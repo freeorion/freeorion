@@ -1,10 +1,18 @@
 #!/usr/bin/python3
 import argparse
 import datetime
+import html
+import json
+import os
 import re
 import subprocess
 import sys
 import textwrap
+import time
+import urllib.parse
+import urllib.request
+import webbrowser
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from collections import namedtuple, OrderedDict
 
 STRING_TABLE_KEY_PATTERN = r'^[A-Z0-9_]+$'
@@ -397,6 +405,343 @@ class StringTable(object):
         return StringTable(source.fpath, source.language, source.notes, source.includes, entries)
 
 
+class EditServerHandler(BaseHTTPRequestHandler):
+    body = '''
+<html>
+    <head>
+        <title>Editing {source}</title>
+        <style>
+            body {{
+                font-family: sans-serif;
+            }}
+            .menu {{
+                border: None;
+                margin: 0;
+                padding: 0;
+                position: relative;
+            }}
+            .menu legend {{
+                cursor: pointer;
+                font-weight: bold;
+                margin-bottom: 0.2em;
+            }}
+            #display-settings {{
+                display: inline;
+            }}
+            #display-settings > label {{
+                display: none;
+            }}
+            table {{
+                table-layout: fixed;
+                width: 100%;
+            }}
+            td {{
+                vertical-align: top;
+                white-space: pre-wrap;
+            }}
+            td.source, td.translation {{
+                border-style: solid;
+                border-width: thin;
+                padding-left: 0.5em;
+                padding-right: 0.5em;
+            }}
+            td.source {{
+                margin-right: 2em;
+            }}
+            td.translation {{
+                position: relative;
+                padding-left: 1em;
+                border-left-width: thick;
+            }}
+            td.translation:before {{
+                position:  absolute;
+                color: #fff;
+                border-radius:  100%;
+                width: 1.2em;
+                height: 1.2em;
+                text-align: center !important;
+                vertical-algin: middle;
+                top: 0.1em;
+                left: -0.8em;
+                text-align: center;
+                font-weight: bolder;
+                line-height: 1.2em;
+            }}
+            .status-recent td.translation {{
+                border-color: #00cc00;
+                background-color: #00cc0010;
+                color: black;
+            }}
+            .status-recent td.translation:before {{
+                content: "\\2713";
+                background-color: #00cc00;
+            }}
+            .status-stale td.translation {{
+                border-color: #cc8400;
+                background-color: #cc840010;
+                color: black;
+            }}
+            .status-stale td.translation:before {{
+                content: "!";
+                background-color: #cc8400;
+            }}
+            .status-untranslated td.translation {{
+                border-color: #ff0000;
+                background-color: #ff000010;
+                color: black;
+            }}
+            .status-untranslated td.translation:before {{
+                content: "\\274c";
+                background-color: #ff0000;
+            }}
+            .entry td.source {{
+                border-color: #808080;
+                background-color: #80808010;
+                color: black;
+            }}
+            form.translator {{
+                width: 100%;
+            }}
+        </style>
+    </head>
+    <body>
+        <h1>Translate stringtable for language &quot;{language}&quot;</h1>
+        <form action="save" method="post">
+            <fieldset class="menu">
+                <legend>Stringtable</legend>
+                <button type="submit" id="save-stringtable">Save</button>
+            </fieldset>
+        </form>
+        <fieldset class="menu" id="display-settings">
+            <legend id="toggle-display-settings"><span id="toggle-display-indicator">&#x25b6;</span> Display</legend>
+            <label><input class="input-slider" type="checkbox" checked="checked" id="toggle-recent">Recent translations</label>
+            <label><input class="input-slider" type="checkbox" checked="checked" id="toggle-stale">Stale translations</label>
+            <label><input class="input-slider" type="checkbox" checked="checked" id="toggle-untranslated">Untranslated translations</label>
+        </fieldset>
+        <table>
+            {entries}
+        </table>
+    </body>
+    <script type="text/javascript" src="/jquery.js"></script>
+    <script type="text/javascript" src="/jeditable.jquery.js"></script>
+    <script type="text/javascript">
+        function toggle_display_settings() {{
+            visible = $(this).data('visible') || false;
+
+            if(visible) {{
+                $('#toggle-display-indicator').html('&#x25b6;');
+                $(this).children('label').css('display', 'none');
+            }} else {{
+                $('#toggle-display-indicator').html('&#x25bd;');
+                $(this).children('label').css('display', 'block');
+            }}
+
+            $(this).data('visible', !visible);
+        }}
+
+        function toggle_entries_by_status(status) {{
+            checkbox = $('#toggle-' + status);
+            checkbox.prop('disabled', true);
+            visible = checkbox.data('visible') || false;
+
+            if(visible) {{
+                setTimeout(function() {{
+                    $('.entry.status-' + status).show();
+                    $('#toggle-' + status)
+                        .prop('disabled', false);
+                }});
+            }} else {{
+                setTimeout(function() {{
+                    $('.entry.status-' + status).hide();
+                    $('#toggle-' + status)
+                        .prop('disabled', false);
+                }});
+            }}
+
+            checkbox.data('visible', !visible);
+        }}
+
+        function save_entry(value, settings, response_handler) {{
+            $.post({{
+                url: '/update',
+                data: JSON.stringify({{"id": settings.id, "value": value}}),
+                contenttype: 'application/json; charset=UTF-8',
+                datatype: 'json',
+                success: function(response) {{
+                    $('#' + response.id)
+                        .removeClass('status-recent status-stale status-untranslated')
+                        .addClass('status-'+response.status);
+                    response_handler($('<div />').text(value).html(), true);
+                }}
+            }});
+        }}
+
+        $(document).ready(function() {{
+            $('#toggle-display-settings').click(toggle_display_settings.bind($('#display-settings')));
+            $('#toggle-recent').click(toggle_entries_by_status.bind($('#toggle-recent'), 'recent'));
+            $('#toggle-stale').click(toggle_entries_by_status.bind($('#toggle-stale'), 'stale'));
+            $('#toggle-untranslated').click(toggle_entries_by_status.bind($('#toggle-untranslated'), 'untranslated'));
+            $('.translation').each(function(idx, element) {{
+                $(element).editable(save_entry, {{
+                    type: 'textarea',
+                    id: $(element).data('id'),
+                    submit: 'Save',
+                    cancel: 'Cancel',
+                    placeholder: '<i>untranslated</i>',
+                    cssclass: 'translator',
+                    width: '100%',
+                    rows: 5
+                }});
+            }});
+        }});
+    </script>
+</html>
+    '''
+
+    entry = '''
+<tbody class="entry status-{status}" id="{key}">
+    <tr><th colspan="2">{key}</th></tr>
+    <tr class="notes"><td colspan="2">{notes}</td></tr>
+    <tr><td class="source">{source}</td><td class="translation" data-id="{key}">{translation}</td></tr>
+</tbody>
+    '''
+
+    def do_GET(self):
+        parsed_path = urllib.parse.urlparse(self.path)
+
+        if parsed_path.path == '/':
+            return self.GET_stringtable()
+        elif parsed_path.path == '/jquery.js':
+            return self.GET_url('https://code.jquery.com/jquery-3.4.1.min.js')
+        elif parsed_path.path == '/jeditable.jquery.js':
+            return self.GET_url('https://raw.githubusercontent.com/NicolasCARPi/jquery_jeditable/2.0.14/dist/jquery.jeditable.min.js')
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def do_POST(self):
+        parsed_path = urllib.parse.urlparse(self.path)
+
+        if parsed_path.path == '/update':
+            return self.POST_entry()
+        if parsed_path.path == '/save':
+            return self.POST_save()
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def GET_url(self, url):
+        response = urllib.request.urlopen(url)
+        self.send_response(response.getcode())
+        self.send_header('Content-Type', response.info()['Content-Type'])
+        self.end_headers()
+
+        for chunk in response:
+            self.wfile.write(chunk)
+
+    def GET_stringtable(self):
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/html ; charset=utf-8')
+        self.end_headers()
+
+        entries = []
+
+        stat = StringTable.statistic(self.server.reference_st, self.server.source_st)
+
+        for key in self.server.reference_st.keys():
+            source = self.server.reference_st[key].value
+            source = html.escape(source)
+
+            translation = self.server.source_st[key].value if key in self.server.source_st else ''
+
+            status = 'recent'
+            if key not in stat.left_older:
+                status = 'stale'
+            if not translation:
+                status = 'untranslated'
+
+            translation = translation if translation else ''
+            translation = html.escape(translation)
+
+            notes = self.server.reference_st[key].notes
+            notes = '\n'.join(notes)
+            notes = html.escape(notes)
+
+            entries.append(EditServerHandler.entry.format(
+                key=key,
+                source=source,
+                translation=translation,
+                notes=notes,
+                status=status
+            ))
+
+        self.wfile.write(EditServerHandler.body.format(
+            source=self.server.source_st.fpath,
+            language=self.server.source_st.language,
+            entries=''.join(entries)
+        ).encode('utf-8'))
+
+    def POST_error(self, message):
+        self.send_response(500)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+
+        self.wfile.write(json.dumps(
+            {'code': 500, 'message': message}).encode('utf-8'))
+
+    def POST_save(self):
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/plain ; charset=utf-8')
+        self.send_header('Content-Disposition', 'attachment; filename="{}"'.format(os.path.basename(self.server.source_st.fpath)))
+        self.end_headers()
+
+        self.wfile.write(str(self.server.source_st).encode('utf-8'))
+
+    def POST_entry(self):
+        try:
+            content_length = int(self.headers.get('Content-Length', '0'))
+            body = self.rfile.read(content_length)
+            request = json.loads(body)
+            if 'id' not in request or 'value' not in request:
+                raise ValueError("Some of the expected json keys are missing")
+        except ValueError:
+            self.POST_error("Browser didn't send a save request")
+            raise
+
+        if request['id'] not in self.server.reference_st:
+            self.POST_error("No entry with key {}".format(request['id']))
+
+        entry = self.server.source_st[request['id']]
+        rentry = self.server.reference_st[request['id']]
+
+        if entry.value != request['value']:
+            if request['value'] and rentry.value != request['value']:
+                entry.value = request['value']
+            else:
+                entry.value = None
+            if entry.value:
+                entry.value_times = [int(time.time())] * len(entry.value.split('\n'))
+            else:
+                entry.value_times = rentry.value_times
+
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+
+        status = 'recent'
+        if max(self.server.reference_st[request['id']].value_times) > min(entry.value_times):
+            status = 'stale'
+        if not entry.value:
+            status = 'untranslated'
+
+        response = {
+            'id': request['id'],
+            'status': status,
+        }
+
+        self.wfile.write(json.dumps(response).encode('utf-8'))
+
+
 def format_action(args):
     source_st = StringTable.from_file(args.source)
 
@@ -409,31 +754,7 @@ def sync_action(args):
     reference_st = StringTable.from_file(args.reference)
     source_st = StringTable.from_file(args.source)
 
-    entries = []
-
-    for item in reference_st.items():
-        if isinstance(item, StringTableEntry):
-            if item.key in source_st:
-                source_item = source_st[item.key]
-                entries.append(StringTableEntry(
-                    item.key,
-                    item.keyline,
-                    source_item.value,
-                    item.notes,
-                    source_item.value_times
-                ))
-            else:
-                entries.append(StringTableEntry(
-                    item.key,
-                    item.keyline,
-                    None,
-                    item.notes,
-                    item.value_times
-                ))
-        else:
-            entries.append(item)
-
-    out_st = StringTable(source_st.fpath, source_st.language, source_st.notes, source_st.includes, entries)
+    out_st = StringTable.sync(reference_st, source_st)
 
     print(out_st, end='')
 
@@ -459,6 +780,21 @@ def rename_key_action(args):
             entry.key = args.new_key
 
     print(source_st, end='')
+
+    return 0
+
+
+def edit_action(args):
+    reference_st = StringTable.from_file(args.reference)
+    source_st = StringTable.from_file(args.source)
+
+    source_st = StringTable.sync(reference_st, source_st)
+
+    server = HTTPServer(('localhost', 8080), EditServerHandler)
+    server.reference_st = reference_st
+    server.source_st = source_st
+    webbrowser.open('http://localhost:8080/')
+    server.serve_forever()
 
     return 0
 
@@ -612,6 +948,24 @@ if __name__ == "__main__":
         type=argparse.FileType(encoding='utf-8', errors='strict'))
     rename_key_parser.add_argument('old_key', metavar='OLD_KEY', help="key to rename")
     rename_key_parser.add_argument('new_key', metavar='NEW_KEY', help="new key name")
+
+    edit_parser = verb_parsers.add_parser(
+        'edit',
+        help="edit a stringtable and exit",
+        description=textwrap.dedent("""\
+        Starts a web server and a web browser to provide an interactive editor.
+
+        Use ^C to exit the web server.  The string table will not be saved, so
+        download it before exiting the web server or closing the browser.
+        """),
+        formatter_class=argparse.RawTextHelpFormatter)
+    edit_parser.set_defaults(action=edit_action)
+    edit_parser.add_argument(
+        'reference', metavar='REFERENCE', help="reference string table",
+        type=argparse.FileType(encoding='utf-8', errors='strict'))
+    edit_parser.add_argument(
+        'source', metavar='SOURCE', help="string table to edit",
+        type=argparse.FileType(encoding='utf-8', errors='strict'))
 
     check_parser = verb_parsers.add_parser(
         'check',
