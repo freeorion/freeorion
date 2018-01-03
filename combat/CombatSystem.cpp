@@ -618,17 +618,17 @@ namespace {
         return true;
     }
 
-    bool ObjectTargettableByEmpire(std::shared_ptr<const UniverseObject> obj, int empire_id) {
+    bool ObjectTargettableByEmpire(std::shared_ptr<const UniverseObject> obj,
+                                   int empire_id)
+    {
         if (!obj)
             return false;
-        if (obj->ObjectType() != OBJ_FIGHTER &&
-            GetUniverse().GetObjectVisibilityByEmpire(obj->ID(), empire_id) <= VIS_BASIC_VISIBILITY)
-        {
-            DebugLogger(combat) << obj->Name() << " not sufficiently visible to empire " << empire_id;
-            return false;
-        }
+        if (obj->ObjectType() == OBJ_FIGHTER)
+            return true;
+        if (GetUniverse().GetObjectVisibilityByEmpire(obj->ID(), empire_id) >= VIS_BASIC_VISIBILITY)
+            return true;
 
-        return true;
+        return false;
     }
 
     bool ObjectAttackableByEmpire(std::shared_ptr<const UniverseObject> obj,
@@ -649,9 +649,8 @@ namespace {
 
     // monsters / natives can attack any planet, but can only attack
     // visible ships or ships that are in aggressive fleets
-    bool ObjectDiplomaticallyAttackableByMonsters(std::shared_ptr<const UniverseObject> obj) {
-        return (!obj->Unowned());
-    }
+    bool ObjectDiplomaticallyAttackableByMonsters(std::shared_ptr<const UniverseObject> obj)
+    { return (!obj->Unowned()); }
 
     bool ObjectTargettableByMonsters(std::shared_ptr<const UniverseObject> obj,
                                      float monster_detection = 0.0f)
@@ -1037,8 +1036,10 @@ namespace {
             }
         }
 
-        /**Report for each empire the stealth objects in the combat. */
-        InitialStealthEvent::StealthInvisbleMap ReportInvisibleObjects(const CombatInfo& combat_info_) const {
+        /** Report for each empire the stealth objects in the combat. */
+        InitialStealthEvent::StealthInvisbleMap ReportInvisibleObjects(
+            const CombatInfo& combat_info_) const
+        {
             DebugLogger(combat) << "Reporting Invisible Objects";
             InitialStealthEvent::StealthInvisbleMap report;
             for (int object_id : valid_target_object_ids) {
@@ -1058,7 +1059,7 @@ namespace {
 
                     if (attacking_empire_id == ALL_EMPIRES) {
                         if (ObjectUnTargettableByMonsters(obj, monster_detection)) {
-                            // Note: This does put information about invisible and basic visible objects and
+                            // Note: This includes information about invisible and basic visible objects and
                             // trusts that the combat logger only informs player/ai of what they should know
                             DebugLogger(combat) << " Monster "  << obj->Name() << " " << visibility << " to empire " << attacking_empire_id;
                             report[attacking_empire_id][obj->Owner()]
@@ -1067,7 +1068,7 @@ namespace {
 
                     } else {
                         if (ObjectUnTargettableByEmpire(obj, attacking_empire_id)) {
-                            // Note: This does put information about invisible and basic visible objects and
+                            // Note: This includes information about invisible and basic visible objects and
                             // trusts that the combat logger only informs player/ai of what they should know
                             DebugLogger(combat) << " Ship " << obj->Name() << " " << visibility << " to empire " << attacking_empire_id;
                             report[attacking_empire_id][obj->Owner()]
