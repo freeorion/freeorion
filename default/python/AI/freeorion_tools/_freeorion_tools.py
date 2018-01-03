@@ -35,7 +35,8 @@ def get_ai_tag_grade(tag_list, tag_type):
     return ""
 
 
-def UserString(label, default=None):  # this name left with C naming style for compatibility with translation assistance procedures  #pylint: disable=invalid-name
+# this name left with C naming style for compatibility with translation assistance procedures
+def UserString(label, default=None):  # pylint: disable=invalid-name
     """
     A translation assistance tool is intended to search for this method to identify translatable strings.
 
@@ -52,7 +53,8 @@ def UserString(label, default=None):  # this name left with C naming style for c
         return table_string
 
 
-def UserStringList(label):  # this name left with C naming style for compatibility with translation assistance procedures  #pylint: disable=invalid-name
+# this name left with C naming style for compatibility with translation assistance procedures
+def UserStringList(label):  # pylint: disable=invalid-name
     """
     A translation assistance tool is intended to search for this method to identify translatable strings.
 
@@ -158,27 +160,27 @@ def cache_by_session(function):
     return wrapper
 
 
-def cache_by_session_with_turnwise_update(function):
+def cache_by_session_with_turnwise_update(func):
     """
     Cache a function value during session, updated each turn.
     Wraps only functions with hashable arguments.
     """
     _cache = {}
 
-    @wraps(function)
+    @wraps(func)
     def wrapper(*args, **kwargs):
-        key = (function , args, tuple(kwargs.items()))
+        key = (func, args, tuple(kwargs.items()))
         this_turn = fo.currentTurn()
         if key in _cache and _cache[key][0] == this_turn:
             return _cache[key][1]
-        res = function(*args, **kwargs)
+        res = func(*args, **kwargs)
         _cache[key] = (this_turn, res)
         return res
     wrapper._cache = _cache
     return wrapper
 
 
-def cache_by_turn(function):
+def cache_by_turn(func):
     """
     Cache a function value by turn, stored in foAIstate so also provides a history that may be analysed. The cache
     is keyed by the original function name.  Wraps only functions without arguments.
@@ -187,14 +189,14 @@ def cache_by_turn(function):
     # avoid circular import
     import FreeOrionAI as foAI
 
-    @wraps(function)
+    @wraps(func)
     def wrapper():
         if foAI.foAIstate is None:
-            return function()
+            return func()
         else:
-            cache = foAI.foAIstate.misc.setdefault('caches', {}).setdefault(function.__name__, {})
+            cache = foAI.foAIstate.misc.setdefault('caches', {}).setdefault(func.__name__, {})
             this_turn = fo.currentTurn()
-            return cache[this_turn] if this_turn in cache else cache.setdefault(this_turn, function())
+            return cache[this_turn] if this_turn in cache else cache.setdefault(this_turn, func())
     return wrapper
 
 
