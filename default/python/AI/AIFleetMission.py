@@ -11,6 +11,7 @@ import CombatRatingsAI
 from universe_object import UniverseObject, System, Fleet, Planet
 from EnumsAI import MissionType
 from AIDependencies import INVALID_ID
+from freeorion_tools import get_partial_visibility_turn
 
 from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
@@ -436,10 +437,8 @@ class AIFleetMission(object):
 
                 if last_order and isinstance(last_order, OrderColonize):
                     planet = universe.getPlanet(last_order.target.id)
-                    sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, fo.empireID()).get(
-                        fo.visibility.partial, -9999)
-                    planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet.id, fo.empireID()).get(
-                        fo.visibility.partial, -9999)
+                    sys_partial_vis_turn = get_partial_visibility_turn(planet.systemID)
+                    planet_partial_vis_turn = get_partial_visibility_turn(planet.id)
                     if (planet_partial_vis_turn == sys_partial_vis_turn and
                             not planet.currentMeterValue(fo.meterType.population)):
                         warn("Fleet %d has tentatively completed its "
