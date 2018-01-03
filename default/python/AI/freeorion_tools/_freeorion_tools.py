@@ -67,7 +67,7 @@ def tech_is_complete(tech):
     """
     Return if tech is complete.
     """
-    return fo.getEmpire().getTechStatus(tech) == fo.techStatus.complete
+    return fo.getEmpire().techResearched(tech)
 
 
 def ppstring(foo):
