@@ -166,8 +166,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                 return fleet_list
 
         # finished system without meeting requirements. Add neighboring systems to search queue.
-        for neighbor_id in [el.key() for el in
-                            universe.getSystemNeighborsMap(this_system_id, fo.empireID())]:
+        for neighbor_id in universe.getImmediateNeighbors(this_system_id, fo.empireID()):
             if all((
                     neighbor_id not in systems_visited,
                     neighbor_id not in systems_enqueued,

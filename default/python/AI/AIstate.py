@@ -13,7 +13,7 @@ from EnumsAI import MissionType, ShipRoleType
 import CombatRatingsAI
 import MilitaryAI
 import PlanetUtilsAI
-from freeorion_tools import dict_from_map, get_partial_visibility_turn
+from freeorion_tools import get_partial_visibility_turn
 from universe_object import System
 from AIDependencies import INVALID_ID
 from character.character_module import create_character, Aggression
@@ -609,7 +609,7 @@ class AIstate(object):
                     my_ratings_against_planets_list)
                 sys_status['all_local_defenses'] = CombatRatingsAI.combine_ratings(
                     sys_status['myFleetRating'], sys_status['mydefenses']['overall'])
-            sys_status['neighbors'] = set(dict_from_map(universe.getSystemNeighborsMap(sys_id, self.empireID)))
+            sys_status['neighbors'] = set(universe.getImmediateNeighbors(sys_id, self.empireID))
 
         for sys_id in universe.systemIDs:
             sys_status = self.systemStatus[sys_id]

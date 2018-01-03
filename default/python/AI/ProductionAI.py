@@ -18,7 +18,7 @@ from turn_state import state
 
 from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_priority_production_types,
                      FocusType, ShipRoleType)
-from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete, AITimer
+from freeorion_tools import ppstring, chat_human, tech_is_complete, AITimer
 from common.print_utils import Table, Sequence, Text
 from AIDependencies import INVALID_ID
 
@@ -991,7 +991,7 @@ def generate_production_orders():
             if sys_id in scanner_locs:
                 continue
             need_scanner = False
-            for nSys in dict_from_map(universe.getSystemNeighborsMap(sys_id, empire.empireID)):
+            for nSys in universe.getImmediateNeighbors(sys_id, empire.empireID):
                 if universe.getVisibility(nSys, empire.empireID) < fo.visibility.partial:
                     need_scanner = True
                     break
@@ -1029,8 +1029,8 @@ def generate_production_orders():
                                     (covered_drydoc_locs, covered_drydoc_locs)]:  # coverage of neighbors up to 2 jumps away from a drydock
             for dd_sys_id in start_set.copy():
                 dest_set.add(dd_sys_id)
-                dd_neighbors = dict_from_map(universe.getSystemNeighborsMap(dd_sys_id, empire.empireID))
-                dest_set.update(dd_neighbors.keys())
+                neighbors = universe.getImmediateNeighbors(dd_sys_id, empire.empireID)
+                dest_set.update(neighbors)
 
         max_dock_builds = int(0.8 + empire.productionPoints/120.0)
         print "Considering building %s, found current and queued systems %s" % (building_name, ppstring(PlanetUtilsAI.sys_name_ids(cur_drydoc_sys.union(queued_sys))))
@@ -1055,8 +1055,8 @@ def generate_production_orders():
                 if res:
                     queued_locs.append(planet.systemID)
                     covered_drydoc_locs.add(planet.systemID)
-                    dd_neighbors = dict_from_map(universe.getSystemNeighborsMap(planet.systemID, empire.empireID))
-                    covered_drydoc_locs.update(dd_neighbors.keys())
+                    neighboring_systems = universe.getImmediateNeighbors(planet.systemID, empire.empireID)
+                    covered_drydoc_locs.update(neighboring_systems)
                     if max_dock_builds >= 2:
                         res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                         print "Requeueing %s to front of build queue, with result %d" % (building_name, res)

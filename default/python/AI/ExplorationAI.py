@@ -5,7 +5,6 @@ from EnumsAI import MissionType
 import universe_object
 import MoveUtilsAI
 import PlanetUtilsAI
-from freeorion_tools import dict_from_map
 from AIDependencies import INVALID_ID
 
 from common.configure_logging import convenience_function_references_for_logger
@@ -169,7 +168,7 @@ def follow_vis_system_connections(start_system_id, home_system_id):
             sys_status = foAI.foAIstate.systemStatus.setdefault(cur_system_id, {})
             foAI.foAIstate.visInteriorSystemIDs.add(cur_system_id)
             foAI.foAIstate.visBorderSystemIDs.discard(cur_system_id)
-            neighbors = set(dict_from_map(universe.getSystemNeighborsMap(cur_system_id, empire_id)).keys())
+            neighbors = set(universe.getImmediateNeighbors(cur_system_id, empire_id))
             sys_status.setdefault('neighbors', set()).update(neighbors)
             if neighbors:
                 status_info.append(" -- has neighbors %s" % sorted(neighbors))
