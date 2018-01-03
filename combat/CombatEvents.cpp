@@ -333,58 +333,42 @@ std::string InitialStealthEvent::DebugString() const {
 }
 
 std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id) const {
+    // Generate lists of the viewing empire's ships that other empires cannot
+    // see (nor thus initially target). The Viewing empire id is the id of the
+    // empire that will view this report.
     std::string desc = "";
 
-    //Viewing empire stealth first
-    for (const auto& attack_empire : target_empire_id_to_invisble_obj_id) {
-        if (attack_empire.first == viewing_empire_id)
+    // target_empire_id_to_invisble_obj_id is:
+    // map from attacker empire id -> defender empire id -> set of (attacker ids, visibility)
+
+    for (const auto& attacker_pair : target_empire_id_to_invisble_obj_id) {
+        // skip info about other empires' ships that viewing empire cannot see
+        if (attacker_pair.first == viewing_empire_id)
             continue;
 
-        auto target_empire = attack_empire.second.find(viewing_empire_id);
-        if (target_empire != attack_empire.second.end() &&
-            !target_empire->second.empty())
-        {
-            std::vector<std::string> cloaked_attackers;
-            for (auto& attacker : target_empire->second) {
-                 std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker.first, viewing_empire_id);
-                // It doesn't matter if targets of viewing empire have no_visibility or basic_visibility
-                 cloaked_attackers.push_back(attacker_link);
-            }
+        // get map from defending empire id to objects/visibilities of attacker
+        const auto& defender_to_invis_objs = attacker_pair.second;
 
-            if (!cloaked_attackers.empty()) {
-                desc += "\n"; //< Add \n at start of the report and between each empire
-                std::vector<std::string> attacker_empire_link(1, EmpireLink(attack_empire.first));
-                desc += FlexibleFormatList(attacker_empire_link, cloaked_attackers,
-                                           UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
-            }
+        // find objects for viewing empire as defender
+        const auto viewer_it = defender_to_invis_objs.find(viewing_empire_id);
+        if (viewer_it == defender_to_invis_objs.end() || viewer_it->second.empty())
+            continue;   // no objects, invisible to current attacker, owned by viewer
+        const auto& viewer_objects_attacker_cannot_see = viewer_it->second;
+
+        // collect links to viewer's objects that current attacker cannot see
+        std::vector<std::string> viewer_object_links;
+        for (auto& viewer_obj_vis : viewer_objects_attacker_cannot_see) {
+            viewer_object_links.push_back(FighterOrPublicNameLink(
+                viewing_empire_id, viewer_obj_vis.first, viewing_empire_id));
         }
-    }
 
-    //Viewing empire defending
-    auto attack_empire = target_empire_id_to_invisble_obj_id.find(viewing_empire_id);
-    if (attack_empire != target_empire_id_to_invisble_obj_id.end() &&
-        !attack_empire->second.empty())
-    {
-        for (auto& target_empire : attack_empire->second) {
-            if (target_empire.first == viewing_empire_id)
-                continue;
-
-            std::vector<std::string> cloaked_attackers;
-            for (const auto& attacker : target_empire.second) {
-                std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker.first, viewing_empire_id);
-                // Don't even report on targets with no_visibility it is supposed to be a surprise
-                if (attacker.second >= VIS_BASIC_VISIBILITY )
-                    cloaked_attackers.push_back(attacker_link);
-            }
-
-            if (!cloaked_attackers.empty()) {
-                if (!desc.empty())
-                    desc += "\n";
-                std::vector<std::string> attacker_empire_link(1, EmpireLink(attack_empire->first));
-                desc += FlexibleFormatList(attacker_empire_link, cloaked_attackers,
-                                           UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
-            }
-        }
+        // if there is at least one viewer empire object to list for this attacker, do so
+        if (viewer_object_links.empty())
+            continue;
+        desc += "\n"; //< Add \n at start of the report and between each empire
+        std::vector<std::string> attacker_empire_link(1, EmpireLink(attacker_pair.first));
+        desc += FlexibleFormatList(attacker_empire_link, viewer_object_links,
+                                   UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
     }
 
     return desc;
