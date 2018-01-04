@@ -947,7 +947,8 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     GG::X panel_width = Width() - MaxPlanetDiameter() - 2*EDGE_PAD;
 
     // create planet name control
-    m_planet_name = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", font, ClientUI::TextColor());
+    m_planet_name = GG::Wnd::Create<GG::TextControl>(
+        GG::X0, GG::Y0, GG::X1, GG::Y1, " ", font, ClientUI::TextColor());
     m_planet_name->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + EDGE_PAD), GG::Y0));
     m_planet_name->Resize(m_planet_name->MinUsableSize());
     AttachChild(m_planet_name);
@@ -1566,17 +1567,17 @@ void SidePanel::PlanetPanel::Refresh() {
         }
     }
 
-    std::shared_ptr<const Ship> selected_colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
+    auto selected_colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
     if (!selected_colony_ship && FleetUIManager::GetFleetUIManager().SelectedShipIDs().empty())
         selected_colony_ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
 
-    std::set<std::shared_ptr<const Ship>> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
+    auto invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
     if (invasion_ships.empty()) {
         std::set<std::shared_ptr<const Ship>> autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
         invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
     }
 
-    std::set<std::shared_ptr<const Ship>> bombard_ships = ValidSelectedBombardShips(SidePanel::SystemID());
+    auto bombard_ships = ValidSelectedBombardShips(SidePanel::SystemID());
     if (bombard_ships.empty()) {
         std::set<std::shared_ptr<const Ship>> autoselected_bombard_ships = AutomaticallyChosenBombardShips(m_planet_id);
         bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
@@ -1911,7 +1912,7 @@ void SidePanel::PlanetPanel::Refresh() {
     // which should be connected to SidePanel::PlanetPanel::DoLayout
 
     m_planet_connection = planet->StateChangedSignal.connect(
-                             boost::bind(&SidePanel::PlanetPanel::Refresh, this), boost::signals2::at_front);
+        boost::bind(&SidePanel::PlanetPanel::Refresh, this), boost::signals2::at_front);
 }
 
 void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -2816,8 +2817,7 @@ namespace {
                 const auto meter_value = planet->InitialMeterValue(m_meter_type);
                 if (m_meter_type == METER_SUPPLY) {
                     total_meter_value = std::max(total_meter_value, meter_value);
-                }
-                else {
+                } else {
                     total_meter_value += meter_value;
                 }
                 auto value = GG::Wnd::Create<CUILabel>(DoubleToString(meter_value, 3, false));
@@ -3277,7 +3277,8 @@ void SidePanel::RefreshImpl() {
     const std::vector<std::pair<MeterType, MeterType>> resource_meters =
        {{METER_INDUSTRY, METER_TARGET_INDUSTRY},
         {METER_RESEARCH, METER_TARGET_RESEARCH},
-        {METER_TRADE,    METER_TARGET_TRADE}};
+        //{METER_TRADE,    METER_TARGET_TRADE},
+        {METER_STOCKPILE,METER_MAX_STOCKPILE}};
     // general meters; show only if all planets are owned by same empire
     const std::vector<std::pair<MeterType, MeterType>> general_meters =
        {{METER_SHIELD,  METER_MAX_SHIELD},

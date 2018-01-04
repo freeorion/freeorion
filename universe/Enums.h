@@ -101,6 +101,7 @@ GG_ENUM(MeterType,
     METER_MAX_STRUCTURE,
     METER_MAX_DEFENSE,
     METER_MAX_SUPPLY,
+    METER_MAX_STOCKPILE,
     METER_MAX_TROOPS,
 
     METER_POPULATION,
@@ -118,6 +119,7 @@ GG_ENUM(MeterType,
     METER_STRUCTURE,
     METER_DEFENSE,
     METER_SUPPLY,
+    METER_STOCKPILE,
     METER_TROOPS,
 
     METER_REBEL_TROOPS,
@@ -125,9 +127,6 @@ GG_ENUM(MeterType,
     METER_STEALTH,
     METER_DETECTION,
     METER_SPEED,
-
-    METER_IMPERIAL_PP_USE_LIMIT,
-    METER_IMPERIAL_PP_TRANSFER_EFFICIENCY,
 
     NUM_METER_TYPES
 )
@@ -275,6 +274,10 @@ FO_COMMON_API MeterType ResourceToTargetMeter(ResourceType type);
 /** Returns the equivalent resource type for the given meter type; if no such
   * resource type exists, returns INVALID_RESOURCE_TYPE. */
 FO_COMMON_API ResourceType MeterToResource(MeterType type);
+
+/** Returns mapping from active to target or max meter types that correspond.
+  * eg. METER_RESEARCH -> METER_TARGET_RESEARCH */
+FO_COMMON_API const std::map<MeterType, MeterType>& AssociatedMeterTypes();
 
 /** Returns the target or max meter type that is associated with the given
   * active meter type.  If no associated meter type exists, INVALID_METER_TYPE

@@ -51,22 +51,29 @@ ResourceType MeterToResource(MeterType type) {
     }
 }
 
+const std::map<MeterType, MeterType>& AssociatedMeterTypes() {
+    static const std::map<MeterType, MeterType> meters = {
+        {METER_POPULATION,      METER_TARGET_POPULATION},
+        {METER_INDUSTRY,        METER_TARGET_INDUSTRY},
+        {METER_RESEARCH,        METER_TARGET_RESEARCH},
+        {METER_TRADE,           METER_TARGET_TRADE},
+        {METER_CONSTRUCTION,    METER_TARGET_CONSTRUCTION},
+        {METER_HAPPINESS,       METER_TARGET_HAPPINESS},
+        {METER_FUEL,            METER_MAX_FUEL},
+        {METER_SHIELD,          METER_MAX_SHIELD},
+        {METER_STRUCTURE,       METER_MAX_STRUCTURE},
+        {METER_DEFENSE,         METER_MAX_DEFENSE},
+        {METER_TROOPS,          METER_MAX_TROOPS},
+        {METER_SUPPLY,          METER_MAX_SUPPLY},
+        {METER_STOCKPILE,       METER_MAX_STOCKPILE}};
+    return meters;
+}
+
 MeterType AssociatedMeterType(MeterType meter_type) {
-    switch (meter_type) {
-    case METER_POPULATION:  return METER_TARGET_POPULATION;     break;
-    case METER_INDUSTRY:    return METER_TARGET_INDUSTRY;       break;
-    case METER_RESEARCH:    return METER_TARGET_RESEARCH;       break;
-    case METER_TRADE:       return METER_TARGET_TRADE;          break;
-    case METER_CONSTRUCTION:return METER_TARGET_CONSTRUCTION;   break;
-    case METER_HAPPINESS:   return METER_TARGET_HAPPINESS;      break;
-    case METER_FUEL:        return METER_MAX_FUEL;              break;
-    case METER_SHIELD:      return METER_MAX_SHIELD;            break;
-    case METER_STRUCTURE:   return METER_MAX_STRUCTURE;         break;
-    case METER_DEFENSE:     return METER_MAX_DEFENSE;           break;
-    case METER_TROOPS:      return METER_MAX_TROOPS;            break;
-    case METER_SUPPLY:      return METER_MAX_SUPPLY;            break;
-    default:                return INVALID_METER_TYPE;          break;
-    }
+    auto mt_pair_it = AssociatedMeterTypes().find(meter_type);
+    if (mt_pair_it == AssociatedMeterTypes().end())
+        return INVALID_METER_TYPE;
+    return mt_pair_it->second;
 }
 
 const std::string& PathTypeToString(PathType path_type) {

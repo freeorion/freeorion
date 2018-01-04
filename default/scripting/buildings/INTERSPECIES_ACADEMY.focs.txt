@@ -9,6 +9,7 @@ BuildingType
         Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"
         OwnedBy empire = Source.Owner
         Happiness low = 15
+        
         // For species with preferred focus its the happiness bonus helps only a bit
         Not And [
             Focus type = Source.PreferredFocus
@@ -76,32 +77,8 @@ BuildingType
             activation = Source
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[LATE_PRIORITY]]
-            effects = [
-                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY" value = min(1.0, Value + 0.05)
-                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 15
-            ]
-        // Once per academy tell the user.
-        EffectsGroup
-            scope = And [
-                Object id = Source.PlanetID
-                Planet
-                OwnedBy empire = Source.Owner
-                Species
-            ]
-            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
-            priority = [[LATE_PRIORITY]]
-            effects = [
-               GenerateSitRepMessage
-                    message = "EFFECT_INTERSPECIES_ACADEMY"
-                    label = "EFFECT_INTERSPECIES_ACADEMY_LABEL"
-                    icon = "icons/building/blackhole.png"
-                    parameters = [
-                        tag = "planet" data = Source.PlanetID
-                        tag = "species" data = Source.Planet.Species
-                        tag = "rawtext" data = EmpireMeterValue empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY"
-                    ]
-                    empire = Source.Owner
-            ]
+            effects = SetStockpile value = Value + 3
+            
     ]
     icon = "icons/building/science-institute.png"
 

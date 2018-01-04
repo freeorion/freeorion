@@ -121,8 +121,7 @@ std::string Building::Dump(unsigned short ntabs) const {
     std::stringstream os;
     os << UniverseObject::Dump(ntabs);
     os << " building type: " << m_building_type
-       << " produced by empire id: " << m_produced_by_empire_id
-       << " \n characteristics " << GetBuildingType(m_building_type)->Dump(ntabs);
+       << " produced by empire id: " << m_produced_by_empire_id;
     return os.str();
 }
 

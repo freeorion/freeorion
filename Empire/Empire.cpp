@@ -121,19 +121,20 @@ namespace {
         return retval;
     }
 
-    float CalculateNewStockpile(int empire_id, int stockpile_location_id,
-                                float starting_stockpile,
+    float CalculateNewStockpile(int empire_id, float starting_stockpile,
                                 const std::map<std::set<int>, float>& available_pp,
                                 const std::map<std::set<int>, float>& allocated_pp,
                                 const std::map<std::set<int>, float>& allocated_stockpile_pp)
     {
+        TraceLogger() << "CalculateNewStockpile for empire " << empire_id;
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "CalculateStockpileContribution() passed null empire.  doing nothing.";
             return 0.0f;
         }
-        float stockpile_transfer_efficiency = std::min(1.0f, empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current());
+        float stockpile_limit = empire->GetProductionQueue().StockpileCapacity();
         float stockpile_used = boost::accumulate(allocated_stockpile_pp | boost::adaptors::map_values, 0.0f);
+        TraceLogger() << " ... stockpile limit: " << stockpile_limit << "  used: " << stockpile_used << "   starting: " << starting_stockpile;
         float new_contributions = 0.0f;
         for (auto const& available_group : available_pp) {
             auto alloc_it = allocated_pp.find(available_group.first);
@@ -143,13 +144,13 @@ namespace {
             if (excess_here < EPSILON)
                 continue;
             // Transfer excess to stockpile
-            new_contributions += excess_here * stockpile_transfer_efficiency;
-            TraceLogger() << "allocated here: " << allocated_here
-                          << "  excess here: " << excess_here
+            new_contributions += excess_here;
+            TraceLogger() << "...allocated in group: " << allocated_here
+                          << "  excess in group: " << excess_here
                           << "  to stockpile: " << new_contributions;
         }
-        TraceLogger() << "starting_stockpile: " << starting_stockpile 
-                      << "  stockpile_used: " << stockpile_used;
+        if (new_contributions > stockpile_limit)
+            new_contributions = stockpile_limit;
         return starting_stockpile + new_contributions - stockpile_used;
     }
 
@@ -227,7 +228,6 @@ namespace {
       * Also checks if elements will be completed this turn. */
     void SetProdQueueElementSpending(
         std::map<std::set<int>, float> available_pp, float available_stockpile,
-        int stockpile_location_id,
         const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
         const std::map<std::pair<ProductionQueue::ProductionItem, int>,
                        std::pair<float, int>>& queue_item_costs_and_times,
@@ -952,7 +952,7 @@ std::map<std::set<int>, float> ProductionQueue::AvailablePP(
     }
 
     // determine available PP (ie. industry) in each resource sharing group of systems
-    for (const auto& ind : industry_pool->Output()) {        // get group of systems in industry pool
+    for (const auto& ind : industry_pool->Output()) {   // get group of systems in industry pool
         const std::set<int>& group = ind.first;
         retval[group] = ind.second;
     }
@@ -965,6 +965,23 @@ const std::map<std::set<int>, float>& ProductionQueue::AllocatedPP() const
 
 const std::map<std::set<int>, float>& ProductionQueue::AllocatedStockpilePP() const
 { return m_object_group_allocated_stockpile_pp; }
+
+float ProductionQueue::StockpileCapacity() const {
+    if (m_empire_id == ALL_EMPIRES)
+        return 0.0f;
+
+    float retval = 0.0f;
+
+    for (const auto& obj : Objects().ExistingObjects()) {
+        if (!obj.second->OwnedBy(m_empire_id))
+            continue;
+        const auto* meter = obj.second->GetMeter(METER_STOCKPILE);
+        if (!meter)
+            continue;
+        retval += meter->Current();
+    }
+    return retval;
+}
 
 std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(
     const std::shared_ptr<ResourcePool>& industry_pool) const
@@ -1024,12 +1041,11 @@ void ProductionQueue::Update() {
 
     auto industry_resource_pool = empire->GetResourcePool(RE_INDUSTRY);
     auto available_pp = AvailablePP(industry_resource_pool);
-    int stockpile_location_id = industry_resource_pool->StockpileObjectID();
     float pp_in_stockpile = industry_resource_pool->Stockpile();
     TraceLogger() << "========= pp_in_stockpile:     " << pp_in_stockpile << " ========";
-    const Meter* pp_use_limit = empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT");
-    float available_stockpile = pp_use_limit? std::min(pp_in_stockpile, pp_use_limit->Current()) : pp_in_stockpile;
-    TraceLogger() << "========= available_stockpile: " << pp_in_stockpile << " ========";
+    float stockpile_limit = StockpileCapacity();
+    float available_stockpile = std::min(pp_in_stockpile, stockpile_limit);
+    TraceLogger() << "========= available_stockpile: " << available_stockpile << " ========";
 
     // determine which resource sharing group each queue item is located in
     std::vector<std::set<int>> queue_element_groups;
@@ -1078,21 +1094,21 @@ void ProductionQueue::Update() {
 
     // duplicate production queue state for future simulation
     QueueType sim_queue = m_queue;
-    std::vector<unsigned int>   sim_queue_original_indices(sim_queue.size());
+    std::vector<unsigned int> sim_queue_original_indices(sim_queue.size());
     for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i)
         sim_queue_original_indices[i] = i;
 
     // allocate pp to queue elements, returning updated available pp and updated
     // allocated pp for each group of resource sharing objects
-    SetProdQueueElementSpending(available_pp, available_stockpile, stockpile_location_id,
-                                queue_element_groups,
+    SetProdQueueElementSpending(available_pp, available_stockpile, queue_element_groups,
                                 queue_item_costs_and_times, is_producible, m_queue,
                                 m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp,
                                 m_projects_in_progress, false);
 
     //update expected new stockpile amount
-    m_expected_new_stockpile_amount = CalculateNewStockpile(m_empire_id, stockpile_location_id, pp_in_stockpile, available_pp, 
-                                                            m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp);
+    m_expected_new_stockpile_amount = CalculateNewStockpile(
+        m_empire_id, pp_in_stockpile, available_pp, m_object_group_allocated_pp,
+        m_object_group_allocated_stockpile_pp);
 
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
@@ -1158,8 +1174,7 @@ void ProductionQueue::Update() {
         allocated_pp.clear();
         allocated_stockpile_pp.clear();
 
-        SetProdQueueElementSpending(available_pp, sim_available_stockpile, stockpile_location_id,
-                                    queue_element_groups,
+        SetProdQueueElementSpending(available_pp, sim_available_stockpile, queue_element_groups,
                                     queue_item_costs_and_times, is_producible, sim_queue,
                                     allocated_pp, allocated_stockpile_pp, dummy_int, true);
 
@@ -1183,11 +1198,10 @@ void ProductionQueue::Update() {
                 sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
             }
         }
-        sim_pp_in_stockpile = CalculateNewStockpile(m_empire_id, stockpile_location_id,
-                                                    sim_pp_in_stockpile,
+        sim_pp_in_stockpile = CalculateNewStockpile(m_empire_id, sim_pp_in_stockpile,
                                                     available_pp, allocated_pp,
                                                     allocated_stockpile_pp);
-        sim_available_stockpile = std::min(sim_pp_in_stockpile, pp_use_limit->Current());
+        sim_available_stockpile = std::min(sim_pp_in_stockpile, stockpile_limit);
     }
 
     sim_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
@@ -1270,8 +1284,6 @@ void Empire::Init() {
     m_eliminated = false;
 
     m_meters[UserStringNop("METER_DETECTION_STRENGTH")];
-    m_meters[UserStringNop("METER_IMPERIAL_PP_USE_LIMIT")];
-    m_meters[UserStringNop("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")];
     m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
     m_meters[UserStringNop("METER_SHIP_COST_FACTOR")];
     m_meters[UserStringNop("METER_TECH_COST_FACTOR")];

@@ -1310,7 +1310,7 @@ void MapWnd::CompleteConstruction() {
     m_industry->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleProduction, this));
 
-    m_stockpile = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_IMPERIAL_PP_TRANSFER_EFFICIENCY), 0, 3, false,
+    m_stockpile = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_STOCKPILE), 0, 3, false,
                                                  ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_stockpile->SetName("Stockpile StatisticIcon");
 
@@ -6587,7 +6587,9 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     float  stockpile = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
     float  stockpile_used = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
     float  expected_stockpile = empire->GetProductionQueue().ExpectedNewStockpileAmount();
-    float  PP_to_stockpile_yield = empire->GetMeter("METER_IMPERIAL_PP_TRANSFER_EFFICIENCY")->Current();
+
+    float  stockpile_limit = empire->GetProductionQueue().StockpileCapacity();
+
     float  stockpile_plusminus_next_turn = expected_stockpile - stockpile;
     double total_PP_to_stockpile = expected_stockpile - stockpile + stockpile_used;
     double total_PP_excess = total_PP_output - total_PP_spent;
@@ -6616,7 +6618,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         m_industry_wasted->SetBrowseInfoWnd(GG::Wnd::Create<WastedStockpiledResourceBrowseWnd>(
             UserString("MAP_PRODUCTION_WASTED_TITLE"), UserString("PRODUCTION_INFO_PP"),
             total_PP_output, total_PP_excess,
-            true, PP_to_stockpile_yield, total_PP_to_stockpile, total_PP_wasted,
+            true, stockpile_limit, total_PP_to_stockpile, total_PP_wasted,
             UserString("MAP_PROD_CLICK_TO_OPEN")));
 
     } else {

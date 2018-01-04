@@ -552,9 +552,20 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
 
+    TraceLogger(effects) << "Universe::ApplyMeterEffectsAndUpdateMeters resetting...";
     for (const auto& object : m_objects) {
+        TraceLogger(effects) << "object " << object->Name() << " (" << object->ID() << ") before resetting meters: ";
+        for (auto const& meter_pair : object->Meters()) {
+            TraceLogger(effects) << "    meter: " << boost::lexical_cast<std::string>(meter_pair.first)
+                                 << "  value: " << meter_pair.second.Current();
+        }
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
+        TraceLogger(effects) << "object " << object->Name() << " (" << object->ID() << ") after resetting meters: ";
+        for (auto const& meter_pair : object->Meters()) {
+            TraceLogger(effects) << "    meter: " << boost::lexical_cast<std::string>(meter_pair.first)
+                                 << "  value: " << meter_pair.second.Current();
+        }
     }
     for (auto& entry : Empires())
         entry.second->ResetMeters();
@@ -869,13 +880,13 @@ namespace {
             boost::condition_variable_any m_state_changed;
         };
         StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-            const std::shared_ptr<Effect::EffectsGroup>& the_effects_group,
+            const std::shared_ptr<Effect::EffectsGroup>&            the_effects_group,
             const std::vector<std::shared_ptr<const UniverseObject>>& the_sources,
             EffectsCauseType                                        the_effect_cause_type,
             const std::string&                                      the_specific_cause_name,
             Effect::TargetSet&                                      the_target_objects,
             Effect::TargetsCauses&                                  the_targets_causes,
-            std::map<int, std::shared_ptr<ConditionCache>>& the_source_cached_condition_matches,
+            std::map<int, std::shared_ptr<ConditionCache>>&         the_source_cached_condition_matches,
             ConditionCache&                                         the_invariant_cached_condition_matches,
             boost::shared_mutex&                                    the_global_mutex
         );
@@ -891,7 +902,7 @@ namespace {
         const std::string                                       m_specific_cause_name;
         Effect::TargetSet*                                      m_target_objects;
         Effect::TargetsCauses*                                  m_targets_causes;
-        std::map<int, std::shared_ptr<ConditionCache>>* m_source_cached_condition_matches;
+        std::map<int, std::shared_ptr<ConditionCache>>*         m_source_cached_condition_matches;
         ConditionCache*                                         m_invariant_cached_condition_matches;
         boost::shared_mutex*                                    m_global_mutex;
 
@@ -904,13 +915,13 @@ namespace {
     };
 
     StoreTargetsAndCausesOfEffectsGroupsWorkItem::StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-            const std::shared_ptr<Effect::EffectsGroup>& the_effects_group,
+            const std::shared_ptr<Effect::EffectsGroup>&            the_effects_group,
             const std::vector<std::shared_ptr<const UniverseObject>>& the_sources,
             EffectsCauseType                                        the_effect_cause_type,
             const std::string&                                      the_specific_cause_name,
             Effect::TargetSet&                                      the_target_objects,
             Effect::TargetsCauses&                                  the_targets_causes,
-            std::map<int, std::shared_ptr<ConditionCache>>& the_source_cached_condition_matches,
+            std::map<int, std::shared_ptr<ConditionCache>>&         the_source_cached_condition_matches,
             ConditionCache&                                         the_invariant_cached_condition_matches,
             boost::shared_mutex&                                    the_global_mutex
         ) :
@@ -964,14 +975,17 @@ namespace {
         return nullptr;
     }
 
-    void StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache::MarkComplete(std::pair<bool, Effect::TargetSet>* cache_entry)
+    void StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache::MarkComplete(
+        std::pair<bool, Effect::TargetSet>* cache_entry)
     {
         boost::unique_lock<boost::shared_mutex> cache_guard(m_mutex); // make sure threads are waiting for completion, not checking for completion
         cache_entry->first = true;
         m_state_changed.notify_all(); // signal cachefill
     }
 
-    void StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache::LockShared(boost::shared_lock<boost::shared_mutex>& guard) {
+    void StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache::LockShared(
+        boost::shared_lock<boost::shared_mutex>& guard)
+    {
         boost::shared_lock<boost::shared_mutex> tmp_guard(m_mutex);
         guard.swap(tmp_guard);
     }
@@ -979,11 +993,11 @@ namespace {
     Effect::TargetSet EMPTY_TARGET_SET;
 
     Effect::TargetSet& StoreTargetsAndCausesOfEffectsGroupsWorkItem::GetConditionMatches(
-        const Condition::ConditionBase*                               cond,
-        StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache& cached_condition_matches,
-        std::shared_ptr<const UniverseObject> source,
-        const ScriptingContext&                                       source_context,
-        Effect::TargetSet&                                            target_objects)
+        const Condition::ConditionBase*                                 cond,
+        StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache&   cached_condition_matches,
+        std::shared_ptr<const UniverseObject>                           source,
+        const ScriptingContext&                                         source_context,
+        Effect::TargetSet&                                              target_objects)
     {
         std::pair<bool, Effect::TargetSet>* cache_entry = nullptr;
 

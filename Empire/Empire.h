@@ -200,9 +200,9 @@ struct FO_COMMON_API ProductionQueue {
     //@}
 
     /** \name Accessors */ //@{
-    int                             ProjectsInProgress() const;         ///< Returns the number of production projects currently (perhaps partially) funded.
-    float                           TotalPPsSpent() const;              ///< Returns the number of PPs currently spent on the projects in this queue.
-    int                             EmpireID() const { return m_empire_id; }
+    int     ProjectsInProgress() const;         ///< Returns the number of production projects currently (perhaps partially) funded.
+    float   TotalPPsSpent() const;              ///< Returns the number of PPs currently spent on the projects in this queue.
+    int     EmpireID() const { return m_empire_id; }
 
     /** Returns map from sets of object ids that can share resources to amount
       * of PP available in those groups of objects ; does not include stockpile */
@@ -211,29 +211,31 @@ struct FO_COMMON_API ProductionQueue {
     /** Returns map from sets of object ids that can share resources to amount
       * of PP allocated to production queue elements that have build locations
       * in systems in the group. */
-    const std::map<std::set<int>, float>&  AllocatedPP() const;
+    const std::map<std::set<int>, float>& AllocatedPP() const;
 
-    
     /** Returns map from sets of object ids that can share resources to amount
      * of stockpile PP allocated to production queue elements that have build locations
      * in systems in the group. */
-    const std::map<std::set<int>, float>&  AllocatedStockpilePP() const;
-    
+    const std::map<std::set<int>, float>& AllocatedStockpilePP() const;
+
+    /** Returns sum of stockpile meters of empire-owned objects. */
+    float StockpileCapacity() const;
+
     /** Returns the value expected for the Imperial Stockpile for the next turn, based on the current
      * ProductionQueue allocations. */
-    float                           ExpectedNewStockpileAmount() const {return m_expected_new_stockpile_amount; }
-    
+    float ExpectedNewStockpileAmount() const {return m_expected_new_stockpile_amount; }
+
     /** Returns sets of object ids that have more available than allocated PP */
     std::set<std::set<int>> ObjectsWithWastedPP(const std::shared_ptr<ResourcePool>& industry_pool) const;
 
 
     // STL container-like interface
-    bool                            empty() const;
-    unsigned int                    size() const;
-    const_iterator                  begin() const;
-    const_iterator                  end() const;
-    const_iterator                  find(int i) const;
-    const Element&                  operator[](int i) const;
+    bool            empty() const;
+    unsigned int    size() const;
+    const_iterator  begin() const;
+    const_iterator  end() const;
+    const_iterator  find(int i) const;
+    const Element&  operator[](int i) const;
 
     /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
@@ -241,20 +243,20 @@ struct FO_COMMON_API ProductionQueue {
       * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
       * empire->CheckProductionProgress() will actually spend PP, remove items from queue and create them
       * in the universe. */
-    void                            Update();
+    void Update();
 
     // STL container-like interface
-    void                            push_back(const Element& element);
-    void                            insert(iterator it, const Element& element);
-    void                            erase(int i);
-    iterator                        erase(iterator it);
+    void        push_back(const Element& element);
+    void        insert(iterator it, const Element& element);
+    void        erase(int i);
+    iterator    erase(iterator it);
 
-    iterator                        begin();
-    iterator                        end();
-    iterator                        find(int i);
-    Element&                        operator[](int i);
+    iterator    begin();
+    iterator    end();
+    iterator    find(int i);
+    Element&    operator[](int i);
 
-    void                            clear();
+    void        clear();
 
     mutable boost::signals2::signal<void ()> ProductionQueueChangedSignal;
     //@}
