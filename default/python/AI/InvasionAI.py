@@ -61,7 +61,7 @@ def get_invasion_fleets():
     num_invasion_fleets = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(invasion_fleet_ids))
 
     print "Current Invasion Targeted SystemIDs: ", PlanetUtilsAI.sys_name_ids(AIstate.invasionTargetedSystemIDs)
-    print "Current Invasion Targeted PlanetIDs: ", PlanetUtilsAI.planet_name_ids(invasion_targeted_planet_ids)
+    print "Current Invasion Targeted PlanetIDs: ", PlanetUtilsAI.planet_string(invasion_targeted_planet_ids)
     print invasion_fleet_ids and "Invasion Fleet IDs: %s" % invasion_fleet_ids or "Available Invasion Fleets: 0"
     print "Invasion Fleets Without Missions: %s" % num_invasion_fleets
 
@@ -197,8 +197,8 @@ def get_invasion_fleets():
             print "Invasion base planning, need %d troops at %d pership, will build %d ships." % (
                 (planet_troops + 1), troops_per_ship, n_bases)
             retval = fo.issueEnqueueShipProductionOrder(col_design.id, loc)
-            print "Enqueueing %d Troop Bases at %s for %s" % (n_bases, PlanetUtilsAI.planet_name_ids([loc]),
-                                                              PlanetUtilsAI.planet_name_ids([pid]))
+            print "Enqueueing %d Troop Bases at %s for %s" % (n_bases, PlanetUtilsAI.planet_string(loc),
+                                                              PlanetUtilsAI.planet_string(pid))
             if retval != 0:
                 all_invasion_targeted_system_ids.add(planet.systemID)
                 reserved_troop_base_targets.append(pid)

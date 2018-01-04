@@ -4,7 +4,6 @@ from collections import namedtuple
 import FreeOrionAI as foAI
 import freeOrionAIInterface as fo
 import PlanetUtilsAI
-import universe_object
 
 from AIDependencies import INVALID_ID
 from EnumsAI import MissionType

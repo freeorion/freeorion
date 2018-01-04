@@ -401,10 +401,10 @@ def generate_production_orders():
                 for pid in pids:
                     best_design_id, col_design, build_choices = get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_DEFENSE, pid)
                     if not best_design_id:
-                        print "no orbital defenses can be built at ", ppstring(PlanetUtilsAI.planet_name_ids([pid]))
+                        print "no orbital defenses can be built at ", PlanetUtilsAI.planet_string(pid)
                         continue
                     retval = fo.issueEnqueueShipProductionOrder(best_design_id, pid)
-                    print "queueing %d Orbital Defenses at %s" % (num_needed, ppstring(PlanetUtilsAI.planet_name_ids([pid])))
+                    print "queueing %d Orbital Defenses at %s" % (num_needed, PlanetUtilsAI.planet_string(pid))
                     if retval != 0:
                         if num_needed > 1:
                             fo.issueChangeProductionQuantityOrder(production_queue.size - 1, 1, num_needed)
@@ -1273,7 +1273,7 @@ def generate_production_orders():
             continue
         print "%.2f PP remaining in system group: %s" % (avail_pp, PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems(planet_set))))
         print "\t owned planets in this group are:"
-        print "\t %s" % (ppstring(PlanetUtilsAI.planet_name_ids(planet_set)))
+        print "\t %s" % PlanetUtilsAI.planet_string(planet_set)
         best_design_id, best_design, build_choices = get_best_ship_info(PriorityType.PRODUCTION_COLONISATION, list(planet_set))
         species_map = {}
         for loc in (build_choices or []):
@@ -1379,7 +1379,8 @@ def generate_production_orders():
             retval = fo.issueEnqueueShipProductionOrder(best_design_id, loc)
             if retval != 0:
                 prioritized = False
-                print "adding %d new ship(s) at location %s to production queue: %s; per turn production cost %.1f" % (ship_number, ppstring(PlanetUtilsAI.planet_name_ids([loc])), best_design.name, per_turn_cost)
+                print "adding %d new ship(s) at location %s to production queue: %s; per turn production cost %.1f" % (
+                    ship_number, PlanetUtilsAI.planet_string(loc), best_design.name, per_turn_cost)
                 print
                 if ship_number > 1:
                     fo.issueChangeProductionQuantityOrder(production_queue.size - 1, 1, ship_number)

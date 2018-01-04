@@ -26,14 +26,20 @@ def sys_name_ids(sys_ids):
     return ppstring([str(universe.getSystem(sys_id)) for sys_id in sys_ids])
 
 
-def planet_name_ids(planet_ids):
+def planet_string(planet_ids):
     """
-    Get list of text representing pairs planet name and system id.
-    :param planet_ids: list if planet ids
-    :return: list of string <name>:<id>
+    Get a string representation of the passed planets
+    :param planet_ids: list of planet ids or single id
+    :rtype: str
     """
-    universe = fo.getUniverse()
-    return [fo.to_str('P', planet_id, safe_name(universe.getPlanet(planet_id))) for planet_id in planet_ids]
+
+    def _safe_planet_name(planet_id):
+        planet = fo.getUniverse().getPlanet(planet_id)
+        return fo.to_str('P', planet_id, (planet and planet.name) or "?")
+
+    if isinstance(planet_ids, int):
+        return _safe_planet_name(planet_ids)
+    return ppstring([_safe_planet_name(pid) for pid in planet_ids])
 
 
 def get_capital():
