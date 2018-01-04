@@ -69,13 +69,6 @@ def calculate_priorities():
     prioritiees_timer.start('setting other priorities')
     foAI.foAIstate.set_priority(PriorityType.PRODUCTION_BUILDINGS, 25)
 
-    foAI.foAIstate.set_priority(PriorityType.RESEARCH_LEARNING, _calculate_learning_priority())
-    foAI.foAIstate.set_priority(PriorityType.RESEARCH_GROWTH, _calculate_growth_priority())
-    foAI.foAIstate.set_priority(PriorityType.RESEARCH_PRODUCTION, _calculate_techs_production_priority())
-    foAI.foAIstate.set_priority(PriorityType.RESEARCH_CONSTRUCTION, _calculate_construction_priority())
-    foAI.foAIstate.set_priority(PriorityType.RESEARCH_ECONOMICS, 0)
-    foAI.foAIstate.set_priority(PriorityType.RESEARCH_SHIPS, _calculate_ships_priority())
-    foAI.foAIstate.set_priority(PriorityType.RESEARCH_DEFENSE, 0)
     prioritiees_timer.stop_print_and_clear()
 
 
@@ -477,47 +470,3 @@ def _calculate_top_production_queue_priority():
 
     return top_production_queue_priority
 
-
-def _calculate_learning_priority():
-    """Calculates the demand for techs learning category."""
-    turn = fo.currentTurn()
-    if turn == 1:
-        return 100
-    elif turn > 1:
-        return 0
-
-
-def _calculate_growth_priority():
-    """Calculates the demand for techs growth category."""
-    production_priority = _calculate_top_production_queue_priority()
-    if production_priority == 8:
-        return 70
-    elif production_priority != 8:
-        return 0
-
-
-def _calculate_techs_production_priority():
-    """Calculates the demand for techs production category."""
-    production_priority = _calculate_top_production_queue_priority()
-    if production_priority == 7 or production_priority == 9:
-        return 60
-    elif production_priority != 7 or production_priority != 9:
-        return 0
-
-
-def _calculate_construction_priority():
-    """Calculates the demand for techs construction category."""
-    production_priority = _calculate_top_production_queue_priority()
-    if production_priority == 6 or production_priority == 11:
-        return 80
-    elif production_priority != 6 or production_priority != 11:
-        return 30
-
-
-def _calculate_ships_priority():
-    """Calculates the demand for techs ships category."""
-    production_priority = _calculate_top_production_queue_priority()
-    if production_priority == 10:
-        return 90
-    elif production_priority != 10:
-        return 0
