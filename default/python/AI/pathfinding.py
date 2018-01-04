@@ -3,6 +3,7 @@ from collections import namedtuple
 
 import FreeOrionAI as foAI
 import freeOrionAIInterface as fo
+import PlanetUtilsAI
 import universe_object
 
 from AIDependencies import INVALID_ID
@@ -24,10 +25,8 @@ def _get_unobstructed_systems():
     return fo.getEmpire().supplyUnobstructedSystems
 
 
-# TODO: remove this and instead use PlanetUtilsAI.sys_name_ids() once that is fixed to render greek chars
 def _info_string(path_info):
-    sequence_string = ", ".join([str(universe_object.System(sys_id)) for sys_id in path_info.path])
-    return "dist %.1f, path %s" % (path_info.distance, sequence_string)
+    return "dist %.1f, path %s" % (path_info.distance, PlanetUtilsAI.sys_name_ids(path_info.path))
 
 
 # Note that this can cover departure from uncontested systems as well as from contested systems where our forces

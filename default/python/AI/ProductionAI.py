@@ -1036,7 +1036,7 @@ def generate_production_orders():
 
         max_dock_builds = int(0.8 + empire.productionPoints/120.0)
         print "Considering building %s, found current and queued systems %s" % (
-            building_name, ppstring(PlanetUtilsAI.sys_name_ids(cur_drydoc_sys.union(queued_sys))))
+            building_name, PlanetUtilsAI.sys_name_ids(cur_drydoc_sys.union(queued_sys)))
         for sys_id, pids in state.get_empire_planets_by_system(include_outposts=False).items():  # TODO: sort/prioritize in some fashion
             local_top_pilots = dict(top_pilot_systems.get(sys_id, []))
             local_drydocks = state.get_empire_drydocks().get(sys_id, [])
@@ -1260,10 +1260,10 @@ def generate_production_orders():
     planets_with_wasted_pp = set([tuple(pidset) for pidset in empire.planetsWithWastedPP])
     print "avail_pp ( <systems> : pp ):"
     for planet_set in available_pp:
-        print "\t%s\t%.2f" % (ppstring(PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems(planet_set)))), available_pp[planet_set])
+        print "\t%s\t%.2f" % (PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems(planet_set))), available_pp[planet_set])
     print "\nallocated_pp ( <systems> : pp ):"
     for planet_set in allocated_pp:
-        print "\t%s\t%.2f" % (ppstring(PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems(planet_set)))), allocated_pp[planet_set])
+        print "\t%s\t%.2f" % (PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems(planet_set))), allocated_pp[planet_set])
 
     print "\n\nBuilding Ships in system groups with remaining PP:"
     for planet_set in planets_with_wasted_pp:
@@ -1271,7 +1271,7 @@ def generate_production_orders():
         avail_pp = total_pp - allocated_pp.get(planet_set, 0)
         if avail_pp <= 0.01:
             continue
-        print "%.2f PP remaining in system group: %s" % (avail_pp, ppstring(PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems(planet_set)))))
+        print "%.2f PP remaining in system group: %s" % (avail_pp, PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems(planet_set))))
         print "\t owned planets in this group are:"
         print "\t %s" % (ppstring(PlanetUtilsAI.planet_name_ids(planet_set)))
         best_design_id, best_design, build_choices = get_best_ship_info(PriorityType.PRODUCTION_COLONISATION, list(planet_set))
@@ -1305,7 +1305,7 @@ def generate_production_orders():
             print "best_ships[%s] = %s \t locs are %s from %s" % (priority, best_design.name, build_choices, planet_set)
 
         if len(local_priorities) == 0:
-            print "Alert!! need shipyards in systemSet ", ppstring(PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems(sorted(planet_set)))))
+            print "Alert!! need shipyards in systemSet ", PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems(planet_set)))
         priority_choices = []
         for priority in local_priorities:
             priority_choices.extend(int(local_priorities[priority]) * [priority])

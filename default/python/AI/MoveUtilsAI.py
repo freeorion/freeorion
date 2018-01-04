@@ -165,7 +165,7 @@ def get_safe_path_leg_to_dest(fleet_id, start_id, dest_id):
     path_ids = [targ.id for targ in this_path if targ.id != start_id] + [start_id]
     universe = fo.getUniverse()
     print "Fleet %d requested safe path leg from %s to %s, found path %s" % (
-        fleet_id, universe.getSystem(start_id), universe.getSystem(dest_id), ppstring(PlanetUtilsAI.sys_name_ids(path_ids)))
+        fleet_id, universe.getSystem(start_id), universe.getSystem(dest_id), PlanetUtilsAI.sys_name_ids(path_ids))
     return path_ids[0]
 
 
