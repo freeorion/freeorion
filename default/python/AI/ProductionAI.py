@@ -380,7 +380,8 @@ def generate_production_orders():
                 sys_id = planet.systemID
                 queued_defenses[sys_id] = queued_defenses.get(sys_id, 0) + element.blocksize*element.remaining
                 defense_allocation += element.allocation
-        print "Queued Defenses:", [(ppstring(PlanetUtilsAI.sys_name_ids([sys_id])), num) for sys_id, num in queued_defenses.items()]
+        print "Queued Defenses:", ppstring([(str(universe.getSystem(sys_id)), num)
+                                            for sys_id, num in queued_defenses.items()])
         for sys_id, pids in state.get_empire_planets_by_system(include_outposts=False).items():
             if foAI.foAIstate.systemStatus.get(sys_id, {}).get('fleetThreat', 1) > 0:
                 continue  # don't build orbital shields if enemy fleet present
@@ -390,7 +391,8 @@ def generate_production_orders():
             fleets_here = foAI.foAIstate.systemStatus.get(sys_id, {}).get('myfleets', [])
             for fid in fleets_here:
                 if foAI.foAIstate.get_fleet_role(fid) == MissionType.ORBITAL_DEFENSE:
-                    print "Found %d existing Orbital Defenses in %s :" % (foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0), ppstring(PlanetUtilsAI.sys_name_ids([sys_id])))
+                    print "Found %d existing Orbital Defenses in %s :" % (
+                        foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0), universe.getSystem(sys_id))
                     sys_orbital_defenses[sys_id] += foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0)
             for pid in pids:
                 sys_orbital_defenses[sys_id] += queued_defenses.get(pid, 0)
@@ -1033,7 +1035,8 @@ def generate_production_orders():
                 dest_set.update(neighbors)
 
         max_dock_builds = int(0.8 + empire.productionPoints/120.0)
-        print "Considering building %s, found current and queued systems %s" % (building_name, ppstring(PlanetUtilsAI.sys_name_ids(cur_drydoc_sys.union(queued_sys))))
+        print "Considering building %s, found current and queued systems %s" % (
+            building_name, ppstring(PlanetUtilsAI.sys_name_ids(cur_drydoc_sys.union(queued_sys))))
         for sys_id, pids in state.get_empire_planets_by_system(include_outposts=False).items():  # TODO: sort/prioritize in some fashion
             local_top_pilots = dict(top_pilot_systems.get(sys_id, []))
             local_drydocks = state.get_empire_drydocks().get(sys_id, [])

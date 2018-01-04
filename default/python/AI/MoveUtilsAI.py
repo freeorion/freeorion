@@ -3,7 +3,6 @@ import FreeOrionAI as foAI
 import AIstate
 import universe_object
 import fleet_orders
-import ColonisationAI
 import PlanetUtilsAI
 import pathfinding
 from freeorion_tools import ppstring
@@ -164,10 +163,9 @@ def get_safe_path_leg_to_dest(fleet_id, start_id, dest_id):
     # TODO actually get a safe path
     this_path = can_travel_to_system(fleet_id, start_targ, dest_targ, ensure_return=False)
     path_ids = [targ.id for targ in this_path if targ.id != start_id] + [start_id]
-    start_info = PlanetUtilsAI.sys_name_ids([start_id])
-    dest_info = PlanetUtilsAI.sys_name_ids([dest_id])
-    path_info = [PlanetUtilsAI.sys_name_ids([sys_id]) for sys_id in path_ids]
-    print "Fleet %d requested safe path leg from %s to %s, found path %s" % (fleet_id, ppstring(start_info), ppstring(dest_info), ppstring(path_info))
+    universe = fo.getUniverse()
+    print "Fleet %d requested safe path leg from %s to %s, found path %s" % (
+        fleet_id, universe.getSystem(start_id), universe.getSystem(dest_id), ppstring(PlanetUtilsAI.sys_name_ids(path_ids)))
     return path_ids[0]
 
 
@@ -205,5 +203,5 @@ def get_repair_fleet_order(fleet, current_system_id):
     if drydock_sys_id is None:
         return None
 
-    print "Ordering fleet %s to %s for repair" % (fleet, ppstring(PlanetUtilsAI.sys_name_ids([drydock_sys_id])))
+    print "Ordering fleet %s to %s for repair" % (fleet, fo.getUniverse().getSystem(drydock_sys_id))
     return fleet_orders.OrderRepair(fleet, universe_object.System(drydock_sys_id))

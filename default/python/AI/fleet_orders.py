@@ -4,7 +4,6 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 import MilitaryAI
 import MoveUtilsAI
-import PlanetUtilsAI
 import CombatRatingsAI
 from universe_object import Fleet, System, Planet
 from freeorion_tools import get_partial_visibility_turn, dump_universe
@@ -284,10 +283,9 @@ class OrderResupply(AIFleetOrder):
             #     fo.issueAggressionOrder(fleet_id, False)
             start_id = FleetUtilsAI.get_fleet_system(fleet)
             dest_id = MoveUtilsAI.get_safe_path_leg_to_dest(fleet_id, start_id, system_id)
+            universe = fo.getUniverse()
             print "fleet %d with order type(%s) sent to safe leg dest %s and ultimate dest %s" % (
-                fleet_id, self.ORDER_NAME,
-                PlanetUtilsAI.sys_name_ids([dest_id]),
-                PlanetUtilsAI.sys_name_ids([system_id]))
+                fleet_id, self.ORDER_NAME, universe.getSystem(dest_id), universe.getSystem(system_id))
             fo.issueFleetMoveOrder(fleet_id, dest_id)
             print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
 
@@ -535,9 +533,9 @@ class OrderRepair(AIFleetOrder):
             fo.issueAggressionOrder(fleet_id, False)
             start_id = FleetUtilsAI.get_fleet_system(fleet)
             dest_id = MoveUtilsAI.get_safe_path_leg_to_dest(fleet_id, start_id, system_id)
+            universe = fo.getUniverse()
             print "fleet %d with order type(%s) sent to safe leg dest %s and ultimate dest %s" % (
-                fleet_id, self.ORDER_NAME, PlanetUtilsAI.sys_name_ids([dest_id]),
-                PlanetUtilsAI.sys_name_ids([system_id]))
+                fleet_id, self.ORDER_NAME, universe.getSystem(dest_id), universe.getSystem(system_id))
             fo.issueFleetMoveOrder(fleet_id, dest_id)
             print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
 

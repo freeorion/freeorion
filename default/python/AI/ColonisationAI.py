@@ -1231,7 +1231,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
         if foAI.foAIstate.systemStatus.setdefault(sys_id, {}).setdefault('monsterThreat', 0) > 2000 \
                 or fo.currentTurn() < 20 and foAI.foAIstate.systemStatus[sys_id]['monsterThreat'] > 200:
             print "Skipping colonization of system %s due to Big Monster, threat %d" % (
-                PlanetUtilsAI.sys_name_ids([sys_id]), foAI.foAIstate.systemStatus[sys_id]['monsterThreat'])
+                universe.getSystem(sys_id), foAI.foAIstate.systemStatus[sys_id]['monsterThreat'])
             already_targeted.append(planet_id)
             continue
         this_spec = target[1][1]
