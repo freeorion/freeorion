@@ -163,7 +163,7 @@ class Table(object):
         result = []
 
         if self.__table_name:
-            result.append(self.__table_name)
+            result.append(self.__table_name.decode('utf-8'))
 
         result.append(self.__get_row_separator(self.__header_sep, column_widths))
         inner_separator = ' %s ' % self.__vertical_sep
