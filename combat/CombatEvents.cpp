@@ -295,7 +295,7 @@ void SimultaneousEvents::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchiv
 
 
 //////////////////////////////////////////
-///////// InitialStealthEvent /////////////
+///////// InitialStealthEvent ////////////
 //////////////////////////////////////////
 
 InitialStealthEvent::InitialStealthEvent() :

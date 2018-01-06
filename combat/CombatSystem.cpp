@@ -229,16 +229,20 @@ void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisi
 }
 
 /** Requires system_id, empire_ids are initialized*/
-void CombatInfo::InitializeObjectVisibility()
-{
+void CombatInfo::InitializeObjectVisibility() {
     // system and empire visibility of all objects in it
     auto system = ::GetSystem(system_id);
-    std::set< int > local_object_ids = system->ContainedObjectIDs();
+    const auto& local_object_ids = system->ContainedObjectIDs();
+
+    // for each empire, assemble known objects and their visibilities
     for (int empire_id : empire_ids) {
         if (empire_id == ALL_EMPIRES)
             continue;
+        // system itself always considered at least basically visible if a combat involving an empire is occurring there
         empire_known_objects[empire_id].Insert(GetEmpireKnownSystem(system->ID(), empire_id));
         empire_object_visibility[empire_id][system->ID()] = GetUniverse().GetObjectVisibilityByEmpire(empire_id, system->ID());
+
+        // other objects may be visible or not for each empire at the start of the battle
         for (int object_id : local_object_ids) {
             Visibility obj_vis = GetUniverse().GetObjectVisibilityByEmpire(empire_id, object_id);
             if (obj_vis > VIS_NO_VISIBILITY)  // to ensure an empire doesn't wrongly get info that an object was present
@@ -247,18 +251,20 @@ void CombatInfo::InitializeObjectVisibility()
     }
 }
 
-void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id)
-{
+void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id) {
     auto attacker = objects.Object(attacker_id);
     auto target = objects.Object(target_id);
-    // Also ensure that attacker (and their fleet if attacker was a ship) are
-    // revealed with at least BASIC_VISIBILITY to the target empire
+    // Ensure that attacker is revealed with at least BASIC_VISIBILITY to the target empire
     Visibility old_visibility = empire_object_visibility[target->Owner()][attacker->ID()];
     Visibility new_visibility = std::max(old_visibility, VIS_BASIC_VISIBILITY);
     empire_object_visibility[target->Owner()][attacker->ID()] = new_visibility;
+
+    // If attacker is a ship, ensure its fleet is also revealed to the target empire
     if (attacker->ObjectType() == OBJ_SHIP && attacker->ContainerObjectID() != INVALID_OBJECT_ID) {
+        old_visibility = empire_object_visibility[target->Owner()][attacker->ContainerObjectID()];
+        new_visibility = std::max(old_visibility, VIS_BASIC_VISIBILITY);
         empire_object_visibility[target->Owner()][attacker->ContainerObjectID()] =
-            std::max(empire_object_visibility[target->Owner()][attacker->ContainerObjectID()], VIS_BASIC_VISIBILITY);
+            new_visibility;
     }
 }
 

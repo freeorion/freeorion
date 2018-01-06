@@ -1883,8 +1883,8 @@ namespace {
     /** Returns true iff there is an appropriate combination of objects in the
       * system with id \a system_id for a combat to occur. */
     bool CombatConditionsInSystem(int system_id) {
-        // combats occur if:
-        // 1) empires A and B are at war, and
+        // combats occur if all of:
+        // 1) empires A and B are at war
         // 2) a) empires A and B both have fleets in a system, or
         // 2) b) empire A has a fleet and empire B has a planet in a system
         // 3) empire A can see the fleet or planet of empire B
@@ -3000,15 +3000,13 @@ void ServerApp::ProcessCombats() {
         if (auto system = combat_info.GetSystem())
             system->SetLastTurnBattleHere(CurrentTurn());
 
-        //// DEBUG
-        //const System* combat_system = combat_info.GetSystem();
-        //DebugLogger() << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
-        //DebugLogger() << combat_info.objects.Dump();
-        //for (const auto& eko : combat_info.empire_known_objects) {
-        //    DebugLogger() << "known objects for empire " << eko.first;
-        //    DebugLogger() << eko.second.Dump();
-        //}
-        //// END DEBUG
+        auto combat_system = combat_info.GetSystem();
+        TraceLogger(combat) << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
+        TraceLogger(combat) << combat_info.objects.Dump();
+        for (const auto& eko : combat_info.empire_known_objects) {
+            TraceLogger(combat) << "known objects for empire " << eko.first;
+            TraceLogger(combat) << eko.second.Dump();
+        }
 
         // find which human players are involved in this battle
         std::set<int> human_empires_involved;
@@ -3040,7 +3038,7 @@ void ServerApp::ProcessCombats() {
 }
 
 void ServerApp::UpdateMonsterTravelRestrictions() {
-    for (auto const &maybe_system : m_universe.Objects().ExistingSystems()) {
+    for (auto const& maybe_system : m_universe.Objects().ExistingSystems()) {
         auto system = std::dynamic_pointer_cast<const System>(maybe_system.second);
         if (!system) {
             ErrorLogger() << "Non System object in ExistingSystems with id = " << maybe_system.second->ID();
