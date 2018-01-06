@@ -2024,6 +2024,7 @@ namespace {
     /** Clears and refills \a combats with CombatInfo structs for
       * every system where a combat should occur this turn. */
     void AssembleSystemCombatInfo(std::vector<CombatInfo>& combats) {
+        combats.clear();
         // for each system, find if a combat will occur in it, and if so, assemble
         // necessary information about that combat in combats
         for (int sys_id : GetUniverse().Objects().FindObjectIDs<System>()) {
@@ -3001,24 +3002,11 @@ void ServerApp::ProcessCombats() {
             system->SetLastTurnBattleHere(CurrentTurn());
 
         auto combat_system = combat_info.GetSystem();
-        TraceLogger(combat) << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
+        DebugLogger(combat) << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
         TraceLogger(combat) << combat_info.objects.Dump();
         for (const auto& eko : combat_info.empire_known_objects) {
             TraceLogger(combat) << "known objects for empire " << eko.first;
             TraceLogger(combat) << eko.second.Dump();
-        }
-
-        // find which human players are involved in this battle
-        std::set<int> human_empires_involved;
-        for (int empire_id : combat_info.empire_ids) {
-            if (human_controlled_empire_ids.find(empire_id) != human_controlled_empire_ids.end())
-                human_empires_involved.insert(empire_id);
-        }
-
-        // if no human players are involved, resolve battle automatically
-        if (human_empires_involved.empty()) {
-            AutoResolveCombat(combat_info);
-            continue;
         }
 
         AutoResolveCombat(combat_info);
