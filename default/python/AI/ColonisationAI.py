@@ -1270,7 +1270,7 @@ def _print_empire_species_roster():
         this_row.append([tag for tag in species_tags if not any(s in tag for s in grade_tags) and 'PEDIA' not in tag])
         species_table.add_row(this_row)
     print
-    species_table.print_table()
+    info(species_table)
 
 
 def _print_outpost_candidate_table(candidates):
@@ -1313,5 +1313,4 @@ def __print_candidate_table(candidates, mission):
                 universe.getSystem(planet.systemID),
                 planet.specials,
             ])
-    print
-    candidate_table.print_table()
+    info(candidate_table)

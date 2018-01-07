@@ -269,8 +269,7 @@ def generate_production_orders():
                 building.owner
             ))
 
-        table.print_table()
-        print
+        info(table)
         capital_buildings = [universe.getBuilding(bldg).buildingTypeName for bldg in homeworld.buildingIDs]
 
         possible_building_type_ids = []
@@ -1513,7 +1512,7 @@ def _print_production_queue(after_turn=False):
             "%.1f" % element.allocation,
             "%d" % element.turnsLeft,
         ])
-    prod_queue_table.print_table()
+    info(prod_queue_table)
 
 
 def find_automatic_historic_analyzer_candidates():
