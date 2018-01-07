@@ -1,0 +1,35 @@
+Tech
+    name = "PRO_VOID_PREDICTION"
+    description = "PRO_VOID_PREDICTION_DESC"
+    short_description = "IMPERIAL_STOCKPILE_SHORT_DESC"
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 500 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 7
+    tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
+    prerequisites = [
+        "LRN_MIND_VOID"
+        "PRO_PREDICTIVE_STOCKPILING"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                NOT Population high = 0
+                Or [
+                    Focus type = "FOCUS_GROWTH"
+                    Focus type = "FOCUS_LOGISTICS"
+                    Focus type = "FOCUS_STOCKPILE"
+                ]
+            ]
+            effects = [
+                SetMaxStockpile value = Value + Target.Population * [[STOCKPILE_PER_POP]] * ( 1
+                        + 10 * (Statistic If Condition = Focus type = "FOCUS_STOCKPILE")
+                        +  5 * (Statistic If Condition = Focus type = "FOCUS_GROWTH")
+                        +  5 * (Statistic If Condition = Focus type = "FOCUS_LOGISTICS")
+                )
+            ]
+    ]
+
+#include "/scripting/species/common/stockpile.macros"
+#include "/scripting/common/base_prod.macros"

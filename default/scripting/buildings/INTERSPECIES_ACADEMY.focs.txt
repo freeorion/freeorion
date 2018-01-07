@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_INTERSPECIES_ACADEMY"
     description = "BLD_INTERSPECIES_ACADEMY_DESC"
-    buildcost = 30
+    buildcost = 50
     buildtime = 5
     location = AND [
         // Homeworld
@@ -72,13 +72,26 @@ BuildingType
             scope = And [
                 Object id = Source.PlanetID
                 Planet
+                Focus type = "FOCUS_STOCKPILE"
                 OwnedBy empire = Source.Owner
                 Species
             ]
             activation = Source
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[LATE_PRIORITY]]
-            effects = SetStockpile value = Value + 3
+            effects = SetStockpile value = Value + 10
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            activation = Source
+            accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetResearch value = Value + 5
             
     ]
     icon = "icons/building/science-institute.png"
