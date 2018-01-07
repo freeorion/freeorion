@@ -10486,7 +10486,13 @@ SHP_SPACE_FLUX_DRIVE
 Spatial Flux Drive
 
 SHP_SPACE_FLUX_DRIVE_DESC
-Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects. Further research into stealth technologies can reduce the dimensional disruption.
+Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects. Further research into stealth technologies can reduce the dimensional disruption. Advanced research allows different hull layout than the [[tech SHP_SPACE_FLUX_BUBBLE]].
+
+SHP_SPACE_FLUX_BUBBLE
+Spatial Flux Bubble
+
+SHP_SPACE_FLUX_BUBBLE_DESC
+Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects. Further research into stealth technologies can reduce the dimensional disruption. The simplest solution to building a vessel using the flux propulsion is the bubble drive, which covers the a sphere-shaped hull. More complex solutions are possible with better tech [[tech SHP_SPACE_FLUX_DRIVE]].
 
 
 SHP_CONTGRAV_MAINT
@@ -13036,6 +13042,18 @@ Spatial Flux Hull
 
 SH_SPATIAL_FLUX_DESC
 '''This tiny hull is capable of decent speed over long distances due to the power of the [[tech SHP_SPACE_FLUX_DRIVE]]. It has only two external slots however, and its max [[metertype METER_STRUCTURE]] is low.
+
+[[metertype METER_STEALTH]] starts at 15, is increased by 10 when passive, but reduced by 30 on any turn it remains in transit. Technology advances such as [[tech SPY_STEALTH_PART_1]] allow crews to increase the stealth of the craft by 10 each.
+
+[[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
+
+SH_SPACE_FLUX_BUBBLE
+Spatial Flux Bubble Hull
+
+SH_SPACE_FLUX_BUBBLE_DESC
+'''This tiny hull is capable of decent speed over long distances due to the power of the [[tech SHP_SPACE_FLUX_BUBBLE]]. It has only one internal slots however, and its max [[metertype METER_STRUCTURE]] is low.
 
 [[metertype METER_STEALTH]] starts at 15, is increased by 10 when passive, but reduced by 30 on any turn it remains in transit. Technology advances such as [[tech SPY_STEALTH_PART_1]] allow crews to increase the stealth of the craft by 10 each.
 
