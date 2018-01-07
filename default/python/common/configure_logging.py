@@ -175,7 +175,7 @@ class _LoggerHandler(logging.Handler):
                 record.exc_info = sys.exc_info()
             traceback_msg = "".join(traceback.format_exception(*record.exc_info))
             msg += traceback_msg
-        self.logger(msg, str(record.name), str(record.filename),
+        self.logger(msg, "python", str(record.filename),
                     str(record.funcName), str(record.lineno))
 
 
