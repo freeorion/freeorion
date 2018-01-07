@@ -7028,6 +7028,24 @@ Social Structure:
 The Laenfa have a unified culture due to their telepathy but because their telepathic communication weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret but takes into account the voices of all Laenfa it is able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goals of gaining knowledge of other species and protecting knowledge of themselves.
 '''
 
+SP_SLY
+Sly
+
+SP_SLY_GAMEPLAY_DESC
+'''Friendly overlooked gasbags.
+Only live an [[PT_GASGIANT]]s.
+[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
+'''
+
+SP_SLY_DESC
+'''Description:
+The Sly live in gas giants. The gas giants are so foreign to most species in the universe that for most of their history they have been overlooked.
+Not being able to build devices they couldnt leave their homeworld. Recently they were able to obtain necessary equipment and technology for spacefaring from traders in exchange for their knowledge of history.
+
+Social Structure:
+The Sly are very long-lived and keep the songs alive in which the whole cultural knowledge is encoded. They are very open and curious towards the galaxy and the other species they are now finally able to encounter.
+'''
+
 SP_LEMBALALAM
 Lembala'Lam
 SP_LEMBALALAM_GAMEPLAY_DESC
@@ -10246,6 +10264,19 @@ Decoupling workforce and the means of production helps to produce just in time a
 
 This is an upgrade technology for the imperial stockpile, which increases the [[METER_STOCKPILE]] of stockpiling-focused planets by 3.'''
 
+PRO_VOID_PREDICTION
+Void Prediction
+
+PRO_VOID_PREDICTION_DESC
+'''While classic prediction always relies on statistical knowledge of the past, studying the chaotic wisdom of the void leads to robust predictions of first-time and freak
+ occurences.
+For the imperial stockpile service void prediction is the quintessential tool to deliver the right goods even before the need occurs.
+
+This is an upgrade technology for the imperial stockpile, which increases the [[METER_STOCKPILE]].
+For planets focused on growth or logistics by 0.1 per population.
+For planets focused on stockpile by 0.2 per population.'''
+
+
 PRO_MICROGRAV_MAN
 Microgravity Industry
 
@@ -10456,6 +10487,7 @@ Spatial Flux Drive
 
 SHP_SPACE_FLUX_DRIVE_DESC
 Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects. Further research into stealth technologies can reduce the dimensional disruption.
+
 
 SHP_CONTGRAV_MAINT
 Contra Gravitational Maintenance
@@ -12276,6 +12308,13 @@ Silexian Colony
 BLD_COL_SILEXIAN_DESC
 [[BLD_COL_PART_1]] [[species SP_SILEXIAN]] colony. [[BLD_COL_PART_2]] Silexian colony [[BLD_COL_PART_3]].
 
+BLD_COL_SLY
+Sly Colony
+
+BLD_COL_SLY_DESC
+[[BLD_COL_PART_1]] [[species SP_SLY]] colony. [[BLD_COL_PART_2]] Sly colony [[BLD_COL_PART_3]].
+
+
 BLD_COL_SSLITH
 Sslith Colony
 
@@ -13934,14 +13973,20 @@ ULTIMATE_SUPPLY_DESC
 NO_STOCKPILE_DESC
 --	No [[metertype METER_STOCKPILE]]
 
+BAD_STOCKPILE_DESC
+	Bad [[metertype METER_STOCKPILE]]: 50%
+
 AVERAGE_STOCKPILE_DESC
 	Average [[metertype METER_STOCKPILE]]: 100%
 
+GOOD_STOCKPILE_DESC
++	Great [[metertype METER_STOCKPILE]]: 400%
+
 GREAT_STOCKPILE_DESC
-+	Great [[metertype METER_STOCKPILE]]: 200%
+++	Great [[metertype METER_STOCKPILE]]: 1000%
 
 ULTIMATE_STOCKPILE_DESC
-++	Ultimate [[metertype METER_STOCKPILE]]: 300%
++++	Ultimate [[metertype METER_STOCKPILE]]: 1500%
 
 GOOD_SHIP_SHIELD_DESC
 +	Good ship [[metertype METER_SHIELD]]: +1
