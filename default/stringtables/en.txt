@@ -10268,8 +10268,7 @@ PRO_VOID_PREDICTION
 Void Prediction
 
 PRO_VOID_PREDICTION_DESC
-'''While classic prediction always relies on statistical knowledge of the past, studying the chaotic wisdom of the void leads to robust predictions of first-time and freak
- occurences.
+'''While classic prediction always relies on statistical knowledge of the past, studying the chaotic wisdom of the void leads to robust predictions of first-time and freak occurences.
 For the imperial stockpile service void prediction is the quintessential tool to deliver the right goods even before the need occurs.
 
 This is an upgrade technology for the imperial stockpile, which increases the [[METER_STOCKPILE]].
