@@ -8,7 +8,7 @@ Tech
     tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     prerequisites = [
         "LRN_MIND_VOID"
-        "PRO_PREDICTIVE_STOCKPILING"
+        "PRO_GENERIC_SUPPLIES"
     ]
     effectsgroups = [
         EffectsGroup
@@ -17,17 +17,11 @@ Tech
                 OwnedBy empire = Source.Owner
                 NOT Population high = 0
                 Or [
-                    Focus type = "FOCUS_GROWTH"
-                    Focus type = "FOCUS_LOGISTICS"
                     Focus type = "FOCUS_STOCKPILE"
                 ]
             ]
             effects = [
-                SetMaxStockpile value = Value + Target.Population * [[STOCKPILE_PER_POP]] * ( 1
-                        + 10 * (Statistic If Condition = Focus type = "FOCUS_STOCKPILE")
-                        +  5 * (Statistic If Condition = Focus type = "FOCUS_GROWTH")
-                        +  5 * (Statistic If Condition = Focus type = "FOCUS_LOGISTICS")
-                )
+                SetMaxStockpile value = Value + 10 * Target.Population * [[STOCKPILE_PER_POP]] 
             ]
     ]
 
