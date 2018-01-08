@@ -22,7 +22,8 @@ BuildingType
             ]
             stackinggroup = "GAS_GIANT_GEN_STACK"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetIndustry value = Value + 10
+            effects = SetTargetIndustry value = Value + 5 
+                + 5 * (Statistic If condition = And [ Object id = Source.PlanetID  Not Planet type = GasGiant ])
         EffectsGroup
             scope = Source
             activation = Not Planet type = GasGiant
