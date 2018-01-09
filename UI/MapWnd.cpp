@@ -672,7 +672,7 @@ public:
                 if (fleet->Speed() > 20)
                     fixed_distances.insert(fleet->Speed());
                 for (int ship_id : fleet->ShipIDs()) {
-                    if (std::shared_ptr<Ship> ship = GetShip(ship_id)) {
+                    if (auto ship = GetShip(ship_id)) {
                         const float ship_range = ship->CurrentMeterValue(METER_DETECTION);
                         if (ship_range > 20)
                             fixed_distances.insert(ship_range);
@@ -2270,7 +2270,7 @@ namespace {
     const unsigned int BUFFER_CAPACITY(512);    // should be long enough for most plausible fleet move lines
 
     std::shared_ptr<GG::Texture> MoveLineDotTexture() {
-        std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
+        auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
         return retval;
     }
 }
@@ -2288,7 +2288,7 @@ void MapWnd::RenderFleetMovementLines() {
     float move_line_animation_shift = static_cast<int>(ticks * rate) % dot_spacing;
 
     // texture for dots
-    std::shared_ptr<GG::Texture> move_line_dot_texture = MoveLineDotTexture();
+    auto move_line_dot_texture = MoveLineDotTexture();
     float dot_size = Value(move_line_dot_texture->DefaultWidth());
     //std::cout << "dot size: " << dot_size << std::endl;
 
@@ -4238,7 +4238,7 @@ void MapWnd::InitScaleCircleRenderingBuffer() {
     if (radius < 5)
         return;
 
-    std::shared_ptr<System> selected_system = GetSystem(SidePanel::SystemID());
+    auto selected_system = GetSystem(SidePanel::SystemID());
     if (!selected_system)
         return;
 
@@ -4894,7 +4894,9 @@ void MapWnd::DoFleetButtonsLayout() {
     }
 }
 
-boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(std::shared_ptr<const Fleet> fleet) const {
+boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
+    std::shared_ptr<const Fleet> fleet) const
+{
     if (!fleet)
         return boost::none;
 
@@ -5056,7 +5058,7 @@ void MapWnd::DeferredRefreshFleetButtons() {
 }
 
 template <typename K>
-void MapWnd::CreateFleetButtonsOfType (
+void MapWnd::CreateFleetButtonsOfType(
     boost::unordered_map<K, std::unordered_set<std::shared_ptr<FleetButton>>>& type_fleet_buttons,
     const boost::unordered_map<std::pair<K, int>, std::vector<int>> &fleets_map,
     const FleetButton::SizeType & fleet_button_size)
@@ -5416,7 +5418,7 @@ void MapWnd::PlanetDoubleClicked(int planet_id) {
         return;
 
     // retrieve system_id from planet_id
-    std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+    auto planet = GetPlanet(planet_id);
     if (!planet)
         return;
 
@@ -6367,7 +6369,7 @@ void MapWnd::ShowProduction() {
     // if no system is currently shown in sidepanel, default to this empire's
     // home system (ie. where the capital is)
     if (SidePanel::SystemID() == INVALID_OBJECT_ID) {
-        if (const Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID()))
+        if (const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
             if (auto obj = GetUniverseObject(empire->CapitalID()))
                 SelectSystem(obj->SystemID());
     } else {
@@ -6485,7 +6487,7 @@ bool MapWnd::KeyboardZoomOut() {
 }
 
 void MapWnd::RefreshTradeResourceIndicator() {
-    Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID());
+    Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_trade->SetValue(0.0);
         return;
@@ -6499,7 +6501,7 @@ void MapWnd::RefreshTradeResourceIndicator() {
 
 void MapWnd::RefreshFleetResourceIndicator() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    Empire* empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
+    Empire* empire = GetEmpire(empire_id);
     if (!empire) {
         m_fleet->SetValue(0.0);
         return;
@@ -6521,7 +6523,7 @@ void MapWnd::RefreshFleetResourceIndicator() {
 }
 
 void MapWnd::RefreshResearchResourceIndicator() {
-    const Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_research->SetValue(0.0);
         m_research_wasted->Hide();
@@ -6559,7 +6561,7 @@ void MapWnd::RefreshResearchResourceIndicator() {
 }
 
 void MapWnd::RefreshDetectionIndicator() {
-    const Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
     m_detection->SetValue(empire->GetMeter("METER_DETECTION_STRENGTH")->Current());
@@ -6570,7 +6572,7 @@ void MapWnd::RefreshDetectionIndicator() {
 }
 
 void MapWnd::RefreshIndustryResourceIndicator() {
-    const Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_industry->SetValue(0.0);
         m_industry_wasted->Hide();
@@ -6627,7 +6629,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
 }
 
 void MapWnd::RefreshPopulationIndicator() {
-    Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID());
+    Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_population->SetValue(0.0);
         return;
@@ -6671,7 +6673,7 @@ void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools() {
 
 void MapWnd::UpdateEmpireResourcePools() {
     //std::cout << "MapWnd::UpdateEmpireResourcePools" << std::endl;
-    Empire *empire = HumanClientApp::GetApp()->GetEmpire( HumanClientApp::GetApp()->EmpireID() );
+    Empire *empire = GetEmpire( HumanClientApp::GetApp()->EmpireID() );
     /* Recalculate stockpile, available, production, predicted change of
      * resources.  When resource pools update, they emit ChangeSignal, which is
      * connected to MapWnd::Refresh???ResourceIndicator, which updates the
@@ -6912,7 +6914,7 @@ bool MapWnd::ZoomToNextFleet() {
 
 bool MapWnd::ZoomToSystemWithWastedPP() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
+    const Empire* empire = GetEmpire(empire_id);
     if (!empire)
         return false;
 
@@ -7427,7 +7429,7 @@ void MapWnd::DispatchFleetsExploring() {
     SectionedScopedTimer timer("MapWnd::DispatchFleetsExploring", true);
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire *empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
+    const Empire *empire = GetEmpire(empire_id);
     if (!empire) {
         WarnLogger() << "Invalid empire";
         return;
