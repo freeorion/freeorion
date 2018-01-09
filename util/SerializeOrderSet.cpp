@@ -39,7 +39,6 @@ void Order::serialize(Archive& ar, const unsigned int version)
         bool dummy_executed;
         ar  & boost::serialization::make_nvp("m_executed", dummy_executed);
     }
-
 }
 
 template <class Archive>
