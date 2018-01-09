@@ -686,42 +686,58 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
 void Universe::UpdateMeterEstimates()
 { UpdateMeterEstimates(INVALID_OBJECT_ID, false); }
 
-void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects) {
-    if (object_id == INVALID_OBJECT_ID) {
+void Universe::UpdateMeterEstimates(int object_id, bool is_update_contained_objects) {
+
+    auto panic_update_all_estimates = [this](){
         for (int obj_id : m_objects.FindExistingObjectIDs())
             m_effect_accounting_map[obj_id].clear();
-        // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
+        // update meters for all objects.  Value of updated_contained_objects is irrelevant and is ignored in this case.
         UpdateMeterEstimatesImpl(std::vector<int>());// will cause it to process all existing objects
+    };
+
+    if (object_id == INVALID_OBJECT_ID) {
+        panic_update_all_estimates();
         return;
     }
 
+    // ids of the object and all valid contained objects
+    std::unordered_set<int> all_ids;
+
     // collect objects to update meter for.  this may be a single object, a group of related objects, or all objects
     // in the (known) universe.  also clear effect accounting for meters that are to be updated.
-    std::set<int> objects_set;
-    std::list<int> objects_list;
-    objects_list.push_back(object_id);
+    std::function<void (int, std::unordered_set<int>&)> update_obj_and_contained_objs =
+        [this, &all_ids, is_update_contained_objects, &panic_update_all_estimates, &update_obj_and_contained_objs]
+        (int cur_id, std::unordered_set<int>& all_ids_)
+    {
+        if (all_ids_.count(cur_id))
+            return;
 
-    for (int cur_object_id : objects_list) {
-        auto cur_object = m_objects.Object(cur_object_id);
+        auto cur_object = m_objects.Object(cur_id);
         if (!cur_object) {
-            ErrorLogger() << "Universe::UpdateMeterEstimates tried to get an invalid object...";
+            ErrorLogger() << "Universe::UpdateMeterEstimates tried to get an invalid object for id " << cur_id
+                          << ". All meter estimates will be updated.";
+            panic_update_all_estimates();
             return;
         }
 
         // add object and clear effect accounting for all its meters
-        objects_set.insert(cur_object_id);
-        m_effect_accounting_map[cur_object_id].clear();
+        all_ids_.insert(cur_id);
+        m_effect_accounting_map[cur_id].clear();
 
         // add contained objects to list of objects to process, if requested.
-        // assumes no objects contain themselves (which could cause infinite loops)
-        if (update_contained_objects) {
-            const std::set<int>& contained_objects = cur_object->ContainedObjectIDs();
-            std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(objects_list));
+        if (is_update_contained_objects) {
+            for (const auto& contained_id : cur_object->ContainedObjectIDs()) {
+                update_obj_and_contained_objs(contained_id, all_ids_);
+            }
         }
-    }
+    };
+
+    update_obj_and_contained_objs(object_id, all_ids);
+
+    // Convert to a vector
     std::vector<int> objects_vec;
-    objects_vec.reserve(objects_set.size());
-    std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(objects_vec));
+    objects_vec.reserve(all_ids.size());
+    std::copy(all_ids.begin(), all_ids.end(), std::back_inserter(objects_vec));
     if (!objects_vec.empty())
         UpdateMeterEstimatesImpl(objects_vec);
 }
