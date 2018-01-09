@@ -705,9 +705,9 @@ void Universe::UpdateMeterEstimates(int object_id, bool is_update_contained_obje
 
     // collect objects to update meter for.  this may be a single object, a group of related objects, or all objects
     // in the (known) universe.  also clear effect accounting for meters that are to be updated.
-    std::function<void (int, std::unordered_set<int>&)> update_obj_and_contained_objs =
+    std::function<void (int, std::unordered_set<int>&, int)> update_obj_and_contained_objs =
         [this, &all_ids, is_update_contained_objects, &panic_update_all_estimates, &update_obj_and_contained_objs]
-        (int cur_id, std::unordered_set<int>& all_ids_)
+        (int cur_id, std::unordered_set<int>& all_ids_, int container_id)
     {
         if (all_ids_.count(cur_id))
             return;
@@ -715,6 +715,7 @@ void Universe::UpdateMeterEstimates(int object_id, bool is_update_contained_obje
         auto cur_object = m_objects.Object(cur_id);
         if (!cur_object) {
             ErrorLogger() << "Universe::UpdateMeterEstimates tried to get an invalid object for id " << cur_id
+                          << " in container " << container_id
                           << ". All meter estimates will be updated.";
             panic_update_all_estimates();
             return;
@@ -725,14 +726,12 @@ void Universe::UpdateMeterEstimates(int object_id, bool is_update_contained_obje
         m_effect_accounting_map[cur_id].clear();
 
         // add contained objects to list of objects to process, if requested.
-        if (is_update_contained_objects) {
-            for (const auto& contained_id : cur_object->ContainedObjectIDs()) {
-                update_obj_and_contained_objs(contained_id, all_ids_);
-            }
-        }
+        if (is_update_contained_objects)
+            for (const auto& contained_id : cur_object->ContainedObjectIDs())
+                update_obj_and_contained_objs(contained_id, all_ids_, cur_id);
     };
 
-    update_obj_and_contained_objs(object_id, all_ids);
+    update_obj_and_contained_objs(object_id, all_ids, INVALID_OBJECT_ID);
 
     // Convert to a vector
     std::vector<int> objects_vec;
