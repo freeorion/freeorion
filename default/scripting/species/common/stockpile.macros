@@ -31,3 +31,6 @@ STOCKPILE_PER_POP_EFFECTSGROUP
             priority = [[EARLY_PRIORITY]]
             effects = SetMaxStockpile value = @2@
 '''
+
+#include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"
