@@ -42,9 +42,12 @@
 #include <boost/functional/hash.hpp>
 #include <boost/date_time/posix_time/time_formatters.hpp>
 
-
 #include <ctime>
 #include <thread>
+
+namespace {
+    DeclareThreadSafeLogger(effects);
+}
 
 namespace fs = boost::filesystem;
 
@@ -1429,8 +1432,12 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
 
     // Apply effects for 1st turn.
     universe.ApplyAllEffectsAndUpdateMeters(false);
+
+    TraceLogger(effects) << "After First turn meter effect applying: " << universe.Objects().Dump();
     // Set active meters to targets or maxes after first meter effects application
     SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
+    TraceLogger(effects) << "After First active set to target/max: " << universe.Objects().Dump();
+
     universe.BackPropagateObjectMeters();
     Empires().BackPropagateMeters();
 

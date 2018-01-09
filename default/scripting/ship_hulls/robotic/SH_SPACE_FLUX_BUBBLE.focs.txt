@@ -1,0 +1,48 @@
+Hull
+    name = "SH_SPACE_FLUX_BUBBLE"
+    description = "SH_SPACE_FLUX_BUBBLE_DESC"
+    speed = 80
+    fuel = 4
+    stealth = 15
+    structure = 3
+    slots = Slot type = Internal position = (0.50, 0.50)
+    buildCost = 11 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
+    buildTime = 2
+    tags = [ "PEDIA_HULL_LINE_ROBOTIC" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Not Stationary
+            accountinglabel = "SPATIAL_FLUX_MALUS"
+            effects = SetStealth value = Value - 30
+        EffectsGroup
+            scope = Source
+            activation = Not Aggressive
+            accountinglabel = "SPATIAL_FLUX_BONUS"
+            effects = SetStealth value = Value + 10 + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_PART_1" ) + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_PART_2" ) + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_PART_3" ) + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_4" )
+
+        [[AVERAGE_BASE_FUEL_REGEN]]
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/bulk_freighter_hull_small.png"
+    graphic = "hulls_design/bulk_freighter_hull.png"
+
+#include "robotic.macros"
+
+#include "../ship_hulls.macros"
+
+#include "/scripting/common/upkeep.macros"

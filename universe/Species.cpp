@@ -128,6 +128,8 @@ void Species::Init() {
     for (auto& effect : m_effects) {
         effect->SetTopLevelContent(m_name);
     }
+
+    TraceLogger() << "Species::Init: " << Dump();
 }
 
 std::string Species::Dump(unsigned short ntabs) const {

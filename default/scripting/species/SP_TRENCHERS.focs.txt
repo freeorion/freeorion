@@ -16,6 +16,7 @@ Species
     effectsgroups = [
         [[GOOD_INDUSTRY]]
         [[NO_RESEARCH]]
+        [[AVERAGE_STOCKPILE]]
 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]

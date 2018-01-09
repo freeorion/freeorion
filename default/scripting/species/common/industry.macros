@@ -40,7 +40,6 @@ BAD_INDUSTRY
             description = "BAD_INDUSTRY_DESC"
             scope = Source
             activation = And [
-                Source
                 Planet
                 TargetIndustry low = 0
                 Focus type = "FOCUS_INDUSTRY"
@@ -61,7 +60,6 @@ GOOD_INDUSTRY
             description = "GOOD_INDUSTRY_DESC"
             scope = Source
             activation = And [
-                Source
                 Planet
                 TargetIndustry low = 0
                 Focus type = "FOCUS_INDUSTRY"
@@ -78,7 +76,6 @@ GREAT_INDUSTRY
             description = "GREAT_INDUSTRY_DESC"
             scope = Source
             activation = And [
-                Source
                 Planet
                 TargetIndustry low = 0
                 Focus type = "FOCUS_INDUSTRY"
@@ -95,7 +92,6 @@ ULTIMATE_INDUSTRY
             description = "ULTIMATE_INDUSTRY_DESC"
             scope = Source
             activation = And [
-                Source
                 Planet
                 TargetIndustry low = 0
                 Focus type = "FOCUS_INDUSTRY"

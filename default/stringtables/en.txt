@@ -5072,6 +5072,12 @@ METER_MAX_SUPPLY_VALUE_LABEL
 METER_MAX_SUPPLY_VALUE_DESC
 [[METER_SUPPLY_VALUE_DESC]]
 
+METER_MAX_STOCKPILE_VALUE_LABEL
+[[METER_STOCKPILE_VALUE_LABEL]]
+
+METER_MAX_STOCKPILE_VALUE_DESC
+[[METER_STOCKPILE_VALUE_DESC]]
+
 METER_MAX_TROOPS_VALUE_LABEL
 [[METER_TROOPS_VALUE_LABEL]]
 
@@ -5090,33 +5096,18 @@ Industry
 METER_INDUSTRY_VALUE_DESC
 '''Industry represents the production and modification of physical goods. It is needed to produce buildings, space ships and other projects.
 
-The Industry of a planet can be used for any production projects of [[metertype METER_SUPPLY]] line connected planets. Any un-allocated Industry is converted via the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and added to the Imperial Stockpile.
+The Industry of a planet can be used for any production projects of [[metertype METER_SUPPLY]] line connected planets. Unallocated Industry up to the [[metertype METER_STOCKPILE]] gets added to the Imperial Stockpile.
 
 For information on the interface, see [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
 
-METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_LABEL
-Industry to Stockpile PP Transfer Ratio
+METER_STOCKPILE
+Stockpile Capacity
 
-METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_DESC
-'''The transfer ratio represents the efficiency of stockpiling items in the [[IMPERIAL_STOCKPILE]] and having them available for production in anywhere in your empire.
+METER_STOCKPILE_DESC
+'''The imperial stockpile capacity indicates an empire's ability to take in excess and to use stockpiled production points. An empire's total stockpiling capacity is the sum of all its planets' stockpile meters. The total determine how many PP can be imported into the imperial stockpile each turn, and how much can be taken out each turn to be used for production.
 
-You start with [[tech PRO_PREDICTIVE_STOCKPILING]] and a 0.2 ratio (i.e. 20% of your excess PP are added to the [[IMPERIAL_STOCKPILE]]).
-Technologies [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]] each add 0.2 .
-[[tech PRO_TRANS_DESIGN]] adds up to 0.3.  As such your ratio can be between 20% to 90% efficiency.''' 
-
-METER_IMPERIAL_PP_USE_LIMIT_VALUE_LABEL
-Imperial Stockpile Use Limit
-
-METER_IMPERIAL_PP_USE_LIMIT_VALUE_DESC
-'''The Imperial Stockpile Use Limit represents the readyness of the imperial stockpile service to supply projects with production points.
-It gives the number of production points which may be taken per turn from the imperial stockpile to produce. 
-
-You start with [[tech PRO_PREDICTIVE_STOCKPILING]] and may use two points per turn.
-[[tech PRO_GENERIC_SUPPLIES]] allows to use three more per turn. 
-[[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]] allows to use five more per turn. 
-Maxed out, [[tech PRO_TRANS_DESIGN]] allows to use twelve more PP per turn.  
-As such your use limit ranges between two and twenty-two PP per turn.''' 
+Species have various innate levels of stockpiling ability.''' 
 
 METER_RESEARCH_VALUE_LABEL
 Research
@@ -5202,6 +5193,12 @@ Supply lines are shown by coloring star-lanes with an empire's color. Planets co
 A set of core supply starlanes for an empire (the set of least-jump starlanes connecting the resource-producing systems of each Resource Group) will have greater thickness than the non-core starlanes. If PP is currently being wasted within a Resource Group, the outer bands of the core starlanes will be a contrasting color.
 
 Supply lines can also be used to refill the [[metertype METER_FUEL]] supply of ships.'''
+
+METER_STOCKPILE_VALUE_LABEL
+Stockpile
+
+METER_STOCKPILE_VALUE_DESC
+'''The stockpile is useful...'''
 
 METER_TROOPS_VALUE_LABEL
 Troops
@@ -7031,6 +7028,24 @@ Social Structure:
 The Laenfa have a unified culture due to their telepathy but because their telepathic communication weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret but takes into account the voices of all Laenfa it is able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goals of gaining knowledge of other species and protecting knowledge of themselves.
 '''
 
+SP_SLY
+Sly
+
+SP_SLY_GAMEPLAY_DESC
+'''Friendly overlooked gasbags.
+Only live an [[PT_GASGIANT]]s.
+[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
+'''
+
+SP_SLY_DESC
+'''Description:
+The Sly live in gas giants. The gas giants are so foreign to most species in the universe that for most of their history they have been overlooked.
+Not being able to build devices they couldnt leave their homeworld. Recently they were able to obtain necessary equipment and technology for spacefaring from traders in exchange for their knowledge of history.
+
+Social Structure:
+The Sly are very long-lived and keep the songs alive in which the whole cultural knowledge is encoded. They are very open and curious towards the galaxy and the other species they are now finally able to encounter.
+'''
+
 SP_LEMBALALAM
 Lembala'Lam
 SP_LEMBALALAM_GAMEPLAY_DESC
@@ -8219,6 +8234,13 @@ FOCUS_INDUSTRY
 Industry
 
 # Focus types
+FOCUS_STOCKPILE
+Stockpile
+
+FOCUS_STOCKPILE_DESC
+Allows stockpile techs to boost stockpile transfer
+
+# Focus types
 FOCUS_RESEARCH
 Research
 
@@ -8327,6 +8349,10 @@ METER_MAX_SUPPLY
 Max Supply
 
 # Meter types
+METER_MAX_STOCKPILE
+Max Stockpile
+
+# Meter types
 METER_MAX_TROOPS
 Max Troops
 
@@ -8337,14 +8363,6 @@ Population
 # Meter types
 METER_INDUSTRY
 Industry
-
-# Meter types
-METER_IMPERIAL_PP_TRANSFER_EFFICIENCY
-Production to Stockpile Ratio
-
-# Meter types
-METER_IMPERIAL_PP_USE_LIMIT
-Imperial Stockpile Use Limit
 
 # Meter types
 METER_RESEARCH
@@ -8389,6 +8407,10 @@ Defense
 # Meter types
 METER_SUPPLY
 Supply
+
+# Meter types
+METER_STOCKPILE
+Stockpile
 
 # Meter types
 METER_TROOPS
@@ -10221,22 +10243,20 @@ This task is difficult as the service has to predict when demand happens, where 
 A portion of unused PP be transferred to the Imperial Production Stockpile the other part going to waste.
 An item on the production queue can draw on the Imperial Stockpile if the item has been explicitly enabled for doing so.
 
-This is the basic technology for the imperial stockpile.
-The imperial stockpile service starts with 20% [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 2 PP / turn from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+This is the basic technology for the imperial stockpile, which increases the [[metertype METER_STOCKPILE]] of stockpile-focused by 1.'''
 
 PRO_GENERIC_SUPPLIES
 Generic Supplies
 
 PRO_GENERIC_SUPPLIES_DESC
-'''By carefully choosing supply chains, materials, and designs, Generic Supplies are created which can easily be decomposited and reused for most industrial products.
+'''Through coordination of supply chains, materials, and designs, Generic Supplies are created which can easily be decomposited and reused for most industrial products.
 
-Generic Supplies can be created a long time before the demand occurs. Supply packages usually include bootstrap devices which reconstruct the facilities for reconstructing new products from the Generic Supplies.
+Generic Supplies can be created a long time before the demand occurs. Supply packages usually include bootstrap devices which construct the facilities for constructing new products from the Generic Supplies.
 Reaching this state of sophistication, Generic Supplies can be used to construct new technology products which were not available at the time the supplies were produced.
 
 This frees the imperial stockpile service from having to know which goods will be demanded exactly. Predicting the location is enough.
 
-This is an upgrade technology for the imperial stockpile.
-It adds 20% to the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 3 PP / turn extra from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+This is an upgrade technology for the imperial stockpile, which increases the [[metertype METER_STOCKPILE]] of stockpiling-focused planets by 3.'''
 
 PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
 Interstellar Entanglement Factory
@@ -10245,8 +10265,19 @@ PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 '''Quantum entanglement of factory control rooms allows to operate machines remotely from other star systems.
 Decoupling workforce and the means of production helps to produce just in time and increases efficiency of the imperial stockpile service.
 
-This is an upgrade technology for the imperial stockpile.
-It adds 20% to the [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] and allows drawing 5 PP / turn extra from the stockpile (See [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+This is an upgrade technology for the imperial stockpile, which increases the [[metertype METER_STOCKPILE]] of stockpiling-focused planets by 3.'''
+
+PRO_VOID_PREDICTION
+Void Prediction
+
+PRO_VOID_PREDICTION_DESC
+'''While classic prediction always relies on statistical knowledge of the past, studying the chaotic wisdom of the void leads to robust predictions of first-time and freak occurences.
+For the imperial stockpile service void prediction is the quintessential tool to deliver the right goods even before the need occurs.
+
+This is an upgrade technology for the imperial stockpile, which increases the [[metertype METER_STOCKPILE]].
+For planets focused on growth or logistics by 0.1 per population.
+For planets focused on stockpile by 0.2 per population.'''
+
 
 PRO_MICROGRAV_MAN
 Microgravity Industry
@@ -10457,7 +10488,14 @@ SHP_SPACE_FLUX_DRIVE
 Spatial Flux Drive
 
 SHP_SPACE_FLUX_DRIVE_DESC
-Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects. Further research into stealth technologies can reduce the dimensional disruption.
+Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects. Further research into stealth technologies can reduce the dimensional disruption. Advanced research allows different hull layout than the [[tech SHP_SPACE_FLUX_BUBBLE]].
+
+SHP_SPACE_FLUX_BUBBLE
+Spatial Flux Bubble
+
+SHP_SPACE_FLUX_BUBBLE_DESC
+Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects. Further research into stealth technologies can reduce the dimensional disruption. The simplest solution to building a vessel using the flux propulsion is the bubble drive, which covers the a sphere-shaped hull. More complex solutions are possible with better tech [[tech SHP_SPACE_FLUX_DRIVE]].
+
 
 SHP_CONTGRAV_MAINT
 Contra Gravitational Maintenance
@@ -12278,6 +12316,13 @@ Silexian Colony
 BLD_COL_SILEXIAN_DESC
 [[BLD_COL_PART_1]] [[species SP_SILEXIAN]] colony. [[BLD_COL_PART_2]] Silexian colony [[BLD_COL_PART_3]].
 
+BLD_COL_SLY
+Sly Colony
+
+BLD_COL_SLY_DESC
+[[BLD_COL_PART_1]] [[species SP_SLY]] colony. [[BLD_COL_PART_2]] Sly colony [[BLD_COL_PART_3]].
+
+
 BLD_COL_SSLITH
 Sslith Colony
 
@@ -12999,6 +13044,18 @@ Spatial Flux Hull
 
 SH_SPATIAL_FLUX_DESC
 '''This tiny hull is capable of decent speed over long distances due to the power of the [[tech SHP_SPACE_FLUX_DRIVE]]. It has only two external slots however, and its max [[metertype METER_STRUCTURE]] is low.
+
+[[metertype METER_STEALTH]] starts at 15, is increased by 10 when passive, but reduced by 30 on any turn it remains in transit. Technology advances such as [[tech SPY_STEALTH_PART_1]] allow crews to increase the stealth of the craft by 10 each.
+
+[[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
+
+SH_SPACE_FLUX_BUBBLE
+Spatial Flux Bubble Hull
+
+SH_SPACE_FLUX_BUBBLE_DESC
+'''This tiny hull is capable of decent speed over long distances due to the power of the [[tech SHP_SPACE_FLUX_BUBBLE]]. It has only one internal slots however, and its max [[metertype METER_STRUCTURE]] is low.
 
 [[metertype METER_STEALTH]] starts at 15, is increased by 10 when passive, but reduced by 30 on any turn it remains in transit. Technology advances such as [[tech SPY_STEALTH_PART_1]] allow crews to increase the stealth of the craft by 10 each.
 
@@ -13933,6 +13990,24 @@ GREAT_SUPPLY_DESC
 ULTIMATE_SUPPLY_DESC
 ++	Ultimate [[metertype METER_SUPPLY]]: +3
 
+NO_STOCKPILE_DESC
+--	No [[metertype METER_STOCKPILE]]
+
+BAD_STOCKPILE_DESC
+	Bad [[metertype METER_STOCKPILE]]: 50%
+
+AVERAGE_STOCKPILE_DESC
+	Average [[metertype METER_STOCKPILE]]: 100%
+
+GOOD_STOCKPILE_DESC
++	Great [[metertype METER_STOCKPILE]]: 400%
+
+GREAT_STOCKPILE_DESC
+++	Great [[metertype METER_STOCKPILE]]: 1000%
+
+ULTIMATE_STOCKPILE_DESC
++++	Ultimate [[metertype METER_STOCKPILE]]: 1500%
+
 GOOD_SHIP_SHIELD_DESC
 +	Good ship [[metertype METER_SHIELD]]: +1
 
@@ -14116,6 +14191,21 @@ GREAT_SUPPLY_LABEL
 # %2% FIXME
 ULTIMATE_SUPPLY_LABEL
 %2% Ultimate Supply
+
+# %1% FIXME
+# %2% FIXME
+AVERAGE_STOCKPILE_LABEL
+%2% Average Stockpiling
+
+# %1% FIXME
+# %2% FIXME
+GREAT_STOCKPILE_LABEL
+%2% Great Stockpiling
+
+# %1% FIXME
+# %2% FIXME
+ULTIMATE_STOCKPILE_LABEL
+%2% Ultimate Stockpiling
 
 # %1% FIXME
 # %2% FIXME

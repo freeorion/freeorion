@@ -547,6 +547,7 @@ std::string SetMeter::Dump(unsigned short ntabs) const {
     case METER_MAX_STRUCTURE:       retval += "MaxStructure"; break;
     case METER_MAX_DEFENSE:         retval += "MaxDefense"; break;
     case METER_MAX_SUPPLY:          retval += "MaxSupply"; break;
+    case METER_MAX_STOCKPILE:       retval += "MaxStockpile"; break;
     case METER_MAX_TROOPS:          retval += "MaxTroops"; break;
 
     case METER_POPULATION:          retval += "Population"; break;
@@ -563,6 +564,7 @@ std::string SetMeter::Dump(unsigned short ntabs) const {
     case METER_STRUCTURE:           retval += "Structure"; break;
     case METER_DEFENSE:             retval += "Defense"; break;
     case METER_SUPPLY:              retval += "Supply"; break;
+    case METER_STOCKPILE:           retval += "Stockpile"; break;
     case METER_TROOPS:              retval += "Troops"; break;
 
     case METER_REBEL_TROOPS:        retval += "RebelTroops"; break;

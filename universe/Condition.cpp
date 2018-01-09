@@ -5997,6 +5997,9 @@ namespace {
         case METER_MAX_SHIELD:          return "MaxShield";          break;
         case METER_MAX_STRUCTURE:       return "MaxStructure";       break;
         case METER_MAX_DEFENSE:         return "MaxDefense";         break;
+        case METER_MAX_SUPPLY:          return "MaxSupply";          break;
+        case METER_MAX_STOCKPILE:       return "MaxStockpile";       break;
+        case METER_MAX_TROOPS:          return "MaxTroops";          break;
         case METER_POPULATION:          return "Population";         break;
         case METER_INDUSTRY:            return "Industry";           break;
         case METER_RESEARCH:            return "Research";           break;
@@ -6007,6 +6010,7 @@ namespace {
         case METER_STRUCTURE:           return "Structure";          break;
         case METER_DEFENSE:             return "Defense";            break;
         case METER_SUPPLY:              return "Supply";             break;
+        case METER_STOCKPILE:           return "Stockpile";          break;
         case METER_STEALTH:             return "Stealth";            break;
         case METER_DETECTION:           return "Detection";          break;
         case METER_SPEED:               return "Speed";              break;

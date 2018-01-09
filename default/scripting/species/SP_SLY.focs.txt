@@ -1,0 +1,60 @@
+Species
+    name = "SP_SLY"
+    description = "SP_SLY_DESC"
+    gameplay_description = "SP_SLY_GAMEPLAY_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
+
+    tags = [ "SELF_SUSTAINING" "GREAT_STOCKPILE" "BAD_RESEARCH" "BAD_POPULATION" "BAD_INDUSTRY" "BAD_WEAPONS" "BAD_SUPPLY" "GOOD_DETECTION" "GREAT_STEALTH" "BAD_ATTACKTROOPS" "PEDIA_SELF_SUSTAINING_SPECIES_CLASS"]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_INDUSTRY"
+
+    effectsgroups = [
+        [[BAD_INDUSTRY]]
+        [[GREAT_STOCKPILE]]
+        [[BAD_RESEARCH]]
+
+        [[BAD_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
+        [[GREAT_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
+        [[BAD_WEAPONS]]
+
+        [[GOOD_DETECTION]]
+        [[GREAT_STEALTH]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[NARROW_EP]]
+        [[STANDARD_SHIP_SHIELDS]]
+    ]
+
+    environments = [
+      type = Swamp        environment = Hostile
+      type = Toxic        environment = Hostile
+      type = Inferno      environment = Hostile
+      type = Radiated     environment = Hostile
+      type = Barren       environment = Hostile
+      type = Tundra       environment = Hostile
+      type = Desert       environment = Hostile
+      type = Terran       environment = Hostile
+      type = Ocean        environment = Hostile
+      type = Asteroids    environment = Uninhabitable
+      type = Gasgiant     environment = Adequate
+    ]
+
+    graphic = "icons/species/amorphous-05.png"
+
+#include "common/*.macros"
+
+#include "/scripting/common/*.macros"

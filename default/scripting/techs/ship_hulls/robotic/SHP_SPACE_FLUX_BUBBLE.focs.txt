@@ -1,0 +1,16 @@
+Tech
+    name = "SHP_SPACE_FLUX_BUBBLE"
+    description = "SHP_SPACE_FLUX_BUBBLE_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    category = "SHIP_HULLS_CATEGORY"
+    researchcost = 12 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    tags = [ "PEDIA_ROBOTIC_HULL_TECHS" ]
+    prerequisites = [
+        "CON_ASYMP_MATS"
+        "PRO_ROBOTIC_PROD"
+    ]
+    unlock = Item type = ShipHull name = "SH_SPACE_FLUX_BUBBLE"
+    graphic = "icons/ship_hulls/bulk_freighter_hull_small.png"
+
+#include "/scripting/common/base_prod.macros"

@@ -79,9 +79,6 @@ private:
     std::shared_ptr<GG::Label>  m_excess_P_label;
 
     bool                        m_show_stockpile;
-    std::shared_ptr<GG::Label>  m_effic_label;
-    std::shared_ptr<GG::Label>  m_effic;
-    std::shared_ptr<GG::Label>  m_effic_P_label;
     std::shared_ptr<GG::Label>  m_stockpile_label;
     std::shared_ptr<GG::Label>  m_stockpile;
     std::shared_ptr<GG::Label>  m_stockpile_P_label;

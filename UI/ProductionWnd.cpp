@@ -1088,7 +1088,7 @@ void ProductionWnd::UpdateInfoPanel() {
     float total_queue_cost = queue.TotalPPsSpent();
     float stockpile = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
     float stockpile_use = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
-    float stockpile_use_max = empire->GetMeter("METER_IMPERIAL_PP_USE_LIMIT")->Current();
+    float stockpile_use_max = queue.StockpileCapacity();
     m_production_info_panel->SetTotalPointsCost(PPs, total_queue_cost);
     m_production_info_panel->SetStockpileCost(stockpile, stockpile_use, stockpile_use_max);
 

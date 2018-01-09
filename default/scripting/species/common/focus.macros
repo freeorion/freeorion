@@ -50,6 +50,12 @@ HAS_ADVANCED_FOCI
             graphic = "icons/focus/supply.png"
 
         Focus
+            name = "FOCUS_STOCKPILE"
+            description = "FOCUS_STOCKPILE_DESC"
+            location = OwnerHasTech name = "PRO_GENERIC_SUPPLIES"
+            graphic = "icons/focus/stockpile.png"
+
+        Focus
             name = "FOCUS_STEALTH"
             description = "FOCUS_STEALTH_DESC"
             location = Or [

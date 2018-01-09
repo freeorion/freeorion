@@ -1,0 +1,33 @@
+NO_STOCKPILE
+'''
+'''
+
+BAD_STOCKPILE
+'''[[STOCKPILE_PER_POP_EFFECTSGROUP(BAD,Value     +  0.5 * Target.Population * [[STOCKPILE_PER_POP]])]]
+'''
+
+AVERAGE_STOCKPILE
+'''[[STOCKPILE_PER_POP_EFFECTSGROUP(AVERAGE,Value +  1 * Target.Population * [[STOCKPILE_PER_POP]])]]
+'''
+
+GOOD_STOCKPILE
+'''[[STOCKPILE_PER_POP_EFFECTSGROUP(GOOD,Value    +  3 * Target.Population * [[STOCKPILE_PER_POP]])]]
+'''
+
+GREAT_STOCKPILE
+'''[[STOCKPILE_PER_POP_EFFECTSGROUP(GREAT,Value  +  5 * Target.Population * [[STOCKPILE_PER_POP]])]]
+'''
+
+ULTIMATE_STOCKPILE
+'''[[STOCKPILE_PER_POP_EFFECTSGROUP(ULTIMATE_STOCKPILE, Value + 15 * Target.Population * [[STOCKPILE_PER_POP]])]]
+'''
+
+STOCKPILE_PER_POP_EFFECTSGROUP
+'''     EffectsGroup
+            description = "@1@_STOCKPILE_DESC"
+            scope = Source
+            activation = Planet
+            accountinglabel = "@1@_STOCKPILE_LABEL"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetMaxStockpile value = @2@
+'''

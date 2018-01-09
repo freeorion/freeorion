@@ -1,18 +1,20 @@
 BuildingType
     name = "BLD_INTERSPECIES_ACADEMY"
     description = "BLD_INTERSPECIES_ACADEMY_DESC"
-    buildcost = 30
+    buildcost = 50
     buildtime = 5
     location = AND [
         // Homeworld
         Species
         Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"
         OwnedBy empire = Source.Owner
-        Happiness low = 15
-        // For species with preferred focus its the happiness bonus helps only a bit
-        Not And [
-            Focus type = Source.PreferredFocus
-            Happiness high = 19
+        Or [
+            Happiness low = 15
+            // The preferred focus happiness bonus helps only a bit
+            And [
+                Focus type = Source.PreferredFocus
+                Happiness low = 19
+            ]
         ]
         Not WithinStarlaneJumps jumps = 3 condition = And [
             System
@@ -70,38 +72,27 @@ BuildingType
             scope = And [
                 Object id = Source.PlanetID
                 Planet
+                Focus type = "FOCUS_STOCKPILE"
                 OwnedBy empire = Source.Owner
                 Species
             ]
             activation = Source
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[LATE_PRIORITY]]
-            effects = [
-                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY" value = min(1.0, Value + 0.05)
-                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_USE_LIMIT"           value = Value + 15
-            ]
-        // Once per academy tell the user.
+            effects = SetStockpile value = Value + 10
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
                 Planet
+                Focus type = "FOCUS_RESEARCH"
                 OwnedBy empire = Source.Owner
                 Species
             ]
-            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            activation = Source
+            accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[LATE_PRIORITY]]
-            effects = [
-               GenerateSitRepMessage
-                    message = "EFFECT_INTERSPECIES_ACADEMY"
-                    label = "EFFECT_INTERSPECIES_ACADEMY_LABEL"
-                    icon = "icons/building/blackhole.png"
-                    parameters = [
-                        tag = "planet" data = Source.PlanetID
-                        tag = "species" data = Source.Planet.Species
-                        tag = "rawtext" data = EmpireMeterValue empire = Source.Owner meter = "METER_IMPERIAL_PP_TRANSFER_EFFICIENCY"
-                    ]
-                    empire = Source.Owner
-            ]
+            effects = SetResearch value = Value + 5
+            
     ]
     icon = "icons/building/science-institute.png"
 

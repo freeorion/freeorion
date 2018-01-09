@@ -222,6 +222,8 @@ namespace {
             meter_name_map["RebelTroops"] =        METER_REBEL_TROOPS;
             meter_name_map["Supply"] =             METER_SUPPLY;
             meter_name_map["MaxSupply"] =          METER_MAX_SUPPLY;
+            meter_name_map["Stockpile"] =          METER_STOCKPILE;
+            meter_name_map["MaxStockpile"] =       METER_MAX_STOCKPILE;
             meter_name_map["Stealth"] =            METER_STEALTH;
             meter_name_map["Detection"] =          METER_DETECTION;
             meter_name_map["Speed"] =              METER_SPEED;
