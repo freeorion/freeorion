@@ -43,23 +43,19 @@ struct FO_COMMON_API CombatEvent {
     { return std::string(""); }
 
     /** If the combat event is composed of smaller events then return a vector of the sub events,
-        otherwise returns an empty vector.
-    */
+        otherwise returns an empty vector. */
     virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const
     { return std::vector<ConstCombatEventPtr>(); }
 
-    /** Return true if there are no details;
-    */
+    /** Return true if there are no details; */
     virtual bool AreDetailsEmpty(int viewing_empire_id) const
     { return true; }
 
-    /** Return true if there are no sub events;
-    */
+    /** Return true if there are no sub events; */
     virtual bool AreSubEventsEmpty(int viewing_empire_id) const
     { return true; }
 
-    /** Return true if sub events are to be flattened on display;
-    */
+    /** Return true if sub events are to be flattened on display; */
     virtual bool FlattenSubEvents() const
     { return false; }
 
