@@ -57,7 +57,10 @@ Species
         // self-destruct when captured
         EffectsGroup
             scope = Source
-            activation = OwnedBy affiliation = AnyEmpire
+            activation = And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
             effects = [
                 SetPopulation value = 0
                 GenerateSitRepMessage
