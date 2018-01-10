@@ -33,7 +33,6 @@ install:
   - >
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       brew update # Circumvent Ruby runtime error ; see travis-ci/travis-ci#8552
-      brew install cmake
       wget --output-document=FreeOrionSDK.dmg https://github.com/freeorion/freeorion-sdk/releases/download/v8/FreeOrionSDK_8_Clang-MacOSX-10.9-x86_64.dmg
       hdiutil attach FreeOrionSDK.dmg
       tar -xjf /Volumes/FreeOrionSDK/dep.tar.bz2 -C Xcode
@@ -43,8 +42,6 @@ install:
       brew install ccache
       export PATH="/usr/local/opt/ccache/libexec:$PATH"
 
-      # add coreutils to get gtimeout
-      brew install coreutils
     fi
 before_script:
   # Configure git to use the identity of FreeOrion Build Bot and
