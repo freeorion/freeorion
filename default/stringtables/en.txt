@@ -5101,14 +5101,6 @@ The Industry of a planet can be used for any production projects of [[metertype 
 For information on the interface, see [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
 
-METER_STOCKPILE
-Stockpile Capacity
-
-METER_STOCKPILE_DESC
-'''The imperial stockpile capacity indicates an empire's ability to take in excess and to use stockpiled production points. An empire's total stockpiling capacity is the sum of all its planets' stockpile meters. The total determine how many PP can be imported into the imperial stockpile each turn, and how much can be taken out each turn to be used for production.
-
-Species have various innate levels of stockpiling ability.''' 
-
 METER_RESEARCH_VALUE_LABEL
 Research
 
@@ -5198,7 +5190,9 @@ METER_STOCKPILE_VALUE_LABEL
 Stockpile
 
 METER_STOCKPILE_VALUE_DESC
-'''The stockpile is useful...'''
+'''The imperial stockpile capacity indicates an empire's ability to take in excess and to use stockpiled production points. An empire's total stockpiling capacity is the sum of all its planets' stockpile meters. The total determine how many PP can be imported into the imperial stockpile each turn, and how much can be taken out each turn to be used for production.
+
+Species have various innate levels of stockpiling ability.'''
 
 METER_TROOPS_VALUE_LABEL
 Troops
