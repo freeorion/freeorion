@@ -6029,6 +6029,12 @@ SITREP_WELCOME
 SITREP_WELCOME_LABEL
 Welcome
 
+SITREP_SYSTEM_GOT_INCOMING_WARNING
+At %system%: Next turn enemy ships arrive!
+
+SITREP_SYSTEM_GOT_INCOMING_WARNING_LABEL
+Incoming Enemies
+
 SITREP_GAS_GIANT_GENERATION_REMINDER
 %planet% is a prime location for a %buildingtype%, but none is being built there.
 
