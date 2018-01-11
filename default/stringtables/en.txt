@@ -1608,7 +1608,7 @@ When set to Low, most systems will typically have one or two starlanes. When set
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 '''The proportion of planets and systems containing Special Features.
 
-Some Special Features are protected by Guardians left by Precursor species—only setting Monster Frequency to None will prevent these appearing if the game contains specials.
+Some Special Features are protected by Guardians left by Precursor species-only setting Monster Frequency to None will prevent these appearing if the game contains specials.
 '''
 
 OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY
