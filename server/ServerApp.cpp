@@ -478,7 +478,6 @@ void ServerApp::HandleLoggerConfig(const Message& msg, PlayerConnectionPtr playe
     }
 }
 
-
 void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection) {
     switch (msg.Type()) {
     case Message::HOST_SP_GAME:  m_fsm->process_event(HostSPGame(msg, player_connection));   break;
@@ -888,8 +887,8 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
 }
 
 namespace {
-        /** Check that \p path is a file or directory in the server save
-        directory. */
+    /** Check that \p path is a file or directory in the server save
+    directory. */
     bool IsInServerSaveDir(const fs::path& path) {
         if (!fs::exists(path))
             return false;
@@ -931,8 +930,9 @@ namespace {
     }
 }
 
-void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection){
-
+void ServerApp::UpdateSavePreviews(const Message& msg,
+                                   PlayerConnectionPtr player_connection)
+{
     // Only relative paths are allowed to prevent client from list arbitrary
     // directories, or knowing the absolute path of the server save directory.
     std::string relative_directory_name;
@@ -959,12 +959,14 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
         directory,
         m_single_player_game? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION,
         preview_information.previews);
+
     DebugLogger() << "ServerApp::UpdateSavePreviews: Sending " << preview_information.previews.size()
                   << " previews in response.";
+
     player_connection->SendMessage(DispatchSavePreviewsMessage(preview_information));
 }
 
-void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_connection){
+void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_connection) {
     std::vector<int> ids;
     ExtractRequestCombatLogsMessageData(msg, ids);
 
@@ -1683,7 +1685,9 @@ namespace {
 
     /** Compiles and return set of ids of empires that are controlled by a
       * human player.*/
-    std::set<int> HumanControlledEmpires(const ServerApp* server_app, const ServerNetworking& server_networking) {
+    std::set<int> HumanControlledEmpires(const ServerApp* server_app,
+                                         const ServerNetworking& server_networking)
+    {
         std::set<int> retval;
         if (!server_app)
             return retval;
@@ -1728,7 +1732,9 @@ namespace {
         }
     }
 
-    void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets, int empire_id, int system_id) {
+    void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets,
+                                          int empire_id, int system_id)
+    {
         visible_fleets.clear();
         auto system = GetSystem(system_id);
         if (!system)

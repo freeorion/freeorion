@@ -211,7 +211,7 @@ void MultiMeterStatusBar::Update() {
 
     int num_bars = 0;   // count number of valid bars' data added
 
-    for (const std::pair<MeterType, MeterType>& meter_types_pair : m_meter_types) {
+    for (auto& meter_types_pair : m_meter_types) {
         const Meter* actual_meter = obj->GetMeter(meter_types_pair.first);
         const Meter* target_max_meter = obj->GetMeter(meter_types_pair.second);
 
