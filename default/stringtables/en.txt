@@ -12892,9 +12892,6 @@ Very long-range detection.
 FU_ENGINE_PART_LIMIT
 Only one engine part may be equipped on a ship.
 
-DT_DETECTOR_4_DESC
-Very long-range detection.
-
 BS_SCANNER_1
 Interferometric Scanner
 
