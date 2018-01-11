@@ -6,6 +6,7 @@ Tech
     researchcost = 1
     researchturns = 1
     tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
+    unlock = Item type = Tech name = "SHP_SPACE_FLUX_BUBBLE"
     effectsgroups = [
         // Set initial meters
         EffectsGroup
@@ -17,8 +18,7 @@ Tech
                     Focus type = "FOCUS_STOCKPILE"
                 ]
             ]
-            effects = [SetMaxStockpile value = Value + 1
-            GiveEmpireTech name = "SHP_SPACE_FLUX_BUBBLE"]
+            effects = SetMaxStockpile value = Value + 1
     ]
 
 #include "/scripting/common/priorities.macros"
