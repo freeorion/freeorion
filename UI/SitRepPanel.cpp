@@ -28,9 +28,15 @@ namespace {
 
     /** Adds options related to SitRepPanel to Options DB. */
     void AddOptions(OptionsDB& db) {
-        db.Add("ui.map.sitrep.invalid.shown", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"), false, Validator<bool>());
-        db.Add<std::string>("ui.map.sitrep.hidden.stringlist", UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"), "");
-        db.Add("ui.map.sitrep.icon.size", UserStringNop("OPTIONS_DB_UI_SITREP_ICONSIZE"), 24, RangedValidator<int>(12, 64));
+        db.Add("ui.map.sitrep.invalid.shown",
+               UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"),
+               false, Validator<bool>());
+        db.Add<std::string>("ui.map.sitrep.hidden.stringlist",
+                            UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"),
+                            "");
+        db.Add("ui.map.sitrep.icon.size",
+               UserStringNop("OPTIONS_DB_UI_SITREP_ICONSIZE"),
+               24, RangedValidator<int>(12, 64));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -42,7 +48,7 @@ namespace {
     std::set<std::string> permanently_snoozed_sitreps;
 
     void SnoozeSitRepForNTurns(std::string sitrep_text, int start_turn, int num_turns) {
-        for (int turn=start_turn; turn < start_turn + num_turns; turn++)
+        for (int turn = start_turn; turn < start_turn + num_turns; turn++)
             snoozed_sitreps[turn].insert(sitrep_text);
     }
 
@@ -174,11 +180,7 @@ namespace {
         std::stringstream ss;
 
         // Join a set of strings into a space-delimited sequence of strings.
-        std::copy(
-            set.begin(),
-            set.end(),
-            std::ostream_iterator<std::string>(ss, " ")
-        );
+        std::copy(set.begin(), set.end(), std::ostream_iterator<std::string>(ss, " "));
 
         GetOptionsDB().Set<std::string>("ui.map.sitrep.hidden.stringlist", ss.str());
         GetOptionsDB().Commit();
@@ -224,9 +226,7 @@ namespace {
     public:
         SitRepDataPanel(GG::X left, GG::Y top, GG::X w, GG::Y h, const SitRepEntry& sitrep) :
             Control(left, top, w, h, GG::NO_WND_FLAGS),
-            m_sitrep_entry(sitrep),
-            m_icon(nullptr),
-            m_link_text(nullptr)
+            m_sitrep_entry(sitrep)
         {}
 
         void CompleteConstruction() override {
@@ -278,7 +278,7 @@ namespace {
                 DoLayout(ul, lr.x - ul.x);
         }
 
-        const SitRepEntry&  GetSitRepEntry() const { return m_sitrep_entry; }
+        const SitRepEntry& GetSitRepEntry() const { return m_sitrep_entry; }
 
         mutable boost::signals2::signal<void(const GG::Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
 
@@ -287,7 +287,7 @@ namespace {
         { RightClickedSignal(pt, mod); }
 
     private:
-        void            DoLayout(const GG::Pt& ul, const GG::X& width) {
+        void DoLayout(const GG::Pt& ul, const GG::X& width) {
             // Resize the text
             GG::Pt spacer = GG::Pt(GG::X(sitrep_edge_to_content_spacing), GG::Y(sitrep_edge_to_content_spacing));
             GG::X icon_left(ul.x + spacer.x);
@@ -313,9 +313,9 @@ namespace {
             GG::Control::SizeMove(ul, ul + new_size);
         }
 
-        const SitRepEntry&  m_sitrep_entry;
-        std::shared_ptr<GG::StaticGraphic>  m_icon;
-        std::shared_ptr<SitRepLinkText>     m_link_text;
+        const SitRepEntry&                  m_sitrep_entry;
+        std::shared_ptr<GG::StaticGraphic>  m_icon = nullptr;
+        std::shared_ptr<SitRepLinkText>     m_link_text = nullptr;
     };
 
     ////////////////////////////////////////////////
@@ -326,7 +326,6 @@ namespace {
     public:
         SitRepRow(GG::X w, GG::Y h, const SitRepEntry& sitrep) :
             GG::ListBox::Row(w, h, ""),
-            m_panel(nullptr),
             m_sitrep(sitrep)
         {
             SetName("SitRepRow");
@@ -360,7 +359,7 @@ namespace {
             GG::ListBox::Row::SizeMove(ul, lr);
         }
 
-        void            Init() {
+        void Init() {
             m_panel = GG::Wnd::Create<SitRepDataPanel>(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
                                                        ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
                                                        ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
@@ -369,11 +368,11 @@ namespace {
                 boost::bind(&SitRepRow::RClick, this, _1, _2));
         }
 
-        const SitRepEntry&  GetSitRepEntry() const { return m_panel->GetSitRepEntry(); }
+        const SitRepEntry& GetSitRepEntry() const { return m_panel->GetSitRepEntry(); }
 
     private:
-        std::shared_ptr<SitRepDataPanel>    m_panel;
-        const SitRepEntry   m_sitrep;
+        std::shared_ptr<SitRepDataPanel>    m_panel = nullptr;
+        const SitRepEntry                   m_sitrep;
     };
 }
 
@@ -381,11 +380,6 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
     CUIWnd(UserString("SITREP_PANEL_TITLE"),
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
            config_name),
-    m_sitreps_lb(nullptr),
-    m_prev_turn_button(nullptr),
-    m_next_turn_button(nullptr),
-    m_last_turn_button(nullptr),
-    m_filter_button(nullptr),
     m_showing_turn(INVALID_GAME_TURN),
     m_hidden_sitrep_templates(HiddenSitRepTemplateStringsFromOptions())
 {}
@@ -467,7 +461,8 @@ void SitRepPanel::KeyPress(GG::Key key, std::uint32_t key_code_point,
 
 void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
-    std::size_t first_visible_queue_row = std::distance(m_sitreps_lb->begin(), m_sitreps_lb->FirstRowShown());
+    std::size_t first_visible_queue_row = std::distance(m_sitreps_lb->begin(),
+                                                        m_sitreps_lb->FirstRowShown());
 
     CUIWnd::SizeMove(ul, lr);
 
@@ -475,7 +470,8 @@ void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         DoLayout();
         Update();
         if (!m_sitreps_lb->Empty())
-            m_sitreps_lb->SetFirstRowShown(std::next(m_sitreps_lb->begin(), first_visible_queue_row));
+            m_sitreps_lb->SetFirstRowShown(std::next(m_sitreps_lb->begin(),
+                                                     first_visible_queue_row));
     }
 }
 
@@ -507,8 +503,8 @@ namespace {
 
 /** Return true if the sitrep is not hidden, validates and is not snoozed. */
 bool SitRepPanel::IsSitRepInvalid(SitRepEntry& sitrep) const {
-    if (m_hidden_sitrep_templates.count(
-            sitrep.GetLabelString().empty() ? sitrep.GetTemplateString() : sitrep.GetLabelString()))
+    if (m_hidden_sitrep_templates.count(sitrep.GetLabelString().empty() ?
+        sitrep.GetTemplateString() : sitrep.GetLabelString()))
     { return true; }
 
     // Validation is time consuming because all variables are substituted
@@ -532,18 +528,17 @@ bool SitRepPanel::IsSitRepInvalid(SitRepEntry& sitrep) const {
     return false;
 }
 
-
-/** Search \p forward from \p turn for the next turn with valid sitreps.
-    Remove turns from \p turns that have all invalid or otherwise filtered out
-    sitreps. */
-int SitRepPanel::GetNextNonEmptySitrepsTurn(std::map<int, std::list<SitRepEntry>>& turns, int turn, bool forward) const {
+int SitRepPanel::GetNextNonEmptySitrepsTurn(std::map<int, std::list<SitRepEntry>>& turns,
+                                            int turn, bool forward) const
+{
     // All sitreps filtered out ?
     if (turns.size() == 0)
         return INVALID_GAME_TURN;
 
     // Only one turn with visible sitreps
     if (turns.size() == 1) {
-        turns.begin()->second.remove_if(std::bind(&SitRepPanel::IsSitRepInvalid, this, std::placeholders::_1));
+        turns.begin()->second.remove_if(std::bind(&SitRepPanel::IsSitRepInvalid,
+                                                  this, std::placeholders::_1));
         // With no valid sitreps
         if (turns.begin()->second.empty()) {
             turns.clear();
@@ -567,7 +562,8 @@ int SitRepPanel::GetNextNonEmptySitrepsTurn(std::map<int, std::list<SitRepEntry>
     int step = forward ? 1 : -1;
 
     while (it != turns.end()) {
-        it->second.remove_if(std::bind(&SitRepPanel::IsSitRepInvalid, this, std::placeholders::_1));
+        it->second.remove_if(std::bind(&SitRepPanel::IsSitRepInvalid,
+                                       this, std::placeholders::_1));
 
         // If any valid sitreps, then exit
         if (!it->second.empty())
@@ -599,9 +595,8 @@ void SitRepPanel::NextClicked() {
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, true));
 }
 
-void SitRepPanel::LastClicked() {
-    ShowSitRepsForTurn(CurrentTurn());
-}
+void SitRepPanel::LastClicked()
+{ ShowSitRepsForTurn(CurrentTurn()); }
 
 void SitRepPanel::FilterClicked() {
     std::map<int, std::string> menu_index_templates;
@@ -609,9 +604,10 @@ void SitRepPanel::FilterClicked() {
     int index = 1;
     bool all_checked = true;
 
-    std::vector<std::string> all_templates = AllSitRepTemplateStrings();
+    auto all_templates = AllSitRepTemplateStrings();
 
-    auto popup = GG::Wnd::Create<CUIPopupMenu>(m_filter_button->Left(), m_filter_button->Bottom());
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(m_filter_button->Left(),
+                                               m_filter_button->Bottom());
 
     for (const std::string& templ : all_templates) {
         menu_index_templates[index] = templ;
@@ -662,11 +658,13 @@ void SitRepPanel::FilterClicked() {
     Update();
 }
 
-void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod) {
+void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, const GG::Pt& pt,
+                               const GG::Flags<GG::ModKey>& mod)
+{
     SitRepRow* sitrep_row = dynamic_cast<SitRepRow*>(it->get());
-    if (!sitrep_row) {
+    if (!sitrep_row)
         return;
-    }
+
     const SitRepEntry& sitrep = sitrep_row->GetSitRepEntry();
     if (sitrep.GetTurn() <= 0)
         return;
@@ -675,8 +673,9 @@ void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, const GG::Pt& pt, const
     Update();
 }
 
-void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod) {
-
+void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt,
+                                const GG::Flags<GG::ModKey>& mod)
+{
     GG::MenuItem menu_contents, submenu_ignore, submenu_block, separator_item;
     std::string sitrep_text, sitrep_template;
     std::string entry_margin("  ");
@@ -730,9 +729,10 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
                 SetHiddenSitRepTemplateStringsInOptions(m_hidden_sitrep_templates);
                 Update();
             };
-            submenu_block.next_level.push_back(GG::MenuItem(entry_margin + str(FlexibleFormat(UserString("SITREP_HIDE_TEMPLATE"))
-                                                                               % sitrep_label),
-                                                            false, false, hide_template_action));
+            submenu_block.next_level.push_back(GG::MenuItem(
+                entry_margin + str(FlexibleFormat(UserString("SITREP_HIDE_TEMPLATE"))
+                                   % sitrep_label),
+                false, false, hide_template_action));
         }
     }
     if (m_hidden_sitrep_templates.size() > 0) {
@@ -743,8 +743,9 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
             SetHiddenSitRepTemplateStringsInOptions(m_hidden_sitrep_templates);
             Update();
         };
-        submenu_block.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SHOWALL_TEMPLATES"),
-                                                        false, false, showall_action));
+        submenu_block.next_level.push_back(GG::MenuItem(
+            entry_margin + UserString("SITREP_SHOWALL_TEMPLATES"),
+            false, false, showall_action));
     }
     popup->AddMenuItem(std::move(submenu_block));
 
@@ -755,10 +756,11 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
     };
     auto help_action = []() { ClientUI::GetClientUI()->ZoomToEncyclopediaEntry("SITREP_IGNORE_BLOCK_TITLE"); };
 
-    popup->AddMenuItem(GG::MenuItem(entry_margin + UserString("HOTKEY_COPY"), false, false, copy_action));
+    popup->AddMenuItem(GG::MenuItem(entry_margin + UserString("HOTKEY_COPY"),
+                                    false, false, copy_action));
     popup->AddMenuItem(GG::MenuItem(entry_margin + UserString("POPUP_MENU_PEDIA_PREFIX") +
-                                   UserString("SITREP_IGNORE_BLOCK_TITLE"),
-                                   false, false, help_action));
+                                        UserString("SITREP_IGNORE_BLOCK_TITLE"),
+                                    false, false, help_action));
 
     if (!popup->Run())
         return;
@@ -768,7 +770,8 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
 void SitRepPanel::Update() {
     DebugLogger() << "SitRepPanel::Update()";
 
-    std::size_t first_visible_row = std::distance(m_sitreps_lb->begin(), m_sitreps_lb->FirstRowShown());
+    std::size_t first_visible_row = std::distance(m_sitreps_lb->begin(),
+                                                  m_sitreps_lb->FirstRowShown());
     m_sitreps_lb->Clear();
     m_sitreps_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     m_sitreps_lb->SetVScrollWheelIncrement(ClientUI::Pts()*4.5);
@@ -786,7 +789,7 @@ void SitRepPanel::Update() {
     auto turns = GetUnvalidatedSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID());
 
     m_showing_turn = GetNextNonEmptySitrepsTurn(turns, m_showing_turn - 1, true);
-    auto& currentTurnSitreps = turns[m_showing_turn];
+    auto& current_turn_sitreps = turns[m_showing_turn];
 
     if (m_showing_turn < 1)
         this->SetName(UserString("SITREP_PANEL_TITLE"));
@@ -794,27 +797,29 @@ void SitRepPanel::Update() {
         this->SetName(boost::io::str(FlexibleFormat(UserString("SITREP_PANEL_TITLE_TURN")) % m_showing_turn));
 
     // order sitreps for display
-    std::vector<SitRepEntry> orderedSitreps;
-    for (const std::string& templ : OrderedSitrepTemplateStrings()) {
-        for (std::list<SitRepEntry>::iterator sitrep_it = currentTurnSitreps.begin();
-             sitrep_it != currentTurnSitreps.end(); ++sitrep_it)
+    std::vector<SitRepEntry> ordered_sitreps;
+    for (const auto& templ : OrderedSitrepTemplateStrings()) {
+        for (auto sitrep_it = current_turn_sitreps.begin();
+             sitrep_it != current_turn_sitreps.end(); ++sitrep_it)
         {
-            if ((sitrep_it->GetLabelString().empty() ? sitrep_it->GetTemplateString() : sitrep_it->GetLabelString()) == templ) {
-                //DebugLogger() << "saving into orderedSitreps -  sitrep of template " << templ << " with full string "<< sitrep_it->GetText();
-                orderedSitreps.push_back(*sitrep_it);
-                //DebugLogger()<< "deleting above sitrep from currentTurnSitreps";
-                sitrep_it = --currentTurnSitreps.erase(sitrep_it);
+            if (templ == (sitrep_it->GetLabelString().empty() ?
+                 sitrep_it->GetTemplateString() : sitrep_it->GetLabelString()))
+            {
+                //DebugLogger() << "saving into ordered_sitreps -  sitrep of template " << templ << " with full string "<< sitrep_it->GetText();
+                ordered_sitreps.push_back(*sitrep_it);
+                //DebugLogger()<< "deleting above sitrep from current_turn_sitreps";
+                sitrep_it = --current_turn_sitreps.erase(sitrep_it);
             }
         }
     }
 
     // copy remaining unordered sitreps
-    for (const SitRepEntry& sitrep : currentTurnSitreps)
-    { orderedSitreps.push_back(sitrep); }
+    for (const SitRepEntry& sitrep : current_turn_sitreps)
+    { ordered_sitreps.push_back(sitrep); }
 
     // create UI rows for all sitrps
     GG::X width = m_sitreps_lb->ClientWidth();
-    for (const SitRepEntry& sitrep : orderedSitreps)
+    for (const SitRepEntry& sitrep : ordered_sitreps)
     { m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, GG::Y(ClientUI::Pts()*2), sitrep)); }
 
     if (m_sitreps_lb->NumRows() > first_visible_row) {
@@ -846,7 +851,7 @@ void SitRepPanel::ShowSitRepsForTurn(int turn) {
 }
 
 void SitRepPanel::SetHiddenSitRepTemplates(const std::set<std::string>& templates) {
-    std::set<std::string> old_hidden_sitrep_templates = m_hidden_sitrep_templates;
+    auto old_hidden_sitrep_templates = m_hidden_sitrep_templates;
     m_hidden_sitrep_templates = templates;
     if (old_hidden_sitrep_templates != m_hidden_sitrep_templates)
         Update();
