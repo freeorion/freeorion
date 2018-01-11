@@ -727,10 +727,6 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->DistanceFromOriginalType();
 
-    } else if (property_name == "NextTurnPopGrowth") {
-        if (auto pop = std::dynamic_pointer_cast<const PopCenter>(object))
-            return pop->NextTurnPopGrowth();
-
     } else if (property_name == "CurrentTurn") {
         return CurrentTurn();
 

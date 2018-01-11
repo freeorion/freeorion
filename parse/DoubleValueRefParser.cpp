@@ -45,7 +45,6 @@ parse::detail::simple_double_parser_rules::simple_double_parser_rules(const pars
         |   tok.X_
         |   tok.Y_
         |   tok.SizeAsDouble_
-        |   tok.NextTurnPopGrowth_
         |   tok.Size_
         |   tok.DistanceFromOriginalType_
         |   tok.Attack_

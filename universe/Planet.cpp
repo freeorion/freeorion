@@ -428,12 +428,6 @@ float Planet::CurrentMeterValue(MeterType type) const
 float Planet::NextTurnCurrentMeterValue(MeterType type) const {
     MeterType max_meter_type = INVALID_METER_TYPE;
     switch (type) {
-    case METER_TARGET_POPULATION:
-    case METER_POPULATION:
-    case METER_TARGET_HAPPINESS:
-    case METER_HAPPINESS:
-        return PopCenterNextTurnMeterValue(type);
-        break;
     case METER_TARGET_INDUSTRY:
     case METER_TARGET_RESEARCH:
     case METER_TARGET_TRADE:

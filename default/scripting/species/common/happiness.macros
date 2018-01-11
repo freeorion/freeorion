@@ -2,6 +2,30 @@ AVERAGE_HAPPINESS
 '''
         EffectsGroup
             scope = Source
+            activation = And [
+                Planet
+                (Source.Happiness < Source.TargetHappiness)
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetHappiness value = min(
+                Source.TargetHappiness,
+                Value + 1
+            )
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                (Source.Happiness > Source.TargetHappiness)
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetHappiness value = max(
+                Source.TargetHappiness,
+                Value - 1
+            )
+            
+        EffectsGroup
+            scope = Source
             activation = Planet
             accountinglabel = "BASIC_CONTENTEDNESS_LABEL"
             effects = SetTargetHappiness value = Value + 10
@@ -32,5 +56,5 @@ AVERAGE_HAPPINESS
             effects = [ 
                     SetHappiness value = 0
                     SetTargetHappiness value = 0
-                    ]
+            ]
 '''

@@ -6,8 +6,36 @@ BASIC_POPULATION
         [[PHOTOTROPHIC_BONUS]]
         [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
 
-        // Since all species have the same advanced focus effects and infrastructure, the macros are stashed here were they don't need to be manually included in each species macros.
 
+        // basic population growth up to target population
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                (Source.Population < Source.TargetPopulation)
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetPopulation value = min(
+                Source.TargetPopulation,
+                Value + Value*0.01*(Target.TargetPopulation + 1 - Value)
+            )
+        // basic population decay down to target population
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                (Source.Population > Source.TargetPopulation)
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetPopulation value = max(
+                Target.TargetPopulation,
+                Value - 0.1*(Value - Target.TargetPopulation)
+            )
+        
+            
+        // Since all species have the same advanced focus effects and
+        // infrastructure, the macros are stashed here were they don't
+        // need to be manually included in each species macros.
         [[FOCUS_CHANGE_PENALTY]]
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
@@ -25,7 +53,8 @@ BAD_POPULATION
             scope = Source
             activation = Planet
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetTargetPopulation value = Value -0.25*abs(Value) accountinglabel = "BAD_POPULATION_LABEL"
+            effects = SetTargetPopulation value = Value -0.25*abs(Value)
+            accountinglabel = "BAD_POPULATION_LABEL"
 '''
 
 GOOD_POPULATION
@@ -36,7 +65,8 @@ GOOD_POPULATION
             scope = Source
             activation = Planet
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetTargetPopulation value = Value +0.25*abs(Value) accountinglabel = "GOOD_POPULATION_LABEL"
+            effects = SetTargetPopulation value = Value +0.25*abs(Value)
+            accountinglabel = "GOOD_POPULATION_LABEL"
 '''
 
 /*
@@ -51,7 +81,8 @@ ENVIRONMENT_MODIFIER
                 Planet environment = Uninhabitable
             ]
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetPopulation value = -999 accountinglabel = "UNINHABTIABLE_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation value = -999
+            accountinglabel = "UNINHABTIABLE_ENVIRONMENT_LABEL"
 
         EffectsGroup
             scope = Source
@@ -60,7 +91,8 @@ ENVIRONMENT_MODIFIER
                 Planet environment = Hostile
             ]
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetPopulation value = Value - 4 * Source.SizeAsDouble accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation value = Value - 4 * Source.SizeAsDouble
+            accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
 
         EffectsGroup
             scope = Source
@@ -69,7 +101,8 @@ ENVIRONMENT_MODIFIER
                 Planet environment = Poor
             ]
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetPopulation value = Value - 2 * Source.SizeAsDouble accountinglabel = "POOR_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation value = Value - 2 * Source.SizeAsDouble
+            accountinglabel = "POOR_ENVIRONMENT_LABEL"
 
 /*        EffectsGroup
             scope = Source
@@ -77,14 +110,16 @@ ENVIRONMENT_MODIFIER
                 Planet
                 Planet environment = Adequate
             ]
-            effects = SetTargetPopulation value = Value + 0 * Source.SizeAsDouble accountinglabel = "ADEQUATE_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation value = Value + 0 * Source.SizeAsDouble
+            accountinglabel = "ADEQUATE_ENVIRONMENT_LABEL"
 */
 
         EffectsGroup
             scope = Source
             activation = Planet environment = Good
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 3 * Target.SizeAsDouble accountinglabel = "GOOD_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation value = Value + 3 * Target.SizeAsDouble
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
 '''
 
 HOMEWORLD_BONUS_POPULATION
@@ -96,7 +131,8 @@ HOMEWORLD_BONUS_POPULATION
             activation = Planet
             stackinggroup = "HOMEWORLD_STACK"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble
+            accountinglabel = "HOMEWORLD_BONUS"
 '''
 
 HOMEWORLD_GROWTH_FOCUS_BOOST
@@ -116,10 +152,12 @@ HOMEWORLD_GROWTH_FOCUS_BOOST
             ]
             stackinggroup = "HOMEWORLD_STACK"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble accountinglabel = "HOMEWORLD_SUPPLY"
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
+            accountinglabel = "HOMEWORLD_SUPPLY"
 '''
 
-// This is dependent on current placement in population effects calc, just after Homeworld and Environment
+// This is dependent on current placement in population effects calc,
+// just after Homeworld and Environment
 SELF_SUSTAINING_BONUS
 '''     EffectsGroup
             scope = Source
