@@ -86,9 +86,10 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #endif
 #ifndef FREEORION_MACOSX
     // did the player request help output?
-    if (GetOptionsDB().Get<bool>("help")) {
+    auto help_arg = GetOptionsDB().Get<std::string>("help");
+    if (help_arg != "NOOP") {
         ShutdownLoggingSystemFileSink();
-        GetOptionsDB().GetUsage(std::cout);
+        GetOptionsDB().GetUsage(std::cout, help_arg, true);
         return 0;   // quit without actually starting game
     }
 
@@ -119,8 +120,10 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
     try {
 #endif
         // add entries in options DB that have no other obvious place
-        GetOptionsDB().AddFlag('h', "help",                         UserStringNop("OPTIONS_DB_HELP"),                   false);
-        GetOptionsDB().AddFlag('v', "version",                      UserStringNop("OPTIONS_DB_VERSION"),                false);
+        GetOptionsDB().Add<std::string>('h', "help",                UserStringNop("OPTIONS_DB_HELP"),                   "NOOP",
+                                        Validator<std::string>(),                                                       false);
+        GetOptionsDB().AddFlag('v', "version",                      UserStringNop("OPTIONS_DB_VERSION"),                false,
+                               "version");
         GetOptionsDB().AddFlag('g', "generate-config-xml",          UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),    false);
         GetOptionsDB().AddFlag('f', "video.fullscreen.enabled",     UserStringNop("OPTIONS_DB_FULLSCREEN"),             STORE_FULLSCREEN_FLAG);
         GetOptionsDB().Add("video.fullscreen.reset",                UserStringNop("OPTIONS_DB_RESET_FSSIZE"),           true);
@@ -139,6 +142,40 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().Add<std::string>("version.string",           UserStringNop("OPTIONS_DB_VERSION_STRING"),         FreeOrionVersionString(),
                                         Validator<std::string>(),                                                       true);
         GetOptionsDB().AddFlag('r', "render-simple",                UserStringNop("OPTIONS_DB_RENDER_SIMPLE"),          false);
+
+        // add sections for option sorting
+        GetOptionsDB().AddSection("audio", UserStringNop("OPTIONS_DB_SECTION_AUDIO"));
+        GetOptionsDB().AddSection("audio.music", UserStringNop("OPTIONS_DB_SECTION_AUDIO_MUSIC"));
+        GetOptionsDB().AddSection("audio.effects", UserStringNop("OPTIONS_DB_SECTION_AUDIO_EFFECTS"));
+        GetOptionsDB().AddSection("audio.effects.paths", UserStringNop("OPTIONS_DB_SECTION_AUDIO_EFFECTS_PATHS"),
+                                  [](const std::string& name)->bool {
+                                      std::string suffix { "sound.path" };
+                                      return name.size() > suffix.size() &&
+                                             name.substr(name.size() - suffix.size()) == suffix;
+                                  });
+        GetOptionsDB().AddSection("effects", UserStringNop("OPTIONS_DB_SECTION_EFFECTS"));
+        GetOptionsDB().AddSection("logging", UserStringNop("OPTIONS_DB_SECTION_LOGGING"));
+        GetOptionsDB().AddSection("network", UserStringNop("OPTIONS_DB_SECTION_NETWORK"));
+        GetOptionsDB().AddSection("resource", UserStringNop("OPTIONS_DB_SECTION_RESOURCE"));
+        GetOptionsDB().AddSection("save", UserStringNop("OPTIONS_DB_SECTION_SAVE"));
+        GetOptionsDB().AddSection("setup", UserStringNop("OPTIONS_DB_SECTION_SETUP"));
+        GetOptionsDB().AddSection("ui", UserStringNop("OPTIONS_DB_SECTION_UI"));
+        GetOptionsDB().AddSection("ui.colors", UserStringNop("OPTIONS_DB_SECTION_UI_COLORS"),
+                                  [](const std::string& name)->bool {
+                                      std::string suffix { ".color" };
+                                      return name.size() > suffix.size() &&
+                                             name.substr(name.size() - suffix.size()) == suffix;
+                                  });
+        GetOptionsDB().AddSection("ui.hotkeys", UserStringNop("OPTIONS_DB_SECTION_UI_HOTKEYS"),
+                                  [](const std::string& name)->bool {
+                                      std::string suffix { ".hotkey" };
+                                      return name.size() > suffix.size() &&
+                                             name.substr(name.size() - suffix.size()) == suffix;
+                                  });
+        GetOptionsDB().AddSection("version", UserStringNop("OPTIONS_DB_SECTION_VERSION"));
+        GetOptionsDB().AddSection("video", UserStringNop("OPTIONS_DB_SECTION_VIDEO"));
+        GetOptionsDB().AddSection("video.fullscreen", UserStringNop("OPTIONS_DB_SECTION_VIDEO_FULLSCREEN"));
+        GetOptionsDB().AddSection("video.windowed", UserStringNop("OPTIONS_DB_SECTION_VIDEO_WINDOWED"));
 
         // Add the keyboard shortcuts
         Hotkey::AddOptions(GetOptionsDB());

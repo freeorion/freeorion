@@ -8,6 +8,7 @@
 #include "util/Directories.h"
 
 #include <iostream>
+#include <iomanip>
 #include <stdexcept>
 #include <string>
 
@@ -74,7 +75,8 @@ OptionsDB::Option::Option()
 
 OptionsDB::Option::Option(char short_name_, const std::string& name_, const boost::any& value_,
                           const boost::any& default_value_, const std::string& description_,
-                          const ValidatorBase* validator_, bool storable_, bool flag_, bool recognized_) :
+                          const ValidatorBase* validator_, bool storable_, bool flag_, bool recognized_,
+                          const std::string& section) :
     name(name_),
     short_name(short_name_),
     value(value_),
@@ -88,6 +90,15 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
 {
     if (short_name_)
         short_names[short_name_] = name;
+
+    auto name_it = name.rfind(".");
+    if (name_it != std::string::npos)
+        sections.emplace(name.substr(0, name_it));
+
+    if (!section.empty())
+        sections.emplace(section);
+    else if (sections.empty())
+        sections.emplace("misc");
 }
 
 bool OptionsDB::Option::SetFromString(const std::string& str) {
@@ -139,6 +150,18 @@ std::string OptionsDB::Option::DefaultValueToString() const {
         return boost::lexical_cast<std::string>(boost::any_cast<bool>(default_value));
 }
 
+
+/////////////////////////////////////////////
+// OptionsDB::OptionSection
+/////////////////////////////////////////////
+OptionsDB::OptionSection::OptionSection() = default;
+
+OptionsDB::OptionSection::OptionSection(const std::string& name_, const std::string& description_,
+                                        std::function<bool (const std::string&)> option_predicate_) :
+    name(name_),
+    description(description_),
+    option_predicate(option_predicate_)
+{}
 
 /////////////////////////////////////////////
 // OptionsDB
@@ -238,61 +261,272 @@ std::shared_ptr<const ValidatorBase> OptionsDB::GetValidator(const std::string& 
     return it->second.validator;
 }
 
-void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = ""*/) const {
-    os << UserString("COMMAND_LINE_USAGE") << command_line << "\n";
+namespace {
+    const std::size_t TERMINAL_LINE_WIDTH = 80;
 
-    int longest_param_name = 0;
-    for (auto& option : m_options) {
-        if (longest_param_name < static_cast<int>(option.first.size()))
-            longest_param_name = option.first.size();
+    /** Breaks and indents text over multiple lines when it exceeds width limits
+     * @param text String to format, tokenized by spaces, tabs, and newlines (newlines retained but potentially indented)
+     * @param indents amount of space prior to text. First for initial line, second for any new lines.
+     * @param widths width to limit the text to. First for initial line, second for any new lines.
+     * @returns string Formatted results of @p text
+     */
+    std::string SplitText(const std::string& text, std::pair<std::size_t, std::size_t> indents = { 0, 0 },
+                          std::pair<std::size_t, std::size_t> widths = { TERMINAL_LINE_WIDTH, TERMINAL_LINE_WIDTH })
+    {
+        boost::char_separator<char> separator { " \t", "\n" };
+        boost::tokenizer<boost::char_separator<char>> tokens { text, separator };
+
+        std::vector<std::string> lines { "" };
+        for (const auto& token : tokens) {
+            if (token == "\n") 
+                lines.push_back("");
+            else if (widths.second < lines.back().size() + token.size() + indents.second)
+                lines.push_back(token + " ");
+            else if (!token.empty())
+                lines.back().append(token + " ");
+        }
+
+        std::string indent { std::string(indents.second, ' ') };
+        std::stringstream retval;
+        auto first_line = std::move(lines.front());
+        retval << std::string(indents.first, ' ') << first_line << std::endl;
+        for (auto line : lines)
+            if (!line.empty())
+                retval << indent << line << std::endl;
+
+        return retval.str();
     }
 
-    int description_column = 5;
-    int description_width = 80 - description_column;
+    bool OptionNameHasParentSection(const std::string& lhs, const std::string& rhs) {
+        auto it = lhs.find_last_of(".");
+        if (it == std::string::npos)
+            return false;
+        return lhs.substr(0, it) == rhs;
+    }
+}
 
-    if (description_width <= 0)
-        throw std::runtime_error("The longest parameter name leaves no room for a description.");
-
+std::unordered_map<std::string, std::set<std::string>> OptionsDB::OptionsBySection(bool allow_unrecognized) const {
+    // Determine sections after all predicate calls from known options
+    std::unordered_map<std::string, std::unordered_set<std::string>> sections_by_option;
     for (const auto& option : m_options) {
-        // Ignore unrecognized options that have not been formally registered
-        // with Add().
-        if (!option.second.recognized)
+        if (!allow_unrecognized && !option.second.recognized)
             continue;
 
-        if (option.second.short_name)
-            os << "-" << option.second.short_name << ", --" << option.second.name << "\n";
-        else
-            os << "--" << option.second.name << "\n";
+        for (const auto& section : option.second.sections)
+            sections_by_option[option.first].emplace(section);
 
-        os << std::string(description_column - 1, ' ');
+        for (auto& section : m_sections)
+            if (section.second.option_predicate && section.second.option_predicate(option.first))
+                sections_by_option[option.first].emplace(section.first);
+    }
 
-        typedef boost::tokenizer<boost::char_separator<char>> Tokenizer;
-        boost::char_separator<char> separator(" \t");
-        Tokenizer tokens(UserString(option.second.description), separator);
-        int curr_column = description_column;
-        for (const auto& token : tokens) {
-            if (80 < curr_column + token.size()) {
-                os << "\n" << std::string(description_column, ' ') << token;
-                curr_column = description_column + token.size();
-            } else {
-                os << " " << token;
-                curr_column += token.size() + 1;
-            }
+    // tally the total number of options under each section
+    std::unordered_map<std::string, std::size_t> total_options_per_section;
+    for (const auto& option_section : sections_by_option) {
+        auto option_name = option_section.first;
+        auto dot_it = option_name.find_first_of(".");
+        // increment count of each containing parent section
+        while (dot_it != std::string::npos) {
+            total_options_per_section[option_name.substr(0, dot_it)]++;
+            dot_it++;
+            dot_it = option_name.find_first_of(".", dot_it);
         }
+    }
 
-        if (option.second.validator) {
-            std::stringstream stream;
-            stream << UserString("COMMAND_LINE_DEFAULT") << option.second.DefaultValueToString();
-            if (80 < curr_column + stream.str().size() + 3) {
-                os << "\n" << std::string(description_column, ' ') << stream.str() << "\n";
-            } else {
-                os << " | " << stream.str() << "\n";
+    // sort options into common sections
+    std::unordered_map<std::string, std::set<std::string>> options_by_section;
+    for (const auto& option : sections_by_option) {
+        for (const auto& section : option.second) {
+            auto section_name = section;
+            auto defined_section_it = m_sections.find(section_name);
+            bool has_descr = defined_section_it != m_sections.end() ?
+                             !defined_section_it->second.description.empty() :
+                             false;
+
+            // move options from sparse sections to more common parent
+            auto section_count = total_options_per_section[section_name];
+            auto section_end_it = section_name.find_last_of(".");
+            while (!has_descr && section_count < 4 && section_end_it != std::string::npos) {
+                auto new_section_name = section_name.substr(0, section_end_it);
+                // prevent moving into dense sections
+                if (total_options_per_section[new_section_name] > ( 7 - section_count ))
+                    break;
+                total_options_per_section[section_name]--;
+                section_name = new_section_name;
+                section_end_it = section_name.find_last_of(".");
+                section_count = total_options_per_section[section_name];
+
+                defined_section_it = m_sections.find(section_name);
+                if (defined_section_it != m_sections.end())
+                    has_descr = !defined_section_it->second.description.empty();
+            }
+
+            options_by_section[section_name].emplace(option.first);
+        }
+    }
+
+    // define which section are top level sections ("root"), move top level candidates with single option to misc
+    for (const auto& section_it : total_options_per_section) {
+        auto root_name = section_it.first.substr(0, section_it.first.find_first_of("."));
+        // root_name with no dot element allowed to pass if an option is known, potentially moving to misc section
+        auto total_it = total_options_per_section.find(root_name);
+        if (total_it == total_options_per_section.end())
+            continue;
+
+        if (total_it->second > 1) {
+            options_by_section["root"].emplace(root_name);
+        } else if (section_it.first != "misc" &&
+                   section_it.first != "root" &&
+                   m_sections.find(section_it.first) == m_sections.end())
+        {
+            // move option to misc section
+            auto section_option_it = options_by_section.find(section_it.first);
+            if (section_option_it == options_by_section.end())
+                continue;
+            for (auto&& option : section_option_it->second)
+                options_by_section["misc"].emplace(std::move(option));
+            options_by_section.erase(section_it.first);
+        }
+    }
+
+    return options_by_section;
+}
+
+void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool allow_unrecognized) const {
+    // Prevent logger output from garbling console display for low severity messages
+    OverrideAllLoggersThresholds(LogLevel::warn);
+
+    auto options_by_section = OptionsBySection(allow_unrecognized);
+    if (!command_line.empty() || command_line == "all" || command_line == "raw") {
+        // remove the root section if unneeded
+        if (options_by_section.find("root") != options_by_section.end())
+            options_by_section.erase("root");
+    }
+
+    // print description of command_line arg as section
+    if (command_line == "all") {
+        os << UserString("OPTIONS_DB_SECTION_ALL") << " ";
+    } else if (command_line == "raw") {
+        os << UserString("OPTIONS_DB_SECTION_RAW") << " ";
+    } else {
+        auto command_section_it = m_sections.find(command_line);
+        if (command_section_it != m_sections.end() && !command_section_it->second.description.empty())
+            os << UserString(command_section_it->second.description) << " ";
+    }
+
+    bool print_misc_section = command_line.empty();
+    std::set<std::string> section_list {};
+    // print option sections
+    if (command_line != "all" && command_line != "raw") {
+        std::size_t name_col_width = 20;
+        if (command_line.empty()) {
+            auto root_it = options_by_section.find("root");
+            if (root_it != options_by_section.end()) {
+                for (const auto& section : root_it->second)
+                    if (section.find_first_of(".") == std::string::npos)
+                        if (section_list.emplace(section).second && name_col_width < section.size())
+                            name_col_width = section.size();
             }
         } else {
-            os << "\n";
+            for (const auto& it : options_by_section)
+                if (OptionNameHasParentSection(it.first, command_line))
+                    if (section_list.emplace(it.first).second && name_col_width < it.first.size())
+                        name_col_width = it.first.size();
         }
-        os << "\n";
+        name_col_width += 5;
+
+        if (!section_list.empty())
+            os << UserString("COMMAND_LINE_SECTIONS") << ":" << std::endl;
+
+        auto indents = std::make_pair(2, name_col_width + 4);
+        auto widths = std::make_pair(TERMINAL_LINE_WIDTH - name_col_width, TERMINAL_LINE_WIDTH);
+        for (const auto& section : section_list) {
+            if (section == "misc") {
+                print_misc_section = true;
+                continue;
+            }
+            auto section_it = m_sections.find(section);
+            std::string descr = (section_it == m_sections.end()) ? "" : UserString(section_it->second.description);
+
+            os << std::setw(2) << "" // indent
+               << std::setw(name_col_width) << std::left << section // section name
+               << SplitText(descr, indents, widths); // section description
+        }
+
+        if (print_misc_section) {
+            // Add special miscellaneous section to bottom
+            os << std::setw(2) << "" << std::setw(name_col_width) << std::left << "misc";
+            os << SplitText(UserString("OPTIONS_DB_SECTION_MISC"), indents, widths);
+        }
+
+        // add empty line between groups and options
+        if (!section_list.empty() && !print_misc_section)
+            os << std::endl;
     }
+
+
+    // print options
+    if (!command_line.empty()) {
+        std::set<std::string> option_list;
+        if (command_line == "all" || command_line == "raw") {
+            for (const auto& option_section_it : options_by_section)
+                for (const auto& option : option_section_it.second)
+                    option_list.emplace(option);
+        } else {
+            auto option_section_it = options_by_section.find(command_line);
+            if (option_section_it != options_by_section.end())
+                option_list = option_section_it->second;
+            // allow traversal by node when no other results are found
+            if (option_list.empty() && section_list.empty())
+                FindOptions(option_list, command_line, allow_unrecognized);
+        }
+
+        // insert command_line as option, if it exists
+        if (command_line != "all" && command_line != "raw" && m_options.find(command_line) != m_options.end())
+            option_list.emplace(command_line);
+
+        if (!option_list.empty())
+            os << UserString("COMMAND_LINE_OPTIONS") << ":" << std::endl;
+
+        for (const auto& option_name : option_list) {
+            auto option_it = m_options.find(option_name);
+            if (option_it == m_options.end() || (!allow_unrecognized && !option_it->second.recognized))
+                continue;
+
+            if (command_line == "raw") {
+                os << option_name << ", " << option_it->second.description << "," << std::endl;
+                if (option_it->second.short_name)
+                    os << option_it->second.short_name << ", " << option_it->second.description << "," << std::endl;
+            } else {
+                // option name(s)
+                if (option_it->second.short_name)
+                    os << "-" << option_it->second.short_name << " | --" << option_name;
+                else
+                    os << "--" << option_name;
+
+                // option description
+                if (!option_it->second.description.empty())
+                    os << std::endl << SplitText(UserString(option_it->second.description), {5, 7});
+                else
+                    os << std::endl;
+
+                // option default value
+                if (option_it->second.validator) {
+                    auto validator_str = UserString("COMMAND_LINE_DEFAULT") + ": " + option_it->second.DefaultValueToString();
+                    os << SplitText(validator_str, {5, 7}, {TERMINAL_LINE_WIDTH - validator_str.size(), 77});
+                }
+                os << std::endl;
+            }
+        }
+
+        if (section_list.empty() && option_list.empty()) {
+            os << UserString("COMMAND_LINE_NOT_FOUND") << ": " << command_line << std::endl << std::endl;
+            os << UserString("COMMAND_LINE_USAGE") << std::endl;
+        }
+    }
+
+    // reset override in case this function is later repurposed
+    OverrideAllLoggersThresholds(boost::none);
 }
 
 void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only) const {
@@ -421,12 +655,12 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 if (value_str.at(0) == '-') { // this is either the last parameter or the next parameter is another option, assume this one is a flag
                     m_options[option_name] = Option(static_cast<char>(0), option_name, true,
                                                     boost::lexical_cast<std::string>(false),
-                                                    "", 0, false, true, false);
+                                                    "", 0, false, true, false, std::string());
                 } else { // the next parameter is the value, store it as a string to be parsed later
                     m_options[option_name] = Option(static_cast<char>(0), option_name,
                                                     value_str, value_str, "",
                                                     new Validator<std::string>(),
-                                                    false, false, false); // don't attempt to store options that have only been specified on the command line
+                                                    false, false, false, std::string()); // don't attempt to store options that have only been specified on the command line
                 }
 
                 WarnLogger() << "Option \"" << option_name << "\", was specified on the command line but was not recognized.  It may not be registered yet or could be a typo.";
@@ -437,10 +671,11 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
 
                 if (!option.flag) { // non-flag
                     try {
-                        // ensure a parameter exists...
-                        if (i + 1 >= static_cast<unsigned int>(args.size()))
-                            throw std::runtime_error("the option \"" + option.name +
-                                                     "\" was specified, at the end of the list, with no parameter value.");
+                        // check if parameter exists...
+                        if (i + 1 >= static_cast<unsigned int>(args.size())) {
+                            m_dirty |= option.SetFromString("");
+                            continue;
+                        }
                         // get parameter value
                         std::string value_str(args[++i]);
                         StripQuotation(value_str);
@@ -486,10 +721,14 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                         throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
 
                     if (!option.flag) {
-                        if (j < single_char_options.size() - 1)
+                        if (j < single_char_options.size() - 1) {
                             throw std::runtime_error(std::string("Option \"-") + single_char_options[j] + "\" was given with no parameter.");
-                        else
-                            m_dirty |= option.SetFromString(args[++i]);
+                        } else {
+                            if (i + 1 >= static_cast<unsigned int>(args.size()))
+                                m_dirty |= option.SetFromString("");
+                            else
+                                m_dirty |= option.SetFromString(args[++i]);
+                        }
                     } else {
                         option.value = true;
                     }
@@ -543,7 +782,7 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
             m_options[option_name] = Option(static_cast<char>(0), option_name,
                                             elem.Text(), elem.Text(),
                                             "", new Validator<std::string>(),
-                                            true, false, false);
+                                            true, false, false, section_name);
         }
 
         TraceLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  It may not be registered yet or you may need to delete your config.xml if it is out of date.";
@@ -566,6 +805,19 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
         } catch (const std::exception& e) {
             ErrorLogger() << "OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attempting to set option \"" << option_name << "\": " << e.what();
         }
+    }
+}
+
+void OptionsDB::AddSection(const std::string& name, const std::string& description,
+                           std::function<bool (const std::string&)> option_predicate)
+{
+    auto insert_result = m_sections.emplace(name, OptionSection(name, description, option_predicate));
+    // if previously existing section, update description/predicate if empty/null
+    if (!insert_result.second) {
+        if (!description.empty() && insert_result.first->second.description.empty())
+            insert_result.first->second.description = description;
+        if (option_predicate != nullptr && insert_result.first->second.option_predicate == nullptr)
+            insert_result.first->second.option_predicate = option_predicate;
     }
 }
 

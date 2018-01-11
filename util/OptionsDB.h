@@ -10,6 +10,7 @@
 #include <boost/signals2/signal.hpp>
 
 #include <map>
+#include <unordered_set>
 
 
 class OptionsDB;
@@ -82,8 +83,8 @@ FO_COMMON_API OptionsDB& GetOptionsDB();
   * options.  All flag command-line options (specified with AddFlag()) are
   * assumed to have false as their default value.  This means that their mere
   * presence on the command line means that they indicate a value of true;
-  * they need no argument.  For example, specifying "--help" on the command
-  * line sets the option "help" in the DB to true, and leaving it out sets the
+  * they need no argument.  For example, specifying "--version" on the command
+  * line sets the option "version" in the DB to true, and leaving it out sets the
   * option to false.
   * <br><br>Long-form names should be preceded with "--", and the
   * single-character version should be preceded with "-".  An exception to this
@@ -176,7 +177,7 @@ public:
     std::shared_ptr<const ValidatorBase> GetValidator(const std::string& option_name) const;
 
     /** writes a usage message to \a os */
-    void        GetUsage(std::ostream& os, const std::string& command_line = "") const;
+    void        GetUsage(std::ostream& os, const std::string& command_line = "", bool allow_unrecognized = false) const;
 
     /** @brief  Saves the contents of the options DB to the @p doc XMLDoc.
      *
@@ -200,7 +201,8 @@ public:
     /** adds an Option, optionally with a custom validator */
     template <class T>
     void        Add(const std::string& name, const std::string& description, T default_value,
-                    const ValidatorBase& validator = Validator<T>(), bool storable = true)
+                    const ValidatorBase& validator = Validator<T>(), bool storable = true,
+                    const std::string& section = std::string())
     {
         auto it = m_options.find(name);
         boost::any value = default_value;
@@ -220,7 +222,7 @@ public:
             }
         }
         m_options[name] = Option(static_cast<char>(0), name, value, default_value,
-                                 description, validator.Clone(), storable, false, true);
+                                 description, validator.Clone(), storable, false, true, section);
         m_dirty = true;
         OptionAddedSignal(name);
     }
@@ -229,7 +231,8 @@ public:
       * optionally with a custom validator */
     template <class T>
     void        Add(char short_name, const std::string& name, const std::string& description, T default_value,
-                    const ValidatorBase& validator = Validator<T>(), bool storable = true)
+                    const ValidatorBase& validator = Validator<T>(), bool storable = true,
+                    const std::string& section = std::string())
     {
         auto it = m_options.find(name);
         boost::any value = default_value;
@@ -249,7 +252,7 @@ public:
             }
         }
         m_options[name] = Option(short_name, name, value, default_value, description,
-                                 validator.Clone(), storable, false, true);
+                                 validator.Clone(), storable, false, true, section);
         m_dirty = true;
         OptionAddedSignal(name);
     }
@@ -258,7 +261,7 @@ public:
       * of false.  Using the flag on the command line at all indicates that its
       * value it set to true. */
     void        AddFlag(const std::string& name, const std::string& description,
-                        bool storable = true)
+                        bool storable = true, const std::string& section = std::string())
     {
         auto it = m_options.find(name);
         bool value = false;
@@ -272,7 +275,7 @@ public:
         }
         m_options[name] = Option(static_cast<char>(0), name, value,
                                  boost::lexical_cast<std::string>(false),
-                                 description, nullptr, storable, true, true);
+                                 description, nullptr, storable, true, true, section);
         m_dirty = true;
         OptionAddedSignal(name);
     }
@@ -281,7 +284,8 @@ public:
       * is treated as a boolean value with a default of false.  Using the flag
       * on the command line at all indicates that its value it set to true. */
     void        AddFlag(char short_name, const std::string& name,
-                        const std::string& description, bool storable = true)
+                        const std::string& description, bool storable = true,
+                        const std::string& section = std::string())
     {
         auto it = m_options.find(name);
         bool value = false;
@@ -295,7 +299,7 @@ public:
         }
         m_options[name] = Option(short_name, name, value,
                                  boost::lexical_cast<std::string>(false),
-                                 description, nullptr, storable, true, true);
+                                 description, nullptr, storable, true, true, section);
         m_dirty = true;
         OptionAddedSignal(name);
     }
@@ -346,7 +350,8 @@ public:
         Option();
         Option(char short_name_, const std::string& name_, const boost::any& value_,
                const boost::any& default_value_, const std::string& description_,
-               const ValidatorBase *validator_, bool storable_, bool flag_, bool recognized_);
+               const ValidatorBase *validator_, bool storable_, bool flag_, bool recognized_,
+               const std::string& section = std::string());
 
         // SetFromValue returns true if this->value is successfully changed
         template <typename T>
@@ -363,6 +368,7 @@ public:
         boost::any      value;          ///< the value of the option
         boost::any      default_value;  ///< the default value of the option
         std::string     description;    ///< a desription of the option
+        std::unordered_set<std::string> sections; ///< sections this option should display under
 
         /** A validator for the option.  Flags have no validators; lexical_cast
             boolean conversions are done for them. */
@@ -376,6 +382,24 @@ public:
 
         static std::map<char, std::string> short_names;   ///< the master list of abbreviated option names, and their corresponding long-form names
     };
+
+    struct FO_COMMON_API OptionSection {
+        OptionSection();
+        OptionSection(const std::string& name_, const std::string& description_,
+                      std::function<bool (const std::string&)> option_predicate_);
+
+        std::string name;
+        std::string description;
+        std::function<bool (const std::string&)> option_predicate = nullptr;
+    };
+
+    /** Defines an option section with a description and optionally a option predicate.
+     *  @param name Name of section, typically in the form of a left side subset of an option name.
+     *  @param description Stringtable key used for local description
+     *  @param option_predicate Functor accepting a option name in the form of a std::string const ref and
+     *                          returning a bool. Options which return true are displayed in the section for @p name */
+    void AddSection(const std::string& name, const std::string& description,
+                    std::function<bool (const std::string&)> option_predicate = nullptr);
 
 private:
     /** indicates whether the option referenced by \a it has been added to this
@@ -393,7 +417,12 @@ private:
 
     void        SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name);
 
+    /** Determine known option sections and which options each contains
+     *  A special "root" section is added for determined top-level sections */
+    std::unordered_map<std::string, std::set<std::string>> OptionsBySection(bool allow_unrecognized = false) const;
+
     std::map<std::string, Option>   m_options;
+    std::unordered_map<std::string, OptionSection> m_sections;
     static OptionsDB*               s_options_db;
     bool                            m_dirty; //< has OptionsDB changed since last Commit()
 

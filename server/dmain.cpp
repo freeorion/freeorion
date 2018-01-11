@@ -47,7 +47,8 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #ifndef FREEORION_DMAIN_KEEP_STACKTRACE
     try {
 #endif
-        GetOptionsDB().AddFlag('h', "help",          UserStringNop("OPTIONS_DB_HELP"),              false);
+        GetOptionsDB().Add<std::string>('h', "help", UserStringNop("OPTIONS_DB_HELP"),              "NOOP",
+                                        Validator<std::string>(),                                   false);
         GetOptionsDB().AddFlag('v', "version",       UserStringNop("OPTIONS_DB_VERSION"),           false);
         GetOptionsDB().AddFlag('s', "singleplayer",  UserStringNop("OPTIONS_DB_SINGLEPLAYER"),      false);
         GetOptionsDB().AddFlag("hostless",           UserStringNop("OPTIONS_DB_HOSTLESS"),          false);
@@ -62,8 +63,9 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         // override previously-saved and default options with command line parameters and flags
         GetOptionsDB().SetFromCommandLine(args);
 
-        if (GetOptionsDB().Get<bool>("help")) {
-            GetOptionsDB().GetUsage(std::cerr);
+        auto help_arg = GetOptionsDB().Get<std::string>("help");
+        if (help_arg != "NOOP") {
+            GetOptionsDB().GetUsage(std::cerr, help_arg);
             ShutdownLoggingSystemFileSink();
             return 0;
         }
