@@ -456,6 +456,7 @@ MPLobby::MPLobby(my_context c) :
 
         m_lobby_data->m_any_can_edit = true;
 
+        auto max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
         std::list<PlayerConnectionPtr> to_disconnect;
         // Try to use connections:
         for (const auto& player_connection : server.m_networking) {
@@ -488,7 +489,7 @@ MPLobby::MPLobby(my_context c) :
                                 Networking::ROLE_GALAXY_SETUP
                                 });
             } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
-                if (m_ai_next_index <= GetOptionsDB().Get<int>("mplobby-max-ai") || GetOptionsDB().Get<int>("mplobby-max-ai") < 0) {
+                if (m_ai_next_index <= max_ai || max_ai < 0) {
                     PlayerSetupData player_setup_data;
                     player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
                     player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
@@ -511,7 +512,7 @@ MPLobby::MPLobby(my_context c) :
             server.Networking().Disconnect(player_connection);
         }
 
-        TestHumanPlayers();
+        ValidateClientLimits();
 
         server.Networking().SendMessageAll(ServerLobbyUpdateMessage(*m_lobby_data));
     } else {
@@ -537,18 +538,44 @@ MPLobby::MPLobby(my_context c) :
 MPLobby::~MPLobby()
 { TraceLogger(FSM) << "(ServerFSM) ~MPLobby"; }
 
-void MPLobby::TestHumanPlayers() {
+void MPLobby::ValidateClientLimits() {
     int human_count = 0;
+    int ai_count = 0;
     for (const auto& plr : m_lobby_data->m_players) {
-        if (plr.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+        if (plr.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
             human_count++;
-        }
+        else if (plr.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            ai_count++;
     }
 
-    // restrict minimun number of human players
-    if (human_count < GetOptionsDB().Get<int>("mplobby-min-human")) {
+    int min_ai = GetOptionsDB().Get<int>("network.server.ai.min");
+    int max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
+    if (max_ai >= 0 && max_ai < min_ai) {
+        WarnLogger(FSM) << "Maximum ai clients less than minimum, setting max to min";
+        max_ai = min_ai;
+        GetOptionsDB().Set<int>("network.server.ai.max", max_ai);
+    }
+    int min_human = GetOptionsDB().Get<int>("network.server.human.min");
+    int max_human = GetOptionsDB().Get<int>("network.server.human.max");
+    if (max_human >= 0 && max_human < min_human) {
+        WarnLogger(FSM) << "Maximum human clients less than minimum, setting max to min";
+        max_human = min_human;
+        GetOptionsDB().Set<int>("network.server.human.max", max_human);
+    }
+
+    // restrict minimun number of human and ai players
+    if (human_count < min_human) {
         m_lobby_data->m_start_locked = true;
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_HUMAN_PLAYERS");
+    } else if (max_human >= 0 && human_count > max_human) {
+        m_lobby_data->m_start_locked = true;
+        m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_TOO_MANY_HUMAN_PLAYERS");
+    } else if (ai_count < min_ai) {
+        m_lobby_data->m_start_locked = true;
+        m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_AI_PLAYERS");
+    } else if (max_ai >= 0 && ai_count > max_ai) {
+        m_lobby_data->m_start_locked = true;
+        m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_TOO_MANY_AI_PLAYERS");
     } else {
         m_lobby_data->m_start_locked = false;
         m_lobby_data->m_start_lock_cause.clear();
@@ -602,7 +629,7 @@ sc::result MPLobby::react(const Disconnection& d) {
         return discard_event();
     }
 
-    TestHumanPlayers();
+    ValidateClientLimits();
 
     // send updated lobby data to players after disconnection-related changes
     for (auto it = server.m_networking.established_begin();
@@ -678,7 +705,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         { server.Networking().Disconnect(conn); }
     }
 
-    TestHumanPlayers();
+    ValidateClientLimits();
 
     player_connection->SetAuthRoles({
                     Networking::ROLE_CLIENT_TYPE_MODERATOR,
@@ -993,7 +1020,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             }
 
             // limit count of AI
-            if (ai_count <= GetOptionsDB().Get<int>("mplobby-max-ai") || GetOptionsDB().Get<int>("mplobby-max-ai") < 0) {
+            auto max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
+            if (ai_count <= max_ai || max_ai < 0) {
                 m_lobby_data->m_players    = incoming_lobby_data.m_players;
             } else {
                 has_important_changes = true;
@@ -1120,7 +1148,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         }
     }
 
-    TestHumanPlayers();
+    ValidateClientLimits();
     if(m_lobby_data->m_start_locked) {
         has_important_changes = true;
     }
