@@ -548,17 +548,34 @@ void MPLobby::ValidateClientLimits() {
             ai_count++;
     }
 
+    int min_ai = GetOptionsDB().Get<int>("network.server.ai.min");
+    int max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
+    if (max_ai >= 0 && max_ai < min_ai) {
+        WarnLogger(FSM) << "Maximum ai clients less than minimum, setting max to min";
+        max_ai = min_ai;
+        GetOptionsDB().Set<int>("network.server.ai.max", max_ai);
+    }
+    int min_human = GetOptionsDB().Get<int>("network.server.human.min");
+    int max_human = GetOptionsDB().Get<int>("network.server.human.max");
+    if (max_human >= 0 && max_human < min_human) {
+        WarnLogger(FSM) << "Maximum human clients less than minimum, setting max to min";
+        max_human = min_human;
+        GetOptionsDB().Set<int>("network.server.human.max", max_human);
+    }
+
     // restrict minimun number of human and ai players
-    auto max_human_clients = GetOptionsDB().Get<int>("network.server.human.max");
-    if (human_count < GetOptionsDB().Get<int>("network.server.human.min")) {
+    if (human_count < min_human) {
         m_lobby_data->m_start_locked = true;
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_HUMAN_PLAYERS");
-    } else if (max_human_clients >= 0 && human_count > max_human_clients) {
+    } else if (max_human >= 0 && human_count > max_human) {
         m_lobby_data->m_start_locked = true;
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_TOO_MANY_HUMAN_PLAYERS");
-    } else if (ai_count < GetOptionsDB().Get<int>("network.server.ai.min")) {
+    } else if (ai_count < min_ai) {
         m_lobby_data->m_start_locked = true;
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_AI_PLAYERS");
+    } else if (max_ai >= 0 && ai_count > max_ai) {
+        m_lobby_data->m_start_locked = true;
+        m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_TOO_MANY_AI_PLAYERS");
     } else {
         m_lobby_data->m_start_locked = false;
         m_lobby_data->m_start_lock_cause.clear();

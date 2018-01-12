@@ -980,6 +980,9 @@ Password wrong for player name %1%.
 ERROR_NOT_ENOUGH_AI_PLAYERS
 Not enough AI players.
 
+ERROR_TOO_MANY_AI_PLAYERS
+Too many ai players.
+
 ERROR_NOT_ENOUGH_HUMAN_PLAYERS
 Not enough human players.
 
