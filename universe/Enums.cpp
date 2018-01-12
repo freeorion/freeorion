@@ -20,6 +20,7 @@ MeterType ResourceToMeter(ResourceType type) {
     case RE_INDUSTRY:   return METER_INDUSTRY;
     case RE_RESEARCH:   return METER_RESEARCH;
     case RE_TRADE:      return METER_TRADE;
+    case RE_STOCKPILE:  return METER_STOCKPILE;
     default:
         assert(0);
         return INVALID_METER_TYPE;
@@ -32,6 +33,7 @@ MeterType ResourceToTargetMeter(ResourceType type) {
     case RE_INDUSTRY:   return METER_TARGET_INDUSTRY;
     case RE_RESEARCH:   return METER_TARGET_RESEARCH;
     case RE_TRADE:      return METER_TARGET_TRADE;
+    case RE_STOCKPILE:  return METER_MAX_STOCKPILE;
     default:
         assert(0);
         return INVALID_METER_TYPE;
@@ -44,6 +46,7 @@ ResourceType MeterToResource(MeterType type) {
     case METER_INDUSTRY:    return RE_INDUSTRY;
     case METER_RESEARCH:    return RE_RESEARCH;
     case METER_TRADE:       return RE_TRADE;
+    case METER_STOCKPILE:   return RE_STOCKPILE;
     default:
         assert(0);
         return INVALID_RESOURCE_TYPE;

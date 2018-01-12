@@ -70,11 +70,9 @@ namespace {
             break;
 
         case RE_TRADE:
-            return 0.0;
-            break;
-
         case RE_RESEARCH:
-            // research isn't consumed at a particular location, so none is consumed at any location
+        case RE_STOCKPILE:
+            // research/stockpile aren't consumed at a particular location, so none is consumed at any location
         default:
             // for INVALID_RESOURCE_TYPE just return 0.0.  Could throw an exception, I suppose...
             break;
@@ -90,7 +88,8 @@ namespace {
     { return GG::X(ClientUI::Pts()*4); }
 }
 
-SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType resource_type, int system_id, int empire_id) :
+SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType resource_type,
+                                                               int system_id, int empire_id) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, LabelWidth() + ValueWidth(), GG::Y1),
     m_resource_type(resource_type),
     m_system_id(system_id),
@@ -249,6 +248,8 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         resource_text = UserString("RESEARCH_PRODUCTION");  break;
     case RE_TRADE:
         resource_text = UserString("TRADE_PRODUCTION");     break;
+    case RE_STOCKPILE:
+        resource_text = UserString("STOCKPILE_GENERATION"); break;
     default:
         resource_text = UserString("UNKNOWN_VALUE_SYMBOL"); break;
     }
@@ -347,14 +348,18 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         resource_text = UserString("RESEARCH_CONSUMPTION"); break;
     case RE_TRADE:
         resource_text = UserString("TRADE_CONSUMPTION");    break;
+    case RE_STOCKPILE:
+        resource_text = UserString("STOCKPILE_USE");        break;
     default:
         resource_text = UserString("UNKNOWN_VALUE_SYMBOL"); break;
     }
 
     std::string system_allocation_text = DoubleToString(m_allocation, 3, false);
 
-    // for research only, local allocation makes no sense
+    // for research and stockpiling, local allocation makes no sense
     if (m_resource_type == RE_RESEARCH && m_allocation == 0.0)
+        system_allocation_text = UserString("NOT_APPLICABLE");
+    if (m_resource_type == RE_STOCKPILE && m_allocation == 0.0)
         system_allocation_text = UserString("NOT_APPLICABLE");
 
 
@@ -372,7 +377,10 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
 
     // check for early exit cases...
     bool abort = false;
-    if (m_empire_id == ALL_EMPIRES ||m_resource_type == RE_RESEARCH) {
+    if (m_empire_id == ALL_EMPIRES ||
+        m_resource_type == RE_RESEARCH ||
+        m_resource_type == RE_STOCKPILE)
+    {
         // multiple empires have complicated stockpiling which don't make sense to try to display.
         // Research use is nonlocalized, so importing / exporting doesn't make sense to display
         abort = true;
@@ -407,6 +415,7 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
             }
             break;
         case RE_RESEARCH:
+        case RE_STOCKPILE:
         default:
             // show nothing
             abort = true;

@@ -71,6 +71,7 @@ namespace FreeOrionPython {
             .value("industry",      RE_INDUSTRY)
             .value("trade",         RE_TRADE)
             .value("research",      RE_RESEARCH)
+            .value("stockpile",     RE_STOCKPILE)
         ;
         enum_<MeterType>("meterType")
             .value("targetPopulation",  METER_TARGET_POPULATION)

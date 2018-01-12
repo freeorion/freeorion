@@ -3152,6 +3152,9 @@ Research Output
 TRADE_PRODUCTION
 Trade Output
 
+STOCKPILE_GENERATION
+Stockpile Capacity Generation
+
 INDUSTRY_CONSUMPTION
 Industrial Consumption
 
@@ -3160,6 +3163,9 @@ Research Consumption
 
 TRADE_CONSUMPTION
 Trade Consumption
+
+STOCKPILE_USE
+Stockpile Capacity Use
 
 IMPORT_EXPORT_TOOLTIP
 Import / Export

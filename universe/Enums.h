@@ -230,6 +230,7 @@ GG_ENUM(ResourceType,
     RE_INDUSTRY,
     RE_TRADE,
     RE_RESEARCH,
+    RE_STOCKPILE,
     NUM_RESOURCE_TYPES
 )
 

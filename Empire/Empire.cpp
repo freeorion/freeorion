@@ -1307,19 +1307,6 @@ const GG::Clr& Empire::Color() const
 int Empire::CapitalID() const
 { return m_capital_id; }
 
-int Empire::StockpileID(ResourceType res) const {
-    switch (res) {
-    case RE_TRADE:
-    case RE_INDUSTRY:
-        return m_capital_id;
-        break;
-    case RE_RESEARCH:
-    default:
-        return INVALID_OBJECT_ID;
-        break;
-    }
-}
-
 int Empire::SourceID() const {
     auto good_source = Source();
     return good_source ? good_source->ID() : INVALID_OBJECT_ID;
@@ -3293,16 +3280,6 @@ void Empire::InitResourcePools() {
     sets_set.insert(all_systems_set);
     m_resource_pools[RE_RESEARCH]->SetConnectedSupplyGroups(sets_set);
     m_resource_pools[RE_TRADE]->SetConnectedSupplyGroups(sets_set);
-
-
-    // set stockpile object locations for each resource, ensuring those systems exist
-    //static std::vector<ResourceType> res_type_vec {RE_INDUSTRY, RE_TRADE, RE_RESEARCH};
-    for (ResourceType res_type : {RE_INDUSTRY, RE_TRADE, RE_RESEARCH}) {
-        int stockpile_object_id = INVALID_OBJECT_ID;
-        if (auto stockpile_obj = GetUniverseObject(StockpileID(res_type)))
-            stockpile_object_id = stockpile_obj->ID();
-        m_resource_pools[res_type]->SetStockpileObject(stockpile_object_id);
-    }
 }
 
 void Empire::UpdateResourcePools() {

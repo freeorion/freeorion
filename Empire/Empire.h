@@ -300,7 +300,6 @@ public:
     int                 EmpireID() const;                           ///< Returns the Empire's unique numeric ID
     const GG::Clr&      Color() const;                              ///< Returns the Empire's color
     int                 CapitalID() const;                          ///< Returns the numeric ID of the empire's capital
-    int                 StockpileID(ResourceType res) const;        ///< Returns the numeric ID of the empire's stockpile location for the resource of type \a res
 
     /** Return an object id that is owned by the empire or INVALID_OBJECT_ID. */
     int                 SourceID() const;
@@ -641,8 +640,8 @@ private:
     std::set<std::string>           m_available_building_types; ///< list of acquired BuildingType.  These are string names referencing BuildingType objects
     std::set<std::string>           m_available_part_types;     ///< list of acquired ship PartType.  These are string names referencing PartType objects
     std::set<std::string>           m_available_hull_types;     ///< list of acquired ship HullType.  These are string names referencing HullType objects
-    std::set<int>                   m_explored_systems;         ///< systems you've explored
-    std::set<int>                   m_ship_designs;             ///< The Empire's ship designs sorted by id
+    std::set<int>                   m_explored_systems;         ///< systems explored by this empire
+    std::set<int>                   m_ship_designs;             ///< The Empire's ship designs ids
 
     std::vector<SitRepEntry>        m_sitrep_entries;           ///< The Empire's sitrep entries
 
