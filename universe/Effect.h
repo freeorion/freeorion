@@ -1270,13 +1270,9 @@ public:
     std::string Dump(unsigned short ntabs = 0) const override;
 
     bool IsMeterEffect() const override;
-
     bool IsAppearanceEffect() const override;
-
     bool IsSitrepEffect() const override;
-
-    bool IsConditionalEffect() const override
-    { return true; }
+    bool IsConditionalEffect() const override { return true; }
 
     void SetTopLevelContent(const std::string& content_name) override;
 

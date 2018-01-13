@@ -366,6 +366,7 @@ unsigned int EffectBase::GetCheckSum() const {
     return retval;
 }
 
+
 ///////////////////////////////////////////////////////////
 // NoOp                                                  //
 ///////////////////////////////////////////////////////////
@@ -499,7 +500,7 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
     } else if (m_value->SimpleIncrement()) {
         // meter value is a consistent constant increment for each target, so handle with
         // deep inspection single ValueRef evaluation
-        ValueRef::Operation<double>* op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
+        auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
         if (!op) {
             ErrorLogger() << "SetMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
             EffectBase::Execute(context, targets);
@@ -3785,6 +3786,8 @@ void Conditional::Execute(const ScriptingContext& context,
                           bool include_empire_meter_effects,
                           bool only_generate_sitrep_effects) const
 {
+    TraceLogger(effects) << "\n\nExecute Conditional effect: \n" << Dump();
+
     // apply sub-condition to target set to pick which to act on with which of sub-effects
     const Condition::ObjectSet& potential_target_objects =
         *reinterpret_cast<const Condition::ObjectSet*>(&targets);
@@ -3793,6 +3796,8 @@ void Conditional::Execute(const ScriptingContext& context,
     if (m_target_condition)
         m_target_condition->Eval(context, matches, non_matches,
                                  Condition::MATCHES);
+
+    TraceLogger(effects) << "\n\nExecute Conditional effect: \n" << Dump();
 
     // execute true and false effects to target matches and non-matches respectively
     if (!matches.empty() && !m_true_effects.empty()) {

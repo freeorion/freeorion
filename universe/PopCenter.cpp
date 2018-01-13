@@ -20,8 +20,7 @@ PopCenter::PopCenter(const std::string& species_name) :
     m_species_name(species_name)
 {}
 
-PopCenter::PopCenter() :
-    m_species_name()
+PopCenter::PopCenter()
 {}
 
 PopCenter::~PopCenter()
@@ -44,7 +43,6 @@ void PopCenter::Copy(std::shared_ptr<const PopCenter> copied_object)
 { Copy(copied_object, VIS_FULL_VISIBILITY); }
 
 void PopCenter::Init() {
-    //DebugLogger() << "PopCenter::Init";
     AddMeter(METER_POPULATION);
     AddMeter(METER_TARGET_POPULATION);
     AddMeter(METER_HAPPINESS);

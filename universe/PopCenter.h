@@ -68,7 +68,7 @@ private:
     virtual const Meter*    GetMeter(MeterType type) const = 0; ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual void            AddMeter(MeterType meter_type) = 0; ///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions
 
-    std::string m_species_name;                                 ///< the name of the species that occupies this planet
+    std::string m_species_name = "";                            ///< the name of the species that occupies this planet
 
     friend class boost::serialization::access;
     template <class Archive>

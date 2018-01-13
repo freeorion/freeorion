@@ -685,8 +685,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return 0.0;
     }
 
-    std::shared_ptr<const UniverseObject> object =
-        FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+    auto object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<double>::Eval unable to follow reference: "
                       << TraceReference(m_property_name, m_ref_type, context);
@@ -1069,8 +1068,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         return "";
     }
 
-    std::shared_ptr<const UniverseObject> object =
-        FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+    auto object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<std::string>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
         if (context.source)
