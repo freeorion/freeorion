@@ -114,7 +114,7 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
         this->m_initial_orbital_position =  copied_planet->m_initial_orbital_position;
         this->m_rotational_period =         copied_planet->m_rotational_period;
         this->m_axial_tilt =                copied_planet->m_axial_tilt;
-        this->m_just_conquered =            copied_planet->m_just_conquered;
+        this->m_turn_last_conquered =       copied_planet->m_turn_last_conquered;
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
             if (vis >= VIS_FULL_VISIBILITY) {
@@ -189,8 +189,8 @@ std::string Planet::Dump(unsigned short ntabs) const {
         os << " (About to be Colonize)";
     if (m_is_about_to_be_invaded)
         os << " (About to be Invaded)";
-    if (m_just_conquered)
-        os << " (Just Conquered)";
+
+    os << " conqured on turn: " << m_turn_last_conquered;
     if (m_is_about_to_be_bombarded)
         os << " (About to be Bombarded)";
     if (m_ordered_given_to_empire_id != ALL_EMPIRES)
@@ -646,7 +646,7 @@ void Planet::Reset() {
                 building->Reset();
     }
 
-    m_just_conquered = false;
+    //m_turn_last_conquered left unchanged
     m_is_about_to_be_colonized = false;
     m_is_about_to_be_invaded = false;
     m_is_about_to_be_bombarded = false;
@@ -665,7 +665,7 @@ void Planet::Depopulate() {
 }
 
 void Planet::Conquer(int conquerer) {
-    m_just_conquered = true;
+    m_turn_last_conquered = CurrentTurn();
 
     // deal with things on production queue located at this planet
     Empire::ConquerProductionQueueItemsAtLocation(ID(), conquerer);
@@ -743,7 +743,6 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
         for (int building_id : m_buildings)
             if (auto building = GetBuilding(building_id))
                 building->Reset();
-        m_just_conquered = false;
         m_is_about_to_be_colonized = false;
         m_is_about_to_be_invaded = false;
         m_is_about_to_be_bombarded = false;
@@ -840,9 +839,8 @@ void Planet::SetSurfaceTexture(const std::string& texture) {
 void Planet::PopGrowthProductionResearchPhase() {
     UniverseObject::PopGrowthProductionResearchPhase();
 
-    bool just_conquered = m_just_conquered;
     // do not do production if planet was just conquered
-    m_just_conquered = false;
+    bool just_conquered = CurrentTurn() > 0 && m_turn_last_conquered == CurrentTurn();
 
     if (!just_conquered)
         ResourceCenterPopGrowthProductionResearchPhase();

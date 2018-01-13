@@ -20,6 +20,7 @@
 BOOST_CLASS_EXPORT(System)
 BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Planet)
+BOOST_CLASS_VERSION(Planet, 1)
 BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
 BOOST_CLASS_VERSION(Fleet, 3)
@@ -213,7 +214,7 @@ void Field::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void Planet::serialize(Archive& ar, const unsigned int version)
 {
-   ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
+   ar   & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_BASE_OBJECT_NVP(PopCenter)
         & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourceCenter)
         & BOOST_SERIALIZATION_NVP(m_type)
@@ -223,9 +224,14 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_initial_orbital_position)
         & BOOST_SERIALIZATION_NVP(m_rotational_period)
         & BOOST_SERIALIZATION_NVP(m_axial_tilt)
-        & BOOST_SERIALIZATION_NVP(m_buildings)
-        & BOOST_SERIALIZATION_NVP(m_just_conquered)
-        & BOOST_SERIALIZATION_NVP(m_is_about_to_be_colonized)
+        & BOOST_SERIALIZATION_NVP(m_buildings);
+    if (version < 1) {
+        bool dummy = false;
+        ar   & boost::serialization::make_nvp("m_just_conquered", dummy);
+    } else {
+        ar   & BOOST_SERIALIZATION_NVP(m_turn_last_conquered);
+    }
+    ar  & BOOST_SERIALIZATION_NVP(m_is_about_to_be_colonized)
         & BOOST_SERIALIZATION_NVP(m_is_about_to_be_invaded)
         & BOOST_SERIALIZATION_NVP(m_is_about_to_be_bombarded)
         & BOOST_SERIALIZATION_NVP(m_ordered_given_to_empire_id)

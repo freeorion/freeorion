@@ -17,41 +17,30 @@ class FO_COMMON_API Planet :
 public:
     /** \name Accessors */ //@{
     bool HostileToEmpire(int empire_id) const override;
-
     std::set<std::string> Tags() const override;
-
     bool HasTag(const std::string& name) const override;
-
     UniverseObjectType ObjectType() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
 
     int ContainerObjectID() const override;
-
     const std::set<int>& ContainedObjectIDs() const override;
-
     bool Contains(int object_id) const override;
-
     bool ContainedBy(int object_id) const override;
 
     float CurrentMeterValue(MeterType type) const override;
-
     float InitialMeterValue(MeterType type) const override;
-
     float NextTurnCurrentMeterValue(MeterType type) const override;
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
-
-    void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    void Copy(std::shared_ptr<const UniverseObject> copied_object,
+              int empire_id = ALL_EMPIRES) override;
 
     Meter* GetMeter(MeterType type) override;
 
     std::vector<std::string> AvailableFoci() const override;
-
     const std::string& FocusIcon(const std::string& focus_name) const override;
 
     void Reset() override;
-
     void Depopulate() override;
 
     PlanetType                  Type() const                        { return m_type; }
@@ -90,6 +79,7 @@ public:
     bool                        IsAboutToBeBombarded() const    { return m_is_about_to_be_bombarded; }
     int                         OrderedGivenToEmpire() const    { return m_ordered_given_to_empire_id; }
     int                         LastTurnAttackedByShip() const  { return m_last_turn_attacked_by_ship; }
+    int                         LastTurnConquered() const       { return m_turn_last_conquered; }
 
     const std::string&          SurfaceTexture() const          { return m_surface_texture; }
     std::string                 CardinalSuffix() const;     ///< returns a roman number representing this planets orbit in relation to other planets
@@ -107,7 +97,8 @@ public:
     bool            RemoveBuilding(int building_id);    ///< removes the building from the planet; returns false if no such building was found
 
     void            Conquer(int conquerer);             ///< Called during combat when a planet changes hands
-    bool            Colonize(int empire_id, const std::string& species_name, double population); ///< Called during colonization handling to do the actual colonizing
+    bool            Colonize(int empire_id, const std::string& species_name,
+                             double population);        ///< Called during colonization handling to do the actual colonizing
     void            SetIsAboutToBeColonized(bool b);    ///< Called during colonization when a planet is about to be colonized
     void            ResetIsAboutToBeColonized();        ///< Called after colonization, to reset the number of prospective colonizers to 0
     void            SetIsAboutToBeInvaded(bool b);      ///< Marks planet as being invaded or not, depending on whether \a b is true or false
@@ -118,9 +109,7 @@ public:
     void            ClearGiveToEmpire();                ///< Marks planet not to be given to any empire
 
     void            SetLastTurnAttackedByShip(int turn);///< Sets the last turn this planet was attacked by a ship
-
     void            SetSurfaceTexture(const std::string& texture);
-
     void            ResetTargetMaxUnpairedMeters() override;
     //@}
 
@@ -138,7 +127,8 @@ public:
     Planet(PlanetType type, PlanetSize size);
 
 protected:
-    template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <class T>
+    friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:
     ~Planet() {}
@@ -173,7 +163,7 @@ private:
 
     std::set<int>   m_buildings;
 
-    bool            m_just_conquered = false;
+    int             m_turn_last_conquered = INVALID_GAME_TURN;
     bool            m_is_about_to_be_colonized = false;
     bool            m_is_about_to_be_invaded = false;
     bool            m_is_about_to_be_bombarded = false;
