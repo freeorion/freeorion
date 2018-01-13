@@ -656,14 +656,20 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
             continue;
         }
 
-        // every meter has a value at the start of the turn, and a value after updating with known effects
+        // every meter has a value at the start of the turn, and a value after
+        // updating with known effects
         for (auto& meter_pair : obj->Meters()) {
             MeterType type = meter_pair.first;
+
+            // skip paired active meters, as differences in these are expected
+            // and persistent, and not a "discrepancy"
+            if (type >= METER_POPULATION && type <= METER_TROOPS)
+                continue;
+
+            // discrepancy is the difference between expected and actual meter
+            // values at start of turn
             Meter& meter = meter_pair.second;
-
-            // discrepancy is the difference between expected and actual meter values at start of turn
             float discrepancy = meter.Initial() - meter.Current();
-
             if (discrepancy == 0.0f) continue;   // no discrepancy for this meter
 
             // add to discrepancy map
@@ -763,7 +769,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
     // get all pointers to objects once, to avoid having to do so repeatedly
     // when iterating over the list in the following code
-    std::vector<std::shared_ptr<UniverseObject>> object_ptrs = m_objects.FindObjects(objects_vec);
+    auto object_ptrs = m_objects.FindObjects(objects_vec);
     if (objects_vec.empty()) {
         object_ptrs.reserve(m_objects.ExistingObjects().size());
         std::transform(Objects().ExistingObjects().begin(), Objects().ExistingObjects().end(),
@@ -774,7 +780,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     for (auto& obj : object_ptrs) {
         int obj_id = obj->ID();
 
-        // Reset max meters to DEFAULT_VALUE and current meters to initial value at start of this turn
+        // Reset max meters to DEFAULT_VALUE and current meters to initial value
+        // at start of this turn
         obj->ResetTargetMaxUnpairedMeters();
         obj->ResetPairedActiveMeters();
 
@@ -782,7 +789,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
             continue;
 
         // record current value(s) of meters after resetting
-        for (MeterType type = MeterType(0); type != NUM_METER_TYPES; type = MeterType(type + 1)) {
+        for (MeterType type = MeterType(0); type != NUM_METER_TYPES;
+             type = MeterType(type + 1))
+        {
             if (Meter* meter = obj->GetMeter(type)) {
                 Effect::AccountingInfo info;
                 info.source_id = INVALID_OBJECT_ID;
@@ -820,7 +829,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
             int obj_id = obj->ID();
 
             // check if this object has any discrepancies
-            Effect::DiscrepancyMap::iterator dis_it = m_effect_discrepancy_map.find(obj_id);
+            auto dis_it = m_effect_discrepancy_map.find(obj_id);
             if (dis_it == m_effect_discrepancy_map.end())
                 continue;   // no discrepancy, so skip to next object
 
@@ -832,20 +841,20 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
                 //if (discrepancy == 0.0) continue;
 
                 Meter* meter = obj->GetMeter(type);
+                if (!meter)
+                    continue;
 
-                if (meter) {
-                    TraceLogger(effects) << "object " << obj_id << " has meter " << type
-                                         << ": discrepancy: " << discrepancy << " and : " << meter->Dump();
+                TraceLogger(effects) << "object " << obj_id << " has meter " << type
+                                     << ": discrepancy: " << discrepancy << " and : " << meter->Dump();
 
-                    meter->AddToCurrent(discrepancy);
+                meter->AddToCurrent(discrepancy);
 
-                    Effect::AccountingInfo info;
-                    info.cause_type = ECT_UNKNOWN_CAUSE;
-                    info.meter_change = discrepancy;
-                    info.running_meter_total = meter->Current();
+                Effect::AccountingInfo info;
+                info.cause_type = ECT_UNKNOWN_CAUSE;
+                info.meter_change = discrepancy;
+                info.running_meter_total = meter->Current();
 
-                    m_effect_accounting_map[obj_id][type].push_back(info);
-                }
+                m_effect_accounting_map[obj_id][type].push_back(info);
             }
         }
     }
