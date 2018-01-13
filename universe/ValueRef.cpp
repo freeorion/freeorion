@@ -192,9 +192,7 @@ namespace {
 
         mutable UniverseObjectType m_type;
     };
-}
 
-namespace {
     const std::map<std::string, MeterType>& GetMeterNameMap() {
         static std::map<std::string, MeterType> meter_name_map;
         if (meter_name_map.empty()) {
