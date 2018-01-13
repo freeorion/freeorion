@@ -428,16 +428,6 @@ float Planet::CurrentMeterValue(MeterType type) const
 float Planet::NextTurnCurrentMeterValue(MeterType type) const {
     MeterType max_meter_type = INVALID_METER_TYPE;
     switch (type) {
-    case METER_TARGET_INDUSTRY:
-    case METER_TARGET_RESEARCH:
-    case METER_TARGET_TRADE:
-    case METER_TARGET_CONSTRUCTION:
-    case METER_INDUSTRY:
-    case METER_RESEARCH:
-    case METER_TRADE:
-    case METER_CONSTRUCTION:
-        return ResourceCenterNextTurnMeterValue(type);
-        break;
     case METER_SHIELD:      max_meter_type = METER_MAX_SHIELD;          break;
     case METER_TROOPS:      max_meter_type = METER_MAX_TROOPS;          break;
     case METER_DEFENSE:     max_meter_type = METER_MAX_DEFENSE;         break;

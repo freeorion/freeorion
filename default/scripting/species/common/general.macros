@@ -4,6 +4,30 @@ STANDARD_CONSTRUCTION
             activation = Planet
             accountinglabel = "STANDARD_CONSTRUCTION_LABEL"
             effects = SetTargetConstruction value = Value + 20
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                (Source.Construction < Source.TargetConstruction)
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetConstruction value = min(
+                Source.TargetConstruction,
+                Value + 1
+            )
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                (Source.Construction > Source.TargetConstruction)
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetConstruction value = max(
+                Source.TargetConstruction,
+                Value - 1
+            )
 '''
 
 FOCUS_CHANGE_PENALTY
@@ -13,7 +37,9 @@ FOCUS_CHANGE_PENALTY
             activation = And [
                 Planet
                 Not Focus type = "FOCUS_INDUSTRY"
+                (0 <= Source.TurnsSinceFocusChange < 1)
             ]
+            priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
             effects = SetIndustry value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
 
         EffectsGroup
@@ -21,7 +47,9 @@ FOCUS_CHANGE_PENALTY
             activation = And [
                 Planet
                 Not Focus type = "FOCUS_RESEARCH"
+                (0 <= Source.TurnsSinceFocusChange < 1)
             ]
+            priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
             effects = SetResearch value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
 '''
 

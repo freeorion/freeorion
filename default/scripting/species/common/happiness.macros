@@ -2,27 +2,11 @@ AVERAGE_HAPPINESS
 '''
         EffectsGroup
             scope = Source
-            activation = And [
-                Planet
-                (Source.Happiness < Source.TargetHappiness)
-            ]
-            priority = [[DEFAULT_PRIORITY]]
-            effects = SetHappiness value = min(
-                Source.TargetHappiness,
-                Value + 1
-            )
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                (Source.Happiness > Source.TargetHappiness)
-            ]
-            priority = [[DEFAULT_PRIORITY]]
-            effects = SetHappiness value = max(
-                Source.TargetHappiness,
-                Value - 1
-            )
+            activation = Planet
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetHappiness value = Value +
+                min(abs(Target.TargetHappiness - Value), 1) *
+                    (1 - 2*(Statistic If condition = And [Target (Value > Target.TargetHappiness)]))
             
         EffectsGroup
             scope = Source

@@ -14,7 +14,7 @@ BASIC_POPULATION
                 Planet
                 (Source.Population < Source.TargetPopulation)
             ]
-            priority = [[DEFAULT_PRIORITY]]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetPopulation value = min(
                 Source.TargetPopulation,
                 Value + Value*0.01*(Target.TargetPopulation + 1 - Value)
@@ -26,7 +26,7 @@ BASIC_POPULATION
                 Planet
                 (Source.Population > Source.TargetPopulation)
             ]
-            priority = [[DEFAULT_PRIORITY]]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetPopulation value = max(
                 Target.TargetPopulation,
                 Value - 0.1*(Value - Target.TargetPopulation)
