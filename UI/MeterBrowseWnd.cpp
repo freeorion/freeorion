@@ -58,7 +58,7 @@ namespace {
         return ColourWrappedtext(IntToString(number, prepend), clr);
     }
 
-    const int       EDGE_PAD(3);
+    const int EDGE_PAD(3);
 
     GG::X MeterBrowseLabelWidth()
     { return GG::X(30*ClientUI::Pts()); }
@@ -87,17 +87,7 @@ MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type, Mete
     GG::BrowseInfoWnd(GG::X0, GG::Y0, MeterBrowseLabelWidth() + MeterBrowseValueWidth(), GG::Y1),
     m_primary_meter_type(primary_meter_type),
     m_secondary_meter_type(secondary_meter_type),
-    m_object_id(object_id),
-    m_summary_title(nullptr),
-    m_current_label(nullptr),
-    m_current_value(nullptr),
-    m_next_turn_label(nullptr),
-    m_next_turn_value(nullptr),
-    m_change_label(nullptr),
-    m_change_value(nullptr),
-    m_meter_title(nullptr),
-    m_row_height(1),
-    m_initialized(false)
+    m_object_id(object_id)
 {}
 
 bool MeterBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
@@ -249,7 +239,7 @@ namespace {
         auto map_it = effect_accounting_map.find(obj_id);
         if (map_it == effect_accounting_map.end())
             return boost::none;
-        const std::map<MeterType, std::vector<Effect::AccountingInfo>>& meter_map = map_it->second;
+        const auto& meter_map = map_it->second;
 
         // get accounting info for this MeterBrowseWnd's meter type, aborting if none available
         auto meter_it = meter_map.find(meter_type);
@@ -260,56 +250,6 @@ namespace {
     }
 }
 
-namespace DualMeter {
-    /** Return the triplet of {Current, Projected, Target} meter value for the pair of meters \p
-        actual_meter_type and \p target_meter_type associated with \p obj. */
-    std::tuple<float, float, float> CurrentProjectedTarget(
-        const UniverseObject& obj, const MeterType& actual_meter_type, const MeterType& target_meter_type)
-    {
-        const Meter* actual_meter = obj.GetMeter(actual_meter_type);
-
-        float current = Meter::INVALID_VALUE;
-        float projected = Meter::INVALID_VALUE;
-        if (actual_meter) {
-            current = actual_meter->Initial();
-            projected = obj.NextTurnCurrentMeterValue(actual_meter_type);
-
-            // If there is accounting info, correct the projected result by including the
-            // results of all known effects in addition to the default meter change.
-            if (boost::optional<const std::vector<Effect::AccountingInfo>&>
-                    maybe_info_vec = GetAccountingInfo(obj.ID(), actual_meter_type))
-            {
-                projected -= current;
-                for (const auto& info : *maybe_info_vec) {
-                    if ((info.cause_type == ECT_UNKNOWN_CAUSE)
-                        || (info.cause_type == INVALID_EFFECTS_GROUP_CAUSE_TYPE))
-                    {
-                        continue;
-                    }
-                    projected += info.meter_change;
-                }
-            }
-        }
-
-        const Meter* target_meter = obj.GetMeter(target_meter_type);
-        const float target = target_meter ? target_meter->Current() : Meter::INVALID_VALUE;
-
-        // Clamp projected value with the target value
-        if (actual_meter && target_meter
-            && ((current <= target && target < projected)
-                || (projected < target && target <= current)))
-        {
-            projected = target;
-        }
-
-        // Clamp when there is no target.
-        if (!target_meter)
-            projected = current;
-
-        return std::make_tuple(current, projected, target);
-    }
-}
-
 void MeterBrowseWnd::UpdateSummary() {
     auto obj = GetUniverseObject(m_object_id);
     if (!obj)
@@ -317,7 +257,6 @@ void MeterBrowseWnd::UpdateSummary() {
 
     const Meter* primary_meter = obj->GetMeter(m_primary_meter_type);
     const Meter* secondary_meter = obj->GetMeter(m_secondary_meter_type);
-
     if (!primary_meter) {
         ErrorLogger() << "MeterBrowseWnd::UpdateSummary can't get primary meter";
         return;
@@ -332,23 +271,18 @@ void MeterBrowseWnd::UpdateSummary() {
             return;
         }
 
-        std::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
-            *obj, m_primary_meter_type, m_secondary_meter_type);
-
-        m_current_value->SetText(DoubleToString(std::get<0>(current_projected_target), 3, false));
-        m_next_turn_value->SetText(DoubleToString(std::get<1>(current_projected_target), 3, false));
-        float primary_change = std::get<1>(current_projected_target) - std::get<0>(current_projected_target);
+        m_current_value->SetText(DoubleToString(primary_meter->Initial(), 3, false));
+        m_next_turn_value->SetText(DoubleToString(primary_meter->Current(), 3, false));
+        float primary_change = primary_meter->Current() - primary_meter->Initial();
         m_change_value->SetText(ColouredNumber(primary_change));
 
         // target or max meter total for breakdown summary
-        breakdown_total = std::get<2>(current_projected_target);
+        breakdown_total = secondary_meter->Current();;
         breakdown_meter_name = MeterToUserString(m_secondary_meter_type);
-    } else {
-        std::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
-            *obj, m_primary_meter_type, m_secondary_meter_type);
 
+    } else {    // no secondary meter
         // unpaired meter total for breakdown summary
-        breakdown_total = std::get<0>(current_projected_target);
+        breakdown_total = primary_meter->Current();
         breakdown_meter_name = MeterToUserString(m_primary_meter_type);
     }
 
@@ -380,8 +314,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     if (accounting_displayed_for_meter == INVALID_METER_TYPE)
         return; // nothing to display
 
-    boost::optional<const std::vector<Effect::AccountingInfo>&>
-        maybe_info_vec = GetAccountingInfo(m_object_id, accounting_displayed_for_meter);
+    auto maybe_info_vec = GetAccountingInfo(m_object_id, accounting_displayed_for_meter);
     if (!maybe_info_vec)
         return;
 
