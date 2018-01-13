@@ -262,7 +262,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_building_id(building_id)
 {
-    if (std::shared_ptr<const Building> building = GetBuilding(m_building_id))
+    if (auto building = GetBuilding(m_building_id))
         building->StateChangedSignal.connect(
             boost::bind(&BuildingIndicator::RequirePreRender, this));
 }
@@ -353,7 +353,7 @@ void BuildingIndicator::PreRender() {
 void BuildingIndicator::Refresh() {
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
-    std::shared_ptr<const Building> building = GetBuilding(m_building_id);
+    auto building = GetBuilding(m_building_id);
     if (!building)
         return;
 

@@ -1993,9 +1993,9 @@ public:
                 system_fleets[fleet->SystemID()].insert(object_id);
             } else if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
                 fleet_ships[ship->FleetID()].insert(object_id);
-            } else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj)) {
+            } else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj)) {
                 system_planets[planet->SystemID()].insert(object_id);
-            } else if (std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(obj)) {
+            } else if (auto building = std::dynamic_pointer_cast<const Building>(obj)) {
                 planet_buildings[building->PlanetID()].insert(object_id);
             }
         }
@@ -2005,8 +2005,8 @@ public:
 
         // add system rows
         for (int system_id : systems) {
-            std::map<int, std::set<int>>::iterator sp_it = system_planets.find(system_id);
-            std::map<int, std::set<int>>::iterator sf_it = system_fleets.find(system_id);
+            auto sp_it = system_planets.find(system_id);
+            auto sf_it = system_fleets.find(system_id);
             std::set<int> system_contents;
             if (sp_it != system_planets.end())
                 system_contents = sp_it->second;
@@ -2019,7 +2019,7 @@ public:
             // add planet rows in this system
             if (sp_it != system_planets.end()) {
                 for (int planet_id : sp_it->second) {
-                    std::map<int, std::set<int>>::iterator pb_it = planet_buildings.find(planet_id);
+                    auto pb_it = planet_buildings.find(planet_id);
 
                     if (!ObjectCollapsed(system_id)) {
                         AddObjectRow(planet_id, system_id,
@@ -2047,7 +2047,7 @@ public:
             // add fleet rows in this system
             if (sf_it != system_fleets.end()) {
                 for (int fleet_id : sf_it->second) {
-                    std::map<int, std::set<int>>::iterator fs_it = fleet_ships.find(fleet_id);
+                    auto fs_it = fleet_ships.find(fleet_id);
 
                     if (!ObjectCollapsed(system_id)) {
                         AddObjectRow(fleet_id, system_id,
@@ -2114,7 +2114,7 @@ public:
         // add fleets not in shown systems
         for (const auto& sf : system_fleets) {
             for (int fleet_id : sf.second) {
-                std::map<int, std::set<int>>::iterator fs_it = fleet_ships.find(fleet_id);
+                auto fs_it = fleet_ships.find(fleet_id);
 
                 AddObjectRow(fleet_id, INVALID_OBJECT_ID,
                                 fs_it != fleet_ships.end() ? fs_it->second : std::set<int>(),
@@ -2312,10 +2312,10 @@ private:
 
     std::map<int, boost::signals2::connection>          m_object_change_connections;
     std::set<int>                                       m_collapsed_objects;
-    std::unique_ptr<Condition::ConditionBase>                           m_filter_condition;
+    std::unique_ptr<Condition::ConditionBase>           m_filter_condition;
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>> m_visibilities;
-    std::shared_ptr<ObjectHeaderRow>                                    m_header_row;
-    boost::signals2::connection m_obj_deleted_connection;
+    std::shared_ptr<ObjectHeaderRow>                    m_header_row;
+    boost::signals2::connection                         m_obj_deleted_connection;
 };
 
 ////////////////////////////////////////////////
@@ -2397,7 +2397,7 @@ void ObjectListWnd::Refresh()
 void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     // mark as selected all ObjectPanel that are in \a rows and mark as not
     // selected all ObjectPanel that aren't in \a rows
-    for (GG::ListBox::iterator it = m_list_box->begin(); it != m_list_box->end(); ++it) {
+    for (auto it = m_list_box->begin(); it != m_list_box->end(); ++it) {
         bool select_this_row = (rows.find(it) != rows.end());
 
         auto& row = *it;
@@ -2425,7 +2425,9 @@ void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows
     SelectedObjectsChangedSignal();
 }
 
-void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                        const GG::Flags<GG::ModKey>& modkeys)
+{
     int object_id = ObjectInRow(it);
     if (object_id != INVALID_OBJECT_ID)
         ObjectDoubleClickedSignal(object_id);
@@ -2434,7 +2436,7 @@ void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it, const GG::Pt& 
 
 std::set<int> ObjectListWnd::SelectedObjectIDs() const {
     std::set<int> sel_ids;
-    const GG::ListBox::SelectionSet sel = m_list_box->Selections();
+    const auto sel = m_list_box->Selections();
     for (const auto& entry : m_list_box->Selections()) {
         ObjectRow *row = dynamic_cast<ObjectRow *>(entry->get());
         if (row) {
@@ -2447,7 +2449,7 @@ std::set<int> ObjectListWnd::SelectedObjectIDs() const {
 }
 
 void ObjectListWnd::SetSelectedObjects(std::set<int> sel_ids) {
-    for (GG::ListBox::iterator it = m_list_box->begin(); it != m_list_box->end(); ++it) {
+    for (auto it = m_list_box->begin(); it != m_list_box->end(); ++it) {
         ObjectRow *row = dynamic_cast<ObjectRow *>(it->get());
         if (row) {
             int selected_object_id = row->ObjectID();
@@ -2478,7 +2480,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
     // Refresh and clean up common to focus and production changes.
     auto focus_ship_building_common_action = [this]() {
-        std::set<int> sel_ids = SelectedObjectIDs();
+        auto sel_ids = SelectedObjectIDs();
         Refresh();
         SetSelectedObjects(sel_ids);
         ObjectSelectionChanged(m_list_box->Selections());
@@ -2657,7 +2659,8 @@ int ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {
 }
 
 void ObjectListWnd::FilterClicked() {
-    auto dlg = GG::Wnd::Create<FilterDialog>(m_list_box->Visibilities(), m_list_box->FilterCondition());
+    auto dlg = GG::Wnd::Create<FilterDialog>(m_list_box->Visibilities(),
+                                             m_list_box->FilterCondition());
     dlg->Run();
 
     if (dlg->ChangesAccepted()) {

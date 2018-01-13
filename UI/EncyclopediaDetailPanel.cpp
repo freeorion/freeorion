@@ -1563,10 +1563,10 @@ namespace {
                 else if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj))
                     detailed_description += LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), fleet->PublicName(client_empire_id)) + "  ";
 
-                else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj))
+                else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj))
                     detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), planet->PublicName(client_empire_id)) + "  ";
 
-                else if (std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(obj))
+                else if (auto building = std::dynamic_pointer_cast<const Building>(obj))
                     detailed_description += LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), building->PublicName(client_empire_id)) + "  ";
 
                 else if (auto system = std::dynamic_pointer_cast<const System>(obj))

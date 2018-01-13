@@ -686,7 +686,7 @@ public:
 
     void Refresh() {
         ScopedTimer timer("RotatingPlanetControl::Refresh", true);
-        std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+        auto planet = GetPlanet(m_planet_id);
         if (!planet) return;
 
         // these values ensure that wierd GLUT-sphere artifacts do not show themselves
@@ -910,7 +910,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     SetName(UserString("PLANET_PANEL"));
 
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet) {
         ErrorLogger() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
         return;
@@ -1108,7 +1108,7 @@ void SidePanel::PlanetPanel::DoLayout() {
 }
 
 void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet || !GetOptionsDB().Get<bool>("ui.map.sidepanel.planet.shown"))
         return;
 
@@ -1925,7 +1925,7 @@ void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void SidePanel::PlanetPanel::SetFocus(const std::string& focus) {
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         return;
     colony_projections.clear();// in case new or old focus was Growth (important that be cleared BEFORE Order is issued)
@@ -2236,7 +2236,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
     // order or cancel colonization, depending on whether it has previously
     // been ordered
 
-    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    auto planet = GetPlanet(m_planet_id);
     if (!planet || planet->CurrentMeterValue(METER_POPULATION) != 0.0 || !m_order_issuing_enabled)
         return;
 
@@ -2503,7 +2503,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
 
     std::multimap<int, int> orbits_planets;
     for (int planet_id : planet_ids) {
-        std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+        auto planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetPanelContainer::SetPlanets couldn't find planet with id " << planet_id;
             continue;
@@ -2682,7 +2682,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
         // find selectables
         for (auto& panel : m_planet_panels) {
             int             planet_id = panel->PlanetID();
-            std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+            auto planet = GetPlanet(planet_id);
 
             if (planet && planet->Accept(*m_valid_selection_predicate)) {
                 m_candidate_ids.insert(planet_id);

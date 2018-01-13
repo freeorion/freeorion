@@ -226,7 +226,7 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
         sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(object_id));
         sitrep.AddVariable(VarText::DESIGN_ID_TAG,     std::to_string(ship->DesignID()));
 
-    } else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj)) {
+    } else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj)) {
         if (planet->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM"),
@@ -297,7 +297,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
                 UserStringNop("SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::FLEET_ID_TAG,      std::to_string(object_id));
 
-    } else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj)) {
+    } else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj)) {
         if (planet->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM"),
@@ -312,7 +312,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
                 UserStringNop("SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(object_id));
 
-    } else if (std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(obj)) {
+    } else if (auto building = std::dynamic_pointer_cast<const Building>(obj)) {
         if (building->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM"),
