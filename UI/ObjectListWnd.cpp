@@ -93,6 +93,15 @@ namespace {
                 ValueRef::SOURCE_REFERENCE, token));
     }
 
+    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedImmediateValueRef(
+        const std::string& token)
+    {
+        return boost::make_unique<ValueRef::StringCast<double>>(
+            std::unique_ptr<ValueRef::Variable<double>>(
+                boost::make_unique<ValueRef::ImmediateValueVariable>(
+                    ValueRef::SOURCE_REFERENCE, token)));
+    }
+
     template <typename T>
     std::unique_ptr<ValueRef::Variable<std::string>> StringCastedComplexValueRef(
         const std::string& token,
@@ -226,7 +235,7 @@ namespace {
             for (MeterType meter = MeterType(0); meter <= METER_SPEED;  // the meter(s) after METER_SPEED are part-specific
                  meter = MeterType(meter + 1))
             {
-                col_types[{boost::lexical_cast<std::string>(meter), UserStringNop("METERS_SUBMENU")}] = StringCastedValueRef<double>(ValueRef::MeterToName(meter));
+                col_types[{boost::lexical_cast<std::string>(meter), UserStringNop("METERS_SUBMENU")}] = StringCastedImmediateValueRef(ValueRef::MeterToName(meter));
             }
         }
         return col_types;
