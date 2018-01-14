@@ -191,8 +191,9 @@
 #define TOKEN_SEQ_6                             \
     (Label)                                     \
     (Large)                                     \
-    (LastTurnBattleHere)                        \
     (LastTurnActiveInBattle)                    \
+    (LastTurnBattleHere)                        \
+    (LastTurnConquered)                         \
     (LastTurnResupplied)                        \
     (LeastHappySpecies)                         \
     (LocalCandidate)                            \

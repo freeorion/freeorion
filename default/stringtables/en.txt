@@ -5980,6 +5980,9 @@ Last Turn In Battle
 LAST_TURN_RESUPPLIED
 Last Turn Resupplied
 
+LAST_TURN_CONQUERED
+Last Turn Conquered
+
 ARRIVED_ON_TURN
 Arrived on Turn
 

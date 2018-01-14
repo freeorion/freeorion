@@ -948,6 +948,13 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return INVALID_GAME_TURN;
 
     }
+    else if (property_name == "LastTurnConquered") {
+        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+            return planet->LastTurnConquered();
+        else
+            return INVALID_GAME_TURN;
+
+    }
     else if (property_name == "LastTurnResupplied") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->LastResuppliedOnTurn();
