@@ -163,7 +163,6 @@ struct FO_COMMON_API Constant : public ValueRefBase<T>
     explicit Constant(T value);
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
-
     T Eval(const ScriptingContext& context) const override;
 
     bool RootCandidateInvariant() const override
@@ -182,13 +181,9 @@ struct FO_COMMON_API Constant : public ValueRefBase<T>
     { return true; }
 
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     T Value() const;
-
     unsigned int GetCheckSum() const override;
 
 private:
@@ -209,25 +204,15 @@ struct FO_COMMON_API Variable : public ValueRefBase<T>
     Variable(ReferenceType ref_type, const std::vector<std::string>& property_name);
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
-
     T Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     ReferenceType GetReferenceType() const;
-
     const std::vector<std::string>& PropertyName() const;
-
     unsigned int GetCheckSum() const override;
 
 protected:
@@ -251,25 +236,16 @@ struct FO_COMMON_API Statistic : public Variable<T>
     Statistic(std::unique_ptr<ValueRefBase<T>>&& value_ref,
               StatisticType stat_type,
               std::unique_ptr<Condition::ConditionBase>&& sampling_condition);
-
     ~Statistic();
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
-
     T Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
 
     StatisticType GetStatisticType() const
@@ -318,37 +294,22 @@ struct FO_COMMON_API ComplexVariable : public Variable<T>
                              std::unique_ptr<ValueRefBase<int>>&& int_ref3 = nullptr,
                              std::unique_ptr<ValueRefBase<std::string>>&& string_ref1 = nullptr,
                              std::unique_ptr<ValueRefBase<std::string>>&& string_ref2 = nullptr);
-
     ~ComplexVariable();
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
-
     T Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     const ValueRefBase<int>* IntRef1() const;
-
     const ValueRefBase<int>* IntRef2() const;
-
     const ValueRefBase<int>* IntRef3() const;
-
     const ValueRefBase<std::string>* StringRef1() const;
-
     const ValueRefBase<std::string>* StringRef2() const;
-
     unsigned int GetCheckSum() const override;
 
 protected:
@@ -383,21 +344,13 @@ struct FO_COMMON_API StaticCast : public Variable<ToType>
     ~StaticCast();
 
     bool operator==(const ValueRefBase<ToType>& rhs) const override;
-
     ToType Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
 
     const ValueRefBase<FromType>* GetValueRef() const
@@ -421,26 +374,16 @@ struct FO_COMMON_API StringCast : public Variable<std::string>
 {
     StringCast(std::unique_ptr<Variable<FromType>>&& value_ref);
     StringCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref);
-    StringCast(Variable<FromType>* value_ref);
-    StringCast(ValueRefBase<FromType>* value_ref);
     ~StringCast();
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
-
     std::string Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
 
     const ValueRefBase<FromType>* GetValueRef() const
@@ -465,21 +408,13 @@ struct FO_COMMON_API UserStringLookup : public Variable<std::string> {
     ~UserStringLookup();
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
-
     std::string Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
 
     const ValueRefBase<FromType>* GetValueRef() const
@@ -508,21 +443,13 @@ struct FO_COMMON_API NameLookup : public Variable<std::string> {
     ~NameLookup();
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
-
     std::string Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
 
     const ValueRefBase<int>* GetValueRef() const
@@ -561,28 +488,16 @@ struct FO_COMMON_API Operation : public ValueRefBase<T>
     ~Operation();
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
-
     T Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     bool SimpleIncrement() const override;
-
-    bool ConstantExpr() const override
-    { return m_constant_expr; }
-
+    bool ConstantExpr() const override { return m_constant_expr; }
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     OpType GetOpType() const;
 
     /** 1st operand (or 0 if none exists). */

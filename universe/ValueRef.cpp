@@ -259,7 +259,7 @@ std::string MeterToName(MeterType meter) {
 }
 
 std::string ReconstructName(const std::vector<std::string>& property_name,
-                                      ReferenceType ref_type)
+                            ReferenceType ref_type)
 {
     std::string retval;
     switch (ref_type) {
@@ -419,8 +419,8 @@ std::string Constant<std::string>::Eval(const ScriptingContext& context) const
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
-std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
-                                             const std::vector<std::string>& property_names)
+std::string FormatedDescriptionPropertyNames(
+    ReferenceType ref_type, const std::vector<std::string>& property_names)
 {
     int num_references = property_names.size();
     if (ref_type == NON_OBJECT_REFERENCE)
