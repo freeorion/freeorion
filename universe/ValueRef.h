@@ -225,6 +225,24 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** The immediate variable value ValueRef class.  This node is a special-case
+  * for meters, in which it is sometimes useful to reference the immediate value
+  * rather than the intial value at the start of a turn.*/
+struct FO_COMMON_API ImmediateValueVariable : public Variable<double> {
+    explicit ImmediateValueVariable(ReferenceType ref_type,
+                                    const std::string& property_name = "");
+    ImmediateValueVariable(ReferenceType ref_type,
+                           const std::vector<std::string>& property_name);
+
+    bool operator==(const ValueRefBase<double>& rhs) const override;
+    double Eval(const ScriptingContext& context) const override;
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** The variable statistic class.   The value returned by this node is
   * computed from the general gamestate; the value of the indicated
   * \a property_name is computed for each object that matches
@@ -645,7 +663,6 @@ void Constant<T>::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_top_level_content);
 }
 
-
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
@@ -758,6 +775,15 @@ void Variable<T>::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
         & BOOST_SERIALIZATION_NVP(m_ref_type)
         & BOOST_SERIALIZATION_NVP(m_property_name);
+}
+
+///////////////////////////////////////////////////////////
+// ImmediateValueVariable                                //
+///////////////////////////////////////////////////////////
+template <class Archive>
+void ImmediateValueVariable::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Variable/*<double>*/);
 }
 
 ///////////////////////////////////////////////////////////

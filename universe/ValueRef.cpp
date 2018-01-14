@@ -465,7 +465,7 @@ std::string FormatedDescriptionPropertyNames(
     return retval;
 }
 
-#define IF_CURRENT_VALUE(T)                                                \
+#define IF_CURRENT_VALUE(T)                                            \
 if (m_ref_type == EFFECT_TARGET_VALUE_REFERENCE) {                     \
     if (context.current_value.empty())                                 \
         throw std::runtime_error(                                      \
@@ -705,7 +705,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     MeterType meter_type = NameToMeter(property_name);
     if (object && meter_type != INVALID_METER_TYPE) {
         if (object->GetMeter(meter_type))
-            return object->InitialMeterValue(meter_type);
+            return object->InitialMeterValue(meter_type);   // use ImmediateValueVariable to get object->CurrentMeterValue(meter_type);
 
     } else if (property_name == "TradeStockpile") {
         if (const Empire* empire = GetEmpire(object->Owner()))
@@ -1173,6 +1173,61 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 }
 
 #undef IF_CURRENT_VALUE
+
+
+///////////////////////////////////////////////////////////
+//ImmediateValueVariable                                 //
+///////////////////////////////////////////////////////////
+ImmediateValueVariable::ImmediateValueVariable(ReferenceType ref_type,
+                                               const std::string& property_name) :
+    Variable<double>(ref_type, property_name)
+{}
+
+ImmediateValueVariable::ImmediateValueVariable(ReferenceType ref_type,
+                                               const std::vector<std::string>& property_name) :
+    Variable<double>(ref_type, property_name)
+{}
+
+bool ImmediateValueVariable::operator==(const ValueRefBase<double>& rhs) const {
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    const ImmediateValueVariable& rhs_ = static_cast<const ImmediateValueVariable&>(rhs);
+
+    return (m_ref_type == rhs_.m_ref_type) && (m_property_name == rhs_.m_property_name);
+}
+
+double ImmediateValueVariable::Eval(const ScriptingContext& context) const {
+    // fallback to base Variable::Eval for most cases
+    if (m_ref_type == EFFECT_TARGET_VALUE_REFERENCE ||
+        m_ref_type == NON_OBJECT_REFERENCE ||
+        m_ref_type == INVALID_REFERENCE_TYPE)
+    { return Variable<double>::Eval(context); }
+
+    // this class currently only speicalizes for meter values...
+    const std::string& property_name = m_property_name.back();
+    MeterType meter_type = NameToMeter(property_name);
+    if (meter_type == INVALID_METER_TYPE)
+        return Variable<double>::Eval(context);
+
+    // get object and its immediate / current / accumulator meter value...
+    auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
+                                  m_ref_type, context);
+    if (object && object->GetMeter(meter_type))
+        return object->CurrentMeterValue(meter_type);   // use Variable<double> for initial meter values
+
+
+    ErrorLogger() << "ImmediateValueVariable::Eval unable to follow reference: "
+                  << TraceReference(m_property_name, m_ref_type, context);
+    if (context.source)
+        ErrorLogger() << "source: " << context.source->ObjectType() << " "
+                      << context.source->ID() << " ( " << context.source->Name() << " ) ";
+    else
+        ErrorLogger() << "source (none)";
+
+    return 0.0;
+}
 
 ///////////////////////////////////////////////////////////
 // Statistic                                             //
