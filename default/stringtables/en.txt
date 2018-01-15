@@ -2187,7 +2187,7 @@ GSETUP_SEED
 Seed
 
 GSETUP_RANDOM_SEED
-Generate a random seed
+Toggle generation of a random seed
 
 GSETUP_STARS
 Systems

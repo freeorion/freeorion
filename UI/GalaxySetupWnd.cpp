@@ -556,7 +556,11 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_seed_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SEED"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_seed_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_seed_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.seed")));
-    m_seed_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("setup.seed"));
+    m_seed = GetOptionsDB().Get<std::string>("setup.seed");
+    if (m_seed == "RANDOM")
+        m_seed_edit = GG::Wnd::Create<CUIEdit>(UserString("GSETUP_RANDOM"));
+    else
+        m_seed_edit = GG::Wnd::Create<CUIEdit>(m_seed);
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
@@ -749,7 +753,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_MANIACAL")));
 
     // initial settings from stored results or defaults
-    m_seed_edit->SetText(GetOptionsDB().Get<std::string>("setup.seed"));
+    SetSeed(GetOptionsDB().Get<std::string>("setup.seed"), true);
     m_stars_spin->SetValue(GetOptionsDB().Get<int>("setup.star.count"));
     m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("setup.galaxy.shape"));
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
@@ -765,12 +769,25 @@ void GalaxySetupPanel::CompleteConstruction() {
 }
 
 void GalaxySetupPanel::RandomClicked() {
-    m_seed_edit->SetText("RANDOM");
-    SettingChanged();
+    if (m_seed == "RANDOM")
+        SetSeed(GetOptionsDB().GetDefault<std::string>("setup.seed"));
+    else
+        SetSeed("RANDOM");
 }
 
 const std::string& GalaxySetupPanel::GetSeed() const
-{ return m_seed_edit->Text(); }
+{ return m_seed; }
+
+void GalaxySetupPanel::SetSeed(const std::string& seed, bool inhibit_signal) {
+    m_seed = seed;
+    if (m_seed == "RANDOM" || m_seed.empty())
+        m_seed_edit->SetText(UserString("GSETUP_RANDOM"));
+    else
+        m_seed_edit->SetText(m_seed);
+
+    if (!inhibit_signal)
+        SettingChanged();
+}
 
 int GalaxySetupPanel::Systems() const
 { return m_stars_spin->Value(); }
@@ -905,7 +922,7 @@ void GalaxySetupPanel::Disable(bool b/* = true*/) {
 }
 
 void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
-    m_seed_edit->SetText(setup_data.m_seed);
+    SetSeed(setup_data.m_seed, true);
     m_stars_spin->SetValue(setup_data.m_size);
     m_galaxy_shapes_list->Select(setup_data.m_shape);
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
