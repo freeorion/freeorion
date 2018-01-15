@@ -997,7 +997,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             }
 
             // GalaxySetupData
-            m_lobby_data->m_seed           = incoming_lobby_data.m_seed;
+            m_lobby_data->SetSeed(incoming_lobby_data.m_seed);
             m_lobby_data->m_size           = incoming_lobby_data.m_size;
             m_lobby_data->m_shape          = incoming_lobby_data.m_shape;
             m_lobby_data->m_age            = incoming_lobby_data.m_age;

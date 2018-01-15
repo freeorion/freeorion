@@ -765,7 +765,7 @@ void GalaxySetupPanel::CompleteConstruction() {
 }
 
 void GalaxySetupPanel::RandomClicked() {
-    m_seed_edit->SetText("");
+    m_seed_edit->SetText("RANDOM");
     SettingChanged();
 }
 
