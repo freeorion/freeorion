@@ -97,9 +97,8 @@ namespace {
         const std::string& token)
     {
         return boost::make_unique<ValueRef::StringCast<double>>(
-            std::unique_ptr<ValueRef::Variable<double>>(
-                boost::make_unique<ValueRef::ImmediateValueVariable>(
-                    ValueRef::SOURCE_REFERENCE, token)));
+            boost::make_unique<ValueRef::Variable<double>>(
+                ValueRef::SOURCE_REFERENCE, token, true));
     }
 
     template <typename T>

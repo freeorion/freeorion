@@ -200,8 +200,10 @@ private:
 template <class T>
 struct FO_COMMON_API Variable : public ValueRefBase<T>
 {
-    explicit Variable(ReferenceType ref_type, const std::string& property_name = "");
-    Variable(ReferenceType ref_type, const std::vector<std::string>& property_name);
+    explicit Variable(ReferenceType ref_type, const std::string& property_name = "",
+                      bool return_immediate_value = false);
+    Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
+             bool return_immediate_value = false);
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
@@ -213,29 +215,13 @@ struct FO_COMMON_API Variable : public ValueRefBase<T>
     std::string Dump(unsigned short ntabs = 0) const override;
     ReferenceType GetReferenceType() const;
     const std::vector<std::string>& PropertyName() const;
+    bool ReturnImmediateValue() const;
     unsigned int GetCheckSum() const override;
 
 protected:
-    mutable ReferenceType       m_ref_type;
+    mutable ReferenceType       m_ref_type = INVALID_REFERENCE_TYPE;
     std::vector<std::string>    m_property_name;
-
-private:
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-/** The immediate variable value ValueRef class.  This node is a special-case
-  * for meters, in which it is sometimes useful to reference the immediate value
-  * rather than the intial value at the start of a turn.*/
-struct FO_COMMON_API ImmediateValueVariable : public Variable<double> {
-    explicit ImmediateValueVariable(ReferenceType ref_type,
-                                    const std::string& property_name = "");
-    ImmediateValueVariable(ReferenceType ref_type,
-                           const std::vector<std::string>& property_name);
-
-    bool operator==(const ValueRefBase<double>& rhs) const override;
-    double Eval(const ScriptingContext& context) const override;
+    bool                        m_return_immediate_value = false;
 
 private:
     friend class boost::serialization::access;
@@ -547,7 +533,8 @@ private:
 FO_COMMON_API MeterType     NameToMeter(const std::string& name);
 FO_COMMON_API std::string   MeterToName(MeterType meter);
 FO_COMMON_API std::string   ReconstructName(const std::vector<std::string>& property_name,
-                                            ReferenceType ref_type);
+                                            ReferenceType ref_type,
+                                            bool return_immediate_value = false);
 
 // Template Implementations
 ///////////////////////////////////////////////////////////
@@ -667,15 +654,19 @@ void Constant<T>::serialize(Archive& ar, const unsigned int version)
 // Variable                                              //
 ///////////////////////////////////////////////////////////
 template <class T>
-Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name) :
+Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
+                      bool return_immediate_value) :
     m_ref_type(ref_type),
-    m_property_name(property_name.begin(), property_name.end())
+    m_property_name(property_name.begin(), property_name.end()),
+    m_return_immediate_value(return_immediate_value)
 {}
 
 template <class T>
-Variable<T>::Variable(ReferenceType ref_type, const std::string& property_name) :
+Variable<T>::Variable(ReferenceType ref_type, const std::string& property_name,
+                      bool return_immediate_value) :
     m_ref_type(ref_type),
-    m_property_name()
+    m_property_name(),
+    m_return_immediate_value(return_immediate_value)
 {
     m_property_name.push_back(property_name);
 }
@@ -688,7 +679,9 @@ bool Variable<T>::operator==(const ValueRefBase<T>& rhs) const
     if (typeid(rhs) != typeid(*this))
         return false;
     const Variable<T>& rhs_ = static_cast<const Variable<T>&>(rhs);
-    return (m_ref_type == rhs_.m_ref_type) && (m_property_name == rhs_.m_property_name);
+    return (m_ref_type == rhs_.m_ref_type) &&
+           (m_property_name == rhs_.m_property_name) &&
+           (m_return_immediate_value == rhs_.m_return_immediate_value);
 }
 
 template <class T>
@@ -698,6 +691,10 @@ ReferenceType Variable<T>::GetReferenceType() const
 template <class T>
 const std::vector<std::string>& Variable<T>::PropertyName() const
 { return m_property_name; }
+
+template <class T>
+bool Variable<T>::ReturnImmediateValue() const
+{ return m_return_immediate_value; }
 
 template <class T>
 bool Variable<T>::RootCandidateInvariant() const
@@ -715,16 +712,17 @@ template <class T>
 bool Variable<T>::SourceInvariant() const
 { return m_ref_type != SOURCE_REFERENCE; }
 
-FO_COMMON_API std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
-                                                           const std::vector<std::string>& property_names);
+FO_COMMON_API std::string FormatedDescriptionPropertyNames(
+    ReferenceType ref_type, const std::vector<std::string>& property_names,
+    bool return_immediate_value = false);
 
 template <class T>
 std::string Variable<T>::Description() const
-{ return FormatedDescriptionPropertyNames(m_ref_type, m_property_name); }
+{ return FormatedDescriptionPropertyNames(m_ref_type, m_property_name, m_return_immediate_value); }
 
 template <class T>
 std::string Variable<T>::Dump(unsigned short ntabs) const
-{ return ReconstructName(m_property_name, m_ref_type); }
+{ return ReconstructName(m_property_name, m_ref_type, m_return_immediate_value); }
 
 template <class T>
 unsigned int Variable<T>::GetCheckSum() const
@@ -734,6 +732,7 @@ unsigned int Variable<T>::GetCheckSum() const
     CheckSums::CheckSumCombine(retval, "ValueRef::Variable");
     CheckSums::CheckSumCombine(retval, m_property_name);
     CheckSums::CheckSumCombine(retval, m_ref_type);
+    CheckSums::CheckSumCombine(retval, m_return_immediate_value);
     TraceLogger() << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }
@@ -774,16 +773,8 @@ void Variable<T>::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
         & BOOST_SERIALIZATION_NVP(m_ref_type)
-        & BOOST_SERIALIZATION_NVP(m_property_name);
-}
-
-///////////////////////////////////////////////////////////
-// ImmediateValueVariable                                //
-///////////////////////////////////////////////////////////
-template <class Archive>
-void ImmediateValueVariable::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Variable/*<double>*/);
+        & BOOST_SERIALIZATION_NVP(m_property_name)
+        & BOOST_SERIALIZATION_NVP(m_return_immediate_value);
 }
 
 ///////////////////////////////////////////////////////////
