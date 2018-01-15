@@ -542,10 +542,8 @@ private:
     void                    ClickBombard();                     ///< called if bombard button is pressed
 
     void                    FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
-    /** Called when focus drop list opens/closes to inform that it now \p is_open. */
-    void                    FocusDropListOpened(bool is_open);
 
-    int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
+    int                                     m_planet_id;                ///< id for the planet with is represented by this planet panel
     std::shared_ptr<GG::TextControl>        m_planet_name;              ///< planet name;
     std::shared_ptr<GG::Label>              m_env_size;                 ///< indicates size and planet environment rating uncolonized planets;
     std::shared_ptr<GG::Button>             m_colonize_button;          ///< btn which can be pressed to colonize this planet;
@@ -553,18 +551,18 @@ private:
     std::shared_ptr<GG::Button>             m_bombard_button;           ///< btn which can be pressed to bombard this planet;
     std::shared_ptr<GG::DynamicGraphic>     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids;
     std::shared_ptr<RotatingPlanetControl>  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
-    bool                    m_selected;                 ///< is this planet panel selected
-    bool                    m_order_issuing_enabled;    ///< can orders be issues via this planet panel?
-    GG::Clr                 m_empire_colour;            ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
+    bool                                    m_selected;                 ///< is this planet panel selected
+    bool                                    m_order_issuing_enabled;    ///< can orders be issues via this planet panel?
+    GG::Clr                                 m_empire_colour;            ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
     std::shared_ptr<GG::DropDownList>       m_focus_drop;               ///< displays and allows selection of planetary focus;
     std::shared_ptr<PopulationPanel>        m_population_panel;         ///< contains info about population and health
     std::shared_ptr<ResourcePanel>          m_resource_panel;           ///< contains info about resources production and focus selection UI
     std::shared_ptr<MilitaryPanel>          m_military_panel;           ///< contains icons representing military-related meters
     std::shared_ptr<BuildingsPanel>         m_buildings_panel;          ///< contains icons representing buildings
     std::shared_ptr<SpecialsPanel>          m_specials_panel;           ///< contains icons representing specials
-    StarType                m_star_type;
+    StarType                                m_star_type;
 
-    boost::signals2::connection m_planet_connection;
+    boost::signals2::connection             m_planet_connection;
 };
 
 /** Container class that holds PlanetPanels.  Creates and destroys PlanetPanel
@@ -957,8 +955,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     // focus-selection droplist
     m_focus_drop = GG::Wnd::Create<CUIDropDownList>(6);
     AttachChild(m_focus_drop);
-    m_focus_drop->DropDownOpenedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::FocusDropListOpened, this, _1));
+        [this](bool open){ FocusDropListOpened(open); });
     m_focus_drop->SelChangedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot, this, _1));
     this->FocusChangedSignal.connect(
@@ -1928,6 +1925,7 @@ void SidePanel::PlanetPanel::SetFocus(const std::string& focus) {
     auto planet = GetPlanet(m_planet_id);
     if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         return;
+    // todo: if focus is already equal to planet's focus, return early.
     colony_projections.clear();// in case new or old focus was Growth (important that be cleared BEFORE Order is issued)
     species_colony_projections.clear();
     HumanClientApp::GetApp()->Orders().IssueOrder(
@@ -2362,14 +2360,6 @@ void SidePanel::PlanetPanel::ClickBombard() {
         }
     }
     OrderButtonChangedSignal(m_planet_id);
-}
-
-void SidePanel::PlanetPanel::FocusDropListOpened(bool is_open) {
-    // Update when the focus drop closes.
-    if (is_open)
-        return;
-
-    FocusDropListSelectionChangedSlot(m_focus_drop->CurrentItem());
 }
 
 void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected) {
