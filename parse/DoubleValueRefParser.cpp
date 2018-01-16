@@ -37,6 +37,7 @@ parse::detail::simple_double_parser_rules::simple_double_parser_rules(const pars
         |   tok.RebelTroops_
         |   tok.MaxStructure_
         |   tok.Structure_
+        |   tok.MaxSupply_
         |   tok.Supply_
         |   tok.Stealth_
         |   tok.Detection_
