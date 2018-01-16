@@ -2885,8 +2885,12 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
         case MINUS:
             return LHS()->Eval(context) - RHS()->Eval(context); break;
 
-        case TIMES:
-            return LHS()->Eval(context) * RHS()->Eval(context); break;
+        case TIMES: {
+            double op1 = LHS()->Eval(context);
+            if (op1 == 0.0)
+                return 0.0;
+            return op1 * RHS()->Eval(context); break;
+        }
 
         case DIVIDE: {
             double op2 = RHS()->Eval(context);
@@ -2900,8 +2904,16 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
             return -(LHS()->Eval(context));                     break;
 
         case EXPONENTIATE: {
-            return std::pow(LHS()->Eval(context),
-                            RHS()->Eval(context));
+            double op2 = RHS()->Eval(context);
+            if (op2 == 0.0)
+                return 1.0;
+            try {
+                double op1 = LHS()->Eval(context);
+                return std::pow(op1, op2);
+            } catch (...) {
+                ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
+                return 0.0;
+            }
             break;
         }
 
@@ -3004,13 +3016,18 @@ int         Operation<int>::EvalImpl(const ScriptingContext& context) const
 {
     switch (m_op_type) {
         case PLUS:
-            return LHS()->Eval(context) + RHS()->Eval(context);   break;
+            return LHS()->Eval(context) + RHS()->Eval(context);     break;
 
         case MINUS:
-            return LHS()->Eval(context) - RHS()->Eval(context);   break;
+            return LHS()->Eval(context) - RHS()->Eval(context);     break;
 
-        case TIMES:
-            return LHS()->Eval(context) * RHS()->Eval(context);   break;
+        case TIMES: {
+            double op1 = LHS()->Eval(context);
+            if (op1 == 0)
+                return 0;
+            return op1 * RHS()->Eval(context);
+            break;
+        }
 
         case DIVIDE: {
             int op2 = RHS()->Eval(context);
@@ -3021,12 +3038,19 @@ int         Operation<int>::EvalImpl(const ScriptingContext& context) const
         }
 
         case NEGATE:
-            return -LHS()->Eval(context);                              break;
+            return -LHS()->Eval(context);                           break;
 
         case EXPONENTIATE: {
-            double op1 = LHS()->Eval(context);
             double op2 = RHS()->Eval(context);
-            return static_cast<int>(std::pow(op1, op2));
+            if (op2 == 0)
+                return 1;
+            try {
+                double op1 = LHS()->Eval(context);
+                return static_cast<int>(std::pow(op1, op2));
+            } catch (...) {
+                ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
+                return 0;
+            }
             break;
         }
 
