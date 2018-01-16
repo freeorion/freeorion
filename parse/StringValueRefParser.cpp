@@ -60,7 +60,8 @@ namespace parse {
         variable_scope_rule = variable_scope(tok);
         container_type_rule = container_type(tok);
         initialize_bound_variable_parser<std::string>(bound_variable, bound_variable_name,
-                                                      variable_scope_rule, container_type_rule);
+                                                      variable_scope_rule, container_type_rule,
+                                                      tok);
 
         statistic_sub_value_ref
             =   constant

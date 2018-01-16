@@ -55,7 +55,8 @@ void initialize_bound_variable_parser(
     parse::detail::variable_rule<T>& bound_variable,
     const parse::detail::name_token_rule& variable_name,
     const parse::detail::reference_token_rule& variable_scope_rule,
-    const parse::detail::name_token_rule& container_type_rule)
+    const parse::detail::name_token_rule& container_type_rule,
+    const parse::lexer& tok)
 {
     using boost::phoenix::construct;
     using boost::phoenix::new_;
@@ -65,13 +66,23 @@ void initialize_bound_variable_parser(
     boost::spirit::qi::_a_type _a;
     boost::spirit::qi::_b_type _b;
     boost::spirit::qi::_val_type _val;
+    boost::spirit::qi::lit_type lit;
     const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
 
     bound_variable
-        =   variable_scope_rule [ _b = _1 ] >>
-        '.' >>-(container_type_rule [ push_back(_a, construct<std::string>(_1)) ] > '.')
-            >>  variable_name
-        [ push_back(_a, construct<std::string>(_1)), _val = construct_movable_(new_<ValueRef::Variable<T>>(_b, _a)) ]
+        = (
+                tok.Value_ >> '('
+            >>  variable_scope_rule [ _b = _1 ]
+            >>  '.' >>-(container_type_rule [ push_back(_a, construct<std::string>(_1)) ] > '.')
+            >> ( variable_name >> ')' )
+            [ push_back(_a, construct<std::string>(_1)), _val = construct_movable_(new_<ValueRef::Variable<T>>(_b, _a, true)) ]
+          )
+        | (
+            variable_scope_rule [ _b = _1 ] >>
+            '.' >>-(container_type_rule [ push_back(_a, construct<std::string>(_1)) ] > '.')
+                >>  variable_name
+            [ push_back(_a, construct<std::string>(_1)), _val = construct_movable_(new_<ValueRef::Variable<T>>(_b, _a, false)) ]
+          )
         ;
 }
 
@@ -103,7 +114,9 @@ enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name,
 
         variable_scope_rule = variable_scope(tok);
         container_type_rule = container_type(tok);
-        initialize_bound_variable_parser<T>(bound_variable_expr, variable_name, variable_scope_rule, container_type_rule);
+        initialize_bound_variable_parser<T>(bound_variable_expr, variable_name,
+                                            variable_scope_rule, container_type_rule,
+                                            tok);
 
         statistic_sub_value_ref
             =   constant_expr
@@ -116,7 +129,7 @@ enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name,
             =   (
                     (
                         (
-                            tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]
+                                tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]
                             |   tok.Min_    [ _c = ValueRef::MINIMUM ]
                             |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
                         )
@@ -143,8 +156,8 @@ enum_value_ref_rules<T>::enum_value_ref_rules(const std::string& type_name,
 
         primary_expr
             =   constant_expr
-            |   free_variable_expr
             |   bound_variable_expr
+            |   free_variable_expr
             |   statistic_expr
             |   complex_expr
             ;
@@ -182,10 +195,11 @@ simple_variable_rules<T>::simple_variable_rules(const std::string& type_name,
 
         boost::spirit::qi::_1_type _1;
         boost::spirit::qi::_val_type _val;
+        boost::spirit::qi::lit_type lit;
         const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
 
         free_variable
-            =   tok.Value_
+            =  (tok.Value_ >> !lit('('))
             [ _val = construct_movable_(new_<ValueRef::Variable<T>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE)) ]
             |   free_variable_name
             [ _val = construct_movable_(new_<ValueRef::Variable<T>>(ValueRef::NON_OBJECT_REFERENCE, _1)) ]
@@ -193,13 +207,15 @@ simple_variable_rules<T>::simple_variable_rules(const std::string& type_name,
 
         simple
             =   constant
-            |   free_variable
             |   bound_variable
+            |   free_variable
             ;
 
         variable_scope_rule = variable_scope(tok);
         container_type_rule = container_type(tok);
-        initialize_bound_variable_parser<T>(bound_variable, bound_variable_name, variable_scope_rule, container_type_rule);
+        initialize_bound_variable_parser<T>(bound_variable, bound_variable_name,
+                                            variable_scope_rule, container_type_rule,
+                                            tok);
 
 #if DEBUG_VALUEREF_PARSERS
         debug(bound_variable_name);
@@ -249,7 +265,7 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
         =   (
             (
                 (
-                    tok.Sin_    [ _c = ValueRef::SINE ]                     // single-parameter math functions
+                        tok.Sin_    [ _c = ValueRef::SINE ]                 // single-parameter math functions
                     |   tok.Cos_    [ _c = ValueRef::COSINE ]
                     |   tok.Log_    [ _c = ValueRef::LOGARITHM ]
                     |   tok.Abs_    [ _c = ValueRef::ABS ]
@@ -257,13 +273,13 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
                 >> ('(' > expr > ')') [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass))) ]
             )
             |   (
-                tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]   // random number requires a min and max value
+                    tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]   // random number requires a min and max value
                 >  ( '(' > expr >  ',' > expr > ')' ) [ _val = construct_movable_(
                         new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass), deconstruct_movable_(_2, _pass))) ]
             )
             |   (
                 (
-                    tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]              // oneof, min, or max can take any number or operands
+                        tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]          // oneof, min, or max can take any number or operands
                     |   tok.Min_    [ _c = ValueRef::MINIMUM ]
                     |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
                 )
@@ -274,7 +290,7 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
             |   (
                 lit('(') >> expr [ push_back(_d, _1) ]
                 >> (
-                    (     lit("==")   [ _c = ValueRef::COMPARE_EQUAL ]
+                    (       lit("==")   [ _c = ValueRef::COMPARE_EQUAL ]
                           | lit('=')    [ _c = ValueRef::COMPARE_EQUAL ]
                           | lit(">=")   [ _c = ValueRef::COMPARE_GREATER_THAN_OR_EQUAL ]
                           | lit('>')    [ _c = ValueRef::COMPARE_GREATER_THAN ]
@@ -365,7 +381,7 @@ parse::detail::arithmetic_rules<T>::arithmetic_rules(
 
     statistic_collection_expr
         =   (tok.Statistic_
-             >> (   tok.Count_  [ _b = ValueRef::COUNT ]
+             >> (       tok.Count_  [ _b = ValueRef::COUNT ]
                     |   tok.If_     [ _b = ValueRef::IF ]
                 )
             )
