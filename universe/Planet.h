@@ -65,14 +65,14 @@ public:
     /** @returns an angle in degree. */
     float AxialTilt() const;
 
-    const std::set<int>& BuildingIDs() const {return m_buildings;}
+    const std::set<int>& BuildingIDs() const    { return m_buildings; }
 
-    bool IsAboutToBeColonized() const   { return m_is_about_to_be_colonized; }
-    bool IsAboutToBeInvaded() const     { return m_is_about_to_be_invaded; }
-    bool IsAboutToBeBombarded() const   { return m_is_about_to_be_bombarded; }
-    int OrderedGivenToEmpire() const    { return m_ordered_given_to_empire_id; }
-    int LastTurnAttackedByShip() const  { return m_last_turn_attacked_by_ship; }
-    int LastTurnConquered() const       { return m_turn_last_conquered; }
+    bool IsAboutToBeColonized() const           { return m_is_about_to_be_colonized; }
+    bool IsAboutToBeInvaded() const             { return m_is_about_to_be_invaded; }
+    bool IsAboutToBeBombarded() const           { return m_is_about_to_be_bombarded; }
+    int OrderedGivenToEmpire() const            { return m_ordered_given_to_empire_id; }
+    int LastTurnAttackedByShip() const          { return m_last_turn_attacked_by_ship; }
+    int LastTurnConquered() const               { return m_turn_last_conquered; }
 
     const std::string&  SurfaceTexture() const  { return m_surface_texture; }
     std::string         CardinalSuffix() const; ///< returns a roman number representing this planets orbit in relation to other planets
