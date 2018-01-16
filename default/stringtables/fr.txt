@@ -977,8 +977,17 @@ ERROR_PLAYER_NAME_ALREADY_USED
 ERROR_WRONG_PASSWORD
 Mot de passe erroné pour le joueur %1%.
 
+ERROR_NOT_ENOUGH_AI_PLAYERS
+Pas assez de joueurs IA.
+
+ERROR_TOO_MANY_AI_PLAYERS
+Trop de joueurs IA.
+
 ERROR_NOT_ENOUGH_HUMAN_PLAYERS
 Pas assez de joueurs humains.
+
+ERROR_TOO_MANY_HUMAN_PLAYERS
+Trop de joueurs humains.
 
 ERROR_CONNECTION_WAS_REPLACED
 Votre connection a été mise à jour.
@@ -1089,14 +1098,28 @@ Les Voies spatiales sont générées entre chaque paire de systèmes, indépenda
 ## Command-line and options database entries
 ##
 
+COMMAND_LINE_NOT_FOUND
+'''Aucune option ou section correspondante trouvée'''
+
 COMMAND_LINE_USAGE
-'''Usage : '''
+'''Usage: -h | --help [nom groupe | nom option]'''
 
 COMMAND_LINE_DEFAULT
-'''Défaut : '''
+'''Défaut'''
+
+COMMAND_LINE_SECTIONS
+'''Groupes d'Options'''
+
+COMMAND_LINE_OPTIONS  # translated
+'''Options'''
 
 OPTIONS_DB_HELP
-Copier ce message d'aide.
+'''Afficher ce message d'aide.
+Accepte un argument pour un nom partiel ou complet d'option.
+Des arguments spéciaux sont prévus pour:
+all - [[OPTIONS_DB_SECTION_ALL]]
+raw - [[OPTIONS_DB_SECTION_RAW]]'''
+
 
 OPTIONS_DB_VERSION
 Copier le numéro de version et quitter.
@@ -1220,11 +1243,17 @@ Adresse à laquelle se connecter pour rejoindre une partie multijoueurs.
 OPTIONS_DB_MP_PLAYER_NAME
 Nom utilisé par le joueur lorsqu'il héberge ou rejoint une partie multijoueurs.
 
+OPTIONS_DB_MP_AI_MIN
+Définit le nombre minimum de joueurs IA requis pour démarrer une partie multijoueurs.
+
 OPTIONS_DB_MP_AI_MAX
-Limite le nombre d'IAs dans une partie multijoueurs. Une valeur de -1 correspond à un nombre illimité.
+Limite le nombre de joueurs IA dans une partie multijoueurs. Une valeur de -1 correspond à un nombre illimité.
 
 OPTIONS_DB_MP_HUMAN_MIN
 Définit le nombre minimum de joueurs humains requis pour démarrer une partie multijoueurs.
+
+OPTIONS_DB_MP_HUMAN_MAX
+Limite le nombre de joueurs humains dans une partie multijoueurs. Une valeur de -1 correspond à un nombre illimité.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position horizontale du centre du menu principal de l'écran d'introduction, en pourcentage de la largeur totale de la fenêtre de jeu ou du plein écran.
@@ -1852,6 +1881,89 @@ Port réseau à utiliser pour la découverte du serveur.
 
 OPTIONS_DB_NETWORK_MESSAGE_PORT
 Port réseau à utiliser pour la communication client-serveur.
+
+
+##
+## Option sections
+##
+
+OPTIONS_DB_SECTION_ALL
+Toutes les options
+
+OPTIONS_DB_SECTION_AUDIO  # translated
+Audio
+
+OPTIONS_DB_SECTION_AUDIO_MUSIC
+Musique de fond
+
+OPTIONS_DB_SECTION_AUDIO_EFFECTS
+Effets sonores
+
+OPTIONS_DB_SECTION_AUDIO_EFFECTS_PATHS
+Chemins des Effets sonores
+
+OPTIONS_DB_SECTION_EFFECTS
+Effets
+
+OPTIONS_DB_SECTION_LOGGING
+Connexion
+
+OPTIONS_DB_SECTION_MISC
+Divers
+
+OPTIONS_DB_SECTION_NETWORK
+Réseau et serveur
+
+OPTIONS_DB_SECTION_RAW
+Toutes les options avec seulement les descriptions brutes des clés
+
+OPTIONS_DB_SECTION_RESOURCE
+Ressources des données de jeu
+
+OPTIONS_DB_SECTION_SAVE
+Sauvegarde de partie
+
+OPTIONS_DB_SECTION_SETUP
+Réglages de départ pour une nouvelle partie
+
+OPTIONS_DB_SECTION_UI
+Interface utilisateur
+
+OPTIONS_DB_SECTION_UI_COLORS
+Couleurs
+
+OPTIONS_DB_SECTION_UI_CONTROL
+Contrôle (générique)
+
+OPTIONS_DB_SECTION_UI_HOTKEYS
+Raccourcis clavier
+
+OPTIONS_DB_SECTION_UI_MAP
+Carte principale
+
+OPTIONS_DB_SECTION_UI_MAP_FLEET
+Flottes (carte)
+
+OPTIONS_DB_SECTION_UI_FLEET
+Fenêtre Flottes
+
+OPTIONS_DB_UI_WINDOW
+Fenêtre (générique)
+
+OPTIONS_DB_SECTION_VERSION  # translated
+Version
+
+OPTIONS_DB_SECTION_VIDEO
+Vidéo
+
+OPTIONS_DB_SECTION_VIDEO_FPS
+Frames par seconde
+
+OPTIONS_DB_SECTION_VIDEO_FULLSCREEN
+Mode plein écran
+
+OPTIONS_DB_SECTION_VIDEO_WINDOWED
+Mode fenêtré
 
 
 ##
@@ -3055,6 +3167,9 @@ Capacité scientifique
 TRADE_PRODUCTION
 Capacité commerciale
 
+STOCKPILE_GENERATION
+Génération Stock
+
 INDUSTRY_CONSUMPTION
 Consommation industrielle
 
@@ -3063,6 +3178,9 @@ Consommation scientifique
 
 TRADE_CONSUMPTION
 Consommation commerciale
+
+STOCKPILE_USE
+Usage Stock
 
 IMPORT_EXPORT_TOOLTIP  # translated
 Import / Export
@@ -5072,6 +5190,12 @@ METER_MAX_SUPPLY_VALUE_LABEL
 METER_MAX_SUPPLY_VALUE_DESC
 [[METER_SUPPLY_VALUE_DESC]]
 
+METER_MAX_STOCKPILE_VALUE_LABEL
+[[METER_STOCKPILE_VALUE_LABEL]]
+
+METER_MAX_STOCKPILE_VALUE_DESC
+[[METER_STOCKPILE_VALUE_DESC]]
+
 METER_MAX_TROOPS_VALUE_LABEL
 [[METER_TROOPS_VALUE_LABEL]]
 
@@ -5090,33 +5214,10 @@ Industrie
 METER_INDUSTRY_VALUE_DESC
 '''L'Industrie, mesurée en Points de Production (PP), représente la capacité de production et de transformation de biens matériels de l'ensemble des planètes de l'empire. Elle est nécessaire pour la construction des structures, des astronefs et tout autre projet.
 
-L'Industrie d'une planète peut participer à tout projet lancé sur les planètes qui lui sont reliées par lignes d'[[metertype METER_SUPPLY]] de l'empire. L'Industrie qui n'est affectée à aucun projet durant un tour est convertie selon le [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] et ajoutée au Stock Impérial.
+L'Industrie d'une planète peut participer à tout projet lancé sur les planètes qui lui sont reliées par lignes d'[[metertype METER_SUPPLY]] de l'empire. L'Industrie n'étant affectée à aucun projet durant un tour est convertie en [[metertype METER_STOCKPILE]] et ajoutée au Stock Impérial.
 
 Pour davantage d'informations sur l'interface de Production, consultez l'article [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
-
-METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_LABEL
-Ratio Transfert Industrie vers Stock de PP
-
-METER_IMPERIAL_PP_TRANSFER_EFFICIENCY_VALUE_DESC
-'''Le ratio de transfert représente l'efficience de mise en stock de points vers le [[IMPERIAL_STOCKPILE]], les rendant disponibles pour toute production à travers tout l'empire.
-
-Vous démarrez avec la technologie [[tech PRO_PREDICTIVE_STOCKPILING]] et un ratio de 0.2 (i.e. 20% des PP en excédent sont transférés au [[IMPERIAL_STOCKPILE]]).
-Les technologies [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]] ajoutent chacune 0.2 de ratio.
-La technologie [[tech PRO_TRANS_DESIGN]] ajoute jusqu'à 0.3 de ratio. Par conséquent, le ratio peut atteindre une efficience comprise entre 20% et 90%.''' 
-
-METER_IMPERIAL_PP_USE_LIMIT_VALUE_LABEL
-Limite d'usage du Stock Impérial
-
-METER_IMPERIAL_PP_USE_LIMIT_VALUE_DESC
-'''La Limite d'usage du Stock Impérial représente la compétence quantitative du Stock Impérial à approvisionner les projets avec des points de production.
-Sa valeur correspond au nombre de PP pouvant être puisés à chaque tour dans le Stock Impérial et alloués à la production. 
-
-Vous démarrez avec la technologie [[tech PRO_PREDICTIVE_STOCKPILING]] et un usage de 2 points par tour.
-La technologie [[tech PRO_GENERIC_SUPPLIES]] autorise l'usage de 3 points supplémentaires par tour.
-La technologie [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]] autorise l'usage de 5 points supplémentaires par tour.
-Pleinement exploitée, la technologie [[tech PRO_TRANS_DESIGN]] autorise l'usage de 12 points supplémentaires par tour.
-Par conséquent, la limite d'usage s'étale entre 2 et 22 PP par tour.''' 
 
 METER_RESEARCH_VALUE_LABEL
 Recherche
@@ -5202,6 +5303,14 @@ Les lignes d'approvisionnement sont représentées par les Voies spatiales aux c
 Les Voies spatiales d'approvisionnement essentielles d'un empire (les lignes les plus directes reliant les systèmes producteurs de ressources de chaque Groupe Ressource) auront une épaisseur plus importante que les Voies spatiales non-essentielles. Si les PP sont gaspillés au sein d'un Groupe Ressource, les bandes extérieures des Voies Spatiales auront une couleur spécifique.
 
 Les lignes d'approvisionnement peuvent également servir à ravitailler en [[metertype METER_FUEL]] les astronefs.'''
+
+METER_STOCKPILE_VALUE_LABEL
+Stock
+
+METER_STOCKPILE_VALUE_DESC
+'''La capacité du Stock Impérial indique la compétence d'un empire à gérer les surplus de production et à utiliser les points de production stockés. Le Stock total d'un empire correspond à la somme des indicateurs Stock de toutes les planètes de l'empire. Ce total détermine combien de PP peuvent être importés dans le Stock Impérial à chaque tour, et combien peuvent y être puisés à chaque tour afin d'être utilisés pour la production.
+
+La compétence de gestion du Stock varie selon les espèces.'''
 
 METER_TROOPS_VALUE_LABEL
 Infanterie
@@ -6031,6 +6140,12 @@ SITREP_WELCOME  # translated
 
 SITREP_WELCOME_LABEL
 Bienvenue
+
+SITREP_SYSTEM_GOT_INCOMING_WARNING
+Dans %system%: des astronefs ennemis arrivent au prochain tour!
+
+SITREP_SYSTEM_GOT_INCOMING_WARNING_LABEL
+Ennemis en approche
 
 SITREP_GAS_GIANT_GENERATION_REMINDER
 La planète %planet% est un emplacement favorable pour la structure %buildingtype%, mais aucune n'y est construite à ce jour.
@@ -7029,6 +7144,24 @@ Les Laenfa sont de longs organismes végétaux semblables à des vignes, capable
 
 Structure sociale:
 Les Laenfa jouissent d'une culture unifiée due à la télépathie, mais comme leur capacité télépathique s'affaiblit avec la distance, le tronc central de la vigne est en charge des décisions importantes. Cette vigne centrale gère seule les arbitrages, mais prend en compte les voix des Laenfa qu'elle est en mesure de détecter. Les Laenfa évoluent donc à la manière d'un super-organisme, chaque individu œuvrant pour le collectif, dont le but est d'acquérir le savoir des autres espèces et de protéger le leur.
+'''
+
+SP_SLY  # translated
+Sly
+
+SP_SLY_GAMEPLAY_DESC
+'''Sacs de gaz affables mais peu connus.
+Vivent seulement sur les planètes de type [[PT_GASGIANT]].
+[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
+'''
+
+SP_SLY_DESC
+'''Description:
+Les Sly vivent sur les géantes gazeuses. Ces dernières étant si étrangères à la plupart des espèces dans l'univers, l'existence et l'histoire des Sly sont par conséquent peu connues.
+Dans l'incapacité de produire tout dispositif technologique, les Sly ne peuvent quitter leur monde natal. Mais récemment, ils ont pu obtenir de marchands galactiques l'équipement et les technologies nécessaires au voyage spatial en échange de données sur leur espèce et son histoire.
+
+Structure sociale:
+Les Sly ont une espérance de vie très importante et transmettent de génération en génération des chants dans lesquels l'ensemble du savoir culturel de l'espèce est encodé. Les Sly sont très ouverts et extrêmement curieux envers la galaxie et les autres espèces, avec lesquelles ils peuvent enfin entrer en contact.
 '''
 
 SP_LEMBALALAM  # translated
@@ -8219,6 +8352,13 @@ FOCUS_INDUSTRY
 Industrie
 
 # Focus types
+FOCUS_STOCKPILE
+Stock
+
+FOCUS_STOCKPILE_DESC
+Permet aux technologies de stockage d'augmenter le transfert vers stock
+
+# Focus types
 FOCUS_RESEARCH
 Recherche
 
@@ -8327,6 +8467,10 @@ METER_MAX_SUPPLY
 Max Approvisionnement
 
 # Meter types
+METER_MAX_STOCKPILE
+Max Stock
+
+# Meter types
 METER_MAX_TROOPS
 Max Infanterie
 
@@ -8337,14 +8481,6 @@ Population
 # Meter types
 METER_INDUSTRY
 Industrie
-
-# Meter types
-METER_IMPERIAL_PP_TRANSFER_EFFICIENCY
-Ratio Production vers Stock
-
-# Meter types
-METER_IMPERIAL_PP_USE_LIMIT
-Limite usage Stock Impérial
 
 # Meter types
 METER_RESEARCH
@@ -8389,6 +8525,10 @@ Défense
 # Meter types
 METER_SUPPLY
 Approvisionnement
+
+# Meter types
+METER_STOCKPILE
+Stock
 
 # Meter types
 METER_TROOPS
@@ -9983,7 +10123,7 @@ LRN_ALGO_ELEGANCE
 Élégance Algorithmique
 
 LRN_ALGO_ELEGANCE_DESC
-'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.1 par Population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.1 par Population sur toutes les planètes en Focus Recherche.
 
 Avec une difficulté grandissante des problèmes d'analyse de données, les démarches traditionnelles des performances algorithmiques deviennent moins efficaces, en raison des limitations de la complexité irréductible. À ce stade, de nouvelles formes et fonctions algorithmiques deviennent significatives: esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisée.'''
 
@@ -10076,7 +10216,7 @@ LRN_QUANT_NET
 Réseau Quantique
 
 LRN_QUANT_NET_DESC
-'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.5 par Population sur toutes les planètes en Focus Recherche.
 
 Un réseau massif de donnés, à l'échelle de l'empire, capable de transférer instantanément des informations entre deux lieux, plutôt que par le système lent et indirect des voies spatiales. Ce progrès facilite grandement la Recherche dans tout l'empire.
 
@@ -10192,7 +10332,7 @@ GRO_ENERGY_META
 Métabolisme d'Énergie Pure
 
 GRO_ENERGY_META_DESC
-'''Augmente le [[metertype METER_FUEL]] max de 2 sur tous les astronefs, la [[metertype METER_DEFENSE]] max de 5 sur toutes les planètes, les [[metertype METER_SHIELD]] max de 5 sur toutes les planètes, la Projection [[metertype METER_INDUSTRY]] de 0.2 par Population sur toutes les planètes réglées sur le Focus Industrie, et la Projection [[metertype METER_RESEARCH]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente le [[metertype METER_FUEL]] max de 2 sur tous les astronefs, la [[metertype METER_DEFENSE]] max de 5 sur toutes les planètes, les [[metertype METER_SHIELD]] max de 5 sur toutes les planètes, la Projection [[metertype METER_INDUSTRY]] de 0.2 par Population sur toutes les planètes en Focus Industrie, et la Projection [[metertype METER_RESEARCH]] de 0.5 par Population sur toutes les planètes en Focus Recherche.
 
 Tandis que la transformation d'une population entière en êtres de pure énergie s'avérerait peu pertinente, certaines tâches conviennent mieux à des individus dénués de corporalité. L'équipage d'un astronef par exemple, n'aurait plus besoin d'optimiser l'espace disponible pour les quartiers d'équipage ou le stockage des rations. Des êtres dotés d'une capacité de canalisation de l'énergie seraient en mesure d'améliorer les défenses et boucliers planétaires, ainsi que la production de ressources.
 
@@ -10216,27 +10356,25 @@ Stockage Anticipatif
 PRO_PREDICTIVE_STOCKPILING_DESC
 '''Connaître où la demande future de certains biens augmentera, permet de stocker ceux-ci en prévision.
 Le service de Stock Impérial dispose d'une flotte acheminant les matériaux bruts vers des lieux où l'on prévoit que d'importants projets puissent être entrepris.
-Cette tâche s'avère difficile étant donné que le service doit présager du moment où la demande sera stipulée, à quel endroit, quels matériaux et biens seront requis et quels en seront les utilisateurs.
+Cette tâche s'avère difficile étant donné que le service doit présager du moment où la demande sera stipulée, de l'endroit, des matériaux et biens qui seront requis, et de leurs utilisateurs.
 
 Une partie des PP inutilisés sont transférés au Stock Impérial de Production, tandis que l'autre partie est gaspillée.
 Un projet de la file d'attente de Production peut puiser dans le Stock Impérial seulement si ce projet y a été explicitement autorisé.
 
-Il s'agit donc de la technologie de base concernant le Stock Impérial.
-Le Stock Impérial débute avec un [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] de 20% et permet de puiser 2 PP / tour dans le Stock (cf. [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+Il s'agit donc de la technologie de base du Stock Impérial, augmentant de 1 le [[metertype METER_STOCKPILE]] des planètes réglées sur le Focus Stock.'''
 
 PRO_GENERIC_SUPPLIES
 Stocks Génériques
 
 PRO_GENERIC_SUPPLIES_DESC
-'''En choisissant avec précaution les chaînes d'approvisionnement, les matériaux, et les modèles de conception, des Stocks Génériques sont constitués, pouvant être facilement dissociés et réutilisés selon les besoins dans la plupart des productions industrielles.
+'''Par une gestion coordonnée des chaînes d'approvisionnement, des différents matériaux et des nombreux modèles de conception, des Stocks Génériques sont constitués, pouvant être facilement dissociés et réutilisés selon les besoins dans la plupart des productions industrielles.
 
-Les Stocks Génériques peuvent être constitués bien avant que la demande ne se fasse sentir. Les packages d'approvisionnement intègrent habituellement des dispositifs de mise en place d'infrastructures permettant de redéfinir la production de nouveaux biens à partir des Stocks Génériques.
+Les Stocks Génériques peuvent être constitués bien avant que la demande ne se fasse sentir. Les packages d'approvisionnement intègrent habituellement des dispositifs de reconstruction d'infrastructures permettant de redéfinir la production de nouveaux biens à partir des Stocks Génériques.
 En atteignant ce degré de sophistication, les Stocks Génériques peuvent être utilisés pour concevoir de nouveaux produits technologiques qui n'étaient même pas envisagés au moment de la constitution des stocks.
 
 Cela exempte le service du Stock Impérial de connaître à l'avance quels biens seront exactement demandés. Prévoir le lieu de la demande s'avère désormais suffisant.
 
-Il s'agit donc d'une technologie améliorant le Stock Impérial.
-Elle ajoute 20% au [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] et permet de puiser un supplément de 3 PP / tour dans le Stock (cf. [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+Il s'agit donc d'une technologie d'amélioration du Stock Impérial, augmentant de 3 le [[metertype METER_STOCKPILE]] des planètes réglées sur le Focus Stock.'''
 
 PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
 Complexe d'Intrication Interstellaire
@@ -10245,8 +10383,19 @@ PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 '''L'intrication quantique des salles de contrôle permet de manœuvrer des machines industrielles à distance à partir d'autres systèmes stellaires.
 Dissocier le personnel et les moyens de production favorise un procédé optimal de conception et augmente l'efficience du service de Stock Impérial.
 
-Il s'agit donc d'une technologie améliorant le Stock Impérial.
-Elle ajoute 20% au [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] et permet de puiser un supplément de 5 PP / tour dans le Stock (cf. [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).'''
+Il s'agit donc d'une technologie d'amélioration du Stock Impérial, augmentant de 3 le [[metertype METER_STOCKPILE]] des planètes réglées sur le Focus Stock.'''
+
+PRO_VOID_PREDICTION
+Prédiction du Vide
+
+PRO_VOID_PREDICTION_DESC
+'''Tandis que les prédictions classiques se basent invariablement sur la connaissance statistique des faits passés, l'étude de la mémoire chaotique du Vide mène à de solides prédictions de faits pourtant initiaux ou étranges.
+Pour le service du Stock Impérial, la Prédiction du Vide est l'instrument par excellence permettant de fournir les bons matériaux avant même que le besoin ne se manifeste.
+
+Il s'agit donc d'une technologie d'amélioration du Stock Impérial, augmentant l'indicateur [[metertype METER_STOCKPILE]] d'une planète.
+De 0.1 par Population pour les planètes réglées sur le Focus Croissance ou Logistique.
+De 0.2 par Population pour les planètes réglées sur le Focus Stock.'''
+
 
 PRO_MICROGRAV_MAN
 Production en Microgravité
@@ -10262,7 +10411,7 @@ PRO_ROBOTIC_PROD
 Production Robotisée
 
 PRO_ROBOTIC_PROD_DESC
-'''Augmente la Projection [[metertype METER_INDUSTRY]] de 0.1 par Population sur toutes les planètes réglées sur le Focus Industrie.
+'''Augmente la Projection [[metertype METER_INDUSTRY]] de 0.1 par Population sur toutes les planètes en Focus Industrie.
 
 Les Exobots, désignation sous laquelle ils sont communément connus, constituent l'aboutissement du design allié à la fonctionnalité. Robots conçus pour effectuer n'importe quelle tâche de production, de l'électronique microscopique à la construction à grande échelle, leur production de masse est aisée, tandis que leur utilisation reste la plus avantageuse dans les colonies assignant une haute priorité à l'industrie. Chaque monde privilégiant l'industrie se voit gratifiée d'une équipe d'Exobots, améliorant ainsi considérablement sa production industrielle.
 
@@ -10277,7 +10426,7 @@ PRO_FUSION_GEN
 Génération par Fusion
 
 PRO_FUSION_GEN_DESC
-'''Augmente la Projection [[metertype METER_INDUSTRY]] de 0.2 par Population sur toutes les planètes réglées sur le Focus Industrie.
+'''Augmente la Projection [[metertype METER_INDUSTRY]] de 0.2 par Population sur toutes les planètes en Focus Industrie.
 
 Les réacteurs de fusion nucléaire, bien que coûteux à produire et à entretenir, s'avèrent rentables pour les mondes industrialisés à forte consommation énergétique. La dépendance aux réacteurs basés sur la fission nucléaire deviendra peu à peu une relique du passé.
 
@@ -10457,7 +10606,14 @@ SHP_SPACE_FLUX_DRIVE
 Propulsion Flux Spatial
 
 SHP_SPACE_FLUX_DRIVE_DESC
-D'ordinaire, la propulsion dans l'espace est limitée par le propulseur ou le milieu de propulsion lui-même. Cependant, à des échelles de grandeur relativement petites, il est possible de propulser un objet dans l'espace de la même manière qu'il le serait dans l'eau, c'est-à-dire en agissant directement sur le milieu dans lequel l'objet est immergé. Cela nécessite la manipulation de l'espace lui-même à une dimension quantique, chaque quantum d'espace étant réorganisé en un système d'unités fixes et adjacentes d'espace. Cette méthode de propulsion est très efficace, mais s'avère dangereuse à grande échelle et facilement détectable en raison des effets dimensionnels résultants. Des recherches avancées en matière de technologies de furtivité peuvent minimiser les désagréments causés par ces perturbations dimensionnelles.
+D'ordinaire, la propulsion dans l'espace est limitée par le propulseur ou le milieu de propulsion lui-même. Cependant, à des échelles de grandeur relativement petites, il est possible de propulser un objet dans l'espace de la même manière qu'il le serait dans l'eau, c'est-à-dire en agissant directement sur le milieu dans lequel l'objet est immergé. Cela nécessite la manipulation de l'espace lui-même à une dimension quantique, chaque quantum d'espace étant réorganisé en un système d'unités fixes et adjacentes d'espace. Cette méthode de propulsion est très efficace, mais s'avère dangereuse à grande échelle et facilement détectable en raison des effets dimensionnels résultants. Des recherches avancées en matière de technologies de furtivité peuvent minimiser les désagréments causés par ces perturbations dimensionnelles. La coque d'astronef résultant de ces recherches est d'un design légèrement plus sophistiqué que celle issue de la technologie [[tech SHP_SPACE_FLUX_BUBBLE]].
+
+SHP_SPACE_FLUX_BUBBLE
+Bulle Flux Spatial
+
+SHP_SPACE_FLUX_BUBBLE_DESC
+D'ordinaire, la propulsion dans l'espace est limitée par le propulseur ou le milieu de propulsion lui-même. Cependant, à des échelles de grandeur relativement petites, il est possible de propulser un objet dans l'espace de la même manière qu'il le serait dans l'eau, c'est-à-dire en agissant directement sur le milieu dans lequel l'objet est immergé. Cela nécessite la manipulation de l'espace lui-même à une dimension quantique, chaque quantum d'espace étant réorganisé en un système d'unités fixes et adjacentes d'espace. Cette méthode de propulsion est très efficace, mais s'avère dangereuse à grande échelle et facilement détectable en raison des effets dimensionnels résultants. Des recherches avancées en matière de technologies de furtivité peuvent minimiser les désagréments causés par ces perturbations dimensionnelles. La plus simple solution pour concevoir un astronef utilisant la propulsion par flux s'avère être la modulation en bulle, laquelle recouvre une coque de forme également sphérique. Des solutions plus complexes sont néanmoins possibles via une meilleure technologie de [[tech SHP_SPACE_FLUX_DRIVE]].
+
 
 SHP_CONTGRAV_MAINT
 Maintenance Anti-Gravitationnelle
@@ -11799,7 +11955,7 @@ BLD_INDUSTRY_CENTER
 Centre Industriel
 
 BLD_INDUSTRY_CENTER_DESC
-'''Augmente l'indicateur [[metertype METER_INDUSTRY]] de 0.2 par Population sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le Focus Industrie.
+'''Augmente l'[[metertype METER_INDUSTRY]] de 0.2 par Population sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le Focus Industrie.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 L'amélioration [[tech PRO_INDUSTRY_CENTER_II]] double le bonus de base.
@@ -11816,7 +11972,6 @@ Concevoir des dispositifs de production dans l'optique que différentes espèces
 
 Chaque empire peut abriter une académie sur une à six planètes peuplées par différentes espèces.
 Afin de pouvoir bâtir une académie, le Bonheur de la Population doit être très élevé et cette dernière doit se trouver à au moins trois Voies spatiales d'une autre académie.
-Chaque Académie InterDesign améliore le [[metertype METER_IMPERIAL_PP_TRANSFER_EFFICIENCY]] de 5% et permet de puiser un supplément de 2PP / tour dans le Stock (Voir l'article [[metertype METER_IMPERIAL_PP_USE_LIMIT]]).
 '''
 
 BLD_MEGALITH
@@ -11861,7 +12016,7 @@ BLD_COLLECTIVE_NET
 Réseau de Pensée Collective
 
 BLD_COLLECTIVE_NET_DESC
-'''Augmente l'[[metertype METER_INDUSTRY]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Industrie, et la [[metertype METER_RESEARCH]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche. Tout voyage sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
+'''Augmente l'[[metertype METER_INDUSTRY]] de 0.5 par Population sur toutes les planètes en Focus Industrie, et la [[metertype METER_RESEARCH]] de 0.5 par Population sur toutes les planètes en Focus Recherche. Tout voyage sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, résolvant des problèmes et faisant des découvertes qui s'avéreraient hors de portée pour un unique esprit, aussi brillant soit-il.'''
@@ -11878,7 +12033,7 @@ BLD_ENCLAVE_VOID
 Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.75 par Population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.75 par Population sur toutes les planètes en Focus Recherche.
 Les bonus de plusieurs exemplaires ne s'additionnent pas.
 
 La population entière d'une planète est modifiée génétiquement afin de l'harmoniser avec l'Esprit du Vide, et ainsi diffuser sa sagesse dans tout l'empire. Les habitants de l'Enclave du Vide sont considérés comme des prêtres, prophètes d'une pensée supérieure et d'un savoir suprême. Dans tous les domaines de grande importance pour la bonne marche de l'empire, leurs conseils et avis s'avèrent d'une grande valeur. Des émissaires de l'Enclave peuvent donc prendre part à tout projet impérial de Recherche et apporter ainsi une aide précieuse.'''
@@ -12087,7 +12242,7 @@ BLD_GAS_GIANT_GEN
 Convertisseur de Géante Gazeuse
 
 BLD_GAS_GIANT_GEN_DESC
-'''Cette structure ne peut être construite que sur une [[PT_GASGIANT]] et augmente de 10 l'indicateur [[metertype METER_INDUSTRY]] sur les planètes du même système réglées sur le Focus Industrie.
+'''Cette structure ne peut être construite que sur une [[PT_GASGIANT]] et augmente de 10 l'[[metertype METER_INDUSTRY]] sur les planètes du même système réglées sur le Focus Industrie.
 Les bonus de plusieurs exemplaires dans le même système ne s'additionnent pas.
 
 Un puissant générateur conçu pour puiser l'énergie des Géantes Gazeuses.'''
@@ -12277,6 +12432,13 @@ Colonie Silexian
 
 BLD_COL_SILEXIAN_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_SILEXIAN]]. [[BLD_COL_PART_2]] colonie Silexian [[BLD_COL_PART_3]].
+
+BLD_COL_SLY
+Colonie Sly
+
+BLD_COL_SLY_DESC
+[[BLD_COL_PART_1]] colonie [[species SP_SLY]]. [[BLD_COL_PART_2]] colonie Sly [[BLD_COL_PART_3]].
+
 
 BLD_COL_SSLITH
 Colonie Sslith
@@ -13000,6 +13162,18 @@ Coque Flux Spatial
 SH_SPATIAL_FLUX_DESC
 '''Cette minuscule coque est capable d'atteindre une vitesse optimale sur de longues distances en raison de la puissance fournie par la technologie de [[tech SHP_SPACE_FLUX_DRIVE]]. Elle ne dispose cependant que de deux niches externes et sa [[metertype METER_STRUCTURE]] max est faible.
  
+Sa [[metertype METER_STEALTH]] débute à 15, augmente de 10 si l'astronef est réglé sur '[[FW_PASSIVE]]', mais diminue de 30 pour tout déplacement durant un tour. Les avancées permises par les technologies telles que l'[[tech SPY_STEALTH_PART_1]] permettent à l'équipage d'accroître de 10 la Furtivité de l'astronef pour chaque recherche effectuée dans cette branche.
+
+Son [[metertype METER_DETECTION]] est standard, tandis que sa [[metertype METER_SPEED]] est moyenne.
+
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
+
+SH_SPACE_FLUX_BUBBLE
+Coque Bulle Flux Spatial
+
+SH_SPACE_FLUX_BUBBLE_DESC
+'''Cette minuscule coque est capable d'atteindre une vitesse optimale sur de longues distances en raison de la puissance fournie par la technologie de [[tech SHP_SPACE_FLUX_BUBBLE]]. Elle ne dispose cependant que d'une niche interne et sa [[metertype METER_STRUCTURE]] max est faible.
+
 Sa [[metertype METER_STEALTH]] débute à 15, augmente de 10 si l'astronef est réglé sur '[[FW_PASSIVE]]', mais diminue de 30 pour tout déplacement durant un tour. Les avancées permises par les technologies telles que l'[[tech SPY_STEALTH_PART_1]] permettent à l'équipage d'accroître de 10 la Furtivité de l'astronef pour chaque recherche effectuée dans cette branche.
 
 Son [[metertype METER_DETECTION]] est standard, tandis que sa [[metertype METER_SPEED]] est moyenne.
@@ -13933,6 +14107,24 @@ GREAT_SUPPLY_DESC
 ULTIMATE_SUPPLY_DESC
 ++	Parfait en [[metertype METER_SUPPLY]] : +3
 
+NO_STOCKPILE_DESC
+--	Aucun [[metertype METER_STOCKPILE]]
+
+BAD_STOCKPILE_DESC
+	Mauvais en [[metertype METER_STOCKPILE]]: 50%
+
+AVERAGE_STOCKPILE_DESC
+	Normal en [[metertype METER_STOCKPILE]]: 100%
+
+GOOD_STOCKPILE_DESC
++	Excellent en [[metertype METER_STOCKPILE]]: 400%
+
+GREAT_STOCKPILE_DESC
+++	Excellent en [[metertype METER_STOCKPILE]]: 1000%
+
+ULTIMATE_STOCKPILE_DESC
++++	Parfait en [[metertype METER_STOCKPILE]]: 1500%
+
 GOOD_SHIP_SHIELD_DESC
 +	Bons [[metertype METER_SHIELD]] d'astronefs : +1
 
@@ -14116,6 +14308,21 @@ GREAT_SUPPLY_LABEL
 # %2% FIXME
 ULTIMATE_SUPPLY_LABEL
 %2% Parfait en Approvisionnement
+
+# %1% FIXME
+# %2% FIXME
+AVERAGE_STOCKPILE_LABEL
+%2% Normal en Stock
+
+# %1% FIXME
+# %2% FIXME
+GREAT_STOCKPILE_LABEL
+%2% Excellent en Stock
+
+# %1% FIXME
+# %2% FIXME
+ULTIMATE_STOCKPILE_LABEL
+%2% Parfait en Stock
 
 # %1% FIXME
 # %2% FIXME
