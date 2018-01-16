@@ -216,6 +216,7 @@ namespace {
             col_types[{UserStringNop("SUPPLY_RANGE"),               UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<double>("PropagatedSupplyRange");
             col_types[{UserStringNop("AVAILABLE_FOCI"),             UserStringNop("PLANETS_SUBMENU")}]= UserStringVecValueRef("AvailableFoci");
             col_types[{UserStringNop("LAST_TURN_CONQUERED"),        UserStringNop("PLANETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnConquered");
+            col_types[{UserStringNop("LAST_TURN_ATTACKED_BY_SHIP"), UserStringNop("PLANETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnAttackedByShip");
 
             // ship/fleet
             col_types[{UserStringNop("SPECIES"),                    UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Species");

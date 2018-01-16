@@ -192,6 +192,7 @@
     (Label)                                     \
     (Large)                                     \
     (LastTurnActiveInBattle)                    \
+    (LastTurnAttackedByShip)                    \
     (LastTurnBattleHere)                        \
     (LastTurnConquered)                         \
     (LastTurnResupplied)                        \

@@ -5983,6 +5983,9 @@ Last Turn Resupplied
 LAST_TURN_CONQUERED
 Last Turn Conquered
 
+LAST_TURN_ATTACKED_BY_SHIP
+Last Turn Attacked By Ship
+
 ARRIVED_ON_TURN
 Arrived on Turn
 
