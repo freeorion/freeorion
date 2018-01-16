@@ -756,10 +756,10 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
     // find a default focus. use first defined available focus.
     // AvailableFoci function should return a vector of all names of
     // available foci.
-    std::vector<std::string> available_foci = AvailableFoci();
+    auto available_foci = AvailableFoci();
     if (species && !available_foci.empty()) {
         bool found_preference = false;
-        for (const std::string& focus : available_foci) {
+        for (const auto& focus : available_foci) {
             if (!focus.empty() && focus == species->PreferredFocus()) {
                 SetFocus(focus);
                 found_preference = true;
@@ -863,15 +863,6 @@ void Planet::PopGrowthProductionResearchPhase() {
         }
         // remove species
         PopCenter::Reset();
-    }
-
-    if (!just_conquered) {
-        GetMeter(METER_SHIELD)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SHIELD));
-        GetMeter(METER_DEFENSE)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_DEFENSE));
-        GetMeter(METER_TROOPS)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_TROOPS));
-        GetMeter(METER_REBEL_TROOPS)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_REBEL_TROOPS));
-        GetMeter(METER_SUPPLY)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SUPPLY));
-        GetMeter(METER_STOCKPILE)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_STOCKPILE));
     }
 
     StateChangedSignal();

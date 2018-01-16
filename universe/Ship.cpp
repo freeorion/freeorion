@@ -364,16 +364,6 @@ float Ship::NextTurnCurrentMeterValue(MeterType type) const {
         throw std::invalid_argument("Ship::NextTurnCurrentMeterValue passed meter type that the Ship does not have: " + boost::lexical_cast<std::string>(type));
     float current_meter_value = meter->Current();
 
-    if (type == METER_SHIELD) {
-        if (m_last_turn_active_in_combat >= CurrentTurn())
-            return std::max(0.0f,   // battle just happened. shields limited to max shield, but don't regen
-                            std::min(current_meter_value,
-                                     UniverseObject::GetMeter(METER_MAX_SHIELD)->Current()));
-        else                        // shields regneerate to max shield
-            return UniverseObject::GetMeter(METER_MAX_SHIELD)->Current();
-    }
-
-
     // ResourceCenter-like resource meter growth...
 
     MeterType target_meter_type = INVALID_METER_TYPE;

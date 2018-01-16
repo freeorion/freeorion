@@ -13,10 +13,12 @@ NATIVE_PLANETARY_DEFENSE
                 SetDetection value = Value + 10
             ]
     [[PROTECTION_FOCUS_DEFENSE]]
+    [[STANDARD_DEFENSE_GROWTH]]
 '''
 
 AVERAGE_PLANETARY_DEFENSE
-'''[[PROTECTION_FOCUS_DEFENSE]]'''
+'''[[PROTECTION_FOCUS_DEFENSE]]
+[[STANDARD_DEFENSE_GROWTH]]'''
 
 PROTECTION_FOCUS_DEFENSE
 '''EffectsGroup
@@ -28,6 +30,17 @@ PROTECTION_FOCUS_DEFENSE
             stackinggroup = "FOCUS_PROTECTION_DEFENSE_STACK"
             priority = [[VERY_LATE_PRIORITY]]
             effects = SetMaxDefense value = Value * 2 accountinglabel = "FOCUS_PROTECTION_LABEL"
+'''
+
+STANDARD_DEFENSE_GROWTH
+'''        EffectsGroup // increase 1 per turn, up to max
+            scope = Source
+            activation = And [
+                Planet
+                (Source.LastTurnConquered < CurrentTurn)
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetDefense value = min(Value(Target.MaxDefense), Value + 1)
 '''
 
 #include "/scripting/common/priorities.macros"

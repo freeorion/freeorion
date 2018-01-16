@@ -1,12 +1,16 @@
 AVERAGE_HAPPINESS
 '''
-        EffectsGroup
+        EffectsGroup    // increase or decrease 1 per turn towards target
             scope = Source
-            activation = Planet
+            activation = And [
+                Planet
+                (Source.Population != Source.TargetPopulation)
+                (Source.LastTurnConquered < CurrentTurn)
+            ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetHappiness value = Value +
-                min(abs(Target.TargetHappiness - Value), 1) *
-                    (1 - 2*(Statistic If condition = And [Target (Value > Target.TargetHappiness)]))
+                min(abs(Value(Target.TargetHappiness) - Value), 1) *
+                    (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.TargetHappiness))]))
             
         EffectsGroup
             scope = Source

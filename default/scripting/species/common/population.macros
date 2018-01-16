@@ -7,31 +7,20 @@ BASIC_POPULATION
         [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
 
 
-        // basic population growth up to target population
+        // population growth or decay towards to target population
         EffectsGroup
             scope = Source
             activation = And [
                 Planet
-                (Source.Population < Source.TargetPopulation)
+                (Source.Population != Source.TargetPopulation)
+                (Source.LastTurnConquered < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetPopulation value = min(
-                Source.TargetPopulation,
-                Value + Value*0.01*(Target.TargetPopulation + 1 - Value)
-            )
-        // basic population decay down to target population
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                (Source.Population > Source.TargetPopulation)
-            ]
-            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetPopulation value = max(
-                Target.TargetPopulation,
-                Value - 0.1*(Value - Target.TargetPopulation)
-            )
-        
+            effects = SetPopulation value =
+                (Statistic If condition = (Value < Value(Target.TargetPopulation)) *
+                    min(Value(Target.TargetPopulation), Value + Value*0.01*(Value(Target.TargetPopulation) + 1 - Value)))
+              + (Statistic If condition = (Value > Value(Target.TargetPopulation)) *
+                    max(Value(Target.TargetPopulation), Value - 0.1*(Value - Value(Target.TargetPopulation))))
             
         // Since all species have the same advanced focus effects and
         // infrastructure, the macros are stashed here were they don't
