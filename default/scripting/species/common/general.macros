@@ -5,29 +5,16 @@ STANDARD_CONSTRUCTION
             accountinglabel = "STANDARD_CONSTRUCTION_LABEL"
             effects = SetTargetConstruction value = Value + 20
 
-        EffectsGroup
+        EffectsGroup    // increase or decrease towards target meter, when not recently conquered
             scope = Source
             activation = And [
                 Planet
-                (Source.Construction < Source.TargetConstruction)
+                (Source.LastTurnConquered < CurrentTurn)
             ]
-            priority = [[DEFAULT_PRIORITY]]
-            effects = SetConstruction value = min(
-                Source.TargetConstruction,
-                Value + 1
-            )
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                (Source.Construction > Source.TargetConstruction)
-            ]
-            priority = [[DEFAULT_PRIORITY]]
-            effects = SetConstruction value = max(
-                Source.TargetConstruction,
-                Value - 1
-            )
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetConstruction value = Value +
+                min(abs(Value(Target.TargetConstruction) - Value), 1) *
+                    (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.TargetConstruction))]))
 '''
 
 FOCUS_CHANGE_PENALTY
