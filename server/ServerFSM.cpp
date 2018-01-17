@@ -2342,7 +2342,9 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
         }
     }
 
-    post_event(HostlessSave());
+    if(server.IsHostless() && GetOptionsDB().Get<bool>("save.server.hostless")) {
+        post_event(HostlessSave());
+    }
     return transit<WaitingForTurnEnd>();
 }
 
