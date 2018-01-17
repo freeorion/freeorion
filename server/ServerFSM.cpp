@@ -650,6 +650,31 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
     ServerApp& server = Server();
     const SpeciesManager& sm = GetSpeciesManager();
 
+    player_connection->SetAuthRoles(roles);
+
+    // check client types and roles
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
+        !player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER))
+    {
+        client_type = Networking::INVALID_CLIENT_TYPE;
+    }
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
+        !player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER))
+    {
+        client_type = Networking::INVALID_CLIENT_TYPE;
+    }
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
+        !player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR))
+    {
+        client_type = Networking::INVALID_CLIENT_TYPE;
+    }
+
+    if (client_type == Networking::INVALID_CLIENT_TYPE) {
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
+        server.Networking().Disconnect(player_connection);
+        return;
+    }
+
     // assign unique player ID to newly connected player
     int player_id = server.m_networking.NewPlayerID();
 
@@ -707,8 +732,6 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
     }
 
     ValidateClientLimits();
-
-    player_connection->SetAuthRoles(roles);
 
     for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
