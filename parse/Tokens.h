@@ -512,8 +512,7 @@
     (TopPriorityResearchableTech)               \
     (TopPriorityTransferrableTech)              \
     (Toxic)                                     \
-    (Trade)                                     \
-    (TradeStockpile)
+    (Trade)
 
 #define TOKEN_SEQ_17                            \
     (Troops)                                    \

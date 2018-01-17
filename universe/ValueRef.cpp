@@ -715,10 +715,6 @@ double Variable<double>::Eval(const ScriptingContext& context) const
             else
                 return object->InitialMeterValue(meter_type);
 
-    } else if (property_name == "TradeStockpile") {
-        if (const Empire* empire = GetEmpire(object->Owner()))
-            return empire->ResourceStockpile(RE_TRADE);
-
     } else if (property_name == "X") {
         return object->X();
 
