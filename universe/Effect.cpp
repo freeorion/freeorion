@@ -3797,8 +3797,6 @@ void Conditional::Execute(const ScriptingContext& context,
         m_target_condition->Eval(context, matches, non_matches,
                                  Condition::MATCHES);
 
-    TraceLogger(effects) << "\n\nExecute Conditional effect: \n" << Dump();
-
     // execute true and false effects to target matches and non-matches respectively
     if (!matches.empty() && !m_true_effects.empty()) {
         Effect::TargetSet& match_targets =
