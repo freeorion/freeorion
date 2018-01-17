@@ -15,98 +15,37 @@ Tech
             scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
-                Industry high = RootCandidate.TargetIndustry - 3
             ]
-            effects = SetIndustry value = Value + 2
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = If
+                condition = (Value(LocalCandidate.Industry) <= Value(LocalCandidate.TargetIndustry))
+                effects = SetIndustry value = min(Value + 2, Value(Target.TargetIndustry))
+                else = SetIndustry value = max(Value - 4, Value(Target.TargetIndustry))
 
         EffectsGroup
             scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
-                Research high = RootCandidate.TargetResearch - 3
             ]
-            effects = SetResearch value = Value + 2
-
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = If
+                condition = (Value(LocalCandidate.Research) <= Value(LocalCandidate.TargetResearch))
+                effects = SetResearch value = min(Value + 2, Value(Target.TargetResearch))
+                else = SetResearch value = max(Value - 4, Value(Target.TargetResearch))
+            
         EffectsGroup
             scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
-                Construction high = RootCandidate.TargetConstruction - 3
             ]
-            effects = SetConstruction value = Value + 2
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = If
+                condition = (Value(LocalCandidate.Construction) <= Value(LocalCandidate.TargetConstruction))
+                effects = SetConstruction value = min(Value + 2, Value(Target.TargetConstruction))
+                else = SetConstruction value = max(Value - 4, Value(Target.TargetConstruction))
 
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy empire = Source.Owner
-                Industry low = RootCandidate.TargetIndustry - 3 high = RootCandidate.TargetIndustry
-            ]
-            effects = SetIndustry value = Target.TargetIndustry
-
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy empire = Source.Owner
-                Research low = RootCandidate.TargetResearch - 3 high = RootCandidate.TargetResearch
-            ]
-            effects = SetResearch value = Target.TargetResearch
-
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy empire = Source.Owner
-                Construction low = RootCandidate.TargetConstruction - 3 high = RootCandidate.TargetConstruction
-            ]
-            effects = SetConstruction value = Target.TargetConstruction
-
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy empire = Source.Owner
-                Industry low = RootCandidate.TargetIndustry + 5
-            ]
-            effects = SetIndustry value = Value - 3
-
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy empire = Source.Owner
-                Research low = RootCandidate.TargetResearch + 5
-            ]
-            effects = SetResearch value = Value - 3
-
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy empire = Source.Owner
-                Construction low = RootCandidate.TargetConstruction + 5
-            ]
-            effects = SetConstruction value = Value - 3
-
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy empire = Source.Owner
-                Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 5
-            ]
-            effects = SetIndustry value = Target.TargetIndustry
-
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy empire = Source.Owner
-                Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 5
-            ]
-            effects = SetResearch value = Target.TargetResearch
-
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy empire = Source.Owner
-                Construction low = RootCandidate.TargetConstruction high = RootCandidate.TargetConstruction + 5
-            ]
-            effects = SetConstruction value = Target.TargetConstruction
     ]
     graphic = "icons/tech/force_energy_structures.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"
