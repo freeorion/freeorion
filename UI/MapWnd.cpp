@@ -1083,7 +1083,7 @@ void MapWnd::CompleteConstruction() {
     m_btn_turn = Wnd::Create<CUIButton>(turn_button_longest_reasonable_text);
     m_btn_turn->Resize(m_btn_turn->MinUsableSize());
     m_btn_turn->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::EndTurn, this));
+        [this](){ EndTurn(); });
     m_btn_turn->LeftClickedSignal.connect(
         &PlayTurnButtonClickSound);
 
@@ -1096,7 +1096,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn_mouseover.png")));
 
     m_btn_auto_turn->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleAutoEndTurn, this));
+        [this](){ ToggleAutoEndTurn(); });
     m_btn_auto_turn->Resize(GG::Pt(GG::X(24), GG::Y(24)));
     m_btn_auto_turn->SetMinSize(GG::Pt(GG::X(24), GG::Y(24)));
     ToggleAutoEndTurn();    // toggle twice to set textures without changing default setting state
@@ -1121,7 +1121,7 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_menu->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_menu->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ShowMenu, this));
+        [this](){ ShowMenu(); });
     m_btn_menu->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_menu->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_MENU"), UserString("MAP_BTN_MENU_DESC")));
@@ -1138,7 +1138,7 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_pedia->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_pedia->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::TogglePedia, this));
+        [this](){ TogglePedia(); });
     m_btn_pedia->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_pedia->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA_DESC")));
@@ -1155,7 +1155,7 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_graphs->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ShowGraphs, this));
+        [this](){ ShowGraphs(); });
     m_btn_graphs->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_graphs->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH_DESC")));
@@ -1172,7 +1172,7 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_design->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_design->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleDesign, this));
+        [this](){ ToggleDesign(); });
     m_btn_design->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_design->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN_DESC")));
@@ -1189,7 +1189,7 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_production->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_production->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleProduction, this));
+        [this](){ ToggleProduction(); });
     m_btn_production->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_production->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION_DESC")));
@@ -1206,7 +1206,7 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_research->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_research->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleResearch, this));
+        [this](){ ToggleResearch(); });
     m_btn_research->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_research->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH_DESC")));
@@ -1223,7 +1223,7 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_objects->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_objects->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleObjects, this));
+        [this](){ ToggleObjects(); });
     m_btn_objects->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_objects->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS_DESC")));
@@ -1240,7 +1240,7 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_empires->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_empires->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleEmpires, this));
+        [this](){ ToggleEmpires(); });
     m_btn_empires->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_empires->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES_DESC")));
@@ -1257,7 +1257,7 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_siterep->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_siterep->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleSitRep, this));
+        [this](){ ToggleSitRep(); });
     m_btn_siterep->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_siterep->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP_DESC")));
@@ -1274,7 +1274,7 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_messages->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_messages->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleMessages, this));
+        [this](){ ToggleMessages(); });
     m_btn_messages->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_messages->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES_DESC")));
@@ -1291,7 +1291,7 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_moderator->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_moderator->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleModeratorActions, this));
+        [this](){ ToggleModeratorActions(); });
     m_btn_moderator->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_moderator->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_MODERATOR"), UserString("MAP_BTN_MODERATOR_DESC")));
@@ -1308,7 +1308,7 @@ void MapWnd::CompleteConstruction() {
                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_industry->SetName("Industry StatisticIcon");
     m_industry->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleProduction, this));
+        [this](){ ToggleProduction(); });
 
     m_stockpile = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_STOCKPILE), 0, 3, false,
                                                  ICON_DUAL_WIDTH, m_btn_turn->Height());
@@ -1318,7 +1318,7 @@ void MapWnd::CompleteConstruction() {
                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
     m_research->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleResearch, this));
+        [this](){ ToggleResearch(); });
 
     m_trade = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_TRADE), 0, 3, false,
                                              ICON_DUAL_WIDTH, m_btn_turn->Height());
@@ -1359,9 +1359,9 @@ void MapWnd::CompleteConstruction() {
     m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     m_industry_wasted->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ZoomToSystemWithWastedPP, this));
+        [this](){ ZoomToSystemWithWastedPP(); });
     m_research_wasted->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleResearch, this));
+        [this](){ ToggleResearch(); });
 
     //Set the correct tooltips
     RefreshIndustryResourceIndicator();
@@ -1504,7 +1504,7 @@ void MapWnd::CompleteConstruction() {
     GG::GUI::GetGUI()->Register(m_zoom_slider);
     m_zoom_slider->Hide();
     m_zoom_slider->SlidSignal.connect(
-        boost::bind(&MapWnd::SetZoom, this, _1, false));
+        [this](double v, double, double){ SetZoom(v, false); });
     GetOptionsDB().OptionChangedSignal("ui.map.zoom.slider.shown").connect(
         boost::bind(&MapWnd::RefreshSliders, this));
 
@@ -5082,9 +5082,9 @@ void MapWnd::CreateFleetButtonsOfType(
             m_fleet_buttons[fleet_id] = fb;
 
         fb->LeftClickedSignal.connect(
-            boost::bind(&MapWnd::FleetButtonLeftClicked, this, fb.get()));
+            [this, fb](){ FleetButtonLeftClicked(fb.get()); });
         fb->RightClickedSignal.connect(
-            boost::bind(&MapWnd::FleetButtonRightClicked, this, fb.get()));
+            [this, fb](){ FleetButtonRightClicked(fb.get()); });
         AttachChild(std::move(fb));
     }
 }

@@ -304,7 +304,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     EnableModalAcceleratorSignals(true);
 
     WindowResizedSignal.connect(
-        boost::bind(&HumanClientApp::HandleWindowResize, this, _1, _2));
+        [this](GG::X w, GG::Y h){ HandleWindowResize(w, h); });
     FocusChangedSignal.connect(
         boost::bind(&HumanClientApp::HandleFocusChange, this, _1));
     WindowMovedSignal.connect(

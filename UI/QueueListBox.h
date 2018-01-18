@@ -51,9 +51,9 @@ protected:
 
 private:
     void            ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    void            EnsurePromptHiddenSlot(iterator it);
+    void            EnsurePromptHiddenSlot();
     void            ShowPromptSlot();
-    void            ShowPromptConditionallySlot(iterator it);
+    void            ShowPromptConditionallySlot();
 
     iterator    m_drop_point;
     bool        m_show_drop_point;

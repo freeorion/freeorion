@@ -49,7 +49,7 @@ void ResourcePanel::CompleteConstruction() {
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
     m_expand_button->LeftClickedSignal.connect(
-        boost::bind(&ResourcePanel::ExpandCollapseButtonPressed, this));
+        [this](){ ExpandCollapseButtonPressed(); });
 
     const auto obj = GetUniverseObject(m_rescenter_id);
     if (!obj) {

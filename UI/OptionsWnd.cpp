@@ -266,7 +266,7 @@ namespace {
             AttachChild(m_hscroll);
 
             m_hscroll->ScrolledSignal.connect(
-                boost::bind(&FontTextureWnd::ScrolledSlot, this, _1, _2, _3, _4));
+                [this](int pos, int, int, int){ ScrolledSlot(pos); });
             DoLayout();
         }
 
@@ -293,7 +293,7 @@ namespace {
              m_hscroll->SizeScroll(0, texture_width - Value(ClientWidth()) / 2, 1, 50);
         }
 
-        void ScrolledSlot(int tab_low, int tab_high, int low, int high) {
+        void ScrolledSlot(int tab_low) {
             m_font_graphic->MoveTo(      GG::Pt(GG::X(-tab_low), GG::Y1));
             m_title_font_graphic->MoveTo(GG::Pt(GG::X(-tab_low), m_font_graphic->Height() + 2));
         }
@@ -766,7 +766,7 @@ void OptionsWnd::CompleteConstruction() {
 
     // Connect the done and cancel button
     m_done_button->LeftClickedSignal.connect(
-        boost::bind(&OptionsWnd::DoneClicked, this));
+        [this](){ DoneClicked(); });
 }
 
 void OptionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -888,9 +888,9 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
                                                layout, indentation_level);
 
     button->LeftClickedSignal.connect(
-        boost::bind(HandleSetHotkeyOption, hotkey_name, button.get()));
+        [hotkey_name, button](){ HandleSetHotkeyOption(hotkey_name, button.get()); });
     button->RightClickedSignal.connect(
-        boost::bind(HandleResetHotkeyOption, hotkey_name, button.get()));
+        [hotkey_name, button](){ HandleResetHotkeyOption(hotkey_name, button.get()); });
 
     page->Insert(row);
 }
@@ -989,9 +989,9 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.volume")));
     button->CheckedSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, _1));
+        [&fb](bool checked){ fb.MusicClicked(checked); });
     slider->SlidSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid, &fb, _1, _2, _3));
+        [&fb](int v, int, int){ fb.MusicVolumeSlid(v); });
     fb.SetMusicButton(std::move(button));
 }
 
@@ -1018,9 +1018,9 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription(volume_option_name)));
     button->CheckedSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb, _1));
+        [&fb](bool checked){ fb.SoundEffectsEnableClicked(checked); });
     slider->SlidAndStoppedSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid, &fb, _1, _2, _3));
+        [&fb](int v, int, int){ fb.UISoundsVolumeSlid(v); });
     fb.SetEffectsButton(std::move(button));
 }
 
@@ -1251,7 +1251,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
                                           apply_button, indentation_level);
     page->Insert(row);
     apply_button->LeftClickedSignal.connect(
-        boost::bind(&HumanClientApp::Reinitialize, HumanClientApp::GetApp()));
+        [](){ HumanClientApp::GetApp()->Reinitialize(); });
 
     drop_list->SelChangedSignal.connect(
         [drop_list](GG::ListBox::iterator it) {
@@ -1364,12 +1364,12 @@ void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
     }
 }
 
-void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int high) const {
+void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos) const {
     GetOptionsDB().Set("audio.music.volume", pos);
     Sound::GetSound().SetMusicVolume(pos);
 }
 
-void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int high) const {
+void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos) const {
     GetOptionsDB().Set("audio.effects.volume", pos);
     Sound::GetSound().SetUISoundsVolume(pos);
     Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.press.sound.path"), true);

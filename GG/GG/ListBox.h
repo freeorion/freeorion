@@ -562,8 +562,8 @@ private:
     bool            ShowVisibleRows(bool do_prerender);
     void            ConnectSignals();
     void            ValidateStyle();                                        ///< reconciles inconsistencies in the style flags
-    void            VScrolled(int tab_low, int tab_high, int low, int high);///< signals from the vertical scroll bar are caught here
-    void            HScrolled(int tab_low, int tab_high, int low, int high);///< signals from the horizontal scroll bar are caught here
+    void            VScrolled(int tab_low);///< signals from the vertical scroll bar are caught here
+    void            HScrolled(int tab_low);///< signals from the horizontal scroll bar are caught here
     void            ClickAtRow(iterator it, Flags<ModKey> mod_keys);        ///< handles to a mouse-click or spacebar-click on \a it, modified by \a keys
     void            NormalizeRow(Row* row);                                 ///< adjusts a Row so that it has the same number of cells as other rows, and that each cell has the correct width and alignment
     iterator        FirstRowShownWhenBottomIs(iterator bottom_row); ///< Returns the first row shown when the last row shown is \a bottom_row

@@ -611,11 +611,11 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     m_next_button->Disable();
 
     m_index_button->LeftClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::OnIndex, this));
+        [this](){ OnIndex(); });
     m_back_button->LeftClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::OnBack, this));
+        [this](){ OnBack(); });
     m_next_button->LeftClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::OnNext, this));
+        [this](){ OnNext(); });
 
     m_description_rich_text = GG::Wnd::Create<GG::RichText>(
         GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "",

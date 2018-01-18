@@ -65,7 +65,7 @@ void BuildingsPanel::CompleteConstruction() {
     }
 
     m_expand_button->LeftClickedSignal.connect(
-        boost::bind(&BuildingsPanel::ExpandCollapseButtonPressed, this));
+        [this](){ ExpandCollapseButtonPressed(); });
 
     // get owner, connect its production queue changed signal to update this panel
     auto planet = GetUniverseObject(m_planet_id);

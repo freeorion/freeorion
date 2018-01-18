@@ -742,7 +742,7 @@ private:
         }
 
         m_class_drop->SelChangedSignal.connect(
-            boost::bind(&ConditionWidget::ConditionClassSelected, this, _1));
+            [this](GG::DropDownList::iterator){ UpdateParameterControls(); });
 
         if (select_row_it != m_class_drop->end())
             m_class_drop->Select(select_row_it);
@@ -750,9 +750,6 @@ private:
             m_class_drop->Select(0);
 
     }
-
-    void    ConditionClassSelected(GG::ListBox::iterator iterator)
-    { UpdateParameterControls(); }
 
     void    UpdateParameterControls() {
         if (!m_class_drop)
@@ -1025,7 +1022,7 @@ private:
     void AcceptClicked();
     void CancelClicked();
     void UpdateStateButtonsFromVisFilters();
-    void UpdateVisFiltersFromStateButtons(bool button_checked);
+    void UpdateVisFiltersFromStateButtons();
     void UpdateVisFiltersFromObjectTypeButton(UniverseObjectType type);
     void UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis);
 
@@ -1086,7 +1083,7 @@ void FilterDialog::CompleteConstruction() {
         label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
         m_filters_layout->Add(label, vis_row, 0, GG::ALIGN_CENTER);
         label->LeftClickedSignal.connect(
-            boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, visibility));
+            [this, visibility](){ UpdateVisFilterFromVisibilityButton(visibility); });
 
         ++vis_row;
     }
@@ -1107,7 +1104,7 @@ void FilterDialog::CompleteConstruction() {
         label = Wnd::Create<CUIButton>(" " + UserString(boost::lexical_cast<std::string>(uot)) + " ");
         m_filters_layout->Add(label, 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
         label->LeftClickedSignal.connect(
-            boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
+            [this, uot](){ UpdateVisFiltersFromObjectTypeButton(uot); });
 
         int row = 1;
 
@@ -1117,7 +1114,7 @@ void FilterDialog::CompleteConstruction() {
             button->SetCheck(vis_display.count(visibility));
             m_filters_layout->Add(button, row, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             button->CheckedSignal.connect(
-                boost::bind(&FilterDialog::UpdateVisFiltersFromStateButtons, this, _1));
+                [this](bool){ UpdateVisFiltersFromStateButtons(); });
             m_filter_buttons[uot][visibility] = button;
 
             ++row;
@@ -1137,9 +1134,9 @@ void FilterDialog::CompleteConstruction() {
     AttachChild(m_apply_button);
 
     m_cancel_button->LeftClickedSignal.connect(
-        boost::bind(&FilterDialog::CancelClicked, this));
+        [this](){ CancelClicked(); });
     m_apply_button->LeftClickedSignal.connect(
-        boost::bind(&FilterDialog::AcceptClicked, this));
+        [this](){ AcceptClicked(); });
 
     ResetDefaultPosition();
 
@@ -1192,7 +1189,7 @@ void FilterDialog::UpdateStateButtonsFromVisFilters() {
     }
 }
 
-void FilterDialog::UpdateVisFiltersFromStateButtons(bool button_checked) {
+void FilterDialog::UpdateVisFiltersFromStateButtons() {
     m_vis_filters.clear();
     // set all filters based on state button settings
     for (const auto& entry : m_filter_buttons) {
@@ -1396,7 +1393,7 @@ public:
 
             AttachChild(m_expand_button);
             m_expand_button->LeftClickedSignal.connect(
-                boost::bind(&ObjectPanel::ExpandCollapseButtonPressed, this));
+                [this](){ ExpandCollapseButtonPressed(); });
         } else {
             m_dot = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(
                 ClientUI::ArtDir() / "icons" / "dot.png", true), style);
@@ -1647,7 +1644,7 @@ public:
                 [this, i](){ this->ColumnButtonLeftClickSignal(i - 1); });
             if (i > 0)
                 controls[i]->RightClickedSignal.connect(
-                    boost::bind(&ObjectHeaderPanel::ButtonRightClicked, this, i-1));
+                    [this, i](){ ButtonRightClicked(i - 1); });
         }
 
         DoLayout();
@@ -2336,23 +2333,23 @@ void ObjectListWnd::CompleteConstruction() {
     m_list_box->SetStyle(GG::LIST_NOSORT);
 
     m_list_box->SelRowsChangedSignal.connect(
-        boost::bind(&ObjectListWnd::ObjectSelectionChanged, this, _1));
+        [this](const GG::ListBox::SelectionSet& rows){ ObjectSelectionChanged(rows); });
     m_list_box->DoubleClickedRowSignal.connect(
-        boost::bind(&ObjectListWnd::ObjectDoubleClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>&){ ObjectDoubleClicked(it); });
     m_list_box->RightClickedRowSignal.connect(
-        boost::bind(&ObjectListWnd::ObjectRightClicked, this, _1, _2, _3));
+        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>&){ ObjectRightClicked(it, pt); });
     m_list_box->ExpandCollapseSignal.connect(
         boost::bind(&ObjectListWnd::DoLayout, this));
     AttachChild(m_list_box);
 
     m_filter_button = Wnd::Create<CUIButton>(UserString("FILTERS"));
     m_filter_button->LeftClickedSignal.connect(
-        boost::bind(&ObjectListWnd::FilterClicked, this));
+        [this](){ FilterClicked(); });
     AttachChild(m_filter_button);
 
     m_collapse_button = Wnd::Create<CUIButton>(UserString("COLLAPSE_ALL"));
     m_collapse_button->LeftClickedSignal.connect(
-        boost::bind(&ObjectListWnd::CollapseExpandClicked, this));
+        [this](){ CollapseExpandClicked(); });
     AttachChild(m_collapse_button);
 
     CUIWnd::CompleteConstruction();
@@ -2425,8 +2422,7 @@ void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows
     SelectedObjectsChangedSignal();
 }
 
-void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                        const GG::Flags<GG::ModKey>& modkeys)
+void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it)
 {
     int object_id = ObjectInRow(it);
     if (object_id != INVALID_OBJECT_ID)
@@ -2462,7 +2458,8 @@ void ObjectListWnd::SetSelectedObjects(std::set<int> sel_ids) {
     }
 }
 
-void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
+{
     int object_id = ObjectInRow(it);
     if (object_id == INVALID_OBJECT_ID)
         return;
