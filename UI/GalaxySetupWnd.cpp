@@ -557,10 +557,12 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_seed_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_seed_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.seed")));
     m_seed = GetOptionsDB().Get<std::string>("setup.seed");
-    if (m_seed == "RANDOM")
+    if (m_seed == "RANDOM" || m_seed.empty()) {
+        m_seed = "RANDOM";
         m_seed_edit = GG::Wnd::Create<CUIEdit>(UserString("GSETUP_RANDOM"));
-    else
+    } else {
         m_seed_edit = GG::Wnd::Create<CUIEdit>(m_seed);
+    }
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
@@ -662,7 +664,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_random->LeftClickedSignal.connect(
         boost::bind(&GalaxySetupPanel::RandomClicked, this));
     m_seed_edit->FocusUpdateSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        boost::bind(&GalaxySetupPanel::SetSeed, this, _1, false));
     m_stars_spin->ValueChangedSignal.connect(
         boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_galaxy_shapes_list->SelChangedSignal.connect(
@@ -754,6 +756,7 @@ void GalaxySetupPanel::CompleteConstruction() {
 
     // initial settings from stored results or defaults
     SetSeed(GetOptionsDB().Get<std::string>("setup.seed"), true);
+    m_seed_edit->Disable(GetSeed() == "RANDOM");
     m_stars_spin->SetValue(GetOptionsDB().Get<int>("setup.star.count"));
     m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("setup.galaxy.shape"));
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
@@ -779,11 +782,15 @@ const std::string& GalaxySetupPanel::GetSeed() const
 { return m_seed; }
 
 void GalaxySetupPanel::SetSeed(const std::string& seed, bool inhibit_signal) {
-    m_seed = seed;
-    if (m_seed == "RANDOM" || m_seed.empty())
+    if (seed == "RANDOM" || seed.empty()) {
+        m_seed = "RANDOM";
         m_seed_edit->SetText(UserString("GSETUP_RANDOM"));
-    else
+        m_seed_edit->Disable();
+    } else {
+        m_seed = seed;
         m_seed_edit->SetText(m_seed);
+        m_seed_edit->Disable(false);
+    }
 
     if (!inhibit_signal)
         SettingChanged();
