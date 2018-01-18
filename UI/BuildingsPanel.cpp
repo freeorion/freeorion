@@ -73,7 +73,7 @@ void BuildingsPanel::CompleteConstruction() {
         if (const Empire* empire = GetEmpire(planet->Owner())) {
             const ProductionQueue& queue = empire->GetProductionQueue();
             queue.ProductionQueueChangedSignal.connect(
-                boost::bind(&BuildingsPanel::RequirePreRender, this));
+                [this](){ RequirePreRender(); });
         }
     }
 
@@ -264,7 +264,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
 {
     if (auto building = GetBuilding(m_building_id))
         building->StateChangedSignal.connect(
-            boost::bind(&BuildingIndicator::RequirePreRender, this));
+            [this](){ RequirePreRender(); });
 }
 
 BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,

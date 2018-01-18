@@ -564,9 +564,9 @@ void PlayerListWnd::CompleteConstruction() {
     AttachChild(m_player_list);
 
     Empires().DiplomaticStatusChangedSignal.connect(
-        boost::bind(&PlayerListWnd::Update, this));
+        [this](int, int){ Update(); });
     Empires().DiplomaticMessageChangedSignal.connect(
-        boost::bind(&PlayerListWnd::Update, this));
+        [this](int, int){ Update(); });
     DoLayout();
 
     Refresh();

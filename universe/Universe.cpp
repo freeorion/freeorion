@@ -753,7 +753,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
         object_ptrs.reserve(m_objects.ExistingObjects().size());
         std::transform(Objects().ExistingObjects().begin(), Objects().ExistingObjects().end(),
                        std::back_inserter(object_ptrs),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
+                       [](const std::pair<const int, std::shared_ptr<UniverseObject>>& entry){ return entry.second; });
     }
 
     for (auto& obj : object_ptrs) {

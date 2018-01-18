@@ -1059,7 +1059,7 @@ void MapWnd::CompleteConstruction() {
     SetName("MapWnd");
 
     GetUniverse().UniverseObjectDeleteSignal.connect(
-        boost::bind(&MapWnd::UniverseObjectDeleted, this, _1));
+        [this](std::shared_ptr<const UniverseObject> obj){ UniverseObjectDeleted(obj); });
 
     // toolbar
     m_toolbar = GG::Wnd::Create<CUIToolBar>();
@@ -2792,9 +2792,9 @@ void MapWnd::InitTurn() {
     // connect system fleet add and remove signals
     for (auto& system : objects.FindObjects<System>()) {
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsInsertedSignal.connect(
-            boost::bind(&MapWnd::FleetsInsertedSignalHandler, this, _1)));
+            [this](const std::vector<std::shared_ptr<Fleet>>& fleets){ FleetsInsertedSignalHandler(fleets); }));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsRemovedSignal.connect(
-            boost::bind(&MapWnd::FleetsRemovedSignalHandler, this, _1)));
+            [this](const std::vector<std::shared_ptr<Fleet>>& fleets){ FleetsRemovedSignalHandler(fleets); }));
     }
 
     RefreshFleetSignals();
@@ -2847,20 +2847,20 @@ void MapWnd::InitTurn() {
     Empire* this_client_empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (this_client_empire) {
         this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshTradeResourceIndicator, this));
+            [this](){ RefreshTradeResourceIndicator(); });
         this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshResearchResourceIndicator, this));
+            [this](){ RefreshResearchResourceIndicator(); });
         this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshIndustryResourceIndicator, this));
+            [this](){ RefreshIndustryResourceIndicator(); });
         this_client_empire->GetPopulationPool().ChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshPopulationIndicator, this));
+            [this](){ RefreshPopulationIndicator(); });
         this_client_empire->GetProductionQueue().ProductionQueueChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshIndustryResourceIndicator, this));
+            [this](){ RefreshIndustryResourceIndicator(); });
         // so lane colouring to indicate wasted PP is updated
         this_client_empire->GetProductionQueue().ProductionQueueChangedSignal.connect(
-            boost::bind(&MapWnd::InitStarlaneRenderingBuffers, this));
+            [this](){ InitStarlaneRenderingBuffers(); });
         this_client_empire->GetResearchQueue().ResearchQueueChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshResearchResourceIndicator, this));
+            [this](){ RefreshResearchResourceIndicator(); });
     }
 
     m_toolbar->Show();
@@ -5116,7 +5116,7 @@ void MapWnd::AddFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet
     ScopedTimer timer("AddFleetsStateChangedSignal()", true);
     for (auto& fleet : fleets) {
         m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
-            boost::bind( &MapWnd::RefreshFleetButtons, this));
+            [this](){ RefreshFleetButtons(); });
     }
 }
 
