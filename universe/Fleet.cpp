@@ -992,7 +992,7 @@ void Fleet::MovementPhase() {
                 }
 
                 // Add current system to the start of any existing route for next turn
-                if (!m_travel_route.empty())
+                if (!m_travel_route.empty() && m_travel_route.front() != SystemID())
                     m_travel_route.push_front(SystemID());
 
                 break;
