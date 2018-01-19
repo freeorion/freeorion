@@ -2005,11 +2005,11 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
             // so it is obstructed, so isn't included in the unobstructed
             // systems set.  Furthermore, this empire's available system exit
             // lanes for this system are cleared
-            if (!m_available_system_exit_lanes[sys_id].empty()) {
+            if (!m_preserved_system_exit_lanes[sys_id].empty()) {
                 //DebugLogger() << "Empire::UpdateSupplyUnobstructedSystems clearing available lanes for system ("<<sys_id<<"); available lanes were:";
-                //for (int system_id : m_available_system_exit_lanes[sys_id])
+                //for (int system_id : m_preserved_system_exit_lanes[sys_id])
                 //    DebugLogger() << "...... "<< system_id;
-                m_available_system_exit_lanes[sys_id].clear();
+                m_preserved_system_exit_lanes[sys_id].clear();
             }
         }
     }
@@ -2027,9 +2027,9 @@ void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id) {
     }
 }
 
-void Empire::UpdateAvailableLanes() {
+void Empire::UpdatePreservedLanes() {
     for (auto& system : m_pending_system_exit_lanes) {
-        m_available_system_exit_lanes[system.first].insert(system.second.begin(), system.second.end());
+        m_preserved_system_exit_lanes[system.first].insert(system.second.begin(), system.second.end());
         system.second.clear();
     }
     m_pending_system_exit_lanes.clear(); // TODO: consider: not really necessary, & may be more efficient to not clear.
@@ -2041,9 +2041,9 @@ const std::map<int, float>& Empire::SystemSupplyRanges() const
 const std::set<int>& Empire::SupplyUnobstructedSystems() const
 { return m_supply_unobstructed_systems; }
 
-const bool Empire::UnrestrictedLaneTravel(int start_system_id, int dest_system_id) const {
-    auto find_it = m_available_system_exit_lanes.find(start_system_id);
-    if (find_it != m_available_system_exit_lanes.end() ) {
+const bool Empire::PreservedLaneTravel(int start_system_id, int dest_system_id) const {
+    auto find_it = m_preserved_system_exit_lanes.find(start_system_id);
+    if (find_it != m_preserved_system_exit_lanes.end() ) {
         if (find_it->second.find(dest_system_id) != find_it->second.end())
             return true;
     }

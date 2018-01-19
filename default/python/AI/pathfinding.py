@@ -39,7 +39,7 @@ def _more_careful_travel_starlane_func(c, d):
 # is being done) arrived second but are currently preserving travel along the starlane of interest.
 def _somewhat_careful_travel_starlane_func(c, d):
     return any((c in _get_unobstructed_systems(),
-                fo.getEmpire().unrestrictedLaneTravel(c, d)))
+                fo.getEmpire().preservedLaneTravel(c, d)))
 
 
 # For some activities like scouting, we may want to allow an extra bit of risk from routing through a system which

@@ -3149,7 +3149,7 @@ void ServerApp::PostCombatProcessTurns() {
     for (auto& entry : empires) {
         if (!entry.second->Eliminated()) {
             Empire* empire = entry.second;
-            empire->UpdateAvailableLanes();
+            empire->UpdatePreservedLanes();
             empire->UpdateUnobstructedFleets();     // must be done after *all* noneliminated empires have updated their unobstructed systems
         }
     }
