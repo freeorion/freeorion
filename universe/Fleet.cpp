@@ -987,6 +987,11 @@ void Fleet::MovementPhase() {
                 if (supply_unobstructed_systems.find(SystemID()) != supply_unobstructed_systems.end()) {
                     m_arrival_starlane = SystemID();//allows departure via any starlane
                 }
+
+                // Add current system to the start of any existing route for next turn
+                if (!m_travel_route.empty() && m_travel_route.front() != SystemID())
+                    m_travel_route.push_front(SystemID());
+
                 break;
 
             } else {
