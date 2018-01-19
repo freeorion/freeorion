@@ -4652,7 +4652,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
             //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() <<
             //    " with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
             if (route_it != route.end() && !( (*route_it == fleet->ArrivalStarlane())  ||
-                (empire && empire->UnrestrictedLaneTravel(fleet->SystemID(), *route_it)) ) )
+                (empire && empire->PreservedLaneTravel(fleet->SystemID(), *route_it)) ) )
             {
                 for (MovePathNode& node : path) {
                     //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" node obj " << node.object_id <<
@@ -4700,7 +4700,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
             //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() <<
             //" with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
             if (route_it != travel_route.end() && !((*route_it == fleet->ArrivalStarlane()) ||
-                (empire && empire->UnrestrictedLaneTravel(fleet->SystemID(), *route_it))))
+                (empire && empire->PreservedLaneTravel(fleet->SystemID(), *route_it))))
             {
                 for (MovePathNode& node : path) {
                     //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id << " node obj " << node.object_id <<

@@ -127,7 +127,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_available_hull_types)
         & BOOST_SERIALIZATION_NVP(m_supply_system_ranges)
         & BOOST_SERIALIZATION_NVP(m_supply_unobstructed_systems)
-        & BOOST_SERIALIZATION_NVP(m_available_system_exit_lanes);
+        & BOOST_SERIALIZATION_NVP(m_preserved_system_exit_lanes);
 
     if (GetUniverse().AllObjectsVisible() ||
         GetUniverse().EncodingEmpire() == ALL_EMPIRES ||
