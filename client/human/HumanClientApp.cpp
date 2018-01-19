@@ -429,6 +429,13 @@ namespace {
             std::runtime_error("LOCAL_SERVER_ALREADY_RUNNING_ERROR")
         {}
     };
+
+    void ClearPreviousPendingSaves(std::queue<std::string>& pending_saves) {
+        if (pending_saves.empty())
+            return;
+        WarnLogger() << "Clearing " << std::to_string(pending_saves.size()) << " pending save game request(s)";
+        std::queue<std::string>().swap(pending_saves);
+    }
 }
 
 void HumanClientApp::StartServer() {
@@ -489,6 +496,8 @@ void HumanClientApp::FreeServer() {
 }
 
 void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
+    ClearPreviousPendingSaves(m_game_saves_in_progress);
+
     if (!GetOptionsDB().Get<bool>("network.server.external.force")) {
         m_single_player_game = true;
         try {
@@ -607,6 +616,8 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 }
 
 void HumanClientApp::MultiPlayerGame() {
+    ClearPreviousPendingSaves(m_game_saves_in_progress);
+
     if (m_networking->IsConnected()) {
         ErrorLogger() << "HumanClientApp::MultiPlayerGame aborting because already connected to a server";
         return;
@@ -1361,6 +1372,7 @@ void HumanClientApp::ResetClientData(bool save_connection) {
     m_empires.Clear();
     m_orders.Reset();
     GetCombatLogManager().Clear();
+    ClearPreviousPendingSaves(m_game_saves_in_progress);
 }
 
 namespace {
