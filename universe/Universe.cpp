@@ -683,30 +683,21 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
     }
 }
 
-void Universe::UpdateMeterEstimates()
-{ UpdateMeterEstimates(INVALID_OBJECT_ID, false); }
+void Universe::UpdateMeterEstimates() {
+    for (int obj_id : m_objects.FindExistingObjectIDs())
+        m_effect_accounting_map[obj_id].clear();
+    // update meters for all objects.
+    UpdateMeterEstimatesImpl(std::vector<int>());
+}
 
 void Universe::UpdateMeterEstimates(int object_id, bool is_update_contained_objects) {
-
-    auto panic_update_all_estimates = [this](){
-        for (int obj_id : m_objects.FindExistingObjectIDs())
-            m_effect_accounting_map[obj_id].clear();
-        // update meters for all objects.  Value of updated_contained_objects is irrelevant and is ignored in this case.
-        UpdateMeterEstimatesImpl(std::vector<int>());// will cause it to process all existing objects
-    };
-
-    if (object_id == INVALID_OBJECT_ID) {
-        panic_update_all_estimates();
-        return;
-    }
-
     // ids of the object and all valid contained objects
     std::unordered_set<int> all_ids;
 
     // collect objects to update meter for.  this may be a single object, a group of related objects, or all objects
     // in the (known) universe.  also clear effect accounting for meters that are to be updated.
     std::function<void (int, std::unordered_set<int>&, int)> update_obj_and_contained_objs =
-        [this, &all_ids, is_update_contained_objects, &panic_update_all_estimates, &update_obj_and_contained_objs]
+        [this, &all_ids, is_update_contained_objects, &update_obj_and_contained_objs]
         (int cur_id, std::unordered_set<int>& all_ids_, int container_id)
     {
         if (all_ids_.count(cur_id))
@@ -717,7 +708,7 @@ void Universe::UpdateMeterEstimates(int object_id, bool is_update_contained_obje
             ErrorLogger() << "Universe::UpdateMeterEstimates tried to get an invalid object for id " << cur_id
                           << " in container " << container_id
                           << ". All meter estimates will be updated.";
-            panic_update_all_estimates();
+            UpdateMeterEstimates();
             return;
         }
 
