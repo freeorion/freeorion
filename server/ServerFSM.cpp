@@ -2324,8 +2324,8 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
         }
     }
 
-    if (server.IsHostless() && GetOptionsDB().Get<bool>("save.server.hostless")) {
-        boost::filesystem::path autosave_dir_path = GetServerSaveDir() / "auto";
+    if (server.IsHostless() && GetOptionsDB().Get<bool>("save.auto.hostless.enabled")) {
+        boost::filesystem::path autosave_dir_path = GetServerSaveDir();
         const auto& extension = MP_SAVE_FILE_EXTENSION;
         // Add timestamp to autosave generated files
         std::string datetime_str = FilenameTimestamp();
