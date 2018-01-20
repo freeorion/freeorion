@@ -64,7 +64,7 @@ FO_COMMON_API const boost::filesystem::path GetBinDir();
 
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
 /** This function returns the Python home directory from where it is embedded
-  * On OSX: within the application bundle 
+  * On OSX: within the application bundle
   * On Windows: same directory where the binaries are located */
 FO_COMMON_API const boost::filesystem::path GetPythonHome();
 #endif
@@ -98,8 +98,8 @@ FO_COMMON_API std::vector<boost::filesystem::path> ListDir(const boost::filesyst
 /** Returns true iff the string \a in is valid UTF-8. */
 FO_COMMON_API bool IsValidUTF8(const std::string& in);
 
-/** Returns true iff the \p test_dir is in \p dir and both \p dir and test_dir
-    are existing directories. */
+/** Returns true iff the \p test_dir is in \p dir and \p dir
+    is existing directory. */
 FO_COMMON_API bool IsInDir(const boost::filesystem::path& dir, const boost::filesystem::path& test_dir);
 
 /** Returns path currently defined for @p path_type */
@@ -112,7 +112,7 @@ FO_COMMON_API boost::filesystem::path GetPath(const std::string& path_string);
 FO_COMMON_API bool IsExistingFile(const boost::filesystem::path& path);
 
 /** All paths contained in a directory filtered by a functor
- * 
+ *
  * @param[in] abs_dir_path Absolute path to directory
  * @param[in] pred Predicate functor accepting a boost::filesystem::path constant reference
  * @param[in] recursive_search If true, recurses into sub-directories
