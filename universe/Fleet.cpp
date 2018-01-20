@@ -14,6 +14,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
 
+#include <boost/bind.hpp>
 #include <boost/timer.hpp>
 
 #include <cmath>
@@ -24,6 +25,9 @@ namespace {
     const std::set<int> EMPTY_SET;
     const double MAX_SHIP_SPEED = 500.0;        // max allowed speed of ship movement
     const double FLEET_MOVEMENT_EPSILON = 0.1;  // how close a fleet needs to be to a system to have arrived in the system
+
+    bool SystemHasNoVisibleStarlanes(int system_id, int empire_id)
+    { return !GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id); }
 
     template<typename IT>
     double PathLength(const IT& begin, const IT& end) {
@@ -95,14 +99,13 @@ namespace {
         }
 
         // Remove any extra systems from the route after the apparent destination.
-        // The functor determines if empire_id knows about the system and/or its
-        // starlanes.  It is enforced on the server in the visibility calculations
-        // that an owning empire knows about
-        //  a) the system containing a fleet
-        //  b) the starlane on which a fleet is travelling
-        //  c) both systems terminating a starlane on which a fleet is travelling.
+        // SystemHasNoVisibleStarlanes determines if empire_id knows about the
+        // system and/or its starlanes.  It is enforced on the server in the
+        // visibility calculations that an owning empire knows about a) the
+        // system containing a fleet, b) the starlane on which a fleet is travelling
+        // and c) both systems terminating a starlane on which a fleet is travelling.
         auto end_it = std::find_if(full_route.begin(), visible_end_it,
-            [empire_id](int system_id){ return !GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id); });
+                                   boost::bind(&SystemHasNoVisibleStarlanes, _1, empire_id));
 
         std::list<int> truncated_route;
         std::copy(full_route.begin(), end_it, std::back_inserter(truncated_route));

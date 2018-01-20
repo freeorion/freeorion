@@ -630,7 +630,8 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
         m_empire_ship_designs_changed_signal.disconnect();
         if (const Empire* empire = GetEmpire(m_empire_id))
             m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-                [this](){ Refresh(); }, boost::signals2::at_front);
+                                                    boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
+                                                    boost::signals2::at_front);
     }
 }
 
@@ -644,7 +645,8 @@ void BuildDesignatorWnd::BuildSelector::Refresh() {
     m_empire_ship_designs_changed_signal.disconnect();
     if (const Empire* empire = GetEmpire(m_empire_id))
         m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-             [this](){ Refresh(); }, boost::signals2::at_front);
+                                                boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
+                                                boost::signals2::at_front);
     PopulateList();
 }
 

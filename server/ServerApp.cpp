@@ -156,9 +156,9 @@ ServerApp::ServerApp() :
     StartBackgroundParsing();
 
     Empires().DiplomaticStatusChangedSignal.connect(
-        [this](int empire1, int empire2){ HandleDiplomaticStatusChange(empire1, empire2); });
+        boost::bind(&ServerApp::HandleDiplomaticStatusChange, this, _1, _2));
     Empires().DiplomaticMessageChangedSignal.connect(
-        [this](int empire1, int empire2){ HandleDiplomaticMessageChange(empire1, empire2); });
+        boost::bind(&ServerApp::HandleDiplomaticMessageChange,this, _1, _2));
 
     m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, _1, _2));
 }

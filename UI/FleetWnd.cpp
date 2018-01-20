@@ -1013,11 +1013,11 @@ namespace {
 
         // bookkeeping
         m_ship_connection = ship->StateChangedSignal.connect(
-            [this](){ RequireRefresh(); });
+            boost::bind(&ShipDataPanel::RequireRefresh, this));
 
         if (auto fleet = GetFleet(ship->FleetID()))
             m_fleet_connection = fleet->StateChangedSignal.connect(
-                [this](){ RequireRefresh(); });
+                boost::bind(&ShipDataPanel::RequireRefresh, this));
     }
 
     ////////////////////////////////////////////////
@@ -1568,12 +1568,12 @@ void FleetDataPanel::RefreshStateChangedSignals() {
         return;
 
     m_fleet_connection = fleet->StateChangedSignal.connect(
-        [this](){ RequireRefresh(); });
+        boost::bind(&FleetDataPanel::RequireRefresh, this));
 
     for (auto& ship : Objects().FindObjects<const Ship>(fleet->ShipIDs()))
         m_ship_connections.push_back(
             ship->StateChangedSignal.connect(
-                [this](){ RequireRefresh(); }));
+                boost::bind(&FleetDataPanel::RequireRefresh, this)));
 }
 
 void FleetDataPanel::SetStatIconValues() {
@@ -2487,7 +2487,7 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
     m_ships_lb->RightClickedRowSignal.connect(
         [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>&){ ShipRightClicked(it, pt); });
     GetUniverse().UniverseObjectDeleteSignal.connect(
-        [this](std::shared_ptr<const UniverseObject> obj){ UniverseObjectDeleted(obj); });
+        boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, _1));
 }
 
 void FleetDetailPanel::CompleteConstruction() {
@@ -2521,7 +2521,7 @@ void FleetDetailPanel::SetFleet(int fleet_id) {
         auto fleet = GetFleet(m_fleet_id);
         if (fleet && !fleet->Empty()) {
             m_fleet_connection = fleet->StateChangedSignal.connect(
-                [this](){ Refresh(); }, boost::signals2::at_front);
+                boost::bind(&FleetDetailPanel::Refresh, this), boost::signals2::at_front);
         } else {
             ErrorLogger() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
         }
@@ -2859,7 +2859,7 @@ void FleetWnd::CompleteConstruction() {
         boost::bind(&FleetWnd::CreateNewFleetFromDrops, this, _1));
 
     GetUniverse().UniverseObjectDeleteSignal.connect(
-        [this](std::shared_ptr<const UniverseObject> obj){ UniverseObjectDeleted(obj); });
+        boost::bind(&FleetWnd::UniverseObjectDeleted, this, _1));
 
     RefreshStateChangedSignals();
 
@@ -2955,7 +2955,7 @@ void FleetWnd::RefreshStateChangedSignals() {
     m_system_connection.disconnect();
     if (auto system = GetSystem(m_system_id))
         m_system_connection = system->StateChangedSignal.connect(
-            [this](){ RequireRefresh(); }, boost::signals2::at_front);
+            boost::bind(&FleetWnd::RequireRefresh, this), boost::signals2::at_front);
 
     for (auto& fleet_connection : m_fleet_connections)
         fleet_connection.disconnect();
@@ -2965,7 +2965,7 @@ void FleetWnd::RefreshStateChangedSignals() {
         if (auto fleet = GetFleet(fleet_id))
             m_fleet_connections.push_back(
                 fleet->StateChangedSignal.connect(
-                    [this](){ RequireRefresh(); }));
+                    boost::bind(&FleetWnd::RequireRefresh, this)));
     }
 }
 

@@ -494,7 +494,7 @@ void ResearchWnd::Refresh() {
 
     if (Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
         m_empire_connection = empire->GetResearchQueue().ResearchQueueChangedSignal.connect(
-            [this](){ ResearchQueueChangedSlot(); });
+                                boost::bind(&ResearchWnd::ResearchQueueChangedSlot, this));
     Update();
 }
 

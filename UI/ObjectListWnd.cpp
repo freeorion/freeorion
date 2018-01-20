@@ -1319,7 +1319,7 @@ public:
         auto rcobj = std::dynamic_pointer_cast<const ResourceCenter>(obj);
         if (rcobj)
             rcobj->ResourceCenterChangedSignal.connect(
-                [this](){ ResourceCenterChanged(); });
+                boost::bind(&ObjectPanel::ResourceCenterChanged, this));
     }
 
     void                ResourceCenterChanged() {
@@ -1862,7 +1862,7 @@ public:
         m_header_row->ColumnHeaderLeftClickSignal.connect(
             boost::bind(&ObjectListBox::SortingClicked, this, _1));
         m_obj_deleted_connection = GetUniverse().UniverseObjectDeleteSignal.connect(
-            [this](std::shared_ptr<const UniverseObject> obj){ UniverseObjectDeleted(obj); });
+            boost::bind(&ObjectListBox::UniverseObjectDeleted, this, _1));
     }
 
     virtual         ~ObjectListBox()
@@ -2212,7 +2212,7 @@ private:
             boost::bind(&ObjectListBox::ObjectExpandCollapseClicked, this, _1), boost::signals2::at_front);
         m_object_change_connections[obj->ID()].disconnect();
         m_object_change_connections[obj->ID()] = obj->StateChangedSignal.connect(
-            [this, object_id](){ ObjectStateChanged(object_id); }, boost::signals2::at_front);
+            boost::bind(&ObjectListBox::ObjectStateChanged, this, obj->ID()), boost::signals2::at_front);
     }
 
     // Removes row of indicated object, and all contained rows, recursively.

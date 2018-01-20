@@ -695,9 +695,13 @@ class Pathfinder::PathfinderImpl {
         int jumps, int system_id,
         const std::vector<std::shared_ptr<const UniverseObject>>& others) const;
 
-    /** If any of \p others are within \p jumps of \p ii return true in \p answer.  */
-    bool WithinJumpsOfOthersCacheHit(
-        int jumps,
+    /** If any of \p others are within \p jumps of \p ii return true in \p answer.
+
+        The return value must be in a parameter so that after being bound to \p answer and \p jumps
+        the function signature is that required by the cache_hit_handler type.
+     */
+    void WithinJumpsOfOthersCacheHit(
+        bool& answer, int jumps,
         const std::vector<std::shared_ptr<const UniverseObject>>& others,
         size_t ii, distance_matrix_storage<short>::row_ref row) const;
 
@@ -796,7 +800,7 @@ short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int
         // prefer filling the smaller row/column for increased cache locality
         short jumps = cache.get_T(
             smaller_index, other_index,
-            [this](size_t& ii, distance_matrix_storage<short>::row_ref row){ HandleCacheMiss(ii, row); });
+            boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, _1, _2));
         if (jumps == SHRT_MAX)  // value returned for no valid path
             return -1;
         return jumps;
@@ -1195,9 +1199,9 @@ std::unordered_set<int> Pathfinder::PathfinderImpl::WithinJumps(
             continue;
 
         cache.examine_row(system_index,
-                          [this](size_t& ii, distance_matrix_storage<short>::row_ref row){ HandleCacheMiss(ii, row); },
-                          [this, &near, jumps](size_t ii, distance_matrix_storage<short>::row_ref row)
-                          { WithinJumpsCacheHit(&near, jumps, ii, row); });
+                          boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, _1, _2),
+                          boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsCacheHit, this,
+                                      &near, jumps, _1, _2));
     }
     return near;
 }
@@ -1262,22 +1266,22 @@ struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
 };
 
 
-bool Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
-    int jumps,
+void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
+    bool& answer, int jumps,
     const std::vector<std::shared_ptr<const UniverseObject>>& others,
     size_t ii, distance_matrix_storage<short>::row_ref row) const
 {
     // Check if any of the others are within jumps of candidate, by looping
     // through all of the others and applying the WithinJumpsOfOthersOtherVisitor.
+    answer = false;
     for (const auto& other : others) {
         WithinJumpsOfOthersOtherVisitor check_if_location_is_within_jumps(*this, jumps, row);
         GeneralizedLocationType location = GeneralizedLocation(other);
         if (boost::apply_visitor(check_if_location_is_within_jumps, location)) {
-            return true;
+            answer = true;
+            return;
         }
     }
-
-    return false;
 }
 
 std::pair<std::vector<std::shared_ptr<const UniverseObject>>,
@@ -1337,9 +1341,9 @@ bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     bool within_jumps(false);
     distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
     cache.examine_row(system_index,
-                      [this](size_t& ii, distance_matrix_storage<short>::row_ref row){ HandleCacheMiss(ii, row); },
-                      [this, &within_jumps, jumps, others](size_t ii, distance_matrix_storage<short>::row_ref row)
-                      { within_jumps = WithinJumpsOfOthersCacheHit(jumps, others, ii, row); });
+                      boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, _1, _2),
+                      boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit, this,
+                                  boost::ref(within_jumps), jumps, others, _1, _2));
     return within_jumps;
 }
 

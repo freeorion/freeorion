@@ -918,7 +918,7 @@ void ProductionWnd::Refresh() {
     m_empire_connection.disconnect();
     if (Empire* empire = GetEmpire(m_empire_shown_id))
         m_empire_connection = empire->GetProductionQueue().ProductionQueueChangedSignal.connect(
-            [this](){ ProductionQueueChangedSlot(); });
+            boost::bind(&ProductionWnd::ProductionQueueChangedSlot, this));
 
     UpdateInfoPanel();
     UpdateQueue();

@@ -1910,7 +1910,7 @@ void SidePanel::PlanetPanel::Refresh() {
     // which should be connected to SidePanel::PlanetPanel::DoLayout
 
     m_planet_connection = planet->StateChangedSignal.connect(
-        [this](){ Refresh(); }, boost::signals2::at_front);
+        boost::bind(&SidePanel::PlanetPanel::Refresh, this), boost::signals2::at_front);
 }
 
 void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
