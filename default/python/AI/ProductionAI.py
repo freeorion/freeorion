@@ -230,6 +230,7 @@ def generate_production_orders():
 
     if current_turn == 1 and len(AIstate.opponentPlanetIDs) == 0 and len(production_queue) == 0:
         init_build_nums = [(PriorityType.PRODUCTION_EXPLORATION, 2),
+                           (PriorityType.PRODUCTION_OUTPOST, 1),
                            ]
         for ship_type, num_ships in init_build_nums:
             best_design_id, _, build_choices = get_best_ship_info(ship_type)
