@@ -15,29 +15,22 @@ class MultiIconValueIndicator : public GG::Wnd {
 public:
     /** Initializes with no icons shown. */
     MultiIconValueIndicator(GG::X w);
-
     MultiIconValueIndicator(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType>>& meter_types);
-
     MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids, const std::vector<std::pair<MeterType, MeterType>>& meter_types);
 
     void CompleteConstruction() override;
 
-    bool            Empty();
+    bool Empty() const;
 
     void Render() override;
-
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
-
     bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
-
-    void            Update();
-
+    void Update();
     void SetToolTip(MeterType meter_type, const std::shared_ptr<GG::BrowseInfoWnd>& browse_wnd);
-
-    void            ClearToolTip(MeterType meter_type);
+    void ClearToolTip(MeterType meter_type);
 
 private:
-    std::vector<std::shared_ptr<StatisticIcon>>                         m_icons;
+    std::vector<std::shared_ptr<StatisticIcon>>         m_icons;
     const std::vector<std::pair<MeterType, MeterType>>  m_meter_types;
     std::vector<int>                                    m_object_ids;
 };

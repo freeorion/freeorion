@@ -26,13 +26,15 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w) :
     MultiIconValueIndicator(w, {}, {})
 {}
 
-MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id,
-                                                 const std::vector<std::pair<MeterType, MeterType>>& meter_types) :
+MultiIconValueIndicator::MultiIconValueIndicator(
+    GG::X w, int object_id,
+    const std::vector<std::pair<MeterType, MeterType>>& meter_types) :
     MultiIconValueIndicator(w, std::vector<int>{object_id}, meter_types)
 {}
 
-MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids,
-                                                 const std::vector<std::pair<MeterType, MeterType>>& meter_types) :
+MultiIconValueIndicator::MultiIconValueIndicator(
+    GG::X w, const std::vector<int>& object_ids,
+    const std::vector<std::pair<MeterType, MeterType>>& meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_icons(),
     m_meter_types(meter_types),
@@ -70,7 +72,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
     Update();
 }
 
-bool MultiIconValueIndicator::Empty()
+bool MultiIconValueIndicator::Empty() const
 { return m_object_ids.empty(); }
 
 void MultiIconValueIndicator::Render() {
