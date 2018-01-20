@@ -556,11 +556,11 @@ void PlayerListWnd::CompleteConstruction() {
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
     m_player_list->SetStyle(GG::LIST_NOSORT);
     m_player_list->SelRowsChangedSignal.connect(
-        [this](const GG::ListBox::SelectionSet& rows){ PlayerSelectionChanged(rows); });
+        boost::bind(&PlayerListWnd::PlayerSelectionChanged, this, _1));
     m_player_list->DoubleClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>&){ PlayerDoubleClicked(it); });
+        boost::bind(&PlayerListWnd::PlayerDoubleClicked, this, _1, _2, _3));
     m_player_list->RightClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>&){ PlayerRightClicked(it, pt); });
+        boost::bind(&PlayerListWnd::PlayerRightClicked, this, _1, _2, _3));
     AttachChild(m_player_list);
 
     Empires().DiplomaticStatusChangedSignal.connect(
@@ -710,7 +710,7 @@ void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows
     SelectedPlayersChangedSignal();
 }
 
-void PlayerListWnd::PlayerDoubleClicked(GG::ListBox::iterator it) {
+void PlayerListWnd::PlayerDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     int player_id = PlayerInRow(it);
     if (player_id != Networking::INVALID_PLAYER_ID)
         PlayerDoubleClickedSignal(player_id);
@@ -728,7 +728,7 @@ namespace {
 
 }
 
-void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // check that a valid player was clicked and that it wasn't this client's own player
     int clicked_player_id = PlayerInRow(it);
     if (clicked_player_id == Networking::INVALID_PLAYER_ID)

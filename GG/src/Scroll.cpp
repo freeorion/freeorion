@@ -86,11 +86,11 @@ void Scroll::CompleteConstruction()
 {
     if (m_decr) {
         AttachChild(m_decr);
-        m_decr->LeftClickedSignal.connect([this](){ ScrollLineIncrDecrImpl(true, -1); });
+        m_decr->LeftClickedSignal.connect(boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, -1));
     }
     if (m_incr) {
         AttachChild(m_incr);
-        m_incr->LeftClickedSignal.connect([this](){ ScrollLineIncrDecrImpl(true, 1); });
+        m_incr->LeftClickedSignal.connect(boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, 1));
     }
     AttachChild(m_tab);
     m_tab->InstallEventFilter(shared_from_this());

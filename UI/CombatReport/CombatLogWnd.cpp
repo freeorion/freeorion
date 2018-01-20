@@ -149,7 +149,7 @@ namespace {
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
         m_expand_button->LeftClickedSignal.connect(
-            [this](){ ToggleExpansion(); });
+            boost::bind(&CombatLogAccordionPanel::ToggleExpansion, this));
         this->ExpandCollapseSignal.connect(
             boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
 
@@ -251,7 +251,7 @@ namespace {
             if (GG::ScrollPanel const * scroll_panel = FindParentOfType<GG::ScrollPanel>(&parent)) {
                 GG::Scroll const* scroll = scroll_panel->GetScroll();
                 m_signals.push_back(scroll->ScrolledAndStoppedSignal.connect(
-                    [this](int, int, int, int){ HandleMaybeVisible(); }));
+                    boost::bind(&LazyScrollerLinkText::HandleScrolledAndStopped, this, _1, _2, _3, _4)));
 
             }
 
@@ -288,6 +288,10 @@ namespace {
 
                 ChangedSignal();
             }
+        }
+
+        void HandleScrolledAndStopped(int start_pos, int end_post, int min_pos, int max_pos) {
+            HandleMaybeVisible();
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr)  override {

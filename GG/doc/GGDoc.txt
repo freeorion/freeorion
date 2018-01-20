@@ -162,9 +162,9 @@
     \subsection sigs_n_slots_connecting Connecting Signals To Slots
 
     There are two types of connections between signals and slots.  The first
-    type of connection is between a signal and a slot, which may be a functor,
-    a lambda function, a free function, a static member function or function
-    object.
+    type of connection is between a signal and a slot, which may be a functor
+    (which in turn may be a boost::bind object), a free function or a static
+    member function or function object.
 
     \subsection sigs_n_slots_emitting Emitting Signals
 

@@ -65,13 +65,13 @@ void QueueListBox::CompleteConstruction() {
     ShowPromptSlot();
 
     BeforeInsertRowSignal.connect(
-        [this](GG::ListBox::iterator){ EnsurePromptHiddenSlot(); });
+        boost::bind(&QueueListBox::EnsurePromptHiddenSlot, this, _1));
     AfterEraseRowSignal.connect(
-        [this](GG::ListBox::iterator){ ShowPromptConditionallySlot(); });
+        boost::bind(&QueueListBox::ShowPromptConditionallySlot, this, _1));
     ClearedRowsSignal.connect(
-        [this](){ this->ShowPromptSlot(); });
+        boost::bind(&QueueListBox::ShowPromptSlot, this));
     GG::ListBox::RightClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys){ ItemRightClicked(it, pt, modkeys); });
+        boost::bind(&QueueListBox::ItemRightClicked, this, _1, _2, _3));
 }
 
 GG::X QueueListBox::RowWidth() const
@@ -199,7 +199,7 @@ void QueueListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& 
     popup->Run();
 }
 
-void QueueListBox::EnsurePromptHiddenSlot() {
+void QueueListBox::EnsurePromptHiddenSlot(iterator it) {
     if (m_showing_prompt) {
         Erase(begin(), false, false); // if the prompt is shown, it must be the only row in the ListBox
         m_showing_prompt = false;
@@ -211,7 +211,7 @@ void QueueListBox::ShowPromptSlot() {
     m_showing_prompt = true;
 }
 
-void QueueListBox::ShowPromptConditionallySlot() {
+void QueueListBox::ShowPromptConditionallySlot(iterator it) {
     if (begin() == end()) {
         ShowPromptSlot();
     }

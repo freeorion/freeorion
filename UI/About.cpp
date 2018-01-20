@@ -46,11 +46,11 @@ void About::CompleteConstruction() {
     fin.close();
 
     m_done_btn->LeftClickedSignal.connect(
-        [this](){ EndRun(); });
+        boost::bind(&GG::Wnd::EndRun, this));
     m_license->LeftClickedSignal.connect(
-        [this](){ ShowLicense(); });
+        boost::bind(&About::ShowLicense, this));
     m_vision->LeftClickedSignal.connect(
-        [this](){ ShowVision(); });
+        boost::bind(&About::ShowVision, this));
 }
 
 About::~About()

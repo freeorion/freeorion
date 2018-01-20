@@ -104,19 +104,19 @@ void ServerConnectWnd::CompleteConstruction() {
     ResetDefaultPosition();
 
     m_host_or_join_radio_group->ButtonChangedSignal.connect(
-        [this](std::size_t){ EnableDisableControls(); });
+        boost::bind(&ServerConnectWnd::EnableDisableControls, this));
     m_servers_lb->SelRowsChangedSignal.connect(
-        [this](const GG::ListBox::SelectionSet& selections){ ServerSelected(selections); });
+        boost::bind(&ServerConnectWnd::ServerSelected, this, _1));
     m_find_LAN_servers_bn->LeftClickedSignal.connect(
-        [this](){ PopulateServerList(); });
+        boost::bind(&ServerConnectWnd::PopulateServerList, this));
     m_IP_address_edit->EditedSignal.connect(
-        [this](const std::string& str){ IPAddressEdited(str); });
+        boost::bind(&ServerConnectWnd::IPAddressEdited, this, _1));
     m_player_name_edit->EditedSignal.connect(
-        [this](const std::string&){ EnableDisableControls(); });
+        boost::bind(&ServerConnectWnd::EnableDisableControls, this));
     m_ok_bn->LeftClickedSignal.connect(
-        [this](){ OkClicked(); });
+        boost::bind(&ServerConnectWnd::OkClicked, this));
     m_cancel_bn->LeftClickedSignal.connect(
-        [this](){ CancelClicked(); });
+        boost::bind(&ServerConnectWnd::CancelClicked, this));
 
     m_host_or_join_radio_group->SetCheck(0);
     PopulateServerList();

@@ -209,7 +209,7 @@ namespace {
             }
 
             SelChangedSignal.connect(
-                [this](GG::DropDownList::iterator it){ SelectionChanged(it); });
+                boost::bind(&TypeSelector::SelectionChanged, this, _1));
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -295,7 +295,7 @@ namespace {
                 edit->Disable();
             else
                 edit->FocusUpdateSignal.connect(
-                    [this](const std::string& str){ EmpireNameChanged(str); });
+                    boost::bind(&NewGamePlayerRow::EmpireNameChanged, this, _1));
 
             // empire colour selector
             auto color_selector = GG::Wnd::Create<EmpireColorSelector>(PlayerFontHeight() + PlayerRowMargin());
@@ -429,7 +429,7 @@ namespace {
                 m_empire_list->Disable();
             else
                 m_empire_list->SelChangedSignal.connect(
-                    [this](GG::DropDownList::iterator it){ EmpireChanged(it); });
+                    boost::bind(&LoadGamePlayerRow::EmpireChanged, this, _1));
 
             // ready state
             if (m_player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -627,19 +627,19 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_browse_saves_btn->Disable();
 
     m_any_can_edit->CheckedSignal.connect(
-        [this](bool checked){ AnyCanEdit(checked); });
+        boost::bind(&MultiPlayerLobbyWnd::AnyCanEdit, this, _1));
     m_new_load_game_buttons->ButtonChangedSignal.connect(
-        [this](std::size_t i){ NewLoadClicked(i); });
+        boost::bind(&MultiPlayerLobbyWnd::NewLoadClicked, this, _1));
     m_galaxy_setup_panel->SettingsChangedSignal.connect(
         boost::bind(&MultiPlayerLobbyWnd::GalaxySetupPanelChanged, this));
     m_browse_saves_btn->LeftClickedSignal.connect(
-        [this](){ SaveGameBrowse(); });
+        boost::bind(&MultiPlayerLobbyWnd::SaveGameBrowse, this));
     m_ready_bn->LeftClickedSignal.connect(
-        [this](){ ReadyClicked(); });
+        boost::bind(&MultiPlayerLobbyWnd::ReadyClicked, this));
     m_galaxy_setup_panel->ImageChangedSignal.connect(
         boost::bind(&MultiPlayerLobbyWnd::PreviewImageChanged, this, _1));
     m_cancel_bn->LeftClickedSignal.connect(
-        [this](){ CancelClicked(); });
+        boost::bind(&MultiPlayerLobbyWnd::CancelClicked, this));
 
     CUIWnd::CompleteConstruction();
 

@@ -48,7 +48,7 @@ public:
         // Catch the window-changed signal from the tab bar so that layout
         // updates can be performed for the newly-selected window.
         m_tabs->TabChangedSignal.connect(
-            [this](std::size_t i){ HandleTabChanged(i); });
+            boost::bind(&Impl::HandleTabChanged, this, _1));
 
         // This can be called whether m_graphical is the selected window or
         // not, but it will still only use the min size of the selected window.

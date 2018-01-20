@@ -1448,24 +1448,24 @@ void DesignWnd::PartPalette::CompleteConstruction() {
         m_class_buttons[part_class] = GG::Wnd::Create<CUIStateButton>(UserString(boost::lexical_cast<std::string>(part_class)), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
         AttachChild(m_class_buttons[part_class]);
         m_class_buttons[part_class]->CheckedSignal.connect(
-            [this, part_class](bool){ ToggleClass(part_class, true); });
+            boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
     }
 
     // availability buttons
     m_availability_buttons.first = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.first);
     m_availability_buttons.first->CheckedSignal.connect(
-        [this](bool){ ToggleAvailability(true, true); });
+        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
     m_availability_buttons.second = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.second);
     m_availability_buttons.second->CheckedSignal.connect(
-        [this](bool){ ToggleAvailability(false, true); });
+        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
 
     // superfluous parts button
     m_superfluous_parts_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_REDUNDANT"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_superfluous_parts_button);
     m_superfluous_parts_button->CheckedSignal.connect(
-        [this](bool){ ToggleSuperfluous(); });
+        boost::bind(&DesignWnd::PartPalette::ToggleSuperfluous, this, true));
 
     // default to showing nothing
     ShowAllClasses(false);
@@ -1740,7 +1740,7 @@ public:
 
     void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
 
-    virtual void QueueItemMoved(const GG::ListBox::iterator& row_it)
+    virtual void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it)
     {}
 
     void SetEmpireShown(int empire_id, bool refresh_list = true);
@@ -1831,11 +1831,11 @@ protected:
     GG::Pt  ListRowSize();
     //@}
 
-    virtual void  BaseDoubleClicked(GG::ListBox::iterator it)
+    virtual void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
     {}
-    virtual void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys)
+    virtual void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
     {}
-    virtual void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
+    virtual void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
     {}
 
 private:
@@ -1984,11 +1984,11 @@ void BasesListBox::CompleteConstruction() {
     SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
 
     DoubleClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>&){ BaseDoubleClicked(it); });
+        boost::bind(&BasesListBox::BaseDoubleClicked, this, _1, _2, _3));
     LeftClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys){ BaseLeftClicked(it, modkeys); });
+        boost::bind(&BasesListBox::BaseLeftClicked, this, _1, _2, _3));
     MovedRowSignal.connect(
-        [this](const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it){ QueueItemMoved(row_it); });
+        boost::bind(&BasesListBox::QueueItemMoved, this, _1, _2));
 
     EnableOrderIssuing(false);
 }
@@ -2074,7 +2074,7 @@ void BasesListBox::InitRowSizes() {
 }
 
 void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-{ BaseRightClicked(it, pt); }
+{ this->BaseRightClicked(it, pt, modkeys); }
 
 BasesListBox::AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
     m_availabilities{obsolete, available, unavailable}
@@ -2127,8 +2127,8 @@ class EmptyHullsListBox : public BasesListBox {
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 
-    void  BaseDoubleClicked(GG::ListBox::iterator it) override;
-    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 
     private:
 };
@@ -2143,11 +2143,11 @@ class CompletedDesignsListBox : public BasesListBox {
     protected:
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
-    void QueueItemMoved(const GG::ListBox::iterator& row_it) override;
+    void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
 
-    void  BaseDoubleClicked(GG::ListBox::iterator it) override;
-    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) override;
-    void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) override;
+    void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 class SavedDesignsListBox : public BasesListBox {
@@ -2173,11 +2173,11 @@ class SavedDesignsListBox : public BasesListBox {
     protected:
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
-    void QueueItemMoved(const GG::ListBox::iterator& row_it) override;
+    void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
 
-    void  BaseDoubleClicked(GG::ListBox::iterator it) override;
-    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) override;
-    void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) override;
+    void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 class MonstersListBox : public BasesListBox {
@@ -2193,7 +2193,7 @@ class MonstersListBox : public BasesListBox {
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 
-    void BaseDoubleClicked(GG::ListBox::iterator it) override;
+    void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 
@@ -2438,7 +2438,8 @@ void MonstersListBox::EnableOrderIssuing(bool)
 { QueueListBox::EnableOrderIssuing(false); }
 
 
-void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
+void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                          const GG::Flags<GG::ModKey>& modkeys)
 {
     HullAndPartsListBoxRow* hp_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hp_row)
@@ -2448,7 +2449,8 @@ void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
         DesignComponentsSelectedSignal(hp_row->Hull(), hp_row->Parts());
 }
 
-void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
+void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                                const GG::Flags<GG::ModKey>& modkeys)
 {
     CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
@@ -2457,7 +2459,8 @@ void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
     DesignSelectedSignal(cd_row->DesignID());
 }
 
-void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
+void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                            const GG::Flags<GG::ModKey>& modkeys)
 {
     SavedDesignListBoxRow* sd_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
 
@@ -2466,7 +2469,8 @@ void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
     SavedDesignSelectedSignal(sd_row->DesignUUID());
 }
 
-void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it)
+void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                        const GG::Flags<GG::ModKey>& modkeys)
 {
     CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
@@ -2476,7 +2480,7 @@ void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it)
 }
 
 
-void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it,
+void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                         const GG::Flags<GG::ModKey>& modkeys)
 {
     HullAndPartsListBoxRow* hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
@@ -2489,7 +2493,7 @@ void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it,
         HullClickedSignal(hull_type);
 }
 
-void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it,
+void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                               const GG::Flags<GG::ModKey>& modkeys)
 {
     CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
@@ -2510,7 +2514,7 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it,
         DesignClickedSignal(design);
 }
 
-void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it,
+void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                           const GG::Flags<GG::ModKey>& modkeys)
 {
     SavedDesignListBoxRow* saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
@@ -2528,7 +2532,8 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it,
 }
 
 
-void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
+void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                               const GG::Flags<GG::ModKey>& modkeys)
 {
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
@@ -2614,7 +2619,8 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     popup->Run();
 }
 
-void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
+void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                           const GG::Flags<GG::ModKey>& modkeys)
 {
     const auto design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
     if (!design_row)
@@ -2671,7 +2677,8 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
 
 }
 
-void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it)
+void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
+                                             const GG::ListBox::iterator& original_position_it)
 {
     const auto control = dynamic_cast<BasesListBox::CompletedDesignListBoxRow*>(row_it->get());
     if (!control || !GetEmpire(EmpireID()))
@@ -2691,7 +2698,8 @@ void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it
     GetCurrentDesignsManager().MoveBefore(design_id, insert_before_id);
 }
 
-void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it)
+void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
+                                         const GG::ListBox::iterator& original_position_it)
 {
     const auto control = dynamic_cast<SavedDesignsListBox::SavedDesignListBoxRow*>(row_it->get());
     if (!control)
@@ -2826,26 +2834,26 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
     m_obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_obsolete_button);
     m_obsolete_button->CheckedSignal.connect(
-        [this](bool){ ToggleAvailability(Availability::Obsolete); });
+        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Obsolete));
     m_obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
 
     auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
     m_available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_available_button);
     m_available_button->CheckedSignal.connect(
-        [this](bool){ ToggleAvailability(Availability::Available); });
+        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Available));
     m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
 
     auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
     m_unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_unavailable_button);
     m_unavailable_button->CheckedSignal.connect(
-        [this](bool){ ToggleAvailability(Availability::Future); });
+        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Future));
     m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
 
     m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
     m_tabs->TabChangedSignal.connect(
-        [this](std::size_t i){ Reset(); });
+        boost::bind(&DesignWnd::BaseSelector::Reset, this));
     AttachChild(m_tabs);
 
     m_hulls_list = GG::Wnd::Create<EmptyHullsListBox>(m_availabilities_state);
@@ -3445,6 +3453,8 @@ private:
     bool            AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot); //!< Swaps part in slot # pair.first to slot # pair.second, adds given part to slot # pair.first
     int             FindEmptySlotForPart(const PartType* part);                                         //!< Determines if a part can be added to any empty slot, returns the slot index if possible, otherwise -1
 
+    void            DesignNameEditedSlot(const std::string& new_name);  //!< triggered when m_design_name's AfterTextChangedSignal fires. Used for basic name validation.
+
     std::pair<int, int> FindSlotForPartWithSwapping(const PartType* part);                              //!< Determines if a part can be added to a slot with swapping, returns a pair containing the slot to swap and an empty slot, otherwise a pair with -1
                                                                                                         //!< This function only tries to find a way to add the given part by swapping a part already in a slot to an empty slot
                                                                                                         //!< If theres an open slot that the given part could go into but all of the occupied slots contain parts that can't swap into the open slot
@@ -3522,9 +3532,9 @@ void DesignWnd::MainPanel::CompleteConstruction() {
     AttachChild(m_clear_button);
 
     m_clear_button->LeftClickedSignal.connect(
-        [this](){ ClearParts(); });
+        boost::bind(&DesignWnd::MainPanel::ClearParts, this));
     m_design_name->EditedSignal.connect(
-        [this](const std::string&){ DesignNameChanged(); });
+        boost::bind(&DesignWnd::MainPanel::DesignNameEditedSlot, this, _1));
     m_replace_button->LeftClickedSignal.connect(DesignReplacedSignal);
     m_confirm_button->LeftClickedSignal.connect(DesignConfirmedSignal);
     DesignChangedSignal.connect(boost::bind(&DesignWnd::MainPanel::DesignChanged, this));
@@ -3749,6 +3759,10 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part) {
         }
     }
     return result;
+}
+
+void DesignWnd::MainPanel::DesignNameEditedSlot(const std::string& new_name) {
+    DesignNameChanged();  // Check whether the confirmation button should be enabled or disabled each time the name changes.
 }
 
 std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const PartType* part) {

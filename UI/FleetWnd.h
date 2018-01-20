@@ -152,7 +152,9 @@ private:
     void            AddFleet(int fleet_id);     ///< adds a new fleet row to this FleetWnd's ListBox of FleetRows and updates internal fleets bookkeeping
 
     void            FleetSelectionChanged(const GG::ListBox::SelectionSet& rows);
-    void            FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void            FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void            FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void            FleetDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     int             FleetInRow(GG::ListBox::iterator it) const;
     std::string     TitleText() const;

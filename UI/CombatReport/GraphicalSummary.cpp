@@ -651,7 +651,7 @@ private:
             button = Wnd::Create<CUIButton>("-");
             parent_->AttachChild(button);
             button->LeftClickedSignal.connect(
-                [this](){ Toggle(); });
+                boost::bind(&ToggleData::Toggle, this));
             SetValue(GetValue());
         }
     };

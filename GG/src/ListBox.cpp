@@ -1949,8 +1949,7 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
 
     row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
 
-    row->RightClickedSignal.connect(
-        [this](const Pt& pt, Flags<ModKey> mod){ HandleRowRightClicked(pt, mod); });
+    row->RightClickedSignal.connect(boost::bind(&ListBox::HandleRowRightClicked, this, _1, _2));
 
     AfterInsertRowSignal(it);
     if (dropped)
@@ -2099,9 +2098,9 @@ ListBox::Row& ListBox::ColHeaders()
 void ListBox::ConnectSignals()
 {
     if (m_vscroll)
-        m_vscroll->ScrolledSignal.connect([this](int pos, int, int, int){ VScrolled(pos); });
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, _1, _2, _3, _4));
     if (m_hscroll)
-        m_hscroll->ScrolledSignal.connect([this](int pos, int, int, int){ HScrolled(pos); });
+        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, _1, _2, _3, _4));
 }
 
 void ListBox::ValidateStyle()
@@ -2222,7 +2221,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
 
         AttachChild(m_vscroll);
-        m_vscroll->ScrolledSignal.connect([this](int pos, int, int, int){ VScrolled(pos); });
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, _1, _2, _3, _4));
     }
 
     if (vertical_needed) {
@@ -2270,7 +2269,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
 
         AttachChild(m_hscroll);
-        m_hscroll->ScrolledSignal.connect([this](int pos, int, int, int){ HScrolled(pos); });
+        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, _1, _2, _3, _4));
     }
 
     if (horizontal_needed) {
@@ -2330,7 +2329,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize, const std::pair<bool, bool>&
     }
 }
 
-void ListBox::VScrolled(int tab_low)
+void ListBox::VScrolled(int tab_low, int tab_high, int low, int high)
 {
     m_first_row_shown = m_rows.empty() ? m_rows.end() : m_rows.begin();
     Y position(BORDER_THICK);
@@ -2361,7 +2360,7 @@ void ListBox::VScrolled(int tab_low)
 
 }
 
-void ListBox::HScrolled(int tab_low)
+void ListBox::HScrolled(int tab_low, int tab_high, int low, int high)
 {
     m_first_col_shown = 0;
     X accum(BORDER_THICK);

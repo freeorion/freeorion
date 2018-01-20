@@ -94,7 +94,7 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &cre
 
     /** Handle app resizing by closing the credits window. */
     GG::GUI::GetGUI()->WindowResizedSignal.connect(
-        [this](GG::X, GG::Y){ OnExit(); });
+        boost::bind(&CreditsWnd::OnExit, this));
 }
 
 CreditsWnd::~CreditsWnd() {
@@ -276,27 +276,27 @@ void IntroScreen::CompleteConstruction() {
 
     //connect signals and slots
     m_continue->LeftClickedSignal.connect(
-        [this](){ OnContinue(); });
+        boost::bind(&IntroScreen::OnContinue, this));
     m_single_player->LeftClickedSignal.connect(
-        [this](){ OnSinglePlayer(); });
+        boost::bind(&IntroScreen::OnSinglePlayer, this));
     m_quick_start->LeftClickedSignal.connect(
-        [this](){ OnQuickStart(); });
+        boost::bind(&IntroScreen::OnQuickStart, this));
     m_multi_player->LeftClickedSignal.connect(
-        [this](){ OnMultiPlayer(); });
+        boost::bind(&IntroScreen::OnMultiPlayer, this));
     m_load_game->LeftClickedSignal.connect(
-        [this](){ OnLoadGame(); });
+        boost::bind(&IntroScreen::OnLoadGame, this));
     m_options->LeftClickedSignal.connect(
-        [this](){ OnOptions(); });
+        boost::bind(&IntroScreen::OnOptions, this));
     m_pedia->LeftClickedSignal.connect(
-        [this](){ OnPedia(); });
+        boost::bind(&IntroScreen::OnPedia, this));
     m_about->LeftClickedSignal.connect(
-        [this](){ OnAbout(); });
+        boost::bind(&IntroScreen::OnAbout, this));
     m_website->LeftClickedSignal.connect(
-        [this](){ OnWebsite(); });
+        boost::bind(&IntroScreen::OnWebsite, this));
     m_credits->LeftClickedSignal.connect(
-        [this](){ OnCredits(); });
+        boost::bind(&IntroScreen::OnCredits, this));
     m_exit_game->LeftClickedSignal.connect(
-        [this](){ OnExitGame(); });
+        boost::bind(&IntroScreen::OnExitGame, this));
 
     RequirePreRender();
 }

@@ -1789,7 +1789,7 @@ void FleetDataPanel::Init() {
             GG::SubTexture(FleetAggressiveMouseoverIcon()));
         AttachChild(m_aggression_toggle);
         m_aggression_toggle->LeftClickedSignal.connect(
-            [this](){ ToggleAggression(); });
+            boost::bind(&FleetDataPanel::ToggleAggression, this));
 
     } else if (auto fleet = GetFleet(m_fleet_id)) {
         int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
@@ -1826,7 +1826,7 @@ void FleetDataPanel::Init() {
                 GG::SubTexture(FleetAggressiveMouseoverIcon()));
             AttachChild(m_aggression_toggle);
             m_aggression_toggle->LeftClickedSignal.connect(
-                [this](){ ToggleAggression(); });
+                boost::bind(&FleetDataPanel::ToggleAggression, this));
         }
 
         ColorTextForSelect();
@@ -2451,7 +2451,7 @@ private:
     void            DoLayout();
     void            UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
     void            ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
-    void            ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void            ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     int             ShipInRow(GG::ListBox::iterator it) const;
 
     int                         m_fleet_id;
@@ -2483,9 +2483,9 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
     }
 
     m_ships_lb->SelRowsChangedSignal.connect(
-        [this](const GG::ListBox::SelectionSet& rows){ ShipSelectionChanged(rows); });
+        boost::bind(&FleetDetailPanel::ShipSelectionChanged, this, _1));
     m_ships_lb->RightClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>&){ ShipRightClicked(it, pt); });
+        boost::bind(&FleetDetailPanel::ShipRightClicked, this, _1, _2, _3));
     GetUniverse().UniverseObjectDeleteSignal.connect(
         boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, _1));
 }
@@ -2627,7 +2627,7 @@ void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& row
     SelectedShipsChangedSignal(rows);
 }
 
-void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // get ship that was clicked, aborting if problems arise doing so
     ShipRow* ship_row = dynamic_cast<ShipRow*>(it->get());
     if (!ship_row)
@@ -2830,13 +2830,13 @@ void FleetWnd::CompleteConstruction() {
     m_fleets_lb = GG::Wnd::Create<FleetsListBox>(m_order_issuing_enabled);
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
     m_fleets_lb->SelRowsChangedSignal.connect(
-        [this](const GG::ListBox::SelectionSet& rows){ FleetSelectionChanged(rows); });
+        boost::bind(&FleetWnd::FleetSelectionChanged, this, _1));
     m_fleets_lb->LeftClickedRowSignal.connect(
-        [this](GG::ListBox::iterator, const GG::Pt&, const GG::Flags<GG::ModKey>&){ ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); });
+        boost::bind(&FleetWnd::FleetLeftClicked, this, _1, _2, _3));
     m_fleets_lb->RightClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>&){ FleetRightClicked(it, pt); });
+        boost::bind(&FleetWnd::FleetRightClicked, this, _1, _2, _3));
     m_fleets_lb->DoubleClickedRowSignal.connect(
-        [this](GG::ListBox::iterator, const GG::Pt&, const GG::Flags<GG::ModKey>&){ ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); });
+        boost::bind(&FleetWnd::FleetDoubleClicked, this, _1, _2, _3));
     AttachChild(m_fleets_lb);
     m_fleets_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_BROWSEUPDATES);
     m_fleets_lb->AllowDropType(SHIP_DROP_TYPE_STRING);
@@ -3342,7 +3342,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     SelectedFleetsChangedSignal();
 }
 
-void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
     auto fleet = GetFleet(FleetInRow(it));
@@ -3649,6 +3649,12 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
 
     popup->Run();
 }
+
+void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+{ ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); }
+
+void FleetWnd::FleetDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+{ ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); }
 
 int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {
     if (it == m_fleets_lb->end())

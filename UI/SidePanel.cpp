@@ -633,6 +633,8 @@ private:
     GG::Y           ResizePanelsForVScroll(bool use_vscroll);
     void            DoLayout();
 
+    void            VScroll(int pos_top, int pos_bottom, int range_min, int range_max); //!< responds to user scrolling of planet panels list.  all but first parameter ignored
+
     std::vector<std::shared_ptr<PlanetPanel>>   m_planet_panels;
 
     int                         m_selected_planet_id;
@@ -956,9 +958,9 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     m_focus_drop = GG::Wnd::Create<CUIDropDownList>(6);
     AttachChild(m_focus_drop);
     m_focus_drop->DropDownOpenedSignal.connect(
-        [this](bool open){ FocusDropListOpened(open); });
+        boost::bind(&SidePanel::PlanetPanel::FocusDropListOpened, this, _1));
     m_focus_drop->SelChangedSignal.connect(
-        [this](GG::DropDownList::iterator it){ FocusDropListSelectionChangedSlot(it); });
+        boost::bind(&SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot, this, _1));
     this->FocusChangedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::SetFocus, this, _1));
     m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
@@ -1004,15 +1006,15 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     m_colonize_button = Wnd::Create<CUIButton>(UserString("PL_COLONIZE"));
     m_colonize_button->LeftClickedSignal.connect(
-        [this](){ ClickColonize(); });
+        boost::bind(&SidePanel::PlanetPanel::ClickColonize, this));
 
     m_invade_button   = Wnd::Create<CUIButton>(UserString("PL_INVADE"));
     m_invade_button->LeftClickedSignal.connect(
-        [this](){ ClickInvade(); });
+        boost::bind(&SidePanel::PlanetPanel::ClickInvade, this));
 
     m_bombard_button  = Wnd::Create<CUIButton>(UserString("PL_BOMBARD"));
     m_bombard_button->LeftClickedSignal.connect(
-        [this](){ ClickBombard(); });
+        boost::bind(&SidePanel::PlanetPanel::ClickBombard, this));
 
     SetChildClippingMode(ClipToWindow);
 
@@ -2427,7 +2429,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ClipToClient);
     m_vscroll->ScrolledSignal.connect(
-        [this](int, int, int, int){ RequirePreRender(); });
+        boost::bind(&SidePanel::PlanetPanelContainer::VScroll, this, _1, _2, _3, _4));
     RequirePreRender();
 }
 
@@ -2702,6 +2704,16 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
     }
 }
 
+void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int range_min, int range_max) {
+    if (pos_bottom > range_max) {
+        // prevent scrolling beyond allowed max
+        int extra = pos_bottom - range_max;
+        pos_top -= extra;
+    }
+
+    RequirePreRender();
+}
+
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels(
     int excluded_planet_id, bool require_prerender)
 {
@@ -2902,15 +2914,15 @@ void SidePanel::CompleteConstruction() {
     AttachChild(m_system_resource_summary);
 
     m_system_name->DropDownOpenedSignal.connect(
-        [this](bool open){ SystemNameDropListOpenedSlot(open); });
+        boost::bind(&SidePanel::SystemNameDropListOpenedSlot, this, _1));
     m_system_name->SelChangedSignal.connect(
-        [this](GG::DropDownList::iterator it){ SystemSelectionChangedSlot(it); });
+        boost::bind(&SidePanel::SystemSelectionChangedSlot, this, _1));
     m_system_name->SelChangedWhileDroppedSignal.connect(
-        [this](GG::DropDownList::iterator it){ SystemSelectionChangedSlot(it); });
+        boost::bind(&SidePanel::SystemSelectionChangedSlot, this, _1));
     m_button_prev->LeftClickedSignal.connect(
-        [this](){ PrevButtonClicked(); });
+        boost::bind(&SidePanel::PrevButtonClicked, this));
     m_button_next->LeftClickedSignal.connect(
-        [this](){ NextButtonClicked(); });
+        boost::bind(&SidePanel::NextButtonClicked, this));
     m_planet_panel_container->PlanetClickedSignal.connect(
         boost::bind(&SidePanel::PlanetClickedSlot, this, _1));
     m_planet_panel_container->PlanetLeftDoubleClickedSignal.connect(

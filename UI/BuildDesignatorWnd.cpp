@@ -491,10 +491,10 @@ private:
     void    AddBuildItemToQueue(GG::ListBox::iterator it, bool top);
 
     /** respond to the user single-clicking a producible item in the build selector */
-    void BuildItemLeftClicked(GG::ListBox::iterator it);
+    void    BuildItemLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     /** respond to the user right-clicking a producible item in the build selector */
-    void BuildItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    BuildItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     std::map<BuildType, std::shared_ptr<CUIStateButton>>    m_build_type_buttons;
     std::vector<std::shared_ptr<CUIStateButton>>            m_availability_buttons;
@@ -540,11 +540,11 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
     // selectable list of buildable items
     AttachChild(m_buildable_items);
     m_buildable_items->LeftClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>&) { BuildItemLeftClicked(it); });
+        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, _1, _2, _3));
     m_buildable_items->DoubleClickedRowSignal.connect(
         [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys) { this->AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL); });
     m_buildable_items->RightClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>&) { BuildItemRightClicked(it, pt); });
+        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, _1, _2, _3));
 
     //auto header = GG::Wnd::Create<GG::ListBox::Row>();
     //std::shared_ptr<GG::Font> font = ClientUI::GetFont();
@@ -857,7 +857,8 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         m_buildable_items->SetFirstRowShown(m_buildable_items->begin());
 }
 
-void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterator it)
+void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterator it,
+                                                             const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 {
     ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>((*it).get());
     if (!item_row)
@@ -896,7 +897,7 @@ void BuildDesignatorWnd::BuildSelector::AddBuildItemToQueue(GG::ListBox::iterato
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::iterator it,
-                                                              const GG::Pt& pt)
+                                                              const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 {
     ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(it->get());
     if (!item_row)
@@ -915,9 +916,9 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
 
     auto add_bottom_queue_action = [this, it]() { AddBuildItemToQueue(it, false); };
     auto add_top_queue_action = [this, it]() { AddBuildItemToQueue(it, true); };
-    auto pedia_lookup_action = [this, it]() {
+    auto pedia_lookup_action = [this, it, pt, &modkeys]() {
         ShowPediaSignal();
-        BuildItemLeftClicked(it);
+        BuildItemLeftClicked(it, pt, modkeys);
     };
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
@@ -979,17 +980,17 @@ void BuildDesignatorWnd::CompleteConstruction() {
 
     // connect build type button clicks to update display
     m_build_selector->m_build_type_buttons[BT_BUILDING]->CheckedSignal.connect(
-        [this](bool){ ToggleType(BT_BUILDING, true); });
+        boost::bind(&BuildDesignatorWnd::ToggleType, this, BT_BUILDING, true));
     m_build_selector->m_build_type_buttons[BT_SHIP]->CheckedSignal.connect(
-        [this](bool){ ToggleType(BT_SHIP, true); });
+        boost::bind(&BuildDesignatorWnd::ToggleType, this, BT_SHIP, true));
 
     // connect availability button clicks to update display
     // available items
     m_build_selector->m_availability_buttons.at(0)->CheckedSignal.connect(
-        [this](bool){ ToggleAvailabilitly(true, true); });
+        boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, true, true));
     // UNavailable items
     m_build_selector->m_availability_buttons.at(1)->CheckedSignal.connect(
-        [this](bool){ ToggleAvailabilitly(false, true); });
+        boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, false, true));
 
     AttachChild(m_enc_detail_panel);
     AttachChild(m_build_selector);

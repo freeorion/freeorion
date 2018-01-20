@@ -454,11 +454,11 @@ template<class T>
 void Spin<T>::ConnectSignals()
 {
     m_edit->FocusUpdateSignal.connect(
-        [this](const std::string& val_text){ ValueUpdated(val_text); });
+        boost::bind(&Spin::ValueUpdated, this, _1));
     m_up_button->LeftClickedSignal.connect(
-        [this](){ IncrImpl(true); });
+        boost::bind(&Spin::IncrImpl, this, true));
     m_down_button->LeftClickedSignal.connect(
-        [this](){ DecrImpl(true); });
+        boost::bind(&Spin::DecrImpl, this, true));
 }
 
 template<class T>

@@ -45,15 +45,15 @@ void InGameMenu::CompleteConstruction() {
     AttachChild(m_done_btn);
 
     m_save_btn->LeftClickedSignal.connect(
-        [this](){ Save(); });
+        boost::bind(&InGameMenu::Save, this));
     m_load_btn->LeftClickedSignal.connect(
-        [this](){ Load(); });
+        boost::bind(&InGameMenu::Load, this));
     m_options_btn->LeftClickedSignal.connect(
-        [this](){ Options(); });
+        boost::bind(&InGameMenu::Options, this));
     m_exit_btn->LeftClickedSignal.connect(
-        [this](){ Exit(); });
+        boost::bind(&InGameMenu::Exit, this));
     m_done_btn->LeftClickedSignal.connect(
-        [this](){ Done(); });
+        boost::bind(&InGameMenu::Done, this));
 
     if (!HumanClientApp::GetApp()->SinglePlayerGame()) {
         // need lobby to load a multiplayer game; menu load of a file is insufficient

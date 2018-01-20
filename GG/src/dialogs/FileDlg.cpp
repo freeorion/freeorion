@@ -226,17 +226,17 @@ void FileDlg::CompleteConstruction()
     UpdateList();
 
     m_ok_button->LeftClickedSignal.connect(
-        [this](){ OkClicked(); });
+        boost::bind(&FileDlg::OkClicked, this));
     m_cancel_button->LeftClickedSignal.connect(
-        [this](){ CancelClicked(); });
+        boost::bind(&FileDlg::CancelClicked, this));
     m_files_list->SelRowsChangedSignal.connect(
-        [this](const ListBox::SelectionSet& sel){ FileSetChanged(sel); });
+        boost::bind(&FileDlg::FileSetChanged, this, _1));
     m_files_list->DoubleClickedRowSignal.connect(
-        [this](DropDownList::iterator it, const Pt&, const Flags<ModKey>&){ FileDoubleClicked(it); });
+        boost::bind(&FileDlg::FileDoubleClicked, this, _1, _2, _3));
     m_files_edit->EditedSignal.connect(
-        [this](const std::string&){ FilesEditChanged(); });
+        boost::bind(&FileDlg::FilesEditChanged, this, _1));
     m_filter_list->SelChangedSignal.connect(
-        [this](DropDownList::iterator){ UpdateList(); });
+        boost::bind(&FileDlg::FilterChanged, this, _1));
 
     if (!m_init_filename.empty()) {
         fs::path filename_path = fs::system_complete(fs::path(m_init_filename));
@@ -482,7 +482,7 @@ void FileDlg::FileSetChanged(const ListBox::SelectionSet& files)
         m_ok_button->SetText(m_open_str);
 }
 
-void FileDlg::FileDoubleClicked(DropDownList::iterator it)
+void FileDlg::FileDoubleClicked(DropDownList::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 {
     m_files_list->DeselectAll();
     m_files_list->SelectRow(it);
@@ -490,16 +490,19 @@ void FileDlg::FileDoubleClicked(DropDownList::iterator it)
     OkHandler(true);
 }
 
-void FileDlg::FilesEditChanged()
+void FileDlg::FilesEditChanged(const std::string& str)
 {
     if (m_save && m_ok_button->Text() != m_save_str)
         m_ok_button->SetText(m_save_str);
 }
 
+void FileDlg::FilterChanged(DropDownList::iterator it)
+{ UpdateList(); }
+
 void FileDlg::SetWorkingDirectory(const fs::path& p)
 {
     m_files_edit->Clear();
-    FilesEditChanged();
+    FilesEditChanged(m_files_edit->Text());
     s_working_dir = p;
     UpdateDirectoryText();
     UpdateList();
@@ -720,7 +723,7 @@ void FileDlg::OpenDirectory()
             // switch to drive selection mode
             m_in_win32_drive_selection = true;
             m_files_edit->Clear();
-            FilesEditChanged();
+            FilesEditChanged(m_files_edit->Text());
             m_curr_dir_text->SetText("");
             DoLayout();
             UpdateList();
@@ -746,7 +749,7 @@ void FileDlg::OpenDirectory()
                 if (e.code() == boost::system::errc::io_error) {
                     m_in_win32_drive_selection = true;
                     m_files_edit->Clear();
-                    FilesEditChanged();
+                    FilesEditChanged(m_files_edit->Text());
                     m_curr_dir_text->SetText("");
                     DoLayout();
                     UpdateList();

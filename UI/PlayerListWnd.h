@@ -39,8 +39,8 @@ private:
     void            DoLayout();
 
     void            PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows);
-    void            PlayerDoubleClicked(GG::ListBox::iterator it);
-    void            PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void            PlayerDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void            PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     int             PlayerInRow(GG::ListBox::iterator it) const;
 
     std::shared_ptr<PlayerListBox>  m_player_list;

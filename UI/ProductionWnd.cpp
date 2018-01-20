@@ -151,7 +151,7 @@ namespace {
             }
 
             this->SelChangedSignal.connect(
-                [this](GG::DropDownList::iterator it){ SelectionChanged(it); });
+                boost::bind(&QuantitySelector::SelectionChanged, this, _1));
         }
 
         void SelectionChanged(GG::DropDownList::iterator it) {
@@ -839,13 +839,13 @@ void ProductionWnd::CompleteConstruction() {
     m_build_designator_wnd->SystemSelectedSignal.connect(
         SystemSelectedSignal);
     m_queue_wnd->GetQueueListBox()->MovedRowSignal.connect(
-        [this](const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it){ QueueItemMoved(row_it, original_position_it); });
+        boost::bind(&ProductionWnd::QueueItemMoved, this, _1, _2));
     m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal.connect(
         boost::bind(&ProductionWnd::DeleteQueueItem, this, _1));
     m_queue_wnd->GetQueueListBox()->LeftClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys){ QueueItemClickedSlot(it, modkeys); });
+        boost::bind(&ProductionWnd::QueueItemClickedSlot, this, _1, _2, _3));
     m_queue_wnd->GetQueueListBox()->DoubleClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>&){ QueueItemDoubleClickedSlot(it); });
+        boost::bind(&ProductionWnd::QueueItemDoubleClickedSlot, this, _1, _2, _3));
     m_queue_wnd->GetQueueListBox()->QueueItemRalliedToSignal.connect(
         boost::bind(&ProductionWnd::QueueItemRallied, this, _1, _2));
     m_queue_wnd->GetQueueListBox()->QueueItemDupedSignal.connect(
@@ -1199,7 +1199,7 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     empire->UpdateProductionQueue();
 }
 
-void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) {
+void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
         if (modkeys & GG::MOD_KEY_CTRL)
             DeleteQueueItem(it);
@@ -1208,7 +1208,7 @@ void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Fla
     }
 }
 
-void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it) {
+void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
         m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_wnd->GetQueueListBox()->begin(), it), true);
     }

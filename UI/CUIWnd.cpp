@@ -47,7 +47,7 @@ CUI_MinRestoreButton::CUI_MinRestoreButton() :
     m_mode(MIN_BUTTON)
 {
     LeftClickedSignal.connect(
-        [this](){ Toggle(); });
+        boost::bind(&CUI_MinRestoreButton::Toggle, this));
 }
 
 void CUI_MinRestoreButton::Render() {
@@ -205,7 +205,7 @@ void CUIWnd::Init() {
             boost::bind(&CUIWnd::ResetDefaultPosition, this));
     else
         HumanClientApp::GetApp()->WindowResizedSignal.connect(
-            [this](GG::X, GG::Y){ ResetDefaultPosition(); });
+            boost::bind(&CUIWnd::ResetDefaultPosition, this));
 }
 
 void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -470,7 +470,7 @@ void CUIWnd::InitButtons() {
         m_minimize_button = Wnd::Create<CUI_MinRestoreButton>();
         m_minimize_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
         m_minimize_button->LeftClickedSignal.connect(
-            [this](){ MinimizeClicked(); });
+            boost::bind(&CUIWnd::MinimizeClicked, this));
         AttachChild(m_minimize_button);
         m_minimize_button->NonClientChild(true);
     }
@@ -480,7 +480,7 @@ void CUIWnd::InitButtons() {
         m_pin_button = Wnd::Create<CUI_PinButton>();
         m_pin_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
         m_pin_button->LeftClickedSignal.connect(
-            [this](){ PinClicked(); });
+            boost::bind(&CUIWnd::PinClicked, this));
         AttachChild(m_pin_button);
         m_pin_button->NonClientChild(true);
     }
@@ -958,9 +958,9 @@ void CUIEditWnd::CompleteConstruction() {
     AttachChild(m_cancel_bn);
 
     m_ok_bn->LeftClickedSignal.connect(
-        [this](){ OkClicked(); });
+        boost::bind(&CUIEditWnd::OkClicked, this));
     m_cancel_bn->LeftClickedSignal.connect(
-        [this](){ CloseClicked(); });
+        boost::bind(&CUIWnd::CloseClicked, static_cast<CUIWnd*>(this)));
 
     m_edit->SelectAll();
 }

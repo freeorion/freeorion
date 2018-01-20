@@ -33,8 +33,8 @@ private:
     void            DoLayout();
 
     void            ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows);
-    void            ObjectDoubleClicked(GG::ListBox::iterator it);
-    void            ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void            ObjectDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void            ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     int             ObjectInRow(GG::ListBox::iterator it) const;
 
     void            SetSelectedObjects(std::set<int> sel_ids);

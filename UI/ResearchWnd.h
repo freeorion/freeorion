@@ -57,8 +57,8 @@ private:
     void    UpdateInfoPanel();     ///< Updates research summary at top left of production screen, and signals that the empire's minerals research pool has changed (propagates to the mapwnd to update indicator)
     void    DeleteQueueItem(GG::ListBox::iterator it);
     void    AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, int pos = -1);
-    void    QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys);
-    void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it);
+    void    QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    QueueItemPaused(GG::ListBox::iterator it, bool pause);
 
     std::shared_ptr<ResourceInfoPanel>  m_research_info_panel;

@@ -93,7 +93,7 @@ namespace GG {
         AttachChild(m_vscroll);
         AttachChild(m_content);
 
-        m_vscroll->ScrolledSignal.connect([this](int pos, int, int, int){ OnScrolled(pos); });
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ScrollPanel::OnScrolled, this, _1, _2, _3, _4));
 
         DoLayout();
     }
@@ -216,10 +216,10 @@ namespace GG {
         m_vscroll->SetLineSize(Value(Height() / 10));
     }
 
-    void ScrollPanel::OnScrolled(int position)
+    void ScrollPanel::OnScrolled(int tab_min, int tab_max, int min, int max)
     {
         // Move the content up by the offset given by the top of the tab.
-        m_content_pos.y = -Y(position);
+        m_content_pos.y = -Y(tab_min);
 
         // Immediately move the content.
         m_content->MoveTo(m_content_pos);
