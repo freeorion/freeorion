@@ -282,6 +282,12 @@ class Trait(object):
         """Return an exponent to scale the production cost of a warship in ShipDesignAI."""
         return None
 
+    def secondary_valuation_factor_for_invasion_targets(self):  # pylint: disable=no-self-use,unused-argument
+        """Return a value in range [0.0 : 1.0], used in colonization scoring calculations where subscores for a primary
+        planet depend on traits of secondary planets, for what portion of the subscore should be assigned if the secondary
+        planet would need to be acquired via invasion"""
+        return None
+
 
 class Aggression(Trait):
     """A trait that models level of difficulty and aggression."""
@@ -454,6 +460,20 @@ class Aggression(Trait):
             exponent = 1.0
         return exponent
 
+    def secondary_valuation_factor_for_invasion_targets(self):  # pylint: disable=no-self-use,unused-argument
+        """Return a value in range [0.0 : 1.0], used in colonization scoring calculations where subscores for a primary
+        planet depend on traits of secondary planets, for what portion of the subscore should be assigned if the secondary
+        planet would need to be acquired via invasion"""
+        if self.aggression == fo.aggression.maniacal:
+            factor = 0.8
+        elif self.aggression == fo.aggression.aggressive:
+            factor = 0.4
+        elif self.aggression == fo.aggression.typical:
+            factor = 0.2
+        else:
+            factor = 0.0
+        return factor
+
 
 class EmpireIDTrait(Trait):
     """A trait that models empire id influence.
@@ -585,7 +605,7 @@ def average_not_none(llin):
     return sum(ll) / float(len(ll))
 
 
-for funcname in ["attitude_to_empire"]:
+for funcname in ["attitude_to_empire", "secondary_valuation_factor_for_invasion_targets"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, average_not_none))
 
 
