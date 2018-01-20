@@ -233,13 +233,13 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
 
     // prepend signs if neccessary
     int effective_sign = EffectiveSign(val);
-    if (effective_sign == -1) {
+    if (effective_sign == -1)
         text += "-";
-    } else {
-        if (always_show_sign) text += "+";
-    }
+    else if (always_show_sign)
+        text += "+";
 
-    if (mag > LARGE_UI_DISPLAY_VALUE) mag = LARGE_UI_DISPLAY_VALUE;
+    if (mag > LARGE_UI_DISPLAY_VALUE)
+        mag = LARGE_UI_DISPLAY_VALUE;
 
     // if value is effectively 0, avoid unnecessary later processing
     if (effective_sign == 0) {
@@ -253,8 +253,37 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     //std::cout << std::endl << "DoubleToString val: " << val << " digits: " << digits << std::endl;
 
     // power of 10 of highest valued digit in number
-    int pow10 = static_cast<int>(floor(log10(mag))); // = 2 (100's) for 234.4,  = 4 (10000's) for 45324
+    // = 2 (100's)   for 234.4
+    // = 4 (10000's) for 45324
+    int pow10 = static_cast<int>(floor(log10(mag)));
     //std::cout << "magnitude power of 10: " << pow10 << std::endl;
+
+
+    // round number to fit in requested number of digits
+    // shift number by power of 10 so that ones digit is the lowest-value digit
+    // that will be retained in final number
+    // eg. 45324 with 3 digits -> pow10 = 4, digits = 3
+    //     want to shift 3 to the 1's digits position, so need 4 - 3 + 1 shift = 2
+    double rounding_factor = pow(10.0, static_cast<double>(pow10 - digits + 1));
+    // shift, round, shift back. this leaves 0 after the lowest retained digit
+    mag = mag / rounding_factor;
+    mag = round(mag);
+    mag *= rounding_factor;
+    //std::cout << "magnitude after initial rounding to " << digits << " digits: " << mag << std::endl;
+
+    // rounding may have changed the power of 10 of the number
+    // eg. 9999 with 3 digits, shifted to 999.9, rounded to 1000,
+    // shifted back to 10000, now the power of 10 is 5 instead of 4.
+    // so, redo this calculation
+    pow10 = static_cast<int>(floor(log10(mag)));
+    rounding_factor = pow(10.0, static_cast<double>(pow10 - digits + 1));
+    mag = mag / rounding_factor;
+    mag = round(mag);
+    mag *= rounding_factor;
+    //std::cout << "magnitude after second rounding to " << digits << " digits: " << mag << std::endl;
+
+    // additional rounding interations shouldn't be necessary
+
 
     // determine base unit for number: the next lower power of 10^3 from the number (inclusive)
     int pow10_digits_above_pow1000 = 0;
@@ -266,6 +295,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     if (unit_pow10 < 0)
         unit_pow10 = 0;
     //std::cout << "unit power of 10: " << unit_pow10 << std::endl;
+
 
     // if not enough digits to include most significant digit and next lower
     // power of 10, add extra digits. this still uses less space than using the
@@ -282,15 +312,9 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     //std::cout << "fraction_digits: " << fraction_digits << std::endl;
 
 
-    /* round number down at lowest digit to be displayed, to prevent lexical_cast from rounding up
-       in cases like 0.998k with 2 digits -> 1.00k  instead of  0.99k  (as it should be) */
-    double rounding_factor = pow(10.0, static_cast<double>(pow10 - digits + 1));
-    mag /= rounding_factor;
-    mag = floor(mag);
-    mag *= rounding_factor;
-
     // scale number by unit power of 10
-    mag /= pow(10.0, static_cast<double>(unit_pow10));  // if mag = 45324 and unitPow = 3, get mag = 45.324
+    // eg. if mag = 45324 and unit_pow10 = 3, get mag = 45.324
+    mag /= pow(10.0, static_cast<double>(unit_pow10));
 
 
     std::string format;
