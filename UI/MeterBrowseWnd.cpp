@@ -27,13 +27,13 @@ namespace {
 
     /** Returns text representation of number wrapped in GG RGBA tags for
       * colour depending on whether number is positive, negative or 0.0 */
-    std::string ColouredNumber(double number) {
+    std::string ColouredNumber(double number, unsigned int digits = 3) {
         GG::Clr clr = ClientUI::TextColor();
         if (number > 0.0)
             clr = ClientUI::StatIncrColor();
         else if (number < 0.0)
             clr = ClientUI::StatDecrColor();
-        return ColourWrappedtext(DoubleToString(number, 3, true), clr);
+        return ColourWrappedtext(DoubleToString(number, digits, true), clr);
     }
 
     /** Cast int to string, prepend sign if requested */
@@ -213,10 +213,12 @@ void MeterBrowseWnd::Initialize() {
 }
 
 void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
-    // because a MeterBrowseWnd's contents depends only on the meters of a single object, if that object doesn't
-    // change between showings of the meter browse wnd, it's not necessary to fully recreate the MeterBrowseWnd,
-    // and it can be just reshown.without being altered.  To refresh a MeterBrowseWnd, recreate it by assigning
-    // a new one as the moused-over object's BrowseWnd in this Wnd's place
+    // because a MeterBrowseWnd's contents depends only on the meters of a
+    // single object, if that object doesn't change between showings of the
+    // meter browse wnd, it's not necessary to fully recreate the
+    // MeterBrowseWnd, and it can be just reshown.without being altered. To
+    // refresh a MeterBrowseWnd, recreate it by assigning a new one as the
+    // moused-over object's BrowseWnd in this Wnd's place
     if (!m_initialized)
         Initialize();
 }
@@ -256,11 +258,11 @@ void MeterBrowseWnd::UpdateSummary() {
         return;
 
     const Meter* primary_meter = obj->GetMeter(m_primary_meter_type);
-    const Meter* secondary_meter = obj->GetMeter(m_secondary_meter_type);
     if (!primary_meter) {
         ErrorLogger() << "MeterBrowseWnd::UpdateSummary can't get primary meter";
         return;
     }
+    const Meter* secondary_meter = obj->GetMeter(m_secondary_meter_type);
 
     float breakdown_total = 0.0f;
     std::string breakdown_meter_name;
@@ -274,10 +276,10 @@ void MeterBrowseWnd::UpdateSummary() {
         m_current_value->SetText(DoubleToString(primary_meter->Initial(), 3, false));
         m_next_turn_value->SetText(DoubleToString(primary_meter->Current(), 3, false));
         float primary_change = primary_meter->Current() - primary_meter->Initial();
-        m_change_value->SetText(ColouredNumber(primary_change));
+        m_change_value->SetText(ColouredNumber(primary_change, 3));
 
         // target or max meter total for breakdown summary
-        breakdown_total = secondary_meter->Current();;
+        breakdown_total = secondary_meter->Current();
         breakdown_meter_name = MeterToUserString(m_secondary_meter_type);
 
     } else {    // no secondary meter
@@ -416,7 +418,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(label);
 
-        auto value = GG::Wnd::Create<CUILabel>(ColouredNumber(info.meter_change));
+        auto value = GG::Wnd::Create<CUILabel>(ColouredNumber(info.meter_change, 3));
         value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
         value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(value);
@@ -425,7 +427,6 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         top += m_row_height;
     }
 }
-
 
 ShipDamageBrowseWnd::ShipDamageBrowseWnd(int object_id, MeterType primary_meter_type) :
     MeterBrowseWnd(object_id, primary_meter_type)
