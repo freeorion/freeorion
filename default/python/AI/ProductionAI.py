@@ -229,11 +229,14 @@ def generate_production_orders():
             claimed_stars.setdefault(t_sys.starType, []).append(sys_id)
 
     if current_turn == 1 and len(AIstate.opponentPlanetIDs) == 0 and len(production_queue) == 0:
-        best_design_id, _, build_choices = get_best_ship_info(PriorityType.PRODUCTION_EXPLORATION)
-        if best_design_id is not None:
-            for _ in range(3):
-                fo.issueEnqueueShipProductionOrder(best_design_id, build_choices[0])
-            fo.updateProductionQueue()
+        init_build_nums = [(PriorityType.PRODUCTION_EXPLORATION, 3),
+                           ]
+        for ship_type, num_ships in init_build_nums:
+            best_design_id, _, build_choices = get_best_ship_info(ship_type)
+            if best_design_id is not None:
+                for _ in range(num_ships):
+                    fo.issueEnqueueShipProductionOrder(best_design_id, build_choices[0])
+                fo.updateProductionQueue()
 
     building_expense = 0.0
     building_ratio = foAI.foAIstate.character.preferred_building_ratio([0.4, 0.35, 0.30])
