@@ -1081,7 +1081,10 @@ def generate_production_orders():
         else:
             warn("Failed enqueueing %s at planet %s, got result %d" % (building_name, planet, res))
 
-    queued_clny_bld_locs = [element.locationID for element in production_queue if element.name.startswith('BLD_COL_')]
+    # ignore acquired-under-construction colony buildings for which our empire lacks the species
+    queued_clny_bld_locs = [element.locationID for element in production_queue
+                            if (element.name.startswith('BLD_COL_') and
+                                empire_has_colony_bld_species(element.name))]
     colony_bldg_entries = ([entry for entry in foAI.foAIstate.colonisablePlanetIDs.items() if entry[1][0] > 60 and
                            entry[0] not in queued_clny_bld_locs and entry[0] in state.get_empire_outposts()]
                            [:PriorityAI.allottedColonyTargets+2])
@@ -1435,6 +1438,11 @@ def update_stockpile_use():
         if fo.issueAllowStockpileProductionOrder(queue_index, True):
             planets_in_stockpile_enabled_group.update(group)
 
+def empire_has_colony_bld_species(building_name):
+    if not building_name.startswith('BLD_COL_'):
+        return False
+    species_name = 'SP' + building_name.split('BLD_COL_')[1]
+    return species_name in ColonisationAI.empire_colonizers
 
 def build_ship_facilities(bld_name, best_pilot_facilities, top_locs=None):
     if top_locs is None:
