@@ -24,7 +24,7 @@ FOCUS_CHANGE_PENALTY
             activation = And [
                 Planet
                 Not Focus type = "FOCUS_INDUSTRY"
-                (0 <= Source.TurnsSinceFocusChange < 1)
+                (0 == Source.TurnsSinceFocusChange)
             ]
             priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
             effects = SetIndustry value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
@@ -34,7 +34,7 @@ FOCUS_CHANGE_PENALTY
             activation = And [
                 Planet
                 Not Focus type = "FOCUS_RESEARCH"
-                (0 <= Source.TurnsSinceFocusChange < 1)
+                (0 == Source.TurnsSinceFocusChange)
             ]
             priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
             effects = SetResearch value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
