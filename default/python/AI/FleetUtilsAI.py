@@ -232,19 +232,14 @@ def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, 
     fleet_b = universe.getFleet(fleet_b_id)
     if not fleet_a or not fleet_b:
         return 0
+    system_id = fleet_a.systemID
+    if fleet_b.systemID != system_id:
+        return 0
     remaining_rating = CombatRatingsAI.get_fleet_rating(fleet_a_id)
     transferred_rating = 0
-    b_has_monster = False
-    for ship_id in fleet_b.shipIDs:
-        this_ship = universe.getShip(ship_id)
-        if not this_ship:
-            continue
-        if this_ship.isMonster:
-            b_has_monster = True
-            break
     for ship_id in fleet_a.shipIDs:
         this_ship = universe.getShip(ship_id)
-        if not this_ship or this_ship.isMonster != b_has_monster:  # TODO Is there any reason for the monster check?
+        if not this_ship:
             continue
         this_rating = CombatRatingsAI.ShipCombatStats(ship_id).get_rating()
         remaining_rating = CombatRatingsAI.rating_needed(remaining_rating, this_rating)
