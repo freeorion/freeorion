@@ -278,8 +278,9 @@ namespace {
             float& group_pp_available = (available_pp_it != available_pp.end()) ? 
                         available_pp_it->second : dummy_pp_source;
 
-            if ((group_pp_available <= 0) && 
-                (available_stockpile <= 0 || !queue_element.allowed_imperial_stockpile_use)) {
+            if ((group_pp_available <= 0) &&
+                (available_stockpile <= 0 || !queue_element.allowed_imperial_stockpile_use))
+            {
                 TraceLogger() << "allocation: " << queue_element.allocated_pp
                               << "  to: " << queue_element.item.name
                               << "  due to lack of available PP in group";
@@ -311,7 +312,7 @@ namespace {
                 item_cost = time_cost_it->second.first;
                 build_turns = time_cost_it->second.second;
             } else {
-                ErrorLogger() << "item: " << queue_element.item.name 
+                ErrorLogger() << "item: " << queue_element.item.name
                               << "  somehow failed time cost lookup for location " << location_id;
             }
             //DebugLogger() << "item " << queue_element.item.name << " costs " << item_cost << " for " << build_turns << " turns";
@@ -323,7 +324,7 @@ namespace {
             // total cost remaining to complete the last item in the queue element (eg. the element has all but
             // the last item complete already) and by the total pp available in this element's production location's
             // resource sharing group (including any stockpile availability)
-            float stockpile_available_for_this = 
+            float stockpile_available_for_this =
                 (queue_element.allowed_imperial_stockpile_use) ? available_stockpile : 0;
 
             float allocation = std::max(0.0f,
@@ -860,13 +861,7 @@ std::string ProductionQueue::ProductionItem::Dump() const {
 //////////////////////////////
 // ProductionQueue::Element //
 //////////////////////////////
-ProductionQueue::Element::Element() :
-    empire_id(ALL_EMPIRES),
-    ordered(0),
-    remaining(0),
-    location(INVALID_OBJECT_ID),
-    paused(false),
-    allowed_imperial_stockpile_use(false)
+ProductionQueue::Element::Element()
 {}
 
 ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int ordered_,

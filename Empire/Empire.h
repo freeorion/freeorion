@@ -152,24 +152,24 @@ struct FO_COMMON_API ProductionQueue {
         Element(ProductionItem item_, int empire_id_,
                 int ordered_, int remaining_, int blocksize_,
                 int location_, bool paused_ = false,
-                bool allowed_imperial_stockpile_use_ = false);
+                bool allowed_imperial_stockpile_use_ = true);
 
         Element(BuildType build_type, std::string name, int empire_id_,
                 int ordered_, int remaining_, int blocksize_,
                 int location_, bool paused_ = false,
-                bool allowed_imperial_stockpile_use_ = false);
+                bool allowed_imperial_stockpile_use_ = true);
 
         Element(BuildType build_type, int design_id, int empire_id_,
                 int ordered_, int remaining_, int blocksize_,
                 int location_, bool paused_ = false,
-                bool allowed_imperial_stockpile_use_ = false);
+                bool allowed_imperial_stockpile_use_ = true);
 
         ProductionItem  item;
         int             empire_id = ALL_EMPIRES;
-        int             ordered = 1;                ///< how many of item (blocks) to produce
+        int             ordered = 0;                ///< how many of item (blocks) to produce
         int             blocksize = 1;              ///< size of block to produce (default=1)
-        int             remaining;                  ///< how many left to produce
-        int             location;                   ///< the ID of the UniverseObject at which this item is being produced
+        int             remaining = 0;              ///< how many left to produce
+        int             location = INVALID_OBJECT_ID;///< the ID of the UniverseObject at which this item is being produced
         float           allocated_pp = 0.0f;        ///< PP allocated to this ProductionQueue Element by Empire production update
         float           progress = 0.0f;            ///< fraction of this item that is complete.
         float           progress_memory = 0.0f;     ///< updated by server turn processing; aides in allowing blocksize changes to be undone in same turn w/o progress loss
@@ -178,7 +178,7 @@ struct FO_COMMON_API ProductionQueue {
         int             turns_left_to_completion = -1;
         int             rally_point_id = INVALID_OBJECT_ID;
         bool            paused = false;
-        bool            allowed_imperial_stockpile_use = false;
+        bool            allowed_imperial_stockpile_use = true;
 
         std::string Dump() const;
 
