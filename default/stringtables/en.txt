@@ -11151,7 +11151,7 @@ DEF_ROOT_DEFENSE
 Self Defense
 
 DEF_ROOT_DEFENSE_DESC
-'''Increases max [[metertype METER_SHIELD]] by 1 on each owned planet. For species with basic defensive troops, increases max [[metertype METER_TROOPS]] on the planet by 0.2 per population.
+'''Increases max [[metertype METER_SHIELD]] by 1 on each owned planet. Regenerates 1 [[metertype METER_SHIELD]] per turn, on turns when the planet has not been attacked in combat. For species with basic defensive troops, increases max [[metertype METER_TROOPS]] on the planet by 0.2 per population.
 
 The concept of 'self defense' is at the root of many avenues of technological advance.'''
 
