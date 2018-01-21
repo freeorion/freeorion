@@ -72,9 +72,12 @@ def _create_default_config_file(path):
         for k, v in entries.iteritems():
             config.set(section, k, str(v))
     if path:
-        with open(unicode(path, 'utf-8'), 'w') as configfile:
-            config.write(configfile)
-        print "default config is dumped to %s" % path
+        try:
+            with open(unicode(path, 'utf-8'), 'w') as configfile:
+                config.write(configfile)
+            print "default config is dumped to %s" % path
+        except IOError:
+            sys.stderr.write("AI Config Error: could not write default config %s\n" % path)
     return config
 
 
