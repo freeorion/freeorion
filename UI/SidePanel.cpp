@@ -955,7 +955,6 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     // focus-selection droplist
     m_focus_drop = GG::Wnd::Create<CUIDropDownList>(6);
     AttachChild(m_focus_drop);
-        [this](bool open){ FocusDropListOpened(open); });
     m_focus_drop->SelChangedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot, this, _1));
     this->FocusChangedSignal.connect(
