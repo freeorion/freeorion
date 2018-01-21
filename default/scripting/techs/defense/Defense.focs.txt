@@ -23,7 +23,10 @@ Tech
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetShield value = Value + 1
+            effects = [
+                SetShield value = min(Value + 1, Value(Target.MaxShield))
+                SetDefense value = min(Value + 1, Value(Target.MaxDefense))
+            ]
     ]
     graphic = ""
 
