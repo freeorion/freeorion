@@ -264,6 +264,10 @@ class AIstate(object):
             del self.fleetStatus[fleet_id]
         if fleet_id in self.__fleetRoleByID:
             del self.__fleetRoleByID[fleet_id]
+        for sys_status in self.systemStatus.values():
+            for fleet_list in [sys_status.get('myfleets', []), sys_status.get('myFleetsAccessible',[])]:
+                if fleet_id in fleet_list:
+                    fleet_list.remove(fleet_id)
 
     def __report_system_threats(self):
         """Print a table with system threats to the logfile."""

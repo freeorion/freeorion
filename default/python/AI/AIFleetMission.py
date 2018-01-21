@@ -150,6 +150,11 @@ class AIFleetMission(object):
         if system_id == INVALID_ID:
             return  # can't merge fleets in middle of starlane
         system_status = foAI.foAIstate.systemStatus[system_id]
+
+        # if a combat mission, and only have final order (so must be at final target), don't try
+        # merging if there is no local threat (it tends to lead to fleet object churn)
+        if self.type in COMBAT_MISSION_TYPES and len(self.orders) == 1 and not system_status.get('totalThreat', 0):
+            return
         destroyed_list = list(universe.destroyedObjectIDs(empire_id))
         other_fleets_here = [fid for fid in system_status.get('myFleetsAccessible', []) if fid != fleet_id and
                              fid not in destroyed_list and universe.getFleet(fid).ownedBy(empire_id)]
@@ -185,8 +190,10 @@ class AIFleetMission(object):
                 else:
                     target = fleet_mission.target.id if fleet_mission.target else None
                     if target == target_id:
-                        print "Military fleet %d has same target as %s fleet %d. Merging." % (fid, fleet_role, fleet_id)
-                        do_merge = True  # TODO: should probably ensure that fleetA has aggression on now
+                        info("Military fleet %d (%d ships) has same target as %s fleet %d (%d ships). Merging former "
+                               "into latter." % (fid, fleet.numShips, fleet_role, fleet_id, len(main_fleet.shipIDs)))
+                        # TODO: should probably ensure that fleetA has aggression on now
+                        do_merge = float(min(main_fleet.speed, fleet.speed))/max(main_fleet.speed, fleet.speed) >= 0.6
                     elif main_fleet.speed > 0:
                         neighbors = foAI.foAIstate.systemStatus.get(system_id, {}).get('neighbors', [])
                         if target == system_id and target_id in neighbors and self.type == MissionType.SECURE:
