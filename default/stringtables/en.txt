@@ -1741,6 +1741,9 @@ Enable autosave after the galaxy is created before any game play.
 OPTIONS_DB_AUTOSAVE_GAME_CLOSE
 Enable autosave when resigning or closing the game.
 
+OPTIONS_DB_AUTOSAVE_HOSTLESS
+Enable autosave in hostless mode.
+
 OPTIONS_DB_UI_MOUSE_LR_SWAP
 Swaps results of clicking left and right mouse buttons.
 
@@ -1794,9 +1797,6 @@ Use Binary serialization for saving games. Binary serialization is faster to sav
 
 OPTIONS_DB_XML_ZLIB_SERIALIZATION
 When saving games with XML serialization, compress most of the XML before writing the file. Compression substantially reduces save file sizes, but may make saves unloadable due to memory requirements to decompress the save data.
-
-OPTIONS_DB_HOSTLESS_SAVE
-Enable autosave in hostless mode.
 
 OPTIONS_DB_UI_WINDOWS_EXISTS
 True if the window with a given config name currently exists, false if one was created and deleted, doesn't exist if no window has yet been created with that name.
