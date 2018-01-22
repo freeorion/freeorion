@@ -37,6 +37,14 @@ namespace {
     const float EPSILON = 0.01f;
     const std::string EMPTY_STRING;
 
+    void AddRules(GameRules& rules) {
+        // limits amount of PP per turn that can be imported into the stockpile
+        rules.Add<bool>("RULE_STOCKPILE_IMPORT_LIMITED",
+                        "RULE_STOCKPILE_IMPORT_LIMITED_DESC",
+                        "", false, true);
+    }
+    bool temp_bool = RegisterGameRules(&AddRules);
+
     float GetQueueFrontloadFactor() {
         static float front_load_factor = -1.0;
         if (front_load_factor == -1.0) {
@@ -67,24 +75,40 @@ namespace {
         return topping_up_factor;
     }
 
-// Calculates per-turn limit on PP contribution, taking into account unit item cost, min build turns, blocksize,
-// remaining repeat count, current progress, and other potential factors discussed below.
+    // Calculates per-turn limit on PP contribution, taking into account unit
+    // item cost, min build turns, blocksize, remaining repeat count, current
+    // progress, and other potential factors discussed below.
 
-// FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR and FUNCTIONAL_PRODUCTION_QUEUE_TOPPING_UP_FACTOR specify global_settings.txt values that affect how the ProductionQueue will limit
-// allocation towards building a given item on a given turn.  The base amount of maximum allocation per turn (if the player has enough PP available) is the item's total
-// cost, divided over its minimum build time.  Sometimes complications arise, though, which unexpectedly delay the completion even if the item had been fully-funded 
-// every turn, because costs have risen partway through (such as due to increasing ship costs resulting from recent ship constructoin completion and ensuing increase 
-// of Fleet Maintenance costs.  These two settings provide a mechanism for some allocation leeway to deal with mid-build cost increases without causing the project 
-// completion to take an extra turn because of the small bit of increased cost.  The settings differ in the timing of the extra allocation allowed.
-// Both factors have a minimum value of 0.0 and a maximum value of 0.3.
+    // FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR and
+    // FUNCTIONAL_PRODUCTION_QUEUE_TOPPING_UP_FACTOR specify global_settings.txt
+    // values that affect how the ProductionQueue will limit allocation towards
+    // building a given item on a given turn.  The base amount of maximum
+    // allocation per turn (if the player has enough PP available) is the item's
+    // total cost, divided over its minimum build time.  Sometimes complications
+    // arise, though, which unexpectedly delay the completion even if the item
+    // had been fully-funded every turn, because costs have risen partway
+    // through (such as due to increasing ship costs resulting from recent ship
+    // constructoin completion and ensuing increase of Fleet Maintenance costs.
+    // These two settings provide a mechanism for some allocation leeway to deal
+    // with mid-build cost increases without causing the project  completion to
+    // take an extra turn because of the small bit of increased cost.  The
+    // settings differ in the timing of the extra allocation allowed.
+    // Both factors have a minimum value of 0.0 and a maximum value of 0.3.
 
-// Making the frontloaded factor greater than zero increases the per-turn allocation cap by the specified percentage (so it always spreads the extra allocation across all turns).
-// Making the topping-up option nonzero allows the final turn allocation cap to be increased by the specified percentage of the total cost, if needed (and then subject to 
-// availability of course). They can both be nonzero, although to avoid that introducing too much interaction complexity into the minimum build time safeguard for topping-up, 
-// the topping-up percentage will be reduced by the frontloading setting. 
+    // Making the frontloaded factor greater than zero increases the per-turn
+    // allocation cap by the specified percentage (so it always spreads the
+    // extra allocation across all turns). Making the topping-up option nonzero
+    // allows the final turn allocation cap to be increased by the specified
+    // percentage of the total cost, if needed (and then subject toavailability
+    // of course). They can both be nonzero, although to avoid that introducing
+    // too much interaction complexity into the minimum build time safeguard for
+    // topping-up,  the topping-up percentage will be reduced by the
+    // frontloading setting.
 
-// Note that for very small values of the options (less than 5%), when dealing with very low cost items the effect/protection may be noticeably less than expected because of
-// interactions with the ProductionQueue Epsilon value (0.01)
+    // Note that for very small values of the options (less than 5%), when
+    // dealing with very low cost items the effect/protection may be noticeably
+    // less than expected because of interactions with the ProductionQueue
+    // Epsilon value (0.01)
 
     float CalculateProductionPerTurnLimit(const ProductionQueue::Element& queue_element,
                                           float item_cost, int build_turns)
@@ -149,8 +173,11 @@ namespace {
                           << "  excess in group: " << excess_here
                           << "  to stockpile: " << new_contributions;
         }
-        if (new_contributions > stockpile_limit)
-            new_contributions = stockpile_limit;
+
+        if (new_contributions > stockpile_limit &&
+            GetGameRules().Get<bool>("RULE_STOCKPILE_IMPORT_LIMITED"))
+        { new_contributions = stockpile_limit; }
+
         return starting_stockpile + new_contributions - stockpile_used;
     }
 
@@ -934,9 +961,9 @@ float ProductionQueue::TotalPPsSpent() const {
     return retval;
 }
 
-/** TODO: Is there any reason to keep this method in addition to the more specific 
- * information directly available from the empire?  This should probably at least be renamed
- * to clarify it is non-stockpile output */
+/** TODO: Is there any reason to keep this method in addition to the more
+  * specific information directly available from the empire?  This should
+  * probably at least be renamed to clarify it is non-stockpile output */
 std::map<std::set<int>, float> ProductionQueue::AvailablePP(
     const std::shared_ptr<ResourcePool>& industry_pool) const
 {
