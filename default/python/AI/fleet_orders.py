@@ -106,11 +106,6 @@ class AIFleetOrder(object):
             retval["target_type"] = None
         return retval
 
-    def ship_in_fleet(self):
-        universe = fo.getUniverse()
-        fleet = universe.getFleet(self.fleet.id)
-        return self.target.id in fleet.shipIDs
-
     def is_valid(self):
         """Check if FleetOrder could be somehow in future issued = is valid."""
         if self.executed and self.order_issued:
