@@ -179,7 +179,7 @@ Disconnection::Disconnection(PlayerConnectionPtr& player_connection) :
 ////////////////////////////////////////////////////////////
 // MessageEventBase
 ////////////////////////////////////////////////////////////
-MessageEventBase::MessageEventBase(const Message& message, PlayerConnectionPtr& player_connection) :
+MessageEventBase::MessageEventBase(const Message& message, const PlayerConnectionPtr& player_connection) :
     m_message(message),
     m_player_connection(player_connection)
 {}

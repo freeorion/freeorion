@@ -62,7 +62,7 @@ struct Hostless : sc::event<Hostless>                                   {}; // E
 //  Message events
 /** The base class for all state machine events that are based on Messages. */
 struct MessageEventBase {
-    MessageEventBase(const Message& message, PlayerConnectionPtr& player_connection);
+    MessageEventBase(const Message& message, const PlayerConnectionPtr& player_connection);
 
     Message              m_message;
     PlayerConnectionPtr  m_player_connection;
@@ -88,14 +88,14 @@ struct MessageEventBase {
     (Error)
 
 
-#define DECLARE_MESSAGE_EVENT(r, data, name)                                    \
-    struct name :                                                               \
-        sc::event<name>,                                                        \
-        MessageEventBase                                                        \
-    {                                                                           \
-        name(const Message& message, PlayerConnectionPtr& player_connection) :  \
-            MessageEventBase(message, player_connection)                        \
-        {}                                                                      \
+#define DECLARE_MESSAGE_EVENT(r, data, name)                                            \
+    struct name :                                                                       \
+        sc::event<name>,                                                                \
+        MessageEventBase                                                                \
+    {                                                                                   \
+        name(const Message& message, const PlayerConnectionPtr& player_connection) :    \
+            MessageEventBase(message, player_connection)                                \
+        {}                                                                              \
     };
 
 BOOST_PP_SEQ_FOR_EACH(DECLARE_MESSAGE_EVENT, _, MESSAGE_EVENTS)
