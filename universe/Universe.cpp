@@ -690,19 +690,18 @@ void Universe::UpdateMeterEstimates() {
     UpdateMeterEstimatesImpl(std::vector<int>());
 }
 
-void Universe::UpdateMeterEstimates(int object_id, bool is_update_contained_objects) {
+void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects) {
     // ids of the object and all valid contained objects
-    std::unordered_set<int> all_ids;
+    std::unordered_set<int> collected_ids;
 
-    // Collect objects to update meter for.  this may be a single object, a group of related
-    // objects, or all objects in the (known) universe.  also clear effect accounting for meters
-    // that are to be updated. Return true on success (all_ids is valid).
-    std::function<bool (int, int)> update_obj_and_contained_objs =
-        [this, &all_ids, is_update_contained_objects, &update_obj_and_contained_objs]
+    // Collect objects ids to update meter for.  This may be a single object, a
+    // group of related objects. Return true if all collected ids are valid.
+    std::function<bool (int, int)> collect_ids =
+        [this, &collected_ids, update_contained_objects, &collect_ids]
         (int cur_id, int container_id)
     {
         // Ignore if already in the set
-        if (all_ids.count(cur_id))
+        if (collected_ids.count(cur_id))
             return true;
 
         auto cur_object = m_objects.Object(cur_id);
@@ -714,28 +713,31 @@ void Universe::UpdateMeterEstimates(int object_id, bool is_update_contained_obje
             return false;
         }
 
-        // add object and clear effect accounting for all its meters
-        all_ids.insert(cur_id);
-        m_effect_accounting_map[cur_id].clear();
+        // add object
+        collected_ids.insert(cur_id);
 
         // add contained objects to list of objects to process, if requested.
-        if (is_update_contained_objects)
+        if (update_contained_objects)
             for (const auto& contained_id : cur_object->ContainedObjectIDs())
-                if (!update_obj_and_contained_objs(contained_id, cur_id))
+                if (!collect_ids(contained_id, cur_id))
                     return false;
         return true;
     };
 
-    if (!update_obj_and_contained_objs(object_id, INVALID_OBJECT_ID))
+    if (!collect_ids(object_id, INVALID_OBJECT_ID))
         return;
 
-    if (all_ids.empty())
+    if (collected_ids.empty())
         return;
+
+    // Clear ids that will be updated
+    for (auto cur_id : collected_ids)
+        m_effect_accounting_map[cur_id].clear();
 
     // Convert to a vector
     std::vector<int> objects_vec;
-    objects_vec.reserve(all_ids.size());
-    std::copy(all_ids.begin(), all_ids.end(), std::back_inserter(objects_vec));
+    objects_vec.reserve(collected_ids.size());
+    std::copy(collected_ids.begin(), collected_ids.end(), std::back_inserter(objects_vec));
     UpdateMeterEstimatesImpl(objects_vec);
 }
 
