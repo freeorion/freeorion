@@ -16,7 +16,6 @@ class IntroScreen : public GG::Wnd {
 public:
     /** \name Structors*/ //!@{
     IntroScreen();
-
     ~IntroScreen();
     //!@}
 
@@ -24,7 +23,6 @@ public:
 
     /** \name Mutators*/ //!@{
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
-
     void Render() override;
 
     /**Note:  Since there is poor filesystem tracking of deleted savegames, use
@@ -34,19 +32,19 @@ public:
     void PreRender() override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-    void            OnContinue();
-    void            OnSinglePlayer();  //!< called when single player is clicked
-    void            OnQuickStart();    //!< called when quick start is clicked
-    void            OnMultiPlayer();   //!< ...
-    void            OnLoadGame();
-    void            OnOptions();
-    void            OnPedia();
-    void            OnAbout();
-    void            OnWebsite();
-    void            OnCredits();
-    void            OnExitGame();
+    void OnContinue();
+    void OnSinglePlayer();  //!< called when single player is clicked
+    void OnQuickStart();    //!< called when quick start is clicked
+    void OnMultiPlayer();   //!< ...
+    void OnLoadGame();
+    void OnOptions();
+    void OnPedia();
+    void OnAbout();
+    void OnWebsite();
+    void OnCredits();
+    void OnExitGame();
 
-    virtual void    Close();
+    virtual void Close();
     //!@}
 
 private:
