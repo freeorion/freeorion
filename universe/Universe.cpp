@@ -683,47 +683,62 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
     }
 }
 
-void Universe::UpdateMeterEstimates()
-{ UpdateMeterEstimates(INVALID_OBJECT_ID, false); }
+void Universe::UpdateMeterEstimates() {
+    for (int obj_id : m_objects.FindExistingObjectIDs())
+        m_effect_accounting_map[obj_id].clear();
+    // update meters for all objects.
+    UpdateMeterEstimatesImpl(std::vector<int>());
+}
 
 void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects) {
-    if (object_id == INVALID_OBJECT_ID) {
-        for (int obj_id : m_objects.FindExistingObjectIDs())
-            m_effect_accounting_map[obj_id].clear();
-        // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
-        UpdateMeterEstimatesImpl(std::vector<int>());// will cause it to process all existing objects
-        return;
-    }
+    // ids of the object and all valid contained objects
+    std::unordered_set<int> collected_ids;
 
-    // collect objects to update meter for.  this may be a single object, a group of related objects, or all objects
-    // in the (known) universe.  also clear effect accounting for meters that are to be updated.
-    std::set<int> objects_set;
-    std::list<int> objects_list;
-    objects_list.push_back(object_id);
+    // Collect objects ids to update meter for.  This may be a single object, a
+    // group of related objects. Return true if all collected ids are valid.
+    std::function<bool (int, int)> collect_ids =
+        [this, &collected_ids, update_contained_objects, &collect_ids]
+        (int cur_id, int container_id)
+    {
+        // Ignore if already in the set
+        if (collected_ids.count(cur_id))
+            return true;
 
-    for (int cur_object_id : objects_list) {
-        auto cur_object = m_objects.Object(cur_object_id);
+        auto cur_object = m_objects.Object(cur_id);
         if (!cur_object) {
-            ErrorLogger() << "Universe::UpdateMeterEstimates tried to get an invalid object...";
-            return;
+            ErrorLogger() << "Universe::UpdateMeterEstimates tried to get an invalid object for id " << cur_id
+                          << " in container " << container_id
+                          << ". All meter estimates will be updated.";
+            UpdateMeterEstimates();
+            return false;
         }
 
-        // add object and clear effect accounting for all its meters
-        objects_set.insert(cur_object_id);
-        m_effect_accounting_map[cur_object_id].clear();
+        // add object
+        collected_ids.insert(cur_id);
 
         // add contained objects to list of objects to process, if requested.
-        // assumes no objects contain themselves (which could cause infinite loops)
-        if (update_contained_objects) {
-            const std::set<int>& contained_objects = cur_object->ContainedObjectIDs();
-            std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(objects_list));
-        }
-    }
+        if (update_contained_objects)
+            for (const auto& contained_id : cur_object->ContainedObjectIDs())
+                if (!collect_ids(contained_id, cur_id))
+                    return false;
+        return true;
+    };
+
+    if (!collect_ids(object_id, INVALID_OBJECT_ID))
+        return;
+
+    if (collected_ids.empty())
+        return;
+
+    // Clear ids that will be updated
+    for (auto cur_id : collected_ids)
+        m_effect_accounting_map[cur_id].clear();
+
+    // Convert to a vector
     std::vector<int> objects_vec;
-    objects_vec.reserve(objects_set.size());
-    std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(objects_vec));
-    if (!objects_vec.empty())
-        UpdateMeterEstimatesImpl(objects_vec);
+    objects_vec.reserve(collected_ids.size());
+    std::copy(collected_ids.begin(), collected_ids.end(), std::back_inserter(objects_vec));
+    UpdateMeterEstimatesImpl(objects_vec);
 }
 
 void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
