@@ -680,6 +680,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     // starts will have m_created_on_turn BEFORE_FIRST_TURN
     GenerateUniverse(active_players_id_setup_data);
 
+
     // after all game initialization stuff has been created, set current turn to 0 and apply only GenerateSitRep Effects
     // so that a set of SitReps intended as the player's initial greeting will be segregated
     m_current_turn = 0;
@@ -695,7 +696,6 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     for (const auto& player_id_and_setup : active_players_id_setup_data) {
         int player_id = player_id_and_setup.first;
         m_player_empire_ids[player_id] = player_id;
-
 
         // add empires to turn processing
         int empire_id = PlayerEmpireID(player_id);
@@ -735,7 +735,6 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     }
 
     m_universe.UpdateStatRecords();
-
 }
 
 bool ServerApp::NewGameInitVerifyJoiners(
@@ -1438,6 +1437,12 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     TraceLogger(effects) << "After First turn meter effect applying: " << universe.Objects().Dump();
     // Set active meters to targets or maxes after first meter effects application
     SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
+
+    universe.UpdateMeterEstimates();
+    universe.BackPropagateObjectMeters();
+    SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
+    universe.BackPropagateObjectMeters();
+
     TraceLogger(effects) << "After First active set to target/max: " << universe.Objects().Dump();
 
     universe.BackPropagateObjectMeters();
