@@ -534,7 +534,7 @@ std::string FilenameTimestamp() {
 }
 
 /**  \brief Return a vector of absolute paths to files in the given path
- * 
+ *
  * @param[in] path relative or absolute directory (searched recursively)
  * @return Any regular files in
  * @return  if absolute directory: path
@@ -573,12 +573,16 @@ bool IsInDir(const fs::path& dir, const fs::path& test_dir) {
     if (!fs::exists(dir) || !fs::is_directory(dir))
         return false;
 
-    if (!fs::exists(test_dir) || !fs::is_directory(test_dir))
+    if (fs::exists(test_dir) && !fs::is_directory(test_dir))
         return false;
 
     // Resolve any symbolic links, dots or dot-dots
     auto canon_dir = fs::canonical(dir);
-    auto canon_path = fs::canonical(test_dir);
+    // Don't resolve path if directory doesn't exist
+    // TODO: Change to fs::weakly_canonical after bump boost version above 1.60
+    auto canon_path = test_dir;
+    if (fs::exists(test_dir))
+        canon_path = fs::canonical(test_dir);
 
     // Paths shorter than dir are not in dir
     auto dir_length = std::distance(canon_dir.begin(), canon_dir.end());

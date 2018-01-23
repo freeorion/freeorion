@@ -163,6 +163,16 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                 WarnLogger() << "Path \"" << path << "\" is not in server save directory.";
                 path = GetServerSaveDir() / path.filename();
                 WarnLogger() << "Path changed to \"" << path << "\"";
+            } else {
+                try {
+                    // ensure save directory exists
+                    if (!exists(path.parent_path())) {
+                        WarnLogger() << "Creating save directories " << path.parent_path().string();
+                        boost::filesystem::create_directories(path.parent_path());
+                    }
+                } catch (const std::exception& e) {
+                    ErrorLogger() << "Server unable to check / create save directory: " << e.what();
+                }
             }
         }
 
