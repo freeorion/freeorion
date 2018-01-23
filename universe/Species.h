@@ -218,8 +218,11 @@ private:
     { bool operator()(const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const; };
 
 public:
-    using SpeciesTypeMap = std::map<std::string, std::unique_ptr<Species>>;
-    using iterator = SpeciesTypeMap::const_iterator;
+    using SpeciesTypeMap = std::pair<
+        std::map<std::string, std::unique_ptr<Species>>,
+        std::vector<std::string>
+    >;
+    using iterator = SpeciesTypeMap::first_type::const_iterator;
     typedef boost::filter_iterator<PlayableSpecies, iterator>   playable_iterator;
     typedef boost::filter_iterator<NativeSpecies, iterator>     native_iterator;
 
@@ -243,6 +246,9 @@ public:
     /** iterators for native species. */
     native_iterator     native_begin() const;
     native_iterator     native_end() const;
+
+    /** returns an ordered list of tags that should be considered for census listings. */
+    const SpeciesTypeMap::second_type& census_order() const;
 
     /** returns true iff this SpeciesManager is empty. */
     bool                empty() const;

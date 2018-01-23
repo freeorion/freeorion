@@ -55,8 +55,11 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_species_, insert_species, 9)
 
 
-    using start_rule_payload = std::map<std::string, std::unique_ptr<Species>>;
-    using start_rule_signature = void(start_rule_payload&);
+    using start_rule_payload = std::pair<
+        std::map<std::string, std::unique_ptr<Species>>, // species_by_name
+        std::vector<std::string> // census ordering
+    >;
+    using start_rule_signature = void(start_rule_payload::first_type&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
         grammar(const parse::lexer& tok,
@@ -234,7 +237,7 @@ namespace {
         > species_params_rule;
 
         typedef parse::detail::rule<
-            SpeciesStrings (const start_rule_payload&),
+            SpeciesStrings (const start_rule_payload::first_type&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
@@ -243,7 +246,7 @@ namespace {
         > species_strings_rule;
 
         typedef parse::detail::rule<
-            void (start_rule_payload&),
+            void (start_rule_payload::first_type&),
             boost::spirit::qi::locals<
                 SpeciesStrings,
                 SpeciesParams,
@@ -276,17 +279,82 @@ namespace {
         parse::detail::planet_type_parser_rules planet_type_rules;
         parse::detail::planet_environment_parser_rules planet_environment_rules;
     };
+
+    using manifest_start_rule_signature = void (std::vector<std::string>&);
+
+    struct manifest_grammar : public parse::detail::grammar<manifest_start_rule_signature> {
+        manifest_grammar(const parse::lexer& tok,
+                         const std::string& filename,
+                         const parse::text_iterator& first, const parse::text_iterator& last) :
+            manifest_grammar::base_type(start),
+            labeller(tok)
+        {
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::push_back;
+
+            qi::_1_type _1;
+            qi::_2_type _2;
+            qi::_3_type _3;
+            qi::_4_type _4;
+            qi::_r1_type _r1;
+
+            species_manifest
+                =    tok.SpeciesCensusOrdering_
+                >    *(labeller.rule(Tag_token)       > tok.string [ push_back(_r1, _1) ])
+                ;
+
+            start
+                =   +species_manifest(_r1)
+                ;
+
+            species_manifest.name("ParsedSpeciesCensusOrdering");
+
+#if DEBUG_PARSERS
+            debug(species_manifest);
+#endif
+
+            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
+        }
+
+        using manifest_rule = parse::detail::rule<void (std::vector<std::string>&)>;
+        using start_rule = parse::detail::rule<manifest_start_rule_signature>;
+
+        parse::detail::Labeller labeller;
+        manifest_rule species_manifest;
+        start_rule start;
+    };
 }
 
 namespace parse {
     start_rule_payload species(const boost::filesystem::path& path) {
         const lexer lexer;
-        start_rule_payload species_;
+        start_rule_payload::first_type species_;
+        start_rule_payload::second_type ordering;
+
+        boost::filesystem::path manifest_file;
 
         for (const boost::filesystem::path& file : ListScripts(path)) {
-            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, species_);
+            if (file.filename() == "SpeciesCensusOrdering.focs.txt" ) {
+                manifest_file = file;
+                continue;
+            }
+
+            /*auto success =*/ detail::parse_file<grammar, start_rule_payload::first_type>(lexer, file, species_);
         }
 
-        return species_;
+        if (!manifest_file.empty()) {
+            try {
+                /*auto success =*/ detail::parse_file<manifest_grammar, start_rule_payload::second_type>(
+                    lexer, manifest_file, ordering);
+
+            } catch (const std::runtime_error& e) {
+                ErrorLogger() << "Failed to species census manifest in " << manifest_file << " from " << path
+                              << " because " << e.what();
+            }
+        }
+
+        return {std::move(species_), ordering};
     }
 }

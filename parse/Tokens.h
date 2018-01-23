@@ -453,6 +453,7 @@
     (SpecialCapacity)                           \
     (Species)                                   \
     (SpeciesID)                                 \
+    (SpeciesCensusOrdering)                     \
     (SpeciesOpinion)                            \
     (SpeciesPlanetsBombed)                      \
     (SpeciesColoniesOwned)

@@ -9,7 +9,7 @@
 class CensusBrowseWnd : public GG::BrowseInfoWnd {
 public:
     CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts,
-                    const std::map<std::string, float>& tag_counts);
+                    const std::map<std::string, float>& tag_counts, const std::vector<std::string>& census_order);
 
     void CompleteConstruction() override;
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
@@ -29,6 +29,7 @@ private:
     GG::Pt          m_offset;
     std::map<std::string, float>    m_population_counts;
     std::map<std::string, float>    m_tag_counts;
+    std::vector<std::string>        m_census_order;
 
     void InitRowSizes();
 };

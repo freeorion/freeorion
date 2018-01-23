@@ -6751,7 +6751,7 @@ void MapWnd::RefreshPopulationIndicator() {
 
     m_population->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_population->SetBrowseInfoWnd(GG::Wnd::Create<CensusBrowseWnd>(
-        UserString("MAP_POPULATION_DISTRIBUTION"), population_counts, tag_counts));
+        UserString("MAP_POPULATION_DISTRIBUTION"), population_counts, tag_counts, GetSpeciesManager().census_order()));
 }
 
 void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools() {

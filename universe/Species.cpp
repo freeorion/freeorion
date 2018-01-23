@@ -388,22 +388,22 @@ SpeciesManager::SpeciesManager() {
 
 const Species* SpeciesManager::GetSpecies(const std::string& name) const {
     CheckPendingSpeciesTypes();
-    auto it = m_species.find(name);
-    return it != m_species.end() ? it->second.get() : nullptr;
+    auto it = m_species.first.find(name);
+    return it != m_species.first.end() ? it->second.get() : nullptr;
 }
 
 Species* SpeciesManager::GetSpecies(const std::string& name) {
     CheckPendingSpeciesTypes();
-    auto it = m_species.find(name);
-    return it != m_species.end() ? it->second.get() : nullptr;
+    auto it = m_species.first.find(name);
+    return it != m_species.first.end() ? it->second.get() : nullptr;
 }
 
 int SpeciesManager::GetSpeciesID(const std::string& name) const {
     CheckPendingSpeciesTypes();
-    auto it = m_species.find(name);
-    if (it == m_species.end())
+    auto it = m_species.first.find(name);
+    if (it == m_species.first.end())
         return -1;
-    return std::distance(m_species.begin(), it);
+    return std::distance(m_species.first.begin(), it);
 }
 
 SpeciesManager& SpeciesManager::GetSpeciesManager() {
@@ -415,7 +415,7 @@ void SpeciesManager::SetSpeciesTypes(Pending::Pending<SpeciesTypeMap>&& future)
 { m_pending_types = std::move(future); }
 
 void SpeciesManager::CheckPendingSpeciesTypes() const {
-    if (!m_pending_types && m_species.empty())
+    if (!m_pending_types && m_species.first.empty())
         throw;
 
     Pending::SwapPending(m_pending_types, m_species);
@@ -423,12 +423,12 @@ void SpeciesManager::CheckPendingSpeciesTypes() const {
 
 SpeciesManager::iterator SpeciesManager::begin() const {
     CheckPendingSpeciesTypes();
-    return m_species.begin();
+    return m_species.first.begin();
 }
 
 SpeciesManager::iterator SpeciesManager::end() const {
     CheckPendingSpeciesTypes();
-    return m_species.end();
+    return m_species.first.end();
 }
 
 SpeciesManager::playable_iterator SpeciesManager::playable_begin() const
@@ -443,14 +443,19 @@ SpeciesManager::native_iterator SpeciesManager::native_begin() const
 SpeciesManager::native_iterator SpeciesManager::native_end() const
 { return native_iterator(NativeSpecies(), end(), end()); }
 
+const SpeciesManager::SpeciesTypeMap::second_type& SpeciesManager::census_order() const {
+    CheckPendingSpeciesTypes();
+    return m_species.second;
+}
+
 bool SpeciesManager::empty() const {
     CheckPendingSpeciesTypes();
-    return m_species.empty();
+    return m_species.first.empty();
 }
 
 int SpeciesManager::NumSpecies() const {
     CheckPendingSpeciesTypes();
-    return m_species.size();
+    return m_species.first.size();
 }
 
 int SpeciesManager::NumPlayableSpecies() const
@@ -465,10 +470,10 @@ namespace {
 
 const std::string& SpeciesManager::RandomSpeciesName() const {
     CheckPendingSpeciesTypes();
-    if (m_species.empty())
+    if (m_species.first.empty())
         return EMPTY_STRING;
 
-    int species_idx = RandSmallInt(0, static_cast<int>(m_species.size()) - 1);
+    int species_idx = RandSmallInt(0, static_cast<int>(m_species.first.size()) - 1);
     return std::next(begin(), species_idx)->first;
 }
 
@@ -491,7 +496,7 @@ const std::string& SpeciesManager::SequentialPlayableSpeciesName(int id) const {
 
 void SpeciesManager::ClearSpeciesHomeworlds() {
     CheckPendingSpeciesTypes();
-    for (auto& entry : m_species)
+    for (auto& entry : m_species.first)
         entry.second->SetHomeworlds(std::set<int>());
 }
 
@@ -503,7 +508,7 @@ void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<i
         const std::set<int>& homeworlds = entry.second;
 
         Species* species = nullptr;
-        auto species_it = m_species.find(species_name);
+        auto species_it = m_species.first.find(species_name);
         if (species_it != end())
             species = species_it->second.get();
 
@@ -530,7 +535,7 @@ void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_spe
 std::map<std::string, std::set<int>> SpeciesManager::GetSpeciesHomeworldsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
     CheckPendingSpeciesTypes();
     std::map<std::string, std::set<int>> retval;
-    for (const auto& entry : m_species) {
+    for (const auto& entry : m_species.first) {
         const std::string species_name = entry.first;
         const Species* species = entry.second.get();
         if (!species) {
@@ -609,9 +614,9 @@ std::map<std::string, std::map<std::string, int>>& SpeciesManager::SpeciesShipsD
 unsigned int SpeciesManager::GetCheckSum() const {
     CheckPendingSpeciesTypes();
     unsigned int retval{0};
-    for (auto const& name_type_pair : m_species)
+    for (auto const& name_type_pair : m_species.first)
         CheckSums::CheckSumCombine(retval, name_type_pair);
-    CheckSums::CheckSumCombine(retval, m_species.size());
+    CheckSums::CheckSumCombine(retval, m_species.first.size());
 
     DebugLogger() << "SpeciesManager checksum: " << retval;
     return retval;

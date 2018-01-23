@@ -123,7 +123,7 @@ private:
 };
 
 CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts,
-                                 const std::map<std::string, float>& tag_counts) :
+                                 const std::map<std::string, float>& tag_counts, const std::vector<std::string>& census_order) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, BrowseTextWidth(), GG::Y1),
     m_title_text(GG::Wnd::Create<CUILabel>(title_text, GG::FORMAT_LEFT)),
     m_species_text(GG::Wnd::Create<CUILabel>(UserString("CENSUS_SPECIES_HEADER"), GG::FORMAT_BOTTOM)),
@@ -132,7 +132,8 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
     m_tags_list(GG::Wnd::Create<CUIListBox>()),
     m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2),
     m_population_counts(population_counts),
-    m_tag_counts(tag_counts)
+    m_tag_counts(tag_counts),
+    m_census_order(census_order)
 {}
 
 void CensusBrowseWnd::CompleteConstruction() {
@@ -198,16 +199,8 @@ void CensusBrowseWnd::CompleteConstruction() {
     AttachChild(m_tags_text);
     AttachChild(m_tags_list);
 
-    // determine tag order
-    //DebugLogger() << "Census Tag Order: " << UserString("FUNCTIONAL_CENSUS_TAG_ORDER");
-    std::istringstream tag_stream(UserString("FUNCTIONAL_CENSUS_TAG_ORDER"));
-    std::vector<std::string> tag_order;
-    std::copy(std::istream_iterator<std::string>(tag_stream),
-        std::istream_iterator<std::string>(),
-        std::back_inserter<std::vector<std::string>>(tag_order));
-
     // add tags/characteristics rows
-    for (const std::string& tag_ord : tag_order) {
+    for (const std::string& tag_ord : m_census_order) {
         //DebugLogger() << "Census checking for tag '"<< tag_ord <<"'";
         auto it2 = m_tag_counts.find(tag_ord);
         if (it2 != m_tag_counts.end()) {
