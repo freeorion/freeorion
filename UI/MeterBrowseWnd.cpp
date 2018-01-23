@@ -83,7 +83,8 @@ MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type) :
     MeterBrowseWnd(object_id, primary_meter_type, INVALID_METER_TYPE)
 {}
 
-MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type, MeterType secondary_meter_type) :
+MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type,
+                               MeterType secondary_meter_type) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, MeterBrowseLabelWidth() + MeterBrowseValueWidth(), GG::Y1),
     m_primary_meter_type(primary_meter_type),
     m_secondary_meter_type(secondary_meter_type),
@@ -99,15 +100,22 @@ void MeterBrowseWnd::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     // main background
-    GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);
+    GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()),
+                      ClientUI::WndOuterBorderColor(), 1);
 
     // top title filled background
     if (m_summary_title)
-        GG::FlatRectangle(m_summary_title->UpperLeft(), m_summary_title->LowerRight() + GG::Pt(GG::X(EDGE_PAD), GG::Y0), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
+        GG::FlatRectangle(m_summary_title->UpperLeft(),
+                          m_summary_title->LowerRight() + GG::Pt(GG::X(EDGE_PAD), GG::Y0),
+                          ClientUI::WndOuterBorderColor(),
+                          ClientUI::WndOuterBorderColor(), 0);
 
     // middle title filled background
     if (m_meter_title)
-        GG::FlatRectangle(m_meter_title->UpperLeft(), m_meter_title->LowerRight() + GG::Pt(GG::X(EDGE_PAD), GG::Y0), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
+        GG::FlatRectangle(m_meter_title->UpperLeft(),
+                          m_meter_title->LowerRight() + GG::Pt(GG::X(EDGE_PAD), GG::Y0),
+                          ClientUI::WndOuterBorderColor(),
+                          ClientUI::WndOuterBorderColor(), 0);
 }
 
 namespace {

@@ -133,7 +133,7 @@ bool ResourcePanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 
 
 namespace {
-    bool sortByMeterValue(std::pair<MeterType, std::shared_ptr<StatisticIcon>> left,
+    bool SortByMeterValue(std::pair<MeterType, std::shared_ptr<StatisticIcon>> left,
                           std::pair<MeterType, std::shared_ptr<StatisticIcon>> right)
     {
         if (left.second->GetValue() == right.second->GetValue()) {
@@ -176,7 +176,7 @@ void ResourcePanel::Update() {
         m_multi_icon_value_indicator->SetToolTip(meter_stat.first, browse_wnd);
     }
 
-    std::sort(m_meter_stats.begin(), m_meter_stats.end(), sortByMeterValue);
+    std::sort(m_meter_stats.begin(), m_meter_stats.end(), SortByMeterValue);
 }
 
 void ResourcePanel::Refresh() {
