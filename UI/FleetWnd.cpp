@@ -431,14 +431,12 @@ FleetUIManager::iterator FleetUIManager::end() const
 FleetWnd* FleetUIManager::ActiveFleetWnd() const
 { return GG::LockAndResetIfExpired(m_active_fleet_wnd).get(); }
 
-std::shared_ptr<FleetWnd> FleetUIManager::WndForFleet(std::shared_ptr<const Fleet> fleet) const {
-    assert(fleet);
-
+std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetID(int fleet_id) const {
     std::shared_ptr<FleetWnd> retval = nullptr;
     GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                 [&retval, &fleet](std::shared_ptr<FleetWnd>& wnd)
+                                 [&retval, fleet_id](std::shared_ptr<FleetWnd>& wnd)
                                  {
-                                     if (!retval && wnd->ContainsFleet(fleet->ID()))
+                                     if (!retval && wnd->ContainsFleet(fleet_id))
                                          retval = wnd;
                                  });
     return retval;

@@ -4582,7 +4582,7 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
 
 
     // find if there is a FleetWnd for this fleet already open.
-    auto fleet_wnd = manager.WndForFleet(fleet);
+    auto fleet_wnd = manager.WndForFleetID(fleet->ID());
 
     // if there isn't a FleetWnd for this fleet open, need to open one
     if (!fleet_wnd) {
@@ -5574,12 +5574,10 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
         ErrorLogger() << "Clicked FleetButton contained no fleets!";
         return;
     }
-    auto first_fleet = GetFleet(btn_fleets[0]);
-
 
     // find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
     // is a single selected fleet in the window, and if so, what fleet that is
-    const auto& wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(first_fleet);
+    const auto& wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleetID(btn_fleets[0]);
     int already_selected_fleet_id = INVALID_OBJECT_ID;
     if (wnd_for_button) {
         // there is already FleetWnd for this button open.

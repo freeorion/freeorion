@@ -858,7 +858,7 @@ void ClientUI::ZoomToFleet(std::shared_ptr<const Fleet> fleet) {
 
     GetMapWnd()->CenterOnObject(fleet->ID());
     GetMapWnd()->SelectFleet(fleet->ID());
-    if (const auto& fleet_wnd = FleetUIManager::GetFleetUIManager().WndForFleet(fleet))
+    if (const auto& fleet_wnd = FleetUIManager::GetFleetUIManager().WndForFleetID(fleet->ID()))
         fleet_wnd->SelectFleet(fleet->ID());
 }
 

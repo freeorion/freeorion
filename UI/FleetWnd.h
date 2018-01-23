@@ -35,7 +35,7 @@ public:
     iterator        begin() const;
     iterator        end() const;
     FleetWnd*       ActiveFleetWnd() const;
-    std::shared_ptr<FleetWnd> WndForFleet(std::shared_ptr<const Fleet> fleet) const;
+    std::shared_ptr<FleetWnd> WndForFleetID(int fleet_id) const;
     int             SelectedShipID() const;     // if a single ship is selected in the active fleetwnd, returns that ship's ID.  Otherwise, returns INVALID_OBJECT_ID
     std::set<int>   SelectedShipIDs() const;    // returns the ids of all selected ships in the active fleetwnd
     //@}
