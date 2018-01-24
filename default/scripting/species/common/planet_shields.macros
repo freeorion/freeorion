@@ -14,15 +14,16 @@ NATIVE_PLANETARY_SHIELDS
 
 
 AVERAGE_PLANETARY_SHIELDS
-'''[[PROTECTION_FOCUS_SHIELDS]]
-[[STANDARD_SHIELD_GROWTH]]'''
+'''[[PROTECTION_FOCUS_SHIELDS]]'''
 
 STANDARD_SHIELD_GROWTH
 '''        EffectsGroup // increase 1 per turn, up to max
             scope = Source
             activation = And [
                 Planet
+                Unowned
                 (Source.LastTurnConquered < CurrentTurn)
+                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetShield value = min(Value(Target.MaxShield), Value + 1)
