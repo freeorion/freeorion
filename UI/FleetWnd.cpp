@@ -2769,6 +2769,26 @@ int FleetDetailPanel::ShipInRow(GG::ListBox::iterator it) const {
 ////////////////////////////////////////////////
 // FleetWnd
 ////////////////////////////////////////////////
+namespace {
+    /** \p create or grow a bounding \p box from \p pt. */
+    GG::Rect CreateOrGrowBox(bool create, const GG::Rect box, const GG::Pt pt) {
+        if (create)
+            return GG::Rect(pt, pt);
+        else
+            return GG::Rect(
+                std::min(box.Left(),    pt.x),
+                std::min(box.Top(),     pt.y),
+                std::max(box.Right(),   pt.x),
+                std::max(box.Bottom(),  pt.y));
+    }
+
+    /** Can \p bounds encompass \p candidate? */
+    bool CouldContain(GG::Rect bounds, GG::Rect candidate) {
+        return (bounds.Width() >= candidate.Width()
+                && bounds.Height() >= candidate.Height());
+    }
+}
+
 FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
          int selected_fleet_id/* = INVALID_OBJECT_ID*/,
          GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
