@@ -709,11 +709,12 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 
     MeterType meter_type = NameToMeter(property_name);
     if (object && meter_type != INVALID_METER_TYPE) {
-        if (object->GetMeter(meter_type))
+        if (object->GetMeter(meter_type)) {
             if (m_return_immediate_value)
                 return object->CurrentMeterValue(meter_type);
             else
                 return object->InitialMeterValue(meter_type);
+        }
 
     } else if (property_name == "X") {
         return object->X();
