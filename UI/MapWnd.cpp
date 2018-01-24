@@ -5065,7 +5065,8 @@ void MapWnd::DeferredRefreshFleetButtons() {
                           << ") is not stationary, departing from a system or in transit."
                           << " final dest id is " << fleet->FinalDestinationID()
                           << " travel routes is of length = " << fleet->TravelRoute().size()
-                          << " system id is "<< fleet->SystemID();
+                          << " system id is " << fleet->SystemID()
+                          << " location is (" << fleet->X() << "," <<fleet->Y() << ")";
         }
     }
 
