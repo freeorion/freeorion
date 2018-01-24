@@ -4983,6 +4983,35 @@ namespace {
         return (fleet->FinalDestinationID() != INVALID_OBJECT_ID
                 && fleet->SystemID() == INVALID_OBJECT_ID);
     }
+
+    /** Return the starlane's endpoints if the \p fleet is on a starlane. */
+    boost::optional<std::pair<int, int>> IsOnStarlane(const std::shared_ptr<const Fleet>& fleet) {
+        // get endpoints of lane on screen
+        int sys1_id = fleet->PreviousSystemID();
+        int sys2_id = fleet->NextSystemID();
+
+        auto sys1 = GetSystem(sys1_id);
+        if (!sys1)
+            return boost::none;
+        if (sys1->HasStarlaneTo(sys2_id))
+            return std::make_pair(std::min(sys1_id, sys2_id), std::max(sys1_id, sys2_id));
+
+        return boost::none;
+    }
+
+    /** If the \p fleet has a valid destination, is not at a system and is
+        on a starlane, return the starlane's endpoint system ids */
+    boost::optional<std::pair<int, int>> IsMovingOnStarlane(const std::shared_ptr<const Fleet>& fleet) {
+        if (!IsMoving(fleet))
+            return boost::none;
+
+        return IsOnStarlane(fleet);
+    }
+
+    /** If the \p fleet has a valid destination and it not on a starlane, return true*/
+    bool IsOffRoad(const std::shared_ptr<const Fleet>& fleet) {
+        return (IsMoving(fleet) && !IsOnStarlane(fleet));
+    }
 }
 
 void MapWnd::RefreshFleetButtons() {
