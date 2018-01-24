@@ -461,9 +461,11 @@ std::set<int> FleetUIManager::SelectedShipIDs() const {
     return active_wnd->SelectedShipIDs();
 }
 
-std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
-                                      int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-                                      GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
+std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
+    const std::vector<int>& fleet_ids,
+    double allowed_bounding_box_leeway /*= 0*/,
+    int selected_fleet_id/* = INVALID_OBJECT_ID*/,
+    GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
 {
     std::string config_name = "";
     if (!GetOptionsDB().Get<bool>("ui.fleet.multiple.enabled")) {
@@ -471,7 +473,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(const std::vector<int>& fl
         // Only write to OptionsDB if in single fleet window mode.
         config_name = FLEET_WND_NAME;
     }
-    auto retval = GG::Wnd::Create<FleetWnd>(fleet_ids, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
+    auto retval = GG::Wnd::Create<FleetWnd>(fleet_ids, m_order_issuing_enabled, allowed_bounding_box_leeway, selected_fleet_id, flags, config_name);
 
     m_fleet_wnds.insert(std::weak_ptr<FleetWnd>(retval));
     retval->ClosingSignal.connect(
@@ -2789,10 +2791,13 @@ namespace {
     }
 }
 
-FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
-         int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-         GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
-         const std::string& config_name) :
+FleetWnd::FleetWnd(
+    const std::vector<int>& fleet_ids, bool order_issuing_enabled,
+    double allowed_bounding_box_leeway /*= 0*/,
+    int selected_fleet_id/* = INVALID_OBJECT_ID*/,
+    GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
+    const std::string& config_name
+) :
     MapWndPopup("", flags | GG::RESIZABLE, config_name),
     m_fleet_ids(),
     m_empire_id(ALL_EMPIRES),
@@ -2818,6 +2823,24 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
         ErrorLogger() << "FleetWnd::FleetWnd couldn't find requested selected fleet with id " << selected_fleet_id;
         selected_fleet_id = INVALID_OBJECT_ID;
     }
+
+    // Determine the size of the bounding box containing the fleets, plus the leeway
+    bool is_first_fleet = true;
+    for (int fleet_id : m_fleet_ids) {
+        auto fleet = GetFleet(fleet_id);
+        if (!fleet)
+            continue;
+
+        auto fleet_loc = GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()));
+        // Grow the fleets bounding box
+        m_bounding_box = CreateOrGrowBox(is_first_fleet, m_bounding_box, fleet_loc);
+        is_first_fleet = false;
+    }
+    m_bounding_box = GG::Rect(m_bounding_box.UpperLeft(),
+                              m_bounding_box.LowerRight()
+                              + GG::Pt(GG::X(allowed_bounding_box_leeway),
+                                       GG::Y(allowed_bounding_box_leeway)));
+
     m_fleet_detail_panel = GG::Wnd::Create<FleetDetailPanel>(GG::X1, GG::Y1, selected_fleet_id, m_order_issuing_enabled);
 }
 
@@ -3012,6 +3035,7 @@ void FleetWnd::Refresh() {
 
     // Check all fleets in initial_fleet_ids and keep those that exist.
     std::unordered_set<int> fleets_that_exist;
+    GG::Rect fleets_bounding_box;
     for (int fleet_id : initial_fleet_ids) {
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end())
@@ -3023,13 +3047,18 @@ void FleetWnd::Refresh() {
         if (!fleet)
             continue;
 
+        auto fleet_loc = GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()));
+        // Grow the fleets bounding box
+        fleets_bounding_box = CreateOrGrowBox(fleets_that_exist.empty(), fleets_bounding_box, fleet_loc);
+
         fleets_that_exist.insert(fleet_id);
-        fleet_locations_ids.insert({{fleet->SystemID(), GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()))},
-                                    fleet_id});
+        fleet_locations_ids.insert({{fleet->SystemID(), fleet_loc}, fleet_id});
 
     }
+    GG::Pt bounding_box_center{fleets_bounding_box.MidX(), fleets_bounding_box.MidY()};
 
     // Filter initially selected fleets according to existing fleets
+    GG::Rect selected_fleets_bounding_box;
     for (int fleet_id : initially_selected_fleets) {
         if (!fleets_that_exist.count(fleet_id))
             continue;
@@ -3038,16 +3067,23 @@ void FleetWnd::Refresh() {
         if (!fleet)
             continue;
 
-        selected_fleet_locations_ids.insert(
-            {{fleet->SystemID(), GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()))},
-             fleet_id});
+        auto fleet_loc = GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()));
+
+        // Grow the selected fleets bounding box
+        selected_fleets_bounding_box = CreateOrGrowBox(
+            selected_fleet_locations_ids.empty(), selected_fleets_bounding_box, fleet_loc);
+        selected_fleet_locations_ids.insert({{fleet->SystemID(), fleet_loc}, fleet_id});
     }
+
+    GG::Pt selected_bounding_box_center{selected_fleets_bounding_box.MidX(), selected_fleets_bounding_box.MidY()};
 
     // Determine FleetWnd location.
 
     // Are all fleets in one location?  Use that location.
     // Otherwise, are all selected fleets in one location?  Use that location.
     // Otherwise, is the current location a system?  Use that location.
+    // Otherwise, would all the fleets fit within m_bounding_box.
+    // Otherwise, would all the selected fleets fit within m_bounding_box
     // Otherwise remove all fleets as all fleets have gone in separate directions.
 
     std::pair<int, GG::Pt> location{INVALID_OBJECT_ID, GG::Pt(GG::X0, GG::Y0)};
@@ -3057,15 +3093,39 @@ void FleetWnd::Refresh() {
         location = fleet_locations_ids.begin()->first;
 
     } else if (!selected_fleet_locations_ids.empty()
-             && (selected_fleet_locations_ids.count(selected_fleet_locations_ids.begin()->first)
-                 == selected_fleet_locations_ids.size()))
+               && (selected_fleet_locations_ids.count(selected_fleet_locations_ids.begin()->first)
+                   == selected_fleet_locations_ids.size()))
     {
         location = selected_fleet_locations_ids.begin()->first;
 
-    } else if (auto system = GetSystem(m_system_id))
+    } else if (auto system = GetSystem(m_system_id)) {
         location = {m_system_id, GG::Pt(GG::X(system->X()), GG::Y(system->Y()))};
 
-    else {
+    } else if (!fleet_locations_ids.empty()
+             && CouldContain(m_bounding_box, fleets_bounding_box))
+    {
+        location = {INVALID_OBJECT_ID, bounding_box_center};
+        boost::unordered_multimap<std::pair<int, GG::Pt>, int> fleets_near_enough;
+        for (const auto& loc_and_id: fleet_locations_ids)
+            fleets_near_enough.insert({location, loc_and_id.second});
+        fleet_locations_ids.swap(fleets_near_enough);
+
+    } else if (!selected_fleet_locations_ids.empty()
+               && CouldContain(m_bounding_box, selected_fleets_bounding_box))
+    {
+        location = {INVALID_OBJECT_ID, selected_bounding_box_center};
+        boost::unordered_multimap<std::pair<int, GG::Pt>, int> fleets_near_enough;
+        // Center bounding box on selected fleets.
+        m_bounding_box = m_bounding_box
+            + GG::Pt(selected_fleets_bounding_box.MidX() - m_bounding_box.MidX(),
+                    selected_fleets_bounding_box.MidY() - m_bounding_box.MidY());
+        for (const auto& loc_and_id: fleet_locations_ids) {
+            const auto& pos = loc_and_id.first.second;
+            if (m_bounding_box.Contains(pos))
+                fleets_near_enough.insert({location, loc_and_id.second});
+        }
+        fleet_locations_ids.swap(fleets_near_enough);
+    } else {
         fleet_locations_ids.clear();
         selected_fleet_locations_ids.clear();
     }

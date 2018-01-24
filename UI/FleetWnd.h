@@ -42,6 +42,7 @@ public:
 
     //! \name Mutators //@{
     std::shared_ptr<FleetWnd> NewFleetWnd(const std::vector<int>& fleet_ids,
+                                          double allowed_bounding_box_leeway = 0,
                                           int selected_fleet_id = INVALID_OBJECT_ID,
                                           GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE);
 
@@ -96,6 +97,7 @@ public:
     /** \name Structors */ //@{
     FleetWnd();
     FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
+             double allowed_bounding_box_leeway = 0,
              int selected_fleet_id = INVALID_OBJECT_ID,
              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE,
              const std::string& config_name = "");
@@ -174,6 +176,8 @@ private:
     int                 m_empire_id;        ///< ID of empire whose fleets are shown in this wnd.  May be ALL_EMPIRES if this FleetWnd wasn't set to shown a particular empire's fleets.
     int                 m_system_id;        ///< ID of system whose fleets are shown in this wnd.  May be INVALID_OBJECT_ID if this FleetWnd wasn't set to show a system's fleets.
 
+    /** The size of box up to which moving fleets are still within the same fleet window.*/
+    GG::Rect            m_bounding_box;
     bool                m_order_issuing_enabled;
     bool                m_needs_refresh = false;
 
