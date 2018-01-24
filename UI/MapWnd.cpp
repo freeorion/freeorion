@@ -989,6 +989,7 @@ MapWnd::MapWnd() :
     m_stationary_fleet_buttons(),
     m_departing_fleet_buttons(),
     m_moving_fleet_buttons(),
+    m_offroad_fleet_buttons(),
     m_fleet_buttons(),
     m_fleet_state_change_signals(),
     m_system_fleet_insert_remove_signals(),
@@ -4586,15 +4587,17 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
 
     // if there isn't a FleetWnd for this fleet open, need to open one
     if (!fleet_wnd) {
-        // get all (moving) fleets represented by fleet button for this fleet
-        const auto& it = m_fleet_buttons.find(fleet->ID());
-        if (it == m_fleet_buttons.end()) {
-            ErrorLogger() << "Couldn't find a FleetButton for fleet in MapWnd::SelectFleet";
-            return;
-        }
-        const auto& wnd_fleet_ids = it->second->Fleets();
+        // Add any overlapping fleet buttons for moving or offroad fleets.
+        const auto wnd_fleet_ids = FleetIDsOfFleetButtonsOverlapping(fleet->ID());
+
+        // A leeway, scaled to the button size, around a group of moving fleets so the fleetwnd
+        // tracks moving fleets together
+        const auto& any_fleet_button = m_fleet_buttons.empty() ? nullptr : m_fleet_buttons.begin()->second;
+        double leeway_around_moving_fleets = any_fleet_button ?
+            2 * (Value(any_fleet_button->Width()) + Value(any_fleet_button->Height())) / ZoomFactor(): 0;
+
         // create new fleetwnd in which to show selected fleet
-        fleet_wnd = manager.NewFleetWnd(wnd_fleet_ids);
+        fleet_wnd = manager.NewFleetWnd(wnd_fleet_ids, leeway_around_moving_fleets);
 
         // opened a new FleetWnd, so play sound
         FleetButton::PlayFleetButtonOpenSound();
@@ -4870,8 +4873,8 @@ void MapWnd::DoFleetButtonsLayout() {
     }
 
     // position moving fleet buttons
-    for (auto& moving_fleet_button : m_moving_fleet_buttons) {
-        for (auto& fb : moving_fleet_button.second) {
+    for (auto& lane_and_fbs : m_moving_fleet_buttons) {
+        for (auto& fb : lane_and_fbs.second) {
             const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
             std::shared_ptr<const Fleet> fleet;
 
@@ -4892,6 +4895,28 @@ void MapWnd::DoFleetButtonsLayout() {
             fb->MoveTo(button_ul);
         }
     }
+
+    // position offroad fleet buttons
+    for (auto& pos_and_fbs : m_offroad_fleet_buttons) {
+        for (auto& fb : pos_and_fbs.second) {
+            const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
+            std::shared_ptr<const Fleet> fleet;
+
+            // skip button if it has no fleets (somehow...?) or if the first fleet in the button is 0
+            if (fb->Fleets().empty() || !(fleet = objects.Object<Fleet>(*fb->Fleets().begin()))) {
+                ErrorLogger() << "DoFleetButtonsLayout couldn't get first fleet for button";
+                continue;
+            }
+
+            // position button
+            auto& button_pos = pos_and_fbs.first;
+            GG::Pt button_ul(button_pos.first  * ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
+                             button_pos.second * ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
+
+            fb->MoveTo(button_ul);
+        }
+    }
+
 }
 
 boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
@@ -4924,6 +4949,7 @@ namespace {
     using KeyToFleetsMap = std::unordered_map<Key, std::vector<int>, boost::hash<Key>>;
     using SystemXEmpireToFleetsMap = KeyToFleetsMap<std::pair<int, int>>;
     using LocationXEmpireToFleetsMap = KeyToFleetsMap<std::pair<std::pair<double, double>, int>>;
+    using StarlaneToFleetsMap = KeyToFleetsMap<std::pair<int, int>>;
 
     /** Return fleet if \p obj is not destroyed, not stale, a fleet and not empty.*/
     std::shared_ptr<const Fleet> IsQualifiedFleet(const std::shared_ptr<const UniverseObject>& obj,
@@ -5037,7 +5063,9 @@ void MapWnd::DeferredRefreshFleetButtons() {
 
     SystemXEmpireToFleetsMap   departing_fleets;
     SystemXEmpireToFleetsMap   stationary_fleets;
+    m_moving_fleets.clear();
     LocationXEmpireToFleetsMap moving_fleets;
+    LocationXEmpireToFleetsMap offroad_fleets;
 
     for (const auto& entry : Objects().ExistingFleets()) {
         auto fleet = IsQualifiedFleet(
@@ -5057,9 +5085,11 @@ void MapWnd::DeferredRefreshFleetButtons() {
             stationary_fleets[{stationary_system->ID(), fleet->Owner()}].push_back(fleet->ID());
 
             // Collect traveling fleets between systems by location
-        } else if (IsMoving(fleet)) {
-            // DebugLogger() << fleet->Name() << " is on the move." ;
-            moving_fleets[{{fleet->X(), fleet->Y()}, fleet->Owner()}].push_back(fleet->ID());
+        } else if (auto starlane_end_systems = IsMovingOnStarlane(fleet)) {
+            moving_fleets[{*starlane_end_systems, fleet->Owner()}].push_back(fleet->ID());
+            m_moving_fleets[*starlane_end_systems].push_back(fleet->ID());
+        } else if (IsOffRoad(fleet)) {
+            offroad_fleets[{{fleet->X(), fleet->Y()}, fleet->Owner()}].push_back(fleet->ID());
         } else {
             ErrorLogger() << "Fleet "<< fleet->Name() <<"(" << fleet->ID()
                           << ") is not stationary, departing from a system or in transit."
@@ -5077,6 +5107,7 @@ void MapWnd::DeferredRefreshFleetButtons() {
     CreateFleetButtonsOfType(m_departing_fleet_buttons,  departing_fleets, FLEETBUTTON_SIZE);
     CreateFleetButtonsOfType(m_stationary_fleet_buttons, stationary_fleets, FLEETBUTTON_SIZE);
     CreateFleetButtonsOfType(m_moving_fleet_buttons,     moving_fleets, FLEETBUTTON_SIZE);
+    CreateFleetButtonsOfType(m_offroad_fleet_buttons,    offroad_fleets, FLEETBUTTON_SIZE);
 
     // position fleetbuttons
     DoFleetButtonsLayout();
@@ -5131,6 +5162,7 @@ void MapWnd::DeleteFleetButtons() {
     m_stationary_fleet_buttons.clear();
     m_departing_fleet_buttons.clear();
     m_moving_fleet_buttons.clear();
+    m_offroad_fleet_buttons.clear();
 }
 
 void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets) {
@@ -5588,6 +5620,96 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
     }
 }
 
+std::vector<int> MapWnd::FleetIDsOfFleetButtonsOverlapping(int fleet_id) const {
+    std::vector<int> fleet_ids;
+
+    auto fleet = GetFleet(fleet_id);
+    if (!fleet) {
+        ErrorLogger() << "MapWnd::FleetIDsOfFleetButtonsOverlapping: Fleet id "
+                      << fleet_id << " does not exist.";
+        return fleet_ids;
+    }
+
+    const auto& it = m_fleet_buttons.find(fleet_id);
+    if (it == m_fleet_buttons.end()) {
+        ErrorLogger() << "Couldn't find a FleetButton for offroad fleet " << fleet_id;
+        return fleet_ids;
+    }
+    const auto& fleet_btn = it->second;
+
+    // A check if a button overlaps the fleet button
+    auto overlaps_fleet_btn = [&fleet_btn](const FleetButton& test_fb) {
+        GG::Pt center = GG::Pt((fleet_btn->Left() + fleet_btn->Right()) / 2,
+                               (fleet_btn->Top() + fleet_btn->Bottom()) /2);
+
+        return (test_fb.InWindow(center)
+                || test_fb.InWindow(fleet_btn->UpperLeft())
+                || test_fb.InWindow(GG::Pt(fleet_btn->Right(), fleet_btn->Top()))
+                || test_fb.InWindow(GG::Pt(fleet_btn->Left(), fleet_btn->Bottom()))
+                || test_fb.InWindow(fleet_btn->LowerRight()));
+    };
+
+    // There are 4 types of fleet buttons: moving on a starlane, offroad,
+    // and stationary or departing from a system.
+
+    // Moving fleet buttons only overlap with fleet buttons on the same starlane
+    if (const auto starlane_end_systems = IsMovingOnStarlane(fleet)) {
+        const auto& lane_btns_it = m_moving_fleet_buttons.find(*starlane_end_systems);
+        if (lane_btns_it == m_moving_fleet_buttons.end())
+            return fleet_ids;
+
+        // Add all fleets for each overlapping button on the starlane
+        for (const auto& test_fb : lane_btns_it->second)
+            if (overlaps_fleet_btn(*test_fb))
+                std::copy(test_fb->Fleets().begin(), test_fb->Fleets().end(), std::back_inserter(fleet_ids));
+
+        return fleet_ids;
+    }
+
+    // Offroad fleet buttons only overlap other offroad fleet buttons.
+    if (IsOffRoad(fleet)) {
+
+        // This scales poorly (linearly) with increasing universe size if
+        // offroading is common.
+        for (const auto& pos_and_fbs: m_offroad_fleet_buttons) {
+            const auto& fbs = pos_and_fbs.second;
+            if (fbs.empty())
+                continue;
+
+            // Since all buttons are at the same position, only check if the first
+            // button overlaps fleet_btn
+            if (!overlaps_fleet_btn(**fbs.begin()))
+                continue;
+
+            // Add all fleets for all fleet buttons to btn_fleet
+            for (const auto& overlapped_fb: fbs) {
+                std::copy(overlapped_fb->Fleets().begin(), overlapped_fb->Fleets().end(), std::back_inserter(fleet_ids));
+            }
+        }
+
+        return fleet_ids;
+    }
+
+    // Stationary and departing fleet buttons should not overlap with each
+    // other because of their offset placement for each empire.
+    return fleet_btn->Fleets();
+}
+
+std::vector<int> MapWnd::FleetIDsOfFleetButtonsOverlapping(const FleetButton& fleet_btn) const {
+    // get possible fleets to select from, and a pointer to one of those fleets
+    if (fleet_btn.Fleets().empty()) {
+        ErrorLogger() << "Clicked FleetButton contained no fleets!";
+        return std::vector<int>();
+    }
+
+    // Add any overlapping fleet buttons for moving or offroad fleets.
+    const auto overlapped_fleets = FleetIDsOfFleetButtonsOverlapping(fleet_btn.Fleets()[0]);
+
+    if (overlapped_fleets.empty())
+        ErrorLogger() << "Clicked FleetButton and overlapping buttons contained no fleets!";
+    return overlapped_fleets;
+}
+
 void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
     if (!fleet_btn)
         return;
@@ -5597,17 +5719,14 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
         HideProduction();
     }
 
-
-    // get possible fleets to select from, and a pointer to one of those fleets
-    const auto& btn_fleets = fleet_btn->Fleets();
-    if (btn_fleets.empty()) {
-        ErrorLogger() << "Clicked FleetButton contained no fleets!";
+    // Add any overlapping fleet buttons for moving or offroad fleets.
+    const auto fleet_ids = FleetIDsOfFleetButtonsOverlapping(*fleet_btn);
+    if (fleet_ids.empty())
         return;
-    }
 
     // find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
     // is a single selected fleet in the window, and if so, what fleet that is
-    const auto& wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleetID(btn_fleets[0]);
+    const auto& wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleetID(fleet_ids[0]);
     int already_selected_fleet_id = INVALID_OBJECT_ID;
     if (wnd_for_button) {
         // there is already FleetWnd for this button open.
@@ -5626,10 +5745,10 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
     int fleet_to_select_id = INVALID_OBJECT_ID;
 
 
-    if (already_selected_fleet_id == INVALID_OBJECT_ID || btn_fleets.size() == 1) {
+    if (already_selected_fleet_id == INVALID_OBJECT_ID || fleet_ids.size() == 1) {
         // no (single) fleet is already selected, or there is only one selectable fleet,
         // so select first fleet in button
-        fleet_to_select_id = *btn_fleets.begin();
+        fleet_to_select_id = *fleet_ids.begin();
 
     } else {
         // select next fleet after already-selected fleet, or first fleet if already-selected
@@ -5637,15 +5756,15 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
 
         // to do this, scan through button's fleets to find already_selected_fleet
         bool found_already_selected_fleet = false;
-        for (auto it = btn_fleets.begin(); it != btn_fleets.end(); ++it) {
+        for (auto it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
             if (*it == already_selected_fleet_id) {
                 // found already selected fleet.  get NEXT fleet.  don't need to worry about
                 // there not being enough fleets to do this because if above checks for case
                 // of there being only one fleet in this button
                 ++it;
                 // if next fleet iterator is past end of fleets, loop around to first fleet
-                if (it == btn_fleets.end())
-                    it = btn_fleets.begin();
+                if (it == fleet_ids.end())
+                    it = fleet_ids.begin();
                 // get fleet to select out of iterator
                 fleet_to_select_id = *it;
                 found_already_selected_fleet = true;
@@ -5657,7 +5776,7 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
             // didn't find already-selected fleet.  the selected fleet might have been moving when the
             // click button was for stationary fleets, or vice versa.  regardless, just default back
             // to selecting the first fleet for this button
-            fleet_to_select_id = *btn_fleets.begin();
+            fleet_to_select_id = *fleet_ids.begin();
         }
     }
 
@@ -5671,19 +5790,17 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
     if (!fleet_btn)
         return;
 
-    // get fleets represented by clicked button
-    const auto btn_fleets = fleet_btn->Fleets();
-    if (btn_fleets.empty()) {
-        ErrorLogger() << "Clicked FleetButton contained no fleets!";
+    // Add any overlapping fleet buttons for moving or offroad fleets.
+    const auto fleet_ids = FleetIDsOfFleetButtonsOverlapping(*fleet_btn);
+    if (fleet_ids.empty())
         return;
-    }
 
     // if fleetbutton holds currently not visible fleets, offer to dismiss them
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     std::vector<int> sensor_ghosts;
 
     // find sensor ghosts
-    for (int fleet_id : btn_fleets) {
+    for (int fleet_id : fleet_ids) {
         auto fleet = GetFleet(fleet_id);
         if (!fleet)
             continue;
@@ -5714,7 +5831,7 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
             fleet_wnd->RequirePreRender();
     }
 
-    FleetsRightClicked(btn_fleets);
+    FleetsRightClicked(fleet_ids);
 }
 
 void MapWnd::FleetRightClicked(int fleet_id) {
