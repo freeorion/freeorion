@@ -4812,65 +4812,43 @@ void MapWnd::DoFieldIconsLayout() {
 
 void MapWnd::DoFleetButtonsLayout() {
     const ObjectMap& objects = GetUniverse().Objects();
-    const int SYSTEM_ICON_SIZE = SystemIconSize();
+
+    auto place_system_fleet_btn = [this](const std::unordered_map<int, std::unordered_set<std::shared_ptr<FleetButton>>>::value_type& system_and_btns, bool is_departing) {
+        // calculate system icon position
+        auto system = GetSystem(system_and_btns.first);
+        if (!system) {
+            ErrorLogger() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << system_and_btns.first;
+            return;
+        }
+
+        const int SYSTEM_ICON_SIZE = SystemIconSize();
+        GG::Pt icon_ul(GG::X(static_cast<int>(system->X()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)),
+                       GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
+
+        // get system icon itself.  can't use the system icon's UpperLeft to position fleet button due to weirdness that results that I don't want to figure out
+        const auto& sys_it = m_system_icons.find(system->ID());
+        if (sys_it == m_system_icons.end()) {
+            ErrorLogger() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
+            return;
+        }
+        const auto& system_icon = sys_it->second;
+
+        // place all buttons
+        int n = 1;
+        for (auto& button : system_and_btns.second) {
+            GG::Pt ul = system_icon->NthFleetButtonUpperLeft(n, is_departing);
+            ++n;
+            button->MoveTo(ul + icon_ul);
+        }
+    };
 
     // position departing fleet buttons
-    for (auto& departing_fleet_button : m_departing_fleet_buttons) {
-        // calculate system icon position
-        auto system = GetSystem(departing_fleet_button.first);
-        if (!system) {
-            ErrorLogger() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << departing_fleet_button.first;
-            continue;
-        }
-
-        GG::Pt icon_ul(GG::X(static_cast<int>(system->X()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)),
-                       GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
-
-        // get system icon itself.  can't use the system icon's UpperLeft to position fleet button due to weirdness that results that I don't want to figure out
-        const auto& sys_it = m_system_icons.find(system->ID());
-        if (sys_it == m_system_icons.end()) {
-            ErrorLogger() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
-            continue;
-        }
-        const auto& system_icon = sys_it->second;
-
-        // place all buttons
-        int n = 1;
-        for (auto& button : departing_fleet_button.second) {
-            GG::Pt ul = system_icon->NthFleetButtonUpperLeft(n, true);
-            ++n;
-            button->MoveTo(ul + icon_ul);
-        }
-    }
+    for (const auto& system_and_btns : m_departing_fleet_buttons)
+        place_system_fleet_btn(system_and_btns, true);
 
     // position stationary fleet buttons
-    for (auto& stationary_fleet_button : m_stationary_fleet_buttons) {
-        // calculate system icon position
-        auto system = GetSystem(stationary_fleet_button.first);
-        if (!system) {
-            ErrorLogger() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << stationary_fleet_button.first;
-            continue;
-        }
-
-        GG::Pt icon_ul(GG::X(static_cast<int>(system->X()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)),
-                       GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
-
-        // get system icon itself.  can't use the system icon's UpperLeft to position fleet button due to weirdness that results that I don't want to figure out
-        const auto& sys_it = m_system_icons.find(system->ID());
-        if (sys_it == m_system_icons.end()) {
-            ErrorLogger() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
-            continue;
-        }
-        const auto& system_icon = sys_it->second;
-
-        // place all buttons
-        int n = 1;
-        for (auto& button : stationary_fleet_button.second) {
-            GG::Pt ul = system_icon->NthFleetButtonUpperLeft(n, false);
-            ++n;
-            button->MoveTo(ul + icon_ul);
-        }
-    }
+    for (const auto& system_and_btns : m_stationary_fleet_buttons)
+        place_system_fleet_btn(system_and_btns, false);
 
     // position moving fleet buttons
     for (auto& lane_and_fbs : m_moving_fleet_buttons) {
