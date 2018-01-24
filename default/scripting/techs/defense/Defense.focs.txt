@@ -26,6 +26,7 @@ Tech
             effects = [
                 SetShield value = min(Value + 1, Value(Target.MaxShield))
                 SetDefense value = min(Value + 1, Value(Target.MaxDefense))
+                SetTroops value = min(Value + 1, Value(Target.MaxTroops))
             ]
     ]
     graphic = ""
