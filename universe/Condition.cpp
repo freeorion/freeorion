@@ -105,9 +105,9 @@ namespace {
     void EvalImpl(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
                   Condition::SearchDomain search_domain, const Pred& pred)
     {
-        Condition::ObjectSet& from_set = search_domain == Condition::MATCHES ? matches : non_matches;
-        Condition::ObjectSet& to_set = search_domain == Condition::MATCHES ? non_matches : matches;
-        for (Condition::ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+        auto& from_set = search_domain == Condition::MATCHES ? matches : non_matches;
+        auto& to_set = search_domain == Condition::MATCHES ? non_matches : matches;
+        for (auto it = from_set.begin(); it != from_set.end(); ) {
             bool match = pred(*it);
             if ((search_domain == Condition::MATCHES && !match) ||
                 (search_domain == Condition::NON_MATCHES && match))
@@ -703,7 +703,7 @@ namespace {
 
         // transfer objects that have been flagged
         int i = 0;
-        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ++i) {
+        for (auto it = from_set.begin(); it != from_set.end(); ++i) {
             if (transfer_flags[i]) {
                 to_set.push_back(*it);
                 *it = from_set.back();
@@ -890,7 +890,8 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
         // put matched objects that are in subcondition_matching_non_matches into matches
         for (auto& matched_object : matched_objects) {
             // is this matched object in subcondition_matching_non_matches?
-            ObjectSet::iterator smnt_it = std::find(subcondition_matching_non_matches.begin(), subcondition_matching_non_matches.end(), matched_object);
+            auto smnt_it = std::find(subcondition_matching_non_matches.begin(),
+                                     subcondition_matching_non_matches.end(), matched_object);
             if (smnt_it != subcondition_matching_non_matches.end()) {
                 // yes; move object to matches
                 *smnt_it = subcondition_matching_non_matches.back();
@@ -913,7 +914,8 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
         // put matched objecs that are in subcondition_matching_matches back into matches
         for (auto& matched_object : matched_objects) {
             // is this matched object in subcondition_matching_matches?
-            ObjectSet::iterator smt_it = std::find(subcondition_matching_matches.begin(), subcondition_matching_matches.end(), matched_object);
+            auto smt_it = std::find(subcondition_matching_matches.begin(),
+                                    subcondition_matching_matches.end(), matched_object);
             if (smt_it != subcondition_matching_matches.end()) {
                 // yes; move back into matches
                 *smt_it = subcondition_matching_matches.back();

@@ -642,7 +642,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
         if (current_token.find("--") == 0) {
             std::string option_name = current_token.substr(2);
 
-            std::map<std::string, Option>::iterator it = m_options.find(option_name);
+            auto it = m_options.find(option_name);
 
             if (it == m_options.end() || !it->second.recognized) { // unrecognized option: may be registered later on so we'll store it for now
                 // Check for more parameters (if this is the last one, assume that it is a flag).
@@ -706,12 +706,12 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 throw std::runtime_error("A \'-\' was given with no options.");
             } else {
                 for (unsigned int j = 0; j < single_char_options.size(); ++j) {
-                    std::map<char, std::string>::iterator short_name_it = Option::short_names.find(single_char_options[j]);
+                    auto short_name_it = Option::short_names.find(single_char_options[j]);
 
                     if (short_name_it == Option::short_names.end())
                         throw std::runtime_error(std::string("Unknown option \"-") + single_char_options[j] + "\" was given.");
 
-                    std::map<std::string, Option>::iterator name_it = m_options.find(short_name_it->second);
+                    auto name_it = m_options.find(short_name_it->second);
 
                     if (name_it == m_options.end())
                         throw std::runtime_error("Option \"--" + short_name_it->second + "\", abbreviated as \"-" + short_name_it->first + "\", could not be found.");

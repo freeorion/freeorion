@@ -78,7 +78,7 @@ void ResourcePanel::CompleteConstruction() {
     m_multi_icon_value_indicator =  GG::Wnd::Create<MultiIconValueIndicator>(Width() - 2*EDGE_PAD,   m_rescenter_id, meters);
 
     // determine if this panel has been created yet.
-    std::map<int, bool>::iterator it = s_expanded_map.find(m_rescenter_id);
+    auto it = s_expanded_map.find(m_rescenter_id);
     if (it == s_expanded_map.end())
         s_expanded_map[m_rescenter_id] = false; // if not, default to collapsed state
 

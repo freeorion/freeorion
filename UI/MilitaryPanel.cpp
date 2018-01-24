@@ -58,7 +58,9 @@ void MilitaryPanel::CompleteConstruction() {
     // small meter indicators - for use when panel is collapsed
     for (MeterType meter : {METER_SHIELD, METER_DEFENSE, METER_TROOPS, METER_DETECTION, METER_STEALTH})
     {
-        auto stat = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(meter), obj->InitialMeterValue(meter), 3, false, MeterIconSize().x, MeterIconSize().y);
+        auto stat = GG::Wnd::Create<StatisticIcon>(
+            ClientUI::MeterIcon(meter), obj->InitialMeterValue(meter),
+            3, false, MeterIconSize().x, MeterIconSize().y);
         stat->InstallEventFilter(shared_from_this());
         AttachChild(stat);
         m_meter_stats.push_back({meter, stat});
@@ -70,7 +72,7 @@ void MilitaryPanel::CompleteConstruction() {
     m_multi_icon_value_indicator =  GG::Wnd::Create<MultiIconValueIndicator>(Width() - 2*EDGE_PAD,   m_planet_id, meters);
 
     // determine if this panel has been created yet.
-    std::map<int, bool>::iterator it = s_expanded_map.find(m_planet_id);
+    auto it = s_expanded_map.find(m_planet_id);
     if (it == s_expanded_map.end())
         s_expanded_map[m_planet_id] = false; // if not, default to collapsed state
 

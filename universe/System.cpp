@@ -419,7 +419,7 @@ void System::Remove(int id) {
 
     bool removed_fleet = false;
 
-    std::set<int>::iterator it = m_fleets.find(id);
+    auto it = m_fleets.find(id);
     if (it != m_fleets.end()) {
         m_fleets.erase(it);
         removed_fleet = true;

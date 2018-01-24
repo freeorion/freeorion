@@ -180,7 +180,7 @@ std::string Planet::Dump(unsigned short ntabs) const {
        << " rot period: " << m_rotational_period
        << " axis tilt: " << m_axial_tilt
        << " buildings: ";
-    for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end();) {
+    for (auto it = m_buildings.begin(); it != m_buildings.end();) {
         int building_id = *it;
         ++it;
         os << building_id << (it == m_buildings.end() ? "" : ", ");
@@ -854,7 +854,7 @@ void Planet::PopGrowthProductionResearchPhase() {
 
             if (!HasTag(TAG_STAT_SKIP_DEPOP)) {
                 // record depopulation of planet with species while owned by this empire
-                std::map<std::string, int>::iterator species_it = empire->SpeciesPlanetsDepoped().find(SpeciesName());
+                auto species_it = empire->SpeciesPlanetsDepoped().find(SpeciesName());
                 if (species_it == empire->SpeciesPlanetsDepoped().end())
                     empire->SpeciesPlanetsDepoped()[SpeciesName()] = 1;
                 else
