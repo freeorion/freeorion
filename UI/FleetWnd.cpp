@@ -2784,9 +2784,9 @@ namespace {
                 std::max(box.Bottom(),  pt.y));
     }
 
-    /** Is \p rr larger or equal to the size of \p ll? */
-    bool LessThanOrEqual(GG::Rect ll, GG::Rect rr) {
-        return (rr.Width() >= ll.Width() && rr.Height() >= ll.Height());
+    /** Is \p ll smaller or equal to the size of \p rr? */
+    bool SmallerOrEqual(GG::Rect ll, GG::Rect rr) {
+        return (ll.Width() <= rr.Width() && ll.Height() <= rr.Height());
     }
 }
 
@@ -3100,7 +3100,7 @@ void FleetWnd::Refresh() {
         location = {m_system_id, GG::Pt(GG::X(system->X()), GG::Y(system->Y()))};
 
     } else if (!fleet_locations_ids.empty()
-               && LessThanOrEqual(fleets_bounding_box, m_bounding_box))
+               && SmallerOrEqual(fleets_bounding_box, m_bounding_box))
     {
         location = {INVALID_OBJECT_ID, bounding_box_center};
         boost::unordered_multimap<std::pair<int, GG::Pt>, int> fleets_near_enough;
@@ -3109,7 +3109,7 @@ void FleetWnd::Refresh() {
         fleet_locations_ids.swap(fleets_near_enough);
 
     } else if (!selected_fleet_locations_ids.empty()
-               && LessThanOrEqual(selected_fleets_bounding_box, m_bounding_box))
+               && SmallerOrEqual(selected_fleets_bounding_box, m_bounding_box))
     {
         location = {INVALID_OBJECT_ID, selected_bounding_box_center};
         boost::unordered_multimap<std::pair<int, GG::Pt>, int> fleets_near_enough;
