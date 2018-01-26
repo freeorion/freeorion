@@ -264,6 +264,10 @@ std::string ReconstructName(const std::vector<std::string>& property_name,
                             bool return_immediate_value)
 {
     std::string retval;
+
+    if (return_immediate_value)
+        retval += "Value(";
+
     switch (ref_type) {
     case SOURCE_REFERENCE:                    retval = "Source";          break;
     case EFFECT_TARGET_REFERENCE:             retval = "Target";          break;
@@ -274,8 +278,6 @@ std::string ReconstructName(const std::vector<std::string>& property_name,
     default:                                  retval = "?????";           break;
     }
 
-    // todo: wrap in Value( ... ) if return_immediate_value is true
-
     if (ref_type != EFFECT_TARGET_VALUE_REFERENCE) {
         for (const std::string& property_name_part : property_name) {
             if (!retval.empty())
@@ -283,6 +285,10 @@ std::string ReconstructName(const std::vector<std::string>& property_name,
             retval += property_name_part.c_str();
         }
     }
+
+    if (return_immediate_value)
+        retval += ")";
+
     return retval;
 }
 
