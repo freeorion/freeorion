@@ -3054,7 +3054,7 @@ void FleetWnd::Refresh() {
         fleet_locations_ids.insert({{fleet->SystemID(), fleet_loc}, fleet_id});
 
     }
-    GG::Pt bounding_box_center{fleets_bounding_box.MidX(), fleets_bounding_box.MidY()};
+    auto bounding_box_center = GG::Pt(fleets_bounding_box.MidX(), fleets_bounding_box.MidY());
 
     // Filter initially selected fleets according to existing fleets
     GG::Rect selected_fleets_bounding_box;
@@ -3073,8 +3073,7 @@ void FleetWnd::Refresh() {
             selected_fleet_locations_ids.empty(), selected_fleets_bounding_box, fleet_loc);
         selected_fleet_locations_ids.insert({{fleet->SystemID(), fleet_loc}, fleet_id});
     }
-
-    GG::Pt selected_bounding_box_center{selected_fleets_bounding_box.MidX(), selected_fleets_bounding_box.MidY()};
+    auto selected_bounding_box_center = GG::Pt(selected_fleets_bounding_box.MidX(), selected_fleets_bounding_box.MidY());
 
     // Determine FleetWnd location.
 
