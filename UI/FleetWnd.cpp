@@ -3081,8 +3081,8 @@ void FleetWnd::Refresh() {
     // Are all fleets in one location?  Use that location.
     // Otherwise, are all selected fleets in one location?  Use that location.
     // Otherwise, is the current location a system?  Use that location.
-    // Otherwise, would all the fleets fit within m_bounding_box.
-    // Otherwise, would all the selected fleets fit within m_bounding_box
+    // Otherwise, are all the moving fleets clustered within m_bounding_box of each other?
+    // Otherwise, are all the selected fleets clustered within m_bounding_box of each other?
     // Otherwise remove all fleets as all fleets have gone in separate directions.
 
     std::pair<int, GG::Pt> location{INVALID_OBJECT_ID, GG::Pt(GG::X0, GG::Y0)};
