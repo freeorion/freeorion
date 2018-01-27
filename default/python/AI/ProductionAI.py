@@ -1544,20 +1544,6 @@ def find_automatic_historic_analyzer_candidates():
 
     min_pp, turn_trigger, min_pp_per_additional = conditions.get(foAI.foAIstate.character.get_trait(Aggression).key,
                                                                  (ARB_LARGE_NUMBER, ARB_LARGE_NUMBER, ARB_LARGE_NUMBER))
-    # If we can colonize good planets instead, do not build this.
-    num_colony_targets = 0
-    for pid in ColonisationAI.all_colony_opportunities:
-        try:
-            best_species_score = ColonisationAI.all_colony_opportunities[pid][0][0]
-        except IndexError:
-            continue
-        if best_species_score > 500:
-            num_colony_targets += 1
-
-    num_covered = get_number_of_existing_outpost_and_colony_ships() + get_number_of_queued_outpost_and_colony_ships()
-    remaining_targets = num_colony_targets - num_covered
-    min_pp *= remaining_targets
-
     max_enqueued = 1 if total_pp > min_pp or fo.currentTurn() > turn_trigger else 0
     max_enqueued += int(total_pp / min_pp_per_additional)
 
