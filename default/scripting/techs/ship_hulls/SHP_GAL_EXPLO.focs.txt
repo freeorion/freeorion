@@ -63,7 +63,7 @@ Tech
                 
                 (LocalCandidate.Population              <  LocalCandidate.TargetPopulation)
                 (LocalCandidate.Population +
-                    LocalCandidate.Population*0.01*(Target.TargetPopulation + 1 - LocalCandidate.Population)
+                    LocalCandidate.Population*0.01*(LocalCandidate.TargetPopulation + 1 - LocalCandidate.Population)
                     >= [[MIN_RECOLONIZING_SIZE]])
                     
                 (LocalCandidate.TargetHappiness         >= [[MIN_RECOLONIZING_HAPPINESS]]           )
