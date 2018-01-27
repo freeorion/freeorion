@@ -657,7 +657,7 @@ def generate_production_orders():
                         other_planet = universe.getPlanet(opid)
                         if other_planet.size == fo.planetSize.gasGiant:
                             gg_list.append(opid)
-                        if opid != pid and other_planet.owner == empire.empireID and (FocusType.FOCUS_INDUSTRY in list(other_planet.availableFoci) + [other_planet.focus]):
+                        if other_planet.owner == empire.empireID and (FocusType.FOCUS_INDUSTRY in list(other_planet.availableFoci) + [other_planet.focus]):
                             can_use_gg = True
                     if pid in sorted(gg_list)[:max_gggs] and can_use_gg:
                         res = fo.issueEnqueueBuildingProductionOrder(building_name, pid)
