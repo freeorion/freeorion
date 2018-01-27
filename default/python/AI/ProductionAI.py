@@ -1445,7 +1445,7 @@ def update_stockpile_use():
 def empire_has_colony_bld_species(building_name):
     if not building_name.startswith('BLD_COL_'):
         return False
-    species_name = 'SP' + building_name.split('BLD_COL_')[1]
+    species_name = 'SP_' + building_name.split('BLD_COL_')[1]
     return species_name in ColonisationAI.empire_colonizers
 
 
