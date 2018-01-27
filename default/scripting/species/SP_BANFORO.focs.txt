@@ -36,6 +36,7 @@ Species
                 Star type = [Blue]
             ]
             accountinglabel = "VERY_BRIGHT_STAR"
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value - 2 * Source.SizeAsDouble
 
         EffectsGroup
@@ -45,6 +46,7 @@ Species
                 Star type = [White]
             ]
             accountinglabel = "BRIGHT_STAR"
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value - Source.SizeAsDouble
 
         // not for description

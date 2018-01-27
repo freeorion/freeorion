@@ -27,12 +27,14 @@ Special
                 SetMaxSupply value = Value + 1
                 SetTargetHappiness value = Value + 5
             ]
+            
         EffectsGroup
             scope = Source
             activation = TargetPopulation low = 1
             accountinglabel = "WORLDTREE_LABEL"
-            priority = [[LATE_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1
+            
         EffectsGroup
             scope = And [
                 Planet

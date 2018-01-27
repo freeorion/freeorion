@@ -13,6 +13,7 @@ BuildingType
             Object id = Source.PlanetID
             Planet
         ]
+        priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
         effects = [
             SetSpecies name = "SP_SUPER_TEST"
             SetPopulation value = max(Target.Population, 1)
@@ -24,3 +25,5 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/species/other-04.png"
+
+#include "/scripting/common/priorities.macros"

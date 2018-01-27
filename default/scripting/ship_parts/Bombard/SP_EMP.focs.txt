@@ -23,6 +23,7 @@ Part
                 /// @content_tag{ROBOTIC} When bombarding in-system enemy with this part, reduces population on visible populated Planet with tag
                 HasTag name = "ROBOTIC"
             ]
+            priority = [[EARLY_POPULATION_PRIORITY]]
             effects = [
                 SetPopulation value = Value - 0.5
                 GenerateSitRepMessage
@@ -50,6 +51,7 @@ Part
                             Unowned
                             InSystem
                          ]
+            priority = [[EARLY_POPULATION_PRIORITY]]
             effects = [
                 SetPopulation value = Value - 0.5
                 GenerateSitRepMessage
@@ -67,3 +69,4 @@ Part
     icon = "icons/ship_parts/EMP.png"
 
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/common/priorities.macros"

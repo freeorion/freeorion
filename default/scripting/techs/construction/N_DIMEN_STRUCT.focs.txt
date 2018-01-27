@@ -17,7 +17,7 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             accountinglabel = "NDIM_STRC_LABEL"
-            priority = [[LATE_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = [
                 SetTargetConstruction value = Value + 10
                 SetTargetPopulation value = Value + 2 * Target.SizeAsDouble

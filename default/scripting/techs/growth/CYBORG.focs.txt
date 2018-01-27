@@ -14,7 +14,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 Planet environment = [ Hostile ]
             ]
-            priority = [[EARLY_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble  accountinglabel = "GRO_CYBORG"
 
         EffectsGroup

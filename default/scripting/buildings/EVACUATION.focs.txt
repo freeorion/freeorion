@@ -40,6 +40,7 @@ BuildingType
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 Population low = 1 high = LocalCandidate.TargetPopulation - 1
             ]
+            priority = [[EARLY_POPULATION_PRIORITY]]
             effects = [
                 SetPopulation value = Value + 2
                 GenerateSitRepMessage
@@ -59,13 +60,14 @@ BuildingType
                 PopulationCenter
                 OwnedBy empire = Source.Owner
             ]
+            priority = [[METER_OVERRIDE_PRIORITY]]
             effects = [
                 [[NEXT_TURN_POPULATION_REDUCE_BY(2)]]
                 SetIndustry value = 0
                 SetTargetIndustry value = 0
                 SetResearch value = 0
                 SetTargetResearch value = 0
-                ]
+            ]
 
         EffectsGroup            // remove evacuation when planet is depopulated or no longer owned by empire that produced this building
             scope = Source
@@ -80,9 +82,11 @@ BuildingType
                     HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
                 ]
             ]
+            priority = [[END_CLEANUP_PRIORITY]]
             effects = Destroy
     ]
     icon = "icons/building/evacuation.png"
 
 #include "/scripting/common/pop_reduce.macros"
+#include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"

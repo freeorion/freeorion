@@ -13,7 +13,7 @@ Tech
                 Species
                 OwnedBy empire = Source.Owner
             ]
-            priority = [[LATE_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble accountinglabel = "GRO_SUBTER_HAB"
     ]
     graphic = "icons/tech/subterranean_construction.png"

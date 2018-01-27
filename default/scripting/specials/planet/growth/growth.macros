@@ -35,13 +35,12 @@ POPULATION_BOOST_ORGANIC
                 Planet
                 OwnedBy empire = Source.Owner
                 HasTag name = "ORGANIC"
-                //TargetPopulation low = 0
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "@1@_STACK"
             accountinglabel = "GROWTH_SPECIAL_LABEL"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
 
         EffectsGroup
@@ -51,7 +50,7 @@ POPULATION_BOOST_ORGANIC
                 HasTag name = "ORGANIC"
             ]
             stackinggroup = "@1@_STACK"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
 '''
 
@@ -64,12 +63,11 @@ POPULATION_BOOST_ROBOTIC
                 OwnedBy empire = Source.Owner
                 HasTag name = "ROBOTIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                //TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "@1@_STACK"
             accountinglabel = "GROWTH_SPECIAL_LABEL"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
 
         EffectsGroup
@@ -79,7 +77,7 @@ POPULATION_BOOST_ROBOTIC
                 HasTag name = "ROBOTIC"
             ]
             stackinggroup = "@1@_STACK"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
 '''
 
@@ -92,12 +90,11 @@ POPULATION_BOOST_LITHIC
                 OwnedBy empire = Source.Owner
                 HasTag name = "LITHIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                //TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "@1@_STACK"
             accountinglabel = "GROWTH_SPECIAL_LABEL"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
 
         EffectsGroup

@@ -19,6 +19,7 @@ ADVANCED_FOCUS_EFFECTS
                 ]
             ]
             activation = Focus type = "FOCUS_BIOTERROR"
+            priority = [[EARLY_TARGET_POPULATION_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value - 4
 
         EffectsGroup

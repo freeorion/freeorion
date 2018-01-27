@@ -12,9 +12,8 @@ Tech
             scope = And [
                 Species
                 OwnedBy empire = Source.Owner
-                //TargetPopulation low = 0
             ]
-            priority = [[LATE_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble accountinglabel = "ORBITAL_HAB_LABEL"
     ]
     graphic = "icons/tech/orbital_gardens.png"
