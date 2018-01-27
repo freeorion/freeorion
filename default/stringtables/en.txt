@@ -15296,6 +15296,7 @@ Cor
 Cormack
 Corona
 Correctos
+Coruscant
 Crawford
 Crius
 Crow
@@ -15573,6 +15574,7 @@ Icarius
 Idril
 Idun
 Ike
+Ileenium
 Iliad
 Ilios
 Ilium
@@ -15723,6 +15725,7 @@ Lupi
 Lurga
 Lusitania
 Lyae
+Lylat
 Lynx
 Lyonesse
 Lyot
