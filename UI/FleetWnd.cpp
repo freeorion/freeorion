@@ -3209,10 +3209,15 @@ void FleetWnd::AddFleet(int fleet_id) {
     row->Resize(row_size);
 }
 
+void FleetWnd::DeselectAllFleets() {
+    m_fleets_lb->DeselectAll();
+    FleetSelectionChanged(m_fleets_lb->Selections());
+}
+
 void FleetWnd::SelectFleet(int fleet_id) {
     if (fleet_id == INVALID_OBJECT_ID || !(GetFleet(fleet_id))) {
-        m_fleets_lb->DeselectAll();
-        FleetSelectionChanged(m_fleets_lb->Selections());
+        ErrorLogger() << "FleetWnd::SelectFleet invalid id " << fleet_id;
+        DeselectAllFleets();
         return;
     }
 
