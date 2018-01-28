@@ -2434,7 +2434,7 @@ public:
     std::set<int>   SelectedShipIDs() const;    ///< returns ids of ships selected in the detail panel's ShipsListBox
 
     void            SetFleet(int fleet_id);                         ///< sets the currently-displayed Fleet.  setting to INVALID_OBJECT_ID shows no fleet
-    void            SetSelectedShips(const std::set<int>& ship_ids);///< sets the currently-selected ships in the ships list
+    void            SelectShips(const std::set<int>& ship_ids);///< sets the currently-selected ships in the ships list
 
     void            Refresh();
 
@@ -2526,7 +2526,7 @@ void FleetDetailPanel::SetFleet(int fleet_id) {
     }
 }
 
-void FleetDetailPanel::SetSelectedShips(const std::set<int>& ship_ids) {
+void FleetDetailPanel::SelectShips(const std::set<int>& ship_ids) {
     const GG::ListBox::SelectionSet initial_selections = m_ships_lb->Selections();
 
     m_ships_lb->DeselectAll();
@@ -2535,7 +2535,7 @@ void FleetDetailPanel::SetSelectedShips(const std::set<int>& ship_ids) {
     for (auto it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
         ShipRow* row = dynamic_cast<ShipRow*>(it->get());
         if (!row) {
-            ErrorLogger() << "FleetDetailPanel::SetSelectedShips couldn't cast a listbow row to ShipRow?";
+            ErrorLogger() << "FleetDetailPanel::SelectShips couldn't cast a list row to ShipRow?";
             continue;
         }
 
@@ -3091,16 +3091,16 @@ void FleetWnd::Refresh() {
 
     if (!still_present_initially_selected_fleets.empty()) {
         // reselect any previously-selected fleets
-        this->SetSelectedFleets(still_present_initially_selected_fleets);
+        SelectFleets(still_present_initially_selected_fleets);
         // reselect any previously-selected ships
-        this->SetSelectedShips(initially_selected_ships);
+        SelectShips(initially_selected_ships);
     } else if (!m_fleets_lb->Empty()) {
         // default select first fleet
         int first_fleet_id = FleetInRow(m_fleets_lb->begin());
         if (first_fleet_id != INVALID_OBJECT_ID) {
             std::set<int> fleet_id_set;
             fleet_id_set.insert(first_fleet_id);
-            this->SetSelectedFleets(fleet_id_set);
+            SelectFleets(fleet_id_set);
         }
     }
 
@@ -3230,7 +3230,7 @@ void FleetWnd::SelectFleet(int fleet_id) {
     }
 }
 
-void FleetWnd::SetSelectedFleets(const std::set<int>& fleet_ids) {
+void FleetWnd::SelectFleets(const std::set<int>& fleet_ids) {
     const GG::ListBox::SelectionSet initial_selections = m_fleets_lb->Selections();
     m_fleets_lb->DeselectAll();
 
@@ -3238,7 +3238,7 @@ void FleetWnd::SetSelectedFleets(const std::set<int>& fleet_ids) {
     for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         FleetRow* row = dynamic_cast<FleetRow*>(it->get());
         if (!row) {
-            ErrorLogger() << "FleetWnd::SetSelectedFleets couldn't cast a listbow row to FleetRow?";
+            ErrorLogger() << "FleetWnd::SelectFleets couldn't cast a list row to FleetRow?";
             continue;
         }
 
@@ -3255,8 +3255,8 @@ void FleetWnd::SetSelectedFleets(const std::set<int>& fleet_ids) {
         FleetSelectionChanged(sels);
 }
 
-void FleetWnd::SetSelectedShips(const std::set<int>& ship_ids)
-{ m_fleet_detail_panel->SetSelectedShips(ship_ids); }
+void FleetWnd::SelectShips(const std::set<int>& ship_ids)
+{ m_fleet_detail_panel->SelectShips(ship_ids); }
 
 void FleetWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = Size();
@@ -3732,7 +3732,7 @@ void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids) {
 
     // deselect all ships so that response to fleet rearrangement doesn't attempt
     // to get the selected ships that are no longer in their old fleet.
-    m_fleet_detail_panel->SetSelectedShips(std::set<int>());
+    m_fleet_detail_panel->SelectShips(std::set<int>());
 
     CreateNewFleetFromShips(ship_ids, aggression);
 }
