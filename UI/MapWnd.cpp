@@ -96,6 +96,8 @@ namespace {
 
     const double    TWO_PI = 2.0*3.1415926536;
 
+    DeclareThreadSafeLogger(effects);
+
     double ZoomScaleFactor(double steps_in) {
         if (steps_in > ZOOM_IN_MAX_STEPS) {
             ErrorLogger() << "ZoomScaleFactor passed steps in (" << steps_in << ") higher than max (" << ZOOM_IN_MAX_STEPS << "), so using max";
@@ -2764,7 +2766,11 @@ void MapWnd::InitTurn() {
     //DebugLogger() << GetSupplyManager().Dump();
 
     Universe& universe = GetUniverse();
-    const ObjectMap& objects = Objects();
+    ObjectMap& objects = Objects();
+
+    TraceLogger(effects) << "MapWnd::InitTurn initial:";
+    for (auto obj : objects)
+        TraceLogger(effects) << obj->Dump();
 
     timer.EnterSection("system graph");
     // FIXME: this is actually only needed when there was no mid-turn update
