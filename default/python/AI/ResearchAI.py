@@ -659,7 +659,7 @@ def generate_classic_research_orders():
     #
     # set starting techs, or after turn 100 add any additional default techs
     #
-    if (fo.currentTurn() == 1) or ((total_rp - research_queue.totalSpent) > 0):
+    if (fo.currentTurn() <= 2) or ((total_rp - research_queue.totalSpent) > 0):
         research_index = get_research_index()
         if fo.currentTurn() == 1:
             # do only this one on first turn, to facilitate use of a turn-1 savegame for testing of alternate
