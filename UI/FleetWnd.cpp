@@ -3824,10 +3824,11 @@ void FleetWnd::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows)
 { SelectedShipsChangedSignal(); }
 
 void FleetWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) {
-    // check if deleted object was a fleet.  if not, abort.
+    // check if deleted object was a fleet.  The universe signals for all
+    // object types, not just fleets.
     std::shared_ptr<const Fleet> deleted_fleet = std::dynamic_pointer_cast<const Fleet>(obj);
     if (!deleted_fleet)
-        return; // TODO: Why exactly does this function not just take a Fleet instead of a UniverseObject?  Maybe rename to FleetDeleted?
+        return;
 
     // if detail panel is showing the deleted fleet, reset to show nothing
     if (GetFleet(m_fleet_detail_panel->FleetID()) == deleted_fleet)
