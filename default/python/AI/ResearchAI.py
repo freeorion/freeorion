@@ -664,7 +664,7 @@ def generate_classic_research_orders():
         if fo.currentTurn() == 1:
             # do only this one on first turn, to facilitate use of a turn-1 savegame for testing of alternate
             # research strategies
-            new_tech = ["GRO_PLANET_ECOL", "LRN_ALGO_ELEGANCE"]
+            new_tech = ["LRN_PHYS_BRAIN", "LRN_ALGO_ELEGANCE"]
         else:
             new_tech = TechsListsAI.sparse_galaxy_techs(research_index) if galaxy_is_sparse else TechsListsAI.primary_meta_techs(research_index)
         print "Empire %s (%d) is selecting research index %d" % (empire.name, empire_id, research_index)
