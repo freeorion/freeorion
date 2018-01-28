@@ -50,7 +50,6 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     EmpireObjectMap                 empire_latest_known_objects;
     EmpireObjectVisibilityMap       empire_object_visibility;
     EmpireObjectVisibilityTurnMap   empire_object_visibility_turns;
-    //EmpireObjectVisibilityMap       effect_specified_visibilities;
     ObjectKnowledgeMap              empire_known_destroyed_object_ids;
     ObjectKnowledgeMap              empire_stale_knowledge_object_ids;
     ShipDesignMap                   ship_designs;
