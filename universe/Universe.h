@@ -194,131 +194,133 @@ public:
     /** Inserts \a ship_design into the universe. Return true on success. The
         ship design's id will be the newly assigned id.
         \note Universe gains ownership of \a ship_design once inserted. */
-    bool            InsertShipDesign(ShipDesign* ship_design);
+    bool InsertShipDesign(ShipDesign* ship_design);
 
     /** Inserts \a ship_design into the universe with given \a id; returns true
       * on success, or false on failure.  An empire id of none indicates that
       * the server is allocating an id on behalf of itself.  This can be removed
       * when no longer supporting legacy id allocation in pending Orders. \note
       * Universe gains ownership of \a ship_design once inserted. */
-    bool            InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> empire_id, int id);
-    
+    bool InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> empire_id, int id);
+
    /** Reset object and ship design id allocation for a new game. */
     void ResetAllIDAllocation(const std::vector<int>& empire_ids = std::vector<int>());
 
     /** Clears main ObjectMap, empires' latest known objects map, and
       * ShipDesign map. */
-    void            Clear();
+    void Clear();
+
+    /** Resets meters */
+    void ResetAllObjectMeters(bool target_max_unpaired = true, bool active = true);
 
     /** Determines all effectsgroups' target sets, then resets meters and
       * executes all effects on all objects.  Then clamps meter values so
       * target and max meters are within a reasonable range and any current
       * meters with associated max meters are limited by their max. */
-    void            ApplyAllEffectsAndUpdateMeters(bool do_accounting = true);
+    void ApplyAllEffectsAndUpdateMeters(bool do_accounting = true);
 
     /** Determines all effectsgroups' target sets, then resets meters and
       * executes only SetMeter effects on all objects whose ids are listed in
       * \a object_ids.  Then clamps meter values so target and max meters are
       * within a reasonable range and any current meters with associated max
       * meters are limited by their max. */
-    void            ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids, bool do_accounting = true);
+    void ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids, bool do_accounting = true);
 
     /** Calls above ApplyMeterEffectsAndUpdateMeters() function on all objects.*/
-    void            ApplyMeterEffectsAndUpdateMeters(bool do_accounting = true);
-    /** Like ApplyMeterEffectsAndUpdateMeters(), but only target, max and unpaired meters are updated.*/
-    void            ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters(bool do_accounting = true);
+    void ApplyMeterEffectsAndUpdateMeters(bool do_accounting = true);
 
     /** Executes effects that modify objects' appearance in the human client. */
-    void            ApplyAppearanceEffects(const std::vector<int>& object_ids);
+    void ApplyAppearanceEffects(const std::vector<int>& object_ids);
 
     /** Executes effects that modify objects' apperance for all objects. */
-    void            ApplyAppearanceEffects();
+    void ApplyAppearanceEffects();
 
     /** Executes effects that modify objects' apperance for all objects. */
-    void            ApplyGenerateSitRepEffects();
+    void ApplyGenerateSitRepEffects();
 
     /** For all objects and meters, determines discrepancies between actual meter
       * maxes and what the known universe should produce, and and stores in
       * m_effect_discrepancy_map. */
-    void            InitMeterEstimatesAndDiscrepancies();
+    void InitMeterEstimatesAndDiscrepancies();
 
     /** Based on (known subset of, if in a client) universe and any orders
       * given so far this turn, updates estimated meter maxes for next turn
       * for the objects with ids indicated in \a objects_vec. */
-    void            UpdateMeterEstimates(const std::vector<int>& objects_vec);
+    void UpdateMeterEstimates(const std::vector<int>& objects_vec);
 
     /** Updates indicated object's meters, and if applicable, the
       * meters of objects contained within the indicated object.
       * If \a object_id is INVALID_OBJECT_ID, then all
       * objects' meters are updated. */
-    void            UpdateMeterEstimates(int object_id, bool update_contained_objects = false);
+    void UpdateMeterEstimates(int object_id, bool update_contained_objects = false);
 
     /** Updates all meters for all (known) objects */
-    void            UpdateMeterEstimates();
+    void UpdateMeterEstimates();
+    void UpdateMeterEstimates(bool do_accounting);
 
     /** Sets all objects' meters' initial values to their current values. */
-    void            BackPropagateObjectMeters();
+    void BackPropagateObjectMeters();
 
     /** Sets indicated objects' meters' initial values to their current values. */
-    void            BackPropagateObjectMeters(const std::vector<int>& object_ids);
+    void BackPropagateObjectMeters(const std::vector<int>& object_ids);
 
     /** Determines which empires can see which objects at what visibility
       * level, based on  */
-    void            UpdateEmpireObjectVisibilities();
+    void UpdateEmpireObjectVisibilities();
 
     /** Sets a special record of visibility that overrides the standard
       * empire-object visibility after the latter is processed. */
-    void            SetEffectDerivedVisibility(int empire_id, int object_id, int source_id,
-                                               const ValueRef::ValueRefBase<Visibility>* vis);
+    void SetEffectDerivedVisibility(int empire_id, int object_id, int source_id,
+                                    const ValueRef::ValueRefBase<Visibility>* vis);
 
     /** Applies empire-object visibilities set by effects. */
-    void            ApplyEffectDerivedVisibilities();
+    void ApplyEffectDerivedVisibilities();
 
     /** If an \p empire_id can't currently see \p object_id, then remove
      * \p object_id' object from the object map and the set of known objects. */
-    void            ForgetKnownObject(int empire_id, int object_id);
+    void ForgetKnownObject(int empire_id, int object_id);
 
     /** Sets visibility for indicated \a empire_id of object with \a object_id
       * a vis */
-    void            SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis);
+    void SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis);
 
     /** Sets visibility for indicated \a empire_id for the indicated \a special */
-    void            SetEmpireSpecialVisibility(int empire_id, int object_id,
-                                               const std::string& special_name, bool visible = true);
+    void SetEmpireSpecialVisibility(int empire_id, int object_id,
+                                    const std::string& special_name, bool visible = true);
 
     /** Stores latest known information about each object for each empire and
       * updates the record of the last turn on which each empire has visibility
       * of object that can be seen on the current turn with the level of
       * visibility that the empire has this turn. */
-    void            UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
+    void UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
     /** Checks latest known information about each object for each empire and,
       * in cases when the latest known state (stealth and location) suggests
       * that the empire should be able to see the object, but the object can't
       * be seen by the empire, updates the latest known state to note this. */
-    void            UpdateEmpireStaleObjectKnowledge();
+    void UpdateEmpireStaleObjectKnowledge();
 
     /** Fills pathfinding data structure and determines least jumps distances
       * between systems for the empire with id \a for_empire_id or uses the
       * main / true / visible objects if \a for_empire_id is ALL_EMPIRES*/
-    void            InitializeSystemGraph(int for_empire_id = ALL_EMPIRES);
+    void InitializeSystemGraph(int for_empire_id = ALL_EMPIRES);
 
     /** Regenerates per-empire system view graphs by filtering the complete
       * system graph based on empire visibility.  Does not regenerate the base
       * graph to account for actual system-starlane connectivity changes. */
-    void            UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id = ALL_EMPIRES);
+    void UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id = ALL_EMPIRES);
 
     /** Adds the object ID \a object_id to the set of object ids for the empire
       * with id \a empire_id that the empire knows have been destroyed. */
-    void            SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id);
+    void SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id);
 
     /** Adds the ship design ID \a ship_design_id to the set of ship design ids
       * known by the empire with id \a empire_id */
-    void            SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id);
+    void SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id);
 
     /** Record in statistics that \a object_id was destroyed by species/empire
       * associated with \a source_object_id */
-    void            CountDestructionInStats(int object_id, int source_object_id);
+    void CountDestructionInStats(int object_id, int source_object_id);
 
     /** Removes the object with ID number \a object_id from the universe's map
       * of existing objects, and adds the object's id to the set of destroyed
@@ -328,34 +330,34 @@ public:
       * or limited versions of objects remain in empires latest known objects
       * ObjectMap, regardless of whether the empire knows the object is
       * destroyed. */
-    void            Destroy(int object_id, bool update_destroyed_object_knowers = true);
+    void Destroy(int object_id, bool update_destroyed_object_knowers = true);
 
     /** Destroys object with ID \a object_id, and destroys any associted
       * objects, such as contained buildings of planets, contained anything of
       * systems, or fleets if their last ship has id \a object_id and the fleet
       * is thus empty. Returns the ids of all destroyed objects. */
-    std::set<int>   RecursiveDestroy(int object_id);
+    std::set<int> RecursiveDestroy(int object_id);
 
     /** Used by the Destroy effect to mark an object for destruction later
       * during turn processing. (objects can't be destroyed immediately as
       * other effects might depend on their existence) */
-    void            EffectDestroy(int object_id, int source_object_id = INVALID_OBJECT_ID);
+    void EffectDestroy(int object_id, int source_object_id = INVALID_OBJECT_ID);
 
     /** Permanently deletes object with ID number \a object_id.  no
       * information about this object is retained in the Universe.  Can be
       * performed on objects whether or not the have been destroyed.  Returns
       * true if such an object was found, false otherwise. */
-    bool            Delete(int object_id);
+    bool Delete(int object_id);
 
     /** Permanently deletes the ship design with ID number \a design_id. No
       * information about this design is retained in the Universe. */
-    bool            DeleteShipDesign(int design_id);
+    bool DeleteShipDesign(int design_id);
 
     /** Sets whether to inhibit UniverseObjectSignals.  Inhibits if \a inhibit
       * is true, and (re)enables UniverseObjectSignals if \a inhibit is false. */
-    void            InhibitUniverseObjectSignals(bool inhibit = true);
+    void InhibitUniverseObjectSignals(bool inhibit = true);
 
-    void            UpdateStatRecords();
+    void UpdateStatRecords();
     //@}
 
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
@@ -366,11 +368,11 @@ public:
       * serialized.  The use of this global variable is done just so I don't
       * have to rewrite any custom boost::serialization classes that implement
       * empire-dependent visibility. */
-    int&            EncodingEmpire();
+    int&    EncodingEmpire();
 
-    double          UniverseWidth() const;
-    void            SetUniverseWidth(double width) { m_universe_width = width; }
-    bool            AllObjectsVisible() const { return m_all_objects_visible; }
+    double  UniverseWidth() const;
+    void    SetUniverseWidth(double width) { m_universe_width = width; }
+    bool    AllObjectsVisible() const { return m_all_objects_visible; }
 
     /** \name Generators */ //@{
     /** InsertNew constructs and inserts a UniverseObject into the object map with a new
@@ -466,32 +468,35 @@ private:
 
     /** Clears \a targets_causes, and then populates with all
       * EffectsGroups and their targets in the known universe. */
-    void    GetEffectsAndTargets(Effect::TargetsCauses& targets_causes);
+    void GetEffectsAndTargets(Effect::TargetsCauses& targets_causes);
 
     /** Removes entries in \a targets_causes about effects groups acting
       * on objects in \a target_objects, and then repopulates for EffectsGroups
       * that act on at least one of the objects in \a target_objects. If 
       * \a target_objects is empty then default target candidates will be used. */
-    void    GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
-                                 const std::vector<int>& target_objects);
+    void GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
+                              const std::vector<int>& target_objects);
+
+    void ResetObjectMeters(const std::vector<std::shared_ptr<UniverseObject>>& objects,
+                           bool target_max_unpaired = true, bool active = true);
 
     /** Executes all effects.  For use on server when processing turns.
       * If \a only_meter_effects is true, then only SetMeter effects are
       * executed.  This is useful on server or clients to update meter
       * values after the rest of effects (including non-meter effects) have
       * been executed. */
-    void    ExecuteEffects(const Effect::TargetsCauses& targets_causes,
-                           bool update_effect_accounting,
-                           bool only_meter_effects = false,
-                           bool only_appearance_effects = false,
-                           bool include_empire_meter_effects = false,
-                           bool only_generate_sitrep_effects = false);
+    void ExecuteEffects(const Effect::TargetsCauses& targets_causes,
+                        bool update_effect_accounting,
+                        bool only_meter_effects = false,
+                        bool only_appearance_effects = false,
+                        bool include_empire_meter_effects = false,
+                        bool only_generate_sitrep_effects = false);
 
     /** Does actual updating of meter estimates after the public function have
       * processed objects_vec or whatever they were passed and cleared the
       * relevant effect accounting for those objects and meters. If an empty 
       * vector is passed, it will instead update all existing objects. */
-    void    UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec);
+    void    UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, bool do_accounting);
 
     ObjectMap                       m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
     EmpireObjectMap                 m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
@@ -544,37 +549,37 @@ private:
     /** Fills \a designs_to_serialize with ShipDesigns known to the empire with
       * the ID \a encoding empire.  If encoding_empire is ALL_EMPIRES, then all
       * designs are included. */
-    void    GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const;
+    void GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const;
 
     /** Fills \a objects with copies of UniverseObjects that should be sent
       * to the empire with id \a encoding_empires */
-    void    GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const;
+    void GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const;
 
     /** Fills \a destroyed_object_ids with ids of objects known to be destroyed
       * by the empire with ID \a encoding empire. If encoding_empire is
       * ALL_EMPIRES, then all destroyed objects are included. */
-    void    GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_ids, int encoding_empire) const;
+    void GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_ids, int encoding_empire) const;
 
     /** Fills \a empire_latest_known_objects map with the latest known data
       * about UniverseObjects for the empire with id \a encoding_empire.  If
       * the encoding empire is ALL_EMPIRES then all stored empire object
       * knowledge is included. */
-    void    GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects, int encoding_empire) const;
+    void GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects, int encoding_empire) const;
 
     /***/
-    void    GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire) const;
+    void GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire) const;
 
     /***/
-    void    GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns, int encoding_empire) const;
+    void GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns, int encoding_empire) const;
 
     /***/
-    //void    GetEffectSpecifiedVisibilities(EmpireObjectVisibilityMap& effect_specified_empire_object_visibilities, int encoding_empire) const;
-    
-    /***/
-    void    GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, int encoding_empire) const;
+    //void GetEffectSpecifiedVisibilities(EmpireObjectVisibilityMap& effect_specified_empire_object_visibilities, int encoding_empire) const;
 
     /***/
-    void    GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, int encoding_empire) const;
+    void GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, int encoding_empire) const;
+
+    /***/
+    void GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, int encoding_empire) const;
 
     /** Manages allocating and verifying new object ids.*/
     std::unique_ptr<IDAllocator> const m_object_id_allocator;
