@@ -12,14 +12,13 @@ BASIC_POPULATION
             scope = Source
             activation = And [
                 Planet
-                (Source.Population != Source.TargetPopulation)
                 (Source.LastTurnConquered < CurrentTurn)
             ]
             priority = [[EARLY_FIRST_NATURAL_POPULATION_PRIORITY]]
             effects = SetPopulation value =
                 (Statistic If condition = (Value < Target.TargetPopulation) *
                     min(Target.TargetPopulation, Value + Value*0.01*(Target.TargetPopulation + 1 - Value)))
-              + (Statistic If condition = (Value > Target.TargetPopulation) *
+              + (Statistic If condition = (Value >= Target.TargetPopulation) *
                     max(Target.TargetPopulation, Value - 0.1*(Value - Target.TargetPopulation)))
             
         // Since all species have the same advanced focus effects and
