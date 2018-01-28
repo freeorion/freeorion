@@ -3103,8 +3103,8 @@ void ServerApp::PostCombatProcessTurns() {
     m_networking.SendMessageAll(TurnProgressMessage(Message::EMPIRE_PRODUCTION));
     DebugLogger() << "ServerApp::PostCombatProcessTurns effects and meter updates";
 
-    TraceLogger() << "!!!!!!! BEFORE TURN PROCESSING EFFECTS APPLICATION";
-    TraceLogger() << objects.Dump();
+    TraceLogger(effects) << "!!!!!!! BEFORE TURN PROCESSING EFFECTS APPLICATION";
+    TraceLogger(effects) << objects.Dump();
 
     // execute all effects and update meters prior to production, research, etc.
     if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
@@ -3117,8 +3117,8 @@ void ServerApp::PostCombatProcessTurns() {
     // have added or removed starlanes.
     m_universe.InitializeSystemGraph();
 
-    TraceLogger() << "!!!!!!! AFTER TURN PROCESSING EFFECTS APPLICATION";
-    TraceLogger() << objects.Dump();
+    TraceLogger(effects) << "!!!!!!! AFTER TURN PROCESSING EFFECTS APPLICATION";
+    TraceLogger(effects) << objects.Dump();
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns empire resources updates";
 
@@ -3159,8 +3159,8 @@ void ServerApp::PostCombatProcessTurns() {
         }
     }
 
-    TraceLogger() << "!!!!!!! AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
-    TraceLogger() << objects.Dump();
+    TraceLogger(effects) << "!!!!!!! AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
+    TraceLogger(effects) << objects.Dump();
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns queue progress checking";
 
@@ -3177,8 +3177,8 @@ void ServerApp::PostCombatProcessTurns() {
         empire->CheckTradeSocialProgress();
     }
 
-    TraceLogger() << "!!!!!!! AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
-    TraceLogger() << objects.Dump();
+    TraceLogger(effects) << "!!!!!!! AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
+    TraceLogger(effects) << objects.Dump();
 
     // execute turn events implemented as Python scripts
     ExecuteScriptedTurnEvents();
@@ -3189,17 +3189,17 @@ void ServerApp::PostCombatProcessTurns() {
     // they are created.
     m_universe.ApplyMeterEffectsAndUpdateMeters(false);
 
-    TraceLogger() << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
-    TraceLogger() << objects.Dump();
+    TraceLogger(effects) << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
+    TraceLogger(effects) << objects.Dump();
 
-    // Population growth or loss, resource current meter growth, etc.
+    // Planet depopulation, some in-C++ meter modifications
     for (const auto& obj : objects) {
         obj->PopGrowthProductionResearchPhase();
-        obj->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
+        obj->ClampMeters();  // ensures no meters are over MAX.  probably redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
 
-    TraceLogger() << "!!!!!!!!!!!!!!!!!!!!!!AFTER GROWTH AND CLAMPING";
-    TraceLogger() << objects.Dump();
+    TraceLogger(effects) << "!!!!!!!!!!!!!!!!!!!!!!AFTER GROWTH AND CLAMPING";
+    TraceLogger(effects) << objects.Dump();
 
     // store initial values of meters for this turn.
     m_universe.BackPropagateObjectMeters();
@@ -3233,8 +3233,8 @@ void ServerApp::PostCombatProcessTurns() {
     // update empire-visibility filtered graphs after visiblity update
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphs();
 
-    TraceLogger() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
-    TraceLogger() << objects.Dump();
+    TraceLogger(effects) << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
+    TraceLogger(effects) << objects.Dump();
 
     // this has to be here for the sitreps it creates to be in the right turn
     CheckForEmpireElimination();
@@ -3247,6 +3247,19 @@ void ServerApp::PostCombatProcessTurns() {
 
     // new turn visibility update
     m_universe.UpdateEmpireObjectVisibilities();
+
+
+    TraceLogger(effects) << "ServerApp::PostCombatProcessTurns Before Final Meter Estimate Update: ";
+    TraceLogger(effects) << objects.Dump();
+
+    // redo meter estimates to hopefully be consistent with what happens in clients
+    m_universe.UpdateMeterEstimates(false);
+
+    TraceLogger(effects) << "ServerApp::PostCombatProcessTurns After Final Meter Estimate Update: ";
+    TraceLogger(effects) << objects.Dump();
+
+
+    // copy latest visible gamestate to each empire's known object state
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
 
