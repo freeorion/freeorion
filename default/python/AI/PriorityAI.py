@@ -240,9 +240,8 @@ def _calculate_colonisation_priority():
     allottedColonyTargets = 1 + int(total_pp * turns_to_build * allotted_portion / colony_cost)
     outpost_prio = foAI.foAIstate.get_priority(PriorityType.PRODUCTION_OUTPOST)
     # if have any outposts to build, don't build colony ships TODO: make more complex assessment
-    if outpost_prio > 0 or num_colonies > colony_growth_barrier:
+    if outpost_prio > 0:
         return 0.0
-
     if num_colonies > colony_growth_barrier:
         return 0.0
     num_colonisable_planet_ids = len([pid for (pid, (score, _)) in foAI.foAIstate.colonisablePlanetIDs.items()
