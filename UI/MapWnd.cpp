@@ -4562,13 +4562,13 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
         for (const auto& fwnd : manager) {
             auto wnd = fwnd.lock();
             if (wnd && wnd.get() != active_fleet_wnd)
-                wnd->SelectFleet(0);
+                wnd->DeselectAllFleets();
         }
 
         // and finally deselect active fleet wnd fleets.  this might emit a signal
         // which will update this->m_selected_Fleets
         if (active_fleet_wnd)
-            active_fleet_wnd->SelectFleet(0);
+            active_fleet_wnd->DeselectAllFleets();
 
         return;
     }
