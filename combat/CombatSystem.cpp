@@ -777,7 +777,7 @@ namespace {
             if (part_class == PC_DIRECT_WEAPON) {
                 float part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
                 int shots = static_cast<int>(ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name)); // secondary stat is shots per attack)
-                float part_noisiness = ship->CurrentPartMeterValue(METER_TERTIARY_STAT, part_name);
+                float part_noisiness = ship->CurrentPartMeterValue(METER_NOISINESS, part_name);
 
                 if (part_attack > 0.0f && shots > 0) {
                     // reduce noisiness to be independent of number of shots, so that increasing number of shots doesn't have the side effect of making a part noisiner
@@ -803,7 +803,7 @@ namespace {
                 part_fighter_launch_capacities_and_noise[part_name].first
                     += ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
                 part_fighter_launch_capacities_and_noise[part_name].second
-                    += ship->CurrentPartMeterValue(METER_TERTIARY_STAT, part_name);
+                    += ship->CurrentPartMeterValue(METER_NOISINESS, part_name);
             }
         }
 

@@ -901,7 +901,7 @@ namespace {
                                                    UserString("SHIP_TROOPS_STAT")));
 
             } else if (entry.first == METER_SECONDARY_STAT ||
-                       entry.first == METER_TERTIARY_STAT)
+                       entry.first == METER_NOISINESS)
             {
                 entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
                                                    m_ship_id, entry.first));

@@ -102,7 +102,7 @@ public:
     float                   Capacity() const;
     std::string             CapacityDescription() const;                            ///< returns a translated description of the part capacity, with numeric value
     float                   SecondaryStat() const;
-    float                   TertiaryStat() const;
+    float                   Noisiness() const;
 
     bool                    CanMountInSlotType(ShipSlotType slot_type) const;       ///< returns true if this part can be placed in a slot of the indicated type
     const std::vector<ShipSlotType>&
@@ -145,7 +145,7 @@ private:
     ShipPartClass                   m_class;
     float                           m_capacity;
     float                           m_secondary_stat;   // damage for a hangar bay, shots per turn for a weapon, etc.
-    float                           m_tertiary_stat;    // stealth reduction in combat per shot for weapons / bays
+    float                           m_noisiness;        // stealth reduction in combat per shot for weapons / bays
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_production_cost;
     std::unique_ptr<ValueRef::ValueRefBase<int>>    m_production_time;
     bool                            m_producible;
@@ -740,7 +740,7 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_class)
         & BOOST_SERIALIZATION_NVP(m_capacity)
         & BOOST_SERIALIZATION_NVP(m_secondary_stat)
-        & BOOST_SERIALIZATION_NVP(m_tertiary_stat)
+        & BOOST_SERIALIZATION_NVP(m_noisiness)
         & BOOST_SERIALIZATION_NVP(m_production_cost)
         & BOOST_SERIALIZATION_NVP(m_production_time)
         & BOOST_SERIALIZATION_NVP(m_producible)

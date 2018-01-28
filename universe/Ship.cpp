@@ -72,8 +72,8 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
                 break;
             }
             case PC_DIRECT_WEAPON: {    // capacity is damage, secondary stat is shots per attack, tertiary stat is noisiness of attack
-                m_part_meters[std::make_pair(METER_TERTIARY_STAT,       part->Name())];
-                m_part_meters[std::make_pair(METER_MAX_TERTIARY_STAT,   part->Name())];
+                m_part_meters[std::make_pair(METER_NOISINESS,           part->Name())];
+                m_part_meters[std::make_pair(METER_MAX_NOISINESS,       part->Name())];
                 // intentinally no break; here
             }
             case PC_FIGHTER_HANGAR: {   // capacity is how many fighters contained, secondary stat is damage per fighter attack
@@ -585,7 +585,7 @@ void Ship::Resupply() {
         switch(meter_type) {
         case METER_CAPACITY:        paired_meter_type = METER_MAX_CAPACITY;         break;
         case METER_SECONDARY_STAT:  paired_meter_type = METER_MAX_SECONDARY_STAT;   break;
-        case METER_TERTIARY_STAT:   paired_meter_type = METER_MAX_TERTIARY_STAT;    break;
+        case METER_NOISINESS:       paired_meter_type = METER_MAX_NOISINESS;        break;
         default:
             break;
         }
@@ -661,7 +661,7 @@ void Ship::ResetTargetMaxUnpairedMeters() {
         switch(meter_type) {
         case METER_CAPACITY:
         case METER_SECONDARY_STAT:
-        case METER_TERTIARY_STAT:
+        case METER_NOISINESS:
             continue;
         default:
             entry.second.ResetCurrent();
@@ -677,7 +677,7 @@ void Ship::ResetPairedActiveMeters() {
         switch(meter_type) {
         case METER_CAPACITY:
         case METER_SECONDARY_STAT:
-        case METER_TERTIARY_STAT:
+        case METER_NOISINESS:
             entry.second.SetCurrent(entry.second.Initial());
         default:
             break;
@@ -725,7 +725,7 @@ void Ship::ClampMeters() {
         switch(meter_type) {
         case METER_MAX_CAPACITY:
         case METER_MAX_SECONDARY_STAT:
-        case METER_MAX_TERTIARY_STAT:
+        case METER_MAX_NOISINESS:
             entry.second.ClampCurrentToRange();
         default:
             break;
@@ -741,7 +741,7 @@ void Ship::ClampMeters() {
         switch(meter_type) {
         case METER_CAPACITY:        paired_meter_type = METER_MAX_CAPACITY;         break;
         case METER_SECONDARY_STAT:  paired_meter_type = METER_MAX_SECONDARY_STAT;   break;
-        case METER_TERTIARY_STAT:   paired_meter_type = METER_MAX_TERTIARY_STAT;    break;
+        case METER_NOISINESS:       paired_meter_type = METER_MAX_NOISINESS;        break;
         default:
             break;
         }

@@ -296,7 +296,7 @@ PartType::PartType() :
     m_class(INVALID_SHIP_PART_CLASS),
     m_capacity(0.0f),
     m_secondary_stat(1.0f),
-    m_tertiary_stat(0.0f),
+    m_noisiness(0.0f),
     m_production_cost(),
     m_production_time(),
     m_producible(false),
@@ -320,7 +320,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2, doub
     m_class(part_class),
     m_capacity(capacity),
     m_secondary_stat(stat2),
-    m_tertiary_stat(stat3),
+    m_noisiness(stat3),
     m_production_cost(std::move(common_params.production_cost)),
     m_production_time(std::move(common_params.production_time)),
     m_producible(common_params.producible),
@@ -344,7 +344,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2, doub
                   << " class: " << m_class
                   << " capacity: " << m_capacity
                   << " secondary stat: " << m_secondary_stat
-                  << " tertiary stat: " << m_tertiary_stat
+                  << " noisiness: " << m_noisiness
                   //<< " prod cost: " << m_production_cost
                   //<< " prod time: " << m_production_time
                   << " producible: " << m_producible
@@ -360,7 +360,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2, doub
 }
 
 void PartType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects) {
-    if ((m_capacity != 0 || m_secondary_stat != 0 || m_tertiary_stat != 0) && m_add_standard_capacity_effect) {
+    if ((m_capacity != 0 || m_secondary_stat != 0 || m_noisiness != 0) && m_add_standard_capacity_effect) {
         switch (m_class) {
         case PC_COLONY:
         case PC_TROOPS:
@@ -369,14 +369,14 @@ void PartType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
         case PC_FIGHTER_HANGAR: {   // capacity indicates how many fighters are stored in this type of part (combined for all copies of the part)
             m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,       m_name, m_capacity, true));         // stacking capacities allowed for this part, so each part contributes to the total capacity
             m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, false));  // stacking damage not allowed, as damage per fighter shot should be the same regardless of number of this part present
-            m_effects.push_back(IncreaseMeter(METER_MAX_TERTIARY_STAT,  m_name, m_tertiary_stat, false));   // stacking noisiness not allowed, as stealth loss per figher launch should be the same regardless of number of this part present
+            m_effects.push_back(IncreaseMeter(METER_MAX_NOISINESS,      m_name, m_noisiness, false));       // stacking noisiness not allowed, as stealth loss per figher launch should be the same regardless of number of this part present
             break;
         }
         case PC_FIGHTER_BAY:        // capacity indicates how many fighters each instance of the part can launch per combat bout...
         case PC_DIRECT_WEAPON: {    // capacity indicates weapon damage per shot
             m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,       m_name, m_capacity, false));
             m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, false));
-            m_effects.push_back(IncreaseMeter(METER_MAX_TERTIARY_STAT,  m_name, m_tertiary_stat, false));   // stacking noisiness not allowed, as stealth loss per shot should be the same regardless of number of this part present
+            m_effects.push_back(IncreaseMeter(METER_MAX_NOISINESS,      m_name, m_noisiness, false));       // stacking noisiness not allowed, as stealth loss per shot should be the same regardless of number of this part present
             break;
         }
         case PC_SHIELD:
@@ -439,14 +439,14 @@ float PartType::Capacity() const {
 float PartType::SecondaryStat() const
 { return m_secondary_stat; }
 
-float PartType::TertiaryStat() const
-{ return m_tertiary_stat; }
+float PartType::Noisiness() const
+{ return m_noisiness; }
 
 std::string PartType::CapacityDescription() const {
     std::string desc_string;
     float main_stat = Capacity();
     float sdry_stat = SecondaryStat();
-    float ttry_stat = TertiaryStat();
+    float ttry_stat = Noisiness();
 
     switch (m_class) {
     case PC_FUEL:
@@ -553,7 +553,7 @@ unsigned int PartType::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_class);
     CheckSums::CheckSumCombine(retval, m_capacity);
     CheckSums::CheckSumCombine(retval, m_secondary_stat);
-    CheckSums::CheckSumCombine(retval, m_tertiary_stat);
+    CheckSums::CheckSumCombine(retval, m_noisiness);
     CheckSums::CheckSumCombine(retval, m_production_cost);
     CheckSums::CheckSumCombine(retval, m_production_time);
     CheckSums::CheckSumCombine(retval, m_producible);

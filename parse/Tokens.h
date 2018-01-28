@@ -292,7 +292,7 @@
     (Partial)                                   \
     (PartName)                                  \
     (PartSecondaryStat)                         \
-    (PartTertiaryStat)
+    (PartNoisiness)
 
 #define TOKEN_SEQ_9                             \
     (Parts)                                     \
@@ -382,7 +382,7 @@
     (SetMaxStockpile)                           \
     (SetMaxStructure)                           \
     (SetMaxSupply)                              \
-    (SetMaxTertiaryStat)                        \
+    (SetMaxNoisiness)                           \
     (SetMaxTroops)                              \
     (SetOverlayTexture)                         \
     (SetOwner)                                  \
@@ -413,7 +413,7 @@
     (SetTargetPopulation)                       \
     (SetTargetResearch)                         \
     (SetTargetTrade)                            \
-    (SetTertiaryStat)                           \
+    (SetNoisiness)                              \
     (SetTexture)                                \
     (SetTrade)                                  \
     (SetTroops)                                 \

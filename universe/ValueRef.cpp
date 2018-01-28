@@ -234,8 +234,8 @@ namespace {
             meter_name_map["MaxCapacity"] =        METER_MAX_CAPACITY;
             meter_name_map["SecondaryStat"] =      METER_SECONDARY_STAT;
             meter_name_map["MaxSecondaryStat"] =   METER_MAX_SECONDARY_STAT;
-            meter_name_map["Noisiness"] =          METER_TERTIARY_STAT;
-            meter_name_map["MaxNoisiness"] =       METER_MAX_TERTIARY_STAT;
+            meter_name_map["Noisiness"] =          METER_NOISINESS;
+            meter_name_map["MaxNoisiness"] =       METER_MAX_NOISINESS;
             meter_name_map["Size"] =               METER_SIZE;
         }
         return meter_name_map;
@@ -2029,7 +2029,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
         return part_type->SecondaryStat();
     }
-    else if (variable_name == "PartTertiaryStat") {
+    else if (variable_name == "PartNoisiness") {
         std::string part_type_name;
         if (m_string_ref1)
             part_type_name = m_string_ref1->Eval(context);
@@ -2038,7 +2038,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (!part_type)
             return 0.0;
 
-        return part_type->TertiaryStat();
+        return part_type->Noisiness();
     }
 
     else if (variable_name == "EmpireMeterValue") {
