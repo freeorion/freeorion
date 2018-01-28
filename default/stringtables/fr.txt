@@ -2,7 +2,7 @@ Français
 
 # This is the French String Table file for FreeOrion.
 #
-# Traduction par alchemy, shivu, zareif, nilstilar et Ouaz. Traduction terminée le 12 Juillet 2015 et couramment maintenue/améliorée par Ouaz (http://github.com/Ouaz/freeorion).
+# Traduction par alchemy, shivu, zareif, nilstilar et Ouaz. Traduction achevée le 12 Juillet 2015 et couramment maintenue/améliorée par Ouaz (http://github.com/Ouaz/freeorion).
 #
 # Notes: to avoid potential conflict with functional keys in other files, do not make
 # any stringtable keys beginning with "FUNCTIONAL_".
@@ -1075,6 +1075,12 @@ Activer Invasion Super-Testeurs
 RULE_ENABLE_SUPER_TESTER_DESC
 Active la structure Invasion Super-Testeurs.
 
+RULE_STOCKPILE_IMPORT_LIMITED
+Limite Import Stock
+
+RULE_STOCKPILE_IMPORT_LIMITED_DESC
+Active la limite d'import du stock par tour
+
 RULE_TEST_INT
 Test des Entiers (Integer)
 
@@ -1740,6 +1746,9 @@ Active une sauvegarde automatique dès que la galaxie est créée et avant toute
 
 OPTIONS_DB_AUTOSAVE_GAME_CLOSE
 Active une sauvegarde automatique lors d'un abandon ou de la fermeture du jeu.
+
+OPTIONS_DB_AUTOSAVE_HOSTLESS
+Active la sauvegarde automatique en mode sans hôte.
 
 OPTIONS_DB_UI_MOUSE_LR_SWAP
 Si activé, les effets des clics droit et gauche de la souris seront inversés.
