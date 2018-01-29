@@ -1,6 +1,6 @@
 import pytest
 
-import SaveGameManager
+import savegame_codec
 
 
 class DummyTestClass(object):
@@ -24,18 +24,18 @@ class DummyTestClass(object):
 class TrustedScope(object):
 
     def __enter__(self):
-        reload(SaveGameManager)  # just to be sure
-        SaveGameManager._definitions.trusted_classes.update({
+        reload(savegame_codec)  # just to be sure
+        savegame_codec._definitions.trusted_classes.update({
             __name__ + ".DummyTestClass": DummyTestClass,
             __name__ + ".GetStateTester": GetStateTester,
             __name__ + ".SetStateTester": SetStateTester,
         })
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        SaveGameManager._definitions.trusted_classes.clear()
+        savegame_codec._definitions.trusted_classes.clear()
 
     def __del__(self):
-        SaveGameManager._definitions.trusted_classes.clear()
+        savegame_codec._definitions.trusted_classes.clear()
 
 
 class Success(Exception):
@@ -58,11 +58,11 @@ class OldStyleClass():
 
 def test_simple_object_encoding():
     def test_encoding(obj):
-        retval = SaveGameManager.encode(obj)
+        retval = savegame_codec.encode(obj)
         assert retval
         assert isinstance(retval, str)
 
-        restored_obj = SaveGameManager.decode(retval)
+        restored_obj = savegame_codec.decode(retval)
         assert type(restored_obj) == type(obj)
         assert restored_obj == obj
 
@@ -76,24 +76,24 @@ def test_simple_object_encoding():
         test_encoding(obj)
 
     for obj in (lambda x: 1, test_encoding, OldStyleClass, DummyTestClass):
-        with pytest.raises(SaveGameManager.CanNotSaveGameException,
+        with pytest.raises(savegame_codec.CanNotSaveGameException,
                            message="Could save unsupported, potentially dangerous object."):
             test_encoding(obj)
 
 
 def test_class_encoding():
     obj = DummyTestClass()
-    with pytest.raises(SaveGameManager.CanNotSaveGameException,
+    with pytest.raises(savegame_codec.CanNotSaveGameException,
                        message="Could save game eventhough test module should not be trusted!"):
-        SaveGameManager.encode(obj)
+        savegame_codec.encode(obj)
 
     with TrustedScope():
-        retval = SaveGameManager.encode(obj)
+        retval = savegame_codec.encode(obj)
 
         assert retval
         assert isinstance(retval, str)
 
-        loaded_obj = SaveGameManager.decode(retval)
+        loaded_obj = savegame_codec.decode(retval)
         assert isinstance(loaded_obj, DummyTestClass)
         assert type(loaded_obj) == type(obj)
 
@@ -109,25 +109,25 @@ def test_class_encoding():
         assert loaded_values == original_values
         assert loaded_dict == original_dict
 
-    with pytest.raises(SaveGameManager.InvalidSaveGameException,
+    with pytest.raises(savegame_codec.InvalidSaveGameException,
                        message="Could load object from untrusted module"):
-        SaveGameManager.decode(retval)
+        savegame_codec.decode(retval)
 
 
 def test_getstate_call():
     with TrustedScope():
         with pytest.raises(Success, message="__getstate__ was not called during encoding."):
-            SaveGameManager.encode(GetStateTester())
+            savegame_codec.encode(GetStateTester())
 
 
 def test_setstate_call():
     with TrustedScope():
         with pytest.raises(Success, message="__setstate__ was not called during decoding."):
-            SaveGameManager.decode(SaveGameManager.encode(SetStateTester()))
+            savegame_codec.decode(savegame_codec.encode(SetStateTester()))
 
 def test_enums():
     import EnumsAI
 
     test_obj = {EnumsAI.MissionType.COLONISATION: EnumsAI.MissionType.INVASION}
-    restored_obj = SaveGameManager.decode(SaveGameManager.encode(test_obj))
+    restored_obj = savegame_codec.decode(savegame_codec.encode(test_obj))
     assert test_obj == restored_obj
