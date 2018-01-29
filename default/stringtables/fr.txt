@@ -12999,19 +12999,6 @@ CO_OUTPOST_POD_DESC
 GT_TROOP_POD
 Module d'Infanterie
 
-GT_TROOP_POD_DESC
-'''Transporte 2 unités d'[[metertype METER_TROOPS]] et l'équipement pouvant être déployés sur une planète. Nécessite la présence d'au moins 2 unités d'Infanterie sur le lieu de production.
-
-[[TROOP_POD_OPERATION_TEXT]]'''
-
-GT_TROOP_POD_2
-Module d'Infanterie Améliorée
-
-GT_TROOP_POD_2_DESC
-'''Transporte 4 unités d'[[metertype METER_TROOPS]] cybernétique et l'équipement pouvant être déployés sur une planète. Nécessite la présence d'au moins 4 unités d'Infanterie sur le lieu de production.
-
-[[TROOP_POD_OPERATION_TEXT]]'''
-
 SP_PLANET_BEACON
 Balise Planétaire Mobile
 

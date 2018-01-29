@@ -1,13 +1,28 @@
 Tech
     name = "GRO_NANO_CYBERNET"
     description = "GRO_NANO_CYBERNET_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    short_description = "ATTACK_TROOPS_SHORT_DESC"
     category = "GROWTH_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
-    tags = [ "PEDIA_GROWTH_CATEGORY" ]
+    tags = [ "PEDIA_GROWTH_CATEGORY" ]            
     prerequisites = "GRO_NANOTECH_MED"
-    unlock = Item type = ShipPart name = "GT_TROOP_POD_2"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "GT_TROOP_POD"
+                ( LocalCandidate.CreationTurn > TurnTechResearched empire = Source.Owner name = CurrentContent )
+            ]
+            accountinglabel = "GT_TROOP_POD_2_LABEL"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD" value = (Value * 2)
+            ]
+    ]
     graphic = "icons/tech/nanotech_cybernetics.png"
 
+#include "../techs.macros"
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"

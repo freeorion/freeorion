@@ -149,16 +149,12 @@ NO_OFFENSE_TROOPS
             scope = Source
             activation = And [
                 Ship
-                Or [
-                    DesignHasPart name = "GT_TROOP_POD"
-                    DesignHasPart name = "GT_TROOP_POD_2"
-                ]
+                DesignHasPart name = "GT_TROOP_POD"
             ]
             stackinggroup = "NO_OFFENSIVE_TROOPS_STACK"
             accountinglabel = "NO_OFFENSIVE_TROOPS_LABEL"
             effects = [
                 SetCapacity partname = "GT_TROOP_POD"   value = 0
-                SetCapacity partname = "GT_TROOP_POD_2" value = 0
             ]
 '''
 
@@ -168,16 +164,12 @@ BAD_OFFENSE_TROOPS
             scope = Source
             activation = And [
                 Ship
-                Or [
-                    DesignHasPart name = "GT_TROOP_POD"
-                    DesignHasPart name = "GT_TROOP_POD_2"
-                ]
+                DesignHasPart name = "GT_TROOP_POD"
             ]
             stackinggroup = "BAD_OFFENSIVE_TROOPS_STACK"
             accountinglabel = "BAD_OFFENSIVE_TROOPS_LABEL"
             effects = [
                 SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 0.5
-                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 0.5
             ]
 '''
 
@@ -195,16 +187,12 @@ GOOD_OFFENSE_TROOPS
             scope = Source
             activation = And [
                 Ship
-                Or [
-                    DesignHasPart name = "GT_TROOP_POD"
-                    DesignHasPart name = "GT_TROOP_POD_2"
-                ]
+                DesignHasPart name = "GT_TROOP_POD"
             ]
             stackinggroup = "GOOD_OFFENSIVE_TROOPS_STACK"
             accountinglabel = "GOOD_OFFENSIVE_TROOPS_LABEL"
             effects = [
                 SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 1.5
-                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 1.5
             ]
 '''
 
@@ -214,16 +202,12 @@ GREAT_OFFENSE_TROOPS
             scope = Source
             activation = And [
                 Ship
-                Or [
-                    DesignHasPart name = "GT_TROOP_POD"
-                    DesignHasPart name = "GT_TROOP_POD_2"
-                ]
+                DesignHasPart name = "GT_TROOP_POD"
             ]
             stackinggroup = "GREAT_OFFENSIVE_TROOPS_STACK"
             accountinglabel = "GREAT_OFFENSIVE_TROOPS_LABEL"
             effects = [
                 SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 2
-                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 2
             ]
 '''
 
@@ -233,15 +217,11 @@ ULTIMATE_OFFENSE_TROOPS
             scope = Source
             activation = And [
                 Ship
-                Or [
-                    DesignHasPart name = "GT_TROOP_POD"
-                    DesignHasPart name = "GT_TROOP_POD_2"
-                ]
+                DesignHasPart name = "GT_TROOP_POD"
             ]
             stackinggroup = "ULTIMATE_OFFENSIVE_TROOPS_STACK"
             accountinglabel = "ULTIMATE_OFFENSIVE_TROOPS_LABEL"
             effects = [
                 SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 3
-                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 3
             ]
 '''

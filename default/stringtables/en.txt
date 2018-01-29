@@ -10329,7 +10329,9 @@ GRO_NANO_CYBERNET
 Nanotech Cybernetics
 
 GRO_NANO_CYBERNET_DESC
-After applying nanotechnology to internally correct defects or injuries, the next step is to augment or replace natural biochemical systems with superior artificial replacements. Rather than merely regrowing lost limbs or repairing damaged organs, augments are able to quickly grow new ones to suit their needs at any time. Antiquated biological systems, from muscle tissue and tendons, down to organelles or enzymes may also be replaced, affording greatly increased strength, endurance and flexibility.
+'''After applying nanotechnology to internally correct defects or injuries, the next step is to augment or replace natural biochemical systems with superior artificial replacements. Rather than merely regrowing lost limbs or repairing damaged organs, augments are able to quickly grow new ones to suit their needs at any time. Antiquated biological systems, from muscle tissue and tendons, down to organelles or enzymes may also be replaced, affording greatly increased strength, endurance and flexibility.
+
+After researching [[tech GRO_NANO_CYBERNET]] all [[shippart GT_TROOP_POD]]s are build with troop force doubled.'''
 
 GRO_TRANSORG_SENT
 Trans-Organic Sentience
@@ -10805,6 +10807,9 @@ Improves Planetary Defense
 
 TROOPS_SHORT_DESC
 Improves Troops
+
+ATTACK_TROOPS_SHORT_DESC
+Improves Attack Troops
 
 METER_GROWTH_SHORT_DESC
 Improves Meter Growth
@@ -13000,15 +13005,7 @@ GT_TROOP_POD
 Ground Troop Pod
 
 GT_TROOP_POD_DESC
-'''Carries 2 units of ground [[metertype METER_TROOPS]] and equipment that can be deployed onto a planet. Can only be built on a production location with at least 2 defensive Troops.
-
-[[TROOP_POD_OPERATION_TEXT]]'''
-
-GT_TROOP_POD_2
-Advanced Ground Troop Pod
-
-GT_TROOP_POD_2_DESC
-'''Carries 4 units of cybernetically advanced ground [[metertype METER_TROOPS]] and equipment that can be deployed onto a planet. Can only be built on a production location with at least 4 defensive Troops.
+'''Carries 2 normal or 4 cybernetically enhanced units of ground [[metertype METER_TROOPS]] and equipment that can be deployed onto a planet. Can only be built on a production location with at least 2 defensive Troops.
 
 [[TROOP_POD_OPERATION_TEXT]]'''
 
@@ -13899,7 +13896,8 @@ The cost of this part increases as the empire expands to reflect the upkeep cost
 
 TROOP_POD_OPERATION_TEXT
 '''  * The troops can only be used for one invasion.
-  * The ships carrying troops during an invasion come in for a fast hard landing and are unusable afterwards.'''
+  * The ships carrying troops during an invasion come in for a fast hard landing and are unusable afterwards.
+  * After researching [[tech GRO_NANO_CYBERNET]] new pods are built with 4 instead of 2 troops.'''
 
 SHIP_WEAPON_GRADUALLY_REDUCE
 which allows ships to gradually reduce
