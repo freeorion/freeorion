@@ -1443,6 +1443,9 @@ def update_stockpile_use():
 
 
 def empire_has_colony_bld_species(building_name):
+    """Checks if this building is a colony building for which this empire has the required source species available.
+    :rtype: bool
+    """
     if not building_name.startswith('BLD_COL_'):
         return False
     species_name = 'SP_' + building_name.split('BLD_COL_')[1]
@@ -1450,10 +1453,12 @@ def empire_has_colony_bld_species(building_name):
 
 
 def already_has_completed_colony_building(planet_id):
+    """Checks if a planet has an already-completed (but not yet 'hatched') colony building.
+    :rtype: bool
+    """
     universe = fo.getUniverse()
     planet = universe.getPlanet(planet_id)
-    return any([building_name.startswith('BLD_COL_') for building_name in
-               [universe.getBuilding(bldg).name for bldg in planet.buildingIDs]])
+    return any(universe.getBuilding(bldg).name.startswith('BLD_COL_') for bldg in planet.buildingIDs)
 
 
 def build_ship_facilities(bld_name, best_pilot_facilities, top_locs=None):
