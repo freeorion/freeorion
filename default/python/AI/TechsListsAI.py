@@ -107,10 +107,10 @@ class TechGroup1(TechGroup):
     def __init__(self):
         super(TechGroup1, self).__init__()
         self.economy.extend([
-            "GRO_PLANET_ECOL",
-            "GRO_SUBTER_HAB",
-            "LRN_ALGO_ELEGANCE",
             "LRN_PHYS_BRAIN",
+            "GRO_PLANET_ECOL",
+            "LRN_ALGO_ELEGANCE",
+            "GRO_SUBTER_HAB",
             "LRN_ARTIF_MINDS",
             "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             "PRO_ROBOTIC_PROD",

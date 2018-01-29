@@ -659,12 +659,12 @@ def generate_classic_research_orders():
     #
     # set starting techs, or after turn 100 add any additional default techs
     #
-    if (fo.currentTurn() == 1) or ((total_rp - research_queue.totalSpent) > 0):
+    if (fo.currentTurn() <= 2) or ((total_rp - research_queue.totalSpent) > 0):
         research_index = get_research_index()
         if fo.currentTurn() == 1:
             # do only this one on first turn, to facilitate use of a turn-1 savegame for testing of alternate
             # research strategies
-            new_tech = ["GRO_PLANET_ECOL", "LRN_ALGO_ELEGANCE"]
+            new_tech = ["LRN_PHYS_BRAIN", "LRN_ALGO_ELEGANCE"]
         else:
             new_tech = TechsListsAI.sparse_galaxy_techs(research_index) if galaxy_is_sparse else TechsListsAI.primary_meta_techs(research_index)
         print "Empire %s (%d) is selecting research index %d" % (empire.name, empire_id, research_index)
@@ -758,22 +758,6 @@ def generate_classic_research_orders():
 
     nest_tech = Dep.NEST_DOMESTICATION_TECH
     artif_minds = Dep.ART_MINDS
-
-    # fast-track LRN_PHYS_BRAIN if we want to build the Automatic History Analyzer
-    # The decision-making is made by the relevant ProductionAI.py scripts which also enqueue the building.
-    # Both LRN_ART_MINDS and GRO_SUBTER_HAB are prioritized over this.
-    if not tech_is_complete(Dep.LRN_PHYS_BRAIN):
-        print "Considering whether to fast-track %s to build Automatic History Analyzer" % Dep.LRN_PHYS_BRAIN
-        if ProductionAI.find_automatic_historic_analyzer_candidates():
-            artif_mind_idx = artif_minds in research_queue_list and research_queue_list.index(artif_minds) or 0
-            subter_hab_idx = Dep.GRO_SUBTER_HAB in research_queue_list and research_queue_list.index(Dep.GRO_SUBTER_HAB) or 0
-            insert_idx = 1 + max(artif_mind_idx, subter_hab_idx)
-            res = fo.issueEnqueueTechOrder(Dep.LRN_PHYS_BRAIN, insert_idx)
-            num_techs_accelerated += 1
-            print "Got possible locations to build the Automatic History Analyzer. Enqueuing, got result %d" % res
-            research_queue_list = get_research_queue_techs()
-        else:
-            print "Currently, no interest in building Automatic History Analyzer. Do not fast-track."
 
     if state.have_nest and not tech_is_complete(nest_tech):
         if artif_minds in research_queue_list:
