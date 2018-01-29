@@ -8,6 +8,7 @@ import AIstate
 import FleetUtilsAI
 import FreeOrionAI as foAI
 import PlanetUtilsAI
+import PriorityAI
 import ProductionAI
 import MilitaryAI
 from turn_state import state
@@ -624,13 +625,18 @@ def get_defense_value(species_name):
         return get_base_outpost_defense_value()
 
 
+def _base_asteroid_mining_val():
+    return 5 if tech_is_complete("PRO_MICROGRAV_MAN") else 3
+
+
 def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     """returns the colonisation value of a planet"""
     empire = fo.getEmpire()
     if detail is None:
         detail = []
     retval = 0
-    discount_multiplier = foAI.foAIstate.character.preferred_discount_multiplier([30.0, 40.0])
+    character = foAI.foAIstate.character
+    discount_multiplier = character.preferred_discount_multiplier([30.0, 40.0])
     species = fo.getSpecies(spec_name or "")  # in case None is passed as specName
     species_foci = [] and species and list(species.foci)
     tag_list = list(species.tags) if species else []
@@ -654,6 +660,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     capital_id = PlanetUtilsAI.get_capital()
     homeworld = universe.getPlanet(capital_id)
     planet = universe.getPlanet(planet_id)
+    prospective_invasion_targets = [pid for pid, pscore, trp in
+                                    AIstate.invasionTargets[:PriorityAI.allotted_invasion_targets()] if pscore > 20]
 
     if spec_name != planet.speciesName and planet.speciesName and mission_type != MissionType.INVASION:
         return 0
@@ -864,10 +872,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 detail.append("%s %.1f" % (special, honey_val))
         if planet.size == fo.planetSize.asteroids:
             ast_val = 0
-            if tech_is_complete("PRO_MICROGRAV_MAN"):
-                per_ast = 5
-            else:
-                per_ast = 3
             if system:
                 for pid in system.planetIDs:
                     other_planet = universe.getPlanet(pid)
@@ -877,8 +881,14 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                         elif pid < planet_id and planet.unowned:
                             ast_val = 0
                             break
-                    elif other_planet.speciesName:  # and otherPlanet.owner==empire.empireID
-                        ast_val += per_ast * discount_multiplier
+                    elif other_planet.speciesName:
+                        if other_planet.owner == empire.empireID:
+                            ownership_factor = 1.0
+                        elif pid in prospective_invasion_targets:
+                            ownership_factor = character.secondary_valuation_factor_for_invasion_targets()
+                        else:
+                            ownership_factor = 0.0
+                        ast_val += ownership_factor * _base_asteroid_mining_val() * discount_multiplier
                 retval += ast_val
                 if ast_val > 0:
                     detail.append("AsteroidMining %.1f" % ast_val)
@@ -898,10 +908,16 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                         elif pid < planet_id and planet.unowned:
                             ast_val = 0
                             break
-                    elif other_planet.speciesName:  # and otherPlanet.owner==empire.empireID
+                    elif other_planet.speciesName:
                         other_species = fo.getSpecies(other_planet.speciesName)
                         if other_species and other_species.canProduceShips:
-                            ast_val += per_ast * discount_multiplier
+                            if other_planet.owner == empire.empireID:
+                                ownership_factor = 1.0
+                            elif pid in prospective_invasion_targets:
+                                ownership_factor = character.secondary_valuation_factor_for_invasion_targets()
+                            else:
+                                ownership_factor = 0.0
+                            ast_val += ownership_factor * per_ast * discount_multiplier
                 retval += ast_val
                 if ast_val > 0:
                     detail.append("AsteroidShipBuilding %.1f" % ast_val)
@@ -983,46 +999,45 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
         mining_bonus = 0
         per_ggg = 10
 
-        got_asteroids = False
-        got_owned_asteroids = False
-        local_gg = False
-        got_owned_gg = False
+        asteroid_factor = 0.0
+        gg_factor = 0.0
         ast_shipyard_name = ""
         if system and FocusType.FOCUS_INDUSTRY in species.foci:
             for pid in [temp_id for temp_id in system.planetIDs if temp_id != planet_id]:
                 p2 = universe.getPlanet(pid)
                 if p2:
                     if p2.size == fo.planetSize.asteroids:
-                        got_asteroids = True
-                        ast_shipyard_name = p2.name
-                        if p2.owner != -1:
-                            got_owned_asteroids = True
+                        this_factor = 0.0
+                        if p2.owner == empire.empireID:
+                            this_factor = 1.0
+                        elif p2.unowned:
+                            this_factor = 0.5
+                        elif pid in prospective_invasion_targets:
+                            this_factor = character.secondary_valuation_factor_for_invasion_targets()
+                        if this_factor > asteroid_factor:
+                            asteroid_factor = this_factor
+                            ast_shipyard_name = p2.name
                     if p2.size == fo.planetSize.gasGiant:
-                        local_gg = True
-                        if p2.owner != -1:
-                            got_owned_gg = True
-        if got_asteroids:
+                        if p2.owner == empire.empireID:
+                            gg_factor = max(gg_factor, 1.0)
+                        elif p2.unowned:
+                            gg_factor = max(gg_factor, 0.5)
+                        elif pid in prospective_invasion_targets:
+                            gg_factor = max(gg_factor, character.secondary_valuation_factor_for_invasion_targets())
+        if asteroid_factor > 0.0:
             if tech_is_complete("PRO_MICROGRAV_MAN") or "PRO_MICROGRAV_MAN" in empire_research_list[:10]:
-                if got_owned_asteroids:  # can be quickly captured
-                    flat_industry += 5  # will go into detailed industry projection
-                    detail.append("Asteroid mining ~ %.1f" % (5 * discount_multiplier))
-                else:  # uncertain when can be outposted
-                    asteroid_bonus = 2.5 * discount_multiplier  # give partial value
-                    detail.append("Asteroid mining %.1f" % (5 * discount_multiplier))
+                flat_industry += 5 * asteroid_factor  # will go into detailed industry projection
+                detail.append("Asteroid mining ~ %.1f" % (5 * asteroid_factor * discount_multiplier))
             if tech_is_complete("SHP_ASTEROID_HULLS") or "SHP_ASTEROID_HULLS" in empire_research_list[:11]:
                 if species and species.canProduceShips:
-                    asteroid_bonus += 30 * discount_multiplier * pilot_val
+                    asteroid_bonus = 30 * discount_multiplier * pilot_val
                     detail.append(
                         "Asteroid ShipBuilding from %s %.1f" % (
-                            ast_shipyard_name, discount_multiplier * 20 * pilot_val))
-        if local_gg:
+                            ast_shipyard_name, discount_multiplier * 30 * pilot_val))
+        if gg_factor > 0.0:
             if tech_is_complete("PRO_ORBITAL_GEN") or "PRO_ORBITAL_GEN" in empire_research_list[:5]:
-                if got_owned_gg:
-                    flat_industry += per_ggg  # will go into detailed industry projection
-                    detail.append("GGG ~ %.1f" % (per_ggg * discount_multiplier))
-                else:
-                    gas_giant_bonus = 0.5 * per_ggg * discount_multiplier
-                    detail.append("GGG %.1f" % (0.5 * per_ggg * discount_multiplier))
+                flat_industry += per_ggg * gg_factor  # will go into detailed industry projection
+                detail.append("GGG ~ %.1f" % (per_ggg * gg_factor * discount_multiplier))
 
         # calculate the maximum population of the species on that planet.
         if planet.speciesName not in AIDependencies.SPECIES_FIXED_POPULATION:
