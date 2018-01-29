@@ -1,3 +1,6 @@
+import freeOrionAIInterface
+
+
 class aggression(object):
     """Aggression enumeration."""
     beginner = 0
@@ -17,8 +20,6 @@ def userStringList(x):
     """userStringList mock"""
     return "UserStringList %s" % x
 
-
-import freeOrionAIInterface
 
 freeOrionAIInterface.aggression = aggression
 freeOrionAIInterface.userString = userString

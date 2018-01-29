@@ -125,6 +125,7 @@ def test_setstate_call():
         with pytest.raises(Success, message="__setstate__ was not called during decoding."):
             savegame_codec.decode(savegame_codec.encode(SetStateTester()))
 
+
 def test_enums():
     import EnumsAI
 
