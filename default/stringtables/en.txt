@@ -1079,7 +1079,7 @@ RULE_STOCKPILE_IMPORT_LIMITED
 Stockpile Import Limited
 
 RULE_STOCKPILE_IMPORT_LIMITED_DESC
-Enabled limits on stockpile import per turn
+Enables limits on stockpile import per turn
 
 RULE_TEST_INT
 Test Integer
