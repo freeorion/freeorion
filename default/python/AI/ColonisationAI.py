@@ -625,7 +625,7 @@ def get_defense_value(species_name):
         return get_base_outpost_defense_value()
 
 
-def base_asteroid_mining_val():
+def _base_asteroid_mining_val():
     return 5 if tech_is_complete("PRO_MICROGRAV_MAN") else 3
 
 
@@ -888,7 +888,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                             ownership_factor = character.secondary_valuation_factor_for_invasion_targets()
                         else:
                             ownership_factor = 0.0
-                        ast_val += ownership_factor * base_asteroid_mining_val() * discount_multiplier
+                        ast_val += ownership_factor * _base_asteroid_mining_val() * discount_multiplier
                 retval += ast_val
                 if ast_val > 0:
                     detail.append("AsteroidMining %.1f" % ast_val)
