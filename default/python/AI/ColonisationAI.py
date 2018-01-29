@@ -1007,24 +1007,23 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 p2 = universe.getPlanet(pid)
                 if p2:
                     if p2.size == fo.planetSize.asteroids:
+                        this_factor = 0.0
                         if p2.owner == empire.empireID:
-                            asteroid_factor = 1.0
+                            this_factor = 1.0
                         elif p2.unowned:
-                            asteroid_factor = 0.5
+                            this_factor = 0.5
                         elif pid in prospective_invasion_targets:
-                            asteroid_factor = character.secondary_valuation_factor_for_invasion_targets()
-                        else:
-                            asteroid_factor = 0.0
-                        ast_shipyard_name = p2.name
+                            this_factor = character.secondary_valuation_factor_for_invasion_targets()
+                        if this_factor > asteroid_factor:
+                            asteroid_factor = this_factor
+                            ast_shipyard_name = p2.name
                     if p2.size == fo.planetSize.gasGiant:
                         if p2.owner == empire.empireID:
-                            gg_factor = 1.0
+                            gg_factor = max(gg_factor, 1.0)
                         elif p2.unowned:
-                            gg_factor = 0.5
+                            gg_factor = max(gg_factor, 0.5)
                         elif pid in prospective_invasion_targets:
-                            gg_factor = character.secondary_valuation_factor_for_invasion_targets()
-                        else:
-                            gg_factor = 0.0
+                            gg_factor = max(gg_factor, character.secondary_valuation_factor_for_invasion_targets())
         if asteroid_factor > 0.0:
             if tech_is_complete("PRO_MICROGRAV_MAN") or "PRO_MICROGRAV_MAN" in empire_research_list[:10]:
                 flat_industry += 5 * asteroid_factor  # will go into detailed industry projection
