@@ -50,24 +50,6 @@ GREAT_PILOT_RATING = 6.0
 ULT_PILOT_RATING = 12.0
 
 
-def _get_planet_size(planet):
-    """Get the colonisation-relevant planet size.
-
-    :param planet: Planet whose size should be find
-    :type planet: fo.Planet
-    :return: size of the planet
-    :rtype: int
-    """
-    if planet.size == fo.planetSize.asteroids:
-        planet_size = 3
-    elif planet.size == fo.planetSize.gasGiant:
-        planet_size = 6
-    else:
-        planet_size = planet.size
-
-    return planet_size
-
-
 def colony_pod_cost():
     return AIDependencies.COLONY_POD_COST * (1 + state.get_number_of_colonies()*AIDependencies.COLONY_POD_UPKEEP)
 
@@ -77,7 +59,7 @@ def outpod_pod_cost():
 
 
 def calc_max_pop(planet, species, detail):
-    planet_size = _get_planet_size(planet)
+    planet_size = AIDependencies.planet_size_as_int(planet.size)
     planet_env = species.getPlanetEnvironment(planet.type)
     if planet_env == fo.planetEnvironment.uninhabitable:
         detail.append("Uninhabitable.")
