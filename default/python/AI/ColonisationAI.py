@@ -882,7 +882,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                             ast_val = 0
                             break
                     elif other_planet.speciesName:
-                        if other_planet.owner==empire.empireID:
+                        if other_planet.owner == empire.empireID:
                             ownership_factor = 1.0
                         elif pid in prospective_invasion_targets:
                             ownership_factor = character.secondary_valuation_factor_for_invasion_targets()
@@ -911,7 +911,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                     elif other_planet.speciesName:
                         other_species = fo.getSpecies(other_planet.speciesName)
                         if other_species and other_species.canProduceShips:
-                            if other_planet.owner==empire.empireID:
+                            if other_planet.owner == empire.empireID:
                                 ownership_factor = 1.0
                             elif pid in prospective_invasion_targets:
                                 ownership_factor = character.secondary_valuation_factor_for_invasion_targets()
@@ -1007,7 +1007,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 p2 = universe.getPlanet(pid)
                 if p2:
                     if p2.size == fo.planetSize.asteroids:
-                        if p2.owner==empire.empireID:
+                        if p2.owner == empire.empireID:
                             asteroid_factor = 1.0
                         elif p2.unowned:
                             asteroid_factor = 0.5
@@ -1017,7 +1017,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                             asteroid_factor = 0.0
                         ast_shipyard_name = p2.name
                     if p2.size == fo.planetSize.gasGiant:
-                        if p2.owner==empire.empireID:
+                        if p2.owner == empire.empireID:
                             gg_factor = 1.0
                         elif p2.unowned:
                             gg_factor = 0.5
