@@ -661,7 +661,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     homeworld = universe.getPlanet(capital_id)
     planet = universe.getPlanet(planet_id)
     prospective_invasion_targets = [pid for pid, pscore, trp in
-                                    AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets] if pscore > 20]
+                                    AIstate.invasionTargets[:PriorityAI.allotted_invasion_targets()] if pscore > 20]
 
     if spec_name != planet.speciesName and planet.speciesName and mission_type != MissionType.INVASION:
         return 0

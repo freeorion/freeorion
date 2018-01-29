@@ -21,7 +21,6 @@ from common.configure_logging import convenience_function_references_for_logger
 
 prioritiees_timer = AITimer('calculate_priorities()')
 
-allottedInvasionTargets = 0
 allottedColonyTargets = 0
 allotted_outpost_targets = 0
 unmetThreat = 0
@@ -315,7 +314,6 @@ def _calculate_outpost_priority():
 def _calculate_invasion_priority():
     """Calculates the demand for troop ships by opponent planets."""
 
-    global allottedInvasionTargets
     if not foAI.foAIstate.character.may_invade():
         return 0
 
@@ -331,10 +329,9 @@ def _calculate_invasion_priority():
     else:
         best_colony_score = 2
 
-    allottedInvasionTargets = 1 + int(fo.currentTurn() / 25)
     total_val = 0
     troops_needed = 0
-    for pid, pscore, trp in AIstate.invasionTargets[:allottedInvasionTargets]:
+    for pid, pscore, trp in AIstate.invasionTargets[:allotted_invasion_targets()]:
         if pscore > best_colony_score:
             multiplier += 1
             total_val += 2 * pscore
@@ -382,6 +379,10 @@ def _calculate_invasion_priority():
         return 0
 
     return invasion_priority * foAI.foAIstate.character.invasion_priority_scaling()
+
+
+def allotted_invasion_targets():
+    return 1 + int(fo.currentTurn() / 25)
 
 
 def _calculate_military_priority():
