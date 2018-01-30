@@ -124,7 +124,6 @@ def _inspect(obj, instances):
             data.append(inspect_instance(instance))
         except Exception as e:
             print "Error inspecting:", type(instance), type(e), e
-            from traceback import print_exc
     return data
 
 
