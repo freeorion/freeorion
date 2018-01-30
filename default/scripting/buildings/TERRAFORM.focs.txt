@@ -15,6 +15,7 @@ BuildingType
             Species name = "SP_EXOBOT"
             Planet environment = Adequate
         ]
+        Not HasTag name = "NO_TERRAFORM"
     ]
     EnqueueLocation = And [
         Planet
