@@ -16,29 +16,37 @@ BuildingType
             scope = And [
                 Planet
                 InSystem id = Source.SystemID
-                Planet type = GasGiant
                 Focus type = "FOCUS_INDUSTRY"
                 NOT Population high = 0
                 OwnedBy empire = Source.Owner
             ]
-            stackinggroup = "GAS_GIANT_GEN_STACK"
-            priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetIndustry value = Value + 5
-
-        EffectsGroup
-            scope = And [
+            activation = ContainedBy And [
                 Planet
-                InSystem id = Source.SystemID
-                Not Planet type = GasGiant
-                Focus type = "FOCUS_INDUSTRY"
-                NOT Population high = 0
-                OwnedBy empire = Source.Owner
+                Population high = 0
             ]
             stackinggroup = "GAS_GIANT_GEN_STACK"
             priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + 10
 
-            EffectsGroup
+        EffectsGroup
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                Focus type = "FOCUS_INDUSTRY"
+                NOT Population high = 0
+                OwnedBy empire = Source.Owner
+            ]
+            activation = ContainedBy And [
+                Planet
+                Not Population high = 0
+            ]
+            stackinggroup = "GAS_GIANT_GEN_STACK"
+            // if there is an unpopulated gas giant generator planet then that bonus applies
+            // VERY_LATE_PRIORITY__PLUS_ONE
+            priority = 121
+            effects = SetTargetIndustry value = Value + 5
+
+        EffectsGroup
             scope = Source
             activation = Not Planet type = GasGiant
             effects = Destroy
