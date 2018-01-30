@@ -5535,7 +5535,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
     auto fleet_ids = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleetIDs();
 
-    // apply to all this-player-owned fleets in currently-active FleetWnd
+    // apply to all selected this-player-owned fleets in currently-active FleetWnd
     for (int fleet_id : fleet_ids) {
         auto fleet = GetFleet(fleet_id);
         if (!fleet) {
@@ -5704,14 +5704,14 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
 
     int already_selected_fleet_id = INVALID_OBJECT_ID;
 
-    // Find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
+    // Find if a FleetWnd for these fleet(s) is already open, and if so, if there
     // is a single selected fleet in the window, and if so, what fleet that
     // is.
 
     // Note: The shared_ptr<FleetWnd> scope is confined to this if block, so that
     // SelectFleet below can delete the FleetWnd and re-use the CUIWnd config from
     // OptionsDB if needed.
-    if (const auto& wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleetID(fleet_ids[0])) {
+    if (const auto& wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleetIDs(fleet_ids)) {
         // check which fleet(s) is/are selected in the button's FleetWnd
         auto selected_fleet_ids = wnd_for_button->SelectedFleetIDs();
 
