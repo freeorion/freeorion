@@ -5702,13 +5702,16 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
     if (fleet_ids.empty())
         return;
 
-    // find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
-    // is a single selected fleet in the window, and if so, what fleet that is
-    const auto& wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleetID(fleet_ids[0]);
     int already_selected_fleet_id = INVALID_OBJECT_ID;
-    if (wnd_for_button) {
-        // there is already FleetWnd for this button open.
 
+    // Find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
+    // is a single selected fleet in the window, and if so, what fleet that
+    // is.
+
+    // Note: The shared_ptr<FleetWnd> scope is confined to this if block, so that
+    // SelectFleet below can delete the FleetWnd and re-use the CUIWnd config from
+    // OptionsDB if needed.
+    if (const auto& wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleetID(fleet_ids[0])) {
         // check which fleet(s) is/are selected in the button's FleetWnd
         auto selected_fleet_ids = wnd_for_button->SelectedFleetIDs();
 
