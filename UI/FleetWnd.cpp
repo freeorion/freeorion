@@ -433,13 +433,30 @@ FleetWnd* FleetUIManager::ActiveFleetWnd() const
 
 std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetID(int fleet_id) const {
     std::shared_ptr<FleetWnd> retval = nullptr;
-    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                 [&retval, fleet_id](std::shared_ptr<FleetWnd>& wnd)
-                                 {
-                                     if (!retval && wnd->ContainsFleet(fleet_id))
-                                         retval = wnd;
-                                 });
+    GG::ProcessThenRemoveExpiredPtrs(
+        m_fleet_wnds,
+        [&retval, fleet_id](std::shared_ptr<FleetWnd>& wnd)
+        {
+            if (!retval && wnd->ContainsFleet(fleet_id))
+                retval = wnd;
+        });
     return retval;
+}
+
+std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetIDs(const std::vector<int>& fleet_ids_) const {
+    std::unordered_set<int> fleet_ids;
+    for (const auto id : fleet_ids_)
+        fleet_ids.insert(id);
+    std::shared_ptr<FleetWnd> retval = nullptr;
+    GG::ProcessThenRemoveExpiredPtrs(
+        m_fleet_wnds,
+        [&retval, fleet_ids](std::shared_ptr<FleetWnd>& wnd)
+        {
+            if (!retval && wnd->ContainsFleets(fleet_ids))
+                retval = wnd;
+        });
+    return retval;
+
 }
 
 int FleetUIManager::SelectedShipID() const {
@@ -3361,6 +3378,26 @@ bool FleetWnd::ContainsFleet(int fleet_id) const {
             return true;
     }
     return false;
+}
+
+template <typename Set>
+bool FleetWnd::ContainsFleets(const Set& fleet_ids_) const {
+    if (fleet_ids_.empty())
+        return false;
+
+    auto fleet_ids = fleet_ids_;
+
+    // Remove found ids from fleet_ids.  If fleet_ids is empty, all have been found.
+    for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
+        auto fleet = GetFleet(FleetInRow(it));
+        if (fleet)
+            fleet_ids.erase(fleet->ID());
+
+        if (fleet_ids.empty())
+            return true;
+    }
+
+    return fleet_ids.empty();
 }
 
 const std::set<int>& FleetWnd::FleetIDs() const
