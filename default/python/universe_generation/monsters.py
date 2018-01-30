@@ -124,7 +124,8 @@ def generate_monsters(monster_freq, systems):
     universe = fo.get_universe()
 
     # Fleet plans that include ships capable of altering starlanes.
-    # @content_tag{CAN_ALTER_STARLANES} universe_generator special handling for fleets containing a hull design with this tag.
+    # @content_tag{CAN_ALTER_STARLANES} universe_generator special handling
+    # for fleets containing a hull design with this tag.
     fleet_can_alter_starlanes = {fp for fp in fleet_plans
                                  if any([universe.getGenericShipDesign(design).hull_type.hasTag("CAN_ALTER_STARLANES")
                                          for design in fp.ship_designs()])}
@@ -203,10 +204,12 @@ def generate_monsters(monster_freq, systems):
 
     print "Actual # monster fleets placed: %d; Total Placement Expectation: %.1f" % (actual_tally, expectation_tally)
     # finally, compile some statistics to be dumped to the log later
-    universe_statistics.monsters_summary = [(fp.name(), fp.spawn_limit() - counter) for fp, counter in spawn_limits.iteritems()]
+    universe_statistics.monsters_summary = [
+        (fp.name(), fp.spawn_limit() - counter) for fp, counter in spawn_limits.iteritems()
+    ]
     universe_statistics.tracked_monsters_tries.update(tracked_plan_tries)
     universe_statistics.tracked_monsters_summary.update(tracked_plan_counts)
-    universe_statistics.tracked_monsters_location_summary.update([(fp.name(), count)
-                                                         for fp, count in tracked_plan_valid_locations.iteritems()])
-    universe_statistics.tracked_nest_location_summary.update([(nest_name_map[nest], count)
-                                                     for nest, count in tracked_nest_valid_locations.items()])
+    universe_statistics.tracked_monsters_location_summary.update(
+        (fp.name(), count) for fp, count in tracked_plan_valid_locations.iteritems())
+    universe_statistics.tracked_nest_location_summary.update(
+        (nest_name_map[nest], count) for nest, count in tracked_nest_valid_locations.items())
