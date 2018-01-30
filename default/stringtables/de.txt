@@ -5695,9 +5695,6 @@ Antimaterietank
 SHP_ANTIMATTER_TANK_DESC
 Erhöht die Kapazität der Treibstofftanks ordentlich.
 
-SHP_ANTIMATTER_TANK
-Antimateriespeicher
-
 SHP_ZERO_POINT
 Nullpunkt-Treibstoffgenerator
 
