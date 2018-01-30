@@ -3094,27 +3094,26 @@ void FleetWnd::Refresh() {
 
     // Determine FleetWnd location.
 
-    // Are all fleets in one location?  Use that location.
-    // Otherwise, are all selected fleets in one location?  Use that location.
-    // Otherwise, is the current location a system?  Use that location.
+    // Are all fleets in one system?  Use that location.
+    // Otherwise, are all selected fleets in one system?  Use that location.
     // Otherwise, are all the moving fleets clustered within m_bounding_box of each other?
     // Otherwise, are all the selected fleets clustered within m_bounding_box of each other?
+    // Otherwise, is the current location a system?  Use that location.
     // Otherwise remove all fleets as all fleets have gone in separate directions.
 
     std::pair<int, GG::Pt> location{INVALID_OBJECT_ID, GG::Pt(GG::X0, GG::Y0)};
     if (!fleet_locations_ids.empty()
+        && fleet_locations_ids.begin()->first.first != INVALID_OBJECT_ID
         && (fleet_locations_ids.count(fleet_locations_ids.begin()->first) == fleet_locations_ids.size()))
     {
         location = fleet_locations_ids.begin()->first;
 
     } else if (!selected_fleet_locations_ids.empty()
+               && selected_fleet_locations_ids.begin()->first.first != INVALID_OBJECT_ID
                && (selected_fleet_locations_ids.count(selected_fleet_locations_ids.begin()->first)
                    == selected_fleet_locations_ids.size()))
     {
         location = selected_fleet_locations_ids.begin()->first;
-
-    } else if (auto system = GetSystem(m_system_id)) {
-        location = {m_system_id, GG::Pt(GG::X(system->X()), GG::Y(system->Y()))};
 
     } else if (!fleet_locations_ids.empty()
                && SmallerOrEqual(fleets_bounding_box, m_bounding_box))
@@ -3140,6 +3139,9 @@ void FleetWnd::Refresh() {
                 fleets_near_enough.insert({location, loc_and_id.second});
         }
         fleet_locations_ids.swap(fleets_near_enough);
+    } else if (auto system = GetSystem(m_system_id)) {
+        location = {m_system_id, GG::Pt(GG::X(system->X()), GG::Y(system->Y()))};
+
     } else {
         fleet_locations_ids.clear();
         selected_fleet_locations_ids.clear();
