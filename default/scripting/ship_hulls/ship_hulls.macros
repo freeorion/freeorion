@@ -131,6 +131,13 @@ REFUEL_MESSAGE
         (Source.Fuel
          + @1@ * (Statistic If Condition = Turn low = Source.ArrivedOnTurn + 1)
          + 0.1 * (Statistic If Condition = DesignHasPart name = "FU_RAMSCOOP")
+         + 0.1 * (Statistic If Condition = And [
+            Species name = "SP_SLY"
+            ContainedBy condition = And [
+                Object id = Source.SystemID
+                Contains condition = And [ Planet type = GasGiant
+                    Not OwnedBy affiliation = EnemyOf empire = Source.Owner
+            ] ] ] )
          >= 1
         )
     ]
