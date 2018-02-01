@@ -294,7 +294,7 @@ class AIstate(object):
                 sys_status.get('jump2_threat', 0.0),
                 sys_status.get('jump3_threat', 0.0),
             ])
-        threat_table.print_table()
+        info(threat_table)
 
     def __report_system_defenses(self):
         """Print a table with system defenses to the logfile."""
@@ -319,7 +319,7 @@ class AIstate(object):
                 sys_status.get('my_jump2_rating', 0.0),
                 sys_status.get('my_jump3_rating', 0.0),
             ])
-        defense_table.print_table()
+        info(defense_table)
 
     def assess_planet_threat(self, pid, sighting_age=0):
         sighting_age += 1  # play it safe
@@ -876,7 +876,7 @@ class AIstate(object):
                         m_mt0 = targets[0]
                         if isinstance(m_mt0.target_type, System):
                             fleet_status['sysID'] = m_mt0.target.id  # hmm, but might still be a fair ways from here
-        fleet_table.print_table()
+        info(fleet_table)
         # Next string used in charts. Don't modify it!
         print "Empire Ship Count: ", self.shipCount
         print "Empire standard fighter summary: ", CombatRatingsAI.get_empire_standard_fighter().get_stats()
@@ -920,7 +920,7 @@ class AIstate(object):
                     FleetUtilsAI.count_troops_in_fleet(fleet_id),
                     mission.target or "-"
                 ])
-        mission_table.print_table()
+        info(mission_table)
 
     def __split_new_fleets(self):
         """Split any new fleets.

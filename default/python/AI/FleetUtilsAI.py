@@ -466,7 +466,7 @@ def generate_fleet_orders_for_fleet_missions():
     if outpost_base_fleet_missions:
         print "Outpost Base targets (must have been interrupted by combat): "
     else:
-        print "Outpost targets: None (as expected, due to expected timing of order submission and execution)"
+        print "Outpost Base targets: None (as expected, due to expected timing of order submission and execution)"
     for outpost_fleet_mission in outpost_base_fleet_missions:
         print "    %s" % outpost_fleet_mission
 

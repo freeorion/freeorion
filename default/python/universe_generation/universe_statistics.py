@@ -1,6 +1,7 @@
 import freeorion as fo
 from common.print_utils import Float, Sequence, Table, Text
 
+
 import natives
 import planets
 import universe_tables
@@ -40,7 +41,7 @@ def log_planet_count_dist(sys_list):
     )
     for planet_count, sys_count in planet_count_dist.items():
         count_distribution_table.add_row((planet_count, sys_count[0], 100.0 * sys_count[0] / len(sys_list)))
-    count_distribution_table.print_table()
+    print count_distribution_table
     print
 
     size_distribution = Table(
@@ -49,7 +50,7 @@ def log_planet_count_dist(sys_list):
     )
     for planet_size, planet_count in sorted(planet_size_dist.items()):
         size_distribution.add_row((planet_size, planet_count, 100.0 * planet_count / planet_tally))
-    size_distribution.print_table()
+    print size_distribution
     print
 
 
@@ -67,7 +68,7 @@ def log_planet_type_summary(sys_list):
 
     for planet_type, planet_count in sorted(planet_type_summary_table.items()):
         type_summary_table.add_row((planet_type.name, 100.0 * planet_count / planet_total))
-    type_summary_table.print_table()
+    print type_summary_table
     print
 
 
@@ -86,7 +87,7 @@ def log_species_summary(native_freq):
 
     for species, count in sorted(empire_species.items()):
         species_summary_table.add_row((species, count, 100.0 * count / num_empires))
-    species_summary_table.print_table()
+    print species_summary_table
     print
 
     native_chance = universe_tables.NATIVE_FREQUENCY[native_freq]
@@ -123,7 +124,7 @@ def log_species_summary(native_freq):
                  [str(p_t) for p_t in natives.planet_types_for_natives[species]]]
             )
 
-    native_table.print_table()
+    print native_table
     print
 
     native_settled_planet_total = sum(settled_native_planet_summary.values())
@@ -139,7 +140,7 @@ def log_species_summary(native_freq):
         potential_percent = 100.0 * planet_count / (1E-10 + native_potential_planet_total)
         settled_percent = 100.0 * settled_planet_count / (1E-10 + planet_count)
         type_summary_table.add_row((planet_type.name, potential_percent, settled_percent))
-    type_summary_table.print_table()
+    print type_summary_table
     print
 
 
@@ -147,7 +148,7 @@ def log_monsters_summary(monster_freq):
     monster_place_table = Table([Text('monster'), Text('count')], table_name='Monster placement')
     for monster, counter in sorted(monsters_summary):
         monster_place_table.add_row([monster, counter])
-    monster_place_table.print_table()
+    print monster_place_table
     print
 
     monster_chance = universe_tables.MONSTER_FREQUENCY[monster_freq]
@@ -163,7 +164,7 @@ def log_monsters_summary(monster_freq):
              tracked_monsters_tries[monster], tracked_monsters_summary[monster],
              tracked_monsters_location_summary[monster], tracked_nest_location_summary[monster])
         )
-    monster_table.print_table()
+    print monster_table
     print
 
 
@@ -174,7 +175,7 @@ def log_specials_summary():
     )
     for special in sorted(specials_summary):
         special_placement_count_table.add_row([special, specials_summary[special]])
-    special_placement_count_table.print_table()
+    print special_placement_count_table
     print
 
     special_placement = Table(
@@ -184,7 +185,7 @@ def log_specials_summary():
     objects_tally = sum(specials_repeat_dist.values())
     for number, tally in specials_repeat_dist.items():
         special_placement.add_row((number, tally, 100.0 * tally / (1E-10 + objects_tally)))
-    special_placement.print_table()
+    print special_placement
     print
 
 

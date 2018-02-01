@@ -141,6 +141,9 @@ class Table(object):
         self.__rows = []
         self.__headers = headers
 
+    def __str__(self):
+        return self.get_table()
+
     def add_row(self, row):
         self.__rows.append(tuple(h.to_unicode(cell) for h, cell in zip(self.__headers, row)))
 
@@ -150,9 +153,6 @@ class Table(object):
                        sum(column_widthes) +
                        2
                        )
-
-    def print_table(self):
-        print self.get_table()
 
     def get_table(self):
         columns = [[len(y) for y in x] for x in zip(*self.__rows)]

@@ -293,7 +293,7 @@ class Reporter(object):
                 planet.speciesName,
                 "%.1f/%.1f" % (population, max_population)
             ])
-        foci_table.print_table()
+        info(foci_table)
         print "Empire Totals:\nPopulation: %5d \nProduction: %5d\nResearch: %5d\n" % (
             empire.population(), empire.productionPoints, empire.resourceProduction(fo.resourceType.research))
         for name, (cp, mp) in warnings.iteritems():

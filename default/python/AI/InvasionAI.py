@@ -227,8 +227,7 @@ def get_invasion_fleets():
             planet and planet.speciesName or "unknown",
             ptroops
         ])
-    print
-    invasion_table.print_table()
+    info(invasion_table)
 
     sorted_planets = filter(lambda x: x[1] > 0, sorted_planets)
     # export opponent planets for other AI modules
