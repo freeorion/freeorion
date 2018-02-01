@@ -106,13 +106,13 @@ bool PythonServer::InitModules() {
     return true;
 }
 
-bool PythonServer::IsRequireAuth(const std::string& player_name, bool &result, Networking::AuthRoles& roles) const {
+bool PythonServer::IsRequireAuthOrReturnRoles(const std::string& player_name, bool &result, Networking::AuthRoles& roles) const {
     boost::python::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
     if (!auth_provider) {
         ErrorLogger() << "Unable to get Python object auth_provider";
         return false;
     }
-    boost::python::object f = auth_provider.attr("is_require_auth");
+    boost::python::object f = auth_provider.attr("is_require_auth_or_return_roles");
     if (!f) {
         ErrorLogger() << "Unable to call Python method is_require_auth";
         return false;
@@ -131,13 +131,13 @@ bool PythonServer::IsRequireAuth(const std::string& player_name, bool &result, N
     return true;
 }
 
-bool PythonServer::IsSuccessAuth(const std::string& player_name, const std::string& auth, bool &result, Networking::AuthRoles& roles) const {
+bool PythonServer::IsSuccessAuthAndReturnRoles(const std::string& player_name, const std::string& auth, bool &result, Networking::AuthRoles& roles) const {
     boost::python::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
     if (!auth_provider) {
         ErrorLogger() << "Unable to get Python object auth_provider";
         return false;
     }
-    boost::python::object f = auth_provider.attr("is_success_auth");
+    boost::python::object f = auth_provider.attr("is_success_auth_and_return_roles");
     if (!f) {
         ErrorLogger() << "Unable to call Python method is_success_auth";
         return false;

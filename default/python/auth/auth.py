@@ -30,7 +30,7 @@ class AuthProvider:
             warn("Cann't read auth file %s: %s %s" % (fo.get_user_config_dir() + "/auth.txt", exctype, value))
         info("Auth initialized")
 
-    def is_require_auth(self, player_name):
+    def is_require_auth_or_return_roles(self, player_name):
         """Returns True if player should be authenticated or list of roles for anonymous players"""
         known_login = player_name in self.logins
         if not known_login:
@@ -38,7 +38,7 @@ class AuthProvider:
             return [ fo.roleType.clientTypeModerator, fo.roleType.clientTypePlayer, fo.roleType.clientTypeObserver, fo.roleType.galaxySetup ]
         return True
 
-    def is_success_auth(self, player_name, auth):
+    def is_success_auth_and_return_roles(self, player_name, auth):
         """Return False if passowrd doesn't match or list of roles for authenticated player"""
         auth_data = self.logins.get(player_name)
         if auth_data[0] == auth:
