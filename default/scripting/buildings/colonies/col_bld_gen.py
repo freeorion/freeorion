@@ -106,8 +106,8 @@ BuildingType
         ${species_condition}
     ]
     effectsgroups = [
-        [[LIFECYCLE_MANIP_POPULATION_EFFECTS]]
-            
+        [[LIFECYCLE_MANIP_POPULATION_EFFECTS("${id}")]]
+        
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID

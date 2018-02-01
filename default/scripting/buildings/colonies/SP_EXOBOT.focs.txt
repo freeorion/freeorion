@@ -24,8 +24,8 @@ BuildingType
         // no existing Exobot colony required!
     ]
     effectsgroups = [
-        [[LIFECYCLE_MANIP_POPULATION_EFFECTS]]
-            
+        [[LIFECYCLE_MANIP_POPULATION_EFFECTS("SP_EXOBOT")]]
+        
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID

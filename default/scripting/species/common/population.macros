@@ -210,6 +210,7 @@ PHOTOTROPHIC_BONUS
             effects = SetTargetPopulation value = Value - 10 * Source.SizeAsDouble
 '''
 
+// @1@ Species key
 LIFECYCLE_MANIP_POPULATION_EFFECTS
 '''
         EffectsGroup
@@ -222,7 +223,7 @@ LIFECYCLE_MANIP_POPULATION_EFFECTS
                 Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
             ]
             effects = [
-                SetSpecies name = ThisSpecies
+                SetSpecies name = @1@
                 SetPopulation value = 1
             ]
             
@@ -236,7 +237,7 @@ LIFECYCLE_MANIP_POPULATION_EFFECTS
                 Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
             ]
             effects = [
-                SetSpecies name = ThisSpecies
+                SetSpecies name = @1@
                 SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
             ]
 '''

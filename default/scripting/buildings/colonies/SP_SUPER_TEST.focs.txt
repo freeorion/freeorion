@@ -65,8 +65,8 @@ BuildingType
         ((GameRule name = "RULE_ENABLE_SUPER_TESTER") > 0)
     ]
     effectsgroups = [
-        [[LIFECYCLE_MANIP_POPULATION_EFFECTS]]
-            
+        [[LIFECYCLE_MANIP_POPULATION_EFFECTS("SP_SUPER_TEST")]]
+        
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID

@@ -89,8 +89,8 @@ BuildingType
         ]
     ]
     effectsgroups = [
-        [[LIFECYCLE_MANIP_POPULATION_EFFECTS]]
-            
+        [[LIFECYCLE_MANIP_POPULATION_EFFECTS("SP_MISIORLA")]]
+        
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
