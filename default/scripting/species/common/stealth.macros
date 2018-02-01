@@ -57,3 +57,5 @@ ULTIMATE_STEALTH
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth value = Value + [[HIGH_STEALTH]]
 '''
+
+#include "/scripting/common/stealth.macros"

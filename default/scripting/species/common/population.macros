@@ -240,3 +240,7 @@ LIFECYCLE_MANIP_POPULATION_EFFECTS
                 SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
             ]
 '''
+
+#include "/scripting/species/common/advanced_focus.macros"
+#include "/scripting/species/common/focus.macros"
+#include "/scripting/species/common/general.macros"
