@@ -6,25 +6,13 @@ Tech
     researchcost = 40 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
     tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
-    effectsgroups = [
+    effectsgroups =
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
             ]
             effects = SetMaxSupply value = Value + 1
-            
-        EffectsGroup    // outpost supply increases 1 per turn up to max
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                Not Species
-            ]
-            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetSupply value = Min(Value(Target.MaxSupply), Value + 1)
-    ]
-            
     graphic = "icons/tech/orbital_construction.png"
 
 #include "/scripting/common/base_prod.macros"
-#include "/scripting/common/priorities.macros"

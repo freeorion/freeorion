@@ -52,6 +52,16 @@ Tech
             accountinglabel = "GAS_GIANT_LABEL"
             effects = SetMaxSupply value = Value - 1
 
+        EffectsGroup    // outpost supply increases 1 per turn up to max
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Not Species
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetSupply value = Min(Value(Target.MaxSupply), Value + 1)
+
+
         // generate sitrep for any planet that is about to increase to above the
         // recolonizing population, while also having sufficient happiness to do
         // do so
@@ -99,5 +109,5 @@ Tech
     graphic = "icons/tech/galactic_exploration.png"
 
 #include "/scripting/common/misc.macros"
-
+#include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
