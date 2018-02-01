@@ -98,6 +98,7 @@ public:
     void Disable(bool b = true) override;
     void SetFromSetupData(const GalaxySetupData& setup_data); ///< sets the controls from a GalaxySetupData
     void GetSetupData(GalaxySetupData& setup_data) const;     ///< fills values in \a setup_data from the panel's current state
+    void SetSeed(const std::string& seed, bool inhibit_single = false);
     //!@}
 
 private:
@@ -108,6 +109,7 @@ private:
 
     std::shared_ptr<GG::Label>          m_seed_label;
     std::shared_ptr<GG::Edit>           m_seed_edit;            //!< The seed used in the generation of the galaxy;
+    std::string                         m_seed;
     std::shared_ptr<GG::Button>         m_random;               //!< Random seed button;
     std::shared_ptr<GG::Label>          m_stars_label;
     std::shared_ptr<GG::Spin<int>>      m_stars_spin;           //!< The number of stars to include in the galaxy;

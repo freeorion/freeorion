@@ -1380,7 +1380,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
             seed = static_cast<unsigned int>(h);
         } catch (...) {}
     }
-    if (GetGalaxySetupData().m_seed.empty()) {
+    if (GetGalaxySetupData().GetSeed().empty() || GetGalaxySetupData().GetSeed() == "RANDOM") {
         //ClockSeed();
         // replicate ClockSeed code here so can log the seed used
         boost::posix_time::ptime ltime = boost::posix_time::microsec_clock::local_time();
@@ -1390,7 +1390,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
         DebugLogger() << "GenerateUniverse using clock for seed:" << new_seed;
         seed = static_cast<unsigned int>(h);
         // store seed in galaxy setup data
-        ServerApp::GetApp()->GetGalaxySetupData().m_seed = std::to_string(seed);
+        ServerApp::GetApp()->GetGalaxySetupData().SetSeed(std::to_string(seed));
     }
     Seed(seed);
     DebugLogger() << "GenerateUniverse with seed: " << seed;

@@ -185,6 +185,10 @@ struct FO_COMMON_API GalaxySetupData {
                         GetGameRules() const;
     //@}
 
+    /** \name Mutators */ //@{
+    void                SetSeed(const std::string& seed);
+    //@}
+
     GalaxySetupData& operator=(const GalaxySetupData&) = default;
 
     std::string         m_seed;

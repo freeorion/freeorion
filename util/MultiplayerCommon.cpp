@@ -254,6 +254,8 @@ namespace {
                       << " from 0 to " << static_cast<int>(enum_vals_count) - 1;
         return hash_value % static_cast<int>(enum_vals_count);
     }
+
+    static char alphanum[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 }
 
 GalaxySetupData::GalaxySetupData() :
@@ -281,7 +283,7 @@ GalaxySetupData::GalaxySetupData(GalaxySetupData&& base) :
     m_native_freq(base.m_native_freq),
     m_ai_aggr(base.m_ai_aggr),
     m_game_rules(std::move(base.m_game_rules))
-{}
+{ SetSeed(m_seed); }
 
 const std::string& GalaxySetupData::GetSeed() const
 { return m_seed; }
@@ -337,6 +339,18 @@ Aggression GalaxySetupData::GetAggression() const
 
 const std::vector<std::pair<std::string, std::string>>& GalaxySetupData::GetGameRules() const
 { return m_game_rules; }
+
+void GalaxySetupData::SetSeed(const std::string& seed) {
+    std::string new_seed = seed;
+    if (new_seed.empty() || new_seed == "RANDOM") {
+        ClockSeed();
+        new_seed.clear();
+        for (int i = 0; i < 8; ++i)
+            new_seed += alphanum[RandSmallInt(0, (sizeof(alphanum) - 2))];
+        DebugLogger() << "Set empty or requested random seed to " << new_seed;
+    }
+    m_seed = new_seed;
+}
 
 /////////////////////////////////////////////////////
 // PlayerSetupData
