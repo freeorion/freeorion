@@ -2361,6 +2361,7 @@ void EmptyHullsListBox::PopulateCore() {
     ScopedTimer scoped_timer("EmptyHulls::PopulateCore");
     DebugLogger() << "EmptyHulls::PopulateCore EmpireID(): " << EmpireID();
 
+    const bool showing_obsolete = AvailabilityState().GetAvailability(Availability::Obsolete);
     const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
     const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
 
@@ -2377,14 +2378,18 @@ void EmptyHullsListBox::PopulateCore() {
         if (!hull_type || !hull_type->Producible())
             continue;
 
-        auto hull_available = empire ? empire->ShipHullAvailable(hull_name) : true;
+        auto available = empire ? empire->ShipHullAvailable(hull_name) : true;
+        auto obsolete = manager.IsHullObsolete(hull_name);
 
         const std::vector<std::string> empty_parts_vec;
-        if ((showing_available && hull_available)
-            || (showing_unavailable && !hull_available))
+        if ((obsolete && showing_obsolete)
+            || (available && !obsolete && showing_available)
+            || (!available && showing_unavailable))
         {
             auto row = GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y, hull_name, empty_parts_vec);
-            if (!hull_available)
+            if (obsolete && available)
+                row->SetAvailability(Availability::Obsolete);
+            else if (!available)
                 row->SetAvailability(Availability::Future);
             Insert(row);
             row->Resize(row_size);
@@ -2423,7 +2428,7 @@ void CompletedDesignsListBox::PopulateCore() {
                     || (!available && showing_unavailable))
                 {
                     auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
-                    if (obsolete)
+                    if (obsolete && available)
                         row->SetAvailability(Availability::Obsolete);
                     else if (!available)
                         row->SetAvailability(Availability::Future);
@@ -2650,7 +2655,15 @@ void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& 
     const std::string& hull_name = hull_parts_row->Hull();
     const HullType* hull_type = GetHullType(hull_name);
     const std::vector<std::string>& parts = hull_parts_row->Parts();
-    if (hull_type && parts.empty())
+
+    if (modkeys & GG::MOD_KEY_CTRL) {
+        // Toggle hull obsolete
+        auto& manager = GetCurrentDesignsManager();
+        const auto is_obsolete = manager.IsHullObsolete(hull_name);
+        manager.SetHullObsolete(hull_name, !is_obsolete);
+        Populate();
+    }
+    else if (hull_type && parts.empty())
         HullClickedSignal(hull_type);
 }
 
