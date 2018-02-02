@@ -35,6 +35,9 @@ namespace Networking {
     void AuthRoles::SetRole(RoleType role, bool value)
     { m_roles.set(role, value); }
 
+    void AuthRoles::Clear()
+    { m_roles = std::bitset<Roles_Count>(); }
+
     bool AuthRoles::HasRole(RoleType role) const
     { return m_roles.test(role); }
 

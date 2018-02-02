@@ -788,6 +788,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
     std::size_t t = 1;
     while (t <= m_lobby_data->m_players.size() + 1 && collision) {
         collision = false;
+        roles.Clear();
         if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
             collision = true;
         } else {
@@ -1740,10 +1741,8 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
 
             // Remove AI prefix to distinguish Human from AI.
             std::string ai_prefix = UserString("AI_PLAYER") + "_";
-            if (client_type != Networking::CLIENT_TYPE_AI_PLAYER) {
-                while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
-                    player_name.erase(0, ai_prefix.size());
-            }
+            while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
+                player_name.erase(0, ai_prefix.size());
             if(player_name.empty())
                 player_name = "_";
 
@@ -1753,6 +1752,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             std::size_t t = 1;
             while (t <= m_lobby_data->m_players.size() + 1 && collision) {
                 collision = false;
+                roles.Clear();
                 if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
                     collision = true;
                 } else {
@@ -1771,6 +1771,12 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             if (collision) {
                 player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
                                                             true));
+                server.Networking().Disconnect(player_connection);
+                return discard_event();
+            }
+
+            if (!player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) {
+                player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
                 server.Networking().Disconnect(player_connection);
                 return discard_event();
             }
