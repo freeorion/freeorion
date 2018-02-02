@@ -2285,6 +2285,7 @@ class EmptyHullsListBox : public BasesListBox {
     protected:
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
+    void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
 
     void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
     void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
@@ -2368,9 +2369,10 @@ void EmptyHullsListBox::PopulateCore() {
 
     Clear();
 
-    for (const auto& name_and_type : GetHullTypeManager()) {
-        const auto& hull_name = name_and_type.first;
-        const auto& hull_type =  name_and_type.second;
+    const auto& manager = GetCurrentDesignsManager();
+
+    for (const auto& hull_name : manager.OrderedHulls()) {
+        const auto& hull_type =  GetHullTypeManager().GetHullType(hull_name);
 
         if (!hull_type || !hull_type->Producible())
             continue;
@@ -2591,7 +2593,7 @@ std::shared_ptr<BasesListBox::Row> MonstersListBox::ChildrenDraggedAwayCore(cons
 
 
 void EmptyHullsListBox::EnableOrderIssuing(bool enable/* = true*/)
-{ QueueListBox::EnableOrderIssuing(false); }
+{ QueueListBox::EnableOrderIssuing(enable); }
 
 void MonstersListBox::EnableOrderIssuing(bool)
 { QueueListBox::EnableOrderIssuing(false); }
@@ -2836,6 +2838,27 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
 
 }
 
+void EmptyHullsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
+                                       const GG::ListBox::iterator& original_position_it)
+{
+    const auto control = dynamic_cast<HullAndPartsListBoxRow*>(row_it->get());
+    if (!control || !GetEmpire(EmpireID()))
+        return;
+
+    const std::string& hull_name = control->Hull();
+
+    iterator insert_before_row = std::next(row_it);
+
+    const auto insert_before_control = (insert_before_row == end()) ? nullptr :
+        boost::polymorphic_downcast<const HullAndPartsListBoxRow*>(insert_before_row->get());
+    std::string insert_before_hull = insert_before_control
+        ? insert_before_control->Hull() : "";
+
+    control->Resize(ListRowSize());
+
+    GetCurrentDesignsManager().InsertHullBefore(hull_name, insert_before_hull);
+}
+
 void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
                                              const GG::ListBox::iterator& original_position_it)
 {
@@ -3013,7 +3036,7 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
         boost::bind(&DesignWnd::BaseSelector::Reset, this));
     AttachChild(m_tabs);
 
-    m_hulls_list = GG::Wnd::Create<EmptyHullsListBox>(m_availabilities_state);
+    m_hulls_list = GG::Wnd::Create<EmptyHullsListBox>(m_availabilities_state, HULL_PARTS_ROW_DROP_TYPE_STRING);
     m_hulls_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_hulls_list, UserString("DESIGN_WND_HULLS"));
     m_hulls_list->DesignComponentsSelectedSignal.connect(
