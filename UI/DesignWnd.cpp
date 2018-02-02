@@ -2289,6 +2289,7 @@ class EmptyHullsListBox : public BasesListBox {
 
     void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
     void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 
     private:
 };
@@ -2705,6 +2706,36 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt
         DesignClickedSignal(design);
 }
 
+
+void EmptyHullsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                               const GG::Flags<GG::ModKey>& modkeys)
+{
+    HullAndPartsListBoxRow* hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
+    if (!hull_parts_row)
+        return;
+    const std::string& hull_name = hull_parts_row->Hull();
+
+    // Context menu actions
+    auto& manager = GetCurrentDesignsManager();
+    auto is_obsolete = manager.IsHullObsolete(hull_name);
+    auto toggle_obsolete_design_action = [&manager, &hull_name, is_obsolete, this]() {
+        manager.SetHullObsolete(hull_name, !is_obsolete);
+        Populate();
+    };
+
+    // create popup menu with a commands in it
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+
+    const auto empire_id = EmpireID();
+    if (empire_id != ALL_EMPIRES)
+        popup->AddMenuItem(GG::MenuItem(
+                               (is_obsolete
+                                ? UserString("DESIGN_WND_UNOBSOLETE_HULL")
+                                : UserString("DESIGN_WND_OBSOLETE_HULL")),
+                               false, false, toggle_obsolete_design_action));
+
+    popup->Run();
+}
 
 void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                                const GG::Flags<GG::ModKey>& modkeys)
