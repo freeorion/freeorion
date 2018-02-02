@@ -903,6 +903,16 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
     if (!is_new_game)
         return;
 
+    // Initialize the hull ordering from the HullTypeManager
+    for (const auto& name_and_type : GetHullTypeManager()) {
+        const auto& hull_name = name_and_type.first;
+        const auto& hull_type =  name_and_type.second;
+
+        if (!hull_type || !hull_type->Producible())
+            continue;
+        current_designs->InsertHullBefore(hull_name);
+    }
+
     // If requested initialize the current designs to all designs known by the empire
     if(GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled")) {
 
