@@ -187,6 +187,9 @@ namespace {
         /** Return all ids including obsoleted designs. */
         std::vector<int> AllOrderedIDs() const;
 
+        /** Return non-obsolete available hulls. */
+        std::vector<std::string> OrderedHulls() const;
+
         template <typename T>
         void InsertOrderedIDs(const T& new_order);
 
@@ -637,6 +640,9 @@ namespace {
 
     std::vector<int> CurrentShipDesignManager::AllOrderedIDs() const
     { return std::vector<int>(m_ordered_design_ids.begin(), m_ordered_design_ids.end()); }
+
+    std::vector<std::string> CurrentShipDesignManager::OrderedHulls() const
+    { return std::vector<std::string>(m_ordered_hulls.begin(), m_ordered_hulls.end()); }
 
     template <typename T>
     void CurrentShipDesignManager::InsertOrderedIDs(const T& new_order) {
