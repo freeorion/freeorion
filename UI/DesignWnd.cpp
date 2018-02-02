@@ -204,8 +204,13 @@ namespace {
         bool IsHullObsolete(const std::string& hull) const;
         /** Return true if \p part is obsolete. */
         bool IsPartObsolete(const std::string& part) const;
+
         /** If \p id is in manager, set \p id's obsolescence to \p obsolete. */
         void SetObsolete(const int id, const bool obsolete);
+        /** Set \p hull's obsolescence to \p obsolete. */
+        void SetHullObsolete(const std::string& hull, const bool obsolete);
+        /** Set \p part's obsolescence to \p obsolete. */
+        void SetPartObsolete(const std::string& part, const bool obsolete);
 
         void Load(const std::vector<std::pair<int, bool>>& design_ids_and_obsoletes,
                   const std::vector<std::pair<std::string, bool>>& hulls_and_obsoletes,
@@ -774,6 +779,24 @@ namespace {
         if (it == m_id_to_obsolete_and_loc.end())
             return;
         it->second.first = obsolete;
+    }
+
+    void CurrentShipDesignManager::SetHullObsolete(const std::string& id, const bool obsolete) {
+        auto it = m_hull_to_obsolete_and_loc.find(id);
+        if (it == m_hull_to_obsolete_and_loc.end()) {
+            // All hulls should be known so tack it on the end and try again.
+            ErrorLogger() << "Hull " << id << " is missing in CurrentShipDesignManager.  Adding...";
+            InsertHullBefore(id);
+            return SetHullObsolete(id, obsolete);
+        }
+        it->second.first = obsolete;
+    }
+
+    void CurrentShipDesignManager::SetPartObsolete(const std::string& id, const bool obsolete) {
+        if (obsolete)
+            m_obsolete_parts.insert(id);
+        else
+            m_obsolete_parts.erase(id);
     }
 
     void CurrentShipDesignManager::Load(
