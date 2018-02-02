@@ -14105,6 +14105,9 @@ GOOD_POPULATION_DESC
 FIXED_LOW_POPULATION_DESC
 −−	Maximum Population is fixed at 5
 
+VERY_BAD_SUPPLY_DESC
+−−	Very Bad [[metertype METER_SUPPLY]]: -1
+
 BAD_SUPPLY_DESC
 −	Bad [[metertype METER_SUPPLY]]: no bonus
 
@@ -14298,6 +14301,11 @@ GREAT_RESEARCH_LABEL
 # %2% FIXME
 ULTIMATE_RESEARCH_LABEL
 %2% Ultimate Research
+
+# %1% FIXME
+# %2% FIXME
+VERY_BAD_SUPPLY_LABEL
+%2% Very Bad Supply
 
 # %1% FIXME
 # %2% FIXME
