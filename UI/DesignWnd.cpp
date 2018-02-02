@@ -196,9 +196,13 @@ namespace {
 
         bool IsKnown(const int id) const;
 
-        /** Return true is \p id is obsolete or boost::none if \p is not in the manager. */
+        /** Return true if \p id is obsolete or boost::none if \p is not in the manager. */
         boost::optional<bool> IsObsolete(const int id) const;
-        /** If \id is in manager, set \p id's obsolescence to \p obsolete. */
+        /** Return true if \p hull is obsolete. */
+        bool IsHullObsolete(const std::string& hull) const;
+        /** Return true if \p part is obsolete. */
+        bool IsPartObsolete(const std::string& part) const;
+        /** If \p id is in manager, set \p id's obsolescence to \p obsolete. */
         void SetObsolete(const int id, const bool obsolete);
 
         void Load(const std::vector<std::pair<int, bool>>& design_ids_and_obsoletes,
@@ -696,10 +700,41 @@ namespace {
     { return m_id_to_obsolete_and_loc.count(id); }
     
     boost::optional<bool> CurrentShipDesignManager::IsObsolete(const int id) const {
-        auto it = m_id_to_obsolete_and_loc.find(id);
-        if (it == m_id_to_obsolete_and_loc.end())
+        // A design is obsolete if it individually, or its hull or parts are obsolete
+
+        boost::optional<bool> is_obsolete = boost::none;
+        auto it_id = m_id_to_obsolete_and_loc.find(id);
+        if (it_id != m_id_to_obsolete_and_loc.end()) {
+            is_obsolete = it_id->second.first;
+            if (*is_obsolete)
+                return true;
+        }
+
+        const auto design = GetShipDesign(id);
+        if (!design) {
+            ErrorLogger() << "CurrentShipDesignManager::IsObsolete design id "
+                          << id << " is unknown to the server";
             return boost::none;
-        return it->second.first;
+        }
+
+        if (IsHullObsolete(design->Hull()))
+            return true;
+
+        for (const auto& part: design->Parts()) {
+            if (IsPartObsolete(part))
+                return true;
+        }
+
+        return is_obsolete;
+    }
+
+    bool CurrentShipDesignManager::IsHullObsolete(const std::string& hull) const {
+        auto it_hull = m_hull_to_obsolete_and_loc.find(hull);
+        return (it_hull != m_hull_to_obsolete_and_loc.end() && it_hull->second.first);
+    }
+
+    bool CurrentShipDesignManager::IsPartObsolete(const std::string& part) const {
+        return m_obsolete_parts.count(part);
     }
 
     void CurrentShipDesignManager::SetObsolete(const int id, const bool obsolete) {
