@@ -226,12 +226,16 @@ struct FO_COMMON_API SaveGameUIData {
     std::set<int> fleets_exploring;
 
     std::vector<std::pair<int, bool>> ordered_ship_design_ids_and_obsolete;
+    std::vector<std::pair<std::string, bool>> ordered_ship_hull_and_obsolete;
+    std::unordered_set<std::string> obsolete_ship_parts;
 
 private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+BOOST_CLASS_VERSION(SaveGameUIData, 1);
 
 extern template FO_COMMON_API void SaveGameUIData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 extern template FO_COMMON_API void SaveGameUIData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);

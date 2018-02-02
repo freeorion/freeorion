@@ -54,6 +54,11 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(fleets_exploring);
 
     ar & BOOST_SERIALIZATION_NVP(ordered_ship_design_ids_and_obsolete);
+
+    if (version >= 1) {
+        ar & BOOST_SERIALIZATION_NVP(ordered_ship_hull_and_obsolete);
+        ar & BOOST_SERIALIZATION_NVP(obsolete_ship_parts);
+    }
 }
 
 template void SaveGameUIData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
