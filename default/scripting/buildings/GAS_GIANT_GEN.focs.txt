@@ -40,10 +40,9 @@ BuildingType
                 Planet
                 Not Population high = 0
             ]
+            // unpopulated gas giant generator planet bonus applies first
             stackinggroup = "GAS_GIANT_GEN_STACK"
-            // if there is an unpopulated gas giant generator planet then that bonus applies
-            // VERY_LATE_PRIORITY__PLUS_ONE
-            priority = 121
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + 5
 
         EffectsGroup
