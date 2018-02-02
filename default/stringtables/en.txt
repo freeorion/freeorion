@@ -1073,7 +1073,7 @@ RULE_ENABLE_SUPER_TESTER
 Enable Super-Tester Takeover
 
 RULE_ENABLE_SUPER_TESTER_DESC
-Enables Super-Tester Takeover building.
+Enables Super-Tester Takeover building
 
 RULE_STOCKPILE_IMPORT_LIMITED
 Stockpile Import Limited
@@ -1125,7 +1125,6 @@ Accepts an argument for partial or full option name.
 Special arguments are provided for:
 all - [[OPTIONS_DB_SECTION_ALL]]
 raw - [[OPTIONS_DB_SECTION_RAW]]'''
-
 
 OPTIONS_DB_VERSION
 Print version and exit.
@@ -1536,8 +1535,8 @@ OPTIONS_DB_UI_LOGGER_THRESHOLDS
 Logger thresholds
 
 OPTIONS_DB_UI_LOGGER_THRESHOLD_TOOLTIP
-'''Each log output file (freeorion.log, freeoriond.log, and AI_x.log) collects log records from sources (sections of code). 
-Setting the threshold for a source will enable logs records of that level or higher for that source. 
+'''Each log output file (freeorion.log, freeoriond.log, and AI_x.log) collects log records from sources (sections of code).
+Setting the threshold for a source will enable logs records of that level or higher for that source.
 Each process client, server, and ai has a general source and may have additional detailed sources (eg. combat resolution logs).'''
 
 # This is a label to designate the logger as the general or default logger for a process
@@ -2942,7 +2941,7 @@ OPTIONS_USE_BINARY_SERIALIZATION
 Create Binary Save Files
 
 OPTIONS_USE_XML_ZLIB_SERIALIZATION
-Use Compression for XML Save Files 
+Use Compression for XML Save Files
 
 OPTIONS_CREATE_PERSISTENT_CONFIG
 Write Persistent Config File
@@ -3061,7 +3060,6 @@ Messages
 
 MAP_BTN_MESSAGES_DESC
 ''''''
-
 
 MAP_PRODUCTION_TITLE
 Production
@@ -3888,6 +3886,7 @@ Stockpile Use
 STOCKPILE_CHANGE_LABEL
 Next Turn Stockpile
 
+
 ##
 ## Research window
 ##
@@ -3988,9 +3987,9 @@ It also allows for some interaction with the [[encyclopedia MAP_WINDOW_ARTICLE_T
 
 (default position: top left)
 The Production Summary panel shows available Production Points.
-If a system is selected there are two columns shown. The left column shows production points across your entire empire. The right column gives production points for the selected system (but is absent if no system is selected).
+If a system is selected, there are two columns shown. The left column shows production points across your entire empire. The right column gives production points for the selected system (but is absent if no system is selected).
 Available Points relates to the PP available for production. The right value are the maximum available production points for the selected system. This may be less than the total available when all of your empire's systems are not [[metertype METER_SUPPLY]] connected.
-Stockpile relates to the PP available for production using the imperial stockpile. Production items specifically need to be enabled to draw from the stockpile. 
+Stockpile relates to the PP available for production using the imperial stockpile. Production items specifically need to be enabled to draw from the stockpile.
 Generally, most excess PP will be wasted and lost, but a part of the excess will be stored in the imperial stockpile.
 
 <u>Producible Items panel</u>
@@ -4494,7 +4493,7 @@ ENC_SPECIES
 Species
 
 ENC_SPECIES_DESC
-Each species is classified according their [[encyclopedia METABOLISM_TITLE]]. 
+Each species is classified according their [[encyclopedia METABOLISM_TITLE]].
 
 ENC_FIELD_TYPE
 Field Type
@@ -4527,7 +4526,7 @@ EMPIRE_METERS
 Meters:
 
 RESEARCHED_TECHS
-Researched Techs: 
+'''Researched Techs: '''
 
 BEFORE_FIRST_TURN
 Before First Turn
@@ -4909,7 +4908,7 @@ ENC_COMBAT_PLATFORM_TARGET_AND_DAMAGE
 ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS
 %2% could not damage
 
-# %1% number of targets 
+# %1% number of targets
 # %2% name of ship unable to damage targets
 ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 %2% could not damage %1% targets:
@@ -5457,7 +5456,7 @@ The planet suitability report can be displayed by right-cliking on a planet in t
 
 When terraforming a planet (by [[metertype METER_RESEARCH]] or if the planet has the [[special GAIA_SPECIAL]] special) in order to better suit the species environmental preferences, the planet's original environment is modified by stages, until it finally reaches the [[PE_GOOD]] suitability for the species who wants to live on the planet. The terraforming stages can be checked on the suitability wheel displayed below.
 
-Clockwise from top: [[PT_TERRAN]], [[PT_OCEAN]], [[PT_SWAMP]], [[PT_TOXIC]], [[PT_INFERNO]], [[PT_RADIATED]], [[PT_BARREN]], [[PT_TUNDRA]], [[PT_DESERT]] 
+Clockwise from top: [[PT_TERRAN]], [[PT_OCEAN]], [[PT_SWAMP]], [[PT_TOXIC]], [[PT_INFERNO]], [[PT_RADIATED]], [[PT_BARREN]], [[PT_TUNDRA]], [[PT_DESERT]]
 
 <img src="encyclopedia/EP_wheel.png"></img>'''
 
@@ -5754,7 +5753,7 @@ Configuration Guide
 
 CONFIG_GUIDE_TEXT
 '''Most configuration options for the game are stored and read from a single XML formatted file named config.xml.
-If this file does not exist (or is for a different build or version), it will be (re)created when the client starts. 
+If this file does not exist (or is for a different build or version), it will be (re)created when the client starts.
 The configuration file is typically updated after a stored option is changed, but may be deferred until a later action (such as clicking Done or Apply).
 Some of these options can be changed from the [[OPTIONS_TITLE]] menu, under the Main Menu.
 
@@ -6708,7 +6707,6 @@ At %system%: ship %ship% has sufficient fuel to resume starlane travel.
 EFFECT_SHIP_REFUELED_LABEL
 Ship Refueled
 
-
 HEAD_ON_A_SPIKE_MESSAGE
 The capital of the %empire% empire has fallen.
 
@@ -7166,8 +7164,8 @@ Only live an [[PT_GASGIANT]]s.
 
 SP_SLY_DESC
 '''Description:
-The Sly live in gas giants. The gas giants are so foreign to most species in the universe that for most of their history they have been overlooked.
-Not being able to build devices they couldnt leave their homeworld. Recently they were able to obtain necessary equipment and technology for spacefaring from traders in exchange for their knowledge of history.
+The Sly live in gas giants. The gas giants are so foreign to most species in the universe that, for most of their history, they have been overlooked.
+Not being able to build devices, they couldn't leave their homeworld. Recently, they were able to obtain necessary equipment and technology for spacefaring from traders in exchange for their knowledge of history.
 
 Social Structure:
 The Sly are very long-lived and keep the songs alive in which the whole cultural knowledge is encoded. They are very open and curious towards the galaxy and the other species they are now finally able to encounter.
@@ -7179,12 +7177,12 @@ SP_LEMBALALAM_GAMEPLAY_DESC
 '''Egocentric, degenerated ancient reptiles that no longer reproduce.
 Prefer [[PT_DESERT]] Planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-Owning the Lembala grants the technologies: [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]] and [[tech GRO_LIFECYCLE_MAN]]. 
+Owning the Lembala grants the technologies: [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]] and [[tech GRO_LIFECYCLE_MAN]].
 '''
 
 SP_LEMBALALAM_DESC
 '''Description:
-The Lembala'Lam are an ancient species in the evening of its existence. They had some apparent resemblance with reptiles such as snakes or geckos, but most of their original physiognomy was lost to evolution warped by their mechanically enhanced lifestyle. Without machines they would no longer be capable of locomotion or feeding. The ability to reproduce was lost completely, but most importantly they've lost the trust in each other. The last nail in the coffin for Lembala society was the invention of an automated system that transfers the mind of a dying Lembala into the next spare clone, of which every Lembala has hundreds safely hidden. Almost all mental and material ressources of the Lembala are used to assure their artificial immortality, leaving little to no room for real developement of their civilization. 
+The Lembala'Lam are an ancient species in the evening of its existence. They had some apparent resemblance with reptiles such as snakes or geckos, but most of their original physiognomy was lost to evolution warped by their mechanically enhanced lifestyle. Without machines they would no longer be capable of locomotion or feeding. The ability to reproduce was lost completely, but most importantly they've lost the trust in each other. The last nail in the coffin for Lembala society was the invention of an automated system that transfers the mind of a dying Lembala into the next spare clone, of which every Lembala has hundreds safely hidden. Almost all mental and material ressources of the Lembala are used to assure their artificial immortality, leaving little to no room for real developement of their civilization.
 
 Social Structure:
 The Lembala know each other for eons, but are suspicious of each and every one of the others. Their democratic government is forever paralyzed by long accepted stalemates. Due to paranoia and their lack of altruism even the most basic cooperation is rare and short lived.
@@ -7329,7 +7327,7 @@ SP_REPLICON_DESC
 The Replicons look like a 3m tall robotic spider with wings. The wings are actually highly efficient solar panels that fold out to a relatively large area, the 'abdomen' is actually the 'industrial processing center' where replacement parts and new Replicons are forged.
 
 Social Structure:
-Replicons have a relatively primitive social structure. They have a planetary government, because a few feudal lords discovered space travel as a convenient way of attacking people really far away. Their government is effectively feudal, due to some unusual effects that allowed them to reach space flight before achieving the nationstate/industrial revolution stage of development. Because of the wide variety of self-replicating machines on Cisarruj, most needs that are met by industry on other worlds are met by 'agriculture' or 'breeding' by Replicons. They end up without any actual 'Industrial Base' or even much of an understanding of technology other than what various 'natural' parts and products can be used for. This means that their society is highly illiterate, most people passing on knowledge that their pappies taught them on how to skin a "creature's" titanium coat, just enough so that it could grow it back or how much uranium ore to feed a reprocessing reactor if it was giving bad aluminum. Most things that normal 'developed' societies would expect are only present in the lord's estates, the remainder of society looks like something out of a post-apocalyptic novel. 
+Replicons have a relatively primitive social structure. They have a planetary government, because a few feudal lords discovered space travel as a convenient way of attacking people really far away. Their government is effectively feudal, due to some unusual effects that allowed them to reach space flight before achieving the nationstate/industrial revolution stage of development. Because of the wide variety of self-replicating machines on Cisarruj, most needs that are met by industry on other worlds are met by 'agriculture' or 'breeding' by Replicons. They end up without any actual 'Industrial Base' or even much of an understanding of technology other than what various 'natural' parts and products can be used for. This means that their society is highly illiterate, most people passing on knowledge that their pappies taught them on how to skin a "creature's" titanium coat, just enough so that it could grow it back or how much uranium ore to feed a reprocessing reactor if it was giving bad aluminum. Most things that normal 'developed' societies would expect are only present in the lord's estates, the remainder of society looks like something out of a post-apocalyptic novel.
 
 Homeworld:
 Cisarruj is a heavily irradiated planet with a profound mystery about it. The planet is dominated by a wide variety of autonomous self replicating machines. There are recorded histories of who went to war with who when, and this is actually significant when dealing with the formation of the Cisarruj Empire. However, most simply reads like any other world's pre industrial history periods of powers large and small waxing and waning. The Mystery of the Replicons, however is in their prehistory. Did a sentient race assemble them as an experiment maybe, or were they some type of accident (an industrial development project left unsupervised) did their creators simply leave and forget about them, or did their creators meet a worse fate possibly at the hands of those beings they created.
@@ -10367,7 +10365,7 @@ PRO_PREDICTIVE_STOCKPILING_DESC
 The imperial stockpile service has a fleet for distributing raw materials to places where important projects are predicted to be started.
 This task is difficult as the service has to predict when demand happens, where it happens, what materials and goods are demanded and also who the users will be.
 
-A portion of unused PP be transferred to the Imperial Production Stockpile the other part going to waste.
+A portion of unused PP will be transferred to the Imperial Production Stockpile, the other part going to waste.
 An item on the production queue can draw on the Imperial Stockpile if the item has been explicitly enabled for doing so.
 
 This is the basic technology for the imperial stockpile, which increases the [[metertype METER_STOCKPILE]] of stockpile-focused by 1.'''
@@ -10399,12 +10397,11 @@ Void Prediction
 
 PRO_VOID_PREDICTION_DESC
 '''While classic prediction always relies on statistical knowledge of the past, studying the chaotic wisdom of the void leads to robust predictions of first-time and freak occurences.
-For the imperial stockpile service void prediction is the quintessential tool to deliver the right goods even before the need occurs.
+For the imperial stockpile service, void prediction is the quintessential tool to deliver the right goods even before the need occurs.
 
 This is an upgrade technology for the imperial stockpile, which increases the [[metertype METER_STOCKPILE]].
 For planets focused on growth or logistics by 0.1 per population.
 For planets focused on stockpile by 0.2 per population.'''
-
 
 PRO_MICROGRAV_MAN
 Microgravity Industry
@@ -10621,8 +10618,7 @@ SHP_SPACE_FLUX_BUBBLE
 Spatial Flux Bubble
 
 SHP_SPACE_FLUX_BUBBLE_DESC
-Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects. Further research into stealth technologies can reduce the dimensional disruption. The simplest solution to building a vessel using the flux propulsion is the bubble drive, which covers the a sphere-shaped hull. More complex solutions are possible with better tech [[tech SHP_SPACE_FLUX_DRIVE]].
-
+Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects. Further research into stealth technologies can reduce the dimensional disruption. The simplest solution to building a vessel using the flux propulsion is the bubble drive, which covers a sphere-shaped hull. More complex solutions are possible with better tech [[tech SHP_SPACE_FLUX_DRIVE]].
 
 SHP_CONTGRAV_MAINT
 Contra Gravitational Maintenance
@@ -11226,7 +11222,7 @@ SHP_FIGHTERS_1
 Fighters and Launch Bays
 
 SHP_FIGHTERS_1_DESC
-'''Enables your empire to build ships using Fighter Hangars and Launch Bays. A ship can only have one type of Fighter Hangar on it but can have as many as you have slots for. Each [[encyclopedia PC_FIGHTER_HANGAR]] has a maximum capacity of fighters and those fighters will all have the same strength (which can be modified by species abilities and further research). 
+'''Enables your empire to build ships using Fighter Hangars and Launch Bays. A ship can only have one type of Fighter Hangar on it but can have as many as you have slots for. Each [[encyclopedia PC_FIGHTER_HANGAR]] has a maximum capacity of fighters and those fighters will all have the same strength (which can be modified by species abilities and further research).
 
 A [[encyclopedia PC_FIGHTER_BAY]] can launch a number of fighters in each combat round. These fighters will then be both valid targets and able to attack ships and other fighters in subsequent combat rounds, but a single hit from any source will destroy a fighter. Unlike [[encyclopedia DAMAGE_TITLE]] inflicted by regular weapons, fighter damage ignores [[metertype METER_SHIELD]] on warships (they fire from within the shields).
 
@@ -11980,7 +11976,7 @@ BLD_INTERSPECIES_ACADEMY_DESC
 Learning to design devices so that different species can use is crucial for developing universally usable tools.
 
 Each empire may contain an academy on up to six planets with different species.
-To be able build such an academy the population must be very happy and at least three starlane jumps away from the next academy.
+To be able build such an academy, the population must be very happy and at least three starlane jumps away from the next academy.
 '''
 
 BLD_MEGALITH
@@ -12011,7 +12007,7 @@ BLD_GAIA_TRANS
 Gaia Transformation
 
 BLD_GAIA_TRANS_DESC
-'''Adds the [[special GAIA_SPECIAL]] special to the planet which increases max Population for [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]]s, according to planet size: 
+'''Adds the [[special GAIA_SPECIAL]] special to the planet which increases max Population for [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]]s, according to planet size:
 • [[SZ_TINY]] (+3)
 • [[SZ_SMALL]] (+6)
 • [[SZ_MEDIUM]] (+9)
@@ -12082,7 +12078,7 @@ Solar Orbital Generator
 BLD_SOL_ORB_GEN_DESC
 '''Increases target [[metertype METER_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets, per Population and depending on the star type:
 * [[STAR_BLUE]] or [[STAR_WHITE]] (x0.4)
-* [[STAR_YELLOW]] or [[STAR_ORANGE]] (x0.2) 
+* [[STAR_YELLOW]] or [[STAR_ORANGE]] (x0.2)
 * [[STAR_RED]] (x0.1)
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] The best bonus applies.
 
@@ -12447,7 +12443,6 @@ Sly Colony
 
 BLD_COL_SLY_DESC
 [[BLD_COL_PART_1]] [[species SP_SLY]] colony. [[BLD_COL_PART_2]] Sly colony [[BLD_COL_PART_3]].
-
 
 BLD_COL_SSLITH
 Sslith Colony
