@@ -1846,6 +1846,13 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
             server.m_networking.Disconnect(player_connection);
         } else {
             // expected human player
+
+            if (!player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) {
+                player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
+                server.Networking().Disconnect(player_connection);
+                return discard_event();
+            }
+
             int player_id = server.m_networking.NewPlayerID();
             player_connection->EstablishPlayer(player_id, player_name, client_type, player_connection->ClientVersionString());
             player_connection->SetAuthRoles(roles);
