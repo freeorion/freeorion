@@ -194,6 +194,8 @@ namespace {
         bool MoveBefore(const int moved_id, const int next_id);
         void Remove(const int id);
 
+        void InsertHullBefore(const std::string& id, const std::string& next_id = "");
+
         bool IsKnown(const int id) const;
 
         /** Return true if \p id is obsolete or boost::none if \p is not in the manager. */
@@ -694,6 +696,36 @@ namespace {
 
         m_ordered_design_ids.erase(it->second.second);
         m_id_to_obsolete_and_loc.erase(it);
+    }
+
+    void CurrentShipDesignManager::InsertHullBefore(const std::string& hull, const std::string& next_hull) {
+        if (hull.empty()) {
+            ErrorLogger() << "Hull name is empty()";
+            return ;
+        }
+
+        if (hull == next_hull)
+            return ;
+
+        // if hull already exists, this is a move.  Remove the old location
+        auto existing_it =  m_hull_to_obsolete_and_loc.find(hull);
+        if (existing_it != m_hull_to_obsolete_and_loc.end()) {
+            m_ordered_hulls.erase(existing_it->second.second);
+            m_hull_to_obsolete_and_loc.erase(existing_it);
+        }
+
+        // Insert in the list, either before next_id or at the end of the list.
+        const auto next_it = (!next_hull.empty()
+                              ? m_hull_to_obsolete_and_loc.find(next_hull)
+                              : m_hull_to_obsolete_and_loc.end());
+        bool is_valid_next_hull = (!next_hull.empty()
+                                   && next_it != m_hull_to_obsolete_and_loc.end());
+        const auto insert_before_it = (is_valid_next_hull
+                                       ? next_it->second.second
+                                       : m_ordered_hulls.end());
+        const auto inserted_it = m_ordered_hulls.insert(insert_before_it, hull);
+
+        m_hull_to_obsolete_and_loc[hull] = std::make_pair(false, inserted_it);
     }
 
     bool CurrentShipDesignManager::IsKnown(const int id) const
