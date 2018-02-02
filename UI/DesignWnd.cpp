@@ -635,7 +635,7 @@ namespace {
         // if id already exists so this is a move.  Remove the old location
         if (IsKnown(id)) {
             WarnLogger() << "CurrentShipDesignManager::InsertBefore id = " << id
-                         << " already inserted.  Removing and reinserting as new location";
+                         << " already inserted.  Removing and reinserting at new location";
             Remove(id);
         }
 
