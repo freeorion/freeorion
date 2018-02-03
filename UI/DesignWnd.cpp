@@ -1044,10 +1044,13 @@ public:
 
     void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
+    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
     void SetAvailability(const Availability::Enum type);
     //@}
 
-    mutable boost::signals2::signal<void (const PartType*)> ClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> ClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)> RightClickedSignal;
     mutable boost::signals2::signal<void (const PartType*)> DoubleClickedSignal;
 
 private:
@@ -1100,10 +1103,13 @@ void PartControl::CompleteConstruction() {
 void PartControl::Render() {}
 
 void PartControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ ClickedSignal(m_part); }
+{ ClickedSignal(m_part, mod_keys); }
 
 void PartControl::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { DoubleClickedSignal(m_part); }
+
+void PartControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ RightClickedSignal(m_part, pt); }
 
 
 void PartControl::SetAvailability(const Availability::Enum type) {
@@ -1158,8 +1164,9 @@ public:
     void            HideSuperfluousParts(bool refresh_list = true);
     //@}
 
-    mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
     mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)> PartTypeRightClickedSignal;
 
 protected:
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
@@ -1212,6 +1219,8 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
             parent->PartTypeClickedSignal);
         new_part_control->DoubleClickedSignal.connect(
             parent->PartTypeDoubleClickedSignal);
+        new_part_control->RightClickedSignal.connect(
+            parent->PartTypeRightClickedSignal);
     }
 
     // set availability shown
@@ -1503,6 +1512,8 @@ void PartsListBox::Populate() {
                 PartsListBox::PartTypeClickedSignal);
             control->DoubleClickedSignal.connect(
                 PartsListBox::PartTypeDoubleClickedSignal);
+            control->RightClickedSignal.connect(
+                PartsListBox::PartTypeRightClickedSignal);
 
             const auto& manager = GetCurrentDesignsManager();
 
@@ -1603,11 +1614,16 @@ public:
     void Populate();
     //@}
 
-    mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
     mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)> PartTypeRightClickedSignal;
 
 private:
     void DoLayout();
+
+    /** A part type click with ctrl obsoletes part. */
+    void HandlePartTypeClicked(const PartType*, GG::Flags<GG::ModKey>);
+    void HandlePartTypeRightClicked(const PartType*, const GG::Pt& pt);
 
     std::shared_ptr<PartsListBox>   m_parts_list;
 
@@ -1638,9 +1654,11 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     m_parts_list = GG::Wnd::Create<PartsListBox>(m_availabilities_state);
     AttachChild(m_parts_list);
     m_parts_list->PartTypeClickedSignal.connect(
-        PartTypeClickedSignal);
+        boost::bind(&DesignWnd::PartPalette::HandlePartTypeClicked, this, _1, _2));
     m_parts_list->PartTypeDoubleClickedSignal.connect(
         PartTypeDoubleClickedSignal);
+    m_parts_list->PartTypeRightClickedSignal.connect(
+        boost::bind(&DesignWnd::PartPalette::HandlePartTypeRightClicked, this, _1, _2));
 
     const PartTypeManager& part_manager = GetPartTypeManager();
 
@@ -1803,6 +1821,44 @@ void DesignWnd::PartPalette::DoLayout() {
     place_avail_button_adjacent(m_obsolete_button.get());
     place_avail_button_adjacent(m_available_button.get());
     place_avail_button_adjacent(m_unavailable_button.get());
+}
+
+void DesignWnd::PartPalette::HandlePartTypeClicked(const PartType* part_type, GG::Flags<GG::ModKey> modkeys) {
+    // Toggle obsolete for a control click.
+    if (modkeys & GG::MOD_KEY_CTRL) {
+        auto& manager = GetCurrentDesignsManager();
+        const auto obsolete = manager.IsPartObsolete(part_type->Name());
+        manager.SetPartObsolete(part_type->Name(), !obsolete);
+        Populate();
+    }
+    else
+        PartTypeClickedSignal(part_type, modkeys);
+}
+
+void DesignWnd::PartPalette::HandlePartTypeRightClicked(const PartType* part_type, const GG::Pt& pt) {
+    // Context menu actions
+    auto& manager = GetCurrentDesignsManager();
+    const auto& part_name = part_type->Name();
+    auto is_obsolete = manager.IsPartObsolete(part_name);
+    auto toggle_obsolete_design_action = [&manager, &part_name, is_obsolete, this]() {
+        manager.SetPartObsolete(part_name, !is_obsolete);
+        Populate();
+    };
+
+    // create popup menu with a commands in it
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+
+    const auto empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (empire_id != ALL_EMPIRES)
+        popup->AddMenuItem(GG::MenuItem(
+                               (is_obsolete
+                                ? UserString("DESIGN_WND_UNOBSOLETE_PART")
+                                : UserString("DESIGN_WND_OBSOLETE_PART")),
+                               false, false, toggle_obsolete_design_action));
+
+    popup->Run();
+
+    PartTypeRightClickedSignal(part_type, pt);
 }
 
 void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_list) {
@@ -3261,7 +3317,7 @@ public:
       * slot contents set using SetPart accordingly */
     mutable boost::signals2::signal<void (const PartType*)> SlotContentsAlteredSignal;
 
-    mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
 
 protected:
     bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
@@ -3654,7 +3710,7 @@ public:
 
     /** propagates signals from contained SlotControls that signal that a part
       * has been clicked */
-    mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
 
     mutable boost::signals2::signal<void (const HullType*)> HullTypeClickedSignal;
 
