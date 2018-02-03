@@ -1600,7 +1600,7 @@ public:
     void HideSuperfluous(bool refresh_list = true);
     void ToggleSuperfluous(bool refresh_list = true);
 
-    void Reset();
+    void Populate();
     //@}
 
     mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
@@ -1696,7 +1696,7 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     // default to showing nothing
     ShowAllClasses(false);
     ShowSuperfluous(false);
-    m_parts_list->Populate();
+    Populate();
 
     CUIWnd::CompleteConstruction();
 
@@ -1879,7 +1879,7 @@ void DesignWnd::PartPalette::ToggleAvailability(Availability::Enum type) {
 
     button->SetCheck(state);
 
-    m_parts_list->Populate();
+    Populate();
 }
 
 void DesignWnd::PartPalette::ShowSuperfluous(bool refresh_list) {
@@ -1900,7 +1900,7 @@ void DesignWnd::PartPalette::ToggleSuperfluous(bool refresh_list) {
         ShowSuperfluous(refresh_list);
 }
 
-void DesignWnd::PartPalette::Reset()
+void DesignWnd::PartPalette::Populate()
 { m_parts_list->Populate(); }
 
 
@@ -4692,7 +4692,7 @@ void DesignWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void DesignWnd::Reset() {
-    m_part_palette->Reset();
+    m_part_palette->Populate();
     m_base_selector->Reset();
     m_detail_panel->Refresh();
     m_main_panel->Sanitize();
