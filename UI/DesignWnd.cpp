@@ -63,6 +63,55 @@ namespace {
     const GG::Y         SLOT_CONTROL_HEIGHT(60);
     const int           PAD(3);
 
+    /** A class to allow the storage of availabilty in a common location. */
+    class AvailabilityManager {
+        private:
+        // A tuple of bools for the state of the 3 availability filters:
+        // Obsolete, Available and Unavailable
+        std::tuple<bool, bool, bool> m_availabilities;
+
+        public:
+        AvailabilityManager(bool obsolete, bool available, bool unavailable);
+
+        bool GetAvailability(const Availability::Enum type) const;
+        void SetAvailability(const Availability::Enum type, const bool state);
+        void ToggleAvailability(const Availability::Enum type);
+    };
+
+    AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
+        m_availabilities{obsolete, available, unavailable}
+    {}
+
+    bool AvailabilityManager::GetAvailability(const Availability::Enum type) const {
+        switch (type) {
+        case Availability::Obsolete:
+            return std::get<Availability::Obsolete>(m_availabilities);
+        case Availability::Available:
+            return std::get<Availability::Available>(m_availabilities);
+        case Availability::Future:
+            return std::get<Availability::Future>(m_availabilities);
+        }
+        return std::get<Availability::Future>(m_availabilities);
+    }
+
+    void AvailabilityManager::SetAvailability(const Availability::Enum type, const bool state) {
+        switch (type) {
+        case Availability::Obsolete:
+            std::get<Availability::Obsolete>(m_availabilities) = state;
+            break;
+        case Availability::Available:
+            std::get<Availability::Available>(m_availabilities) = state;
+            break;
+        case Availability::Future:
+            std::get<Availability::Future>(m_availabilities) = state;
+            break;
+        }
+    }
+
+    void AvailabilityManager::ToggleAvailability(const Availability::Enum type) {
+        SetAvailability(type, !GetAvailability(type));
+    }
+
     /** Returns texture with which to render a SlotControl, depending on \a slot_type. */
     std::shared_ptr<GG::Texture> SlotBackgroundTexture(ShipSlotType slot_type) {
         if (slot_type == SL_EXTERNAL)
@@ -1865,27 +1914,10 @@ void DesignWnd::PartPalette::Reset()
   * scripts or saved (on disk) designs from previous games. */
 class BasesListBox : public QueueListBox {
 public:
-
-    /** A class to allow the storage of availabilty in a common location to all
-        the various BasesListBoxes. */
-    class AvailabilityManager {
-        private:
-        // A tuple of bools for the state of the 3 availability filters:
-        // Obsolete, Available and Unavailable
-        std::tuple<bool, bool, bool> m_availabilities;
-
-        public:
-        AvailabilityManager(bool obsolete, bool available, bool unavailable);
-
-        bool GetAvailability(const Availability::Enum type) const;
-        void SetAvailability(const Availability::Enum type, const bool state);
-        void ToggleAvailability(const Availability::Enum type);
-    };
-
     static const std::string BASES_LIST_BOX_DROP_TYPE;
 
     /** \name Structors */ //@{
-    BasesListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+    BasesListBox(const AvailabilityManager& availabilities_state,
                  const boost::optional<std::string>& drop_type = boost::none,
                  const boost::optional<std::string>& empty_prompt = boost::none);
     //@}
@@ -1984,7 +2016,7 @@ protected:
     /** \name Accessors for derived classes. */ //@{
     int EmpireID() const { return m_empire_id_shown; }
 
-    const BasesListBox::AvailabilityManager& AvailabilityState() const
+    const AvailabilityManager& AvailabilityState() const
     { return m_availabilities_state; }
 
     GG::Pt  ListRowSize();
@@ -2002,7 +2034,7 @@ private:
     void    InitRowSizes();
 
     int                         m_empire_id_shown;
-    const BasesListBox::AvailabilityManager& m_availabilities_state;
+    const AvailabilityManager& m_availabilities_state;
 
     boost::signals2::connection m_empire_designs_changed_signal;
 };
@@ -2127,7 +2159,7 @@ void BasesListBox::CompletedDesignListBoxRow::CompleteConstruction() {
 
 const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
 
-BasesListBox::BasesListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+BasesListBox::BasesListBox(const AvailabilityManager& availabilities_state,
                            const boost::optional<std::string>& drop_type,
                            const boost::optional<std::string>& empty_prompt /*= boost::none*/) :
     QueueListBox(drop_type,
@@ -2235,47 +2267,13 @@ void BasesListBox::InitRowSizes() {
 void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 { this->BaseRightClicked(it, pt, modkeys); }
 
-BasesListBox::AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
-    m_availabilities{obsolete, available, unavailable}
-{}
-
-bool BasesListBox::AvailabilityManager::GetAvailability(const Availability::Enum type) const {
-    switch (type) {
-    case Availability::Obsolete:
-        return std::get<Availability::Obsolete>(m_availabilities);
-    case Availability::Available:
-        return std::get<Availability::Available>(m_availabilities);
-    case Availability::Future:
-        return std::get<Availability::Future>(m_availabilities);
-    }
-    return std::get<Availability::Future>(m_availabilities);
-}
-
-void BasesListBox::AvailabilityManager::SetAvailability(const Availability::Enum type, const bool state) {
-    switch (type) {
-    case Availability::Obsolete:
-        std::get<Availability::Obsolete>(m_availabilities) = state;
-        break;
-    case Availability::Available:
-        std::get<Availability::Available>(m_availabilities) = state;
-        break;
-    case Availability::Future:
-        std::get<Availability::Future>(m_availabilities) = state;
-        break;
-    }
-}
-
-void BasesListBox::AvailabilityManager::ToggleAvailability(const Availability::Enum type) {
-    SetAvailability(type, !GetAvailability(type));
-}
-
 //////////////////////////////////////////////////
 // BasesListBox derived classes                 //
 //////////////////////////////////////////////////
 
 class EmptyHullsListBox : public BasesListBox {
     public:
-    EmptyHullsListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+    EmptyHullsListBox(const AvailabilityManager& availabilities_state,
                       const boost::optional<std::string>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ADD_FIRST_DESIGN_HULL_QUEUE_PROMPT"))
     {};
@@ -2296,7 +2294,7 @@ class EmptyHullsListBox : public BasesListBox {
 
 class CompletedDesignsListBox : public BasesListBox {
     public:
-    CompletedDesignsListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+    CompletedDesignsListBox(const AvailabilityManager& availabilities_state,
                             const boost::optional<std::string>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
@@ -2313,7 +2311,7 @@ class CompletedDesignsListBox : public BasesListBox {
 
 class SavedDesignsListBox : public BasesListBox {
     public:
-    SavedDesignsListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+    SavedDesignsListBox(const AvailabilityManager& availabilities_state,
                         const boost::optional<std::string>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ADD_FIRST_SAVED_DESIGN_QUEUE_PROMPT"))
     {};
@@ -2343,7 +2341,7 @@ class SavedDesignsListBox : public BasesListBox {
 
 class MonstersListBox : public BasesListBox {
     public:
-    MonstersListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+    MonstersListBox(const AvailabilityManager& availabilities_state,
                     const boost::optional<std::string>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
@@ -3037,7 +3035,7 @@ private:
     std::shared_ptr<MonstersListBox>           m_monsters_list;        // monster designs
 
     // Holds the state of the availabilities filter.
-    BasesListBox::AvailabilityManager m_availabilities_state;
+    AvailabilityManager m_availabilities_state;
     std::tuple<std::shared_ptr<CUIStateButton>, std::shared_ptr<CUIStateButton>, std::shared_ptr<CUIStateButton>> m_availabilities_buttons;
 };
 
