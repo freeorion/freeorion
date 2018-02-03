@@ -2786,8 +2786,6 @@ public:
     void            Reset();
     void            ToggleAvailability(const Availability::Enum type);
     void            SetEmpireShown(int empire_id, bool refresh_list);
-    void            ShowAvailability(bool available, bool refresh_list);
-    void            HideAvailability(bool available, bool refresh_list);
     void            EnableOrderIssuing(bool enable/* = true*/);
     //@}
 
