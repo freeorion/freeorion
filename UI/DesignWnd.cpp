@@ -63,55 +63,6 @@ namespace {
     const GG::Y         SLOT_CONTROL_HEIGHT(60);
     const int           PAD(3);
 
-    /** A class to allow the storage of availabilty in a common location. */
-    class AvailabilityManager {
-        private:
-        // A tuple of bools for the state of the 3 availability filters:
-        // Obsolete, Available and Unavailable
-        std::tuple<bool, bool, bool> m_availabilities;
-
-        public:
-        AvailabilityManager(bool obsolete, bool available, bool unavailable);
-
-        bool GetAvailability(const Availability::Enum type) const;
-        void SetAvailability(const Availability::Enum type, const bool state);
-        void ToggleAvailability(const Availability::Enum type);
-    };
-
-    AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
-        m_availabilities{obsolete, available, unavailable}
-    {}
-
-    bool AvailabilityManager::GetAvailability(const Availability::Enum type) const {
-        switch (type) {
-        case Availability::Obsolete:
-            return std::get<Availability::Obsolete>(m_availabilities);
-        case Availability::Available:
-            return std::get<Availability::Available>(m_availabilities);
-        case Availability::Future:
-            return std::get<Availability::Future>(m_availabilities);
-        }
-        return std::get<Availability::Future>(m_availabilities);
-    }
-
-    void AvailabilityManager::SetAvailability(const Availability::Enum type, const bool state) {
-        switch (type) {
-        case Availability::Obsolete:
-            std::get<Availability::Obsolete>(m_availabilities) = state;
-            break;
-        case Availability::Available:
-            std::get<Availability::Available>(m_availabilities) = state;
-            break;
-        case Availability::Future:
-            std::get<Availability::Future>(m_availabilities) = state;
-            break;
-        }
-    }
-
-    void AvailabilityManager::ToggleAvailability(const Availability::Enum type) {
-        SetAvailability(type, !GetAvailability(type));
-    }
-
     /** Returns texture with which to render a SlotControl, depending on \a slot_type. */
     std::shared_ptr<GG::Texture> SlotBackgroundTexture(ShipSlotType slot_type) {
         if (slot_type == SL_EXTERNAL)
@@ -918,6 +869,131 @@ namespace {
 
         obsolete_parts = m_obsolete_parts;
     }
+
+    //////////////////////////////////////////////////
+    //  AvailabilityManager                         //
+    //////////////////////////////////////////////////
+
+    /** A class to allow the storage of availabilty in a common location. */
+    class AvailabilityManager {
+        private:
+        // A tuple of bools for the state of the 3 availability filters:
+        // Obsolete, Available and Unavailable
+        std::tuple<bool, bool, bool> m_availabilities;
+
+        public:
+        AvailabilityManager(bool obsolete, bool available, bool unavailable);
+
+        bool GetAvailability(const Availability::Enum type) const;
+        void SetAvailability(const Availability::Enum type, const bool state);
+        void ToggleAvailability(const Availability::Enum type);
+
+        /** Return none or the shown state of the design \p id */
+        boost::optional<Availability::Enum> ShowDesignAs(int id) const;
+        /** Return none or the shown state of the hull \p id */
+        boost::optional<Availability::Enum> ShowHullAs(const std::string& id) const;
+        /** Return none or the shown state of the part \p id */
+        boost::optional<Availability::Enum> ShowPartAs(const std::string& id) const;
+
+        private:
+        /** Return none or the shown state of the with \p available and \p obsolete */
+        boost::optional<Availability::Enum> ShowAs(bool available, bool obsolete) const;
+
+    };
+
+    AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
+        m_availabilities{obsolete, available, unavailable}
+    {}
+
+    bool AvailabilityManager::GetAvailability(const Availability::Enum type) const {
+        switch (type) {
+        case Availability::Obsolete:
+            return std::get<Availability::Obsolete>(m_availabilities);
+        case Availability::Available:
+            return std::get<Availability::Available>(m_availabilities);
+        case Availability::Future:
+            return std::get<Availability::Future>(m_availabilities);
+        }
+        return std::get<Availability::Future>(m_availabilities);
+    }
+
+    void AvailabilityManager::SetAvailability(const Availability::Enum type, const bool state) {
+        switch (type) {
+        case Availability::Obsolete:
+            std::get<Availability::Obsolete>(m_availabilities) = state;
+            break;
+        case Availability::Available:
+            std::get<Availability::Available>(m_availabilities) = state;
+            break;
+        case Availability::Future:
+            std::get<Availability::Future>(m_availabilities) = state;
+            break;
+        }
+    }
+
+    void AvailabilityManager::ToggleAvailability(const Availability::Enum type) {
+        SetAvailability(type, !GetAvailability(type));
+    }
+
+    boost::optional<Availability::Enum> AvailabilityManager::ShowDesignAs(int id) const {
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* empire = GetEmpire(empire_id);  // may be 0
+        bool available = empire ? empire->ShipDesignAvailable(id) : true;
+
+        const auto& manager = GetCurrentDesignsManager();
+        const auto maybe_obsolete = manager.IsObsolete(id);
+        bool is_obsolete = maybe_obsolete && *maybe_obsolete;
+
+        return ShowAs(available, is_obsolete);
+    }
+    
+    boost::optional<Availability::Enum> AvailabilityManager::ShowHullAs(const std::string& id) const {
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* empire = GetEmpire(empire_id);  // may be 0
+        bool available = empire ? empire->ShipHullAvailable(id) : true;
+
+        const auto& manager = GetCurrentDesignsManager();
+        const auto obsolete = manager.IsHullObsolete(id);
+
+        return ShowAs(available, obsolete);
+    }
+
+    boost::optional<Availability::Enum> AvailabilityManager::ShowPartAs(const std::string& id) const {
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* empire = GetEmpire(empire_id);  // may be 0
+        bool available = empire ? empire->ShipPartAvailable(id) : true;
+
+        const auto& manager = GetCurrentDesignsManager();
+        const auto obsolete = manager.IsPartObsolete(id);
+
+        return ShowAs(available, obsolete);
+    }
+
+    boost::optional<Availability::Enum> AvailabilityManager::ShowAs(bool available, bool obsolete) const {
+        const bool showing_obsolete = std::get<Availability::Obsolete>(m_availabilities);
+        const bool showing_available = std::get<Availability::Available>(m_availabilities);
+        const bool showing_future = std::get<Availability::Future>(m_availabilities);
+
+        // Show as obsolete if it overlaps an already show category or is the
+        // only catagory.
+        if (showing_obsolete && obsolete && showing_available && available)
+            return Availability::Obsolete;
+
+        if (showing_obsolete && obsolete && showing_future && !available)
+            return Availability::Obsolete;
+
+        if (showing_obsolete && obsolete && !showing_available && !showing_future)
+            return Availability::Obsolete;
+
+
+        if (showing_available && available && !obsolete)
+            return Availability::Available;
+
+        if (showing_future && !available && !obsolete)
+            return Availability::Future;
+
+        return boost::none;
+    }
 }
 
 //////////////////////////////////////////////////
@@ -1113,7 +1189,7 @@ void PartControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 
 void PartControl::SetAvailability(const Availability::Enum type) {
-    auto disabled = type != Availability::Available;
+    auto disabled = type == Availability::Obsolete;
     m_icon->Disable(disabled);
     m_background->Disable(disabled);
 }
@@ -1126,9 +1202,11 @@ class PartsListBox : public CUIListBox {
 public:
     class PartsListBoxRow : public CUIListBox::Row {
     public:
-        PartsListBoxRow(GG::X w, GG::Y h);
+        PartsListBoxRow(GG::X w, GG::Y h, const AvailabilityManager& availabilities_state);
         void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
                                  const GG::Wnd* destination) override;
+    private:
+        const AvailabilityManager& m_availabilities_state;
     };
 
     /** \name Structors */ //@{
@@ -1179,8 +1257,9 @@ private:
     const AvailabilityManager& m_availabilities_state;
 };
 
-PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h) :
-    CUIListBox::Row(w, h, "")    // drag_drop_data_type = "" implies not draggable row
+PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h, const AvailabilityManager& availabilities_state) :
+    CUIListBox::Row(w, h, ""),    // drag_drop_data_type = "" implies not draggable row
+    m_availabilities_state(availabilities_state)
 {}
 
 void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
@@ -1224,17 +1303,9 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
     }
 
     // set availability shown
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = GetEmpire(empire_id);  // may be 0
-    const auto& manager = GetCurrentDesignsManager();
-
-    bool available = empire ? empire->ShipPartAvailable(part_type->Name()) : true;
-    const auto obsolete = manager.IsPartObsolete(part_type->Name());
-
-    if (obsolete)
-        new_part_control->SetAvailability(Availability::Obsolete);
-    else if (!available)
-        new_part_control->SetAvailability(Availability::Future);
+    auto shown = m_availabilities_state.ShowPartAs(part_type->Name());
+    if (shown)
+        new_part_control->SetAvailability(*shown);
 
     SetCell(ii, new_part_control);
 }
@@ -1278,12 +1349,6 @@ void PartsListBox::AcceptDrops(const GG::Pt& pt,
 {}
 
 PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) {
-    const auto& manager = GetCurrentDesignsManager();
-
-    const bool showing_obsolete = AvailabilityState().GetAvailability(Availability::Obsolete);
-    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
-    const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
-
     PartGroupsType part_groups;
     // loop through all possible parts
     for (const auto& entry : GetPartTypeManager()) {
@@ -1297,11 +1362,8 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
             continue;   // part of this class is not requested to be shown
 
         // Check if part satisfies availability and obsolecense
-        bool available = empire ? empire->ShipPartAvailable(part->Name()) : true;
-        const auto obsolete = manager.IsPartObsolete(part->Name());
-        if (! ((obsolete && showing_obsolete)
-               || (available && !obsolete && showing_available)
-               || (!available && showing_unavailable)))
+        auto shown = m_availabilities_state.ShowPartAs(part->Name());
+        if (!shown)
             continue;
 
         for (ShipSlotType slot_type : part->MountableSlotTypes()) {
@@ -1502,7 +1564,8 @@ void PartsListBox::Populate() {
                 if (cur_row)
                     Insert(cur_row);
                 cur_col = 0;
-                cur_row = GG::Wnd::Create<PartsListBoxRow>(TOTAL_WIDTH, SLOT_CONTROL_HEIGHT + GG::Y(PAD));
+                cur_row = GG::Wnd::Create<PartsListBoxRow>(
+                    TOTAL_WIDTH, SLOT_CONTROL_HEIGHT + GG::Y(PAD), m_availabilities_state);
             }
             ++cur_col;
 
@@ -1515,15 +1578,9 @@ void PartsListBox::Populate() {
             control->RightClickedSignal.connect(
                 PartsListBox::PartTypeRightClickedSignal);
 
-            const auto& manager = GetCurrentDesignsManager();
-
-            bool available = empire ? empire->ShipPartAvailable(part->Name()) : true;
-            const auto obsolete = manager.IsPartObsolete(part->Name());
-
-            if (obsolete)
-                control->SetAvailability(Availability::Obsolete);
-            else if (!available)
-                control->SetAvailability(Availability::Future);
+            auto shown = m_availabilities_state.ShowPartAs(part->Name());
+            if (shown)
+                control->SetAvailability(*shown);
 
             cur_row->push_back(control);
         }
@@ -2418,11 +2475,6 @@ void EmptyHullsListBox::PopulateCore() {
     ScopedTimer scoped_timer("EmptyHulls::PopulateCore");
     DebugLogger() << "EmptyHulls::PopulateCore EmpireID(): " << EmpireID();
 
-    const bool showing_obsolete = AvailabilityState().GetAvailability(Availability::Obsolete);
-    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
-    const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
-
-    const Empire* empire = GetEmpire(EmpireID()); // may return 0
     const GG::Pt row_size = ListRowSize();
 
     Clear();
@@ -2435,31 +2487,21 @@ void EmptyHullsListBox::PopulateCore() {
         if (!hull_type || !hull_type->Producible())
             continue;
 
-        auto available = empire ? empire->ShipHullAvailable(hull_name) : true;
-        auto obsolete = manager.IsHullObsolete(hull_name);
-
+        auto shown = AvailabilityState().ShowHullAs(hull_name);
+        if (!shown)
+            continue;
         const std::vector<std::string> empty_parts_vec;
-        if ((obsolete && showing_obsolete)
-            || (available && !obsolete && showing_available)
-            || (!available && showing_unavailable))
-        {
-            auto row = GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y, hull_name, empty_parts_vec);
-            if (obsolete && available)
-                row->SetAvailability(Availability::Obsolete);
-            else if (!available)
-                row->SetAvailability(Availability::Future);
-            Insert(row);
-            row->Resize(row_size);
-        }
+        auto row = GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y, hull_name, empty_parts_vec);
+        row->SetAvailability(*shown);
+        Insert(row);
+        row->Resize(row_size);
     }
 }
 
 void CompletedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesignsListBox::PopulateCore");
 
-    const bool showing_obsolete = AvailabilityState().GetAvailability(Availability::Obsolete);
     const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
-    const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
 
     const Universe& universe = GetUniverse();
 
@@ -2477,18 +2519,11 @@ void CompletedDesignsListBox::PopulateCore() {
                 const ShipDesign* design = GetShipDesign(design_id);
                 if (!design || !design->Producible())
                     continue;
-                bool available = empire->ShipDesignAvailable(design_id);
-                const auto maybe_obsolete = manager.IsObsolete(design_id);
-                bool obsolete = maybe_obsolete && *maybe_obsolete;
-                if ((obsolete && showing_obsolete)
-                    || (available && !obsolete && showing_available)
-                    || (!available && showing_unavailable))
-                {
+
+                auto shown = AvailabilityState().ShowDesignAs(design_id);
+                if (shown) {
                     auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
-                    if (obsolete && available)
-                        row->SetAvailability(Availability::Obsolete);
-                    else if (!available)
-                        row->SetAvailability(Availability::Future);
+                    row->SetAvailability(*shown);
                     Insert(row);
                     row->Resize(row_size);
                 }
@@ -2515,27 +2550,20 @@ void SavedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesigns::PopulateCore");
     DebugLogger() << "CompletedDesigns::PopulateCore";
 
-    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
-    const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
-
     // remove preexisting rows
     Clear();
     const GG::Pt row_size = ListRowSize();
-    const auto empire = GetEmpire(EmpireID());
 
     for (const auto& uuid : GetSavedDesignsManager().OrderedDesignUUIDs()) {
         const auto design = GetSavedDesignsManager().GetDesign(uuid);
-        auto available = (empire && design) ? empire->ShipDesignAvailable(*design) : true;
-
-        if (!((available && showing_available) || (!available && showing_unavailable)))
+        auto shown = AvailabilityState().ShowDesignAs(design->ID());
+        if (!shown)
             continue;
 
         auto row = GG::Wnd::Create<SavedDesignListBoxRow>(row_size.x, row_size.y, *design);
         Insert(row);
         row->Resize(row_size);
-
-        if (!available)
-            row->SetAvailability(Availability::Future);
+        row->SetAvailability(*shown);
     }
 }
 
@@ -2573,11 +2601,8 @@ std::shared_ptr<BasesListBox::Row> EmptyHullsListBox::ChildrenDraggedAwayCore(co
     std::vector<std::string> empty_parts_vec;
     auto row =  GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y, hull_name, empty_parts_vec);
 
-    if (const Empire* empire = GetEmpire(EmpireID())) {
-        auto hull_available = empire->ShipHullAvailable(hull_name);
-        if (!hull_available)
-            row->SetAvailability(Availability::Future);
-    }
+    if (auto shown = AvailabilityState().ShowHullAs(hull_name))
+        row->SetAvailability(*shown);
 
     return row;
 }
@@ -2598,13 +2623,8 @@ std::shared_ptr<BasesListBox::Row> CompletedDesignsListBox::ChildrenDraggedAwayC
 
     const auto row_size = ListRowSize();
     auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
-    if (const Empire* empire = GetEmpire(EmpireID())) {
-        const auto maybe_obsolete = GetCurrentDesignsManager().IsObsolete(design_id);
-        if (!empire->ShipDesignAvailable(design_id))
-            row->SetAvailability(Availability::Future);
-        else if (maybe_obsolete && *maybe_obsolete)
-            row->SetAvailability(Availability::Obsolete);
-    }
+    if (auto shown = AvailabilityState().ShowDesignAs(design->ID()))
+        row->SetAvailability(*shown);
     return row;
 }
 
@@ -2624,13 +2644,8 @@ std::shared_ptr<BasesListBox::Row> SavedDesignsListBox::ChildrenDraggedAwayCore(
     const auto row_size = ListRowSize();
     auto row = GG::Wnd::Create<SavedDesignListBoxRow>(row_size.x, row_size.y, *design);
 
-    const auto empire = GetEmpire(EmpireID());
-
-    if (empire) {
-        auto available = empire->ShipDesignAvailable(*design);
-        if (!available)
-            row->SetAvailability(Availability::Future);
-    }
+    if (auto shown = AvailabilityState().ShowDesignAs(design->ID()))
+        row->SetAvailability(*shown);
 
     return row;
 }
@@ -3555,19 +3570,6 @@ void SlotControl::SetPart(const PartType* part_type) {
             UserString(part_type->Name()) + " (" + title_text + ")",
             UserString(part_type->Description())
         ));
-
-        // Set availability shown
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        const Empire* empire = GetEmpire(empire_id);  // may be 0
-        const auto& manager = GetCurrentDesignsManager();
-
-        bool available = empire ? empire->ShipPartAvailable(part_type->Name()) : true;
-        const auto obsolete = manager.IsPartObsolete(part_type->Name());
-
-        if (obsolete)
-            m_part_control->SetAvailability(Availability::Obsolete);
-        else if (!available)
-            m_part_control->SetAvailability(Availability::Future);
     }
 }
 
