@@ -24,27 +24,29 @@ planet types, planet sizes, and also other content get placed.
 
 # Code style check
 
-Code style checks are done with [pycodestyle](https://pypi.python.org/pypi/pycodestyle)
+We use [flake8-putty](https://pypi.python.org/pypi/flake8-putty)
+which include [flake8](https://pypi.python.org/pypi/flake8)
+which include [pycodestyle](https://pypi.python.org/pypi/pycodestyle) and other tools.
 
-This part is in progress.
+`flake8-putty` is `flake8` plugin that allows one to disable rule for certain file, see `putty-ignore` section in `tox.ini`
 
 Plan is to fix all easy things (code formatting) and ignore hard things (`E722 do not use bare except`).
 Final stage is to setup automatic check to avoid adding new cases.
 
-## Why we ignore
-- `E241 multiple spaces after ':'`  this is ok only for `AIDependencies.py` because it is used as config file
-- `E501 line too long` it is ok to ignore it for `AIDependencies.py`
+## TODO section
 
-## List of check that should pass:
-`pycodestyle python/AI/AIDependencies.py --ignore=E501,E241`
-`pycodestyle python/AI/AIFleetMission.py --max-line-length=120`
-`pycodestyle python/AI/AIstate.py --max-line-length=120`
-`pycodestyle python/AI/ColonisationAI.py --max-line-length=120`
-`pycodestyle python/AI/CombatRatingsAI.py --max-line-length=120`
-`pycodestyle python/AI/DiplomaticCorp.py --max-line-length=120`
-`pycodestyle python/AI/EnumsAI.py --max-line-length=120`
-`pycodestyle python/AI/ExplorationAI.py --max-line-length=120`
-`pycodestyle python/AI/fleet_orders.py --max-line-length=120`
-`pycodestyle python/AI/FleetUtilsAI.py --max-line-length=120`
-`pycodestyle python/AI/FreeOrionAI.py --max-line-length=120 --ignore=E402,E722`
-`pycodestyle python/AI/InvasionAI.py --max-line-length=120`
+- remove all folders from excludes
+- don't ignore line length check (E501)
+
+## Install dependencies
+
+```sh
+pip install flake8-putty
+```
+
+## Run checks
+
+```sh
+cd default/python
+flake8
+```
