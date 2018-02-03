@@ -1043,6 +1043,8 @@ public:
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void SetAvailability(const Availability::Enum type);
     //@}
 
     mutable boost::signals2::signal<void (const PartType*)> ClickedSignal;
@@ -1103,6 +1105,12 @@ void PartControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void PartControl::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { DoubleClickedSignal(m_part); }
 
+
+void PartControl::SetAvailability(const Availability::Enum type) {
+    auto disabled = type != Availability::Available;
+    m_icon->Disable(disabled);
+    m_background->Disable(disabled);
+}
 
 //////////////////////////////////////////////////
 // PartsListBox                                 //
@@ -1205,6 +1213,20 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
         new_part_control->DoubleClickedSignal.connect(
             parent->PartTypeDoubleClickedSignal);
     }
+
+    // set availability shown
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = GetEmpire(empire_id);  // may be 0
+    const auto& manager = GetCurrentDesignsManager();
+
+    bool available = empire ? empire->ShipPartAvailable(part_type->Name()) : true;
+    const auto obsolete = manager.IsPartObsolete(part_type->Name());
+
+    if (obsolete)
+        new_part_control->SetAvailability(Availability::Obsolete);
+    else if (!available)
+        new_part_control->SetAvailability(Availability::Future);
+
     SetCell(ii, new_part_control);
 }
 
@@ -1481,6 +1503,17 @@ void PartsListBox::Populate() {
                 PartsListBox::PartTypeClickedSignal);
             control->DoubleClickedSignal.connect(
                 PartsListBox::PartTypeDoubleClickedSignal);
+
+            const auto& manager = GetCurrentDesignsManager();
+
+            bool available = empire ? empire->ShipPartAvailable(part->Name()) : true;
+            const auto obsolete = manager.IsPartObsolete(part->Name());
+
+            if (obsolete)
+                control->SetAvailability(Availability::Obsolete);
+            else if (!available)
+                control->SetAvailability(Availability::Future);
+
             cur_row->push_back(control);
         }
     }
@@ -3462,6 +3495,19 @@ void SlotControl::SetPart(const PartType* part_type) {
             UserString(part_type->Name()) + " (" + title_text + ")",
             UserString(part_type->Description())
         ));
+
+        // Set availability shown
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* empire = GetEmpire(empire_id);  // may be 0
+        const auto& manager = GetCurrentDesignsManager();
+
+        bool available = empire ? empire->ShipPartAvailable(part_type->Name()) : true;
+        const auto obsolete = manager.IsPartObsolete(part_type->Name());
+
+        if (obsolete)
+            m_part_control->SetAvailability(Availability::Obsolete);
+        else if (!available)
+            m_part_control->SetAvailability(Availability::Future);
     }
 }
 
