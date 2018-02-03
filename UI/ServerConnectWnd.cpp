@@ -227,7 +227,7 @@ void ServerConnectWnd::OkClicked() {
     GetOptionsDB().Commit();
 
     m_result.player_name = *m_player_name_edit;
-    const auto& it = m_client_type_list->CurrentItem();
+    auto it = m_client_type_list->CurrentItem();
     if (it != m_client_type_list->end()) {
         const ClientTypeRow* type_row = boost::polymorphic_downcast<const ClientTypeRow*>(it->get());
         if (type_row) {
