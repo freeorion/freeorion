@@ -2031,8 +2031,209 @@ sc::result PlayingGame::react(const RequestCombatLogs& msg) {
 
 sc::result PlayingGame::react(const JoinGame& msg) {
     DebugLogger(FSM) << "(ServerFSM) PlayingGame::JoinGame message received";
-    msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_PLAYING_GAME")));
-    Server().Networking().Disconnect(msg.m_player_connection);
+    ServerApp& server = Server();
+    const Message& message = msg.m_message;
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+
+    std::string player_name;
+    Networking::ClientType client_type;
+    std::string client_version_string;
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
+
+    if (client_type != Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
+        client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+    {
+        msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_PLAYING_GAME")));
+        Server().Networking().Disconnect(msg.m_player_connection);
+        return discard_event();
+    }
+
+    Networking::AuthRoles roles;
+    if (server.IsAuthRequiredOrFillRoles(player_name, roles)) {
+        // send authentication request
+        player_connection->AwaitPlayer(client_type, client_version_string);
+        player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
+        return discard_event();
+    }
+
+    std::string original_player_name = player_name;
+    // Remove AI prefix to distinguish Human from AI.
+    std::string ai_prefix = UserString("AI_PLAYER") + "_";
+    while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
+        player_name.erase(0, ai_prefix.size());
+    if (player_name.empty())
+        player_name = "_";
+
+    std::string new_player_name = player_name;
+
+    bool collision = true;
+    std::size_t t = 1;
+    while (t <= server.Networking().NumEstablishedPlayers() + 1 && collision) {
+        collision = false;
+        roles.Clear();
+        if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
+            collision = true;
+        } else {
+            for (auto& plr : server.Empires() ) {
+                if (plr.second->Name() == new_player_name) {
+                    collision = true;
+                    break;
+                }
+            }
+        }
+
+        if (collision)
+            new_player_name = player_name + std::to_string(++t); // start alternative names from 2
+    }
+
+    if (collision) {
+        player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
+                                                    true));
+        server.Networking().Disconnect(player_connection);
+        return discard_event();
+    }
+
+    player_name = new_player_name;
+
+    // establish player
+    player_connection->SetAuthRoles(roles);
+
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
+        !player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER))
+    {
+        client_type = Networking::INVALID_CLIENT_TYPE;
+    }
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
+        !player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR))
+    {
+        client_type = Networking::INVALID_CLIENT_TYPE;
+    }
+
+    if (client_type == Networking::INVALID_CLIENT_TYPE) {
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
+        server.Networking().Disconnect(player_connection);
+        return discard_event();
+    }
+
+    // assign unique player ID to newly connected player
+    int player_id = server.m_networking.NewPlayerID();
+    DebugLogger() << "PlayingGame.JoinGame Assign new player id " << player_id;
+
+    // establish player with requested client type and acknowldge via connection
+    player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
+    player_connection->SendMessage(JoinAckMessage(player_id));
+    if (!GetOptionsDB().Get<bool>("skip-checksum"))
+        player_connection->SendMessage(ContentCheckSumMessage());
+
+    // inform player of host
+    player_connection->SendMessage(HostIDMessage(server.m_networking.HostPlayerID()));
+
+    // send chat history
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
+        client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+        client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+    {
+        std::vector<std::reference_wrapper<const ChatHistoryEntity>> chat_history;
+        for (const auto& elem : server.GetChatHistory()) {
+            chat_history.push_back(std::cref(elem));
+        }
+        if (chat_history.size() > 0) {
+            player_connection->SendMessage(ChatHistoryMessage(chat_history));
+        }
+    }
+
+    // send playing game
+    server.AddObserverPlayerIntoGame(player_connection);
+
+    return discard_event();
+}
+
+sc::result PlayingGame::react(const AuthResponse& msg) {
+    DebugLogger(FSM) << "(ServerFSM) PlayingGame::AuthResponse message received";
+    ServerApp& server = Server();
+    const Message& message = msg.m_message;
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+
+    std::string player_name;
+    std::string auth;
+    ExtractAuthResponseMessageData(message, player_name, auth);
+
+    Networking::AuthRoles roles;
+
+    if (!server.IsAuthSuccessAndFillRoles(player_name, auth, roles)) {
+        // wrong password
+        player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_WRONG_PASSWORD")) % player_name),
+                                                    true));
+        server.Networking().Disconnect(player_connection);
+        return discard_event();
+    }
+
+    player_connection->SetAuthenticated();
+    Networking::ClientType client_type = player_connection->GetClientType();
+
+    // establish player
+    player_connection->SetAuthRoles(roles);
+
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
+        !player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER))
+    {
+        client_type = Networking::INVALID_CLIENT_TYPE;
+    }
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
+        !player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR))
+    {
+        client_type = Networking::INVALID_CLIENT_TYPE;
+    }
+
+    if (client_type == Networking::INVALID_CLIENT_TYPE) {
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
+        server.Networking().Disconnect(player_connection);
+        return discard_event();
+    }
+
+    // drop other connection with same name
+    std::list<PlayerConnectionPtr> to_disconnect;
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+         it != server.m_networking.established_end(); ++it)
+    {
+        if ((*it)->PlayerName() == player_name && player_connection != (*it)) {
+            (*it)->SendMessage(ErrorMessage(UserString("ERROR_CONNECTION_WAS_REPLACED"), true));
+            to_disconnect.push_back(*it);
+        }
+    }
+    for (const auto& conn : to_disconnect)
+    { server.Networking().Disconnect(conn); }
+
+    // assign unique player ID to newly connected player
+    int player_id = server.m_networking.NewPlayerID();
+    DebugLogger() << "PlayingGame.AuthResponse Assign new player id " << player_id;
+
+    // establish player with requested client type and acknowldge via connection
+    player_connection->EstablishPlayer(player_id, player_name, client_type, player_connection->ClientVersionString());
+    player_connection->SendMessage(JoinAckMessage(player_id));
+    if (!GetOptionsDB().Get<bool>("skip-checksum"))
+        player_connection->SendMessage(ContentCheckSumMessage());
+
+    // inform player of host
+    player_connection->SendMessage(HostIDMessage(server.m_networking.HostPlayerID()));
+
+    // send chat history
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
+        client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+        client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+    {
+        std::vector<std::reference_wrapper<const ChatHistoryEntity>> chat_history;
+        for (const auto& elem : server.GetChatHistory()) {
+            chat_history.push_back(std::cref(elem));
+        }
+        if (chat_history.size() > 0) {
+            player_connection->SendMessage(ChatHistoryMessage(chat_history));
+        }
+    }
+
+    // send playing game
+    server.AddObserverPlayerIntoGame(player_connection);
+
     return discard_event();
 }
 
