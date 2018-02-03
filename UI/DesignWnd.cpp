@@ -1118,13 +1118,15 @@ public:
     };
 
     /** \name Structors */ //@{
-    PartsListBox(void);
+    PartsListBox(const AvailabilityManager& availabilities_state);
     //@}
 
     /** \name Accessors */ //@{
     const std::set<ShipPartClass>&  GetClassesShown() const;
     const std::set<ShipSlotType>&   GetSlotTypesShown() const;
-    const std::pair<bool, bool>&    GetAvailabilitiesShown() const; // .first -> available items; .second -> unavailable items
+
+    const AvailabilityManager&      AvailabilityState() const { return m_availabilities_state; }
+
     //@}
     bool                            GetShowingSuperfluous() const { return m_show_superfluous_parts; }
 
@@ -1144,9 +1146,6 @@ public:
     void            HideClass(ShipPartClass part_class, bool refresh_list = true);
     void            HideAllClasses(bool refresh_list = true);
 
-    void            ShowAvailability(bool available, bool refresh_list = true);
-    void            HideAvailability(bool available, bool refresh_list = true);
-
     void            ShowSuperfluousParts(bool refresh_list = true);
     void            HideSuperfluousParts(bool refresh_list = true);
     //@}
@@ -1160,10 +1159,9 @@ protected:
 
 private:
     std::set<ShipPartClass> m_part_classes_shown;   // which part classes should be shown
-    std::pair<bool, bool>   m_availabilities_shown; // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
     bool                    m_show_superfluous_parts;
-
     int                     m_previous_num_columns;
+    const AvailabilityManager& m_availabilities_state;
 };
 
 PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h) :
@@ -1210,12 +1208,12 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
     SetCell(ii, new_part_control);
 }
 
-PartsListBox::PartsListBox(void) :
+PartsListBox::PartsListBox(const AvailabilityManager& availabilities_state) :
     CUIListBox(),
     m_part_classes_shown(),
-    m_availabilities_shown{false, false},
     m_show_superfluous_parts(true),
-    m_previous_num_columns(-1)
+    m_previous_num_columns(-1),
+    m_availabilities_state(availabilities_state)
 {
     ManuallyManageColProps();
     NormalizeRowsOnInsert(false);
@@ -1224,9 +1222,6 @@ PartsListBox::PartsListBox(void) :
 
 const std::set<ShipPartClass>& PartsListBox::GetClassesShown() const
 { return m_part_classes_shown; }
-
-const std::pair<bool, bool>& PartsListBox::GetAvailabilitiesShown() const
-{ return m_availabilities_shown; }
 
 void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
@@ -1252,6 +1247,12 @@ void PartsListBox::AcceptDrops(const GG::Pt& pt,
 {}
 
 PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) {
+    const auto& manager = GetCurrentDesignsManager();
+
+    const bool showing_obsolete = AvailabilityState().GetAvailability(Availability::Obsolete);
+    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
+    const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
+
     PartGroupsType part_groups;
     // loop through all possible parts
     for (const auto& entry : GetPartTypeManager()) {
@@ -1264,17 +1265,17 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
         if (m_part_classes_shown.find(part_class) == m_part_classes_shown.end())
             continue;   // part of this class is not requested to be shown
 
-        bool part_available = empire ? empire->ShipPartAvailable(part->Name()) : true;
-        if (!(part_available && m_availabilities_shown.first) &&
-            !(!part_available && m_availabilities_shown.second))
-        {
-            // part is available but available parts shouldn't be shown, or
-            // part isn't available and not available parts shouldn't be shown
+        // Check if part satisfies availability and obsolecense
+        bool available = empire ? empire->ShipPartAvailable(part->Name()) : true;
+        const auto obsolete = manager.IsPartObsolete(part->Name());
+        if (! ((obsolete && showing_obsolete)
+               || (available && !obsolete && showing_available)
+               || (!available && showing_unavailable)))
             continue;
-        }
 
-        for (ShipSlotType slot_type : part->MountableSlotTypes())
-        { part_groups[{part_class, slot_type}].push_back(part.get()); }
+        for (ShipSlotType slot_type : part->MountableSlotTypes()) {
+            part_groups[{part_class, slot_type}].push_back(part.get());
+        }
     }
     return part_groups;
 }
@@ -1521,38 +1522,6 @@ void PartsListBox::HideAllClasses(bool refresh_list) {
         Populate();
 }
 
-void PartsListBox::ShowAvailability(bool available, bool refresh_list) {
-    if (available) {
-        if (!m_availabilities_shown.first) {
-            m_availabilities_shown.first = true;
-            if (refresh_list)
-                Populate();
-        }
-    } else {
-        if (!m_availabilities_shown.second) {
-            m_availabilities_shown.second = true;
-            if (refresh_list)
-                Populate();
-        }
-    }
-}
-
-void PartsListBox::HideAvailability(bool available, bool refresh_list) {
-    if (available) {
-        if (m_availabilities_shown.first) {
-            m_availabilities_shown.first = false;
-            if (refresh_list)
-                Populate();
-        }
-    } else {
-        if (m_availabilities_shown.second) {
-            m_availabilities_shown.second = false;
-            if (refresh_list)
-                Populate();
-        }
-    }
-}
-
 void PartsListBox::ShowSuperfluousParts(bool refresh_list) {
     if (m_show_superfluous_parts)
         return;
@@ -1592,9 +1561,7 @@ public:
     void ToggleClass(ShipPartClass part_class, bool refresh_list = true);
     void ToggleAllClasses(bool refresh_list = true);
 
-    void ShowAvailability(bool available, bool refresh_list = true);
-    void HideAvailability(bool available, bool refresh_list = true);
-    void ToggleAvailability(bool available, bool refresh_list = true);
+    void ToggleAvailability(const Availability::Enum type);
 
     void ShowSuperfluous(bool refresh_list = true);
     void HideSuperfluous(bool refresh_list = true);
@@ -1612,9 +1579,14 @@ private:
     std::shared_ptr<PartsListBox>   m_parts_list;
 
     std::map<ShipPartClass, std::shared_ptr<CUIStateButton>>    m_class_buttons;
-    std::pair<std::shared_ptr<CUIStateButton>,
-              std::shared_ptr<CUIStateButton>>                  m_availability_buttons;
     std::shared_ptr<CUIStateButton>                             m_superfluous_parts_button;
+
+    // Holds the state of the availabilities filter.
+    AvailabilityManager m_availabilities_state;
+    std::tuple<std::shared_ptr<CUIStateButton>,
+               std::shared_ptr<CUIStateButton>,
+               std::shared_ptr<CUIStateButton>> m_availabilities_buttons;
+
 };
 
 DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
@@ -1622,14 +1594,15 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE,
            config_name),
     m_parts_list(nullptr),
-    m_superfluous_parts_button(nullptr)
+    m_superfluous_parts_button(nullptr),
+    m_availabilities_state(false, true, false)
 {}
 
 void DesignWnd::PartPalette::CompleteConstruction() {
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
     SetChildClippingMode(ClipToClient);
 
-    m_parts_list = GG::Wnd::Create<PartsListBox>();
+    m_parts_list = GG::Wnd::Create<PartsListBox>(m_availabilities_state);
     AttachChild(m_parts_list);
     m_parts_list->PartTypeClickedSignal.connect(
         PartTypeClickedSignal);
@@ -1660,14 +1633,26 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     }
 
     // availability buttons
-    m_availability_buttons.first = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
-    AttachChild(m_availability_buttons.first);
-    m_availability_buttons.first->CheckedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
-    m_availability_buttons.second = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
-    AttachChild(m_availability_buttons.second);
-    m_availability_buttons.second->CheckedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
+    auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
+    m_obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(m_obsolete_button);
+    m_obsolete_button->CheckedSignal.connect(
+        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Obsolete));
+    m_obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
+
+    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
+    m_available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(m_available_button);
+    m_available_button->CheckedSignal.connect(
+        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Available));
+    m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
+
+    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
+    m_unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(m_unavailable_button);
+    m_unavailable_button->CheckedSignal.connect(
+        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Future));
+    m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
 
     // superfluous parts button
     m_superfluous_parts_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_REDUNDANT"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
@@ -1677,8 +1662,8 @@ void DesignWnd::PartPalette::CompleteConstruction() {
 
     // default to showing nothing
     ShowAllClasses(false);
-    ShowAvailability(true, false);
     ShowSuperfluous(false);
+    m_parts_list->Populate();
 
     CUIWnd::CompleteConstruction();
 
@@ -1706,7 +1691,7 @@ void DesignWnd::PartPalette::DoLayout() {
 
     const int NUM_CLASS_BUTTONS = std::max(1, static_cast<int>(m_class_buttons.size()));
     const int NUM_SUPERFLUOUS_CULL_BUTTONS = 1;
-    const int NUM_AVAILABILITY_BUTTONS = 2;
+    const int NUM_AVAILABILITY_BUTTONS = 3;
     const int NUM_NON_CLASS_BUTTONS = NUM_SUPERFLUOUS_CULL_BUTTONS + NUM_AVAILABILITY_BUTTONS;
 
     // determine whether to put non-class buttons (availability and redundancy)
@@ -1745,61 +1730,46 @@ void DesignWnd::PartPalette::DoLayout() {
 
     // place parts list.  note: assuming at least as many rows of class buttons as availability buttons, as should
     //                          be the case given how num_non_class_buttons_per_row is determined
-    m_parts_list->SizeMove(GG::Pt(GG::X0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)), ClientSize() - GG::Pt(GG::X(BUTTON_SEPARATION), GG::Y(BUTTON_SEPARATION)));
-
-    GG::Pt ul, lr;
+    m_parts_list->SizeMove(GG::Pt(GG::X0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)),
+                           ClientSize() - GG::Pt(GG::X(BUTTON_SEPARATION), GG::Y(BUTTON_SEPARATION)));
 
     // place slot type buttons
     col = NUM_CLASS_BUTTONS_PER_ROW;
     row = 0;
-    ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    auto ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    auto lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
     m_superfluous_parts_button->SizeMove(ul, lr);
 
-    // place availability buttons
-    if (num_non_class_buttons_per_row > 1) {
-        ++col;
-        row = 0;
-    } else {
-        ++row;
-    }
-    ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_availability_buttons.first->SizeMove(ul, lr);
+    // a function to place availability buttons either in a single column below the
+    // superfluous button or to complete a 2X2 grid left of the class buttons.
+    auto place_avail_button_adjacent =
+        [&col, &row, &num_non_class_buttons_per_row, NUM_CLASS_BUTTONS_PER_ROW,
+         BUTTON_EDGE_PAD, COL_OFFSET, ROW_OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT]
+        (GG::Wnd* avail_btn)
+        {
+            if (num_non_class_buttons_per_row == 1)
+                ++row;
+            else {
+                if (col >= NUM_CLASS_BUTTONS_PER_ROW + num_non_class_buttons_per_row - 1) {
+                    col = NUM_CLASS_BUTTONS_PER_ROW - 1;
+                    ++row;
+                }
+                ++col;
+            }
 
-    if (row != 0 && num_non_class_buttons_per_row > 2) {
-        ++col;
-        row = 0;
-    } else {
-        ++row;
-    }
-    ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_availability_buttons.second->SizeMove(ul, lr);
+            auto ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+            auto lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+            avail_btn->SizeMove(ul, lr);
+        };
 
+    //place availability buttons
+    auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
+    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
+    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
 
-    //GG::Pt ul, lr;
-
-    //// place availability buttons
-    //if (num_non_class_buttons_per_row > 1) {
-    //    ++col;
-    //    row = 0;
-    //}
-    //ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    //lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    //m_availability_buttons.first->SizeMove(ul, lr);
-
-    //++row;
-    //ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    //lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    //m_availability_buttons.second->SizeMove(ul, lr);
-
-    //// place superfluous culling button
-    //++row;
-    //ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    //lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    //m_superfluous_parts_button->SizeMove(ul, lr);
-
+    place_avail_button_adjacent(m_obsolete_button.get());
+    place_avail_button_adjacent(m_available_button.get());
+    place_avail_button_adjacent(m_unavailable_button.get());
 }
 
 void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_list) {
@@ -1853,35 +1823,30 @@ void DesignWnd::PartPalette::ToggleAllClasses(bool refresh_list)
         ShowAllClasses(refresh_list);
 }
 
-void DesignWnd::PartPalette::ShowAvailability(bool available, bool refresh_list) {
-    m_parts_list->ShowAvailability(available, refresh_list);
-    if (available)
-        m_availability_buttons.first->SetCheck();
-    else
-        m_availability_buttons.second->SetCheck();
-}
-
-void DesignWnd::PartPalette::HideAvailability(bool available, bool refresh_list) {
-    m_parts_list->HideAvailability(available, refresh_list);
-    if (available)
-        m_availability_buttons.first->SetCheck(false);
-    else
-        m_availability_buttons.second->SetCheck(false);
-}
-
-void DesignWnd::PartPalette::ToggleAvailability(bool available, bool refresh_list) {
-    const auto& avail_shown = m_parts_list->GetAvailabilitiesShown();
-    if (available) {
-        if (avail_shown.first)
-            HideAvailability(true, refresh_list);
-        else
-            ShowAvailability(true, refresh_list);
-    } else {
-        if (avail_shown.second)
-            HideAvailability(false, refresh_list);
-        else
-            ShowAvailability(false, refresh_list);
+void DesignWnd::PartPalette::ToggleAvailability(Availability::Enum type) {
+    std::shared_ptr<CUIStateButton> button;
+    bool state = false;
+    switch (type) {
+    case Availability::Obsolete:
+        m_availabilities_state.ToggleAvailability(Availability::Obsolete);
+        state = m_availabilities_state.GetAvailability(Availability::Obsolete);
+        button = std::get<Availability::Obsolete>(m_availabilities_buttons);
+        break;
+    case Availability::Available:
+        m_availabilities_state.ToggleAvailability(Availability::Available);
+        state = m_availabilities_state.GetAvailability(Availability::Available);
+        button = std::get<Availability::Available>(m_availabilities_buttons);
+        break;
+    case Availability::Future:
+        m_availabilities_state.ToggleAvailability(Availability::Future);
+        state = m_availabilities_state.GetAvailability(Availability::Future);
+        button = std::get<Availability::Future>(m_availabilities_buttons);
+        break;
     }
+
+    button->SetCheck(state);
+
+    m_parts_list->Populate();
 }
 
 void DesignWnd::PartPalette::ShowSuperfluous(bool refresh_list) {
