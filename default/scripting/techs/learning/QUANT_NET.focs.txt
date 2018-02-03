@@ -3,7 +3,7 @@ Tech
     description = "LRN_QUANT_NET_DESC"
     short_description = "RESEARCH_SHORT_DESC"
     category = "LEARNING_CATEGORY"
-    researchcost = 200 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 180 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
     tags = [ "PEDIA_LEARNING_CATEGORY" ]
     prerequisites = "LRN_NDIM_SUBSPACE"
@@ -15,7 +15,7 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 1.5 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/quantum_networking.png"
 

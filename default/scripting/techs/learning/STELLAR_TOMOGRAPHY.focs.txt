@@ -3,10 +3,13 @@ Tech
     description = "LRN_STELLAR_TOMOGRAPHY_DESC"
     short_description = "RESEARCH_SHORT_DESC"
     category = "LEARNING_CATEGORY"
-    researchcost = 125 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 60 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
     tags = [ "PEDIA_LEARNING_CATEGORY" ]
-    prerequisites = "LRN_EVERYTHING"
+    prerequisites = [
+        "LRN_ARTIF_MINDS"
+        "CON_ORBITAL_CON"
+    ]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -16,7 +19,7 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 3 * [[RESEARCH_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -26,7 +29,7 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * 3.75 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 2 * [[RESEARCH_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -36,7 +39,7 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -46,7 +49,7 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/stellar_tomography.png"
 
