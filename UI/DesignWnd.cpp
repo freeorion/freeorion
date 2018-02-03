@@ -1617,6 +1617,7 @@ public:
     mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
     mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
     mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)> PartTypeRightClickedSignal;
+    mutable boost::signals2::signal<void ()> PartObsolescenceChangedSignal;
 
 private:
     void DoLayout();
@@ -1829,6 +1830,8 @@ void DesignWnd::PartPalette::HandlePartTypeClicked(const PartType* part_type, GG
         auto& manager = GetCurrentDesignsManager();
         const auto obsolete = manager.IsPartObsolete(part_type->Name());
         manager.SetPartObsolete(part_type->Name(), !obsolete);
+
+        PartObsolescenceChangedSignal();
         Populate();
     }
     else
@@ -1842,6 +1845,7 @@ void DesignWnd::PartPalette::HandlePartTypeRightClicked(const PartType* part_typ
     auto is_obsolete = manager.IsPartObsolete(part_name);
     auto toggle_obsolete_design_action = [&manager, &part_name, is_obsolete, this]() {
         manager.SetPartObsolete(part_name, !is_obsolete);
+        PartObsolescenceChangedSignal();
         Populate();
     };
 
@@ -4734,6 +4738,10 @@ void DesignWnd::CompleteConstruction() {
     m_base_selector->HullClickedSignal.connect(
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
     m_base_selector->TabChangedSignal.connect(boost::bind(&MainPanel::HandleBaseTypeChange, m_main_panel, _1));
+
+    // Connect signals to re-populate when part obsolescence changes
+    m_part_palette->PartObsolescenceChangedSignal.connect(
+        boost::bind(&BaseSelector::Reset, m_base_selector));
 }
 
 void DesignWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
