@@ -2,8 +2,7 @@
 Version=1.0
 Name=FreeOrion
 GenericName=Turn-based space strategy game
-Comment=turn-based space empire and galactic conquest computer game (client)
-Comment[de]=Rundenbasierendes Weltraum-Strategiespiel
+Comment=Turn-based space empire and galactic conquest (4X) computer game (client)
 Exec=freeorion
 TryExec=freeorion
 Icon=freeorion
