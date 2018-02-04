@@ -3351,7 +3351,7 @@ public:
     /** emitted when the contents of a slot are altered by the dragging
       * a PartControl in or out of the slot.  signal should be caught and the
       * slot contents set using SetPart accordingly */
-    mutable boost::signals2::signal<void (const PartType*)> SlotContentsAlteredSignal;
+    mutable boost::signals2::signal<void (const PartType*, bool)> SlotContentsAlteredSignal;
 
     mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
 
@@ -3509,7 +3509,7 @@ void SlotControl::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::
     const PartType* part_type = control ? control->Part() : nullptr;
 
     if (part_type)
-        SlotContentsAlteredSignal(part_type);
+        SlotContentsAlteredSignal(part_type, (mod_keys & GG::MOD_KEY_CTRL));
 }
 
 void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
@@ -3520,7 +3520,7 @@ void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const G
     if (part_control != m_part_control.get())
         return;
     DetachChildAndReset(m_part_control);
-    SlotContentsAlteredSignal(nullptr);
+    SlotContentsAlteredSignal(nullptr, false);
 }
 
 void SlotControl::DragDropEnter(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
@@ -3570,7 +3570,7 @@ void SlotControl::SetPart(const PartType* part_type) {
 
         // double click clears slot
         m_part_control->DoubleClickedSignal.connect(
-            [this](const PartType*){ this->SlotContentsAlteredSignal(nullptr); });
+            [this](const PartType*){ this->SlotContentsAlteredSignal(nullptr, false); });
         SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
         // set part occupying slot's tool tip to say slot type
@@ -3682,7 +3682,9 @@ public:
     void            Sanitize();
 
     void            SetPart(const std::string& part_name, unsigned int slot);   //!< puts specified part in specified slot.  does nothing if slot is out of range of available slots for current hull
-    void            SetPart(const PartType* part, unsigned int slot, bool emit_signal = false);
+    /** Sets the part in \p slot to \p part and emits and signal if requested.  Changes
+        all similar parts if \p change_all_similar_parts. */
+    void            SetPart(const PartType* part, unsigned int slot, bool emit_signal = false, bool change_all_similar_parts = false);
     void            SetParts(const std::vector<std::string>& parts);            //!< puts specified parts in slots.  attempts to put each part into the slot corresponding to its place in the passed vector.  if a part cannot be placed, it is ignored.  more parts than there are slots available are ignored, and slots for which there are insufficient parts in the passed vector are unmodified
 
     /** Attempts to add the specified part to the design, if possible.  will
@@ -3994,13 +3996,36 @@ void DesignWnd::MainPanel::Sanitize() {
 void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int slot)
 { SetPart(GetPartType(part_name), slot); }
 
-void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot, bool emit_signal /* = false */) {
+void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot, bool emit_signal /* = false */, bool change_all_similar_parts /*= false*/) {
     //DebugLogger() << "DesignWnd::MainPanel::SetPart(" << (part ? part->Name() : "no part") << ", slot " << slot << ")";
     if (slot > m_slots.size()) {
         ErrorLogger() << "DesignWnd::MainPanel::SetPart specified nonexistant slot";
         return;
     }
-    m_slots[slot]->SetPart(part);
+
+    if (!change_all_similar_parts) {
+        m_slots[slot]->SetPart(part);
+
+    } else {
+        const auto original_part = m_slots[slot]->GetPart();
+        std::string original_part_name = original_part ? original_part->Name() : "";
+
+        if (change_all_similar_parts) {
+            for (auto& slot : m_slots) {
+                // skip incompatible slots
+                if (!part->CanMountInSlotType(slot->SlotType()))
+                    continue;
+
+                // skip different type parts
+                const auto replaced_part = slot->GetPart();
+                if (replaced_part && (replaced_part->Name() != original_part_name))
+                    continue;
+
+                slot->SetPart(part);
+            }
+        }
+    }
+
     if (emit_signal)  // to avoid unnecessary signal repetition.
         DesignChangedSignal();
 }
@@ -4263,7 +4288,7 @@ void DesignWnd::MainPanel::Populate(){
         m_slots.push_back(slot_control);
         AttachChild(slot_control);
         slot_control->SlotContentsAlteredSignal.connect(
-            boost::bind(static_cast<void (DesignWnd::MainPanel::*)(const PartType*, unsigned int, bool)>(&DesignWnd::MainPanel::SetPart), this, _1, i, true));
+            boost::bind(static_cast<void (DesignWnd::MainPanel::*)(const PartType*, unsigned int, bool, bool)>(&DesignWnd::MainPanel::SetPart), this, _1, i, true, _2));
         slot_control->PartTypeClickedSignal.connect(
             PartTypeClickedSignal);
     }
