@@ -2549,11 +2549,11 @@ namespace {
             }
             if (planet->CurrentMeterValue(METER_TROOPS) > 0.0f) {
                 // empires may have garrisons on planets
-                planet_empire_troops[planet->ID()][planet->Owner()] += planet->CurrentMeterValue(METER_TROOPS) + 0.0001;    // small bonus to ensure ties are won by initial owner
+                planet_empire_troops[planet->ID()][planet->Owner()] += planet->InitialMeterValue(METER_TROOPS) + 0.0001;    // small bonus to ensure ties are won by initial owner
             }
             if (!planet->Unowned() && planet->CurrentMeterValue(METER_REBEL_TROOPS) > 0.0f) {
                 // rebels may be present on empire-owned planets
-                planet_empire_troops[planet->ID()][ALL_EMPIRES] += planet->CurrentMeterValue(METER_REBEL_TROOPS);
+                planet_empire_troops[planet->ID()][ALL_EMPIRES] += planet->InitialMeterValue(METER_REBEL_TROOPS);
             }
         }
 
@@ -2564,7 +2564,7 @@ namespace {
             std::set<int> all_involved_empires;
             int planet_initial_owner_id = planet->Owner();
 
-            std::map<int, double>& empires_troops = planet_combat.second;
+            auto& empires_troops = planet_combat.second;
             if (empires_troops.empty())
                 continue;
             else if (empires_troops.size() == 1) {
