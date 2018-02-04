@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>freeorion.desktop</id>
+  <id>org.freeorion</id>
   <name>FreeOrion</name>
   <summary>Turn-based space empire and galactic conquest (4X) computer game</summary>
   <summary xml:lang="de">Rundenbasierendes Weltraum-Strategiespiel</summary>
