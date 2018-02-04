@@ -94,7 +94,6 @@ def _calculate_research_priority():
     """Calculates the AI empire's demand for research."""
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    empire_id = empire.empireID
     current_turn = fo.currentTurn()
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted', {})
     recent_enemies = [x for x in enemies_sighted if x > current_turn - 8]
