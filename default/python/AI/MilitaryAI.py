@@ -9,7 +9,7 @@ import PlanetUtilsAI
 import PriorityAI
 import ProductionAI
 import CombatRatingsAI
-from freeorion_tools import ppstring, cache_by_turn
+from freeorion_tools import cache_by_turn
 from AIDependencies import INVALID_ID
 from common.configure_logging import convenience_function_references_for_logger
 from turn_state import state
