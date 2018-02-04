@@ -287,6 +287,12 @@ private:
 
     void DoFleetButtonsLayout();                     //!< does layout of fleet buttons
 
+    /** Return fleets ids of all fleet buttons containing or overlapping the
+        fleet button for \p fleet_id. */
+    std::vector<int> FleetIDsOfFleetButtonsOverlapping(int fleet_id) const;
+    /** Return fleets ids of all fleet buttons containing or overlapping \p fleet_btn. */
+    std::vector<int> FleetIDsOfFleetButtonsOverlapping(const FleetButton& fleet_btn) const;
+
     /** Returns position on map where a moving fleet should be displayed.  This
         is different from the fleet's actual universe position due to the
         squishing of fleets moving along a lane into the space between the
@@ -477,11 +483,26 @@ private:
     std::unordered_map<int, std::unordered_set<std::shared_ptr<FleetButton>>>
         m_departing_fleet_buttons;
 
-    /** Icons representing fleets not at a system. */
+    /** Sets of fleet ids of fleets moving on a starlane, keyed by starlane end
+        system ids. */
+    std::unordered_map<std::pair<int, int>,
+                       std::vector<int>,
+                       boost::hash<std::pair<int, int>>>
+        m_moving_fleets;
+
+    /** Icons representing fleets moving on a starlane, keyed by starlane end
+        system ids. */
+    std::unordered_map<std::pair<int, int>,
+                       std::unordered_set<std::shared_ptr<FleetButton>>,
+                       boost::hash<std::pair<int, int>>>
+        m_moving_fleet_buttons;
+
+    /** Icons representing fleets moving and not on a starlane, indexed by
+        (x,y) location. */
     std::unordered_map<std::pair<double, double>,
                        std::unordered_set<std::shared_ptr<FleetButton>>,
                        boost::hash<std::pair<double, double>>>
-        m_moving_fleet_buttons;
+        m_offroad_fleet_buttons;
 
     boost::unordered_map<int, std::shared_ptr<FleetButton>>
         m_fleet_buttons;                        //!< fleet icons, index by fleet
