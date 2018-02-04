@@ -15,7 +15,7 @@ public:
     /** Connection parameters */
     struct Result {
         std::string player_name;
-        std::string server_name;
+        std::string server_dest;
         Networking::ClientType type;
     };
 
@@ -32,7 +32,7 @@ public:
     //!@}
 
     /** \name Accessors */ //@{
-    /** returns a the player's name (.player_name); the location of the server (.server_name -- IP address or name), or "" if none was selected and client type (.type) */
+    /** returns a the player's name (.player_name); the location of the server (.server_dest -- IP address or name), or "" if none was selected and client type (.type) */
     const Result& GetResult() const;
     //@}
 

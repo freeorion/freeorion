@@ -235,11 +235,11 @@ void ServerConnectWnd::OkClicked() {
         }
     }
     if (m_host_or_join_radio_group->CheckedButton() == 0) {
-        m_result.server_name = "HOST GAME SELECTED";
+        m_result.server_dest = "HOST GAME SELECTED";
     } else {
-        m_result.server_name = *m_IP_address_edit;
-        if (m_result.server_name.empty() && !(***m_servers_lb->Selections().begin()).empty()) {
-            m_result.server_name = boost::polymorphic_downcast<GG::Label*>(
+        m_result.server_dest = *m_IP_address_edit;
+        if (m_result.server_dest.empty() && !(***m_servers_lb->Selections().begin()).empty()) {
+            m_result.server_dest = boost::polymorphic_downcast<GG::Label*>(
                 (***m_servers_lb->Selections().begin()).at(0))->Text() ;
         }
     }
