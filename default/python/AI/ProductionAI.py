@@ -1442,7 +1442,7 @@ def update_stockpile_use():
             continue
         group = next((_g for _g in resource_groups if element.locationID in _g), None)
         if group is None:
-            continue # we don't appear to own the location any more
+            continue  # we don't appear to own the location any more
         if fo.issueAllowStockpileProductionOrder(queue_index, True):
             planets_in_stockpile_enabled_group.update(group)
 
