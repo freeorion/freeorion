@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>freeorion.desktop</id>
+  <id>org.freeorion.FreeOrion</id>
   <name>FreeOrion</name>
   <summary>Turn-based space empire and galactic conquest (4X) computer game</summary>
   <developer_name>FreeOrion Project</developer_name>
@@ -14,6 +14,7 @@
   </categories>
   <metadata_license>CC-BY-SA-3.0</metadata_license>
   <project_license>GPL-2.0 AND CC-BY-SA-3.0</project_license>
+  <launchable type="desktop-id">org.freeorion.FreeOrion.desktop</launchable>
   <url type="bugtracker">https://github.com/freeorion/freeorion/issues</url>
   <url type="donation">http://www.freeorion.org/index.php/Donations</url>
   <url type="faq">http://www.freeorion.org/index.php/FAQ</url>
