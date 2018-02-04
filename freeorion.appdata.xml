@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component type="desktop">
+<component type="desktop-application">
   <id>freeorion.desktop</id>
   <name>FreeOrion</name>
   <summary>Turn-based space empire and galactic conquest (4X) computer game</summary>
