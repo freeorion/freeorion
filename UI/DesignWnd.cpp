@@ -1245,6 +1245,7 @@ public:
     mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
     mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
     mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)> PartTypeRightClickedSignal;
+    mutable boost::signals2::signal<void (const std::string&)> ClearPartSignal;
 
 protected:
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
@@ -1346,7 +1347,21 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void PartsListBox::AcceptDrops(const GG::Pt& pt,
                                std::vector<std::shared_ptr<GG::Wnd>> wnds,
                                GG::Flags<GG::ModKey> mod_keys)
-{}
+{
+    // If ctrl is pressed then signal all parts of the same type to be cleared.
+    if (!(GG::GUI::GetGUI()->ModKeys() & GG::MOD_KEY_CTRL))
+        return;
+
+    if (wnds.empty())
+        return ;
+
+    const PartControl* control = boost::polymorphic_downcast<const PartControl*>(wnds.begin()->get());
+    const PartType* part_type = control ? control->Part() : nullptr;
+    if (!part_type)
+        return;
+
+    ClearPartSignal(part_type->Name());
+}
 
 PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) {
     PartGroupsType part_groups;
@@ -1675,6 +1690,7 @@ public:
     mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
     mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)> PartTypeRightClickedSignal;
     mutable boost::signals2::signal<void ()> PartObsolescenceChangedSignal;
+    mutable boost::signals2::signal<void (const std::string&)> ClearPartSignal;
 
 private:
     void DoLayout();
@@ -1717,6 +1733,7 @@ void DesignWnd::PartPalette::CompleteConstruction() {
         PartTypeDoubleClickedSignal);
     m_parts_list->PartTypeRightClickedSignal.connect(
         boost::bind(&DesignWnd::PartPalette::HandlePartTypeRightClicked, this, _1, _2));
+    m_parts_list->ClearPartSignal.connect(ClearPartSignal);
 
     const PartTypeManager& part_manager = GetPartTypeManager();
 
@@ -3677,6 +3694,8 @@ public:
     bool            CanPartBeAdded(const PartType* part);
 
     void            ClearParts();                                               //!< removes all parts from design.  hull is not altered
+    /** Remove parts called \p part_name*/
+    void            ClearPart(const std::string& part_name);
 
     /** Set the design hull \p hull_name, displaying appropriate background image and creating
         appropriate SlotControls.  If \p signal is false do not emit the the
@@ -4114,6 +4133,22 @@ void DesignWnd::MainPanel::ClearParts() {
     for (auto& slot : m_slots)
         slot->SetPart(nullptr);
     DesignChangedSignal();
+}
+
+void DesignWnd::MainPanel::ClearPart(const std::string& part_name) {
+    bool changed = false;
+    for (const auto& slot : m_slots) {
+        const PartType* existing_part = slot->GetPart();
+        if (!existing_part)
+            continue;
+        if (existing_part->Name() != part_name)
+            continue;
+        slot->SetPart(nullptr);
+        changed = true;
+    }
+
+    if (changed)
+        DesignChangedSignal();
 }
 
 void DesignWnd::MainPanel::SetHull(const std::string& hull_name, bool signal)
@@ -4573,7 +4608,6 @@ void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, std::vector<std::shared
     }
 }
 
-
 std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
     try {
         std::vector<std::string> parts = Parts();
@@ -4725,6 +4759,8 @@ void DesignWnd::CompleteConstruction() {
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
     m_part_palette->PartTypeDoubleClickedSignal.connect(
         boost::bind(&DesignWnd::MainPanel::AddPart, m_main_panel, _1));
+    m_part_palette->ClearPartSignal.connect(
+        boost::bind(&DesignWnd::MainPanel::ClearPart, m_main_panel, _1));
 
     AttachChild(m_base_selector);
 
