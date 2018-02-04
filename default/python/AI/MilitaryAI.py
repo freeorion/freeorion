@@ -434,8 +434,8 @@ class TargetAllocator(Allocator):
         # present, the smaller proportion of our attacks would be directed against the enemy planet.  The following is
         # just one of many forms of calculation that might work reasonably.
         # TODO: assess and revamp the planet_threat_multiplier calculation
-        return  ((self._enemy_ship_count() + self._local_threat()/self._planet_threat())**0.5
-                 if self._planet_threat() > 0 else 1.0)
+        return ((self._enemy_ship_count() + self._local_threat()/self._planet_threat())**0.5
+                if self._planet_threat() > 0 else 1.0)
 
     def _allocation_vs_planets(self):
         return CombatRatingsAI.rating_needed(
