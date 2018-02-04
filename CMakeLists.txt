@@ -754,7 +754,7 @@ if(UNIX AND NOT APPLE)
 
     install(
         FILES
-        ${CMAKE_SOURCE_DIR}/packaging/freeorion.appdata.xml
+        ${CMAKE_SOURCE_DIR}/packaging/freeorion.metainfo.xml
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo
     )
 
