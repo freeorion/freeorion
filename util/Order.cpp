@@ -745,7 +745,7 @@ void BombardOrder::ExecuteImpl() const {
         return;
     }
 
-    // note: multiple ships, from same or different empires, can invade the same planet on the same turn
+    // note: multiple ships, from same or different empires, can bombard the same planet on the same turn
     DebugLogger() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "
                   << ship->Name() << " to bombard planet " << m_planet << " "
                   << planet->Name();
