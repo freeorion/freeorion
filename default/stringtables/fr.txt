@@ -52,7 +52,7 @@ NO
 Non
 
 # Used as a placeholder for unexpanded content in the combat log window.
-#ELLIPSIS  
+#ELLIPSIS
 #...
 
 EMPIRE  # translated
@@ -427,7 +427,7 @@ SD_ROBO_FLUX_TROOPS
 Transport Flux d'Infanterie
 
 SD_ROBO_FLUX_TROOPS_DESC
-Transporteur rapide d'infanterie 
+Transporteur rapide d'infanterie
 
 SD_ROBO_FLUX_TROOPS_HVY
 Transport Flux d'Infanterie Lourde
@@ -834,7 +834,7 @@ FLD_MOLECULAR_CLOUD
 Nuage Moléculaire
 
 FLD_MOLECULAR_CLOUD_DESC
-Nuage diffus de molécules complexes pouvant perturber le champ de protection des astronefs, ces derniers voyant la solidité de leurs [[metertype METER_SHIELD]] diminuer de 15. 
+Nuage diffus de molécules complexes pouvant perturber le champ de protection des astronefs, ces derniers voyant la solidité de leurs [[metertype METER_SHIELD]] diminuer de 15.
 
 FLD_NEBULA_1
 Nébuleuse
@@ -1073,7 +1073,7 @@ RULE_ENABLE_SUPER_TESTER
 Activer Invasion Super-Testeurs
 
 RULE_ENABLE_SUPER_TESTER_DESC
-Active la structure Invasion Super-Testeurs.
+Active la structure Invasion Super-Testeurs
 
 RULE_STOCKPILE_IMPORT_LIMITED
 Limite Import Stock
@@ -1125,7 +1125,6 @@ Accepte un argument pour un nom partiel ou complet d'option.
 Des arguments spéciaux sont prévus pour:
 all - [[OPTIONS_DB_SECTION_ALL]]
 raw - [[OPTIONS_DB_SECTION_RAW]]'''
-
 
 OPTIONS_DB_VERSION
 Copier le numéro de version et quitter.
@@ -1295,7 +1294,7 @@ OPTIONS_DB_MAX_FPS
 Fixe la valeur limite du Ni/s (nombre d'images par seconde) lorsque sa limitation est activée avec l'option Limitation Ni/s.
 
 OPTIONS_DB_LIMIT_FPS_NO_FOCUS
-Active/désactive la limitation du Ni/s lorsque la fenêtre principale de jeu n'est pas sélectionnée. La limite est définie avec l'option Ni/s Maximal (hors-fenêtre).
+Active/Désactive la limitation du Ni/s lorsque la fenêtre principale de jeu n'est pas sélectionnée. La limite est définie avec l'option Ni/s Maximal (hors-fenêtre).
 
 OPTIONS_DB_MAX_FPS_NO_FOCUS
 Fixe la valeur limite du Ni/s (nombre d'images par seconde) lorsque la fenêtre principale de jeu n'est pas sélectionnée, si la limitation est activée avec l'option Limitation Ni/s (hors-fenêtre).
@@ -1313,7 +1312,7 @@ OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK
 Adresse du fichier son à jouer lorsque le bouton de Tour est cliqué.
 
 OPTIONS_DB_UI_SOUND_NEWTURN_TOGGLE
-Active/désactive la lecture d'un fichier son au début d'un nouveau tour.
+Active/Désactive la lecture d'un fichier son au début d'un nouveau tour.
 
 OPTIONS_DB_UI_SOUND_NEWTURN_FILE
 Le fichier son joué au début d'un nouveau tour, si activé.
@@ -1536,8 +1535,8 @@ OPTIONS_DB_UI_LOGGER_THRESHOLDS
 Seuils de journalisation
 
 OPTIONS_DB_UI_LOGGER_THRESHOLD_TOOLTIP
-'''Chaque fichier journal (freeorion.log, freeoriond.log, and AI_x.log) collecte les événements à partir de différentes sources (sections de code). 
-Régler le seuil pour une source rendra possible l'enregistrement des événements pour ce niveau et au-delà quant à la source en question. 
+'''Chaque fichier journal (freeorion.log, freeoriond.log, and AI_x.log) collecte les événements à partir de différentes sources (sections de code).
+Régler le seuil pour une source rendra possible l'enregistrement des événements pour ce niveau et au-delà quant à la source en question.
 Chaque processus client, serveur, et IA dispose d'une source générale et peut avoir des sources détaillées additionnelles (eg. log de résolution de combat).'''
 
 # This is a label to designate the logger as the general or default logger for a process
@@ -1832,7 +1831,7 @@ OPTIONS_DB_UI_WINDOWS_HEIGHT_WINDOWED
 La hauteur d'une fenêtre en mode fenêtré.
 
 OPTIONS_DB_UI_WINDOWS_VISIBLE
-Active/désactive l'affiche d'une fenêtre, lorsque celle-ci est disponible.
+Active/Désactive l'affichage d'une fenêtre, lorsque celle-ci est disponible.
 
 OPTIONS_DB_UI_WINDOWS_PINNED
 Définit si une fenêtre est ancrée.
@@ -2196,7 +2195,7 @@ GSETUP_SEED
 Graine de hasard
 
 GSETUP_RANDOM_SEED
-Génère une Graine de hasard aléatoire
+Active/Désactive la génération d'une Graine de hasard aléatoire
 
 GSETUP_STARS
 Systèmes
@@ -3062,7 +3061,6 @@ Messages
 MAP_BTN_MESSAGES_DESC
 ''''''
 
-
 MAP_PRODUCTION_TITLE  # translated
 Production
 
@@ -3888,6 +3886,7 @@ Usage Stock
 STOCKPILE_CHANGE_LABEL
 Stock prochain tour
 
+
 ##
 ## Research window
 ##
@@ -4404,7 +4403,7 @@ Population
 
 # %1% name of the species.
 ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
-'''%1% :	'''
+'''%1%:	'''
 
 # %1% content of ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1 expanded to match
 #     column width.
@@ -4464,13 +4463,13 @@ ENC_GAME_RULES
 [Partie - Règles]
 
 ENC_SHIP_PART
--[Équipement Astronef]
+Equipement Astronef
 
 ENC_SHIP_PART_DESC
 Un Équipement d'Astronef peut être monté sur une <encyclopedia ENC_SHIP_HULL>Coque d'Astronef</encyclopedia> (dans une [[encyclopedia SLOT_TITLE]]) lors de la conception d'un astronef, afin d'améliorer ses statistiques. Certains équipements d'entrée de gamme sont disponibles par défaut, mais [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]] permet de débloquer de meilleures versions ou de nouveaux types d'équipement. Chaque équipement d'astronef appartient à l'une des catégories listées ci-dessous.
 
 ENC_SHIP_HULL
--[Coque Astronef]
+Coque Astronef
 
 ENC_SHIP_HULL_DESC
 Une Coque d'Astronef est l'élément de base de l'architecture d'un astronef, et définit les statistiques basiques d'un modèle d'astronef (si aucun <encyclopedia ENC_SHIP_PART>Équipement d'Astronef</encyclopedia> n'est encore monté). Certaines coques d'entrée de gamme sont disponibles par défaut, mais [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]] permet de débloquer de meilleures versions ou de nouvelles classes de coque. Les coques d'astronef sont classées selon les catégories listées ci-dessous.
@@ -4494,7 +4493,7 @@ ENC_SPECIES
 Espèce
 
 ENC_SPECIES_DESC
-Chaque espèce est classifiée selon son [[encyclopedia METABOLISM_TITLE]]. 
+Chaque espèce est classifiée selon son [[encyclopedia METABOLISM_TITLE]].
 
 ENC_FIELD_TYPE
 Type de Régions
@@ -4909,7 +4908,7 @@ ENC_COMBAT_PLATFORM_TARGET_AND_DAMAGE
 ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS
 %2% n'a pas pu endommagé
 
-# %1% number of targets 
+# %1% number of targets
 # %2% name of ship unable to damage targets
 ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 %2% n'a pas pu endommagé %1% cibles :
@@ -5457,7 +5456,7 @@ Le rapport d'Habitabilité d'une planète peut être affiché par un clic-droit 
 
 Lors de la terraformation d'une planète dans le but de mieux l'adapter aux préférences environnementales de l'espèce (via la [[metertype METER_RESEARCH]] ou si la planète dispose de la Particularité [[special GAIA_SPECIAL]]), l'Environnement d'origine de la planète est modifié par paliers, jusqu'à que ce dernier atteigne l'Habitabilité [[PE_GOOD]] pour l'espèce désirant vivre sur la planète. Les étapes de terraformation d'une planète peuvent être consultées ci-dessous sous la forme d'une représentation circulaire des différents types d'Environnement.
 
-Depuis midi dans le sens horaire: [[PT_TERRAN]], [[PT_OCEAN]], [[PT_SWAMP]], [[PT_TOXIC]], [[PT_INFERNO]], [[PT_RADIATED]], [[PT_BARREN]], [[PT_TUNDRA]], [[PT_DESERT]] 
+Depuis midi dans le sens horaire: [[PT_TERRAN]], [[PT_OCEAN]], [[PT_SWAMP]], [[PT_TOXIC]], [[PT_INFERNO]], [[PT_RADIATED]], [[PT_BARREN]], [[PT_TUNDRA]], [[PT_DESERT]]
 
 <img src="encyclopedia/EP_wheel.png"></img>'''
 
@@ -5754,7 +5753,7 @@ Guide de Configuration
 
 CONFIG_GUIDE_TEXT
 '''La plupart des options de configuration du jeu sont conservées et lues à partir d'un unique fichier XML nommé config.xml.
-Si ce fichier n'existe pas (ou provient d'un build ou d'une version différente), il sera (re)créé lors du démarrage du serveur client. 
+Si ce fichier n'existe pas (ou provient d'un build ou d'une version différente), il sera (re)créé lors du démarrage du serveur client.
 Le fichier de configuration est mis à jour lors de la modification d'une option, mais cette dernière peut être différée dans l'attente d'une action ultérieure (comme cliquer sur Valider ou Appliquer).
 Certaines de ces options peuvent être modifiées depuis la page '[[OPTIONS_TITLE]]' du Menu Principal.
 
@@ -6708,7 +6707,6 @@ Dans %system% : l'astronef %ship% a suffisamment de carburant pour reprendre son
 EFFECT_SHIP_REFUELED_LABEL
 Astronef ravitaillé
 
-
 HEAD_ON_A_SPIKE_MESSAGE
 La capitale de l'empire %empire% est tombée.
 
@@ -7179,12 +7177,12 @@ SP_LEMBALALAM_GAMEPLAY_DESC
 '''Reptiles ancestraux égocentriques et dégénérescents, ne pouvant plus se reproduire.
 Préfèrent les Planètes [[PT_DESERT]]s.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-Contrôler les Lembala octroie les technologies suivantes : [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]] et [[tech GRO_LIFECYCLE_MAN]]. 
+Contrôler les Lembala octroie les technologies suivantes : [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]] et [[tech GRO_LIFECYCLE_MAN]].
 '''
 
 SP_LEMBALALAM_DESC
 '''Description:
-Les Lembala'Lam sont une ancienne espèce au crépuscule de leur existence. Semblables par le passé à des reptiles tels les serpents ou les geckos, l'évolution de leur physionomie d'origine a été corrompue par leur mode de vie fortement influencé par l'amélioration mécanique. Sans machines de toutes sortes, ils seraient aujourd'hui incapables de se mouvoir ou de se nourrir. Leur système de reproduction s'en est retrouvé totalement inhibé, mais encore plus important, plus aucune relation de confiance n'unit l'espèce. Car le dernier clou planté dans le cercueil de la société Lembala fut l'invention d'un système automatisé transférant l'esprit d'un Lembala mourant dans un clone de remplacement, chaque Lembala s'assurant de disposer de centaines de corps de rechange précieusement conservés et dissimulés. La quasi-totalité des ressources mentales et matérielles des Lembala est utilisée pour entretenir cette immortalité artificielle, au détriment du développement réel de leur civilisation. 
+Les Lembala'Lam sont une ancienne espèce au crépuscule de leur existence. Semblables par le passé à des reptiles tels les serpents ou les geckos, l'évolution de leur physionomie d'origine a été corrompue par leur mode de vie fortement influencé par l'amélioration mécanique. Sans machines de toutes sortes, ils seraient aujourd'hui incapables de se mouvoir ou de se nourrir. Leur système de reproduction s'en est retrouvé totalement inhibé, mais encore plus important, plus aucune relation de confiance n'unit l'espèce. Car le dernier clou planté dans le cercueil de la société Lembala fut l'invention d'un système automatisé transférant l'esprit d'un Lembala mourant dans un clone de remplacement, chaque Lembala s'assurant de disposer de centaines de corps de rechange précieusement conservés et dissimulés. La quasi-totalité des ressources mentales et matérielles des Lembala est utilisée pour entretenir cette immortalité artificielle, au détriment du développement réel de leur civilisation.
 
 Structure sociale:
 Les Lembala connaissent chacun de leurs semblables depuis les âges les plus reculés, mais la méfiance envers tout un chacun est le seul sentiment partagé. Ces relations délétères engendrent de nombreuses impasses sociétales et paralysent leur gouvernement, pourtant démocratique, depuis une éternité. En raison de cette paranoïa constante et du manque d'altruisme des Lembala, même la coopération la plus basique est vouée à l'échec, les rares fois où une tentative de collaboration semble émerger.
@@ -7329,7 +7327,7 @@ SP_REPLICON_DESC
 Un Replicon a l'apparence d'une araignée robotique d'une envergure de 3m et munie d'ailes. Ces ailes sont en réalité des panneaux solaires hautement efficients car couvrant une grande superficie. "L'abdomen" de la créature s'avère être un "centre industriel de production" où les membres de remplacement et les nouveaux Replicons sont créés.
 
 Structure sociale:
-Les Replicons ont une structure sociale relativement primitive. Ils sont dirigés par un gouvernement planétaire s'appuyant sur quelques seigneurs féodaux, ces derniers ayant découvert le voyage spatial, devenu rapidement une solution très pratique pour lancer des attaques contre des peuplades très lointaines. Leur gouvernement est donc féodal en raison d'un fait assez inhabituel: la découverte du vol spatial par quelques individus avant l'avènement d'une révolution industrielle à l'échelle d'une nation. De par la grande variété des machines auto-réplicantes sur Cisarruj, la plupart des besoins normalement satisfaits par l'industrie sur les autres planètes, le sont par "l'agriculture" ou "reproduction" chez les Replicons. En effet, les Replicons ne disposent d'aucune base industrielle ni d'aucune connaissance technologique à proprement parler, autres que l'usage d'équipements et produits créés "naturellement" par leur soin. Par conséquent, leur société est très peu érudite, la plupart des individus transmettant la connaissance d'une manière discontinue et partielle: comment forger un revêtement de titane ou quelle quantité de minerai d'uranium est nécessaire pour alimenter son réacteur de production. La plupart des connaissances que les sociétés développées regroupent, partagent et mettent en relation, ne sont détenues que par les seigneurs, le reste de la société se développant aléatoirement grâce aux quelques savoirs appris et conservés, à la manière d'un monde post-apocalyptique. 
+Les Replicons ont une structure sociale relativement primitive. Ils sont dirigés par un gouvernement planétaire s'appuyant sur quelques seigneurs féodaux, ces derniers ayant découvert le voyage spatial, devenu rapidement une solution très pratique pour lancer des attaques contre des peuplades très lointaines. Leur gouvernement est donc féodal en raison d'un fait assez inhabituel: la découverte du vol spatial par quelques individus avant l'avènement d'une révolution industrielle à l'échelle d'une nation. De par la grande variété des machines auto-réplicantes sur Cisarruj, la plupart des besoins normalement satisfaits par l'industrie sur les autres planètes, le sont par "l'agriculture" ou "reproduction" chez les Replicons. En effet, les Replicons ne disposent d'aucune base industrielle ni d'aucune connaissance technologique à proprement parler, autres que l'usage d'équipements et produits créés "naturellement" par leur soin. Par conséquent, leur société est très peu érudite, la plupart des individus transmettant la connaissance d'une manière discontinue et partielle: comment forger un revêtement de titane ou quelle quantité de minerai d'uranium est nécessaire pour alimenter son réacteur de production. La plupart des connaissances que les sociétés développées regroupent, partagent et mettent en relation, ne sont détenues que par les seigneurs, le reste de la société se développant aléatoirement grâce aux quelques savoirs appris et conservés, à la manière d'un monde post-apocalyptique.
 
 Planète natale:
 Cisarruj est une planète fortement irradiée, dominée par une grande variété de machines autonomes auto-réplicantes, et entourée d'un grand mystère. Il existe bien quelques rares archives historiques sur les protagonistes de la guerre ayant mené à la naissance de l'Empire Cisarruj. Cependant, la plupart de ces écrits ne relatent que les faits classiques d'une ère pré-industrielle, parsemée de périodes d'essor ou de déclin. Le Grand Mystère des Replicons quant à lui, reste entier. Une race supérieure a-t-elle conçu les Replicons au terme de nombreuses expériences, ou sont-ils le résultat d'un accident industriel poussant leurs infortunés créateurs à abandonner la planète? Ou bien ont-ils subi un destin encore plus funeste de la main-même des créatures qu'ils ont engendrées...
@@ -10405,7 +10403,6 @@ Il s'agit donc d'une technologie d'amélioration du Stock Impérial, augmentant 
 De 0.1 par Population pour les planètes réglées sur le Focus Croissance ou Logistique.
 De 0.2 par Population pour les planètes réglées sur le Focus Stock.'''
 
-
 PRO_MICROGRAV_MAN
 Production en Microgravité
 
@@ -10622,7 +10619,6 @@ Bulle Flux Spatial
 
 SHP_SPACE_FLUX_BUBBLE_DESC
 D'ordinaire, la propulsion dans l'espace est limitée par le propulseur ou le milieu de propulsion lui-même. Cependant, à des échelles de grandeur relativement petites, il est possible de propulser un objet dans l'espace de la même manière qu'il le serait dans l'eau, c'est-à-dire en agissant directement sur le milieu dans lequel l'objet est immergé. Cela nécessite la manipulation de l'espace lui-même à une dimension quantique, chaque quantum d'espace étant réorganisé en un système d'unités fixes et adjacentes d'espace. Cette méthode de propulsion est très efficace, mais s'avère dangereuse à grande échelle et facilement détectable en raison des effets dimensionnels résultants. Des recherches avancées en matière de technologies de furtivité peuvent minimiser les désagréments causés par ces perturbations dimensionnelles. La plus simple solution pour concevoir un astronef utilisant la propulsion par flux s'avère être la modulation en bulle, laquelle recouvre une coque de forme également sphérique. Des solutions plus complexes sont néanmoins possibles via une meilleure technologie de [[tech SHP_SPACE_FLUX_DRIVE]].
-
 
 SHP_CONTGRAV_MAINT
 Maintenance Anti-Gravitationnelle
@@ -11226,7 +11222,7 @@ SHP_FIGHTERS_1
 Chasseurs et Rampes de Lancement
 
 SHP_FIGHTERS_1_DESC
-'''Permet à l'empire de produire des astronefs intégrant des Hangars à Chasseurs et des Rampes de Lancement. Un astronef ne peut abriter qu'un seul type de [[encyclopedia PC_FIGHTER_HANGAR]], mais cependant autant que le permet le nombre de [[encyclopedia SLOT_TITLE]]s disponibles. Chaque Hangar dispose d'une capacité maximale de chasseurs et ces derniers auront tous la même Puissance (pouvant être modifiée selon l'espèce les contrôlant et en procédant à des recherches plus avancées dans le domaine). 
+'''Permet à l'empire de produire des astronefs intégrant des Hangars à Chasseurs et des Rampes de Lancement. Un astronef ne peut abriter qu'un seul type de [[encyclopedia PC_FIGHTER_HANGAR]], mais cependant autant que le permet le nombre de [[encyclopedia SLOT_TITLE]]s disponibles. Chaque Hangar dispose d'une capacité maximale de chasseurs et ces derniers auront tous la même Puissance (pouvant être modifiée selon l'espèce les contrôlant et en procédant à des recherches plus avancées dans le domaine).
 
 Une <encyclopedia PC_FIGHTER_BAY>Rampe de Lancement</encyclopedia> peut faire décoller un nombre défini de chasseurs lors de chaque passe de combat. Ces chasseurs deviennent des cibles valides et peuvent attaquer les astronefs et chasseurs ennemis lors de chaque passe suivante de combat. Toutefois, un unique tir de n'importe quelle nature subi par un chasseur détruira ce dernier. Contrairement aux [[encyclopedia DAMAGE_TITLE]] qu'infligent les armements traditionnels, les dommages résultant d'un tir de chasseur ne sont pas minorés par les [[metertype METER_SHIELD]] d'astronef (les chasseurs faisant feu une fois à l'intérieur de la zone de protection d'un bouclier).
 
@@ -12082,7 +12078,7 @@ Générateur Orbital Solaire
 BLD_SOL_ORB_GEN_DESC
 '''Augmente la Projection [[metertype METER_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]], par Population et selon le type d'étoile :
 * [[STAR_BLUE]] ou [[STAR_WHITE]] (x0.4)
-* [[STAR_YELLOW]] ou [[STAR_ORANGE]] (x0.2) 
+* [[STAR_YELLOW]] ou [[STAR_ORANGE]] (x0.2)
 * [[STAR_RED]] (x0.1)
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] Le meilleur bonus s'applique.
 
@@ -12447,7 +12443,6 @@ Colonie Sly
 
 BLD_COL_SLY_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_SLY]]. [[BLD_COL_PART_2]] colonie Sly [[BLD_COL_PART_3]].
-
 
 BLD_COL_SSLITH
 Colonie Sslith
@@ -12829,7 +12824,7 @@ FU_BASIC_TANK
 Réservoir Additionnel de Carburant
 
 FU_BASIC_TANK_DESC
-Augmente la capacité en [[metertype METER_FUEL]] d'un astronef, permettant un voyage supplémentaire sur une Voie spatiale. Des technologies plus avancées augmenteront le nombre de voyages supplémentaires pour chaque réservoir de carburant équipant un astronef. 
+Augmente la capacité en [[metertype METER_FUEL]] d'un astronef, permettant un voyage supplémentaire sur une Voie spatiale. Des technologies plus avancées augmenteront le nombre de voyages supplémentaires pour chaque réservoir de carburant équipant un astronef.
 
 FU_ZERO_FUEL
 Générateur Zero-Point de Carburant
