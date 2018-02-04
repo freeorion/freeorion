@@ -482,7 +482,7 @@ public:
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
 
-    int                     PlanetID() const { return m_planet_id; }
+    int PlanetID() const { return m_planet_id; }
     //@}
 
     /** \name Mutators */ //@{
@@ -500,12 +500,12 @@ public:
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-    void                    Select(bool selected);
+    void Select(bool selected);
 
-    void                    Refresh();                      ///< updates panels, shows / hides colonize button, redoes layout of infopanels
+    void Refresh(); ///< updates panels, shows / hides colonize button, redoes layout of infopanels
 
     /** Enables, or disables if \a enable is false, issuing orders via this PlanetPanel. */
-    void                    EnableOrderIssuing(bool enable = true);
+    void EnableOrderIssuing(bool enable = true);
     //@}
 
     /** emitted when the planet panel is left clicked by the user.
@@ -534,14 +534,14 @@ public:
     mutable boost::signals2::signal<void (int)> OrderButtonChangedSignal;
 
 private:
-    void                    DoLayout();
-    void                    RefreshPlanetGraphic();
-    void                    SetFocus(const std::string& focus); ///< set the focus of the planet to \a focus
-    void                    ClickColonize();                    ///< called if colonize button is pressed
-    void                    ClickInvade();                      ///< called if invade button is pressed
-    void                    ClickBombard();                     ///< called if bombard button is pressed
+    void DoLayout();
+    void RefreshPlanetGraphic();
+    void SetFocus(const std::string& focus); ///< set the focus of the planet to \a focus
+    void ClickColonize();                    ///< called if colonize button is pressed
+    void ClickInvade();                      ///< called if invade button is pressed
+    void ClickBombard();                     ///< called if bombard button is pressed
 
-    void                    FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
+    void FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
 
     int                                     m_planet_id;                ///< id for the planet with is represented by this planet panel
     std::shared_ptr<GG::TextControl>        m_planet_name;              ///< planet name;
@@ -1741,7 +1741,7 @@ void SidePanel::PlanetPanel::Refresh() {
         // rounding up, as it's better to slightly overestimate defending troops than
         // underestimate, since one needs to drop more droops than there are defenders
         // to capture a planet
-        float defending_troops = planet->CurrentMeterValue(METER_TROOPS);
+        float defending_troops = planet->InitialMeterValue(METER_TROOPS);
         //std::cout << "def troops: " << defending_troops << std::endl;
         float log10_df = floor(std::log10(defending_troops));
         //std::cout << "def troops log10: " << log10_df << std::endl;
