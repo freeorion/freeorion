@@ -781,7 +781,7 @@ def generate_production_orders():
                     print "problem queueing %s at planet %s" % (building_name, planet_used)
 
     building_name = "BLD_BLACK_HOLE_POW_GEN"
-    if empire.buildingTypeAvailable(building_name) and  foAI.foAIstate.character.may_build_building(building_name):
+    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.character.may_build_building(building_name):
         already_got_one = False
         for pid in state.get_all_empire_planets():
             planet = universe.getPlanet(pid)
