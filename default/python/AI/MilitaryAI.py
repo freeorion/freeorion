@@ -81,7 +81,7 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False,
         my_local_rating = combine_ratings(local_status.get('mydefenses', {}).get('overall', 0), local_status.get('myFleetRating', 0))
         my_local_rating_vs_planets = local_status.get('myFleetRatingVsPlanets', 0)
         needed_here = local_status.get('totalThreat', 0) > 0  # TODO: assess if remaining other forces are sufficient
-        safely_needed = needed_here and my_local_rating > local_status.get('totalThreat', 0) and my_local_rating_vs_planets > local_status.get('planetThreat', 0)# TODO: improve both assessment prongs
+        safely_needed = needed_here and my_local_rating > local_status.get('totalThreat', 0) and my_local_rating_vs_planets > local_status.get('planetThreat', 0)  # TODO: improve both assessment prongs
         if not fleet_ok:
             if safely_needed:
                 print "Fleet %d at %s needs repair but deemed safely needed to remain for defense" % (fleet_id, universe.getSystem(fleet.systemID))
