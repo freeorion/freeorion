@@ -20,7 +20,21 @@ BASIC_RESEARCH
             priority = [[LATE_PRIORITY]]
             effects = SetTargetResearch value = Value * 2
 
-        EffectsGroup      // removes residual production from a dead planet
+
+        EffectsGroup    // increase or decrease towards target meter, when not recently conquered
+            scope = Source
+            activation = And [
+                Planet
+                (Source.LastTurnConquered < CurrentTurn)
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetResearch value = Value +
+                min(abs(Value(Target.TargetResearch) - Value), 1) *
+                    (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.TargetResearch))]))
+
+
+        // removes residual production from a dead planet
+        EffectsGroup
             scope = Source
             activation = And [
                 Planet

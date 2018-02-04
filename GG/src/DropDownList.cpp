@@ -203,7 +203,7 @@ bool ModalListPicker::RunAndCheckSelfDestruction()
     //    const std::shared_ptr<ModalListPicker> leash_holder_prevents_destruction = leash;
     const auto keep_alive = shared_from_this();
 
-    DropDownList::iterator old_current_item = CurrentItem();
+    auto old_current_item = CurrentItem();
     Wnd::Run();
     m_dropped = false;
 
@@ -269,7 +269,7 @@ boost::optional<DropDownList::iterator>  ModalListPicker::Select(boost::optional
     if (!it)
         return boost::none;
 
-    DropDownList::iterator old_m_current_item = CurrentItem();
+    auto old_m_current_item = CurrentItem();
     if (*it == LB()->end()) {
         LB()->DeselectAll();
     } else {
@@ -398,14 +398,14 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
     switch (key) {
     case GGK_UP: // arrow-up (not numpad arrow)
         if (CurrentItem() != LB()->end() && CurrentItem() != LB()->begin()) {
-            DropDownList::iterator prev_it{std::prev(CurrentItem())};
+            auto prev_it{std::prev(CurrentItem())};
             LB()->BringRowIntoView(prev_it);
             return prev_it;
         }
         break;
     case GGK_DOWN: // arrow-down (not numpad arrow)
         if (CurrentItem() != LB()->end() && CurrentItem() != --LB()->end()) {
-            DropDownList::iterator next_it(std::next(CurrentItem()));
+            auto next_it(std::next(CurrentItem()));
             LB()->BringRowIntoView(next_it);
             return next_it;
         }
@@ -413,7 +413,7 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
     case GGK_PAGEUP: // page up key (not numpad key)
         if (!LB()->Empty() && CurrentItem() != LB()->end()) {
             std::size_t i = std::max<std::size_t>(1, m_num_shown_rows - 1);
-            DropDownList::iterator it = CurrentItem();
+            auto it = CurrentItem();
             while (i && it != LB()->begin()) {
                 --it;
                 --i;
@@ -425,7 +425,7 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
     case GGK_PAGEDOWN: // page down key (not numpad key)
         if (!LB()->Empty()) {
             std::size_t i = std::max<std::size_t>(1, m_num_shown_rows - 1);
-            DropDownList::iterator it = CurrentItem();
+            auto it = CurrentItem();
             while (i && it != --LB()->end()) {
                 ++it;
                 --i;
@@ -469,7 +469,7 @@ boost::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
     if (m_only_mouse_scroll_when_dropped && !Dropped())
         return boost::none;
 
-    DropDownList::iterator cur_it = CurrentItem();
+    auto cur_it = CurrentItem();
     if (cur_it == LB()->end())
         return boost::none;
     if (move == 0)
@@ -514,7 +514,7 @@ void ModalListPicker::LBSelChangedSlot(const ListBox::SelectionSet& rows)
     if (rows.empty()) {
         SignalChanged(m_lb_wnd->end());
     } else {
-        ListBox::iterator sel_it = *rows.begin();
+        auto sel_it = *rows.begin();
         SignalChanged(sel_it);
     }
 }

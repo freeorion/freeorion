@@ -280,20 +280,20 @@ const ShipDesign* Universe::GetShipDesign(int ship_design_id) const {
     return (it != m_ship_designs.end() ? it->second : nullptr);
 }
 
-void Universe::RenameShipDesign(int design_id, const std::string& name/* = ""*/, const std::string& description/* = ""*/) {
-    ShipDesignMap::iterator design_it = m_ship_designs.find(design_id);
+void Universe::RenameShipDesign(int design_id, const std::string& name/* = ""*/,
+                                const std::string& description/* = ""*/)
+{
+    auto design_it = m_ship_designs.find(design_id);
     if (design_it == m_ship_designs.end()) {
         DebugLogger() << "Universe::RenameShipDesign tried to rename a ship design that doesn't exist!";
         return;
     }
     ShipDesign* design = design_it->second;
 
-    if (name != "") {
+    if (name != "")
         design->SetName(name);
-    }
-    if (description != "") {
+    if (description != "")
         design->SetDescription(description);
-    }
 }
 
 const ShipDesign* Universe::GetGenericShipDesign(const std::string& name) const {
@@ -466,11 +466,31 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> 
 }
 
 bool Universe::DeleteShipDesign(int design_id) {
-    ShipDesignMap::iterator it = m_ship_designs.find(design_id);
+    auto it = m_ship_designs.find(design_id);
     if (it != m_ship_designs.end()) {
         m_ship_designs.erase(it);
         return true;
     } else { return false; }
+}
+
+void Universe::ResetAllObjectMeters(bool target_max_unpaired, bool active) {
+    for (const auto& object : m_objects) {
+        if (target_max_unpaired)
+            object->ResetTargetMaxUnpairedMeters();
+        if (active)
+            object->ResetPairedActiveMeters();
+    }
+}
+
+void Universe::ResetObjectMeters(const std::vector<std::shared_ptr<UniverseObject>>& objects,
+                                 bool target_max_unpaired, bool active)
+{
+    for (const auto& object : objects) {
+        if (target_max_unpaired)
+            object->ResetTargetMaxUnpairedMeters();
+        if (active)
+            object->ResetPairedActiveMeters();
+    }
 }
 
 void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
@@ -494,10 +514,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    for (const auto& object : m_objects) {
-        object->ResetTargetMaxUnpairedMeters();
-        object->ResetPairedActiveMeters();
-    }
+    ResetAllObjectMeters(true, true);
     for (auto& entry : Empires())
         entry.second->ResetMeters();
 
@@ -528,10 +545,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    for (auto& object : objects) {
-        object->ResetTargetMaxUnpairedMeters();
-        object->ResetPairedActiveMeters();
-    }
+    ResetObjectMeters(objects, true, true);
     // could also reset empire meters here, but unless all objects have meters
     // recalculated, some targets that lead to empire meters being modified may
     // be missed, and estimated empire meters would be inaccurate
@@ -569,25 +583,6 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
     }
     for (auto& entry : Empires())
         entry.second->ResetMeters();
-    ExecuteEffects(targets_causes, do_accounting, true, false, true);
-
-    for (const auto& object : m_objects)
-        object->ClampMeters();
-}
-
-void Universe::ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters(bool do_accounting) {
-    ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on all objects");
-    if (do_accounting) {
-        // override if disabled
-        do_accounting = GetOptionsDB().Get<bool>("effects.accounting.enabled");
-    }
-    Effect::TargetsCauses targets_causes;
-    GetEffectsAndTargets(targets_causes);
-
-    for (const auto& object : m_objects) {
-        object->ResetTargetMaxUnpairedMeters();
-    }
-
     ExecuteEffects(targets_causes, do_accounting, true, false, true);
 
     for (const auto& object : m_objects)
@@ -639,8 +634,16 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
 
     DebugLogger() << "IMEAD: updating meter estimates";
 
+    // save starting meter vales
+    Effect::DiscrepancyMap starting_current_meter_values;
+    for (const auto& obj : m_objects)
+        for (const auto& meter_pair : obj->Meters())
+            starting_current_meter_values[obj->ID()][meter_pair.first] = meter_pair.second.Current();
+
+
     // generate new estimates (normally uses discrepancies, but in this case will find none)
     UpdateMeterEstimates();
+
 
     DebugLogger() << "IMEAD: determining discrepancies";
     // determine meter max discrepancies
@@ -656,14 +659,24 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
             continue;
         }
 
-        // every meter has a value at the start of the turn, and a value after updating with known effects
+        TraceLogger(effects) << "... discrepancies for " << obj->Name() << " (" << obj->ID() << "):";
+
+        // every meter has a value at the start of the turn, and a value after
+        // updating with known effects
         for (auto& meter_pair : obj->Meters()) {
             MeterType type = meter_pair.first;
+
+            // skip paired active meters, as differences in these are expected
+            // and persistent, and not a "discrepancy"
+            if (type >= METER_POPULATION && type <= METER_TROOPS)
+                continue;
+
+            // discrepancy is the difference between expected and actual meter
+            // values at start of turn. here "expected" is what the meter value
+            // was before updating the meters, and actual is what it is now
+            // after updating the meters based on the known universe.
             Meter& meter = meter_pair.second;
-
-            // discrepancy is the difference between expected and actual meter values at start of turn
-            float discrepancy = meter.Initial() - meter.Current();
-
+            float discrepancy = starting_current_meter_values[object_id][type] - meter.Current();
             if (discrepancy == 0.0f) continue;   // no discrepancy for this meter
 
             // add to discrepancy map
@@ -679,15 +692,20 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
             info.running_meter_total = meter.Current();
 
             m_effect_accounting_map[object_id][type].push_back(info);
+
+            TraceLogger(effects) << "... ... " << boost::lexical_cast<std::string>(type) << ": " << discrepancy;
         }
     }
 }
 
-void Universe::UpdateMeterEstimates() {
+void Universe::UpdateMeterEstimates()
+{ UpdateMeterEstimates(GetOptionsDB().Get<bool>("effects.accounting.enabled")); }
+
+void Universe::UpdateMeterEstimates(bool do_accounting) {
     for (int obj_id : m_objects.FindExistingObjectIDs())
         m_effect_accounting_map[obj_id].clear();
     // update meters for all objects.
-    UpdateMeterEstimatesImpl(std::vector<int>());
+    UpdateMeterEstimatesImpl(std::vector<int>(), do_accounting);
 }
 
 void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects) {
@@ -738,7 +756,7 @@ void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects
     std::vector<int> objects_vec;
     objects_vec.reserve(collected_ids.size());
     std::copy(collected_ids.begin(), collected_ids.end(), std::back_inserter(objects_vec));
-    UpdateMeterEstimatesImpl(objects_vec);
+    UpdateMeterEstimatesImpl(objects_vec, GetOptionsDB().Get<bool>("effects.accounting.enabled"));
 }
 
 void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
@@ -754,16 +772,15 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     std::vector<int> final_objects_vec;
     std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(final_objects_vec));
     if (!final_objects_vec.empty())
-        UpdateMeterEstimatesImpl(final_objects_vec);
+        UpdateMeterEstimatesImpl(final_objects_vec, GetOptionsDB().Get<bool>("effects.accounting.enabled"));
 }
 
-void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
+void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, bool do_accounting) {
     ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + std::to_string(objects_vec.size()) + " objects", true);
-    bool do_accounting = GetOptionsDB().Get<bool>("effects.accounting.enabled");
 
     // get all pointers to objects once, to avoid having to do so repeatedly
     // when iterating over the list in the following code
-    std::vector<std::shared_ptr<UniverseObject>> object_ptrs = m_objects.FindObjects(objects_vec);
+    auto object_ptrs = m_objects.FindObjects(objects_vec);
     if (objects_vec.empty()) {
         object_ptrs.reserve(m_objects.ExistingObjects().size());
         std::transform(Objects().ExistingObjects().begin(), Objects().ExistingObjects().end(),
@@ -774,7 +791,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     for (auto& obj : object_ptrs) {
         int obj_id = obj->ID();
 
-        // Reset max meters to DEFAULT_VALUE and current meters to initial value at start of this turn
+        // Reset max meters to DEFAULT_VALUE and current meters to initial value
+        // at start of this turn
         obj->ResetTargetMaxUnpairedMeters();
         obj->ResetPairedActiveMeters();
 
@@ -782,7 +800,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
             continue;
 
         // record current value(s) of meters after resetting
-        for (MeterType type = MeterType(0); type != NUM_METER_TYPES; type = MeterType(type + 1)) {
+        for (MeterType type = MeterType(0); type != NUM_METER_TYPES;
+             type = MeterType(type + 1))
+        {
             if (Meter* meter = obj->GetMeter(type)) {
                 Effect::AccountingInfo info;
                 info.source_id = INVALID_OBJECT_ID;
@@ -798,7 +818,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
     TraceLogger(effects) << "UpdateMeterEstimatesImpl after resetting meters objects:";
     for (auto& obj : object_ptrs)
-            TraceLogger(effects) << obj->Dump();
+        TraceLogger(effects) << obj->Dump();
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
@@ -820,7 +840,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
             int obj_id = obj->ID();
 
             // check if this object has any discrepancies
-            Effect::DiscrepancyMap::iterator dis_it = m_effect_discrepancy_map.find(obj_id);
+            auto dis_it = m_effect_discrepancy_map.find(obj_id);
             if (dis_it == m_effect_discrepancy_map.end())
                 continue;   // no discrepancy, so skip to next object
 
@@ -832,20 +852,20 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
                 //if (discrepancy == 0.0) continue;
 
                 Meter* meter = obj->GetMeter(type);
+                if (!meter)
+                    continue;
 
-                if (meter) {
-                    TraceLogger(effects) << "object " << obj_id << " has meter " << type
-                                         << ": discrepancy: " << discrepancy << " and : " << meter->Dump();
+                TraceLogger(effects) << "object " << obj_id << " has meter " << type
+                                     << ": discrepancy: " << discrepancy << " and : " << meter->Dump();
 
-                    meter->AddToCurrent(discrepancy);
+                meter->AddToCurrent(discrepancy);
 
-                    Effect::AccountingInfo info;
-                    info.cause_type = ECT_UNKNOWN_CAUSE;
-                    info.meter_change = discrepancy;
-                    info.running_meter_total = meter->Current();
+                Effect::AccountingInfo info;
+                info.cause_type = ECT_UNKNOWN_CAUSE;
+                info.meter_change = discrepancy;
+                info.running_meter_total = meter->Current();
 
-                    m_effect_accounting_map[obj_id][type].push_back(info);
-                }
+                m_effect_accounting_map[obj_id][type].push_back(info);
             }
         }
     }
@@ -1315,7 +1335,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     for (auto& building : m_objects.FindObjects<Building>()) {
         if (m_destroyed_object_ids.find(building->ID()) != m_destroyed_object_ids.end())
             continue;
-        const std::string&  building_type_name = building->BuildingTypeName();
+        const std::string& building_type_name = building->BuildingTypeName();
         const BuildingType* building_type = GetBuildingType(building_type_name);
         if (!building_type) {
             ErrorLogger() << "GetEffectsAndTargets couldn't get BuildingType " << building->BuildingTypeName();
@@ -1327,10 +1347,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
     // enforce building types effects order
     for (const auto& entry : GetBuildingTypeManager()) {
-        const std::string&  building_type_name = entry.first;
-        const BuildingType* building_type      = entry.second.get();
-        std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>>::iterator buildings_by_type_it =
-            buildings_by_type.find(building_type_name);
+        const std::string& building_type_name = entry.first;
+        const BuildingType* building_type = entry.second.get();
+        auto buildings_by_type_it = buildings_by_type.find(building_type_name);
 
         if (buildings_by_type_it == buildings_by_type.end())
             continue;
@@ -1801,8 +1820,8 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
         return;
 
     // get visibility map for empire and find object in it
-    Universe::ObjectVisibilityMap& vis_map = m_empire_object_visibility[empire_id];
-    Universe::ObjectVisibilityMap::iterator vis_map_it = vis_map.find(object_id);
+    auto& vis_map = m_empire_object_visibility[empire_id];
+    auto vis_map_it = vis_map.find(object_id);
 
     // if object not already present, store default value (which may be replaced)
     if (vis_map_it == vis_map.end()) {

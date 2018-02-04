@@ -4,22 +4,27 @@ NO_STOCKPILE
 
 BAD_STOCKPILE
 '''[[STOCKPILE_PER_POP_EFFECTSGROUP(BAD,Value     +  0.5 * Target.Population * [[STOCKPILE_PER_POP]])]]
+[[STANDARD_STOCKPILE_GROWTH]]
 '''
 
 AVERAGE_STOCKPILE
 '''[[STOCKPILE_PER_POP_EFFECTSGROUP(AVERAGE,Value +  1 * Target.Population * [[STOCKPILE_PER_POP]])]]
+[[STANDARD_STOCKPILE_GROWTH]]
 '''
 
 GOOD_STOCKPILE
 '''[[STOCKPILE_PER_POP_EFFECTSGROUP(GOOD,Value    +  3 * Target.Population * [[STOCKPILE_PER_POP]])]]
+[[STANDARD_STOCKPILE_GROWTH]]
 '''
 
 GREAT_STOCKPILE
 '''[[STOCKPILE_PER_POP_EFFECTSGROUP(GREAT,Value  +  5 * Target.Population * [[STOCKPILE_PER_POP]])]]
+[[STANDARD_STOCKPILE_GROWTH]]
 '''
 
 ULTIMATE_STOCKPILE
 '''[[STOCKPILE_PER_POP_EFFECTSGROUP(ULTIMATE, Value + 15 * Target.Population * [[STOCKPILE_PER_POP]])]]
+[[STANDARD_STOCKPILE_GROWTH]]
 '''
 
 STOCKPILE_PER_POP_EFFECTSGROUP
@@ -30,6 +35,17 @@ STOCKPILE_PER_POP_EFFECTSGROUP
             accountinglabel = "@1@_STOCKPILE_LABEL"
             priority = [[EARLY_PRIORITY]]
             effects = SetMaxStockpile value = @2@
+'''
+
+STANDARD_STOCKPILE_GROWTH
+'''        EffectsGroup // increase 1 per turn, up to max
+            scope = Source
+            activation = And [
+                Planet
+                (Source.LastTurnConquered < CurrentTurn)
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetStockpile value = min(Value(Target.MaxStockpile), Value + 1)
 '''
 
 #include "/scripting/common/base_prod.macros"

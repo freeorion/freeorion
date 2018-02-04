@@ -5980,6 +5980,12 @@ Last Turn In Battle
 LAST_TURN_RESUPPLIED
 Last Turn Resupplied
 
+LAST_TURN_CONQUERED
+Last Turn Conquered
+
+LAST_TURN_ATTACKED_BY_SHIP
+Last Turn Attacked By Ship
+
 ARRIVED_ON_TURN
 Arrived on Turn
 
@@ -10524,7 +10530,7 @@ CON_FRC_ENRG_STRC
 Force-Energy Structures
 
 CON_FRC_ENRG_STRC_DESC
-'''Increases the growth of resource meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn.
+'''Increases the growth of resource and infrastructure meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn.
 
 The flexibility and versatility of force-energy structures permits a colonies buildings to be more easily re-tooled to suit new purposes, increasing the rate at which focus changes can take effect.
 
@@ -11145,7 +11151,7 @@ DEF_ROOT_DEFENSE
 Self Defense
 
 DEF_ROOT_DEFENSE_DESC
-'''Increases max [[metertype METER_SHIELD]] by 1 on each owned planet. For species with basic defensive troops, increases max [[metertype METER_TROOPS]] on the planet by 0.2 per population.
+'''Increases max [[metertype METER_SHIELD]] by 1 on each owned planet. Regenerates 1 [[metertype METER_SHIELD]] per turn, on turns when the planet has not been attacked in combat. For species with basic defensive troops, increases max [[metertype METER_TROOPS]] on the planet by 0.2 per population.
 
 The concept of 'self defense' is at the root of many avenues of technological advance.'''
 
@@ -15290,6 +15296,7 @@ Cor
 Cormack
 Corona
 Correctos
+Coruscant
 Crawford
 Crius
 Crow
@@ -15567,6 +15574,7 @@ Icarius
 Idril
 Idun
 Ike
+Ileenium
 Iliad
 Ilios
 Ilium
@@ -15717,6 +15725,7 @@ Lupi
 Lurga
 Lusitania
 Lyae
+Lylat
 Lynx
 Lyonesse
 Lyot

@@ -1,5 +1,5 @@
 BASIC_DEFENSE_TROOPS
-'''EffectsGroup
+'''        EffectsGroup
             scope = Source
             activation = And [
                 Homeworld
@@ -10,7 +10,7 @@ BASIC_DEFENSE_TROOPS
             effects = SetMaxTroops value = Value + 4
             accountinglabel = "HOMEWORLD_LABEL"
 
-EffectsGroup
+        EffectsGroup
             scope = Source
             activation = And [
                 Planet
@@ -21,7 +21,7 @@ EffectsGroup
             effects = SetMaxTroops value = Value + 10
             accountinglabel = "INDEPENDENT_TROOP_LABEL"
 
-EffectsGroup
+        EffectsGroup
             scope = Source
             activation = Planet
             stackinggroup = "POPULATION_TROOPS_STACK"
@@ -29,7 +29,7 @@ EffectsGroup
             effects = SetMaxTroops Value = Value + Target.Population * [[TROOPS_PER_POP]]
             accountinglabel = "DEF_ROOT_DEFENSE"
             
-EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
+        EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
             scope = Source
             activation = And [
                 Human     // human player, not human species
@@ -39,10 +39,20 @@ EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
             accountinglabel = "DIFFICULTY"
             priority = [[DEFAULT_PRIORITY]]
             effects = SetMaxTroops value = max(6, Value * 2)
+
+        EffectsGroup // increase 1 per turn, up to max
+            scope = Source
+            activation = And [
+                Planet
+                (Source.LastTurnConquered < CurrentTurn)
+                (Source.LastTurnAttackedByShip < CurrentTurn - 1)
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetTroops value = min(Value(Target.MaxTroops), Value + 1)
 '''
 
 AFTER_SPECIES_MULTIPLICATOR_TROOPS
-'''EffectsGroup
+'''        EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner

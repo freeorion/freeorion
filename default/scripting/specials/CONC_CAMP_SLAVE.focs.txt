@@ -5,7 +5,9 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
+            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
             effects = SetPopulation value = Value + 0.5*(101+Target.TargetPopulation-2*Value - ((101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-2*100))^0.5)
+            
         EffectsGroup
             scope = Source
             activation = And [
@@ -14,6 +16,7 @@ Special
                 Not Contains Building name = "BLD_CONC_CAMP_REMNANT"
             ]
             effects = CreateBuilding type = "BLD_CONC_CAMP_REMNANT"
+            
         EffectsGroup
             scope = Source
             activation = OR [
@@ -23,3 +26,5 @@ Special
             effects = RemoveSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
     ]
     graphic = "icons/building/concentration-camp.png"
+
+#include "/scripting/common/priorities.macros"

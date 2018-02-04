@@ -96,14 +96,15 @@ namespace {
         return obj;
     }
 
-    // Generates a debug  trace that can be included in error logs, augmenting the ReconstructName() info with
-    // additional info identifying the object references that were successfully followed.
+    // Generates a debug trace that can be included in error logs, augmenting
+    // the ReconstructName() info with additional info identifying the object
+    // references that were successfully followed.
     std::string TraceReference(const std::vector<std::string>& property_name,
                                ValueRef::ReferenceType ref_type,
                                const ScriptingContext& context)
     {
         std::shared_ptr<const UniverseObject> obj, initial_obj;
-        std::string retval = ReconstructName(property_name, ref_type) + " : ";
+        std::string retval = ReconstructName(property_name, ref_type, false) + " : ";
         switch (ref_type) {
         case ValueRef::NON_OBJECT_REFERENCE:
             retval += " | Non Object Reference |";
@@ -192,9 +193,7 @@ namespace {
 
         mutable UniverseObjectType m_type;
     };
-}
 
-namespace {
     const std::map<std::string, MeterType>& GetMeterNameMap() {
         static std::map<std::string, MeterType> meter_name_map;
         if (meter_name_map.empty()) {
@@ -261,9 +260,14 @@ std::string MeterToName(MeterType meter) {
 }
 
 std::string ReconstructName(const std::vector<std::string>& property_name,
-                                      ReferenceType ref_type)
+                            ReferenceType ref_type,
+                            bool return_immediate_value)
 {
     std::string retval;
+
+    if (return_immediate_value)
+        retval += "Value(";
+
     switch (ref_type) {
     case SOURCE_REFERENCE:                    retval = "Source";          break;
     case EFFECT_TARGET_REFERENCE:             retval = "Target";          break;
@@ -281,6 +285,10 @@ std::string ReconstructName(const std::vector<std::string>& property_name,
             retval += property_name_part.c_str();
         }
     }
+
+    if (return_immediate_value)
+        retval += ")";
+
     return retval;
 }
 
@@ -421,8 +429,9 @@ std::string Constant<std::string>::Eval(const ScriptingContext& context) const
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
-std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
-                                             const std::vector<std::string>& property_names)
+std::string FormatedDescriptionPropertyNames(
+    ReferenceType ref_type, const std::vector<std::string>& property_names,
+    bool return_immediate_value)
 {
     int num_references = property_names.size();
     if (ref_type == NON_OBJECT_REFERENCE)
@@ -467,7 +476,7 @@ std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
     return retval;
 }
 
-#define IF_CURRENT_VALUE(T)                                                \
+#define IF_CURRENT_VALUE(T)                                            \
 if (m_ref_type == EFFECT_TARGET_VALUE_REFERENCE) {                     \
     if (context.current_value.empty())                                 \
         throw std::runtime_error(                                      \
@@ -706,12 +715,12 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 
     MeterType meter_type = NameToMeter(property_name);
     if (object && meter_type != INVALID_METER_TYPE) {
-        if (object->GetMeter(meter_type))
-            return object->InitialMeterValue(meter_type);
-
-    } else if (property_name == "TradeStockpile") {
-        if (const Empire* empire = GetEmpire(object->Owner()))
-            return empire->ResourceStockpile(RE_TRADE);
+        if (object->GetMeter(meter_type)) {
+            if (m_return_immediate_value)
+                return object->CurrentMeterValue(meter_type);
+            else
+                return object->InitialMeterValue(meter_type);
+        }
 
     } else if (property_name == "X") {
         return object->X();
@@ -726,10 +735,6 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     } else if (property_name == "DistanceFromOriginalType") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->DistanceFromOriginalType();
-
-    } else if (property_name == "NextTurnPopGrowth") {
-        if (auto pop = std::dynamic_pointer_cast<const PopCenter>(object))
-            return pop->NextTurnPopGrowth();
 
     } else if (property_name == "CurrentTurn") {
         return CurrentTurn();
@@ -950,6 +955,20 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "LastTurnActiveInBattle") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->LastTurnActiveInCombat();
+        else
+            return INVALID_GAME_TURN;
+
+    }
+    else if (property_name == "LastTurnAttackedByShip") {
+        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+            return planet->LastTurnAttackedByShip();
+        else
+            return INVALID_GAME_TURN;
+
+    }
+    else if (property_name == "LastTurnConquered") {
+        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+            return planet->LastTurnConquered();
         else
             return INVALID_GAME_TURN;
 
@@ -2869,8 +2888,12 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
         case MINUS:
             return LHS()->Eval(context) - RHS()->Eval(context); break;
 
-        case TIMES:
-            return LHS()->Eval(context) * RHS()->Eval(context); break;
+        case TIMES: {
+            double op1 = LHS()->Eval(context);
+            if (op1 == 0.0)
+                return 0.0;
+            return op1 * RHS()->Eval(context); break;
+        }
 
         case DIVIDE: {
             double op2 = RHS()->Eval(context);
@@ -2884,8 +2907,16 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
             return -(LHS()->Eval(context));                     break;
 
         case EXPONENTIATE: {
-            return std::pow(LHS()->Eval(context),
-                            RHS()->Eval(context));
+            double op2 = RHS()->Eval(context);
+            if (op2 == 0.0)
+                return 1.0;
+            try {
+                double op1 = LHS()->Eval(context);
+                return std::pow(op1, op2);
+            } catch (...) {
+                ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
+                return 0.0;
+            }
             break;
         }
 
@@ -2988,13 +3019,18 @@ int         Operation<int>::EvalImpl(const ScriptingContext& context) const
 {
     switch (m_op_type) {
         case PLUS:
-            return LHS()->Eval(context) + RHS()->Eval(context);   break;
+            return LHS()->Eval(context) + RHS()->Eval(context);     break;
 
         case MINUS:
-            return LHS()->Eval(context) - RHS()->Eval(context);   break;
+            return LHS()->Eval(context) - RHS()->Eval(context);     break;
 
-        case TIMES:
-            return LHS()->Eval(context) * RHS()->Eval(context);   break;
+        case TIMES: {
+            double op1 = LHS()->Eval(context);
+            if (op1 == 0)
+                return 0;
+            return op1 * RHS()->Eval(context);
+            break;
+        }
 
         case DIVIDE: {
             int op2 = RHS()->Eval(context);
@@ -3005,12 +3041,19 @@ int         Operation<int>::EvalImpl(const ScriptingContext& context) const
         }
 
         case NEGATE:
-            return -LHS()->Eval(context);                              break;
+            return -LHS()->Eval(context);                           break;
 
         case EXPONENTIATE: {
-            double op1 = LHS()->Eval(context);
             double op2 = RHS()->Eval(context);
-            return static_cast<int>(std::pow(op1, op2));
+            if (op2 == 0)
+                return 1;
+            try {
+                double op1 = LHS()->Eval(context);
+                return static_cast<int>(std::pow(op1, op2));
+            } catch (...) {
+                ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
+                return 0;
+            }
             break;
         }
 

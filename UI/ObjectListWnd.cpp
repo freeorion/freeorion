@@ -93,6 +93,14 @@ namespace {
                 ValueRef::SOURCE_REFERENCE, token));
     }
 
+    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedImmediateValueRef(
+        const std::string& token)
+    {
+        return boost::make_unique<ValueRef::StringCast<double>>(
+            boost::make_unique<ValueRef::Variable<double>>(
+                ValueRef::SOURCE_REFERENCE, token, true));
+    }
+
     template <typename T>
     std::unique_ptr<ValueRef::Variable<std::string>> StringCastedComplexValueRef(
         const std::string& token,
@@ -199,7 +207,6 @@ namespace {
             col_types[{UserStringNop("PREFERRED_FOCUS"),            UserStringNop("PLANETS_SUBMENU")}]= UserStringValueRef("PreferredFocus");
             col_types[{UserStringNop("TURNS_SINCE_FOCUS_CHANGE"),   UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<int>("TurnsSinceFocusChange");
             col_types[{UserStringNop("SIZE_AS_DOUBLE"),             UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<double>("SizeAsDouble");
-            col_types[{UserStringNop("NEXT_TURN_POP_GROWTH"),       UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<double>("NextTurnPopGrowth");
             col_types[{UserStringNop("DISTANCE_FROM_ORIGINAL_TYPE"),UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<double>("DistanceFromOriginalType");
             col_types[{UserStringNop("PLANET_TYPE"),                UserStringNop("PLANETS_SUBMENU")}]= UserStringCastedValueRef<PlanetType>("PlanetType");
             col_types[{UserStringNop("ORIGINAL_TYPE"),              UserStringNop("PLANETS_SUBMENU")}]= UserStringCastedValueRef<PlanetType>("OriginalType");
@@ -208,6 +215,8 @@ namespace {
             col_types[{UserStringNop("PLANET_ENVIRONMENT"),         UserStringNop("PLANETS_SUBMENU")}]= UserStringCastedValueRef<PlanetEnvironment>("PlanetEnvironment");
             col_types[{UserStringNop("SUPPLY_RANGE"),               UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<double>("PropagatedSupplyRange");
             col_types[{UserStringNop("AVAILABLE_FOCI"),             UserStringNop("PLANETS_SUBMENU")}]= UserStringVecValueRef("AvailableFoci");
+            col_types[{UserStringNop("LAST_TURN_CONQUERED"),        UserStringNop("PLANETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnConquered");
+            col_types[{UserStringNop("LAST_TURN_ATTACKED_BY_SHIP"), UserStringNop("PLANETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnAttackedByShip");
 
             // ship/fleet
             col_types[{UserStringNop("SPECIES"),                    UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Species");
@@ -226,7 +235,7 @@ namespace {
             for (MeterType meter = MeterType(0); meter <= METER_SPEED;  // the meter(s) after METER_SPEED are part-specific
                  meter = MeterType(meter + 1))
             {
-                col_types[{boost::lexical_cast<std::string>(meter), UserStringNop("METERS_SUBMENU")}] = StringCastedValueRef<double>(ValueRef::MeterToName(meter));
+                col_types[{boost::lexical_cast<std::string>(meter), UserStringNop("METERS_SUBMENU")}] = StringCastedImmediateValueRef(ValueRef::MeterToName(meter));
             }
         }
         return col_types;

@@ -27,13 +27,13 @@ namespace {
 
     /** Returns text representation of number wrapped in GG RGBA tags for
       * colour depending on whether number is positive, negative or 0.0 */
-    std::string ColouredNumber(double number) {
+    std::string ColouredNumber(double number, unsigned int digits = 3) {
         GG::Clr clr = ClientUI::TextColor();
         if (number > 0.0)
             clr = ClientUI::StatIncrColor();
         else if (number < 0.0)
             clr = ClientUI::StatDecrColor();
-        return ColourWrappedtext(DoubleToString(number, 3, true), clr);
+        return ColourWrappedtext(DoubleToString(number, digits, true), clr);
     }
 
     /** Cast int to string, prepend sign if requested */
@@ -58,7 +58,7 @@ namespace {
         return ColourWrappedtext(IntToString(number, prepend), clr);
     }
 
-    const int       EDGE_PAD(3);
+    const int EDGE_PAD(3);
 
     GG::X MeterBrowseLabelWidth()
     { return GG::X(30*ClientUI::Pts()); }
@@ -83,21 +83,12 @@ MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type) :
     MeterBrowseWnd(object_id, primary_meter_type, INVALID_METER_TYPE)
 {}
 
-MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type, MeterType secondary_meter_type) :
+MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type,
+                               MeterType secondary_meter_type) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, MeterBrowseLabelWidth() + MeterBrowseValueWidth(), GG::Y1),
     m_primary_meter_type(primary_meter_type),
     m_secondary_meter_type(secondary_meter_type),
-    m_object_id(object_id),
-    m_summary_title(nullptr),
-    m_current_label(nullptr),
-    m_current_value(nullptr),
-    m_next_turn_label(nullptr),
-    m_next_turn_value(nullptr),
-    m_change_label(nullptr),
-    m_change_value(nullptr),
-    m_meter_title(nullptr),
-    m_row_height(1),
-    m_initialized(false)
+    m_object_id(object_id)
 {}
 
 bool MeterBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
@@ -109,15 +100,22 @@ void MeterBrowseWnd::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     // main background
-    GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);
+    GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()),
+                      ClientUI::WndOuterBorderColor(), 1);
 
     // top title filled background
     if (m_summary_title)
-        GG::FlatRectangle(m_summary_title->UpperLeft(), m_summary_title->LowerRight() + GG::Pt(GG::X(EDGE_PAD), GG::Y0), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
+        GG::FlatRectangle(m_summary_title->UpperLeft(),
+                          m_summary_title->LowerRight() + GG::Pt(GG::X(EDGE_PAD), GG::Y0),
+                          ClientUI::WndOuterBorderColor(),
+                          ClientUI::WndOuterBorderColor(), 0);
 
     // middle title filled background
     if (m_meter_title)
-        GG::FlatRectangle(m_meter_title->UpperLeft(), m_meter_title->LowerRight() + GG::Pt(GG::X(EDGE_PAD), GG::Y0), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
+        GG::FlatRectangle(m_meter_title->UpperLeft(),
+                          m_meter_title->LowerRight() + GG::Pt(GG::X(EDGE_PAD), GG::Y0),
+                          ClientUI::WndOuterBorderColor(),
+                          ClientUI::WndOuterBorderColor(), 0);
 }
 
 namespace {
@@ -223,10 +221,12 @@ void MeterBrowseWnd::Initialize() {
 }
 
 void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
-    // because a MeterBrowseWnd's contents depends only on the meters of a single object, if that object doesn't
-    // change between showings of the meter browse wnd, it's not necessary to fully recreate the MeterBrowseWnd,
-    // and it can be just reshown.without being altered.  To refresh a MeterBrowseWnd, recreate it by assigning
-    // a new one as the moused-over object's BrowseWnd in this Wnd's place
+    // because a MeterBrowseWnd's contents depends only on the meters of a
+    // single object, if that object doesn't change between showings of the
+    // meter browse wnd, it's not necessary to fully recreate the
+    // MeterBrowseWnd, and it can be just reshown.without being altered. To
+    // refresh a MeterBrowseWnd, recreate it by assigning a new one as the
+    // moused-over object's BrowseWnd in this Wnd's place
     if (!m_initialized)
         Initialize();
 }
@@ -249,7 +249,7 @@ namespace {
         auto map_it = effect_accounting_map.find(obj_id);
         if (map_it == effect_accounting_map.end())
             return boost::none;
-        const std::map<MeterType, std::vector<Effect::AccountingInfo>>& meter_map = map_it->second;
+        const auto& meter_map = map_it->second;
 
         // get accounting info for this MeterBrowseWnd's meter type, aborting if none available
         auto meter_it = meter_map.find(meter_type);
@@ -260,68 +260,17 @@ namespace {
     }
 }
 
-namespace DualMeter {
-    /** Return the triplet of {Current, Projected, Target} meter value for the pair of meters \p
-        actual_meter_type and \p target_meter_type associated with \p obj. */
-    std::tuple<float, float, float> CurrentProjectedTarget(
-        const UniverseObject& obj, const MeterType& actual_meter_type, const MeterType& target_meter_type)
-    {
-        const Meter* actual_meter = obj.GetMeter(actual_meter_type);
-
-        float current = Meter::INVALID_VALUE;
-        float projected = Meter::INVALID_VALUE;
-        if (actual_meter) {
-            current = actual_meter->Initial();
-            projected = obj.NextTurnCurrentMeterValue(actual_meter_type);
-
-            // If there is accounting info, correct the projected result by including the
-            // results of all known effects in addition to the default meter change.
-            if (boost::optional<const std::vector<Effect::AccountingInfo>&>
-                    maybe_info_vec = GetAccountingInfo(obj.ID(), actual_meter_type))
-            {
-                projected -= current;
-                for (const auto& info : *maybe_info_vec) {
-                    if ((info.cause_type == ECT_UNKNOWN_CAUSE)
-                        || (info.cause_type == INVALID_EFFECTS_GROUP_CAUSE_TYPE))
-                    {
-                        continue;
-                    }
-                    projected += info.meter_change;
-                }
-            }
-        }
-
-        const Meter* target_meter = obj.GetMeter(target_meter_type);
-        const float target = target_meter ? target_meter->Current() : Meter::INVALID_VALUE;
-
-        // Clamp projected value with the target value
-        if (actual_meter && target_meter
-            && ((current <= target && target < projected)
-                || (projected < target && target <= current)))
-        {
-            projected = target;
-        }
-
-        // Clamp when there is no target.
-        if (!target_meter)
-            projected = current;
-
-        return std::make_tuple(current, projected, target);
-    }
-}
-
 void MeterBrowseWnd::UpdateSummary() {
     auto obj = GetUniverseObject(m_object_id);
     if (!obj)
         return;
 
     const Meter* primary_meter = obj->GetMeter(m_primary_meter_type);
-    const Meter* secondary_meter = obj->GetMeter(m_secondary_meter_type);
-
     if (!primary_meter) {
         ErrorLogger() << "MeterBrowseWnd::UpdateSummary can't get primary meter";
         return;
     }
+    const Meter* secondary_meter = obj->GetMeter(m_secondary_meter_type);
 
     float breakdown_total = 0.0f;
     std::string breakdown_meter_name;
@@ -332,23 +281,18 @@ void MeterBrowseWnd::UpdateSummary() {
             return;
         }
 
-        std::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
-            *obj, m_primary_meter_type, m_secondary_meter_type);
-
-        m_current_value->SetText(DoubleToString(std::get<0>(current_projected_target), 3, false));
-        m_next_turn_value->SetText(DoubleToString(std::get<1>(current_projected_target), 3, false));
-        float primary_change = std::get<1>(current_projected_target) - std::get<0>(current_projected_target);
-        m_change_value->SetText(ColouredNumber(primary_change));
+        m_current_value->SetText(DoubleToString(primary_meter->Initial(), 3, false));
+        m_next_turn_value->SetText(DoubleToString(primary_meter->Current(), 3, false));
+        float primary_change = primary_meter->Current() - primary_meter->Initial();
+        m_change_value->SetText(ColouredNumber(primary_change, 3));
 
         // target or max meter total for breakdown summary
-        breakdown_total = std::get<2>(current_projected_target);
+        breakdown_total = secondary_meter->Current();
         breakdown_meter_name = MeterToUserString(m_secondary_meter_type);
-    } else {
-        std::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
-            *obj, m_primary_meter_type, m_secondary_meter_type);
 
+    } else {    // no secondary meter
         // unpaired meter total for breakdown summary
-        breakdown_total = std::get<0>(current_projected_target);
+        breakdown_total = primary_meter->Current();
         breakdown_meter_name = MeterToUserString(m_primary_meter_type);
     }
 
@@ -380,8 +324,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     if (accounting_displayed_for_meter == INVALID_METER_TYPE)
         return; // nothing to display
 
-    boost::optional<const std::vector<Effect::AccountingInfo>&>
-        maybe_info_vec = GetAccountingInfo(m_object_id, accounting_displayed_for_meter);
+    auto maybe_info_vec = GetAccountingInfo(m_object_id, accounting_displayed_for_meter);
     if (!maybe_info_vec)
         return;
 
@@ -483,7 +426,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(label);
 
-        auto value = GG::Wnd::Create<CUILabel>(ColouredNumber(info.meter_change));
+        auto value = GG::Wnd::Create<CUILabel>(ColouredNumber(info.meter_change, 3));
         value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
         value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(value);
@@ -492,7 +435,6 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         top += m_row_height;
     }
 }
-
 
 ShipDamageBrowseWnd::ShipDamageBrowseWnd(int object_id, MeterType primary_meter_type) :
     MeterBrowseWnd(object_id, primary_meter_type)

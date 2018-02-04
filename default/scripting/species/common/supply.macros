@@ -9,6 +9,8 @@ BAD_SUPPLY
             activation = Planet
             accountinglabel = "BAD_SUPPLY_LABEL"
             effects = SetMaxSupply value = Value + 0
+
+[[STANDARD_SUPPLY_GROWTH]]
 '''
 
 AVERAGE_SUPPLY
@@ -17,6 +19,8 @@ AVERAGE_SUPPLY
             activation = Planet
             accountinglabel = "AVERAGE_SUPPLY_LABEL"
             effects = SetMaxSupply value = Value + 1
+
+[[STANDARD_SUPPLY_GROWTH]]
 '''
 
 GREAT_SUPPLY
@@ -26,6 +30,8 @@ GREAT_SUPPLY
             activation = Planet
             accountinglabel = "GREAT_SUPPLY_LABEL"
             effects = SetMaxSupply value = Value + 2
+
+[[STANDARD_SUPPLY_GROWTH]]
 '''
 
 ULTIMATE_SUPPLY
@@ -35,4 +41,18 @@ ULTIMATE_SUPPLY
             activation = Planet
             accountinglabel = "ULTIMATE_SUPPLY_LABEL"
             effects = SetMaxSupply value = Value + 3
+            
+[[STANDARD_SUPPLY_GROWTH]]
+'''
+
+STANDARD_SUPPLY_GROWTH
+'''        EffectsGroup // increase 1 per turn, up to max
+            scope = Source
+            activation = And [
+                Planet
+                (Source.LastTurnConquered < CurrentTurn)
+                (Source.LastTurnAttackedByShip < CurrentTurn - 1)
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetSupply value = min(Value(Target.MaxSupply), Value + 1)
 '''

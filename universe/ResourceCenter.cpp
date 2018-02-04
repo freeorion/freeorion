@@ -19,9 +19,9 @@ namespace {
 
 ResourceCenter::ResourceCenter() :
     m_focus(),
-    m_last_turn_focus_changed(BEFORE_FIRST_TURN),
+    m_last_turn_focus_changed(INVALID_GAME_TURN),
     m_focus_turn_initial(),
-    m_last_turn_focus_changed_turn_initial(BEFORE_FIRST_TURN)
+    m_last_turn_focus_changed_turn_initial(INVALID_GAME_TURN)
 {}
 
 ResourceCenter::~ResourceCenter()
@@ -93,43 +93,6 @@ std::string ResourceCenter::Dump(unsigned short ntabs) const {
     return os.str();
 }
 
-float ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
-    const Meter* meter = GetMeter(type);
-    if (!meter)
-        throw std::invalid_argument("ResourceCenter::ResourceCenterNextTurnMeterValue passed meter type that the ResourceCenter does not have: " + boost::lexical_cast<std::string>(type));
-    float current_meter_value = meter->Current();
-
-    MeterType target_meter_type = INVALID_METER_TYPE;
-    switch (type) {
-    case METER_TARGET_INDUSTRY:
-    case METER_TARGET_RESEARCH:
-    case METER_TARGET_TRADE:
-    case METER_TARGET_CONSTRUCTION:
-        return current_meter_value;
-        break;
-    case METER_INDUSTRY:    target_meter_type = METER_TARGET_INDUSTRY;      break;
-    case METER_RESEARCH:    target_meter_type = METER_TARGET_RESEARCH;      break;
-    case METER_TRADE:       target_meter_type = METER_TARGET_TRADE;         break;
-    case METER_CONSTRUCTION:target_meter_type = METER_TARGET_CONSTRUCTION;  break;
-    default:
-        ErrorLogger() << "ResourceCenter::ResourceCenterNextTurnMeterValue dealing with invalid meter type";
-        return 0.0f;
-    }
-
-    const Meter* target_meter = GetMeter(target_meter_type);
-    if (!target_meter)
-        throw std::runtime_error("ResourceCenter::ResourceCenterNextTurnMeterValue dealing with invalid meter type");
-    float target_meter_value = target_meter->Current();
-
-    // meter growth or decay towards target is one per turn.
-    if (target_meter_value > current_meter_value)
-        return std::min(current_meter_value + 1.0f, target_meter_value);
-    else if (target_meter_value < current_meter_value)
-        return std::max(target_meter_value, current_meter_value - 1.0f);
-    else
-        return current_meter_value;
-}
-
 void ResourceCenter::SetFocus(const std::string& focus) {
     if (focus == m_focus)
         return;
@@ -137,7 +100,7 @@ void ResourceCenter::SetFocus(const std::string& focus) {
         ClearFocus();
         return;
     }
-    std::vector<std::string> avail_foci = AvailableFoci();
+    auto avail_foci = AvailableFoci();
     if (std::find(avail_foci.begin(), avail_foci.end(), focus) != avail_foci.end()) {
         m_focus = focus;
         if (m_focus == m_focus_turn_initial)
@@ -157,6 +120,9 @@ void ResourceCenter::ClearFocus() {
 }
 
 void ResourceCenter::UpdateFocusHistory() {
+    DebugLogger() << "ResourceCenter::UpdateFocusHistory: focus: " << m_focus
+                  << "  initial focus: " << m_focus_turn_initial
+                  << "  turns since change initial: " << m_last_turn_focus_changed_turn_initial;
     if (m_focus != m_focus_turn_initial) {
         m_focus_turn_initial = m_focus;
         m_last_turn_focus_changed_turn_initial = m_last_turn_focus_changed;
@@ -170,12 +136,8 @@ void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters() {
     GetMeter(METER_TARGET_CONSTRUCTION)->ResetCurrent();
 }
 
-void ResourceCenter::ResourceCenterPopGrowthProductionResearchPhase() {
-    GetMeter(METER_INDUSTRY)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_INDUSTRY));
-    GetMeter(METER_RESEARCH)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_RESEARCH));
-    GetMeter(METER_TRADE)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_TRADE));
-    GetMeter(METER_CONSTRUCTION)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_CONSTRUCTION));
-}
+void ResourceCenter::ResourceCenterPopGrowthProductionResearchPhase()
+{}
 
 void ResourceCenter::ResourceCenterClampMeters() {
     GetMeter(METER_TARGET_INDUSTRY)->ClampCurrentToRange();

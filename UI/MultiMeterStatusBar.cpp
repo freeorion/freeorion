@@ -215,14 +215,16 @@ void MultiMeterStatusBar::Update() {
         const Meter* actual_meter = obj->GetMeter(meter_types_pair.first);
         const Meter* target_max_meter = obj->GetMeter(meter_types_pair.second);
 
-        std::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
-            *obj, meter_types_pair.first, meter_types_pair.second);
-
         if (actual_meter || target_max_meter) {
+            float initial = actual_meter ? actual_meter->Initial() : Meter::INVALID_VALUE;
+            float projected = actual_meter ? actual_meter->Current() : Meter::INVALID_VALUE;
+            float target = target_max_meter ? target_max_meter->Current() : Meter::INVALID_VALUE;
+
             ++num_bars;
-            m_initial_values.push_back(std::get<0>(current_projected_target));
-            m_projected_values.push_back(std::get<1>(current_projected_target));
-            m_target_max_values.push_back(std::get<2>(current_projected_target));
+
+            m_initial_values.push_back(initial);
+            m_projected_values.push_back(projected);
+            m_target_max_values.push_back(target);
             m_bar_colours.push_back(MeterColor(meter_types_pair.first));
         }
     }

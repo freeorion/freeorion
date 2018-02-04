@@ -21,6 +21,7 @@ BuildingType
                 Planet
             ]
             activation = Source
+            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
             effects = [
                 SetPlanetType type = Barren
                 SetSpecies name = "SP_EXOBOT"
@@ -42,4 +43,5 @@ BuildingType
 
 #include "/scripting/common/enqueue.macros"
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"

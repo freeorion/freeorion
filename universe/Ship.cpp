@@ -364,16 +364,6 @@ float Ship::NextTurnCurrentMeterValue(MeterType type) const {
         throw std::invalid_argument("Ship::NextTurnCurrentMeterValue passed meter type that the Ship does not have: " + boost::lexical_cast<std::string>(type));
     float current_meter_value = meter->Current();
 
-    if (type == METER_SHIELD) {
-        if (m_last_turn_active_in_combat >= CurrentTurn())
-            return std::max(0.0f,   // battle just happened. shields limited to max shield, but don't regen
-                            std::min(current_meter_value,
-                                     UniverseObject::GetMeter(METER_MAX_SHIELD)->Current()));
-        else                        // shields regneerate to max shield
-            return UniverseObject::GetMeter(METER_MAX_SHIELD)->Current();
-    }
-
-
     // ResourceCenter-like resource meter growth...
 
     MeterType target_meter_type = INVALID_METER_TYPE;
@@ -409,7 +399,7 @@ const Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) co
 
 Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) {
     Meter* retval = nullptr;
-    PartMeterMap::iterator it = m_part_meters.find(std::make_pair(type, part_name));
+    auto it = m_part_meters.find(std::make_pair(type, part_name));
     if (it != m_part_meters.end())
         retval = &it->second;
     return retval;
@@ -709,7 +699,7 @@ void Ship::ResetPairedActiveMeters() {
     UniverseObject::ResetPairedActiveMeters();
 
     for (auto& entry : m_part_meters) {
-        PartMeterMap::iterator max_it = m_part_meters.end();
+        auto max_it = m_part_meters.end();
         if (entry.first.first == METER_CAPACITY) {
             max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, entry.first.second));
         } else if (entry.first.first == METER_SECONDARY_STAT) {
@@ -730,7 +720,7 @@ void Ship::SetShipMetersToMax() {
 
     // some part capacity meters may have an associated max capacity...
     for (auto& entry : m_part_meters) {
-        PartMeterMap::iterator max_it = m_part_meters.end();
+        auto max_it = m_part_meters.end();
         if (entry.first.first == METER_CAPACITY) {
             max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, entry.first.second));
         } else if (entry.first.first == METER_SECONDARY_STAT) {
@@ -784,7 +774,7 @@ void Ship::ClampMeters() {
 
     // special case extra clamping for paired CAPACTY meters dependent on their associated MAX_CAPACITY meter...
     for (auto& entry : m_part_meters) {
-        PartMeterMap::iterator max_it = m_part_meters.end();
+        auto max_it = m_part_meters.end();
         if (entry.first.first == METER_CAPACITY) {
             max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, entry.first.second));
         } else if (entry.first.first == METER_SECONDARY_STAT) {

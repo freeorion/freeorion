@@ -557,11 +557,11 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                    dpsim_tech_status_map[techname] == TS_HAS_RESEARCHED_PREREQ)
         {
             std::set<std::string> these_prereqs = tech->Prerequisites();
-            for (std::set<std::string>::iterator ptech_it = these_prereqs.begin(); ptech_it != these_prereqs.end();) {
+            for (auto ptech_it = these_prereqs.begin(); ptech_it != these_prereqs.end();) {
                 if (dpsim_tech_status_map[*ptech_it] != TS_COMPLETE) {
                     ++ptech_it;
                 } else {
-                    std::set<std::string>::iterator erase_it = ptech_it;
+                    auto erase_it = ptech_it;
                     ++ptech_it;
                     these_prereqs.erase(erase_it);
                 }
@@ -580,7 +580,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         for (int tech_id : dp_researchable_techs) {
             already_processed[tech_id] = false;
         }
-        std::set<int>::iterator cur_tech_it = dp_researchable_techs.begin();
+        auto cur_tech_it = dp_researchable_techs.begin();
         while ((rp_still_available[dp_turns-1] > EPSILON)) { // try to use up this turns RPs
             if (cur_tech_it == dp_researchable_techs.end()) {
                 break; //will be wasting some RP this turn
@@ -601,7 +601,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
             progress += RPs_to_spend / std::max(EPSILON, tech_cost);
             dpsim_research_progress[cur_tech] = progress;
             rp_still_available[dp_turns-1] -= RPs_to_spend;
-            std::set<int>::iterator next_res_tech_it = cur_tech_it;
+            auto next_res_tech_it = cur_tech_it;
             int next_res_tech_idx;
             if (++next_res_tech_it == dp_researchable_techs.end()) {
                 next_res_tech_idx = m_queue.size()+1;
@@ -620,10 +620,10 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                 if (tech)
                     unlocked_techs = tech->UnlockedTechs();
                 for (std::string u_tech_name : unlocked_techs) {
-                    std::map<std::string,std::set<std::string>>::iterator prereq_tech_it = waiting_for_prereqs.find(u_tech_name);
+                    auto prereq_tech_it = waiting_for_prereqs.find(u_tech_name);
                     if (prereq_tech_it != waiting_for_prereqs.end() ){
-                        std::set<std::string> &these_prereqs = prereq_tech_it->second;
-                        std::set<std::string>::iterator just_finished_it = these_prereqs.find(tech_name);
+                        std::set<std::string>& these_prereqs = prereq_tech_it->second;
+                        auto just_finished_it = these_prereqs.find(tech_name);
                         if (just_finished_it != these_prereqs.end() ) {  //should always find it
                             these_prereqs.erase(just_finished_it);
                             if (these_prereqs.empty()) { // tech now fully unlocked
@@ -2844,7 +2844,7 @@ void Empire::CheckResearchProgress() {
     // remove completed items from queue (after consuming extra RP, as that
     // determination uses the contents of the queue as input)
     for (const std::string& tech_name : to_erase) {
-        ResearchQueue::iterator temp_it = m_research_queue.find(tech_name);
+        auto temp_it = m_research_queue.find(tech_name);
         if (temp_it != m_research_queue.end())
             m_research_queue.erase(temp_it);
     }

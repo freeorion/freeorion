@@ -20,7 +20,7 @@ Special
 
         EffectsGroup
             scope = Object id = Source.PlanetID
-            priority = [[LATE_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value - 5 * Target.SizeAsDouble accountinglabel = "TEMPORAL_ANOMALY_SPECIAL"
     ]
     graphic = "icons/specials_huge/temporal_anomaly.png"

@@ -83,8 +83,8 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
         keep("[[" >> (s1 = IDENTIFIER) >> "]]");
 
     // parse input text stream
-    std::string::iterator it = file_contents.begin();
-    std::string::iterator end = file_contents.end();
+    auto it = file_contents.begin();
+    auto end = file_contents.end();
 
     smatch matches;
     bool well_formed = false;

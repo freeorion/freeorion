@@ -52,21 +52,35 @@ Tech
             accountinglabel = "GAS_GIANT_LABEL"
             effects = SetMaxSupply value = Value - 1
 
+        EffectsGroup    // outpost supply increases 1 per turn up to max
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Not Species
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetSupply value = Min(Value(Target.MaxSupply), Value + 1)
+
+
+        // generate sitrep for any planet that is about to increase to above the
+        // recolonizing population, while also having sufficient happiness to do
+        // do so
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
                 CanColonize
-                //(6 > 4) // test
-                //(5 = 5)
-                //(3 != 83)
-                //(6 >= 0)
-                (LocalCandidate.NextTurnPopGrowth       >= [[MIN_RECOLONIZING_SIZE]] - LocalCandidate.Population)
-                (LocalCandidate.TargetHappiness         >= [[MIN_RECOLONIZING_HAPPINESS]]                       )
-                (LocalCandidate.Happiness               >= [[MIN_RECOLONIZING_HAPPINESS]] - 1                   )
+                
+                (LocalCandidate.Population              <  LocalCandidate.TargetPopulation)
+                (LocalCandidate.Population +
+                    LocalCandidate.Population*0.01*(LocalCandidate.TargetPopulation + 1 - LocalCandidate.Population)
+                    >= [[MIN_RECOLONIZING_SIZE]])
+                    
+                (LocalCandidate.TargetHappiness         >= [[MIN_RECOLONIZING_HAPPINESS]]           )
+                (LocalCandidate.Happiness               >= [[MIN_RECOLONIZING_HAPPINESS]] - 1       )
                 Or [
-                    (0.1 <= LocalCandidate.Population   <= ([[MIN_RECOLONIZING_SIZE]] - 0.001)                  )
-                    (0.1 <= LocalCandidate.Happiness    <= ([[MIN_RECOLONIZING_HAPPINESS]] - 0.001)             )
+                    (0.1 <= LocalCandidate.Population   <= ([[MIN_RECOLONIZING_SIZE]] - 0.001)      )
+                    (0.1 <= LocalCandidate.Happiness    <= ([[MIN_RECOLONIZING_HAPPINESS]] - 0.001) )
                 ]
             ]
             activation = Source
@@ -95,5 +109,5 @@ Tech
     graphic = "icons/tech/galactic_exploration.png"
 
 #include "/scripting/common/misc.macros"
-
+#include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"

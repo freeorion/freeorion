@@ -34,8 +34,10 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
         |   tok.PreviousSystemID_
         |   tok.NumShips_
         |   tok.NumStarlanes_
-        |   tok.LastTurnBattleHere_
         |   tok.LastTurnActiveInBattle_
+        |   tok.LastTurnAttackedByShip_
+        |   tok.LastTurnBattleHere_
+        |   tok.LastTurnConquered_
         |   tok.LastTurnResupplied_
         |   tok.Orbit_
         |   tok.SpeciesID_

@@ -106,32 +106,8 @@ BuildingType
         ${species_condition}
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Object id = Source.PlanetID
-                Planet
-            ]
-            activation = And [
-                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
-                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
-            ]
-            effects = [
-                SetSpecies name = "${id}"
-                SetPopulation value = 1
-            ]
-        EffectsGroup
-            scope = And [
-                Object id = Source.PlanetID
-                Planet
-            ]
-            activation = And [
-                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
-                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
-            ]
-            effects = [
-                SetSpecies name = "${id}"
-                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
-            ]
+        [[LIFECYCLE_MANIP_POPULATION_EFFECTS("${id}")]]
+        
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -149,6 +125,7 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
+            
         EffectsGroup
             scope = Source
             activation = Turn low = Source.CreationTurn + 2
@@ -158,7 +135,9 @@ BuildingType
 
 #include "/scripting/common/misc.macros"
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/species/common/population.macros"
 ''')
 
 # Location and Enqueued condition template

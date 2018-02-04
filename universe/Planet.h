@@ -16,115 +16,105 @@ class FO_COMMON_API Planet :
 {
 public:
     /** \name Accessors */ //@{
-    bool HostileToEmpire(int empire_id) const override;
+    std::set<std::string>   Tags() const override;
+    bool                    HasTag(const std::string& name) const override;
+    UniverseObjectType      ObjectType() const override;
 
-    std::set<std::string> Tags() const override;
+    std::string             Dump(unsigned short ntabs = 0) const override;
 
-    bool HasTag(const std::string& name) const override;
-
-    UniverseObjectType ObjectType() const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    int ContainerObjectID() const override;
-
-    const std::set<int>& ContainedObjectIDs() const override;
-
-    bool Contains(int object_id) const override;
-
-    bool ContainedBy(int object_id) const override;
+    int                     ContainerObjectID() const override;
+    const std::set<int>&    ContainedObjectIDs() const override;
+    bool                    Contains(int object_id) const override;
+    bool                    ContainedBy(int object_id) const override;
 
     float CurrentMeterValue(MeterType type) const override;
-
     float InitialMeterValue(MeterType type) const override;
-
     float NextTurnCurrentMeterValue(MeterType type) const override;
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
-    void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
-
-    Meter* GetMeter(MeterType type) override;
-
     std::vector<std::string> AvailableFoci() const override;
-
     const std::string& FocusIcon(const std::string& focus_name) const override;
 
-    void Reset() override;
+    PlanetType          Type() const                        { return m_type; }
+    PlanetType          OriginalType() const                { return m_original_type; }
+    int                 DistanceFromOriginalType() const    { return TypeDifference(m_type, m_original_type); }
+    PlanetSize          Size() const                        { return m_size; }
+    int                 SizeAsInt() const;
 
-    void Depopulate() override;
+    bool                HostileToEmpire(int empire_id) const override;
 
-    PlanetType                  Type() const                        { return m_type; }
-    PlanetType                  OriginalType() const                { return m_original_type; }
-    int                         DistanceFromOriginalType() const    { return TypeDifference(m_type, m_original_type); }
-    PlanetSize                  Size() const                        { return m_size; }
-    int                         SizeAsInt() const;
+    PlanetEnvironment   EnvironmentForSpecies(const std::string& species_name = "") const;
+    PlanetType          NextBetterPlanetTypeForSpecies(const std::string& species_name = "") const;
+    PlanetType          NextCloserToOriginalPlanetType() const;
+    PlanetType          ClockwiseNextPlanetType() const;
+    PlanetType          CounterClockwiseNextPlanetType() const;
+    PlanetSize          NextLargerPlanetSize() const;
+    PlanetSize          NextSmallerPlanetSize() const;
 
-    PlanetEnvironment           EnvironmentForSpecies(const std::string& species_name = "") const;
-    PlanetType                  NextBetterPlanetTypeForSpecies(const std::string& species_name = "") const;
-    PlanetType                  NextCloserToOriginalPlanetType() const;
-    PlanetType                  ClockwiseNextPlanetType() const;
-    PlanetType                  CounterClockwiseNextPlanetType() const;
-    PlanetSize                  NextLargerPlanetSize() const;
-    PlanetSize                  NextSmallerPlanetSize() const;
-
-    /**
-     * An orbital period is equal to a planets "year". A "year" is arbitrarily
-     * defined to be 4 turns. */
-    float                       OrbitalPeriod() const;
+    /** An orbital period is equal to a planets "year". A "year" is arbitrarily
+      * defined to be 4 turns. */
+    float OrbitalPeriod() const;
     /** @returns an angle in radians. */
-    float                       InitialOrbitalPosition() const;
+    float InitialOrbitalPosition() const;
     /** @returns an angle in radians. */
-    float                       OrbitalPositionOnTurn(int turn) const;
-    /**
-     * The rotational period represents a planets "day".  A "day" is
-     * arbitrarily defined to be 1/360 of a "year", and 1/90 of a turn. */
-    float                       RotationalPeriod() const;
+    float OrbitalPositionOnTurn(int turn) const;
+    /** The rotational period represents a planets "day".  A "day" is
+      * arbitrarily defined to be 1/360 of a "year", and 1/90 of a turn. */
+    float RotationalPeriod() const;
     /** @returns an angle in degree. */
-    float                       AxialTilt() const;
+    float AxialTilt() const;
 
-    const std::set<int>&        BuildingIDs() const {return m_buildings;}
+    const std::set<int>& BuildingIDs() const    { return m_buildings; }
 
-    bool                        IsAboutToBeColonized() const    { return m_is_about_to_be_colonized; }
-    bool                        IsAboutToBeInvaded() const      { return m_is_about_to_be_invaded; }
-    bool                        IsAboutToBeBombarded() const    { return m_is_about_to_be_bombarded; }
-    int                         OrderedGivenToEmpire() const    { return m_ordered_given_to_empire_id; }
-    int                         LastTurnAttackedByShip() const  { return m_last_turn_attacked_by_ship; }
+    bool IsAboutToBeColonized() const           { return m_is_about_to_be_colonized; }
+    bool IsAboutToBeInvaded() const             { return m_is_about_to_be_invaded; }
+    bool IsAboutToBeBombarded() const           { return m_is_about_to_be_bombarded; }
+    int OrderedGivenToEmpire() const            { return m_ordered_given_to_empire_id; }
+    int LastTurnAttackedByShip() const          { return m_last_turn_attacked_by_ship; }
+    int LastTurnConquered() const               { return m_turn_last_conquered; }
 
-    const std::string&          SurfaceTexture() const          { return m_surface_texture; }
-    std::string                 CardinalSuffix() const;     ///< returns a roman number representing this planets orbit in relation to other planets
+    const std::string&  SurfaceTexture() const  { return m_surface_texture; }
+    std::string         CardinalSuffix() const; ///< returns a roman number representing this planets orbit in relation to other planets
     //@}
 
     /** \name Mutators */ //@{
-    void            SetType(PlanetType type);           ///< sets the type of this Planet to \a type
-    void            SetOriginalType(PlanetType type);   ///< sets the original type of this Planet to \a type
-    void            SetSize(PlanetSize size);           ///< sets the size of this Planet to \a size
+    void Copy(std::shared_ptr<const UniverseObject> copied_object,
+              int empire_id = ALL_EMPIRES) override;
 
-    void            SetRotationalPeriod(float days);    ///< sets the rotational period of this planet
-    void            SetHighAxialTilt();                 ///< randomly generates a new, high axial tilt
+    Meter* GetMeter(MeterType type) override;
 
-    void            AddBuilding(int building_id);       ///< adds the building to the planet
-    bool            RemoveBuilding(int building_id);    ///< removes the building from the planet; returns false if no such building was found
+    void Reset() override;
+    void Depopulate() override;
 
-    void            Conquer(int conquerer);             ///< Called during combat when a planet changes hands
-    bool            Colonize(int empire_id, const std::string& species_name, double population); ///< Called during colonization handling to do the actual colonizing
-    void            SetIsAboutToBeColonized(bool b);    ///< Called during colonization when a planet is about to be colonized
-    void            ResetIsAboutToBeColonized();        ///< Called after colonization, to reset the number of prospective colonizers to 0
-    void            SetIsAboutToBeInvaded(bool b);      ///< Marks planet as being invaded or not, depending on whether \a b is true or false
-    void            ResetIsAboutToBeInvaded();          ///< Marks planet as not being invaded
-    void            SetIsAboutToBeBombarded(bool b);    ///< Marks planet as being bombarded or not, depending on whether \a b is true or false
-    void            ResetIsAboutToBeBombarded();        ///< Marks planet as not being bombarded
-    void            SetGiveToEmpire(int empire_id);     ///< Marks planet to be given to empire
-    void            ClearGiveToEmpire();                ///< Marks planet not to be given to any empire
+    void SetType(PlanetType type);          ///< sets the type of this Planet to \a type
+    void SetOriginalType(PlanetType type);  ///< sets the original type of this Planet to \a type
+    void SetSize(PlanetSize size);          ///< sets the size of this Planet to \a size
 
-    void            SetLastTurnAttackedByShip(int turn);///< Sets the last turn this planet was attacked by a ship
+    void SetRotationalPeriod(float days);   ///< sets the rotational period of this planet
+    void SetHighAxialTilt();                ///< randomly generates a new, high axial tilt
 
-    void            SetSurfaceTexture(const std::string& texture);
+    void AddBuilding(int building_id);      ///< adds the building to the planet
+    bool RemoveBuilding(int building_id);   ///< removes the building from the planet; returns false if no such building was found
 
-    void            ResetTargetMaxUnpairedMeters() override;
+    void Conquer(int conquerer);            ///< Called during combat when a planet changes hands
+    bool Colonize(int empire_id, const std::string& species_name,
+                  double population);       ///< Called during colonization handling to do the actual colonizing
+    void SetIsAboutToBeColonized(bool b);   ///< Called during colonization when a planet is about to be colonized
+    void ResetIsAboutToBeColonized();       ///< Called after colonization, to reset the number of prospective colonizers to 0
+    void SetIsAboutToBeInvaded(bool b);     ///< Marks planet as being invaded or not, depending on whether \a b is true or false
+    void ResetIsAboutToBeInvaded();         ///< Marks planet as not being invaded
+    void SetIsAboutToBeBombarded(bool b);   ///< Marks planet as being bombarded or not, depending on whether \a b is true or false
+    void ResetIsAboutToBeBombarded();       ///< Marks planet as not being bombarded
+    void SetGiveToEmpire(int empire_id);    ///< Marks planet to be given to empire
+    void ClearGiveToEmpire();               ///< Marks planet not to be given to any empire
+
+    void SetLastTurnAttackedByShip(int turn);///< Sets the last turn this planet was attacked by a ship
+    void SetSurfaceTexture(const std::string& texture);
+    void ResetTargetMaxUnpairedMeters() override;
     //@}
 
-    static int      TypeDifference(PlanetType type1, PlanetType type2);
+    static int TypeDifference(PlanetType type1, PlanetType type2);
 
 protected:
     friend class Universe;
@@ -138,7 +128,8 @@ public:
     Planet(PlanetType type, PlanetSize size);
 
 protected:
-    template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <class T>
+    friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:
     ~Planet() {}
@@ -173,7 +164,7 @@ private:
 
     std::set<int>   m_buildings;
 
-    bool            m_just_conquered = false;
+    int             m_turn_last_conquered = INVALID_GAME_TURN;
     bool            m_is_about_to_be_colonized = false;
     bool            m_is_about_to_be_invaded = false;
     bool            m_is_about_to_be_bombarded = false;

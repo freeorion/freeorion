@@ -163,7 +163,6 @@ struct FO_COMMON_API Constant : public ValueRefBase<T>
     explicit Constant(T value);
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
-
     T Eval(const ScriptingContext& context) const override;
 
     bool RootCandidateInvariant() const override
@@ -182,13 +181,9 @@ struct FO_COMMON_API Constant : public ValueRefBase<T>
     { return true; }
 
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     T Value() const;
-
     unsigned int GetCheckSum() const override;
 
 private:
@@ -205,34 +200,28 @@ private:
 template <class T>
 struct FO_COMMON_API Variable : public ValueRefBase<T>
 {
-    explicit Variable(ReferenceType ref_type, const std::string& property_name = "");
-    Variable(ReferenceType ref_type, const std::vector<std::string>& property_name);
+    explicit Variable(ReferenceType ref_type, const std::string& property_name = "",
+                      bool return_immediate_value = false);
+    Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
+             bool return_immediate_value = false);
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
-
     T Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     ReferenceType GetReferenceType() const;
-
     const std::vector<std::string>& PropertyName() const;
-
+    bool ReturnImmediateValue() const;
     unsigned int GetCheckSum() const override;
 
 protected:
-    mutable ReferenceType       m_ref_type;
+    mutable ReferenceType       m_ref_type = INVALID_REFERENCE_TYPE;
     std::vector<std::string>    m_property_name;
+    bool                        m_return_immediate_value = false;
 
 private:
     friend class boost::serialization::access;
@@ -251,25 +240,16 @@ struct FO_COMMON_API Statistic : public Variable<T>
     Statistic(std::unique_ptr<ValueRefBase<T>>&& value_ref,
               StatisticType stat_type,
               std::unique_ptr<Condition::ConditionBase>&& sampling_condition);
-
     ~Statistic();
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
-
     T Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
 
     StatisticType GetStatisticType() const
@@ -318,37 +298,22 @@ struct FO_COMMON_API ComplexVariable : public Variable<T>
                              std::unique_ptr<ValueRefBase<int>>&& int_ref3 = nullptr,
                              std::unique_ptr<ValueRefBase<std::string>>&& string_ref1 = nullptr,
                              std::unique_ptr<ValueRefBase<std::string>>&& string_ref2 = nullptr);
-
     ~ComplexVariable();
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
-
     T Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     const ValueRefBase<int>* IntRef1() const;
-
     const ValueRefBase<int>* IntRef2() const;
-
     const ValueRefBase<int>* IntRef3() const;
-
     const ValueRefBase<std::string>* StringRef1() const;
-
     const ValueRefBase<std::string>* StringRef2() const;
-
     unsigned int GetCheckSum() const override;
 
 protected:
@@ -383,21 +348,13 @@ struct FO_COMMON_API StaticCast : public Variable<ToType>
     ~StaticCast();
 
     bool operator==(const ValueRefBase<ToType>& rhs) const override;
-
     ToType Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
 
     const ValueRefBase<FromType>* GetValueRef() const
@@ -421,26 +378,16 @@ struct FO_COMMON_API StringCast : public Variable<std::string>
 {
     StringCast(std::unique_ptr<Variable<FromType>>&& value_ref);
     StringCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref);
-    StringCast(Variable<FromType>* value_ref);
-    StringCast(ValueRefBase<FromType>* value_ref);
     ~StringCast();
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
-
     std::string Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
 
     const ValueRefBase<FromType>* GetValueRef() const
@@ -465,21 +412,13 @@ struct FO_COMMON_API UserStringLookup : public Variable<std::string> {
     ~UserStringLookup();
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
-
     std::string Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
 
     const ValueRefBase<FromType>* GetValueRef() const
@@ -508,21 +447,13 @@ struct FO_COMMON_API NameLookup : public Variable<std::string> {
     ~NameLookup();
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
-
     std::string Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
 
     const ValueRefBase<int>* GetValueRef() const
@@ -561,28 +492,16 @@ struct FO_COMMON_API Operation : public ValueRefBase<T>
     ~Operation();
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
-
     T Eval(const ScriptingContext& context) const override;
-
     bool RootCandidateInvariant() const override;
-
     bool LocalCandidateInvariant() const override;
-
     bool TargetInvariant() const override;
-
     bool SourceInvariant() const override;
-
     bool SimpleIncrement() const override;
-
-    bool ConstantExpr() const override
-    { return m_constant_expr; }
-
+    bool ConstantExpr() const override { return m_constant_expr; }
     std::string Description() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     OpType GetOpType() const;
 
     /** 1st operand (or 0 if none exists). */
@@ -614,7 +533,8 @@ private:
 FO_COMMON_API MeterType     NameToMeter(const std::string& name);
 FO_COMMON_API std::string   MeterToName(MeterType meter);
 FO_COMMON_API std::string   ReconstructName(const std::vector<std::string>& property_name,
-                                            ReferenceType ref_type);
+                                            ReferenceType ref_type,
+                                            bool return_immediate_value = false);
 
 // Template Implementations
 ///////////////////////////////////////////////////////////
@@ -730,20 +650,23 @@ void Constant<T>::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_top_level_content);
 }
 
-
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
 template <class T>
-Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name) :
+Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
+                      bool return_immediate_value) :
     m_ref_type(ref_type),
-    m_property_name(property_name.begin(), property_name.end())
+    m_property_name(property_name.begin(), property_name.end()),
+    m_return_immediate_value(return_immediate_value)
 {}
 
 template <class T>
-Variable<T>::Variable(ReferenceType ref_type, const std::string& property_name) :
+Variable<T>::Variable(ReferenceType ref_type, const std::string& property_name,
+                      bool return_immediate_value) :
     m_ref_type(ref_type),
-    m_property_name()
+    m_property_name(),
+    m_return_immediate_value(return_immediate_value)
 {
     m_property_name.push_back(property_name);
 }
@@ -756,7 +679,9 @@ bool Variable<T>::operator==(const ValueRefBase<T>& rhs) const
     if (typeid(rhs) != typeid(*this))
         return false;
     const Variable<T>& rhs_ = static_cast<const Variable<T>&>(rhs);
-    return (m_ref_type == rhs_.m_ref_type) && (m_property_name == rhs_.m_property_name);
+    return (m_ref_type == rhs_.m_ref_type) &&
+           (m_property_name == rhs_.m_property_name) &&
+           (m_return_immediate_value == rhs_.m_return_immediate_value);
 }
 
 template <class T>
@@ -766,6 +691,10 @@ ReferenceType Variable<T>::GetReferenceType() const
 template <class T>
 const std::vector<std::string>& Variable<T>::PropertyName() const
 { return m_property_name; }
+
+template <class T>
+bool Variable<T>::ReturnImmediateValue() const
+{ return m_return_immediate_value; }
 
 template <class T>
 bool Variable<T>::RootCandidateInvariant() const
@@ -783,16 +712,17 @@ template <class T>
 bool Variable<T>::SourceInvariant() const
 { return m_ref_type != SOURCE_REFERENCE; }
 
-FO_COMMON_API std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
-                                                           const std::vector<std::string>& property_names);
+FO_COMMON_API std::string FormatedDescriptionPropertyNames(
+    ReferenceType ref_type, const std::vector<std::string>& property_names,
+    bool return_immediate_value = false);
 
 template <class T>
 std::string Variable<T>::Description() const
-{ return FormatedDescriptionPropertyNames(m_ref_type, m_property_name); }
+{ return FormatedDescriptionPropertyNames(m_ref_type, m_property_name, m_return_immediate_value); }
 
 template <class T>
 std::string Variable<T>::Dump(unsigned short ntabs) const
-{ return ReconstructName(m_property_name, m_ref_type); }
+{ return ReconstructName(m_property_name, m_ref_type, m_return_immediate_value); }
 
 template <class T>
 unsigned int Variable<T>::GetCheckSum() const
@@ -802,6 +732,7 @@ unsigned int Variable<T>::GetCheckSum() const
     CheckSums::CheckSumCombine(retval, "ValueRef::Variable");
     CheckSums::CheckSumCombine(retval, m_property_name);
     CheckSums::CheckSumCombine(retval, m_ref_type);
+    CheckSums::CheckSumCombine(retval, m_return_immediate_value);
     TraceLogger() << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }
@@ -842,7 +773,8 @@ void Variable<T>::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
         & BOOST_SERIALIZATION_NVP(m_ref_type)
-        & BOOST_SERIALIZATION_NVP(m_property_name);
+        & BOOST_SERIALIZATION_NVP(m_property_name)
+        & BOOST_SERIALIZATION_NVP(m_return_immediate_value);
 }
 
 ///////////////////////////////////////////////////////////

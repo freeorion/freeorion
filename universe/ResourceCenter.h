@@ -50,9 +50,9 @@ public:
 
     void Copy(std::shared_ptr<const ResourceCenter> copied_object);
 
-    void            SetFocus(const std::string& focus);
-    void            ClearFocus();
-    void            UpdateFocusHistory();
+    void SetFocus(const std::string& focus);
+    void ClearFocus();
+    void UpdateFocusHistory();
 
     /** Resets the meters, etc. This should be called when a ResourceCenter is
         wiped out due to starvation, etc. */
@@ -60,14 +60,11 @@ public:
     //@}
 
 protected:
-    void            Init();                                                         ///< initialization that needs to be called by derived class after derived class is constructed
+    void Init();    ///< initialization that needs to be called by derived class after derived class is constructed
 
-    float           ResourceCenterNextTurnMeterValue(MeterType meter_type) const;   ///< returns estimate of the next turn's current values of meters relevant to this ResourceCenter
-    void            ResourceCenterResetTargetMaxUnpairedMeters();
-    void            ResourceCenterClampMeters();
-
-    void            ResourceCenterPopGrowthProductionResearchPhase();
-
+    void ResourceCenterResetTargetMaxUnpairedMeters();
+    void ResourceCenterClampMeters();
+    void ResourceCenterPopGrowthProductionResearchPhase();
 
 private:
     std::string m_focus;

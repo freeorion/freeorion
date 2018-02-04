@@ -596,7 +596,7 @@ void Wnd::MoveChildUp(Wnd* wnd)
     m_children.push_back(*it);
     m_children.erase(it);
 }
- 
+
 void Wnd::MoveChildDown(const std::shared_ptr<Wnd>& wnd)
 { MoveChildDown(wnd.get()); }
 

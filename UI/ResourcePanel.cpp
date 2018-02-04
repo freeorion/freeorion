@@ -78,7 +78,7 @@ void ResourcePanel::CompleteConstruction() {
     m_multi_icon_value_indicator =  GG::Wnd::Create<MultiIconValueIndicator>(Width() - 2*EDGE_PAD,   m_rescenter_id, meters);
 
     // determine if this panel has been created yet.
-    std::map<int, bool>::iterator it = s_expanded_map.find(m_rescenter_id);
+    auto it = s_expanded_map.find(m_rescenter_id);
     if (it == s_expanded_map.end())
         s_expanded_map[m_rescenter_id] = false; // if not, default to collapsed state
 
@@ -133,7 +133,7 @@ bool ResourcePanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 
 
 namespace {
-    bool sortByMeterValue(std::pair<MeterType, std::shared_ptr<StatisticIcon>> left,
+    bool SortByMeterValue(std::pair<MeterType, std::shared_ptr<StatisticIcon>> left,
                           std::pair<MeterType, std::shared_ptr<StatisticIcon>> right)
     {
         if (left.second->GetValue() == right.second->GetValue()) {
@@ -176,7 +176,7 @@ void ResourcePanel::Update() {
         m_multi_icon_value_indicator->SetToolTip(meter_stat.first, browse_wnd);
     }
 
-    std::sort(m_meter_stats.begin(), m_meter_stats.end(), sortByMeterValue);
+    std::sort(m_meter_stats.begin(), m_meter_stats.end(), SortByMeterValue);
 }
 
 void ResourcePanel::Refresh() {

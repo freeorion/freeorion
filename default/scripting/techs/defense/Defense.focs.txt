@@ -15,6 +15,19 @@ Tech
             stackinggroup = "PLANET_SHIELDS_STACK_ROOT"
             priority = [[DEFAULT_PRIORITY]]
             effects = SetMaxShield value = Value + 1 accountinglabel = "DEF_ROOT_DEFENSE"
+        
+        EffectsGroup    // regenerate 1 per turn
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = [
+                SetShield value = min(Value + 1, Value(Target.MaxShield))
+                SetDefense value = min(Value + 1, Value(Target.MaxDefense))
+                SetTroops value = min(Value + 1, Value(Target.MaxTroops))
+            ]
     ]
     graphic = ""
 
@@ -73,7 +86,5 @@ Tech
     graphic = "icons/tech/system_defense_mines.png"
 
 #include "mines.macros"
-
 #include "/scripting/common/priorities.macros"
-
 #include "/scripting/common/base_prod.macros"

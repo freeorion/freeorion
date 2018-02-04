@@ -9,6 +9,15 @@ STANDARD_SHIP_SHIELDS
             accountinglabel = "DIFFICULTY"
             priority = [[DEFAULT_PRIORITY]]
             effects = SetMaxShield value = Value + 1
+            
+        EffectsGroup // increase to max when not in battle
+            scope = Source
+            activation = And [
+                Ship
+                (Source.LastTurnActiveInBattle < CurrentTurn)
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetShield value = Target.MaxShield
 '''
 
 GOOD_SHIP_SHIELDS

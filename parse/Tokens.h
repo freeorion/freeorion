@@ -191,8 +191,10 @@
 #define TOKEN_SEQ_6                             \
     (Label)                                     \
     (Large)                                     \
-    (LastTurnBattleHere)                        \
     (LastTurnActiveInBattle)                    \
+    (LastTurnAttackedByShip)                    \
+    (LastTurnBattleHere)                        \
+    (LastTurnConquered)                         \
     (LastTurnResupplied)                        \
     (LeastHappySpecies)                         \
     (LocalCandidate)                            \
@@ -510,8 +512,7 @@
     (TopPriorityResearchableTech)               \
     (TopPriorityTransferrableTech)              \
     (Toxic)                                     \
-    (Trade)                                     \
-    (TradeStockpile)
+    (Trade)
 
 #define TOKEN_SEQ_17                            \
     (Troops)                                    \

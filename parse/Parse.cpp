@@ -95,7 +95,7 @@ namespace parse {
     bool macro_deep_referenced_in_text(const std::string& macro_to_find, const std::string& text,
                                        const std::map<std::string, std::string>& macros)
     {
-        //DebugLogger() << "Checking if " << macro_to_find << " deep referenced in text: " << text;
+        TraceLogger() << "Checking if " << macro_to_find << " deep referenced in text: " << text;
         // check of text directly references macro_to_find
         std::set<std::string> macros_directly_referenced_in_input_text = macros_directly_referenced_in_text(text);
         if (macros_directly_referenced_in_input_text.empty())

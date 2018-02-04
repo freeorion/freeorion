@@ -4,6 +4,17 @@ STANDARD_CONSTRUCTION
             activation = Planet
             accountinglabel = "STANDARD_CONSTRUCTION_LABEL"
             effects = SetTargetConstruction value = Value + 20
+
+        EffectsGroup    // increase or decrease towards target meter, when not recently conquered
+            scope = Source
+            activation = And [
+                Planet
+                (Source.LastTurnConquered < CurrentTurn)
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetConstruction value = Value +
+                min(abs(Value(Target.TargetConstruction) - Value), 1) *
+                    (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.TargetConstruction))]))
 '''
 
 FOCUS_CHANGE_PENALTY
@@ -13,7 +24,9 @@ FOCUS_CHANGE_PENALTY
             activation = And [
                 Planet
                 Not Focus type = "FOCUS_INDUSTRY"
+                (0 == Source.TurnsSinceFocusChange)
             ]
+            priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
             effects = SetIndustry value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
 
         EffectsGroup
@@ -21,7 +34,9 @@ FOCUS_CHANGE_PENALTY
             activation = And [
                 Planet
                 Not Focus type = "FOCUS_RESEARCH"
+                (0 == Source.TurnsSinceFocusChange)
             ]
+            priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
             effects = SetResearch value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
 '''
 

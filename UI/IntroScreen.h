@@ -48,7 +48,7 @@ public:
     //!@}
 
 private:
-    std::shared_ptr<GG::Button>         m_continue;      //!< continues from last autosave
+    std::shared_ptr<GG::Button>         m_continue;     //!< continues from last autosave
     std::shared_ptr<GG::Button>         m_single_player;//!< opens up the single player game dialog
     std::shared_ptr<GG::Button>         m_quick_start;  //!< starts a single-player game with the default options (no dialog)
     std::shared_ptr<GG::Button>         m_multi_player; //!< opens up the multi player game dialog

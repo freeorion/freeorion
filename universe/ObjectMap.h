@@ -78,7 +78,6 @@ public:
         { return (typename std::map<int, std::shared_ptr<T>>::iterator(*this) != other);}
 
     private:
-        // 
         mutable std::shared_ptr<T> m_current_ptr;
         ObjectMap& m_owner;
 
@@ -159,25 +158,24 @@ public:
 
     /** \name Structors */ //@{
     ObjectMap();
-
     ~ObjectMap();
 
     /** Copies contents of this ObjectMap to a new ObjectMap, which is
       * returned.  Copies are limited to only duplicate information that the
       * empire with id \a empire_id would know about the copied objects. */
-    ObjectMap*              Clone(int empire_id = ALL_EMPIRES) const;
+    ObjectMap* Clone(int empire_id = ALL_EMPIRES) const;
     //@}
 
     /** \name Accessors */ //@{
     /** Returns number of objects in this ObjectMap */
-    int                     NumObjects() const;
+    int NumObjects() const;
 
     /** Returns the number of objects of the specified class in this ObjectMap. */
     template <class T>
-    int                     NumObjects() const;
+    int NumObjects() const;
 
     /** Returns true if this ObjectMap contains no objects */
-    bool                    Empty() const;
+    bool Empty() const;
 
     /** Returns a pointer to the universe object with ID number \a id,
       * or a null std::shared_ptr if none exists */
@@ -356,7 +354,7 @@ public:
 private:
     void InsertCore(std::shared_ptr<UniverseObject> item, int empire_id = ALL_EMPIRES);
 
-    void                CopyObjectsToSpecializedMaps();
+    void CopyObjectsToSpecializedMaps();
 
     template <class T>
     const std::map<int, std::shared_ptr<T>>& Map() const;

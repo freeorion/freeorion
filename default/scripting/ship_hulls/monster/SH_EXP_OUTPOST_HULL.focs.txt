@@ -21,7 +21,8 @@ Hull
                 Not Planet type = [Asteroids GasGiant]
                 InSystem id = Source.SystemID
             ]
-            activation = Turn high = 0 
+            activation = Turn high = 0
+            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
             effects = [
                 SetSpecies name = "SP_EXPERIMENTOR"
                 SetPopulation value = Target.TargetPopulation

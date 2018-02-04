@@ -114,7 +114,7 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
         this->m_initial_orbital_position =  copied_planet->m_initial_orbital_position;
         this->m_rotational_period =         copied_planet->m_rotational_period;
         this->m_axial_tilt =                copied_planet->m_axial_tilt;
-        this->m_just_conquered =            copied_planet->m_just_conquered;
+        this->m_turn_last_conquered =       copied_planet->m_turn_last_conquered;
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
             if (vis >= VIS_FULL_VISIBILITY) {
@@ -180,7 +180,7 @@ std::string Planet::Dump(unsigned short ntabs) const {
        << " rot period: " << m_rotational_period
        << " axis tilt: " << m_axial_tilt
        << " buildings: ";
-    for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end();) {
+    for (auto it = m_buildings.begin(); it != m_buildings.end();) {
         int building_id = *it;
         ++it;
         os << building_id << (it == m_buildings.end() ? "" : ", ");
@@ -189,8 +189,8 @@ std::string Planet::Dump(unsigned short ntabs) const {
         os << " (About to be Colonize)";
     if (m_is_about_to_be_invaded)
         os << " (About to be Invaded)";
-    if (m_just_conquered)
-        os << " (Just Conquered)";
+
+    os << " conqured on turn: " << m_turn_last_conquered;
     if (m_is_about_to_be_bombarded)
         os << " (About to be Bombarded)";
     if (m_ordered_given_to_empire_id != ALL_EMPIRES)
@@ -428,22 +428,6 @@ float Planet::CurrentMeterValue(MeterType type) const
 float Planet::NextTurnCurrentMeterValue(MeterType type) const {
     MeterType max_meter_type = INVALID_METER_TYPE;
     switch (type) {
-    case METER_TARGET_POPULATION:
-    case METER_POPULATION:
-    case METER_TARGET_HAPPINESS:
-    case METER_HAPPINESS:
-        return PopCenterNextTurnMeterValue(type);
-        break;
-    case METER_TARGET_INDUSTRY:
-    case METER_TARGET_RESEARCH:
-    case METER_TARGET_TRADE:
-    case METER_TARGET_CONSTRUCTION:
-    case METER_INDUSTRY:
-    case METER_RESEARCH:
-    case METER_TRADE:
-    case METER_CONSTRUCTION:
-        return ResourceCenterNextTurnMeterValue(type);
-        break;
     case METER_SHIELD:      max_meter_type = METER_MAX_SHIELD;          break;
     case METER_TROOPS:      max_meter_type = METER_MAX_TROOPS;          break;
     case METER_DEFENSE:     max_meter_type = METER_MAX_DEFENSE;         break;
@@ -662,7 +646,7 @@ void Planet::Reset() {
                 building->Reset();
     }
 
-    m_just_conquered = false;
+    //m_turn_last_conquered left unchanged
     m_is_about_to_be_colonized = false;
     m_is_about_to_be_invaded = false;
     m_is_about_to_be_bombarded = false;
@@ -681,7 +665,7 @@ void Planet::Depopulate() {
 }
 
 void Planet::Conquer(int conquerer) {
-    m_just_conquered = true;
+    m_turn_last_conquered = CurrentTurn();
 
     // deal with things on production queue located at this planet
     Empire::ConquerProductionQueueItemsAtLocation(ID(), conquerer);
@@ -759,7 +743,6 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
         for (int building_id : m_buildings)
             if (auto building = GetBuilding(building_id))
                 building->Reset();
-        m_just_conquered = false;
         m_is_about_to_be_colonized = false;
         m_is_about_to_be_invaded = false;
         m_is_about_to_be_bombarded = false;
@@ -773,10 +756,10 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
     // find a default focus. use first defined available focus.
     // AvailableFoci function should return a vector of all names of
     // available foci.
-    std::vector<std::string> available_foci = AvailableFoci();
+    auto available_foci = AvailableFoci();
     if (species && !available_foci.empty()) {
         bool found_preference = false;
-        for (const std::string& focus : available_foci) {
+        for (const auto& focus : available_foci) {
             if (!focus.empty() && focus == species->PreferredFocus()) {
                 SetFocus(focus);
                 found_preference = true;
@@ -856,9 +839,8 @@ void Planet::SetSurfaceTexture(const std::string& texture) {
 void Planet::PopGrowthProductionResearchPhase() {
     UniverseObject::PopGrowthProductionResearchPhase();
 
-    bool just_conquered = m_just_conquered;
     // do not do production if planet was just conquered
-    m_just_conquered = false;
+    bool just_conquered = CurrentTurn() > 0 && m_turn_last_conquered == CurrentTurn();
 
     if (!just_conquered)
         ResourceCenterPopGrowthProductionResearchPhase();
@@ -872,7 +854,7 @@ void Planet::PopGrowthProductionResearchPhase() {
 
             if (!HasTag(TAG_STAT_SKIP_DEPOP)) {
                 // record depopulation of planet with species while owned by this empire
-                std::map<std::string, int>::iterator species_it = empire->SpeciesPlanetsDepoped().find(SpeciesName());
+                auto species_it = empire->SpeciesPlanetsDepoped().find(SpeciesName());
                 if (species_it == empire->SpeciesPlanetsDepoped().end())
                     empire->SpeciesPlanetsDepoped()[SpeciesName()] = 1;
                 else
@@ -881,15 +863,6 @@ void Planet::PopGrowthProductionResearchPhase() {
         }
         // remove species
         PopCenter::Reset();
-    }
-
-    if (!just_conquered) {
-        GetMeter(METER_SHIELD)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SHIELD));
-        GetMeter(METER_DEFENSE)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_DEFENSE));
-        GetMeter(METER_TROOPS)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_TROOPS));
-        GetMeter(METER_REBEL_TROOPS)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_REBEL_TROOPS));
-        GetMeter(METER_SUPPLY)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SUPPLY));
-        GetMeter(METER_STOCKPILE)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_STOCKPILE));
     }
 
     StateChangedSignal();

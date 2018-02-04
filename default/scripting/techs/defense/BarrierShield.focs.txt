@@ -7,17 +7,26 @@ Tech
     researchturns = 5
     tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "LRN_FORCE_FIELD"
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = [
+            effects =
                 SetMaxShield value = Value + 30 accountinglabel = "DEF_PLAN_BARRIER_SHLD_1"
-                SetShield value = Value + max(min(1.0, Value), 0.25*Target.Construction)
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetShield value = Value + max(min(1.0, Value), 0.25*Target.Construction)
+    ]
+
     graphic = "icons/tech/planetary_barrier_shield.png"
 
 Tech
@@ -29,17 +38,26 @@ Tech
     researchturns = 6
     tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_PLAN_BARRIER_SHLD_1"
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
+                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = [
-                SetMaxShield value = Value + 60 accountinglabel = "DEF_PLAN_BARRIER_SHLD_2"
-                SetShield value = Value + max(min(3.0, Value), 0.75*Target.Construction)
+            effects = SetMaxShield value = Value + 60 accountinglabel = "DEF_PLAN_BARRIER_SHLD_2"
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetShield value = Value + max(min(3.0, Value), 0.75*Target.Construction)
+    ]
+
     graphic = "icons/tech/planetary_barrier_shield.png"
 
 Tech
@@ -51,17 +69,26 @@ Tech
     researchturns = 8
     tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_PLAN_BARRIER_SHLD_2"
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
+                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = [
-                SetMaxShield value = Value + 90 accountinglabel = "DEF_PLAN_BARRIER_SHLD_3"
-                SetShield value = Value + max(min(5.0, Value), 1.0*Target.Construction)
+            effects = SetMaxShield value = Value + 90 accountinglabel = "DEF_PLAN_BARRIER_SHLD_3"
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetShield value = Value + max(min(5.0, Value), 1.0*Target.Construction)
+    ]
+    
     graphic = "icons/tech/planetary_barrier_shield.png"
 
 Tech
@@ -73,17 +100,26 @@ Tech
     researchturns = 10
     tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_PLAN_BARRIER_SHLD_3"
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
+                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = [
-                SetMaxShield value = Value + 150 accountinglabel = "DEF_PLAN_BARRIER_SHLD_4"
-                SetShield value = Value + max(min(9.0, Value), 1.5*Target.Construction)
+            effects = SetMaxShield value = Value + 150 accountinglabel = "DEF_PLAN_BARRIER_SHLD_4"
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetShield value = Value + max(min(9.0, Value), 1.5*Target.Construction)
+    ]
+    
     graphic = "icons/tech/planetary_barrier_shield.png"
 
 Tech
@@ -95,17 +131,25 @@ Tech
     researchturns = 12
     tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_PLAN_BARRIER_SHLD_4"
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = [
-                SetMaxShield value = Value + 150 accountinglabel = "DEF_PLAN_BARRIER_SHLD_5"
-                SetShield value = Value + max(min(14.0, Value), 2.5*Target.Construction)
+            effects = SetMaxShield value = Value + 150 accountinglabel = "DEF_PLAN_BARRIER_SHLD_5"
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetShield value = Value + max(min(14.0, Value), 2.5*Target.Construction)
+    ]
+    
     graphic = "icons/tech/planetary_barrier_shield.png"
 
 #include "/scripting/common/base_prod.macros"

@@ -24,7 +24,19 @@ BASIC_INDUSTRY
             priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value * 2
 
-        EffectsGroup                    // removes residual production from a dead planet
+        EffectsGroup    // increase or decrease towards target meter, when not recently conquered
+            scope = Source
+            activation = And [
+                Planet
+                (Source.LastTurnConquered < CurrentTurn)
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetIndustry value = Value +
+                min(abs(Value(Target.TargetIndustry) - Value), 1) *
+                    (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.TargetIndustry))]))
+
+        // removes residual production from a dead planet
+        EffectsGroup
             scope = Source
             activation = And [
                 Planet

@@ -745,7 +745,7 @@ void BombardOrder::ExecuteImpl() const {
         return;
     }
 
-    // note: multiple ships, from same or different empires, can invade the same planet on the same turn
+    // note: multiple ships, from same or different empires, can bombard the same planet on the same turn
     DebugLogger() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "
                   << ship->Name() << " to bombard planet " << m_planet << " "
                   << planet->Name();
@@ -1071,7 +1071,7 @@ void ShipDesignOrder::ExecuteImpl() const {
     } else if (m_update_name_or_description) {
         // player is ordering empire to rename a design
         const std::set<int>& empire_known_design_ids = universe.EmpireKnownShipDesignIDs(EmpireID());
-        std::set<int>::iterator design_it = empire_known_design_ids.find(m_design_id);
+        auto design_it = empire_known_design_ids.find(m_design_id);
         if (design_it == empire_known_design_ids.end()) {
             ErrorLogger() << "Empire, " << EmpireID() << ", tried to rename/redescribe a ShipDesign id = " << m_design_id
                           << " that this empire hasn't seen";

@@ -52,6 +52,7 @@ Species
                 Planet
             ]
             activation = Turn high = 1
+            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
             effects = SetPopulation value = Target.TargetPopulation
 
         // self-destruct when captured
@@ -61,6 +62,7 @@ Species
                 Planet
                 OwnedBy affiliation = AnyEmpire
             ]
+            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
             effects = [
                 SetPopulation value = 0
                 GenerateSitRepMessage

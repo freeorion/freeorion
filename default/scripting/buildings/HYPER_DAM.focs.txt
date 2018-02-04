@@ -38,11 +38,11 @@ BuildingType
                 Not ResourceSupplyConnected empire = Source.Owner Condition = And [
                     Building name = "BLD_BLACK_HOLE_POW_GEN" 
                     OwnedBy empire = Source.Owner
-                    ]
+                ]
             ]
             activation = Source
             stackinggroup = "BLD_HYPER_DAM_MALUS"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value - Target.SizeAsDouble
     ]
     icon = "icons/building/blackhole.png"

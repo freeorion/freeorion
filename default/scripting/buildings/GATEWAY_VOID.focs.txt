@@ -27,19 +27,20 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
+            
         EffectsGroup
             scope = And [
                 PopulationCenter
                 InSystem id = Source.SystemID
             ]
             activation = Turn low = Source.CreationTurn + 1
-            priority = 200
+            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
             effects = [
                 SetTargetPopulation value = min(Value, 0)
                 SetPopulation value = min(Value, 0)
                 SetMaxSupply value = 0
                 SetSupply value = 0
-                ]
+            ]
 
         EffectsGroup
             scope = InSystem id = Source.SystemID
@@ -49,4 +50,5 @@ BuildingType
     icon = "icons/building/monument_to_exodus.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"

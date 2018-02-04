@@ -21,7 +21,7 @@ Special
 
         EffectsGroup
             scope = Object id = Source.PlanetID
-            priority = [[DEFAULT_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value - 1 * Target.SizeAsDouble accountinglabel = "TIDAL_LOCK_LABEL"
     ]
     graphic = "icons/specials_huge/tidal_lock.png"

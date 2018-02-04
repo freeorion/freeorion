@@ -209,14 +209,58 @@ namespace {
     const double SMALL_UI_DISPLAY_VALUE = 1.0e-6;
     const double LARGE_UI_DISPLAY_VALUE = 9.99999999e+9;
     const double UNKNOWN_UI_DISPLAY_VALUE = std::numeric_limits<double>::infinity();
+
+    double RoundMagnitude(double mag, int digits) {
+        // power of 10 of highest valued digit in number
+        // = 2 (100's)   for 234.4
+        // = 4 (10000's) for 45324
+        int pow10 = static_cast<int>(floor(log10(mag)));
+        //std::cout << "magnitude power of 10: " << pow10 << std::endl;
+
+
+        // round number to fit in requested number of digits
+        // shift number by power of 10 so that ones digit is the lowest-value digit
+        // that will be retained in final number
+        // eg. 45324 with 3 digits -> pow10 = 4, digits = 3
+        //     want to shift 3 to the 1's digits position, so need 4 - 3 + 1 shift = 2
+        double rounding_factor = pow(10.0, static_cast<double>(pow10 - digits + 1));
+        // shift, round, shift back. this leaves 0 after the lowest retained digit
+        mag = mag / rounding_factor;
+        mag = round(mag);
+        mag *= rounding_factor;
+        //std::cout << "magnitude after initial rounding to " << digits << " digits: " << mag << std::endl;
+
+        // rounding may have changed the power of 10 of the number
+        // eg. 9999 with 3 digits, shifted to 999.9, rounded to 1000,
+        // shifted back to 10000, now the power of 10 is 5 instead of 4.
+        // so, redo this calculation
+        pow10 = static_cast<int>(floor(log10(mag)));
+        rounding_factor = pow(10.0, static_cast<double>(pow10 - digits + 1));
+        mag = mag / rounding_factor;
+        mag = round(mag);
+        mag *= rounding_factor;
+        //std::cout << "magnitude after second rounding to " << digits << " digits: " << mag << std::endl;
+
+        return mag;
+    }
+
+    int TestRounding() {
+        for (double num : {-0.001, -0.02, -0.05, 0.0001, 0.0005, 9.0,
+                           10.0, 84.5, 90.9, 99.9,
+                           999.9, 9999.9, 245.1, 249.1, 249.55})
+        {
+            std::cout << "n: " << num
+                      << "  r3: " << DoubleToString(num, 3, false) << std::endl;
+        }
+    }
+    //int dummy = TestRounding();
 }
 
 std::string DoubleToString(double val, int digits, bool always_show_sign) {
     std::string text; // = ""
 
-    // minimum digits is 2.  If digits was 1, then 30 couldn't be displayed,
-    // as 0.1k is too much and 9 is too small and just 30 is 2 digits
-    digits = std::max(digits, 2);
+    // minimum digits is 3. Fewer than this and things can't be sensibly displayed.
+    digits = std::max(digits, 3);
 
     // default result for sentinel value
     if (val == UNKNOWN_UI_DISPLAY_VALUE)
@@ -233,13 +277,13 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
 
     // prepend signs if neccessary
     int effective_sign = EffectiveSign(val);
-    if (effective_sign == -1) {
+    if (effective_sign == -1)
         text += "-";
-    } else {
-        if (always_show_sign) text += "+";
-    }
+    else if (always_show_sign)
+        text += "+";
 
-    if (mag > LARGE_UI_DISPLAY_VALUE) mag = LARGE_UI_DISPLAY_VALUE;
+    if (mag > LARGE_UI_DISPLAY_VALUE)
+        mag = LARGE_UI_DISPLAY_VALUE;
 
     // if value is effectively 0, avoid unnecessary later processing
     if (effective_sign == 0) {
@@ -249,48 +293,39 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
         return text;
     }
 
-
     //std::cout << std::endl << "DoubleToString val: " << val << " digits: " << digits << std::endl;
+    mag = RoundMagnitude(mag, digits);
+    int pow10 = static_cast<int>(floor(log10(mag)));
 
-    // power of 10 of highest valued digit in number
-    int pow10 = static_cast<int>(floor(log10(mag))); // = 2 (100's) for 234.4,  = 4 (10000's) for 45324
-    //std::cout << "magnitude power of 10: " << pow10 << std::endl;
 
-    // determine base unit for number: the next lower power of 10^3 from the number (inclusive)
+    // determine base unit for number: the next lower power of 10^3 from the
+    // number (inclusive)
     int pow10_digits_above_pow1000 = 0;
     if (pow10 >= 0)
         pow10_digits_above_pow1000 = pow10 % 3;
     else
         pow10_digits_above_pow1000 = (pow10 % 3) + 3;   // +3 ensures positive result of mod
     int unit_pow10 = pow10 - pow10_digits_above_pow1000;
+
+    // special limit: currently don't use any base unit powers below 0 (1's digit)
     if (unit_pow10 < 0)
         unit_pow10 = 0;
-    //std::cout << "unit power of 10: " << unit_pow10 << std::endl;
-
-    // if not enough digits to include most significant digit and next lower
-    // power of 10, add extra digits. this still uses less space than using the
-    // next higher power of 10 and adding a 0. out front.  for example, 240 with
-    // 2 digits is better shown as "240" than "0.24k"
-    digits = std::max(digits, pow10_digits_above_pow1000 + 1);
-    //std::cout << "adjusted digits: " << digits << std::endl;
 
     int lowest_digit_pow10 = pow10 - digits + 1;
-    //std::cout << "lowest_digit_pow10: " << lowest_digit_pow10 << std::endl;
+
+    //std::cout << "unit power of 10: " << unit_pow10
+    //          << "  pow10 digits above pow1000: " << pow10_digits_above_pow1000
+    //          << "  lowest_digit_pow10: " << lowest_digit_pow10
+    //          << std::endl;
 
     // fraction digits:
     int fraction_digits = std::max(0, std::min(digits - 1, unit_pow10 - lowest_digit_pow10));
     //std::cout << "fraction_digits: " << fraction_digits << std::endl;
 
 
-    /* round number down at lowest digit to be displayed, to prevent lexical_cast from rounding up
-       in cases like 0.998k with 2 digits -> 1.00k  instead of  0.99k  (as it should be) */
-    double rounding_factor = pow(10.0, static_cast<double>(pow10 - digits + 1));
-    mag /= rounding_factor;
-    mag = floor(mag);
-    mag *= rounding_factor;
-
     // scale number by unit power of 10
-    mag /= pow(10.0, static_cast<double>(unit_pow10));  // if mag = 45324 and unitPow = 3, get mag = 45.324
+    // eg. if mag = 45324 and unit_pow10 = 3, get mag = 45.324
+    mag /= pow(10.0, static_cast<double>(unit_pow10));
 
 
     std::string format;

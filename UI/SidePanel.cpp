@@ -482,7 +482,7 @@ public:
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
 
-    int                     PlanetID() const { return m_planet_id; }
+    int PlanetID() const { return m_planet_id; }
     //@}
 
     /** \name Mutators */ //@{
@@ -500,12 +500,12 @@ public:
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-    void                    Select(bool selected);
+    void Select(bool selected);
 
-    void                    Refresh();                      ///< updates panels, shows / hides colonize button, redoes layout of infopanels
+    void Refresh(); ///< updates panels, shows / hides colonize button, redoes layout of infopanels
 
     /** Enables, or disables if \a enable is false, issuing orders via this PlanetPanel. */
-    void                    EnableOrderIssuing(bool enable = true);
+    void EnableOrderIssuing(bool enable = true);
     //@}
 
     /** emitted when the planet panel is left clicked by the user.
@@ -534,18 +534,16 @@ public:
     mutable boost::signals2::signal<void (int)> OrderButtonChangedSignal;
 
 private:
-    void                    DoLayout();
-    void                    RefreshPlanetGraphic();
-    void                    SetFocus(const std::string& focus); ///< set the focus of the planet to \a focus
-    void                    ClickColonize();                    ///< called if colonize button is pressed
-    void                    ClickInvade();                      ///< called if invade button is pressed
-    void                    ClickBombard();                     ///< called if bombard button is pressed
+    void DoLayout();
+    void RefreshPlanetGraphic();
+    void SetFocus(const std::string& focus); ///< set the focus of the planet to \a focus
+    void ClickColonize();                    ///< called if colonize button is pressed
+    void ClickInvade();                      ///< called if invade button is pressed
+    void ClickBombard();                     ///< called if bombard button is pressed
 
-    void                    FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
-    /** Called when focus drop list opens/closes to inform that it now \p is_open. */
-    void                    FocusDropListOpened(bool is_open);
+    void FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
 
-    int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
+    int                                     m_planet_id;                ///< id for the planet with is represented by this planet panel
     std::shared_ptr<GG::TextControl>        m_planet_name;              ///< planet name;
     std::shared_ptr<GG::Label>              m_env_size;                 ///< indicates size and planet environment rating uncolonized planets;
     std::shared_ptr<GG::Button>             m_colonize_button;          ///< btn which can be pressed to colonize this planet;
@@ -553,18 +551,18 @@ private:
     std::shared_ptr<GG::Button>             m_bombard_button;           ///< btn which can be pressed to bombard this planet;
     std::shared_ptr<GG::DynamicGraphic>     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids;
     std::shared_ptr<RotatingPlanetControl>  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
-    bool                    m_selected;                 ///< is this planet panel selected
-    bool                    m_order_issuing_enabled;    ///< can orders be issues via this planet panel?
-    GG::Clr                 m_empire_colour;            ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
+    bool                                    m_selected;                 ///< is this planet panel selected
+    bool                                    m_order_issuing_enabled;    ///< can orders be issues via this planet panel?
+    GG::Clr                                 m_empire_colour;            ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
     std::shared_ptr<GG::DropDownList>       m_focus_drop;               ///< displays and allows selection of planetary focus;
     std::shared_ptr<PopulationPanel>        m_population_panel;         ///< contains info about population and health
     std::shared_ptr<ResourcePanel>          m_resource_panel;           ///< contains info about resources production and focus selection UI
     std::shared_ptr<MilitaryPanel>          m_military_panel;           ///< contains icons representing military-related meters
     std::shared_ptr<BuildingsPanel>         m_buildings_panel;          ///< contains icons representing buildings
     std::shared_ptr<SpecialsPanel>          m_specials_panel;           ///< contains icons representing specials
-    StarType                m_star_type;
+    StarType                                m_star_type;
 
-    boost::signals2::connection m_planet_connection;
+    boost::signals2::connection             m_planet_connection;
 };
 
 /** Container class that holds PlanetPanels.  Creates and destroys PlanetPanel
@@ -957,8 +955,6 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     // focus-selection droplist
     m_focus_drop = GG::Wnd::Create<CUIDropDownList>(6);
     AttachChild(m_focus_drop);
-    m_focus_drop->DropDownOpenedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::FocusDropListOpened, this, _1));
     m_focus_drop->SelChangedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot, this, _1));
     this->FocusChangedSignal.connect(
@@ -1351,8 +1347,8 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
             continue;
         int ship_id = ship->ID();
         float planet_capacity = -999.9f;
-        std::pair<int,int> this_pair = std::make_pair(ship_id, target_planet_id);
-        std::map<std::pair<int,int>,float>::iterator pair_it = colony_projections.find(this_pair);
+        auto this_pair = std::make_pair(ship_id, target_planet_id);
+        auto pair_it = colony_projections.find(this_pair);
         if (pair_it != colony_projections.end()) {
             planet_capacity = pair_it->second;
         } else {
@@ -1364,8 +1360,8 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
             colony_ship_capacity = design->ColonyCapacity();
             if (colony_ship_capacity > 0.0f ) {
                 ship_species_name = ship->SpeciesName();
-                std::pair<std::string,int> spec_pair = std::make_pair(ship_species_name, target_planet_id);
-                std::map<std::pair<std::string,int>,float>::iterator spec_pair_it = species_colony_projections.find(spec_pair);
+                auto spec_pair = std::make_pair(ship_species_name, target_planet_id);
+                auto spec_pair_it = species_colony_projections.find(spec_pair);
                 if (spec_pair_it != species_colony_projections.end()) {
                     planet_capacity = spec_pair_it->second;
                 } else {
@@ -1573,13 +1569,13 @@ void SidePanel::PlanetPanel::Refresh() {
 
     auto invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
     if (invasion_ships.empty()) {
-        std::set<std::shared_ptr<const Ship>> autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
+        auto autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
         invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
     }
 
     auto bombard_ships = ValidSelectedBombardShips(SidePanel::SystemID());
     if (bombard_ships.empty()) {
-        std::set<std::shared_ptr<const Ship>> autoselected_bombard_ships = AutomaticallyChosenBombardShips(m_planet_id);
+        auto autoselected_bombard_ships = AutomaticallyChosenBombardShips(m_planet_id);
         bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
     }
 
@@ -1681,8 +1677,8 @@ void SidePanel::PlanetPanel::Refresh() {
         // colony_projections map.
         AttachChild(m_colonize_button);
         double planet_capacity;
-        std::pair<int,int> this_pair = std::make_pair(selected_colony_ship->ID(), m_planet_id);
-        std::map<std::pair<int,int>,float>::iterator pair_it = colony_projections.find(this_pair);
+        auto this_pair = std::make_pair(selected_colony_ship->ID(), m_planet_id);
+        auto pair_it = colony_projections.find(this_pair);
         if (pair_it != colony_projections.end()) {
             planet_capacity = pair_it->second;
         } else if (colony_ship_capacity == 0.0f) {
@@ -1745,7 +1741,7 @@ void SidePanel::PlanetPanel::Refresh() {
         // rounding up, as it's better to slightly overestimate defending troops than
         // underestimate, since one needs to drop more droops than there are defenders
         // to capture a planet
-        float defending_troops = planet->CurrentMeterValue(METER_TROOPS);
+        float defending_troops = planet->InitialMeterValue(METER_TROOPS);
         //std::cout << "def troops: " << defending_troops << std::endl;
         float log10_df = floor(std::log10(defending_troops));
         //std::cout << "def troops log10: " << log10_df << std::endl;
@@ -1786,14 +1782,14 @@ void SidePanel::PlanetPanel::Refresh() {
     if (!planet->SpeciesName().empty()) {
         AttachChild(m_focus_drop);
 
-        std::vector<std::string> available_foci = planet->AvailableFoci();
+        auto available_foci = planet->AvailableFoci();
 
         // refresh items in list
         m_focus_drop->Clear();
         std::vector<std::shared_ptr<GG::DropDownList::Row>> rows;
         rows.reserve(available_foci.size());
         for (const std::string& focus_name : available_foci) {
-            std::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(
+            auto texture = ClientUI::GetTexture(
                 ClientUI::ArtDir() / planet->FocusIcon(focus_name), true);
             auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             graphic->Resize(GG::Pt(MeterIconSize().x*3/2, MeterIconSize().y*3/2));
@@ -1928,6 +1924,7 @@ void SidePanel::PlanetPanel::SetFocus(const std::string& focus) {
     auto planet = GetPlanet(m_planet_id);
     if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         return;
+    // todo: if focus is already equal to planet's focus, return early.
     colony_projections.clear();// in case new or old focus was Growth (important that be cleared BEFORE Order is issued)
     species_colony_projections.clear();
     HumanClientApp::GetApp()->Orders().IssueOrder(
@@ -2185,7 +2182,7 @@ namespace {
         // is selected ship already ordered to colonize?  If so, recind that order.
         if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
             for (const auto& id_and_order : orders) {
-                if (std::shared_ptr<ColonizeOrder> order = std::dynamic_pointer_cast<ColonizeOrder>(id_and_order.second)) {
+                if (auto order = std::dynamic_pointer_cast<ColonizeOrder>(id_and_order.second)) {
                     if (order->ShipID() == ship->ID()) {
                         HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
@@ -2197,7 +2194,7 @@ namespace {
         // is selected ship ordered to invade?  If so, recind that order
         if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
             for (const auto& id_and_order : orders) {
-               if (std::shared_ptr<InvadeOrder> order = std::dynamic_pointer_cast<InvadeOrder>(id_and_order.second)) {
+               if (auto order = std::dynamic_pointer_cast<InvadeOrder>(id_and_order.second)) {
                     if (order->ShipID() == ship->ID()) {
                         HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
@@ -2209,7 +2206,7 @@ namespace {
         // is selected ship ordered scrapped?  If so, recind that order
         if (ship->OrderedScrapped()) {
             for (const auto& id_and_order : orders) {
-                if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
+                if (auto order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
                     if (order->ObjectID() == ship->ID()) {
                         HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
@@ -2221,7 +2218,7 @@ namespace {
         // is selected ship order to bombard?  If so, recind that order
         if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
             for (const auto& id_and_order : orders) {
-               if (std::shared_ptr<BombardOrder> order = std::dynamic_pointer_cast<BombardOrder>(id_and_order.second)) {
+               if (auto order = std::dynamic_pointer_cast<BombardOrder>(id_and_order.second)) {
                     if (order->ShipID() == ship->ID()) {
                         HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
@@ -2364,14 +2361,6 @@ void SidePanel::PlanetPanel::ClickBombard() {
     OrderButtonChangedSignal(m_planet_id);
 }
 
-void SidePanel::PlanetPanel::FocusDropListOpened(bool is_open) {
-    // Update when the focus drop closes.
-    if (is_open)
-        return;
-
-    FocusDropListSelectionChangedSlot(m_focus_drop->CurrentItem());
-}
-
 void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected) {
     // all this funciton needs to do is emit FocusChangedSignal.  The code
     // preceeding that determines which focus was selected from the iterator
@@ -2479,7 +2468,7 @@ int SidePanel::PlanetPanelContainer::ScrollPosition() const {
 
 void SidePanel::PlanetPanelContainer::ScrollTo(int pos) {
     if (m_vscroll && m_vscroll->Parent().get() == this) {
-        const std::pair<int, int> initial_pos = m_vscroll->PosnRange();
+        auto initial_pos = m_vscroll->PosnRange();
         m_vscroll->ScrollTo(pos);
         if (initial_pos != m_vscroll->PosnRange())
             GG::SignalScroll(*m_vscroll, true);
@@ -2673,7 +2662,7 @@ void SidePanel::PlanetPanelContainer::SetValidSelectionPredicate(const std::shar
 void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
     //std::cout << "SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates" << std::endl;
     m_candidate_ids.clear();
-    std::set<std::shared_ptr<PlanetPanel>>   disabled_panels;
+    std::set<std::shared_ptr<PlanetPanel>> disabled_panels;
 
     if (m_valid_selection_predicate) {
         // if there is a selection predicate, which determines which planet panels
@@ -2681,7 +2670,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
 
         // find selectables
         for (auto& panel : m_planet_panels) {
-            int             planet_id = panel->PlanetID();
+            int planet_id = panel->PlanetID();
             auto planet = GetPlanet(planet_id);
 
             if (planet && planet->Accept(*m_valid_selection_predicate)) {
@@ -2865,15 +2854,7 @@ boost::signals2::signal<void (int)>        SidePanel::BuildingRightClickedSignal
 boost::signals2::signal<void (int)>        SidePanel::SystemSelectedSignal;
 
 SidePanel::SidePanel(const std::string& config_name) :
-    CUIWnd("", GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP, config_name),
-    m_system_name(nullptr),
-    m_star_type_text(nullptr),
-    m_button_prev(nullptr),
-    m_button_next(nullptr),
-    m_star_graphic(nullptr),
-    m_planet_panel_container(nullptr),
-    m_system_resource_summary(nullptr),
-    m_selection_enabled(false)
+    CUIWnd("", GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP, config_name)
 {}
 
 void SidePanel::CompleteConstruction() {

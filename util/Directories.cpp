@@ -73,12 +73,12 @@ void InitDirs(const std::string& argv0) {
     bundle_path = fs::path(bundle_dir);
 
     // search bundle_path for a directory named "FreeOrion.app", exiting if not found, else constructing a path to application bundle contents
-    fs::path::iterator appiter =   std::find(bundle_path.begin(), bundle_path.end(), "FreeOrion.app");
+    auto appiter = std::find(bundle_path.begin(), bundle_path.end(), "FreeOrion.app");
     if (appiter == bundle_path.end()) {
         std::cerr << "Error: Application bundle must be named 'FreeOrion.app' and executables must not be called from outside of it." << std::endl;
         exit(-1);
     } else {
-        for (fs::path::iterator piter = bundle_path.begin(); piter != appiter; ++piter) {
+        for (auto piter = bundle_path.begin(); piter != appiter; ++piter) {
             app_path /= *piter;
         }
         app_path /= "FreeOrion.app/Contents";
@@ -484,10 +484,10 @@ fs::path RelativePath(const fs::path& from, const fs::path& to) {
     fs::path retval;
     fs::path from_abs = fs::absolute(from);
     fs::path to_abs = fs::absolute(to);
-    fs::path::iterator from_it = from_abs.begin();
-    fs::path::iterator end_from_it = from_abs.end();
-    fs::path::iterator to_it = to_abs.begin();
-    fs::path::iterator end_to_it = to_abs.end();
+    auto from_it = from_abs.begin();
+    auto end_from_it = from_abs.end();
+    auto to_it = to_abs.begin();
+    auto end_to_it = to_abs.end();
     while (from_it != end_from_it && to_it != end_to_it && *from_it == *to_it) {
         ++from_it;
         ++to_it;
