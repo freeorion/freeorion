@@ -469,4 +469,3 @@ def _calculate_top_production_queue_priority():
             top_production_queue_priority = evaluationPair[0]
 
     return top_production_queue_priority
-
