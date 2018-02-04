@@ -31,7 +31,7 @@ def test_non_existing_keys():
     # check correct functionality if keys not in dict
     assert 'INVALID_KEY' not in test_dict
     assert test_dict.get('INVALID_KEY', -99999) == -99999
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, message="Invalid key lookup didn't raise a KeyError"):
         # noinspection PyStatementEffect
         test_dict['INVALID_KEY']
 
@@ -70,12 +70,12 @@ def test_deletion():
 
 def test_setitem():
     test_dict = ReadOnlyDict(dict_content)
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, message='Can add items to the dict.'):
         test_dict['INVALID_KEY'] = 1
     assert 'INVALID_KEY' not in test_dict
 
 
 def test_nonhashable_values():
     # make sure can't store unhashable items (as heuristic for mutable items)
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, message='Can store mutable items in dict.'):
         ReadOnlyDict({1: [1]})
