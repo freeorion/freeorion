@@ -76,8 +76,11 @@ planet_size_map = {
     fo.planetSize.small: 2,
     fo.planetSize.tiny: 1,
 }
+
+
 def planet_size_as_int(planet_size):
     return planet_size_map.get(planet_size) or 0
+
 
 # Drydock repair details
 DRYDOCK_HAPPINESS_THRESHOLD = 5
