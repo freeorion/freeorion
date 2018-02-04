@@ -3,26 +3,26 @@ import random
 import sys
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+from common.configure_logging import convenience_function_references_for_logger
+from common.print_utils import Sequence, Table, Text
+
 import AIDependencies
 import AIstate
-from character.character_module import Aggression
+import ColonisationAI
+import CombatRatingsAI
 import FleetUtilsAI
 import FreeOrionAI as foAI
+import MilitaryAI
 import PlanetUtilsAI
 import PriorityAI
-import ColonisationAI
-import MilitaryAI
 import ShipDesignAI
-import CombatRatingsAI
+from AIDependencies import INVALID_ID
+from EnumsAI import (EmpireProductionTypes, FocusType, MissionType, PriorityType, ShipRoleType,
+                     get_priority_production_types, )
+from character.character_module import Aggression
+from freeorion_tools import AITimer, chat_human, ppstring, tech_is_complete
 from turn_state import state
 
-from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_priority_production_types,
-                     FocusType, ShipRoleType)
-from freeorion_tools import ppstring, chat_human, tech_is_complete, AITimer
-from common.print_utils import Table, Sequence, Text
-from AIDependencies import INVALID_ID
-
-from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 _best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
@@ -1090,12 +1090,12 @@ def generate_production_orders():
     queued_clny_bld_locs = [element.locationID for element in production_queue
                             if (element.name.startswith('BLD_COL_') and
                                 empire_has_colony_bld_species(element.name))]
-    colony_bldg_entries = ([entry for entry in foAI.foAIstate.colonisablePlanetIDs.items() if
-                                entry[1][0] > 60 and
-                                entry[0] not in queued_clny_bld_locs and
-                                entry[0] in state.get_empire_outposts() and
-                                not already_has_completed_colony_building(entry[0])]
-                           [:PriorityAI.allottedColonyTargets+2])
+    colony_bldg_entries = [entry for entry in foAI.foAIstate.colonisablePlanetIDs.items() if
+                           entry[1][0] > 60 and
+                           entry[0] not in queued_clny_bld_locs and
+                           entry[0] in state.get_empire_outposts() and
+                           not already_has_completed_colony_building(entry[0])]
+    colony_bldg_entries = colony_bldg_entries[:PriorityAI.allottedColonyTargets + 2]
     for entry in colony_bldg_entries:
         pid = entry[0]
         building_name = "BLD_COL_" + entry[1][1][3:]
