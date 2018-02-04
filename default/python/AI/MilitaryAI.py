@@ -625,10 +625,10 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         for fleet_id in all_military_fleet_ids:
             status = foAI.foAIstate.fleetStatus.get(fleet_id, None)
             if status is not None:
-                sys_id = status['sysID']
-                if not list(universe.getSystem(sys_id).planetIDs):
+                system_id = status['sysID']
+                if not list(universe.getSystem(system_id).planetIDs):
                     continue
-                system_dict[sys_id] = system_dict.get(sys_id, 0) + status.get('rating', 0)
+                system_dict[system_id] = system_dict.get(system_id, 0) + status.get('rating', 0)
         ranked_systems = sorted([(val, sys_id) for sys_id, val in system_dict.items()])
         if ranked_systems:
             capital_sys_id = ranked_systems[-1][-1]
