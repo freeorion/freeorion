@@ -16,9 +16,9 @@ In contrast to standard library json module, the type of dict keys (e.g. int) is
     json_string = json.dumps({1: 2})  ==> '{"1": 2}'
     json.loads(json_string) ==> {"1": 2}
 
-    import SaveGameManager  # load package
-    json_string = SaveGameManager.encode({1: 2})  ==> '{"__INT__1": 2'}'
-    SaveGameManager.decode(json_string)  ==> {1: 2}
+    import savegame_codec  # load package
+    json_string = savegame_codec.encode({1: 2})  ==> '{"__INT__1": 2'}'
+    savegame_codec.decode(json_string)  ==> {1: 2}
 
 
 Public functions:
@@ -33,12 +33,12 @@ Defined Exceptions:
 
 Example usage:
     # saving the game
-    import SaveGameManager  # load package
-    savegame_string = SaveGameManager.build_savegame_string()
+    import savegame_codec  # load package
+    savegame_string = savegame_codec.build_savegame_string()
 
     # loading the game
-    import SaveGameManager
-    aistate = SaveGameManager.load_savegame_string(savegame_string)
+    import savegame_codec
+    aistate = savegame_codec.load_savegame_string(savegame_string)
 """
 
 from _decoder import decode, load_savegame_string
