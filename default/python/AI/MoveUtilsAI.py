@@ -5,7 +5,6 @@ import universe_object
 import fleet_orders
 import PlanetUtilsAI
 import pathfinding
-from freeorion_tools import ppstring
 from AIDependencies import INVALID_ID, DRYDOCK_HAPPINESS_THRESHOLD
 from turn_state import state
 
