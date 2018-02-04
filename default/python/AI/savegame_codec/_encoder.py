@@ -21,7 +21,8 @@ import collections
 import EnumsAI
 from freeorion_tools import profile
 
-from _definitions import *  # prefixes, trusted classes and exceptions
+from _definitions import (CanNotSaveGameException, ENUM_PREFIX, FALSE, FLOAT_PREFIX, INT_PREFIX, NONE, PLACEHOLDER,
+                          SET_PREFIX, TRUE, TUPLE_PREFIX, trusted_classes, )
 
 
 @profile
