@@ -191,7 +191,7 @@ class AIFleetMission(object):
                     target = fleet_mission.target.id if fleet_mission.target else None
                     if target == target_id:
                         info("Military fleet %d (%d ships) has same target as %s fleet %d (%d ships). Merging former "
-                               "into latter." % (fid, fleet.numShips, fleet_role, fleet_id, len(main_fleet.shipIDs)))
+                             "into latter." % (fid, fleet.numShips, fleet_role, fleet_id, len(main_fleet.shipIDs)))
                         # TODO: should probably ensure that fleetA has aggression on now
                         do_merge = float(min(main_fleet.speed, fleet.speed))/max(main_fleet.speed, fleet.speed) >= 0.6
                     elif main_fleet.speed > 0:
