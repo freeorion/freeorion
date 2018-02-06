@@ -225,7 +225,7 @@ struct FO_COMMON_API SaveGameUIData {
     double  map_zoom_steps_in;
     std::set<int> fleets_exploring;
 
-    std::vector<std::pair<int, bool>> ordered_ship_design_ids_and_obsolete;
+    std::vector<std::pair<int, boost::optional<bool>>> ordered_ship_design_ids_and_obsolete;
     std::vector<std::pair<std::string, bool>> ordered_ship_hull_and_obsolete;
     std::unordered_set<std::string> obsolete_ship_parts;
 

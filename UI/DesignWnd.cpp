@@ -215,12 +215,12 @@ namespace {
         /** Set \p part's obsolescence to \p obsolete. */
         void SetPartObsolete(const std::string& part, const bool obsolete);
 
-        void Load(const std::vector<std::pair<int, bool>>& design_ids_and_obsoletes,
+        void Load(const std::vector<std::pair<int, boost::optional<bool>>>& design_ids_and_obsoletes,
                   const std::vector<std::pair<std::string, bool>>& hulls_and_obsoletes,
                   const std::unordered_set<std::string>& obsolete_parts);
         /** Save modifies each of its parameters to store obsolete and
             ordering data in the UI save data.*/
-        void Save(std::vector<std::pair<int, bool>>& design_ids_and_obsoletes,
+        void Save(std::vector<std::pair<int, boost::optional<bool>>>& design_ids_and_obsoletes,
                   std::vector<std::pair<std::string, bool>>& hulls_and_obsoletes,
                   std::unordered_set<std::string>& obsolete_parts);
 
@@ -228,8 +228,10 @@ namespace {
         std::list<int> m_ordered_design_ids;
         std::list<std::string> m_ordered_hulls;
 
-        // An index from the id to the obsolescence state and the location in the m_ordered_design_ids list.
-        std::unordered_map<int, std::pair<bool, std::list<int>::const_iterator>> m_id_to_obsolete_and_loc;
+        // An index from the id to the obsolescence state and the location in the
+        // m_ordered_design_ids list. For the state information (false, true, none)
+        // correspond to (not obsolete, obsolete and defer to parts and hull obsolescence)
+        std::unordered_map<int, std::pair<boost::optional<bool>, std::list<int>::const_iterator>> m_id_to_obsolete_and_loc;
         // An index from the hull name to the obsolescence state and the location in the
         // m_ordered_hull_ids list.
         std::unordered_map<std::string, std::pair<bool, std::list<std::string>::const_iterator>> m_hull_to_obsolete_and_loc;
@@ -631,9 +633,10 @@ namespace {
         // Remove all obsolete ids from the list
         std::vector<int> retval;
         std::copy_if(m_ordered_design_ids.begin(), m_ordered_design_ids.end(), std::back_inserter(retval),
-                     [this](const int id){
-                         const auto it = m_id_to_obsolete_and_loc.find(id);
-                         return (it == m_id_to_obsolete_and_loc.end()) ? false : !it->second.first;
+                     [this](const int id) {
+                         const auto maybe_obsolete = IsObsolete(id);
+                         const auto known_and_not_obsolete = maybe_obsolete ? !*maybe_obsolete : false;
+                         return known_and_not_obsolete;
                      });
         return retval;
     }
@@ -675,7 +678,7 @@ namespace {
         const auto insert_before_it = (is_valid_next_id ? next_it->second.second :m_ordered_design_ids.end());
         const auto inserted_it = m_ordered_design_ids.insert(insert_before_it, id);
 
-        m_id_to_obsolete_and_loc[id] = std::make_pair(false, inserted_it);
+        m_id_to_obsolete_and_loc[id] = std::make_pair(boost::none, inserted_it);
     }
 
     bool CurrentShipDesignManager::MoveBefore(const int moved_id, const int next_id) {
@@ -743,15 +746,15 @@ namespace {
     { return m_id_to_obsolete_and_loc.count(id); }
     
     boost::optional<bool> CurrentShipDesignManager::IsObsolete(const int id) const {
-        // A design is obsolete if it individually, or its hull or parts are obsolete
-
-        boost::optional<bool> is_obsolete = boost::none;
+        // A non boost::none value for a specific design overrides the hull and part values
         auto it_id = m_id_to_obsolete_and_loc.find(id);
-        if (it_id != m_id_to_obsolete_and_loc.end()) {
-            is_obsolete = it_id->second.first;
-            if (*is_obsolete)
-                return true;
-        }
+
+        // Unknown design
+        if (it_id == m_id_to_obsolete_and_loc.end())
+            return boost::none;
+
+        if (const auto is_obsolete_design = it_id->second.first)
+            return *is_obsolete_design;
 
         const auto design = GetShipDesign(id);
         if (!design) {
@@ -768,7 +771,8 @@ namespace {
                 return true;
         }
 
-        return is_obsolete;
+        // Default to false if the player has not obsoleted the design, its hull or its parts
+        return false;
     }
 
     bool CurrentShipDesignManager::IsHullObsolete(const std::string& hull) const {
@@ -784,7 +788,32 @@ namespace {
         auto it = m_id_to_obsolete_and_loc.find(id);
         if (it == m_id_to_obsolete_and_loc.end())
             return;
-        it->second.first = obsolete;
+
+        const auto design = GetShipDesign(id);
+        if (!design) {
+            ErrorLogger() << "CurrentShipDesignManager::SetObsolete design id "
+                          << id << " is unknown to the server.";
+
+            it->second.first = obsolete;
+            return;
+        }
+
+        // If the parts and hulls settings for obsolescence all agree with the new value,
+        // then set the design specific value to boost::none, meaning defer to parts
+
+        if (IsHullObsolete(design->Hull()) != obsolete) {
+            it->second.first = obsolete;
+            return;
+        }
+
+        for (const auto& part: design->Parts()) {
+            if (IsPartObsolete(part) != obsolete) {
+                it->second.first = obsolete;
+                return;
+            }
+        }
+
+        it->second.first = boost::none;
     }
 
     void CurrentShipDesignManager::SetHullObsolete(const std::string& id, const bool obsolete) {
@@ -806,7 +835,7 @@ namespace {
     }
 
     void CurrentShipDesignManager::Load(
-        const std::vector<std::pair<int, bool>>& design_ids_and_obsoletes,
+        const std::vector<std::pair<int, boost::optional<bool>>>& design_ids_and_obsoletes,
         const std::vector<std::pair<std::string, bool>>& hulls_and_obsoletes,
         const std::unordered_set<std::string>& obsolete_parts)
     {
@@ -843,7 +872,7 @@ namespace {
     }
 
     void CurrentShipDesignManager::Save(
-        std::vector<std::pair<int, bool>>& design_ids_and_obsoletes,
+        std::vector<std::pair<int, boost::optional<bool>>>& design_ids_and_obsoletes,
         std::vector<std::pair<std::string, bool>>& hulls_and_obsoletes,
         std::unordered_set<std::string>& obsolete_parts)
     {
