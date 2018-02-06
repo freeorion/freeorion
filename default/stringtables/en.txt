@@ -2102,7 +2102,7 @@ HOST_GAME_BN
 Host a new game
 
 JOIN_GAME_BN
-Join a game
+Join a game as
 
 REFRESH_LIST_BN
 Refresh list
