@@ -6,7 +6,6 @@ import natives
 import planets
 import universe_tables
 
-
 species_summary = {species: 0 for species in fo.get_native_species()}
 empire_species = {species: 0 for species in fo.get_playable_species()}
 potential_native_planet_summary = {planet_type: 0 for planet_type in planets.planet_types}
@@ -114,7 +113,12 @@ def log_species_summary(native_freq):
             expectation_tally = 0.0
             for p_type in natives.planet_types_for_natives[species]:
                 settleable_planets += potential_native_planet_summary[p_type]
-                expectation_tally += native_chance * 100.0 * potential_native_planet_summary[p_type] / (1E-10 + len(natives.natives_for_planet_type[p_type]))
+                expectation_tally += (
+                        native_chance *
+                        100.0 *
+                        potential_native_planet_summary[p_type] /
+                        (1E-10 + len(natives.natives_for_planet_type[p_type]))
+                )
             expectation = expectation_tally / (1E-10 + settleable_planets)
             native_table.add_row(
                 [species,
@@ -129,7 +133,8 @@ def log_species_summary(native_freq):
 
     native_settled_planet_total = sum(settled_native_planet_summary.values())
     type_summary_table = Table(
-        [Text('planet type'), Float('potential (% of tot)', precession=1), Float('settled (% of potential)', precession=1)],
+        [Text('planet type'), Float('potential (% of tot)', precession=1),
+         Float('settled (% of potential)', precession=1)],
         table_name=("Planet Type Summary for Native Planets (native frequency: %.1f%%)\n"
                     "Totals: native_potential_planet_total: %s; native_settled_planet_total %s"
                     ) % (100 * native_chance, native_potential_planet_total, native_settled_planet_total)
@@ -210,7 +215,8 @@ def log_planets():
     universe = fo.get_universe()
 
     planets_table = Table(
-        [Text('id'), Text('name'), Text('system'), Text('type'), Sequence('specials'), Text('species'), Sequence('buildings')],
+        [Text('id'), Text('name'), Text('system'), Text('type'),
+         Sequence('specials'), Text('species'), Sequence('buildings')],
         table_name='Planets summary')
     # group planets by system
     for sid in fo.get_systems():

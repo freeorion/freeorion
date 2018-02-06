@@ -87,14 +87,12 @@ def main():
     fileRoot = "game1"
     saveFile = True
     turnsP = None
-    turnsAI = None
     rankings = []
 
     doPlotTypes = ["PP + 2RP"] + ["PP"] + ["RP"] + ["RP_Ratio"]  # +[ "ShipCount"]
 
     allData = {}
     species = {}
-    empires = []
     empireColors = {}
     playerName = "Player"
 

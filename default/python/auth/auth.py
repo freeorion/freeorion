@@ -8,6 +8,7 @@ import sys
 
 import freeorion as fo
 
+
 class AuthProvider:
     def __init__(self):
         self.logins = {}
@@ -20,10 +21,9 @@ class AuthProvider:
             exctype, value = sys.exc_info()[:2]
             warn("Cann't read auth file %s: %s %s" % (fo.get_user_config_dir() + "/auth.txt", exctype, value))
         info("Auth initialized")
- 
+
     def is_require_auth(self, player_name):
         return player_name in self.logins
 
     def is_success_auth(self, player_name, auth):
         return self.logins.get(player_name) == auth
-

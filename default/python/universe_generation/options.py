@@ -3,9 +3,9 @@ import freeorion as fo
 from planets import planet_sizes_real, planet_types_real
 
 
-###############################
-## STAR GROUP NAMING OPTIONS ##
-###############################
+#############################
+# STAR GROUP NAMING OPTIONS #
+#############################
 
 # if star_groups_use_chars is true use entries from the stringtable entry STAR_GROUP_CHARS (single characters),
 # otherwise use words like 'Alpha' from the stringtable entry STAR_GROUP_WORDS.
@@ -23,9 +23,9 @@ TARGET_INDIV_RATIO_LARGE = 0.3  # in large galaxies, 30% of the star systems get
 NAMING_LARGE_GALAXY_SIZE = 200  # a galaxy with 200+ star systems is considered as large, below that value as small
 
 
-###################################
-## HOME SYSTEM SELECTION OPTIONS ##
-###################################
+#################################
+# HOME SYSTEM SELECTION OPTIONS #
+#################################
 
 # These options are needed in the home system selection/placement process. They determine the minimum number of
 # systems and planets that a home system must have in its near vicinity, define the extend of this "near vicinity", etc.
