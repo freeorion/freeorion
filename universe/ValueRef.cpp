@@ -732,6 +732,10 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->Size();
 
+    } else if (property_name == "HabitableSize") {
+        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+            return planet->HabitableSize();
+
     } else if (property_name == "DistanceFromOriginalType") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->DistanceFromOriginalType();
