@@ -6019,6 +6019,9 @@ Arrived on Turn
 SIZE_AS_DOUBLE
 Size As Number
 
+HABITABLE_SIZE
+Habitable Size
+
 DISTANCE_FROM_ORIGINAL_TYPE
 Distance From Original Planet Type
 
