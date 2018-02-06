@@ -50,7 +50,7 @@ Special
             ]
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = [
-                SetTargetPopulation value = Value + 3 * Target.SizeAsDouble accountinglabel = "GAIA_LABEL"
+                SetTargetPopulation value = Value + 3 * Target.HabitableSize accountinglabel = "GAIA_LABEL"
                 SetTargetHappiness value = Value + 5 accountinglabel = "GAIA_LABEL"
             ]
 

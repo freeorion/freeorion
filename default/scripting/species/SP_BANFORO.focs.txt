@@ -37,7 +37,7 @@ Species
             ]
             accountinglabel = "VERY_BRIGHT_STAR"
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
-            effects = SetTargetPopulation value = Value - 2 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value - 2 * Source.HabitableSize
 
         EffectsGroup
             scope = Source
@@ -47,7 +47,7 @@ Species
             ]
             accountinglabel = "BRIGHT_STAR"
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
-            effects = SetTargetPopulation value = Value - Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value - Source.HabitableSize
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]

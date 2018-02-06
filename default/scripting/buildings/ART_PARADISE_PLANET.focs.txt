@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_ART_PARADISE_PLANET"
     description = "BLD_ART_PARADISE_PLANET_DESC"
-    buildcost = (200 * Target.SizeAsDouble + 300) * [[BUILDING_COST_MULTIPLIER]]
+    buildcost = (200 * Target.HabitableSize + 300) * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 10
     location = And [
         Planet
