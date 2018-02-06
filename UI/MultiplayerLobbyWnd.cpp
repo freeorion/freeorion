@@ -99,7 +99,7 @@ namespace {
                     m_label = GG::Wnd::Create<CUILabel>(UserString("OBSERVER"));
                     break;
                 case Networking::CLIENT_TYPE_HUMAN_PLAYER:
-                    m_label = GG::Wnd::Create<CUILabel>(UserString("HUMAN_PLAYER"));
+                    m_label = GG::Wnd::Create<CUILabel>(UserString("PLAYER"));
                     break;
                 case Networking::CLIENT_TYPE_HUMAN_MODERATOR:
                     m_label = GG::Wnd::Create<CUILabel>(UserString("MODERATOR"));

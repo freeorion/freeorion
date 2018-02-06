@@ -54,5 +54,5 @@ GameRule
     description = "RULE_TEST_STRING_DESC"
     category = "TEST"
     type = String
-    default = "HUMAN_PLAYER"
-    allowed = ["MODERATOR" "OBSERVER" "HUMAN_PLAYER" "AI_PLAYER"]
+    default = "PLAYER"
+    allowed = ["MODERATOR" "OBSERVER" "PLAYER" "AI_PLAYER"]

@@ -109,7 +109,7 @@ namespace {
             case Networking::CLIENT_TYPE_AI_PLAYER:         ss << "AI_PLAYER, ";    break;
             case Networking::CLIENT_TYPE_HUMAN_MODERATOR:   ss << "MODERATOR, ";    break;
             case Networking::CLIENT_TYPE_HUMAN_OBSERVER:    ss << "OBSERVER, ";     break;
-            case Networking::CLIENT_TYPE_HUMAN_PLAYER:      ss << "HUMAN_PLAYER, "; break;
+            case Networking::CLIENT_TYPE_HUMAN_PLAYER:      ss << "PLAYER, "; break;
             default:                                        ss << "<invalid client type>, ";
             }
             ss << entry.second.m_starting_species_name;
