@@ -58,7 +58,7 @@ BuildingType
                 Planet type = GasGiant
             ]
             activation = Source
-            effects = SetMaxSupply value = Value + 4
+            effects = SetMaxSupply value = Value + 3
     ]
     icon = "icons/building/space-elevator.png"
 
