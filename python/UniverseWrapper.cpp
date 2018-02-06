@@ -684,6 +684,7 @@ namespace FreeOrionPython {
             .add_property("LastTurnAttackedByShip",         &Planet::LastTurnAttackedByShip)
             .add_property("LastTurnConquered",              &Planet::LastTurnConquered)
             .add_property("buildingIDs",                    make_function(&Planet::BuildingIDs,     return_internal_reference<>()))
+            .add_property("habitableSize",                  &Planet::HabitableSize)
         ;
 
         //////////////////
