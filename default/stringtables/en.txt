@@ -1102,6 +1102,30 @@ Starlanes Everywhere
 RULE_STARLANES_EVERYWHERE_DESC
 Starlanes are generated between every pair of systems, regardless of geometry. Lanes may still be removed during a game, however. Lanes are also not rendered on the galaxy map.
 
+RULE_HABITABLE_SIZE_TINY
+Tiny planets Habitable size
+
+RULE_HABITABLE_SIZE_SMALL
+Small planets Habitable size
+
+RULE_HABITABLE_SIZE_MEDIUM
+Medium planets Habitable size
+
+RULE_HABITABLE_SIZE_LARGE
+Large planets Habitable size
+
+RULE_HABITABLE_SIZE_HUGE
+Huge planets Habitable size
+
+RULE_HABITABLE_SIZE_ASTEROIDS
+Asteroids Habitable size
+
+RULE_HABITABLE_SIZE_GASGIANT
+Gas Giants Habitable size
+
+RULE_HABITABLE_SIZE_DESC
+Value used to adjust for [[encyclopedia POPULATION_TITLE_SHORT_DESC]] changes on a planet of this size.
+
 
 ##
 ## Command-line and options database entries
