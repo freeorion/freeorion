@@ -41,6 +41,7 @@ namespace Networking {
         AuthRoles(const std::initializer_list<RoleType>& roles);
 
         void SetRole(RoleType role, bool value = true);
+        void Clear();
 
         bool HasRole(RoleType role) const;
 

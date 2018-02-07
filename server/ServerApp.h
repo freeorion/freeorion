@@ -210,11 +210,11 @@ public:
                            const std::vector<PlayerSaveGameData>& player_save_game_data,
                            std::shared_ptr<ServerSaveGameData> server_save_game_data);
 
-    /** Checks if \a player_name requires auth to login. */
-    bool IsAuthRequired(const std::string& player_name);
+    /** Checks if \a player_name requires auth to login and fill \a roles if not. */
+    bool IsAuthRequiredOrFillRoles(const std::string& player_name, Networking::AuthRoles& roles);
 
-    /** Checks if \a auth match \a player_name. */
-    bool IsAuthSuccess(const std::string& player_name, const std::string& auth);
+    /** Checks if \a auth match \a player_name and fill \a roles if successed. */
+    bool IsAuthSuccessAndFillRoles(const std::string& player_name, const std::string& auth, Networking::AuthRoles& roles);
     //@}
 
     void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);

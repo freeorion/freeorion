@@ -36,12 +36,46 @@ namespace {
         db.Add("setup.multiplayer.host.address",    UserStringNop("OPTIONS_DB_MP_HOST_ADDRESS"),    std::string("localhost"),   Validator<std::string>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    class ClientTypeRow : public GG::DropDownList::Row {
+    public:
+        ClientTypeRow(Networking::ClientType type_) :
+            GG::DropDownList::Row(),
+            type(type_)
+        {
+            switch (type) {
+            case Networking::CLIENT_TYPE_HUMAN_PLAYER:
+                m_label = GG::Wnd::Create<CUILabel>(UserString("PLAYER"));
+                break;
+            case Networking::CLIENT_TYPE_HUMAN_MODERATOR:
+                m_label = GG::Wnd::Create<CUILabel>(UserString("MODERATOR"));
+                break;
+            case Networking::CLIENT_TYPE_HUMAN_OBSERVER:
+                m_label = GG::Wnd::Create<CUILabel>(UserString("OBSERVER"));
+                break;
+            default:
+                break;
+            }
+        }
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+            if (m_label) {
+                push_back(m_label);
+            }
+        }
+
+        const Networking::ClientType type;
+    private:
+        std::shared_ptr<CUILabel> m_label;
+    };
 }
 
 ServerConnectWnd::ServerConnectWnd() :
     CUIWnd(UserString("SCONNECT_WINDOW_TITLE"),
            GG::INTERACTIVE | GG::MODAL),
     m_host_or_join_radio_group(nullptr),
+    m_client_type_list(nullptr),
     m_LAN_game_label(nullptr),
     m_servers_lb(nullptr),
     m_find_LAN_servers_bn(nullptr),
@@ -62,6 +96,8 @@ void ServerConnectWnd::CompleteConstruction() {
     m_host_or_join_radio_group = GG::Wnd::Create<GG::RadioButtonGroup>(GG::VERTICAL);
     m_host_or_join_radio_group->AddButton(GG::Wnd::Create<CUIStateButton>(UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
     m_host_or_join_radio_group->AddButton(GG::Wnd::Create<CUIStateButton>(UserString("JOIN_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
+    m_client_type_list = GG::Wnd::Create<CUIDropDownList>(3);
+    m_client_type_list->SetStyle(GG::LIST_NOSORT);
     m_LAN_game_label = GG::Wnd::Create<CUILabel>(UserString("LAN_GAME_LABEL"), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     m_servers_lb = GG::Wnd::Create<CUIListBox>();
     m_servers_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
@@ -90,7 +126,8 @@ void ServerConnectWnd::CompleteConstruction() {
 
     layout->Add(player_name_label, 0, 0, 1, 1, GG::ALIGN_VCENTER);
     layout->Add(m_player_name_edit, 0, 1, 1, 3, GG::ALIGN_VCENTER);
-    layout->Add(m_host_or_join_radio_group, 1, 0, 1, 4);
+    layout->Add(m_host_or_join_radio_group, 1, 0, 1, 2, GG::ALIGN_VCENTER);
+    layout->Add(m_client_type_list, 1, 2, 1, 2, GG::ALIGN_BOTTOM);
     layout->Add(m_LAN_game_label, 2, 0, 1, 4, GG::ALIGN_BOTTOM);
     layout->Add(m_servers_lb, 3, 0, 1, 4);
     layout->Add(m_find_LAN_servers_bn, 4, 3);
@@ -117,6 +154,13 @@ void ServerConnectWnd::CompleteConstruction() {
         boost::bind(&ServerConnectWnd::OkClicked, this));
     m_cancel_bn->LeftClickedSignal.connect(
         boost::bind(&ServerConnectWnd::CancelClicked, this));
+
+    m_client_type_list->Insert(GG::Wnd::Create<ClientTypeRow>(Networking::CLIENT_TYPE_HUMAN_PLAYER));
+    m_client_type_list->Insert(GG::Wnd::Create<ClientTypeRow>(Networking::CLIENT_TYPE_HUMAN_MODERATOR));
+    m_client_type_list->Insert(GG::Wnd::Create<ClientTypeRow>(Networking::CLIENT_TYPE_HUMAN_OBSERVER));
+
+    m_client_type_list->Select(0);
+    m_result.type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
 
     m_host_or_join_radio_group->SetCheck(0);
     PopulateServerList();
@@ -150,7 +194,7 @@ void ServerConnectWnd::KeyPress(GG::Key key, std::uint32_t key_code_point,
     }
 }
 
-const std::pair<std::string, std::string>& ServerConnectWnd::Result() const
+const ServerConnectWnd::Result& ServerConnectWnd::GetResult() const
 { return m_result; }
 
 void ServerConnectWnd::PopulateServerList() {
@@ -183,13 +227,20 @@ void ServerConnectWnd::OkClicked() {
     GetOptionsDB().Set("setup.multiplayer.host.address", m_IP_address_edit->Text());
     GetOptionsDB().Commit();
 
-    m_result.first = *m_player_name_edit;
+    m_result.player_name = *m_player_name_edit;
+    auto it = m_client_type_list->CurrentItem();
+    if (it != m_client_type_list->end()) {
+        const ClientTypeRow* type_row = boost::polymorphic_downcast<const ClientTypeRow*>(it->get());
+        if (type_row) {
+            m_result.type = type_row->type;
+        }
+    }
     if (m_host_or_join_radio_group->CheckedButton() == 0) {
-        m_result.second = "HOST GAME SELECTED";
+        m_result.server_dest = "HOST GAME SELECTED";
     } else {
-        m_result.second = *m_IP_address_edit;
-        if (m_result.second.empty() && !(***m_servers_lb->Selections().begin()).empty()) {
-            m_result.second = boost::polymorphic_downcast<GG::Label*>(
+        m_result.server_dest = *m_IP_address_edit;
+        if (m_result.server_dest.empty() && !(***m_servers_lb->Selections().begin()).empty()) {
+            m_result.server_dest = boost::polymorphic_downcast<GG::Label*>(
                 (***m_servers_lb->Selections().begin()).at(0))->Text() ;
         }
     }
@@ -198,6 +249,7 @@ void ServerConnectWnd::OkClicked() {
 
 void ServerConnectWnd::EnableDisableControls() {
     bool host_selected = m_host_or_join_radio_group->CheckedButton() == 0;
+    m_client_type_list->Disable(host_selected);
     m_LAN_game_label->Disable(host_selected);
     m_servers_lb->Disable(host_selected);
     m_find_LAN_servers_bn->Disable(host_selected);

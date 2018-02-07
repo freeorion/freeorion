@@ -1563,13 +1563,13 @@ bool ServerApp::IsAvailableName(const std::string& player_name) const {
     return true;
 }
 
-bool ServerApp::IsAuthRequired(const std::string& player_name) {
+bool ServerApp::IsAuthRequiredOrFillRoles(const std::string& player_name, Networking::AuthRoles& roles) {
     bool result = false;
     bool success = false;
     try {
         m_python_server.SetCurrentDir(GetPythonAuthDir());
         // Call the main Python turn events function
-        success = m_python_server.IsRequireAuth(player_name, result);
+        success = m_python_server.IsRequireAuthOrReturnRoles(player_name, result, roles);
     } catch (boost::python::error_already_set err) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
@@ -1585,20 +1585,20 @@ bool ServerApp::IsAuthRequired(const std::string& player_name) {
     }
 
     if (!success) {
-        ErrorLogger() << "Python scripted turn events failed.";
+        ErrorLogger() << "Python scripted authentication failed.";
         ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
                                                                       false));
     }
     return result;
 }
 
-bool ServerApp::IsAuthSuccess(const std::string& player_name, const std::string& auth) {
+bool ServerApp::IsAuthSuccessAndFillRoles(const std::string& player_name, const std::string& auth, Networking::AuthRoles& roles) {
     bool result = false;
     bool success = false;
     try {
         m_python_server.SetCurrentDir(GetPythonAuthDir());
         // Call the main Python turn events function
-        success = m_python_server.IsSuccessAuth(player_name, auth, result);
+        success = m_python_server.IsSuccessAuthAndReturnRoles(player_name, auth, result, roles);
     } catch (boost::python::error_already_set err) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
@@ -1614,7 +1614,7 @@ bool ServerApp::IsAuthSuccess(const std::string& player_name, const std::string&
     }
 
     if (!success) {
-        ErrorLogger() << "Python scripted turn events failed.";
+        ErrorLogger() << "Python scripted authentication failed.";
         ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
                                                                       false));
     }

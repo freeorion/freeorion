@@ -190,6 +190,11 @@ void PlayerConnection::SetAuthRoles(const std::initializer_list<Networking::Role
     SendMessage(SetAuthorizationRolesMessage(m_roles));
 }
 
+void PlayerConnection::SetAuthRoles(const Networking::AuthRoles& roles) {
+    m_roles = roles;
+    SendMessage(SetAuthorizationRolesMessage(m_roles));
+}
+
 void PlayerConnection::SetAuthRole(Networking::RoleType role, bool value) {
     m_roles.SetRole(role, value);
     SendMessage(SetAuthorizationRolesMessage(m_roles));

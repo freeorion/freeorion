@@ -17,7 +17,6 @@
 #include "../../UI/ServerConnectWnd.h"
 #include "../../UI/Sound.h"
 #include "../../network/Message.h"
-#include "../../network/Networking.h"
 #include "../../network/ClientNetworking.h"
 #include "../../util/i18n.h"
 #include "../../util/LoggerWithOptionsDB.h"
@@ -626,12 +625,12 @@ void HumanClientApp::MultiPlayerGame() {
     auto server_connect_wnd = GG::Wnd::Create<ServerConnectWnd>();
     server_connect_wnd->Run();
 
-    std::string server_name = server_connect_wnd->Result().second;
+    std::string server_dest = server_connect_wnd->GetResult().server_dest;
 
-    if (server_name.empty())
+    if (server_dest.empty())
         return;
 
-    if (server_name == "HOST GAME SELECTED") {
+    if (server_dest == "HOST GAME SELECTED") {
         if (!GetOptionsDB().Get<bool>("network.server.external.force")) {
             m_single_player_game = false;
             try {
@@ -645,24 +644,24 @@ void HumanClientApp::MultiPlayerGame() {
                 ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
                 return;
             }
-            server_name = "localhost";
+            server_dest = "localhost";
         }
-        server_name = GetOptionsDB().Get<std::string>("network.server.uri");
+        server_dest = GetOptionsDB().Get<std::string>("network.server.uri");
     }
 
-    m_connected = m_networking->ConnectToServer(server_name);
+    m_connected = m_networking->ConnectToServer(server_dest);
     if (!m_connected) {
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-        if (server_connect_wnd->Result().second == "HOST GAME SELECTED")
+        if (server_connect_wnd->GetResult().server_dest == "HOST GAME SELECTED")
             ResetToIntro(true);
         return;
     }
 
-    if (server_connect_wnd->Result().second == "HOST GAME SELECTED") {
-        m_networking->SendMessage(HostMPGameMessage(server_connect_wnd->Result().first));
+    if (server_connect_wnd->GetResult().server_dest == "HOST GAME SELECTED") {
+        m_networking->SendMessage(HostMPGameMessage(server_connect_wnd->GetResult().player_name));
         m_fsm->process_event(HostMPGameRequested());
     } else {
-        m_networking->SendMessage(JoinGameMessage(server_connect_wnd->Result().first, Networking::CLIENT_TYPE_HUMAN_PLAYER));
+        m_networking->SendMessage(JoinGameMessage(server_connect_wnd->GetResult().player_name, server_connect_wnd->GetResult().type));
         m_fsm->process_event(JoinMPGameRequested());
     }
 }

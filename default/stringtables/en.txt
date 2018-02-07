@@ -977,6 +977,9 @@ Player name %1% already in use.
 ERROR_WRONG_PASSWORD
 Password wrong for player name %1%.
 
+ERROR_CLIENT_TYPE_NOT_ALLOWED
+Client type forbidden.
+
 ERROR_NOT_ENOUGH_AI_PLAYERS
 Not enough AI players.
 
@@ -2099,7 +2102,7 @@ HOST_GAME_BN
 Host a new game
 
 JOIN_GAME_BN
-Join a game
+Join a game as
 
 REFRESH_LIST_BN
 Refresh list
