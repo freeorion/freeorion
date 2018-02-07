@@ -1099,9 +1099,9 @@ class StringVec(object):
 
     def __iter__(self):
         """
-        :rtype: object
+        :rtype: iter
         """
-        return object()
+        return iter()
 
     def __setitem__(self, obj1, obj2):
         """
@@ -1235,7 +1235,7 @@ class buildingType(object):
 
     @property
     def dump(self):
-        return str()
+        pass
 
     @property
     def name(self):
@@ -1467,16 +1467,6 @@ class empire(object):
         """
         return bool()
 
-    def unrestrictedLaneTravel(self, number1, number2):
-        """
-        :param number1:
-        :type number1: int
-        :param number2:
-        :type number2: int
-        :rtype: bool
-        """
-        return bool()
-
     def numSitReps(self, number):
         """
         :param number:
@@ -1571,6 +1561,16 @@ class empire(object):
         """
         return float()
 
+    def preservedLaneTravel(self, number1, number2):
+        """
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :rtype: bool
+        """
+        return bool()
+
 
 class fieldType(object):
     @property
@@ -1579,7 +1579,7 @@ class fieldType(object):
 
     @property
     def dump(self):
-        return str()
+        pass
 
     @property
     def name(self):
@@ -1671,7 +1671,7 @@ class meter(object):
 
     @property
     def dump(self):
-        return str()
+        pass
 
 
 class partType(object):
@@ -1729,10 +1729,6 @@ class partType(object):
 
 
 class popCenter(object):
-    @property
-    def nextTurnPopGrowth(self):
-        pass
-
     @property
     def speciesName(self):
         pass
@@ -1822,12 +1818,20 @@ class productionQueueElement(object):
         return int()
 
     @property
+    def paused(self):
+        return bool()
+
+    @property
     def locationID(self):
         return int()
 
     @property
     def progress(self):
         return float()
+
+    @property
+    def allowedStockpile(self):
+        return bool()
 
     @property
     def remaining(self):
@@ -1975,7 +1979,7 @@ class shipDesign(object):
 
     @property
     def dump(self):
-        return str()
+        pass
 
     @property
     def canColonize(self):
@@ -2159,7 +2163,7 @@ class special(object):
 
     @property
     def dump(self):
-        return str()
+        pass
 
     @property
     def spawnrate(self):
@@ -2189,7 +2193,7 @@ class species(object):
 
     @property
     def dump(self):
-        return str()
+        pass
 
     @property
     def tags(self):
@@ -2449,21 +2453,6 @@ class universe(object):
         """
         return IntVec()
 
-    def shortestNonHostilePath(self, number1, number2, number3):
-        """
-        Shortest sequence of System ids and distance from System (number1) to System (number2) with no hostile Fleets
-        as determined by visibility of Empire (number3).  (number3) must be a valid empire.
-
-        :param number1:
-        :type number1: int
-        :param number2:
-        :type number2: int
-        :param number3:
-        :type number3: int
-        :rtype: IntVec
-        """
-        return IntVec()
-
     def updateMeterEstimates(self, item_list):
         """
         :param item_list:
@@ -2507,6 +2496,20 @@ class universe(object):
         :rtype: bool
         """
         return bool()
+
+    def shortestNonHostilePath(self, number1, number2, number3):
+        """
+        Shortest sequence of System ids and distance from System (number1) to System (number2) with no hostile Fleets as determined by visibility of Empire (number3).  (number3) must be a valid empire.
+
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :param number3:
+        :type number3: int
+        :rtype: IntVec
+        """
+        return IntVec()
 
     def getGenericShipDesign(self, string):
         """
@@ -2817,8 +2820,16 @@ class planet(universeObject, popCenter, resourceCenter):
         return int()
 
     @property
+    def OrbitalPeriod(self):
+        return float()
+
+    @property
     def clockwiseNextPlanetType(self):
         return planetType()
+
+    @property
+    def LastTurnConquered(self):
+        return int()
 
     @property
     def nextSmallerPlanetSize(self):
@@ -2829,8 +2840,8 @@ class planet(universeObject, popCenter, resourceCenter):
         return IntSet()
 
     @property
-    def OrbitalPeriod(self):
-        return float()
+    def LastTurnAttackedByShip(self):
+        return int()
 
     @property
     def counterClockwiseNextPlanetType(self):
@@ -3232,26 +3243,28 @@ class meterType(Enum):
     maxStructure = None  # meterType(10, "maxStructure")
     maxDefense = None  # meterType(11, "maxDefense")
     maxSupply = None  # meterType(12, "maxSupply")
-    maxTroops = None  # meterType(13, "maxTroops")
-    population = None  # meterType(14, "population")
-    industry = None  # meterType(15, "industry")
-    research = None  # meterType(16, "research")
-    trade = None  # meterType(17, "trade")
-    construction = None  # meterType(18, "construction")
-    happiness = None  # meterType(19, "happiness")
-    capacity = None  # meterType(20, "capacity")
-    secondaryStat = None  # meterType(21, "secondaryStat")
-    fuel = None  # meterType(22, "fuel")
-    shield = None  # meterType(23, "shield")
-    structure = None  # meterType(24, "structure")
-    defense = None  # meterType(25, "defense")
-    supply = None  # meterType(26, "supply")
-    troops = None  # meterType(27, "troops")
-    rebels = None  # meterType(28, "rebels")
-    size = None  # meterType(29, "size")
-    stealth = None  # meterType(30, "stealth")
-    detection = None  # meterType(31, "detection")
-    speed = None  # meterType(32, "speed")
+    maxStockpile = None  # meterType(13, "maxStockpile")
+    maxTroops = None  # meterType(14, "maxTroops")
+    population = None  # meterType(15, "population")
+    industry = None  # meterType(16, "industry")
+    research = None  # meterType(17, "research")
+    trade = None  # meterType(18, "trade")
+    construction = None  # meterType(19, "construction")
+    happiness = None  # meterType(20, "happiness")
+    capacity = None  # meterType(21, "capacity")
+    secondaryStat = None  # meterType(22, "secondaryStat")
+    fuel = None  # meterType(23, "fuel")
+    shield = None  # meterType(24, "shield")
+    structure = None  # meterType(25, "structure")
+    defense = None  # meterType(26, "defense")
+    supply = None  # meterType(27, "supply")
+    stockpile = None  # meterType(28, "stockpile")
+    troops = None  # meterType(29, "troops")
+    rebels = None  # meterType(30, "rebels")
+    size = None  # meterType(31, "size")
+    stealth = None  # meterType(32, "stealth")
+    detection = None  # meterType(33, "detection")
+    speed = None  # meterType(34, "speed")
 
 
 meterType.targetPopulation = meterType(0, "targetPopulation")
@@ -3267,26 +3280,28 @@ meterType.maxShield = meterType(9, "maxShield")
 meterType.maxStructure = meterType(10, "maxStructure")
 meterType.maxDefense = meterType(11, "maxDefense")
 meterType.maxSupply = meterType(12, "maxSupply")
-meterType.maxTroops = meterType(13, "maxTroops")
-meterType.population = meterType(14, "population")
-meterType.industry = meterType(15, "industry")
-meterType.research = meterType(16, "research")
-meterType.trade = meterType(17, "trade")
-meterType.construction = meterType(18, "construction")
-meterType.happiness = meterType(19, "happiness")
-meterType.capacity = meterType(20, "capacity")
-meterType.secondaryStat = meterType(21, "secondaryStat")
-meterType.fuel = meterType(22, "fuel")
-meterType.shield = meterType(23, "shield")
-meterType.structure = meterType(24, "structure")
-meterType.defense = meterType(25, "defense")
-meterType.supply = meterType(26, "supply")
-meterType.troops = meterType(27, "troops")
-meterType.rebels = meterType(28, "rebels")
-meterType.size = meterType(29, "size")
-meterType.stealth = meterType(30, "stealth")
-meterType.detection = meterType(31, "detection")
-meterType.speed = meterType(32, "speed")
+meterType.maxStockpile = meterType(13, "maxStockpile")
+meterType.maxTroops = meterType(14, "maxTroops")
+meterType.population = meterType(15, "population")
+meterType.industry = meterType(16, "industry")
+meterType.research = meterType(17, "research")
+meterType.trade = meterType(18, "trade")
+meterType.construction = meterType(19, "construction")
+meterType.happiness = meterType(20, "happiness")
+meterType.capacity = meterType(21, "capacity")
+meterType.secondaryStat = meterType(22, "secondaryStat")
+meterType.fuel = meterType(23, "fuel")
+meterType.shield = meterType(24, "shield")
+meterType.structure = meterType(25, "structure")
+meterType.defense = meterType(26, "defense")
+meterType.supply = meterType(27, "supply")
+meterType.stockpile = meterType(28, "stockpile")
+meterType.troops = meterType(29, "troops")
+meterType.rebels = meterType(30, "rebels")
+meterType.size = meterType(31, "size")
+meterType.stealth = meterType(32, "stealth")
+meterType.detection = meterType(33, "detection")
+meterType.speed = meterType(34, "speed")
 
 
 class planetEnvironment(Enum):
@@ -3372,11 +3387,13 @@ class resourceType(Enum):
     industry = None  # resourceType(0, "industry")
     trade = None  # resourceType(1, "trade")
     research = None  # resourceType(2, "research")
+    stockpile = None  # resourceType(3, "stockpile")
 
 
 resourceType.industry = resourceType(0, "industry")
 resourceType.trade = resourceType(1, "trade")
 resourceType.research = resourceType(2, "research")
+resourceType.stockpile = resourceType(3, "stockpile")
 
 
 class ruleType(Enum):
@@ -3819,6 +3836,19 @@ def issueAggressionOrder(number, boolean):
     return int()
 
 
+def issueAllowStockpileProductionOrder(number, boolean):
+    """
+    Orders the item on the production queue at index queueIndex (int) to be enabled (or disabled) to use the imperial stockpile. Returns 1 (int) on success or 0 (int) on failure if the queue index is less than 0 or greater than the largest indexed item on the queue.
+
+    :param number:
+    :type number: int
+    :param boolean:
+    :type boolean: bool
+    :rtype: int
+    """
+    return int()
+
+
 def issueBombardOrder(number1, number2):
     """
     :param number1:
@@ -4009,6 +4039,19 @@ def issueNewFleetOrder(string, number):
     :type string: str
     :param number:
     :type number: int
+    :rtype: int
+    """
+    return int()
+
+
+def issuePauseProductionOrder(number, boolean):
+    """
+    Orders the item on the production queue at index queueIndex (int) to be paused (or unpaused). Returns 1 (int) on success or 0 (int) on failure if the queue index is less than 0 or greater than the largest indexed item on the queue.
+
+    :param number:
+    :type number: int
+    :param boolean:
+    :type boolean: bool
     :rtype: int
     """
     return int()
