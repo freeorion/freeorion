@@ -320,16 +320,16 @@ SD_MARK1_DESC
 Einfache Fregatte mit Massenkatapult. Kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
 
 SD_LARGE_MARK_1
-Zerstörer (M1)
+Kreuzer (M)
 
 SD_LARGE_MARK_2
-Zerstörer (M2)
+Kreuzer (L)
 
 SD_LARGE_MARK_3
-Kreuzer (L1)
+Zerstörer (M)
 
 SD_LARGE_MARK_4
-Kreuzer (L2)
+Zerstörer (L)
 
 SD_GRAVITATING1
 Gravitierend I
