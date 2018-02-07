@@ -434,7 +434,7 @@ def set_planet_growth_specials(focus_manager):
             # the increased population on the planet using this growth focus
             # is mostly wasted, so ignore it for now.
             pop = planet.currentMeterValue(fo.meterType.population)
-            pop_gain = potential_pop_increase - planet.size
+            pop_gain = potential_pop_increase - AIDependencies.planet_size_as_int(planet.size)
             if pop > pop_gain:
                 _print_evaluation("would lose more pop (%.1f) than gain everywhere else (%.1f)." % (pop, pop_gain))
                 continue

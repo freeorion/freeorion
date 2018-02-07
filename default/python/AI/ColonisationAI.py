@@ -241,7 +241,8 @@ def survey_universe():
                 if planet_population > 0.0 and this_spec:
                     empire_has_qualifying_planet = True
                     for metab in [tag for tag in this_spec.tags if tag in AIDependencies.metabolismBoostMap]:
-                        empire_metabolisms[metab] = empire_metabolisms.get(metab, 0.0) + planet.size
+                        empire_metabolisms[metab] = (empire_metabolisms.get(metab, 0.0) +
+                                                     AIDependencies.planet_size_as_int(planet.size))
                     if this_spec.canProduceShips:
                         pilot_val = rate_piloting_tag(list(this_spec.tags))
                         if spec_name == "SP_ACIREMA":
@@ -648,7 +649,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     if spec_name != planet.speciesName and planet.speciesName and mission_type != MissionType.INVASION:
         return 0
 
-    planet_size = planet.size
     this_sysid = planet.systemID
     if homeworld:
         home_system_id = homeworld.systemID
@@ -678,7 +678,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     sys_status = foAI.foAIstate.systemStatus.get(this_sysid, {})
 
     sys_supply = state.get_system_supply(this_sysid)
-    planet_supply = AIDependencies.supply_by_size.get(int(planet_size), 0)
+    planet_supply = AIDependencies.supply_by_size.get(planet.size, 0)
     bld_types = set(universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs).intersection(
         AIDependencies.building_supply)
     planet_supply += sum(AIDependencies.building_supply[bld_type].get(int(psize), 0)
