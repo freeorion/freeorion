@@ -47,9 +47,6 @@ def handle_class(info):
         result.append('')
 
     for rutine_name, rutine_docs in instance_methods:
-        if rutine_name == 'error_stub':
-            continue
-
         docs = Docs(rutine_docs, 2, is_class=True)
 
         if docs.rtype == 'VisibilityIntMap':
