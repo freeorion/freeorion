@@ -2,6 +2,9 @@ import os
 from inspect import getdoc, isroutine
 from generate_mock import make_mock
 
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+
 
 def get_member_info(member):
     info = {
@@ -25,7 +28,7 @@ def get_member_info(member):
         if not len(member):
             info['value'] = member
     else:
-        print '>>>', type(member), "of", member
+        warn('Unexpected member "%s":' % (type(member), member))
     return info
 
 
@@ -39,7 +42,7 @@ def getmembers(obj, predicate=None):
         except AttributeError:
             continue
         except Exception as e:
-            print 'Error in "%s.%s": %s' % (obj.__class__.__name__, key, e)
+            error('Error in "%s.%s" with error: %s' % (obj.__class__.__name__, key, e))
             continue
         if not predicate or predicate(value):
             results.append((key, value))
@@ -112,18 +115,18 @@ def _inspect(obj, instances):
         function = switcher.get(str(type(member)), None)
         if function:
             data.append(function(name, member))
-        elif name in ('__doc__', '__package__', '__name__'):
+        elif name in ('__doc__', '__package__', '__name__', 'INVALID_GAME_TURN', 'to_str'):
             pass
         else:
-            print "Unknown", name, type(member), member
+            warn("Unknown: '%s' of type '%s': %s" % (name, type(member), member))
     for i, instance in enumerate(instances, start=2):
         if isinstance(instance, (basestring, int, long, float)):
-            print "Argument number %s(1-based) is builtin python instance: (%s) %s" % (i, type(instance), instance)
+            warn("Argument number %s(1-based) is builtin python instance: (%s) %s" % (i, type(instance), instance))
             continue
         try:
             data.append(inspect_instance(instance))
         except Exception as e:
-            print "Error inspecting:", type(instance), type(e), e
+            error("Error inspecting: '%s' with '%s': %s" % (type(instance), type(e), e))
     return data
 
 
@@ -137,8 +140,8 @@ def inspect(obj, instances, classes_to_ignore=tuple()):
                               this argument required because some classes present in interface
                               but have no methods, to get their instances.
     """
-    print "\n\nStart generating skeleton for %s\n\n" % obj.__name__
+    debug("\n\nStart generating skeleton for %s\n\n" % obj.__name__)
     folder_name = os.path.join(os.path.dirname(__file__), 'result')
     result_path = os.path.join(folder_name, '%s.py' % obj.__name__)
     make_mock(_inspect(obj, instances), result_path, classes_to_ignore)
-    print "Skeleton written to %s" % result_path
+    debug("Skeleton written to %s" % result_path)

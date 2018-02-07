@@ -1,6 +1,8 @@
 import re
 
-import sys
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+
 
 normalization_dict = {
     'empire': 'empire_object',
@@ -71,7 +73,7 @@ def normalize_name(tp):
         return provided_name
 
     if argument_type not in normalization_dict:
-        print sys.stderr.write("Can't find proper name for: %s\n" % argument_type)
+        error("Can't find proper name for: %s\n" % argument_type)
         normalization_dict[argument_type] = 'arg'
     return normalization_dict[argument_type]
 
@@ -116,7 +118,7 @@ def merge_args(arg_types, is_class):
         names, types = get_argument_names(filter(None, arg_types)[0], is_class)
         use_keyword = True
     else:
-        sys.stderr.write('Cannot merge, use first arguments from:\n    %s\n' % '\n    '.join(', '.join('(%s)%s' % (tp, name) for tp, name in arg_set) for arg_set in arg_types))
+        error('Cannot merge, use first argument group from:\n    %s\n' % '\n    '.join(', '.join('(%s)%s' % (tp, name) for tp, name in arg_set) for arg_set in arg_types))
         names, types = get_argument_names(arg_types[0], is_class)
         use_keyword = False
     return ['%s=None' % name for name in names] if use_keyword else names, zip(names, types)
@@ -225,7 +227,7 @@ if __name__ == '__main__':
     print "=" * 100
     print "Doc string:\n", info.get_doc_string()
 
-    # double standarts
+    # double standards
     # canBuild ['empire', 'buildType', 'str', 'int'], ['empire', 'buildType', 'int', 'int']
     # inField ['field', 'universeObject'], ['field', 'float', 'float']
     # validShipDesign ['str', 'StringVec']
