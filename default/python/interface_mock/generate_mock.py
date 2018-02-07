@@ -157,7 +157,7 @@ def make_mock(data, result_path, classes_to_ignore):
 
     res.append(ENUM_STUB)
 
-    for enum in enums:
+    for enum in sorted(enums, key=itemgetter('name')):
         res.append(handle_enum(enum))
 
     for function in sorted(groups['function'], key=itemgetter('name')):
