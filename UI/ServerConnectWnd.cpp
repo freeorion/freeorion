@@ -97,6 +97,7 @@ void ServerConnectWnd::CompleteConstruction() {
     m_host_or_join_radio_group->AddButton(GG::Wnd::Create<CUIStateButton>(UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
     m_host_or_join_radio_group->AddButton(GG::Wnd::Create<CUIStateButton>(UserString("JOIN_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
     m_client_type_list = GG::Wnd::Create<CUIDropDownList>(3);
+    m_client_type_list->SetStyle(GG::LIST_NOSORT);
     m_LAN_game_label = GG::Wnd::Create<CUILabel>(UserString("LAN_GAME_LABEL"), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     m_servers_lb = GG::Wnd::Create<CUIListBox>();
     m_servers_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
