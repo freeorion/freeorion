@@ -19,7 +19,7 @@ def handle_class(info):
 
     properties = []
     instance_methods = []
-    for attr_name, attr in attrs.items():
+    for attr_name, attr in sorted(attrs.items()):
         if attr['type'] == "<type 'property'>":
             properties.append((attr_name, attr.get('rtype', '')))
         elif attr['type'] == "<type 'instancemethod'>":
