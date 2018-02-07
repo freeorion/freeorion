@@ -337,7 +337,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     ConnectKeyboardAcceleratorSignals();
 
-    InitAutoTurns(GetOptionsDB().Get<int>("auto-advance-n-turns"));
+    m_auto_turns = GetOptionsDB().Get<int>("auto-advance-n-turns");
 
     if (fake_mode_change && !FramebuffersAvailable()) {
         ErrorLogger() << "Requested fake mode changes, but the framebuffer opengl extension is not available. Ignoring.";
