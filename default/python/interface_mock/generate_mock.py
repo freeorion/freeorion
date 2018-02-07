@@ -150,12 +150,10 @@ def make_mock(data, result_path, classes_to_ignore):
                 error("Unknown class attribute type: '%s'" % v['type'])
 
     res = []
-    classes = sorted(classes, key=lambda class_: len(class_['parents']))  # put classes with no parents on first place
-    class_groups = groupby(classes, key=lambda class_: class_['parents'] and class_['parents'][0] or '')
+    classes = sorted(classes, key=lambda class_: (len(class_['parents']), class_['parents'] and class_['parents'][0] or '', class_['name']))  # put classes with no parents on first place
 
-    for name, group in class_groups:
-        for cls in sorted(group, key=itemgetter('name')):
-            res.append(handle_class(cls))
+    for cls in classes:
+        res.append(handle_class(cls))
 
     res.append(ENUM_STUB)
 

@@ -2806,88 +2806,6 @@ class fleet(universeObject):
         return bool()
 
 
-class planet(universeObject, popCenter, resourceCenter):
-    @property
-    def originalType(self):
-        return planetType()
-
-    @property
-    def nextLargerPlanetSize(self):
-        return planetSize()
-
-    @property
-    def distanceFromOriginalType(self):
-        return int()
-
-    @property
-    def OrbitalPeriod(self):
-        return float()
-
-    @property
-    def clockwiseNextPlanetType(self):
-        return planetType()
-
-    @property
-    def LastTurnConquered(self):
-        return int()
-
-    @property
-    def nextSmallerPlanetSize(self):
-        return planetSize()
-
-    @property
-    def buildingIDs(self):
-        return IntSet()
-
-    @property
-    def LastTurnAttackedByShip(self):
-        return int()
-
-    @property
-    def counterClockwiseNextPlanetType(self):
-        return planetType()
-
-    @property
-    def RotationalPeriod(self):
-        return float()
-
-    @property
-    def type(self):
-        return planetType()
-
-    @property
-    def InitialOrbitalPosition(self):
-        return float()
-
-    @property
-    def size(self):
-        return planetSize()
-
-    def nextBetterPlanetTypeForSpecies(self, string):
-        """
-        :param string:
-        :type string: str
-        :rtype: planetType
-        """
-        return planetType()
-
-    def environmentForSpecies(self, string):
-        """
-        :param string:
-        :type string: str
-        :rtype: planetEnvironment
-        """
-        return planetEnvironment()
-
-    def OrbitalPositionOnTurn(self, number):
-        """
-        :param number:
-        :type number: int
-        :rtype: float
-        """
-        return float()
-
-
 class ship(universeObject):
     @property
     def canColonize(self):
@@ -3052,6 +2970,88 @@ class system(universeObject):
         :rtype: bool
         """
         return bool()
+
+
+class planet(universeObject, popCenter, resourceCenter):
+    @property
+    def originalType(self):
+        return planetType()
+
+    @property
+    def nextLargerPlanetSize(self):
+        return planetSize()
+
+    @property
+    def distanceFromOriginalType(self):
+        return int()
+
+    @property
+    def OrbitalPeriod(self):
+        return float()
+
+    @property
+    def clockwiseNextPlanetType(self):
+        return planetType()
+
+    @property
+    def LastTurnConquered(self):
+        return int()
+
+    @property
+    def nextSmallerPlanetSize(self):
+        return planetSize()
+
+    @property
+    def buildingIDs(self):
+        return IntSet()
+
+    @property
+    def LastTurnAttackedByShip(self):
+        return int()
+
+    @property
+    def counterClockwiseNextPlanetType(self):
+        return planetType()
+
+    @property
+    def RotationalPeriod(self):
+        return float()
+
+    @property
+    def type(self):
+        return planetType()
+
+    @property
+    def InitialOrbitalPosition(self):
+        return float()
+
+    @property
+    def size(self):
+        return planetSize()
+
+    def nextBetterPlanetTypeForSpecies(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: planetType
+        """
+        return planetType()
+
+    def environmentForSpecies(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: planetEnvironment
+        """
+        return planetEnvironment()
+
+    def OrbitalPositionOnTurn(self, number):
+        """
+        :param number:
+        :type number: int
+        :rtype: float
+        """
+        return float()
 
 
 class Enum(int):
