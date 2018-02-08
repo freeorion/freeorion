@@ -5,6 +5,16 @@
 
 #include "CUIControls.h"
 
+/** A simple ListBox row containing only a static label.*/
+struct PromptRow : GG::ListBox::Row {
+    PromptRow(GG::X w, const std::string& prompt_str);
+    void CompleteConstruction() override;
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+private:
+     std::shared_ptr<GG::Label> m_prompt;
+};
+
 /** A list box type for representing queues (eg the research and production queues). */
 class QueueListBox :
     public CUIListBox
