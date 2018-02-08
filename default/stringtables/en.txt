@@ -7164,7 +7164,7 @@ Sly
 
 SP_SLY_GAMEPLAY_DESC
 '''Friendly overlooked gasbags.
-Only live an [[PT_GASGIANT]]s.
+Greatly prefer [[PT_GASGIANT]]s.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 '''
 
@@ -14106,7 +14106,7 @@ FIXED_LOW_POPULATION_DESC
 −−	Maximum Population is fixed at 5
 
 VERY_BAD_SUPPLY_DESC
-−−	Very Bad [[metertype METER_SUPPLY]]: -1
+−−     Very Bad [[metertype METER_SUPPLY]]: -1
 
 BAD_SUPPLY_DESC
 −	Bad [[metertype METER_SUPPLY]]: no bonus
@@ -14130,10 +14130,10 @@ AVERAGE_STOCKPILE_DESC
 	Average [[metertype METER_STOCKPILE]]: 100%
 
 GOOD_STOCKPILE_DESC
-+	Great [[metertype METER_STOCKPILE]]: 400%
++	Great [[metertype METER_STOCKPILE]]: 300%
 
 GREAT_STOCKPILE_DESC
-++	Great [[metertype METER_STOCKPILE]]: 1000%
+++	Great [[metertype METER_STOCKPILE]]: 800%
 
 ULTIMATE_STOCKPILE_DESC
 +++	Ultimate [[metertype METER_STOCKPILE]]: 1500%
