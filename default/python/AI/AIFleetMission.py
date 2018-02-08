@@ -8,7 +8,7 @@ import MoveUtilsAI
 import MilitaryAI
 import InvasionAI
 import CombatRatingsAI
-from universe_object import UniverseObject, System, Fleet, Planet
+from universe_object import System, Fleet, Planet
 from EnumsAI import MissionType
 from AIDependencies import INVALID_ID
 from freeorion_tools import get_partial_visibility_turn
@@ -54,7 +54,7 @@ COMPATIBLE_ROLES_MAP = {
 class AIFleetMission(object):
     """
     Stores information about AI mission. Every mission has fleetID and AI targets depending upon AI fleet mission type.
-    :type target: UniverseObject | None
+    :type target: universe_object.UniverseObject | None
     """
 
     def __init__(self, fleet_id):
@@ -94,7 +94,7 @@ class AIFleetMission(object):
         Set mission and target for this fleet.
 
         :type mission_type: MissionType
-        :type target: UniverseObject
+        :type target: universe_object.UniverseObject
         """
         if self.type == mission_type and self.target == target:
             return
@@ -113,7 +113,7 @@ class AIFleetMission(object):
         Check if fleet has specified mission_type and target.
 
         :type mission_type: MissionType
-        :type target: UniverseObject
+        :type target: universe_object.UniverseObject
         :rtype: bool
         """
         return self.type == mission_type and self.target == target
@@ -127,7 +127,7 @@ class AIFleetMission(object):
         Get a fleet order according to mission type and target.
 
         :type mission_type: MissionType
-        :type target: UniverseObject
+        :type target: universe_object.UniverseObject
         :rtype: AIFleetOrder
         """
         fleet_target = Fleet(self.fleet.id)
@@ -191,7 +191,7 @@ class AIFleetMission(object):
                     target = fleet_mission.target.id if fleet_mission.target else None
                     if target == target_id:
                         info("Military fleet %d (%d ships) has same target as %s fleet %d (%d ships). Merging former "
-                               "into latter." % (fid, fleet.numShips, fleet_role, fleet_id, len(main_fleet.shipIDs)))
+                             "into latter." % (fid, fleet.numShips, fleet_role, fleet_id, len(main_fleet.shipIDs)))
                         # TODO: should probably ensure that fleetA has aggression on now
                         do_merge = float(min(main_fleet.speed, fleet.speed))/max(main_fleet.speed, fleet.speed) >= 0.6
                     elif main_fleet.speed > 0:
@@ -333,7 +333,8 @@ class AIFleetMission(object):
         target_stats = {'rating': 10, 'troopCapacity': troops_needed}
         found_fleets = []
         # TODO check if next statement does not mutate any global states and can be removed
-        _ = FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, {}, starting_system=fleet.systemID,
+
+        _ = FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, {}, starting_system=fleet.systemID,  # noqa: F841
                                                 fleet_pool_set=set(new_fleets), fleet_list=found_fleets)
         for fid in found_fleets:
             FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id)

@@ -1,13 +1,14 @@
 # This Python file uses the following encoding: utf-8
-import cProfile, pstats, StringIO
-import re
+import StringIO
+import cProfile
 import logging
+import pstats
+import re
 import sys
 from collections import Mapping
 from functools import wraps
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-
 
 # color wrappers for chat:
 RED = '<rgba 255 0 0 255>%s</rgba>'

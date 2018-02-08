@@ -3,26 +3,26 @@ import random
 import sys
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+from common.configure_logging import convenience_function_references_for_logger
+from common.print_utils import Sequence, Table, Text
+
 import AIDependencies
 import AIstate
-from character.character_module import Aggression
+import ColonisationAI
+import CombatRatingsAI
 import FleetUtilsAI
 import FreeOrionAI as foAI
+import MilitaryAI
 import PlanetUtilsAI
 import PriorityAI
-import ColonisationAI
-import MilitaryAI
 import ShipDesignAI
-import CombatRatingsAI
+from AIDependencies import INVALID_ID
+from EnumsAI import (EmpireProductionTypes, FocusType, MissionType, PriorityType, ShipRoleType,
+                     get_priority_production_types, )
+from character.character_module import Aggression
+from freeorion_tools import AITimer, chat_human, ppstring, tech_is_complete
 from turn_state import state
 
-from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_priority_production_types,
-                     FocusType, ShipRoleType)
-from freeorion_tools import ppstring, chat_human, tech_is_complete, AITimer
-from common.print_utils import Table, Sequence, Text
-from AIDependencies import INVALID_ID
-
-from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 _best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
@@ -781,7 +781,7 @@ def generate_production_orders():
                     print "problem queueing %s at planet %s" % (building_name, planet_used)
 
     building_name = "BLD_BLACK_HOLE_POW_GEN"
-    if empire.buildingTypeAvailable(building_name) and  foAI.foAIstate.character.may_build_building(building_name):
+    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.character.may_build_building(building_name):
         already_got_one = False
         for pid in state.get_all_empire_planets():
             planet = universe.getPlanet(pid)
@@ -978,7 +978,7 @@ def generate_production_orders():
                         fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                     else:
                         # TODO: enable location condition reporting a la mapwnd BuildDesignatorWnd
-                       warn("Enqueing Conc Camp at %s despite building_type.canBeProduced(empire.empireID, pid) reporting %s" % (planet, can_build_camp))
+                        warn("Enqueing Conc Camp at %s despite building_type.canBeProduced(empire.empireID, pid) reporting %s" % (planet, can_build_camp))
         if verbose_camp:
             print "conc camp status at %s : checkedCamp: %s, built_camp: %s" % (planet.name, can_build_camp, built_camp)
 
@@ -1090,12 +1090,12 @@ def generate_production_orders():
     queued_clny_bld_locs = [element.locationID for element in production_queue
                             if (element.name.startswith('BLD_COL_') and
                                 empire_has_colony_bld_species(element.name))]
-    colony_bldg_entries = ([entry for entry in foAI.foAIstate.colonisablePlanetIDs.items() if
-                                entry[1][0] > 60 and
-                                entry[0] not in queued_clny_bld_locs and
-                                entry[0] in state.get_empire_outposts() and
-                                not already_has_completed_colony_building(entry[0])]
-                           [:PriorityAI.allottedColonyTargets+2])
+    colony_bldg_entries = [entry for entry in foAI.foAIstate.colonisablePlanetIDs.items() if
+                           entry[1][0] > 60 and
+                           entry[0] not in queued_clny_bld_locs and
+                           entry[0] in state.get_empire_outposts() and
+                           not already_has_completed_colony_building(entry[0])]
+    colony_bldg_entries = colony_bldg_entries[:PriorityAI.allottedColonyTargets + 2]
     for entry in colony_bldg_entries:
         pid = entry[0]
         building_name = "BLD_COL_" + entry[1][1][3:]
@@ -1442,7 +1442,7 @@ def update_stockpile_use():
             continue
         group = next((_g for _g in resource_groups if element.locationID in _g), None)
         if group is None:
-            continue # we don't appear to own the location any more
+            continue  # we don't appear to own the location any more
         if fo.issueAllowStockpileProductionOrder(queue_index, True):
             planets_in_stockpile_enabled_group.update(group)
 

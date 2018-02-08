@@ -16,7 +16,8 @@ import json
 import EnumsAI
 from freeorion_tools import profile
 
-from _definitions import *
+from _definitions import (ENUM_PREFIX, FALSE, FLOAT_PREFIX, INT_PREFIX, InvalidSaveGameException, NONE, PLACEHOLDER,
+                          SET_PREFIX, TRUE, TUPLE_PREFIX, trusted_classes, )
 
 
 @profile
@@ -193,4 +194,3 @@ def _replace_quote_placeholders(s):
                 start = i
     s = s[:start] + s[start:].replace(PLACEHOLDER, '"')
     return s
-

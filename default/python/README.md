@@ -45,6 +45,7 @@ pip install flake8-putty
 ```
 
 ## Run checks
+This script should be run from directory where `tox.ini` located
 
 ```sh
 cd default/python

@@ -9,7 +9,7 @@ import PlanetUtilsAI
 import PriorityAI
 import ProductionAI
 import CombatRatingsAI
-from freeorion_tools import ppstring, cache_by_turn
+from freeorion_tools import cache_by_turn
 from AIDependencies import INVALID_ID
 from common.configure_logging import convenience_function_references_for_logger
 from turn_state import state
@@ -81,7 +81,7 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False,
         my_local_rating = combine_ratings(local_status.get('mydefenses', {}).get('overall', 0), local_status.get('myFleetRating', 0))
         my_local_rating_vs_planets = local_status.get('myFleetRatingVsPlanets', 0)
         needed_here = local_status.get('totalThreat', 0) > 0  # TODO: assess if remaining other forces are sufficient
-        safely_needed = needed_here and my_local_rating > local_status.get('totalThreat', 0) and my_local_rating_vs_planets > local_status.get('planetThreat', 0)# TODO: improve both assessment prongs
+        safely_needed = needed_here and my_local_rating > local_status.get('totalThreat', 0) and my_local_rating_vs_planets > local_status.get('planetThreat', 0)  # TODO: improve both assessment prongs
         if not fleet_ok:
             if safely_needed:
                 print "Fleet %d at %s needs repair but deemed safely needed to remain for defense" % (fleet_id, universe.getSystem(fleet.systemID))
@@ -434,8 +434,8 @@ class TargetAllocator(Allocator):
         # present, the smaller proportion of our attacks would be directed against the enemy planet.  The following is
         # just one of many forms of calculation that might work reasonably.
         # TODO: assess and revamp the planet_threat_multiplier calculation
-        return  ((self._enemy_ship_count() + self._local_threat()/self._planet_threat())**0.5
-                 if self._planet_threat() > 0 else 1.0)
+        return ((self._enemy_ship_count() + self._local_threat()/self._planet_threat())**0.5
+                if self._planet_threat() > 0 else 1.0)
 
     def _allocation_vs_planets(self):
         return CombatRatingsAI.rating_needed(
@@ -625,10 +625,10 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         for fleet_id in all_military_fleet_ids:
             status = foAI.foAIstate.fleetStatus.get(fleet_id, None)
             if status is not None:
-                sys_id = status['sysID']
-                if not list(universe.getSystem(sys_id).planetIDs):
+                system_id = status['sysID']
+                if not list(universe.getSystem(system_id).planetIDs):
                     continue
-                system_dict[sys_id] = system_dict.get(sys_id, 0) + status.get('rating', 0)
+                system_dict[system_id] = system_dict.get(system_id, 0) + status.get('rating', 0)
         ranked_systems = sorted([(val, sys_id) for sys_id, val in system_dict.items()])
         if ranked_systems:
             capital_sys_id = ranked_systems[-1][-1]
