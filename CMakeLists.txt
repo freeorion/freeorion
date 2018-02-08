@@ -577,13 +577,13 @@ install(
 
 install(
     FILES
-    ${CMAKE_SOURCE_DIR}/freeorion.desktop
+    ${CMAKE_SOURCE_DIR}/org.freeorion.desktop
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
 )
 
 install(
     FILES
-    ${CMAKE_SOURCE_DIR}/freeorion.appdata.xml
+    ${CMAKE_SOURCE_DIR}/org.freeorion.appdata.xml
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo
 )
 
