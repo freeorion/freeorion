@@ -9017,7 +9017,7 @@ std::string ValueTest::Dump(unsigned short ntabs) const {
     else if (m_string_value_ref2)
         retval += m_string_value_ref2->Dump(ntabs);
     else if (m_int_value_ref2)
-        retval += m_int_value_ref2->Dump(ntabs);
+        retval += " " + m_int_value_ref2->Dump(ntabs);
 
     if (m_compare_type2 != INVALID_COMPARISON)
         retval += " " + CompareTypeString(m_compare_type2);
@@ -9027,7 +9027,7 @@ std::string ValueTest::Dump(unsigned short ntabs) const {
     else if (m_string_value_ref3)
         retval += m_string_value_ref3->Dump(ntabs);
     else if (m_int_value_ref3)
-        retval += m_int_value_ref3->Dump(ntabs);
+        retval += " " + m_int_value_ref3->Dump(ntabs);
 
     retval += ")\n";
     return retval;

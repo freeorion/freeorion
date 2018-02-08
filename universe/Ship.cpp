@@ -71,7 +71,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
                 m_part_meters[std::make_pair(METER_CAPACITY, part->Name())];
                 break;
             }
-            case PC_DIRECT_WEAPON: {    // capacity is damage, secondary stat is shots per attack, tertiary stat is noisiness of attack
+            case PC_DIRECT_WEAPON: {    // capacity is damage, secondary stat is shots per attack
                 m_part_meters[std::make_pair(METER_NOISINESS,           part->Name())];
                 m_part_meters[std::make_pair(METER_MAX_NOISINESS,       part->Name())];
                 // intentinally no break; here
@@ -695,7 +695,6 @@ void Ship::SetShipMetersToMax() {
 
     // some part capacity meters may have an associated max capacity...
     for (auto& entry : m_part_meters)
-
         entry.second.SetCurrent(Meter::LARGE_VALUE);
 }
 
