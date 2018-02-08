@@ -2383,7 +2383,7 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
     if (wnds.size() != 1)
         ErrorLogger() << "BasesListBox::ChildrenDraggedAway unexpected informed that multiple Wnds were dragged away...";
     const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list as BasesListBost doesn't allow selection, so dragging is only one-at-a-time
-    const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
+    const auto control = dynamic_cast<const GG::Control*>(wnd);
     if (!control)
         return;
 
@@ -2745,7 +2745,7 @@ void MonstersListBox::EnableOrderIssuing(bool)
 void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                           const GG::Flags<GG::ModKey>& modkeys)
 {
-    HullAndPartsListBoxRow* hp_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
+    const auto hp_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hp_row)
         return;
 
@@ -2756,7 +2756,7 @@ void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt
 void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                                 const GG::Flags<GG::ModKey>& modkeys)
 {
-    CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
+    const auto cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
         return;
 
@@ -2766,7 +2766,7 @@ void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const 
 void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                             const GG::Flags<GG::ModKey>& modkeys)
 {
-    SavedDesignListBoxRow* sd_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
+    const auto sd_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
 
     if (!sd_row)
         return;
@@ -2776,7 +2776,7 @@ void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::
 void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                         const GG::Flags<GG::ModKey>& modkeys)
 {
-    CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
+    const auto cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
         return;
 
@@ -2787,7 +2787,7 @@ void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& 
 void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                         const GG::Flags<GG::ModKey>& modkeys)
 {
-    HullAndPartsListBoxRow* hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
+    const auto hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hull_parts_row)
         return;
     const std::string& hull_name = hull_parts_row->Hull();
@@ -2808,7 +2808,7 @@ void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& 
 void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                               const GG::Flags<GG::ModKey>& modkeys)
 {
-    CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
+    const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
         return;
     int id = design_row->DesignID();
@@ -2829,7 +2829,7 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG
 void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                           const GG::Flags<GG::ModKey>& modkeys)
 {
-    SavedDesignListBoxRow* saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
+    const auto saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
     if (!saved_design_row)
         return;
     const auto design_uuid = saved_design_row->DesignUUID();
@@ -2847,7 +2847,7 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt
 void EmptyHullsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                          const GG::Flags<GG::ModKey>& modkeys)
 {
-    HullAndPartsListBoxRow* hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
+    const auto hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hull_parts_row)
         return;
     const std::string& hull_name = hull_parts_row->Hull();
@@ -3269,7 +3269,7 @@ void DesignWnd::BaseSelector::Reset() {
     const int empire_id = HumanClientApp::GetApp()->EmpireID();
     SetEmpireShown(empire_id, false);
 
-    if (BasesListBox* base_box = dynamic_cast<BasesListBox*>(m_tabs->CurrentWnd()))
+    if (auto base_box = dynamic_cast<BasesListBox*>(m_tabs->CurrentWnd()))
         base_box->Populate();
 
     // Signal the type of tab selected
@@ -3529,7 +3529,7 @@ void SlotControl::StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset
     if (!m_part_control)
         return;
 
-    const PartControl* control = dynamic_cast<const PartControl*>(wnd);
+    const auto control = dynamic_cast<const PartControl*>(wnd);
     if (!control)
         return;
 
@@ -3542,7 +3542,7 @@ void SlotControl::CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnd
         return;
 
     for (const auto& wnd : wnds) {
-        const PartControl* control = dynamic_cast<const PartControl*>(wnd);
+        const auto control = dynamic_cast<const PartControl*>(wnd);
         if (!control)
             continue;
 
@@ -3567,7 +3567,7 @@ void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const G
     if (wnds.empty())
         return;
     const GG::Wnd* wnd = wnds.front();
-    const PartControl* part_control = dynamic_cast<const PartControl*>(wnd);
+    const auto part_control = dynamic_cast<const PartControl*>(wnd);
     if (part_control != m_part_control.get())
         return;
     DetachChildAndReset(m_part_control);
