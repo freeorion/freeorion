@@ -905,13 +905,10 @@ namespace {
     /** A class to allow the storage of the state of a GUI availabilty filter
         and the querying of that state WRT a ship design. */
     class AvailabilityManager {
-    private:
-        // A tuple of the toogle state of the 3-tuple of coupled
-        // availability filters in the GUI:
-        // Obsolete, Available and Unavailable
-        std::tuple<bool, bool, bool> m_availabilities;
-
     public:
+        // DisplayedAvailabiltyType is indexed by Availability::Enum
+        using DisplayedAvailabilty = std::tuple<bool, bool, bool>;
+
         AvailabilityManager(bool obsolete, bool available, bool unavailable);
 
         bool GetAvailability(const Availability::Enum type) const;
@@ -921,23 +918,27 @@ namespace {
         /** Given the GUI's displayed availabilities as stored in this
             AvailabiltyManager, return the displayed state of the design \p
             id. Return none if the design should not be displayed. */
-        boost::optional<Availability::Enum> DisplayedDesignAvailability(int id) const;
+        boost::optional<DisplayedAvailabilty> DisplayedDesignAvailability(int id) const;
         /** Given the GUI's displayed availabilities as stored in this
             AvailabiltyManager, return the displayed state of the hull \p
             name. Return none if the hull should not be displayed. */
-        boost::optional<Availability::Enum> DisplayedHullAvailability(const std::string& name) const;
+        boost::optional<DisplayedAvailabilty> DisplayedHullAvailability(const std::string& name) const;
         /** Given the GUI's displayed availabilities as stored in this
             AvailabiltyManager, return the displayed state of the part \p
             name. Return none if the part should not be displayed. */
-        boost::optional<Availability::Enum> DisplayedPartAvailability(const std::string& name) const;
+        boost::optional<DisplayedAvailabilty> DisplayedPartAvailability(const std::string& name) const;
 
     private:
         /** Given the GUI's displayed availabilities as stored in this
             AvailabiltyManager and that the X is \p available and \p obsolete,
             return the displayed state of the X. Return none if the X should
             not be displayed. */
-        boost::optional<Availability::Enum> DisplayedXAvailability(bool available, bool obsolete) const;
+        boost::optional<DisplayedAvailabilty> DisplayedXAvailability(bool available, bool obsolete) const;
 
+        // A tuple of the toogle state of the 3-tuple of coupled
+        // availability filters in the GUI:
+        // Obsolete, Available and Unavailable
+        std::tuple<bool, bool, bool> m_availabilities;
     };
 
     AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
@@ -973,9 +974,8 @@ namespace {
     void AvailabilityManager::ToggleAvailability(const Availability::Enum type)
     { SetAvailability(type, !GetAvailability(type)); }
 
-    boost::optional<Availability::Enum> AvailabilityManager::DisplayedDesignAvailability(
-        int id) const
-    {
+    boost::optional<AvailabilityManager::DisplayedAvailabilty>
+    AvailabilityManager::DisplayedDesignAvailability(int id) const {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->ShipDesignAvailable(id) : true;
@@ -987,9 +987,8 @@ namespace {
         return DisplayedXAvailability(available, is_obsolete);
     }
     
-    boost::optional<Availability::Enum> AvailabilityManager::DisplayedHullAvailability(
-        const std::string& id) const
-    {
+    boost::optional<AvailabilityManager::DisplayedAvailabilty>
+    AvailabilityManager::DisplayedHullAvailability(const std::string& id) const {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->ShipHullAvailable(id) : true;
@@ -1000,9 +999,8 @@ namespace {
         return DisplayedXAvailability(available, obsolete);
     }
 
-    boost::optional<Availability::Enum> AvailabilityManager::DisplayedPartAvailability(
-        const std::string& id) const
-    {
+    boost::optional<AvailabilityManager::DisplayedAvailabilty>
+    AvailabilityManager::DisplayedPartAvailability(const std::string& id) const {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->ShipPartAvailable(id) : true;
@@ -1013,33 +1011,26 @@ namespace {
         return DisplayedXAvailability(available, obsolete);
     }
 
-    boost::optional<Availability::Enum> AvailabilityManager::DisplayedXAvailability(
-        bool available, bool obsolete) const
-    {
+    boost::optional<AvailabilityManager::DisplayedAvailabilty>
+    AvailabilityManager::DisplayedXAvailability(bool available, bool obsolete) const {
         // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
         const bool showing_obsolete = std::get<Availability::Obsolete>(m_availabilities);
         const bool showing_available = std::get<Availability::Available>(m_availabilities);
         const bool showing_future = std::get<Availability::Future>(m_availabilities);
 
-        // Show as obsolete if it overlaps an already show category or is the
-        // only catagory.
-        if (showing_obsolete && obsolete && showing_available && available)
-            return Availability::Obsolete;
+        auto show = (
+            (showing_obsolete && obsolete && showing_available && available)
+            || (showing_obsolete && obsolete && showing_future && !available)
+            || (showing_obsolete && obsolete && !showing_available && !showing_future)
+            || (showing_available && available && !obsolete)
+            || (showing_future && !available && !obsolete));
 
-        if (showing_obsolete && obsolete && showing_future && !available)
-            return Availability::Obsolete;
+        if (!show)
+            return boost::none;
 
-        if (showing_obsolete && obsolete && !showing_available && !showing_future)
-            return Availability::Obsolete;
-
-        // Available and future are non-overlapping.
-        if (showing_available && available && !obsolete)
-            return Availability::Available;
-
-        if (showing_future && !available && !obsolete)
-            return Availability::Future;
-
-        return boost::none;
+        return std::make_tuple(showing_obsolete && obsolete,
+                               showing_available && available,
+                               showing_future && !available);
     }
 }
 
@@ -1169,7 +1160,7 @@ public:
 
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void SetAvailability(const Availability::Enum type);
+    void SetAvailability(const AvailabilityManager::DisplayedAvailabilty& type);
     //@}
 
     mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> ClickedSignal;
@@ -1235,8 +1226,8 @@ void PartControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { RightClickedSignal(m_part, pt); }
 
 
-void PartControl::SetAvailability(const Availability::Enum type) {
-    auto disabled = type == Availability::Obsolete;
+void PartControl::SetAvailability(const AvailabilityManager::DisplayedAvailabilty& type) {
+    auto disabled = std::get<Availability::Obsolete>(type);
     m_icon->Disable(disabled);
     m_background->Disable(disabled);
 }
@@ -2140,7 +2131,7 @@ public:
         void Render() override
         {}
 
-        void SetAvailability(const Availability::Enum type);
+        void SetAvailability(const AvailabilityManager::DisplayedAvailabilty& type);
         void SetDisplayName(const std::string& name);
 
     private:
@@ -2157,7 +2148,7 @@ public:
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-        virtual void SetAvailability(const Availability::Enum type);
+        virtual void SetAvailability(const AvailabilityManager::DisplayedAvailabilty& type);
         virtual void SetDisplayName(const std::string& name);
 
         private:
@@ -2245,8 +2236,10 @@ void BasesListBox::HullAndNamePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr
     m_name->Resize(Size());
 }
 
-void BasesListBox::HullAndNamePanel::SetAvailability(const Availability::Enum type) {
-    auto disabled = type != Availability::Available;
+void BasesListBox::HullAndNamePanel::SetAvailability(
+    const AvailabilityManager::DisplayedAvailabilty& type)
+{
+    auto disabled = std::get<Availability::Obsolete>(type);
     m_graphic->Disable(disabled);
     m_name->Disable(disabled);
 }
@@ -2292,20 +2285,18 @@ void BasesListBox::BasesListBoxRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
         at(0)->Resize(Size());
 }
 
-void BasesListBox::BasesListBoxRow::SetAvailability(const Availability::Enum type) {
-    switch (type) {
-    case Availability::Obsolete:
+void BasesListBox::BasesListBoxRow::SetAvailability(const AvailabilityManager::DisplayedAvailabilty& type) {
+    if (std::get<Availability::Obsolete>(type) && std::get<Availability::Future>(type))
+        SetBrowseText(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE_AND_UNAVAILABLE"));
+    else if (std::get<Availability::Obsolete>(type))
         SetBrowseText(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"));
-        break;
-    case Availability::Available:
-        ClearBrowseInfoWnd();
-        break;
-    case Availability::Future:
+    else if (std::get<Availability::Future>(type))
         SetBrowseText(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
-        break;
-    }
+    else
+        ClearBrowseInfoWnd();
 
-    Disable(type != Availability::Available);
+    auto disabled = std::get<Availability::Obsolete>(type);
+    Disable(disabled);
     if (m_hull_panel)
         m_hull_panel->SetAvailability(type);
 }
