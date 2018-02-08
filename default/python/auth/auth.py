@@ -1,4 +1,4 @@
-from common.configure_logging import redirect_logging_to_freeorion_logger, convenience_function_references_for_logger
+from common.configure_logging import convenience_function_references_for_logger, redirect_logging_to_freeorion_logger
 
 # Logging is redirected before other imports so that import errors appear in log files.
 redirect_logging_to_freeorion_logger()
@@ -12,7 +12,11 @@ import freeorion as fo
 class AuthProvider:
     def __init__(self):
         self.logins = {}
-        self.roles_symbols = {'h' : fo.roleType.host, 'm' : fo.roleType.clientTypeModerator, 'p' : fo.roleType.clientTypePlayer, 'o' : fo.roleType.clientTypeObserver, 'g' : fo.roleType.galaxySetup }
+        self.roles_symbols = {
+            'h': fo.roleType.host, 'm': fo.roleType.clientTypeModerator,
+            'p': fo.roleType.clientTypePlayer, 'o': fo.roleType.clientTypeObserver,
+            'g': fo.roleType.galaxySetup
+        }
         try:
             with open(fo.get_user_config_dir() + "/auth.txt") as f:
                 first_line = True
@@ -26,7 +30,10 @@ class AuthProvider:
         except IOError:
             exctype, value = sys.exc_info()[:2]
             warn("Cann't read auth file %s: %s %s" % (fo.get_user_config_dir() + "/auth.txt", exctype, value))
-            self.default_roles = [ fo.roleType.clientTypeModerator, fo.roleType.clientTypePlayer, fo.roleType.clientTypeObserver, fo.roleType.galaxySetup ]
+            self.default_roles = [
+                fo.roleType.clientTypeModerator, fo.roleType.clientTypePlayer,
+                fo.roleType.clientTypeObserver, fo.roleType.galaxySetup
+            ]
         info("Auth initialized")
 
     def __parse_roles(self, roles_str):
@@ -38,7 +45,7 @@ class AuthProvider:
             else:
                 roles.append(r)
         return roles
- 
+
     def is_require_auth_or_return_roles(self, player_name):
         """Returns True if player should be authenticated or list of roles for anonymous players"""
         known_login = player_name in self.logins
@@ -54,4 +61,3 @@ class AuthProvider:
             return auth_data[1]
         else:
             return False
-        
