@@ -15,7 +15,7 @@
     <category>StrategyGame</category>
   </categories>
   <metadata_license>CC-BY-SA-3.0</metadata_license>
-  <project_license>GPL-2.0</project_license>
+  <project_license>GPL-2.0 AND CC-BY-SA-3.0</project_license>
   <url type="bugtracker">https://github.com/freeorion/freeorion/issues</url>
   <url type="donation">http://www.freeorion.org/index.php/Donations</url>
   <url type="faq">http://www.freeorion.org/index.php/FAQ</url>
