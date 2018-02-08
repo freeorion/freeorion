@@ -102,6 +102,10 @@ WITH_UPKEEP = "considering fleet upkeep"
 WITHOUT_UPKEEP = "not considering fleet upkeep"
 
 
+def _get_capacity(x):
+    return x.capacity
+
+
 class ShipDesignCache(object):
     """This class handles the caching of information used to assess and build shipdesigns in this module.
 
@@ -1666,14 +1670,13 @@ class WarShipDesigner(MilitaryShipDesignerBaseClass):
         parts = [get_part_type(part) for part in available_parts]
         weapons = [part for part in parts if part.partClass in WEAPONS]
         armours = [part for part in parts if part.partClass in ARMOUR]
-        cap = lambda x: x.capacity
         if weapons:
             weapon_part = max(weapons, key=self._calculate_weapon_strength)
             weapon = weapon_part.name
             idxweapon = available_parts.index(weapon)
             cw = Cache.production_cost[self.pid].get(weapon, weapon_part.productionCost(fo.empireID(), self.pid))
             if armours:
-                armour_part = max(armours, key=cap)
+                armour_part = max(armours, key=_get_capacity)
                 armour = armour_part.name
                 idxarmour = available_parts.index(armour)
                 a = get_part_type(armour).capacity
@@ -1812,8 +1815,7 @@ class TroopShipDesignerBaseClass(ShipDesigner):
         troop_pods = [get_part_type(part) for part in available_parts if get_part_type(part).partClass in TROOPS]
         ret_val = (len(available_parts)+1)*[0]
         if troop_pods:
-            cap = lambda x: x.capacity
-            biggest_troop_pod = max(troop_pods, key=cap).name
+            biggest_troop_pod = max(troop_pods, key=_get_capacity).name
             try:  # we could use an if-check here but since we usually have troop pods for the slot, try is faster
                 idx = available_parts.index(biggest_troop_pod)
             except ValueError:
