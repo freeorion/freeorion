@@ -656,12 +656,12 @@ namespace {
     void CurrentShipDesignManager::InsertBefore(const int id, const int next_id) {
         if (id == INVALID_DESIGN_ID) {
             ErrorLogger() << "Ship design is invalid";
-            return ;
+            return;
         }
 
         if (id == next_id) {
             ErrorLogger() << "Ship design " << id << " is the same as next_id";
-            return ;
+            return;
         }
 
         // if id already exists so this is a move.  Remove the old location
@@ -715,14 +715,14 @@ namespace {
     void CurrentShipDesignManager::InsertHullBefore(const std::string& hull, const std::string& next_hull) {
         if (hull.empty()) {
             ErrorLogger() << "Hull name is empty()";
-            return ;
+            return;
         }
 
         if (hull == next_hull)
-            return ;
+            return;
 
         // if hull already exists, this is a move.  Remove the old location
-        auto existing_it =  m_hull_to_obsolete_and_loc.find(hull);
+        auto existing_it = m_hull_to_obsolete_and_loc.find(hull);
         if (existing_it != m_hull_to_obsolete_and_loc.end()) {
             m_ordered_hulls.erase(existing_it->second.second);
             m_hull_to_obsolete_and_loc.erase(existing_it);
@@ -780,9 +780,8 @@ namespace {
         return (it_hull != m_hull_to_obsolete_and_loc.end() && it_hull->second.first);
     }
 
-    bool CurrentShipDesignManager::IsPartObsolete(const std::string& part) const {
-        return m_obsolete_parts.count(part);
-    }
+    bool CurrentShipDesignManager::IsPartObsolete(const std::string& part) const
+    { return m_obsolete_parts.count(part); }
 
     void CurrentShipDesignManager::SetObsolete(const int id, const bool obsolete) {
         auto it = m_id_to_obsolete_and_loc.find(id);
@@ -816,22 +815,22 @@ namespace {
         it->second.first = boost::none;
     }
 
-    void CurrentShipDesignManager::SetHullObsolete(const std::string& id, const bool obsolete) {
-        auto it = m_hull_to_obsolete_and_loc.find(id);
+    void CurrentShipDesignManager::SetHullObsolete(const std::string& name, const bool obsolete) {
+        auto it = m_hull_to_obsolete_and_loc.find(name);
         if (it == m_hull_to_obsolete_and_loc.end()) {
             // All hulls should be known so tack it on the end and try again.
-            ErrorLogger() << "Hull " << id << " is missing in CurrentShipDesignManager.  Adding...";
-            InsertHullBefore(id);
-            return SetHullObsolete(id, obsolete);
+            ErrorLogger() << "Hull " << name << " is missing in CurrentShipDesignManager.  Adding...";
+            InsertHullBefore(name);
+            return SetHullObsolete(name, obsolete);
         }
         it->second.first = obsolete;
     }
 
-    void CurrentShipDesignManager::SetPartObsolete(const std::string& id, const bool obsolete) {
+    void CurrentShipDesignManager::SetPartObsolete(const std::string& name, const bool obsolete) {
         if (obsolete)
-            m_obsolete_parts.insert(id);
+            m_obsolete_parts.insert(name);
         else
-            m_obsolete_parts.erase(id);
+            m_obsolete_parts.erase(name);
     }
 
     void CurrentShipDesignManager::Load(
@@ -971,15 +970,14 @@ namespace {
         }
     }
 
-    void AvailabilityManager::ToggleAvailability(const Availability::Enum type) {
-        SetAvailability(type, !GetAvailability(type));
-    }
+    void AvailabilityManager::ToggleAvailability(const Availability::Enum type)
+    { SetAvailability(type, !GetAvailability(type)); }
 
     boost::optional<Availability::Enum> AvailabilityManager::DisplayedDesignAvailability(
         int id) const
     {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        const Empire* empire = GetEmpire(empire_id);  // may be 0
+        const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->ShipDesignAvailable(id) : true;
 
         const auto& manager = GetCurrentDesignsManager();
@@ -993,7 +991,7 @@ namespace {
         const std::string& id) const
     {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        const Empire* empire = GetEmpire(empire_id);  // may be 0
+        const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->ShipHullAvailable(id) : true;
 
         const auto& manager = GetCurrentDesignsManager();
@@ -1006,7 +1004,7 @@ namespace {
         const std::string& id) const
     {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        const Empire* empire = GetEmpire(empire_id);  // may be 0
+        const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->ShipPartAvailable(id) : true;
 
         const auto& manager = GetCurrentDesignsManager();
@@ -1033,7 +1031,7 @@ namespace {
         if (showing_obsolete && obsolete && !showing_available && !showing_future)
             return Availability::Obsolete;
 
-
+        // Available and future are non-overlapping.
         if (showing_available && available && !obsolete)
             return Availability::Available;
 
@@ -1401,7 +1399,7 @@ void PartsListBox::AcceptDrops(const GG::Pt& pt,
         return;
 
     if (wnds.empty())
-        return ;
+        return;
 
     const PartControl* control = boost::polymorphic_downcast<const PartControl*>(wnds.begin()->get());
     const PartType* part_type = control ? control->Part() : nullptr;
@@ -1560,7 +1558,7 @@ void PartsListBox::Populate() {
     const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = GetEmpire(empire_id);  // may be 0
+    const Empire* empire = GetEmpire(empire_id);  // may be nullptr
 
     int cur_col = NUM_COLUMNS;
     std::shared_ptr<PartsListBoxRow> cur_row;
@@ -2844,7 +2842,7 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt
 
 
 void EmptyHullsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                               const GG::Flags<GG::ModKey>& modkeys)
+                                         const GG::Flags<GG::ModKey>& modkeys)
 {
     HullAndPartsListBoxRow* hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hull_parts_row)
