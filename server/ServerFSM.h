@@ -308,6 +308,12 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     sc::result react(const AuthResponse& msg);
     sc::result react(const Error& msg);
 
+    void EstablishPlayer(const PlayerConnectionPtr& player_connection,
+                         const std::string& player_name,
+                         Networking::ClientType client_type,
+                         const std::string& client_version_string,
+                         const Networking::AuthRoles& roles);
+
     SERVER_ACCESSOR
 };
 
