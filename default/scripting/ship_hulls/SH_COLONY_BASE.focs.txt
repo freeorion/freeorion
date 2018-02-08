@@ -6,7 +6,7 @@ Hull
     stealth = 5
     structure = 2
     slots = Slot type = Internal position = (0.50, 0.50)
-    buildCost = 1
+    buildCost = 3
     buildTime = 3
     tags = [ "PEDIA_HULL_LINE_GENERIC" ]
     location = OwnedBy empire = Source.Owner
