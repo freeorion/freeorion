@@ -49,7 +49,6 @@ from collections import Counter, defaultdict
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
 import AIDependencies
-import AIstate
 import CombatRatingsAI
 import FleetUtilsAI
 from AIDependencies import INVALID_ID
