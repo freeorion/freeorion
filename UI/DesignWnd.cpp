@@ -1555,6 +1555,7 @@ void PartsListBox::Populate() {
 
     int cur_col = NUM_COLUMNS;
     std::shared_ptr<PartsListBoxRow> cur_row;
+    int num_parts = 0;
 
     // remove parts currently in rows of listbox
     Clear();
@@ -1622,6 +1623,7 @@ void PartsListBox::Populate() {
                     TOTAL_WIDTH, SLOT_CONTROL_HEIGHT + GG::Y(PAD), m_availabilities_state);
             }
             ++cur_col;
+            ++num_parts;
 
             // make new part control and add to row
             auto control = GG::Wnd::Create<PartControl>(part);
@@ -1645,6 +1647,13 @@ void PartsListBox::Populate() {
 
     // keep track of how many columns are present now
     m_previous_num_columns = NUM_COLUMNS;
+
+    // If there are no parts add a prompt to suggest a solution.
+    if (num_parts == 0)
+        Insert(GG::Wnd::Create<PromptRow>(TOTAL_WIDTH,
+                                          UserString("ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT")),
+               begin(), false);
+
 }
 
 void PartsListBox::ShowClass(ShipPartClass part_class, bool refresh_list) {
