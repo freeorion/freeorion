@@ -1016,6 +1016,7 @@ namespace {
     boost::optional<Availability::Enum> AvailabilityManager::DisplayedXAvailability(
         bool available, bool obsolete) const
     {
+        // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
         const bool showing_obsolete = std::get<Availability::Obsolete>(m_availabilities);
         const bool showing_available = std::get<Availability::Available>(m_availabilities);
         const bool showing_future = std::get<Availability::Future>(m_availabilities);
@@ -1805,6 +1806,7 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     }
 
     // availability buttons
+    // TODO: C++17, Collect and replace with structured binding auto [a, b, c] = m_availabilities;
     auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
     m_obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_obsolete_button);
@@ -1935,6 +1937,7 @@ void DesignWnd::PartPalette::DoLayout() {
         };
 
     //place availability buttons
+    // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
     auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
     auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
     auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
@@ -3188,6 +3191,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
 {}
 
 void DesignWnd::BaseSelector::CompleteConstruction() {
+    // TODO: C++17, Collect and replace with structured binding auto [a, b, c] = m_availabilities;
     auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
     m_obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_obsolete_button);
@@ -3335,6 +3339,7 @@ void DesignWnd::BaseSelector::DoLayout() {
     GG::Y top(TOP_PAD);
     GG::X left(LEFT_PAD);
 
+    // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
     auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
     auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
     auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
