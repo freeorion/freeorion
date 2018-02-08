@@ -7,7 +7,6 @@ import FreeOrionAI as foAI
 import AIDependencies as Dep
 import AIstate
 import ColonisationAI
-import ProductionAI
 import ShipDesignAI
 import TechsListsAI
 from turn_state import state
