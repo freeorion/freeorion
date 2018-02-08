@@ -173,6 +173,16 @@ void QueueListBox::Clear() {
     DragDropLeave();
 }
 
+void QueueListBox::SetEmptyPromptText(const std::string prompt) {
+    if (m_prompt_str == prompt)
+        return;
+
+    m_prompt_str = prompt;
+
+    if (m_showing_prompt)
+        ShowPromptSlot();
+}
+
 std::function<void()> QueueListBox::MoveToTopAction(GG::ListBox::iterator it) {
     return [it, this]() {
         ListBox::Insert(*it, begin(), true);
