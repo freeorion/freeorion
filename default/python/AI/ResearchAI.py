@@ -1059,8 +1059,8 @@ def generate_classic_research_orders():
             continue
         old_designs = ShipDesignAI.WarShipDesigner().optimize_design(consider_fleet_count=False)
         new_designs = ShipDesignAI.WarShipDesigner().optimize_design(additional_hulls=unlocked_hulls,
-                                                                          additional_parts=unlocked_parts,
-                                                                          consider_fleet_count=False)
+                                                                     additional_parts=unlocked_parts,
+                                                                     consider_fleet_count=False)
         if not (old_designs and new_designs):
             # AI is likely defeated; don't bother with logging error message
             continue
