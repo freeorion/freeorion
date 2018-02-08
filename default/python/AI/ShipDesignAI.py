@@ -2315,7 +2315,7 @@ def recursive_dict_diff(dict_new, dict_old, dict_diff, diff_level_threshold=0):
     NO_DIFF = 9999
     min_diff_level = NO_DIFF
     for key, value in dict_new.iteritems():
-        if not key in dict_old:
+        if key not in dict_old:
             dict_diff[key] = copy.deepcopy(value)
             min_diff_level = 0
         elif isinstance(value, dict):
@@ -2323,7 +2323,7 @@ def recursive_dict_diff(dict_new, dict_old, dict_diff, diff_level_threshold=0):
             min_diff_level = min(min_diff_level, this_diff_level)
             if this_diff_level > NO_DIFF and min_diff_level > diff_level_threshold:
                 del dict_diff[key]
-        elif not key in dict_old or value != dict_old[key]:
+        elif key not in dict_old or value != dict_old[key]:
                 dict_diff[key] = copy.deepcopy(value)
                 min_diff_level = 0
     return min_diff_level
