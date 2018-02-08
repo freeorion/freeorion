@@ -911,6 +911,7 @@ namespace {
 
         AvailabilityManager(bool obsolete, bool available, bool unavailable);
 
+        const DisplayedAvailabilty& GetAvailabilities() const { return m_availabilities; };
         bool GetAvailability(const Availability::Enum type) const;
         void SetAvailability(const Availability::Enum type, const bool state);
         void ToggleAvailability(const Availability::Enum type);
@@ -2182,6 +2183,9 @@ protected:
     /** An implementation of BasesListBox provides a PopulateCore to fill itself.*/
     virtual void PopulateCore() = 0;
 
+    /** Reset the empty list prompt. */
+    virtual void ResetEmptyListPrompt();
+
     /** If \p wnd is a valid dragged child return a replacement row.  Otherwise return nullptr. */
     virtual std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) = 0;
 
@@ -2414,6 +2418,12 @@ void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
 void BasesListBox::Populate() {
     DebugLogger() << "BasesListBox::Populate";
 
+    // Provide conditional reminder text when the list is empty
+    if (AvailabilityState().GetAvailabilities() == AvailabilityManager::DisplayedAvailabilty(false, false, false))
+        SetEmptyPromptText(UserString("ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT"));
+    else
+        this->ResetEmptyListPrompt();
+
     // make note of first visible row to preserve state
     auto init_first_row_shown = FirstRowShown();
     std::size_t init_first_row_offset = std::distance(begin(), init_first_row_shown);
@@ -2426,6 +2436,7 @@ void BasesListBox::Populate() {
         BringRowIntoView(--end());
     if (init_first_row_offset < NumRows())
         BringRowIntoView(std::next(begin(), init_first_row_offset));
+
 }
 
 GG::Pt BasesListBox::ListRowSize()
@@ -2449,7 +2460,7 @@ class EmptyHullsListBox : public BasesListBox {
     public:
     EmptyHullsListBox(const AvailabilityManager& availabilities_state,
                       const boost::optional<std::string>& drop_type = boost::none) :
-        BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ADD_FIRST_DESIGN_HULL_QUEUE_PROMPT"))
+        BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT"))
     {};
 
     void EnableOrderIssuing(bool enable = true) override;
@@ -2475,6 +2486,7 @@ class CompletedDesignsListBox : public BasesListBox {
 
     protected:
     void PopulateCore() override;
+    void ResetEmptyListPrompt() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
     void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
 
@@ -2505,6 +2517,7 @@ class SavedDesignsListBox : public BasesListBox {
 
     protected:
     void PopulateCore() override;
+    void ResetEmptyListPrompt() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
     void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
 
@@ -2638,6 +2651,26 @@ void MonstersListBox::PopulateCore() {
         Insert(row);
         row->Resize(row_size);
     }
+}
+
+
+void BasesListBox::ResetEmptyListPrompt() {
+    SetEmptyPromptText(UserString("ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT"));
+}
+
+void CompletedDesignsListBox::ResetEmptyListPrompt() {
+    if (!GetOptionsDB().Get<bool>("resource.shipdesign.saved.enabled")
+        && !GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled"))
+    {
+        SetEmptyPromptText(UserString("NO_SAVED_OR_DEFAULT_DESIGNS_ADDED_PROMPT"));
+    } else {
+        SetEmptyPromptText(UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT"));
+    }
+
+}
+
+void SavedDesignsListBox::ResetEmptyListPrompt() {
+    SetEmptyPromptText(UserString("ADD_FIRST_SAVED_DESIGN_QUEUE_PROMPT"));
 }
 
 
