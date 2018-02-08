@@ -2418,6 +2418,8 @@ void BasesListBox::Populate() {
     auto init_first_row_shown = FirstRowShown();
     std::size_t init_first_row_offset = std::distance(begin(), init_first_row_shown);
 
+    Clear();
+
     this->PopulateCore();
 
     if (!Empty())
@@ -2534,8 +2536,6 @@ void EmptyHullsListBox::PopulateCore() {
 
     const GG::Pt row_size = ListRowSize();
 
-    Clear();
-
     const auto& manager = GetCurrentDesignsManager();
 
     for (const auto& hull_name : manager.OrderedHulls()) {
@@ -2564,8 +2564,6 @@ void CompletedDesignsListBox::PopulateCore() {
 
     DebugLogger() << "CompletedDesignsListBox::PopulateCore for empire " << EmpireID();
 
-    // remove preexisting rows
-    Clear();
     const GG::Pt row_size = ListRowSize();
 
     if (const auto empire = GetEmpire(EmpireID())) {
@@ -2607,8 +2605,6 @@ void SavedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesigns::PopulateCore");
     DebugLogger() << "CompletedDesigns::PopulateCore";
 
-    // remove preexisting rows
-    Clear();
     const GG::Pt row_size = ListRowSize();
 
     for (const auto& uuid : GetSavedDesignsManager().OrderedDesignUUIDs()) {
@@ -2629,8 +2625,6 @@ void MonstersListBox::PopulateCore() {
 
     const Universe& universe = GetUniverse();
 
-    // remove preexisting rows
-    Clear();
     const GG::Pt row_size = ListRowSize();
 
     for (auto it = universe.beginShipDesigns();
