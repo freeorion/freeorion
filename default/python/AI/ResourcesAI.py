@@ -479,7 +479,7 @@ def set_planet_production_and_research_specials(focus_manager):
     already_have_comp_moon = False
     for pid, pinfo in focus_manager.raw_planet_info.items():
         planet = pinfo.planet
-        if (AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials and 
+        if (AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials and
                 RESEARCH in planet.availableFoci and not already_have_comp_moon):
             if focus_manager.bake_future_focus(pid, RESEARCH):
                 already_have_comp_moon = True

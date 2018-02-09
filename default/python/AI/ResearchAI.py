@@ -1,20 +1,20 @@
-from functools import partial
 import math
 import random
+from functools import partial
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-import FreeOrionAI as foAI
+from common.configure_logging import convenience_function_references_for_logger
+from common.print_utils import print_in_columns
+
 import AIDependencies as Dep
 import AIstate
 import ColonisationAI
-import ProductionAI
+import FreeOrionAI as foAI
 import ShipDesignAI
 import TechsListsAI
+from freeorion_tools import chat_human, get_ai_tag_grade, tech_is_complete
 from turn_state import state
-from freeorion_tools import tech_is_complete, get_ai_tag_grade, chat_human
-from common.print_utils import print_in_columns
 
-from common.configure_logging import convenience_function_references_for_logger
 (debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 inProgressTechs = {}
@@ -716,7 +716,7 @@ def generate_classic_research_orders():
             def_techs = TechsListsAI.defense_techs_1()
             for def_tech in def_techs:
                 if (foAI.foAIstate.character.may_research_tech_classic(def_tech)
-                    and def_tech not in research_queue_list[:5] and not tech_is_complete(def_tech)):
+                        and def_tech not in research_queue_list[:5] and not tech_is_complete(def_tech)):
                     res = fo.issueEnqueueTechOrder(def_tech, min(3, len(research_queue_list)))
                     print "Empire is very defensive, so attempted to fast-track %s, got result %d" % (def_tech, res)
         if False:  # with current stats of Conc Camps, disabling this fast-track
@@ -729,7 +729,7 @@ def generate_classic_research_orders():
                 insert_idx = min(insert_idx, research_queue_list.index("SHP_DEFLECTOR_SHIELD"))
             for cc_tech in ["CON_ARCH_PSYCH", "CON_CONC_CAMP"]:
                 if (cc_tech not in research_queue_list[:insert_idx + 1] and not tech_is_complete(cc_tech)
-                    and foAI.foAIstate.character.may_research_tech_classic(cc_tech)):
+                        and foAI.foAIstate.character.may_research_tech_classic(cc_tech)):
                     res = fo.issueEnqueueTechOrder(cc_tech, insert_idx)
                     msg = "Empire is very aggressive, so attempted to fast-track %s, got result %d" % (cc_tech, res)
                     if report_adjustments:
@@ -842,7 +842,7 @@ def generate_classic_research_orders():
     # check to accelerate xeno_arch
     if True:  # just to help with cold-folding /  organization
         if (state.have_ruins and not tech_is_complete("LRN_XENOARCH")
-            and foAI.foAIstate.character.may_research_tech_classic("LRN_XENOARCH")):
+                and foAI.foAIstate.character.may_research_tech_classic("LRN_XENOARCH")):
             if artif_minds in research_queue_list:
                 insert_idx = 7 + research_queue_list.index(artif_minds)
             elif "GRO_SYMBIOTIC_BIO" in research_queue_list:
@@ -948,8 +948,8 @@ def generate_classic_research_orders():
             if most_adequate == 0:
                 insert_idx = num_techs_accelerated
                 for xg_tech in ["GRO_XENO_GENETICS", "GRO_GENETIC_ENG"]:
-                    if (xg_tech not in research_queue_list[:1+num_techs_accelerated] and not tech_is_complete(xg_tech)
-                        and foAI.foAIstate.character.may_research_tech_classic(xg_tech)):
+                    if (xg_tech not in research_queue_list[:1 + num_techs_accelerated] and not tech_is_complete(xg_tech)
+                            and foAI.foAIstate.character.may_research_tech_classic(xg_tech)):
                         res = fo.issueEnqueueTechOrder(xg_tech, insert_idx)
                         num_techs_accelerated += 1
                         msg = "Empire has poor colonizers, so attempted to fast-track %s, got result %d" % (xg_tech, res)
@@ -972,7 +972,7 @@ def generate_classic_research_orders():
                 insert_idx = num_techs_accelerated
                 for dt_ech in ["LRN_PHYS_BRAIN", "LRN_TRANSLING_THT", "LRN_PSIONICS", "LRN_DISTRIB_THOUGHT"]:
                     if (dt_ech not in research_queue_list[:insert_idx + 2] and not tech_is_complete(dt_ech)
-                        and foAI.foAIstate.character.may_research_tech_classic(dt_ech)):
+                            and foAI.foAIstate.character.may_research_tech_classic(dt_ech)):
                         res = fo.issueEnqueueTechOrder(dt_ech, insert_idx)
                         num_techs_accelerated += 1
                         insert_idx += 1
@@ -1059,8 +1059,8 @@ def generate_classic_research_orders():
             continue
         old_designs = ShipDesignAI.WarShipDesigner().optimize_design(consider_fleet_count=False)
         new_designs = ShipDesignAI.WarShipDesigner().optimize_design(additional_hulls=unlocked_hulls,
-                                                                          additional_parts=unlocked_parts,
-                                                                          consider_fleet_count=False)
+                                                                     additional_parts=unlocked_parts,
+                                                                     consider_fleet_count=False)
         if not (old_designs and new_designs):
             # AI is likely defeated; don't bother with logging error message
             continue

@@ -323,7 +323,7 @@ class Aggression(Trait):
 
     def max_number_colonies(self):
         # significant growth barrier for low aggression, negligible for high aggression
-        #TODO: consider further changes, including a dependency on galaxy size and planet density
+        # TODO: consider further changes, including a dependency on galaxy size and planet density
         return 2 + ((0.5 + 1.4*self.aggression) ** 2) * fo.currentTurn() / 50.0
 
     def may_invade(self):

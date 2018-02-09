@@ -49,7 +49,6 @@ from collections import Counter, defaultdict
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
 import AIDependencies
-import AIstate
 import CombatRatingsAI
 import FleetUtilsAI
 from AIDependencies import INVALID_ID
@@ -101,6 +100,10 @@ _raised_warnings = set()
 # string constants for better readability of the cache
 WITH_UPKEEP = "considering fleet upkeep"
 WITHOUT_UPKEEP = "not considering fleet upkeep"
+
+
+def _get_capacity(x):
+    return x.capacity
 
 
 class ShipDesignCache(object):
@@ -1667,14 +1670,13 @@ class WarShipDesigner(MilitaryShipDesignerBaseClass):
         parts = [get_part_type(part) for part in available_parts]
         weapons = [part for part in parts if part.partClass in WEAPONS]
         armours = [part for part in parts if part.partClass in ARMOUR]
-        cap = lambda x: x.capacity
         if weapons:
             weapon_part = max(weapons, key=self._calculate_weapon_strength)
             weapon = weapon_part.name
             idxweapon = available_parts.index(weapon)
             cw = Cache.production_cost[self.pid].get(weapon, weapon_part.productionCost(fo.empireID(), self.pid))
             if armours:
-                armour_part = max(armours, key=cap)
+                armour_part = max(armours, key=_get_capacity)
                 armour = armour_part.name
                 idxarmour = available_parts.index(armour)
                 a = get_part_type(armour).capacity
@@ -1813,8 +1815,7 @@ class TroopShipDesignerBaseClass(ShipDesigner):
         troop_pods = [get_part_type(part) for part in available_parts if get_part_type(part).partClass in TROOPS]
         ret_val = (len(available_parts)+1)*[0]
         if troop_pods:
-            cap = lambda x: x.capacity
-            biggest_troop_pod = max(troop_pods, key=cap).name
+            biggest_troop_pod = max(troop_pods, key=_get_capacity).name
             try:  # we could use an if-check here but since we usually have troop pods for the slot, try is faster
                 idx = available_parts.index(biggest_troop_pod)
             except ValueError:
@@ -2314,7 +2315,7 @@ def recursive_dict_diff(dict_new, dict_old, dict_diff, diff_level_threshold=0):
     NO_DIFF = 9999
     min_diff_level = NO_DIFF
     for key, value in dict_new.iteritems():
-        if not key in dict_old:
+        if key not in dict_old:
             dict_diff[key] = copy.deepcopy(value)
             min_diff_level = 0
         elif isinstance(value, dict):
@@ -2322,7 +2323,7 @@ def recursive_dict_diff(dict_new, dict_old, dict_diff, diff_level_threshold=0):
             min_diff_level = min(min_diff_level, this_diff_level)
             if this_diff_level > NO_DIFF and min_diff_level > diff_level_threshold:
                 del dict_diff[key]
-        elif not key in dict_old or value != dict_old[key]:
+        elif key not in dict_old or value != dict_old[key]:
                 dict_diff[key] = copy.deepcopy(value)
                 min_diff_level = 0
     return min_diff_level
