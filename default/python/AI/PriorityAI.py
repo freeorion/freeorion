@@ -238,10 +238,11 @@ def _calculate_colonisation_priority():
     # allottedColonyTargets = 1+ int(fo.currentTurn()/50)
     allottedColonyTargets = 1 + int(total_pp * turns_to_build * allotted_portion / colony_cost)
     outpost_prio = foAI.foAIstate.get_priority(PriorityType.PRODUCTION_OUTPOST)
-    # if have any outposts to build, don't build colony ships TODO: make more complex assessment
-    if outpost_prio > 0 or num_colonies > colony_growth_barrier:
-        return 0.0
 
+
+    # if not a purely SP_SLY empire, and have any outposts to build, don't build colony ships TODO: make more complex assessment
+    if outpost_prio > 0 and list(ColonisationAI.empire_colonizers) != ["SP_SLY"]:
+        return 0.0
     if num_colonies > colony_growth_barrier:
         return 0.0
     num_colonisable_planet_ids = len([pid for (pid, (score, _)) in foAI.foAIstate.colonisablePlanetIDs.items()
@@ -299,6 +300,11 @@ def _calculate_outpost_priority():
     outpost_ship_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST)
     num_outpost_ships = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(outpost_ship_ids))
     outpost_priority = (50.0 * (num_outpost_targets - num_outpost_ships)) / num_outpost_targets
+
+    # discourage early outposting for SP_SLY, due to supply and stealth considerations they are best off
+    # using colony ships until they have other colonizers (and more established military)
+    if list(ColonisationAI.empire_colonizers) == ["SP_SLY"]:
+        outpost_priority /= 3.0
 
     # print
     # print "Number of Outpost Ships : " + str(num_outpost_ships)

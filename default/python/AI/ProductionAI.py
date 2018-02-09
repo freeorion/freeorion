@@ -229,9 +229,11 @@ def generate_production_orders():
             claimed_stars.setdefault(t_sys.starType, []).append(sys_id)
 
     if current_turn == 1 and len(AIstate.opponentPlanetIDs) == 0 and len(production_queue) == 0:
-        init_build_nums = [(PriorityType.PRODUCTION_EXPLORATION, 2),
-                           (PriorityType.PRODUCTION_OUTPOST, 1),
-                           ]
+        init_build_nums = [(PriorityType.PRODUCTION_EXPLORATION, 2)]
+        if list(ColonisationAI.empire_colonizers) == ["SP_SLY"]:
+            init_build_nums.append((PriorityType.PRODUCTION_COLONISATION, 1))
+        else:
+            init_build_nums.append((PriorityType.PRODUCTION_OUTPOST, 1))
         for ship_type, num_ships in init_build_nums:
             best_design_id, _, build_choices = get_best_ship_info(ship_type)
             if best_design_id is not None:
@@ -656,7 +658,7 @@ def generate_production_orders():
                         other_planet = universe.getPlanet(opid)
                         if other_planet.size == fo.planetSize.gasGiant:
                             gg_list.append(opid)
-                        if opid != pid and other_planet.owner == empire.empireID and (FocusType.FOCUS_INDUSTRY in list(other_planet.availableFoci) + [other_planet.focus]):
+                        if other_planet.owner == empire.empireID and (FocusType.FOCUS_INDUSTRY in list(other_planet.availableFoci) + [other_planet.focus]):
                             can_use_gg = True
                     if pid in sorted(gg_list)[:max_gggs] and can_use_gg:
                         res = fo.issueEnqueueBuildingProductionOrder(building_name, pid)
