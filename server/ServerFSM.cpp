@@ -281,6 +281,39 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     }
 }
 
+void ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
+                                const std::string& player_name,
+                                Networking::ClientType client_type,
+                                const std::string& client_version_string)
+{
+    // assign unique player ID to newly connected player
+    int player_id = m_server.m_networking.NewPlayerID();
+    DebugLogger() << "ServerFSM.EstablishPlayer Assign new player id " << player_id;
+
+    // establish player with requested client type and acknowldge via connection
+    player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
+    player_connection->SendMessage(JoinAckMessage(player_id));
+    if (!GetOptionsDB().Get<bool>("skip-checksum"))
+        player_connection->SendMessage(ContentCheckSumMessage());
+
+    // inform player of host
+    player_connection->SendMessage(HostIDMessage(m_server.m_networking.HostPlayerID()));
+
+    // send chat history
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
+        client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+        client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+    {
+        std::vector<std::reference_wrapper<const ChatHistoryEntity>> chat_history;
+        for (const auto& elem : m_server.GetChatHistory()) {
+            chat_history.push_back(std::cref(elem));
+        }
+        if (chat_history.size() > 0) {
+            player_connection->SendMessage(ChatHistoryMessage(chat_history));
+        }
+    }
+}
+
 ////////////////////////////////////////////////////////////
 // Idle
 ////////////////////////////////////////////////////////////
@@ -1688,6 +1721,9 @@ WaitingForMPGameJoiners::~WaitingForMPGameJoiners()
 sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     TraceLogger(FSM) << "(ServerFSM) WaitingForMPGameJoiners.JoinGame";
     ServerApp& server = Server();
+    // due disconnection could cause `delete this` in transition
+    // to MPLobby or ShuttingDownServer gets context before disconnection
+    ServerFSM& fsm = context<ServerFSM>();
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
@@ -1695,8 +1731,6 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
     std::string client_version_string;
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
-
-    int player_id = server.m_networking.NewPlayerID();
 
     // is this an AI?
     if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -1708,6 +1742,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
         } else {
             // expected player
             // let the networking system know what socket this player is on
+            int player_id = server.m_networking.NewPlayerID();
             player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
             player_connection->SendMessage(JoinAckMessage(player_id));
 
@@ -1781,12 +1816,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
                 return discard_event();
             }
 
-            player_name = new_player_name;
-
-            // expected human player
-            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
-            player_connection->SetAuthRoles(roles);
-            player_connection->SendMessage(JoinAckMessage(player_id));
+            fsm.EstablishPlayer(player_connection, new_player_name, client_type, client_version_string);
         }
     } else {
         ErrorLogger(FSM) << "WaitingForMPGameJoiners::react(const JoinGame& msg): Received JoinGame message with invalid client type: " << client_type;
@@ -1804,6 +1834,9 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
 sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
     TraceLogger(FSM) << "(ServerFSM) WaitingForMPGameJoiners.AuthResponse";
     ServerApp& server = Server();
+    // due disconnection could cause `delete this` in transition
+    // to MPLobby or ShuttingDownServer gets context before disconnection
+    ServerFSM& fsm = context<ServerFSM>();
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
@@ -1853,10 +1886,7 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
                 return discard_event();
             }
 
-            int player_id = server.m_networking.NewPlayerID();
-            player_connection->EstablishPlayer(player_id, player_name, client_type, player_connection->ClientVersionString());
-            player_connection->SetAuthRoles(roles);
-            player_connection->SendMessage(JoinAckMessage(player_id));
+            fsm.EstablishPlayer(player_connection, player_name, client_type, player_connection->ClientVersionString());
         }
     } else {
         // non-human player
@@ -2036,7 +2066,9 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                                   const Networking::AuthRoles& roles)
 {
     ServerApp& server = Server();
-
+    // due disconnection could cause `delete this` in transition
+    // to MPLobby or ShuttingDownServer gets context before disconnection
+    ServerFSM& fsm = context<ServerFSM>();
 
     player_connection->SetAuthRoles(roles);
 
@@ -2077,32 +2109,7 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         { server.Networking().Disconnect(conn); }
     }
 
-    // assign unique player ID to newly connected player
-    int player_id = server.m_networking.NewPlayerID();
-    DebugLogger() << "PlayingGame.AuthResponse Assign new player id " << player_id;
-
-    // establish player with requested client type and acknowldge via connection
-    player_connection->EstablishPlayer(player_id, player_name, client_type, player_connection->ClientVersionString());
-    player_connection->SendMessage(JoinAckMessage(player_id));
-    if (!GetOptionsDB().Get<bool>("skip-checksum"))
-        player_connection->SendMessage(ContentCheckSumMessage());
-
-    // inform player of host
-    player_connection->SendMessage(HostIDMessage(server.m_networking.HostPlayerID()));
-
-    // send chat history
-    if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
-        client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-        client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
-    {
-        std::vector<std::reference_wrapper<const ChatHistoryEntity>> chat_history;
-        for (const auto& elem : server.GetChatHistory()) {
-            chat_history.push_back(std::cref(elem));
-        }
-        if (chat_history.size() > 0) {
-            player_connection->SendMessage(ChatHistoryMessage(chat_history));
-        }
-    }
+    fsm.EstablishPlayer(player_connection, player_name, client_type, player_connection->ClientVersionString());
 
     // send playing game
     server.AddObserverPlayerIntoGame(player_connection);

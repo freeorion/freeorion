@@ -129,6 +129,10 @@ struct ServerFSM : sc::state_machine<ServerFSM, Idle> {
     void unconsumed_event(const sc::event_base &event);
     ServerApp& Server();
     void HandleNonLobbyDisconnection(const Disconnection& d);
+    void EstablishPlayer(const PlayerConnectionPtr& player_connection,
+                         const std::string& player_name,
+                         Networking::ClientType client_type,
+                         const std::string& client_version_string);
 
     std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
     std::shared_ptr<SinglePlayerSetupData>  m_single_player_setup_data;
