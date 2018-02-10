@@ -3992,7 +3992,7 @@ It also allows for some interaction with the [[encyclopedia MAP_WINDOW_ARTICLE_T
 The Production Summary panel shows available Production Points.
 If a system is selected, there are two columns shown. The left column shows production points across your entire empire. The right column gives production points for the selected system (but is absent if no system is selected).
 Available Points relates to the PP available for production. The right value are the maximum available production points for the selected system. This may be less than the total available when all of your empire's systems are not [[metertype METER_SUPPLY]] connected.
-Stockpile relates to the PP available for production using the imperial stockpile. Production items specifically need to be enabled to draw from the stockpile.
+Stockpile relates to the PP available for production using the imperial stockpile. Production items are enabled to draw from the Imperial Stockpile by default and have to be explicitly disabled from doing so.
 Generally, most excess PP will be wasted and lost, but a part of the excess will be stored in the imperial stockpile.
 
 <u>Producible Items panel</u>
@@ -10375,7 +10375,7 @@ The imperial stockpile service has a fleet for distributing raw materials to pla
 This task is difficult as the service has to predict when demand happens, where it happens, what materials and goods are demanded and also who the users will be.
 
 A portion of unused PP will be transferred to the Imperial Production Stockpile, the other part going to waste.
-An item on the production queue can draw on the Imperial Stockpile if the item has been explicitly enabled for doing so.
+An item on the production queue draws automatically on the Imperial Stockpile if the item has not been explicitly disabled from doing so.
 
 This is the basic technology for the imperial stockpile, which increases the [[metertype METER_STOCKPILE]] of stockpile-focused by 1.'''
 
