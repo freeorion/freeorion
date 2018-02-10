@@ -178,7 +178,7 @@ namespace {
     class CurrentShipDesignManager : public ShipDesignManager::Designs {
         public:
         CurrentShipDesignManager() :
-            m_ordered_ids()
+            m_ordered_design_ids()
         {}
 
         /** Return non-obsolete available ordered ids. */
@@ -187,6 +187,9 @@ namespace {
         /** Return all ids including obsoleted designs. */
         std::vector<int> AllOrderedIDs() const;
 
+        /** Return non-obsolete available hulls. */
+        std::vector<std::string> OrderedHulls() const;
+
         template <typename T>
         void InsertOrderedIDs(const T& new_order);
 
@@ -194,21 +197,46 @@ namespace {
         bool MoveBefore(const int moved_id, const int next_id);
         void Remove(const int id);
 
+        void InsertHullBefore(const std::string& id, const std::string& next_id = "");
+
         bool IsKnown(const int id) const;
 
-        /** Return true is \p id is obsolete or boost::none if \p is not in the manager. */
+        /** Return true if \p id is obsolete or boost::none if \p is not in the manager. */
         boost::optional<bool> IsObsolete(const int id) const;
-        /** If \id is in manager, set \p id's obsolescence to \p obsolete. */
-        void SetObsolete(const int id, const bool obsolete);
+        /** Return true if \p hull is obsolete. */
+        bool IsHullObsolete(const std::string& hull) const;
+        /** Return true if \p part is obsolete. */
+        bool IsPartObsolete(const std::string& part) const;
 
-        void Load(const std::vector<std::pair<int, bool>>& ids_and_obsoletes);
-        std::vector<std::pair<int, bool>> Save() const;
+        /** If \p id is in manager, set \p id's obsolescence to \p obsolete. */
+        void SetObsolete(const int id, const bool obsolete);
+        /** Set \p hull's obsolescence to \p obsolete. */
+        void SetHullObsolete(const std::string& hull, const bool obsolete);
+        /** Set \p part's obsolescence to \p obsolete. */
+        void SetPartObsolete(const std::string& part, const bool obsolete);
+
+        void Load(const std::vector<std::pair<int, boost::optional<bool>>>& design_ids_and_obsoletes,
+                  const std::vector<std::pair<std::string, bool>>& hulls_and_obsoletes,
+                  const std::unordered_set<std::string>& obsolete_parts);
+        /** Save modifies each of its parameters to store obsolete and
+            ordering data in the UI save data.*/
+        void Save(std::vector<std::pair<int, boost::optional<bool>>>& design_ids_and_obsoletes,
+                  std::vector<std::pair<std::string, bool>>& hulls_and_obsoletes,
+                  std::unordered_set<std::string>& obsolete_parts);
 
         private:
-        std::list<int> m_ordered_ids;
+        std::list<int> m_ordered_design_ids;
+        std::list<std::string> m_ordered_hulls;
 
-        // An index from the id to the obsolescence state and the location in the m_ordered_ids list.
-        std::unordered_map<int, std::pair<bool, std::list<int>::const_iterator>> m_id_to_obsolete_and_loc;
+        // An index from the id to the obsolescence state and the location in the
+        // m_ordered_design_ids list. For the state information (false, true, none)
+        // correspond to (not obsolete, obsolete and defer to parts and hull obsolescence)
+        std::unordered_map<int, std::pair<boost::optional<bool>, std::list<int>::const_iterator>> m_id_to_obsolete_and_loc;
+        // An index from the hull name to the obsolescence state and the location in the
+        // m_ordered_hull_ids list.
+        std::unordered_map<std::string, std::pair<bool, std::list<std::string>::const_iterator>> m_hull_to_obsolete_and_loc;
+        // A set of obsolete ship parts.
+        std::unordered_set<std::string> m_obsolete_parts;
     };
 
     class SavedDesignsManager : public ShipDesignManager::Designs {
@@ -604,16 +632,20 @@ namespace {
 
         // Remove all obsolete ids from the list
         std::vector<int> retval;
-        std::copy_if(m_ordered_ids.begin(), m_ordered_ids.end(), std::back_inserter(retval),
-                     [this](const int id){
-                         const auto it = m_id_to_obsolete_and_loc.find(id);
-                         return (it == m_id_to_obsolete_and_loc.end()) ? false : !it->second.first;
+        std::copy_if(m_ordered_design_ids.begin(), m_ordered_design_ids.end(), std::back_inserter(retval),
+                     [this](const int id) {
+                         const auto maybe_obsolete = IsObsolete(id);
+                         const auto known_and_not_obsolete = maybe_obsolete ? !*maybe_obsolete : false;
+                         return known_and_not_obsolete;
                      });
         return retval;
     }
 
     std::vector<int> CurrentShipDesignManager::AllOrderedIDs() const
-    { return std::vector<int>(m_ordered_ids.begin(), m_ordered_ids.end()); }
+    { return std::vector<int>(m_ordered_design_ids.begin(), m_ordered_design_ids.end()); }
+
+    std::vector<std::string> CurrentShipDesignManager::OrderedHulls() const
+    { return std::vector<std::string>(m_ordered_hulls.begin(), m_ordered_hulls.end()); }
 
     template <typename T>
     void CurrentShipDesignManager::InsertOrderedIDs(const T& new_order) {
@@ -624,12 +656,12 @@ namespace {
     void CurrentShipDesignManager::InsertBefore(const int id, const int next_id) {
         if (id == INVALID_DESIGN_ID) {
             ErrorLogger() << "Ship design is invalid";
-            return ;
+            return;
         }
 
         if (id == next_id) {
             ErrorLogger() << "Ship design " << id << " is the same as next_id";
-            return ;
+            return;
         }
 
         // if id already exists so this is a move.  Remove the old location
@@ -643,10 +675,10 @@ namespace {
         const auto next_it = m_id_to_obsolete_and_loc.find(next_id);
         bool is_valid_next_id = (next_id != INVALID_DESIGN_ID
                                  && next_it != m_id_to_obsolete_and_loc.end());
-        const auto insert_before_it = (is_valid_next_id ? next_it->second.second :m_ordered_ids.end());
-        const auto inserted_it = m_ordered_ids.insert(insert_before_it, id);
+        const auto insert_before_it = (is_valid_next_id ? next_it->second.second :m_ordered_design_ids.end());
+        const auto inserted_it = m_ordered_design_ids.insert(insert_before_it, id);
 
-        m_id_to_obsolete_and_loc[id] = std::make_pair(false, inserted_it);
+        m_id_to_obsolete_and_loc[id] = std::make_pair(boost::none, inserted_it);
     }
 
     bool CurrentShipDesignManager::MoveBefore(const int moved_id, const int next_id) {
@@ -659,13 +691,13 @@ namespace {
             return false;
         }
 
-        m_ordered_ids.erase(existing_it->second.second);
+        m_ordered_design_ids.erase(existing_it->second.second);
 
         const auto next_it = m_id_to_obsolete_and_loc.find(next_id);
         bool is_valid_next_id = (next_id != INVALID_DESIGN_ID
                                  && next_it != m_id_to_obsolete_and_loc.end());
-        const auto insert_before_it = (is_valid_next_id ? next_it->second.second :m_ordered_ids.end());
-        const auto inserted_it = m_ordered_ids.insert(insert_before_it, moved_id);
+        const auto insert_before_it = (is_valid_next_id ? next_it->second.second :m_ordered_design_ids.end());
+        const auto inserted_it = m_ordered_design_ids.insert(insert_before_it, moved_id);
 
         existing_it->second.second = inserted_it;
         return true;
@@ -676,53 +708,338 @@ namespace {
         if (it == m_id_to_obsolete_and_loc.end())
             return;
 
-        m_ordered_ids.erase(it->second.second);
+        m_ordered_design_ids.erase(it->second.second);
         m_id_to_obsolete_and_loc.erase(it);
+    }
+
+    void CurrentShipDesignManager::InsertHullBefore(const std::string& hull, const std::string& next_hull) {
+        if (hull.empty()) {
+            ErrorLogger() << "Hull name is empty()";
+            return;
+        }
+
+        if (hull == next_hull)
+            return;
+
+        // if hull already exists, this is a move.  Remove the old location
+        auto existing_it = m_hull_to_obsolete_and_loc.find(hull);
+        if (existing_it != m_hull_to_obsolete_and_loc.end()) {
+            m_ordered_hulls.erase(existing_it->second.second);
+            m_hull_to_obsolete_and_loc.erase(existing_it);
+        }
+
+        // Insert in the list, either before next_id or at the end of the list.
+        const auto next_it = (!next_hull.empty()
+                              ? m_hull_to_obsolete_and_loc.find(next_hull)
+                              : m_hull_to_obsolete_and_loc.end());
+        bool is_valid_next_hull = (!next_hull.empty()
+                                   && next_it != m_hull_to_obsolete_and_loc.end());
+        const auto insert_before_it = (is_valid_next_hull
+                                       ? next_it->second.second
+                                       : m_ordered_hulls.end());
+        const auto inserted_it = m_ordered_hulls.insert(insert_before_it, hull);
+
+        m_hull_to_obsolete_and_loc[hull] = std::make_pair(false, inserted_it);
     }
 
     bool CurrentShipDesignManager::IsKnown(const int id) const
     { return m_id_to_obsolete_and_loc.count(id); }
     
     boost::optional<bool> CurrentShipDesignManager::IsObsolete(const int id) const {
-        auto it = m_id_to_obsolete_and_loc.find(id);
-        if (it == m_id_to_obsolete_and_loc.end())
+        // A non boost::none value for a specific design overrides the hull and part values
+        auto it_id = m_id_to_obsolete_and_loc.find(id);
+
+        // Unknown design
+        if (it_id == m_id_to_obsolete_and_loc.end())
             return boost::none;
-        return it->second.first;
+
+        if (const auto is_obsolete_design = it_id->second.first)
+            return *is_obsolete_design;
+
+        const auto design = GetShipDesign(id);
+        if (!design) {
+            ErrorLogger() << "CurrentShipDesignManager::IsObsolete design id "
+                          << id << " is unknown to the server";
+            return boost::none;
+        }
+
+        if (IsHullObsolete(design->Hull()))
+            return true;
+
+        for (const auto& part: design->Parts()) {
+            if (IsPartObsolete(part))
+                return true;
+        }
+
+        // Default to false if the player has not obsoleted the design, its hull or its parts
+        return false;
     }
+
+    bool CurrentShipDesignManager::IsHullObsolete(const std::string& hull) const {
+        auto it_hull = m_hull_to_obsolete_and_loc.find(hull);
+        return (it_hull != m_hull_to_obsolete_and_loc.end() && it_hull->second.first);
+    }
+
+    bool CurrentShipDesignManager::IsPartObsolete(const std::string& part) const
+    { return m_obsolete_parts.count(part); }
 
     void CurrentShipDesignManager::SetObsolete(const int id, const bool obsolete) {
         auto it = m_id_to_obsolete_and_loc.find(id);
         if (it == m_id_to_obsolete_and_loc.end())
             return;
+
+        const auto design = GetShipDesign(id);
+        if (!design) {
+            ErrorLogger() << "CurrentShipDesignManager::SetObsolete design id "
+                          << id << " is unknown to the server.";
+
+            it->second.first = obsolete;
+            return;
+        }
+
+        // If the parts and hulls settings for obsolescence all agree with the new value,
+        // then set the design specific value to boost::none, meaning defer to parts
+
+        if (IsHullObsolete(design->Hull()) != obsolete) {
+            it->second.first = obsolete;
+            return;
+        }
+
+        for (const auto& part: design->Parts()) {
+            if (IsPartObsolete(part) != obsolete) {
+                it->second.first = obsolete;
+                return;
+            }
+        }
+
+        it->second.first = boost::none;
+    }
+
+    void CurrentShipDesignManager::SetHullObsolete(const std::string& name, const bool obsolete) {
+        auto it = m_hull_to_obsolete_and_loc.find(name);
+        if (it == m_hull_to_obsolete_and_loc.end()) {
+            // All hulls should be known so tack it on the end and try again.
+            ErrorLogger() << "Hull " << name << " is missing in CurrentShipDesignManager.  Adding...";
+            InsertHullBefore(name);
+            return SetHullObsolete(name, obsolete);
+        }
         it->second.first = obsolete;
     }
 
-    void CurrentShipDesignManager::Load(const std::vector<std::pair<int, bool>>& ids_and_obsoletes) {
+    void CurrentShipDesignManager::SetPartObsolete(const std::string& name, const bool obsolete) {
+        if (obsolete)
+            m_obsolete_parts.insert(name);
+        else
+            m_obsolete_parts.erase(name);
+    }
+
+    void CurrentShipDesignManager::Load(
+        const std::vector<std::pair<int, boost::optional<bool>>>& design_ids_and_obsoletes,
+        const std::vector<std::pair<std::string, bool>>& hulls_and_obsoletes,
+        const std::unordered_set<std::string>& obsolete_parts)
+    {
+        // Clear and load the ship design ids
         m_id_to_obsolete_and_loc.clear();
-        m_ordered_ids.clear();
-        for (const auto& id_and_obsolete : ids_and_obsoletes) {
+        m_ordered_design_ids.clear();
+        for (const auto& id_and_obsolete : design_ids_and_obsoletes) {
             const auto id = id_and_obsolete.first;
             const auto obsolete = id_and_obsolete.second;
             if (m_id_to_obsolete_and_loc.count(id)) {
-                ErrorLogger() << "CurrentShipDesignManager::Load duplicate id = " << id;
+                ErrorLogger() << "CurrentShipDesignManager::Load duplicate design id = " << id;
                 continue;
             }
-            m_ordered_ids.push_back(id);
-            m_id_to_obsolete_and_loc[id] = std::make_pair(obsolete, --m_ordered_ids.end());;
+            m_ordered_design_ids.push_back(id);
+            m_id_to_obsolete_and_loc[id] = std::make_pair(obsolete, --m_ordered_design_ids.end());
         }
+
+        // Clear and load the ship hulls
+        m_hull_to_obsolete_and_loc.clear();
+        m_ordered_hulls.clear();
+        for (const auto& name_and_obsolete : hulls_and_obsoletes) {
+            const auto name = name_and_obsolete.first;
+            const auto obsolete = name_and_obsolete.second;
+            if (m_hull_to_obsolete_and_loc.count(name)) {
+                ErrorLogger() << "CurrentShipDesignManager::Load duplicate hull name = " << name;
+                continue;
+            }
+            m_ordered_hulls.push_back(name);
+            m_hull_to_obsolete_and_loc[name] = std::make_pair(obsolete, --m_ordered_hulls.end());
+        }
+
+        // Clear and load the ship parts
+        m_obsolete_parts = obsolete_parts;
     }
 
-    std::vector<std::pair<int, bool>> CurrentShipDesignManager::Save() const {
-        std::vector<std::pair<int, bool>> retval;
-        for (const auto id : m_ordered_ids) {
+    void CurrentShipDesignManager::Save(
+        std::vector<std::pair<int, boost::optional<bool>>>& design_ids_and_obsoletes,
+        std::vector<std::pair<std::string, bool>>& hulls_and_obsoletes,
+        std::unordered_set<std::string>& obsolete_parts)
+    {
+        design_ids_and_obsoletes.clear();
+        for (const auto id : m_ordered_design_ids) {
             try {
-                retval.push_back(std::make_pair(id, m_id_to_obsolete_and_loc.at(id).first));
+                design_ids_and_obsoletes.push_back(std::make_pair(id, m_id_to_obsolete_and_loc.at(id).first));
             } catch (const std::out_of_range&) {
                 ErrorLogger() << "CurrentShipDesignManager::Save missing id = " << id;
                 continue;
             }
         }
-        return retval;
+
+        hulls_and_obsoletes.clear();
+        for (const auto name : m_ordered_hulls) {
+            try {
+               hulls_and_obsoletes.push_back(std::make_pair(name, m_hull_to_obsolete_and_loc.at(name).first));
+            } catch (const std::out_of_range&) {
+                ErrorLogger() << "CurrentShipDesignManager::Save missing hull = " << name;
+                continue;
+            }
+        }
+
+        obsolete_parts = m_obsolete_parts;
+    }
+
+    //////////////////////////////////////////////////
+    //  AvailabilityManager                         //
+    //////////////////////////////////////////////////
+
+    /** A class to allow the storage of the state of a GUI availabilty filter
+        and the querying of that state WRT a ship design. */
+    class AvailabilityManager {
+    private:
+        // A tuple of the toogle state of the 3-tuple of coupled
+        // availability filters in the GUI:
+        // Obsolete, Available and Unavailable
+        std::tuple<bool, bool, bool> m_availabilities;
+
+    public:
+        AvailabilityManager(bool obsolete, bool available, bool unavailable);
+
+        bool GetAvailability(const Availability::Enum type) const;
+        void SetAvailability(const Availability::Enum type, const bool state);
+        void ToggleAvailability(const Availability::Enum type);
+
+        /** Given the GUI's displayed availabilities as stored in this
+            AvailabiltyManager, return the displayed state of the design \p
+            id. Return none if the design should not be displayed. */
+        boost::optional<Availability::Enum> DisplayedDesignAvailability(int id) const;
+        /** Given the GUI's displayed availabilities as stored in this
+            AvailabiltyManager, return the displayed state of the hull \p
+            name. Return none if the hull should not be displayed. */
+        boost::optional<Availability::Enum> DisplayedHullAvailability(const std::string& name) const;
+        /** Given the GUI's displayed availabilities as stored in this
+            AvailabiltyManager, return the displayed state of the part \p
+            name. Return none if the part should not be displayed. */
+        boost::optional<Availability::Enum> DisplayedPartAvailability(const std::string& name) const;
+
+    private:
+        /** Given the GUI's displayed availabilities as stored in this
+            AvailabiltyManager and that the X is \p available and \p obsolete,
+            return the displayed state of the X. Return none if the X should
+            not be displayed. */
+        boost::optional<Availability::Enum> DisplayedXAvailability(bool available, bool obsolete) const;
+
+    };
+
+    AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
+        m_availabilities{obsolete, available, unavailable}
+    {}
+
+    bool AvailabilityManager::GetAvailability(const Availability::Enum type) const {
+        switch (type) {
+        case Availability::Obsolete:
+            return std::get<Availability::Obsolete>(m_availabilities);
+        case Availability::Available:
+            return std::get<Availability::Available>(m_availabilities);
+        case Availability::Future:
+            return std::get<Availability::Future>(m_availabilities);
+        }
+        return std::get<Availability::Future>(m_availabilities);
+    }
+
+    void AvailabilityManager::SetAvailability(const Availability::Enum type, const bool state) {
+        switch (type) {
+        case Availability::Obsolete:
+            std::get<Availability::Obsolete>(m_availabilities) = state;
+            break;
+        case Availability::Available:
+            std::get<Availability::Available>(m_availabilities) = state;
+            break;
+        case Availability::Future:
+            std::get<Availability::Future>(m_availabilities) = state;
+            break;
+        }
+    }
+
+    void AvailabilityManager::ToggleAvailability(const Availability::Enum type)
+    { SetAvailability(type, !GetAvailability(type)); }
+
+    boost::optional<Availability::Enum> AvailabilityManager::DisplayedDesignAvailability(
+        int id) const
+    {
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* empire = GetEmpire(empire_id);  // may be nullptr
+        bool available = empire ? empire->ShipDesignAvailable(id) : true;
+
+        const auto& manager = GetCurrentDesignsManager();
+        const auto maybe_obsolete = manager.IsObsolete(id);
+        bool is_obsolete = maybe_obsolete && *maybe_obsolete;
+
+        return DisplayedXAvailability(available, is_obsolete);
+    }
+    
+    boost::optional<Availability::Enum> AvailabilityManager::DisplayedHullAvailability(
+        const std::string& id) const
+    {
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* empire = GetEmpire(empire_id);  // may be nullptr
+        bool available = empire ? empire->ShipHullAvailable(id) : true;
+
+        const auto& manager = GetCurrentDesignsManager();
+        const auto obsolete = manager.IsHullObsolete(id);
+
+        return DisplayedXAvailability(available, obsolete);
+    }
+
+    boost::optional<Availability::Enum> AvailabilityManager::DisplayedPartAvailability(
+        const std::string& id) const
+    {
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* empire = GetEmpire(empire_id);  // may be nullptr
+        bool available = empire ? empire->ShipPartAvailable(id) : true;
+
+        const auto& manager = GetCurrentDesignsManager();
+        const auto obsolete = manager.IsPartObsolete(id);
+
+        return DisplayedXAvailability(available, obsolete);
+    }
+
+    boost::optional<Availability::Enum> AvailabilityManager::DisplayedXAvailability(
+        bool available, bool obsolete) const
+    {
+        // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
+        const bool showing_obsolete = std::get<Availability::Obsolete>(m_availabilities);
+        const bool showing_available = std::get<Availability::Available>(m_availabilities);
+        const bool showing_future = std::get<Availability::Future>(m_availabilities);
+
+        // Show as obsolete if it overlaps an already show category or is the
+        // only catagory.
+        if (showing_obsolete && obsolete && showing_available && available)
+            return Availability::Obsolete;
+
+        if (showing_obsolete && obsolete && showing_future && !available)
+            return Availability::Obsolete;
+
+        if (showing_obsolete && obsolete && !showing_available && !showing_future)
+            return Availability::Obsolete;
+
+        // Available and future are non-overlapping.
+        if (showing_available && available && !obsolete)
+            return Availability::Available;
+
+        if (showing_future && !available && !obsolete)
+            return Availability::Future;
+
+        return boost::none;
     }
 }
 
@@ -758,6 +1075,16 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
     if (!is_new_game)
         return;
 
+    // Initialize the hull ordering from the HullTypeManager
+    for (const auto& name_and_type : GetHullTypeManager()) {
+        const auto& hull_name = name_and_type.first;
+        const auto& hull_type =  name_and_type.second;
+
+        if (!hull_type || !hull_type->Producible())
+            continue;
+        current_designs->InsertHullBefore(hull_name);
+    }
+
     // If requested initialize the current designs to all designs known by the empire
     if(GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled")) {
 
@@ -782,12 +1109,16 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
 }
 
 void ShipDesignManager::Save(SaveGameUIData& data) const {
-   data.ordered_ship_design_ids_and_obsolete =
-       GetCurrentDesignsManager().Save();
+    GetCurrentDesignsManager().Save(data.ordered_ship_design_ids_and_obsolete,
+                                    data.ordered_ship_hull_and_obsolete,
+                                    data.obsolete_ship_parts);
 }
 
-void ShipDesignManager::Load(const SaveGameUIData& data)
-{ GetCurrentDesignsManager().Load(data.ordered_ship_design_ids_and_obsolete); }
+void ShipDesignManager::Load(const SaveGameUIData& data) {
+    GetCurrentDesignsManager().Load(data.ordered_ship_design_ids_and_obsolete,
+                                    data.ordered_ship_hull_and_obsolete,
+                                    data.obsolete_ship_parts);
+}
 
 ShipDesignManager::Designs* ShipDesignManager::CurrentDesigns() {
     auto retval = m_current_designs.get();
@@ -835,9 +1166,14 @@ public:
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void SetAvailability(const Availability::Enum type);
     //@}
 
-    mutable boost::signals2::signal<void (const PartType*)> ClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> ClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)> RightClickedSignal;
     mutable boost::signals2::signal<void (const PartType*)> DoubleClickedSignal;
 
 private:
@@ -890,11 +1226,20 @@ void PartControl::CompleteConstruction() {
 void PartControl::Render() {}
 
 void PartControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ ClickedSignal(m_part); }
+{ ClickedSignal(m_part, mod_keys); }
 
 void PartControl::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { DoubleClickedSignal(m_part); }
 
+void PartControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ RightClickedSignal(m_part, pt); }
+
+
+void PartControl::SetAvailability(const Availability::Enum type) {
+    auto disabled = type == Availability::Obsolete;
+    m_icon->Disable(disabled);
+    m_background->Disable(disabled);
+}
 
 //////////////////////////////////////////////////
 // PartsListBox                                 //
@@ -904,19 +1249,23 @@ class PartsListBox : public CUIListBox {
 public:
     class PartsListBoxRow : public CUIListBox::Row {
     public:
-        PartsListBoxRow(GG::X w, GG::Y h);
+        PartsListBoxRow(GG::X w, GG::Y h, const AvailabilityManager& availabilities_state);
         void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
                                  const GG::Wnd* destination) override;
+    private:
+        const AvailabilityManager& m_availabilities_state;
     };
 
     /** \name Structors */ //@{
-    PartsListBox(void);
+    PartsListBox(const AvailabilityManager& availabilities_state);
     //@}
 
     /** \name Accessors */ //@{
     const std::set<ShipPartClass>&  GetClassesShown() const;
     const std::set<ShipSlotType>&   GetSlotTypesShown() const;
-    const std::pair<bool, bool>&    GetAvailabilitiesShown() const; // .first -> available items; .second -> unavailable items
+
+    const AvailabilityManager&      AvailabilityState() const { return m_availabilities_state; }
+
     //@}
     bool                            GetShowingSuperfluous() const { return m_show_superfluous_parts; }
 
@@ -936,15 +1285,14 @@ public:
     void            HideClass(ShipPartClass part_class, bool refresh_list = true);
     void            HideAllClasses(bool refresh_list = true);
 
-    void            ShowAvailability(bool available, bool refresh_list = true);
-    void            HideAvailability(bool available, bool refresh_list = true);
-
     void            ShowSuperfluousParts(bool refresh_list = true);
     void            HideSuperfluousParts(bool refresh_list = true);
     //@}
 
-    mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
     mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)> PartTypeRightClickedSignal;
+    mutable boost::signals2::signal<void (const std::string&)> ClearPartSignal;
 
 protected:
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
@@ -952,14 +1300,14 @@ protected:
 
 private:
     std::set<ShipPartClass> m_part_classes_shown;   // which part classes should be shown
-    std::pair<bool, bool>   m_availabilities_shown; // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
     bool                    m_show_superfluous_parts;
-
     int                     m_previous_num_columns;
+    const AvailabilityManager& m_availabilities_state;
 };
 
-PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h) :
-    CUIListBox::Row(w, h, "")    // drag_drop_data_type = "" implies not draggable row
+PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h, const AvailabilityManager& availabilities_state) :
+    CUIListBox::Row(w, h, ""),    // drag_drop_data_type = "" implies not draggable row
+    m_availabilities_state(availabilities_state)
 {}
 
 void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
@@ -998,16 +1346,24 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
             parent->PartTypeClickedSignal);
         new_part_control->DoubleClickedSignal.connect(
             parent->PartTypeDoubleClickedSignal);
+        new_part_control->RightClickedSignal.connect(
+            parent->PartTypeRightClickedSignal);
     }
+
+    // set availability shown
+    auto shown = m_availabilities_state.DisplayedPartAvailability(part_type->Name());
+    if (shown)
+        new_part_control->SetAvailability(*shown);
+
     SetCell(ii, new_part_control);
 }
 
-PartsListBox::PartsListBox(void) :
+PartsListBox::PartsListBox(const AvailabilityManager& availabilities_state) :
     CUIListBox(),
     m_part_classes_shown(),
-    m_availabilities_shown{false, false},
     m_show_superfluous_parts(true),
-    m_previous_num_columns(-1)
+    m_previous_num_columns(-1),
+    m_availabilities_state(availabilities_state)
 {
     ManuallyManageColProps();
     NormalizeRowsOnInsert(false);
@@ -1016,9 +1372,6 @@ PartsListBox::PartsListBox(void) :
 
 const std::set<ShipPartClass>& PartsListBox::GetClassesShown() const
 { return m_part_classes_shown; }
-
-const std::pair<bool, bool>& PartsListBox::GetAvailabilitiesShown() const
-{ return m_availabilities_shown; }
 
 void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
@@ -1041,7 +1394,21 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void PartsListBox::AcceptDrops(const GG::Pt& pt,
                                std::vector<std::shared_ptr<GG::Wnd>> wnds,
                                GG::Flags<GG::ModKey> mod_keys)
-{}
+{
+    // If ctrl is pressed then signal all parts of the same type to be cleared.
+    if (!(GG::GUI::GetGUI()->ModKeys() & GG::MOD_KEY_CTRL))
+        return;
+
+    if (wnds.empty())
+        return;
+
+    const PartControl* control = boost::polymorphic_downcast<const PartControl*>(wnds.begin()->get());
+    const PartType* part_type = control ? control->Part() : nullptr;
+    if (!part_type)
+        return;
+
+    ClearPartSignal(part_type->Name());
+}
 
 PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) {
     PartGroupsType part_groups;
@@ -1056,17 +1423,14 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
         if (m_part_classes_shown.find(part_class) == m_part_classes_shown.end())
             continue;   // part of this class is not requested to be shown
 
-        bool part_available = empire ? empire->ShipPartAvailable(part->Name()) : true;
-        if (!(part_available && m_availabilities_shown.first) &&
-            !(!part_available && m_availabilities_shown.second))
-        {
-            // part is available but available parts shouldn't be shown, or
-            // part isn't available and not available parts shouldn't be shown
+        // Check if part satisfies availability and obsolecense
+        auto shown = m_availabilities_state.DisplayedPartAvailability(part->Name());
+        if (!shown)
             continue;
-        }
 
-        for (ShipSlotType slot_type : part->MountableSlotTypes())
-        { part_groups[{part_class, slot_type}].push_back(part.get()); }
+        for (ShipSlotType slot_type : part->MountableSlotTypes()) {
+            part_groups[{part_class, slot_type}].push_back(part.get());
+        }
     }
     return part_groups;
 }
@@ -1195,7 +1559,7 @@ void PartsListBox::Populate() {
     const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = GetEmpire(empire_id);  // may be 0
+    const Empire* empire = GetEmpire(empire_id);  // may be nullptr
 
     int cur_col = NUM_COLUMNS;
     std::shared_ptr<PartsListBoxRow> cur_row;
@@ -1262,7 +1626,8 @@ void PartsListBox::Populate() {
                 if (cur_row)
                     Insert(cur_row);
                 cur_col = 0;
-                cur_row = GG::Wnd::Create<PartsListBoxRow>(TOTAL_WIDTH, SLOT_CONTROL_HEIGHT + GG::Y(PAD));
+                cur_row = GG::Wnd::Create<PartsListBoxRow>(
+                    TOTAL_WIDTH, SLOT_CONTROL_HEIGHT + GG::Y(PAD), m_availabilities_state);
             }
             ++cur_col;
 
@@ -1272,6 +1637,13 @@ void PartsListBox::Populate() {
                 PartsListBox::PartTypeClickedSignal);
             control->DoubleClickedSignal.connect(
                 PartsListBox::PartTypeDoubleClickedSignal);
+            control->RightClickedSignal.connect(
+                PartsListBox::PartTypeRightClickedSignal);
+
+            auto shown = m_availabilities_state.DisplayedPartAvailability(part->Name());
+            if (shown)
+                control->SetAvailability(*shown);
+
             cur_row->push_back(control);
         }
     }
@@ -1313,38 +1685,6 @@ void PartsListBox::HideAllClasses(bool refresh_list) {
         Populate();
 }
 
-void PartsListBox::ShowAvailability(bool available, bool refresh_list) {
-    if (available) {
-        if (!m_availabilities_shown.first) {
-            m_availabilities_shown.first = true;
-            if (refresh_list)
-                Populate();
-        }
-    } else {
-        if (!m_availabilities_shown.second) {
-            m_availabilities_shown.second = true;
-            if (refresh_list)
-                Populate();
-        }
-    }
-}
-
-void PartsListBox::HideAvailability(bool available, bool refresh_list) {
-    if (available) {
-        if (m_availabilities_shown.first) {
-            m_availabilities_shown.first = false;
-            if (refresh_list)
-                Populate();
-        }
-    } else {
-        if (m_availabilities_shown.second) {
-            m_availabilities_shown.second = false;
-            if (refresh_list)
-                Populate();
-        }
-    }
-}
-
 void PartsListBox::ShowSuperfluousParts(bool refresh_list) {
     if (m_show_superfluous_parts)
         return;
@@ -1384,29 +1724,39 @@ public:
     void ToggleClass(ShipPartClass part_class, bool refresh_list = true);
     void ToggleAllClasses(bool refresh_list = true);
 
-    void ShowAvailability(bool available, bool refresh_list = true);
-    void HideAvailability(bool available, bool refresh_list = true);
-    void ToggleAvailability(bool available, bool refresh_list = true);
+    void ToggleAvailability(const Availability::Enum type);
 
     void ShowSuperfluous(bool refresh_list = true);
     void HideSuperfluous(bool refresh_list = true);
     void ToggleSuperfluous(bool refresh_list = true);
 
-    void Reset();
+    void Populate();
     //@}
 
-    mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
     mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)> PartTypeRightClickedSignal;
+    mutable boost::signals2::signal<void ()> PartObsolescenceChangedSignal;
+    mutable boost::signals2::signal<void (const std::string&)> ClearPartSignal;
 
 private:
     void DoLayout();
 
+    /** A part type click with ctrl obsoletes part. */
+    void HandlePartTypeClicked(const PartType*, GG::Flags<GG::ModKey>);
+    void HandlePartTypeRightClicked(const PartType*, const GG::Pt& pt);
+
     std::shared_ptr<PartsListBox>   m_parts_list;
 
     std::map<ShipPartClass, std::shared_ptr<CUIStateButton>>    m_class_buttons;
-    std::pair<std::shared_ptr<CUIStateButton>,
-              std::shared_ptr<CUIStateButton>>                  m_availability_buttons;
     std::shared_ptr<CUIStateButton>                             m_superfluous_parts_button;
+
+    // Holds the state of the availabilities filter.
+    AvailabilityManager m_availabilities_state;
+    std::tuple<std::shared_ptr<CUIStateButton>,
+               std::shared_ptr<CUIStateButton>,
+               std::shared_ptr<CUIStateButton>> m_availabilities_buttons;
+
 };
 
 DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
@@ -1414,19 +1764,23 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE,
            config_name),
     m_parts_list(nullptr),
-    m_superfluous_parts_button(nullptr)
+    m_superfluous_parts_button(nullptr),
+    m_availabilities_state(false, true, false)
 {}
 
 void DesignWnd::PartPalette::CompleteConstruction() {
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
     SetChildClippingMode(ClipToClient);
 
-    m_parts_list = GG::Wnd::Create<PartsListBox>();
+    m_parts_list = GG::Wnd::Create<PartsListBox>(m_availabilities_state);
     AttachChild(m_parts_list);
     m_parts_list->PartTypeClickedSignal.connect(
-        PartTypeClickedSignal);
+        boost::bind(&DesignWnd::PartPalette::HandlePartTypeClicked, this, _1, _2));
     m_parts_list->PartTypeDoubleClickedSignal.connect(
         PartTypeDoubleClickedSignal);
+    m_parts_list->PartTypeRightClickedSignal.connect(
+        boost::bind(&DesignWnd::PartPalette::HandlePartTypeRightClicked, this, _1, _2));
+    m_parts_list->ClearPartSignal.connect(ClearPartSignal);
 
     const PartTypeManager& part_manager = GetPartTypeManager();
 
@@ -1452,14 +1806,27 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     }
 
     // availability buttons
-    m_availability_buttons.first = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
-    AttachChild(m_availability_buttons.first);
-    m_availability_buttons.first->CheckedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
-    m_availability_buttons.second = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
-    AttachChild(m_availability_buttons.second);
-    m_availability_buttons.second->CheckedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
+    // TODO: C++17, Collect and replace with structured binding auto [a, b, c] = m_availabilities;
+    auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
+    m_obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(m_obsolete_button);
+    m_obsolete_button->CheckedSignal.connect(
+        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Obsolete));
+    m_obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
+
+    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
+    m_available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(m_available_button);
+    m_available_button->CheckedSignal.connect(
+        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Available));
+    m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
+
+    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
+    m_unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(m_unavailable_button);
+    m_unavailable_button->CheckedSignal.connect(
+        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Future));
+    m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
 
     // superfluous parts button
     m_superfluous_parts_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_REDUNDANT"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
@@ -1469,8 +1836,8 @@ void DesignWnd::PartPalette::CompleteConstruction() {
 
     // default to showing nothing
     ShowAllClasses(false);
-    ShowAvailability(true, false);
     ShowSuperfluous(false);
+    Populate();
 
     CUIWnd::CompleteConstruction();
 
@@ -1498,7 +1865,7 @@ void DesignWnd::PartPalette::DoLayout() {
 
     const int NUM_CLASS_BUTTONS = std::max(1, static_cast<int>(m_class_buttons.size()));
     const int NUM_SUPERFLUOUS_CULL_BUTTONS = 1;
-    const int NUM_AVAILABILITY_BUTTONS = 2;
+    const int NUM_AVAILABILITY_BUTTONS = 3;
     const int NUM_NON_CLASS_BUTTONS = NUM_SUPERFLUOUS_CULL_BUTTONS + NUM_AVAILABILITY_BUTTONS;
 
     // determine whether to put non-class buttons (availability and redundancy)
@@ -1537,61 +1904,88 @@ void DesignWnd::PartPalette::DoLayout() {
 
     // place parts list.  note: assuming at least as many rows of class buttons as availability buttons, as should
     //                          be the case given how num_non_class_buttons_per_row is determined
-    m_parts_list->SizeMove(GG::Pt(GG::X0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)), ClientSize() - GG::Pt(GG::X(BUTTON_SEPARATION), GG::Y(BUTTON_SEPARATION)));
-
-    GG::Pt ul, lr;
+    m_parts_list->SizeMove(GG::Pt(GG::X0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)),
+                           ClientSize() - GG::Pt(GG::X(BUTTON_SEPARATION), GG::Y(BUTTON_SEPARATION)));
 
     // place slot type buttons
     col = NUM_CLASS_BUTTONS_PER_ROW;
     row = 0;
-    ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    auto ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    auto lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
     m_superfluous_parts_button->SizeMove(ul, lr);
 
-    // place availability buttons
-    if (num_non_class_buttons_per_row > 1) {
-        ++col;
-        row = 0;
-    } else {
-        ++row;
+    // a function to place availability buttons either in a single column below the
+    // superfluous button or to complete a 2X2 grid left of the class buttons.
+    auto place_avail_button_adjacent =
+        [&col, &row, &num_non_class_buttons_per_row, NUM_CLASS_BUTTONS_PER_ROW,
+         BUTTON_EDGE_PAD, COL_OFFSET, ROW_OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT]
+        (GG::Wnd* avail_btn)
+        {
+            if (num_non_class_buttons_per_row == 1)
+                ++row;
+            else {
+                if (col >= NUM_CLASS_BUTTONS_PER_ROW + num_non_class_buttons_per_row - 1) {
+                    col = NUM_CLASS_BUTTONS_PER_ROW - 1;
+                    ++row;
+                }
+                ++col;
+            }
+
+            auto ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+            auto lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+            avail_btn->SizeMove(ul, lr);
+        };
+
+    //place availability buttons
+    // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
+    auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
+    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
+    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
+
+    place_avail_button_adjacent(m_obsolete_button.get());
+    place_avail_button_adjacent(m_available_button.get());
+    place_avail_button_adjacent(m_unavailable_button.get());
+}
+
+void DesignWnd::PartPalette::HandlePartTypeClicked(const PartType* part_type, GG::Flags<GG::ModKey> modkeys) {
+    // Toggle obsolete for a control click.
+    if (modkeys & GG::MOD_KEY_CTRL) {
+        auto& manager = GetCurrentDesignsManager();
+        const auto obsolete = manager.IsPartObsolete(part_type->Name());
+        manager.SetPartObsolete(part_type->Name(), !obsolete);
+
+        PartObsolescenceChangedSignal();
+        Populate();
     }
-    ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_availability_buttons.first->SizeMove(ul, lr);
+    else
+        PartTypeClickedSignal(part_type, modkeys);
+}
 
-    if (row != 0 && num_non_class_buttons_per_row > 2) {
-        ++col;
-        row = 0;
-    } else {
-        ++row;
-    }
-    ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_availability_buttons.second->SizeMove(ul, lr);
+void DesignWnd::PartPalette::HandlePartTypeRightClicked(const PartType* part_type, const GG::Pt& pt) {
+    // Context menu actions
+    auto& manager = GetCurrentDesignsManager();
+    const auto& part_name = part_type->Name();
+    auto is_obsolete = manager.IsPartObsolete(part_name);
+    auto toggle_obsolete_design_action = [&manager, &part_name, is_obsolete, this]() {
+        manager.SetPartObsolete(part_name, !is_obsolete);
+        PartObsolescenceChangedSignal();
+        Populate();
+    };
 
+    // create popup menu with a commands in it
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    //GG::Pt ul, lr;
+    const auto empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (empire_id != ALL_EMPIRES)
+        popup->AddMenuItem(GG::MenuItem(
+                               (is_obsolete
+                                ? UserString("DESIGN_WND_UNOBSOLETE_PART")
+                                : UserString("DESIGN_WND_OBSOLETE_PART")),
+                               false, false, toggle_obsolete_design_action));
 
-    //// place availability buttons
-    //if (num_non_class_buttons_per_row > 1) {
-    //    ++col;
-    //    row = 0;
-    //}
-    //ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    //lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    //m_availability_buttons.first->SizeMove(ul, lr);
+    popup->Run();
 
-    //++row;
-    //ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    //lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    //m_availability_buttons.second->SizeMove(ul, lr);
-
-    //// place superfluous culling button
-    //++row;
-    //ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    //lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    //m_superfluous_parts_button->SizeMove(ul, lr);
-
+    PartTypeRightClickedSignal(part_type, pt);
 }
 
 void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_list) {
@@ -1645,35 +2039,30 @@ void DesignWnd::PartPalette::ToggleAllClasses(bool refresh_list)
         ShowAllClasses(refresh_list);
 }
 
-void DesignWnd::PartPalette::ShowAvailability(bool available, bool refresh_list) {
-    m_parts_list->ShowAvailability(available, refresh_list);
-    if (available)
-        m_availability_buttons.first->SetCheck();
-    else
-        m_availability_buttons.second->SetCheck();
-}
-
-void DesignWnd::PartPalette::HideAvailability(bool available, bool refresh_list) {
-    m_parts_list->HideAvailability(available, refresh_list);
-    if (available)
-        m_availability_buttons.first->SetCheck(false);
-    else
-        m_availability_buttons.second->SetCheck(false);
-}
-
-void DesignWnd::PartPalette::ToggleAvailability(bool available, bool refresh_list) {
-    const auto& avail_shown = m_parts_list->GetAvailabilitiesShown();
-    if (available) {
-        if (avail_shown.first)
-            HideAvailability(true, refresh_list);
-        else
-            ShowAvailability(true, refresh_list);
-    } else {
-        if (avail_shown.second)
-            HideAvailability(false, refresh_list);
-        else
-            ShowAvailability(false, refresh_list);
+void DesignWnd::PartPalette::ToggleAvailability(Availability::Enum type) {
+    std::shared_ptr<CUIStateButton> button;
+    bool state = false;
+    switch (type) {
+    case Availability::Obsolete:
+        m_availabilities_state.ToggleAvailability(Availability::Obsolete);
+        state = m_availabilities_state.GetAvailability(Availability::Obsolete);
+        button = std::get<Availability::Obsolete>(m_availabilities_buttons);
+        break;
+    case Availability::Available:
+        m_availabilities_state.ToggleAvailability(Availability::Available);
+        state = m_availabilities_state.GetAvailability(Availability::Available);
+        button = std::get<Availability::Available>(m_availabilities_buttons);
+        break;
+    case Availability::Future:
+        m_availabilities_state.ToggleAvailability(Availability::Future);
+        state = m_availabilities_state.GetAvailability(Availability::Future);
+        button = std::get<Availability::Future>(m_availabilities_buttons);
+        break;
     }
+
+    button->SetCheck(state);
+
+    Populate();
 }
 
 void DesignWnd::PartPalette::ShowSuperfluous(bool refresh_list) {
@@ -1694,7 +2083,7 @@ void DesignWnd::PartPalette::ToggleSuperfluous(bool refresh_list) {
         ShowSuperfluous(refresh_list);
 }
 
-void DesignWnd::PartPalette::Reset()
+void DesignWnd::PartPalette::Populate()
 { m_parts_list->Populate(); }
 
 
@@ -1706,27 +2095,10 @@ void DesignWnd::PartPalette::Reset()
   * scripts or saved (on disk) designs from previous games. */
 class BasesListBox : public QueueListBox {
 public:
-
-    /** A class to allow the storage of availabilty in a common location to all
-        the various BasesListBoxes. */
-    class AvailabilityManager {
-        private:
-        // A tuple of bools for the state of the 3 availability filters:
-        // Obsolete, Available and Unavailable
-        std::tuple<bool, bool, bool> m_availabilities;
-
-        public:
-        AvailabilityManager(bool obsolete, bool available, bool unavailable);
-
-        bool GetAvailability(const Availability::Enum type) const;
-        void SetAvailability(const Availability::Enum type, const bool state);
-        void ToggleAvailability(const Availability::Enum type);
-    };
-
     static const std::string BASES_LIST_BOX_DROP_TYPE;
 
     /** \name Structors */ //@{
-    BasesListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+    BasesListBox(const AvailabilityManager& availabilities_state,
                  const boost::optional<std::string>& drop_type = boost::none,
                  const boost::optional<std::string>& empty_prompt = boost::none);
     //@}
@@ -1825,7 +2197,7 @@ protected:
     /** \name Accessors for derived classes. */ //@{
     int EmpireID() const { return m_empire_id_shown; }
 
-    const BasesListBox::AvailabilityManager& AvailabilityState() const
+    const AvailabilityManager& AvailabilityState() const
     { return m_availabilities_state; }
 
     GG::Pt  ListRowSize();
@@ -1843,7 +2215,7 @@ private:
     void    InitRowSizes();
 
     int                         m_empire_id_shown;
-    const BasesListBox::AvailabilityManager& m_availabilities_state;
+    const AvailabilityManager& m_availabilities_state;
 
     boost::signals2::connection m_empire_designs_changed_signal;
 };
@@ -1968,7 +2340,7 @@ void BasesListBox::CompletedDesignListBoxRow::CompleteConstruction() {
 
 const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
 
-BasesListBox::BasesListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+BasesListBox::BasesListBox(const AvailabilityManager& availabilities_state,
                            const boost::optional<std::string>& drop_type,
                            const boost::optional<std::string>& empty_prompt /*= boost::none*/) :
     QueueListBox(drop_type,
@@ -2011,7 +2383,7 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
     if (wnds.size() != 1)
         ErrorLogger() << "BasesListBox::ChildrenDraggedAway unexpected informed that multiple Wnds were dragged away...";
     const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list as BasesListBost doesn't allow selection, so dragging is only one-at-a-time
-    const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
+    const auto control = dynamic_cast<const GG::Control*>(wnd);
     if (!control)
         return;
 
@@ -2076,47 +2448,13 @@ void BasesListBox::InitRowSizes() {
 void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 { this->BaseRightClicked(it, pt, modkeys); }
 
-BasesListBox::AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
-    m_availabilities{obsolete, available, unavailable}
-{}
-
-bool BasesListBox::AvailabilityManager::GetAvailability(const Availability::Enum type) const {
-    switch (type) {
-    case Availability::Obsolete:
-        return std::get<Availability::Obsolete>(m_availabilities);
-    case Availability::Available:
-        return std::get<Availability::Available>(m_availabilities);
-    case Availability::Future:
-        return std::get<Availability::Future>(m_availabilities);
-    }
-    return std::get<Availability::Future>(m_availabilities);
-}
-
-void BasesListBox::AvailabilityManager::SetAvailability(const Availability::Enum type, const bool state) {
-    switch (type) {
-    case Availability::Obsolete:
-        std::get<Availability::Obsolete>(m_availabilities) = state;
-        break;
-    case Availability::Available:
-        std::get<Availability::Available>(m_availabilities) = state;
-        break;
-    case Availability::Future:
-        std::get<Availability::Future>(m_availabilities) = state;
-        break;
-    }
-}
-
-void BasesListBox::AvailabilityManager::ToggleAvailability(const Availability::Enum type) {
-    SetAvailability(type, !GetAvailability(type));
-}
-
 //////////////////////////////////////////////////
 // BasesListBox derived classes                 //
 //////////////////////////////////////////////////
 
 class EmptyHullsListBox : public BasesListBox {
     public:
-    EmptyHullsListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+    EmptyHullsListBox(const AvailabilityManager& availabilities_state,
                       const boost::optional<std::string>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ADD_FIRST_DESIGN_HULL_QUEUE_PROMPT"))
     {};
@@ -2126,16 +2464,18 @@ class EmptyHullsListBox : public BasesListBox {
     protected:
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
+    void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
 
     void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
     void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 
     private:
 };
 
 class CompletedDesignsListBox : public BasesListBox {
     public:
-    CompletedDesignsListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+    CompletedDesignsListBox(const AvailabilityManager& availabilities_state,
                             const boost::optional<std::string>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
@@ -2152,7 +2492,7 @@ class CompletedDesignsListBox : public BasesListBox {
 
 class SavedDesignsListBox : public BasesListBox {
     public:
-    SavedDesignsListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+    SavedDesignsListBox(const AvailabilityManager& availabilities_state,
                         const boost::optional<std::string>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ADD_FIRST_SAVED_DESIGN_QUEUE_PROMPT"))
     {};
@@ -2182,7 +2522,7 @@ class SavedDesignsListBox : public BasesListBox {
 
 class MonstersListBox : public BasesListBox {
     public:
-    MonstersListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+    MonstersListBox(const AvailabilityManager& availabilities_state,
                     const boost::optional<std::string>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
@@ -2201,42 +2541,33 @@ void EmptyHullsListBox::PopulateCore() {
     ScopedTimer scoped_timer("EmptyHulls::PopulateCore");
     DebugLogger() << "EmptyHulls::PopulateCore EmpireID(): " << EmpireID();
 
-    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
-    const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
-
-    const Empire* empire = GetEmpire(EmpireID()); // may return 0
     const GG::Pt row_size = ListRowSize();
 
     Clear();
 
-    for (const auto& name_and_type : GetHullTypeManager()) {
-        const auto& hull_name = name_and_type.first;
-        const auto& hull_type =  name_and_type.second;
+    const auto& manager = GetCurrentDesignsManager();
+
+    for (const auto& hull_name : manager.OrderedHulls()) {
+        const auto& hull_type =  GetHullTypeManager().GetHullType(hull_name);
 
         if (!hull_type || !hull_type->Producible())
             continue;
 
-        auto hull_available = empire ? empire->ShipHullAvailable(hull_name) : true;
-
+        auto shown = AvailabilityState().DisplayedHullAvailability(hull_name);
+        if (!shown)
+            continue;
         const std::vector<std::string> empty_parts_vec;
-        if ((showing_available && hull_available)
-            || (showing_unavailable && !hull_available))
-        {
-            auto row = GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y, hull_name, empty_parts_vec);
-            if (!hull_available)
-                row->SetAvailability(Availability::Future);
-            Insert(row);
-            row->Resize(row_size);
-        }
+        auto row = GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y, hull_name, empty_parts_vec);
+        row->SetAvailability(*shown);
+        Insert(row);
+        row->Resize(row_size);
     }
 }
 
 void CompletedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesignsListBox::PopulateCore");
 
-    const bool showing_obsolete = AvailabilityState().GetAvailability(Availability::Obsolete);
     const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
-    const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
 
     const Universe& universe = GetUniverse();
 
@@ -2254,18 +2585,11 @@ void CompletedDesignsListBox::PopulateCore() {
                 const ShipDesign* design = GetShipDesign(design_id);
                 if (!design || !design->Producible())
                     continue;
-                bool available = empire->ShipDesignAvailable(design_id);
-                const auto maybe_obsolete = manager.IsObsolete(design_id);
-                bool obsolete = maybe_obsolete && *maybe_obsolete;
-                if ((obsolete && showing_obsolete)
-                    || (available && !obsolete && showing_available)
-                    || (!available && showing_unavailable))
-                {
+
+                auto shown = AvailabilityState().DisplayedDesignAvailability(design_id);
+                if (shown) {
                     auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
-                    if (obsolete)
-                        row->SetAvailability(Availability::Obsolete);
-                    else if (!available)
-                        row->SetAvailability(Availability::Future);
+                    row->SetAvailability(*shown);
                     Insert(row);
                     row->Resize(row_size);
                 }
@@ -2292,27 +2616,20 @@ void SavedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesigns::PopulateCore");
     DebugLogger() << "CompletedDesigns::PopulateCore";
 
-    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
-    const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
-
     // remove preexisting rows
     Clear();
     const GG::Pt row_size = ListRowSize();
-    const auto empire = GetEmpire(EmpireID());
 
     for (const auto& uuid : GetSavedDesignsManager().OrderedDesignUUIDs()) {
         const auto design = GetSavedDesignsManager().GetDesign(uuid);
-        auto available = (empire && design) ? empire->ShipDesignAvailable(*design) : true;
-
-        if (!((available && showing_available) || (!available && showing_unavailable)))
+        auto shown = AvailabilityState().DisplayedDesignAvailability(design->ID());
+        if (!shown)
             continue;
 
         auto row = GG::Wnd::Create<SavedDesignListBoxRow>(row_size.x, row_size.y, *design);
         Insert(row);
         row->Resize(row_size);
-
-        if (!available)
-            row->SetAvailability(Availability::Future);
+        row->SetAvailability(*shown);
     }
 }
 
@@ -2350,11 +2667,8 @@ std::shared_ptr<BasesListBox::Row> EmptyHullsListBox::ChildrenDraggedAwayCore(co
     std::vector<std::string> empty_parts_vec;
     auto row =  GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y, hull_name, empty_parts_vec);
 
-    if (const Empire* empire = GetEmpire(EmpireID())) {
-        auto hull_available = empire->ShipHullAvailable(hull_name);
-        if (!hull_available)
-            row->SetAvailability(Availability::Future);
-    }
+    if (auto shown = AvailabilityState().DisplayedHullAvailability(hull_name))
+        row->SetAvailability(*shown);
 
     return row;
 }
@@ -2375,13 +2689,8 @@ std::shared_ptr<BasesListBox::Row> CompletedDesignsListBox::ChildrenDraggedAwayC
 
     const auto row_size = ListRowSize();
     auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
-    if (const Empire* empire = GetEmpire(EmpireID())) {
-        const auto maybe_obsolete = GetCurrentDesignsManager().IsObsolete(design_id);
-        if (!empire->ShipDesignAvailable(design_id))
-            row->SetAvailability(Availability::Future);
-        else if (maybe_obsolete && *maybe_obsolete)
-            row->SetAvailability(Availability::Obsolete);
-    }
+    if (auto shown = AvailabilityState().DisplayedDesignAvailability(design->ID()))
+        row->SetAvailability(*shown);
     return row;
 }
 
@@ -2401,13 +2710,8 @@ std::shared_ptr<BasesListBox::Row> SavedDesignsListBox::ChildrenDraggedAwayCore(
     const auto row_size = ListRowSize();
     auto row = GG::Wnd::Create<SavedDesignListBoxRow>(row_size.x, row_size.y, *design);
 
-    const auto empire = GetEmpire(EmpireID());
-
-    if (empire) {
-        auto available = empire->ShipDesignAvailable(*design);
-        if (!available)
-            row->SetAvailability(Availability::Future);
-    }
+    if (auto shown = AvailabilityState().DisplayedDesignAvailability(design->ID()))
+        row->SetAvailability(*shown);
 
     return row;
 }
@@ -2432,7 +2736,7 @@ std::shared_ptr<BasesListBox::Row> MonstersListBox::ChildrenDraggedAwayCore(cons
 
 
 void EmptyHullsListBox::EnableOrderIssuing(bool enable/* = true*/)
-{ QueueListBox::EnableOrderIssuing(false); }
+{ QueueListBox::EnableOrderIssuing(enable); }
 
 void MonstersListBox::EnableOrderIssuing(bool)
 { QueueListBox::EnableOrderIssuing(false); }
@@ -2441,7 +2745,7 @@ void MonstersListBox::EnableOrderIssuing(bool)
 void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                           const GG::Flags<GG::ModKey>& modkeys)
 {
-    HullAndPartsListBoxRow* hp_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
+    const auto hp_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hp_row)
         return;
 
@@ -2452,7 +2756,7 @@ void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt
 void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                                 const GG::Flags<GG::ModKey>& modkeys)
 {
-    CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
+    const auto cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
         return;
 
@@ -2462,7 +2766,7 @@ void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const 
 void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                             const GG::Flags<GG::ModKey>& modkeys)
 {
-    SavedDesignListBoxRow* sd_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
+    const auto sd_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
 
     if (!sd_row)
         return;
@@ -2472,7 +2776,7 @@ void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::
 void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                         const GG::Flags<GG::ModKey>& modkeys)
 {
-    CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
+    const auto cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
         return;
 
@@ -2483,20 +2787,28 @@ void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& 
 void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                         const GG::Flags<GG::ModKey>& modkeys)
 {
-    HullAndPartsListBoxRow* hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
+    const auto hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hull_parts_row)
         return;
     const std::string& hull_name = hull_parts_row->Hull();
     const HullType* hull_type = GetHullType(hull_name);
     const std::vector<std::string>& parts = hull_parts_row->Parts();
-    if (hull_type && parts.empty())
+
+    if (modkeys & GG::MOD_KEY_CTRL) {
+        // Toggle hull obsolete
+        auto& manager = GetCurrentDesignsManager();
+        const auto is_obsolete = manager.IsHullObsolete(hull_name);
+        manager.SetHullObsolete(hull_name, !is_obsolete);
+        Populate();
+    }
+    else if (hull_type && parts.empty())
         HullClickedSignal(hull_type);
 }
 
 void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                               const GG::Flags<GG::ModKey>& modkeys)
 {
-    CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
+    const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
         return;
     int id = design_row->DesignID();
@@ -2517,7 +2829,7 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG
 void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                           const GG::Flags<GG::ModKey>& modkeys)
 {
-    SavedDesignListBoxRow* saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
+    const auto saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
     if (!saved_design_row)
         return;
     const auto design_uuid = saved_design_row->DesignUUID();
@@ -2531,6 +2843,36 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt
         DesignClickedSignal(design);
 }
 
+
+void EmptyHullsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                         const GG::Flags<GG::ModKey>& modkeys)
+{
+    const auto hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
+    if (!hull_parts_row)
+        return;
+    const std::string& hull_name = hull_parts_row->Hull();
+
+    // Context menu actions
+    auto& manager = GetCurrentDesignsManager();
+    auto is_obsolete = manager.IsHullObsolete(hull_name);
+    auto toggle_obsolete_design_action = [&manager, &hull_name, is_obsolete, this]() {
+        manager.SetHullObsolete(hull_name, !is_obsolete);
+        Populate();
+    };
+
+    // create popup menu with a commands in it
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+
+    const auto empire_id = EmpireID();
+    if (empire_id != ALL_EMPIRES)
+        popup->AddMenuItem(GG::MenuItem(
+                               (is_obsolete
+                                ? UserString("DESIGN_WND_UNOBSOLETE_HULL")
+                                : UserString("DESIGN_WND_OBSOLETE_HULL")),
+                               false, false, toggle_obsolete_design_action));
+
+    popup->Run();
+}
 
 void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                                const GG::Flags<GG::ModKey>& modkeys)
@@ -2677,6 +3019,27 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
 
 }
 
+void EmptyHullsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
+                                       const GG::ListBox::iterator& original_position_it)
+{
+    const auto control = dynamic_cast<HullAndPartsListBoxRow*>(row_it->get());
+    if (!control || !GetEmpire(EmpireID()))
+        return;
+
+    const std::string& hull_name = control->Hull();
+
+    iterator insert_before_row = std::next(row_it);
+
+    const auto insert_before_control = (insert_before_row == end()) ? nullptr :
+        boost::polymorphic_downcast<const HullAndPartsListBoxRow*>(insert_before_row->get());
+    std::string insert_before_hull = insert_before_control
+        ? insert_before_control->Hull() : "";
+
+    control->Resize(ListRowSize());
+
+    GetCurrentDesignsManager().InsertHullBefore(hull_name, insert_before_hull);
+}
+
 void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
                                              const GG::ListBox::iterator& original_position_it)
 {
@@ -2811,7 +3174,7 @@ private:
     std::shared_ptr<MonstersListBox>           m_monsters_list;        // monster designs
 
     // Holds the state of the availabilities filter.
-    BasesListBox::AvailabilityManager m_availabilities_state;
+    AvailabilityManager m_availabilities_state;
     std::tuple<std::shared_ptr<CUIStateButton>, std::shared_ptr<CUIStateButton>, std::shared_ptr<CUIStateButton>> m_availabilities_buttons;
 };
 
@@ -2828,6 +3191,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
 {}
 
 void DesignWnd::BaseSelector::CompleteConstruction() {
+    // TODO: C++17, Collect and replace with structured binding auto [a, b, c] = m_availabilities;
     auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
     m_obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_obsolete_button);
@@ -2854,7 +3218,7 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
         boost::bind(&DesignWnd::BaseSelector::Reset, this));
     AttachChild(m_tabs);
 
-    m_hulls_list = GG::Wnd::Create<EmptyHullsListBox>(m_availabilities_state);
+    m_hulls_list = GG::Wnd::Create<EmptyHullsListBox>(m_availabilities_state, HULL_PARTS_ROW_DROP_TYPE_STRING);
     m_hulls_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_hulls_list, UserString("DESIGN_WND_HULLS"));
     m_hulls_list->DesignComponentsSelectedSignal.connect(
@@ -2905,7 +3269,7 @@ void DesignWnd::BaseSelector::Reset() {
     const int empire_id = HumanClientApp::GetApp()->EmpireID();
     SetEmpireShown(empire_id, false);
 
-    if (BasesListBox* base_box = dynamic_cast<BasesListBox*>(m_tabs->CurrentWnd()))
+    if (auto base_box = dynamic_cast<BasesListBox*>(m_tabs->CurrentWnd()))
         base_box->Populate();
 
     // Signal the type of tab selected
@@ -2975,6 +3339,7 @@ void DesignWnd::BaseSelector::DoLayout() {
     GG::Y top(TOP_PAD);
     GG::X left(LEFT_PAD);
 
+    // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
     auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
     auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
     auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
@@ -3037,9 +3402,9 @@ public:
     /** emitted when the contents of a slot are altered by the dragging
       * a PartControl in or out of the slot.  signal should be caught and the
       * slot contents set using SetPart accordingly */
-    mutable boost::signals2::signal<void (const PartType*)> SlotContentsAlteredSignal;
+    mutable boost::signals2::signal<void (const PartType*, bool)> SlotContentsAlteredSignal;
 
-    mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
 
 protected:
     bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
@@ -3164,7 +3529,7 @@ void SlotControl::StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset
     if (!m_part_control)
         return;
 
-    const PartControl* control = dynamic_cast<const PartControl*>(wnd);
+    const auto control = dynamic_cast<const PartControl*>(wnd);
     if (!control)
         return;
 
@@ -3177,7 +3542,7 @@ void SlotControl::CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnd
         return;
 
     for (const auto& wnd : wnds) {
-        const PartControl* control = dynamic_cast<const PartControl*>(wnd);
+        const auto control = dynamic_cast<const PartControl*>(wnd);
         if (!control)
             continue;
 
@@ -3195,18 +3560,18 @@ void SlotControl::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::
     const PartType* part_type = control ? control->Part() : nullptr;
 
     if (part_type)
-        SlotContentsAlteredSignal(part_type);
+        SlotContentsAlteredSignal(part_type, (mod_keys & GG::MOD_KEY_CTRL));
 }
 
 void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
     if (wnds.empty())
         return;
     const GG::Wnd* wnd = wnds.front();
-    const PartControl* part_control = dynamic_cast<const PartControl*>(wnd);
+    const auto part_control = dynamic_cast<const PartControl*>(wnd);
     if (part_control != m_part_control.get())
         return;
     DetachChildAndReset(m_part_control);
-    SlotContentsAlteredSignal(nullptr);
+    SlotContentsAlteredSignal(nullptr, false);
 }
 
 void SlotControl::DragDropEnter(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
@@ -3256,7 +3621,7 @@ void SlotControl::SetPart(const PartType* part_type) {
 
         // double click clears slot
         m_part_control->DoubleClickedSignal.connect(
-            [this](const PartType*){ this->SlotContentsAlteredSignal(nullptr); });
+            [this](const PartType*){ this->SlotContentsAlteredSignal(nullptr, false); });
         SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
         // set part occupying slot's tool tip to say slot type
@@ -3368,7 +3733,9 @@ public:
     void            Sanitize();
 
     void            SetPart(const std::string& part_name, unsigned int slot);   //!< puts specified part in specified slot.  does nothing if slot is out of range of available slots for current hull
-    void            SetPart(const PartType* part, unsigned int slot, bool emit_signal = false);
+    /** Sets the part in \p slot to \p part and emits and signal if requested.  Changes
+        all similar parts if \p change_all_similar_parts. */
+    void            SetPart(const PartType* part, unsigned int slot, bool emit_signal = false, bool change_all_similar_parts = false);
     void            SetParts(const std::vector<std::string>& parts);            //!< puts specified parts in slots.  attempts to put each part into the slot corresponding to its place in the passed vector.  if a part cannot be placed, it is ignored.  more parts than there are slots available are ignored, and slots for which there are insufficient parts in the passed vector are unmodified
 
     /** Attempts to add the specified part to the design, if possible.  will
@@ -3380,6 +3747,8 @@ public:
     bool            CanPartBeAdded(const PartType* part);
 
     void            ClearParts();                                               //!< removes all parts from design.  hull is not altered
+    /** Remove parts called \p part_name*/
+    void            ClearPart(const std::string& part_name);
 
     /** Set the design hull \p hull_name, displaying appropriate background image and creating
         appropriate SlotControls.  If \p signal is false do not emit the the
@@ -3419,7 +3788,7 @@ public:
 
     /** propagates signals from contained SlotControls that signal that a part
       * has been clicked */
-    mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
 
     mutable boost::signals2::signal<void (const HullType*)> HullTypeClickedSignal;
 
@@ -3678,13 +4047,36 @@ void DesignWnd::MainPanel::Sanitize() {
 void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int slot)
 { SetPart(GetPartType(part_name), slot); }
 
-void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot, bool emit_signal /* = false */) {
+void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot, bool emit_signal /* = false */, bool change_all_similar_parts /*= false*/) {
     //DebugLogger() << "DesignWnd::MainPanel::SetPart(" << (part ? part->Name() : "no part") << ", slot " << slot << ")";
     if (slot > m_slots.size()) {
         ErrorLogger() << "DesignWnd::MainPanel::SetPart specified nonexistant slot";
         return;
     }
-    m_slots[slot]->SetPart(part);
+
+    if (!change_all_similar_parts) {
+        m_slots[slot]->SetPart(part);
+
+    } else {
+        const auto original_part = m_slots[slot]->GetPart();
+        std::string original_part_name = original_part ? original_part->Name() : "";
+
+        if (change_all_similar_parts) {
+            for (auto& slot : m_slots) {
+                // skip incompatible slots
+                if (!part->CanMountInSlotType(slot->SlotType()))
+                    continue;
+
+                // skip different type parts
+                const auto replaced_part = slot->GetPart();
+                if (replaced_part && (replaced_part->Name() != original_part_name))
+                    continue;
+
+                slot->SetPart(part);
+            }
+        }
+    }
+
     if (emit_signal)  // to avoid unnecessary signal repetition.
         DesignChangedSignal();
 }
@@ -3819,6 +4211,22 @@ void DesignWnd::MainPanel::ClearParts() {
     DesignChangedSignal();
 }
 
+void DesignWnd::MainPanel::ClearPart(const std::string& part_name) {
+    bool changed = false;
+    for (const auto& slot : m_slots) {
+        const PartType* existing_part = slot->GetPart();
+        if (!existing_part)
+            continue;
+        if (existing_part->Name() != part_name)
+            continue;
+        slot->SetPart(nullptr);
+        changed = true;
+    }
+
+    if (changed)
+        DesignChangedSignal();
+}
+
 void DesignWnd::MainPanel::SetHull(const std::string& hull_name, bool signal)
 { SetHull(GetHullType(hull_name), signal); }
 
@@ -3931,7 +4339,7 @@ void DesignWnd::MainPanel::Populate(){
         m_slots.push_back(slot_control);
         AttachChild(slot_control);
         slot_control->SlotContentsAlteredSignal.connect(
-            boost::bind(static_cast<void (DesignWnd::MainPanel::*)(const PartType*, unsigned int, bool)>(&DesignWnd::MainPanel::SetPart), this, _1, i, true));
+            boost::bind(static_cast<void (DesignWnd::MainPanel::*)(const PartType*, unsigned int, bool, bool)>(&DesignWnd::MainPanel::SetPart), this, _1, i, true, _2));
         slot_control->PartTypeClickedSignal.connect(
             PartTypeClickedSignal);
     }
@@ -4276,7 +4684,6 @@ void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, std::vector<std::shared
     }
 }
 
-
 std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
     try {
         std::vector<std::string> parts = Parts();
@@ -4428,6 +4835,8 @@ void DesignWnd::CompleteConstruction() {
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
     m_part_palette->PartTypeDoubleClickedSignal.connect(
         boost::bind(&DesignWnd::MainPanel::AddPart, m_main_panel, _1));
+    m_part_palette->ClearPartSignal.connect(
+        boost::bind(&DesignWnd::MainPanel::ClearPart, m_main_panel, _1));
 
     AttachChild(m_base_selector);
 
@@ -4443,6 +4852,10 @@ void DesignWnd::CompleteConstruction() {
     m_base_selector->HullClickedSignal.connect(
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
     m_base_selector->TabChangedSignal.connect(boost::bind(&MainPanel::HandleBaseTypeChange, m_main_panel, _1));
+
+    // Connect signals to re-populate when part obsolescence changes
+    m_part_palette->PartObsolescenceChangedSignal.connect(
+        boost::bind(&BaseSelector::Reset, m_base_selector));
 }
 
 void DesignWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -4457,7 +4870,7 @@ void DesignWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void DesignWnd::Reset() {
-    m_part_palette->Reset();
+    m_part_palette->Populate();
     m_base_selector->Reset();
     m_detail_panel->Refresh();
     m_main_panel->Sanitize();

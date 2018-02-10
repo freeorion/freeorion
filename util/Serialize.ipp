@@ -30,6 +30,7 @@
 #include <boost/ptr_container/serialize_ptr_vector.hpp>
 #include <boost/uuid/uuid_serialize.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/serialization/optional.hpp>
 
 // disabling these tests as they reportedly cause problems on some systems
 // and binary serialization portability is apparently broken regardless of
