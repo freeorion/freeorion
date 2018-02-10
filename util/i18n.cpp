@@ -245,13 +245,16 @@ namespace {
     }
 
     int TestRounding() {
-        for (double num : {-0.001, -0.02, -0.05, 0.0001, 0.0005, 9.0,
-                           10.0, 84.5, 90.9, 99.9,
-                           999.9, 9999.9, 245.1, 249.1, 249.55})
+        for (double num : {-0.001, -0.02, 0.0001,
+                           84.5, 90.9, 99.9,
+                           9999.9, 245.1, 2451.1, 12451.1, 1124451.1})
         {
             std::cout << "n: " << num
-                      << "  r3: " << DoubleToString(num, 3, false) << std::endl;
+                      << "  r2: " << DoubleToString(num, 2, false)
+                      << "  r3: " << DoubleToString(num, 3, false)
+                      << "  r5: " << DoubleToString(num, 5, false) << std::endl;
         }
+        exit(0);
     }
     //int dummy = TestRounding();
 }
@@ -259,8 +262,9 @@ namespace {
 std::string DoubleToString(double val, int digits, bool always_show_sign) {
     std::string text; // = ""
 
-    // minimum digits is 3. Fewer than this and things can't be sensibly displayed.
-    digits = std::max(digits, 3);
+    // minimum digits is 2. Fewer than this and things can't be sensibly displayed.
+    // eg. 300 with 2 digits is 0.3k. With 1 digits, it would be unrepresentable.
+    digits = std::max(digits, 2);
 
     // default result for sentinel value
     if (val == UNKNOWN_UI_DISPLAY_VALUE)
@@ -269,7 +273,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     double mag = std::abs(val);
 
     // early termination if magnitude is 0
-    if (mag == 0.0) {
+    if (mag == 0.0 || RoundMagnitude(mag, digits + 1) == 0.0) {
         std::string format = "%1." + std::to_string(digits - 1) + "f";
         text += (boost::format(format) % mag).str();
         return text;
@@ -294,7 +298,10 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     }
 
     //std::cout << std::endl << "DoubleToString val: " << val << " digits: " << digits << std::endl;
-    mag = RoundMagnitude(mag, digits);
+    const double initial_mag = mag;
+
+    // round magnitude to appropriate precision for requested digits
+    mag = RoundMagnitude(initial_mag, digits);
     int pow10 = static_cast<int>(floor(log10(mag)));
 
 
@@ -306,6 +313,23 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     else
         pow10_digits_above_pow1000 = (pow10 % 3) + 3;   // +3 ensures positive result of mod
     int unit_pow10 = pow10 - pow10_digits_above_pow1000;
+
+    if (digits == 2 && pow10_digits_above_pow1000 == 2) {
+        digits = 3;
+
+        // rounding to 2 digits when 3 digits must be shown to display the
+        // number will cause apparent rounding issues.
+        // re-do rounding for 3 digits of precision
+        mag = RoundMagnitude(initial_mag, digits);
+        pow10 = static_cast<int>(floor(log10(mag)));
+
+        if (pow10 >= 0)
+            pow10_digits_above_pow1000 = pow10 % 3;
+        else
+            pow10_digits_above_pow1000 = (pow10 % 3) + 3;   // +3 ensures positive result of mod
+        unit_pow10 = pow10 - pow10_digits_above_pow1000;
+    }
+
 
     // special limit: currently don't use any base unit powers below 0 (1's digit)
     if (unit_pow10 < 0)
