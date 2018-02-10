@@ -4778,7 +4778,7 @@ ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
 For [[encyclopedia ENC_SPECIES]]: %1%
 Total [[encyclopedia DAMAGE_TITLE]]: %2%    [[PC_DIRECT_WEAPON]] Shots: %3%
-Total Noisiness: %22%
+Total [[metertype METER_NOISINESS]]: %22%
 [[metertype METER_STRUCTURE]]: %4%    [[metertype METER_SHIELD]]: %5%
 [[metertype METER_DETECTION]]: %6%    [[metertype METER_STEALTH]]: %7%
 [[metertype METER_BATTLE_DETECTION]]: %21%
@@ -12618,7 +12618,7 @@ PART_DESC_DETECTION
 PART_DESC_DIRECT_FIRE_STATS
 '''Shot [[encyclopedia DAMAGE_TITLE]]: %1%
 Shots per Attack: %2%
-Noise per Attack: %3%'''
+<metertype METER_NOISINESS>Noise</metertype> per Attack: %3%'''
 
 # %1% ship part damage done (fighters).
 # %2% number of deployable fighters.
