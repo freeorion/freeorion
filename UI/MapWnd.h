@@ -456,18 +456,18 @@ private:
     std::set<int>                               m_selected_fleet_ids;
     std::set<int>                               m_selected_ship_ids;
 
-    double                                      m_zoom_steps_in;    //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
-    std::shared_ptr<SidePanel>                  m_side_panel;       //!< planet view panel on the side of the main map
-    boost::unordered_map<int, std::shared_ptr<SystemIcon>>  m_system_icons;     //!< system icons in the main map, indexed by system id
-    std::map<int, std::shared_ptr<FieldIcon>>   m_field_icons;      //!< field icons in the main map, indexed by field id
-    std::shared_ptr<SitRepPanel>                m_sitrep_panel;     //!< sitrep panel
-    std::shared_ptr<ResearchWnd>                m_research_wnd;     //!< research screen
-    std::shared_ptr<ProductionWnd>              m_production_wnd;   //!< production screen
-    std::shared_ptr<DesignWnd>                  m_design_wnd;       //!< design screen
-    std::shared_ptr<EncyclopediaDetailPanel>    m_pedia_panel;      //!< encyclpedia panel
-    std::shared_ptr<ObjectListWnd>              m_object_list_wnd;  //!< filterable list of objects in universe
-    std::shared_ptr<ModeratorActionsWnd>        m_moderator_wnd;    //!< buttons to select moderator actions
-    std::shared_ptr<CombatReportWnd>            m_combat_report_wnd;//!< shows graphical reports of combats
+    double                                      m_zoom_steps_in = 0.0;          //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
+    std::shared_ptr<SidePanel>                  m_side_panel = nullptr;         //!< planet view panel on the side of the main map
+    boost::unordered_map<int, std::shared_ptr<SystemIcon>> m_system_icons;      //!< system icons in the main map, indexed by system id
+    std::map<int, std::shared_ptr<FieldIcon>>   m_field_icons;                  //!< field icons in the main map, indexed by field id
+    std::shared_ptr<SitRepPanel>                m_sitrep_panel = nullptr;       //!< sitrep panel
+    std::shared_ptr<ResearchWnd>                m_research_wnd = nullptr;       //!< research screen
+    std::shared_ptr<ProductionWnd>              m_production_wnd = nullptr;     //!< production screen
+    std::shared_ptr<DesignWnd>                  m_design_wnd = nullptr;         //!< design screen
+    std::shared_ptr<EncyclopediaDetailPanel>    m_pedia_panel = nullptr;        //!< encyclpedia panel
+    std::shared_ptr<ObjectListWnd>              m_object_list_wnd = nullptr;    //!< filterable list of objects in universe
+    std::shared_ptr<ModeratorActionsWnd>        m_moderator_wnd = nullptr;      //!< buttons to select moderator actions
+    std::shared_ptr<CombatReportWnd>            m_combat_report_wnd = nullptr;  //!< shows graphical reports of combats
 
     std::vector<std::weak_ptr<GG::Wnd>>         m_wnd_stack;        //!< stack of open windows, to allow closing them with escape in a LIFO order
 
@@ -553,36 +553,38 @@ private:
 
     ScanlineRenderer                m_scanline_shader;
 
-    GG::Pt                          m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
-    bool                            m_dragged;          //!< tracks whether or not a drag occurs during a left button down sequence of events
-    std::shared_ptr<GG::Button>     m_btn_turn;         //!< button that updates player's turn;
-    std::shared_ptr<GG::Button>     m_btn_auto_turn;    //!< button that toggles whether to automatically end turns;
-    bool                            m_auto_end_turn;    //!< should turns be ended automatically by this client?
-    std::list<std::weak_ptr<MapWndPopup>>
-                                    m_popups;           //!< list of currently active popup windows
-    bool                            m_menu_showing;     //!< set during ShowMenu() to prevent reentrency
+    GG::Pt                          m_drag_offset = {-GG::X1, -GG::Y1}; //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
+    bool                            m_dragged = false;          //!< tracks whether or not a drag occurs during a left button down sequence of events
+
+    std::shared_ptr<GG::Button>     m_btn_turn = nullptr;       //!< button that updates player's turn;
+    std::shared_ptr<GG::Button>     m_btn_auto_turn = nullptr;  //!< button that toggles whether to automatically end turns;
+    bool                            m_auto_end_turn = false;    //!< should turns be ended automatically by this client?
+    std::list<std::weak_ptr<MapWndPopup>> m_popups;             //!< list of currently active popup windows
+    bool                            m_menu_showing = false;     //!< set during ShowMenu() to prevent reentrency
     int                             m_current_owned_system;
     int                             m_current_fleet_id;
-    bool                            m_in_production_view_mode;
+    bool                            m_in_production_view_mode = false;
 
-    bool                            m_sidepanel_open_before_showing_other;  //!< was the sidepanel open before switching to production, research or design screens?  If so, it should be restored when leaving them.
+    bool                            m_sidepanel_open_before_showing_other = false;  //!< was the sidepanel open before switching to production, research or design screens?  If so, it should be restored when leaving them.
 
-    std::shared_ptr<CUIToolBar>     m_toolbar;
-    std::shared_ptr<StatisticIcon>  m_trade, m_population, m_research, m_industry, m_stockpile, m_detection, m_fleet;
-    std::shared_ptr<GG::Button>     m_industry_wasted, m_research_wasted;
-    std::shared_ptr<GG::Button>     m_btn_moderator, m_btn_messages, m_btn_empires,
-                                    m_btn_siterep, m_btn_research, m_btn_production,
-                                    m_btn_design, m_btn_pedia, m_btn_graphs,
-                                    m_btn_objects, m_btn_menu;
-    std::shared_ptr<GG::Label>      m_FPS;
+    std::shared_ptr<CUIToolBar>     m_toolbar = nullptr;
+    std::shared_ptr<StatisticIcon>  m_trade = nullptr, m_population = nullptr, m_research = nullptr,
+                                    m_industry = nullptr, m_stockpile = nullptr, m_detection = nullptr,
+                                    m_fleet = nullptr;
+    std::shared_ptr<GG::Button>     m_industry_wasted = nullptr, m_research_wasted = nullptr,
+                                    m_btn_moderator = nullptr, m_btn_messages = nullptr, m_btn_empires = nullptr,
+                                    m_btn_siterep = nullptr, m_btn_research = nullptr, m_btn_production = nullptr,
+                                    m_btn_design = nullptr, m_btn_pedia = nullptr, m_btn_graphs = nullptr,
+                                    m_btn_objects = nullptr, m_btn_menu = nullptr;
+    std::shared_ptr<GG::Label>      m_FPS = nullptr;
 
-    std::shared_ptr<MapScaleLine>       m_scale_line;       //!< indicates the on-screen distance that reprensents an in-universe distance
-    std::shared_ptr<GG::Slider<double>> m_zoom_slider;      //!< allows user to set zoom level;
+    std::shared_ptr<MapScaleLine>       m_scale_line = nullptr;     //!< indicates the on-screen distance that reprensents an in-universe distance
+    std::shared_ptr<GG::Slider<double>> m_zoom_slider = nullptr;    //!< allows user to set zoom level;
 
     std::set<int>                   m_fleets_exploring;
 
     /// indicates that refresh fleet button work should be done before rendering.
-    bool                            m_deferred_refresh_fleet_buttons;
+    bool                            m_deferred_refresh_fleet_buttons = false;
 
     friend struct IntroMenu;
     friend struct WaitingForGameStart;
