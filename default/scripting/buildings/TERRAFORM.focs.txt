@@ -1,8 +1,8 @@
 BuildingType
     name = "BLD_TERRAFORM"
     description = "BLD_TERRAFORM_DESC"
-    buildcost = 100 * (Target.SizeAsDouble * (1 + Target.DistanceFromOriginalType) ) * [[BUILDING_COST_MULTIPLIER]]
-    buildtime = 8
+    buildcost = 200 * Target.SizeAsDouble * [[BUILDING_COST_MULTIPLIER]]
+    buildtime = (6 + Target.SizeAsDouble)
     location = And [
         Planet
         Not Contains Building name = "BLD_TERRAFORM"
@@ -16,20 +16,13 @@ BuildingType
             Planet environment = Adequate
         ]
     ]
-    EnqueueLocation = And [
-        Planet
-        OwnedBy empire = Source.Owner
-        Not Contains Building name = "BLD_TERRAFORM_REVERT"
-        Not Contains Building name = "BLD_GAIA_TRANS"
-        Not HasSpecial name = "GAIA_SPECIAL"
-        Not Enqueued type = Building name = "BLD_TERRAFORM_REVERT"
-        Not Enqueued type = Building name = "BLD_GAIA_TRANS"
-    ]
     effectsgroups = [
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
                 Planet
+                Not HasSpecial name = "UNSTABLE_SPECIAL"
+                Not Planet type = LocalCandidate.NextBetterPlanetType
             ]
             effects = [
                 SetPlanetType type = Target.NextBetterPlanetType
@@ -39,11 +32,24 @@ BuildingType
                     icon = "icons/building/terraform.png"
                     parameters = tag = "planet" data = Target.ID
                     empire = Source.Owner
+                AddSpecial name = "UNSTABLE_SPECIAL" capacity = Target.DistanceFromOriginalType + Target.SizeAsDouble
             ]
 
         EffectsGroup
-            scope = Source
-            effects = Destroy
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                HasSpecialCapacity name = "UNSTABLE_SPECIAL" high = 1
+            ]
+            effects = RemoveSpecial name = "UNSTABLE_SPECIAL"
+
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                HasSpecialCapacity name = "UNSTABLE_SPECIAL" low = 2
+            ]
+            effects = SetSpecialCapacity name = "UNSTABLE_SPECIAL" value = Value - 1
     ]
     icon = "icons/building/terraform.png"
 
