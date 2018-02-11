@@ -83,10 +83,8 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::vector<int>& PopCenterIDs() const {return m_pop_center_ids;}  ///< returns the PopCenter vector
-
-    float   Population() const;     ///< returns current total population
-    float   Growth() const;         ///< returns predicted growth for next turn
+    const std::vector<int>& PopCenterIDs() const { return m_pop_center_ids; }   ///< returns the PopCenter vector
+    float Population() const;   ///< returns current total population
     //@}
 
     /** \name Mutators */ //@{
@@ -94,14 +92,12 @@ public:
     mutable boost::signals2::signal<void ()> ChangedSignal;
 
     void    SetPopCenters(const std::vector<int>& pop_center_ids);
-
-    void    Update();                               ///< recalculates total population and growth
+    void    Update();                           ///< recalculates total population and growth
     //@}
 
 private:
-    std::vector<int>    m_pop_center_ids;   ///< UniverseObject ids of PopCenters that contribute to the pool
-    float               m_population;       ///< total population of all PopCenters in pool
-    float               m_growth;           ///< total predicted population growth for next turn for all PopCenters in pool
+    std::vector<int>    m_pop_center_ids;       ///< UniverseObject ids of PopCenters that contribute to the pool
+    float               m_population = 0.0f;    ///< total population of all PopCenters in pool
 
     friend class boost::serialization::access;
     template <class Archive>

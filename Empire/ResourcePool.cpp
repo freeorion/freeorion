@@ -187,16 +187,11 @@ void ResourcePool::Update() {
 //////////////////////////////////////////////////
 // PopulationPool
 //////////////////////////////////////////////////
-PopulationPool::PopulationPool() :
-    m_population(0.0f),
-    m_growth(0.0f)
+PopulationPool::PopulationPool()
 {}
 
 float PopulationPool::Population() const
 { return m_population; }
-
-float PopulationPool::Growth() const
-{ return m_growth; }
 
 void PopulationPool::SetPopCenters(const std::vector<int>& pop_center_ids) {
     if (m_pop_center_ids == pop_center_ids)
@@ -206,14 +201,11 @@ void PopulationPool::SetPopCenters(const std::vector<int>& pop_center_ids) {
 
 void PopulationPool::Update() {
     m_population = 0.0f;
-    float future_population = 0.0f;
     // sum population from all PopCenters in this pool
     for (int pop_center_id : m_pop_center_ids) {
         if (auto center = GetPopCenter(pop_center_id)) {
             m_population += center->CurrentMeterValue(METER_POPULATION);
-            future_population += center->NextTurnCurrentMeterValue(METER_POPULATION);
         }
     }
-    m_growth = future_population - m_population;
     ChangedSignal();
 }

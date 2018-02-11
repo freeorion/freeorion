@@ -39,7 +39,6 @@ public:
 
     virtual float   InitialMeterValue(MeterType type) const = 0;            ///< implementation should return the initial value of the specified meter \a type
     virtual float   CurrentMeterValue(MeterType type) const = 0;            ///< implementation should return the current value of the specified meter \a type
-    virtual float   NextTurnCurrentMeterValue(MeterType type) const = 0;    ///< implementation should return an estimate of the next turn's current value of the specified meter \a type
 
     /** the state changed signal object for this ResourceCenter */
     mutable boost::signals2::signal<void ()> ResourceCenterChangedSignal;

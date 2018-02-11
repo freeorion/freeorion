@@ -425,39 +425,6 @@ float Planet::InitialMeterValue(MeterType type) const
 float Planet::CurrentMeterValue(MeterType type) const
 { return UniverseObject::CurrentMeterValue(type); }
 
-float Planet::NextTurnCurrentMeterValue(MeterType type) const {
-    MeterType max_meter_type = INVALID_METER_TYPE;
-    switch (type) {
-    case METER_SHIELD:      max_meter_type = METER_MAX_SHIELD;          break;
-    case METER_TROOPS:      max_meter_type = METER_MAX_TROOPS;          break;
-    case METER_DEFENSE:     max_meter_type = METER_MAX_DEFENSE;         break;
-    case METER_SUPPLY:      max_meter_type = METER_MAX_SUPPLY;          break;
-    case METER_STOCKPILE:   max_meter_type = METER_MAX_STOCKPILE;       break;
-        break;
-    default:
-        return UniverseObject::NextTurnCurrentMeterValue(type);
-    }
-
-    const Meter* meter = GetMeter(type);
-    if (!meter) {
-        throw std::invalid_argument("Planet::NextTurnCurrentMeterValue passed meter type that the Planet does not have, but should: " + boost::lexical_cast<std::string>(type));
-    }
-    float current_meter_value = meter->Current();
-
-    const Meter* max_meter = GetMeter(max_meter_type);
-    if (!max_meter) {
-        throw std::runtime_error("Planet::NextTurnCurrentMeterValue dealing with invalid meter type: " + boost::lexical_cast<std::string>(type));
-    }
-    float max_meter_value = max_meter->Current();
-
-    // being attacked prevents meter growth
-    if (LastTurnAttackedByShip() >= CurrentTurn())
-        return std::min(current_meter_value, max_meter_value);
-
-    // currently meter growth is one per turn.
-    return std::min(current_meter_value + 1.0f, max_meter_value);
-}
-
 std::string Planet::CardinalSuffix() const {
     std::string retval = "";
     // Early return for invalid ID

@@ -29,7 +29,6 @@ public:
 
     float CurrentMeterValue(MeterType type) const override;
     float InitialMeterValue(MeterType type) const override;
-    float NextTurnCurrentMeterValue(MeterType type) const override;
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
