@@ -7,6 +7,7 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
+        Not HasSpecial name = "UNSTABLE_SPECIAL"
         Not WithinStarlaneJumps jumps = 2 condition = And [
             System
             Contains And [
