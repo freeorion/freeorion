@@ -22,11 +22,7 @@ FO_COMMON_API extern const int ALL_EMPIRES;
 struct FO_COMMON_API ResearchQueue {
     /** The type of a single element in the research queue. */
     struct Element {
-        Element() :
-            empire_id(ALL_EMPIRES),
-            allocated_rp(0.0f),
-            turns_left(0),
-            paused(false)
+        Element()
         {}
         Element(const std::string& name_, int empire_id_, float spending_, int turns_left_, bool paused_ = false) :
             name(name_),
@@ -36,11 +32,12 @@ struct FO_COMMON_API ResearchQueue {
             paused(paused_)
         {}
         std::string Dump() const;
+
         std::string name;
-        int         empire_id;
-        float       allocated_rp;
-        int         turns_left;
-        bool        paused;
+        int         empire_id = ALL_EMPIRES;
+        float       allocated_rp = 0.0f;
+        int         turns_left = 0;
+        bool        paused = false;
     private:
         friend class boost::serialization::access;
         template <class Archive>
@@ -56,8 +53,6 @@ struct FO_COMMON_API ResearchQueue {
 
     /** \name Structors */ //@{
     ResearchQueue(int empire_id) :
-        m_projects_in_progress(0),
-        m_total_RPs_spent(0.0),
         m_empire_id(empire_id)
     {}
     //@}
@@ -106,9 +101,9 @@ struct FO_COMMON_API ResearchQueue {
 
 private:
     QueueType   m_queue;
-    int         m_projects_in_progress;
-    float       m_total_RPs_spent;
-    int         m_empire_id;
+    int         m_projects_in_progress = 0;
+    float       m_total_RPs_spent = 0.0f;
+    int         m_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -263,11 +258,11 @@ struct FO_COMMON_API ProductionQueue {
 
 private:
     QueueType                       m_queue;
-    int                             m_projects_in_progress;
+    int                             m_projects_in_progress = 0;
     std::map<std::set<int>, float>  m_object_group_allocated_pp;
     std::map<std::set<int>, float>  m_object_group_allocated_stockpile_pp;
-    float                           m_expected_new_stockpile_amount;
-    int                             m_empire_id;
+    float                           m_expected_new_stockpile_amount = 0.0f;
+    int                             m_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -295,11 +290,11 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&  Name() const;                               ///< Returns the Empire's name
-    const std::string&  PlayerName() const;                         ///< Returns the Empire's player's name
-    int                 EmpireID() const;                           ///< Returns the Empire's unique numeric ID
-    const GG::Clr&      Color() const;                              ///< Returns the Empire's color
-    int                 CapitalID() const;                          ///< Returns the numeric ID of the empire's capital
+    const std::string&  Name() const;           ///< Returns the Empire's name
+    const std::string&  PlayerName() const;     ///< Returns the Empire's player's name
+    int                 EmpireID() const;       ///< Returns the Empire's unique numeric ID
+    const GG::Clr&      Color() const;          ///< Returns the Empire's color
+    int                 CapitalID() const;      ///< Returns the numeric ID of the empire's capital
 
     /** Return an object id that is owned by the empire or INVALID_OBJECT_ID. */
     int                 SourceID() const;
@@ -615,9 +610,9 @@ public:
     mutable boost::signals2::signal<void ()>  ShipDesignsChangedSignal;
 
 private:
-    void        Init();
+    void Init();
 
-    int                             m_id;                       ///< Empire's unique numeric id
+    int                             m_id = ALL_EMPIRES;         ///< Empire's unique numeric id
     std::string                     m_name;                     ///< Empire's name
     std::string                     m_player_name;              ///< Empire's Player's name
     GG::Clr                         m_color;                    ///< Empire's color
@@ -627,7 +622,7 @@ private:
         mutable so that Source() can be const and still cache its result. */
     mutable int                     m_source_id = INVALID_OBJECT_ID;
 
-    bool                            m_eliminated;               ///< Whether the empire has lost
+    bool                            m_eliminated = false;       ///< Whether the empire has lost
     std::set<std::string>           m_victories;                ///< The ways that the empire has won, if any
 
     std::map<std::string, int>      m_techs;                    ///< names of researched technologies, and turns on which they were acquired.
@@ -656,7 +651,7 @@ private:
     std::map<std::string, int>      m_ship_part_types_owned;    ///< how many ship parts are currently owned, indexed by PartType
     std::map<ShipPartClass, int>    m_ship_part_class_owned;    ///< how many ship parts are currently owned, indexed by ShipPartClass
     std::map<std::string, int>      m_species_colonies_owned;   ///< how many colonies of each species does this empire currently own?
-    int                             m_outposts_owned;           ///< how many uncolonized outposts does this empire currently own?
+    int                             m_outposts_owned = 0;       ///< how many uncolonized outposts does this empire currently own?
     std::map<std::string, int>      m_building_types_owned;     ///< how many buildings does this empire currently own?
 
     std::map<int, int>              m_empire_ships_destroyed;   ///< how many ships of each empire has this empire destroyed?

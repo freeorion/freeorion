@@ -1281,7 +1281,6 @@ void ProductionQueue::clear() {
 // Empire //
 ////////////
 Empire::Empire() :
-    m_id(ALL_EMPIRES),
     m_research_queue(m_id),
     m_production_queue(m_id)
 { Init(); }
