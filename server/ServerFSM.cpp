@@ -286,9 +286,10 @@ void ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                                 Networking::ClientType client_type,
                                 const std::string& client_version_string)
 {
+    std::list<PlayerConnectionPtr> to_disconnect;
+
     if (player_connection->IsAuthenticated()) {
         // drop other connection with same name
-        std::list<PlayerConnectionPtr> to_disconnect;
         for (ServerNetworking::const_established_iterator it = m_server.m_networking.established_begin();
              it != m_server.m_networking.established_end(); ++it)
         {
@@ -297,8 +298,6 @@ void ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                 to_disconnect.push_back(*it);
             }
         }
-        for (const auto& conn : to_disconnect)
-        { m_server.Networking().Disconnect(conn); }
     }
 
     // assign unique player ID to newly connected player
@@ -327,6 +326,10 @@ void ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
             player_connection->SendMessage(ChatHistoryMessage(chat_history));
         }
     }
+
+    // disconnect "ghost" connection after establishing new
+    for (const auto& conn : to_disconnect)
+    { m_server.Networking().Disconnect(conn); }
 }
 
 ////////////////////////////////////////////////////////////
@@ -2073,8 +2076,27 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 
     fsm.EstablishPlayer(player_connection, player_name, client_type, player_connection->ClientVersionString());
 
-    // send playing game
-    server.AddObserverPlayerIntoGame(player_connection);
+    // it possible to be not in PlayingGame here
+    bool is_in_mplobby = false;
+    std::stringstream ss;
+    for (auto leaf_state_it = fsm.state_begin(); leaf_state_it != fsm.state_end();) {
+        // The following use of typeid assumes that
+        // BOOST_STATECHART_USE_NATIVE_RTTI is defined
+        const auto& leaf_state = *leaf_state_it;
+        ss << typeid(leaf_state).name();
+        if (typeid(leaf_state) == typeid(MPLobby))
+            is_in_mplobby = true;
+        ++leaf_state_it;
+        if (leaf_state_it != fsm.state_end())
+            ss << ", ";
+    }
+    ss << "]";
+    DebugLogger(FSM) << "(ServerFSM) PlayingGame.EstablishPlayer at " << ss.str();
+
+    if (!is_in_mplobby) {
+        // send playing game
+        server.AddObserverPlayerIntoGame(player_connection);
+    }
 }
 
 sc::result PlayingGame::react(const JoinGame& msg) {
