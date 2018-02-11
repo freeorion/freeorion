@@ -6,7 +6,6 @@ BuildingType
     location = And [
         Planet
         Not Contains Building name = "BLD_TERRAFORM"
-        Not Contains Building name = "BLD_TERRAFORM_REVERT"
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
         Not Planet type = [Asteroids GasGiant]

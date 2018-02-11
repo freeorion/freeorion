@@ -12098,12 +12098,6 @@ Terraformeur
 BLD_TERRAFORM_DESC
 Terraforme une planète en un type d'[[encyclopedia ENVIRONMENT_TITLE]] un palier plus proche de l'Environnement favori de l'espèce.
 
-BLD_TERRAFORM_REVERT
-Terraformeur Inversé
-
-BLD_TERRAFORM_REVERT_DESC
-Terraforme une planète en un type d'[[encyclopedia ENVIRONMENT_TITLE]] un palier plus proche de l'Environnement planétaire d'origine.
-
 BLD_REMOTE_TERRAFORM
 Terraformeur à Distance
 

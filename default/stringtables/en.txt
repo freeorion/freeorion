@@ -12131,12 +12131,6 @@ The duration of [[special UNSTABLE_SPECIAL]] increases with the planet size and 
 [[special UNSTABLE_SPECIAL]] prevents further changes from terraforming.
 '''
 
-BLD_TERRAFORM_REVERT
-Terraforming Reversion
-
-BLD_TERRAFORM_REVERT_DESC
-Terraforms a world one step back towards its original type of [[encyclopedia ENVIRONMENT_TITLE]].
-
 BLD_REMOTE_TERRAFORM
 Remote Terraforming
 
