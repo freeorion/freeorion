@@ -124,10 +124,10 @@ protected:
     virtual void RenderRollover();
     //@}
 
-    std::shared_ptr<TextControl>   m_label;             ///< Label used to display text
+    std::shared_ptr<TextControl> m_label;   ///< Label used to display text
 
 private:
-    void           RenderDefault();     ///< This just draws the default unadorned square-and-rectangle button
+    void RenderDefault();     ///< This just draws the default unadorned square-and-rectangle button
 
     ButtonState    m_state;             ///< Button is always in exactly one of the ButtonState states above
     SubTexture     m_unpressed_graphic; ///< Graphic used to display button when it's unpressed
@@ -173,16 +173,16 @@ public:
     void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
-    Pt MinUsableSize() const override;
+    Pt                  MinUsableSize() const override;
 
     /** Returns button state \see ButtonState */
-    ButtonState       State() const;
+    ButtonState         State() const;
 
-    const std::string& Text() const;        ///< Returns the label to be used as the button label
+    const std::string&  Text() const;        ///< Returns the label to be used as the button label
 
-    bool             Checked() const;       ///< Returns true if button is checked
+    bool                Checked() const;       ///< Returns true if button is checked
 
-    TextControl* GetLabel() const;
+    TextControl*        GetLabel() const;
 
     mutable CheckedSignalType CheckedSignal; ///< The checked signal object for this StaticButton
     //@}
@@ -192,9 +192,9 @@ public:
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
 
-    void             Reset();                 ///< Unchecks button
-    void             SetCheck(bool b = true); ///< (Un)checks button
-    void             SetTextColor(Clr c); ///< Sets the color of the box label text
+    void Reset();                 ///< Unchecks button
+    void SetCheck(bool b = true); ///< (Un)checks button
+    void SetTextColor(Clr c); ///< Sets the color of the box label text
     //@}
 
 protected:
@@ -207,16 +207,14 @@ protected:
     void MouseLeave() override;
 
     /** Sets button state programmatically \see ButtonState */
-    void         SetState(ButtonState next_state);
+    void SetState(ButtonState next_state);
     //@}
 
 private:
     std::shared_ptr<StateButtonRepresenter> m_representer;
-
-    std::shared_ptr<TextControl>      m_label;       ///< Label used to display text
-
-    ButtonState       m_state;       ///< Button is always in exactly one of the ButtonState states above
-    bool              m_checked;     ///< true when this button in a checked, active state
+    std::shared_ptr<TextControl>            m_label;       ///< Label used to display text
+    ButtonState                             m_state;       ///< Button is always in exactly one of the ButtonState states above
+    bool                                    m_checked;     ///< true when this button in a checked, active state
 };
 
 

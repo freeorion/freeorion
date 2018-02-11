@@ -36,7 +36,7 @@ namespace {
         if (!app)
             return retval;
         for (const auto& id_and_order : app->Orders()) {
-            if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
+            if (auto order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
                 retval[order->ObjectID()] = id_and_order.first;
             }
         }
@@ -272,7 +272,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_building_id(INVALID_OBJECT_ID)
 {
-    std::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(building_type);
+    auto texture = ClientUI::BuildingIcon(building_type);
 
     const BuildingType* type = GetBuildingType(building_type);
     const std::string& desc = type ? type->Description() : "";
@@ -363,7 +363,7 @@ void BuildingIndicator::Refresh() {
     DetachChildAndReset(m_scrap_indicator);
 
     if (const BuildingType* type = GetBuildingType(building->BuildingTypeName())) {
-        std::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(type->Name());
+        auto texture = ClientUI::BuildingIcon(type->Name());
         m_graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         AttachChild(m_graphic);
 
@@ -378,7 +378,7 @@ void BuildingIndicator::Refresh() {
     }
 
     if (building && building->OrderedScrapped()) {
-        std::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
+        auto scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
         m_scrap_indicator = GG::Wnd::Create<GG::StaticGraphic>(scrap_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         AttachChild(m_scrap_indicator);
     }
@@ -403,7 +403,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     // queued production item, and that the owner of the building is this
     // client's player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    std::shared_ptr<Building> building = GetBuilding(m_building_id);
+    auto building = GetBuilding(m_building_id);
     if (!building)
         return;
 

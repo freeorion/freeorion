@@ -426,7 +426,7 @@ namespace {
         if (!app)
             return retval;
         for (const auto& id_and_order : app->Orders()) {
-            if (std::shared_ptr<ColonizeOrder> order = std::dynamic_pointer_cast<ColonizeOrder>(id_and_order.second)) {
+            if (auto order = std::dynamic_pointer_cast<ColonizeOrder>(id_and_order.second)) {
                 retval[order->PlanetID()] = id_and_order.first;
             }
         }
@@ -441,7 +441,7 @@ namespace {
         if (!app)
             return retval;
         for (const auto& id_and_order : app->Orders()) {
-            if (std::shared_ptr<InvadeOrder> order = std::dynamic_pointer_cast<InvadeOrder>(id_and_order.second)) {
+            if (auto order = std::dynamic_pointer_cast<InvadeOrder>(id_and_order.second)) {
                 retval[order->PlanetID()].insert(id_and_order.first);
             }
         }
@@ -456,7 +456,7 @@ namespace {
         if (!app)
             return retval;
         for (const auto& id_and_order : app->Orders()) {
-            if (std::shared_ptr<BombardOrder> order = std::dynamic_pointer_cast<BombardOrder>(id_and_order.second)) {
+            if (auto order = std::dynamic_pointer_cast<BombardOrder>(id_and_order.second)) {
                 retval[order->PlanetID()].insert(id_and_order.first);
             }
         }
@@ -592,11 +592,11 @@ public:
 
     void PreRender() override;
 
-    void            Clear();
-    void            SetPlanets(const std::vector<int>& planet_ids, StarType star_type);
-    void            SelectPlanet(int planet_id);        //!< programatically selects a planet with id \a planet_id
-    void            SetValidSelectionPredicate(const std::shared_ptr<UniverseObjectVisitor> &visitor);
-    void            ScrollTo(int pos);
+    void Clear();
+    void SetPlanets(const std::vector<int>& planet_ids, StarType star_type);
+    void SelectPlanet(int planet_id);        //!< programatically selects a planet with id \a planet_id
+    void SetValidSelectionPredicate(const std::shared_ptr<UniverseObjectVisitor> &visitor);
+    void ScrollTo(int pos);
 
     /** Updates data displayed in info panels and redoes layout
      *  @param[in] excluded_planet_id Excludes panels with this planet id
@@ -609,7 +609,7 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via the
       * PlanetPanels in this PlanetPanelContainer. */
-    void            EnableOrderIssuing(bool enable = true);
+    void EnableOrderIssuing(bool enable = true);
     //@}
 
     /** emitted when an enabled planet panel is clicked by the user */
@@ -624,25 +624,22 @@ public:
     mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
 
 private:
-    void            DisableNonSelectionCandidates();    //!< disables planet panels that aren't selection candidates
+    void DisableNonSelectionCandidates();    //!< disables planet panels that aren't selection candidates
 
-    void            DoPanelsLayout();                   //!< repositions PlanetPanels, without moving top panel.  Panels below may shift if ones above them have resized.
+    void DoPanelsLayout();                   //!< repositions PlanetPanels, without moving top panel.  Panels below may shift if ones above them have resized.
+
     /** Resize the panels and \p use_vscroll if requested.  Return the total height.*/
-    GG::Y           ResizePanelsForVScroll(bool use_vscroll);
-    void            DoLayout();
+    GG::Y ResizePanelsForVScroll(bool use_vscroll);
+    void DoLayout();
 
-    void            VScroll(int pos_top, int pos_bottom, int range_min, int range_max); //!< responds to user scrolling of planet panels list.  all but first parameter ignored
+    void VScroll(int pos_top, int pos_bottom, int range_min, int range_max); //!< responds to user scrolling of planet panels list.  all but first parameter ignored
 
     std::vector<std::shared_ptr<PlanetPanel>>   m_planet_panels;
-
-    int                         m_selected_planet_id;
-    std::set<int>               m_candidate_ids;
-
-    std::shared_ptr<UniverseObjectVisitor> m_valid_selection_predicate;
-
+    int                                         m_selected_planet_id;
+    std::set<int>                               m_candidate_ids;
+    std::shared_ptr<UniverseObjectVisitor>      m_valid_selection_predicate;
     std::shared_ptr<GG::Scroll>                 m_vscroll; ///< the vertical scroll (for viewing all the planet panes);
-
-    bool                        m_ignore_recursive_resize;
+    bool                                        m_ignore_recursive_resize;
 };
 
 class RotatingPlanetControl : public GG::Control {
@@ -803,7 +800,7 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
         if (!system_row)
             return;
 
-        std::shared_ptr<const System> system(GetSystem(system_row->SystemID()));
+        auto system = GetSystem(system_row->SystemID());
         if (!system)
             return;
 
@@ -1112,7 +1109,7 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
     DetachChildAndReset(m_rotating_planet_graphic);
 
     if (planet->Type() == PT_ASTEROIDS) {
-        const std::vector<std::shared_ptr<GG::Texture>>& textures = GetAsteroidTextures();
+        const auto& textures = GetAsteroidTextures();
         if (textures.empty())
             return;
         GG::X texture_width = textures[0]->DefaultWidth();
@@ -1250,7 +1247,7 @@ namespace {
 
         // is there a valid single selected ship in the active FleetWnd?
         for (int ship_id : FleetUIManager::GetFleetUIManager().SelectedShipIDs())
-            if (std::shared_ptr<Ship> ship = GetUniverse().Objects().Object<Ship>(ship_id))
+            if (auto ship = GetUniverse().Objects().Object<Ship>(ship_id))
                 if (ship->SystemID() == system_id && ship->HasTroops() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                     retval.insert(ship);
 
@@ -1266,7 +1263,7 @@ namespace {
 
         // is there a valid single selected ship in the active FleetWnd?
         for (int ship_id : FleetUIManager::GetFleetUIManager().SelectedShipIDs()) {
-            std::shared_ptr<Ship> ship = GetShip(ship_id);
+            auto ship = GetShip(ship_id);
             if (!ship || ship->SystemID() != system_id)
                 continue;
             if (!ship->CanBombard() || !ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
@@ -1297,7 +1294,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
         return INVALID_OBJECT_ID;
     if (GetUniverse().GetObjectVisibilityByEmpire(target_planet_id, empire_id) < VIS_PARTIAL_VISIBILITY)
         return INVALID_OBJECT_ID;
-    std::shared_ptr<Planet> target_planet = GetPlanet(target_planet_id);
+    auto target_planet = GetPlanet(target_planet_id);
     if (!target_planet)
         return INVALID_OBJECT_ID;
     int system_id = target_planet->SystemID();
@@ -1312,7 +1309,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     PlanetType target_planet_type = target_planet->Type();
 
     // todo: return vector of ships from system ids using new Objects().FindObjects<Ship>(system->FindObjectIDs())
-    std::vector<std::shared_ptr<const Ship>> ships = Objects().FindObjects<const Ship>(system->ShipIDs());
+    auto ships = Objects().FindObjects<const Ship>(system->ShipIDs());
     std::vector<std::shared_ptr<const Ship>> capable_and_available_colony_ships;
     capable_and_available_colony_ships.reserve(ships.size());
 
@@ -1407,7 +1404,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenInvasionShips(int targe
     if (empire_id == ALL_EMPIRES)
         return retval;
 
-    std::shared_ptr<const Planet> target_planet = GetPlanet(target_planet_id);
+    auto target_planet = GetPlanet(target_planet_id);
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();
@@ -1449,7 +1446,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenBombardShips(int target
     if (empire_id == ALL_EMPIRES)
         return retval;
 
-    std::shared_ptr<const Planet> target_planet = GetPlanet(target_planet_id);
+    auto target_planet = GetPlanet(target_planet_id);
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();

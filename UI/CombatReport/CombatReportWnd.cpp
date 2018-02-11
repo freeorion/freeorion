@@ -141,24 +141,22 @@ public:
     { return m_min_size; }
 
 private:
-    CombatReportWnd&        m_wnd;
+    CombatReportWnd&                        m_wnd;
     std::shared_ptr<GG::TabWnd>             m_tabs;
     std::shared_ptr<GraphicalSummaryWnd>    m_graphical;//< Graphical summary
     std::shared_ptr<CombatLogWnd>           m_log;      //< Detailed log
     std::shared_ptr<GG::ScrollPanel>        m_log_scroller;
-    GG::Pt                  m_min_size; //< Minimum size according to the contents, is not constrained by the app window size
+    GG::Pt                                  m_min_size; //< Minimum size according to the contents, is not constrained by the app window size
 
     void UpdateMinSize() {
         m_min_size = GG::Pt(GG::X0, GG::Y0);
-
         m_min_size += m_wnd.Size() - m_wnd.ClientSize();
 
         // The rest of this function could use m_tabs->MinUsableSize instead of
         // dealing with the children of m_tabs directly, but that checks the
         // MinUsableSize of _all_ child windows, not just the currently
         // selected one.
-        if (GraphicalSummaryWnd* graphical_wnd =
-               dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd())) {
+        if (auto graphical_wnd = dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd())) {
             m_min_size += graphical_wnd->MinUsableSize();
         } else {
             // The log uses the GG::Layout which incorrectly reports

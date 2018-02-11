@@ -84,7 +84,7 @@ public:
     }
 
 private:
-    void            DoLayout() {
+    void DoLayout() {
         const GG::X SPECIES_NAME_WIDTH(ClientUI::Pts() * 9);
         const GG::X SPECIES_CENSUS_WIDTH(ClientUI::Pts() * 5);
 
@@ -104,7 +104,7 @@ private:
         InitBuffer();
     }
 
-    void            InitBuffer() {
+    void InitBuffer() {
         GG::Pt sz = Size();
         m_buffer.clear();
 
@@ -115,11 +115,11 @@ private:
         m_buffer.createServerBuffer();
     }
 
-    GG::GL2DVertexBuffer    m_buffer;
-    std::shared_ptr<GG::StaticGraphic>      m_icon;
-    std::shared_ptr<GG::Label>              m_name;
-    std::shared_ptr<GG::Label>              m_census_val;
-    bool                    m_show_icon;
+    GG::GL2DVertexBuffer                m_buffer;
+    std::shared_ptr<GG::StaticGraphic>  m_icon;
+    std::shared_ptr<GG::Label>          m_name;
+    std::shared_ptr<GG::Label>          m_census_val;
+    bool                                m_show_icon;
 };
 
 CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts,

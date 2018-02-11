@@ -292,7 +292,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
             GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
     GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
 
-    std::shared_ptr<GG::Texture> cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
+    auto cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
     SetCursor(std::make_shared<GG::TextureCursor>(cursor_texture, GG::Pt(GG::X(6), GG::Y(3))));
     RenderCursor(true);
 

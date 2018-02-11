@@ -102,7 +102,7 @@ Ship* Ship::Clone(int empire_id) const {
 void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object.get() == this)
         return;
-    std::shared_ptr<const Ship> copied_ship = std::dynamic_pointer_cast<const Ship>(copied_object);
+    auto copied_ship = std::dynamic_pointer_cast<const Ship>(copied_object);
     if (!copied_ship) {
         ErrorLogger() << "Ship::Copy passed an object that wasn't a Ship";
         return;
@@ -110,16 +110,16 @@ void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_
 
     int copied_object_id = copied_object->ID();
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
-    std::set<std::string> visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+    auto visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
     UniverseObject::Copy(copied_object, vis, visible_specials);;
 
     if (vis >= VIS_BASIC_VISIBILITY) {
         if (this->m_fleet_id != copied_ship->m_fleet_id) {
             // as with other containers, removal from the old container is triggered by the contained Object; removal from System is handled by UniverseObject::Copy
-            if (std::shared_ptr<Fleet> oldFleet = GetFleet(this->m_fleet_id))
-                oldFleet->RemoveShip(this->ID());
-            this->m_fleet_id =              copied_ship->m_fleet_id; // as with other containers (Systems), actual insertion into fleet ships set is handled by the fleet
+            if (auto old_fleet = GetFleet(this->m_fleet_id))
+                old_fleet->RemoveShip(this->ID());
+            this->m_fleet_id = copied_ship->m_fleet_id; // as with other containers (Systems), actual insertion into fleet ships set is handled by the fleet
         }
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {

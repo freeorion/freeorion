@@ -151,15 +151,15 @@ private:
     virtual void InitBuffer();
     void UpdateImpl(std::size_t mode, const Wnd* target) override;
 
-    GG::GL2DVertexBuffer    m_buffer;
-    bool                    m_text_from_target;
-    std::shared_ptr<Font> m_font;
-    Clr                     m_color;
-    Clr                     m_border_color;
-    unsigned int            m_border_width;
-    X                       m_preferred_width;
-    std::shared_ptr<TextControl>            m_text_control;
-    unsigned int            m_text_margin;
+    GG::GL2DVertexBuffer            m_buffer;
+    bool                            m_text_from_target;
+    std::shared_ptr<Font>           m_font;
+    Clr                             m_color;
+    Clr                             m_border_color;
+    unsigned int                    m_border_width;
+    X                               m_preferred_width;
+    std::shared_ptr<TextControl>    m_text_control;
+    unsigned int                    m_text_margin;
 };
 
 } // namespace GG

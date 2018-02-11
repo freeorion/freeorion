@@ -660,19 +660,16 @@ ClientUI::ClientUI() :
     GG::ImageBlock::SetDefaultImagePath(ArtDir().string());
 }
 
-ClientUI::~ClientUI() {
-    s_the_UI = nullptr;
-}
+ClientUI::~ClientUI()
+{ s_the_UI = nullptr; }
 
-std::shared_ptr<MapWnd> ClientUI::GetMapWnd()
-{
+std::shared_ptr<MapWnd> ClientUI::GetMapWnd() {
     static bool initialized = m_map_wnd ? true : (m_map_wnd = GG::Wnd::Create<MapWnd>()) != nullptr;
     (void)initialized; // Hide unused variable warning
     return m_map_wnd;
 }
 
-MapWnd const* ClientUI::GetMapWndConst() const
-{
+MapWnd const* ClientUI::GetMapWndConst() const {
     static bool initialized = m_map_wnd ? true : (m_map_wnd = GG::Wnd::Create<MapWnd>()) != nullptr;
     (void)initialized; // Hide unused variable warning
     return m_map_wnd.get();
@@ -687,8 +684,7 @@ std::shared_ptr<PlayerListWnd> ClientUI::GetPlayerListWnd()
 std::shared_ptr<IntroScreen> ClientUI::GetIntroScreen()
 { return m_intro_screen; }
 
-void ClientUI::ShowIntroScreen()
-{
+void ClientUI::ShowIntroScreen() {
     if (m_map_wnd) {
         HumanClientApp::GetApp()->Remove(m_map_wnd);
         m_map_wnd->RemoveWindows();
@@ -1125,11 +1121,11 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
     namespace fs = boost::filesystem;
     assert(fs::is_directory(dir));
     const std::string KEY = dir.string() + "/" + prefix;
-    PrefixedTextures::iterator prefixed_textures_it = m_prefixed_textures.find(KEY);
+    auto prefixed_textures_it = m_prefixed_textures.find(KEY);
     if (prefixed_textures_it == m_prefixed_textures.end()) {
         prefixed_textures_it = m_prefixed_textures.insert({KEY, TexturesAndDist()}).first;
-        std::vector<std::shared_ptr<GG::Texture>>& textures = prefixed_textures_it->second.first;
-        std::shared_ptr<SmallIntDistType>& rand_int = prefixed_textures_it->second.second;
+        auto& textures = prefixed_textures_it->second.first;
+        auto& rand_int = prefixed_textures_it->second.second;
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(dir); it != end_it; ++it) {
             try {

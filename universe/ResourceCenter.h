@@ -23,9 +23,7 @@ class FO_COMMON_API ResourceCenter : virtual public std::enable_shared_from_this
 public:
     /** \name Structors */ //@{
     ResourceCenter();
-
     ResourceCenter(const ResourceCenter& rhs);
-
     virtual ~ResourceCenter();
     //@}
 
@@ -46,7 +44,6 @@ public:
 
     /** \name Mutators */ //@{
     void Copy(std::shared_ptr<const ResourceCenter> copied_object, Visibility vis);
-
     void Copy(std::shared_ptr<const ResourceCenter> copied_object);
 
     void SetFocus(const std::string& focus);

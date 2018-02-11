@@ -112,7 +112,7 @@ namespace {
 
             const Empire* empire = GetEmpire(m_empire_id);
 
-            std::shared_ptr<GG::Texture> texture;
+            std::shared_ptr<GG::Texture>            texture;
             std::string                             name_text;
             std::string                             cost_text;
             std::string                             time_text;
@@ -262,7 +262,7 @@ namespace {
             // show build conditions
             const std::string& enqueue_and_location_condition_failed_text = EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
             if (!enqueue_and_location_condition_failed_text.empty())
-                if (std::shared_ptr<UniverseObject> location = GetUniverseObject(candidate_object_id)) {
+                if (auto location = GetUniverseObject(candidate_object_id)) {
                     std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
                     main_text += "\n\n" + failed_cond_loc + ":\n" + enqueue_and_location_condition_failed_text;
             }
@@ -313,7 +313,7 @@ namespace {
             // show build conditions
             const std::string& location_condition_failed_text = LocationConditionDescription(item.design_id, candidate_object_id, empire_id, true);
             if (!location_condition_failed_text.empty())
-                if (std::shared_ptr<UniverseObject> location = GetUniverseObject(candidate_object_id)) {
+                if (auto location = GetUniverseObject(candidate_object_id)) {
                     std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
                     main_text += ("\n\n" + failed_cond_loc + ":\n" + location_condition_failed_text);
                 }
@@ -382,8 +382,8 @@ namespace {
         }
 
     private:
-        ProductionQueue::ProductionItem m_item;
-        std::shared_ptr<ProductionItemPanel>            m_panel;
+        ProductionQueue::ProductionItem         m_item;
+        std::shared_ptr<ProductionItemPanel>    m_panel;
     };
 
     //////////////////////////////////
@@ -501,13 +501,10 @@ private:
 
     std::set<BuildType>                     m_build_types_shown;
     std::pair<bool, bool>                   m_availabilities_shown; //!< .first -> available items; .second -> unavailable items
-
-    std::shared_ptr<BuildableItemsListBox>                  m_buildable_items;
+    std::shared_ptr<BuildableItemsListBox>  m_buildable_items;
     GG::Pt                                  m_original_ul;
-
     int                                     m_production_location;
     int                                     m_empire_id;
-
     mutable boost::signals2::connection     m_empire_ship_designs_changed_signal;
 
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
@@ -777,7 +774,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 
     m_buildable_items->Clear(); // the list of items to be populated
 
-    std::shared_ptr<GG::Font> default_font = ClientUI::GetFont();
+    auto default_font = ClientUI::GetFont();
     const GG::Pt row_size = m_buildable_items->ListRowSize();
 
     // populate list with building types
@@ -1326,13 +1323,13 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
     // only checking visible objects for this clients empire (and not the
     // latest known objects) as an empire shouldn't be able to use a planet or
     // system it can't currently see as a production location.
-    std::shared_ptr<const System> sys = GetSystem(system_id);
+    auto sys = GetSystem(system_id);
     if (!sys) {
         ErrorLogger() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
         return;
     }
 
-    std::vector<std::shared_ptr<const Planet>> planets = Objects().FindObjects<const Planet>(sys->PlanetIDs());
+    auto planets = Objects().FindObjects<const Planet>(sys->PlanetIDs());
 
     if (planets.empty()) {
         this->SelectPlanet(INVALID_OBJECT_ID);

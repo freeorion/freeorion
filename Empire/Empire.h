@@ -646,9 +646,8 @@ private:
 
     std::vector<SitRepEntry>        m_sitrep_entries;           ///< The Empire's sitrep entries
 
-    std::map<ResourceType, std::shared_ptr<ResourcePool>> m_resource_pools;
-
-    PopulationPool                                              m_population_pool;
+    std::map<ResourceType, std::shared_ptr<ResourcePool>>   m_resource_pools;
+    PopulationPool                                          m_population_pool;
 
     std::map<std::string, int>      m_ship_names_used;          ///< map from name to number of times used
 

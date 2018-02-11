@@ -75,7 +75,7 @@ namespace {
         for (int owner_id : owners)
             objects_per_owner[owner_id] = 0;
         for (int obj_id : objects) {
-            std::shared_ptr<const UniverseObject> object = Objects().Object(obj_id);
+            auto object = Objects().Object(obj_id);
             if (object && (
                     object->ObjectType() == OBJ_SHIP || (
                         object->GetMeter(METER_POPULATION) &&
@@ -113,13 +113,13 @@ namespace {
     /// A Single section in the CombatLog showing general outline of a ship's combat
     /// and expanding into specifics.
     class CombatLogAccordionPanel : public AccordionPanel {
-        public:
+    public:
         CombatLogAccordionPanel(GG::X w, CombatLogWnd::Impl &log_,
                                 int viewing_empire_id_, ConstCombatEventPtr event_);
         ~CombatLogAccordionPanel();
         void CompleteConstruction() override;
 
-        private:
+    private:
         /** toggles panel expanded or collapsed */
         void ToggleExpansion();
 
@@ -131,7 +131,6 @@ namespace {
 
         // distance between expansion symbol and text
         static const unsigned int BORDER_MARGIN = 5;
-
     };
 
     CombatLogAccordionPanel::CombatLogAccordionPanel(GG::X w, CombatLogWnd::Impl& log_,

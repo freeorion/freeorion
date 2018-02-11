@@ -228,10 +228,10 @@ private:
     void OkClicked();
     void CancelClicked();
 
-    HSVClr                    m_current_color;
-    Clr                       m_original_color;
-    bool                      m_original_color_specified;
-    bool                      m_color_was_picked;
+    HSVClr  m_current_color;
+    Clr     m_original_color;
+    bool    m_original_color_specified;
+    bool    m_color_was_picked;
 
     std::shared_ptr<HueSaturationPicker>      m_hue_saturation_picker;
     std::shared_ptr<ValuePicker>              m_value_picker;
@@ -243,7 +243,7 @@ private:
     std::shared_ptr<Layout>                   m_color_squares_layout;
     std::vector<std::shared_ptr<ColorButton>> m_color_buttons;
     std::shared_ptr<Layout>                   m_color_buttons_layout;
-    std::size_t               m_current_color_button;
+    std::size_t                               m_current_color_button;
     std::vector<std::shared_ptr<TextControl>> m_slider_labels;
     std::vector<std::shared_ptr<TextControl>> m_slider_values;
     std::vector<std::shared_ptr<Slider<int>>> m_sliders;
@@ -251,9 +251,9 @@ private:
     std::shared_ptr<Button>                   m_cancel;
     std::shared_ptr<Layout>                   m_sliders_ok_cancel_layout;
 
-    Clr                       m_color;
-    Clr                       m_border_color;
-    Clr                       m_text_color;
+    Clr m_color;
+    Clr m_border_color;
+    Clr m_text_color;
 
     static std::vector<Clr>   s_custom_colors;
 };

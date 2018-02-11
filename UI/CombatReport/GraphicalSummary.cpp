@@ -511,12 +511,12 @@ public:
     { return GG::Wnd::UpperLeft() + RelativeClientUpperLeft(); }
 
 private:
-    const CombatSummary&            m_side_summary;
+    const CombatSummary&                            m_side_summary;
     std::vector<std::shared_ptr<ParticipantBar>>    m_participant_bars;
     std::shared_ptr<GG::Label>                      m_x_axis_label;
     std::shared_ptr<GG::Label>                      m_y_axis_label;
     std::shared_ptr<GG::Label>                      m_dead_label;
-    const BarSizer&                 m_sizer;
+    const BarSizer&                                 m_sizer;
 
     float MaxMaxHealth() {
         float max_health = -1.0f;
@@ -584,13 +584,13 @@ public:
     }
 
     void DoLayout() {
-        std::shared_ptr<GG::Font> cui_font = ClientUI::GetFont();
+        auto cui_font = ClientUI::GetFont();
 
         GG::Pt pos(GG::X(0), GG::Y(0));
         for (auto& data : m_toggles) {
             if (!data->button->Children().empty()) {
                 //Assume first child of the button is the label
-                if (const GG::TextControl* label = dynamic_cast<GG::TextControl const*>(data->button->Children().front().get()))
+                if (const auto* label = dynamic_cast<GG::TextControl const*>(data->button->Children().front().get()))
                 {
                     data->button->Resize(
                         GG::Pt(label->MinUsableSize().x + OPTION_BUTTON_PADDING,
@@ -603,8 +603,8 @@ public:
     }
 
 private:
-    std::unique_ptr<BarSizer>& m_sizer;
-    std::vector<std::shared_ptr<ToggleData>> m_toggles;
+    std::unique_ptr<BarSizer>&                  m_sizer;
+    std::vector<std::shared_ptr<ToggleData>>    m_toggles;
 
     struct ToggleData : public boost::signals2::trackable {
         typedef bool (BarSizer::*ToggleGetter)() const;

@@ -1677,7 +1677,7 @@ namespace {
             GG::Control::SizeMove(ul, GG::Pt(ul.x + Width(), lr.y));
         }
     private:
-    std::shared_ptr<ColorSquare> m_color_square;
+        std::shared_ptr<ColorSquare> m_color_square;
 
     };
 }

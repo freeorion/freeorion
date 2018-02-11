@@ -7,32 +7,29 @@
 //! This is a screen showing license and vision
 class About : public CUIWnd {
 public:
-//! \name Structors
-//!@{
+    //! \name Structors
+    //!@{
     About();
-    void CompleteConstruction() override;
-//!@}
     ~About();
+    //!@}
+    void CompleteConstruction() override;
 
-//! \name Mutators
-//!@{
+    //! \name Mutators
+    //!@{
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
-//!@}
+    //!@}
 
     void ShowLicense();
-
     void ShowVision();
 
 private:
     void DoLayout();
 
-//! \name Controls
-//!@{
     std::shared_ptr<GG::Button>     m_done_btn;     //!< Done button
     std::shared_ptr<GG::Button>     m_license;      //!< License button
     std::shared_ptr<GG::Button>     m_vision;       //!< Vision button
     std::shared_ptr<GG::MultiEdit>  m_info;         //!< Displays the license or vision information
-    std::string     m_license_str;  //!< String containing the copyright license
+    std::string                     m_license_str;  //!< String containing the copyright license
 };
 
 #endif // _About_h_
