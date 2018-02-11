@@ -977,6 +977,9 @@ ERROR_PLAYER_NAME_ALREADY_USED
 ERROR_WRONG_PASSWORD
 Mot de passe erroné pour le joueur %1%.
 
+ERROR_CLIENT_TYPE_NOT_ALLOWED
+Type de client non autorisé.
+
 ERROR_NOT_ENOUGH_AI_PLAYERS
 Pas assez de joueurs IA.
 
@@ -2099,7 +2102,7 @@ HOST_GAME_BN
 Héberger une partie
 
 JOIN_GAME_BN
-Rejoindre une partie
+Rejoindre une partie comme
 
 REFRESH_LIST_BN
 Rafraîchir
@@ -3989,7 +3992,7 @@ La Fenêtre Production permet d'interagir directement avec la carte de la  [[enc
 Le panneau "Récapitulation de Production" affiche les Points de Production disponibles.
 Si un système est sélectionné, deux colonnes sont visibles. La colonne de gauche correspond aux points de production à travers tout l'empire. La colonne de droite affiche les points de production pour le système sélectionné (absente si aucun système n'est sélectionné).
 "Points disponibles" fait référence aux PP disponibles pour la Production. La valeur de droite correspond au maximum de points disponibles pour le système sélectionné. Cette valeur peut être inférieure au total disponible lorsque tous les systèmes de votre empire ne sont pas reliés par lignes d'[[metertype METER_SUPPLY]].
-Le Stock correspond aux PP disponibles pour la Production, et provenant du Stock Impérial. Les Projets de Production doivent être individuellement autorisés à puiser dans le stock de PP.
+Le Stock correspond aux PP disponibles pour la Production, et provenant du Stock Impérial. Les Projets de Production sont autorisés à puiser par défaut dans le Stock Impérial, excepté si son usage a été individuellement bloqué pour un projet.
 D'une manière générale, la plupart des PP en excédent seront gaspillés et perdus, mais une partie de cette excédent sera transférée dans le Stock Impérial.
 
 <u>Panneau Projets de Production</u>
@@ -4009,7 +4012,7 @@ Les objets indisponibles, si affichés, permettront par un survol de souris d'ac
 Le panneau "File d'Attente de Production" contient les Commandes de Production de l'empire.
 Les Points de Production sont alloués aux Commandes de Production en partant du haut de la file d'attente.
 Toute commande ayant pour lieu le système sélectionné sur la carte galactique affichera le nom du système de la même couleur que celle de votre empire (en haut à droite de la commande).
-Ces commandes peuvent être déplacées dans la file d'attente à l'aide d'un glisser/déposer vers une nouvelle position.
+Ces commandes peuvent être déplacées dans la file d'attente à l'aide d'un glisser-déposer vers une nouvelle position.
 Un clic-droit sur une commande affichera un menu permettant de déplacer, retirer, ou mettre en pause une commande (d'autres actions sont disponibles, telle <i>Rechercher dans l'Encyclopédie</i>).
 Lorsqu'une commande est retirée de la file d'attente, tout point déjà dépensé est perdu, aucun n'est récupéré ou réaffecté sur une autre commande.
 Mettre en pause une commande empêche toute nouvelle dépense de points sur ce projet, jusqu'à ce que la commande soit remise en route.
@@ -4197,6 +4200,18 @@ Modèle obsolète
 
 DESIGN_WND_UNOBSOLETE_DESIGN
 Modèle non-obsolète
+
+DESIGN_WND_OBSOLETE_HULL
+Coque obsolète
+
+DESIGN_WND_UNOBSOLETE_HULL
+Coque non-obsolète
+
+DESIGN_WND_OBSOLETE_PART
+Équipement obsolète
+
+DESIGN_WND_UNOBSOLETE_PART
+Équipement non-obsolète
 
 DESIGN_WND_DELETE_DESIGN
 Supprimer Modèle
@@ -5582,16 +5597,16 @@ Fenêtre Conception
 DESIGN_WINDOW_ARTICLE_TEXT
 '''La [[DESIGN_WINDOW_ARTICLE_TITLE]] permet de visualiser ou de modifier les modèles de monstres ou d'astronefs.
 
-Les modèles et équipements d'astronef peuvent être [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]], [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] ou [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]. Les modèles et équipements [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]] sont libres d'utilisation pour l'empire. L'accès aux modèles et équipements [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] est soumis à certaines conditions. Certains modèles et équipements indisponibles peuvent être débloqués via la [[METER_RESEARCH]] des [[encyclopedia ENC_TECH]] associées. Les modèles [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] sont déclarés obsolètes/non-obsolètes selon les besoins de l'empire. Les modèles [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] n'apparaîtront pas dans la [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]] mais seulement dans la [[DESIGN_WINDOW_ARTICLE_TITLE]] lorsque le filtre "[[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]" est activé. Les équipements d'astronef ne peuvent pas être déclarés obsolètes.
+Les modèles et équipements d'astronef peuvent être [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]], [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] ou [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]. Les modèles et équipements [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]] sont libres d'utilisation pour l'empire. L'accès aux modèles et équipements [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] est soumis à certaines conditions. Certains modèles et équipements indisponibles peuvent être débloqués via la [[METER_RESEARCH]] des [[encyclopedia ENC_TECH]] associées. Les modèles, coques et équipements [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] sont déclarés obsolètes/non-obsolètes selon les besoins de l'empire. Les modèles [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] n'apparaîtront pas dans la [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]] mais seulement dans la [[DESIGN_WINDOW_ARTICLE_TITLE]] lorsque le filtre "[[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]" est activé. Les équipements d'astronef ne peuvent pas être déclarés obsolètes.
 
 La [[DESIGN_WINDOW_ARTICLE_TITLE]] est composée de quatre panneaux: [[DESIGN_WND_STARTS]], [[DESIGN_WND_PART_PALETTE_TITLE]], [[DESIGN_WND_MAIN_PANEL_TITLE]], [[MAP_BTN_PEDIA]].
 
 
-Le panneau [[DESIGN_WND_STARTS]] propose quatre onglets différents: les [[DESIGN_WND_HULLS]] de départ, les modèles [[DESIGN_WND_FINISHED_DESIGNS]], les modèles [[DESIGN_WND_SAVED_DESIGNS]] lors de précédentes parties, et enfin les modèles de [[DESIGN_WND_MONSTERS]] pour consultation. Glissez-déposez ou double-cliquez sur une coque, un modèle ou un monstre pour les examiner plus en détails ou les modifier sur le plan de travail. L'ordre des modèles dans la liste peut être également modifié par un glisser/déposer.
+Le panneau [[DESIGN_WND_STARTS]] propose quatre onglets différents: les [[DESIGN_WND_HULLS]] de départ, les modèles [[DESIGN_WND_FINISHED_DESIGNS]], les modèles [[DESIGN_WND_SAVED_DESIGNS]] lors de précédentes parties, et enfin les modèles de [[DESIGN_WND_MONSTERS]] pour consultation. Glissez-déposez ou double-cliquez sur une coque, un modèle ou un monstre pour les examiner plus en détails ou les modifier sur le plan de travail. L'ordre des modèles et des coques dans la liste peut être également modifié par un glisser-déposer.
 
-Les modèles [[DESIGN_WND_FINISHED_DESIGNS]] sont affichés dans un ordre identique à celui de la Fenêtre Production. Le menu contextuel suite à un clic-droit propose plusieurs options. Déclarer un modèle obsolète/non-obsolète avec l'entrée "[[DESIGN_WND_OBSOLETE_DESIGN]]" (ctrl+clic sur un modèle permettra de basculer directement entre les deux états). Supprimer un modèle avec l'entrée "[[DESIGN_WND_DELETE_DESIGN]]" ; les modèles supprimés ne peuvent pas être récupérés (les astronefs déjà placés en file d'attente de production seront cependant toujours construits sur la base du modèle obsolète ou supprimé). Renommer un modèle avec l'entrée "[[DESIGN_RENAME]]". Sauvegarder un modèle sur le disque dur avec l'entrée "[[DESIGN_SAVE]]", afin de pouvoir le réutiliser sans passer à nouveau par l'étape de conception lors de futures parties. Activez/désactivez l'option "[[DESIGN_WND_ADD_ALL_DEFAULT_START]]" pour utiliser/ne pas utiliser les modèles par défaut lors d'une nouvelle partie.
+Les modèles [[DESIGN_WND_FINISHED_DESIGNS]] sont affichés dans un ordre identique à celui de la Fenêtre Production. Le menu contextuel suite à un clic-droit propose plusieurs options. Déclarer un modèle obsolète/non-obsolète avec l'entrée "[[DESIGN_WND_OBSOLETE_DESIGN]]" (ctrl + clic sur un modèle ou une coque permettra de basculer directement entre les deux états). Supprimer un modèle avec l'entrée "[[DESIGN_WND_DELETE_DESIGN]]" ; les modèles supprimés ne peuvent pas être récupérés (les astronefs déjà placés en file d'attente de production seront cependant toujours construits sur la base du modèle obsolète ou supprimé). Renommer un modèle avec l'entrée "[[DESIGN_RENAME]]". Sauvegarder un modèle sur le disque dur avec l'entrée "[[DESIGN_SAVE]]", afin de pouvoir le réutiliser sans passer à nouveau par l'étape de conception lors de futures parties. Activez/désactivez l'option "[[DESIGN_WND_ADD_ALL_DEFAULT_START]]" pour utiliser/ne pas utiliser les modèles par défaut lors d'une nouvelle partie.
 
-Un clic-droit sur les modèles [[DESIGN_WND_SAVED_DESIGNS]] ouvre un menu contextuel permettant de les ajouter à l'unité ou en totalité aux modèles [[DESIGN_WND_FINISHED_DESIGNS]] de l'empire (ctrl+clic sur un modèle permettra de l'ajouter directement aux modèles [[DESIGN_WND_FINISHED_DESIGNS]]). Un modèle sauvegardé peut être supprimé définitivement avec l'entrée "[[DESIGN_WND_DELETE_SAVED]]". Si l'option "[[OPTIONS_ADD_SAVED_DESIGNS]]" est activée dans les options de jeu, tous les modèles [[DESIGN_WND_SAVED_DESIGNS]] seront automatiquement importés à chaque lancement d'une toute nouvelle partie.
+Un clic-droit sur les modèles [[DESIGN_WND_SAVED_DESIGNS]] ouvre un menu contextuel permettant de les ajouter à l'unité ou en totalité aux modèles [[DESIGN_WND_FINISHED_DESIGNS]] de l'empire (ctrl + clic sur un modèle permettra de l'ajouter directement aux modèles [[DESIGN_WND_FINISHED_DESIGNS]]). Un modèle sauvegardé peut être supprimé définitivement avec l'entrée "[[DESIGN_WND_DELETE_SAVED]]". Si l'option "[[OPTIONS_ADD_SAVED_DESIGNS]]" est activée dans les options de jeu, tous les modèles [[DESIGN_WND_SAVED_DESIGNS]] seront automatiquement importés à chaque lancement d'une toute nouvelle partie.
 
 
 Le panneau [[DESIGN_WND_PART_PALETTE_TITLE]] affiche comme son nom l'indique les équipements. Ceux dont la technologie associée a été recherchée et assimilée sont disponibles et peuvent être intégrés dans un modèle d'astronef. D'autres équipements sont indisponibles si aucune [[metertype METER_RESEARCH]] n'a encore été effectuée concernant la technologie associée ou si cet équipement est seulement utilisable par les monstres.
@@ -5603,7 +5618,7 @@ Le panneau [[DESIGN_WND_PART_PALETTE_TITLE]] propose également des filtres pour
 
 Le panneau [[DESIGN_WND_MAIN_PANEL_TITLE]] fait office de plan de travail pour le modèle en cours.
 
-Un modèle peut accueillir plusieurs types de [[encyclopedia SLOT_TITLE]]: interne, externe, et centrale. Un glisser-déposer ou un double-clic sur un équipement dans le panneau [[DESIGN_WND_PART_PALETTE_TITLE]] ajoute celui-ci au modèle en cours, tandis que la même action le retire si elle est effectuée depuis le panneau [[DESIGN_WND_MAIN_PANEL_TITLE]].
+Un modèle peut accueillir plusieurs types de [[encyclopedia SLOT_TITLE]]: interne, externe, et centrale. Un glisser-déposer ou un double-clic sur un équipement dans le panneau [[DESIGN_WND_PART_PALETTE_TITLE]] ajoute celui-ci au modèle en cours, tandis que la même action le retire si elle est effectuée depuis le panneau [[DESIGN_WND_MAIN_PANEL_TITLE]]. Ctrl + glisser-déposer ajoute/retire/remplace tous les équipements de même type.
 
 Un nom pour le modèle conçu est requis tandis que sa description reste optionnelle.
 
@@ -5979,6 +5994,12 @@ Dern. Tour Bataille
 
 LAST_TURN_RESUPPLIED
 Dern. Tour Approvisionnement
+
+LAST_TURN_CONQUERED
+Dern. Tour Conquête
+
+LAST_TURN_ATTACKED_BY_SHIP
+Dern. Tour Attaque par Astronef
 
 ARRIVED_ON_TURN
 Arrivé au Tour
@@ -10366,7 +10387,7 @@ Le service de Stock Impérial dispose d'une flotte acheminant les matériaux bru
 Cette tâche s'avère difficile étant donné que le service doit présager du moment où la demande sera stipulée, de l'endroit, des matériaux et biens qui seront requis, et de leurs utilisateurs.
 
 Une partie des PP inutilisés sont transférés au Stock Impérial de Production, tandis que l'autre partie est gaspillée.
-Un projet de la file d'attente de Production peut puiser dans le Stock Impérial seulement si ce projet y a été explicitement autorisé.
+Un projet de la file d'attente de Production puise automatiquement dans le Stock Impérial si son usage n'a pas été explicitement bloqué pour le projet en question.
 
 Il s'agit donc de la technologie de base du Stock Impérial, augmentant de 1 le [[metertype METER_STOCKPILE]] des planètes réglées sur le Focus Stock.'''
 
@@ -10524,7 +10545,7 @@ CON_FRC_ENRG_STRC
 Structures Synergiques
 
 CON_FRC_ENRG_STRC_DESC
-'''Accroît la progression des indicateurs de ressources inférieurs à ceux de la planète référence de 3 par tour, et la diminution des indicateurs de ressources supérieurs à ceux de la planète référence de 5 par tour.
+'''Accroît la progression des indicateurs de ressources et d'infrastructure inférieurs à la valeur projetée de 3 par tour, et la diminution des indicateurs de ressources supérieurs à la valeur projetée de 5 par tour.
 
 La flexibilité et la versatilité des structures synergiques permettent de redéfinir plus facilement le rôle des infrastructures des colonies en vue de nouvelles applications, augmentant ainsi la rapidité et le taux d'une modification de Focus.
 
@@ -11145,7 +11166,7 @@ DEF_ROOT_DEFENSE
 Auto-défense
 
 DEF_ROOT_DEFENSE_DESC
-'''Augmente les [[metertype METER_SHIELD]] max de 1 sur chaque planète appartenant à l'empire. Pour les espèces disposant de troupes de défense, augmente l'[[metertype METER_TROOPS]] max de 0.2 par Population sur la planète.
+'''Augmente les [[metertype METER_SHIELD]] max de 1 sur chaque planète appartenant à l'empire. Régénère 1 point de [[metertype METER_SHIELD]] par tour, seulement durant les tours où la planète n'est pas attaquée. Pour les espèces disposant de troupes de défense, augmente l'[[metertype METER_TROOPS]] max de 0.2 par Population sur la planète.
 
 Le concept d'Auto-défense est à la racine de maints développements technologiques.'''
 
