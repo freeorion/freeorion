@@ -140,6 +140,7 @@ const std::array<std::string, 36> ValueRefDoubleFixture::attributes = {{
     "X",
     "Y",
     "SizeAsDouble",
+    "HabitableSize",
     "NextTurnPopGrowth",
     "Size",
     "DistanceFromOriginalType"

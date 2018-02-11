@@ -59,7 +59,7 @@ def outpod_pod_cost():
 
 
 def calc_max_pop(planet, species, detail):
-    planet_size = AIDependencies.planet_size_as_int(planet.size)
+    planet_size = planet.habitableSize
     planet_env = species.getPlanetEnvironment(planet.type)
     if planet_env == fo.planetEnvironment.uninhabitable:
         detail.append("Uninhabitable.")
@@ -241,8 +241,7 @@ def survey_universe():
                 if planet_population > 0.0 and this_spec:
                     empire_has_qualifying_planet = True
                     for metab in [tag for tag in this_spec.tags if tag in AIDependencies.metabolismBoostMap]:
-                        empire_metabolisms[metab] = (empire_metabolisms.get(metab, 0.0) +
-                                                     AIDependencies.planet_size_as_int(planet.size))
+                        empire_metabolisms[metab] = (empire_metabolisms.get(metab, 0.0) + planet.habitableSize)
                     if this_spec.canProduceShips:
                         pilot_val = rate_piloting_tag(list(this_spec.tags))
                         if spec_name == "SP_ACIREMA":

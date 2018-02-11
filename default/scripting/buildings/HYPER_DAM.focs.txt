@@ -43,7 +43,7 @@ BuildingType
             activation = Source
             stackinggroup = "BLD_HYPER_DAM_MALUS"
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
-            effects = SetTargetPopulation value = Value - Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value - Target.HabitableSize
     ]
     icon = "icons/building/blackhole.png"
 

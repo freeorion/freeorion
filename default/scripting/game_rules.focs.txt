@@ -56,3 +56,66 @@ GameRule
     type = String
     default = "PLAYER"
     allowed = ["MODERATOR" "OBSERVER" "PLAYER" "AI_PLAYER"]
+
+GameRule
+    name = "RULE_HABITABLE_SIZE_TINY"
+    description = "RULE_HABITABLE_SIZE_DESC"
+    category = "PLANET_SIZE"
+    type = Integer
+    default = 1
+    min = 0
+    max = 999
+
+GameRule
+    name = "RULE_HABITABLE_SIZE_SMALL"
+    description = "RULE_HABITABLE_SIZE_DESC"
+    category = "PLANET_SIZE"
+    type = Integer
+    default = 2
+    min = 0
+    max = 999
+
+GameRule
+    name = "RULE_HABITABLE_SIZE_MEDIUM"
+    description = "RULE_HABITABLE_SIZE_DESC"
+    category = "PLANET_SIZE"
+    type = Integer
+    default = 3
+    min = 0
+    max = 999
+
+GameRule
+    name = "RULE_HABITABLE_SIZE_LARGE"
+    description = "RULE_HABITABLE_SIZE_DESC"
+    category = "PLANET_SIZE"
+    type = Integer
+    default = 4
+    min = 0
+    max = 999
+
+GameRule
+    name = "RULE_HABITABLE_SIZE_HUGE"
+    description = "RULE_HABITABLE_SIZE_DESC"
+    category = "PLANET_SIZE"
+    type = Integer
+    default = 5
+    min = 0
+    max = 999
+
+GameRule
+    name = "RULE_HABITABLE_SIZE_ASTEROIDS"
+    description = "RULE_HABITABLE_SIZE_DESC"
+    category = "PLANET_SIZE"
+    type = Integer
+    default = 3
+    min = 0
+    max = 999
+
+GameRule
+    name = "RULE_HABITABLE_SIZE_GASGIANT"
+    description = "RULE_HABITABLE_SIZE_DESC"
+    category = "PLANET_SIZE"
+    type = Integer
+    default = 6
+    min = 0
+    max = 999

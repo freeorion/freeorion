@@ -20,7 +20,7 @@ Tech
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
             effects = [
                 SetTargetConstruction value = Value + 10
-                SetTargetPopulation value = Value + 2 * Target.SizeAsDouble
+                SetTargetPopulation value = Value + 2 * Target.HabitableSize
             ]
     ]
     graphic = "icons/tech/n-dimensional_structures.png"

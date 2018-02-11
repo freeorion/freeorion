@@ -15,7 +15,7 @@ Tech
                 Planet environment = [ Hostile ]
             ]
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble  accountinglabel = "GRO_CYBORG"
+            effects = SetTargetPopulation value = Value + 2 * Target.HabitableSize  accountinglabel = "GRO_CYBORG"
 
         EffectsGroup
             scope = And [

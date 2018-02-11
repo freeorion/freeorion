@@ -153,6 +153,7 @@
     (GiveEmpireTech)                            \
     (Good)                                      \
     (Graphic)                                   \
+    (HabitableSize)                             \
     (Happiness)                                 \
     (HasSpecial)                                \
     (HasSpecialCapacity)                        \

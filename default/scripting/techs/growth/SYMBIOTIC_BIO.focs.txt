@@ -19,7 +19,7 @@ Tech
                 ]
             ]
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble accountinglabel = "GRO_SYMBIOTIC_BIO"
+            effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize accountinglabel = "GRO_SYMBIOTIC_BIO"
     ]
     graphic = "icons/tech/symbiosis_biology.png"
 

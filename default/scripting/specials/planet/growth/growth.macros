@@ -41,7 +41,7 @@ POPULATION_BOOST_ORGANIC
             stackinggroup = "@1@_STACK"
             accountinglabel = "GROWTH_SPECIAL_LABEL"
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize
 
         EffectsGroup
             description = "GROWTH_SPECIAL_POPULATION_ORGANIC_INCREASE"
@@ -51,7 +51,7 @@ POPULATION_BOOST_ORGANIC
             ]
             stackinggroup = "@1@_STACK"
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize  // Provides the bonus locally, no matter the focus
 '''
 
 // argument 1 is the name of the used stacking group
@@ -68,7 +68,7 @@ POPULATION_BOOST_ROBOTIC
             stackinggroup = "@1@_STACK"
             accountinglabel = "GROWTH_SPECIAL_LABEL"
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize
 
         EffectsGroup
             description = "GROWTH_SPECIAL_POPULATION_ROBOTIC_INCREASE"
@@ -78,7 +78,7 @@ POPULATION_BOOST_ROBOTIC
             ]
             stackinggroup = "@1@_STACK"
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize  // Provides the bonus locally, no matter the focus
 '''
 
 // argument 1 is the name of the used stacking group
@@ -95,7 +95,7 @@ POPULATION_BOOST_LITHIC
             stackinggroup = "@1@_STACK"
             accountinglabel = "GROWTH_SPECIAL_LABEL"
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize
 
         EffectsGroup
             description = "GROWTH_SPECIAL_POPULATION_LITHIC_INCREASE"
@@ -105,7 +105,7 @@ POPULATION_BOOST_LITHIC
             ]
             stackinggroup = "@1@_STACK"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize  // Provides the bonus locally, no matter the focus
 '''
 
 #include "/scripting/common/base_prod.macros"

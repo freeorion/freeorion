@@ -65,23 +65,6 @@ supply_by_size = {
     fo.planetSize.gasGiant: -1,
 }
 
-# Planet Size as Int
-# should be kept in sync with Planet::SizeAsInt() in universe/planet.cpp
-planet_size_map = {
-    fo.planetSize.gasGiant: 6,
-    fo.planetSize.huge: 5,
-    fo.planetSize.large: 4,
-    fo.planetSize.medium: 3,
-    fo.planetSize.asteroids: 3,
-    fo.planetSize.small: 2,
-    fo.planetSize.tiny: 1,
-}
-
-
-def planet_size_as_int(planet_size):
-    return planet_size_map.get(planet_size) or 0
-
-
 # Drydock repair details
 DRYDOCK_HAPPINESS_THRESHOLD = 5
 

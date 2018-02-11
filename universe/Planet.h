@@ -39,7 +39,7 @@ public:
     PlanetType          OriginalType() const                { return m_original_type; }
     int                 DistanceFromOriginalType() const    { return TypeDifference(m_type, m_original_type); }
     PlanetSize          Size() const                        { return m_size; }
-    int                 SizeAsInt() const;
+    int                 HabitableSize() const;
 
     bool                HostileToEmpire(int empire_id) const override;
 

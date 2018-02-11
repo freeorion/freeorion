@@ -56,7 +56,7 @@ XENOPHOBIC_SELF
             priority = [[LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value - min(
                     max(Value, 0) * 0.4 * (1 - 0.8^[[XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT]]),
-                    3 * Target.SizeAsDouble  // Cap malus at the self-sustaining bonus
+                    3 * Target.HabitableSize  // Cap malus at the self-sustaining bonus
                 )
 '''
 

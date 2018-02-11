@@ -11,6 +11,7 @@
 #include "ValueRef.h"
 #include "Enums.h"
 #include "../util/Logger.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
 #include "../util/Directories.h"
@@ -200,15 +201,16 @@ std::string Planet::Dump(unsigned short ntabs) const {
     return os.str();
 }
 
-int Planet::SizeAsInt() const {
+int Planet::HabitableSize() const {
+    const auto& gr = GetGameRules();
     switch (m_size) {
-    case SZ_GASGIANT:   return 6;   break;
-    case SZ_HUGE:       return 5;   break;
-    case SZ_LARGE:      return 4;   break;
-    case SZ_MEDIUM:     return 3;   break;
-    case SZ_ASTEROIDS:  return 3;   break;
-    case SZ_SMALL:      return 2;   break;
-    case SZ_TINY:       return 1;   break;
+    case SZ_GASGIANT:   return gr.Get<int>("RULE_HABITABLE_SIZE_GASGIANT");   break;
+    case SZ_HUGE:       return gr.Get<int>("RULE_HABITABLE_SIZE_HUGE");   break;
+    case SZ_LARGE:      return gr.Get<int>("RULE_HABITABLE_SIZE_LARGE");   break;
+    case SZ_MEDIUM:     return gr.Get<int>("RULE_HABITABLE_SIZE_MEDIUM");   break;
+    case SZ_ASTEROIDS:  return gr.Get<int>("RULE_HABITABLE_SIZE_ASTEROIDS");   break;
+    case SZ_SMALL:      return gr.Get<int>("RULE_HABITABLE_SIZE_SMALL");   break;
+    case SZ_TINY:       return gr.Get<int>("RULE_HABITABLE_SIZE_TINY");   break;
     default:            return 0;   break;
     }
 }
