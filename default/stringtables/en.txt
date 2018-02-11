@@ -8178,6 +8178,12 @@ Native Elerium
 ELERIUM_SPECIAL_DESC
 This planet has a rich natural deposit of pure elerium, boosting production or Lithic growth significantly.
 
+UNSTABLE_SPECIAL
+Unstable Environment
+
+UNSTABLE_SPECIAL_DESC
+This planet has an unstable environment, suffering a reduction in [[metertype METER_HAPPINESS]], [[metertype METER_INDUSTRY]], and [[metertype METER_RESEARCH]].
+
 
 ##
 ## Enumeration values
@@ -12114,16 +12120,16 @@ BLD_CLONING_CENTER_DESC
 [[tech GRO_INDUSTRY_CLONE]] allows made-to-order populations to be produced industrially, significantly improving population.'''
 
 BLD_TERRAFORM
-Terraforming
+Terraform Center
 
 BLD_TERRAFORM_DESC
-Terraforms a world one step closer to the [[encyclopedia ENVIRONMENT_TITLE]] preference of the inhabiting species.
+'''Terraforms a planet towards the [[encyclopedia ENVIRONMENT_TITLE]] preference of the inhabiting [[encyclopedia ENC_SPECIES]].
 
-BLD_TERRAFORM_REVERT
-Terraforming Reversion
-
-BLD_TERRAFORM_REVERT_DESC
-Terraforms a world one step back towards its original type of [[encyclopedia ENVIRONMENT_TITLE]].
+This building incrementally changes the environment of a planet.
+After each enviroment change, the planet will be under the effects of [[special UNSTABLE_SPECIAL]].
+The duration of [[special UNSTABLE_SPECIAL]] increases with the planet size and the distance from the original environment.
+[[special UNSTABLE_SPECIAL]] prevents further changes from terraforming.
+'''
 
 BLD_REMOTE_TERRAFORM
 Remote Terraforming

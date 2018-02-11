@@ -9,7 +9,6 @@ Tech
     prerequisites = "GRO_ADV_ECOMAN"
     unlock = [
         Item type = Building name = "BLD_TERRAFORM"
-        Item type = Building name = "BLD_TERRAFORM_REVERT"
     ]
     graphic = "icons/tech/terraform.png"
 

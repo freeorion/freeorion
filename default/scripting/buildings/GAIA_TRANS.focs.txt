@@ -15,11 +15,9 @@ BuildingType
         Planet
         OwnedBy empire = Source.Owner
         Not Contains Building name = "BLD_TERRAFORM"
-        Not Contains Building name = "BLD_TERRAFORM_REVERT"
         Not Contains Building name = "BLD_GAIA_TRANS"
         Not HasSpecial name = "GAIA_SPECIAL"
         Not Enqueued type = Building name = "BLD_TERRAFORM"
-        Not Enqueued type = Building name = "BLD_TERRAFORM_REVERT"
         Not Enqueued type = Building name = "BLD_GAIA_TRANS"
     ]
     effectsgroups = [
