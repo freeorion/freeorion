@@ -8178,6 +8178,12 @@ Native Elerium
 ELERIUM_SPECIAL_DESC
 This planet has a rich natural deposit of pure elerium, boosting production or Lithic growth significantly.
 
+UNSTABLE_SPECIAL
+Unstable Environment
+
+UNSTABLE_SPECIAL_DESC
+This planet has an unstable environment, suffering a reduction in [[metertype METER_HAPPINESS]], [[metertype METER_INDUSTRY]], and [[metertype METER_RESEARCH]].
+
 
 ##
 ## Enumeration values

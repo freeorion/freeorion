@@ -1,0 +1,22 @@
+// TODO Replace this special with meter
+Special
+    name = "UNSTABLE_SPECIAL"
+    description = "UNSTABLE_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 0
+    spawnlimit = 0
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                Population low = 0.001
+            ]
+            priority = 500
+            effects = [
+                SetTargetIndustry value = Value * 0.8 accountinglabel = "UNSTABLE_SPECIAL"
+                SetTargetResearch value = Value * 0.8 accountinglabel = "UNSTABLE_SPECIAL"
+                SetTargetHappiness value = Value * 0.8 accountinglabel = "UNSTABLE_SPECIAL"
+            ]
+    ]
+    graphic = "icons/specials_huge/tectonic_instability.png"
