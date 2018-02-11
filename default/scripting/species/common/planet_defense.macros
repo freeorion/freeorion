@@ -13,9 +13,15 @@ NATIVE_PLANETARY_DEFENSE
                 SetDetection value = Value + 10
             ]
             
-    [[PROTECTION_FOCUS_DEFENSE]]
+    [[AVERAGE_PLANETARY_DEFENSE]]
+'''
 
-        EffectsGroup // increase 1 per turn, up to max
+AVERAGE_PLANETARY_DEFENSE
+'''[[PROTECTION_FOCUS_DEFENSE]]
+[[STANDARD_DEFENSE_GROWTH]]'''
+
+STANDARD_DEFENSE_GROWTH
+'''        EffectsGroup // increase 1 per turn, up to max
             scope = Source
             activation = And [
                 Planet
@@ -25,9 +31,6 @@ NATIVE_PLANETARY_DEFENSE
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetDefense value = min(Value(Target.MaxDefense), Value + 1)
 '''
-
-AVERAGE_PLANETARY_DEFENSE
-'''[[PROTECTION_FOCUS_DEFENSE]]'''
 
 PROTECTION_FOCUS_DEFENSE
 '''EffectsGroup
