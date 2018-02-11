@@ -8,13 +8,13 @@ NATIVE_PLANETARY_SHIELDS
             ]
             effects = SetMaxShield value = Value + 10 accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
 
-    [[PROTECTION_FOCUS_SHIELDS]]
-    [[STANDARD_SHIELD_GROWTH]]
+    [[AVERAGE_PLANETARY_SHIELDS]]
 '''
 
 
 AVERAGE_PLANETARY_SHIELDS
-'''[[PROTECTION_FOCUS_SHIELDS]]'''
+'''[[PROTECTION_FOCUS_SHIELDS]]
+[[STANDARD_SHIELD_GROWTH]]'''
 
 STANDARD_SHIELD_GROWTH
 '''        EffectsGroup // increase 1 per turn, up to max
