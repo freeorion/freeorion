@@ -51,7 +51,7 @@ STANDARD_SUPPLY_GROWTH
             activation = And [
                 Planet
                 (Source.LastTurnConquered < CurrentTurn)
-                (Source.LastTurnAttackedByShip < CurrentTurn)
+                (Source.System.LastTurnBattleHere < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetSupply value = min(Value(Target.MaxSupply), Value + 1)

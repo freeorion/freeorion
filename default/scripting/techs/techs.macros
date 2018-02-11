@@ -1,5 +1,3 @@
-CANDIDATE_BATTLE_CHECK
-'''Turn low = LocalCandidate.System.LastTurnBattleHere + 1'''
 
 // In typical usage this is used as a plain macro, not a substitution macro; the substitution is instead done within the calling macro
 EMPIRE_OWNED_SHIP_WITH_PART

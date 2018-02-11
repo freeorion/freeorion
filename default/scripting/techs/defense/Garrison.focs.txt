@@ -33,7 +33,7 @@ Tech
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
-                [[CANDIDATE_BATTLE_CHECK]]
+                (LocalCandidate.System.LastTurnBattleHere < CurrentTurn)
             ]
             effects = SetTroops value = Value + 1
 
@@ -63,7 +63,7 @@ Tech
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
-                [[CANDIDATE_BATTLE_CHECK]]
+                (LocalCandidate.System.LastTurnBattleHere < CurrentTurn)
             ]
             effects = SetTroops value = Value + 2
 
@@ -92,7 +92,7 @@ Tech
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
-                [[CANDIDATE_BATTLE_CHECK]]
+                (LocalCandidate.System.LastTurnBattleHere < CurrentTurn)
             ]
             effects = SetTroops value = Value + 3
 
