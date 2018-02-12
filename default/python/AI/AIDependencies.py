@@ -556,7 +556,7 @@ SP_LAMBALALAM = "SP_LEMBALALAM"
 SPECIES_RESEARCH_MODIFIER = {'NO': 0.0, 'BAD': 0.75, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 3.0}
 SPECIES_INDUSTRY_MODIFIER = {'NO': 0.0, 'BAD': 0.75, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 3.0}
 SPECIES_POPULATION_MODIFIER = {'BAD': 0.75, 'GOOD': 1.25}
-SPECIES_SUPPLY_MODIFIER = {'BAD': 0, 'AVERAGE': 1, 'GREAT': 2, 'ULTIMATE': 3}
+SPECIES_SUPPLY_MODIFIER = {'VERY_BAD': -1, 'BAD': 0, 'AVERAGE': 1, 'GREAT': 2, 'ULTIMATE': 3}
 
 # <editor-fold desc="XenoResurrectionSpecies">
 EXTINCT_SPECIES = [
@@ -642,7 +642,7 @@ building_supply = {
         fo.planetSize.medium: 3,
         fo.planetSize.large: 4,
         fo.planetSize.huge: 5,
-        fo.planetSize.gasGiant: 4,
+        fo.planetSize.gasGiant: 3,
     },
 }
 # </editor-fold>
