@@ -6,7 +6,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "VERY_BAD_SUPPLY" "PEDIA_PC_FUEL" "SELF_SUSTAINING" "GREAT_STOCKPILE" "NO_TERRAFORM" "BAD_RESEARCH" "BAD_POPULATION" "BAD_INDUSTRY" "BAD_WEAPONS" "GOOD_DETECTION" "GREAT_STEALTH" "BAD_ATTACKTROOPS" "PEDIA_SELF_SUSTAINING_SPECIES_CLASS"]
+    tags = [ "VERY_BAD_SUPPLY" "PEDIA_PC_FUEL" "GASEOUS" "GREAT_STOCKPILE" "NO_TERRAFORM" "BAD_RESEARCH" "BAD_WEAPONS" "GOOD_DETECTION" "GREAT_STEALTH" "BAD_ATTACKTROOPS" "PEDIA_GASEOUS_SPECIES_CLASS"]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -18,11 +18,11 @@ Species
     preferredfocus = "FOCUS_INDUSTRY"
 
     effectsgroups = [
-        [[BAD_INDUSTRY]]
+        [[AVERAGE_INDUSTRY]]
         [[GREAT_STOCKPILE]]
         [[BAD_RESEARCH]]
 
-        [[BAD_POPULATION]]
+        [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[VERY_BAD_SUPPLY]]
         [[GREAT_DEFENSE_TROOPS]]
@@ -70,7 +70,7 @@ Species
       type = Terran       environment = Hostile
       type = Ocean        environment = Hostile
       type = Asteroids    environment = Uninhabitable
-      type = Gasgiant     environment = Adequate
+      type = Gasgiant     environment = Good
     ]
 
     graphic = "icons/species/amorphous-05.png"

@@ -4,6 +4,7 @@ BASIC_POPULATION
         [[ENVIRONMENT_MODIFIER]]
         [[SELF_SUSTAINING_BONUS]]
         [[PHOTOTROPHIC_BONUS]]
+        [[GASEOUS_BONUS]]
         [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
 
 
@@ -208,6 +209,19 @@ PHOTOTROPHIC_BONUS
             accountinglabel = "NO_STAR"
             priority = [[EARLY_POPULATION_PRIORITY]]
             effects = SetTargetPopulation value = Value - 10 * Source.SizeAsDouble
+'''
+
+GASEOUS_BONUS
+'''     EffectsGroup
+            description = "GASEOUS_DESC"
+            scope = Source
+            activation = And [
+                Planet type = GasGiant
+                HasTag name = "GASEOUS"
+            ]
+            accountinglabel = "GASEOUS_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 0.5*abs(Value) accountinglabel = "BAD_ENVIRONMENT_LABEL"
 '''
 
 // @1@ Species key
