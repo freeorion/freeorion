@@ -348,8 +348,7 @@ namespace {
 
         auto& current_manager = GetCurrentDesignsManager();
         const auto& all_ids = current_manager.AllOrderedIDs();
-        const int before_id = (all_ids.empty() ? INVALID_OBJECT_ID :
-                               (is_front ? *all_ids.begin() : *(--all_ids.end())));
+        const int before_id = (all_ids.empty() | !is_front) ? INVALID_OBJECT_ID : *all_ids.begin() ;
         current_manager.InsertBefore(order->DesignID(), before_id);
 }
 
