@@ -1,0 +1,6 @@
+Article
+    name = "STOCKPILE_FOCUS_TITLE"
+    category = "PLANETARY_FOCUS_TITLE"
+    short_description = "STOCKPILE_ARTICLE_SHORT_DESC"
+    description = "STOCKPILE_FOCUS_TEXT"
+    icon = "icons/focus/growth.png"

@@ -6,7 +6,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "SELF_SUSTAINING" "GREAT_STOCKPILE" "BAD_RESEARCH" "BAD_POPULATION" "BAD_INDUSTRY" "BAD_WEAPONS" "BAD_SUPPLY" "GOOD_DETECTION" "GREAT_STEALTH" "BAD_ATTACKTROOPS" "PEDIA_SELF_SUSTAINING_SPECIES_CLASS"]
+    tags = [ "VERY_BAD_SUPPLY" "PEDIA_PC_FUEL" "GASEOUS" "GREAT_STOCKPILE" "NO_TERRAFORM" "BAD_RESEARCH" "BAD_WEAPONS" "GOOD_DETECTION" "GREAT_STEALTH" "BAD_ATTACKTROOPS" "PEDIA_GASEOUS_SPECIES_CLASS"]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -18,13 +18,13 @@ Species
     preferredfocus = "FOCUS_INDUSTRY"
 
     effectsgroups = [
-        [[BAD_INDUSTRY]]
+        [[AVERAGE_INDUSTRY]]
         [[GREAT_STOCKPILE]]
         [[BAD_RESEARCH]]
 
-        [[BAD_POPULATION]]
+        [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
-        [[BAD_SUPPLY]]
+        [[VERY_BAD_SUPPLY]]
         [[GREAT_DEFENSE_TROOPS]]
         [[BAD_OFFENSE_TROOPS]]
         [[BAD_WEAPONS]]
@@ -37,6 +37,26 @@ Species
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[NARROW_EP]]
         [[STANDARD_SHIP_SHIELDS]]
+
+        // Extra refueling on gas giants
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Stationary
+                ContainedBy And [
+                    Object id = Source.SystemID
+                    System
+                    Contains condition = And [
+                        Planet type = GasGiant
+                        Not OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    ]
+                ]
+            ]
+            stackinggroup = "SP_SLY_FUEL_STACK"
+            // Update ship_hulls.macros if this number changes
+            effects = SetFuel value = Value + 0.1
+
     ]
 
     environments = [
@@ -50,7 +70,7 @@ Species
       type = Terran       environment = Hostile
       type = Ocean        environment = Hostile
       type = Asteroids    environment = Uninhabitable
-      type = Gasgiant     environment = Adequate
+      type = Gasgiant     environment = Good
     ]
 
     graphic = "icons/species/amorphous-05.png"

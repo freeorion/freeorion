@@ -5541,6 +5541,12 @@ Self-Sustaining Metabolism
 SELF_SUSTAINING_SPECIES_TEXT
 [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] species may be energy or crystalline beings or something even stranger. Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three [[encyclopedia GROWTH_FOCUS_TITLE]] specials.
 
+GASEOUS_SPECIES_TITLE
+Gaseous Metabolism
+
+GASEOUS_SPECIES_TEXT
+[[encyclopedia GASEOUS_SPECIES_CLASS]] species have metabolisms based on elements which are in gaseous state in an earth-like environment. Most researchers actually agree that complex life based on a gaseous metabolism is physically impossible. Search for life on the most probable habitat, gas giants, gets mostly neglected. Although gas giant are really huge the habitable area is similar to a medium size planet. Also there exist no specials that boost the growth of gaseous species.
+
 TELEPATHIC_TITLE
 Telepathy
 
@@ -7002,6 +7008,13 @@ Self-Sustaining
 SELF_SUSTAINING_SPECIES_CLASS_DESC
 List of [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] species:
 
+
+GASEOUS_SPECIES_CLASS
+Gaseous
+
+GASEOUS_SPECIES_CLASS_DESC
+List of [[encyclopedia GASEOUS_SPECIES_TITLE]] species:
+
 # Species Pedia Articles
 
 SP_HUMAN
@@ -7206,14 +7219,16 @@ Sly
 
 SP_SLY_GAMEPLAY_DESC
 '''Friendly overlooked gasbags.
-Only live an [[PT_GASGIANT]]s.
-[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
+Greatly prefer [[PT_GASGIANT]]s.
+
+[[encyclopedia GASEOUS_SPECIES_TITLE]]
 '''
 
 SP_SLY_DESC
 '''Description:
 The Sly live in gas giants. The gas giants are so foreign to most species in the universe that, for most of their history, they have been overlooked.
 Not being able to build devices, they couldn't leave their homeworld. Recently, they were able to obtain necessary equipment and technology for spacefaring from traders in exchange for their knowledge of history.
+On the right diet Sly excrete refined fuel. When in system with a gas giant, a Sly-crewed ship will regenerate fuel.
 
 Social Structure:
 The Sly are very long-lived and keep the songs alive in which the whole cultural knowledge is encoded. They are very open and curious towards the galaxy and the other species they are now finally able to encounter.
@@ -14135,6 +14150,10 @@ GREAT_WEAPONS_DESC
 ULTIMATE_WEAPONS_DESC
 +++	Ultimate Pilots: Base damage per ship weapon increased by three levels.
 
+GASEOUS_DESC
+'''+	Live on Gas Giants
++	Refuel on Gas Giants 0.1'''
+
 BAD_POPULATION_DESC
 −	Bad Population 75%
 
@@ -14146,6 +14165,9 @@ GOOD_POPULATION_DESC
 
 FIXED_LOW_POPULATION_DESC
 −−	Maximum Population is fixed at 5
+
+VERY_BAD_SUPPLY_DESC
+−−	Very Bad [[metertype METER_SUPPLY]]: -1
 
 BAD_SUPPLY_DESC
 −	Bad [[metertype METER_SUPPLY]]: no bonus
@@ -14169,7 +14191,7 @@ AVERAGE_STOCKPILE_DESC
 	Average [[metertype METER_STOCKPILE]]: 100%
 
 GOOD_STOCKPILE_DESC
-+	Great [[metertype METER_STOCKPILE]]: 400%
++	Great [[metertype METER_STOCKPILE]]: 300%
 
 GREAT_STOCKPILE_DESC
 ++	Great [[metertype METER_STOCKPILE]]: 1000%
@@ -14343,6 +14365,11 @@ ULTIMATE_RESEARCH_LABEL
 
 # %1% FIXME
 # %2% FIXME
+VERY_BAD_SUPPLY_LABEL
+%2% Very Bad Supply
+
+# %1% FIXME
+# %2% FIXME
 BAD_SUPPLY_LABEL
 %2% Bad Supply
 
@@ -14482,6 +14509,12 @@ Excellent Vision
 
 FOCUS_PROTECTION_LABEL
 Protection Focus
+
+GASEOUS_DESC
+Gas giants are huge but are only habitable like medium sized planets.
+
+GASEOUS_LABEL
+Bad Environment
 
 XENOPHOBIC_LABEL_SELF
 Xenophobic Frenzy (other species nearby)
