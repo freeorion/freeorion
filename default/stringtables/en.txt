@@ -7186,7 +7186,7 @@ SP_SLY_DESC
 '''Description:
 The Sly live in gas giants. The gas giants are so foreign to most species in the universe that, for most of their history, they have been overlooked.
 Not being able to build devices, they couldn't leave their homeworld. Recently, they were able to obtain necessary equipment and technology for spacefaring from traders in exchange for their knowledge of history.
-Keeping a strict diet a Sly crew on gas giants actually can help in refinining fuel for their ship.
+On the right diet Sly excrement refined fuel. When staying on a gas giant, a Sly crew will create some fuel for the ship.
 
 Social Structure:
 The Sly are very long-lived and keep the songs alive in which the whole cultural knowledge is encoded. They are very open and curious towards the galaxy and the other species they are now finally able to encounter.
@@ -14109,7 +14109,7 @@ ULTIMATE_WEAPONS_DESC
 +++	Ultimate Pilots: Base damage per ship weapon increased by three levels.
 
 GASEOUS_DESC
-'''+	Lives on Gas Giants
+'''+	Live on Gas Giants
 +	Refuel on Gas Giants 0.1'''
 
 BAD_POPULATION_DESC
