@@ -609,7 +609,7 @@ sc::result MPLobby::react(const Disconnection& d) {
     // if the disconnected player wasn't in the lobby, don't need to do anything more.
     // if player is in lobby, need to remove it
     int id = player_connection->PlayerID();
-    // if player was not etablished disconnect him as AI also have player_id is Networking::INVALID_PLAYER_ID
+    // Non-established player shouldn't be processed because it wasn't in lobby and AI entries have same id (INVALID_PLAYER_ID).
     if (id == Networking::INVALID_PLAYER_ID) {
         DebugLogger(FSM) << "MPLobby.Disconnection : Disconnecting player (" << id << ") was not established";
         return discard_event();
