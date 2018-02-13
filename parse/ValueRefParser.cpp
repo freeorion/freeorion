@@ -78,7 +78,9 @@ namespace parse { namespace detail {
 
         variable_scope_rule = variable_scope(tok);
         container_type_rule = container_type(tok);
-        initialize_bound_variable_parser<T>(bound_variable, bound_variable_name, variable_scope_rule, container_type_rule, tok);
+        initialize_bound_variable_parser<T>(
+            bound_variable, unwrapped_bound_variable, bound_variable_name,
+            variable_scope_rule, container_type_rule, tok);
 
 #if DEBUG_VALUEREF_PARSERS
         debug(bound_variable_name);
@@ -89,6 +91,7 @@ namespace parse { namespace detail {
         debug(simple);
 #endif
 
+        unwrapped_bound_variable.name(type_name + " unwrapped bound variable name");
         bound_variable_name.name(type_name + " bound variable name");
         free_variable_name.name(type_name + " free variable name");
         constant.name(type_name + " constant");

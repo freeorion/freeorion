@@ -29,6 +29,7 @@ namespace parse {
         value_ref_rule<T> constant_expr;
         value_ref_rule<T> free_variable_expr;
         variable_rule<T> bound_variable_expr;
+        variable_rule<T> unwrapped_bound_variable_expr;
         expression_rule<T> functional_expr;
         value_ref_rule<T> primary_expr;
         value_ref_rule<T> statistic_sub_value_ref;
@@ -95,7 +96,9 @@ namespace parse {
 
         variable_scope_rule = variable_scope(tok);
         container_type_rule = container_type(tok);
-        initialize_bound_variable_parser<T>(bound_variable_expr, variable_name, variable_scope_rule, container_type_rule, tok);
+        initialize_bound_variable_parser<T>(
+            bound_variable_expr, unwrapped_bound_variable_expr,
+            variable_name, variable_scope_rule, container_type_rule, tok);
 
         statistic_sub_value_ref
             =   constant_expr
