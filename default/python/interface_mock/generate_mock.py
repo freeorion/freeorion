@@ -1,6 +1,10 @@
 from itertools import groupby
 from operator import itemgetter
+
 from parse_docs import Docs
+
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 
 def handle_class(info):
@@ -15,13 +19,13 @@ def handle_class(info):
 
     properties = []
     instance_methods = []
-    for attr_name, attr in attrs.items():
+    for attr_name, attr in sorted(attrs.items()):
         if attr['type'] == "<type 'property'>":
             properties.append((attr_name, attr.get('rtype', '')))
         elif attr['type'] == "<type 'instancemethod'>":
             instance_methods.append(attr['rutine'])
         else:
-            print "!!!", name, attr
+            warn("Skipping '%s': %s" % (name, attr))
 
     for property_name, rtype in properties:
         if not rtype:
@@ -43,9 +47,6 @@ def handle_class(info):
         result.append('')
 
     for rutine_name, rutine_docs in instance_methods:
-        if rutine_name == 'error_stub':
-            continue
-
         docs = Docs(rutine_docs, 2, is_class=True)
 
         if docs.rtype == 'VisibilityIntMap':
@@ -113,7 +114,7 @@ def make_mock(data, result_path, classes_to_ignore):
         if info['type'] in known_types:
             groups.setdefault(info['type'], []).append(info)
         else:
-            print 'Unknown type %s in %s' % (info['type'], info)
+            error('Unknown type "%s" in "%s' % (info['type'], info))
     classes = [x for x in groups['boost_class'] if not x['name'].startswith('map_indexing_suite_')]
     clases_map = {x['name']: x for x in classes}
     instance_names = {instance['class_name'] for instance in groups.get('instance', [])}
@@ -122,12 +123,12 @@ def make_mock(data, result_path, classes_to_ignore):
     enums_names = [x['name'] for x in enums]
 
     missed_instances = instance_names.symmetric_difference(clases_map).difference(classes_to_ignore)
-    print "Classes without instances (%s):" % len(missed_instances), ', '.join(sorted(missed_instances))
+    warn("Classes without instances (%s): %s" % (len(missed_instances), ', '.join(sorted(missed_instances))))
 
     for instance in groups.get('instance', []):
         class_name = instance['class_name']
         if class_name in enums_names:
-            print "skipping enum instance: %s" % class_name
+            warn("skipping enum instance: %s" % class_name)
             continue
 
         class_attrs = clases_map[class_name]['attrs']
@@ -143,19 +144,17 @@ def make_mock(data, result_path, classes_to_ignore):
             elif v['type'] == "<type 'instancemethod'>":
                 pass
             else:
-                print "Unknown class attribute type", v['type']
+                error("Unknown class attribute type: '%s'" % v['type'])
 
     res = []
-    classes = sorted(classes, key=lambda class_: len(class_['parents']))  # put classes with no parents on first place
-    class_groups = groupby(classes, key=lambda class_: class_['parents'] and class_['parents'][0] or '')
+    classes = sorted(classes, key=lambda class_: (len(class_['parents']), class_['parents'] and class_['parents'][0] or '', class_['name']))  # put classes with no parents on first place
 
-    for name, group in class_groups:
-        for cls in sorted(group, key=itemgetter('name')):
-            res.append(handle_class(cls))
+    for cls in classes:
+        res.append(handle_class(cls))
 
     res.append(ENUM_STUB)
 
-    for enum in enums:
+    for enum in sorted(enums, key=itemgetter('name')):
         res.append(handle_enum(enum))
 
     for function in sorted(groups['function'], key=itemgetter('name')):
