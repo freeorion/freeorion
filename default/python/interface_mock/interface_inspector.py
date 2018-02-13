@@ -141,7 +141,7 @@ def inspect(obj, instances, classes_to_ignore=tuple()):
                               but have no methods, to get their instances.
     """
     debug("\n\nStart generating skeleton for %s\n\n" % obj.__name__)
-    folder_name = os.path.join(os.path.dirname(__file__), 'result')
+    folder_name = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))  # python/ folder
     result_path = os.path.join(folder_name, '%s.py' % obj.__name__)
     make_mock(_inspect(obj, instances), result_path, classes_to_ignore)
     debug("Skeleton written to %s" % result_path)
