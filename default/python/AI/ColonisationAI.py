@@ -66,6 +66,7 @@ def calc_max_pop(planet, species, detail):
         return 0
     tag_list = list(species.tags) if species else []
     pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
+    gaseous_adjustment = AIDependencies.GASEOUS_POP_FACTOR if "GASEOUS" in tag_list else 1.0
 
     base_pop_modified_by_species = 0
     base_pop_not_modified_by_species = 0
@@ -134,7 +135,7 @@ def calc_max_pop(planet, species, detail):
         base_pop_not_modified_by_species += 2
 
     def max_pop_size():
-        species_effect = (pop_tag_mod - 1) * abs(base_pop_modified_by_species)
+        species_effect = (pop_tag_mod - 1) * abs(base_pop_modified_by_species) * gaseous_adjustment
         base_pop = base_pop_not_modified_by_species + base_pop_modified_by_species + species_effect
         return planet_size * base_pop + pop_const_mod
 
@@ -902,10 +903,17 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 retval += ast_val
                 if ast_val > 0:
                     detail.append("AsteroidShipBuilding %.1f" % ast_val)
-        if planet.size == fo.planetSize.gasGiant and tech_is_complete("PRO_ORBITAL_GEN"):
-            per_gg = 20
-        elif planet.size == fo.planetSize.gasGiant and tech_is_complete("CON_ORBITAL_CON"):
-            per_gg = 10
+        # We will assume that if any GG in the system is populated, they all will wind up populated; cannot then hope
+        # to build a GGG on a non-populated GG
+        populated_gg_factor = 1.0
+        if planet.size == fo.planetSize.gasGiant:
+            # TODO: Given current industry calc approach, consider bringing this max val down to actual max val of 10
+            if tech_is_complete("PRO_ORBITAL_GEN"):
+                per_gg = 20
+            elif tech_is_complete("CON_ORBITAL_CON"):
+                per_gg = 10
+            if spec_name:
+                populated_gg_factor = 0.5
         else:
             per_gg = 5
         if system:
@@ -916,12 +924,15 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 other_planet = universe.getPlanet(pid)
                 if other_planet.size == fo.planetSize.gasGiant:
                     gg_list.append(pid)
+                    if other_planet.speciesName:
+                        populated_gg_factor = 0.5
                 if pid != planet_id and other_planet.owner == empire.empireID and FocusType.FOCUS_INDUSTRY in list(
                         other_planet.availableFoci) + [other_planet.focus]:
                     orb_gen_val += per_gg * discount_multiplier
-                    gg_detail.append("GGG for %s %.1f" % (other_planet.name, discount_multiplier * per_gg))
+                    # Note, this reported value may not take into account a later adjustment from a populated gg
+                    gg_detail.append("GGG for %s %.1f" % (other_planet.name, discount_multiplier * per_gg * populated_gg_factor))
             if planet_id in sorted(gg_list)[:max_gggs]:
-                retval += orb_gen_val
+                retval += orb_gen_val * populated_gg_factor
                 detail.extend(gg_detail)
             else:
                 detail.append("Won't GGG")
