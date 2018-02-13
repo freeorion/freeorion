@@ -1630,7 +1630,7 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
     if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
         client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
     {
-
+        // simply sends GAME_START message so established player will known he is in the game now
         player_connection->SendMessage(GameStartMessage(m_single_player_game, ALL_EMPIRES,
                                                         m_current_turn, m_empires, m_universe,
                                                         GetSpeciesManager(), GetCombatLogManager(),

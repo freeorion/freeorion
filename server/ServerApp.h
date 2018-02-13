@@ -216,7 +216,8 @@ public:
     /** Checks if \a auth match \a player_name and fill \a roles if successed. */
     bool IsAuthSuccessAndFillRoles(const std::string& player_name, const std::string& auth, Networking::AuthRoles& roles);
 
-    /** Add new observing player to running game. */
+    /** Adds new observing player to running game.
+      * Simply sends GAME_START message so established player knows he is in the game. */
     void AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_connection);
     //@}
 

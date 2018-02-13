@@ -291,7 +291,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 
     if (player_connection->IsAuthenticated()) {
         // drop other connection with same name
-        for (ServerNetworking::const_established_iterator it = m_server.m_networking.established_begin();
+        for (auto it = m_server.m_networking.established_begin();
              it != m_server.m_networking.established_end(); ++it)
         {
             if ((*it)->PlayerName() == player_name && player_connection != (*it)) {
