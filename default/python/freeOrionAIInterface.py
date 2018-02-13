@@ -3002,6 +3002,10 @@ class planet(universeObject, popCenter, resourceCenter):
         return int()
 
     @property
+    def habitableSize(self):
+        return int()
+
+    @property
     def nextLargerPlanetSize(self):
         return planetSize()
 
@@ -3386,6 +3390,24 @@ resourceType.industry = resourceType(0, "industry")
 resourceType.trade = resourceType(1, "trade")
 resourceType.research = resourceType(2, "research")
 resourceType.stockpile = resourceType(3, "stockpile")
+
+
+class roleType(Enum):
+    def __init__(self, numerator, name):
+        self.name = name
+
+    host = None  # roleType(0, "host")
+    clientTypeModerator = None  # roleType(1, "clientTypeModerator")
+    clientTypePlayer = None  # roleType(2, "clientTypePlayer")
+    clientTypeObserver = None  # roleType(3, "clientTypeObserver")
+    galaxySetup = None  # roleType(4, "galaxySetup")
+
+
+roleType.host = roleType(0, "host")
+roleType.clientTypeModerator = roleType(1, "clientTypeModerator")
+roleType.clientTypePlayer = roleType(2, "clientTypePlayer")
+roleType.clientTypeObserver = roleType(3, "clientTypeObserver")
+roleType.galaxySetup = roleType(4, "galaxySetup")
 
 
 class ruleType(Enum):
