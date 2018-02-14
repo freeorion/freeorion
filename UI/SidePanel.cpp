@@ -1213,14 +1213,13 @@ namespace {
         if (!ship || planet_type == INVALID_PLANET_TYPE)
             return false;
 
-        const ShipDesign* design = nullptr;
-        double colony_ship_capacity = 0.0;
+        float colony_ship_capacity = 0.0f;
 
-        design = ship->Design();
+        const auto design = ship->Design();
         if (design) {
             colony_ship_capacity = design->ColonyCapacity();
-            if (ship->CanColonize() && colony_ship_capacity==0)
-                return true;
+            if (ship->CanColonize() && colony_ship_capacity == 0.0f)
+                return true;    // outpost ship; planet type doesn't matter as there is no species to check against
         }
 
         if (const Species* colony_ship_species = GetSpecies(ship->SpeciesName())) {
@@ -1229,7 +1228,7 @@ namespace {
             // One-Click Colonize planets that are colonizable (even if they are
             // not hospitable), and One-Click Outpost planets that are not
             // colonizable.
-            if (colony_ship_capacity > 0.0) {
+            if (colony_ship_capacity > 0.0f) {
                 return planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
             } else {
                 return planet_env_for_colony_species < PE_HOSTILE || planet_env_for_colony_species > PE_GOOD;
@@ -1591,17 +1590,18 @@ void SidePanel::PlanetPanel::Refresh() {
     // calculate truth tables for planet colonization and invasion
     bool has_owner =        !planet->Unowned();
     bool mine =             planet->OwnedBy(client_empire_id);
-    bool populated =        planet->CurrentMeterValue(METER_POPULATION) > 0.0;
+    bool populated =        planet->CurrentMeterValue(METER_POPULATION) > 0.0f;
     bool habitable =        planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
     bool visible =          GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY;
-    bool shielded =         planet->CurrentMeterValue(METER_SHIELD) > 0.0;
-    bool has_defenses =     planet->CurrentMeterValue(METER_MAX_SHIELD) > 0.0 || 
-                                    planet->CurrentMeterValue(METER_MAX_DEFENSE) > 0.0 ||
-                                    planet->CurrentMeterValue(METER_MAX_TROOPS) > 0.0;
+    bool shielded =         planet->CurrentMeterValue(METER_SHIELD) > 0.0f;
+    bool has_defenses =     planet->CurrentMeterValue(METER_MAX_SHIELD) > 0.0f ||
+                            planet->CurrentMeterValue(METER_MAX_DEFENSE) > 0.0f ||
+                            planet->CurrentMeterValue(METER_MAX_TROOPS) > 0.0f;
     bool being_colonized =  planet->IsAboutToBeColonized();
     bool outpostable =                   !populated && (  !has_owner /*&& !shielded*/         ) && visible && !being_colonized;
     bool colonizable =      habitable && !populated && ( (!has_owner /*&& !shielded*/) || mine) && visible && !being_colonized;
-    bool can_colonize =     selected_colony_ship && ((colonizable  && (colony_ship_capacity > 0.0f)) || (outpostable && (colony_ship_capacity == 0.0f)));
+    bool can_colonize =     selected_colony_ship && (   (colonizable  && (colony_ship_capacity > 0.0f))
+                                                     || (outpostable && (colony_ship_capacity == 0.0f)));
 
     bool at_war_with_me =   !mine && (populated || (has_owner && Empires().GetDiplomaticStatus(client_empire_id, planet->Owner()) == DIPLO_WAR));
 
