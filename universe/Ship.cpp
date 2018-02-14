@@ -290,8 +290,7 @@ float Ship::ColonyCapacity() const {
     if (!design)
         return retval;
 
-    for (const std::string& part_name : design->Parts())
-    {
+    for (const std::string& part_name : design->Parts()) {
         if (part_name.empty())
             continue;
         const PartType* part_type = GetPartType(part_name);
@@ -301,7 +300,7 @@ float Ship::ColonyCapacity() const {
         if (part_class != PC_COLONY)
             continue;
         // add capacity for all instances of colony parts to accumulator
-        retval += this->CurrentPartMeterValue(METER_CAPACITY, part_name);
+        retval += this->InitialPartMeterValue(METER_CAPACITY, part_name);
     }
 
     return retval;
@@ -324,7 +323,7 @@ float Ship::TroopCapacity() const {
         if (part_class != PC_TROOPS)
             continue;
         // add capacity for all instances of colony parts to accumulator
-        retval += this->CurrentPartMeterValue(METER_CAPACITY, part_name);
+        retval += this->InitialPartMeterValue(METER_CAPACITY, part_name);
     }
 
     return retval;
@@ -364,7 +363,7 @@ float Ship::NextTurnCurrentMeterValue(MeterType type) const {
         throw std::invalid_argument("Ship::NextTurnCurrentMeterValue passed meter type that the Ship does not have: " + boost::lexical_cast<std::string>(type));
     float current_meter_value = meter->Current();
 
-    // ResourceCenter-like resource meter growth...
+    // ResourceCenter-like resource meter growth...  TODO: Remove this, do in effects
 
     MeterType target_meter_type = INVALID_METER_TYPE;
     switch (type) {

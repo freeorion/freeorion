@@ -1705,7 +1705,7 @@ namespace {
     /** Returns true if \a empire has been eliminated by the applicable
       * definition of elimination.  As of this writing, elimination means
       * having no ships and no planets. */
-      bool EmpireEliminated(int empire_id) {
+    bool EmpireEliminated(int empire_id) {
           return (Objects().FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
                   Objects().FindObjects(OwnedVisitor<Ship>(empire_id)).empty());      // no ship
       }
@@ -1754,7 +1754,7 @@ namespace {
         for (auto& planet : Objects().FindObjects<const Planet>(system->PlanetIDs())) {
             if (!planet->Unowned())
                 empire_planets[planet->Owner()].insert(planet->ID());
-            else if (planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+            else if (planet->CurrentMeterValue(METER_POPULATION) > 0.0f)
                 empire_planets[ALL_EMPIRES].insert(planet->ID());
         }
     }
@@ -1794,7 +1794,7 @@ namespace {
 
 
         // get best monster detection strength here.  Use monster detection meters for this...
-        double monster_detection_strength_here = 0.0;
+        float monster_detection_strength_here = 0.0f;
         for (int ship_id : system->ShipIDs()) {
             auto ship = GetShip(ship_id);
             if (!ship || !ship->Unowned())  // only want unowned / monster ships
@@ -1850,7 +1850,7 @@ namespace {
                     continue;
                 // skip planets that have no owner and that are unpopulated; don't matter for combat conditions test
                 auto planet = GetPlanet(planet_id);
-                if (planet->Unowned() && planet->CurrentMeterValue(METER_POPULATION) <= 0.0)
+                if (planet->Unowned() && planet->CurrentMeterValue(METER_POPULATION) <= 0.0f)
                     continue;
                 visible_planets.insert(planet->ID());
             }
@@ -1862,7 +1862,7 @@ namespace {
 
 
         // get best monster detection strength here.  Use monster detection meters for this...
-        double monster_detection_strength_here = 0.0;
+        float monster_detection_strength_here = 0.0f;
         for (auto& ship : Objects().FindObjects<const Ship>(system->ShipIDs())) {
             if (!ship->Unowned())  // only want unowned / monster ships
                 continue;
@@ -2193,14 +2193,11 @@ namespace {
         for (const CombatInfo& combat_info : combats) {
             std::vector<WeaponFireEvent::ConstWeaponFireEventPtr> events_that_killed;
             for (CombatEventPtr event : combat_info.combat_events) {
-                WeaponsPlatformEvent::ConstWeaponsPlatformEventPtr maybe_attacker
-                    = std::dynamic_pointer_cast<WeaponsPlatformEvent>(event);
+                auto maybe_attacker = std::dynamic_pointer_cast<WeaponsPlatformEvent>(event);
                 if (maybe_attacker) {
-                    std::vector<ConstCombatEventPtr>sub_events
-                        = maybe_attacker->SubEvents(maybe_attacker->attacker_owner_id);
-                    for (ConstCombatEventPtr weapon_event : sub_events) {
-                        const WeaponFireEvent::ConstWeaponFireEventPtr maybe_fire_event
-                            = std::dynamic_pointer_cast<const WeaponFireEvent>(weapon_event);
+                    auto sub_events = maybe_attacker->SubEvents(maybe_attacker->attacker_owner_id);
+                    for (auto weapon_event : sub_events) {
+                        auto maybe_fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(weapon_event);
                         if (maybe_fire_event
                             && combat_info.destroyed_object_ids.find(maybe_fire_event->target_id)
                             != combat_info.destroyed_object_ids.end())
@@ -2208,8 +2205,7 @@ namespace {
                     }
                 }
 
-                const WeaponFireEvent::ConstWeaponFireEventPtr maybe_fire_event
-                    = std::dynamic_pointer_cast<const WeaponFireEvent>(event);
+                auto maybe_fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(event);
                 if (maybe_fire_event
                     && combat_info.destroyed_object_ids.find(maybe_fire_event->target_id)
                             != combat_info.destroyed_object_ids.end())
@@ -2569,11 +2565,11 @@ namespace {
                 ErrorLogger() << "HandleInvasion couldn't get planet";
                 continue;
             }
-            if (planet->CurrentMeterValue(METER_TROOPS) > 0.0f) {
+            if (planet->InitialMeterValue(METER_TROOPS) > 0.0f) {
                 // empires may have garrisons on planets
                 planet_empire_troops[planet->ID()][planet->Owner()] += planet->InitialMeterValue(METER_TROOPS) + 0.0001;    // small bonus to ensure ties are won by initial owner
             }
-            if (!planet->Unowned() && planet->CurrentMeterValue(METER_REBEL_TROOPS) > 0.0f) {
+            if (!planet->Unowned() && planet->InitialMeterValue(METER_REBEL_TROOPS) > 0.0f) {
                 // rebels may be present on empire-owned planets
                 planet_empire_troops[planet->ID()][ALL_EMPIRES] += planet->InitialMeterValue(METER_REBEL_TROOPS);
             }
