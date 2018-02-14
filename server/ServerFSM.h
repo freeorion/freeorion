@@ -129,6 +129,11 @@ struct ServerFSM : sc::state_machine<ServerFSM, Idle> {
     void unconsumed_event(const sc::event_base &event);
     ServerApp& Server();
     void HandleNonLobbyDisconnection(const Disconnection& d);
+    bool EstablishPlayer(const PlayerConnectionPtr& player_connection,
+                         const std::string& player_name,
+                         Networking::ClientType client_type,
+                         const std::string& client_version_string,
+                         const Networking::AuthRoles& roles);
 
     std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
     std::shared_ptr<SinglePlayerSetupData>  m_single_player_setup_data;
@@ -291,6 +296,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
         sc::custom_reaction<ShutdownServer>,
         sc::custom_reaction<Hostless>,
         sc::custom_reaction<JoinGame>,
+        sc::custom_reaction<AuthResponse>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -304,7 +310,14 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     sc::result react(const Hostless& u);
     sc::result react(const RequestCombatLogs& msg);
     sc::result react(const JoinGame& msg);
+    sc::result react(const AuthResponse& msg);
     sc::result react(const Error& msg);
+
+    void EstablishPlayer(const PlayerConnectionPtr& player_connection,
+                         const std::string& player_name,
+                         Networking::ClientType client_type,
+                         const std::string& client_version_string,
+                         const Networking::AuthRoles& roles);
 
     SERVER_ACCESSOR
 };

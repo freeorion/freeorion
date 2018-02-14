@@ -1621,6 +1621,28 @@ bool ServerApp::IsAuthSuccessAndFillRoles(const std::string& player_name, const 
     return result;
 }
 
+void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
+    std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
+
+    Networking::ClientType client_type = player_connection->GetClientType();
+    bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
+
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+        client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+    {
+        // simply sends GAME_START message so established player will known he is in the game now
+        player_connection->SendMessage(GameStartMessage(m_single_player_game, ALL_EMPIRES,
+                                                        m_current_turn, m_empires, m_universe,
+                                                        GetSpeciesManager(), GetCombatLogManager(),
+                                                        GetSupplyManager(), player_info_map,
+                                                        m_galaxy_setup_data, use_binary_serialization));
+    } else {
+        ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
+    }
+
+    // TODO: notify other players
+}
+
 bool ServerApp::IsHostless() const
 { return GetOptionsDB().Get<bool>("hostless"); }
 
