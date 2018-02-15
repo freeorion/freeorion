@@ -5267,6 +5267,9 @@ Verbessert Planetenverteidigung
 TROOPS_SHORT_DESC
 Erhöht Truppen
 
+ATTACK_TROOPS_SHORT_DESC
+Verbessert Angriffstruppen
+
 POPULATION_SHORT_DESC
 Erhöht Planetare Bevölkerung
 
@@ -6069,7 +6072,7 @@ GT_TROOP_POD
 Bodentruppen Kapsel
 
 GT_TROOP_POD_DESC
-Trägt eine Brigade Boden[[metertype METER_TROOPS]], samt Ausrüstung, die auf einen Planeten eingesetzt werden kann.
+Trägt Bodentruppen, samt Ausrüstung, die für die Eroberung eines Planeten eingesetzt werden kann. Erforschung von [[tech GRO_NANO_CYBERNET]] verdoppelt die Truppenstärke pro [[shippart GT_TROOP_POD]].
 
 
 ##
