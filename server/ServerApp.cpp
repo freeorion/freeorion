@@ -1637,6 +1637,12 @@ void ServerApp::EliminatePlayer(int player_id) {
         return;
     empire->Eliminate();
 
+    // unclaim ships and systems
+    for (auto& obj : Objects().FindObjects(OwnedVisitor<Planet>(empire_id)))
+        obj->SetOwner(ALL_EMPIRES);
+    for (auto& obj : Objects().FindObjects(OwnedVisitor<Ship>(empire_id)))
+        obj->SetOwner(ALL_EMPIRES);
+
     // Don't wait for turn
     RemoveEmpireTurn(empire_id);
 }
