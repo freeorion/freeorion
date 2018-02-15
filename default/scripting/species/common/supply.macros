@@ -9,6 +9,8 @@ VERY_BAD_SUPPLY
             activation = Planet
             accountinglabel = "VERY_BAD_SUPPLY_LABEL"
             effects = SetMaxSupply value = Value - 1
+
+[[STANDARD_SUPPLY_GROWTH]]
 '''
 
 BAD_SUPPLY
