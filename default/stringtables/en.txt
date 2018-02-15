@@ -2422,6 +2422,9 @@ Load Game
 GAME_MENU_RESIGN
 Resign
 
+GAME_MENU_EXIT
+Exit
+
 GAME_MENU_SAVE_FILES
 Save Game Files
 
@@ -2431,6 +2434,8 @@ Button Disabled
 SAVE_DISABLED_BROWSE_TEXT
 The Save Game button is disabled, either because this is a multiplayer game in which this client is neither Host nor Moderator, or because at the time this menu was opened at least one of the AIs had not yet finished submitting its moves for the turn (indicated by a green triangle status icon just to the left of its player-type icon in the Empires window).
 
+GAME_MENU_REALLY_RESIGN
+Are you sure you want to resign from the game?
 
 ##
 ## Save game dialog

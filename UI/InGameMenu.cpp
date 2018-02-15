@@ -15,6 +15,7 @@
 #include <GG/Button.h>
 #include <GG/Clr.h>
 #include <GG/DrawUtil.h>
+#include <GG/dialogs/ThreeButtonDlg.h>
 
 #include <boost/filesystem/operations.hpp>
 
@@ -34,12 +35,14 @@ void InGameMenu::CompleteConstruction() {
     m_save_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_SAVE"));
     m_load_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_LOAD"));
     m_options_btn = Wnd::Create<CUIButton>(UserString("INTRO_BTN_OPTIONS"));
-    m_exit_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_RESIGN"));
+    m_resign_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_RESIGN"));
+    m_exit_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_EXIT"));
     m_done_btn = Wnd::Create<CUIButton>(UserString("DONE"));
 
     AttachChild(m_save_btn);
     AttachChild(m_load_btn);
     AttachChild(m_options_btn);
+    AttachChild(m_resign_btn);
     AttachChild(m_exit_btn);
     AttachChild(m_done_btn);
 
@@ -49,6 +52,8 @@ void InGameMenu::CompleteConstruction() {
         boost::bind(&InGameMenu::Load, this));
     m_options_btn->LeftClickedSignal.connect(
         boost::bind(&InGameMenu::Options, this));
+    m_resign_btn->LeftClickedSignal.connect(
+        boost::bind(&InGameMenu::Resign, this));
     m_exit_btn->LeftClickedSignal.connect(
         boost::bind(&InGameMenu::Exit, this));
     m_done_btn->LeftClickedSignal.connect(
@@ -98,6 +103,7 @@ GG::X InGameMenu::ButtonWidth() const {
     button_width = std::max(button_width, m_save_btn->MinUsableSize().x);
     button_width = std::max(button_width, m_load_btn->MinUsableSize().x);
     button_width = std::max(button_width, m_options_btn->MinUsableSize().x);
+    button_width = std::max(button_width, m_resign_btn->MinUsableSize().x);
     button_width = std::max(button_width, m_exit_btn->MinUsableSize().x);
     button_width = std::max(button_width, m_done_btn->MinUsableSize().x);
     button_width = std::max(MIN_BUTTON_WIDTH, button_width);
@@ -126,6 +132,9 @@ void InGameMenu::DoLayout() {
     button_ul.y += GG::Y(button_cell_height);
     button_lr.y += GG::Y(button_cell_height);
     m_options_btn->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_cell_height);
+    button_lr.y += GG::Y(button_cell_height);
+    m_resign_btn->SizeMove(button_ul, button_lr);
     button_ul.y += GG::Y(button_cell_height);
     button_lr.y += GG::Y(button_cell_height);
     m_exit_btn->SizeMove(button_ul, button_lr);
@@ -186,6 +195,20 @@ void InGameMenu::Load() {
 void InGameMenu::Options() {
     auto options_wnd = GG::Wnd::Create<OptionsWnd>(true);
     options_wnd->Run();
+}
+
+void InGameMenu::Resign() {
+    // show confirmation dialog
+    std::shared_ptr<GG::Font> font = ClientUI::GetFont();
+    auto prompt = GG::Wnd::Create<GG::ThreeButtonDlg>(
+        GG::X(200), GG::Y(75), UserString("GAME_MENU_REALLY_RESIGN"), font,
+        ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::CtrlColor(), ClientUI::TextColor(),
+        std::size_t(2), UserString("YES"), UserString("CANCEL"), "");
+    prompt->Run();
+    if (prompt->Result() == 0) {
+       // send RESIGN message
+       Exit();
+    }
 }
 
 void InGameMenu::Exit() {
