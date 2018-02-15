@@ -10,6 +10,7 @@ STANDARD_CONSTRUCTION
             activation = And [
                 Planet
                 (Source.LastTurnConquered < CurrentTurn)
+                (Source.System.LastTurnBattleHere < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetConstruction value = Value +
