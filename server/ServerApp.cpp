@@ -1628,8 +1628,18 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
     // TODO: notify other players
 }
 
-void ServerApp::EliminatePlayer(int player_id)
-{ }
+void ServerApp::EliminatePlayer(int player_id) {
+    int empire_id = PlayerEmpireID(player_id);
+    if (empire_id == ALL_EMPIRES)
+        return;
+    Empire* empire = GetEmpire(empire_id);
+    if (!empire)
+        return;
+    empire->Eliminate();
+
+    // Don't wait for turn
+    RemoveEmpireTurn(empire_id);
+}
 
 void ServerApp::DropPlayerEmpireLink(int player_id)
 { m_player_empire_ids.erase(player_id); }
