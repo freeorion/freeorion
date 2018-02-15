@@ -1012,6 +1012,8 @@ Too many human players.
 ERROR_CONNECTION_WAS_REPLACED
 Your connection was replaced.
 
+ERROR_CANNOT_ELIMINATE_NO_HUMAN_PLAYER
+Cannot eliminate other than Player
 
 ##
 ## Game Rules

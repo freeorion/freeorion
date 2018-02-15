@@ -1628,6 +1628,9 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
     // TODO: notify other players
 }
 
+void ServerApp::EliminatePlayer(int player_id)
+{ }
+
 void ServerApp::DropPlayerEmpireLink(int player_id)
 { m_player_empire_ids.erase(player_id); }
 

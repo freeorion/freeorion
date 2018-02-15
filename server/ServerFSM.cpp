@@ -2305,6 +2305,14 @@ sc::result PlayingGame::react(const EliminateSelf& msg) {
     ServerApp& server = Server();
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
+    if (player_connection->GetClientType() != Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CANNOT_ELIMINATE_NO_HUMAN_PLAYER"), true));
+        server.Networking().Disconnect(player_connection);
+        return discard_event();
+    }
+
+    server.EliminatePlayer(player_connection->PlayerID());
+
     return discard_event();
 }
 
