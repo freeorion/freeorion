@@ -213,7 +213,6 @@ PHOTOTROPHIC_BONUS
 
 GASEOUS_BONUS
 '''     EffectsGroup
-            description = "GASEOUS_DESC"
             scope = Source
             activation = And [
                 Planet type = GasGiant
