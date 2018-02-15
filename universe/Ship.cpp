@@ -735,7 +735,6 @@ void Ship::SetShipMetersToMax() {
 void Ship::PopGrowthProductionResearchPhase() {
     UniverseObject::PopGrowthProductionResearchPhase();
 
-    UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Ship::NextTurnCurrentMeterValue(METER_SHIELD));
     UniverseObject::GetMeter(METER_INDUSTRY)->SetCurrent(Ship::NextTurnCurrentMeterValue(METER_INDUSTRY));
     UniverseObject::GetMeter(METER_RESEARCH)->SetCurrent(Ship::NextTurnCurrentMeterValue(METER_RESEARCH));
     UniverseObject::GetMeter(METER_TRADE)->SetCurrent(Ship::NextTurnCurrentMeterValue(METER_TRADE));
