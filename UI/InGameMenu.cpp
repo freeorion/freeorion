@@ -206,7 +206,9 @@ void InGameMenu::Resign() {
         std::size_t(2), UserString("YES"), UserString("CANCEL"), "");
     prompt->Run();
     if (prompt->Result() == 0) {
-       // send RESIGN message
+       // send ELIMINATE_SELF message
+       HumanClientApp::GetApp()->EliminateSelf();
+
        Exit();
     }
 }

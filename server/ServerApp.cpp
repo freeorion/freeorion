@@ -424,6 +424,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg, player_connection));       break;
     case Message::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg, player_connection));        break;
     case Message::MODERATOR_ACTION:         m_fsm->process_event(ModeratorAct(msg, player_connection));     break;
+    case Message::ELIMINATE_SELF:           m_fsm->process_event(EliminateSelf(msg, player_connection));    break;
 
     case Message::ERROR_MSG:
     case Message::DEBUG:                    break;

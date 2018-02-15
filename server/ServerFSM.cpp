@@ -2300,6 +2300,14 @@ sc::result PlayingGame::react(const AuthResponse& msg) {
     return discard_event();
 }
 
+sc::result PlayingGame::react(const EliminateSelf& msg) {
+    DebugLogger(FSM) << "(ServerFSM) PlayingGame::EliminateSelf message received";
+    ServerApp& server = Server();
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+
+    return discard_event();
+}
+
 sc::result PlayingGame::react(const Error& msg) {
     auto fatal = HandleErrorMessage(msg, Server());
     if (fatal) {

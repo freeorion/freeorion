@@ -94,6 +94,7 @@ public:
     std::string SelectLoadFile();       ///< Lets the user select a multiplayer save to load
     void InitAutoTurns(int auto_turns); ///< Initialize auto turn counter
     void DecAutoTurns(int n = 1);       ///< Decrease auto turn counter
+    void EliminateSelf();               ///< Resign from the game
 
     ClientUI& GetClientUI()
     { return *m_ui.get(); }
