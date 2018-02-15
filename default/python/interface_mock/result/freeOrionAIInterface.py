@@ -2665,14 +2665,6 @@ class universeObject(object):
         """
         return float()
 
-    def nextTurnCurrentMeterValue(self, meter_type):
-        """
-        :param meter_type:
-        :type meter_type: meterType
-        :rtype: float
-        """
-        return float()
-
     def ownedBy(self, number):
         """
         :param number:
