@@ -294,3 +294,5 @@ EffectsGroup
 
 // Note, the "]" on the following line is functional and important; it must be present and all EffectsGroups must be above it.
 ]
+
+#include "/scripting/common/priorities.macros"
