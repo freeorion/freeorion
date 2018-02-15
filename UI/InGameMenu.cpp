@@ -21,7 +21,7 @@
 
 namespace {
     const GG::X IN_GAME_OPTIONS_WIDTH(150);
-    const GG::Y IN_GAME_OPTIONS_HEIGHT(280);
+    const GG::Y IN_GAME_OPTIONS_HEIGHT(310);
 }
 
 InGameMenu::InGameMenu():
@@ -87,7 +87,7 @@ GG::Rect InGameMenu::CalculatePosition() const {
 
     // Calculate window width and height
     GG::Pt new_size(ButtonWidth() + H_MAINMENU_MARGIN,
-                    5.75 * ButtonCellHeight() + V_MAINMENU_MARGIN); // 8 rows + 0.75 before exit button
+                    6.75 * ButtonCellHeight() + V_MAINMENU_MARGIN); // 9 rows + 0.75 before exit button
 
     // This wnd determines its own position.
     GG::Pt new_ul((HumanClientApp::GetApp()->AppWidth()  - new_size.x) / 2,
