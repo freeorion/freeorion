@@ -514,7 +514,7 @@ void ColonizeOrder::ExecuteImpl() const {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
     }
-    if (planet->CurrentMeterValue(METER_POPULATION) > 0.0f) {
+    if (planet->InitialMeterValue(METER_POPULATION) > 0.0f) {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that already has population";
         return;
     }
@@ -621,11 +621,11 @@ void InvadeOrder::ExecuteImpl() const {
         ErrorLogger() << "InvadeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
     }
-    if (planet->Unowned() && planet->CurrentMeterValue(METER_POPULATION) == 0.0) {
+    if (planet->Unowned() && planet->InitialMeterValue(METER_POPULATION) == 0.0) {
         ErrorLogger() << "InvadeOrder::ExecuteImpl given unpopulated planet";
         return;
     }
-    if (planet->CurrentMeterValue(METER_SHIELD) > 0.0) {
+    if (planet->InitialMeterValue(METER_SHIELD) > 0.0) {
         ErrorLogger() << "InvadeOrder::ExecuteImpl given planet with shield > 0";
         return;
     }
