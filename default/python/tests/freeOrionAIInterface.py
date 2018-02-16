@@ -1,4 +1,4 @@
-import freeOrionAIInterface
+# Mock module for tests
 
 
 class aggression(object):
@@ -19,8 +19,3 @@ def userString(x):
 def userStringList(x):
     """userStringList mock"""
     return "UserStringList %s" % x
-
-
-freeOrionAIInterface.aggression = aggression
-freeOrionAIInterface.userString = userString
-freeOrionAIInterface.userStringList = userStringList
