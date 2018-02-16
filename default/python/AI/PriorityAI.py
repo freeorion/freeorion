@@ -220,6 +220,8 @@ def _calculate_colonisation_priority():
     total_pp = fo.getEmpire().productionPoints
     num_colonies = state.get_number_of_colonies()
     colony_growth_barrier = foAI.foAIstate.character.max_number_colonies()
+    if num_colonies > colony_growth_barrier:
+        return 0.0
     colony_cost = AIDependencies.COLONY_POD_COST * (1 + AIDependencies.COLONY_POD_UPKEEP * num_colonies)
     turns_to_build = 8  # TODO: check for susp anim pods, build time 10
     mil_prio = foAI.foAIstate.get_priority(PriorityType.PRODUCTION_MILITARY)
@@ -240,19 +242,24 @@ def _calculate_colonisation_priority():
     outpost_prio = foAI.foAIstate.get_priority(PriorityType.PRODUCTION_OUTPOST)
 
 
-    # if not a purely SP_SLY empire, and have any outposts to build, don't build colony ships TODO: make more complex assessment
-    if outpost_prio > 0 and list(ColonisationAI.empire_colonizers) != ["SP_SLY"]:
+    # if have no SP_SLY, and have any outposts to build, don't build colony ships TODO: make more complex assessment
+    colonizers = list(ColonisationAI.empire_colonizers)
+    if "SP_SLY" not in colonizers and outpost_prio > 0:
         return 0.0
-    if num_colonies > colony_growth_barrier:
-        return 0.0
-    num_colonisable_planet_ids = len([pid for (pid, (score, _)) in foAI.foAIstate.colonisablePlanetIDs.items()
-                                     if score > 60][:allottedColonyTargets + 2])
+    colony_opportunities = [species_name for  (_, (score, species_name)) in foAI.foAIstate.colonisablePlanetIDs.items()
+                                   if score > 60]
+    num_colonisable_planet_ids = len(colony_opportunities)
     if num_colonisable_planet_ids == 0:
         return 1
 
     colony_ship_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION)
     num_colony_ships = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(colony_ship_ids))
     colonisation_priority = 60 * (1.0 + num_colonisable_planet_ids - num_colony_ships) / (num_colonisable_planet_ids + 1)
+
+    if colonizers == ["SP_SLY"]:
+        colonisation_priority *= 2
+    elif "SP_SLY" in colonizers:
+        colonisation_priority *= (1.0 + colony_opportunities.count("SP_SLY")) / num_colonisable_planet_ids
 
     # print
     # print "Number of Colony Ships : " + str(num_colony_ships)
