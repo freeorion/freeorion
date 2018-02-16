@@ -7,11 +7,9 @@ This test are supposed to be run outside the game engine.
 
 ## Run test
  - open console (`cmd` or `PowerShell` for win)
- - change dir to `freeorion\default\python\tests`
- - execute  `run_tests.py` with python
-   - `python run_tests.py` for windows
-   - `./run_tests.py` for linux and mac
+ - execute  `pytest`
 
- `run_tests.py` accepts same commandline arguments as pytest. I prefer to add `-v --tb long`
- 
- `run_tests.py` adds required directories to python path and runs pytest.  
+If you want to run specific tests see [pytest documentation](https://docs.pytest.org/en/latest/usage.html#specifying-tests-selecting-tests)
+
+If you need to test module that is not in python path, add its to  `conftest.py`,
+this file is executed before import of the test files. 
