@@ -1008,11 +1008,11 @@ namespace {
             meters_icons.push_back({METER_TROOPS,         TroopIcon()});
         if (ship->CanColonize())
             meters_icons.push_back({METER_POPULATION,     ColonyIcon()});
-        if (ship->CurrentMeterValue(METER_INDUSTRY) > 0.0f)
+        if (ship->InitialMeterValue(METER_INDUSTRY) > 0.0f)
             meters_icons.push_back({METER_INDUSTRY,       IndustryIcon()});
-        if (ship->CurrentMeterValue(METER_RESEARCH) > 0.0f)
+        if (ship->InitialMeterValue(METER_RESEARCH) > 0.0f)
             meters_icons.push_back({METER_RESEARCH,       ResearchIcon()});
-        if (ship->CurrentMeterValue(METER_TRADE) > 0.0f)
+        if (ship->InitialMeterValue(METER_TRADE) > 0.0f)
             meters_icons.push_back({METER_TRADE,          TradeIcon()});
 
         meters_icons.push_back({METER_SHIELD,     ClientUI::MeterIcon(METER_SHIELD)});

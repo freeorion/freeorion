@@ -2128,7 +2128,12 @@ namespace {
         //(weapons - enemyShield) * armor / (enemyWeapons - shield). This
         //depends on the enemy's weapons and shields, so we estimate the
         //enemy technology from the turn.
-        const std::string& species = ship->SpeciesName().empty() ? "Generic" : UserString(ship->SpeciesName());
+
+        // use the current meter values here, not initial, as this is used
+        // within a loop that sets the species, updates meter, then checks
+        // meter values for display
+
+        auto& species = ship->SpeciesName().empty() ? "Generic" : UserString(ship->SpeciesName());
         float structure = ship->CurrentMeterValue(METER_MAX_STRUCTURE);
         float shield = ship->CurrentMeterValue(METER_MAX_SHIELD);
         float attack = ship->TotalWeaponsDamage();
@@ -2191,12 +2196,17 @@ namespace {
         DebugLogger() << "default enemy stats:: tech_level: " << tech_level << "   DR: " << enemy_DR << "   attack: " << typical_shot;
         std::set<float> enemy_shots;
         enemy_shots.insert(typical_shot);
+
+
+        // select which species to show info for
+
         std::set<std::string> additional_species; // from currently selected planet and fleets, if any
         const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
         if (const auto planet = GetPlanet(map_wnd->SelectedPlanetID())) {
             if (!planet->SpeciesName().empty())
                 additional_species.insert(planet->SpeciesName());
         }
+
         FleetUIManager& fleet_manager = FleetUIManager::GetFleetUIManager();
         std::set<int> chosen_ships;
         int selected_ship = fleet_manager.SelectedShipID();
@@ -2224,7 +2234,7 @@ namespace {
                 if (!this_ship->SpeciesName().empty())
                     additional_species.insert(this_ship->SpeciesName());
                 if (!this_ship->OwnedBy(client_empire_id)) {
-                    enemy_DR = this_ship->CurrentMeterValue(METER_MAX_SHIELD);
+                    enemy_DR = this_ship->InitialMeterValue(METER_MAX_SHIELD);
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
                     auto this_damage = this_ship->AllWeaponsMaxDamage();
@@ -2338,8 +2348,8 @@ namespace {
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.insert(selected_ship);
             if (const auto this_ship = GetShip(selected_ship)) {
-                if (!additional_species.empty() && ((this_ship->CurrentMeterValue(METER_MAX_SHIELD) > 0) || !this_ship->OwnedBy(client_empire_id))) {
-                    enemy_DR = this_ship->CurrentMeterValue(METER_MAX_SHIELD);
+                if (!additional_species.empty() && ((this_ship->InitialMeterValue(METER_MAX_SHIELD) > 0) || !this_ship->OwnedBy(client_empire_id))) {
+                    enemy_DR = this_ship->InitialMeterValue(METER_MAX_SHIELD);
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
                     auto this_damage = this_ship->AllWeaponsMaxDamage();
@@ -2512,7 +2522,7 @@ namespace {
                 planet_environment = species->GetPlanetEnvironment(planet.Type());
 
             float planet_capacity = ((planet_environment == PE_UNINHABITABLE) ?
-                                     0.0f : planet.CurrentMeterValue(METER_TARGET_POPULATION));
+                                     0.0f : planet.CurrentMeterValue(METER_TARGET_POPULATION)); // want value after temporary meter update, so get current, not initial value of meter
 
             retval.insert({planet_capacity, {species_name, planet_environment}});
         }

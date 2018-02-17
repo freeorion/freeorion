@@ -63,8 +63,8 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     auto planets = Objects().FindObjects<Planet>(system->PlanetIDs());
 
     for (auto& planet : planets) {
-        // if planet is populated, add owner to empires that have assets in this battle
-        if (!planet->Unowned() || planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+        // if planet is populated or has an owner, add owner to empires that have assets in this battle
+        if (!planet->Unowned() || planet->InitialMeterValue(METER_POPULATION) > 0.0f)
             empire_ids.insert(planet->Owner());
 
         objects.Insert(planet);
@@ -300,7 +300,7 @@ namespace {
 
         float power = weapon.part_attack;
 
-        std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
+        auto& damaged_object_ids = combat_info.damaged_object_ids;
 
         Meter* target_structure = target->UniverseObject::GetMeter(METER_STRUCTURE);
         if (!target_structure) {
@@ -593,7 +593,7 @@ namespace {
             return true;
 
         if (obj_type == OBJ_PLANET) {
-            if (!obj->Unowned() || obj->CurrentMeterValue(METER_POPULATION) > 0.0f)
+            if (!obj->Unowned() || obj->InitialMeterValue(METER_POPULATION) > 0.0f)
                 return true;
             return false;
         }
@@ -660,7 +660,7 @@ namespace {
         if (obj_type == OBJ_PLANET || obj_type == OBJ_FIGHTER) {
             return true;
         } else if (obj_type == OBJ_SHIP) {
-            float stealth = obj->CurrentMeterValue(METER_STEALTH);
+            float stealth = obj->InitialMeterValue(METER_STEALTH);
             if (monster_detection >= stealth)
                 return true;
         }
@@ -688,7 +688,7 @@ namespace {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
             return ship->IsArmed() || ship->HasFighters();
         } else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj)) {
-            return planet->CurrentMeterValue(METER_DEFENSE) > 0.0f;
+            return planet->InitialMeterValue(METER_DEFENSE) > 0.0f;
         } else if (auto fighter = std::dynamic_pointer_cast<const Fighter>(obj)) {
             return fighter->Damage() > 0.0f;
         } else {
@@ -796,7 +796,7 @@ namespace {
         for (auto it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it) {
             auto obj = *it;
             if (obj->Unowned() && (obj->ObjectType() == OBJ_SHIP || obj->ObjectType() == OBJ_PLANET )){
-                monster_detection = std::max(monster_detection, obj->CurrentMeterValue(METER_DETECTION));
+                monster_detection = std::max(monster_detection, obj->InitialMeterValue(METER_DETECTION));
             }
         }
         return monster_detection;
@@ -950,7 +950,7 @@ namespace {
                     for (int empire_id : combat_info.empire_ids) {
                         if (empire_id != ALL_EMPIRES) {
                             DebugLogger(combat) << "Giving knowledge of destroyed object " << target_id
-                                          << " to empire " << empire_id;
+                                                << " to empire " << empire_id;
                             combat_info.destroyed_object_knowers[empire_id].insert(target_id);
                         }
                     }
@@ -1242,18 +1242,17 @@ namespace {
             // destroyed something
             int attacker_owner_id = attacker->Owner();
 
-            std::map<int, EmpireCombatInfo >::iterator target_vec_it = combat_state.empire_infos.find(attacker_owner_id);
+            auto target_vec_it = combat_state.empire_infos.find(attacker_owner_id);
             if (target_vec_it == combat_state.empire_infos.end() || !target_vec_it->second.HasTargets()) {
                 DebugLogger(combat) << "No targets for empire: " << attacker_owner_id;
                 break;
             }
 
-            const std::set<int> valid_target_ids = ValidTargetsForAttackerType(attacker, combat_state, target_vec_it->second.target_ids);
+            auto valid_target_ids = ValidTargetsForAttackerType(attacker, combat_state, target_vec_it->second.target_ids);
             if (valid_target_ids.empty()) {
                 DebugLogger(combat) << "No valid targets for attacker " << attacker->ID();
                 break;
             }
-            //const std::set<int>& valid_target_ids = target_vec_it->second.target_ids;
 
             DebugLogger(combat) << [&valid_target_ids, &attacker, &attacker_owner_id]() {
                 std::stringstream ss;
@@ -1265,8 +1264,6 @@ namespace {
                 return ss.str();
             }();
 
-
-            // END DEBUG
 
             // select target object
             int target_idx = RandInt(0, valid_target_ids.size() - 1);
@@ -1467,10 +1464,12 @@ namespace {
             }
 
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon
-            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"), attack_planet->CurrentMeterValue(METER_DEFENSE)));
+            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"),
+                                             attack_planet->CurrentMeterValue(METER_DEFENSE)));
 
         } else if (attack_fighter) {    // treat fighter damage as direct fire weapon
-            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("FT_WEAPON_1"), attack_fighter->Damage()));
+            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("FT_WEAPON_1"),
+                                             attack_fighter->Damage()));
         }
         return weapons;
     }
@@ -1495,7 +1494,7 @@ namespace {
             return ss.str();
         }();
 
-        AttacksEventPtr attacks_event = std::make_shared<AttacksEvent>();
+        auto attacks_event = std::make_shared<AttacksEvent>();
         bout_event->AddEvent(attacks_event);
 
         auto fighter_on_fighter_event = std::make_shared<FightersAttackFightersEvent>(bout);
@@ -1686,7 +1685,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         last_bout = bout;
     } // end for over combat arounds
 
-    FighterLaunchesEventPtr launches_event = std::make_shared<FighterLaunchesEvent>();
+    auto launches_event = std::make_shared<FighterLaunchesEvent>();
     combat_info.combat_events.push_back(launches_event);
 
     RecoverFighters(combat_info, last_bout, launches_event);
@@ -1702,7 +1701,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     DebugLogger(combat) << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
 
     DebugLogger(combat) << "combat event log start:";
-    for (CombatEventPtr event : combat_info.combat_events)
-    { DebugLogger(combat) << event->DebugString(); }
+    for (auto event : combat_info.combat_events)
+        DebugLogger(combat) << event->DebugString();
     DebugLogger(combat) << "combat event log end:";
 }

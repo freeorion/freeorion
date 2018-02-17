@@ -471,7 +471,7 @@ namespace AIInterface {
             ErrorLogger() << "IssueColonizeOrder : no planet with passed planet_id";
             return 0;
         }
-        if ((!planet->Unowned()) && !( planet->OwnedBy(empire_id) && planet->CurrentMeterValue(METER_POPULATION)==0)) {
+        if ((!planet->Unowned()) && !( planet->OwnedBy(empire_id) && planet->InitialMeterValue(METER_POPULATION) == 0.0f)) {
             ErrorLogger() << "IssueColonizeOrder : planet with passed planet_id "<<planet_id<<" is already owned, or colonized by own empire";
             return 0;
         }
@@ -526,10 +526,10 @@ namespace AIInterface {
         }
         bool owned_by_invader = planet->OwnedBy(empire_id);
         bool unowned = planet->Unowned();
-        bool populated = planet->CurrentMeterValue(METER_POPULATION) > 0.;
+        bool populated = planet->InitialMeterValue(METER_POPULATION) > 0.0f;
         bool visible = GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_PARTIAL_VISIBILITY;
-        bool vulnerable = planet->CurrentMeterValue(METER_SHIELD) <= 0.;
-        float shields = planet->CurrentMeterValue(METER_SHIELD);
+        bool vulnerable = planet->InitialMeterValue(METER_SHIELD) <= 0.0f;
+        float shields = planet->InitialMeterValue(METER_SHIELD);
         std::string this_species = planet->SpeciesName();
         //bool being_invaded = planet->IsAboutToBeInvaded();
         bool invadable = !owned_by_invader && vulnerable && (populated || !unowned) && visible ;// && !being_invaded; a 'being_invaded' check prevents AI from invading with multiple ships at once, which is important
@@ -570,7 +570,7 @@ namespace AIInterface {
             ErrorLogger() << "IssueBombardOrder : passed an invalid ship_id";
             return 0;
         }
-        if (ship->TotalWeaponsDamage() <= 0) {
+        if (ship->TotalWeaponsDamage() <= 0.0f) {   // this will test the current meter values. potential issue if some local change sets these to zero even though they will be nonzero on server when bombard is processed before effects application / meter update
             ErrorLogger() << "IssueBombardOrder : ship can't attack / bombard";
             return 0;
         }

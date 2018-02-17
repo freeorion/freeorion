@@ -166,7 +166,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
 
         // is planet populated by neutral species
         if (!has_neutrals) {
-            if (planet->Unowned() && !planet->SpeciesName().empty() && planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+            if (planet->Unowned() && !planet->SpeciesName().empty() && planet->InitialMeterValue(METER_POPULATION) > 0.0f)
                 has_neutrals = true;
         }
 
