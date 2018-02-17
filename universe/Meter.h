@@ -31,31 +31,31 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    float       Current() const;                    ///< returns the current value of the meter
-    float       Initial() const;                    ///< returns the value of the meter as it was at the beginning of the turn
+    float Current() const;                  ///< returns the current value of the meter
+    float Initial() const;                  ///< returns the value of the meter as it was at the beginning of the turn
 
-    std::string Dump(unsigned short ntabs = 0) const;                       ///< returns text of meter values
+    std::string Dump(unsigned short ntabs = 0) const;   ///< returns text of meter values
     //@}
 
     /** \name Mutators */ //@{
-    void        SetCurrent(float current_value);    ///< sets current value, leaving initial value unchanged
-    void        Set(float current_value, float initial_value);  ///< sets current and initial values
-    void        ResetCurrent();                     ///< sets current value to DEFAULT_VALUE
-    void        Reset();                            ///< sets current and initial values to DEFAULT_VALUE
+    void SetCurrent(float current_value);   ///< sets current value, leaving initial value unchanged
+    void Set(float current_value, float initial_value); ///< sets current and initial values
+    void ResetCurrent();                    ///< sets current value to DEFAULT_VALUE
+    void Reset();                           ///< sets current and initial values to DEFAULT_VALUE
 
-    void        AddToCurrent(float adjustment);     ///< adds \a current to the current value of the Meter
-    void        ClampCurrentToRange(float min = DEFAULT_VALUE, float max = LARGE_VALUE);    ///< ensures the current value falls in the range [\a min, \a max]
+    void AddToCurrent(float adjustment);    ///< adds \a current to the current value of the Meter
+    void ClampCurrentToRange(float min = DEFAULT_VALUE, float max = LARGE_VALUE);   ///< ensures the current value falls in the range [\a min, \a max]
 
-    void        BackPropagate();                    ///< sets previous equal to initial, then sets initial equal to current
+    void BackPropagate();                   ///< sets previous equal to initial, then sets initial equal to current
     //@}
 
-    static constexpr float DEFAULT_VALUE = 0.0f;    ///< value assigned to current or initial when resetting or when no value is specified in a constructor
-    static const float LARGE_VALUE;                 ///< a very large number, which is useful to set current to when it will be later clamped, to ensure that the result is the max value in the clamp range
-    static const float INVALID_VALUE;               ///< sentinel value to indicate no valid value for this meter
+    static constexpr float DEFAULT_VALUE = 0.0f;///< value assigned to current or initial when resetting or when no value is specified in a constructor
+    static const float LARGE_VALUE;             ///< a very large number, which is useful to set current to when it will be later clamped, to ensure that the result is the max value in the clamp range
+    static const float INVALID_VALUE;           ///< sentinel value to indicate no valid value for this meter
 
 private:
-    float  m_current_value = DEFAULT_VALUE;
-    float  m_initial_value = DEFAULT_VALUE;
+    float m_current_value = DEFAULT_VALUE;
+    float m_initial_value = DEFAULT_VALUE;
 
     friend class boost::serialization::access;
     template <class Archive>
