@@ -70,16 +70,19 @@ namespace {
 
     const std::string EMPTY_STRING;
 
+    // Counts how many ships or populated planets in \a objects are owned by
+    // each empire. Assumes ownership and populations now are consistent with
+    // whenever the result is supposed to indicate, not accounting for 
     std::map<int, int> CountByOwner(const std::set<int>& owners, const std::set<int>& objects) {
         std::map<int, int> objects_per_owner;
         for (int owner_id : owners)
             objects_per_owner[owner_id] = 0;
         for (int obj_id : objects) {
-            auto object = Objects().Object(obj_id);
+            auto object = Objects().Object(obj_id); // gets destroyed objects, so this function can be used for initial combat forces even if some are destroyed during the combat
             if (object && (
                     object->ObjectType() == OBJ_SHIP || (
                         object->GetMeter(METER_POPULATION) &&
-                        object->CurrentMeterValue(METER_POPULATION) > 0.0)))
+                        object->InitialMeterValue(METER_POPULATION) > 0.0f)))
             {
                 int owner_id = object->Owner();
                 if (objects_per_owner.find(owner_id) == objects_per_owner.end())
@@ -90,6 +93,8 @@ namespace {
         return objects_per_owner;
     }
 
+    // converts input empire ids and numbers of objects to text with names and
+    // links to empires and numbers-as-text of how many objects they own
     std::string CountsToText(const std::map<int, int>& count_per_empire,
                              const std::string& delimiter = ", ")
     {
@@ -123,11 +128,11 @@ namespace {
         /** toggles panel expanded or collapsed */
         void ToggleExpansion();
 
-        CombatLogWnd::Impl & log;
-        int viewing_empire_id;
-        ConstCombatEventPtr event;
-        std::shared_ptr<LinkText> title;
-        std::vector<std::shared_ptr<GG::Wnd>> details;
+        CombatLogWnd::Impl&                     log;
+        int                                     viewing_empire_id;
+        ConstCombatEventPtr                     event;
+        std::shared_ptr<LinkText>               title;
+        std::vector<std::shared_ptr<GG::Wnd>>   details;
 
         // distance between expansion symbol and text
         static const unsigned int BORDER_MARGIN = 5;
@@ -228,7 +233,7 @@ namespace {
     */
 
     class LazyScrollerLinkText : public LinkText {
-        public:
+    public:
 
         mutable boost::signals2::signal<void ()> ChangedSignal;
 
@@ -265,7 +270,6 @@ namespace {
         }
 
         void HandleMaybeVisible() {
-
             // Assumes the log is the second tab.
             const auto& tab = FindParentOfType<const GG::OverlayWnd>(Parent().get());
             if (tab && (tab->CurrentWndIndex() != 1))
@@ -276,10 +280,11 @@ namespace {
             if (scroll_panel && (scroll_panel->InClient(UpperLeft())
                                  || scroll_panel->InClient(LowerRight())
                                  || scroll_panel->InClient(GG::Pt(Right(), Top()))
-                                 || scroll_panel->InClient(GG::Pt(Left(), Bottom())))) {
-                for (boost::signals2::connection& signal : m_signals) {
+                                 || scroll_panel->InClient(GG::Pt(Left(), Bottom()))))
+            {
+                for (boost::signals2::connection& signal : m_signals)
                     signal.disconnect();
-                }
+
                 m_signals.clear();
 
                 SetText(*m_text);
@@ -289,9 +294,8 @@ namespace {
             }
         }
 
-        void HandleScrolledAndStopped(int start_pos, int end_post, int min_pos, int max_pos) {
-            HandleMaybeVisible();
-        }
+        void HandleScrolledAndStopped(int start_pos, int end_post, int min_pos, int max_pos)
+        { HandleMaybeVisible(); }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr)  override {
             LinkText::SizeMove(ul, lr);
@@ -326,12 +330,12 @@ std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(const std::string
 
 /** Fill \p new_logs with pointers to the flat log contents of \p
     event using the pre-calculated \p details.*/
-void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id, std::vector<std::shared_ptr<GG::Wnd>> &new_logs,
+void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id,
+                                              std::vector<std::shared_ptr<GG::Wnd>>& new_logs,
                                               ConstCombatEventPtr& event, std::string& details)
 {
-    if (!details.empty()) {
+    if (!details.empty())
         new_logs.push_back(DecorateLinkText(details));
-    }
 
     if (!event->AreSubEventsEmpty(viewing_empire_id)) {
         for (auto& sub_event : event->SubEvents(viewing_empire_id)) {
