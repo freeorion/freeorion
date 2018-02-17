@@ -5,6 +5,16 @@
 
 #include "CUIControls.h"
 
+/** A simple ListBox row containing only a static label.*/
+struct PromptRow : GG::ListBox::Row {
+    PromptRow(GG::X w, const std::string& prompt_str);
+    void CompleteConstruction() override;
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+private:
+     std::shared_ptr<GG::Label> m_prompt;
+};
+
 /** A list box type for representing queues (eg the research and production queues). */
 class QueueListBox :
     public CUIListBox
@@ -32,6 +42,9 @@ public:
     bool            DisplayingValidQueueItems(); ///< whether or not this QueueListBox is displaying valid queue items, as opposed to, for example, a prompt for the user to enter an item
 
     void            Clear();
+
+    /** Change the empty list prompt text. */
+    void            SetEmptyPromptText(const std::string prompt);
 
     boost::signals2::signal<void (GG::ListBox::iterator)>           QueueItemDeletedSignal;
 

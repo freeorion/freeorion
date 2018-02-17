@@ -11,33 +11,31 @@
 ////////////////////////////////////////////////////////////
 // PromptRow
 ////////////////////////////////////////////////////////////
-struct PromptRow : GG::ListBox::Row {
-    PromptRow(GG::X w, std::string prompt_str) :
-        GG::ListBox::Row(w, GG::Y(20), ""),
-        m_prompt(GG::Wnd::Create<CUILabel>(prompt_str, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK))
-    {}
+PromptRow::PromptRow(GG::X w, const std::string& prompt) :
+    GG::ListBox::Row(w, GG::Y(20), ""),
+    m_prompt(
+        GG::Wnd::Create<CUILabel>(
+            prompt,
+            GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK))
+{}
 
-    void CompleteConstruction() override {
-        GG::ListBox::Row::CompleteConstruction();        //std::cout << "PromptRow(" << w << ", ...)" << std::endl;
+void PromptRow::CompleteConstruction() {
+    GG::ListBox::Row::CompleteConstruction();
 
-        m_prompt->MoveTo(GG::Pt(GG::X(2), GG::Y(2)));
-        m_prompt->Resize(GG::Pt(Width() - 10, Height()));
-        m_prompt->SetTextColor(GG::LightColor(ClientUI::TextColor()));
-        m_prompt->ClipText(true);
-        Resize(GG::Pt(Width(), m_prompt->Height()));
-        push_back(m_prompt);
-    }
+    m_prompt->MoveTo(GG::Pt(GG::X(2), GG::Y(2)));
+    m_prompt->Resize(GG::Pt(Width() - 10, Height()));
+    m_prompt->SetTextColor(GG::LightColor(ClientUI::TextColor()));
+    m_prompt->ClipText(true);
+    Resize(GG::Pt(Width(), m_prompt->Height()));
+    push_back(m_prompt);
+}
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
-        const GG::Pt old_size = Size();
-        GG::ListBox::Row::SizeMove(ul, lr);
-        if (!empty() && old_size != Size() && m_prompt)
-            m_prompt->Resize(Size());
-    }
-
-private:
-     std::shared_ptr<GG::Label> m_prompt;
-};
+void PromptRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr)  {
+    const GG::Pt old_size = Size();
+    GG::ListBox::Row::SizeMove(ul, lr);
+    if (!empty() && old_size != Size() && m_prompt)
+        m_prompt->Resize(Size());
+}
 
 
 ////////////////////////////////////////////////////////////
@@ -171,6 +169,16 @@ bool QueueListBox::DisplayingValidQueueItems()
 void QueueListBox::Clear() {
     CUIListBox::Clear();
     DragDropLeave();
+}
+
+void QueueListBox::SetEmptyPromptText(const std::string prompt) {
+    if (m_prompt_str == prompt)
+        return;
+
+    m_prompt_str = prompt;
+
+    if (m_showing_prompt)
+        ShowPromptSlot();
 }
 
 std::function<void()> QueueListBox::MoveToTopAction(GG::ListBox::iterator it) {

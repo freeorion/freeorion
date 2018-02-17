@@ -3960,6 +3960,10 @@ Available
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Unavailable
 
+PRODUCTION_WND_AVAILABILITY_OBSOLETE_AND_UNAVAILABLE
+'''Obsolete
+Unavailable'''
+
 PRODUCTION_WND_REDUNDANT
 Redundant
 
@@ -4362,6 +4366,14 @@ Toggle the Obsolete, Available and Unavailable filters to show more hulls
 
 ADD_FIRST_SAVED_DESIGN_QUEUE_PROMPT
 Select an existing Finished design, right click and select "[[DESIGN_SAVE]]" to create a saved design.
+
+ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT
+Toggle the Obsolete, Available and Unavailable filters to show more
+
+NO_SAVED_OR_DEFAULT_DESIGNS_ADDED_PROMPT
+'''Select a hull, add parts and then click "[[DESIGN_WND_ADD_FINISHED]]" to create an available design.
+
+Neither the Saved Designs nor the Default Designs were added to the empire at game start.  Options to add these designs at game start can be changed in Options->Other.  Add the Saved Designs with the context menu of any design under the Saved tab.'''
 
 # %1% File path of unwritable file
 ERROR_UNABLE_TO_WRITE_FILE
