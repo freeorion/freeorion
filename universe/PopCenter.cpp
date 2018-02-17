@@ -74,6 +74,8 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
         return;
     }
 
+    // Should be run after meter update but before a backpropagation, so check current, not initial, meter values
+
     if (CurrentMeterValue(METER_POPULATION) < MINIMUM_POP_CENTER_POPULATION) {
         // if population falls below threshold, kill off the remainder
         Depopulate();
