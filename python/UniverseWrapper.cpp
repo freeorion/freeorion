@@ -650,7 +650,7 @@ namespace FreeOrionPython {
         // ResourceCenter //
         ////////////////////
         class_<ResourceCenter, noncopyable>("resourceCenter", no_init)
-            .add_property("focus",                  make_function(&ResourceCenter::Focus,       return_value_policy<copy_const_reference>()))
+            .add_property("focus",                  make_function(&ResourceCenter::Focus,   return_value_policy<copy_const_reference>()))
             .add_property("turnsSinceFocusChange" , &ResourceCenter::TurnsSinceFocusChange)
             .add_property("availableFoci",          &ResourceCenter::AvailableFoci)
         ;
