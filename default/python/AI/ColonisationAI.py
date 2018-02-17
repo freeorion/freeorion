@@ -906,6 +906,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
         # We will assume that if any GG in the system is populated, they all will wind up populated; cannot then hope
         # to build a GGG on a non-populated GG
         populated_gg_factor = 1.0
+        per_gg = 0
         if planet.size == fo.planetSize.gasGiant:
             # TODO: Given current industry calc approach, consider bringing this max val down to actual max val of 10
             if tech_is_complete("PRO_ORBITAL_GEN"):
