@@ -27,13 +27,13 @@ public:
     bool                    Contains(int object_id) const override;
     bool                    ContainedBy(int object_id) const override;
 
-    float CurrentMeterValue(MeterType type) const override;
-    float InitialMeterValue(MeterType type) const override;
+    float                   CurrentMeterValue(MeterType type) const override;
+    float                   InitialMeterValue(MeterType type) const override;
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
-    std::vector<std::string> AvailableFoci() const override;
-    const std::string& FocusIcon(const std::string& focus_name) const override;
+    std::vector<std::string>AvailableFoci() const override;
+    const std::string&      FocusIcon(const std::string& focus_name) const override;
 
     PlanetType          Type() const                        { return m_type; }
     PlanetType          OriginalType() const                { return m_original_type; }
@@ -125,13 +125,11 @@ protected:
 public:
     /** Create planet from @p type and @p size. */
     Planet(PlanetType type, PlanetSize size);
+    ~Planet() {}
 
 protected:
     template <class T>
     friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-
-public:
-    ~Planet() {}
 
 protected:
     /** returns new copy of this Planet. */
