@@ -2662,9 +2662,8 @@ void MonstersListBox::PopulateCore() {
 }
 
 
-void BasesListBox::ResetEmptyListPrompt() {
-    SetEmptyPromptText(UserString("ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT"));
-}
+void BasesListBox::ResetEmptyListPrompt()
+{ SetEmptyPromptText(UserString("ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT")); }
 
 void CompletedDesignsListBox::ResetEmptyListPrompt() {
     if (!GetOptionsDB().Get<bool>("resource.shipdesign.saved.enabled")
@@ -2677,9 +2676,8 @@ void CompletedDesignsListBox::ResetEmptyListPrompt() {
 
 }
 
-void SavedDesignsListBox::ResetEmptyListPrompt() {
-    SetEmptyPromptText(UserString("ADD_FIRST_SAVED_DESIGN_QUEUE_PROMPT"));
-}
+void SavedDesignsListBox::ResetEmptyListPrompt()
+{ SetEmptyPromptText(UserString("ADD_FIRST_SAVED_DESIGN_QUEUE_PROMPT")); }
 
 
 std::shared_ptr<BasesListBox::Row> EmptyHullsListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd) {
