@@ -807,17 +807,12 @@ void Planet::SetSurfaceTexture(const std::string& texture) {
 
 void Planet::PopGrowthProductionResearchPhase() {
     UniverseObject::PopGrowthProductionResearchPhase();
-
-    // do not do production if planet was just conquered
-    bool just_conquered = CurrentTurn() > 0 && m_turn_last_conquered == CurrentTurn();
-
-    if (!just_conquered)
-        ResourceCenterPopGrowthProductionResearchPhase();
-
     PopCenterPopGrowthProductionResearchPhase();
 
+    // should be run after a meter update, but before a backpropagation, so check current, not initial, meter values
+
     // check for colonies without positive population, and change to outposts
-    if (!SpeciesName().empty() && GetMeter(METER_POPULATION)->Current() <= 0.0f) {
+    if (!SpeciesName().empty() && CurrentMeterValue(METER_POPULATION) <= 0.0f) {
         if (Empire* empire = GetEmpire(this->Owner())) {
             empire->AddSitRepEntry(CreatePlanetDepopulatedSitRep(this->ID()));
 

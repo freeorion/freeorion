@@ -29,7 +29,6 @@ public:
     { return m_fleet_id; }
 
     bool ContainedBy(int object_id) const override;
-    float NextTurnCurrentMeterValue(MeterType type) const override;
     const std::string& PublicName(int empire_id) const override;
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
@@ -39,7 +38,6 @@ public:
     void ResetTargetMaxUnpairedMeters() override;
     void ResetPairedActiveMeters() override;
     void ClampMeters() override;
-    void PopGrowthProductionResearchPhase() override;
 
     /** Returns new copy of this Ship. */
     Ship* Clone(int empire_id = ALL_EMPIRES) const override;

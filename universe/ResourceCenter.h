@@ -60,7 +60,6 @@ protected:
 
     void ResourceCenterResetTargetMaxUnpairedMeters();
     void ResourceCenterClampMeters();
-    void ResourceCenterPopGrowthProductionResearchPhase();
 
 private:
     std::string m_focus;

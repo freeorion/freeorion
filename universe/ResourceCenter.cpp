@@ -136,9 +136,6 @@ void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters() {
     GetMeter(METER_TARGET_CONSTRUCTION)->ResetCurrent();
 }
 
-void ResourceCenter::ResourceCenterPopGrowthProductionResearchPhase()
-{}
-
 void ResourceCenter::ResourceCenterClampMeters() {
     GetMeter(METER_TARGET_INDUSTRY)->ClampCurrentToRange();
     GetMeter(METER_TARGET_RESEARCH)->ClampCurrentToRange();

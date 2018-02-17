@@ -107,10 +107,6 @@ public:
     float                       CurrentMeterValue(MeterType type) const;        ///< returns current value of the specified meter \a type
     float                       InitialMeterValue(MeterType type) const;        ///< returns this turn's initial value for the speicified meter \a type
 
-    /** Returns an estimate of the next turn's current value of the specified
-        meter \a type. */
-    virtual float               NextTurnCurrentMeterValue(MeterType type) const;
-
     Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
 
     /** Returns the name of this objectas it appears to empire \a empire_id .*/
@@ -190,9 +186,9 @@ public:
     {};
     //@}
 
-    static const double         INVALID_POSITION;       ///< the position in x and y at which default-constructed objects are placed
-    static const int            INVALID_OBJECT_AGE;     ///< the age returned by UniverseObject::AgeInTurns() if the current turn is INVALID_GAME_TURN, or if the turn on which an object was created is INVALID_GAME_TURN
-    static const int            SINCE_BEFORE_TIME_AGE;  ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
+    static const double INVALID_POSITION;       ///< the position in x and y at which default-constructed objects are placed
+    static const int    INVALID_OBJECT_AGE;     ///< the age returned by UniverseObject::AgeInTurns() if the current turn is INVALID_GAME_TURN, or if the turn on which an object was created is INVALID_GAME_TURN
+    static const int    SINCE_BEFORE_TIME_AGE;  ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
 
 protected:
     friend class Universe;

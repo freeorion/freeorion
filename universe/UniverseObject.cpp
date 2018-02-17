@@ -263,9 +263,6 @@ float UniverseObject::InitialMeterValue(MeterType type) const {
     return it->second.Initial();
 }
 
-float UniverseObject::NextTurnCurrentMeterValue(MeterType type) const
-{ return UniverseObject::CurrentMeterValue(type); }
-
 void UniverseObject::AddMeter(MeterType meter_type) {
     if (INVALID_METER_TYPE == meter_type)
         ErrorLogger() << "UniverseObject::AddMeter asked to add invalid meter type!";
