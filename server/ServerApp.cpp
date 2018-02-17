@@ -1754,7 +1754,7 @@ namespace {
         for (auto& planet : Objects().FindObjects<const Planet>(system->PlanetIDs())) {
             if (!planet->Unowned())
                 empire_planets[planet->Owner()].insert(planet->ID());
-            else if (planet->CurrentMeterValue(METER_POPULATION) > 0.0f)
+            else if (planet->InitialMeterValue(METER_POPULATION) > 0.0f)
                 empire_planets[ALL_EMPIRES].insert(planet->ID());
         }
     }
@@ -1766,7 +1766,7 @@ namespace {
         auto system = GetSystem(system_id);
         if (!system)
             return; // no such system
-        const std::set<int>& fleet_ids = system->FleetIDs();
+        const auto& fleet_ids = system->FleetIDs();
         if (fleet_ids.empty())
             return; // no fleets to be seen
         if (empire_id != ALL_EMPIRES && !GetEmpire(empire_id))
@@ -1799,8 +1799,8 @@ namespace {
             auto ship = GetShip(ship_id);
             if (!ship || !ship->Unowned())  // only want unowned / monster ships
                 continue;
-            if (ship->CurrentMeterValue(METER_DETECTION) > monster_detection_strength_here)
-                monster_detection_strength_here = ship->CurrentMeterValue(METER_DETECTION);
+            if (ship->InitialMeterValue(METER_DETECTION) > monster_detection_strength_here)
+                monster_detection_strength_here = ship->InitialMeterValue(METER_DETECTION);
         }
 
         // test each ship in each fleet for visibility by best monster detection here
@@ -1818,7 +1818,7 @@ namespace {
                 if (!ship)
                     continue;
                 // if a ship is low enough stealth, its fleet can be seen by monsters
-                if (monster_detection_strength_here >= ship->CurrentMeterValue(METER_STEALTH)) {
+                if (monster_detection_strength_here >= ship->InitialMeterValue(METER_STEALTH)) {
                     visible_fleets.insert(fleet->ID());
                     break;  // fleet is seen, so don't need to check any more ships in it
                 }
@@ -1850,7 +1850,7 @@ namespace {
                     continue;
                 // skip planets that have no owner and that are unpopulated; don't matter for combat conditions test
                 auto planet = GetPlanet(planet_id);
-                if (planet->Unowned() && planet->CurrentMeterValue(METER_POPULATION) <= 0.0f)
+                if (planet->Unowned() && planet->InitialMeterValue(METER_POPULATION) <= 0.0f)
                     continue;
                 visible_planets.insert(planet->ID());
             }
@@ -1866,8 +1866,8 @@ namespace {
         for (auto& ship : Objects().FindObjects<const Ship>(system->ShipIDs())) {
             if (!ship->Unowned())  // only want unowned / monster ships
                 continue;
-            if (ship->CurrentMeterValue(METER_DETECTION) > monster_detection_strength_here)
-                monster_detection_strength_here = ship->CurrentMeterValue(METER_DETECTION);
+            if (ship->InitialMeterValue(METER_DETECTION) > monster_detection_strength_here)
+                monster_detection_strength_here = ship->InitialMeterValue(METER_DETECTION);
         }
 
         // test each planet for visibility by best monster detection here
@@ -1875,7 +1875,7 @@ namespace {
             if (planet->Unowned())
                 continue;       // only want empire-owned planets; unowned planets visible to monsters don't matter for combat conditions test
             // if a planet is low enough stealth, it can be seen by monsters
-            if (monster_detection_strength_here >= planet->CurrentMeterValue(METER_STEALTH))
+            if (monster_detection_strength_here >= planet->InitialMeterValue(METER_STEALTH))
                 visible_planets.insert(planet->ID());
         }
     }
