@@ -201,13 +201,19 @@ namespace {
 
         bool IsKnown(const int id) const;
 
-        /** Return true if \p id is obsolete or boost::none if \p is not in the manager. */
+        /** Return true if design \p id is obsolete or boost::none if \p id is not in
+            the manager. */
         boost::optional<bool> IsObsolete(const int id) const;
-        /** Return true if \p hull is obsolete. */
-        bool IsHullObsolete(const std::string& hull) const;
-        /** Return true if \p part is obsolete. */
-        bool IsPartObsolete(const std::string& part) const;
+        /** Return UI event number that obsoletes \p hull if it is obsolete. */
+        boost::optional<int> IsHullObsolete(const std::string& hull) const;
+        /** Return UI event number that obsoletes \p part if it is obsolete. */
+        boost::optional<int> IsPartObsolete(const std::string& part) const;
 
+        private:
+        /* Increment and return the obsolete ui event counter. */
+        int NextUIObsoleteEvent();
+
+        public:
         /** If \p id is in manager, set \p id's obsolescence to \p obsolete. */
         void SetObsolete(const int id, const bool obsolete);
         /** Set \p hull's obsolescence to \p obsolete. */
@@ -215,28 +221,44 @@ namespace {
         /** Set \p part's obsolescence to \p obsolete. */
         void SetPartObsolete(const std::string& part, const bool obsolete);
 
-        void Load(const std::vector<std::pair<int, boost::optional<bool>>>& design_ids_and_obsoletes,
-                  const std::vector<std::pair<std::string, bool>>& hulls_and_obsoletes,
-                  const std::unordered_set<std::string>& obsolete_parts);
+        void Load(const int obsolete_ui_event_count,
+                  const std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>>& design_ids_and_obsoletes,
+                  const std::vector<std::pair<std::string, std::pair<bool, int>>>& hulls_and_obsoletes,
+                  const std::unordered_map<std::string, int>& obsolete_parts);
         /** Save modifies each of its parameters to store obsolete and
             ordering data in the UI save data.*/
-        void Save(std::vector<std::pair<int, boost::optional<bool>>>& design_ids_and_obsoletes,
-                  std::vector<std::pair<std::string, bool>>& hulls_and_obsoletes,
-                  std::unordered_set<std::string>& obsolete_parts);
+        void Save(int& obsolete_ui_event_count,
+                  std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>>& design_ids_and_obsoletes,
+                  std::vector<std::pair<std::string, std::pair<bool, int>>>& hulls_and_obsoletes,
+                  std::unordered_map<std::string, int>& obsolete_parts);
 
         private:
         std::list<int> m_ordered_design_ids;
         std::list<std::string> m_ordered_hulls;
 
+        // A counter to track the number of times a player has (un)obsoleted a part,
+        // hull or design.  This allows the ui to determine if a design was obsoleted
+        // before/after its hull/parts.
+        int m_obsolete_ui_event_count = 1;
+
         // An index from the id to the obsolescence state and the location in the
-        // m_ordered_design_ids list. For the state information (false, true, none)
+        // m_ordered_design_ids list.
+        // For the state information ((false, ui_event), (true, ui_event), none)
         // correspond to (not obsolete, obsolete and defer to parts and hull obsolescence)
-        std::unordered_map<int, std::pair<boost::optional<bool>, std::list<int>::const_iterator>> m_id_to_obsolete_and_loc;
+        std::unordered_map<
+            int,
+            std::pair<
+                boost::optional<std::pair<bool, int>>,
+                std::list<int>::const_iterator>> m_id_to_obsolete_and_loc;
         // An index from the hull name to the obsolescence state and the location in the
         // m_ordered_hull_ids list.
-        std::unordered_map<std::string, std::pair<bool, std::list<std::string>::const_iterator>> m_hull_to_obsolete_and_loc;
-        // A set of obsolete ship parts.
-        std::unordered_set<std::string> m_obsolete_parts;
+        std::unordered_map<
+            std::string,
+            std::pair<
+                std::pair<bool, int>,
+                std::list<std::string>::const_iterator>> m_hull_to_obsolete_and_loc;
+        // A map from obsolete part name to the UI event count that changed it.
+        std::unordered_map<std::string, int> m_obsolete_parts;
     };
 
     class SavedDesignsManager : public ShipDesignManager::Designs {
@@ -738,7 +760,8 @@ namespace {
                                        : m_ordered_hulls.end());
         const auto inserted_it = m_ordered_hulls.insert(insert_before_it, hull);
 
-        m_hull_to_obsolete_and_loc[hull] = std::make_pair(false, inserted_it);
+        m_hull_to_obsolete_and_loc[hull] =
+            std::make_pair(std::make_pair(false, NextUIObsoleteEvent()), inserted_it);
     }
 
     bool CurrentShipDesignManager::IsKnown(const int id) const
@@ -752,9 +775,6 @@ namespace {
         if (it_id == m_id_to_obsolete_and_loc.end())
             return boost::none;
 
-        if (const auto is_obsolete_design = it_id->second.first)
-            return *is_obsolete_design;
-
         const auto design = GetShipDesign(id);
         if (!design) {
             ErrorLogger() << "CurrentShipDesignManager::IsObsolete design id "
@@ -762,56 +782,58 @@ namespace {
             return boost::none;
         }
 
-        if (IsHullObsolete(design->Hull()))
-            return true;
+        // Check the UI (un)obsoleting events for design, hull and parts.  Events
+        // with a later/higher/more recent stamp supercede older instructions.
+        // If there are no instructions from the user the design is not obsolete.
+        int latest_obsolete_event = -1;
+        int latest_unobsolete_event = 0;
+
+        if (const auto maybe_obsolete_design = it_id->second.first) {
+            if (maybe_obsolete_design->first)
+                latest_obsolete_event = maybe_obsolete_design->second;
+            else
+                latest_unobsolete_event = maybe_obsolete_design->second;
+        }
+
+        if (const auto maybe_hull_obsolete = IsHullObsolete(design->Hull()))
+            latest_obsolete_event = std::max(latest_obsolete_event, *maybe_hull_obsolete);
 
         for (const auto& part: design->Parts()) {
-            if (IsPartObsolete(part))
-                return true;
+            if(const auto maybe_part_obsolete = IsPartObsolete(part))
+                latest_obsolete_event = std::max(latest_obsolete_event, *maybe_part_obsolete);
         }
 
         // Default to false if the player has not obsoleted the design, its hull or its parts
-        return false;
+        return latest_obsolete_event > latest_unobsolete_event;
     }
 
-    bool CurrentShipDesignManager::IsHullObsolete(const std::string& hull) const {
+    boost::optional<int> CurrentShipDesignManager::IsHullObsolete(const std::string& hull) const {
         auto it_hull = m_hull_to_obsolete_and_loc.find(hull);
-        return (it_hull != m_hull_to_obsolete_and_loc.end() && it_hull->second.first);
+        if (it_hull == m_hull_to_obsolete_and_loc.end())
+            return boost::none;
+
+        return (it_hull->second.first.first ?  boost::optional<int>(it_hull->second.first.second) : boost::none);
     }
 
-    bool CurrentShipDesignManager::IsPartObsolete(const std::string& part) const
-    { return m_obsolete_parts.count(part); }
+    boost::optional<int> CurrentShipDesignManager::IsPartObsolete(const std::string& part) const {
+        auto it_part = m_obsolete_parts.find(part);
+        return (it_part != m_obsolete_parts.end()) ?  boost::optional<int>(it_part->second) : boost::none ;
+    }
+
+    int CurrentShipDesignManager::NextUIObsoleteEvent() {
+        ++m_obsolete_ui_event_count;
+        if (m_obsolete_ui_event_count < 0)
+            // Report but don't fix so the error appears more than once in the log
+            ErrorLogger() << "The counter of UI obsoletion events has wrapped to negative values.";
+        return m_obsolete_ui_event_count > 0 ? m_obsolete_ui_event_count : 0;
+    }
 
     void CurrentShipDesignManager::SetObsolete(const int id, const bool obsolete) {
         auto it = m_id_to_obsolete_and_loc.find(id);
         if (it == m_id_to_obsolete_and_loc.end())
             return;
 
-        const auto design = GetShipDesign(id);
-        if (!design) {
-            ErrorLogger() << "CurrentShipDesignManager::SetObsolete design id "
-                          << id << " is unknown to the server.";
-
-            it->second.first = obsolete;
-            return;
-        }
-
-        // If the parts and hulls settings for obsolescence all agree with the new value,
-        // then set the design specific value to boost::none, meaning defer to parts
-
-        if (IsHullObsolete(design->Hull()) != obsolete) {
-            it->second.first = obsolete;
-            return;
-        }
-
-        for (const auto& part: design->Parts()) {
-            if (IsPartObsolete(part) != obsolete) {
-                it->second.first = obsolete;
-                return;
-            }
-        }
-
-        it->second.first = boost::none;
+        it->second.first = {obsolete, NextUIObsoleteEvent()};
     }
 
     void CurrentShipDesignManager::SetHullObsolete(const std::string& name, const bool obsolete) {
@@ -822,27 +844,29 @@ namespace {
             InsertHullBefore(name);
             return SetHullObsolete(name, obsolete);
         }
-        it->second.first = obsolete;
+        it->second.first = {obsolete, NextUIObsoleteEvent()};
     }
 
     void CurrentShipDesignManager::SetPartObsolete(const std::string& name, const bool obsolete) {
         if (obsolete)
-            m_obsolete_parts.insert(name);
+            m_obsolete_parts[name] = NextUIObsoleteEvent();
         else
             m_obsolete_parts.erase(name);
     }
 
     void CurrentShipDesignManager::Load(
-        const std::vector<std::pair<int, boost::optional<bool>>>& design_ids_and_obsoletes,
-        const std::vector<std::pair<std::string, bool>>& hulls_and_obsoletes,
-        const std::unordered_set<std::string>& obsolete_parts)
+        const int obsolete_ui_event_count,
+        const std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>>& design_ids_and_obsoletes,
+        const std::vector<std::pair<std::string, std::pair<bool, int>>>& hulls_and_obsoletes,
+        const std::unordered_map<std::string, int>& obsolete_parts)
     {
+        m_obsolete_ui_event_count = obsolete_ui_event_count;
         // Clear and load the ship design ids
         m_id_to_obsolete_and_loc.clear();
         m_ordered_design_ids.clear();
         for (const auto& id_and_obsolete : design_ids_and_obsoletes) {
             const auto id = id_and_obsolete.first;
-            const auto obsolete = id_and_obsolete.second;
+            const auto& obsolete = id_and_obsolete.second;
             if (m_id_to_obsolete_and_loc.count(id)) {
                 ErrorLogger() << "CurrentShipDesignManager::Load duplicate design id = " << id;
                 continue;
@@ -855,8 +879,8 @@ namespace {
         m_hull_to_obsolete_and_loc.clear();
         m_ordered_hulls.clear();
         for (const auto& name_and_obsolete : hulls_and_obsoletes) {
-            const auto name = name_and_obsolete.first;
-            const auto obsolete = name_and_obsolete.second;
+            const auto& name = name_and_obsolete.first;
+            const auto& obsolete = name_and_obsolete.second;
             if (m_hull_to_obsolete_and_loc.count(name)) {
                 ErrorLogger() << "CurrentShipDesignManager::Load duplicate hull name = " << name;
                 continue;
@@ -870,10 +894,13 @@ namespace {
     }
 
     void CurrentShipDesignManager::Save(
-        std::vector<std::pair<int, boost::optional<bool>>>& design_ids_and_obsoletes,
-        std::vector<std::pair<std::string, bool>>& hulls_and_obsoletes,
-        std::unordered_set<std::string>& obsolete_parts)
+        int& obsolete_ui_event_count,
+        std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>>& design_ids_and_obsoletes,
+        std::vector<std::pair<std::string, std::pair<bool, int>>>& hulls_and_obsoletes,
+        std::unordered_map<std::string, int>& obsolete_parts)
     {
+        obsolete_ui_event_count = m_obsolete_ui_event_count;
+
         design_ids_and_obsoletes.clear();
         for (const auto id : m_ordered_design_ids) {
             try {
@@ -994,7 +1021,7 @@ namespace {
         bool available = empire ? empire->ShipHullAvailable(id) : true;
 
         const auto& manager = GetCurrentDesignsManager();
-        const auto obsolete = manager.IsHullObsolete(id);
+        const auto obsolete = bool(manager.IsHullObsolete(id));
 
         return DisplayedXAvailability(available, obsolete);
     }
@@ -1006,7 +1033,7 @@ namespace {
         bool available = empire ? empire->ShipPartAvailable(id) : true;
 
         const auto& manager = GetCurrentDesignsManager();
-        const auto obsolete = manager.IsPartObsolete(id);
+        const auto obsolete = bool(manager.IsPartObsolete(id));
 
         return DisplayedXAvailability(available, obsolete);
     }
@@ -1100,13 +1127,15 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
 }
 
 void ShipDesignManager::Save(SaveGameUIData& data) const {
-    GetCurrentDesignsManager().Save(data.ordered_ship_design_ids_and_obsolete,
+    GetCurrentDesignsManager().Save(data.obsolete_ui_event_count,
+                                    data.ordered_ship_design_ids_and_obsolete,
                                     data.ordered_ship_hull_and_obsolete,
                                     data.obsolete_ship_parts);
 }
 
 void ShipDesignManager::Load(const SaveGameUIData& data) {
-    GetCurrentDesignsManager().Load(data.ordered_ship_design_ids_and_obsolete,
+    GetCurrentDesignsManager().Load(data.obsolete_ui_event_count,
+                                    data.ordered_ship_design_ids_and_obsolete,
                                     data.ordered_ship_hull_and_obsolete,
                                     data.obsolete_ship_parts);
 }
