@@ -73,7 +73,7 @@ def get_capital():
             for planet_id in peopled_planets:
                 planet = universe.getPlanet(planet_id)
                 if spec_list is None or planet.speciesName in spec_list:
-                    population_id_pairs.append((planet.currentMeterValue(fo.meterType.population), planet_id))
+                    population_id_pairs.append((planet.initialMeterValue(fo.meterType.population), planet_id))
             if population_id_pairs:
                 return max(population_id_pairs)[-1]
     except Exception as e:
@@ -140,7 +140,7 @@ def get_all_owned_planet_ids(planet_ids):
     for pid in planet_ids:
         planet = universe.getPlanet(pid)
         if planet:
-            population = planet.currentMeterValue(fo.meterType.population)
+            population = planet.initialMeterValue(fo.meterType.population)
             if not planet.unowned or population > 0:
                 result.append(pid)
     return result
@@ -153,7 +153,7 @@ def get_populated_planet_ids(planet_ids):
     :return: list of planets ids
     """
     universe = fo.getUniverse()
-    return [pid for pid in planet_ids if universe.getPlanet(pid).currentMeterValue(fo.meterType.population) > 0]
+    return [pid for pid in planet_ids if universe.getPlanet(pid).initialMeterValue(fo.meterType.population) > 0]
 
 
 def get_systems(planet_ids):

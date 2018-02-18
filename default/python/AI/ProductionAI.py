@@ -433,7 +433,7 @@ def generate_production_orders():
                     break  # won't try building more than one shipyard at once, per colonizer
             else:  # no queued shipyards, get planets with target pop >=3, and queue a shipyard on the one with biggest current pop
                 planets = map(universe.getPlanet, state.get_empire_planets_with_species(spec_name))
-                pops = sorted([(planet.currentMeterValue(fo.meterType.population), planet.id) for planet in planets if (planet and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3.0)])
+                pops = sorted([(planet.initialMeterValue(fo.meterType.population), planet.id) for planet in planets if (planet and planet.initialMeterValue(fo.meterType.targetPopulation) >= 3.0)])
                 pids = [pid for pop, pid in pops if building_type.canBeProduced(empire.empireID, pid)]
                 if pids:
                     build_loc = pids[-1]
@@ -930,8 +930,8 @@ def generate_production_orders():
         if not planet:
             continue
         can_build_camp = building_type.canBeProduced(empire.empireID, pid) and empire.buildingTypeAvailable(building_name)
-        t_pop = planet.currentMeterValue(fo.meterType.targetPopulation)
-        c_pop = planet.currentMeterValue(fo.meterType.population)
+        t_pop = planet.initialMeterValue(fo.meterType.targetPopulation)
+        c_pop = planet.initialMeterValue(fo.meterType.population)
         t_ind = planet.currentMeterValue(fo.meterType.targetIndustry)
         c_ind = planet.currentMeterValue(fo.meterType.industry)
         pop_disqualified = (c_pop <= 32) or (c_pop < 0.9*t_pop)

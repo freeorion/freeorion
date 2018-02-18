@@ -121,11 +121,11 @@ class ShipCombatStats(object):
             return  # TODO: Add some estimate for stealthed ships
 
         if self._consider_refuel:
-            structure = ship.currentMeterValue(fo.meterType.maxStructure)
-            shields = ship.currentMeterValue(fo.meterType.maxShield)
+            structure = ship.initialMeterValue(fo.meterType.maxStructure)
+            shields = ship.initialMeterValue(fo.meterType.maxShield)
         else:
-            structure = ship.currentMeterValue(fo.meterType.structure)
-            shields = ship.currentMeterValue(fo.meterType.shield)
+            structure = ship.initialMeterValue(fo.meterType.structure)
+            shields = ship.initialMeterValue(fo.meterType.shield)
         attacks = {}
         fighter_launch_rate = 0
         fighter_capacity = 0

@@ -338,12 +338,12 @@ def assess_protection_focus(pinfo):
     my_neighbor_rating = sys_status.get('my_neighbor_rating', 0)
     neighbor_threat = sys_status.get('neighborThreat', 0)
     safety_factor = 1.2 if pinfo.current_focus == PROTECTION else 0.5
-    cur_shield = this_planet.currentMeterValue(fo.meterType.shield)
-    max_shield = this_planet.currentMeterValue(fo.meterType.maxShield)
-    cur_troops = this_planet.currentMeterValue(fo.meterType.troops)
-    max_troops = this_planet.currentMeterValue(fo.meterType.maxTroops)
-    cur_defense = this_planet.currentMeterValue(fo.meterType.defense)
-    max_defense = this_planet.currentMeterValue(fo.meterType.maxDefense)
+    cur_shield = this_planet.initialMeterValue(fo.meterType.shield)
+    max_shield = this_planet.initialMeterValue(fo.meterType.maxShield)
+    cur_troops = this_planet.initialMeterValue(fo.meterType.troops)
+    max_troops = this_planet.initialMeterValue(fo.meterType.maxTroops)
+    cur_defense = this_planet.initialMeterValue(fo.meterType.defense)
+    max_defense = this_planet.initialMeterValue(fo.meterType.maxDefense)
     def_meter_pairs = [(cur_troops, max_troops), (cur_shield, max_shield), (cur_defense, max_defense)]
     use_protection = True
     reason = ""
@@ -599,8 +599,8 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
                         target_rp >= priority_ratio * cumulative_pp)):
                     continue
 
-                pop = planet.currentMeterValue(fo.meterType.population)
-                t_pop = planet.currentMeterValue(fo.meterType.targetPopulation)
+                pop = planet.initialMeterValue(fo.meterType.population)
+                t_pop = planet.initialMeterValue(fo.meterType.targetPopulation)
                 # let pop stabilize before trying to dither; the calculations that determine whether dithering will be
                 # advantageous assume a stable population, so a larger gap means a less reliable decision
                 MAX_DITHER_POP_GAP = 5  # some smallish number

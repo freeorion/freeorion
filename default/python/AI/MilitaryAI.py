@@ -69,8 +69,8 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False,
         ships_max_health = [0, 0]
         for ship_id in fleet.shipIDs:
             this_ship = universe.getShip(ship_id)
-            cur_struc = this_ship.currentMeterValue(fo.meterType.structure)
-            max_struc = this_ship.currentMeterValue(fo.meterType.maxStructure)
+            cur_struc = this_ship.initialMeterValue(fo.meterType.structure)
+            max_struc = this_ship.initialMeterValue(fo.meterType.maxStructure)
             ship_ok = cur_struc >= cutoff * max_struc
             ship_buckets[ship_ok].append(ship_id)
             ships_cur_health[ship_ok] += cur_struc

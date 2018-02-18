@@ -230,7 +230,7 @@ class AIFleetMission(object):
                 return False
             if isinstance(target, Planet):
                 planet = target.get_object()
-                population = planet.currentMeterValue(fo.meterType.population)
+                population = planet.initialMeterValue(fo.meterType.population)
                 if planet.unowned or (planet.owner == fleet.owner and population == 0):
                     return True
         elif mission_type in [MissionType.INVASION, MissionType.ORBITAL_INVASION]:
@@ -259,7 +259,7 @@ class AIFleetMission(object):
         if fleet_order.target and isinstance(fleet_order.target, Planet):
             planet = fleet_order.target.get_object()
             if isinstance(fleet_order, OrderColonize):
-                if (planet.currentMeterValue(fo.meterType.population) == 0 and
+                if (planet.initialMeterValue(fo.meterType.population) == 0 and
                         (planet.ownedBy(fo.empireID()) or planet.unowned)):
                     return False
             elif isinstance(fleet_order, OrderOutpost):
@@ -304,7 +304,7 @@ class AIFleetMission(object):
             planet = universe.getPlanet(pid)
             if planet.unowned or (planet.owner == empire_id):
                 continue
-            if (planet.currentMeterValue(fo.meterType.shield)) <= 0:
+            if (planet.initialMeterValue(fo.meterType.shield)) <= 0:
                 open_targets.append(pid)
         if not open_targets:
             return
@@ -448,7 +448,7 @@ class AIFleetMission(object):
                     sys_partial_vis_turn = get_partial_visibility_turn(planet.systemID)
                     planet_partial_vis_turn = get_partial_visibility_turn(planet.id)
                     if (planet_partial_vis_turn == sys_partial_vis_turn and
-                            not planet.currentMeterValue(fo.meterType.population)):
+                            not planet.initialMeterValue(fo.meterType.population)):
                         warn("Fleet %d has tentatively completed its "
                              "colonize mission but will wait to confirm population." % self.fleet.id)
                         print "    Order details are %s" % last_order
@@ -614,8 +614,8 @@ class AIFleetMission(object):
         ships_max_health = 0
         for ship_id in fleet.shipIDs:
             this_ship = universe.getShip(ship_id)
-            ships_cur_health += this_ship.currentMeterValue(fo.meterType.structure)
-            ships_max_health += this_ship.currentMeterValue(fo.meterType.maxStructure)
+            ships_cur_health += this_ship.initialMeterValue(fo.meterType.structure)
+            ships_max_health += this_ship.initialMeterValue(fo.meterType.maxStructure)
         return ships_cur_health < repair_limit * ships_max_health
 
     def get_location_target(self):

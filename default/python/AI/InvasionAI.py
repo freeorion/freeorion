@@ -286,7 +286,7 @@ def assign_invasion_values(planet_ids):
                 species2 = fo.getSpecies(species_name2)
                 if species2 and species2.canProduceShips:
                     # to prevent divide-by-zero
-                    planet_industries[pid2] = planet2.currentMeterValue(fo.meterType.industry) + 0.1
+                    planet_industries[pid2] = planet2.initialMeterValue(fo.meterType.industry) + 0.1
             industry_ratio = planet_industries[pid] / max(planet_industries.values())
             for pid2 in system.planetIDs:
                 if pid2 == pid:
@@ -294,7 +294,7 @@ def assign_invasion_values(planet_ids):
                 planet2 = universe.getPlanet(pid2)
                 # TODO check for allies
                 if (planet2 and (planet2.owner != empire_id) and
-                        ((planet2.owner != -1) or (planet2.currentMeterValue(fo.meterType.population) > 0))):
+                        ((planet2.owner != -1) or (planet2.initialMeterValue(fo.meterType.population) > 0))):
                     planet_values[pid][0] += (
                         industry_ratio *
                         neighbor_val_ratio *
