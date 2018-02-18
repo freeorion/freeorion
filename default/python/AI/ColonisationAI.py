@@ -1368,18 +1368,6 @@ class OrbitalColonizationManager(object):
         """
         return self._colonization_plans.keys()
 
-    def delete_plan(self, target_id):
-        """
-        Delete an orbital colonization plan for a target planet.
-
-        :param target_id: id of the target planet
-        :type target_id: int
-        """
-        if target_id not in self._colonization_plans:
-            warn("Tried to delete non-existing plan. Doing nothing.")
-            return
-        del self._colonization_plans[target_id]
-
     def create_new_plan(self, target_id, source_id):
         """
         Create and keep track of a new colonization plan for a target planet.
