@@ -1228,16 +1228,24 @@ def __print_candidate_table(candidates, mission):
 
 class OrbitalColonizationPlan(object):
     def __init__(self, target_id, source_id):
+        """
+        :param target_id: id of the target planet to colonize
+        :type target_id: int
+        :param source_id: id of the planet which should build the colony base
+        :type source_id: int
+        """
         self.target = target_id
         self.source = source_id
         self.base_enqueued = False
-        self.fid = INVALID_ID
+        self.fleet_id = INVALID_ID
         self.__score = 0
         self.__last_score_update = -1
 
     def assign_base(self, fleet_id):
         """
         Assign an outpost base fleet to execute the plan.
+
+        It is expected that the fleet consists of only that one outpost base.
 
         :type fleet_id: int
         :return: True on success, False on failure
@@ -1250,7 +1258,7 @@ class OrbitalColonizationPlan(object):
         target = universe_object.Planet(self.target)
         fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
         fleet_mission.set_target(MissionType.ORBITAL_OUTPOST, target)
-        self.fid = fleet_id
+        self.fleet_id = fleet_id
         return True
 
     def enqueue_base(self):
@@ -1291,15 +1299,15 @@ class OrbitalColonizationPlan(object):
 
     @property
     def base_assigned(self):
-        if self.fid == INVALID_ID:
+        if self.fleet_id == INVALID_ID:
             return False
 
-        fleet = fo.getUniverse().getFleet(self.fid)
+        fleet = fo.getUniverse().getFleet(self.fleet_id)
         if fleet:
             return True
 
         debug("The fleet assigned to the OrbitalColonizationPlan doesn't exist anymore.")
-        self.fid = INVALID_ID
+        self.fleet_id = INVALID_ID
         return False
 
     @property
@@ -1317,6 +1325,14 @@ class OrbitalColonizationPlan(object):
         self.__score = planet_score
 
     def is_valid(self):
+        """
+        Check the colonization plan for validity, i.e. if it could be executed in the future.
+
+        The plan is valid if it is possible to outpust the target planet
+        and if the planet envisioned to build the outpost bases can still do so.
+
+        :rtype: bool
+        """
         universe = fo.getUniverse()
 
         # make sure target is valid
