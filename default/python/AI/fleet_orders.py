@@ -425,7 +425,7 @@ class OrderInvade(AIFleetOrder):
             ship is not None,
             self.fleet.get_object().systemID == planet.systemID,
             ship.canInvade,
-            not planet.currentMeterValue(fo.meterType.shield)
+            not planet.initialMeterValue(fo.meterType.shield)
         ))
 
     def issue_order(self):
