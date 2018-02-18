@@ -977,6 +977,9 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 supply_val = 40 * (planet_supply - max(-3, sys_supply))
             else:
                 supply_val = 200 * (planet_supply + sys_supply)  # a penalty
+                if spec_name == "SP_SLY":
+                    # Sly are essentially stuck with lousy supply, so don't penalize for that
+                    supply_val = 0
         elif planet_supply > sys_supply == 1:  # TODO: check min neighbor supply
             supply_val = 20 * (planet_supply - sys_supply)
         detail.append("sys_supply: %d, planet_supply: %d, supply_val: %.0f" % (sys_supply, planet_supply, supply_val))
