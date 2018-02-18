@@ -1102,6 +1102,30 @@ Voies Spatiales Systématiques
 RULE_STARLANES_EVERYWHERE_DESC
 Les Voies spatiales sont générées entre chaque paire de systèmes, indépendamment de toute géométrie. Toutefois, ces Voies peuvent toujours être supprimées durant une partie. Dans ce mode, les Voies ne sont pas affichées sur la carte galactique.
 
+RULE_HABITABLE_SIZE_TINY
+Taille habitable Minuscules Planètes
+
+RULE_HABITABLE_SIZE_SMALL
+Taille habitable Petites Planètes
+
+RULE_HABITABLE_SIZE_MEDIUM
+Taille habitable Moyennes Planètes
+
+RULE_HABITABLE_SIZE_LARGE
+Taille habitable Grandes Planètes
+
+RULE_HABITABLE_SIZE_HUGE
+Taille habitable Immenses Planètes
+
+RULE_HABITABLE_SIZE_ASTEROIDS
+Taille habitable Astéroïdes
+
+RULE_HABITABLE_SIZE_GASGIANT
+Taille habitable Géantes Gazeuses
+
+RULE_HABITABLE_SIZE_DESC
+Valeur utilisée pour ajuster les variations de [[encyclopedia POPULATION_TITLE_SHORT_DESC]] sur une planète de cette taille.
+
 
 ##
 ## Command-line and options database entries
@@ -3936,6 +3960,10 @@ Disponibles
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Indisponibles
 
+PRODUCTION_WND_AVAILABILITY_OBSOLETE_AND_UNAVAILABLE
+'''Obsolètes
+Indisponibles'''
+
 PRODUCTION_WND_REDUNDANT
 Redondants
 
@@ -4338,6 +4366,14 @@ Activez/Désactivez les filtres Obsolètes, Disponibles et Indisponibles pour af
 
 ADD_FIRST_SAVED_DESIGN_QUEUE_PROMPT
 Sélectionnez un Modèle Finalisé existant, clic-droit puis cliquez sur "[[DESIGN_SAVE]]" pour créer un modèle sauvegardé.
+
+ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT
+Activez/Désactivez les filtres Obsolètes, Disponibles et Indisponibles pour afficher les items
+
+NO_SAVED_OR_DEFAULT_DESIGNS_ADDED_PROMPT
+'''Choisissez une coque, ajoutez des équipements puis cliquez sur "[[DESIGN_WND_ADD_FINISHED]]" pour créer un modèle utilisable.
+
+Aucun Modèle Sauvegardé ou Modèle par Défaut n'ont été ajoutés à l'empire au démarrage de la partie. Les options pour ajouter ces modèles au démarrage d'une partie peuvent être modifiées dans Options->Autres. Ajoutez les Modèles Sauvegardés à l'aide du menu contextuel de n'importe quel modèle dans l'onglet "Sauvegardés".'''
 
 # %1% File path of unwritable file
 ERROR_UNABLE_TO_WRITE_FILE
@@ -5517,6 +5553,12 @@ Métabolisme Autosuffisant
 SELF_SUSTAINING_SPECIES_TEXT
 Les espèces de type [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] sont des organismes cristallins, voire purement énergétiques, et peut-être même d'une physiologie encore plus étrange. Leur constitution est telle qu'ils n'ont pas besoin d'apports vitaux, leur population maximale étant de ce fait très élevée. Tandis qu'aucune Particularité n'augmente leur Croissance, leur population maximale évolue plutôt à la manière d'une espèce profitant simultanément des trois Particularités basées sur le [[encyclopedia GROWTH_FOCUS_TITLE]].
 
+GASEOUS_SPECIES_TITLE
+Métabolisme Gazeux
+
+GASEOUS_SPECIES_TEXT
+Les espèces de type [[encyclopedia GASEOUS_SPECIES_CLASS]] ont un métabolisme basé sur les éléments rencontrés sous forme gazeuse dans un environnement de type terrestre. La plupart des chercheurs s'accordent pourtant sur le fait qu'une vie complexe dotée d'un métabolisme gazeux est physiquement impossible. Par conséquent, la recherche de vie sur le plus probable des habitats, les géantes gazeuses, est généralement négligée. Bien que les géantes gazeuses soient immenses, la zone habitable est similaire à celle d'une planète de taille moyenne. Par ailleurs, il n'existe pas de Particularités ayant une influence sur la croissance des espèces gazeuses.
+
 TELEPATHIC_TITLE
 Télépathie
 
@@ -6005,7 +6047,10 @@ ARRIVED_ON_TURN
 Arrivé au Tour
 
 SIZE_AS_DOUBLE
-Taille numér.
+Taille numérique
+
+HABITABLE_SIZE
+Taille habitable
 
 DISTANCE_FROM_ORIGINAL_TYPE
 Distance Type d'origine de la Planète
@@ -6975,6 +7020,13 @@ Autosuffisant
 SELF_SUSTAINING_SPECIES_CLASS_DESC
 Liste des espèces à [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]:
 
+
+GASEOUS_SPECIES_CLASS
+Gazeux
+
+GASEOUS_SPECIES_CLASS_DESC
+Liste des espèces à [[encyclopedia GASEOUS_SPECIES_TITLE]]:
+
 # Species Pedia Articles
 
 SP_HUMAN
@@ -7179,14 +7231,16 @@ Sly
 
 SP_SLY_GAMEPLAY_DESC
 '''Sacs de gaz affables mais peu connus.
-Vivent seulement sur les planètes de type [[PT_GASGIANT]].
-[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
+Préfèrent grandement les planètes de type [[PT_GASGIANT]].
+
+[[encyclopedia GASEOUS_SPECIES_TITLE]]
 '''
 
 SP_SLY_DESC
 '''Description:
 Les Sly vivent sur les géantes gazeuses. Ces dernières étant si étrangères à la plupart des espèces dans l'univers, l'existence et l'histoire des Sly sont par conséquent peu connues.
 Dans l'incapacité de produire tout dispositif technologique, les Sly ne peuvent quitter leur monde natal. Mais récemment, ils ont pu obtenir de marchands galactiques l'équipement et les technologies nécessaires au voyage spatial en échange de données sur leur espèce et son histoire.
+Sous un régime alimentaire adapté, les Sly excrètent du carburant raffiné. Un astronef à équipage Sly régénère donc son carburant lorsqu'il se trouve dans un système abritant une géante gazeuse.
 
 Structure sociale:
 Les Sly ont une espérance de vie très importante et transmettent de génération en génération des chants dans lesquels l'ensemble du savoir culturel de l'espèce est encodé. Les Sly sont très ouverts et extrêmement curieux envers la galaxie et les autres espèces, avec lesquelles ils peuvent enfin entrer en contact.
@@ -14108,6 +14162,10 @@ GREAT_WEAPONS_DESC
 ULTIMATE_WEAPONS_DESC
 +++	Parfaits Pilotes : dommages de base par armement d'astronef augmentés de trois niveaux.
 
+GASEOUS_DESC
+'''+	Vie sur Géantes Gazeuses
++	Ravitaillement Carburant sur Géantes Gazeuses 0.1'''
+
 BAD_POPULATION_DESC
 −	Faible Population : 75%
 
@@ -14119,6 +14177,9 @@ GOOD_POPULATION_DESC
 
 FIXED_LOW_POPULATION_DESC
 −−	Population Maximale limitée à 5
+
+VERY_BAD_SUPPLY_DESC
+−−	Très Mauvais en [[metertype METER_SUPPLY]]: -1
 
 BAD_SUPPLY_DESC
 −	Mauvais en [[metertype METER_SUPPLY]] : aucun bonus
@@ -14142,7 +14203,7 @@ AVERAGE_STOCKPILE_DESC
 	Normal en [[metertype METER_STOCKPILE]]: 100%
 
 GOOD_STOCKPILE_DESC
-+	Excellent en [[metertype METER_STOCKPILE]]: 400%
++	Excellent en [[metertype METER_STOCKPILE]]: 300%
 
 GREAT_STOCKPILE_DESC
 ++	Excellent en [[metertype METER_STOCKPILE]]: 1000%
@@ -14316,6 +14377,11 @@ ULTIMATE_RESEARCH_LABEL
 
 # %1% FIXME
 # %2% FIXME
+VERY_BAD_SUPPLY_LABEL
+%2% Très Mauvais en Approvisionnement
+
+# %1% FIXME
+# %2% FIXME
 BAD_SUPPLY_LABEL
 %2% Mauvais en Approvisionnement
 
@@ -14455,6 +14521,12 @@ Excellente Vision
 
 FOCUS_PROTECTION_LABEL
 Focus Protection
+
+GASEOUS_DESC
+Les Géantes gazeuses sont immenses mais leur zone habitable correspond à celle d'une planète de taille moyenne.
+
+GASEOUS_LABEL
+Environnement Rude
 
 XENOPHOBIC_LABEL_SELF
 Frénésie xénophobe (autre espèce proche)
