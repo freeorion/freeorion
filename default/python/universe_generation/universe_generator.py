@@ -144,6 +144,19 @@ def create_universe(psd_map):
     seed_rng(seed_pool.pop())
     distribute_specials(gsd.specials_frequency, fo.get_all_objects())
 
+    # set game uid
+    empire_names = []
+    for psd in psd_map.values():
+        empire_names.append(psd.empire_name)
+
+    empire_names.sort()
+    for i, v in enumerate(empire_names):
+        empire_names[i] = v.capitalize()[:2]
+
+    fo.get_galaxy_setup_data().gameUID = "".join(empire_names) + str(random.randint(0,999)).zfill(3)
+
+    print "Game UID %s" % fo.get_galaxy_setup_data().gameUID
+
     # finally, write some statistics to the log file
     print "############################################################"
     print "##             Universe generation statistics             ##"

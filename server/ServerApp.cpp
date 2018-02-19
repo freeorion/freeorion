@@ -556,7 +556,7 @@ void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_d
 
 bool ServerApp::VerifySPGameAIs(const SinglePlayerSetupData& single_player_setup_data) {
     const auto& player_setup_data = single_player_setup_data.m_players;
-    return NewGameInitVerifyJoiners(single_player_setup_data, player_setup_data);
+    return NewGameInitVerifyJoiners(player_setup_data);
 }
 
 void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data) {
@@ -633,7 +633,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
     }
 
     NewGameInitConcurrentWithJoiners(multiplayer_lobby_data, psds);
-    if (NewGameInitVerifyJoiners(multiplayer_lobby_data, psds))
+    if (NewGameInitVerifyJoiners(psds))
         SendNewGameStartMessages();
 }
 
@@ -737,13 +737,8 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     m_universe.UpdateStatRecords();
 }
 
-bool ServerApp::NewGameInitVerifyJoiners(
-    const GalaxySetupData& galaxy_setup_data,
-    const std::vector<PlayerSetupData>& player_setup_data)
-{
+bool ServerApp::NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& player_setup_data) {
     DebugLogger() << "ServerApp::NewGameInitVerifyJoiners";
-
-    m_galaxy_setup_data = galaxy_setup_data;
 
     // associate player IDs with player setup data.  the player connection with
     // id == m_networking.HostPlayerID() should be the human player in
