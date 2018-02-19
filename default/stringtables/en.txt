@@ -4330,6 +4330,17 @@ Duplicates Existing Design
 DESIGN_WND_KNOWN_DETAIL
 This design is a duplicate of "%1%".
 
+DESIGN_WND_RENAME_FINISHED
+Rename Finished Design
+
+# %1% name of the equivalent ship design.
+# %2% new name of the ship design.
+DESIGN_WND_RENAME_FINISHED_DETAIL
+'''Rename Finished design from
+"%1%"
+to 
+"%2%"'''
+
 DESIGN_WND_COMPONENT_CONFLICT
 Conflicting Design
 
