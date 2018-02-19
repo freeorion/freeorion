@@ -60,14 +60,18 @@ public:
 
     std::string Dump() const;
 
+    /** Returns the set of policies the empire has adopted and the turns on
+      * which they were adopted. */
+    const std::map<std::string, int>& AdoptedPoliciesTurns() const;
+
     /** Returns the set of Tech names available to this empire. */
     const std::map<std::string, int>& ResearchedTechs() const;
 
     /** Returns the set of BuildingType names availble to this empire. */
-    const std::set<std::string>& AvailableBuildingTypes() const;
+    const std::set<std::string>&    AvailableBuildingTypes() const;
 
     /** Returns the set of ShipDesign IDs available for this empire to build. */
-    std::set<int> AvailableShipDesigns() const;
+    std::set<int>                   AvailableShipDesigns() const;
 
     const std::set<int>&            ShipDesigns() const;                ///< Returns the set of all ship design ids of this empire
     const std::set<std::string>&    AvailableShipParts() const;         ///< Returns the set of ship part names this empire that the empire can currently build
@@ -169,6 +173,14 @@ public:
     /** If the object with id \a id is a planet owned by this empire, sets that
       * planet to be this empire's capital, and otherwise does nothing. */
     void SetCapitalID(int id);
+
+    /** Adopts the specified policy, assuming its conditions are met. Revokes
+      * the policy if \a adopt is false; */
+    void AdoptPolicy(const std::string& name, const std::string& type, bool adopt = true);
+
+    /** Checks that all policy adoption conditions are met, removing any that
+      * are not allowed. */
+    void AuditPolicies();
 
     /** Returns the meter with the indicated \a name if it exists, or nullptr. */
     Meter* GetMeter(const std::string& name);
@@ -443,6 +455,9 @@ private:
     bool                            m_authenticated;
     GG::Clr                         m_color;                    ///< Empire's color
     int                             m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
+
+    std::map<std::string, std::map<std::string, int>>
+                                    m_adopted_policy_turns;     ///< map from policy type, to map from names of policies the empire has adopted, to turn on which they were adopted
 
     /** The source id is the id of any object owned by the empire.  It is
         mutable so that Source() can be const and still cache its result. */

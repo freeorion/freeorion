@@ -62,9 +62,11 @@ void Empire::Init() {
     m_eliminated = false;
 
     m_meters[UserStringNop("METER_DETECTION_STRENGTH")];
-    m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
-    m_meters[UserStringNop("METER_SHIP_COST_FACTOR")];
-    m_meters[UserStringNop("METER_TECH_COST_FACTOR")];
+    //m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
+    //m_meters[UserStringNop("METER_SHIP_COST_FACTOR")];
+    //m_meters[UserStringNop("METER_TECH_COST_FACTOR")];
+    m_meters[UserStringNop("METER_NUM_ECONOMIC_POLICIES")];
+    m_meters[UserStringNop("METER_NUM_SOCIAL_POLICIES")];
 }
 
 Empire::~Empire()
@@ -149,6 +151,41 @@ void Empire::SetCapitalID(int id) {
     auto possible_source = Objects().get(id);
     if (possible_source && possible_source->OwnedBy(m_id))
         m_source_id = id;
+}
+
+void Empire::AdoptPolicy(const std::string& name, const std::string& type, bool adopt) {
+    if (!adopt) {
+        // find policy type
+        if (m_adopted_policy_turns.find(type) == m_adopted_policy_turns.end() ||
+            m_adopted_policy_turns[type].empty())
+        {
+            ErrorLogger() << "Can't unadopt policy of type that doesn't have any policies";
+            return;
+        }
+        // revoke policy
+        m_adopted_policy_turns[type].erase(name);
+
+    } else {
+        // check that policy is not already adopted
+        if (m_adopted_policy_turns.find(type) != m_adopted_policy_turns.end() &&
+            m_adopted_policy_turns[type].find(name) != m_adopted_policy_turns[type].end())
+        {
+            DebugLogger() << "Policy already adopted: " << name << "  of type: " << type;
+            return;
+        }
+
+        // todo: check that policy can be adopted by this empire in the specified type
+        // todo: check that same policy isn't already in another type, and if so, transfer with same adoption date
+
+        // adopt policy
+        m_adopted_policy_turns[type][name] = CurrentTurn();
+    }
+}
+
+void Empire::AuditPolicies() {
+    // todo: make sure all adopted policies are allowed to be adtoped by this
+    // empires, and revoke any that aren't allowed, such as due to not having enough
+    // slots of the relevant type, or failing other adoption conditions
 }
 
 Meter* Empire::GetMeter(const std::string& name) {

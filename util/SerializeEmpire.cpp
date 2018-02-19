@@ -162,6 +162,13 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         ar  & boost::serialization::make_nvp("m_techs", dummy_string_int_map);
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_techs);
+        if (Archive::is_loading::value && version < 2) {
+            std::map<std::string, int> temp_string_int_map;
+            ar  & boost::serialization::make_nvp("m_adopted_policy_turns", temp_string_int_map);
+            m_adopted_policy_turns.clear();
+        } else {
+            ar  & BOOST_SERIALIZATION_NVP(m_adopted_policy_turns);
+        }
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_meters);
