@@ -237,6 +237,7 @@ def survey_universe():
             spec_name = planet.speciesName
             this_spec = fo.getSpecies(spec_name)
             owner_id = planet.owner
+            # TODO: Shouldn't this be initial population meter?
             planet_population = planet.currentMeterValue(fo.meterType.population)
             buildings_here = [universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs]
             ship_facilities = set(AIDependencies.SHIP_FACILITIES).intersection(buildings_here)
@@ -258,6 +259,9 @@ def survey_universe():
                             empire_ship_builders.setdefault(spec_name, []).append(pid)
                             empire_shipyards[pid] = pilot_val
                             yard_here = [pid]
+                        # TODO: Shouldn't this be initial meter?
+                        # If the population is >= only in the next turn but not now,
+                        # then we haven't reached colonization threshold yet...
                         if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
                             empire_colonizers.setdefault(spec_name, []).extend(yard_here)
 
@@ -1012,6 +1016,10 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                 ind_mult += 1
             max_ind_factor += AIDependencies.INDUSTRY_PER_POP * mining_bonus
             max_ind_factor += AIDependencies.INDUSTRY_PER_POP * ind_mult
+
+        # using current over initial meter here to be consistent with the
+        # basically next-turn estimate that is the 1.0 (3.0) population
+        # estimate that would be given on the next turn after colonization
         cur_pop = 1.0  # assume an initial colonization value
         if planet.speciesName != "":
             cur_pop = planet.currentMeterValue(fo.meterType.population)

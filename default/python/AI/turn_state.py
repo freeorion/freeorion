@@ -64,6 +64,7 @@ class State(object):
             self.__planet_info[pid] = PlanetInfo(pid, planet.speciesName, planet.owner, planet.systemID)
 
             if planet.ownedBy(empire_id):
+                # TODO: Shouldn't this be initial meter value?
                 population = planet.currentMeterValue(fo.meterType.population)
                 if AIDependencies.ANCIENT_RUINS_SPECIAL in planet.specials:
                     self.__have_ruins = True

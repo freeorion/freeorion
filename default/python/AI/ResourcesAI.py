@@ -39,6 +39,7 @@ class PlanetFocusInfo(object):
     def __init__(self, planet):
         self.planet = planet
         self.current_focus = planet.focus
+        # TODO: Shouldn't this be initial meter values as this turn's output without focus changes?
         self.current_output = (planet.currentMeterValue(fo.meterType.industry),
                                planet.currentMeterValue(fo.meterType.research))
         self.possible_output = {}
@@ -86,6 +87,7 @@ class PlanetFocusManager(object):
             if update and pinfo.current_focus != focus:
                 universe = fo.getUniverse()
                 universe.updateMeterEstimates(self.raw_planet_info.keys())
+                # using current meter here to reflect focus changes
                 industry_target = pinfo.planet.currentMeterValue(fo.meterType.targetIndustry)
                 research_target = pinfo.planet.currentMeterValue(fo.meterType.targetResearch)
                 pinfo.possible_output[focus] = (industry_target, research_target)
@@ -107,6 +109,7 @@ class PlanetFocusManager(object):
             if INDUSTRY in planet.availableFoci and planet.focus != INDUSTRY:
                 fo.issueChangeFocusOrder(pid, INDUSTRY)  # may not be able to take, but try
 
+        # always using current meters in the following to reflect focus changes
         universe.updateMeterEstimates(unbaked_pids)
         for pid, pinfo, planet in planet_infos:
             industry_target = planet.currentMeterValue(fo.meterType.targetIndustry)
@@ -281,6 +284,7 @@ class Reporter(object):
             ], table_name="Planetary Foci Overview Turn %d" % fo.currentTurn())
         for pid in empire_planet_ids:
             planet = universe.getPlanet(pid)
+            # TODO: Shouldn't these be initial meters?
             population = planet.currentMeterValue(fo.meterType.population)
             max_population = planet.currentMeterValue(fo.meterType.targetPopulation)
             if max_population < 1 and population > 0:
@@ -433,6 +437,7 @@ def set_planet_growth_specials(focus_manager):
 
             # the increased population on the planet using this growth focus
             # is mostly wasted, so ignore it for now.
+            # TODO: Do we want to use current meter here or initial?
             pop = planet.currentMeterValue(fo.meterType.population)
             pop_gain = potential_pop_increase - planet.habitableSize
             if pop > pop_gain:

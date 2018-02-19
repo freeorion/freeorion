@@ -157,6 +157,7 @@ def get_invasion_fleets():
             if troop_tally > planet_troops:  # base troopers appear unneeded
                 del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
                 continue
+            # TODO: Why use current meter here?
             if (planet.currentMeterValue(fo.meterType.shield) > 0 and
                     (this_sys_status.get('myFleetRating', 0) < 0.8 * this_sys_status.get('totalThreat', 0) or
                      this_sys_status.get('myFleetRatingVsPlanets', 0) < this_sys_status.get('planetThreat', 0))):
@@ -400,8 +401,10 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
             if path_leg_threat > max_path_threat:
                 max_path_threat = path_leg_threat
 
+    # TODO: Shouldn't this consider pop initial meter values to be consistent with calculation in assign_invasion_values()?
     pop = planet.currentMeterValue(fo.meterType.population)
     target_pop = planet.currentMeterValue(fo.meterType.targetPopulation)
+    # TODO: The code below seems to assume initial meter value, not current here
     troops = planet.currentMeterValue(fo.meterType.troops)
     max_troops = planet.currentMeterValue(fo.meterType.maxTroops)
     # TODO: refactor troop determination into function for use in mid-mission updates and also consider defender techs
@@ -429,10 +432,12 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
                " - maxShields: %.1f\n"
                " - sysFleetThreat: %.1f\n"
                " - sysMonsterThreat: %.1f") % (
+            # TODO: why current over initial?
             planet, planet.currentMeterValue(fo.meterType.maxShield), system_fleet_treat,
             system_monster_threat)
     enemy_val = 0
     if planet.owner != -1:  # value in taking this away from an enemy
+        # TODO: why current over initial? Seems inconsistent
         enemy_val = 20 * (planet.currentMeterValue(fo.meterType.targetIndustry) +
                           2*planet.currentMeterValue(fo.meterType.targetResearch))
 

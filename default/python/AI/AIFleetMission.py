@@ -512,6 +512,13 @@ class AIFleetMission(object):
                             planet = universe.getPlanet(pid)
                             if (planet and
                                     planet.owner != fo.empireID() and
+                                    # Defense meters will in general always regenerate so currentMeterValue
+                                    # will always be greater than 0 as long as planet has some target defense.
+                                    # If we shot all the planets pretty much down and the regeneration is small,
+                                    # then we actually do want to release a few ships rather than having a fleet
+                                    # of possibly hundreds of ships stay idle at a system that has negligibly small
+                                    # threat.
+                                    # TODO: Check initialMeterValue here or actually estimate next turn threat
                                     planet.currentMeterValue(fo.meterType.maxDefense) > 0):
                                 threat_present = True
                                 break
@@ -614,6 +621,7 @@ class AIFleetMission(object):
         ships_max_health = 0
         for ship_id in fleet.shipIDs:
             this_ship = universe.getShip(ship_id)
+            # TODO: Should this check currentMeterValue to account for hull's regeneration?
             ships_cur_health += this_ship.initialMeterValue(fo.meterType.structure)
             ships_max_health += this_ship.initialMeterValue(fo.meterType.maxStructure)
         return ships_cur_health < repair_limit * ships_max_health

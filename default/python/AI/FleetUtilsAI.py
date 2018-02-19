@@ -568,6 +568,7 @@ def get_fighter_capacity_of_fleet(fleet_id):
         for partname in design_parts:
             part = get_part_type(partname)
             if part and part.partClass == fo.shipPartClass.fighterHangar:
+                # TODO: Shouldn't this be initial meter values to reflect this turn's values?
                 cur_capacity += ship.currentPartMeterValue(fo.meterType.capacity, partname)
                 max_capacity += ship.currentPartMeterValue(fo.meterType.maxCapacity, partname)
     return cur_capacity, max_capacity

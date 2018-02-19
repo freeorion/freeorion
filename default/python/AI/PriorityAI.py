@@ -79,6 +79,7 @@ def _calculate_industry_priority():  # currently only used to print status
     industry_production = empire.resourceProduction(fo.resourceType.industry)
     owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
     planets = map(universe.getPlanet, owned_planet_ids)
+    # using current meter here to reflect potential focus changes
     target_pp = sum(map(lambda x: x.currentMeterValue(fo.meterType.targetIndustry), planets))
 
     # currently, previously set to 50 in calculatePriorities(), this is just for reporting
@@ -122,6 +123,7 @@ def _calculate_research_priority():
     # get current industry production & Target
     owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
     planets = map(universe.getPlanet, owned_planet_ids)
+    # using current meter here to reflect potential focus changes
     target_rp = sum(map(lambda x: x.currentMeterValue(fo.meterType.targetResearch), planets))
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted', {})
