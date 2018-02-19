@@ -435,23 +435,18 @@ namespace parse {
 
     tags_grammar::tags_grammar(const parse::lexer& tok,
                                Labeller& labeller) :
-        tags_grammar::base_type(start, "tags_grammar")
+        tags_grammar::base_type(start, "tags_grammar"),
+        one_or_more_string_tokens(tok)
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
 
         using phoenix::insert;
 
-        qi::_1_type _1;
-        qi::_r1_type _r1;
-
-        start
-            =  -(
+        start %=
+            -(
                 labeller.rule(Tags_token)
-                >>  (
-                    ('[' > +tok.string [ insert(_r1, _1) ] > ']')
-                    |   tok.string [ insert(_r1, _1) ]
-                )
+                >>  one_or_more_string_tokens
             )
             ;
 
@@ -472,32 +467,26 @@ namespace parse {
         using phoenix::if_;
 
         qi::_1_type _1;
-        qi::_a_type _a;
-        qi::_b_type _b;
-        qi::_c_type _c;
+        qi::_2_type _2;
+        qi::_3_type _3;
+        qi::_4_type _4;
         qi::_pass_type _pass;
         qi::_val_type _val;
         qi::eps_type eps;
-        qi::uint_type uint_;
 
-        channel
-            =    tok.int_ [ _val = _1, _pass = 0 <= _1 && _1 <= 255 ]
-            ;
-
+        channel = tok.int_ [ _val = _1, _pass = 0 <= _1 && _1 <= 255 ];
+        alpha   = (',' > channel) [ _val = _1 ] | eps [ _val = 255 ];
         start
-            =    ('(' >> channel [ _a = _1 ])
-            >    (',' >> channel [ _b = _1 ])
-            >    (',' >> channel [ _c = _1 ])
-            >    (
-                (
-                    ',' > channel [ _val = construct<GG::Clr>(_a, _b, _c, _1) ]
-                )
-                |         eps [ _val = construct<GG::Clr>(_a, _b, _c, phoenix::val(255)) ]
-            )
+            =  ( ('(' >> channel )
+            >    (',' >> channel )
+            >    (',' >> channel )
+            >    alpha
             >    ')'
+               ) [ _val  = construct<GG::Clr>(_1, _2, _3, _4)]
             ;
 
         channel.name("colour channel (0 to 255)");
+        alpha.name("alpha channel (0 to 255) defaults to 255");
         start.name("Colour");
 
 #if DEBUG_PARSERS
@@ -519,13 +508,15 @@ namespace parse {
         using phoenix::construct;
 
         qi::_1_type _1;
-        qi::_a_type _a;
+        qi::_2_type _2;
         qi::_val_type _val;
+        qi::omit_type omit_;
 
         start
-            =    tok.Item_
-            >    labeller.rule(Type_token) > unlockable_item_type_enum [ _a = _1 ]
-            >    labeller.rule(Name_token) > tok.string [ _val = construct<ItemSpec>(_a, _1) ]
+            =  ( omit_[tok.Item_]
+            >    labeller.rule(Type_token) > unlockable_item_type_enum
+            >    labeller.rule(Name_token) > tok.string
+               ) [ _val = construct<ItemSpec>(_1, _2) ]
             ;
 
         start.name("ItemSpec");

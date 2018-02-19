@@ -83,6 +83,7 @@ namespace {
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
             labeller(tok),
+            one_or_more_string_tokens(tok),
             double_rule(tok),
             int_rule(tok)
         {
@@ -108,6 +109,7 @@ namespace {
             qi::_j_type _j;
             qi::_r1_type _r1;
             qi::eps_type eps;
+            boost::spirit::qi::repeat_type repeat_;
 
             game_rule_bool
                 =   (tok.GameRule_
@@ -160,13 +162,7 @@ namespace {
                     >>  labeller.rule(Type_token) >>         tok.String_
                     )
                 >   labeller.rule(Default_token) >       tok.string [ _e = _1 ]
-                >  -( (labeller.rule(Allowed_token)
-                       > '['
-                       > +tok.string [ insert(_h, _1) ]
-                       > ']'
-                      )
-                      |tok.string [ insert(_h, _1) ]
-                    )
+                >  -( labeller.rule(Allowed_token) > one_or_more_string_tokens [_h = _1])
                   [ add_rule(_r1, _a, _b, _j, _e, _h) ]
                 ;
 
@@ -219,6 +215,7 @@ namespace {
         using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller labeller;
+        parse::detail::single_or_repeated_string<std::set<std::string>> one_or_more_string_tokens;
         parse::detail::double_grammar double_rule;
         parse::detail::int_grammar int_rule;
         game_rule_rule  game_rule_bool;

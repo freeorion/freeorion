@@ -7,7 +7,7 @@
 #include "EnumParser.h"
 #include "ValueRefParser.h"
 #include "ConditionParserImpl.h"
-#include "CommonParams.h"
+#include "CommonParamsParser.h"
 
 #include "../universe/ShipDesign.h"
 #include "../universe/Condition.h"
@@ -33,18 +33,22 @@ namespace {
 
     void insert_parttype(std::map<std::string, std::unique_ptr<PartType>>& part_types,
                          ShipPartClass part_class,
-                         std::pair<double, double> capacity_and_stat2,
+                         std::pair<boost::optional<double>, boost::optional<double>> capacity_and_stat2,
                          const parse::detail::MovableEnvelope<CommonParams>& common_params,
                          const MoreCommonParams& more_common_params,
-                         std::vector<ShipSlotType> mountable_slot_types,
+                         boost::optional<std::vector<ShipSlotType>> mountable_slot_types,
                          const std::string& icon,
-                         bool add_standard_capacity_effect,
+                         boost::optional<const char*> add_standard_capacity_effect,
                          bool& pass)
     {
         auto part_type = boost::make_unique<PartType>(
-            part_class, capacity_and_stat2.first, capacity_and_stat2.second,
-            *common_params.OpenEnvelope(pass), more_common_params, mountable_slot_types, icon,
-            add_standard_capacity_effect);
+            part_class,
+            (capacity_and_stat2.first ? *capacity_and_stat2.first : 0.0),
+            (capacity_and_stat2.second ? *capacity_and_stat2.second : 1.0),
+            *common_params.OpenEnvelope(pass), more_common_params,
+            (mountable_slot_types ? *mountable_slot_types : std::vector<ShipSlotType>()),
+            icon,
+            (add_standard_capacity_effect ? false : true));
 
         part_types.insert(std::make_pair(part_type->Name(), std::move(part_type)));
     }
@@ -66,97 +70,60 @@ namespace {
             common_rules(tok, labeller, condition_parser, string_grammar, tags_parser),
             ship_slot_type_enum(tok),
             ship_part_class_enum(tok),
-            double_rule(tok)
+            double_rule(tok),
+            one_or_more_slots(ship_slot_type_enum)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
-            using phoenix::push_back;
             using phoenix::construct;
 
             qi::_1_type _1;
             qi::_2_type _2;
             qi::_3_type _3;
             qi::_4_type _4;
-            qi::_a_type _a;
-            qi::_b_type _b;
-            qi::_c_type _c;
-            qi::_d_type _d;
-            qi::_e_type _e;
-            qi::_f_type _f;
-            qi::_g_type _g;
-            qi::_h_type _h;
-            qi::_i_type _i;
+            qi::_5_type _5;
+            qi::_6_type _6;
+            qi::_7_type _7;
+            qi::_8_type _8;
             qi::_pass_type _pass;
             qi::_r1_type _r1;
-            qi::eps_type eps;
-
-            slots
-                =  -(
-                        labeller.rule(MountableSlotTypes_token)
-                    >   (
-                            ('[' > +ship_slot_type_enum [ push_back(_r1, _1) ] > ']')
-                        |    ship_slot_type_enum [ push_back(_r1, _1) ]
-                        )
-                     )
-                ;
+            qi::omit_type omit_;
 
             part_type
-                = ( tok.Part_
+                = ( omit_[tok.Part_]
                 >   common_rules.more_common
-                    [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
-                >   labeller.rule(Class_token)       > ship_part_class_enum [ _c = _1 ]
-                > (  (labeller.rule(Capacity_token)  > double_rule [ _d = _1 ])
-                   | (labeller.rule(Damage_token)    > double_rule [ _d = _1 ])
-                   |  eps [ _d = 0.0 ]
-                  )
-                > (  (labeller.rule(Damage_token)    > double_rule [ _h = _1 ])   // damage is secondary for fighters
-                   | (labeller.rule(Shots_token)     > double_rule [ _h = _1 ])   // shots is secondary for direct fire weapons
-                   |  eps [ _h = 1.0 ]
-                  )
-                > (   tok.NoDefaultCapacityEffect_ [ _g = false ]
-                   |  eps [ _g = true ]
-                  )
-                >   slots(_f)
-                >   common_rules.common           [ _e = _1 ]
-                >   labeller.rule(Icon_token)        > tok.string    [ _b = _1 ]
-                  ) [ _i = construct<std::pair<double, double>>(_d, _h),
-                      insert_parttype_(_r1, _c, _i, _e, _a, _f, _b, _g, _pass) ]
+                    [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)) ]
+                >   labeller.rule(Class_token)       > ship_part_class_enum
+                > -(  (labeller.rule(Capacity_token)  > double_rule)
+                   | (labeller.rule(Damage_token)    > double_rule)
+                   )
+                > -(  (labeller.rule(Damage_token)    > double_rule )   // damage is secondary for fighters
+                   | (labeller.rule(Shots_token)     > double_rule )   // shots is secondary for direct fire weapons
+                   )
+                > -tok.NoDefaultCapacityEffect_
+                > -(labeller.rule(MountableSlotTypes_token) > one_or_more_slots)
+                >   common_rules.common
+                >   labeller.rule(Icon_token)        > tok.string
+                  ) [ insert_parttype_(_r1, _2,
+                                       construct<std::pair<boost::optional<double>, boost::optional<double>>>(_3, _4)
+                                       , _7, _1, _6, _8, _5, _pass) ]
                 ;
 
             start
                 =   +part_type(_r1)
                 ;
 
-            slots.name("mountable slot types");
             part_type.name("Part");
 
 #if DEBUG_PARSERS
-            debug(slots);
             debug(part_type);
 #endif
 
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        typedef parse::detail::rule<
-            void (std::vector<ShipSlotType>&)
-        > slots_rule;
-
-        typedef parse::detail::rule<
-            void (start_rule_payload&),
-            boost::spirit::qi::locals<
-                MoreCommonParams,
-                std::string,
-                ShipPartClass,
-                double,
-                parse::detail::MovableEnvelope<CommonParams>,
-                std::vector<ShipSlotType>,
-                bool,
-                double,
-                std::pair<double, double>
-            >
-        > part_type_rule;
+        using  part_type_rule = parse::detail::rule<void (start_rule_payload&)>;
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
@@ -168,7 +135,7 @@ namespace {
         parse::ship_slot_enum_grammar  ship_slot_type_enum;
         parse::ship_part_class_enum_grammar ship_part_class_enum;
         parse::detail::double_grammar double_rule;
-        slots_rule                         slots;
+        parse::detail::single_or_bracketed_repeat<parse::ship_slot_enum_grammar> one_or_more_slots;
         part_type_rule                     part_type;
         start_rule                         start;
     };

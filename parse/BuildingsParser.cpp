@@ -4,7 +4,7 @@
 #include "EnumParser.h"
 #include "ConditionParserImpl.h"
 #include "ValueRefParser.h"
-#include "CommonParams.h"
+#include "CommonParamsParser.h"
 
 #include "../universe/Building.h"
 #include "../universe/Enums.h"
@@ -64,25 +64,27 @@ namespace {
             qi::_2_type _2;
             qi::_3_type _3;
             qi::_4_type _4;
-            qi::_a_type _a;
-            qi::_b_type _b;
-            qi::_c_type _c;
-            qi::_d_type _d;
+            qi::_5_type _5;
             qi::_pass_type _pass;
+            qi::_val_type _val;
             qi::_r1_type _r1;
             qi::eps_type eps;
+            qi::omit_type omit_;
+
+            capture %=
+                (labeller.rule(CaptureResult_token) >> capture_result_enum)
+                | eps [ _val = CR_CAPTURE ]
+                ;
 
             building_type
-                =   tok.BuildingType_
+                = ( omit_[tok.BuildingType_]
                 >   labeller.rule(Name_token)
-                >   tok.string        [ _pass = is_unique_(_r1, BuildingType_token, _1), _a = _1 ]
-                >   labeller.rule(Description_token)         > tok.string        [ _b = _1 ]
-                >   (   labeller.rule(CaptureResult_token)   >> capture_result_enum [ _d = _1 ]
-                    |   eps [ _d = CR_CAPTURE ]
-                    )
-                >   common_rules.common [ _c = _1 ]
-                >   labeller.rule(Icon_token)      > tok.string
-                [ insert_building_(_r1, _a, _b, _c, _d, _1, _pass) ]
+                >   tok.string        [ _pass = is_unique_(_r1, BuildingType_token, _1)]
+                >   labeller.rule(Description_token)         > tok.string
+                >   capture
+                >   common_rules.common
+                >   labeller.rule(Icon_token)      > tok.string)
+                [ insert_building_(_r1, _1, _2, _4, _3, _5, _pass) ]
                 ;
 
             start
@@ -98,15 +100,8 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<BuildingType>>&),
-            boost::spirit::qi::locals<
-                std::string,
-                std::string,
-                parse::detail::MovableEnvelope<CommonParams>,
-                CaptureResult
-            >
-        > building_type_rule;
+        using building_type_rule = parse::detail::rule<
+            void (std::map<std::string, std::unique_ptr<BuildingType>>&)>;
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
@@ -116,6 +111,7 @@ namespace {
         parse::detail::tags_grammar tags_parser;
         parse::detail::common_params_rules common_rules;
         parse::capture_result_enum_grammar capture_result_enum;
+        parse::detail::rule<CaptureResult ()> capture;
         building_type_rule          building_type;
         start_rule                  start;
     };

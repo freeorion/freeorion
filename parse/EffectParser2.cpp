@@ -1,8 +1,9 @@
 #include "EffectParser2.h"
 
-#include "ValueRefParserImpl.h"
+#include "ValueRefParser.h"
 #include "../universe/Effect.h"
 #include "../universe/Enums.h"
+#include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -26,6 +27,8 @@ namespace parse { namespace detail {
         set_ship_part_meter_type_enum(tok)
     {
         qi::_1_type _1;
+        qi::_2_type _2;
+        qi::_3_type _3;
         qi::_a_type _a;
         qi::_b_type _b;
         qi::_c_type _c;
@@ -40,29 +43,27 @@ namespace parse { namespace detail {
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
         set_meter =
-            (
+            ((
                 /* has some overlap with set_ship_part_meter_type_enum so can't use '>' */
                 set_non_ship_part_meter_type_enum [ _a = _1 ]
                 >>  labeller.rule(Value_token)
             )
-            >   double_rules.expr [ _c = _1 ]
-            >   (
-                (labeller.rule(AccountingLabel_token) > tok.string [ _val = construct_movable_(new_<Effect::SetMeter>(
-                        _a,
-                        deconstruct_movable_(_c, _pass),
-                        _1)) ] )
-                |    eps [ _val = construct_movable_(new_<Effect::SetMeter>(
-                        _a,
-                        deconstruct_movable_(_c, _pass))) ]
-            )
+            >   double_rules.expr [ _b = _1 ]
+            > -(labeller.rule(AccountingLabel_token) > tok.string) [ _c = _1]
+            ) [ _val = construct_movable_(new_<Effect::SetMeter>(
+                _a,
+                deconstruct_movable_(_b, _pass),
+                _c)) ]
+
             ;
 
         set_ship_part_meter
-            =    (set_ship_part_meter_type_enum [ _a = _1 ] >>   labeller.rule(PartName_token))   > string_grammar [ _b = _1 ]
-            >    labeller.rule(Value_token)      > double_rules.expr [ _val = construct_movable_(new_<Effect::SetShipPartMeter>(
-                _a,
-                deconstruct_movable_(_b, _pass),
-                deconstruct_movable_(_1, _pass))) ]
+            = ((set_ship_part_meter_type_enum  >>   labeller.rule(PartName_token))   > string_grammar
+               >    labeller.rule(Value_token)      > double_rules.expr
+              ) [ _val = construct_movable_(new_<Effect::SetShipPartMeter>(
+                  _1,
+                  deconstruct_movable_(_2, _pass),
+                  deconstruct_movable_(_3, _pass))) ]
             ;
 
         set_empire_stockpile

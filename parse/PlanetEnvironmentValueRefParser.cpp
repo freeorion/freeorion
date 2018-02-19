@@ -1,9 +1,10 @@
-#include "ValueRefParserImpl.h"
+#include "ValueRefParser.h"
 
 #include "EnumParser.h"
+#include "EnumValueRefRules.h"
 
 #include "../universe/Enums.h"
-
+#include "../universe/ValueRef.h"
 
 namespace parse { namespace detail {
     planet_environment_parser_rules::planet_environment_parser_rules(

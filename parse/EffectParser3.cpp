@@ -1,7 +1,8 @@
 #include "EffectParser3.h"
 
-#include "ValueRefParserImpl.h"
+#include "ValueRefParser.h"
 #include "../universe/Effect.h"
+#include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -20,11 +21,12 @@ namespace parse { namespace detail {
         star_type_rules(tok, labeller, condition_parser)
     {
         qi::_1_type _1;
+        qi::_2_type _2;
         qi::_a_type _a;
         qi::_b_type _b;
-        qi::_c_type _c;
         qi::_val_type _val;
         qi::_pass_type _pass;
+        qi::omit_type omit_;
         using phoenix::new_;
         using phoenix::construct;
         const boost::phoenix::function<construct_movable> construct_movable_;
@@ -103,13 +105,14 @@ namespace parse { namespace detail {
             ;
 
         add_special_2
-            =  ((tok.AddSpecial_ | tok.SetSpecialCapacity_)
-                >>  labeller.rule(Name_token) >> string_grammar [ _c = _1 ]
-                >> (labeller.rule(Capacity_token) | labeller.rule(Value_token))
-               )
-            >   double_rules.expr [ _val = construct_movable_(new_<Effect::AddSpecial>(
-                deconstruct_movable_(_c, _pass),
-                deconstruct_movable_(_1, _pass))) ]
+            =  ((omit_[(tok.AddSpecial_ | tok.SetSpecialCapacity_)]
+                 >>  labeller.rule(Name_token) >> string_grammar
+                 >> (labeller.rule(Capacity_token) | labeller.rule(Value_token))
+                )
+                >   double_rules.expr
+               ) [ _val = construct_movable_(new_<Effect::AddSpecial>(
+                   deconstruct_movable_(_1, _pass),
+                   deconstruct_movable_(_2, _pass))) ]
             ;
 
         remove_special
