@@ -3854,8 +3854,8 @@ public:
     boost::optional<int>                GetReplacedDesignID() const;//!< returns ID of completed design selected to be replaced.
 
     /** If a design with the same hull and parts is registered with the empire then return the
-        design name, otherwise return boost::none. */
-    boost::optional<std::string>        CurrentDesignIsRegistered();
+        design, otherwise return boost::none. */
+    boost::optional<const ShipDesign*>        CurrentDesignIsRegistered();
     //@}
 
     /** \name Mutators */ //@{
@@ -4124,7 +4124,7 @@ std::shared_ptr<const ShipDesign> DesignWnd::MainPanel::GetIncompleteDesign() co
 boost::optional<int> DesignWnd::MainPanel::GetReplacedDesignID() const
 { return m_replaced_design_id; }
 
-boost::optional<std::string> DesignWnd::MainPanel::CurrentDesignIsRegistered() {
+boost::optional<const ShipDesign*> DesignWnd::MainPanel::CurrentDesignIsRegistered() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const auto empire = GetEmpire(empire_id);
     if (!empire) {
@@ -4134,9 +4134,9 @@ boost::optional<std::string> DesignWnd::MainPanel::CurrentDesignIsRegistered() {
 
     if (const auto& cur_design = GetIncompleteDesign()) {
         for (const auto design_id : empire->ShipDesigns()) {
-            const auto& ship_design = *GetShipDesign(design_id);
-            if (ship_design == *cur_design.get())
-                return ship_design.Name();
+            const auto ship_design = GetShipDesign(design_id);
+            if (*ship_design == *cur_design.get())
+                return ship_design;
         }
     }
     return boost::none;
@@ -4633,7 +4633,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     bool producible = cur_design->Producible();
 
     // Current designs can not duplicate other designs, be already registered.
-    const auto existing_design_name = CurrentDesignIsRegistered();
+    const auto existing_design = CurrentDesignIsRegistered();
 
     const auto& replaced_saved_design = EditingSavedDesign();
 
@@ -4656,7 +4656,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     }
 
     if (producible && replaced_current_design) {
-        if (!existing_design_name) {
+        if (!existing_design) {
             // A current design can be replaced if it doesn't duplicate an existing design
             m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_WND_UPDATE_FINISHED"),
@@ -4669,7 +4669,7 @@ void DesignWnd::MainPanel::DesignChanged() {
             m_replace_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_WND_KNOWN"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_WND_KNOWN_DETAIL"))
-                               % *existing_design_name)));
+                               % (*existing_design)->Name())));
         }
     }
 
@@ -4686,7 +4686,7 @@ void DesignWnd::MainPanel::DesignChanged() {
                                % new_design_name)));
         m_confirm_button->Disable(false);
     } else if (producible) {
-        if (!existing_design_name) {
+        if (!existing_design) {
             // A new current can be added if it does not duplicate an existing design.
             m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_WND_ADD_FINISHED"),
@@ -4699,7 +4699,7 @@ void DesignWnd::MainPanel::DesignChanged() {
             m_confirm_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                 UserString("DESIGN_WND_KNOWN"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_WND_KNOWN_DETAIL"))
-                               % *existing_design_name)));
+                               % (*existing_design)->Name())));
         }
     }
 }
