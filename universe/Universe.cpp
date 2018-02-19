@@ -292,8 +292,7 @@ void Universe::RenameShipDesign(int design_id, const std::string& name/* = ""*/,
 
     if (name != "")
         design->SetName(name);
-    if (description != "")
-        design->SetDescription(description);
+    design->SetDescription(description);
 }
 
 const ShipDesign* Universe::GetGenericShipDesign(const std::string& name) const {

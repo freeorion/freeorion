@@ -882,11 +882,8 @@ const std::string& ShipDesign::Description(bool stringtable_lookup /* = true */)
         return m_description;
 }
 
-void ShipDesign::SetDescription(const std::string& description) {
-    if (m_description != "") {
-        m_description = description;
-    }
-}
+void ShipDesign::SetDescription(const std::string& description)
+{ m_description = description; }
 
 bool ShipDesign::ProductionCostTimeLocationInvariant() const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
