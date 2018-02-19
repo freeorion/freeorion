@@ -14,7 +14,7 @@ import MilitaryAI
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer, get_partial_visibility_turn
-from AIDependencies import (INVALID_ID, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
+from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
                             POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
 
 from common.configure_logging import convenience_function_references_for_logger
@@ -48,6 +48,9 @@ AVG_PILOT_RATING = 2.0
 GOOD_PILOT_RATING = 4.0
 GREAT_PILOT_RATING = 6.0
 ULT_PILOT_RATING = 12.0
+
+# minimum evaluation score that a planet must reach so it is considered for outposting
+MINIMUM_OUTPOST_SCORE = 100
 
 
 def colony_pod_cost():
@@ -353,28 +356,12 @@ def get_colony_fleets():
     avail_pp_by_sys = {}
     for p_set in available_pp:
         avail_pp_by_sys.update([(sys_id, available_pp[p_set]) for sys_id in set(PlanetUtilsAI.get_systems(p_set))])
-    colony_cost = colony_pod_cost()
-    outpost_cost = outpod_pod_cost()
-    production_queue = empire.productionQueue
-    queued_outpost_bases = []
-    queued_colony_bases = []
-    for queue_index in range(0, len(production_queue)):
-        element = production_queue[queue_index]
-        if element.buildType == EmpireProductionTypes.BT_SHIP and element.turnsLeft != -1:
-            if foAI.foAIstate.get_ship_role(element.designID) in [ShipRoleType.BASE_OUTPOST]:
-                build_planet = universe.getPlanet(element.locationID)
-                queued_outpost_bases.append(build_planet.systemID)
-            elif foAI.foAIstate.get_ship_role(element.designID) in [ShipRoleType.BASE_COLONISATION]:
-                build_planet = universe.getPlanet(element.locationID)
-                queued_colony_bases.append(build_planet.systemID)
 
     evaluated_colony_planet_ids = list(state.get_unowned_empty_planets().union(state.get_empire_outposts()) - set(
         colony_targeted_planet_ids))  # places for possible colonyBase
 
-    # don't want to lose the info by clearing, but #TODO: should double check if still own colonizer planet
-    # foAI.foAIstate.qualifyingOutpostBaseTargets.clear()
-    # foAI.foAIstate.qualifyingColonyBaseTargets.clear()
-    cost_ratio = 120  # TODO: temp ratio; reest to 12 *; consider different ratio
+    outpost_base_manager = foAI.foAIstate.orbital_colonization_manager
+
     for pid in evaluated_colony_planet_ids:  # TODO: reorganize
         planet = universe.getPlanet(pid)
         if not planet:
@@ -384,64 +371,14 @@ def get_colony_fleets():
             planet2 = universe.getPlanet(pid2)
             if not (planet2 and planet2.speciesName in empire_colonizers):
                 continue
-            if pid not in foAI.foAIstate.qualifyingOutpostBaseTargets:
-                if planet.unowned:
-                    foAI.foAIstate.qualifyingOutpostBaseTargets.setdefault(pid, [pid2, -1])
-            if ((pid not in foAI.foAIstate.qualifyingColonyBaseTargets) and
-                    (colony_cost < cost_ratio * avail_pp_by_sys.get(sys_id, 0)) and
-                    (planet.unowned or pid in state.get_empire_outposts())):
-                # TODO: enable actual building, remove from outpostbases, check other local colonizers for better score
-                foAI.foAIstate.qualifyingColonyBaseTargets.setdefault(pid, [pid2, -1])
+            if planet.unowned:
+                outpost_base_manager.create_new_plan(pid, pid2)
 
     colonization_timer.start('Initiate outpost base construction')
 
-    reserved_outpost_base_targets = foAI.foAIstate.qualifyingOutpostBaseTargets.keys()
-    max_queued_outpost_bases = max(1, int(2 * empire.productionPoints / outpost_cost))
-    considered_outpost_base_targets = (set(reserved_outpost_base_targets)
-                                       - set(outpost_targeted_planet_ids)
-                                       - set(colony_targeted_planet_ids))
-    if tech_is_complete(AIDependencies.OUTPOSTING_TECH) and considered_outpost_base_targets:
-        print "Considering to build outpost bases for %s" % considered_outpost_base_targets
-        for pid in considered_outpost_base_targets:
-            if len(queued_outpost_bases) >= max_queued_outpost_bases:
-                print "Too many queued outpost bases to build any more now"
-                break
-            if pid not in state.get_unowned_empty_planets():
-                continue
-            if foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1:
-                continue  # already building for here
-            loc = foAI.foAIstate.qualifyingOutpostBaseTargets[pid][0]
-            this_score = evaluate_planet(pid, MissionType.OUTPOST, None, [])
-            for species in empire_colonizers:
-                this_score = max(this_score, evaluate_planet(pid, MissionType.COLONISATION, species, []))
-            planet = universe.getPlanet(pid)
-            if this_score <= 0:
-                continue
-            elif this_score < 100:
-                print "Potential outpost base (rejected) for %s to be built at planet %s; outpost score %.1f" % (
-                    (planet, universe.getPlanet(loc), this_score))
-                continue
-            print "Potential outpost base for %s to be built at planet %s; outpost score %.1f" % (
-                (planet, universe.getPlanet(loc), this_score))
-            best_ship, col_design, build_choices = ProductionAI.get_best_ship_info(
-                PriorityType.PRODUCTION_ORBITAL_OUTPOST, loc)
-            if best_ship is None:
-                warn("Can't get standard best outpost base design that can be built at %s" % (
-                    PlanetUtilsAI.planet_string(loc)))
-                outpost_base_design_ids = [design for design in empire.availableShipDesigns if
-                                           "SD_OUTPOST_BASE" == fo.getShipDesign(design).name]
-                if outpost_base_design_ids:
-                    print "trying fallback outpost base design SD_OUTPOST_BASE"
-                    best_ship = outpost_base_design_ids.pop()
-                else:
-                    continue
-            retval = fo.issueEnqueueShipProductionOrder(best_ship, loc)
-            print "Enqueueing Outpost Base at %s for %s with result %s" % (
-                PlanetUtilsAI.planet_string(loc), PlanetUtilsAI.planet_string(pid), retval)
-            if retval:
-                foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] = loc
-                queued_outpost_bases.append((planet and planet.systemID) or INVALID_ID)
-                # res=fo.issueRequeueProductionOrder(production_queue.size -1, 0) # TODO: evaluate move to front
+    reserved_outpost_base_targets = outpost_base_manager.get_targets()
+    debug("Current qualifyingOutpostBaseTargets: %s" % reserved_outpost_base_targets)
+    outpost_base_manager.build_bases()
     colonization_timer.start('Evaluate Primary Colony Opportunities')
 
     evaluated_outpost_planet_ids = list(state.get_unowned_empty_planets() - set(outpost_targeted_planet_ids) - set(
@@ -1142,31 +1079,8 @@ def get_claimed_stars():
 
 
 def assign_colony_fleets_to_colonise():
-    universe = fo.getUniverse()
-    all_outpost_base_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.ORBITAL_OUTPOST)
-    avail_outpost_base_fleet_ids = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_outpost_base_fleet_ids)
-    for fid in avail_outpost_base_fleet_ids:
-        fleet = universe.getFleet(fid)
-        if not fleet:
-            continue
-        sys_id = fleet.systemID
-        system = universe.getSystem(sys_id)
-        avail_planets = set(system.planetIDs).intersection(set(foAI.foAIstate.qualifyingOutpostBaseTargets.keys()))
-        targets = [pid for pid in avail_planets if foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1]
-        if not targets:
-            warn("Found no valid target for outpost base in system %s" % system)
-            continue
-        target_id = INVALID_ID
-        best_score = -1
-        for pid, rating in assign_colonisation_values(targets, MissionType.OUTPOST, None).items():
-            if rating[0] > best_score:
-                best_score = rating[0]
-                target_id = pid
-        if target_id != INVALID_ID:
-            foAI.foAIstate.qualifyingOutpostBaseTargets[target_id][1] = -1  # TODO: should probably delete
-            ai_target = universe_object.Planet(target_id)
-            ai_fleet_mission = foAI.foAIstate.get_fleet_mission(fid)
-            ai_fleet_mission.set_target(MissionType.ORBITAL_OUTPOST, ai_target)
+
+    foAI.foAIstate.orbital_colonization_manager.assign_bases_to_colonize()
 
     # assign fleet targets to colonisable planets
     all_colony_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION)
@@ -1325,3 +1239,269 @@ def __print_candidate_table(candidates, mission):
                 planet.specials,
             ])
     info(candidate_table)
+
+
+class OrbitalColonizationPlan(object):
+    def __init__(self, target_id, source_id):
+        """
+        :param target_id: id of the target planet to colonize
+        :type target_id: int
+        :param source_id: id of the planet which should build the colony base
+        :type source_id: int
+        """
+        self.target = target_id
+        self.source = source_id
+        self.base_enqueued = False
+        self.fleet_id = INVALID_ID
+        self.__score = 0
+        self.__last_score_update = -1
+
+    def assign_base(self, fleet_id):
+        """
+        Assign an outpost base fleet to execute the plan.
+
+        It is expected that the fleet consists of only that one outpost base.
+
+        :type fleet_id: int
+        :return: True on success, False on failure
+        :rtype: bool
+        """
+        if self.base_assigned:
+            warn("Assigned a base to a plan that was already assigned a base to.")
+            return False
+        # give orders to perform the mission
+        target = universe_object.Planet(self.target)
+        fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
+        fleet_mission.set_target(MissionType.ORBITAL_OUTPOST, target)
+        self.fleet_id = fleet_id
+        return True
+
+    def enqueue_base(self):
+        """
+        Enqueue the base according to the plan.
+
+        :return: True on success, False on failure
+        :rtype: bool
+        """
+        if self.base_enqueued:
+            warn("Tried to enqueue a base eventhough already done that.")
+            return False
+
+        # find the best possible base design for the source planet
+        universe = fo.getUniverse()
+        best_ship, _, _ = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_OUTPOST, self.source)
+        if best_ship is None:
+            warn("Can't find optimized outpost base design at %s" % (universe.getPlanet(self.source)))
+            try:
+                best_ship = next(design for design in fo.getEmpire().availableShipDesigns
+                                 if "SD_OUTPOST_BASE" == fo.getShipDesign(design).name)
+                debug("Falling back to base design SD_OUTPOST_BASE")
+            except StopIteration:
+                # fallback design not available
+                return False
+
+        # enqueue the design at the source planet
+        retval = fo.issueEnqueueShipProductionOrder(best_ship, self.source)
+        print "Enqueueing Outpost Base at %s for %s with result %s" % (
+            universe.getPlanet(self.source), universe.getPlanet(self.target), retval)
+
+        if not retval:
+            warn("Failed to enqueue outpost base at %s" % universe.getPlanet(self.source))
+            return False
+
+        self.base_enqueued = True
+        return True
+
+    @property
+    def base_assigned(self):
+        if self.fleet_id == INVALID_ID:
+            return False
+
+        fleet = fo.getUniverse().getFleet(self.fleet_id)
+        if fleet:
+            return True
+
+        debug("The fleet assigned to the OrbitalColonizationPlan doesn't exist anymore.")
+        self.fleet_id = INVALID_ID
+        return False
+
+    @property
+    def score(self):
+        if self.__last_score_update != fo.currentTurn():
+            self.__update_score()
+        return self.__score
+
+    def __update_score(self):
+        planet_score = evaluate_planet(self.target, MissionType.OUTPOST, None)
+        for species in empire_colonizers:
+            this_score = evaluate_planet(self.target, MissionType.COLONISATION, species)
+            planet_score = max(planet_score, this_score)
+        self.__last_score_update = fo.currentTurn()
+        self.__score = planet_score
+
+    def is_valid(self):
+        """
+        Check the colonization plan for validity, i.e. if it could be executed in the future.
+
+        The plan is valid if it is possible to outpust the target planet
+        and if the planet envisioned to build the outpost bases can still do so.
+
+        :rtype: bool
+        """
+        universe = fo.getUniverse()
+
+        # make sure target is valid
+        target = universe.getPlanet(self.target)
+        if target is None or (not target.unowned) or target.speciesName:
+            return False
+
+        # make sure source is valid
+        source = universe.getPlanet(self.source)
+        if not (source and source.ownedBy(fo.empireID()) and source.speciesName in empire_colonizers):
+            return False
+
+        # appears to be valid
+        return True
+
+
+class OrbitalColonizationManager(object):
+    """
+    The OrbitalColonizationManager handles orbital colonization for the AI.
+
+    :type _colonization_plans: dict[int, OrbitalColonizationPlan]
+    :type num_enqueued_bases: int
+    """
+    def __init__(self):
+        self._colonization_plans = {}
+        self.num_enqueued_bases = 0
+
+    def get_targets(self):
+        """
+        Return all planets for which an orbital colonization plan exists.
+
+        :rtype: list[int]
+        """
+        return self._colonization_plans.keys()
+
+    def create_new_plan(self, target_id, source_id):
+        """
+        Create and keep track of a new colonization plan for a target planet.
+
+        :param target_id: id of the target planet
+        :type target_id: int
+        :param source_id: id of the planet which is supposed to build the base
+        :type source_id: int
+        """
+        if target_id in self._colonization_plans:
+            warn("Already have a colonization plan for this planet. Doing nothing.")
+            return
+        self._colonization_plans[target_id] = OrbitalColonizationPlan(target_id, source_id)
+
+    def turn_start_cleanup(self):
+        universe = fo.getUniverse()
+        # clean up invalid or finished plans
+        for pid in self._colonization_plans.keys():
+            if not self._colonization_plans[pid].is_valid():
+                del self._colonization_plans[pid]
+
+        # parse the production queue and find bases which no longer have valid
+        # targets (e.g. the planet was colonized already).
+        self.num_enqueued_bases = 0
+        unaccounted_plans = dict(self._colonization_plans)
+
+        # Check which plans still have valid bases assigned (possibly interrupted by combat last turn)
+        for pid in unaccounted_plans.keys():
+            if unaccounted_plans[pid].base_assigned:
+                del unaccounted_plans[pid]
+
+        # find enqueued bases which are no longer needed and dequeue those.
+        items_to_dequeue = []
+        for idx, element in enumerate(fo.getEmpire().productionQueue):
+            if element.buildType != EmpireProductionTypes.BT_SHIP or element.turnsLeft == -1:
+                continue
+
+            role = foAI.foAIstate.get_ship_role(element.designID)
+            if role != ShipRoleType.BASE_OUTPOST:
+                continue
+
+            self.num_enqueued_bases += 1
+            # check if a target for this base remains
+            original_target = next((target for target, plan in unaccounted_plans.iteritems() if
+                                    plan.source == element.locationID and plan.base_enqueued), None)
+            if original_target:
+                debug("Base built at %d still has its original target." % element.locationID)
+                del unaccounted_plans[original_target]
+                continue
+
+            # the original target may be no longer valid but maybe there is another
+            # orbital colonization plan which wasn't started yet and has the same source planet
+            alternative_target = next((target for target, plan in unaccounted_plans.iteritems()
+                                       if plan.source == element.locationID), None)
+            if alternative_target:
+                debug("Reassigning base built at %d to new target %d as old target is no longer valid" % (
+                    element.locationID, alternative_target))
+                self._colonization_plans[alternative_target].base_enqueued = True
+                del unaccounted_plans[alternative_target]
+                continue
+
+            # final try: unstarted plans with source in the same system
+            target_system = universe.getSystem(universe.getPlanet(element.locationID).systemID)
+            alternative_plan = next((plan for target, plan in unaccounted_plans.iteritems()
+                                     if plan.source in target_system.planetIDs and not plan.base_enqueued
+                                     and not plan.base_assigned), None)
+            if alternative_plan:
+                debug("Reassigning base enqueued at %d to new plan with target %d. Previous source was %d" % (
+                    element.locationID, alternative_plan.target, alternative_plan.source))
+                alternative_plan.source = element.locationID
+                alternative_plan.base_enqueued = True
+                del unaccounted_plans[alternative_plan.target]
+                continue
+
+            debug("Could not find a target for the outpost base enqueued at %s" % universe.getPlanet(element.locationID))
+            items_to_dequeue.append(idx)
+
+        # TODO: Stop Building for targets with now insufficient colonization score
+
+        # delete last items first so that queue index of remaining items
+        # does not have to be adjusted
+        # TODO: Only pause the production if could become valid again
+        items_to_dequeue.sort(reverse=True)
+        for idx in items_to_dequeue:
+            fo.issueDequeueProductionOrder(idx)
+            self.num_enqueued_bases -= 1
+
+    def build_bases(self):
+        empire = fo.getEmpire()
+        if not empire.techResearched(OUTPOSTING_TECH):
+            return
+
+        considered_plans = [plan for plan in self._colonization_plans.itervalues()
+                            if not plan.base_enqueued and plan.score > MINIMUM_OUTPOST_SCORE]
+        queue_limit = max(1, int(2*empire.productionPoints / outpod_pod_cost()))
+        for colonization_plan in sorted(considered_plans, key=lambda x: x.score, reverse=True):
+            if self.num_enqueued_bases >= queue_limit:
+                debug("Base enqueue limit (%d) reached." % queue_limit)
+                return
+
+            success = colonization_plan.enqueue_base()
+            if success:
+                self.num_enqueued_bases += 1
+
+    def assign_bases_to_colonize(self):
+        universe = fo.getUniverse()
+        all_outpost_base_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.ORBITAL_OUTPOST)
+        avail_outpost_base_fleet_ids = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_outpost_base_fleet_ids)
+        for fid in avail_outpost_base_fleet_ids:
+            fleet = universe.getFleet(fid)
+            if not fleet:
+                continue
+            sys_id = fleet.systemID
+            system = universe.getSystem(sys_id)
+
+            avail_plans = [plan for plan in self._colonization_plans.itervalues()
+                           if plan.target in system.planetIDs and not plan.base_assigned]
+            avail_plans.sort(key=lambda x: x.score, reverse=True)
+            for plan in avail_plans:
+                success = plan.assign_base(fid)
+                if success:
+                    break
