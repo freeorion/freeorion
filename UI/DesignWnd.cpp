@@ -861,6 +861,10 @@ namespace {
         const std::unordered_map<std::string, int>& obsolete_parts)
     {
         m_obsolete_ui_event_count = obsolete_ui_event_count;
+        if (m_obsolete_ui_event_count < 0)
+            ErrorLogger() << "CurrentShipDesignManager::Load obsolete_ui_event_count = "
+                          << obsolete_ui_event_count << " < 0 ";
+
         // Clear and load the ship design ids
         m_id_to_obsolete_and_loc.clear();
         m_ordered_design_ids.clear();
@@ -870,6 +874,14 @@ namespace {
             if (m_id_to_obsolete_and_loc.count(id)) {
                 ErrorLogger() << "CurrentShipDesignManager::Load duplicate design id = " << id;
                 continue;
+            }
+            if (obsolete && obsolete->first
+                && (obsolete->second < 0 || obsolete->second >= m_obsolete_ui_event_count))
+            {
+                ErrorLogger() << "CurrentShipDesignManager::Load design with id = " << id
+                              << " has an obsolete_ui_event_count = " << obsolete->second
+                              << " which does not satisfy 0 < obsolete_ui_event_count < m_obsolete_ui_event_count = "
+                              << m_obsolete_ui_event_count;
             }
             m_ordered_design_ids.push_back(id);
             m_id_to_obsolete_and_loc[id] = std::make_pair(obsolete, --m_ordered_design_ids.end());
@@ -885,12 +897,27 @@ namespace {
                 ErrorLogger() << "CurrentShipDesignManager::Load duplicate hull name = " << name;
                 continue;
             }
+            if (obsolete.first && (obsolete.second < 0 || obsolete.second >= m_obsolete_ui_event_count))
+                ErrorLogger() << "CurrentShipDesignManager::Load hull \"" << name
+                              << "\" has an obsolete_ui_event_count = " << obsolete.second
+                              << " which does not satisfy 0 < obsolete_ui_event_count < m_obsolete_ui_event_count = "
+                              << m_obsolete_ui_event_count;
             m_ordered_hulls.push_back(name);
             m_hull_to_obsolete_and_loc[name] = std::make_pair(obsolete, --m_ordered_hulls.end());
         }
 
         // Clear and load the ship parts
         m_obsolete_parts = obsolete_parts;
+        for (const auto& part_and_event_count : m_obsolete_parts) {
+            const auto& name = part_and_event_count.first;
+            const auto& count = part_and_event_count.second;
+            if (count < 0 || count >= m_obsolete_ui_event_count)
+                ErrorLogger() << "CurrentShipDesignManager::Load part \"" << name
+                              << "\" has an obsolete_ui_event_count = " << count
+                              << " which does not satisfy 0 < obsolete_ui_event_count < m_obsolete_ui_event_count = "
+                              << m_obsolete_ui_event_count;
+
+        }
     }
 
     void CurrentShipDesignManager::Save(
