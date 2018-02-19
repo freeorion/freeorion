@@ -7020,7 +7020,6 @@ Self-Sustaining
 SELF_SUSTAINING_SPECIES_CLASS_DESC
 List of [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] species:
 
-
 GASEOUS_SPECIES_CLASS
 Gaseous
 
@@ -7232,7 +7231,6 @@ Sly
 SP_SLY_GAMEPLAY_DESC
 '''Friendly overlooked gasbags.
 Greatly prefer [[PT_GASGIANT]]s.
-
 [[encyclopedia GASEOUS_SPECIES_TITLE]]
 '''
 
@@ -14167,13 +14165,13 @@ GASEOUS_DESC
 +	Refuel on Gas Giants 0.1'''
 
 BAD_POPULATION_DESC
-−	Bad Population 75%
+−	Bad [[metertype METER_POPULATION]]: 75%
 
 AVERAGE_POPULATION_DESC
-'''	Average Population'''
+'''	Average [[metertype METER_POPULATION]]: 100%'''
 
 GOOD_POPULATION_DESC
-+	Good Population 125%
++	Good [[metertype METER_POPULATION]]: 125%
 
 FIXED_LOW_POPULATION_DESC
 −−	Maximum Population is fixed at 5
@@ -14194,16 +14192,16 @@ ULTIMATE_SUPPLY_DESC
 ++	Ultimate [[metertype METER_SUPPLY]]: +3
 
 NO_STOCKPILE_DESC
---	No [[metertype METER_STOCKPILE]]
+−−	No [[metertype METER_STOCKPILE]]
 
 BAD_STOCKPILE_DESC
-	Bad [[metertype METER_STOCKPILE]]: 50%
+−	Bad [[metertype METER_STOCKPILE]]: 50%
 
 AVERAGE_STOCKPILE_DESC
-	Average [[metertype METER_STOCKPILE]]: 100%
+'''	Average [[metertype METER_STOCKPILE]]: 100%'''
 
 GOOD_STOCKPILE_DESC
-+	Great [[metertype METER_STOCKPILE]]: 300%
++	Good [[metertype METER_STOCKPILE]]: 300%
 
 GREAT_STOCKPILE_DESC
 ++	Great [[metertype METER_STOCKPILE]]: 1000%
@@ -14318,12 +14316,12 @@ Homeworld
 # %1% FIXME
 # %2% FIXME
 BAD_POPULATION_LABEL
-%2% Bad Population 75%%
+%2% Bad Population
 
 # %1% FIXME
 # %2% FIXME
 GOOD_POPULATION_LABEL
-%2% Good Population 125%%
+%2% Good Population
 
 # %1% FIXME
 # %2% FIXME
@@ -14402,8 +14400,18 @@ ULTIMATE_SUPPLY_LABEL
 
 # %1% FIXME
 # %2% FIXME
+BAD_STOCKPILE_LABEL
+%2% Bad Stockpiling
+
+# %1% FIXME
+# %2% FIXME
 AVERAGE_STOCKPILE_LABEL
 %2% Average Stockpiling
+
+# %1% FIXME
+# %2% FIXME
+GOOD_STOCKPILE_LABEL
+%2% Good Stockpiling
 
 # %1% FIXME
 # %2% FIXME
