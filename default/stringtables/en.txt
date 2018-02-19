@@ -4298,26 +4298,26 @@ Begin a ship design by selecting its hull.
 DESIGN_INV_NO_NAME
 Design name cannot be empty.
 
-DESIGN_KNOWN
+DESIGN_WND_KNOWN
 Duplicates Existing Design
 
 # %1% name of the equivalent ship design.
-DESIGN_KNOWN_DETAIL
+DESIGN_WND_KNOWN_DETAIL
 This design is a duplicate of "%1%".
 
-DESIGN_COMPONENT_CONFLICT
+DESIGN_WND_COMPONENT_CONFLICT
 Conflicting Design
 
 # %1% first conflicting ship part name.
 # %2% second conflicting ship part name.
-DESIGN_COMPONENT_CONFLICT_DETAIL
+DESIGN_WND_COMPONENT_CONFLICT_DETAIL
 A shipdesign cannot contain both %1% and %2%.
 
 DESIGN_WND_ADD_FINISHED
 Add Finished Design
 
 # %1% name of the new ship design.
-DESIGN_WND_ADD_DETAIL_FINISHED
+DESIGN_WND_ADD_FINISHED_DETAIL
 '''Add new design called
 "%1%"
 to finished designs.'''
@@ -4327,7 +4327,7 @@ Update Finished Design
 
 # %1% previous name of the existing design.
 # %2% new name of the existing design.
-DESIGN_WND_UPDATE_DETAIL_FINISHED
+DESIGN_WND_UPDATE_FINISHED_DETAIL
 '''Replace Finished design
 "%1%"
 with new design
@@ -4338,7 +4338,7 @@ DESIGN_WND_ADD_SAVED
 Add Saved Design
 
 # %1% name of the new ship design.
-DESIGN_WND_ADD_DETAIL_SAVED
+DESIGN_WND_ADD_SAVED_DETAIL
 '''Add a design called
 "%1%"
 to saved designs.'''
@@ -4348,7 +4348,7 @@ Update Saved Design
 
 # %1% old name of the saved design.
 # %2% new name of the saved design.
-DESIGN_WND_UPDATE_DETAIL_SAVED
+DESIGN_WND_UPDATE_SAVED_DETAIL
 '''Replace saved design
 "%1%"
 with new design

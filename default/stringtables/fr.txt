@@ -4298,26 +4298,26 @@ Démarrer la conception d'un astronef par le choix de la coque.
 DESIGN_INV_NO_NAME
 La dénomination du modèle d'astronef ne peut pas rester vide.
 
-DESIGN_KNOWN
+DESIGN_WND_KNOWN
 Modèle déjà existant
 
 # %1% name of the equivalent ship design.
-DESIGN_KNOWN_DETAIL
+DESIGN_WND_KNOWN_DETAIL
 Ce modèle est une réplique de "%1%".
 
-DESIGN_COMPONENT_CONFLICT
+DESIGN_WND_COMPONENT_CONFLICT
 Modèle incompatible
 
 # %1% first conflicting ship part name.
 # %2% second conflicting ship part name.
-DESIGN_COMPONENT_CONFLICT_DETAIL
+DESIGN_WND_COMPONENT_CONFLICT_DETAIL
 Un modèle d'astronef ne peut contenir à la fois les équipements %1% et %2%.
 
 DESIGN_WND_ADD_FINISHED
 Ajouter Modèle Finalisé
 
 # %1% name of the new ship design.
-DESIGN_WND_ADD_DETAIL_FINISHED
+DESIGN_WND_ADD_FINISHED_DETAIL
 '''Ajouter nouveau modèle nommé
 "%1%"
 aux modèles finalisés.'''
@@ -4327,7 +4327,7 @@ Actualiser Modèle Finalisé
 
 # %1% previous name of the existing design.
 # %2% new name of the existing design.
-DESIGN_WND_UPDATE_DETAIL_FINISHED
+DESIGN_WND_UPDATE_FINISHED_DETAIL
 '''Remplacer modèle finalisé
 "%1%"
 avec nouveau modèle
@@ -4338,7 +4338,7 @@ DESIGN_WND_ADD_SAVED
 Ajouter Modèle Sauvegardé
 
 # %1% name of the new ship design.
-DESIGN_WND_ADD_DETAIL_SAVED
+DESIGN_WND_ADD_SAVED_DETAIL
 '''Ajouter un modèle nommé
 "%1%"
 aux modèles sauvegardés.'''
@@ -4348,7 +4348,7 @@ Actualiser Modèle Sauvegardé
 
 # %1% old name of the saved design.
 # %2% new name of the saved design.
-DESIGN_WND_UPDATE_DETAIL_SAVED
+DESIGN_WND_UPDATE_SAVED_DETAIL
 '''Remplacer modèle sauvegardé
 "%1%"
 avec nouveau modèle

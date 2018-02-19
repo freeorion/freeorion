@@ -3640,19 +3640,19 @@ DESIGN_INV_NO_HULL
 DESIGN_INV_NO_NAME
 Имя проекта не может быть пустым
 
-DESIGN_KNOWN
+DESIGN_WND_KNOWN
 Дублирует существующий дизайн
 
 # %1% name of the equivalent ship design.
-DESIGN_KNOWN_DETAIL
+DESIGN_WND_KNOWN_DETAIL
 Такой проект уже существует "%1%"
 
-DESIGN_COMPONENT_CONFLICT
+DESIGN_WND_COMPONENT_CONFLICT
 Конфликтный дизайн
 
 # %1% first conflicting ship part name.
 # %2% second conflicting ship part name.
-DESIGN_COMPONENT_CONFLICT_DETAIL
+DESIGN_WND_COMPONENT_CONFLICT_DETAIL
 Конструкция судна не может содержать как %1% так и %2%
 
 # %1% name of the new ship design.
