@@ -86,6 +86,7 @@ namespace {
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
             labeller(tok),
+            one_or_more_string_tokens(tok),
             condition_parser(tok, labeller),
             string_grammar(tok, labeller, condition_parser),
             castable_int_rules(tok, labeller, condition_parser, string_grammar),
@@ -93,6 +94,7 @@ namespace {
             effects_group_grammar(tok, labeller, condition_parser, string_grammar),
             tags_parser(tok, labeller),
             item_spec_parser(tok, labeller),
+            one_or_more_item_specs(item_spec_parser),
             color_parser(tok)
         {
             namespace phoenix = boost::phoenix;
@@ -139,29 +141,25 @@ namespace {
                     |   tok.Researchable_ [ _h = true ]
                     |   eps [ _h = true ]
                    )
-                >   tags_parser(_d)
-                [ _val = construct_movable_(new_<Tech::TechInfo>(_a, _b, _c, _e, deconstruct_movable_(_f, _pass), deconstruct_movable_(_g, _pass), _h, _d)) ]
+                >   tags_parser
+                [ _val = construct_movable_(new_<Tech::TechInfo>(_a, _b, _c, _e, deconstruct_movable_(_f, _pass), deconstruct_movable_(_g, _pass), _h, _1)) ]
                 ;
 
             prerequisites
-                =   labeller.rule(Prerequisites_token)
-                >  (    ('[' > +tok.string [ insert(_r1, _1) ] > ']')
-                    |    tok.string [ insert(_r1, _1) ]
-                   )
+                %=   labeller.rule(Prerequisites_token)
+                >  one_or_more_string_tokens
                 ;
 
             unlocks
-                =   labeller.rule(Unlock_token)
-                >  (    ('[' > +item_spec_parser [ push_back(_r1, _1) ] > ']')
-                    |    item_spec_parser [ push_back(_r1, _1) ]
-                   )
+                %=   labeller.rule(Unlock_token)
+                >  one_or_more_item_specs
                 ;
 
             tech
                 =  (tok.Tech_
                 >   tech_info [ _a = _1 ]
-                >  -prerequisites(_b)
-                >  -unlocks(_c)
+                >  -prerequisites [_b = _1]
+                >  -unlocks [ _c = _1 ]
                 > -(labeller.rule(EffectsGroups_token) > effects_group_grammar [ _d = _1 ])
                 > -(labeller.rule(Graphic_token) > tok.string [ _e = _1 ])
                    ) [ insert_tech_(_r1, _a, _d, _b, _c, _e, _pass) ]
@@ -219,11 +217,11 @@ namespace {
         > tech_info_rule;
 
         typedef parse::detail::rule<
-            parse::detail::MovableEnvelope<Tech::TechInfo> (std::set<std::string>&)
+            std::set<std::string> ()
         > prerequisites_rule;
 
         typedef parse::detail::rule<
-            parse::detail::MovableEnvelope<Tech::TechInfo> (std::vector<ItemSpec>&)
+            std::vector<ItemSpec> ()
         > unlocks_rule;
 
         typedef parse::detail::rule<
@@ -250,6 +248,7 @@ namespace {
         > start_rule;
 
         parse::detail::Labeller labeller;
+        parse::detail::single_or_repeated_string<std::set<std::string>> one_or_more_string_tokens;
         parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::castable_as_int_parser_rules     castable_int_rules;
@@ -257,6 +256,7 @@ namespace {
         parse::effects_group_grammar effects_group_grammar;
         parse::detail::tags_grammar tags_parser;
         parse::detail::item_spec_grammar item_spec_parser;
+        parse::detail::single_or_bracketed_repeat<parse::detail::item_spec_grammar> one_or_more_item_specs;
         parse::detail::color_parser_grammar color_parser;
         tech_info_name_desc_rule    tech_info_name_desc;
         tech_info_rule              tech_info;

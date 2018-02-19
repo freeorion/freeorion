@@ -92,7 +92,8 @@ namespace parse { namespace detail {
         effect_parser_rules_1::base_type(start, "effect_parser_rules_1"),
         int_rules(tok, labeller, condition_parser, string_grammar),
         double_rules(tok, labeller, condition_parser, string_grammar),
-        empire_affiliation_type_enum(tok)
+        empire_affiliation_type_enum(tok),
+        one_or_more_string_and_string_ref_pair(string_and_string_ref)
     {
         qi::_1_type _1;
         qi::_a_type _a;
@@ -162,7 +163,7 @@ namespace parse { namespace detail {
                 | eps [ _f = true ]
             )
             >  -(labeller.rule(Icon_token)       >  tok.string [ _b = _1 ] )
-            >  -(labeller.rule(Parameters_token) >  string_and_string_ref_vector [_c = _1] )
+            >  -(labeller.rule(Parameters_token) >  one_or_more_string_and_string_ref_pair [_c = _1] )
             >   (
                 (   // empire id specified, optionally with an affiliation type:
                     // useful to specify a single recipient empire, or the allies
@@ -222,11 +223,6 @@ namespace parse { namespace detail {
             [_val = construct<string_and_string_ref_pair>(_a, _b)]
             ;
 
-        string_and_string_ref_vector
-            =    ('[' > *string_and_string_ref [ push_back(_val, _1) ] > ']')
-            |     string_and_string_ref [ push_back(_val, _1) ]
-            ;
-
         start
             =    set_empire_meter_1
             |    set_empire_meter_2
@@ -243,7 +239,6 @@ namespace parse { namespace detail {
         generate_sitrep_message.name("GenerateSitrepMessage");
         set_overlay_texture.name("SetOverlayTexture");
         string_and_string_ref.name("Tag and Data (string reference)");
-        string_and_string_ref_vector.name("List of Tags and Data");
 
 
 #if DEBUG_EFFECT_PARSERS

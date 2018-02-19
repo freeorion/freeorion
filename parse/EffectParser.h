@@ -51,7 +51,6 @@ namespace parse {
                 parse::detail::condition_payload,
                 parse::detail::condition_payload,
                 std::string,
-                std::vector<detail::effect_payload>,
                 std::string,
                 int,
                 std::string
@@ -59,7 +58,9 @@ namespace parse {
         > effect_group_rule;
 
         effects_parser_grammar effects_grammar;
+        detail::single_or_bracketed_repeat<effects_parser_grammar> one_or_more_effects;
         effect_group_rule effects_group;
+        detail::single_or_bracketed_repeat<effect_group_rule> one_or_more_groups;
         effects_group_rule start;
     };
 

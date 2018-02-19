@@ -41,7 +41,8 @@ namespace parse { namespace detail {
         castable_int_rules(tok, labeller, condition_parser, string_grammar),
         double_rules(tok, labeller, condition_parser, string_grammar),
         effects_group_grammar(tok, labeller, condition_parser, string_grammar),
-        non_ship_part_meter_type_enum(tok)
+        non_ship_part_meter_type_enum(tok),
+        repeated_string(tok)
     {
         namespace qi = boost::spirit::qi;
 
@@ -85,13 +86,11 @@ namespace parse { namespace detail {
             ;
 
         exclusions
-            =  -(
+            =
+            -(
                 labeller.rule(Exclusions_token)
-                >>  (
-                    ('[' > +tok.string [ insert(_r1, _1) ] > ']')
-                    |   tok.string [ insert(_r1, _1) ]
-                )
-            )
+                >> repeated_string
+            ) [_r1 = _1]
             ;
 
         more_common
@@ -107,7 +106,7 @@ namespace parse { namespace detail {
             (   labeller.rule(BuildCost_token)  > double_rules.expr [ _a = _1 ]
                 >   labeller.rule(BuildTime_token)  > castable_int_rules.flexible_int [ _b = _1 ]
                 >   producible                                          [ _c = _1 ]
-                >   tags_parser(_d)
+                >   tags_parser [ _d = _1 ]
                 >   location [_e = _1]
                 >   enqueue_location [_i = _1]
                 >  -consumption(_g, _h)

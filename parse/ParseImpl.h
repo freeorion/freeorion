@@ -64,6 +64,50 @@ namespace parse { namespace detail {
         locals
     >;
 
+    template <typename Signature>
+    struct BracketedParserSignature;
+    template <typename Synthesized, typename... Inherited>
+    struct BracketedParserSignature<Synthesized (Inherited...)> {
+        using Synthesized_t = Synthesized;
+        using Signature_t = std::vector<Synthesized_t>(Inherited...);
+    };
+
+      /** single_or_bracketed_repeat uses \p Parser to parser expressions with
+        either a single element or repeated elements within square brackets. */
+    template <typename Parser>
+    struct single_or_bracketed_repeat : public grammar<
+        typename BracketedParserSignature<typename Parser::sig_type>::Signature_t
+        >
+    {
+        single_or_bracketed_repeat(const Parser& repeated_parser)
+            : single_or_bracketed_repeat::base_type(start)
+        {
+            boost::spirit::qi::repeat_type repeat_;
+            start
+                =    ('[' > +repeated_parser > ']')
+                |    repeat_(1)[repeated_parser]
+                ;
+
+            this->name("List of " + repeated_parser.name());
+        }
+
+        rule<typename BracketedParserSignature<typename Parser::sig_type>::Signature_t> start;
+    };
+
+    template <typename SynthesizedContainer = std::vector<std::string>>
+    struct single_or_repeated_string : public grammar<SynthesizedContainer ()> {
+        single_or_repeated_string(const parse::lexer& tok) : single_or_repeated_string::base_type(start) {
+            boost::spirit::qi::repeat_type repeat_;
+            start
+                =    ('[' > +tok.string > ']')
+                |    repeat_(1)[tok.string]
+                ;
+
+            this->name("List of strings");
+        }
+
+        rule<SynthesizedContainer ()> start;
+    };
 
     struct double_grammar : public grammar<double()> {
         double_grammar(const parse::lexer& tok);
@@ -93,13 +137,14 @@ namespace parse { namespace detail {
     template <typename T>
     using enum_grammar = grammar<T ()>;
 
-    using tags_rule_type    = rule<void (std::set<std::string>&)>;
-    using tags_grammar_type = grammar<void (std::set<std::string>&)>;
+    using tags_rule_type    = rule<std::set<std::string> ()>;
+    using tags_grammar_type = grammar<std::set<std::string> ()>;
 
     struct tags_grammar : public tags_grammar_type {
         tags_grammar(const parse::lexer& tok,
                      Labeller& labeller);
         tags_rule_type start;
+        single_or_repeated_string<std::set<std::string>> one_or_more_string_tokens;
     };
 
     using color_parser_signature = GG::Clr ();
