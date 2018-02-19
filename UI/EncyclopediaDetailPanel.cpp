@@ -2150,7 +2150,7 @@ namespace {
             % ship->CurrentMeterValue(METER_STEALTH)
             % ship->CurrentMeterValue(METER_SPEED)
             % ship->CurrentMeterValue(METER_MAX_FUEL)
-            % design->ColonyCapacity()
+            % ship->SumCurrentPartMeterValuesForPartClass(METER_CAPACITY, PC_COLONY)
             % ship->SumCurrentPartMeterValuesForPartClass(METER_CAPACITY, PC_TROOPS)
             % ship->FighterMax()
             % (attack - ship->TotalWeaponsDamage(0.0f, false))
