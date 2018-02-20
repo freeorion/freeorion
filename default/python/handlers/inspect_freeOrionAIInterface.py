@@ -82,4 +82,5 @@ def inspect_ai_interface():
     )
     exit(1)  # exit game to main menu no need to play anymore.
 
+
 register_pre_handler('generateOrders', inspect_ai_interface)
