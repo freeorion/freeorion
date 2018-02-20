@@ -4497,6 +4497,7 @@ ENC_GALAXY_SETUP
 # %8% monster frequency in the current galaxy.
 # %9% natives frequency in the current galaxy.
 # %10% upper AI aggression level in this galaxy.
+# %11% game UID
 ENC_GALAXY_SETUP_SETTINGS
 '''Seed: %1%
 Number of Systems: %2%
@@ -4508,6 +4509,7 @@ Specials: %7%
 Monsters: %8%
 Natives: %9%
 AI Max Aggression: %10%
+Game UID: %11%
 '''
 
 ENC_GAME_RULES

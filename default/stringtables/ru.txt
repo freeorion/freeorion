@@ -3782,6 +3782,7 @@ ENC_GALAXY_SETUP
 # %8% monster frequency in the current galaxy.
 # %9% natives frequency in the current galaxy.
 # %10% upper AI aggression level in this galaxy.
+# %11% game UID
 ENC_GALAXY_SETUP_SETTINGS
 '''Семя: %1%
 Количество систем: %2%
@@ -3793,6 +3794,7 @@ ENC_GALAXY_SETUP_SETTINGS
 Монстры: %8%
 Аборигены: %9%
 Макс. агрессивность ИИ: %10%
+Идентификатор игры: %11%
 '''
 
 ENC_SHIP_PART
