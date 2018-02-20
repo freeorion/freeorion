@@ -60,7 +60,7 @@ void InGameMenu::CompleteConstruction() {
         boost::bind(&InGameMenu::Done, this));
 
     if (HumanClientApp::GetApp()->SinglePlayerGame()) {
-        // no sense to concede in a singlesplayer game
+        // no sense to concede in a singleplayer game
         m_concede_btn->Disable();
     } else {
         // need lobby to load a multiplayer game; menu load of a file is insufficient
