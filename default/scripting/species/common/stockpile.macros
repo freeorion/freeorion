@@ -8,7 +8,9 @@ BAD_STOCKPILE
 '''
 
 AVERAGE_STOCKPILE
-'''[[STOCKPILE_PER_POP_EFFECTSGROUP(AVERAGE,Value +  1 * Target.Population * [[STOCKPILE_PER_POP]])]]
+'''EffectsGroup
+            // Skip the AVERAGE_STOCKPILE_DESC, same as for the other *_STOCKPILE macros
+	    [[STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(AVERAGE,Value +  1 * Target.Population * [[STOCKPILE_PER_POP]])]]
 [[STANDARD_STOCKPILE_GROWTH]]
 '''
 
@@ -30,7 +32,11 @@ ULTIMATE_STOCKPILE
 STOCKPILE_PER_POP_EFFECTSGROUP
 '''     EffectsGroup
             description = "@1@_STOCKPILE_DESC"
-            scope = Source
+	    [[STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(@1@,@2@)]]
+'''
+
+STOCKPILE_PER_POP_EFFECTSGROUP__SNIP
+'''scope = Source
             activation = Planet
             accountinglabel = "@1@_STOCKPILE_LABEL"
             priority = [[EARLY_PRIORITY]]
