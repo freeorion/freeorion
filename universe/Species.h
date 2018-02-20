@@ -219,6 +219,7 @@ private:
 
 public:
     using SpeciesTypeMap = std::map<std::string, std::unique_ptr<Species>>;
+    using CensusOrder = std::vector<std::string>;
     using iterator = SpeciesTypeMap::const_iterator;
     typedef boost::filter_iterator<PlayableSpecies, iterator>   playable_iterator;
     typedef boost::filter_iterator<NativeSpecies, iterator>     native_iterator;
@@ -243,6 +244,9 @@ public:
     /** iterators for native species. */
     native_iterator     native_begin() const;
     native_iterator     native_end() const;
+
+    /** returns an ordered list of tags that should be considered for census listings. */
+    const CensusOrder& census_order() const;
 
     /** returns true iff this SpeciesManager is empty. */
     bool                empty() const;
@@ -324,7 +328,7 @@ public:
     std::map<std::string, std::map<std::string, int>>&  SpeciesShipsDestroyed(int encoding_empire = ALL_EMPIRES);
 
     /** Sets species types to the value of \p future. */
-    FO_COMMON_API void SetSpeciesTypes(Pending::Pending<SpeciesTypeMap>&& future);
+    FO_COMMON_API void SetSpeciesTypes(Pending::Pending<std::pair<SpeciesTypeMap, CensusOrder>>&& future);
 
     //@}
 
@@ -340,9 +344,10 @@ private:
 
     /** Future types being parsed by parser.  mutable so that it can
         be assigned to m_species_types when completed.*/
-    mutable boost::optional<Pending::Pending<SpeciesTypeMap>> m_pending_types = boost::none;
+    mutable boost::optional<Pending::Pending<std::pair<SpeciesTypeMap, CensusOrder>>> m_pending_types = boost::none;
 
     mutable SpeciesTypeMap                              m_species;
+    mutable CensusOrder                                 m_census_order;
     std::map<std::string, std::map<int, float>>         m_species_empire_opinions;
     std::map<std::string, std::map<std::string, float>> m_species_species_opinions;
 

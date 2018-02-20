@@ -15127,6 +15127,5 @@ Plein écran [on/off]
 
 
 
-#include "../global_settings.txt"
 #include "../content_specific_parameters.txt"
 #include "../customizations/common_user_customizations.txt"

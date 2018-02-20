@@ -411,14 +411,22 @@ SpeciesManager& SpeciesManager::GetSpeciesManager() {
     return manager;
 }
 
-void SpeciesManager::SetSpeciesTypes(Pending::Pending<SpeciesTypeMap>&& future)
+void SpeciesManager::SetSpeciesTypes(Pending::Pending<std::pair<SpeciesTypeMap, CensusOrder>>&& future)
 { m_pending_types = std::move(future); }
 
 void SpeciesManager::CheckPendingSpeciesTypes() const {
-    if (!m_pending_types && m_species.empty())
-        throw;
+    if (!m_pending_types) {
+        if (m_species.empty())
+            throw;
+        return;
+    }
 
-    Pending::SwapPending(m_pending_types, m_species);
+    auto container = std::make_pair(std::move(m_species), m_census_order);
+
+    Pending::SwapPending(m_pending_types, container);
+
+    m_species = std::move(container.first);
+    m_census_order = std::move(container.second);
 }
 
 SpeciesManager::iterator SpeciesManager::begin() const {
@@ -442,6 +450,11 @@ SpeciesManager::native_iterator SpeciesManager::native_begin() const
 
 SpeciesManager::native_iterator SpeciesManager::native_end() const
 { return native_iterator(NativeSpecies(), end(), end()); }
+
+const SpeciesManager::CensusOrder& SpeciesManager::census_order() const {
+    CheckPendingSpeciesTypes();
+    return m_census_order;
+}
 
 bool SpeciesManager::empty() const {
     CheckPendingSpeciesTypes();

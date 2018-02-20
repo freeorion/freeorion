@@ -1000,6 +1000,18 @@ Your connection was replaced.
 ## Game Rules
 ##
 
+RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR
+Turn PP overcommit
+
+RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR_DESC
+Percentage of PP overcommitment per item build turn to build in time.
+
+RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR
+Final PP overcommit
+
+RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR_DESC
+Percentage of PP overcommitment on final item build turn to build in time.
+
 RULE_CHEAP_AND_FAST_TECH_RESEARCH
 Cheap and Fast Techs
 
@@ -18416,6 +18428,5 @@ MONSTER_NAMES
 [[SHIP_NAME_UNSORTED_MYTHOLOGY]]
 [[SHIP_NAME_DEVS]]'''
 
-#include "../global_settings.txt"
 #include "../content_specific_parameters.txt"
 #include "../customizations/common_user_customizations.txt"

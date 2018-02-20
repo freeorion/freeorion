@@ -36,7 +36,14 @@ namespace parse {
 
     FO_PARSE_API std::map<std::string, std::unique_ptr<Special>> specials(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::map<std::string, std::unique_ptr<Species>> species(const boost::filesystem::path& path);
+    /** Parse all species in directory \p path, store them with their name in \p
+        species_by_name. If a file exists called SpeciesCensusOrdering.focs.txt, parse it and
+        store the census order in \p ordering. */
+    using species_type = std::pair<
+        std::map<std::string, std::unique_ptr<Species>>, // species_by_name,
+        std::vector<std::string> // ordering
+        >;
+    FO_PARSE_API species_type species(const boost::filesystem::path& path);
 
     /* T in techs<T> can only be TechManager::TechParseTuple.  This decouples
        Parse.h from Tech.h so that all parsers are not recompiled when Tech.h changes.*/

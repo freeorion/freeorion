@@ -42,53 +42,31 @@ namespace {
         rules.Add<bool>("RULE_STOCKPILE_IMPORT_LIMITED",
                         "RULE_STOCKPILE_IMPORT_LIMITED_DESC",
                         "", false, true);
+
+        rules.Add<double>("RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR",
+                          "RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR_DESC",
+                          "", 0.0, true, RangedValidator<double>(0.0, 30.0));
+        rules.Add<double>("RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR",
+                          "RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR_DESC",
+                          "", 0.0, true, RangedValidator<double>(0.0, 30.0));
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 
-    float GetQueueFrontloadFactor() {
-        static float front_load_factor = -1.0;
-        if (front_load_factor == -1.0) {
-            front_load_factor = 0.0;
-            try {
-                if (UserStringExists("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR")) {
-                    float new_front_factor = std::atof(UserString("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR").c_str());
-                    if (new_front_factor > 0.0f && new_front_factor <= 0.3f)
-                        front_load_factor = new_front_factor;
-                }
-            } catch (...) {}
-        }
-        return front_load_factor;
-    }
-
-    float GetQueueToppingFactor() {
-        static float topping_up_factor = -1.0;
-        if (topping_up_factor == -1.0) {
-            topping_up_factor = 0.0;
-            try {
-                if (UserStringExists("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR")) {
-                    float new_front_factor = std::atof(UserString("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR").c_str());
-                    if (new_front_factor > 0.0f && new_front_factor <= 0.3f)
-                        topping_up_factor = new_front_factor;
-                }
-            } catch (...) {}
-        }
-        return topping_up_factor;
-    }
 
     // Calculates per-turn limit on PP contribution, taking into account unit
     // item cost, min build turns, blocksize, remaining repeat count, current
     // progress, and other potential factors discussed below.
 
-    // FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR and
-    // FUNCTIONAL_PRODUCTION_QUEUE_TOPPING_UP_FACTOR specify global_settings.txt
-    // values that affect how the ProductionQueue will limit allocation towards
-    // building a given item on a given turn.  The base amount of maximum
-    // allocation per turn (if the player has enough PP available) is the item's
-    // total cost, divided over its minimum build time.  Sometimes complications
-    // arise, though, which unexpectedly delay the completion even if the item
-    // had been fully-funded every turn, because costs have risen partway
-    // through (such as due to increasing ship costs resulting from recent ship
-    // constructoin completion and ensuing increase of Fleet Maintenance costs.
+    // RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR and
+    // RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR specify how the ProductionQueue
+    // will limit allocation towards building a given item on a given turn.
+    // The base amount of maximum allocation per turn (if the player has enough
+    // PP available) is the item's total cost, divided over its minimum build
+    // time.  Sometimes complications arise, though, which unexpectedly delay
+    // the completion even if the item had been fully-funded every turn,
+    // because costs have risen partway through (such as due to increasing ship
+    // costs resulting from recent ship constructoin completion and ensuing
+    // increase of Fleet Maintenance costs.
     // These two settings provide a mechanism for some allocation leeway to deal
     // with mid-build cost increases without causing the project  completion to
     // take an extra turn because of the small bit of increased cost.  The
@@ -113,10 +91,10 @@ namespace {
     float CalculateProductionPerTurnLimit(const ProductionQueue::Element& queue_element,
                                           float item_cost, int build_turns)
     {
-        const float frontload_limit_factor = GetQueueFrontloadFactor();
+        const float frontload_limit_factor = GetGameRules().Get<double>("RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR") * 0.01;
         // any allowed topping up is limited by how much frontloading was allowed
         const float topping_up_limit_factor =
-            std::max(0.0f, GetQueueToppingFactor() - frontload_limit_factor);
+            std::max(0.0, GetGameRules().Get<double>("RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR") * 0.01 - frontload_limit_factor);
 
         item_cost *= queue_element.blocksize;
         build_turns = std::max(build_turns, 1);
@@ -277,8 +255,8 @@ namespace {
 
         // See explanation at CalculateProductionPerTurnLimit() above regarding operation of these factors.
         // any allowed topping up is limited by how much frontloading was allowed
-        //const float frontload_limit_factor = GetQueueFrontloadFactor();
-        //const float topping_up_limit_factor = std::max(0.0f, GetQueueToppingFactor() - frontload_limit_factor);
+        //const float frontload_limit_factor = GetGameRules().Get<double>("RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR") * 0.01;
+        //const float topping_up_limit_factor = std::max(0.0, GetGameRules().Get<double>("RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR") * 0.01f - frontload_limit_factor);
         // DebugLogger() << "SetProdQueueElementSpending frontload  factor " << frontload_limit_factor;
         // DebugLogger() << "SetProdQueueElementSpending topping up factor " << topping_up_limit_factor;
 
