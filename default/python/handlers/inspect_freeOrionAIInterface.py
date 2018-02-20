@@ -39,7 +39,7 @@ def inspect_ai_interface():
 
     inspect(
         fo,
-        [
+        instances=[
             meter,
             part_meters,
             color,
@@ -77,7 +77,8 @@ def inspect_ai_interface():
             'IntPairVec', 'IntFltMap', 'MeterTypeStringPair', 'MeterTypeMeterMap', 'universeObject',
             # this item cannot be get from generate orders
             'diplomaticStatusUpdate',
-        )
+        ),
+        path='AI'
     )
     exit(1)  # exit game to main menu no need to play anymore.
 
