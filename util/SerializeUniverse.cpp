@@ -27,7 +27,7 @@ BOOST_CLASS_VERSION(Fleet, 3)
 BOOST_CLASS_EXPORT(Ship)
 BOOST_CLASS_VERSION(Ship, 2)
 BOOST_CLASS_EXPORT(ShipDesign)
-BOOST_CLASS_VERSION(ShipDesign, 1)
+BOOST_CLASS_VERSION(ShipDesign, 2)
 BOOST_CLASS_EXPORT(Universe)
 BOOST_CLASS_VERSION(Universe, 1)
 
@@ -316,8 +316,10 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_description)
-        & BOOST_SERIALIZATION_NVP(m_designed_on_turn)
-        & BOOST_SERIALIZATION_NVP(m_hull)
+        & BOOST_SERIALIZATION_NVP(m_designed_on_turn);
+    if (version >= 2)
+        ar  & BOOST_SERIALIZATION_NVP(m_designed_by_empire);
+    ar  & BOOST_SERIALIZATION_NVP(m_hull)
         & BOOST_SERIALIZATION_NVP(m_parts)
         & BOOST_SERIALIZATION_NVP(m_is_monster)
         & BOOST_SERIALIZATION_NVP(m_icon)
