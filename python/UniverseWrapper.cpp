@@ -767,7 +767,9 @@ namespace FreeOrionPython {
             .add_property("specialsFrequency",  make_function(&GalaxySetupData::GetSpecialsFreq,    return_value_policy<return_by_value>()))
             .add_property("monsterFrequency",   make_function(&GalaxySetupData::GetMonsterFreq,     return_value_policy<return_by_value>()))
             .add_property("nativeFrequency",    make_function(&GalaxySetupData::GetNativeFreq,      return_value_policy<return_by_value>()))
-            .add_property("maxAIAggression",    make_function(&GalaxySetupData::GetAggression,      return_value_policy<return_by_value>()));
+            .add_property("maxAIAggression",    make_function(&GalaxySetupData::GetAggression,      return_value_policy<return_by_value>()))
+            .add_property("gameUID",            make_function(&GalaxySetupData::GetGameUID,         return_value_policy<return_by_value>()),
+                                                &GalaxySetupData::SetGameUID);
 
         //std::vector<std::pair<std::string, std::string>>
         class_<std::pair<std::string, std::string>>("RuleValueStringStringPair")

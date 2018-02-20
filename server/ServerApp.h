@@ -252,8 +252,7 @@ private:
                                              const std::vector<PlayerSetupData>& player_setup_data);
 
     /** Return true if player data is consistent with starting a new game. */
-    bool    NewGameInitVerifyJoiners(const GalaxySetupData& galaxy_setup_data,
-                                     const std::vector<PlayerSetupData>& player_setup_data);
+    bool    NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& player_setup_data);
 
     /** Sends out initial new game state to clients, and signals clients to start first turn. */
     void SendNewGameStartMessages();

@@ -183,10 +183,12 @@ struct FO_COMMON_API GalaxySetupData {
     Aggression          GetAggression() const;
     const std::vector<std::pair<std::string, std::string>>&
                         GetGameRules() const;
+    const std::string&  GetGameUID() const;
     //@}
 
     /** \name Mutators */ //@{
     void                SetSeed(const std::string& seed);
+    void                SetGameUID(const std::string& game_uid);
     //@}
 
     GalaxySetupData& operator=(const GalaxySetupData&) = default;
@@ -203,6 +205,7 @@ struct FO_COMMON_API GalaxySetupData {
     Aggression          m_ai_aggr;
     std::vector<std::pair<std::string, std::string>>
                         m_game_rules;
+    std::string         m_game_uid;
 
 private:
     friend class boost::serialization::access;
@@ -210,7 +213,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(GalaxySetupData, 1);
+BOOST_CLASS_VERSION(GalaxySetupData, 2);
 
 extern template FO_COMMON_API void GalaxySetupData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 extern template FO_COMMON_API void GalaxySetupData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);

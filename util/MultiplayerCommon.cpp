@@ -282,7 +282,8 @@ GalaxySetupData::GalaxySetupData(GalaxySetupData&& base) :
     m_monster_freq(base.m_monster_freq),
     m_native_freq(base.m_native_freq),
     m_ai_aggr(base.m_ai_aggr),
-    m_game_rules(std::move(base.m_game_rules))
+    m_game_rules(std::move(base.m_game_rules)),
+    m_game_uid(std::move(base.m_game_uid))
 { SetSeed(m_seed); }
 
 const std::string& GalaxySetupData::GetSeed() const
@@ -340,6 +341,9 @@ Aggression GalaxySetupData::GetAggression() const
 const std::vector<std::pair<std::string, std::string>>& GalaxySetupData::GetGameRules() const
 { return m_game_rules; }
 
+const std::string& GalaxySetupData::GetGameUID() const
+{ return m_game_uid; }
+
 void GalaxySetupData::SetSeed(const std::string& seed) {
     std::string new_seed = seed;
     if (new_seed.empty() || new_seed == "RANDOM") {
@@ -351,6 +355,9 @@ void GalaxySetupData::SetSeed(const std::string& seed) {
     }
     m_seed = new_seed;
 }
+
+void GalaxySetupData::SetGameUID(const std::string& game_uid)
+{ m_game_uid = game_uid; }
 
 /////////////////////////////////////////////////////
 // PlayerSetupData

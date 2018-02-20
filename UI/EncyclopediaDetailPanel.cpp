@@ -1212,7 +1212,8 @@ namespace {
                 % TextForGalaxySetupSetting(gsd.m_specials_freq)
                 % TextForGalaxySetupSetting(gsd.m_monster_freq)
                 % TextForGalaxySetupSetting(gsd.m_native_freq)
-                % TextForAIAggression(gsd.m_ai_aggr));
+                % TextForAIAggression(gsd.m_ai_aggr)
+                % gsd.m_game_uid);
 
             return;
         } else if (item_name == "ENC_GAME_RULES") {
