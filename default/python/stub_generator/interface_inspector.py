@@ -1,9 +1,8 @@
 import os
 from inspect import getdoc, isroutine
-from generate_stub import make_stub
+from logging import warn, error, debug
 
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+from generate_stub import make_stub
 
 
 def get_member_info(member):

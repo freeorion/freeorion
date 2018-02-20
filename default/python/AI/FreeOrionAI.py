@@ -1,10 +1,11 @@
 """The FreeOrionAI module contains the methods which can be made by the C AIInterface;
 these methods in turn activate other portions of the python AI code."""
-from common.configure_logging import redirect_logging_to_freeorion_logger, convenience_function_references_for_logger
+from logging import debug, info, error
+
+from common.configure_logging import redirect_logging_to_freeorion_logger
 
 # Logging is redirected before other imports so that import errors appear in log files.
 redirect_logging_to_freeorion_logger()
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 
 import sys
 import random

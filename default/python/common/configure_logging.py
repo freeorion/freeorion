@@ -7,9 +7,8 @@ logging messages of levels warning and above are decorated with module name, fil
 
 Usage:
 
-from common.configure_logging import redirect_logging_to_freeorion_logger, convenience_function_references_for_logger
+from common.configure_logging import redirect_logging_to_freeorion_logger
 redirect_logging_to_freeorion_logger(log_level)
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 
 Then use python logging or print and have it re-directed appropriately.
 
@@ -36,7 +35,7 @@ logging.getLogger().isEnableFor(logging.WARN)
 
 * One strength of the python standard logging library is the ability to create
   arbitrary hierarchical loggers.  Loggers are created globally when getLogger()
-  is called with any string.  The hierarchical levels are dot seperated.  The
+  is called with any string.  The hierarchical levels are dot separated.  The
   root logger is the empty string.  The following creates a logger:
 
 logging.getLogger("toplevel.2ndlevel")
@@ -72,12 +71,6 @@ DEBUG   - used for low-level implementation or calculation details.
 
 For more information about the python standard library logger see
 https://docs.python.org/2/howto/logging.html
-
-The function convenience_function_references_for_logger(name) returns the
-specific logging functions from the logger ''name'' which can be bound to
-convenient local functions, to avoid calling name.error() to produce an error
-log.
-
 """
 import sys
 import logging
@@ -228,9 +221,3 @@ def redirect_logging_to_freeorion_logger(initial_log_level=logging.DEBUG):
                     logging.getLevelName(logger.getEffectiveLevel()))
 
         redirect_logging_to_freeorion_logger.only_redirect_once = True
-
-
-def convenience_function_references_for_logger(name=""):
-    """Return a tuple (debug, info, warn, error, fatal) of the ''name'' logger's convenience functions."""
-    logger = logging.getLogger(name)
-    return (logger.debug, logger.info, logger.warning, logger.error, logger.critical)

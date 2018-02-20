@@ -1,5 +1,6 @@
 from heapq import heappush, heappop
 from collections import namedtuple
+from logging import warn, error
 
 import FreeOrionAI as foAI
 import freeOrionAIInterface as fo
@@ -8,11 +9,8 @@ import PlanetUtilsAI
 from AIDependencies import INVALID_ID
 from EnumsAI import MissionType
 from turn_state import state
-from common.configure_logging import convenience_function_references_for_logger
 from freeorion_tools import cache_by_session_with_turnwise_update, chat_human, get_partial_visibility_turn
 
-
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 _DEBUG_CHAT = False
 _ACCEPTABLE_DETOUR_LENGTH = 2000
 path_information = namedtuple('path_information', ['distance', 'fuel', 'path'])

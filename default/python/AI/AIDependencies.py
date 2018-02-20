@@ -20,8 +20,6 @@ Example usage:
     my_industry = AIDependencies.INDUSTRY_PER_POP * my_population
 """
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 # Note re common dictionary lookup structure, "PlanetSize-Dependent-Lookup":
 # Many dictionaries herein (a prime example being the building_supply dictionary) have a primary key (such as

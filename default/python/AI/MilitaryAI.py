@@ -11,9 +11,7 @@ import ProductionAI
 import CombatRatingsAI
 from freeorion_tools import cache_by_turn
 from AIDependencies import INVALID_ID
-from common.configure_logging import convenience_function_references_for_logger
 from turn_state import state
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 MinThreat = 10  # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
 _military_allocations = []

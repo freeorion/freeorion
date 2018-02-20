@@ -1,3 +1,5 @@
+from logging import info, warn
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 from fleet_orders import OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
@@ -13,8 +15,6 @@ from EnumsAI import MissionType
 from AIDependencies import INVALID_ID
 from freeorion_tools import get_partial_visibility_turn
 
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 ORDERS_FOR_MISSION = {
     MissionType.EXPLORATION: OrderMove,

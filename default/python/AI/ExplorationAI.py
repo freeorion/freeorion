@@ -1,3 +1,5 @@
+from logging import error
+
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client # pylint: disable=import-error
 import FreeOrionAI as foAI
 import FleetUtilsAI
@@ -7,10 +9,6 @@ import MoveUtilsAI
 import PlanetUtilsAI
 from AIDependencies import INVALID_ID
 from freeorion_tools import get_partial_visibility_turn
-
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
-
 
 graph_flags = set()
 border_unexplored_system_ids = set()

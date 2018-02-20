@@ -3,10 +3,9 @@ The TechsListAI module provides functions that describes dependencies between
 various technologies to help the AI decide which technologies should be
 researched next.
 """
-import freeOrionAIInterface as fo  # pylint: disable=import-error
+from logging import warn
 
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 
 def unusable_techs():

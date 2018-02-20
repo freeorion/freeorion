@@ -1,3 +1,5 @@
+from logging import warn, debug
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 import AIstate
@@ -7,9 +9,6 @@ import PlanetUtilsAI
 import pathfinding
 from AIDependencies import INVALID_ID, DRYDOCK_HAPPINESS_THRESHOLD
 from turn_state import state
-
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 
 def create_move_orders_to_system(fleet, target):
