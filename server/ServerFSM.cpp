@@ -2305,8 +2305,11 @@ sc::result PlayingGame::react(const EliminateSelf& msg) {
     ServerApp& server = Server();
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
-    if (player_connection->GetClientType() != Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CANNOT_ELIMINATE_NO_HUMAN_PLAYER"), true));
+    if (player_connection->GetClientType() != Networking::CLIENT_TYPE_HUMAN_PLAYER
+        && player_connection->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER)
+    {
+        WarnLogger(FSM) << "(ServerFSM) PlayingGame::EliminateSelf non-player connection " << player_connection->PlayerID();
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_NONPLAYER_CANNOT_CONCEDE"), true));
         server.Networking().Disconnect(player_connection);
         return discard_event();
     }
