@@ -144,6 +144,6 @@ def inspect(obj, instances, classes_to_ignore, path):
     debug("\n\nStart generating skeleton for %s\n\n" % obj.__name__)
     python_folder_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
     result_folder = os.path.join(python_folder_path, path)
-    result_path = os.path.join(result_folder, '%s.py' % obj.__name__)
+    result_path = os.path.join(result_folder, '%s.pyi' % obj.__name__)
     make_mock(_inspect(obj, instances), result_path, classes_to_ignore)
     debug("Skeleton written to %s" % result_path)
