@@ -48,7 +48,7 @@ namespace {
                           "", 0.0, true, RangedValidator<double>(0.0, 30.0));
         rules.Add<double>("RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR",
                           "RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR_DESC",
-                          "", 20.0, true, RangedValidator<double>(0.0, 30.0));
+                          "", 0.0, true, RangedValidator<double>(0.0, 30.0));
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 
