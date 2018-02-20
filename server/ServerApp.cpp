@@ -1635,16 +1635,25 @@ void ServerApp::EliminatePlayer(int player_id) {
     Empire* empire = GetEmpire(empire_id);
     if (!empire)
         return;
+
     empire->Eliminate();
 
     // unclaim ships and systems
-    for (auto& obj : Objects().FindObjects(OwnedVisitor<Planet>(empire_id)))
+    for (int planet_id : Objects().FindObjectIDs(OwnedVisitor<Planet>(empire_id))) {
+        auto planet = GetPlanet(planet_id);
+        if (planet)
+            planet->Reset();
+    }
+    for (auto& obj : Objects().FindObjects(OwnedVisitor<Ship>(empire_id))) {
         obj->SetOwner(ALL_EMPIRES);
-    for (auto& obj : Objects().FindObjects(OwnedVisitor<Ship>(empire_id)))
-        obj->SetOwner(ALL_EMPIRES);
+        GetUniverse().RecursiveDestroy(obj->ID());
+    }
 
     // Don't wait for turn
     RemoveEmpireTurn(empire_id);
+
+    // break link between player and empire
+    m_player_empire_ids.erase(player_id);
 }
 
 void ServerApp::DropPlayerEmpireLink(int player_id)
