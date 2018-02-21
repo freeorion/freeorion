@@ -85,7 +85,7 @@ def inspect_universe_generation():
             'FleetPlan', 'GGColor', 'MonsterFleetPlan', 'PlayerSetupData', 'ShipPartMeterMap', 'ShipSlotVec',
             'VisibilityIntMap', 'diplomaticMessage', 'diplomaticStatusUpdate', 'meter',
         ),
-        path='universe_generation'
+        path=''
     )
     # fo.sys_get_star_type(system),
     # fo.planet_get_size(pid),
