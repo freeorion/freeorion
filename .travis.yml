@@ -13,6 +13,16 @@ matrix:
         # Auth token to push API documentation
         - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
     - os: linux
+      language: python
+      python: 2.7.14
+      install:
+        - pip install pytest==3.4.0
+      script:
+        - pytest
+      before_script: echo ""
+      before_cache: echo ""
+      env: NAME="Pytest"
+    - os: linux
       services:
         - docker
       env:
@@ -56,14 +66,14 @@ before_script:
   - |
     # Make certain ~/.ccache exists
     mkdir -p $HOME/.ccache;
-    
+
     if [ -e /Users/travis/.ccache/ccache.conf ]; then
        echo "Show global /Users/travis/.ccache/ccache.conf"
        more /Users/travis/.ccache/ccache.conf
     else
        echo "Missing global /Users/travis/.ccache/ccache.conf"
     fi;
-    
+
     if [ -e $HOME/.ccache/ccache.conf ]; then
        echo "Show local $HOME/.ccache/ccache.conf"
        more $HOME/.ccache/ccache.conf
