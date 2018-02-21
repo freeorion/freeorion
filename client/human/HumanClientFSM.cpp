@@ -606,7 +606,17 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
     boost::posix_time::ptime timestamp;
     ExtractServerPlayerChatMessageData(msg.m_message, sending_player_id, timestamp, text);
 
-    Client().GetClientUI().GetMessageWnd()->HandlePlayerChatMessage(text, sending_player_id, timestamp, Client().PlayerID());
+    std::string player_name{UserString("PLAYER") + " " + std::to_string(sending_player_id)};
+    GG::Clr text_color{Client().GetClientUI().TextColor()};
+    auto players = Client().Players();
+    auto player_it = players.find(sending_player_id);
+    if (player_it != players.end()) {
+        player_name = player_it->second.name;
+        if (auto empire = GetEmpire(player_it->second.empire_id))
+            text_color = empire->Color();
+    }
+
+    Client().GetClientUI().GetMessageWnd()->HandlePlayerChatMessage(text, player_name, text_color, timestamp, Client().PlayerID());
 
     return discard_event();
 }

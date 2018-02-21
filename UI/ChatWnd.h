@@ -24,7 +24,8 @@ public:
     void PreRender() override;
 
     void            HandlePlayerChatMessage(const std::string& text,
-                                            int sender_player_id,
+                                            const std::string& player_name,
+                                            GG::Clr text_color,
                                             const boost::posix_time::ptime& timestamp,
                                             int recipient_player_id);
     void            HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id);
