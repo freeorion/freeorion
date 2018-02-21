@@ -107,7 +107,7 @@ known_types = {'boost_class',
                'instance'}
 
 
-def make_mock(data, result_path, classes_to_ignore):
+def make_stub(data, result_path, classes_to_ignore):
     groups = {}
     for info in data:
         if info['type'] in known_types:

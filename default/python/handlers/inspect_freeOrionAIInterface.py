@@ -2,7 +2,7 @@ import PlanetUtilsAI
 import freeOrionAIInterface as fo
 
 from common.listeners import register_pre_handler
-from interface_mock import inspect
+from stub_generator import inspect
 
 
 def inspect_ai_interface():

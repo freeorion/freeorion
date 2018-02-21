@@ -1,4 +1,4 @@
-from interface_mock import inspect
+from stub_generator import inspect
 
 
 def inspect_universe_generation():
@@ -113,7 +113,7 @@ def inspect_universe_generation():
 # Traceback (most recent call last):
 # File "f:\projects\FreeOrion\default/python/universe_generation\universe_generator.py", line 163, in create_universe
 #  inspect_universe_generation()
-# File "f:\projects\FreeOrion\default/python\interface_mock\mock_functions.py", line 27, in inspect_universe_generation
+# File "f:\projects\FreeOrion\default/python\interface_stub\stub_functions.py", line 27, in inspect_universe_generation
 #  meter = ship.getMeter(fo.meterType.maxFuel)
 # Boost.Python.ArgumentError: Python argument types in
 #  ship.getMeter(ship, meterType)
