@@ -258,6 +258,7 @@ struct FO_COMMON_API ChatHistoryEntity {
     boost::posix_time::ptime m_timestamp;
     std::string m_player_name;
     std::string m_text;
+    GG::Clr m_text_color;
 
 private:
     friend class boost::serialization::access;

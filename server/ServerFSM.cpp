@@ -1326,7 +1326,13 @@ sc::result MPLobby::react(const PlayerChat& msg) {
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
 
     if (sender->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER) {
-        server.PushChatMessage(timestamp, sender->PlayerName(), data);
+        GG::Clr text_color(255, 255, 255, 0);
+        for (const auto& player : m_lobby_data->m_players) {
+            if (player.first != sender->PlayerID())
+                continue;
+            text_color = player.second.m_empire_color;
+        }
+        server.PushChatMessage(data, sender->PlayerName(), text_color, timestamp);
     }
 
     if (receiver == Networking::INVALID_PLAYER_ID) { // the receiver is everyone
@@ -1975,7 +1981,11 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
 
     if (sender->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER) {
-        server.PushChatMessage(timestamp, sender->PlayerName(), data);
+        GG::Clr text_color(255, 255, 255, 0);
+        if (auto empire = GetEmpire(sender->PlayerID()))
+            text_color = empire->Color();
+
+        server.PushChatMessage(data, sender->PlayerName(), text_color, timestamp);
     }
 
     for (auto it = server.m_networking.established_begin();

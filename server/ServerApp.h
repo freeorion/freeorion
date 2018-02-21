@@ -241,9 +241,10 @@ public:
     /** Send the requested combat logs to the client.*/
     void UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_connection);
 
-    void PushChatMessage(const boost::posix_time::ptime& timestamp,
+    void PushChatMessage(const std::string& text,
                          const std::string& player_name,
-                         const std::string& msg);
+                         GG::Clr text_color,
+                         const boost::posix_time::ptime& timestamp);
 
     ServerNetworking&           Networking();     ///< returns the networking object for the server
 
