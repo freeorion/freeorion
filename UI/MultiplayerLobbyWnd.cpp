@@ -831,10 +831,8 @@ void MultiPlayerLobbyWnd::DoLayout() {
     g_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - CONTROL_MARGIN - PREVIEW_MARGIN, GG::Y(CONTROL_MARGIN + PREVIEW_MARGIN));
     m_preview_image->SizeMove(g_preview_ul, g_preview_ul + PREVIEW_SZ);
 
-    x = CHAT_WIDTH + CONTROL_MARGIN;
-    GG::Y y = std::max(m_save_file_text->RelativeLowerRight().y, m_preview_image->RelativeLowerRight().y) + 7*CONTROL_MARGIN;
-
-    GG::Pt any_can_edit_ul(x, y);
+    GG::Pt any_can_edit_ul(m_preview_image->RelativeUpperLeft().x + CONTROL_MARGIN,
+                           m_preview_image->RelativeLowerRight().y + CONTROL_MARGIN);
     GG::Pt any_can_edit_lr = any_can_edit_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, RADIO_BN_HT);
     m_any_can_edit->SizeMove(any_can_edit_ul, any_can_edit_lr);
 
@@ -847,8 +845,9 @@ void MultiPlayerLobbyWnd::DoLayout() {
     m_ready_bn->MoveTo(GG::Pt(m_cancel_bn->RelativeUpperLeft().x - CONTROL_MARGIN - m_ready_bn->Width(),
                               ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
 
-    y += CONTROL_MARGIN + RADIO_BN_HT;
-    GG::Pt players_lb_ul(x, y);
+    x = CHAT_WIDTH + CONTROL_MARGIN;
+    GG::Y y(std::max(m_save_file_text->RelativeLowerRight().y, m_browse_saves_btn->RelativeLowerRight().y));
+    GG::Pt players_lb_ul(x, std::max(y, m_any_can_edit->RelativeLowerRight().y) + CONTROL_MARGIN);
     GG::Pt players_lb_lr(ClientWidth() - CONTROL_MARGIN, m_cancel_bn->RelativeUpperLeft().y - CONTROL_MARGIN);
     m_players_lb->SizeMove(players_lb_ul, players_lb_lr);
     std::vector<GG::X> players_lb_col_widths = PlayerRowColWidths(players_lb_lr.x - players_lb_ul.x);
