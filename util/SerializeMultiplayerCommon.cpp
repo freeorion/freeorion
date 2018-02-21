@@ -64,6 +64,12 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
     if (version >= 2)
         return;
 
+    legacy_serialize(ar, version);
+}
+
+template <class Archive>
+void SaveGameUIData::legacy_serialize(Archive& ar, const unsigned int version)
+{
     if (!Archive::is_loading::value)
         return;
 
