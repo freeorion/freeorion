@@ -31,8 +31,8 @@ public:
     /** Helper struct for parsing tech definitions */
     struct TechInfo {
         TechInfo();
-        TechInfo(const std::string& name_, const std::string& description_, const std::string& short_description_,
-                 const std::string& category_,
+        TechInfo(const std::string& name_, const std::string& description_,
+                 const std::string& short_description_, const std::string& category_,
                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_cost_,
                  std::unique_ptr<ValueRef::ValueRefBase<int>>&& research_turns_,
                  bool researchable_,
@@ -50,21 +50,23 @@ public:
     };
 
     /** \name Structors */ //@{
-    Tech(const std::string& name, const std::string& description, const std::string& short_description,
-         const std::string& category,
+    Tech(const std::string& name, const std::string& description,
+         const std::string& short_description, const std::string& category,
          std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_cost,
          std::unique_ptr<ValueRef::ValueRefBase<int>>&& research_turns,
          bool researchable,
          const std::set<std::string>& tags,
          const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
-         const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
+         const std::set<std::string>& prerequisites,
+         const std::vector<ItemSpec>& unlocked_items,
          const std::string& graphic);
 
     /** basic ctor taking helper struct to reduce number of direct parameters
       * in order to making parsing work. */
     Tech(TechInfo& tech_info,
          std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-         const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
+         const std::set<std::string>& prerequisites,
+         const std::vector<ItemSpec>& unlocked_items,
          const std::string& graphic);
 
     ~Tech();
@@ -276,7 +278,7 @@ public:
 private:
     TechManager();
 
-    /** Assigns any m_pending_types to m_specials. */
+    /** Assigns any m_pending_types to m_techs. */
     void CheckPendingTechs() const;
 
     /** returns an error string indicating the first instance of an illegal prerequisite relationship between
@@ -297,10 +299,10 @@ private:
         be assigned to m_species_types when completed.*/
     mutable boost::optional<Pending::Pending<TechParseTuple>> m_pending_types = boost::none;
 
-    mutable TechCategoryMap                         m_categories;
-    mutable TechContainer                           m_techs;
+    mutable TechCategoryMap m_categories;
+    mutable TechContainer   m_techs;
 
-    static TechManager*                     s_instance;
+    static TechManager*     s_instance;
 };
 
 /** returns the singleton tech manager */

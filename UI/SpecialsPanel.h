@@ -15,26 +15,21 @@ public:
 
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
-
-    int                     ObjectID() const { return m_object_id; }
+    int  ObjectID() const { return m_object_id; }
     //@}
 
     /** \name Mutators */ //@{
     void Render() override;
-
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
-
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-
     bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
-
-    void                    Update();          ///< regenerates indicators according specials on object
+    void Update();          ///< regenerates indicators according specials on object
     //@}
 
 private:
-    void                    SpecialRightClicked(const std::string& name);
+    void SpecialRightClicked(const std::string& name);
 
-    int                                     m_object_id;        ///< id for the Object whose specials this panel displays
+    int                                                     m_object_id;    ///< id for the Object whose specials this panel displays
     std::map<std::string, std::shared_ptr<StatisticIcon>>   m_icons;
 };
 
