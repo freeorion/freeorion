@@ -403,6 +403,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     pop = planet.currentMeterValue(fo.meterType.population)
     target_pop = planet.currentMeterValue(fo.meterType.targetPopulation)
     troops = planet.currentMeterValue(fo.meterType.troops)
+    troop_regen = planet.currentMeterValue(fo.meterType.troops) - planet.initialMeterValue(fo.meterType.troops)
     max_troops = planet.currentMeterValue(fo.meterType.maxTroops)
     # TODO: refactor troop determination into function for use in mid-mission updates and also consider defender techs
     max_troops += AIDependencies.TROOPS_PER_POP * (target_pop - pop)
@@ -443,7 +444,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     if not locs or not universe.getPlanet(locs[0]):
         # We are in trouble anyway, so just calculate whatever approximation...
         build_time = 4
-        planned_troops = troops if system_secured else min(troops + max_jumps + build_time, max_troops)
+        planned_troops = troops if system_secured else min(troops + troop_regen*(max_jumps + build_time), max_troops)
         planned_troops += .01  # we must attack with more troops than there are defenders
         troop_cost = math.ceil((planned_troops+_TROOPS_SAFETY_MARGIN) / 6.0) * 20 * FleetUtilsAI.get_fleet_upkeep()
     else:
@@ -454,7 +455,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         build_time = design.productionTime(empire_id, loc)
         troops_per_ship = CombatRatingsAI.weight_attack_troops(design.troopCapacity,
                                                                CombatRatingsAI.get_species_troops_grade(species_here))
-        planned_troops = troops if system_secured else min(troops + max_jumps + build_time, max_troops)
+        planned_troops = troops if system_secured else min(troops + troop_regen*(max_jumps + build_time), max_troops)
         planned_troops += .01  # we must attack with more troops than there are defenders
         ships_needed = math.ceil((planned_troops+_TROOPS_SAFETY_MARGIN) / float(troops_per_ship))
         troop_cost = ships_needed * cost_per_ship  # fleet upkeep is already included in query from server
