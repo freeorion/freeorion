@@ -225,8 +225,7 @@ namespace {
         manifest_grammar(const parse::lexer& tok,
                          const std::string& filename,
                          const parse::text_iterator& first, const parse::text_iterator& last) :
-            manifest_grammar::base_type(start),
-            labeller(tok)
+            manifest_grammar::base_type(start)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -238,10 +237,11 @@ namespace {
             qi::_3_type _3;
             qi::_4_type _4;
             qi::_r1_type _r1;
+            qi::omit_type omit_;
 
             species_manifest
-                =    tok.SpeciesCensusOrdering_
-                >    *(labeller.rule(Tag_token)       > tok.string [ push_back(_r1, _1) ])
+                =    omit_[tok.SpeciesCensusOrdering_]
+                >    *(label(tok.Tag_) > tok.string [ push_back(_r1, _1) ])
                 ;
 
             start
@@ -260,7 +260,7 @@ namespace {
         using manifest_rule = parse::detail::rule<void (std::vector<std::string>&)>;
         using start_rule = parse::detail::rule<manifest_start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         manifest_rule species_manifest;
         start_rule start;
     };
