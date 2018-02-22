@@ -945,7 +945,8 @@ namespace {
             ConditionCache&                    cached_condition_matches,
             std::shared_ptr<const UniverseObject> source,
             const ScriptingContext&            source_context,
-            Effect::TargetSet&                 target_objects);
+            Effect::TargetSet&                 target_objects,
+			std::string&					   match_log);
     };
 
     StoreTargetsAndCausesOfEffectsGroupsWorkItem::StoreTargetsAndCausesOfEffectsGroupsWorkItem(
@@ -1031,7 +1032,8 @@ namespace {
         StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache&   cached_condition_matches,
         std::shared_ptr<const UniverseObject>                           source,
         const ScriptingContext&                                         source_context,
-        Effect::TargetSet&                                              target_objects)
+        Effect::TargetSet&                                              target_objects,
+		std::string&													match_log)
     {
         std::pair<bool, Effect::TargetSet>* cache_entry = nullptr;
 
@@ -1068,18 +1070,19 @@ namespace {
             target_objects.insert(target_objects.end(), target_set->begin(), target_set->end());
         }
 
+        // log condition scope matches, except for Source
+        if (cond->Description() != " that is the source object") {  // TODO: derive this comparison text
+            std::stringstream ss;
+            ss << "\nGenerated new target set, for Condition: " << cond->Description() << "    targets: (";
+            for (const auto& obj : *target_set)
+                ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
+            ss << ")";
+            match_log.append(ss.str());
+        }
+
         cached_condition_matches.MarkComplete(cache_entry);
 
-        // log condition scope matches
-        TraceLogger(effects) << "Generated new target set, for Condition: " << cond->Description();
-        std::stringstream ss;
-        ss << "    targets: (";
-        for (const auto& obj : *target_set)
-            ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
-        ss << ")";
-        TraceLogger(effects) << ss.str();
-
-        return *target_set; 
+        return *target_set;
     }
 
     std::string StoreTargetsAndCausesOfEffectsGroupsWorkItem::GenerateReport() const {
@@ -1099,15 +1102,17 @@ namespace {
     {
         ScopedTimer timer("StoreTargetsAndCausesOfEffectsGroups");
 
-        TraceLogger(effects) << GenerateReport();
 
         // get objects matched by scope
         const Condition::ConditionBase* scope = m_effects_group->Scope();
-        if (!scope)
+        if (!scope) {
+            TraceLogger(effects) << GenerateReport();
             return;
+        }
 
         // create temporary container for concurrent work
         Effect::TargetSet target_objects(*m_target_objects);
+        std::string match_log;
         // process all sources in set provided
         for (auto& source : *m_sources) {
             ScriptingContext source_context(source);
@@ -1132,7 +1137,8 @@ namespace {
                                                                 *condition_cache,
                                                                 source,
                                                                 source_context,
-                                                                target_objects);
+                                                                target_objects,
+                                                                match_log);
             {
                 boost::shared_lock<boost::shared_mutex> cache_guard;
 
@@ -1142,6 +1148,8 @@ namespace {
             }
 
             {
+                TraceLogger(effects) << GenerateReport() << match_log;
+
                 // NOTE: std::shared_ptr copying is not thread-safe.
                 // FIXME: use std::shared_ptr here, or a dedicated lock
                 boost::unique_lock<boost::shared_mutex> guard(*m_global_mutex);
