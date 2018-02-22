@@ -1070,7 +1070,15 @@ namespace {
 
         cached_condition_matches.MarkComplete(cache_entry);
 
-        //DebugLogger() << "Generated new target set!";
+        // log condition scope matches
+        TraceLogger(effects) << "Generated new target set, for Condition: " << cond->Description();
+        std::stringstream ss;
+        ss << "    targets: (";
+        for (const auto& obj : *target_set)
+            ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
+        ss << ")";
+        TraceLogger(effects) << ss.str();
+
         return *target_set; 
     }
 
