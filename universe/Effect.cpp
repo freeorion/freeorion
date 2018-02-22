@@ -260,6 +260,7 @@ bool EffectsGroup::HasSitrepEffects() const {
 }
 
 void EffectsGroup::SetTopLevelContent(const std::string& content_name) {
+    m_content_name = content_name;
     if (m_scope)
         m_scope->SetTopLevelContent(content_name);
     if (m_activation)

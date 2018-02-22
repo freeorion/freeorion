@@ -1615,8 +1615,8 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
             if (group_targets_causes.empty())
                 continue;
 
-            TraceLogger(effects) << "\n\n * * * * * * * * * * * (new effects group log entry)(" 
-                                 << effects_group->AccountingLabel() << " " << effects_group->StackingGroup() << ")";
+            TraceLogger(effects) << "\n\n * * * * * * * * * * * (new effects group log entry)(" << effects_group->TopLevelContent()
+                                 << " " << effects_group->AccountingLabel() << " " << effects_group->StackingGroup() << ")";
 
             // execute Effects in the EffectsGroup
             effects_group->Execute(group_targets_causes,
