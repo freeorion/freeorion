@@ -84,6 +84,7 @@ namespace FreeOrionPython {
             .value("maxDamage",         METER_MAX_CAPACITY)
             .value("maxCapacity",       METER_MAX_CAPACITY)
             .value("maxSecondaryStat",  METER_MAX_SECONDARY_STAT)
+            .value("maxNoisiness",      METER_MAX_NOISINESS)
 
             .value("maxFuel",           METER_MAX_FUEL)
             .value("maxShield",         METER_MAX_SHIELD)
@@ -103,6 +104,7 @@ namespace FreeOrionPython {
             .value("damage",            METER_CAPACITY)
             .value("capacity",          METER_CAPACITY)
             .value("secondaryStat",     METER_SECONDARY_STAT)
+            .value("noisiness",         METER_NOISINESS)
 
             .value("fuel",              METER_FUEL)
             .value("shield",            METER_SHIELD)
@@ -116,6 +118,7 @@ namespace FreeOrionPython {
             .value("size",              METER_SIZE)
             .value("stealth",           METER_STEALTH)
             .value("detection",         METER_DETECTION)
+            .value("battleDetection",   METER_BATTLE_DETECTION)
             .value("speed",             METER_SPEED)
         ;
         enum_<DiplomaticStatus>("diplomaticStatus")
@@ -174,6 +177,7 @@ namespace FreeOrionPython {
             .value("research",          PC_RESEARCH)
             .value("trade",             PC_TRADE)
             .value("productionLocation",PC_PRODUCTION_LOCATION)
+            .value("battleScanner",     PC_BATTLE_SCANNER)
         ;
         enum_<UnlockableItemType>("unlockableItemType")
             .value("invalid",       INVALID_UNLOCKABLE_ITEM_TYPE)

@@ -572,6 +572,7 @@ std::string SetMeter::Dump(unsigned short ntabs) const {
     case METER_SIZE:                retval += "Size"; break;
     case METER_STEALTH:             retval += "Stealth"; break;
     case METER_DETECTION:           retval += "Detection"; break;
+    case METER_BATTLE_DETECTION:    retval += "BattleDetection"; break;
     case METER_SPEED:               retval += "Speed"; break;
 
     default:                        retval += "?"; break;
@@ -744,7 +745,9 @@ std::string SetShipPartMeter::Dump(unsigned short ntabs) const {
         case METER_MAX_CAPACITY:        retval += "SetMaxCapacity";     break;
         case METER_SECONDARY_STAT:      retval += "SetSecondaryStat";   break;
         case METER_MAX_SECONDARY_STAT:  retval += "SetMaxSecondaryStat";break;
-        default:                retval += "Set???";         break;
+        case METER_NOISINESS:           retval += "SetNoisiness";       break;
+        case METER_MAX_NOISINESS:       retval += "SetMaxNoisiness";    break;
+        default:                        retval += "Set???";             break;
     }
 
     if (m_part_name)

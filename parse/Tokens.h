@@ -30,6 +30,8 @@
     (Attack)                                    \
     (Barren)                                    \
     (Basic)                                     \
+    (BattleDetection)                           \
+    (BattleScanner)                             \
     (BlackHole)                                 \
     (Blue)                                      \
     (Bombard)                                   \
@@ -252,6 +254,7 @@
     (NextTurnPopGrowth)                         \
     (NextYoungerStarType)                       \
     (NoDefaultCapacityEffect)                   \
+    (Noisiness)                                 \
     (None)                                      \
     (NoOp)                                      \
     (NoStar)                                    \
@@ -288,7 +291,8 @@
     (PartDamage)                                \
     (Partial)                                   \
     (PartName)                                  \
-    (PartSecondaryStat)
+    (PartSecondaryStat)                         \
+    (PartNoisiness)
 
 #define TOKEN_SEQ_9                             \
     (Parts)                                     \
@@ -355,6 +359,7 @@
 
 #define TOKEN_SEQ_11                            \
     (SetAggressive)                             \
+    (SetBattleDetection)                        \
     (SetCapacity)                               \
     (SetConstruction)                           \
     (SetDamage)                                 \
@@ -377,6 +382,7 @@
     (SetMaxStockpile)                           \
     (SetMaxStructure)                           \
     (SetMaxSupply)                              \
+    (SetMaxNoisiness)                           \
     (SetMaxTroops)                              \
     (SetOverlayTexture)                         \
     (SetOwner)                                  \
@@ -407,6 +413,7 @@
     (SetTargetPopulation)                       \
     (SetTargetResearch)                         \
     (SetTargetTrade)                            \
+    (SetNoisiness)                              \
     (SetTexture)                                \
     (SetTrade)                                  \
     (SetTroops)                                 \

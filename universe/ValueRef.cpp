@@ -227,12 +227,15 @@ namespace {
             meter_name_map["MaxStockpile"] =       METER_MAX_STOCKPILE;
             meter_name_map["Stealth"] =            METER_STEALTH;
             meter_name_map["Detection"] =          METER_DETECTION;
+            meter_name_map["BattleDetection"] =    METER_BATTLE_DETECTION;
             meter_name_map["Speed"] =              METER_SPEED;
             meter_name_map["Damage"] =             METER_CAPACITY;
             meter_name_map["Capacity"] =           METER_CAPACITY;
             meter_name_map["MaxCapacity"] =        METER_MAX_CAPACITY;
             meter_name_map["SecondaryStat"] =      METER_SECONDARY_STAT;
             meter_name_map["MaxSecondaryStat"] =   METER_MAX_SECONDARY_STAT;
+            meter_name_map["Noisiness"] =          METER_NOISINESS;
+            meter_name_map["MaxNoisiness"] =       METER_MAX_NOISINESS;
             meter_name_map["Size"] =               METER_SIZE;
         }
         return meter_name_map;
@@ -2025,8 +2028,19 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             return 0.0;
 
         return part_type->SecondaryStat();
-
     }
+    else if (variable_name == "PartNoisiness") {
+        std::string part_type_name;
+        if (m_string_ref1)
+            part_type_name = m_string_ref1->Eval(context);
+
+        const PartType* part_type = GetPartType(part_type_name);
+        if (!part_type)
+            return 0.0;
+
+        return part_type->Noisiness();
+    }
+
     else if (variable_name == "EmpireMeterValue") {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1)
@@ -2547,7 +2561,8 @@ std::string ComplexVariable<double>::Dump(unsigned short ntabs) const
              variable_name == "HullStructure" ||
              variable_name == "HullSpeed" ||
              variable_name == "PartCapacity" ||
-             variable_name == "PartSecondaryStat")
+             variable_name == "PartSecondaryStat" ||
+             variable_name == "PartTertiaryStat")
     {
         if (!m_string_ref1)
             retval += " name = " + m_string_ref1->Dump(ntabs);

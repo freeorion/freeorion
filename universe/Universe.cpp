@@ -1515,7 +1515,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     ScopedTimer timer("Universe::ExecuteEffects", true);
 
     m_marked_destroyed.clear();
-    std::map< std::string, std::set<int>> executed_nonstacking_effects;
+    std::map<std::string, std::set<int>> executed_nonstacking_effects;
 
     // grouping targets causes by effects group
     // sorting by effects group has already been done in GetEffectsAndTargets()
@@ -1600,6 +1600,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                 continue;
 
             TraceLogger(effects) << "\n\n * * * * * * * * * * * (new effects group log entry)";
+            TraceLogger(effects) << "EffectsGroup: " << effects_group->Dump();
 
             // execute Effects in the EffectsGroup
             effects_group->Execute(group_targets_causes,

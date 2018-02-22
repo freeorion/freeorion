@@ -12,5 +12,6 @@ WEAPON_BASE_DEFAULT_EFFECTS
             effects = [
                 SetMaxCapacity partname = "@1@" value = Value + PartCapacity name = "@1@"
                 SetMaxSecondaryStat partname = "@1@" value = Value + PartSecondaryStat name = "@1@"
+                SetMaxNoisiness partname = "@1@" value = Value + PartNoisiness name = "@1@"
             ]
 '''

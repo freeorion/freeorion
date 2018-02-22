@@ -44,6 +44,7 @@ namespace {
             return GG::Clr(168, 107, 0, 255);
             break;
         case METER_DETECTION:
+        case METER_BATTLE_DETECTION:
             return GG::Clr(191, 255, 0, 255);
             break;
         case METER_STEALTH:

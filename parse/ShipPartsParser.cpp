@@ -13,6 +13,7 @@
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
 
+#include <tuple>
 #include <boost/spirit/include/phoenix.hpp>
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>
@@ -31,9 +32,21 @@ namespace std {
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
+    struct Stats {
+        Stats() {}
+        Stats(double stat1_, double stat2_, double stat3_) :
+            stat1(stat1_),
+            stat2(stat2_),
+            stat3(stat3_)
+        {}
+        double stat1 = 0.0;
+        double stat2 = 0.0;
+        double stat3 = 0.0;
+    };
+
     void insert_parttype(std::map<std::string, std::unique_ptr<PartType>>& part_types,
                          ShipPartClass part_class,
-                         std::pair<double, double> capacity_and_stat2,
+                         const Stats& stats,
                          const parse::detail::MovableEnvelope<CommonParams>& common_params,
                          const MoreCommonParams& more_common_params,
                          std::vector<ShipSlotType> mountable_slot_types,
@@ -42,7 +55,7 @@ namespace {
                          bool& pass)
     {
         auto part_type = boost::make_unique<PartType>(
-            part_class, capacity_and_stat2.first, capacity_and_stat2.second,
+            part_class, stats.stat1, stats.stat2, stats.stat3,
             *common_params.OpenEnvelope(pass), more_common_params, mountable_slot_types, icon,
             add_standard_capacity_effect);
 
@@ -55,8 +68,7 @@ namespace {
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
-        grammar(const parse::lexer& tok,
-                const std::string& filename,
+        grammar(const parse::lexer& tok, const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
             labeller(tok),
@@ -104,7 +116,7 @@ namespace {
             part_type
                 = ( tok.Part_
                 >   common_rules.more_common
-                    [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
+                    [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1]
                 >   labeller.rule(Class_token)       > ship_part_class_enum [ _c = _1 ]
                 > (  (labeller.rule(Capacity_token)  > double_rule [ _d = _1 ])
                    | (labeller.rule(Damage_token)    > double_rule [ _d = _1 ])
@@ -114,14 +126,17 @@ namespace {
                    | (labeller.rule(Shots_token)     > double_rule [ _h = _1 ])   // shots is secondary for direct fire weapons
                    |  eps [ _h = 1.0 ]
                   )
+                > (  (labeller.rule(Noisiness_token) >
+                      double_rule [ _i = construct<Stats>(_d, _h, _1) ])   // noisiness for weapons / fighter bays
+                   |  eps [ _i = construct<Stats>(_d, _h, 1.0) ]
+                  )
                 > (   tok.NoDefaultCapacityEffect_ [ _g = false ]
                    |  eps [ _g = true ]
                   )
                 >   slots(_f)
-                >   common_rules.common           [ _e = _1 ]
+                >   common_rules.common [ _e = _1 ]
                 >   labeller.rule(Icon_token)        > tok.string    [ _b = _1 ]
-                  ) [ _i = construct<std::pair<double, double>>(_d, _h),
-                      insert_parttype_(_r1, _c, _i, _e, _a, _f, _b, _g, _pass) ]
+                  ) [ insert_parttype_(_r1, _c, _i, _e, _a, _f, _b, _g, _pass) ]
                 ;
 
             start
@@ -146,31 +161,31 @@ namespace {
         typedef parse::detail::rule<
             void (start_rule_payload&),
             boost::spirit::qi::locals<
-                MoreCommonParams,
-                std::string,
-                ShipPartClass,
-                double,
-                parse::detail::MovableEnvelope<CommonParams>,
-                std::vector<ShipSlotType>,
-                bool,
-                double,
-                std::pair<double, double>
+                MoreCommonParams,           // _a_type
+                std::string,                // _b_type
+                ShipPartClass,              // _c_type
+                double,                     // _d_type
+                parse::detail::MovableEnvelope<CommonParams>,   // _e_type
+                std::vector<ShipSlotType>,  // _f_type
+                bool,                       // _g_type
+                double,                     // _h_type
+                Stats                       // _i_type
             >
         > part_type_rule;
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
-        const parse::conditions_parser_grammar condition_parser;
-        const parse::string_parser_grammar string_grammar;
-        parse::detail::tags_grammar tags_parser;
-        parse::detail::common_params_rules common_rules;
-        parse::ship_slot_enum_grammar  ship_slot_type_enum;
-        parse::ship_part_class_enum_grammar ship_part_class_enum;
-        parse::detail::double_grammar double_rule;
-        slots_rule                         slots;
-        part_type_rule                     part_type;
-        start_rule                         start;
+        parse::detail::Labeller                 labeller;
+        const parse::conditions_parser_grammar  condition_parser;
+        const parse::string_parser_grammar      string_grammar;
+        parse::detail::tags_grammar             tags_parser;
+        parse::detail::common_params_rules      common_rules;
+        parse::ship_slot_enum_grammar           ship_slot_type_enum;
+        parse::ship_part_class_enum_grammar     ship_part_class_enum;
+        parse::detail::double_grammar           double_rule;
+        slots_rule                              slots;
+        part_type_rule                          part_type;
+        start_rule                              start;
     };
 
 }

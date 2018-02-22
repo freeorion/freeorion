@@ -71,7 +71,7 @@ namespace parse {
             |   tok.Industry_           [ _val = PC_INDUSTRY ]
             |   tok.Trade_              [ _val = PC_TRADE ]
             |   tok.ProductionLocation_ [ _val = PC_PRODUCTION_LOCATION ]
-
+            |   tok.BattleScanner_      [ _val = PC_BATTLE_SCANNER ]
             ;
     }
 
@@ -140,12 +140,13 @@ namespace parse {
             |   tok.Supply_                 [ _val = METER_SUPPLY ]
             |   tok.Stockpile_              [ _val = METER_STOCKPILE ]
 
-            |   tok.RebelTroops_            [ _val = METER_REBEL_TROOPS ]
-            |   tok.Stealth_                [ _val = METER_STEALTH ]
-            |   tok.Detection_              [ _val = METER_DETECTION ]
-            |   tok.Speed_                  [ _val = METER_SPEED ]
+            |    tok.RebelTroops_           [ _val = METER_REBEL_TROOPS ]
+            |    tok.Stealth_               [ _val = METER_STEALTH ]
+            |    tok.Detection_             [ _val = METER_DETECTION ]
+            |    tok.BattleDetection_       [ _val = METER_BATTLE_DETECTION ]
+            |    tok.Speed_                 [ _val = METER_SPEED ]
 
-            |   tok.Size_                   [ _val = METER_SIZE ]
+            |    tok.Size_                  [ _val = METER_SIZE ]
 
             ;
     }
@@ -199,6 +200,7 @@ namespace parse {
             |   tok.SetRebelTroops_         [ _val = METER_REBEL_TROOPS ]
             |   tok.SetStealth_             [ _val = METER_STEALTH ]
             |   tok.SetDetection_           [ _val = METER_DETECTION ]
+            |   tok.SetBattleDetection_     [ _val = METER_BATTLE_DETECTION ]
             |   tok.SetSpeed_               [ _val = METER_SPEED ]
 
             |   tok.SetSize_                [ _val = METER_SIZE ]
@@ -213,10 +215,11 @@ namespace parse {
             =   tok.SetMaxCapacity_         [ _val = METER_MAX_CAPACITY ]
             |   tok.SetMaxDamage_           [ _val = METER_MAX_CAPACITY ]
             |   tok.SetMaxSecondaryStat_    [ _val = METER_MAX_SECONDARY_STAT ]
+            |   tok.SetMaxNoisiness_        [ _val = METER_MAX_NOISINESS ]
             |   tok.SetCapacity_            [ _val = METER_CAPACITY ]
             |   tok.SetDamage_              [ _val = METER_CAPACITY ]
             |   tok.SetSecondaryStat_       [ _val = METER_SECONDARY_STAT ]
-
+            |   tok.SetNoisiness_           [ _val = METER_NOISINESS ]
             ;
     }
 

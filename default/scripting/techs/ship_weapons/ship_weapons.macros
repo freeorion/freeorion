@@ -6,6 +6,7 @@ WEAPON_BASE_EFFECTS
             effects = [
                 SetMaxCapacity partname = "@1@" value = Value + PartCapacity name = "@1@"
                 SetMaxSecondaryStat partname = "@1@" value = Value + PartSecondaryStat name = "@1@"
+                SetMaxNoisiness partname = "@1@" value = Value + PartNoisiness name = "@1@"
             ]
 
 // The following is really only needed on the first resupplied turn after an upgrade is researched, since the resupply currently

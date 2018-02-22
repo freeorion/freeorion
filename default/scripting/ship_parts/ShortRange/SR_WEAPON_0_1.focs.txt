@@ -4,6 +4,7 @@ Part
     class = ShortRange
     damage = 1
     shots = 3
+    noisiness = 3
     NoDefaultCapacityEffect
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]

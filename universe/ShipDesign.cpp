@@ -158,6 +158,7 @@ namespace CheckSums {
     }
 }
 
+
 ////////////////////////////////////////////////
 // Free Functions                             //
 ////////////////////////////////////////////////
@@ -295,6 +296,7 @@ PartType::PartType() :
     m_class(INVALID_SHIP_PART_CLASS),
     m_capacity(0.0f),
     m_secondary_stat(1.0f),
+    m_noisiness(0.0f),
     m_production_cost(),
     m_production_time(),
     m_producible(false),
@@ -309,7 +311,7 @@ PartType::PartType() :
     m_add_standard_capacity_effect(false)
 {}
 
-PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
+PartType::PartType(ShipPartClass part_class, double capacity, double stat2, double stat3,
                    CommonParams& common_params, const MoreCommonParams& more_common_params,
                    std::vector<ShipSlotType> mountable_slot_types,
                    const std::string& icon, bool add_standard_capacity_effect) :
@@ -318,6 +320,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     m_class(part_class),
     m_capacity(capacity),
     m_secondary_stat(stat2),
+    m_noisiness(stat3),
     m_production_cost(std::move(common_params.production_cost)),
     m_production_time(std::move(common_params.production_time)),
     m_producible(common_params.producible),
@@ -331,15 +334,33 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     m_icon(icon),
     m_add_standard_capacity_effect(add_standard_capacity_effect)
 {
-    //TraceLogger() << "part type: " << m_name << " producible: " << m_producible << std::endl;
     Init(std::move(common_params.effects));
 
     for (const std::string& tag : common_params.tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
+
+    TraceLogger() << "PartType::PartType: name: " << m_name
+                  << " description: " << m_description
+                  << " class: " << m_class
+                  << " capacity: " << m_capacity
+                  << " secondary stat: " << m_secondary_stat
+                  << " noisiness: " << m_noisiness
+                  //<< " prod cost: " << m_production_cost
+                  //<< " prod time: " << m_production_time
+                  << " producible: " << m_producible
+                  //<< " mountable slot types: " << m_mountable_slot_types
+                  //<< " tags: " << m_tags
+                  //<< " prod meter consump: " << m_production_meter_consumption
+                  //<< " prod special consump: " << m_production_special_consumption
+                  //<< " location: " << m_location
+                  //<< " exclusions: " << m_exclusions
+                  //<< " effects: " << m_effects
+                  << " icon: " << m_icon
+                  << " add standard cap effect: " << m_add_standard_capacity_effect;
 }
 
 void PartType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects) {
-    if ((m_capacity != 0 || m_secondary_stat != 0) && m_add_standard_capacity_effect) {
+    if ((m_capacity != 0 || m_secondary_stat != 0 || m_noisiness != 0) && m_add_standard_capacity_effect) {
         switch (m_class) {
         case PC_COLONY:
         case PC_TROOPS:
@@ -347,13 +368,15 @@ void PartType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
             break;
         case PC_FIGHTER_HANGAR: {   // capacity indicates how many fighters are stored in this type of part (combined for all copies of the part)
             m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,       m_name, m_capacity, true));         // stacking capacities allowed for this part, so each part contributes to the total capacity
-            m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, false));  // stacking damage not allowed, as damage per shot should be the same regardless of number of shots
+            m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, false));  // stacking damage not allowed, as damage per fighter shot should be the same regardless of number of this part present
+            m_effects.push_back(IncreaseMeter(METER_MAX_NOISINESS,      m_name, m_noisiness, false));       // stacking noisiness not allowed, as stealth loss per figher launch should be the same regardless of number of this part present
             break;
         }
         case PC_FIGHTER_BAY:        // capacity indicates how many fighters each instance of the part can launch per combat bout...
         case PC_DIRECT_WEAPON: {    // capacity indicates weapon damage per shot
             m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,       m_name, m_capacity, false));
             m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, false));
+            m_effects.push_back(IncreaseMeter(METER_MAX_NOISINESS,      m_name, m_noisiness, false));       // stacking noisiness not allowed, as stealth loss per shot should be the same regardless of number of this part present
             break;
         }
         case PC_SHIELD:
@@ -382,6 +405,9 @@ void PartType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
             break;
         case PC_TRADE:
             m_effects.push_back(IncreaseMeter(METER_TARGET_TRADE,   m_capacity));
+            break;
+        case PC_BATTLE_SCANNER:
+            m_effects.push_back(IncreaseMeter(METER_BATTLE_DETECTION,m_capacity));
             break;
         default:
             break;
@@ -413,20 +439,26 @@ float PartType::Capacity() const {
 float PartType::SecondaryStat() const
 { return m_secondary_stat; }
 
+float PartType::Noisiness() const
+{ return m_noisiness; }
+
 std::string PartType::CapacityDescription() const {
     std::string desc_string;
     float main_stat = Capacity();
     float sdry_stat = SecondaryStat();
+    float ttry_stat = Noisiness();
 
     switch (m_class) {
     case PC_FUEL:
     case PC_TROOPS:
     case PC_COLONY:
-    case PC_FIGHTER_BAY:
         desc_string += str(FlexibleFormat(UserString("PART_DESC_CAPACITY")) % main_stat);
         break;
+    case PC_FIGHTER_BAY:
+        desc_string += str(FlexibleFormat(UserString("PART_DESC_FIGHTER_BAY_STATS")) % main_stat % ttry_stat);
+        break;
     case PC_DIRECT_WEAPON:
-        desc_string += str(FlexibleFormat(UserString("PART_DESC_DIRECT_FIRE_STATS")) % main_stat % sdry_stat);
+        desc_string += str(FlexibleFormat(UserString("PART_DESC_DIRECT_FIRE_STATS")) % main_stat % sdry_stat % ttry_stat);
         break;
     case PC_FIGHTER_HANGAR:
         desc_string += str(FlexibleFormat(UserString("PART_DESC_HANGAR_STATS")) % main_stat % sdry_stat);
@@ -521,6 +553,7 @@ unsigned int PartType::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_class);
     CheckSums::CheckSumCombine(retval, m_capacity);
     CheckSums::CheckSumCombine(retval, m_secondary_stat);
+    CheckSums::CheckSumCombine(retval, m_noisiness);
     CheckSums::CheckSumCombine(retval, m_production_cost);
     CheckSums::CheckSumCombine(retval, m_production_time);
     CheckSums::CheckSumCombine(retval, m_producible);
@@ -585,7 +618,7 @@ HullType::HullType(const HullTypeStats& stats,
     m_graphic(graphic),
     m_icon(icon)
 {
-    //TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
+    TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
     Init(std::move(common_params.effects));
 
     for (const std::string& tag : common_params.tags)
@@ -785,8 +818,9 @@ void HullTypeManager::CheckPendingHullTypes() const {
         ErrorLogger() << "HullTypeManager expects at least one hull type.  All ship design construction will fail.";
 }
 
+
 /////////////////////////////////////
-// ParsedShipDesign     //
+// ParsedShipDesign                //
 /////////////////////////////////////
 ParsedShipDesign::ParsedShipDesign(
     const std::string& name, const std::string& description,
@@ -1238,7 +1272,7 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
 }
 
 void ShipDesign::ForceValidDesignOrThrow(const boost::optional<std::invalid_argument>& should_throw,
-                                         bool  produce_log)
+                                         bool produce_log)
 {
     auto force_valid = MaybeInvalidDesign(m_hull, m_parts, produce_log);
     if (!force_valid)
@@ -1420,6 +1454,7 @@ bool operator ==(const ShipDesign& first, const ShipDesign& second) {
     return first_parts == second_parts;
 }
 
+
 /////////////////////////////////////
 // PredefinedShipDesignManager     //
 /////////////////////////////////////
@@ -1493,7 +1528,6 @@ PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesig
     return manager;
 }
 
-
 std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedShipDesigns() const {
     CheckPendingDesignsTypes();
     std::vector<const ShipDesign*> retval;
@@ -1537,7 +1571,6 @@ unsigned int PredefinedShipDesignManager::GetCheckSum() const {
     DebugLogger() << "PredefinedShipDesignManager checksum: " << retval;
     return retval;
 }
-
 
 void PredefinedShipDesignManager::SetShipDesignTypes(
     Pending::Pending<ParsedShipDesignsType>&& pending_designs)

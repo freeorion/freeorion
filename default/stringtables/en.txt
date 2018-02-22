@@ -4787,7 +4787,7 @@ Parts: %3%
 # %7% stealth
 # %8% starlane speed
 # %9% fuel
-# %10% population
+# %10% population / colony capacity
 # %11% troops
 # %12% fighters
 # %13% total damage per round of fighters
@@ -4798,12 +4798,16 @@ Parts: %3%
 # %18% mock enemy shields
 # %19% mock average attack strength
 # %20% mock average attack strength/pp
+# %21% battle detection
+# %22% total noisiness from all weapon types
 ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
 For [[encyclopedia ENC_SPECIES]]: %1%
 Total [[encyclopedia DAMAGE_TITLE]]: %2%    [[PC_DIRECT_WEAPON]] Shots: %3%
+Total [[metertype METER_NOISINESS]]: %22%
 [[metertype METER_STRUCTURE]]: %4%    [[metertype METER_SHIELD]]: %5%
 [[metertype METER_DETECTION]]: %6%    [[metertype METER_STEALTH]]: %7%
+[[metertype METER_BATTLE_DETECTION]]: %21%
 [[metertype METER_SPEED]]: %8%    [[metertype METER_FUEL]] [[METER_CAPACITY]]: %9%
 Colonization [[METER_CAPACITY]]: %10%    [[metertype METER_TROOPS]]: %11%
 [[OBJ_FIGHTER]] [[encyclopedia DAMAGE_TITLE]]: %13%    [[ENC_SDD_HANGAR]]: %12%    [[ENC_SDD_BAY]]: %14%
@@ -5233,6 +5237,12 @@ METER_MAX_SECONDARY_STAT_VALUE_LABEL
 METER_MAX_SECONDARY_STAT_VALUE_DESC
 [[METER_SECONDARY_STAT_VALUE_DESC]]
 
+METER_MAX_NOISINESS_VALUE_LABEL
+[[METER_NOISINESS_VALUE_LABEL]]
+
+METER_MAX_NOISINESS_VALUE_DESC
+[[METER_NOISINESS_VALUE_DESC]]
+
 METER_MAX_FUEL_VALUE_LABEL
 [[METER_FUEL_VALUE_LABEL]]
 
@@ -5326,13 +5336,19 @@ Stat - Primary
 
 # TODO make this into a listing of possible capacity types
 METER_CAPACITY_VALUE_DESC
-The primary stat of an object.
+The primary stat of an object or part.
 
 METER_SECONDARY_STAT_VALUE_LABEL
 Stat - Secondary
 
 METER_SECONDARY_STAT_VALUE_DESC
-The secondary stat of an object.
+The secondary stat of an object or part.
+
+METER_NOISINESS_VALUE_LABEL
+Noisiness
+
+METER_NOISINESS_VALUE_DESC
+The noisiness of an object or part.
 
 METER_FUEL_VALUE_LABEL
 Fuel
@@ -8541,6 +8557,10 @@ METER_MAX_SECONDARY_STAT
 Max Secondary Stat
 
 # Meter types
+METER_MAX_NOISINESS
+Max Noisiness
+
+# Meter types
 METER_MAX_FUEL
 Max Fuel
 
@@ -8601,6 +8621,10 @@ METER_SECONDARY_STAT
 Secondary Stat
 
 # Meter types
+METER_NOISINESS
+Noisiness
+
+# Meter types
 METER_FUEL
 Fuel
 
@@ -8643,6 +8667,10 @@ Stealth
 # Meter types
 METER_DETECTION
 Detection Range
+
+# Meter types
+METER_BATTLE_DETECTION
+Battle Detection Strength
 
 # Meter types
 METER_SPEED
@@ -8837,6 +8865,12 @@ PC_DETECTION_DESC
 '''Detection parts increase the [[metertype METER_DETECTION]] for the ship they are equipped on.
 
 An empire's [[encyclopedia DETECTION_TITLE]] must equal or exceed an object's [[metertype METER_STEALTH]] to detect the object.'''
+
+PC_BATTLE_SCANNER
+Battle Scanner
+
+PC_BATTLE_SCANNER_DESC
+'''Battle scanner parts make enemy ships more easily detected during combat.'''
 
 # Ship part classes
 PC_STEALTH
@@ -9179,6 +9213,9 @@ DESC_VAR_MAXCAPACITY
 DESC_VAR_MAX_SECONDARY_STAT
 [[METER_MAX_SECONDARY_STAT]]
 
+DESC_VAR_MAX_NOISINESS
+[[METER_MAX_NOISINESS]]
+
 DESC_VAR_POPULATION
 [[METER_POPULATION]]
 
@@ -9226,6 +9263,9 @@ DESC_VAR_CAPACITY
 
 DESC_VAR_SECONDARY_STAT
 [[METER_SECONDARY_STAT]]
+
+DESC_VAR_NOISINESS
+[[METER_NOISINESS]]
 
 DESC_VAR_SIZE
 [[METER_SIZE]]
@@ -12601,13 +12641,20 @@ PART_DESC_DETECTION
 # %2% number of shots done per attack.
 PART_DESC_DIRECT_FIRE_STATS
 '''Shot [[encyclopedia DAMAGE_TITLE]]: %1%
-Shots per Attack: %2%'''
+Shots per Attack: %2%
+<metertype METER_NOISINESS>Noise</metertype> per Attack: %3%'''
 
 # %1% ship part damage done (fighters).
 # %2% number of deployable fighters.
 PART_DESC_HANGAR_STATS
 '''Shot [[encyclopedia DAMAGE_TITLE]]: %2%
 Fighter Capacity: %1%'''
+
+# %1% fighters launched per round
+# %2% noisiness (per attack)
+PART_DESC_FIGHTER_BAY_STATS
+'''Lauches per Round: %1%
+Noise per Launch: %2%'''
 
 
 ##
@@ -12868,6 +12915,30 @@ Very long-range detection.
 
 FU_ENGINE_PART_LIMIT
 Only one engine part may be equipped on a ship.
+
+BS_SCANNER_1
+Interferometric Scanner
+
+BS_SCANNER_1_DESC
+Weak in-battle detection.
+
+BS_SCANNER_2
+Holographic Scanner
+
+BS_SCANNER_2_DESC
+Moderate in-battle detection.
+
+BS_SCANNER_3
+Cherenkov Scanner
+
+BS_SCANNER_3_DESC
+Good in-battle detection.
+
+BS_SCANNER_4
+Tachyon Scanner
+
+BS_SCANNER_4_DESC
+Ultimate in-battle detection.
 
 FU_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings

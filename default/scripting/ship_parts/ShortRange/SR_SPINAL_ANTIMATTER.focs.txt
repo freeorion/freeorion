@@ -3,6 +3,7 @@ Part
     description = "SR_SPINAL_ANTIMATTER_DESC"
     class = ShortRange
     damage = 100
+    noisiness = 100
     mountableSlotTypes = Core
     buildcost = 250 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 4

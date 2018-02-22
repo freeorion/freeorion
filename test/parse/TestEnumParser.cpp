@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(PlanetTypeParser) {
 
 BOOST_AUTO_TEST_CASE(ShipPartsClassParser) {
     // Literal is number of tests, not number of enums.
-    BOOST_REQUIRE_MESSAGE(NUM_SHIP_PART_CLASSES == 17, "Untested enumeration value.");
+    BOOST_REQUIRE_MESSAGE(NUM_SHIP_PART_CLASSES == 18, "Untested enumeration value.");
 
     CHECK_ENUM_AND_RESULT("ShortRange", PC_DIRECT_WEAPON, ShipPartClass, parse::ship_part_class_enum_grammar);
     CHECK_ENUM_AND_RESULT("FighterBay", PC_FIGHTER_BAY, ShipPartClass, parse::ship_part_class_enum_grammar);
@@ -259,6 +259,7 @@ BOOST_AUTO_TEST_CASE(ShipPartsClassParser) {
     CHECK_ENUM_AND_RESULT("Research", PC_RESEARCH, ShipPartClass, parse::ship_part_class_enum_grammar);
     CHECK_ENUM_AND_RESULT("Trade", PC_TRADE, ShipPartClass, parse::ship_part_class_enum_grammar);
     CHECK_ENUM_AND_RESULT("ProductionLocation", PC_PRODUCTION_LOCATION, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("BattleScanner", PC_BATTLE_SCANNER, ShipPartClass, parse::ship_part_class_enum_grammar);
     CHECK_FAILED_ENUM(ShipPartClass, parse::ship_part_class_enum_grammar);
 }
 

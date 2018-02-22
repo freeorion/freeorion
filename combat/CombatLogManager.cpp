@@ -11,50 +11,40 @@
 
 namespace {
     static float MaxHealth(const UniverseObject& object) {
-        if ( object.ObjectType() == OBJ_SHIP ) {
+        if (object.ObjectType() == OBJ_SHIP) {
             return object.CurrentMeterValue(METER_MAX_STRUCTURE);
-        } else if ( object.ObjectType() == OBJ_PLANET ) {
-            const Meter* defense = object.GetMeter(METER_MAX_DEFENSE);
-            const Meter* shield = object.GetMeter(METER_MAX_SHIELD);
-            const Meter* construction = object.UniverseObject::GetMeter(METER_TARGET_CONSTRUCTION);
 
-            float ret = 0.0;
-            if(defense) {
+        } else if ( object.ObjectType() == OBJ_PLANET ) {
+            float ret = 0.0f;
+            if (const Meter* defense = object.GetMeter(METER_MAX_DEFENSE))
                 ret += defense->Current();
-            }
-            if(shield) {
+            if (const Meter* shield = object.GetMeter(METER_MAX_SHIELD))
                 ret += shield->Current();
-            }
-            if(construction) {
+            if (const Meter* construction = object.UniverseObject::GetMeter(METER_TARGET_CONSTRUCTION))
                 ret += construction->Current();
-            }
             return ret;
+
         } else {
-            return 0.0;
+            return 0.0f;
         }
     }
 
     static float CurrentHealth(const UniverseObject& object) {
-        if ( object.ObjectType() == OBJ_SHIP ) {
+        if (object.ObjectType() == OBJ_SHIP) {
             return object.CurrentMeterValue(METER_STRUCTURE);
-        } else if ( object.ObjectType() == OBJ_PLANET ) {
-            const Meter* defense = object.GetMeter(METER_DEFENSE);
-            const Meter* shield = object.GetMeter(METER_SHIELD);
-            const Meter* construction = object.UniverseObject::GetMeter(METER_CONSTRUCTION);
 
-            float ret = 0.0;
-            if(defense) {
+        } else if (object.ObjectType() == OBJ_PLANET) {
+            float ret = 0.0f;
+            if (const Meter* defense = object.GetMeter(METER_DEFENSE))
                 ret += defense->Current();
-            }
-            if(shield) {
+            if (const Meter* shield = object.GetMeter(METER_SHIELD))
                 ret += shield->Current();
-            }
-            if(construction) {
+            if (const Meter* construction = object.GetMeter(METER_CONSTRUCTION))
                 ret += construction->Current();
-            }
             return ret;
+
         } else {
-            return 0.0;
+            return 0.0f;
         }
     }
 
@@ -114,16 +104,16 @@ void CombatLog::serialize(Archive& ar, const unsigned int version)
     ar.template register_type<IncapacitationEvent>();
     ar.template register_type<BoutBeginEvent>();
     ar.template register_type<InitialStealthEvent>();
-    ar.template register_type<StealthChangeEvent>();
+    ar.template register_type<VisibilityChangeEvent>();
     ar.template register_type<WeaponsPlatformEvent>();
 
     ar  & BOOST_SERIALIZATION_NVP(turn)
-    & BOOST_SERIALIZATION_NVP(system_id)
-    & BOOST_SERIALIZATION_NVP(empire_ids)
-    & BOOST_SERIALIZATION_NVP(object_ids)
-    & BOOST_SERIALIZATION_NVP(damaged_object_ids)
-    & BOOST_SERIALIZATION_NVP(destroyed_object_ids)
-    & BOOST_SERIALIZATION_NVP(combat_events);
+        & BOOST_SERIALIZATION_NVP(system_id)
+        & BOOST_SERIALIZATION_NVP(empire_ids)
+        & BOOST_SERIALIZATION_NVP(object_ids)
+        & BOOST_SERIALIZATION_NVP(damaged_object_ids)
+        & BOOST_SERIALIZATION_NVP(destroyed_object_ids)
+        & BOOST_SERIALIZATION_NVP(combat_events);
 
     // Store state of fleet at this battle.
     // Used to show summaries of past battles.
@@ -142,14 +132,11 @@ template
 void CombatLog::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
 
 
-
 ////////////////////////////////////////////////
 // CombatLogManagerImpl
 ////////////////////////////////////////////////
-
-class CombatLogManager::Impl
-{
-    public:
+class CombatLogManager::Impl {
+public:
     Impl();
 
       /** \name Accessors */ //@{
@@ -179,7 +166,7 @@ class CombatLogManager::Impl
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 
-    private:
+private:
     boost::unordered_map<int, CombatLog> m_logs;
     /** Set of logs ids that do not have bodies and need to be fetched from the server. */
     std::set<int>                        m_incomplete_logs;
@@ -224,8 +211,8 @@ void CombatLogManager::Impl::CompleteLog(int id, const CombatLog& log) {
 void CombatLogManager::Impl::Clear()
 { m_logs.clear(); }
 
-void CombatLogManager::Impl::GetLogsToSerialize(
-    std::map<int, CombatLog>& logs, int encoding_empire) const
+void CombatLogManager::Impl::GetLogsToSerialize(std::map<int, CombatLog>& logs,
+                                                int encoding_empire) const
 {
     // TODO: filter logs by who should have access to them
     for (auto it = m_logs.begin(); it != m_logs.end(); ++it) {
@@ -236,8 +223,7 @@ void CombatLogManager::Impl::GetLogsToSerialize(
 void CombatLogManager::Impl::SetLog(int log_id, const CombatLog& log)
 { m_logs[log_id] = log; }
 
-boost::optional<std::vector<int>> CombatLogManager::Impl::IncompleteLogIDs() const
-{
+boost::optional<std::vector<int>> CombatLogManager::Impl::IncompleteLogIDs() const {
     if (m_incomplete_logs.empty())
         return boost::none;
 
@@ -245,9 +231,9 @@ boost::optional<std::vector<int>> CombatLogManager::Impl::IncompleteLogIDs() con
     // send one log it is the most recent combat log, which is the one most
     // likely of interest to the player.
     std::vector<int> ids;
-    for (auto rit = m_incomplete_logs.rbegin(); rit != m_incomplete_logs.rend(); ++rit) {
+    for (auto rit = m_incomplete_logs.rbegin(); rit != m_incomplete_logs.rend(); ++rit)
         ids.push_back(*rit);
-    }
+
     return ids;
 }
 

@@ -1,0 +1,13 @@
+Part
+    name = "BS_SCANNER_1"
+    description = "BS_SCANNER_1_DESC"
+    class = BattleScanner
+    capacity = 10
+    mountableSlotTypes = Internal
+    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 2
+    tags = [ "PEDIA_PC_BATTLE_SCANNER" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/battle_scanner-1.png"
+
+#include "/scripting/common/upkeep.macros"

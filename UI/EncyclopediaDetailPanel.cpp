@@ -1227,6 +1227,7 @@ namespace {
 
         // search for article in custom pedia entries.
         for (const auto& entry : GetEncyclopedia().Articles()) {
+            bool done = false;
             for (const EncyclopediaArticle& article : entry.second) {
                 if (article.name != item_name)
                     continue;
@@ -1243,8 +1244,11 @@ namespace {
 
                 texture = ClientUI::GetTexture(ClientUI::ArtDir() / article.icon, true);
 
+                done = true;
                 break;
             }
+            if (done)
+                break;
         }
 
         // add listing of articles in this category
@@ -2161,7 +2165,10 @@ namespace {
             % typical_shot
             % enemy_DR
             % typical_strength
-            % (typical_strength / cost)).str();
+            % (typical_strength / cost)
+            % ship->CurrentMeterValue(METER_BATTLE_DETECTION)
+            % ship->SumCurrentPartMeterValuesForPartClass(METER_MAX_NOISINESS, PC_DIRECT_WEAPON)
+               ).str();
     }
 
     void RefreshDetailPanelShipDesignTag(   const std::string& item_type, const std::string& item_name,

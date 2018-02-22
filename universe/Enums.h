@@ -95,6 +95,7 @@ GG_ENUM(MeterType,
 
     METER_MAX_CAPACITY,
     METER_MAX_SECONDARY_STAT,
+    METER_MAX_NOISINESS,
 
     METER_MAX_FUEL,
     METER_MAX_SHIELD,
@@ -113,6 +114,7 @@ GG_ENUM(MeterType,
 
     METER_CAPACITY,
     METER_SECONDARY_STAT,
+    METER_NOISINESS,
 
     METER_FUEL,
     METER_SHIELD,
@@ -126,6 +128,7 @@ GG_ENUM(MeterType,
     METER_SIZE,
     METER_STEALTH,
     METER_DETECTION,
+    METER_BATTLE_DETECTION,
     METER_SPEED,
 
     NUM_METER_TYPES
@@ -254,6 +257,7 @@ GG_ENUM(ShipPartClass,
     PC_RESEARCH,            ///< generates research points for owner
     PC_TRADE,               ///< generates trade points for owner
     PC_PRODUCTION_LOCATION, ///< allows production items to be produced at its location
+    PC_BATTLE_SCANNER,      ///< improves detection during battle
     NUM_SHIP_PART_CLASSES
 )
 
