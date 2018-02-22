@@ -74,12 +74,12 @@ private:
 
     std::string                                         m_name = "";
     std::string                                         m_description = "";
-    std::unique_ptr<ValueRef::ValueRefBase<double>>     m_stealth = nullptr;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>     m_stealth;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     float                                               m_spawn_rate = 0.0f;
     int                                                 m_spawn_limit = 99999;
-    std::unique_ptr<ValueRef::ValueRefBase<double>>     m_initial_capacity = nullptr;
-    std::unique_ptr<Condition::ConditionBase>           m_location = nullptr;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>     m_initial_capacity;
+    std::unique_ptr<Condition::ConditionBase>           m_location;
     std::string                                         m_graphic ="";
 
     friend class boost::serialization::access;
