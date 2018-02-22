@@ -1599,7 +1599,8 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
             if (group_targets_causes.empty())
                 continue;
 
-            TraceLogger(effects) << "\n\n * * * * * * * * * * * (new effects group log entry)";
+            TraceLogger(effects) << "\n\n * * * * * * * * * * * (new effects group log entry)(" 
+                                 << effects_group->AccountingLabel() << ")";
 
             // execute Effects in the EffectsGroup
             effects_group->Execute(group_targets_causes,
