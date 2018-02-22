@@ -1071,7 +1071,7 @@ namespace {
         }
 
         // log condition scope matches, except for Source
-        if (cond->Description() != " that is the source object") {  // TODO: derive this comparison text
+        if (!(dynamic_cast<const Condition::Source*>(cond))) {
             std::stringstream ss;
             ss << "\nGenerated new target set, for Condition: " << cond->Description() << "    targets: (";
             for (const auto& obj : *target_set)
