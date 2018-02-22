@@ -1,7 +1,9 @@
 #include "EffectParser4.h"
 
-#include "ValueRefParserImpl.h"
+#include "ValueRefParser.h"
+#include "EnumValueRefRules.h"
 #include "../universe/Effect.h"
+#include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

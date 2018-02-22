@@ -7,7 +7,7 @@
 #include "EnumParser.h"
 #include "ConditionParserImpl.h"
 #include "ValueRefParser.h"
-#include "CommonParams.h"
+#include "CommonParamsParser.h"
 
 #include "../universe/ValueRef.h"
 #include "../universe/Condition.h"

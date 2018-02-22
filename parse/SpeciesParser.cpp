@@ -2,7 +2,8 @@
 
 #include "ParseImpl.h"
 #include "EnumParser.h"
-#include "ValueRefParserImpl.h"
+#include "ValueRefParser.h"
+#include "EnumValueRefRules.h"
 #include "EffectParser.h"
 #include "ConditionParserImpl.h"
 #include "MovableEnvelope.h"

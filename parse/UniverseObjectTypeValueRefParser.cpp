@@ -1,9 +1,10 @@
-#include "ValueRefParserImpl.h"
+#include "ValueRefParser.h"
 
 #include "EnumParser.h"
+#include "EnumValueRefRules.h"
 
 #include "../universe/Enums.h"
-
+#include "../universe/ValueRef.h"
 
 namespace parse { namespace detail {
     universe_object_type_parser_rules::universe_object_type_parser_rules(

@@ -1,5 +1,5 @@
-#ifndef _Common_Params_h_
-#define _Common_Params_h_
+#ifndef _Common_Params_Parser_h_
+#define _Common_Params_Parser_h_
 
 #include "Lexer.h"
 #include "ParseImpl.h"
@@ -89,4 +89,4 @@ namespace parse { namespace detail {
 
 } }
 
-#endif
+#endif // _Common_Params_Parser_h_

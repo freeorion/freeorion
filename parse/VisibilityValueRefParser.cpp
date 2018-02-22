@@ -1,9 +1,12 @@
-#include "ValueRefParserImpl.h"
+#include "ValueRefParser.h"
 
 #include "EnumParser.h"
+#include "EnumValueRefRules.h"
 
 #include "../universe/Enums.h"
 #include "../universe/ValueRef.h"
+
+#include <boost/spirit/include/phoenix.hpp>
 
 namespace parse { namespace detail {
     visibility_complex_parser_grammar::visibility_complex_parser_grammar(

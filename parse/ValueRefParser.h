@@ -8,6 +8,7 @@
 #include "../universe/EnumsFwd.h"
 
 #include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/phoenix.hpp>
 
 namespace Condition {
     struct ConditionBase;
@@ -31,6 +32,9 @@ namespace parse { namespace detail {
 
     using name_token_rule = rule<const char* ()>;
     using reference_token_rule = rule<ValueRef::ReferenceType ()>;
+    const parse::detail::reference_token_rule variable_scope(const parse::lexer& tok);
+    const parse::detail::name_token_rule container_type(const parse::lexer& tok);
+
 
     template <typename T>
     using variable_payload = MovableEnvelope<ValueRef::Variable<T>>;
@@ -145,6 +149,41 @@ namespace parse { namespace detail {
         complex_variable_rule<std::string> start;
     };
 
+    template <typename T>
+    void initialize_bound_variable_parser(
+        variable_rule<T>& bound_variable,
+        const name_token_rule& variable_name,
+        const reference_token_rule& variable_scope_rule,
+        const name_token_rule& container_type_rule,
+        const parse::lexer& tok)
+    {
+        using boost::phoenix::construct;
+        using boost::phoenix::new_;
+        using boost::phoenix::push_back;
+
+        boost::spirit::qi::_1_type _1;
+        boost::spirit::qi::_a_type _a;
+        boost::spirit::qi::_b_type _b;
+        boost::spirit::qi::lit_type lit;
+        boost::spirit::qi::_val_type _val;
+        const boost::phoenix::function<construct_movable> construct_movable_;
+
+        bound_variable
+            = (
+                    tok.Value_ >> '('
+                >>  variable_scope_rule [ _b = _1 ]
+                >>  '.' >>-(container_type_rule [ push_back(_a, construct<std::string>(_1)) ] > '.')
+                >> ( variable_name >> ')' )
+                [ push_back(_a, construct<std::string>(_1)), _val = construct_movable_(new_<ValueRef::Variable<T>>(_b, _a, true)) ]
+              )
+            | (
+                variable_scope_rule [ _b = _1 ] >>
+                '.' >>-(container_type_rule [ push_back(_a, construct<std::string>(_1)) ] > '.')
+                    >>  variable_name
+                [ push_back(_a, construct<std::string>(_1)), _val = construct_movable_(new_<ValueRef::Variable<T>>(_b, _a, false)) ]
+              )
+            ;
+    }
 }}
 
 namespace parse {
@@ -251,90 +290,6 @@ namespace parse {
         detail::value_ref_rule<int> castable_expr;
         detail::value_ref_rule<int> flexible_int;
     };
-
-    namespace detail {
-
-    template <typename T>
-    struct enum_value_ref_rules {
-        enum_value_ref_rules(const std::string& type_name,
-                             const lexer& tok,
-                             Labeller& labeller,
-                             const condition_parser_grammar& condition_parser);
-
-        name_token_rule variable_name;
-        detail::enum_rule<T> enum_expr;
-        value_ref_rule<T> constant_expr;
-        value_ref_rule<T> free_variable_expr;
-        variable_rule<T> bound_variable_expr;
-        expression_rule<T> functional_expr;
-        value_ref_rule<T> primary_expr;
-        value_ref_rule<T> statistic_sub_value_ref;
-        statistic_rule<T> statistic_expr;
-        complex_variable_rule<T> complex_expr;
-        value_ref_rule<T> expr;
-        reference_token_rule variable_scope_rule;
-        name_token_rule container_type_rule;
-    };
-
-    struct planet_environment_parser_rules :
-        public detail::enum_value_ref_rules<PlanetEnvironment>
-    {
-        planet_environment_parser_rules(const lexer& tok,
-                                        Labeller& labeller,
-                                        const condition_parser_grammar& condition_parser);
-    };
-
-    struct planet_size_parser_rules :
-        public detail::enum_value_ref_rules<PlanetSize>
-    {
-        planet_size_parser_rules(const lexer& tok,
-                                 Labeller& labeller,
-                                 const condition_parser_grammar& condition_parser);
-    };
-
-    struct planet_type_parser_rules :
-        public detail::enum_value_ref_rules<PlanetType>
-    {
-        planet_type_parser_rules(const lexer& tok,
-                                 Labeller& labeller,
-                                 const condition_parser_grammar& condition_parser);
-    };
-
-    struct star_type_parser_rules :
-        public enum_value_ref_rules<StarType>
-    {
-        star_type_parser_rules(const lexer& tok,
-                               Labeller& labeller,
-                               const condition_parser_grammar& condition_parser);
-    };
-
-    struct visibility_complex_parser_grammar : public complex_variable_grammar<Visibility> {
-        visibility_complex_parser_grammar(const lexer& tok, Labeller& labeller);
-
-        simple_int_parser_rules  simple_int_rules;
-        complex_variable_rule<Visibility> empire_object_visibility;
-        complex_variable_rule<Visibility> start;
-    };
-
-    struct visibility_parser_rules :
-        public detail::enum_value_ref_rules<Visibility>
-    {
-        visibility_parser_rules(const lexer& tok,
-                                Labeller& labeller,
-                                const condition_parser_grammar& condition_parser);
-
-        visibility_complex_parser_grammar visibility_var_complex_grammar;
-    };
-
-    struct universe_object_type_parser_rules :
-        public enum_value_ref_rules<UniverseObjectType>
-    {
-        universe_object_type_parser_rules(const lexer& tok,
-                                          Labeller& labeller,
-                                          const condition_parser_grammar& condition_parser);
-    };
-
-    }
 }
 
-#endif
+#endif // _ValueRefParser_h_

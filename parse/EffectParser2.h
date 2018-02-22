@@ -2,6 +2,7 @@
 #define _EffectParser2_h_
 
 #include "EffectParserImpl.h"
+#include "EnumValueRefRules.h"
 
 namespace parse { namespace detail {
     struct effect_parser_rules_2 : public effect_parser_grammar {

@@ -1,7 +1,7 @@
 #define PHOENIX_LIMIT 11
 #define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
 
-#include "CommonParams.h"
+#include "CommonParamsParser.h"
 
 #include "ParseImpl.h"
 #include "EnumParser.h"
