@@ -20,4 +20,3 @@
 ## Implementation
     Only AI handlers implementation is present now (`python\AI\freeorion_tools\handlers.py`),
     need to add universe generation and events implementation too.
- 

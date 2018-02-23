@@ -2,7 +2,7 @@ import PlanetUtilsAI
 import freeOrionAIInterface as fo
 
 from common.listeners import register_pre_handler
-from interface_mock import inspect
+from stub_generator import inspect
 
 
 def inspect_ai_interface():
@@ -39,7 +39,7 @@ def inspect_ai_interface():
 
     inspect(
         fo,
-        [
+        instances=[
             meter,
             part_meters,
             color,
@@ -77,8 +77,10 @@ def inspect_ai_interface():
             'IntPairVec', 'IntFltMap', 'MeterTypeStringPair', 'MeterTypeMeterMap', 'universeObject',
             # this item cannot be get from generate orders
             'diplomaticStatusUpdate',
-        )
+        ),
+        path='AI'
     )
     exit(1)  # exit game to main menu no need to play anymore.
+
 
 register_pre_handler('generateOrders', inspect_ai_interface)

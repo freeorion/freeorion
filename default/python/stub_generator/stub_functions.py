@@ -1,4 +1,4 @@
-from interface_mock import inspect
+from stub_generator import inspect
 
 
 def inspect_universe_generation():
@@ -52,38 +52,40 @@ def inspect_universe_generation():
 
     inspect(
         fo,
-        [fo.get_galaxy_setup_data(),
-         universe,
-         planet_ids,
-         universe.getPlanet(planet_ids[0]),
-         system,
-         techs,
-         tech,
-         tech.unlockedTechs,
-         building,
-         fo.getBuildingType(building.buildingTypeName),
-         empire,
-         field,
-         fo.getFieldType(field.fieldTypeName),
-         fleet,
-         ship,
-         # meter,
-         design,
-         fleet.shipIDs,  # int set wtf?
-         universe_object,
-         system.starlanesWormholes,
-         empire.systemSupplyRanges,
-         empire.supplyProjections(),
-         empire.obstructedStarlanes(),
-         empire.planetsWithWastedPP,
-         unlocked_items,
-         species,
-         special
-         ],
+        instances=[
+            fo.get_galaxy_setup_data(),
+            universe,
+            planet_ids,
+            universe.getPlanet(planet_ids[0]),
+            system,
+            techs,
+            tech,
+            tech.unlockedTechs,
+            building,
+            fo.getBuildingType(building.buildingTypeName),
+            empire,
+            field,
+            fo.getFieldType(field.fieldTypeName),
+            fleet,
+            ship,
+            # meter,
+            design,
+            fleet.shipIDs,  # int set wtf?
+            universe_object,
+            system.starlanesWormholes,
+            empire.systemSupplyRanges,
+            empire.supplyProjections(),
+            empire.obstructedStarlanes(),
+            empire.planetsWithWastedPP,
+            unlocked_items,
+            species,
+            special
+        ],
         classes_to_ignore=(
             'FleetPlan', 'GGColor', 'MonsterFleetPlan', 'PlayerSetupData', 'ShipPartMeterMap', 'ShipSlotVec',
             'VisibilityIntMap', 'diplomaticMessage', 'diplomaticStatusUpdate', 'meter',
-        )
+        ),
+        path=''
     )
     # fo.sys_get_star_type(system),
     # fo.planet_get_size(pid),
@@ -111,7 +113,7 @@ def inspect_universe_generation():
 # Traceback (most recent call last):
 # File "f:\projects\FreeOrion\default/python/universe_generation\universe_generator.py", line 163, in create_universe
 #  inspect_universe_generation()
-# File "f:\projects\FreeOrion\default/python\interface_mock\mock_functions.py", line 27, in inspect_universe_generation
+# File "f:\projects\FreeOrion\default/python\interface_stub\stub_functions.py", line 27, in inspect_universe_generation
 #  meter = ship.getMeter(fo.meterType.maxFuel)
 # Boost.Python.ArgumentError: Python argument types in
 #  ship.getMeter(ship, meterType)
