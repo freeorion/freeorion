@@ -23,7 +23,7 @@ namespace parse { namespace detail {
 namespace parse {
     struct effects_parser_grammar : public detail::effect_parser_grammar {
         effects_parser_grammar(const lexer& tok,
-                               detail::Labeller& labeller,
+                               detail::Labeller& label,
                                const detail::condition_parser_grammar& condition_parser,
                                const detail::value_ref_grammar<std::string>& string_grammar);
         ~effects_parser_grammar();
@@ -41,7 +41,7 @@ namespace parse {
 
     struct effects_group_grammar : public detail::grammar<effects_group_signature> {
         effects_group_grammar(const lexer& tok,
-                              detail::Labeller& labeller,
+                              detail::Labeller& label,
                               const detail::condition_parser_grammar& condition_parser,
                               const detail::value_ref_grammar<std::string>& string_grammar);
 
@@ -51,7 +51,6 @@ namespace parse {
                 parse::detail::condition_payload,
                 parse::detail::condition_payload,
                 std::string,
-                std::vector<detail::effect_payload>,
                 std::string,
                 int,
                 std::string
@@ -59,7 +58,9 @@ namespace parse {
         > effect_group_rule;
 
         effects_parser_grammar effects_grammar;
+        detail::single_or_bracketed_repeat<effects_parser_grammar> one_or_more_effects;
         effect_group_rule effects_group;
+        detail::single_or_bracketed_repeat<effect_group_rule> one_or_more_groups;
         effects_group_rule start;
     };
 

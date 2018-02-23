@@ -32,10 +32,9 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok),
-            condition_parser(tok, labeller),
-            string_grammar(tok, labeller, condition_parser),
-            double_rules(tok, labeller, condition_parser, string_grammar)
+            condition_parser(tok, label),
+            string_grammar(tok, label, condition_parser),
+            double_rules(tok, label, condition_parser, string_grammar)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -51,13 +50,14 @@ namespace {
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::_pass_type _pass;
+            qi::omit_type omit_;
             const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             stat
-                = tok.Statistic_
-                >   labeller.rule(Name_token)    > tok.string[_a = _1]
-                >   labeller.rule(Value_token)   > double_rules.expr
-                [ _val = construct<std::pair<std::string, parse::detail::value_ref_payload<double>>>(_a, _1) ]
+                = ( omit_[tok.Statistic_]
+                >   label(tok.Name_)    > tok.string
+                >   label(tok.Value_)   > double_rules.expr
+                  ) [ _val = construct<std::pair<std::string, parse::detail::value_ref_payload<double>>>(_1, _2) ]
                 ;
 
             start
@@ -75,8 +75,7 @@ namespace {
         }
 
         using stat_rule = parse::detail::rule<
-            std::pair<std::string, parse::detail::value_ref_payload<double>> (),
-            boost::spirit::qi::locals<std::string>
+            std::pair<std::string, parse::detail::value_ref_payload<double>> ()
             >;
 
         using start_rule = parse::detail::rule<
@@ -84,7 +83,7 @@ namespace {
             boost::spirit::qi::locals<std::map<std::string, parse::detail::value_ref_payload<double>>>
             >;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::double_parser_rules      double_rules;

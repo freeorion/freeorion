@@ -122,10 +122,10 @@
     <ClCompile Include="..\..\parse\EffectParser4.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\Tokens.cpp">
+    <ClCompile Include="..\..\parse\ValueRefParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\ValueRefParserImpl.cpp">
+    <ClCompile Include="..\..\parse\ArithmeticRules.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
     <ClCompile Include="..\..\parse\EmpireStatsParser.cpp">
@@ -187,9 +187,6 @@
     <ClInclude Include="..\..\parse\ConditionParser7.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\parse\ValueRefParserImpl.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\parse\ConditionParserImpl.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
@@ -232,13 +229,16 @@
     <ClInclude Include="..\..\parse\ValueRefParser.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\parse\EnumValueRefRules.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\parse\EffectParserImpl.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\Tokens.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\parse\CommonParams.h">
+    <ClInclude Include="..\..\parse\CommonParamsParser.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
   </ItemGroup>

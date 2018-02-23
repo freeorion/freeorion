@@ -1,7 +1,7 @@
 #define PHOENIX_LIMIT 11
 #define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
 
-#include "CommonParams.h"
+#include "CommonParamsParser.h"
 
 #include "ParseImpl.h"
 #include "EnumParser.h"
@@ -26,22 +26,24 @@ namespace parse { namespace detail {
     {
         CommonParams::ConsumptionMap<T> retval;
         for (auto&& name_and_values : in)
-            retval[name_and_values.first] = {name_and_values.second.first.OpenEnvelope(pass),
-                                             name_and_values.second.second.OpenEnvelope(pass)};
+            retval[name_and_values.first] = {
+                name_and_values.second.first.OpenEnvelope(pass),
+                (name_and_values.second.second ? name_and_values.second.second->OpenEnvelope(pass) : nullptr)};
         return retval;
     }
 
     common_params_rules::common_params_rules(
         const parse::lexer& tok,
-        Labeller& labeller,
+        Labeller& label,
         const condition_parser_grammar& condition_parser,
         const value_ref_grammar<std::string>& string_grammar,
         const tags_grammar_type& tags_parser
     ) :
-        castable_int_rules(tok, labeller, condition_parser, string_grammar),
-        double_rules(tok, labeller, condition_parser, string_grammar),
-        effects_group_grammar(tok, labeller, condition_parser, string_grammar),
-        non_ship_part_meter_type_enum(tok)
+        castable_int_rules(tok, label, condition_parser, string_grammar),
+        double_rules(tok, label, condition_parser, string_grammar),
+        effects_group_grammar(tok, label, condition_parser, string_grammar),
+        non_ship_part_meter_type_enum(tok),
+        repeated_string(tok)
     {
         namespace qi = boost::spirit::qi;
 
@@ -50,15 +52,14 @@ namespace parse { namespace detail {
         using phoenix::insert;
 
         qi::_1_type _1;
+        qi::_2_type _2;
+        qi::_3_type _3;
+        qi::_4_type _4;
+        qi::_5_type _5;
+        qi::_6_type _6;
+        qi::_7_type _7;
         qi::_a_type _a;
         qi::_b_type _b;
-        qi::_c_type _c;
-        qi::_d_type _d;
-        qi::_e_type _e;
-        qi::_f_type _f;
-        qi::_g_type _g;
-        qi::_h_type _h;
-        qi::_i_type _i;
         qi::_r1_type _r1;
         qi::_r2_type _r2;
         qi::_val_type _val;
@@ -75,57 +76,52 @@ namespace parse { namespace detail {
             ;
 
         location
-            =    (labeller.rule(Location_token) > condition_parser [ _val = _1 ])
+            %=    (label(tok.Location_) > condition_parser)
             |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
             ;
 
         enqueue_location
-            =    (labeller.rule(EnqueueLocation_token) > condition_parser [ _val = _1 ])
+            %=    (label(tok.EnqueueLocation_) > condition_parser)
             |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
             ;
 
         exclusions
-            =  -(
-                labeller.rule(Exclusions_token)
-                >>  (
-                    ('[' > +tok.string [ insert(_r1, _1) ] > ']')
-                    |   tok.string [ insert(_r1, _1) ]
-                )
-            )
+            =
+            -(label(tok.Exclusions_) >> repeated_string)
             ;
 
         more_common
             =
-            (   labeller.rule(Name_token)        > tok.string [ _a = _1 ]
-                >   labeller.rule(Description_token) > tok.string [ _b = _1 ]
-                >   exclusions(_c)
-            ) [ _val = construct<MoreCommonParams>(_a, _b, _c) ]
+            (   label(tok.Name_)        > tok.string
+                >   label(tok.Description_) > tok.string
+                >   exclusions
+            ) [ _val = construct<MoreCommonParams>(_1, _2, _3) ]
             ;
 
         common
             =
-            (   labeller.rule(BuildCost_token)  > double_rules.expr [ _a = _1 ]
-                >   labeller.rule(BuildTime_token)  > castable_int_rules.flexible_int [ _b = _1 ]
-                >   producible                                          [ _c = _1 ]
-                >   tags_parser(_d)
-                >   location [_e = _1]
-                >   enqueue_location [_i = _1]
-                >  -consumption(_g, _h)
-                > -(labeller.rule(EffectsGroups_token)> effects_group_grammar [ _f = _1 ])
+            (   label(tok.BuildCost_)  > double_rules.expr
+                >   label(tok.BuildTime_)  > castable_int_rules.flexible_int
+                >   producible
+                >   tags_parser 
+                >   location
+                >   enqueue_location
+                >  -consumption(_a, _b)
+                > -(label(tok.EffectsGroups_)> effects_group_grammar )
             ) [ _val = construct_movable_(
                 new_<CommonParams>(
-                    deconstruct_movable_(_a, _pass),
-                    deconstruct_movable_(_b, _pass),
-                    _c, _d,
-                    deconstruct_movable_(_e, _pass),
-                    deconstruct_movable_vector_(_f, _pass),
-                    phoenix::bind(&parse::detail::OpenConsumptionEnvelopes<MeterType>, _g, _pass),
-                    phoenix::bind(&parse::detail::OpenConsumptionEnvelopes<std::string>, _h, _pass),
-                    deconstruct_movable_(_i, _pass))) ]
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_2, _pass),
+                    _3, _4,
+                    deconstruct_movable_(_5, _pass),
+                    deconstruct_movable_vector_(_7, _pass),
+                    phoenix::bind(&parse::detail::OpenConsumptionEnvelopes<MeterType>, _a, _pass),
+                    phoenix::bind(&parse::detail::OpenConsumptionEnvelopes<std::string>, _b, _pass),
+                    deconstruct_movable_(_6, _pass))) ]
             ;
 
         consumption
-            =   labeller.rule(Consumption_token) >
+            =   label(tok.Consumption_) >
             (   consumable_meter(_r1)
                 | consumable_special(_r2)
                 |
@@ -143,20 +139,20 @@ namespace parse { namespace detail {
         consumable_special
             =   tok.Special_
             > (
-                labeller.rule(Name_token)        > tok.string [ _a = _1 ]
-                >   labeller.rule(Consumption_token) > double_rules.expr [ _b = _1 ]
-                > -(labeller.rule(Condition_token)   > condition_parser [ _c = _1 ])
+                label(tok.Name_)        > tok.string
+                >   label(tok.Consumption_) > double_rules.expr
+                > -(label(tok.Condition_)   > condition_parser )
             )
-            [ insert(_r1, construct<ConsumptionMapPackaged<std::string>::value_type>(_a, construct<ConsumptionMapPackaged<std::string>::mapped_type>(_b, _c))) ]
+            [ insert(_r1, construct<ConsumptionMapPackaged<std::string>::value_type>(_1, construct<ConsumptionMapPackaged<std::string>::mapped_type>(_2, _3))) ]
             ;
 
         consumable_meter
             = (
-                non_ship_part_meter_type_enum [ _a = _1 ]
-                >   labeller.rule(Consumption_token) > double_rules.expr [ _b = _1 ]
-                > -(labeller.rule(Condition_token)   > condition_parser [ _c = _1 ])
+                non_ship_part_meter_type_enum
+                >   label(tok.Consumption_) > double_rules.expr
+                > -(label(tok.Condition_)   > condition_parser )
             )
-            [ insert(_r1, construct<ConsumptionMapPackaged<MeterType>::value_type>(_a, construct<ConsumptionMapPackaged<MeterType>::mapped_type>(_b, _c))) ]
+            [ insert(_r1, construct<ConsumptionMapPackaged<MeterType>::value_type>(_1, construct<ConsumptionMapPackaged<MeterType>::mapped_type>(_2, _3))) ]
             ;
 
         producible.name("Producible or Unproducible");

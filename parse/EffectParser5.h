@@ -7,19 +7,11 @@
     struct effect_parser_rules_5 : public effect_parser_grammar {
         effect_parser_rules_5(const parse::lexer& tok,
                               const effect_parser_grammar& effect_parser,
-                              Labeller& labeller,
+                              Labeller& label,
                               const condition_parser_grammar& condition_parser);
 
-        typedef rule<
-            effect_signature,
-            boost::spirit::qi::locals<
-                condition_payload,
-                std::vector<effect_payload>,
-                std::vector<effect_payload>
-                >
-            > conditional_rule;
-
-        conditional_rule   conditional;
+        single_or_bracketed_repeat<effect_parser_grammar> one_or_more_effects;
+        effect_parser_rule conditional;
         effect_parser_rule start;
     };
     }

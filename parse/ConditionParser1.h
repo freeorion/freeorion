@@ -7,24 +7,9 @@ namespace parse { namespace detail {
 
     struct condition_parser_rules_1 : public condition_parser_grammar {
         condition_parser_rules_1(const parse::lexer& tok,
-                                 Labeller& labeller,
+                                 Labeller& label,
                                  const condition_parser_grammar& condition_parser,
                                  const value_ref_grammar<std::string>& string_grammar);
-
-        typedef rule<
-            condition_signature,
-            boost::spirit::qi::locals<EmpireAffiliationType>
-        > owned_by_rule;
-
-        typedef rule<
-            condition_signature,
-            boost::spirit::qi::locals<std::vector<condition_payload>>
-        > and_or_rule;
-
-        typedef rule<
-            condition_signature,
-            boost::spirit::qi::locals<std::string>
-        > described_rule;
 
         parse::int_arithmetic_rules            int_rules;
         parse::empire_affiliation_enum_grammar empire_affiliation_type_enum;
@@ -44,12 +29,12 @@ namespace parse { namespace detail {
         condition_parser_rule                  owned_by_2;
         condition_parser_rule                  owned_by_3;
         condition_parser_rule                  owned_by_4;
-        owned_by_rule                          owned_by_5;
+        condition_parser_rule                  owned_by_5;
         condition_parser_rule                  owned_by;
-        and_or_rule                            and_;
-        and_or_rule                            or_;
+        condition_parser_rule                  and_;
+        condition_parser_rule                  or_;
         condition_parser_rule                  not_;
-        described_rule                         described;
+        condition_parser_rule                  described;
         condition_parser_rule                  start;
     };
 

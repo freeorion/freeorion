@@ -26,8 +26,7 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok),
-            item_spec_parser(tok, labeller)
+            item_spec_parser(tok, label)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -51,7 +50,7 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         parse::detail::item_spec_grammar item_spec_parser;
         start_rule start;
     };

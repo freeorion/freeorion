@@ -17,16 +17,16 @@ namespace parse {
     struct conditions_parser_grammar::Impl {
         Impl(conditions_parser_grammar& conditions_parser_grammar,
              const parse::lexer& tok,
-             detail::Labeller& labeller
+             detail::Labeller& label
             ) :
-            string_grammar(tok, labeller, conditions_parser_grammar),
-            condition_parser_1(tok, labeller, conditions_parser_grammar, string_grammar),
-            condition_parser_2(tok, labeller, conditions_parser_grammar, string_grammar),
-            condition_parser_3(tok, labeller, conditions_parser_grammar, string_grammar),
-            condition_parser_4(tok, labeller, conditions_parser_grammar, string_grammar),
-            condition_parser_5(tok, labeller, conditions_parser_grammar, string_grammar),
-            condition_parser_6(tok, labeller, conditions_parser_grammar, string_grammar),
-            condition_parser_7(tok, labeller, conditions_parser_grammar, string_grammar)
+            string_grammar(tok, label, conditions_parser_grammar),
+            condition_parser_1(tok, label, conditions_parser_grammar, string_grammar),
+            condition_parser_2(tok, label, conditions_parser_grammar, string_grammar),
+            condition_parser_3(tok, label, conditions_parser_grammar, string_grammar),
+            condition_parser_4(tok, label, conditions_parser_grammar, string_grammar),
+            condition_parser_5(tok, label, conditions_parser_grammar, string_grammar),
+            condition_parser_6(tok, label, conditions_parser_grammar, string_grammar),
+            condition_parser_7(tok, label, conditions_parser_grammar, string_grammar)
         {}
 
         const parse::string_parser_grammar string_grammar;
@@ -41,10 +41,10 @@ namespace parse {
 
     conditions_parser_grammar::conditions_parser_grammar(
         const parse::lexer& tok,
-        detail::Labeller& labeller
+        detail::Labeller& label
     ) :
         conditions_parser_grammar::base_type(start, "conditions_parser_grammar"),
-        m_impl(boost::make_unique<conditions_parser_grammar::Impl>(*this, tok, labeller))
+        m_impl(boost::make_unique<conditions_parser_grammar::Impl>(*this, tok, label))
     {
         start
             = m_impl->condition_parser_1

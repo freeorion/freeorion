@@ -7,6 +7,7 @@
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <vector>
 
@@ -173,8 +174,9 @@ private:
 class FO_COMMON_API SetMeter : public EffectBase {
 public:
 
-    SetMeter(MeterType meter, std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
-    SetMeter(MeterType meter, std::unique_ptr<ValueRef::ValueRefBase<double>>&& value, const std::string& accounting_label);
+    SetMeter(MeterType meter,
+             std::unique_ptr<ValueRef::ValueRefBase<double>>&& value,
+             const boost::optional<std::string>& accounting_label = boost::none);
 
     virtual ~SetMeter();
 
@@ -1024,11 +1026,8 @@ private:
 class FO_COMMON_API SetEmpireTechProgress : public EffectBase {
 public:
     SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
-                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_progress);
-
-    SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
                           std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_progress,
-                          std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
+                          std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr);
 
     virtual ~SetEmpireTechProgress();
 

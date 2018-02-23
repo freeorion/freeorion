@@ -34,8 +34,7 @@ namespace {
         grammar(const parse::lexer& tok,
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
-            grammar::base_type(start),
-            labeller(tok)
+            grammar::base_type(start)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -46,20 +45,18 @@ namespace {
             qi::_2_type _2;
             qi::_3_type _3;
             qi::_4_type _4;
-            qi::_a_type _a;
-            qi::_b_type _b;
-            qi::_c_type _c;
-            qi::_d_type _d;
+            qi::_5_type _5;
             qi::_r1_type _r1;
+            qi::omit_type omit_;
 
             article
-                =    tok.Article_
-                >    labeller.rule(Name_token)                > tok.string [ _a = _1 ]
-                >    labeller.rule(Category_token)            > tok.string [ _b = _1 ]
-                >    labeller.rule(Short_Description_token)   > tok.string [ _c = _1 ]
-                >    labeller.rule(Description_token)         > tok.string [ _d = _1 ]
-                >    labeller.rule(Icon_token)                > tok.string
-                    [ insert(_r1, construct<EncyclopediaArticle>(_a, _b, _c, _d, _1)) ]
+                =  ( omit_[tok.Article_]
+                >    label(tok.Name_)                > tok.string
+                >    label(tok.Category_)            > tok.string
+                >    label(tok.Short_Description_)   > tok.string
+                >    label(tok.Description_)         > tok.string
+                >    label(tok.Icon_)                > tok.string )
+                    [ insert(_r1, construct<EncyclopediaArticle>(_1, _2, _3, _4, _5)) ]
                 ;
 
             start
@@ -75,19 +72,11 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        typedef parse::detail::rule<
-            void (ArticleMap&),
-            boost::spirit::qi::locals<
-                std::string,
-                std::string,
-                std::string,
-                std::string
-            >
-        > strings_rule;
+        using  strings_rule = parse::detail::rule<void (ArticleMap&)>;
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         strings_rule    article;
         start_rule      start;
     };

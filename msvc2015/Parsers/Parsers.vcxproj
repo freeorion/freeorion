@@ -139,6 +139,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\parse\ArithmeticRules.cpp" />
     <ClCompile Include="..\..\parse\BuildingsParser.cpp" />
     <ClCompile Include="..\..\parse\CommonParamsParser.cpp" />
     <ClCompile Include="..\..\parse\ConditionParser.cpp" />
@@ -187,13 +188,12 @@
     <ClCompile Include="..\..\parse\StringComplexValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\StringValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\TechsParser.cpp" />
-    <ClCompile Include="..\..\parse\Tokens.cpp" />
     <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp" />
-    <ClCompile Include="..\..\parse\ValueRefParserImpl.cpp" />
+    <ClCompile Include="..\..\parse\ValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\VisibilityValueRefParser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\parse\CommonParams.h" />
+    <ClInclude Include="..\..\parse\CommonParamsParser.h" />
     <ClInclude Include="..\..\parse\ConditionParser.h" />
     <ClInclude Include="..\..\parse\ConditionParser1.h" />
     <ClInclude Include="..\..\parse\ConditionParser2.h" />
@@ -211,6 +211,7 @@
     <ClInclude Include="..\..\parse\EffectParser5.h" />
     <ClInclude Include="..\..\parse\EffectParserImpl.h" />
     <ClInclude Include="..\..\parse\EnumParser.h" />
+    <ClInclude Include="..\..\parse\EnumValueRefRules.h" />
     <ClInclude Include="..\..\parse\Lexer.h" />
     <ClInclude Include="..\..\parse\MovableEnvelope.h" />
     <ClInclude Include="..\..\parse\Parse.h" />
@@ -218,7 +219,6 @@
     <ClInclude Include="..\..\parse\ReportParseError.h" />
     <ClInclude Include="..\..\parse\Tokens.h" />
     <ClInclude Include="..\..\parse\ValueRefParser.h" />
-    <ClInclude Include="..\..\parse\ValueRefParserImpl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

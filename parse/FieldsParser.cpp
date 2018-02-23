@@ -28,12 +28,14 @@ namespace {
     void insert_fieldtype(std::map<std::string, std::unique_ptr<FieldType>>& fieldtypes,
                           const std::string& name, const std::string& description,
                           float stealth, const std::set<std::string>& tags,
-                          const parse::effects_group_payload& effects,
+                          const boost::optional<parse::effects_group_payload>& effects,
                           const std::string& graphic,
                           bool& pass)
     {
         auto fieldtype_ptr = boost::make_unique<FieldType>(
-            name, description, stealth, tags, OpenEnvelopes(effects, pass), graphic);
+            name, description, stealth, tags,
+            (effects ? OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
+            graphic);
 
         fieldtypes.insert(std::make_pair(fieldtype_ptr->Name(), std::move(fieldtype_ptr)));
     }
@@ -48,11 +50,10 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok),
-            condition_parser(tok, labeller),
-            string_grammar(tok, labeller, condition_parser),
-            effects_group_grammar(tok, labeller, condition_parser, string_grammar),
-            tags_parser(tok, labeller),
+            condition_parser(tok, label),
+            string_grammar(tok, label, condition_parser),
+            effects_group_grammar(tok, label, condition_parser, string_grammar),
+            tags_parser(tok, label),
             double_rule(tok)
         {
             namespace phoenix = boost::phoenix;
@@ -62,24 +63,23 @@ namespace {
             qi::_2_type _2;
             qi::_3_type _3;
             qi::_4_type _4;
-            qi::_a_type _a;
-            qi::_b_type _b;
-            qi::_c_type _c;
-            qi::_d_type _d;
-            qi::_e_type _e;
+            qi::_5_type _5;
+            qi::_6_type _6;
+            qi::_7_type _7;
             qi::_pass_type _pass;
             qi::_r1_type _r1;
 
             field
-                =   tok.FieldType_
-                >   labeller.rule(Name_token)
-                >   tok.string        [ _pass = is_unique_(_r1, FieldType_token, _1), _a = _1 ]
-                >   labeller.rule(Description_token)         > tok.string [ _b = _1 ]
-                >   labeller.rule(Stealth_token)             > double_rule [ _c = _1]
-                >   tags_parser(_d)
-                > -(labeller.rule(EffectsGroups_token)       > effects_group_grammar [ _e = _1 ])
-                >   labeller.rule(Graphic_token)             > tok.string
-                [ insert_fieldtype_(_r1, _a, _b, _c, _d, _e, _1, _pass) ]
+                = ( tok.FieldType_
+                >   label(tok.Name_)
+                >   tok.string
+                >   label(tok.Description_)         > tok.string
+                >   label(tok.Stealth_)             > double_rule
+                >   tags_parser
+                > -(label(tok.EffectsGroups_)       > effects_group_grammar )
+                >   label(tok.Graphic_)             > tok.string )
+                [ _pass = is_unique_(_r1, _1, _2),
+                  insert_fieldtype_(_r1, _2, _3, _4, _5, _6, _7, _pass) ]
                 ;
 
             start
@@ -95,20 +95,13 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        typedef parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<FieldType>>&),
-            boost::spirit::qi::locals<
-                std::string,
-                std::string,
-                float,
-                std::set<std::string>,
-                parse::effects_group_payload
-            >
-        > field_rule;
+        using field_rule = parse::detail::rule<
+            void (std::map<std::string, std::unique_ptr<FieldType>>&)
+            >;
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         const parse::conditions_parser_grammar condition_parser;
         const parse::string_parser_grammar string_grammar;
         parse::effects_group_grammar effects_group_grammar;

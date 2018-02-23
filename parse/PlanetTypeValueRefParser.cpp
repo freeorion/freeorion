@@ -1,17 +1,19 @@
-#include "ValueRefParserImpl.h"
+#include "ValueRefParser.h"
 
 #include "EnumParser.h"
+#include "EnumValueRefRules.h"
 
 #include "../universe/Enums.h"
+#include "../universe/ValueRef.h"
 
 
 namespace parse { namespace detail {
     planet_type_parser_rules::planet_type_parser_rules(
         const parse::lexer& tok,
-        Labeller& labeller,
+        Labeller& label,
         const condition_parser_grammar& condition_parser
     ) :
-        enum_value_ref_rules("PlanetType", tok, labeller, condition_parser)
+        enum_value_ref_rules("PlanetType", tok, label, condition_parser)
     {
         boost::spirit::qi::_val_type _val;
 

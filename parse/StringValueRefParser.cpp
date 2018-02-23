@@ -1,15 +1,19 @@
-#include "ValueRefParserImpl.h"
+#include "ValueRefParser.h"
 
+#include "EnumValueRefRules.h"
+#include "MovableEnvelope.h"
 #include "../universe/ValueRef.h"
+
+#include <boost/spirit/include/phoenix.hpp>
 
 namespace parse {
     string_parser_grammar::string_parser_grammar(
         const parse::lexer& tok,
-        detail::Labeller& labeller,
+        detail::Labeller& label,
         const detail::condition_parser_grammar& condition_parser
     ) :
         string_parser_grammar::base_type(expr, "string_parser_grammar"),
-        string_var_complex(tok, labeller, *this)
+        string_var_complex(tok, label, *this)
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
@@ -57,11 +61,12 @@ namespace parse {
             |   tok.GalaxySeed_     [ _val = construct_movable_(new_<ValueRef::Variable<std::string>>(ValueRef::NON_OBJECT_REFERENCE, _1)) ]
             ;
 
-        variable_scope_rule = variable_scope(tok);
-        container_type_rule = container_type(tok);
-        initialize_bound_variable_parser<std::string>(bound_variable, bound_variable_name,
-                                                      variable_scope_rule, container_type_rule,
-                                                      tok);
+        variable_scope_rule = detail::variable_scope(tok);
+        container_type_rule = detail::container_type(tok);
+        detail::initialize_bound_variable_parser<std::string>(
+            bound_variable, unwrapped_bound_variable,
+            bound_variable_name, variable_scope_rule, container_type_rule,
+            tok);
 
         statistic_sub_value_ref
             =   constant
@@ -116,8 +121,8 @@ namespace parse {
             =   operated_expr
             ;
 
-        initialize_nonnumeric_statistic_parser<std::string>(
-            statistic, tok, labeller, condition_parser, statistic_sub_value_ref);
+        detail::initialize_nonnumeric_statistic_parser<std::string>(
+            statistic, tok, label, condition_parser, statistic_sub_value_ref);
 
         primary_expr
             =   constant

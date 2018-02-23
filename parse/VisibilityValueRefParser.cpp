@@ -1,13 +1,16 @@
-#include "ValueRefParserImpl.h"
+#include "ValueRefParser.h"
 
 #include "EnumParser.h"
+#include "EnumValueRefRules.h"
 
 #include "../universe/Enums.h"
 #include "../universe/ValueRef.h"
 
+#include <boost/spirit/include/phoenix.hpp>
+
 namespace parse { namespace detail {
     visibility_complex_parser_grammar::visibility_complex_parser_grammar(
-        const parse::lexer& tok, Labeller& labeller
+        const parse::lexer& tok, Labeller& label
     ) :
         visibility_complex_parser_grammar::base_type(start, "EmpireObjectVisibility"),
         simple_int_rules(tok)
@@ -19,12 +22,8 @@ namespace parse { namespace detail {
         using phoenix::new_;
 
         qi::_1_type _1;
-        qi::_a_type _a;
-        qi::_b_type _b;
-        qi::_c_type _c;
-        qi::_d_type _d;
-        qi::_e_type _e;
-        qi::_f_type _f;
+        qi::_2_type _2;
+        qi::_3_type _3;
         qi::_val_type _val;
         qi::_pass_type _pass;
         const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
@@ -33,10 +32,10 @@ namespace parse { namespace detail {
         const value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
         empire_object_visibility
-            =   tok.EmpireObjectVisibility_ [ _a = construct<std::string>(_1) ]
-            >   labeller.rule(Empire_token) >   simple_int [ _b = _1 ]
-            >   labeller.rule(Object_token) >   simple_int [ _c = _1 ]
-            [ _val = construct_movable_(new_<ValueRef::ComplexVariable<Visibility>>(_a, deconstruct_movable_(_b, _pass), deconstruct_movable_(_c, _pass), deconstruct_movable_(_f, _pass), deconstruct_movable_(_d, _pass), deconstruct_movable_(_e, _pass))) ]
+            = ( tok.EmpireObjectVisibility_
+                >   label(tok.Empire_) >   simple_int
+                >   label(tok.Object_) >   simple_int
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<Visibility>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr)) ]
             ;
 
         start
@@ -53,11 +52,11 @@ namespace parse { namespace detail {
 
     visibility_parser_rules::visibility_parser_rules(
         const parse::lexer& tok,
-        Labeller& labeller,
+        Labeller& label,
         const condition_parser_grammar& condition_parser
     ) :
-        enum_value_ref_rules("Visibility", tok, labeller, condition_parser),
-        visibility_var_complex_grammar(tok, labeller)
+        enum_value_ref_rules("Visibility", tok, label, condition_parser),
+        visibility_var_complex_grammar(tok, label)
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;

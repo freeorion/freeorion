@@ -1,5 +1,9 @@
-#include "ValueRefParserImpl.h"
+#include "ValueRefParser.h"
 
+#include "MovableEnvelope.h"
+#include "../universe/ValueRef.h"
+
+#include <boost/spirit/include/phoenix.hpp>
 
 parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lexer& tok) :
     simple_variable_rules("integer", tok)
@@ -65,12 +69,12 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
 
 parse::castable_as_int_parser_rules::castable_as_int_parser_rules(
     const parse::lexer& tok,
-    parse::detail::Labeller& labeller,
+    parse::detail::Labeller& label,
     const parse::detail::condition_parser_grammar& condition_parser,
     const parse::detail::value_ref_grammar<std::string>& string_grammar
 ) :
-    int_rules(tok, labeller, condition_parser, string_grammar),
-    double_rules(tok, labeller, condition_parser, string_grammar)
+    int_rules(tok, label, condition_parser, string_grammar),
+    double_rules(tok, label, condition_parser, string_grammar)
 {
     namespace phoenix = boost::phoenix;
     namespace qi = boost::spirit::qi;
@@ -102,13 +106,13 @@ parse::castable_as_int_parser_rules::castable_as_int_parser_rules(
 
 parse::int_arithmetic_rules::int_arithmetic_rules(
     const parse::lexer& tok,
-    parse::detail::Labeller& labeller,
+    parse::detail::Labeller& label,
     const parse::detail::condition_parser_grammar& condition_parser,
     const parse::detail::value_ref_grammar<std::string>& string_grammar
 ) :
-    arithmetic_rules("integer", tok, labeller, condition_parser),
+    arithmetic_rules("integer", tok, label, condition_parser),
     simple_int_rules(tok),
-    int_complex_grammar(tok, labeller, *this, string_grammar)
+    int_complex_grammar(tok, label, *this, string_grammar)
 {
     const parse::detail::value_ref_rule<int>& simple = simple_int_rules.simple;
 

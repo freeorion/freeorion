@@ -1,5 +1,9 @@
-#include "ValueRefParserImpl.h"
+#include "ValueRefParser.h"
 
+#include "MovableEnvelope.h"
+#include "../universe/ValueRef.h"
+
+#include <boost/spirit/include/phoenix.hpp>
 
 parse::detail::simple_double_parser_rules::simple_double_parser_rules(const parse::lexer& tok) :
     simple_variable_rules("double", tok)
@@ -67,16 +71,16 @@ parse::detail::simple_double_parser_rules::simple_double_parser_rules(const pars
 
 parse::double_parser_rules::double_parser_rules(
     const parse::lexer& tok,
-    parse::detail::Labeller& labeller,
+    parse::detail::Labeller& label,
     const parse::detail::condition_parser_grammar& condition_parser,
     const parse::detail::value_ref_grammar<std::string>& string_grammar
 ) :
-    arithmetic_rules("real number", tok, labeller, condition_parser),
-    int_rules(tok, labeller, condition_parser, string_grammar),
+    arithmetic_rules("real number", tok, label, condition_parser),
+    int_rules(tok, label, condition_parser, string_grammar),
     simple_int_rules(tok),
     simple_double_rules(tok),
-    int_complex_grammar(tok, labeller, int_rules, string_grammar),
-    double_complex_grammar(tok, labeller, condition_parser, string_grammar)
+    int_complex_grammar(tok, label, int_rules, string_grammar),
+    double_complex_grammar(tok, label, condition_parser, string_grammar)
 {
     namespace phoenix = boost::phoenix;
     namespace qi = boost::spirit::qi;

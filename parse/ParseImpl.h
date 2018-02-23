@@ -5,6 +5,7 @@
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/timer.hpp>
@@ -33,11 +34,12 @@ namespace parse { namespace detail {
         typedef bool result_type;
 
         template <typename Map>
-        result_type operator() (const Map& map, const char* const type, const std::string& key) const {
+        result_type operator() (const Map& map, const std::string& type, const std::string& key) const {
             // Will this key be unique?
             auto will_be_unique = (map.count(key) == 0);
             if (!will_be_unique)
-                ErrorLogger() << "More than one " <<  type << " has the same name, " << key << ".";
+                ErrorLogger() << "More than one " <<  boost::algorithm::to_lower_copy(type)
+                              << " has the same name, " << key << ".";
             return will_be_unique;
         }
     };
@@ -64,6 +66,50 @@ namespace parse { namespace detail {
         locals
     >;
 
+    template <typename Signature>
+    struct BracketedParserSignature;
+    template <typename Synthesized, typename... Inherited>
+    struct BracketedParserSignature<Synthesized (Inherited...)> {
+        using Synthesized_t = Synthesized;
+        using Signature_t = std::vector<Synthesized_t>(Inherited...);
+    };
+
+      /** single_or_bracketed_repeat uses \p Parser to parser expressions with
+        either a single element or repeated elements within square brackets. */
+    template <typename Parser>
+    struct single_or_bracketed_repeat : public grammar<
+        typename BracketedParserSignature<typename Parser::sig_type>::Signature_t
+        >
+    {
+        single_or_bracketed_repeat(const Parser& repeated_parser)
+            : single_or_bracketed_repeat::base_type(start)
+        {
+            boost::spirit::qi::repeat_type repeat_;
+            start
+                =    ('[' > +repeated_parser > ']')
+                |    repeat_(1)[repeated_parser]
+                ;
+
+            this->name("List of " + repeated_parser.name());
+        }
+
+        rule<typename BracketedParserSignature<typename Parser::sig_type>::Signature_t> start;
+    };
+
+    template <typename SynthesizedContainer = std::vector<std::string>>
+    struct single_or_repeated_string : public grammar<SynthesizedContainer ()> {
+        single_or_repeated_string(const parse::lexer& tok) : single_or_repeated_string::base_type(start) {
+            boost::spirit::qi::repeat_type repeat_;
+            start
+                =    ('[' > +tok.string > ']')
+                |    repeat_(1)[tok.string]
+                ;
+
+            this->name("List of strings");
+        }
+
+        rule<SynthesizedContainer ()> start;
+    };
 
     struct double_grammar : public grammar<double()> {
         double_grammar(const parse::lexer& tok);
@@ -79,13 +125,10 @@ namespace parse { namespace detail {
     /** Store label_rules. */
     class Labeller {
     public:
-        Labeller(const parse::lexer& tok_);
-
         /** Retrieve or create a label rule for \p name.*/
-        label_rule& rule(const char* name);
+        label_rule& operator()(const parse::lexer::string_token_def& token);
     private:
-        const parse::lexer& m_tok;
-        std::unordered_map<const char*, label_rule> m_rules;
+        std::unordered_map<const parse::lexer::string_token_def*, label_rule> m_rules;
     };
 
     template <typename T>
@@ -93,29 +136,26 @@ namespace parse { namespace detail {
     template <typename T>
     using enum_grammar = grammar<T ()>;
 
-    using tags_rule_type    = rule<void (std::set<std::string>&)>;
-    using tags_grammar_type = grammar<void (std::set<std::string>&)>;
+    using tags_rule_type    = rule<std::set<std::string> ()>;
+    using tags_grammar_type = grammar<std::set<std::string> ()>;
 
     struct tags_grammar : public tags_grammar_type {
         tags_grammar(const parse::lexer& tok,
-                     Labeller& labeller);
+                     Labeller& label);
         tags_rule_type start;
+        single_or_repeated_string<std::set<std::string>> one_or_more_string_tokens;
     };
 
     using color_parser_signature = GG::Clr ();
-    using color_parser_locals = boost::spirit::qi::locals<
-        unsigned int,
-        unsigned int,
-        unsigned int
-        >;
-    using color_rule_type = rule<color_parser_signature, color_parser_locals>;
-    using color_grammar_type = grammar<color_parser_signature, color_parser_locals>;
+    using color_rule_type = rule<color_parser_signature>;
+    using color_grammar_type = grammar<color_parser_signature>;
 
     struct color_parser_grammar : public color_grammar_type {
         color_parser_grammar(const parse::lexer& tok);
         using channel_rule = rule<unsigned int ()>;
 
         channel_rule channel;
+        channel_rule alpha;
         color_rule_type start;
     };
 

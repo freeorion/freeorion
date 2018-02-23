@@ -73,7 +73,7 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            labeller(tok)
+            one_or_more_string_tokens(tok)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -102,30 +102,27 @@ namespace {
 
             design_prefix
                 =    tok.ShipDesign_
-                >    labeller.rule(Name_token) > tok.string [ _r1 = _1 ]
-                >    ((labeller.rule(UUID_token)
+                >    label(tok.Name_) > tok.string [ _r1 = _1 ]
+                >    ((label(tok.UUID_)
                        > tok.string [_pass = is_valid_uuid_(_1),  _r5 = parse_uuid_(_1) ])
                       | eps [ _r5 = boost::uuids::nil_generator()() ]
                      )
-                >    labeller.rule(Description_token) > tok.string [ _r2 = _1 ]
+                >    label(tok.Description_) > tok.string [ _r2 = _1 ]
                 > (
                      tok.NoStringtableLookup_ [ _r4 = false ]
                     | eps [ _r4 = true ]
                   )
-                >    labeller.rule(Hull_token)        > tok.string [ _r3 = _1 ]
+                >    label(tok.Hull_)        > tok.string [ _r3 = _1 ]
                 ;
 
             design
                 =    design_prefix(_a, _b, _c, _f, _g)
-                >    labeller.rule(Parts_token)
-                >    (
-                            ('[' > +tok.string [ push_back(_d, _1) ] > ']')
-                        |    tok.string [ push_back(_d, _1) ]
-                     )
+                >    label(tok.Parts_)
+                >    one_or_more_string_tokens [ _d = _1 ]
                 >   -(
-                        labeller.rule(Icon_token)     > tok.string [ _e = _1 ]
+                        label(tok.Icon_)     > tok.string [ _e = _1 ]
                      )
-                >    labeller.rule(Model_token)       > tok.string
+                >    label(tok.Model_)       > tok.string
                 [ insert_ship_design_(_r1, _a, _b, _c, _d, _e, _1, _f, _g) ]
                 ;
 
@@ -162,7 +159,8 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
+        parse::detail::single_or_repeated_string<> one_or_more_string_tokens;
         design_prefix_rule design_prefix;
         design_rule design;
         start_rule start;
@@ -174,8 +172,7 @@ namespace {
         manifest_grammar(const parse::lexer& tok,
                          const std::string& filename,
                          const parse::text_iterator& first, const parse::text_iterator& last) :
-            manifest_grammar::base_type(start),
-            labeller(tok)
+            manifest_grammar::base_type(start)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -190,7 +187,7 @@ namespace {
 
             design_manifest
                 =    tok.ShipDesignOrdering_
-                >    *(labeller.rule(UUID_token)       > tok.string [ push_back(_r1, parse_uuid_(_1)) ])
+                >    *(label(tok.UUID_)       > tok.string [ push_back(_r1, parse_uuid_(_1)) ])
                 ;
 
             start
@@ -209,7 +206,7 @@ namespace {
         using manifest_rule = parse::detail::rule<void (std::vector<boost::uuids::uuid>&)>;
         using start_rule = parse::detail::rule<manifest_start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         manifest_rule design_manifest;
         start_rule start;
     };

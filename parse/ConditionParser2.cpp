@@ -12,131 +12,129 @@ namespace phoenix = boost::phoenix;
 namespace parse { namespace detail {
     condition_parser_rules_2::condition_parser_rules_2(
         const parse::lexer& tok,
-        Labeller& labeller,
+        Labeller& label,
         const condition_parser_grammar& condition_parser,
         const value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_2::base_type(start, "condition_parser_rules_2"),
-        int_rules(tok, labeller, condition_parser, string_grammar),
-        castable_int_rules(tok, labeller, condition_parser, string_grammar),
+        int_rules(tok, label, condition_parser, string_grammar),
+        castable_int_rules(tok, label, condition_parser, string_grammar),
         ship_part_class_enum(tok)
     {
         qi::_1_type _1;
-        qi::_a_type _a; // intref
-        qi::_b_type _b; // intref
-        qi::_c_type _c; // intref
-        qi::_d_type _d; // intref
-        qi::_e_type _e; // string
+        qi::_2_type _2;
+        qi::_3_type _3;
+        qi::_4_type _4;
         qi::_val_type _val;
         qi::eps_type eps;
         qi::_pass_type _pass;
+        qi::omit_type omit_;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         using phoenix::new_;
         using phoenix::construct;
 
         has_special_since_turn
-            =   (       tok.HasSpecialSinceTurn_
-                        >   labeller.rule(Name_token) >  string_grammar [ _e = _1 ]
-                        > -(labeller.rule(Low_token)  >  castable_int_rules.flexible_int [ _a = _1 ] )
-                        > -(labeller.rule(High_token) >  castable_int_rules.flexible_int [ _b = _1 ] )
+            =   (       omit_[tok.HasSpecialSinceTurn_]
+                        >   label(tok.Name_) >  string_grammar
+                        > -(label(tok.Low_)  >  castable_int_rules.flexible_int )
+                        > -(label(tok.High_) >  castable_int_rules.flexible_int )
                 ) [ _val = construct_movable_(new_<Condition::HasSpecial>(
-                    deconstruct_movable_(_e, _pass),
-                    deconstruct_movable_(_a, _pass),
-                    deconstruct_movable_(_b, _pass))) ]
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_2, _pass),
+                    deconstruct_movable_(_3, _pass))) ]
             ;
 
         enqueued
-            =   enqueued1
+            %=   enqueued1
             |   enqueued3
             |   enqueued2 /* enqueued2 must come after enqueued3 or enqueued2 would always dominate because of its optional components*/
             |   enqueued4
             ;
 
         enqueued1
-            =   (   (tok.Enqueued_
-                     >>  labeller.rule(Type_token)   >>   tok.Building_)
-                    > -(labeller.rule(Name_token)   >    string_grammar [ _e = _1 ])
-                    > -(labeller.rule(Empire_token) >    int_rules.expr [ _a = _1 ])
-                    > -(labeller.rule(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
-                    > -(labeller.rule(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
+            =   (   (omit_[tok.Enqueued_]
+                     >>  label(tok.Type_)   >>   omit_[tok.Building_])
+                    > -(label(tok.Name_)   >    string_grammar)
+                    > -(label(tok.Empire_) >    int_rules.expr)
+                    > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
+                    > -(label(tok.High_)   >    castable_int_rules.flexible_int)
                 ) [ _val = construct_movable_(new_<Condition::Enqueued>(
                     BT_BUILDING,
-                    deconstruct_movable_(_e, _pass),
-                    deconstruct_movable_(_a, _pass),
-                    deconstruct_movable_(_b, _pass),
-                    deconstruct_movable_(_c, _pass))) ]
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_2, _pass),
+                    deconstruct_movable_(_3, _pass),
+                    deconstruct_movable_(_4, _pass))) ]
             ;
 
         enqueued2
-            =   (   (tok.Enqueued_
-                     >>  labeller.rule(Type_token)   >>   tok.Ship_)
-                    > -(labeller.rule(Design_token) >    int_rules.expr [ _d = _1 ])
-                    > -(labeller.rule(Empire_token) >    int_rules.expr [ _a = _1 ])
-                    > -(labeller.rule(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
-                    > -(labeller.rule(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
+            =   (   (omit_[tok.Enqueued_]
+                     >>  label(tok.Type_)   >>   omit_[tok.Ship_])
+                    > -(label(tok.Design_) >    int_rules.expr)
+                    > -(label(tok.Empire_) >    int_rules.expr)
+                    > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
+                    > -(label(tok.High_)   >    castable_int_rules.flexible_int)
                 ) [ _val = construct_movable_(new_<Condition::Enqueued>(
-                    deconstruct_movable_(_d, _pass),
-                    deconstruct_movable_(_a, _pass),
-                    deconstruct_movable_(_b, _pass),
-                    deconstruct_movable_(_c, _pass))) ]
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_2, _pass),
+                    deconstruct_movable_(_3, _pass),
+                    deconstruct_movable_(_4, _pass))) ]
             ;
 
         enqueued3
-            =   (   (tok.Enqueued_
-                     >>  labeller.rule(Type_token)   >>   tok.Ship_
-                     >>  labeller.rule(Name_token)   ) >    string_grammar [ _e = _1 ]
-                    > -(labeller.rule(Empire_token) >    int_rules.expr [ _a = _1 ])
-                    > -(labeller.rule(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
-                    > -(labeller.rule(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
+            =   (   (omit_[tok.Enqueued_]
+                     >>  label(tok.Type_)   >>   omit_[tok.Ship_]
+                     >>  label(tok.Name_)   ) >    string_grammar
+                    > -(label(tok.Empire_) >    int_rules.expr)
+                    > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
+                    > -(label(tok.High_)   >    castable_int_rules.flexible_int)
                 ) [ _val = construct_movable_(new_<Condition::Enqueued>(
                     BT_SHIP,
-                    deconstruct_movable_(_e, _pass),
-                    deconstruct_movable_(_a, _pass),
-                    deconstruct_movable_(_b, _pass),
-                    deconstruct_movable_(_c, _pass))) ]
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_2, _pass),
+                    deconstruct_movable_(_3, _pass),
+                    deconstruct_movable_(_4, _pass))) ]
             ;
 
         enqueued4
-            =   (   tok.Enqueued_
-                    > -(labeller.rule(Empire_token) >    int_rules.expr [ _a = _1 ])
-                    > -(labeller.rule(Low_token)    >    castable_int_rules.flexible_int [ _b = _1 ])
-                    > -(labeller.rule(High_token)   >    castable_int_rules.flexible_int [ _c = _1 ])
+            =   (   omit_[tok.Enqueued_]
+                    > -(label(tok.Empire_) >    int_rules.expr)
+                    > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
+                    > -(label(tok.High_)   >    castable_int_rules.flexible_int)
                 ) [ _val = construct_movable_(new_<Condition::Enqueued>(
                     INVALID_BUILD_TYPE,
-                    deconstruct_movable_(_e, _pass),
-                    deconstruct_movable_(_a, _pass),
-                    deconstruct_movable_(_b, _pass),
-                    deconstruct_movable_(_c, _pass))) ]
+                    nullptr,
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_2, _pass),
+                    deconstruct_movable_(_3, _pass))) ]
             ;
 
         design_has_part
-            =   (   tok.DesignHasPart_
-                    > -(labeller.rule(Low_token)   > castable_int_rules.flexible_int [ _a = _1 ])
-                    > -(labeller.rule(High_token)  > castable_int_rules.flexible_int [ _b = _1 ])
-                )   >   labeller.rule(Name_token)  > string_grammar
-            [ _val = construct_movable_(new_<Condition::DesignHasPart>(
+            =   (   omit_[tok.DesignHasPart_]
+                    > -(label(tok.Low_)   > castable_int_rules.flexible_int)
+                    > -(label(tok.High_)  > castable_int_rules.flexible_int)
+                   >   label(tok.Name_)  > string_grammar
+                ) [ _val = construct_movable_(new_<Condition::DesignHasPart>(
+                    deconstruct_movable_(_3, _pass),
                     deconstruct_movable_(_1, _pass),
-                    deconstruct_movable_(_a, _pass),
-                    deconstruct_movable_(_b, _pass))) ]
+                    deconstruct_movable_(_2, _pass))) ]
             ;
 
         design_has_part_class
-            =   (   tok.DesignHasPartClass_
-                    > -(labeller.rule(Low_token)   > castable_int_rules.flexible_int [ _a = _1 ])
-                    > -(labeller.rule(High_token)  > castable_int_rules.flexible_int [ _b = _1 ])
-                )   >   labeller.rule(Class_token) > ship_part_class_enum
-            [ _val = construct_movable_(new_<Condition::DesignHasPartClass>(
-                    _1,
-                    deconstruct_movable_(_a, _pass),
-                    deconstruct_movable_(_b, _pass))) ]
+            =   (   omit_[tok.DesignHasPartClass_]
+                    > -(label(tok.Low_)   > castable_int_rules.flexible_int)
+                    > -(label(tok.High_)  > castable_int_rules.flexible_int)
+                   >   label(tok.Class_)  > ship_part_class_enum
+                ) [ _val = construct_movable_(new_<Condition::DesignHasPartClass>(
+                    _3,
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_2, _pass))) ]
             ;
 
         in_system
-            =   (   tok.InSystem_
-                    >  -(labeller.rule(ID_token)  > int_rules.expr [ _a = _1 ])
-                )
-            [ _val = construct_movable_(new_<Condition::InSystem>(deconstruct_movable_(_a, _pass))) ]
+            =   (   omit_[tok.InSystem_]
+                    >  -(label(tok.ID_)  > int_rules.expr)
+                ) [ _val = construct_movable_(new_<Condition::InSystem>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         start

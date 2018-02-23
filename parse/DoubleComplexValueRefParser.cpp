@@ -1,11 +1,14 @@
-#include "ValueRefParserImpl.h"
-#include "MovableEnvelope.h"
+#include "ValueRefParser.h"
 
+#include "MovableEnvelope.h"
+#include "../universe/ValueRef.h"
+
+#include <boost/spirit/include/phoenix.hpp>
 
 namespace parse {
     double_complex_parser_grammar::double_complex_parser_grammar(
         const lexer& tok,
-        detail::Labeller& labeller,
+        detail::Labeller& label,
         const detail::condition_parser_grammar& condition_parser,
         const detail::value_ref_grammar<std::string>& string_grammar
     ) :
@@ -19,14 +22,11 @@ namespace parse {
         using phoenix::new_;
 
         qi::_1_type _1;
-        qi::_a_type _a;
-        qi::_b_type _b;
-        qi::_c_type _c;
-        qi::_d_type _d;
-        qi::_e_type _e;
-        qi::_f_type _f;
+        qi::_2_type _2;
+        qi::_3_type _3;
         qi::_val_type _val;
         qi::_pass_type _pass;
+        qi::omit_type omit_;
         const boost::phoenix::function<detail::construct_movable> construct_movable_;
         const boost::phoenix::function<detail::deconstruct_movable> deconstruct_movable_;
 
@@ -36,115 +36,104 @@ namespace parse {
         const detail::value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
         name_property_rule
-            = (     tok.GameRule_           [ _a = construct<std::string>(_1) ]
-                |   tok.HullFuel_           [ _a = construct<std::string>(_1) ]
-                |   tok.HullStructure_      [ _a = construct<std::string>(_1) ]
-                |   tok.HullStealth_        [ _a = construct<std::string>(_1) ]
-                |   tok.HullSpeed_          [ _a = construct<std::string>(_1) ]
-                |   tok.PartCapacity_       [ _a = construct<std::string>(_1) ]
-                |   tok.PartSecondaryStat_  [ _a = construct<std::string>(_1) ]
-              ) >   labeller.rule(Name_token) > string_grammar [ _d = _1 ]
-                [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
-                        _a,
-                        deconstruct_movable_(_b, _pass),
-                        deconstruct_movable_(_c, _pass),
-                        deconstruct_movable_(_f, _pass),
-                        deconstruct_movable_(_d, _pass),
-                        deconstruct_movable_(_e, _pass))) ]
+            = ((    tok.GameRule_
+                |   tok.HullFuel_
+                |   tok.HullStructure_
+                |   tok.HullStealth_
+                |   tok.HullSpeed_
+                |   tok.PartCapacity_
+                |   tok.PartSecondaryStat_
+               ) >   label(tok.Name_) > string_grammar
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                        _1,
+                        nullptr,
+                        nullptr,
+                        nullptr,
+                        deconstruct_movable_(_2, _pass),
+                        nullptr)) ]
             ;
 
         empire_meter_value
-            = (     tok.EmpireMeterValue_ [ _a = construct<std::string>(_1)]
-                 >  labeller.rule(Empire_token) > simple_int[ _b = _1]
-                    >  labeller.rule(Meter_token) > tok.string[
-                        _d = construct_movable_(new_<ValueRef::Constant<std::string>>(_1))]
-              )     [_val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
-                _a,
-                deconstruct_movable_(_b, _pass),
-                deconstruct_movable_(_c, _pass),
-                deconstruct_movable_(_f, _pass),
-                deconstruct_movable_(_d, _pass),
-                deconstruct_movable_(_e, _pass))) ]
+            = (     tok.EmpireMeterValue_
+                 >  label(tok.Empire_) > simple_int
+                 >  label(tok.Meter_) > tok.string
+              ) [_val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                _1,
+                deconstruct_movable_(_2, _pass),
+                nullptr,
+                nullptr,
+                deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(_3)), _pass),
+                nullptr)) ]
             ;
 
         direct_distance
-            = (     tok.DirectDistanceBetween_ [ _a = construct<std::string>(_1) ]
-                 >  labeller.rule(Object_token) > simple_int [ _b = _1 ]
-                 >  labeller.rule(Object_token) > simple_int [ _c = _1 ]
+            = (     tok.DirectDistanceBetween_
+                 >  label(tok.Object_) > simple_int
+                 >  label(tok.Object_) > simple_int
               )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
-                _a,
-                deconstruct_movable_(_b, _pass),
-                deconstruct_movable_(_c, _pass),
-                deconstruct_movable_(_f, _pass),
-                deconstruct_movable_(_d, _pass),
-                deconstruct_movable_(_e, _pass))) ]
+                _1,
+                deconstruct_movable_(_2, _pass),
+                deconstruct_movable_(_3, _pass),
+                nullptr, nullptr, nullptr)) ]
             ;
 
         // in shortest_path would have liked to be able to use
-        //            >   labeller.rule(Object_token) >   (simple_int [ _b = _1 ] | int_rules.statistic_expr [ _b = _1 ])
-        //            >   labeller.rule(Object_token) >   (simple_int [ _c = _1 ] | int_rules.statistic_expr [ _c = _1 ])
+        //            >   label(tok.Object_) >   (simple_int [ _b = _1 ] | int_rules.statistic_expr [ _b = _1 ])
+        //            >   label(tok.Object_) >   (simple_int [ _c = _1 ] | int_rules.statistic_expr [ _c = _1 ])
         // but getting crashes upon program start, presumably due to initialization order problems
 
         shortest_path
             =   (
-                        tok.ShortestPath_ [ _a = construct<std::string>(_1) ]
-                    >   labeller.rule(Object_token) > simple_int [ _b = _1 ]
-                    >   labeller.rule(Object_token) > simple_int [ _c = _1 ]
+                        tok.ShortestPath_
+                    >   label(tok.Object_) > simple_int
+                    >   label(tok.Object_) > simple_int
                 )       [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
-                _a,
-                deconstruct_movable_(_b, _pass),
-                deconstruct_movable_(_c, _pass),
-                deconstruct_movable_(_f, _pass),
-                deconstruct_movable_(_d, _pass),
-                deconstruct_movable_(_e, _pass))) ]
+                _1,
+                deconstruct_movable_(_2, _pass),
+                deconstruct_movable_(_3, _pass),
+                nullptr, nullptr, nullptr)) ]
             ;
 
+        species_opinion
+            = omit_[tok.SpeciesOpinion_] >  label(tok.Species_) > string_grammar;
+
+
         species_empire_opinion
-            = (
-                ((  tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_EMPIRE_OPINION) ]
-                   >  labeller.rule(Species_token) > string_grammar [ _d = _1 ]
-                 )
-                >> labeller.rule(Empire_token)
-                )  >  simple_int [ _b = _1 ]
-              )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
-                _a,
-                deconstruct_movable_(_b, _pass),
-                deconstruct_movable_(_c, _pass),
-                deconstruct_movable_(_f, _pass),
-                deconstruct_movable_(_d, _pass),
-                deconstruct_movable_(_e, _pass))) ]
+            = ( species_opinion
+                >> (label(tok.Empire_) >  simple_int)
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                construct<std::string>(TOK_SPECIES_EMPIRE_OPINION),
+                deconstruct_movable_(_2, _pass),
+                nullptr,
+                nullptr,
+                deconstruct_movable_(_1, _pass),
+                nullptr)) ]
             ;
 
         species_species_opinion
-            = (
-                ((   tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_SPECIES_OPINION) ]
-                  >  labeller.rule(Species_token) >  string_grammar [ _d = _1 ]
-                 )
-                >> labeller.rule(Species_token)
-                ) >  string_grammar [ _e = _1 ]
-              )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
-                _a,
-                deconstruct_movable_(_b, _pass),
-                deconstruct_movable_(_c, _pass),
-                deconstruct_movable_(_f, _pass),
-                deconstruct_movable_(_d, _pass),
-                deconstruct_movable_(_e, _pass))) ]
+            = ( species_opinion
+                >> (label(tok.Species_) >  string_grammar)
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                construct<std::string>(TOK_SPECIES_SPECIES_OPINION),
+                nullptr,
+                nullptr,
+                nullptr,
+                deconstruct_movable_(_1, _pass),
+                deconstruct_movable_(_2, _pass))) ]
             ;
 
         special_capacity
-            = (
-                ((  tok.SpecialCapacity_ [ _a = construct<std::string>(_1) ]
-                   >  labeller.rule(Name_token) > string_grammar [ _d = _1 ]
-                 )
-                >> labeller.rule(Object_token)
-                )  >  simple_int [ _b = _1 ]
-              )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
-                _a,
-                deconstruct_movable_(_b, _pass),
-                deconstruct_movable_(_c, _pass),
-                deconstruct_movable_(_f, _pass),
-                deconstruct_movable_(_d, _pass),
-                deconstruct_movable_(_e, _pass))) ]
+            = ( tok.SpecialCapacity_
+                >  label(tok.Name_) > string_grammar
+                >> label(tok.Object_)
+                >  simple_int
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                _1,
+                deconstruct_movable_(_3, _pass),
+                nullptr,
+                nullptr,
+                deconstruct_movable_(_2, _pass),
+                nullptr ))]
             ;
 
         start

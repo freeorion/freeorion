@@ -49,8 +49,7 @@ namespace {
         grammar(const parse::lexer& tok,
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
-            grammar::base_type(start),
-            labeller(tok)
+            grammar::base_type(start)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -62,20 +61,20 @@ namespace {
             qi::_3_type _3;
             qi::_4_type _4;
             qi::_a_type _a;
-            qi::_b_type _b;
             qi::_r1_type _r1;
+            qi::omit_type omit_;
 
             int_pair
-                =   tok.int_ [ _a = _1 ] >> tok.int_ [ _b = _1 ]
-                    [ insert_key_pair(_r1, construct<Keymap::value_type>(_a, _b)) ]
+                =   (tok.int_ >> tok.int_)
+                    [ insert_key_pair(_r1, construct<Keymap::value_type>(_1, _2)) ]
                 ;
 
             keymap
-                =   tok.Keymap_
-                >   labeller.rule(Name_token) > tok.string [ _a = _1 ]
-                >   labeller.rule(Keys_token)
-                >   ( '[' > *(int_pair(_b)) > ']' )
-                    [ insert_key_map(_r1, construct<NamedKeymaps::value_type>(_a, _b)) ]
+                = ( omit_[tok.Keymap_]
+                >   label(tok.Name_) > tok.string
+                >   label(tok.Keys_)
+                >   ( '[' > *(int_pair(_a)) > ']' )
+                  ) [ insert_key_map(_r1, construct<NamedKeymaps::value_type>(_1, _a)) ]
                 ;
 
             start
@@ -93,19 +92,16 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        typedef parse::detail::rule<
-            void (Keymap&),
-            boost::spirit::qi::locals<int, int>
-        > int_pair_rule;
+        using int_pair_rule = parse::detail::rule<void (Keymap&)>;
 
-        typedef parse::detail::rule<
+        using keymap_rule = parse::detail::rule<
             void (NamedKeymaps&),
-            boost::spirit::qi::locals<std::string, Keymap>
-        > keymap_rule;
+            boost::spirit::qi::locals<Keymap>
+        >;
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller labeller;
+        parse::detail::Labeller label;
         int_pair_rule   int_pair;
         keymap_rule     keymap;
         start_rule      start;

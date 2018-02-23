@@ -99,12 +99,7 @@ lexer::lexer() :
         |     '?'
         ;
 
-#define REGISTER_TOKEN(r, _, name)                                    \
-    {                                                                 \
-        const char* n(BOOST_PP_CAT(name, _token));                    \
-        self += BOOST_PP_CAT(name, _) [ _val = n ];                   \
-        m_name_tokens[n] = &BOOST_PP_CAT(name, _);                    \
-    }
+#define REGISTER_TOKEN(r, _, name) self += BOOST_PP_CAT(name, _);
     BOOST_PP_SEQ_FOR_EACH(REGISTER_TOKEN, _, TOKEN_SEQ_1)
     BOOST_PP_SEQ_FOR_EACH(REGISTER_TOKEN, _, TOKEN_SEQ_2)
     BOOST_PP_SEQ_FOR_EACH(REGISTER_TOKEN, _, TOKEN_SEQ_3)
@@ -135,20 +130,6 @@ lexer::lexer() :
         ;
 }
 
-const boost::spirit::lex::token_def<const char*>& lexer::name_token(const char* name) const {
-    auto it = m_name_tokens.find(name);
-    assert(it != m_name_tokens.end());
-    return *it->second;
-}
-
 namespace boost { namespace spirit { namespace traits {
 
-    // This template specialization is required by Spirit.Lex to automatically
-    // convert an iterator pair to an const char* in the lexer.
-    void assign_to_attribute_from_iterators<const char*, parse::text_iterator, void>::
-    call(const parse::text_iterator& first, const parse::text_iterator& last, const char*& attr) {
-        std::string str(first, last);
-        boost::algorithm::to_lower(str);
-        attr = str.c_str();
-    }
 } } }

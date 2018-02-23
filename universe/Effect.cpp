@@ -392,18 +392,12 @@ unsigned int NoOp::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetMeter                                              //
 ///////////////////////////////////////////////////////////
-SetMeter::SetMeter(MeterType meter, std::unique_ptr<ValueRef::ValueRefBase<double>>&& value) :
-    m_meter(meter),
-    m_value(std::move(value)),
-    m_accounting_label()
-{}
-
 SetMeter::SetMeter(MeterType meter,
                    std::unique_ptr<ValueRef::ValueRefBase<double>>&& value,
-                   const std::string& accounting_label) :
+                   const boost::optional<std::string>& accounting_label) :
     m_meter(meter),
     m_value(std::move(value)),
-    m_accounting_label(accounting_label)
+    m_accounting_label(accounting_label ? *accounting_label : std::string())
 {}
 
 SetMeter::~SetMeter()
@@ -3097,18 +3091,14 @@ unsigned int Victory::GetCheckSum() const {
 // SetEmpireTechProgress                                 //
 ///////////////////////////////////////////////////////////
 SetEmpireTechProgress::SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
-                                             std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_progress) :
-    m_tech_name(std::move(tech_name)),
-    m_research_progress(std::move(research_progress)),
-    m_empire_id(boost::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
-{}
-
-SetEmpireTechProgress::SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
                                              std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_progress,
-                                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
+                                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id /*= nullptr*/) :
     m_tech_name(std::move(tech_name)),
     m_research_progress(std::move(research_progress)),
-    m_empire_id(std::move(empire_id))
+    m_empire_id(
+        empire_id
+        ? std::move(empire_id)
+        : boost::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
 {}
 
 SetEmpireTechProgress::~SetEmpireTechProgress()
