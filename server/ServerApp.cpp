@@ -3214,6 +3214,10 @@ void ServerApp::PostCombatProcessTurns() {
     TraceLogger(effects) << "!!!!!!!!!!!!!!!!!!!!!!AFTER GROWTH AND CLAMPING";
     TraceLogger(effects) << objects.Dump();
 
+    m_universe.UpdateMeterEstimates(false);
+
+    TraceLogger(effects) << "After Final Meter Estimate Update:\n" << objects.Dump();
+
     // store initial values of meters for this turn.
     m_universe.BackPropagateObjectMeters();
     empires.BackPropagateMeters();
@@ -3260,16 +3264,6 @@ void ServerApp::PostCombatProcessTurns() {
 
     // new turn visibility update
     m_universe.UpdateEmpireObjectVisibilities();
-
-
-    TraceLogger(effects) << "ServerApp::PostCombatProcessTurns Before Final Meter Estimate Update: ";
-    TraceLogger(effects) << objects.Dump();
-
-    // redo meter estimates to hopefully be consistent with what happens in clients
-    m_universe.UpdateMeterEstimates(false);
-
-    TraceLogger(effects) << "ServerApp::PostCombatProcessTurns After Final Meter Estimate Update: ";
-    TraceLogger(effects) << objects.Dump();
 
 
     // copy latest visible gamestate to each empire's known object state
