@@ -141,6 +141,7 @@ namespace {
     const std::vector<std::string>& GetSearchTextDirNames() {
         static std::vector<std::string> dir_names {
             "ENC_INDEX",        "ENC_SHIP_PART",    "ENC_SHIP_HULL",    "ENC_TECH",
+            "ENC_POLICY",
             "ENC_BUILDING_TYPE","ENC_SPECIAL",      "ENC_SPECIES",      "ENC_FIELD_TYPE",
             "ENC_METER_TYPE",   "ENC_EMPIRE",       "ENC_SHIP_DESIGN",  "ENC_SHIP",
             "ENC_MONSTER",      "ENC_MONSTER_TYPE", "ENC_FLEET",        "ENC_PLANET",
@@ -230,6 +231,14 @@ namespace {
                                                 {LinkTaggedText(VarText::TECH_TAG, tech_name.second) + "\n",
                                                  tech_name.second}});
                 }
+            }
+
+        }
+        else if (dir_name == "ENC_POLICY") {
+            for (const auto& policy_name : GetPolicyManager().PolicyNames()) {
+                sorted_entries_list.insert({policy_name,
+                                            {LinkTaggedText(VarText::POLICY_TAG, policy_name) + "\n",
+                                             policy_name}});
             }
 
         }
@@ -499,6 +508,12 @@ namespace {
                 if (DetermineCustomCategory(GetTech(tech_name)->Tags()) == dir_name)
                     dir_entries[UserString(tech_name)] =
                         std::make_pair(VarText::TECH_TAG, tech_name);
+
+            //// policies
+            //for (const auto& policy_name : GetPolicyManager().PolicyNames())
+            //    //if (DetermineCustomCategory(GetPolicy(tech_name)->Tags()) == dir_name)
+            //    //    dir_entries[UserString(tech_name)] =
+            //    //        std::make_pair(VarText::POLICY_TAG, tech_name);
 
             // building types
             for (const auto& entry : GetBuildingTypeManager())
@@ -917,6 +932,8 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
 
         } else if (link_type == VarText::TECH_TAG) {
             this->SetTech(data);
+        } else if (link_type == VarText::POLICY_TAG) {
+            this->SetPolicy(data);
         } else if (link_type == VarText::BUILDING_TYPE_TAG) {
             this->SetBuildingType(data);
         } else if (link_type == VarText::FIELD_TYPE_TAG) {
@@ -970,6 +987,8 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
 
         } else if (link_type == VarText::TECH_TAG) {
             ClientUI::GetClientUI()->ZoomToTech(data);
+        } else if (link_type == VarText::POLICY_TAG) {
+            ClientUI::GetClientUI()->ZoomToPolicy(data);
         } else if (link_type == VarText::BUILDING_TYPE_TAG) {
             ClientUI::GetClientUI()->ZoomToBuildingType(data);
         } else if (link_type == VarText::SPECIAL_TAG) {
@@ -1395,6 +1414,38 @@ namespace {
             { detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  "; }
             detailed_description += "\n\n";
         }
+    }
+
+    void RefreshDetailPanelPolicyTag(       const std::string& item_type, const std::string& item_name,
+                                            std::string& name, std::shared_ptr<GG::Texture>& texture,
+                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
+        const Policy* policy = GetPolicy(item_name);
+        if (!policy) {
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find policy with name " << item_name;
+            return;
+        }
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+
+        // Policies
+        name = UserString(item_name);
+        texture = ClientUI::PolicyIcon(item_name);
+        cost = policy->AdoptionCost(client_empire_id);
+        cost_units = UserString("ENC_RP");
+        general_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR"))
+            % UserString(policy->Category())
+            % ""
+            % UserString(policy->ShortDescription()));
+
+        detailed_description += UserString(policy->Description());
+
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !policy->Effects().empty()) {
+            detailed_description += "\n" + Dump(policy->Effects());
+        }
+
     }
 
     void RefreshDetailPanelBuildingTypeTag( const std::string& item_type, const std::string& item_name,
@@ -2721,6 +2772,11 @@ namespace {
         }
         else if (item_type == "ENC_TECH") {
             RefreshDetailPanelTechTag(          item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        }
+        else if (item_type == "ENC_POLICY") {
+            RefreshDetailPanelPolicyTag(        item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
                                                 general_type, specific_type, detailed_description, color);
         }

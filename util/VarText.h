@@ -150,6 +150,8 @@ public:
     static const std::string PREDEFINED_DESIGN_TAG;
     //! Variable value is a Tech::Name().
     static const std::string TECH_TAG;
+    //! Variable value is a Policy::Name().
+    static const std::string POLICY_TAG;
     //! Variable value is a BuildingType::Name().
     static const std::string BUILDING_TYPE_TAG;
     //! Variable value is a Special::Name().

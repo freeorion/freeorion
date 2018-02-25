@@ -32,6 +32,7 @@
 #include "../universe/Species.h"
 #include "../universe/FieldType.h"
 #include "../universe/Enums.h"
+#include "../Empire/Government.h"
 #include "../combat/CombatLogManager.h"
 #include "../client/human/HumanClientApp.h"
 
@@ -261,6 +262,14 @@ std::shared_ptr<GG::Texture> ClientUI::TechIcon(const std::string& tech_name) {
         if (texture_name.empty())
             return CategoryIcon(tech->Category());
     }
+    return ClientUI::GetTexture(ArtDir() / texture_name, true);
+}
+
+std::shared_ptr<GG::Texture> ClientUI::PolicyIcon(const std::string& policy_name) {
+    const Policy* policy = GetPolicyManager().GetPolicy(policy_name);
+    std::string texture_name;
+    if (policy)
+        texture_name = policy->Graphic();
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
@@ -907,6 +916,13 @@ bool ClientUI::ZoomToTech(const std::string& tech_name) {
     if (!GetTech(tech_name))
         return false;
     GetMapWnd()->ShowTech(tech_name);
+    return true;
+}
+
+bool ClientUI::ZoomToPolicy(const std::string& policy_name) {
+    if (!GetPolicy(policy_name))
+        return false;
+    //GetMapWnd()->ShowPolicy(policy_name);
     return true;
 }
 

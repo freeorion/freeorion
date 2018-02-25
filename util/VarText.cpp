@@ -17,6 +17,7 @@
 namespace xpr = boost::xpressive;
 
 class Tech;
+class Policy;
 class BuildingType;
 class Special;
 class Species;
@@ -24,6 +25,7 @@ class FieldType;
 class ShipHull;
 class ShipPart;
 const Tech*         GetTech(const std::string& name);
+const Policy*       GetPolicy(const std::string& name);
 const BuildingType* GetBuildingType(const std::string& name);
 const Special*      GetSpecial(const std::string& name);
 const Species*      GetSpecies(const std::string& name);
@@ -151,6 +153,8 @@ namespace {
                 { return WithTags(UserString("COMBAT"), VarText::COMBAT_ID_TAG, data); }},
             {VarText::TECH_TAG, [](const std::string& data)
                 { return NameString<Tech, GetTech>(data, VarText::TECH_TAG); }},
+            {VarText::POLICY_TAG, [](const std::string& data)
+                { return NameString<Policy, GetPolicy>(data, VarText::POLICY_TAG); }},
             {VarText::BUILDING_TYPE_TAG, [](const std::string& data)
                 { return NameString<BuildingType, GetBuildingType>(data, VarText::BUILDING_TYPE_TAG); }},
             {VarText::SHIP_HULL_TAG, [](const std::string& data)
@@ -233,6 +237,7 @@ const std::string VarText::DESIGN_ID_TAG = "shipdesign";
 const std::string VarText::PREDEFINED_DESIGN_TAG = "predefinedshipdesign";
 
 const std::string VarText::TECH_TAG = "tech";
+const std::string VarText::POLICY_TAG = "policy";
 const std::string VarText::BUILDING_TYPE_TAG = "buildingtype";
 const std::string VarText::SPECIAL_TAG = "special";
 const std::string VarText::SHIP_HULL_TAG = "shiphull";
