@@ -31,20 +31,19 @@ namespace {
 Policy::Policy(const std::string& name, const std::string& description,
                const std::string& short_description, const std::string& category,
                std::unique_ptr<ValueRef::ValueRefBase<double>>&& adoption_cost,
-               const std::set<std::string>& tags,
-               const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+               std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
                const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_short_description(short_description),
     m_category(category),
     m_adoption_cost(std::move(adoption_cost)),
-    m_tags(),
-    m_effects(effects),
+    m_effects(),
     m_graphic(graphic)
 {
-    for (const std::string& tag : tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+    for (auto&& effect : effects)
+        m_effects.emplace_back(std::move(effect));
+
     Init();
 }
 
@@ -114,7 +113,6 @@ unsigned int Policy::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_short_description);
     CheckSums::CheckSumCombine(retval, m_category);
     CheckSums::CheckSumCombine(retval, m_adoption_cost);
-    CheckSums::CheckSumCombine(retval, m_tags);
     CheckSums::CheckSumCombine(retval, m_effects);
     CheckSums::CheckSumCombine(retval, m_graphic);
 

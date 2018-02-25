@@ -6,7 +6,6 @@
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
-#include <boost/serialization/access.hpp>
 #include <boost/optional/optional.hpp>
 
 #include <memory>
@@ -24,8 +23,7 @@ public:
     Policy(const std::string& name, const std::string& description,
            const std::string& short_description, const std::string& category,
            std::unique_ptr<ValueRef::ValueRefBase<double>>&& adoption_cost,
-           const std::set<std::string>& tags,
-           const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
+           std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
            const std::string& graphic);
     ~Policy();
 
@@ -33,11 +31,9 @@ public:
     const std::string&  Name() const                { return m_name; }              //!< returns name of this tech
     const std::string&  Description() const         { return m_description; }       //!< Returns the text description of this tech
     const std::string&  ShortDescription() const    { return m_short_description; } //!< Returns the single-line short text description of this tech
-    std::string         Dump(unsigned short ntabs = 0) const;                                               //!< Returns a text representation of this object
+    std::string         Dump(unsigned short ntabs = 0) const;                       //!< Returns a text representation of this object
     const std::string&  Category() const            { return m_category; }          //!< retursn the name of the category to which this tech belongs
     float               AdoptionCost(int empire_id) const;                          //!< returns the total research cost in RPs required to research this tech
-
-    const std::set<std::string>&    Tags() const    { return m_tags; }
 
     /** returns the effects that are applied to the discovering empire's capital
       * when this tech is researched; not all techs have effects, in which case
@@ -45,7 +41,7 @@ public:
     const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
     { return m_effects; }
 
-    const std::string&              Graphic() const       { return m_graphic; }         //!< returns the name of the grapic file for this tech
+    const std::string&  Graphic() const       { return m_graphic; }         //!< returns the name of the grapic file for this tech
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -53,7 +49,7 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    unsigned int                    GetCheckSum() const;
+    unsigned int        GetCheckSum() const;
     //@}
 
 private:
@@ -66,7 +62,6 @@ private:
     std::string                                         m_short_description = "";
     std::string                                         m_category = "";
     std::unique_ptr<ValueRef::ValueRefBase<double>>     m_adoption_cost = nullptr;
-    std::set<std::string>                               m_tags;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_graphic = "";
 
@@ -101,11 +96,7 @@ private:
         be assigned to m_species_types when completed.*/
     mutable boost::optional<Pending::Pending<PoliciesTypeMap>> m_pending_types = boost::none;
 
-    PoliciesTypeMap m_policies;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    mutable PoliciesTypeMap m_policies;
 };
 
 /** returns the singleton policy manager */
