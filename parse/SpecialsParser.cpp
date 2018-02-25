@@ -72,7 +72,7 @@ namespace {
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_special_, insert_special, 3)
 
-    using start_rule_payload = std::map<std::string, std::unique_ptr<Special>>;
+    using start_rule_payload = SpecialsManager::SpecialsTypeMap;
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
@@ -134,18 +134,17 @@ namespace {
         }
 
         using special_rule = parse::detail::rule<void (start_rule_payload&)>;
-
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller label;
-        parse::conditions_parser_grammar condition_parser;
-        const parse::string_parser_grammar string_grammar;
-        parse::double_parser_rules      double_rules;
-        parse::effects_group_grammar effects_group_grammar;
-        parse::detail::double_grammar double_rule;
-        parse::detail::int_grammar int_rule;
-        special_rule        special;
-        start_rule          start;
+        parse::detail::Labeller             label;
+        parse::conditions_parser_grammar    condition_parser;
+        const parse::string_parser_grammar  string_grammar;
+        parse::double_parser_rules          double_rules;
+        parse::effects_group_grammar        effects_group_grammar;
+        parse::detail::double_grammar       double_rule;
+        parse::detail::int_grammar          int_rule;
+        special_rule                        special;
+        start_rule                          start;
     };
 }
 

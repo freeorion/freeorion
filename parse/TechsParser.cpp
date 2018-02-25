@@ -127,21 +127,22 @@ namespace {
             const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             researchable =
-                tok.Unresearchable_ [ _val = false ]
+                    tok.Unresearchable_ [ _val = false ]
                 |   tok.Researchable_ [ _val = true ]
                 |   eps [ _val = true ]
                 ;
 
             tech_info
-                = ( label(tok.Name_)              > tok.string
-                >   label(tok.Description_)       > tok.string
-                >   label(tok.Short_Description_) > tok.string  // TODO: Get rid of underscore.
-                >   label(tok.Category_)      > tok.string
-                >   label(tok.ResearchCost_)  > double_rules.expr
-                >   label(tok.ResearchTurns_) > castable_int_rules.flexible_int
+                = ( label(tok.Name_)                > tok.string
+                >   label(tok.Description_)         > tok.string
+                >   label(tok.Short_Description_)   > tok.string  // TODO: Get rid of underscore.
+                >   label(tok.Category_)            > tok.string
+                >   label(tok.ResearchCost_)        > double_rules.expr
+                >   label(tok.ResearchTurns_)       > castable_int_rules.flexible_int
                 >   researchable
                 >   tags_parser
-                ) [ _val = construct_movable_(new_<Tech::TechInfo>(_1, _2, _3, _4, deconstruct_movable_(_5, _pass), deconstruct_movable_(_6, _pass), _7, _8)) ]
+                ) [ _val = construct_movable_(new_<Tech::TechInfo>(_1, _2, _3, _4, deconstruct_movable_(_5, _pass),
+                                                                   deconstruct_movable_(_6, _pass), _7, _8)) ]
                 ;
 
             prerequisites
@@ -200,35 +201,32 @@ namespace {
         }
 
         using tech_info_rule = parse::detail::rule<parse::detail::MovableEnvelope<Tech::TechInfo> ()>;
-
         using prerequisites_rule = parse::detail::rule<std::set<std::string> ()>;
-
         using unlocks_rule = parse::detail::rule<std::vector<ItemSpec> ()>;
-
         using tech_rule = parse::detail::rule<void (TechManager::TechContainer&)>;
-
         using category_rule = parse::detail::rule<void (std::map<std::string, std::unique_ptr<TechCategory>>&)>;
-
         using start_rule = parse::detail::rule<void (TechManager::TechContainer&)>;
 
-        parse::detail::Labeller label;
-        parse::detail::single_or_repeated_string<std::set<std::string>> one_or_more_string_tokens;
-        parse::conditions_parser_grammar condition_parser;
-        const parse::string_parser_grammar string_grammar;
+        parse::detail::Labeller                 label;
+        parse::detail::single_or_repeated_string<std::set<std::string>>
+                                                one_or_more_string_tokens;
+        parse::conditions_parser_grammar        condition_parser;
+        const parse::string_parser_grammar      string_grammar;
         parse::castable_as_int_parser_rules     castable_int_rules;
-        parse::double_parser_rules  double_rules;
-        parse::effects_group_grammar effects_group_grammar;
-        parse::detail::tags_grammar tags_parser;
-        parse::detail::item_spec_grammar item_spec_parser;
-        parse::detail::single_or_bracketed_repeat<parse::detail::item_spec_grammar> one_or_more_item_specs;
-        parse::detail::color_parser_grammar color_parser;
-        parse::detail::rule<bool()> researchable;
-        tech_info_rule              tech_info;
-        prerequisites_rule          prerequisites;
-        unlocks_rule                unlocks;
-        tech_rule                   tech;
-        category_rule               category;
-        start_rule                  start;
+        parse::double_parser_rules              double_rules;
+        parse::effects_group_grammar            effects_group_grammar;
+        parse::detail::tags_grammar             tags_parser;
+        parse::detail::item_spec_grammar        item_spec_parser;
+        parse::detail::single_or_bracketed_repeat<parse::detail::item_spec_grammar>
+                                                one_or_more_item_specs;
+        parse::detail::color_parser_grammar     color_parser;
+        parse::detail::rule<bool()>             researchable;
+        tech_info_rule                          tech_info;
+        prerequisites_rule                      prerequisites;
+        unlocks_rule                            unlocks;
+        tech_rule                               tech;
+        category_rule                           category;
+        start_rule                              start;
     };
 }
 
