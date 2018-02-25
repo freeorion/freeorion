@@ -12,6 +12,7 @@
 
 class Planet;
 class Tech;
+class Policy;
 class ShipPart;
 class ShipHull;
 class BuildingType;
@@ -56,6 +57,8 @@ public:
     void SetItem(std::shared_ptr<const Planet> planet);
     void SetTech(const std::string& tech_name);
     void SetItem(const Tech* tech);
+    void SetPolicy(const std::string& policy_name);
+    void SetItem(const Policy* policy);
     void SetShipPart(const std::string& part_name);
     void SetItem(const ShipPart* part);
     void SetShipHull(const std::string& hull_name);
