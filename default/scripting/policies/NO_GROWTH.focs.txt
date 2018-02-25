@@ -1,0 +1,16 @@
+Policy
+    name = "NO_GROWTH_POLICY"
+    description = "NO_GROWTH_POLICY_DESC"
+    short_description = "NO_GROWTH_POLICY_SHORT_DESC"
+    category = "SOCIOLOGY_CATEGORY"
+    adoptioncost = 10
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            effects =
+                SetPopulation value = Target.Population // revert to initial value
+    graphic = "icons/specials_huge/nova_boom.png"
