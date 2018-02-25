@@ -1000,6 +1000,18 @@ Votre connection a été mise à jour.
 ## Game Rules
 ##
 
+RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR
+Surengagement de PP par Tour
+
+RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR_DESC
+Pourcentage de surengagement de PP par tour de production d'un item afin de le produire dans les temps.
+
+RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR
+Surengagement final de PP
+
+RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR_DESC
+Pourcentage de surengagement de PP pour le tour final de production d'un item afin de le produire dans les temps.
+
 RULE_CHEAP_AND_FAST_TECH_RESEARCH
 Technologies gratuites et immédiates
 
@@ -4373,7 +4385,7 @@ Activez/Désactivez les filtres Obsolètes, Disponibles et Indisponibles pour af
 NO_SAVED_OR_DEFAULT_DESIGNS_ADDED_PROMPT
 '''Choisissez une coque, ajoutez des équipements puis cliquez sur "[[DESIGN_WND_ADD_FINISHED]]" pour créer un modèle utilisable.
 
-Aucun Modèle Sauvegardé ou Modèle par Défaut n'ont été ajoutés à l'empire au démarrage de la partie. Les options pour ajouter ces modèles au démarrage d'une partie peuvent être modifiées dans Options->Autres. Ajoutez les Modèles Sauvegardés à l'aide du menu contextuel de n'importe quel modèle dans l'onglet "Sauvegardés".'''
+Aucun Modèle Sauvegardé ou Modèle par Défaut n'ont été ajoutés à l'empire au démarrage de la partie. Les options pour ajouter ces modèles au démarrage d'une partie peuvent être modifiées dans Options->Autres. En cours de partie, il est possible d'ajouter directement les Modèles Sauvegardés à l'aide du menu contextuel de n'importe quel modèle dans l'onglet "Sauvegardés".'''
 
 # %1% File path of unwritable file
 ERROR_UNABLE_TO_WRITE_FILE
@@ -4497,6 +4509,7 @@ ENC_GALAXY_SETUP
 # %8% monster frequency in the current galaxy.
 # %9% natives frequency in the current galaxy.
 # %10% upper AI aggression level in this galaxy.
+# %11% game UID
 ENC_GALAXY_SETUP_SETTINGS
 '''Graine: %1%
 Nombre de systèmes: %2%
@@ -4508,6 +4521,7 @@ Planètes: %6%
 Monstres: %8%
 Indigènes: %9%
 Agressivité max de l'IA: %10%
+UID Partie: %11%
 '''
 
 ENC_GAME_RULES
@@ -7020,7 +7034,6 @@ Autosuffisant
 SELF_SUSTAINING_SPECIES_CLASS_DESC
 Liste des espèces à [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]:
 
-
 GASEOUS_SPECIES_CLASS
 Gazeux
 
@@ -7232,7 +7245,6 @@ Sly
 SP_SLY_GAMEPLAY_DESC
 '''Sacs de gaz affables mais peu connus.
 Préfèrent grandement les planètes de type [[PT_GASGIANT]].
-
 [[encyclopedia GASEOUS_SPECIES_TITLE]]
 '''
 
@@ -14167,13 +14179,13 @@ GASEOUS_DESC
 +	Ravitaillement Carburant sur Géantes Gazeuses 0.1'''
 
 BAD_POPULATION_DESC
-−	Faible Population : 75%
+−	Mauvais en [[metertype METER_POPULATION]] : 75%
 
 AVERAGE_POPULATION_DESC
-'''	Population normale'''
+'''	Normal en [[metertype METER_POPULATION]] : 100%'''
 
 GOOD_POPULATION_DESC
-+	Grande Population : 125%
++	Bon en [[metertype METER_POPULATION]] : 125%
 
 FIXED_LOW_POPULATION_DESC
 −−	Population Maximale limitée à 5
@@ -14194,22 +14206,22 @@ ULTIMATE_SUPPLY_DESC
 ++	Parfait en [[metertype METER_SUPPLY]] : +3
 
 NO_STOCKPILE_DESC
---	Aucun [[metertype METER_STOCKPILE]]
+−−	Aucun [[metertype METER_STOCKPILE]]
 
 BAD_STOCKPILE_DESC
-	Mauvais en [[metertype METER_STOCKPILE]]: 50%
+−	Mauvais en [[metertype METER_STOCKPILE]] : 50%
 
 AVERAGE_STOCKPILE_DESC
-	Normal en [[metertype METER_STOCKPILE]]: 100%
+'''	Normal en [[metertype METER_STOCKPILE]] : 100%'''
 
 GOOD_STOCKPILE_DESC
-+	Excellent en [[metertype METER_STOCKPILE]]: 300%
++	Bon en [[metertype METER_STOCKPILE]] : 300%
 
 GREAT_STOCKPILE_DESC
-++	Excellent en [[metertype METER_STOCKPILE]]: 1000%
+++	Excellent en [[metertype METER_STOCKPILE]] : 1000%
 
 ULTIMATE_STOCKPILE_DESC
-+++	Parfait en [[metertype METER_STOCKPILE]]: 1500%
++++	Parfait en [[metertype METER_STOCKPILE]] : 1500%
 
 GOOD_SHIP_SHIELD_DESC
 +	Bons [[metertype METER_SHIELD]] d'astronefs : +1
@@ -14318,12 +14330,12 @@ Planète Natale
 # %1% FIXME
 # %2% FIXME
 BAD_POPULATION_LABEL
-%2% Faible population 75%%
+%2% Mauvais en Population
 
 # %1% FIXME
 # %2% FIXME
 GOOD_POPULATION_LABEL
-%2% Grande population 125%%
+%2% Bon en Population
 
 # %1% FIXME
 # %2% FIXME
@@ -14402,8 +14414,18 @@ ULTIMATE_SUPPLY_LABEL
 
 # %1% FIXME
 # %2% FIXME
+BAD_STOCKPILE_LABEL
+%2% Mauvais en Stock
+
+# %1% FIXME
+# %2% FIXME
 AVERAGE_STOCKPILE_LABEL
 %2% Normal en Stock
+
+# %1% FIXME
+# %2% FIXME
+GOOD_STOCKPILE_LABEL
+%2% Bon en Stock
 
 # %1% FIXME
 # %2% FIXME
