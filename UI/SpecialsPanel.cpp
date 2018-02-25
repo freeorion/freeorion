@@ -18,7 +18,7 @@ namespace {
     const GG::Y     SPECIAL_ICON_HEIGHT(24);
 }
 
-SpecialsPanel::SpecialsPanel(GG::X w, int object_id) : 
+SpecialsPanel::SpecialsPanel(GG::X w, int object_id) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(32), GG::INTERACTIVE),
     m_object_id(object_id),
     m_icons()
@@ -135,8 +135,7 @@ bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
         return false;
     const GG::Pt& pt = event.Point();
 
-    for (const auto& entry : m_icons)
-    {
+    for (const auto& entry : m_icons) {
         if (entry.second.get() != w)
             continue;
 
