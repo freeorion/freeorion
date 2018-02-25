@@ -4924,6 +4924,12 @@ Technologies
 ENC_TECH_DESC
 New effects, improved planetary stats, buildings, and ship parts can be unlocked by [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]], each falling into one of the categories listed here.
 
+ENC_POLICY
+Imperial Policies
+
+ENC_POLICY_DESC
+Improved or situational effects that can be adopted by empires.
+
 ENC_SPECIAL
 Special
 
@@ -10807,6 +10813,26 @@ DESC_HAS_TAG
 # %1% an object tag string.
 DESC_HAS_TAG_NOT
 ''' that is not %1%'''
+
+##
+## Policy categories
+##
+
+SOCIOLOGY_CATEGORY
+Sociology
+
+##
+## Imperial Policies
+##
+
+NO_GROWTH_POLICY
+No Growth
+
+NO_GROWTH_POLICY_DESC
+Prevents planets from increasing population from turn to turn.
+
+NO_GROWTH_POLICY_SHORT_DESC
+Stops planet growth
 
 
 ##

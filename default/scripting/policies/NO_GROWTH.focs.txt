@@ -13,4 +13,4 @@ Policy
             ]
             effects =
                 SetPopulation value = Target.Population // revert to initial value
-    graphic = "icons/specials_huge/nova_boom.png"
+    graphic = "icons/policies/no_growth.png"
