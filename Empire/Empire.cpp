@@ -19,6 +19,7 @@
 #include "../universe/UnlockableItem.h"
 #include "EmpireManager.h"
 #include "Supply.h"
+#include "Government.h"
 
 #include <unordered_set>
 
@@ -153,33 +154,61 @@ void Empire::SetCapitalID(int id) {
         m_source_id = id;
 }
 
-void Empire::AdoptPolicy(const std::string& name, const std::string& type, bool adopt) {
+void Empire::AdoptPolicy(const std::string& name, const std::string& category, bool adopt) {
     if (!adopt) {
-        // find policy type
-        if (m_adopted_policy_turns.find(type) == m_adopted_policy_turns.end() ||
-            m_adopted_policy_turns[type].empty())
-        {
-            ErrorLogger() << "Can't unadopt policy of type that doesn't have any policies";
-            return;
-        }
         // revoke policy
-        m_adopted_policy_turns[type].erase(name);
+        if (m_adopted_policy_turns.count(category)) {
+            auto& cat_policies = m_adopted_policy_turns[category];
+            if (cat_policies.find(name) != cat_policies.end()) {
+                // refund adoption cost if adoption was this turn
+                if (cat_policies[name] == CurrentTurn()) {
+                    // todo: refund
+                }
+                // un-adopt policy
+                cat_policies.erase(name);
+            }
+        }
+        return;
+    }
 
-    } else {
-        // check that policy is not already adopted
-        if (m_adopted_policy_turns.find(type) != m_adopted_policy_turns.end() &&
-            m_adopted_policy_turns[type].find(name) != m_adopted_policy_turns[type].end())
-        {
-            DebugLogger() << "Policy already adopted: " << name << "  of type: " << type;
+    // check that policy is available
+    if (!m_available_policies.count(name)) {
+        DebugLogger() << "Policy name: " << name << "  not available to empire with id: " << m_id;
+        return;
+    }
+
+    // todo: check that there is sufficient influence to adopt policy
+
+    // todo: check if there is room to adopt policy in requested category
+
+    // check that policy is not already adopted, and if it is another
+    // category
+    for (auto& category_entry : m_adopted_policy_turns) {
+        if (category_entry.first == category) {
+            if (category_entry.second.count(name)) {
+                DebugLogger() << "Policy already adopted: " << name << "  of category: " << category;
+                return;
+            }
+            continue;
+
+        } else if (category_entry.second.find(name) != category_entry.second.end()) {
+            // already adopted in a different category... switch at no additional cost / refund
+            int turn_of_adoption = category_entry.second[name];
+            category_entry.second.erase(name);
+            m_adopted_policy_turns[category][name] = turn_of_adoption;
+
+            DebugLogger() << "Policy: " << name << "  transferred to category: " << category << "  from previous category: " << category_entry.first;
+
+            // assumes policy has only been already adopted in at most one other category
             return;
         }
-
-        // todo: check that policy can be adopted by this empire in the specified type
-        // todo: check that same policy isn't already in another type, and if so, transfer with same adoption date
-
-        // adopt policy
-        m_adopted_policy_turns[type][name] = CurrentTurn();
     }
+
+    // todo: deduct adoption cost from empire's influence
+
+    // adopt policy in requested category on this turn
+    m_adopted_policy_turns[category][name] = CurrentTurn();
+    DebugLogger() << "Policy: " << name << "  adopted in category " << category << "  on turn: " << CurrentTurn();
 }
 
 void Empire::AuditPolicies() {
@@ -1424,6 +1453,19 @@ void Empire::ApplyNewTechs() {
     m_newly_researched_techs.clear();
 }
 
+void Empire::AddPolicy(const std::string& name) {
+    const Policy* policy = GetPolicy(name);
+    if (!policy) {
+        ErrorLogger() << "Empire::AddPolicy given and invalid policy: " << name;
+        return;
+    }
+
+    if (m_available_policies.find(name) == m_available_policies.end()) {
+        AddSitRepEntry(CreatePolicyUnlockedSitRep(name));
+        m_available_policies.insert(name);
+    }
+}
+
 void Empire::UnlockItem(const UnlockableItem& item) {
     switch (item.type) {
     case UIT_BUILDING:
@@ -1440,6 +1482,9 @@ void Empire::UnlockItem(const UnlockableItem& item) {
         break;
     case UIT_TECH:
         AddNewlyResearchedTechToGrantAtStartOfNextTurn(item.name);
+        break;
+    case UIT_POLICY:
+        AddPolicy(item.name);
         break;
     default:
         ErrorLogger() << "Empire::UnlockItem : passed UnlockableItem with unrecognized UnlockableItemType";
@@ -1575,6 +1620,9 @@ void Empire::AddSitRepEntry(const SitRepEntry& entry)
 void Empire::RemoveTech(const std::string& name)
 { m_techs.erase(name); }
 
+void Empire::RemovePolicy(const std::string& name)
+{ m_available_policies.erase(name); }
+
 void Empire::LockItem(const UnlockableItem& item) {
     switch (item.type) {
     case UIT_BUILDING:
@@ -1591,6 +1639,9 @@ void Empire::LockItem(const UnlockableItem& item) {
         break;
     case UIT_TECH:
         RemoveTech(item.name);
+        break;
+    case UIT_POLICY:
+        RemovePolicy(item.name);
         break;
     default:
         ErrorLogger() << "Empire::LockItem : passed UnlockableItem with unrecognized UnlockableItemType";
