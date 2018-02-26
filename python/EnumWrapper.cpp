@@ -66,6 +66,7 @@ namespace FreeOrionPython {
         enum_<BuildType>("buildType")
             .value("building",          BT_BUILDING)
             .value("ship",              BT_SHIP)
+            .value("stockpile",         BT_STOCKPILE)
         ;
         enum_<ResourceType>("resourceType")
             .value("industry",      RE_INDUSTRY)
