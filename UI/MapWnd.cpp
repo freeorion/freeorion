@@ -4283,6 +4283,17 @@ void MapWnd::ShowTech(const std::string& tech_name) {
     }
 }
 
+void MapWnd::ShowPolicy(const std::string& policy_name) {
+    if (m_production_wnd->Visible()) {
+        m_production_wnd->ShowPedia();
+        m_production_wnd->ShowPolicyInEncyclopedia(policy_name);
+    } else {
+        if (!m_pedia_panel->Visible())
+            TogglePedia();
+        m_pedia_panel->SetPolicy(policy_name);
+    }
+}
+
 void MapWnd::ShowBuildingType(const std::string& building_type_name) {
     if (m_production_wnd->Visible()) {
         m_production_wnd->ShowPedia();

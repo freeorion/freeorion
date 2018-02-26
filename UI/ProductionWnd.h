@@ -51,6 +51,9 @@ public:
     /** Shows \a tech in production encyclopedia window */
     void ShowTechInEncyclopedia(const std::string& tech_name);
 
+    /** Shows \a policy in production encyclopedia window */
+    void ShowPolicyInEncyclopedia(const std::string& policy_name);
+
     //! Shows @a part_name in production encyclopedia window
     void ShowShipPartInEncyclopedia(const std::string& part_name);
 

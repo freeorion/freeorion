@@ -158,6 +158,7 @@ public:
     void ShowPlanet(int planet_id);                              //!< brings up encyclopedia panel and displays info about the planet
     void ShowCombatLog(int log_id);                              //!< brings up encyclopedia panel and displays info about the combat
     void ShowTech(const std::string& tech_name);                 //!< brings up the research screen and centers the tech tree on \a tech_name
+    void ShowPolicy(const std::string& policy_name);             //!< brings up ??? and displays info about the policy with name \a policy_name
     void ShowBuildingType(const std::string& building_type_name);//!< brings up the production screen and displays info about the buildtype \a type_name
 
     //! Brings up the production screen and displays info about

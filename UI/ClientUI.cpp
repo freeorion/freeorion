@@ -922,7 +922,7 @@ bool ClientUI::ZoomToTech(const std::string& tech_name) {
 bool ClientUI::ZoomToPolicy(const std::string& policy_name) {
     if (!GetPolicy(policy_name))
         return false;
-    //GetMapWnd()->ShowPolicy(policy_name);
+    GetMapWnd()->ShowPolicy(policy_name);
     return true;
 }
 
