@@ -111,6 +111,16 @@ SitRepEntry CreateTechUnlockedSitRep(const std::string& tech_name) {
     return sitrep;
 }
 
+SitRepEntry CreatePolicyUnlockedSitRep(const std::string& policy_name) {
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_POLICY_UNLOCKED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/policy_unlocked.png",
+        UserStringNop("SITREP_POLICY_UNLOCKED_LABEL"), true);
+    sitrep.AddVariable(VarText::POLICY_TAG,        policy_name);
+    return sitrep;
+}
+
 SitRepEntry CreateBuildingTypeUnlockedSitRep(const std::string& building_type_name) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_BUILDING_TYPE_UNLOCKED"),

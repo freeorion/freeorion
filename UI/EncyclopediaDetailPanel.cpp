@@ -509,12 +509,6 @@ namespace {
                     dir_entries[UserString(tech_name)] =
                         std::make_pair(VarText::TECH_TAG, tech_name);
 
-            //// policies
-            //for (const auto& policy_name : GetPolicyManager().PolicyNames())
-            //    //if (DetermineCustomCategory(GetPolicy(tech_name)->Tags()) == dir_name)
-            //    //    dir_entries[UserString(tech_name)] =
-            //    //        std::make_pair(VarText::POLICY_TAG, tech_name);
-
             // building types
             for (const auto& entry : GetBuildingTypeManager())
                 if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
@@ -1383,6 +1377,7 @@ namespace {
                 case UIT_SHIP_HULL:     TAG = VarText::SHIP_HULL_TAG;           break;
                 case UIT_SHIP_DESIGN:   TAG = VarText::PREDEFINED_DESIGN_TAG;   break;
                 case UIT_TECH:          TAG = VarText::TECH_TAG;                break;
+                case UIT_POLICY:        TAG = VarText::POLICY_TAG;              break;
                 default: break;
                 }
 

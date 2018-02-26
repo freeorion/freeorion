@@ -6795,6 +6795,12 @@ SITREP_TECH_UNLOCKED
 SITREP_TECH_UNLOCKED_LABEL
 Tech Unlocked
 
+SITREP_POLICY_UNLOCKED
+%policy% has been unlocked and can now be adopted.
+
+SITREP_POLICY_UNLOCKED_LABEL
+Policy Unlocked
+
 SITREP_SHIP_PART_UNLOCKED
 %shippart% has been unlocked and can now be produced in ship designs.
 
@@ -9341,6 +9347,10 @@ Ship Hull
 # Unlockable item types
 UIT_TECH
 Technology
+
+# Unlockable item types
+UIT_POLICY
+Policy
 
 # Build types
 BT_NOT_BUILDING
