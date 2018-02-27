@@ -3357,17 +3357,28 @@ void ServerApp::PostCombatProcessTurns() {
 
 void ServerApp::CheckForEmpireElimination() {
     std::set<Empire*> surviving_empires;
+    std::set<Empire*> surviving_human_empires;
     for (auto& entry : Empires()) {
         if (entry.second->Eliminated())
             continue;   // don't double-eliminate an empire
         else if (EmpireEliminated(entry.first))
             entry.second->Eliminate();
-        else
+        else {
             surviving_empires.insert(entry.second);
+            if (GetEmpireClientType(entry.second->EmpireID()) == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                surviving_human_empires.insert(entry.second);
+        }
     }
 
     if (surviving_empires.size() == 1) // last man standing
         (*surviving_empires.begin())->Win(UserStringNop("VICTORY_ALL_ENEMIES_ELIMINATED"));
+    else if (!m_single_player_game &&
+        static_cast<int>(surviving_human_empires.size()) <= GetGameRules().Get<int>("RULE_THRESHOLD_HUMAN_PLAYER_WIN"))
+    { // human victory threshold
+        for (auto& empire : surviving_human_empires) {
+            empire->Win(UserStringNop("VICTORY_FEW_HUMANS_ALIVE"));
+        }
+    }
 }
 
 void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
