@@ -466,7 +466,44 @@ private:
     void ExecuteImpl() const override;
 
     int m_planet = INVALID_OBJECT_ID;
-    std::string m_focus;
+    std::string m_focus = "";
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/////////////////////////////////////////////////////
+// PolicyOrder
+/////////////////////////////////////////////////////
+/** the Order subclass that represents the adoptiong imperial polices. */
+class FO_COMMON_API PolicyOrder : public Order {
+public:
+    /** \name Structors */ //@{
+    PolicyOrder(int empire, const std::string& name,
+                const std::string& category, bool adopt);
+    //@}
+
+    /** \name Accessors */ //@{
+    /** Returns ID of fleet selected in this order. */
+    const std::string& PolicyName() const
+    { return m_policy_name; }
+
+    const std::string& CategoryName() const
+    { return m_category; }
+
+    bool Adopt() const
+    { return m_adopt; }
+    //@}
+
+private:
+    PolicyOrder() = default;
+
+    void ExecuteImpl() const override;
+
+    std::string m_policy_name = "";
+    std::string m_category = "";
+    bool        m_adopt = false;
 
     friend class boost::serialization::access;
     template <typename Archive>

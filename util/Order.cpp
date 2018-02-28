@@ -894,6 +894,25 @@ void ChangeFocusOrder::ExecuteImpl() const {
 }
 
 ////////////////////////////////////////////////
+// PolicyOrder
+////////////////////////////////////////////////
+PolicyOrder::PolicyOrder(int empire, const std::string& name,
+                         const std::string& category, bool adopt) :
+    Order(empire),
+    m_policy_name(name),
+    m_category(category),
+    m_adopt(adopt)
+{}
+
+void PolicyOrder::ExecuteImpl() const {
+    auto empire = GetValidatedEmpire();
+
+    // todo: validate order
+
+    empire->AdoptPolicy(m_policy_name, m_category, m_adopt);
+}
+
+////////////////////////////////////////////////
 // ResearchQueueOrder
 ////////////////////////////////////////////////
 ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name) :

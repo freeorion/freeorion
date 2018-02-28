@@ -117,6 +117,15 @@ void ChangeFocusOrder::serialize(Archive& ar, const unsigned int version)
 }
 
 template <typename Archive>
+void PolicyOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_policy_name)
+        & BOOST_SERIALIZATION_NVP(m_category)
+        & BOOST_SERIALIZATION_NVP(m_adopt);
+}
+
+template <class Archive>
 void ResearchQueueOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
