@@ -14544,9 +14544,6 @@ Excellente Vision
 FOCUS_PROTECTION_LABEL
 Focus Protection
 
-GASEOUS_DESC
-Les Géantes gazeuses sont immenses mais leur zone habitable correspond à celle d'une planète de taille moyenne.
-
 GASEOUS_LABEL
 Environnement Rude
 

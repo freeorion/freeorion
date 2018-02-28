@@ -14544,9 +14544,6 @@ Excellent Vision
 FOCUS_PROTECTION_LABEL
 Protection Focus
 
-GASEOUS_DESC
-Gas giants are huge but are only habitable like medium sized planets.
-
 GASEOUS_LABEL
 Bad Environment
 
