@@ -60,15 +60,19 @@ public:
 
     std::string Dump() const;
 
-    /** Returns the set of policies the empire has adopted and the turns on
+    /** Returns the policies the empire has adopted and the turns on
       * which they were adopted. */
-    const std::map<std::string, std::map<std::string, int>>& AdoptedPoliciesTurns() const;
+    const std::map<std::string, int>&           AdoptedPolicyTurns() const;
+
+    /** Returns the policies the empire has adopted and the categories
+      * in which they were adopted. */
+    const std::map<std::string, std::string>&   AdoptedPolicyCategories() const;
 
     /** Returns the set of policies the empire has avaialble. */
-    const std::set<std::string>&    AvailablePolicies() const;
+    const std::set<std::string>&                AvailablePolicies() const;
 
     /** Returns the set of Tech names available to this empire. */
-    const std::map<std::string, int>& ResearchedTechs() const;
+    const std::map<std::string, int>&           ResearchedTechs() const;
 
     /** Returns the set of BuildingType names availble to this empire. */
     const std::set<std::string>&    AvailableBuildingTypes() const;
@@ -461,9 +465,9 @@ private:
     GG::Clr                         m_color;                    ///< Empire's color
     int                             m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
 
-    std::map<std::string, std::map<std::string, int>>
-                                    m_adopted_policy_turns;     ///< map from policy category, to map from names of policies the empire has adopted, to turn on which they were adopted
-    std::set<std::string>           m_available_policies;       ///< list of unlocked policies. These are string names referencing Policy objects.
+    std::map<std::string, int>          m_adopted_policy_turns;     ///< map from policy name to turn on which policy was adopted
+    std::map<std::string, std::string>  m_adopted_policy_categories;///< map from policy name to name of category in which policy was adopted
+    std::set<std::string>               m_available_policies;       ///< list of unlocked policies. These are string names referencing Policy objects.
 
     /** The source id is the id of any object owned by the empire.  It is
         mutable so that Source() can be const and still cache its result. */

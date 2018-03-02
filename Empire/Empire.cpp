@@ -154,19 +154,19 @@ void Empire::SetCapitalID(int id) {
         m_source_id = id;
 }
 
-void Empire::AdoptPolicy(const std::string& name, const std::string& category, bool adopt) {
+void Empire::AdoptPolicy(const std::string& name, const std::string& category,
+                         bool adopt)
+{
     if (!adopt) {
         // revoke policy
-        if (m_adopted_policy_turns.count(category)) {
-            auto& cat_policies = m_adopted_policy_turns[category];
-            if (cat_policies.find(name) != cat_policies.end()) {
-                // refund adoption cost if adoption was this turn
-                if (cat_policies[name] == CurrentTurn()) {
-                    // todo: refund
-                }
-                // un-adopt policy
-                cat_policies.erase(name);
+        if (m_adopted_policy_turns.count(name)) {
+            // refund adoption cost if adoption was this turn
+            if (m_adopted_policy_turns[name] == CurrentTurn()) {
+                // todo: refund
             }
+            // un-adopt policy
+            m_adopted_policy_turns.erase(name);
+            m_adopted_policy_categories.erase(name);
         }
         return;
     }
@@ -181,44 +181,33 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category, b
 
     // todo: check if there is room to adopt policy in requested category
 
-    // check that policy is not already adopted, and if it is another
-    // category
-    for (auto& category_entry : m_adopted_policy_turns) {
-        if (category_entry.first == category) {
-            if (category_entry.second.count(name)) {
-                DebugLogger() << "Policy already adopted: " << name << "  of category: " << category;
-                return;
-            }
-            continue;
-
-        } else if (category_entry.second.find(name) != category_entry.second.end()) {
-            // already adopted in a different category... switch at no additional cost / refund
-            int turn_of_adoption = category_entry.second[name];
-            category_entry.second.erase(name);
-            m_adopted_policy_turns[category][name] = turn_of_adoption;
-
-            DebugLogger() << "Policy: " << name << "  transferred to category: " << category << "  from previous category: " << category_entry.first;
-
-            // assumes policy has only been already adopted in at most one other category
-            return;
-        }
+    // check that policy is not already adopted
+    if (m_adopted_policy_categories.count(name)) {
+        // set category to that requested. may be no-op if already in that category
+        m_adopted_policy_categories[name] = category;
+        return;
     }
 
-    // todo: deduct adoption cost from empire's influence
-
     // adopt policy in requested category on this turn
-    m_adopted_policy_turns[category][name] = CurrentTurn();
+    m_adopted_policy_categories[name] = category;
+    m_adopted_policy_turns[name] = CurrentTurn();
+
     DebugLogger() << "Policy: " << name << "  adopted in category " << category << "  on turn: " << CurrentTurn();
 }
 
 void Empire::AuditPolicies() {
-    // todo: make sure all adopted policies are allowed to be adtoped by this
-    // empires, and revoke any that aren't allowed, such as due to not having enough
-    // slots of the relevant type, or failing other adoption conditions
+    // todo: make sure all adopted policies are allowed to be adopted by this
+    // empire, and revoke any that aren't allowed, such as due to not having
+    // enough slots of the relevant type.
+    // todo: make sure polices indexing m_adopted_policy_turns and
+    // m_adopted_policy_categories are consistent
 }
 
-const std::map<std::string, std::map<std::string, int>>& Empire::AdoptedPoliciesTurns() const
+const std::map<std::string, int>& Empire::AdoptedPolicyTurns() const
 { return m_adopted_policy_turns; }
+
+const std::map<std::string, std::string>& Empire::AdoptedPolicyCategories() const
+{ return m_adopted_policy_categories; }
 
 const std::set<std::string>& Empire::AvailablePolicies() const
 { return m_available_policies; }
