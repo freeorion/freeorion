@@ -6284,7 +6284,9 @@ void EmpireMeterValue::Eval(const ScriptingContext& parent_context,
         }
 
     } else {
-        // re-evaluate allowed turn range for each candidate object
+        // re-evaluate all parameters for each candidate object.
+        // could optimize further by only re-evaluating the local-candidate
+        // variants.
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
@@ -6552,6 +6554,135 @@ unsigned int EmpireStockpileValue::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_high);
 
     TraceLogger() << "GetCheckSum(EmpireStockpileValue): retval: " << retval;
+    return retval;
+}
+
+///////////////////////////////////////////////////////////
+// EmpireHasAdoptedPolicy                                //
+///////////////////////////////////////////////////////////
+EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+                                               std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name)),
+    m_empire_id(std::move(empire_id))
+{}
+
+EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name))
+{}
+
+EmpireHasAdoptedPolicy::~EmpireHasAdoptedPolicy()
+{}
+
+bool EmpireHasAdoptedPolicy::operator==(const ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const EmpireHasAdoptedPolicy& rhs_ = static_cast<const EmpireHasAdoptedPolicy&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_name)
+
+    return true;
+}
+
+namespace {
+    struct EmpireHasAdoptedPolicySimpleMatch {
+        EmpireHasAdoptedPolicySimpleMatch(const std::string& name) :
+            m_name(name)
+        {}
+
+        bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
+            if (!candidate)
+                return false;
+
+            if (candidate->Unowned())
+                return false;
+
+            const Empire* empire = GetEmpire(candidate->Owner());
+            if (!empire)
+                return false;
+
+            return empire->AdoptedPolicyTurns().count(m_name);
+        }
+
+        std::string m_name;
+    };
+}
+
+void EmpireHasAdoptedPolicy::Eval(const ScriptingContext& parent_context,
+                                  ObjectSet& matches, ObjectSet& non_matches,
+                                  SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
+    if (simple_eval_safe) {
+        // evaluate number limits once, use to match all candidates
+        std::shared_ptr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
+        std::string name = m_name ? m_name->Eval(local_context) : "";
+        EvalImpl(matches, non_matches, search_domain, EmpireHasAdoptedPolicySimpleMatch(name));
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool EmpireHasAdoptedPolicy::RootCandidateInvariant() const
+{ return !m_name || m_name->RootCandidateInvariant(); }
+
+bool EmpireHasAdoptedPolicy::TargetInvariant() const
+{ return !m_name || m_name->TargetInvariant(); }
+
+bool EmpireHasAdoptedPolicy::SourceInvariant() const
+{ return !m_name || m_name->SourceInvariant(); }
+
+std::string EmpireHasAdoptedPolicy::Description(bool negated/* = false*/) const {
+    std::string name_str;
+    if (m_name) {
+        name_str = m_name->Description();
+        if (m_name->ConstantExpr() && UserStringExists(name_str))
+            name_str = UserString(name_str);
+    }
+    return str(FlexibleFormat((!negated)
+        ? UserString("DESC_EMPIRE_HAS_ADOPTED_POLICY")
+        : UserString("DESC_EMPIRE_HAS_ADOPTED_POLICY_NOT"))
+        % name_str);
+}
+
+std::string EmpireHasAdoptedPolicy::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "EmpireHasAdoptedPolicy";
+    if (m_name)
+        retval += " name = " + m_name->Dump(ntabs);
+    retval += "\n";
+    return retval;
+}
+
+bool EmpireHasAdoptedPolicy::Match(const ScriptingContext& local_context) const {
+    auto candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        ErrorLogger() << "EmpireHasAdoptedPolicy::Match passed no candidate object";
+        return false;
+    }
+
+    std::string name = m_name ? m_name->Eval(local_context) : "";
+    return EmpireHasAdoptedPolicySimpleMatch(name)(candidate);
+}
+
+void EmpireHasAdoptedPolicy::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
+}
+
+unsigned int EmpireHasAdoptedPolicy::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::EmpireHasAdoptedPolicy");
+    CheckSums::CheckSumCombine(retval, m_name);
+
+    TraceLogger() << "GetCheckSum(EmpireHasAdoptedPolicy): retval: " << retval;
     return retval;
 }
 
