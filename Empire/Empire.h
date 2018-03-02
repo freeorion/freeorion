@@ -62,7 +62,10 @@ public:
 
     /** Returns the set of policies the empire has adopted and the turns on
       * which they were adopted. */
-    const std::map<std::string, int>& AdoptedPoliciesTurns() const;
+    const std::map<std::string, std::map<std::string, int>>& AdoptedPoliciesTurns() const;
+
+    /** Returns the set of policies the empire has avaialble. */
+    const std::set<std::string>&    AvailablePolicies() const;
 
     /** Returns the set of Tech names available to this empire. */
     const std::map<std::string, int>& ResearchedTechs() const;

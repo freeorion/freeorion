@@ -217,6 +217,12 @@ void Empire::AuditPolicies() {
     // slots of the relevant type, or failing other adoption conditions
 }
 
+const std::map<std::string, std::map<std::string, int>>& Empire::AdoptedPoliciesTurns() const
+{ return m_adopted_policy_turns; }
+
+const std::set<std::string>& Empire::AvailablePolicies() const
+{ return m_available_policies; }
+
 Meter* Empire::GetMeter(const std::string& name) {
     auto it = m_meters.find(name);
     if (it != m_meters.end())
