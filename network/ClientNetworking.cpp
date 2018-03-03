@@ -19,7 +19,6 @@
 
 #include "Networking.h"
 #include "../util/Logger.h"
-#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 
 #include <boost/algorithm/string/predicate.hpp>

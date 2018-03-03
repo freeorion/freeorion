@@ -19,7 +19,6 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
-#include "../util/MultiplayerCommon.h"
 
 #include <GG/GUI.h>
 

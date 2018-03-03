@@ -8,7 +8,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/GameRules.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/AppInterface.h"

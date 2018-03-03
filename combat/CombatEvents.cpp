@@ -11,7 +11,8 @@
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
 #include "../util/VarText.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/GameRules.h"
+
 #include "../Empire/Empire.h"
 
 #include <sstream>

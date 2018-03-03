@@ -20,7 +20,7 @@
 #include "../../network/ClientNetworking.h"
 #include "../../util/i18n.h"
 #include "../../util/LoggerWithOptionsDB.h"
-#include "../../util/MultiplayerCommon.h"
+#include "../util/GameRules.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Process.h"
 #include "../../util/SaveGamePreviewUtils.h"

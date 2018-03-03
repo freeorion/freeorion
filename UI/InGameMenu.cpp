@@ -8,7 +8,6 @@
 #include "../client/human/HumanClientApp.h"
 #include "../network/Networking.h"
 #include "../util/i18n.h"
-#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/Logger.h"

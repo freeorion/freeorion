@@ -31,6 +31,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/CheckSums.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Directories.cpp
         ${CMAKE_CURRENT_LIST_DIR}/EnumText.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/GameRules.cpp
         ${CMAKE_CURRENT_LIST_DIR}/i18n.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Logger.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LoggerWithOptionsDB.cpp

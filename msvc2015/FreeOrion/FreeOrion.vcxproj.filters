@@ -231,6 +231,9 @@
     <ClInclude Include="..\..\util\MultiplayerCommon.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\util\GameRules.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\util\OptionsDB.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>

@@ -194,6 +194,7 @@
     <ClInclude Include="..\..\util\Directories.h" />
     <ClInclude Include="..\..\util\ModeratorAction.h" />
     <ClInclude Include="..\..\util\MultiplayerCommon.h" />
+    <ClInclude Include="..\..\util\GameRules.h" />
     <ClInclude Include="..\..\util\i18n.h" />
     <ClInclude Include="..\..\util\Logger.h" />
     <ClInclude Include="..\..\util\LoggerWithOptionsDB.h" />
@@ -259,6 +260,7 @@
     <ClCompile Include="..\..\util\Directories.cpp" />
     <ClCompile Include="..\..\util\ModeratorAction.cpp" />
     <ClCompile Include="..\..\util\MultiplayerCommon.cpp" />
+    <ClCompile Include="..\..\util\GameRules.cpp" />
     <ClCompile Include="..\..\util\i18n.cpp" />
     <ClCompile Include="..\..\util\Logger.cpp" />
     <ClCompile Include="..\..\util\LoggerWithOptionsDB.cpp" />

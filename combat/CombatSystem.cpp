@@ -2,7 +2,7 @@
 #include "CombatEvents.h"
 
 #include "../universe/Universe.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/GameRules.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Predicates.h"
 #include "../universe/Planet.h"

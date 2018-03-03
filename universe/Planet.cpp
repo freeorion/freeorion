@@ -11,7 +11,7 @@
 #include "ValueRef.h"
 #include "Enums.h"
 #include "../util/Logger.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/GameRules.h"
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
 #include "../util/Directories.h"

@@ -4,8 +4,6 @@
 #include "Condition.h"
 #include "Universe.h"
 
-#include "../util/MultiplayerCommon.h"
-
 
 struct PlayerSetupData;
 

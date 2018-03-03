@@ -4,6 +4,7 @@
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/GameRules.h"
 #include "../universe/Building.h"
 #include "../universe/Effect.h"
 #include "../universe/Planet.h"

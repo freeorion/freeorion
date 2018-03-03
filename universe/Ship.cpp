@@ -4,7 +4,7 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 #include "../util/AppInterface.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/GameRules.h"
 #include "Fleet.h"
 #include "Predicates.h"
 #include "ShipDesign.h"

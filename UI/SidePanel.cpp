@@ -27,7 +27,6 @@
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
-#include "../util/MultiplayerCommon.h"
 #include "../util/Random.h"
 #include "../util/XMLDoc.h"
 #include "../util/Order.h"

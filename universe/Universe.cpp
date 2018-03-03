@@ -7,7 +7,7 @@
 #include "../util/RunQueue.h"
 #include "../util/ScopedTimer.h"
 #include "../util/CheckSums.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/GameRules.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "IDAllocator.h"

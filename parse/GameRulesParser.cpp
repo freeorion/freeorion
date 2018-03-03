@@ -3,7 +3,7 @@
 #include "ParseImpl.h"
 
 #include "../util/Directories.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/GameRules.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

@@ -5,7 +5,6 @@
 #include "../Empire/Supply.h"
 #include "../Empire/Diplomacy.h"
 #include "../util/Logger.h"
-#include "../util/MultiplayerCommon.h"
 #include "../util/ModeratorAction.h"
 #include "../util/SaveGamePreviewUtils.h"
 #include "../universe/Species.h"

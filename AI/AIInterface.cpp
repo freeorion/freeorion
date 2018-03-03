@@ -1,6 +1,5 @@
 #include "AIInterface.h"
 
-#include "../util/MultiplayerCommon.h"
 #include "../network/ClientNetworking.h"
 #include "../client/AI/AIClientApp.h"
 

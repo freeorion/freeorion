@@ -9,7 +9,7 @@
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
 #include "../util/Directories.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/GameRules.h"
 #include "../util/Pending.h"
 
 #include <boost/filesystem.hpp>

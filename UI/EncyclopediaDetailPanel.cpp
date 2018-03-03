@@ -29,6 +29,7 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
+#include "../util/GameRules.h"
 #include "../util/Directories.h"
 #include "../util/VarText.h"
 #include "../util/ScopedTimer.h"

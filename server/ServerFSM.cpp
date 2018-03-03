@@ -16,7 +16,6 @@
 #include "../util/OrderSet.h"
 #include "../util/Random.h"
 #include "../util/ModeratorAction.h"
-#include "../util/MultiplayerCommon.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>

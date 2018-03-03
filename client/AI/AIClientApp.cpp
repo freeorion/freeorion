@@ -3,7 +3,6 @@
 #include "../../python/AI/AIFramework.h"
 #include "../../util/Logger.h"
 #include "../../util/LoggerWithOptionsDB.h"
-#include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/Serialize.h"
