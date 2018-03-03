@@ -118,6 +118,7 @@ namespace parse { namespace detail {
         has_special.name("HasSpecial");
         has_tag.name("HasTag");
         owner_has_tech.name("OwnerHasTech");
+        empire_adopted_policy.name("EmpireHasAdoptedPolicy");
         design_has_hull.name("DesignHasHull");
         predefined_design.name("PredefinedDesign");
         design_number.name("DesignNumber");
@@ -131,6 +132,7 @@ namespace parse { namespace detail {
         debug(has_special);
         debug(has_tag);
         debug(owner_has_tech);
+        debug(empire_adopted_policy);
         debug(design_has_hull);
         debug(predefined_design);
         debug(design_number);
