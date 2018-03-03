@@ -916,7 +916,7 @@ std::string Statistic<T>::Description() const {
         case SPREAD:             retval += "(SPREAD)";           break;
         case STDEV:              retval += "(STDEV)";            break;
         case PRODUCT:            retval += "(PRODUCT)";          break;
-        default:                           retval += "()";                 break;
+        default:                 retval += "()";                 break;
     }
     if (m_value_ref) {
         retval += "(" + m_value_ref->Description() + ")";
@@ -929,7 +929,30 @@ std::string Statistic<T>::Description() const {
 
 template <class T>
 std::string Statistic<T>::Dump(unsigned short ntabs) const
-{ return Description(); }
+{
+    std::string retval = "Statistic ";
+
+    switch (m_stat_type) {
+        case COUNT:              retval += "Count";         break;
+        case UNIQUE_COUNT:       retval += "CountUnique";   break;
+        case IF:                 retval += "If";            break;
+        case SUM:                retval += "Sum";           break;
+        case MEAN:               retval += "Mean";          break;
+        case RMS:                retval += "RMS";           break;
+        case MODE:               retval += "Mode";          break;
+        case MAX:                retval += "Max";           break;
+        case MIN:                retval += "Min";           break;
+        case SPREAD:             retval += "Spread";        break;
+        case STDEV:              retval += "StDev";         break;
+        case PRODUCT:            retval += "Product";       break;
+        default:                 retval += "???";           break;
+    }
+    if (m_value_ref)
+        retval += " value = " + m_value_ref->Dump();
+    if (m_sampling_condition)
+        retval += " condition = " + m_sampling_condition->Dump();
+    return retval;
+}
 
 template <class T>
 void Statistic<T>::SetTopLevelContent(const std::string& content_name)
