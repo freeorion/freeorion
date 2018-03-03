@@ -433,20 +433,13 @@ void SetMeter::Execute(const ScriptingContext& context,
         // without accounting, can do default batch execute
         Execute(context, targets);
 
-    } else if (!accounting_map) {
-        // process each target separately in order to do effect accounting for each
-        for (auto target : targets)
-            Execute(ScriptingContext(context.source, target));
-
     } else {
         // accounting info for this effect on this meter, starting with non-target-dependent info
         AccountingInfo info;
-        if (accounting_map) {
-            info.cause_type =     effect_cause.cause_type;
-            info.specific_cause = effect_cause.specific_cause;
-            info.custom_label =   (m_accounting_label.empty() ? effect_cause.custom_label : m_accounting_label);
-            info.source_id =      context.source->ID();
-        }
+        info.cause_type =     effect_cause.cause_type;
+        info.specific_cause = effect_cause.specific_cause;
+        info.custom_label =   (m_accounting_label.empty() ? effect_cause.custom_label : m_accounting_label);
+        info.source_id =      context.source->ID();
 
         // process each target separately in order to do effect accounting for each
         for (auto& target : targets) {
