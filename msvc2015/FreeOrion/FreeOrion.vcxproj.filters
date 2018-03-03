@@ -84,6 +84,9 @@
     <ClInclude Include="..\..\Empire\ResearchQueue.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Empire\ProductionQueue.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\network\Networking.h">
       <Filter>Header Files\network</Filter>
     </ClInclude>

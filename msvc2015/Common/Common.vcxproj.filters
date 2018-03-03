@@ -67,6 +67,9 @@
     <ClInclude Include="..\..\Empire\ResearchQueue.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Empire\ProductionQueue.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Empire\EmpireManager.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
@@ -310,6 +313,9 @@
       <Filter>Source Files\Empire</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Empire\ResearchQueue.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\ProductionQueue.cpp">
       <Filter>Source Files\Empire</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Empire\EmpireManager.cpp">
