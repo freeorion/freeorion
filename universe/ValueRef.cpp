@@ -2883,7 +2883,7 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
 }
 
 template <>
-double      Operation<double>::EvalImpl(const ScriptingContext& context) const
+double Operation<double>::EvalImpl(const ScriptingContext& context) const
 {
     switch (m_op_type) {
         case PLUS:
@@ -3019,7 +3019,7 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
 }
 
 template <>
-int         Operation<int>::EvalImpl(const ScriptingContext& context) const
+int Operation<int>::EvalImpl(const ScriptingContext& context) const
 {
     switch (m_op_type) {
         case PLUS:
