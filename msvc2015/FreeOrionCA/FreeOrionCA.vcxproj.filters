@@ -89,6 +89,9 @@
     <ClInclude Include="..\..\Empire\ResourcePool.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Empire\PopulationPool.h"
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\network\ClientNetworking.h">
       <Filter>Header Files\network</Filter>
     </ClInclude>

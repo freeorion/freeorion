@@ -1,6 +1,7 @@
 #ifndef _Empire_h_
 #define _Empire_h_
 
+#include "PopulationPool.h"
 #include "ProductionQueue.h"
 #include "ResearchQueue.h"
 #include "ResourcePool.h"

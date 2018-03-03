@@ -76,6 +76,9 @@
     <ClInclude Include="..\..\Empire\ResourcePool.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Empire\PopulationPool.h"
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\universe\Building.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
@@ -322,6 +325,9 @@
       <Filter>Source Files\Empire</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Empire\ResourcePool.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\PopulationPool.cpp">
       <Filter>Source Files\Empire</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Building.cpp">

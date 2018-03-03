@@ -141,6 +141,7 @@
     <ClInclude Include="..\..\Empire\ProductionQueue.h" />
     <ClInclude Include="..\..\Empire\EmpireManager.h" />
     <ClInclude Include="..\..\Empire\ResourcePool.h" />
+    <ClInclude Include="..\..\Empire\PopulationPool.h" />
     <ClInclude Include="..\..\GG\GG\Clr.h" />
     <ClInclude Include="..\..\GG\GG\Exception.h" />
     <ClInclude Include="..\..\network\ClientNetworking.h" />
