@@ -137,6 +137,7 @@
     <ClInclude Include="..\..\client\ClientApp.h" />
     <ClInclude Include="..\..\client\ClientFSMEvents.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
+    <ClInclude Include="..\..\Empire\ResearchQueue.h" />
     <ClInclude Include="..\..\Empire\EmpireManager.h" />
     <ClInclude Include="..\..\Empire\ResourcePool.h" />
     <ClInclude Include="..\..\GG\GG\Clr.h" />

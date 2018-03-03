@@ -77,6 +77,9 @@
     <ClInclude Include="..\..\Empire\Empire.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Empire\ResearchQueue.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Empire\EmpireManager.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
