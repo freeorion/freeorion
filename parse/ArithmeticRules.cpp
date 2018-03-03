@@ -139,7 +139,7 @@ namespace parse { namespace detail {
                     (
                         (
                             lit('+') [ _c = ValueRef::PLUS ]
-                            |   lit('-') [ _c = ValueRef::MINUS ]
+                        |   lit('-') [ _c = ValueRef::MINUS ]
                         )
                         >>   multiplicative_expr [
                             _b = construct_movable_(new_<ValueRef::Operation<T>>(
@@ -154,7 +154,7 @@ namespace parse { namespace detail {
         statistic_collection_expr
             =   (tok.Statistic_
                  >> (   tok.Count_  [ _b = ValueRef::COUNT ]
-                        |   tok.If_     [ _b = ValueRef::IF ]
+                    |   tok.If_     [ _b = ValueRef::IF ]
                     )
                 )
             >   label(tok.Condition_) >    condition_parser
@@ -162,9 +162,9 @@ namespace parse { namespace detail {
             ;
 
         statistic_value_expr
-            =   (tok.Statistic_ >>  statistic_type_enum [ _b = _1 ])
-            >   label(tok.Value_)     >     statistic_value_ref_expr [ _a = _1 ]
-            >   label(tok.Condition_) >     condition_parser
+            =  (tok.Statistic_ >>       statistic_type_enum [ _b = _1 ])
+            >   label(tok.Value_) >     statistic_value_ref_expr [ _a = _1 ]
+            >   label(tok.Condition_) > condition_parser
             [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
             ;
 
