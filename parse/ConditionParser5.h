@@ -15,6 +15,8 @@ namespace parse { namespace detail {
         condition_parser_rule       has_tag;
         condition_parser_rule       owner_has_tech;
         condition_parser_rule       empire_adopted_policy;
+        condition_parser_rule       empire_adopted_policy1;
+        condition_parser_rule       empire_adopted_policy2;
         condition_parser_rule       design_has_hull;
         condition_parser_rule       predefined_design;
         condition_parser_rule       design_number;

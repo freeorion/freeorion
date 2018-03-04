@@ -93,7 +93,7 @@ namespace parse { namespace detail {
 
         empire_meter_value
             %=  empire_meter_value1
-            |   empire_meter_value2
+             |   empire_meter_value2
             ;
 
         start

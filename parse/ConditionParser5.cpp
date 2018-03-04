@@ -8,6 +8,12 @@
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
+#if DEBUG_CONDITION_PARSERS
+namespace std {
+    inline ostream& operator<<(ostream& os, const std::vector<condition_payload>&) { return os; }
+}
+#endif
+
 namespace parse { namespace detail {
     condition_parser_rules_5::condition_parser_rules_5(
         const parse::lexer& tok,
@@ -19,9 +25,11 @@ namespace parse { namespace detail {
         int_rules(tok, label, condition_parser, string_grammar)
     {
         qi::_1_type _1;
+        qi::_2_type _2;
         qi::_val_type _val;
         qi::eps_type eps;
         qi::_pass_type _pass;
+        qi::omit_type omit_;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         using phoenix::new_;
@@ -37,18 +45,44 @@ namespace parse { namespace detail {
             ;
 
         has_tag
-            =   (   (tok.HasTag_
-                     >>  label(tok.Name_)
-                    ) > string_grammar [ _val = construct_movable_(new_<Condition::HasTag>(
-                            deconstruct_movable_(_1, _pass))) ]
+            = (
+                (tok.HasTag_
+                 >>  label(tok.Name_))
+                 > string_grammar
+                 [ _val = construct_movable_(new_<Condition::HasTag>(
+                    deconstruct_movable_(_1, _pass))) ]
                 )
             |   tok.HasTag_ [ _val = construct_movable_(new_<Condition::HasTag>()) ]
             ;
 
         owner_has_tech
             =   tok.OwnerHasTech_
-            >   label(tok.Name_) > string_grammar [ _val = construct_movable_(new_<Condition::OwnerHasTech>(
+            >   label(tok.Name_) > string_grammar
+            [ _val = construct_movable_(new_<Condition::OwnerHasTech>(
                 deconstruct_movable_(_1, _pass))) ]
+            ;
+
+        empire_adopted_policy1
+            = (
+                (omit_[tok.EmpireHasAdoptedPolicy_]
+                >>  label(tok.Empire_)) >   int_rules.expr
+                >   label(tok.Name_)    >   string_grammar
+              ) [ _val = construct_movable_(new_<Condition::EmpireHasAdoptedPolicy>(
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_2, _pass))) ]
+            ;
+
+        empire_adopted_policy2
+            = (
+                (omit_[tok.EmpireHasAdoptedPolicy_]
+                >>  label(tok.Name_))   >   string_grammar
+                ) [ _val = construct_movable_(new_<Condition::EmpireHasAdoptedPolicy>(
+                    deconstruct_movable_(_1, _pass))) ]
+            ;
+
+        empire_adopted_policy
+            %=   empire_adopted_policy1
+             |   empire_adopted_policy2
             ;
 
         design_has_hull
@@ -105,6 +139,7 @@ namespace parse { namespace detail {
             %=  has_special
             |   has_tag
             |   owner_has_tech
+            |   empire_adopted_policy
             |   design_has_hull
             |   predefined_design
             |   design_number
