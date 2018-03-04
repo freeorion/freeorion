@@ -166,7 +166,10 @@ namespace parse { namespace detail {
             = ( variable_scope_rule >> '.'
                 >> -(container_type_rule > '.')
                 >>  variable_name
-              ) [ _val = construct_movable_(new_<ValueRef::Variable<T>>(_1, construct<boost::optional<std::string>>(_2), construct<std::string>(_3))) ];
+              ) [ _val = construct_movable_(new_<ValueRef::Variable<T>>(
+                  _1, construct<boost::optional<std::string>>(_2),
+                  construct<std::string>(_3))) ];
+
         bound_variable
             = (( omit_[tok.Value_] >> '(' >> unwrapped_bound_variable >> ')')
                | unwrapped_bound_variable

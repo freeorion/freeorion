@@ -37,7 +37,7 @@ namespace parse { namespace detail {
             =   (
                 (
                     (
-                        tok.Sin_    [ _c = ValueRef::SINE ]                     // single-parameter math functions
+                            tok.Sin_    [ _c = ValueRef::SINE ]                     // single-parameter math functions
                         |   tok.Cos_    [ _c = ValueRef::COSINE ]
                         |   tok.Log_    [ _c = ValueRef::LOGARITHM ]
                         |   tok.Abs_    [ _c = ValueRef::ABS ]
@@ -45,13 +45,13 @@ namespace parse { namespace detail {
                     >> ('(' > expr > ')') [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass))) ]
                 )
                 |   (
-                    tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]   // random number requires a min and max value
+                    tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]           // random number requires a min and max value
                     >  ( '(' > expr >  ',' > expr > ')' ) [ _val = construct_movable_(
                             new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass), deconstruct_movable_(_2, _pass))) ]
                 )
                 |   (
                     (
-                        tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]              // oneof, min, or max can take any number or operands
+                            tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]              // oneof, min, or max can take any number or operands
                         |   tok.Min_    [ _c = ValueRef::MINIMUM ]
                         |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
                     )
@@ -62,7 +62,7 @@ namespace parse { namespace detail {
                 |   (
                     lit('(') >> expr [ push_back(_d, _1) ]
                     >> (
-                        (     lit("==")   [ _c = ValueRef::COMPARE_EQUAL ]
+                        (       lit("==")   [ _c = ValueRef::COMPARE_EQUAL ]
                               | lit('=')    [ _c = ValueRef::COMPARE_EQUAL ]
                               | lit(">=")   [ _c = ValueRef::COMPARE_GREATER_THAN_OR_EQUAL ]
                               | lit('>')    [ _c = ValueRef::COMPARE_GREATER_THAN ]
@@ -71,16 +71,16 @@ namespace parse { namespace detail {
                               | lit("!=")   [ _c = ValueRef::COMPARE_NOT_EQUAL ]
                         )
                         > expr [ push_back(_d, _1) ]
-                    )
+                       )
                     > (
                         lit(')')
                         | (
                             (lit('?') > expr [ push_back(_d, _1) ])
                             > (
-                                lit(')')
+                                     lit(')')
                                 |  ( lit(':') > expr [ push_back(_d, _1) ] > ')' )
-                            )
-                        )
+                              )
+                          )
                     ) [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
                 )
                 |   (
@@ -91,8 +91,8 @@ namespace parse { namespace detail {
                     [ _val = construct_movable_(new_<ValueRef::Operation<T>>(ValueRef::NEGATE, deconstruct_movable_(_1, _pass))) ]
                 )
                 |   (
-                    primary_expr [ _val = _1 ]
-                )
+                        primary_expr [ _val = _1 ]
+                    )
             )
             ;
 

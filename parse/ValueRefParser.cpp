@@ -64,9 +64,11 @@ namespace parse { namespace detail {
 
         free_variable
             =  (tok.Value_ >> !lit('('))
-            [ _val = construct_movable_(new_<ValueRef::Variable<T>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE)) ]
+                [ _val = construct_movable_(new_<ValueRef::Variable<T>>(
+                    ValueRef::EFFECT_TARGET_VALUE_REFERENCE)) ]
             |   free_variable_name
-            [ _val = construct_movable_(new_<ValueRef::Variable<T>>(ValueRef::NON_OBJECT_REFERENCE, _1)) ]
+                [ _val = construct_movable_(new_<ValueRef::Variable<T>>(
+                    ValueRef::NON_OBJECT_REFERENCE, _1)) ]
             ;
 
         simple
@@ -132,35 +134,36 @@ namespace parse { namespace detail {
         const phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
 
         functional_expr
-            =   (
+            = (
                 (
                     (
-                        tok.Sin_    [ _c = ValueRef::SINE ]                     // single-parameter math functions
+                            tok.Sin_    [ _c = ValueRef::SINE ]                     // single-parameter math functions
                         |   tok.Cos_    [ _c = ValueRef::COSINE ]
                         |   tok.Log_    [ _c = ValueRef::LOGARITHM ]
                         |   tok.Abs_    [ _c = ValueRef::ABS ]
                     )
                     >> ('(' > expr > ')') [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass))) ]
-                )
+                    )
                 |   (
                     tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]   // random number requires a min and max value
                     >  ( '(' > expr >  ',' > expr > ')' ) [ _val = construct_movable_(
                             new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass), deconstruct_movable_(_2, _pass))) ]
-                )
-                |   (
-                    (
-                        tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]              // oneof, min, or max can take any number or operands
-                        |   tok.Min_    [ _c = ValueRef::MINIMUM ]
-                        |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
                     )
-                    >>  ( '(' >>  expr [ push_back(_d, _1) ]
-                    >>(*(',' >  expr [ push_back(_d, _1) ] )) >> ')' )
-                    [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
-                )
+                |   (
+                        (
+                                tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ] // oneof, min, or max can take any number or operands
+                            |   tok.Min_    [ _c = ValueRef::MINIMUM ]
+                            |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
+                        )
+                        >>  ( '(' >>  expr [ push_back(_d, _1) ]
+                        >>(*(',' >  expr [ push_back(_d, _1) ] )) >> ')' )
+                        [ _val = construct_movable_(new_<ValueRef::Operation<T>>(
+                            _c, deconstruct_movable_vector_(_d, _pass))) ]
+                    )
                 |   (
                     lit('(') >> expr [ push_back(_d, _1) ]
                     >> (
-                        (     lit("==")   [ _c = ValueRef::COMPARE_EQUAL ]
+                        (       lit("==")   [ _c = ValueRef::COMPARE_EQUAL ]
                               | lit('=')    [ _c = ValueRef::COMPARE_EQUAL ]
                               | lit(">=")   [ _c = ValueRef::COMPARE_GREATER_THAN_OR_EQUAL ]
                               | lit('>')    [ _c = ValueRef::COMPARE_GREATER_THAN ]
@@ -175,23 +178,25 @@ namespace parse { namespace detail {
                         | (
                             (lit('?') > expr [ push_back(_d, _1) ])
                             > (
-                                lit(')')
+                                     lit(')')
                                 |  ( lit(':') > expr [ push_back(_d, _1) ] > ')' )
-                            )
-                        )
-                    ) [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
+                              )
+                          )
+                      ) [ _val = construct_movable_(new_<ValueRef::Operation<T>>(
+                          _c, deconstruct_movable_vector_(_d, _pass))) ]
                 )
                 |   (
                     lit('-') >> functional_expr
                     // single parameter math function with a function expression
                     // rather than any arbitrary expression as parameter, because
                     // negating more general expressions can be ambiguous
-                    [ _val = construct_movable_(new_<ValueRef::Operation<T>>(ValueRef::NEGATE, deconstruct_movable_(_1, _pass))) ]
+                    [ _val = construct_movable_(new_<ValueRef::Operation<T>>(
+                        ValueRef::NEGATE, deconstruct_movable_(_1, _pass))) ]
                 )
                 |   (
                     primary_expr [ _val = _1 ]
                 )
-            )
+              )
             ;
 
         exponential_expr
@@ -216,7 +221,7 @@ namespace parse { namespace detail {
                 *(
                     (
                         (
-                            lit('*') [ _c = ValueRef::TIMES ]
+                                lit('*') [ _c = ValueRef::TIMES ]
                             |   lit('/') [ _c = ValueRef::DIVIDE ]
                         )
                         >>  exponential_expr [
@@ -236,7 +241,7 @@ namespace parse { namespace detail {
                 *(
                     (
                         (
-                            lit('+') [ _c = ValueRef::PLUS ]
+                                lit('+') [ _c = ValueRef::PLUS ]
                             |   lit('-') [ _c = ValueRef::MINUS ]
                         )
                         >>   multiplicative_expr [
@@ -251,19 +256,21 @@ namespace parse { namespace detail {
 
         statistic_collection_expr
             =   (tok.Statistic_
-                 >> (   tok.Count_  [ _b = ValueRef::COUNT ]
+                 >> (       tok.Count_  [ _b = ValueRef::COUNT ]
                         |   tok.If_     [ _b = ValueRef::IF ]
                     )
                 )
-            >   label(tok.Condition_) >    condition_parser
-            [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
+            >   label(tok.Condition_) > condition_parser
+            [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(
+                deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
             ;
 
         statistic_value_expr
-            =   (tok.Statistic_ >>  statistic_type_enum [ _b = _1 ])
-            >   label(tok.Value_)     >     statistic_value_ref_expr [ _a = _1 ]
-            >   label(tok.Condition_) >     condition_parser
-            [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
+            =   (tok.Statistic_ >>      statistic_type_enum [ _b = _1 ])
+            >   label(tok.Value_) >     statistic_value_ref_expr [ _a = _1 ]
+            >   label(tok.Condition_) > condition_parser
+            [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(
+                deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
             ;
 
         statistic_expr
@@ -302,9 +309,12 @@ namespace parse { namespace detail {
 
     // Explicit instantiation to prevent costly recompilation in multiple units
     template arithmetic_rules<double>::arithmetic_rules(
-        const std::string& type_name, const parse::lexer& tok, parse::detail::Labeller& label,
+        const std::string& type_name, const parse::lexer& tok,
+        parse::detail::Labeller& label,
         const parse::detail::condition_parser_grammar& condition_parser);
+
     template arithmetic_rules<int>::arithmetic_rules(
-        const std::string& type_name, const parse::lexer& tok, parse::detail::Labeller& label,
+        const std::string& type_name, const parse::lexer& tok,
+        parse::detail::Labeller& label,
         const parse::detail::condition_parser_grammar& condition_parser);
 } }
