@@ -22,6 +22,7 @@
 #include "EmpireManager.h"
 #include "Supply.h"
 
+#include <boost/filesystem/fstream.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/range/numeric.hpp>
 #include <boost/range/adaptor/map.hpp>
