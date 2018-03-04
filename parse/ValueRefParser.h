@@ -159,7 +159,6 @@ namespace parse { namespace detail {
         boost::spirit::qi::lit_type lit;
         boost::spirit::qi::_val_type _val;
         boost::spirit::qi::omit_type omit_;
-        boost::spirit::qi::_pass_type _pass;
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
