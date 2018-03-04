@@ -64,7 +64,7 @@ namespace parse {
         variable_scope_rule = detail::variable_scope(tok);
         container_type_rule = detail::container_type(tok);
         detail::initialize_bound_variable_parser<std::string>(
-            bound_variable, unwrapped_bound_variable,
+            bound_variable, unwrapped_bound_variable, value_wrapped_bound_variable,
             bound_variable_name, variable_scope_rule, container_type_rule,
             tok);
 

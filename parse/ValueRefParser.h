@@ -60,6 +60,7 @@ namespace parse { namespace detail {
         variable_rule<T> free_variable;
         variable_rule<T> bound_variable;
         variable_rule<T> unwrapped_bound_variable;
+        variable_rule<T> value_wrapped_bound_variable;
         detail::value_ref_rule<T> simple;
         reference_token_rule variable_scope_rule;
         name_token_rule container_type_rule;
@@ -144,6 +145,7 @@ namespace parse { namespace detail {
     void initialize_bound_variable_parser(
         variable_rule<T>& bound_variable,
         variable_rule<T>& unwrapped_bound_variable,
+        variable_rule<T>& value_wrapped_bound_variable,
         const name_token_rule& variable_name,
         const reference_token_rule& variable_scope_rule,
         const name_token_rule& container_type_rule,
@@ -163,17 +165,30 @@ namespace parse { namespace detail {
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
         unwrapped_bound_variable
-            = ( variable_scope_rule >> '.'
+            = (
+                     variable_scope_rule >> '.'
                 >> -(container_type_rule > '.')
-                >>  variable_name
+                >>   variable_name
               ) [ _val = construct_movable_(new_<ValueRef::Variable<T>>(
                   _1, construct<boost::optional<std::string>>(_2),
-                  construct<std::string>(_3))) ];
+                  construct<std::string>(_3), false)) ];
+
+        value_wrapped_bound_variable
+            = (
+                omit_[tok.Value_] >> '('
+                >>   variable_scope_rule >> '.'
+                >> -(container_type_rule > '.')
+                >>   variable_name
+                >>   ')'
+              ) [ _val = construct_movable_(new_<ValueRef::Variable<T>>(
+                  _1, construct<boost::optional<std::string>>(_2),
+                  construct<std::string>(_3), true)) ];
 
         bound_variable
-            = (( omit_[tok.Value_] >> '(' >> unwrapped_bound_variable >> ')')
-               | unwrapped_bound_variable
-              ) [ _val = _1 ];
+            =
+                value_wrapped_bound_variable [ _val = _1 ]
+            |   unwrapped_bound_variable [ _val = _1 ]
+            ;
     }
 }}
 
@@ -189,6 +204,7 @@ namespace parse {
         detail::value_ref_rule<std::string> free_variable;
         detail::variable_rule<std::string> bound_variable;
         detail::variable_rule<std::string> unwrapped_bound_variable;
+        detail::variable_rule<std::string> value_wrapped_bound_variable;
         detail::value_ref_rule<std::string> statistic_sub_value_ref;
         detail::statistic_rule<std::string> statistic;
         detail::expression_rule<std::string> function_expr;
