@@ -6,6 +6,8 @@
 #include "../util/XMLDoc.h"
 #include "../universe/Enums.h"
 
+#include <boost/filesystem/fstream.hpp>
+
 namespace {
     // sorted pair, so order of empire IDs specified doesn't matter
     std::pair<int, int> DiploKey(int id1, int ind2)
