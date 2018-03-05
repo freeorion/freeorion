@@ -204,11 +204,7 @@ class FO_COMMON_API FleetMoveOrder : public Order {
 public:
     /** \name Structors */ //@{
     FleetMoveOrder(int empire_id, int fleet_id, int start_system_id, int dest_system_id,
-                   std::vector<int> route, bool append = false);
-
-    FleetMoveOrder(int empire_id, int fleet_id, int start_system_id, int dest_system_id, bool append = false);
-
-    FleetMoveOrder(int empire_id, int fleet_id, std::vector<int> route);
+                   bool append = false);
     //@}
 
     /** \name Accessors */ //@{

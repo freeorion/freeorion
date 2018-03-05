@@ -7408,7 +7408,7 @@ namespace {
         int max_fleet_jumps = std::trunc(fleet->Fuel());
         if (num_jumps_resupply <= max_fleet_jumps) {
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<FleetMoveOrder>(fleet->Owner(), fleet->ID(), route.second));
+                    std::make_shared<FleetMoveOrder>(fleet->Owner(), fleet->ID(), *route.second.begin(), *route.second.rbegin()));
         } else {
             TraceLogger() << "Not enough fuel for fleet " << fleet->ID()
                           << " to resupply at system " << *route.second.rbegin();
@@ -7445,7 +7445,7 @@ namespace {
         }
 
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<FleetMoveOrder>(fleet->Owner(), fleet->ID(), route));
+            std::make_shared<FleetMoveOrder>(fleet->Owner(), fleet->ID(), *route.begin(), *route.rbegin()));
         if (fleet->FinalDestinationID() == *route.rbegin()) {
             TraceLogger() << "Sending fleet " << fleet->ID() << " to explore system " << *route.rbegin();
             return true;

@@ -257,12 +257,12 @@ void NewFleetOrder::ExecuteImpl() const {
 // FleetMoveOrder
 ////////////////////////////////////////////////
 FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int start_system_id, int dest_system_id,
-                               std::vector<int> route, bool append) :
+                               bool append) :
     Order(empire_id),
     m_fleet(fleet_id),
     m_start_system(start_system_id),
     m_dest_system(dest_system_id),
-    m_route(route),
+    m_route(),
     m_append(append)
 {
     // perform sanity checks
@@ -285,25 +285,14 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int start_system_id,
         return;
     }
 
-    if (m_route.empty()) {
-        auto short_path = GetPathfinder()->ShortestPath(m_start_system, m_dest_system, EmpireID());
+    auto short_path = GetPathfinder()->ShortestPath(m_start_system, m_dest_system, EmpireID());
 
-        m_route.clear();
-        std::copy(short_path.first.begin(), short_path.first.end(), std::back_inserter(m_route));
+    std::copy(short_path.first.begin(), short_path.first.end(), std::back_inserter(m_route));
 
-        // ensure a zero-length (invalid) route is not requested / sent to a fleet
-        if (m_route.empty())
-            m_route.push_back(m_start_system);
-    }
+    // ensure a zero-length (invalid) route is not requested / sent to a fleet
+    if (m_route.empty())
+        m_route.push_back(m_start_system);
 }
-
-FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int start_system_id, int dest_system_id, bool append) :
-    FleetMoveOrder(empire_id, fleet_id, start_system_id, dest_system_id, std::vector<int>(), append)
-{}
-
-FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, std::vector<int> route) :
-    FleetMoveOrder(empire_id, fleet_id, *route.begin(), *route.rbegin(), route, false)
-{}
 
 void FleetMoveOrder::ExecuteImpl() const {
     GetValidatedEmpire();
