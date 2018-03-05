@@ -115,6 +115,7 @@ struct FO_COMMON_API ProductionQueue {
     struct FO_COMMON_API ProductionItem {
         ProductionItem();
 
+        ProductionItem(BuildType build_type_);   ///< basic ctor for BuildTypes only have one type of item (e.g. stockpile transfer item)
         ProductionItem(BuildType build_type_, std::string name_);   ///< basic ctor for BuildTypes that use std::string to identify specific items (BuildingTypes)
         ProductionItem(BuildType build_type_, int design_id_);      ///< basic ctor for BuildTypes that use int to indentify the design of the item (ShipDesigns)
 
@@ -356,6 +357,7 @@ public:
     std::pair<float, int>   ProductionCostAndTime(const ProductionQueue::Element& element) const;
     std::pair<float, int>   ProductionCostAndTime(const ProductionQueue::ProductionItem& item, int location_id) const;
 
+    bool                    ProducibleItem(BuildType build_type, int location) const;  ///< Returns true iff this empire can produce the specified item at the specified location.
     bool                    ProducibleItem(BuildType build_type, const std::string& name, int location) const;  ///< Returns true iff this empire can produce the specified item at the specified location.
     bool                    ProducibleItem(BuildType build_type, int design_id, int location) const;            ///< Returns true iff this empire can produce the specified item at the specified location.
     bool                    ProducibleItem(const ProductionQueue::ProductionItem& item, int location) const;    ///< Returns true iff this empire can produce the specified item at the specified location.
@@ -440,6 +442,13 @@ public:
       * placed at the end of the queue. */
     void PlaceProductionOnQueue(BuildType build_type, int design_id, int number,
                                 int blocksize, int location, int pos = -1);
+    /** Adds the indicated build to the production queue, placing it before
+    * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
+    * placed at the end of the queue.
+    * The second parameter is there for overloading resolution and gets ignored.
+    */
+    void PlaceProductionOnQueue(BuildType build_type, BuildType dummy, int number,
+        int blocksize, int location, int pos = -1);
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
       * placed at the end of the queue. */

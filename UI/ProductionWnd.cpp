@@ -286,6 +286,14 @@ namespace {
             total_cost = design->ProductionCost(elem.empire_id, elem.location) * elem.blocksize;
             max_allocation = design->PerTurnCost(elem.empire_id, elem.location) * elem.blocksize;
             icon = ClientUI::ShipDesignIcon(elem.item.design_id);
+        } else if (elem.item.build_type == BT_STOCKPILE) {
+            main_text += UserString("OBJ_PROJECT") + "\n";
+
+            item_name = UserString("PROJECT_BT_STOCKPILE");
+            location_ok = true;
+            total_cost = 1.0;
+            max_allocation = total_cost * elem.blocksize;
+            icon = ClientUI::MeterIcon(METER_STOCKPILE);
         }
 
         if (std::shared_ptr<UniverseObject> rally_object = GetUniverseObject(elem.rally_point_id)) {
@@ -448,6 +456,9 @@ namespace {
                 name_text = design->Name();
             else
                 ErrorLogger() << "QueueProductionItemPanel unable to get design with id: " << elem.item.design_id;
+        } else if (elem.item.build_type == BT_STOCKPILE) {
+            graphic = ClientUI::MeterIcon(METER_STOCKPILE);
+            name_text = UserString("PROJECT_BT_STOCKPILE");
         } else {
             graphic = ClientUI::GetTexture(""); // get "missing texture" texture by supply intentionally bad path
             name_text = UserString("FW_UNKNOWN_DESIGN_NAME");
@@ -468,7 +479,7 @@ namespace {
         if (graphic)
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
-        if (elem.item.build_type == BT_SHIP) {
+        if (elem.item.build_type == BT_SHIP || elem.item.build_type == BT_STOCKPILE) {
             m_quantity_selector = GG::Wnd::Create<QuantitySelector>(elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
                                                                     m_in_progress, GG::X(FONT_PTS*2.5), false);
             m_block_size_selector = GG::Wnd::Create<QuantitySelector>(elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
@@ -723,17 +734,27 @@ namespace {
                 popup->AddMenuItem(GG::MenuItem(UserString("PAUSE"),            false, false, pause_action));
             }
 
-            if (queue_row && queue_row->elem.allowed_imperial_stockpile_use) {
-                popup->AddMenuItem(GG::MenuItem(UserString("DISALLOW_IMPERIAL_PP_STOCKPILE_USE"), false, false, disallow_stockpile_action));
-            } else {
-                popup->AddMenuItem(GG::MenuItem(UserString("ALLOW_IMPERIAL_PP_STOCKPILE_USE"), false, false, allow_stockpile_action));
+            switch (build_type) {
+            case BT_BUILDING:
+            case BT_SHIP:
+                if (queue_row && queue_row->elem.allowed_imperial_stockpile_use) {
+                    popup->AddMenuItem(GG::MenuItem(UserString("DISALLOW_IMPERIAL_PP_STOCKPILE_USE"), false, false, disallow_stockpile_action));
+                } else {
+                    popup->AddMenuItem(GG::MenuItem(UserString("ALLOW_IMPERIAL_PP_STOCKPILE_USE"), false, false, allow_stockpile_action));
+                }
+                break;
+            case BT_STOCKPILE:
+                break;
             }
+
             // pedia lookup
             std::string item_name = "";
             if (build_type == BT_BUILDING) {
                 item_name = queue_row->elem.item.name;
             } else if (build_type == BT_SHIP) {
                 item_name = GetShipDesign(queue_row->elem.item.design_id)->Name(false);
+            } else if (build_type == BT_STOCKPILE) {
+                item_name = "PROJECT_BT_STOCKPILE";
             } else {
                 ErrorLogger() << "Invalid build type (" << build_type << ") for row item";
                 return;

@@ -234,6 +234,7 @@ namespace {
       * Also checks if elements will be completed this turn. */
     void SetProdQueueElementSpending(
         std::map<std::set<int>, float> available_pp, float available_stockpile,
+        float& stockpile_transfer,
         const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
         const std::map<std::pair<ProductionQueue::ProductionItem, int>,
                        std::pair<float, int>>& queue_item_costs_and_times,
@@ -348,14 +349,17 @@ namespace {
             // record allocation from group
             float group_drawdown = std::min(allocation, group_pp_available);
             allocated_pp[group] += group_drawdown;  // relies on default initial mapped value of 0.0f
+            if (queue_element.item.build_type == BT_STOCKPILE) {
+                stockpile_transfer += group_drawdown;
+            }
             group_pp_available -= group_drawdown;
 
-            float stockpile_drawdown = allocation <= group_drawdown ?  0.0f : (allocation - group_drawdown);
-                                       // 0.0f : (allocation - group_drawdown) / stockpile_conversion_rate;
+            float stockpile_drawdown = allocation <= group_drawdown ? 0.0f : (allocation - group_drawdown);
             TraceLogger() << "allocation: " << allocation
                           << "  to: " << queue_element.item.name
                           << "  from group: " << group_drawdown
                           << "  from stockpile: " << stockpile_drawdown
+                          << "  to stockpile:" << stockpile_transfer
                           << "  group remaining: " << group_pp_available;
 
             // record allocation from stockpile
@@ -366,7 +370,6 @@ namespace {
                 allocated_stockpile_pp[group] += stockpile_drawdown;
                 available_stockpile -= stockpile_drawdown;
             }
-
 
             // check for completion
             float block_cost = item_cost * queue_element.blocksize;
@@ -671,6 +674,11 @@ ProductionQueue::ProductionItem::ProductionItem() :
     build_type(INVALID_BUILD_TYPE)
 {}
 
+ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_) :
+    build_type(build_type_),
+    name("PROJECT_BT_STOCKPILE")
+{}
+
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, std::string name_) :
     build_type(build_type_),
     name(name_)
@@ -700,6 +708,9 @@ bool ProductionQueue::ProductionItem::CostIsProductionLocationInvariant() const 
         if (!design)
             return true;
         return design->ProductionCostTimeLocationInvariant();
+
+    } else if (build_type == BT_STOCKPILE) {
+        return true;
     }
     return false;
 }
@@ -719,6 +730,7 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id) 
         break;
     }
     case BT_SHIP:   // ships don't have enqueue location conditions
+    case BT_STOCKPILE:  // stockpile can always be enqueued 
     default:
         return true;
     }
@@ -795,6 +807,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
         break;
     }
     case BT_PROJECT:    // TODO
+    case BT_STOCKPILE:  // stockpile transfer consumes no special
     default:
         break;
     }
@@ -848,6 +861,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
         break;
     }
     case BT_PROJECT:    // TODO
+    case BT_STOCKPILE:  // stockpile transfer happens before completion - nothing to do
     default:
         break;
     }
@@ -883,7 +897,9 @@ ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int orde
     blocksize_memory(blocksize_),
     paused(paused_),
     allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_)
-{}
+{
+    ErrorLogger() << "ProductionQueue::Element::Element() : BT_STOCKPILE";
+}
 
 ProductionQueue::Element::Element(BuildType build_type, std::string name, int empire_id_, int ordered_,
                                   int remaining_, int blocksize_, int location_, bool paused_,
@@ -1100,9 +1116,10 @@ void ProductionQueue::Update() {
     for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i)
         sim_queue_original_indices[i] = i;
 
+    float transfer_to_stockpile = 0.0f;
     // allocate pp to queue elements, returning updated available pp and updated
     // allocated pp for each group of resource sharing objects
-    SetProdQueueElementSpending(available_pp, available_stockpile, queue_element_groups,
+    SetProdQueueElementSpending(available_pp, available_stockpile, transfer_to_stockpile, queue_element_groups,
                                 queue_item_costs_and_times, is_producible, m_queue,
                                 m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp,
                                 m_projects_in_progress, false);
@@ -1111,6 +1128,7 @@ void ProductionQueue::Update() {
     m_expected_new_stockpile_amount = CalculateNewStockpile(
         m_empire_id, pp_in_stockpile, available_pp, m_object_group_allocated_pp,
         m_object_group_allocated_stockpile_pp);
+    m_expected_new_stockpile_amount += transfer_to_stockpile;
 
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
@@ -1160,6 +1178,7 @@ void ProductionQueue::Update() {
     sim_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
     std::map<std::set<int>, float>  allocated_pp;
     float sim_available_stockpile = available_stockpile;
+    float sim_transfer_to_stockpile = transfer_to_stockpile;
     float sim_pp_in_stockpile = pp_in_stockpile;
     std::map<std::set<int>, float>  allocated_stockpile_pp;
     int dummy_int = 0;
@@ -1176,7 +1195,7 @@ void ProductionQueue::Update() {
         allocated_pp.clear();
         allocated_stockpile_pp.clear();
 
-        SetProdQueueElementSpending(available_pp, sim_available_stockpile, queue_element_groups,
+        SetProdQueueElementSpending(available_pp, sim_available_stockpile, sim_transfer_to_stockpile, queue_element_groups,
                                     queue_item_costs_and_times, is_producible, sim_queue,
                                     allocated_pp, allocated_stockpile_pp, dummy_int, true);
 
@@ -1203,6 +1222,7 @@ void ProductionQueue::Update() {
         sim_pp_in_stockpile = CalculateNewStockpile(m_empire_id, sim_pp_in_stockpile,
                                                     available_pp, allocated_pp,
                                                     allocated_stockpile_pp);
+        sim_pp_in_stockpile += sim_transfer_to_stockpile;
         sim_available_stockpile = std::min(sim_pp_in_stockpile, stockpile_limit);
     }
 
@@ -1661,6 +1681,8 @@ std::pair<float, int> Empire::ProductionCostAndTime(const ProductionQueue::Produ
             return std::make_pair(design->ProductionCost(m_id, location_id),
                                   design->ProductionTime(m_id, location_id));
         return std::make_pair(-1.0, -1);
+    } else if (item.build_type == BT_STOCKPILE) {
+        return std::make_pair(1.0, 1);
     }
     ErrorLogger() << "Empire::ProductionCostAndTime was passed a ProductionItem with an invalid BuildType";
     return std::make_pair(-1.0, -1);
@@ -1669,10 +1691,53 @@ std::pair<float, int> Empire::ProductionCostAndTime(const ProductionQueue::Produ
 bool Empire::HasExploredSystem(int ID) const
 { return (m_explored_systems.find(ID) != m_explored_systems.end()); }
 
+bool Empire::ProducibleItem(BuildType build_type, int location_id) const {
+    if (build_type == BT_SHIP)
+        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_SHIP with no further parameters, but ship designs are tracked by number");
+    
+    if (build_type == BT_BUILDING)
+        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_BUILDING with no further parameters, but these types are tracked by name");
+
+    auto build_location = GetUniverseObject(location_id);
+    if (!build_location)
+        return false;
+
+    if (build_type == BT_STOCKPILE) {
+        Empire* empire = GetEmpire(m_id);
+        if (!empire) {
+            DebugLogger() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << m_id;
+            return false;
+        }
+
+        // must own the production location...
+        auto location = GetUniverseObject(location_id);
+        if (!location) {
+            WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << location_id;
+            return false;
+        }
+        if (!location->OwnedBy(m_id))
+            return false;
+
+        auto planet = std::dynamic_pointer_cast<const Planet>(location);
+        std::shared_ptr<const Ship> ship;
+        if (!planet)
+             return false;
+
+        return true;
+    } else {
+        ErrorLogger() << "Empire::ProducibleItem was passed an invalid BuildType";
+        return false;
+    }
+
+}
+
 bool Empire::ProducibleItem(BuildType build_type, const std::string& name, int location) const {
     // special case to check for ships being passed with names, not design ids
     if (build_type == BT_SHIP)
         throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_SHIP with a name, but ship designs are tracked by number");
+
+    if (build_type == BT_STOCKPILE)
+        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_STOCKPILE with a name, but the stockpile does not need an identification");
 
     if (build_type == BT_BUILDING && !BuildingTypeAvailable(name))
         return false;
@@ -1700,6 +1765,9 @@ bool Empire::ProducibleItem(BuildType build_type, int design_id, int location) c
     if (build_type == BT_BUILDING)
         throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_BUILDING with a design id number, but these types are tracked by name");
 
+    if (build_type == BT_STOCKPILE)
+        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_STOCKPILE with a design id, but the stockpile does not need an identification");
+
     if (build_type == BT_SHIP && !ShipDesignAvailable(design_id))
         return false;
 
@@ -1726,6 +1794,8 @@ bool Empire::ProducibleItem(const ProductionQueue::ProductionItem& item, int loc
         return ProducibleItem(item.build_type, item.name, location);
     else if (item.build_type == BT_SHIP)
         return ProducibleItem(item.build_type, item.design_id, location);
+    else if (item.build_type == BT_STOCKPILE)
+        return ProducibleItem(item.build_type, location);
     else
         throw std::invalid_argument("Empire::ProducibleItem was passed a ProductionItem with an invalid BuildType");
     return false;
@@ -1752,10 +1822,13 @@ bool Empire::EnqueuableItem(const ProductionQueue::ProductionItem& item, int loc
         return EnqueuableItem(item.build_type, item.name, location);
     else if (item.build_type == BT_SHIP)    // ships don't have a distinction between enqueuable and producible
         return ProducibleItem(item.build_type, item.design_id, location);
+    else if (item.build_type == BT_STOCKPILE) // stockpile does not have a distinction between enqueuable and producible
+        return ProducibleItem(item.build_type, location);
     else
         throw std::invalid_argument("Empire::ProducibleItem was passed a ProductionItem with an invalid BuildType");
     return false;
 }
+
 
 int Empire::NumSitRepEntries(int turn/* = INVALID_GAME_TURN*/) const {
     if (turn == INVALID_GAME_TURN)
@@ -2232,11 +2305,11 @@ void Empire::SetTechResearchProgress(const std::string& name, float progress) {
 const unsigned int MAX_PROD_QUEUE_SIZE = 500;
 
 void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& name, int number,
-                                    int blocksize, int location, int pos/* = -1*/)
+    int blocksize, int location, int pos/* = -1*/)
 {
     if (!EnqueuableItem(build_type, name, location)) {
         ErrorLogger() << "Empire::PlaceProductionOnQueue() : Attempted to place non-enqueuable item in queue: build_type: "
-                      << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
+            << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
         return;
     }
 
@@ -2247,12 +2320,40 @@ void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& nam
 
     if (!ProducibleItem(build_type, name, location)) {
         ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: "
-                      << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
+            << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
         return;
     }
 
-    ProductionQueue::Element build(build_type, name, m_id, number, number,
-                                   blocksize, location);
+    ProductionQueue::Element build(build_type, name, m_id, number, number, blocksize, location);
+    
+    if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
+        m_production_queue.push_back(build);
+    else
+        m_production_queue.insert(m_production_queue.begin() + pos, build);
+}
+
+void Empire::PlaceProductionOnQueue(BuildType build_type, BuildType dummy, int number,
+    int blocksize, int location, int pos/* = -1*/)
+{
+ErrorLogger() << "Empire::PlaceProductionOnQueue() : BT_STOCKPILE";
+    // no distinction between enqueuable and producible...
+
+    if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE) {
+        ErrorLogger() << "Empire::PlaceProductionOnQueue() : Maximum queue size reached. Aborting enqueue";
+        return;
+    }
+
+    if (!ProducibleItem(build_type, location)) {
+        ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: "
+            << boost::lexical_cast<std::string>(build_type) << "  location: " << location;
+        return;
+    }
+
+    const bool paused = false;
+    const bool allowed_imperial_stockpile_use = false;
+    const std::string dummy_str = "BT_STOCKPILE_DUMMY_BLD_NAME";
+    ProductionQueue::Element build(build_type, dummy_str, m_id, number, number, blocksize, location, paused, allowed_imperial_stockpile_use);
+
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
         m_production_queue.push_back(build);
     else
@@ -2289,6 +2390,8 @@ void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
         PlaceProductionOnQueue(item.build_type, item.name, number, blocksize, location, pos);
     else if (item.build_type == BT_SHIP)
         PlaceProductionOnQueue(item.build_type, item.design_id, number, blocksize, location, pos);
+    else if (item.build_type == BT_STOCKPILE)
+        PlaceProductionOnQueue(item.build_type, item.build_type, number, blocksize, location, pos);
     else
         throw std::invalid_argument("Empire::PlaceProductionOnQueue was passed a ProductionQueue::ProductionItem with an invalid BuildType");
 }
@@ -2908,6 +3011,10 @@ void Empire::CheckProductionProgress() {
                 build_description = "Ships(s) with design id " + std::to_string(elem.item.design_id);
                 break;
             }
+            case BT_STOCKPILE: {
+                build_description = "Stockpile PP transfer";
+                break;
+            }
             default: 
                 build_description = "unknown build type";
         }
@@ -3111,6 +3218,11 @@ void Empire::CheckProductionProgress() {
                 AddSitRepEntry(CreateShipBlockBuiltSitRep(system->ID(), ship->DesignID(), elem.blocksize));
                 DebugLogger() << "New block of "<< elem.blocksize << " ships created on turn: " << ship->CreationTurn();
             }
+            break;
+        }
+
+        case BT_STOCKPILE: {
+            DebugLogger() << "Finished a transfer to stockpile";
             break;
         }
 

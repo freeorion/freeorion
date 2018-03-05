@@ -122,7 +122,7 @@ namespace {
             switch (m_item.build_type) {
             case BT_BUILDING: {
                 texture = ClientUI::BuildingIcon(m_item.name);
-                desc_text = UserString("BT_BUILDING"); 
+                desc_text = UserString("BT_BUILDING");
                 name_text = UserString(m_item.name);
                 break;
             }
@@ -132,6 +132,12 @@ namespace {
                 const ShipDesign* design = GetShipDesign(m_item.design_id);
                 if (design)
                     name_text = design->Name(true);
+                break;
+            }
+            case BT_STOCKPILE: {
+                texture = ClientUI::MeterIcon(METER_STOCKPILE);
+                desc_text = UserString("BT_STOCKPILE");
+                name_text = UserString("PROJECT_BT_STOCKPILE");
                 break;
             }
             default:
@@ -323,6 +329,25 @@ namespace {
                 ClientUI::ShipDesignIcon(item.design_id), title, main_text);
         }
 
+        // production item is a stockpiling project
+        if (item.build_type == BT_STOCKPILE) {
+
+            // create title, description, production time and cost
+            const std::string& title = UserString("PROJECT_BT_STOCKPILE");
+            std::string main_text = UserString("PROJECT_BT_STOCKPILE_DESC");
+            float total_cost = 1.0;
+            int production_time = 1;
+
+            main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
+            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + std::to_string(production_time);
+
+            // do not show build conditions - always buildable
+
+            // create tooltip
+            return GG::Wnd::Create<IconTextBrowseWnd>(
+                ClientUI::MeterIcon(METER_STOCKPILE), title, main_text);
+        }
+
         // other production item (?)
         else {
             return nullptr;
@@ -472,6 +497,8 @@ public:
 
     mutable boost::signals2::signal<void (const BuildingType*)>                DisplayBuildingTypeSignal;
     mutable boost::signals2::signal<void (const ShipDesign*)>                  DisplayShipDesignSignal;
+    mutable boost::signals2::signal<void ()>                                   DisplayStockpileProjectSignal;
+
     mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, int)> RequestBuildItemSignal;
     mutable boost::signals2::signal<void ()>                                   ShowPediaSignal;
 
@@ -667,6 +694,7 @@ void BuildDesignatorWnd::BuildSelector::HideType(BuildType type, bool refresh_li
 void BuildDesignatorWnd::BuildSelector::ShowAllTypes(bool refresh_list) {
     m_build_types_shown.insert(BT_BUILDING);
     m_build_types_shown.insert(BT_SHIP);
+    m_build_types_shown.insert(BT_STOCKPILE);
     if (refresh_list)
         Refresh();
 }
@@ -777,6 +805,18 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     auto default_font = ClientUI::GetFont();
     const GG::Pt row_size = m_buildable_items->ListRowSize();
 
+    // populate list with fixed projects
+    {
+        auto stockpile_row = GG::Wnd::Create<ProductionItemRow>(row_size.x, row_size.y,
+            ProductionQueue::ProductionItem(BT_STOCKPILE), m_empire_id, m_production_location);
+        m_buildable_items->Insert(stockpile_row);
+
+        // resize inserted rows and record first row to show
+        for (auto& row : *m_buildable_items) {
+            row->Resize(row_size);
+        }
+    }
+
     // populate list with building types
     //DebugLogger() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding Buildings ";
     if (m_build_types_shown.find(BT_BUILDING) != m_build_types_shown.end()) {
@@ -879,6 +919,8 @@ void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterat
             return;
         }
         DisplayShipDesignSignal(design);
+    } else if (build_type == BT_STOCKPILE) {
+        DisplayStockpileProjectSignal();
     }
 }
 
@@ -906,6 +948,8 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
         item_name = item.name;
     } else if (item.build_type == BT_SHIP) {
         item_name = GetShipDesign(item.design_id)->Name(false);
+    } else if (item.build_type == BT_STOCKPILE) {
+        item_name = "PROJECT_BT_STOCKPILE";
     } else {
         ErrorLogger() << "Invalid build type (" << item.build_type << ") for item";
         return;
@@ -966,6 +1010,8 @@ void BuildDesignatorWnd::CompleteConstruction() {
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(&EncyclopediaDetailPanel::SetItem),  m_enc_detail_panel, _1));
     m_build_selector->DisplayShipDesignSignal.connect(
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, _1));
+    m_build_selector->DisplayStockpileProjectSignal.connect(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const std::string&, bool)>(&EncyclopediaDetailPanel::SetText), m_enc_detail_panel, "PROJECT_BT_STOCKPILE_DESC", true));
 
     m_build_selector->ShowPediaSignal.connect(
         boost::bind(&BuildDesignatorWnd::ShowPedia, this));
@@ -1070,6 +1116,8 @@ void BuildDesignatorWnd::SetBuild(int queue_idx) {
             const ShipDesign* design = GetShipDesign(queue[queue_idx].item.design_id);
             assert(design);
             m_build_selector->DisplayShipDesignSignal(design);
+        } else if (buildType == BT_STOCKPILE) {
+            m_build_selector->DisplayStockpileProjectSignal();
         }
     } else {
             m_enc_detail_panel->OnIndex();
@@ -1153,6 +1201,8 @@ void BuildDesignatorWnd::ShowType(BuildType type, bool refresh_list) {
     if (type == BT_BUILDING || type == BT_SHIP) {
         m_build_selector->ShowType(type, refresh_list);
         m_build_selector->m_build_type_buttons[type]->SetCheck();
+    } else if (type == BT_STOCKPILE) {
+        m_build_selector->ShowType(type, refresh_list);
     } else {
         ErrorLogger() << "BuildDesignatorWnd::ShowType(" << boost::lexical_cast<std::string>(type) << ")";
         throw std::invalid_argument("BuildDesignatorWnd::ShowType was passed an invalid BuildType");
@@ -1170,6 +1220,8 @@ void BuildDesignatorWnd::HideType(BuildType type, bool refresh_list) {
     if (type == BT_BUILDING || type == BT_SHIP) {
         m_build_selector->HideType(type, refresh_list);
         m_build_selector->m_build_type_buttons[type]->SetCheck(false);
+    } else if (type == BT_STOCKPILE) {
+        m_build_selector->HideType(type, refresh_list);
     } else {
         throw std::invalid_argument("BuildDesignatorWnd::HideType was passed an invalid BuildType");
     }

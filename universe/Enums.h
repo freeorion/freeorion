@@ -221,6 +221,7 @@ GG_ENUM(BuildType,
     BT_BUILDING,            ///< a Building object is being built
     BT_SHIP,                ///< a Ship object is being built
     BT_PROJECT,             ///< a project may produce effects while on the queue, may or may not ever complete, and does not result in a ship or building being produced
+    BT_STOCKPILE,
     NUM_BUILD_TYPES
 )
 
