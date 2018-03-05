@@ -336,7 +336,7 @@ class AIstate(object):
         max_shields = planet.currentMeterValue(fo.meterType.maxShield)
         current_defense = planet.currentMeterValue(fo.meterType.defense)
         max_defense = planet.currentMeterValue(fo.meterType.maxDefense)
-        # TODO: Consider using current vs initial meter difference for regen estimate
+        # TODO: Use current vs initial meter difference for regen estimate
         shields = min(max_shields, current_shields + 2 * sighting_age)  # TODO: base off regen tech
         defense = min(max_defense, current_defense + 2 * sighting_age)  # TODO: base off regen tech
         return {'overall': defense * (defense + shields), 'attack': defense, 'health': (defense + shields)}
