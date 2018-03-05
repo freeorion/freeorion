@@ -237,13 +237,14 @@ def survey_universe():
             spec_name = planet.speciesName
             this_spec = fo.getSpecies(spec_name)
             owner_id = planet.owner
-            # TODO: Shouldn't this be initial population meter?
-            planet_population = planet.currentMeterValue(fo.meterType.population)
             buildings_here = [universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs]
             ship_facilities = set(AIDependencies.SHIP_FACILITIES).intersection(buildings_here)
             weapons_grade = "WEAPONS_0.0"
             if owner_id == empire_id:
-                if planet_population > 0.0 and this_spec:
+                # Initial vs current population meter in next check should only matter if the planet is dying off.
+                # In that case, just assume that the planet is indeed dying off and worthless as a colony.
+                planet_populated = planet.currentMeterValue(fo.meterType.population) > 0.0 and this_spec
+                if planet_populated:
                     empire_has_qualifying_planet = True
                     for metab in [tag for tag in this_spec.tags if tag in AIDependencies.metabolismBoostMap]:
                         empire_metabolisms[metab] = (empire_metabolisms.get(metab, 0.0) + planet.habitableSize)
@@ -259,9 +260,8 @@ def survey_universe():
                             empire_ship_builders.setdefault(spec_name, []).append(pid)
                             empire_shipyards[pid] = pilot_val
                             yard_here = [pid]
-                        # TODO: Shouldn't this be initial meter?
-                        # If the population is >= only in the next turn but not now,
-                        # then we haven't reached colonization threshold yet...
+                        # for target meters, we want use the next turn's value estimate
+                        # as the planning here aims for some point in the future.
                         if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
                             empire_colonizers.setdefault(spec_name, []).extend(yard_here)
 
