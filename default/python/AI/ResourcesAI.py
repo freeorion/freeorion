@@ -39,12 +39,11 @@ class PlanetFocusInfo(object):
     def __init__(self, planet):
         self.planet = planet
         self.current_focus = planet.focus
-        # TODO: Shouldn't this be initial meter values as this turn's output without focus changes?
-        self.current_output = (planet.currentMeterValue(fo.meterType.industry),
-                               planet.currentMeterValue(fo.meterType.research))
+        self.current_output = (planet.initialMeterValue(fo.meterType.industry),
+                               planet.initialMeterValue(fo.meterType.research))
         self.possible_output = {}
-        industry_target = planet.currentMeterValue(fo.meterType.targetIndustry)
-        research_target = planet.currentMeterValue(fo.meterType.targetResearch)
+        industry_target = planet.initialMeterValue(fo.meterType.targetIndustry)
+        research_target = planet.initialMeterValue(fo.meterType.targetResearch)
         self.possible_output[self.current_focus] = (industry_target, research_target)
         self.future_focus = self.current_focus
 
