@@ -175,14 +175,16 @@ EffectsGroup::EffectsGroup(std::unique_ptr<Condition::ConditionBase>&& scope,
                            std::vector<std::unique_ptr<EffectBase>>&& effects,
                            const std::string& accounting_label,
                            const std::string& stacking_group, int priority,
-                           const std::string& description) :
+                           const std::string& description,
+                           const std::string& content_name):
     m_scope(std::move(scope)),
     m_activation(std::move(activation)),
     m_stacking_group(stacking_group),
     m_effects(std::move(effects)),
     m_accounting_label(accounting_label),
     m_priority(priority),
-    m_description(description)
+    m_description(description),
+    m_content_name(content_name)
 {}
 
 EffectsGroup::~EffectsGroup()

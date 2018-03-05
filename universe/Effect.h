@@ -44,7 +44,8 @@ public:
                  std::vector<std::unique_ptr<EffectBase>>&& effects,
                  const std::string& accounting_label = "",
                  const std::string& stacking_group = "", int priority = 0,
-                 const std::string& description = "");
+                 const std::string& description = "",
+                 const std::string& content_name = "");
     virtual ~EffectsGroup();
 
     /** execute all effects in group */
