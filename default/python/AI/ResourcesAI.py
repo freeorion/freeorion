@@ -283,9 +283,8 @@ class Reporter(object):
             ], table_name="Planetary Foci Overview Turn %d" % fo.currentTurn())
         for pid in empire_planet_ids:
             planet = universe.getPlanet(pid)
-            # TODO: Shouldn't these be initial meters?
-            population = planet.currentMeterValue(fo.meterType.population)
-            max_population = planet.currentMeterValue(fo.meterType.targetPopulation)
+            population = planet.initialMeterValue(fo.meterType.population)
+            max_population = planet.initialMeterValue(fo.meterType.targetPopulation)
             if max_population < 1 and population > 0:
                 warnings[planet.name] = (population, max_population)
             foci_table.add_row([
