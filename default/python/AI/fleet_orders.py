@@ -31,8 +31,7 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
     supplied_systems = fo.getEmpire().fleetSupplyableSystemIDs
     # if about to leave supply lines
     if order.target.id not in supplied_systems or fo.getUniverse().jumpDistance(order.fleet.id, invasion_system.id) < 5:
-        # using current meter value here as the planet will have time to grow
-        # shields if no military fleets present there.
+        # using current meter value here as the planet will have time to grow if it is important...
         if invasion_planet.currentMeterValue(fo.meterType.maxShield):
             military_support_fleets = MilitaryAI.get_military_fleets_with_target_system(invasion_system.id)
             if not military_support_fleets:
