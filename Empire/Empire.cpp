@@ -212,6 +212,41 @@ const std::map<std::string, std::string>& Empire::AdoptedPolicyCategories() cons
 const std::set<std::string>& Empire::AvailablePolicies() const
 { return m_available_policies; }
 
+namespace {
+    const std::initializer_list<std::pair<std::string, std::string>> policy_slot_cats_meters = {
+        {UserStringNop("ECONOMIC_CATEGORY"),    UserStringNop("METER_NUM_ECONOMIC_POLICIES")},
+        {UserStringNop("SOCIAL_CATEGORY"),      UserStringNop("METER_NUM_SOCIAL_POLICIES")}
+    };
+}
+
+std::map<std::string, int> Empire::TotalPolicySlots() const {
+    std::map<std::string, int> retval;
+    // collect policy slot category meter values and return
+    for (const auto& cat_meter_pair : policy_slot_cats_meters) {
+        if (!m_meters.count(cat_meter_pair.second))
+            continue;
+        auto it = m_meters.find(cat_meter_pair.second);
+        if (it == m_meters.end()) {
+            ErrorLogger() << "Empire doesn't have policy category slot meter with name: " << cat_meter_pair.second;
+            continue;
+        }
+        retval[cat_meter_pair.first] = it->second.Initial();
+    }
+    return retval;
+}
+
+std::map<std::string, int> Empire::EmptyPolicySlots() const {
+    // get total slots empire has available
+    std::map<std::string, int> retval = TotalPolicySlots();
+
+    // subtract used policy categories
+    for (const auto& policy_cat_pair : m_adopted_policy_categories)
+        retval[policy_cat_pair.second]--;
+
+    // return difference
+    return retval;
+}
+
 Meter* Empire::GetMeter(const std::string& name) {
     auto it = m_meters.find(name);
     if (it != m_meters.end())

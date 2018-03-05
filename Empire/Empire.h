@@ -68,8 +68,10 @@ public:
       * in which they were adopted. */
     const std::map<std::string, std::string>&   AdoptedPolicyCategories() const;
 
-    /** Returns the set of policies the empire has avaialble. */
+    /** Returns the set of policies / slots the empire has avaialble. */
     const std::set<std::string>&                AvailablePolicies() const;
+    std::map<std::string, int>                  TotalPolicySlots() const;
+    std::map<std::string, int>                  EmptyPolicySlots() const;
 
     /** Returns the set of Tech names available to this empire. */
     const std::map<std::string, int>&           ResearchedTechs() const;
