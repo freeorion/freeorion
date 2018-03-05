@@ -435,7 +435,8 @@ def set_planet_growth_specials(focus_manager):
 
             # the increased population on the planet using this growth focus
             # is mostly wasted, so ignore it for now.
-            # TODO: Do we want to use current meter here or initial?
+            # Using current meter here as focus will only be active next turn and because
+            # pop is more likely to grow than shrink also as the more conservative estimate.
             pop = planet.currentMeterValue(fo.meterType.population)
             pop_gain = potential_pop_increase - planet.habitableSize
             if pop > pop_gain:
