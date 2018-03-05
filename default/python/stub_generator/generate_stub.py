@@ -49,6 +49,7 @@ def handle_class(info):
         docs = Docs(rutine_docs, 2, is_class=True)
 
         if docs.rtype == 'VisibilityIntMap':
+            docs.rtype = 'dict[int, int]'
             return_string = 'return dict()'
         elif docs.rtype == 'None':
             return_string = 'return None'

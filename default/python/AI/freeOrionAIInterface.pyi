@@ -2450,7 +2450,7 @@ class universe(object):
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype: VisibilityIntMap
+        :rtype: dict[int, int]
         """
         return dict()
 
