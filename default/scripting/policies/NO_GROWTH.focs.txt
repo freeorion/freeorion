@@ -11,6 +11,9 @@ Policy
                 OwnedBy empire = Source.Owner
                 Species
             ]
+            priority = [[METER_OVERRIDE_PRIORITY]]
             effects =
                 SetPopulation value = Target.Population // revert to initial value
     graphic = "icons/policies/no_growth.png"
+
+#include "/scripting/common/priorities.macros"
