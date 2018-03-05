@@ -328,6 +328,15 @@ FORMAT_LIST_10_ITEMS
 #FORMAT_LIST_MANY_ITEMS
 #%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
 
+##
+## Build Projects
+##
+
+PROJECT_BT_STOCKPILE
+Service Transfert Stock
+
+PROJECT_BT_STOCKPILE_DESC
+Transfère les PP vers le stock impérial
 
 ##
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
@@ -8261,6 +8270,10 @@ Structure
 OBJ_SHIP
 Astronef
 
+# As the OBJ_SHIP and OBJ_BUILDING are used in the production window, we use OBJ_PROJECT for BT_STOCKPILING
+OBJ_PROJECT
+Projet
+
 # Universe object types
 OBJ_FLEET
 Flotte
@@ -8738,6 +8751,10 @@ structure
 # Build types
 BT_SHIP
 astronef
+
+# Build types
+BT_STOCKPILE
+stock
 
 # Resource types
 INVALID_RESOURCE_TYPE
