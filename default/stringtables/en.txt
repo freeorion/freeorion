@@ -4925,7 +4925,7 @@ ENC_TECH_DESC
 New effects, improved planetary stats, buildings, and ship parts can be unlocked by [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]], each falling into one of the categories listed here.
 
 ENC_POLICY
-Imperial Policies
+Policies
 
 ENC_POLICY_DESC
 Improved or situational effects that can be adopted by empires.
@@ -10843,6 +10843,16 @@ Prevents planets from increasing population from turn to turn.
 
 NO_GROWTH_POLICY_SHORT_DESC
 Stops planet growth
+
+NO_SUPPLY_POLICY
+No Supply
+
+NO_SUPPLY_POLICY_DESC
+Prevents planets from generating supply networks.
+
+NO_SUPPLY_POLICY_SHORT_DESC
+Stops supply propagation
+
 
 
 ##

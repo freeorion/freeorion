@@ -1,0 +1,20 @@
+Policy
+    name = "NO_SUPPLY_POLICY"
+    description = "NO_SUPPLY_POLICY_DESC"
+    short_description = "NO_SUPPLY_POLICY_SHORT_DESC"
+    category = "ECONOMIC_CATEGORY"
+    adoptioncost = 10
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            priority = [[METER_OVERRIDE_PRIORITY]]
+            effects = [
+                SetMaxSupply value = -100
+                SetSupply value = -100
+            ]
+    graphic = "icons/policies/no_supply.png"
+
+#include "/scripting/common/priorities.macros"

@@ -7,6 +7,8 @@ Tech
     researchturns = 3
     tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
     prerequisites = "CON_ORBITAL_CON"
+    unlock =
+        Item type = Policy name = "NO_SUPPLY_POLICY"
     effectsgroups = EffectsGroup
             scope = And [
                 Ship
