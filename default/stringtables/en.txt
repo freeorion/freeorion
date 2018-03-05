@@ -9282,6 +9282,12 @@ Ship Cost Factor
 METER_TECH_COST_FACTOR
 Tech Cost Factor
 
+METER_NUM_ECONOMIC_POLICIES
+Economic Policy Slots
+
+METER_NUM_SOCIAL_POLICIES
+Social Policy Slots
+
 ALIGN_MILITARISM
 Militarism
 

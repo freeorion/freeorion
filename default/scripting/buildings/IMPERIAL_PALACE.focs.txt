@@ -53,6 +53,10 @@ BuildingType
             effects = SetEmpireCapital
 
         EffectsGroup
+            scope = Source
+            effects = SetEmpireMeter empire = Source.Owner meter = "METER_NUM_ECONOMIC_POLICIES" value = Value + 1
+
+        EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
                 Planet

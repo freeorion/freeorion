@@ -2,7 +2,7 @@ Policy
     name = "NO_GROWTH_POLICY"
     description = "NO_GROWTH_POLICY_DESC"
     short_description = "NO_GROWTH_POLICY_SHORT_DESC"
-    category = "SOCIOLOGY_CATEGORY"
+    category = "SOCIAL_CATEGORY"
     adoptioncost = 10
     effectsgroups =
         EffectsGroup
