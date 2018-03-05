@@ -64,12 +64,11 @@ class State(object):
             self.__planet_info[pid] = PlanetInfo(pid, planet.speciesName, planet.owner, planet.systemID)
 
             if planet.ownedBy(empire_id):
-                # TODO: Shouldn't this be initial meter value?
-                population = planet.currentMeterValue(fo.meterType.population)
+                population = planet.initialMeterValue(fo.meterType.population)
                 if AIDependencies.ANCIENT_RUINS_SPECIAL in planet.specials:
                     self.__have_ruins = True
                 if population > 0 and AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:
-                        self.__have_computronium = True  # TODO: Check if species can set research focus
+                    self.__have_computronium = True  # TODO: Check if species can set research focus
 
                 if planet.focus == FocusType.FOCUS_INDUSTRY:
                     self.__num_industrialists += population
