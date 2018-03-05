@@ -142,19 +142,19 @@ def chat_human(message):
     print "Chat Message to human: %s" % remove_tags(message)
 
 
-def cache_by_session(function):
+def cache_by_session(func):
     """
     Cache a function value by session.
     Wraps only functions with hashable arguments.
     """
     _cache = {}
 
-    @wraps(function)
+    @wraps(func)
     def wrapper(*args, **kwargs):
-        key = (function, args, tuple(kwargs.items()))
+        key = (func, args, tuple(kwargs.items()))
         if key in _cache:
             return _cache[key]
-        res = function(*args, **kwargs)
+        res = func(*args, **kwargs)
         _cache[key] = res
         return res
     wrapper._cache = _cache
