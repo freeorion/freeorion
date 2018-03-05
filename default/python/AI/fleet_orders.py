@@ -456,10 +456,9 @@ class OrderInvade(AIFleetOrder):
             print "Ordering troop ship %d to invade %s" % (ship_id, planet)
             result = fo.issueInvadeOrder(ship_id, planet_id) or result
             if not result:
-                # TODO: Shouldn't this be initial meter values to reflect this turn's state?
-                shields = planet.currentMeterValue(fo.meterType.shield)
-                planet_stealth = planet.currentMeterValue(fo.meterType.stealth)
-                pop = planet.currentMeterValue(fo.meterType.population)
+                shields = planet.initialMeterValue(fo.meterType.shield)
+                planet_stealth = planet.initialMeterValue(fo.meterType.stealth)
+                pop = planet.initialMeterValue(fo.meterType.population)
                 warn("Invasion order failed!")
                 print (" -- planet has %.1f stealth, shields %.1f, %.1f population and "
                        "is owned by empire %d") % (planet_stealth, shields, pop, planet.owner)
