@@ -215,7 +215,10 @@ const std::string& EffectsGroup::GetDescription() const
 { return m_description; }
 
 std::string EffectsGroup::Dump(unsigned short ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "EffectsGroup\n";
+    std::string retval = DumpIndent(ntabs) + "EffectsGroup";
+    if (!m_content_name.empty())
+        retval += " from " + m_content_name;
+    retval += "\n";
     retval += DumpIndent(ntabs+1) + "scope =\n";
     retval += m_scope->Dump(ntabs+2);
     if (m_activation) {
