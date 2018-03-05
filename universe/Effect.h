@@ -80,7 +80,7 @@ protected:
     std::string                 m_accounting_label;
     int                         m_priority;
     std::string                 m_description;
-    std::string	                m_content_name;
+    std::string                 m_content_name;
 
 private:
     friend class boost::serialization::access;

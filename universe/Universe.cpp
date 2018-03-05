@@ -946,7 +946,7 @@ namespace {
             std::shared_ptr<const UniverseObject> source,
             const ScriptingContext&            source_context,
             Effect::TargetSet&                 target_objects,
-			std::string&					   match_log);
+            std::string&                       match_log);
     };
 
     StoreTargetsAndCausesOfEffectsGroupsWorkItem::StoreTargetsAndCausesOfEffectsGroupsWorkItem(
@@ -1033,7 +1033,7 @@ namespace {
         std::shared_ptr<const UniverseObject>                           source,
         const ScriptingContext&                                         source_context,
         Effect::TargetSet&                                              target_objects,
-		std::string&													match_log)
+        std::string&                                                    match_log)
     {
         std::pair<bool, Effect::TargetSet>* cache_entry = nullptr;
 
