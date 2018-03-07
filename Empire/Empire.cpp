@@ -1,33 +1,21 @@
 #include "Empire.h"
 
 #include "../util/i18n.h"
-#include "../util/ScopedTimer.h"
 #include "../util/Random.h"
 #include "../util/Logger.h"
-#include "../util/OptionsDB.h"
+#include "../util/AppInterface.h"
 #include "../util/SitRepEntry.h"
 #include "../universe/Building.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
-#include "../universe/Predicates.h"
+#include "../universe/ShipDesign.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
-#include "../universe/Universe.h"
-#include "../universe/Enums.h"
 #include "../universe/Tech.h"
 #include "../universe/UniverseObject.h"
-#include "../universe/ValueRef.h"
-#include "ResourcePool.h"
 #include "EmpireManager.h"
 #include "Supply.h"
 
-#include <boost/filesystem/fstream.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/timer.hpp>
-#include "boost/date_time/posix_time/posix_time.hpp"
-
-#include <algorithm>
-#include <iterator>
 #include <unordered_set>
 
 
