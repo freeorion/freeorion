@@ -113,6 +113,7 @@ class ConsoleLogHandler(logging.Handler):
         except:
             self.handleError(record)
 
+
 # Create the log handler, format it and attach it to the root logger
 console_handler = ConsoleLogHandler()
 
@@ -216,13 +217,13 @@ def tuple_to_dict(tup):
             return {}
 
 
-def profile(function):
+def profile(func):
 
-    @wraps(function)
+    @wraps(func)
     def wrapper(*args, **kwargs):
         pr = cProfile.Profile()
         pr.enable()
-        retval = function(*args, **kwargs)
+        retval = func(*args, **kwargs)
         pr.disable()
         s = StringIO.StringIO()
         sortby = 'cumulative'
