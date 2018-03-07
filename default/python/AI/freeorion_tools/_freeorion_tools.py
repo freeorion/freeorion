@@ -324,7 +324,7 @@ class LogLevelSwitcher(object):
         logging.getLogger().setLevel(self.old_log_level)
 
 
-def log_with_specic_log_level(log_level):
+def log_with_specific_log_level(log_level):
     """Set the logging level for this function call to a specific level.
 
     This decorator is useful to selectively activate debugging for a specific function
