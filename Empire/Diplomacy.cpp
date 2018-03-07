@@ -42,6 +42,20 @@ std::string DiplomaticMessage::Dump() const {
     return retval;
 }
 
+
+DiplomaticStatusUpdateInfo::DiplomaticStatusUpdateInfo() :
+    empire1_id(ALL_EMPIRES),
+    empire2_id(ALL_EMPIRES),
+    diplo_status(INVALID_DIPLOMATIC_STATUS)
+{}
+
+DiplomaticStatusUpdateInfo::DiplomaticStatusUpdateInfo(int empire1_id_, int empire2_id_, DiplomaticStatus status) :
+    empire1_id(empire1_id_),
+    empire2_id(empire2_id_),
+    diplo_status(status)
+{}
+
+
 DiplomaticMessage WarDeclarationDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
 { return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::WAR_DECLARATION); }
 

@@ -4,6 +4,7 @@
 #include <string>
 #include <boost/serialization/access.hpp>
 
+#include "../universe/Enums.h"
 #include "../util/Export.h"
 
 class FO_COMMON_API DiplomaticMessage {
@@ -36,6 +37,14 @@ private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
+};
+
+struct FO_COMMON_API DiplomaticStatusUpdateInfo {
+    DiplomaticStatusUpdateInfo();
+    DiplomaticStatusUpdateInfo(int empire1_id_, int empire2_id_, DiplomaticStatus status);
+    int                 empire1_id;
+    int                 empire2_id;
+    DiplomaticStatus    diplo_status;
 };
 
 bool operator==(const DiplomaticMessage& lhs, const DiplomaticMessage& rhs);

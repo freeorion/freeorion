@@ -16,18 +16,6 @@ namespace {
     const std::string EMPTY_STRING;
 }
 
-DiplomaticStatusUpdateInfo::DiplomaticStatusUpdateInfo() :
-    empire1_id(ALL_EMPIRES),
-    empire2_id(ALL_EMPIRES),
-    diplo_status(INVALID_DIPLOMATIC_STATUS)
-{}
-
-DiplomaticStatusUpdateInfo::DiplomaticStatusUpdateInfo(int empire1_id_, int empire2_id_, DiplomaticStatus status) :
-    empire1_id(empire1_id_),
-    empire2_id(empire2_id_),
-    diplo_status(status)
-{}
-
 EmpireManager::EmpireManager()
 {}
 

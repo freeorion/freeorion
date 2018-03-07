@@ -7,7 +7,6 @@
 #include "../../util/i18n.h"
 #include "../../util/OptionsDB.h"
 #include "../../Empire/Empire.h"
-#include "../../Empire/EmpireManager.h"
 #include "../../Empire/Diplomacy.h"
 #include "../CommonFramework.h"
 #include "../SetWrapper.h"
