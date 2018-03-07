@@ -2,6 +2,7 @@ import freeOrionAIInterface as fo
 from freeorion_tools import chat_human
 from code import InteractiveInterpreter
 from cStringIO import StringIO
+import logging
 import sys
 
 
@@ -88,7 +89,12 @@ def shell(msg):
 
     sys.stdout = StringIO()
     sys.stderr = StringIO()
+    handler = logging.StreamHandler(sys.stdout)
+    logging.getLogger().addHandler(handler)
+
     interpreter.runsource(msg)
+
+    logging.getLogger().removeHandler(handler)
 
     sys.stdout.seek(0)
     out = sys.stdout.read()
