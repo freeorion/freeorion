@@ -1701,7 +1701,7 @@ class WarShipDesigner(MilitaryShipDesignerBaseClass):
             else:
                 ret_val[idxweapon] = num_slots
         elif armours:
-            armour = max(armours, key=cap).name
+            armour = max(armours, key=_get_capacity).name
             idxarmour = available_parts.index(armour)
             ret_val[idxarmour] = num_slots
         else:
