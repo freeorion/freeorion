@@ -145,9 +145,8 @@ namespace {
       * Elements will not receive funding if they cannot be produced by the
       * empire with the indicated \a empire_id this turn at their build location. 
       * Also checks if elements will be completed this turn. */
-    void SetProdQueueElementSpending(
+    float SetProdQueueElementSpending(
         std::map<std::set<int>, float> available_pp, float available_stockpile,
-        float& stockpile_transfer,
         const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
         const std::map<std::pair<ProductionQueue::ProductionItem, int>,
                        std::pair<float, int>>& queue_item_costs_and_times,
@@ -165,7 +164,7 @@ namespace {
 
         if (queue.size() != queue_element_resource_sharing_object_groups.size()) {
             ErrorLogger() << "SetProdQueueElementSpending queue size and sharing groups size inconsistent. aborting";
-            return;
+            return 0.0f;
         }
 
         // See explanation at CalculateProductionPerTurnLimit() above regarding operation of these factors.
@@ -179,7 +178,7 @@ namespace {
         allocated_pp.clear();
         allocated_stockpile_pp.clear();
         float dummy_pp_source = 0;
-
+        float stockpile_transfer = 0;
         //DebugLogger() << "queue size: " << queue.size();
         int i = 0;
         for (auto& queue_element : queue) {
@@ -298,6 +297,7 @@ namespace {
 
             ++i;
         }
+        return stockpile_transfer;
     }
 }
 
@@ -748,10 +748,9 @@ void ProductionQueue::Update() {
     for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i)
         sim_queue_original_indices[i] = i;
 
-    float transfer_to_stockpile = 0.0f;
     // allocate pp to queue elements, returning updated available pp and updated
     // allocated pp for each group of resource sharing objects
-    SetProdQueueElementSpending(available_pp, available_stockpile, transfer_to_stockpile, queue_element_groups,
+    float transfer_to_stockpile = SetProdQueueElementSpending(available_pp, available_stockpile, queue_element_groups,
                                 queue_item_costs_and_times, is_producible, m_queue,
                                 m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp,
                                 m_projects_in_progress, false);
@@ -810,7 +809,6 @@ void ProductionQueue::Update() {
     sim_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
     std::map<std::set<int>, float>  allocated_pp;
     float sim_available_stockpile = available_stockpile;
-    float sim_transfer_to_stockpile = transfer_to_stockpile;
     float sim_pp_in_stockpile = pp_in_stockpile;
     std::map<std::set<int>, float>  allocated_stockpile_pp;
     int dummy_int = 0;
@@ -827,7 +825,7 @@ void ProductionQueue::Update() {
         allocated_pp.clear();
         allocated_stockpile_pp.clear();
 
-        SetProdQueueElementSpending(available_pp, sim_available_stockpile, sim_transfer_to_stockpile, queue_element_groups,
+        float sim_transfer_to_stockpile = SetProdQueueElementSpending(available_pp, sim_available_stockpile, queue_element_groups,
                                     queue_item_costs_and_times, is_producible, sim_queue,
                                     allocated_pp, allocated_stockpile_pp, dummy_int, true);
 
