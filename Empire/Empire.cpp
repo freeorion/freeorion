@@ -451,28 +451,22 @@ bool Empire::ProducibleItem(BuildType build_type, int location_id) const {
     if (!build_location)
         return false;
 
+    // must own the production location...
+    auto location = GetUniverseObject(location_id);
+    if (!location) {
+        WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << location_id;
+        return false;
+    }
+
+    if (!location->OwnedBy(m_id))
+        return false;
+
+    if (!std::dynamic_pointer_cast<const Planet>(location))
+        return false;
+
     if (build_type == BT_STOCKPILE) {
-        Empire* empire = GetEmpire(m_id);
-        if (!empire) {
-            DebugLogger() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << m_id;
-            return false;
-        }
-
-        // must own the production location...
-        auto location = GetUniverseObject(location_id);
-        if (!location) {
-            WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << location_id;
-            return false;
-        }
-        if (!location->OwnedBy(m_id))
-            return false;
-
-        auto planet = std::dynamic_pointer_cast<const Planet>(location);
-        std::shared_ptr<const Ship> ship;
-        if (!planet)
-             return false;
-
         return true;
+
     } else {
         ErrorLogger() << "Empire::ProducibleItem was passed an invalid BuildType";
         return false;
