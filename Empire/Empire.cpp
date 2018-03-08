@@ -445,7 +445,7 @@ bool Empire::ProducibleItem(BuildType build_type, int location_id) const {
         throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_SHIP with no further parameters, but ship designs are tracked by number");
     
     if (build_type == BT_BUILDING)
-        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_BUILDING with no further parameters, but these types are tracked by name");
+        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_BUILDING with no further parameters, but buildings are tracked by name");
 
     auto build_location = GetUniverseObject(location_id);
     if (!build_location)
@@ -512,7 +512,7 @@ bool Empire::ProducibleItem(BuildType build_type, const std::string& name, int l
 bool Empire::ProducibleItem(BuildType build_type, int design_id, int location) const {
     // special case to check for buildings being passed with ids, not names
     if (build_type == BT_BUILDING)
-        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_BUILDING with a design id number, but these types are tracked by name");
+        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_BUILDING with a design id number, but buildings are tracked by name");
 
     if (build_type == BT_STOCKPILE)
         throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_STOCKPILE with a design id, but the stockpile does not need an identification");
