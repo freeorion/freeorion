@@ -22,8 +22,19 @@ class Field;
 struct GalaxySetupData;
 
 class FO_COMMON_API IApp {
+protected:
+    IApp();
+
 public:
+    IApp(const IApp&) = delete;
+
+    IApp(IApp&&) = delete;
+
     virtual ~IApp();
+
+    const IApp& operator=(const IApp&) = delete;
+
+    IApp& operator=(IApp&&) = delete;
 
     /** Returns a IApp pointer to the singleton instance of the app. */
     static IApp* GetApp();
@@ -67,17 +78,11 @@ public:
     virtual int EffectsProcessingThreads() const = 0;
 
 protected:
-    IApp();
-
     static IApp* s_app; ///< a IApp pointer to the singleton instance of the app
 
     // NormalExitException is used to break out of the run loop, without calling
     // terminate and failing to unroll the stack.
     class NormalExitException {};
-
-private:
-    const IApp& operator=(const IApp&); // disabled
-    IApp(const IApp&); // disabled
 };
 
 /** Accessor for the App's empire manager */

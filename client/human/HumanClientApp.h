@@ -25,12 +25,21 @@ public:
     typedef boost::signals2::signal<void (bool)> FullscreenSwitchSignalType;
     typedef boost::signals2::signal<void ()>     RepositionWindowsSignalType;
 
-    /** \name Structors */ //@{
+    HumanClientApp() = delete;
+
     HumanClientApp(int width, int height, bool calculate_FPS,
                    const std::string& name, int x, int y,
                    bool fullscreen, bool fake_mode_change);
-    virtual ~HumanClientApp();
-    //@}
+
+    HumanClientApp(const HumanClientApp&) = delete;
+
+    HumanClientApp(HumanClientApp&&) = delete;
+
+    ~HumanClientApp() override;
+
+    const HumanClientApp& operator=(const HumanClientApp&) = delete;
+
+    HumanClientApp& operator=(const HumanClientApp&&) = delete;
 
     /** \name Accessors */ //@{
     int EffectsProcessingThreads() const override;

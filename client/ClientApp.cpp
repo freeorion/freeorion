@@ -21,9 +21,6 @@ ClientApp::ClientApp() :
     m_current_turn(INVALID_GAME_TURN)
 {}
 
-ClientApp::~ClientApp()
-{}
-
 int ClientApp::PlayerID() const
 { return m_networking->PlayerID(); }
 

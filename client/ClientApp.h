@@ -20,10 +20,19 @@ class ClientNetworking;
  * being run in.
  */
 class ClientApp : public IApp {
-public:
+protected:
     ClientApp();
 
-    virtual ~ClientApp();
+public:
+    ClientApp(const ClientApp&) = delete;
+
+    ClientApp(ClientApp&&) = delete;
+
+    ~ClientApp() override = default;
+
+    const ClientApp& operator=(const ClientApp&) = delete;
+
+    ClientApp& operator=(ClientApp&&) = delete;
 
     /** @brief Return the player identifier of this client
      *
@@ -257,10 +266,6 @@ protected:
      */
     std::map<int, Message::PlayerStatus>
                                 m_player_status;
-
-private:
-    const ClientApp& operator=(const ClientApp&); // disabled
-    ClientApp(const ClientApp&); // disabled
 };
 
 #endif // _ClientApp_h_

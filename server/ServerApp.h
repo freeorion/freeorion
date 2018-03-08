@@ -74,10 +74,17 @@ private:
 /** the application framework class for the FreeOrion server. */
 class ServerApp : public IApp {
 public:
-    /** \name Structors */ //@{
     ServerApp();
-    ~ServerApp();
-    //@}
+
+    ServerApp(const ServerApp&) = delete;
+
+    ServerApp(ServerApp&&) = delete;
+
+    ~ServerApp() override;
+
+    const ServerApp& operator=(const ServerApp&) = delete;
+
+    ServerApp& operator=(IApp&&) = delete;
 
     /** \name Accessors */ //@{
 
@@ -233,9 +240,6 @@ public:
     ServerNetworking&           Networking();     ///< returns the networking object for the server
 
 private:
-    const ServerApp& operator=(const ServerApp&); // disabled
-    ServerApp(const ServerApp&); // disabled
-
     void    Run();          ///< initializes app state, then executes main event handler/render loop (Poll())
 
     /** Initialize the python engine if not already running. Return true on success. */
