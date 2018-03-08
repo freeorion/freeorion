@@ -200,7 +200,7 @@ public:
     * The second parameter is there for overloading resolution and gets ignored.
     */
     void PlaceProductionOnQueue(BuildType build_type, BuildType dummy, int number,
-        int blocksize, int location, int pos = -1);
+                                int blocksize, int location, int pos = -1);
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
       * placed at the end of the queue. */

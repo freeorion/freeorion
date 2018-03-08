@@ -1048,11 +1048,11 @@ void Empire::SetTechResearchProgress(const std::string& name, float progress) {
 const unsigned int MAX_PROD_QUEUE_SIZE = 500;
 
 void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& name, int number,
-    int blocksize, int location, int pos/* = -1*/)
+                                    int blocksize, int location, int pos/* = -1*/)
 {
     if (!EnqueuableItem(build_type, name, location)) {
         ErrorLogger() << "Empire::PlaceProductionOnQueue() : Attempted to place non-enqueuable item in queue: build_type: "
-            << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
+                      << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
         return;
     }
 
@@ -1063,7 +1063,7 @@ void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& nam
 
     if (!ProducibleItem(build_type, name, location)) {
         ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: "
-            << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
+                      << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
         return;
     }
 
@@ -1076,9 +1076,8 @@ void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& nam
 }
 
 void Empire::PlaceProductionOnQueue(BuildType build_type, BuildType dummy, int number,
-    int blocksize, int location, int pos/* = -1*/)
+                                    int blocksize, int location, int pos/* = -1*/)
 {
-ErrorLogger() << "Empire::PlaceProductionOnQueue() : BT_STOCKPILE";
     // no distinction between enqueuable and producible...
 
     if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE) {
@@ -1088,14 +1087,15 @@ ErrorLogger() << "Empire::PlaceProductionOnQueue() : BT_STOCKPILE";
 
     if (!ProducibleItem(build_type, location)) {
         ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: "
-            << boost::lexical_cast<std::string>(build_type) << "  location: " << location;
+                      << boost::lexical_cast<std::string>(build_type) << "  location: " << location;
         return;
     }
 
     const bool paused = false;
     const bool allowed_imperial_stockpile_use = false;
     const std::string dummy_str = "BT_STOCKPILE_DUMMY_BLD_NAME";
-    ProductionQueue::Element build(build_type, dummy_str, m_id, number, number, blocksize, location, paused, allowed_imperial_stockpile_use);
+    ProductionQueue::Element build(build_type, dummy_str, m_id, number, number, blocksize,
+                                   location, paused, allowed_imperial_stockpile_use);
 
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
         m_production_queue.push_back(build);

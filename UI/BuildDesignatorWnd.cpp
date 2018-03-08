@@ -331,7 +331,6 @@ namespace {
 
         // production item is a stockpiling project
         if (item.build_type == BT_STOCKPILE) {
-
             // create title, description, production time and cost
             const std::string& title = UserString("PROJECT_BT_STOCKPILE");
             std::string main_text = UserString("PROJECT_BT_STOCKPILE_DESC");
@@ -807,8 +806,8 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 
     // populate list with fixed projects
     {
-        auto stockpile_row = GG::Wnd::Create<ProductionItemRow>(row_size.x, row_size.y,
-            ProductionQueue::ProductionItem(BT_STOCKPILE), m_empire_id, m_production_location);
+        auto stockpile_row = GG::Wnd::Create<ProductionItemRow>(
+            row_size.x, row_size.y, ProductionQueue::ProductionItem(BT_STOCKPILE), m_empire_id, m_production_location);
         m_buildable_items->Insert(stockpile_row);
 
         // resize inserted rows and record first row to show
