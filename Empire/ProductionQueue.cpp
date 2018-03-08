@@ -307,9 +307,11 @@ ProductionQueue::ProductionItem::ProductionItem() :
 {}
 
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_) :
-    build_type(build_type_),
-    name("PROJECT_BT_STOCKPILE")
-{}
+    build_type(build_type_)
+{
+    if (build_type_ == BT_STOCKPILE)
+        name = "PROJECT_BT_STOCKPILE";
+}
 
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, std::string name_) :
     build_type(build_type_),
