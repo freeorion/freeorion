@@ -118,9 +118,7 @@ public:
 
     void                    SetAggressive(bool aggressive = true);          ///< sets this fleet to be agressive (true) or passive (false)
 
-    void                    AddShip(int ship_id);                           ///< adds the ship to the fleet
     void                    AddShips(const std::vector<int>& ship_ids);     ///< adds the ships to the fleet
-    void                    RemoveShip(int ship_id);                        ///< removes the ship from the fleet.
     void                    RemoveShips(const std::vector<int>& ship_ids);  ///< removes the ships from the fleet.
 
     void                    SetNextAndPreviousSystems(int next, int prev);  ///< sets the previous and next systems for this fleet.  Useful after moving a moving fleet to a different location, so that it moves along its new local starlanes

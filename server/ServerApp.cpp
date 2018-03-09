@@ -2348,7 +2348,7 @@ namespace {
         // destroy colonizing ship, and its fleet if now empty
         auto fleet = GetFleet(ship->FleetID());
         if (fleet) {
-            fleet->RemoveShip(ship->ID());
+            fleet->RemoveShips({ship->ID()});
             if (fleet->Empty()) {
                 if (system)
                     system->Remove(fleet->ID());
@@ -2533,7 +2533,7 @@ namespace {
             // destroy invading ships and their fleets if now empty
             auto fleet = GetFleet(ship->FleetID());
             if (fleet) {
-                fleet->RemoveShip(ship->ID());
+                fleet->RemoveShips({ship->ID()});
                 if (fleet->Empty()) {
                     if (system)
                         system->Remove(fleet->ID());
@@ -2779,7 +2779,7 @@ namespace {
 
             auto fleet = GetFleet(ship->FleetID());
             if (fleet) {
-                fleet->RemoveShip(ship->ID());
+                fleet->RemoveShips({ship->ID()});
                 if (fleet->Empty()) {
                     //scrapped_object_ids.push_back(fleet->ID());
                     system->Remove(fleet->ID());

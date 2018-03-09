@@ -118,7 +118,7 @@ void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_
         if (this->m_fleet_id != copied_ship->m_fleet_id) {
             // as with other containers, removal from the old container is triggered by the contained Object; removal from System is handled by UniverseObject::Copy
             if (auto old_fleet = GetFleet(this->m_fleet_id))
-                old_fleet->RemoveShip(this->ID());
+                old_fleet->RemoveShips({this->ID()});
             this->m_fleet_id = copied_ship->m_fleet_id; // as with other containers (Systems), actual insertion into fleet ships set is handled by the fleet
         }
 

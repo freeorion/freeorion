@@ -2055,7 +2055,7 @@ void Empire::CheckProductionProgress() {
                         fleets.push_back(fleet);
                     }
                     ship_ids.push_back(ship->ID());
-                    fleet->AddShip(ship->ID());
+                    fleet->AddShips({ship->ID()});
                     ship->SetFleetID(fleet->ID());
                 }
 

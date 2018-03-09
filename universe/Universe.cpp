@@ -1804,7 +1804,7 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
             else if (auto planet = std::dynamic_pointer_cast<Planet>(container))
                 planet->RemoveBuilding(object_id);
             else if (auto fleet = std::dynamic_pointer_cast<Fleet>(container)) {
-                fleet->RemoveShip(object_id);
+                fleet->RemoveShips({object_id});
                 if (fleet->Empty())
                     objects.Remove(fleet->ID());
             }
@@ -2763,7 +2763,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
         auto fleet = GetFleet(ship->FleetID());
         if (fleet) {
-            fleet->RemoveShip(ship->ID());
+            fleet->RemoveShips({ship->ID()});
             if (fleet->Empty()) {
                 if (system)
                     system->Remove(fleet->ID());

@@ -222,7 +222,7 @@ void NewFleetOrder::ExecuteImpl() const {
         for (auto& ship : validated_ships) {
             if (auto old_fleet = GetFleet(ship->FleetID())) {
                 modified_fleets.insert(old_fleet);
-                old_fleet->RemoveShip(ship->ID());
+                old_fleet->RemoveShips({ship->ID()});
             }
             ship->SetFleetID(fleet->ID());
         }
@@ -443,7 +443,7 @@ void FleetTransferOrder::ExecuteImpl() const {
     std::set<std::shared_ptr<Fleet>> modified_fleets;
     for (auto& ship : validated_ships) {
         if (auto source_fleet = GetFleet(ship->FleetID())) {
-            source_fleet->RemoveShip(ship->ID());
+            source_fleet->RemoveShips({ship->ID()});
             modified_fleets.insert(source_fleet);
         }
         ship->SetFleetID(target_fleet->ID());
