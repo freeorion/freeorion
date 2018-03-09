@@ -152,7 +152,7 @@ def create_universe(psd_map):
     for i, v in enumerate(empire_names):
         empire_names[i] = v.capitalize()[:2]
 
-    fo.get_galaxy_setup_data().gameUID = "".join(empire_names) + str(random.randint(0,999)).zfill(3)
+    fo.get_galaxy_setup_data().gameUID = "".join(empire_names) + str(random.randint(0, 999)).zfill(3)
 
     print "Game UID %s" % fo.get_galaxy_setup_data().gameUID
 
