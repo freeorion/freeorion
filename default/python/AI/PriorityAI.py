@@ -1,6 +1,8 @@
 import math
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+
+import AIDependencies
 import AIstate
 import ColonisationAI
 import ExplorationAI
@@ -11,11 +13,10 @@ import MilitaryAI
 import PlanetUtilsAI
 import ProductionAI
 import ResearchAI
-import AIDependencies
-from turn_state import state
-from EnumsAI import PriorityType, MissionType, EmpireProductionTypes, get_priority_production_types, ShipRoleType
-from freeorion_tools import AITimer, tech_is_complete
 from AIDependencies import INVALID_ID
+from EnumsAI import EmpireProductionTypes, MissionType, PriorityType, ShipRoleType, get_priority_production_types
+from freeorion_tools import AITimer, tech_is_complete
+from turn_state import state
 
 prioritiees_timer = AITimer('calculate_priorities()')
 
@@ -243,8 +244,8 @@ def _calculate_colonisation_priority():
     colonizers = list(ColonisationAI.empire_colonizers)
     if "SP_SLY" not in colonizers and outpost_prio > 0:
         return 0.0
-    colony_opportunities = [species_name for  (_, (score, species_name)) in foAI.foAIstate.colonisablePlanetIDs.items()
-                                   if score > 60]
+    colony_opportunities = [species_name for (_, (score, species_name)) in foAI.foAIstate.colonisablePlanetIDs.items()
+                            if score > 60]
     num_colonisable_planet_ids = len(colony_opportunities)
     if num_colonisable_planet_ids == 0:
         return 1
