@@ -239,7 +239,6 @@ def _calculate_colonisation_priority():
     allottedColonyTargets = 1 + int(total_pp * turns_to_build * allotted_portion / colony_cost)
     outpost_prio = foAI.foAIstate.get_priority(PriorityType.PRODUCTION_OUTPOST)
 
-
     # if have no SP_SLY, and have any outposts to build, don't build colony ships TODO: make more complex assessment
     colonizers = list(ColonisationAI.empire_colonizers)
     if "SP_SLY" not in colonizers and outpost_prio > 0:
