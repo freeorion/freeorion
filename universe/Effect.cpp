@@ -50,8 +50,6 @@ namespace {
 
         auto fleet = universe.InsertNew<Fleet>("", x, y, ship->Owner());
 
-        std::vector<int> ship_ids;
-        ship_ids.push_back(ship->ID());
         fleet->Rename(fleet->GenerateFleetName());
         fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 

@@ -388,9 +388,7 @@ void System::Insert(std::shared_ptr<UniverseObject> obj, int orbit/* = -1*/) {
     }
     case OBJ_FLEET: {
         m_fleets.insert(obj->ID());
-        std::vector<std::shared_ptr<Fleet>> fleets;
-        fleets.push_back(std::dynamic_pointer_cast<Fleet>(obj));
-        FleetsInsertedSignal(fleets);
+        FleetsInsertedSignal({std::dynamic_pointer_cast<Fleet>(obj)});
         break;
     }
     case OBJ_PLANET:
@@ -439,11 +437,8 @@ void System::Remove(int id) {
     m_objects.erase(id);
 
     if (removed_fleet) {
-        if (auto fleet = GetFleet(id)) {
-            std::vector<std::shared_ptr<Fleet>> fleets;
-            fleets.push_back(fleet);
-            FleetsRemovedSignal(fleets);
-        }
+        if (auto fleet = GetFleet(id))
+            FleetsRemovedSignal({fleet});
     }
     StateChangedSignal();
 }
