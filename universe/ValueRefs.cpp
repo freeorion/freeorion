@@ -2312,6 +2312,50 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
     return "";
 }
 
+template <>
+std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
+    const ScriptingContext& context) const
+{
+    const std::string& variable_name = m_property_name.back();
+
+    // unindexed empire properties
+    if (variable_name == "EmpireAdoptedPolices") {
+        int empire_id = ALL_EMPIRES;
+        if (m_int_ref1) {
+            empire_id = m_int_ref1->Eval(context);
+            if (empire_id == ALL_EMPIRES)
+                return {};
+        }
+        const Empire* empire = GetEmpire(empire_id);
+        if (!empire)
+            return {};
+
+        std::vector<std::string> retval;
+        retval.reserve(empire->AdoptedPolicyCategories().size());
+        for (const auto& policy_cat : empire->AdoptedPolicyCategories())
+            retval.push_back(policy_cat.first);
+        return retval;
+
+    } else if (variable_name == "EmpireAvailablePolices") {
+        int empire_id = ALL_EMPIRES;
+        if (m_int_ref1) {
+            empire_id = m_int_ref1->Eval(context);
+            if (empire_id == ALL_EMPIRES)
+                return {};
+        }
+        const Empire* empire = GetEmpire(empire_id);
+        if (!empire)
+            return {};
+
+        std::vector<std::string> retval;
+        const auto& pols = empire->AvailablePolicies();
+        std::copy(pols.begin(), pols.end(), std::back_inserter(retval));
+        return retval;
+    }
+
+    return {};
+}
+
 #undef IF_CURRENT_VALUE
 
 template <>
@@ -2415,7 +2459,7 @@ std::string ComplexVariable<int>::Dump(unsigned short ntabs) const
 {
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
-
+    // todo: implement like <double> case
     return retval;
 }
 
@@ -2424,7 +2468,16 @@ std::string ComplexVariable<std::string>::Dump(unsigned short ntabs) const
 {
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
+    // todo: implement like <double> case
+    return retval;
+}
 
+template <>
+std::string ComplexVariable<std::vector<std::string>>::Dump(unsigned short ntabs) const
+{
+    const std::string& variable_name = m_property_name.back();
+    std::string retval = variable_name;
+    // todo: implement like <double> case
     return retval;
 }
 
