@@ -16,7 +16,6 @@ import CombatRatingsAI
 import MilitaryAI
 import PlanetUtilsAI
 from freeorion_tools import get_partial_visibility_turn
-from universe_object import System
 from AIDependencies import INVALID_ID
 from character.character_module import create_character, Aggression
 
