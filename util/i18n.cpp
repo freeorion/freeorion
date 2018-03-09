@@ -8,18 +8,21 @@
 #include <boost/locale.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 
+#include <mutex>
+
 namespace {
     std::string GetDefaultStringTableFileName()
     { return PathToString(GetResourceDir() / "stringtables" / "en.txt"); }
 
+    std::map<std::string, std::shared_ptr<const StringTable_>>  stringtables;
+    std::recursive_mutex                                        stringtable_access_mutex;
+    bool                                                        stringtable_filename_init = false;
 
     /** Determines stringtable to use from users locale when stringtable filename is at default setting */
     void InitStringtableFileName() {
         // Only check on the first call
-        static bool stringtable_filename_init { false };
         if (stringtable_filename_init)
             return;
-
         stringtable_filename_init = true;
 
         bool was_specified = false;
@@ -51,8 +54,8 @@ namespace {
 
         DebugLogger() << "Detected language: " << lang;
 
-        boost::filesystem::path lang_filename { lang + ".txt" };
-        boost::filesystem::path stringtable_file { GetResourceDir() / "stringtables" / lang_filename };
+        boost::filesystem::path lang_filename{ lang + ".txt" };
+        boost::filesystem::path stringtable_file{ GetResourceDir() / "stringtables" / lang_filename };
 
         if (IsExistingFile(stringtable_file))
             GetOptionsDB().Set("resource.stringtable.path", PathToString(stringtable_file));
@@ -62,6 +65,7 @@ namespace {
     }
 
     std::string GetStringTableFileName() {
+        std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
         InitStringtableFileName();
 
         std::string option_filename = GetOptionsDB().Get<std::string>("resource.stringtable.path");
@@ -71,9 +75,9 @@ namespace {
             return option_filename;
     }
 
-    std::map<std::string, const StringTable_*> stringtables;
-
     const StringTable_& GetStringTable(std::string stringtable_filename = "") {
+        std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+
         // get option-configured stringtable if no filename specified
         if (stringtable_filename.empty())
             stringtable_filename = GetStringTableFileName();
@@ -81,7 +85,7 @@ namespace {
         // ensure the default stringtable is loaded first
         auto default_stringtable_it = stringtables.find(GetDefaultStringTableFileName());
         if (default_stringtable_it == stringtables.end()) {
-            auto table = new StringTable_(GetDefaultStringTableFileName());
+            auto table = std::make_shared<StringTable_>(GetDefaultStringTableFileName());
             stringtables[GetDefaultStringTableFileName()] = table;
             default_stringtable_it = stringtables.find(GetDefaultStringTableFileName());
         }
@@ -93,7 +97,7 @@ namespace {
 
         // if not already loaded, load, store, and return,
         // using default stringtable for fallback expansion lookups
-        auto table = new StringTable_(stringtable_filename, default_stringtable_it->second);
+        auto table = std::make_shared<StringTable_>(stringtable_filename, default_stringtable_it->second);
         stringtables[stringtable_filename] = table;
 
         return *table;
@@ -134,16 +138,20 @@ std::locale GetLocale(const std::string& name) {
     return retval;
 }
 
-void FlushLoadedStringTables()
-{ stringtables.clear(); }
+void FlushLoadedStringTables() {
+    std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+    stringtables.clear();
+}
 
 const std::string& UserString(const std::string& str) {
+    std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     if (GetStringTable().StringExists(str))
         return GetStringTable().String(str);
     return GetDefaultStringTable().String(str);
 }
 
 std::vector<std::string> UserStringList(const std::string& key) {
+    std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     std::vector<std::string> result;
     std::istringstream template_stream(UserString(key));
     std::string item;
@@ -153,6 +161,7 @@ std::vector<std::string> UserStringList(const std::string& key) {
 }
 
 bool UserStringExists(const std::string& str) {
+    std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     if (GetStringTable().StringExists(str))
         return true;
     return GetDefaultStringTable().StringExists(str);
@@ -171,8 +180,10 @@ boost::format FlexibleFormat(const std::string &string_to_format) {
     return retval;
 }
 
-const std::string& Language()
-{ return GetStringTable().Language(); }
+const std::string& Language() {
+    std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+    return GetStringTable().Language();
+}
 
 std::string RomanNumber(unsigned int n) {
     //letter pattern (N) and the associated values (V)

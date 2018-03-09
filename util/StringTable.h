@@ -54,7 +54,7 @@ public:
     //! construct a StringTable_ from the given filename
     //! @param filename A file containing the data for this StringTable_
     //! @param lookups_fallback_table A StringTable_ to be used as fallback expansions lookup
-    StringTable_(const std::string& filename, const StringTable_* lookups_fallback_table = nullptr);
+    StringTable_(const std::string& filename, std::shared_ptr<const StringTable_> lookups_fallback_table = nullptr);
 
     ~StringTable_();
     //!@}
@@ -84,7 +84,7 @@ private:
     //!@{
     //! Loads the String table file from m_filename
     //! @param lookups_fallback_table A StringTable_ to be used as fallback expansions lookup
-    void Load(const StringTable_* lookups_fallback_table = nullptr);
+    void Load(std::shared_ptr<const StringTable_> lookups_fallback_table = nullptr);
     //!@}
 
     //! \name Data Members

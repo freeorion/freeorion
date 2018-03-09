@@ -21,7 +21,7 @@ StringTable_::StringTable_():
     m_filename(DEFAULT_FILENAME)
 { Load(); }
 
-StringTable_::StringTable_(const std::string& filename, const StringTable_* lookups_fallback_table):
+StringTable_::StringTable_(const std::string& filename, std::shared_ptr<const StringTable_> lookups_fallback_table):
     m_filename(filename)
 { Load(lookups_fallback_table); }
 
@@ -49,7 +49,7 @@ const std::string& StringTable_::operator[] (const std::string& index) const {
     return *(error.first);
 }
 
-void StringTable_::Load(const StringTable_* lookups_fallback_table) {
+void StringTable_::Load(std::shared_ptr<const StringTable_> lookups_fallback_table) {
     std::lock_guard<std::mutex> lock(m_mutex);
 
     if (lookups_fallback_table && !lookups_fallback_table->m_initialized) {
