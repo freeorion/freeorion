@@ -87,10 +87,9 @@ import abc
 from collections import Counter
 import math
 import random
+from logging import warn
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 
 class Trait(object):

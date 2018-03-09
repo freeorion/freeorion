@@ -9,6 +9,8 @@ have their future focus decided.
 """
 # Note: The algorithm is not stable with respect to pid order.  i.e. Two empire with
 #       exactly the same colonies, but different pids may make different choices.
+from logging import info, warn, debug
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 from EnumsAI import PriorityType, get_priority_resource_types, FocusType
@@ -18,8 +20,6 @@ import AIDependencies
 import CombatRatingsAI
 from common.print_utils import Table, Text
 from freeorion_tools import tech_is_complete, AITimer
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 resource_timer = AITimer('timer_bucket')
 

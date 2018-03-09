@@ -1,9 +1,9 @@
 import math
 import random
 from functools import partial
+from logging import warn
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-from common.configure_logging import convenience_function_references_for_logger
 from common.print_utils import print_in_columns
 
 import AIDependencies as Dep
@@ -14,8 +14,6 @@ import ShipDesignAI
 import TechsListsAI
 from freeorion_tools import chat_human, get_ai_tag_grade, tech_is_complete
 from turn_state import state
-
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 inProgressTechs = {}
 

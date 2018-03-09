@@ -1,4 +1,5 @@
 import math
+from logging import warn, info
 
 from turn_state import state
 import freeOrionAIInterface as fo
@@ -17,9 +18,6 @@ from EnumsAI import MissionType, PriorityType
 import CombatRatingsAI
 from freeorion_tools import tech_is_complete, AITimer, get_partial_visibility_turn
 from AIDependencies import INVALID_ID
-
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 MAX_BASE_TROOPERS_GOOD_INVADERS = 20
 MAX_BASE_TROOPERS_POOR_INVADERS = 10

@@ -1,5 +1,6 @@
 import copy
 from collections import Counter, OrderedDict as odict
+from logging import error, info, warn
 from operator import itemgetter
 from time import time
 
@@ -18,10 +19,6 @@ from freeorion_tools import get_partial_visibility_turn
 from universe_object import System
 from AIDependencies import INVALID_ID
 from character.character_module import create_character, Aggression
-
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
-
 
 # moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
 # in general, leaving items as a module attribute if they are recalculated each turn without reference to prior values

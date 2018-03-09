@@ -1,3 +1,4 @@
+from logging import debug, warn, error, info
 from operator import itemgetter
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -16,9 +17,6 @@ from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType,
 from freeorion_tools import tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer, get_partial_visibility_turn
 from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
                             POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
-
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 colonization_timer = AITimer('getColonyFleets()')
 

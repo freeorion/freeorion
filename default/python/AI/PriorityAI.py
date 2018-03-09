@@ -16,8 +16,6 @@ from turn_state import state
 from EnumsAI import PriorityType, MissionType, EmpireProductionTypes, get_priority_production_types, ShipRoleType
 from freeorion_tools import AITimer, tech_is_complete
 from AIDependencies import INVALID_ID
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 prioritiees_timer = AITimer('calculate_priorities()')
 

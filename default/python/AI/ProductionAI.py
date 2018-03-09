@@ -1,9 +1,9 @@
 import math
 import random
 import sys
+from logging import info, warn, error
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-from common.configure_logging import convenience_function_references_for_logger
 from common.print_utils import Sequence, Table, Text
 
 import AIDependencies
@@ -22,8 +22,6 @@ from EnumsAI import (EmpireProductionTypes, FocusType, MissionType, PriorityType
 from character.character_module import Aggression
 from freeorion_tools import AITimer, chat_human, ppstring, tech_is_complete
 from turn_state import state
-
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 _best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
 _design_cost_cache = {0: {(-1, -1): 0}}  # outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)

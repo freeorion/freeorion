@@ -1,11 +1,10 @@
+from logging import error
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import ColonisationAI
 from AIDependencies import INVALID_ID
 
 from freeorion_tools import ppstring
-
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 
 def safe_name(univ_object):

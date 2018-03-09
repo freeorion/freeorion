@@ -24,8 +24,6 @@ possible_capitals(Character([Aggression(0)])) returns ['Royal', 'Imperial'].
 
 import character as character_package
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 
 class _CharacterTableFunction(object):

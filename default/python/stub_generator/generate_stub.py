@@ -1,9 +1,7 @@
+from logging import warn, error
 from operator import itemgetter
 
 from parse_docs import Docs
-
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 
 def handle_class(info):

@@ -1,3 +1,5 @@
+from logging import error, warn
+
 from EnumsAI import ShipRoleType, MissionType
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -7,9 +9,6 @@ import MoveUtilsAI
 import CombatRatingsAI
 from universe_object import Fleet, System, Planet
 from freeorion_tools import get_partial_visibility_turn, dump_universe
-
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 
 def trooper_move_reqs_met(main_fleet_mission, order, verbose):
@@ -464,7 +463,7 @@ class OrderInvade(AIFleetOrder):
                     foAI.foAIstate.needsEmergencyExploration.append(fleet.systemID)
                     print "Due to trouble invading, adding system %d to Emergency Exploration List" % fleet.systemID
                     self.executed = False
-                
+
                 if shields > 0 and planet.unowned:
                     dump_universe()
                 break
