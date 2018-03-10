@@ -1309,6 +1309,9 @@ void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState
     double orig_color[4];
     glGetDoublev(GL_CURRENT_COLOR, orig_color);
 
+    if (line_data.empty())
+        return;
+
     for (std::size_t i = 0; i <= begin_line; ++i) {
         const LineData& line = line_data[i];
         for (CPSize j = CP0;

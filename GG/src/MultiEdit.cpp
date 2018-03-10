@@ -163,16 +163,29 @@ void MultiEdit::Render()
 
     BeveledRectangle(ul, lr, int_color_to_use, color_to_use, false, BORDER_THICK);
 
+    const auto& lines = GetLineData();
+    if (lines.empty()) {
+        // no text to render
+        return;
+    }
+
     // clip text to client area
     BeginScissorClipping(Pt(cl_ul.x - 1, cl_ul.y), cl_lr);
 
     Font::RenderState state(text_color_to_use);
     std::size_t first_visible_row = FirstVisibleRow();
     std::size_t last_visible_row = LastVisibleRow();
-    Flags<TextFormat> text_format = (TextFormat() & ~(FORMAT_TOP | FORMAT_BOTTOM)) | FORMAT_VCENTER;
-    const auto& lines = GetLineData();
+
+    // safety checks
+    if (first_visible_row > last_visible_row || (last_visible_row > lines.size())) {
+        EndScissorClipping();
+        return;
+    }
+
+    // process tags
     GetFont()->ProcessTagsBefore(lines, state, first_visible_row, CP0);
 
+    Flags<TextFormat> text_format = (TextFormat() & ~(FORMAT_TOP | FORMAT_BOTTOM)) | FORMAT_VCENTER;
     for (std::size_t row = first_visible_row; row <= last_visible_row && row < lines.size(); ++row) {
         Y row_y_pos = ((m_style & MULTI_TOP) || m_contents_sz.y - ClientSize().y < 0) ?
             cl_ul.y + static_cast<int>(row) * GetFont()->Lineskip() - m_first_row_shown :
