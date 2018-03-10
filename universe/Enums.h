@@ -289,7 +289,8 @@ GG_ENUM(EffectsCauseType,
     ECT_SPECIAL,
     ECT_SPECIES,
     ECT_SHIP_PART,
-    ECT_SHIP_HULL
+    ECT_SHIP_HULL,
+    ECT_POLICY
 )
 
 /** Used for tracking what moderator action is set */
