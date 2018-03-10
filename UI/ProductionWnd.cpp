@@ -287,7 +287,7 @@ namespace {
             max_allocation = design->PerTurnCost(elem.empire_id, elem.location) * elem.blocksize;
             icon = ClientUI::ShipDesignIcon(elem.item.design_id);
         } else if (elem.item.build_type == BT_STOCKPILE) {
-            main_text += UserString("OBJ_PROJECT") + "\n";
+            main_text += UserString("BUILD_ITEM_TYPE_PROJECT") + "\n";
 
             item_name = UserString("PROJECT_BT_STOCKPILE");
             location_ok = true;
