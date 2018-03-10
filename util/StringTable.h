@@ -5,6 +5,7 @@
 #include <map>
 #include <unordered_set>
 #include <mutex>
+#include <memory>
 
 // HACK! StringTable is renamed to StringTable_ because freeimage defines
 // a class StringTable too. If both are named identically, static linking
