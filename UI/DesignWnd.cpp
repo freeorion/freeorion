@@ -1253,47 +1253,42 @@ public:
 
     /** \name Accessors */ //@{
     const std::set<ShipPartClass>&  GetClassesShown() const;
-    const std::set<ShipSlotType>&   GetSlotTypesShown() const;
-
     const AvailabilityManager&      AvailabilityState() const { return m_availabilities_state; }
-
-    //@}
     bool                            GetShowingSuperfluous() const { return m_show_superfluous_parts; }
+    //@}
 
     /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override;
 
-    PartGroupsType  GroupAvailableDisplayableParts(const Empire* empire);
-    void            CullSuperfluousParts(std::vector<const PartType* >& this_group,
-                                         ShipPartClass pclass, int empire_id, int loc_id);
-    void            Populate();
+    PartGroupsType GroupAvailableDisplayableParts(const Empire* empire);
+    void CullSuperfluousParts(std::vector<const PartType* >& this_group,
+                              ShipPartClass pclass, int empire_id, int loc_id);
+    void Populate();
 
-    void            ShowClass(ShipPartClass part_class, bool refresh_list = true);
-    void            ShowAllClasses(bool refresh_list = true);
-    void            HideClass(ShipPartClass part_class, bool refresh_list = true);
-    void            HideAllClasses(bool refresh_list = true);
-
-    void            ShowSuperfluousParts(bool refresh_list = true);
-    void            HideSuperfluousParts(bool refresh_list = true);
+    void ShowClass(ShipPartClass part_class, bool refresh_list = true);
+    void ShowAllClasses(bool refresh_list = true);
+    void HideClass(ShipPartClass part_class, bool refresh_list = true);
+    void HideAllClasses(bool refresh_list = true);
+    void ShowSuperfluousParts(bool refresh_list = true);
+    void HideSuperfluousParts(bool refresh_list = true);
     //@}
 
-    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
-    mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
-    mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)> PartTypeRightClickedSignal;
-    mutable boost::signals2::signal<void (const std::string&)> ClearPartSignal;
+    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)>  PartTypeClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*)>                         PartTypeDoubleClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)>       PartTypeRightClickedSignal;
+    mutable boost::signals2::signal<void (const std::string&)>                      ClearPartSignal;
 
 protected:
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                          const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
-    std::set<ShipPartClass> m_part_classes_shown;   // which part classes should be shown
-    bool                    m_show_superfluous_parts;
-    int                     m_previous_num_columns;
-    const AvailabilityManager& m_availabilities_state;
+    std::set<ShipPartClass>     m_part_classes_shown;   // which part classes should be shown
+    bool                        m_show_superfluous_parts;
+    int                         m_previous_num_columns;
+    const AvailabilityManager&  m_availabilities_state;
 };
 
 PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h, const AvailabilityManager& availabilities_state) :
