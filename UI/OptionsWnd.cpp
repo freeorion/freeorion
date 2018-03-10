@@ -481,7 +481,7 @@ void OptionsWnd::CompleteConstruction() {
     MusicVolumeOption(current_page, 0, m_sound_feedback);
     VolumeOption(current_page, 0, "audio.effects.enabled", "audio.effects.volume", UserString("OPTIONS_UI_SOUNDS"), UI_sound_enabled, m_sound_feedback);
     FileOption(current_page, 0, "audio.music.path", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
-               std::make_pair(UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX),
+               {UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX},
                ValidMusicFile);
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_SOUNDS"));
@@ -534,8 +534,7 @@ void OptionsWnd::CompleteConstruction() {
 
     FileOption(current_page, 0, "resource.stringtable.path",    UserString("OPTIONS_LANGUAGE"),
                GetRootDataDir() / "default" / "stringtables",
-               std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"),
-               "*" + STRINGTABLE_FILE_SUFFIX),
+               {UserString("OPTIONS_LANGUAGE_FILE"), "*" + STRINGTABLE_FILE_SUFFIX},
                &ValidStringtableFile);
 
     // flush stringtable button
@@ -1091,8 +1090,8 @@ void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std:
 { FileOptionImpl(page, indentation_level, option_name, text, path, filters, string_validator, false, false, false); }
 
 void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
-    FileOption(page, indentation_level, option_name, text, ClientUI::SoundDir(), std::make_pair(UserString("OPTIONS_SOUND_FILE"),
-               "*" + SOUND_FILE_SUFFIX), ValidSoundFile);
+    FileOption(page, indentation_level, option_name, text, ClientUI::SoundDir(),
+               {UserString("OPTIONS_SOUND_FILE"), "*" + SOUND_FILE_SUFFIX}, ValidSoundFile);
 }
 
 void OptionsWnd::DirectoryOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
@@ -1127,7 +1126,7 @@ void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std
 
 void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     FileOption(page, indentation_level, option_name, text, GetRootDataDir() / "default",
-               std::make_pair<std::string, std::string>(std::string(option_name), "*" + FONT_FILE_SUFFIX),
+               {std::string(option_name), "*" + FONT_FILE_SUFFIX},
                &ValidFontFile);
 }
 

@@ -133,7 +133,7 @@ std::vector<std::pair<std::string, std::string>> GameRules::GetRulesAsStrings() 
     CheckPendingGameRules();
     std::vector<std::pair<std::string, std::string>> retval;
     for (const auto& rule : m_game_rules)
-        retval.push_back(std::make_pair(rule.first, rule.second.ValueToString()));
+        retval.push_back({rule.first, rule.second.ValueToString()});
     return retval;
 }
 

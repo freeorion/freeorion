@@ -1149,7 +1149,7 @@ namespace {
                 Effect::TargetsAndCause target_and_cause(target_set, effect_cause);
 
                 // store effect cause and targets info in map, indexed by sourced effects group
-                m_targets_causes->push_back(std::make_pair(sourced_effects_group, target_and_cause));
+                m_targets_causes->push_back({sourced_effects_group, target_and_cause});
             }
         }
     }
@@ -1530,7 +1530,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 
             if (effects_group != last_effects_group) {
                 last_effects_group = effects_group;
-                dispatched_targets_causes[effects_group->Priority()].push_back(std::make_pair(effects_group, Effect::TargetsCauses()));
+                dispatched_targets_causes[effects_group->Priority()].push_back({effects_group, Effect::TargetsCauses()});
                 group_targets_causes = &dispatched_targets_causes[effects_group->Priority()].back().second;
             }
             group_targets_causes->push_back(targets_cause);

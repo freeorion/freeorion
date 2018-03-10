@@ -115,7 +115,7 @@ namespace {
             for (int i = 0; i < len(py_params); i++) {
                 std::string k = extract<std::string>(py_params.keys()[i]);
                 std::string v = extract<std::string>(py_params.values()[i]);
-                params.push_back(std::make_pair(k, v));
+                params.push_back({k, v});
             }
         }
 

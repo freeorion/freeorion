@@ -1581,7 +1581,7 @@ namespace {
                 continue;
             }
 
-            name_to_uuid.insert(std::make_pair(design->Name(), design->UUID()));
+            name_to_uuid.insert({design->Name(), design->UUID()});
             designs[design->UUID()] = std::move(design);
         }
     }

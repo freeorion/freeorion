@@ -37,7 +37,7 @@ namespace {
             (effects ? OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
             graphic);
 
-        fieldtypes.insert(std::make_pair(fieldtype_ptr->Name(), std::move(fieldtype_ptr)));
+        fieldtypes.insert({fieldtype_ptr->Name(), std::move(fieldtype_ptr)});
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_fieldtype_, insert_fieldtype, 8)

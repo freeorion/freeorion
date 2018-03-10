@@ -552,8 +552,7 @@ namespace {
 
             const auto save_path = CreateSaveFileNameForDesign(design);
 
-            m_saved_designs.insert(
-                std::make_pair(design.UUID(), std::make_pair(std::move(design_copy), save_path)));
+            m_saved_designs.insert({design.UUID(), std::make_pair(std::move(design_copy), save_path)});
             SaveDesign(design.UUID());
         }
 
@@ -877,7 +876,7 @@ namespace {
         design_ids_and_obsoletes.clear();
         for (const auto id : m_ordered_design_ids) {
             try {
-                design_ids_and_obsoletes.push_back(std::make_pair(id, m_id_to_obsolete_and_loc.at(id).first));
+                design_ids_and_obsoletes.push_back({id, m_id_to_obsolete_and_loc.at(id).first});
             } catch (const std::out_of_range&) {
                 ErrorLogger() << "CurrentShipDesignManager::Save missing id = " << id;
                 continue;
@@ -887,7 +886,7 @@ namespace {
         hulls_and_obsoletes.clear();
         for (const auto name : m_ordered_hulls) {
             try {
-               hulls_and_obsoletes.push_back(std::make_pair(name, m_hull_to_obsolete_and_loc.at(name).first));
+               hulls_and_obsoletes.push_back({name, m_hull_to_obsolete_and_loc.at(name).first});
             } catch (const std::out_of_range&) {
                 ErrorLogger() << "CurrentShipDesignManager::Save missing hull = " << name;
                 continue;

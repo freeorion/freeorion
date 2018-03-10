@@ -2504,7 +2504,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
             ErrorLogger() << "PlanetPanelContainer::SetPlanets couldn't find system of planet" << planet->Name();
             continue;
         }
-        orbits_planets.insert(std::make_pair(system->OrbitOfPlanet(planet_id), planet_id));
+        orbits_planets.insert({system->OrbitOfPlanet(planet_id), planet_id});
     }
 
     // create new panels and connect their signals
@@ -3143,7 +3143,7 @@ void SidePanel::RefreshSystemNames() {
     for (auto& system : Objects().FindObjects<System>()) {
         // Skip rows for systems that aren't known to this client, except the selected system
         if (!system->Name().empty() || system->ID() == s_system_id)
-            sorted_systems.insert(std::make_pair(system->Name(), system->ID()));
+            sorted_systems.insert({system->Name(), system->ID()});
     }
 
     auto system_name_font(ClientUI::GetBoldFont(SystemNameFontSize()));

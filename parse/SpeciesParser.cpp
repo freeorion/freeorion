@@ -54,7 +54,7 @@ namespace {
             params,
             tags_and_graphic.first, tags_and_graphic.second);
 
-        species.insert(std::make_pair(species_ptr->Name(), std::move(species_ptr)));
+        species.insert({species_ptr->Name(), std::move(species_ptr)});
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_species_, insert_species, 9)

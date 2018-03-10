@@ -511,18 +511,18 @@ void SupplyManager::Update() {
                 // and set any traversals going to this system as obstructed
                 for (const auto& lane : lane_traversals_initial) {
                     if (lane.first == sys_id) {
-                        lane_traversals.erase(std::make_pair(sys_id, lane.second));
+                        lane_traversals.erase({sys_id, lane.second});
                     }
                     if (lane.second == sys_id) {
-                        lane_traversals.erase(std::make_pair(lane.first, sys_id));
-                        obstructed_traversals.insert(std::make_pair(lane.first, sys_id));
+                        lane_traversals.erase({lane.first, sys_id});
+                        obstructed_traversals.insert({lane.first, sys_id});
                     }
                 }
 
                 // remove obstructed traverals departing from this system
                 for (const auto& lane : obstrcuted_traversals_initial) {
                     if (lane.first == sys_id)
-                        obstructed_traversals.erase(std::make_pair(lane.first, lane.second));
+                        obstructed_traversals.erase({lane.first, lane.second});
                 }
             }
 
@@ -597,7 +597,7 @@ void SupplyManager::Update() {
 
                     // if so, add a blocked traversal and continue
                     if (range_after_one_more_jump <= other_empire_biggest_range) {
-                        m_supply_starlane_obstructed_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
+                        m_supply_starlane_obstructed_traversals[empire_id].insert({system_id, lane_end_sys_id});
                         //DebugLogger() << "Added obstructed traversal from " << system_id << " to " << lane_end_sys_id << " due to other empire biggest range being " << other_empire_biggest_range;
                         continue;
                     }
@@ -635,15 +635,15 @@ void SupplyManager::Update() {
                     //DebugLogger() << "Added traversal from " << system_id << " to " << lane_end_sys_id;
 
                     // erase any previous obstructed traversal that just succeeded
-                    if (m_supply_starlane_obstructed_traversals[empire_id].count(std::make_pair(system_id, lane_end_sys_id)))
+                    if (m_supply_starlane_obstructed_traversals[empire_id].count({system_id, lane_end_sys_id}))
                     {
                         //DebugLogger() << "Removed obstructed traversal from " << system_id << " to " << lane_end_sys_id;
-                        m_supply_starlane_obstructed_traversals[empire_id].erase(std::make_pair(system_id, lane_end_sys_id));
+                        m_supply_starlane_obstructed_traversals[empire_id].erase({system_id, lane_end_sys_id});
                     }
-                    if (m_supply_starlane_obstructed_traversals[empire_id].count(std::make_pair(lane_end_sys_id, system_id)))
+                    if (m_supply_starlane_obstructed_traversals[empire_id].count({lane_end_sys_id, system_id}))
                     {
                         //DebugLogger() << "Removed obstructed traversal from " << lane_end_sys_id << " to " << system_id;
-                        m_supply_starlane_obstructed_traversals[empire_id].erase(std::make_pair(lane_end_sys_id, system_id));
+                        m_supply_starlane_obstructed_traversals[empire_id].erase({lane_end_sys_id, system_id});
                     }
                 }
             }

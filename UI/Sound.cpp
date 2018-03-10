@@ -563,7 +563,7 @@ void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_soun
 
                         current_buffer = sound_handle;
                         found_buffer = true;
-                        m_buffers.insert(std::make_pair(filename, sound_handle));
+                        m_buffers.insert({filename, sound_handle});
                     }
                     else
                     {

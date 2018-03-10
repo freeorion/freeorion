@@ -228,9 +228,8 @@ void CombatLogManager::Impl::GetLogsToSerialize(
     std::map<int, CombatLog>& logs, int encoding_empire) const
 {
     // TODO: filter logs by who should have access to them
-    for (auto it = m_logs.begin(); it != m_logs.end(); ++it) {
-        logs.insert(std::make_pair(it->first, it->second));
-    }
+    for (auto it = m_logs.begin(); it != m_logs.end(); ++it)
+        logs.insert({it->first, it->second});
 }
 
 void CombatLogManager::Impl::SetLog(int log_id, const CombatLog& log)

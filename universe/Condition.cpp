@@ -739,7 +739,7 @@ namespace {
         std::multimap<float, std::shared_ptr<const UniverseObject>> sort_key_objects;
         for (auto& from : from_set) {
             float sort_value = sort_key->Eval(ScriptingContext(context, from));
-            sort_key_objects.insert(std::make_pair(sort_value, from));
+            sort_key_objects.insert({sort_value, from});
         }
 
         // how many objects to select?
@@ -790,7 +790,7 @@ namespace {
             // invert histogram to index by number of occurances
             std::multimap<unsigned int, float> inv_histogram;
             for (const auto& entry : histogram) {
-                inv_histogram.insert(std::make_pair(entry.second, entry.first));
+                inv_histogram.insert({entry.second, entry.first});
             }
             // reverse-loop through inverted histogram to find which sort keys
             // occurred most frequently, and transfer objects with those sort

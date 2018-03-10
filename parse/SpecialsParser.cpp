@@ -67,7 +67,7 @@ namespace {
             (special_.location ? special_.location->OpenEnvelope(pass) : nullptr),
             special_.graphic);
 
-        specials.insert(std::make_pair(special_ptr->Name(), std::move(special_ptr)));
+        specials.insert({special_ptr->Name(), std::move(special_ptr)});
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_special_, insert_special, 3)

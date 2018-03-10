@@ -3288,7 +3288,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
     // evaluate all parameter valuerefs so they can be substituted into sitrep template
     std::vector<std::pair<std::string, std::string>> parameter_tag_values;
     for (const auto& entry : m_message_parameters) {
-        parameter_tag_values.push_back(std::make_pair(entry.first, entry.second->Eval(context)));
+        parameter_tag_values.push_back({entry.first, entry.second->Eval(context)});
 
         // special case for ship designs: make sure sitrep recipient knows about the design
         // so the sitrep won't have errors about unknown designs being referenced

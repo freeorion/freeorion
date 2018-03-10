@@ -854,7 +854,7 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
             // In a single player game, the host player is always the human player, so
             // this is just a matter of finding which entry in player_save_game_data was
             // a human player, and assigning that saved player data to the host player ID
-            player_id_to_save_game_data_index.push_back(std::make_pair(m_networking.HostPlayerID(), i));
+            player_id_to_save_game_data_index.push_back({m_networking.HostPlayerID(), i});
 
         } else if (psgd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // All saved AI player data, as determined from their client type, is
@@ -867,7 +867,7 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
                 // if player is an AI, assign it to this
                 if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
                     int player_id = player_connection->PlayerID();
-                    player_id_to_save_game_data_index.push_back(std::make_pair(player_id, i));
+                    player_id_to_save_game_data_index.push_back({player_id, i});
                     break;
                 }
             }
@@ -972,7 +972,7 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
             ErrorLogger() << "UpdateCombatLogs can't fetch log with id = "<< *it << " ... skipping.";
             continue;
         }
-        logs.push_back(std::make_pair(*it, *log));
+        logs.push_back({*it, *log});
     }
 
     // Return them to the client
@@ -1048,7 +1048,7 @@ namespace {
         // determine and store save game data index for this player
         int index = VectorIndexForPlayerSaveGameDataForEmpireID(player_save_game_data, psd.m_save_game_empire_id);
         if (index != -1) {
-            player_id_to_save_game_data_index.push_back(std::make_pair(setup_data_player_id, index));
+            player_id_to_save_game_data_index.push_back({setup_data_player_id, index});
         } else {
             ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find save game data for "
                                    << "human player with assigned empire id: " << psd.m_save_game_empire_id;
@@ -1111,7 +1111,7 @@ namespace {
         // determine and store save game data index for this player
         int index = VectorIndexForPlayerSaveGameDataForEmpireID(player_save_game_data, psd.m_save_game_empire_id);
         if (index != -1) {
-            player_id_to_save_game_data_index.push_back(std::make_pair(player_id, index));
+            player_id_to_save_game_data_index.push_back({player_id, index});
         } else {
             ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find save game data for "
                                    << "human player with assigned empire id: " << psd.m_save_game_empire_id;
@@ -2482,7 +2482,7 @@ namespace {
 
         std::multimap<double, int> inverted_empires_troops;
         for (const auto& entry : empires_troops)
-            inverted_empires_troops.insert(std::make_pair(entry.second, entry.first));
+            inverted_empires_troops.insert({entry.second, entry.first});
 
         // everyone but victor loses all troops.  victor's troops remaining are
         // what the victor started with minus what the second-largest troop

@@ -465,8 +465,8 @@ namespace SystemPathing {
         ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
         auto edges = boost::out_edges(id_to_graph_index.at(system_id), graph);
         for (OutEdgeIterator it = edges.first; it != edges.second; ++it) {
-            retval.insert(std::make_pair(edge_weight_map[*it],
-                                         sys_id_property_map[boost::target(*it, graph)]));
+            retval.insert({edge_weight_map[*it],
+                           sys_id_property_map[boost::target(*it, graph)]});
         }
         return retval;
     }

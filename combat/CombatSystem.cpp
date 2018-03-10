@@ -1062,7 +1062,7 @@ namespace {
                             // trusts that the combat logger only informs player/ai of what they should know
                             DebugLogger(combat) << " Monster "  << obj->Name() << " " << visibility << " to empire " << attacking_empire_id;
                             report[attacking_empire_id][obj->Owner()]
-                                .insert(std::make_pair(obj->ID(), visibility));
+                                .insert({obj->ID(), visibility});
                         }
 
                     } else {
@@ -1071,7 +1071,7 @@ namespace {
                             // trusts that the combat logger only informs player/ai of what they should know
                             DebugLogger(combat) << " Ship " << obj->Name() << " " << visibility << " to empire " << attacking_empire_id;
                             report[attacking_empire_id][obj->Owner()]
-                                .insert(std::make_pair(obj->ID(), visibility));
+                                .insert({obj->ID(), visibility});
                         }
                     }
                 }

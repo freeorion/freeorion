@@ -246,7 +246,7 @@ std::vector<ConstCombatEventPtr> SimultaneousEvents::SubEvents(int viewing_empir
     for (CombatEventPtr event : events) {
         boost::optional<int> maybe_faction = event->PrincipalFaction(viewing_empire_id);
         int faction = maybe_faction.get_value_or(ALL_EMPIRES);
-        empire_to_event.insert(std::make_pair(faction, event));
+        empire_to_event.insert({faction, event});
     }
 
     std::vector<ConstCombatEventPtr> ordered_events;

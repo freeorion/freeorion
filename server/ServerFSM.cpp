@@ -557,7 +557,7 @@ MPLobby::MPLobby(my_context c) :
                 else
                     player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
 
-                m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
+                m_lobby_data->m_players.push_back({player_id, player_setup_data});
 
                 player_connection->SetAuthRoles({
                                 Networking::ROLE_CLIENT_TYPE_MODERATOR,
@@ -578,7 +578,7 @@ MPLobby::MPLobby(my_context c) :
                     else
                         player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
 
-                    m_lobby_data->m_players.push_back(std::make_pair(Networking::INVALID_PLAYER_ID, player_setup_data));
+                    m_lobby_data->m_players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
                 }
                 // disconnect AI
                 to_disconnect.push_back(player_connection);
@@ -597,7 +597,7 @@ MPLobby::MPLobby(my_context c) :
         const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(host_id));
 
         // create player setup data for host, and store in list
-        m_lobby_data->m_players.push_back(std::make_pair(host_id, PlayerSetupData()));
+        m_lobby_data->m_players.push_back({host_id, PlayerSetupData()});
 
         PlayerSetupData& player_setup_data = m_lobby_data->m_players.begin()->second;
 
@@ -757,7 +757,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
             player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
 
         // after setting all details, push into lobby data
-        m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
+        m_lobby_data->m_players.push_back({player_id, player_setup_data});
 
         // drop ready player flag at new player
         for (std::pair<int, PlayerSetupData>& plr : m_lobby_data->m_players) {
@@ -1527,7 +1527,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     m_expected_ai_names_and_ids.clear();
     for (const auto& player_data : players) {
         if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-            m_expected_ai_names_and_ids.insert(std::make_pair(player_data.m_player_name, player_data.m_player_id));
+            m_expected_ai_names_and_ids.insert({player_data.m_player_name, player_data.m_player_id});
     }
 
     server.CreateAIClients(players, m_single_player_setup_data->m_ai_aggr);    // also disconnects any currently-connected AI clients
