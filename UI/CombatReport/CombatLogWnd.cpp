@@ -85,7 +85,7 @@ namespace {
                         object->InitialMeterValue(METER_POPULATION) > 0.0f)))
             {
                 int owner_id = object->Owner();
-                if (objects_per_owner.find(owner_id) == objects_per_owner.end())
+                if (!objects_per_owner.count(owner_id))
                     objects_per_owner[owner_id] = 0;
                 ++objects_per_owner[owner_id];
             }

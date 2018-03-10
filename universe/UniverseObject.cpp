@@ -92,8 +92,8 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
 
         this->m_specials.clear();
         for (const auto& entry_special : copied_object->m_specials) {
-            if (visible_specials.find(entry_special.first) != visible_specials.end())
-            { this->m_specials[entry_special.first] = entry_special.second; }
+            if (visible_specials.count(entry_special.first))
+                this->m_specials[entry_special.first] = entry_special.second;
         }
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
@@ -143,7 +143,7 @@ const std::map<std::string, std::pair<int, float>>& UniverseObject::Specials() c
 { return m_specials; }
 
 bool UniverseObject::HasSpecial(const std::string& name) const
-{ return m_specials.find(name) != m_specials.end(); }
+{ return m_specials.count(name); }
 
 int UniverseObject::SpecialAddedOnTurn(const std::string& name) const {
     auto it = m_specials.find(name);
@@ -357,7 +357,7 @@ void UniverseObject::AddSpecial(const std::string& name, float capacity)
 { m_specials[name] = std::make_pair(CurrentTurn(), capacity); }
 
 void UniverseObject::SetSpecialCapacity(const std::string& name, float capacity) {
-    if (m_specials.find(name) != m_specials.end())
+    if (m_specials.count(name))
         m_specials[name].second = capacity;
     else
         AddSpecial(name, capacity);
@@ -370,9 +370,8 @@ std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const 
     std::map<MeterType, Meter> retval;
     if (vis >= VIS_PARTIAL_VISIBILITY) {
         retval = m_meters;
-    } else if (vis == VIS_BASIC_VISIBILITY && m_meters.find(METER_STEALTH) != m_meters.end()) {
+    } else if (vis == VIS_BASIC_VISIBILITY && m_meters.count(METER_STEALTH))
         retval[METER_STEALTH] = Meter(Meter::LARGE_VALUE, Meter::LARGE_VALUE);
-    }
     return retval;
 }
 

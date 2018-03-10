@@ -39,11 +39,11 @@ namespace {
     /// Check if the tech will be unique.
     bool check_tech(TechManager::TechContainer& techs, const std::unique_ptr<Tech>& tech) {
         auto retval = true;
-        if (techs.get<TechManager::NameIndex>().find(tech->Name()) != techs.get<TechManager::NameIndex>().end()) {
+        if (techs.get<TechManager::NameIndex>().count(tech->Name())) {
             ErrorLogger() <<  "More than one tech has the name " << tech->Name();
             retval = false;
         }
-        if (tech->Prerequisites().find(tech->Name()) != tech->Prerequisites().end()) {
+        if (tech->Prerequisites().count(tech->Name())) {
             ErrorLogger() << "Tech " << tech->Name() << " depends on itself!";
             retval = false;
         }

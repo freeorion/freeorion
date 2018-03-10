@@ -564,9 +564,8 @@ SDLGUI* SDLGUI::GetGUI()
 Key SDLGUI::GGKeyFromSDLKey(const SDL_Keysym& key)
 {
     Key retval = GGK_UNKNOWN;
-    if (m_key_map.find(key.sym) != m_key_map.end()) {
+    if (m_key_map.count(key.sym))
         retval = m_key_map[key.sym];
-    }
     int shift = key.mod & KMOD_SHIFT;
     int caps_lock = key.mod & KMOD_CAPS;
 

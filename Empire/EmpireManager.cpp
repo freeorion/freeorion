@@ -122,7 +122,7 @@ void EmpireManager::InsertEmpire(Empire* empire) {
 
     int empire_id = empire->EmpireID();
 
-    if (m_empire_map.find(empire_id) != m_empire_map.end()) {
+    if (m_empire_map.count(empire_id)) {
         ErrorLogger() << "EmpireManager::InsertEmpire passed empire with id (" << empire_id << ") for which there already is an empire.";
         return;
     }

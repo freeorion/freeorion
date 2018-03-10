@@ -308,14 +308,14 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const
 void Species::AddHomeworld(int homeworld_id) {
     if (!GetUniverseObject(homeworld_id))
         DebugLogger() << "Species asked to add homeworld id " << homeworld_id << " but there is no such object in the Universe";
-    if (m_homeworlds.find(homeworld_id) != m_homeworlds.end())
+    if (m_homeworlds.count(homeworld_id))
         return;
     m_homeworlds.insert(homeworld_id);
     // TODO if needed: StateChangedSignal();
 }
 
 void Species::RemoveHomeworld(int homeworld_id) {
-    if (m_homeworlds.find(homeworld_id) == m_homeworlds.end()) {
+    if (!m_homeworlds.count(homeworld_id)) {
         DebugLogger() << "Species asked to remove homeworld id " << homeworld_id << " but doesn't have that id as a homeworld";
         return;
     }

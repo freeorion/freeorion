@@ -738,7 +738,7 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
             }
 
             int owner_id = object->Owner();
-            if (m_summaries.find(owner_id) == m_summaries.end())
+            if (!m_summaries.count(owner_id))
                 m_summaries[owner_id] = CombatSummary(owner_id);
 
             auto map_it = log->participant_states.find(object_id);

@@ -375,7 +375,7 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr
         // the UI
         if (m_min_drag_time < (curr_ticks - m_prev_mouse_button_press_time) &&
             m_min_drag_distance * m_min_drag_distance < drag_distance &&
-            m_drag_drop_wnds.find(dragged_wnd) == m_drag_drop_wnds.end())
+            !m_drag_drop_wnds.count(dragged_wnd))
         {
             // several conditions to allow drag-and-drop to occur:
             if (!dragged_wnd->Dragable() &&             // normal-dragable non-drop wnds can't be drag-dropped

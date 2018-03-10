@@ -171,8 +171,7 @@ ObjectMap::const_iterator<> ObjectMap::const_end() const
 void ObjectMap::InsertCore(std::shared_ptr<UniverseObject> item, int empire_id/* = ALL_EMPIRES*/) {
     FOR_EACH_MAP(TryInsertIntoMap, item);
     if (item &&
-        GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).find(item->ID()) ==
-            GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).end())
+        GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).count(item->ID()))
     {
         auto this_item = this->Object(item->ID());
         m_existing_objects[item->ID()] = this_item;
@@ -258,7 +257,7 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_obj
     for (const auto& entry : m_objects) {
         if (!entry.second)
             continue;
-        if (destroyed_object_ids.find(entry.first) != destroyed_object_ids.end())
+        if (destroyed_object_ids.count(entry.first))
             continue;
         auto this_item = this->Object(entry.first);
         m_existing_objects[entry.first] = this_item;
@@ -305,7 +304,7 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     std::map<int, std::set<int>>    contained_fields;
 
     for (const auto& contained : *this) {
-        if (destroyed_object_ids.find(contained->ID()) != destroyed_object_ids.end())
+        if (destroyed_object_ids.count(contained->ID()))
             continue;
 
         int contained_id = contained->ID();

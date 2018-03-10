@@ -149,14 +149,14 @@ namespace {
 
         // only use those ordered templates actually in the current set of sitrep templates
         for (const std::string& templ : OrderedSitrepTemplateStrings()) {
-            if ( (template_set.find(templ) != template_set.end()) &&
-                 (std::find(retval.begin(), retval.end(), templ) == retval.end()) )
+            if ( template_set.count(templ) &&
+                !std::count(retval.begin(), retval.end(), templ))
             { retval.push_back(templ); }
         }
 
         //now add the current templates that did not have a specified order
         for (const std::string& templ : template_set)
-            if (std::find(retval.begin(), retval.end(), templ) == retval.end())
+            if (!std::count(retval.begin(), retval.end(), templ))
                 retval.push_back(templ);
 
         return retval;
@@ -612,7 +612,7 @@ void SitRepPanel::FilterClicked() {
     for (const std::string& templ : all_templates) {
         menu_index_templates[index] = templ;
         bool check = true;
-        if (m_hidden_sitrep_templates.find(templ) != m_hidden_sitrep_templates.end()) {
+        if (m_hidden_sitrep_templates.count(templ)) {
             check = false;
             all_checked = false;
         }

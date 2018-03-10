@@ -167,7 +167,7 @@ struct DiscreteValidator : public Validator<T>
     boost::any Validate(const std::string& str) const override {
         T val = boost::lexical_cast<T>(str);
 
-        if (m_values.find(val) == m_values.end())
+        if (!m_values.count(val))
             throw boost::bad_lexical_cast();
 
         return boost::any(val);

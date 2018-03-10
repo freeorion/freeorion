@@ -37,8 +37,7 @@ std::map<std::set<int>, float> ResourcePool::Output() const { return m_connected
 float ResourcePool::GroupOutput(int object_id) const {
     // find group containing specified object
     for (const auto& entry : m_connected_object_groups_resource_output) {
-        const std::set<int>& group = entry.first;
-        if (group.find(object_id) != group.end())
+        if (entry.first.count(object_id))
             return entry.second;
     }
 
@@ -58,8 +57,7 @@ float ResourcePool::TargetOutput() const {
 float ResourcePool::GroupTargetOutput(int object_id) const {
     // find group containing specified object
     for (const auto& entry : m_connected_object_groups_resource_target_output) {
-        const std::set<int>& group = entry.first;
-        if (group.find(object_id) != group.end())
+        if (entry.first.count(object_id))
             return entry.second;
     }
 
@@ -137,7 +135,7 @@ void ResourcePool::Update() {
         // is object's system in a system group?
         std::set<int> object_system_group;
         for (const auto& sys_group : m_connected_system_groups) {
-            if (sys_group.find(object_system_id) != sys_group.end()) {
+            if (sys_group.count(object_system_id)) {
                 object_system_group = sys_group;
                 break;
             }

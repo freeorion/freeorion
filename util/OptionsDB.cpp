@@ -377,7 +377,7 @@ std::unordered_map<std::string, std::set<std::string>> OptionsDB::OptionsBySecti
             options_by_section["root"].emplace(root_name);
         } else if (section_it.first != "misc" &&
                    section_it.first != "root" &&
-                   m_sections.find(section_it.first) == m_sections.end())
+                   !m_sections.count(section_it.first))
         {
             // move option to misc section
             auto section_option_it = options_by_section.find(section_it.first);
@@ -399,7 +399,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
     auto options_by_section = OptionsBySection(allow_unrecognized);
     if (!command_line.empty() || command_line == "all" || command_line == "raw") {
         // remove the root section if unneeded
-        if (options_by_section.find("root") != options_by_section.end())
+        if (options_by_section.count("root"))
             options_by_section.erase("root");
     }
 
@@ -482,7 +482,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
         }
 
         // insert command_line as option, if it exists
-        if (command_line != "all" && command_line != "raw" && m_options.find(command_line) != m_options.end())
+        if (command_line != "all" && command_line != "raw" && m_options.count(command_line))
             option_list.emplace(command_line);
 
         if (!option_list.empty())

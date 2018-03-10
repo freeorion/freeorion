@@ -120,9 +120,8 @@ private:
                 const std::string& to   = edge->GetTechTo();
                 // Do not show lines leading to techs
                 // we are not showing
-                if (techs.find(to) == techs.end()) {
+                if (!techs.count(to))
                     continue;
-                }
                 // Remember what edges we are showing so
                 // we can eventually highlight them
                 m_edges_to_show[from].insert(to);

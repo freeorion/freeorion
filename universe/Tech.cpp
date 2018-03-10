@@ -31,10 +31,10 @@ namespace {
                    std::set<const Tech*>& checked_techs,
                    TechManager::iterator it, TechManager::iterator end_it)
     {
-        if (checked_techs.find(it->get()) != checked_techs.end())
+        if (checked_techs.count(it->get()))
             return;
 
-        if (known_techs.find((*it)->Name()) == known_techs.end() && it != end_it) {
+        if (!known_techs.count((*it)->Name()) && it != end_it) {
             std::vector<const Tech*> stack;
             stack.push_back(it->get());
             while (!stack.empty()) {
@@ -43,10 +43,10 @@ namespace {
                 bool all_prereqs_known = true;
                 for (const std::string& prereq_name : current_tech->Prerequisites()) {
                     const Tech* prereq_tech = GetTech(prereq_name);
-                    bool prereq_unknown = known_techs.find(prereq_tech->Name()) == known_techs.end();
+                    bool prereq_unknown = !known_techs.count(prereq_tech->Name());
                     if (prereq_unknown)
                         all_prereqs_known = false;
-                    if (checked_techs.find(prereq_tech) == checked_techs.end() && prereq_unknown)
+                    if (!checked_techs.count(prereq_tech) && prereq_unknown)
                         stack.push_back(prereq_tech);
                 }
                 if (starting_stack_size == stack.size()) {
@@ -552,7 +552,7 @@ std::string TechManager::FindFirstDependencyCycle() const {
 
     std::set<const Tech*> checked_techs; // the list of techs that are not part of any cycle
     for (const auto& tech : *this) {
-        if (checked_techs.find(tech.get()) != checked_techs.end())
+        if (checked_techs.count(tech.get()))
             continue;
 
         std::vector<const Tech*> stack;
@@ -567,7 +567,7 @@ std::string TechManager::FindFirstDependencyCycle() const {
             const std::set<std::string>& prereqs = (current_tech ? current_tech->Prerequisites() : EMPTY_STRING_SET);
             for (const std::string& prereq_name : prereqs) {
                 const Tech* prereq_tech = GetTech(prereq_name);
-                if (!prereq_tech || checked_techs.find(prereq_tech) != checked_techs.end())
+                if (!prereq_tech || checked_techs.count(prereq_tech))
                     continue;
 
                 // since this is not a checked prereq, see if it is already in the stack somewhere; if so, we have a cycle
@@ -581,7 +581,7 @@ std::string TechManager::FindFirstDependencyCycle() const {
                     for (std::vector<const Tech*>::reverse_iterator stack_it = stack.rbegin();
                             stack_it != stack_duplicate_it;
                             ++stack_it) {
-                        if ((*stack_it)->Prerequisites().find(current_tech_name) != (*stack_it)->Prerequisites().end()) {
+                        if ((*stack_it)->Prerequisites().count(current_tech_name)) {
                             current_tech_name = (*stack_it)->Name();
                             stream << " <-- \"" << current_tech_name << "\"";
                         }
@@ -676,7 +676,8 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
         const Tech* cur_tech = this->GetTech(cur_name);
 
         // check if this tech is already in the map of prereqs.  If so, it has already been processed, and can be skipped.
-        if (prereqs_set.find(cur_name) != prereqs_set.end()) continue;
+        if (prereqs_set.count(cur_name))
+            continue;
 
         // if this tech is already known and min_required==true, can skip.
         if (min_required && empire && (empire->GetTechStatus(cur_name) == TS_COMPLETE))

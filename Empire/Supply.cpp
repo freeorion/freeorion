@@ -85,7 +85,7 @@ std::set<int> SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool includ
 
 int SupplyManager::EmpireThatCanSupplyAt(int system_id) const {
     for (const auto& entry : m_fleet_supplyable_system_ids) {
-        if (entry.second.find(system_id) != entry.second.end())
+        if (entry.second.count(system_id))
             return entry.first;
     }
     return ALL_EMPIRES;
@@ -135,7 +135,7 @@ bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const {
     if (it == m_fleet_supplyable_system_ids.end())
         return false;
     const std::set<int>& sys_set = it->second;
-    if (sys_set.find(system_id) != sys_set.end())
+    if (sys_set.count(system_id))
         return true;
     return false;
 }
@@ -156,7 +156,7 @@ bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool incl
         if (sys_set_it == m_fleet_supplyable_system_ids.end())
             continue;
         auto sys_set = sys_set_it->second;
-        if (sys_set.find(system_id) != sys_set.end())
+        if (sys_set.count(system_id))
             return true;
     }
 
@@ -321,11 +321,8 @@ void SupplyManager::Update() {
 
         for (auto& fleet : fleets) {
             int system_id = fleet->SystemID();
-            if (system_id == INVALID_OBJECT_ID) {
-                continue;   // not in a system, so can't affect system obstruction
-            } else if (known_destroyed_objects.find(fleet->ID()) != known_destroyed_objects.end()) {
-                continue; //known to be destroyed so can't affect supply, important just in case being updated on client side
-            }
+            if (system_id == INVALID_OBJECT_ID || known_destroyed_objects.count(fleet->ID()))
+                continue;
 
             if ((fleet->HasArmedShips() || fleet->HasFighterShips()) && fleet->Aggressive()) {
                 if (fleet->OwnedBy(empire_id)) {
@@ -362,7 +359,7 @@ void SupplyManager::Update() {
         // and where this empire has no fleets...
         // supply is obstructed
         for (int system_id : systems_where_others_have_supply_sources_and_current_empire_doesnt) {
-            if (systems_containing_friendly_fleets.find(system_id) == systems_containing_friendly_fleets.end())
+            if (!systems_containing_friendly_fleets.count(system_id))
                 empire_supply_unobstructed_systems[empire_id].erase(system_id);
         }
     }
@@ -392,7 +389,7 @@ void SupplyManager::Update() {
 
         for (const auto& supply_range : empire_supply.second) {
             int system_id = supply_range.first;
-            if (unobstructed_systems.find(system_id) != unobstructed_systems.end()) {
+            if (unobstructed_systems.count(system_id)) {
                 // stored: first -> source supply range.  second -> distance to source (0 for the source itself)
                 empire_propagating_supply_ranges[empire_id][system_id] = {supply_range.second, 0.0f};
                 if (supply_range.second > max_range)
@@ -575,7 +572,7 @@ void SupplyManager::Update() {
                 // attempt to propagate to all adjacent systems...
                 for (int lane_end_sys_id : empire_visible_starlanes[empire_id][system_id]) {
                     // is propagation to the adjacent system obstructed?
-                    if (unobstructed_systems.find(lane_end_sys_id) == unobstructed_systems.end()) {
+                    if (!unobstructed_systems.count(lane_end_sys_id)) {
                         // propagation obstructed!
                         //DebugLogger() << "Added obstructed traversal from " << system_id << " to " << lane_end_sys_id << " due to not being on unobstructed systems";
                         m_supply_starlane_obstructed_traversals[empire_id].insert({system_id, lane_end_sys_id});
@@ -638,14 +635,12 @@ void SupplyManager::Update() {
                     //DebugLogger() << "Added traversal from " << system_id << " to " << lane_end_sys_id;
 
                     // erase any previous obstructed traversal that just succeeded
-                    if (m_supply_starlane_obstructed_traversals[empire_id].find(std::make_pair(system_id, lane_end_sys_id)) !=
-                        m_supply_starlane_obstructed_traversals[empire_id].end())
+                    if (m_supply_starlane_obstructed_traversals[empire_id].count(std::make_pair(system_id, lane_end_sys_id)))
                     {
                         //DebugLogger() << "Removed obstructed traversal from " << system_id << " to " << lane_end_sys_id;
                         m_supply_starlane_obstructed_traversals[empire_id].erase(std::make_pair(system_id, lane_end_sys_id));
                     }
-                    if (m_supply_starlane_obstructed_traversals[empire_id].find(std::make_pair(lane_end_sys_id, system_id)) !=
-                        m_supply_starlane_obstructed_traversals[empire_id].end())
+                    if (m_supply_starlane_obstructed_traversals[empire_id].count(std::make_pair(lane_end_sys_id, system_id)))
                     {
                         //DebugLogger() << "Removed obstructed traversal from " << lane_end_sys_id << " to " << system_id;
                         m_supply_starlane_obstructed_traversals[empire_id].erase(std::make_pair(lane_end_sys_id, system_id));

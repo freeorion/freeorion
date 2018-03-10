@@ -907,9 +907,8 @@ void CUIWnd::InvalidateUnusedOptions() {
         if ((option.rfind(suffix_exist) == (option.length() - suffix_exist.length())) && db.OptionExists(option)) {
             auto window_name = WindowNameFromOption(option);
             // If the ".initialized" option isn't present under this name, remove the options.
-            if (!window_name.empty() && window_options.find(prefix + window_name + ".initialized") == window_options.end()) {
+            if (!window_name.empty() && !window_options.count(prefix + window_name + ".initialized"))
                 InvalidateWindowOptions(window_name);
-            }
         }
     }
 

@@ -1096,7 +1096,7 @@ void ShipDesignOrder::ExecuteImpl() const {
 
         // check if the empire can see any objects that have this design (thus enabling it to be copied)
         const std::set<int>& empire_known_design_ids = universe.EmpireKnownShipDesignIDs(EmpireID());
-        if (empire_known_design_ids.find(m_design_id) != empire_known_design_ids.end()) {
+        if (empire_known_design_ids.count(m_design_id)) {
             empire->AddShipDesign(m_design_id);
         } else {
             ErrorLogger() << "Empire, " << EmpireID() << ", tried to remember a ShipDesign id = " << m_design_id

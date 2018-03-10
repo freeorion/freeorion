@@ -298,7 +298,7 @@ namespace {
                 // occupied planets
                 std::vector<std::shared_ptr<const Planet>> species_occupied_planets;
                 for (auto& planet : Objects().FindObjects<Planet>()) {
-                    if ((planet->SpeciesName() == entry.first) && (known_homeworlds.find(planet->ID()) == known_homeworlds.end()))
+                    if ((planet->SpeciesName() == entry.first) && !known_homeworlds.count(planet->ID()))
                         species_occupied_planets.push_back(planet);
                 }
                 if (!species_occupied_planets.empty()) {
@@ -1553,7 +1553,7 @@ namespace {
         // objects that have special
         std::vector<std::shared_ptr<const UniverseObject>> objects_with_special;
         for (const auto& obj : Objects())
-            if (obj->Specials().find(item_name) != obj->Specials().end())
+            if (obj->Specials().count(item_name))
                 objects_with_special.push_back(obj);
 
         if (!objects_with_special.empty()) {
@@ -2442,18 +2442,17 @@ namespace {
                 continue;
             const std::string& species_str = entry.first;
             const auto& species_tags = entry.second->Tags();
-            if (species_tags.find(TAG_ALWAYS_REPORT) != species_tags.end()) {
+            if (species_tags.count(TAG_ALWAYS_REPORT)) {
                 retval.insert(species_str);
                 continue;
             }
             // Add extinct species if their tech is known
             // Extinct species and enabling tech should have an EXTINCT tag
-            if (species_tags.find(TAG_EXTINCT) != species_tags.end()) {
+            if (species_tags.count(TAG_EXTINCT)) {
                 for (const auto& tech : empire->ResearchedTechs()) {
                     // Check for presence of tags in tech
                     const auto& tech_tags = GetTech(tech.first)->Tags();
-                    if ((tech_tags.find(species_str) != tech_tags.end()) &&
-                        (tech_tags.find(TAG_EXTINCT) != tech_tags.end()))
+                    if (tech_tags.count(species_str) && tech_tags.count(TAG_EXTINCT))
                     {
                         // Add the species and exit loop
                         retval.insert(species_str);

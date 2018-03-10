@@ -1727,7 +1727,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     // is this an AI?
     if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
         // verify that player name was expected
-        if (m_expected_ai_player_names.find(player_name) == m_expected_ai_player_names.end()) {
+        if (!m_expected_ai_player_names.count(player_name)) {
             // unexpected ai player
             ErrorLogger(FSM) << "WaitingForMPGameJoiners::react(const JoinGame& msg) received join game message for player \"" << player_name << "\" which was not an expected AI player name.    Terminating connection.";
             server.m_networking.Disconnect(player_connection);

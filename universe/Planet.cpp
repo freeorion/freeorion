@@ -509,7 +509,7 @@ const std::set<int>& Planet::ContainedObjectIDs() const
 { return m_buildings; }
 
 bool Planet::Contains(int object_id) const
-{ return object_id != INVALID_OBJECT_ID && m_buildings.find(object_id) != m_buildings.end(); }
+{ return object_id != INVALID_OBJECT_ID && m_buildings.count(object_id); }
 
 bool Planet::ContainedBy(int object_id) const
 { return object_id != INVALID_OBJECT_ID && this->SystemID() == object_id; }
@@ -586,7 +586,7 @@ void Planet::AddBuilding(int building_id) {
 }
 
 bool Planet::RemoveBuilding(int building_id) {
-    if (m_buildings.find(building_id) != m_buildings.end()) {
+    if (m_buildings.count(building_id)) {
         m_buildings.erase(building_id);
         StateChangedSignal();
         return true;

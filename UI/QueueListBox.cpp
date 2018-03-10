@@ -99,7 +99,7 @@ void QueueListBox::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG:
     const auto& row = std::dynamic_pointer_cast<GG::ListBox::Row>(wnd);
     if (!AllowedDropType(drop_type) ||
         !row ||
-        std::find(begin(), end(), row) == end())
+        !std::count(begin(), end(), row))
     {
         return;
     }

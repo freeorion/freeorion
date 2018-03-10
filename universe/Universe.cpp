@@ -649,7 +649,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
     for (auto& entry : m_effect_accounting_map) {
         int object_id = entry.first;
         // skip destroyed objects
-        if (m_destroyed_object_ids.find(object_id) != m_destroyed_object_ids.end())
+        if (m_destroyed_object_ids.count(object_id))
             continue;
         // get object
         auto obj = m_objects.Object(object_id);
@@ -763,7 +763,7 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
 
     for (int object_id : objects_vec) {
         // skip destroyed objects
-        if (m_destroyed_object_ids.find(object_id) != m_destroyed_object_ids.end())
+        if (m_destroyed_object_ids.count(object_id))
             continue;
         m_effect_accounting_map[object_id].clear();
         objects_set.insert(object_id);
@@ -1206,7 +1206,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // find each species planets in single pass, maintaining object map order per-species
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> species_objects;
     for (auto& planet : m_objects.FindObjects<Planet>()) {
-        if (m_destroyed_object_ids.find(planet->ID()) != m_destroyed_object_ids.end())
+        if (m_destroyed_object_ids.count(planet->ID()))
             continue;
         const std::string& species_name = planet->SpeciesName();
         if (species_name.empty())
@@ -1224,7 +1224,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
     // find each species ships in single pass, maintaining object map order per-species
     for (auto& ship : m_objects.FindObjects<Ship>()) {
-        if (m_destroyed_object_ids.find(ship->ID()) != m_destroyed_object_ids.end())
+        if (m_destroyed_object_ids.count(ship->ID()))
             continue;
         const std::string& species_name = ship->SpeciesName();
         if (species_name.empty())
@@ -1264,8 +1264,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> specials_objects;
     // determine objects with specials in a single pass
     for (const auto& obj : m_objects) {
-        int source_object_id = obj->ID();
-        if (m_destroyed_object_ids.find(source_object_id) != m_destroyed_object_ids.end())
+        if (m_destroyed_object_ids.count(obj->ID()))
             continue;
         for (const auto& entry : obj->Specials()) {
             const std::string& special_name = entry.first;
@@ -1332,7 +1331,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // determine buildings of each type in a single pass
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> buildings_by_type;
     for (auto& building : m_objects.FindObjects<Building>()) {
-        if (m_destroyed_object_ids.find(building->ID()) != m_destroyed_object_ids.end())
+        if (m_destroyed_object_ids.count(building->ID()))
             continue;
         const std::string& building_type_name = building->BuildingTypeName();
         const BuildingType* building_type = GetBuildingType(building_type_name);
@@ -1374,7 +1373,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_hull_type;
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_part_type;
     for (auto& ship : m_objects.FindObjects<Ship>()) {
-        if (m_destroyed_object_ids.find(ship->ID()) != m_destroyed_object_ids.end())
+        if (m_destroyed_object_ids.count(ship->ID()))
             continue;
 
         const ShipDesign* ship_design = ship->Design();
@@ -1447,7 +1446,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // determine fields of each type in a single pass
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> fields_by_type;
     for (auto& field : m_objects.FindObjects<Field>()) {
-        if (m_destroyed_object_ids.find(field->ID()) != m_destroyed_object_ids.end())
+        if (m_destroyed_object_ids.count(field->ID()))
             continue;
 
         const std::string& field_type_name = field->FieldTypeName();
@@ -2002,7 +2001,7 @@ namespace {
                 continue;
             }
             const std::set<int>& empires_that_know = obj_it->second;
-            if (empires_that_know.find(empire_id) == empires_that_know.end()) {
+            if (!empires_that_know.count(empire_id)) {
                 ++it;
                 continue;
             }
@@ -2167,7 +2166,7 @@ namespace {
             for (const auto& empire_entry : empires_systems_with_owned_objects) {
                 int empire_id = empire_entry.first;
                 const auto& empire_systems = empire_entry.second;
-                if (empire_systems.find(system_id) == empire_systems.end())
+                if (!empire_systems.count(system_id))
                     continue;
                 // ensure planets are at least basicaly visible.  does not
                 // overwrite higher visibility levels
@@ -2583,13 +2582,10 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
         // remove stale marking for any known destroyed or currently visible objects
         for (auto stale_it = stale_set.begin(); stale_it != stale_set.end();) {
             int object_id = *stale_it;
-            if (vis_map.find(object_id) != vis_map.end() ||
-                destroyed_set.find(object_id) != destroyed_set.end())
-            {
+            if (vis_map.count(object_id) || destroyed_set.count(object_id))
                 stale_set.erase(stale_it++);
-            } else {
+            else
                 ++stale_it;
-            }
         }
 
 
@@ -2648,7 +2644,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
             int fleet_id = obj_it->ID();
 
             // destroyed? not stale
-            if (destroyed_set.find(fleet_id) != destroyed_set.end()) {
+            if (destroyed_set.count(fleet_id)) {
                 stale_set.insert(fleet_id);
                 continue;
             }
@@ -2670,7 +2666,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
                     continue;
 
                 // if ship is destroyed, doesn't count
-                if (destroyed_set.find(ship_id) != destroyed_set.end())
+                if (destroyed_set.count(ship_id))
                     continue;
 
                 // is contained ship visible? If so, fleet is not stale.
@@ -2681,7 +2677,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
                 }
 
                 // is contained ship not visible and not stale? if so, fleet is not stale
-                if (stale_set.find(ship_id) == stale_set.end()) {
+                if (!stale_set.count(ship_id)) {
                     fleet_stale = false;
                     break;
                 }
@@ -2869,7 +2865,7 @@ bool Universe::Delete(int object_id) {
 }
 
 void Universe::EffectDestroy(int object_id, int source_object_id) {
-    if (m_marked_destroyed.find(object_id) != m_marked_destroyed.end())
+    if (m_marked_destroyed.count(object_id))
         return;
     m_marked_destroyed[object_id].insert(source_object_id);
 }

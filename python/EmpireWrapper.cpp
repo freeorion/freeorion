@@ -123,7 +123,7 @@ namespace {
 
             // propagate to any not-already-counted adjacent system
             for (int lane_end_system_id : lane_ends) {
-                if (retval.find(lane_end_system_id) != retval.end())
+                if (retval.count(lane_end_system_id))
                     continue;   // system already processed
                 // system not yet processed; add it to list to propagate from, and set its range to one more than this system
                 propagating_list.push_back(lane_end_system_id);

@@ -113,7 +113,7 @@ public:
     /** indicates whether an option with name \a name has been added to this
         OptionsDB. */
     bool        OptionExists(const std::string& name) const
-    { return m_options.find(name) != m_options.end() && m_options.at(name).recognized; }
+    { return m_options.count(name) && m_options.at(name).recognized; }
 
     /** write back the optionDB's state to the XML config file
         if it has changed since it was last saved. */

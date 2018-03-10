@@ -424,7 +424,7 @@ namespace {
         /** Constructs and attaches new description and value labels
          *  for the given description row @p descr. */
         void NewLabelValue(const std::string& descr, bool title = false) {
-            if (m_labels.find(descr) != m_labels.end())
+            if (m_labels.count(descr))
                 return;
 
             GG::Y height{ClientUI::Pts()};
@@ -472,7 +472,7 @@ namespace {
 
             const auto& destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(m_empire_id);
             for (auto& ship : Objects().FindObjects<Ship>()) {
-                if (!ship->OwnedBy(m_empire_id) || destroyed_objects.find(ship->ID()) != destroyed_objects.end())
+                if (!ship->OwnedBy(m_empire_id) || destroyed_objects.count(ship->ID()))
                     continue;
                 m_values[FLEET_DETAIL_SHIP_COUNT]++;
 
@@ -510,7 +510,7 @@ namespace {
                        GG::Pt& value_ul, GG::Pt& value_lr,
                        const GG::Pt& row_advance)
         {
-            if (m_labels.find(descr) == m_labels.end()) {
+            if (!m_labels.count(descr)) {
                 ErrorLogger() << "Unable to find expected label key " << descr;
                 return;
             }
@@ -893,7 +893,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
     if (empire) {
         unobstructed = empire->SupplyUnobstructedSystems();
         calc_s_flag = true;
-        //s_flag = ((first_node.object_id != INVALID_OBJECT_ID) && unobstructed.find(first_node.object_id)==unobstructed.end());
+        //s_flag = ((first_node.object_id != INVALID_OBJECT_ID) && !unobstructed.count(first_node.object_id));
     }
 
     for (const MovePathNode& node : path) {
@@ -948,7 +948,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
         // 3) Add points for line segment to list of Vertices
         bool b_flag = node.post_blockade;
         s_flag = s_flag || (calc_s_flag &&
-            ((node.object_id != INVALID_OBJECT_ID) && unobstructed.find(node.object_id)==unobstructed.end()));
+            ((node.object_id != INVALID_OBJECT_ID) && !unobstructed.count(node.object_id)));
         vertices.push_back(Vertex(start_xy->first,   start_xy->second,    prev_eta,   false,          b_flag, s_flag));
         vertices.push_back(Vertex(end_xy->first,     end_xy->second,      node.eta,   node.turn_end,  b_flag, s_flag));
 
@@ -2948,7 +2948,7 @@ void MapWnd::InitTurnRendering() {
         int sys_id = sys->ID();
 
         // skip known destroyed objects
-        if (this_client_known_destroyed_objects.find(sys_id) != this_client_known_destroyed_objects.end())
+        if (this_client_known_destroyed_objects.count(sys_id))
             continue;
 
         // create new system icon
@@ -2995,9 +2995,9 @@ void MapWnd::InitTurnRendering() {
         int fld_id = field->ID();
 
         // skip known destroyed and stale fields
-        if (this_client_known_destroyed_objects.find(fld_id) != this_client_known_destroyed_objects.end())
+        if (this_client_known_destroyed_objects.count(fld_id))
             continue;
-        if (this_client_stale_object_info.find(fld_id) != this_client_stale_object_info.end())
+        if (this_client_stale_object_info.count(fld_id))
             continue;
         // don't skip not visible but not stale fields; still expect these to be where last seen, or near there
         //if (field->GetVisibility(client_empire_id) <= VIS_NO_VISIBILITY)
@@ -3585,7 +3585,7 @@ namespace {
             int system_id = id_icon.first;
 
             // skip systems that don't actually exist
-            if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
+            if (this_client_known_destroyed_objects.count(system_id))
                 continue;
 
             auto start_system = GetSystem(system_id);
@@ -3602,7 +3602,7 @@ namespace {
                 int lane_end_sys_id = render_lane.first;
 
                 // skip lanes to systems that don't actually exist
-                if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
+                if (this_client_known_destroyed_objects.count(lane_end_sys_id))
                     continue;
 
                 auto dest_system = GetSystem(render_lane.first);
@@ -3612,9 +3612,8 @@ namespace {
 
 
                 // check that this lane isn't already in map / being rendered.
-                if (already_rendered_full_lanes.find({start_system->ID(), dest_system->ID()}) !=
-                    already_rendered_full_lanes.end())
-                { continue; }
+                if (already_rendered_full_lanes.count({start_system->ID(), dest_system->ID()}))
+                    continue;
                 already_rendered_full_lanes.insert({start_system->ID(), dest_system->ID()});
                 already_rendered_full_lanes.insert({dest_system->ID(), start_system->ID()});
 
@@ -3639,7 +3638,7 @@ namespace {
                     std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
 
                     // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
-                    if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
+                    if (resource_supply_lanes.count(lane_forward) || resource_supply_lanes.count(lane_backward)) {
                         lane_colour = empire->Color();
                         //std::cout << "selected colour of empire " << empire->Name() << " for this full lane" << std::endl;
                         break;
@@ -3688,7 +3687,7 @@ namespace {
             int system_id = id_icon.first;
 
             // skip systems that don't actually exist
-            if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
+            if (this_client_known_destroyed_objects.count(system_id))
                 continue;
 
             auto start_system = GetSystem(system_id);
@@ -3705,7 +3704,7 @@ namespace {
                 int lane_end_sys_id = render_lane.first;
 
                 // skip lanes to systems that don't actually exist
-                if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
+                if (this_client_known_destroyed_objects.count(lane_end_sys_id))
                     continue;
 
                 auto dest_system = GetSystem(render_lane.first);
@@ -3715,7 +3714,7 @@ namespace {
 
 
                 // check that this lane isn't already going to be rendered.  skip it if it is.
-                if (rendered_half_starlanes.find({start_system->ID(), dest_system->ID()}) != rendered_half_starlanes.end())
+                if (rendered_half_starlanes.count({start_system->ID(), dest_system->ID()}))
                     continue;
 
 
@@ -3724,14 +3723,14 @@ namespace {
                 //std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
                 LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
 
-                if (res_group_core_members.find(start_system->ID()) == res_group_core_members.end())
+                if (!res_group_core_members.count(start_system->ID()))
                     continue;
 
                 //start system is a res Grp core member for empire -- highlight
                 float indicator_extent = 0.5f;
                 GG::Clr lane_colour_to_use = lane_colour;
                 if (under_alloc_res_grp_core_members
-                    && (under_alloc_res_grp_core_members->find(start_system->ID()) != under_alloc_res_grp_core_members->end() ) )
+                    && under_alloc_res_grp_core_members->count(start_system->ID()))
                 {
                     lane_colour_to_use = GG::DarkColor(GG::Clr(255-lane_colour.r, 255-lane_colour.g, 255-lane_colour.b, lane_colour.a));
                 }
@@ -3772,11 +3771,11 @@ namespace {
             int system_id = id_icon.first;
 
             // skip systems that don't actually exist
-            if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
+            if (this_client_known_destroyed_objects.count(system_id))
                 continue;
 
             // skip systems that don't actually exist
-            if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
+            if (this_client_known_destroyed_objects.count(system_id))
                 continue;
 
             auto start_system = GetSystem(system_id);
@@ -3793,7 +3792,7 @@ namespace {
                 int lane_end_sys_id = render_lane.first;
 
                 // skip lanes to systems that don't actually exist
-                if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
+                if (this_client_known_destroyed_objects.count(lane_end_sys_id))
                     continue;
 
                 auto dest_system = GetSystem(render_lane.first);
@@ -3803,7 +3802,7 @@ namespace {
 
 
                 // check that this lane isn't already going to be rendered.  skip it if it is.
-                if (rendered_half_starlanes.find({start_system->ID(), dest_system->ID()}) != rendered_half_starlanes.end())
+                if (rendered_half_starlanes.count({start_system->ID(), dest_system->ID()}))
                     continue;
 
 
@@ -3814,7 +3813,7 @@ namespace {
                         GetSupplyManager().SupplyObstructedStarlaneTraversals(entry.first);
 
                     // see if this lane exists in this empire's obstructed supply propagation lanes set.  either direction accepted.
-                    if (resource_obstructed_supply_lanes.find({start_system->ID(), dest_system->ID()}) == resource_obstructed_supply_lanes.end())
+                    if (!resource_obstructed_supply_lanes.count({start_system->ID(), dest_system->ID()}))
                         continue;
 
                     // found an empire that has a half lane here, so add it.
@@ -3850,7 +3849,7 @@ namespace {
             int system_id = id_icon.first;
 
             // skip systems that don't actually exist
-            if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
+            if (this_client_known_destroyed_objects.count(system_id))
                 continue;
 
             auto start_system = GetSystem(system_id);
@@ -3867,7 +3866,7 @@ namespace {
                 int lane_end_sys_id = render_lane.first;
 
                 // skip lanes to systems that don't actually exist
-                if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
+                if (this_client_known_destroyed_objects.count(lane_end_sys_id))
                     continue;
 
                 auto dest_system = GetSystem(render_lane.first);
@@ -4054,10 +4053,10 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     for (auto& obj : objects.FindObjects<UniverseObject>()) {
         int object_id = obj->ID();
         // skip destroyed objects
-        if (destroyed_object_ids.find(object_id) != destroyed_object_ids.end())
+        if (destroyed_object_ids.count(object_id))
             continue;
         // skip stale objects
-        if (stale_object_ids.find(object_id) != stale_object_ids.end())
+        if (stale_object_ids.count(object_id))
             continue;
 
         // skip unowned objects
@@ -4542,9 +4541,8 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
 
     // if indicated fleet is already the only selected fleet in the active FleetWnd, don't need to do anything
     if (m_selected_fleet_ids.size() == 1 &&
-        m_selected_fleet_ids.find(fleet->ID()) != m_selected_fleet_ids.end())
-    { return; }
-
+            m_selected_fleet_ids.count(fleet->ID()))
+        return;
 
     // find if there is a FleetWnd for this fleet already open.
     auto fleet_wnd = manager.WndForFleetID(fleet->ID());
@@ -6599,7 +6597,7 @@ void MapWnd::RefreshFleetResourceIndicator() {
 
     int total_fleet_count = 0;
     for (auto& ship : Objects().FindObjects<Ship>()) {
-        if (ship->OwnedBy(empire_id) && this_client_known_destroyed_objects.find(ship->ID()) == this_client_known_destroyed_objects.end())
+        if (ship->OwnedBy(empire_id) && !this_client_known_destroyed_objects.count(ship->ID()))
             total_fleet_count++;
     }
 
@@ -6933,7 +6931,7 @@ bool MapWnd::ZoomToPrevIdleFleet() {
         --it;
     else
         it = vec.end();
-    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.find(*it) != destroyed_object_ids.end()))
+    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.count(*it)))
         --it;
     m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.back();
 
@@ -6951,7 +6949,7 @@ bool MapWnd::ZoomToNextIdleFleet() {
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.end())
         ++it;
-    while (it != vec.end() && destroyed_object_ids.find(*it) != destroyed_object_ids.end())
+    while (it != vec.end() && destroyed_object_ids.count(*it))
         ++it;
     m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.front();
 
@@ -6971,7 +6969,7 @@ bool MapWnd::ZoomToPrevFleet() {
         --it;
     else
         it = vec.end();
-    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.find(*it) != destroyed_object_ids.end()))
+    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.count(*it)))
         --it;
     m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.back();
 
@@ -6989,7 +6987,7 @@ bool MapWnd::ZoomToNextFleet() {
     auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.end())
         ++it;
-    while (it != vec.end() && destroyed_object_ids.find(*it) != destroyed_object_ids.end())
+    while (it != vec.end() && destroyed_object_ids.count(*it))
         ++it;
     m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.front();
 
@@ -7151,8 +7149,7 @@ void MapWnd::HideAllPopups() {
 }
 
 void MapWnd::SetFleetExploring(const int fleet_id) {
-    auto it = std::find(m_fleets_exploring.begin(), m_fleets_exploring.end(), fleet_id);
-    if (it == m_fleets_exploring.end()){ //this fleet is not currently exploring
+    if (!std::count(m_fleets_exploring.begin(), m_fleets_exploring.end(), fleet_id)) {
         m_fleets_exploring.insert(fleet_id);
         DispatchFleetsExploring();
     }
@@ -7174,9 +7171,7 @@ void MapWnd::StopFleetExploring(const int fleet_id) {
 }
 
 bool MapWnd::IsFleetExploring(const int fleet_id){
-    std::set<int>::iterator it;
-    it = std::find(m_fleets_exploring.begin(), m_fleets_exploring.end(), fleet_id);
-    return it != m_fleets_exploring.end();
+    return std::count(m_fleets_exploring.begin(), m_fleets_exploring.end(), fleet_id);
 }
 
 namespace {
@@ -7471,7 +7466,7 @@ namespace {
             return;
         }
 
-        if (systems_being_explored.find(*route.rbegin()) != systems_being_explored.end()) {
+        if (systems_being_explored.count(*route.rbegin())) {
             TraceLogger() << "System " << std::to_string(*route.rbegin()) << " already being explored";
             return;
         }
@@ -7535,7 +7530,7 @@ void MapWnd::DispatchFleetsExploring() {
     timer.EnterSection("idle fleets/systems being explored");
     for (auto it = m_fleets_exploring.begin(); it != m_fleets_exploring.end();) {
         auto fleet = GetFleet(*it);
-        if (!fleet || destroyed_objects.find(fleet->ID()) != destroyed_objects.end()) {
+        if (!fleet || destroyed_objects.count(fleet->ID())) {
             m_fleets_exploring.erase(it++); //this fleet can't explore anymore
         } else {
              if (fleet->MovePath().empty())
@@ -7574,7 +7569,7 @@ void MapWnd::DispatchFleetsExploring() {
         if (!system)
             continue;
         if (!empire->HasExploredSystem(system->ID()) &&
-            systems_being_explored.find(system_id) == systems_being_explored.end())
+            !systems_being_explored.count(system_id))
         { unexplored_systems.insert(system->ID()); }
     }
     timer.EnterSection("");

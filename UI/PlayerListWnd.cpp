@@ -286,8 +286,8 @@ namespace {
             for (auto& ship : objects.FindObjects<Ship>()) {
                 if (empire) {
                     if (ship->Owner() == empire->EmpireID()
-                        && this_client_known_destroyed_objects.find(ship->ID()) == this_client_known_destroyed_objects.end()
-                        && this_client_stale_object_info.find(ship->ID()) == this_client_stale_object_info.end()) {
+                        && !this_client_known_destroyed_objects.count(ship->ID())
+                        && !this_client_stale_object_info.count(ship->ID())) {
                             empires_ship_count += 1;
                     }
                 }
@@ -648,7 +648,7 @@ void PlayerListWnd::SetSelectedPlayers(const std::set<int>& player_ids) {
         }
 
         // if this row's player should be selected, so so
-        if (player_ids.find(row->PlayerID()) != player_ids.end()) {
+        if (player_ids.count(row->PlayerID())) {
             m_player_list->SelectRow(it);
             m_player_list->BringRowIntoView(it);  // may cause earlier rows brought into view to be brought out of view... oh well
         }
@@ -682,8 +682,6 @@ void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows
     // mark as selected all PlayerDataPanel that are in \a rows and mark as not
     // selected all PlayerDataPanel that aren't in \a rows
     for (auto it = m_player_list->begin(); it != m_player_list->end(); ++it) {
-        bool select_this_row = (rows.find(it) != rows.end());
-
         auto& row = *it;
         if (!row) {
             ErrorLogger() << "PlayerListWnd::PlayerSelectionChanged couldn't get row";
@@ -703,7 +701,7 @@ void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows
             ErrorLogger() << "PlayerListWnd::PlayerSelectionChanged couldn't get PlayerDataPanel from control";
             continue;
         }
-        data_panel->Select(select_this_row);
+        data_panel->Select(rows.count(it));
     }
 
     SelectedPlayersChangedSignal();

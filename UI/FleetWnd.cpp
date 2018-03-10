@@ -1616,9 +1616,9 @@ void FleetDataPanel::SetStatIconValues() {
     for (auto& ship : Objects().FindObjects<const Ship>(fleet->ShipIDs())) {
         int ship_id = ship->ID();
         // skip known destroyed and stale info objects
-        if (this_client_known_destroyed_objects.find(ship_id) != this_client_known_destroyed_objects.end())
+        if (this_client_known_destroyed_objects.count(ship_id))
             continue;
-        if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
+        if (this_client_stale_object_info.count(ship_id))
             continue;
 
         if (ship->Design()) {
@@ -2330,9 +2330,9 @@ public:
         rows.reserve(ship_ids.size());
         for (int ship_id : ship_ids) {
             // skip known destroyed and stale info objects
-            if (this_client_known_destroyed_objects.find(ship_id) != this_client_known_destroyed_objects.end())
+            if (this_client_known_destroyed_objects.count(ship_id))
                 continue;
-            if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
+            if (this_client_stale_object_info.count(ship_id))
                 continue;
 
             auto row = GG::Wnd::Create<ShipRow>(GG::X1, row_size.y, ship_id);
@@ -2559,7 +2559,7 @@ void FleetDetailPanel::SelectShips(const std::set<int>& ship_ids) {
         }
 
         // if this row's ship should be selected, so so
-        if (ship_ids.find(row->ShipID()) != ship_ids.end()) {
+        if (ship_ids.count(row->ShipID())) {
             m_ships_lb->SelectRow(it);
             m_ships_lb->BringRowIntoView(it);   // may cause earlier rows brought into view to be brought out of view... oh well
         }
@@ -2634,7 +2634,7 @@ void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& row
     for (auto it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
         try {
             ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>(!(**it).empty() ? (**it).at(0) : nullptr);
-            ship_panel->Select(rows.find(it) != rows.end());
+            ship_panel->Select(rows.count(it));
         } catch (const std::exception& e) {
             ErrorLogger() << "FleetDetailPanel::ShipSelectionChanged caught exception: " << e.what();
             continue;
@@ -2834,7 +2834,7 @@ FleetWnd::FleetWnd(
 
     // verify that the selected fleet id is valid.
     if (selected_fleet_id != INVALID_OBJECT_ID &&
-        m_fleet_ids.find(selected_fleet_id) == m_fleet_ids.end())
+        !m_fleet_ids.count(selected_fleet_id))
     {
         ErrorLogger() << "FleetWnd::FleetWnd couldn't find requested selected fleet with id " << selected_fleet_id;
         selected_fleet_id = INVALID_OBJECT_ID;
@@ -2972,9 +2972,9 @@ void FleetWnd::SetStatIconValues() {
             int ship_id = ship->ID();
 
             // skip known destroyed and stale info objects
-            if (this_client_known_destroyed_objects.find(ship_id) != this_client_known_destroyed_objects.end())
+            if (this_client_known_destroyed_objects.count(ship_id))
                 continue;
-            if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
+            if (this_client_stale_object_info.count(ship_id))
                 continue;
 
             if (ship->Design()) {
@@ -3054,9 +3054,9 @@ void FleetWnd::Refresh() {
     GG::Rect fleets_bounding_box;
     for (int fleet_id : initial_fleet_ids) {
         // skip known destroyed and stale info objects
-        if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end())
+        if (this_client_known_destroyed_objects.count(fleet_id))
             continue;
-        if (this_client_stale_object_info.find(fleet_id) != this_client_stale_object_info.end())
+        if (this_client_stale_object_info.count(fleet_id))
             continue;
 
         auto fleet = GetFleet(fleet_id);
@@ -3165,9 +3165,9 @@ void FleetWnd::Refresh() {
             int fleet_id = fleet->ID();
 
             // skip known destroyed and stale info objects
-            if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end() ||
-                this_client_stale_object_info.find(fleet_id) != this_client_stale_object_info.end())
-            { continue; }
+            if (this_client_known_destroyed_objects.count(fleet_id) ||
+                    this_client_stale_object_info.count(fleet_id))
+                continue;
 
             if ( ((m_empire_id == ALL_EMPIRES) && (fleet->Unowned())) || fleet->OwnedBy(m_empire_id) )
                 m_fleet_ids.insert(fleet_id);
@@ -3345,7 +3345,7 @@ void FleetWnd::SelectFleets(const std::set<int>& fleet_ids) {
         }
 
         // if this row's fleet should be selected, so so
-        if (fleet_ids.find(row->FleetID()) != fleet_ids.end()) {
+        if (fleet_ids.count(row->FleetID())) {
             m_fleets_lb->SelectRow(it);
             m_fleets_lb->BringRowIntoView(it);  // may cause earlier rows brought into view to be brought out of view... oh well
         }
@@ -3435,7 +3435,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
         // find selected row and fleet
         bool found_row = false;
         for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
-            if (rows.find(it) != rows.end()) {
+            if (rows.count(it)) {
                 m_fleet_detail_panel->SetFleet(FleetInRow(it));
                 found_row = true;
                 break;
@@ -3451,7 +3451,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         try {
             if (auto* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>(!(**it).empty() ? (**it).at(0) : nullptr))
-                fleet_panel->Select(rows.find(it) != rows.end());
+                fleet_panel->Select(rows.count(it));
         } catch (const std::exception& e) {
             ErrorLogger() << "FleetWnd::FleetSelectionChanged caught exception: " << e.what();
             continue;
@@ -3515,7 +3515,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                 continue;
             if (obj->Owner() == client_empire_id || obj->Unowned())
                 continue;
-            if (peaceful_empires_in_system.find(obj->Owner()) != peaceful_empires_in_system.end())
+            if (peaceful_empires_in_system.count(obj->Owner()))
                 continue;
             if (Empires().GetDiplomaticStatus(client_empire_id, obj->Owner()) != DIPLO_PEACE &&
                 Empires().GetDiplomaticStatus(client_empire_id, obj->Owner()) != DIPLO_ALLIED)
@@ -3723,7 +3723,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         GG::MenuItem give_away_menu(UserString("ORDER_GIVE_FLEET_TO_EMPIRE"), false, false);
         for (auto& entry : Empires()) {
             int recipient_empire_id = entry.first;
-            if (peaceful_empires_in_system.find(recipient_empire_id) == peaceful_empires_in_system.end())
+            if (!peaceful_empires_in_system.count(recipient_empire_id))
                 continue;
             auto gift_action = [recipient_empire_id, fleet, client_empire_id]() {
                 HumanClientApp::GetApp()->Orders().IssueOrder(

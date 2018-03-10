@@ -81,9 +81,9 @@ namespace GG {
                 // Filter out unregistered tags.
                 std::vector<RichTextTag> relevant_tags;
                 for (const RichTextTag& tag : tags) {
-                    if (m_known_tags.find(tag.tag) != m_known_tags.end()) {
+                    if (m_known_tags.count(tag.tag))
                         AddWithPlaintextSquashing(relevant_tags, tag);
-                    } else {
+                    else {
                         RichTextTag wrapped = WrapInPlaintext(tag);
                         AddWithPlaintextSquashing(relevant_tags, wrapped);
                     }

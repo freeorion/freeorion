@@ -26,8 +26,8 @@ namespace FreeOrionPython {
             return static_cast<unsigned int>(self.size());  // ignore warning http://lists.boost.org/Archives/boost/2007/04/120377.php
         }
         static bool empty(const Set& self) { return self.empty(); }
-        static bool contains(const Set& self, const ElementType& item) { return self.find(item) != self.end(); }
-        static unsigned int count(const Set& self, const ElementType& item) { return self.find(item) == self.end() ? 0u : 1u; }
+        static bool contains(const Set& self, const ElementType& item) { return self.count(item); }
+        static unsigned int count(const Set& self, const ElementType& item) { return self.count(item); }
         static SetIterator begin(const Set& self) { return self.begin(); }
         static SetIterator end(const Set& self) { return self.end(); }
 

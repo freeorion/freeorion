@@ -99,14 +99,14 @@ namespace {
             return false;
 
         // check that category is visible
-        if (categories_shown.find(tech->Category()) == categories_shown.end())
+        if (!categories_shown.count(tech->Category()))
             return false;
 
         // check tech status
         const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
         if (!empire)
             return true;    // if no empire, techs have no status, so just return true
-        if (statuses_shown.find(empire->GetTechStatus(tech_name)) == statuses_shown.end())
+        if (!statuses_shown.count(empire->GetTechStatus(tech_name)))
             return false;
 
         // all tests pass, so tech is visible
@@ -1245,7 +1245,7 @@ void TechTreeWnd::LayoutPanel::SetScale(double scale) {
 }
 
 void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category) {
-    if (m_categories_shown.find(category) == m_categories_shown.end()) {
+    if (!m_categories_shown.count(category)) {
         m_categories_shown.insert(category);
         Layout(true);
     }
@@ -1276,7 +1276,7 @@ void TechTreeWnd::LayoutPanel::HideAllCategories() {
 }
 
 void TechTreeWnd::LayoutPanel::ShowStatus(TechStatus status) {
-    if (m_tech_statuses_shown.find(status) == m_tech_statuses_shown.end()) {
+    if (!m_tech_statuses_shown.count(status)) {
         m_tech_statuses_shown.insert(status);
         Layout(true);
     }
@@ -1434,7 +1434,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     if (keep_position) {
         m_selected_tech_name = selected_tech;
         // select clicked on tech
-        if (m_techs.find(m_selected_tech_name) != m_techs.end())
+        if (m_techs.count(m_selected_tech_name))
             m_techs[m_selected_tech_name]->Select(true);
         double hscroll_page_size_ratio = m_hscroll->PageSize() / initial_hscroll_page_size;
         double vscroll_page_size_ratio = m_vscroll->PageSize() / initial_vscroll_page_size;
@@ -1467,10 +1467,10 @@ void TechTreeWnd::LayoutPanel::ScrolledSlot(int, int, int, int) {
 void TechTreeWnd::LayoutPanel::SelectTech(const std::string& tech_name)
 {
     // deselect previously-selected tech panel
-    if (m_techs.find(m_selected_tech_name) != m_techs.end())
+    if (m_techs.count(m_selected_tech_name))
         m_techs[m_selected_tech_name]->Select(false);
     // select clicked on tech
-    if (m_techs.find(tech_name) != m_techs.end())
+    if (m_techs.count(tech_name))
         m_techs[tech_name]->Select(true);
     m_selected_tech_name = tech_name;
     TechSelectedSignal(tech_name, GG::Flags<GG::ModKey>());
@@ -1722,7 +1722,7 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
 
     if (empire) {
         const ResearchQueue& rq = empire->GetResearchQueue();
-        m_enqueued = rq.find(m_tech) != rq.end();
+        m_enqueued = rq.InQueue(m_tech);
     } else {
         m_enqueued = false;
     }
@@ -1922,7 +1922,7 @@ void TechTreeWnd::TechListBox::Populate(bool update /* = true*/) {
 }
 
 void TechTreeWnd::TechListBox::ShowCategory(const std::string& category) {
-    if (m_categories_shown.find(category) == m_categories_shown.end()) {
+    if (!m_categories_shown.count(category)) {
         m_categories_shown.insert(category);
         Populate();
     }
@@ -1953,7 +1953,7 @@ void TechTreeWnd::TechListBox::HideAllCategories() {
 }
 
 void TechTreeWnd::TechListBox::ShowStatus(TechStatus status) {
-    if (m_tech_statuses_shown.find(status) == m_tech_statuses_shown.end()) {
+    if (!m_tech_statuses_shown.count(status)) {
         m_tech_statuses_shown.insert(status);
         Populate();
     }
@@ -1987,7 +1987,7 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     const ResearchQueue& rq = empire->GetResearchQueue();
-    if (rq.find(tech_name) == rq.end()) {
+    if (!rq.InQueue(tech_name)) {
         auto tech_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>()); };
         auto tech_ctrl_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::MOD_KEY_CTRL); };
 

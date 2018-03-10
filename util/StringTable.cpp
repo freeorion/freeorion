@@ -28,7 +28,7 @@ StringTable_::~StringTable_()
 {}
 
 bool StringTable_::StringExists(const std::string& index) const
-{ return m_strings.find(index) != m_strings.end(); }
+{ return m_strings.count(index); }
 
 bool StringTable_::Empty() const
 { return m_strings.empty(); }
@@ -111,7 +111,7 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
                                match_it->regex_id() == MULTI_LINE_VALUE.regex_id())
                     {
                         assert(key != "");
-                        if (m_strings.find(key) == m_strings.end()) {
+                        if (!m_strings.count(key)) {
                             m_strings[key] = match_it->str();
                             boost::algorithm::replace_all(m_strings[key], "\\n", "\n");
                         } else {
@@ -172,7 +172,7 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
                     } else
                         ++ref_check_it;
                 }
-                if (cyclic_reference_check.find(match[1]) == cyclic_reference_check.end()) {
+                if (!cyclic_reference_check.count(match[1])) {
                     //DebugLogger() << "Pushing to cyclic ref check: " << match[1];
                     cyclic_reference_check[match[1]] = position + match.length();
                     auto map_lookup_it = m_strings.find(match[1]);

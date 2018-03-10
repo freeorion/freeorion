@@ -104,7 +104,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
         return;
 
     const auto& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
-    if (known_destroyed_object_ids.find(system_id) != known_destroyed_object_ids.end())
+    if (known_destroyed_object_ids.count(system_id))
         return;
 
     const SpeciesManager& species_manager = GetSpeciesManager();
@@ -123,7 +123,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
     for (auto& planet : system_planets) {
         int planet_id = planet->ID();
 
-        if (known_destroyed_object_ids.find(planet_id) != known_destroyed_object_ids.end())
+        if (known_destroyed_object_ids.count(planet_id))
             continue;
 
         // is planet a capital?
@@ -141,7 +141,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
             for (const auto& entry : species_manager) {
                 if (const auto& species = entry.second) {
                     const auto& homeworld_ids = species->Homeworlds();
-                    if (homeworld_ids.find(planet_id) != homeworld_ids.end()) {
+                    if (homeworld_ids.count(planet_id)) {
                         homeworld = true;
                         break;
                     }
@@ -154,7 +154,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
             for (auto& building : Objects().FindObjects<const Building>(planet->BuildingIDs())) {
                 int building_id = building->ID();
 
-                if (known_destroyed_object_ids.find(building_id) != known_destroyed_object_ids.end())
+                if (known_destroyed_object_ids.count(building_id))
                     continue;
 
                 if (building->HasTag(TAG_SHIPYARD)) {

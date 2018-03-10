@@ -57,7 +57,7 @@ namespace parse {
                 //DebugLogger() << "text:\n" << macro_text;
 
                 // store macro
-                if (macros.find(macro_key) == macros.end()) {
+                if (!macros.count(macro_key)) {
                     macros[macro_key] = macro_text;
                 } else {
                     ErrorLogger() << "Duplicate macro key foud: " << macro_key << ".  Ignoring duplicate.";
@@ -100,7 +100,7 @@ namespace parse {
         std::set<std::string> macros_directly_referenced_in_input_text = macros_directly_referenced_in_text(text);
         if (macros_directly_referenced_in_input_text.empty())
             return false;
-        if (macros_directly_referenced_in_input_text.find(macro_to_find) != macros_directly_referenced_in_input_text.end())
+        if (macros_directly_referenced_in_input_text.count(macro_to_find))
             return true;
         // check if macros referenced in text reference macro_to_find
         for (const std::string& direct_referenced_macro_key : macros_directly_referenced_in_input_text) {

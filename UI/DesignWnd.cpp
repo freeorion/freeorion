@@ -1406,7 +1406,7 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
 
         // check whether this part should be shown in list
         ShipPartClass part_class = part->Class();
-        if (m_part_classes_shown.find(part_class) == m_part_classes_shown.end())
+        if (!m_part_classes_shown.count(part_class))
             continue;   // part of this class is not requested to be shown
 
         // Check if part satisfies availability and obsolecense
@@ -1599,7 +1599,7 @@ void PartsListBox::Populate() {
     for (auto& part_group : part_groups) {
         std::multimap<double, const PartType*> sorted_group;
         for (const PartType* part : part_group.second) {
-            if (already_added.find(part) != already_added.end())
+            if (already_added.count(part))
                 continue;
             already_added.insert(part);
             sorted_group.insert({GetMainStat(part), part});
@@ -1651,7 +1651,7 @@ void PartsListBox::Populate() {
 }
 
 void PartsListBox::ShowClass(ShipPartClass part_class, bool refresh_list) {
-    if (m_part_classes_shown.find(part_class) == m_part_classes_shown.end()) {
+    if (!m_part_classes_shown.count(part_class)) {
         m_part_classes_shown.insert(part_class);
         if (refresh_list)
             Populate();
@@ -2016,7 +2016,7 @@ void DesignWnd::PartPalette::HideAllClasses(bool refresh_list) {
 void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_list) {
     if (part_class >= ShipPartClass(0) && part_class < NUM_SHIP_PART_CLASSES) {
         const auto& classes_shown = m_parts_list->GetClassesShown();
-        if (classes_shown.find(part_class) == classes_shown.end())
+        if (!classes_shown.count(part_class))
             ShowClass(part_class, refresh_list);
         else
             HideClass(part_class, refresh_list);
@@ -4320,8 +4320,7 @@ void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
 
 void DesignWnd::MainPanel::HighlightSlotType(std::vector<ShipSlotType>& slot_types) {
     for (auto& control : m_slots) {
-        ShipSlotType slot_type = control->SlotType();
-        if (std::find(slot_types.begin(), slot_types.end(), slot_type) != slot_types.end())
+        if (std::count(slot_types.begin(), slot_types.end(), control->SlotType()))
             control->Highlight(true);
         else
             control->Highlight(false);
@@ -4479,7 +4478,7 @@ void DesignWnd::MainPanel::DesignChanged() {
         for (const std::string& part_name : Parts()) {
             if (part_name.empty())
                 continue;
-            if (hull_exclusions.find(part_name) != hull_exclusions.end()) {
+            if (hull_exclusions.count(part_name)) {
                 m_disabled_by_part_conflict = true;
                 problematic_components.first = m_hull->Name();
                 problematic_components.second = part_name;
@@ -4496,7 +4495,7 @@ void DesignWnd::MainPanel::DesignChanged() {
             if (!part_type)
                 continue;
             for (const std::string& excluded_part : part_type->Exclusions()) {
-                if (already_seen_component_names.find(excluded_part) != already_seen_component_names.end()) {
+                if (already_seen_component_names.count(excluded_part)) {
                     m_disabled_by_part_conflict = true;
                     problematic_components.first = part_name;
                     problematic_components.second = excluded_part;

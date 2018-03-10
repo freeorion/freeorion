@@ -1197,7 +1197,7 @@ void FilterDialog::UpdateStateButtonsFromVisFilters() {
         for (auto& button : entry.second) {
             if (!button.second)
                 continue;
-            button.second->SetCheck(shown_vis.find(button.first) != shown_vis.end());
+            button.second->SetCheck(shown_vis.count(button.first));
         }
     }
 }
@@ -1237,7 +1237,7 @@ void FilterDialog::UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis) {
     bool all_on = true;
     for (const auto& entry : m_filter_buttons) {
         auto& type_vis = m_vis_filters[entry.first];
-        if (type_vis.find(vis) == type_vis.end()) {
+        if (!type_vis.count(vis)) {
             all_on = false;
             break;
         }
@@ -1925,10 +1925,8 @@ public:
         Refresh();
     }
 
-    bool            ObjectCollapsed(int object_id) const {
-        if (object_id == INVALID_OBJECT_ID)
-            return false;
-        return m_collapsed_objects.find(object_id) != m_collapsed_objects.end();
+    bool ObjectCollapsed(int object_id) const {
+        return object_id != INVALID_OBJECT_ID && m_collapsed_objects.count(object_id);
     }
 
     bool            AnythingCollapsed() const
@@ -1966,13 +1964,13 @@ public:
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         UniverseObjectType type = obj->ObjectType();
 
-        if (GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).find(object_id) != GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).end())
-            return m_visibilities[type].find(SHOW_DESTROYED) != m_visibilities[type].end();
+        if (GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).count(object_id))
+            return m_visibilities[type].count(SHOW_DESTROYED);
 
         if (assume_visible_without_checking || GetUniverse().GetObjectVisibilityByEmpire(object_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY)
-            return m_visibilities[type].find(SHOW_VISIBLE) != m_visibilities[type].end();
+            return m_visibilities[type].count(SHOW_VISIBLE);
 
-        return m_visibilities[type].find(SHOW_PREVIOUSLY_VISIBLE) != m_visibilities[type].end();
+        return m_visibilities[type].count(SHOW_PREVIOUSLY_VISIBLE);
     }
 
     void            Refresh() {
@@ -2408,8 +2406,6 @@ void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows
     // mark as selected all ObjectPanel that are in \a rows and mark as not
     // selected all ObjectPanel that aren't in \a rows
     for (auto it = m_list_box->begin(); it != m_list_box->end(); ++it) {
-        bool select_this_row = (rows.find(it) != rows.end());
-
         auto& row = *it;
         if (!row) {
             ErrorLogger() << "ObjectListWnd::ObjectSelectionChanged couldn't get row";
@@ -2429,7 +2425,7 @@ void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows
             ErrorLogger() << "ObjectListWnd::ObjectSelectionChanged couldn't get ObjectPanel from control";
             continue;
         }
-        data_panel->Select(select_this_row);
+        data_panel->Select(rows.count(it));
     }
 
     SelectedObjectsChangedSignal();
@@ -2464,7 +2460,7 @@ void ObjectListWnd::SetSelectedObjects(std::set<int> sel_ids) {
         if (row) {
             int selected_object_id = row->ObjectID();
             if (selected_object_id != INVALID_OBJECT_ID) {
-                if (sel_ids.find(selected_object_id) != sel_ids.end()) {
+                if (sel_ids.count(selected_object_id)) {
                     m_list_box->SelectRow(it);
                 }
             }
