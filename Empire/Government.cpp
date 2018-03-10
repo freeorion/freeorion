@@ -138,6 +138,24 @@ std::vector<std::string> PolicyManager::PolicyNames() const {
     return retval;
 }
 
+std::set<std::string> PolicyManager::PolicyCategories() const {
+    CheckPendingPolicies();
+    std::set<std::string> retval;
+    for (const auto& policy : m_policies)
+        retval.insert(policy.second->Category());
+    return retval;
+}
+
+PolicyManager::iterator PolicyManager::begin() const {
+    CheckPendingPolicies();
+    return m_policies.begin();
+}
+
+PolicyManager::iterator PolicyManager::end() const {
+    CheckPendingPolicies();
+    return m_policies.end();
+}
+
 PolicyManager::PolicyManager()
 {}
 

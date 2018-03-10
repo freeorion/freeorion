@@ -72,6 +72,7 @@ private:
 class FO_COMMON_API PolicyManager {
 public:
     using PoliciesTypeMap = std::map<std::string, std::unique_ptr<Policy>>;
+    using iterator = PoliciesTypeMap::const_iterator;
 
     /** \name Structors */ //@{
     PolicyManager();
@@ -80,9 +81,16 @@ public:
 
     /** \name Accessors */ //@{
     /** returns the policy with the name \a name; you should use the free function GetPolicy() instead */
-    const Policy*                   GetPolicy(const std::string& name) const;
-    std::vector<std::string>        PolicyNames() const;
-    unsigned int                    GetCheckSum() const;
+    const Policy*               GetPolicy(const std::string& name) const;
+    std::vector<std::string>    PolicyNames() const;
+    std::set<std::string>       PolicyCategories() const;
+    unsigned int                GetCheckSum() const;
+
+    /** iterator to the first policy */
+    iterator begin() const;
+
+    /** iterator to the last + 1th policy */
+    iterator end() const;
     //@}
 
     /** Sets types to the value of \p future. */
