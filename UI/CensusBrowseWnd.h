@@ -29,8 +29,10 @@ private:
     std::shared_ptr<GG::Label>      m_title_text;
     std::shared_ptr<GG::Label>      m_species_text;
     std::shared_ptr<GG::ListBox>    m_list;
-    std::shared_ptr<GG::Label>      m_tags_text;
-    std::shared_ptr<GG::ListBox>    m_tags_list;
+	std::shared_ptr<GG::Label>      m_tags_text;
+	std::shared_ptr<GG::ListBox>    m_tags_list;
+	std::shared_ptr<GG::Label>      m_total_population;
+	std::shared_ptr<GG::Label>      m_total_worlds;
     GG::Pt          m_offset;
 	std::map<std::string, float>    m_population_counts;
 	std::map<std::string, int>      m_population_worlds;

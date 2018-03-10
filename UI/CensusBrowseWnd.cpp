@@ -143,6 +143,8 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     m_list(GG::Wnd::Create<CUIListBox>()),
     m_tags_text(GG::Wnd::Create<CUILabel>(UserString("CENSUS_TAG_HEADER"), GG::FORMAT_BOTTOM)),
     m_tags_list(GG::Wnd::Create<CUIListBox>()),
+	m_total_population(GG::Wnd::Create<CUILabel>(UserString("CENSUS_TOTAL_POPULATION"), GG::FORMAT_BOTTOM)),
+	m_total_worlds(GG::Wnd::Create<CUILabel>(UserString("CENSUS_TOTAL_WORLDS"), GG::FORMAT_BOTTOM)),
     m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2),
     m_population_counts(population_counts),
 	m_population_worlds(population_worlds),
@@ -183,8 +185,13 @@ void CensusBrowseWnd::CompleteConstruction() {
     { counts_species.insert({entry.second, entry.first}); }
     m_population_counts.clear();
 
+	int totalWorlds = 0;
+	float totalPopulation = 0;
+	
     // add species rows
     for (auto it = counts_species.rbegin(); it != counts_species.rend(); ++it) {
+		totalPopulation += it->first;
+		totalWorlds += m_population_worlds[it->second];
         auto row = GG::Wnd::Create<GG::ListBox::Row>(m_list->Width(), ROW_HEIGHT, "Census Species Row");
         row->push_back(GG::Wnd::Create<CensusRowPanel>(m_list->Width(), ROW_HEIGHT, it->second, it->first, m_population_worlds[it->second], true));
         m_list->Insert(row);
@@ -207,7 +214,7 @@ void CensusBrowseWnd::CompleteConstruction() {
     m_tags_list->SetNumCols(1);
     m_tags_list->SetColWidth(0, GG::X0);
     m_tags_list->LockColWidths();
-
+	
     AttachChild(m_title_text);
     AttachChild(m_species_text);
     AttachChild(m_list);
@@ -229,6 +236,23 @@ void CensusBrowseWnd::CompleteConstruction() {
     m_tag_counts.clear();
 
     m_tags_list->Resize(GG::Pt(BrowseTextWidth(), top2 -top -ROW_HEIGHT - HALF_HEIGHT + (EDGE_PAD*3)));
+	
+	// only show total population and number of worlds if there is more than just one species
+	if (m_population_worlds.size() > 1) {
+		top2 += 0.5 * ROW_HEIGHT;
+		m_total_population->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
+		m_total_population->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
+		m_total_population->SetText(boost::io::str(FlexibleFormat(UserString("CENSUS_TOTAL_POPULATION")) % DoubleToString(totalPopulation, 2, false)));
+		top2 += ROW_HEIGHT;
+
+		m_total_worlds->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
+		m_total_worlds->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
+		m_total_worlds->SetText(boost::io::str(FlexibleFormat(UserString("CENSUS_TOTAL_WORLDS")) % totalWorlds));
+		top2 += ROW_HEIGHT;
+
+		AttachChild(m_total_population);
+		AttachChild(m_total_worlds);
+	}
 
     Resize(GG::Pt(BrowseTextWidth(), top2  + (EDGE_PAD*3)));
 
