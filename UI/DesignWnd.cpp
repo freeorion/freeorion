@@ -552,7 +552,7 @@ namespace {
 
             const auto save_path = CreateSaveFileNameForDesign(design);
 
-            m_saved_designs.insert({design.UUID(), std::make_pair(std::move(design_copy), save_path)});
+            m_saved_designs.insert(std::make_pair(design.UUID(), std::make_pair(std::move(design_copy), save_path)));
             SaveDesign(design.UUID());
         }
 
