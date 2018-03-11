@@ -77,7 +77,7 @@ namespace {
                          const std::string& name, const std::string& graphic, const GG::Clr& color)
     {
         auto category_ptr = boost::make_unique<TechCategory>(name, graphic, color);
-        categories.insert({category_ptr->name, std::move(category_ptr)});
+        categories.insert(std::make_pair(category_ptr->name, std::move(category_ptr)));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_category_, insert_category, 4)
