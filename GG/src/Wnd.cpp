@@ -758,9 +758,9 @@ void Wnd::GridLayout()
     {
         Pt ul = it->ul;
         for (X x = ul.x - 1; x >= 0; --x) {
-            if (grid_layout.get<LayoutRight>().count(x + 1, IsRight())) {
+            if (grid_layout.get<LayoutRight>().find(x + 1, IsRight()) != grid_layout.get<LayoutRight>().end()) {
                 break;
-            } else if (grid_layout.get<LayoutLeft>().count(x, IsLeft())) {
+            } else if (grid_layout.get<LayoutLeft>().find(x, IsLeft()) != grid_layout.get<LayoutLeft>().end()) {
                 GridLayoutWnd grid_wnd = *it;
                 grid_wnd.ul.x = x;
                 grid_layout.get<LayoutLeft>().replace(it, grid_wnd);
@@ -773,9 +773,9 @@ void Wnd::GridLayout()
     for (RightIter it = grid_layout.get<LayoutRight>().begin(); it != grid_layout.get<LayoutRight>().end(); ++it) {
         Pt lr = it->lr;
         for (X x = lr.x + 1; x < client_sz.x; ++x) {
-            if (grid_layout.get<LayoutLeft>().count(x - 1, IsLeft())) {
+            if (grid_layout.get<LayoutLeft>().find(x - 1, IsLeft()) != grid_layout.get<LayoutLeft>().end()) {
                 break;
-            } else if (grid_layout.get<LayoutRight>().count(x, IsRight())) {
+            } else if (grid_layout.get<LayoutRight>().find(x, IsRight()) != grid_layout.get<LayoutRight>().end()) {
                 GridLayoutWnd grid_wnd = *it;
                 grid_wnd.lr.x = x;
                 grid_layout.get<LayoutRight>().replace(it, grid_wnd);
@@ -788,9 +788,9 @@ void Wnd::GridLayout()
     for (TopIter it = grid_layout.get<LayoutTop>().begin(); it != grid_layout.get<LayoutTop>().end(); ++it) {
         Pt ul = it->ul;
         for (Y y = ul.y - 1; y >= 0; --y) {
-            if (grid_layout.get<LayoutBottom>().count(y + 1, IsBottom())) {
+            if (grid_layout.get<LayoutBottom>().find(y + 1, IsBottom()) != grid_layout.get<LayoutBottom>().end()) {
                 break;
-            } else if (grid_layout.get<LayoutTop>().count(y, IsTop())) {
+            } else if (grid_layout.get<LayoutTop>().find(y, IsTop()) != grid_layout.get<LayoutTop>().end()) {
                 GridLayoutWnd grid_wnd = *it;
                 grid_wnd.ul.y = y;
                 grid_layout.get<LayoutTop>().replace(it, grid_wnd);
@@ -803,9 +803,9 @@ void Wnd::GridLayout()
     for (BottomIter it = grid_layout.get<LayoutBottom>().begin(); it != grid_layout.get<LayoutBottom>().end(); ++it) {
         Pt lr = it->lr;
         for (Y y = lr.y + 1; y < client_sz.y; ++y) {
-            if (grid_layout.get<LayoutTop>().count(y - 1, IsTop())) {
+            if (grid_layout.get<LayoutTop>().find(y - 1, IsTop()) != grid_layout.get<LayoutTop>().end()) {
                 break;
-            } else if (grid_layout.get<LayoutBottom>().count(y, IsBottom())) {
+            } else if (grid_layout.get<LayoutBottom>().find(y, IsBottom()) != grid_layout.get<LayoutBottom>().end()) {
                 GridLayoutWnd grid_wnd = *it;
                 grid_wnd.lr.y = y;
                 grid_layout.get<LayoutBottom>().replace(it, grid_wnd);

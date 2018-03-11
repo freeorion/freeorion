@@ -182,7 +182,7 @@ const std::set<int>& Fleet::ContainedObjectIDs() const
 { return m_ships; }
 
 bool Fleet::Contains(int object_id) const
-{ return object_id != INVALID_OBJECT_ID && m_ships.count(object_id); }
+{ return object_id != INVALID_OBJECT_ID && m_ships.find(object_id) != m_ships.end(); }
 
 bool Fleet::ContainedBy(int object_id) const
 { return object_id != INVALID_OBJECT_ID && this->SystemID() == object_id; }
@@ -238,7 +238,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
     if (fuel < 1.0f &&
         this->SystemID() != INVALID_OBJECT_ID &&
-        !fleet_supplied_systems.count(this->SystemID()))
+        fleet_supplied_systems.find(this->SystemID()) == fleet_supplied_systems.end())
     {
         retval.emplace_back(this->X(), this->Y(), true, ETA_OUT_OF_RANGE,
                             this->SystemID(),
@@ -280,8 +280,8 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     bool is_post_blockade = false;
     if (cur_system) {
         //DebugLogger() << "Fleet::MovePath starting in system "<< SystemID();
-        if (flag_blockades && next_system->ID() != m_arrival_starlane &&
-            !unobstructed_systems.count(cur_system->ID()))
+        if (flag_blockades && next_system->ID() != m_arrival_starlane && 
+            (unobstructed_systems.find(cur_system->ID()) == unobstructed_systems.end())) 
         {
             //DebugLogger() << "Fleet::MovePath checking blockade from "<< cur_system->ID() << " to "<< next_system->ID();
             if (BlockadedAtSystem(cur_system->ID(), next_system->ID())){
@@ -354,7 +354,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         // check if fuel limits movement or current system refuels passing fleet
         if (cur_system) {
             // check if current system has fuel supply available
-            if (fleet_supplied_systems.count(cur_system->ID())) {
+            if (fleet_supplied_systems.find(cur_system->ID()) != fleet_supplied_systems.end()) {
                 // current system has fuel supply.  don't restrict movement
                 // if had just stopped here, then replenish fleet's supply
                 if (stopped_at_system)
@@ -474,7 +474,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         // if new position is an obstructed system, must end turn here
         // on client side, if have stale info on cur_system it may appear blockaded even if not actually obstructed,
         // and so will force a stop in that situation
-        if (cur_system && !unobstructed_systems.count(cur_system->ID())) {
+        if (cur_system && (unobstructed_systems.find(cur_system->ID()) == unobstructed_systems.end())) {
             turn_dist_remaining = 0.0;
             end_turn_at_cur_position = true;
         }
@@ -808,7 +808,7 @@ void Fleet::MovementPhase() {
     // is the fleet stuck in a system for a whole turn?
     if (current_system) {
         ///update m_arrival_starlane if no blockade, if needed
-        if (supply_unobstructed_systems.count(SystemID())) {
+        if (supply_unobstructed_systems.find(SystemID()) != supply_unobstructed_systems.end()) {
             m_arrival_starlane = SystemID();//allows departure via any starlane
         }
 
@@ -941,8 +941,9 @@ void Fleet::MovementPhase() {
 
                 current_system = system;
 
-                if (supply_unobstructed_systems.count(SystemID()))
+                if (supply_unobstructed_systems.find(SystemID()) != supply_unobstructed_systems.end()) {
                     m_arrival_starlane = SystemID();//allows departure via any starlane
+                }
 
                 // Add current system to the start of any existing route for next turn
                 if (!m_travel_route.empty() && m_travel_route.front() != SystemID())
@@ -1179,7 +1180,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     auto empire = GetEmpire(this->Owner());
     if (empire) {
         auto unobstructed_systems = empire->SupplyUnobstructedSystems();
-        if (unobstructed_systems.count(start_system_id))
+        if (unobstructed_systems.find(start_system_id) != unobstructed_systems.end())
             return false;
         if (empire->PreservedLaneTravel(start_system_id, dest_system_id)) {
             return false;

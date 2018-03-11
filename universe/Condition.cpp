@@ -1522,7 +1522,7 @@ namespace {
                 for (auto species_it = manager.begin(); species_it != manager.end(); ++species_it) {
                     if (const auto& species = species_it->second) {
                         const auto& homeworld_ids = species->Homeworlds();
-                        if (homeworld_ids.count(planet_id))
+                        if (homeworld_ids.find(planet_id) != homeworld_ids.end())
                             return true;
                     }
                 }
@@ -1532,7 +1532,7 @@ namespace {
                 for (const std::string& name : m_names) {
                     if (auto species = GetSpecies(name)) {
                         const auto& homeworld_ids = species->Homeworlds();
-                        if (homeworld_ids.count(planet_id))
+                        if (homeworld_ids.find(planet_id) != homeworld_ids.end())
                             return true;
                     }
                 }
@@ -1655,7 +1655,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
         for (const auto& entry : manager) {
             if (const auto& species = entry.second) {
                 const auto& homeworld_ids = species->Homeworlds();
-                if (homeworld_ids.count(planet_id))
+                if (homeworld_ids.find(planet_id) != homeworld_ids.end())   // is this planet the homeworld for this species?
                     return true;
             }
         }
@@ -1666,7 +1666,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
             const auto& species_name = name->Eval(local_context);
             if (const auto species = manager.GetSpecies(species_name)) {
                 const auto& homeworld_ids = species->Homeworlds();
-                if (homeworld_ids.count(planet_id))
+                if (homeworld_ids.find(planet_id) != homeworld_ids.end())   // is this planet the homeworld for this species?
                     return true;
             }
         }
@@ -2055,7 +2055,7 @@ namespace {
                 return true;
 
             // is it one of the specified building types?
-            return std::count(m_names.begin(), m_names.end(), building->BuildingTypeName());
+            return std::find(m_names.begin(), m_names.end(), building->BuildingTypeName()) != m_names.end();
         }
 
         const std::vector<std::string>& m_names;
@@ -3502,7 +3502,7 @@ namespace {
             }
             if (planet) {
                 // is it one of the specified building types?
-                return std::count(m_types.begin(), m_types.end(), planet->Type());
+                return std::find(m_types.begin(), m_types.end(), planet->Type()) != m_types.end();
             }
 
             return false;
@@ -4106,20 +4106,20 @@ namespace {
             if (auto pop = std::dynamic_pointer_cast<const ::PopCenter>(candidate)) {
                 const std::string& species_name = pop->SpeciesName();
                 // if the popcenter has a species and that species is one of those specified...
-                return !species_name.empty() && (m_names.empty() || std::count(m_names.begin(), m_names.end(), species_name));
+                return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
             }
             // is it a ship?
             if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate)) {
                 // if the ship has a species and that species is one of those specified...
                 const std::string& species_name = ship->SpeciesName();
-                return !species_name.empty() && (m_names.empty() || std::count(m_names.begin(), m_names.end(), species_name));
+                return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
             }
             // is it a building on a planet?
             if (auto building = std::dynamic_pointer_cast<const ::Building>(candidate)) {
                 auto planet = GetPlanet(building->PlanetID());
                 const std::string& species_name = planet->SpeciesName();
                 // if the planet (which IS a popcenter) has a species and that species is one of those specified...
-                return !species_name.empty() && (m_names.empty() || std::count(m_names.begin(), m_names.end(), species_name));
+                return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
             }
 
             return false;
@@ -4661,7 +4661,7 @@ namespace {
             }
             if (res_center) {
                 return !res_center->Focus().empty() &&
-                    std::count(m_names.begin(), m_names.end(), res_center->Focus());
+                    (std::find(m_names.begin(), m_names.end(), res_center->Focus()) != m_names.end());
             }
 
             return false;
@@ -4843,7 +4843,7 @@ namespace {
 
             std::shared_ptr<const System> system = GetSystem(candidate->SystemID());
             if (system || (system = std::dynamic_pointer_cast<const System>(candidate)))
-                return !m_types.empty() && std::count(m_types.begin(), m_types.end(), system->GetStarType());
+                return !m_types.empty() && (std::find(m_types.begin(), m_types.end(), system->GetStarType()) != m_types.end());
 
             return false;
         }
@@ -8213,7 +8213,7 @@ namespace {
             auto it = empire_supplyable_systems.find(m_empire_id);
             if (it == empire_supplyable_systems.end())
                 return false;
-            return it->second.count(candidate->SystemID());
+            return it->second.find(candidate->SystemID()) != it->second.end();
         }
 
         int m_empire_id;
@@ -8340,9 +8340,9 @@ namespace {
             // is candidate object connected to a subcondition matching object by resource supply?
             for (auto& from_object : m_from_objects) {
                 for (const auto& group : groups) {
-                    if (group.count(from_object->SystemID())) {
+                    if (group.find(from_object->SystemID()) != group.end()) {
                         // found resource sharing group containing test object.  Does it also contain candidate?
-                        if (group.count(candidate->SystemID()))
+                        if (group.find(candidate->SystemID()) != group.end())
                             return true;    // test object and candidate object are in same resourse sharing group
                         else
                             // test object is not in resource sharing group with candidate

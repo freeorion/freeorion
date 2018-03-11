@@ -670,7 +670,7 @@ const ListBox::SelectionSet& ListBox::Selections() const
 { return m_selections; }
 
 bool ListBox::Selected(iterator it) const
-{ return it != m_rows.end() && m_selections.count(it); }
+{ return it != m_rows.end() && m_selections.find(it) != m_selections.end(); }
 
 Clr ListBox::InteriorColor() const
 { return m_int_color; }
@@ -776,10 +776,13 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
 
     iterator wnd_it = std::find_if(m_rows.begin(), m_rows.end(),
                                    [&wnd](const std::shared_ptr<Row>& x){ return x.get() == wnd; });
+    //assert(wnd_it != m_rows.end());   // replaced with following test and return to avoid crashes
     if (wnd_it == m_rows.end())
         return;
 
-    if (!m_selections.count(wnd_it))
+    SelectionSet::iterator wnd_sel_it = m_selections.find(wnd_it);
+    //assert(wnd_sel_it != m_selections.end()); // replaced with following test and return to avoid crashes
+    if (wnd_sel_it == m_selections.end())
         return;
 
     // Preserve the displayed row order in the dragged selections by finding the y offset of wnd
@@ -1118,7 +1121,7 @@ void ListBox::SelectRow(iterator it, bool signal/* = false*/)
         return;
     if (it == m_rows.end())
         return;
-    if (m_selections.count(it))
+    if (m_selections.find(it) != m_selections.end())
         return;
 
     SelectionSet previous_selections = m_selections;
@@ -1138,7 +1141,7 @@ void ListBox::DeselectRow(iterator it, bool signal/* = false*/)
 
     if (it == m_rows.end())  // always check that an iterator is valid before attempting a search for it
         return;
-    if (m_selections.count(it))
+    if (m_selections.find(it) != m_selections.end())
         m_selections.erase(it);
 
     if (signal && previous_selections != m_selections)
@@ -1534,7 +1537,7 @@ void ListBox::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
         switch (key) {
         case GGK_SPACE: // space bar (selects item under caret like a mouse click)
             if (m_caret != m_rows.end()) {
-                m_old_sel_row_selected = m_selections.count(m_caret);
+                m_old_sel_row_selected = m_selections.find(m_caret) != m_selections.end();
                 ClickAtRow(m_caret, mod_keys);
             }
             break;
@@ -1741,7 +1744,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     case WndEvent::LButtonDown: {
         m_old_sel_row = RowUnderPt(pt);
         if (m_old_sel_row != m_rows.end()) {
-            m_old_sel_row_selected = m_selections.count(m_old_sel_row);
+            m_old_sel_row_selected = m_selections.find(m_old_sel_row) != m_selections.end();
             if (!(m_style & LIST_NOSEL) && !m_old_sel_row_selected)
                 ClickAtRow(m_old_sel_row, mod_keys);
         }
@@ -2399,7 +2402,7 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
                 iterator low  = RowPtrIteratorLess()(m_caret, it) ? m_caret : it;
                 iterator high = RowPtrIteratorLess()(m_caret, it) ? it : m_caret;
 
-                bool erase = !m_selections.count(m_caret);
+                bool erase = m_selections.find(m_caret) == m_selections.end();
                 if (high != m_rows.end())
                     ++high;
                 for (iterator it2 = low; it2 != high; ++it2) {
@@ -2416,7 +2419,7 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
                 m_caret = it;
             }
         } else if (mod_keys & MOD_KEY_SHIFT) { // shift key depressed
-            bool erase = m_caret != m_rows.end() && !m_selections.count(m_caret);
+            bool erase = m_caret != m_rows.end() && m_selections.find(m_caret) == m_selections.end();
             if (!(m_style & LIST_QUICKSEL))
                 m_selections.clear();
             if (m_caret == m_rows.end()) {

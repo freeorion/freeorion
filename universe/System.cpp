@@ -95,7 +95,7 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
         m_orbits.assign(orbits_size, INVALID_OBJECT_ID);
         for (int o = 0; o < static_cast<int>(copied_system->m_orbits.size()); ++o) {
             int planet_id = copied_system->m_orbits[o];
-            if (m_objects.count(planet_id))
+            if (m_objects.find(planet_id) != m_objects.end())
                 m_orbits[o] = planet_id;
         }
 
@@ -103,31 +103,31 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
         m_planets.clear();
         for (int planet_id : copied_system->m_planets)
         {
-            if (m_objects.count(planet_id))
+            if (m_objects.find(planet_id) != m_objects.end())
                 m_planets.insert(planet_id);
         }
 
         m_buildings.clear();
         for (int building_id : copied_system->m_buildings) {
-            if (m_objects.count(building_id))
+            if (m_objects.find(building_id) != m_objects.end())
                 m_buildings.insert(building_id);
         }
 
         m_fleets.clear();
         for (int fleet_id : copied_system->m_fleets) {
-            if (m_objects.count(fleet_id))
+            if (m_objects.find(fleet_id) != m_objects.end())
                 m_fleets.insert(fleet_id);
         }
 
         m_ships.clear();
         for (int ship_id : copied_system->m_ships) {
-            if (m_objects.count(ship_id))
+            if (m_objects.find(ship_id) != m_objects.end())
                 m_ships.insert(ship_id);
         }
 
         m_fields.clear();
         for (int field_id : copied_system->m_fields) {
-            if (m_objects.count(field_id))
+            if (m_objects.find(field_id) != m_objects.end())
                 m_fields.insert(field_id);
         }
 
@@ -146,7 +146,7 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
                  /* conditional increment in deleting loop */)
             {
                 int lane_end_sys_id = entry_it->first;
-                if (!visible_lanes_holes.count(lane_end_sys_id)) {
+                if (visible_lanes_holes.find(lane_end_sys_id) == visible_lanes_holes.end()) {
                     entry_it = m_starlanes_wormholes.erase(entry_it);
                 } else {
                     ++entry_it;
@@ -209,7 +209,7 @@ const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and
 
     // has the indicated empire ever detected this system?
     const auto& vtm = GetUniverse().GetObjectVisibilityTurnMapByEmpire(this->ID(), empire_id);
-    if (!vtm.count(VIS_PARTIAL_VISIBILITY)) {
+    if (vtm.find(VIS_PARTIAL_VISIBILITY) == vtm.end()) {
         if (blank_unexplored_and_none)
             return EMPTY_STRING;
 
@@ -307,7 +307,7 @@ const std::set<int>& System::ContainedObjectIDs() const
 bool System::Contains(int object_id) const {
     if (object_id == INVALID_OBJECT_ID)
         return false;
-    return m_objects.count(object_id);
+    return m_objects.find(object_id) != m_objects.end();
 }
 
 std::shared_ptr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor) const
