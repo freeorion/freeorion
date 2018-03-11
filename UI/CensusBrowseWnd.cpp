@@ -242,7 +242,7 @@ void CensusBrowseWnd::CompleteConstruction() {
 		top2 += 0.5 * ROW_HEIGHT;
 		m_total_population->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
 		m_total_population->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
-		m_total_population->SetText(boost::io::str(FlexibleFormat(UserString("CENSUS_TOTAL_POPULATION")) % DoubleToString(totalPopulation, 2, false)));
+		m_total_population->SetText(boost::io::str(FlexibleFormat(UserString("CENSUS_TOTAL_POPULATION")) % (int)round(totalPopulation)));
 		top2 += ROW_HEIGHT;
 
 		m_total_worlds->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
