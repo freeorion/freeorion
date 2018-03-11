@@ -37,7 +37,7 @@ namespace {
         auto building_type = boost::make_unique<BuildingType>(
             name, description, *common_params.OpenEnvelope(pass), capture_result, icon);
 
-        building_types.insert({building_type->Name(), std::move(building_type)});
+        building_types.insert(std::make_pair(building_type->Name(), std::move(building_type)));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_building_, insert_building, 7)
