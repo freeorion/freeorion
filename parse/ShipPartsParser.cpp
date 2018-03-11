@@ -50,7 +50,7 @@ namespace {
             icon,
             !no_default_capacity_effect);
 
-        part_types.insert({part_type->Name(), std::move(part_type)});
+        part_types.insert(std::make_pair(part_type->Name(), std::move(part_type)));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_parttype_, insert_parttype, 9)
