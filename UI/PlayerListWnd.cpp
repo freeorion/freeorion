@@ -857,9 +857,8 @@ void PlayerListWnd::SetSelectedPlayers(const std::set<int>& player_ids) {
         PlayerSelectionChanged(m_player_list->Selections());
 }
 
-void PlayerListWnd::Clear() {
-    m_player_list->Clear();
-}
+void PlayerListWnd::Clear()
+{ m_player_list->Clear(); }
 
 void PlayerListWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
@@ -868,8 +867,7 @@ void PlayerListWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         DoLayout();
 }
 
-void PlayerListWnd::DoLayout()
-{
+void PlayerListWnd::DoLayout() {
     if (m_player_list)
         m_player_list->SizeMove(GG::Pt(), GG::Pt(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)));
 }

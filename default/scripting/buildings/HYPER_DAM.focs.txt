@@ -21,7 +21,7 @@ BuildingType
                 Not ResourceSupplyConnected empire = Source.Owner Condition = And [
                     Building name = "BLD_BLACK_HOLE_POW_GEN" 
                     OwnedBy empire = Source.Owner
-                    ]
+                ]
             ]
             activation = Source
             stackinggroup = "BLD_HYPER_DAM_BONUS"

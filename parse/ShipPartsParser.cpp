@@ -143,7 +143,6 @@ namespace {
         }
 
         using  part_type_rule = parse::detail::rule<void (start_rule_payload&)>;
-
         using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller                 label;

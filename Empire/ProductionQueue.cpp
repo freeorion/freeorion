@@ -315,8 +315,7 @@ namespace {
 }
 
 
-ProductionQueue::ProductionItem::ProductionItem() :
-    build_type(INVALID_BUILD_TYPE)
+ProductionQueue::ProductionItem::ProductionItem()
 {}
 
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_) :
@@ -880,7 +879,7 @@ void ProductionQueue::Update() {
     }
     DebugLogger() << "ProductionQueue::Update: Projections took "
                   << ((sim_time_end - sim_time_start).total_microseconds()) << " microseconds with "
-                  << empire->ProductionPoints() << " total Production Points";
+                  << empire->ResourceOutput(RE_INDUSTRY) << " industry output";
     ProductionQueueChangedSignal();
 }
 

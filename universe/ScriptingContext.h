@@ -57,7 +57,7 @@ struct ScriptingContext {
         empire_object_vis_map_override(parent_context.empire_object_vis_map_override)
     {}
 
-    /** For recusrive evaluation of Conditions.  Keeps source and effect_target
+    /** For recursive evaluation of Conditions.  Keeps source and effect_target
       * from input context, but sets local candidate with input object, and if
       * there is no root candidate in the parent context, then the input object
       * becomes the root candidate. */

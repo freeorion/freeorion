@@ -193,12 +193,12 @@ void HumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
     const int max_width_plus_one = HumanClientApp::MaximumPossibleWidth() + 1;
     const int max_height_plus_one = HumanClientApp::MaximumPossibleHeight() + 1;
 
-    db.Add("video.fullscreen.width", UserStringNop("OPTIONS_DB_APP_WIDTH"),            DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
-    db.Add("video.fullscreen.height", UserStringNop("OPTIONS_DB_APP_HEIGHT"),          DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
-    db.Add("video.windowed.width",  UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
-    db.Add("video.windowed.height", UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
-    db.Add("video.windowed.left", UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),  DEFAULT_LEFT,        OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));
-    db.Add("video.windowed.top", UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),    DEFAULT_TOP,         RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
+    db.Add("video.fullscreen.width", UserStringNop("OPTIONS_DB_APP_WIDTH"),             DEFAULT_WIDTH,  RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
+    db.Add("video.fullscreen.height", UserStringNop("OPTIONS_DB_APP_HEIGHT"),           DEFAULT_HEIGHT, RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
+    db.Add("video.windowed.width",  UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),     DEFAULT_WIDTH,  RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
+    db.Add("video.windowed.height", UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),    DEFAULT_HEIGHT, RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
+    db.Add("video.windowed.left", UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),        DEFAULT_LEFT,   OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));
+    db.Add("video.windowed.top", UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),          DEFAULT_TOP,    RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
 }
 
 std::string HumanClientApp::EncodeServerAddressOption(const std::string& server) {

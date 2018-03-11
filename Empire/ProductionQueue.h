@@ -21,9 +21,8 @@ FO_COMMON_API extern const int ALL_EMPIRES;
 struct FO_COMMON_API ProductionQueue {
     /** The type that specifies a single production item (BuildType and name string). */
     struct FO_COMMON_API ProductionItem {
-        ProductionItem();
-
-        ProductionItem(BuildType build_type_);   ///< basic ctor for BuildTypes only have one type of item (e.g. stockpile transfer item)
+        explicit ProductionItem();
+        explicit ProductionItem(BuildType build_type_);             ///< basic ctor for BuildTypes only have one type of item (e.g. stockpile transfer item)
         ProductionItem(BuildType build_type_, std::string name_);   ///< basic ctor for BuildTypes that use std::string to identify specific items (BuildingTypes)
         ProductionItem(BuildType build_type_, int design_id_);      ///< basic ctor for BuildTypes that use int to indentify the design of the item (ShipDesigns)
 
@@ -38,7 +37,7 @@ struct FO_COMMON_API ProductionQueue {
 
         std::string Dump() const;
 
-        BuildType   build_type;
+        BuildType   build_type = INVALID_BUILD_TYPE;
         // only one of these may be valid, depending on BuildType
         std::string name;
         int         design_id = INVALID_DESIGN_ID;
