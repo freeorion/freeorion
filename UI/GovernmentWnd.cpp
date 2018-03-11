@@ -152,7 +152,7 @@ void PolicyControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 
 //////////////////////////////////////////////////
-// PoliciesListBox                               //
+// PoliciesListBox                              //
 //////////////////////////////////////////////////
 /** Arrangement of PolicyControls that can be dragged onto SlotControls */
 class PoliciesListBox : public CUIListBox {
@@ -656,7 +656,7 @@ void GovernmentWnd::PolicyPalette::Populate()
 
 
 //////////////////////////////////////////////////
-// PolicySlotControl                                  //
+// PolicySlotControl                            //
 //////////////////////////////////////////////////
 /** UI representation and drop-target for policies of a government.
   * PolicyControl may be dropped into slots to add the corresponding policies to
@@ -1205,7 +1205,7 @@ void GovernmentWnd::MainPanel::AcceptDrops(const GG::Pt& pt,
 
 
 //////////////////////////////////////////////////
-// GovernmentWnd                                    //
+// GovernmentWnd                                //
 //////////////////////////////////////////////////
 GovernmentWnd::GovernmentWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::ONTOP | GG::INTERACTIVE),
