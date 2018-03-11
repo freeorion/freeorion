@@ -23,6 +23,7 @@ class MapWndPopup;
 class DesignWnd;
 class ProductionWnd;
 class ResearchWnd;
+class GovernmentWnd;
 class EncyclopediaDetailPanel;
 class CombatReportWnd;
 class ObjectListWnd;
@@ -580,8 +581,8 @@ private:
     std::shared_ptr<GG::Button>     m_industry_wasted, m_research_wasted,
                                     m_btn_moderator, m_btn_messages, m_btn_empires,
                                     m_btn_siterep, m_btn_research, m_btn_production,
-                                    m_btn_design, m_btn_government, m_btn_pedia, m_btn_graphs,
-                                    m_btn_objects, m_btn_menu;
+                                    m_btn_design, m_btn_government, m_btn_pedia,
+                                    m_btn_graphs, m_btn_objects, m_btn_menu;
     std::shared_ptr<GG::Label>      m_FPS;
 
     std::shared_ptr<MapScaleLine>       m_scale_line;   //!< indicates the on-screen distance that reprensents an in-universe distance
