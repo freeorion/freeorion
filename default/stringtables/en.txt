@@ -12378,7 +12378,7 @@ BLD_XENORESURRECTION_LAB
 Xenoresurrection Lab
 
 BLD_XENORESURRECTION_LAB_DESC
-The Xenoresurrection Lab restores living samples of extinct species, allowing colonization of [[metertype METER_SUPPLY]] connected planets with the extinct species found in [[special ANCIENT_RUINS_SPECIAL]]. It can only be build on planets where the excavations of [[special ANCIENT_RUINS_SPECIAL]] have found well preserved bodies of an extinct species.
+The Xenoresurrection Lab restores living samples of extinct species, allowing colonization of [[metertype METER_SUPPLY]] connected planets with the extinct species found in [[special ANCIENT_RUINS_SPECIAL]]. It can only be built on planets where the excavations of [[special ANCIENT_RUINS_SPECIAL]] have found well preserved bodies of an extinct species.
 
 BLD_COLONY_BASE
 Colony Base
