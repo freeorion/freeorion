@@ -10,6 +10,7 @@ macro(ADD_GIGI_ACCEPTANCE_TEST name)
         ${OPENGL_glu_LIBRARY}
         ${CMAKE_THREAD_LIBS_INIT}
         ${GLEW_LIBRARIES}
+        ${SDL_LIBRARIES}
     )
     set_target_properties(gg_acceptance_${name}
         PROPERTIES
@@ -24,6 +25,7 @@ find_package(GLEW REQUIRED)
 include_directories(
     SYSTEM
     ${OPENGL_INCLUDE_DIR}
+    ${SDL_INCLUDE_DIR}
 )
 
 add_library(gigi_acceptance_runner OBJECT
