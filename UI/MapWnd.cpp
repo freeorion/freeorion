@@ -2858,6 +2858,9 @@ void MapWnd::InitTurn() {
     for (auto& entry : Empires())
         entry.second->UpdateResourcePools();
 
+    timer.EnterSection("refresh government");
+    m_government_wnd->Refresh();
+
 
     timer.EnterSection("refresh research");
     m_research_wnd->Refresh();

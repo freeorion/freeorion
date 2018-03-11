@@ -17,6 +17,7 @@ public:
 
     void Reset();
     void Sanitize();
+    void Refresh();
 
     /** Enables, or disables if \a enable is false, issuing orders via this DesignWnd. */
     void EnableOrderIssuing(bool enable = true);

@@ -108,6 +108,7 @@ void PolicyControl::CompleteConstruction() {
     GG::Control::CompleteConstruction();
     if (!m_policy)
         return;
+    std::cout << "PolicyControl: " << m_policy->Name() << std::endl;
 
     m_background = GG::Wnd::Create<GG::StaticGraphic>(PolicyBackgroundTexture(m_policy), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_background->Resize(GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT));
@@ -197,7 +198,7 @@ private:
     GroupAvailableDisplayablePolicies(const Empire* empire) const;
 
     std::set<std::string>   m_policy_categories_shown;  // which policy categories should be shown
-    int                     m_previous_num_columns;
+    int                     m_previous_num_columns = -1;
 };
 
 PoliciesListBox::PoliciesListBoxRow::PoliciesListBoxRow(GG::X w, GG::Y h) :
@@ -248,9 +249,7 @@ void PoliciesListBox::PoliciesListBoxRow::ChildrenDraggedAway(
 
 
 PoliciesListBox::PoliciesListBox() :
-    CUIListBox(),
-    m_policy_categories_shown(),
-    m_previous_num_columns(-1)
+    CUIListBox()
 {
     ManuallyManageColProps();
     NormalizeRowsOnInsert(false);
@@ -300,16 +299,31 @@ std::map<std::string, std::vector<const Policy*>>
 PoliciesListBox::GroupAvailableDisplayablePolicies(const Empire* empire) const {
     std::map<std::string, std::vector<const Policy*>> policies_categorized;
 
+    std::cout << "PoliciesListBox::GroupAvailableDisplayablePolicies categories shown: ";
+    for (const auto& entry : m_policy_categories_shown) {
+        std::cout << entry << "  ";
+    }
+    std::cout << std::endl;
+
     // loop through all possible policies
     for (const auto& entry : GetPolicyManager()) {
         const auto& policy = entry.second;
         const auto& category = policy->Category();
 
+        std::cout << "PoliciesListBox::GroupAvailableDisplayablePolicies policy: "
+                  << policy->Name() << "  in category: " << category << std::endl;
+
         // check whether this policy should be shown in list
-        if (m_policy_categories_shown.find(category) == m_policy_categories_shown.end())
+        if (!m_policy_categories_shown.count(category)) {
+            std::cout << " ... category not shown" << std::endl;
             continue;   // policy of this class is not requested to be shown
-        if (empire && !empire->AvailablePolicies().count(policy->Name()))
+        }
+        if (empire && !empire->AvailablePolicies().count(policy->Name())) {
+            std::cout << " ... policy not available to empire" << std::endl;
             continue;
+        }
+
+        std::cout << " ... added to retval" << std::endl;
 
         policies_categorized[category].push_back(policy.get());
     }
@@ -317,6 +331,7 @@ PoliciesListBox::GroupAvailableDisplayablePolicies(const Empire* empire) const {
 }
 
 void PoliciesListBox::Populate() {
+    std::cout << "PoliciesListBox::Populate" << std::endl;
     ScopedTimer scoped_timer("PoliciesListBox::Populate");
 
 
@@ -345,8 +360,10 @@ void PoliciesListBox::Populate() {
     }
 
     for (auto& cat : cats_policies) {
+        std::cout << "  cat: " << cat.first << std::endl;
         // take the sorted policies and make UI element rows for the PoliciesListBox
         for (const auto* policy: cat.second) {
+            std::cout << "   ... policy: " << policy->Name() << std::endl;
             // check if current row is full, and make a new row if necessary
             if (cur_col >= NUM_COLUMNS) {
                 if (cur_row)
@@ -365,6 +382,8 @@ void PoliciesListBox::Populate() {
             control->RightClickedSignal.connect(PoliciesListBox::PolicyRightClickedSignal);
 
             cur_row->push_back(control);
+
+            std::cout << "PoliciesListBox::Populate created row for policy: " << policy->Name() << std::endl;
         }
     }
     // add any incomplete rows
@@ -390,7 +409,8 @@ void PoliciesListBox::ShowCategory(const std::string& category, bool refresh_lis
 }
 
 void PoliciesListBox::ShowAllCategories(bool refresh_list) {
-    for (const auto& category : GetPolicyManager().PolicyCategories())
+    auto cats = GetPolicyManager().PolicyCategories();
+    for (const auto& category : cats)
         m_policy_categories_shown.insert(category);
     if (refresh_list)
         Populate();
@@ -473,13 +493,11 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
         boost::bind(&GovernmentWnd::PolicyPalette::HandlePolicyRightClicked, this, _1, _2));
     m_policies_list->ClearPolicySignal.connect(ClearPolicySignal);
 
-    const PolicyManager& policy_manager = GetPolicyManager();
-
     // class buttons
     for (auto& category : GetPolicyManager().PolicyCategories()) {
         // are there any policies of this class?
         bool policy_of_this_class_exists = false;
-        for (const auto& entry : policy_manager) {
+        for (const auto& entry : GetPolicyManager()) {
             if (const auto& policy = entry.second) {
                 if (policy->Category() == category) {
                     policy_of_this_class_exists = true;
@@ -498,7 +516,7 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
             boost::bind(&GovernmentWnd::PolicyPalette::ToggleCategory, this, category, true));
     }
 
-    // default to showing nothing
+    // default to showing everything
     ShowAllCategories(false);
     Populate();
 
@@ -716,6 +734,8 @@ void PolicySlotControl::CompleteConstruction() {
         UserString(m_slot_category),
         UserString("SL_TOOLTIP_DESC")
     ));
+
+    std::cout << "PolicySlotControl::CompleteConstruction category: " << m_slot_category << std::endl;
 }
 
 bool PolicySlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
@@ -926,14 +946,11 @@ public:
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void Sanitize();
+    void Refresh();
 
-    void SetEmpire(int empire_id = ALL_EMPIRES);
-    void SetPolicy(const std::string& policy_name, unsigned int slot);  //!< puts specified policy in specified slot.  does nothing if slot is out of range of available slots for current hull
-
-    /** Sets the policy in \p slot to \p policy and emits and signal if
-      * requested. */
-    void SetPolicy(const Policy* policy, unsigned int slot, bool emit_signal = false);
-    void SetPolicies(const std::vector<std::string>& policies);         //!< puts specified policies in slots.  attempts to put each policy into the slot corresponding to its place in the passed vector.  if a policy cannot be placed, it is ignored.  more policies than there are slots available are ignored, and slots for which there are insufficient policies in the passed vector are unmodified
+    void SetPolicy(const std::string& policy_name, unsigned int slot);                  //!< puts specified policy in specified slot.  does nothing if slot is out of range of available slots for category
+    void SetPolicy(const Policy* policy, unsigned int slot, bool emit_signal = false);  //!< Sets the policy in \p slot to \p policy and emits and signal if requested.
+    void SetPolicies(const std::vector<std::string>& policies);                         //!< puts specified policies in slots.  attempts to put each policy into the slot corresponding to its place in the passed vector.  if a policy cannot be placed, it is ignored.  more policies than there are slots available are ignored, and slots for which there are insufficient policies in the passed vector are unmodified
 
     /** If a suitable slot is available, adds the specified policy to the
       * government. */
@@ -963,7 +980,6 @@ private:
     std::shared_ptr<GG::StaticGraphic>              m_background_image;
     std::shared_ptr<GG::Button>                     m_clear_button;
 };
-
 
 GovernmentWnd::MainPanel::MainPanel(const std::string& config_name) :
     CUIWnd(UserString("GOVERNMENT_WND_MAIN_PANEL_TITLE"),
@@ -1014,6 +1030,9 @@ void GovernmentWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void GovernmentWnd::MainPanel::Sanitize()
 { void ClearPolicies(); }
+
+void GovernmentWnd::MainPanel::Refresh()
+{ Populate(); }
 
 void GovernmentWnd::MainPanel::SetPolicy(const std::string& policy_name, unsigned int slot)
 { SetPolicy(GetPolicy(policy_name), slot); }
@@ -1092,12 +1111,12 @@ void GovernmentWnd::MainPanel::ClearPolicy(const std::string& policy_name) {
         PoliciesChangedSignal();
 }
 
-void GovernmentWnd::MainPanel::Populate(){
+void GovernmentWnd::MainPanel::Populate() {
     for (const auto& slot: m_slots)
         DetachChild(slot);
     m_slots.clear();
 
-    // todo: loop over policy slots the empire's government has, add slot controls
+    // loop over policy slots the empire's government has, add slot controls
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);  // may be nullptr
     if (!empire)
@@ -1111,6 +1130,8 @@ void GovernmentWnd::MainPanel::Populate(){
         const std::string& cat_name = cat_slots.first;
 
         for (unsigned int n = 0; n < num_slots_in_cat; ++n) {
+            std::cout << "GovernmentWnd::MainPanel::Populate cat: " << cat_name << "  slot n: " << n << std::endl;
+
             auto slot_control = GG::Wnd::Create<PolicySlotControl>(cat_name);
             AttachChild(slot_control);
             m_slots.push_back(slot_control);
@@ -1232,6 +1253,11 @@ void GovernmentWnd::Reset() {
 
 void GovernmentWnd::Sanitize()
 { m_main_panel->Sanitize(); }
+
+void GovernmentWnd::Refresh() {
+    m_policy_palette->Populate();
+    m_main_panel->Refresh();
+}
 
 void GovernmentWnd::Render()
 { GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), GG::CLR_ZERO, 0); }
