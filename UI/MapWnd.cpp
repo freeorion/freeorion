@@ -12,6 +12,7 @@
 #include "FleetWnd.h"
 #include "InGameMenu.h"
 #include "DesignWnd.h"
+#include "GovernmentWnd.h"
 #include "ProductionWnd.h"
 #include "ResearchWnd.h"
 #include "EncyclopediaDetailPanel.h"
@@ -1106,6 +1107,23 @@ void MapWnd::CompleteConstruction() {
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1), boost::bind(&WndTop, m_toolbar.get()),
                     boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1), _2);
+    // Government button
+    m_btn_government = Wnd::Create<SettableInWindowCUIButton>(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "government.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "government_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "government_mouseover.png")),
+        in_window_func);
+    m_btn_government->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_government->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ToggleGovernment, this));
+    m_btn_government->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_btn_government->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
+        UserString("MAP_BTN_GOVERNMENT"), UserString("MAP_BTN_GOVERNMENT_DESC")));
+
+    in_window_func =
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
+                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+                    _2);
     // Production button
     m_btn_production = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production.png")),
@@ -1376,6 +1394,11 @@ void MapWnd::CompleteConstruction() {
     layout->Add(m_btn_design,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
+    layout->SetMinimumColumnWidth(layout_column, m_btn_government->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_btn_government,   0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
     layout->SetMinimumColumnWidth(layout_column, m_btn_graphs->Width());
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_btn_graphs,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
@@ -1536,7 +1559,11 @@ void MapWnd::CompleteConstruction() {
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
 
-
+    // government window
+    m_government_wnd = GG::Wnd::Create<GovernmentWnd>(AppWidth(), AppHeight() - m_toolbar->Height());
+    m_government_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
+    GG::GUI::GetGUI()->Register(m_government_wnd);
+    m_government_wnd->Hide();
 
     //////////////////
     // General Gamestate response signals
@@ -1565,6 +1592,7 @@ void MapWnd::DoLayout() {
     m_research_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
     m_production_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
     m_design_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
+    m_government_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
     m_sitrep_panel->ValidatePosition();
     m_object_list_wnd->ValidatePosition();
     m_pedia_panel->ValidatePosition();
@@ -1664,6 +1692,9 @@ bool MapWnd::InResearchViewMode() const
 bool MapWnd::InDesignViewMode() const
 { return m_design_wnd->Visible(); }
 
+bool MapWnd::InGovernmentViewMode() const
+{ return m_government_wnd->Visible(); }
+
 ModeratorActionSetting MapWnd::GetModeratorActionSetting() const
 { return m_moderator_wnd->SelectedAction(); }
 
@@ -1676,6 +1707,8 @@ void MapWnd::PreRender() {
     if (m_design_wnd->Visible())
         return;
     if (m_research_wnd->Visible())
+        return;
+    if (m_government_wnd->Visible())
         return;
 
     GG::Wnd::PreRender();
@@ -1693,6 +1726,8 @@ void MapWnd::Render() {
     if (m_design_wnd->Visible())
         return;
     if (m_research_wnd->Visible())
+        return;
+    if (m_government_wnd->Visible())
         return;
 
     glMatrixMode(GL_MODELVIEW);
@@ -2666,6 +2701,7 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
     m_production_wnd->EnableOrderIssuing(enable);
     m_research_wnd->EnableOrderIssuing(enable);
     m_design_wnd->EnableOrderIssuing(enable);
+    m_government_wnd->EnableOrderIssuing(enable);
     FleetUIManager::GetFleetUIManager().EnableOrderIssuing(enable);
 }
 
@@ -2759,8 +2795,11 @@ void MapWnd::InitTurn() {
     DebugLogger() << "showing intro sitreps : " << show_intro_sitreps;
     if (show_intro_sitreps || m_sitrep_panel->NumVisibleSitrepsThisTurn() > 0) {
         m_sitrep_panel->ShowSitRepsForTurn(CurrentTurn());
-        if (!m_design_wnd->Visible() && !m_research_wnd->Visible() && !m_production_wnd->Visible())
+        if (!m_design_wnd->Visible() && !m_research_wnd->Visible()
+            && !m_production_wnd->Visible() && !m_government_wnd->Visible())
+        {
             ShowSitRep();
+        }
     }
 
     if (m_sitrep_panel->Visible()) {
@@ -5904,6 +5943,7 @@ void MapWnd::Sanitize() {
     HideResearch();
     HideProduction();
     HideDesign();
+    HideGovernment();
     RemoveWindows();
     m_pedia_panel->ClearItems();    // deletes all pedia items in the memory
     m_toolbar->Hide();
@@ -5947,6 +5987,7 @@ void MapWnd::Sanitize() {
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize();
     m_design_wnd->Sanitize();
+    m_government_wnd->Sanitize();
 
     m_selected_fleet_ids.clear();
     m_selected_ship_ids.clear();
@@ -6061,6 +6102,8 @@ bool MapWnd::ReturnToMap() {
         ToggleResearch();
     } else if (wnd == m_design_wnd) {
         ToggleDesign();
+    } else if (wnd == m_government_wnd) {
+        ToggleGovernment();
     } else if (wnd == m_production_wnd) {
         ToggleProduction();
     } else if (wnd == m_pedia_panel) {
@@ -6137,6 +6180,7 @@ void MapWnd::ShowModeratorActions() {
     HideResearch();
     HideProduction();
     HideDesign();
+    HideGovernment();
 
     // update moderator window
     m_moderator_wnd->Refresh();
@@ -6158,7 +6202,10 @@ void MapWnd::HideModeratorActions() {
 }
 
 bool MapWnd::ToggleModeratorActions() {
-    if (!m_moderator_wnd->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
+    if (!m_moderator_wnd->Visible() || m_production_wnd->Visible() ||
+        m_research_wnd->Visible() || m_design_wnd->Visible() ||
+        m_government_wnd->Visible())
+    {
         ShowModeratorActions();
     } else {
         HideModeratorActions();
@@ -6173,6 +6220,7 @@ void MapWnd::ShowObjects() {
     HideResearch();
     HideProduction();
     HideDesign();
+    HideGovernment();
 
     // update objects window
     m_object_list_wnd->Refresh();
@@ -6195,7 +6243,10 @@ void MapWnd::HideObjects() {
 }
 
 bool MapWnd::ToggleObjects() {
-    if (!m_object_list_wnd->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
+    if (!m_object_list_wnd->Visible() || m_production_wnd->Visible() ||
+        m_research_wnd->Visible() || m_design_wnd->Visible() ||
+        m_government_wnd->Visible())
+    {
         ShowObjects();
     } else {
         HideObjects();
@@ -6210,6 +6261,7 @@ void MapWnd::ShowSitRep() {
     HideResearch();
     HideProduction();
     HideDesign();
+    HideGovernment();
 
     // show the sitrep window
     m_sitrep_panel->Show();
@@ -6229,7 +6281,10 @@ void MapWnd::HideSitRep() {
 }
 
 bool MapWnd::ToggleSitRep() {
-    if (!m_sitrep_panel->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
+    if (!m_sitrep_panel->Visible() || m_production_wnd->Visible() ||
+        m_research_wnd->Visible() || m_design_wnd->Visible() ||
+        m_government_wnd->Visible())
+    {
         ShowSitRep();
     } else {
         HideSitRep();
@@ -6242,6 +6297,7 @@ void MapWnd::ShowMessages() {
     HideResearch();
     HideProduction();
     HideDesign();
+    HideGovernment();
 
     ClientUI* cui = ClientUI::GetClientUI();
     if (!cui)
@@ -6278,7 +6334,10 @@ bool MapWnd::ToggleMessages() {
     const auto& msg_wnd = cui->GetMessageWnd();
     if (!msg_wnd)
         return false;
-    if (!msg_wnd->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
+    if (!msg_wnd->Visible() || m_production_wnd->Visible() ||
+        m_research_wnd->Visible() || m_design_wnd->Visible() ||
+        m_government_wnd->Visible())
+    {
         ShowMessages();
     } else {
         HideMessages();
@@ -6291,6 +6350,7 @@ void MapWnd::ShowEmpires() {
     HideResearch();
     HideProduction();
     HideDesign();
+    HideGovernment();
 
     ClientUI* cui = ClientUI::GetClientUI();
     if (!cui)
@@ -6326,7 +6386,10 @@ bool MapWnd::ToggleEmpires() {
     const auto& plr_wnd = cui->GetPlayerListWnd();
     if (!plr_wnd)
         return false;
-    if (!plr_wnd->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
+    if (!plr_wnd->Visible() || m_production_wnd->Visible() ||
+        m_research_wnd->Visible() || m_design_wnd->Visible() ||
+        m_government_wnd->Visible())
+    {
         ShowEmpires();
     } else {
         HideEmpires();
@@ -6352,6 +6415,7 @@ void MapWnd::ShowPedia() {
     HideResearch();
     HideProduction();
     HideDesign();
+    HideGovernment();
 
     if (m_pedia_panel->GetItemsSize() == 0)
         m_pedia_panel->SetIndex();
@@ -6377,7 +6441,10 @@ void MapWnd::HidePedia() {
 }
 
 bool MapWnd::TogglePedia() {
-    if (!m_pedia_panel->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
+    if (!m_pedia_panel->Visible() || m_production_wnd->Visible() ||
+        m_research_wnd->Visible() || m_design_wnd->Visible() ||
+        m_government_wnd->Visible())
+    {
         ShowPedia();
     } else {
         HidePedia();
@@ -6410,6 +6477,7 @@ void MapWnd::ShowResearch() {
     HideProduction();
     HideDesign();
     HideSidePanel();
+    HideGovernment();
 
     // show the research window
     m_research_wnd->Show();
@@ -6450,6 +6518,8 @@ void MapWnd::ShowProduction() {
     HideDesign();
     HideSidePanel();
     HidePedia();
+    HideGovernment();
+
     if (GetOptionsDB().Get<bool>("ui.production.mappanels.removed")) {
         RemoveWindows();
         GG::GUI::GetGUI()->Remove(ClientUI::GetClientUI()->GetMessageWnd());
@@ -6546,6 +6616,43 @@ bool MapWnd::ToggleDesign() {
         HideDesign();
     else
         ShowDesign();
+    return true;
+}
+
+void MapWnd::ShowGovernment() {
+    ClearProjectedFleetMovementLines();
+
+    // hide other "competing" windows
+    HideResearch();
+    HideProduction();
+    HideSidePanel();
+    HideDesign();
+
+    // show the design window
+    m_government_wnd->Show();
+    GG::GUI::GetGUI()->MoveUp(m_government_wnd);
+    PushWndStack(m_government_wnd);
+    m_government_wnd->Reset();
+
+    // indicate selection on button
+    m_btn_government->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
+    m_btn_government->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
+}
+
+void MapWnd::HideGovernment() {
+    m_government_wnd->Hide();
+    RemoveFromWndStack(m_government_wnd);
+    m_btn_government->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
+    m_btn_government->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
+
+    RestoreSidePanel();
+}
+
+bool MapWnd::ToggleGovernment() {
+    if (m_government_wnd->Visible())
+        HideGovernment();
+    else
+        ShowGovernment();
     return true;
 }
 
@@ -7157,7 +7264,10 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
 
     // the list of windows for which the fleet shortcuts are blacklisted.
-    std::initializer_list<const GG::Wnd*> bl = {m_research_wnd.get(), m_production_wnd.get(), m_design_wnd.get()};
+    std::initializer_list<const GG::Wnd*> bl = {m_research_wnd.get(),
+                                                m_production_wnd.get(),
+                                                m_design_wnd.get(),
+                                                m_government_wnd.get()};
 
     hkm->Connect(boost::bind(&MapWnd::ZoomToPrevFleet, this), "ui.map.fleet.zoom.prev",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));

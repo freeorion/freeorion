@@ -99,6 +99,9 @@ public:
      * and on top.*/
     bool                        InDesignViewMode() const;
 
+    /** same, but for government window. */
+    bool                        InGovernmentViewMode() const;
+
     /** returns the currently set moderator action in this MapWnd's
       * ModeratorActionsWnd. */
     ModeratorActionSetting      GetModeratorActionSetting() const;
@@ -421,6 +424,10 @@ private:
     void ShowDesign();
     void HideDesign();
 
+    bool ToggleGovernment();
+    void ShowGovernment();
+    void HideGovernment();
+
     bool ShowMenu();
 
     bool CloseSystemView(); //!< closes off the current system view
@@ -459,6 +466,7 @@ private:
     std::shared_ptr<ResearchWnd>                m_research_wnd;             //!< research screen
     std::shared_ptr<ProductionWnd>              m_production_wnd;           //!< production screen
     std::shared_ptr<DesignWnd>                  m_design_wnd;               //!< design screen
+    std::shared_ptr<GovernmentWnd>              m_government_wnd;           //!< government screen
     std::shared_ptr<EncyclopediaDetailPanel>    m_pedia_panel;              //!< encyclpedia panel
     std::shared_ptr<ObjectListWnd>              m_object_list_wnd;          //!< filterable list of objects in universe
     std::shared_ptr<ModeratorActionsWnd>        m_moderator_wnd;            //!< buttons to select moderator actions
@@ -572,7 +580,7 @@ private:
     std::shared_ptr<GG::Button>     m_industry_wasted, m_research_wasted,
                                     m_btn_moderator, m_btn_messages, m_btn_empires,
                                     m_btn_siterep, m_btn_research, m_btn_production,
-                                    m_btn_design, m_btn_pedia, m_btn_graphs,
+                                    m_btn_design, m_btn_government, m_btn_pedia, m_btn_graphs,
                                     m_btn_objects, m_btn_menu;
     std::shared_ptr<GG::Label>      m_FPS;
 
