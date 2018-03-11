@@ -2,6 +2,7 @@
 
 #include "client/ClientApp.h"
 #include "network/ClientNetworking.h"
+#include "util/Process.h"
 #include "util/Directories.h"
 
 namespace {
@@ -31,6 +32,8 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
     std::string SERVER_CLIENT_EXE = ServerClientExe();
 
+    BOOST_TEST_MESSAGE(SERVER_CLIENT_EXE);
+
 #ifdef FREEORION_MACOSX
     // On OSX set environment variable DYLD_LIBRARY_PATH to python framework folder
     // bundled with app, so the dynamic linker uses the bundled python library.
@@ -40,6 +43,11 @@ BOOST_AUTO_TEST_CASE(host_server) {
     setenv("DYLD_LIBRARY_PATH", GetPythonHome().string().c_str(), 1);
 #endif
 
+    std::vector<std::string> args;
+    args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
+    Process server = Process(SERVER_CLIENT_EXE, args);
+
+    BOOST_REQUIRE(m_networking->ConnectToLocalHostServer());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
