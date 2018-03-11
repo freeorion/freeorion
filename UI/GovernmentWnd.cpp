@@ -35,19 +35,29 @@ namespace {
     const GG::Y         SLOT_CONTROL_HEIGHT(60);
     const int           PAD(3);
 
-    /** Returns texture with which to render a PolicySlotControl, depending on \a slot_type. */
+    /** Returns texture with which to render a PolicySlotControl, depending on
+      * \a category */
     std::shared_ptr<GG::Texture> SlotBackgroundTexture(const std::string& category) {
+        if (category == "ECONOMIC_CATEGORY")
+            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / "economic_slot.png", true);
+        if (category == "SOCIAL_CATEGORY")
+            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / "social_slot.png", true);
+        if (category == "MILITARY_CATEGORY")
+            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / "military_slot.png", true);
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
 
-    /** Returns background texture with which to render a PolicyControl, depending on the
-      * types of slot that the indicated \a policy can be put into. */
+    /** Returns background texture with which to render a PolicyControl,
+      * depending on the category of slot that the indicated \a policy can
+      * be put into. */
     std::shared_ptr<GG::Texture> PolicyBackgroundTexture(const Policy* policy) {
         if (policy) {
-            bool social = policy->Category() == "ECONOMIC_CATEGORY";
-            bool economic = policy->Category() == "SOCIAL_CATEGORY";
-
-            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_policies" / "core_policy.png", true);
+            if (policy->Category() == "ECONOMIC_CATEGORY")
+                return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / "economic_policy.png", true);
+            if (policy->Category() == "SOCIAL_CATEGORY")
+                return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / "social_policy.png", true);
+            if (policy->Category() == "MILITARY_CATEGORY")
+                return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / "military_policy.png", true);
         }
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
@@ -917,6 +927,7 @@ public:
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void Sanitize();
 
+    void SetEmpire(int empire_id = ALL_EMPIRES);
     void SetPolicy(const std::string& policy_name, unsigned int slot);  //!< puts specified policy in specified slot.  does nothing if slot is out of range of available slots for current hull
 
     /** Sets the policy in \p slot to \p policy and emits and signal if
@@ -942,20 +953,20 @@ protected:
                          const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
-    void Populate();        //!< creates and places SlotControls for current hull
-    void DoLayout();        //!< positions buttons, text entry boxes and SlotControls
+    void Populate();        //!< creates and places SlotControls for empire
+    void DoLayout();        //!< positions SlotControls
     void PoliciesChanged();
     bool AddPolicyEmptySlot(const Policy* policy, int slot_number);
     int FindEmptySlotForPolicy(const Policy* policy) const;
 
-    std::vector<std::shared_ptr<PolicySlotControl>>   m_slots;
-    std::shared_ptr<GG::StaticGraphic>          m_background_image;
-    std::shared_ptr<GG::Button>                 m_clear_button;
+    std::vector<std::shared_ptr<PolicySlotControl>> m_slots;
+    std::shared_ptr<GG::StaticGraphic>              m_background_image;
+    std::shared_ptr<GG::Button>                     m_clear_button;
 };
 
 
 GovernmentWnd::MainPanel::MainPanel(const std::string& config_name) :
-    CUIWnd(UserString("DESIGN_WND_MAIN_PANEL_TITLE"),
+    CUIWnd(UserString("GOVERNMENT_WND_MAIN_PANEL_TITLE"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE,
            config_name),
     m_slots(),
@@ -1087,17 +1098,30 @@ void GovernmentWnd::MainPanel::Populate(){
     m_slots.clear();
 
     // todo: loop over policy slots the empire's government has, add slot controls
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = GetEmpire(empire_id);  // may be nullptr
+    if (!empire)
+        return;
 
-    //for (???) {
-    //    
-    //    auto slot_control = GG::Wnd::Create<PolicySlotControl>(slot.category);
-    //    m_slots.push_back(slot_control);
-    //    AttachChild(slot_control);
-    //    slot_control->SlotContentsAlteredSignal.connect(
-    //        boost::bind(static_cast<void (GovernmentWnd::MainPanel::*)(const Policy*, unsigned int, bool, bool)>(&GovernmentWnd::MainPanel::SetPolicy), this, _1, i, true, _2));
-    //    slot_control->PolicyClickedSignal.connect(
-    //        PolicyClickedSignal);
-    //}
+    const std::map<std::string, int> policy_slots = empire->TotalPolicySlots();
+    const std::map<std::string, int>& adopted_policy_turns = empire->AdoptedPolicyTurns();
+
+    for (const auto& cat_slots : policy_slots) {
+        unsigned int num_slots_in_cat = static_cast<int>(cat_slots.second);
+        const std::string& cat_name = cat_slots.first;
+
+        for (unsigned int n = 0; n < num_slots_in_cat; ++n) {
+            auto slot_control = GG::Wnd::Create<PolicySlotControl>(cat_name);
+            AttachChild(slot_control);
+            m_slots.push_back(slot_control);
+
+            slot_control->SlotContentsAlteredSignal.connect(
+                boost::bind(static_cast<void (GovernmentWnd::MainPanel::*)(
+                    const Policy*, unsigned int, bool)>(&GovernmentWnd::MainPanel::SetPolicy),
+                                                        this, _1, n, _2));
+            slot_control->PolicyClickedSignal.connect(PolicyClickedSignal);
+        }
+    }
 }
 
 void GovernmentWnd::MainPanel::DoLayout() {

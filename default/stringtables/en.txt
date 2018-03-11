@@ -3382,6 +3382,12 @@ Design
 MAP_BTN_DESIGN_DESC
 ''''''
 
+MAP_BTN_GOVERNMENT
+Government Policies
+
+MAP_BTN_GOVERNMENT_DESC
+''''''
+
 MAP_BTN_GRAPH
 Graphs
 
@@ -4745,6 +4751,21 @@ Neither the Saved Designs nor the Default Designs were added to the empire at ga
 # %1% File path of unwritable file
 ERROR_UNABLE_TO_WRITE_FILE
 Unable to write file:\n"%1%"
+
+GOVERNMENT_WND_MAIN_PANEL_TITLE
+Government Policies
+
+GOVERNMENT_WND_POLICY_PALETTE_TITLE
+Policies
+
+GOVERNMENT_WND_CLEAR
+Clear
+
+ECONOMIC_CATEGORY
+Ecnomic
+
+SOCIAL_CATEGORY
+Social
 
 
 ##
