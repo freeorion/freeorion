@@ -6635,15 +6635,15 @@ void MapWnd::ShowGovernment() {
     m_government_wnd->Reset();
 
     // indicate selection on button
-    m_btn_government->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
-    m_btn_government->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
+    m_btn_government->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government_mouseover.png")));
+    m_btn_government->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government.png")));
 }
 
 void MapWnd::HideGovernment() {
     m_government_wnd->Hide();
     RemoveFromWndStack(m_government_wnd);
-    m_btn_government->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
-    m_btn_government->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
+    m_btn_government->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government.png")));
+    m_btn_government->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government_mouseover.png")));
 
     RestoreSidePanel();
 }
