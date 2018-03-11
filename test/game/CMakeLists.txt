@@ -1,4 +1,9 @@
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION}
+    COMPONENTS
+        unit_test_framework
+        log
+        log_setup
+    REQUIRED)
 
 add_executable(fo_unittest_game
     main.cpp
@@ -6,8 +11,9 @@ add_executable(fo_unittest_game
 
 target_compile_definitions(fo_unittest_game
     PRIVATE
-        -DFREEORION_BUILD_SERVER
+        -DFREEORION_BUILD_HUMAN
         -DBOOST_TEST_DYN_LINK
+        -DBOOST_LOG_DYN_LINK
 )
 
 target_include_directories(fo_unittest_game
@@ -20,6 +26,8 @@ target_link_libraries(fo_unittest_game
     freeorioncommon
     freeorionparse
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
+    ${Boost_LOG_LIBRARY}
+    ${Boost_LOG_SETUP_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
@@ -29,6 +37,17 @@ add_coverage(fo_unittest_game
 
 add_dependencies(unittest
     fo_unittest_game
+)
+
+target_sources(fo_unittest_game
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}/client/ClientApp.h
+        ${PROJECT_SOURCE_DIR}/client/ClientFSMEvents.h
+        ${PROJECT_SOURCE_DIR}/network/ClientNetworking.h
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/client/ClientApp.cpp
+        ${PROJECT_SOURCE_DIR}/client/ClientFSMEvents.cpp
+        ${PROJECT_SOURCE_DIR}/network/ClientNetworking.cpp
 )
 
 set(FO_TEST_GAME
