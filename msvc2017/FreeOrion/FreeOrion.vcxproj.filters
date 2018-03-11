@@ -204,9 +204,6 @@
     <ClInclude Include="..\..\UI\ResourcePanel.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\UI\SDLGUI.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\UI\ServerConnectWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
@@ -409,6 +406,9 @@
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="..\..\UI\GovernmentWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\client\human\FreeOrion.ico">
@@ -548,9 +548,6 @@
     <ClCompile Include="..\..\UI\ResourcePanel.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\UI\SDLGUI.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\UI\ServerConnectWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
@@ -618,6 +615,9 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="..\..\UI\GovernmentWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\client\human\FreeOrion.rc">

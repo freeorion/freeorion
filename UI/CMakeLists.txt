@@ -26,6 +26,7 @@ target_sources(freeorion
         ${CMAKE_CURRENT_LIST_DIR}/FleetButton.h
         ${CMAKE_CURRENT_LIST_DIR}/FleetWnd.h
         ${CMAKE_CURRENT_LIST_DIR}/GalaxySetupWnd.h
+        ${CMAKE_CURRENT_LIST_DIR}/GovernmentWnd.h
         ${CMAKE_CURRENT_LIST_DIR}/GraphControl.h
         ${CMAKE_CURRENT_LIST_DIR}/Hotkeys.h
         ${CMAKE_CURRENT_LIST_DIR}/IconTextBrowseWnd.h
@@ -86,6 +87,7 @@ target_sources(freeorion
         ${CMAKE_CURRENT_LIST_DIR}/FleetButton.cpp
         ${CMAKE_CURRENT_LIST_DIR}/FleetWnd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GalaxySetupWnd.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/GovernmentWnd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GraphControl.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Hotkeys.cpp
         ${CMAKE_CURRENT_LIST_DIR}/IconTextBrowseWnd.cpp
