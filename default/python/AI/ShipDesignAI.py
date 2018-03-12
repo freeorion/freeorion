@@ -45,7 +45,7 @@ global variables:
 import copy
 import math
 from collections import Counter, defaultdict
-from logging import warn, error
+from logging import debug, info, warn, error
 
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
