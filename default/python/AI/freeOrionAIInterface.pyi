@@ -1566,9 +1566,9 @@ class empire(object):
 
     def supplyProjections(self):
         """
-        :rtype: IntIntMap
+        :rtype: dict[int, int]
         """
-        return IntIntMap()
+        return dict()
 
     def techResearched(self, string):
         """
@@ -2450,7 +2450,7 @@ class universe(object):
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype: VisibilityIntMap
+        :rtype: dict[int, int]
         """
         return dict()
 

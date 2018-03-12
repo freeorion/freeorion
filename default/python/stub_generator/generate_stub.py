@@ -45,8 +45,9 @@ def handle_class(info):
 
     for rutine_name, rutine_docs in instance_methods:
         docs = Docs(rutine_docs, 2, is_class=True)
-
-        if docs.rtype == 'VisibilityIntMap':
+        # TODO: Subclass map-like classes from dict (or custom class) rather than this hack
+        if docs.rtype in ('VisibilityIntMap', 'IntIntMap'):
+            docs.rtype = 'dict[int, int]'
             return_string = 'return dict()'
         elif docs.rtype == 'None':
             return_string = 'return None'
