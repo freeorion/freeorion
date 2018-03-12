@@ -22,6 +22,35 @@ namespace {
 struct GameFixture : public ClientApp {
     int EffectsProcessingThreads() const
     { return GetOptionsDB().Get<int>("effects.ai.threads"); }
+
+    bool ProcessMessages() {
+        bool to_process = true;
+        while (1) {
+            if (!m_networking->IsConnected())
+                return false;
+            auto opt_msg = m_networking->GetMessage();
+            if (opt_msg) {
+                Message msg = *opt_msg;
+                HandleMessage(msg);
+                to_process = true;
+            } else {
+                if(to_process) {
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                    to_process = false;
+                } else {
+                    return true;
+                }
+            }
+        }
+    }
+
+    void HandleMessage(Message& msg) {
+        switch (msg.Type()) {
+        default:
+            BOOST_TEST_MESSAGE(msg.Type());
+            break;
+        }
+    }
 };
 
 BOOST_FIXTURE_TEST_SUITE(TestGame, GameFixture)
@@ -45,9 +74,13 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
     std::vector<std::string> args;
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
+    args.push_back("--singleplayer");
+
     Process server = Process(SERVER_CLIENT_EXE, args);
 
     BOOST_REQUIRE(m_networking->ConnectToLocalHostServer());
+
+    BOOST_REQUIRE(ProcessMessages());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
