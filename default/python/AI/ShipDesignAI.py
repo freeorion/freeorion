@@ -45,7 +45,7 @@ global variables:
 import copy
 import math
 from collections import Counter, defaultdict
-from logging import warn, error
+from logging import debug, info, warn, error
 
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
@@ -147,8 +147,7 @@ class ShipDesignCache(object):
         Make sure this function is called once at the beginning of the turn,
         i.e. before any other function of this module is used.
         """
-        print
-        print 10 * "=", "Updating ShipDesignCache for new turn", 10 * "="
+        info(10 * "=" + "Updating ShipDesignCache for new turn" + 10 * "=")
         if not self.map_reference_design_name:
             self._build_cache_after_load()
         self._check_cache_for_consistency()
@@ -157,25 +156,25 @@ class ShipDesignCache(object):
 
     def print_testhulls(self):
         """Print the testhulls cache."""
-        print "Testhull cache:", self.testhulls
+        debug("Testhull cache: %s" % self.testhulls)
 
     def print_design_id_by_name(self):
         """Print the design_id_by_name cache."""
-        print "DesignID cache:", self.design_id_by_name
+        debug("DesignID cache: %s" % self.design_id_by_name)
 
     def print_part_by_partname(self):
         """Print the part_by_partname cache."""
-        print "Parts cached by name:", self.part_by_partname
+        debug("Parts cached by name: %s" % self.part_by_partname)
 
     def print_strictly_worse_parts(self):
         """Print the strictly_worse_parts cache."""
-        print "List of strictly worse parts (ignoring slots):"
+        debug("List of strictly worse parts (ignoring slots):")
         for part in self.strictly_worse_parts:
-            print "  %s:" % part, self.strictly_worse_parts[part]
+            debug("  %s: %s" % (part, self.strictly_worse_parts[part]))
 
     def print_map_reference_design_name(self):
         """Print the ingame, reference name map of shipdesigns."""
-        print "Design name map:", self.map_reference_design_name
+        debug("Design name map: %s" % self.map_reference_design_name)
 
     def print_hulls_for_planets(self, pid=None):
         """Print the hulls buildable on each planet.
@@ -191,10 +190,10 @@ class ShipDesignCache(object):
         else:
             error("Invalid parameter 'pid' for 'print_hulls_for_planets'. Expected int, list or None.")
             return
-        print "Hull-cache:"
+        debug("Hull-cache:")
         get_planet = fo.getUniverse().getPlanet
         for pid in planets:
-            print "%s:" % get_planet(pid).name, self.hulls_for_planets[pid]
+            debug("%s: %s" % (get_planet(pid).name, self.hulls_for_planets[pid]))
 
     def print_parts_for_planets(self, pid=None):
         """Print the parts buildable on each planet.
@@ -210,12 +209,13 @@ class ShipDesignCache(object):
         else:
             error("Invalid parameter 'pid' for 'print_parts_for_planets'. Expected int, list or None.")
             return
-        print "Available parts per planet:"
+        debug("Available parts per planet:")
         get_planet = fo.getUniverse().getPlanet
+
         for pid in planets:
-            print "  %s:" % get_planet(pid).name,
+            debug("  %s:" % get_planet(pid).name)
             for slot in self.parts_for_planets[pid]:
-                print slot, ":", self.parts_for_planets[pid][slot]
+                debug("    %s: %s" % (slot, self.parts_for_planets[pid][slot]))
 
     def print_best_designs(self, print_diff_only=True):
         """Print the best designs that were previously found.
@@ -223,53 +223,51 @@ class ShipDesignCache(object):
         :param print_diff_only: Print only changes to cache since last print
         :type print_diff_only: bool
         """
-        print "Currently cached best designs:"
+        debug("Currently cached best designs:")
         if print_diff_only:
             print_dict = {}
             recursive_dict_diff(self.best_designs, self.last_printed, print_dict, diff_level_threshold=1)
         else:
             print_dict = self.best_designs
         for classname in print_dict:
-            print classname
+            debug(classname)
             cache_name = print_dict[classname]
             for consider_fleet in cache_name:
-                print 4*" ", consider_fleet
+                debug(4*" " + str(consider_fleet))
                 cache_upkeep = cache_name[consider_fleet]
                 for req_tuple in cache_upkeep:
-                    print 8*" ", req_tuple
+                    debug(8*" " + str(req_tuple))
                     cache_reqs = cache_upkeep[req_tuple]
                     for tech_tuple in cache_reqs:
-                        print 12*" ", tech_tuple, " # relevant tech upgrades"
+                        debug(12*" " + str(tech_tuple) + " # relevant tech upgrades")
                         cache_techs = cache_reqs[tech_tuple]
                         for species_tuple in cache_techs:
-                            print 16*" ", species_tuple, " # relevant species stats"
+                            debug(16*" " + str(species_tuple) + " # relevant species stats")
                             cache_species = cache_techs[species_tuple]
                             for av_parts in cache_species:
-                                print 20*" ", av_parts
+                                debug(20*" " + str(av_parts))
                                 cache_parts = cache_species[av_parts]
                                 for hullname in sorted(cache_parts, reverse=True, key=lambda x: cache_parts[x][0]):
-                                    print 24*" ", hullname, ":",
-                                    print cache_parts[hullname]
+                                    debug(24*" " + hullname + ":" + str(cache_parts[hullname]))
         self.last_printed = copy.deepcopy(self.best_designs)
 
     def print_production_cost(self):
         """Print production_cost cache."""
         universe = fo.getUniverse()
-        print "Cached production cost per planet:"
+        debug("Cached production cost per planet:")
         for pid in self.production_cost:
-            print "  %s:" % universe.getPlanet(pid).name, self.production_cost[pid]
+            debug("  %s: %s" % (universe.getPlanet(pid).name, self.production_cost[pid]))
 
     def print_production_time(self):
         """Print production_time cache."""
         universe = fo.getUniverse()
-        print "Cached production cost per planet:"
+        debug("Cached production cost per planet:")
         for pid in self.production_time:
-            print "  %s:" % universe.getPlanet(pid).name, self.production_time[pid]
+            debug("  %s: %s" % (universe.getPlanet(pid).name, self.production_time[pid]))
 
     def print_all(self):
         """Print the entire ship design cache."""
-        print
-        print "Printing the ShipDesignAI cache..."
+        debug("Printing the ShipDesignAI cache...")
         self.print_testhulls()
         self.print_design_id_by_name()
         self.print_part_by_partname()
@@ -280,8 +278,6 @@ class ShipDesignCache(object):
         self.print_best_designs()
         self.print_production_cost()
         self.print_production_time()
-        print "-----"
-        print
 
     def update_cost_cache(self, partnames=None, hullnames=None):
         """Cache the production cost and time for each part and hull for each inhabited planet for this turn.
@@ -350,14 +346,13 @@ class ShipDesignCache(object):
         This function should be called once at the beginning of the turn (before update_shipdesign_cache()).
         Especially (only?) in multiplayer games, the shipDesignIDs may sometimes change across turns.
         """
-        print "Checking persistent cache for consistency..."
+        debug("Checking persistent cache for consistency...")
         try:
             for partname in self.part_by_partname:
                 cached_name = self.part_by_partname[partname].name
                 if cached_name != partname:
                     self.part_by_partname[partname] = fo.getPartType(partname)
-                    print "  WARNING: Part cache corrupted."
-                    print "    Expected: %s, got: %s. Cache was repaired." % (partname, cached_name)
+                    error("Part cache corrupted. Expected: %s, got: %s. Cache was repaired." % (partname, cached_name))
         except Exception as e:
             self.part_by_partname.clear()
             error(e, exc_info=True)
@@ -412,7 +407,7 @@ class ShipDesignCache(object):
         self.parts_for_planets.clear()
         inhabited_planets = state.get_inhabited_planets()
         if not inhabited_planets:
-            print "No inhabited planets found. The design process was aborted."
+            debug("No inhabited planets found. The design process was aborted.")
             return
         get_shipdesign = fo.getShipDesign
         get_hulltype = fo.getHullType
@@ -443,14 +438,14 @@ class ShipDesignCache(object):
             if new_part.partClass in WEAPONS:
                 continue  # TODO:  Update cache-functionality to handle tech upgrades
             if not new_part.costTimeLocationInvariant:
-                print "new part %s not location invariant!" % new_part.name
+                debug("new part %s not location invariant!" % new_part.name)
                 continue
             for part_class in ALL_META_CLASSES:
                 if new_part.partClass in part_class:
                     for old_part in [get_part_type(part) for part in self.strictly_worse_parts
                                      if part != new_part.name]:
                         if not old_part.costTimeLocationInvariant:
-                            print "old part %s not location invariant!" % old_part.name
+                            debug("old part %s not location invariant!" % old_part.name)
                             continue
                         if old_part.partClass in part_class:
                             if new_part.capacity >= old_part.capacity:
@@ -463,27 +458,27 @@ class ShipDesignCache(object):
                                     and {x for x in a.mountableSlotTypes} >= {x for x in b.mountableSlotTypes}
                                     and self.production_time[pid][a.name] <= self.production_time[pid][b.name]):
                                 self.strictly_worse_parts[a.name].append(b.name)
-                                print "Part %s is strictly worse than part %s" % (b.name, a.name)
+                                debug("Part %s is strictly worse than part %s" % (b.name, a.name))
                     break
         available_parts = sorted(self.strictly_worse_parts.keys(),
                                  key=lambda item: get_part_type(item).capacity, reverse=True)
 
         # in case of a load, we need to rebuild our Cache.
         if not self.testhulls:
-            print "Testhull cache not found. This may happen only at first turn after game start or load."
+            debug("Testhull cache not found. This may happen only at first turn after game start or load.")
             for hullname in available_hulls:
                 des = [des for des in testdesign_names_part if des.endswith(hullname)]
                 if des:
                     self.testhulls.add(hullname)
             if verbose:
-                print "Rebuilt Cache. The following hulls are used in testdesigns for parts: ", self.testhulls
+                debug("Rebuilt Cache. The following hulls are used in testdesigns for parts: %s" % self.testhulls)
 
         # 1. Update hull test designs
-        print "Updating Testdesigns for hulls..."
+        debug("Updating Testdesigns for hulls...")
         if verbose:
-            print "Available Hulls: ", available_hulls
-            print "Existing Designs (prefix: %s): " % TESTDESIGN_NAME_HULL,
-            print [x.replace(TESTDESIGN_NAME_HULL, "") for x in testdesign_names_hull]
+            debug("Available Hulls: %s" % available_hulls)
+            debug("Existing Designs (prefix: %s): %s" % (
+                TESTDESIGN_NAME_HULL, [x.replace(TESTDESIGN_NAME_HULL, "") for x in testdesign_names_hull]))
         for hull in [get_hulltype(hullname) for hullname in available_hulls
                      if "%s_%s" % (TESTDESIGN_NAME_HULL, hullname) not in testdesign_names_hull]:
             partlist = len(hull.slots) * [""]
@@ -492,7 +487,7 @@ class ShipDesignCache(object):
                                 description="TESTPURPOSE ONLY", verbose=verbose)
 
         # 2. Cache the list of buildable ship hulls for each planet
-        print "Caching buildable hulls per planet..."
+        debug("Caching buildable hulls per planet...")
         testname = "%s_%s" % (TESTDESIGN_NAME_HULL, "%s")
         for pid in inhabited_planets:
             self.hulls_for_planets[pid] = []
@@ -503,7 +498,7 @@ class ShipDesignCache(object):
                     if _can_build(testdesign, empire_id, pid):
                         self.hulls_for_planets[pid].append(hullname)
             else:
-                print "Missing testdesign for hull %s!" % hullname
+                warn("Missing testdesign for hull %s!" % hullname)
 
         # 3. Update ship part test designs
         #     Because there are different slottypes, we need to find a hull that can host said slot.
@@ -512,11 +507,11 @@ class ShipDesignCache(object):
         #       II. If there are parts, find out which slots we need
         #       III. For each slot type, try to find a hull we can build on this planet
         #            and use this hull for all the parts hostable in this type.
-        print "Updating test designs for ship parts..."
+        debug("Updating test designs for ship parts...")
         if verbose:
-            print "Available parts: ", available_parts
-            print "Existing Designs (prefix: %s): " % TESTDESIGN_NAME_PART,
-            print [x.replace(TESTDESIGN_NAME_PART, "") for x in testdesign_names_part]
+            debug("Available parts: %s" % available_parts)
+            debug("Existing Designs (prefix: %s): %s" % (
+                TESTDESIGN_NAME_PART, [x.replace(TESTDESIGN_NAME_PART, "") for x in testdesign_names_part]))
         for pid in inhabited_planets:
             planetname = universe.getPlanet(pid).name
             local_hulls = self.hulls_for_planets[pid]
@@ -525,20 +520,20 @@ class ShipDesignCache(object):
                                        for hullname in local_hulls])]
             if not needs_update:
                 if verbose:
-                    print "Planet %s: Test designs are up to date" % planetname
+                    debug("Planet %s: Test designs are up to date" % planetname)
                 continue
             if verbose:
-                print "Planet %s: The following parts appear to need a new design: " % planetname,
-                print [part.name for part in needs_update]
+                debug("Planet %s: The following parts appear to need a new design: %s" % (
+                    planetname, [part.name for part in needs_update]))
             for slot in available_slot_types:
                 testhull = next((hullname for hullname in local_hulls if slot in get_hulltype(hullname).slots), None)
                 if testhull is None:
                     if verbose:
-                        print "Failure: Could not find a hull with slots of type '%s' for this planet" % slot.name
+                        debug("Failure: Could not find a hull with slots of type '%s' for this planet" % slot.name)
                     continue
                 else:
                     if verbose:
-                        print "Using hull %s for slots of type '%s'" % (testhull, slot.name)
+                        debug("Using hull %s for slots of type '%s'" % (testhull, slot.name))
                     self.testhulls.add(testhull)
                 slotlist = [s for s in get_hulltype(testhull).slots]
                 slot_index = slotlist.index(slot)
@@ -568,13 +563,13 @@ class ShipDesignCache(object):
                       exc_info=True)
 
         # 4. Cache the list of buildable ship parts for each planet
-        print "Caching buildable ship parts per planet..."
+        debug("Caching buildable ship parts per planet...")
         for pid in inhabited_planets:
             local_testhulls = [hull for hull in self.testhulls
                                if hull in self.hulls_for_planets[pid]]
             this_planet = universe.getPlanet(pid)
             if verbose:
-                print "Testhulls for %s are %s" % (this_planet, local_testhulls)
+                debug("Testhulls for %s are %s" % (this_planet, local_testhulls))
             self.parts_for_planets[pid] = {}
             local_ignore = set()
             local_cache = self.parts_for_planets[pid]
@@ -597,14 +592,14 @@ class ShipDesignCache(object):
                         break
                 if verbose and not ship_design:
                     planetname = universe.getPlanet(pid).name
-                    print "Failure: Couldn't find a testdesign for part %s on planet %s." % (partname, planetname)
+                    debug("Failure: Couldn't find a testdesign for part %s on planet %s." % (partname, planetname))
             # make sure we do not edit the list later on this turn => tuple: immutable
             # This also allows to shallowcopy the cache.
             for slot in local_cache:
                 local_cache[slot] = tuple(local_cache[slot])
 
             if verbose:
-                print "Parts for Planet: %s: " % universe.getPlanet(pid).name, self.parts_for_planets[pid]
+                debug("Parts for Planet: %s: " % universe.getPlanet(pid).name, self.parts_for_planets[pid])
 
 
 Cache = ShipDesignCache()
@@ -765,7 +760,7 @@ class ShipDesigner(object):
         # However, we also need to make sure, that the closer we are to requirements,
         # the better our rating is so the optimizing heuristic finds "the right way".
         rating = MISSING_REQUIREMENT_MULTIPLIER * sum([
-            max(0, self._minimum_fuel() - self.design_stats.fuel),
+            max(0., self._minimum_fuel() - self.design_stats.fuel),
             max(0, self._minimum_speed() - self.design_stats.speed),
             max(0, self._minimum_structure() - (self.design_stats.structure + self._expected_organic_growth())),
             max(0, self._minimum_fighter_launch_rate() - self.design_stats.fighter_launch_rate)
@@ -1033,8 +1028,8 @@ class ShipDesigner(object):
 
         if reference_name in Cache.map_reference_design_name:
             if verbose:
-                print "Design with reference name %s is cached: %s" % (reference_name,
-                                                                       Cache.map_reference_design_name[reference_name])
+                debug("Design with reference name %s is cached: %s" % (
+                    reference_name, Cache.map_reference_design_name[reference_name]))
             try:
                 return _get_design_by_name(Cache.map_reference_design_name[reference_name]).id
             except AttributeError:
@@ -1044,7 +1039,7 @@ class ShipDesigner(object):
                 return None
 
         if verbose:
-            print "Trying to add Design... %s" % design_name
+            debug("Trying to add Design... %s" % design_name)
         res = _create_ship_design(design_name, self.hull.name, self.partnames,
                                   description=self.description, verbose=verbose)
         if not res:
@@ -1109,7 +1104,7 @@ class ShipDesigner(object):
         best_design_list = []
 
         if verbose:
-            print "Trying to find optimum designs for shiptype class %s" % self.__class__.__name__
+            debug("Trying to find optimum designs for shiptype class %s" % self.__class__.__name__)
         for pid in planets:
             planet = universe.getPlanet(pid)
             self.pid = pid
@@ -1141,9 +1136,9 @@ class ShipDesigner(object):
 
             available_hulls = list(Cache.hulls_for_planets[pid]) + list(additional_hulls)
             if verbose:
-                print "Evaluating planet %s" % planet.name
-                print "Species:", planet.speciesName
-                print "Available Ship Hulls: ", available_hulls
+                debug("Evaluating planet %s" % planet.name)
+                debug("Species: %s" % planet.speciesName)
+                debug("Available Ship Hulls: %s" % available_hulls)
             available_parts = copy.copy(Cache.parts_for_planets[pid])  # this is a dict! {slottype:(partnames)}
             available_slots = set(available_parts.keys()) | set(additional_part_dict.keys())
             for slot in available_slots:
@@ -1163,27 +1158,27 @@ class ShipDesigner(object):
                     best_hull_rating = cache[0]
                     current_parts = cache[1]
                     if verbose:
-                        print "Best rating for hull %s: %f (read from Cache)" % (hullname, best_hull_rating),
-                        print current_parts
+                        debug("Best rating for hull %s: %f (read from Cache) %s" % (
+                            hullname, best_hull_rating, current_parts))
                 else:
                     self.update_hull(hullname)
                     best_hull_rating, current_parts = self._filling_algorithm(available_parts)
                     design_cache_parts.update({hullname: (best_hull_rating, current_parts)})
                     if verbose:
-                        print "Best rating for hull %s: %f" % (hullname, best_hull_rating), current_parts
+                        debug("Best rating for hull %s: %f %s" % (hullname, best_hull_rating, current_parts))
                 if best_hull_rating > best_rating_for_planet:
                     best_rating_for_planet = best_hull_rating
                     best_hull = hullname
                     best_parts = current_parts
             if verbose:
-                print "Best overall rating for this planet: %f" % best_rating_for_planet,
-                print "(", best_hull, " with", best_parts, ")"
+                debug("Best overall rating for this planet: %f (%s with %s)" % (
+                    best_rating_for_planet, best_hull, best_parts))
             if best_hull:
                 self.update_hull(best_hull)
                 self.update_parts(best_parts)
                 design_id = self.add_design(verbose=verbose)
                 if verbose:
-                    print "For best design got got design id %s" % design_id
+                    debug("For best design got got design id %s" % design_id)
                 if design_id is not None:
                     best_design_list.append((best_rating_for_planet, pid, design_id,
                                              self.production_cost, copy.deepcopy(self.design_stats)))
@@ -1191,7 +1186,7 @@ class ShipDesigner(object):
                     error("The best design for %s on planet %d could not be added."
                           % (self.__class__.__name__, pid))
             elif verbose:
-                print "Could not find a suitable design of type %s for planet %s." % (self.__class__.__name__, planet)
+                debug("Could not find a suitable design of type %s for planet %s." % (self.__class__.__name__, planet))
         sorted_design_list = sorted(best_design_list, key=lambda x: x[0], reverse=True)
         return sorted_design_list
 
@@ -1213,9 +1208,9 @@ class ShipDesigner(object):
         """
         empire_id = fo.empireID()
         if verbose:
-            print "Available parts:"
+            debug("Available parts:")
             for x in partname_dict:
-                print x, ":", partname_dict[x]
+                debug("  %s: %s" % (x, partname_dict[x]))
 
         part_dict = {slottype: zip(partname_dict[slottype], map(get_part_type, partname_dict[slottype]))
                      for slottype in partname_dict}  # {slottype: [(partname, parttype_object)]}
@@ -1241,7 +1236,7 @@ class ShipDesigner(object):
                         if a.capacity == 0:  # TODO: Modify this if effects of items get hardcoded
                             part_dict[slottype].remove((a.name, a))
                             if verbose:
-                                print "removing %s because capacity is zero." % a.name
+                                debug("removing %s because capacity is zero." % a.name)
                             continue
                         if len(shipPartsPerClass) == 1:
                             break
@@ -1253,16 +1248,16 @@ class ShipDesigner(object):
                                     and (b.capacity/cost_b - a.capacity/cost_a) > -1e-6
                                     and b.capacity >= a.capacity):
                                 if verbose:
-                                    print "removing %s because %s is better." % (a.name, b.name)
+                                    debug("removing %s because %s is better." % (a.name, b.name))
                                 part_dict[slottype].remove((a.name, a))
                                 break
         for slottype in part_dict:
             partname_dict[slottype] = [tup[0] for tup in part_dict[slottype]]
         self._class_specific_filter(partname_dict)
         if verbose:
-            print "Available parts after filtering:"
+            debug("Available parts after filtering:")
             for x in partname_dict:
-                print x, ":", partname_dict[x]
+                debug("  %s: %s" % (x, partname_dict[x]))
 
     def _starting_guess(self, available_parts, num_slots):
         """Return an initial guess for the filling of the slots.
@@ -1542,7 +1537,7 @@ class ShipDesigner(object):
         weapon_name = weapon_part.name
         base = weapon_part.secondaryStat
         if not base:
-            print "WARNING: Queried weapon %s for number of shots but didn't return any." % weapon_name
+            warn("Queried weapon %s for number of shots but didn't return any." % weapon_name)
             base = 1
         tech_bonus = _get_tech_bonus(AIDependencies.WEAPON_ROF_UPGRADE_DICT, weapon_name)
         # species modifier
@@ -1693,7 +1688,7 @@ class WarShipDesigner(MilitaryShipDesignerBaseClass):
                 n = int(round(n))
                 n = max(n, 1)
                 n = min(n, s)
-                # print "estimated weapon slots for %s: %d" % (self.hull.name, n)
+                debug("estimated weapon slots for %s: %d" % (self.hull.name, n))
                 ret_val[idxarmour] = s-n
                 ret_val[idxweapon] = n
             else:
@@ -1751,8 +1746,8 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
         # Therefore, after using (multiple) entries of one hangar part, the algorithm won't consider different parts.
         # Workaround: Do multiple passes with only one hangar part each and choose the best rated one.
         if verbose:
-            print "Calling _filling_algorithm() for Carrier-Style ships!"
-            print "Available parts: ", available_parts
+            debug("Calling _filling_algorithm() for Carrier-Style ships!")
+            debug("Available parts: %s" % available_parts)
         # first, get all available hangar parts.
         hangar_parts = set()
         for partlist in available_parts.values():
@@ -1761,7 +1756,7 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
                 if part.partClass == fo.shipPartClass.fighterHangar:
                     hangar_parts.add(partname)
         if verbose:
-            print "Found the following hangar parts: ", hangar_parts
+            debug("Found the following hangar parts: %s" % hangar_parts)
 
         # now, call the standard-algorithm with only one hangar part at a time and choose the best rated one.
         best_rating = INVALID_DESIGN_RATING
@@ -1773,7 +1768,7 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
                 current_available_parts[slot] = [part for part in partlist if part not in forbidden_hangar_parts]
             this_rating, this_partlist = ShipDesigner._filling_algorithm(self, current_available_parts)
             if verbose:
-                print "Best rating for part %s is %.2f with partlist %s" % (this_hangar_part, this_rating, this_partlist)
+                debug("Best rating for part %s is %.2f with partlist %s" % (this_hangar_part, this_rating, this_partlist))
             if this_rating > best_rating:
                 best_rating = this_rating
                 best_partlist = this_partlist
@@ -2174,12 +2169,12 @@ def _create_ship_design(design_name, hull_name, part_names, model="fighter",
                                              model, name_desc_in_string_table))
     if res:
         if verbose:
-            print "Success: Added Design %s, with result %d" % (design_name, res)
+            debug("Success: Added Design %s, with result %d" % (design_name, res))
         # update cache
         design = _update_design_by_name_cache(design_name, verbose=verbose)
         if design:
             if verbose:
-                print "Success: Design %s stored in design_by_name_cache" % design_name
+                debug("Success: Design %s stored in design_by_name_cache" % design_name)
         else:
             warn("Tried to get just created design %s but got None" % design_name)
     else:
@@ -2202,7 +2197,7 @@ def _update_design_by_name_cache(design_name, verbose=False, cache_as_invalid=Tr
     design = None
     for design_id in fo.getEmpire().allShipDesigns:
         if verbose:
-            print "Checking design %s in search for %s" % (fo.getShipDesign(design_id).name, design_name)
+            debug("Checking design %s in search for %s" % (fo.getShipDesign(design_id).name, design_name))
         if fo.getShipDesign(design_id).name == design_name:
             design = fo.getShipDesign(design_id)
             break
@@ -2210,7 +2205,7 @@ def _update_design_by_name_cache(design_name, verbose=False, cache_as_invalid=Tr
         Cache.design_id_by_name[design_name] = design.id
     elif cache_as_invalid:
         # invalid design
-        print "Shipdesign %s seems not to exist: Caching as invalid design." % design_name
+        debug("Shipdesign %s seems not to exist: Caching as invalid design." % design_name)
         Cache.design_id_by_name[design_name] = INVALID_ID
     return design
 
