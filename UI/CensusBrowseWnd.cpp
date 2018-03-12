@@ -35,7 +35,7 @@ public:
         m_icon(nullptr),
         m_name(nullptr),
         m_census_val(nullptr),
-		m_worlds(nullptr),
+        m_worlds(nullptr),
         m_show_icon(show_icon)
     {
         if (m_show_icon)
@@ -47,8 +47,8 @@ public:
         num_digits =    census_val < 100 ? num_digits : 3; // this allows the decimal point to line up when there number above and below 100.
         num_digits =   census_val < 1000 ? num_digits : 4; // this allows the decimal point to line up when there number above and below 1000.
         m_census_val = GG::Wnd::Create<CUILabel>(DoubleToString(census_val, num_digits, false), GG::FORMAT_RIGHT);
-		
-		m_worlds = GG::Wnd::Create<CUILabel>(std::to_string(worlds), GG::FORMAT_RIGHT);
+
+        m_worlds = GG::Wnd::Create<CUILabel>(std::to_string(worlds), GG::FORMAT_RIGHT);
     }
 
     void CompleteConstruction() override {
@@ -61,7 +61,7 @@ public:
 
         AttachChild(m_name);
         AttachChild(m_census_val);
-		AttachChild(m_worlds);
+        AttachChild(m_worlds);
 
         DoLayout();
     }
@@ -91,7 +91,7 @@ private:
     void DoLayout() {
         const GG::X SPECIES_NAME_WIDTH(ClientUI::Pts() * 9);
         const GG::X SPECIES_CENSUS_WIDTH(ClientUI::Pts() * 5);
-		const GG::X SPECIES_WORLDS_WIDTH(ClientUI::Pts() * 3);
+        const GG::X SPECIES_WORLDS_WIDTH(ClientUI::Pts() * 3);
 
         GG::X left(GG::X0);
         GG::Y bottom(MeterIconSize().y - GG::Y(EDGE_PAD));
@@ -105,9 +105,9 @@ private:
 
         m_census_val->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + SPECIES_CENSUS_WIDTH, bottom));
         left += SPECIES_CENSUS_WIDTH;
-		
-		m_worlds->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + SPECIES_WORLDS_WIDTH, bottom));
-		left += SPECIES_WORLDS_WIDTH;
+
+        m_worlds->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + SPECIES_WORLDS_WIDTH, bottom));
+        left += SPECIES_WORLDS_WIDTH;
 
         InitBuffer();
     }
@@ -127,29 +127,29 @@ private:
     std::shared_ptr<GG::StaticGraphic>  m_icon;
     std::shared_ptr<GG::Label>          m_name;
     std::shared_ptr<GG::Label>          m_census_val;
-	std::shared_ptr<GG::Label>          m_worlds;
+    std::shared_ptr<GG::Label>          m_worlds;
     bool                                m_show_icon;
 };
 
 CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
-								 const std::map<std::string, float>& population_counts,
-								 const std::map<std::string, int>&   population_worlds,
+                                 const std::map<std::string, float>& population_counts,
+                                 const std::map<std::string, int>&   population_worlds,
                                  const std::map<std::string, float>& tag_counts,
-								 const std::map<std::string, int>&   tag_worlds,
-								 const std::vector<std::string>&     census_order) :
+                                 const std::map<std::string, int>&   tag_worlds,
+                                 const std::vector<std::string>&     census_order) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, BrowseTextWidth(), GG::Y1),
     m_title_text(GG::Wnd::Create<CUILabel>(title_text, GG::FORMAT_LEFT)),
     m_species_text(GG::Wnd::Create<CUILabel>(UserString("CENSUS_SPECIES_HEADER"), GG::FORMAT_BOTTOM)),
     m_list(GG::Wnd::Create<CUIListBox>()),
     m_tags_text(GG::Wnd::Create<CUILabel>(UserString("CENSUS_TAG_HEADER"), GG::FORMAT_BOTTOM)),
     m_tags_list(GG::Wnd::Create<CUIListBox>()),
-	m_total_population(GG::Wnd::Create<CUILabel>(UserString("CENSUS_TOTAL_POPULATION"), GG::FORMAT_BOTTOM)),
-	m_total_worlds(GG::Wnd::Create<CUILabel>(UserString("CENSUS_TOTAL_WORLDS"), GG::FORMAT_BOTTOM)),
+    m_total_population(GG::Wnd::Create<CUILabel>(UserString("CENSUS_TOTAL_POPULATION"), GG::FORMAT_BOTTOM)),
+    m_total_worlds(GG::Wnd::Create<CUILabel>(UserString("CENSUS_TOTAL_WORLDS"), GG::FORMAT_BOTTOM)),
     m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2),
     m_population_counts(population_counts),
-	m_population_worlds(population_worlds),
+    m_population_worlds(population_worlds),
     m_tag_counts(tag_counts),
-	m_tag_worlds(tag_worlds),
+    m_tag_worlds(tag_worlds),
     m_census_order(census_order)
 {}
 
@@ -185,9 +185,9 @@ void CensusBrowseWnd::CompleteConstruction() {
     { counts_species.insert({entry.second, entry.first}); }
     m_population_counts.clear();
 
-	int totalWorlds = 0;
-	float totalPopulation = 0;
-	
+    int totalWorlds = 0;
+    float totalPopulation = 0;
+
     // add species rows
     for (auto it = counts_species.rbegin(); it != counts_species.rend(); ++it) {
 		totalPopulation += it->first;
@@ -214,7 +214,7 @@ void CensusBrowseWnd::CompleteConstruction() {
     m_tags_list->SetNumCols(1);
     m_tags_list->SetColWidth(0, GG::X0);
     m_tags_list->LockColWidths();
-	
+
     AttachChild(m_title_text);
     AttachChild(m_species_text);
     AttachChild(m_list);
@@ -236,23 +236,23 @@ void CensusBrowseWnd::CompleteConstruction() {
     m_tag_counts.clear();
 
     m_tags_list->Resize(GG::Pt(BrowseTextWidth(), top2 -top -ROW_HEIGHT - HALF_HEIGHT + (EDGE_PAD*3)));
-	
-	// only show total population and number of worlds if there is more than just one species
-	if (m_population_worlds.size() > 1) {
-		top2 += 0.5 * ROW_HEIGHT;
-		m_total_population->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
-		m_total_population->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
-		m_total_population->SetText(boost::io::str(FlexibleFormat(UserString("CENSUS_TOTAL_POPULATION")) % (int)round(totalPopulation)));
-		top2 += ROW_HEIGHT;
 
-		m_total_worlds->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
-		m_total_worlds->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
-		m_total_worlds->SetText(boost::io::str(FlexibleFormat(UserString("CENSUS_TOTAL_WORLDS")) % totalWorlds));
-		top2 += ROW_HEIGHT;
+    // only show total population and number of worlds if there is more than just one species
+    if (m_population_worlds.size() > 1) {
+        top2 += 0.5 * ROW_HEIGHT;
+        m_total_population->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
+        m_total_population->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
+        m_total_population->SetText(boost::io::str(FlexibleFormat(UserString("CENSUS_TOTAL_POPULATION")) % (int)round(totalPopulation)));
+        top2 += ROW_HEIGHT;
 
-		AttachChild(m_total_population);
-		AttachChild(m_total_worlds);
-	}
+        m_total_worlds->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
+        m_total_worlds->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
+        m_total_worlds->SetText(boost::io::str(FlexibleFormat(UserString("CENSUS_TOTAL_WORLDS")) % totalWorlds));
+        top2 += ROW_HEIGHT;
+
+        AttachChild(m_total_population);
+        AttachChild(m_total_worlds);
+    }
 
     Resize(GG::Pt(BrowseTextWidth(), top2  + (EDGE_PAD*3)));
 
