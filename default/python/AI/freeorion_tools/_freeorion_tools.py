@@ -298,3 +298,52 @@ def dump_universe():
             dump_universe.last_dump < cur_turn):
         dump_universe.last_dump = cur_turn
         print fo.universe().dump()
+
+
+class LogLevelSwitcher(object):
+    """A context manager class which controls the log level within its scope.
+
+    Example usage:
+    logging.getLogger().setLevel(logging.INFO)
+
+    debug("Some message")  # not printed because of log level
+    with LogLevelSwitcher(logging.DEBUG):
+        debug("foo")  # printed because we set to DEBUG level
+
+    debug("baz")  # not printed, we are back to INFO level
+    """
+    def __init__(self, log_level):
+        self.target_log_level = log_level
+        self.old_log_level = 0
+
+    def __enter__(self):
+        self.old_log_level = logging.getLogger().level
+        logging.getLogger().setLevel(self.target_log_level)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        logging.getLogger().setLevel(self.old_log_level)
+
+
+def with_log_level(log_level):
+    """A decorator to set a specific logging level for the function call.
+
+    This decorator is useful to selectively activate debugging for a specific function
+    while the rest of the code base only logs at a higher level.
+
+    If functions are called within the decorated function, then those will be
+    executed with the same logging level. However, if those functions use this
+    decorator as well, then that logging level will be respected for its scope.
+
+    Example usage:
+    @log_with_specific_log_level(logging.DEBUG)
+    def foo():
+        debug("debug stuff")
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            with LogLevelSwitcher(log_level):
+                return func(*args, **kwargs)
+
+        return wrapper
+    return decorator
