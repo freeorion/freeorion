@@ -728,7 +728,7 @@ namespace {
 
             } else if (part_class == PC_FIGHTER_HANGAR) {
                 // hangar max-capacity-modification effects stack, so only add capacity for each hangar type once
-                if (!seen_hangar_part_types.count(part_name)) {
+                if (seen_hangar_part_types.find(part_name) == seen_hangar_part_types.end()) {
                     available_fighters += ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
                     seen_hangar_part_types.insert(part_name);
 
@@ -770,7 +770,7 @@ namespace {
         bool HasUnlauchedArmedFighters(const CombatInfo& combat_info) const {
             // check each ship to see if it has any unlaunched armed fighters...
             for (int attacker_id : attacker_ids) {
-                if (combat_info.destroyed_object_ids.count(attacker_id))
+                if (combat_info.destroyed_object_ids.find(attacker_id) != combat_info.destroyed_object_ids.end())
                     continue;   // destroyed objects can't launch fighters
 
                 auto ship = combat_info.objects.Object<Ship>(attacker_id);
@@ -893,8 +893,8 @@ namespace {
 
                 // There may be objects, for example unowned planets, that were
                 // not a part of the battle to start with. Ignore them
-                if (!valid_attacker_object_ids.count(obj->ID()) &&
-                    !valid_target_object_ids.count(obj->ID()))
+                if (valid_attacker_object_ids.find(obj->ID()) == valid_attacker_object_ids.end() &&
+                    valid_target_object_ids.find(obj->ID()) == valid_target_object_ids.end())
                 { continue; }
 
                 // Check if the target was destroyed and update lists if yes
@@ -970,7 +970,7 @@ namespace {
 
             } else if (target->ObjectType() == OBJ_PLANET) {
                 if (!ObjectCanAttack(target) &&
-                    valid_attacker_object_ids.count(target_id))
+                    valid_attacker_object_ids.find(target_id) != valid_attacker_object_ids.end())
                 {
                     DebugLogger(combat) << "!! Target Planet " << target_id << " knocked out, can no longer attack";
                     // remove disabled planet's ID from lists of valid attackers
@@ -985,7 +985,7 @@ namespace {
                     // before it has been attacked then it can wrongly get regen
                     // on the next turn, so check that it has been attacked
                     // before excluding it from any remaining battle
-                    if (!combat_info.damaged_object_ids.count(target_id)) {
+                    if (combat_info.damaged_object_ids.find(target_id) == combat_info.damaged_object_ids.end()) {
                         DebugLogger(combat) << "!! Planet " << target_id << "has not yet been attacked, "
                                             << "so will not yet be removed from battle, despite being essentially incapacitated";
                         return false;
@@ -1424,7 +1424,7 @@ namespace {
             auto fighter = std::dynamic_pointer_cast<Fighter>(*obj_it);
             if (!fighter || fighter->Destroyed())
                 continue;   // destroyed fighters can't return
-            if (combat_info.destroyed_object_ids.count(fighter->LaunchedFrom()))
+            if (combat_info.destroyed_object_ids.find(fighter->LaunchedFrom()) != combat_info.destroyed_object_ids.end())
                 continue;   // can't return to a destroyed ship
             ships_fighters_to_add_back[fighter->LaunchedFrom()]++;
         }

@@ -101,7 +101,7 @@ void ResourceCenter::SetFocus(const std::string& focus) {
         return;
     }
     auto avail_foci = AvailableFoci();
-    if (std::count(avail_foci.begin(), avail_foci.end(), focus)) {
+    if (std::find(avail_foci.begin(), avail_foci.end(), focus) != avail_foci.end()) {
         m_focus = focus;
         if (m_focus == m_focus_turn_initial)
             m_last_turn_focus_changed = m_last_turn_focus_changed_turn_initial;

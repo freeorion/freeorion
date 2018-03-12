@@ -166,7 +166,7 @@ bool Empire::ResearchableTech(const std::string& name) const {
     if (!tech)
         return false;
     for (const auto& prereq : tech->Prerequisites()) {
-        if (!m_techs.count(prereq))
+        if (m_techs.find(prereq) == m_techs.end())
             return false;
     }
     return true;
@@ -179,7 +179,7 @@ bool Empire::HasResearchedPrereqAndUnresearchedPrereq(const std::string& name) c
     bool one_unresearched = false;
     bool one_researched = false;
     for (const auto& prereq : tech->Prerequisites()) {
-        if (m_techs.count(prereq))
+        if (m_techs.find(prereq) != m_techs.end())
             one_researched = true;
         else
             one_unresearched = true;
@@ -205,7 +205,7 @@ const std::map<std::string, int>& Empire::ResearchedTechs() const
 { return m_techs; }
 
 bool Empire::TechResearched(const std::string& name) const
-{ return m_techs.count(name); }
+{ return m_techs.find(name) != m_techs.end(); }
 
 TechStatus Empire::GetTechStatus(const std::string& name) const {
     if (TechResearched(name)) return TS_COMPLETE;
@@ -274,7 +274,7 @@ const std::string& Empire::MostRPSpentEnqueuedTech() const {
 
     for (const auto& progress : m_research_progress) {
         const auto& tech_name = progress.first;
-        if (!m_research_queue.InQueue(tech_name))
+        if (m_research_queue.find(tech_name) == m_research_queue.end())
             continue;
         float rp_spent = progress.second;
         if (rp_spent > most_spent) {
@@ -298,7 +298,7 @@ const std::string& Empire::MostRPCostLeftEnqueuedTech() const {
         if (!tech)
             continue;
 
-        if (!m_research_queue.InQueue(tech_name))
+        if (m_research_queue.find(tech_name) == m_research_queue.end())
             continue;
 
         float rp_spent = progress.second;
@@ -346,7 +346,7 @@ const std::set<std::string>& Empire::AvailableBuildingTypes() const
 { return m_available_building_types; }
 
 bool Empire::BuildingTypeAvailable(const std::string& name) const
-{ return m_available_building_types.count(name); }
+{ return m_available_building_types.find(name) != m_available_building_types.end(); }
 
 const std::set<int>& Empire::ShipDesigns() const
 { return m_ship_designs; }
@@ -385,19 +385,19 @@ bool Empire::ShipDesignAvailable(const ShipDesign& design) const {
 }
 
 bool Empire::ShipDesignKept(int ship_design_id) const
-{ return m_ship_designs.count(ship_design_id); }
+{ return (m_ship_designs.find(ship_design_id) != m_ship_designs.end()); }
 
 const std::set<std::string>& Empire::AvailableShipParts() const
 { return m_available_part_types; }
 
 bool Empire::ShipPartAvailable(const std::string& name) const
-{ return m_available_part_types.count(name); }
+{ return m_available_part_types.find(name) != m_available_part_types.end(); }
 
 const std::set<std::string>& Empire::AvailableShipHulls() const
 { return m_available_hull_types; }
 
 bool Empire::ShipHullAvailable(const std::string& name) const
-{ return m_available_hull_types.count(name); }
+{ return m_available_hull_types.find(name) != m_available_hull_types.end(); }
 
 const ProductionQueue& Empire::GetProductionQueue() const
 { return m_production_queue; }
@@ -438,7 +438,7 @@ std::pair<float, int> Empire::ProductionCostAndTime(const ProductionQueue::Produ
 }
 
 bool Empire::HasExploredSystem(int ID) const
-{ return m_explored_systems.count(ID); }
+{ return (m_explored_systems.find(ID) != m_explored_systems.end()); }
 
 bool Empire::ProducibleItem(BuildType build_type, int location_id) const {
     if (build_type == BT_SHIP)
@@ -685,7 +685,7 @@ void Empire::UpdateSystemSupplyRanges() {
 
     // exclude objects known to have been destroyed (or rather, include ones that aren't known by this empire to be destroyed)
     for (int object_id : known_objects_vec)
-        if (!known_destroyed_objects.count(object_id))
+        if (known_destroyed_objects.find(object_id) == known_destroyed_objects.end())
             known_objects_set.insert(object_id);
     UpdateSystemSupplyRanges(known_objects_set);
 }
@@ -700,7 +700,7 @@ void Empire::UpdateUnobstructedFleets() {
             continue;
 
         for (auto& fleet : Objects().FindObjects<Fleet>(system->FleetIDs())) {
-            if (known_destroyed_objects.count(fleet->ID()))
+            if (known_destroyed_objects.find(fleet->ID()) != known_destroyed_objects.end())
                 continue;
             if (fleet->OwnedBy(m_id))
                 fleet->SetArrivalStarlane(system_id);
@@ -720,7 +720,7 @@ void Empire::UpdateSupplyUnobstructedSystems() {
 
     // exclude systems known to have been destroyed (or rather, include ones that aren't known to be destroyed)
     for (int system_id : known_systems_vec)
-        if (!known_destroyed_objects.count(system_id))
+        if (known_destroyed_objects.find(system_id) == known_destroyed_objects.end())
             known_systems_set.insert(system_id);
     UpdateSupplyUnobstructedSystems(known_systems_set);
 }
@@ -733,7 +733,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     std::set<int> systems_with_at_least_partial_visibility_at_some_point;
     for (int system_id : known_systems) {
         const auto& vis_turns = GetUniverse().GetObjectVisibilityTurnMapByEmpire(system_id, m_id);
-        if (vis_turns.count(VIS_PARTIAL_VISIBILITY))
+        if (vis_turns.find(VIS_PARTIAL_VISIBILITY) != vis_turns.end())
             systems_with_at_least_partial_visibility_at_some_point.insert(system_id);
     }
 
@@ -766,7 +766,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
         int system_id = fleet->SystemID();
         if (system_id == INVALID_OBJECT_ID) {
             continue;   // not in a system, so can't affect system obstruction
-        } else if (known_destroyed_objects.count(fleet->ID())) {
+        } else if (known_destroyed_objects.find(fleet->ID()) != known_destroyed_objects.end()) {
             continue; //known to be destroyed so can't affect supply, important just in case being updated on client side
         }
 
@@ -802,22 +802,27 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
         //DebugLogger() << "deciding unobstructedness for system " << sys_id;
 
         // has empire ever seen this system with partial or better visibility?
-        if (!systems_with_at_least_partial_visibility_at_some_point.count(sys_id))
-            continue;
+        if (systems_with_at_least_partial_visibility_at_some_point.find(sys_id) ==
+            systems_with_at_least_partial_visibility_at_some_point.end())
+        { continue; }
 
         // if system is explored, then whether it can propagate supply depends
         // on what friendly / enemy ships and planets are in the system
 
-        if (unrestricted_friendly_systems.count(sys_id))
+        if (unrestricted_friendly_systems.find(sys_id) != unrestricted_friendly_systems.end()) {
             // if there are unrestricted friendly ships, supply can propagate
             m_supply_unobstructed_systems.insert(sys_id);
-        else if (systems_containing_friendly_fleets.count(sys_id)) {
-            if (!unrestricted_obstruction_systems.count(sys_id))
+
+        } else if (systems_containing_friendly_fleets.find(sys_id) != systems_containing_friendly_fleets.end()) {
+            if (unrestricted_obstruction_systems.find(sys_id) == unrestricted_obstruction_systems.end()) {
                 // if there are (previously) restricted friendly ships, and no unrestricted enemy fleets, supply can propagate
                 m_supply_unobstructed_systems.insert(sys_id);
-        } else if (!systems_containing_obstructing_objects.count(sys_id))
+            }
+
+        } else if (systems_containing_obstructing_objects.find(sys_id) == systems_containing_obstructing_objects.end()) {
             m_supply_unobstructed_systems.insert(sys_id);
-        else if (!systems_with_lane_preserving_fleets.count(sys_id)) {
+
+        } else if (systems_with_lane_preserving_fleets.find(sys_id) == systems_with_lane_preserving_fleets.end()) {
             // otherwise, if system contains no friendly fleets capable of
             // maintaining lane access but does contain an unfriendly fleet,
             // so it is obstructed, so isn't included in the unobstructed
@@ -834,9 +839,10 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
 }
 
 void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id) {
-    if (!m_supply_unobstructed_systems.count(start_system_id))
+    if (m_supply_unobstructed_systems.find(start_system_id) == m_supply_unobstructed_systems.end()) {
         m_pending_system_exit_lanes[start_system_id].insert(dest_system_id); 
-    else { // if the system is unobstructed, mark all its lanes as avilable
+
+    } else { // if the system is unobstructed, mark all its lanes as avilable
         auto system = GetSystem(start_system_id);
         for (const auto& lane : system->StarlanesWormholes()) {
             m_pending_system_exit_lanes[start_system_id].insert(lane.first); // will add both starlanes and wormholes
@@ -860,8 +866,11 @@ const std::set<int>& Empire::SupplyUnobstructedSystems() const
 
 const bool Empire::PreservedLaneTravel(int start_system_id, int dest_system_id) const {
     auto find_it = m_preserved_system_exit_lanes.find(start_system_id);
-    return find_it != m_preserved_system_exit_lanes.end()
-            && find_it->second.count(dest_system_id);
+    if (find_it != m_preserved_system_exit_lanes.end() ) {
+        if (find_it->second.find(dest_system_id) != find_it->second.end())
+            return true;
+    }
+    return false;
 }
 
 const std::set<int>& Empire::ExploredSystems() const
@@ -880,11 +889,11 @@ const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
         int start_id = sys_it->ID();
 
         // exclude lanes starting at systems known to be destroyed
-        if (known_destroyed_objects.count(start_id))
+        if (known_destroyed_objects.find(start_id) != known_destroyed_objects.end())
             continue;
 
         for (const auto& lane : sys_it->StarlanesWormholes()) {
-            if (lane.second || known_destroyed_objects.count(lane.second))
+            if (lane.second || known_destroyed_objects.find(lane.second) != known_destroyed_objects.end())
                 continue;   // is a wormhole, not a starlane, or is connected to a known destroyed system
             int end_id = lane.first;
             retval[start_id].insert(end_id);
@@ -974,7 +983,7 @@ void Empire::SetResourceStockpile(ResourceType resource_type, float stockpile) {
 }
 
 void Empire::PlaceTechInQueue(const std::string& name, int pos/* = -1*/) {
-    if (name.empty() || TechResearched(name) || m_techs.count(name))
+    if (name.empty() || TechResearched(name) || m_techs.find(name) != m_techs.end())
         return;
     const Tech* tech = GetTech(name);
     if (!tech || !tech->Researchable())
@@ -1036,8 +1045,8 @@ void Empire::SetTechResearchProgress(const std::string& name, float progress) {
 
     // if tech is complete, ensure it is on the queue, so it will be researched next turn
     if (clamped_progress >= tech->ResearchCost(m_id) &&
-            !m_research_queue.InQueue(name))
-        m_research_queue.push_back(name);
+        m_research_queue.find(name) == m_research_queue.end())
+    { m_research_queue.push_back(name); }
 
     // don't just give tech to empire, as another effect might reduce its progress before end of turn
 }
@@ -1341,13 +1350,13 @@ void Empire::AddTech(const std::string& name) {
         return;
     }
 
-    if (!m_techs.count(name))
+    if (m_techs.find(name) == m_techs.end())
         AddSitRepEntry(CreateTechResearchedSitRep(name));
 
     for (const ItemSpec& item : tech->UnlockedItems())
         UnlockItem(item);  // potential infinite if a tech (in)directly unlocks itself?
 
-    if (!m_techs.count(name))
+    if (m_techs.find(name) == m_techs.end())
         m_techs[name] = CurrentTurn();
 }
 
@@ -1381,7 +1390,7 @@ void Empire::AddBuildingType(const std::string& name) {
     }
     if (!building_type->Producible())
         return;
-    if (m_available_building_types.count(name))
+    if (m_available_building_types.find(name) != m_available_building_types.end())
         return;
     m_available_building_types.insert(name);
     AddSitRepEntry(CreateBuildingTypeUnlockedSitRep(name));
@@ -1445,7 +1454,7 @@ void Empire::AddShipDesign(int ship_design_id, int next_design_id) {
     const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id);
     if (ship_design) {  // don't check if design is producible; adding a ship design is useful for more than just producing it
         // design is valid, so just add the id to empire's set of ids that it knows about
-        if (!m_ship_designs.count(ship_design_id)) {
+        if (m_ship_designs.find(ship_design_id) == m_ship_designs.end()) {
             m_ship_designs.insert(ship_design_id);
 
             ShipDesignsChangedSignal();
@@ -1487,7 +1496,7 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
 }
 
 void Empire::RemoveShipDesign(int ship_design_id) {
-    if (m_ship_designs.count(ship_design_id)) {
+    if (m_ship_designs.find(ship_design_id) != m_ship_designs.end()) {
         m_ship_designs.erase(ship_design_id);
         ShipDesignsChangedSignal();
     } else {
@@ -1524,7 +1533,8 @@ void Empire::LockItem(const ItemSpec& item) {
 }
 
 void Empire::RemoveBuildingType(const std::string& name) {
-    if (!m_available_building_types.count(name))
+    auto it = m_available_building_types.find(name);
+    if (it == m_available_building_types.end())
         DebugLogger() << "Empire::RemoveBuildingType asked to remove building type " << name << " that was no available to this empire";
     m_available_building_types.erase(name);
 }
@@ -1699,7 +1709,7 @@ void Empire::CheckProductionProgress() {
         int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
         auto key = std::make_pair(elem.item, location_id);
 
-        if (!queue_item_costs_and_times.count(key))
+        if (queue_item_costs_and_times.find(key) == queue_item_costs_and_times.end())
             queue_item_costs_and_times[key] = ProductionCostAndTime(elem);
     }
 
@@ -1874,7 +1884,7 @@ void Empire::CheckProductionProgress() {
             system->Insert(building);
 
             // record building production in empire stats
-            if (m_building_types_produced.count(elem.item.name))
+            if (m_building_types_produced.find(elem.item.name) != m_building_types_produced.end())
                 m_building_types_produced[elem.item.name]++;
             else
                 m_building_types_produced[elem.item.name] = 1;
@@ -1922,11 +1932,11 @@ void Empire::CheckProductionProgress() {
                 system->Insert(ship);
 
                 // record ship production in empire stats
-                if (m_ship_designs_produced.count(elem.item.design_id))
+                if (m_ship_designs_produced.find(elem.item.design_id) != m_ship_designs_produced.end())
                     m_ship_designs_produced[elem.item.design_id]++;
                 else
                     m_ship_designs_produced[elem.item.design_id] = 1;
-                if (m_species_ships_produced.count(species_name))
+                if (m_species_ships_produced.find(species_name) != m_species_ships_produced.end())
                     m_species_ships_produced[species_name]++;
                 else
                     m_species_ships_produced[species_name] = 1;

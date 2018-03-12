@@ -550,7 +550,7 @@ namespace {
                     EmpireSystemPredicateMap empire_graph_map;
                     empire_graph_map.emplace(empire_id, std::move(sys_pred_filtered_graph_ptr));
                     system_pred_graph_views.emplace(pred, std::move(empire_graph_map));
-                } else if (pred_it->second.count(empire_id)) {
+                } else if (pred_it->second.find(empire_id) != pred_it->second.end()) {
                     pred_it->second.at(empire_id) = std::move(sys_pred_filtered_graph_ptr);
                 } else {
                     pred_it->second.emplace(empire_id, std::move(sys_pred_filtered_graph_ptr));

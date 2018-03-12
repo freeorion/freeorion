@@ -735,7 +735,7 @@ void ProductionQueue::Update() {
         int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
         std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
 
-        if (!queue_item_costs_and_times.count(key))
+        if (queue_item_costs_and_times.find(key) == queue_item_costs_and_times.end())
             queue_item_costs_and_times[key] = empire->ProductionCostAndTime(elem);
 
         elem.turns_left_to_next_item = -1;

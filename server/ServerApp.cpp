@@ -1909,7 +1909,7 @@ namespace {
                 if (  (fleet->Aggressive() || fleet->Unowned())  &&
                       (fleet->HasArmedShips() || fleet->HasFighterShips() || !fleet->Unowned())  )
                 {
-                    if (!empires_with_aggressive_fleets_here.count(empire_id))
+                    if (empires_with_aggressive_fleets_here.find(empire_id) == empires_with_aggressive_fleets_here.end())
                         DebugLogger(combat) << "\t Empire " << empire_id << " has at least one aggressive fleet present";
                     empires_with_aggressive_fleets_here.insert(empire_id);
                     break;
@@ -1976,7 +1976,7 @@ namespace {
                 int visible_planet_empire_id = planet->Owner();
 
                 if (aggressive_empire_id != visible_planet_empire_id &&
-                    at_war_with_empire_ids.count(visible_planet_empire_id))
+                    at_war_with_empire_ids.find(visible_planet_empire_id) != at_war_with_empire_ids.end())
                 {
                     DebugLogger(combat) << "\t Empire " << aggressive_empire_id << " sees target planet " << planet->Name();
                     return true;  // an aggressive empire can see a planet onwned by an empire it is at war with
@@ -2004,7 +2004,7 @@ namespace {
                 int visible_fleet_empire_id = fleet->Owner();
 
                 if (aggressive_empire_id != visible_fleet_empire_id &&
-                    at_war_with_empire_ids.count(visible_fleet_empire_id))
+                    at_war_with_empire_ids.find(visible_fleet_empire_id) != at_war_with_empire_ids.end())
                 {
                     DebugLogger(combat) << "\t Empire " << aggressive_empire_id << " sees target fleet " << fleet->Name();
                     return true;  // an aggressive empire can see a fleet onwned by an empire it is at war with
@@ -2095,7 +2095,7 @@ namespace {
             // destroyed. If so, need to also update empires knowledge of this
             for (const auto& fleet_empires : empires_to_update_of_fleet_destruction) {
                 int fleet_id = fleet_empires.first;
-                if (!all_destroyed_object_ids.count(fleet_id))
+                if (all_destroyed_object_ids.find(fleet_id) == all_destroyed_object_ids.end())
                     continue;   // fleet wasn't destroyed
                 // inform empires
                 for (int empire_id : fleet_empires.second) {
@@ -2156,9 +2156,10 @@ namespace {
             for (int damaged_object_id : combat_info.damaged_object_ids) {
                 //DebugLogger() << "Checking object " << damaged_object_id << " for damaged sitrep";
                 // is object destroyed? If so, don't need a damage sitrep
-                if (combat_info.destroyed_object_ids.count(damaged_object_id))
+                if (combat_info.destroyed_object_ids.find(damaged_object_id) != combat_info.destroyed_object_ids.end()) {
                     //DebugLogger() << "Object is destroyed and doesn't need a sitrep.";
                     continue;
+                }
                 // which empires know about this object?
                 for (const auto& empire_ko : combat_info.empire_known_objects) {
                     //DebugLogger() << "Checking if empire " << empire_ko.first << " knows about the object.";
@@ -2193,15 +2194,17 @@ namespace {
                     for (auto weapon_event : sub_events) {
                         auto maybe_fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(weapon_event);
                         if (maybe_fire_event
-                                && combat_info.destroyed_object_ids.count(maybe_fire_event->target_id))
+                            && combat_info.destroyed_object_ids.find(maybe_fire_event->target_id)
+                            != combat_info.destroyed_object_ids.end())
                             events_that_killed.push_back(maybe_fire_event);
                     }
                 }
 
                 auto maybe_fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(event);
                 if (maybe_fire_event
-                        && combat_info.destroyed_object_ids.count(maybe_fire_event->target_id))
-                    events_that_killed.push_back(maybe_fire_event);
+                    && combat_info.destroyed_object_ids.find(maybe_fire_event->target_id)
+                            != combat_info.destroyed_object_ids.end())
+                            events_that_killed.push_back(maybe_fire_event);
             }
 
             // If a ship was attacked multiple times during a combat in which it dies, it will get
@@ -2251,7 +2254,7 @@ namespace {
                 }
 
                 if (target_empire) {
-                    if (already_logged__target_ships.count(attack_event->target_id))
+                    if (already_logged__target_ships.find(attack_event->target_id) != already_logged__target_ships.end())
                         continue;
                     already_logged__target_ships.insert(attack_event->target_id);
                     // record destruction of a ship with a species on it owned by defender empire
@@ -2788,13 +2791,13 @@ namespace {
             Empire* scrapping_empire = GetEmpire(ship->Owner());
             if (scrapping_empire) {
                 auto& designs_scrapped = scrapping_empire->ShipDesignsScrapped();
-                if (designs_scrapped.count(ship->DesignID()))
+                if (designs_scrapped.find(ship->DesignID()) != designs_scrapped.end())
                     designs_scrapped[ship->DesignID()]++;
                 else
                     designs_scrapped[ship->DesignID()] = 1;
 
                 auto& species_ships_scrapped = scrapping_empire->SpeciesShipsScrapped();
-                if (species_ships_scrapped.count(ship->SpeciesName()))
+                if (species_ships_scrapped.find(ship->SpeciesName()) != species_ships_scrapped.end())
                     species_ships_scrapped[ship->SpeciesName()]++;
                 else
                     species_ships_scrapped[ship->SpeciesName()] = 1;
@@ -2818,7 +2821,7 @@ namespace {
             Empire* scrapping_empire = GetEmpire(building->Owner());
             if (scrapping_empire) {
                 auto& buildings_scrapped = scrapping_empire->BuildingTypesScrapped();
-                if (buildings_scrapped.count(building->BuildingTypeName()))
+                if (buildings_scrapped.find(building->BuildingTypeName()) != buildings_scrapped.end())
                     buildings_scrapped[building->BuildingTypeName()]++;
                 else
                     buildings_scrapped[building->BuildingTypeName()] = 1;
@@ -3007,7 +3010,7 @@ void ServerApp::ProcessCombats() {
         // find which human players are involved in this battle
         std::set<int> human_empires_involved;
         for (int empire_id : combat_info.empire_ids) {
-            if (human_controlled_empire_ids.count(empire_id))
+            if (human_controlled_empire_ids.find(empire_id) != human_controlled_empire_ids.end())
                 human_empires_involved.insert(empire_id);
         }
 
