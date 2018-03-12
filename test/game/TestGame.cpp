@@ -91,6 +91,12 @@ BOOST_AUTO_TEST_CASE(host_server) {
     BOOST_REQUIRE(ProcessMessages());
 
     BOOST_TEST_MESSAGE("First messages processed");
+
+    BOOST_TEST_MESSAGE("Terminating server...");
+
+    BOOST_REQUIRE(server.Terminate());
+
+    BOOST_TEST_MESSAGE("Server terminated");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
