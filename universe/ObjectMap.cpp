@@ -171,7 +171,7 @@ ObjectMap::const_iterator<> ObjectMap::const_end() const
 void ObjectMap::InsertCore(std::shared_ptr<UniverseObject> item, int empire_id/* = ALL_EMPIRES*/) {
     FOR_EACH_MAP(TryInsertIntoMap, item);
     if (item &&
-        GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).count(item->ID()))
+        !GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).count(item->ID()))
     {
         auto this_item = this->Object(item->ID());
         m_existing_objects[item->ID()] = this_item;
