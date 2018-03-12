@@ -76,11 +76,21 @@ BOOST_AUTO_TEST_CASE(host_server) {
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
     args.push_back("--singleplayer");
 
+#ifdef FREEORION_LINUX
+    // Dirty hack to output log to console.
+    args.push_back("--log-file");
+    args.push_back("/proc/self/fd/1");
+#endif
+
     Process server = Process(SERVER_CLIENT_EXE, args);
 
     BOOST_REQUIRE(m_networking->ConnectToLocalHostServer());
 
+    BOOST_TEST_MESSAGE("Connected to server");
+
     BOOST_REQUIRE(ProcessMessages());
+
+    BOOST_TEST_MESSAGE("First messages processed");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -39,6 +39,10 @@ add_dependencies(unittest
     fo_unittest_game
 )
 
+add_dependencies(fo_unittest_game
+    freeoriond
+)
+
 target_sources(fo_unittest_game
     PUBLIC
         ${PROJECT_SOURCE_DIR}/client/ClientApp.h
