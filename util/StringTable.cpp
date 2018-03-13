@@ -11,41 +11,61 @@
 #include <iostream>
 
 
-// static(s)
-const std::string StringTable_::S_DEFAULT_FILENAME = "en.txt";
-const std::string StringTable_::S_ERROR_STRING = "ERROR: ";
+namespace {
+    const std::string DEFAULT_FILENAME = "en.txt";
+    const std::string ERROR_STRING = "ERROR: ";
+}
 
 // StringTable
 StringTable_::StringTable_():
-    m_filename(S_DEFAULT_FILENAME)
+    m_filename(DEFAULT_FILENAME)
 { Load(); }
 
-StringTable_::StringTable_(const std::string& filename, const StringTable_* lookups_fallback_table /* = 0 */):
+StringTable_::StringTable_(const std::string& filename, std::shared_ptr<const StringTable_> lookups_fallback_table):
     m_filename(filename)
 { Load(lookups_fallback_table); }
 
 StringTable_::~StringTable_()
 {}
 
-bool StringTable_::StringExists(const std::string& index) const
-{ return m_strings.count(index); }
-
-bool StringTable_::Empty() const
-{ return m_strings.empty(); }
-
-const std::string& StringTable_::operator[] (const std::string& index) const {
-    static std::string error_retval;
-    auto it = m_strings.find(index);
-    return it == m_strings.end() ? error_retval = S_ERROR_STRING + index : it->second;
+bool StringTable_::StringExists(const std::string& index) const {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_strings.count(index);
 }
 
-void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
+bool StringTable_::Empty() const {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_strings.empty();
+}
+
+const std::string& StringTable_::operator[] (const std::string& index) const {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    auto it = m_strings.find(index);
+    if (it != m_strings.end())
+        return it->second;
+
+    auto error = m_error_strings.insert(ERROR_STRING + index);
+    return *(error.first);
+}
+
+void StringTable_::Load(std::shared_ptr<const StringTable_> lookups_fallback_table) {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    if (lookups_fallback_table && !lookups_fallback_table->m_initialized) {
+        // this prevents deadlock if two stringtables were to be loaded
+        // simultaneously with eachother as fallback tables
+        ErrorLogger() << "StringTable_::Load given uninitialized stringtable as fallback. Ignoring.";
+        lookups_fallback_table = nullptr;
+    }
+
     auto path = FilenameToPath(m_filename);
     std::string file_contents;
 
     bool read_success = parse::read_file(path, file_contents);
     if (!read_success) {
         ErrorLogger() << "StringTable_::Load failed to read file at path: " << path.string();
+        //m_initialized intentionally left false
         return;
     }
     // add newline at end to avoid errors when one is left out, but is expected by parsers
@@ -56,8 +76,9 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
     std::map<std::string, std::string> fallback_lookup_strings;
     std::string fallback_table_file;
     if (lookups_fallback_table) {
+        std::lock_guard<std::mutex> fallback_lock(lookups_fallback_table->m_mutex);
         fallback_table_file = lookups_fallback_table->Filename();
-        fallback_lookup_strings.insert(lookups_fallback_table->GetStrings().begin(), lookups_fallback_table->GetStrings().end());
+        fallback_lookup_strings.insert(lookups_fallback_table->m_strings.begin(), lookups_fallback_table->m_strings.end());
     }
 
     using namespace boost::xpressive;
@@ -135,6 +156,7 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
         ErrorLogger() << "Last and prior keys matched: " << key << ", " << prev_key;
         std::cerr << "Exception caught regex parsing Stringtable: " << e.what() << std::endl;
         std::cerr << "Last and prior keys matched: " << key << ", " << prev_key << std::endl;
+        m_initialized = true;
         return;
     }
 
@@ -153,7 +175,8 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
                 position += match.position();
                 //DebugLogger() << "checking next internal keyword match: " << match[1] << " with matchlen " << match.length();
                 if (match[1].length() != match.length() - 4)
-                    ErrorLogger() << "Positional error in key expansion: " << match[1] << " with length: " << match[1].length() << "and matchlen: " << match.length();
+                    ErrorLogger() << "Positional error in key expansion: " << match[1] << " with length: "
+                                  << match[1].length() << "and matchlen: " << match.length();
                 // clear out any keywords that have been fully processed
                 for (auto ref_check_it = cyclic_reference_check.begin(); 
                      ref_check_it != cyclic_reference_check.end(); )
@@ -177,9 +200,9 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
                     cyclic_reference_check[match[1]] = position + match.length();
                     auto map_lookup_it = m_strings.find(match[1]);
                     bool foundmatch = map_lookup_it != m_strings.end();
-                    if (!foundmatch && lookups_fallback_table) {
-                        DebugLogger() << "Key expansion: " << match[1] << " not found in primary stringtable: " << m_filename 
-                                      << "; checking in fallback file" << fallback_table_file;
+                    if (!foundmatch && !fallback_lookup_strings.empty()) {
+                        DebugLogger() << "Key expansion: " << match[1] << " not found in primary stringtable: " << m_filename
+                                      << "; checking in fallback file: " << fallback_table_file;
                         map_lookup_it = fallback_lookup_strings.find(match[1]);
                         foundmatch = map_lookup_it != fallback_lookup_strings.end();
                     }
@@ -215,7 +238,7 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
                 position += match.position();
                 auto map_lookup_it = m_strings.find(match[2]);
                 bool foundmatch = map_lookup_it != m_strings.end();
-                if (!foundmatch && lookups_fallback_table) {
+                if (!foundmatch && !fallback_lookup_strings.empty()) {
                     DebugLogger() << "Key reference: " << match[2] << " not found in primary stringtable: " << m_filename 
                                   << "; checking in fallback file" << fallback_table_file;
                     map_lookup_it = fallback_lookup_strings.find(match[2]);
@@ -235,4 +258,6 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
     } else {
         ErrorLogger() << "StringTable file \"" << m_filename << "\" is malformed around line " << std::count(file_contents.begin(), it, '\n');
     }
+
+    m_initialized = true;
 }
