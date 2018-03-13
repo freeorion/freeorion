@@ -42,11 +42,7 @@ public:
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::SpeciesIcon(name), GG::GRAPHIC_FITGRAPHIC);
 
         m_name = GG::Wnd::Create<CUILabel>(UserString(name), GG::FORMAT_RIGHT);
-
-        int num_digits = census_val < 10 ? 1 : 2; // this allows the decimal point to line up when there number above and below 10.
-        num_digits =    census_val < 100 ? num_digits : 3; // this allows the decimal point to line up when there number above and below 100.
-        num_digits =   census_val < 1000 ? num_digits : 4; // this allows the decimal point to line up when there number above and below 1000.
-        m_census_val = GG::Wnd::Create<CUILabel>(DoubleToString(census_val, num_digits, false), GG::FORMAT_RIGHT);
+        m_census_val = GG::Wnd::Create<CUILabel>(census_val < 100 ? DoubleToString(census_val, 2, false) : std::to_string((int)round(census_val)), GG::FORMAT_RIGHT);
 
         m_worlds = GG::Wnd::Create<CUILabel>(std::to_string(worlds), GG::FORMAT_RIGHT);
     }
