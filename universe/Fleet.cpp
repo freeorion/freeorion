@@ -201,6 +201,27 @@ const std::string& Fleet::PublicName(int empire_id) const {
         return UserString("OBJ_FLEET");
 }
 
+int Fleet::MaxShipAgeInTurns() const {
+    if (m_ships.empty())
+        return INVALID_OBJECT_AGE;
+
+    bool fleet_is_scrapped = true;
+    int retval = 0;
+    for (int ship_id : m_ships) {
+        auto ship = GetShip(ship_id);
+        if (!ship || ship->OrderedScrapped())
+            continue;
+        if (ship->AgeInTurns() > retval)
+            retval = ship->AgeInTurns();
+        fleet_is_scrapped = false;
+    }
+
+    if (fleet_is_scrapped)
+        retval = 0;
+
+    return retval;
+}
+
 const std::list<int>& Fleet::TravelRoute() const
 { return m_travel_route; }
 

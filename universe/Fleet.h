@@ -49,6 +49,7 @@ public:
     std::shared_ptr<UniverseObject>Accept(const UniverseObjectVisitor& visitor) const override;
 
     const std::set<int>&                ShipIDs() const     { return m_ships; }         ///< returns set of IDs of ships in fleet.
+    int                                 MaxShipAgeInTurns() const;                      ///< Returns the age of the oldest ship in the fleet
 
     /** Returns the list of systems that this fleet will move through en route
       * to its destination (may be empty).  If this fleet is currently at a
