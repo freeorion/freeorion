@@ -14,6 +14,7 @@ target_compile_definitions(fo_unittest_game
         -DFREEORION_BUILD_HUMAN
         -DBOOST_TEST_DYN_LINK
         -DBOOST_LOG_DYN_LINK
+        -DBOOST_TEST_IGNORE_SIGCHLD
 )
 
 target_include_directories(fo_unittest_game
@@ -69,9 +70,10 @@ foreach(_TEST ${FO_TEST_GAME})
         PRIVATE
         ${_TEST}.cpp
     )
+    # ToDo: Change `--catch_system_errors=no` to `yes` after moving to boost >= 1.59
     add_test(
         NAME ${_TEST}
-        COMMAND fo_unittest_game --log_level=message "--run_test=${_TEST}" --catch_system_error=yes
+        COMMAND fo_unittest_game --log_level=message "--run_test=${_TEST}" --catch_system_error=no
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
 endforeach()
