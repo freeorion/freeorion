@@ -144,7 +144,9 @@ namespace {
       * location and the amount of minerals and industry produced in the group).
       * Elements will not receive funding if they cannot be produced by the
       * empire with the indicated \a empire_id this turn at their build location. 
-      * Also checks if elements will be completed this turn. */
+      * Also checks if elements will be completed this turn. 
+      * Returns the amount of PP which gets transferred to the stockpile using 
+      * stockpile project build items. */
     float SetProdQueueElementSpending(
         std::map<std::set<int>, float> available_pp, float available_stockpile,
         const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
@@ -177,8 +179,8 @@ namespace {
         projects_in_progress = 0;
         allocated_pp.clear();
         allocated_stockpile_pp.clear();
-        float dummy_pp_source = 0;
-        float stockpile_transfer = 0;
+        float dummy_pp_source = 0.0f;
+        float stockpile_transfer = 0.0f;
         //DebugLogger() << "queue size: " << queue.size();
         int i = 0;
         for (auto& queue_element : queue) {
@@ -531,9 +533,7 @@ ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int orde
     blocksize_memory(blocksize_),
     paused(paused_),
     allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_)
-{
-    ErrorLogger() << "ProductionQueue::Element::Element() : BT_STOCKPILE";
-}
+{}
 
 ProductionQueue::Element::Element(BuildType build_type, std::string name, int empire_id_, int ordered_,
                                   int remaining_, int blocksize_, int location_, bool paused_,
@@ -752,10 +752,11 @@ void ProductionQueue::Update() {
 
     // allocate pp to queue elements, returning updated available pp and updated
     // allocated pp for each group of resource sharing objects
-    float transfer_to_stockpile = SetProdQueueElementSpending(available_pp, available_stockpile, queue_element_groups,
-                                queue_item_costs_and_times, is_producible, m_queue,
-                                m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp,
-                                m_projects_in_progress, false);
+    float transfer_to_stockpile = SetProdQueueElementSpending(
+        available_pp, available_stockpile, queue_element_groups,
+        queue_item_costs_and_times, is_producible, m_queue,
+        m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp,
+        m_projects_in_progress, false);
 
     //update expected new stockpile amount
     m_expected_new_stockpile_amount = CalculateNewStockpile(
@@ -827,9 +828,10 @@ void ProductionQueue::Update() {
         allocated_pp.clear();
         allocated_stockpile_pp.clear();
 
-        float sim_transfer_to_stockpile = SetProdQueueElementSpending(available_pp, sim_available_stockpile, queue_element_groups,
-                                    queue_item_costs_and_times, is_producible, sim_queue,
-                                    allocated_pp, allocated_stockpile_pp, dummy_int, true);
+        float sim_transfer_to_stockpile = SetProdQueueElementSpending(
+            available_pp, sim_available_stockpile, queue_element_groups,
+            queue_item_costs_and_times, is_producible, sim_queue,
+            allocated_pp, allocated_stockpile_pp, dummy_int, true);
 
         // check completion status and update m_queue and sim_queue as appropriate
         for (unsigned int i = 0; i < sim_queue.size(); i++) {

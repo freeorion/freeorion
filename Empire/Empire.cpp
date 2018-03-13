@@ -447,21 +447,17 @@ bool Empire::ProducibleItem(BuildType build_type, int location_id) const {
     if (build_type == BT_BUILDING)
         throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_BUILDING with no further parameters, but buildings are tracked by name");
 
-    auto build_location = GetUniverseObject(location_id);
-    if (!build_location)
-        return false;
-
     // must own the production location...
     auto location = GetUniverseObject(location_id);
     if (!location) {
-        WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << location_id;
+        WarnLogger() << "Empire::ProducibleItem for BT_STOCKPILE unable to get location object with id " << location_id;
         return false;
     }
 
     if (!location->OwnedBy(m_id))
         return false;
 
-    if (!std::dynamic_pointer_cast<const Planet>(location))
+    if (!std::dynamic_pointer_cast<const ResourceCenter>(location))
         return false;
 
     if (build_type == BT_STOCKPILE) {
