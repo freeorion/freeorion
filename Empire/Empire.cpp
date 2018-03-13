@@ -2031,6 +2031,8 @@ void Empire::CheckProductionProgress() {
 
                     system->Insert(fleet);
                     fleet->SetNextAndPreviousSystems(system->ID(), system->ID());
+                    // set invalid arrival starlane so that fleet won't necessarily be free from blockades
+                    fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
 
                     fleets.push_back(fleet);
                 }
@@ -2041,6 +2043,8 @@ void Empire::CheckProductionProgress() {
 
                         system->Insert(fleet);
                         fleet->SetNextAndPreviousSystems(system->ID(), system->ID());
+                        // set invalid arrival starlane so that fleet won't necessarily be free from blockades
+                        fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
 
                         fleets.push_back(fleet);
                     }
