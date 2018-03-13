@@ -253,13 +253,17 @@ bool Process::Impl::Terminate() {
         DebugLogger() << "Process::Impl::Terminate called but m_free is true so returning with no action";
         return true;
     }
-    int status;
+    int status = -1;
     DebugLogger() << "Process::Impl::Terminate calling kill(m_process_id, SIGINT)";
     kill(m_process_id, SIGINT);
     DebugLogger() << "Process::Impl::Terminate calling waitpid(m_process_id, &status, 0)";
     waitpid(m_process_id, &status, 0);
     DebugLogger() << "Process::Impl::Terminate done";
-    return status == 0;
+    if (status != 0) {
+        WarnLogger() << "Process::Impl::Terminate got failure status " << status;
+        return false;
+    }
+    return true;
 }
 
 void Process::Impl::Kill() {
