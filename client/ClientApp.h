@@ -246,8 +246,11 @@ public:
      */
     static ClientApp* GetApp();
 
-    /** Compare content checksum from server with client content checksum. */
-    void VerifyCheckSum(const Message& msg);
+    /** @brief Compare content checksum from server with client content checksum.
+     *
+     * @return true if verify successed.
+     */
+    bool VerifyCheckSum(const Message& msg);
 
 protected:
     Universe                    m_universe;

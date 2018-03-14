@@ -48,17 +48,13 @@ target_sources(fo_unittest_game
     PUBLIC
         ${PROJECT_SOURCE_DIR}/client/ClientApp.h
         ${PROJECT_SOURCE_DIR}/client/ClientFSMEvents.h
+        ${PROJECT_SOURCE_DIR}/GG/GG/ClrConstants.h
         ${PROJECT_SOURCE_DIR}/network/ClientNetworking.h
-        ${PROJECT_SOURCE_DIR}/util/Directories.h
-        ${PROJECT_SOURCE_DIR}/util/binreloc.h
-        ${PROJECT_SOURCE_DIR}/util/Process.h
     PRIVATE
         ${PROJECT_SOURCE_DIR}/client/ClientApp.cpp
         ${PROJECT_SOURCE_DIR}/client/ClientFSMEvents.cpp
+        ${PROJECT_SOURCE_DIR}/GG/src/ClrConstants.cpp
         ${PROJECT_SOURCE_DIR}/network/ClientNetworking.cpp
-        ${PROJECT_SOURCE_DIR}/util/Directories.cpp
-        ${PROJECT_SOURCE_DIR}/util/binreloc.c
-        ${PROJECT_SOURCE_DIR}/util/Process.cpp
 )
 
 set(FO_TEST_GAME
