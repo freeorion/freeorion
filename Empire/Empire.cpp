@@ -1089,8 +1089,8 @@ void Empire::PlaceProductionOnQueue(BuildType build_type, BuildType dummy, int n
 
     const bool paused = false;
     const bool allowed_imperial_stockpile_use = false;
-    const std::string dummy_str = "BT_STOCKPILE_DUMMY_BLD_NAME";
-    ProductionQueue::Element build(build_type, dummy_str, m_id, number, number, blocksize,
+    const std::string name = "PROJECT_BT_STOCKPILE";
+    ProductionQueue::Element build(build_type, name, m_id, number, number, blocksize,
                                    location, paused, allowed_imperial_stockpile_use);
 
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
