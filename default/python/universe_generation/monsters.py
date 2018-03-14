@@ -165,7 +165,7 @@ def generate_monsters(monster_freq, systems):
         # filter out all monster fleets whose location condition allows this system and whose counter hasn't reached 0.
         suitable_fleet_plans = [fp for fp in fleet_plans
                                 if system in fp_location_cache[fp]
-                                and spawn_limits[fp]
+                                and spawn_limits.get(fp, 0)
                                 and (fp not in fleet_can_alter_starlanes
                                      or starlane_altering_monsters.can_place_at(system, fp))]
         # if there are no suitable monster fleets for this system, continue with the next
