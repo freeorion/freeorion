@@ -132,6 +132,17 @@ struct GameFixture : public ClientApp {
             }
             return true;
         }
+        case Message::TURN_PARTIAL_UPDATE: {
+            ExtractTurnPartialUpdateMessageData(msg, EmpireID(), GetUniverse());
+            return true;
+        }
+        case Message::TURN_UPDATE: {
+            int current_turn = INVALID_GAME_TURN;
+            ExtractTurnUpdateMessageData(msg,                   EmpireID(),         current_turn,
+                                         Empires(),             GetUniverse(),      GetSpeciesManager(),
+                                         GetCombatLogManager(), GetSupplyManager(), Players());
+            return true;
+        }
         default:
             ErrorLogger() << "Unknown message type: " << msg.Type();
             return false;
@@ -255,6 +266,17 @@ BOOST_AUTO_TEST_CASE(host_server) {
     m_ai_waiting = m_ai_players;
 
     BOOST_TEST_MESSAGE("Game started. Waiting AI for turns...");
+
+    while (! m_ai_waiting.empty()) {
+        BOOST_REQUIRE(ProcessMessages());
+        BOOST_TEST_MESSAGE("Processed messages");
+    }
+
+    m_networking->SendMessage(TurnOrdersMessage(OrderSet()));
+
+    m_ai_waiting = m_ai_players;
+
+    BOOST_TEST_MESSAGE("Turn done. Waiting AI for turns...");
 
     while (! m_ai_waiting.empty()) {
         BOOST_REQUIRE(ProcessMessages());
