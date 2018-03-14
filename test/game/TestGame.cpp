@@ -119,13 +119,28 @@ struct GameFixture : public ClientApp {
             m_game_started = true;
             return true;
         }
+        case Message::DIPLOMATIC_STATUS:
+        case Message::PLAYER_CHAT:
+            return true; // ignore
+        case Message::PLAYER_STATUS: {
+            int about_player_id;
+            Message::PlayerStatus status;
+            ExtractPlayerStatusMessageData(msg, about_player_id, status);
+
+            if (status == Message::WAITING) {
+                m_ai_waiting.erase(about_player_id);
+            }
+            return true;
+        }
         default:
             ErrorLogger() << "Unknown message type: " << msg.Type();
             return false;
         }
     }
 
-    bool m_game_started; ///< Is server started the game?
+    bool          m_game_started; ///< Is server started the game?
+    std::set<int> m_ai_players; ///< Ids of AI players in game.
+    std::set<int> m_ai_waiting; ///< Ids of AI players not yet send orders.
 };
 
 BOOST_FIXTURE_TEST_SUITE(TestGame, GameFixture)
@@ -207,8 +222,8 @@ BOOST_AUTO_TEST_CASE(host_server) {
     setup_data.m_players.push_back(human_player_setup_data);
 
     // AI player setup data.  One entry for each requested AI
-    int num_AIs = 2;
-    for (int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
+    unsigned int num_AIs = 2;
+    for (unsigned int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
         PlayerSetupData ai_setup_data;
 
         ai_setup_data.m_player_name = "AI_" + std::to_string(ai_i);
@@ -226,6 +241,22 @@ BOOST_AUTO_TEST_CASE(host_server) {
     BOOST_TEST_MESSAGE("Waiting game to start...");
 
     while (!m_game_started) {
+        BOOST_REQUIRE(ProcessMessages());
+        BOOST_TEST_MESSAGE("Processed messages");
+    }
+
+    for (const auto& player : Players()) {
+        if (player.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            m_ai_players.insert(player.first);
+    }
+
+    BOOST_REQUIRE(m_ai_players.size() == num_AIs);
+
+    m_ai_waiting = m_ai_players;
+
+    BOOST_TEST_MESSAGE("Game started. Waiting AI for turns...");
+
+    while (! m_ai_waiting.empty()) {
         BOOST_REQUIRE(ProcessMessages());
         BOOST_TEST_MESSAGE("Processed messages");
     }
