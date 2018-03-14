@@ -176,6 +176,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
     std::vector<std::string> args;
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
     args.push_back("--singleplayer");
+    args.push_back("--testing");
 
 #ifdef FREEORION_LINUX
     // Dirty hack to output log to console.
