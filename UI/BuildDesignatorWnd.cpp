@@ -262,8 +262,8 @@ namespace {
             float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
             int production_time = building_type->ProductionTime(empire_id, candidate_object_id);
 
-            main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
-            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + std::to_string(production_time);
+            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) % DoubleToString(total_cost, 3, false));
+            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) % std::to_string(production_time));
 
             // show build conditions
             const std::string& enqueue_and_location_condition_failed_text = EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
@@ -291,8 +291,8 @@ namespace {
             float total_cost = design->ProductionCost(empire_id, candidate_object_id);
             int production_time = design->ProductionTime(empire_id, candidate_object_id);
 
-            main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
-            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + std::to_string(production_time);
+            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) % DoubleToString(total_cost, 3, false));
+            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) % std::to_string(production_time));
             main_text += "\n\n" + UserString("ENC_SHIP_HULL") + ": " + UserString(design->Hull());
 
             // load ship parts, stack ship parts that are used multiple times
@@ -337,8 +337,8 @@ namespace {
             float total_cost = 1.0;
             int production_time = 1;
 
-            main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
-            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + std::to_string(production_time);
+            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) % DoubleToString(total_cost, 3, false));
+            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) % std::to_string(production_time));
 
             // do not show build conditions - always buildable
 

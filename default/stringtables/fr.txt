@@ -4206,10 +4206,10 @@ DUPLICATE
 Dupliquer
 
 PRODUCTION_WND_TOOLTIP_PROD_COST
-Coût production
+Coût production: %1%
 
 PRODUCTION_WND_TOOLTIP_PROD_TIME
-Temps production
+Temps production: %1%
 
 PRODUCTION_WND_TOOLTIP_PARTS
 Équipements Astronef

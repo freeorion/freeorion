@@ -3561,10 +3561,10 @@ MOVE_DOWN_QUEUE_ITEM
 Переместить в конец очереди
 
 PRODUCTION_WND_TOOLTIP_PROD_COST
-Стоимость производства
+Стоимость производства: %1%
 
 PRODUCTION_WND_TOOLTIP_PROD_TIME
-Время производства
+Время производства: %1%
 
 PRODUCTION_WND_TOOLTIP_PARTS
 Части корабля
