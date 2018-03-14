@@ -289,8 +289,10 @@ namespace {
         } else if (elem.item.build_type == BT_STOCKPILE) {
             main_text += UserString("BUILD_ITEM_TYPE_PROJECT") + "\n";
 
-            item_name = UserString("PROJECT_BT_STOCKPILE");
-            location_ok = true;
+            item_name = UserString(elem.item.name);
+            auto loc = GetUniverseObject(elem.location);
+            location_ok = loc && loc->OwnedBy(elem.empire_id) && (std::dynamic_pointer_cast<const ResourceCenter>(loc));
+
             total_cost = 1.0;
             max_allocation = total_cost * elem.blocksize;
             icon = ClientUI::MeterIcon(METER_STOCKPILE);
