@@ -749,7 +749,7 @@ namespace {
                 } else {
                     popup->AddMenuItem(GG::MenuItem(UserString("ALLOW_IMPERIAL_PP_STOCKPILE_USE"), false, false, allow_stockpile_action));
                 }
-	    default:
+            default:
                 break;
             }
 
@@ -766,7 +766,7 @@ namespace {
                 item_name = "PROJECT_BT_STOCKPILE";
                 break;
             default:
-	        break;
+                break;
             }
 
             if (UserStringExists(item_name))
