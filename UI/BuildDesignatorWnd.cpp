@@ -137,7 +137,7 @@ namespace {
             case BT_STOCKPILE: {
                 texture = ClientUI::MeterIcon(METER_STOCKPILE);
                 desc_text = UserString("BT_STOCKPILE");
-                name_text = UserString("PROJECT_BT_STOCKPILE");
+                name_text = UserString(m_item.name);
                 break;
             }
             default:
@@ -332,7 +332,7 @@ namespace {
         // production item is a stockpiling project
         if (item.build_type == BT_STOCKPILE) {
             // create title, description, production time and cost
-            const std::string& title = UserString("PROJECT_BT_STOCKPILE");
+            const std::string& title = UserString(item.name);
             std::string main_text = UserString("PROJECT_BT_STOCKPILE_DESC");
             float total_cost = 1.0;
             int production_time = 1;

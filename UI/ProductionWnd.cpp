@@ -460,7 +460,7 @@ namespace {
                 ErrorLogger() << "QueueProductionItemPanel unable to get design with id: " << elem.item.design_id;
         } else if (elem.item.build_type == BT_STOCKPILE) {
             graphic = ClientUI::MeterIcon(METER_STOCKPILE);
-            name_text = UserString("PROJECT_BT_STOCKPILE");
+            name_text = UserString(elem.item.name);
         } else {
             graphic = ClientUI::GetTexture(""); // get "missing texture" texture by supply intentionally bad path
             name_text = UserString("FW_UNKNOWN_DESIGN_NAME");
@@ -759,13 +759,11 @@ namespace {
             std::string item_name = "";
             switch (build_type) {
             case BT_BUILDING:
+            case BT_STOCKPILE:
                 item_name = queue_row->elem.item.name;
                 break;
             case BT_SHIP:
                 item_name = GetShipDesign(queue_row->elem.item.design_id)->Name(false);
-                break;
-            case BT_STOCKPILE:
-                item_name = "PROJECT_BT_STOCKPILE";
                 break;
             default:
                 break;
