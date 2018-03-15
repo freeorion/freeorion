@@ -507,6 +507,7 @@ private:
 
     void                DoLayout();
 
+    bool    BuildableItemVisible(BuildType build_type);
     bool    BuildableItemVisible(BuildType build_type, const std::string& name);
     bool    BuildableItemVisible(BuildType build_type, int design_id);
 
@@ -736,6 +737,17 @@ void BuildDesignatorWnd::BuildSelector::HideAvailability(bool available, bool re
     }
 }
 
+bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_type) {
+    if (build_type != BT_STOCKPILE)
+        throw std::invalid_argument("BuildableItemVisible was passed an invalid build type without id");
+
+    const Empire* empire = GetEmpire(m_empire_id);
+    if (!empire)
+        return true;
+
+    return empire->ProducibleItem(build_type, m_production_location);
+}
+
 bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_type,
                                                              const std::string& name)
 {
@@ -805,7 +817,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     const GG::Pt row_size = m_buildable_items->ListRowSize();
 
     // populate list with fixed projects
-    {
+    if (BuildableItemVisible(BT_STOCKPILE)) {
         auto stockpile_row = GG::Wnd::Create<ProductionItemRow>(
             row_size.x, row_size.y, ProductionQueue::ProductionItem(BT_STOCKPILE), m_empire_id, m_production_location);
         m_buildable_items->Insert(stockpile_row);
