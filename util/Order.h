@@ -481,19 +481,16 @@ class FO_COMMON_API PolicyOrder : public Order {
 public:
     /** \name Structors */ //@{
     PolicyOrder(int empire, const std::string& name,
-                const std::string& category, bool adopt);
+                const std::string& category, bool adopt,
+                int slot = -1);
     //@}
 
     /** \name Accessors */ //@{
     /** Returns ID of fleet selected in this order. */
-    const std::string& PolicyName() const
-    { return m_policy_name; }
-
-    const std::string& CategoryName() const
-    { return m_category; }
-
-    bool Adopt() const
-    { return m_adopt; }
+    const std::string&  PolicyName() const  { return m_policy_name; }
+    const std::string&  CategoryName() const{ return m_category; }
+    bool                Adopt() const       { return m_adopt; }
+    int                 Slot() const        { return m_slot; }
     //@}
 
 private:
@@ -503,6 +500,7 @@ private:
 
     std::string m_policy_name = "";
     std::string m_category = "";
+    int         m_slot = -1;
     bool        m_adopt = false;
 
     friend class boost::serialization::access;

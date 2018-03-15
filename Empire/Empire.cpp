@@ -155,15 +155,15 @@ void Empire::SetCapitalID(int id) {
 }
 
 void Empire::AdoptPolicy(const std::string& name, const std::string& category,
-                         bool adopt)
+                         bool adopt, int slot)
 {
     if (!adopt) {
         // revoke policy
         if (m_adopted_policy_turns.count(name)) {
             // refund adoption cost if adoption was this turn
-            if (m_adopted_policy_turns[name] == CurrentTurn()) {
-                // todo: refund
-            }
+            //if (m_adopted_policy_turns[name] == CurrentTurn()) {
+            //    // todo: refund
+            //}
             // un-adopt policy
             m_adopted_policy_turns.erase(name);
             m_adopted_policy_categories.erase(name);
@@ -180,6 +180,7 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     // todo: check that there is sufficient influence to adopt policy
 
     // todo: check if there is room to adopt policy in requested category
+    //       or that requested slot (if not -1) is empty
 
     // check that policy is not already adopted
     if (m_adopted_policy_categories.count(name)) {

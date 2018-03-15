@@ -1039,6 +1039,29 @@ void GovernmentWnd::MainPanel::Refresh()
 void GovernmentWnd::MainPanel::SetPolicy(const std::string& policy_name, unsigned int slot)
 { SetPolicy(GetPolicy(policy_name), slot); }
 
+namespace {
+    std::vector<std::pair<std::string, int>> ConcatenatedCategorySlots(int empire_id) {
+        std::vector<std::pair<std::string, int>> retval;
+        retval.reserve(50); // should be enough in most cases, avoid repeated reallocations
+
+        const Empire* empire = GetEmpire(empire_id);  // may be nullptr
+        if (!empire)
+            return retval;
+
+        const std::map<std::string, int> policy_slots = empire->TotalPolicySlots();
+
+        // for every slot in every category, add entry to retval in series
+        for (const auto& cat_slots : policy_slots) {
+            unsigned int num_slots_in_cat = static_cast<int>(cat_slots.second);
+            const std::string& cat_name = cat_slots.first;
+            for (unsigned int n = 0; n < num_slots_in_cat; ++n)
+                retval.push_back({cat_name, n});
+        }
+
+        return retval;
+    }
+}
+
 void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot,
                                          bool emit_signal)
 {
@@ -1055,19 +1078,51 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
         return;
     }
 
-    // get slot...
     const std::string& category = m_slots[slot]->SlotCategory();
-
     std::string policy_name = "";
     bool adopt = true;
 
+    int order_slot = -1;
+
     if (policy) {
-        // if specified policy, issue order to adopt in category of slot
+        // if specified policy, issue order to adopt policy in the requested
+        // category and/or slot
+        policy_name = policy->Name();
+
+        // slot in UI ignores category. slots in empire's adopted policies are
+        // counted separately for each category. ConcatenatedCategorySlots
+        // returns the category and index within category for each slot
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        auto all_slot_cats = ConcatenatedCategorySlots(empire_id);
+
+        // check that requested slot falls within those available
+        if (slot >= all_slot_cats.size()) {
+            ErrorLogger() << "MainPanel::SetPolicy - Can't adopt policy in slot " << slot
+                          << " as there are only " << all_slot_cats.size() << " slots available";
+            return;
+        }
+        // check that categories are consistent
+        if (all_slot_cats[slot].first != category) {
+            ErrorLogger() << "MainPanel::SetPolicy - inconsistent slot types for slot " << slot
+                          << " : " << all_slot_cats[slot].first << " and " << category;
+            return;
+        }
+
+        order_slot = all_slot_cats[slot].second;
+
     } else {
         // if specified null policy, issue order to remove policy currently in slot
+        adopt = false;
+        const auto* policy_in_slot = m_slots[slot]->GetPolicy();
+        if (policy_in_slot)
+            policy_name = policy_in_slot->Name();
+        if (policy_name.empty()) {
+            ErrorLogger() << "MainPanel::SetPolicy - Can't un-adopt empty slot's policy...";
+            return;
+        }
     }
 
-    auto order = std::make_shared<PolicyOrder>(empire_id, policy_name, category, adopt);
+    auto order = std::make_shared<PolicyOrder>(empire_id, policy_name, category, adopt, order_slot);
     HumanClientApp::GetApp()->Orders().IssueOrder(order);
 
     if (emit_signal)  // to avoid unnecessary signal repetition.
@@ -1150,26 +1205,22 @@ void GovernmentWnd::MainPanel::Populate() {
     if (!empire)
         return;
 
-    const std::map<std::string, int> policy_slots = empire->TotalPolicySlots();
     const std::map<std::string, int>& adopted_policy_turns = empire->AdoptedPolicyTurns();
+    auto all_slot_cats = ConcatenatedCategorySlots(empire_id);
 
-    for (const auto& cat_slots : policy_slots) {
-        unsigned int num_slots_in_cat = static_cast<int>(cat_slots.second);
-        const std::string& cat_name = cat_slots.first;
+    for (unsigned int n = 0; n < all_slot_cats.size(); ++n) {
+        const auto& cat_slot = all_slot_cats[n];    // todo: std::tie ?
+        const std::string& category_name = cat_slot.first;
+        const int& idx_category = cat_slot.second;
+        auto slot_control = GG::Wnd::Create<PolicySlotControl>(category_name);
+        AttachChild(slot_control);
+        m_slots.push_back(slot_control);
 
-        for (unsigned int n = 0; n < num_slots_in_cat; ++n) {
-            //std::cout << "GovernmentWnd::MainPanel::Populate cat: " << cat_name << "  slot n: " << n << std::endl;
-
-            auto slot_control = GG::Wnd::Create<PolicySlotControl>(cat_name);
-            AttachChild(slot_control);
-            m_slots.push_back(slot_control);
-
-            slot_control->SlotContentsAlteredSignal.connect(
-                boost::bind(static_cast<void (GovernmentWnd::MainPanel::*)(
-                    const Policy*, unsigned int, bool)>(&GovernmentWnd::MainPanel::SetPolicy),
-                                                        this, _1, n, _2));
-            slot_control->PolicyClickedSignal.connect(PolicyClickedSignal);
-        }
+        slot_control->SlotContentsAlteredSignal.connect(
+        boost::bind(static_cast<void (GovernmentWnd::MainPanel::*)(
+            const Policy*, unsigned int, bool)>(&GovernmentWnd::MainPanel::SetPolicy),
+                                                this, _1, n, _2));
+        slot_control->PolicyClickedSignal.connect(PolicyClickedSignal);
     }
 
     DoLayout();

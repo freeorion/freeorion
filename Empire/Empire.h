@@ -185,7 +185,8 @@ public:
 
     /** Adopts the specified policy, assuming its conditions are met. Revokes
       * the policy if \a adopt is false; */
-    void AdoptPolicy(const std::string& name, const std::string& category, bool adopt = true);
+    void AdoptPolicy(const std::string& name, const std::string& category,
+                     bool adopt = true, int slot = -1);
 
     /** Checks that all policy adoption conditions are met, removing any that
       * are not allowed. */

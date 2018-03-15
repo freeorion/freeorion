@@ -897,11 +897,13 @@ void ChangeFocusOrder::ExecuteImpl() const {
 // PolicyOrder
 ////////////////////////////////////////////////
 PolicyOrder::PolicyOrder(int empire, const std::string& name,
-                         const std::string& category, bool adopt) :
+                         const std::string& category, bool adopt,
+                         int slot) :
     Order(empire),
     m_policy_name(name),
     m_category(category),
-    m_adopt(adopt)
+    m_adopt(adopt),
+    m_slot(slot)
 {}
 
 void PolicyOrder::ExecuteImpl() const {
@@ -909,7 +911,7 @@ void PolicyOrder::ExecuteImpl() const {
 
     // todo: validate order
 
-    empire->AdoptPolicy(m_policy_name, m_category, m_adopt);
+    empire->AdoptPolicy(m_policy_name, m_category, m_adopt, m_slot);
 }
 
 ////////////////////////////////////////////////
