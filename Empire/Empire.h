@@ -470,6 +470,8 @@ private:
 
     std::map<std::string, int>          m_adopted_policy_turns;     ///< map from policy name to turn on which policy was adopted
     std::map<std::string, std::string>  m_adopted_policy_categories;///< map from policy name to name of category in which policy was adopted
+    std::map<std::string, std::vector<std::string>>
+                                        m_adopted_policy_slots;     ///< map from category name to ordered / indexed list of polices adopted in that category
     std::set<std::string>               m_available_policies;       ///< list of unlocked policies. These are string names referencing Policy objects.
 
     /** The source id is the id of any object owned by the empire.  It is

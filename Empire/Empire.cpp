@@ -167,6 +167,20 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
             // un-adopt policy
             m_adopted_policy_turns.erase(name);
             m_adopted_policy_categories.erase(name);
+
+            if (m_adopted_policy_slots.count(category)) {
+                auto& category_slots = m_adopted_policy_slots[category];
+                if (slot >= 0 && category_slots.size() >= slot) {
+                    // if slot specified, clear it
+                    category_slots[slot].clear();
+                } else if (!category_slots.empty()) {
+                    // if no slot specified, try to find policy in any slot and clear
+                    for (auto& slot : category_slots) {
+                        if (slot == name)
+                            slot.clear();
+                    }
+                }
+            }
         }
         return;
     }
