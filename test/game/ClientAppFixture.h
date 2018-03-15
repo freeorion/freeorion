@@ -13,7 +13,7 @@ public:
 
     void HostSPGame(unsigned int num_AIs);
 
-    bool ProcessMessages();
+    bool ProcessMessages(const boost::posix_time::ptime& start_time, int max_seconds);
 
     bool HandleMessage(Message& msg);
 

@@ -92,9 +92,9 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
     m_networking->SendMessage(HostSPGameMessage(setup_data));
 }
 
-bool ClientAppFixture::ProcessMessages() {
+bool ClientAppFixture::ProcessMessages(const boost::posix_time::ptime& start_time, int max_seconds) {
     bool to_process = true;
-    while (1) {
+    while ((boost::posix_time::microsec_clock::local_time() - start_time).total_seconds() < max_seconds) {
         if (!m_networking->IsConnected())
             return false;
         auto opt_msg = m_networking->GetMessage();
@@ -113,6 +113,7 @@ bool ClientAppFixture::ProcessMessages() {
              }
         }
     }
+    return false; // return on timeout
 }
 
 bool ClientAppFixture::HandleMessage(Message& msg) {

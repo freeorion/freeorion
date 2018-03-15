@@ -13,6 +13,8 @@ namespace {
         return (GetBinDir() / "freeoriond").string();
 #endif
     }
+
+    constexpr static int MAX_WAITING_SEC = 120;
 }
 
 #ifdef FREEORION_MACOSX
@@ -55,7 +57,8 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
     BOOST_TEST_MESSAGE("Connected to server");
 
-    BOOST_REQUIRE(ProcessMessages());
+    boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
+    BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
 
     BOOST_TEST_MESSAGE("First messages processed. Starting game...");
 
@@ -64,9 +67,9 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
     BOOST_TEST_MESSAGE("Waiting game to start...");
 
+    start_time = boost::posix_time::microsec_clock::local_time();
     while (!m_game_started) {
-        BOOST_REQUIRE(ProcessMessages());
-        BOOST_TEST_MESSAGE("Processed messages");
+        BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
     }
 
     for (const auto& player : Players()) {
@@ -80,9 +83,9 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
     BOOST_TEST_MESSAGE("Game started. Waiting AI for turns...");
 
+    start_time = boost::posix_time::microsec_clock::local_time();
     while (! m_ai_waiting.empty()) {
-        BOOST_REQUIRE(ProcessMessages());
-        BOOST_TEST_MESSAGE("Processed messages");
+        BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
     }
 
     SendTurnOrders();
@@ -91,9 +94,9 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
     BOOST_TEST_MESSAGE("Turn done. Waiting AI for turns...");
 
+    start_time = boost::posix_time::microsec_clock::local_time();
     while (! m_ai_waiting.empty()) {
-        BOOST_REQUIRE(ProcessMessages());
-        BOOST_TEST_MESSAGE("Processed messages");
+        BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
     }
 
     BOOST_TEST_MESSAGE("Terminating server...");
