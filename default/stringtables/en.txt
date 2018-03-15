@@ -1013,7 +1013,10 @@ ERROR_CONNECTION_WAS_REPLACED
 Your connection was replaced.
 
 ERROR_NONPLAYER_CANNOT_CONCEDE
-Only Players can concede
+Only Players can concede.
+
+ERROR_CONCEDE_NOT_ALLOWED
+Concede is not allowed.
 
 ##
 ## Game Rules
@@ -1156,6 +1159,18 @@ Gas Giants Habitable size
 
 RULE_HABITABLE_SIZE_DESC
 Value used to adjust for [[encyclopedia POPULATION_TITLE_SHORT_DESC]] changes on a planet of this size.
+
+RULE_ALLOW_CONCEDE
+Allow concede
+
+RULE_ALLOW_CONCEDE_DESC
+Allows empire to concede with elimination its assets.
+
+RULE_CONCEDE_COLONIES_THRESHOLD
+Maximum colonies allowed to concede
+
+RULE_CONCEDE_COLONIES_THRESHOLD_DESC
+Disallow empire with more coloies to concede.
 
 RULE_THRESHOLD_HUMAN_PLAYER_WIN
 Max human player winners

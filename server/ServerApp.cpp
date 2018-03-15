@@ -1628,18 +1628,27 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
     // TODO: notify other players
 }
 
-void ServerApp::EliminatePlayer(int player_id) {
+bool ServerApp::EliminatePlayer(int player_id) {
+    if (!GetGameRules().Get<bool>("RULE_ALLOW_CONCEDE"))
+        return false;
+
     int empire_id = PlayerEmpireID(player_id);
     if (empire_id == ALL_EMPIRES)
-        return;
+        return false;
     Empire* empire = GetEmpire(empire_id);
     if (!empire)
-        return;
+        return false;
 
+    // test for colonies count
+    std::vector<int> planet_ids = Objects().FindObjectIDs(OwnedVisitor<Planet>(empire_id));
+    if (planet_ids.size() > static_cast<size_t>(GetGameRules().Get<int>("RULE_CONCEDE_COLONIES_THRESHOLD")))
+        return false;
+
+    // empire elimination
     empire->Eliminate();
 
     // unclaim ships and systems
-    for (int planet_id : Objects().FindObjectIDs(OwnedVisitor<Planet>(empire_id))) {
+    for (int planet_id : planet_ids) {
         auto planet = GetPlanet(planet_id);
         if (planet)
             planet->Reset();
@@ -1654,6 +1663,8 @@ void ServerApp::EliminatePlayer(int player_id) {
 
     // break link between player and empire
     m_player_empire_ids.erase(player_id);
+
+    return true;
 }
 
 void ServerApp::DropPlayerEmpireLink(int player_id)

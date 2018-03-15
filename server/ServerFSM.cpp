@@ -2314,7 +2314,13 @@ sc::result PlayingGame::react(const EliminateSelf& msg) {
         return discard_event();
     }
 
-    server.EliminatePlayer(player_connection->PlayerID());
+    if (!server.EliminatePlayer(player_connection->PlayerID())) {
+        WarnLogger(FSM) << "(ServerFSM) PlayingGame::EliminateSelf player " << player_connection->PlayerID() << " not allowed to concede";
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CONCEDE_NOT_ALLOWED"), false));
+        return discard_event();
+    }
+
+    server.Networking().Disconnect(player_connection);
 
     return discard_event();
 }

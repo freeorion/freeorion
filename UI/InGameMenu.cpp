@@ -211,8 +211,7 @@ void InGameMenu::Concede() {
     if (prompt->Result() == 0) {
        // send ELIMINATE_SELF message
        HumanClientApp::GetApp()->EliminateSelf();
-
-       Resign();
+       CloseClicked();
     }
 }
 
