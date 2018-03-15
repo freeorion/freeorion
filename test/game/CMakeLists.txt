@@ -7,6 +7,7 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
 
 add_executable(fo_unittest_game
     main.cpp
+    ClientAppFixture.cpp
 )
 
 target_compile_definitions(fo_unittest_game
@@ -37,11 +38,8 @@ add_coverage(fo_unittest_game
 )
 
 add_dependencies(unittest
-    fo_unittest_game
-)
-
-add_dependencies(fo_unittest_game
     freeoriond
+    fo_unittest_game
 )
 
 target_sources(fo_unittest_game
