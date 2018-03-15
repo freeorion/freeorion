@@ -2,8 +2,8 @@
 #define _Order_h_
 
 #include "../universe/EnumsFwd.h"
-#include "Export.h"
 #include "../Empire/Empire.h"
+#include "Export.h"
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>

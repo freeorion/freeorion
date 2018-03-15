@@ -3,6 +3,8 @@
 #include "../universe/Effect.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ObjectMap.h"
+#include "../universe/ValueRef.h"
+#include "../universe/Enums.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
@@ -11,8 +13,6 @@
 #include "../util/GameRules.h"
 #include "../util/CheckSums.h"
 #include "../util/ScopedTimer.h"
-#include "../universe/ValueRef.h"
-#include "../universe/Enums.h"
 #include "../Empire/EmpireManager.h"
 
 #include <boost/filesystem/fstream.hpp>
