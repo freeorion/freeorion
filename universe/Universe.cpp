@@ -1073,7 +1073,7 @@ namespace {
         // log condition scope matches, except for Source
         if (!(dynamic_cast<const Condition::Source*>(cond))) {
             std::stringstream ss;
-            ss << "\nGenerated new target set, for Condition: " << cond->Description() << "    targets: (";
+            ss << "\nGenerated new target set, for Condition: " << cond->Dump() << "\n    targets: (";
             for (const auto& obj : *target_set)
                 ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
             ss << ")";
