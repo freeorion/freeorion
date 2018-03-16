@@ -128,3 +128,10 @@ GameRule
     default = 0
     min = 0
     max = 999
+
+GameRule
+    name = "RULE_ONLY_ALLIANCE_WIN"
+    description = "RULE_ONLY_ALLIANCE_WIN_DESC"
+    category = "BALANCE"
+    type = Toggle
+    default = On

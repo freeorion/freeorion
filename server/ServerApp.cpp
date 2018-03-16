@@ -3375,6 +3375,19 @@ void ServerApp::CheckForEmpireElimination() {
     else if (!m_single_player_game &&
         static_cast<int>(surviving_human_empires.size()) <= GetGameRules().Get<int>("RULE_THRESHOLD_HUMAN_PLAYER_WIN"))
     { // human victory threshold
+        if (GetGameRules().Get<bool>("RULE_ONLY_ALLIANCE_WIN")) {
+            for (auto emp1_it = surviving_human_empires.begin();
+                 emp1_it != surviving_human_empires.end(); ++emp1_it)
+            {
+                auto emp2_it = emp1_it;
+                ++emp2_it;
+                for (; emp2_it != surviving_human_empires.end(); ++emp2_it) {
+                    if (Empires().GetDiplomaticStatus((*emp1_it)->EmpireID(), (*emp2_it)->EmpireID()) != DIPLO_ALLIED)
+                        return;
+                }
+            }
+        }
+
         for (auto& empire : surviving_human_empires) {
             empire->Win(UserStringNop("VICTORY_FEW_HUMANS_ALIVE"));
         }

@@ -1153,6 +1153,12 @@ Threshold for human player winners
 RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC
 Threshold for count of alive human players for them to be considered winners. Not active for single-player.
 
+RULE_ONLY_ALLIANCE_WIN
+Only alliance wins
+
+RULE_ONLY_ALLIANCE_WIN_DESC
+Only alliance of human players could win. Not active for single-player.
+
 
 ##
 ## Command-line and options database entries
