@@ -3162,6 +3162,12 @@ Species
 CENSUS_TAG_HEADER
 Characteristics
 
+CENSUS_TOTAL_POPULATION
+Total population: %1%
+
+CENSUS_TOTAL_WORLDS
+Settled worlds: %1%
+
 MAP_DETECTION_TITLE
 Empire Detection
 

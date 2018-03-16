@@ -1950,6 +1950,12 @@ Spezies
 CENSUS_TAG_HEADER
 Merkmale
 
+CENSUS_TOTAL_POPULATION
+Gesamtbevölkerung: %1%
+
+CENSUS_TOTAL_WORLDS
+Bevölkerte Welten: %1%
+
 MAP_DETECTION_TITLE
 Imperiumsortung
 
