@@ -288,18 +288,6 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 {
     std::list<PlayerConnectionPtr> to_disconnect;
 
-    if (player_connection->IsAuthenticated()) {
-        // drop other connection with same name
-        for (auto it = m_server.m_networking.established_begin();
-             it != m_server.m_networking.established_end(); ++it)
-        {
-            if ((*it)->PlayerName() == player_name && player_connection != (*it)) {
-                (*it)->SendMessage(ErrorMessage(UserString("ERROR_CONNECTION_WAS_REPLACED"), true));
-                to_disconnect.push_back(*it);
-            }
-        }
-    }
-
     // set and test roles
     player_connection->SetAuthRoles(roles);
 
@@ -317,6 +305,26 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         !player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER))
     {
         client_type = Networking::INVALID_CLIENT_TYPE;
+    }
+
+    if (player_connection->IsAuthenticated()) {
+        // drop other connection with same name
+        for (auto it = m_server.m_networking.established_begin();
+             it != m_server.m_networking.established_end(); ++it)
+        {
+            if ((*it)->PlayerName() == player_name && player_connection != (*it)) {
+                (*it)->SendMessage(ErrorMessage(UserString("ERROR_CONNECTION_WAS_REPLACED"), true));
+                to_disconnect.push_back(*it);
+
+                // If we're going to establish Human Player
+                // it will be better to break link with previous connection
+                // so game won't be stopped on disconnection of previous connection.
+                if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+                    m_server.DropPlayerEmpireLink((*it)->PlayerID());
+                    (*it)->SetClientType(Networking::INVALID_CLIENT_TYPE);
+                }
+            }
+        }
     }
 
     if (client_type == Networking::INVALID_CLIENT_TYPE) {
@@ -2095,6 +2103,14 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
             {
                 // send playing game
                 server.AddObserverPlayerIntoGame(player_connection);
+            } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+                // previous connection was dropped
+                // set empire link to new connection by name
+                // send playing game
+                if (!server.AddPlayerIntoGame(player_connection)) {
+                    player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_PLAYING_GAME")));
+                    server.Networking().Disconnect(player_connection);
+                }
             } else {
                 player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_PLAYING_GAME")));
                 server.Networking().Disconnect(player_connection);
