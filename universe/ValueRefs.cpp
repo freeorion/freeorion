@@ -1765,6 +1765,25 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return 0;
 
         return object->SpecialAddedOnTurn(special_name);
+
+    } else if (variable_name == "TurnPolicyAdopted") {
+        if (!m_string_ref1)
+            return 0;
+        std::string policy_name = m_string_ref1->Eval();
+        if (policy_name.empty())
+            return 0;
+
+        int empire_id = ALL_EMPIRES;
+        if (m_int_ref1) {
+            empire_id = m_int_ref1->Eval(context);
+            if (empire_id == ALL_EMPIRES)
+                return 0;
+        }
+        const Empire* empire = GetEmpire(empire_id);
+        if (!empire)
+            return 0;
+
+        return empire->TurnPolicyAdopted(policy_name);
     }
 
     return 0;
@@ -2140,8 +2159,8 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         if (!empire)
             return "";
         // get all techs on queue, randomly pick one
-        const ResearchQueue& queue = empire->GetResearchQueue();
-        std::vector<std::string> all_enqueued_techs = queue.AllEnqueuedProjects();
+        const auto& queue = empire->GetResearchQueue();
+        auto all_enqueued_techs = queue.AllEnqueuedProjects();
         if (all_enqueued_techs.empty())
             return "";
         std::size_t idx = RandSmallInt(0, static_cast<int>(all_enqueued_techs.size()) - 1);
@@ -2158,7 +2177,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         if (!empire)
             return "";
 
-        std::vector<std::string> researchable_techs = TechsResearchableByEmpire(empire_id);
+        auto researchable_techs = TechsResearchableByEmpire(empire_id);
         if (researchable_techs.empty())
             return "";
         std::size_t idx = RandSmallInt(0, static_cast<int>(researchable_techs.size()) - 1);
@@ -2174,7 +2193,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         if (!empire)
             return "";
 
-        std::vector<std::string> complete_techs = TechsResearchedByEmpire(empire_id);
+        auto complete_techs = TechsResearchedByEmpire(empire_id);
         if (complete_techs.empty())
             return "";
         std::size_t idx = RandSmallInt(0, static_cast<int>(complete_techs.size()) - 1);
@@ -2330,11 +2349,7 @@ std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
         if (!empire)
             return {};
 
-        std::vector<std::string> retval;
-        retval.reserve(empire->AdoptedPolicyCategories().size());
-        for (const auto& policy_cat : empire->AdoptedPolicyCategories())
-            retval.push_back(policy_cat.first);
-        return retval;
+        return empire->AdoptedPolicies();
 
     } else if (variable_name == "EmpireAvailablePolices") {
         int empire_id = ALL_EMPIRES;

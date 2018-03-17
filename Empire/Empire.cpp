@@ -27,9 +27,23 @@
 namespace {
     const float EPSILON = 0.01f;
     const std::string EMPTY_STRING;
+    const int INVALID_SLOT_INDEX = -1;
 
     DeclareThreadSafeLogger(supply);
 }
+
+////////////////////////////////
+// Empire::PolicyAdoptionInfo //
+////////////////////////////////
+Empire::PolicyAdoptionInfo::PolicyAdoptionInfo() :
+    PolicyAdoptionInfo(INVALID_GAME_TURN, EMPTY_STRING, INVALID_SLOT_INDEX)
+{}
+
+Empire::PolicyAdoptionInfo::PolicyAdoptionInfo(int turn, const std::string& cat, int slot) :
+    adoption_turn(turn),
+    category(cat),
+    slot_in_category(slot)
+{}
 
 
 ////////////
@@ -159,28 +173,10 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
 {
     if (!adopt) {
         // revoke policy
-        if (m_adopted_policy_turns.count(name)) {
-            // refund adoption cost if adoption was this turn
-            //if (m_adopted_policy_turns[name] == CurrentTurn()) {
-            //    // todo: refund
-            //}
+        if (m_adopted_policies.count(name)) {
             // un-adopt policy
-            m_adopted_policy_turns.erase(name);
-            m_adopted_policy_categories.erase(name);
-
-            if (m_adopted_policy_slots.count(category)) {
-                auto& category_slots = m_adopted_policy_slots[category];
-                if (slot >= 0 && category_slots.size() >= slot) {
-                    // if slot specified, clear it
-                    category_slots[slot].clear();
-                } else if (!category_slots.empty()) {
-                    // if no slot specified, try to find policy in any slot and clear
-                    for (auto& slot : category_slots) {
-                        if (slot == name)
-                            slot.clear();
-                    }
-                }
-            }
+            m_adopted_policies.erase(name);
+            // todo: refund adoption cost if adoption was this turn
         }
         return;
     }
@@ -193,41 +189,112 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
 
     // todo: check that there is sufficient influence to adopt policy
 
-    // todo: check if there is room to adopt policy in requested category
-    //       or that requested slot (if not -1) is empty
-
     // check that policy is not already adopted
-    if (m_adopted_policy_categories.count(name)) {
-        // set category to that requested. may be no-op if already in that category
-        m_adopted_policy_categories[name] = category;
+    if (m_adopted_policies.count(name)) {
+        DebugLogger() << "Empire::AdoptPolicy policy " << name << "  already adopted in category "
+                      << m_adopted_policies[name].category << "  in slot "
+                      << m_adopted_policies[name].slot_in_category << "  on turn "
+                      << m_adopted_policies[name].adoption_turn;
         return;
     }
 
-    // adopt policy in requested category on this turn
-    m_adopted_policy_categories[name] = category;
-    m_adopted_policy_turns[name] = CurrentTurn();
+    // get slots for category requested for policy to be adopted in
+    auto total_slots = TotalPolicySlots();
+    auto total_slots_in_category = total_slots[category];
+    if (total_slots_in_category < 1 || slot >= total_slots_in_category) {
+        ErrorLogger() << "Empire::AdoptPolicy can't adopt policy: " << name
+                      << "  into category: " << category << "  in slot: " << slot
+                      << " because category has only " << total_slots_in_category
+                      << " slots total";
+        return;
+    }
 
-    DebugLogger() << "Policy: " << name << "  adopted in category " << category << "  on turn: " << CurrentTurn();
+    // collect already-adopted policies in category
+    std::vector<std::string> adopted_policies_in_category;
+    for (const auto& policy_entry : m_adopted_policies) {
+        if (policy_entry.second.category != category)
+            continue;
+        if (policy_entry.second.slot_in_category >= total_slots_in_category) {
+            ErrorLogger() << "Empire::AdoptPolicy found adopted policy: "
+                          << policy_entry.first << "  in category: " << category
+                          << "  in slot: " << policy_entry.second.slot_in_category
+                          << "  which is higher than max slot in category: "
+                          << (total_slots_in_category - 1);
+        }
+        if (slot != INVALID_SLOT_INDEX && policy_entry.second.slot_in_category == slot) {
+            ErrorLogger() << "Empire::AdoptPolicy found adopted policy: "
+                          << policy_entry.first << "  in category: " << category
+                          << "  in slot: " << slot
+                          << "  so cannot adopt another policy in that slot";
+            return;
+        }
+        adopted_policies_in_category[policy_entry.second.slot_in_category] = policy_entry.first;
+    }
+
+    // if no particular slot was specified, try to find a suitable slot in category
+    if (slot == INVALID_SLOT_INDEX) {
+        // search for any suitable empty slot
+        for (int i = adopted_policies_in_category.size();
+             i < static_cast<int>(adopted_policies_in_category.size());
+             ++i)
+        {
+            if (adopted_policies_in_category[i].empty()) {
+                slot = i;
+                break;
+            }
+        }
+
+        if (slot == INVALID_SLOT_INDEX) {
+            ErrorLogger() << "Couldn't find empty slot for policy in category: " << category;
+            return;
+        }
+    }
+
+    // adopt policy in requested category on this turn
+    m_adopted_policies[name] = {CurrentTurn(), category, slot};
+
+    DebugLogger() << "Empire::AdoptPolicy policy " << name << "  adopted in category "
+                  << m_adopted_policies[name].category << "  in slot "
+                  << m_adopted_policies[name].slot_in_category << "  on turn "
+                  << m_adopted_policies[name].adoption_turn;
 }
 
 void Empire::AuditPolicies() {
     // todo: make sure all adopted policies are allowed to be adopted by this
-    // empire, and revoke any that aren't allowed, such as due to not having
-    // enough slots of the relevant type.
-    // todo: make sure polices indexing m_adopted_policy_turns and
-    // m_adopted_policy_categories are consistent
+    //       empire, and revoke any that aren't allowed, such as due to not
+    //       having enough slots of the relevant type.
 }
 
-const std::map<std::string, int>& Empire::AdoptedPolicyTurns() const
-{ return m_adopted_policy_turns; }
+bool Empire::PolicyAdopted(const std::string& name) const
+{ return m_adopted_policies.count(name); }
 
-const std::map<std::string, std::string>& Empire::AdoptedPolicyCategories() const
-{ return m_adopted_policy_categories; }
+int Empire::TurnPolicyAdopted(const std::string& name) const {
+    if (!PolicyAdopted(name))
+        return INVALID_GAME_TURN;
+    auto it = m_adopted_policies.find(name);
+    return it->second.adoption_turn;
+}
+
+int Empire::SlotPolicyAdoptedIn(const std::string& name) const {
+    if (!PolicyAdopted(name))
+        return INVALID_SLOT_INDEX;
+    auto it = m_adopted_policies.find(name);
+    return it->second.slot_in_category;
+}
+
+std::vector<std::string> Empire::AdoptedPolicies() const {
+    std::vector<std::string> retval;
+    retval.reserve(m_adopted_policies.size());
+    for (const auto& entry : m_adopted_policies)
+        retval.push_back(entry.first);
+    return retval;
+}
 
 const std::set<std::string>& Empire::AvailablePolicies() const
 { return m_available_policies; }
 
 namespace {
+    // todo: get / derive from PolicyManager info
     const std::initializer_list<std::pair<std::string, std::string>> policy_slot_cats_meters = {
         {UserStringNop("ECONOMIC_CATEGORY"),    UserStringNop("METER_NUM_ECONOMIC_POLICIES")},
         {UserStringNop("SOCIAL_CATEGORY"),      UserStringNop("METER_NUM_SOCIAL_POLICIES")}
@@ -255,8 +322,8 @@ std::map<std::string, int> Empire::EmptyPolicySlots() const {
     std::map<std::string, int> retval = TotalPolicySlots();
 
     // subtract used policy categories
-    for (const auto& policy_cat_pair : m_adopted_policy_categories)
-        retval[policy_cat_pair.second]--;
+    for (const auto& policy_cat_pair : m_adopted_policies)
+        retval[policy_cat_pair.second.category]--;
 
     // return difference
     return retval;
@@ -694,7 +761,6 @@ bool Empire::EnqueuableItem(const ProductionQueue::ProductionItem& item, int loc
         throw std::invalid_argument("Empire::ProducibleItem was passed a ProductionItem with an invalid BuildType");
     return false;
 }
-
 
 int Empire::NumSitRepEntries(int turn/* = INVALID_GAME_TURN*/) const {
     if (turn == INVALID_GAME_TURN)

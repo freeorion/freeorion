@@ -124,6 +124,19 @@ template void ProductionQueue::serialize<freeorion_xml_oarchive>(freeorion_xml_o
 template void ProductionQueue::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 template <typename Archive>
+void Empire::PolicyAdoptionInfo::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(adoption_turn)
+        & BOOST_SERIALIZATION_NVP(category)
+        & BOOST_SERIALIZATION_NVP(slot_in_category);
+}
+
+template void Empire::PolicyAdoptionInfo::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void Empire::PolicyAdoptionInfo::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void Empire::PolicyAdoptionInfo::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void Empire::PolicyAdoptionInfo::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+
+template <class Archive>
 void Empire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_id)
@@ -162,10 +175,11 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         ar  & boost::serialization::make_nvp("m_techs", dummy_string_int_map);
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_techs)
+            & BOOST_SERIALIZATION_NVP(m_adopted_policies)
             & BOOST_SERIALIZATION_NVP(m_available_policies);
 
         if (Archive::is_loading::value && version < 2) {
-            m_adopted_policy_turns.clear();
+            m_adopted_policies.clear();
             m_available_policies.clear();
         }
     }

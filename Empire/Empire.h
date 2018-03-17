@@ -55,26 +55,28 @@ public:
 
     /** Return an object id that is owned by the empire or INVALID_OBJECT_ID. */
     int                 SourceID() const;
-    /** Return an object that is owned by the empire or null.*/
+    /** Return an object that is owned by the empire, or null.*/
     std::shared_ptr<const UniverseObject> Source() const;
 
-    std::string Dump() const;
+    std::string         Dump() const;
 
     /** Returns the policies the empire has adopted and the turns on
       * which they were adopted. */
-    const std::map<std::string, int>&           AdoptedPolicyTurns() const;
+    bool                            PolicyAdopted(const std::string& name) const;
+    int                             TurnPolicyAdopted(const std::string& name) const;
+    int                             SlotPolicyAdoptedIn(const std::string& name) const;
+    std::vector<std::string>        AdoptedPolicies() const;
 
     /** Returns the policies the empire has adopted and the categories
       * in which they were adopted. */
-    const std::map<std::string, std::string>&   AdoptedPolicyCategories() const;
 
     /** Returns the set of policies / slots the empire has avaialble. */
-    const std::set<std::string>&                AvailablePolicies() const;
-    std::map<std::string, int>                  TotalPolicySlots() const;
-    std::map<std::string, int>                  EmptyPolicySlots() const;
+    const std::set<std::string>&    AvailablePolicies() const;
+    std::map<std::string, int>      TotalPolicySlots() const;
+    std::map<std::string, int>      EmptyPolicySlots() const;
 
     /** Returns the set of Tech names available to this empire. */
-    const std::map<std::string, int>&           ResearchedTechs() const;
+    const std::map<std::string, int>&   ResearchedTechs() const;
 
     /** Returns the set of BuildingType names availble to this empire. */
     const std::set<std::string>&    AvailableBuildingTypes() const;
@@ -470,9 +472,21 @@ private:
 
     std::map<std::string, int>          m_adopted_policy_turns;     ///< map from policy name to turn on which policy was adopted
     std::map<std::string, std::string>  m_adopted_policy_categories;///< map from policy name to name of category in which policy was adopted
-    std::map<std::string, std::vector<std::string>>
-                                        m_adopted_policy_slots;     ///< map from category name to ordered / indexed list of polices adopted in that category
-    std::set<std::string>               m_available_policies;       ///< list of unlocked policies. These are string names referencing Policy objects.
+    struct PolicyAdoptionInfo {
+        PolicyAdoptionInfo();
+        PolicyAdoptionInfo(int turn, const std::string& cat, int slot);
+        int         adoption_turn;
+        std::string category;
+        int         slot_in_category;
+
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version);
+    };
+    std::map<std::string, PolicyAdoptionInfo>
+                                    m_adopted_policies;         ///< map from policy name to turn, category, and slot in/on which it was adopted
+    std::set<std::string>           m_available_policies;       ///< names of unlocked policies
+
 
     /** The source id is the id of any object owned by the empire.  It is
         mutable so that Source() can be const and still cache its result. */

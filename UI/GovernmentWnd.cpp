@@ -1092,7 +1092,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
         // slot in UI ignores category. slots in empire's adopted policies are
         // counted separately for each category. ConcatenatedCategorySlots
         // returns the category and index within category for each slot
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
+
         auto all_slot_cats = ConcatenatedCategorySlots(empire_id);
 
         // check that requested slot falls within those available
@@ -1205,7 +1205,6 @@ void GovernmentWnd::MainPanel::Populate() {
     if (!empire)
         return;
 
-    const std::map<std::string, int>& adopted_policy_turns = empire->AdoptedPolicyTurns();
     auto all_slot_cats = ConcatenatedCategorySlots(empire_id);
 
     for (unsigned int n = 0; n < all_slot_cats.size(); ++n) {
