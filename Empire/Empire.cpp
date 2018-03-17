@@ -782,7 +782,15 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
                 }
             } else if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                 int fleet_owner = fleet->Owner();
-                if (fleet_owner == ALL_EMPIRES || Empires().GetDiplomaticStatus(m_id, fleet_owner) == DIPLO_WAR) {
+                bool fleet_at_war = fleet_owner == ALL_EMPIRES || Empires().GetDiplomaticStatus(m_id, fleet_owner) == DIPLO_WAR;
+                // newly created ships are not allowed to block supply since they have not even potentially gone
+                // through a combat round at the present location.  Potential sources for such new ships are monsters
+                // created via Effect.  (Ships/fleets constructed by empires are currently created at a later stage of
+                // turn processing, but even if such were moved forward they should be similarly restricted.)  Because
+                // supply blocks are determined prior to turn advancement, we check against age zero here.  Because the
+                // fleets themselves may be created and/or destroyed purely as organizational matters, we check ship
+                // age not fleet age.
+                if (fleet_at_war && fleet->MaxShipAgeInTurns() > 0) {
                     systems_containing_obstructing_objects.insert(system_id);
                     if (fleet->ArrivalStarlane() == system_id)
                         unrestricted_obstruction_systems.insert(system_id);

@@ -201,6 +201,27 @@ const std::string& Fleet::PublicName(int empire_id) const {
         return UserString("OBJ_FLEET");
 }
 
+int Fleet::MaxShipAgeInTurns() const {
+    if (m_ships.empty())
+        return INVALID_OBJECT_AGE;
+
+    bool fleet_is_scrapped = true;
+    int retval = 0;
+    for (int ship_id : m_ships) {
+        auto ship = GetShip(ship_id);
+        if (!ship || ship->OrderedScrapped())
+            continue;
+        if (ship->AgeInTurns() > retval)
+            retval = ship->AgeInTurns();
+        fleet_is_scrapped = false;
+    }
+
+    if (fleet_is_scrapped)
+        retval = 0;
+
+    return retval;
+}
+
 const std::list<int>& Fleet::TravelRoute() const
 { return m_travel_route; }
 
@@ -1235,7 +1256,15 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         bool aggressive = (fleet->Aggressive() || fleet->Unowned());
         if (!aggressive)
             continue;
-
+        // Newly created ships/monsters are not allowed to block other fleet movement since they have not even
+        // potentially gone through a combat round at the present location.  Potential sources for such new ships are
+        // monsters created via Effect and Ships/fleets newly constructed by empires.  We check ship ages not fleet
+        // ageas since fleets can be created/destroyed as purely organizational matters.  Since these checks are
+        // pertinent just during those stages of turn processing immediately following turn number advancement,
+        // whereas the new ships were created just prior to turn advamcenemt, we require age greater than 1.
+        // 
+        if (fleet->MaxShipAgeInTurns() <= 1)
+            continue;
         // These are the most costly checks.  Do them last
         if (!fleet->HasArmedShips() && !fleet->HasFighterShips())
             continue;
