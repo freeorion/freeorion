@@ -10906,6 +10906,15 @@ Increases resourse output at the capital but reduces supply range and stockpilin
 PLC_CENTRALIZATION_SHORT_DESC
 Boosts Capital
 
+PLC_COLONIZATION
+Colonization
+
+PLC_COLONIZATION_DESC
+Decreases cost of colonization ship parts.
+
+PLC_COLONIZATION_SHORT_DESC
+Discounts Colonization
+
 
 ##
 ## Technology categories
