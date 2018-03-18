@@ -395,7 +395,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
         text += "G";        // Giga
         break;
     case 12:
-        text += "T";        // Tera
+        text += "T";        // Terra
         break;
     default:
         break;

@@ -2580,7 +2580,7 @@ namespace {
             auto distance = longest_width - column1_species_extents.at(it.first).x;
             std::size_t num_tabs = Value(distance) / Value(single_tab_width);
             for (std::size_t i = 0; i < num_tabs; ++i)
-                it.second.append(" ");
+                it.second.append("\t");
         }
 
         return retval;
