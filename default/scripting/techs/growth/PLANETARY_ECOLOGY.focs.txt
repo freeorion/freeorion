@@ -18,7 +18,8 @@ Tech
                 ]
             ]
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 1 accountinglabel = "GRO_PLANET_ECOL"
+            effects = SetTargetPopulation value = Value + 1
+            accountinglabel = "GRO_TECH_ACCOUNTING_LABEL"
     ]
     graphic = "icons/tech/planetary_ecology.png"
 
