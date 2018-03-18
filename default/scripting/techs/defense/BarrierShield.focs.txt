@@ -15,7 +15,8 @@ Tech
             ]
             priority = [[DEFAULT_PRIORITY]]
             effects =
-                SetMaxShield value = Value + 30 accountinglabel = "DEF_PLAN_BARRIER_SHLD_1"
+                SetMaxShield value = Value + 30
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
 
         EffectsGroup
             scope = And [
@@ -25,6 +26,7 @@ Tech
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetShield value = Value + max(min(1.0, Value), 0.25*Target.Construction)
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
     ]
 
     graphic = "icons/tech/planetary_barrier_shield.png"
@@ -46,7 +48,8 @@ Tech
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + 60 accountinglabel = "DEF_PLAN_BARRIER_SHLD_2"
+            effects = SetMaxShield value = Value + 60
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
 
         EffectsGroup
             scope = And [
@@ -56,6 +59,7 @@ Tech
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetShield value = Value + max(min(3.0, Value), 0.75*Target.Construction)
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
     ]
 
     graphic = "icons/tech/planetary_barrier_shield.png"
@@ -77,7 +81,8 @@ Tech
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + 90 accountinglabel = "DEF_PLAN_BARRIER_SHLD_3"
+            effects = SetMaxShield value = Value + 90
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
 
         EffectsGroup
             scope = And [
@@ -87,6 +92,7 @@ Tech
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetShield value = Value + max(min(5.0, Value), 1.0*Target.Construction)
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
     ]
     
     graphic = "icons/tech/planetary_barrier_shield.png"
@@ -108,7 +114,8 @@ Tech
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + 150 accountinglabel = "DEF_PLAN_BARRIER_SHLD_4"
+            effects = SetMaxShield value = Value + 150
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
 
         EffectsGroup
             scope = And [
@@ -118,6 +125,7 @@ Tech
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetShield value = Value + max(min(9.0, Value), 1.5*Target.Construction)
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
     ]
     
     graphic = "icons/tech/planetary_barrier_shield.png"
@@ -138,7 +146,8 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + 150 accountinglabel = "DEF_PLAN_BARRIER_SHLD_5"
+            effects = SetMaxShield value = Value + 150
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
 
         EffectsGroup
             scope = And [
@@ -148,6 +157,7 @@ Tech
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetShield value = Value + max(min(14.0, Value), 2.5*Target.Construction)
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
     ]
     
     graphic = "icons/tech/planetary_barrier_shield.png"

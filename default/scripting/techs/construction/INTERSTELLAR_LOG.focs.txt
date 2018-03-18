@@ -18,6 +18,7 @@ Tech
                 ]
             ]
         effects = SetSpeed value = Value + 20
+        accountinglabel = "CON_TECH_ACCOUNTING_LABEL"
     graphic = "icons/tech/stellar_navigation.png"
 
 #include "/scripting/common/base_prod.macros"
