@@ -3738,6 +3738,11 @@ Species <i>%2%</i>
 TT_FIELD
 <i>%2%</i>
 
+# %1% name of the adopting empire.
+# %2% name of policy
+TT_POLICY
+%1% Policy <i>%2%</i>
+
 TT_FIGHTER_LAUNCH
 Launching
 
@@ -10868,24 +10873,32 @@ Sociology
 ## Imperial Policies
 ##
 
-NO_GROWTH_POLICY
+PLC_NO_GROWTH
 No Growth
 
-NO_GROWTH_POLICY_DESC
+PLC_NO_GROWTH_DESC
 Prevents planets from increasing population from turn to turn.
 
-NO_GROWTH_POLICY_SHORT_DESC
+PLC_NO_GROWTH_SHORT_DESC
 Stops planet growth
 
-NO_SUPPLY_POLICY
+PLC_NO_SUPPLY
 No Supply
 
-NO_SUPPLY_POLICY_DESC
+PLC_NO_SUPPLY_DESC
 Prevents planets from generating supply networks.
 
-NO_SUPPLY_POLICY_SHORT_DESC
+PLC_NO_SUPPLY_SHORT_DESC
 Stops supply propagation
 
+PLC_CENTRALIZATION
+Centralization
+
+PLC_CENTRALIZATION_DESC
+Increases resourse output at the capital but reduces supply range and stockpiling.
+
+PLC_CENTRALIZATION_SHORT_DESC
+Boosts Capital
 
 
 ##

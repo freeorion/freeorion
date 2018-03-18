@@ -1,7 +1,7 @@
 Policy
-    name = "NO_GROWTH_POLICY"
-    description = "NO_GROWTH_POLICY_DESC"
-    short_description = "NO_GROWTH_POLICY_SHORT_DESC"
+    name = "PLC_NO_GROWTH"
+    description = "PLC_NO_GROWTH_DESC"
+    short_description = "PLC_NO_GROWTH_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
     adoptioncost = 10
     effectsgroups =

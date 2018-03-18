@@ -154,6 +154,7 @@ namespace FreeOrionPython {
             .value("species",       ECT_SPECIES)
             .value("shipPart",      ECT_SHIP_PART)
             .value("shipHull",      ECT_SHIP_HULL)
+            .value("policy",        ECT_POLICY)
         ;
         enum_<ShipSlotType>("shipSlotType")
             .value("external",      SL_EXTERNAL)

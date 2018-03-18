@@ -902,8 +902,8 @@ PolicyOrder::PolicyOrder(int empire, const std::string& name,
     Order(empire),
     m_policy_name(name),
     m_category(category),
-    m_adopt(adopt),
-    m_slot(slot)
+    m_slot(slot),
+    m_adopt(adopt)
 {}
 
 void PolicyOrder::ExecuteImpl() const {

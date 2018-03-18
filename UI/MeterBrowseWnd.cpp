@@ -409,6 +409,19 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                 % UserString(info.specific_cause));
             break;
         }
+        case ECT_POLICY: {
+            name.clear();
+            if (const auto empire = GetEmpire(source->Owner()))
+                name = empire->Name();
+            const std::string& label_template = (info.custom_label.empty()
+                ? UserString("TT_POLICY")
+                : UserString(info.custom_label));
+            text += boost::io::str(FlexibleFormat(label_template)
+                % name
+                % UserString(info.specific_cause));
+            break;
+        }
+
         case ECT_INHERENT:
             text += UserString("TT_INHERENT");
             break;
