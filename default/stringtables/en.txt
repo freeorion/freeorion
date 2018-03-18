@@ -14335,8 +14335,9 @@ Subterranean Bonus
 GAIA_LABEL
 Gaia Bonus
 
+# %1% Planet where the special is located
 WORLDTREE_LABEL
-World Tree Bonus
+%1% World Tree Bonus
 
 TIDAL_LOCK_LABEL
 Tidally Locked Rotation
