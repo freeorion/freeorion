@@ -19,3 +19,6 @@ SHIP_HULL_COST_MULTIPLIER
 
 SHIP_PART_COST_MULTIPLIER
 '''(GameRule name = "RULE_SHIP_PART_COST_FACTOR")'''
+
+COLONIZATION_POLICY_MULTIPLIER
+'''(1 - 0.3*(Statistic If condition = EmpireHasAdoptedPolicy name = "PLC_COLONIZATION"))'''

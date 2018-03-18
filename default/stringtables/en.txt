@@ -1075,6 +1075,12 @@ Cheap and Fast Techs
 RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC
 Techs cost 1 RP and take 1 turn to research.
 
+RULE_CHEAP_POLICIES
+Cheap Policies
+
+RULE_CHEAP_POLICIES_DESC
+Policies cost 1 IP to adopt.
+
 RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION
 Cheap and Fast Buildings
 

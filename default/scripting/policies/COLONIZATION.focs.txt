@@ -1,0 +1,7 @@
+Policy
+    name = "PLC_COLONIZATION"
+    description = "PLC_COLONIZATION_DESC"
+    short_description = "PLC_COLONIZATION_SHORT_DESC"
+    category = "SOCIAL_CATEGORY"
+    adoptioncost = 10
+    graphic = "icons/policies/colonization.png"
