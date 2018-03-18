@@ -61,6 +61,7 @@ target_sources(freeorionparseobj
         ${CMAKE_CURRENT_LIST_DIR}/PlanetEnvironmentValueRefParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PlanetSizeValueRefParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PlanetTypeValueRefParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/PoliciesParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ReportParseError.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ShipDesignsParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ShipHullsParser.cpp
