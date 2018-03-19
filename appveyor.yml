@@ -14,7 +14,7 @@ skip_commits:
       - '**/*.md'
       - '**/*.xml'
       - '**/COPYING'
-  message: /.*\[skip appveyor\].*/
+  message: /.*\[(skip appveyor)|(appveyor skip)\].*/
 
 install:
   # Remove the VS Xamarin targets to reduce AppVeyor specific noise in build
