@@ -45,7 +45,8 @@ public:
                  std::vector<std::unique_ptr<EffectBase>>&& effects,
                  const std::string& accounting_label = "",
                  const std::string& stacking_group = "", int priority = 0,
-                 const std::string& description = "");
+                 const std::string& description = "",
+                 const std::string& content_name = "");
     virtual ~EffectsGroup();
 
     /** execute all effects in group */
@@ -69,6 +70,7 @@ public:
     bool                            HasSitrepEffects() const;
 
     void                            SetTopLevelContent(const std::string& content_name);
+    const std::string&              TopLevelContent() const { return m_content_name; }
 
     virtual unsigned int            GetCheckSum() const;
 
@@ -80,6 +82,7 @@ protected:
     std::string                 m_accounting_label;
     int                         m_priority;
     std::string                 m_description;
+    std::string                 m_content_name;
 
 private:
     friend class boost::serialization::access;
@@ -1296,7 +1299,8 @@ void EffectsGroup::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_activation)
         & BOOST_SERIALIZATION_NVP(m_stacking_group)
         & BOOST_SERIALIZATION_NVP(m_effects)
-        & BOOST_SERIALIZATION_NVP(m_description);
+        & BOOST_SERIALIZATION_NVP(m_description)
+        & BOOST_SERIALIZATION_NVP(m_content_name);
 }
 
 template <class Archive>

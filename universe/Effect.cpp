@@ -173,14 +173,16 @@ EffectsGroup::EffectsGroup(std::unique_ptr<Condition::ConditionBase>&& scope,
                            std::vector<std::unique_ptr<EffectBase>>&& effects,
                            const std::string& accounting_label,
                            const std::string& stacking_group, int priority,
-                           const std::string& description) :
+                           const std::string& description,
+                           const std::string& content_name):
     m_scope(std::move(scope)),
     m_activation(std::move(activation)),
     m_stacking_group(stacking_group),
     m_effects(std::move(effects)),
     m_accounting_label(accounting_label),
     m_priority(priority),
-    m_description(description)
+    m_description(description),
+    m_content_name(content_name)
 {}
 
 EffectsGroup::~EffectsGroup()
@@ -211,7 +213,10 @@ const std::string& EffectsGroup::GetDescription() const
 { return m_description; }
 
 std::string EffectsGroup::Dump(unsigned short ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "EffectsGroup\n";
+    std::string retval = DumpIndent(ntabs) + "EffectsGroup";
+    if (!m_content_name.empty())
+        retval += " from " + m_content_name;
+    retval += "\n";
     retval += DumpIndent(ntabs+1) + "scope =\n";
     retval += m_scope->Dump(ntabs+2);
     if (m_activation) {
@@ -258,6 +263,7 @@ bool EffectsGroup::HasSitrepEffects() const {
 }
 
 void EffectsGroup::SetTopLevelContent(const std::string& content_name) {
+    m_content_name = content_name;
     if (m_scope)
         m_scope->SetTopLevelContent(content_name);
     if (m_activation)
