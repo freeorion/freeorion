@@ -7,16 +7,6 @@
 class EncyclopediaDetailPanel;
 struct SaveGameUIData;
 
-struct Availability {
-    // Declaring an enum inside a struct makes the syntax when using the enum with tuples simpler,
-    // without polluting the global namespace with 3 generic names.
-
-    enum Enum {Obsolete,  // A design/part is researched/known by the player has marked it obsolete
-               Available, // A design/part is researched/known and currently available
-               Future     // A design/part is unresearched and hence not available
-    };
-};
-
 /** ShipDesignManager tracks information known to the client about ShipDesigns.
   * This includes the order of designs to be shown DesignWnd and the
   * BuildDesignator. */
