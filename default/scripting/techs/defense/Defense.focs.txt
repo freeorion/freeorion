@@ -20,7 +20,7 @@ Tech
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
-                (LocalCandidate.System.LastTurnBattleHere < CurrentTurn)
+                (LocalCandidate.LastTurnAttackedByShip   < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [

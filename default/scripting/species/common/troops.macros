@@ -45,7 +45,7 @@ BASIC_DEFENSE_TROOPS
             activation = And [
                 Planet
                 (Source.LastTurnConquered < CurrentTurn)
-                (Source.System.LastTurnBattleHere < CurrentTurn)
+                (Source.LastTurnAttackedByShip  < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetTroops value = min(Value(Target.MaxTroops), Value + 1)
