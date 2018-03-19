@@ -24,6 +24,15 @@
 
 #include <boost/cast.hpp>
 
+struct Availability {
+    // duplicated from DesignWnd
+    enum Enum {
+        Obsolete,  // A design/part is researched/known by the player has marked it obsolete
+        Available, // A design/part is researched/known and currently available
+        Future     // A design/part is unresearched and hence not available
+    };
+};
+
 namespace {
     const std::string   POLICY_CONTROL_DROP_TYPE_STRING = "Policy Control";
     const std::string   EMPTY_STRING = "";
@@ -61,6 +70,110 @@ namespace {
         }
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
+
+    //////////////////////////////////////////////////
+    //  AvailabilityManager                         //
+    //////////////////////////////////////////////////
+    /** A class to allow the storage of the state of a GUI availabilty filter
+        and the querying of that state WRT a policy. */
+    class AvailabilityManager {
+    public:
+        // DisplayedAvailabilies is indexed by Availability::Enum
+        using DisplayedAvailabilies = std::tuple<bool, bool, bool>;
+
+        AvailabilityManager(bool obsolete, bool available, bool unavailable);
+
+        const DisplayedAvailabilies& GetAvailabilities() const { return m_availabilities; };
+        bool GetAvailability(const Availability::Enum type) const;
+        void SetAvailability(const Availability::Enum type, const bool state);
+        void ToggleAvailability(const Availability::Enum type);
+
+        /** Given the GUI's displayed availabilities as stored in this
+            AvailabilityManager, return the displayed state of the \p policy.
+            Return none if the \p policy should not be displayed. */
+        boost::optional<DisplayedAvailabilies> DisplayedPolicyAvailability(
+            const Policy* policy) const;
+
+    private:
+        /** Given the GUI's displayed availabilities as stored in this
+            AvailabilityManager and that the X is \p available and \p obsolete,
+            return the displayed state of the X. Return none if the X should
+            not be displayed. */
+        boost::optional<DisplayedAvailabilies> DisplayedXAvailability(
+            bool available, bool obsolete) const;
+
+        // A tuple of the toogle state of the 3-tuple of coupled
+        // availability filters in the GUI:
+        // Obsolete, Available and Unavailable
+        DisplayedAvailabilies m_availabilities;
+    };
+
+    AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
+        m_availabilities{obsolete, available, unavailable}
+    {}
+
+    bool AvailabilityManager::GetAvailability(const Availability::Enum type) const {
+        switch (type) {
+        case Availability::Obsolete:
+            return std::get<Availability::Obsolete>(m_availabilities);
+        case Availability::Available:
+            return std::get<Availability::Available>(m_availabilities);
+        case Availability::Future:
+            return std::get<Availability::Future>(m_availabilities);
+        }
+        return std::get<Availability::Future>(m_availabilities);
+    }
+
+    void AvailabilityManager::SetAvailability(const Availability::Enum type,
+                                              const bool state)
+    {
+        switch (type) {
+        case Availability::Obsolete:
+            std::get<Availability::Obsolete>(m_availabilities) = state;
+            break;
+        case Availability::Available:
+            std::get<Availability::Available>(m_availabilities) = state;
+            break;
+        case Availability::Future:
+            std::get<Availability::Future>(m_availabilities) = state;
+            break;
+        }
+    }
+
+    void AvailabilityManager::ToggleAvailability(const Availability::Enum type)
+    { SetAvailability(type, !GetAvailability(type)); }
+
+    boost::optional<AvailabilityManager::DisplayedAvailabilies>
+    AvailabilityManager::DisplayedPolicyAvailability(const Policy* policy) const {
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* empire = GetEmpire(empire_id);  // may be nullptr
+        bool available = policy ? (empire ? empire->PolicyAvailable(policy->Name()) : false)
+                                : false;
+
+        return DisplayedXAvailability(available, false);
+    }
+
+    boost::optional<AvailabilityManager::DisplayedAvailabilies>
+    AvailabilityManager::DisplayedXAvailability(bool available, bool obsolete) const {
+        // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
+        const bool showing_obsolete = std::get<Availability::Obsolete>(m_availabilities);
+        const bool showing_available = std::get<Availability::Available>(m_availabilities);
+        const bool showing_future = std::get<Availability::Future>(m_availabilities);
+
+        auto show = (
+               (showing_obsolete    &&  obsolete    &&  showing_available   &&  available)
+            || (showing_obsolete    &&  obsolete    &&  showing_future      && !available)
+            || (showing_obsolete    &&  obsolete    && !showing_available   && !showing_future)
+            || (showing_available   &&  available   && !obsolete)
+            || (showing_future      && !available   && !obsolete));
+
+        if (!show)
+            return boost::none;
+
+        return std::make_tuple(showing_obsolete     &&  obsolete,
+                               showing_available    &&  available,
+                               showing_future       && !available);
+    }
 }
 
 //////////////////////////////////////////////////
@@ -82,9 +195,12 @@ public:
 
     /** \name Mutators */ //@{
     void Render() override;
+
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type);
     //@}
 
     mutable boost::signals2::signal<void (const Policy*, GG::Flags<GG::ModKey>)> ClickedSignal;
@@ -150,6 +266,12 @@ void PolicyControl::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_key
 void PolicyControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { RightClickedSignal(m_policy, pt); }
 
+void PolicyControl::SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type) {
+    auto disabled = std::get<Availability::Obsolete>(type);
+    m_icon->Disable(disabled);
+    m_background->Disable(disabled);
+}
+
 
 //////////////////////////////////////////////////
 // PoliciesListBox                              //
@@ -159,17 +281,20 @@ class PoliciesListBox : public CUIListBox {
 public:
     class PoliciesListBoxRow : public CUIListBox::Row {
     public:
-        PoliciesListBoxRow(GG::X w, GG::Y h);
+        PoliciesListBoxRow(GG::X w, GG::Y h, const AvailabilityManager& availabilities_state);
         void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
                                  const GG::Wnd* destination) override;
+    private:
+        const AvailabilityManager& m_availabilities_state;
     };
 
     /** \name Structors */ //@{
-    PoliciesListBox();
+    explicit PoliciesListBox(const AvailabilityManager& availabilities_state);
     //@}
 
     /** \name Accessors */ //@{
-    const std::set<std::string>& GetCategoriesShown() const;
+    const std::set<std::string>&    GetCategoriesShown() const;
+    const AvailabilityManager&      AvailabilityState() const { return m_availabilities_state; }
     //@}
 
     /** \name Mutators */ //@{
@@ -197,12 +322,15 @@ private:
     std::map<std::string, std::vector<const Policy*>>
     GroupAvailableDisplayablePolicies(const Empire* empire) const;
 
-    std::set<std::string>   m_policy_categories_shown;  // which policy categories should be shown
-    int                     m_previous_num_columns = -1;
+    std::set<std::string>       m_policy_categories_shown;  // which policy categories should be shown
+    int                         m_previous_num_columns = -1;
+    const AvailabilityManager&  m_availabilities_state;
 };
 
-PoliciesListBox::PoliciesListBoxRow::PoliciesListBoxRow(GG::X w, GG::Y h) :
-    CUIListBox::Row(w, h)
+PoliciesListBox::PoliciesListBoxRow::PoliciesListBoxRow(
+    GG::X w, GG::Y h, const AvailabilityManager& availabilities_state) :
+    CUIListBox::Row(w, h),
+    m_availabilities_state(availabilities_state)
 {}
 
 void PoliciesListBox::PoliciesListBoxRow::ChildrenDraggedAway(
@@ -248,8 +376,9 @@ void PoliciesListBox::PoliciesListBoxRow::ChildrenDraggedAway(
 }
 
 
-PoliciesListBox::PoliciesListBox() :
-    CUIListBox()
+PoliciesListBox::PoliciesListBox(const AvailabilityManager& availabilities_state) :
+    CUIListBox(),
+    m_availabilities_state(availabilities_state)
 {
     ManuallyManageColProps();
     NormalizeRowsOnInsert(false);
@@ -299,31 +428,19 @@ std::map<std::string, std::vector<const Policy*>>
 PoliciesListBox::GroupAvailableDisplayablePolicies(const Empire* empire) const {
     std::map<std::string, std::vector<const Policy*>> policies_categorized;
 
-    //std::cout << "PoliciesListBox::GroupAvailableDisplayablePolicies categories shown: ";
-    //for (const auto& entry : m_policy_categories_shown) {
-    //    std::cout << entry << "  ";
-    //}
-    //std::cout << std::endl;
-
     // loop through all possible policies
     for (const auto& entry : GetPolicyManager()) {
         const auto& policy = entry.second;
         const auto& category = policy->Category();
 
-        //std::cout << "PoliciesListBox::GroupAvailableDisplayablePolicies policy: "
-        //          << policy->Name() << "  in category: " << category << std::endl;
-
         // check whether this policy should be shown in list
-        if (!m_policy_categories_shown.count(category)) {
-            //std::cout << " ... category not shown" << std::endl;
+        if (!m_policy_categories_shown.count(category))
             continue;   // policy of this class is not requested to be shown
-        }
-        if (empire && !empire->AvailablePolicies().count(policy->Name())) {
-            //std::cout << " ... policy not available to empire" << std::endl;
-            continue;
-        }
 
-        //std::cout << " ... added to retval" << std::endl;
+        // Check if part satisfies availability
+        auto shown = m_availabilities_state.DisplayedPolicyAvailability(policy.get());
+        if (!shown)
+            continue;
 
         policies_categorized[category].push_back(policy.get());
     }
@@ -370,7 +487,7 @@ void PoliciesListBox::Populate() {
                     Insert(cur_row);
                 cur_col = 0;
                 cur_row = GG::Wnd::Create<PoliciesListBoxRow>(
-                    TOTAL_WIDTH, SLOT_CONTROL_HEIGHT + GG::Y(PAD));
+                    TOTAL_WIDTH, SLOT_CONTROL_HEIGHT + GG::Y(PAD), m_availabilities_state);
             }
             ++cur_col;
             ++num_policies;
@@ -454,6 +571,8 @@ public:
     void ToggleCategory(const std::string& category, bool refresh_list = true);
     void ToggleAllCategories(bool refresh_list = true);
 
+    void ToggleAvailability(const Availability::Enum type);
+
     void Populate();
     //@}
 
@@ -471,19 +590,26 @@ private:
 
     std::shared_ptr<PoliciesListBox>                        m_policies_list;
     std::map<std::string, std::shared_ptr<CUIStateButton>>  m_category_buttons;
+
+    // Holds the state of the availabilities filter.
+    AvailabilityManager                         m_availabilities_state;
+    std::tuple<std::shared_ptr<CUIStateButton>, // first not used for obsolete for policies
+               std::shared_ptr<CUIStateButton>,
+               std::shared_ptr<CUIStateButton>> m_availabilities_buttons;
 };
 
 GovernmentWnd::PolicyPalette::PolicyPalette(const std::string& config_name) :
     CUIWnd(UserString("GOVERNMENT_WND_POLICY_PALETTE_TITLE"),
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE,
            config_name),
-    m_policies_list(nullptr)
+    m_policies_list(nullptr),
+    m_availabilities_state(false, true, false)
 {}
 
 void GovernmentWnd::PolicyPalette::CompleteConstruction() {
     SetChildClippingMode(ClipToClient);
 
-    m_policies_list = GG::Wnd::Create<PoliciesListBox>();
+    m_policies_list = GG::Wnd::Create<PoliciesListBox>(m_availabilities_state);
     AttachChild(m_policies_list);
     m_policies_list->PolicyClickedSignal.connect(
         boost::bind(&GovernmentWnd::PolicyPalette::HandlePolicyClicked, this, _1, _2));
@@ -516,6 +642,20 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
             boost::bind(&GovernmentWnd::PolicyPalette::ToggleCategory, this, category, true));
     }
 
+    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
+    m_available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(m_available_button);
+    m_available_button->CheckedSignal.connect(
+        boost::bind(&GovernmentWnd::PolicyPalette::ToggleAvailability, this, Availability::Available));
+    m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
+
+    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
+    m_unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(m_unavailable_button);
+    m_unavailable_button->CheckedSignal.connect(
+        boost::bind(&GovernmentWnd::PolicyPalette::ToggleAvailability, this, Availability::Future));
+    m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
+
     // default to showing everything
     ShowAllCategories(false);
     Populate();
@@ -544,25 +684,25 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
     const GG::X MIN_BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL;
     const int MAX_BUTTONS_PER_ROW = std::max(Value(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION)), 1);
 
-    const int NUM_CLASS_BUTTONS = std::max(1, static_cast<int>(m_category_buttons.size()));
-    const int NUM_SUPERFLUOUS_CULL_BUTTONS = 1;
-    const int NUM_AVAILABILITY_BUTTONS = 3;
-    const int NUM_NON_CLASS_BUTTONS = NUM_SUPERFLUOUS_CULL_BUTTONS + NUM_AVAILABILITY_BUTTONS;
+    const int NUM_CATEGORY_BUTTONS = std::max(1, static_cast<int>(m_category_buttons.size()));
+    const int NUM_SUPERFLUOUS_CULL_BUTTONS = 0;
+    const int NUM_AVAILABILITY_BUTTONS = 2;
+    const int NUM_NON_CATEGORY_BUTTONS = NUM_SUPERFLUOUS_CULL_BUTTONS + NUM_AVAILABILITY_BUTTONS;
 
     // determine whether to put non-class buttons (availability and redundancy)
     // in one column or two.
     // -> if class buttons fill up fewer rows than (the non-class buttons in one
     // column), split the non-class buttons into two columns
-    int num_non_class_buttons_per_row = 1;
-    if (NUM_CLASS_BUTTONS < NUM_NON_CLASS_BUTTONS*(MAX_BUTTONS_PER_ROW - num_non_class_buttons_per_row))
-        num_non_class_buttons_per_row = 2;
+    int num_non_category_buttons_per_row = 1;
+    if (NUM_CATEGORY_BUTTONS < NUM_NON_CATEGORY_BUTTONS*(MAX_BUTTONS_PER_ROW - num_non_category_buttons_per_row))
+        num_non_category_buttons_per_row = 2;
 
-    const int MAX_CLASS_BUTTONS_PER_ROW = std::max(1, MAX_BUTTONS_PER_ROW - num_non_class_buttons_per_row);
+    const int MAX_CATEGORY_BUTTONS_PER_ROW = std::max(1, MAX_BUTTONS_PER_ROW - num_non_category_buttons_per_row);
 
-    const int NUM_CLASS_BUTTON_ROWS = static_cast<int>(std::ceil(static_cast<float>(NUM_CLASS_BUTTONS) / MAX_CLASS_BUTTONS_PER_ROW));
-    const int NUM_CATEGORY_BUTTONS_PER_ROW = static_cast<int>(std::ceil(static_cast<float>(NUM_CLASS_BUTTONS) / NUM_CLASS_BUTTON_ROWS));
+    const int NUM_CATEGORY_BUTTON_ROWS = static_cast<int>(std::ceil(static_cast<float>(NUM_CATEGORY_BUTTONS) / MAX_CATEGORY_BUTTONS_PER_ROW));
+    const int NUM_CATEGORY_BUTTONS_PER_ROW = static_cast<int>(std::ceil(static_cast<float>(NUM_CATEGORY_BUTTONS) / NUM_CATEGORY_BUTTON_ROWS));
 
-    const int TOTAL_BUTTONS_PER_ROW = NUM_CATEGORY_BUTTONS_PER_ROW + num_non_class_buttons_per_row;
+    const int TOTAL_BUTTONS_PER_ROW = NUM_CATEGORY_BUTTONS_PER_ROW + num_non_category_buttons_per_row;
 
     const GG::X BUTTON_WIDTH = (USABLE_WIDTH - (TOTAL_BUTTONS_PER_ROW - 1)*BUTTON_SEPARATION) / TOTAL_BUTTONS_PER_ROW;
 
@@ -586,6 +726,36 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
     // place policies list.
     m_policies_list->SizeMove(GG::Pt(GG::X0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)),
                               ClientSize() - GG::Pt(GG::X(BUTTON_SEPARATION), GG::Y(BUTTON_SEPARATION)));
+
+    // a function to place availability buttons either in a single column below the
+    // category buttons or to complete a 2X2 grid left of the category buttons.
+    auto place_avail_button_adjacent =
+        [&col, &row, &num_non_category_buttons_per_row, NUM_CATEGORY_BUTTONS_PER_ROW,
+         BUTTON_EDGE_PAD, COL_OFFSET, ROW_OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT]
+        (GG::Wnd* avail_btn)
+        {
+            if (num_non_category_buttons_per_row == 1) {
+                ++row;
+            } else {
+                if (col >= NUM_CATEGORY_BUTTONS_PER_ROW + num_non_category_buttons_per_row - 1) {
+                    col = NUM_CATEGORY_BUTTONS_PER_ROW - 1;
+                    ++row;
+                }
+                ++col;
+            }
+
+            auto ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+            auto lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+            avail_btn->SizeMove(ul, lr);
+        };
+
+    //place availability buttons
+    // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
+    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
+    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
+
+    place_avail_button_adjacent(m_available_button.get());
+    place_avail_button_adjacent(m_unavailable_button.get());
 }
 
 void GovernmentWnd::PolicyPalette::HandlePolicyClicked(const Policy* policy_type,
@@ -649,6 +819,30 @@ void GovernmentWnd::PolicyPalette::ToggleAllCategories(bool refresh_list) {
         HideAllCategories(refresh_list);
     else
         ShowAllCategories(refresh_list);
+}
+
+void GovernmentWnd::PolicyPalette::ToggleAvailability(Availability::Enum type) {
+    std::shared_ptr<CUIStateButton> button;
+    bool state = false;
+    switch (type) {
+    case Availability::Obsolete:
+        break;  // no obsolete policies
+
+    case Availability::Available:
+        m_availabilities_state.ToggleAvailability(Availability::Available);
+        state = m_availabilities_state.GetAvailability(Availability::Available);
+        button = std::get<Availability::Available>(m_availabilities_buttons);
+        break;
+    case Availability::Future:
+        m_availabilities_state.ToggleAvailability(Availability::Future);
+        state = m_availabilities_state.GetAvailability(Availability::Future);
+        button = std::get<Availability::Future>(m_availabilities_buttons);
+        break;
+    }
+
+    button->SetCheck(state);
+
+    Populate();
 }
 
 void GovernmentWnd::PolicyPalette::Populate()
