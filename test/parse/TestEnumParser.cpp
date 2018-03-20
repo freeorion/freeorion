@@ -328,13 +328,14 @@ BOOST_AUTO_TEST_CASE(StarTypeParser) {
 BOOST_AUTO_TEST_CASE(UnlockableItemTypeParser)
 {
     // Literal is number of tests, not number of enums.
-    BOOST_REQUIRE_MESSAGE(NUM_UNLOCKABLE_ITEM_TYPES == 5, "Untested enumeration value.");
+    BOOST_REQUIRE_MESSAGE(NUM_UNLOCKABLE_ITEM_TYPES == 6, "Untested enumeration value.");
 
     CHECK_ENUM_AND_RESULT("Building", UIT_BUILDING, UnlockableItemType, parse::unlockable_item_enum_grammar);
     CHECK_ENUM_AND_RESULT("ShipPart", UIT_SHIP_PART, UnlockableItemType, parse::unlockable_item_enum_grammar);
     CHECK_ENUM_AND_RESULT("ShipHull", UIT_SHIP_HULL, UnlockableItemType, parse::unlockable_item_enum_grammar);
     CHECK_ENUM_AND_RESULT("ShipDesign", UIT_SHIP_DESIGN, UnlockableItemType, parse::unlockable_item_enum_grammar);
     CHECK_ENUM_AND_RESULT("Tech", UIT_TECH, UnlockableItemType, parse::unlockable_item_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Policy", UIT_POLICY, UnlockableItemType, parse::unlockable_item_enum_grammar);
     CHECK_FAILED_ENUM(UnlockableItemType, parse::unlockable_item_enum_grammar);
 }
 
