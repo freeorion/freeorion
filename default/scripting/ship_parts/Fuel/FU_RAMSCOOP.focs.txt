@@ -3,6 +3,7 @@ Part
     description = "FU_RAMSCOOP_DESC"
     class = Fuel
     capacity = 0
+    NoDefaultCapacityEffect
     mountableSlotTypes = External
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 6
