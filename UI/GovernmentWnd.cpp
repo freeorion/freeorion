@@ -1302,6 +1302,10 @@ bool GovernmentWnd::MainPanel::AddPolicyEmptySlot(const Policy* policy, int slot
 int GovernmentWnd::MainPanel::FindEmptySlotForPolicy(const Policy* policy) const {
     if (!policy)
         return -1;
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = GetEmpire(empire_id);
+    if (!empire || !empire->PolicyAvailable(policy->Name()))
+        return -1;
 
     // scan through slots to find one that can "mount" policy
     for (unsigned int i = 0; i < m_slots.size(); ++i) {
