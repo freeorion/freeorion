@@ -679,17 +679,16 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
     const int BUTTON_EDGE_PAD = 2;      // distance from edges of control to buttons
     const GG::X RIGHT_EDGE_PAD(8);       // to account for border of CUIWnd
 
-    const GG::X USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, GG::X1);   // space in which to fit buttons
-    const int GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL = 14;                   // rough guesstimate... avoid overly long policy class names
+    const GG::X USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, GG::X1);// space in which to fit buttons
+    const int GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL = 14;                       // rough guesstimate... avoid overly long policy class names
     const GG::X MIN_BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL;
     const int MAX_BUTTONS_PER_ROW = std::max(Value(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION)), 1);
 
     const int NUM_CATEGORY_BUTTONS = std::max(1, static_cast<int>(m_category_buttons.size()));
-    const int NUM_SUPERFLUOUS_CULL_BUTTONS = 0;
     const int NUM_AVAILABILITY_BUTTONS = 2;
-    const int NUM_NON_CATEGORY_BUTTONS = NUM_SUPERFLUOUS_CULL_BUTTONS + NUM_AVAILABILITY_BUTTONS;
+    const int NUM_NON_CATEGORY_BUTTONS = NUM_AVAILABILITY_BUTTONS;
 
-    // determine whether to put non-class buttons (availability and redundancy)
+    // determine whether to put non-class buttons (availability)
     // in one column or two.
     // -> if class buttons fill up fewer rows than (the non-class buttons in one
     // column), split the non-class buttons into two columns
@@ -727,35 +726,25 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
     m_policies_list->SizeMove(GG::Pt(GG::X0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)),
                               ClientSize() - GG::Pt(GG::X(BUTTON_SEPARATION), GG::Y(BUTTON_SEPARATION)));
 
-    // a function to place availability buttons either in a single column below the
-    // category buttons or to complete a 2X2 grid left of the category buttons.
-    auto place_avail_button_adjacent =
-        [&col, &row, &num_non_category_buttons_per_row, NUM_CATEGORY_BUTTONS_PER_ROW,
-         BUTTON_EDGE_PAD, COL_OFFSET, ROW_OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT]
-        (GG::Wnd* avail_btn)
-        {
-            if (num_non_category_buttons_per_row == 1) {
-                ++row;
-            } else {
-                if (col >= NUM_CATEGORY_BUTTONS_PER_ROW + num_non_category_buttons_per_row - 1) {
-                    col = NUM_CATEGORY_BUTTONS_PER_ROW - 1;
-                    ++row;
-                }
-                ++col;
-            }
+    // reset row / column
+    col = NUM_CATEGORY_BUTTONS_PER_ROW;
+    row = 0;
 
-            auto ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-            auto lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-            avail_btn->SizeMove(ul, lr);
-        };
-
-    //place availability buttons
-    // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
     auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
     auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
 
-    place_avail_button_adjacent(m_available_button.get());
-    place_avail_button_adjacent(m_unavailable_button.get());
+    auto ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    auto lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_available_button->SizeMove(ul, lr);
+
+    if (col >= TOTAL_BUTTONS_PER_ROW - 1)
+        row++;
+    else
+        col++;
+
+    ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_unavailable_button->SizeMove(ul, lr);
 }
 
 void GovernmentWnd::PolicyPalette::HandlePolicyClicked(const Policy* policy_type,
