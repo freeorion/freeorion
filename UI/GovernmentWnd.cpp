@@ -949,14 +949,20 @@ void PolicySlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptab
     if (std::distance(first, last) != 1)
         return;
 
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = GetEmpire(empire_id);  // may be nullptr
+    if (!empire)
+        return;
+
     for (DropsAcceptableIter it = first; it != last; ++it) {
         if (it->first->DragDropDataType() != POLICY_CONTROL_DROP_TYPE_STRING)
             continue;
         const auto policy_control = boost::polymorphic_downcast<const PolicyControl* const>(it->first);
-        const Policy* policy_type = policy_control->GetPolicy();
-        if (policy_type &&
-            policy_type->Category() == m_slot_category &&
-            policy_control != m_policy_control.get())
+        const Policy* policy = policy_control->GetPolicy();
+        if (policy &&
+            policy->Category() == m_slot_category &&
+            policy_control != m_policy_control.get() &&
+            empire->PolicyAvailable(policy->Name()))
         {
             it->second = true;
             return;
