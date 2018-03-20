@@ -23,6 +23,18 @@ matrix:
       before_cache: echo ""
       env: NAME="Pytest"
     - os: linux
+      language: python
+      python: 2.7.14
+      install:
+        - pip install flake8-putty==0.4.0
+      script:
+        - |
+          cd default/python
+          flake8
+      before_script: echo "Code style check https://github.com/freeorion/freeorion/tree/master/default/python#code-style-check"
+      before_cache: echo ""
+      env: NAME="Python linter"
+    - os: linux
       services:
         - docker
       env:

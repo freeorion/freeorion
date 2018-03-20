@@ -24,6 +24,9 @@ planet types, planet sizes, and also other content get placed.
 
 # Code style check
 
+Each PR will be checked automatically, but you still can run checks manually.
+Fixing all issues are mandatory before merging PR.
+
 We use [flake8-putty](https://pypi.python.org/pypi/flake8-putty)
 which include [flake8](https://pypi.python.org/pypi/flake8)
 which include [pycodestyle](https://pypi.python.org/pypi/pycodestyle) and other tools.
