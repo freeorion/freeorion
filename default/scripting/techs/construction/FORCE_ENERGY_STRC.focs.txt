@@ -21,7 +21,6 @@ Tech
                 condition = (Value(LocalCandidate.Industry) <= Value(LocalCandidate.TargetIndustry))
                 effects = SetIndustry value = min(Value + 2, Value(Target.TargetIndustry))
                 else = SetIndustry value = max(Value - 4, Value(Target.TargetIndustry))
-            accountinglabel = "CON_TECH_ACCOUNTING_LABEL"
 
         EffectsGroup
             scope = And [
@@ -33,7 +32,6 @@ Tech
                 condition = (Value(LocalCandidate.Research) <= Value(LocalCandidate.TargetResearch))
                 effects = SetResearch value = min(Value + 2, Value(Target.TargetResearch))
                 else = SetResearch value = max(Value - 4, Value(Target.TargetResearch))
-            accountinglabel = "CON_TECH_ACCOUNTING_LABEL"
             
         EffectsGroup
             scope = And [
@@ -45,7 +43,7 @@ Tech
                 condition = (Value(LocalCandidate.Construction) <= Value(LocalCandidate.TargetConstruction))
                 effects = SetConstruction value = min(Value + 2, Value(Target.TargetConstruction))
                 else = SetConstruction value = max(Value - 4, Value(Target.TargetConstruction))
-            accountinglabel = "CON_TECH_ACCOUNTING_LABEL"
+
     ]
     graphic = "icons/tech/force_energy_structures.png"
 

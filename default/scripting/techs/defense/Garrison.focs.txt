@@ -15,8 +15,7 @@ Tech
             ]
             stackinggroup = "GARRISON_1_TROOPS_STACK"
             priority = [[LATE_PRIORITY]]
-            effects = SetMaxTroops value = Value + 10
-            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
+            effects = SetMaxTroops value = Value + 10 accountinglabel = "DEF_GARRISON_1"
     ]
     graphic = "icons/tech/troops.png"
 
@@ -37,7 +36,6 @@ Tech
                 (LocalCandidate.System.LastTurnBattleHere < CurrentTurn)
             ]
             effects = SetTroops value = Value + 1
-            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
 
         EffectsGroup
             scope = And [
@@ -47,8 +45,7 @@ Tech
             ]
             stackinggroup = "GARRISON_2_TROOPS_STACK"
             priority = [[EARLY_PRIORITY]]
-            effects = SetMaxTroops value = Value + Target.Population * 2 * [[TROOPS_PER_POP]]
-            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
+            effects = SetMaxTroops value = Value + Target.Population * 2 * [[TROOPS_PER_POP]] accountinglabel = "DEF_GARRISON_2"
     ]
     graphic = "icons/tech/troops.png"
 
@@ -69,7 +66,7 @@ Tech
                 (LocalCandidate.System.LastTurnBattleHere < CurrentTurn)
             ]
             effects = SetTroops value = Value + 2
-            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
+
         EffectsGroup
             scope = And [
                 Planet
@@ -77,8 +74,7 @@ Tech
             ]
             stackinggroup = "GARRISON_3_TROOPS_STACK"
             priority = [[LATE_PRIORITY]]
-            effects = SetMaxTroops value = Value + 16
-            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
+            effects = SetMaxTroops value = Value + 16 accountinglabel = "DEF_GARRISON_3"
     ]
     graphic = "icons/tech/troops.png"
 
@@ -99,7 +95,6 @@ Tech
                 (LocalCandidate.System.LastTurnBattleHere < CurrentTurn)
             ]
             effects = SetTroops value = Value + 3
-            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
 
         EffectsGroup
             scope = And [
@@ -109,8 +104,7 @@ Tech
             ]
             stackinggroup = "GARRISON_4_TROOPS_STACK"
             priority = [[EARLY_PRIORITY]]
-            effects = SetMaxTroops value = Value + Target.Population * 2 * [[TROOPS_PER_POP]]
-            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
+            effects = SetMaxTroops value = Value + Target.Population * 2 * [[TROOPS_PER_POP]] accountinglabel = "DEF_GARRISON_4"
     ]
     graphic = "icons/tech/troops.png"
 

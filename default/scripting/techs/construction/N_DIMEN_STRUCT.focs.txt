@@ -21,7 +21,6 @@ Tech
             effects = [
                 SetTargetConstruction value = Value + 10
                 SetTargetPopulation value = Value + 2 * Target.HabitableSize
-                accountinglabel = "CON_TECH_ACCOUNTING_LABEL"
             ]
     ]
     graphic = "icons/tech/n-dimensional_structures.png"

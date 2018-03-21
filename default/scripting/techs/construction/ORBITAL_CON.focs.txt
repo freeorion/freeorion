@@ -13,7 +13,6 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             effects = SetMaxSupply value = Value + 1
-            accountinglabel = "CON_TECH_ACCOUNTING_LABEL"
     graphic = "icons/tech/orbital_construction.png"
 
 #include "/scripting/common/base_prod.macros"

@@ -14,8 +14,7 @@ Tech
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_ROOT"
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + 1
-            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
+            effects = SetMaxShield value = Value + 1 accountinglabel = "DEF_ROOT_DEFENSE"
         
         EffectsGroup    // regenerate 1 per turn
             scope = And [
@@ -26,11 +25,8 @@ Tech
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [
                 SetShield value = min(Value + 1, Value(Target.MaxShield))
-                accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
                 SetDefense value = min(Value + 1, Value(Target.MaxDefense))
-                accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
                 SetTroops value = min(Value + 1, Value(Target.MaxTroops))
-                accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             ]
     ]
     graphic = ""
