@@ -15,8 +15,7 @@ Tech
                 Planet environment = [ Poor ]
             ]
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize
-            accountinglabel = "GRO_TECH_ACCOUNTING_LABEL"
+            effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize accountinglabel = "GRO_XENO_HYBRIDS"
 
         EffectsGroup
             scope = And [
@@ -25,8 +24,7 @@ Tech
                 Planet environment = [ Hostile ]
             ]
             priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 2 * Target.HabitableSize
-            accountinglabel = "GRO_TECH_ACCOUNTING_LABEL"
+            effects = SetTargetPopulation value = Value + 2 * Target.HabitableSize accountinglabel = "GRO_XENO_HYBRIDS"
     ]
     graphic = "icons/tech/xenological_hybridization.png"
 

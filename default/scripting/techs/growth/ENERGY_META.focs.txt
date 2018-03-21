@@ -18,7 +18,6 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             effects = SetMaxFuel value = Value + 2
-            accountinglabel = "GRO_TECH_ACCOUNTING_LABEL"
 
         EffectsGroup
             scope = And [
@@ -27,8 +26,7 @@ Tech
             ]
             stackinggroup = "DEFENSE_NET_STACK_GM"
             priority = [[LATE_PRIORITY]]
-            effects = SetMaxDefense value = Value + 10
-            accountinglabel = "GRO_TECH_ACCOUNTING_LABEL"
+            effects = SetMaxDefense value = Value + 10 accountinglabel = "GRO_ENERGY_META"
 
         EffectsGroup
             scope = And [
@@ -37,8 +35,7 @@ Tech
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_GEM"
             priority = [[LATE_PRIORITY]]
-            effects = SetMaxShield value = Value + 50
-            accountinglabel = "GRO_TECH_ACCOUNTING_LABEL"
+            effects = SetMaxShield value = Value + 50 accountinglabel = "GRO_ENERGY_META"
 
         EffectsGroup
             scope = And [
@@ -49,7 +46,6 @@ Tech
             ]
             priority = [[EARLY_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
-            accountinglabel = "GRO_TECH_ACCOUNTING_LABEL"
 
         EffectsGroup
             scope = And [
@@ -60,7 +56,6 @@ Tech
             ]
             priority = [[EARLY_PRIORITY]]
             effects = SetTargetResearch value = Value  + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
-            accountinglabel = "GRO_TECH_ACCOUNTING_LABEL"
     ]
     graphic = "icons/tech/pure-energy_metabolism.png"
 
