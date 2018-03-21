@@ -42,7 +42,6 @@ Special
                 OwnedBy affiliation = TheEmpire empire = Source.Owner
                 Population low = 0.0001
             ]
-            accountinglabel = "WORLDTREE_LABEL"
             effects = SetTargetHappiness value = Value + 1
     ]
     graphic = "icons/specials_huge/worldtree.png"
