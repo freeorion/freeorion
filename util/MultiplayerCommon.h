@@ -266,6 +266,8 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+BOOST_CLASS_VERSION(ChatHistoryEntity, 1);
+
 /** Information about one player that other players are informed of.  Assembled by server and sent to players. */
 struct PlayerInfo {
     PlayerInfo() :
