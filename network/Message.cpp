@@ -544,30 +544,36 @@ Message DispatchSavePreviewsMessage(const PreviewInformation& previews) {
 
 Message RequestCombatLogsMessage(const std::vector<int>& ids) {
     std::ostringstream os;
-    freeorion_xml_oarchive oa(os);
-    oa << BOOST_SERIALIZATION_NVP(ids);
+    {
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(ids);
+    }
     return Message(Message::REQUEST_COMBAT_LOGS, os.str());
 }
 
 Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatLog>>& logs) {
     std::ostringstream os;
-    freeorion_xml_oarchive oa(os);
-    oa << BOOST_SERIALIZATION_NVP(logs);
+    {
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(logs);
+    }
     return Message(Message::DISPATCH_COMBAT_LOGS, os.str());
 }
 
 Message LoggerConfigMessage(int sender, const std::set<std::tuple<std::string, std::string, LogLevel>>& options) {
     std::ostringstream os;
-    freeorion_xml_oarchive oa(os);
-    std::size_t size = options.size();
-    oa << BOOST_SERIALIZATION_NVP(size);
-    for (const auto& option_tuple : options) {
-        auto option = std::get<0>(option_tuple);
-        auto name = std::get<1>(option_tuple);
-        auto value = std::get<2>(option_tuple);
-        oa << BOOST_SERIALIZATION_NVP(option);
-        oa << BOOST_SERIALIZATION_NVP(name);
-        oa << BOOST_SERIALIZATION_NVP(value);
+    {
+        freeorion_xml_oarchive oa(os);
+        std::size_t size = options.size();
+        oa << BOOST_SERIALIZATION_NVP(size);
+        for (const auto& option_tuple : options) {
+            auto option = std::get<0>(option_tuple);
+            auto name = std::get<1>(option_tuple);
+            auto value = std::get<2>(option_tuple);
+            oa << BOOST_SERIALIZATION_NVP(option);
+            oa << BOOST_SERIALIZATION_NVP(name);
+            oa << BOOST_SERIALIZATION_NVP(value);
+        }
     }
     return Message(Message::LOGGER_CONFIG, os.str());
 }
