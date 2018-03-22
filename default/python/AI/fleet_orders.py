@@ -462,7 +462,7 @@ class OrderInvade(AIFleetOrder):
                 if fleet.systemID not in foAI.foAIstate.needsEmergencyExploration:
                     foAI.foAIstate.needsEmergencyExploration.append(fleet.systemID)
                     print "Due to trouble invading, adding system %d to Emergency Exploration List" % fleet.systemID
-                    self.executed = False
+                self.executed = False
 
                 if shields > 0 and planet.unowned:
                     dump_universe()
