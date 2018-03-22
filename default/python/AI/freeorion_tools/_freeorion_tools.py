@@ -297,7 +297,7 @@ def dump_universe():
     if (not hasattr(dump_universe, "last_dump") or
             dump_universe.last_dump < cur_turn):
         dump_universe.last_dump = cur_turn
-        print fo.universe().dump()
+        fo.getUniverse().dump()  # goes to debug logger
 
 
 class LogLevelSwitcher(object):
