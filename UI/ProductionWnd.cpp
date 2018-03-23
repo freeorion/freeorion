@@ -287,10 +287,12 @@ namespace {
             max_allocation = design->PerTurnCost(elem.empire_id, elem.location) * elem.blocksize;
             icon = ClientUI::ShipDesignIcon(elem.item.design_id);
         } else if (elem.item.build_type == BT_STOCKPILE) {
-            main_text += UserString("OBJ_PROJECT") + "\n";
+            main_text += UserString("BUILD_ITEM_TYPE_PROJECT") + "\n";
 
-            item_name = UserString("PROJECT_BT_STOCKPILE");
-            location_ok = true;
+            item_name = UserString(elem.item.name);
+            auto loc = GetUniverseObject(elem.location);
+            location_ok = loc && loc->OwnedBy(elem.empire_id) && (std::dynamic_pointer_cast<const ResourceCenter>(loc));
+
             total_cost = 1.0;
             max_allocation = total_cost * elem.blocksize;
             icon = ClientUI::MeterIcon(METER_STOCKPILE);
@@ -458,7 +460,7 @@ namespace {
                 ErrorLogger() << "QueueProductionItemPanel unable to get design with id: " << elem.item.design_id;
         } else if (elem.item.build_type == BT_STOCKPILE) {
             graphic = ClientUI::MeterIcon(METER_STOCKPILE);
-            name_text = UserString("PROJECT_BT_STOCKPILE");
+            name_text = UserString(elem.item.name);
         } else {
             graphic = ClientUI::GetTexture(""); // get "missing texture" texture by supply intentionally bad path
             name_text = UserString("FW_UNKNOWN_DESIGN_NAME");
@@ -713,12 +715,18 @@ namespace {
                 location_passes = elem.item.EnqueueConditionPassedAt(elem.location);
             }
 
+            // Check if build type is ok. If not bail out. Note that DeleteAction does make sense in this case.
+            BuildType build_type = queue_row ? queue_row->elem.item.build_type : INVALID_BUILD_TYPE;
+            if (build_type != BT_SHIP && build_type != BT_BUILDING && build_type != BT_STOCKPILE) {
+                ErrorLogger() << "Invalid build type (" << build_type << ") for row item";
+                return;
+            }
+
             popup->AddMenuItem(GG::MenuItem(UserString("DUPLICATE"), !location_passes, false, dupe_action));
             if (remaining > 1) {
                 popup->AddMenuItem(GG::MenuItem(UserString("SPLIT_INCOMPLETE"), false, false, split_action));
             }
 
-            BuildType build_type = queue_row ? queue_row->elem.item.build_type : INVALID_BUILD_TYPE;
             if (build_type == BT_SHIP) {
                 // for ships, add a set rally point command
                 if (auto system = GetSystem(SidePanel::SystemID())) {
@@ -734,6 +742,7 @@ namespace {
                 popup->AddMenuItem(GG::MenuItem(UserString("PAUSE"),            false, false, pause_action));
             }
 
+            // stockpile use allow/disallow commands
             switch (build_type) {
             case BT_BUILDING:
             case BT_SHIP:
@@ -742,23 +751,24 @@ namespace {
                 } else {
                     popup->AddMenuItem(GG::MenuItem(UserString("ALLOW_IMPERIAL_PP_STOCKPILE_USE"), false, false, allow_stockpile_action));
                 }
-                break;
-            case BT_STOCKPILE:
+            default:
                 break;
             }
 
             // pedia lookup
             std::string item_name = "";
-            if (build_type == BT_BUILDING) {
+            switch (build_type) {
+            case BT_BUILDING:
+            case BT_STOCKPILE:
                 item_name = queue_row->elem.item.name;
-            } else if (build_type == BT_SHIP) {
+                break;
+            case BT_SHIP:
                 item_name = GetShipDesign(queue_row->elem.item.design_id)->Name(false);
-            } else if (build_type == BT_STOCKPILE) {
-                item_name = "PROJECT_BT_STOCKPILE";
-            } else {
-                ErrorLogger() << "Invalid build type (" << build_type << ") for row item";
-                return;
+                break;
+            default:
+                break;
             }
+
             if (UserStringExists(item_name))
                 item_name = UserString(item_name);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % item_name);

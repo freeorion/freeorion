@@ -445,34 +445,24 @@ bool Empire::ProducibleItem(BuildType build_type, int location_id) const {
         throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_SHIP with no further parameters, but ship designs are tracked by number");
     
     if (build_type == BT_BUILDING)
-        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_BUILDING with no further parameters, but these types are tracked by name");
+        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_BUILDING with no further parameters, but buildings are tracked by name");
 
-    auto build_location = GetUniverseObject(location_id);
-    if (!build_location)
+    // must own the production location...
+    auto location = GetUniverseObject(location_id);
+    if (!location) {
+        WarnLogger() << "Empire::ProducibleItem for BT_STOCKPILE unable to get location object with id " << location_id;
+        return false;
+    }
+
+    if (!location->OwnedBy(m_id))
+        return false;
+
+    if (!std::dynamic_pointer_cast<const ResourceCenter>(location))
         return false;
 
     if (build_type == BT_STOCKPILE) {
-        Empire* empire = GetEmpire(m_id);
-        if (!empire) {
-            DebugLogger() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << m_id;
-            return false;
-        }
-
-        // must own the production location...
-        auto location = GetUniverseObject(location_id);
-        if (!location) {
-            WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << location_id;
-            return false;
-        }
-        if (!location->OwnedBy(m_id))
-            return false;
-
-        auto planet = std::dynamic_pointer_cast<const Planet>(location);
-        std::shared_ptr<const Ship> ship;
-        if (!planet)
-             return false;
-
         return true;
+
     } else {
         ErrorLogger() << "Empire::ProducibleItem was passed an invalid BuildType";
         return false;
@@ -512,7 +502,7 @@ bool Empire::ProducibleItem(BuildType build_type, const std::string& name, int l
 bool Empire::ProducibleItem(BuildType build_type, int design_id, int location) const {
     // special case to check for buildings being passed with ids, not names
     if (build_type == BT_BUILDING)
-        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_BUILDING with a design id number, but these types are tracked by name");
+        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_BUILDING with a design id number, but buildings are tracked by name");
 
     if (build_type == BT_STOCKPILE)
         throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_STOCKPILE with a design id, but the stockpile does not need an identification");
@@ -1053,11 +1043,11 @@ void Empire::SetTechResearchProgress(const std::string& name, float progress) {
 const unsigned int MAX_PROD_QUEUE_SIZE = 500;
 
 void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& name, int number,
-    int blocksize, int location, int pos/* = -1*/)
+                                    int blocksize, int location, int pos/* = -1*/)
 {
     if (!EnqueuableItem(build_type, name, location)) {
         ErrorLogger() << "Empire::PlaceProductionOnQueue() : Attempted to place non-enqueuable item in queue: build_type: "
-            << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
+                      << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
         return;
     }
 
@@ -1068,7 +1058,7 @@ void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& nam
 
     if (!ProducibleItem(build_type, name, location)) {
         ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: "
-            << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
+                      << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
         return;
     }
 
@@ -1081,9 +1071,8 @@ void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& nam
 }
 
 void Empire::PlaceProductionOnQueue(BuildType build_type, BuildType dummy, int number,
-    int blocksize, int location, int pos/* = -1*/)
+                                    int blocksize, int location, int pos/* = -1*/)
 {
-ErrorLogger() << "Empire::PlaceProductionOnQueue() : BT_STOCKPILE";
     // no distinction between enqueuable and producible...
 
     if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE) {
@@ -1093,14 +1082,15 @@ ErrorLogger() << "Empire::PlaceProductionOnQueue() : BT_STOCKPILE";
 
     if (!ProducibleItem(build_type, location)) {
         ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: "
-            << boost::lexical_cast<std::string>(build_type) << "  location: " << location;
+                      << boost::lexical_cast<std::string>(build_type) << "  location: " << location;
         return;
     }
 
     const bool paused = false;
     const bool allowed_imperial_stockpile_use = false;
-    const std::string dummy_str = "BT_STOCKPILE_DUMMY_BLD_NAME";
-    ProductionQueue::Element build(build_type, dummy_str, m_id, number, number, blocksize, location, paused, allowed_imperial_stockpile_use);
+    const std::string name = "PROJECT_BT_STOCKPILE";
+    ProductionQueue::Element build(build_type, name, m_id, number, number, blocksize,
+                                   location, paused, allowed_imperial_stockpile_use);
 
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
         m_production_queue.push_back(build);

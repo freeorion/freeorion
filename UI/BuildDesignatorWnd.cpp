@@ -137,7 +137,7 @@ namespace {
             case BT_STOCKPILE: {
                 texture = ClientUI::MeterIcon(METER_STOCKPILE);
                 desc_text = UserString("BT_STOCKPILE");
-                name_text = UserString("PROJECT_BT_STOCKPILE");
+                name_text = UserString(m_item.name);
                 break;
             }
             default:
@@ -262,8 +262,8 @@ namespace {
             float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
             int production_time = building_type->ProductionTime(empire_id, candidate_object_id);
 
-            main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
-            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + std::to_string(production_time);
+            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) % DoubleToString(total_cost, 3, false));
+            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) % std::to_string(production_time));
 
             // show build conditions
             const std::string& enqueue_and_location_condition_failed_text = EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
@@ -291,8 +291,8 @@ namespace {
             float total_cost = design->ProductionCost(empire_id, candidate_object_id);
             int production_time = design->ProductionTime(empire_id, candidate_object_id);
 
-            main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
-            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + std::to_string(production_time);
+            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) % DoubleToString(total_cost, 3, false));
+            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) % std::to_string(production_time));
             main_text += "\n\n" + UserString("ENC_SHIP_HULL") + ": " + UserString(design->Hull());
 
             // load ship parts, stack ship parts that are used multiple times
@@ -331,15 +331,14 @@ namespace {
 
         // production item is a stockpiling project
         if (item.build_type == BT_STOCKPILE) {
-
             // create title, description, production time and cost
-            const std::string& title = UserString("PROJECT_BT_STOCKPILE");
+            const std::string& title = UserString(item.name);
             std::string main_text = UserString("PROJECT_BT_STOCKPILE_DESC");
             float total_cost = 1.0;
             int production_time = 1;
 
-            main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
-            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + std::to_string(production_time);
+            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) % DoubleToString(total_cost, 3, false));
+            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) % std::to_string(production_time));
 
             // do not show build conditions - always buildable
 
@@ -508,6 +507,7 @@ private:
 
     void                DoLayout();
 
+    bool    BuildableItemVisible(BuildType build_type);
     bool    BuildableItemVisible(BuildType build_type, const std::string& name);
     bool    BuildableItemVisible(BuildType build_type, int design_id);
 
@@ -737,6 +737,17 @@ void BuildDesignatorWnd::BuildSelector::HideAvailability(bool available, bool re
     }
 }
 
+bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_type) {
+    if (build_type != BT_STOCKPILE)
+        throw std::invalid_argument("BuildableItemVisible was passed an invalid build type without id");
+
+    const Empire* empire = GetEmpire(m_empire_id);
+    if (!empire)
+        return true;
+
+    return empire->ProducibleItem(build_type, m_production_location);
+}
+
 bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_type,
                                                              const std::string& name)
 {
@@ -806,9 +817,9 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     const GG::Pt row_size = m_buildable_items->ListRowSize();
 
     // populate list with fixed projects
-    {
-        auto stockpile_row = GG::Wnd::Create<ProductionItemRow>(row_size.x, row_size.y,
-            ProductionQueue::ProductionItem(BT_STOCKPILE), m_empire_id, m_production_location);
+    if (BuildableItemVisible(BT_STOCKPILE)) {
+        auto stockpile_row = GG::Wnd::Create<ProductionItemRow>(
+            row_size.x, row_size.y, ProductionQueue::ProductionItem(BT_STOCKPILE), m_empire_id, m_production_location);
         m_buildable_items->Insert(stockpile_row);
 
         // resize inserted rows and record first row to show

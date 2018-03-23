@@ -4206,10 +4206,10 @@ DUPLICATE
 Dupliquer
 
 PRODUCTION_WND_TOOLTIP_PROD_COST
-Coût production
+Coût production: %1%
 
 PRODUCTION_WND_TOOLTIP_PROD_TIME
-Temps production
+Temps production: %1%
 
 PRODUCTION_WND_TOOLTIP_PARTS
 Équipements Astronef
@@ -8270,8 +8270,8 @@ Structure
 OBJ_SHIP
 Astronef
 
-# As the OBJ_SHIP and OBJ_BUILDING are used in the production window, we use OBJ_PROJECT for BT_STOCKPILING
-OBJ_PROJECT
+# Note: the OBJ_SHIP and OBJ_BUILDING entries are used for the build item type of ships and buildings.
+BUILD_ITEM_TYPE_PROJECT
 Projet
 
 # Universe object types

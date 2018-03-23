@@ -4206,10 +4206,10 @@ DUPLICATE
 Duplicate
 
 PRODUCTION_WND_TOOLTIP_PROD_COST
-Production cost
+Production cost: %1%
 
 PRODUCTION_WND_TOOLTIP_PROD_TIME
-Production time
+Production time: %1%
 
 PRODUCTION_WND_TOOLTIP_PARTS
 Ship Parts
@@ -8270,8 +8270,8 @@ Building
 OBJ_SHIP
 Ship
 
-# As the OBJ_SHIP and OBJ_BUILDING are used in the production window, we use OBJ_PROJECT for BT_STOCKPILING
-OBJ_PROJECT
+# Note: the OBJ_SHIP and OBJ_BUILDING entries are used for the build item type of ships and buildings.
+BUILD_ITEM_TYPE_PROJECT
 Project
 
 # Universe object types
