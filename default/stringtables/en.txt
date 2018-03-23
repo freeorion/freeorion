@@ -3702,7 +3702,7 @@ FW_ORDER_DISMISS_SENSOR_GHOST
 Dismiss Sensor Ghost
 
 FW_ORDER_DISMISS_SENSOR_GHOST_ALL
-Dismiss All Sensor Ghosts
+Dismiss All Sensor Ghosts Here
 
 ORDER_SHIP_SCRAP
 Scrap Ship
