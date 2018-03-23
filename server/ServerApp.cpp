@@ -3373,8 +3373,9 @@ void ServerApp::CheckForEmpireElimination() {
     if (surviving_empires.size() == 1) // last man standing
         (*surviving_empires.begin())->Win(UserStringNop("VICTORY_ALL_ENEMIES_ELIMINATED"));
     else if (!m_single_player_game &&
-        static_cast<int>(surviving_human_empires.size()) <= GetGameRules().Get<int>("RULE_THRESHOLD_HUMAN_PLAYER_WIN"))
-    { // human victory threshold
+             static_cast<int>(surviving_human_empires.size()) <= GetGameRules().Get<int>("RULE_THRESHOLD_HUMAN_PLAYER_WIN"))
+    {
+        // human victory threshold
         if (GetGameRules().Get<bool>("RULE_ONLY_ALLIANCE_WIN")) {
             for (auto emp1_it = surviving_human_empires.begin();
                  emp1_it != surviving_human_empires.end(); ++emp1_it)
