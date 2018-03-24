@@ -1638,6 +1638,44 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
     // TODO: notify other players
 }
 
+void ServerApp::DropPlayerEmpireLink(int player_id)
+{ m_player_empire_ids.erase(player_id); }
+
+bool ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
+    // search empire by player name
+    for (auto empire : Empires()) {
+        if (empire.second->PlayerName() == player_connection->PlayerName()) {
+            auto orders_it = m_turn_sequence.find(empire.first);
+            if (orders_it == m_turn_sequence.end()) {
+                WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire.first
+                             << " for \"" << player_connection->PlayerName()
+                             << "\" doesn't wait for orders";
+                return false;
+            }
+            // make a link to new connection
+            m_player_empire_ids[player_connection->PlayerID()] = empire.first;
+
+            const OrderSet dummy;
+            const OrderSet& orders = orders_it->second ? *orders_it->second : dummy;
+
+            auto player_info_map = GetPlayerInfoMap();
+            bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
+
+            player_connection->SendMessage(GameStartMessage(
+                m_single_player_game, empire.first,
+                m_current_turn, m_empires, m_universe,
+                GetSpeciesManager(), GetCombatLogManager(),
+                GetSupplyManager(),  player_info_map, orders,
+                static_cast<const SaveGameUIData*>(nullptr),
+                m_galaxy_setup_data,
+                use_binary_serialization));
+
+            return true;
+        }
+    }
+    return false;
+}
+
 bool ServerApp::IsHostless() const
 { return GetOptionsDB().Get<bool>("hostless"); }
 

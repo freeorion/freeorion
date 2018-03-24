@@ -226,6 +226,14 @@ public:
     /** Adds new observing player to running game.
       * Simply sends GAME_START message so established player knows he is in the game. */
     void AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_connection);
+
+    /** Drop link between player with \a player_id and his empire. */
+    void DropPlayerEmpireLink(int planet_id);
+
+    /** Adds new player to running game.
+      * Search empire by player's name and return true if success and false if no empire found.
+      * Simply sends GAME_START message so established player knows he is in the game. */
+    bool AddPlayerIntoGame(const PlayerConnectionPtr& player_connection);
     //@}
 
     void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);
