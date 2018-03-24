@@ -183,10 +183,10 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         return true;
     }
     case Message::TURN_UPDATE: {
-        int current_turn = INVALID_GAME_TURN;
-        ExtractTurnUpdateMessageData(msg,                   EmpireID(),         current_turn,
+        ExtractTurnUpdateMessageData(msg,                   EmpireID(),         m_current_turn,
                                      Empires(),             GetUniverse(),      GetSpeciesManager(),
                                      GetCombatLogManager(), GetSupplyManager(), Players());
+        m_turn_done = true;
         return true;
     }
     default:
