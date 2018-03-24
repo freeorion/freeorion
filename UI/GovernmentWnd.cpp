@@ -375,7 +375,6 @@ void PoliciesListBox::PoliciesListBoxRow::ChildrenDraggedAway(
     SetCell(ii, new_policy_control);
 }
 
-
 PoliciesListBox::PoliciesListBox(const AvailabilityManager& availabilities_state) :
     CUIListBox(),
     m_availabilities_state(availabilities_state)
@@ -848,13 +847,16 @@ class PolicySlotControl : public GG::Control {
 public:
     /** \name Structors */ //@{
     PolicySlotControl();
-    explicit PolicySlotControl(const std::string& slot_category);
+    PolicySlotControl(const std::string& slot_category, int category_index,
+                      unsigned int slot_index);
     //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
-    const std::string&  SlotCategory() const;
+    const std::string&  SlotCategory() const    { return m_slot_category; }
     const Policy*       GetPolicy() const;
+    int                 CategoryIndex() const   { return m_category_index; }
+    unsigned int        SlotIndex() const       { return m_slot_index; }
     //@}
 
     /** \name Mutators */ //@{
@@ -871,8 +873,8 @@ public:
 
     void Highlight(bool actually = true);
 
-    void SetPolicy(const std::string& policy_name); //!< used to programmatically set the PolicyControl in this slot.  Does not emit signal
-    void SetPolicy(const Policy* policy = nullptr); //!< used to programmatically set the PolicyControl in this slot.  Does not emit signal
+    void SetPolicy(const std::string& policy_name); //!< used to programmatically set the PolicyControl in this slot.
+    void SetPolicy(const Policy* policy);           //!< used to programmatically set the PolicyControl in this slot.
     //@}
 
     /** emitted when the contents of a slot are altered by the dragging
@@ -889,6 +891,8 @@ protected:
 private:
     bool                                m_highlighted = false;
     std::string                         m_slot_category = "";
+    int                                 m_category_index = -1;
+    unsigned int                        m_slot_index = 0;
     std::shared_ptr<PolicyControl>      m_policy_control = nullptr;
     std::shared_ptr<GG::StaticGraphic>  m_background = nullptr;
 };
@@ -897,9 +901,12 @@ PolicySlotControl::PolicySlotControl() :
     GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE)
 {}
 
-PolicySlotControl::PolicySlotControl(const std::string& slot_category) :
+PolicySlotControl::PolicySlotControl(const std::string& slot_category, int category_index,
+                                     unsigned int slot_index) :
     GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE),
-    m_slot_category(slot_category)
+    m_slot_category(slot_category),
+    m_category_index(category_index),
+    m_slot_index(slot_index)
 {}
 
 void PolicySlotControl::CompleteConstruction() {
@@ -969,9 +976,6 @@ void PolicySlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptab
         }
     }
 }
-
-const std::string& PolicySlotControl::SlotCategory() const
-{ return m_slot_category; }
 
 const Policy* PolicySlotControl::GetPolicy() const {
     if (m_policy_control)
@@ -1137,9 +1141,9 @@ public:
     void Sanitize();
     void Refresh();
 
-    void SetPolicy(const std::string& policy_name, unsigned int slot);                  //!< puts specified policy in specified slot.  does nothing if slot is out of range of available slots for category
-    void SetPolicy(const Policy* policy, unsigned int slot, bool emit_signal = false);  //!< Sets the policy in \p slot to \p policy and emits and signal if requested.
-    void SetPolicies(const std::vector<std::string>& policies);                         //!< puts specified policies in slots.  attempts to put each policy into the slot corresponding to its place in the passed vector.  if a policy cannot be placed, it is ignored.  more policies than there are slots available are ignored, and slots for which there are insufficient policies in the passed vector are unmodified
+    void SetPolicy(const std::string& policy_name, unsigned int slot);  //!< puts specified policy in specified slot.  does nothing if slot is out of range of available slots for category
+    void SetPolicy(const Policy* policy, unsigned int slot);            //!< Sets the policy in \p slot to \p policy
+    void SetPolicies(const std::vector<std::string>& policies);         //!< puts specified policies in slots.  attempts to put each policy into the slot corresponding to its place in the passed vector.  if a policy cannot be placed, it is ignored.  more policies than there are slots available are ignored, and slots for which there are insufficient policies in the passed vector are unmodified
 
     /** If a suitable slot is available, adds the specified policy to the
       * government. */
@@ -1151,7 +1155,7 @@ public:
 
     /** emitted when the design is changed (by adding or removing policies, not
       * name or description changes) */
-    mutable boost::signals2::signal<void ()> PoliciesChangedSignal;
+    mutable boost::signals2::signal<void (int, const std::string&)> PoliciesChangedSignal;
     mutable boost::signals2::signal<void (const Policy*, GG::Flags<GG::ModKey>)> PolicyClickedSignal;
 
 protected:
@@ -1251,9 +1255,7 @@ namespace {
     }
 }
 
-void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot,
-                                         bool emit_signal)
-{
+void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot) {
     //DebugLogger() << "GovernmentWnd::MainPanel::SetPolicy(" << (policy ? policy->Name() : "no policy") << ", slot " << slot << ")";
 
     if (slot > m_slots.size()) {
@@ -1267,22 +1269,30 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
         return;
     }
 
+    // update contents of slot in UI
     m_slots[slot]->SetPolicy(policy);
 
-    if (emit_signal)  // to avoid unnecessary signal repetition.
-        PoliciesChangedSignal();
+    // order actual policy change
+    //std::cout << "MainPanel::SetPolicy: " << (policy ? policy->Name() : "No Policy") << "  ordered set in slot " << slot << std::endl;
 
-    //Refresh();
+    //PolicyOrder(int empire, const std::string& name,
+    //            const std::string& category, bool adopt,
+    //            int slot = -1);
+    const std::string& policy_name = (policy ? policy->Name() : EMPTY_STRING);
+    const std::string& category_name = m_slots[slot]->SlotCategory();
+    bool adopt = true;
+    int order_slot = m_slots[slot]->CategoryIndex();
+
+    auto order = std::make_shared<PolicyOrder>(empire_id, policy_name, category_name, adopt, order_slot);
+    HumanClientApp::GetApp()->Orders().IssueOrder(order);
 }
 
 void GovernmentWnd::MainPanel::SetPolicies(const std::vector<std::string>& policies) {
     ClearPolicies();
 
     unsigned int num_policies = std::min(policies.size(), m_slots.size());
-    for (unsigned int i = 0; i < num_policies; ++i)
-        m_slots[i]->SetPolicy(policies[i]);
-
-    PoliciesChangedSignal();
+    for (unsigned int slot = 0; slot < num_policies; ++slot)
+        this->SetPolicy(policies[slot], slot);
 }
 
 void GovernmentWnd::MainPanel::AddPolicy(const Policy* policy)
@@ -1295,7 +1305,6 @@ bool GovernmentWnd::MainPanel::AddPolicyEmptySlot(const Policy* policy, int slot
     if (!policy || slot_number < 0)
         return false;
     SetPolicy(policy, slot_number);
-    PoliciesChangedSignal();
     return true;
 }
 
@@ -1323,23 +1332,17 @@ int GovernmentWnd::MainPanel::FindEmptySlotForPolicy(const Policy* policy) const
 void GovernmentWnd::MainPanel::ClearPolicies() {
     for (auto& slot : m_slots)
         slot->SetPolicy(nullptr);
-    PoliciesChangedSignal();
 }
 
 void GovernmentWnd::MainPanel::ClearPolicy(const std::string& policy_name) {
-    bool changed = false;
-    for (const auto& slot : m_slots) {
+    for (auto& slot : m_slots) {
         const Policy* existing_policy = slot->GetPolicy();
         if (!existing_policy)
             continue;
         if (existing_policy->Name() != policy_name)
             continue;
         slot->SetPolicy(nullptr);
-        changed = true;
     }
-
-    if (changed)
-        PoliciesChangedSignal();
 }
 
 void GovernmentWnd::MainPanel::Populate() {
@@ -1358,14 +1361,15 @@ void GovernmentWnd::MainPanel::Populate() {
     for (unsigned int n = 0; n < all_slot_cats.size(); ++n) {
         const auto& cat_slot = all_slot_cats[n];    // todo: std::tie ?
         const std::string& category_name = cat_slot.first;
-        auto slot_control = GG::Wnd::Create<PolicySlotControl>(category_name);
+        int category_index = cat_slot.second;
+        auto slot_control = GG::Wnd::Create<PolicySlotControl>(category_name, category_index, n);
         m_slots.push_back(slot_control);
         AttachChild(slot_control);
 
         slot_control->SlotContentsAlteredSignal.connect(
-        boost::bind(static_cast<void (GovernmentWnd::MainPanel::*)(
-            const Policy*, unsigned int, bool)>(&GovernmentWnd::MainPanel::SetPolicy),
-                                                this, _1, n, _2));
+            boost::bind(static_cast<void (GovernmentWnd::MainPanel::*)(
+                const Policy*, unsigned int)>(&GovernmentWnd::MainPanel::SetPolicy),
+                                              this, _1, n));
         slot_control->PolicyClickedSignal.connect(PolicyClickedSignal);
     }
 
@@ -1509,9 +1513,8 @@ void GovernmentWnd::InitializeWindows() {
     m_policy_palette->  InitSizeMove(palette_ul,   palette_ul + palette_wh);
 }
 
-void GovernmentWnd::PoliciesChanged() {
-
-}
+void GovernmentWnd::PoliciesChanged()
+{ std::cout << "GovernmentWnd::PoliciesChanged()" << std::endl; }
 
 void GovernmentWnd::EnableOrderIssuing(bool enable/* = true*/)
 {}
