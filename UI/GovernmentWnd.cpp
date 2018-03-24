@@ -7,6 +7,8 @@
 #include "IconTextBrowseWnd.h"
 #include "Sound.h"
 #include "TextBrowseWnd.h"
+#include "SidePanel.h"
+#include "FleetWnd.h"
 #include "../parse/Parse.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
@@ -924,8 +926,6 @@ void PolicySlotControl::CompleteConstruction() {
         UserString(m_slot_category),
         UserString("SL_TOOLTIP_DESC")
     ));
-
-    //std::cout << "PolicySlotControl::CompleteConstruction category: " << m_slot_category << std::endl;
 }
 
 bool PolicySlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
@@ -1280,6 +1280,11 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     // issue order to adopt or revoke
     auto order = std::make_shared<PolicyOrder>(empire_id, oder_policy_name, category_name, adopt, order_slot);
     HumanClientApp::GetApp()->Orders().IssueOrder(order);
+
+    // update UI after policy changes
+    GetUniverse().UpdateMeterEstimates();
+    SidePanel::Refresh();
+    FleetUIManager::GetFleetUIManager().RefreshAll();
 }
 
 void GovernmentWnd::MainPanel::SetPolicies(const std::vector<std::string>& policies) {
