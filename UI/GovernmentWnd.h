@@ -27,7 +27,6 @@ private:
     class PolicyPalette;    // shows policies that can be clicked for detailed or dragged on slots in government
     class MainPanel;        // shows slots and adopted policies
 
-    void PoliciesChanged();
     void InitializeWindows();
 
     std::shared_ptr<PolicyPalette>  m_policy_palette;
