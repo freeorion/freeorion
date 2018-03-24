@@ -8,7 +8,7 @@ Tech
     tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
     prerequisites = "CON_ORBITAL_CON"
     unlock =
-        Item type = Policy name = "NO_SUPPLY_POLICY"
+        Item type = Policy name = "PLC_NO_SUPPLY"
     effectsgroups = EffectsGroup
             scope = And [
                 Ship
