@@ -170,7 +170,7 @@ void Empire::SetCapitalID(int id) {
 
 void Empire::AdoptPolicy(const std::string& name, const std::string& category,
                          bool adopt, int slot)
-{
+{   // todo: add error message if passed empty policy name or category
     if (!adopt) {
         // revoke policy
         if (m_adopted_policies.count(name)) {
@@ -287,6 +287,14 @@ std::vector<std::string> Empire::AdoptedPolicies() const {
     retval.reserve(m_adopted_policies.size());
     for (const auto& entry : m_adopted_policies)
         retval.push_back(entry.first);
+    return retval;
+}
+
+std::map<std::string, std::map<int, std::string>>
+Empire::CategoriesSlotsPoliciesAdopted() const {
+    std::map<std::string, std::map<int, std::string>> retval;
+    for (const auto& entry : m_adopted_policies)
+        retval[entry.second.category][entry.second.slot_in_category] = entry.first;
     return retval;
 }
 
