@@ -10927,6 +10927,14 @@ Increases ship detection range and imperial detection strength, increasing with 
 PLC_CONTINUOUS_SCANNING_SHORT_DESC
 Improves Detection and Hinders Stealth
 
+PLC_EXPLORATION
+Exploration
+
+PLC_EXPLORATION_DESC
+Increases speed of ships with no weapons, fighters, shields, armour, troops, colony pods, bombardment, research, industry, trade, production, or general parts. Detection, fuel, and engine parts are allowed.
+
+PLC_EXPLORATION_SHORT_DESC
+Speeds Up Explorer Ships
 
 ##
 ## Technology categories
@@ -12855,7 +12863,7 @@ Sets the owner's Capital for the empire.
 Represents imperial power and prestige and functions as a center of control for the empire's holdings.'''
 
 BLD_MILITARY_COMMAND
-Military command
+Military Command
 
 BLD_MILITARY_COMMAND_DESC
 Provides a military policy slot.

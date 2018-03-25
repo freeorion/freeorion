@@ -1,0 +1,30 @@
+Policy
+    name = "PLC_EXPLORATION"
+    description = "PLC_EXPLORATION_DESC"
+    short_description = "PLC_EXPLORATION_DESC"
+    category = "MILITARY_CATEGORY"
+    adoptioncost = 10
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPartClass low = 0 high = 0 class = ShortRange
+                DesignHasPartClass low = 0 high = 0 class = FighterBay
+                DesignHasPartClass low = 0 high = 0 class = FighterHangar
+                DesignHasPartClass low = 0 high = 0 class = Shield
+                DesignHasPartClass low = 0 high = 0 class = Armour
+                DesignHasPartClass low = 0 high = 0 class = Troops
+                DesignHasPartClass low = 0 high = 0 class = Colony
+                DesignHasPartClass low = 0 high = 0 class = General
+                DesignHasPartClass low = 0 high = 0 class = Bombard
+                DesignHasPartClass low = 0 high = 0 class = Research
+                DesignHasPartClass low = 0 high = 0 class = Industry
+                DesignHasPartClass low = 0 high = 0 class = Trade
+                DesignHasPartClass low = 0 high = 0 class = ProductionLocation
+            ]
+            effects = SetSpeed value = Value + 20
+    ]
+    graphic = "icons/policies/exploration.png"
+
+#include "/scripting/common/priorities.macros"
