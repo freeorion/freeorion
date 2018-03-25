@@ -1330,8 +1330,8 @@ int GovernmentWnd::MainPanel::FindEmptySlotForPolicy(const Policy* policy) const
 }
 
 void GovernmentWnd::MainPanel::ClearPolicies() {
-    for (auto& slot : m_slots)
-        slot->SetPolicy(nullptr);
+    for (unsigned int slot = 0; slot < m_slots.size(); ++slot)
+        this->SetPolicy(nullptr, slot);
 }
 
 void GovernmentWnd::MainPanel::ClearPolicy(const std::string& policy_name) {
