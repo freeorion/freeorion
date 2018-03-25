@@ -9,7 +9,7 @@ Tech
     prerequisites = "CON_ASYMP_MATS"
     effectsgroups = EffectsGroup
         scope = Source
-        effects = SetEmpireMeter empire = Source.Owner meter = "METER_NUM_SOCIAL_POLICIES" value = Value + 1
+        effects = SetEmpireMeter empire = Source.Owner meter = "SOCIAL_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1
     graphic = "icons/tech/architecture_psychology.png"
 
 #include "/scripting/common/base_prod.macros"

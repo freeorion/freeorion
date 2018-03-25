@@ -29,6 +29,15 @@ namespace {
     const std::string EMPTY_STRING;
     const int INVALID_SLOT_INDEX = -1;
 
+    std::vector<std::pair<std::string, std::string>> PolicyCategoriesSlotsMeters() {
+        std::vector<std::pair<std::string, std::string>> retval;
+
+        // derive meters from PolicyManager parsed policies' categories
+        for (const auto cat : GetPolicyManager().PolicyCategories())
+            retval.push_back({cat, cat + "_NUM_POLICY_SLOTS"});
+        return retval;
+    }
+
     DeclareThreadSafeLogger(supply);
 }
 
@@ -80,8 +89,8 @@ void Empire::Init() {
     //m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
     //m_meters[UserStringNop("METER_SHIP_COST_FACTOR")];
     //m_meters[UserStringNop("METER_TECH_COST_FACTOR")];
-    m_meters[UserStringNop("METER_NUM_ECONOMIC_POLICIES")];
-    m_meters[UserStringNop("METER_NUM_SOCIAL_POLICIES")];
+    for (auto entry : PolicyCategoriesSlotsMeters())
+        m_meters[entry.second];
 }
 
 Empire::~Empire()
@@ -311,18 +320,10 @@ const std::set<std::string>& Empire::AvailablePolicies() const
 bool Empire::PolicyAvailable(const std::string& name) const
 { return m_available_policies.count(name); }
 
-namespace {
-    // todo: get / derive from PolicyManager info
-    const std::initializer_list<std::pair<std::string, std::string>> policy_slot_cats_meters = {
-        {UserStringNop("ECONOMIC_CATEGORY"),    UserStringNop("METER_NUM_ECONOMIC_POLICIES")},
-        {UserStringNop("SOCIAL_CATEGORY"),      UserStringNop("METER_NUM_SOCIAL_POLICIES")}
-    };
-}
-
 std::map<std::string, int> Empire::TotalPolicySlots() const {
     std::map<std::string, int> retval;
     // collect policy slot category meter values and return
-    for (const auto& cat_meter_pair : policy_slot_cats_meters) {
+    for (const auto& cat_meter_pair : PolicyCategoriesSlotsMeters()) {
         if (!m_meters.count(cat_meter_pair.second))
             continue;
         auto it = m_meters.find(cat_meter_pair.second);

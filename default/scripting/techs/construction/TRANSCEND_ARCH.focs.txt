@@ -11,6 +11,9 @@ Tech
         "CON_NDIM_STRC"
     ]
     unlock = Item type = Building name = "BLD_MEGALITH"
+    effectsgroups = EffectsGroup
+        scope = Source
+        effects = SetEmpireMeter empire = Source.Owner meter = "SOCIAL_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1
     graphic = "icons/tech/transcendent_architecture.png"
 
 #include "/scripting/common/base_prod.macros"
