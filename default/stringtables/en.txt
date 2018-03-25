@@ -10918,6 +10918,15 @@ Decreases cost of colonization ship parts.
 PLC_COLONIZATION_SHORT_DESC
 Discounts Colonization
 
+PLC_CONTINUOUS_SCANNING
+Continuous Scanning
+
+PLC_CONTINUOUS_SCANNING_DESC
+Increases ship detection range and imperial detection strength, increasing with duration of adoption, while also reducing ship stealth.
+
+PLC_CONTINUOUS_SCANNING_SHORT_DESC
+Improves Detection and Hinders Stealth
+
 
 ##
 ## Technology categories
@@ -12844,6 +12853,12 @@ Grants 1 economic policy slot.
 Sets the owner's Capital for the empire.
 
 Represents imperial power and prestige and functions as a center of control for the empire's holdings.'''
+
+BLD_MILITARY_COMMAND
+Military command
+
+BLD_MILITARY_COMMAND_DESC
+Provides a military policy slot.
 
 BLD_SUPER_TEST
 Super-Tester Takeover

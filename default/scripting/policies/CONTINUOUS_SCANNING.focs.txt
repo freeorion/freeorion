@@ -1,0 +1,33 @@
+Policy
+    name = "PLC_CONTINUOUS_SCANNING"
+    description = "PLC_CONTINUOUS_SCANNING"
+    short_description = "PLC_CONTINUOUS_SCANNING_DESC"
+    category = "MILITARY_CATEGORY"
+    adoptioncost = 10
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+            ]
+            effects = [
+                SetDetection value = Value + 5
+                SetStealth value = Value - 10
+            ]
+
+        EffectsGroup
+            scope = And [
+                Capital
+                OwnedBy empire = Source.Owner            
+            ]
+            effects = SetEmpireMeter
+                empire = Source.Owner
+                meter = "METER_DETECTION_STRENGTH"
+                value = Value + min(20.0,
+                    CurrentTurn - TurnPolicyAdopted empire = source.Owner
+                                                    name = "PLC_CONTINUOUS_SCANNING"
+                                   )
+    ]
+    graphic = "icons/policies/continuous_scanning.png"
+
+#include "/scripting/common/priorities.macros"

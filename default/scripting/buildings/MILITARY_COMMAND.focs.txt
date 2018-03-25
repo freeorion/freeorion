@@ -1,0 +1,45 @@
+BuildingType
+    name = "BLD_MILITARY_COMMAND"
+    description = "BLD_MILITARY_COMMAND_DESC"
+    captureresult = destroy
+    buildcost = 80 * [[BUILDING_COST_MULTIPLIER]]
+    buildtime = 6
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_MILITARY_COMMAND_DESC"
+        TargetPopulation low = 1
+        Number low = 0 high = 0 condition = And [
+            Building name = "BLD_MILITARY_COMMAND_DESC"
+            OwnedBy empire = Source.Owner
+        ]
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy empire = Source.Owner
+                Capital
+            ]
+            activation = ContainedBy OwnedBy empire = Source.Owner
+            stackinggroup = "MILITARY_COMMAND_SLOT_METER_EFFECT"
+            effects = SetEmpireMeter empire = Source.Owner meter = "MILITARY_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1
+
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                OwnedBy empire = Source.ProducedByEmpireID
+            ]
+            accountinglabel = "BLD_MILITARY_COMMAND"
+            priority = [[VERY_EARLY_PRIORITY]]
+            effects = [
+                SetMaxDefense value = Value + 5
+                SetMaxTroops value = Value + 6
+            ]
+    ]
+    icon = "icons/building/palace.png"
+
+#include "/scripting/common/enqueue.macros"
+#include "/scripting/common/priorities.macros"
+#include "/scripting/common/base_prod.macros"
