@@ -48,6 +48,8 @@ To ensure your PR won't be rejected please make sure that:
   want to update your branch to a more recent master use the `git rebase`
   command.
 
+To build FreeOrion please refer to the [Build Instructions](BUILD.md).
+
 
 ## Further documentation
 

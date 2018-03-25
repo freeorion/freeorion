@@ -47,7 +47,7 @@ For Mac OSX, open the downloaded DMG file and copy the contained FreeOrion
 application to your system Applications folder by Drag and Drop.
 
 For Linux or other from-source installations in general please refer to the
-[Compile Instructions].
+[Build Instructions](BUILD.md).
 
 Various Linux distributions provide the stable release of FreeOrion in
 a prebuilt way.  Usually you can install those packages by either using
@@ -126,7 +126,6 @@ accompanying license file.
 [FreeOrion Stable Releases]: https://github.com/freeorion/freeorion/releases
 [FreeOrion Weekly Releases]: https://sourceforge.net/projects/freeorion/files/FreeOrion/Test/
 [FreeOrion Development]: https://github.com/freeorion/freeorion
-[Compile Instructions]: http://www.freeorion.org/index.php/Compile
 [Debian Package]: https://packages.debian.org/source/sid/freeorion
 [Ubuntu Package]: https://launchpad.net/ubuntu/+source/freeorion
 [Fedora Package]: https://admin.fedoraproject.org/pkgdb/package/rpms/freeorion/
