@@ -252,7 +252,7 @@ void PolicyControl::CompleteConstruction() {
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
         ClientUI::PolicyIcon(m_policy->Name()),
-        UserString(m_policy->Name()),
+        UserString(m_policy->Name()) + " (" + UserString(m_policy->Category()) + ")",
         UserString(m_policy->Description())
     ));
 }
@@ -1090,12 +1090,9 @@ void PolicySlotControl::SetPolicy(const Policy* policy) {
         [this](const Policy*){ this->SlotContentsAlteredSignal(nullptr, false); });
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
-    // set policy occupying slot's tool tip to say slot type
-    std::string title_text = UserString(policy->Name());
-
     m_policy_control->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
         ClientUI::PolicyIcon(policy->Name()),
-        UserString(policy->Name()) + " (" + title_text + ")",
+        UserString(policy->Name()) + " (" + UserString(policy->Category()) + ")",
         UserString(policy->Description())
     ));
 }
