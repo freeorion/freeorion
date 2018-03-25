@@ -26,7 +26,6 @@ required_boost_libraries = [
     "boost_signals",
     "boost_system",
     "boost_thread",
-    "boost_zlib"
 ]
 
 

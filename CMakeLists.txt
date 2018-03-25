@@ -757,15 +757,19 @@ if(WIN32)
     install(
         FILES
         OpenAL32.dll
-        boost_date_time-vc90-mt-1_44.dll
-        boost_filesystem-vc90-mt-1_44.dll
-        boost_iostreams-vc90-mt-1_44.dll
-        boost_python-vc90-mt-1_44.dll
-        boost_regex-vc90-mt-1_44.dll
-        boost_serialization-vc90-mt-1_44.dll
-        boost_signals-vc90-mt-1_44.dll
-        boost_system-vc90-mt-1_44.dll
-        boost_thread-vc90-mt-1_44.dll
+        boost_chrono.dll
+        boost_date_time.dll
+        boost_filesystem.dll
+        boost_iostreams.dll
+        boost_locale.dll
+        boost_log.dll
+        boost_log_setup.dll
+        boost_python.dll
+        boost_regex.dll
+        boost_serialization.dll
+        boost_signals.dll
+        boost_system.dll
+        boost_thread.dll
         glew32.dll
         libexpat.dll
         libogg.dll
