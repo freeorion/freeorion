@@ -1766,7 +1766,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
         return object->SpecialAddedOnTurn(special_name);
 
-    } else if (variable_name == "TurnPolicyAdopted") {
+    }
+    else if (variable_name == "TurnPolicyAdopted") {
         if (!m_string_ref1)
             return 0;
         std::string policy_name = m_string_ref1->Eval();
