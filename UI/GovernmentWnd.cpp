@@ -25,6 +25,7 @@
 #include <GG/TabWnd.h>
 
 #include <boost/cast.hpp>
+#include <boost/algorithm/string.hpp>
 
 struct Availability {
     // duplicated from DesignWnd
@@ -49,13 +50,8 @@ namespace {
     /** Returns texture with which to render a PolicySlotControl, depending on
       * \a category */
     std::shared_ptr<GG::Texture> SlotBackgroundTexture(const std::string& category) {
-        if (category == "ECONOMIC_CATEGORY")
-            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / "economic_slot.png", true);
-        if (category == "SOCIAL_CATEGORY")
-            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / "social_slot.png", true);
-        if (category == "MILITARY_CATEGORY")
-            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / "military_slot.png", true);
-        return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
+        std::string filename = boost::algorithm::to_lower_copy(category) + "_slot.png";
+        return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / filename, true);
     }
 
     /** Returns background texture with which to render a PolicyControl,
@@ -63,12 +59,8 @@ namespace {
       * be put into. */
     std::shared_ptr<GG::Texture> PolicyBackgroundTexture(const Policy* policy) {
         if (policy) {
-            if (policy->Category() == "ECONOMIC_CATEGORY")
-                return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / "economic_policy.png", true);
-            if (policy->Category() == "SOCIAL_CATEGORY")
-                return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / "social_policy.png", true);
-            if (policy->Category() == "MILITARY_CATEGORY")
-                return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / "military_policy.png", true);
+            std::string filename = boost::algorithm::to_lower_copy(policy->Category()) + "_slot.png";
+            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / filename, true);
         }
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
