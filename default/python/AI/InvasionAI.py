@@ -436,7 +436,8 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
                           2*planet.currentMeterValue(fo.meterType.targetResearch))
 
     # devalue invasions that would require too much military force
-    threat_factor = min(1, 0.2*MilitaryAI.get_tot_mil_rating()/(sys_total_threat+0.001))**2
+    threat_factor = min(1, MilitaryAI.get_preferred_max_military_portion_for_single_battle() *
+                        MilitaryAI.get_concentrated_tot_mil_rating()/(sys_total_threat+0.001))**2
 
     design_id, _, locs = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_INVASION)
     if not locs or not universe.getPlanet(locs[0]):
@@ -469,7 +470,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         planet_score *= 1.5
     if verbose:
         print (' - planet score: %.2f\n'
-               ' - troop score: %.2f\n'
+               ' - planned troops: %.2f\n'
                ' - projected troop cost: %.1f\n'
                ' - threat factor: %s\n'
                ' - planet detail: %s\n'
