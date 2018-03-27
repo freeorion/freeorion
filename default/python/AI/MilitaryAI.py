@@ -46,6 +46,27 @@ def cur_best_mil_ship_rating(include_designs=False):
     return max(best_rating, 0.001)
 
 
+def get_preferred_max_military_portion_for_single_battle():
+    """
+    Determine and return the preferred max portion of military to be allocated to a single battle.  May be used to
+    downgrade various possible actions requiring military support if they would require an excessive allocation of
+    military forces.  At the beginning of the game this max portion starts as 1.0, then is slightly reduced to account
+    for desire to reserve some defenses for other locations, and then in mid to late game, as the size of the the
+    military grows, this portion is further reduced to promote pursuit of multiple battlefronts in parallel as opposed
+    to single battlefronts against heavily defended positions.
+    :return: a number in range (0:1] for preferred max portion of miltary to be allocated to a single battle
+     :rtype: float
+    """
+    # TODO: this is a roughcut first pass, needs plenty of refinement
+    if fo.currentTurn < 40:
+        return 1.0
+    best_ship_equivalents = (get_concentrated_tot_mil_rating() / cur_best_mil_ship_rating())**0.5
+    _MIN_SHIPS_TO_PURSUE_MULTIPLE_FRONTS = 3
+    if best_ship_equivalents <= _MIN_SHIPS_TO_PURSUE_MULTIPLE_FRONTS:
+        return 1.0
+    return 1.0 / (best_ship_equivalents + 1 - _MIN_SHIPS_TO_PURSUE_MULTIPLE_FRONTS)**0.25
+
+
 def try_again(mil_fleet_ids, try_reset=False, thisround=""):
     """Clear targets and orders for all specified fleets then call get_military_fleets again."""
     for fid in mil_fleet_ids:
