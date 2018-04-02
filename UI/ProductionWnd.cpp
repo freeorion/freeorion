@@ -469,10 +469,17 @@ namespace {
         // get location indicator text
         std::string location_text;
         bool system_selected = false;
+        bool rally_dest_selected = (elem.rally_point_id != INVALID_OBJECT_ID && elem.rally_point_id == SidePanel::SystemID());
         if (std::shared_ptr<const UniverseObject> location = GetUniverseObject(elem.location)) {
-            system_selected = (location->SystemID() != -1 && location ->SystemID() == SidePanel::SystemID());
-            if (GetOptionsDB().Get<bool>("ui.queue.production_location.shown"))
-                location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name()) + " ";
+            system_selected = (location->SystemID() != INVALID_OBJECT_ID && location ->SystemID() == SidePanel::SystemID());
+            if (GetOptionsDB().Get<bool>("ui.queue.production_location.shown")) {
+                if (rally_dest_selected && !system_selected) {
+                    location_text = boost::io::str(FlexibleFormat(UserString(
+                        "PRODUCTION_QUEUE_ITEM_RALLIED_FROM_LOCATION")) % location->Name()) + " ";
+                } else {
+                    location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name()) + " ";
+                }
+            }
         }
 
         const int FONT_PTS = ClientUI::Pts();
@@ -497,9 +504,12 @@ namespace {
         GG::Clr location_clr = clr;
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         const Empire* this_client_empire = GetEmpire(client_empire_id);
-        if (this_client_empire && system_selected) {
+        if (this_client_empire && (system_selected || rally_dest_selected)) {
+            auto empire_color = this_client_empire->Color();
+            auto rally_color = GG::DarkColor(GG::Clr(255 - empire_color.r, 255 - empire_color.g, 255 - empire_color.b, empire_color.a));
+            auto location_color = system_selected ? empire_color : rally_color;
             m_location_text = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + location_text + "</s>",
-                                                  ClientUI::GetBoldFont(), this_client_empire->Color(), GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+                                                  ClientUI::GetBoldFont(), location_color, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
         } else {
             m_location_text = GG::Wnd::Create<CUILabel>(location_text, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
             m_location_text->SetTextColor(location_clr);

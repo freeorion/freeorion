@@ -4160,6 +4160,10 @@ PRODUCTION_WND_PROGRESS
 PRODUCTION_QUEUE_ITEM_LOCATION
 At %1%
 
+# %1% location where the item is produced.
+PRODUCTION_QUEUE_ITEM_RALLIED_FROM_LOCATION
+Rallying From %1%
+
 # %1% location where the item is enqueued for production.
 PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION
 Enqueued at %1%
