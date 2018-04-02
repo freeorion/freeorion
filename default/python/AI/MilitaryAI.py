@@ -845,8 +845,24 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
 
 @cache_by_turn
 def get_tot_mil_rating():
+    """
+    Give an assessment of total miltary rating considering all fleets as if distributed to separate systems.
+    :return: a military rating value
+    :rtype: float
+    """
     return sum(CombatRatingsAI.get_fleet_rating(fleet_id)
                for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY))
+
+
+@cache_by_turn
+def get_concentrated_tot_mil_rating():
+    """
+    Give an assessment of total miltary rating as if all fleets were merged into a single mega-fleet.
+    :return: a military rating value
+    :rtype: float
+    """
+    return CombatRatingsAI.combine_ratings_list([CombatRatingsAI.get_fleet_rating(fleet_id) for fleet_id in
+                                                 FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)])
 
 
 @cache_by_turn
