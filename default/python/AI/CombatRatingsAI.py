@@ -118,10 +118,15 @@ class ShipCombatStats(object):
         if not ship:
             return  # TODO: Add some estimate for stealthed ships
 
+
         if self._consider_refuel:
+            # TODO: Shouldn't we use current meter here?
+            # We make a prediction into the future anyway, so probably should
+            # take the most accurate guess into the account...
             structure = ship.initialMeterValue(fo.meterType.maxStructure)
             shields = ship.initialMeterValue(fo.meterType.maxShield)
         else:
+            # We use initial meters here because they do not grow before combat
             structure = ship.initialMeterValue(fo.meterType.structure)
             shields = ship.initialMeterValue(fo.meterType.shield)
         attacks = {}
@@ -135,6 +140,7 @@ class ShipCombatStats(object):
                 if not partname:
                     continue
                 pc = get_part_type(partname).partClass
+                # TODO: Why are we using current and not initial meter in the following?
                 if pc == fo.shipPartClass.shortRange:
                     damage = ship.currentPartMeterValue(meter_choice, partname)
                     attacks[damage] = attacks.get(damage, 0) + 1

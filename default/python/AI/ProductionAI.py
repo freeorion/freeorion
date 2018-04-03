@@ -928,6 +928,7 @@ def generate_production_orders():
         if not planet:
             continue
         can_build_camp = building_type.canBeProduced(empire.empireID, pid) and empire.buildingTypeAvailable(building_name)
+        # TODO: Using initial meter for pop but current for industry seems incosistent
         t_pop = planet.initialMeterValue(fo.meterType.targetPopulation)
         c_pop = planet.initialMeterValue(fo.meterType.population)
         t_ind = planet.currentMeterValue(fo.meterType.targetIndustry)
@@ -965,6 +966,7 @@ def generate_production_orders():
                         old_focus = planet.focus
                         fo.issueChangeFocusOrder(pid, FocusType.FOCUS_INDUSTRY)
                         universe.updateMeterEstimates([pid])
+                        # using current meter here to reflect focus changes
                         t_ind = planet.currentMeterValue(fo.meterType.targetIndustry)
                         if c_ind >= t_ind + c_pop:
                             fo.issueChangeFocusOrder(pid, old_focus)
@@ -1009,6 +1011,7 @@ def generate_production_orders():
                 planet = universe.getPlanet(pid)
                 if not planet:
                     continue
+                # TODO: Why not initial meter value?
                 build_locs.append((planet.currentMeterValue(fo.meterType.maxTroops), pid))
             if not build_locs:
                 continue
@@ -1582,6 +1585,7 @@ def find_automatic_historic_analyzer_candidates():
     possible_locations = set()
     for pid in state.get_all_empire_planets():
         planet = universe.getPlanet(pid)
+        # using currentMeterValue here allows us to consider techs, growth specials etc. unlocked this turn
         if not planet or planet.currentMeterValue(fo.meterType.targetPopulation) < 1:
             continue
         buildings_here = [bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs)]

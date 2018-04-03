@@ -30,6 +30,7 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
     supplied_systems = fo.getEmpire().fleetSupplyableSystemIDs
     # if about to leave supply lines
     if order.target.id not in supplied_systems or fo.getUniverse().jumpDistance(order.fleet.id, invasion_system.id) < 5:
+        # using current meter value here as the planet will have time to grow if it is important...
         if invasion_planet.currentMeterValue(fo.meterType.maxShield):
             military_support_fleets = MilitaryAI.get_military_fleets_with_target_system(invasion_system.id)
             if not military_support_fleets:
@@ -364,6 +365,7 @@ class OrderColonize(AIFleetOrder):
         sys_partial_vis_turn = get_partial_visibility_turn(planet.systemID)
         planet_partial_vis_turn = get_partial_visibility_turn(planet.id)
         if (planet_partial_vis_turn == sys_partial_vis_turn and planet.unowned or
+                # TODO: Shouldn't this be initial meter value to be consistent with AIFleetMission checks?
                 (planet.ownedBy(fo.empireID()) and not planet.currentMeterValue(fo.meterType.population))):
             return self.fleet.get_object().hasColonyShips
         self.executed = True
@@ -400,6 +402,7 @@ class OrderInvade(AIFleetOrder):
         if not super(OrderInvade, self).is_valid():
             return False
         planet = self.target.get_object()
+        # TODO: Shouldn't this be initial meter value to be consistent with AIFleetMission checks?
         planet_population = planet.currentMeterValue(fo.meterType.population)
         if planet.unowned and not planet_population:
             print "\t\t invasion order not valid due to target planet status-- owned: %s and population %.1f" % (
@@ -451,9 +454,9 @@ class OrderInvade(AIFleetOrder):
             debug("Ordering troop ship %d to invade %s" % (ship_id, planet))
             result = fo.issueInvadeOrder(ship_id, planet_id) or result
             if not result:
-                shields = planet.currentMeterValue(fo.meterType.shield)
-                planet_stealth = planet.currentMeterValue(fo.meterType.stealth)
-                pop = planet.currentMeterValue(fo.meterType.population)
+                shields = planet.initialMeterValue(fo.meterType.shield)
+                planet_stealth = planet.initialMeterValue(fo.meterType.stealth)
+                pop = planet.initialMeterValue(fo.meterType.population)
                 warn("Invasion order failed!")
                 debug(" -- planet has %.1f stealth, shields %.1f, %.1f population and "
                       "is owned by empire %d" % (planet_stealth, shields, pop, planet.owner))

@@ -510,9 +510,10 @@ class AIFleetMission(object):
                     if not threat_present and target_system:
                         for pid in target_system.planetIDs:
                             planet = universe.getPlanet(pid)
-                            if (planet and
-                                    planet.owner != fo.empireID() and
-                                    planet.currentMeterValue(fo.meterType.maxDefense) > 0):
+                            # using current meter here as we are checking if the planet could
+                            # possibly be a threat in the future. So use best prediction for that.
+                            is_potential_threat = planet.currentMeterValue(fo.meterType.maxDefense) > 0
+                            if planet and not planet.ownedBy(fo.empireID()) and is_potential_threat:
                                 threat_present = True
                                 break
                     if not threat_present:
@@ -614,6 +615,7 @@ class AIFleetMission(object):
         ships_max_health = 0
         for ship_id in fleet.shipIDs:
             this_ship = universe.getShip(ship_id)
+            # TODO: Predict if the ship will fight next turn. If not, use currentMeterValue to account for regeneration
             ships_cur_health += this_ship.initialMeterValue(fo.meterType.structure)
             ships_max_health += this_ship.initialMeterValue(fo.meterType.maxStructure)
         return ships_cur_health < repair_limit * ships_max_health

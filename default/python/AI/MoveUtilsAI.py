@@ -128,6 +128,8 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
         for pid in pids:
             planet = universe.getPlanet(pid)
             if (planet and
+                    # using current meter here to look one turn ahead is fine
+                    # the fleet may wait that one turn at target system...
                     planet.currentMeterValue(fo.meterType.happiness) >= DRYDOCK_HAPPINESS_THRESHOLD and
                     planet.currentMeterValue(fo.meterType.targetHappiness) >= DRYDOCK_HAPPINESS_THRESHOLD):
                 drydock_system_ids.add(sys_id)
