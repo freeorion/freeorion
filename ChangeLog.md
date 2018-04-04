@@ -3,6 +3,8 @@
 Notable changes to the FreeOrion project will be documented in this file.
 
 
+Made an awesum change!
+
 
 ## [v0.4.7.1] - 2017-09-03
 
