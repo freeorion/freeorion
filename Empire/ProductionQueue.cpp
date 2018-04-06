@@ -577,6 +577,7 @@ std::string ProductionQueue::Element::Dump() const {
 ProductionQueue::ProductionQueue(int empire_id) :
     m_projects_in_progress(0),
     m_expected_new_stockpile_amount(0),
+    m_expected_transfer_to_stockpile(0),
     m_empire_id(empire_id)
 {}
 
@@ -763,6 +764,7 @@ void ProductionQueue::Update() {
         m_empire_id, pp_in_stockpile, available_pp, m_object_group_allocated_pp,
         m_object_group_allocated_stockpile_pp);
     m_expected_new_stockpile_amount += transfer_to_stockpile;
+    m_expected_transfer_to_stockpile = transfer_to_stockpile;
 
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
