@@ -68,6 +68,7 @@ DRYDOCK_HAPPINESS_THRESHOLD = 5
 
 # Constants defined by the C++ game engine
 INVALID_ID = -1
+ALL_EMPIRES = -1
 
 # </editor-fold>
 

@@ -15,7 +15,7 @@ import MilitaryAI
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer, get_partial_visibility_turn
-from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
+from AIDependencies import (ALL_EMPIRES, INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
                             POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
 from InvasionAI import MIN_INVASION_SCORE
 
@@ -153,6 +153,14 @@ def calc_max_pop(planet, species, detail):
                     pop_tag_mod, base_pop_modified_by_species, base_pop_not_modified_by_species, max_pop_size()))
     detail.append("maxPop %.1f" % max_pop_size())
     return max_pop_size()
+
+def colony_detectable_by_empire(species_tags, empire_id=ALL_EMPIRES):
+    # TODO: add tech lookup ability for actual empire
+    if "GREAT_STEALTH" in species_tags or "ULTIMATE_STEALTH" in species_tags:
+        return False
+    if "GOOD_STEALTH" in species_tags:
+        return fo.currentTurn() > 30
+    return True
 
 
 def galaxy_is_sparse():
@@ -641,32 +649,23 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
 
     myrating = sys_status.get('myFleetRating', 0)
     cur_best_mil_ship_rating = max(MilitaryAI.cur_best_mil_ship_rating(), 0.001)
-    fleet_threat_ratio = (sys_status.get('fleetThreat', 0) - myrating) / float(cur_best_mil_ship_rating)
-    monster_threat_ratio = sys_status.get('monsterThreat', 0) / float(cur_best_mil_ship_rating)
-    neighbor_threat_ratio = (
-        sys_status.get('neighborThreat', 0) / float(cur_best_mil_ship_rating) +
-        min(0, fleet_threat_ratio)
-    )  # last portion gives credit for inner extra defenses
-    myrating = sys_status.get('my_neighbor_rating', 0)
-    jump2_threat_ratio = (
-        max(0, sys_status.get('jump2_threat', 0) - myrating) / float(cur_best_mil_ship_rating) +
-        min(0, neighbor_threat_ratio)
-    )  # last portion gives credit for inner extra defenses
-
-    thrt_factor = 1.0
-    ship_limit = 2 * (2 ** (fo.currentTurn() / 40.0))
-    threat_tally = fleet_threat_ratio + neighbor_threat_ratio + monster_threat_ratio
-    if existing_presence:
-        threat_tally += 0.3 * jump2_threat_ratio
-        threat_tally *= 0.8
-    else:
-        threat_tally += 0.6 * jump2_threat_ratio
-    if threat_tally > ship_limit:
-        thrt_factor = 0.1
-    elif fleet_threat_ratio + neighbor_threat_ratio + monster_threat_ratio > 0.6 * ship_limit:
-        thrt_factor = 0.4
-    elif fleet_threat_ratio + neighbor_threat_ratio + monster_threat_ratio > 0.2 * ship_limit:
-        thrt_factor = 0.8
+    local_defenses = sys_status.get('all_local_defenses', 0)
+    local_threat = sys_status.get('fleetThreat', 0) + sys_status.get('monsterThreat', 0)
+    neighbor_threat = sys_status.get('neighborThreat', 0)
+    jump2_threat = 0.6 * max(0, sys_status.get('jump2_threat', 0) - sys_status.get('my_neighbor_rating', 0))
+    area_threat = neighbor_threat + jump2_threat
+    area_threat *= 2.0 / (existing_presence + 2)  # once we have a foothold be less scared off by area threats
+    if not colony_detectable_by_empire(tag_list):  # TODO: evaluate detectability by specific source of area threat
+        area_threat *= 0.05
+    net_threat = max(0, local_threat + area_threat - local_defenses)
+    # even if our military has lost all warships, rate planets as if we have at least one
+    reference_rating = max(cur_best_mil_ship_rating, MilitaryAI.get_preferred_max_military_portion_for_single_battle() *
+                           MilitaryAI.get_concentrated_tot_mil_rating())
+    threat_factor = min(1.0, reference_rating/(net_threat+0.001))**2
+    if threat_factor < 0.5:
+        mil_ref_string = "Military rating reference: %.1f" % reference_rating
+        debug("Significant threat discounting %2d%% at %s, local defense: %.1f, local threat %.1f, area threat %.1f" %
+              (100*(1-threat_factor), planet.name, local_defenses, local_threat, area_threat) + mil_ref_string)
 
     sys_partial_vis_turn = get_partial_visibility_turn(this_sysid)
     planet_partial_vis_turn = get_partial_visibility_turn(planet_id)
@@ -889,9 +888,9 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
             supply_val += 25 * (planet_supply - sys_supply)
         detail.append("sys_supply: %d, planet_supply: %d, supply_val: %.0f" % (sys_supply, planet_supply, supply_val))
         retval += supply_val
-        if thrt_factor < 1.0:
-            retval *= thrt_factor
-            detail.append("threat reducing value by %3d %%" % (100 * (1 - thrt_factor)))
+        if threat_factor < 1.0:
+            retval *= threat_factor
+            detail.append("threat reducing value by %3d %%" % (100 * (1 - threat_factor)))
         return int(retval)
     else:  # colonization mission
         if not species:
@@ -1053,9 +1052,9 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
         if existing_presence:
             detail.append("preexisting system colony")
             retval = (retval + existing_presence * get_defense_value(spec_name)) * 2
-        if thrt_factor < 1.0:
-            retval *= thrt_factor
-            detail.append("threat reducing value by %3d %%" % (100 * (1 - thrt_factor)))
+        if threat_factor < 1.0:
+            retval *= threat_factor
+            detail.append("threat reducing value by %3d %%" % (100 * (1 - threat_factor)))
     return retval
 
 
