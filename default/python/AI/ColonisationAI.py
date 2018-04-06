@@ -394,7 +394,7 @@ def get_colony_fleets():
     sorted_planets = evaluated_colony_planets.items()
     sorted_planets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
 
-    _print_colony_candidate_table(sorted_planets)
+    _print_colony_candidate_table(sorted_planets, show_detail=True)
 
     sorted_planets = [(planet_id, score[:2]) for planet_id, score in sorted_planets if score[0] > 0]
     # export planets for other AI modules
@@ -1198,23 +1198,23 @@ def _print_empire_species_roster():
     info(species_table)
 
 
-def _print_outpost_candidate_table(candidates):
+def _print_outpost_candidate_table(candidates, show_detail=False):
     """Print a summary for the outpost candidates in a table format to log.
 
     :param candidates: list of (planet_id, (score, species, details)) tuples
     """
-    __print_candidate_table(candidates, mission='Outposts')
+    __print_candidate_table(candidates, mission='Outposts', show_detail=show_detail)
 
 
-def _print_colony_candidate_table(candidates):
+def _print_colony_candidate_table(candidates, show_detail=False):
     """Print a summary for the colony candidates in a table format to log.
 
     :param candidates: list of (planet_id, (score, species, details)) tuples
     """
-    __print_candidate_table(candidates, mission='Colonization')
+    __print_candidate_table(candidates, mission='Colonization', show_detail=show_detail)
 
 
-def __print_candidate_table(candidates, mission):
+def __print_candidate_table(candidates, mission, show_detail=False):
     universe = fo.getUniverse()
     if mission == 'Colonization':
         first_column = Text('(Score, Species)')
@@ -1227,17 +1227,22 @@ def __print_candidate_table(candidates, mission):
     else:
         warn("__print_candidate_table(%s, %s): Invalid mission type" % (candidates, mission))
         return
-    candidate_table = Table([first_column, Text('Planet'), Text('System'), Sequence('Specials')],
+    columns = [first_column, Text('Planet'), Text('System'), Sequence('Specials')]
+    if show_detail:
+        columns.append(Sequence('Detail'))
+    candidate_table = Table(columns,
                             table_name='Potential Targets for %s in Turn %d' % (mission, fo.currentTurn()))
     for planet_id, score_tuple in candidates:
         if score_tuple[0] > 0.5:
             planet = universe.getPlanet(planet_id)
-            candidate_table.add_row([
-                get_first_column_value(score_tuple),
-                planet,
-                universe.getSystem(planet.systemID),
-                planet.specials,
-            ])
+            entries = [get_first_column_value(score_tuple),
+                       planet,
+                       universe.getSystem(planet.systemID),
+                       planet.specials,
+                       ]
+            if show_detail:
+                entries.append(score_tuple[-1])
+            candidate_table.add_row(entries)
     info(candidate_table)
 
 
