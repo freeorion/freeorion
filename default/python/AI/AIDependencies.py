@@ -111,6 +111,16 @@ GASEOUS_POP_FACTOR = 0.50
 
 # </editor-fold>
 
+# <editor-fold desc="Detection Strengths">
+DETECTION_STRENGTHS = {
+    "SPY_DETECT_1" : 10,
+    "SPY_DETECT_2" : 30,
+    "SPY_DETECT_3" : 50,
+    "SPY_DETECT_4" : 70,
+    "SPY_DETECT_5" : 200,
+}
+# </editor-fold>
+
 
 # <editor-fold desc="Specials">
 # <editor-fold desc="Growth Focus specials">
