@@ -205,16 +205,14 @@ class OrderMove(AIFleetOrder):
                 'myFleetRatingVsPlanets', 0)
             is_military = foAI.foAIstate.get_fleet_role(self.fleet.id) == MissionType.MILITARY
 
-            # TODO(Morlic): Is there any reason to add this linearly instead of using CombineRatings?
-            total_rating = my_other_fleet_rating + fleet_rating
-            total_rating_vs_planets = my_other_fleet_rating_vs_planets + fleet_rating_vs_planets
+            total_rating = CombatRatingsAI.combine_ratings(my_other_fleet_rating, fleet_rating)
+            total_rating_vs_planets = CombatRatingsAI.combine_ratings(my_other_fleet_rating_vs_planets,
+                                                                      fleet_rating_vs_planets)
             if (my_other_fleet_rating > 3 * safety_factor * threat or
                     (is_military and total_rating_vs_planets > 2.5*p_threat and total_rating > safety_factor * threat)):
-                if verbose:
-                    print ("\tAdvancing fleet %d (rating %d) at system %d (%s) "
-                           "into system %d (%s) with threat %d because of "
-                           "sufficient empire fleet strength already at destination") % (
-                        self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat)
+                debug(("\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d"
+                       " because of sufficient empire fleet strength already at destination") %
+                      (self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat))
                 return True
             elif (threat == p_threat and
                   not self.fleet.get_object().aggressive and
