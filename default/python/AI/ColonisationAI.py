@@ -154,14 +154,10 @@ def calc_max_pop(planet, species, detail):
     detail.append("maxPop %.1f" % max_pop_size())
     return max_pop_size()
 
-def colony_detectable_by_empire(planet_id=None, species_name=None, species_tags=None, empire_id=ALL_EMPIRES,
-                                future_stealth_bonus=0):
-    # The future_stealth_bonus can be used if the AI knows it has researched techs that would grant a stealth bonus to
-    # the planet once it was colonized/captured
-
+def get_empire_detection(empire_id):
+    # TODO: move to an EspionageAI module
     empire_detection = 10
     empire = None
-    planet_stealth = 5
     if empire_id != ALL_EMPIRES:
         empire = fo.getEmpire(empire_id)
     if empire:
@@ -170,6 +166,15 @@ def colony_detectable_by_empire(planet_id=None, species_name=None, species_tags=
             if empire.techResearched(techname):
                 empire_detection = AIDependencies.DETECTION_STRENGTHS[techname]
                 break
+    return empire_detection
+
+def colony_detectable_by_empire(planet_id=None, species_name=None, species_tags=None, empire_id=ALL_EMPIRES,
+                                future_stealth_bonus=0):
+    # The future_stealth_bonus can be used if the AI knows it has researched techs that would grant a stealth bonus to
+    # the planet once it was colonized/captured
+
+    empire_detection = get_empire_detection(empire_id)
+    planet_stealth = 5
     if planet_id is not None:
         planet = fo.getUniverse().getPlanet(planet_id)
         if planet:
