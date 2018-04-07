@@ -121,6 +121,21 @@ DETECTION_STRENGTHS = {
 }
 # </editor-fold>
 
+# <editor-fold desc="Stealth Strengths">
+STEALTH_SPECIAL_STRENGTHS = {
+    "CLOUD_COVER_SLAVE_SPECIAL" : 20,
+    "VOLCANIC_ASH_SLAVE_SPECIAL" : 40,
+    "DIM_RIFT_SLAVE_SPECIAL" : 60,
+    "VOID_SLAVE_SPECIAL" : 80,
+}
+
+BASIC_STEALTH_STRENGTHS = {
+    "BAD_STEALTH" : 20,
+    "GOOD_STEALTH" : 40,
+    "GREAT_STEALTH" : 60,
+    "ULTIMATE_STEALTH" : 80,
+}
+# </editor-fold>
 
 # <editor-fold desc="Specials">
 # <editor-fold desc="Growth Focus specials">
