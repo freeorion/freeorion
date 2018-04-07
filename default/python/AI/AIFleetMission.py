@@ -1,9 +1,10 @@
-from logging import info, warn
+from logging import debug, info, warn
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 from fleet_orders import OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
 import AIstate
+import EspionageAI
 import FleetUtilsAI
 import FreeOrionAI as foAI
 import MoveUtilsAI
@@ -258,7 +259,9 @@ class AIFleetMission(object):
         """ checks if current mission (targeting a planet) should be aborted"""
         if fleet_order.target and isinstance(fleet_order.target, Planet):
             planet = fleet_order.target.get_object()
-            if isinstance(fleet_order, OrderColonize):
+            if not EspionageAI.colony_detectable_by_empire(planet.id, empire_id = fo.empireID()):
+                debug("EspionageAI predicts we can no longer detect %s, will abort mission" % fleet_order.target)
+            elif isinstance(fleet_order, OrderColonize):
                 if (planet.initialMeterValue(fo.meterType.population) == 0 and
                         (planet.ownedBy(fo.empireID()) or planet.unowned)):
                     return False
@@ -271,8 +274,8 @@ class AIFleetMission(object):
                 return False
 
         # canceling fleet orders
-        print "   %s" % fleet_order
-        print "Fleet %d had a target planet that is no longer valid for this mission; aborting." % self.fleet.id
+        debug("   %s" % fleet_order)
+        debug("Fleet %d had a target planet that is no longer valid for this mission; aborting." % self.fleet.id)
         self.clear_fleet_orders()
         self.clear_target()
         FleetUtilsAI.split_fleet(self.fleet.id)
@@ -384,6 +387,11 @@ class AIFleetMission(object):
             self._check_retarget_invasion()
         just_issued_move_order = False
         last_move_target_id = INVALID_ID
+        # Note: the following abort check somewhat assumes only one major mission type
+        for fleet_order in self.orders:
+            if (isinstance(fleet_order, (OrderColonize, OrderOutpost, OrderInvade)) and
+                    self._check_abort_mission(fleet_order)):
+                return
         for fleet_order in self.orders:
             if just_issued_move_order and self.fleet.get_object().systemID != last_move_target_id:
                 # having just issued a move order, we will normally stop issuing orders this turn, except that if there
@@ -392,10 +400,6 @@ class AIFleetMission(object):
                         self.need_to_pause_movement(last_move_target_id, fleet_order)):
                     break
             print "Checking order: %s" % fleet_order
-            if isinstance(fleet_order, (OrderColonize, OrderOutpost, OrderInvade)):  # TODO: invasion?
-                if self._check_abort_mission(fleet_order):
-                    print "Aborting fleet order %s" % fleet_order
-                    return
             self.check_mergers(context=str(fleet_order))
             if fleet_order.can_issue_order(verbose=False):
                 if isinstance(fleet_order, OrderMove) and order_completed:  # only move if all other orders completed
