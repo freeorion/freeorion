@@ -1,5 +1,5 @@
 import math
-from logging import warn, info
+from logging import debug, info, warn
 
 from turn_state import state
 import freeOrionAIInterface as fo
@@ -315,7 +315,14 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
 
     system_id = planet.systemID
 
-    # make sure the target planet is not stealthed
+    # by using the following instead of simply relying on stealth meter reading, can (sometimes) plan ahead even if
+    # planet is temporarily shrouded by an ion storm
+    if not ColonisationAI.colony_detectable_by_empire(planet_id, empire_id=fo.empireID()):
+        debug("InvasionAI predicts planet id %d to be stealthed" % planet_id)
+        return [0, 0]
+
+    # make sure the target planet was not extra-stealthed somehow its system was last viewed
+    # this test below augments the tests above, but by itself it can be thrown off by temporary combat-related sighting
     system_last_seen = get_partial_visibility_turn(planet_id)
     planet_last_seen = get_partial_visibility_turn(system_id)
     if planet_last_seen < system_last_seen:
