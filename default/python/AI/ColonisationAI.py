@@ -156,7 +156,8 @@ def calc_max_pop(planet, species, detail):
 
 def get_empire_detection(empire_id):
     # TODO: move to an EspionageAI module
-    empire_detection = 10
+    # TODO doublecheck typical AI research times for Radar, for below default value
+    empire_detection = 10 if fo.currentTurn() < 40 else 30
     empire = None
     if empire_id != ALL_EMPIRES:
         empire = fo.getEmpire(empire_id)
