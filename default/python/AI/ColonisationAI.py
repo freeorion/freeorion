@@ -154,14 +154,45 @@ def calc_max_pop(planet, species, detail):
     detail.append("maxPop %.1f" % max_pop_size())
     return max_pop_size()
 
-def colony_detectable_by_empire(species_tags, empire_id=ALL_EMPIRES):
-    # TODO: add tech lookup ability for actual empire
-    if "GREAT_STEALTH" in species_tags or "ULTIMATE_STEALTH" in species_tags:
-        return False
-    if "GOOD_STEALTH" in species_tags:
-        return fo.currentTurn() > 30
-    return True
+def colony_detectable_by_empire(planet_id=None, species_name=None, species_tags=None, empire_id=ALL_EMPIRES,
+                                future_stealth_bonus=0):
+    # The future_stealth_bonus can be used if the AI knows it has researched techs that would grant a stealth bonus to
+    # the planet once it was colonized/captured
 
+    empire_detection = 10
+    empire = None
+    planet_stealth = 5
+    if empire_id != ALL_EMPIRES:
+        empire = fo.getEmpire(empire_id)
+    if empire:
+        # TODO: expose Empire.GetMeter to automatically take into account detection specials
+        for techname in sorted(AIDependencies.DETECTION_STRENGTHS, reverse=True):
+            if empire.techResearched(techname):
+                empire_detection = AIDependencies.DETECTION_STRENGTHS[techname]
+                break
+    if planet_id is not None:
+        planet = fo.getUniverse().getPlanet(planet_id)
+        if planet:
+            species_name = planet.speciesName
+            # could just check stealth meter, but this approach might allow us to plan ahead a bit even if the planet
+            # is temporarily stealth boosted by temporary effects like ion storm
+            planet_stealth = max([5] + [AIDependencies.STEALTH_SPECIAL_STRENGTHS.get(tag, 0) for tag in planet.tags])
+        else:
+            error("Couldn't retrieve planet ID %d." % planet_id)
+    planet_stealth = max(planet_stealth, 5 + future_stealth_bonus)
+    if species_name is not None:
+        species = fo.getSpecies(species_name)
+        if species:
+            species_tags = species.tags
+        elif species_name == "":
+            species_tags = []
+        else:
+            error("Couldn't retrieve species named '%s'." % species_name)
+            return False
+    if species_tags is None:
+        species_tags = []
+    total_stealth = planet_stealth + sum([AIDependencies.BASIC_STEALTH_STRENGTHS.get(tag, 0) for tag in species_tags])
+    return total_stealth < empire_detection
 
 def galaxy_is_sparse():
     setup_data = fo.getGalaxySetupData()
@@ -655,7 +686,9 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     jump2_threat = 0.6 * max(0, sys_status.get('jump2_threat', 0) - sys_status.get('my_neighbor_rating', 0))
     area_threat = neighbor_threat + jump2_threat
     area_threat *= 2.0 / (existing_presence + 2)  # once we have a foothold be less scared off by area threats
-    if not colony_detectable_by_empire(tag_list):  # TODO: evaluate detectability by specific source of area threat
+    # TODO: evaluate detectability by specific source of area threat, also consider if the subject AI already has
+    # researched techs that would grant a stealth bonus
+    if not colony_detectable_by_empire(species_tags=tag_list):
         area_threat *= 0.05
     net_threat = max(0, local_threat + area_threat - local_defenses)
     # even if our military has lost all warships, rate planets as if we have at least one
