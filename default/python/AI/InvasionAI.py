@@ -8,6 +8,7 @@ from common.print_utils import Table, Text, Float
 import FreeOrionAI as foAI
 import AIstate
 import AIDependencies
+import EspionageAI
 import FleetUtilsAI
 import PlanetUtilsAI
 import universe_object
@@ -317,7 +318,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
 
     # by using the following instead of simply relying on stealth meter reading, can (sometimes) plan ahead even if
     # planet is temporarily shrouded by an ion storm
-    if not ColonisationAI.colony_detectable_by_empire(planet_id, empire_id=fo.empireID()):
+    if not EspionageAI.colony_detectable_by_empire(planet_id, empire_id=fo.empireID()):
         debug("InvasionAI predicts planet id %d to be stealthed" % planet_id)
         return [0, 0]
 

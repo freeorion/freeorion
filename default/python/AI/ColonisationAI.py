@@ -6,6 +6,7 @@ from common.print_utils import Table, Text, Sequence, Bool, Float
 import AIDependencies
 import universe_object
 import AIstate
+import EspionageAI
 import FleetUtilsAI
 import FreeOrionAI as foAI
 import PlanetUtilsAI
@@ -153,58 +154,6 @@ def calc_max_pop(planet, species, detail):
                     pop_tag_mod, base_pop_modified_by_species, base_pop_not_modified_by_species, max_pop_size()))
     detail.append("maxPop %.1f" % max_pop_size())
     return max_pop_size()
-
-
-def get_empire_detection(empire_id):
-    # TODO: move to an EspionageAI module
-    # TODO doublecheck typical AI research times for Radar, for below default value
-    empire_detection = 10 if fo.currentTurn() < 40 else 30
-    empire = None
-    if empire_id != ALL_EMPIRES:
-        empire = fo.getEmpire(empire_id)
-    if empire:
-        # TODO: expose Empire.GetMeter to automatically take into account detection specials, or possibly simply
-        # scan for such specials, but the latter approach would be subject to error for enemy empires due to incomplete
-        # visibility of their empire
-        for techname in sorted(AIDependencies.DETECTION_TECH_STRENGTHS, reverse=True):
-            if empire.techResearched(techname):
-                empire_detection = AIDependencies.DETECTION_TECH_STRENGTHS[techname]
-                break
-    return empire_detection
-
-
-def colony_detectable_by_empire(planet_id=None, species_name=None, species_tags=None, empire_id=ALL_EMPIRES,
-                                future_stealth_bonus=0):
-    # The future_stealth_bonus can be used if the AI knows it has researched techs that would grant a stealth bonus to
-    # the planet once it was colonized/captured
-
-    empire_detection = get_empire_detection(empire_id)
-    planet_stealth = AIDependencies.BASE_PLANET_STEALTH
-    if planet_id is not None:
-        planet = fo.getUniverse().getPlanet(planet_id)
-        if planet:
-            species_name = planet.speciesName
-            # could just check stealth meter, but this approach might allow us to plan ahead a bit even if the planet
-            # is temporarily stealth boosted by temporary effects like ion storm
-            planet_stealth = max([AIDependencies.BASE_PLANET_STEALTH] +
-                                 [AIDependencies.STEALTH_SPECIAL_STRENGTHS.get(_spec, 0) for _spec in planet.specials])
-        else:
-            error("Couldn't retrieve planet ID %d." % planet_id)
-    planet_stealth = max(planet_stealth, AIDependencies.BASE_PLANET_STEALTH + future_stealth_bonus)
-    if species_name is not None:
-        species = fo.getSpecies(species_name)
-        if species:
-            species_tags = species.tags
-        elif species_name == "":
-            species_tags = []
-        else:
-            error("Couldn't retrieve species named '%s'." % species_name)
-            return False
-    if species_tags is None:
-        species_tags = []
-    total_stealth = planet_stealth + sum([AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(tag, 0) for tag in species_tags])
-    return total_stealth < empire_detection
-
 
 def galaxy_is_sparse():
     setup_data = fo.getGalaxySetupData()
@@ -699,7 +648,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     area_threat *= 2.0 / (existing_presence + 2)  # once we have a foothold be less scared off by area threats
     # TODO: evaluate detectability by specific source of area threat, also consider if the subject AI already has
     # researched techs that would grant a stealth bonus
-    if not colony_detectable_by_empire(species_tags=tag_list):
+    if not EspionageAI.colony_detectable_by_empire(species_tags=tag_list):
         area_threat *= 0.05
     net_threat = max(0, local_threat + area_threat - local_defenses)
     # even if our military has lost all warships, rate planets as if we have at least one
