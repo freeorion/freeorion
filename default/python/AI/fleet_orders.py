@@ -1,6 +1,7 @@
 from logging import debug, error, warn
 
 from EnumsAI import ShipRoleType, MissionType
+import EspionageAI
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -495,11 +496,25 @@ class OrderMilitary(AIFleetOrder):
         fleet = self.target.get_object()
         system_status = foAI.foAIstate.systemStatus.get(target_sys_id, {})
         total_threat = sum(system_status.get(threat, 0) for threat in ('fleetThreat', 'planetThreat', 'monsterThreat'))
+        combat_trigger = system_status.get('fleetThreat', 0) or  system_status.get('monsterThreat', 0)
+        if not combat_trigger and system_status.get('planetThreat', 0):
+            universe = fo.getUniverse()
+            system = universe.getSystem(target_sys_id)
+            for planet_id in system.planetIDs:
+                planet = universe.getPlanet(planet_id)
+                if planet.ownedBy(fo.empireID()):  # TODO: also exclude at-peace planets
+                    continue
+                if planet.unowned and not EspionageAI.colony_detectable_by_empire(planet_id, empire_id=fo.empireID()):
+                    continue
+                if sum([planet.currentMeterValue(meter_type) for meter_type in
+                        [fo.meterType.defense, fo.meterType.shield, fo.meterType.construction]]):
+                    combat_trigger = True
+                    break
         if all((
                 fleet,
                 fleet.systemID == target_sys_id,
                 system_status.get('currently_visible', False),
-                not total_threat
+                not (total_threat and combat_trigger)
         )):
             self.order_issued = True
 
