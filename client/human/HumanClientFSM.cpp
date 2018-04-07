@@ -337,7 +337,9 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPJoinAck.JoinGame";
 
     try {
-        int player_id = boost::lexical_cast<int>(msg.m_message.Text());
+        int player_id;
+        boost::uuids::uuid cookie;
+        ExtractJoinAckMessageData(msg.m_message, player_id, cookie);
 
         Client().Networking().SetPlayerID(player_id);
 

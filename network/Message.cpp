@@ -24,6 +24,8 @@
 #include <boost/serialization/weak_ptr.hpp>
 #include <boost/timer.hpp>
 #include <boost/date_time/posix_time/time_serialize.hpp>
+#include <boost/uuid/uuid_serialize.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 #include <zlib.h>
 
@@ -152,14 +154,17 @@ Message HostMPGameMessage(const std::string& host_player_name)
     return Message(Message::HOST_MP_GAME, os.str());
 }
 
-Message JoinGameMessage(const std::string& player_name, Networking::ClientType client_type) {
+Message JoinGameMessage(const std::string& player_name,
+                        Networking::ClientType client_type,
+                        boost::uuids::uuid cookie) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
         std::string client_version_string = FreeOrionVersionString();
         oa << BOOST_SERIALIZATION_NVP(player_name)
            << BOOST_SERIALIZATION_NVP(client_type)
-           << BOOST_SERIALIZATION_NVP(client_version_string);
+           << BOOST_SERIALIZATION_NVP(client_version_string)
+           << BOOST_SERIALIZATION_NVP(cookie);
     }
     return Message(Message::JOIN_GAME, os.str());
 }
@@ -340,8 +345,16 @@ Message HostSPAckMessage(int player_id)
 Message HostMPAckMessage(int player_id)
 { return Message(Message::HOST_MP_GAME, std::to_string(player_id)); }
 
-Message JoinAckMessage(int player_id)
-{ return Message(Message::JOIN_GAME, std::to_string(player_id)); }
+Message JoinAckMessage(int player_id, boost::uuids::uuid cookie)
+{
+    std::ostringstream os;
+    {
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(player_id)
+           << BOOST_SERIALIZATION_NVP(cookie);
+    }
+    return Message(Message::JOIN_GAME, os.str());
+}
 
 Message TurnOrdersMessage(const OrderSet& orders) {
     std::ostringstream os;
@@ -879,7 +892,8 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
 
 void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
                                 Networking::ClientType& client_type,
-                                std::string& version_string)
+                                std::string& version_string,
+                                boost::uuids::uuid& cookie)
 {
     DebugLogger() << "ExtractJoinGameMessageData() from " << player_name << " client type " << client_type;
     try {
@@ -887,11 +901,29 @@ void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(player_name)
            >> BOOST_SERIALIZATION_NVP(client_type)
-           >> BOOST_SERIALIZATION_NVP(version_string);
+           >> BOOST_SERIALIZATION_NVP(version_string)
+           >> BOOST_SERIALIZATION_NVP(cookie);
 
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractJoinGameMessageData(const Message& msg, std::string& player_name, "
                       << "Networking::ClientType client_type, std::string& version_string) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
+        throw err;
+    }
+}
+
+void ExtractJoinAckMessageData(const Message& msg, int& player_id,
+                               boost::uuids::uuid& cookie)
+{
+    try {
+        std::istringstream is(msg.Text());
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(player_id)
+           >> BOOST_SERIALIZATION_NVP(cookie);
+    } catch (const std::exception& err) {
+        ErrorLogger() << "ExtractJoinAckMessageData(const Message& msg, int& player_id, "
+                      << "boost::uuids::uuid& cookie) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;

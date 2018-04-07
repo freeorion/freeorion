@@ -25,7 +25,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/functional/hash.hpp>
-
+#include <boost/uuid/nil_generator.hpp>
 
 #include <thread>
 #include <chrono>
@@ -139,7 +139,9 @@ void AIClientApp::Run() {
         StartPythonAI();
 
         // join game
-        Networking().SendMessage(JoinGameMessage(PlayerName(), Networking::CLIENT_TYPE_AI_PLAYER));
+        Networking().SendMessage(JoinGameMessage(PlayerName(),
+                                                 Networking::CLIENT_TYPE_AI_PLAYER,
+                                                 boost::uuids::nil_uuid()));
 
         // Start parsing content
         StartBackgroundParsing();
@@ -224,12 +226,13 @@ void AIClientApp::HandleMessage(const Message& msg) {
     case Message::JOIN_GAME: {
         if (PlayerID() == Networking::INVALID_PLAYER_ID) {
             DebugLogger() << "AIClientApp::HandleMessage : Received JOIN_GAME acknowledgement";
-            const std::string& text = msg.Text();
             try {
-                int player_id = boost::lexical_cast<int>(text);
+                int player_id;
+                boost::uuids::uuid cookie; // ignore
+                ExtractJoinAckMessageData(msg, player_id, cookie);
                 m_networking->SetPlayerID(player_id);
             } catch(const boost::bad_lexical_cast& ex) {
-                ErrorLogger() << "AIClientApp::HandleMessage for JOIN_GAME : Couldn't parse message text \"" << text << "\": " << ex.what();
+                ErrorLogger() << "AIClientApp::HandleMessage for JOIN_GAME : Couldn't parse message text \"" << msg.Text() << "\": " << ex.what();
             }
         } else {
             ErrorLogger() << "AIClientApp::HandleMessage : Received erroneous JOIN_GAME acknowledgement when already in a game";

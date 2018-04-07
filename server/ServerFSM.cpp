@@ -22,6 +22,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/uuid/nil_generator.hpp>
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>
 
@@ -337,7 +338,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 
         // establish player with requested client type and acknowldge via connection
         player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
-        player_connection->SendMessage(JoinAckMessage(player_id));
+        player_connection->SendMessage(JoinAckMessage(player_id, boost::uuids::nil_uuid()));
         if (!GetOptionsDB().Get<bool>("skip-checksum"))
             player_connection->SendMessage(ContentCheckSumMessage());
 
@@ -794,7 +795,8 @@ sc::result MPLobby::react(const JoinGame& msg) {
     std::string player_name;
     Networking::ClientType client_type;
     std::string client_version_string;
-    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
+    boost::uuids::uuid cookie;
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
 
     Networking::AuthRoles roles;
     if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequiredOrFillRoles(player_name, roles)) {
@@ -1566,7 +1568,8 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
     std::string player_name("Default_Player_Name_in_WaitingForSPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
     std::string client_version_string;
-    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
+    boost::uuids::uuid cookie;
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
 
     // is this an AI?
     if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -1580,7 +1583,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             // expected player
             // let the networking system know what socket this player is on
             player_connection->EstablishPlayer(expected_it->second, player_name, client_type, client_version_string);
-            player_connection->SendMessage(JoinAckMessage(expected_it->second));
+            player_connection->SendMessage(JoinAckMessage(expected_it->second, boost::uuids::nil_uuid()));
             if (!GetOptionsDB().Get<bool>("skip-checksum"))
                 player_connection->SendMessage(ContentCheckSumMessage());
 
@@ -1605,7 +1608,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             // unexpected but welcome human player
             int host_id = server.Networking().HostPlayerID();
             player_connection->EstablishPlayer(host_id, player_name, client_type, client_version_string);
-            player_connection->SendMessage(JoinAckMessage(host_id));
+            player_connection->SendMessage(JoinAckMessage(host_id, boost::uuids::nil_uuid()));
             if (!GetOptionsDB().Get<bool>("skip-checksum"))
                 player_connection->SendMessage(ContentCheckSumMessage());
 
@@ -1730,7 +1733,8 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     std::string player_name("Default_Player_Name_in_WaitingForMPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
     std::string client_version_string;
-    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
+    boost::uuids::uuid cookie;
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
 
     // is this an AI?
     if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -1744,7 +1748,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             // let the networking system know what socket this player is on
             int player_id = server.m_networking.NewPlayerID();
             player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
-            player_connection->SendMessage(JoinAckMessage(player_id));
+            player_connection->SendMessage(JoinAckMessage(player_id, boost::uuids::nil_uuid()));
 
             // Inform AI of logging configuration.
             player_connection->SendMessage(
@@ -2128,7 +2132,8 @@ sc::result PlayingGame::react(const JoinGame& msg) {
     std::string player_name;
     Networking::ClientType client_type;
     std::string client_version_string;
-    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
+    boost::uuids::uuid cookie;
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
 
     Networking::AuthRoles roles;
     if (server.IsAuthRequiredOrFillRoles(player_name, roles)) {
