@@ -799,7 +799,7 @@ namespace {
             latest_obsolete_event = std::max(latest_obsolete_event, *maybe_hull_obsolete);
 
         for (const auto& part: design->Parts()) {
-            if(const auto maybe_part_obsolete = IsPartObsolete(part))
+            if (const auto maybe_part_obsolete = IsPartObsolete(part))
                 latest_obsolete_event = std::max(latest_obsolete_event, *maybe_part_obsolete);
         }
 
@@ -1131,7 +1131,7 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
     }
 
     // If requested initialize the current designs to all designs known by the empire
-    if(GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled")) {
+    if (GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled")) {
 
         // Assume that on new game start the server assigns the ids in an order
         // that makes sense for the UI.
