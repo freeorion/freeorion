@@ -7,11 +7,12 @@
 #include <boost/function.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/signals2/signal.hpp>
+#include <boost/functional/hash.hpp>
 
 #include <memory>
 #include <queue>
 #include <set>
-
+#include <unordered_map>
 
 class DiscoveryServer;
 class PlayerConnection;
@@ -20,6 +21,22 @@ typedef std::shared_ptr<PlayerConnection> PlayerConnectionPtr;
 typedef boost::function<void (Message, PlayerConnectionPtr)> MessageAndConnectionFn;
 typedef boost::function<void (PlayerConnectionPtr)> ConnectionFn;
 typedef boost::function<void ()> NullaryFn;
+
+/** Data associated with cookie
+ */
+struct CookieData {
+    std::string player_name;
+    boost::posix_time::ptime expired;
+    Networking::AuthRoles roles;
+
+    CookieData(const std::string& player_name_,
+               const boost::posix_time::ptime& expired_,
+               const Networking::AuthRoles& roles_) :
+        player_name(player_name_),
+        expired(expired_),
+        roles(roles_)
+    { }
+};
 
 /** Encapsulates the networking facilities of the server.  This class listens
     for incoming UDP LAN server-discovery requests and TCP player connections.
@@ -124,6 +141,15 @@ public:
 
     /** Sets Host player ID. */
     void SetHostPlayerID(int host_player_id);
+
+    /** Generate cookies for player's name and roles. */
+    boost::uuids::uuid GenerateCookie(const std::string& player_name, const Networking::AuthRoles& roles);
+
+    /** Bump cookie's expired date. */
+    void UpdateCookie(boost::uuids::uuid cookie);
+
+    /** Clean up expired cookies. */
+    void CleanupCookies();
     //@}
 
 private:
@@ -140,6 +166,7 @@ private:
     boost::asio::ip::tcp::acceptor  m_player_connection_acceptor;
     PlayerConnections               m_player_connections;
     std::queue<NullaryFn>           m_event_queue;
+    std::unordered_map<boost::uuids::uuid, CookieData, boost::hash<boost::uuids::uuid>> m_cookies;
 
     MessageAndConnectionFn          m_nonplayer_message_callback;
     MessageAndConnectionFn          m_player_message_callback;
@@ -197,6 +224,9 @@ public:
 
     /** Checks if the player has a some role */
     bool HasAuthRole(Networking::RoleType role) const;
+
+    /** Get cookie associated with this connection. */
+    boost::uuids::uuid Cookie() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -229,6 +259,9 @@ public:
 
     /** Sets or unset authorizaion role and send message to client. */
     void SetAuthRole(Networking::RoleType role, bool value = true);
+
+    /** Sets cookie value to this connection to update expire date. */
+    void SetCookie(boost::uuids::uuid cookie);
     //@}
 
     mutable boost::signals2::signal<void (const NullaryFn&)> EventSignal;
@@ -259,6 +292,7 @@ private:
     std::string                     m_client_version_string;
     bool                            m_authenticated;
     Networking::AuthRoles           m_roles;
+    boost::uuids::uuid              m_cookie;
 
     MessageAndConnectionFn          m_nonplayer_message_callback;
     MessageAndConnectionFn          m_player_message_callback;

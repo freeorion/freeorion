@@ -235,6 +235,10 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     bool must_quit = false;
 
     if (player_connection->IsEstablished()) {
+        // update cookie expire date
+        // so player could reconnect within 15 minutes
+        m_server.Networking().UpdateCookie(player_connection->Cookie());
+
         int id = player_connection->PlayerID();
         DebugLogger(FSM) << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << id
                          << ", named \"" << player_connection->PlayerName() << "\".";
@@ -270,6 +274,8 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         must_quit = true;
         DebugLogger(FSM) << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
     }
+
+    m_server.Networking().CleanupCookies();
 
     if (must_quit) {
         ErrorLogger(FSM) << "Unable to recover server terminating.";
@@ -338,7 +344,12 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 
         // establish player with requested client type and acknowldge via connection
         player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
-        player_connection->SendMessage(JoinAckMessage(player_id, boost::uuids::nil_uuid()));
+
+        // save cookie for player name
+        boost::uuids::uuid cookie = m_server.m_networking.GenerateCookie(player_name, roles);
+        player_connection->SetCookie(cookie);
+
+        player_connection->SendMessage(JoinAckMessage(player_id, cookie));
         if (!GetOptionsDB().Get<bool>("skip-checksum"))
             player_connection->SendMessage(ContentCheckSumMessage());
 
@@ -711,6 +722,10 @@ sc::result MPLobby::react(const Disconnection& d) {
         }
     }
     if (player_was_in_lobby) {
+        // update cookie's expire date
+        // so player could reconnect within 15 minutes
+        Server().Networking().UpdateCookie(player_connection->Cookie());
+
         // drop ready flag as player list changed
         for (auto& plrs : m_lobby_data->m_players) {
             plrs.second.m_player_ready = false;
