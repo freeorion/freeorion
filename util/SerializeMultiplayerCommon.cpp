@@ -66,22 +66,78 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(map_zoom_steps_in)
         & BOOST_SERIALIZATION_NVP(fleets_exploring);
 
-    if (version >= 1) {
+    if (version >= 2) {
+        ar & BOOST_SERIALIZATION_NVP(obsolete_ui_event_count);
         ar & BOOST_SERIALIZATION_NVP(ordered_ship_design_ids_and_obsolete);
         ar & BOOST_SERIALIZATION_NVP(ordered_ship_hull_and_obsolete);
         ar & BOOST_SERIALIZATION_NVP(obsolete_ship_parts);
-    } else {
-        if (Archive::is_loading::value) {
-            std::vector<std::pair<int, bool>> dummy_ordered_ship_design_ids_and_obsolete;
-            ar & boost::serialization::make_nvp(
-                "ordered_ship_design_ids_and_obsolete", dummy_ordered_ship_design_ids_and_obsolete);
-            ordered_ship_design_ids_and_obsolete.clear();
-            ordered_ship_design_ids_and_obsolete.reserve(dummy_ordered_ship_design_ids_and_obsolete.size());
-            for (auto id_and_obsolete : dummy_ordered_ship_design_ids_and_obsolete) {
-                ordered_ship_design_ids_and_obsolete.push_back(
-                    {id_and_obsolete.first, (id_and_obsolete.second ? boost::optional<bool>(true) : boost::none)});
-            }
+    }
+
+    // Only workarounds for old versions follow
+    if (version >= 2)
+        return;
+
+    legacy_serialize(ar, version);
+}
+
+template <class Archive>
+void SaveGameUIData::legacy_serialize(Archive& ar, const unsigned int version)
+{
+    if (!Archive::is_loading::value)
+        return;
+
+    if (version == 1) {
+        obsolete_ui_event_count = 1;
+
+        std::vector<std::pair<int, boost::optional<bool>>> dummy_ordered_ship_design_ids_and_obsolete;
+        ar & boost::serialization::make_nvp(
+            "ordered_ship_design_ids_and_obsolete", dummy_ordered_ship_design_ids_and_obsolete);
+
+        std::vector<std::pair<std::string, bool>> dummy_ordered_ship_hull_and_obsolete;
+        ar & boost::serialization::make_nvp(
+            "ordered_ship_hull_and_obsolete", dummy_ordered_ship_hull_and_obsolete);
+        ordered_ship_hull_and_obsolete.clear();
+        ordered_ship_hull_and_obsolete.reserve(dummy_ordered_ship_hull_and_obsolete.size());
+        for (auto name_and_obsolete : dummy_ordered_ship_hull_and_obsolete) {
+            ordered_ship_hull_and_obsolete.push_back(
+                {name_and_obsolete.first, {name_and_obsolete.second, ++obsolete_ui_event_count}});
         }
+
+        std::unordered_set<std::string> dummy_obsolete_ship_parts;
+        ar & boost::serialization::make_nvp(
+            "obsolete_ship_parts", dummy_obsolete_ship_parts);
+        obsolete_ship_parts.clear();
+        obsolete_ship_parts.reserve(dummy_obsolete_ship_parts.size());
+        for (auto part : dummy_obsolete_ship_parts) {
+            obsolete_ship_parts.insert({part, ++obsolete_ui_event_count});
+        }
+
+        // Insert designs last to preserve version 1 behavior
+        ordered_ship_design_ids_and_obsolete.clear();
+        ordered_ship_design_ids_and_obsolete.reserve(dummy_ordered_ship_design_ids_and_obsolete.size());
+        for (auto id_and_obsolete : dummy_ordered_ship_design_ids_and_obsolete) {
+            ordered_ship_design_ids_and_obsolete.push_back(
+                std::make_pair(id_and_obsolete.first,
+                               (id_and_obsolete.second
+                                ? boost::optional<std::pair<bool, int>>({true, ++obsolete_ui_event_count})
+                                : boost::none)));
+        }
+    } else {
+        std::vector<std::pair<int, bool>> dummy_ordered_ship_design_ids_and_obsolete;
+        ar & boost::serialization::make_nvp(
+            "ordered_ship_design_ids_and_obsolete", dummy_ordered_ship_design_ids_and_obsolete);
+
+        ordered_ship_design_ids_and_obsolete.clear();
+        ordered_ship_design_ids_and_obsolete.reserve(dummy_ordered_ship_design_ids_and_obsolete.size());
+        for (auto id_and_obsolete : dummy_ordered_ship_design_ids_and_obsolete) {
+            ordered_ship_design_ids_and_obsolete.push_back(
+                std::make_pair(id_and_obsolete.first,
+                               (id_and_obsolete.second
+                                ? boost::optional<std::pair<bool, int>>({true, ++obsolete_ui_event_count})
+                                : boost::none)));
+        }
+        ordered_ship_hull_and_obsolete.clear();
+        obsolete_ship_parts.clear();
     }
 }
 

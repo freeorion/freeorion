@@ -91,17 +91,21 @@ struct FO_COMMON_API SaveGameUIData {
     double  map_zoom_steps_in;
     std::set<int> fleets_exploring;
 
-    std::vector<std::pair<int, boost::optional<bool>>> ordered_ship_design_ids_and_obsolete;
-    std::vector<std::pair<std::string, bool>> ordered_ship_hull_and_obsolete;
-    std::unordered_set<std::string> obsolete_ship_parts;
+    // See DesignWnd.cpp for the usage of the following variables.
+    int obsolete_ui_event_count;
+    std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>> ordered_ship_design_ids_and_obsolete;
+    std::vector<std::pair<std::string, std::pair<bool, int>>> ordered_ship_hull_and_obsolete;
+    std::unordered_map<std::string, int> obsolete_ship_parts;
 
 private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
+    template <class Archive>
+    void legacy_serialize(Archive& ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(SaveGameUIData, 1);
+BOOST_CLASS_VERSION(SaveGameUIData, 2);
 
 extern template FO_COMMON_API void SaveGameUIData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 extern template FO_COMMON_API void SaveGameUIData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
