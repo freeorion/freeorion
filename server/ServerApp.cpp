@@ -1556,7 +1556,8 @@ bool ServerApp::IsAvailableName(const std::string& player_name) const {
         if ((*it)->PlayerName() == player_name)
             return false;
     }
-    return true;
+    // check if some name reserved with cookie
+    return m_networking.IsAvailableNameInCookies(player_name);
 }
 
 bool ServerApp::IsAuthRequiredOrFillRoles(const std::string& player_name, Networking::AuthRoles& roles) {

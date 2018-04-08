@@ -22,6 +22,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/nil_generator.hpp>
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>
@@ -314,7 +315,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         client_type = Networking::INVALID_CLIENT_TYPE;
     }
 
-    if (player_connection->IsAuthenticated()) {
+    if (player_connection->IsAuthenticated() || !player_connection->Cookie().is_nil()) {
         // drop other connection with same name
         for (auto it = m_server.m_networking.established_begin();
              it != m_server.m_networking.established_end(); ++it)
@@ -346,7 +347,11 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
 
         // save cookie for player name
-        boost::uuids::uuid cookie = m_server.m_networking.GenerateCookie(player_name, roles);
+        boost::uuids::uuid cookie = player_connection->Cookie();
+        // Don't generate cookie if player already have it
+        if (cookie.is_nil())
+            cookie = m_server.m_networking.GenerateCookie(player_name, roles);
+        DebugLogger() << "ServerFSM.EstablishPlayer player " << player_name << " get cookie: " << cookie;
         player_connection->SetCookie(cookie);
 
         player_connection->SendMessage(JoinAckMessage(player_id, cookie));
@@ -814,54 +819,61 @@ sc::result MPLobby::react(const JoinGame& msg) {
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
 
     Networking::AuthRoles roles;
-    if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequiredOrFillRoles(player_name, roles)) {
-        // send authentication request
-        player_connection->AwaitPlayer(client_type, client_version_string);
-        player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
-        return discard_event();
-    }
 
-    std::string original_player_name = player_name;
-
-    // Remove AI prefix to distinguish Human from AI.
-    std::string ai_prefix = UserString("AI_PLAYER") + "_";
-    if (client_type != Networking::CLIENT_TYPE_AI_PLAYER) {
-        while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
-            player_name.erase(0, ai_prefix.size());
-    }
-    if (player_name.empty())
-        player_name = "_";
-
-    std::string new_player_name = player_name;
-
-    bool collision = true;
-    std::size_t t = 1;
-    while (t <= m_lobby_data->m_players.size() + 1 && collision) {
-        collision = false;
-        roles.Clear();
-        if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
-            collision = true;
-        } else {
-            for (auto& plr : m_lobby_data->m_players) {
-                if (plr.second.m_empire_name == new_player_name) {
-                    collision = true;
-                    break;
-                }
-            }
+    DebugLogger() << "MPLobby.JoinGame Try to login player " << player_name << " with cookie: " << cookie;
+    if (server.Networking().CheckCookie(cookie, player_name, roles)) {
+        // if player have correct and non-expired cookies simply establish him
+        player_connection->SetCookie(cookie);
+    } else {
+        if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequiredOrFillRoles(player_name, roles)) {
+            // send authentication request
+            player_connection->AwaitPlayer(client_type, client_version_string);
+            player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
+            return discard_event();
         }
 
-        if (collision)
-            new_player_name = player_name + std::to_string(++t); // start alternative names from 2
-    }
+        std::string original_player_name = player_name;
 
-    if (collision) {
-        player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
-                                                    true));
-        server.Networking().Disconnect(player_connection);
-        return discard_event();
-    }
+        // Remove AI prefix to distinguish Human from AI.
+        std::string ai_prefix = UserString("AI_PLAYER") + "_";
+        if (client_type != Networking::CLIENT_TYPE_AI_PLAYER) {
+            while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
+                player_name.erase(0, ai_prefix.size());
+        }
+        if (player_name.empty())
+            player_name = "_";
 
-    player_name = new_player_name;
+        std::string new_player_name = player_name;
+
+        bool collision = true;
+        std::size_t t = 1;
+        while (t <= m_lobby_data->m_players.size() + 1 && collision) {
+            collision = false;
+            roles.Clear();
+            if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
+                collision = true;
+            } else {
+                for (auto& plr : m_lobby_data->m_players) {
+                    if (plr.second.m_empire_name == new_player_name) {
+                        collision = true;
+                        break;
+                    }
+                }
+            }
+
+            if (collision)
+                new_player_name = player_name + std::to_string(++t); // start alternative names from 2
+        }
+
+        if (collision) {
+            player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
+                                                        true));
+            server.Networking().Disconnect(player_connection);
+            return discard_event();
+        }
+
+        player_name = new_player_name;
+    }
 
     EstablishPlayer(player_connection, player_name, client_type, client_version_string, roles);
 

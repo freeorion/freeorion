@@ -102,6 +102,15 @@ public:
 
     /** Returns whether there are any moderators in the game. */
     bool ModeratorsInGame() const;
+
+    /** Returns whether there no non-expired cookie with this player name. */
+    bool IsAvailableNameInCookies(const std::string& player_name) const;
+
+    /** Returns whether player have non-expired cookie with this player name.
+      * Fills roles on success. */
+    bool CheckCookie(boost::uuids::uuid cookie,
+                     const std::string& player_name,
+                     Networking::AuthRoles& roles) const;
     //@}
 
     /** \name Mutators */ //@{

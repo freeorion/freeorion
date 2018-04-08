@@ -500,6 +500,32 @@ bool ServerNetworking::ModeratorsInGame() const {
     return false;
 }
 
+bool ServerNetworking::IsAvailableNameInCookies(const std::string& player_name) const {
+    boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+    for (const auto& cookie : m_cookies) {
+        if (cookie.second.expired >= now && cookie.second.player_name == player_name)
+            return false;
+    }
+    return true;
+}
+
+bool ServerNetworking::CheckCookie(boost::uuids::uuid cookie,
+                                   const std::string& player_name,
+                                   Networking::AuthRoles& roles) const
+{
+    if (!cookie.is_nil()) {
+        auto it = m_cookies.find(cookie);
+        if (it != m_cookies.end() && player_name == it->second.player_name) {
+            boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+            if (it->second.expired >= now) {
+                roles = it->second.roles;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 bool ServerNetworking::SendMessageAll(const Message& message) {
     bool success = true;
     for (auto player_it = established_begin();
@@ -595,7 +621,7 @@ void ServerNetworking::CleanupCookies() {
     std::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>> to_delete;
     boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
     // clean up expired cookies
-    for (auto cookie : m_cookies) {
+    for (const auto& cookie : m_cookies) {
         if (cookie.second.expired < now)
             to_delete.insert(cookie.first);
     }
