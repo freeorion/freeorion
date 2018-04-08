@@ -3,6 +3,7 @@ import FreeOrionAI as foAI
 import AIstate
 import universe_object
 from EnumsAI import MissionType
+import EspionageAI
 import FleetUtilsAI
 from CombatRatingsAI import combine_ratings
 import PlanetUtilsAI
@@ -118,7 +119,21 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False,
         local_status = foAI.foAIstate.systemStatus.get(this_sys_id, {})
         my_local_rating = combine_ratings(local_status.get('mydefenses', {}).get('overall', 0), local_status.get('myFleetRating', 0))
         my_local_rating_vs_planets = local_status.get('myFleetRatingVsPlanets', 0)
-        needed_here = local_status.get('totalThreat', 0) > 0  # TODO: assess if remaining other forces are sufficient
+        combat_trigger = local_status.get('fleetThreat', 0) or  local_status.get('monsterThreat', 0)
+        if not combat_trigger and local_status.get('planetThreat', 0):
+            universe = fo.getUniverse()
+            system = universe.getSystem(this_sys_id)
+            for planet_id in system.planetIDs:
+                planet = universe.getPlanet(planet_id)
+                if planet.ownedBy(fo.empireID()):  # TODO: also exclude at-peace planets
+                    continue
+                if planet.unowned and not EspionageAI.colony_detectable_by_empire(planet_id, empire_id=fo.empireID()):
+                    continue
+                if sum([planet.currentMeterValue(meter_type) for meter_type in
+                        [fo.meterType.defense, fo.meterType.shield, fo.meterType.construction]]):
+                    combat_trigger = True
+                    break
+        needed_here = combat_trigger and local_status.get('totalThreat', 0) > 0  # TODO: assess if remaining other forces are sufficient
         safely_needed = needed_here and my_local_rating > local_status.get('totalThreat', 0) and my_local_rating_vs_planets > local_status.get('planetThreat', 0)  # TODO: improve both assessment prongs
         if not fleet_ok:
             if safely_needed:
