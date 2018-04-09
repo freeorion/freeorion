@@ -3702,7 +3702,7 @@ FW_ORDER_DISMISS_SENSOR_GHOST
 Supprimer les données obsolètes de Détection
 
 FW_ORDER_DISMISS_SENSOR_GHOST_ALL
-Supprimer toutes les données obsolètes de Détection
+Supprimer ici toutes les données obsolètes de Détection
 
 ORDER_SHIP_SCRAP
 Envoyer l'astronef à la casse
@@ -4158,7 +4158,11 @@ PRODUCTION_WND_PROGRESS
 
 # %1% location where the item is produced.
 PRODUCTION_QUEUE_ITEM_LOCATION
-sur %1%
+Sur %1%
+
+# %1% location where the item is produced.
+PRODUCTION_QUEUE_ITEM_RALLIED_FROM_LOCATION
+Provenant de %1%
 
 # %1% location where the item is enqueued for production.
 PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION
