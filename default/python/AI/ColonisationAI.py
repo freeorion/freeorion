@@ -154,6 +154,7 @@ def calc_max_pop(planet, species, detail):
     detail.append("maxPop %.1f" % max_pop_size())
     return max_pop_size()
 
+
 def get_empire_detection(empire_id):
     # TODO: move to an EspionageAI module
     # TODO doublecheck typical AI research times for Radar, for below default value
@@ -168,6 +169,7 @@ def get_empire_detection(empire_id):
                 empire_detection = AIDependencies.DETECTION_STRENGTHS[techname]
                 break
     return empire_detection
+
 
 def colony_detectable_by_empire(planet_id=None, species_name=None, species_tags=None, empire_id=ALL_EMPIRES,
                                 future_stealth_bonus=0):
@@ -199,6 +201,7 @@ def colony_detectable_by_empire(planet_id=None, species_name=None, species_tags=
         species_tags = []
     total_stealth = planet_stealth + sum([AIDependencies.BASIC_STEALTH_STRENGTHS.get(tag, 0) for tag in species_tags])
     return total_stealth < empire_detection
+
 
 def galaxy_is_sparse():
     setup_data = fo.getGalaxySetupData()
@@ -684,7 +687,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     if planet.speciesName == (spec_name or ""):  # adding or "" in case None was passed as spec_name
         planet_supply_cache[planet_id] = planet_supply + sys_supply
 
-    myrating = sys_status.get('myFleetRating', 0)
     cur_best_mil_ship_rating = max(MilitaryAI.cur_best_mil_ship_rating(), 0.001)
     local_defenses = sys_status.get('all_local_defenses', 0)
     local_threat = sys_status.get('fleetThreat', 0) + sys_status.get('monsterThreat', 0)

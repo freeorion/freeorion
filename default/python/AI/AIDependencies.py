@@ -113,27 +113,27 @@ GASEOUS_POP_FACTOR = 0.50
 
 # <editor-fold desc="Detection Strengths">
 DETECTION_STRENGTHS = {
-    "SPY_DETECT_1" : 10,
-    "SPY_DETECT_2" : 30,
-    "SPY_DETECT_3" : 50,
-    "SPY_DETECT_4" : 70,
-    "SPY_DETECT_5" : 200,
+    "SPY_DETECT_1": 10,
+    "SPY_DETECT_2": 30,
+    "SPY_DETECT_3": 50,
+    "SPY_DETECT_4": 70,
+    "SPY_DETECT_5": 200,
 }
 # </editor-fold>
 
 # <editor-fold desc="Stealth Strengths">
 STEALTH_SPECIAL_STRENGTHS = {
-    "CLOUD_COVER_SLAVE_SPECIAL" : 20,
-    "VOLCANIC_ASH_SLAVE_SPECIAL" : 40,
-    "DIM_RIFT_SLAVE_SPECIAL" : 60,
-    "VOID_SLAVE_SPECIAL" : 80,
+    "CLOUD_COVER_SLAVE_SPECIAL": 20,
+    "VOLCANIC_ASH_SLAVE_SPECIAL": 40,
+    "DIM_RIFT_SLAVE_SPECIAL": 60,
+    "VOID_SLAVE_SPECIAL": 80,
 }
 
 BASIC_STEALTH_STRENGTHS = {
-    "BAD_STEALTH" : 20,
-    "GOOD_STEALTH" : 40,
-    "GREAT_STEALTH" : 60,
-    "ULTIMATE_STEALTH" : 80,
+    "BAD_STEALTH": 20,
+    "GOOD_STEALTH": 40,
+    "GREAT_STEALTH": 60,
+    "ULTIMATE_STEALTH": 80,
 }
 # </editor-fold>
 
