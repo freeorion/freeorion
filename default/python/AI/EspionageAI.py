@@ -3,6 +3,7 @@ from logging import error
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
 from AIDependencies import ALL_EMPIRES
+from turn_state import state
 
 
 def get_empire_detection(empire_id):
@@ -12,11 +13,14 @@ def get_empire_detection(empire_id):
     if empire_id != ALL_EMPIRES:
         empire = fo.getEmpire(empire_id)
     if empire:
-        # TODO: expose Empire.GetMeter to automatically take into account detection specials
+        # TODO: expose Empire.GetMeter to automatically take into account detection specials for enemies, or search for
+        # them, but the latter can be inaccurate for enemies
         for techname in sorted(AIDependencies.DETECTION_TECH_STRENGTHS, reverse=True):
             if empire.techResearched(techname):
                 empire_detection = AIDependencies.DETECTION_TECH_STRENGTHS[techname]
                 break
+        if empire_id == fo.empireID()and state.have_panopticon:
+            empire_detection += 10
     return empire_detection
 
 
@@ -61,9 +65,12 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire_id=ALL_EMPI
     # is temporarily stealth boosted by temporary effects like ion storm
     planet_stealth = max([AIDependencies.BASE_PLANET_STEALTH] +
                          [AIDependencies.STEALTH_SPECIAL_STRENGTHS.get(_spec, 0) for _spec in planet.specials])
+    # TODO: check planet buildings for stealth bonuses
+
     # if the planet already has an existing stealth special, then the most common situation is that it would be
     # overlapping with or superseded by the future_stealth_bonus, not additive with it.
     planet_stealth = max(planet_stealth, AIDependencies.BASE_PLANET_STEALTH + future_stealth_bonus)
+
     total_stealth = planet_stealth + sum([AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(tag, 0)
                                           for tag in species_tags])
     return total_stealth < empire_detection
