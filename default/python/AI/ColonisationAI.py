@@ -16,8 +16,8 @@ import MilitaryAI
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer, get_partial_visibility_turn
-from AIDependencies import (ALL_EMPIRES, INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
-                            POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
+from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP,
+                            POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
 from InvasionAI import MIN_INVASION_SCORE
 
 colonization_timer = AITimer('getColonyFleets()')
@@ -154,6 +154,7 @@ def calc_max_pop(planet, species, detail):
                     pop_tag_mod, base_pop_modified_by_species, base_pop_not_modified_by_species, max_pop_size()))
     detail.append("maxPop %.1f" % max_pop_size())
     return max_pop_size()
+
 
 def galaxy_is_sparse():
     setup_data = fo.getGalaxySetupData()
@@ -639,26 +640,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     if planet.speciesName == (spec_name or ""):  # adding or "" in case None was passed as spec_name
         planet_supply_cache[planet_id] = planet_supply + sys_supply
 
-    cur_best_mil_ship_rating = max(MilitaryAI.cur_best_mil_ship_rating(), 0.001)
-    local_defenses = sys_status.get('all_local_defenses', 0)
-    local_threat = sys_status.get('fleetThreat', 0) + sys_status.get('monsterThreat', 0)
-    neighbor_threat = sys_status.get('neighborThreat', 0)
-    jump2_threat = 0.6 * max(0, sys_status.get('jump2_threat', 0) - sys_status.get('my_neighbor_rating', 0))
-    area_threat = neighbor_threat + jump2_threat
-    area_threat *= 2.0 / (existing_presence + 2)  # once we have a foothold be less scared off by area threats
-    # TODO: evaluate detectability by specific source of area threat, also consider if the subject AI already has
-    # researched techs that would grant a stealth bonus
-    if not EspionageAI.colony_detectable_by_empire(planet_id, spec_name, default_result=True):
-        area_threat *= 0.05
-    net_threat = max(0, local_threat + area_threat - local_defenses)
-    # even if our military has lost all warships, rate planets as if we have at least one
-    reference_rating = max(cur_best_mil_ship_rating, MilitaryAI.get_preferred_max_military_portion_for_single_battle() *
-                           MilitaryAI.get_concentrated_tot_mil_rating())
-    threat_factor = min(1.0, reference_rating/(net_threat+0.001))**2
-    if threat_factor < 0.5:
-        mil_ref_string = "Military rating reference: %.1f" % reference_rating
-        debug("Significant threat discounting %2d%% at %s, local defense: %.1f, local threat %.1f, area threat %.1f" %
-              (100*(1-threat_factor), planet.name, local_defenses, local_threat, area_threat) + mil_ref_string)
+    threat_factor = determine_colony_threat_factor(planet_id, spec_name, existing_presence)
 
     sys_partial_vis_turn = get_partial_visibility_turn(this_sysid)
     planet_partial_vis_turn = get_partial_visibility_turn(planet_id)
@@ -1049,6 +1031,36 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
             retval *= threat_factor
             detail.append("threat reducing value by %3d %%" % (100 * (1 - threat_factor)))
     return retval
+
+
+def determine_colony_threat_factor(planet_id, spec_name, existing_presence):
+    universe = fo.getUniverse()
+    planet = universe.getPlanet(planet_id)
+    if not planet:  # should have been checked previously, but belt-and-suspenders
+        error("Can't retrieve planet ID %d" % planet_id)
+        return 0
+    sys_status = foAI.foAIstate.systemStatus.get(planet.systemID, {})
+    cur_best_mil_ship_rating = max(MilitaryAI.cur_best_mil_ship_rating(), 0.001)
+    local_defenses = sys_status.get('all_local_defenses', 0)
+    local_threat = sys_status.get('fleetThreat', 0) + sys_status.get('monsterThreat', 0)
+    neighbor_threat = sys_status.get('neighborThreat', 0)
+    jump2_threat = 0.6 * max(0, sys_status.get('jump2_threat', 0) - sys_status.get('my_neighbor_rating', 0))
+    area_threat = neighbor_threat + jump2_threat
+    area_threat *= 2.0 / (existing_presence + 2)  # once we have a foothold be less scared off by area threats
+    # TODO: evaluate detectability by specific source of area threat, also consider if the subject AI already has
+    # researched techs that would grant a stealth bonus
+    if not EspionageAI.colony_detectable_by_empire(planet_id, spec_name, default_result=True):
+        area_threat *= 0.05
+    net_threat = max(0, local_threat + area_threat - local_defenses)
+    # even if our military has lost all warships, rate planets as if we have at least one
+    reference_rating = max(cur_best_mil_ship_rating, MilitaryAI.get_preferred_max_military_portion_for_single_battle() *
+                           MilitaryAI.get_concentrated_tot_mil_rating())
+    threat_factor = min(1.0, reference_rating / (net_threat + 0.001)) ** 2
+    if threat_factor < 0.5:
+        mil_ref_string = "Military rating reference: %.1f" % reference_rating
+        debug("Significant threat discounting %2d%% at %s, local defense: %.1f, local threat %.1f, area threat %.1f" %
+              (100 * (1 - threat_factor), planet.name, local_defenses, local_threat, area_threat) + mil_ref_string)
+    return threat_factor
 
 
 @cache_by_turn
