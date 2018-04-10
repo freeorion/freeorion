@@ -163,10 +163,12 @@ def get_empire_detection(empire_id):
     if empire_id != ALL_EMPIRES:
         empire = fo.getEmpire(empire_id)
     if empire:
-        # TODO: expose Empire.GetMeter to automatically take into account detection specials
-        for techname in sorted(AIDependencies.DETECTION_STRENGTHS, reverse=True):
+        # TODO: expose Empire.GetMeter to automatically take into account detection specials, or possibly simply
+        # scan for such specials, but the latter approach would be subject to error for enemy empires due to incomplete
+        # visibility of their empire
+        for techname in sorted(AIDependencies.DETECTION_TECH_STRENGTHS, reverse=True):
             if empire.techResearched(techname):
-                empire_detection = AIDependencies.DETECTION_STRENGTHS[techname]
+                empire_detection = AIDependencies.DETECTION_TECH_STRENGTHS[techname]
                 break
     return empire_detection
 
@@ -177,7 +179,7 @@ def colony_detectable_by_empire(planet_id=None, species_name=None, species_tags=
     # the planet once it was colonized/captured
 
     empire_detection = get_empire_detection(empire_id)
-    planet_stealth = 5
+    planet_stealth = AIDependencies.BASE_PLANET_STEALTH
     if planet_id is not None:
         planet = fo.getUniverse().getPlanet(planet_id)
         if planet:
@@ -187,7 +189,7 @@ def colony_detectable_by_empire(planet_id=None, species_name=None, species_tags=
             planet_stealth = max([5] + [AIDependencies.STEALTH_SPECIAL_STRENGTHS.get(tag, 0) for tag in planet.tags])
         else:
             error("Couldn't retrieve planet ID %d." % planet_id)
-    planet_stealth = max(planet_stealth, 5 + future_stealth_bonus)
+    planet_stealth = max(planet_stealth, AIDependencies.BASE_PLANET_STEALTH + future_stealth_bonus)
     if species_name is not None:
         species = fo.getSpecies(species_name)
         if species:
