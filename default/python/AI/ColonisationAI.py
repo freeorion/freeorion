@@ -186,7 +186,8 @@ def colony_detectable_by_empire(planet_id=None, species_name=None, species_tags=
             species_name = planet.speciesName
             # could just check stealth meter, but this approach might allow us to plan ahead a bit even if the planet
             # is temporarily stealth boosted by temporary effects like ion storm
-            planet_stealth = max([5] + [AIDependencies.STEALTH_SPECIAL_STRENGTHS.get(tag, 0) for tag in planet.tags])
+            planet_stealth = max([AIDependencies.BASE_PLANET_STEALTH] +
+                                 [AIDependencies.STEALTH_SPECIAL_STRENGTHS.get(_spec, 0) for _spec in planet.specials])
         else:
             error("Couldn't retrieve planet ID %d." % planet_id)
     planet_stealth = max(planet_stealth, AIDependencies.BASE_PLANET_STEALTH + future_stealth_bonus)
