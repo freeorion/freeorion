@@ -201,7 +201,7 @@ def colony_detectable_by_empire(planet_id=None, species_name=None, species_tags=
             return False
     if species_tags is None:
         species_tags = []
-    total_stealth = planet_stealth + sum([AIDependencies.BASIC_STEALTH_STRENGTHS.get(tag, 0) for tag in species_tags])
+    total_stealth = planet_stealth + sum([AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(tag, 0) for tag in species_tags])
     return total_stealth < empire_detection
 
 
