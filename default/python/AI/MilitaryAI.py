@@ -11,6 +11,7 @@ import ProductionAI
 import CombatRatingsAI
 from freeorion_tools import cache_by_turn
 from AIDependencies import INVALID_ID
+from InvasionAI import MIN_INVASION_SCORE
 from turn_state import state
 
 MinThreat = 10  # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
@@ -676,9 +677,12 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
                 pass
 
     num_targets = max(10, PriorityAI.allotted_outpost_targets)
-    top_target_planets = ([pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allotted_invasion_targets()] if pscore > 20] +
-                          [pid for pid, (pscore, spec) in foAI.foAIstate.colonisableOutpostIDs.items()[:num_targets] if pscore > 20] +
-                          [pid for pid, (pscore, spec) in foAI.foAIstate.colonisablePlanetIDs.items()[:num_targets] if pscore > 20])
+    top_target_planets = ([pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allotted_invasion_targets()]
+                           if pscore > MIN_INVASION_SCORE] +
+                          [pid for pid, (pscore, spec) in foAI.foAIstate.colonisableOutpostIDs.items()[:num_targets]
+                           if pscore > MIN_INVASION_SCORE] +
+                          [pid for pid, (pscore, spec) in foAI.foAIstate.colonisablePlanetIDs.items()[:num_targets]
+                           if pscore > MIN_INVASION_SCORE])
     top_target_planets.extend(foAI.foAIstate.qualifyingTroopBaseTargets.keys())
     base_col_target_systems = PlanetUtilsAI.get_systems(top_target_planets)
     top_target_systems = []
