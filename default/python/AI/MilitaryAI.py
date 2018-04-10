@@ -886,6 +886,7 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
 def get_tot_mil_rating():
     """
     Give an assessment of total miltary rating considering all fleets as if distributed to separate systems.
+
     :return: a military rating value
     :rtype: float
     """
@@ -897,6 +898,7 @@ def get_tot_mil_rating():
 def get_concentrated_tot_mil_rating():
     """
     Give an assessment of total miltary rating as if all fleets were merged into a single mega-fleet.
+
     :return: a military rating value
     :rtype: float
     """
