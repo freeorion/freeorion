@@ -648,7 +648,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     area_threat *= 2.0 / (existing_presence + 2)  # once we have a foothold be less scared off by area threats
     # TODO: evaluate detectability by specific source of area threat, also consider if the subject AI already has
     # researched techs that would grant a stealth bonus
-    if not EspionageAI.colony_detectable_by_empire(species_tags=tag_list):
+    if not EspionageAI.colony_detectable_by_empire(planet_id, spec_name, default_result=True):
         area_threat *= 0.05
     net_threat = max(0, local_threat + area_threat - local_defenses)
     # even if our military has lost all warships, rate planets as if we have at least one
