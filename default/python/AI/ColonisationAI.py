@@ -49,8 +49,8 @@ GOOD_PILOT_RATING = 4.0
 GREAT_PILOT_RATING = 6.0
 ULT_PILOT_RATING = 12.0
 
-# minimum evaluation score that a planet must reach so it is considered for outposting
-MINIMUM_OUTPOST_SCORE = 100
+# minimum evaluation score that a planet must reach so it is considered for outposting or colonizing
+MINIMUM_COLONY_SCORE = 60
 
 
 def colony_pod_cost():
@@ -842,7 +842,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                         other_planet.availableFoci) + [other_planet.focus]:
                     orb_gen_val += per_gg * discount_multiplier
                     # Note, this reported value may not take into account a later adjustment from a populated gg
-                    gg_detail.append("GGG for %s %.1f" % (other_planet.name, discount_multiplier * per_gg * populated_gg_factor))
+                    gg_detail.append("GGG for %s %.1f" % (other_planet.name, discount_multiplier * per_gg *
+                                                          populated_gg_factor))
             if planet_id in sorted(gg_list)[:max_gggs]:
                 retval += orb_gen_val * populated_gg_factor
                 detail.extend(gg_detail)
@@ -1114,7 +1115,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
             cost *= 0.8  # will be making fast-ish tech progress so value is underestimated
 
     potential_targets = [(pid, (score, specName)) for (pid, (score, specName)) in evaluated_planets if
-                         score > (0.8 * cost)]
+                         score > max((0.8 * cost), MINIMUM_COLONY_SCORE)]
 
     print "Colony/outpost ship matching: fleets %s to planets %s" % (fleet_pool, evaluated_planets)
 
@@ -1466,7 +1467,8 @@ class OrbitalColonizationManager(object):
                 del unaccounted_plans[alternative_plan.target]
                 continue
 
-            debug("Could not find a target for the outpost base enqueued at %s" % universe.getPlanet(element.locationID))
+            debug("Could not find a target for the outpost base enqueued at %s" %
+                  universe.getPlanet(element.locationID))
             items_to_dequeue.append(idx)
 
         # TODO: Stop Building for targets with now insufficient colonization score
@@ -1485,7 +1487,7 @@ class OrbitalColonizationManager(object):
             return
 
         considered_plans = [plan for plan in self._colonization_plans.itervalues()
-                            if not plan.base_enqueued and plan.score > MINIMUM_OUTPOST_SCORE]
+                            if not plan.base_enqueued and plan.score > MINIMUM_COLONY_SCORE]
         queue_limit = max(1, int(2*empire.productionPoints / outpod_pod_cost()))
         for colonization_plan in sorted(considered_plans, key=lambda x: x.score, reverse=True):
             if self.num_enqueued_bases >= queue_limit:
