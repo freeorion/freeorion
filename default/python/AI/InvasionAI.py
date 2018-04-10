@@ -493,6 +493,8 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
     invasion_fleet_pool = set(fleet_ids)
 
     for planet_id, pscore, ptroops in evaluated_planets:
+        if pscore < MIN_INVASION_SCORE:
+            continue
         planet = universe.getPlanet(planet_id)
         if not planet:
             continue
