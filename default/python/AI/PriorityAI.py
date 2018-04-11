@@ -244,9 +244,14 @@ def _calculate_colonisation_priority():
     colonizers = list(ColonisationAI.empire_colonizers)
     if "SP_SLY" not in colonizers and outpost_prio > 0:
         return 0.0
-    colony_opportunities = [species_name for (_, (score, species_name)) in foAI.foAIstate.colonisablePlanetIDs.items()
-                            if score > ColonisationAI.MINIMUM_COLONY_SCORE]
-    num_colonisable_planet_ids = len(colony_opportunities)
+    min_score = ColonisationAI.MINIMUM_COLONY_SCORE
+    minimal_range = 2  # one more than the conditional floor set by ColonisationAI.revise_threat_factor()
+    minimal_opportunities = [species_name for (_, (score, species_name)) in foAI.foAIstate.colonisablePlanetIDs.items()
+                             if min_score < score <= min_score + minimal_range]
+    decent_opportunities = [species_name for (_, (score, species_name)) in foAI.foAIstate.colonisablePlanetIDs.items()
+                            if score > min_score + minimal_range]
+    minimal_planet_factor = 0.2  # count them for something, but not much
+    num_colonisable_planet_ids = len(decent_opportunities) + minimal_planet_factor * len(minimal_opportunities)
     if num_colonisable_planet_ids == 0:
         return 1
 
@@ -257,7 +262,8 @@ def _calculate_colonisation_priority():
     if colonizers == ["SP_SLY"]:
         colonisation_priority *= 2
     elif "SP_SLY" in colonizers:
-        colonisation_priority *= (1.0 + colony_opportunities.count("SP_SLY")) / num_colonisable_planet_ids
+        colony_opportunities = minimal_opportunities + decent_opportunities
+        colonisation_priority *= (1.0 + colony_opportunities.count("SP_SLY")) / len(colony_opportunities)
 
     # print
     # print "Number of Colony Ships : " + str(num_colony_ships)
