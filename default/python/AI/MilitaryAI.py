@@ -61,7 +61,7 @@ def get_preferred_max_military_portion_for_single_battle():
     :rtype: float
     """
     # TODO: this is a roughcut first pass, needs plenty of refinement
-    if fo.currentTurn < 40:
+    if fo.currentTurn() < 40:
         return 1.0
     best_ship_equivalents = (get_concentrated_tot_mil_rating() / cur_best_mil_ship_rating())**0.5
     _MAX_SHIPS_BEFORE_PREFERRING_LESS_THAN_FULL_ENGAGEMENT = 3
