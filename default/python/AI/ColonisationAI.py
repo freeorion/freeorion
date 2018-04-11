@@ -613,7 +613,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     # triple count pop_ctrs
     existing_presence = len(locally_owned_planets) + 2 * len(locally_owned_pop_ctrs)
     system = universe.getSystem(this_sysid)
-    sys_status = foAI.foAIstate.systemStatus.get(this_sysid, {})
 
     sys_supply = state.get_system_supply(this_sysid)
     planet_supply = AIDependencies.supply_by_size.get(planet.size, 0)
@@ -864,7 +863,9 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
             supply_val += 25 * (planet_supply - sys_supply)
         detail.append("sys_supply: %d, planet_supply: %d, supply_val: %.0f" % (sys_supply, planet_supply, supply_val))
         retval += supply_val
+
         if threat_factor < 1.0:
+            threat_factor = revise_threat_factor(threat_factor, retval, this_sysid, MINIMUM_COLONY_SCORE)
             retval *= threat_factor
             detail.append("threat reducing value by %3d %%" % (100 * (1 - threat_factor)))
         return int(retval)
@@ -1029,9 +1030,42 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
             detail.append("preexisting system colony")
             retval = (retval + existing_presence * get_defense_value(spec_name)) * 2
         if threat_factor < 1.0:
+            threat_factor = revise_threat_factor(threat_factor, retval, this_sysid, MINIMUM_COLONY_SCORE)
             retval *= threat_factor
             detail.append("threat reducing value by %3d %%" % (100 * (1 - threat_factor)))
     return retval
+
+
+def revise_threat_factor(threat_factor, planet_value, system_id, min_planet_value=MINIMUM_COLONY_SCORE):
+    """
+    Check if the threat_factor should be made less severe.
+
+    If the AI does have enough total miltary to secure this system, and the target has more than minimal value,
+    don't let the threat_factor discount the adjusted value below min_planet_value +1, so that if there are no
+    other targets the AI could still pursue this one.  Otherwise, scoring pressure from
+    MilitaryAI.get_preferred_max_military_portion_for_single_battle might prevent the AI from pursuing a heavily
+    defended but still obtainable target even if it has no softer locations available.
+
+    :param threat_factor: the base threat factor
+    :type threat_factor: float
+    :param planet_value: the planet score
+    :type planet_value: float
+    :param system_id: the system ID of subject planet
+    :type system_id: int
+    :param min_planet_value: a floor planet value if the AI has enough military to secure the system
+    :type min_planet_value: float
+    :return: the (potentially) revised threat_factor
+    :rtype: float
+    """
+
+    # the default value below for fleetThreat shouldn't come in to play, but is just to be absolutely sure we don't
+    # send colony ships into some system for which we have not evaluated fleetThreat
+    system_status = foAI.foAIstate.systemStatus.get(system_id, {})
+    system_fleet_treat = system_status.get('fleetThreat', 1000)
+    sys_total_threat = system_fleet_treat + system_status.get('monsterThreat', 0) + system_status.get('planetThreat', 0)
+    if (MilitaryAI.get_concentrated_tot_mil_rating() > sys_total_threat) and (planet_value > 2 * min_planet_value):
+        threat_factor = max(threat_factor, (min_planet_value + 1) / planet_value)
+    return threat_factor
 
 
 def determine_colony_threat_factor(planet_id, spec_name, existing_presence):
