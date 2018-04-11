@@ -192,7 +192,7 @@ FO_COMMON_API Message HostSPGameMessage(const SinglePlayerSetupData& setup_data)
 /** creates a minimal HOST_MP_GAME message used to initiate multiplayer "lobby" setup*/
 FO_COMMON_API Message HostMPGameMessage(const std::string& host_player_name);
 
-/** creates a JOIN_GAME message.  The sender's player name, client type and cookie are sent in the message.*/
+/** creates a JOIN_GAME message.  The sender's player name, client type, and cookie are sent in the message.*/
 FO_COMMON_API Message JoinGameMessage(const std::string& player_name,
                                       Networking::ClientType client_type,
                                       boost::uuids::uuid cookie);

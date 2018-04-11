@@ -1791,12 +1791,12 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
 
         DebugLogger() << "WaitingForMPGameJoiners.JoinGame Try to login player " << player_name << " with cookie: " << cookie;
         if (server.Networking().CheckCookie(cookie, player_name, roles)) {
-            // if player have correct and non-expired cookies simply establish him
+            // if player has correct and non-expired cookies simply establish him
             player_connection->SetCookie(cookie);
 
             // drop other connection with same name before checks for expected players
             std::list<PlayerConnectionPtr> to_disconnect;
-            for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+            for (auto it = server.m_networking.established_begin();
                  it != server.m_networking.established_end(); ++it)
             {
                 if ((*it)->PlayerName() == player_name && player_connection != (*it)) {

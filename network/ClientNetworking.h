@@ -68,7 +68,7 @@ public:
     /** Checks if the client has some authorization \a role. */
     bool HasAuthRole(Networking::RoleType role) const;
 
-    /** Returns destination address of server. */
+    /** Returns address of multiplayer server entered by player. */
     const std::string& Destination() const;
     //@}
 

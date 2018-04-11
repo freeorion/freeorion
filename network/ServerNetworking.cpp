@@ -513,14 +513,15 @@ bool ServerNetworking::CheckCookie(boost::uuids::uuid cookie,
                                    const std::string& player_name,
                                    Networking::AuthRoles& roles) const
 {
-    if (!cookie.is_nil()) {
-        auto it = m_cookies.find(cookie);
-        if (it != m_cookies.end() && player_name == it->second.player_name) {
-            boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
-            if (it->second.expired >= now) {
-                roles = it->second.roles;
-                return true;
-            }
+    if (cookie.is_nil())
+        return false;
+
+    auto it = m_cookies.find(cookie);
+    if (it != m_cookies.end() && player_name == it->second.player_name) {
+        boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+        if (it->second.expired >= now) {
+            roles = it->second.roles;
+            return true;
         }
     }
     return false;
@@ -609,11 +610,12 @@ boost::uuids::uuid ServerNetworking::GenerateCookie(const std::string& player_na
 }
 
 void ServerNetworking::UpdateCookie(boost::uuids::uuid cookie) {
-    if (!cookie.is_nil()) {
-        auto it = m_cookies.find(cookie);
-        if (it != m_cookies.end()) {
-            it->second.expired = boost::posix_time::second_clock::local_time() + boost::posix_time::minutes(15);
-        }
+    if (cookie.is_nil())
+        return;
+
+    auto it = m_cookies.find(cookie);
+    if (it != m_cookies.end()) {
+        it->second.expired = boost::posix_time::second_clock::local_time() + boost::posix_time::minutes(15);
     }
 }
 
