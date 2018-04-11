@@ -17,6 +17,7 @@ from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType,
 from freeorion_tools import tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer, get_partial_visibility_turn
 from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
                             POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
+from InvasionAI import MIN_INVASION_SCORE
 
 colonization_timer = AITimer('getColonyFleets()')
 
@@ -579,7 +580,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     homeworld = universe.getPlanet(capital_id)
     planet = universe.getPlanet(planet_id)
     prospective_invasion_targets = [pid for pid, pscore, trp in
-                                    AIstate.invasionTargets[:PriorityAI.allotted_invasion_targets()] if pscore > 20]
+                                    AIstate.invasionTargets[:PriorityAI.allotted_invasion_targets()]
+                                    if pscore > MIN_INVASION_SCORE]
 
     if spec_name != planet.speciesName and planet.speciesName and mission_type != MissionType.INVASION:
         return 0

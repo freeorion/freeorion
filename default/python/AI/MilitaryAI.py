@@ -11,6 +11,7 @@ import ProductionAI
 import CombatRatingsAI
 from freeorion_tools import cache_by_turn
 from AIDependencies import INVALID_ID
+from InvasionAI import MIN_INVASION_SCORE
 from turn_state import state
 
 MinThreat = 10  # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
@@ -44,6 +45,45 @@ def cur_best_mil_ship_rating(include_designs=False):
         best_design_rating = ProductionAI.cur_best_military_design_rating()
         best_rating = max(best_rating, best_design_rating)
     return max(best_rating, 0.001)
+
+
+def get_preferred_max_military_portion_for_single_battle():
+    """
+    Determine and return the preferred max portion of military to be allocated to a single battle.
+
+    May be used to downgrade various possible actions requiring military support if they would require an excessive
+    allocation of military forces.  At the beginning of the game this max portion starts as 1.0, then is slightly
+    reduced to account for desire to reserve some defenses for other locations, and then in mid to late game, as the
+    size of the the military grows, this portion is further reduced to promote pursuit of multiple battlefronts in
+    parallel as opposed to single battlefronts against heavily defended positions.
+
+    :return: a number in range (0:1] for preferred max portion of miltary to be allocated to a single battle
+    :rtype: float
+    """
+    # TODO: this is a roughcut first pass, needs plenty of refinement
+    if fo.currentTurn < 40:
+        return 1.0
+    best_ship_equivalents = (get_concentrated_tot_mil_rating() / cur_best_mil_ship_rating())**0.5
+    _MAX_SHIPS_BEFORE_PREFERRING_LESS_THAN_FULL_ENGAGEMENT = 3
+    if best_ship_equivalents <= _MAX_SHIPS_BEFORE_PREFERRING_LESS_THAN_FULL_ENGAGEMENT:
+        return 1.0
+    # the below ratio_exponent is still very much a work in progress.  It should probably be somewhere in the range of
+    # 0.2 to 0.5.  Values at the larger end will create a smaller expected battle size threshold that would
+    # cause the respective opportunity (invasion, colonization) scores to be discounted, thereby more quickly creating
+    # pressure for the AI to pursue multiple small/medium resistance fronts rather than pursuing a smaller number fronts
+    # facing larger resistance.  The AI will start facing some scoring pressure to not need to throw 100% of its
+    # military at a target as soon as its max military rating surpasses the equvalent of
+    # _MAX_SHIPS_BEFORE_PREFERRING_LESS_THAN_FULL_ENGAGEMENT of its best ships.  That starts simply as some scoring
+    # pressure to be able to hold back some small portion of its ships from the engagement, in order to be able to use
+    # them for defense or for other targets.  With an exponent value of 0.25, this would start creating substantial
+    # pressure against devoting more than half the military to a single target once the total military is somewhere
+    # above 18 best-ship equivalents, and pressure against deovting more than a third once the total is above about 80
+    # best-ship equivalents.  With an exponent value of 0.5, those thresholds would be 6 ships and 11 ships.  With the
+    # initial value of 0.35, those thresholds are about 10 ships and 25 ships.  Depending on how this return value is
+    # used, it should not prevent the more heavily fortified targets (and therefore discounted) from being taken
+    # if there are no more remaining easier targets available.
+    ratio_exponent = 0.35
+    return 1.0 / (best_ship_equivalents + 1 - _MAX_SHIPS_BEFORE_PREFERRING_LESS_THAN_FULL_ENGAGEMENT)**ratio_exponent
 
 
 def try_again(mil_fleet_ids, try_reset=False, thisround=""):
@@ -637,9 +677,12 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
                 pass
 
     num_targets = max(10, PriorityAI.allotted_outpost_targets)
-    top_target_planets = ([pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allotted_invasion_targets()] if pscore > 20] +
-                          [pid for pid, (pscore, spec) in foAI.foAIstate.colonisableOutpostIDs.items()[:num_targets] if pscore > 20] +
-                          [pid for pid, (pscore, spec) in foAI.foAIstate.colonisablePlanetIDs.items()[:num_targets] if pscore > 20])
+    top_target_planets = ([pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allotted_invasion_targets()]
+                           if pscore > MIN_INVASION_SCORE] +
+                          [pid for pid, (pscore, spec) in foAI.foAIstate.colonisableOutpostIDs.items()[:num_targets]
+                           if pscore > MIN_INVASION_SCORE] +
+                          [pid for pid, (pscore, spec) in foAI.foAIstate.colonisablePlanetIDs.items()[:num_targets]
+                           if pscore > MIN_INVASION_SCORE])
     top_target_planets.extend(foAI.foAIstate.qualifyingTroopBaseTargets.keys())
     base_col_target_systems = PlanetUtilsAI.get_systems(top_target_planets)
     top_target_systems = []
@@ -845,8 +888,26 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
 
 @cache_by_turn
 def get_tot_mil_rating():
+    """
+    Give an assessment of total miltary rating considering all fleets as if distributed to separate systems.
+
+    :return: a military rating value
+    :rtype: float
+    """
     return sum(CombatRatingsAI.get_fleet_rating(fleet_id)
                for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY))
+
+
+@cache_by_turn
+def get_concentrated_tot_mil_rating():
+    """
+    Give an assessment of total miltary rating as if all fleets were merged into a single mega-fleet.
+
+    :return: a military rating value
+    :rtype: float
+    """
+    return CombatRatingsAI.combine_ratings_list([CombatRatingsAI.get_fleet_rating(fleet_id) for fleet_id in
+                                                 FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)])
 
 
 @cache_by_turn

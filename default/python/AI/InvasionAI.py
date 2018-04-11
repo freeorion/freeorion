@@ -22,6 +22,7 @@ from AIDependencies import INVALID_ID
 MAX_BASE_TROOPERS_GOOD_INVADERS = 20
 MAX_BASE_TROOPERS_POOR_INVADERS = 10
 _TROOPS_SAFETY_MARGIN = 1  # try to send this amount of additional troops to account for uncertainties in calculation
+MIN_INVASION_SCORE = 20
 
 invasion_timer = AITimer('get_invasion_fleets()', write_log=False)
 
@@ -436,7 +437,10 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
                           2*planet.currentMeterValue(fo.meterType.targetResearch))
 
     # devalue invasions that would require too much military force
-    threat_factor = min(1, 0.2*MilitaryAI.get_tot_mil_rating()/(sys_total_threat+0.001))**2
+    preferred_max_portion = MilitaryAI.get_preferred_max_military_portion_for_single_battle()
+    total_max_mil_rating = MilitaryAI.get_concentrated_tot_mil_rating()
+    threat_exponent = 2  # TODO: make this a character trait; higher aggression with a lower exponent
+    threat_factor = min(1, preferred_max_portion * total_max_mil_rating/(sys_total_threat+0.001))**threat_exponent
 
     design_id, _, locs = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_INVASION)
     if not locs or not universe.getPlanet(locs[0]):
@@ -464,12 +468,19 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     cost_score = (normalized_cost**2 / 50.0) * troop_cost
 
     base_score = colony_base_value + bld_tally + tech_tally + enemy_val - cost_score
+    # If the AI does have enough total miltary to attack this target, and the target is more than minimally valuable,
+    # don't let the threat_factor discount the adjusted value below MIN_INVASION_SCORE +1, so that if there are no
+    # other targets the AI could still pursue this one.  Otherwise, scoring pressure from
+    # MilitaryAI.get_preferred_max_military_portion_for_single_battle might prevent the AI from attacking heavily
+    # defended but still defeatable targets even if it has no softer targets available.
+    if total_max_mil_rating > sys_total_threat and base_score > 2 * MIN_INVASION_SCORE:
+        threat_factor = max(threat_factor, (MIN_INVASION_SCORE + 1)/base_score)
     planet_score = retaliation_risk_factor(planet.owner) * threat_factor * max(0, base_score)
     if clear_path:
         planet_score *= 1.5
     if verbose:
         print (' - planet score: %.2f\n'
-               ' - troop score: %.2f\n'
+               ' - planned troops: %.2f\n'
                ' - projected troop cost: %.1f\n'
                ' - threat factor: %s\n'
                ' - planet detail: %s\n'
@@ -489,6 +500,8 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
     invasion_fleet_pool = set(fleet_ids)
 
     for planet_id, pscore, ptroops in evaluated_planets:
+        if pscore < MIN_INVASION_SCORE:
+            continue
         planet = universe.getPlanet(planet_id)
         if not planet:
             continue
