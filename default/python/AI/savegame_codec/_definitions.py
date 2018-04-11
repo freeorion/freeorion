@@ -1,5 +1,10 @@
 # a list of trusted classes - other classes will not be loaded
-try:
+import sys
+if 'pytest' in sys.modules:
+    # this was imported for a unit test - failure to import
+    # real AI modules is expected in this case.
+    trusted_classes = {}
+else:
     import AIFleetMission
     import fleet_orders
     import character.character_module
@@ -24,9 +29,6 @@ try:
         ColonisationAI.OrbitalColonizationManager,
         ColonisationAI.OrbitalColonizationPlan,
     ]}
-except RuntimeError:
-    # unit test throws this at the moment during imports  TODO handle cleaner
-    trusted_classes = {}
 
 # prefixes to encode types not supported by json
 # or not fully supported as dictionary key
