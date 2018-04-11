@@ -11,6 +11,19 @@ class aggression(object):
     maniacal = 5
 
 
+class planetSize(object):
+    """PlanetSize enumeration."""
+    tiny = 1
+    small = 2
+    medium = 3
+    large = 4
+    huge = 5
+    asteroids = 6
+    gasGiant = 7
+    noWorld = 0
+    unknown = -1
+
+
 def userString(x):
     """userString mock"""
     return "UserString %s" % x
