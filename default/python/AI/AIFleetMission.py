@@ -259,7 +259,7 @@ class AIFleetMission(object):
         """ checks if current mission (targeting a planet) should be aborted"""
         if fleet_order.target and isinstance(fleet_order.target, Planet):
             planet = fleet_order.target.get_object()
-            if not EspionageAI.colony_detectable_by_empire(planet.id, empire_id = fo.empireID()):
+            if not EspionageAI.colony_detectable_by_empire(planet.id, empire_id=fo.empireID()):
                 debug("EspionageAI predicts we can no longer detect %s, will abort mission" % fleet_order.target)
             elif isinstance(fleet_order, OrderColonize):
                 if (planet.initialMeterValue(fo.meterType.population) == 0 and

@@ -496,7 +496,7 @@ class OrderMilitary(AIFleetOrder):
         fleet = self.target.get_object()
         system_status = foAI.foAIstate.systemStatus.get(target_sys_id, {})
         total_threat = sum(system_status.get(threat, 0) for threat in ('fleetThreat', 'planetThreat', 'monsterThreat'))
-        combat_trigger = system_status.get('fleetThreat', 0) or  system_status.get('monsterThreat', 0)
+        combat_trigger = system_status.get('fleetThreat', 0) or system_status.get('monsterThreat', 0)
         if not combat_trigger and system_status.get('planetThreat', 0):
             universe = fo.getUniverse()
             system = universe.getSystem(target_sys_id)

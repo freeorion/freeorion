@@ -119,7 +119,7 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False,
         local_status = foAI.foAIstate.systemStatus.get(this_sys_id, {})
         my_local_rating = combine_ratings(local_status.get('mydefenses', {}).get('overall', 0), local_status.get('myFleetRating', 0))
         my_local_rating_vs_planets = local_status.get('myFleetRatingVsPlanets', 0)
-        combat_trigger = local_status.get('fleetThreat', 0) or  local_status.get('monsterThreat', 0)
+        combat_trigger = local_status.get('fleetThreat', 0) or local_status.get('monsterThreat', 0)
         if not combat_trigger and local_status.get('planetThreat', 0):
             universe = fo.getUniverse()
             system = universe.getSystem(this_sys_id)
