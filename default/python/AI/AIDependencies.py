@@ -213,7 +213,6 @@ COMPUTRONIUM_SPECIAL = "COMPUTRONIUM_SPECIAL"
 COMPUTRONIUM_RES_MULTIPLIER = 1.0
 
 ANCIENT_RUINS_SPECIAL = "ANCIENT_RUINS_SPECIAL"
-PANOPTICON_SPECIAL = "PANOPTICON_SPECIAL"
 # </editor-fold>
 
 # <editor-fold desc="Supply related specials">
@@ -228,6 +227,11 @@ SUPPLY_MOD_SPECIALS = {
         -1: -1,
     },
 }
+# </editor-fold>
+
+# <editor-fold desc="Detection related specials">
+PANOPTICON_SPECIAL = "PANOPTICON_SPECIAL"
+PANOPTICON_DETECTION_BONUS = 10
 # </editor-fold>
 
 

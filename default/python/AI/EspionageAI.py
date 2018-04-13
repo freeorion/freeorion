@@ -8,7 +8,8 @@ from turn_state import state
 
 def get_empire_detection(empire_id):
     # TODO doublecheck typical AI research times for Radar, for below default value
-    empire_detection = 10 if fo.currentTurn() < 40 else 30
+    empire_detection = (AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_1"]
+                        if fo.currentTurn() < 40 else AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_2"])
     empire = None
     if empire_id != ALL_EMPIRES:
         empire = fo.getEmpire(empire_id)
@@ -19,8 +20,8 @@ def get_empire_detection(empire_id):
             if empire.techResearched(techname):
                 empire_detection = AIDependencies.DETECTION_TECH_STRENGTHS[techname]
                 break
-        if empire_id == fo.empireID()and state.have_panopticon:
-            empire_detection += 10
+        if empire_id == fo.empireID() and state.have_panopticon:
+            empire_detection += AIDependencies.PANOPTICON_DETECTION_BONUS
     return empire_detection
 
 

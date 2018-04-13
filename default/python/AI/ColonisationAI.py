@@ -1149,7 +1149,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
             cost *= 0.8  # will be making fast-ish tech progress so value is underestimated
 
     potential_targets = [(pid, (score, specName)) for (pid, (score, specName)) in evaluated_planets if
-                         score > max((0.8 * cost), MINIMUM_COLONY_SCORE)]
+                         score > (0.8 * cost) and score > MINIMUM_COLONY_SCORE]
 
     print "Colony/outpost ship matching: fleets %s to planets %s" % (fleet_pool, evaluated_planets)
 
