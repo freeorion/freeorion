@@ -10,7 +10,7 @@ BAD_STOCKPILE
 AVERAGE_STOCKPILE
 '''EffectsGroup
             // Skip the AVERAGE_STOCKPILE_DESC, same as for the other *_STOCKPILE macros
-	    [[STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(AVERAGE,Value +  1 * Target.Population * [[STOCKPILE_PER_POP]])]]
+    [[STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(AVERAGE,Value +  1 * Target.Population * [[STOCKPILE_PER_POP]])]]
 [[STANDARD_STOCKPILE_GROWTH]]
 '''
 
@@ -32,7 +32,7 @@ ULTIMATE_STOCKPILE
 STOCKPILE_PER_POP_EFFECTSGROUP
 '''     EffectsGroup
             description = "@1@_STOCKPILE_DESC"
-	    [[STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(@1@,@2@)]]
+        [[STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(@1@,@2@)]]
 '''
 
 STOCKPILE_PER_POP_EFFECTSGROUP__SNIP
@@ -44,14 +44,24 @@ STOCKPILE_PER_POP_EFFECTSGROUP__SNIP
 '''
 
 STANDARD_STOCKPILE_GROWTH
-'''        EffectsGroup // increase 1 per turn, up to max
+'''        EffectsGroup // FOCUS_STOCKPILE fast growth: double each turn, up to max (starting with 0.1)
             scope = Source
             activation = And [
                 Planet
                 (Source.LastTurnConquered < CurrentTurn)
+                Focus type = "FOCUS_STOCKPILE"
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetStockpile value = min(Value(Target.MaxStockpile), Value + 1)
+            effects = SetStockpile value = min(Value(Target.MaxStockpile), max(0.1, Value * 2))
+        EffectsGroup // slow growth: add 0.1 per turn, up to max
+            scope = Source
+            activation = And [
+                Planet
+                (Source.LastTurnConquered < CurrentTurn)
+                Not Focus type = "FOCUS_STOCKPILE"
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetStockpile value = min(Value(Target.MaxStockpile), Value + 0.1)
 '''
 
 #include "/scripting/common/base_prod.macros"

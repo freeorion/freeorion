@@ -52,7 +52,13 @@ HAS_ADVANCED_FOCI
         Focus
             name = "FOCUS_STOCKPILE"
             description = "FOCUS_STOCKPILE_DESC"
-            location = OwnerHasTech name = "PRO_GENERIC_SUPPLIES"
+            location = And [
+                OwnerHasTech name = "PRO_GENERIC_SUPPLIES"
+                Or [
+                    Homeworld name = Source.Species
+                    Capital
+                ]
+            ]
             graphic = "icons/focus/stockpile.png"
 
         Focus
