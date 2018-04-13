@@ -1062,6 +1062,7 @@ def revise_threat_factor(threat_factor, planet_value, system_id, min_planet_valu
     # send colony ships into some system for which we have not evaluated fleetThreat
     system_status = foAI.foAIstate.systemStatus.get(system_id, {})
     system_fleet_treat = system_status.get('fleetThreat', 1000)
+    # TODO: consider taking area threat into account here.  Arguments can be made both ways, see discussion in PR2069
     sys_total_threat = system_fleet_treat + system_status.get('monsterThreat', 0) + system_status.get('planetThreat', 0)
     if (MilitaryAI.get_concentrated_tot_mil_rating() > sys_total_threat) and (planet_value > 2 * min_planet_value):
         threat_factor = max(threat_factor, (min_planet_value + 1) / planet_value)
