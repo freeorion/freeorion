@@ -318,18 +318,23 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
 
     # by using the following instead of simply relying on stealth meter reading, can (sometimes) plan ahead even if
     # planet is temporarily shrouded by an ion storm
-    if not EspionageAI.colony_detectable_by_empire(planet_id, empire_id=fo.empireID(), default_result=False):
-        debug("InvasionAI predicts planet id %d to be stealthed" % planet_id)
-        return [0, 0]
+    predicted_detectable = EspionageAI.colony_detectable_by_empire(planet_id, empire_id=fo.empireID(),
+                                                                   default_result=False)
+    if not predicted_detectable:
+        if get_partial_visibility_turn(planet_id) < fo.currentTurn():
+            debug("InvasionAI predicts planet id %d to be stealthed" % planet_id)
+            return [0, 0]
+        else:
+            debug("InvasionAI predicts planet id %d to be stealthed" % planet_id +
+                  ", but somehow have current visibity anyway, will still consider as target")
 
-    # make sure the target planet was not extra-stealthed somehow its system was last viewed
-    # this test below augments the tests above, but by itself it can be thrown off by temporary combat-related sighting
+    # Check if the target planet was extra-stealthed somehow its system was last viewed
+    # this test below may augment the tests above, but can be thrown off by temporary combat-related sighting
     system_last_seen = get_partial_visibility_turn(planet_id)
     planet_last_seen = get_partial_visibility_turn(system_id)
     if planet_last_seen < system_last_seen:
         # TODO: track detection strength, order new scouting when it goes up
-        print "invasion AI couldn't get current info on planet id %d (was stealthed at last sighting)" % planet_id
-        return [0, 0]
+        debug("Invasion AI considering planet id %d (stealthed at last view), still proceeding." % planet_id)
 
     # get a baseline evaluation of the planet as determined by ColonisationAI
     species_name = planet.speciesName
