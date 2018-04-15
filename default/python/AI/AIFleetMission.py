@@ -2,7 +2,7 @@ from logging import debug, info, warn
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
-from fleet_orders import OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
+from fleet_orders import AIFleetOrder, OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
 import AIstate
 import EspionageAI
 import FleetUtilsAI
@@ -55,6 +55,7 @@ COMPATIBLE_ROLES_MAP = {
 class AIFleetMission(object):
     """
     Stores information about AI mission. Every mission has fleetID and AI targets depending upon AI fleet mission type.
+    :type orders: list[AIFleetOrder]
     :type target: universe_object.UniverseObject | None
     """
 
@@ -407,6 +408,8 @@ class AIFleetMission(object):
             if just_issued_move_order and self.fleet.get_object().systemID != last_move_target_id:
                 # having just issued a move order, we will normally stop issuing orders this turn, except that if there
                 # are consecutive move orders we will consider moving through the first destination rather than stopping
+                # Without the below noinspection directive, PyCharm is concerned about the 2nd part of the test
+                # noinspection PyTypeChecker
                 if (not isinstance(fleet_order, OrderMove) or
                         self.need_to_pause_movement(last_move_target_id, fleet_order)):
                     break
