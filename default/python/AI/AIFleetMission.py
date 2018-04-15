@@ -257,11 +257,22 @@ class AIFleetMission(object):
 
     def _check_abort_mission(self, fleet_order):
         """ checks if current mission (targeting a planet) should be aborted"""
-        if fleet_order.target and isinstance(fleet_order.target, Planet):
+        planet_stealthed = False
+        target_is_planet = fleet_order.target and isinstance(fleet_order.target, Planet)
+        planet = None
+        if target_is_planet:
             planet = fleet_order.target.get_object()
+            # Check visibility prediction, but if somehow still have current visibility, don't
+            # abort the mission yet
             if not EspionageAI.colony_detectable_by_empire(planet.id, empire_id=fo.empireID()):
-                debug("EspionageAI predicts we can no longer detect %s, will abort mission" % fleet_order.target)
-            elif isinstance(fleet_order, OrderColonize):
+                if get_partial_visibility_turn(planet.id) == fo.currentTurn():
+                    debug("EspionageAI predicts planet id %d to be stealthed" % planet.id +
+                          ", but somehow have current visibity anyway, so won't trigger mission abort")
+                else:
+                    debug("EspionageAI predicts we can no longer detect %s, will abort mission" % fleet_order.target)
+                    planet_stealthed = True
+        if target_is_planet and not planet_stealthed:
+            if isinstance(fleet_order, OrderColonize):
                 if (planet.initialMeterValue(fo.meterType.population) == 0 and
                         (planet.ownedBy(fo.empireID()) or planet.unowned)):
                     return False
