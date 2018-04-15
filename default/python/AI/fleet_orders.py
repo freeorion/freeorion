@@ -9,7 +9,6 @@ import MilitaryAI
 import MoveUtilsAI
 import CombatRatingsAI
 from universe_object import Fleet, System, Planet
-from freeorion_tools import get_partial_visibility_turn
 
 
 def trooper_move_reqs_met(main_fleet_mission, order, verbose):
@@ -298,9 +297,7 @@ class OrderOutpost(AIFleetOrder):
         if not super(OrderOutpost, self).is_valid():
             return False
         planet = self.target.get_object()
-        sys_partial_vis_turn = get_partial_visibility_turn(planet.systemID)
-        planet_partial_vis_turn = get_partial_visibility_turn(planet.id)
-        if not (planet_partial_vis_turn == sys_partial_vis_turn and planet.unowned):
+        if not planet.unowned:
             # terminate early
             self.executed = True
             self.order_issued = True
@@ -361,11 +358,7 @@ class OrderColonize(AIFleetOrder):
         if not super(OrderColonize, self).is_valid():
             return False
         planet = self.target.get_object()
-
-        sys_partial_vis_turn = get_partial_visibility_turn(planet.systemID)
-        planet_partial_vis_turn = get_partial_visibility_turn(planet.id)
-        if (planet_partial_vis_turn == sys_partial_vis_turn and planet.unowned or
-                (planet.ownedBy(fo.empireID()) and not planet.currentMeterValue(fo.meterType.population))):
+        if (planet.unowned or planet.ownedBy(fo.empireID())) and not planet.currentMeterValue(fo.meterType.population):
             return self.fleet.get_object().hasColonyShips
         # Otherwise, terminate early
         self.executed = True
