@@ -2,7 +2,9 @@ from logging import debug, info, warn
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
-from fleet_orders import AIFleetOrder, OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
+# the following import is used for type hinting, which pylint seems not to recognize
+from fleet_orders import AIFleetOrder  # pylint: disable=unused-import
+from fleet_orders import OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
 import AIstate
 import EspionageAI
 import FleetUtilsAI
