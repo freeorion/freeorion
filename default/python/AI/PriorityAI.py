@@ -245,11 +245,11 @@ def _calculate_colonisation_priority():
     if "SP_SLY" not in colonizers and outpost_prio > 0:
         return 0.0
     min_score = ColonisationAI.MINIMUM_COLONY_SCORE
-    minimal_range = 2  # one more than the conditional floor set by ColonisationAI.revise_threat_factor()
+    minimal_top = min_score + 2  # one more than the conditional floor set by ColonisationAI.revise_threat_factor()
     minimal_opportunities = [species_name for (_, (score, species_name)) in foAI.foAIstate.colonisablePlanetIDs.items()
-                             if min_score < score <= min_score + minimal_range]
+                             if min_score < score <= minimal_top]
     decent_opportunities = [species_name for (_, (score, species_name)) in foAI.foAIstate.colonisablePlanetIDs.items()
-                            if score > min_score + minimal_range]
+                            if score > minimal_top]
     minimal_planet_factor = 0.2  # count them for something, but not much
     num_colonisable_planet_ids = len(decent_opportunities) + minimal_planet_factor * len(minimal_opportunities)
     if num_colonisable_planet_ids == 0:
