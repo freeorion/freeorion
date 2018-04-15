@@ -121,7 +121,7 @@ def _calculate_research_priority():
     # get current industry production & Target
     owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
     planets = map(universe.getPlanet, owned_planet_ids)
-    target_rp = sum(map(lambda x: x.currentMeterValue(fo.meterType.targetResearch), planets))
+    target_rp = sum(map(lambda _x: _x.currentMeterValue(fo.meterType.targetResearch), planets))
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted', {})
 
@@ -244,9 +244,14 @@ def _calculate_colonisation_priority():
     colonizers = list(ColonisationAI.empire_colonizers)
     if "SP_SLY" not in colonizers and outpost_prio > 0:
         return 0.0
-    colony_opportunities = [species_name for (_, (score, species_name)) in foAI.foAIstate.colonisablePlanetIDs.items()
-                            if score > 60]
-    num_colonisable_planet_ids = len(colony_opportunities)
+    min_score = ColonisationAI.MINIMUM_COLONY_SCORE
+    minimal_top = min_score + 2  # one more than the conditional floor set by ColonisationAI.revise_threat_factor()
+    minimal_opportunities = [species_name for (_, (score, species_name)) in foAI.foAIstate.colonisablePlanetIDs.items()
+                             if min_score < score <= minimal_top]
+    decent_opportunities = [species_name for (_, (score, species_name)) in foAI.foAIstate.colonisablePlanetIDs.items()
+                            if score > minimal_top]
+    minimal_planet_factor = 0.2  # count them for something, but not much
+    num_colonisable_planet_ids = len(decent_opportunities) + minimal_planet_factor * len(minimal_opportunities)
     if num_colonisable_planet_ids == 0:
         return 1
 
@@ -257,7 +262,8 @@ def _calculate_colonisation_priority():
     if colonizers == ["SP_SLY"]:
         colonisation_priority *= 2
     elif "SP_SLY" in colonizers:
-        colonisation_priority *= (1.0 + colony_opportunities.count("SP_SLY")) / num_colonisable_planet_ids
+        colony_opportunities = minimal_opportunities + decent_opportunities
+        colonisation_priority *= (1.0 + colony_opportunities.count("SP_SLY")) / len(colony_opportunities)
 
     # print
     # print "Number of Colony Ships : " + str(num_colony_ships)
@@ -298,7 +304,8 @@ def _calculate_outpost_priority():
     allotted_outpost_targets = 1 + int(total_pp * 3 * allotted_portion / base_outpost_cost)
 
     num_outpost_targets = len([pid for (pid, (score, specName)) in foAI.foAIstate.colonisableOutpostIDs.items()
-                               if score > 1.0 * base_outpost_cost / 3.0][:allotted_outpost_targets])
+                               if score > max(1.0 * base_outpost_cost / 3.0, ColonisationAI.MINIMUM_COLONY_SCORE)]
+                              [:allotted_outpost_targets])
     if num_outpost_targets == 0 or not tech_is_complete(AIDependencies.OUTPOSTING_TECH):
         return 0
 
@@ -412,8 +419,9 @@ def _calculate_military_priority():
                      tech_is_complete("SHP_WEAPON_4_1"))
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted', {})
 
-    allotted_invasion_targets = 1 + int(fo.currentTurn()/25)
-    target_planet_ids = [pid for pid, pscore, trp in AIstate.invasionTargets[:allotted_invasion_targets]] + [pid for pid, pscore in foAI.foAIstate.colonisablePlanetIDs.items()[:allottedColonyTargets]] + [pid for pid, pscore in foAI.foAIstate.colonisableOutpostIDs.items()[:allottedColonyTargets]]
+    target_planet_ids = ([pid for pid, pscore, trp in AIstate.invasionTargets[:allotted_invasion_targets()]] +
+                         [pid for pid, pscore in foAI.foAIstate.colonisablePlanetIDs.items()[:allottedColonyTargets]] +
+                         [pid for pid, pscore in foAI.foAIstate.colonisableOutpostIDs.items()[:allottedColonyTargets]])
 
     my_systems = set(state.get_empire_planets_by_system())
     target_systems = set(PlanetUtilsAI.get_systems(target_planet_ids))

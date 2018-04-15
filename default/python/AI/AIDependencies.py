@@ -68,6 +68,7 @@ DRYDOCK_HAPPINESS_THRESHOLD = 5
 
 # Constants defined by the C++ game engine
 INVALID_ID = -1
+ALL_EMPIRES = -1
 
 # </editor-fold>
 
@@ -110,6 +111,40 @@ GASEOUS_POP_FACTOR = 0.50
 
 # </editor-fold>
 
+# <editor-fold desc="Detection Strengths">
+DETECTION_TECH_STRENGTHS = {
+    "SPY_DETECT_1": 10,
+    "SPY_DETECT_2": 30,
+    "SPY_DETECT_3": 50,
+    "SPY_DETECT_4": 70,
+    "SPY_DETECT_5": 200,
+}
+# </editor-fold>
+
+# <editor-fold desc="Stealth Strengths">
+PRIMARY_FOCS_STEALTH_LEVELS = {
+    "LOW_STEALTH": 20,
+    "MEDIUM_STEALTH": 40,
+    "HIGH_STEALTH": 60,
+    "VERY_HIGH_STEALTH": 80,
+}
+
+STEALTH_SPECIAL_STRENGTHS = {
+    "CLOUD_COVER_SLAVE_SPECIAL": PRIMARY_FOCS_STEALTH_LEVELS["LOW_STEALTH"],
+    "VOLCANIC_ASH_SLAVE_SPECIAL": PRIMARY_FOCS_STEALTH_LEVELS["MEDIUM_STEALTH"],
+    "DIM_RIFT_SLAVE_SPECIAL": PRIMARY_FOCS_STEALTH_LEVELS["HIGH_STEALTH"],
+    "VOID_SLAVE_SPECIAL": PRIMARY_FOCS_STEALTH_LEVELS["VERY_HIGH_STEALTH"],
+}
+
+BASE_PLANET_STEALTH = 5
+
+STEALTH_STRENGTHS_BY_SPECIES_TAG = {
+    "BAD_STEALTH": -PRIMARY_FOCS_STEALTH_LEVELS["LOW_STEALTH"],
+    "GOOD_STEALTH": PRIMARY_FOCS_STEALTH_LEVELS["LOW_STEALTH"],
+    "GREAT_STEALTH": PRIMARY_FOCS_STEALTH_LEVELS["MEDIUM_STEALTH"],
+    "ULTIMATE_STEALTH": PRIMARY_FOCS_STEALTH_LEVELS["HIGH_STEALTH"],
+}
+# </editor-fold>
 
 # <editor-fold desc="Specials">
 # <editor-fold desc="Growth Focus specials">
@@ -192,6 +227,11 @@ SUPPLY_MOD_SPECIALS = {
         -1: -1,
     },
 }
+# </editor-fold>
+
+# <editor-fold desc="Detection related specials">
+PANOPTICON_SPECIAL = "PANOPTICON_SPECIAL"
+PANOPTICON_DETECTION_BONUS = 10
 # </editor-fold>
 
 

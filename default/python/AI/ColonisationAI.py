@@ -6,6 +6,7 @@ from common.print_utils import Table, Text, Sequence, Bool, Float
 import AIDependencies
 import universe_object
 import AIstate
+import EspionageAI
 import FleetUtilsAI
 import FreeOrionAI as foAI
 import PlanetUtilsAI
@@ -15,8 +16,8 @@ import MilitaryAI
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer, get_partial_visibility_turn
-from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
-                            POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
+from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP,
+                            POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
 from InvasionAI import MIN_INVASION_SCORE
 
 colonization_timer = AITimer('getColonyFleets()')
@@ -48,8 +49,8 @@ GOOD_PILOT_RATING = 4.0
 GREAT_PILOT_RATING = 6.0
 ULT_PILOT_RATING = 12.0
 
-# minimum evaluation score that a planet must reach so it is considered for outposting
-MINIMUM_OUTPOST_SCORE = 100
+# minimum evaluation score that a planet must reach so it is considered for outposting or colonizing
+MINIMUM_COLONY_SCORE = 60
 
 
 def colony_pod_cost():
@@ -394,7 +395,7 @@ def get_colony_fleets():
     sorted_planets = evaluated_colony_planets.items()
     sorted_planets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
 
-    _print_colony_candidate_table(sorted_planets)
+    _print_colony_candidate_table(sorted_planets, show_detail=True)
 
     sorted_planets = [(planet_id, score[:2]) for planet_id, score in sorted_planets if score[0] > 0]
     # export planets for other AI modules
@@ -612,7 +613,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     # triple count pop_ctrs
     existing_presence = len(locally_owned_planets) + 2 * len(locally_owned_pop_ctrs)
     system = universe.getSystem(this_sysid)
-    sys_status = foAI.foAIstate.systemStatus.get(this_sysid, {})
 
     sys_supply = state.get_system_supply(this_sysid)
     planet_supply = AIDependencies.supply_by_size.get(planet.size, 0)
@@ -639,34 +639,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     if planet.speciesName == (spec_name or ""):  # adding or "" in case None was passed as spec_name
         planet_supply_cache[planet_id] = planet_supply + sys_supply
 
-    myrating = sys_status.get('myFleetRating', 0)
-    cur_best_mil_ship_rating = max(MilitaryAI.cur_best_mil_ship_rating(), 0.001)
-    fleet_threat_ratio = (sys_status.get('fleetThreat', 0) - myrating) / float(cur_best_mil_ship_rating)
-    monster_threat_ratio = sys_status.get('monsterThreat', 0) / float(cur_best_mil_ship_rating)
-    neighbor_threat_ratio = (
-        sys_status.get('neighborThreat', 0) / float(cur_best_mil_ship_rating) +
-        min(0, fleet_threat_ratio)
-    )  # last portion gives credit for inner extra defenses
-    myrating = sys_status.get('my_neighbor_rating', 0)
-    jump2_threat_ratio = (
-        max(0, sys_status.get('jump2_threat', 0) - myrating) / float(cur_best_mil_ship_rating) +
-        min(0, neighbor_threat_ratio)
-    )  # last portion gives credit for inner extra defenses
-
-    thrt_factor = 1.0
-    ship_limit = 2 * (2 ** (fo.currentTurn() / 40.0))
-    threat_tally = fleet_threat_ratio + neighbor_threat_ratio + monster_threat_ratio
-    if existing_presence:
-        threat_tally += 0.3 * jump2_threat_ratio
-        threat_tally *= 0.8
-    else:
-        threat_tally += 0.6 * jump2_threat_ratio
-    if threat_tally > ship_limit:
-        thrt_factor = 0.1
-    elif fleet_threat_ratio + neighbor_threat_ratio + monster_threat_ratio > 0.6 * ship_limit:
-        thrt_factor = 0.4
-    elif fleet_threat_ratio + neighbor_threat_ratio + monster_threat_ratio > 0.2 * ship_limit:
-        thrt_factor = 0.8
+    threat_factor = determine_colony_threat_factor(planet_id, spec_name, existing_presence)
 
     sys_partial_vis_turn = get_partial_visibility_turn(this_sysid)
     planet_partial_vis_turn = get_partial_visibility_turn(planet_id)
@@ -868,7 +841,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
                         other_planet.availableFoci) + [other_planet.focus]:
                     orb_gen_val += per_gg * discount_multiplier
                     # Note, this reported value may not take into account a later adjustment from a populated gg
-                    gg_detail.append("GGG for %s %.1f" % (other_planet.name, discount_multiplier * per_gg * populated_gg_factor))
+                    gg_detail.append("GGG for %s %.1f" % (other_planet.name, discount_multiplier * per_gg *
+                                                          populated_gg_factor))
             if planet_id in sorted(gg_list)[:max_gggs]:
                 retval += orb_gen_val * populated_gg_factor
                 detail.extend(gg_detail)
@@ -889,9 +863,11 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
             supply_val += 25 * (planet_supply - sys_supply)
         detail.append("sys_supply: %d, planet_supply: %d, supply_val: %.0f" % (sys_supply, planet_supply, supply_val))
         retval += supply_val
-        if thrt_factor < 1.0:
-            retval *= thrt_factor
-            detail.append("threat reducing value by %3d %%" % (100 * (1 - thrt_factor)))
+
+        if threat_factor < 1.0:
+            threat_factor = revise_threat_factor(threat_factor, retval, this_sysid, MINIMUM_COLONY_SCORE)
+            retval *= threat_factor
+            detail.append("threat reducing value by %3d %%" % (100 * (1 - threat_factor)))
         return int(retval)
     else:  # colonization mission
         if not species:
@@ -1053,10 +1029,74 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
         if existing_presence:
             detail.append("preexisting system colony")
             retval = (retval + existing_presence * get_defense_value(spec_name)) * 2
-        if thrt_factor < 1.0:
-            retval *= thrt_factor
-            detail.append("threat reducing value by %3d %%" % (100 * (1 - thrt_factor)))
+        if threat_factor < 1.0:
+            threat_factor = revise_threat_factor(threat_factor, retval, this_sysid, MINIMUM_COLONY_SCORE)
+            retval *= threat_factor
+            detail.append("threat reducing value by %3d %%" % (100 * (1 - threat_factor)))
     return retval
+
+
+def revise_threat_factor(threat_factor, planet_value, system_id, min_planet_value=MINIMUM_COLONY_SCORE):
+    """
+    Check if the threat_factor should be made less severe.
+
+    If the AI does have enough total miltary to secure this system, and the target has more than minimal value,
+    don't let the threat_factor discount the adjusted value below min_planet_value +1, so that if there are no
+    other targets the AI could still pursue this one.  Otherwise, scoring pressure from
+    MilitaryAI.get_preferred_max_military_portion_for_single_battle might prevent the AI from pursuing a heavily
+    defended but still obtainable target even if it has no softer locations available.
+
+    :param threat_factor: the base threat factor
+    :type threat_factor: float
+    :param planet_value: the planet score
+    :type planet_value: float
+    :param system_id: the system ID of subject planet
+    :type system_id: int
+    :param min_planet_value: a floor planet value if the AI has enough military to secure the system
+    :type min_planet_value: float
+    :return: the (potentially) revised threat_factor
+    :rtype: float
+    """
+
+    # the default value below for fleetThreat shouldn't come in to play, but is just to be absolutely sure we don't
+    # send colony ships into some system for which we have not evaluated fleetThreat
+    system_status = foAI.foAIstate.systemStatus.get(system_id, {})
+    system_fleet_treat = system_status.get('fleetThreat', 1000)
+    # TODO: consider taking area threat into account here.  Arguments can be made both ways, see discussion in PR2069
+    sys_total_threat = system_fleet_treat + system_status.get('monsterThreat', 0) + system_status.get('planetThreat', 0)
+    if (MilitaryAI.get_concentrated_tot_mil_rating() > sys_total_threat) and (planet_value > 2 * min_planet_value):
+        threat_factor = max(threat_factor, (min_planet_value + 1) / planet_value)
+    return threat_factor
+
+
+def determine_colony_threat_factor(planet_id, spec_name, existing_presence):
+    universe = fo.getUniverse()
+    planet = universe.getPlanet(planet_id)
+    if not planet:  # should have been checked previously, but belt-and-suspenders
+        error("Can't retrieve planet ID %d" % planet_id)
+        return 0
+    sys_status = foAI.foAIstate.systemStatus.get(planet.systemID, {})
+    cur_best_mil_ship_rating = max(MilitaryAI.cur_best_mil_ship_rating(), 0.001)
+    local_defenses = sys_status.get('all_local_defenses', 0)
+    local_threat = sys_status.get('fleetThreat', 0) + sys_status.get('monsterThreat', 0)
+    neighbor_threat = sys_status.get('neighborThreat', 0)
+    jump2_threat = 0.6 * max(0, sys_status.get('jump2_threat', 0) - sys_status.get('my_neighbor_rating', 0))
+    area_threat = neighbor_threat + jump2_threat
+    area_threat *= 2.0 / (existing_presence + 2)  # once we have a foothold be less scared off by area threats
+    # TODO: evaluate detectability by specific source of area threat, also consider if the subject AI already has
+    # researched techs that would grant a stealth bonus
+    if not EspionageAI.colony_detectable_by_empire(planet_id, spec_name, default_result=True):
+        area_threat *= 0.05
+    net_threat = max(0, local_threat + area_threat - local_defenses)
+    # even if our military has lost all warships, rate planets as if we have at least one
+    reference_rating = max(cur_best_mil_ship_rating, MilitaryAI.get_preferred_max_military_portion_for_single_battle() *
+                           MilitaryAI.get_concentrated_tot_mil_rating())
+    threat_factor = min(1.0, reference_rating / (net_threat + 0.001)) ** 2
+    if threat_factor < 0.5:
+        mil_ref_string = "Military rating reference: %.1f" % reference_rating
+        debug("Significant threat discounting %2d%% at %s, local defense: %.1f, local threat %.1f, area threat %.1f" %
+              (100 * (1 - threat_factor), planet.name, local_defenses, local_threat, area_threat) + mil_ref_string)
+    return threat_factor
 
 
 @cache_by_turn
@@ -1110,7 +1150,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
             cost *= 0.8  # will be making fast-ish tech progress so value is underestimated
 
     potential_targets = [(pid, (score, specName)) for (pid, (score, specName)) in evaluated_planets if
-                         score > (0.8 * cost)]
+                         score > (0.8 * cost) and score > MINIMUM_COLONY_SCORE]
 
     print "Colony/outpost ship matching: fleets %s to planets %s" % (fleet_pool, evaluated_planets)
 
@@ -1198,23 +1238,23 @@ def _print_empire_species_roster():
     info(species_table)
 
 
-def _print_outpost_candidate_table(candidates):
+def _print_outpost_candidate_table(candidates, show_detail=False):
     """Print a summary for the outpost candidates in a table format to log.
 
     :param candidates: list of (planet_id, (score, species, details)) tuples
     """
-    __print_candidate_table(candidates, mission='Outposts')
+    __print_candidate_table(candidates, mission='Outposts', show_detail=show_detail)
 
 
-def _print_colony_candidate_table(candidates):
+def _print_colony_candidate_table(candidates, show_detail=False):
     """Print a summary for the colony candidates in a table format to log.
 
     :param candidates: list of (planet_id, (score, species, details)) tuples
     """
-    __print_candidate_table(candidates, mission='Colonization')
+    __print_candidate_table(candidates, mission='Colonization', show_detail=show_detail)
 
 
-def __print_candidate_table(candidates, mission):
+def __print_candidate_table(candidates, mission, show_detail=False):
     universe = fo.getUniverse()
     if mission == 'Colonization':
         first_column = Text('(Score, Species)')
@@ -1227,17 +1267,22 @@ def __print_candidate_table(candidates, mission):
     else:
         warn("__print_candidate_table(%s, %s): Invalid mission type" % (candidates, mission))
         return
-    candidate_table = Table([first_column, Text('Planet'), Text('System'), Sequence('Specials')],
+    columns = [first_column, Text('Planet'), Text('System'), Sequence('Specials')]
+    if show_detail:
+        columns.append(Sequence('Detail'))
+    candidate_table = Table(columns,
                             table_name='Potential Targets for %s in Turn %d' % (mission, fo.currentTurn()))
     for planet_id, score_tuple in candidates:
         if score_tuple[0] > 0.5:
             planet = universe.getPlanet(planet_id)
-            candidate_table.add_row([
-                get_first_column_value(score_tuple),
-                planet,
-                universe.getSystem(planet.systemID),
-                planet.specials,
-            ])
+            entries = [get_first_column_value(score_tuple),
+                       planet,
+                       universe.getSystem(planet.systemID),
+                       planet.specials,
+                       ]
+            if show_detail:
+                entries.append(score_tuple[-1])
+            candidate_table.add_row(entries)
     info(candidate_table)
 
 
@@ -1457,7 +1502,8 @@ class OrbitalColonizationManager(object):
                 del unaccounted_plans[alternative_plan.target]
                 continue
 
-            debug("Could not find a target for the outpost base enqueued at %s" % universe.getPlanet(element.locationID))
+            debug("Could not find a target for the outpost base enqueued at %s" %
+                  universe.getPlanet(element.locationID))
             items_to_dequeue.append(idx)
 
         # TODO: Stop Building for targets with now insufficient colonization score
@@ -1476,7 +1522,7 @@ class OrbitalColonizationManager(object):
             return
 
         considered_plans = [plan for plan in self._colonization_plans.itervalues()
-                            if not plan.base_enqueued and plan.score > MINIMUM_OUTPOST_SCORE]
+                            if not plan.base_enqueued and plan.score > MINIMUM_COLONY_SCORE]
         queue_limit = max(1, int(2*empire.productionPoints / outpod_pod_cost()))
         for colonization_plan in sorted(considered_plans, key=lambda x: x.score, reverse=True):
             if self.num_enqueued_bases >= queue_limit:

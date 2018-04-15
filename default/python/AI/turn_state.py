@@ -30,6 +30,7 @@ class State(object):
         self.__have_ruins = False
         self.__have_nest = False
         self.__have_computronium = False
+        self.__have_panopticon = False
         self.__best_pilot_rating = 1e-8
         self.__medium_pilot_rating = 1e-8
         self.__planet_info = {}  # map from planet_id to PlanetInfo
@@ -67,6 +68,8 @@ class State(object):
                 population = planet.currentMeterValue(fo.meterType.population)
                 if AIDependencies.ANCIENT_RUINS_SPECIAL in planet.specials:
                     self.__have_ruins = True
+                if AIDependencies.PANOPTICON_SPECIAL in planet.specials:
+                    self.__have_panopticon = True
                 if population > 0 and AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:
                         self.__have_computronium = True  # TODO: Check if species can set research focus
 
@@ -232,6 +235,10 @@ class State(object):
     @property
     def have_ruins(self):
         return self.__have_ruins
+
+    @property
+    def have_panopticon(self):
+        return self.__have_panopticon
 
     @property
     def have_nest(self):
