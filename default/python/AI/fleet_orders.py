@@ -301,6 +301,7 @@ class OrderOutpost(AIFleetOrder):
         sys_partial_vis_turn = get_partial_visibility_turn(planet.systemID)
         planet_partial_vis_turn = get_partial_visibility_turn(planet.id)
         if not (planet_partial_vis_turn == sys_partial_vis_turn and planet.unowned):
+            # terminate early
             self.executed = True
             self.order_issued = True
             return False
@@ -366,6 +367,7 @@ class OrderColonize(AIFleetOrder):
         if (planet_partial_vis_turn == sys_partial_vis_turn and planet.unowned or
                 (planet.ownedBy(fo.empireID()) and not planet.currentMeterValue(fo.meterType.population))):
             return self.fleet.get_object().hasColonyShips
+        # Otherwise, terminate early
         self.executed = True
         self.order_issued = True
         return False
@@ -404,6 +406,7 @@ class OrderInvade(AIFleetOrder):
         if planet.unowned and not planet_population:
             print "\t\t invasion order not valid due to target planet status-- owned: %s and population %.1f" % (
                 not planet.unowned, planet_population)
+            # terminate early
             self.executed = True
             self.order_issued = True
             return False
