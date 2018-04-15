@@ -67,6 +67,7 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
 class AIFleetOrder(object):
     """Stores information about orders which can be executed."""
     TARGET_TYPE = None
+    ORDER_NAME = ''
 
     def __init__(self, fleet, target):
         """
