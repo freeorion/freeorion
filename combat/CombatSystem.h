@@ -5,6 +5,8 @@
 #include "../util/AppInterface.h"
 #include "CombatEvent.h"
 
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 
 /** Contains information about the state of a combat before or after the combat
