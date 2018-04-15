@@ -10515,7 +10515,7 @@ PRO_MICROGRAV_MAN
 Production en Microgravité
 
 PRO_MICROGRAV_MAN_DESC
-'''Augmente l'[[metertype METER_INDUSTRY]] de 5 sur toutes les colonies en Focus Recherche situées dans un système abritant des colonies ou avant-postes sur une Ceinture d'Astéroïdes. Plusieurs Ceintures d'Astéroïdes n'engendrent pas de bénéfices additionnels.
+'''Augmente l'[[metertype METER_INDUSTRY]] de 5 sur toutes les colonies en Focus Recherche situées dans des systèmes abritant des colonies ou avant-postes sur une Ceinture d'Astéroïdes. Plusieurs Ceintures d'Astéroïdes n'engendrent pas de bénéfices additionnels.
 
 L'extraction de ressources minières sur des planétoïdes implique de nombreux challenges mais aussi de réelles opportunités en comparaison d'une exploitation planétaire classique. Ne disposant pas de la masse nécessaire pour la liquéfaction et la différenciation, les astéroïdes permettent un accès bien plus aisé à certains éléments lourds, tandis que l'absence de gravité rend l'extraction en vue d'une utilisation directe dans l'espace bien plus efficace. Par contre, la taille généralement limitée des astéroïdes requiert des infrastructures d'extraction auto-suffisantes et d'une grande mobilité. Par conséquent, les défis relatifs à un environnement en microgravité doivent être surmontés, nécessitant une refonte totale des méthodes traditionnelles.
 
@@ -11651,7 +11651,7 @@ SHP_DEUTERIUM_TANK
 Réservoir de Deutérium
 
 SHP_DEUTERIUM_TANK_DESC
-Légère amélioration de chaque [[shippart FU_BASIC_TANK]] d'un astronef. Augmente la capacité en [[metertype METER_FUEL]] d'un astronef et par conséquent le nombre maximum de Voies spatiales pouvant être parcourues avec un réservoir plein.
+Légère amélioration de chaque [[shippart FU_BASIC_TANK]] d'un astronef. Augmente la capacité en [[metertype METER_FUEL]] d'un astronef et par conséquent le nombre maximum de Voies spatiales pouvant être parcourues avant de devoir ravitailler en carburant.
 
 SHP_DEUTERIUM_TANK_EFFECT
 Technologie Réservoir de Deutérium
@@ -11660,7 +11660,7 @@ SHP_ANTIMATTER_TANK
 Réservoir d'Anti-Matière
 
 SHP_ANTIMATTER_TANK_DESC
-Notable amélioration de chaque [[shippart FU_BASIC_TANK]] d'un astronef. Augmente la capacité en [[metertype METER_FUEL]] d'un astronef et par conséquent le nombre maximum de Voies spatiales pouvant être parcourues avec un réservoir plein.
+Notable amélioration de chaque [[shippart FU_BASIC_TANK]] d'un astronef. Augmente la capacité en [[metertype METER_FUEL]] d'un astronef et par conséquent le nombre maximum de Voies spatiales pouvant être parcourues avant de devoir ravitailler en carburant.
 
 SHP_ANTIMATTER_TANK_EFFECT
 Technologie Réservoir d'Anti-Matière
