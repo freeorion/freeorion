@@ -429,12 +429,15 @@ class AIFleetMission(object):
                 else:
                     print "NOT issuing (even though can_issue) fleet order %s" % fleet_order
                 print "Order issued: %s" % fleet_order.order_issued
-                if not fleet_order.order_issued:
+                if not fleet_order.executed:
                     order_completed = False
             else:  # check that we're not held up by a Big Monster
                 if fleet_order.order_issued:
-                    # It's unclear why we'd really get to this spot, but it has been observed to happen, perhaps due to
-                    # game being reloaded after code changes.
+                    # A previously issued order that wasn't instantly executed must have had cirumstances change so that
+                    # the order can't currently be reissued (or perhaps simply a savegame has been reloaded on the same
+                    # turn the order was issued).
+                    if not fleet_order.executed:
+                        order_completed = False
                     # Go on to the next order.
                     continue
                 print "CAN'T issue fleet order %s" % fleet_order

@@ -138,9 +138,12 @@ class AIFleetOrder(object):
         if not self.can_issue_order():  # appears to be redundant with check in IAFleetMission?
             print "  can't issue %s" % self
             return False
-        else:
-            self.executed = True  # TODO check that it is really executed
-            return True
+        # by default we now set the order as issue and executed.  For any subclass where order issuence and execution
+        # is not necessarily sure, these values can be reset after any appropriate checks in the respective
+        # subclass issue_order()
+        self.order_issued = True
+        self.executed = True
+        return True
 
     def __str__(self):
         execute_status = 'in progress'
@@ -250,7 +253,6 @@ class OrderMove(AIFleetOrder):
             if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
                 if system_id in foAI.foAIstate.needsEmergencyExploration:
                     foAI.foAIstate.needsEmergencyExploration.remove(system_id)
-        self.order_issued = True
 
 
 class OrderResupply(AIFleetOrder):
@@ -268,12 +270,13 @@ class OrderResupply(AIFleetOrder):
         fleet_id = self.fleet.id
         system_id = self.target.get_system().id
         fleet = self.fleet.get_object()
-        if system_id not in [fleet.systemID, fleet.nextSystemID]:
-            # if self.order_type == AIFleetOrderType.ORDER_MOVE:
-            #     dest_id = system_id
-            # else:
-            # if self.order_type == AIFleetOrderType.ORDER_REPAIR:
-            #     fo.issueAggressionOrder(fleet_id, False)
+        if system_id == fleet.systemID:
+            if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
+                if system_id in foAI.foAIstate.needsEmergencyExploration:
+                    foAI.foAIstate.needsEmergencyExploration.remove(system_id)
+            return
+        if system_id != fleet.nextSystemID:
+            self.executed = False
             start_id = FleetUtilsAI.get_fleet_system(fleet)
             dest_id = MoveUtilsAI.get_safe_path_leg_to_dest(fleet_id, start_id, system_id)
             universe = fo.getUniverse()
@@ -281,12 +284,6 @@ class OrderResupply(AIFleetOrder):
                 fleet_id, self.ORDER_NAME, universe.getSystem(dest_id), universe.getSystem(system_id))
             fo.issueFleetMoveOrder(fleet_id, dest_id)
             print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
-
-        if system_id == fleet.systemID:
-            if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
-                if system_id in foAI.foAIstate.needsEmergencyExploration:
-                    foAI.foAIstate.needsEmergencyExploration.remove(system_id)
-            self.order_issued = True
 
 
 class OrderOutpost(AIFleetOrder):
@@ -319,18 +316,21 @@ class OrderOutpost(AIFleetOrder):
     def issue_order(self):
         if not super(OrderOutpost, self).issue_order():
             return
+        # we can't know yet if the order will actually execute; instead, rely on the fact that if the order does get
+        # executed, then next turn it will be invalid
+        self.executed = False
         planet = self.target.get_object()
         if not planet.unowned:
-            self.order_issued = True
             return
         fleet_id = self.fleet.id
         ship_id = FleetUtilsAI.get_ship_id_with_role(fleet_id, ShipRoleType.CIVILIAN_OUTPOST)
         if ship_id is None:
             ship_id = FleetUtilsAI.get_ship_id_with_role(fleet_id, ShipRoleType.BASE_OUTPOST)
-        result = fo.issueColonizeOrder(ship_id, self.target.id)
-        print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
-        if not result:
-            self.executed = False
+        if fo.issueColonizeOrder(ship_id, self.target.id):
+            debug("Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+        else:
+            self.order_issued = False
+            debug("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
 
 
 class OrderColonize(AIFleetOrder):
@@ -340,6 +340,9 @@ class OrderColonize(AIFleetOrder):
     def issue_order(self):
         if not super(OrderColonize, self).issue_order():
             return
+        # we can't know yet if the order will actually execute; instead, rely on the fact that if the order does get
+        # executed, then next turn it will be invalid
+        self.executed = False
 
         fleet_id = self.fleet.id
         ship_id = FleetUtilsAI.get_ship_id_with_role(fleet_id, ShipRoleType.CIVILIAN_COLONISATION)
@@ -348,11 +351,11 @@ class OrderColonize(AIFleetOrder):
 
         planet = self.target.get_object()
         planet_name = planet and planet.name or "apparently invisible"
-        result = fo.issueColonizeOrder(ship_id, self.target.id)
-        print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
-        print "Ordered colony ship ID %d to colonize %s, got result %d" % (ship_id, planet_name, result)
-        if not result:
-            self.executed = False
+        if fo.issueColonizeOrder(ship_id, self.target.id):
+            debug("Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+        else:
+            self.order_issued = False
+            debug("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
 
     def is_valid(self):
         if not super(OrderColonize, self).is_valid():
@@ -507,13 +510,13 @@ class OrderMilitary(AIFleetOrder):
                         [fo.meterType.defense, fo.meterType.shield, fo.meterType.construction]]):
                     combat_trigger = True
                     break
-        if all((
-                fleet,
-                fleet.systemID == target_sys_id,
-                system_status.get('currently_visible', False),
-                not (total_threat and combat_trigger)
+        if not all((
+                    fleet,
+                    fleet.systemID == target_sys_id,
+                    system_status.get('currently_visible', False),
+                    not (total_threat and combat_trigger)
         )):
-            self.order_issued = True
+            self.executed = False
 
 
 class OrderRepair(AIFleetOrder):
@@ -531,7 +534,13 @@ class OrderRepair(AIFleetOrder):
         fleet_id = self.fleet.id
         system_id = self.target.get_system().id
         fleet = self.fleet.get_object()
-        if system_id not in [fleet.systemID, fleet.nextSystemID]:
+        if system_id == fleet.systemID:
+            if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
+                if system_id in foAI.foAIstate.needsEmergencyExploration:
+                    foAI.foAIstate.needsEmergencyExploration.remove(system_id)
+            return
+        if system_id != fleet.nextSystemID:
+            self.executed = False
             fo.issueAggressionOrder(fleet_id, False)
             start_id = FleetUtilsAI.get_fleet_system(fleet)
             dest_id = MoveUtilsAI.get_safe_path_leg_to_dest(fleet_id, start_id, system_id)
@@ -541,8 +550,5 @@ class OrderRepair(AIFleetOrder):
             fo.issueFleetMoveOrder(fleet_id, dest_id)
             print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
 
-        if system_id == fleet.systemID:
-            if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
-                if system_id in foAI.foAIstate.needsEmergencyExploration:
-                    foAI.foAIstate.needsEmergencyExploration.remove(system_id)
-            self.order_issued = True
+
+
