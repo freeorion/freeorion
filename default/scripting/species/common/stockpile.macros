@@ -51,8 +51,9 @@ STANDARD_STOCKPILE_GROWTH
                 (Source.LastTurnConquered < CurrentTurn)
                 Focus type = "FOCUS_STOCKPILE"
             ]
+            accountinglabel = "STOCKPILE_FOCUS_GROWTH"
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetStockpile value = min(Value(Target.MaxStockpile), max(0.1, Value * 2))
+            effects = SetStockpile value = min(Value(Target.MaxStockpile), Value + 0.2 * (2 ^ Target.TurnsSinceFocusChange))
         EffectsGroup // slow growth: add 0.1 per turn, up to max
             scope = Source
             activation = And [
@@ -60,6 +61,7 @@ STANDARD_STOCKPILE_GROWTH
                 (Source.LastTurnConquered < CurrentTurn)
                 Not Focus type = "FOCUS_STOCKPILE"
             ]
+            accountinglabel = "STOCKPILE_NATURAL_GROWTH"
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetStockpile value = min(Value(Target.MaxStockpile), Value + 0.1)
 '''
