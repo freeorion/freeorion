@@ -53,6 +53,10 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire_id=ALL_EMPI
     if species_name is None:
         species_name = planet.speciesName
 
+    # in case we are checking about aborting a colonization mission
+    if empire_id == fo.empireID() and planet.ownedBy(empire_id):
+        return True
+
     species = fo.getSpecies(species_name)
     if species:
         species_tags = species.tags

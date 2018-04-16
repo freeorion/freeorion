@@ -1,6 +1,7 @@
 from logging import debug, error, warn
 
 from EnumsAI import ShipRoleType, MissionType
+import EspionageAI
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -8,7 +9,6 @@ import MilitaryAI
 import MoveUtilsAI
 import CombatRatingsAI
 from universe_object import Fleet, System, Planet
-from freeorion_tools import get_partial_visibility_turn
 
 
 def trooper_move_reqs_met(main_fleet_mission, order, verbose):
@@ -66,6 +66,7 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
 class AIFleetOrder(object):
     """Stores information about orders which can be executed."""
     TARGET_TYPE = None
+    ORDER_NAME = ''
 
     def __init__(self, fleet, target):
         """
@@ -205,16 +206,14 @@ class OrderMove(AIFleetOrder):
                 'myFleetRatingVsPlanets', 0)
             is_military = foAI.foAIstate.get_fleet_role(self.fleet.id) == MissionType.MILITARY
 
-            # TODO(Morlic): Is there any reason to add this linearly instead of using CombineRatings?
-            total_rating = my_other_fleet_rating + fleet_rating
-            total_rating_vs_planets = my_other_fleet_rating_vs_planets + fleet_rating_vs_planets
+            total_rating = CombatRatingsAI.combine_ratings(my_other_fleet_rating, fleet_rating)
+            total_rating_vs_planets = CombatRatingsAI.combine_ratings(my_other_fleet_rating_vs_planets,
+                                                                      fleet_rating_vs_planets)
             if (my_other_fleet_rating > 3 * safety_factor * threat or
                     (is_military and total_rating_vs_planets > 2.5*p_threat and total_rating > safety_factor * threat)):
-                if verbose:
-                    print ("\tAdvancing fleet %d (rating %d) at system %d (%s) "
-                           "into system %d (%s) with threat %d because of "
-                           "sufficient empire fleet strength already at destination") % (
-                        self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat)
+                debug(("\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d"
+                       " because of sufficient empire fleet strength already at destination") %
+                      (self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat))
                 return True
             elif (threat == p_threat and
                   not self.fleet.get_object().aggressive and
@@ -298,9 +297,8 @@ class OrderOutpost(AIFleetOrder):
         if not super(OrderOutpost, self).is_valid():
             return False
         planet = self.target.get_object()
-        sys_partial_vis_turn = get_partial_visibility_turn(planet.systemID)
-        planet_partial_vis_turn = get_partial_visibility_turn(planet.id)
-        if not (planet_partial_vis_turn == sys_partial_vis_turn and planet.unowned):
+        if not planet.unowned:
+            # terminate early
             self.executed = True
             self.order_issued = True
             return False
@@ -360,12 +358,9 @@ class OrderColonize(AIFleetOrder):
         if not super(OrderColonize, self).is_valid():
             return False
         planet = self.target.get_object()
-
-        sys_partial_vis_turn = get_partial_visibility_turn(planet.systemID)
-        planet_partial_vis_turn = get_partial_visibility_turn(planet.id)
-        if (planet_partial_vis_turn == sys_partial_vis_turn and planet.unowned or
-                (planet.ownedBy(fo.empireID()) and not planet.currentMeterValue(fo.meterType.population))):
+        if (planet.unowned or planet.ownedBy(fo.empireID())) and not planet.currentMeterValue(fo.meterType.population):
             return self.fleet.get_object().hasColonyShips
+        # Otherwise, terminate early
         self.executed = True
         self.order_issued = True
         return False
@@ -404,6 +399,7 @@ class OrderInvade(AIFleetOrder):
         if planet.unowned and not planet_population:
             print "\t\t invasion order not valid due to target planet status-- owned: %s and population %.1f" % (
                 not planet.unowned, planet_population)
+            # terminate early
             self.executed = True
             self.order_issued = True
             return False
@@ -497,11 +493,25 @@ class OrderMilitary(AIFleetOrder):
         fleet = self.target.get_object()
         system_status = foAI.foAIstate.systemStatus.get(target_sys_id, {})
         total_threat = sum(system_status.get(threat, 0) for threat in ('fleetThreat', 'planetThreat', 'monsterThreat'))
+        combat_trigger = system_status.get('fleetThreat', 0) or system_status.get('monsterThreat', 0)
+        if not combat_trigger and system_status.get('planetThreat', 0):
+            universe = fo.getUniverse()
+            system = universe.getSystem(target_sys_id)
+            for planet_id in system.planetIDs:
+                planet = universe.getPlanet(planet_id)
+                if planet.ownedBy(fo.empireID()):  # TODO: also exclude at-peace planets
+                    continue
+                if planet.unowned and not EspionageAI.colony_detectable_by_empire(planet_id, empire_id=fo.empireID()):
+                    continue
+                if sum([planet.currentMeterValue(meter_type) for meter_type in
+                        [fo.meterType.defense, fo.meterType.shield, fo.meterType.construction]]):
+                    combat_trigger = True
+                    break
         if all((
                 fleet,
                 fleet.systemID == target_sys_id,
                 system_status.get('currently_visible', False),
-                not total_threat
+                not (total_threat and combat_trigger)
         )):
             self.order_issued = True
 
