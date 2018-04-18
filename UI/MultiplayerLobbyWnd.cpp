@@ -560,7 +560,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 void MultiPlayerLobbyWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
 
-    m_chat_wnd = GG::Wnd::Create<MessageWnd>("mplobby.chat");
+    m_chat_wnd = GG::Wnd::Create<MessageWnd>(GG::INTERACTIVE, "mplobby.chat");
 
     m_any_can_edit = GG::Wnd::Create<CUIStateButton>(UserString("EDITABLE_GALAXY_SETTINGS"), GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
     m_any_can_edit->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
