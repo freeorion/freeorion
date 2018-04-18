@@ -220,7 +220,7 @@ GASEOUS_BONUS
             ]
             accountinglabel = "GASEOUS_LABEL"
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetTargetPopulation value = Value - 0.5*abs(Value) accountinglabel = "BAD_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation value = Value - 0.5*abs(Value)
 '''
 
 // @1@ Species key
