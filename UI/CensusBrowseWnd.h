@@ -37,7 +37,7 @@ private:
     std::map<std::string, float>    m_population_counts;
     std::map<std::string, int>      m_population_worlds;
     std::map<std::string, float>    m_tag_counts;
-	std::map<std::string, int>      m_tag_worlds;
+    std::map<std::string, int>      m_tag_worlds;
     std::vector<std::string>        m_census_order;
 
     void InitRowSizes();

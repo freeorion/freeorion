@@ -186,8 +186,8 @@ void CensusBrowseWnd::CompleteConstruction() {
 
     // add species rows
     for (auto it = counts_species.rbegin(); it != counts_species.rend(); ++it) {
-		totalPopulation += it->first;
-		totalWorlds += m_population_worlds[it->second];
+        totalPopulation += it->first;
+        totalWorlds += m_population_worlds[it->second];
         auto row = GG::Wnd::Create<GG::ListBox::Row>(m_list->Width(), ROW_HEIGHT, "Census Species Row");
         row->push_back(GG::Wnd::Create<CensusRowPanel>(m_list->Width(), ROW_HEIGHT, it->second, it->first, m_population_worlds[it->second], true));
         m_list->Insert(row);
