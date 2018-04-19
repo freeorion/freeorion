@@ -387,15 +387,10 @@ void Universe::ObfuscateIDGenerator() {
 
 bool Universe::VerifyUnusedObjectID(const int empire_id, const int id) {
     auto good_id_and_possible_legacy = m_object_id_allocator->IsIDValidAndUnused(id, empire_id);
-    if (!good_id_and_possible_legacy.second) {
-        WarnLogger() << "object id = " << id << " should not have been assigned by empire = "
-                     << empire_id << ". It is probably from loading an old saved game. "
-                     << "In future this will be promoted to an error.";
-        m_object_id_allocator->FixLegacyOrderIDs(id);
-        //TODO before version change to v0.4.8 make this a hard failure;
-    }
+    if (!good_id_and_possible_legacy.second) // Possibly from old save game
+        ErrorLogger() << "object id = " << id << " should not have been assigned by empire = " << empire_id;
 
-    return good_id_and_possible_legacy.first;
+    return good_id_and_possible_legacy.first && good_id_and_possible_legacy.second;
 }
 
 void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
