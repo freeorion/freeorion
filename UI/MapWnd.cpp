@@ -6726,9 +6726,9 @@ void MapWnd::RefreshPopulationIndicator() {
 
     const auto pop_center_ids = empire->GetPopulationPool().PopCenterIDs();
     std::map<std::string, float> population_counts;
-	std::map<std::string, int>   population_worlds;
+    std::map<std::string, int>   population_worlds;
     std::map<std::string, float> tag_counts;
-	std::map<std::string, int>   tag_worlds;
+    std::map<std::string, int>   tag_worlds;
     const ObjectMap& objects = Objects();
 
     //tally up all species population counts
@@ -6743,22 +6743,22 @@ void MapWnd::RefreshPopulationIndicator() {
             continue;
         float this_pop = pc->InitialMeterValue(METER_POPULATION);
         population_counts[species_name] += this_pop;
-		population_worlds[species_name] += 1;
+        population_worlds[species_name] += 1;
         if (const Species* species = GetSpecies(species_name) ) {
             for (const std::string& tag : species->Tags()) {
                 tag_counts[tag] += this_pop;
-				tag_worlds[tag] += 1;
+                tag_worlds[tag] += 1;
             }
         }
     }
 
     m_population->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_population->SetBrowseInfoWnd(GG::Wnd::Create<CensusBrowseWnd>(
-        UserString("MAP_POPULATION_DISTRIBUTION")
-		,population_counts,population_worlds
-		,tag_counts,tag_worlds
-		,GetSpeciesManager().census_order())
-	);
+        UserString("MAP_POPULATION_DISTRIBUTION"),
+        population_counts,population_worlds,
+        tag_counts,tag_worlds,
+        GetSpeciesManager().census_order())
+    );
 }
 
 void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools() {
