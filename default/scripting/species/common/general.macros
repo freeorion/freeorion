@@ -39,6 +39,16 @@ FOCUS_CHANGE_PENALTY
             ]
             priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
             effects = SetResearch value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Focus type = "FOCUS_STOCKPILE"
+                (0 == Source.TurnsSinceFocusChange)
+            ]
+            priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
+            effects = SetStockpile value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
 '''
 
 //#####      COLONIZATION SPEED        #####//

@@ -4,29 +4,29 @@ NO_STOCKPILE
 
 BAD_STOCKPILE
 '''[[STOCKPILE_PER_POP_EFFECTSGROUP(BAD,Value     +  0.5 * Target.Population * [[STOCKPILE_PER_POP]])]]
-[[STANDARD_STOCKPILE_GROWTH]]
+[[STANDARD_STOCKPILE]]
 '''
 
 AVERAGE_STOCKPILE
 '''EffectsGroup
             // Skip the AVERAGE_STOCKPILE_DESC, same as for the other *_STOCKPILE macros
     [[STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(AVERAGE,Value +  1 * Target.Population * [[STOCKPILE_PER_POP]])]]
-[[STANDARD_STOCKPILE_GROWTH]]
+[[STANDARD_STOCKPILE]]
 '''
 
 GOOD_STOCKPILE
 '''[[STOCKPILE_PER_POP_EFFECTSGROUP(GOOD,Value    +  3 * Target.Population * [[STOCKPILE_PER_POP]])]]
-[[STANDARD_STOCKPILE_GROWTH]]
+[[STANDARD_STOCKPILE]]
 '''
 
 GREAT_STOCKPILE
 '''[[STOCKPILE_PER_POP_EFFECTSGROUP(GREAT,Value  +  10 * Target.Population * [[STOCKPILE_PER_POP]])]]
-[[STANDARD_STOCKPILE_GROWTH]]
+[[STANDARD_STOCKPILE]]
 '''
 
 ULTIMATE_STOCKPILE
 '''[[STOCKPILE_PER_POP_EFFECTSGROUP(ULTIMATE, Value + 15 * Target.Population * [[STOCKPILE_PER_POP]])]]
-[[STANDARD_STOCKPILE_GROWTH]]
+[[STANDARD_STOCKPILE]]
 '''
 
 STOCKPILE_PER_POP_EFFECTSGROUP
@@ -43,27 +43,27 @@ STOCKPILE_PER_POP_EFFECTSGROUP__SNIP
             effects = SetMaxStockpile value = @2@
 '''
 
-STANDARD_STOCKPILE_GROWTH
-'''        EffectsGroup // FOCUS_STOCKPILE fast growth: double each turn, up to max (starting with 0.1)
+STANDARD_STOCKPILE
+'''        EffectsGroup    // increase or decrease towards target meter, when not recently conquered
             scope = Source
             activation = And [
                 Planet
                 (Source.LastTurnConquered < CurrentTurn)
-                Focus type = "FOCUS_STOCKPILE"
+                (Source.System.LastTurnBattleHere < CurrentTurn)
             ]
-            accountinglabel = "STOCKPILE_FOCUS_GROWTH"
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetStockpile value = min(Value(Target.MaxStockpile), Value + 0.2 * (2 ^ Target.TurnsSinceFocusChange))
-        EffectsGroup // slow growth: add 0.1 per turn, up to max
+            effects = SetStockpile value = Value +
+                min(abs(Value(Target.MaxStockpile) - Value), 1) *
+                    (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.MaxStockpile))]))
+
+        // removes residual stockpile capacity from a dead planet
+        EffectsGroup
             scope = Source
             activation = And [
                 Planet
-                (Source.LastTurnConquered < CurrentTurn)
-                Not Focus type = "FOCUS_STOCKPILE"
+                TargetPopulation high = 0
             ]
-            accountinglabel = "STOCKPILE_NATURAL_GROWTH"
-            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetStockpile value = min(Value(Target.MaxStockpile), Value + 0.1)
+            effects = SetStockpile value = 0
 '''
 
 #include "/scripting/common/base_prod.macros"
