@@ -632,13 +632,7 @@ class AIFleetMission(object):
             return fleet_id in MilitaryAI.avail_mil_needing_repair([fleet_id], on_mission=bool(self.orders),
                                                                    repair_limit=repair_limit)[0]
         # TODO: Allow to split fleet to send only damaged ships to repair
-        fleet = universe.getFleet(fleet_id)
-        ships_cur_health = 0
-        ships_max_health = 0
-        for ship_id in fleet.shipIDs:
-            this_ship = universe.getShip(ship_id)
-            ships_cur_health += this_ship.initialMeterValue(fo.meterType.structure)
-            ships_max_health += this_ship.initialMeterValue(fo.meterType.maxStructure)
+        ships_cur_health, ships_max_health = FleetUtilsAI.get_current_and_max_structure(fleet_id)
         return ships_cur_health < repair_limit * ships_max_health
 
     def get_location_target(self):
