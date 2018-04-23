@@ -3,26 +3,26 @@ from logging import error
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
 from AIDependencies import ALL_EMPIRES
-from turn_state import state
+from EnumsAI import EmpireMeters
+from freeorion_tools import cache_by_session_with_turnwise_update
 
 
+@cache_by_session_with_turnwise_update
 def get_empire_detection(empire_id):
-    # TODO doublecheck typical AI research times for Radar, for below default value
-    empire_detection = (AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_1"]
-                        if fo.currentTurn() < 40 else AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_2"])
-    empire = None
     if empire_id != ALL_EMPIRES:
         empire = fo.getEmpire(empire_id)
-    if empire:
-        # TODO: expose Empire.GetMeter to automatically take into account detection specials for enemies, or search for
-        # them, but the latter can be inaccurate for enemies
-        for techname in sorted(AIDependencies.DETECTION_TECH_STRENGTHS, reverse=True):
-            if empire.techResearched(techname):
-                empire_detection = AIDependencies.DETECTION_TECH_STRENGTHS[techname]
-                break
-        if empire_id == fo.empireID() and state.have_panopticon:
-            empire_detection += AIDependencies.PANOPTICON_DETECTION_BONUS
-    return empire_detection
+        if empire:
+            return empire.getMeter(EmpireMeters.DETECTION_STRENGTH).initial
+        else:
+            # TODO doublecheck typical AI research times for Radar, for below default value
+            return (AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_1"] if fo.currentTurn() < 40
+                    else AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_2"])
+    else:
+        max_detection = 0
+        for this_empire_id in fo.allEmpireIDs():
+            if this_empire_id != fo.empireID():
+                max_detection = max(max_detection, get_empire_detection(this_empire_id))
+        return max_detection
 
 
 def colony_detectable_by_empire(planet_id, species_name=None, empire_id=ALL_EMPIRES,
