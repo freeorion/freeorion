@@ -10,7 +10,6 @@ BuildingType
         Number low = 0 high = 0 condition = And [
             Building name = "BLD_STOCKPILING_CENTER"
             OwnedBy empire = Source.Owner
-            ProducedByEmpire empire = Source.Owner
         ]
     ]
     enqueuelocation = And [
@@ -20,7 +19,6 @@ BuildingType
         Number low = 0 high = 0 condition = And [
             Building name = "BLD_STOCKPILING_CENTER"
             OwnedBy empire = Source.Owner
-            ProducedByEmpire empire = Source.Owner
         ]
 
         // can't enqueue if already have an enqueued stockpiling_center anywhere
