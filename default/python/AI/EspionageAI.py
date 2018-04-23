@@ -7,22 +7,30 @@ from EnumsAI import EmpireMeters
 from freeorion_tools import cache_by_session_with_turnwise_update
 
 
+def default_empire_detection_strength():
+    # TODO doublecheck typical AI research times for Radar, for below default value
+    return (AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_1"] if fo.currentTurn() < 40
+            else AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_2"])
+
+
 @cache_by_session_with_turnwise_update
 def get_empire_detection(empire_id):
-    if empire_id != ALL_EMPIRES:
-        empire = fo.getEmpire(empire_id)
-        if empire:
-            return empire.getMeter(EmpireMeters.DETECTION_STRENGTH).initial
-        else:
-            # TODO doublecheck typical AI research times for Radar, for below default value
-            return (AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_1"] if fo.currentTurn() < 40
-                    else AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_2"])
+    if empire_id == ALL_EMPIRES:
+        return get_max_empire_detection(fo.allEmpireIDs())
+
+    empire = fo.getEmpire(empire_id)
+    if empire:
+        return empire.getMeter(EmpireMeters.DETECTION_STRENGTH).initial
     else:
-        max_detection = 0
-        for this_empire_id in fo.allEmpireIDs():
-            if this_empire_id != fo.empireID():
-                max_detection = max(max_detection, get_empire_detection(this_empire_id))
-        return max_detection
+        return default_empire_detection_strength()
+
+
+def get_max_empire_detection(empire_list):
+    max_detection = 0
+    for this_empire_id in empire_list:
+        if this_empire_id != fo.empireID():
+            max_detection = max(max_detection, get_empire_detection(this_empire_id))
+    return max_detection
 
 
 def colony_detectable_by_empire(planet_id, species_name=None, empire_id=ALL_EMPIRES,
