@@ -400,6 +400,7 @@ class AIstate(object):
         supply_unobstructed_systems = set(empire.supplyUnobstructedSystems)
         min_hidden_attack = 4
         min_hidden_health = 8
+        observed_enemies = self.misc.setdefault("observed_enemies", set())
 
         # TODO: Variables that are recalculated each turn from scratch should not be stored in AIstate
         # clear previous game state
@@ -449,6 +450,7 @@ class AIstate(object):
 
             if not fleet.unowned:
                 self.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
+                observed_enemies.add(fleet.owner)
 
         # assess fleet and planet threats & my local fleets
         for sys_id in universe.systemIDs:
@@ -600,6 +602,7 @@ class AIstate(object):
         for sys_id in universe.systemIDs:
             sys_status = self.systemStatus[sys_id]
             sys_status['enemies_supplied'] = enemy_supply.get(sys_id, [])
+            observed_enemies.update(enemy_supply.get(sys_id, []))
             sys_status['enemies_nearly_supplied'] = enemy_near_supply.get(sys_id, [])
             my_ratings_list = []
             my_ratings_against_planets_list = []
