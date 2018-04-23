@@ -4,7 +4,7 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 # the following import is used for type hinting, which pylint seems not to recognize
 from fleet_orders import AIFleetOrder  # pylint: disable=unused-import # noqa: F401
-from fleet_orders import OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
+from fleet_orders import OrderMove, OrderPause, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
 import AIstate
 import EspionageAI
 import FleetUtilsAI
@@ -20,7 +20,7 @@ from freeorion_tools import get_partial_visibility_turn
 
 
 ORDERS_FOR_MISSION = {
-    MissionType.EXPLORATION: OrderMove,
+    MissionType.EXPLORATION: OrderPause,
     MissionType.OUTPOST: OrderOutpost,
     MissionType.COLONISATION: OrderColonize,
     MissionType.INVASION: OrderInvade,
