@@ -33,16 +33,16 @@ def get_max_empire_detection(empire_list):
     return max_detection
 
 
-def colony_detectable_by_empire(planet_id, species_name=None, empire_id=ALL_EMPIRES,
-                                future_stealth_bonus=0, default_result=True):
+def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES, future_stealth_bonus=0,
+                                default_result=True):
     """
     Predicts if a planet/colony is/will-be detectable by an empire
     :param planet_id: required, the planet of concern
     :type planet_id: int
     :param species_name: will override the existing planet species if provided
     :type species_name: str
-    :param empire_id: empire whose detection ability is of concern
-    :type empire_id: int
+    :param empire: empire (or list of empires) whose detection ability is of concern
+    :type empire: int | list[int]
     :param future_stealth_bonus: can specify a projected future stealth bonus, such as from a stealth tech
     :type future_stealth_bonus: int
     :param default_result: generally for offensive assessments should be False, for defensive should be True
@@ -53,7 +53,10 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire_id=ALL_EMPI
     # The future_stealth_bonus can be used if the AI knows it has researched techs that would grant a stealth bonus to
     # the planet once it was colonized/captured
 
-    empire_detection = get_empire_detection(empire_id)
+    if isinstance(empire, int):
+        empire_detection = get_empire_detection(empire)
+    else:
+        empire_detection = get_max_empire_detection(empire)
     planet = fo.getUniverse().getPlanet(planet_id)
     if not planet:
         error("Couldn't retrieve planet ID %d." % planet_id)
@@ -62,7 +65,7 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire_id=ALL_EMPI
         species_name = planet.speciesName
 
     # in case we are checking about aborting a colonization mission
-    if empire_id == fo.empireID() and planet.ownedBy(empire_id):
+    if empire == fo.empireID() and planet.ownedBy(empire):
         return True
 
     species = fo.getSpecies(species_name)

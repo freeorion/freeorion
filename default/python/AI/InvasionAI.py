@@ -318,7 +318,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
 
     # by using the following instead of simply relying on stealth meter reading, can (sometimes) plan ahead even if
     # planet is temporarily shrouded by an ion storm
-    predicted_detectable = EspionageAI.colony_detectable_by_empire(planet_id, empire_id=fo.empireID(),
+    predicted_detectable = EspionageAI.colony_detectable_by_empire(planet_id, empire=fo.empireID(),
                                                                    default_result=False)
     if not predicted_detectable:
         if get_partial_visibility_turn(planet_id) < fo.currentTurn():

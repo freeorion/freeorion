@@ -127,7 +127,7 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False,
                 planet = universe.getPlanet(planet_id)
                 if planet.ownedBy(fo.empireID()):  # TODO: also exclude at-peace planets
                     continue
-                if planet.unowned and not EspionageAI.colony_detectable_by_empire(planet_id, empire_id=fo.empireID()):
+                if planet.unowned and not EspionageAI.colony_detectable_by_empire(planet_id, empire=fo.empireID()):
                     continue
                 if sum([planet.currentMeterValue(meter_type) for meter_type in
                         [fo.meterType.defense, fo.meterType.shield, fo.meterType.construction]]):
