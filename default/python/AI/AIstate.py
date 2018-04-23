@@ -154,7 +154,7 @@ class AIstate(object):
         self.newlySplitFleets = {}
         self.militaryRating = 0
         self.shipCount = 4
-        self.misc = {}
+        self.misc = {}  # Keys: "observed_enemies"
         self.orbital_colonization_manager = ColonisationAI.OrbitalColonizationManager()
         self.qualifyingTroopBaseTargets = {}
         # TODO: track on a per-empire basis
