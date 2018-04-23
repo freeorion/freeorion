@@ -1454,6 +1454,14 @@ class empire(object):
         """
         return bool()
 
+    def getMeter(self, meter_name):
+        """
+        :param meter_name:
+        :type meter_name: string
+        :rtype: meter
+        """
+        return meter()
+
     def getResourcePool(self, resource_type):
         """
         :param resource_type:
