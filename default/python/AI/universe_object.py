@@ -102,4 +102,7 @@ class Fleet(UniverseObject):
         return System(system_id)
 
     def get_object(self):
+        """
+        :rtype fo.fleet:
+        """
         return fo.getUniverse().getFleet(self.id)

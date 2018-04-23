@@ -67,6 +67,8 @@ class AIFleetOrder(object):
     """Stores information about orders which can be executed."""
     TARGET_TYPE = None
     ORDER_NAME = ''
+    fleet = None  # type: fo.fleet
+    target = None  # type: universe_object.UniverseObject
 
     def __init__(self, fleet, target):
         """
@@ -533,7 +535,7 @@ class OrderRepair(AIFleetOrder):
             return
         fleet_id = self.fleet.id
         system_id = self.target.get_system().id
-        fleet = self.fleet.get_object()
+        fleet = self.fleet.get_object()  # type: fo.fleet
         if system_id == fleet.systemID:
             if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
                 if system_id in foAI.foAIstate.needsEmergencyExploration:
