@@ -257,6 +257,23 @@ class OrderMove(AIFleetOrder):
         return True
 
 
+class OrderPause(AIFleetOrder):
+    """Ensure Fleet at least temporarily halts movemenet at the target system."""
+    ORDER_NAME = 'pause'
+    TARGET_TYPE = System
+
+    def is_valid(self):
+        if not super(OrderPause, self).is_valid():
+            return False
+        return bool(self.target.get_system().get_object())
+
+    def issue_order(self):
+        if not super(OrderPause, self).issue_order():
+            return False
+        # not executed until actually arrives at target system
+        self.excuted = self.fleet.get_current_system_id() == self.target.get_system().id
+
+
 class OrderResupply(AIFleetOrder):
     ORDER_NAME = 'resupply'
     TARGET_TYPE = System
