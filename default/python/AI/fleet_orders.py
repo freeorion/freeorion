@@ -242,7 +242,7 @@ class OrderMove(AIFleetOrder):
 
     def issue_order(self):
         if not super(OrderMove, self).issue_order():
-            return
+            return False
         fleet_id = self.fleet.id
         system_id = self.target.get_system().id
         fleet = self.fleet.get_object()
@@ -250,11 +250,11 @@ class OrderMove(AIFleetOrder):
             dest_id = system_id
             fo.issueFleetMoveOrder(fleet_id, dest_id)
             print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
-
         if system_id == fleet.systemID:
             if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
                 if system_id in foAI.foAIstate.needsEmergencyExploration:
                     foAI.foAIstate.needsEmergencyExploration.remove(system_id)
+        return True
 
 
 class OrderResupply(AIFleetOrder):
@@ -268,7 +268,7 @@ class OrderResupply(AIFleetOrder):
 
     def issue_order(self):
         if not super(OrderResupply, self).issue_order():
-            return
+            return False
         fleet_id = self.fleet.id
         system_id = self.target.get_system().id
         fleet = self.fleet.get_object()
@@ -276,7 +276,7 @@ class OrderResupply(AIFleetOrder):
             if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
                 if system_id in foAI.foAIstate.needsEmergencyExploration:
                     foAI.foAIstate.needsEmergencyExploration.remove(system_id)
-            return
+            return True
         if system_id != fleet.nextSystemID:
             self.executed = False
             start_id = FleetUtilsAI.get_fleet_system(fleet)
@@ -286,6 +286,7 @@ class OrderResupply(AIFleetOrder):
                 fleet_id, self.ORDER_NAME, universe.getSystem(dest_id), universe.getSystem(system_id))
             fo.issueFleetMoveOrder(fleet_id, dest_id)
             print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
+        return True
 
 
 class OrderOutpost(AIFleetOrder):
@@ -317,22 +318,24 @@ class OrderOutpost(AIFleetOrder):
 
     def issue_order(self):
         if not super(OrderOutpost, self).issue_order():
-            return
+            return False
         # we can't know yet if the order will actually execute; instead, rely on the fact that if the order does get
         # executed, then next turn it will be invalid
         self.executed = False
         planet = self.target.get_object()
         if not planet.unowned:
-            return
+            return False
         fleet_id = self.fleet.id
         ship_id = FleetUtilsAI.get_ship_id_with_role(fleet_id, ShipRoleType.CIVILIAN_OUTPOST)
         if ship_id is None:
             ship_id = FleetUtilsAI.get_ship_id_with_role(fleet_id, ShipRoleType.BASE_OUTPOST)
         if fo.issueColonizeOrder(ship_id, self.target.id):
             debug("Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            return True
         else:
             self.order_issued = False
             debug("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            return False
 
 
 class OrderColonize(AIFleetOrder):
@@ -341,7 +344,7 @@ class OrderColonize(AIFleetOrder):
 
     def issue_order(self):
         if not super(OrderColonize, self).issue_order():
-            return
+            return False
         # we can't know yet if the order will actually execute; instead, rely on the fact that if the order does get
         # executed, then next turn it will be invalid
         self.executed = False
@@ -355,9 +358,11 @@ class OrderColonize(AIFleetOrder):
         planet_name = planet and planet.name or "apparently invisible"
         if fo.issueColonizeOrder(ship_id, self.target.id):
             debug("Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            return True
         else:
             self.order_issued = False
             debug("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            return False
 
     def is_valid(self):
         if not super(OrderColonize, self).is_valid():
@@ -430,7 +435,7 @@ class OrderInvade(AIFleetOrder):
 
     def issue_order(self):
         if not super(OrderInvade, self).can_issue_order():
-            return
+            return False
 
         universe = fo.getUniverse()
         planet_id = self.target.id
@@ -468,6 +473,9 @@ class OrderInvade(AIFleetOrder):
                 break
         if result:
             print "Successfully ordered troop ship(s) to invade %s" % planet
+            return True
+        else:
+            return False
 
 
 class OrderMilitary(AIFleetOrder):
@@ -493,7 +501,7 @@ class OrderMilitary(AIFleetOrder):
 
     def issue_order(self):
         if not super(OrderMilitary, self).issue_order():
-            return
+            return False
         target_sys_id = self.target.id
         fleet = self.target.get_object()
         system_status = foAI.foAIstate.systemStatus.get(target_sys_id, {})
@@ -519,6 +527,7 @@ class OrderMilitary(AIFleetOrder):
                     not (total_threat and combat_trigger)
         )):
             self.executed = False
+        return True
 
 
 class OrderRepair(AIFleetOrder):
@@ -532,7 +541,7 @@ class OrderRepair(AIFleetOrder):
 
     def issue_order(self):
         if not super(OrderRepair, self).issue_order():
-            return
+            return False
         fleet_id = self.fleet.id
         system_id = self.target.get_system().id
         fleet = self.fleet.get_object()  # type: fo.fleet
@@ -540,8 +549,7 @@ class OrderRepair(AIFleetOrder):
             if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
                 if system_id in foAI.foAIstate.needsEmergencyExploration:
                     foAI.foAIstate.needsEmergencyExploration.remove(system_id)
-            return
-        if system_id != fleet.nextSystemID:
+        elif system_id != fleet.nextSystemID:
             self.executed = False
             fo.issueAggressionOrder(fleet_id, False)
             start_id = FleetUtilsAI.get_fleet_system(fleet)
@@ -551,6 +559,7 @@ class OrderRepair(AIFleetOrder):
                 fleet_id, self.ORDER_NAME, universe.getSystem(dest_id), universe.getSystem(system_id))
             fo.issueFleetMoveOrder(fleet_id, dest_id)
             print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
+        return True
 
 
 
