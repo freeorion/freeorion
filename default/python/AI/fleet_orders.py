@@ -559,6 +559,8 @@ class OrderRepair(AIFleetOrder):
                 fleet_id, self.ORDER_NAME, universe.getSystem(dest_id), universe.getSystem(system_id))
             fo.issueFleetMoveOrder(fleet_id, dest_id)
             print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
+        ships_cur_health, ships_max_health = FleetUtilsAI.get_current_and_max_structure(fleet_id)
+        self.executed = (ships_cur_health == ships_max_health)
         return True
 
 
