@@ -70,6 +70,8 @@ namespace {
     }
     auto GetEmpireSitRepFunc = GetSitRep;
 
+    const Meter*            (Empire::*EmpireGetMeter)(const std::string&) const =                &Empire::GetMeter;
+    
     template<class T1, class T2>
     struct PairToTupleConverter {
         static PyObject* convert(const std::pair<T1, T2>& pair) {
@@ -366,6 +368,10 @@ namespace FreeOrionPython {
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<std::map<int, int>, const Empire&>()
                                                     ))
+            .def("getMeter",                        make_function(
+                                                        EmpireGetMeter,
+                                                        return_internal_reference<>()),
+                                                    "Returns the empire meter with the indicated name (string).")
         ;
 
         ////////////////////
