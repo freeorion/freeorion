@@ -619,7 +619,6 @@ class AIFleetMission(object):
          :rtype: bool
         """
         # TODO: More complex evaluation if fleet needs repair (consider self-repair, distance, threat, mission...)
-        universe = fo.getUniverse()
         fleet_id = self.fleet.id
         # if we are already at a system where we can repair, make sure we use it...
         system = self.fleet.get_system()

@@ -371,8 +371,6 @@ class OrderColonize(AIFleetOrder):
         if ship_id is None:
             ship_id = FleetUtilsAI.get_ship_id_with_role(fleet_id, ShipRoleType.BASE_COLONISATION)
 
-        planet = self.target.get_object()
-        planet_name = planet and planet.name or "apparently invisible"
         if fo.issueColonizeOrder(ship_id, self.target.id):
             debug("Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
             return True
@@ -579,6 +577,3 @@ class OrderRepair(AIFleetOrder):
         ships_cur_health, ships_max_health = FleetUtilsAI.get_current_and_max_structure(fleet_id)
         self.executed = (ships_cur_health == ships_max_health)
         return True
-
-
-
