@@ -28,13 +28,16 @@ struct CookieData {
     std::string player_name;
     boost::posix_time::ptime expired;
     Networking::AuthRoles roles;
+    bool authenticated;
 
     CookieData(const std::string& player_name_,
                const boost::posix_time::ptime& expired_,
-               const Networking::AuthRoles& roles_) :
+               const Networking::AuthRoles& roles_,
+               bool authenticated_) :
         player_name(player_name_),
         expired(expired_),
-        roles(roles_)
+        roles(roles_),
+        authenticated(authenticated_)
     { }
 };
 
@@ -107,10 +110,11 @@ public:
     bool IsAvailableNameInCookies(const std::string& player_name) const;
 
     /** Returns whether player have non-expired cookie with this player name.
-      * Fills roles on success. */
+      * Fills roles and authentication status on success. */
     bool CheckCookie(boost::uuids::uuid cookie,
                      const std::string& player_name,
-                     Networking::AuthRoles& roles) const;
+                     Networking::AuthRoles& roles,
+                     bool& authenticated) const;
     //@}
 
     /** \name Mutators */ //@{
@@ -151,8 +155,10 @@ public:
     /** Sets Host player ID. */
     void SetHostPlayerID(int host_player_id);
 
-    /** Generate cookies for player's name and roles. */
-    boost::uuids::uuid GenerateCookie(const std::string& player_name, const Networking::AuthRoles& roles);
+    /** Generate cookies for player's name, roles, and authentication status. */
+    boost::uuids::uuid GenerateCookie(const std::string& player_name,
+                                      const Networking::AuthRoles& roles,
+                                      bool authenticated);
 
     /** Bump cookie's expired date. */
     void UpdateCookie(boost::uuids::uuid cookie);

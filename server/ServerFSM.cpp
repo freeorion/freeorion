@@ -350,7 +350,9 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         boost::uuids::uuid cookie = player_connection->Cookie();
         // Don't generate cookie if player already have it
         if (cookie.is_nil())
-            cookie = m_server.m_networking.GenerateCookie(player_name, roles);
+            cookie = m_server.m_networking.GenerateCookie(player_name,
+                                                          roles,
+                                                          player_connection->IsAuthenticated());
         DebugLogger() << "ServerFSM.EstablishPlayer player " << player_name << " get cookie: " << cookie;
         player_connection->SetCookie(cookie);
 
@@ -819,11 +821,14 @@ sc::result MPLobby::react(const JoinGame& msg) {
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
 
     Networking::AuthRoles roles;
+    bool authenticated;
 
     DebugLogger() << "MPLobby.JoinGame Try to login player " << player_name << " with cookie: " << cookie;
-    if (server.Networking().CheckCookie(cookie, player_name, roles)) {
+    if (server.Networking().CheckCookie(cookie, player_name, roles, authenticated)) {
         // if player have correct and non-expired cookies simply establish him
         player_connection->SetCookie(cookie);
+        if (authenticated)
+            player_connection->SetAuthenticated();
     } else {
         if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequiredOrFillRoles(player_name, roles)) {
             // send authentication request
@@ -1788,11 +1793,14 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
         // if we don't need to authenticate player we got default roles here
         Networking::AuthRoles roles;
+        bool authenticated;
 
         DebugLogger() << "WaitingForMPGameJoiners.JoinGame Try to login player " << player_name << " with cookie: " << cookie;
-        if (server.Networking().CheckCookie(cookie, player_name, roles)) {
+        if (server.Networking().CheckCookie(cookie, player_name, roles, authenticated)) {
             // if player has correct and non-expired cookies simply establish him
             player_connection->SetCookie(cookie);
+            if (authenticated)
+                player_connection->SetAuthenticated();
 
             // drop other connection with same name before checks for expected players
             std::list<PlayerConnectionPtr> to_disconnect;
@@ -2183,11 +2191,14 @@ sc::result PlayingGame::react(const JoinGame& msg) {
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
 
     Networking::AuthRoles roles;
+    bool authenticated;
 
     DebugLogger() << "PlayingGame.JoinGame Try to login player " << player_name << " with cookie: " << cookie;
-    if (server.Networking().CheckCookie(cookie, player_name, roles)) {
+    if (server.Networking().CheckCookie(cookie, player_name, roles, authenticated)) {
         // if player have correct and non-expired cookies simply establish him
         player_connection->SetCookie(cookie);
+        if (authenticated)
+            player_connection->SetAuthenticated();
     } else {
         if (server.IsAuthRequiredOrFillRoles(player_name, roles)) {
             // send authentication request
