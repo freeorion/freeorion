@@ -17,6 +17,7 @@ else:
         fleet_orders.OrderDefend,
         fleet_orders.OrderColonize,
         fleet_orders.OrderOutpost,
+        fleet_orders.OrderPause,
         fleet_orders.OrderInvade,
         fleet_orders.OrderMove,
         fleet_orders.OrderRepair,
