@@ -67,6 +67,9 @@ public:
 
     /** Checks if the client has some authorization \a role. */
     bool HasAuthRole(Networking::RoleType role) const;
+
+    /** Returns address of multiplayer server entered by player. */
+    const std::string& Destination() const;
     //@}
 
     /** \name Mutators */ //@{

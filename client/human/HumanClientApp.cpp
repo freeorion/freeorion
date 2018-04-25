@@ -48,6 +48,8 @@
 #include <boost/optional/optional.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/uuid/nil_generator.hpp>
+#include <boost/uuid/string_generator.hpp>
 
 #include <chrono>
 #include <thread>
@@ -661,7 +663,22 @@ void HumanClientApp::MultiPlayerGame() {
         m_networking->SendMessage(HostMPGameMessage(server_connect_wnd->GetResult().player_name));
         m_fsm->process_event(HostMPGameRequested());
     } else {
-        m_networking->SendMessage(JoinGameMessage(server_connect_wnd->GetResult().player_name, server_connect_wnd->GetResult().type));
+        boost::uuids::uuid cookie = boost::uuids::nil_uuid();
+        try {
+            if (!GetOptionsDB().OptionExists("network.server.cookie." + server_dest))
+                GetOptionsDB().Add<std::string>("network.server.cookie." + server_dest, "OPTIONS_DB_SERVER_COOKIE", "");
+            std::string cookie_str = GetOptionsDB().Get<std::string>("network.server.cookie." + server_dest);
+            boost::uuids::string_generator gen;
+            cookie = gen(cookie_str);
+        } catch(const std::exception& err) {
+            WarnLogger() << "Cann't get cookie for server " << server_dest << ". Get error message"
+                         << err.what();
+            // ignore
+        }
+
+        m_networking->SendMessage(JoinGameMessage(server_connect_wnd->GetResult().player_name,
+                                                  server_connect_wnd->GetResult().type,
+                                                  cookie));
         m_fsm->process_event(JoinMPGameRequested());
     }
 }

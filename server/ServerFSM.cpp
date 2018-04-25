@@ -22,6 +22,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/nil_generator.hpp>
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>
 
@@ -234,6 +236,10 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     bool must_quit = false;
 
     if (player_connection->IsEstablished()) {
+        // update cookie expire date
+        // so player could reconnect within 15 minutes
+        m_server.Networking().UpdateCookie(player_connection->Cookie());
+
         int id = player_connection->PlayerID();
         DebugLogger(FSM) << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << id
                          << ", named \"" << player_connection->PlayerName() << "\".";
@@ -269,6 +275,8 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         must_quit = true;
         DebugLogger(FSM) << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
     }
+
+    m_server.Networking().CleanupCookies();
 
     if (must_quit) {
         ErrorLogger(FSM) << "Unable to recover server terminating.";
@@ -307,7 +315,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         client_type = Networking::INVALID_CLIENT_TYPE;
     }
 
-    if (player_connection->IsAuthenticated()) {
+    if (player_connection->IsAuthenticated() || !player_connection->Cookie().is_nil()) {
         // drop other connection with same name
         for (auto it = m_server.m_networking.established_begin();
              it != m_server.m_networking.established_end(); ++it)
@@ -337,7 +345,18 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 
         // establish player with requested client type and acknowldge via connection
         player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
-        player_connection->SendMessage(JoinAckMessage(player_id));
+
+        // save cookie for player name
+        boost::uuids::uuid cookie = player_connection->Cookie();
+        // Don't generate cookie if player already have it
+        if (cookie.is_nil())
+            cookie = m_server.m_networking.GenerateCookie(player_name,
+                                                          roles,
+                                                          player_connection->IsAuthenticated());
+        DebugLogger() << "ServerFSM.EstablishPlayer player " << player_name << " get cookie: " << cookie;
+        player_connection->SetCookie(cookie);
+
+        player_connection->SendMessage(JoinAckMessage(player_id, cookie));
         if (!GetOptionsDB().Get<bool>("skip-checksum"))
             player_connection->SendMessage(ContentCheckSumMessage());
 
@@ -710,6 +729,10 @@ sc::result MPLobby::react(const Disconnection& d) {
         }
     }
     if (player_was_in_lobby) {
+        // update cookie's expire date
+        // so player could reconnect within 15 minutes
+        Server().Networking().UpdateCookie(player_connection->Cookie());
+
         // drop ready flag as player list changed
         for (auto& plrs : m_lobby_data->m_players) {
             plrs.second.m_player_ready = false;
@@ -794,57 +817,68 @@ sc::result MPLobby::react(const JoinGame& msg) {
     std::string player_name;
     Networking::ClientType client_type;
     std::string client_version_string;
-    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
+    boost::uuids::uuid cookie;
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
 
     Networking::AuthRoles roles;
-    if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequiredOrFillRoles(player_name, roles)) {
-        // send authentication request
-        player_connection->AwaitPlayer(client_type, client_version_string);
-        player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
-        return discard_event();
-    }
+    bool authenticated;
 
-    std::string original_player_name = player_name;
-
-    // Remove AI prefix to distinguish Human from AI.
-    std::string ai_prefix = UserString("AI_PLAYER") + "_";
-    if (client_type != Networking::CLIENT_TYPE_AI_PLAYER) {
-        while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
-            player_name.erase(0, ai_prefix.size());
-    }
-    if (player_name.empty())
-        player_name = "_";
-
-    std::string new_player_name = player_name;
-
-    bool collision = true;
-    std::size_t t = 1;
-    while (t <= m_lobby_data->m_players.size() + 1 && collision) {
-        collision = false;
-        roles.Clear();
-        if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
-            collision = true;
-        } else {
-            for (auto& plr : m_lobby_data->m_players) {
-                if (plr.second.m_empire_name == new_player_name) {
-                    collision = true;
-                    break;
-                }
-            }
+    DebugLogger() << "MPLobby.JoinGame Try to login player " << player_name << " with cookie: " << cookie;
+    if (server.Networking().CheckCookie(cookie, player_name, roles, authenticated)) {
+        // if player have correct and non-expired cookies simply establish him
+        player_connection->SetCookie(cookie);
+        if (authenticated)
+            player_connection->SetAuthenticated();
+    } else {
+        if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequiredOrFillRoles(player_name, roles)) {
+            // send authentication request
+            player_connection->AwaitPlayer(client_type, client_version_string);
+            player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
+            return discard_event();
         }
 
-        if (collision)
-            new_player_name = player_name + std::to_string(++t); // start alternative names from 2
-    }
+        std::string original_player_name = player_name;
 
-    if (collision) {
-        player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
-                                                    true));
-        server.Networking().Disconnect(player_connection);
-        return discard_event();
-    }
+        // Remove AI prefix to distinguish Human from AI.
+        std::string ai_prefix = UserString("AI_PLAYER") + "_";
+        if (client_type != Networking::CLIENT_TYPE_AI_PLAYER) {
+            while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
+                player_name.erase(0, ai_prefix.size());
+        }
+        if (player_name.empty())
+            player_name = "_";
 
-    player_name = new_player_name;
+        std::string new_player_name = player_name;
+
+        bool collision = true;
+        std::size_t t = 1;
+        while (t <= m_lobby_data->m_players.size() + 1 && collision) {
+            collision = false;
+            roles.Clear();
+            if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
+                collision = true;
+            } else {
+                for (auto& plr : m_lobby_data->m_players) {
+                    if (plr.second.m_empire_name == new_player_name) {
+                        collision = true;
+                        break;
+                    }
+                }
+            }
+
+            if (collision)
+                new_player_name = player_name + std::to_string(++t); // start alternative names from 2
+        }
+
+        if (collision) {
+            player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
+                                                        true));
+            server.Networking().Disconnect(player_connection);
+            return discard_event();
+        }
+
+        player_name = new_player_name;
+    }
 
     EstablishPlayer(player_connection, player_name, client_type, client_version_string, roles);
 
@@ -1566,7 +1600,8 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
     std::string player_name("Default_Player_Name_in_WaitingForSPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
     std::string client_version_string;
-    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
+    boost::uuids::uuid cookie;
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
 
     // is this an AI?
     if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -1580,7 +1615,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             // expected player
             // let the networking system know what socket this player is on
             player_connection->EstablishPlayer(expected_it->second, player_name, client_type, client_version_string);
-            player_connection->SendMessage(JoinAckMessage(expected_it->second));
+            player_connection->SendMessage(JoinAckMessage(expected_it->second, boost::uuids::nil_uuid()));
             if (!GetOptionsDB().Get<bool>("skip-checksum"))
                 player_connection->SendMessage(ContentCheckSumMessage());
 
@@ -1605,7 +1640,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             // unexpected but welcome human player
             int host_id = server.Networking().HostPlayerID();
             player_connection->EstablishPlayer(host_id, player_name, client_type, client_version_string);
-            player_connection->SendMessage(JoinAckMessage(host_id));
+            player_connection->SendMessage(JoinAckMessage(host_id, boost::uuids::nil_uuid()));
             if (!GetOptionsDB().Get<bool>("skip-checksum"))
                 player_connection->SendMessage(ContentCheckSumMessage());
 
@@ -1730,7 +1765,8 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     std::string player_name("Default_Player_Name_in_WaitingForMPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
     std::string client_version_string;
-    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
+    boost::uuids::uuid cookie;
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
 
     // is this an AI?
     if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -1744,7 +1780,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             // let the networking system know what socket this player is on
             int player_id = server.m_networking.NewPlayerID();
             player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
-            player_connection->SendMessage(JoinAckMessage(player_id));
+            player_connection->SendMessage(JoinAckMessage(player_id, boost::uuids::nil_uuid()));
 
             // Inform AI of logging configuration.
             player_connection->SendMessage(
@@ -1757,11 +1793,34 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
         // if we don't need to authenticate player we got default roles here
         Networking::AuthRoles roles;
-        if (server.IsAuthRequiredOrFillRoles(player_name, roles)) {
-            // send authentication request
-            player_connection->AwaitPlayer(client_type, client_version_string);
-            player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
-            return discard_event();
+        bool authenticated;
+
+        DebugLogger() << "WaitingForMPGameJoiners.JoinGame Try to login player " << player_name << " with cookie: " << cookie;
+        if (server.Networking().CheckCookie(cookie, player_name, roles, authenticated)) {
+            // if player has correct and non-expired cookies simply establish him
+            player_connection->SetCookie(cookie);
+            if (authenticated)
+                player_connection->SetAuthenticated();
+
+            // drop other connection with same name before checks for expected players
+            std::list<PlayerConnectionPtr> to_disconnect;
+            for (auto it = server.m_networking.established_begin();
+                 it != server.m_networking.established_end(); ++it)
+            {
+                if ((*it)->PlayerName() == player_name && player_connection != (*it)) {
+                    (*it)->SendMessage(ErrorMessage(UserString("ERROR_CONNECTION_WAS_REPLACED"), true));
+                    to_disconnect.push_back(*it);
+                }
+            }
+            for (const auto& conn : to_disconnect)
+            { server.Networking().Disconnect(conn); }
+        } else {
+            if (server.IsAuthRequiredOrFillRoles(player_name, roles)) {
+                // send authentication request
+                player_connection->AwaitPlayer(client_type, client_version_string);
+                player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
+                return discard_event();
+            }
         }
 
         // verify that there is room left for this player
@@ -2128,62 +2187,75 @@ sc::result PlayingGame::react(const JoinGame& msg) {
     std::string player_name;
     Networking::ClientType client_type;
     std::string client_version_string;
-    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
+    boost::uuids::uuid cookie;
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
 
     Networking::AuthRoles roles;
-    if (server.IsAuthRequiredOrFillRoles(player_name, roles)) {
-        // send authentication request
-        player_connection->AwaitPlayer(client_type, client_version_string);
-        player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
-        return discard_event();
-    }
+    bool authenticated;
 
-    if (client_type != Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
-        client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-    {
-        msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_PLAYING_GAME")));
-        Server().Networking().Disconnect(msg.m_player_connection);
-        return discard_event();
-    }
-
-    std::string original_player_name = player_name;
-    // Remove AI prefix to distinguish Human from AI.
-    std::string ai_prefix = UserString("AI_PLAYER") + "_";
-    while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
-        player_name.erase(0, ai_prefix.size());
-    if (player_name.empty())
-        player_name = "_";
-
-    std::string new_player_name = player_name;
-
-    bool collision = true;
-    std::size_t t = 1;
-    while (t <= server.Networking().NumEstablishedPlayers() + 1 && collision) {
-        collision = false;
-        roles.Clear();
-        if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
-            collision = true;
-        } else {
-            for (auto& plr : server.Empires() ) {
-                if (plr.second->Name() == new_player_name) {
-                    collision = true;
-                    break;
-                }
-            }
+    DebugLogger() << "PlayingGame.JoinGame Try to login player " << player_name << " with cookie: " << cookie;
+    if (server.Networking().CheckCookie(cookie, player_name, roles, authenticated)) {
+        // if player have correct and non-expired cookies simply establish him
+        player_connection->SetCookie(cookie);
+        if (authenticated)
+            player_connection->SetAuthenticated();
+    } else {
+        if (server.IsAuthRequiredOrFillRoles(player_name, roles)) {
+            // send authentication request
+            player_connection->AwaitPlayer(client_type, client_version_string);
+            player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
+            return discard_event();
         }
 
-        if (collision)
-            new_player_name = player_name + std::to_string(++t); // start alternative names from 2
+        if (client_type != Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
+            client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        {
+            msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_PLAYING_GAME")));
+            Server().Networking().Disconnect(msg.m_player_connection);
+            return discard_event();
+        }
+
+        std::string original_player_name = player_name;
+        // Remove AI prefix to distinguish Human from AI.
+        std::string ai_prefix = UserString("AI_PLAYER") + "_";
+        while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
+            player_name.erase(0, ai_prefix.size());
+        if (player_name.empty())
+            player_name = "_";
+
+        std::string new_player_name = player_name;
+
+        bool collision = true;
+        std::size_t t = 1;
+        while (t <= server.Networking().NumEstablishedPlayers() + 1 && collision) {
+            collision = false;
+            roles.Clear();
+            if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
+                collision = true;
+            } else {
+                for (auto& plr : server.Empires() ) {
+                    if (plr.second->Name() == new_player_name) {
+                        collision = true;
+                        break;
+                    }
+                }
+            }
+
+            if (collision)
+                new_player_name = player_name + std::to_string(++t); // start alternative names from 2
+        }
+
+        if (collision) {
+            player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
+                                                        true));
+            server.Networking().Disconnect(player_connection);
+            return discard_event();
+        }
+
+        player_name = new_player_name;
     }
 
-    if (collision) {
-        player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
-                                                    true));
-        server.Networking().Disconnect(player_connection);
-        return discard_event();
-    }
-
-    EstablishPlayer(player_connection, new_player_name, client_type,
+    EstablishPlayer(player_connection, player_name, client_type,
                     client_version_string, roles);
 
     return discard_event();

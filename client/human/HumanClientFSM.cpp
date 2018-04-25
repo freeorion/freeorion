@@ -18,6 +18,7 @@
 #include "../../UI/MapWnd.h"
 
 #include <boost/format.hpp>
+#include <boost/uuid/uuid_io.hpp>
 #include <thread>
 
 /** \page statechart_notes Notes on Boost Statechart transitions
@@ -337,7 +338,22 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPJoinAck.JoinGame";
 
     try {
-        int player_id = boost::lexical_cast<int>(msg.m_message.Text());
+        int player_id;
+        boost::uuids::uuid cookie;
+        ExtractJoinAckMessageData(msg.m_message, player_id, cookie);
+
+        if (!cookie.is_nil()) {
+            try {
+                std::string cookie_option = "network.server.cookie." + Client().Networking().Destination();
+                GetOptionsDB().Remove(cookie_option);
+                GetOptionsDB().Add(cookie_option, "OPTIONS_DB_SERVER_COOKIE", boost::uuids::to_string(cookie));
+                GetOptionsDB().Commit();
+            } catch(const std::exception& err) {
+                WarnLogger() << "Cann't save cookie for server " << Client().Networking().Destination() << ": "
+                             << err.what();
+                // ignore
+            }
+        }
 
         Client().Networking().SetPlayerID(player_id);
 

@@ -6,6 +6,8 @@
 
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
+#include <boost/uuid/nil_generator.hpp>
+#include <boost/uuid/random_generator.hpp>
 
 #include <thread>
 
@@ -60,6 +62,7 @@ PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
     m_new_connection(true),
     m_client_type(Networking::INVALID_CLIENT_TYPE),
     m_authenticated(false),
+    m_cookie(boost::uuids::nil_uuid()),
     m_nonplayer_message_callback(nonplayer_message_callback),
     m_player_message_callback(player_message_callback),
     m_disconnected_callback(disconnected_callback)
@@ -124,6 +127,9 @@ bool PlayerConnection::IsAuthenticated() const {
 bool PlayerConnection::HasAuthRole(Networking::RoleType role) const {
     return m_roles.HasRole(role);
 }
+
+boost::uuids::uuid PlayerConnection::Cookie() const
+{ return m_cookie; }
 
 void PlayerConnection::AwaitPlayer(Networking::ClientType client_type,
                                    const std::string& client_version_string)
@@ -199,6 +205,9 @@ void PlayerConnection::SetAuthRole(Networking::RoleType role, bool value) {
     m_roles.SetRole(role, value);
     SendMessage(SetAuthorizationRolesMessage(m_roles));
 }
+
+void PlayerConnection::SetCookie(boost::uuids::uuid cookie)
+{ m_cookie = cookie; }
 
 const std::string& PlayerConnection::ClientVersionString() const
 { return m_client_version_string; }
@@ -491,6 +500,35 @@ bool ServerNetworking::ModeratorsInGame() const {
     return false;
 }
 
+bool ServerNetworking::IsAvailableNameInCookies(const std::string& player_name) const {
+    boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+    for (const auto& cookie : m_cookies) {
+        if (cookie.second.expired >= now && cookie.second.player_name == player_name)
+            return false;
+    }
+    return true;
+}
+
+bool ServerNetworking::CheckCookie(boost::uuids::uuid cookie,
+                                   const std::string& player_name,
+                                   Networking::AuthRoles& roles,
+                                   bool& authenticated) const
+{
+    if (cookie.is_nil())
+        return false;
+
+    auto it = m_cookies.find(cookie);
+    if (it != m_cookies.end() && player_name == it->second.player_name) {
+        boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+        if (it->second.expired >= now) {
+            roles = it->second.roles;
+            authenticated = it->second.authenticated;
+            return true;
+        }
+    }
+    return false;
+}
+
 bool ServerNetworking::SendMessageAll(const Message& message) {
     bool success = true;
     for (auto player_it = established_begin();
@@ -561,6 +599,47 @@ void ServerNetworking::HandleNextEvent() {
 
 void ServerNetworking::SetHostPlayerID(int host_player_id)
 { m_host_player_id = host_player_id; }
+
+boost::uuids::uuid ServerNetworking::GenerateCookie(const std::string& player_name,
+                                                    const Networking::AuthRoles& roles,
+                                                    bool authenticated)
+{
+    boost::uuids::uuid cookie = boost::uuids::random_generator()();
+    m_cookies.erase(cookie); // remove previous cookie if exists
+    m_cookies.emplace(cookie, CookieData(player_name,
+                                         boost::posix_time::second_clock::local_time() + boost::posix_time::minutes(15),
+                                         roles,
+                                         authenticated));
+    return cookie;
+}
+
+void ServerNetworking::UpdateCookie(boost::uuids::uuid cookie) {
+    if (cookie.is_nil())
+        return;
+
+    auto it = m_cookies.find(cookie);
+    if (it != m_cookies.end()) {
+        it->second.expired = boost::posix_time::second_clock::local_time() + boost::posix_time::minutes(15);
+    }
+}
+
+void ServerNetworking::CleanupCookies() {
+    std::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>> to_delete;
+    boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+    // clean up expired cookies
+    for (const auto& cookie : m_cookies) {
+        if (cookie.second.expired < now)
+            to_delete.insert(cookie.first);
+    }
+    // don't clean up cookies from active connections
+    for (auto it = established_begin();
+        it != established_end(); ++it)
+    {
+        to_delete.erase((*it)->Cookie());
+    }
+    for (auto cookie : to_delete)
+        m_cookies.erase(cookie);
+}
 
 void ServerNetworking::Init() {
     // use a dual stack (ipv6 + ipv4) socket

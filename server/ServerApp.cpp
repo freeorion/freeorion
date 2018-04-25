@@ -412,6 +412,7 @@ void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
 void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_connection) {
 
     //DebugLogger() << "ServerApp::HandleMessage type " << boost::lexical_cast<std::string>(msg.Type());
+    m_networking.UpdateCookie(player_connection->Cookie()); // update cookie expire date
 
     switch (msg.Type()) {
     case Message::HOST_SP_GAME:             m_fsm->process_event(HostSPGame(msg, player_connection));       break;
@@ -1555,7 +1556,8 @@ bool ServerApp::IsAvailableName(const std::string& player_name) const {
         if ((*it)->PlayerName() == player_name)
             return false;
     }
-    return true;
+    // check if some name reserved with cookie
+    return m_networking.IsAvailableNameInCookies(player_name);
 }
 
 bool ServerApp::IsAuthRequiredOrFillRoles(const std::string& player_name, Networking::AuthRoles& roles) {

@@ -166,6 +166,9 @@ public:
 
     /** Checks if the client has some authorization \a role. */
     bool HasAuthRole(Networking::RoleType role) const;
+
+    /** Returns destination address of server. */
+    const std::string& Destination() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -248,6 +251,8 @@ private:
     Message::HeaderBuffer           m_incoming_header;
     Message                         m_incoming_message;
     Message::HeaderBuffer           m_outgoing_header;
+
+    std::string                     m_destination;
 };
 
 
@@ -305,6 +310,9 @@ ClientNetworking::ServerNames ClientNetworking::Impl::DiscoverLANServerNames() {
     }
     return names;
 }
+
+const std::string& ClientNetworking::Impl::Destination() const
+{ return m_destination; }
 
 bool ClientNetworking::Impl::ConnectToServer(
     const ClientNetworking* const self,
@@ -394,6 +402,8 @@ bool ClientNetworking::Impl::ConnectToServer(
         ErrorLogger(network) << "ConnectToServer() : unable to connect to server at "
                              << ip_address << " due to exception: " << e.what();
     }
+    if (IsConnected())
+        m_destination = ip_address;
     return IsConnected();
 }
 
@@ -668,6 +678,9 @@ bool ClientNetworking::PlayerIsHost(int player_id) const
 
 bool ClientNetworking::HasAuthRole(Networking::RoleType role) const
 { return m_impl->HasAuthRole(role); }
+
+const std::string& ClientNetworking::Destination() const
+{ return m_impl->Destination(); }
 
 ClientNetworking::ServerNames ClientNetworking::DiscoverLANServerNames()
 { return m_impl->DiscoverLANServerNames(); }

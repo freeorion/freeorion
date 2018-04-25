@@ -7,6 +7,7 @@
 
 #include <boost/shared_array.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/uuid/uuid.hpp>
 
 #if defined(_MSC_VER) && defined(int64_t)
 #undef int64_t
@@ -191,8 +192,10 @@ FO_COMMON_API Message HostSPGameMessage(const SinglePlayerSetupData& setup_data)
 /** creates a minimal HOST_MP_GAME message used to initiate multiplayer "lobby" setup*/
 FO_COMMON_API Message HostMPGameMessage(const std::string& host_player_name);
 
-/** creates a JOIN_GAME message.  The sender's player name and client type are sent in the message.*/
-FO_COMMON_API Message JoinGameMessage(const std::string& player_name, Networking::ClientType client_type);
+/** creates a JOIN_GAME message.  The sender's player name, client type, and cookie are sent in the message.*/
+FO_COMMON_API Message JoinGameMessage(const std::string& player_name,
+                                      Networking::ClientType client_type,
+                                      boost::uuids::uuid cookie);
 
 /** creates a HOST_ID message.  The player ID of the host is sent in the message. */
 FO_COMMON_API Message HostIDMessage(int host_player_id);
@@ -233,8 +236,9 @@ FO_COMMON_API Message HostSPAckMessage(int player_id);
 FO_COMMON_API Message HostMPAckMessage(int player_id);
 
 /** creates a JOIN_GAME acknowledgement message.  The \a player_id is the ID of
-  * the receiving player.  This message should only be sent by the server.*/
-FO_COMMON_API Message JoinAckMessage(int player_id);
+  * the receiving player and \a cookie is a token to quickly authenticate player.
+  * This message should only be sent by the server.*/
+FO_COMMON_API Message JoinAckMessage(int player_id, boost::uuids::uuid cookie);
 
 /** creates a TURN_ORDERS message. */
 FO_COMMON_API Message TurnOrdersMessage(const OrderSet& orders);
@@ -387,7 +391,11 @@ FO_COMMON_API void ExtractGameStartMessageData(const Message& msg, bool& single_
 
 FO_COMMON_API void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
                                               Networking::ClientType& client_type,
-                                              std::string& version_string);
+                                              std::string& version_string,
+                                              boost::uuids::uuid& cookie);
+
+FO_COMMON_API void ExtractJoinAckMessageData(const Message& msg, int& player_id,
+                                             boost::uuids::uuid& cookie);
 
 FO_COMMON_API void ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders);
 
