@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_INTERSPECIES_ACADEMY"
     description = "BLD_INTERSPECIES_ACADEMY_DESC"
-    buildcost = 50
+    buildcost = 50 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     location = AND [
         // Homeworld
@@ -79,7 +79,7 @@ BuildingType
             activation = Source
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[LATE_PRIORITY]]
-            effects = SetStockpile value = Value + 10
+            effects = SetMaxStockpile value = Value + 10
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID

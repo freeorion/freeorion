@@ -1,0 +1,54 @@
+BuildingType
+    name = "BLD_STOCKPILING_CENTER"
+    description = "BLD_STOCKPILING_CENTER_DESC"
+    captureresult = destroy
+    buildcost = 100 * [[BUILDING_COST_MULTIPLIER]]
+    buildtime = 5
+    location = AND [
+        Capital
+        OwnedBy empire = Source.Owner
+        Number low = 0 high = 0 condition = And [
+            Building name = "BLD_STOCKPILING_CENTER"
+            OwnedBy empire = Source.Owner
+        ]
+    ]
+    enqueuelocation = And [
+        Capital
+        OwnedBy empire = Source.Owner
+
+        Number low = 0 high = 0 condition = And [
+            Building name = "BLD_STOCKPILING_CENTER"
+            OwnedBy empire = Source.Owner
+        ]
+
+        // can't enqueue if already have an enqueued stockpiling_center anywhere
+        Number low = 0 high = 0 condition = And [
+            Planet
+            Enqueued
+                type = Building
+                name = "BLD_STOCKPILING_CENTER"
+                empire = Source.Owner
+                low = 1
+        ]
+    ]
+    effectsgroups = 
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Source
+            accountinglabel = "BLD_STOCKPILING_CENTER_LABEL"
+            effects = [
+                SetMaxStockpile value = Value + (0.1 * Statistic Sum value = LocalCandidate.Industry condition = And [
+                    ProductionCenter
+                    OwnedBy empire = Source.Owner
+                ])
+            ]
+
+    icon = "icons/building/stockpiling_center.png"
+
+#include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/enqueue.macros"
+#include "/scripting/common/priorities.macros"

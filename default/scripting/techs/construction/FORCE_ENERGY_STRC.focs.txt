@@ -44,6 +44,17 @@ Tech
                 effects = SetConstruction value = min(Value + 2, Value(Target.TargetConstruction))
                 else = SetConstruction value = max(Value - 4, Value(Target.TargetConstruction))
 
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = If
+                condition = (Value(LocalCandidate.Stockpile) <= Value(LocalCandidate.MaxStockpile))
+                effects = SetStockpile value = min(Value + 2, Value(Target.MaxStockpile))
+                else = SetStockpile value = max(Value - 4, Value(Target.MaxStockpile))
+
     ]
     graphic = "icons/tech/force_energy_structures.png"
 
