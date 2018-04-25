@@ -6678,7 +6678,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     float  expected_stockpile = empire->GetProductionQueue().ExpectedNewStockpileAmount();
 
     float  stockpile_plusminus_next_turn = expected_stockpile - stockpile;
-    double total_PP_for_stockpile_projects = empire->GetProductionQueue().ExpectedTransferToStockpile();
+    double total_PP_for_stockpile_projects = empire->GetProductionQueue().ExpectedProjectTransferToStockpile();
     double total_PP_to_stockpile = expected_stockpile - stockpile + stockpile_used;
     double total_PP_excess = total_PP_output - total_PP_spent;
     double total_PP_wasted = total_PP_output - total_PP_spent - total_PP_to_stockpile + total_PP_for_stockpile_projects;
