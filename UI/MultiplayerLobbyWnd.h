@@ -4,6 +4,7 @@
 #include <vector>
 #include <GG/GGFwd.h>
 
+#include "ChatWnd.h"
 #include "CUIWnd.h"
 #include "CUIControls.h"
 #include "GalaxySetupWnd.h"
@@ -35,9 +36,10 @@ public:
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     void            ChatMessage(int player_id, const boost::posix_time::ptime& timestamp, const std::string& msg);
-    void            ChatMessage(const std::string& player_name,
-                                const boost::posix_time::ptime& timestamp,
-                                const std::string& msg);
+    void            ChatMessage(const std::string& message_text,
+                                const std::string& player_name,
+                                GG::Clr text_color,
+                                const boost::posix_time::ptime& timestamp);
     void            LobbyUpdate(const MultiplayerLobbyData& lobby_data);
     void            Refresh();
     void            CleanupChat();
@@ -75,8 +77,7 @@ private:
 
     MultiplayerLobbyData    m_lobby_data;   ///< a copy of the most recently received lobby update
 
-    std::shared_ptr<GG::MultiEdit>          m_chat_box;
-    std::shared_ptr<GG::Edit>               m_chat_input_edit;
+    std::shared_ptr<MessageWnd>             m_chat_wnd;
     std::shared_ptr<CUIStateButton>         m_any_can_edit;
     std::shared_ptr<GG::RadioButtonGroup>   m_new_load_game_buttons;
     std::shared_ptr<GalaxySetupPanel>       m_galaxy_setup_panel;

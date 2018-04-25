@@ -624,7 +624,8 @@ ClientUI::ClientUI() :
     if (GetOptionsDB().Get<bool>("window-reset"))
         CUIWnd::InvalidateUnusedOptions();
 
-    m_message_wnd = GG::Wnd::Create<MessageWnd>(MESSAGE_WND_NAME);
+    m_message_wnd = GG::Wnd::Create<MessageWnd>(GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | GG::RESIZABLE |
+                                                CLOSABLE | PINABLE, MESSAGE_WND_NAME);
     m_player_list_wnd = GG::Wnd::Create<PlayerListWnd>(PLAYER_LIST_WND_NAME);
     InitializeWindows();
 

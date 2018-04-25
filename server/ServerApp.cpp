@@ -982,14 +982,16 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
     player_connection->SendMessage(DispatchCombatLogsMessage(logs));
 }
 
-void ServerApp::PushChatMessage(const boost::posix_time::ptime& timestamp,
+void ServerApp::PushChatMessage(const std::string& text,
                                 const std::string& player_name,
-                                const std::string& msg)
+                                GG::Clr text_color,
+                                const boost::posix_time::ptime& timestamp)
 {
     ChatHistoryEntity chat;
     chat.m_timestamp = timestamp;
     chat.m_player_name = player_name;
-    chat.m_text = msg;
+    chat.m_text_color = text_color;
+    chat.m_text = text;
     m_chat_history.push_back(chat);
 }
 

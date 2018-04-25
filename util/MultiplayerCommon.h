@@ -258,12 +258,15 @@ struct FO_COMMON_API ChatHistoryEntity {
     boost::posix_time::ptime m_timestamp;
     std::string m_player_name;
     std::string m_text;
+    GG::Clr m_text_color;
 
 private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+BOOST_CLASS_VERSION(ChatHistoryEntity, 1);
 
 /** Information about one player that other players are informed of.  Assembled by server and sent to players. */
 struct PlayerInfo {

@@ -199,9 +199,16 @@ template void MultiplayerLobbyData::serialize<freeorion_xml_iarchive>(freeorion_
 template <class Archive>
 void ChatHistoryEntity::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_timestamp)
-        & BOOST_SERIALIZATION_NVP(m_player_name)
-        & BOOST_SERIALIZATION_NVP(m_text);
+    if (version < 1) {
+        ar  & BOOST_SERIALIZATION_NVP(m_timestamp)
+            & BOOST_SERIALIZATION_NVP(m_player_name)
+            & BOOST_SERIALIZATION_NVP(m_text);
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_text)
+            & BOOST_SERIALIZATION_NVP(m_player_name)
+            & BOOST_SERIALIZATION_NVP(m_text_color)
+            & BOOST_SERIALIZATION_NVP(m_timestamp);
+    }
 }
 
 template void ChatHistoryEntity::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);

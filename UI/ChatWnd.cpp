@@ -314,10 +314,8 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names, const std:
 ////////////////////
 //   MessageWnd   //
 ////////////////////
-MessageWnd::MessageWnd(const std::string& config_name) :
-    CUIWnd(UserString("MESSAGES_PANEL_TITLE"),
-           GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | GG::RESIZABLE | CLOSABLE | PINABLE,
-           config_name),
+MessageWnd::MessageWnd(GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
+    CUIWnd(UserString("MESSAGES_PANEL_TITLE"), flags, config_name),
     m_display(nullptr),
     m_edit(nullptr),
     m_display_show_time(0),
@@ -377,39 +375,19 @@ void MessageWnd::PreRender() {
 }
 
 void MessageWnd::HandlePlayerChatMessage(const std::string& text,
-                                         int sender_player_id,
+                                         const std::string& player_name,
+                                         GG::Clr text_color,
                                          const boost::posix_time::ptime& timestamp,
                                          int recipient_player_id)
 {
-    const ClientApp* app = ClientApp::GetApp();
-    if (!app) {
-        ErrorLogger() << "MessageWnd::HandlePlayerChatMessage couldn't get client app!";
-        return;
-    }
-
-    const std::map<int, PlayerInfo>& players = app->Players();
-    auto player_it = players.find(sender_player_id);
-    if (player_it == players.end()) {
-        ErrorLogger() << "MessageWnd::HandlePlayerChatMessage couldn't message sending player with id: " << sender_player_id;
-        return;
-    }
-
-    const std::string& sender_name = player_it->second.name;
-    const int& sender_empire_id = player_it->second.empire_id;
-
-    GG::Clr sender_colour(ClientUI::TextColor());
-    if (const Empire* sender_empire = GetEmpire(sender_empire_id))
-        sender_colour = sender_empire->Color();
-
     std::string filtered_message = StringtableTextSubstitute(text);
-    std::string wrapped_text = RgbaTag(sender_colour);
+    std::string wrapped_text = RgbaTag(text_color);
     const std::string&& formatted_timestamp = ClientUI::FormatTimestamp(timestamp);
     if (IsValidUTF8(formatted_timestamp))
         wrapped_text += formatted_timestamp;
-    wrapped_text += sender_name + ": " + filtered_message + "</rgba>";
-    TraceLogger() << "HandlePlayerChatMessage sender: " << sender_name
-                  << "  sender empire id: " << sender_empire_id
-                  << "  sender colour rgba tag: " << RgbaTag(sender_colour)
+    wrapped_text += player_name + ": " + filtered_message + "</rgba>";
+    TraceLogger() << "HandlePlayerChatMessage sender: " << player_name
+                  << "  sender colour rgba tag: " << RgbaTag(text_color)
                   << "  filtered message: " << filtered_message
                   << "  timestamp text: " << ClientUI::FormatTimestamp(timestamp)
                   << "  wrapped text: " << wrapped_text;

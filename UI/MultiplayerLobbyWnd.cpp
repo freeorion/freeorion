@@ -544,8 +544,7 @@ namespace {
 MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     CUIWnd(UserString("MPLOBBY_WINDOW_TITLE"),
            GG::ONTOP | GG::INTERACTIVE | GG::RESIZABLE),
-    m_chat_box(nullptr),
-    m_chat_input_edit(nullptr),
+    m_chat_wnd(nullptr),
     m_any_can_edit(nullptr),
     m_new_load_game_buttons(nullptr),
     m_galaxy_setup_panel(nullptr),
@@ -561,9 +560,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 void MultiPlayerLobbyWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
 
-    m_chat_input_edit = GG::Wnd::Create<CUIEdit>("");
-    m_chat_box = GG::Wnd::Create<CUIMultiEdit>("", GG::MULTI_LINEWRAP | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE);
-    m_chat_box->SetMaxLinesOfHistory(250);
+    m_chat_wnd = GG::Wnd::Create<MessageWnd>(GG::INTERACTIVE, "mplobby.chat");
 
     m_any_can_edit = GG::Wnd::Create<CUIStateButton>(UserString("EDITABLE_GALAXY_SETTINGS"), GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
     m_any_can_edit->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
@@ -602,8 +599,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
 
     m_start_conditions_text = GG::Wnd::Create<CUILabel>(UserString("MULTIPLAYER_GAME_START_CONDITIONS"), GG::FORMAT_LEFT);
 
-    AttachChild(m_chat_box);
-    AttachChild(m_chat_input_edit);
+    AttachChild(m_chat_wnd);
     AttachChild(m_any_can_edit);
     AttachChild(m_new_load_game_buttons);
     AttachChild(m_galaxy_setup_panel);
@@ -723,13 +719,7 @@ void MultiPlayerLobbyWnd::Render() {
 }
 
 void MultiPlayerLobbyWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
-    if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) &&
-         GG::GUI::GetGUI()->FocusWnd() == m_chat_input_edit)
-    {
-        std::string text = m_chat_input_edit->Text();   // copy, so subsequent clearing doesn't affect typed message that is used later...
-        HumanClientApp::GetApp()->Networking().SendMessage(PlayerChatMessage(text));
-        m_chat_input_edit->SetText("");
-    } else if (m_ready_bn && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
+    if (m_ready_bn && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
         m_ready_bn->LeftClickedSignal();
     } else if (key == GG::GGK_ESCAPE) {
         m_cancel_bn->LeftClickedSignal();
@@ -738,23 +728,25 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG
 
 void MultiPlayerLobbyWnd::ChatMessage(int player_id, const boost::posix_time::ptime& timestamp, const std::string& msg) {
     // look up player name by ID
-    std::string player_name;
+    std::string player_name{UserString("PLAYER") + " " + std::to_string(player_id)};
+    GG::Clr text_color{ClientUI::GetClientUI()->TextColor()};
     for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.m_players) {
-        if (entry.first == player_id && entry.first != Networking::INVALID_PLAYER_ID) {
-            player_name = entry.second.m_player_name;
-            break;
-        }
+        if (entry.first != player_id || entry.first == Networking::INVALID_PLAYER_ID)
+            continue;
+        player_name = entry.second.m_player_name;
+        text_color = entry.second.m_empire_color;
     }
 
-    ChatMessage(player_name, timestamp, msg);
+    m_chat_wnd->HandlePlayerChatMessage(msg, player_name, text_color, timestamp, HumanClientApp::GetApp()->PlayerID());
 }
 
-void MultiPlayerLobbyWnd::ChatMessage(const std::string& player_name,
-                                      const boost::posix_time::ptime& timestamp,
-                                      const std::string& msg)
+void MultiPlayerLobbyWnd::ChatMessage(const std::string& message_text,
+                                      const std::string& player_name,
+                                      GG::Clr text_color,
+                                      const boost::posix_time::ptime& timestamp)
 {
-    // show message with player name in chat box
-    *m_chat_box += ClientUI::FormatTimestamp(timestamp) + player_name + ": " + msg + '\n';
+    m_chat_wnd->HandlePlayerChatMessage(message_text, player_name, text_color, timestamp,
+                                        HumanClientApp::GetApp()->PlayerID());
 }
 
 namespace {
@@ -806,7 +798,7 @@ void MultiPlayerLobbyWnd::Refresh() {
 }
 
 void MultiPlayerLobbyWnd::CleanupChat()
-{ m_chat_box->SetText(""); }
+{ m_chat_wnd->Clear(); }
 
 GG::Pt MultiPlayerLobbyWnd::MinUsableSize() const
 { return GG::Pt(LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT); }
@@ -814,13 +806,9 @@ GG::Pt MultiPlayerLobbyWnd::MinUsableSize() const
 void MultiPlayerLobbyWnd::DoLayout() {
     GG::X x(CONTROL_MARGIN);
 
-    GG::Pt chat_input_ul(x, ClientHeight() - (ClientUI::Pts() + 10) - 2 * CONTROL_MARGIN);
-    GG::Pt chat_input_lr = chat_input_ul + GG::Pt(CHAT_WIDTH - x, m_chat_input_edit->MinUsableSize().y);
-    m_chat_input_edit->SizeMove(chat_input_ul, chat_input_lr);
-
     GG::Pt chat_box_ul(x, GG::Y(CONTROL_MARGIN));
-    GG::Pt chat_box_lr(CHAT_WIDTH, m_chat_input_edit->RelativeUpperLeft().y - CONTROL_MARGIN);
-    m_chat_box->SizeMove(chat_box_ul, chat_box_lr);
+    GG::Pt chat_box_lr(CHAT_WIDTH, ClientHeight() - CONTROL_MARGIN);
+    m_chat_wnd->SizeMove(chat_box_ul, chat_box_lr);
 
     const GG::Y RADIO_BN_HT(ClientUI::Pts() + 4);
 
@@ -843,24 +831,12 @@ void MultiPlayerLobbyWnd::DoLayout() {
     g_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - CONTROL_MARGIN - PREVIEW_MARGIN, GG::Y(CONTROL_MARGIN + PREVIEW_MARGIN));
     m_preview_image->SizeMove(g_preview_ul, g_preview_ul + PREVIEW_SZ);
 
-    x = CHAT_WIDTH + CONTROL_MARGIN;
-    GG::Y y = std::max(m_save_file_text->RelativeLowerRight().y, m_preview_image->RelativeLowerRight().y) + 7*CONTROL_MARGIN;
-
-    GG::Pt any_can_edit_ul(x, y);
+    GG::Pt any_can_edit_ul(m_preview_image->RelativeUpperLeft().x + CONTROL_MARGIN,
+                           m_preview_image->RelativeLowerRight().y + CONTROL_MARGIN);
     GG::Pt any_can_edit_lr = any_can_edit_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, RADIO_BN_HT);
     m_any_can_edit->SizeMove(any_can_edit_ul, any_can_edit_lr);
 
     const GG::Y TEXT_HEIGHT = GG::Y(ClientUI::Pts() * 3/2);
-
-    y += CONTROL_MARGIN + RADIO_BN_HT;
-    GG::Pt players_lb_ul(x, y);
-    GG::Pt players_lb_lr = players_lb_ul + GG::Pt(ClientWidth() - CONTROL_MARGIN - x, m_chat_input_edit->RelativeUpperLeft().y - CONTROL_MARGIN - y);
-    m_players_lb->SizeMove(players_lb_ul, players_lb_lr);
-    std::vector<GG::X> players_lb_col_widths = PlayerRowColWidths(players_lb_lr.x - players_lb_ul.x);
-    m_players_lb_headers->SetColWidths(players_lb_col_widths);
-    for (unsigned int i = 0; i < players_lb_col_widths.size(); ++i)
-        m_players_lb->SetColWidth(i, players_lb_col_widths[i]);
-    m_players_lb->RequirePreRender();
 
     m_ready_bn->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(GG::X(125), m_ready_bn->MinUsableSize().y));
     m_cancel_bn->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(GG::X(125), m_ready_bn->MinUsableSize().y));
@@ -868,6 +844,17 @@ void MultiPlayerLobbyWnd::DoLayout() {
                                ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
     m_ready_bn->MoveTo(GG::Pt(m_cancel_bn->RelativeUpperLeft().x - CONTROL_MARGIN - m_ready_bn->Width(),
                               ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
+
+    x = CHAT_WIDTH + CONTROL_MARGIN;
+    GG::Y y(std::max(m_save_file_text->RelativeLowerRight().y, m_browse_saves_btn->RelativeLowerRight().y));
+    GG::Pt players_lb_ul(x, std::max(y, m_any_can_edit->RelativeLowerRight().y) + CONTROL_MARGIN);
+    GG::Pt players_lb_lr(ClientWidth() - CONTROL_MARGIN, m_cancel_bn->RelativeUpperLeft().y - CONTROL_MARGIN);
+    m_players_lb->SizeMove(players_lb_ul, players_lb_lr);
+    std::vector<GG::X> players_lb_col_widths = PlayerRowColWidths(players_lb_lr.x - players_lb_ul.x);
+    m_players_lb_headers->SetColWidths(players_lb_col_widths);
+    for (unsigned int i = 0; i < players_lb_col_widths.size(); ++i)
+        m_players_lb->SetColWidth(i, players_lb_col_widths[i]);
+    m_players_lb->RequirePreRender();
 
     GG::Pt start_conditions_text_ul(x, ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN);
     GG::Pt start_conditions_text_lr = start_conditions_text_ul + GG::Pt(m_cancel_bn->RelativeUpperLeft().x - x, TEXT_HEIGHT);
