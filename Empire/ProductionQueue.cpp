@@ -100,7 +100,7 @@ namespace {
         return retval;
     }
 
-    float CalculateNewStockpile(int empire_id, float starting_stockpile, float stockpile_transfer,
+    float CalculateNewStockpile(int empire_id, float starting_stockpile, float project_transfer_to_stockpile,
                                 const std::map<std::set<int>, float>& available_pp,
                                 const std::map<std::set<int>, float>& allocated_pp,
                                 const std::map<std::set<int>, float>& allocated_stockpile_pp)
@@ -129,11 +129,11 @@ namespace {
                           << "  to stockpile: " << new_contributions;
         }
 
-        if ((new_contributions + stockpile_transfer) > stockpile_limit &&
+        if ((new_contributions + project_transfer_to_stockpile) > stockpile_limit &&
             GetGameRules().Get<bool>("RULE_STOCKPILE_IMPORT_LIMITED"))
-        { new_contributions = stockpile_limit - stockpile_transfer; }
+        { new_contributions = stockpile_limit - project_transfer_to_stockpile; }
 
-        return starting_stockpile + new_contributions - stockpile_used;
+        return starting_stockpile + new_contributions + project_transfer_to_stockpile - stockpile_used;
     }
 
     /** Sets the allocated_pp value for each Element in the passed
@@ -772,7 +772,6 @@ void ProductionQueue::Update() {
     m_expected_new_stockpile_amount = CalculateNewStockpile(
         m_empire_id, pp_in_stockpile, project_transfer_to_stockpile, available_pp, m_object_group_allocated_pp,
         m_object_group_allocated_stockpile_pp);
-    m_expected_new_stockpile_amount += project_transfer_to_stockpile;
     m_expected_project_transfer_to_stockpile = project_transfer_to_stockpile;
 
     // if at least one resource-sharing system group have available PP, simulate
@@ -864,11 +863,9 @@ void ProductionQueue::Update() {
                 sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
             }
         }
-        sim_pp_in_stockpile = CalculateNewStockpile(m_empire_id, sim_pp_in_stockpile, 
-                                                    sim_project_transfer_to_stockpile,
-                                                    available_pp, allocated_pp,
-                                                    allocated_stockpile_pp);
-        sim_pp_in_stockpile += sim_project_transfer_to_stockpile;
+        sim_pp_in_stockpile = CalculateNewStockpile(
+            m_empire_id, sim_pp_in_stockpile, sim_project_transfer_to_stockpile,
+            available_pp, allocated_pp, allocated_stockpile_pp);
         sim_available_stockpile = std::min(sim_pp_in_stockpile, stockpile_limit);
     }
 
