@@ -5368,7 +5368,7 @@ void MapWnd::SystemLeftClicked(int system_id) {
     SystemLeftClickedSignal(system_id);
 }
 
-void MapWnd::SystemRightClicked(int system_id, GG::Flags< GG::ModKey > mod_keys) {
+void MapWnd::SystemRightClicked(int system_id, GG::Flags<GG::ModKey> mod_keys) {
     if (ClientPlayerIsModerator()) {
         ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
         ClientNetworking& net = HumanClientApp::GetApp()->Networking();
@@ -5420,7 +5420,7 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags< GG::ModKey > mod_keys)
     }
 }
 
-void MapWnd::MouseEnteringSystem(int system_id, GG::Flags< GG::ModKey > mod_keys) {
+void MapWnd::MouseEnteringSystem(int system_id, GG::Flags<GG::ModKey> mod_keys) {
     if (ClientPlayerIsModerator()) {
         //
     } else {

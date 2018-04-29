@@ -309,7 +309,7 @@ public:
         }
     }
 
-    void MouseEnter(const GG::Pt& pt, GG::Flags< GG::ModKey > mod_keys) override
+    void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override
     { m_hovered = true; }
 
     void MouseLeave() override
