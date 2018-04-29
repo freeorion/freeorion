@@ -456,7 +456,6 @@ std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetIDs(const std::vector<int>&
                 retval = wnd;
         });
     return retval;
-
 }
 
 int FleetUIManager::SelectedShipID() const {
@@ -490,7 +489,9 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
         // Only write to OptionsDB if in single fleet window mode.
         config_name = FLEET_WND_NAME;
     }
-    auto retval = GG::Wnd::Create<FleetWnd>(fleet_ids, m_order_issuing_enabled, allowed_bounding_box_leeway, selected_fleet_id, flags, config_name);
+    auto retval = GG::Wnd::Create<FleetWnd>(fleet_ids, m_order_issuing_enabled,
+                                            allowed_bounding_box_leeway,
+                                            selected_fleet_id, flags, config_name);
 
     m_fleet_wnds.insert(std::weak_ptr<FleetWnd>(retval));
     retval->ClosingSignal.connect(
@@ -2807,13 +2808,11 @@ namespace {
     }
 }
 
-FleetWnd::FleetWnd(
-    const std::vector<int>& fleet_ids, bool order_issuing_enabled,
-    double allowed_bounding_box_leeway /*= 0*/,
-    int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-    GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
-    const std::string& config_name
-) :
+FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
+                   double allowed_bounding_box_leeway /*= 0*/,
+                   int selected_fleet_id/* = INVALID_OBJECT_ID*/,
+                   GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
+                   const std::string& config_name) :
     MapWndPopup("", flags | GG::RESIZABLE, config_name),
     m_fleet_ids(),
     m_empire_id(ALL_EMPIRES),
