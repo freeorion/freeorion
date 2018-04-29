@@ -5688,8 +5688,8 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
         HideProduction();
 
     // Add any overlapping fleet buttons for moving or offroad fleets.
-    const auto fleet_ids = FleetIDsOfFleetButtonsOverlapping(*fleet_btn);
-    if (fleet_ids.empty())
+    const auto fleet_ids_to_include_in_fleet_wnd = FleetIDsOfFleetButtonsOverlapping(*fleet_btn);
+    if (fleet_ids_to_include_in_fleet_wnd.empty())
         return;
 
     int already_selected_fleet_id = INVALID_OBJECT_ID;
@@ -5700,9 +5700,13 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
     // Note: The shared_ptr<FleetWnd> scope is confined to this if block, so that
     // SelectFleet below can delete the FleetWnd and re-use the CUIWnd config from
     // OptionsDB if needed.
-    if (const auto& wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleetIDs(fleet_ids)) {
+    if (const auto& wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleetIDs(fleet_ids_to_include_in_fleet_wnd)) {
         // check which fleet(s) is/are selected in the button's FleetWnd
         auto selected_fleet_ids = wnd_for_button->SelectedFleetIDs();
+        //std::cout << "Initially selected fleets: " << selected_fleet_ids.size() << " : ";
+        //for (auto id : selected_fleet_ids)
+        //    std::cout << id << " ";
+        //std::cout << std::endl;
 
         // record selected fleet if just one fleet is selected.  otherwise, keep default
         // INVALID_OBJECT_ID to indicate that no single fleet is selected
@@ -5715,10 +5719,15 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
     int fleet_to_select_id = INVALID_OBJECT_ID;
 
 
-    if (already_selected_fleet_id == INVALID_OBJECT_ID || fleet_ids.size() == 1) {
+    // fleet_ids are the ids of the clicked and nearby buttons, but when
+    // clicking a button, only the fleets in that button should be cycled
+    // through.
+    const auto& selectable_fleet_ids = fleet_btn->Fleets();
+
+    if (already_selected_fleet_id == INVALID_OBJECT_ID || selectable_fleet_ids.size() == 1) {
         // no (single) fleet is already selected, or there is only one selectable fleet,
         // so select first fleet in button
-        fleet_to_select_id = *fleet_ids.begin();
+        fleet_to_select_id = *selectable_fleet_ids.begin();
 
     } else {
         // select next fleet after already-selected fleet, or first fleet if already-selected
@@ -5726,15 +5735,15 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
 
         // to do this, scan through button's fleets to find already_selected_fleet
         bool found_already_selected_fleet = false;
-        for (auto it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
+        for (auto it = selectable_fleet_ids.begin(); it != selectable_fleet_ids.end(); ++it) {
             if (*it == already_selected_fleet_id) {
                 // found already selected fleet.  get NEXT fleet.  don't need to worry about
                 // there not being enough fleets to do this because if above checks for case
                 // of there being only one fleet in this button
                 ++it;
                 // if next fleet iterator is past end of fleets, loop around to first fleet
-                if (it == fleet_ids.end())
-                    it = fleet_ids.begin();
+                if (it == selectable_fleet_ids.end())
+                    it = selectable_fleet_ids.begin();
                 // get fleet to select out of iterator
                 fleet_to_select_id = *it;
                 found_already_selected_fleet = true;
@@ -5746,7 +5755,7 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
             // didn't find already-selected fleet.  the selected fleet might have been moving when the
             // click button was for stationary fleets, or vice versa.  regardless, just default back
             // to selecting the first fleet for this button
-            fleet_to_select_id = *fleet_ids.begin();
+            fleet_to_select_id = *selectable_fleet_ids.begin();
         }
     }
 
