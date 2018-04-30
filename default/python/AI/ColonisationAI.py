@@ -1086,7 +1086,7 @@ def determine_colony_threat_factor(planet_id, spec_name, existing_presence):
     # TODO: evaluate detectability by specific source of area threat, also consider if the subject AI already has
     # researched techs that would grant a stealth bonus
     local_enemies = sys_status.get("enemies_nearly_supplied", [])
-    # could more conservatively base detection on foAI.foAIstate.misc.get("observed_enemies")
+    # could more conservatively base detection on foAI.foAIstate.misc.get("observed_empires")
     if not EspionageAI.colony_detectable_by_empire(planet_id, spec_name, empire=local_enemies, default_result=True):
         area_threat *= 0.05
     net_threat = max(0, local_threat + area_threat - local_defenses)

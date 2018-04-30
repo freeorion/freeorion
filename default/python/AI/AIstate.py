@@ -154,7 +154,9 @@ class AIstate(object):
         self.newlySplitFleets = {}
         self.militaryRating = 0
         self.shipCount = 4
-        self.misc = {}  # Keys: "observed_enemies"
+        self.misc = {}  # Keys: "enemies_sighted" (dict[turn: list[fleetIDs]]),
+        #                       "observed_empires" (list[enemy empire IDs]),
+        #                       "ReassignedFleetMissions" (list[FleetMissions])
         self.orbital_colonization_manager = ColonisationAI.OrbitalColonizationManager()
         self.qualifyingTroopBaseTargets = {}
         # TODO: track on a per-empire basis
@@ -400,7 +402,7 @@ class AIstate(object):
         supply_unobstructed_systems = set(empire.supplyUnobstructedSystems)
         min_hidden_attack = 4
         min_hidden_health = 8
-        observed_enemies = self.misc.setdefault("observed_enemies", set())
+        observed_empires = self.misc.setdefault("observed_empires", set())
 
         # TODO: Variables that are recalculated each turn from scratch should not be stored in AIstate
         # clear previous game state
@@ -450,7 +452,7 @@ class AIstate(object):
 
             if not fleet.unowned:
                 self.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
-                observed_enemies.add(fleet.owner)
+                observed_empires.add(fleet.owner)
 
         # assess fleet and planet threats & my local fleets
         for sys_id in universe.systemIDs:
@@ -602,7 +604,7 @@ class AIstate(object):
         for sys_id in universe.systemIDs:
             sys_status = self.systemStatus[sys_id]
             sys_status['enemies_supplied'] = enemy_supply.get(sys_id, [])
-            observed_enemies.update(enemy_supply.get(sys_id, []))
+            observed_empires.update(enemy_supply.get(sys_id, []))
             sys_status['enemies_nearly_supplied'] = enemy_near_supply.get(sys_id, [])
             my_ratings_list = []
             my_ratings_against_planets_list = []
