@@ -15,6 +15,14 @@ def default_empire_detection_strength():
 
 @cache_by_session_with_turnwise_update
 def get_empire_detection(empire_id):
+    """
+    Returns the detection strength for the provided empire ID.
+
+    If passed the ALL_EMPIRES ID, then it returns the max detection strength across
+    all empires except for the current AI's empire.
+
+    :rtype: float
+    """
     if empire_id == ALL_EMPIRES:
         return get_max_empire_detection(fo.allEmpireIDs())
 
