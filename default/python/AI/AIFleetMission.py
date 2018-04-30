@@ -267,7 +267,7 @@ class AIFleetMission(object):
             planet = fleet_order.target.get_object()
             # Check visibility prediction, but if somehow still have current visibility, don't
             # abort the mission yet
-            if not EspionageAI.colony_detectable_by_empire(planet.id, empire_id=fo.empireID()):
+            if not EspionageAI.colony_detectable_by_empire(planet.id, empire=fo.empireID()):
                 if get_partial_visibility_turn(planet.id) == fo.currentTurn():
                     debug("EspionageAI predicts planet id %d to be stealthed" % planet.id +
                           ", but somehow have current visibity anyway, so won't trigger mission abort")
