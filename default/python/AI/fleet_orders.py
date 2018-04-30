@@ -351,7 +351,7 @@ class OrderOutpost(AIFleetOrder):
             return True
         else:
             self.order_issued = False
-            debug("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            warn("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
             return False
 
 
@@ -376,7 +376,7 @@ class OrderColonize(AIFleetOrder):
             return True
         else:
             self.order_issued = False
-            debug("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            warn("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
             return False
 
     def is_valid(self):
