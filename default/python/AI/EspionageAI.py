@@ -80,10 +80,6 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
     # The future_stealth_bonus can be used if the AI knows it has researched techs that would grant a stealth bonus to
     # the planet once it was colonized/captured
 
-    if isinstance(empire, int):
-        empire_detection = get_empire_detection(empire)
-    else:
-        empire_detection = get_max_empire_detection(empire)
     planet = fo.getUniverse().getPlanet(planet_id)
     if not planet:
         error("Couldn't retrieve planet ID %d." % planet_id)
@@ -116,4 +112,8 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
 
     total_stealth = planet_stealth + sum([AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(tag, 0)
                                           for tag in species_tags])
+    if isinstance(empire, int):
+        empire_detection = get_empire_detection(empire)
+    else:
+        empire_detection = get_max_empire_detection(empire)
     return total_stealth < empire_detection
