@@ -644,9 +644,14 @@ def get_current_and_max_structure(fleet):
     ships_max_health = 0
     for ship_id in fleet.shipIDs:
         # Check if we have see this ship get destroyed in a different fleet since the last time we saw the subject fleet
+        # this may be redundant with the new fleet assignment check made below, but for its limited scope it may be more
+        # reliable, in that it does not rely on any particular handling of post-destruction stats
         if ship_id in destroyed_ids:
             continue
         this_ship = universe.getShip(ship_id)
+        # check that the ship has not been seen in a new fleet since this current fleet was last observed
+        if not (this_ship and this_ship.fleetID == fleet.id):
+            continue
         ships_cur_health += this_ship.initialMeterValue(fo.meterType.structure)
         ships_max_health += this_ship.initialMeterValue(fo.meterType.maxStructure)
 
