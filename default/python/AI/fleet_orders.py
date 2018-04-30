@@ -258,7 +258,7 @@ class OrderMove(AIFleetOrder):
 
 
 class OrderPause(AIFleetOrder):
-    """Ensure Fleet at least temporarily halts movemenet at the target system."""
+    """Ensure Fleet at least temporarily halts movement at the target system."""
     ORDER_NAME = 'pause'
     TARGET_TYPE = System
 
