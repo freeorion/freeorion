@@ -126,8 +126,12 @@ struct FO_COMMON_API ProductionQueue {
     float StockpileCapacity() const;
 
     /** Returns the value expected for the Imperial Stockpile for the next turn, based on the current
-     * ProductionQueue allocations. */
-    float ExpectedNewStockpileAmount() const {return m_expected_new_stockpile_amount; }
+    * ProductionQueue allocations. */
+    float ExpectedNewStockpileAmount() const { return m_expected_new_stockpile_amount; }
+
+    /** Returns the PP amount expected to be transferred via stockpiling projects to the Imperial Stockpile
+    * for the next turn, based on the current ProductionQueue allocations. */
+    float ExpectedProjectTransferToStockpile() const { return m_expected_project_transfer_to_stockpile; }
 
     /** Returns sets of object ids that have more available than allocated PP */
     std::set<std::set<int>> ObjectsWithWastedPP(const std::shared_ptr<ResourcePool>& industry_pool) const;
@@ -171,6 +175,7 @@ private:
     std::map<std::set<int>, float>  m_object_group_allocated_pp;
     std::map<std::set<int>, float>  m_object_group_allocated_stockpile_pp;
     float                           m_expected_new_stockpile_amount = 0.0f;
+    float                           m_expected_project_transfer_to_stockpile = 0.0f;
     int                             m_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;

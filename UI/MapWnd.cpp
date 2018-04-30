@@ -6713,12 +6713,11 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     float  stockpile_use_capacity = empire->GetProductionQueue().StockpileCapacity();
     float  expected_stockpile = empire->GetProductionQueue().ExpectedNewStockpileAmount();
 
-    float  stockpile_limit = empire->GetProductionQueue().StockpileCapacity();
-
     float  stockpile_plusminus_next_turn = expected_stockpile - stockpile;
+    double total_PP_for_stockpile_projects = empire->GetProductionQueue().ExpectedProjectTransferToStockpile();
     double total_PP_to_stockpile = expected_stockpile - stockpile + stockpile_used;
     double total_PP_excess = total_PP_output - total_PP_spent;
-    double total_PP_wasted = total_PP_output - total_PP_spent - total_PP_to_stockpile;
+    double total_PP_wasted = total_PP_output - total_PP_spent - total_PP_to_stockpile + total_PP_for_stockpile_projects;
 
     m_industry->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_PRODUCTION_TITLE"), UserString("PRODUCTION_INFO_PP"),
@@ -6743,7 +6742,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         m_industry_wasted->SetBrowseInfoWnd(GG::Wnd::Create<WastedStockpiledResourceBrowseWnd>(
             UserString("MAP_PRODUCTION_WASTED_TITLE"), UserString("PRODUCTION_INFO_PP"),
             total_PP_output, total_PP_excess,
-            true, stockpile_limit, total_PP_to_stockpile, total_PP_wasted,
+            true, stockpile_use_capacity, total_PP_to_stockpile, total_PP_wasted,
             UserString("MAP_PROD_CLICK_TO_OPEN")));
 
     } else {

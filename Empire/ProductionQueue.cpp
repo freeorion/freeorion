@@ -100,7 +100,7 @@ namespace {
         return retval;
     }
 
-    float CalculateNewStockpile(int empire_id, float starting_stockpile,
+    float CalculateNewStockpile(int empire_id, float starting_stockpile, float project_transfer_to_stockpile,
                                 const std::map<std::set<int>, float>& available_pp,
                                 const std::map<std::set<int>, float>& allocated_pp,
                                 const std::map<std::set<int>, float>& allocated_stockpile_pp)
@@ -129,11 +129,11 @@ namespace {
                           << "  to stockpile: " << new_contributions;
         }
 
-        if (new_contributions > stockpile_limit &&
+        if ((new_contributions + project_transfer_to_stockpile) > stockpile_limit &&
             GetGameRules().Get<bool>("RULE_STOCKPILE_IMPORT_LIMITED"))
-        { new_contributions = stockpile_limit; }
+        { new_contributions = stockpile_limit - project_transfer_to_stockpile; }
 
-        return starting_stockpile + new_contributions - stockpile_used;
+        return starting_stockpile + new_contributions + project_transfer_to_stockpile - stockpile_used;
     }
 
     /** Sets the allocated_pp value for each Element in the passed
@@ -148,7 +148,8 @@ namespace {
       * Returns the amount of PP which gets transferred to the stockpile using 
       * stockpile project build items. */
     float SetProdQueueElementSpending(
-        std::map<std::set<int>, float> available_pp, float available_stockpile,
+        std::map<std::set<int>, float> available_pp, float available_stockpile, 
+        float stockpile_limit,
         const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
         const std::map<std::pair<ProductionQueue::ProductionItem, int>,
                        std::pair<float, int>>& queue_item_costs_and_times,
@@ -252,6 +253,13 @@ namespace {
                 std::min(element_this_turn_limit,
                          group_pp_available + stockpile_available_for_this));
 
+            if (queue_element.item.build_type == BT_STOCKPILE) {
+                if (GetGameRules().Get<bool>("RULE_STOCKPILE_IMPORT_LIMITED")) {
+                    float unused_limit = std::max(0.0f, stockpile_limit - stockpile_transfer);
+                    allocation = std::min(allocation, unused_limit);
+                }
+            }
+
             //DebugLogger() << "element accumulated " << element_accumulated_PP << " of total cost "
             //                       << element_total_cost << " and needs " << additional_pp_to_complete_element
             //                       << " more to be completed";
@@ -262,6 +270,7 @@ namespace {
 
             // record allocation from group
             float group_drawdown = std::min(allocation, group_pp_available);
+
             allocated_pp[group] += group_drawdown;  // relies on default initial mapped value of 0.0f
             if (queue_element.item.build_type == BT_STOCKPILE) {
                 stockpile_transfer += group_drawdown;
@@ -577,6 +586,7 @@ std::string ProductionQueue::Element::Dump() const {
 ProductionQueue::ProductionQueue(int empire_id) :
     m_projects_in_progress(0),
     m_expected_new_stockpile_amount(0),
+    m_expected_project_transfer_to_stockpile(0),
     m_empire_id(empire_id)
 {}
 
@@ -752,17 +762,17 @@ void ProductionQueue::Update() {
 
     // allocate pp to queue elements, returning updated available pp and updated
     // allocated pp for each group of resource sharing objects
-    float transfer_to_stockpile = SetProdQueueElementSpending(
-        available_pp, available_stockpile, queue_element_groups,
+    float project_transfer_to_stockpile = SetProdQueueElementSpending(
+        available_pp, available_stockpile, stockpile_limit, queue_element_groups,
         queue_item_costs_and_times, is_producible, m_queue,
         m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp,
         m_projects_in_progress, false);
 
     //update expected new stockpile amount
     m_expected_new_stockpile_amount = CalculateNewStockpile(
-        m_empire_id, pp_in_stockpile, available_pp, m_object_group_allocated_pp,
+        m_empire_id, pp_in_stockpile, project_transfer_to_stockpile, available_pp, m_object_group_allocated_pp,
         m_object_group_allocated_stockpile_pp);
-    m_expected_new_stockpile_amount += transfer_to_stockpile;
+    m_expected_project_transfer_to_stockpile = project_transfer_to_stockpile;
 
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
@@ -828,8 +838,8 @@ void ProductionQueue::Update() {
         allocated_pp.clear();
         allocated_stockpile_pp.clear();
 
-        float sim_transfer_to_stockpile = SetProdQueueElementSpending(
-            available_pp, sim_available_stockpile, queue_element_groups,
+        float sim_project_transfer_to_stockpile = SetProdQueueElementSpending(
+            available_pp, sim_available_stockpile, stockpile_limit, queue_element_groups,
             queue_item_costs_and_times, is_producible, sim_queue,
             allocated_pp, allocated_stockpile_pp, dummy_int, true);
 
@@ -853,10 +863,9 @@ void ProductionQueue::Update() {
                 sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
             }
         }
-        sim_pp_in_stockpile = CalculateNewStockpile(m_empire_id, sim_pp_in_stockpile,
-                                                    available_pp, allocated_pp,
-                                                    allocated_stockpile_pp);
-        sim_pp_in_stockpile += sim_transfer_to_stockpile;
+        sim_pp_in_stockpile = CalculateNewStockpile(
+            m_empire_id, sim_pp_in_stockpile, sim_project_transfer_to_stockpile,
+            available_pp, allocated_pp, allocated_stockpile_pp);
         sim_available_stockpile = std::min(sim_pp_in_stockpile, stockpile_limit);
     }
 
