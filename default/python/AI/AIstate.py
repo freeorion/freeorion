@@ -155,7 +155,7 @@ class AIstate(object):
         self.militaryRating = 0
         self.shipCount = 4
         self.misc = {}  # Keys: "enemies_sighted" (dict[turn: list[fleetIDs]]),
-        #                       "observed_empires" (list[enemy empire IDs]),
+        #                       "observed_empires" (set[enemy empire IDs]),
         #                       "ReassignedFleetMissions" (list[FleetMissions])
         self.orbital_colonization_manager = ColonisationAI.OrbitalColonizationManager()
         self.qualifyingTroopBaseTargets = {}
