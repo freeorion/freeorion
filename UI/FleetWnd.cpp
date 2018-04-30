@@ -3045,8 +3045,8 @@ void FleetWnd::Refresh() {
     auto initial_fleet_ids = m_fleet_ids;
     m_fleet_ids.clear();
 
-    boost::unordered_multimap<std::pair<int, GG::Pt>, int> fleet_locations_ids;
-    boost::unordered_multimap<std::pair<int, GG::Pt>, int> selected_fleet_locations_ids;
+    std::multimap<std::pair<int, GG::Pt>, int> fleet_locations_ids;
+    std::multimap<std::pair<int, GG::Pt>, int> selected_fleet_locations_ids;
 
     // Check all fleets in initial_fleet_ids and keep those that exist.
     std::unordered_set<int> fleets_that_exist;
@@ -3068,9 +3068,10 @@ void FleetWnd::Refresh() {
 
         fleets_that_exist.insert(fleet_id);
         fleet_locations_ids.insert({{fleet->SystemID(), fleet_loc}, fleet_id});
-
     }
+
     auto bounding_box_center = GG::Pt(fleets_bounding_box.MidX(), fleets_bounding_box.MidY());
+
 
     // Filter initially selected fleets according to existing fleets
     GG::Rect selected_fleets_bounding_box;
@@ -3085,11 +3086,13 @@ void FleetWnd::Refresh() {
         auto fleet_loc = GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()));
 
         // Grow the selected fleets bounding box
-        selected_fleets_bounding_box = CreateOrGrowBox(
-            selected_fleet_locations_ids.empty(), selected_fleets_bounding_box, fleet_loc);
+        selected_fleets_bounding_box = CreateOrGrowBox(selected_fleet_locations_ids.empty(),
+                                                       selected_fleets_bounding_box, fleet_loc);
         selected_fleet_locations_ids.insert({{fleet->SystemID(), fleet_loc}, fleet_id});
     }
-    auto selected_bounding_box_center = GG::Pt(selected_fleets_bounding_box.MidX(), selected_fleets_bounding_box.MidY());
+    auto selected_bounding_box_center = GG::Pt(selected_fleets_bounding_box.MidX(),
+                                               selected_fleets_bounding_box.MidY());
+
 
     // Determine FleetWnd location
 
@@ -3118,7 +3121,7 @@ void FleetWnd::Refresh() {
                && SmallerOrEqual(fleets_bounding_box, m_bounding_box))
     {
         location = {INVALID_OBJECT_ID, bounding_box_center};
-        boost::unordered_multimap<std::pair<int, GG::Pt>, int> fleets_near_enough;
+        std::multimap<std::pair<int, GG::Pt>, int> fleets_near_enough;
         for (const auto& loc_and_id: fleet_locations_ids)
             fleets_near_enough.insert({location, loc_and_id.second});
         fleet_locations_ids.swap(fleets_near_enough);
@@ -3127,11 +3130,11 @@ void FleetWnd::Refresh() {
                && SmallerOrEqual(selected_fleets_bounding_box, m_bounding_box))
     {
         location = {INVALID_OBJECT_ID, selected_bounding_box_center};
-        boost::unordered_multimap<std::pair<int, GG::Pt>, int> fleets_near_enough;
+        std::multimap<std::pair<int, GG::Pt>, int> fleets_near_enough;
         // Center bounding box on selected fleets.
-        m_bounding_box = m_bounding_box
-            + GG::Pt(selected_fleets_bounding_box.MidX() - m_bounding_box.MidX(),
-                    selected_fleets_bounding_box.MidY() - m_bounding_box.MidY());
+        m_bounding_box = m_bounding_box +
+            GG::Pt(selected_fleets_bounding_box.MidX() - m_bounding_box.MidX(),
+                   selected_fleets_bounding_box.MidY() - m_bounding_box.MidY());
         for (const auto& loc_and_id: fleet_locations_ids) {
             const auto& pos = loc_and_id.first.second;
             if (m_bounding_box.Contains(pos))
@@ -3146,6 +3149,7 @@ void FleetWnd::Refresh() {
         fleet_locations_ids.clear();
         selected_fleet_locations_ids.clear();
     }
+
 
     // Use fleets that are at the determined location
     auto flt_at_loc = fleet_locations_ids.equal_range(location);
@@ -3174,18 +3178,27 @@ void FleetWnd::Refresh() {
         }
     }
 
+
     // Add rows for the known good fleet_ids.
     m_fleets_lb->Clear();
     for (int fleet_id : m_fleet_ids)
         AddFleet(fleet_id);
 
-    // Use selected fleets that are at the determined location
-    std::set<int> still_present_initially_selected_fleets;
 
+    // Determine selected fleets that are at the determined location
+    std::set<int> still_present_initially_selected_fleets;
     auto sel_flt_at_loc = selected_fleet_locations_ids.equal_range(location);
     for (auto it = sel_flt_at_loc.first; it != sel_flt_at_loc.second; ++it)
     { still_present_initially_selected_fleets.insert(it->second); }
 
+
+    //std::cout << "Still present initially selected fleets: ";
+    //for (auto entry : still_present_initially_selected_fleets)
+    //    std::cout << entry << " ";
+    //std::cout << std::endl;
+
+
+    // Reselect previously-selected fleets, or default select first fleet in FleetWnd
     if (!still_present_initially_selected_fleets.empty()) {
         // reselect any previously-selected fleets
         SelectFleets(still_present_initially_selected_fleets);
