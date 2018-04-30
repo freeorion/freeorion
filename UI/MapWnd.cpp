@@ -4975,9 +4975,8 @@ namespace {
     }
 
     /** If the \p fleet has a valid destination and it not on a starlane, return true*/
-    bool IsOffRoad(const std::shared_ptr<const Fleet>& fleet) {
-        return (IsMoving(fleet) && !IsOnStarlane(fleet));
-    }
+    bool IsOffRoad(const std::shared_ptr<const Fleet>& fleet)
+    { return (IsMoving(fleet) && !IsOnStarlane(fleet)); }
 }
 
 void MapWnd::RefreshFleetButtons() {
@@ -5136,7 +5135,7 @@ void MapWnd::AddFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet
     ScopedTimer timer("AddFleetsStateChangedSignal()", true);
     for (auto& fleet : fleets) {
         m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
-            boost::bind( &MapWnd::RefreshFleetButtons, this));
+            boost::bind(&MapWnd::RefreshFleetButtons, this));
     }
 }
 

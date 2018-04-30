@@ -3034,15 +3034,15 @@ void FleetWnd::Refresh() {
     m_needs_refresh = false;
 
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
-    const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
+    const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
+    const auto& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
     // save selected fleet(s) and ships(s)
-    std::set<int> initially_selected_fleets = this->SelectedFleetIDs();
-    std::set<int> initially_selected_ships = this->SelectedShipIDs();
+    auto initially_selected_fleets = this->SelectedFleetIDs();
+    auto initially_selected_ships = this->SelectedShipIDs();
 
     // remove existing fleet rows
-    std::set<int> initial_fleet_ids = m_fleet_ids;
+    auto initial_fleet_ids = m_fleet_ids;
     m_fleet_ids.clear();
 
     boost::unordered_multimap<std::pair<int, GG::Pt>, int> fleet_locations_ids;
@@ -3091,7 +3091,7 @@ void FleetWnd::Refresh() {
     }
     auto selected_bounding_box_center = GG::Pt(selected_fleets_bounding_box.MidX(), selected_fleets_bounding_box.MidY());
 
-    // Determine FleetWnd location.
+    // Determine FleetWnd location
 
     // Are all fleets in one system?  Use that location.
     // Otherwise, are all selected fleets in one system?  Use that location.
@@ -3138,6 +3138,7 @@ void FleetWnd::Refresh() {
                 fleets_near_enough.insert({location, loc_and_id.second});
         }
         fleet_locations_ids.swap(fleets_near_enough);
+
     } else if (auto system = GetSystem(m_system_id)) {
         location = {m_system_id, GG::Pt(GG::X(system->X()), GG::Y(system->Y()))};
 
@@ -3190,6 +3191,7 @@ void FleetWnd::Refresh() {
         SelectFleets(still_present_initially_selected_fleets);
         // reselect any previously-selected ships
         SelectShips(initially_selected_ships);
+
     } else if (!m_fleets_lb->Empty()) {
         // default select first fleet
         int first_fleet_id = FleetInRow(m_fleets_lb->begin());
@@ -3201,9 +3203,7 @@ void FleetWnd::Refresh() {
     }
 
     SetName(TitleText());
-
     SetStatIconValues();
-
     RefreshStateChangedSignals();
 }
 

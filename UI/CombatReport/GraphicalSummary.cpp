@@ -290,7 +290,7 @@ public:
         // Always draw the red background, health will cover it
         GG::FlatRectangle(ClientUpperLeft(), ClientLowerRight(), base_color, m_hovered ? GG::CLR_WHITE : GG::CLR_BLACK, 1);
 
-        if ( m_sizer.Get( TOGGLE_BAR_HEALTH_SMOOTH ) ) {
+        if (m_sizer.Get(TOGGLE_BAR_HEALTH_SMOOTH)) {
             // Use a smooth colour change based health display.
             if (Alive()) {
                 double health_percentage = 1.0 * m_participant.current_health / m_participant.max_health;
@@ -304,7 +304,8 @@ public:
         } else {
             if (Alive()) {
                 GG::Y health_height( (m_participant.current_health / m_participant.max_health) * Value(ClientHeight()) );
-                GG::FlatRectangle(GG::Pt(ClientUpperLeft().x, ClientLowerRight().y - health_height), ClientLowerRight(), m_health_color, GG::CLR_ZERO, 1);
+                GG::FlatRectangle(GG::Pt(ClientUpperLeft().x, ClientLowerRight().y - health_height),
+                                         ClientLowerRight(), m_health_color, GG::CLR_ZERO, 1);
             }
         }
     }

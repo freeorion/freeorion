@@ -210,7 +210,7 @@ public:
     /** \name Accessors */ //@{
     /** Returns ID of fleet selected in this order. */
     int FleetID() const
-    {return m_fleet;}
+    { return m_fleet; }
 
     /** Returns ID of system set as the start system for this order (the system
         the route starts from). */
