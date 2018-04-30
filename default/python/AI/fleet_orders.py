@@ -565,7 +565,6 @@ class OrderRepair(AIFleetOrder):
                 if system_id in foAI.foAIstate.needsEmergencyExploration:
                     foAI.foAIstate.needsEmergencyExploration.remove(system_id)
         elif system_id != fleet.nextSystemID:
-            self.executed = False
             fo.issueAggressionOrder(fleet_id, False)
             start_id = FleetUtilsAI.get_fleet_system(fleet)
             dest_id = MoveUtilsAI.get_safe_path_leg_to_dest(fleet_id, start_id, system_id)
