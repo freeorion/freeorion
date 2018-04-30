@@ -78,6 +78,17 @@ class System(UniverseObject):
 class Fleet(UniverseObject):
     object_name = 'fleet'
 
+    def get_current_system_id(self):
+        """
+        Get current systemID (or INVALID_ID if on a starlane).
+
+        :rtype: int
+        """
+        universe = fo.getUniverse()
+        fleet = universe.getFleet(self.id)
+        # will also return INVALID_ID if somehow the fleet cannot be retrieved
+        return fleet.systemID if fleet else INVALID_ID
+
     def get_system(self):
         """
         Get current fleet location or target system if currently on starlane.
@@ -91,4 +102,7 @@ class Fleet(UniverseObject):
         return System(system_id)
 
     def get_object(self):
+        """
+        :rtype fo.fleet:
+        """
         return fo.getUniverse().getFleet(self.id)

@@ -4,7 +4,7 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 # the following import is used for type hinting, which pylint seems not to recognize
 from fleet_orders import AIFleetOrder  # pylint: disable=unused-import # noqa: F401
-from fleet_orders import OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
+from fleet_orders import OrderMove, OrderPause, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
 import AIstate
 import EspionageAI
 import FleetUtilsAI
@@ -20,7 +20,7 @@ from freeorion_tools import get_partial_visibility_turn
 
 
 ORDERS_FOR_MISSION = {
-    MissionType.EXPLORATION: OrderMove,
+    MissionType.EXPLORATION: OrderPause,
     MissionType.OUTPOST: OrderOutpost,
     MissionType.COLONISATION: OrderColonize,
     MissionType.INVASION: OrderInvade,
@@ -429,12 +429,15 @@ class AIFleetMission(object):
                 else:
                     print "NOT issuing (even though can_issue) fleet order %s" % fleet_order
                 print "Order issued: %s" % fleet_order.order_issued
-                if not fleet_order.order_issued:
+                if not fleet_order.executed:
                     order_completed = False
             else:  # check that we're not held up by a Big Monster
                 if fleet_order.order_issued:
-                    # It's unclear why we'd really get to this spot, but it has been observed to happen, perhaps due to
-                    # game being reloaded after code changes.
+                    # A previously issued order that wasn't instantly executed must have had cirumstances change so that
+                    # the order can't currently be reissued (or perhaps simply a savegame has been reloaded on the same
+                    # turn the order was issued).
+                    if not fleet_order.executed:
+                        order_completed = False
                     # Go on to the next order.
                     continue
                 print "CAN'T issue fleet order %s" % fleet_order
@@ -616,7 +619,6 @@ class AIFleetMission(object):
          :rtype: bool
         """
         # TODO: More complex evaluation if fleet needs repair (consider self-repair, distance, threat, mission...)
-        universe = fo.getUniverse()
         fleet_id = self.fleet.id
         # if we are already at a system where we can repair, make sure we use it...
         system = self.fleet.get_system()
@@ -629,13 +631,7 @@ class AIFleetMission(object):
             return fleet_id in MilitaryAI.avail_mil_needing_repair([fleet_id], on_mission=bool(self.orders),
                                                                    repair_limit=repair_limit)[0]
         # TODO: Allow to split fleet to send only damaged ships to repair
-        fleet = universe.getFleet(fleet_id)
-        ships_cur_health = 0
-        ships_max_health = 0
-        for ship_id in fleet.shipIDs:
-            this_ship = universe.getShip(ship_id)
-            ships_cur_health += this_ship.initialMeterValue(fo.meterType.structure)
-            ships_max_health += this_ship.initialMeterValue(fo.meterType.maxStructure)
+        ships_cur_health, ships_max_health = FleetUtilsAI.get_current_and_max_structure(fleet_id)
         return ships_cur_health < repair_limit * ships_max_health
 
     def get_location_target(self):

@@ -5,7 +5,7 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 from EnumsAI import MissionType, ShipRoleType
 import CombatRatingsAI
-from universe_object import Planet
+from universe_object import Planet, Fleet
 from ShipDesignAI import get_part_type
 from AIDependencies import INVALID_ID
 import AIDependencies
@@ -621,3 +621,38 @@ def get_fleet_system(fleet):
     if isinstance(fleet, int):
         fleet = fo.getUniverse().getFleet(fleet)
     return fleet.systemID if fleet.systemID != INVALID_ID else fleet.nextSystemID
+
+
+def get_current_and_max_structure(fleet):
+    """Return a 2-tuple of the sums of structure and maxStructure meters of all ships in the fleet
+
+    :param fleet:
+    :type fleet: int | universe_object.Fleet | fo.Fleet
+    :return: tuple of sums of structure and maxStructure meters of all ships in the fleet
+    :rtype: (float, float)
+    """
+
+    universe = fo.getUniverse()
+    destroyed_ids = universe.destroyedObjectIDs(fo.empireID())
+    if isinstance(fleet, int):
+        fleet = universe.getFleet(fleet)
+    elif isinstance(fleet, Fleet):
+        fleet = fleet.get_object()
+    if not fleet:
+        return (0.0, 0.0)
+    ships_cur_health = 0
+    ships_max_health = 0
+    for ship_id in fleet.shipIDs:
+        # Check if we have see this ship get destroyed in a different fleet since the last time we saw the subject fleet
+        # this may be redundant with the new fleet assignment check made below, but for its limited scope it may be more
+        # reliable, in that it does not rely on any particular handling of post-destruction stats
+        if ship_id in destroyed_ids:
+            continue
+        this_ship = universe.getShip(ship_id)
+        # check that the ship has not been seen in a new fleet since this current fleet was last observed
+        if not (this_ship and this_ship.fleetID == fleet.id):
+            continue
+        ships_cur_health += this_ship.initialMeterValue(fo.meterType.structure)
+        ships_max_health += this_ship.initialMeterValue(fo.meterType.maxStructure)
+
+    return ships_cur_health, ships_max_health

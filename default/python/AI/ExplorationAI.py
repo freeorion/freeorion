@@ -83,7 +83,7 @@ def assign_scouts_to_explore_systems():
                 continue
         # TODO: if blocked byu monster, try to find nearby system from which to see this system
         if (not foAI.foAIstate.character.may_explore_system(sys_status.setdefault('monsterThreat', 0)) or (
-                fo.currentTurn() < 20 and foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'] > 200)):
+                fo.currentTurn() < 20 and foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'] > 0)):
             print "Skipping exploration of system %d due to Big Monster, threat %d" % (
                 this_sys_id, foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'])
             continue
