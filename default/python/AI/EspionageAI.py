@@ -35,6 +35,14 @@ def get_empire_detection(empire_id):
 
 
 def get_max_empire_detection(empire_list):
+    """
+    Returns the max detection strength across all empires except for the current AI's empire.
+
+    :param empire_list: list of empire IDs
+    :type empire_list: list[int] | fo.IntVec
+    :return: max detection strength of provided empires, excluding the current self empire
+    :rtype: float
+    """
     max_detection = 0
     for this_empire_id in empire_list:
         if this_empire_id != fo.empireID():
@@ -45,12 +53,22 @@ def get_max_empire_detection(empire_list):
 def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES, future_stealth_bonus=0,
                                 default_result=True):
     """
-    Predicts if a planet/colony is/will-be detectable by an empire
+    Predicts if a planet/colony is/will-be detectable by an empire.
+
+    The passed empire value can be a single empire ID or a list of empire IDs.  If passed ALL_empires, will use the list
+    of all empires.  When using a list of empires (or when passed ALL_EMPIRES), the present empire is excluded.  To
+    check for the present empire the current empire ID must be passed as a simple int.  Ignores current ownership of the
+    planet unless the passed empire value is a simple int matching fo.empireID(), because in most cases we are concerned
+    about (i) visibility to us of a planet we do not own, or (ii) visibility by enemies of a planet we own or expect to
+    own at the time we are making the visibility projection for (even if they may own it right now).  The only case
+    where current ownership matters is when we are considering whether to abort a colonization mission, which might be
+    for a planet we already own.
+
     :param planet_id: required, the planet of concern
     :type planet_id: int
     :param species_name: will override the existing planet species if provided
     :type species_name: str
-    :param empire: empire (or list of empires) whose detection ability is of concern
+    :param empire: empire ID (or list of empire IDs) whose detection ability is of concern
     :type empire: int | list[int]
     :param future_stealth_bonus: can specify a projected future stealth bonus, such as from a stealth tech
     :type future_stealth_bonus: int
