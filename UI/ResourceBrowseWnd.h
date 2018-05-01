@@ -11,9 +11,10 @@ class ResourceBrowseWnd : public GG::BrowseInfoWnd {
 public:
     ResourceBrowseWnd(const std::string& title_text, const std::string& unit_label,
                       float used, float output, float target_output,
-                      bool show_stockpile = false,
-                      float stockpile_use = 0.0f,
-                      float stockpile = 0.0f, float stockpile_change = 0.0f);
+                      bool show_stockpile = false, float stockpile_use = 0.0f,
+                      float stockpile = 0.0f, float stockpile_change = 0.0f,
+                      bool show_stockpile_limit = false,
+                      float stockpile_use_limit = 0.0f);
     void CompleteConstruction() override;
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
     void Render() override;
@@ -24,7 +25,7 @@ private:
     GG::GL2DVertexBuffer        m_buffer;
     std::shared_ptr<GG::Label>  m_title_text;
 
-    bool                        m_show_points;
+    bool                        m_show_points = false;
     std::shared_ptr<GG::Label>  m_used_points_label;
     std::shared_ptr<GG::Label>  m_used_points;
     std::shared_ptr<GG::Label>  m_used_points_P_label;
@@ -34,7 +35,7 @@ private:
     std::shared_ptr<GG::Label>  m_target_points_label;
     std::shared_ptr<GG::Label>  m_target_points;
     std::shared_ptr<GG::Label>  m_target_points_P_label;
-    bool                        m_show_stockpile;
+    bool                        m_show_stockpile = false;
     std::shared_ptr<GG::Label>  m_stockpile_points_label;
     std::shared_ptr<GG::Label>  m_stockpile_points;
     std::shared_ptr<GG::Label>  m_stockpile_points_P_label;
@@ -44,6 +45,7 @@ private:
     std::shared_ptr<GG::Label>  m_stockpile_change_points_label;
     std::shared_ptr<GG::Label>  m_stockpile_change_points;
     std::shared_ptr<GG::Label>  m_stockpile_change_points_P_label;
+    bool                        m_show_stockpile_limit = false;
 
     GG::Pt                      m_offset;
 };

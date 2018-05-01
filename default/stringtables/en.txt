@@ -3144,9 +3144,6 @@ Used
 RESOURCE_TT_EXCESS
 Excess
 
-RESOURCE_TT_STOCKPILE_EFFIC
-Stockpile Efficiency
-
 RESOURCE_TT_TO_STOCKPILE
 To Stockpile
 
@@ -3930,6 +3927,9 @@ Stockpile
 
 STOCKPILE_USE_LABEL
 Stockpile Use
+
+STOCKPILE_USE_LIMIT
+Stockpile Use Limit
 
 STOCKPILE_CHANGE_LABEL
 Next Turn Stockpile

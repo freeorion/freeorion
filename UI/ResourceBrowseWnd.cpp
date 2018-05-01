@@ -22,7 +22,9 @@ ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text,
                                      bool show_stockpile /*=false*/,
                                      float stockpile_use /*=0.0f*/,
                                      float stockpile /*=0.0f*/,
-                                     float stockpile_change /*=0.0f*/) :
+                                     float stockpile_change /*=0.0f*/,
+                                     bool show_stockpile_limit /* = false*/,
+                                     float stockpile_use_limit /*= 0.0f*/) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, BrowseTextWidth(), GG::Y1),
     m_title_text(GG::Wnd::Create<CUILabel>(title_text, GG::FORMAT_CENTER)),
     m_show_points(used >= 0.0f),
@@ -45,8 +47,15 @@ ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text,
     m_stockpile_change_points_label(GG::Wnd::Create<CUILabel>(UserString("STOCKPILE_CHANGE_LABEL"), GG::FORMAT_RIGHT)),
     m_stockpile_change_points(GG::Wnd::Create<CUILabel>(DoubleToString(stockpile_change, 3, false), GG::FORMAT_LEFT)),
     m_stockpile_change_points_P_label(GG::Wnd::Create<CUILabel>(unit_label, GG::FORMAT_LEFT)),
-    m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2)
-{}
+    m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2),
+    m_show_stockpile_limit(show_stockpile_limit)
+{
+    if (!m_show_points && m_show_stockpile_limit) {
+        // replace usage with with stockpile limits
+        m_output_points_label->SetText(UserString("STOCKPILE_USE_LIMIT"));
+        m_output_points->SetText(DoubleToString(stockpile_use_limit, 3, false));
+    }
+}
 
 void ResourceBrowseWnd::CompleteConstruction() {
     GG::BrowseInfoWnd::CompleteConstruction();
@@ -145,7 +154,27 @@ void ResourceBrowseWnd::CompleteConstruction() {
         m_stockpile_used_points_P_label->MoveTo(GG::Pt(top_left.x + P_LABEL_X, top_left.y));
         m_stockpile_used_points_P_label->Resize(P_LABEL_SIZE);
         top_left.y += m_stockpile_used_points_label->Height();
+    } else {
+        m_stockpile_used_points_label->Hide();
+        m_stockpile_used_points->Hide();
+        m_stockpile_used_points_P_label->Hide();
+    }
 
+    if (!m_show_points && m_show_stockpile_limit) {
+        m_output_points_label->MoveTo(GG::Pt(top_left.x + LEFT_TEXT_X, top_left.y));
+        m_output_points_label->Resize(LABEL_TEXT_SIZE);
+        m_output_points->MoveTo(GG::Pt(top_left.x + RIGHT_TEXT_X, top_left.y));
+        m_output_points->Resize(VALUE_TEXT_SIZE);
+        m_output_points_P_label->MoveTo(GG::Pt(top_left.x + P_LABEL_X, top_left.y));
+        m_output_points_P_label->Resize(P_LABEL_SIZE);
+        top_left.y += m_output_points_label->Height();
+
+        m_output_points_label->Show();
+        m_output_points->Show();
+        m_output_points_P_label->Show();
+    }
+
+    if (m_show_stockpile) {
         m_stockpile_points_label->MoveTo(GG::Pt(top_left.x + LEFT_TEXT_X, top_left.y));
         m_stockpile_points_label->Resize(LABEL_TEXT_SIZE);
         m_stockpile_points->MoveTo(GG::Pt(top_left.x + RIGHT_TEXT_X, top_left.y));
@@ -165,9 +194,6 @@ void ResourceBrowseWnd::CompleteConstruction() {
         m_stockpile_points_label->Hide();
         m_stockpile_points->Hide();
         m_stockpile_points_P_label->Hide();
-        m_stockpile_used_points_label->Hide();
-        m_stockpile_used_points->Hide();
-        m_stockpile_used_points_P_label->Hide();
         m_stockpile_change_points_label->Hide();
         m_stockpile_change_points->Hide();
         m_stockpile_change_points_P_label->Hide();

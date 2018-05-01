@@ -1268,8 +1268,7 @@ void MapWnd::CompleteConstruction() {
     m_industry = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false,
                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_industry->SetName("Industry StatisticIcon");
-    m_industry->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleProduction, this));
+    m_industry->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleProduction, this));
 
     m_stockpile = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_STOCKPILE), 0, 3, false,
                                                  ICON_DUAL_WIDTH, m_btn_turn->Height());
@@ -1278,8 +1277,7 @@ void MapWnd::CompleteConstruction() {
     m_research = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false,
                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
-    m_research->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleResearch, this));
+    m_research->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleResearch, this));
 
     m_trade = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_TRADE), 0, 3, false,
                                              ICON_DUAL_WIDTH, m_btn_turn->Height());
@@ -6730,7 +6728,8 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     m_stockpile->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_STOCKPILE_TITLE"), UserString("PRODUCTION_INFO_PP"),
         -1.0f, -1.0f, -1.0f,
-        true, stockpile_used, stockpile, expected_stockpile));
+        true, stockpile_used, stockpile, expected_stockpile,
+        true, stockpile_use_capacity));
 
     if (total_PP_wasted > 0.05 || (total_PP_excess > (3 * stockpile_use_capacity))) {
         DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: "
