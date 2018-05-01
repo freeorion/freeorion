@@ -156,14 +156,6 @@ bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t checked_id) {
     return true;;
 }
 
-void IDAllocator::FixLegacyOrderIDs(const ID_t id) {
-    // For legacy saved games orders will contain ids not in the appropriate partition.
-    // Advance all paritions past id so there will be no conflicts.
-    // This should stop happening after all of a saved games unprocessed orders are processed.
-    for (const auto assigning_empire : m_offset_to_empire_id)
-        IncrementNextAssignedId(assigning_empire, id);
-}
-
 IDAllocator::ID_t& IDAllocator::AssigningEmpireForID(ID_t id)
 { return m_offset_to_empire_id[(id - m_zero) % m_stride]; }
 

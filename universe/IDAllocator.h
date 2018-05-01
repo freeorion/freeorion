@@ -32,8 +32,6 @@ public:
 
     /** \p client_ids are all the player ids in the game. \p highest_pre_allocated_id is the used for
         legacy loads to offset the newly allocated id to after the ones from the save game.
-        TODO: Remove the extra code legacy loading before v0.4.8, which will be a save game
-        compatibility break.
     */
     IDAllocator(const int server_id,
                 const std::vector<int>& client_ids,
@@ -61,10 +59,6 @@ public:
         On the client it returns true iff this client allocated \p id and does
         nothing else. That means that id modulo m_stride == client's offset.*/
     bool UpdateIDAndCheckIfOwned(const ID_t id);
-
-    /** On the server advance all client's next_ids so they won't conflict with
-        \p id.  On the client do nothing. */
-    void FixLegacyOrderIDs(const ID_t id);
 
     /** ObfuscateBeforeSerialization randomizes which client is using which modulus each turn
         before IDAllocator is serialized and sent to the clients. */

@@ -387,15 +387,10 @@ void Universe::ObfuscateIDGenerator() {
 
 bool Universe::VerifyUnusedObjectID(const int empire_id, const int id) {
     auto good_id_and_possible_legacy = m_object_id_allocator->IsIDValidAndUnused(id, empire_id);
-    if (!good_id_and_possible_legacy.second) {
-        WarnLogger() << "object id = " << id << " should not have been assigned by empire = "
-                     << empire_id << ". It is probably from loading an old saved game. "
-                     << "In future this will be promoted to an error.";
-        m_object_id_allocator->FixLegacyOrderIDs(id);
-        //TODO before version change to v0.4.8 make this a hard failure;
-    }
+    if (!good_id_and_possible_legacy.second) // Possibly from old save game
+        ErrorLogger() << "object id = " << id << " should not have been assigned by empire = " << empire_id;
 
-    return good_id_and_possible_legacy.first;
+    return good_id_and_possible_legacy.first && good_id_and_possible_legacy.second;
 }
 
 void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
@@ -416,48 +411,19 @@ void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
 bool Universe::InsertShipDesign(ShipDesign* ship_design) {
     if (!ship_design
         || (ship_design->ID() != INVALID_DESIGN_ID && m_ship_designs.count(ship_design->ID())))
-        return false;
+    { return false; }
 
-    int id = GenerateDesignID();
-
-    // TODO move this check int InsertShipDesignID(design, id) before the version change to v0.4.8
-    // **************************************** Non Legacy Check Below ********************
-    m_design_id_allocator->UpdateIDAndCheckIfOwned(id);
-    // **************************************** Non Legacy Check Above ********************
-
-    return InsertShipDesignID(ship_design, boost::none, id);
+    return InsertShipDesignID(ship_design, boost::none, GenerateDesignID());
 }
 
 bool Universe::InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> empire_id, int id) {
     if (!ship_design)
         return false;
 
-    // TODO remove this check before the version change to v0.4.8
-    if (empire_id) {
-        auto good_id_and_possible_legacy = m_design_id_allocator->IsIDValidAndUnused(id, *empire_id);
-        if (!good_id_and_possible_legacy.first) {
-            ErrorLogger() << "Ship design id = " << id << " is invalid.";
-            return false;
-        }
-
-        if (!good_id_and_possible_legacy.second) {
-            WarnLogger() << "design id = " << id << " should not have been assigned by empire = "
-                         << *empire_id << ". It is probably from loading an old saved game. "
-                         << "In future this will be promoted to an error.";
-        }
-        m_design_id_allocator->FixLegacyOrderIDs(id);
+    if (!m_design_id_allocator->UpdateIDAndCheckIfOwned(id)) {
+        ErrorLogger() << "Ship design id " << id << " is invalid.";
+        return false;
     }
-
-    // TODO replace the above code with this check before the version change to v0.4.8
-    // **************************************** Non Legacy Check Below ********************
-    else {
-        auto valid = m_design_id_allocator->UpdateIDAndCheckIfOwned(id);
-        if (!valid) {
-            ErrorLogger() << "Ship design id = " << id << " is invalid.";
-            return false;
-        }
-    }
-    // **************************************** Non Legacy Check Above ********************
 
     ship_design->SetID(id);
     m_ship_designs[id] = ship_design;
