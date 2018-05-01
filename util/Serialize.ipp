@@ -8,7 +8,6 @@
 
 #if BOOST_VERSION == 105800
 // HACK: The following two includes work around a bug in boost 1.58
-#include <boost/serialization/type_info_implementation.hpp>
 #include <boost/archive/basic_archive.hpp>
 #endif
 

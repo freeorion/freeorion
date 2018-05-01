@@ -35,14 +35,6 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/thread.hpp>
 
-// HACK: The following two includes work around a bug in boost 1.58,
-// which uses them without including.
-#include <boost/version.hpp>
-#if BOOST_VERSION == 105800
-#include <boost/serialization/type_info_implementation.hpp>
-#include <boost/archive/basic_archive.hpp>
-#endif
-
 #include <boost/serialization/shared_ptr.hpp>
 
 
