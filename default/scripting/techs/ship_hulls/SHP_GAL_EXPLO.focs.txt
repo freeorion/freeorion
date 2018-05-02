@@ -12,7 +12,6 @@ Tech
                 OwnedBy empire = Source.Owner
                 Planet size = Tiny
             ]
-            activation = Planet
             accountinglabel = "TINY_PLANET_LABEL"
             effects = SetMaxSupply value = Value + 2
 
@@ -21,7 +20,6 @@ Tech
                 OwnedBy empire = Source.Owner
                 Planet size = Small
             ]
-            activation = Planet
             accountinglabel = "SMALL_PLANET_LABEL"
             effects = SetMaxSupply value = Value + 1
 
@@ -30,7 +28,6 @@ Tech
                 OwnedBy empire = Source.Owner
                 Planet size = Large
             ]
-            activation = Planet
             accountinglabel = "LARGE_PLANET_LABEL"
             effects = SetMaxSupply value = Value - 1
 
@@ -39,7 +36,6 @@ Tech
                 OwnedBy empire = Source.Owner
                 Planet size = Huge
             ]
-            activation = Planet
             accountinglabel = "HUGE_PLANET_LABEL"
             effects = SetMaxSupply value = Value - 2
 
@@ -48,7 +44,6 @@ Tech
                 OwnedBy empire = Source.Owner
                 Planet type = GasGiant
             ]
-            activation = Planet
             accountinglabel = "GAS_GIANT_LABEL"
             effects = SetMaxSupply value = Value - 1
 
@@ -83,7 +78,6 @@ Tech
                     (0.1 <= LocalCandidate.Happiness    <= ([[MIN_RECOLONIZING_HAPPINESS]] - 0.001) )
                 ]
             ]
-            activation = Source
             effects = [
                 GenerateSitRepMessage
                     message = "SITREP_POP_THRESHOLD"
