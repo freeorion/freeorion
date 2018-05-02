@@ -86,6 +86,9 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
         return default_result
     if species_name is None:
         species_name = planet.speciesName
+        verify_prediction = True
+    else:
+        verify_prediction = False
 
     # in case we are checking about aborting a colonization mission
     if empire == fo.empireID() and planet.ownedBy(empire):
@@ -113,6 +116,12 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
 
     total_stealth = planet_stealth + sum([AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(tag, 0)
                                           for tag in species_tags])
+
+    if verify_prediction:
+        meter_stealth = planet.currentMeterValue(fo.meterType.stealth)
+        if meter_stealth != total_stealth:
+            warn("Predicted stealth value for planet %s of %.1f but got %.1f" % (planet, total_stealth, meter_stealth))
+
     if isinstance(empire, int):
         empire_detection = get_empire_detection(empire)
     else:
