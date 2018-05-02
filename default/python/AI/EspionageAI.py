@@ -4,7 +4,7 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
 from AIDependencies import ALL_EMPIRES
 from EnumsAI import EmpireMeters
-from freeorion_tools import cache_by_session_with_turnwise_update
+from freeorion_tools import cache_by_session_with_turnwise_update, object_is_in_ion_storm
 
 
 def default_empire_detection_strength():
@@ -119,6 +119,9 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
 
     if verify_prediction:
         meter_stealth = planet.currentMeterValue(fo.meterType.stealth)
+        predicted_stealth = total_stealth
+        if object_is_in_ion_storm(planet_id):
+            predicted_stealth += AIDependencies.ION_STORM_STEALTH
         if meter_stealth != total_stealth:
             warn("Predicted stealth value for planet %s of %.1f but got %.1f" % (planet, total_stealth, meter_stealth))
 
