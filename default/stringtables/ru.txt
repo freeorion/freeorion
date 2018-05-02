@@ -6251,8 +6251,8 @@ SP_MUURSH
 Му-Урш
 
 SP_MUURSH_GAMEPLAY_DESC
-'''Сражающиеся за мир травоядные.Предпочитают [[PT_DESERT]] планеты.[[encyclopedia ORGANIC_SPECIES_TITLE]]
-'''
+'''Сражающиеся за мир травоядные.Предпочитают [[PT_DESERT]] планеты.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]'''
 
 SP_MUURSH_DESC
 '''Описание:
