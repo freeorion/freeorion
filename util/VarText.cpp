@@ -47,15 +47,15 @@ namespace {
 
     /// The signature of functions that generate substitution strings for
     /// tags.
-    typedef boost::optional<std::string> (*TagString)(const std::string& data, const std::string& tag);
+    typedef boost::optional<std::string> (*TagString)(const std::string& data);
 
     /// Get string substitute for a translated text tag
-    boost::optional<std::string> TextString(const std::string& data, const std::string& tag) {
+    boost::optional<std::string> TextString(const std::string& data) {
         return UserString(data);
     }
 
     /// Get string substitute for a raw text tag
-    boost::optional<std::string> RawTextString(const std::string& data, const std::string& tag) {
+    boost::optional<std::string> RawTextString(const std::string& data) {
         return data;
     }
 
@@ -75,11 +75,11 @@ namespace {
     }
 
     /// combat links always just labelled "Combat"; don't need to look up details
-    boost::optional<std::string> CombatLogString(const std::string& data, const std::string& tag)
-    { return WithTags(UserString("COMBAT"), tag, data); }
+    boost::optional<std::string> CombatLogString(const std::string& data)
+    { return WithTags(UserString("COMBAT"), VarText::COMBAT_ID_TAG, data); }
 
     /// Returns substitution string for a ship design tag
-    boost::optional<std::string> ShipDesignString(const std::string& data, const std::string& tag) {
+    boost::optional<std::string> ShipDesignString(const std::string& data) {
         int design_id = INVALID_DESIGN_ID;
         try {
             design_id = boost::lexical_cast<int>(data);
@@ -90,20 +90,20 @@ namespace {
         if (!design)
             return boost::none;
 
-        return WithTags(design->Name(), tag, data);
+        return WithTags(design->Name(), VarText::DESIGN_ID_TAG, data);
     }
 
     /// Returns substitution string for a predefined ship design tag
-    boost::optional<std::string> PredefinedShipDesignString(const std::string& data, const std::string& tag) {
+    boost::optional<std::string> PredefinedShipDesignString(const std::string& data) {
         const ShipDesign* design = GetPredefinedShipDesign(data);
         if (!design)
             return boost::none;
 
-        return WithTags(design->Name(), tag, data);
+        return WithTags(design->Name(), VarText::PREDEFINED_DESIGN_TAG, data);
     }
 
     /// Returns substitution string for an empire tag
-    boost::optional<std::string> EmpireString(const std::string& data, const std::string& tag) {
+    boost::optional<std::string> EmpireString(const std::string& data) {
         int empire_id = ALL_EMPIRES;
         try {
             empire_id = boost::lexical_cast<int>(data);
@@ -113,10 +113,10 @@ namespace {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire)
             return boost::none;
-        return WithTags(empire->Name(), tag, data);
+        return WithTags(empire->Name(), VarText::EMPIRE_ID_TAG, data);
     }
 
-    boost::optional<std::string> MeterTypeString(const std::string& data, const std::string& tag) {
+    boost::optional<std::string> MeterTypeString(const std::string& data) {
         boost::optional<std::string> retval = boost::none;
         // validate data
         MeterType meter_type = INVALID_METER_TYPE;
@@ -126,7 +126,7 @@ namespace {
         if (meter_type > INVALID_METER_TYPE && meter_type < NUM_METER_TYPES) {
             retval = boost::lexical_cast<std::string>(meter_type);
             if (UserStringExists(*retval))
-                retval = WithTags(UserString(*retval), tag, *retval);
+                retval = WithTags(UserString(*retval), VarText::METER_TYPE_TAG, *retval);
         }
 
         return retval;
@@ -149,20 +149,33 @@ namespace {
         subs[VarText::TEXT_TAG] = TextString;
         subs[VarText::RAW_TEXT_TAG] = RawTextString;
 
-        subs[VarText::PLANET_ID_TAG] =
-            subs[VarText::SYSTEM_ID_TAG] =
-            subs[VarText::SHIP_ID_TAG] =
-            subs[VarText::FLEET_ID_TAG] =
-            subs[VarText::BUILDING_ID_TAG] =
-            subs[VarText::FIELD_ID_TAG] = UniverseObjectString;
+        subs[VarText::PLANET_ID_TAG] = [](const std::string& data)
+            { return UniverseObjectString(data, VarText::PLANET_ID_TAG); };
+        subs[VarText::SYSTEM_ID_TAG] = [](const std::string& data)
+            { return UniverseObjectString(data, VarText::SYSTEM_ID_TAG); };
+        subs[VarText::SHIP_ID_TAG] = [](const std::string& data)
+            { return UniverseObjectString(data, VarText::SHIP_ID_TAG); };
+        subs[VarText::FLEET_ID_TAG] = [](const std::string& data)
+            { return UniverseObjectString(data, VarText::FLEET_ID_TAG); };
+        subs[VarText::BUILDING_ID_TAG] = [](const std::string& data)
+            { return UniverseObjectString(data, VarText::BUILDING_ID_TAG); };
+        subs[VarText::FIELD_ID_TAG] = [](const std::string& data)
+            { return UniverseObjectString(data, VarText::FIELD_ID_TAG); };
         subs[VarText::COMBAT_ID_TAG] = CombatLogString;
-        subs[VarText::TECH_TAG] = NameString<Tech, GetTech>;
-        subs[VarText::BUILDING_TYPE_TAG] = NameString<BuildingType, GetBuildingType>;
-        subs[VarText::SHIP_HULL_TAG] = NameString<HullType, GetHullType>;
-        subs[VarText::SHIP_PART_TAG] = NameString<PartType, GetPartType>;
-        subs[VarText::SPECIAL_TAG] = NameString<Special, GetSpecial>;
-        subs[VarText::SPECIES_TAG] = NameString<Species, GetSpecies>;
-        subs[VarText::FIELD_TYPE_TAG] = NameString<FieldType, GetFieldType>;
+        subs[VarText::TECH_TAG] = [](const std::string& data)
+            { return NameString<Tech, GetTech>(data, VarText::TECH_TAG); };
+        subs[VarText::BUILDING_TYPE_TAG] = [](const std::string& data)
+            { return NameString<BuildingType, GetBuildingType>(data, VarText::BUILDING_TYPE_TAG); };
+        subs[VarText::SHIP_HULL_TAG] = [](const std::string& data)
+            { return NameString<HullType, GetHullType>(data, VarText::SHIP_HULL_TAG); };
+        subs[VarText::SHIP_PART_TAG] = [](const std::string& data)
+            { return NameString<PartType, GetPartType>(data, VarText::SHIP_PART_TAG); };
+        subs[VarText::SPECIAL_TAG] = [](const std::string& data)
+            { return NameString<Special, GetSpecial>(data, VarText::SPECIAL_TAG); };
+        subs[VarText::SPECIES_TAG] = [](const std::string& data)
+            { return NameString<Species, GetSpecies>(data, VarText::SPECIES_TAG); };
+        subs[VarText::FIELD_TYPE_TAG] = [](const std::string& data)
+            { return NameString<FieldType, GetFieldType>(data, VarText::FIELD_TYPE_TAG); };
         subs[VarText::METER_TYPE_TAG] = MeterTypeString;
         subs[VarText::DESIGN_ID_TAG] = ShipDesignString;
         subs[VarText::PREDEFINED_DESIGN_TAG] = PredefinedShipDesignString;
@@ -222,7 +235,7 @@ namespace {
 
             auto substituter = SubstitutionMap().find(tag);
             if (substituter != SubstitutionMap().end()) {
-                if (auto substitution = substituter->second(elem->second, tag)) {
+                if (auto substitution = substituter->second(elem->second)) {
                     m_str += *substitution;
                     return;
                 }
