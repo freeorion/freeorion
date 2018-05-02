@@ -25,7 +25,7 @@ def get_current_exploration_info():
             available_scouts.append(fleet_id)
         else:
             if fleet_mission.type == MissionType.EXPLORATION:
-                already_covered.add(fleet_mission.target)
+                already_covered.add(fleet_mission.target.id)
                 if not fleet_mission.target:
                     print "problem determining existing exploration target systems"
                 else:
