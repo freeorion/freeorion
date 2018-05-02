@@ -15,11 +15,7 @@ namespace parse {
             void indent() const;
             std::string prepare(const string& s) const;
             void print(const string& str) const;
-#if BOOST_VERSION < 105600
-            void operator()(boost::spirit::info::nil) const;
-#else
             void operator()(boost::spirit::info::nil_) const;
-#endif
             void operator()(const string& str) const;
             void operator()(const boost::spirit::info& what) const;
             void operator()(const std::pair<boost::spirit::info, boost::spirit::info>& pair) const;

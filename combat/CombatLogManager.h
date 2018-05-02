@@ -7,6 +7,7 @@
 #include "../util/Serialize.h"
 
 #include <boost/optional/optional.hpp>
+#include <boost/serialization/nvp.hpp>
 
 #include <memory>
 

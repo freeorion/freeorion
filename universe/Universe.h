@@ -9,13 +9,6 @@
 #include "../util/Pending.h"
 
 #include <boost/signals2/signal.hpp>
-// Fix for issue #1513 (boost ticket #12978)
-// Starting with v1.64, boost::numeric::ublas was not updated for changes to
-// boost::serialization, which moved array_wrapper to separate header
-#if BOOST_VERSION >= 106400
-    #include <boost/serialization/array_wrapper.hpp>
-#endif
-#include <boost/numeric/ublas/symmetric.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/thread/shared_mutex.hpp>
 

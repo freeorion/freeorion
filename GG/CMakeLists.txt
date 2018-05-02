@@ -80,7 +80,7 @@ endif()
 ## Collect project dependencies.
 ##
 
-set(MINIMUM_BOOST_VERSION 1.56.0)
+set(MINIMUM_BOOST_VERSION 1.58.0)
 
 if(NOT USE_STATIC_LIBS)
     add_definitions(

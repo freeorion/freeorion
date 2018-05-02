@@ -36,11 +36,7 @@ std::string parse::detail::info_visitor::prepare(const string& s) const {
 void parse::detail::info_visitor::print(const string& str) const
 { m_os << prepare(str); }
 
-#if BOOST_VERSION < 105600
-void parse::detail::info_visitor::operator()(boost::spirit::info::nil) const {
-#else
 void parse::detail::info_visitor::operator()(boost::spirit::info::nil_) const {
-#endif
     indent();
     print(m_tag);
 }
