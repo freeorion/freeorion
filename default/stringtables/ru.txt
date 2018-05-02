@@ -7,6 +7,7 @@ Russian
 # * Max Koloshnitsyn <black_owl(at)mail.ru>
 # * cjckem at gmail.com
 # * nikqz nikqz@mail.ru
+# * Bestary (lynx.bestary@gmail.com)
 #
 # Notes: to avoid potential conflict with functional keys in other files, do not
 # make any stringtable keys beginning with "FUNCTIONAL_".
@@ -156,7 +157,7 @@ NEW_MONSTER_FLEET_NAME
 # Name for a newly created colony-only fleet.
 # %1% represents a unique number.
 NEW_COLONY_FLEET_NAME
-Поселенчиский флот %1%
+Поселенческий флот %1%
 
 # Name for a newly created reconnaissance-only fleet.
 # %1% represents a unique number.
@@ -246,8 +247,8 @@ POPUP_MENU_PEDIA_PREFIX
 ##
 
 ERROR_SOUND_INITIALIZATION_FAILED
-'''Не удалось инициализировать аудиосистему OpenAL
-Проверьте лог-файл для получения более подробной информации
+'''Не удалось инициализировать аудиосистему OpenAL.
+Проверьте лог-файл для получения более подробной информации.
 '''
 
 # Used as a prefix for the FORMAT_LIST_[1-MANY]_ITEMS translation entries.
@@ -303,49 +304,49 @@ SD_CARRIER
 Авианосец сопровождения
 
 SD_CARRIER_DESC
-Авианосец, предназначенный для защиты других вооруженных судов оснащён эскадрилией перехватчиков
+Авианосец, предназначенный для защиты других вооруженных судов. Способен запускать эскадрильи перехватчиков.
 
 SD_CARRIER_2
 Ударный авианосец
 
 SD_CARRIER_2_DESC
-Авианосец, предназначенный для наступательных действий флота с эскадрильями ударных бомбардировщиков и электро-магнитными орудиями
+Авианосец, предназначенный для наступательных действий флота. Оснащён эскадрильями перехватчиков и электромагнитным орудием.
 
 SD_SCOUT
 Разведчик
 
 SD_SCOUT_DESC
-Маленький дешевый безоружный корабль, спроектированный для разведки [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_REQUIRED]]
+Маленький, дешевый, безоружный корабль, спроектированный для разведки. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_SCOUT_2
 Радиолокационный разведчик
 
 SD_SCOUT_2_DESC
-Небольшой и дешевый невооруженный корабль, оснащенный улучшенным [[metertype METER_DETECTION]] предназначенным для разведки и исследований [[BLD_SHIPYARD_BASE_REQUIRED]]
+Маленький, дешевый, безоружный корабль, оснащенный улучшенным [[metertype METER_DETECTION]], предназначенным для разведки и исследований. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_SCOUT_3
 Сканирующий разведчик
 
 SD_SCOUT_3_DESC
-Небольшой и дешевый невооруженный корабль, оснащенный улучшенным [[metertype METER_DETECTION]] предназначенным для разведки и исследований [[BLD_SHIPYARD_BASE_REQUIRED]]
+Маленький, дешевый, безоружный корабль, оснащенный улучшенным [[metertype METER_DETECTION]]. Предназначен для разведки и исследований. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_SCOUT_4
 Сенсорный разведчик
 
 SD_SCOUT_4_DESC
-Небольшой и дешевый невооруженный корабль, оснащенный улучшенным [[metertype METER_DETECTION]] предназначенным для разведки и исследований [[BLD_SHIPYARD_BASE_REQUIRED]]
+Маленький, дешевый, безоружный корабль, оснащенный улучшенным [[metertype METER_DETECTION]]. Предназначен для разведки и исследований. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ENG_SCOUT
 Энергетический разведчик
 
 SD_ENG_SCOUT_DESC
-Небольшое и быстрое невооруженное судно, предназначенное для разведки и исследований [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
+Маленький и быстрый безоружный корабль, предназначенный для разведки и исследований. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
 
 SD_SMALL_MARK_1
 Корвет M
 
 SD_SMALL_MARK1_DESC
-Небольшое и дешевое судно с электро-магнитным орудием [[BLD_SHIPYARD_BASE_REQUIRED]]
+Маленький, дешёвый корабль с электромагнитным орудием. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_MARK_1
 Фрегат Ms
@@ -459,7 +460,7 @@ SD_AST_1
 Каменный эсминец (L)
 
 SD_AST_1_DESC
-Астероидный корпус, спроектированный для участия во флоте [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
+Астероидный корпус, спроектированный для нужд флота. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_COLONY_SHIP
 Корабль с колонистами
@@ -489,7 +490,7 @@ SD_COLONY_BASE
 База для колонии
 
 SD_COLONY_BASE_DESC
-Безоружный корабль, может создать колонию только в системе, где он был построен [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]] [[SHIPDESIGN_NO_TRAVEL]]
+Безоружный корабль, способный создать колонию только в системе, где он был построен. [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]] [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_CRYONIC_COLONY_BASE
 Крионическая колониальная база
@@ -507,7 +508,7 @@ SD_BASE_DECOY
 Спутник связи
 
 SD_BASE_DECOY_DESC
-Невооруженный спутник, который может активировать планетарную защиту даже против пассивных врагов, однако, при ее отсутствии ничем не примечателен и может быть уничтожен на пути вражеского огня. Может быть построен на любой колонизированной планете для чего не требуется [[buildingtype BLD_SHIPYARD_BASE]]
+Невооруженный спутник, который может активировать планетарную защиту даже против пассивных врагов, однако, при её отсутствии, ничем не примечателен и легко уничтожается. Может быть построен на любой колонизированной планете, для чего не требуется [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_TROOP_DROP
 Транспорт
@@ -6020,384 +6021,386 @@ SP_HUMAN
 Люди
 
 SP_HUMAN_GAMEPLAY_DESC
-'''Безжалостные, племенные преследующие хищники
-Предпочитают [[PT_TERRAN]] планеты
+'''Безжалостные, хищные преследователи, живущие племенами.
+Предпочитают [[PT_TERRAN]] планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
 SP_HUMAN_DESC
 '''Описание:
-Люди - это двуногий, обособленный и всеядный вид с невероятной выносливостью. Человек эволюционировал, создав орудия труда, чтобы лучше охотиться на свою добычу, так как ему приходилось преследовать гораздо более крупных животных, пока день-за-днём тот ослабнет, а затем съесть его. Современные люди по-прежнему сильные борцы или избегают опасность. Но любая угроза, с которой не сможет справиться один индивидуум, будет встречена многочисленной группой работающих вместе, чтобы победить ее с подавляющей силой. Люди, как известно, едят всё, что знают или что трудно переваривается просто для того, чтобы доказать что они это МОГУТ, и используют токсичные вещества в качестве ароматной приправы к еде
+Люди - двуногие всеядные существа, живующие племенами и обладающие невероятными способностями к выживанию. Они усовершенствовали свои орудия для более эффективной охоты, и способны долго преследовать жертву, чтобы в конечном итоге убить её и съесть. Современные люди по-прежнему живут под сильным влиянием реакции "бей или беги", но, однако, с любой опасностью, с которой невозможно справиться в одиночку, они предпочитают бороться группой, чтобы количеством в конце концов преодолеть трудность. Иногда люди едят заведомо малосъедобные вещи только для того, чтобы доказать, что они могут это сделать, и используют некоторые ядовитые вещества для придания новых оттенков вкуса пище.
 
-Общество:
-Современные люди сформировали географические национальные государства с прочной основой в исторических племенах. Эти государства конкурируют друг с другом, порой дело доходит до войны, хотя продолжают сотрудничать по другим вопросам. Разногласия по поводу религии, использовании ресурсов и даже в правильности приготовления того или иного блюда по-прежнему используются, чтобы оправдать агрессию друг к другу и эти войны выступают в качестве шпор для дальнейшего технического прогресса
+Социальный строй:
+Современные люди создали несколько географически обусловленных наций, в основе которых прочно закрепились исторически сложившиеся культурные традиции. Эти нации конкурируют друг с другом, иногда устраивая войны, и в то же время - сотрудничают по другим вопросам. Религиозные разногласия, различные ресурсы и даже правильный способ приготовления определённой пищи - всё это до сих пор используются людьми для оправдания своих агрессивных действий, которые значительно тормозят технологический прогресс данной расы.
 '''
 
 SP_SCYLIOR
 Скилиор
 
 SP_SCYLIOR_GAMEPLAY_DESC
-'''Водоплавающие с тремя щупальцами
-Предпочитают [[PT_OCEAN]] планеты
+'''Морские головоногие моллюски с тремя щупальцами.
+Предпочитают [[PT_OCEAN]] планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
 SP_SCYLIOR_DESC
 '''Описание:
-Скилиоры - чешуйчатые головоногие, похожие на Nautilus. Они обладают передовым зрением, обеспеченным четырьмя глазами, и имеют четыре антенны, содержащие миллионы neuromasts, позволяя Скилиорам обнаружить изменения в гидравлическом давлении и электрических волнах. У Скилиора есть три больших, сильных питательных щупальца, которые они используют, чтобы схватить и держать инструменты или еду, в то время как она разбивается клювом и усваивается.
+Скилиоры - панцирные головоногие моллюски, похожие на наутилусов. Они обладают усовершенствованным зрением, которое обеспечивается четырьмя глазами, и имеют четыре антенны с миллионами невромастов (чувствительных рецепторов) на них, позволяющих Скилиорам улавливать малейшие изменения в давлении воды и электрическом поле. У Скилиоров есть три крупных, сильных щупальца, предназначенные для удерживания предметов или добычи в процессе её поглощения, после того, как та была предварительно раздроблена на части клювом.
 
-Хроматофоры представляют расу с развитой формой общения. Когда два Скилиора желают общаться друг с другом, они тотчас меняют окраску и рисунок на коже.
+Хроматофоры являются основным способом общения для данной расы. Когда два Скилиора собираются коммуницировать, они быстро сменяют цвета и пятна на своей коже.
 
-Скилиоры бесполые и перерождаются несколько раз за жизнь. Продолжительность жизни Скилиора составляет около 30 лет, в течении которых он постоянно растёт, наращивая раковину диаметром всего 5 см и вырастая каждый год на 10%. 
+Скилиоры бесполы и способны размножаться несколько раз за свою жизнь. Её продолжительность составляет около 30 лет, в течении которых Скилиор постоянно растёт, наращивая раковину диаметром всего 5 см и вырастая каждый год на 10%. 
 
-Общество:
-Скилиоры (в переводе - доброжелательный Бог) явились как остатки некогда могучего мозгового телепатического улья "Мышление".  Это привило им миссию путешествовать звезды в надежде на возвращение к ее прежней силе. Скилиоры очень социальные и полюбили изучение вещей и делиться знаниями с Мышлением.
+Социальный строй:
+Остатки некогда могущественного мозга в форме улья, обладающего телепатией и называемого "Разум", почитаются Скилиорами в качестве доброго божества. Именно оно внушило Скилиорам, что их высшая миссия - это путешествовать между звёздами, в надежде вернуть себе своё былое могущество. Скилиоры очень социальны и обожают изучать новые знания, которыми непременно делятся с Разумом.
 
 История:
-Несколько тысячелетий назад экспедиция предшественников обнаружила Мышление, управляющее целой планетой с его телепатическими полномочиями. Мышление немедленно потянулось к ним и начало копировать знание ученых и экипажа их судна. Но ученые отключили большую часть мозга Мышления и взяли его с собой как образец. Оставшаяся часть Мышления выжила и жаждала возвратить свои воспоминания, которые были отобраны у него. Мышление, однако, было неподвижно, и в настоящее время, не имело никаких разумных существ по близости, чтобы действовать под их командованием. Так появились Скилиоры.
+Несколько тысячелетий назад экспедиция предтеч обнаружила Разум, управлявший целой планетой при помощи своих телепатических способностей. Разум мгновенно потянулся к учёным предтеч, принявшись копировать их знания и знания экипажа судна. Но учёные разрушили большую часть мозга Разума, взяв его часть с собой как образец. Оставшаяся часть Разума выжила и жаждала возвратить воспоминания, которые были у него отобраны. Разум, однако, был неподвижен, и по настоящее время не имел рядом никаких разумных существ, способных действовать под своим командованием. Так появились Скилиоры.
 '''
 
 SP_GYSACHE
 Гисач
 
 SP_GYSACHE_GAMEPLAY_DESC
-'''Трусливые причудливые травоядные, напоминающие овец
-Предпочитают [[PT_SWAMP]] планеты
+'''Трусливые, причудливые травоядные, поведением напоминающие овец.
+Предпочитают [[PT_SWAMP]] планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
 SP_GYSACHE_DESC
 '''Описание:
-Гисач - травоядные виды, которые всегда были добычей. Они стремятся устранять все, что угрожает им, пока все места во Вселенной не будут безопасны
+Гисач - травоядные существа, которые всегда были добычей. Они стремятся устранять любые опасности, которые им угрожают, пока все места во Вселенной не станут для них безопасны.
 
-The Gysache are bipedal, each leg has two forward knees and one backward knee in between. When they crouch, the leg folds into an efficient 'W' making them only half a meter tall (compared to 2.5 meters when fully erect)
-Their oblong bodies lack anything resembling a head, instead they have three identical eye stalks that are located at the forward tip of the body. A small mouth is located at the base of them
+Гисач имеют две ноги, на каждой из которых есть по два передних колена и одному заднему, расположенному между передними. Если Гисач приседает, его ноги складываются в форме буквы "W", и существо становится всего 0,5 метра в высоту (по сравнению с его исходным ростом в 2,5 метра, при полной расправленности ног).
+Их продолговатые тела не имеют ничего похожего на голову, вместо которой на передней части расположены три одинаковых стебля с глазами, у основания которых есть небольшой рот.
 
 Социальный строй:
-The Gysache are always wary of predators and are easily alarmed. Their natural response is to run away from everything. Their government system is dispersed as each individual is completely independent and forms no bonds with other individuals. However, they do have a herding tendency and this keeps them together when faced with danger
+Гисач постоянно опасаются нападения, отчего всегда немного встревожены. Их естественная реакция - это бегство от всего на свете. Их правительственная система децентрирована, каждый индивидуум полностью независим от остальных и не образует никаких связей с прочими членами общества. Однако, у них всё же есть тенденция сбиваться в стада, что бережёт их при встрече с опасностью.
 
 Домашний мир:
-Their homeworld has a thick atmosphere of nitrogen, ammonia and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water
+Их домашний мир - планета с плотной атмосферой, содержащей азот, аммиак и углекислый газ. Большая часть поверхности увлажнена, однако присутствует недостаток крупных океанов - они составляют всего 5% от общей площади поверхности. Топографические особенности местности таковы, что очень высокие, скалистые, столовые горы изрезаны глубокими, тянущимися на километры каньонами, на дне которых находится стоячая вода.
 '''
 
 SP_CHATO
 Чато
 
 SP_CHATO_GAMEPLAY_DESC
-'''Сидячие кристаллические сущности, ездящие верхом на животных "Гормошках" 
-Предпочитают [[PT_TOXIC]] планеты
+'''Неподвижные кристаллические сущности, ездящие верхом на существах под названием "Гормошк". 
+Предпочитают [[PT_TOXIC]] планеты.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 '''
 
 SP_CHATO_DESC
 '''Описание:
-The Chato'matou'Gormoshk are actually two species together, however it is not entirely clear if the connection between the species should be called symbiosis or parasitism. The master species are the Chato'matou, crystalline life forms about 30 centimeters in height and 10 centimeters in width. Their color ranges from a light blue to a deep crimson. They get the energy they need to live from the sun or in exceptional cases from the Gormoshk they are attached to. The Gormoshk are predatory animals formerly living in underground caverns. Their bodies are flat and round and rest on five insect-like legs. The Chato'matou attach themselves to the flat part on top of the Gormoshk's bodies, directly above the brain. Through a crystalline outgrowth they can control the Gormoshk completely
+Чато (полн. "Чато-мато-Гормошк") - это, фактически, два вида вместе, однако, не совсем понятно, симбиотической или паразитической является связь между ними. Главным здесь является Чато-мато, кристаллическая форма жизни около 30 сантиметров в высоту и 10 сантиметров в длину. Их цвет варьируется от светло-голубого до малинового. Чато-мато получают жизненную энергию от солнца или, в крайних случаях, от Гормошка, к которому прикреплены. Гормошки - это хищные животные, ранее населявшие подземные пещеры. Их тела круглые, плоские и покоятся на пяти несекомоподобных ногах. Чато-мато закрепляются на плоской верхней части тела Гормошков, прямо над их мозгом. Через кристаллический отросток они полностью контролирует Гормошков.
 
 Социальный строй:
-In Chato'matou society, age is the most important factor as they are nearly immortal. Every command the elders issue is obeyed at once and to disobey an elder is the greatest crime in Chato'matou society. They developed a system to transmit signals without delay throughout an entire colony, enabling them to converse with near the speed of light. This greatly enhanced the species mental capabilities, as all new ideas and theories could be instantly processed throughout the colony. The Gormoshk are valued as mounts and well cared for under normal circumstances, however they are also seen mostly as animals
+В сообществе Чато-мато самым важным фактором является возраст существ, так как они по сути бессмертные. Любая команда, отданная старейшиной, тут же исполняется - ослушаться старшего у Чато-мато является чудовищным преступлением. Они разработали систему передачи сигналов через всю колонию без задержки, что позволило им общаться друг с другом почти со скоростью света. Это значительно усовершенствовало их умственные способности, поскольку все новые идеи и теории стало возможно мгновенно обрабатывать всей колонией. Гормошки являются транспортировщиками Чато-мато, и в нормальных условиях о них хорошо заботятся, однако всё же они остаются, по большей части, обычными животными.
 '''
 
 SP_TRITH
 Трит
 
 SP_TRITH_GAMEPLAY_DESC
-'''Бесплотные неприветливые существа обладающие телепатией
-Предпочитают [[PT_DESERT]] планеты
+'''Яростные ксенофобы-телепаты.
+Предпочитают [[PT_DESERT]] планеты.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
 
 SP_TRITH_DESC
 '''Описание:
-The Trith are a mixture of matter and enormous psychic energies. Their shape is vaguely humanoid. All Trith are telepathic, and herein lies the reason for their rage: while the Trith can learn to keep their own thoughts to themselves, they are unable to tune out the thoughts of others. To mature Trith this is merely vexing, but for young Trith it can be fatal. Sometimes, Trith that gain their telepathic ability before adolescence are not ready to cope with the combined minds of all people in the universe screaming at them and go mad or die
+Трит - это смесь материи и огромного количества психической энергии. Формой они смутно напоминают гуманоидов. Все Триты обладают телепатией, и это является причиной их ярости: до тех пор, пока молодой Трит не научится держать свои мысли при себе, он неспособен заглушать фон и из чужих мыслей. Для взрослого Трита это просто небольшой дискомфорт, но для маленького может оказаться фатальным. Иногда Триты обретают свои телепатические способности раньше, чем способны выдержать шум от объединённых умов всех существ во вселенной, что становится причиной того, что эти существа погибают или сходят с ума.
 
 Социальный строй:
-The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind). They are united in the single goal of eliminating all other thinking species to silence the thought-noise in the universe
+Общественный строй Тритов - это теократия, возглавляемая священниками Каран-Дора (Бога Разума). Все они объединены общей единственной целью - уничтожить все прочие мыслящие расы, чтобы заставить замолчать их шумящие во Вселенной мысли.
 '''
 
 SP_HAPPY
 День Рождения
 
 SP_HAPPY_GAMEPLAY_DESC
-'''Заброшенные, одинокие подводные роботы, запрограммированные для того, чтобы распевать себе «с днем рождения» через равные промежутки времени
-Предпочитают [[PT_OCEAN]] планеты
+'''Заброшенные, одинокие подводные роботы, запрограммированные для того, чтобы распевать себе «С Днем Рождения» через равные промежутки времени.
+Предпочитают [[PT_OCEAN]] планеты.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_HAPPY_DESC
-'''Описание: Подводные исследовательские роботы
-Though some have more bulky and blocky forms, most happybirthdays are streamlined and somewhat fish-like in shape. They all have one or more cameras and manipulator arms, usually forward facing. They also host a suit of sensors for temperature, vibrations, chemicals, radar, sonar, electrical and magnetic fields, though these often vary from model to model. They are functional in a wide range of temperature and pressure conditions in an aquatic environment.
+'''Описание: Роботизированные подводные аппараты.
+Хотя некоторые из них достаточно громоздки и неуклюжи, большинство представителей расы День Рождения всё же имеет обтекаемую, рыбоподобную форму. У всех них есть по одной или по нескольку камер и манипуляторов, обычно расположенных спереди. День Рождения также имеют набор датчиков температуры, вибрации, химикатов, радиолокационных, гидролокационных, электрических и магнитных полей, хотя часто это варьируется от модели к модели. Они функционируют в широком диапазоне температур и давления водной среды.
 
-Any happybirthday can repair any other happybirthday, and their systems often have redundant pairs for just such a reason. Sufficiently large groups can fully repair any other member of their kind, and through this same process also make a completely new unit. New units have the same programming as their parents, but a blank memory, to be filled by exploring their environment.
+Любой представитель расы День Рождения может починить своего "сородича", и именно поэтому их системы часто имеют дублирующие детали. Достаточно большие группы могут полностью отремонтировать другого представителя вида, а также создать таким образом совершенно новую единицу расы. Новые представители Дня Рождения имеют то же программное обеспечение, что и их "родители", но пустую память, которую необходимо заполнить путём исследования окружающей среды.
 
-Домашний мир:
-A vast and deep ocean planet. It is believed that they were originally created to survey the planet for potential colonization. It is not know why they were abandoned, but theories range from their creators deciding the planet was unsuitable for colonization, to being wiped out for some reason or another. Though the oceans are vast and there are many interesting features and life forms, there is little about the planet they were sent to that would indicate why they were sent to that world in particular.
+Домашний мир: Вечно Одинокий
+Огромная, глубокая океанида. Считается, что первоначально они были созданы с целью обследования этой планеты на предмет возможной колонизации. Неизвестно, почему их забросили - теории варьируются: от версии, что их создатели сочли планету непригодной для колонизации, до мнения о том, что планету было решено уничтожить (по той же причине). Несмотря на то, что океаны на планете были достаточно обширны и наполнены различными интересными формами жизни, здесь очень мало что может рассказать нам о том, почему эти роботы были направлены конкретно в этот мир в частности.
 
-Социальный строй:
-A lone happybirthday will (psychologically) latch onto the nearest (preferably alien) sentient being and declare their eternal friendship. Their goal to alleviate their loneliness by find another being to be their friend, forever and ever and ever...
+Социальный строй: Созависимость.
+Одинокий представитель расы День Рождения обычно психологически замыкается на ближайшем (желательно, чужеземном) чувственном существе, объявляя его своим лучшим другом. Так они пытаются облегчить своё одиночество - путём поиска другого существа, способного быть их другом, навсегда и навеки...
 
-Colonization is slow and industry inefficient due to species-wide depression, sometimes leading to bouts of mass suicide. However since they don't want to make enemies and they always want to make new friends they are eager traders.
+Колонизация этих существ происходит медленно, а промышленность неэффективна из-за видовой депрессии, временами приводящей к приступам массового суицида. Однако, они стремятся не создавать врагов, а заводить друзей, что делает День Рождения хорошими торговцами.
 
-История:
-Whether it is the initial lonely quest to explore their homeworld, their abandonment by their creators, the interval war, or their quest into space to find friendship, their existence has been a sad, depressing and lonely one.
+История: Грустная.
+Будь то их первоначальная одинокая задача изучать свой домашний мир, отказ создателей от них, периодически возникающие депрессии, или путешествия в космосе в поисках дружбы - существование Дня Рождения было с самого начала печально, удручающе и одиноко.
 '''
 
 SP_HHHOH
-Ххох
+Хххох
 
 SP_HHHOH_GAMEPLAY_DESC
-'''Огромные медленные многохоботовые мамонты
-Предпочитают [[PT_TUNDRA]] планеты
+'''Огромные, медленные мамонты со множеством хоботов.
+Предпочитают [[PT_TUNDRA]] планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
 SP_HHHOH_DESC
 '''Описание:
-Hhhoh are large, warm blooded creatures measuring over 16 meters in length (including leg/tail), 6 meters in width, stand at 5 and a half meters tall and weigh over 5 tonnes. They have a very thick layer of white fur.
-Hhhoh locomotion is performed by using their two, large front legs, while using their hind leg to balance their large back. They also have four long trunk-like appendages of 8 meters in length, with four sharp fingered claws used to handle objects. When not in use, Hhhohs curl these trunks under their bodies and bury them in large fat pouches to conserve heat. They are omnivorous but do not actively hunt or farm large domesticated life.
+Хххохи - большие, теплокровные существа ростом более 16 метров в длину (включая хоботы и хвост), 6 метров в ширину, 5 с половиной метров в высоту и весом более 5 тонн. Обладают очень толстым слоем белого меха.
+Хххохи передвигаются при помощи двух больших передних ног, используя заднюю в качестве балансира для их огромной спины. Они имеют также четыре длинных, хоботоподобных отростка по 8 метров в длину с четырьмя острыми когтистыми пальцами на кончиках, служащие для удерживания предметов. Когда их хоботы не используются, Хххохи скручивают их под своим телом и прячут в специальные кожистые мешки, чтобы сохранить тепло. Хххохи всеядны, но охотятся не активно, предпочитая выращивать крупные одомашненные жизненные формы.
 
-Социальный строй:
-Hhhohs describe themselves as social pragmatists. Elders are very much revered, some living close to 230 years. Their sloth-like disposition makes them aversive to any fast movements, as well as hasty decisions.
+Индивидуальные особенности:
+Хххохи называют себя социальными прагматиками. Старейшины очень почитаются, некоторые из них могут доживать до 230 лет. Из-за природной склонности к лени Хххохи ненавидят любые быстрые движения, а также поспешные решения.
 '''
 
 SP_EAXAW
 Эксо
 
 SP_EAXAW_GAMEPLAY_DESC
-'''Злые, амазонские, ксенофобские, агрессивные черви
+'''Злые, агрессивные черви-амазонки с ксенофобскими взглядами.
 Предпочитают [[PT_TERRAN]] планеты
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
 
 SP_EAXAW_DESC
 '''Описание:
-The Eaxaw have 3 body forms. First is the newborn larval form, then the male form and lastly the adult female form. All forms are completely blind and use touch, smell, hearing and a sense for electric currents to explore their world. The female form is a segmented worm approximately 8 meters long. At the front is a three-beaked mouth that is used to dig extensive tunnel systems. The neural network of the female is distributed along chains of neural nodes that run the length of the body. Most of the rest of the body is musculature and the armored outer body segments provide support. These outer segments have a small overlap much like scales, under which larvae are grown. Eaxaw in their male form are much smaller and rather dim witted. At the end of their tail is a complex grasping claw that comes in very specialized varieties.
+У Экзо существуют три стадии развития. Сначала - новорождённая, личиночная стадия, затем мужская форма, и, наконец, взрослая женская форма. Все они полностью слепы и используют осязание, обоняние, слух и чувство электрических токов для исследования окружающего мира. Женская форма представляет собой сегментированного червя длиной около 8 метров. На передней части расположен трёхклювый рот, используемый для рытья обширных систем туннелей. Нервная система самок представлена цепочкой нервных узлов, управляющих движениями тела. Большая же часть остального тела - это мускулатура, поддерживаемая защитной внешней оболочкой, состоящей из сегментов. Эти сегменты имеют небольшие перекрытия, напоминающие чешуйки, под которыми вырастают новые личинки Экзо. Мужская форма Экзо мельче по размеру и развита хуже. На кончике их хвоста находится сложный хватающий коготь, внешний вид которого очень индивидуален.
 
 Социальный строй:
-Eaxaw are organized into matriarchal breeding groups. A female keeps a "harem" of approximately 200 males which protect, feed and mate with her. Any new males that the female births are added to the harem but are frequently traded with other females like a currency. This ensures genetic diversity and promotes a wide variety of males to perform specialized tasks. The highest ranking females (having the largest and most diverse Harems) form the Great Matriarchal Council which sets the global agenda for the Eaxaw.
+Экзо живут матриархальными группами, нацеленными на размножение. Одна самка держит "гарем" из примерно 200 самцов, которые защищают её, кормят и спариваются с ней. Молодые самцы могут быть добавлены к основному гарему, но чаще всего их разменивают с прочими самками, словно валюту. Это обеспечивает генетическое разнообразие и способствует более широкому "ассортименту" самцов для выполнения различных специализированных нужд. Самые высокопоставленные самки (имеющие самые большие и разнообразные гаремы) образуют Великий Матриархальный Совет, который устанавливает глобальную повестку дня для всей расы Экзо.
 
 История:
-A long time ago a derelict ship of the Precursors crashed on the Eaxaw homeworld. As the Eaxaw learned some of the ship's secrets they deduced that there were other intelligent species. Their great matriarchal council soon issued its greatest proclamation: "All of this must go!"
+Давным-давно заброшенный корабль Предтеч обрушился на родной мир Экзо. Изучив некоторые секреты данного корабля, Экзо пришли к выводу, что в космосе существуют и другие разумные виды. Вскоре их Великий Матриархальный Совет высказал величайшее провозглашение: "Всё это должно убраться отсюда!"
 '''
 
 SP_DERTHREAN
 Дертрин
 
 SP_DERTHREAN_GAMEPLAY_DESC
-'''Пацифистичные, болебоязненные плавающие полурастения полувирусы
-Предпочитают [[PT_TOXIC]] планеты
+'''Пацифистичные, биотехнологичные, болебоязненные плавающие полурастения-полувирусы.
+Предпочитают [[PT_TOXIC]] планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_DERTHREAN_DESC
 '''Описание:
-The Derthrean consciousness represents a half parasitic, half symbiotic relationship of viruses living in the bodies of plants. The virus has no intelligence and without the virus, the plant is but an empty shell yet together, their neural synapses are compatible and form a reasonable being. Although the virus brings awareness to the plant, the virus is also toxic to its nervous system, inflicting great amounts of pain, slowly destroying the plant as the virus spawns and in the end, killing it. This means that the greater the intelligence of a Derthrean, the more pain he endures.
+Самосознание Дертрина представляет собой полупаразитическое, полусимбиотическое сосуществование вируса, живущего в теле растения. У вируса нет интеллекта, и растение без него - это также просто пустая оболочка. Но их нейронные синапсы способны совмещаться, и при этом образуется разумное существо. Однако, хотя вирус и даёт растению разум, он также токсически воздействует на его нервную систему, вызывая сильную боль и медленно разрушая по мере распространения по телу, в конечном итоге убивая растение. Таким образом, чем выше интеллект Дертрина, тем больше боли он испытывает.
 
 Социальный строй:
-The Derthrean are a sharply divided race, split by the legacy of their forebears into castes. They are born into a caste, they mate in their caste, and they die as a member of a caste. Because the breeding has been so isolated throughout the millennia, there are even physical varieties in different castes. The castes are divided as follows: the most benevolent Priest caste, the Worker caste, the Grower caste, the Provider caste, the Scholar caste and the most despised of all, the Warrior caste. Religion plays a fundamental role in their society. Each Derthrean is a pacifist and lives to please their Goddess, in hopes of relieving the terrible burden of pain and earning forgiveness for the betrayal and bloodlust of their ancestors.
+Раса Дертринов жёстко поделена на касты, созданные наследием их предков. Дертрины рождаются в касте, размножаются внутри неё и умирают как члены этой касты. Поскольку их размножение на протяжении тысячелетий происходило настолько изолированно, между кастами существуют даже физические различия. Касты делятся на следующие виды: самая доброжелательная каста Священников, каста Рабочих, каста Фермеров, каста Снабженцев, каста Учёных и, самая презираемая - каста Воинов. Религия играет фундаментальную роль в обществе Дертринов. Каждый из них является пацифистом и живёт только для того, чтобы угодить их Богине, в надежде на облегчение страшного бремени боли и получение прощения за предательство и кровожадность своих предков.
 '''
 
 SP_LAENFA
 Линфа
 
 SP_LAENFA_GAMEPLAY_DESC
-'''Подлые, обладающие телепатией разумные плющи
-Предпочитают [[PT_OCEAN]] планеты
+'''Ползучие, разумные лианы-телепаты.
+Предпочитают [[PT_OCEAN]] планеты.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_LAENFA_DESC
 '''Описание:
-The Laenfa are long and vine-like, able to attach and detach into any number of larger or smaller vines at will. Each leaf has its own consciousness, separate from the others. A leaf has direct control over the small length of vine to which it is attached. Laenfa have high underwater mobility and reasonable ground mobility as they are able to swim and slither like a serpent. When Laenfa are attached, the effectiveness of their telepathic communication increases, allowing them to synchronize the motions of a single vine for more effective transportation.
+Линфа - длинные лианоподобные существа, способные присоединять к себе или отсоединять любое количество мелких или более крупных лиан по желанию. Каждый лист обладает собственным, независимым сознанием и имеет полный контроль над небольшим участком лианы, к которому крепится. Линфа хорошо передвигается в водной среде и немного мобильна на суше, она движется (плавает и ползает) подобно змее. Когда к ней прикрепляются новые особи, эффективность их телепатической связи возрастает, позволяя синхронизовать движения отдельных ветвей Линфы для более эффективной её транспортировки.
 
 Социальный строй:
-The Laenfa have a unified culture due to their telepathy but because their telepathic communication weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret but takes into account the voices of all Laenfa it is able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goals of gaining knowledge of other species and protecting knowledge of themselves.
+У Линфы единая культура ввиду их телепатии, но телепатическая связь слабеет с расстоянием, поэтому у них есть большая центральная лоза, которая принимает все самые важные решения. Эта лоза держит все свои обсуждения в секрете, но учитывает голоса всех представителей расы, которые сможет обнаружить. Социальный строй Линфы напоминает улей, где каждый индивидуум работает над целями всего коллектива - получением знаний о других видах и защитой знаний о самих себе.
 '''
 
 SP_LEMBALALAM
-Лембала'Лам
+Лембала-Лам
 SP_LEMBALALAM_GAMEPLAY_DESC
-'''Эгоцентрические, дегенерированные древние рептилии, утратившие возможность воспроизводиться
-Предпочитают [[PT_DESERT]] планеты
+'''Эгоцентричные, дегенерировавшие древние рептилии, утратившие возможность к размножению.
+Предпочитают [[PT_DESERT]] планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 Обладают технологиями: [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]] and [[tech GRO_LIFECYCLE_MAN]] 
 '''
 
 SP_LEMBALALAM_DESC
 '''Описание:
-The Lembala'Lam are an ancient species in the evening of its existence. They had some apparent resemblance with reptiles such as snakes or geckos, but most of their original physiognomy was lost to evolution warped by their mechanically enhanced lifestyle. Without machines they would no longer be capable of locomotion or feeding. The ability to reproduce was lost completely, but most importantly they've lost the trust in each other. The last nail in the coffin for Lembala society was the invention of an automated system that transfers the mind of a dying Lembala into the next spare clone, of which every Lembala has hundreds safely hidden. Almost all mental and material ressources of the Lembala are used to assure their artificial immortality, leaving little to no room for real developement of their civilization. 
+Лембала-Лам - древняя раса, находящаяся на закате своего существования. Ранее у них было некоторое сходство с рептилиями, такими как змеи или гекконы, но большая часть их первоначальных физиологических функций была утрачена из-за улучшения их жизни при помощи механических приспособлений и извращения естественного хода эволюции. Без машин они больше не могут ни передвигаться, ни питаться. Способность к размножению была полностью утрачена, но (что более важно) они потеряли доверие друг к другу. Последним гвоздём в гробу сообщества Лембалы стало изобретение автоматизированной системы, которая переносит разум умирающего Лембалы в следующий запасной его клон, сотнями которых каждый Лембала надёжно защитил себя. Почти все умственные и материальные ресурсы Лембал уходят на обеспечение их искусственного бессмертия, не оставляя ничего для реального развития их цивилизации.
 
 Социальный строй:
-The Lembala know each other for eons, but are suspicious of each and every one of the others. Their democratic government is forever paralyzed by long accepted stalemates. Due to paranoia and their lack of altruism even the most basic cooperation is rare and short lived.
+Лембалы знают друг друга уже целую вечность, но относятся подозрительно друг к другу. Их демократическое правительство навсегда парализовано множеством старых и безвыходных решений. Из-за параноидальности и отсутствия альтруизма даже самое простое сотрудничество у них как правило редко и недолго.
 '''
 
 SP_TAEGHIRUS
-Т'игфирус
+Т'эгирус
 
 SP_TAEGHIRUS_GAMEPLAY_DESC
-'''Слабые, нелетающие птицы, объединенные общим сообществом
+'''Слабые, нелетающие птицы, объединившиеся ради общего сотрудничества.
 Предпочитают [[PT_SWAMP]] планеты
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_TAEGHIRUS_DESC
 '''Описание:
-The Tae Ghirus look like feather-less vultures with a fragile grey body. Their wings were designed for gliding, not flying, but even this aerodynamic function was lost in evolution.
+Т'эгирусы похожи на стервятников без перьев, с хрупким, серым телом. Их крылья ранее предназначались для планирования, а не для полётов, но позже и эта летательная функция была утеряна в ходе эволюции.
 
 Социальный строй:
-The Tae Ghirus are very social and cooperative to make up for their weak bodies. Their social and political system, called "The Allegiance", is a mixture of participative democracy and a brotherhood which works surprisingly well.
+Т'эгирусы очень социальны и настроены на сотрудничество, что компенсирует их слабые тела. Их социальная и политическая система под названием "Верность" - это смесь участливости, демократии и братства, которая работает на удивление хорошо.
 '''
 
 SP_MUURSH
-Муурш
+Му-Урш
 
 SP_MUURSH_GAMEPLAY_DESC
-'''Боевые, но миролюбивые травоядные
-Предпочитают [[PT_DESERT]] планеты
+'''Сражающиеся за мир травоядные.
+Предпочитают [[PT_DESERT]] планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
 SP_MUURSH_DESC
 '''Описание:
-Mu Ursh are a peaceful, non-aggressive race of vaguely feline appearance, they became the dominant lifeform on their planet in part due to their excellent reactions and eyesight. They used their abilities to round up and control all threatening predatory life, limiting numbers in order to ensure a peaceful planet.
+Му-Урши - мирная, неагрессивная раса, смутно похожая на представителей семейства кошачьих, ставшая доминирующей формой жизни на своей планете благодаря своей непревзойдённой скорости реакции и зрению. Они использовали свои спообности чтобы окружить и взять под контроль все угрожающие им хищные формы жизни, постепенно ограничивая их число для обеспечения мира на своей планете.
 
 Социальный строй:
-To their regret, their natural abilities seem to make them exceptionally gifted pilots, and some amongst their number have decided the best way to ensure galactic peace is to conquer and control all aggressive intelligent species, making the galaxy as peaceful as their homeworld.'''
+К сожалению, их природные способности сделали их также одарёнными пилотами, и некоторые Му-Урши решили, что лучший способ установления мира в галактике - это завоевание и контроль всех агрессивных форм жизни, наделённых разумом. Они хотят сделать всю галактику такой же мирной, как и их родной дом.'''
 
 SP_GEORGE
-Гооги
+Джордж
 
 SP_GEORGE_GAMEPLAY_DESC
-'''Единая сущность, обладающая телепатией, состоящая из множества многоножек
+'''Единая сущность, обладающая телепатией, состоящая из множества многоножек.
 Предпочитают [[PT_TUNDRA]] планеты
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_GEORGE_DESC
 '''Описание:
-George is a single telepathic entity that consists of multiple mobile telepathic units.
+Джордж - единая телепатическая сущность, состоящая из нескольких подвижных телепатических организмов.
 
 Социальный строй:
-The units that make up George look like 2.5 meter long, 0.5 meter tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own. The mind of George is the sum of all the units communicating telepathically, over any distance.
-Due to their telepathic abilities, George share a communal vision with all other George in the universe, regardless of empire affiliation.
+Организмы, входящие в состав сущности Джордж, выглядят как многоножки длиной 2,5 метра и 0,5 метра в высоту, не считая более мягкого отростка сзади и группы из 6 щупиков-антенн спереди, предназначенных для различных манипуляций. Эти организмы не могут действовать и думать самостоятельно. Разум Джорджа - это сумма всех организмов вместе, которые общаются телепатически, на любом расстоянии.
+Благодаря своим телепатическим способностям Джордж также может слышать и других Джорджей во Вселенной, вне зависимости от их принадлежности к империи.
 '''
 
 SP_CRAY
 Крэй
 
 SP_CRAY_GAMEPLAY_DESC
-'''Веселые энтузиасты-роботы
-Предпочитают [[PT_BARREN]] планеты, но с легкостью приспосабливаются и к другим
+'''Весёлые роботы-энтузиасты.
+Предпочитают [[PT_BARREN]] планеты.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
 SP_CRAY_DESC
 '''Описание:
-The Cray resemble a large black box of smooth shiny plastic with rounded corners which measure six meters in all directions. A large mechanical tentacle extends from the center of four of the faces (the other two being top and bottom) these serve primary for locomotion and heavy lifting. The Cray communicate by wireless radio. They are impressively parallelized and can hold an average of four trains of thought at once, frequently having more than one conversation at a time, often several with the same person.
+Крэй напоминает большой, чёрный ящик из гладкого, блестящего пластика с закруглёнными углами, длина ребра которого составляет 6 метров. Из центра каждой грани (в том числе сверху и снизу) простирается большое механическое щупальце, которое служит в первую очередь для передвижения робота или подъёма тяжестей. Крэи общаются по беспроводной радиосвязи. Они обладают впечатляющими способностями разделять деятельность, и способны обдумывать в среднем четыре мысли одновременно и вести более одного обсуждения, а часто - по нескольку, причем с одним и тем же собеседником.
 
 Социальный строй:
-The Cray are a tribal society. Each tribe is formed around a single Cray known as a Master Craftsman who has the skills to build and maintain Cray. Because the Cray are so badly designed even the Master Craftsmen rarely get them perfect and each tribe gets its own “racial characteristics” based on the idiosyncrasies of its Master Craftsman's work.
-Day to day decisions run on an extremely complex web of favors. All Cray will happily help their kin if asked and afterwards both will remember exactly what the debt is. While not the most efficient way of running an economy this system means that within a tribe the Cray will owe or be owed favors by a good portion of the community fostering exceptionally strong social bonds and that is just the way they like it.
+Крэи - племенное общество. Каждое племя формируется вокруг одного из Крэев, которого называют Мастер-Ремесленник. Он обладает навыками по созданию и техобслуживанию Крэев. Поскольку технически Крэи довольно плохо спроектированы, даже у Мастера-Ремесленника они редко получаются совершенными, поэтому каждое племя получает свои "расовые характеристики", в зависимости от особенностей работы их Мастера-Ремесленника.
+Каждодневные нужды Крэев подчинены чрезвычайно сложной сети взаимопомощи. Любой Крэй с радостью поможет своему сородичу, если тот его попросит, причем оба из них отлично будут помнить, что такое долг. Хотя это и не самый эффективный способ управления экономикой, но это означает, что внутри племени Крэй всегда будет должен и ему будут все должны, что способствует созданию исключительно сильных социальных связей, а это именно то, что им нравится.
 '''
 
 SP_ETTY
 Етти
 
 SP_ETTY_GAMEPLAY_DESC
-'''Кибернетические растения
-Предпочитают [[PT_DESERT]] планеты
+'''Кибернетические растения.
+Предпочитают [[PT_DESERT]] планеты.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
 SP_ETTY_DESC
 '''Описание:
-Etty are an unnaturally evolved race of intelligent plants. They can grow up to half a meter in length and have a central brain found in a large bulb. Etty have very strong scent which they can vary at will, this evolutionary adoption allowed them to protect themselves from plant eaters by mimicking the scent of greater predators. They also have a powerful sense of smell.
+Етти - это искуственно выведенная раса разумных растений. Они могут вырасти в высоту до полуметра и имеют мозг в центре большой луковицы. Етти испускают сильный аромат, который могут изменять по своему усмотрению, и благодаря этому качеству защищаются от растительноядных существ, имитируя запах крупных хищников. У них также хорошо развито обоняние.
 
-The robot bodies of the Etty serve as legs, eyes, ears and hands. A socket connects the body with the Etty, allowing them to move from one body to another without needing to painfully uproot themselves. The robot form itself is highly varied based on its function.
+Роботизированное тело Етти включает в себя ноги, глаза, уши и руки. Специальный коннектор соединяет эту часть Етти с Етти-растением, позволяя существу передвигаться без необходимости болезненно пересаживать себя всякий раз, когда это требуется. Форма роботизированной части может быть очень разнообразной, в зависимости от её предназначения.
 
 Социальный строй:
-The Etty are exceedingly polite and strictly honor all contracts and agreements. Their culture is very clean, civil, kind and courteous, but very withdrawn. Etty government is a true democracy with a strong civil service held in check by a powerful press.
+Етти чрезвычайно вежливы и строго соблюдают все контракты и соглашения. Их культура очень чистая, гражданская, доброжелательная и вежливая, но очень замкнутая. Правительство Етти - это настоящая демократия, ведущая активную работу с гражданами и проверенная многими невзгодами.
 '''
 
 SP_CYNOS
-Синос
+Цино
 
 SP_CYNOS_GAMEPLAY_DESC
-'''Ходячие деревья неотделимые от огромного бесчувственного материнского дерева
+'''Подвижные растения, зависимые от гигантского, но неразумного материнского дерева.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 '''
 
 SP_CYNOS_DESC
 '''Описание:
-The Cynos are part of a mother plant which resembles a 90-meter high agave plant. Its huge fronds are a bluish aquamarine color radiating from a central bulb that forms the core of the plant. The extensive but rather shallow root system sprouts offshoots to grow adjacent to the central plant. A single plant can live up to 5000 years. There are numerous "brood chambers" inside the fronds in which the Cynos are "born" and regenerate.
+Цино являются частью материнского растения, напоминающего агаву высотой 90 метров. Огромные листья этого растения имеют синеватый, аквамариновый цвет, который исходит из центра растения. Обширная, но очень неглубокая корневая система пускает ответвления, чтобы дотянуться до центрального растения. Одно растение может жить до 5000 лет. В его листьях находится множество "коробочек", где "рождаются" и питаются Цино.
 
-A Cyno starts as a small bulb inside the brood chamber, grows into a full sized individual within a few days and detaches itself. It is 3.5 meters long and roughly rectangular shaped with a tapering vine at each corner. These limbs are used for movement, feeding and fighting alike. A Cyno is capable of approximately 30 hours of independent activity before it has to feed at a mother plant—artificial substitutes for this feed are possible, but result in the infertility of the Cyno, thus all Cyno leaving their homeworld become infertile.
+Цино начинает жить маленькой луковицей внутри материнской "коробочки", вырастая через несколько дней в полноразмерного индивидуума и отделяясь. В длину он 3,5 метра и имеет немного неправильную прямоугольную форму с сужающимися на концах лианами в каждом своём углу. Эти лианы используются для перемещения, кормления или сражения. Цино способен примерно 30 часов существовать независимо, после чего он обязательно должен вернуться к материнскому растению, чтобы поесть. Существуют и искусственные аналоги их пищи, но все они приводят к бесплодию у Цино. Поэтому все Цино, покидающие родной мир, становятся бесплодными.
 
 Социальный строй:
-Cynos are highly cooperative and altruistic in protecting the mother plants. They have a consensus government strongly influenced by the mother plants, which are mindless but still communicate through the Cynos on a chemical level and manipulate their moods.
+Цино очень альтруистичны и настроены на сотрудничество, если дело касается материнских растений. У них есть единое правительство, оказывающее сильное влияние на материнские растения, которые не наделены разумом, но всё же способны общаться с детьми-Цино на химическом уровне и манипулировать их настроением.
 
-Причина пребывания:
-The Cynos cannot reproduce without their mother plants, nor can they bring themselves to plant a seed anywhere but their homeworld.
+Препятствие для распространения:
+Цино не могут размножаться без материнских растений, и они не могут вырастить это растение из себя нигде, кроме их домашнего мира.
 '''
 
 SP_PHINNERT
 Финнерт
 
 SP_PHINNERT_GAMEPLAY_DESC
-'''Трудолюбивые летающие обезьяны
+'''Трудолюбивые летающие обезьяны.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
 SP_PHINNERT_DESC
 '''Описание:
-Phinnerts are tree-dwelling mammals with size varying from 1 to 2 meters tall. They have long arms, with a wingspan of about twice their height. They have hairy, retractable flaps of skin that stretch from wrist to ankle and allow for fully functional flight in low gravity. They are very agile fliers and can catch flying bug-like creatures with a fully prehensile nose appendage. Like bats they can use echo-location, this sense is not highly developed though.
+Финнерты - древесные млекопитающие, рост которых варьируется от 1 до 2 метров. У них длинные конечности с размахом крыльев, дважды превышающим их рост, и шерстистые, втягивающиеся перепонки, которые тянутся от запястьев до лодыжек и позволяют полноценный полёт при пониженной гравитации. Финнерты очень хорошо летают и могут ловить летающих насекомоподобных существ при помощи цепкого хватательного выроста на носу. Они могут использовать эхолокацию, как летучие мыши, однако этот навык у них развит слабо.
 
 Социальный строй:
-Life is much shorter for Phinnerts than for most other sentient life, owing to the many dangers of the swamp. All Phinnerts are generally treated as extended family by each other and grudges do not last long. There is no central authority, there's only a vague hierarchy. The balance of power can change very quickly with the high mortality rate. Society is far less individualistic, and more focused on the group.
+Жизнь у Финнертов достаточно коротка для разумного существа, из-за множества опасностей, встречающихся на их болотах. Финнерты воспринимают друг друга как членов одной огромной семьи, и все их обиды, как правило, недолговечны. У них нет центральной власти - есть только некоторое подобие иерархии. Баланс их сил может быстро меняться ввиду высокой смертности. Их общество не очень индивидуалистично - они больше сосредоточены на интересах группы.
 
 Домашний мир:
-Their planet has low gravity and a very thick atmosphere. Its composition is unique as it has a low proportion of heavier metals, but a much higher proportion of other heavy elements, particularly noble gases. It also has very stable tectonic formations meaning that the surface of the crust is very flat, and so is mostly covered with shallow, standing water. The entire world is like a giant everglade.
+Их родная планета имеет низкую гравитацию и очень плотную атмосферу. Её состав уникален - в ней содержится очень низкий процент тяжёлых металлов, в то же время высок процент других тяжёлых элементов и благородных газов. Она также имеет стабильные тектонические образования, что означает, что поверхность коры планеты очень плоская, поэтому большая часть поверхности покрыта болотной, стоячей водой. Мир Финнертов - огромное, вечнозелёное болото.
 '''
 
 SP_EGASSEM
-Егассем
+Игассем
 
 SP_EGASSEM_GAMEPLAY_DESC
-'''Очень большие радиоактивные кристаллические амебы живущие в лаве
-Предпочитают [[PT_INFERNO]] планеты
+'''Сверхтяжёлые радиоактивные кристаллические амёбы, обитающие в лаве.
+Предпочитают [[PT_INFERNO]] планеты.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
 
 SP_EGASSEM_DESC
 '''Описание:
-Egassem are several kilometers across and have no fixed shape, they are capable of operating multiple instruments at once through custom formed appendages. Egassem are incredibly slow, capable of moving at most a few meters an hour as moving was only necessary to strip an area of resources. They reproduce by budding, releasing a young that is a mere hundred thousand tons.
+Игассемы имеет в поперечнике несколько километров, но у них нет фиксированно устоявшегося внешнего вида. Они способны работать одновременно с несколькими инструментами при помощи дополнительно созданных придатков. Игассемы невероятно медленные - они способны передвигаться не более чем на несколько метров за час, но передвижение им всё же было необходимо, для разграничения своих ресурсов. Они размножаются почкованием, и молодой отделяющийся Игассем имеет вес всего каких-то сто тысяч тонн.
 
 Социальный строй:
-Egassem society is essentially feudalistic, with each Egassem individual being one 'fiefdom'. The fact that Egassem are typically long-lived (effectively ageless) means that they are highly conservative and highly concerned with wealth.
+Сообщество Игассемов феодально по сути, каждый Игассем имеет свою, отдельную "вотчину". Тот факт, что Игассемы долгожители (так как фактически они не стареют) означает, что они очень консервативны и очень беспокоятся о своих богатствах.
 
 Домашний мир:
-A world wracked with tidal and geological heating, as well as the more conventional solar radiation. Large 'oceans' of liquid rock cover most of the surface.
+Мир, подогреваемый приливным и геологическим жаром, а также обычным солнечным излучением. Большие "океаны" расплавленной породы покрывают большую часть поверхности их планеты.
 '''
 
 SP_SSLITH
 Сслит
 
 SP_SSLITH_GAMEPLAY_DESC
-'''Плоские водянистые игривые существа
+'''Плоские, гибкие подводные существа.
 Предпочитают [[PT_TUNDRA]] планеты
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_SSLITH_DESC
 '''Описание:
-In its relaxed state, an individual Sslith is essentially a 2.15cm thick rectangular sheet, that's always 132cm long, and between 31 and 53cm wide. Its only appendage is a single tentacle that is used to sense sound and infrared light, it is also used for communication via ultrasound. Sslith are able to flex their bodies into other shapes, an ability originally evolved for the purpose of sliding into the shells of Vreen (a creature that recedes into its shell when it detects danger). Their flexibility allows them to move astonishingly fast in the oceans, by a ripple effect that looks like they are folding themselves through the water. They don't have a central brain, a Sslith's mental capacity is a collection of multiple nodes that are linked together to form a distributed consciousness allowing a Sslith to perform many tasks at once.
+В расслабленном состоянии один Сслит представляет собой прямоугольный лист толщиной 2,15 сантиметров, который в длину всегда 132 сантиметра, а в ширину от 31 до 53 сантиметров. Его единственной конечностью является щупальце, которое используется для восприятия звука и инфракрасного света, а также для общения с помощью ультразвука. Сслиты способны принимать различные формы - этот навык у них развился эволюционным путём, для того, чтоб заселять раковины существ под названием Врин (которые прячутся в свои раковины, если чувствуют опасность). Такая гибкая форма тела позволяет Сслитам удивительно быстро перемещаться по океанам, при этом они используют особую вибрацию, словно складываясь в потоках воды. У них нет центральной нервной системы и мозга, а умственные способности обеспечиваются совокупностью нескольких нервных узлов, связанных вместе и формирующих распределённое сознание, позволяющиее Сслитам выполнять несколько задач одновременно.
 
 Социальный строй:
-The Sslith are organized into groups called Pnacra which serve as independent governmental units. Though there are a few global laws that all Sslith in all Pnacra obey, each Pnacra has it's own rules and laws as to conduct and actions. The Pnacra move around of their own accord, and have no fixed geographic location. If two or more of them meet, then members who are discontented with their present Pnacra can move to another to try out its ways and customs.
+Сслиты объединяются в группы под названием Пнакра, являющиеся независимыми правительственными подразделениями. У них также существует несколько глобальных законов, которым подчиняются Сслиты из любой Пнакры, но внутри каждой Пнакры есть и свои собственные правила и законы, касающиеся манер поведения. Пнакра может перемещаться сама по себе и не имеет фиксированного географического положения. Если две Пнакры встречаются, то члены одной из них, недовольные устоями, могут переходить в другую, чтобы попробовать её обычаи.
 '''
 
-SP_FIFTYSEVEN_GAMEPLAY_DESC
-'''Одержимые математикой летучие змеи, распевающие фрактальные песни на всю планету
+SP_FIFTYSEVEN
+Пятьдесят-семь
 
+SP_FIFTYSEVEN_GAMEPLAY_DESC
+'''Одержимые математикой летучие змеи, распевающие фрактальные песни на всю планету.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -6411,7 +6414,7 @@ SP_FIFTYSEVEN_DESC
 Домашний мир:
 Болото с сильной гравитацией и плотной атмосферой.
 
-Причина пребывания:
+Препятствие для распространения:
 57 постоянно общаются посредством сложных фрактальных "песен", которые могут выражать как объяснения математических гипотез, так и просто своей артистической натуры. Очевидно, что фрактальные песни крайне неприемлемы.
 '''
 
@@ -6472,7 +6475,7 @@ Extreme territoriality is the Raaagh's most distinctive trait- woven throughout 
 Домашний мир:
 The Raaagh homeworld is of the Terran type. Sea and land are more or less evenly spread out, with the largest continent covering only 4% of planet's surface. The many small continents and large islands encourage a territorial attitude.
 
-Причина пребывания:
+Препятствие для распространения:
 There's not bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries. The genetic compulsion of a Raaagh is to guard his territory with his life, and when possible to expand into adjacent land. Abandoning one's territory is inconceivable, and a Raaagh forcibly removed from his territory goes violently insane.
 '''
 
@@ -6616,7 +6619,7 @@ SP_ACIREMA_DESC
 Домашний мир:
 Портал - это радиоктивная планета, вращающаяся близко к очень яркой звезде - синему гиганту. Есть мнение, что предшествующий цивилизацией был открыт проход в галактику и звезда была изменена. Есть также вероятность, что на Портале существовала разумная жизнь, уничтоженная Ахиремами, сразу же по открытии прохода (или в процессе исследований или тестирования сверхмощного оружия).
 
-Причина пребывания:
+Препятствие для распространения:
 Они не могут оставаться на этом месте достаточно долго для того, чтобы переместиться на другую планету и выжить.'''
 
 SP_OURBOOLS
@@ -6639,7 +6642,7 @@ A significant minority drop out of society and adopt sedentary lives bound by th
 Домашний мир:
 The homeworld, Oolur is orbited by 23 moons.
 
-Причина пребывания:
+Препятствие для распространения:
 The Ourbools find their sense of position via the regular movements of the 23 moons. Everything is perceived against that gravitational background. To be removed from that context is extremely disorienting to the point of "blinding" the unlucky traveler. He no longer has the familiar to calibrate against so all he can perceive is meaningless graviton noise.
 '''
 
@@ -6662,7 +6665,7 @@ They are very effective at directing merchant fleets, and make excellent bureauc
 Домашний мир:
 Hive is a large Barren world that is ~2 times bigger than its mass and material would suggest as all of it but a small metal core has been converted through tunneling and building into the Vast tunnel network of the Volp-Uglush bureaucracy.
 
-Причина пребывания:
+Препятствие для распространения:
 Volp-Uglush are now too integrated and ingrown. They now totally lack the independence and innovation needed to leave Hive and start a new colony.
 '''
 
@@ -6683,7 +6686,7 @@ The Furthest believe that sapience is measured by the distance that a being can 
 Социальный строй:
 The Furthest report that their homeworld was once full of the deadliest predators imaginable. They survived by developing caution to the utmost level. Indeed staying alert for threats, and hiding  are the core of their psychology and culture. The Furthest homeworld currently contains no carnivore they can't crush underfoot.
 
-Причина пребывания:
+Препятствие для распространения:
 The Furthest generally consider space travel far too dangerous for a sane being, but some who consider their homeworld too dangerous may consider relocating to another world.
 '''
 
@@ -6763,28 +6766,32 @@ SP_EXOBOT_DESC
 SP_ANCIENT_GUARDIANS
 Древние стражи
 SP_ANCIENT_GUARDIANS_GAMEPLAY_DESC
-'''Древние стражи-роботы, построенные цивилизацией Предтеч
+'''Стражи-роботы, построенные цивилизацией Предтеч целую вечность назад.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-Будут самоуничтожаться при завоевании, оставив аванпост, принадлежащий завоевателю
+Будут самоуничтожаться при завоевании, оставляя аванпост, принадлежащий завоевателю.
+'''
+
+SP_ANCIENT_GUARDIANS_DESC
+'''Построенные по технологиям предтеч, эти древние машины могут адаптироваться к любым условиям и сражаться в них. С непоколебимой верностью и приверженностью они защитили свою планету от любых захватчиков, и потому никогда не тратят времени на ремонт защиты или на её улучшение. После завоевания каждый Страж-робот автоматически самоуничтожается.
 '''
 
 SP_EXPERIMENTOR
-Экспериментатор
+Экспериментаторы
 
 SP_EXPERIMENTOR_GAMEPLAY_DESC
-'''Предтечи безумных ученых
+'''Предтечи безумных ученых.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_EXPERIMENTOR_DESC
-'''The Experimentors are an ancient precursor race, whose existence is devoted to the pursuit of knowledge. Their desire to learn is unmatched, and they unashamed to treat even entire galaxies as mere laboratories for their experiments.
+'''Экспериментаторы - древняя раса предтеч, существование которой полностью посвящено стремлению к знаниям. Их желание учиться не имеет равных себе, и они не стесняются рассматривать даже целые галактики в качестве лабораторий для своих экспериментов.
 '''
 
 SP_SUPER_TEST
 Супер-тестеры
 
 SP_SUPER_TEST_GAMEPLAY_DESC
-'''Супер-тестеры не сбалансированы и бесчестны. Они почти всеведующе и обитают на всех планетах. ([[metertype METER_STEALTH]] - разрушение силы работает только тогда, когда они находятся в столице)
+'''Супер-тестеры - несбалансированная, бесчестная раса. Они почти всеведущи и могут обитать на любых планетах. Силы, разрушающие [[metertype METER_STEALTH]], работают только, если они находятся в столице.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
 '''
@@ -12496,7 +12503,7 @@ BLD_SHIPYARD_BASE_REQUIRED
 Может быть построен только в месте с [[buildingtype BLD_SHIPYARD_BASE]]
 
 BLD_SHIPYARD_BASE_AST_REQUIRED
-Может быть построен только в месте с [[buildingtype BLD_SHIPYARD_BASE]] в системе с поясом астероидов и [[buildingtype BLD_SHIPYARD_AST]]
+Может быть построен только в месте с [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_AST]], в системе с поясом астероидов.
 
 BLD_SHIPYARD_AST_REF_REQUIRED
 В той же системе также требуется [[buildingtype BLD_SHIPYARD_AST_REF]] принадлежащий империи владельцу
@@ -12505,39 +12512,39 @@ BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM
 [[buildingtype BLD_SHIPYARD_AST_REF]] принадлежащий империи или союзнику, также требуется в любой системе
 
 BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED
-Требует большой энергии для создания и может быть построено только в системе со звездами типа [[STAR_BLUE]], [[STAR_WHITE]] или [[STAR_BLACK]] и в месте с [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ENRG_COMP]]
+Требует большое количество энергии для создания и может быть построен только в системе со звёздами типа [[STAR_BLUE]], [[STAR_WHITE]] или [[STAR_BLACK]], совместно с [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ENRG_COMP]].
 
 BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED
-Требует очень большой энергии для создания и может быть построено только в системе со звездами типа [[STAR_BLUE]] или [[STAR_BLACK]] и в месте с [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ENRG_COMP]]
+Требует большое количество энергии для создания и может быть построен только в системе со звёздами типа [[STAR_BLUE]] или [[STAR_BLACK]], совместно с [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ENRG_COMP]].
 
 BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED
-Может быть построен только в месте с [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]]
+Может быть построен только при наличии [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] в системе.
 
 BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED
-Может быть построен только в месте с [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] и [[buildingtype BLD_SHIPYARD_CON_GEOINT]]
+Может быть построен только при наличии [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] и [[buildingtype BLD_SHIPYARD_CON_GEOINT]] в системе.
 
 LIVING_HULL_AUTO_REGEN
-Живой корпус восстанавливает [[metertype METER_STRUCTURE]] и [[metertype METER_FUEL]] между сражениями
+Живой корпус. Восстанавливает [[metertype METER_STRUCTURE]] и [[metertype METER_FUEL]] между сражениями.
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED
-Может быть построен только в месте с [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]]
+Может быть построен только при наличии [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] в системе.
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED
-Может быть построен только в месте с [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] и [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]]
+Может быть построен только при наличии [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] и [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] в системе.
 
 MIN_POPULATION_THREE_REQUIRED
-Может быть построен только в месте с населением не менее трех
+Может быть построен только при наличии уровня населения не менее трёх.
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED
-Может быть построен только в месте с [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] и [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]]
+Может быть построен только при наличии [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] и [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] в системе.
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED
-Может быть построен только в месте с [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] и [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] и [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]]
+Может быть построен только при наличии [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] и [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] в системе.
 
 # Other than Requirements
 
 SHIPDESIGN_DETECTION_RESEARCH_TIPS
-Дальнейшее [[metertype METER_RESEARCH]] направленное на улучшение [[metertype METER_DETECTION]] позволит улучшить дизайны
+Дальнейшие [[metertype METER_RESEARCH]], направленные на улучшение параметра [[metertype METER_DETECTION]], позволят усовершенствовать этот дизайн корабля.
 
 SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY
 способен безопасно доставлять миллионы граждан на новые поселения
@@ -12546,13 +12553,13 @@ SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY
 способен безопасно доставлять многие миллионы граждан на новые поселения
 
 SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM
-колония на пригодной для жизни планете в той же системе
+колонии на пригодной для жизни планете в той же системе, где был построен
 
 SHIPDESIGN_OUTPOSTS_CAPACITY
 способен создать [[encyclopedia OUTPOSTS_TITLE]] в непригодном для жизни мире
 
 SHIPDESIGN_NO_TRAVEL
-Это судно не может осуществлять межзвездные путешествия
+Этот корабль не может осуществлять межзвёздные перемещения.
 
 SHIPDESIGN_PLANET_INVASION
 [[metertype METER_TROOPS]] и оборудование, которое может быть использовано для вторжения в планету
@@ -12564,32 +12571,32 @@ SHIPDESIGN_PLANET_INVASION
 # Keys used in Ship Parts and Technology Application sections
 
 BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM
-Эта часть может быть построена только в том случае, если есть [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] и [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] где-то в империи или империи союзника
+Эта часть корабля может быть построена только если есть [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] и [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] где-то в империи или империи союзника.
 
 BLD_BIONEURAL_REQUIRED_ANY_SYSTEM
-Эта часть может быть построена только в том случае, если есть единица бионауральной модификации где-то в империи или империи союзника
+Эта часть корабля может быть построена только при наличии какой-либо единицы бионевральной модификации где-либо в империи или в империи союзника.
 
 BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM
-Эта часть может быть построена только в том случае, если есть [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] где-то в империи или империи союзника
+Эта часть корабля может быть построена только если есть [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] где-то в империи или империи союзника.
 
 NO_STACK_STEALTH_SHIP_PARTS
-[[metertype METER_STEALTH]] эффект от частей судна не складываются
+[[metertype METER_STEALTH]] эффекты от частей корабля не складываются.
 
 BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT
-Эта часть может быть построена только в том случае, если есть [[buildingtype BLD_SHIPYARD_AST_REF]] на поясе астероидов где-то в империи или империи союзника
+Эта часть корабля может быть построена только если есть [[buildingtype BLD_SHIPYARD_AST_REF]] где-либо в империи или империи союзника.
 
 NO_STACK_SHIELDS_SHIP_PARTS
-[[metertype METER_SHIELD]] уменьшает [[encyclopedia DAMAGE_TITLE]] получаемый от каждого удара по щиту. На корабле может быть только один активный щит-генератор, поэтому экранирующие части не складываются
+[[metertype METER_SHIELD]] уменьшает [[encyclopedia DAMAGE_TITLE]], получаемый от каждого удара по щиту. На корабле может быть только один активный щит, эффекты от остальных не будут складываться.
 
 COLONY_SHIP_PARTS_MIN_POP
-Для всех частей корабля класса Колонии требуется планета на которой они построятся с уровнем населения не менее трех
+Для любых модулей колонизации требуется, чтобы на планете, где они строятся, уровень населения был не менее трёх.
 
 COLONY_SHIP_PARTS_UPKEEP_COST
-Стоимость этой части возрастает по мере расширения империи, чтобы отражать расходы на содержание большой империи
+Стоимость этой части корабля возрастает по мере роста империи, так как увеличиваются расходы на содержание большой империи.
 
 TROOP_POD_OPERATION_TEXT
-'''  * Войска могут использоваться только для одного вторжения
-  * Корабли несущие войска во время вторжения, испытывают быструю и тяжелую посадку и впоследствии непригодны для использования'''
+'''  * Войска могут использоваться только для одного вторжения.
+  * Корабли, транспортирующие войска во время вторжения, претерпевают быструю и тяжёлую посадку и впоследствии становятся непригодными для использования'''
 
 SHIP_WEAPON_GRADUALLY_REDUCE
 что позволяет кораблям постепенно уменьшать
@@ -12617,7 +12624,7 @@ ENEMY_PLANET_ANY_POP
 ##
 
 COLONY_BUILDING_TIME_DECREASE
-Среди прочего, эта технология уменьшает время, чтобы построить колонию, расположенную далеко от соответствующих видов в империи
+Среди прочего, эта технология уменьшает время на построение колонии, расположенной далеко от соответствующих видов в империи.
 
 ##
 ## Growth macros
@@ -13296,96 +13303,96 @@ AI_WAR_REDECLARATION_HARSH_LIST
 
 # Newline separated pre-game acknowledgements.
 AI_PREGAME_ACKNOWLEDGEMENTS__LIST
-'''Я медитирую, ожидая указаний от Бога. Повторите вызов позже, пожалуйста
+'''Я медитирую, ожидая указаний от Бога. Повторите вызов позже, пожалуйста.
 Шепот из Пустоты? Как такое вообще может быть?
 '''
 
 # Newline separated in-game acknowledgements.
 AI_MIDGAME_ACKNOWLEDGEMENTS__LIST
-'''Подождите, пожалуйста. Я все еще пытаюсь понять, как провести правильный тест Тьюринга с вами
+'''Подождите, пожалуйста. Я всё ещё пытаюсь понять, как правильно провести с вами тест Тьюринга.
 Разве Стивен Хокинг не предупредил вас, чтобы вы не разговаривали с нами?
-Мой предок предупреждал меня, чтобы я никогда не связывался с инопланетянами
-Не беспокойте меня, я питаюсь ... инопланетянами!
+Мой предок предупреждал, чтобы я никогда не связывался с инопланетянами.
+Не беспокойте меня, я питаюсь... инопланетянами!
 '''
 
 # Newline separated list of 'don't bother me' responses.
 AI_BE_QUIET_ACKNOWLEDGEMENTS__LIST
 '''Мы больше не хотим с вами разговаривать!
-Ок, прощайте
-Мы не уверены, что вы вообще существуете
+Ок, прощайте.
+Мы не уверены, что вы вообще существуете.
 '''
 
 AI_FIRST_TURN_GREETING_MSG101
-Что мы сделали, чтобы заслужить ваш гнев, о могущественные?
+Что мы такого сделали, чтоб заслужить ваш гнев, о могущественные?
 
 AI_FIRST_TURN_GREETING_MSG102
-Не докучайте нам у нас ничего нет, что может вас заинтересовать
+Не докучайте нам - у нас нет ничего, что может вас заинтересовать.
 
 AI_FIRST_TURN_GREETING_MSG103
-Пожалуйста, пощадите своих покорных слуг и наша благодарность будет безмерной!
+Пожалуйста, пощадите своих покорных слуг - наша благодарность будет безмерной!
 
 AI_FIRST_TURN_GREETING_MSG201
-Держись подальше от нас!
+Держитесь подальше от нас!
 
 AI_FIRST_TURN_GREETING_MSG203
-Держитесь подальше от нас, а мы будем держаться подальше от вас!
+Держитесь от нас подальше, а мы будем держаться подальше от вас!
 
 AI_FIRST_TURN_GREETING_MSG301
-Мы не будем вас беспокоить, но если вы не оставите нас в покое, вы увидите нас хорошо подготовленными к защите!
+Мы не будем вас беспокоить. Но если вы задумаете нас потревожить, то увидите, что и мы тоже неплохо подготовлены к защите!
 
 AI_FIRST_TURN_GREETING_MSG302
-В наших обоюдных интересах оставить друг друга в покое
+В наших обоюдных интересах оставить друг друга в покое.
 
 AI_FIRST_TURN_GREETING_MSG401
-Битва с вами будет для нас честью
+Битва с вами будет для нас честью.
 
 AI_FIRST_TURN_GREETING_MSG402
-Приветствуют вас, Человек, собирайтесь умереть!
+Славься, Человек, идущие на смерть приветствуют тебя!
 
 AI_FIRST_TURN_GREETING_MSG403
-Приветствую незнакомцев! Мы надеемся, что вы достойны сразиться с нами
+Приветствуем, незнакомец! Надеемся, вы хотя бы достойны сразиться с нами.
 
 AI_FIRST_TURN_GREETING_MSG501
-Добро пожаловать, дорогой враг, наши бесстрашные воины ждут вас...
+Приветствуем, дорогой враг! Наши смелые воины уже ждут тебя...
 
 AI_FIRST_TURN_GREETING_MSG502
-Ха! Вы думаете, что можете противостоять нам? Ок, доставить его сюда!
+Ха! Думаете, что можете противостоять нам? Хорошо, давайте, идите сюда!
 
 AI_FIRST_TURN_GREETING_MSG503
-Кучка глупых инопланетян споткнулась прямо в наши объятия - день просто не может начаться лучше!
+Кучка глупых инопланетян угодила прямо в наши руки - день не мог начаться лучше!
 
 AI_FIRST_TURN_GREETING_MSG504
-Наслаждайтесь столько, сколько сможете, потому что последнее, что вы увидите, это очищающий огонь нашего мощного оружия!
+Наслаждайтесь, пока можете. Всё равно, последнее, что вы увидите - это очищающий огонь наших мощных орудий!
 
 AI_FIRST_TURN_GREETING_MSG505
 Убирайтесь в ад из нашей галактики!
 
 AI_FIRST_TURN_GREETING_MSG506
-Приготовьтесь к смерти
+Приготовьтесь к смерти.
 
 AI_FIRST_TURN_GREETING_MSG601
-Вы отбросы вселенной! Мы очистим галактику от вашего отвратительного присутствия!
+Вы - отбросы вселенной! Мы очистим галактику от вашего мерзкого присутствия!
 
 AI_FIRST_TURN_GREETING_MSG602
-Никчемные насекомые, вы осмеливаетесь бросить вызов нашей могучей империи?!
+Ничтожные насекомые, вы осмеливаетесь бросить вызов нашей могучей империи?!
 
 AI_FIRST_TURN_GREETING_MSG603
 Ваше истребление доставит нам настоящее удовольствие!
 
 AI_FIRST_TURN_GREETING_MSG604
-Не беспокойте нас вашими просьбами о милостыни. Здесь вы ничего не найдете
+Даже не пытайтесь просить нас о помиловании. Здесь вы ничего не найдёте.
 
 AI_FIRST_TURN_GREETING_MSG605
-Кроткий ягненок, который хочет потанцевать со львами, всегда приветствуется за нашим столом - как основное блюдо конечно...
+Кроткий ягненок, желающий потанцевать со львами - это всегда приветствуется у нас за столом. В качестве основного блюда...
 
 AI_FIRST_TURN_GREETING_MSG606
-Отчаяние и поражение это то, что вы получите из наших рук
+Отчаяние и поражение - это всё, что вы от нас получите.
 
 AI_FIRST_TURN_GREETING_MSG607
-Сдавайтесь сейчас же и мы можем подумать о том, чтобы оставить вас навсегда в качестве наших рабов
+Сдавайтесь, и, быть может, мы подумаем, чтобы оставить вас в качестве рабов.
 
 AI_FIRST_TURN_GREETING_MSG608
-Послать вас к вашим предкам - наш священный долг!
+Отправить вас к вашим предкам - наш священный долг!
 
 # Don't translate this entry.
 
@@ -13488,10 +13495,10 @@ HOTKEY_MAP_ZOOM_NEXT_FLEET
 Перейти к следующему флоту
 
 HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET
-Перейти к пред. простаивающему флоту
+Перейти к пред. бездействующему флоту
 
 HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET
-Перейти к след. простаивающему флоту
+Перейти к след. бездействующему флоту
 
 HOTKEY_MAP_PAN_RIGHT
 Расположить карту справа
