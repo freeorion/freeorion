@@ -1,4 +1,4 @@
-from logging import error
+from logging import debug, error
 
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -30,6 +30,8 @@ def get_current_exploration_info():
                     print "problem determining existing exploration target systems"
                 else:
                     print "found existing exploration target: %s" % fleet_mission.target
+    debug("Current exploration targets: %s" % already_covered)
+    debug("Available scout fleets: %s" % available_scouts)
     return list(already_covered), available_scouts
 
 
@@ -57,6 +59,7 @@ def assign_scouts_to_explore_systems():
             if INVALID_ID in sys_list:
                 error("INVALID_ID found in " + name, exc_info=True)
     # emergency coverage can be due to invasion detection trouble, etc.
+    print "Check list: %s" % check_list
     needs_coverage = [sys_id for sys_id in check_list if sys_id not in already_covered and sys_id != INVALID_ID]
     print "Needs coverage: %s" % needs_coverage
 
