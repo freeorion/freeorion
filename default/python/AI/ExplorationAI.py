@@ -1,4 +1,4 @@
-from logging import debug, error
+from logging import debug, error, info
 
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -69,9 +69,7 @@ def assign_scouts_to_explore_systems():
     if not needs_coverage or not available_scouts:
         return
 
-    available_scouts = set(available_scouts)
-    sent_list = []
-
+    # clean up targets which can not or don't need to be scouted
     for sys_id in list(needs_coverage):
         if sys_id not in explore_list:  # doesn't necessarily need direct visit
             if universe.getVisibility(sys_id, fo.empireID()) >= fo.visibility.partial:
@@ -94,7 +92,9 @@ def assign_scouts_to_explore_systems():
             needs_coverage.remove(sys_id)
             continue
 
+    # find the jump distance for all possible scout-system pairings
     options = []
+    available_scouts = set(available_scouts)
     for fleet_id in available_scouts:
         fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
         start = fleet_mission.get_location_target()
@@ -103,23 +103,28 @@ def assign_scouts_to_explore_systems():
             path = MoveUtilsAI.can_travel_to_system(fleet_id, start, target, ensure_return=True)
             if not path:
                 continue
-            options.append((len(path), fleet_id, sys_id))
+            num_jumps = len(path) - 1  # -1 as path contains the original system
+            options.append((num_jumps, fleet_id, sys_id))
 
+    # Apply a simple, greedy heuristic to match scouts to nearby systems:
+    # Always choose the shortest possible path from the remaining scout-system pairing.
+    # This is clearly not optimal in the general case but it works well enough for now.
+    # TODO: Consider using a more sophisticated assignment algorithm
     options.sort()
     while options:
         debug("Remaining options: %s" % options)
         _, fleet_id, sys_id = options[0]
         fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
         target = universe_object.System(sys_id)
-        debug("Sending fleet %d to explore %s" % (fleet_id, target))
+        info("Sending fleet %d to explore %s" % (fleet_id, target))
         fleet_mission.set_target(MissionType.EXPLORATION, target)
         options = [option for option in options if option[1] != fleet_id and option[2] != sys_id]
         available_scouts.remove(fleet_id)
         needs_coverage.remove(sys_id)
 
     debug("Exploration assignment finished.")
-    debug("Remaining scouts: %s" % available_scouts)
-    debug("Remaining exploration targets: %s" % needs_coverage)
+    debug("Unassigned scouts: %s" % available_scouts)
+    debug("Unassigned exploration targets: %s" % needs_coverage)
 
 
 def follow_vis_system_connections(start_system_id, home_system_id):
