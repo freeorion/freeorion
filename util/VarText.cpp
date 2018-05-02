@@ -47,93 +47,77 @@ namespace {
 
     /// The signature of functions that generate substitution strings for
     /// tags.
-    typedef std::string (*TagString)(const std::string& data, const std::string& tag, bool& valid);
+    typedef boost::optional<std::string> (*TagString)(const std::string& data, const std::string& tag);
 
     /// Get string substitute for a translated text tag
-    std::string TextString(const std::string& data, const std::string& tag, bool& valid) {
+    boost::optional<std::string> TextString(const std::string& data, const std::string& tag) {
         return UserString(data);
     }
 
     /// Get string substitute for a raw text tag
-    std::string RawTextString(const std::string& data, const std::string& tag, bool& valid) {
+    boost::optional<std::string> RawTextString(const std::string& data, const std::string& tag) {
         return data;
     }
 
     ///Get string substitute for a tag that is a universe object
-    std::string UniverseObjectString(const std::string& data, const std::string& tag, bool& valid) {
+    boost::optional<std::string> UniverseObjectString(const std::string& data, const std::string& tag) {
         int object_id = INVALID_OBJECT_ID;
         try {
             object_id = boost::lexical_cast<int>(data);
         } catch (const std::exception&) {
-            ErrorLogger() << "UniverseObjectString couldn't cast \"" << data << "\" to int for object ID.";
-            valid = false;
-            return UserString("ERROR");
+            return boost::none;
         }
         auto obj = GetUniverseObject(object_id);
-        if (!obj) {
-            //ErrorLogger() << "UniverseObjectString couldn't get object with ID " << object_id;
-            valid = false;
-            return UserString("ERROR");
-        }
+        if (!obj)
+            return boost::none;
 
         return WithTags(GetVisibleObjectName(obj), tag, data);
     }
 
     /// combat links always just labelled "Combat"; don't need to look up details
-    std::string CombatLogString(const std::string& data, const std::string& tag, bool& valid)
+    boost::optional<std::string> CombatLogString(const std::string& data, const std::string& tag)
     { return WithTags(UserString("COMBAT"), tag, data); }
 
     /// Returns substitution string for a ship design tag
-    std::string ShipDesignString(const std::string& data, const std::string& tag, bool& valid) {
+    boost::optional<std::string> ShipDesignString(const std::string& data, const std::string& tag) {
         int design_id = INVALID_DESIGN_ID;
         try {
             design_id = boost::lexical_cast<int>(data);
         } catch (const std::exception&) {
-            ErrorLogger() << "SubstituteAndAppend couldn't cast \"" << data << "\" to int for ship design ID.";
-            valid = false;
-            return UserString("ERROR");
+            return boost::none;
         }
         const ShipDesign* design = GetShipDesign(design_id);
-        if (!design) {
-            ErrorLogger() << "SubstituteAndAppend couldn't get ship design with ID " << design_id;
-            valid = false;
-            return UserString("ERROR");
-        }
+        if (!design)
+            return boost::none;
+
         return WithTags(design->Name(), tag, data);
     }
 
     /// Returns substitution string for a predefined ship design tag
-    std::string PredefinedShipDesignString(const std::string& data, const std::string& tag, bool& valid) {
+    boost::optional<std::string> PredefinedShipDesignString(const std::string& data, const std::string& tag) {
         const ShipDesign* design = GetPredefinedShipDesign(data);
-        if (!design) {
-            ErrorLogger() << "SubstituteAndAppend couldn't get predefined ship design with name " << data;
-            valid = false;
-            return UserString("ERROR");
-        }
+        if (!design)
+            return boost::none;
+
         return WithTags(design->Name(), tag, data);
     }
 
     /// Returns substitution string for an empire tag
-    std::string EmpireString(const std::string& data, const std::string& tag, bool& valid) {
+    boost::optional<std::string> EmpireString(const std::string& data, const std::string& tag) {
         int empire_id = ALL_EMPIRES;
         try {
             empire_id = boost::lexical_cast<int>(data);
         } catch (const std::exception&) {
-            ErrorLogger() << "SubstituteAndAppend couldn't cast \"" << data << "\" to int for empire ID.";
-            valid = false;
-            return UserString("ERROR");
+            return boost::none;
         }
         const Empire* empire = GetEmpire(empire_id);
-        if (!empire) {
-            ErrorLogger() << "SubstituteAndAppend couldn't get empire with ID " << empire_id;
-            valid = false;
-            return UserString("ERROR");
-        }
+        if (!empire)
+            return boost::none;
         return WithTags(empire->Name(), tag, data);
     }
 
-    std::string MeterTypeString(const std::string& data, const std::string& tag, bool& valid) {
-        std::string retval = UserString("ERROR");
+    boost::optional<std::string> MeterTypeString(const std::string& data, const std::string& tag) {
+        boost::optional<std::string> retval = boost::none;
         // validate data
         MeterType meter_type = INVALID_METER_TYPE;
         std::istringstream data_ss(data);
@@ -141,8 +125,8 @@ namespace {
 
         if (meter_type > INVALID_METER_TYPE && meter_type < NUM_METER_TYPES) {
             retval = boost::lexical_cast<std::string>(meter_type);
-            if (UserStringExists(retval))
-                retval = WithTags(UserString(retval), tag, retval);
+            if (UserStringExists(*retval))
+                retval = WithTags(UserString(*retval), tag, *retval);
         }
 
         return retval;
@@ -150,13 +134,11 @@ namespace {
 
     /// Interprets value of data as a name.
     /// Returns translation of name, if Get says
-    /// that a thing by that name exists, otherwise ERROR.
+    /// that a thing by that name exists, otherwise boost::none.
     template <typename T,const T* (*GetByName)(const std::string&)>
-    std::string NameString(const std::string& data, const std::string& tag, bool& valid) {
-        if (!GetByName(data)) {
-            valid = false;
-            return UserString("ERROR");
-        }
+    boost::optional<std::string> NameString(const std::string& data, const std::string& tag) {
+        if (!GetByName(data))
+            return boost::none;
         return WithTags(UserString(data), tag, data);
     }
 
@@ -240,12 +222,15 @@ namespace {
 
             auto substituter = SubstitutionMap().find(tag);
             if (substituter != SubstitutionMap().end()) {
-                m_str += substituter->second(elem->second, tag, m_valid);
-            } else {
-                ErrorLogger() << "SubstituteAndAppend::operator(): No substitution scheme defined for tag: " << tag << " from token: " << token;
-                m_str += UserString("ERROR");
-                m_valid = false;
+                if (auto substitution = substituter->second(elem->second, tag)) {
+                    m_str += *substitution;
+                    return;
+                }
             }
+
+            ErrorLogger() << "SubstituteAndAppend::operator(): No substitution executed for tag: " << tag << " from token: " << token;
+            m_str += UserString("ERROR");
+            m_valid = false;
         }
 
         const std::map<std::string, std::string>& m_variables;
