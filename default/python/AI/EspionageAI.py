@@ -102,8 +102,9 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
 
     # could just check stealth meter, but this approach might allow us to plan ahead a bit even if the planet
     # is temporarily stealth boosted by temporary effects like ion storm
-    planet_stealth = max([AIDependencies.BASE_PLANET_STEALTH] +
-                         [AIDependencies.STEALTH_SPECIAL_STRENGTHS.get(_spec, 0) for _spec in planet.specials])
+    planet_stealth = AIDependencies.BASE_PLANET_STEALTH
+    if planet.specials:
+        planet_stealth += max([AIDependencies.STEALTH_SPECIAL_STRENGTHS.get(_spec, 0) for _spec in planet.specials])
     # TODO: check planet buildings for stealth bonuses
 
     # if the planet already has an existing stealth special, then the most common situation is that it would be
