@@ -122,6 +122,7 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
         predicted_stealth = total_stealth
         if object_is_in_ion_storm(planet_id):
             predicted_stealth += AIDependencies.ION_STORM_STEALTH
+        predicted_stealth = max(0., predicted_stealth)
         if meter_stealth != predicted_stealth:
             warn("Predicted stealth value for planet %s of %.1f but got %.1f" % (planet, predicted_stealth, meter_stealth))
 
