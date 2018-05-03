@@ -406,7 +406,7 @@ SD_LARGE_MARK_2
 Cruiser Lz
 
 SD_LARGE_MARK2_DESC
-Cruiser equipped for long range independent action. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Cruiser equipped for long range independent action . [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_3
 Destroyer Ms
