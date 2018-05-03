@@ -6303,7 +6303,7 @@ SP_MUURSH
 Му-Урш
 
 SP_MUURSH_GAMEPLAY_DESC
-'''Боевые, но миролюбивые травоядные.
+'''Сражающиеся за мир травоядные.
 Предпочитают [[PT_DESERT]] планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
