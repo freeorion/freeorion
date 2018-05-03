@@ -64,21 +64,6 @@ namespace {
         return WithTags(GetVisibleObjectName(obj), tag, data);
     }
 
-    /// Returns substitution string for a ship design tag
-    boost::optional<std::string> ShipDesignString(const std::string& data) {
-        int design_id = INVALID_DESIGN_ID;
-        try {
-            design_id = boost::lexical_cast<int>(data);
-        } catch (const std::exception&) {
-            return boost::none;
-        }
-        const ShipDesign* design = GetShipDesign(design_id);
-        if (!design)
-            return boost::none;
-
-        return WithTags(design->Name(), VarText::DESIGN_ID_TAG, data);
-    }
-
     /// Returns substitution string for a predefined ship design tag
     boost::optional<std::string> PredefinedShipDesignString(const std::string& data) {
         const ShipDesign* design = GetPredefinedShipDesign(data);
@@ -86,20 +71,6 @@ namespace {
             return boost::none;
 
         return WithTags(design->Name(), VarText::PREDEFINED_DESIGN_TAG, data);
-    }
-
-    /// Returns substitution string for an empire tag
-    boost::optional<std::string> EmpireString(const std::string& data) {
-        int empire_id = ALL_EMPIRES;
-        try {
-            empire_id = boost::lexical_cast<int>(data);
-        } catch (const std::exception&) {
-            return boost::none;
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return boost::none;
-        return WithTags(empire->Name(), VarText::EMPIRE_ID_TAG, data);
     }
 
     boost::optional<std::string> MeterTypeString(const std::string& data) {
@@ -118,6 +89,23 @@ namespace {
         return retval;
     }
 
+    /// Returns substitution string for a ship design tag
+    template <typename T,T* (*GetByID)(int)>
+    boost::optional<std::string> IDString(const std::string& data, const std::string& tag) {
+        int id{};
+        try {
+            id = boost::lexical_cast<int>(data);
+        } catch (const std::exception&) {
+            return boost::none;
+        }
+        T* object = GetByID(id);
+        if (!object)
+            return boost::none;
+
+        return WithTags(object->Name(), tag, data);
+    }
+
+    /// Returns substitution string for an empire tag
     /// Interprets value of data as a name.
     /// Returns translation of name, if Get says
     /// that a thing by that name exists, otherwise boost::none.
@@ -165,9 +153,11 @@ namespace {
         subs[VarText::FIELD_TYPE_TAG] = [](const std::string& data)
             { return NameString<FieldType, GetFieldType>(data, VarText::FIELD_TYPE_TAG); };
         subs[VarText::METER_TYPE_TAG] = MeterTypeString;
-        subs[VarText::DESIGN_ID_TAG] = ShipDesignString;
+        subs[VarText::DESIGN_ID_TAG] = [](const std::string& data)
+            { return IDString<const ShipDesign, GetShipDesign>(data, VarText::DESIGN_ID_TAG); };
         subs[VarText::PREDEFINED_DESIGN_TAG] = PredefinedShipDesignString;
-        subs[VarText::EMPIRE_ID_TAG] = EmpireString;
+        subs[VarText::EMPIRE_ID_TAG] = [](const std::string& data)
+            { return IDString<Empire, GetEmpire>(data, VarText::EMPIRE_ID_TAG); };
         return subs;
     }
 
