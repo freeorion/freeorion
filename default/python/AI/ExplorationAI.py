@@ -1,4 +1,4 @@
-from logging import debug, error
+from logging import debug, error, info
 
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -69,71 +69,62 @@ def assign_scouts_to_explore_systems():
     if not needs_coverage or not available_scouts:
         return
 
-    available_scouts = set(available_scouts)
-    sent_list = []
-    while available_scouts and needs_coverage:
-        this_sys_id = needs_coverage.pop(0)
-        sys_status = foAI.foAIstate.systemStatus.setdefault(this_sys_id, {})
-        if this_sys_id not in explore_list:  # doesn't necessarily need direct visit
-            if universe.getVisibility(this_sys_id, fo.empireID()) >= fo.visibility.partial:
+    # clean up targets which can not or don't need to be scouted
+    for sys_id in list(needs_coverage):
+        if sys_id not in explore_list:  # doesn't necessarily need direct visit
+            if universe.getVisibility(sys_id, fo.empireID()) >= fo.visibility.partial:
                 # already got visibility; remove from visit lists and skip
-                if this_sys_id in needs_vis:
-                    del needs_vis[needs_vis.index(this_sys_id)]
-                if this_sys_id in foAI.foAIstate.needsEmergencyExploration:
+                if sys_id in needs_vis:
+                    del needs_vis[needs_vis.index(sys_id)]
+                if sys_id in foAI.foAIstate.needsEmergencyExploration:
                     del foAI.foAIstate.needsEmergencyExploration[
-                        foAI.foAIstate.needsEmergencyExploration.index(this_sys_id)]
-                print "system id %d already currently visible; skipping exploration" % this_sys_id
+                        foAI.foAIstate.needsEmergencyExploration.index(sys_id)]
+                print "system id %d already currently visible; skipping exploration" % sys_id
+                needs_coverage.remove(sys_id)
                 continue
-        # TODO: if blocked byu monster, try to find nearby system from which to see this system
+
+        # skip systems threatened by monsters
+        sys_status = foAI.foAIstate.systemStatus.setdefault(sys_id, {})
         if (not foAI.foAIstate.character.may_explore_system(sys_status.setdefault('monsterThreat', 0)) or (
-                fo.currentTurn() < 20 and foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'] > 0)):
+                fo.currentTurn() < 20 and foAI.foAIstate.systemStatus[sys_id]['monsterThreat'] > 0)):
             print "Skipping exploration of system %d due to Big Monster, threat %d" % (
-                this_sys_id, foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'])
+                sys_id, foAI.foAIstate.systemStatus[sys_id]['monsterThreat'])
+            needs_coverage.remove(sys_id)
             continue
-        this_fleet_list = FleetUtilsAI.get_fleets_for_mission(target_stats={}, min_stats={}, cur_stats={},
-                                                              starting_system=this_sys_id,
-                                                              fleet_pool_set=available_scouts,
-                                                              fleet_list=[])
-        if not this_fleet_list:
-            print "Seem to have run out of scouts while trying to cover sys_id %d" % this_sys_id
-            break  # must have ran out of scouts
-        fleet_id = this_fleet_list[0]
+
+    # find the jump distance for all possible scout-system pairings
+    options = []
+    available_scouts = set(available_scouts)
+    for fleet_id in available_scouts:
         fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
-        target = universe_object.System(this_sys_id)
-        if MoveUtilsAI.can_travel_to_system(fleet_id, fleet_mission.get_location_target(), target, ensure_return=True):
-            fleet_mission.set_target(MissionType.EXPLORATION, target)
-            sent_list.append(this_sys_id)
-        else:  # system too far out, skip it, but can add scout back to available pool
-            print "sys_id %d too far out for fleet ( ID %d ) to reach" % (this_sys_id, fleet_id)
-            available_scouts.update(this_fleet_list)
-    print "Sent scouting fleets to sysIDs : %s" % sent_list
-    return
-    # pylint: disable=pointless-string-statement
-    """
-    #TODO: consider matching system to closest scout, also consider rejecting scouts that would travel a blockaded path
-    sent_list=[]
-    sysList= list(explorable_system_ids)
-    shuffle( sysList ) #so that a monster defended system wont always be selected early
-    fleetList = list(available_scouts)
-    isys= -1
-    jfleet= -1
-    while ( jfleet < len(fleetList) -1) :
-        jfleet += 1
-        fleet_id = fleetList[ jfleet ]
-        while ( isys < len(sysList) -1) :
-            isys += 1
-            sys_id = sysList[ isys]
-            fleet_mission = foAI.foAIstate.get_fleet_mission( fleet_id )
-            target = AITarget.AITarget(AITargetType.TARGET_SYSTEM, sys_id )
-            # add exploration mission to fleet with target unexplored system and this system is in range
-            #print "try to assign scout to system %d"%systemID
-            if MoveUtilsAI.can_travel_to_system_and_return_to_resupply(fleet_id, fleet_mission.get_location_target(),
-                                                                       target, fo.empireID()):
-                fleet_mission.addAITarget(MissionType.EXPLORATION, target)
-                sent_list.append(sys_id)
-                break
-    print "sent scouting fleets to sysIDs : %s"%sent_list
-    """
+        start = fleet_mission.get_location_target()
+        for sys_id in needs_coverage:
+            target = universe_object.System(sys_id)
+            path = MoveUtilsAI.can_travel_to_system(fleet_id, start, target, ensure_return=True)
+            if not path:
+                continue
+            num_jumps = len(path) - 1  # -1 as path contains the original system
+            options.append((num_jumps, fleet_id, sys_id))
+
+    # Apply a simple, greedy heuristic to match scouts to nearby systems:
+    # Always choose the shortest possible path from the remaining scout-system pairing.
+    # This is clearly not optimal in the general case but it works well enough for now.
+    # TODO: Consider using a more sophisticated assignment algorithm
+    options.sort()
+    while options:
+        debug("Remaining options: %s" % options)
+        _, fleet_id, sys_id = options[0]
+        fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
+        target = universe_object.System(sys_id)
+        info("Sending fleet %d to explore %s" % (fleet_id, target))
+        fleet_mission.set_target(MissionType.EXPLORATION, target)
+        options = [option for option in options if option[1] != fleet_id and option[2] != sys_id]
+        available_scouts.remove(fleet_id)
+        needs_coverage.remove(sys_id)
+
+    debug("Exploration assignment finished.")
+    debug("Unassigned scouts: %s" % available_scouts)
+    debug("Unassigned exploration targets: %s" % needs_coverage)
 
 
 def follow_vis_system_connections(start_system_id, home_system_id):
