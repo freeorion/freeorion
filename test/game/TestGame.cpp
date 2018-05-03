@@ -66,6 +66,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
     unsigned int num_AIs = 2;
     int num_turns = 2;
+    bool save_game = true;
 
     const char *env_num_AIs = std::getenv("TEST_GAME_AIS");
     if (env_num_AIs) {
@@ -80,6 +81,15 @@ BOOST_AUTO_TEST_CASE(host_server) {
     if (env_num_turns) {
         try {
             num_turns = boost::lexical_cast<int>(env_num_turns);
+        } catch (...) {
+            // ignore
+        }
+    }
+
+    const char *env_save_game = std::getenv("TEST_GAME_SAVE");
+    if (env_save_game) {
+        try {
+            save_game = boost::lexical_cast<int>(env_save_game) != 0;
         } catch (...) {
             // ignore
         }
@@ -151,6 +161,16 @@ BOOST_AUTO_TEST_CASE(host_server) {
         start_time = boost::posix_time::microsec_clock::local_time();
         while (! m_ai_waiting.empty()) {
             BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
+        }
+
+        if (save_game) {
+            BOOST_TEST_MESSAGE("Save game");
+
+            SaveGame();
+            start_time = boost::posix_time::microsec_clock::local_time();
+            while (! m_save_completed) {
+                BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
+            }
         }
     }
 

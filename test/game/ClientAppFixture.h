@@ -19,12 +19,15 @@ public:
 
     void SendTurnOrders();
 
+    void SaveGame();
+
     int EffectsProcessingThreads() const;
 protected:
-    bool          m_game_started; ///< Is server started the game?
-    std::set<int> m_ai_players;   ///< Ids of AI players in game.
-    std::set<int> m_ai_waiting;   ///< Ids of AI players not yet send orders.
-    bool          m_turn_done;    ///< Is server processed turn?
+    bool          m_game_started;   ///< Is server started the game?
+    std::set<int> m_ai_players;     ///< Ids of AI players in game.
+    std::set<int> m_ai_waiting;     ///< Ids of AI players not yet send orders.
+    bool          m_turn_done;      ///< Is server processed turn?
+    bool          m_save_completed; ///< Is server saved game?
 };
 
 #endif // _ClientAppFixture_h_

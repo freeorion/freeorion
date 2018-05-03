@@ -3,10 +3,13 @@
 #include "combat/CombatLogManager.h"
 #include "network/ClientNetworking.h"
 #include "universe/Species.h"
+#include "util/Directories.h"
 #include "util/GameRules.h"
 #include "util/Version.h"
 
 #include "GG/GG/ClrConstants.h"
+
+#include <boost/format.hpp>
 
 ClientAppFixture::ClientAppFixture()
     :m_game_started(false)
@@ -189,6 +192,12 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         m_turn_done = true;
         return true;
     }
+    case Message::SAVE_GAME_COMPLETE:
+        m_save_completed = true;
+        return true;
+    case Message::SAVE_GAME_DATA_REQUEST:
+        m_networking->SendMessage(ClientSaveDataMessage(Orders()));
+        return true;
     default:
         ErrorLogger() << "Unknown message type: " << msg.Type();
         return false;
@@ -197,4 +206,17 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
 
 void ClientAppFixture::SendTurnOrders()
 { m_networking->SendMessage(TurnOrdersMessage(OrderSet())); }
+
+void ClientAppFixture::SaveGame() {
+    std::string save_filename = boost::io::str(boost::format("FreeOrionTestGame_%04d_%s%s") % CurrentTurn() % FilenameTimestamp() % SP_SAVE_FILE_EXTENSION);
+    boost::filesystem::path save_dir_path(GetSaveDir() / "test");
+    boost::filesystem::path save_path(save_dir_path / save_filename);
+    if (!exists(save_dir_path))
+        boost::filesystem::create_directories(save_dir_path);
+
+    auto path_string = PathToString(save_path);
+    m_save_completed = false;
+    m_networking->SendMessage(HostSaveGameInitiateMessage(path_string));
+
+}
 
