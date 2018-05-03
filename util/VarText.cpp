@@ -49,16 +49,6 @@ namespace {
     /// tags.
     typedef boost::optional<std::string> (*TagString)(const std::string& data);
 
-    /// Get string substitute for a translated text tag
-    boost::optional<std::string> TextString(const std::string& data) {
-        return UserString(data);
-    }
-
-    /// Get string substitute for a raw text tag
-    boost::optional<std::string> RawTextString(const std::string& data) {
-        return data;
-    }
-
     ///Get string substitute for a tag that is a universe object
     boost::optional<std::string> UniverseObjectString(const std::string& data, const std::string& tag) {
         int object_id = INVALID_OBJECT_ID;
@@ -73,10 +63,6 @@ namespace {
 
         return WithTags(GetVisibleObjectName(obj), tag, data);
     }
-
-    /// combat links always just labelled "Combat"; don't need to look up details
-    boost::optional<std::string> CombatLogString(const std::string& data)
-    { return WithTags(UserString("COMBAT"), VarText::COMBAT_ID_TAG, data); }
 
     /// Returns substitution string for a ship design tag
     boost::optional<std::string> ShipDesignString(const std::string& data) {
@@ -146,9 +132,10 @@ namespace {
     /// generate a substitution for which tag.
     std::map<std::string, TagString> CreateSubstituterMap() {
         std::map<std::string, TagString> subs;
-        subs[VarText::TEXT_TAG] = TextString;
-        subs[VarText::RAW_TEXT_TAG] = RawTextString;
-
+        subs[VarText::TEXT_TAG] = [](const std::string& data) -> boost::optional<std::string>
+            { return UserString(data); };
+        subs[VarText::RAW_TEXT_TAG] = [](const std::string& data) -> boost::optional<std::string>
+            { return data; };
         subs[VarText::PLANET_ID_TAG] = [](const std::string& data)
             { return UniverseObjectString(data, VarText::PLANET_ID_TAG); };
         subs[VarText::SYSTEM_ID_TAG] = [](const std::string& data)
@@ -161,7 +148,8 @@ namespace {
             { return UniverseObjectString(data, VarText::BUILDING_ID_TAG); };
         subs[VarText::FIELD_ID_TAG] = [](const std::string& data)
             { return UniverseObjectString(data, VarText::FIELD_ID_TAG); };
-        subs[VarText::COMBAT_ID_TAG] = CombatLogString;
+        subs[VarText::COMBAT_ID_TAG] = [](const std::string& data) -> boost::optional<std::string>
+            { return WithTags(UserString("COMBAT"), VarText::COMBAT_ID_TAG, data); };
         subs[VarText::TECH_TAG] = [](const std::string& data)
             { return NameString<Tech, GetTech>(data, VarText::TECH_TAG); };
         subs[VarText::BUILDING_TYPE_TAG] = [](const std::string& data)
