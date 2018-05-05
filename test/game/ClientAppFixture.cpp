@@ -11,8 +11,8 @@
 
 #include <boost/format.hpp>
 
-ClientAppFixture::ClientAppFixture()
-    :m_game_started(false)
+ClientAppFixture::ClientAppFixture() :
+    m_game_started(false)
 {
 #ifdef FREEORION_LINUX
     // Dirty hack to output log to console.
@@ -38,14 +38,11 @@ bool ClientAppFixture::ConnectToLocalHostServer()
 { return m_networking->ConnectToLocalHostServer(); }
 
 void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
-    std::vector<std::pair<std::string, std::string>> game_rules = GetGameRules().GetRulesAsStrings();
+    auto game_rules = GetGameRules().GetRulesAsStrings();
 
     SinglePlayerSetupData setup_data;
     setup_data.m_new_game = true;
     setup_data.m_filename.clear();  // not used for new game
-
-    // get values stored in options from previous time game was run or
-    // from just having run GalaxySetupWnd
 
     // GalaxySetupData
     setup_data.SetSeed("TestSeed1");

@@ -8,20 +8,15 @@ public:
     ClientAppFixture();
 
     bool PingLocalHostServer();
-
     bool ConnectToLocalHostServer();
 
     void HostSPGame(unsigned int num_AIs);
-
     bool ProcessMessages(const boost::posix_time::ptime& start_time, int max_seconds);
-
     bool HandleMessage(Message& msg);
-
     void SendTurnOrders();
-
     void SaveGame();
 
-    int EffectsProcessingThreads() const;
+    int EffectsProcessingThreads() const override;
 protected:
     bool          m_game_started;   ///< Is server started the game?
     std::set<int> m_ai_players;     ///< Ids of AI players in game.
