@@ -198,7 +198,8 @@ public:
                      bool adopt = true, int slot = -1);
 
     /** Checks that all policy adoption conditions are met, removing any that
-      * are not allowed. */
+      * are not allowed. Also copies adopted policies to initial adopted
+      * policies */
     void AuditPolicies();
 
     /** Returns the meter with the indicated \a name if it exists, or nullptr. */
@@ -482,9 +483,9 @@ private:
     struct PolicyAdoptionInfo {
         PolicyAdoptionInfo();
         PolicyAdoptionInfo(int turn, const std::string& cat, int slot);
-        int         adoption_turn;
-        std::string category;
-        int         slot_in_category;
+        int         adoption_turn = -1;
+        std::string category = "";
+        int         slot_in_category = -1;
 
         friend class boost::serialization::access;
         template <class Archive>
@@ -492,6 +493,8 @@ private:
     };
     std::map<std::string, PolicyAdoptionInfo>
                                     m_adopted_policies;         ///< map from policy name to turn, category, and slot in/on which it was adopted
+    std::map<std::string, PolicyAdoptionInfo>
+                                    m_initial_adopted_policies; ///< adopted policies at start of turn
     std::set<std::string>           m_available_policies;       ///< names of unlocked policies
 
 

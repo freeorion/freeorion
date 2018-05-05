@@ -176,10 +176,12 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_techs)
             & BOOST_SERIALIZATION_NVP(m_adopted_policies)
+            & BOOST_SERIALIZATION_NVP(m_initial_adopted_policies)
             & BOOST_SERIALIZATION_NVP(m_available_policies);
 
         if (Archive::is_loading::value && version < 2) {
             m_adopted_policies.clear();
+            m_initial_adopted_policies.clear();
             m_available_policies.clear();
         }
     }

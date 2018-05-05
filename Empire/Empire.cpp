@@ -81,7 +81,7 @@ Empire::Empire(const std::string& name, const std::string& player_name,
 void Empire::Init() {
     m_resource_pools[RE_RESEARCH] = std::make_shared<ResourcePool>(RE_RESEARCH);
     m_resource_pools[RE_INDUSTRY] = std::make_shared<ResourcePool>(RE_INDUSTRY);
-    m_resource_pools[RE_TRADE] = std::make_shared<ResourcePool>(RE_TRADE);
+    m_resource_pools[RE_TRADE] =    std::make_shared<ResourcePool>(RE_TRADE);
 
     m_eliminated = false;
 
@@ -185,7 +185,10 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
         if (m_adopted_policies.count(name)) {
             // un-adopt policy
             m_adopted_policies.erase(name);
-            // todo: refund adoption cost if adoption was this turn
+
+            if (!m_initial_adopted_policies.count(name)) {
+                // todo: refund adoption cost if adoption was this turn
+            }
         }
         return;
     }
@@ -196,7 +199,8 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
         return;
     }
 
-    // todo: check that there is sufficient influence to adopt policy
+    // todo: check that there is sufficient influence to adopt policy.
+    // todo: if not, abort adoption
 
     // check that policy is not already adopted
     if (m_adopted_policies.count(name)) {
@@ -219,7 +223,7 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     }
 
     // collect already-adopted policies in category
-    std::vector<std::string> adopted_policies_in_category;
+    std::map<int, std::string> adopted_policies_in_category_map;
     for (const auto& policy_entry : m_adopted_policies) {
         if (policy_entry.second.category != category)
             continue;
@@ -237,8 +241,12 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
                           << "  so cannot adopt another policy in that slot";
             return;
         }
-        adopted_policies_in_category[policy_entry.second.slot_in_category] = policy_entry.first;
+
+        adopted_policies_in_category_map[policy_entry.second.slot_in_category] = policy_entry.first;
     }
+    // convert to vector;
+    std::vector<std::string> adopted_policies_in_category;
+    int max_idx = -1;
 
     // if no particular slot was specified, try to find a suitable slot in category
     if (slot == INVALID_SLOT_INDEX) {
@@ -272,6 +280,8 @@ void Empire::AuditPolicies() {
     // todo: make sure all adopted policies are allowed to be adopted by this
     //       empire, and revoke any that aren't allowed, such as due to not
     //       having enough slots of the relevant type.
+
+    m_initial_adopted_policies = m_adopted_policies;
 }
 
 bool Empire::PolicyAdopted(const std::string& name) const
