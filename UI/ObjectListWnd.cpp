@@ -123,8 +123,7 @@ namespace {
         return StringCastedComplexValueRef<double>(
             propagated ? "PropagatedSystemSupplyRange" :"SystemSupplyRange",
             nullptr,
-            boost::make_unique<ValueRef::Variable<int>>(
-                ValueRef::SOURCE_REFERENCE, "SystemID"));
+            boost::make_unique<ValueRef::Variable<int>>(ValueRef::SOURCE_REFERENCE, "SystemID"));
     }
 
     std::unique_ptr<ValueRef::Variable<std::string>> SystemSupplyDistanceValueRef() {
