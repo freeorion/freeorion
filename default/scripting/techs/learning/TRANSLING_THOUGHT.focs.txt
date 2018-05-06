@@ -10,6 +10,7 @@ Tech
         "LRN_PHYS_BRAIN"
         "LRN_ALGO_ELEGANCE"
     ]
+    unlock = Item type = Policy name = "PLC_MARINE_RECRUITMENT"
     graphic = "icons/tech/translingustic_thought.png"
 
 #include "/scripting/common/base_prod.macros"

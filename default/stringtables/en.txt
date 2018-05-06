@@ -10936,6 +10936,16 @@ Increases speed of ships with no weapons, fighters, shields, armour, troops, col
 PLC_EXPLORATION_SHORT_DESC
 Speeds Up Explorer Ships
 
+PLC_MARINE_RECRUITMENT
+Marine Recruitment
+
+PLC_MARINE_RECRUITMENT_DESC
+Reduces the cost of ground troop ship parts by 50%.
+
+PLC_MARINE_RECRUITMENT_SHORT_DESC
+Reduces Ground Troop Cost
+
+
 ##
 ## Technology categories
 ##
@@ -11110,7 +11120,7 @@ LRN_TRANSLING_THT
 Translinguistics
 
 LRN_TRANSLING_THT_DESC
-'''Does nothing. Later this can enable peaceful acquisition of native planets.
+'''Unlocks [[PLC_MARINE_RECRUITMENT]]
 
 Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truly great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?'''
 

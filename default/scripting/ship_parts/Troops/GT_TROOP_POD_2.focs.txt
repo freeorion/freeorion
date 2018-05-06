@@ -4,7 +4,7 @@ Part
     class = Troops
     capacity = 4
     mountableSlotTypes = [External Internal]
-    buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]] * [[MARINE_RECRUITMENT_POLICY_MULTIPLIER]]
     buildtime = 1
     tags = [ "PEDIA_PC_TROOPS" ]
     location = And [

@@ -22,3 +22,6 @@ SHIP_PART_COST_MULTIPLIER
 
 COLONIZATION_POLICY_MULTIPLIER
 '''(1 - 0.3*(Statistic If condition = EmpireHasAdoptedPolicy name = "PLC_COLONIZATION"))'''
+
+MARINE_RECRUITMENT_POLICY_MULTIPLIER
+'''(1 - 0.5*(Statistic If condition = EmpireHasAdoptedPolicy name = "PLC_MARINE_RECRUITMENT"))'''
