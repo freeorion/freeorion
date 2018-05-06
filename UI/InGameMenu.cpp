@@ -33,39 +33,35 @@ void InGameMenu::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     m_save_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_SAVE"));
-    m_load_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_LOAD"));
+    if (HumanClientApp::GetApp()->SinglePlayerGame())
+        m_load_or_concede_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_LOAD"));
+    else
+        m_load_or_concede_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_CONCEDE"));
     m_options_btn = Wnd::Create<CUIButton>(UserString("INTRO_BTN_OPTIONS"));
-    m_concede_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_CONCEDE"));
     m_resign_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_RESIGN"));
     m_done_btn = Wnd::Create<CUIButton>(UserString("DONE"));
 
     AttachChild(m_save_btn);
-    AttachChild(m_load_btn);
+    AttachChild(m_load_or_concede_btn);
     AttachChild(m_options_btn);
-    AttachChild(m_concede_btn);
     AttachChild(m_resign_btn);
     AttachChild(m_done_btn);
 
     m_save_btn->LeftClickedSignal.connect(
         boost::bind(&InGameMenu::Save, this));
-    m_load_btn->LeftClickedSignal.connect(
-        boost::bind(&InGameMenu::Load, this));
+    if (HumanClientApp::GetApp()->SinglePlayerGame()) {
+        m_load_or_concede_btn->LeftClickedSignal.connect(
+            boost::bind(&InGameMenu::Load, this));
+    } else {
+        m_load_or_concede_btn->LeftClickedSignal.connect(
+            boost::bind(&InGameMenu::Concede, this));
+    }
     m_options_btn->LeftClickedSignal.connect(
         boost::bind(&InGameMenu::Options, this));
-    m_concede_btn->LeftClickedSignal.connect(
-        boost::bind(&InGameMenu::Concede, this));
     m_resign_btn->LeftClickedSignal.connect(
         boost::bind(&InGameMenu::Resign, this));
     m_done_btn->LeftClickedSignal.connect(
         boost::bind(&InGameMenu::Done, this));
-
-    if (HumanClientApp::GetApp()->SinglePlayerGame()) {
-        // no sense to concede in a singleplayer game
-        m_concede_btn->Disable();
-    } else {
-        // need lobby to load a multiplayer game; menu load of a file is insufficient
-        m_load_btn->Disable();
-    }
 
     if (!HumanClientApp::GetApp()->CanSaveNow()) {
         m_save_btn->Disable();
@@ -90,7 +86,7 @@ GG::Rect InGameMenu::CalculatePosition() const {
 
     // Calculate window width and height
     GG::Pt new_size(ButtonWidth() + H_MAINMENU_MARGIN,
-                    6.75 * ButtonCellHeight() + V_MAINMENU_MARGIN); // 9 rows + 0.75 before exit button
+                    5.75 * ButtonCellHeight() + V_MAINMENU_MARGIN); // 9 rows + 0.75 before exit button
 
     // This wnd determines its own position.
     GG::Pt new_ul((HumanClientApp::GetApp()->AppWidth()  - new_size.x) / 2,
@@ -104,9 +100,8 @@ GG::X InGameMenu::ButtonWidth() const {
     GG::X button_width(0);              //width of the buttons
 
     button_width = std::max(button_width, m_save_btn->MinUsableSize().x);
-    button_width = std::max(button_width, m_load_btn->MinUsableSize().x);
+    button_width = std::max(button_width, m_load_or_concede_btn->MinUsableSize().x);
     button_width = std::max(button_width, m_options_btn->MinUsableSize().x);
-    button_width = std::max(button_width, m_concede_btn->MinUsableSize().x);
     button_width = std::max(button_width, m_resign_btn->MinUsableSize().x);
     button_width = std::max(button_width, m_done_btn->MinUsableSize().x);
     button_width = std::max(MIN_BUTTON_WIDTH, button_width);
@@ -131,16 +126,13 @@ void InGameMenu::DoLayout() {
     m_save_btn->SizeMove(button_ul, button_lr);
     button_ul.y += GG::Y(button_cell_height);
     button_lr.y += GG::Y(button_cell_height);
-    m_load_btn->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_options_btn->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
-    m_concede_btn->SizeMove(button_ul, button_lr);
+    m_load_or_concede_btn->SizeMove(button_ul, button_lr);
     button_ul.y += GG::Y(button_cell_height);
     button_lr.y += GG::Y(button_cell_height);
     m_resign_btn->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_cell_height);
+    button_lr.y += GG::Y(button_cell_height);
+    m_options_btn->SizeMove(button_ul, button_lr);
     button_ul.y += GG::Y(button_cell_height) * 1.75;
     button_lr.y += GG::Y(button_cell_height) * 1.75;
     m_done_btn->SizeMove(button_ul, button_lr);

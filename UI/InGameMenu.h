@@ -33,9 +33,10 @@ private:
     GG::Y ButtonCellHeight() const; //!< Helper function
 
     std::shared_ptr<GG::Button> m_save_btn;
-    std::shared_ptr<GG::Button> m_load_btn;
+    /** Depending on singleplayer or multiplayer mode
+      * this menu shows or Load or Concede button */
+    std::shared_ptr<GG::Button> m_load_or_concede_btn;
     std::shared_ptr<GG::Button> m_options_btn;
-    std::shared_ptr<GG::Button> m_concede_btn;
     std::shared_ptr<GG::Button> m_done_btn;
     std::shared_ptr<GG::Button> m_resign_btn;
 };
