@@ -424,6 +424,7 @@
 #define TOKEN_SEQ_13                            \
     (Shield)                                    \
     (ShipDesign)                                \
+    (ShipDesignCost)                            \
     (ShipDesignOrdering)                        \
     (ShipDesignsDestroyed)                      \
     (ShipDesignsInProduction)                   \

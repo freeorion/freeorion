@@ -59,6 +59,19 @@ namespace parse {
                         nullptr)) ]
             ;
 
+        id_empire_location_rule
+            = (     tok.ShipDesignCost_
+                 >  label(tok.Design_) > simple_int
+                 >  label(tok.Empire_) > simple_int
+                 >  label(tok.Location_) > simple_int
+              )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                _1,
+                deconstruct_movable_(_2, _pass),
+                deconstruct_movable_(_3, _pass),
+                deconstruct_movable_(_4, _pass),
+                nullptr, nullptr)) ]
+            ;
+
         empire_meter_value
             = (     tok.EmpireMeterValue_
                  >  label(tok.Empire_) > simple_int
@@ -106,7 +119,7 @@ namespace parse {
 
         species_empire_opinion
             = (     species_opinion
-                >> (label(tok.Empire_) >  simple_int)
+                >> (label(tok.Empire_) > simple_int)
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 construct<std::string>(TOK_SPECIES_EMPIRE_OPINION),
                 deconstruct_movable_(_2, _pass),
@@ -118,7 +131,7 @@ namespace parse {
 
         species_species_opinion
             = (     species_opinion
-                >> (label(tok.Species_) >  string_grammar)
+                >> (label(tok.Species_) > string_grammar)
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 construct<std::string>(TOK_SPECIES_SPECIES_OPINION),
                 nullptr,
@@ -178,6 +191,7 @@ namespace parse {
 
         start
             %=  name_property_rule
+            |   id_empire_location_rule
             |   empire_meter_value
             |   direct_distance
             |   shortest_path
@@ -189,6 +203,7 @@ namespace parse {
             ;
 
         name_property_rule.name("GameRule; Hull Fuel, Stealth, Structure, or Speed; or PartCapacity or PartSecondaryStat");
+        id_empire_location_rule.name("ShipDesignCost");
         empire_meter_value.name("EmpireMeterValue");
         direct_distance.name("DirectDistanceBetween");
         shortest_path.name("ShortestPathBetween");
@@ -200,6 +215,7 @@ namespace parse {
 
 #if DEBUG_DOUBLE_COMPLEX_PARSERS
         debug(name_property_rule);
+        debug(id_empire_location_rule);
         debug(empire_meter_value);
         debug(direct_distance);
         debug(shortest_path);

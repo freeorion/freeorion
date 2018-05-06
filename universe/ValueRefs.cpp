@@ -2210,6 +2210,26 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return part_type->SecondaryStat();
 
     }
+    else if (variable_name == "ShipDesignCost") {
+        int design_id = INVALID_DESIGN_ID;
+        if (m_int_ref1)
+            design_id = m_int_ref1->Eval(context);
+
+        const ShipDesign* design = GetShipDesign(design_id);
+        if (!design)
+            return 0.0;
+
+        int empire_id = ALL_EMPIRES;
+        if (m_int_ref2)
+            empire_id = m_int_ref2->Eval(context);
+
+        int location_id = INVALID_OBJECT_ID;
+        if (m_int_ref3)
+            location_id = m_int_ref3->Eval(context);
+
+        return design->ProductionCost(empire_id, location_id);
+
+    }
     else if (variable_name == "EmpireMeterValue") {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1)
