@@ -1161,16 +1161,16 @@ RULE_HABITABLE_SIZE_DESC
 Value used to adjust for [[encyclopedia POPULATION_TITLE_SHORT_DESC]] changes on a planet of this size.
 
 RULE_ALLOW_CONCEDE
-Allow concede
+Allow Conceding
 
 RULE_ALLOW_CONCEDE_DESC
-Allows empire to concede with elimination its assets.
+Allows empires to concede from a game. This eliminates the empire's assets from the universe. The game continues with the remaining players.
 
 RULE_CONCEDE_COLONIES_THRESHOLD
-Maximum colonies allowed to concede
+Maximum Colonies When Conceding
 
 RULE_CONCEDE_COLONIES_THRESHOLD_DESC
-Disallow empire with more coloies to concede.
+Empires with more than this number of colonies may not concede.
 
 RULE_THRESHOLD_HUMAN_PLAYER_WIN
 Max human player winners
@@ -2452,7 +2452,7 @@ SAVE_DISABLED_BROWSE_TEXT
 The Save Game button is disabled, either because this is a multiplayer game in which this client is neither Host nor Moderator, or because at the time this menu was opened at least one of the AIs had not yet finished submitting its moves for the turn (indicated by a green triangle status icon just to the left of its player-type icon in the Empires window).
 
 GAME_MENU_REALLY_CONCEDE
-Are you sure you want to concede the game?
+Confirm conceding? This empire will be removed from the game.
 
 ##
 ## Save game dialog
