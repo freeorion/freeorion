@@ -1,3 +1,11 @@
+
+GROWTH_RATE_FACTOR
+'''
+0.005 *
+(1 - (Statistic If condition = EmpireHasAdoptedPolicy name = "PLC_NO_GROWTH")) *    // no growth with no-growth policy
+(1 + 0.5*(Statistic If condition = EmpireHasAdoptedPolicy name = "PLC_POPULATION")) // +50% growth with population policy
+'''
+
 BASIC_POPULATION
 '''
         [[HOMEWORLD_BONUS_POPULATION]]
@@ -18,7 +26,8 @@ BASIC_POPULATION
             priority = [[EARLY_FIRST_NATURAL_POPULATION_PRIORITY]]
             effects = SetPopulation value =
                 (Statistic If condition = (Value < Target.TargetPopulation) *
-                    min(Target.TargetPopulation, Value + Value*0.01*(Target.TargetPopulation + 1 - Value)))
+                    min(Target.TargetPopulation, Value + Value*[[GROWTH_RATE_FACTOR]]*
+                                                               (Target.TargetPopulation + 1 - Value)))
               + (Statistic If condition = (Value >= Target.TargetPopulation) *
                     max(Target.TargetPopulation, Value - 0.1*(Value - Target.TargetPopulation)))
             

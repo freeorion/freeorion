@@ -1,0 +1,9 @@
+Policy
+    name = "PLC_POPULATION"
+    description = "PLC_POPULATION_DESC"
+    short_description = "PLC_POPULATION_SHORT_DESC"
+    category = "SOCIAL_CATEGORY"
+    adoptioncost = 10
+    graphic = "icons/focus/growth.png"
+
+#include "/scripting/common/priorities.macros"
