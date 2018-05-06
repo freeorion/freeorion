@@ -5,12 +5,12 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         log_setup
     REQUIRED)
 
-add_executable(fo_unittest_game
+add_executable(fo_systemtest_game
     main.cpp
     ClientAppFixture.cpp
 )
 
-target_compile_definitions(fo_unittest_game
+target_compile_definitions(fo_systemtest_game
     PRIVATE
         -DFREEORION_BUILD_HUMAN
         -DBOOST_TEST_DYN_LINK
@@ -18,13 +18,13 @@ target_compile_definitions(fo_unittest_game
         -DBOOST_TEST_IGNORE_SIGCHLD
 )
 
-target_include_directories(fo_unittest_game
+target_include_directories(fo_systemtest_game
     PRIVATE
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/GG/
 )
 
-target_link_libraries(fo_unittest_game
+target_link_libraries(fo_systemtest_game
     freeorioncommon
     freeorionparse
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
@@ -33,16 +33,16 @@ target_link_libraries(fo_unittest_game
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
-add_coverage(fo_unittest_game
+add_coverage(fo_systemtest_game
     unittest
 )
 
 add_dependencies(unittest
     freeoriond
-    fo_unittest_game
+    fo_systemtest_game
 )
 
-target_sources(fo_unittest_game
+target_sources(fo_systemtest_game
     PUBLIC
         ${PROJECT_SOURCE_DIR}/client/ClientApp.h
         ${PROJECT_SOURCE_DIR}/client/ClientFSMEvents.h
@@ -56,18 +56,18 @@ target_sources(fo_unittest_game
 )
 
 set(FO_TEST_GAME
-    TestGame
+        SmokeTestGame
 )
 
 foreach(_TEST ${FO_TEST_GAME})
-    target_sources(fo_unittest_game
+    target_sources(fo_systemtest_game
         PRIVATE
         ${_TEST}.cpp
     )
     # ToDo: Change `--catch_system_errors=no` to `yes` after moving to boost >= 1.59
     add_test(
         NAME ${_TEST}
-        COMMAND fo_unittest_game --log_level=message "--run_test=${_TEST}" --catch_system_error=no
+        COMMAND fo_systemtest_game --log_level=message "--run_test=${_TEST}" --catch_system_error=no
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
 endforeach()

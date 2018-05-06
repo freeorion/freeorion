@@ -1,3 +1,3 @@
 add_subdirectory(parse)
 add_subdirectory(util)
-add_subdirectory(game)
+add_subdirectory(system)

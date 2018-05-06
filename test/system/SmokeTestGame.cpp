@@ -23,7 +23,21 @@ namespace {
 #include <stdlib.h>
 #endif
 
-BOOST_FIXTURE_TEST_SUITE(TestGame, ClientAppFixture)
+BOOST_FIXTURE_TEST_SUITE(SmokeTestGame, ClientAppFixture)
+
+/**
+ * - Do start a server with as a host mock player on localhost.
+ * - Expect successfully connection to localhost server.
+ * - Do launch singleplayer game with `FO_TEST_GAME_AIS` AIs (by default 2).
+ * - Expect singleplayer game is correctly lauched.
+ * - Do make empty turns until turn number reach `FO_TEST_GAME_TURNS` or mock player will be
+ *   eliminated or someone will win.
+ * - Expect turns're processing without error.
+ * - Do save game after each turn if `FO_TEST_GAME_SAVE` was set.
+ * - Expect saving is processing correctly.
+ * - Do shut down server.
+ * - Expect that server and AIs were shut down.
+ */
 
 BOOST_AUTO_TEST_CASE(host_server) {
 
@@ -68,7 +82,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
     int num_turns = 2;
     bool save_game = true;
 
-    const char *env_num_AIs = std::getenv("TEST_GAME_AIS");
+    const char *env_num_AIs = std::getenv("FO_TEST_GAME_AIS");
     if (env_num_AIs) {
         try {
             num_AIs = boost::lexical_cast<unsigned int>(env_num_AIs);
@@ -77,7 +91,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
         }
     }
 
-    const char *env_num_turns = std::getenv("TEST_GAME_TURNS");
+    const char *env_num_turns = std::getenv("FO_TEST_GAME_TURNS");
     if (env_num_turns) {
         try {
             num_turns = boost::lexical_cast<int>(env_num_turns);
@@ -86,7 +100,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
         }
     }
 
-    const char *env_save_game = std::getenv("TEST_GAME_SAVE");
+    const char *env_save_game = std::getenv("FO_TEST_GAME_SAVE");
     if (env_save_game) {
         try {
             save_game = boost::lexical_cast<int>(env_save_game) != 0;
