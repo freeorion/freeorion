@@ -9,11 +9,11 @@
 #include "i18n.h"
 #include "Logger.h"
 
-#include <boost/algorithm/string/split.hpp>
-#include <boost/static_assert.hpp>
-#include <boost/spirit/include/classic.hpp>
+#include <boost/xpressive/xpressive.hpp>
 
 #include <map>
+
+namespace xpr = boost::xpressive;
 
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
@@ -30,10 +30,6 @@ const Species*      GetSpecies(const std::string& name);
 const FieldType*    GetFieldType(const std::string& name);
 
 namespace {
-    const std::string START_VAR("%");
-    const std::string END_VAR("%");
-    const std::string LABEL_SEPARATOR(":");
-
     //////////////////////////////////////////
     ///// Tag substitution generators////////
     ////////////////////////////////////////
@@ -168,76 +164,43 @@ namespace {
     }
 
 
-    /** Converts (first, last) to a string, looks up its value in the Universe,
-      * then appends this to the end of a std::string. */
-    struct SubstituteAndAppend {
-        SubstituteAndAppend(const std::map<std::string, std::string>& variables,
-                            std::string& str, bool& valid) :
+    /** Looks up the given match in the Universe and returns the Universe entities
+     * value.
+     */
+    struct Substitute {
+        Substitute(const std::map<std::string, std::string>& variables,
+                   bool& valid) :
             m_variables(variables),
-            m_str(str),
             m_valid(valid)
         {}
 
-        void operator()(const char* first, const char* last) const {
-            std::string token(first, last);
-
-            // special case: "%%" is interpreted to be a '%' character
-            if (token.empty()) {
-                m_str += "%";
-                return;
-            }
-
-            // Labelled tokens have the form %tag:label%,  unlabelled are just %tag%
-            std::vector<std::string> pieces;
-            boost::split(pieces, token, boost::is_any_of(LABEL_SEPARATOR));
-
-            std::string tag; //< The tag of the token (the type)
-            std::string label; //< The label of the token (the key to fetch data by)
-            if (pieces.size() == 1) {
-                // No separator. There is only a tag. The tag is the default label
-                tag = token;
-                label = token;
-            } else if (pieces.size() == 2) {
-                // Had a separator
-                tag = pieces[0];
-                label = pieces[1];
-            }
+        std::string operator()(xpr::smatch const& match) const {
+            // Labelled variables have the form %tag:label%,  unlabelled are just %tag%
+            std::string tag = match[1];
+            // For unlabelled variables use the tag value as label.
+            std::string label = match[(match.size() == 1) ? 1 : 2];
 
             // look up child
             auto elem = m_variables.find(label);
             if (m_variables.end() == elem) {
-                m_str += UserString("ERROR");
                 m_valid = false;
-                return;
+                return UserString("ERROR");
             }
 
             auto substituter = SubstitutionMap().find(tag);
             if (substituter != SubstitutionMap().end()) {
                 if (auto substitution = substituter->second(elem->second)) {
-                    m_str += *substitution;
-                    return;
+                    return *substitution;
                 }
             }
 
-            ErrorLogger() << "SubstituteAndAppend::operator(): No substitution executed for tag: " << tag << " from token: " << token;
-            m_str += UserString("ERROR");
+            ErrorLogger() << "Substitute::operator(): No substitution executed for tag: " << tag << " from token: " << match.str();
             m_valid = false;
+            return UserString("ERROR");
         }
 
         const std::map<std::string, std::string>& m_variables;
-        std::string& m_str;
         bool& m_valid;
-    };
-
-    // sticks a sequence of characters onto the end of a std::string
-    struct StringAppend {
-        StringAppend(std::string& str) :
-            m_str(str)
-        {}
-
-        void operator()(const char* first, const char* last) const
-        { m_str += std::string(first, last); }
-        std::string& m_str;
     };
 }
 
@@ -316,16 +279,6 @@ void VarText::GenerateVarText() const {
     // get string into which to substitute variables
     std::string template_str = m_stringtable_lookup_flag ? UserString(m_template_string) : m_template_string;
 
-    // set up parser
-    namespace classic = boost::spirit::classic;
-    classic::rule<> token = *(classic::anychar_p - classic::space_p - END_VAR.c_str());
-    classic::rule<> var = START_VAR.c_str() >> token[SubstituteAndAppend(m_variables, m_text, m_validated)] >> END_VAR.c_str();
-    classic::rule<> non_var = classic::anychar_p - START_VAR.c_str();
-
-    // parse and substitute variables
-    try {
-        classic::parse(template_str.c_str(), *(non_var[StringAppend(m_text)] | var));
-    } catch (const std::exception&) {
-        ErrorLogger() << "VarText::GenerateVartText caught exception when parsing template string: " << m_template_string;
-    }
+    xpr::sregex var = '%' >> (xpr::s1 = -+xpr::_w) >> !(':' >> (xpr::s2 = -*xpr::_w)) >> '%';
+    m_text = xpr::regex_replace(template_str, var, Substitute(m_variables, m_validated));
 }
