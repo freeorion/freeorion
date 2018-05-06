@@ -119,3 +119,19 @@ GameRule
     default = 6
     min = 0
     max = 999
+
+GameRule
+    name = "RULE_THRESHOLD_HUMAN_PLAYER_WIN"
+    description = "RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC"
+    category = "BALANCE"
+    type = Integer
+    default = 0
+    min = 0
+    max = 999
+
+GameRule
+    name = "RULE_ONLY_ALLIANCE_WIN"
+    description = "RULE_ONLY_ALLIANCE_WIN_DESC"
+    category = "BALANCE"
+    type = Toggle
+    default = On

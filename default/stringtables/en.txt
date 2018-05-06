@@ -1147,6 +1147,18 @@ Gas Giants Habitable size
 RULE_HABITABLE_SIZE_DESC
 Value used to adjust for [[encyclopedia POPULATION_TITLE_SHORT_DESC]] changes on a planet of this size.
 
+RULE_THRESHOLD_HUMAN_PLAYER_WIN
+Max human player winners
+
+RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC
+Maximum number of human players that could win together in multiplayer games if there are no other human player survivors.
+
+RULE_ONLY_ALLIANCE_WIN
+Only allied players win
+
+RULE_ONLY_ALLIANCE_WIN_DESC
+Allied players could win together if the number of human players in their alliance is no large than the maximum human player winners and there are no other human player survivors.
+
 
 ##
 ## Command-line and options database entries
@@ -6835,6 +6847,9 @@ VICTORY! The %empire% has transcended our reality and wins a technological victo
 
 VICTORY_ALL_ENEMIES_ELIMINATED
 VICTORY! The %empire% is the last surviving empire.
+
+VICTORY_FEW_HUMANS_ALIVE
+VICTORY! The %empire% is one of the last surviving empires controlled by a human player.
 
 VICTORY_EXPERIMENTOR_CAPTURE
 VICTORY! The %empire% has captured the powerful Experimentors and ended the fearsome threat plaguing the galaxy.
