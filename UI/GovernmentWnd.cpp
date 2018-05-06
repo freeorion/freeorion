@@ -679,33 +679,58 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
 
     const int NUM_CATEGORY_BUTTONS = std::max(1, static_cast<int>(m_category_buttons.size()));
     const int NUM_AVAILABILITY_BUTTONS = 2;
-    const int NUM_NON_CATEGORY_BUTTONS = NUM_AVAILABILITY_BUTTONS;
+    const int TOTAL_BUTTONS = NUM_CATEGORY_BUTTONS + NUM_AVAILABILITY_BUTTONS;
 
     // determine whether to put non-class buttons (availability)
     // in one column or two.
-    // -> if class buttons fill up fewer rows than (the non-class buttons in one
-    // column), split the non-class buttons into two columns
-    int num_non_category_buttons_per_row = 1;
-    if (NUM_CATEGORY_BUTTONS < NUM_NON_CATEGORY_BUTTONS*(MAX_BUTTONS_PER_ROW - num_non_category_buttons_per_row))
-        num_non_category_buttons_per_row = 2;
+    // -> if class buttons + availability buttons all fit in one row,
+    //    put the availability buttons into two columns.
+    // -> if class buttons + availability buttons don't fit in one row,
+    //    put the availability buttons into one column.
+    int AVAILABILITY_BUTTONS_PER_ROW = 2;
+    if (TOTAL_BUTTONS > MAX_BUTTONS_PER_ROW)
+        AVAILABILITY_BUTTONS_PER_ROW = 1;
+    const int NUM_AVAILABILITY_BUTTON_ROWS = NUM_AVAILABILITY_BUTTONS / AVAILABILITY_BUTTONS_PER_ROW;
 
-    const int MAX_CATEGORY_BUTTONS_PER_ROW = std::max(1, MAX_BUTTONS_PER_ROW - num_non_category_buttons_per_row);
+    // how many rows of buttons?
+    // if there are 3 max buttons per row and 1 availability button per row,
+    // then at most 2 category buttons per row can be placed.
+    const int MAX_CATEGORY_BUTTONS_PER_ROW = std::max(1, MAX_BUTTONS_PER_ROW - AVAILABILITY_BUTTONS_PER_ROW);
+    //std::cout << "  max cat buts pr: " << MAX_CATEGORY_BUTTONS_PER_ROW;
 
-    const int NUM_CATEGORY_BUTTON_ROWS = static_cast<int>(std::ceil(static_cast<float>(NUM_CATEGORY_BUTTONS) / MAX_CATEGORY_BUTTONS_PER_ROW));
-    const int NUM_CATEGORY_BUTTONS_PER_ROW = static_cast<int>(std::ceil(static_cast<float>(NUM_CATEGORY_BUTTONS) / NUM_CATEGORY_BUTTON_ROWS));
+    // if there are 5 category buttons and at most 2 per row, then need 5/2 = 2.5 -> 3 rows of category buttons
+    const int MIN_CATEGORY_BUTTON_ROWS = static_cast<int>(std::ceil(
+        NUM_CATEGORY_BUTTONS / static_cast<float>(MAX_CATEGORY_BUTTONS_PER_ROW)));
+    //std::cout << "  min cat but rows: " << MIN_CATEGORY_BUTTON_ROWS;
 
-    const int TOTAL_BUTTONS_PER_ROW = NUM_CATEGORY_BUTTONS_PER_ROW + num_non_category_buttons_per_row;
+    // if there are already more rows for availability buttons than are needed
+    // category buttons, can use up to that many rows for category buttons.
+    // if there are 2 availability buttons per row, then need just 1 row for them.
+    // if there is just 1 availability button per row, then need 2 rows for them.
+    const int CATEGORY_BUTTON_ROWS = std::max(NUM_AVAILABILITY_BUTTON_ROWS, MIN_CATEGORY_BUTTON_ROWS);
+    //std::cout << "  cat but rows: " << CATEGORY_BUTTON_ROWS;
+
+    // how many category buttons per row?
+    // if there are 3 category buttons and 2 rows, should put 2 cat buttons
+    // on first row and 1 on the second row.
+    const int CATEGORY_BUTTONS_PER_ROW = std::min(MAX_CATEGORY_BUTTONS_PER_ROW, static_cast<int>(
+        std::ceil(NUM_CATEGORY_BUTTONS / static_cast<float>(CATEGORY_BUTTON_ROWS))));
+    //std::cout << "  cat buts pr: " << CATEGORY_BUTTONS_PER_ROW;
+
+    const int TOTAL_BUTTONS_PER_ROW = CATEGORY_BUTTONS_PER_ROW + AVAILABILITY_BUTTONS_PER_ROW;
+    //std::cout << "  total buts pr: " << TOTAL_BUTTONS_PER_ROW << std::endl;
 
     const GG::X BUTTON_WIDTH = (USABLE_WIDTH - (TOTAL_BUTTONS_PER_ROW - 1)*BUTTON_SEPARATION) / TOTAL_BUTTONS_PER_ROW;
 
     const GG::X COL_OFFSET = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
     const GG::Y ROW_OFFSET = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
 
+
     // place category buttons
-    int col = NUM_CATEGORY_BUTTONS_PER_ROW;
+    int col = CATEGORY_BUTTONS_PER_ROW;
     int row = -1;
     for (auto& entry : m_category_buttons) {
-        if (col >= NUM_CATEGORY_BUTTONS_PER_ROW) {
+        if (col >= CATEGORY_BUTTONS_PER_ROW) {
             col = 0;
             ++row;
         }
@@ -715,12 +740,12 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
         ++col;
     }
 
-    // place policies list.
+    // place policies list
     m_policies_list->SizeMove(GG::Pt(GG::X0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)),
                               ClientSize() - GG::Pt(GG::X(BUTTON_SEPARATION), GG::Y(BUTTON_SEPARATION)));
 
     // reset row / column
-    col = NUM_CATEGORY_BUTTONS_PER_ROW;
+    col = CATEGORY_BUTTONS_PER_ROW;
     row = 0;
 
     auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
