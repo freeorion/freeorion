@@ -742,7 +742,7 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
 
     // place policies list
     m_policies_list->SizeMove(GG::Pt(GG::X0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)),
-                              ClientSize() - GG::Pt(GG::X(BUTTON_SEPARATION), GG::Y(BUTTON_SEPARATION)));
+                              GG::Pt(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)));
 
     // reset row / column
     col = CATEGORY_BUTTONS_PER_ROW;
