@@ -58,9 +58,9 @@ BuildingType
                 OwnedBy empire = Source.Owner
                 HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
             ]
-            priority = 150 //after everything else is resolved
+            priority = [[CONCENTRATION_CAMP_PRIORITY]]
             effects = [
-                [[NEXT_TURN_POPULATION_REDUCE_BY(3)]]
+                SetPopulation value = min(Value, Target.Population - 3)
                 SetIndustry value = Target.TargetIndustry
             ]
         EffectsGroup

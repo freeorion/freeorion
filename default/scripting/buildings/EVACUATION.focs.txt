@@ -60,9 +60,9 @@ BuildingType
                 PopulationCenter
                 OwnedBy empire = Source.Owner
             ]
-            priority = [[METER_OVERRIDE_PRIORITY]]
+            priority = [[CONCENTRATION_CAMP_PRIORITY]]
             effects = [
-                [[NEXT_TURN_POPULATION_REDUCE_BY(2)]]
+                SetPopulation value = min(Value, Target.Population - 2)
                 SetIndustry value = 0
                 SetTargetIndustry value = 0
                 SetResearch value = 0
@@ -87,6 +87,5 @@ BuildingType
     ]
     icon = "icons/building/evacuation.png"
 
-#include "/scripting/common/pop_reduce.macros"
 #include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
