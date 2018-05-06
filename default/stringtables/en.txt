@@ -7755,6 +7755,32 @@ Reason for Staying:
 Volp-Uglush are now too integrated and ingrown. They now totally lack the independence and innovation needed to leave Hive and start a new colony.
 '''
 
+SP_FULVER
+Fulver
+
+SP_FULVER_GAMEPLAY_DESC
+'''Precognitive unsatisfied ants.
+Prefer [[PT_TUNDRA]]s.
+[[encyclopedia LITHIC_SPECIES_TITLE]]
+'''
+
+SP_FULVER_DESC
+'''Biology:
+The Fulvers' appearance resembles that of large nervous ants. They possess quantum computing brains which effectively allows them to predict all possible near futures making them hard to surprise in combat.
+
+Name:
+The precognition ability is also unique to the Fulvers species on the Fulver homeworld. As such a "Fulver" is "One who can see" your possible reactions.
+
+Personality:
+Fulver prefer to concentrate on their strength and prefer to live from day to day. Fulver often favor the tools and decisions which allows for the highest number of future choices. Having a bad memory and no capability for long term future prediction they are bad at long term commitments like science and building up defensive structures. Feeling locked in by the limited number of choices they are restless and unsatisfied and constantly try to overcome their situation.
+
+Reason for Leaving:
+The endless possibilites that space promises helped the Fulvers to concentrate and finally develop space-faring technology. Finally they are out going to the frontier and beyond not caring much for what they leave behind.
+
+Social Structure:
+The focus on the near future prevents the Fulver from building long-lasting structures. Knowing each others possible choices and reacting to these leads to a society which could be best described as an informal anarchy.
+'''
+
 SP_FURTHEST
 Furthest
 
@@ -12455,6 +12481,12 @@ Furthest Colony
 
 BLD_COL_FURTHEST_DESC
 [[BLD_COL_PART_1]] [[species SP_FURTHEST]] colony. [[BLD_COL_PART_2]] Furthest colony [[BLD_COL_PART_3]].
+
+BLD_COL_FULVER
+Fulver Colony
+
+BLD_COL_FULVER_DESC
+[[BLD_COL_PART_1]] [[species SP_FULVER]] colony. [[BLD_COL_PART_2]] Fulver colony [[BLD_COL_PART_3]].
 
 BLD_COL_GEORGE
 George Colony
