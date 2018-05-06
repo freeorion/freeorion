@@ -4,7 +4,6 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../universe/Enums.h"
-#include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "i18n.h"
 #include "Logger.h"
@@ -14,8 +13,6 @@
 #include <map>
 
 namespace xpr = boost::xpressive;
-
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 // Forward declarations
 class Tech;
@@ -28,6 +25,7 @@ const BuildingType* GetBuildingType(const std::string& name);
 const Special*      GetSpecial(const std::string& name);
 const Species*      GetSpecies(const std::string& name);
 const FieldType*    GetFieldType(const std::string& name);
+
 
 namespace {
     //////////////////////////////////////////
