@@ -112,55 +112,50 @@ namespace {
         return WithTags(UserString(data), tag, data);
     }
 
-    /// Returns a map that tells shich function should be used to
-    /// generate a substitution for which tag.
-    std::map<std::string, TagString> CreateSubstituterMap() {
-        std::map<std::string, TagString> subs;
-        subs[VarText::TEXT_TAG] = [](const std::string& data) -> boost::optional<std::string>
-            { return UserString(data); };
-        subs[VarText::RAW_TEXT_TAG] = [](const std::string& data) -> boost::optional<std::string>
-            { return data; };
-        subs[VarText::PLANET_ID_TAG] = [](const std::string& data)
-            { return UniverseObjectString(data, VarText::PLANET_ID_TAG); };
-        subs[VarText::SYSTEM_ID_TAG] = [](const std::string& data)
-            { return UniverseObjectString(data, VarText::SYSTEM_ID_TAG); };
-        subs[VarText::SHIP_ID_TAG] = [](const std::string& data)
-            { return UniverseObjectString(data, VarText::SHIP_ID_TAG); };
-        subs[VarText::FLEET_ID_TAG] = [](const std::string& data)
-            { return UniverseObjectString(data, VarText::FLEET_ID_TAG); };
-        subs[VarText::BUILDING_ID_TAG] = [](const std::string& data)
-            { return UniverseObjectString(data, VarText::BUILDING_ID_TAG); };
-        subs[VarText::FIELD_ID_TAG] = [](const std::string& data)
-            { return UniverseObjectString(data, VarText::FIELD_ID_TAG); };
-        subs[VarText::COMBAT_ID_TAG] = [](const std::string& data) -> boost::optional<std::string>
-            { return WithTags(UserString("COMBAT"), VarText::COMBAT_ID_TAG, data); };
-        subs[VarText::TECH_TAG] = [](const std::string& data)
-            { return NameString<Tech, GetTech>(data, VarText::TECH_TAG); };
-        subs[VarText::BUILDING_TYPE_TAG] = [](const std::string& data)
-            { return NameString<BuildingType, GetBuildingType>(data, VarText::BUILDING_TYPE_TAG); };
-        subs[VarText::SHIP_HULL_TAG] = [](const std::string& data)
-            { return NameString<HullType, GetHullType>(data, VarText::SHIP_HULL_TAG); };
-        subs[VarText::SHIP_PART_TAG] = [](const std::string& data)
-            { return NameString<PartType, GetPartType>(data, VarText::SHIP_PART_TAG); };
-        subs[VarText::SPECIAL_TAG] = [](const std::string& data)
-            { return NameString<Special, GetSpecial>(data, VarText::SPECIAL_TAG); };
-        subs[VarText::SPECIES_TAG] = [](const std::string& data)
-            { return NameString<Species, GetSpecies>(data, VarText::SPECIES_TAG); };
-        subs[VarText::FIELD_TYPE_TAG] = [](const std::string& data)
-            { return NameString<FieldType, GetFieldType>(data, VarText::FIELD_TYPE_TAG); };
-        subs[VarText::METER_TYPE_TAG] = MeterTypeString;
-        subs[VarText::DESIGN_ID_TAG] = [](const std::string& data)
-            { return IDString<const ShipDesign, GetShipDesign>(data, VarText::DESIGN_ID_TAG); };
-        subs[VarText::PREDEFINED_DESIGN_TAG] = PredefinedShipDesignString;
-        subs[VarText::EMPIRE_ID_TAG] = [](const std::string& data)
-            { return IDString<Empire, GetEmpire>(data, VarText::EMPIRE_ID_TAG); };
-        return subs;
-    }
-
     /// Global substitution map, wrapped in a function to avoid initialization order issues
     const std::map<std::string, TagString>& SubstitutionMap() {
-        static std::map<std::string, TagString> subs = CreateSubstituterMap();
-        return subs;
+        static std::map<std::string, TagString> substitute_map{
+            {VarText::TEXT_TAG, [](const std::string& data) -> boost::optional<std::string>
+                { return UserString(data); }},
+            {VarText::RAW_TEXT_TAG, [](const std::string& data) -> boost::optional<std::string>
+                { return data; }},
+            {VarText::PLANET_ID_TAG, [](const std::string& data)
+                { return UniverseObjectString(data, VarText::PLANET_ID_TAG); }},
+            {VarText::SYSTEM_ID_TAG, [](const std::string& data)
+                { return UniverseObjectString(data, VarText::SYSTEM_ID_TAG); }},
+            {VarText::SHIP_ID_TAG, [](const std::string& data)
+                { return UniverseObjectString(data, VarText::SHIP_ID_TAG); }},
+            {VarText::FLEET_ID_TAG, [](const std::string& data)
+                { return UniverseObjectString(data, VarText::FLEET_ID_TAG); }},
+            {VarText::BUILDING_ID_TAG, [](const std::string& data)
+                { return UniverseObjectString(data, VarText::BUILDING_ID_TAG); }},
+            {VarText::FIELD_ID_TAG, [](const std::string& data)
+                { return UniverseObjectString(data, VarText::FIELD_ID_TAG); }},
+            {VarText::COMBAT_ID_TAG, [](const std::string& data) -> boost::optional<std::string>
+                { return WithTags(UserString("COMBAT"), VarText::COMBAT_ID_TAG, data); }},
+            {VarText::TECH_TAG, [](const std::string& data)
+                { return NameString<Tech, GetTech>(data, VarText::TECH_TAG); }},
+            {VarText::BUILDING_TYPE_TAG, [](const std::string& data)
+                { return NameString<BuildingType, GetBuildingType>(data, VarText::BUILDING_TYPE_TAG); }},
+            {VarText::SHIP_HULL_TAG, [](const std::string& data)
+                { return NameString<HullType, GetHullType>(data, VarText::SHIP_HULL_TAG); }},
+            {VarText::SHIP_PART_TAG, [](const std::string& data)
+                { return NameString<PartType, GetPartType>(data, VarText::SHIP_PART_TAG); }},
+            {VarText::SPECIAL_TAG, [](const std::string& data)
+                { return NameString<Special, GetSpecial>(data, VarText::SPECIAL_TAG); }},
+            {VarText::SPECIES_TAG, [](const std::string& data)
+                { return NameString<Species, GetSpecies>(data, VarText::SPECIES_TAG); }},
+            {VarText::FIELD_TYPE_TAG, [](const std::string& data)
+                { return NameString<FieldType, GetFieldType>(data, VarText::FIELD_TYPE_TAG); }},
+            {VarText::METER_TYPE_TAG, MeterTypeString},
+            {VarText::DESIGN_ID_TAG, [](const std::string& data)
+                { return IDString<const ShipDesign, GetShipDesign>(data, VarText::DESIGN_ID_TAG); }},
+            {VarText::PREDEFINED_DESIGN_TAG, PredefinedShipDesignString},
+            {VarText::EMPIRE_ID_TAG, [](const std::string& data)
+                { return IDString<Empire, GetEmpire>(data, VarText::EMPIRE_ID_TAG); }},
+        };
+
+        return substitute_map;
     }
 
 
