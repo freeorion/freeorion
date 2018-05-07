@@ -1147,6 +1147,18 @@ Taille habitable Géantes Gazeuses
 RULE_HABITABLE_SIZE_DESC
 Valeur utilisée pour ajuster les variations de [[encyclopedia POPULATION_TITLE_SHORT_DESC]] sur une planète de cette taille.
 
+RULE_THRESHOLD_HUMAN_PLAYER_WIN
+Maximum de joueurs humains vainqueurs
+
+RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC
+Nombre maximum de joueurs humains pouvant gagner collectivement dans une partie multijoueurs s'il n'y a pas d'autres joueurs humains survivants.
+
+RULE_ONLY_ALLIANCE_WIN
+Seuls les joueurs alliés gagnent
+
+RULE_ONLY_ALLIANCE_WIN_DESC
+Les joueurs alliés peuvent gagner collectivement si le nombre de joueurs humains au sein de leur alliance n'est pas supérieur au maximum de joueurs humains vainqueurs et s'il n'y a pas d'autres joueurs humains survivants.
+
 
 ##
 ## Command-line and options database entries
@@ -3144,9 +3156,6 @@ Utilisée
 RESOURCE_TT_EXCESS
 Excédent
 
-RESOURCE_TT_STOCKPILE_EFFIC
-Efficience Stock
-
 RESOURCE_TT_TO_STOCKPILE
 Vers Stock
 
@@ -3930,6 +3939,9 @@ Stock
 
 STOCKPILE_USE_LABEL
 Usage Stock
+
+STOCKPILE_USE_LIMIT
+Limite Usage Stock
 
 STOCKPILE_CHANGE_LABEL
 Stock prochain tour
@@ -6835,6 +6847,9 @@ VICTOIRE! L'empire %empire% a transcendé notre réalité et remporte une victoi
 
 VICTORY_ALL_ENEMIES_ELIMINATED
 VICTOIRE! L'empire %empire% est l'ultime survivant.
+
+VICTORY_FEW_HUMANS_ALIVE
+VICTOIRE! L'empire %empire% est l'un des derniers empires survivants contrôlé par un joueur humain.
 
 VICTORY_EXPERIMENTOR_CAPTURE
 VICTOIRE! L'empire %empire% a capturé les puissants Expérimentateurs, mettant ainsi un terme à l'effroyable fléau menaçant la galaxie.
