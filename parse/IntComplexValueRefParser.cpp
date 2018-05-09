@@ -182,8 +182,8 @@ namespace parse {
             |   outposts_owned
             |   parts_in_ship_design
             |   part_class_in_ship_design
-            |   ship_parts_owned_by_name
             |   ship_parts_owned_by_class
+            |   ship_parts_owned_by_name
             |   empire_design_ref
             |   slots_in_hull
             |   slots_in_ship_design
