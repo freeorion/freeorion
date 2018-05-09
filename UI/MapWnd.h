@@ -372,7 +372,7 @@ private:
     void FleetButtonRightClicked(const FleetButton* fleet_btn);
     void FleetRightClicked(int fleet_id);
     void FleetsRightClicked(const std::vector<int>& fleet_ids);
-    
+
     void ShipRightClicked(int fleet_id);
     void ShipsRightClicked(const std::vector<int>& fleet_ids);
 
@@ -559,6 +559,7 @@ private:
     std::shared_ptr<GG::Button>     m_btn_turn = nullptr;       //!< button that updates player's turn;
     std::shared_ptr<GG::Button>     m_btn_auto_turn = nullptr;  //!< button that toggles whether to automatically end turns;
     bool                            m_auto_end_turn = false;    //!< should turns be ended automatically by this client?
+    bool                            m_ready_turn = false;       //!< is turn orders are ready and sent to server?
     std::list<std::weak_ptr<MapWndPopup>> m_popups;             //!< list of currently active popup windows
     bool                            m_menu_showing = false;     //!< set during ShowMenu() to prevent reentrency
     int                             m_current_owned_system;
