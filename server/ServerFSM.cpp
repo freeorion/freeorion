@@ -2546,7 +2546,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     // received orders are ignored if there are already existing orders?
     std::shared_ptr<OrderSet> order_set;
     if (const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id))) {
-        const auto& existing_orders = server.m_turn_sequence[empire->EmpireID()];
+        const auto& existing_orders = server.m_turn_sequence[empire->EmpireID()].second;
         if (existing_orders)
             order_set.reset(new OrderSet(*existing_orders));
         else
