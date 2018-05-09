@@ -10954,6 +10954,15 @@ Reduces the cost of ground troop ship parts by 50%.
 PLC_MARINE_RECRUITMENT_SHORT_DESC
 Reduces Ground Troop Cost
 
+PLC_DESIGN_SIMPLICITY
+Design Simplicity
+
+PLC_DESIGN_SIMPLICITY_DESC
+Reduces production cost by 20% for ship designs with 6 or fewer parts.
+
+PLC_DESIGN_SIMPLICITY_SHORT_DESC
+Reduces Cost of Simple Designs
+
 
 ##
 ## Technology categories
@@ -11196,7 +11205,9 @@ LRN_MIND_VOID
 Mind of the Void
 
 LRN_MIND_VOID_DESC
-We are not alone in the cosmos... but why should the search be so limited? Many cultures have myths, legends or fervent belief in a higher consciousness. Whether a loving or malevolent God, or a detached observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.
+'''Unlocks [[policy PLC_DESIGN_SIMPLICITY]]
+
+We are not alone in the cosmos... but why should the search be so limited? Many cultures have myths, legends or fervent belief in a higher consciousness. Whether a loving or malevolent God, or a detached observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.'''
 
 LRN_TIME_MECH
 Temporal Mechanics
@@ -11580,9 +11591,9 @@ CON_TRANS_ARCH
 Transcendent Architecture
 
 CON_TRANS_ARCH_DESC
-'''Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring [[buildingtype BLD_MEGALITH]].
+'''Grants 1 extra social policy slot.
 
-Grants 1 extra social policy slot.
+Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring [[buildingtype BLD_MEGALITH]].
 
 The epitome of design unifies optimal functionality with elegance of form. A transcendent structure expands and inspires the minds of its occupants or observers with its shape, placement, substance and integration, whether through awe-inspiring scale, perfect emphasis of a single idea, perception or lack thereof, or utter simplicity and fitness for purpose.'''
 

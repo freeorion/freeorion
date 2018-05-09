@@ -7,6 +7,7 @@ Tech
     researchturns = 10
     tags = [ "PEDIA_LEARNING_CATEGORY" "THEORY" ]
     prerequisites = "LRN_XENOARCH"
+    unlock = Item type = Policy name = "PLC_DESIGN_SIMPLICITY"
     graphic = "icons/tech/mind_of_the_void.png"
 
 #include "/scripting/common/base_prod.macros"
