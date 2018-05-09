@@ -3073,7 +3073,7 @@ Turn %1%
 
 # %1% current turn number.
 MAP_BTN_TURN_UNREADY
-Unready %1%
+Revise Orders %1%
 
 # %1% number of frames currently displayed per second.
 MAP_INDICATOR_FPS
