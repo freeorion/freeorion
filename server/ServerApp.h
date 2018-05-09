@@ -163,6 +163,9 @@ public:
       * will be freed when all processing is done for the turn */
     void    SetEmpireTurnOrders(int empire_id, std::unique_ptr<OrderSet>&& order_set);
 
+    /** Revokes turn order's ready state for the given empire. */
+    void    RevokeEmpireTurnReadyness(int empire_id);
+
     /** Sets all empire turn orders to an empty set. */
     void    ClearEmpireTurnOrders();
 

@@ -891,6 +891,13 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     return transit<PlayingTurn>();
 }
 
+boost::statechart::result WaitingForTurnData::react(const TurnRevoked& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.TurnRevoked";
+
+    // Allow player to change orders
+    return transit<PlayingTurn>();
+}
+
 boost::statechart::result WaitingForTurnData::react(const DispatchCombatLogs& msg) {
     DebugLogger(FSM) << "(PlayerFSM) WaitingForTurnData::DispatchCombatLogs message received";
     Client().UpdateCombatLogs(msg.m_message);

@@ -312,6 +312,7 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
         boost::statechart::custom_reaction<SaveGameDataRequest>,
         boost::statechart::custom_reaction<SaveGameComplete>,
         boost::statechart::custom_reaction<TurnUpdate>,
+        boost::statechart::custom_reaction<TurnRevoked>,
         boost::statechart::custom_reaction<DispatchCombatLogs>
     > reactions;
 
@@ -321,6 +322,7 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
     boost::statechart::result react(const SaveGameDataRequest& d);
     boost::statechart::result react(const SaveGameComplete& d);
     boost::statechart::result react(const TurnUpdate& msg);
+    boost::statechart::result react(const TurnRevoked& msg);
     boost::statechart::result react(const DispatchCombatLogs& msg);
 
     CLIENT_ACCESSOR

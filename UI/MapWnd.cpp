@@ -6126,6 +6126,7 @@ bool MapWnd::ReturnToMap() {
 
 bool MapWnd::EndTurn() {
     if (m_ready_turn) {
+        HumanClientApp::GetApp()->UnreadyTurn();
     } else {
         HumanClientApp::GetApp()->StartTurn();
     }

@@ -933,6 +933,10 @@ void HumanClientApp::StartTurn() {
     m_fsm->process_event(TurnEnded());
 }
 
+void HumanClientApp::UnreadyTurn() {
+    m_networking->SendMessage(UnreadyMessage());
+}
+
 void HumanClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
     ClientApp::HandleTurnPhaseUpdate(phase_id);
 
@@ -977,6 +981,7 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::TURN_UPDATE:              m_fsm->process_event(TurnUpdate(msg));              break;
     case Message::TURN_PARTIAL_UPDATE:      m_fsm->process_event(TurnPartialUpdate(msg));       break;
     case Message::TURN_PROGRESS:            m_fsm->process_event(TurnProgress(msg));            break;
+    case Message::UNREADY:                  m_fsm->process_event(TurnRevoked(msg));             break;
     case Message::PLAYER_STATUS:            m_fsm->process_event(::PlayerStatus(msg));          break;
     case Message::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg));              break;
     case Message::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg));               break;

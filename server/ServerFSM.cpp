@@ -2443,6 +2443,44 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     return discard_event();
 }
 
+sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
+    TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd.RevokeReadiness";
+    ServerApp& server = Server();
+    const PlayerConnectionPtr& sender = msg.m_player_connection;
+
+    int player_id = sender->PlayerID();
+    Networking::ClientType client_type = sender->GetClientType();
+
+    if (client_type == Networking::CLIENT_TYPE_AI_PLAYER ||
+        client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+    {
+        // store empire orders and resume waiting for more
+        const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
+        if (!empire) {
+            ErrorLogger(FSM) << "WaitingForTurnEnd::react(RevokeReadiness&) couldn't get empire for player with id:" << player_id;
+            sender->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
+            return discard_event();
+        }
+
+        TraceLogger(FSM) << "WaitingForTurnEnd.RevokeReadiness : Revoke orders from player " << player_id;
+
+        server.RevokeEmpireTurnReadyness(empire->EmpireID());
+    }
+
+    // inform player who just submitted of acknowledge revoking status.
+    sender->SendMessage(msg.m_message);
+
+    // notify other player that this player revoked orders
+    for (auto player_it = server.m_networking.established_begin();
+         player_it != server.m_networking.established_end(); ++player_it)
+    {
+        PlayerConnectionPtr player_ctn = *player_it;
+        player_ctn->SendMessage(PlayerStatusMessage(player_id, Message::PLAYING_TURN));
+    }
+
+    return discard_event();
+}
+
 sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
     TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd.CheckTurnEndConditions";
     ServerApp& server = Server();
