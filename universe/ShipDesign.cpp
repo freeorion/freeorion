@@ -472,54 +472,52 @@ bool PartType::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float PartType::ProductionCost(int empire_id, int location_id) const {
-    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost) {
+float PartType::ProductionCost(int empire_id, int location_id, int in_design_id/* = INVALID_DESIGN_ID*/) const {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost)
         return 1.0f;
-    } else {
-        if (m_production_cost->ConstantExpr())
-            return static_cast<float>(m_production_cost->Eval());
-        else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant())
-            return static_cast<float>(m_production_cost->Eval());
 
-        const auto arbitrary_large_number = 999999.9f;
+    if (m_production_cost->ConstantExpr())
+        return static_cast<float>(m_production_cost->Eval());
+    else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant())
+        return static_cast<float>(m_production_cost->Eval(ScriptingContext(nullptr, nullptr, in_design_id)));
 
-        auto location = GetUniverseObject(location_id);
-        if (!location && !m_production_cost->TargetInvariant())
-            return arbitrary_large_number;
+    const auto arbitrary_large_number = 999999.9f;
 
-        auto source = Empires().GetSource(empire_id);
-        if (!source && !m_production_cost->SourceInvariant())
-            return arbitrary_large_number;
+    auto location = GetUniverseObject(location_id);
+    if (!location && !m_production_cost->TargetInvariant())
+        return arbitrary_large_number;
 
-        ScriptingContext context(source, location);
+    auto source = Empires().GetSource(empire_id);
+    if (!source && !m_production_cost->SourceInvariant())
+        return arbitrary_large_number;
 
-        return static_cast<float>(m_production_cost->Eval(context));
-    }
+    ScriptingContext context(source, location, in_design_id);
+
+    return static_cast<float>(m_production_cost->Eval(context));
 }
 
-int PartType::ProductionTime(int empire_id, int location_id) const {
+int PartType::ProductionTime(int empire_id, int location_id, int in_design_id/* = INVALID_DESIGN_ID*/) const {
     const auto arbitrary_large_number = 9999;
 
-    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time) {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)
         return 1;
-    } else {
-        if (m_production_time->ConstantExpr())
-            return m_production_time->Eval();
-        else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
-            return m_production_time->Eval();
 
-        auto location = GetUniverseObject(location_id);
-        if (!location && !m_production_time->TargetInvariant())
-            return arbitrary_large_number;
+    if (m_production_time->ConstantExpr())
+        return m_production_time->Eval();
+    else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
+        return m_production_time->Eval(ScriptingContext(nullptr, nullptr, in_design_id));
 
-        auto source = Empires().GetSource(empire_id);
-        if (!source && !m_production_time->SourceInvariant())
-            return arbitrary_large_number;
+    auto location = GetUniverseObject(location_id);
+    if (!location && !m_production_time->TargetInvariant())
+        return arbitrary_large_number;
 
-        ScriptingContext context(source, location);
+    auto source = Empires().GetSource(empire_id);
+    if (!source && !m_production_time->SourceInvariant())
+        return arbitrary_large_number;
 
-        return m_production_time->Eval(context);
-    }
+    ScriptingContext context(source, location, in_design_id);
+
+    return m_production_time->Eval(context);
 }
 
 unsigned int PartType::GetCheckSum() const {
@@ -650,54 +648,52 @@ bool HullType::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float HullType::ProductionCost(int empire_id, int location_id) const {
-    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost) {
+float HullType::ProductionCost(int empire_id, int location_id, int in_design_id/* = INVALID_DESIGN_ID*/) const {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost)
         return 1.0f;
-    } else {
-        if (m_production_cost->ConstantExpr())
-            return static_cast<float>(m_production_cost->Eval());
-        else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant())
-            return static_cast<float>(m_production_cost->Eval());
 
-        const auto arbitrary_large_number = 999999.9f;
+    if (m_production_cost->ConstantExpr())
+        return static_cast<float>(m_production_cost->Eval());
+    else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant())
+        return static_cast<float>(m_production_cost->Eval(ScriptingContext(nullptr, nullptr, in_design_id)));
 
-        auto location = GetUniverseObject(location_id);
-        if (!location && !m_production_cost->TargetInvariant())
-            return arbitrary_large_number;
+    const auto arbitrary_large_number = 999999.9f;
 
-        auto source = Empires().GetSource(empire_id);
-        if (!source && !m_production_cost->SourceInvariant())
-            return arbitrary_large_number;
+    auto location = GetUniverseObject(location_id);
+    if (!location && !m_production_cost->TargetInvariant())
+        return arbitrary_large_number;
 
-        ScriptingContext context(source, location);
+    auto source = Empires().GetSource(empire_id);
+    if (!source && !m_production_cost->SourceInvariant())
+        return arbitrary_large_number;
 
-        return static_cast<float>(m_production_cost->Eval(context));
-    }
+    ScriptingContext context(source, location, in_design_id);
+
+    return static_cast<float>(m_production_cost->Eval(context));
 }
 
-int HullType::ProductionTime(int empire_id, int location_id) const {
-    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time) {
+int HullType::ProductionTime(int empire_id, int location_id, int in_design_id/* = INVALID_DESIGN_ID*/) const {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)
         return 1;
-    } else {
-        if (m_production_time->ConstantExpr())
-            return m_production_time->Eval();
-        else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
-            return m_production_time->Eval();
 
-        const auto arbitrary_large_number = 999999;
+    if (m_production_time->ConstantExpr())
+        return m_production_time->Eval();
+    else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
+        return m_production_time->Eval(ScriptingContext(nullptr, nullptr, in_design_id));
 
-        auto location = GetUniverseObject(location_id);
-        if (!location && !m_production_time->TargetInvariant())
-            return arbitrary_large_number;
+    const auto arbitrary_large_number = 999999;
 
-        auto source = Empires().GetSource(empire_id);
-        if (!source && !m_production_time->SourceInvariant())
-            return arbitrary_large_number;
+    auto location = GetUniverseObject(location_id);
+    if (!location && !m_production_time->TargetInvariant())
+        return arbitrary_large_number;
 
-        ScriptingContext context(source, location);
+    auto source = Empires().GetSource(empire_id);
+    if (!source && !m_production_time->SourceInvariant())
+        return arbitrary_large_number;
 
-        return m_production_time->Eval(context);
-    }
+    ScriptingContext context(source, location, in_design_id);
+
+    return m_production_time->Eval(context);
 }
 
 unsigned int HullType::GetCheckSum() const {
@@ -787,12 +783,12 @@ void HullTypeManager::CheckPendingHullTypes() const {
     Pending::SwapPending(m_pending_hull_types, m_hulls);
 
     TraceLogger() << [this]() {
-            std::string retval("Hull Types:");
-            for (const auto& entry : m_hulls) {
-                retval.append("\n\t" + entry.second->Name());
-            }
-            return retval;
-        }();
+        std::string retval("Hull Types:");
+        for (const auto& entry : m_hulls) {
+            retval.append("\n\t" + entry.second->Name());
+        }
+        return retval;
+    }();
 
     if (m_hulls.empty())
         ErrorLogger() << "HullTypeManager expects at least one hull type.  All ship design construction will fail.";
@@ -908,6 +904,7 @@ bool ShipDesign::ProductionCostTimeLocationInvariant() const {
     if (const HullType* hull = GetHullType(m_hull))
         if (!hull->ProductionCostTimeLocationInvariant())
             return false;
+
     for (const std::string& part_name : m_parts)
         if (const PartType* part = GetPartType(part_name))
             if (!part->ProductionCostTimeLocationInvariant())
@@ -918,34 +915,37 @@ bool ShipDesign::ProductionCostTimeLocationInvariant() const {
 }
 
 float ShipDesign::ProductionCost(int empire_id, int location_id) const {
-    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION")) {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return 1.0f;
-    } else {
-        float cost_accumulator = 0.0f;
-        if (const HullType* hull = GetHullType(m_hull))
-            cost_accumulator += hull->ProductionCost(empire_id, location_id);
-        for (const std::string& part_name : m_parts)
-            if (const PartType* part = GetPartType(part_name))
-                cost_accumulator += part->ProductionCost(empire_id, location_id);
-        return std::max(0.0f, cost_accumulator);
+
+    float cost_accumulator = 0.0f;
+    if (const HullType* hull = GetHullType(m_hull))
+        cost_accumulator += hull->ProductionCost(empire_id, location_id, m_id);
+    int part_count = 0;
+    for (const std::string& part_name : m_parts) {
+        if (const PartType* part = GetPartType(part_name)) {
+            cost_accumulator += part->ProductionCost(empire_id, location_id, m_id);
+            part_count++;
+        }
     }
+
+    return std::max(0.0f, cost_accumulator);
 }
 
 float ShipDesign::PerTurnCost(int empire_id, int location_id) const
 { return ProductionCost(empire_id, location_id) / std::max(1, ProductionTime(empire_id, location_id)); }
 
 int ShipDesign::ProductionTime(int empire_id, int location_id) const {
-    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION")) {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return 1;
-    } else {
-        int time_accumulator = 1;
-        if (const HullType* hull = GetHullType(m_hull))
-            time_accumulator = std::max(time_accumulator, hull->ProductionTime(empire_id, location_id));
-        for (const std::string& part_name : m_parts)
-            if (const PartType* part = GetPartType(part_name))
-                time_accumulator = std::max(time_accumulator, part->ProductionTime(empire_id, location_id));
-        return std::max(1, time_accumulator);
-    }
+
+    int time_accumulator = 1;
+    if (const HullType* hull = GetHullType(m_hull))
+        time_accumulator = std::max(time_accumulator, hull->ProductionTime(empire_id, location_id));
+    for (const std::string& part_name : m_parts)
+        if (const PartType* part = GetPartType(part_name))
+            time_accumulator = std::max(time_accumulator, part->ProductionTime(empire_id, location_id));
+    return std::max(1, time_accumulator);
 }
 
 bool ShipDesign::CanColonize() const {
@@ -1030,7 +1030,7 @@ std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
         ErrorLogger() << "Design hull not found: " << m_hull;
         return retval;
     }
-    const std::vector<HullType::Slot>& slots = hull->Slots();
+    const auto& slots = hull->Slots();
 
     if (m_parts.empty())
         return retval;
@@ -1046,7 +1046,7 @@ std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
 std::vector<std::string> ShipDesign::Weapons() const {
     std::vector<std::string> retval;
     retval.reserve(m_parts.size());
-    for (const std::string& part_name : m_parts) {
+    for (const auto& part_name : m_parts) {
         const PartType* part = GetPartType(part_name);
         if (!part)
             continue;
@@ -1055,6 +1055,13 @@ std::vector<std::string> ShipDesign::Weapons() const {
         { retval.push_back(part_name); }
     }
     return retval;
+}
+
+int ShipDesign::PartCount() const {
+    int count = 0;
+    for (auto& entry : m_num_part_classes)
+         count += entry.second;
+    return count;
 }
 
 bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {

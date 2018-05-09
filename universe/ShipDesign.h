@@ -27,6 +27,7 @@
 
 
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
 namespace Condition {
     struct Condition;
 }
@@ -114,8 +115,8 @@ public:
                             MountableSlotTypes() const { return m_mountable_slot_types; }
 
     bool                    ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
-    float                   ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to produce this part
-    int                     ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to produce this part
+    float                   ProductionCost(int empire_id, int location_id, int in_design_id = INVALID_DESIGN_ID) const; ///< returns the number of production points required to produce this part
+    int                     ProductionTime(int empire_id, int location_id, int in_design_id = INVALID_DESIGN_ID) const; ///< returns the number of turns required to produce this part
     bool                    Producible() const { return m_producible; }             ///< returns whether this part type is producible by players and appears on the design screen
 
     const CommonParams::ConsumptionMap<MeterType>&
@@ -294,8 +295,8 @@ public:
     float               Detection() const       { return 0.0f; }                ///< returns detection ability of hull
 
     bool                ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
-    float               ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to produce this hull
-    int                 ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to produce this hull
+    float               ProductionCost(int empire_id, int location_id, int in_design_id = INVALID_DESIGN_ID) const; ///< returns the number of production points required to produce this hull
+    int                 ProductionTime(int empire_id, int location_id, int in_design_id = INVALID_DESIGN_ID) const; ///< returns the number of turns required to produce this hull
     bool                Producible() const      { return m_producible; }        ///< returns whether this hull type is producible by players and appears on the design screen
 
     const CommonParams::ConsumptionMap<MeterType>&
@@ -543,8 +544,7 @@ public:
     float                           Defense() const;
 
     const std::string&              Hull() const            { return m_hull; }      ///< returns name of hull on which design is based
-    const HullType*                 GetHull() const
-    { return GetHullTypeManager().GetHullType(m_hull); }                            ///< returns HullType on which design is based
+    const HullType*                 GetHull() const         { return GetHullTypeManager().GetHullType(m_hull); }    ///< returns HullType on which design is based
 
     const std::vector<std::string>& Parts() const           { return m_parts; }     ///< returns vector of names of all parts in this design, with position in vector corresponding to slot positions
     std::vector<std::string>        Parts(ShipSlotType slot_type) const;            ///< returns vector of names of parts in slots of indicated type in this design, unrelated to slot positions
@@ -555,7 +555,8 @@ public:
     bool                            LookupInStringtable() const { return m_name_desc_in_stringtable; }
 
     /** returns number of parts in this ship design, indexed by PartType name */
-    const std::map<std::string, int>&     PartTypeCount() const { return m_num_part_types; }
+    const std::map<std::string, int>&   PartTypeCount() const { return m_num_part_types; }
+    int                                 PartCount() const;
 
     /** returns number of parts in this ship design, indexed by ShipPartClass */
     const std::map<ShipPartClass, int>&   PartClassCount() const { return m_num_part_classes; }
