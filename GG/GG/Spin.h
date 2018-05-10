@@ -109,32 +109,24 @@ public:
 
     /** \name Mutators */ ///@{
     void Render() override;
-
     void SizeMove(const Pt& ul, const Pt& lr) override;
-
     void Disable(bool b = true) override;
-
     void SetColor(Clr c) override;
-
     void Incr();  ///< increments the value of the control's text by StepSize(), up to at most MaxValue()
     void Decr();  ///< decrements the value of the control's text by StepSize(), down to at least MinValue()
 
-    /** sets the value of the control's text to \a value, locked to the range [MinValue(), MaxValue()]*/
+    /** sets the value of the control's text to \a value, locked to the
+      * range [MinValue(), MaxValue()]*/
     void SetValue(T value);
+    void SetStepSize(T step);           ///< sets the step size of the control to \a step
+    void SetMinValue(T value);          ///< sets the minimum value of the control to \a value
+    void SetMaxValue(T value);          ///< sets the maximum value of the control to \a value
 
-    void SetStepSize(T step);   ///< sets the step size of the control to \a step
-    void SetMinValue(T value);  ///< sets the minimum value of the control to \a value
-    void SetMaxValue(T value);  ///< sets the maximum value of the control to \a value
-
-    /** turns on or off the mode that allows the user to edit the value in the spinbox directly. */
-    void AllowEdits(bool b = true);
-
-    void SetButtonWidth(X width); ///< sets the width used for the up and down buttons
-
-    void SetTextColor(Clr c);          ///< sets the text color
-    void SetInteriorColor(Clr c);      ///< sets the interior color of the control
-    void SetHiliteColor(Clr c);        ///< sets the color used to render hiliting around selected text
-    void SetSelectedTextColor(Clr c);  ///< sets the color used to render selected text   
+    void SetButtonWidth(X width);       ///< sets the width used for the up and down buttons
+    void SetTextColor(Clr c);           ///< sets the text color
+    void SetInteriorColor(Clr c);       ///< sets the interior color of the control
+    void SetHiliteColor(Clr c);         ///< sets the color used to render hiliting around selected text
+    void SetSelectedTextColor(Clr c);   ///< sets the color used to render selected text   
     //@}
 
 protected:
@@ -150,11 +142,8 @@ protected:
 
     /** \name Mutators */ ///@{
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
-
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
-
     bool EventFilter(Wnd* w, const WndEvent& event) override;
-
     virtual void SetEditTextFromValue();
     //@}
 
@@ -381,11 +370,11 @@ void Spin<T>::SetSelectedTextColor(Clr c)
 
 template<class T>
 Button* Spin<T>::UpButton() const
-{ return m_up_button; }
+{ return m_up_button.get(); }
 
 template<class T>
 Button* Spin<T>::DownButton() const
-{ return m_down_button; }
+{ return m_down_button.get(); }
 
 template<class T>
 Edit* Spin<T>::GetEdit() const
