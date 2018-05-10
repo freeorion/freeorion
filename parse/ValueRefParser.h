@@ -54,16 +54,16 @@ namespace parse { namespace detail {
     {
         simple_variable_rules(const std::string& type_name, const parse::lexer& tok);
 
-        name_token_rule bound_variable_name;
-        name_token_rule free_variable_name;
-        detail::value_ref_rule<T> constant;
-        variable_rule<T> free_variable;
-        variable_rule<T> bound_variable;
-        variable_rule<T> unwrapped_bound_variable;
-        variable_rule<T> value_wrapped_bound_variable;
-        detail::value_ref_rule<T> simple;
-        reference_token_rule variable_scope_rule;
-        name_token_rule container_type_rule;
+        name_token_rule             bound_variable_name;
+        name_token_rule             free_variable_name;
+        detail::value_ref_rule<T>   constant;
+        variable_rule<T>            free_variable;
+        variable_rule<T>            bound_variable;
+        variable_rule<T>            unwrapped_bound_variable;
+        variable_rule<T>            value_wrapped_bound_variable;
+        detail::value_ref_rule<T>   simple;
+        reference_token_rule        variable_scope_rule;
+        name_token_rule             container_type_rule;
     };
 
     template <typename T>
@@ -97,17 +97,17 @@ namespace parse { namespace detail {
                          Labeller& label,
                          const condition_parser_grammar& condition_parser);
 
-        parse::statistic_enum_grammar statistic_type_enum;
-        expression_rule<T> functional_expr;
-        expression_rule<T> exponential_expr;
-        expression_rule<T> multiplicative_expr;
-        expression_rule<T> additive_expr;
-        detail::value_ref_rule<T> primary_expr;
-        detail::value_ref_rule<T> statistic_value_ref_expr;
-        statistic_rule<T> statistic_collection_expr;
-        statistic_rule<T> statistic_value_expr;
-        statistic_rule<T> statistic_expr;
-        detail::value_ref_rule<T> expr;
+        parse::statistic_enum_grammar   statistic_type_enum;
+        expression_rule<T>              functional_expr;
+        expression_rule<T>              exponential_expr;
+        expression_rule<T>              multiplicative_expr;
+        expression_rule<T>              additive_expr;
+        detail::value_ref_rule<T>       primary_expr;
+        detail::value_ref_rule<T>       statistic_value_ref_expr;
+        statistic_rule<T>               statistic_collection_expr;
+        statistic_rule<T>               statistic_value_expr;
+        statistic_rule<T>               statistic_expr;
+        detail::value_ref_rule<T>       expr;
     };
 
     struct simple_int_parser_rules : public simple_variable_rules<int> {
@@ -132,13 +132,11 @@ namespace parse { namespace detail {
                                       Labeller& label,
                                       const value_ref_grammar<std::string>& string_grammar);
 
-        simple_int_parser_rules  simple_int_rules;
-        complex_variable_rule<std::string> game_rule;
-
-        complex_variable_rule<std::string> empire_ref;
-        complex_variable_rule<std::string> empire_empire_ref;
-
-        complex_variable_rule<std::string> start;
+        simple_int_parser_rules             simple_int_rules;
+        complex_variable_rule<std::string>  game_rule;
+        complex_variable_rule<std::string>  empire_ref;
+        complex_variable_rule<std::string>  empire_empire_ref;
+        complex_variable_rule<std::string>  start;
     };
 
     template <typename T>
@@ -198,21 +196,21 @@ namespace parse {
                               detail::Labeller& label,
                               const detail::condition_parser_grammar& condition_parser);
 
-        detail::string_complex_parser_grammar string_var_complex;
-        detail::name_token_rule bound_variable_name;
-        detail::value_ref_rule<std::string> constant;
-        detail::value_ref_rule<std::string> free_variable;
-        detail::variable_rule<std::string> bound_variable;
-        detail::variable_rule<std::string> unwrapped_bound_variable;
-        detail::variable_rule<std::string> value_wrapped_bound_variable;
-        detail::value_ref_rule<std::string> statistic_sub_value_ref;
-        detail::statistic_rule<std::string> statistic;
-        detail::expression_rule<std::string> function_expr;
-        detail::expression_rule<std::string> operated_expr;
-        detail::value_ref_rule<std::string> expr;
-        detail::value_ref_rule<std::string> primary_expr;
-        detail::reference_token_rule variable_scope_rule;
-        detail::name_token_rule container_type_rule;
+        detail::string_complex_parser_grammar   string_var_complex;
+        detail::name_token_rule                 bound_variable_name;
+        detail::value_ref_rule<std::string>     constant;
+        detail::value_ref_rule<std::string>     free_variable;
+        detail::variable_rule<std::string>      bound_variable;
+        detail::variable_rule<std::string>      unwrapped_bound_variable;
+        detail::variable_rule<std::string>      value_wrapped_bound_variable;
+        detail::value_ref_rule<std::string>     statistic_sub_value_ref;
+        detail::statistic_rule<std::string>     statistic;
+        detail::expression_rule<std::string>    function_expr;
+        detail::expression_rule<std::string>    operated_expr;
+        detail::value_ref_rule<std::string>     expr;
+        detail::value_ref_rule<std::string>     primary_expr;
+        detail::reference_token_rule            variable_scope_rule;
+        detail::name_token_rule                 container_type_rule;
     };
 
     struct int_arithmetic_rules;
@@ -223,23 +221,23 @@ namespace parse {
                                    const int_arithmetic_rules& _int_arith_rules,
                                    const detail::value_ref_grammar<std::string>& string_grammar);
 
-        const int_arithmetic_rules& int_rules;
-        ship_part_class_enum_grammar ship_part_class_enum;
-        detail::complex_variable_rule<int> game_rule;
-        detail::complex_variable_rule<int> empire_name_ref;
-        detail::complex_variable_rule<int> empire_ships_destroyed;
-        detail::complex_variable_rule<int> jumps_between;
-        //complex_variable_rule<int> jumps_between_by_empire_supply;
-        detail::complex_variable_rule<int> outposts_owned;
-        detail::complex_variable_rule<int> parts_in_ship_design;
-        detail::complex_variable_rule<int> part_class_in_ship_design;
-        detail::complex_variable_rule<int> ship_parts_owned_by_name;
-        detail::complex_variable_rule<int> ship_parts_owned_by_class;
-        detail::complex_variable_rule<int> empire_design_ref;
-        detail::complex_variable_rule<int> slots_in_hull;
-        detail::complex_variable_rule<int> slots_in_ship_design;
-        detail::complex_variable_rule<int> special_added_on_turn;
-        detail::complex_variable_rule<int> start;
+        const int_arithmetic_rules&         int_rules;
+        ship_part_class_enum_grammar        ship_part_class_enum;
+        detail::complex_variable_rule<int>  game_rule;
+        detail::complex_variable_rule<int>  empire_name_ref;
+        detail::complex_variable_rule<int>  empire_ships_destroyed;
+        detail::complex_variable_rule<int>  jumps_between;
+        //complex_variable_rule<int>          jumps_between_by_empire_supply;
+        detail::complex_variable_rule<int>  outposts_owned;
+        detail::complex_variable_rule<int>  parts_in_ship_design;
+        detail::complex_variable_rule<int>  part_class_in_ship_design;
+        detail::value_ref_rule<int>         part_class_as_int;
+        detail::complex_variable_rule<int>  ship_parts_owned;
+        detail::complex_variable_rule<int>  empire_design_ref;
+        detail::complex_variable_rule<int>  slots_in_hull;
+        detail::complex_variable_rule<int>  slots_in_ship_design;
+        detail::complex_variable_rule<int>  special_added_on_turn;
+        detail::complex_variable_rule<int>  start;
     };
 
     struct int_arithmetic_rules : public detail::arithmetic_rules<int> {
@@ -258,16 +256,16 @@ namespace parse {
                                       const detail::condition_parser_grammar& condition_parser,
                                       const detail::value_ref_grammar<std::string>& string_grammar);
 
-        detail::simple_int_parser_rules simple_int_rules;
-        detail::complex_variable_rule<double> name_property_rule;
-        detail::complex_variable_rule<double> empire_meter_value;
-        detail::complex_variable_rule<double> direct_distance;
-        detail::complex_variable_rule<double> shortest_path;
+        detail::simple_int_parser_rules         simple_int_rules;
+        detail::complex_variable_rule<double>   name_property_rule;
+        detail::complex_variable_rule<double>   empire_meter_value;
+        detail::complex_variable_rule<double>   direct_distance;
+        detail::complex_variable_rule<double>   shortest_path;
         detail::rule<detail::value_ref_payload<std::string>()> species_opinion;
-        detail::complex_variable_rule<double> species_empire_opinion;
-        detail::complex_variable_rule<double> species_species_opinion;
-        detail::complex_variable_rule<double> special_capacity;
-        detail::complex_variable_rule<double> start;
+        detail::complex_variable_rule<double>   species_empire_opinion;
+        detail::complex_variable_rule<double>   species_species_opinion;
+        detail::complex_variable_rule<double>   special_capacity;
+        detail::complex_variable_rule<double>   start;
     };
 
     struct double_parser_rules : public detail::arithmetic_rules<double> {
@@ -277,16 +275,16 @@ namespace parse {
             const detail::condition_parser_grammar& condition_parser,
             const detail::value_ref_grammar<std::string>& string_grammar);
 
-        int_arithmetic_rules        int_rules;
-        detail::simple_int_parser_rules    simple_int_rules;
-        detail::simple_double_parser_rules simple_double_rules;
-        int_complex_parser_grammar int_complex_grammar;
-        double_complex_parser_grammar double_complex_grammar;
-        detail::value_ref_rule<double> int_constant_cast;
-        detail::value_ref_rule<double> int_bound_variable_cast;
-        detail::value_ref_rule<double> int_free_variable_cast;
-        detail::value_ref_rule<double> int_statistic_cast;
-        detail::value_ref_rule<double> int_complex_variable_cast;
+        int_arithmetic_rules                int_rules;
+        detail::simple_int_parser_rules     simple_int_rules;
+        detail::simple_double_parser_rules  simple_double_rules;
+        int_complex_parser_grammar          int_complex_grammar;
+        double_complex_parser_grammar       double_complex_grammar;
+        detail::value_ref_rule<double>      int_constant_cast;
+        detail::value_ref_rule<double>      int_bound_variable_cast;
+        detail::value_ref_rule<double>      int_free_variable_cast;
+        detail::value_ref_rule<double>      int_statistic_cast;
+        detail::value_ref_rule<double>      int_complex_variable_cast;
     };
 
     struct castable_as_int_parser_rules {
@@ -295,8 +293,8 @@ namespace parse {
                                      const detail::condition_parser_grammar& condition_parser,
                                      const detail::value_ref_grammar<std::string>& string_grammar);
 
-        int_arithmetic_rules     int_rules;
-        double_parser_rules      double_rules;
+        int_arithmetic_rules        int_rules;
+        double_parser_rules         double_rules;
         detail::value_ref_rule<int> castable_expr;
         detail::value_ref_rule<int> flexible_int;
     };

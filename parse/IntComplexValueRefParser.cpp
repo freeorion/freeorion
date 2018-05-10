@@ -25,7 +25,9 @@ namespace parse {
         qi::_1_type _1;
         qi::_2_type _2;
         qi::_3_type _3;
+        qi::_4_type _4;
         qi::_val_type _val;
+        qi::eps_type eps;
         qi::_pass_type _pass;
         const boost::phoenix::function<detail::construct_movable> construct_movable_;
         const boost::phoenix::function<detail::deconstruct_movable> deconstruct_movable_;
@@ -122,20 +124,21 @@ namespace parse {
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(_2)), _pass), nullptr)) ]
             ;
 
-        ship_parts_owned_by_name
+        part_class_as_int
+            = ( label(tok.Class_) > ship_part_class_enum )
+              [ _val = construct_movable_(new_<ValueRef::Constant<int>>(_1)) ]
+        ;
+
+        ship_parts_owned
             =   (
                      tok.ShipPartsOwned_
                 > -( label(tok.Empire_) > int_rules.expr )
                 > -( label(tok.Name_)   > string_grammar )
-                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), nullptr, nullptr, deconstruct_movable_(_3, _pass), nullptr)) ]
-            ;
-
-        ship_parts_owned_by_class
-            =   (
-                     tok.ShipPartsOwned_
-                > -( label(tok.Empire_) > int_rules.expr )
-                >    label(tok.Class_)  >> ship_part_class_enum
-                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<int>>(_3)), _pass), nullptr, nullptr, nullptr)) ]
+                > -part_class_as_int
+                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(
+                    _1,
+                    deconstruct_movable_(_2, _pass), deconstruct_movable_(_4, _pass), nullptr,
+                    deconstruct_movable_(_3, _pass), nullptr)) ]
             ;
 
         empire_design_ref
@@ -182,8 +185,7 @@ namespace parse {
             |   outposts_owned
             |   parts_in_ship_design
             |   part_class_in_ship_design
-            |   ship_parts_owned_by_name
-            |   ship_parts_owned_by_class
+            |   ship_parts_owned
             |   empire_design_ref
             |   slots_in_hull
             |   slots_in_ship_design
@@ -198,8 +200,8 @@ namespace parse {
         outposts_owned.name("OutpostsOwned");
         parts_in_ship_design.name("PartsInShipDesign");
         part_class_in_ship_design.name("PartOfClassInShipDesign");
-        ship_parts_owned_by_name.name("ShipPartsOwnedByName");
-        ship_parts_owned_by_class.name("ShipPartsOwnedByClass");
+        part_class_as_int.name("PartClass");
+        ship_parts_owned.name("ShipPartsOwned");
         empire_design_ref.name("ShipDesignsDestroyed, ShipDesignsLost, ShipDesignsOwned, ShipDesignsProduced, or ShipDesignsScrapped");
         slots_in_hull.name("SlotsInHull");
         slots_in_ship_design.name("SlotsInShipDesign");
