@@ -12094,13 +12094,11 @@ BLD_INTERSPECIES_ACADEMY
 Species InterDesign Academy
 
 BLD_INTERSPECIES_ACADEMY_DESC
-'''The Species InterDesign Academy.
+'''Increases stockpile extraction on its planet by 10, if that planet has stockpiling focus.
+Increases research on its planet by 5, if that planet has research focus.
 
-Learning to design devices so that different species can use is crucial for developing universally usable tools.
+Each empire may contain an academy on up to six planets with different species. To support an academy, a planet's population must be happy, and at least three starlane jumps away from the nearest existing academy.'''
 
-Each empire may contain an academy on up to six planets with different species.
-To be able build such an academy, the population must be very happy and at least three starlane jumps away from the next academy.
-'''
 
 BLD_MEGALITH
 Megalith
