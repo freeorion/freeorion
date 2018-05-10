@@ -31,8 +31,8 @@ namespace parse {
         const boost::phoenix::function<detail::deconstruct_movable> deconstruct_movable_;
 
         game_rule
-            = ( tok.GameRule_
-                > label(tok.Name_) >     string_grammar
+            = (   tok.GameRule_
+                > label(tok.Name_) > string_grammar
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, nullptr, nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
             ;
          empire_name_ref
@@ -51,21 +51,21 @@ namespace parse {
                     |   tok.SpeciesShipsScrapped_
                     |   tok.TurnTechResearched_
                     )
-                >  -(   label(tok.Empire_) >   int_rules.expr)
-                >  -(   label(tok.Name_) >     string_grammar)
+                >  -(   label(tok.Empire_) > int_rules.expr)
+                >  -(   label(tok.Name_) >   string_grammar)
                 ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), nullptr, nullptr, deconstruct_movable_(_3, _pass), nullptr)) ]
             ;
 
         empire_ships_destroyed
             =   (
-                tok.EmpireShipsDestroyed_
-                >-( label(tok.Empire_) >   int_rules.expr )
-                >-( label(tok.Empire_) >   int_rules.expr )
+                    tok.EmpireShipsDestroyed_
+                >-( label(tok.Empire_) > int_rules.expr )
+                >-( label(tok.Empire_) > int_rules.expr )
                 ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr)) ]
             ;
 
         jumps_between
-            = (tok.JumpsBetween_
+            = (  tok.JumpsBetween_
                > label(tok.Object_)
                > ( int_rules.expr
                    // "cast" the ValueRef::Statistic<int> into
@@ -89,16 +89,16 @@ namespace parse {
 
         outposts_owned
             =   (
-                tok.OutpostsOwned_
-                >-( label(tok.Empire_) >   int_rules.expr )
+                    tok.OutpostsOwned_
+                >-( label(tok.Empire_) > int_rules.expr )
                 ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), nullptr, nullptr, nullptr, nullptr)) ]
             ;
 
         parts_in_ship_design
             =   (
-                tok.PartsInShipDesign_
-                >-( label(tok.Name_)   >   string_grammar )
-                > ( label(tok.Design_) >   int_rules.expr )
+                    tok.PartsInShipDesign_
+                >-( label(tok.Name_)   > string_grammar )
+                > ( label(tok.Design_) > int_rules.expr )
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
             ;
 
@@ -110,7 +110,7 @@ namespace parse {
                 //    [ _d = construct_movable_(new_<ValueRef::Constant<std::string>>(_1)) ]
                 //  )
                 > ( label(tok.Class_) >
-                    ( tok.ShortRange_       | tok.FighterBay_   | tok.FighterWeapon_
+                    (   tok.ShortRange_       | tok.FighterBay_   | tok.FighterWeapon_
                       | tok.Shield_           | tok.Armour_
                       | tok.Troops_           | tok.Detection_    | tok.Stealth_
                       | tok.Fuel_             | tok.Colony_       | tok.Speed_
@@ -118,13 +118,13 @@ namespace parse {
                       | tok.Industry_         | tok.Trade_        | tok.ProductionLocation_
                     )
                   )
-                > ( label(tok.Design_) >   int_rules.expr)
+                > ( label(tok.Design_) > int_rules.expr)
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(_2)), _pass), nullptr)) ]
             ;
 
         ship_parts_owned_by_name
             =   (
-                tok.ShipPartsOwned_
+                     tok.ShipPartsOwned_
                 > -( label(tok.Empire_) > int_rules.expr )
                 > -( label(tok.Name_)   > string_grammar )
                 ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), nullptr, nullptr, deconstruct_movable_(_3, _pass), nullptr)) ]
@@ -132,9 +132,9 @@ namespace parse {
 
         ship_parts_owned_by_class
             =   (
-                tok.ShipPartsOwned_
+                     tok.ShipPartsOwned_
                 > -( label(tok.Empire_) > int_rules.expr )
-                > label(tok.Class_)  >> ship_part_class_enum
+                >    label(tok.Class_)  >> ship_part_class_enum
                 ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<int>>(_3)), _pass), nullptr, nullptr, nullptr)) ]
             ;
 
@@ -153,23 +153,23 @@ namespace parse {
 
         slots_in_hull
             =   (
-                tok.SlotsInHull_
-                >   label(tok.Name_) >      string_grammar
+                    tok.SlotsInHull_
+                >   label(tok.Name_) > string_grammar
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, nullptr, nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
             ;
 
         slots_in_ship_design
             =   (
-                tok.SlotsInShipDesign_
-                >   label(tok.Design_) >    int_rules.expr
+                    tok.SlotsInShipDesign_
+                >   label(tok.Design_) > int_rules.expr
                 ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), nullptr, nullptr, nullptr, nullptr)) ]
             ;
 
         special_added_on_turn
             =   (
-                tok.SpecialAddedOnTurn_
-                >-( label(tok.Name_)   >   string_grammar )
-                >-( label(tok.Object_) >   int_rules.expr )
+                    tok.SpecialAddedOnTurn_
+                >-( label(tok.Name_)   > string_grammar )
+                >-( label(tok.Object_) > int_rules.expr )
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
             ;
 
