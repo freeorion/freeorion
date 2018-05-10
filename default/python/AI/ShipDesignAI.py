@@ -1009,7 +1009,7 @@ class ShipDesigner(object):
             if tech_is_complete(tech):
                 parse_tokens(AIDependencies.TECH_EFFECTS[tech])
 
-    def add_design(self, verbose=False):
+    def add_design(self, verbose=True):
         """Add a real (i.e. gameobject) ship design of the current configuration.
 
         :param verbose: toggles detailed debugging output
