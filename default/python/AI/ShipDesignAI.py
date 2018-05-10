@@ -384,6 +384,10 @@ class ShipDesignCache(object):
                     corrupted.append(designname)
         for corrupted_entry in corrupted:
             del self.design_id_by_name[corrupted_entry]
+            bad_ref = next(iter([_key for _key, _val in self.map_reference_design_name.iteritems()
+                                 if _val == corrupted_entry]), None)
+            if bad_ref is not None:
+                del self.map_reference_design_name[bad_ref]
 
     def _update_buildable_items_this_turn(self, verbose=False):
         """Calculate which parts and hulls can be built on each planet this turn.
