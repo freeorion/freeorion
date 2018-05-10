@@ -92,8 +92,8 @@ namespace parse { namespace detail {
             ;
 
         owned_by_1
-            =   (tok.OwnedBy_
-                 >>  label(tok.Empire_)
+            =   (   tok.OwnedBy_
+                 >> label(tok.Empire_)
                 ) > int_rules.expr
             [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(deconstruct_movable_(_1, _pass))) ]
             ;

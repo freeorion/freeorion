@@ -35,7 +35,6 @@ namespace parse {
             |   tok.ShipHull_       [ _val = UIT_SHIP_HULL ]
             |   tok.ShipDesign_     [ _val = UIT_SHIP_DESIGN ]
             |   tok.Tech_           [ _val = UIT_TECH ]
-
             ;
     }
 
@@ -46,7 +45,6 @@ namespace parse {
             =   tok.External_   [ _val = SL_EXTERNAL ]
             |   tok.Internal_   [ _val = SL_INTERNAL ]
             |   tok.Core_       [ _val = SL_CORE ]
-
             ;
     }
 
@@ -71,7 +69,6 @@ namespace parse {
             |   tok.Industry_           [ _val = PC_INDUSTRY ]
             |   tok.Trade_              [ _val = PC_TRADE ]
             |   tok.ProductionLocation_ [ _val = PC_PRODUCTION_LOCATION ]
-
             ;
     }
 
@@ -82,7 +79,6 @@ namespace parse {
             =   tok.Capture_            [ _val = CR_CAPTURE ]
             |   tok.Retain_             [ _val = CR_RETAIN ]
             |   tok.Destroy_            [ _val = CR_DESTROY ]
-
             ;
     }
 
@@ -102,7 +98,6 @@ namespace parse {
             |   tok.Spread_         [ _val = ValueRef::SPREAD ]
             |   tok.StDev_          [ _val = ValueRef::STDEV ]
             |   tok.Product_        [ _val = ValueRef::PRODUCT ]
-
             ;
     }
 
@@ -146,7 +141,6 @@ namespace parse {
             |   tok.Speed_                  [ _val = METER_SPEED ]
 
             |   tok.Size_                   [ _val = METER_SIZE ]
-
             ;
     }
 
@@ -158,7 +152,6 @@ namespace parse {
             |   tok.MaxDamage_              [ _val = METER_MAX_CAPACITY ]
             |   tok.Capacity_               [ _val = METER_CAPACITY ]
             |   tok.Damage_                 [ _val = METER_CAPACITY ]
-
             ;
     }
 
@@ -202,7 +195,6 @@ namespace parse {
             |   tok.SetSpeed_               [ _val = METER_SPEED ]
 
             |   tok.SetSize_                [ _val = METER_SIZE ]
-
             ;
     }
 
@@ -216,8 +208,6 @@ namespace parse {
             |   tok.SetCapacity_            [ _val = METER_CAPACITY ]
             |   tok.SetDamage_              [ _val = METER_CAPACITY ]
             |   tok.SetSecondaryStat_       [ _val = METER_SECONDARY_STAT ]
-
             ;
     }
-
 }

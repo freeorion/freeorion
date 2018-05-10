@@ -63,7 +63,7 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
         ;
 
     constant
-        =   tok.int_    [ _val = construct_movable_(new_<ValueRef::Constant<int>>(_1)) ]
+        =   tok.int_ [ _val = construct_movable_(new_<ValueRef::Constant<int>>(_1)) ]
         ;
 }
 
