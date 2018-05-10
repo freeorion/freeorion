@@ -6012,7 +6012,7 @@ void MapWnd::Sanitize() {
     }
 
     MoveTo(GG::Pt(-AppWidth(), -AppHeight()));
-    m_zoom_steps_in = 0.0;
+    m_zoom_steps_in = 1.0;
 
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize();

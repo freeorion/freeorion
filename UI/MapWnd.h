@@ -456,7 +456,7 @@ private:
     std::set<int>                               m_selected_fleet_ids;
     std::set<int>                               m_selected_ship_ids;
 
-    double                                      m_zoom_steps_in = 0.0;          //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
+    double                                      m_zoom_steps_in = 1.0;          //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
     std::shared_ptr<SidePanel>                  m_side_panel = nullptr;         //!< planet view panel on the side of the main map
     boost::unordered_map<int, std::shared_ptr<SystemIcon>> m_system_icons;      //!< system icons in the main map, indexed by system id
     std::map<int, std::shared_ptr<FieldIcon>>   m_field_icons;                  //!< field icons in the main map, indexed by field id
