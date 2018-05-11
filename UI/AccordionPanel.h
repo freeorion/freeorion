@@ -11,8 +11,6 @@
 
 class AccordionPanel : public GG::Control {
 public:
-    static const int EXPAND_BUTTON_SIZE = 16;
-
     /** \name Structors */ //@{
     AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left = false);
     virtual ~AccordionPanel();
@@ -46,10 +44,10 @@ protected:
 
     GG::GL2DVertexBuffer        m_border_buffer;
     std::shared_ptr<GG::Button> m_expand_button;    ///< at top right/left of panel, toggles the panel open/closed to show details or minimal summary;
-    bool                        m_collapsed;
-    bool                        m_is_left;          ///< Is expand button on the left?
+    bool                        m_collapsed = true;
+    bool                        m_is_left = false;  ///< Is expand button on the left?
     GG::Clr                     m_interior_color;
-    unsigned int                m_border_margin;    ///< The number of pixels between the expansion button and the client area.
+    unsigned int                m_border_margin = 1;///< The number of pixels between the expansion button and the client area.
 };
 
 #endif

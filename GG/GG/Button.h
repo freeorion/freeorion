@@ -72,7 +72,7 @@ public:
     Pt MinUsableSize() const override;
 
     /** Returns button state \see ButtonState */
-    ButtonState       State() const;
+    ButtonState State() const;
 
     const std::string& Text() const;             ///< Returns the label to be used as the button label
     const SubTexture& UnpressedGraphic() const;  ///< Returns the SubTexture to be used as the image of the button when unpressed
@@ -83,6 +83,10 @@ public:
     mutable ClickedSignalType LeftClickedSignal;
     /** The right clicked signal object for this Button */
     mutable ClickedSignalType RightClickedSignal;
+    /** The left pressed signal object for this Button */
+    mutable ClickedSignalType LeftPressedSignal;
+    /** The right pressed signal object for this Button */
+    mutable ClickedSignalType RightPressedSignal;
     //@}
 
     /** \name Mutators */ ///@{
@@ -94,12 +98,12 @@ public:
     void SetColor(Clr c) override;
 
     /** Sets button state programmatically \see ButtonState */
-    void           SetState(ButtonState state);
+    void SetState(ButtonState state);
 
-    void           SetText(const std::string& text);          ///< Sets the text to be used as the button label
-    void           SetUnpressedGraphic(const SubTexture& st); ///< Sets the SubTexture to be used as the image of the button when unpressed
-    void           SetPressedGraphic(const SubTexture& st);   ///< Sets the SubTexture to be used as the image of the button when pressed
-    void           SetRolloverGraphic(const SubTexture& st);  ///< Sets the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
+    void SetText(const std::string& text);          ///< Sets the text to be used as the button label
+    void SetUnpressedGraphic(const SubTexture& st); ///< Sets the SubTexture to be used as the image of the button when unpressed
+    void SetPressedGraphic(const SubTexture& st);   ///< Sets the SubTexture to be used as the image of the button when pressed
+    void SetRolloverGraphic(const SubTexture& st);  ///< Sets the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
     //@}
 
 protected:

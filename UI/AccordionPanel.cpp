@@ -3,13 +3,15 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 
-AccordionPanel::AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left /*= false*/) :
+namespace {
+    const int EXPAND_BUTTON_SIZE = 20;
+}
+
+AccordionPanel::AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
     m_expand_button(nullptr),
-    m_collapsed(true),
     m_is_left(is_button_on_left),
-    m_interior_color(ClientUI::WndColor()),
-    m_border_margin(0)
+    m_interior_color(ClientUI::WndColor())
 {}
 
 void AccordionPanel::CompleteConstruction() {

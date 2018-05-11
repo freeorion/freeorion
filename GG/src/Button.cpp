@@ -124,12 +124,15 @@ void Button::SetRolloverGraphic(const SubTexture& st)
 
 void Button::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
 {
-    if (!Disabled()) {
-        ButtonState prev_state = m_state;
-        m_state = BN_PRESSED;
-        if (prev_state == BN_PRESSED && RepeatButtonDown())
-            LeftClickedSignal();
-    }
+    if (Disabled())
+        return;
+
+    ButtonState prev_state = m_state;
+    m_state = BN_PRESSED;
+    if (prev_state == BN_PRESSED && RepeatButtonDown())
+        LeftClickedSignal();
+    else if (prev_state != BN_PRESSED)
+        LeftPressedSignal();
 }
 
 void Button::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
@@ -155,12 +158,15 @@ void Button::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 
 void Button::RButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
 {
-    if (!Disabled()) {
-        ButtonState prev_state = m_state;
-        m_state = BN_PRESSED;
-        if (prev_state == BN_PRESSED && RepeatButtonDown())
-            RightClickedSignal();
-    }
+    if (Disabled())
+        return;
+
+    ButtonState prev_state = m_state;
+    m_state = BN_PRESSED;
+    if (prev_state == BN_PRESSED && RepeatButtonDown())
+        RightClickedSignal();
+    else if (prev_state != BN_PRESSED)
+        RightPressedSignal();
 }
 
 void Button::RDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)

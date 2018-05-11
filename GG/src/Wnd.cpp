@@ -155,12 +155,8 @@ std::shared_ptr<BrowseInfoWnd> Wnd::s_default_browse_info_wnd;
 
 Wnd::Wnd() :
     std::enable_shared_from_this<Wnd>(),
-    m_done(false),
     m_parent(),
-    m_visible(true),
-    m_needs_prerender(false),
     m_child_clipping_mode(DontClip),
-    m_non_client_child(false),
     m_upperleft(X0, Y0),
     m_lowerright(X1, Y1),
     m_max_size(X(1 << 30), Y(1 << 30)),

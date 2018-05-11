@@ -1404,7 +1404,7 @@ public:
             }
 
             AttachChild(m_expand_button);
-            m_expand_button->LeftClickedSignal.connect(
+            m_expand_button->LeftPressedSignal.connect(
                 boost::bind(&ObjectPanel::ExpandCollapseButtonPressed, this));
         } else {
             m_dot = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(

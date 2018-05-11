@@ -305,7 +305,7 @@ public:
         std::shared_ptr<BrowseInfoWnd> wnd;
 
         /** The text to display in the BrowseInfoWnd shown for this mode. */
-        std::string                      text;
+        std::string text;
     };
 
     /** The type of the iterator parameters passed to DropsAcceptable(). */
@@ -1006,7 +1006,7 @@ protected:
     //@}
 
     /** Modal Wnd's set this to true to stop modal loop. */
-    bool m_done;
+    bool m_done = false;
 
 private:
     void ValidateFlags();              ///< Sanity-checks the window creation flags
@@ -1019,35 +1019,35 @@ private:
     void DetachChildCore(Wnd* wnd);
 
     /// m_parent may be expired or null if there is no parent.  m_parent will reset itself if expired.
-    mutable std::weak_ptr<Wnd> m_parent;
-    std::string       m_name;          ///< A user-significant name for this Wnd
-    std::list<std::shared_ptr<Wnd>>   m_children;      ///< List of ptrs to child windows kept in order of decreasing area
-    bool              m_visible;
-    bool              m_needs_prerender; ///< Indicates if Wnd needs a PreRender();
-    std::string       m_drag_drop_data_type; ///< The type of drag-and-drop data this Wnd represents, if any. If empty/blank, indicates that this Wnd cannot be drag-dropped.
-    ChildClippingMode m_child_clipping_mode;
-    bool              m_non_client_child;
-    Pt                m_upperleft;     ///< Upper left point of window
-    Pt                m_lowerright;    ///< Lower right point of window
-    Pt                m_min_size;      ///< Minimum window size Pt(0, 0) (= none) by default
-    Pt                m_max_size;      ///< Maximum window size Pt(1 << 30, 1 << 30) (= none) by default
+    mutable std::weak_ptr<Wnd>      m_parent;
+    std::string                     m_name = "";                ///< A user-significant name for this Wnd
+    std::list<std::shared_ptr<Wnd>> m_children;                 ///< List of ptrs to child windows kept in order of decreasing area
+    bool                            m_visible = true;
+    bool                            m_needs_prerender = false;  ///< Indicates if Wnd needs a PreRender();
+    std::string                     m_drag_drop_data_type = ""; ///< The type of drag-and-drop data this Wnd represents, if any. If empty/blank, indicates that this Wnd cannot be drag-dropped.
+    ChildClippingMode               m_child_clipping_mode;
+    bool                            m_non_client_child = false;
+    Pt                              m_upperleft;                ///< Upper left point of window
+    Pt                              m_lowerright;               ///< Lower right point of window
+    Pt                              m_min_size;                 ///< Minimum window size Pt(0, 0) (= none) by default
+    Pt                              m_max_size;                 ///< Maximum window size Pt(1 << 30, 1 << 30) (= none) by default
 
     /** The Wnds that are filtering this Wnd's events. These are in reverse
         order: top of the stack is back(). */
     std::vector<std::weak_ptr<Wnd>> m_filters;
 
-    std::set<std::weak_ptr<Wnd>, std::owner_less<std::weak_ptr<Wnd>>>    m_filtering;         ///< The Wnds in whose filter chains this Wnd lies
-    mutable std::weak_ptr<Layout>           m_layout;            ///< The layout for this Wnd, if any
-    mutable std::weak_ptr<Layout>           m_containing_layout; ///< The layout that contains this Wnd, if any
-    std::vector<BrowseInfoMode>
-                      m_browse_modes;      ///< The browse info modes for this window
+    std::set<std::weak_ptr<Wnd>, std::owner_less<std::weak_ptr<Wnd>>>
+                                    m_filtering;                ///< The Wnds in whose filter chains this Wnd lies
+    mutable std::weak_ptr<Layout>   m_layout;                   ///< The layout for this Wnd, if any
+    mutable std::weak_ptr<Layout>   m_containing_layout;        ///< The layout that contains this Wnd, if any
+    std::vector<BrowseInfoMode>     m_browse_modes;             ///< The browse info modes for this window
 
     /** The style factory to use when creating dialogs or child controls. */
-    std::shared_ptr<StyleFactory> m_style_factory;
+    std::shared_ptr<StyleFactory>   m_style_factory;
 
     /** Flags supplied at window creation for clickability, dragability,
         resizability, etc. */
-    Flags<WndFlag> m_flags;
+    Flags<WndFlag>                  m_flags;
 
     /** The default time to set for the first (and only) value in
         m_browse_mode_times during Wnd contruction */

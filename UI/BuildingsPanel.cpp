@@ -64,7 +64,7 @@ void BuildingsPanel::CompleteConstruction() {
         m_columns = 1;
     }
 
-    m_expand_button->LeftClickedSignal.connect(
+    m_expand_button->LeftPressedSignal.connect(
         boost::bind(&BuildingsPanel::ExpandCollapseButtonPressed, this));
 
     // get owner, connect its production queue changed signal to update this panel

@@ -152,7 +152,7 @@ namespace {
         AccordionPanel::CompleteConstruction();
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
-        m_expand_button->LeftClickedSignal.connect(
+        m_expand_button->LeftPressedSignal.connect(
             boost::bind(&CombatLogAccordionPanel::ToggleExpansion, this));
         this->ExpandCollapseSignal.connect(
             boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));

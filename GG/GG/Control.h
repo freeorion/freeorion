@@ -49,8 +49,8 @@ class GG_API Control : public Wnd
 {
 public:
     /** \name Accessors */ ///@{
-    Clr            Color() const;    ///< returns the color of the control
-    bool           Disabled() const; ///< returns true if the control is disabled, false otherwise
+    Clr Color() const;      ///< returns the color of the control
+    bool Disabled() const;  ///< returns true if the control is disabled, false otherwise
     //@}
 
     /** \name Mutators */ ///@{
