@@ -10965,6 +10965,16 @@ Reduces production cost by 20% for ship designs with 6 or fewer parts.
 PLC_DESIGN_SIMPLICITY_SHORT_DESC
 Reduces Cost of Simple Designs
 
+PLC_PSYONIC_SHIELDS
+Psyonic Shields
+
+PLC_PSYONIC_SHIELDS_DESC
+'''On planets with telepathic species, increases max shields by 20.
+On ships with telepathic species, increases max shields by 2.'''
+
+PLC_PSYONIC_SHIELDS_SHORT_DESC
+Generates Shields
+
 
 ##
 ## Technology categories
@@ -11140,9 +11150,7 @@ LRN_TRANSLING_THT
 Translinguistics
 
 LRN_TRANSLING_THT_DESC
-'''Unlocks [[PLC_MARINE_RECRUITMENT]]
-
-Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truly great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?'''
+'''Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truly great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?'''
 
 LRN_PSIONICS
 Psionics

@@ -11,6 +11,9 @@ Tech
     researchturns = 4
     tags = [ "PEDIA_LEARNING_CATEGORY" "THEORY" ]
     prerequisites = "LRN_TRANSLING_THT"
+    unlock = [
+        Item type = Policy name = "PLC_PSYONIC_SHIELDS"
+    ]
     graphic = "icons/tech/psionics.png"
 
 #include "/scripting/common/base_prod.macros"
