@@ -963,6 +963,9 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
                 case UIT_BUILDING:  texture = ClientUI::BuildingIcon(item.name);    break;
                 case UIT_SHIP_PART: texture = ClientUI::PartIcon(item.name);        break;
                 case UIT_SHIP_HULL: texture = ClientUI::HullIcon(item.name);        break;
+                case UIT_POLICY:    texture = ClientUI::PolicyIcon(item.name);      break;
+                case UIT_TECH:
+                case UIT_SHIP_DESIGN:
                 default:    break;
                 }
 
