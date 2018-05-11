@@ -290,23 +290,16 @@ void PartTypeManager::CheckPendingPartTypes() const {
 // PartType
 ////////////////////////////////////////////////
 PartType::PartType() :
-    m_name("invalid part type"),
-    m_description("indescribable"),
     m_class(INVALID_SHIP_PART_CLASS),
-    m_capacity(0.0f),
-    m_secondary_stat(1.0f),
     m_production_cost(),
     m_production_time(),
-    m_producible(false),
     m_mountable_slot_types(),
     m_tags(),
     m_production_meter_consumption(),
     m_production_special_consumption(),
     m_location(),
     m_exclusions(),
-    m_effects(),
-    m_icon(),
-    m_add_standard_capacity_effect(false)
+    m_effects()
 {}
 
 PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
@@ -318,9 +311,9 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     m_class(part_class),
     m_capacity(capacity),
     m_secondary_stat(stat2),
+    m_producible(common_params.producible),
     m_production_cost(std::move(common_params.production_cost)),
     m_production_time(std::move(common_params.production_time)),
-    m_producible(common_params.producible),
     m_mountable_slot_types(mountable_slot_types),
     m_tags(),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
@@ -388,6 +381,12 @@ void PartType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
         }
     }
 
+    if (m_production_cost)
+        m_production_cost->SetTopLevelContent(m_name);
+    if (m_production_time)
+        m_production_time->SetTopLevelContent(m_name);
+    if (m_location)
+        m_location->SetTopLevelContent(m_name);
     for (auto&& effect : effects) {
         effect->SetTopLevelContent(m_name);
         m_effects.emplace_back(std::move(effect));
@@ -542,15 +541,8 @@ unsigned int PartType::GetCheckSum() const {
 // HullType
 ////////////////////////////////////////////////
 HullType::HullType() :
-    m_name("generic hull type"),
-    m_description("indescribable"),
-    m_speed(1.0f),
-    m_fuel(0.0f),
-    m_stealth(0.0f),
-    m_structure(0.0f),
     m_production_cost(nullptr),
     m_production_time(nullptr),
-    m_producible(false),
     m_slots(),
     m_tags(),
     m_production_meter_consumption(),
@@ -593,7 +585,7 @@ HullType::HullType(const HullTypeStats& stats,
 }
 
 HullType::Slot::Slot() :
-    type(INVALID_SHIP_SLOT_TYPE), x(0.5), y(0.5)
+    type(INVALID_SHIP_SLOT_TYPE)
 {}
 
 HullType::~HullType()
@@ -609,6 +601,12 @@ void HullType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
     if (m_speed != 0)
         m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed,        "RULE_SHIP_SPEED_FACTOR"));
 
+    if (m_production_cost)
+        m_production_cost->SetTopLevelContent(m_name);
+    if (m_production_time)
+        m_production_time->SetTopLevelContent(m_name);
+    if (m_location)
+        m_location->SetTopLevelContent(m_name);
     for (auto&& effect : effects) {
         effect->SetTopLevelContent(m_name);
         m_effects.emplace_back(std::move(effect));

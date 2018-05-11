@@ -139,25 +139,25 @@ public:
 private:
     void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects);
 
-    std::string                     m_name;
-    std::string                     m_description;
-    ShipPartClass                   m_class;
-    float                           m_capacity;
-    float                           m_secondary_stat;   // damage for a hangar bay, shots per turn for a weapon, etc.
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_production_cost;
-    std::unique_ptr<ValueRef::ValueRefBase<int>>    m_production_time;
-    bool                            m_producible;
-    std::vector<ShipSlotType>       m_mountable_slot_types;
-    std::set<std::string>           m_tags;
-    CommonParams::ConsumptionMap<MeterType>
-                                    m_production_meter_consumption;
-    CommonParams::ConsumptionMap<std::string>
-                                    m_production_special_consumption;
-    std::unique_ptr<Condition::ConditionBase>       m_location;
-    std::set<std::string>           m_exclusions;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
-    std::string                     m_icon;
-    bool                            m_add_standard_capacity_effect;
+    std::string     m_name = "";
+    std::string     m_description = "";
+    ShipPartClass   m_class;
+    float           m_capacity = 0.0f;
+    float           m_secondary_stat = 0.0f;    // damage for a hangar bay, shots per turn for a weapon, etc.
+    bool            m_producible = false;
+
+    std::unique_ptr<ValueRef::ValueRefBase<double>>     m_production_cost;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>        m_production_time;
+    std::vector<ShipSlotType>                           m_mountable_slot_types;
+    std::set<std::string>                               m_tags;
+    CommonParams::ConsumptionMap<MeterType>             m_production_meter_consumption;
+    CommonParams::ConsumptionMap<std::string>           m_production_special_consumption;
+    std::unique_ptr<Condition::ConditionBase>           m_location;
+    std::set<std::string>                               m_exclusions;
+    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
+
+    std::string     m_icon = "";
+    bool            m_add_standard_capacity_effect = false;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -222,11 +222,7 @@ FO_COMMON_API const PartType* GetPartType(const std::string& name);
 /** Hull stats.  Used by parser due to limits on number of sub-items per
   * parsed main item. */
 struct HullTypeStats {
-    HullTypeStats() :
-        fuel(0.0f),
-        speed(0.0f),
-        stealth(0.0f),
-        structure(0.0f)
+    HullTypeStats()
     {}
 
     HullTypeStats(float fuel_,
@@ -239,10 +235,10 @@ struct HullTypeStats {
         structure(structure_)
     {}
 
-    float   fuel;
-    float   speed;
-    float   stealth;
-    float   structure;
+    float   fuel = 0.0f;
+    float   speed = 0.0f;
+    float   stealth = 0.0f;
+    float   structure = 0.0f;
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int) {
@@ -264,7 +260,7 @@ public:
             type(slot_type), x(x_), y(y_)
         {}
         ShipSlotType type;
-        double x, y;
+        double x = 0.5, y = 0.5;
     };
 
     /** \name Structors */ //@{
@@ -306,7 +302,6 @@ public:
     const std::vector<Slot>& Slots() const      { return m_slots; }             ///< returns vector of slots in hull
 
     const std::set<std::string>& Tags() const   { return m_tags; }
-
     bool HasTag(const std::string& tag) const   { return m_tags.count(tag) != 0; }
 
     const Condition::ConditionBase* Location() const{ return m_location.get(); }      ///< returns the condition that determines the locations where ShipDesign containing hull can be produced
@@ -332,26 +327,25 @@ public:
 private:
     void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects);
 
-    std::string                                             m_name;
-    std::string                                             m_description;
-    float                                                   m_speed;
-    float                                                   m_fuel;
-    float                                                   m_stealth;
-    float                                                   m_structure;
-    std::unique_ptr<ValueRef::ValueRefBase<double>>                         m_production_cost;
-    std::unique_ptr<ValueRef::ValueRefBase<int>>                            m_production_time;
-    bool                                                    m_producible;
-    std::vector<Slot>                                       m_slots;
-    std::set<std::string>                                   m_tags;
-    CommonParams::ConsumptionMap<MeterType>
-                                                            m_production_meter_consumption;
-    CommonParams::ConsumptionMap<std::string>
-                                                            m_production_special_consumption;
-    std::unique_ptr<Condition::ConditionBase>                               m_location;
-    std::set<std::string>                                   m_exclusions;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>>      m_effects;
-    std::string                                             m_graphic;
-    std::string                                             m_icon;
+    std::string m_name = "";
+    std::string m_description = "";
+    float       m_speed = 1.0f;
+    float       m_fuel = 0.0f;
+    float       m_stealth = 0.0f;
+    float       m_structure = 0.0f;
+
+    std::unique_ptr<ValueRef::ValueRefBase<double>>     m_production_cost;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>        m_production_time;
+    bool                                                m_producible = false;
+    std::vector<Slot>                                   m_slots;
+    std::set<std::string>                               m_tags;
+    CommonParams::ConsumptionMap<MeterType>             m_production_meter_consumption;
+    CommonParams::ConsumptionMap<std::string>           m_production_special_consumption;
+    std::unique_ptr<Condition::ConditionBase>           m_location;
+    std::set<std::string>                               m_exclusions;
+    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
+    std::string                                         m_graphic = "";
+    std::string                                         m_icon = "";
 
     friend class boost::serialization::access;
     template <class Archive>
