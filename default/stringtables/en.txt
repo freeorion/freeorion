@@ -10895,10 +10895,10 @@ PLC_POPULATION
 Population
 
 PLC_POPULATION_DESC
-Increases Growth Rate
+Increases natural population growth rate by 50%.
 
 PLC_POPULATION_SHORT_DESC
-Increases natural population growth rate by 50%.
+Increases Growth Rate
 
 PLC_NO_SUPPLY
 No Supply
@@ -10940,7 +10940,9 @@ PLC_EXPLORATION
 Exploration
 
 PLC_EXPLORATION_DESC
-Increases speed of ships with no weapons, fighters, shields, armour, troops, colony pods, bombardment, research, industry, trade, production, or general parts. Detection, fuel, and engine parts are allowed.
+'''Increases speed of ships with no weapons, fighters, shields, armour, troops, colony pods, bombardment, research, industry, trade, production, or general parts.
+
+Detection, fuel, and engine parts are allowed.'''
 
 PLC_EXPLORATION_SHORT_DESC
 Speeds Up Explorer Ships
