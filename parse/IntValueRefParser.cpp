@@ -62,7 +62,7 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
         |   tok.GalaxySize_
         |   tok.GalaxySpecialFrequency_
         |   tok.GalaxyStarlaneFrequency_
-        |   tok.ShipDesignNumParts_
+        |   tok.UsedInDesignID_
         ;
 
     constant

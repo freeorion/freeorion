@@ -927,27 +927,22 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         if (property_name == "GalaxyMaxAIAggression")
             return static_cast<int>(GetGalaxySetupData().GetAggression());
 
-        if (property_name == "ShipDesignNumParts") {
+        // non-object values passed by abuse of context.current_value
+        if (property_name == "UsedInDesignID") {
             // check if an int was passed as the current_value, as would be
             // done when evaluating a ValueRef for the cost or production
             // time of a part or hull in a ship design. this should be the id
             // of the design.
-            int design_id = INVALID_DESIGN_ID;
             try {
-                design_id = boost::any_cast<int>(context.current_value);
+                return boost::any_cast<int>(context.current_value);
             } catch (...) {
                 ErrorLogger() << "Variable<int>::Eval could get ship design id for property: " << TraceReference(m_property_name, m_ref_type, context);
-                return 0;
             }
-            const auto* design = GetShipDesign(design_id);
-            if (!design) {
-                ErrorLogger() << "Variable<int>::Eval could get ship design with id: " << design_id << "  for property: " << TraceReference(m_property_name, m_ref_type, context);
-                return 0;
-            }
-            return design->PartCount();
+            return 0;
         }
 
         // add more non-object reference int functions here
+
         ErrorLogger() << "Variable<int>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
         if (context.source)
             ErrorLogger() << "source: " << context.source->ObjectType() << " "
@@ -1965,12 +1960,13 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (!design)
             return 0;
 
+        if (part_type_name.empty())
+            return design->PartCount();
+
         int count = 0;
         for (const std::string& part : design->Parts()) {
-            if (part_type_name.empty() && !part.empty())
+            if (part_type_name == part)
                 count++;
-            else if (!part_type_name.empty() && part_type_name == part)
-                count ++;
         }
         return count;
     }
