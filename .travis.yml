@@ -1,3 +1,6 @@
+stages:
+  - build
+
 language: cpp
 
 # ccache caches obj files between builds
@@ -111,33 +114,41 @@ before_script:
 before_cache:
   # Check ccache
   - ccache --show-stats
-script:
-  - >
-    if [[ "${BUILD_APIDOC}" == "true" && "${TRAVIS_BRANCH}" == "master" ]]; then
-      cmake ..
-      cmake --build . --target cpp-apidoc
 
-      git clone --depth=1 --branch=master https://github.com/freeorion/freeorion.github.io.git apidoc-deploy.git
-      pushd apidoc-deploy.git
-      rm -rf cppapi/master
-      mkdir -p cppapi/master
-      cp -R ../doc/cpp-apidoc/html cppapi/master
-      git add -A cppapi/master
-      git commit -m "Update FreeOrion API documentation to match commit \`$(date --iso-8601).${TRAVIS_COMMIT:0:8}\`"
-      git push https://github.com/freeorion/freeorion.github.io.git master:master
-      popd
-    fi
-  - >
-    if [[ "${TRAVIS_OS_NAME}" == "linux" && "${BUILD_UNITTEST}" == "true" ]]; then
-      cmake -DBUILD_TESTING=ON ..
-      cmake --build . -- -j 2 &&
-      cmake --build . --target unittest &&
-      cd ../default &&
-      python -m compileall -q .
-    fi
-  - >
-    if [[ "${TRAVIS_OS_NAME}" == "osx" && -z "${BUILD_APIDOC}" ]]; then
-      cmake -GXcode ..
-      # timeout before Travis kills jobs so that ccache is always at least partially populated
-      gtimeout 40m cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
-    fi
+jobs:
+  include:
+    - stage: build
+      script:
+        - >
+          if [[ "${BUILD_APIDOC}" == "true" && "${TRAVIS_BRANCH}" == "master" ]]; then
+            cmake ..
+            cmake --build . --target cpp-apidoc
+
+            git clone --depth=1 --branch=master https://github.com/freeorion/freeorion.github.io.git apidoc-deploy.git
+            pushd apidoc-deploy.git
+            rm -rf cppapi/master
+            mkdir -p cppapi/master
+            cp -R ../doc/cpp-apidoc/html cppapi/master
+            git add -A cppapi/master
+            git commit -m "Update FreeOrion API documentation to match commit \`$(date --iso-8601).${TRAVIS_COMMIT:0:8}\`"
+            git push https://github.com/freeorion/freeorion.github.io.git master:master
+            popd
+          fi
+    - stage: build
+      script:
+        - >
+          if [[ "${TRAVIS_OS_NAME}" == "linux" && "${BUILD_UNITTEST}" == "true" ]]; then
+            cmake -DBUILD_TESTING=ON ..
+            cmake --build . -- -j 2 &&
+            cmake --build . --target unittest &&
+            cd ../default &&
+            python -m compileall -q .
+          fi
+    - stage: build
+      script:
+        - >
+          if [[ "${TRAVIS_OS_NAME}" == "osx" && -z "${BUILD_APIDOC}" ]]; then
+            cmake -GXcode ..
+            # timeout before Travis kills jobs so that ccache is always at least partially populated
+            gtimeout 40m cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
+          fi
