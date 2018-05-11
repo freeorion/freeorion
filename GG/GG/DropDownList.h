@@ -84,7 +84,6 @@ public:
     /** \name Structors */ ///@{
     /** basic ctor.  DropDownList retains ownership of \a lb, if it is non-null. */
     DropDownList(size_t num_shown_elements, Clr color);
-
     ~DropDownList();
     //@}
 
@@ -174,58 +173,58 @@ public:
     void Insert(const std::vector<std::shared_ptr<Row>>& rows);
 
     std::shared_ptr<Row> Erase(iterator it, bool signal = false); ///< removes and returns \a it from the list, or 0 if no such row exists
-    void            Clear();                        ///< empties the list
+    void Clear();                        ///< empties the list
 
-    iterator        begin();                    ///< returns an iterator to the first list row
-    iterator        end();                      ///< returns an iterator to the imaginary row one past the last one
+    iterator begin();                    ///< returns an iterator to the first list row
+    iterator end();                      ///< returns an iterator to the imaginary row one past the last one
 
-    Row&            GetRow(std::size_t n);          ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
+    Row& GetRow(std::size_t n);          ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
 
-    void            Select(iterator it);            ///< selects row-item \a it in the list
-    void            Select(std::size_t n);          ///< selects row-item \a it in the list
+    void Select(iterator it);            ///< selects row-item \a it in the list
+    void Select(std::size_t n);          ///< selects row-item \a it in the list
 
-    void            SetInteriorColor(Clr c);        ///< sets the color painted into the client area of the control
+    void SetInteriorColor(Clr c);        ///< sets the color painted into the client area of the control
 
     /** sets the style flags for the list to \a s (invalidates currently
         selected item). \see GG::ListBoxStyle */
-    void            SetStyle(Flags<ListBoxStyle> s);
+    void SetStyle(Flags<ListBoxStyle> s);
 
-    void            SetNumCols(std::size_t n);      ///< sets the number of columns in each list item to \a n; if no column widths exist before this call, proportional widths are calulated and set, otherwise no column widths are set
-    void            SetSortCol(std::size_t n);      ///< sets the index of the column used to sort rows when sorting is enabled (invalidates currently selected item); not range-checked
-    void            SetColWidth(std::size_t n, X w);///< sets the width of column \n to \a w; not range-checked
+    void SetNumCols(std::size_t n);      ///< sets the number of columns in each list item to \a n; if no column widths exist before this call, proportional widths are calulated and set, otherwise no column widths are set
+    void SetSortCol(std::size_t n);      ///< sets the index of the column used to sort rows when sorting is enabled (invalidates currently selected item); not range-checked
+    void SetColWidth(std::size_t n, X w);///< sets the width of column \n to \a w; not range-checked
 
     /** Fixes the column widths; by default, an empty list will take on the
         number of columns of its first added row. \note The number of columns
         and their widths may still be set via SetNumCols() and SetColWidth()
         after this function has been called. */
-    void            LockColWidths();
+    void LockColWidths();
 
     /** Allows the number of columns to be determined by the first row added
         to an empty ListBox */
-    void            UnLockColWidths();
+    void UnLockColWidths();
 
     /** Set ListBox to stop managing column widths and alignment.  The number of columns must be
         set with SetColWidth(), but widths of individual rows columns or the header will not be
         managed by ListBox. */
-    void            ManuallyManageColProps();
+    void ManuallyManageColProps();
 
-    void            SetColAlignment(std::size_t n, Alignment align); ///< sets the alignment of column \a n to \a align; not range-checked
-    void            SetRowAlignment(iterator it, Alignment align);   ///< sets the alignment of the Row at row index \a n to \a align; not range-checked
+    void SetColAlignment(std::size_t n, Alignment align); ///< sets the alignment of column \a n to \a align; not range-checked
+    void SetRowAlignment(iterator it, Alignment align);   ///< sets the alignment of the Row at row index \a n to \a align; not range-checked
 
     /** Sets the stretch of column \a n to \a stretch; not range-checked */
-    void            SetColStretch(std::size_t n, double stretch);
+    void SetColStretch(std::size_t n, double stretch);
 
     /** Sets whether to normalize rows when inserted (true) or leave them as
       * they are. */
-    void            NormalizeRowsOnInsert(bool enable = true);
+    void NormalizeRowsOnInsert(bool enable = true);
 
     /** Set the drop down list to only mouse scroll if it is dropped. */
-    void            SetOnlyMouseScrollWhenDropped(bool enable);
+    void SetOnlyMouseScrollWhenDropped(bool enable);
     //@}
 
 protected:
     /** \name Mutators */ ///@{
-    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
 

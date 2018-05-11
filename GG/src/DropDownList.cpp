@@ -541,7 +541,8 @@ void ModalListPicker::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 // GG::DropDownList
 ////////////////////////////////////////////////
 DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
-    Control(X0, Y0, X(1 + 2 * ListBox::BORDER_THICK), Y(1 + 2 * ListBox::BORDER_THICK), INTERACTIVE),
+    Control(X0, Y0, X(1 + 2 * ListBox::BORDER_THICK),
+            Y(1 + 2 * ListBox::BORDER_THICK), INTERACTIVE),
     m_modal_picker(Wnd::Create<ModalListPicker>(color, this, num_shown_elements))
 {
     SetStyle(LIST_SINGLESEL);
@@ -880,7 +881,7 @@ void DropDownList::SetColStretch(std::size_t n, double stretch)
 void DropDownList::NormalizeRowsOnInsert(bool enable /*= true*/)
 { LB()->NormalizeRowsOnInsert(enable); }
 
-void DropDownList::LClick(const Pt& pt, Flags<ModKey> mod_keys)
+void DropDownList::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (Disabled())
         return;
