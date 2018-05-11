@@ -4627,6 +4627,18 @@ Turn
 NO_TECHS_RESEARCHED
 No Techs Researched
 
+AVAILABLE_PARTS
+'''Available Parts: '''
+
+NO_PARTS_AVAILABLE
+No Parts Available
+
+AVAILABLE_HULLS
+'''Available Hulls: '''
+
+NO_HULLS_AVAILABLE
+No Hulls Available
+
 OWNED_PLANETS
 '''Owned Planets: '''
 

@@ -1632,24 +1632,6 @@ namespace {
             }
         }
 
-        // Techs
-        auto techs = empire->ResearchedTechs();
-        if (!techs.empty()) {
-            detailed_description += "\n\n" + UserString("RESEARCHED_TECHS");
-            for (const auto& tech_entry : techs) {
-                detailed_description += "\n";
-                std::string turn_text;
-                if (tech_entry.second == BEFORE_FIRST_TURN)
-                    turn_text = UserString("BEFORE_FIRST_TURN");
-                else
-                    turn_text = UserString("TURN") + " " + std::to_string(tech_entry.second);
-                detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_entry.first)
-                                     + " : " + turn_text;
-            }
-        } else {
-            detailed_description += "\n\n" + UserString("NO_TECHS_RESEARCHED");
-        }
-
 
         // Planets
         auto empire_planets = Objects().FindObjects(OwnedVisitor<Planet>(empire_id));
@@ -1687,6 +1669,48 @@ namespace {
         } else {
             detailed_description += "\n\n" + UserString("NO_OWNED_FLEETS_KNOWN");
         }
+
+
+        // Techs
+        auto techs = empire->ResearchedTechs();
+        if (!techs.empty()) {
+            detailed_description += "\n\n" + UserString("RESEARCHED_TECHS");
+            for (const auto& tech_entry : techs) {
+                detailed_description += "\n";
+                std::string turn_text;
+                if (tech_entry.second == BEFORE_FIRST_TURN)
+                    turn_text = UserString("BEFORE_FIRST_TURN");
+                else
+                    turn_text = UserString("TURN") + " " + std::to_string(tech_entry.second);
+                detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_entry.first)
+                                     + " : " + turn_text;
+            }
+        } else {
+            detailed_description += "\n\n" + UserString("NO_TECHS_RESEARCHED");
+        }
+
+        // WIP: Parts, Hulls, Buildings, ... available
+        auto parts = empire->AvailableShipParts();
+        if (!parts.empty()) {
+            detailed_description += "\n\n" + UserString("AVAILABLE_PARTS");
+            for (const auto& part_name : parts) {
+                detailed_description += "\n";
+                detailed_description += LinkTaggedText(VarText::SHIP_PART_TAG, part_name);
+            }
+        } else {
+            detailed_description += "\n\n" + UserString("NO_PARTS_AVAILABLE");
+        }
+        auto hulls = empire->AvailableShipHulls();
+        if (!hulls.empty()) {
+            detailed_description += "\n\n" + UserString("AVAILABLE_HULLS");
+            for (const auto& hull_name : hulls) {
+                detailed_description += "\n";
+                detailed_description += LinkTaggedText(VarText::SHIP_HULL_TAG, hull_name);
+            }
+        } else {
+            detailed_description += "\n\n" + UserString("NO_HULLS_AVAILABLE");
+        }
+
 
         // Misc. Statistics
 
@@ -1908,6 +1932,8 @@ namespace {
                 building_type_name = UserString(entry.first);
             detailed_description += "\n" + building_type_name + " : " + num_str;
         }
+
+        detailed_description += "\n";
     }
 
     void RefreshDetailPanelSpeciesTag(      const std::string& item_type, const std::string& item_name,
