@@ -1744,17 +1744,24 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (!GetGameRules().RuleExists(rule_name))
             return 0;
         try {
-            // may throw if no such int-valued rule exists
-            return GetGameRules().Get<int>(rule_name);
-        } catch (...) {
-            // may throw if no such bool (or int) -valued rule exists
-            if (GetGameRules().Get<bool>(rule_name))
-                return 1;
-            else
-                return 0;
-            try {
-            } catch (...) {
+            // can cast boolean, int, or double-valued rules to int
+            switch (GetGameRules().GetRuleType(rule_name)) {
+            case GameRules::TOGGLE: {
+                return GetGameRules().Get<bool>(rule_name);
+                break;
             }
+            case GameRules::INT: {
+                return GetGameRules().Get<int>(rule_name);
+                break;
+            }
+            case GameRules::DOUBLE: {
+                return static_cast<int>(GetGameRules().Get<double>(rule_name));
+                break;
+            }
+            default:
+                break;
+            }
+        } catch (...) {
         }
         return 0;
     }
@@ -1949,12 +1956,26 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (!GetGameRules().RuleExists(rule_name))
             return 0.0;
         try {
-            // may throw if no such int-valued rule exists
-            return GetGameRules().Get<double>(rule_name);
+            // can cast boolean, int, or double-valued rules to double
+            switch (GetGameRules().GetRuleType(rule_name)) {
+            case GameRules::TOGGLE: {
+                return GetGameRules().Get<bool>(rule_name);
+                break;
+            }
+            case GameRules::INT: {
+                return GetGameRules().Get<int>(rule_name);
+                break;
+            }
+            case GameRules::DOUBLE: {
+                return GetGameRules().Get<double>(rule_name);
+                break;
+            }
+            default:
+                break;
+            }
         } catch (...) {
         }
         return 0.0;
-
     }
     else if (variable_name == "HullFuel") {
         std::string hull_type_name;
@@ -2497,8 +2518,27 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         if (!GetGameRules().RuleExists(rule_name))
             return "";
         try {
-            // may throw if no such int-valued rule exists
-            return GetGameRules().Get<std::string>(rule_name);
+            // can cast boolean, int, double, or string-valued rules to strings
+            switch (GetGameRules().GetRuleType(rule_name)) {
+            case GameRules::TOGGLE: {
+                return std::to_string(GetGameRules().Get<bool>(rule_name));
+                break;
+            }
+            case GameRules::INT: {
+                return std::to_string(GetGameRules().Get<int>(rule_name));
+                break;
+            }
+            case GameRules::DOUBLE: {
+                return DoubleToString(GetGameRules().Get<double>(rule_name), 3, false);
+                break;
+            }
+            case GameRules::STRING: {
+                return GetGameRules().Get<std::string>(rule_name);
+                break;
+            }
+            default:
+                break;
+            }
         } catch (...) {
         }
         return "";
