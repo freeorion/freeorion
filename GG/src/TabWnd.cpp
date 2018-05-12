@@ -301,9 +301,9 @@ void TabBar::CompleteConstruction()
 
     m_tabs->ButtonChangedSignal.connect(
         boost::bind(&TabBar::TabChanged, this, _1, true));
-    m_left_button->LeftClickedSignal.connect(
+    m_left_button->LeftPressedSignal.connect(
         boost::bind(&TabBar::LeftClicked, this));
-    m_right_button->LeftClickedSignal.connect(
+    m_right_button->LeftPressedSignal.connect(
         boost::bind(&TabBar::RightClicked, this));
 
     if (INSTRUMENT_ALL_SIGNALS)
@@ -448,7 +448,9 @@ void TabBar::TabChanged(std::size_t index, bool signal)
 void TabBar::LeftClicked()
 {
     assert(0 < m_first_tab_shown);
-    m_tabs->OffsetMove(Pt(m_tab_buttons[m_first_tab_shown]->Left() - m_tab_buttons[m_first_tab_shown - 1]->Left(), Y0));
+    m_tabs->OffsetMove(Pt(m_tab_buttons[m_first_tab_shown]->Left() -
+                            m_tab_buttons[m_first_tab_shown - 1]->Left(),
+                          Y0));
     --m_first_tab_shown;
     m_left_button->Disable(m_first_tab_shown == 0);
     m_right_button->Disable(false);
@@ -457,7 +459,9 @@ void TabBar::LeftClicked()
 void TabBar::RightClicked()
 {
     assert(m_first_tab_shown < m_tab_buttons.size() - 1);
-    m_tabs->OffsetMove(Pt(m_tab_buttons[m_first_tab_shown]->Left() - m_tab_buttons[m_first_tab_shown + 1]->Left(), Y0));
+    m_tabs->OffsetMove(Pt(m_tab_buttons[m_first_tab_shown]->Left() -
+                            m_tab_buttons[m_first_tab_shown + 1]->Left(),
+                          Y0));
     ++m_first_tab_shown;
     X right_side = m_left_right_button_layout->Visible() ?
         m_left_button->Left() :
