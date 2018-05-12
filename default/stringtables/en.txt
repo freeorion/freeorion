@@ -1190,6 +1190,11 @@ Only allied players win
 RULE_ONLY_ALLIANCE_WIN_DESC
 Allied players could win together if the number of human players in their alliance is no large than the maximum human player winners and there are no other human player survivors.
 
+RULE_SHIP_PART_BASED_UPKEEP
+Use part-based upkeep
+
+RULE_SHIP_PART_BASED_UPKEEP_DESC
+Calculate upkeep based on ship parts instead of ships themselves.
 
 ##
 ## Command-line and options database entries

@@ -151,3 +151,10 @@ GameRule
     default = 1
     min = 0
     max = 9999
+
+GameRule
+    name = "RULE_SHIP_PART_BASED_UPKEEP"
+    description = "RULE_SHIP_PART_BASED_UPKEEP_DESC"
+    category = "BALANCE"
+    type = Toggle
+    default = Off
