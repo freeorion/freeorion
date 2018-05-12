@@ -114,7 +114,8 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK);
+    TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font,
+           Clr color, Clr text_color = CLR_BLACK);
     //@}
     void CompleteConstruction() override;
 
@@ -230,21 +231,21 @@ public:
     /** Adds a tab called \a name to the sequence of tabs in this TabBar.  \a
         name can be used later to remove the tab (\a name is not checked for
         uniqueness).  Returns the index at which the tab is placed. */
-    std::size_t     AddTab(const std::string& name);
+    std::size_t AddTab(const std::string& name);
 
     /** Adds tab to the sequence of tabs in this TabBar, inserting it at the
         \a index location within the sequence.  \a name can be used later to
         remove the tab (\a name is not checked for uniqueness).  Not range
         checked. */
-    void            InsertTab(std::size_t index, const std::string& name);
+    void InsertTab(std::size_t index, const std::string& name);
 
     /** Removes the first tab previously added witht he name \a name from the
         sequence of tab in this TabBar. */
-    void            RemoveTab(const std::string& name);
+    void RemoveTab(const std::string& name);
 
     /** Sets the current tab in the sequence to the tab in the \a index
         position within the sequence.  Not range checked. */
-    void            SetCurrentTab(std::size_t index);
+    void SetCurrentTab(std::size_t index);
     //@}
 
     mutable TabChangedSignalType TabChangedSignal; ///< The tab change signal object for this TabBar
@@ -267,7 +268,7 @@ protected:
 
     /** Brings the currently-selected tab button to the top within the tab
         button group. */
-    void            RaiseCurrentTabButton();
+    void RaiseCurrentTabButton();
     //@}
 
 private:

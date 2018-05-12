@@ -454,8 +454,9 @@ void OptionsWnd::CompleteConstruction() {
     // FIXME: PAGE_WIDTH is needed to prevent triggering an assert within the TabBar class.
     // The placement of the tab register buttons assumes that the whole TabWnd is at least
     // wider than the first tab button.
-    m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X0, GG::Y0, PAGE_WIDTH, GG::Y1, ClientUI::GetFont(),
-                                         ClientUI::WndColor(), ClientUI::TextColor());
+    m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X0, GG::Y0, PAGE_WIDTH, GG::Y1,
+                                         ClientUI::GetFont(), ClientUI::WndColor(),
+                                         ClientUI::TextColor());
 
     CUIWnd::CompleteConstruction();
 
@@ -526,8 +527,9 @@ void OptionsWnd::CompleteConstruction() {
 
     // manual reposition windows button
     auto window_reset_button = Wnd::Create<CUIButton>(UserString("OPTIONS_WINDOW_RESET"));
-    auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
-                                               window_reset_button, 0);
+    auto row = GG::Wnd::Create<OptionsListRow>(
+        ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
+        window_reset_button, 0);
     current_page->Insert(row);
     window_reset_button->LeftClickedSignal.connect(
         HumanClientApp::GetApp()->RepositionWindowsSignal);
@@ -539,79 +541,82 @@ void OptionsWnd::CompleteConstruction() {
 
     // flush stringtable button
     auto flush_button = Wnd::Create<CUIButton>(UserString("OPTIONS_FLUSH_STRINGTABLE"));
-    row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6, flush_button, 0);
+    row = GG::Wnd::Create<OptionsListRow>(
+        ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
+        flush_button, 0);
     current_page->Insert(row);
-    flush_button->LeftClickedSignal.connect(
-        &FlushLoadedStringTables);
+    flush_button->LeftClickedSignal.connect(&FlushLoadedStringTables);
 
-    IntOption(current_page, 0, "ui.tooltip.delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
-    IntOption(current_page, 0, "ui.input.keyboard.repeat.delay", UserString("OPTIONS_KEYPRESS_REPEAT_DELAY"));
-    IntOption(current_page, 0, "ui.input.keyboard.repeat.interval", UserString("OPTIONS_KEYPRESS_REPEAT_INTERVAL"));
-    IntOption(current_page, 0, "ui.input.mouse.button.repeat.delay", UserString("OPTIONS_MOUSE_REPEAT_DELAY"));
+    IntOption(current_page, 0, "ui.tooltip.delay",                      UserString("OPTIONS_TOOLTIP_DELAY"));
+    IntOption(current_page, 0, "ui.input.keyboard.repeat.delay",        UserString("OPTIONS_KEYPRESS_REPEAT_DELAY"));
+    IntOption(current_page, 0, "ui.input.keyboard.repeat.interval",     UserString("OPTIONS_KEYPRESS_REPEAT_INTERVAL"));
+    IntOption(current_page, 0, "ui.input.mouse.button.repeat.delay",    UserString("OPTIONS_MOUSE_REPEAT_DELAY"));
     IntOption(current_page, 0, "ui.input.mouse.button.repeat.interval", UserString("OPTIONS_MOUSE_REPEAT_INTERVAL"));
 
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONTS"));
-    FontOption(current_page, 0, "ui.font.path",  UserString("OPTIONS_FONT_TEXT"));
-    FontOption(current_page, 0, "ui.font.title.path", UserString("OPTIONS_FONT_TITLE"));
+    CreateSectionHeader(current_page, 0,                                UserString("OPTIONS_FONTS"));
+    FontOption(current_page, 0, "ui.font.path",                         UserString("OPTIONS_FONT_TEXT"));
+    FontOption(current_page, 0, "ui.font.title.path",                   UserString("OPTIONS_FONT_TITLE"));
 
     // show font texture button
     auto show_font_texture_button = Wnd::Create<CUIButton>(UserString("SHOW_FONT_TEXTURES"));
-    row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, show_font_texture_button ->MinUsableSize().y + LAYOUT_MARGIN + 6, show_font_texture_button , 0);
+    row = GG::Wnd::Create<OptionsListRow>(
+        ROW_WIDTH, show_font_texture_button ->MinUsableSize().y + LAYOUT_MARGIN + 6,
+        show_font_texture_button , 0);
     current_page->Insert(row);
     show_font_texture_button->LeftClickedSignal.connect(
         &ShowFontTextureWnd);
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONT_SIZES"));
-    IntOption(current_page,    0, "ui.font.size",                          UserString("OPTIONS_FONT_TEXT"));
-    IntOption(current_page,    0, "ui.font.title.size",                    UserString("OPTIONS_FONT_TITLE"));
+    IntOption(current_page,    0, "ui.font.size",                       UserString("OPTIONS_FONT_TEXT"));
+    IntOption(current_page,    0, "ui.font.title.size",                 UserString("OPTIONS_FONT_TITLE"));
 
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_RESEARCH_WND"));
-    DoubleOption(current_page, 0, "ui.research.tree.spacing.horizontal", UserString("OPTIONS_TECH_SPACING_HORIZONTAL"));
-    DoubleOption(current_page, 0, "ui.research.tree.spacing.vertical", UserString("OPTIONS_TECH_SPACING_VERTICAL"));
-    DoubleOption(current_page, 0, "ui.research.tree.zoom.scale", UserString("OPTIONS_TECH_LAYOUT_ZOOM"));
-    DoubleOption(current_page, 0, "ui.research.control.graphic.size", UserString("OPTIONS_TECH_CTRL_ICON_SIZE"));
+    CreateSectionHeader(current_page, 0,                                UserString("OPTIONS_RESEARCH_WND"));
+    DoubleOption(current_page, 0, "ui.research.tree.spacing.horizontal",UserString("OPTIONS_TECH_SPACING_HORIZONTAL"));
+    DoubleOption(current_page, 0, "ui.research.tree.spacing.vertical",  UserString("OPTIONS_TECH_SPACING_VERTICAL"));
+    DoubleOption(current_page, 0, "ui.research.tree.zoom.scale",        UserString("OPTIONS_TECH_LAYOUT_ZOOM"));
+    DoubleOption(current_page, 0, "ui.research.control.graphic.size",   UserString("OPTIONS_TECH_CTRL_ICON_SIZE"));
 
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_QUEUES"));
-    IntOption(current_page,    0, "ui.queue.width", UserString("OPTIONS_UI_QUEUE_WIDTH"));
+    CreateSectionHeader(current_page, 0,                                UserString("OPTIONS_QUEUES"));
+    IntOption(current_page,    0, "ui.queue.width",                     UserString("OPTIONS_UI_QUEUE_WIDTH"));
     BoolOption(current_page,   0, "ui.queue.production_location.shown", UserString("OPTIONS_UI_PROD_QUEUE_LOCATION"));
 
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_DESCRIPTIONS"));
-    BoolOption(current_page,   0, "resource.effects.description.shown",    UserString("OPTIONS_DUMP_EFFECTS_GROUPS_DESC"));
-    BoolOption(current_page,   0, "ui.map.sitrep.invalid.shown",           UserString("OPTIONS_VERBOSE_SITREP_DESC"));
-    BoolOption(current_page,   0, "ui.name.id.shown",                      UserString("OPTIONS_SHOW_IDS_AFTER_NAMES"));
+    CreateSectionHeader(current_page, 0,                                UserString("OPTIONS_DESCRIPTIONS"));
+    BoolOption(current_page,   0, "resource.effects.description.shown", UserString("OPTIONS_DUMP_EFFECTS_GROUPS_DESC"));
+    BoolOption(current_page,   0, "ui.map.sitrep.invalid.shown",        UserString("OPTIONS_VERBOSE_SITREP_DESC"));
+    BoolOption(current_page,   0, "ui.name.id.shown",                   UserString("OPTIONS_SHOW_IDS_AFTER_NAMES"));
 
     m_tabs->SetCurrentWnd(0);
 
     // Galaxy Map Page
     current_page = CreatePage(UserString("OPTIONS_GALAXY_MAP"));
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_SYSTEM_ICONS"));
-    IntOption(current_page,    0, "ui.map.system.icon.size",                    UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
-    BoolOption(current_page,   0, "ui.map.system.circle.shown",                 UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
-    DoubleOption(current_page, 0, "ui.map.system.circle.size",                  UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
-    DoubleOption(current_page, 0, "ui.map.system.select.indicator.size",     UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
-    IntOption(current_page,    0, "ui.map.system.select.indicator.rpm",      UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
-    IntOption(current_page,    0, "ui.map.system.icon.tiny.threshold",     UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
-    ColorOption(current_page,  0, "ui.map.system.unowned.name.color",           UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
-    BoolOption(current_page,   0, "ui.map.scanlines.shown",                     UserString("OPTIONS_UI_SYSTEM_FOG"));
-    DoubleOption(current_page, 0, "ui.map.system.scanlines.spacing",            UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
+    CreateSectionHeader(current_page, 0,                                UserString("OPTIONS_SYSTEM_ICONS"));
+    IntOption(current_page,    0, "ui.map.system.icon.size",            UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
+    BoolOption(current_page,   0, "ui.map.system.circle.shown",         UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
+    DoubleOption(current_page, 0, "ui.map.system.circle.size",          UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
+    DoubleOption(current_page, 0, "ui.map.system.select.indicator.size",UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
+    IntOption(current_page,    0, "ui.map.system.select.indicator.rpm", UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
+    IntOption(current_page,    0, "ui.map.system.icon.tiny.threshold",  UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
+    ColorOption(current_page,  0, "ui.map.system.unowned.name.color",   UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
+    BoolOption(current_page,   0, "ui.map.scanlines.shown",             UserString("OPTIONS_UI_SYSTEM_FOG"));
+    DoubleOption(current_page, 0, "ui.map.system.scanlines.spacing",    UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
 
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_FLEET_ICONS"));
+    CreateSectionHeader(current_page, 0,                                        UserString("OPTIONS_FLEET_ICONS"));
     DoubleOption(current_page, 0, "ui.map.fleet.button.tiny.zoom.threshold",    UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
     DoubleOption(current_page, 0, "ui.map.fleet.button.small.zoom.threshold",   UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
     DoubleOption(current_page, 0, "ui.map.fleet.button.medium.zoom.threshold",  UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption(current_page, 0, "ui.map.fleet.select.indicator.size",      UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
+    DoubleOption(current_page, 0, "ui.map.fleet.select.indicator.size",         UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
 
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_STARLANES"));
-    DoubleOption(current_page, 0, "ui.map.starlane.thickness",                  UserString("OPTIONS_STARLANE_THICKNESS"));
-    BoolOption(current_page,   0, "ui.map.starlane.empire.color.shown",         UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
-    DoubleOption(current_page, 0, "ui.map.starlane.thickness.factor",  UserString("OPTIONS_DB_STARLANE_CORE"));
-    BoolOption(current_page,   0, "ui.map.fleet.supply.shown",             UserString("OPTIONS_FLEET_SUPPLY_LINES"));
-    DoubleOption(current_page, 0, "ui.map.fleet.supply.width",             UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
-    IntOption(current_page,    0, "ui.map.fleet.supply.dot.spacing",       UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));
-    DoubleOption(current_page, 0, "ui.map.fleet.supply.dot.rate",          UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE"));
-    ColorOption(current_page,  0, "ui.map.starlane.color",                      UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
+    CreateSectionHeader(current_page, 0,                                UserString("OPTIONS_STARLANES"));
+    DoubleOption(current_page, 0, "ui.map.starlane.thickness",          UserString("OPTIONS_STARLANE_THICKNESS"));
+    BoolOption(current_page,   0, "ui.map.starlane.empire.color.shown", UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
+    DoubleOption(current_page, 0, "ui.map.starlane.thickness.factor",   UserString("OPTIONS_DB_STARLANE_CORE"));
+    BoolOption(current_page,   0, "ui.map.fleet.supply.shown",          UserString("OPTIONS_FLEET_SUPPLY_LINES"));
+    DoubleOption(current_page, 0, "ui.map.fleet.supply.width",          UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
+    IntOption(current_page,    0, "ui.map.fleet.supply.dot.spacing",    UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));
+    DoubleOption(current_page, 0, "ui.map.fleet.supply.dot.rate",       UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE"));
+    ColorOption(current_page,  0, "ui.map.starlane.color",              UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
 
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_GALAXY_MAP_GENERAL"));
+    CreateSectionHeader(current_page, 0,                                        UserString("OPTIONS_GALAXY_MAP_GENERAL"));
     BoolOption(current_page,   0, "ui.map.background.gas.shown",                UserString("OPTIONS_GALAXY_MAP_GAS"));
     BoolOption(current_page,   0, "ui.map.background.starfields.shown",         UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
     BoolOption(current_page,   0, "ui.map.scale.legend.shown",                  UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
@@ -619,9 +624,9 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page,   0, "ui.map.zoom.slider.shown",                   UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
     BoolOption(current_page,   0, "ui.map.detection.range.shown",               UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"));
     IntOption(current_page,    0, "ui.map.detection.range.opacity",             UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY"));
-    BoolOption(current_page,   0, "ui.map.menu.enabled",                  UserString("OPTIONS_GALAXY_MAP_POPUP"));
+    BoolOption(current_page,   0, "ui.map.menu.enabled",                        UserString("OPTIONS_GALAXY_MAP_POPUP"));
     BoolOption(current_page,   0, "ui.map.system.unexplored.rollover.enabled",  UserString("OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY"));
-    BoolOption(current_page,   0, "ui.production.mappanels.removed",         UserString("OPTIONS_UI_HIDE_MAP_PANELS"));
+    BoolOption(current_page,   0, "ui.production.mappanels.removed",            UserString("OPTIONS_UI_HIDE_MAP_PANELS"));
 
     m_tabs->SetCurrentWnd(0);
 
@@ -638,45 +643,45 @@ void OptionsWnd::CompleteConstruction() {
         std::string col_contents = GetOptionsDB().GetValueString(col_opt_name);
         const std::string& tx_contents = (col_contents.empty() ? "" : UserString(col_contents));
 
-        IntOption(current_page, 0, col_width_opt_name,                      tx_contents);
+        IntOption(current_page, 0, col_width_opt_name, tx_contents);
     }
 
     m_tabs->SetCurrentWnd(0);
 
     // Colors tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_COLORS"));
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_GENERAL_COLORS"));
-    ColorOption(current_page, 0, "ui.font.color",          UserString("OPTIONS_TEXT_COLOR"));
-    ColorOption(current_page, 0, "ui.font.link.color",     UserString("OPTIONS_DEFAULT_LINK_COLOR"));
+    CreateSectionHeader(current_page, 0,                        UserString("OPTIONS_GENERAL_COLORS"));
+    ColorOption(current_page, 0, "ui.font.color",               UserString("OPTIONS_TEXT_COLOR"));
+    ColorOption(current_page, 0, "ui.font.link.color",          UserString("OPTIONS_DEFAULT_LINK_COLOR"));
     ColorOption(current_page, 0, "ui.font.link.rollover.color", UserString("OPTIONS_ROLLOVER_LINK_COLOR"));
 
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_WINDOW_COLORS"));
-    ColorOption(current_page, 0, "ui.window.background.color", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 0, "ui.window.border.inner.color", UserString("OPTIONS_INNER_BORDER_COLOR"));
-    ColorOption(current_page, 0, "ui.window.border.outer.color", UserString("OPTIONS_OUTER_BORDER_COLOR"));
+    CreateSectionHeader(current_page, 0,                        UserString("OPTIONS_WINDOW_COLORS"));
+    ColorOption(current_page, 0, "ui.window.background.color",  UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 0, "ui.window.border.inner.color",UserString("OPTIONS_INNER_BORDER_COLOR"));
+    ColorOption(current_page, 0, "ui.window.border.outer.color",UserString("OPTIONS_OUTER_BORDER_COLOR"));
 
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_CONTROL_COLORS"));
-    ColorOption(current_page, 0, "ui.control.background.color", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 0, "ui.control.border.color",     UserString("OPTIONS_BORDER_COLOR"));
+    CreateSectionHeader(current_page, 0,                            UserString("OPTIONS_CONTROL_COLORS"));
+    ColorOption(current_page, 0, "ui.control.background.color",     UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 0, "ui.control.border.color",         UserString("OPTIONS_BORDER_COLOR"));
     ColorOption(current_page, 0, "ui.control.edit.highlight.color", UserString("OPTIONS_HIGHLIGHT_COLOR"));
-    ColorOption(current_page, 0, "ui.dropdownlist.arrow.color", UserString("OPTIONS_DROPLIST_ARROW_COLOR"));
-    ColorOption(current_page, 0, "ui.button.state.color",   UserString("OPTIONS_STATE_BUTTON_COLOR"));
-    ColorOption(current_page, 0, "ui.font.stat.increase.color", UserString("OPTIONS_STAT_INCREASE_COLOR"));
-    ColorOption(current_page, 0, "ui.font.stat.decrease.color", UserString("OPTIONS_STAT_DECREASE_COLOR"));
+    ColorOption(current_page, 0, "ui.dropdownlist.arrow.color",     UserString("OPTIONS_DROPLIST_ARROW_COLOR"));
+    ColorOption(current_page, 0, "ui.button.state.color",           UserString("OPTIONS_STATE_BUTTON_COLOR"));
+    ColorOption(current_page, 0, "ui.font.stat.increase.color",     UserString("OPTIONS_STAT_INCREASE_COLOR"));
+    ColorOption(current_page, 0, "ui.font.stat.decrease.color",     UserString("OPTIONS_STAT_DECREASE_COLOR"));
 
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_COMBAT_COLORS"));
-    ColorOption(current_page, 0, "ui.combat.summary.dead.color", UserString("OPTIONS_COMBAT_SUMMARY_DEAD_COLOR"));
-    ColorOption(current_page, 0, "ui.combat.summary.damaged.color", UserString("OPTIONS_COMBAT_SUMMARY_WOUND_COLOR"));
-    ColorOption(current_page, 0, "ui.combat.summary.undamaged.color", UserString("OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR"));
+    CreateSectionHeader(current_page, 0,                                UserString("OPTIONS_COMBAT_COLORS"));
+    ColorOption(current_page, 0, "ui.combat.summary.dead.color",        UserString("OPTIONS_COMBAT_SUMMARY_DEAD_COLOR"));
+    ColorOption(current_page, 0, "ui.combat.summary.damaged.color",     UserString("OPTIONS_COMBAT_SUMMARY_WOUND_COLOR"));
+    ColorOption(current_page, 0, "ui.combat.summary.undamaged.color",   UserString("OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR"));
 
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_TECH_COLORS"));
-    CreateSectionHeader(current_page, 1, UserString("OPTIONS_KNOWN_TECH_COLORS"));
-    ColorOption(current_page, 1, "ui.research.status.completed.background.color", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 1, "ui.research.status.completed.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    CreateSectionHeader(current_page, 0,                                            UserString("OPTIONS_TECH_COLORS"));
+    CreateSectionHeader(current_page, 1,                                            UserString("OPTIONS_KNOWN_TECH_COLORS"));
+    ColorOption(current_page, 1, "ui.research.status.completed.background.color",   UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.completed.border.color",       UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
-    CreateSectionHeader(current_page, 1, UserString("OPTIONS_RESEARCHABLE_TECH_COLORS"));
-    ColorOption(current_page, 1, "ui.research.status.researchable.background.color", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 1, "ui.research.status.researchable.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    CreateSectionHeader(current_page, 1,                                            UserString("OPTIONS_RESEARCHABLE_TECH_COLORS"));
+    ColorOption(current_page, 1, "ui.research.status.researchable.background.color",UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.researchable.border.color",    UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_UNRESEARCHABLE_TECH_COLORS"));
     ColorOption(current_page, 1, "ui.research.status.unresearchable.background.color", UserString("OPTIONS_FILL_COLOR"));

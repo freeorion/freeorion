@@ -181,16 +181,19 @@ std::shared_ptr<StateButton> StyleFactory::NewTabBarTab(const std::string& str,
     return retval;
 }
 
-std::shared_ptr<Button> StyleFactory::NewTabBarLeftButton(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
+std::shared_ptr<Button> StyleFactory::NewTabBarLeftButton(
+    const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
 { return NewButton("<", font, color, text_color, INTERACTIVE); }
 
-std::shared_ptr<Button> StyleFactory::NewTabBarRightButton(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
+std::shared_ptr<Button> StyleFactory::NewTabBarRightButton(
+    const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
 { return NewButton(">", font, color, text_color, INTERACTIVE); }
 
-std::shared_ptr<ThreeButtonDlg> StyleFactory::NewThreeButtonDlg(X w, Y h, const std::string& msg, const std::shared_ptr<Font>& font,
-                                                Clr color, Clr border_color, Clr button_color, Clr text_color,
-                                                int buttons, const std::string& zero/* = ""*/,
-                                                const std::string& one/* = ""*/, const std::string& two/* = ""*/) const
+std::shared_ptr<ThreeButtonDlg> StyleFactory::NewThreeButtonDlg(
+    X w, Y h, const std::string& msg, const std::shared_ptr<Font>& font,
+    Clr color, Clr border_color, Clr button_color, Clr text_color,
+    int buttons, const std::string& zero/* = ""*/,
+    const std::string& one/* = ""*/, const std::string& two/* = ""*/) const
 {
     return Wnd::Create<ThreeButtonDlg>(w, h, msg, font, color, border_color, button_color, text_color,
                                        buttons, zero, one, two);

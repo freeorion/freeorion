@@ -18,15 +18,13 @@ public:
     //! \name Structors
     //!@{
     OptionsWnd(bool is_game_running_);
-    void CompleteConstruction() override;
-
     ~OptionsWnd();
+    void CompleteConstruction() override;
     //!@}
 
     //! \name Mutators
     //!@{
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
-
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     //!@}
 
@@ -94,14 +92,10 @@ private:
 
     void                DoneClicked();
 
-    bool is_game_running;
-
+    bool                        is_game_running;
     std::shared_ptr<GG::TabWnd> m_tabs;
     std::shared_ptr<GG::Button> m_done_button;
-
-    // Enable and disable the sound when audio options are changed.
-    SoundOptionsFeedback m_sound_feedback;
-
+    SoundOptionsFeedback        m_sound_feedback;   // Enable and disable the sound when audio options are changed.
 };
 
 #endif // _OptionsWnd_h_
