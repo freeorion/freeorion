@@ -1,11 +1,17 @@
+stages:
+  - lint
+  - build
+  - test
+
 language: cpp
 
 # ccache caches obj files between builds
 cache: ccache
 
-matrix:
+jobs:
   include:
-    - os: linux
+    - stage: build
+      os: linux
       services:
         - docker
       env:
@@ -47,7 +53,8 @@ matrix:
         script: git push https://github.com/freeorion/freeorion.github.io.git master:master
         on:
           branch: master
-    - os: linux
+    - stage: test
+      os: linux
       language: python
       python: 2.7.14
       install:
@@ -56,7 +63,8 @@ matrix:
         - pytest
       env:
         - NAME="Pytest"
-    - os: linux
+    - stage: lint
+      os: linux
       language: python
       python: 2.7.14
       install:
@@ -67,7 +75,8 @@ matrix:
         - python -m compileall -q .
       env:
         - NAME="Lint Python script"
-    - os: linux
+    - stage: build
+      os: linux
       services:
         - docker
       env:
@@ -98,7 +107,8 @@ matrix:
       before_cache:
         # Check ccache
         - ccache --show-stats
-    - os: osx
+    - stage: build
+      os: osx
       osx_image: xcode8.3
       compiler: clang
       env:
