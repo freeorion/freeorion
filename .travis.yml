@@ -100,6 +100,8 @@ matrix:
     - os: osx
       osx_image: xcode8.3
       compiler: clang
+      env:
+        - NAME="Build FreeOrion"
       install:
         - wget --output-document=FreeOrionSDK.dmg https://github.com/freeorion/freeorion-sdk/releases/download/v8/FreeOrionSDK_8_Clang-MacOSX-10.9-x86_64.dmg
         - hdiutil attach FreeOrionSDK.dmg
