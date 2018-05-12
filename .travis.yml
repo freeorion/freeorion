@@ -34,6 +34,7 @@ matrix:
       script:
         - cmake ..
         - cmake --build . --target cpp-apidoc
+      before_deploy:
         - git clone --depth=1 --branch=master https://github.com/freeorion/freeorion.github.io.git apidoc-deploy.git
         - pushd apidoc-deploy.git
         - rm -rf cppapi/master
@@ -41,8 +42,11 @@ matrix:
         - cp -R ../doc/cpp-apidoc/html cppapi/master
         - git add -A cppapi/master
         - git commit -m "Update FreeOrion API documentation to match commit \`$(date --iso-8601).${TRAVIS_COMMIT:0:8}\`"
-        - git push https://github.com/freeorion/freeorion.github.io.git master:master
-        - popd
+      deploy:
+        provider: script
+        script: git push https://github.com/freeorion/freeorion.github.io.git master:master
+        on:
+          branch: master
     - os: linux
       language: python
       python: 2.7.14
