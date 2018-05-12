@@ -170,12 +170,13 @@ namespace {
         std::string operator()(xpr::smatch const& match) const {
             // Labelled variables have the form %tag:label%,  unlabelled are just %tag%
             std::string tag = match[1];
-            // For unlabelled variables use the tag value as label.
-            std::string label = match[(match.size() == 1) ? 1 : 2];
+            // Use the label value. When missing, use the tag submatch as label instead.
+            std::string label = match[match[2].matched ? 2 : 1];
 
             // look up child
             auto elem = m_variables.find(label);
             if (m_variables.end() == elem) {
+                ErrorLogger() << "Substitute::operator(): No value found for label: " << label << " from token: " << match.str();
                 m_valid = false;
                 return UserString("ERROR");
             }
@@ -272,6 +273,6 @@ void VarText::GenerateVarText() const {
     // get string into which to substitute variables
     std::string template_str = m_stringtable_lookup_flag ? UserString(m_template_string) : m_template_string;
 
-    xpr::sregex var = '%' >> (xpr::s1 = -+xpr::_w) >> !(':' >> (xpr::s2 = -*xpr::_w)) >> '%';
+    xpr::sregex var = '%' >> (xpr::s1 = -+xpr::_w) >> !(':' >> (xpr::s2 = -+xpr::_w)) >> '%';
     m_text = xpr::regex_replace(template_str, var, Substitute(m_variables, m_validated));
 }
