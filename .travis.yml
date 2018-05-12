@@ -15,6 +15,8 @@ matrix:
         - BUILD_APIDOC=true
         # Auth token to push API documentation
         - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
+      install:
+        - docker pull freeorion/freeorion-travis-build
     - os: linux
       language: python
       python: 2.7.14
@@ -42,31 +44,22 @@ matrix:
         - docker
       env:
         - BUILD_UNITTEST=true
+      install:
+        - docker pull freeorion/freeorion-travis-build
     - os: osx
       osx_image: xcode8.3
       compiler: clang
+      install:
+        - wget --output-document=FreeOrionSDK.dmg https://github.com/freeorion/freeorion-sdk/releases/download/v8/FreeOrionSDK_8_Clang-MacOSX-10.9-x86_64.dmg
+        - hdiutil attach FreeOrionSDK.dmg
+        - tar -xjf /Volumes/FreeOrionSDK/dep.tar.bz2 -C Xcode
+        - hdiutil detach /Volumes/FreeOrionSDK
+        - brew install ccache
+        - export PATH="/usr/local/opt/ccache/libexec:$PATH"
   allow_failures:
     - env:
       - BUILD_APIDOC=true
       - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
-install:
-  - >
-    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      # Download build environment in a docker container
-      docker pull freeorion/freeorion-travis-build
-    fi
-  - >
-    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      wget --output-document=FreeOrionSDK.dmg https://github.com/freeorion/freeorion-sdk/releases/download/v8/FreeOrionSDK_8_Clang-MacOSX-10.9-x86_64.dmg
-      hdiutil attach FreeOrionSDK.dmg
-      tar -xjf /Volumes/FreeOrionSDK/dep.tar.bz2 -C Xcode
-      hdiutil detach /Volumes/FreeOrionSDK
-
-      # download and setup ccache
-      brew install ccache
-      export PATH="/usr/local/opt/ccache/libexec:$PATH"
-
-    fi
 before_script:
   # Configure git to use the identity of FreeOrion Build Bot and
   # load credentials
