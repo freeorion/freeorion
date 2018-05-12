@@ -117,12 +117,19 @@ matrix:
         - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
         - ccache --version
         - ccache --show-stats
+        # Add transparent cmake function to allow possible cross platform use of
+        # build sections.
+        # mount ccache dir and set its environment variable
+        # timeout before Travis kills jobs so that ccache is always at least partially populated
+        - >
+          function cmake {
+              /usr/local/bin/gtimeout 40m /usr/local/bin/cmake $@
+          }
         - mkdir build
         - cd build
       script:
         - cmake -GXcode ..
-        # timeout before Travis kills jobs so that ccache is always at least partially populated
-        - gtimeout 40m cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
+        - cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
       before_cache:
         # Check ccache
         - ccache --show-stats
