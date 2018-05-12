@@ -78,27 +78,11 @@ before_script:
       echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
     fi
   # Setup ccache
-  - |
-    # Make certain ~/.ccache exists
-    mkdir -p $HOME/.ccache;
-
-    if [ -e /Users/travis/.ccache/ccache.conf ]; then
-       echo "Show global /Users/travis/.ccache/ccache.conf"
-       more /Users/travis/.ccache/ccache.conf
-    else
-       echo "Missing global /Users/travis/.ccache/ccache.conf"
-    fi;
-
-    if [ -e $HOME/.ccache/ccache.conf ]; then
-       echo "Show local $HOME/.ccache/ccache.conf"
-       more $HOME/.ccache/ccache.conf
-    else
-       echo "Missing local $HOME/.ccache/ccache.conf"
-    fi;
-    # Allow ccache to account for __FILE__ macro
-    echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
-    ccache --version
-    ccache --show-stats
+  - mkdir -p $HOME/.ccache;
+  # Allow ccache to account for __FILE__ macro
+  - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
+  - ccache --version
+  - ccache --show-stats
   - >
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       # Add transparent cmake function to allow possible cross platform use of
