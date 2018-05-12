@@ -187,14 +187,10 @@ namespace {
 
         void LButtonDown(const GG::Pt&  pt, GG::Flags<GG::ModKey> mod_keys) override {
             amOn = !amOn;
-            DropDownList::LButtonDown(pt, mod_keys);
-        }
-
-        void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override {
             if (this->Disabled())
                 return;
 
-            DropDownList::LClick(pt, mod_keys);
+            DropDownList::LButtonDown(pt, mod_keys);
             if ( (quantity != prevQuant) || (blocksize != prevBlocksize) )
                 QuantChangedSignal(quantity, blocksize);
         }
