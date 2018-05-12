@@ -954,10 +954,10 @@ ABORT_SAVE_AND_EXIT
 Exit FreeOrion without saving.
 
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
-You do not control an empire and cannot issue orders.
+No empire is being controlled by this client; orders cannot be issued.
 
 ORDERS_FOR_WRONG_EMPIRE
-Orders were sent for an empire you do not control.
+Orders were sent for an empire that this client does not control.
 
 SERVER_ALREADY_HOSTING_GAME
 This server is already hosting a game.
@@ -1623,7 +1623,7 @@ OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 If true, clicks on multiple fleet buttons will open multiple fleet windows at the same time. Otherwise, opening a fleet window will close any currently-open fleet window.
 
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
-Close open fleet window(s) when you left-click on the main map.
+Close fleet window(s) when the main map is left-clicked.
 
 OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS
 Toggles whether to automatically reposition windows when the application size changes.
@@ -1705,7 +1705,7 @@ Some natives can be technologically advanced and may create guard ships to prote
 OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
 '''The maximum aggression level for AI opponents.
 
-Most AIs will be at the level set, some may be at the next level below, all should greet you and state their level in the messages window during the first turn.'''
+Most AIs will be at the level set, some may be at the next level below, all should send greetings and state their level in the messages window during the first turn.'''
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 Your empire's name.
@@ -2421,7 +2421,7 @@ BUTTON_DISABLED
 Button Disabled
 
 SAVE_DISABLED_BROWSE_TEXT
-The Save Game button is disabled, either because this is a multiplayer game in which you are neither Host nor Moderator, or because at the time this menu was opened at least one of the AIs had not yet finished submitting its moves for the turn (indicated by a green triangle status icon just to the left of its player-type icon in the Empires window).
+The Save Game button is disabled, either because this is a multiplayer game in which this client is neither Host nor Moderator, or because at the time this menu was opened at least one of the AIs had not yet finished submitting its moves for the turn (indicated by a green triangle status icon just to the left of its player-type icon in the Empires window).
 
 
 ##
@@ -2506,11 +2506,11 @@ Path:
 
 # %1% entered path to the save game file that should be deleted.
 SAVE_REALLY_DELETE
-Are you sure you want to delete %1%?
+Really delete %1%?
 
 # %1% entered path to the save game file that should be overwritten.
 SAVE_REALLY_OVERRIDE
-Are you sure you want to override %1%?
+Really overwrite %1%?
 
 
 ##
@@ -5482,7 +5482,7 @@ OUTPOSTS_TITLE
 Outpost
 
 OUTPOSTS_TEXT
-Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create [[metertype METER_SUPPLY]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an [[shippart CO_OUTPOST_POD]] on a ship. Outposts are also formed when the population of a colony drops to zero for any reason.
+Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create [[metertype METER_SUPPLY]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. Building an Output requires a ship with an [[shippart CO_OUTPOST_POD]]. Outposts are also formed when the population of a colony drops to zero for any reason.
 
 HOMEWORLDS_TITLE
 Homeworld
@@ -5643,7 +5643,7 @@ AI Aggression Levels
 AI_LEVELS_TEXT
 '''AI aggression levels are meant to be roughly akin to difficulty levels, but not exactly, particularly in that they are differentiated in various aspects of risk-taking and aggression, with only some actual limitations being applied to the lower level ones. They can all still play pretty well, but the lower aggression ones may be a bit easier to manage, even if not necessarily easier to actually take over. The more aggressive ones do a bit better over the course of a game.
 
-AIs rename their capital planet on turn 1, adding a prefix. Once you discover their home system you can determine their personality.
+AIs rename their capital planet on turn 1, adding a prefix. Once their home system is discovered, their personality can be discerned.
 The current prefixes are:
 
 Beginner:
@@ -5823,7 +5823,7 @@ SitRep types only appear in the Filters list once an event has occurred that wou
 
 Ignoring is useful for hiding a reoccurring event, such as reminders to build a [[buildingtype BLD_GAS_GIANT_GEN]] at one planet.
 
-Blocking is useful if you find some types of SitReps unhelpful, such as once you have seen all of the [[encyclopedia BEGINNER_HINTS]].
+Blocking is useful if some types of SitReps are unhelpful, such as once all of the [[encyclopedia BEGINNER_HINTS]] have been seen.
 '''
 
 RESEARCH_TECH_GUIDE_TITLE
@@ -7972,7 +7972,7 @@ EXTINCT_BANFORO_SPECIAL
 Banforo Remains
 
 EXTINCT_BANFORO_SPECIAL_DESC
-On this planet well preserved bodies of the extinct species [[species SP_BANFORO]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_BANFORO]] on [[metertype METER_SUPPLY]] connected planets.
+On this planet, well preserved bodies of the extinct species [[species SP_BANFORO]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow production of a [[buildingtype BLD_COL_BANFORO]] on [[metertype METER_SUPPLY]] connected planets.
 
 TECH_COL_BANFORO
 Banforo Resequencing
@@ -7984,7 +7984,7 @@ EXTINCT_KILANDOW_SPECIAL
 Kilandow Remains
 
 EXTINCT_KILANDOW_SPECIAL_DESC
-On this planet well preserved bodies of the extinct species [[species SP_KILANDOW]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_KILANDOW]] on [[metertype METER_SUPPLY]] connected planets.
+On this planet, well preserved bodies of the extinct species [[species SP_KILANDOW]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow production of a [[buildingtype BLD_COL_KILANDOW]] on [[metertype METER_SUPPLY]] connected planets.
 
 TECH_COL_KILANDOW
 Kilandow Resequencing
@@ -7996,7 +7996,7 @@ EXTINCT_MISIORLA_SPECIAL
 Misiorla Remains
 
 EXTINCT_MISIORLA_SPECIAL_DESC
-On this planet well preserved bodies of the extinct species [[species SP_MISIORLA]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_MISIORLA]] on [[metertype METER_SUPPLY]] connected planets.
+On this planet well, preserved bodies of the extinct species [[species SP_MISIORLA]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow production of a [[buildingtype BLD_COL_MISIORLA]] on [[metertype METER_SUPPLY]] connected planets.
 
 TECH_COL_MISIORLA
 Misiorla Resequencing
@@ -11025,7 +11025,7 @@ CON_PALACE_EXCLUDE
 Palace Excluder
 
 CON_PALACE_EXCLUDE_DESC
-Ensures that only one imperial palace will be present in an empire at a time. Make sure you scrap your old imperial palace before your new one is built.
+Ensures that only one imperial palace will be present in an empire at a time. Make sure to scrap any old imperial palace before a new one is built.
 
 GRO_SUBTER_HAB
 Subterranean Habitation
@@ -11357,7 +11357,7 @@ SHP_FIGHTERS_1
 Fighters and Launch Bays
 
 SHP_FIGHTERS_1_DESC
-'''Enables your empire to build ships using Fighter Hangars and Launch Bays. A ship can only have one type of Fighter Hangar on it but can have as many as you have slots for. Each [[encyclopedia PC_FIGHTER_HANGAR]] has a maximum capacity of fighters and those fighters will all have the same strength (which can be modified by species abilities and further research).
+'''Enables an empire to build ships using Fighter Hangars and Launch Bays. A ship can only have one type of Fighter Hangar on it, but can have as many as there are available slots. Each [[encyclopedia PC_FIGHTER_HANGAR]] has a maximum capacity of fighters and those fighters will all have the same strength (which can be modified by species abilities and further research).
 
 A [[encyclopedia PC_FIGHTER_BAY]] can launch a number of fighters in each combat round. These fighters will then be both valid targets and able to attack ships and other fighters in subsequent combat rounds, but a single hit from any source will destroy a fighter. Unlike [[encyclopedia DAMAGE_TITLE]] inflicted by regular weapons, fighter damage ignores [[metertype METER_SHIELD]] on warships (they fire from within the shields).
 
@@ -11637,7 +11637,7 @@ SPY_CUSTOM_ADVISORIES
 Empire Intelligence Agency
 
 SPY_CUSTOM_ADVISORIES_DESC
-'''The Empire Intelligence Agency gathers and organizes information from many sources, including spies, common informers, and official chains of command reporting. The most important items of information are presented each turn as Situation Reports (SitReps). If a SitRep is repeated from turn to turn more often than you really need for remembering the information, you can ignore the SitRep for the current turn by double-clicking its icon, or for multiple turns via right-click menu on the SitRep's icon.
+'''The Empire Intelligence Agency gathers and organizes information from many sources, including spies, common informers, and official chains of command reporting. The most important items of information are presented each turn as Situation Reports (SitReps). If a SitRep is repeated from turn to turn, more often than needed for remembering the information, it can be ignored for the current turn by double-clicking its icon, or for multiple turns via right-click menu on the SitRep's icon.
 
 Many of the SitReps are determined automatically, but additional custom SitReps can be specified by editing the file default/customizations/custom_sitreps.txt
 (Note: in a multiplayer game, the content files of the Server are the ones which determine what SitReps are sent to empires.)
@@ -13120,7 +13120,7 @@ CO_OUTPOST_POD
 Outpost Module
 
 CO_OUTPOST_POD_DESC
-'''[[encyclopedia OUTPOSTS_TITLE]] modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[metertype METER_SUPPLY]] lines when the right tech is researched. Outposts can be upgraded to colonies.
+'''[[encyclopedia OUTPOSTS_TITLE]] modules allow unmanned stations to be established. These may be placed on uninhabitable planets. They have no population, and normally produce no resources, but they do provide vision and create [[metertype METER_SUPPLY]] lines when the right tech is researched. Outposts can be upgraded to colonies.
 
 [[COLONY_SHIP_PARTS_UPKEEP_COST]]'''
 
