@@ -5,6 +5,19 @@ stages:
 
 jobs:
   include:
+    - stage: lint
+      os: linux
+      language: python
+      python: 2.7.14
+      before_install:
+        - pip install flake8-putty==0.4.0
+      before_script:
+        - cd default/python
+      script:
+        - flake8
+        - python -m compileall -q .
+      env:
+        - NAME="Lint Python script"
     - stage: build
       os: linux
       language: cpp
@@ -47,29 +60,6 @@ jobs:
         script: git push https://github.com/freeorion/freeorion.github.io.git master:master
         on:
           branch: master
-    - stage: test
-      os: linux
-      language: python
-      python: 2.7.14
-      before_install:
-        - pip install pytest==3.4.0
-      script:
-        - pytest
-      env:
-        - NAME="Pytest"
-    - stage: lint
-      os: linux
-      language: python
-      python: 2.7.14
-      before_install:
-        - pip install flake8-putty==0.4.0
-      before_script:
-        - cd default/python
-      script:
-        - flake8
-        - python -m compileall -q .
-      env:
-        - NAME="Lint Python script"
     - stage: build
       os: linux
       language: cpp
@@ -143,6 +133,16 @@ jobs:
       before_cache:
         # Check ccache
         - ccache --show-stats
+    - stage: test
+      os: linux
+      language: python
+      python: 2.7.14
+      before_install:
+        - pip install pytest==3.4.0
+      script:
+        - pytest
+      env:
+        - NAME="Pytest"
   allow_failures:
     - env:
       - NAME="Build C++ API documentation"
