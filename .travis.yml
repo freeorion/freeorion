@@ -25,11 +25,9 @@ jobs:
         - echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
         # Add transparent cmake function to allow possible cross platform use of
         # build sections.
-        # mount ccache dir and set its environment variable
-        # timeout before Travis kills jobs so that ccache is always at least partially populated
         - >
           function cmake {
-              docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -v "${HOME}/.ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
+              docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
           }
         - mkdir build
         - cd build
