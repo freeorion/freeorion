@@ -115,7 +115,6 @@ namespace {
             blocksize(build.blocksize),
             prevBlocksize(build.blocksize),
             amBlockType(amBlockType_),
-            amOn(false),
             h(h_)
         {
             MoveTo(GG::Pt(xoffset, yoffset));
@@ -155,8 +154,6 @@ namespace {
         }
 
         void SelectionChanged(GG::DropDownList::iterator it) {
-            amOn = false;
-
             DebugLogger() << "QuantSelector:  selection made ";
             if (it != end()) {
                 int quant = boost::polymorphic_downcast<const QuantRow*>(it->get())->Quant();
@@ -177,24 +174,13 @@ namespace {
         int     blocksize;
         int     prevBlocksize;
         bool    amBlockType;
-        bool    amOn;
         GG::Y   h;
 
-        void LosingFocus() override {
-            amOn = false;
-            DropDownList::LosingFocus();
-        }
-
         void LButtonDown(const GG::Pt&  pt, GG::Flags<GG::ModKey> mod_keys) override {
-            amOn = !amOn;
-            DropDownList::LButtonDown(pt, mod_keys);
-        }
-
-        void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override {
             if (this->Disabled())
                 return;
 
-            DropDownList::LClick(pt, mod_keys);
+            DropDownList::LButtonDown(pt, mod_keys);
             if ( (quantity != prevQuant) || (blocksize != prevBlocksize) )
                 QuantChangedSignal(quantity, blocksize);
         }
