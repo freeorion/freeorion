@@ -14,15 +14,15 @@ jobs:
         - NAME="Build C++ API documentation"
         # Auth token to push API documentation
         - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
-      install:
+      before_install:
         - docker pull freeorion/freeorion-travis-build
-      before_script:
         # Add transparent cmake function to allow possible cross platform use of
         # build sections.
         - >
           function cmake {
               docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
           }
+      before_script:
         - mkdir build
         - cd build
       script:
@@ -51,7 +51,7 @@ jobs:
       os: linux
       language: python
       python: 2.7.14
-      install:
+      before_install:
         - pip install pytest==3.4.0
       script:
         - pytest
@@ -61,10 +61,11 @@ jobs:
       os: linux
       language: python
       python: 2.7.14
-      install:
+      before_install:
         - pip install flake8-putty==0.4.0
-      script:
+      before_script:
         - cd default/python
+      script:
         - flake8
         - python -m compileall -q .
       env:
@@ -77,15 +78,14 @@ jobs:
       cache: ccache
       env:
         - NAME="Build FreeOrion"
-      install:
-        - docker pull freeorion/freeorion-travis-build
-      before_script:
+      before_install:
         # Setup ccache
         - mkdir -p $HOME/.ccache;
         # Allow ccache to account for __FILE__ macro
         - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
         - ccache --version
         - ccache --show-stats
+        - docker pull freeorion/freeorion-travis-build
         # Add transparent cmake function to allow possible cross platform use of
         # build sections.
         # mount ccache dir and set its environment variable
@@ -94,6 +94,7 @@ jobs:
           function cmake {
               docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -v "${HOME}/.ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
           }
+      before_script:
         - mkdir build
         - cd build
       script:
@@ -111,14 +112,9 @@ jobs:
       cache: ccache
       env:
         - NAME="Build FreeOrion"
-      install:
-        - wget --output-document=FreeOrionSDK.dmg https://github.com/freeorion/freeorion-sdk/releases/download/v8/FreeOrionSDK_8_Clang-MacOSX-10.9-x86_64.dmg
-        - hdiutil attach FreeOrionSDK.dmg
-        - tar -xjf /Volumes/FreeOrionSDK/dep.tar.bz2 -C Xcode
-        - hdiutil detach /Volumes/FreeOrionSDK
+      before_install:
         - brew install ccache
         - export PATH="/usr/local/opt/ccache/libexec:$PATH"
-      before_script:
         # Setup ccache
         - mkdir -p $HOME/.ccache;
         # Allow ccache to account for __FILE__ macro
@@ -133,6 +129,12 @@ jobs:
           function cmake {
               /usr/local/bin/gtimeout 40m /usr/local/bin/cmake $@
           }
+      install:
+        - wget --output-document=FreeOrionSDK.dmg https://github.com/freeorion/freeorion-sdk/releases/download/v8/FreeOrionSDK_8_Clang-MacOSX-10.9-x86_64.dmg
+        - hdiutil attach FreeOrionSDK.dmg
+        - tar -xjf /Volumes/FreeOrionSDK/dep.tar.bz2 -C Xcode
+        - hdiutil detach /Volumes/FreeOrionSDK
+      before_script:
         - mkdir build
         - cd build
       script:
