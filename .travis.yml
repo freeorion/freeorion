@@ -3,8 +3,6 @@ stages:
   - build
   - test
 
-language: cpp
-
 # ccache caches obj files between builds
 cache: ccache
 
@@ -12,6 +10,7 @@ jobs:
   include:
     - stage: build
       os: linux
+      language: cpp
       services:
         - docker
       env:
@@ -77,6 +76,7 @@ jobs:
         - NAME="Lint Python script"
     - stage: build
       os: linux
+      language: cpp
       services:
         - docker
       env:
@@ -109,6 +109,7 @@ jobs:
         - ccache --show-stats
     - stage: build
       os: osx
+      language: cpp
       osx_image: xcode8.3
       compiler: clang
       env:
