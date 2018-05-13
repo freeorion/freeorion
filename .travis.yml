@@ -3,9 +3,6 @@ stages:
   - build
   - test
 
-# ccache caches obj files between builds
-cache: ccache
-
 jobs:
   include:
     - stage: build
@@ -79,6 +76,7 @@ jobs:
       language: cpp
       services:
         - docker
+      cache: ccache
       env:
         - NAME="Build FreeOrion"
       install:
@@ -112,6 +110,7 @@ jobs:
       language: cpp
       osx_image: xcode8.3
       compiler: clang
+      cache: ccache
       env:
         - NAME="Build FreeOrion"
       install:
