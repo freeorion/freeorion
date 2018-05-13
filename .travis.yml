@@ -17,12 +17,6 @@ jobs:
       install:
         - docker pull freeorion/freeorion-travis-build
       before_script:
-        # Configure git to use the identity of FreeOrion Build Bot and
-        # load credentials
-        - git config --global user.email "freeorionorg@gmail.com"
-        - git config --global user.name "FreeOrion Build Bot"
-        - git config --global credential.helper "cache --timeout=300"
-        - echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
         # Add transparent cmake function to allow possible cross platform use of
         # build sections.
         - >
@@ -35,6 +29,12 @@ jobs:
         - cmake ..
         - cmake --build . --target cpp-apidoc
       before_deploy:
+        # Configure git to use the identity of FreeOrion Build Bot and
+        # load credentials
+        - git config --global user.email "freeorionorg@gmail.com"
+        - git config --global user.name "FreeOrion Build Bot"
+        - git config --global credential.helper "cache --timeout=300"
+        - echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
         - git clone --depth=1 --branch=master https://github.com/freeorion/freeorion.github.io.git apidoc-deploy.git
         - pushd apidoc-deploy.git
         - rm -rf cppapi/master
