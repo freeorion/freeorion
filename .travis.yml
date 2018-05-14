@@ -20,7 +20,7 @@ jobs:
         - NAME="Lint Python script"
     - stage: build
       os: linux
-      language: cpp
+      language: shell
       services:
         - docker
       env:
@@ -62,7 +62,7 @@ jobs:
           branch: master
     - stage: build
       os: linux
-      language: cpp
+      language: shell
       services:
         - docker
       cache: ccache
