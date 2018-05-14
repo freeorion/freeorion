@@ -2609,7 +2609,17 @@ void EmptyHullsListBox::PopulateCore() {
 
     const auto& manager = GetCurrentDesignsManager();
 
-    for (const auto& hull_name : manager.OrderedHulls()) {
+    auto hulls = manager.OrderedHulls();
+    if (hulls.size() < GetHullTypeManager().size()) {
+        ErrorLogger() << "EmptyHulls::PopulateCoreordered has fewer than expected entries...";
+        for (auto& hull : GetHullTypeManager()) {
+            auto it = std::find(hulls.begin(), hulls.end(), hull.first);
+            if (it == hulls.end())
+                hulls.push_back(hull.first);    // O(N^2) in loop, but I don't care...
+        }
+    }
+
+    for (const auto& hull_name : hulls) {
         const auto& hull_type =  GetHullTypeManager().GetHullType(hull_name);
 
         if (!hull_type || !hull_type->Producible())

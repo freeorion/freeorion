@@ -751,6 +751,11 @@ HullTypeManager::iterator HullTypeManager::end() const {
     return m_hulls.end();
 }
 
+std::size_t HullTypeManager::size() const const {
+    CheckPendingHullTypes();
+    return m_hulls.size();
+}
+
 unsigned int HullTypeManager::GetCheckSum() const {
     CheckPendingHullTypes();
     unsigned int retval{0};

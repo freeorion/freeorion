@@ -372,6 +372,9 @@ public:
     /** iterator to the last + 1th hull type */
     iterator end() const;
 
+    /** how many hulls are known? */
+    std::size_t size() const;
+
     /** returns the instance of this singleton class; you should use the free function GetHullTypeManager() instead */
     static HullTypeManager& GetHullTypeManager();
 
