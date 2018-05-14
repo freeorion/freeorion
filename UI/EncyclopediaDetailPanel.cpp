@@ -1710,7 +1710,16 @@ namespace {
         } else {
             detailed_description += "\n\n" + UserString("NO_HULLS_AVAILABLE");
         }
-
+        auto buildings = empire->AvailableBuildingTypes();
+        if (!buildings.empty()) {
+            detailed_description += "\n\n" + UserString("AVAILABLE_BUILDINGS");
+            for (const auto& building_name : buildings) {
+                detailed_description += "\n";
+                detailed_description += LinkTaggedText(VarText::BUILDING_TYPE_TAG, building_name);
+            }
+        } else {
+            detailed_description += "\n\n" + UserString("NO_BUILDINGS_AVAILABLE");
+        }
 
         // Misc. Statistics
 
