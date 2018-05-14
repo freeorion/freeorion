@@ -954,10 +954,10 @@ ABORT_SAVE_AND_EXIT
 Quitter FreeOrion sans sauvegarder.
 
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
-Vous ne contrôlez aucun empire et ne pouvez émettre aucun ordre.
+Aucun empire n'est contrôlé par ce client; les ordres ne peuvent pas être exécutés.
 
 ORDERS_FOR_WRONG_EMPIRE
-Des ordres ont été transmis à un empire que vous ne contrôlez pas.
+Des ordres ont été transmis à un empire que ce client ne contrôle pas.
 
 SERVER_ALREADY_HOSTING_GAME
 Ce serveur héberge déjà une partie.
@@ -1705,7 +1705,7 @@ Certaines espèces indigènes peuvent être technologiquement avancées et crée
 OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
 '''Le niveau maximal d'agressivité des adversaires gérés par l'ordinateur.
 
-La plupart des IAs seront réglées sur la valeur définie, certaines pourront se situer à un niveau inférieur. Tous les adversaires se manifesteront dans la Fenêtre Messages lors du premier tour, vous indiquant ainsi leur niveau.'''
+La plupart des IAs seront réglées sur la valeur définie, certaines pourront se situer à un niveau inférieur. Tous les adversaires se manifesteront dans la Fenêtre Messages lors du premier tour, indiquant ainsi leur niveau.'''
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 Le nom de votre empire dans le jeu.
@@ -2421,7 +2421,7 @@ BUTTON_DISABLED
 Bouton désactivé
 
 SAVE_DISABLED_BROWSE_TEXT
-Le bouton "Sauvegarder" est désactivé, soit parce qu'il s'agit d'une partie multijoueurs dont vous n'êtes ni l'Hôte ni le Modérateur, soit parce que le menu a été ouvert alors qu'au moins une des IAs n'a pas encore terminé son tour de jeu (indiqué par un triangle vert à gauche de l'icône représentant le type de joueur dans la fenêtre Empires).
+Le bouton "Sauvegarder" est désactivé, soit parce qu'il s'agit d'une partie multijoueurs dont ce client n'est ni l'Hôte ni le Modérateur, soit parce que le menu a été ouvert alors qu'au moins une des IAs n'a pas encore terminé son tour de jeu (indiqué par un triangle vert à gauche de l'icône représentant le type de joueur dans la fenêtre Empires).
 
 
 ##
@@ -2506,11 +2506,11 @@ Chemin:
 
 # %1% entered path to the save game file that should be deleted.
 SAVE_REALLY_DELETE
-Êtes-vous sûr(e) de vouloir supprimer %1%?
+Supprimer définitivement %1%?
 
 # %1% entered path to the save game file that should be overwritten.
 SAVE_REALLY_OVERRIDE
-Êtes-vous sûr(e) de vouloir écraser %1%?
+Écraser définitivement %1%?
 
 
 ##
@@ -4625,13 +4625,31 @@ TURN
 Tour
 
 NO_TECHS_RESEARCHED
-Aucune technologie recherchée
+Aucune Technologie recherchée
+
+AVAILABLE_PARTS
+'''Équipements disponibles : '''
+
+NO_PARTS_AVAILABLE
+Aucun Équipement disponible
+
+AVAILABLE_HULLS
+'''Coques disponibles : '''
+
+NO_HULLS_AVAILABLE
+Aucune Coque disponible
+
+AVAILABLE_BUILDINGS
+'''Structures disponibles : '''
+
+NO_BUILDINGS_AVAILABLE
+Aucune Structure disponible
 
 OWNED_PLANETS
 '''Planètes impériales : '''
 
 NO_OWNED_PLANETS_KNOWN
-Aucune planète impériale connue
+Aucune Planète impériale connue
 
 OWNED_FLEETS
 '''Flottes impériales : '''
@@ -4642,7 +4660,7 @@ OWNED_FLEET_AT_SYSTEM
 %1% dans %2%
 
 NO_OWNED_FLEETS_KNOWN
-Aucune flotte impériale connue
+Aucune Flotte impériale connue
 
 EMPIRE_SHIPS_DESTROYED
 Astronefs impériaux détruits
@@ -5631,7 +5649,7 @@ Niveaux d'Agressivité de l'IA
 AI_LEVELS_TEXT
 '''Les niveaux d'agressivité de l'IA correspondent plus ou moins aux niveaux de difficulté, mais pas entièrement. Ils varient sur des aspects comme la prise de risque et l'hostilité, avec des seules limitations étant appliquées au niveaux les plus bas. Alors qu'ils peuvent toujours se comporter de manière intelligente, les plus bas niveaux d'agressivité sont plus faciles à gérer, même s'il n'est pas nécessairement plus aisé de les soumettre totalement. Les niveaux les plus agressifs font bien mieux à mesure que la partie progresse.
 
-L'IA renomme sa capitale d'empire au tour 1, en y ajoutant un préfixe. Une fois que vous avez découvert son système natal, vous pouvez déterminer sa personnalité.
+L'IA renomme sa capitale d'empire au tour 1, en y ajoutant un préfixe. Une fois que son système natal est découvert, la personnalité de l'IA peut être identifiée.
 Liste des préfixes:
 
 Balbutiant:
@@ -5811,7 +5829,7 @@ Les types de SitRep apparaissent dans la liste Filtres seulement une fois que l'
 
 Ignorer est utile pour masquer un événement récurrent, tels les rappels pour construire un [[buildingtype BLD_GAS_GIANT_GEN]] sur une planète.
 
-Bloquer est utile si vous considérez certains types de SitReps superflus, telles les [[encyclopedia BEGINNER_HINTS]] une fois toutes celles-ci connues.
+Bloquer est utile si certains types de SitReps deviennent superflus, telles les [[encyclopedia BEGINNER_HINTS]] une fois toutes celles-ci connues.
 '''
 
 RESEARCH_TECH_GUIDE_TITLE
@@ -12094,13 +12112,11 @@ BLD_INTERSPECIES_ACADEMY
 Académie InterDesign d'Espèce
 
 BLD_INTERSPECIES_ACADEMY_DESC
-'''Académie InterDesign d'Espèce.
+'''Augmente l'usage du Stock de 10 sur la planète, si cette dernière est réglée sur le Focus Stock.
+Augmente la [[metertype METER_RESEARCH]] de 5 sur la planète, si cette dernière est réglée sur le Focus Recherche.
 
-Concevoir des dispositifs de production dans l'optique que différentes espèces puissent les utiliser, s'avère crucial dans le développement d'outils universellement utilisables.
+Chaque empire peut abriter une académie sur une à six planètes peuplées par différentes espèces. Pour accueillir une académie, le Bonheur de la Population sur la planète doit être élevé et cette dernière doit se trouver à au moins trois Voies spatiales de l'académie existante la plus proche.'''
 
-Chaque empire peut abriter une académie sur une à six planètes peuplées par différentes espèces.
-Afin de pouvoir bâtir une académie, le Bonheur de la Population doit être très élevé et cette dernière doit se trouver à au moins trois Voies spatiales d'une autre académie.
-'''
 
 BLD_MEGALITH
 Mégalithe
@@ -13110,7 +13126,7 @@ CO_OUTPOST_POD
 Module d'Avant-Poste
 
 CO_OUTPOST_POD_DESC
-'''Les Modules d'[[encyclopedia OUTPOSTS_TITLE]] permettent d'établir des stations non-habitées et peuvent être installés sur des planètes inhabitables. Ces modules n'ont aucune population et ne produisent normalement aucune ressource, mais offrent une extension des lignes d'[[metertype METER_SUPPLY]] lorsque la technologie nécessaire est assimilée. Les Modules d'Avant-Poste peuvent évoluer en colonies.
+'''Les Modules d'[[encyclopedia OUTPOSTS_TITLE]] permettent d'établir des stations non-habitées et peuvent être installés sur des planètes inhabitables. Ces modules n'ont aucune population et ne produisent normalement aucune ressource, mais permettent de découvrir une zone donnée et offrent une extension des lignes d'[[metertype METER_SUPPLY]] lorsque la technologie nécessaire est assimilée. Les Modules d'Avant-Poste peuvent évoluer en colonies.
 
 [[COLONY_SHIP_PARTS_UPKEEP_COST]]'''
 
