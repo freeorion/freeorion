@@ -62,7 +62,7 @@ jobs:
           branch: master
     - stage: build
       os: linux
-      language: shell
+      language: cpp
       services:
         - docker
       cache: ccache
