@@ -54,7 +54,7 @@ jobs:
         - mkdir -p cppapi/master
         - cp -R ../doc/cpp-apidoc/html cppapi/master
         - git add -A cppapi/master
-        - git commit -m "Update FreeOrion API documentation to match commit \`$(date --iso-8601).${TRAVIS_COMMIT:0:8}\`"
+        - git commit -m "Update FreeOrion API documentation to match commit \`$(date --iso-8601).${TRAVIS_COMMIT:0:8}\`" || true
       deploy:
         provider: script
         script: git push https://github.com/freeorion/freeorion.github.io.git master:master
