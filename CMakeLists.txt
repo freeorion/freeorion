@@ -75,9 +75,29 @@ if(WIN32)
 endif()
 
 if(APPLE)
+    set(FreeOrionSDK_VERSION 8)
+    set(FreeOrionSDK_FILE "FreeOrionSDK_${FreeOrionSDK_VERSION}_Clang-MacOSX-10.9-x86_64.dmg")
+    if(NOT EXISTS "${CMAKE_BINARY_DIR}/${FreeOrionSDK_FILE}")
+	file(DOWNLOAD
+            "https://github.com/freeorion/freeorion-sdk/releases/download/v${FreeOrionSDK_VERSION}/${FreeOrionSDK_FILE}"
+            "${CMAKE_BINARY_DIR}/${FreeOrionSDK_FILE}"
+            SHOW_PROGRESS
+        )
+    endif()
+    set(FreeOrionSDK_INSTALL_VERSION 0)
+    if(EXISTS "${CMAKE_BINARY_DIR}/dep/sdkversion")
+        file(READ "${CMAKE_BINARY_DIR}/dep/sdkversion" FreeOrionSDK_INSTALL_VERSION)
+    endif()
+    if(NOT "${FreeOrionSDK_VERSION}" EQUAL "${FreeOrionSDK_INSTALL_VERSION}")
+        file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/dep")
+        execute_process(COMMAND /usr/bin/hdiutil attach "${CMAKE_BINARY_DIR}/${FreeOrionSDK_FILE}")
+        execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfj /Volumes/FreeOrionSDK/dep.tar.bz2 WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+        execute_process(COMMAND /usr/bin/hdiutil detach "/Volumes/FreeOrionSDK")
+        file(WRITE "${CMAKE_BINARY_DIR}/dep/sdkversion" "${FreeOrionSDK_VERSION}")
+    endif()
     # Location of the FreeOrionSDK root
-    set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/Xcode/dep/")
-    set(CMAKE_FRAMEWORK_PATH "${CMAKE_SOURCE_DIR}/Xcode/dep/Frameworks")
+    set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/dep/")
+    set(CMAKE_FRAMEWORK_PATH "${CMAKE_BINARY_DIR}/dep/Frameworks")
     set(CMAKE_PROGRAM_PATH "${CMAKE_FRAMEWORK_PATH}/Python.framework/Versions/Current/bin")
 endif()
 
