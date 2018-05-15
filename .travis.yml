@@ -58,6 +58,7 @@ jobs:
       deploy:
         provider: script
         script: git push https://github.com/freeorion/freeorion.github.io.git master:master
+        skip_cleanup: true
         on:
           branch: master
     - stage: build
