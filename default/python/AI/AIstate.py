@@ -70,6 +70,9 @@ def convert_to_version(state, version):
         del state['qualifyingColonyBaseTargets']
         state['orbital_colonization_manager'] = ColonisationAI.OrbitalColonizationManager()
 
+    if version == 5:
+        state['last_turn_played'] = 0
+
     #   state["some_new_member"] = some_default_value
     #   del state["some_removed_member"]
     #   state["list_changed_to_set"] = set(state["list_changed_to_set"])
@@ -97,7 +100,7 @@ class AIstate(object):
     via boost. If desiring to store a reference to a UniverseObject store its
     object id instead; for enum values store their int conversion value.
     """
-    version = 4
+    version = 5
 
     def __init__(self, aggression):
         # Do not allow to create AIstate instances with an invalid version number.
@@ -163,6 +166,7 @@ class AIstate(object):
         self.__empire_standard_enemy = CombatRatingsAI.default_ship_stats().get_stats(hashable=True)
         self.empire_standard_enemy_rating = 0  # TODO: track on a per-empire basis
         self.character = create_character(aggression, self.empireID)
+        self.last_turn_played = 0
 
     def __setstate__(self, state):
         try:
