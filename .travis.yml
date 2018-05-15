@@ -1,143 +1,143 @@
-language: cpp
+stages:
+  - lint
+  - build
+  - test
 
-# ccache caches obj files between builds
-cache: ccache
-
-matrix:
+jobs:
   include:
-    - os: linux
+    - stage: lint
+      os: linux
+      language: python
+      python: 2.7.14
+      before_install:
+        - pip install flake8-putty==0.4.0
+      before_script:
+        - cd default/python
+      script:
+        - flake8
+        - python -m compileall -q .
+      env:
+        - NAME="Lint Python script"
+    - stage: build
+      os: linux
+      language: shell
       services:
         - docker
       env:
-        - BUILD_APIDOC=true
+        - NAME="Build C++ API documentation"
         # Auth token to push API documentation
         - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
-    - os: linux
+      before_install:
+        - docker pull freeorion/freeorion-travis-build
+        # Add transparent cmake function to allow possible cross platform use of
+        # build sections.
+        - >
+          function cmake {
+              docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
+          }
+      before_script:
+        - mkdir build
+        - cd build
+      script:
+        - cmake ..
+        - cmake --build . --target cpp-apidoc
+      before_deploy:
+        # Configure git to use the identity of FreeOrion Build Bot and
+        # load credentials
+        - git config --global user.email "freeorionorg@gmail.com"
+        - git config --global user.name "FreeOrion Build Bot"
+        - git config --global credential.helper "cache --timeout=300"
+        - echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
+        - git clone --depth=1 --branch=master https://github.com/freeorion/freeorion.github.io.git apidoc-deploy.git
+        - pushd apidoc-deploy.git
+        - rm -rf cppapi/master
+        - mkdir -p cppapi/master
+        - cp -R ../doc/cpp-apidoc/html cppapi/master
+        - git add -A cppapi/master
+        - git commit -m "Update FreeOrion API documentation to match commit \`$(date --iso-8601).${TRAVIS_COMMIT:0:8}\`"
+      deploy:
+        provider: script
+        script: git push https://github.com/freeorion/freeorion.github.io.git master:master
+        on:
+          branch: master
+    - stage: build
+      os: linux
+      language: cpp
+      services:
+        - docker
+      cache: ccache
+      env:
+        - NAME="Build FreeOrion"
+      before_install:
+        - mkdir -p $HOME/.ccache;
+        - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
+        - echo max_size = 200M >> $HOME/.ccache/ccache.conf
+        - ccache --version
+        - ccache --show-stats
+        - docker pull freeorion/freeorion-travis-build
+        # Add transparent cmake function to allow possible cross platform use of
+        # build sections.
+        # mount ccache dir and set its environment variable
+        # timeout before Travis kills jobs so that ccache is always at least partially populated
+        - >
+          function cmake {
+              docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -v "${HOME}/.ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
+          }
+      before_script:
+        - mkdir build
+        - cd build
+      script:
+        - cmake -DBUILD_TESTING=ON ..
+        - cmake --build . -- -j 2
+        - cmake --build . --target unittest
+      before_cache:
+        - ccache --clean
+        - ccache --show-stats
+    - stage: build
+      os: osx
+      language: cpp
+      osx_image: xcode8.3
+      compiler: clang
+      cache: ccache
+      env:
+        - NAME="Build FreeOrion"
+      before_install:
+        - brew install ccache
+        - export PATH="/usr/local/opt/ccache/libexec:$PATH"
+        - mkdir -p $HOME/.ccache;
+        - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
+        - echo max_size = 200M >> $HOME/.ccache/ccache.conf
+        - ccache --version
+        - ccache --show-stats
+        # Add transparent cmake function to allow possible cross platform use of
+        # build sections.
+        # mount ccache dir and set its environment variable
+        # timeout before Travis kills jobs so that ccache is always at least partially populated
+        - >
+          function cmake {
+              /usr/local/bin/gtimeout 40m /usr/local/bin/cmake $@
+          }
+      install:
+        - wget --output-document=FreeOrionSDK.dmg https://github.com/freeorion/freeorion-sdk/releases/download/v8/FreeOrionSDK_8_Clang-MacOSX-10.9-x86_64.dmg
+        - hdiutil attach FreeOrionSDK.dmg
+        - tar -xjf /Volumes/FreeOrionSDK/dep.tar.bz2 -C Xcode
+        - hdiutil detach /Volumes/FreeOrionSDK
+      before_script:
+        - mkdir build
+        - cd build
+      script:
+        - cmake -GXcode ..
+        - cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
+      before_cache:
+        - ccache --clean
+        - ccache --show-stats
+    - stage: test
+      os: linux
       language: python
       python: 2.7.14
-      install:
+      before_install:
         - pip install pytest==3.4.0
       script:
         - pytest
-      before_script: echo ""
-      before_cache: echo ""
-      env: NAME="Pytest"
-    - os: linux
-      language: python
-      python: 2.7.14
-      install:
-        - pip install flake8-putty==0.4.0
-      script:
-        - |
-          cd default/python
-          flake8
-      before_script: echo "Code style check https://github.com/freeorion/freeorion/tree/master/default/python#code-style-check"
-      before_cache: echo ""
-      env: NAME="Python linter"
-    - os: linux
-      services:
-        - docker
       env:
-        - BUILD_UNITTEST=true
-    - os: osx
-      osx_image: xcode8.3
-      compiler: clang
-  allow_failures:
-    - env:
-      - BUILD_APIDOC=true
-      - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
-install:
-  - >
-    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      # Download build environment in a docker container
-      docker pull freeorion/freeorion-travis-build
-    fi
-  - >
-    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      wget --output-document=FreeOrionSDK.dmg https://github.com/freeorion/freeorion-sdk/releases/download/v8/FreeOrionSDK_8_Clang-MacOSX-10.9-x86_64.dmg
-      hdiutil attach FreeOrionSDK.dmg
-      tar -xjf /Volumes/FreeOrionSDK/dep.tar.bz2 -C Xcode
-      hdiutil detach /Volumes/FreeOrionSDK
-
-      # download and setup ccache
-      brew install ccache
-      export PATH="/usr/local/opt/ccache/libexec:$PATH"
-
-    fi
-before_script:
-  # Configure git to use the identity of FreeOrion Build Bot and
-  # load credentials
-  - >
-    if [[ "${BUILD_APIDOC}" == "true" ]]; then
-      git config --global user.email "freeorionorg@gmail.com"
-      git config --global user.name "FreeOrion Build Bot"
-      git config --global credential.helper "cache --timeout=300"
-      echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
-    fi
-  # Setup ccache
-  - |
-    # Make certain ~/.ccache exists
-    mkdir -p $HOME/.ccache;
-
-    if [ -e /Users/travis/.ccache/ccache.conf ]; then
-       echo "Show global /Users/travis/.ccache/ccache.conf"
-       more /Users/travis/.ccache/ccache.conf
-    else
-       echo "Missing global /Users/travis/.ccache/ccache.conf"
-    fi;
-
-    if [ -e $HOME/.ccache/ccache.conf ]; then
-       echo "Show local $HOME/.ccache/ccache.conf"
-       more $HOME/.ccache/ccache.conf
-    else
-       echo "Missing local $HOME/.ccache/ccache.conf"
-    fi;
-    # Allow ccache to account for __FILE__ macro
-    echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
-    ccache --version
-    ccache --show-stats
-  - >
-    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      # Add transparent cmake function to allow possible cross platform use of
-      # build sections.
-      # mount ccache dir and set its environment variable
-      # timeout before Travis kills jobs so that ccache is always at least partially populated
-      function cmake {
-          docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -v "${HOME}/.ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
-      }
-    fi
-  - mkdir build
-  - cd build
-before_cache:
-  # Check ccache
-  - ccache --show-stats
-script:
-  - >
-    if [[ "${BUILD_APIDOC}" == "true" && "${TRAVIS_BRANCH}" == "master" ]]; then
-      cmake ..
-      cmake --build . --target cpp-apidoc
-
-      git clone --depth=1 --branch=master https://github.com/freeorion/freeorion.github.io.git apidoc-deploy.git
-      pushd apidoc-deploy.git
-      rm -rf cppapi/master
-      mkdir -p cppapi/master
-      cp -R ../doc/cpp-apidoc/html cppapi/master
-      git add -A cppapi/master
-      git commit -m "Update FreeOrion API documentation to match commit \`$(date --iso-8601).${TRAVIS_COMMIT:0:8}\`"
-      git push https://github.com/freeorion/freeorion.github.io.git master:master
-      popd
-    fi
-  - >
-    if [[ "${TRAVIS_OS_NAME}" == "linux" && "${BUILD_UNITTEST}" == "true" ]]; then
-      cmake -DBUILD_TESTING=ON ..
-      cmake --build . -- -j 2 &&
-      cmake --build . --target unittest &&
-      cd ../default &&
-      python -m compileall -q .
-    fi
-  - >
-    if [[ "${TRAVIS_OS_NAME}" == "osx" && -z "${BUILD_APIDOC}" ]]; then
-      cmake -GXcode ..
-      # timeout before Travis kills jobs so that ccache is always at least partially populated
-      gtimeout 40m cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
-    fi
+        - NAME="Pytest"
