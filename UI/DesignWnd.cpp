@@ -173,8 +173,9 @@ namespace {
     }
 
 
-    /** CurrentShipDesignManager allows for the storage and manipulation of an ordered list of design
-        ids that are used to order the display of ShipDesigns in the DesignWnd and the ProductionWnd. */
+    /** CurrentShipDesignManager allows for the storage and manipulation of an
+      * ordered list of design ids that are used to order the display of
+      * ShipDesigns in the DesignWnd and the ProductionWnd. */
     class CurrentShipDesignManager : public ShipDesignManager::Designs {
         public:
         CurrentShipDesignManager() :
@@ -267,7 +268,6 @@ namespace {
         {}
 
         const std::list<boost::uuids::uuid>& OrderedDesignUUIDs() const;
-
         std::vector<int> OrderedIDs() const override;
 
         void StartParsingDesignsFromFileSystem(bool is_new_game);
@@ -279,9 +279,7 @@ namespace {
 
         std::list<boost::uuids::uuid>::const_iterator
         InsertBefore(const ShipDesign& design, std::list<boost::uuids::uuid>::const_iterator next);
-
         bool MoveBefore(const boost::uuids::uuid& moved_uuid, const boost::uuids::uuid& next_uuid);
-
         void Erase(const boost::uuids::uuid& erased_uuid);
 
     private:
@@ -291,8 +289,6 @@ namespace {
         /** SaveDesignConst allows CheckPendingDesigns to correct the designs
             in the saved directory.*/
         void SaveDesignConst(const boost::uuids::uuid &uuid) const;
-
-        void SaveDesign(int design_id);
 
         /** A const version of SaveManifest to allow CheckPendingDesigns to
             correct and save the loaded designs. */
@@ -306,9 +302,9 @@ namespace {
         mutable std::list<boost::uuids::uuid> m_ordered_uuids;
         /// Saved designs with filename
         mutable std::unordered_map<boost::uuids::uuid,
-                           std::pair<std::unique_ptr<ShipDesign>,
-                                     boost::filesystem::path>,
-                           boost::hash<boost::uuids::uuid>>  m_saved_designs;
+                                   std::pair<std::unique_ptr<ShipDesign>,
+                                             boost::filesystem::path>,
+                                   boost::hash<boost::uuids::uuid>>         m_saved_designs;
 
         mutable bool m_is_new_game = false;
     };
@@ -424,7 +420,6 @@ namespace {
     //////////////////////////////////////////////////
     // SavedDesignsManager implementations          
     //////////////////////////////////////////////////
-
     const std::list<boost::uuids::uuid>& SavedDesignsManager::OrderedDesignUUIDs() const {
         CheckPendingDesigns();
         return m_ordered_uuids;
@@ -522,7 +517,6 @@ namespace {
             for (const auto& uuid : m_ordered_uuids)
                 AddSavedDesignToCurrentDesigns(uuid, empire_id, false);
         }
-
     }
 
     const ShipDesign* SavedDesignsManager::GetDesign(const boost::uuids::uuid& uuid) const {
@@ -643,7 +637,6 @@ namespace {
     //////////////////////////////////////////////////
     // CurrentShipDesignsManager implementations
     //////////////////////////////////////////////////
-
     std::vector<int> CurrentShipDesignManager::OrderedIDs() const {
         // Make sure that saved designs are included.
         // Only OrderedIDs is part of the Designs base class and
@@ -765,7 +758,7 @@ namespace {
 
     bool CurrentShipDesignManager::IsKnown(const int id) const
     { return m_id_to_obsolete_and_loc.count(id); }
-    
+
     boost::optional<bool> CurrentShipDesignManager::IsObsolete(const int id) const {
         // A non boost::none value for a specific design overrides the hull and part values
         auto it_id = m_id_to_obsolete_and_loc.find(id);
@@ -1039,7 +1032,7 @@ namespace {
 
         return DisplayedXAvailability(available, is_obsolete);
     }
-    
+
     boost::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedHullAvailability(const std::string& id) const {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1131,7 +1124,6 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
 
     // If requested initialize the current designs to all designs known by the empire
     if (GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled")) {
-
         // Assume that on new game start the server assigns the ids in an order
         // that makes sense for the UI.
         DebugLogger() << "Add default designs to empire.";
@@ -1139,10 +1131,9 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         std::set<int> ordered_ids(ids.begin(), ids.end());
 
         current_designs->InsertOrderedIDs(ordered_ids);
-    }
 
-    // Remove the default designs from the empire's current designs.
-    else {
+    } else {
+        // Remove the default designs from the empire's current designs.
         DebugLogger() << "Remove default designs from empire.";
         const auto ids = empire->ShipDesigns();
         for (const auto design_id : ids) {
@@ -1208,13 +1199,9 @@ public:
 
     /** \name Mutators */ //@{
     void Render() override;
-
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type);
     //@}
 
@@ -1279,7 +1266,6 @@ void PartControl::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void PartControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { RightClickedSignal(m_part, pt); }
-
 
 void PartControl::SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type) {
     auto disabled = std::get<Availability::Obsolete>(type);
@@ -1650,7 +1636,7 @@ void PartsListBox::Populate() {
     // now sort the parts within each group according to main stat, via weak
     // sorting in a multimap also, if a part was in multiple groups due to being
     // compatible with multiple slot types, ensure it is only displayed once
-    std::set<const PartType* > already_added;
+    std::set<const PartType*> already_added;
     for (auto& part_group : part_groups) {
         std::multimap<double, const PartType*> sorted_group;
         for (const PartType* part : part_group.second) {
@@ -2159,16 +2145,11 @@ public:
 
     /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-
     void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
-
     virtual void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it)
     {}
-
     void SetEmpireShown(int empire_id, bool refresh_list = true);
-
     virtual void Populate();
-
     //@}
 
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
@@ -2548,9 +2529,9 @@ class CompletedDesignsListBox : public BasesListBox {
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
     void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
 
-    void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 class SavedDesignsListBox : public BasesListBox {
@@ -2638,13 +2619,10 @@ void EmptyHullsListBox::PopulateCore() {
 
 void CompletedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesignsListBox::PopulateCore");
-
-    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
-
-    const Universe& universe = GetUniverse();
-
     DebugLogger() << "CompletedDesignsListBox::PopulateCore for empire " << EmpireID();
 
+    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
+    const Universe& universe = GetUniverse();
     const GG::Pt row_size = ListRowSize();
 
     if (const auto empire = GetEmpire(EmpireID())) {
@@ -2667,6 +2645,7 @@ void CompletedDesignsListBox::PopulateCore() {
                 ErrorLogger() << "ship design with id " << design_id << " incorrectly stored in manager.";
             }
         }
+
     } else if (showing_available) {
         // add all known / existing designs
         for (auto it = universe.beginShipDesigns();
@@ -2992,12 +2971,12 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
         DeleteFromCurrentDesigns(design_id);
         Populate();
     };
-    
+
     auto rename_design_action = [&empire_id, &design_id, design, &design_row]() {
         auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
         edit_wnd->Run();
         const std::string& result = edit_wnd->Result();
-        if (result != "" && result != design->Name()) {
+        if (!result.empty() && result != design->Name()) {
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ShipDesignOrder>(empire_id, design_id, result));
             design_row->SetDisplayName(design->Name());
@@ -3015,6 +2994,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     auto toggle_add_default_designs_at_game_start_action = [add_defaults]() {
         GetOptionsDB().Set<bool>("resource.shipdesign.default.enabled", !add_defaults);
     };
+
 
     // create popup menu with a commands in it
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
@@ -3067,8 +3047,8 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
     auto add_design_action = [&manager, &design, &empire_id]() {
         AddSavedDesignToCurrentDesigns(design->UUID(), empire_id);
     };
-    
-    // delete design from saved designs 
+
+    // delete design from saved designs
     auto delete_saved_design_action = [&manager, &design, this]() {
         DebugLogger() << "BasesListBox::BaseRightClicked Delete Saved Design" << design->Name();
         manager.Erase(design->UUID());
@@ -3088,15 +3068,15 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
         GetOptionsDB().Set<bool>("resource.shipdesign.saved.enabled", !add_all);
     };
 
-    
+
     // create popup menu with a commands in it
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (design->Producible())
-        popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"), false, false, add_design_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_SAVED"), false, false, delete_saved_design_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_NOW"), false, false, add_all_saved_designs_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),                   false, false, add_design_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_SAVED"),          false, false, delete_saved_design_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_NOW"),     false, false, add_all_saved_designs_action));
     popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_START"), false, add_all,
+    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_START"),   false, add_all,
                                    toggle_add_all_saved_game_start_action));
 
     popup->Run();
