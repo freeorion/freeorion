@@ -119,7 +119,7 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False,
         local_status = foAI.foAIstate.systemStatus.get(this_sys_id, {})
         my_local_rating = combine_ratings(local_status.get('mydefenses', {}).get('overall', 0), local_status.get('myFleetRating', 0))
         my_local_rating_vs_planets = local_status.get('myFleetRatingVsPlanets', 0)
-        combat_trigger = local_status.get('fleetThreat', 0) or local_status.get('monsterThreat', 0)
+        combat_trigger = bool(local_status.get('fleetThreat', 0) or local_status.get('monsterThreat', 0))
         if not combat_trigger and local_status.get('planetThreat', 0):
             universe = fo.getUniverse()
             system = universe.getSystem(this_sys_id)
@@ -143,7 +143,7 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False,
                     print "Fleet %d at %s needed present for combat, but is damaged and deemed unsafe to remain." % (fleet_id, universe.getSystem(fleet.systemID))
                     print "\t my_local_rating: %.1f ; threat: %.1f" % (my_local_rating, local_status.get('totalThreat', 0))
                 print "Selecting fleet %d at %s for repair" % (fleet_id, universe.getSystem(fleet.systemID))
-        fleet_buckets[fleet_ok or safely_needed].append(fleet_id)
+        fleet_buckets[fleet_ok or bool(safely_needed)].append(fleet_id)
     return fleet_buckets
 
 
