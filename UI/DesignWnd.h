@@ -17,9 +17,9 @@ struct Availability {
     };
 };
 
-/** ShipDesignManager tracks information known to the client about ShipDesigns.  This includes
-    the order of designs in the UI. The information is currently used in the DesignWnd and the
-    BuildDesignator. */
+/** ShipDesignManager tracks information known to the client about ShipDesigns.
+  * This includes the order of designs to be shown DesignWnd and the
+  * BuildDesignator. */
 class ShipDesignManager {
 public:
     /** Designs provides ordered lists of designs for display in the UI.
@@ -39,15 +39,15 @@ public:
     virtual void Load(const SaveGameUIData& data);
     virtual void Save(SaveGameUIData& data) const;
 
-    /** CurrentDesigns are design currently producible by the empire, in the ProductionWnd.*/
-    virtual Designs* CurrentDesigns();
+    /** DisplayedDesigns are design currently producible by the empire, in the ProductionWnd.*/
+    virtual Designs* DisplayedDesigns();
     /** SavedDesigns are designs that the player has saved on their own machine
         for future use.  They may/may not also be in use in the current game. */
     virtual Designs* SavedDesigns();
 
 private:
-    std::unique_ptr<Designs>    m_current_designs;
-    std::unique_ptr<Designs>    m_saved_designs;
+    std::unique_ptr<Designs>    m_displayed_designs;// designs shown to the player in the UI
+    std::unique_ptr<Designs>    m_saved_designs;    // loaded from saved design script files, can be added to empire by player or automatically
 };
 
 /** Lets the player design ships */

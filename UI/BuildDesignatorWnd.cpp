@@ -857,7 +857,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         // get ids of designs to show... for specific empire, or for all empires
         std::vector<int> design_ids;
         if (empire) {
-            design_ids = ClientUI::GetClientUI()->GetShipDesignManager()->CurrentDesigns()->OrderedIDs();
+            design_ids = ClientUI::GetClientUI()->GetShipDesignManager()->DisplayedDesigns()->OrderedIDs();
         } else {
             for (auto it = GetUniverse().beginShipDesigns();
                  it != GetUniverse().endShipDesigns(); ++it)
