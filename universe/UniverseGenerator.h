@@ -29,6 +29,7 @@ public:
     virtual ~FleetPlan() {};
     const std::string&              Name() const;
     const std::vector<std::string>& ShipDesigns() const { return m_ship_designs; }
+
 protected:
     std::string                     m_name;
     std::vector<std::string>        m_ship_designs;
