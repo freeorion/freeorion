@@ -1675,19 +1675,18 @@ namespace {
         auto techs = empire->ResearchedTechs();
         if (!techs.empty()) {
             detailed_description += "\n\n" + UserString("RESEARCHED_TECHS");
-            std::map<int, std::pair<std::string, int>> sorted_techs;
+            std::multimap<int, std::string> sorted_techs;
             for (const auto& tech_entry : techs) {
-                sorted_techs.emplace(std::make_pair(tech_entry.second, tech_entry));
+                sorted_techs.emplace(tech_entry.second, tech_entry.first);
             }
             for (const auto& sorted_tech_entry : sorted_techs) {
-                auto tech_entry = sorted_tech_entry.second;
                 detailed_description += "\n";
                 std::string turn_text;
-                if (tech_entry.second == BEFORE_FIRST_TURN)
+                if (sorted_tech_entry.first == BEFORE_FIRST_TURN)
                     turn_text = UserString("BEFORE_FIRST_TURN");
                 else
-                    turn_text = UserString("TURN") + " " + std::to_string(tech_entry.second);
-                detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_entry.first)
+                    turn_text = UserString("TURN") + " " + std::to_string(sorted_tech_entry.first);
+                detailed_description += LinkTaggedText(VarText::TECH_TAG, sorted_tech_entry.second)
                                      + " : " + turn_text;
             }
         } else {
