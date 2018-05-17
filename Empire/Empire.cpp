@@ -443,9 +443,12 @@ bool Empire::HasExploredSystem(int ID) const
 bool Empire::ProducibleItem(BuildType build_type, int location_id) const {
     if (build_type == BT_SHIP)
         throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_SHIP with no further parameters, but ship designs are tracked by number");
-    
+
     if (build_type == BT_BUILDING)
         throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_BUILDING with no further parameters, but buildings are tracked by name");
+
+    if (location_id == INVALID_OBJECT_ID)
+        return false;
 
     // must own the production location...
     auto location = GetUniverseObject(location_id);
