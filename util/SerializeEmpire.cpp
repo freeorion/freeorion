@@ -133,8 +133,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         GetUniverse().EncodingEmpire() == ALL_EMPIRES ||
         m_id == GetUniverse().EncodingEmpire())
     {
-        ar  & BOOST_SERIALIZATION_NVP(m_ship_designs)
-            & BOOST_SERIALIZATION_NVP(m_sitrep_entries)
+        ar  & boost::serialization::make_nvp("m_ship_designs", m_known_ship_designs);
+        ar  & BOOST_SERIALIZATION_NVP(m_sitrep_entries)
             & BOOST_SERIALIZATION_NVP(m_resource_pools)
             & BOOST_SERIALIZATION_NVP(m_population_pool)
 
@@ -169,7 +169,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-BOOST_CLASS_VERSION(Empire, 1)
+BOOST_CLASS_VERSION(Empire, 2)
 
 template void Empire::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Empire::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);

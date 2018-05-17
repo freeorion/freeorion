@@ -349,12 +349,12 @@ bool Empire::BuildingTypeAvailable(const std::string& name) const
 { return m_available_building_types.count(name); }
 
 const std::set<int>& Empire::ShipDesigns() const
-{ return m_ship_designs; }
+{ return m_known_ship_designs; }
 
 std::set<int> Empire::AvailableShipDesigns() const {
     // create new map containing all ship designs that are available
     std::set<int> retval;
-    for (int design_id : m_ship_designs) {
+    for (int design_id : m_known_ship_designs) {
         if (ShipDesignAvailable(design_id))
             retval.insert(design_id);
     }
@@ -385,7 +385,7 @@ bool Empire::ShipDesignAvailable(const ShipDesign& design) const {
 }
 
 bool Empire::ShipDesignKept(int ship_design_id) const
-{ return m_ship_designs.count(ship_design_id); }
+{ return m_known_ship_designs.count(ship_design_id); }
 
 const std::set<std::string>& Empire::AvailableShipParts() const
 { return m_available_part_types; }
@@ -606,11 +606,10 @@ void Empire::Eliminate() {
     // m_available_part_types;
     // m_available_hull_types;
     // m_explored_systems;
-    // m_ship_designs;
+    // m_known_ship_designs;
     m_sitrep_entries.clear();
-    for (auto& entry : m_resource_pools) {
+    for (auto& entry : m_resource_pools)
         entry.second->SetObjects(std::vector<int>());
-    }
     m_population_pool.SetPopCenters(std::vector<int>());
 
     // m_ship_names_used;
@@ -1443,11 +1442,12 @@ void Empire::AddShipDesign(int ship_design_id, int next_design_id) {
      * list of available designs for human players, and */
     if (ship_design_id == next_design_id)
         return;
+
     const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id);
     if (ship_design) {  // don't check if design is producible; adding a ship design is useful for more than just producing it
         // design is valid, so just add the id to empire's set of ids that it knows about
-        if (!m_ship_designs.count(ship_design_id)) {
-            m_ship_designs.insert(ship_design_id);
+        if (!m_known_ship_designs.count(ship_design_id)) {
+            m_known_ship_designs.insert(ship_design_id);
 
             ShipDesignsChangedSignal();
 
@@ -1488,8 +1488,8 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
 }
 
 void Empire::RemoveShipDesign(int ship_design_id) {
-    if (m_ship_designs.count(ship_design_id)) {
-        m_ship_designs.erase(ship_design_id);
+    if (m_known_ship_designs.count(ship_design_id)) {
+        m_known_ship_designs.erase(ship_design_id);
         ShipDesignsChangedSignal();
     } else {
         DebugLogger() << "Empire::RemoveShipDesign: this empire did not have design with id " << ship_design_id;
