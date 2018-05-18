@@ -61,8 +61,6 @@ DerivedData
 /doc/apidoc-commit-message
 
 # FreeOrion Xcode project
-/Xcode/dep/
-/Xcode/build/
 /Xcode/Info.plist
 contents.xcworkspacedata
 
