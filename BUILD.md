@@ -57,8 +57,11 @@ manager or compiling from source).
 
 Step by step procedure:
 
- * On Windows or Mac OS X:
+ * On Windows:
    * Download the [FreeOrionSDK v8] from the FreeOrionSDK respository releases.
+ * On Mac OS X:
+   * The [FreeOrionSDK v8] is downloaded automatically when CMake creates the
+     build environment.
  * Linux and other Operating Systems:
    * Install build and runtime dependencies by the preferred way for the
      respective OS.
@@ -67,13 +70,7 @@ Step by step procedure:
    * Unzip the SDK archive contents into the project directory.
    * Execute the `bootstrap.bat` within the project directory. This will clone
      the FreeOrion repository and place the dependencies at the correct place.
- * On Mac OS X:
-   * Mount the SDK DMG image.
-   * Copy the contents of the mounted image into the project directory.
-   * Execute the `bootstrap.command` within the project directory. This will
-     clone the FreeOrion repository and place the dependencies at the correct
-     place.
- * On Linux and other Operating Systems:
+ * On Max OS X, Linux and other Operating Systems:
    * Navigate into the project directory.
    * Clone the project via Git:
      ```
@@ -84,8 +81,8 @@ This will leave you with the latest development branch `master` and the
 FreeOrion source code in:
 
  * `freeorion-project/FreeOrion/` on Windows.
- * `freeorion-project/` on Mac OS X.
- * `freeorion-project/freeorion/` on Linux and other Operating Systems.
+ * `freeorion-project/freeorion/` on Mac OS X, Linux and other Operating
+   Systems.
 
 This directory will be referred to as _source directory_ in the rest of the
 document.
@@ -123,7 +120,7 @@ Step by step procedure:
      ```
      cmake -GXcode ..
      ```
-   * Open `FreeOrion.xcodeproj` with Visual Studio
+   * Open `FreeOrion.xcodeproj` with Xcode.
    * Compile the whole project by selecting the `ALL_BUILD` scheme and
      pressing 'Command' + 'B'.
 

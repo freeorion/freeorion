@@ -118,11 +118,6 @@ jobs:
           function cmake {
               /usr/local/bin/gtimeout 40m /usr/local/bin/cmake $@
           }
-      install:
-        - wget --output-document=FreeOrionSDK.dmg https://github.com/freeorion/freeorion-sdk/releases/download/v8/FreeOrionSDK_8_Clang-MacOSX-10.9-x86_64.dmg
-        - hdiutil attach FreeOrionSDK.dmg
-        - tar -xjf /Volumes/FreeOrionSDK/dep.tar.bz2 -C Xcode
-        - hdiutil detach /Volumes/FreeOrionSDK
       before_script:
         - mkdir build
         - cd build
