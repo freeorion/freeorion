@@ -1602,16 +1602,11 @@ void MapWnd::CompleteConstruction() {
     // General Gamestate response signals
     //////////////////
     FleetUIManager& fm = FleetUIManager::GetFleetUIManager();
-    fm.ActiveFleetWndChangedSignal.connect(
-        boost::bind(&MapWnd::SelectedFleetsChanged, this));
-    fm.ActiveFleetWndSelectedFleetsChangedSignal.connect(
-        boost::bind(&MapWnd::SelectedFleetsChanged, this));
-    fm.ActiveFleetWndSelectedShipsChangedSignal.connect(
-        boost::bind(&MapWnd::SelectedShipsChanged, this));
-    fm.FleetRightClickedSignal.connect(
-        boost::bind(&MapWnd::FleetRightClicked, this, _1));
-    fm.ShipRightClickedSignal.connect(
-        boost::bind(&MapWnd::ShipRightClicked, this, _1));
+    fm.ActiveFleetWndChangedSignal.connect(boost::bind(&MapWnd::SelectedFleetsChanged, this));
+    fm.ActiveFleetWndSelectedFleetsChangedSignal.connect(boost::bind(&MapWnd::SelectedFleetsChanged, this));
+    fm.ActiveFleetWndSelectedShipsChangedSignal.connect(boost::bind(&MapWnd::SelectedShipsChanged, this));
+    fm.FleetRightClickedSignal.connect(boost::bind(&MapWnd::FleetRightClicked, this, _1));
+    fm.ShipRightClickedSignal.connect(boost::bind(&MapWnd::ShipRightClicked, this, _1));
 
     DoLayout();
 
