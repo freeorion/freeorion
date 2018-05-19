@@ -4154,7 +4154,7 @@ void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void DesignWnd::MainPanel::Sanitize() {
-    SetHull(nullptr);
+    SetHull(nullptr, false);
     m_design_name->SetText(UserString("DESIGN_NAME_DEFAULT"));
     m_design_description->SetText(UserString("DESIGN_DESCRIPTION_DEFAULT"));
     // disconnect old empire design signal
@@ -4944,7 +4944,7 @@ void DesignWnd::CompleteConstruction() {
         boost::bind(&DesignWnd::DesignNameChanged, this));
     m_main_panel->CompleteDesignClickedSignal.connect(
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(int)>(&EncyclopediaDetailPanel::SetDesign), m_detail_panel, _1));
-    m_main_panel->Sanitize();
+    //m_main_panel->Sanitize();
 
     AttachChild(m_part_palette);
     m_part_palette->PartTypeClickedSignal.connect(
