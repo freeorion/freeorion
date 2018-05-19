@@ -47,15 +47,9 @@ namespace {
         ProductionItemPanel(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
                             int empire_id, int location_id) :
             Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-            m_initialized(false),
             m_item(item),
             m_empire_id(empire_id),
-            m_location_id(location_id),
-            m_icon(nullptr),
-            m_name(nullptr),
-            m_cost(nullptr),
-            m_time(nullptr),
-            m_desc(nullptr)
+            m_location_id(location_id)
         {
             SetChildClippingMode(ClipToClient);
         }
@@ -77,7 +71,7 @@ namespace {
         }
 
     private:
-        void            DoLayout() {
+        void DoLayout() {
             if (!m_initialized)
                 return;
 
@@ -92,16 +86,12 @@ namespace {
 
             m_icon->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ICON_WIDTH, bottom));
             left += ICON_WIDTH + GG::X(3);
-
             m_name->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ITEM_NAME_WIDTH, bottom));
             left += ITEM_NAME_WIDTH;
-
             m_cost->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + COST_WIDTH, bottom));
             left += COST_WIDTH;
-
             m_time->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + TIME_WIDTH, bottom));
             left += TIME_WIDTH;
-
             m_desc->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + DESC_WIDTH, bottom));
         }
 
@@ -167,16 +157,15 @@ namespace {
             DoLayout();
         }
 
-        bool                                    m_initialized;
+        bool                                    m_initialized = false;
         const ProductionQueue::ProductionItem   m_item;
-        int                                     m_empire_id;
-        int                                     m_location_id;
-
-        std::shared_ptr<GG::StaticGraphic>  m_icon;
-        std::shared_ptr<GG::Label>          m_name;
-        std::shared_ptr<GG::Label>          m_cost;
-        std::shared_ptr<GG::Label>          m_time;
-        std::shared_ptr<GG::Label>          m_desc;
+        int                                     m_empire_id = ALL_EMPIRES;
+        int                                     m_location_id = INVALID_OBJECT_ID;
+        std::shared_ptr<GG::StaticGraphic>      m_icon = nullptr;
+        std::shared_ptr<GG::Label>              m_name = nullptr;
+        std::shared_ptr<GG::Label>              m_cost = nullptr;
+        std::shared_ptr<GG::Label>              m_time = nullptr;
+        std::shared_ptr<GG::Label>              m_desc = nullptr;
     };
 
     std::shared_ptr<const UniverseObject> GetSourceObjectForEmpire(int empire_id) {
@@ -262,14 +251,18 @@ namespace {
             float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
             int production_time = building_type->ProductionTime(empire_id, candidate_object_id);
 
-            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) % DoubleToString(total_cost, 3, false));
-            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) % std::to_string(production_time));
+            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                 DoubleToString(total_cost, 3, false));
+            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
+                                               std::to_string(production_time));
 
             // show build conditions
-            const std::string& enqueue_and_location_condition_failed_text = EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
+            const std::string& enqueue_and_location_condition_failed_text =
+                EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
             if (!enqueue_and_location_condition_failed_text.empty())
                 if (auto location = GetUniverseObject(candidate_object_id)) {
-                    std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
+                    std::string failed_cond_loc = boost::io::str(
+                        FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
                     main_text += "\n\n" + failed_cond_loc + ":\n" + enqueue_and_location_condition_failed_text;
             }
 
@@ -281,9 +274,8 @@ namespace {
         // production item is a ship
         if (item.build_type == BT_SHIP) {
             const ShipDesign* design = GetShipDesign(item.design_id);
-            if (!design) {
+            if (!design)
                 return nullptr;
-            }
 
             // create title, description, production time and cost, hull type
             const std::string& title = design->Name(true);
@@ -291,8 +283,10 @@ namespace {
             float total_cost = design->ProductionCost(empire_id, candidate_object_id);
             int production_time = design->ProductionTime(empire_id, candidate_object_id);
 
-            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) % DoubleToString(total_cost, 3, false));
-            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) % std::to_string(production_time));
+            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                 DoubleToString(total_cost, 3, false));
+            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
+                                               std::to_string(production_time));
             main_text += "\n\n" + UserString("ENC_SHIP_HULL") + ": " + UserString(design->Hull());
 
             // load ship parts, stack ship parts that are used multiple times
@@ -311,16 +305,20 @@ namespace {
                 if (ship_part_names[part_name_count.first] == 1)
                     ship_parts_formatted += (UserString(part_name_count.first) + ", ");
                 else
-                    ship_parts_formatted += (UserString(part_name_count.first) + " x" + std::to_string(part_name_count.second) + ", ");
+                    ship_parts_formatted += (UserString(part_name_count.first) + " x" +
+                                             std::to_string(part_name_count.second) + ", ");
             }
 
-            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PARTS") + ": " + ship_parts_formatted.substr(0, ship_parts_formatted.length() - 2);
+            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PARTS") + ": " +
+                ship_parts_formatted.substr(0, ship_parts_formatted.length() - 2);
 
             // show build conditions
-            const std::string& location_condition_failed_text = LocationConditionDescription(item.design_id, candidate_object_id, empire_id, true);
+            const std::string& location_condition_failed_text =
+                LocationConditionDescription(item.design_id, candidate_object_id, empire_id, true);
             if (!location_condition_failed_text.empty())
                 if (auto location = GetUniverseObject(candidate_object_id)) {
-                    std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
+                    std::string failed_cond_loc = boost::io::str(FlexibleFormat(
+                        UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
                     main_text += ("\n\n" + failed_cond_loc + ":\n" + location_condition_failed_text);
                 }
 
@@ -337,8 +335,10 @@ namespace {
             float total_cost = 1.0;
             int production_time = 1;
 
-            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) % DoubleToString(total_cost, 3, false));
-            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) % std::to_string(production_time));
+            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                 DoubleToString(total_cost, 3, false));
+            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
+                                               std::to_string(production_time));
 
             // do not show build conditions - always buildable
 
@@ -390,7 +390,6 @@ namespace {
 
         void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
-
             push_back(m_panel);
         }
 
@@ -440,10 +439,10 @@ namespace {
             }
         }
 
-        GG::Pt          ListRowSize() const
+        GG::Pt ListRowSize() const
         { return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight()); }
 
-        static GG::Y    ListRowHeight()
+        static GG::Y ListRowHeight()
         { return GG::Y(ClientUI::Pts() * 3/2); }
     };
 }
@@ -472,67 +471,66 @@ public:
     /** Sets build location for this selector, which may be used to filter
       * items in the list or enable / disable them at some point in the
       * future. */
-    void    SetBuildLocation(int location_id, bool refresh_list = true);
+    void SetBuildLocation(int location_id, bool refresh_list = true);
 
     /** Sets id of empire (or ALL_EMPIRES) for which to show items in this
       * BuildSelector. */
-    void    SetEmpireID(int empire_id = ALL_EMPIRES, bool refresh_list = true);
+    void SetEmpireID(int empire_id = ALL_EMPIRES, bool refresh_list = true);
 
     /** Clear and refill list of buildable items, according to current
       * filter settings. */
-    void    Refresh();
+    void Refresh();
 
     /** Show or hide indicated types of buildable items */
-    void    ShowType(BuildType type, bool refresh_list = true);
-    void    ShowAllTypes(bool refresh_list = true);
-    void    HideType(BuildType type, bool refresh_list = true);
-    void    HideAllTypes(bool refresh_list = true);
+    void ShowType(BuildType type, bool refresh_list = true);
+    void ShowAllTypes(bool refresh_list = true);
+    void HideType(BuildType type, bool refresh_list = true);
+    void HideAllTypes(bool refresh_list = true);
 
     /** Show or hide indicated availabilities of buildable items.  Available
       * items are those which have been unlocked for this selector's emipre. */
-    void    ShowAvailability(bool available, bool refresh_list = true);
-    void    HideAvailability(bool available, bool refresh_list = true);
+    void ShowAvailability(bool available, bool refresh_list = true);
+    void HideAvailability(bool available, bool refresh_list = true);
     //@}
 
-    mutable boost::signals2::signal<void (const BuildingType*)>                DisplayBuildingTypeSignal;
-    mutable boost::signals2::signal<void (const ShipDesign*)>                  DisplayShipDesignSignal;
-    mutable boost::signals2::signal<void ()>                                   DisplayStockpileProjectSignal;
-
-    mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, int)> RequestBuildItemSignal;
-    mutable boost::signals2::signal<void ()>                                   ShowPediaSignal;
+    mutable boost::signals2::signal<void (const BuildingType*)> DisplayBuildingTypeSignal;
+    mutable boost::signals2::signal<void (const ShipDesign*)>   DisplayShipDesignSignal;
+    mutable boost::signals2::signal<void ()>                    DisplayStockpileProjectSignal;
+    mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, int)>
+                                                                RequestBuildItemSignal;
+    mutable boost::signals2::signal<void ()>                    ShowPediaSignal;
 
 private:
     static const GG::X TEXT_MARGIN_X;
     static const GG::Y TEXT_MARGIN_Y;
 
-    void                DoLayout();
+    void DoLayout();
 
-    bool    BuildableItemVisible(BuildType build_type);
-    bool    BuildableItemVisible(BuildType build_type, const std::string& name);
-    bool    BuildableItemVisible(BuildType build_type, int design_id);
+    bool BuildableItemVisible(BuildType build_type);
+    bool BuildableItemVisible(BuildType build_type, const std::string& name);
+    bool BuildableItemVisible(BuildType build_type, int design_id);
 
     /** Clear and refill list of buildable items, according to current
       * filter settings. */
-    void    PopulateList();
+    void PopulateList();
 
-    void    AddBuildItemToQueue(GG::ListBox::iterator it, bool top);
+    void AddBuildItemToQueue(GG::ListBox::iterator it, bool top);
 
     /** respond to the user single-clicking a producible item in the build selector */
-    void    BuildItemLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void BuildItemLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     /** respond to the user right-clicking a producible item in the build selector */
-    void    BuildItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void BuildItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     std::map<BuildType, std::shared_ptr<CUIStateButton>>    m_build_type_buttons;
     std::vector<std::shared_ptr<CUIStateButton>>            m_availability_buttons;
-
-    std::set<BuildType>                     m_build_types_shown;
-    std::pair<bool, bool>                   m_availabilities_shown; //!< .first -> available items; .second -> unavailable items
-    std::shared_ptr<BuildableItemsListBox>  m_buildable_items;
-    GG::Pt                                  m_original_ul;
-    int                                     m_production_location;
-    int                                     m_empire_id;
-    mutable boost::signals2::connection     m_empire_ship_designs_changed_signal;
+    std::set<BuildType>                                     m_build_types_shown;
+    std::pair<bool, bool>                                   m_availabilities_shown; //!< .first -> available items; .second -> unavailable items
+    std::shared_ptr<BuildableItemsListBox>                  m_buildable_items;
+    GG::Pt                                                  m_original_ul;
+    int                                                     m_production_location;
+    int                                                     m_empire_id;
+    mutable boost::signals2::connection                     m_empire_ship_designs_changed_signal;
 
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
 };
@@ -550,15 +548,19 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
 
 void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
     // create build type toggle buttons (ship, building, all)
-    m_build_type_buttons[BT_BUILDING] = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_build_type_buttons[BT_BUILDING] = GG::Wnd::Create<CUIStateButton>(
+        UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_build_type_buttons[BT_BUILDING]);
-    m_build_type_buttons[BT_SHIP] = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_build_type_buttons[BT_SHIP] = GG::Wnd::Create<CUIStateButton>(
+        UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_build_type_buttons[BT_SHIP]);
 
     // create availability toggle buttons (available, not available)
-    m_availability_buttons.push_back(GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
+    m_availability_buttons.push_back(GG::Wnd::Create<CUIStateButton>(
+        UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
     AttachChild(m_availability_buttons.back());
-    m_availability_buttons.push_back(GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
+    m_availability_buttons.push_back(GG::Wnd::Create<CUIStateButton>(
+        UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
     AttachChild(m_availability_buttons.back());
 
     // selectable list of buildable items
@@ -566,7 +568,8 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
     m_buildable_items->LeftClickedRowSignal.connect(
         boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, _1, _2, _3));
     m_buildable_items->DoubleClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys) { this->AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL); });
+        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys)
+        { this->AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL); });
     m_buildable_items->RightClickedRowSignal.connect(
         boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, _1, _2, _3));
 
@@ -609,13 +612,10 @@ void BuildDesignatorWnd::BuildSelector::DoLayout() {
 
     m_build_type_buttons[BT_BUILDING]->SizeMove(GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
     x += button_width;
-
     m_build_type_buttons[BT_SHIP]->SizeMove(    GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
     x += button_width;
-
     m_availability_buttons[0]->SizeMove(        GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
     x += button_width;
-
     m_availability_buttons[1]->SizeMove(        GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
     x += button_width;
 
@@ -930,6 +930,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterat
             return;
         }
         DisplayShipDesignSignal(design);
+
     } else if (build_type == BT_STOCKPILE) {
         DisplayStockpileProjectSignal();
     }
@@ -960,7 +961,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
     } else if (item.build_type == BT_SHIP) {
         item_name = GetShipDesign(item.design_id)->Name(false);
     } else if (item.build_type == BT_STOCKPILE) {
-        item_name = "PROJECT_BT_STOCKPILE";
+        item_name = UserStringNop("PROJECT_BT_STOCKPILE");
     } else {
         ErrorLogger() << "Invalid build type (" << item.build_type << ") for item";
         return;
@@ -1018,11 +1019,14 @@ void BuildDesignatorWnd::CompleteConstruction() {
     m_side_panel->EnableSelection();
 
     m_build_selector->DisplayBuildingTypeSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(&EncyclopediaDetailPanel::SetItem),  m_enc_detail_panel, _1));
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(
+            &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, _1));
     m_build_selector->DisplayShipDesignSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, _1));
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(
+            &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, _1));
     m_build_selector->DisplayStockpileProjectSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const std::string&, bool)>(&EncyclopediaDetailPanel::SetText), m_enc_detail_panel, "PROJECT_BT_STOCKPILE_DESC", true));
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const std::string&, bool)>(
+            &EncyclopediaDetailPanel::SetText), m_enc_detail_panel, "PROJECT_BT_STOCKPILE_DESC", true));
 
     m_build_selector->ShowPediaSignal.connect(
         boost::bind(&BuildDesignatorWnd::ShowPedia, this));
