@@ -2576,7 +2576,9 @@ public:
 protected:
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
+
     void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 class AllDesignsListBox : public BasesListBox {
@@ -2591,6 +2593,7 @@ protected:
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 
     void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 void EmptyHullsListBox::PopulateCore() {
@@ -2961,6 +2964,34 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt
         AddSavedDesignToDisplayedDesigns(design->UUID(), EmpireID());
     else
         DesignClickedSignal(design);
+}
+
+void MonstersListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                      const GG::Flags<GG::ModKey>& modkeys)
+{
+    const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
+    if (!design_row)
+        return;
+    int id = design_row->DesignID();
+    const ShipDesign* design = GetShipDesign(id);
+    if (!design)
+        return;
+
+    DesignClickedSignal(design);
+}
+
+void AllDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                        const GG::Flags<GG::ModKey>& modkeys)
+{
+    const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
+    if (!design_row)
+        return;
+    int id = design_row->DesignID();
+    const ShipDesign* design = GetShipDesign(id);
+    if (!design)
+        return;
+
+    DesignClickedSignal(design);
 }
 
 
