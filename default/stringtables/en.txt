@@ -5138,6 +5138,9 @@ CATEGORY_GAME_CONCEPTS
 GROWTH_ARTICLE_SHORT_DESC
 Growth
 
+STOCKPILE_ARTICLE_SHORT_DESC
+Stockpile
+
 OUTPOSTS_ARTICLE_SHORT_DESC
 Outpost
 
@@ -5525,13 +5528,21 @@ TRADE_FOCUS_TITLE
 Trade Focus
 
 TRADE_FOCUS_TEXT
-Trade doesn't do anything, yet. It is just a placeholder to show that more resources are planned.
+Trade doesn't do anything. It is just a placeholder to show that more resources are planned.
 
 PROTECTION_FOCUS_TITLE
 Protection Focus
 
 PROTECTION_FOCUS_TEXT
 The Protection focus represents a planet wholly focused on defending itself. [[metertype METER_TROOPS]], Planetary [[metertype METER_DEFENSE]], and Planetary [[metertype METER_SHIELD]] are doubled.
+
+STOCKPILE_FOCUS_TITLE
+Stockpile Focus
+
+STOCKPILE_FOCUS_TEXT
+'''The Stockpile focus increases the [[metertype METER_STOCKPILE]] of a planet.
+
+[[METER_STOCKPILE_VALUE_DESC]]'''
 
 ARMOR_TITLE
 Armor Plating
