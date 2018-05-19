@@ -45,16 +45,15 @@ doing the actual release.
 * [ ] Create a new GitHub Issue from `.github/RELEASE_TEMPLATE.md` and follow
       instructions. :wink:
 * [ ] Determine initial milestones and dates for release.
+* [ ] *On master branch HEAD* - Update version number in `CMakeLists.txt` and
+      `cmake/make_versioncpp.py` to `vX.Y.Z+`.
+* [ ] Push updated master branch to GitHub.
 * [ ] Create release branch from development branch master by using:
 ```
 git checkout -b release-vX.Y.Z master
 ```
-* [ ] *On release branch HEAD* - Update version number in `CMakeLists.txt` and
-      `cmake/make_versioncpp.py` to `vX.Y.Z`, remove trailing `+` if needed.
 * [ ] *On release branch HEAD* - Remove `Super Testers` species.
-* [ ] *On master branch HEAD* - Update version number in `CMakeLists.txt` and
-      `cmake/make_versioncpp.py` to `vX.Y.Z+`.
-* [ ] Push updated release and master branch to GitHub.
+* [ ] Push release branch to GitHub.
 * [ ] Update `ChangeLog.md`.
 
 
