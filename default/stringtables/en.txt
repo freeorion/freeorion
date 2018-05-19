@@ -333,10 +333,18 @@ FORMAT_LIST_MANY_ITEMS
 ##
 
 PROJECT_BT_STOCKPILE
-Stockpile Transfer Units
+Stockpile Transfer
+
+PROJECT_BT_STOCKPILE_SHORT_DESC
+Transfers PP into the imperial stockpile
 
 PROJECT_BT_STOCKPILE_DESC
-Transfers PP into the imperial stockpile
+'''Transfers PP at the planet where this project is enqueued to the imperial stockpile. Anything enqueued below the transfer project at a supply-connected planet will not be allocated PP.
+
+Only transfers PP that are available at this planet; PP allocation on planets that are not supply-connected to here will not be affected by this project.
+
+Surplus PP (PP not allocated to anything on the queue) at this or any other location will be transferred to the stockpile with or without a stockpile transfer project on the queue.  This project is used to transfer PP to the stockpile even if there are things on the queue below it that could have been allocated available PP.'''
+
 
 ##
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
@@ -8514,7 +8522,7 @@ FOCUS_STOCKPILE
 Stockpile
 
 FOCUS_STOCKPILE_DESC
-Allows stockpile techs to boost stockpile transfer
+Allows stockpile techs to boost stockpile withdrawl capacity
 
 # Focus types
 FOCUS_RESEARCH

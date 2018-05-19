@@ -51,7 +51,6 @@ public:
     void ClearItems();
     int GetItemsSize() { return m_items.size(); }
 
-    void SetText(const std::string& text, bool lookup_in_stringtable = true);
     void SetPlanet(int planet_id);
     void SetItem(std::shared_ptr<const Planet> planet);
     void SetTech(const std::string& tech_name);
@@ -82,6 +81,7 @@ public:
     void SetItem(const MeterType& meter_type);
     void SetGraph(const std::string& graph_id);
     void SetIndex();
+    void SetEncyclopediaArticle(const std::string& name);
 
     void Refresh();
     void OnIndex();
@@ -92,6 +92,7 @@ public:
     mutable boost::signals2::signal<void ()> ClosingSignal;
 
 protected:
+    void SetText(const std::string& text, bool lookup_in_stringtable = true);
     void InitBuffers() override;
 
 private:

@@ -1,0 +1,6 @@
+Article
+    name = "PROJECT_BT_STOCKPILE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "PROJECT_BT_STOCKPILE_SHORT_DESC"
+    description = "PROJECT_BT_STOCKPILE_DESC"
+    icon = "icons/meter/stockpile.png"

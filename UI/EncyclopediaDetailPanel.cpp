@@ -3156,6 +3156,9 @@ void EncyclopediaDetailPanel::SetItem(const ShipDesign* design)
 void EncyclopediaDetailPanel::SetItem(const MeterType& meter_type)
 { SetMeterType(boost::lexical_cast<std::string>(meter_type)); }
 
+void EncyclopediaDetailPanel::SetEncyclopediaArticle(const std::string& name)
+{ AddItem(TextLinker::ENCYCLOPEDIA_TAG, name); }
+
 void EncyclopediaDetailPanel::OnIndex()
 { AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX"); }
 

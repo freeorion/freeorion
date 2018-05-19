@@ -4395,7 +4395,7 @@ void MapWnd::ShowMeterTypeArticle(const std::string& meter_string) {
 void MapWnd::ShowEncyclopediaEntry(const std::string& str) {
     if (!m_pedia_panel->Visible())
         TogglePedia();
-    m_pedia_panel->SetText(str, false);
+    m_pedia_panel->SetEncyclopediaArticle(str);
 }
 
 void MapWnd::CenterOnObject(int id) {

@@ -1025,8 +1025,8 @@ void BuildDesignatorWnd::CompleteConstruction() {
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(
             &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, _1));
     m_build_selector->DisplayStockpileProjectSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const std::string&, bool)>(
-            &EncyclopediaDetailPanel::SetText), m_enc_detail_panel, "PROJECT_BT_STOCKPILE_DESC", true));
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const std::string&)>(
+            &EncyclopediaDetailPanel::SetEncyclopediaArticle), m_enc_detail_panel, "PROJECT_BT_STOCKPILE"));
 
     m_build_selector->ShowPediaSignal.connect(
         boost::bind(&BuildDesignatorWnd::ShowPedia, this));
