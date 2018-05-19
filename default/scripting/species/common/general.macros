@@ -28,7 +28,7 @@ FOCUS_CHANGE_PENALTY
                 (0 == Source.TurnsSinceFocusChange)
             ]
             priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
-            effects = SetIndustry value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
+            effects = SetIndustry value = Value - max(0, min(1 - Target.TurnsSinceFocusChange, Value - Value(Target.TargetIndustry)))
 
         EffectsGroup
             scope = Source
@@ -38,8 +38,10 @@ FOCUS_CHANGE_PENALTY
                 (0 == Source.TurnsSinceFocusChange)
             ]
             priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
-            effects = SetResearch value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
+            effects = SetResearch value = Value - max(0, min(1 - Target.TurnsSinceFocusChange, Value - Value(Target.TargetResearch)))
 
+// TODO Delete this whole Stockpile penalty clause if Stockpile is determined to remain as a Max rather than a Target type meter
+// If a decision is made to change Stockpile to a Target type meter, then simply change MaxStockpile below to TargetStockpile
         EffectsGroup
             scope = Source
             activation = And [
@@ -48,7 +50,7 @@ FOCUS_CHANGE_PENALTY
                 (0 == Source.TurnsSinceFocusChange)
             ]
             priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
-            effects = SetStockpile value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
+            effects = SetStockpile value = Value - max(0, min(1 - Target.TurnsSinceFocusChange, Value - Value(Target.MaxStockpile)))
 '''
 
 //#####      COLONIZATION SPEED        #####//
