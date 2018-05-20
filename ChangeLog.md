@@ -4,6 +4,31 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 
 
+## [v0.4.8] - TBD
+
+
+### Key Changes
+
+
+### Detailed Changelog
+
+
+#### Graphics / GUI
+
+
+#### Content
+
+
+#### Balance
+
+
+#### Bugs
+
+
+#### Technical / Internal
+
+
+
 ## [v0.4.7.1] - 2017-09-03
 
 
