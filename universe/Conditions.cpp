@@ -6608,6 +6608,13 @@ unsigned int EmpireStockpileValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OwnerHasTech                                          //
 ///////////////////////////////////////////////////////////
+OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                           std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Condition(),
+    m_name(std::move(name)),
+    m_empire_id(std::move(empire_id))
+{}
+
 OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name))
@@ -6724,15 +6731,25 @@ unsigned int OwnerHasTech::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OwnerHasBuildingTypeAvailable                         //
 ///////////////////////////////////////////////////////////
+OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
+    std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+    std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Condition(),
+    m_name(std::move(name)),
+    m_empire_id(std::move(empire_id))
+{}
+
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(const std::string& name) :
     Condition(),
     // TODO: Use std::make_unique when adopting C++14
-    m_name(new ValueRef::Constant<std::string>(name))
+    m_name(new ValueRef::Constant<std::string>(name)),
+    m_empire_id(nullptr)
 {}
 
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     Condition(),
-    m_name(std::move(name))
+    m_name(std::move(name)),
+    m_empire_id(nullptr)
 {}
 
 bool OwnerHasBuildingTypeAvailable::operator==(const Condition& rhs) const {
@@ -6841,15 +6858,25 @@ unsigned int OwnerHasBuildingTypeAvailable::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OwnerHasShipDesignAvailable                           //
 ///////////////////////////////////////////////////////////
+OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(
+    std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+    std::unique_ptr<ValueRef::ValueRef<int>>&& id) :
+    Condition(),
+    m_id(std::move(id)),
+    m_empire_id(std::move(empire_id))
+{}
+
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int id) :
     Condition(),
     // TODO: Use std::make_unique when adopting C++14
-    m_id(new ValueRef::Constant<int>(id))
+    m_id(new ValueRef::Constant<int>(id)),
+    m_empire_id(nullptr)
 {}
 
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& id) :
     Condition(),
-    m_id(std::move(id))
+    m_id(std::move(id)),
+    m_empire_id(nullptr)
 {}
 
 bool OwnerHasShipDesignAvailable::operator==(const Condition& rhs) const {
@@ -6958,6 +6985,14 @@ unsigned int OwnerHasShipDesignAvailable::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OwnerHasShipPartAvailable                             //
 ///////////////////////////////////////////////////////////
+OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(
+    std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+    std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Condition(),
+    m_name(std::move(name)),
+    m_empire_id(std::move(empire_id))
+{}
+
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(const std::string& name) :
     Condition(),
     // TODO: Use std::make_unique when adopting C++14
