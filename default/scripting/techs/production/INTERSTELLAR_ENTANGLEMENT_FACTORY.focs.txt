@@ -19,6 +19,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 Species
             ]
+            accountinglabel = "INTERSTELLAR_ENTANGLEMENT_FACTORY_POPULATION_BONUS_LABEL"
             effects = SetMaxStockpile value = Value +  1.0 * Target.Population * [[STOCKPILE_PER_POP]]
 
         EffectsGroup
@@ -27,6 +28,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_STOCKPILE"
             ]
+            accountinglabel = "INTERSTELLAR_ENTANGLEMENT_FACTORY_FIXED_BONUS_LABEL"
             effects = SetMaxStockpile value = Value + 6
     ]
 
