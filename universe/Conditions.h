@@ -1218,6 +1218,10 @@ struct FO_COMMON_API EmpireStockpileValue final : public Condition {
     EmpireStockpileValue(ResourceType stockpile,
                          std::unique_ptr<ValueRef::ValueRef<double>>&& low,
                          std::unique_ptr<ValueRef::ValueRef<double>>&& high);
+    EmpireStockpileValue(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                         ResourceType stockpile,
+                         std::unique_ptr<ValueRef::ValueRef<double>>&& low,
+                         std::unique_ptr<ValueRef::ValueRef<double>>&& high);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1233,7 +1237,8 @@ struct FO_COMMON_API EmpireStockpileValue final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ResourceType m_stockpile;
+    std::unique_ptr<ValueRef::ValueRef<int>>    m_empire_id;
+    ResourceType                                m_stockpile;
     std::unique_ptr<ValueRef::ValueRef<double>> m_low;
     std::unique_ptr<ValueRef::ValueRef<double>> m_high;
 
@@ -2214,7 +2219,8 @@ void EmpireStockpileValue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high);
+        & BOOST_SERIALIZATION_NVP(m_high)
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>
