@@ -1015,8 +1015,14 @@ Your connection was replaced.
 ERROR_NONPLAYER_CANNOT_CONCEDE
 Only Players can concede.
 
-ERROR_CONCEDE_NOT_ALLOWED
-Concede is not allowed.
+ERROR_CONCEDE_DISABLED
+Concede is disabled.
+
+ERROR_CONCEDE_EXCEED_COLONIES
+Your colonies number exceeds limits to concede.
+
+ERROR_CONCEDE_LAST_HUMAN_PLAYER
+Should be other human players to concede.
 
 ##
 ## Game Rules
