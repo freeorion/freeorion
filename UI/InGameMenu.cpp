@@ -8,6 +8,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../network/Networking.h"
 #include "../util/i18n.h"
+#include "../util/GameRules.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/Logger.h"
@@ -69,6 +70,18 @@ void InGameMenu::CompleteConstruction() {
         m_save_btn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
             UserString("BUTTON_DISABLED"),
             UserString("SAVE_DISABLED_BROWSE_TEXT"),
+            GG::X(400)
+        ));
+    }
+
+    if (!HumanClientApp::GetApp()->SinglePlayerGame() &&
+        !GetGameRules().Get<bool>("RULE_ALLOW_CONCEDE"))
+    {
+        m_load_or_concede_btn->Disable();
+        m_load_or_concede_btn->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+        m_load_or_concede_btn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
+            UserString("BUTTON_DISABLED"),
+            UserString("ERROR_CONCEDE_DISABLED"),
             GG::X(400)
         ));
     }
