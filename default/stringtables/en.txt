@@ -1019,10 +1019,10 @@ ERROR_CONCEDE_DISABLED
 Concede is disabled.
 
 ERROR_CONCEDE_EXCEED_COLONIES
-Your colonies number exceeds limits to concede.
+Cannot concede; empire controls too many colonies.
 
 ERROR_CONCEDE_LAST_HUMAN_PLAYER
-Should be other human players to concede.
+Cannot concede from a game with only one human player.
 
 ##
 ## Game Rules
