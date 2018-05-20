@@ -1012,6 +1012,17 @@ Too many human players.
 ERROR_CONNECTION_WAS_REPLACED
 Your connection was replaced.
 
+ERROR_NONPLAYER_CANNOT_CONCEDE
+Only Players can concede.
+
+ERROR_CONCEDE_DISABLED
+Concede is disabled.
+
+ERROR_CONCEDE_EXCEED_COLONIES
+Cannot concede; empire controls too many colonies.
+
+ERROR_CONCEDE_LAST_HUMAN_PLAYER
+Cannot concede from a game with only one human player.
 
 ##
 ## Game Rules
@@ -1154,6 +1165,18 @@ Gas Giants Habitable size
 
 RULE_HABITABLE_SIZE_DESC
 Value used to adjust for [[encyclopedia POPULATION_TITLE_SHORT_DESC]] changes on a planet of this size.
+
+RULE_ALLOW_CONCEDE
+Allow Conceding
+
+RULE_ALLOW_CONCEDE_DESC
+Allows empires to concede from a game. This eliminates the empire's assets from the universe. The game continues with the remaining players.
+
+RULE_CONCEDE_COLONIES_THRESHOLD
+Maximum Colonies When Conceding
+
+RULE_CONCEDE_COLONIES_THRESHOLD_DESC
+Empires with more than this number of colonies may not concede.
 
 RULE_THRESHOLD_HUMAN_PLAYER_WIN
 Max human player winners
@@ -2422,6 +2445,9 @@ Load Game
 GAME_MENU_RESIGN
 Resign
 
+GAME_MENU_CONCEDE
+Concede
+
 GAME_MENU_SAVE_FILES
 Save Game Files
 
@@ -2431,6 +2457,8 @@ Button Disabled
 SAVE_DISABLED_BROWSE_TEXT
 The Save Game button is disabled, either because this is a multiplayer game in which this client is neither Host nor Moderator, or because at the time this menu was opened at least one of the AIs had not yet finished submitting its moves for the turn (indicated by a green triangle status icon just to the left of its player-type icon in the Empires window).
 
+GAME_MENU_REALLY_CONCEDE
+Confirm conceding? This empire will be removed from the game.
 
 ##
 ## Save game dialog

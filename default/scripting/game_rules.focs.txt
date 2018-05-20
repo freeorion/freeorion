@@ -135,3 +135,19 @@ GameRule
     category = "BALANCE"
     type = Toggle
     default = On
+    
+GameRule
+    name = "RULE_ALLOW_CONCEDE"
+    description = "RULE_ALLOW_CONCEDE_DESC"
+    category = "CONTENT"
+    type = Toggle
+    default = Off
+
+GameRule
+    name = "RULE_CONCEDE_COLONIES_THRESHOLD"
+    description = "RULE_CONCEDE_COLONIES_THRESHOLD_DESC"
+    category = "CONTENT"
+    type = Integer
+    default = 1
+    min = 0
+    max = 9999

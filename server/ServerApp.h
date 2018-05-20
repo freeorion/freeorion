@@ -227,6 +227,9 @@ public:
       * Simply sends GAME_START message so established player knows he is in the game. */
     void AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_connection);
 
+    /** Eliminate player's empire by \a player_connection. Return true if player was eliminated. */
+    bool EliminatePlayer(const PlayerConnectionPtr& player_connection);
+
     /** Drop link between player with \a player_id and his empire. */
     void DropPlayerEmpireLink(int planet_id);
 

@@ -686,6 +686,9 @@ Message AuthResponseMessage(const std::string& player_name, const std::string& a
 Message SetAuthorizationRolesMessage(const Networking::AuthRoles& roles)
 { return Message(Message::SET_AUTH_ROLES, roles.Text()); }
 
+Message EliminateSelfMessage()
+{ return Message(Message::ELIMINATE_SELF, DUMMY_EMPTY_MESSAGE); }
+
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////

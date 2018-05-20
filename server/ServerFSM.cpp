@@ -2300,6 +2300,30 @@ sc::result PlayingGame::react(const AuthResponse& msg) {
     return discard_event();
 }
 
+sc::result PlayingGame::react(const EliminateSelf& msg) {
+    DebugLogger(FSM) << "(ServerFSM) PlayingGame::EliminateSelf message received";
+    ServerApp& server = Server();
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+
+    if (player_connection->GetClientType() != Networking::CLIENT_TYPE_HUMAN_PLAYER
+        && player_connection->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER)
+    {
+        WarnLogger(FSM) << "(ServerFSM) PlayingGame::EliminateSelf non-player connection " << player_connection->PlayerID();
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_NONPLAYER_CANNOT_CONCEDE"), true));
+        server.Networking().Disconnect(player_connection);
+        return discard_event();
+    }
+
+    if (!server.EliminatePlayer(player_connection)) {
+        WarnLogger(FSM) << "(ServerFSM) PlayingGame::EliminateSelf player " << player_connection->PlayerID() << " not allowed to concede";
+        return discard_event();
+    }
+
+    server.Networking().Disconnect(player_connection);
+
+    return discard_event();
+}
+
 sc::result PlayingGame::react(const Error& msg) {
     auto fatal = HandleErrorMessage(msg, Server());
     if (fatal) {

@@ -1462,6 +1462,9 @@ void HumanClientApp::InitAutoTurns(int auto_turns) {
 void HumanClientApp::DecAutoTurns(int n)
 { InitAutoTurns(m_auto_turns - n); }
 
+void HumanClientApp::EliminateSelf()
+{ m_networking->SendMessage(EliminateSelfMessage()); }
+
 int HumanClientApp::AutoTurnsLeft() const
 { return m_auto_turns; }
 

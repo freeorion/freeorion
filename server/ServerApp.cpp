@@ -424,6 +424,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg, player_connection));       break;
     case Message::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg, player_connection));        break;
     case Message::MODERATOR_ACTION:         m_fsm->process_event(ModeratorAct(msg, player_connection));     break;
+    case Message::ELIMINATE_SELF:           m_fsm->process_event(EliminateSelf(msg, player_connection));    break;
 
     case Message::ERROR_MSG:
     case Message::DEBUG:                    break;
@@ -1278,7 +1279,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     m_universe.InitializeSystemGraph();
 
     UpdateEmpireSupply();
-    
+
     std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
 
     // assemble player state information, and send game start messages
@@ -1625,6 +1626,71 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
     }
 
     // TODO: notify other players
+}
+
+bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
+    if (!GetGameRules().Get<bool>("RULE_ALLOW_CONCEDE")) {
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CONCEDE_DISABLED"), false));
+        return false;
+    }
+
+    int player_id = player_connection->PlayerID();
+    int empire_id = PlayerEmpireID(player_id);
+    if (empire_id == ALL_EMPIRES) {
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_NONPLAYER_CANNOT_CONCEDE"), false));
+        return false;
+    }
+
+    // test if there other human players in the game
+    bool other_human_player = false;
+    for (auto& empires : Empires()) {
+        if (!empires.second->Eliminated() &&
+            empire_id != empires.second->EmpireID() &&
+            GetEmpireClientType(empires.second->EmpireID()) == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+        {
+            other_human_player = true;
+            break;
+        }
+    }
+    if (!other_human_player) {
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CONCEDE_LAST_HUMAN_PLAYER"), false));
+        return false;
+    }
+
+    Empire* empire = GetEmpire(empire_id);
+    if (!empire) {
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_NONPLAYER_CANNOT_CONCEDE"), false));
+        return false;
+    }
+
+    // test for colonies count
+    std::vector<int> planet_ids = Objects().FindObjectIDs(OwnedVisitor<Planet>(empire_id));
+    if (planet_ids.size() > static_cast<size_t>(GetGameRules().Get<int>("RULE_CONCEDE_COLONIES_THRESHOLD"))) {
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CONCEDE_EXCEED_COLONIES"), false));
+        return false;
+    }
+
+    // empire elimination
+    empire->Eliminate();
+
+    // unclaim ships and systems
+    for (int planet_id : planet_ids) {
+        auto planet = GetPlanet(planet_id);
+        if (planet)
+            planet->Reset();
+    }
+    for (auto& obj : Objects().FindObjects(OwnedVisitor<Ship>(empire_id))) {
+        obj->SetOwner(ALL_EMPIRES);
+        GetUniverse().RecursiveDestroy(obj->ID());
+    }
+
+    // Don't wait for turn
+    RemoveEmpireTurn(empire_id);
+
+    // break link between player and empire
+    m_player_empire_ids.erase(player_id);
+
+    return true;
 }
 
 void ServerApp::DropPlayerEmpireLink(int player_id)
