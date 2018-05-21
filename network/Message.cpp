@@ -793,11 +793,11 @@ void ExtractServerPlayerChatMessageData(const Message& msg,
 }
 
 void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn,
-                        EmpireManager& empires, Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
-                        SupplyManager& supply,
-                        std::map<int, PlayerInfo>& players, OrderSet& orders, bool& loaded_game_data, bool& ui_data_available,
-                        SaveGameUIData& ui_data, bool& save_state_string_available, std::string& save_state_string,
-                        GalaxySetupData& galaxy_setup_data)
+                                 EmpireManager& empires, Universe& universe, SpeciesManager& species,
+                                 CombatLogManager& combat_logs, SupplyManager& supply,
+                                 std::map<int, PlayerInfo>& players, OrderSet& orders, bool& loaded_game_data,
+                                 bool& ui_data_available, SaveGameUIData& ui_data, bool& save_state_string_available,
+                                 std::string& save_state_string, GalaxySetupData& galaxy_setup_data)
 {
     try {
         bool try_xml = false;
@@ -817,6 +817,7 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                 DebugLogger() << "ExtractGameStartMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
                 ia >> BOOST_SERIALIZATION_NVP(species);
+                combat_logs.Clear();    // only needed when loading new game, not when incrementally serializing logs on turn update
                 combat_logs.SerializeIncompleteLogs(ia, 1);
                 ia >> BOOST_SERIALIZATION_NVP(supply);
 
@@ -861,6 +862,7 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
             DebugLogger() << "ExtractGameStartMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
             ia >> BOOST_SERIALIZATION_NVP(species);
+            combat_logs.Clear();    // only needed when loading new game, not when incrementally serializing logs on turn update
             combat_logs.SerializeIncompleteLogs(ia, 1);
             ia >> BOOST_SERIALIZATION_NVP(supply);
 
