@@ -51,7 +51,7 @@ git checkout -b release-vX.Y.Z master
 ```
 * [ ] *On release branch HEAD* - Update version number in `CMakeLists.txt` and
       `cmake/make_versioncpp.py` to `vX.Y.Z`, remove trailing `+` if needed.
-* [ ] *On release branch HEAD* - Remove `Super Testers` species.
+* [ ] *On release branch HEAD* - Disable `Super Testers` species by default.
 * [ ] *On master branch HEAD* - Update version number in `CMakeLists.txt` and
       `cmake/make_versioncpp.py` to `vX.Y.Z+`.
 * [ ] Push updated release and master branch to GitHub.
