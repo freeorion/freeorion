@@ -104,10 +104,15 @@
     (EffectsGroups)                             \
     (Else)                                      \
     (Empire)                                    \
+    (EmpireHasBuildingAvailable)                \
+    (EmpireHasShipDesignAvailable)              \
+    (EmpireHasShipPartAvailable)                \
+    (EmpireHasTechResearched)                   \
     (EmpireMeter)                               \
     (EmpireMeterValue)                          \
     (EmpireObjectVisibility)                    \
     (EmpireShipsDestroyed)                      \
+    (EmpireStockpile)                           \
     (Enabled)                                   \
     (Endpoint)                                  \
     (EnemyOf)                                   \
@@ -286,7 +291,6 @@
     (Owner)                                     \
     (OwnerHasShipPartAvailable)                 \
     (OwnerHasTech)                              \
-    (OwnerTradeStockpile)                       \
     (Parameters)                                \
     (Part)                                      \
     (PartCapacity)                              \

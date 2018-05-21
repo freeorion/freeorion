@@ -11,17 +11,27 @@ namespace parse { namespace detail {
                                  const condition_parser_grammar& condition_parser,
                                  const value_ref_grammar<std::string>& string_grammar);
 
-        condition_parser_rule  ordered_bombarded_by;
-        condition_parser_rule  contains;
-        condition_parser_rule  contained_by;
-        condition_parser_rule  star_type;
+        parse::int_arithmetic_rules     int_rules;
+        star_type_parser_rules          star_type_rules;
+        single_or_bracketed_repeat<value_ref_rule<StarType>>
+                                        one_or_more_star_types;
+        condition_parser_rule           ordered_bombarded_by;
+        condition_parser_rule           contains;
+        condition_parser_rule           contained_by;
+        condition_parser_rule           star_type;
         rule<Condition::ContentType ()> content_type;
-        condition_parser_rule  location;
-        condition_parser_rule  combat_targets;
-        condition_parser_rule  owner_has_shippart_available;
-        condition_parser_rule  start;
-        star_type_parser_rules star_type_rules;
-        single_or_bracketed_repeat<value_ref_rule<StarType>> one_or_more_star_types;
+        condition_parser_rule           location;
+        condition_parser_rule           combat_targets;
+        condition_parser_rule           empire_has_buildingtype_available;
+        condition_parser_rule           empire_has_buildingtype_available1;
+        condition_parser_rule           empire_has_buildingtype_available2;
+        condition_parser_rule           empire_has_shipdesign_available;
+        condition_parser_rule           empire_has_shipdesign_available1;
+        condition_parser_rule           empire_has_shipdesign_available2;
+        condition_parser_rule           empire_has_shippart_available;
+        condition_parser_rule           empire_has_shippart_available1;
+        condition_parser_rule           empire_has_shippart_available2;
+        condition_parser_rule           start;
     };
 
     }

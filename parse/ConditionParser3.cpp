@@ -237,12 +237,12 @@ namespace parse { namespace detail {
                 [ _val = construct_movable_(new_<Condition::Chance>(deconstruct_movable_(_1, _pass))) ]
                 ;
 
-            owner_stockpile
-                = ( omit_[tok.OwnerTradeStockpile_]
+            stockpile
+                = ( omit_[tok.EmpireStockpile_]
                 >   label(tok.Low_)  > double_rules.expr
                 >   label(tok.High_) > double_rules.expr)
                 [ _val = construct_movable_(new_<Condition::EmpireStockpileValue>(
-                        RE_TRADE,
+                        RE_INDUSTRY,
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
                 ;
@@ -278,7 +278,7 @@ namespace parse { namespace detail {
                 |   created_on_turn
                 |   number_of
                 |   random
-                |   owner_stockpile
+                |   stockpile
                 |   resource_supply_connected
                 |   can_add_starlane
                 ;
@@ -301,7 +301,7 @@ namespace parse { namespace detail {
             sorting_operator.name("sorting operator");
             number_of.name("NumberOf");
             random.name("Random");
-            owner_stockpile.name("OwnerStockpile");
+            stockpile.name("EmpireStockpile");
             resource_supply_connected.name("ResourceSupplyConnected");
             can_add_starlane.name("CanAddStarlanesTo");
 
@@ -314,7 +314,7 @@ namespace parse { namespace detail {
             debug(created_on_turn);
             debug(number_of);
             debug(random);
-            debug(owner_stockpile);
+            debug(stockpile);
             debug(resource_supply_connected);
             debug(can_add_starlane);
 #endif

@@ -26,6 +26,7 @@ namespace parse { namespace detail {
         const value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_7::base_type(start, "condition_parser_rules_7"),
+        int_rules(tok, label, condition_parser, string_grammar),
         star_type_rules(tok, label, condition_parser),
         one_or_more_star_types(star_type_rules.expr)
     {
@@ -96,13 +97,73 @@ namespace parse { namespace detail {
                     deconstruct_movable_(_2, _pass))) ]
             ;
 
-        owner_has_shippart_available
-            =   (tok.OwnerHasShipPartAvailable_
-                 >>  (label(tok.Name_)
-                      > string_grammar [ _val = construct_movable_(new_<Condition::OwnerHasShipPartAvailable>(
-                              deconstruct_movable_(_1, _pass))) ]
-                     )
-                )
+        empire_has_buildingtype_available1
+            = (
+                    omit_[tok.EmpireHasBuildingAvailable_]
+                 >  label(tok.Name_) > string_grammar
+              ) [ _val = construct_movable_(new_<Condition::OwnerHasBuildingTypeAvailable>(
+                    deconstruct_movable_(_1, _pass))) ]
+            ;
+
+        empire_has_buildingtype_available2
+            = (
+                    omit_[tok.EmpireHasBuildingAvailable_]
+                 >> label(tok.Empire_) > int_rules.expr
+                 >  label(tok.Name_)   > string_grammar
+              ) [ _val = construct_movable_(new_<Condition::OwnerHasBuildingTypeAvailable>(
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_2, _pass))) ]
+            ;
+
+        empire_has_buildingtype_available
+            %=  empire_has_buildingtype_available1
+             |  empire_has_buildingtype_available2
+            ;
+
+        empire_has_shipdesign_available1
+            = (
+                    omit_[tok.EmpireHasShipDesignAvailable_]
+                 >> label(tok.DesignID_) > int_rules.expr
+              ) [ _val = construct_movable_(new_<Condition::OwnerHasShipDesignAvailable>(
+                    deconstruct_movable_(_1, _pass))) ]
+            ;
+
+        empire_has_shipdesign_available2
+            = (
+                    omit_[tok.EmpireHasShipDesignAvailable_]
+                 >> label(tok.Empire_)   > int_rules.expr
+                 >  label(tok.DesignID_) > int_rules.expr
+              ) [ _val = construct_movable_(new_<Condition::OwnerHasShipDesignAvailable>(
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_2, _pass))) ]
+            ;
+
+        empire_has_shipdesign_available
+            %=  empire_has_shipdesign_available1
+             |  empire_has_shipdesign_available2
+            ;
+
+        empire_has_shippart_available1
+            = (
+                    omit_[tok.OwnerHasShipPartAvailable_]
+                 >  label(tok.Name_) > string_grammar
+              ) [ _val = construct_movable_(new_<Condition::OwnerHasShipPartAvailable>(
+                    deconstruct_movable_(_1, _pass))) ]
+            ;
+
+        empire_has_shippart_available2
+            = (
+                    omit_[tok.EmpireHasShipPartAvailable_]
+                 >> label(tok.Empire_) > int_rules.expr
+                 >  label(tok.Name_)   > string_grammar
+              ) [ _val = construct_movable_(new_<Condition::OwnerHasShipPartAvailable>(
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_2, _pass))) ]
+            ;
+
+        empire_has_shippart_available
+            %=  empire_has_shippart_available1
+             |  empire_has_shippart_available2
             ;
 
         start
@@ -112,7 +173,9 @@ namespace parse { namespace detail {
             |   star_type
             |   location
             |   combat_targets
-            |   owner_has_shippart_available
+            |   empire_has_buildingtype_available
+            |   empire_has_shipdesign_available
+            |   empire_has_shippart_available
             ;
 
         ordered_bombarded_by.name("OrderedBombardedBy");
@@ -121,7 +184,9 @@ namespace parse { namespace detail {
         star_type.name("StarType");
         location.name("Location");
         combat_targets.name("CombatTargets");
-        owner_has_shippart_available.name("OwnerHasShipPartAvailable");
+        empire_has_buildingtype_available.name("EmpireHasBuildingTypeAvailable");
+        empire_has_shipdesign_available.name("EmpireHasShipDesignAvailable");
+        empire_has_shippart_available.name("EmpireHasShipPartAvailable");
 
 #if DEBUG_CONDITION_PARSERS
         debug(ordered_bombarded_by);

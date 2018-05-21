@@ -35,7 +35,7 @@ namespace parse { namespace detail {
         condition_parser_rule               number_of1;
         condition_parser_rule               number_of2;
         condition_parser_rule               random;
-        condition_parser_rule               owner_stockpile;
+        condition_parser_rule               stockpile;
         condition_parser_rule               resource_supply_connected;
         condition_parser_rule               can_add_starlane;
         condition_parser_rule               start;
