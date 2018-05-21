@@ -333,10 +333,18 @@ FORMAT_LIST_10_ITEMS
 ##
 
 PROJECT_BT_STOCKPILE
-Service Transfert Stock
+Transfert Stock
+
+PROJECT_BT_STOCKPILE_SHORT_DESC
+Transfère les PP vers le stock impérial
 
 PROJECT_BT_STOCKPILE_DESC
-Transfère les PP vers le stock impérial
+'''Transfère les PP vers le stock impérial sur la planète où le projet est en file d'attente. Tout autre projet en file d'attente situé sous le projet de transfert sur une planète reliée par ligne d'approvisionnement, ne se verra pas allouer de PP.
+
+Transfère seulement les PP disponibles sur cette planète; l'attribution des PP sur les planètes ne lui étant pas reliées par ligne d'approvisionnement ne sera pas affectée par ce projet.
+
+L'excédent de PP (PP non-alloués à un projet dans la file d'attente) sur cette planète ou tout autre emplacement, sera transféré vers le Stock, qu'un projet de Transfert Stock soit présent ou pas dans la file d'attente. Ce projet est utilisé pour transférer les PP vers le Stock même si d'autres projets situés sous celui-ci dans la file d'attente auraient pu se voir allouer les PP disponibles.'''
+
 
 ##
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
@@ -1004,6 +1012,17 @@ Trop de joueurs humains.
 ERROR_CONNECTION_WAS_REPLACED
 Votre connection a été mise à jour.
 
+ERROR_NONPLAYER_CANNOT_CONCEDE
+Seuls les joueurs peuvent capituler.
+
+ERROR_CONCEDE_DISABLED
+Capituler n'est pas autorisé.
+
+ERROR_CONCEDE_EXCEED_COLONIES
+Impossible de capituler; l'empire contrôle trop de colonies.
+
+ERROR_CONCEDE_LAST_HUMAN_PLAYER
+Impossible de capituler dans une partie avec un seul joueur humain.
 
 ##
 ## Game Rules
@@ -1146,6 +1165,18 @@ Taille habitable Géantes Gazeuses
 
 RULE_HABITABLE_SIZE_DESC
 Valeur utilisée pour ajuster les variations de [[encyclopedia POPULATION_TITLE_SHORT_DESC]] sur une planète de cette taille.
+
+RULE_ALLOW_CONCEDE
+Autoriser Capitulation
+
+RULE_ALLOW_CONCEDE_DESC
+Autorise les empires à capituler dans une partie. Si un empire capitule, tout ce qu'il possède dans l'univers sera automatiquement détruit. La partie continue avec les joueurs restants.
+
+RULE_CONCEDE_COLONIES_THRESHOLD
+Nombre maximum de colonies pour capituler
+
+RULE_CONCEDE_COLONIES_THRESHOLD_DESC
+Les empires contrôlant un nombre de colonies supérieur à cette valeur ne peuvent pas capituler.
 
 RULE_THRESHOLD_HUMAN_PLAYER_WIN
 Maximum de joueurs humains vainqueurs
@@ -2412,7 +2443,10 @@ GAME_MENU_LOAD
 Charger
 
 GAME_MENU_RESIGN
-Abandonner
+Quitter
+
+GAME_MENU_CONCEDE
+Capituler
 
 GAME_MENU_SAVE_FILES
 Fichiers de sauvegarde
@@ -2423,6 +2457,8 @@ Bouton désactivé
 SAVE_DISABLED_BROWSE_TEXT
 Le bouton "Sauvegarder" est désactivé, soit parce qu'il s'agit d'une partie multijoueurs dont ce client n'est ni l'Hôte ni le Modérateur, soit parce que le menu a été ouvert alors qu'au moins une des IAs n'a pas encore terminé son tour de jeu (indiqué par un triangle vert à gauche de l'icône représentant le type de joueur dans la fenêtre Empires).
 
+GAME_MENU_REALLY_CONCEDE
+Confirmer la capitulation? Cet empire sera supprimé de cette partie.
 
 ##
 ## Save game dialog
@@ -4302,6 +4338,9 @@ Sauvegardés
 DESIGN_WND_MONSTERS
 Monstres
 
+DESIGN_WND_ALL
+Connus
+
 DESIGN_WND_PART_PALETTE_TITLE
 Équipements d'Astronef
 
@@ -5135,6 +5174,9 @@ CATEGORY_GAME_CONCEPTS
 GROWTH_ARTICLE_SHORT_DESC
 Croissance
 
+STOCKPILE_ARTICLE_SHORT_DESC
+Stock
+
 OUTPOSTS_ARTICLE_SHORT_DESC
 Avant-Poste
 
@@ -5330,7 +5372,7 @@ Industrie
 METER_INDUSTRY_VALUE_DESC
 '''L'Industrie, mesurée en Points de Production (PP), représente la capacité de production et de transformation de biens matériels de l'ensemble des planètes de l'empire. Elle est nécessaire pour la construction des structures, des astronefs et tout autre projet.
 
-L'Industrie d'une planète peut participer à tout projet lancé sur les planètes qui lui sont reliées par lignes d'[[metertype METER_SUPPLY]] de l'empire. L'Industrie n'étant affectée à aucun projet durant un tour est convertie en [[metertype METER_STOCKPILE]] et ajoutée au Stock Impérial.
+L'Industrie d'une planète peut participer à tout projet lancé sur les planètes qui lui sont reliées par lignes d'[[metertype METER_SUPPLY]] de l'empire. L'Industrie n'étant affectée à aucun projet durant un tour est ajoutée au Stock Impérial.
 
 Pour davantage d'informations sur l'interface de Production, consultez l'article [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
@@ -5424,7 +5466,7 @@ METER_STOCKPILE_VALUE_LABEL
 Stock
 
 METER_STOCKPILE_VALUE_DESC
-'''La capacité du Stock Impérial indique la compétence d'un empire à gérer les surplus de production et à utiliser les points de production stockés. Le Stock total d'un empire correspond à la somme des indicateurs Stock de toutes les planètes de l'empire. Ce total détermine combien de PP peuvent être importés dans le Stock Impérial à chaque tour, et combien peuvent y être puisés à chaque tour afin d'être utilisés pour la production.
+'''La capacité du Stock Impérial indique la compétence d'un empire à gérer les surplus de production et à utiliser les points de production stockés. Le Stock total d'un empire correspond à la somme des indicateurs Stock de toutes les planètes de l'empire, plus les éventuels bonus de technologie. Ce total détermine combien de PP peuvent être puisés dans le Stock à chaque tour afin d'être utilisés pour la production.
 
 La compétence de gestion du Stock varie selon les espèces.'''
 
@@ -5522,13 +5564,21 @@ TRADE_FOCUS_TITLE
 Focus Commerce
 
 TRADE_FOCUS_TEXT
-Le Commerce est encore sans effet. Il s'agit juste d'un espace réservé indiquant que d'autres ressources sont prévues.
+Le Commerce est sans effet. Il s'agit juste d'un espace réservé indiquant que d'autres ressources sont prévues.
 
 PROTECTION_FOCUS_TITLE
 Focus Protection
 
 PROTECTION_FOCUS_TEXT
 Privilégier la Protection consiste pour une planète à se consacrer entièrement à sa propre défense. Ses effectifs d'[[metertype METER_TROOPS]], sa capacité de [[metertype METER_DEFENSE]], et la solidité de ses [[metertype METER_SHIELD]] sont par conséquent doublés.
+
+STOCKPILE_FOCUS_TITLE
+Focus Stock
+
+STOCKPILE_FOCUS_TEXT
+'''Le Focus Stock augmente le [[metertype METER_STOCKPILE]] d'une planète.
+
+[[METER_STOCKPILE_VALUE_DESC]]'''
 
 ARMOR_TITLE
 Blindage
@@ -8500,7 +8550,7 @@ FOCUS_STOCKPILE
 Stock
 
 FOCUS_STOCKPILE_DESC
-Permet aux technologies de stockage d'augmenter le transfert vers stock
+Permet aux technologies de stockage d'augmenter la capacité d'usage du stock
 
 # Focus types
 FOCUS_RESEARCH
@@ -10506,10 +10556,10 @@ PRO_PREDICTIVE_STOCKPILING_DESC
 Le service de Stock Impérial dispose d'une flotte acheminant les matériaux bruts vers des lieux où l'on prévoit que d'importants projets puissent être entrepris.
 Cette tâche s'avère difficile étant donné que le service doit présager du moment où la demande sera stipulée, de l'endroit, des matériaux et biens qui seront requis, et de leurs utilisateurs.
 
-Une partie des PP inutilisés sont transférés au Stock Impérial de Production, tandis que l'autre partie est gaspillée.
+Les PP inutilisés sont transférés automatiquement au Stock Impérial de Production.
 Un projet de la file d'attente de Production puise automatiquement dans le Stock Impérial si son usage n'a pas été explicitement bloqué pour le projet en question.
 
-Il s'agit donc de la technologie de base du Stock Impérial, augmentant de 1 le [[metertype METER_STOCKPILE]] des planètes réglées sur le Focus Stock.'''
+Il s'agit donc de la technologie de base du Stock Impérial, augmentant de 1 le [[metertype METER_STOCKPILE]] des planètes réglées sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]] ou le [[encyclopedia GROWTH_FOCUS_TITLE]].'''
 
 PRO_GENERIC_SUPPLIES
 Stocks Génériques
@@ -10520,9 +10570,10 @@ PRO_GENERIC_SUPPLIES_DESC
 Les Stocks Génériques peuvent être constitués bien avant que la demande ne se fasse sentir. Les packages d'approvisionnement intègrent habituellement des dispositifs de reconstruction d'infrastructures permettant de redéfinir la production de nouveaux biens à partir des Stocks Génériques.
 En atteignant ce degré de sophistication, les Stocks Génériques peuvent être utilisés pour concevoir de nouveaux produits technologiques qui n'étaient même pas envisagés au moment de la constitution des stocks.
 
-Cela exempte le service du Stock Impérial de connaître à l'avance quels biens seront exactement demandés. Prévoir le lieu de la demande s'avère désormais suffisant.
+Cela exempte le service du Stock Impérial de connaître à l'avance quels biens seront exactement demandés. Prévoir le lieu de la demande et les quantités s'avère désormais suffisant.
 
-Il s'agit donc d'une technologie d'amélioration du Stock Impérial, augmentant de 3 le [[metertype METER_STOCKPILE]] des planètes réglées sur le Focus Stock.'''
+Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 2, plus un supplément de 0.01 par Population, plus un supplément de 3 pour chaque planète réglée sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]] ou le [[encyclopedia GROWTH_FOCUS_TITLE]].
+Ces amélioriations sont cumulables avec le bonus de la technologie [[tech PRO_PREDICTIVE_STOCKPILING]].'''
 
 PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
 Complexe d'Intrication Interstellaire
@@ -10531,7 +10582,10 @@ PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 '''L'intrication quantique des salles de contrôle permet de manœuvrer des machines industrielles à distance à partir d'autres systèmes stellaires.
 Dissocier le personnel et les moyens de production favorise un procédé optimal de conception et augmente l'efficience du service de Stock Impérial.
 
-Il s'agit donc d'une technologie d'amélioration du Stock Impérial, augmentant de 3 le [[metertype METER_STOCKPILE]] des planètes réglées sur le Focus Stock.'''
+Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 6, plus un supplément de 0.02 par Population.
+Ces amélioriations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_VOID_PREDICTION]].
+
+Débloque également la structure [[building BLD_STOCKPILING_CENTER]], augmentant additionnellement le [[metertype METER_STOCKPILE]] de 0.1 par Industrie.'''
 
 PRO_VOID_PREDICTION
 Prédiction du Vide
@@ -10540,9 +10594,8 @@ PRO_VOID_PREDICTION_DESC
 '''Tandis que les prédictions classiques se basent invariablement sur la connaissance statistique des faits passés, l'étude de la mémoire chaotique du Vide mène à de solides prédictions de faits pourtant initiaux ou étranges.
 Pour le service du Stock Impérial, la Prédiction du Vide est l'instrument par excellence permettant de fournir les bons matériaux avant même que le besoin ne se manifeste.
 
-Il s'agit donc d'une technologie d'amélioration du Stock Impérial, augmentant l'indicateur [[metertype METER_STOCKPILE]] d'une planète.
-De 0.1 par Population pour les planètes réglées sur le Focus Croissance ou Logistique.
-De 0.2 par Population pour les planètes réglées sur le Focus Stock.'''
+Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 0.2 par Population.
+Ces amélioriations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].'''
 
 PRO_MICROGRAV_MAN
 Production en Microgravité
@@ -12112,11 +12165,20 @@ BLD_INTERSPECIES_ACADEMY
 Académie InterDesign d'Espèce
 
 BLD_INTERSPECIES_ACADEMY_DESC
-'''Augmente l'usage du Stock de 10 sur la planète, si cette dernière est réglée sur le Focus Stock.
+'''Augmente le Stock de 10 sur la planète, si cette dernière est réglée sur le Focus Stock.
 Augmente la [[metertype METER_RESEARCH]] de 5 sur la planète, si cette dernière est réglée sur le Focus Recherche.
+
+Apprendre à concevoir des dispositifs utilisables par différentes espèces est crucial afin de développer des outils universellement exploitables.
 
 Chaque empire peut abriter une académie sur une à six planètes peuplées par différentes espèces. Pour accueillir une académie, le Bonheur de la Population sur la planète doit être élevé et cette dernière doit se trouver à au moins trois Voies spatiales de l'académie existante la plus proche.'''
 
+BLD_STOCKPILING_CENTER
+Centre d'Intrication Impériale
+
+BLD_STOCKPILING_CENTER_DESC
+'''Augmente le [[metertype METER_STOCKPILE]] de 0.1 par [[metertype METER_INDUSTRY]].
+
+Au lieu de recourir à l'implantation classique d'infastructures associant le lieu de production et la main d'œuvre planétaire, un noyau central peut permettre la connexion entre n'importe quelle infrastructure et main d'œuvre disponible. Cela engendre une très grande flexibilité des lieux de production.'''
 
 BLD_MEGALITH
 Mégalithe
@@ -14261,19 +14323,19 @@ NO_STOCKPILE_DESC
 −−	Aucun [[metertype METER_STOCKPILE]]
 
 BAD_STOCKPILE_DESC
-−	Mauvais en [[metertype METER_STOCKPILE]] : 50%
+−	Mauvais en [[metertype METER_STOCKPILE]] : +0.01 par Population
 
 AVERAGE_STOCKPILE_DESC
-'''	Normal en [[metertype METER_STOCKPILE]] : 100%'''
+'''	Normal en [[metertype METER_STOCKPILE]] : +0.02 par Population'''
 
 GOOD_STOCKPILE_DESC
-+	Bon en [[metertype METER_STOCKPILE]] : 300%
++	Bon en [[metertype METER_STOCKPILE]] : +0.06 par Population
 
 GREAT_STOCKPILE_DESC
-++	Excellent en [[metertype METER_STOCKPILE]] : 1000%
+++	Excellent en [[metertype METER_STOCKPILE]] : +0.2 par Population
 
 ULTIMATE_STOCKPILE_DESC
-+++	Parfait en [[metertype METER_STOCKPILE]] : 1500%
++++	Parfait en [[metertype METER_STOCKPILE]] : +0.3 par Population
 
 GOOD_SHIP_SHIELD_DESC
 +	Bons [[metertype METER_SHIELD]] d'astronefs : +1
