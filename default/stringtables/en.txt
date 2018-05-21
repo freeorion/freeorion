@@ -339,13 +339,14 @@ PROJECT_BT_STOCKPILE_SHORT_DESC
 Transfers PP into the imperial stockpile
 
 PROJECT_BT_STOCKPILE_DESC
-'''Transfers PP at the planet where this project is enqueued to the imperial stockpile. You can specify the amount and repetition of the transfer. PP spent on the transfer are added to the imperial stockpile.
+'''Transfers PP at the planet where this project is enqueued to the imperial stockpile. One can specify the amount and repetition of the transfer. PP spent on the transfer are added to the imperial stockpile.
 
-Only transfers PP that are available at this planet so only PP produced in the same supply-group are used and no PP from the imperial stockpile.
+Only uses PP that are produced in the same supply-group. No PP from the imperial stockpile are used.
 
-Surplus PP (PP not allocated to anything on the queue) at this or any other location will be transferred to the stockpile with or without a stockpile transfer project on the queue and may trigger a warning.  This project is used for fine-tuning allocation of PP to the stockpile even if there are items on the build queue below it that could have been allocated available PP.
+Surplus PP (PP not allocated to anything on the queue) at this or any other location will be transferred to the stockpile with or without a stockpile transfer project on the queue.  This project is used for controlling PP allocation to the stockpile. PP used for stockpile transfer are not available for items on the build queue below it.
 
-A fully funded transfer will be finished in a single turn so if you want to make sure you always have at least 10PP available in the stockpile, you can add a 10x Stockpile Transfer and set the repetition to 99 times.'''
+An example: One wants to draw PP from the stockpile in a secondary supply-group. For this the stockpile needs to be filled from the primary supply-group. Lets say one has 100PP industry in the primary supply-group and is able to draw 10PP from the stockpile. For making sure that 10PP are always available in the stockpile one adds to the top of build queue a 10x Stockpile Transfer project on a planet in the primary supply-group.
+The Stockpile Transfer project is above other primary supply-group projects in the build queue. So it is fully funded and will increase the stockpile by 10PP next turn. In order for a lasting effect one sets the repetition to 99 times.'''
 
 
 ##
