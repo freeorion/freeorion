@@ -831,7 +831,7 @@ namespace {
         if (it == m_id_to_obsolete_and_loc.end())
             return;
 
-        it->second.first = {obsolete, NextUIObsoleteEvent()};
+        it->second.first = std::make_pair(obsolete, NextUIObsoleteEvent());
     }
 
     void DisplayedShipDesignManager::SetHullObsolete(const std::string& name, const bool obsolete) {
