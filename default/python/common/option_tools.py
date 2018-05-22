@@ -1,3 +1,4 @@
+import ast
 import os
 import sys
 from ConfigParser import SafeConfigParser
@@ -131,5 +132,28 @@ def parse_config(option_string, config_dir):
     for section in config.sections():
         sectioned_options.setdefault(section, odict())
         for k, v in config.items(section):
-            flat_options[k] = v
-            sectioned_options[section][k] = v
+            parsed_value = _parse_config_value(v)
+            print "Config option: %s = %s" % (k, parsed_value)
+            flat_options[k] = parsed_value
+            sectioned_options[section][k] = parsed_value
+
+
+def _parse_config_value(value):
+    """Convert the config value into a suitable data type.
+
+    As the python standard library ConfigParser will always return strings,
+    a config entry as some_option=False is quite misleading:
+    if {'some_option: 'False'}['some_option']:
+        print "Oops, 'False' is a non-empty string which evaluates to True"
+
+    Therefore, use ast.literal_eval to try and interpret the config value as a
+    more suitable data type than string (e.g. bool, int or float). If parsing
+    fails, the original string is returned.
+    """
+    # parsing with literal_eval will fail for empty strings
+    if not value:
+        return value
+    try:
+        return ast.literal_eval(value)
+    except ValueError:
+        return value
