@@ -13,7 +13,7 @@ import random
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
 
-from common.option_tools import parse_config, get_option_dict
+from common.option_tools import parse_config, get_option_dict, check_bool
 parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())
 
 from freeorion_tools import patch_interface
@@ -313,8 +313,8 @@ def generateOrders():  # pylint: disable=invalid-name
     # TODO: Consider adding an option to clear AI orders after load (must save AIstate at turn start then)
     if fo.currentTurn() == foAIstate.last_turn_played:
         info("The AIstate indicates that this turn was already played.")
-        if not get_option_dict().get('replay_turn_after_load', False):
-            info("Aborting order generation. Orders from savegame will still be issued.")
+        if not check_bool(get_option_dict().get('replay_turn_after_load', 'False')):
+            info("Aborting new order generation. Orders from savegame will still be issued.")
             try:
                 fo.doneTurn()
             except Exception as e:
