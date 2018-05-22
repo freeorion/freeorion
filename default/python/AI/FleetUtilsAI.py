@@ -1,5 +1,5 @@
 import math
-from logging import error, warn
+from logging import warn
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -148,7 +148,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
             try:
                 fleet_pool_set.remove(fleet_id)
             except KeyError:
-                error("After having split a fleet, the original fleet apparently no longer exists.", exc_info=True)
+                warn("After having split a fleet, the original fleet apparently no longer exists.")
                 continue
             fleet_list.append(fleet_id)
 
