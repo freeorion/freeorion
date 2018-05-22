@@ -339,14 +339,14 @@ PROJECT_BT_STOCKPILE_SHORT_DESC
 Transfers PP into the imperial stockpile
 
 PROJECT_BT_STOCKPILE_DESC
-'''Transfers PP at the planet where this project is enqueued to the imperial stockpile. One can specify the amount and repetition of the transfer. PP spent on the transfer are added to the imperial stockpile.
+'''Transfers PP at the planet where this project is enqueued to the imperial stockpile. The amount to transfer and how often the transfer should occur can be specified. PP spent on the transfer are added to the imperial stockpile.
 
 Only uses PP that are produced in the same supply-group. No PP from the imperial stockpile are used.
 
-Surplus PP (PP not allocated to anything on the queue) at this or any other location will be transferred to the stockpile with or without a stockpile transfer project on the queue.  This project is used for controlling PP allocation to the stockpile. PP used for stockpile transfer are not available for items on the build queue below it.
+Surplus PP (PP not allocated to anything on the queue) at this or any other location will be transferred to the stockpile with or without a stockpile transfer project on the queue. PP used for stockpile transfer are not available for items on the build queue below it.
 
-An example: One wants to draw PP from the stockpile in a secondary supply-group. For this the stockpile needs to be filled from the primary supply-group. Lets say one has 100PP industry in the primary supply-group and is able to draw 10PP from the stockpile. For making sure that 10PP are always available in the stockpile one adds to the top of build queue a 10x Stockpile Transfer project on a planet in the primary supply-group.
-The Stockpile Transfer project is above other primary supply-group projects in the build queue. So it is fully funded and will increase the stockpile by 10PP next turn. In order for a lasting effect one sets the repetition to 99 times.'''
+For example: An empire wants to draw PP from the stockpile in a secondary supply-group. For this the stockpile needs to be filled from the primary supply-group. The empire has 100 PP industry in the primary supply-group and its stockpile use limit is 10 PP. To make sure that 10 PP are always available in the stockpile, one adds to the top of build queue a 10x Stockpile Transfer project on a planet in the primary supply-group.
+The Stockpile Transfer project is above other primary supply-group projects in the build queue. So it is fully funded and will increase the stockpile by 10 PP next turn. In order for a lasting effect one sets the repetition to 99 times.'''
 
 
 ##
@@ -4064,8 +4064,8 @@ It also allows for some interaction with the [[encyclopedia MAP_WINDOW_ARTICLE_T
 The Production Summary panel shows available Production Points.
 If a system is selected, there are two columns shown. The left column shows production points across your entire empire. The right column gives production points for the selected system (but is absent if no system is selected).
 Available Points relates to the PP available for production. The right value are the maximum available production points for the selected system. This may be less than the total available when all of your empire's systems are not [[metertype METER_SUPPLY]] connected.
-Stockpile relates to the PP available for production using the imperial stockpile. Production items are enabled to draw from the Imperial Stockpile by default and have to be explicitly disabled from doing so.
-Generally, most excess PP will be wasted and lost, but a part of the excess will be stored in the imperial stockpile.
+Stockpile relates to the PP available for production using the imperial stockpile. Production items are enabled to use PP from the Imperial Stockpile by default and have to be explicitly disabled from doing so.
+PP not allocated to anything on the build queue will automatically be stored in the imperial stockpile.
 
 <u>Producible Items panel</u>
 
