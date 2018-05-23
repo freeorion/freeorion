@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\network">
+      <UniqueIdentifier>{142c3274-1cab-42d6-a86c-e59ea78eb237}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Empire">
+      <UniqueIdentifier>{12515875-a210-4dcd-bb6d-d3670862478b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\combat">
+      <UniqueIdentifier>{764c47ba-1d26-4f9e-a713-5fe40180a278}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\universe">
+      <UniqueIdentifier>{43f4183a-a57b-41e7-ba41-dcd67de4ce56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\network">
+      <UniqueIdentifier>{160a68fb-39f9-46df-a415-704ffec1d678}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{cf92b189-673f-4409-a849-7cf498468f7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\combat">
+      <UniqueIdentifier>{b769d59e-1a03-4c55-9bdd-cfa42e506283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Empire">
+      <UniqueIdentifier>{329c410c-9729-4f42-9a1f-09106fff80a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{8288356b-fc09-4aef-992b-9ecf8963f7f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\universe">
+      <UniqueIdentifier>{150b0529-eaa2-4ad3-b805-488bc11d1d6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cmake">
+      <UniqueIdentifier>{6ffe6d1e-98f6-4958-9efb-3ceb8ff2c1c0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\util\Serialize.ipp">
+      <Filter>Source Files\util</Filter>
+    </None>
+    <None Include="..\..\cmake\make_versioncpp.py">
+      <Filter>Source Files\cmake</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\network\Message.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\MessageQueue.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\Networking.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\Empire.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\ResearchQueue.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\ProductionQueue.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\EmpireManager.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\ResourcePool.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\PopulationPool.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Building.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Condition.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Effect.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\EffectAccounting.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Encyclopedia.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Enums.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Fleet.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\IDAllocator.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\blocking_combiner.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Meter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ObjectMap.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Planet.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\PopCenter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Predicates.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ResourceCenter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Ship.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ShipDesign.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Special.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Species.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\System.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Tech.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Universe.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\UniverseObject.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRef.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRefFwd.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\AppInterface.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Directories.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\MultiplayerCommon.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\GameRules.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\i18n.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Logger.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\LoggerWithOptionsDB.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OptionsDB.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OptionValidators.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Order.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OrderSet.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Process.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Pending.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Random.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Serialize.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\SitRepEntry.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\VarText.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Version.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\XMLDoc.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\Diplomacy.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\StringTable.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Field.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\ModeratorAction.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\CombatSystem.h">
+      <Filter>Header Files\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\ScopedTimer.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\CombatEvent.h">
+      <Filter>Header Files\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\CombatEvents.h">
+      <Filter>Header Files\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\CombatLogManager.h">
+      <Filter>Header Files\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Fighter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\Supply.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Pathfinder.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\CheckSums.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\network\MessageQueue.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\network\Networking.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Directories.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\MultiplayerCommon.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\GameRules.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\i18n.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Logger.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\LoggerWithOptionsDB.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\OptionsDB.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Order.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\OrderSet.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Random.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeEmpire.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeMultiplayerCommon.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeOrderSet.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeUniverse.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\AppInterface.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SitRepEntry.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\VarText.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\XMLDoc.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\Empire.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\ResearchQueue.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\ProductionQueue.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\EmpireManager.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\ResourcePool.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\PopulationPool.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Building.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ValueRef.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Condition.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Effect.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\EffectAccounting.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Encyclopedia.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Enums.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Fleet.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\IDAllocator.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Meter.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ObjectMap.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Planet.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\PopCenter.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Predicates.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ResourceCenter.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Ship.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ShipDesign.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Special.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Species.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\System.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Tech.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Universe.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\UniverseObject.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\StringTable.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\Diplomacy.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Field.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\ModeratorAction.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeModeratorAction.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\CombatLogManager.cpp">
+      <Filter>Source Files\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Version.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\ScopedTimer.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\network\Message.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\EnumText.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SaveGamePreviewUtils.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\CombatEvents.cpp">
+      <Filter>Source Files\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\CombatEvent.cpp">
+      <Filter>Source Files\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Fighter.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\Supply.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Pathfinder.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\CheckSums.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\util\Version.cpp.in">
+      <Filter>Source Files\util</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

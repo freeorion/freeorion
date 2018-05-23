@@ -1,0 +1,77 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GiGi", "GiGi\GiGi.vcxproj", "{2CEC3AB3-36A0-4037-AEC2-DA0435A4DADB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FreeOrion", "FreeOrion\FreeOrion.vcxproj", "{311D02C0-427D-4A03-AAEB-B819A9ACF5AB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BEDF460A-EAE9-4E20-AFB2-2C8434051150} = {BEDF460A-EAE9-4E20-AFB2-2C8434051150}
+		{9925F25C-A72E-42AE-B2E3-6657255BF293} = {9925F25C-A72E-42AE-B2E3-6657255BF293}
+		{A79A0D95-B9C4-42A5-9D4A-B55240EB295A} = {A79A0D95-B9C4-42A5-9D4A-B55240EB295A}
+		{2CEC3AB3-36A0-4037-AEC2-DA0435A4DADB} = {2CEC3AB3-36A0-4037-AEC2-DA0435A4DADB}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FreeOrionD", "FreeOrionD\FreeOrionD.vcxproj", "{B9808A04-CE5E-4660-99CB-B8C8C4E64402}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BEDF460A-EAE9-4E20-AFB2-2C8434051150} = {BEDF460A-EAE9-4E20-AFB2-2C8434051150}
+		{9925F25C-A72E-42AE-B2E3-6657255BF293} = {9925F25C-A72E-42AE-B2E3-6657255BF293}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FreeOrionCA", "FreeOrionCA\FreeOrionCA.vcxproj", "{77E8E74E-F581-4850-A4C6-A088564DF9A7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BEDF460A-EAE9-4E20-AFB2-2C8434051150} = {BEDF460A-EAE9-4E20-AFB2-2C8434051150}
+		{9925F25C-A72E-42AE-B2E3-6657255BF293} = {9925F25C-A72E-42AE-B2E3-6657255BF293}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Parsers", "Parsers\Parsers.vcxproj", "{9925F25C-A72E-42AE-B2E3-6657255BF293}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Common\Common.vcxproj", "{BEDF460A-EAE9-4E20-AFB2-2C8434051150}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9925F25C-A72E-42AE-B2E3-6657255BF293} = {9925F25C-A72E-42AE-B2E3-6657255BF293}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GiGiSDL", "GiGiSDL\GiGiSDL.vcxproj", "{A79A0D95-B9C4-42A5-9D4A-B55240EB295A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2CEC3AB3-36A0-4037-AEC2-DA0435A4DADB} = {2CEC3AB3-36A0-4037-AEC2-DA0435A4DADB}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|Win32 = Release|Win32
+		Release-XP|Win32 = Release-XP|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2CEC3AB3-36A0-4037-AEC2-DA0435A4DADB}.Release|Win32.ActiveCfg = Release|Win32
+		{2CEC3AB3-36A0-4037-AEC2-DA0435A4DADB}.Release|Win32.Build.0 = Release|Win32
+		{2CEC3AB3-36A0-4037-AEC2-DA0435A4DADB}.Release-XP|Win32.ActiveCfg = Release-XP|Win32
+		{2CEC3AB3-36A0-4037-AEC2-DA0435A4DADB}.Release-XP|Win32.Build.0 = Release-XP|Win32
+		{311D02C0-427D-4A03-AAEB-B819A9ACF5AB}.Release|Win32.ActiveCfg = Release|Win32
+		{311D02C0-427D-4A03-AAEB-B819A9ACF5AB}.Release|Win32.Build.0 = Release|Win32
+		{311D02C0-427D-4A03-AAEB-B819A9ACF5AB}.Release-XP|Win32.ActiveCfg = Release-XP|Win32
+		{311D02C0-427D-4A03-AAEB-B819A9ACF5AB}.Release-XP|Win32.Build.0 = Release-XP|Win32
+		{B9808A04-CE5E-4660-99CB-B8C8C4E64402}.Release|Win32.ActiveCfg = Release|Win32
+		{B9808A04-CE5E-4660-99CB-B8C8C4E64402}.Release|Win32.Build.0 = Release|Win32
+		{B9808A04-CE5E-4660-99CB-B8C8C4E64402}.Release-XP|Win32.ActiveCfg = Release-XP|Win32
+		{B9808A04-CE5E-4660-99CB-B8C8C4E64402}.Release-XP|Win32.Build.0 = Release-XP|Win32
+		{77E8E74E-F581-4850-A4C6-A088564DF9A7}.Release|Win32.ActiveCfg = Release|Win32
+		{77E8E74E-F581-4850-A4C6-A088564DF9A7}.Release|Win32.Build.0 = Release|Win32
+		{77E8E74E-F581-4850-A4C6-A088564DF9A7}.Release-XP|Win32.ActiveCfg = Release-XP|Win32
+		{77E8E74E-F581-4850-A4C6-A088564DF9A7}.Release-XP|Win32.Build.0 = Release-XP|Win32
+		{9925F25C-A72E-42AE-B2E3-6657255BF293}.Release|Win32.ActiveCfg = Release|Win32
+		{9925F25C-A72E-42AE-B2E3-6657255BF293}.Release|Win32.Build.0 = Release|Win32
+		{9925F25C-A72E-42AE-B2E3-6657255BF293}.Release-XP|Win32.ActiveCfg = Release-XP|Win32
+		{9925F25C-A72E-42AE-B2E3-6657255BF293}.Release-XP|Win32.Build.0 = Release-XP|Win32
+		{BEDF460A-EAE9-4E20-AFB2-2C8434051150}.Release|Win32.ActiveCfg = Release|Win32
+		{BEDF460A-EAE9-4E20-AFB2-2C8434051150}.Release|Win32.Build.0 = Release|Win32
+		{BEDF460A-EAE9-4E20-AFB2-2C8434051150}.Release-XP|Win32.ActiveCfg = Release-XP|Win32
+		{BEDF460A-EAE9-4E20-AFB2-2C8434051150}.Release-XP|Win32.Build.0 = Release-XP|Win32
+		{A79A0D95-B9C4-42A5-9D4A-B55240EB295A}.Release|Win32.ActiveCfg = Release|Win32
+		{A79A0D95-B9C4-42A5-9D4A-B55240EB295A}.Release|Win32.Build.0 = Release|Win32
+		{A79A0D95-B9C4-42A5-9D4A-B55240EB295A}.Release-XP|Win32.ActiveCfg = Release-XP|Win32
+		{A79A0D95-B9C4-42A5-9D4A-B55240EB295A}.Release-XP|Win32.Build.0 = Release-XP|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

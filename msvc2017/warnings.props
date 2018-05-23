@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_PropertySheetDisplayName>Warning and error reporting</_PropertySheetDisplayName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4091;4099;4101;4146;4244;4251;4258;4267;4275;4311;4312;4351;4396;4503;4800;4996</DisableSpecificWarnings>
+      <ErrorReporting>None</ErrorReporting>
+    </ClCompile>
+    <Link>
+      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

@@ -1,0 +1,622 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\client">
+      <UniqueIdentifier>{b7e1ac2b-7eb2-497a-80b4-1b3c660e492a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\client\human">
+      <UniqueIdentifier>{d2ae9498-3cb1-4223-b055-39f924d909ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Empire">
+      <UniqueIdentifier>{3cc43ce0-b6b4-416a-80a0-949870380ee1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\client">
+      <UniqueIdentifier>{8155c968-e020-4d9e-9b45-1b2b9f769cf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\client\human">
+      <UniqueIdentifier>{36991414-b082-4e70-b6b1-77cff5c09cb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\network">
+      <UniqueIdentifier>{683283a4-a27f-4105-8437-c3d102745e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\network">
+      <UniqueIdentifier>{b9e15fb8-5458-4bcb-92dc-09ba4b65cfae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{f9dda62a-26fb-45a2-a8dc-c2fe4f1434c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{df72940c-e723-470a-b3ef-bd243e47ffbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\universe">
+      <UniqueIdentifier>{8fb10d4c-209f-4422-a61f-749aae32aa5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{f30d9cf4-175a-4a74-8480-75ef04f66ed4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{4fba4d8e-44f9-4cb3-8914-7aff0a18b6da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\CombatReport">
+      <UniqueIdentifier>{595eb208-938f-4560-aa0c-0d706f821421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI\CombatReport">
+      <UniqueIdentifier>{039411a6-01bf-4e77-b491-f746f5f7fc1d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\client\ClientApp.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\ClientFSMEvents.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\human\HumanClientFSM.h">
+      <Filter>Header Files\client\human</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\human\chmain.h">
+      <Filter>Header Files\client\human</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\human\HumanClientApp.h">
+      <Filter>Header Files\client\human</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\EmpireManager.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\ResourcePool.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\PopulationPool.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\Empire.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\ResearchQueue.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\ProductionQueue.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\Networking.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\ClientNetworking.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\Message.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\MessageQueue.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\About.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\AccordionPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\BuildDesignatorWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\BuildingsPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CensusBrowseWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ChatWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ClientUI.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CUIControls.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CUIDrawUtil.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CUISpin.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CUIStyle.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CUIWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\DesignWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\EncyclopediaDetailPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\FleetButton.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\FleetWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\GalaxySetupWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\IconTextBrowseWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\InGameMenu.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\IntroScreen.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\LinkText.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\MapWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\MeterBrowseWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\MilitaryPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\MultiIconValueIndicator.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\MultiMeterStatusBar.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\MultiplayerLobbyWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\i18n.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Logger.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\OptionsWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PopulationPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ProductionWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\QueueListBox.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ResearchWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ResourcePanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ServerConnectWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ShaderProgram.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\SidePanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\SitRepPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\Sound.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\SpecialsPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\SystemIcon.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\SystemResourceSummaryBrowseWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\TechTreeWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\TextBrowseWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\MultiplayerCommon.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\GameRules.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OptionsDB.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OptionValidators.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Order.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OrderSet.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Process.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Random.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Serialize.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\SitRepEntry.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\VarText.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Version.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\XMLDoc.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\AppInterface.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\binreloc.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Directories.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\IDAllocator.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\UniverseObject.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRef.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Building.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Condition.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Effect.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\EffectAccounting.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Enums.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Fleet.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\blocking_combiner.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Meter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Planet.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\PopCenter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Predicates.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ResourceCenter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Ship.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ShipDesign.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Special.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Species.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\System.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Tech.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Universe.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PlayerListWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRefFwd.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\TechTreeLayout.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CUISlider.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ObjectMap.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ObjectListWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\FieldIcon.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Field.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ModeratorActionsWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\GraphControl.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\Hotkeys.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\TechTreeArcs.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CombatReport\CombatLogWnd.h">
+      <Filter>Header Files\UI\CombatReport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CombatReport\CombatReportData.h">
+      <Filter>Header Files\UI\CombatReport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CombatReport\CombatReportWnd.h">
+      <Filter>Header Files\UI\CombatReport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CombatReport\GraphicalSummary.h">
+      <Filter>Header Files\UI\CombatReport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CUILinkTextBlock.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ResourceBrowseWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PasswordEnterWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\FreeOrion.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\client\ClientFSMEvents.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\ClientApp.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\human\HumanClientApp.cpp">
+      <Filter>Source Files\client\human</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\human\chmain.cpp">
+      <Filter>Source Files\client\human</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\human\HumanClientFSM.cpp">
+      <Filter>Source Files\client\human</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\network\ClientNetworking.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ShaderProgram.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\SidePanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\SitRepPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\Sound.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\SystemIcon.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\TechTreeWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\About.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\AccordionPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\BuildDesignatorWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\BuildingsPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CensusBrowseWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ChatWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ClientUI.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CUIControls.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CUIDrawUtil.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CUIStyle.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CUIWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\DesignWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\EncyclopediaDetailPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\FleetButton.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\FleetWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\GalaxySetupWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\IconTextBrowseWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\InGameMenu.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\IntroScreen.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\LinkText.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\MapWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\MeterBrowseWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\MilitaryPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\MultiIconValueIndicator.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\MultiMeterStatusBar.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\MultiplayerLobbyWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\OptionsWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PopulationPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ProductionWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\QueueListBox.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ResearchWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ResourcePanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ServerConnectWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\SpecialsPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\SystemResourceSummaryBrowseWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PlayerListWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\TechTreeLayout.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\TextBrowseWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Process.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ObjectListWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\FieldIcon.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ModeratorActionsWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\GraphControl.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\Hotkeys.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\SaveFileDialog.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\TechTreeArcs.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CombatReport\CombatLogWnd.cpp">
+      <Filter>Source Files\UI\CombatReport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CombatReport\CombatReportData.cpp">
+      <Filter>Source Files\UI\CombatReport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CombatReport\CombatReportWnd.cpp">
+      <Filter>Source Files\UI\CombatReport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CombatReport\GraphicalSummary.cpp">
+      <Filter>Source Files\UI\CombatReport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CUILinkTextBlock.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ResourceBrowseWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\DependencyVersions.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PasswordEnterWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\client\human\FreeOrion.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
