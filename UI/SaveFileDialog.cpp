@@ -461,7 +461,6 @@ public:
     const FullPreview m_full_preview;
 };
 
-
 class SaveFileListBox : public CUIListBox {
 public:
     SaveFileListBox() :

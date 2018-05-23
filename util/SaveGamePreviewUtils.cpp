@@ -154,6 +154,7 @@ template void SaveGamePreviewData::serialize<freeorion_bin_iarchive>(freeorion_b
 template void SaveGamePreviewData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, unsigned int);
 template void SaveGamePreviewData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, unsigned int);
 
+
 template<class Archive>
 void FullPreview::serialize(Archive& ar, unsigned int version)
 {
@@ -180,6 +181,59 @@ template void PreviewInformation::serialize<freeorion_bin_oarchive>(freeorion_bi
 template void PreviewInformation::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
 template void PreviewInformation::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void PreviewInformation::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+
+
+bool SaveFileWithValidHeader(const boost::filesystem::path& path) {
+    if (!fs::exists(path))
+        return false;
+
+    fs::ifstream ifs(path, std::ios_base::binary);
+    if (!ifs)
+        return false;
+
+    // dummy holders for deserialized data
+    SaveGamePreviewData                 ignored_save_preview_data;
+    GalaxySetupData                     ignored_galaxy_setup_data;
+    ServerSaveGameData                  ignored_server_save_game_data;
+    std::vector<PlayerSaveHeaderData>   ignored_player_save_header_data;
+    std::map<int, SaveGameEmpireData>   ignored_empire_save_game_data;
+
+    DebugLogger() << "SaveFileWithValidHeader: Loading headers from: " << path.string();
+    try {
+        try {
+            ScopedTimer timer("SaveFileWithValidHeader (binary): " + path.string(), true);
+
+            // first attempt binary deserialziation
+            freeorion_bin_iarchive ia(ifs);
+
+            ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
+            ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
+            ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
+            ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_header_data);
+            ia >> BOOST_SERIALIZATION_NVP(ignored_empire_save_game_data);
+
+        } catch (...) {
+            // if binary deserialization failed, try more-portable XML deserialization
+
+            // reset to start of stream (attempted binary serialization will have consumed some input...)
+            boost::iostreams::seek(ifs, 0, std::ios_base::beg);
+
+            DebugLogger() << "Deserializing XML data";
+            freeorion_xml_iarchive ia(ifs);
+
+            ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
+            ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
+            ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
+            ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_header_data);
+            ia >> BOOST_SERIALIZATION_NVP(ignored_empire_save_game_data);
+        }
+
+    } catch (const std::exception& e) {
+        ErrorLogger() << "SaveFileWithValidHeader: Failed to read headers of " << path.string() << " because: " << e.what();
+        return false;
+    }
+    return true;
+}
 
 std::string ColumnInPreview(const FullPreview& full, const std::string& name, bool thin) {
     if (name == "player") {

@@ -20,7 +20,7 @@
 #include "../../network/ClientNetworking.h"
 #include "../../util/i18n.h"
 #include "../../util/LoggerWithOptionsDB.h"
-#include "../util/GameRules.h"
+#include "../../util/GameRules.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Process.h"
 #include "../../util/SaveGamePreviewUtils.h"
@@ -1191,8 +1191,17 @@ namespace {
             if (files_by_write_time.empty())
                 return boost::none;
 
-            // Return the newest
-            return PathToString(files_by_write_time.rbegin()->second);
+            // Return the newest file that has a valid header
+            for (auto file_it = files_by_write_time.rbegin();
+                 file_it != files_by_write_time.rend(); ++file_it)
+            {
+                auto file = file_it->second;
+                // attempt to load header
+                if (SaveFileWithValidHeader(file))
+                    return PathToString(file);  // load succeeded, return path to OK file
+            }
+
+            return boost::none;
 
         } catch (const boost::filesystem::filesystem_error& e) {
             ErrorLogger() << "File system error " << e.what() << " while finding newest autosave";
@@ -1366,9 +1375,8 @@ void HumanClientApp::ContinueSinglePlayerGame() {
         LoadSinglePlayerGame(*file);
 }
 
-bool HumanClientApp::IsLoadGameAvailable() const {
-    return bool(NewestSinglePlayerSavegame());
-}
+bool HumanClientApp::IsLoadGameAvailable() const
+{ return bool(NewestSinglePlayerSavegame()); }
 
 std::string HumanClientApp::SelectLoadFile() {
     return ClientUI::GetClientUI()->GetFilenameWithSaveFileDialog(

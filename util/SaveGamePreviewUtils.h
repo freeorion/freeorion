@@ -76,6 +76,11 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/// Attempts to load headers of a save file.
+/// Returns true on success, false if header data could not be loaded
+/// @param path Filename to load headers of
+FO_COMMON_API bool SaveFileWithValidHeader(const boost::filesystem::path& path);
+
 /// Get the value of column name in this preview
 /// @param full FullPreview to match for column @p name
 /// \param name The name of the column
