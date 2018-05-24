@@ -13,7 +13,7 @@ import random
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
 
-from common.option_tools import parse_config, get_option_dict
+from common.option_tools import parse_config, get_option_dict, check_bool
 parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())
 
 from freeorion_tools import patch_interface
@@ -232,7 +232,6 @@ def generateOrders():  # pylint: disable=invalid-name
     """Called once per turn to tell the Python AI to generate and issue orders to control its empire.
     at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
     and can be sent to the server for processing."""
-
     rules = fo.getGameRules()
     print "Defined game rules:"
     for rule in rules.getRulesAsStrings:
@@ -305,6 +304,25 @@ def generateOrders():  # pylint: disable=invalid-name
     print "***************************************************************************"
     print "***************************************************************************"
 
+    # When loading a savegame, the AI will already have issued orders for this turn.
+    # To avoid duplicate orders, generally try not to replay turns. However, for debugging
+    # purposes it is often useful to replay the turn and observe varying results after
+    # code changes. Set the replay_after_load flag in the AI config to let the AI issue
+    # new orders after a game load. Note that the orders from the original savegame are
+    # still being issued and the AIstate was saved after those orders were issued.
+    # TODO: Consider adding an option to clear AI orders after load (must save AIstate at turn start then)
+    if fo.currentTurn() == foAIstate.last_turn_played:
+        info("The AIstate indicates that this turn was already played.")
+        if not check_bool(get_option_dict().get('replay_turn_after_load', 'False')):
+            info("Aborting new order generation. Orders from savegame will still be issued.")
+            try:
+                fo.doneTurn()
+            except Exception as e:
+                error("Exception %s while trying doneTurn()" % e, exc_info=True)
+            return
+        else:
+            info("Issuing new orders anyway.")
+
     if turn == 1:
         declare_war_on_all()
         human_player = fo.empirePlayerID(1)
@@ -345,6 +363,8 @@ def generateOrders():  # pylint: disable=invalid-name
         fo.doneTurn()
     except Exception as e:
         error("Exception %s while trying doneTurn()" % e, exc_info=True)  # TODO move it to cycle above
+    finally:
+        foAIstate.last_turn_played = fo.currentTurn()
 
     if using_statprof:
         try:
