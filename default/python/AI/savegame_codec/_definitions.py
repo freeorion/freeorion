@@ -1,35 +1,29 @@
 # a list of trusted classes - other classes will not be loaded
-import sys
-if 'pytest' in sys.modules:
-    # this was imported for a unit test - failure to import
-    # real AI modules is expected in this case.
-    trusted_classes = {}
-else:
-    import AIFleetMission
-    import fleet_orders
-    import character.character_module
-    import AIstate
-    import ColonisationAI
-    trusted_classes = {"%s.%s" % (cls.__module__, cls.__name__): cls for cls in [
-        AIFleetMission.AIFleetMission,
-        fleet_orders.AIFleetOrder,
-        fleet_orders.OrderMilitary,
-        fleet_orders.OrderDefend,
-        fleet_orders.OrderColonize,
-        fleet_orders.OrderOutpost,
-        fleet_orders.OrderPause,
-        fleet_orders.OrderInvade,
-        fleet_orders.OrderMove,
-        fleet_orders.OrderRepair,
-        fleet_orders.OrderResupply,
-        character.character_module.Trait,
-        character.character_module.Aggression,
-        character.character_module.EmpireIDTrait,
-        character.character_module.Character,
-        AIstate.AIstate,
-        ColonisationAI.OrbitalColonizationManager,
-        ColonisationAI.OrbitalColonizationPlan,
-    ]}
+import AIFleetMission
+import fleet_orders
+import character.character_module
+import AIstate
+import ColonisationAI
+trusted_classes = {"%s.%s" % (cls.__module__, cls.__name__): cls for cls in [
+    AIFleetMission.AIFleetMission,
+    fleet_orders.AIFleetOrder,
+    fleet_orders.OrderMilitary,
+    fleet_orders.OrderDefend,
+    fleet_orders.OrderColonize,
+    fleet_orders.OrderOutpost,
+    fleet_orders.OrderPause,
+    fleet_orders.OrderInvade,
+    fleet_orders.OrderMove,
+    fleet_orders.OrderRepair,
+    fleet_orders.OrderResupply,
+    character.character_module.Trait,
+    character.character_module.Aggression,
+    character.character_module.EmpireIDTrait,
+    character.character_module.Character,
+    AIstate.AIstate,
+    ColonisationAI.OrbitalColonizationManager,
+    ColonisationAI.OrbitalColonizationPlan,
+]}
 
 # prefixes to encode types not supported by json
 # or not fully supported as dictionary key
