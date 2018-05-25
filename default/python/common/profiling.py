@@ -14,7 +14,7 @@ def profile(save_path, sort_by='cumulative'):
     Result stored in user directory in profile catalog. See lne in logs for exact position.
 
     :param save_path: path to save profile, for example:
-        os.path.join(fo.getUserDataDir(), 'profiling', base_path, foAI.foAIstate.uid)
+        os.path.join(fo.getUserDataDir(), 'profiling', base_path, get_aistate().uid)
     :type save_path: str
     :param sort_by: sort stats https://docs.python.org/2/library/profile.html#pstats.Stats.sort_stats
     :type sort_by: str

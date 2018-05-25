@@ -34,8 +34,8 @@ def build_savegame_string(use_compression=True):
     :return: compressed savegame string
     :rtype: str
     """
-    import FreeOrionAI as foAI
-    savegame_string = encode(foAI.foAIstate)
+    from aistate_interface import get_aistate
+    savegame_string = encode(get_aistate())
     if use_compression:
         import base64
         import zlib

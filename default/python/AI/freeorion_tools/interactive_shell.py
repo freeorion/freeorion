@@ -49,12 +49,12 @@ def handle_debug_chat(sender, message):
             debug_mode = True
 
             initial_code = [
-                'import FreeOrionAI as foAI',
+                'from aistate_interface import get_aistate',
             ]
 
             # add some variables to scope: (name, help text, value)
             scopes_variable = (
-                ('ai', 'aistate', 'foAI.foAIstate'),
+                ('ai', 'aistate', 'get_aistate()'),
                 ('u', 'universe', 'fo.getUniverse()'),
                 ('e', 'empire', 'fo.getEmpire()'),
             )

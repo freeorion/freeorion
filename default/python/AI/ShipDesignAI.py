@@ -48,7 +48,7 @@ from collections import Counter, defaultdict
 from logging import debug, info, warn, error
 
 import freeOrionAIInterface as fo
-import FreeOrionAI as foAI
+from aistate_interface import get_aistate
 import AIDependencies
 import CombatRatingsAI
 import FleetUtilsAI
@@ -639,7 +639,7 @@ class AdditionalSpecifications(object):
         else:
             self.enemy_mine_dmg = 14
         self.enemy = None
-        self.update_enemy(foAI.foAIstate.get_standard_enemy())
+        self.update_enemy(get_aistate().get_standard_enemy())
 
     def update_enemy(self, enemy):
         """Read out the enemies stats and save them.
@@ -1615,7 +1615,7 @@ class MilitaryShipDesignerBaseClass(ShipDesigner):
     def _adjusted_production_cost(self):
         # as military ships are grouped up in fleets, their power rating scales quadratic in numbers.
         # To account for this, we need to maximize rating/cost_squared not rating/cost as usual.
-        exponent = foAI.foAIstate.character.warship_adjusted_production_cost_exponent()
+        exponent = get_aistate().character.warship_adjusted_production_cost_exponent()
         return super(MilitaryShipDesignerBaseClass, self)._adjusted_production_cost()**exponent
 
     def _effective_structure(self):

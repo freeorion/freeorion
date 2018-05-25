@@ -4,7 +4,7 @@ from EnumsAI import ShipRoleType, MissionType
 import EspionageAI
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-import FreeOrionAI as foAI
+from aistate_interface import get_aistate
 import MilitaryAI
 import MoveUtilsAI
 import CombatRatingsAI
@@ -130,7 +130,7 @@ class AIFleetOrder(object):
 
         if verbose:
             sys1 = self.fleet.get_system()
-            main_fleet_mission = foAI.foAIstate.get_fleet_mission(self.fleet.id)
+            main_fleet_mission = get_aistate().get_fleet_mission(self.fleet.id)
             print "  Can issue %s - Mission Type %s (%s), current loc sys %d - %s" % (
                 self, main_fleet_mission.type,
                 main_fleet_mission.type, self.fleet.id, sys1)
@@ -174,24 +174,24 @@ class OrderMove(AIFleetOrder):
         #                                        MissionType.SECURE,
         #                                        MissionType.HIT_AND_RUN,
         #                                        MissionType.EXPLORATION]:
-        #     if not universe.getVisibility(target_id, foAI.foAIstate.empireID) >= fo.visibility.partial:
+        #     if not universe.getVisibility(target_id, get_aistate().empireID) >= fo.visibility.partial:
         #         #if not target_id in interior systems
-        #         foAI.foAIstate.needsEmergencyExploration.append(fleet.systemID)
+        #         get_aistate().needsEmergencyExploration.append(fleet.systemID)
         #         return False
         system_id = self.fleet.get_system().id
         if system_id == self.target.get_system().id:
             return True  # TODO: already there, but could consider retreating
 
-        main_fleet_mission = foAI.foAIstate.get_fleet_mission(self.fleet.id)
+        main_fleet_mission = get_aistate().get_fleet_mission(self.fleet.id)
 
         fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
         fleet_rating_vs_planets = CombatRatingsAI.get_fleet_rating_against_planets(self.fleet.id)
-        target_sys_status = foAI.foAIstate.systemStatus.get(self.target.id, {})
+        target_sys_status = get_aistate().systemStatus.get(self.target.id, {})
         f_threat = target_sys_status.get('fleetThreat', 0)
         m_threat = target_sys_status.get('monsterThreat', 0)
         p_threat = target_sys_status.get('planetThreat', 0)
         threat = f_threat + m_threat + p_threat
-        safety_factor = foAI.foAIstate.character.military_safety_factor()
+        safety_factor = get_aistate().character.military_safety_factor()
         universe = fo.getUniverse()
         if main_fleet_mission.type == MissionType.INVASION and not trooper_move_reqs_met(main_fleet_mission,
                                                                                          self, verbose):
@@ -206,10 +206,10 @@ class OrderMove(AIFleetOrder):
             target_system = self.target.get_system()
             target_system_name = (target_system and target_system.get_object().name) or "unknown"
             # TODO: adjust calc for any departing fleets
-            my_other_fleet_rating = foAI.foAIstate.systemStatus.get(self.target.id, {}).get('myFleetRating', 0)
-            my_other_fleet_rating_vs_planets = foAI.foAIstate.systemStatus.get(self.target.id, {}).get(
+            my_other_fleet_rating = get_aistate().systemStatus.get(self.target.id, {}).get('myFleetRating', 0)
+            my_other_fleet_rating_vs_planets = get_aistate().systemStatus.get(self.target.id, {}).get(
                 'myFleetRatingVsPlanets', 0)
-            is_military = foAI.foAIstate.get_fleet_role(self.fleet.id) == MissionType.MILITARY
+            is_military = get_aistate().get_fleet_role(self.fleet.id) == MissionType.MILITARY
 
             total_rating = CombatRatingsAI.combine_ratings(my_other_fleet_rating, fleet_rating)
             total_rating_vs_planets = CombatRatingsAI.combine_ratings(my_other_fleet_rating_vs_planets,
@@ -235,7 +235,7 @@ class OrderMove(AIFleetOrder):
                     print ("\tHolding fleet %d (rating %d) at system %d (%s) "
                            "before travelling to system %d (%s) with threat %d") % (
                         self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat)
-                needs_vis = foAI.foAIstate.misc.setdefault('needs_vis', [])
+                needs_vis = get_aistate().misc.setdefault('needs_vis', [])
                 if self.target.id not in needs_vis:
                     needs_vis.append(self.target.id)
                 return False
@@ -251,9 +251,9 @@ class OrderMove(AIFleetOrder):
             fo.issueFleetMoveOrder(fleet_id, dest_id)
             print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
         if system_id == fleet.systemID:
-            if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
-                if system_id in foAI.foAIstate.needsEmergencyExploration:
-                    foAI.foAIstate.needsEmergencyExploration.remove(system_id)
+            if get_aistate().get_fleet_role(fleet_id) == MissionType.EXPLORATION:
+                if system_id in get_aistate().needsEmergencyExploration:
+                    get_aistate().needsEmergencyExploration.remove(system_id)
         return True
 
 
@@ -290,9 +290,9 @@ class OrderResupply(AIFleetOrder):
         system_id = self.target.get_system().id
         fleet = self.fleet.get_object()
         if system_id == fleet.systemID:
-            if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
-                if system_id in foAI.foAIstate.needsEmergencyExploration:
-                    foAI.foAIstate.needsEmergencyExploration.remove(system_id)
+            if get_aistate().get_fleet_role(fleet_id) == MissionType.EXPLORATION:
+                if system_id in get_aistate().needsEmergencyExploration:
+                    get_aistate().needsEmergencyExploration.remove(system_id)
             return True
         if system_id != fleet.nextSystemID:
             self.executed = False
@@ -465,7 +465,7 @@ class OrderInvade(AIFleetOrder):
         result = False
         for ship_id in fleet.shipIDs:
             ship = universe.getShip(ship_id)
-            role = foAI.foAIstate.get_ship_role(ship.design.id)
+            role = get_aistate().get_ship_role(ship.design.id)
             if role not in invasion_roles:
                 continue
 
@@ -478,10 +478,10 @@ class OrderInvade(AIFleetOrder):
                 warn("Invasion order failed!")
                 debug(" -- planet has %.1f stealth, shields %.1f, %.1f population and "
                       "is owned by empire %d" % (planet_stealth, shields, pop, planet.owner))
-                if 'needsEmergencyExploration' not in dir(foAI.foAIstate):
-                    foAI.foAIstate.needsEmergencyExploration = []
-                if fleet.systemID not in foAI.foAIstate.needsEmergencyExploration:
-                    foAI.foAIstate.needsEmergencyExploration.append(fleet.systemID)
+                if 'needsEmergencyExploration' not in dir(get_aistate()):
+                    get_aistate().needsEmergencyExploration = []
+                if fleet.systemID not in get_aistate().needsEmergencyExploration:
+                    get_aistate().needsEmergencyExploration.append(fleet.systemID)
                     debug("Due to trouble invading, adding system %d to Emergency Exploration List" % fleet.systemID)
                 self.executed = False
                 # debug(universe.getPlanet(planet_id).dump())  # TODO: fix fo.UniverseObject.dump()
@@ -519,7 +519,7 @@ class OrderMilitary(AIFleetOrder):
             return False
         target_sys_id = self.target.id
         fleet = self.target.get_object()
-        system_status = foAI.foAIstate.systemStatus.get(target_sys_id, {})
+        system_status = get_aistate().systemStatus.get(target_sys_id, {})
         total_threat = sum(system_status.get(threat, 0) for threat in ('fleetThreat', 'planetThreat', 'monsterThreat'))
         combat_trigger = system_status.get('fleetThreat', 0) or system_status.get('monsterThreat', 0)
         if not combat_trigger and system_status.get('planetThreat', 0):
@@ -561,9 +561,9 @@ class OrderRepair(AIFleetOrder):
         system_id = self.target.get_system().id
         fleet = self.fleet.get_object()  # type: fo.fleet
         if system_id == fleet.systemID:
-            if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
-                if system_id in foAI.foAIstate.needsEmergencyExploration:
-                    foAI.foAIstate.needsEmergencyExploration.remove(system_id)
+            if get_aistate().get_fleet_role(fleet_id) == MissionType.EXPLORATION:
+                if system_id in get_aistate().needsEmergencyExploration:
+                    get_aistate().needsEmergencyExploration.remove(system_id)
         elif system_id != fleet.nextSystemID:
             fo.issueAggressionOrder(fleet_id, False)
             start_id = FleetUtilsAI.get_fleet_system(fleet)
