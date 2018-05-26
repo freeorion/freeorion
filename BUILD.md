@@ -106,33 +106,32 @@ maintained Visual Studio Project is used for building.
 Step by step procedure:
 
  * Enter the _source directory_.
+ * Create a `build` directory, which will contain all compile FreeOrion
+   build artifacs.
+ * Change into the `build` directory on the command line.
+ * Execute cmake to generate the native build system:
+
+     ```
+     cmake -G "GENERATOR" ..
+     ```
+
+   Where `GENERATOR` should be:
+
+   * on Windows: "Visual Studio 2015"
+   * on Mac OS X: "Xcode"
+   * on Linux and other other Operating Systems: "Unix Makefiles"
+
  * On Windows:
-   * Open `msvc2015\FreeOrion.sln` with Visual Studio.
+   * Open `FreeOrion.sln` with Visual Studio.
    * Compile the whole project by selecting the `Build` -> `Build Solution`
      menu entry.
 
  * On Mac OS X:
-   * Create a `build` directory, which will contain all compile FreeOrion
-     build artifacs.
-   * Change into the `build` directory on the command line.
-   * Execute cmake to generate a Xcode project file:
-
-     ```
-     cmake -GXcode ..
-     ```
    * Open `FreeOrion.xcodeproj` with Xcode.
    * Compile the whole project by selecting the `ALL_BUILD` scheme and
      pressing 'Command' + 'B'.
 
  * On Linux and other Operating Systems
-   * Create a `build` directory, which will contain all compile FreeOrion
-     build artifacs.
-   * Change into the `build` directory on the command line.
-   * Execute cmake to generate Makefiles:
-
-     ```
-     cmake ..
-     ```
    * Compile the whole project by calling `make` within the build directory.
      In case you want to utilize multiple CPU cores by running parallel compile
      jobs check out the the [make jobs](`--jobs`) parameter of `make`.
@@ -145,8 +144,7 @@ Step by step procedure:
 
 This will leave you with a build of FreeOrion executables.
 
- * `freeorion-project/FreeOrion` on Windows.
- * `freeorion-project/build/Release` on Mac OS X.
+ * `freeorion-project/build/Release` on Windows and Mac OS X.
  * `freeorion-project/freeorion/build` on Linux and other Operating Systems.
 
 
