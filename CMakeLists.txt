@@ -75,10 +75,10 @@ if(WIN32)
 endif()
 
 if(APPLE)
-    set(FreeOrionSDK_VERSION 8)
-    set(FreeOrionSDK_FILE "FreeOrionSDK_${FreeOrionSDK_VERSION}_Clang-MacOSX-10.9-x86_64.dmg")
+    set(FreeOrionSDK_VERSION 10)
+    set(FreeOrionSDK_FILE "FreeOrionSDK_${FreeOrionSDK_VERSION}_Clang-MacOSX-10.9-x86_64.tar.bz2")
     if(NOT EXISTS "${CMAKE_BINARY_DIR}/${FreeOrionSDK_FILE}")
-	file(DOWNLOAD
+    file(DOWNLOAD
             "https://github.com/freeorion/freeorion-sdk/releases/download/v${FreeOrionSDK_VERSION}/${FreeOrionSDK_FILE}"
             "${CMAKE_BINARY_DIR}/${FreeOrionSDK_FILE}"
             SHOW_PROGRESS
@@ -90,9 +90,8 @@ if(APPLE)
     endif()
     if(NOT "${FreeOrionSDK_VERSION}" EQUAL "${FreeOrionSDK_INSTALL_VERSION}")
         file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/dep")
-        execute_process(COMMAND /usr/bin/hdiutil attach "${CMAKE_BINARY_DIR}/${FreeOrionSDK_FILE}")
-        execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfj /Volumes/FreeOrionSDK/dep.tar.bz2 WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
-        execute_process(COMMAND /usr/bin/hdiutil detach "/Volumes/FreeOrionSDK")
+        file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/dep")
+        execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfj "${CMAKE_BINARY_DIR}/${FreeOrionSDK_FILE}" WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/dep")
         file(WRITE "${CMAKE_BINARY_DIR}/dep/sdkversion" "${FreeOrionSDK_VERSION}")
     endif()
     # Location of the FreeOrionSDK root
@@ -757,15 +756,19 @@ if(WIN32)
     install(
         FILES
         OpenAL32.dll
-        boost_date_time-vc90-mt-1_44.dll
-        boost_filesystem-vc90-mt-1_44.dll
-        boost_iostreams-vc90-mt-1_44.dll
-        boost_python-vc90-mt-1_44.dll
-        boost_regex-vc90-mt-1_44.dll
-        boost_serialization-vc90-mt-1_44.dll
-        boost_signals-vc90-mt-1_44.dll
-        boost_system-vc90-mt-1_44.dll
-        boost_thread-vc90-mt-1_44.dll
+        boost_chrono.dll
+        boost_date_time.dll
+        boost_filesystem.dll
+        boost_iostreams.dll
+        boost_locale.dll
+        boost_log.dll
+        boost_log_setup.dll
+        boost_python.dll
+        boost_regex.dll
+        boost_serialization.dll
+        boost_signals.dll
+        boost_system.dll
+        boost_thread.dll
         glew32.dll
         libexpat.dll
         libogg.dll
