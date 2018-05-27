@@ -19,7 +19,7 @@ to compile ; 6 GiB RAM or more is recommended. To build FreeOrion, expect up to
 FreeOrion depends on the following software to build:
 
   * [Visual Studio] - 2015 for Windows Desktop Update 3 ; Windows only
-  * [Xcode] - 6.4 or later ; Mac OS X only
+  * [Xcode] - 8.3 or later ; Mac OS X only
   * [CMake] - 3.4 (Mac OS X) ; 3.1 or later (Other non-Windows)
   * A C++11 compliant compiler - Other Operating Systems
     * [GNU GCC] - 5.0 or later
