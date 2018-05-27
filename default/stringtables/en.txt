@@ -5753,6 +5753,8 @@ Stockpile Focus
 STOCKPILE_FOCUS_TEXT
 '''The Stockpile focus increases the [[metertype METER_STOCKPILE]] of a planet.
 
+A Homeworld focused on Stockpile also helps other planets of the same species and increases the [[metertype METER_STOCKPILE]] there by an additional 0.04 per population.
+
 [[METER_STOCKPILE_VALUE_DESC]]'''
 
 ARMOR_TITLE
