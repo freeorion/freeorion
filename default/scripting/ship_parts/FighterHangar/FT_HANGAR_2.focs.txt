@@ -1,7 +1,7 @@
 Part
     name = "FT_HANGAR_2"
     description = "FT_HANGAR_2_DESC"
-    exclusions = [ "FT_HANGAR_0" "FT_HANGAR_1" "FT_HANGAR_3" "FT_HANGAR_4" ]
+    exclusions = [ "FT_HANGAR_0" "FT_HANGAR_1" "FT_HANGAR_3" "FT_HANGAR_4" "FT_HANGAR_DRONES" ]
     class = FighterHangar
     capacity = 3
     damage = 3

@@ -13140,6 +13140,12 @@ Heavy-Bomber
 FT_HANGAR_4_DESC
 Storage system for heavily armed fighters.
 
+FT_HANGAR_DRONES
+Drone Hangar
+
+FT_HANGAR_DRONES_DESC
+Storage system for a swarm of anti-fighter drones. A launch bay is able to field six drones per turn. These drones are designed to launch independently shoot down enemy fighters and draw fire. The drones not affected by the aptness of the pilots nor available weapon technology.
+
 FT_HANGAR_KRILL
 Krill Swarm
 
