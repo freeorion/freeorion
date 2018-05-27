@@ -1,4 +1,4 @@
-﻿English
+English
 
 # This is the English String Table file for FreeOrion
 #
@@ -10932,7 +10932,7 @@ This task is difficult as the service has to predict when demand happens, where 
 Unused PP will automatically be transferred to the Imperial Production Stockpile.
 An item on the production queue draws automatically on the Imperial Stockpile if the item has not been explicitly disabled from doing so.
 
-This is the basic technology for the imperial stockpile, which increases the [[metertype METER_STOCKPILE]] of growth-focused and stockpile-focused planets by 1.'''
+This is the basic technology for the imperial stockpile, which increases the [[metertype METER_STOCKPILE]] of stockpile-focused planets by 1.'''
 
 PRO_GENERIC_SUPPLIES
 Generic Supplies
@@ -10945,7 +10945,7 @@ Reaching this state of sophistication, Generic Supplies can be used to construct
 
 This frees the imperial stockpile service from having to know which goods will be demanded exactly. Predicting the location and amount is enough.
 
-This is an upgrade technology for the imperial stockpile. The [[metertype METER_STOCKPILE]] is increased by 2, plus an additional 0.01 per [[metertype METER_POPULATION]], plus an additional 3 for each growth-focused and stockpiling-focused planet.
+This is an upgrade technology for the imperial stockpile. The [[metertype METER_STOCKPILE]] is increased by 2, plus an additional 0.01 per [[metertype METER_POPULATION]], plus an additional 3 for each stockpiling-focused planet.
 These improvements are cumulative with that provided by [[tech PRO_PREDICTIVE_STOCKPILING]].'''
 
 PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
@@ -12821,7 +12821,7 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a [[PT_GASGIANT]] and gives a +10 [[metertype METER_TARGET_INDUSTRY]] bonus to planets with the Industry focus in the same system.
+'''This building can only be constructed at a [[PT_GASGIANT]] and gives a +10 [[metertype METER_INDUSTRY]] bonus to planets with the Industry focus in the same system. If the [[BLD_GAS_GIANT_GEN]] is build on an inhabited gas giant it gives only a +5 [[metertype METER_INDUSTRY]] bonus.
 Multiple copies in the same system do not stack.
 
 A power generator designed to harvest the energy of a [[PT_GASGIANT]].'''
