@@ -246,15 +246,15 @@ struct FO_COMMON_API Statistic : public Variable<T>
               std::unique_ptr<Condition::ConditionBase>&& sampling_condition);
     ~Statistic();
 
-    bool operator==(const ValueRefBase<T>& rhs) const override;
-    T Eval(const ScriptingContext& context) const override;
-    bool RootCandidateInvariant() const override;
-    bool LocalCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
+    bool        operator==(const ValueRefBase<T>& rhs) const override;
+    T           Eval(const ScriptingContext& context) const override;
+    bool        RootCandidateInvariant() const override;
+    bool        LocalCandidateInvariant() const override;
+    bool        TargetInvariant() const override;
+    bool        SourceInvariant() const override;
     std::string Description() const override;
     std::string Dump(unsigned short ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override;
+    void        SetTopLevelContent(const std::string& content_name) override;
 
     StatisticType GetStatisticType() const
     { return m_stat_type; }
@@ -269,14 +269,14 @@ struct FO_COMMON_API Statistic : public Variable<T>
 
 protected:
     /** Gets the set of objects in the Universe that match the sampling condition. */
-    void    GetConditionMatches(const ScriptingContext& context,
-                                Condition::ObjectSet& condition_targets,
-                                Condition::ConditionBase* condition) const;
+    void GetConditionMatches(const ScriptingContext& context,
+                             Condition::ObjectSet& condition_targets,
+                             Condition::ConditionBase* condition) const;
 
     /** Evaluates the property for the specified objects. */
-    void    GetObjectPropertyValues(const ScriptingContext& context,
-                                    const Condition::ObjectSet& objects,
-                                    std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const;
+    void  GetObjectPropertyValues(const ScriptingContext& context,
+                                  const Condition::ObjectSet& objects,
+                                  std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const;
 
     /** Computes the statistic from the specified set of property values. */
     T ReduceData(const std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const;
@@ -540,6 +540,30 @@ FO_COMMON_API std::string   ReconstructName(const std::vector<std::string>& prop
                                             ReferenceType ref_type,
                                             bool return_immediate_value = false);
 
+FO_COMMON_API std::string FormatedDescriptionPropertyNames(
+    ReferenceType ref_type, const std::vector<std::string>& property_names,
+    bool return_immediate_value = false);
+
+FO_COMMON_API std::string ComplexVariableDescription(
+    const std::vector<std::string>& property_names,
+    const ValueRef::ValueRefBase<int>* int_ref1,
+    const ValueRef::ValueRefBase<int>* int_ref2,
+    const ValueRef::ValueRefBase<int>* int_ref3,
+    const ValueRef::ValueRefBase<std::string>* string_ref1,
+    const ValueRef::ValueRefBase<std::string>* string_ref2);
+
+FO_COMMON_API std::string ComplexVariableDump(
+    const std::vector<std::string>& property_names,
+    const ValueRef::ValueRefBase<int>* int_ref1,
+    const ValueRef::ValueRefBase<int>* int_ref2,
+    const ValueRef::ValueRefBase<int>* int_ref3,
+    const ValueRef::ValueRefBase<std::string>* string_ref1,
+    const ValueRef::ValueRefBase<std::string>* string_ref2);
+
+FO_COMMON_API std::string StatisticDescription(StatisticType stat_type,
+                                               const std::string& value_desc,
+                                               const std::string& condition_desc);
+
 // Template Implementations
 ///////////////////////////////////////////////////////////
 // ValueRefBase                                          //
@@ -731,10 +755,6 @@ template <class T>
 bool Variable<T>::SourceInvariant() const
 { return m_ref_type != SOURCE_REFERENCE; }
 
-FO_COMMON_API std::string FormatedDescriptionPropertyNames(
-    ReferenceType ref_type, const std::vector<std::string>& property_names,
-    bool return_immediate_value = false);
-
 template <class T>
 std::string Variable<T>::Description() const
 { return FormatedDescriptionPropertyNames(m_ref_type, m_property_name, m_return_immediate_value); }
@@ -901,30 +921,17 @@ bool Statistic<T>::SourceInvariant() const
 }
 
 template <class T>
-std::string Statistic<T>::Description() const {
-    std::string retval = UserString("DESC_STATISTIC") + ": [(" + UserString("DESC_STAT_TYPE") + ": " + boost::lexical_cast<std::string>(m_stat_type) + ")";
-    switch (m_stat_type) {
-        case COUNT:              retval += "(COUNT)";            break;
-        case UNIQUE_COUNT:       retval += "(UNIQUE_COUNT)";     break;
-        case IF:                 retval += "(IF ANY)";           break;
-        case SUM:                retval += "(SUM)";              break;
-        case MEAN:               retval += "(MEAN)";             break;
-        case RMS:                retval += "(RMS)";              break;
-        case MODE:               retval += "(MODE)";             break;
-        case MAX:                retval += "(MAX)";              break;
-        case MIN:                retval += "(MIN)";              break;
-        case SPREAD:             retval += "(SPREAD)";           break;
-        case STDEV:              retval += "(STDEV)";            break;
-        case PRODUCT:            retval += "(PRODUCT)";          break;
-        default:                 retval += "()";                 break;
-    }
-    if (m_value_ref) {
-        retval += "(" + m_value_ref->Description() + ")";
-    } else if (!Variable<T>::Description().empty()){
-        retval += "(" + Variable<T>::Description() + ")";
-    }
-    retval += "(" + UserString("DESC_SAMPLING_CONDITION") + ": " + m_sampling_condition->Description() + ")]";
-    return retval;
+std::string Statistic<T>::Description() const
+{
+    if (m_value_ref)
+        return StatisticDescription(m_stat_type, m_value_ref->Description(),
+                                    m_sampling_condition ? m_sampling_condition->Description() : "");
+    else if (!Variable<T>::Description().empty())
+        return StatisticDescription(m_stat_type, Variable<T>::Description(),
+                                    m_sampling_condition ? m_sampling_condition->Description() : "");
+    else
+        return StatisticDescription(m_stat_type, "",
+                                    m_sampling_condition ? m_sampling_condition->Description() : "");
 }
 
 template <class T>
@@ -1356,37 +1363,30 @@ bool ComplexVariable<T>::SourceInvariant() const
 }
 
 template <class T>
-std::string ComplexVariable<T>::Description() const {
-    std::string variable_name;
-    if (!this->m_property_name.empty())
-        variable_name = this->m_property_name.back();
-    std::string retval = UserString("DESC_COMPLEX") + ": [(" + UserString("DESC_VARIABLE_NAME") + ": " + variable_name + ") (";
-    if (variable_name == "PartCapacity") {
-        //retval += m_string_ref1->Description();
-    } else if (variable_name == "JumpsBetween") {
-        if (m_int_ref1)
-            retval += m_int_ref1->Description() + ", ";
-        if (m_int_ref2)
-            retval += m_int_ref2->Description() + ", ";
-    } else if (false) {
-        if (m_int_ref1)
-            retval += m_int_ref1->Description() + ", ";
-        if (m_int_ref2)
-            retval += m_int_ref2->Description() + ", ";
-        if (m_int_ref2)
-            retval += m_int_ref2->Description() + ", ";
-        if (m_string_ref1)
-            retval += m_string_ref1->Description() + ", ";
-        if (m_string_ref2)
-            retval += m_string_ref2->Description();
-    }
-    retval += ")]";
+std::string ComplexVariable<T>::Description() const
+{
+    std::string retval = ComplexVariableDescription(
+        m_property_name,
+        m_int_ref1 ? m_int_ref1.get() : nullptr,
+        m_int_ref2 ? m_int_ref2.get() : nullptr,
+        m_int_ref3 ? m_int_ref3.get() : nullptr,
+        m_string_ref1 ? m_string_ref1.get() : nullptr,
+        m_string_ref2 ? m_string_ref2.get() : nullptr);
+    if (retval.empty())
+        return Dump();
     return retval;
 }
 
 template <class T>
 std::string ComplexVariable<T>::Dump(unsigned short ntabs) const
-{ return Variable<T>::Dump(ntabs); }
+{
+    return ComplexVariableDump(m_property_name,
+                               m_int_ref1 ? m_int_ref1.get() : nullptr,
+                               m_int_ref2 ? m_int_ref2.get() : nullptr,
+                               m_int_ref3 ? m_int_ref3.get() : nullptr,
+                               m_string_ref1 ? m_string_ref1.get() : nullptr,
+                               m_string_ref2 ? m_string_ref2.get() : nullptr);
+}
 
 template <class T>
 void ComplexVariable<T>::SetTopLevelContent(const std::string& content_name)

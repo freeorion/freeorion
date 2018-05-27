@@ -9427,8 +9427,12 @@ last turn a battle occurred here
 DESC_COMPLEX
 Complex Variable
 
-DESC_VARIABLE_NAME
-Variable Name
+DESC_VAR_JUMPSBETWEEN
+starlane jumps between systems containing objects with ids %1% and %2%
+
+DESC_STATISTIC
+Statistic
+
 
 # FOCS variable reference description text.
 # %1% reference type of the FOCS variable.

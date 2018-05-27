@@ -293,6 +293,136 @@ std::string ReconstructName(const std::vector<std::string>& property_name,
     return retval;
 }
 
+std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
+                                             const std::vector<std::string>& property_names,
+                                             bool return_immediate_value)
+{
+    int num_references = property_names.size();
+    if (ref_type == NON_OBJECT_REFERENCE)
+        num_references--;
+    for (const std::string& property_name_part : property_names)
+        if (property_name_part.empty())
+             num_references--;
+    num_references = std::max(0, num_references);
+    std::string format_string;
+    switch (num_references) {
+        case 0: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE0"); break;
+        case 1: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE1"); break;
+        case 2: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE2"); break;
+        case 3: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE3"); break;
+        case 4: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE4"); break;
+        case 5: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE5"); break;
+        case 6: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE6"); break;
+        default: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLEMANY"); break;
+    }
+
+    boost::format formatter = FlexibleFormat(format_string);
+
+    switch (ref_type) {
+    case SOURCE_REFERENCE:                    formatter % UserString("DESC_VAR_SOURCE");          break;
+    case EFFECT_TARGET_REFERENCE:             formatter % UserString("DESC_VAR_TARGET");          break;
+    case EFFECT_TARGET_VALUE_REFERENCE:       formatter % UserString("DESC_VAR_VALUE");           break;
+    case CONDITION_LOCAL_CANDIDATE_REFERENCE: formatter % UserString("DESC_VAR_LOCAL_CANDIDATE"); break;
+    case CONDITION_ROOT_CANDIDATE_REFERENCE:  formatter % UserString("DESC_VAR_ROOT_CANDIDATE");  break;
+    case NON_OBJECT_REFERENCE:                                                                    break;
+    default:                                  formatter % "???";                                  break;
+    }
+
+    for (const std::string& property_name_part : property_names) {
+        if (property_name_part.empty())  // apparently is empty for a EFFECT_TARGET_VALUE_REFERENCE
+            continue;
+        std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(property_name_part));
+        formatter % UserString(stringtable_key);
+    }
+
+    std::string retval = boost::io::str(formatter);
+    //std::cerr << "ret: " << retval << std::endl;
+    return retval;
+}
+
+std::string ComplexVariableDescription(const std::vector<std::string>& property_names,
+                                       const ValueRef::ValueRefBase<int>* int_ref1,
+                                       const ValueRef::ValueRefBase<int>* int_ref2,
+                                       const ValueRef::ValueRefBase<int>* int_ref3,
+                                       const ValueRef::ValueRefBase<std::string>* string_ref1,
+                                       const ValueRef::ValueRefBase<std::string>* string_ref2)
+{
+    if (property_names.empty()) {
+        ErrorLogger() << "ComplexVariableDescription passed empty property names?!";
+        return "";
+    }
+
+    std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(property_names.back()));
+    if (!UserStringExists(stringtable_key))
+        return "";
+
+    boost::format formatter = FlexibleFormat(UserString(stringtable_key));
+
+    if (int_ref1)
+        formatter % int_ref1->Description();
+    if (int_ref2)
+        formatter % int_ref2->Description();
+    if (int_ref3)
+        formatter % int_ref3->Description();
+    if (string_ref1)
+        formatter % string_ref1->Description();
+    if (string_ref2)
+        formatter % string_ref2->Description();
+
+    return boost::io::str(formatter);
+}
+
+std::string ComplexVariableDump(const std::vector<std::string>& property_names,
+                                const ValueRef::ValueRefBase<int>* int_ref1,
+                                const ValueRef::ValueRefBase<int>* int_ref2,
+                                const ValueRef::ValueRefBase<int>* int_ref3,
+                                const ValueRef::ValueRefBase<std::string>* string_ref1,
+                                const ValueRef::ValueRefBase<std::string>* string_ref2)
+{
+    std::string retval;
+    if (property_names.empty()) {
+        ErrorLogger() << "ComplexVariableDump passed empty property names?!";
+        return "ComplexVariable";
+    } else {
+        retval += property_names.back();
+    }
+
+    // TODO: Depending on the property name, the parameter names will vary
+    //       Need to handle each case correctly, in order for the Dumped
+    //       text to be parsable as the correct ComplexVariable.
+
+    if (int_ref1)
+        retval += " int1 = " + int_ref1->Dump();
+    if (int_ref2)
+        retval += " int2 = " + int_ref2->Dump();
+    if (int_ref3)
+        retval += " int3 = " + int_ref3->Dump();
+    if (string_ref1)
+        retval += " string1 = " + string_ref1->Dump();
+    if (string_ref2)
+        retval += " string2 = " + string_ref2->Dump();
+
+    return retval;
+}
+
+std::string StatisticDescription(StatisticType stat_type,
+                                 const std::string& value_desc,
+                                 const std::string& condition_desc)
+{
+    return UserString("DESC_VAR_STATISITIC");
+    // If needed, can uncomment below and add strings to stringtable to support
+    // automatic generation of statistic descriptions. in practice, these should
+    // be hand-written, instead, though.
+
+    //std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(
+    //    boost::lexical_cast<std::string>(stat_type)));
+
+    //boost::format formatter = FlexibleFormat(stringtable_key);
+
+    //formatter % value_desc % condition_desc;
+    //return boost::io::str(formatter);
+}
+
 ///////////////////////////////////////////////////////////
 // Constant                                              //
 ///////////////////////////////////////////////////////////
@@ -430,53 +560,6 @@ std::string Constant<std::string>::Eval(const ScriptingContext& context) const
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
-std::string FormatedDescriptionPropertyNames(
-    ReferenceType ref_type, const std::vector<std::string>& property_names,
-    bool return_immediate_value)
-{
-    int num_references = property_names.size();
-    if (ref_type == NON_OBJECT_REFERENCE)
-        num_references--;
-    for (const std::string& property_name_part : property_names)
-        if (property_name_part.empty())
-             num_references--;
-    num_references = std::max(0, num_references);
-    std::string format_string;
-    switch (num_references) {
-        case 0: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE0"); break;
-        case 1: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE1"); break;
-        case 2: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE2"); break;
-        case 3: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE3"); break;
-        case 4: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE4"); break;
-        case 5: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE5"); break;
-        case 6: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE6"); break;
-        default: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLEMANY"); break;
-    }
-
-    boost::format formatter = FlexibleFormat(format_string);
-
-    switch (ref_type) {
-    case SOURCE_REFERENCE:                    formatter % UserString("DESC_VAR_SOURCE");          break;
-    case EFFECT_TARGET_REFERENCE:             formatter % UserString("DESC_VAR_TARGET");          break;
-    case EFFECT_TARGET_VALUE_REFERENCE:       formatter % UserString("DESC_VAR_VALUE");           break;
-    case CONDITION_LOCAL_CANDIDATE_REFERENCE: formatter % UserString("DESC_VAR_LOCAL_CANDIDATE"); break;
-    case CONDITION_ROOT_CANDIDATE_REFERENCE:  formatter % UserString("DESC_VAR_ROOT_CANDIDATE");  break;
-    case NON_OBJECT_REFERENCE:                                                                    break;
-    default:                                            formatter % "???";                                  break;
-    }
-
-    for (const std::string& property_name_part : property_names) {
-        if (property_name_part.empty())  // apparently is empty for a EFFECT_TARGET_VALUE_REFERENCE
-            continue;
-        std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(property_name_part));
-        formatter % UserString(stringtable_key);
-    }
-
-    std::string retval = boost::io::str(formatter);
-    //std::cerr << "ret: " << retval << std::endl;
-    return retval;
-}
-
 #define IF_CURRENT_VALUE(T)                                            \
 if (m_ref_type == EFFECT_TARGET_VALUE_REFERENCE) {                     \
     if (context.current_value.empty())                                 \
