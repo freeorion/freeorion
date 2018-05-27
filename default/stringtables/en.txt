@@ -11789,6 +11789,12 @@ Death Ray Fighters
 SHP_FIGHTERS_4_DESC
 Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have death ray weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 5 and [[shippart FT_HANGAR_3]] by 7.
 
+SHP_DRONES
+Interception Drones
+
+SHP_DRONES_DESC
+'''Enables an empire to build unmanned anti-fighter drones using Drone Hangars and Launch Bays. Drones are smaller and can be started more efficiently than manned spacecraft.'''
+
 SHP_WEAPON_1_2
 Mass Driver 2
 
