@@ -1366,7 +1366,7 @@ template <class T>
 std::string ComplexVariable<T>::Description() const
 {
     std::string retval = ComplexVariableDescription(
-        m_property_name,
+        this->m_property_name,
         m_int_ref1 ? m_int_ref1.get() : nullptr,
         m_int_ref2 ? m_int_ref2.get() : nullptr,
         m_int_ref3 ? m_int_ref3.get() : nullptr,
@@ -1380,7 +1380,7 @@ std::string ComplexVariable<T>::Description() const
 template <class T>
 std::string ComplexVariable<T>::Dump(unsigned short ntabs) const
 {
-    return ComplexVariableDump(m_property_name,
+    return ComplexVariableDump(this->m_property_name,
                                m_int_ref1 ? m_int_ref1.get() : nullptr,
                                m_int_ref2 ? m_int_ref2.get() : nullptr,
                                m_int_ref3 ? m_int_ref3.get() : nullptr,
