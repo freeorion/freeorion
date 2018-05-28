@@ -689,6 +689,9 @@ Message SetAuthorizationRolesMessage(const Networking::AuthRoles& roles)
 Message EliminateSelfMessage()
 { return Message(Message::ELIMINATE_SELF, DUMMY_EMPTY_MESSAGE); }
 
+Message UnreadyMessage()
+{ return Message(Message::UNREADY, DUMMY_EMPTY_MESSAGE); }
+
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////

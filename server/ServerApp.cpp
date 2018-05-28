@@ -420,6 +420,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg, player_connection));      break;
     case Message::SAVE_GAME_INITIATE:       m_fsm->process_event(SaveGameRequest(msg, player_connection));  break;
     case Message::TURN_ORDERS:              m_fsm->process_event(TurnOrders(msg, player_connection));       break;
+    case Message::UNREADY:                  m_fsm->process_event(RevokeReadiness(msg, player_connection));  break;
     case Message::CLIENT_SAVE_DATA:         m_fsm->process_event(ClientSaveData(msg, player_connection));   break;
     case Message::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg, player_connection));       break;
     case Message::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg, player_connection));        break;
@@ -1711,7 +1712,10 @@ bool ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) 
             m_player_empire_ids[player_connection->PlayerID()] = empire.first;
 
             const OrderSet dummy;
-            const OrderSet& orders = orders_it->second ? *orders_it->second : dummy;
+            const OrderSet& orders = orders_it->second.second ? *orders_it->second.second : dummy;
+
+            // drop ready status
+            orders_it->second.first = false;
 
             auto player_info_map = GetPlayerInfoMap();
             bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
@@ -1755,38 +1759,45 @@ int ServerApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects.server.threads"); }
 
 void ServerApp::AddEmpireTurn(int empire_id)
-{ m_turn_sequence[empire_id].reset(nullptr); }
+{
+    m_turn_sequence[empire_id].second.reset(nullptr);
+    m_turn_sequence[empire_id].first = false;
+}
 
 void ServerApp::RemoveEmpireTurn(int empire_id)
 { m_turn_sequence.erase(empire_id); }
 
 void ServerApp::ClearEmpireTurnOrders() {
     for (auto& order : m_turn_sequence) {
-        if (order.second) {
-            order.second.reset(nullptr);
+        order.second.first = false;
+        if (order.second.second) {
+            order.second.second.reset(nullptr);
         }
     }
 }
 
 void ServerApp::SetEmpireTurnOrders(int empire_id, std::unique_ptr<OrderSet>&& order_set)
-{ m_turn_sequence[empire_id] = std::move(order_set); }
+{ m_turn_sequence[empire_id] = std::make_pair(true, std::move(order_set)); }
+
+void ServerApp::RevokeEmpireTurnReadyness(int empire_id)
+{ m_turn_sequence[empire_id].first = false; }
 
 bool ServerApp::AllOrdersReceived() {
     // debug output
     DebugLogger() << "ServerApp::AllOrdersReceived for turn: " << m_current_turn;
+    bool all_orders_received = true;
     for (const auto& empire_orders : m_turn_sequence) {
-        if (!empire_orders.second)
+        if (!empire_orders.second.second) {
             DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
-        else
+            all_orders_received = false;
+        } else if (!empire_orders.second.first) {
+            DebugLogger() << " ... not ready empire id: " << empire_orders.first;
+            all_orders_received = false;
+        } else {
             DebugLogger() << " ... have orders from empire id: " << empire_orders.first;
+        }
     }
-
-    // Loop through to find empire ID and check for valid orders pointer
-    for (const auto& empire_orders : m_turn_sequence) {
-        if (!empire_orders.second)
-            return false;
-    }
-    return true;
+    return all_orders_received;
 }
 
 namespace {
@@ -2978,11 +2989,11 @@ void ServerApp::PreCombatProcessTurns() {
     // execute orders
     for (const auto& empire_orders : m_turn_sequence) {
         auto& order_set = empire_orders.second;
-        if (!order_set) {
+        if (!order_set.second) {
             DebugLogger() << "No OrderSet for empire " << empire_orders.first;
             continue;
         }
-        for (const auto& id_and_order : *order_set)
+        for (const auto& id_and_order : *order_set.second)
             id_and_order.second->Execute();
     }
 

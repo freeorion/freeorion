@@ -163,6 +163,9 @@ public:
       * will be freed when all processing is done for the turn */
     void    SetEmpireTurnOrders(int empire_id, std::unique_ptr<OrderSet>&& order_set);
 
+    /** Revokes turn order's ready state for the given empire. */
+    void    RevokeEmpireTurnReadyness(int empire_id);
+
     /** Sets all empire turn orders to an empty set. */
     void    ClearEmpireTurnOrders();
 
@@ -351,8 +354,11 @@ private:
 
     /** Turn sequence map is used for turn processing. Each empire is added at
       * the start of a game or reload and then the map maintains OrderSets for
-      * that turn. */
-    std::map<int, std::unique_ptr<OrderSet>>         m_turn_sequence;
+      * that turn.
+      * The map contains ready state which should be true to advance turn and
+      * pointer to orders from empire.
+      * */
+    std::map<int, std::pair<bool, std::unique_ptr<OrderSet>>>      m_turn_sequence;
 
     // Give FSM and its states direct access.  We are using the FSM code as a
     // control-flow mechanism; it is all notionally part of this class.

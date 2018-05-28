@@ -3071,6 +3071,10 @@ Unable to create persistent_config.xml, check log file for details.
 MAP_BTN_TURN_UPDATE
 Turn %1%
 
+# %1% current turn number.
+MAP_BTN_TURN_UNREADY
+Revise Orders %1%
+
 # %1% number of frames currently displayed per second.
 MAP_INDICATOR_FPS
 %1% FPS

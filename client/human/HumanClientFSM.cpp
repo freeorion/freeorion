@@ -824,6 +824,8 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     if (is_new_game && Client().Networking().PlayerIsHost(Client().PlayerID()))
         Client().Autosave();
 
+    Client().GetClientUI().GetPlayerListWnd()->Refresh();
+
     return transit<PlayingTurn>();
 }
 
@@ -888,6 +890,15 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
 
     Client().HandleTurnUpdate();
 
+    Client().GetClientUI().GetPlayerListWnd()->Refresh();
+
+    return transit<PlayingTurn>();
+}
+
+boost::statechart::result WaitingForTurnData::react(const TurnRevoked& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.TurnRevoked";
+
+    // Allow player to change orders
     return transit<PlayingTurn>();
 }
 
@@ -912,7 +923,6 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % CurrentTurn()) + "\n");
     Client().GetClientUI().GetMessageWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
-    Client().GetClientUI().GetPlayerListWnd()->Refresh();
     Client().GetClientUI().GetPlayerListWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
 
     if (Client().GetApp()->GetClientType() != Networking::CLIENT_TYPE_HUMAN_OBSERVER)

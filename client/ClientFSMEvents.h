@@ -34,6 +34,7 @@ struct MessageEventBase {
     (TurnUpdate)                               \
     (TurnPartialUpdate)                        \
     (TurnProgress)                             \
+    (TurnRevoked)                              \
     (PlayerStatus)                             \
     (PlayerChat)                               \
     (Diplomacy)                                \
