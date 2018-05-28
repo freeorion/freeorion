@@ -1296,23 +1296,23 @@ bool ComplexVariable<T>::operator==(const ValueRefBase<T>& rhs) const
 
 template <class T>
 const ValueRefBase<int>* ComplexVariable<T>::IntRef1() const
-{ return m_int_ref1; }
+{ return m_int_ref1.get(); }
 
 template <class T>
 const ValueRefBase<int>* ComplexVariable<T>::IntRef2() const
-{ return m_int_ref2; }
+{ return m_int_ref2.get(); }
 
 template <class T>
 const ValueRefBase<int>* ComplexVariable<T>::IntRef3() const
-{ return m_int_ref3; }
+{ return m_int_ref3.get(); }
 
 template <class T>
 const ValueRefBase<std::string>* ComplexVariable<T>::StringRef1() const
-{ return m_string_ref1; }
+{ return m_string_ref1.get(); }
 
 template <class T>
 const ValueRefBase<std::string>* ComplexVariable<T>::StringRef2() const
-{ return m_string_ref2; }
+{ return m_string_ref2.get(); }
 
 template <class T>
 bool ComplexVariable<T>::RootCandidateInvariant() const
