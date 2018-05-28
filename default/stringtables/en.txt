@@ -9433,6 +9433,11 @@ starlane jumps between systems containing objects with ids %1% and %2%
 DESC_STATISTIC
 Statistic
 
+DESC_VAR_COUNT
+the number of objects%2%
+
+DESC_VAR_IF
+0, or 1 if there is any object%2%
 
 # FOCS variable reference description text.
 # %1% reference type of the FOCS variable.

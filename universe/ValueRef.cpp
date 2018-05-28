@@ -306,14 +306,14 @@ std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
     num_references = std::max(0, num_references);
     std::string format_string;
     switch (num_references) {
-        case 0: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE0"); break;
-        case 1: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE1"); break;
-        case 2: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE2"); break;
-        case 3: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE3"); break;
-        case 4: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE4"); break;
-        case 5: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE5"); break;
-        case 6: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE6"); break;
-        default: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLEMANY"); break;
+    case 0: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE0"); break;
+    case 1: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE1"); break;
+    case 2: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE2"); break;
+    case 3: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE3"); break;
+    case 4: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE4"); break;
+    case 5: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE5"); break;
+    case 6: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE6"); break;
+    default:format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLEMANY"); break;
     }
 
     boost::format formatter = FlexibleFormat(format_string);
@@ -387,7 +387,7 @@ std::string ComplexVariableDump(const std::vector<std::string>& property_names,
         retval += property_names.back();
     }
 
-    // TODO: Depending on the property name, the parameter names will vary
+    // TODO: Depending on the property name, the parameter names will vary.
     //       Need to handle each case correctly, in order for the Dumped
     //       text to be parsable as the correct ComplexVariable.
 
@@ -409,18 +409,16 @@ std::string StatisticDescription(StatisticType stat_type,
                                  const std::string& value_desc,
                                  const std::string& condition_desc)
 {
+    std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(
+        boost::lexical_cast<std::string>(stat_type)));
+
+    if (UserStringExists(stringtable_key)) {
+        boost::format formatter = FlexibleFormat(stringtable_key);
+        formatter % value_desc % condition_desc;
+        return boost::io::str(formatter);
+    }
+
     return UserString("DESC_VAR_STATISITIC");
-    // If needed, can uncomment below and add strings to stringtable to support
-    // automatic generation of statistic descriptions. in practice, these should
-    // be hand-written, instead, though.
-
-    //std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(
-    //    boost::lexical_cast<std::string>(stat_type)));
-
-    //boost::format formatter = FlexibleFormat(stringtable_key);
-
-    //formatter % value_desc % condition_desc;
-    //return boost::io::str(formatter);
 }
 
 ///////////////////////////////////////////////////////////
