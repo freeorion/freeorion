@@ -74,6 +74,10 @@ public:
         if (GraphicalSummaryWnd* graphical_wnd =
                dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd())) {
             graphical_wnd->DoLayout();
+        } else if (auto log_wnd = dynamic_cast<GG::ScrollPanel*>(m_tabs->CurrentWnd())) {
+            log_wnd->SizeMove(GG::Pt(GG::X0, GG::Y0),
+                         GG::Pt(m_wnd.ClientWidth(),
+                                m_wnd.ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)));
         }
     }
 
