@@ -926,12 +926,12 @@ std::string Statistic<T>::Description() const
     if (m_value_ref)
         return StatisticDescription(m_stat_type, m_value_ref->Description(),
                                     m_sampling_condition ? m_sampling_condition->Description() : "");
-    else if (!Variable<T>::Description().empty())
-        return StatisticDescription(m_stat_type, Variable<T>::Description(),
-                                    m_sampling_condition ? m_sampling_condition->Description() : "");
-    else
-        return StatisticDescription(m_stat_type, "",
-                                    m_sampling_condition ? m_sampling_condition->Description() : "");
+
+    auto temp = Variable<T>::Description();
+    if (!temp.empty())
+        return StatisticDescription(m_stat_type, temp, m_sampling_condition ? m_sampling_condition->Description() : "");
+
+    return StatisticDescription(m_stat_type, "", m_sampling_condition ? m_sampling_condition->Description() : "");
 }
 
 template <class T>
