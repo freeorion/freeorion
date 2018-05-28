@@ -2031,7 +2031,11 @@ void Empire::CheckProductionProgress() {
                     fleet = universe.InsertNew<Fleet>("", system->X(), system->Y(), m_id);
 
                     system->Insert(fleet);
-                    fleet->SetNextAndPreviousSystems(system->ID(), system->ID());
+                    // set prev system to prevent conflicts with CalculateRouteTo used for
+                    // rally points below, but leave next system as INVALID_OBJECT_ID so
+                    // fleet won't necessarily be disqualified from making blockades if it
+                    // is left stationary
+                    fleet->SetNextAndPreviousSystems(INVALID_OBJECT_ID, system->ID());
                     // set invalid arrival starlane so that fleet won't necessarily be free from blockades
                     fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
 
@@ -2043,7 +2047,11 @@ void Empire::CheckProductionProgress() {
                         fleet = universe.InsertNew<Fleet>("", system->X(), system->Y(), m_id);
 
                         system->Insert(fleet);
-                        fleet->SetNextAndPreviousSystems(system->ID(), system->ID());
+                        // set prev system to prevent conflicts with CalculateRouteTo used for
+                        // rally points below, but leave next system as INVALID_OBJECT_ID so
+                        // fleet won't necessarily be disqualified from making blockades if it
+                        // is left stationary
+                        fleet->SetNextAndPreviousSystems(INVALID_OBJECT_ID, system->ID());
                         // set invalid arrival starlane so that fleet won't necessarily be free from blockades
                         fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
 
