@@ -14,9 +14,10 @@ Part
         EffectsGroup
             scope = [[EMPIRE_OWNED_SHIP_WITH_PART(FT_BAY_1)]]
             activation = Source
+            stackinggroup = "INTERCEPTOR_FAST_LAUNCH_EFFECT"
             effects = [
-                SetCapacity partname = "FT_BAY_1" value = 4
-                SetMaxCapacity partname = "FT_BAY_1" value = 4
+                SetCapacity partname = "FT_BAY_1" value = Value + 2
+                SetMaxCapacity partname = "FT_BAY_1" value = Value + 2
             ]
     ]
     icon = "icons/ship_parts/fighter06.png"
