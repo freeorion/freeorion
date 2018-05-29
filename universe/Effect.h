@@ -181,8 +181,6 @@ public:
              std::unique_ptr<ValueRef::ValueRefBase<double>>&& value,
              const boost::optional<std::string>& accounting_label = boost::none);
 
-    virtual ~SetMeter();
-
     void Execute(const ScriptingContext& context) const override;
 
     void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
@@ -235,8 +233,6 @@ public:
                      std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& part_name,
                      std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
 
-    virtual ~SetShipPartMeter();
-
     void Execute(const ScriptingContext& context) const override;
 
     void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
@@ -285,8 +281,6 @@ public:
     SetEmpireMeter(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id, const std::string& meter,
                    std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
 
-    virtual ~SetEmpireMeter();
-
     void Execute(const ScriptingContext& context) const override;
 
     void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
@@ -333,8 +327,6 @@ public:
                        ResourceType stockpile,
                        std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
 
-    virtual ~SetEmpireStockpile();
-
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -362,8 +354,6 @@ public:
 
     explicit SetEmpireCapital(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
 
-    virtual ~SetEmpireCapital();
-
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -387,8 +377,6 @@ private:
 class FO_COMMON_API SetPlanetType final : public EffectBase {
 public:
     explicit SetPlanetType(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&& type);
-
-    virtual ~SetPlanetType();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -415,8 +403,6 @@ class FO_COMMON_API SetPlanetSize final : public EffectBase {
 public:
     explicit SetPlanetSize(std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>&& size);
 
-    virtual ~SetPlanetSize();
-
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -439,8 +425,6 @@ class FO_COMMON_API SetSpecies final : public EffectBase {
 public:
     explicit SetSpecies(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species);
 
-    virtual ~SetSpecies();
-
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -462,8 +446,6 @@ private:
 class FO_COMMON_API SetOwner final : public EffectBase {
 public:
     explicit SetOwner(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-
-    virtual ~SetOwner();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -488,8 +470,6 @@ public:
     SetSpeciesEmpireOpinion(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
                             std::unique_ptr<ValueRef::ValueRefBase<double>>&& opinion);
-
-    virtual ~SetSpeciesEmpireOpinion();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -516,8 +496,6 @@ public:
     SetSpeciesSpeciesOpinion(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& opinionated_species_name,
                              std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& rated_species_name,
                              std::unique_ptr<ValueRef::ValueRefBase<double>>&& opinion);
-
-    virtual ~SetSpeciesSpeciesOpinion();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -546,8 +524,6 @@ public:
                  std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                  std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
-    virtual ~CreatePlanet();
-
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -573,8 +549,6 @@ public:
     CreateBuilding(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& building_type_name,
                    std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                    std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
-
-    virtual ~CreateBuilding();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -610,8 +584,6 @@ public:
                std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
                std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
                std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
-
-    virtual ~CreateShip();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -650,8 +622,6 @@ public:
                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                 std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
-    virtual ~CreateField();
-
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -687,8 +657,6 @@ public:
                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
                  std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                  std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
-
-    virtual ~CreateSystem();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -742,8 +710,6 @@ public:
     explicit AddSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                         std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity = nullptr);
 
-    ~AddSpecial();
-
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -772,8 +738,6 @@ public:
 
     explicit RemoveSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
 
-    ~RemoveSpecial();
-
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -795,8 +759,6 @@ private:
 class FO_COMMON_API AddStarlanes final : public EffectBase {
 public:
     explicit AddStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition);
-
-    virtual ~AddStarlanes();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -820,8 +782,6 @@ class FO_COMMON_API RemoveStarlanes final : public EffectBase {
 public:
     explicit RemoveStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition);
 
-    virtual ~RemoveStarlanes();
-
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -843,8 +803,6 @@ private:
 class FO_COMMON_API SetStarType final : public EffectBase {
 public:
     explicit SetStarType(std::unique_ptr<ValueRef::ValueRefBase<StarType>>&& type);
-
-    virtual ~SetStarType();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -869,8 +827,6 @@ private:
 class FO_COMMON_API MoveTo final : public EffectBase {
 public:
     explicit MoveTo(std::unique_ptr<Condition::ConditionBase>&& location_condition);
-
-    virtual ~MoveTo();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -899,8 +855,6 @@ public:
     MoveInOrbit(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& focus_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& focus_y = nullptr);
-
-    virtual ~MoveInOrbit();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -932,8 +886,6 @@ public:
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& dest_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& dest_y = nullptr);
 
-    virtual ~MoveTowards();
-
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -960,8 +912,6 @@ private:
 class FO_COMMON_API SetDestination final : public EffectBase {
 public:
     explicit SetDestination(std::unique_ptr<Condition::ConditionBase>&& location_condition);
-
-    virtual ~SetDestination();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -1032,8 +982,6 @@ public:
                           std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_progress,
                           std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr);
 
-    virtual ~SetEmpireTechProgress();
-
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -1056,8 +1004,6 @@ class FO_COMMON_API GiveEmpireTech final : public EffectBase {
 public:
     explicit GiveEmpireTech(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr);
-
-    virtual ~GiveEmpireTech();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -1107,8 +1053,6 @@ public:
                           const std::string& label = "",
                           bool stringtable_lookup = true);
 
-    virtual ~GenerateSitRepMessage();
-
     void Execute(const ScriptingContext& context) const override;
 
     bool IsSitrepEffect() const override
@@ -1157,8 +1101,6 @@ class FO_COMMON_API SetOverlayTexture final : public EffectBase {
 public:
     SetOverlayTexture(const std::string& texture, std::unique_ptr<ValueRef::ValueRefBase<double>>&& size);
     SetOverlayTexture(const std::string& texture, ValueRef::ValueRefBase<double>* size);
-
-    virtual ~SetOverlayTexture();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -1213,7 +1155,6 @@ public:
                   EmpireAffiliationType affiliation,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr,
                   std::unique_ptr<Condition::ConditionBase>&& of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
-    virtual ~SetVisibility();
 
     void Execute(const ScriptingContext& context) const override;
 
