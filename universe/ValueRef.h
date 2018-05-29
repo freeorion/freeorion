@@ -244,7 +244,6 @@ struct FO_COMMON_API Statistic final : public Variable<T>
     Statistic(std::unique_ptr<ValueRefBase<T>>&& value_ref,
               StatisticType stat_type,
               std::unique_ptr<Condition::ConditionBase>&& sampling_condition);
-    ~Statistic();
 
     bool        operator==(const ValueRefBase<T>& rhs) const override;
     T           Eval(const ScriptingContext& context) const override;
@@ -302,7 +301,6 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
                              std::unique_ptr<ValueRefBase<int>>&& int_ref3 = nullptr,
                              std::unique_ptr<ValueRefBase<std::string>>&& string_ref1 = nullptr,
                              std::unique_ptr<ValueRefBase<std::string>>&& string_ref2 = nullptr);
-    ~ComplexVariable();
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
@@ -349,8 +347,6 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
                std::is_convertible<T, std::unique_ptr<ValueRefBase<FromType>>>::value
                && !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type* = nullptr);
 
-    ~StaticCast();
-
     bool operator==(const ValueRefBase<ToType>& rhs) const override;
     ToType Eval(const ScriptingContext& context) const override;
     bool RootCandidateInvariant() const override;
@@ -382,7 +378,6 @@ struct FO_COMMON_API StringCast final : public Variable<std::string>
 {
     StringCast(std::unique_ptr<Variable<FromType>>&& value_ref);
     StringCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref);
-    ~StringCast();
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
     std::string Eval(const ScriptingContext& context) const override;
@@ -413,7 +408,6 @@ template <class FromType>
 struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
     explicit UserStringLookup(std::unique_ptr<Variable<FromType>>&& value_ref);
     explicit UserStringLookup(std::unique_ptr<ValueRefBase<FromType>>&& value_ref);
-    ~UserStringLookup();
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
     std::string Eval(const ScriptingContext& context) const override;
@@ -448,7 +442,6 @@ struct FO_COMMON_API NameLookup final : public Variable<std::string> {
     };
 
     NameLookup(std::unique_ptr<ValueRefBase<int>>&& value_ref, LookupType lookup_type);
-    ~NameLookup();
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
     std::string Eval(const ScriptingContext& context) const override;
@@ -492,8 +485,6 @@ struct FO_COMMON_API Operation final : public ValueRefBase<T>
 
     /* N-ary operation ctor. */
     Operation(OpType op_type, std::vector<std::unique_ptr<ValueRefBase<T>>>&& operands);
-
-    ~Operation();
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
@@ -826,10 +817,6 @@ Statistic<T>::Statistic(std::unique_ptr<ValueRefBase<T>>&& value_ref, StatisticT
     m_stat_type(stat_type),
     m_sampling_condition(std::move(sampling_condition)),
     m_value_ref(std::move(value_ref))
-{}
-
-template <class T>
-Statistic<T>::~Statistic()
 {}
 
 template <class T>
@@ -1238,10 +1225,6 @@ ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
 }
 
 template <class T>
-ComplexVariable<T>::~ComplexVariable()
-{}
-
-template <class T>
 bool ComplexVariable<T>::operator==(const ValueRefBase<T>& rhs) const
 {
     if (&rhs == this)
@@ -1493,10 +1476,6 @@ StaticCast<FromType, ToType>::StaticCast(
 {}
 
 template <class FromType, class ToType>
-StaticCast<FromType, ToType>::~StaticCast()
-{}
-
-template <class FromType, class ToType>
 bool StaticCast<FromType, ToType>::operator==(const ValueRefBase<ToType>& rhs) const
 {
     if (&rhs == this)
@@ -1585,10 +1564,6 @@ template <class FromType>
 StringCast<FromType>::StringCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
-{}
-
-template <class FromType>
-StringCast<FromType>::~StringCast()
 {}
 
 template <class FromType>
@@ -1697,10 +1672,6 @@ template <class FromType>
 UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRefBase<FromType>>&& value_ref) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
-{}
-
-template <class FromType>
-UserStringLookup<FromType>::~UserStringLookup()
 {}
 
 template <class FromType>
@@ -1878,10 +1849,6 @@ void Operation<T>::CacheConstValue()
 
     m_cached_const_value = this->EvalImpl(ScriptingContext());
 }
-
-template <class T>
-Operation<T>::~Operation()
-{}
 
 template <class T>
 bool Operation<T>::operator==(const ValueRefBase<T>& rhs) const
