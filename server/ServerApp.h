@@ -20,57 +20,6 @@ struct GalaxySetupData;
 struct SaveGameUIData;
 struct ServerFSM;
 
-/** Contains basic data about a player in a game. */
-struct PlayerSaveHeaderData {
-    PlayerSaveHeaderData();
-
-    PlayerSaveHeaderData(const std::string& name, int empire_id,
-                         Networking::ClientType client_type);
-
-    std::string             m_name;
-    int                     m_empire_id;
-    Networking::ClientType  m_client_type;
-
-private:
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-/** Contains data that must be saved for a single player. */
-struct PlayerSaveGameData : public PlayerSaveHeaderData {
-    PlayerSaveGameData();
-
-    PlayerSaveGameData(const std::string& name, int empire_id,
-                       const std::shared_ptr<OrderSet>& orders,
-                       const std::shared_ptr<SaveGameUIData>& ui_data,
-                       const std::string& save_state_string,
-                       Networking::ClientType client_type);
-
-    std::shared_ptr<OrderSet>       m_orders;
-    std::shared_ptr<SaveGameUIData> m_ui_data;
-    std::string                     m_save_state_string;
-
-private:
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-/** contains data that must be retained by the server when saving and loading a
-  * game that isn't player data or the universe */
-struct ServerSaveGameData {
-    ServerSaveGameData();
-    ServerSaveGameData(int current_turn);
-
-    int m_current_turn;
-
-private:
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
 /** the application framework class for the FreeOrion server. */
 class ServerApp : public IApp {
 public:
@@ -374,31 +323,5 @@ private:
     friend struct ProcessingTurn;
     friend struct ShuttingDownServer;
 };
-
-// template implementations
-template <class Archive>
-void PlayerSaveHeaderData::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_client_type);
-}
-
-template <class Archive>
-void PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_orders)
-        & BOOST_SERIALIZATION_NVP(m_ui_data)
-        & BOOST_SERIALIZATION_NVP(m_save_state_string)
-        & BOOST_SERIALIZATION_NVP(m_client_type);
-}
-
-template <class Archive>
-void ServerSaveGameData::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_current_turn);
-}
 
 #endif // _ServerApp_h_
