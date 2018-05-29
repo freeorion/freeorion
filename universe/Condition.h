@@ -169,7 +169,6 @@ struct FO_COMMON_API Number final : public ConditionBase {
     Number(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
            std::unique_ptr<ValueRef::ValueRefBase<int>>&& high,
            std::unique_ptr<ConditionBase>&& condition);
-    virtual ~Number();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -198,7 +197,6 @@ private:
 struct FO_COMMON_API Turn final : public ConditionBase {
     explicit Turn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& high = nullptr);
-    virtual ~Turn();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -241,8 +239,6 @@ struct FO_COMMON_API SortedNumberOf final : public ConditionBase {
                    std::unique_ptr<ValueRef::ValueRefBase<double>>&& sort_key_ref,
                    SortingMethod sorting_method,
                    std::unique_ptr<ConditionBase>&& condition);
-
-    virtual ~SortedNumberOf();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -329,7 +325,6 @@ struct FO_COMMON_API EmpireAffiliation final : public ConditionBase {
     EmpireAffiliation(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id, EmpireAffiliationType affiliation);
     explicit EmpireAffiliation(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
     explicit EmpireAffiliation(EmpireAffiliationType affiliation);
-    virtual ~EmpireAffiliation();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -442,7 +437,6 @@ private:
 struct FO_COMMON_API Homeworld final : public ConditionBase {
     Homeworld();
     explicit Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
-    virtual ~Homeworld();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -549,7 +543,6 @@ private:
 /** Matches all objects that are of UniverseObjectType \a type. */
 struct FO_COMMON_API Type final : public ConditionBase {
     explicit Type(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>&& type);
-    virtual ~Type();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -578,7 +571,6 @@ private:
   * in \a names. */
 struct FO_COMMON_API Building final : public ConditionBase {
     explicit Building(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
-    virtual ~Building();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -615,7 +607,6 @@ struct FO_COMMON_API HasSpecial final : public ConditionBase {
     HasSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity_low,
                std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity_high = nullptr);
-    virtual ~HasSpecial();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -647,7 +638,6 @@ struct FO_COMMON_API HasTag final : public ConditionBase {
     HasTag();
     explicit HasTag(const std::string& name);
     explicit HasTag(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
-    virtual ~HasTag();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -674,7 +664,6 @@ private:
 struct FO_COMMON_API CreatedOnTurn final : public ConditionBase {
     CreatedOnTurn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& high);
-    virtual ~CreatedOnTurn();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -706,7 +695,6 @@ struct FO_COMMON_API Contains final : public ConditionBase {
         ConditionBase(),
         m_condition(std::move(condition))
     {}
-    virtual ~Contains();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -739,7 +727,6 @@ struct FO_COMMON_API ContainedBy final : public ConditionBase {
         ConditionBase(),
         m_condition(std::move(condition))
     {}
-    virtual ~ContainedBy();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -767,7 +754,6 @@ private:
 /** Matches all objects that are in the system with the indicated \a system_id */
 struct FO_COMMON_API InSystem final : public ConditionBase {
     InSystem(std::unique_ptr<ValueRef::ValueRefBase<int>>&& system_id);
-    virtual ~InSystem();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -795,7 +781,6 @@ private:
 /** Matches the object with the id \a object_id */
 struct FO_COMMON_API ObjectID final : public ConditionBase {
     ObjectID(std::unique_ptr<ValueRef::ValueRefBase<int>>&& object_id);
-    virtual ~ObjectID();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -825,7 +810,6 @@ private:
   * matched. */
 struct FO_COMMON_API PlanetType final : public ConditionBase {
     PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetType>>>&& types);
-    virtual ~PlanetType();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -855,7 +839,6 @@ private:
   * matched. */
 struct FO_COMMON_API PlanetSize final : public ConditionBase {
     PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetSize>>>&& sizes);
-    virtual ~PlanetSize();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -886,7 +869,6 @@ private:
 struct FO_COMMON_API PlanetEnvironment final : public ConditionBase {
     PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetEnvironment>>>&& environments,
                       std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name_ref = nullptr);
-    virtual ~PlanetEnvironment();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -918,7 +900,6 @@ private:
 struct FO_COMMON_API Species final : public ConditionBase {
     explicit Species(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
     Species();
-    virtual ~Species();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -956,7 +937,6 @@ struct FO_COMMON_API Enqueued final : public ConditionBase {
                       std::unique_ptr<ValueRef::ValueRefBase<int>>&& low = nullptr,
                       std::unique_ptr<ValueRef::ValueRefBase<int>>&& high = nullptr);
     Enqueued();
-    virtual ~Enqueued();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -989,7 +969,6 @@ private:
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
 struct FO_COMMON_API FocusType final : public ConditionBase {
     FocusType(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
-    virtual ~FocusType();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1018,7 +997,6 @@ private:
     in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.). */
 struct FO_COMMON_API StarType final : public ConditionBase {
     StarType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::StarType>>>&& types);
-    virtual ~StarType();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1044,7 +1022,6 @@ private:
 /** Matches all ships whose ShipDesign has the hull specified by \a name. */
 struct FO_COMMON_API DesignHasHull final : public ConditionBase {
     explicit DesignHasHull(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
-    virtual ~DesignHasHull();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1075,7 +1052,6 @@ struct FO_COMMON_API DesignHasPart final : public ConditionBase {
     DesignHasPart(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& low = nullptr,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& high = nullptr);
-    virtual ~DesignHasPart();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1108,7 +1084,6 @@ struct FO_COMMON_API DesignHasPartClass final : public ConditionBase {
     DesignHasPartClass(ShipPartClass part_class,
                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& high);
-    virtual ~DesignHasPartClass();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1140,7 +1115,6 @@ private:
 struct FO_COMMON_API PredefinedShipDesign final : public ConditionBase {
     explicit PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
     explicit PredefinedShipDesign(ValueRef::ValueRefBase<std::string>* name);
-    virtual ~PredefinedShipDesign();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1166,7 +1140,6 @@ private:
 /** Matches ships whose design id \a id. */
 struct FO_COMMON_API NumberedShipDesign final : public ConditionBase {
     NumberedShipDesign(std::unique_ptr<ValueRef::ValueRefBase<int>>&& design_id);
-    virtual ~NumberedShipDesign();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1192,7 +1165,6 @@ private:
 /** Matches ships or buildings produced by the empire with id \a empire_id.*/
 struct FO_COMMON_API ProducedByEmpire final : public ConditionBase {
     ProducedByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-    virtual ~ProducedByEmpire();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1218,7 +1190,6 @@ private:
 /** Matches a given object with a linearly distributed probability of \a chance. */
 struct FO_COMMON_API Chance final : public ConditionBase {
     Chance(std::unique_ptr<ValueRef::ValueRefBase<double>>&& chance);
-    virtual ~Chance();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1247,7 +1218,6 @@ struct FO_COMMON_API MeterValue final : public ConditionBase {
     MeterValue(MeterType meter,
                std::unique_ptr< ValueRef::ValueRefBase<double>>&& low,
                std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
-    virtual ~MeterValue();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1279,7 +1249,6 @@ struct FO_COMMON_API ShipPartMeterValue final : public ConditionBase {
                        MeterType meter,
                        std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
                        std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
-    virtual ~ShipPartMeterValue();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1311,7 +1280,6 @@ struct FO_COMMON_API EmpireMeterValue final : public ConditionBase {
                      const std::string& meter,
                      std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
                      std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
-    virtual ~EmpireMeterValue();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1340,8 +1308,6 @@ struct FO_COMMON_API EmpireStockpileValue final : public ConditionBase {
                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
 
-    virtual ~EmpireStockpileValue();
-
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
@@ -1369,8 +1335,6 @@ private:
 struct FO_COMMON_API OwnerHasTech final : public ConditionBase {
     explicit OwnerHasTech(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
 
-    virtual ~OwnerHasTech();
-
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
@@ -1396,7 +1360,6 @@ private:
 struct FO_COMMON_API OwnerHasBuildingTypeAvailable final : public ConditionBase {
     explicit OwnerHasBuildingTypeAvailable(const std::string& name);
     explicit OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
-    virtual ~OwnerHasBuildingTypeAvailable();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1423,7 +1386,6 @@ private:
 struct FO_COMMON_API OwnerHasShipDesignAvailable final : public ConditionBase {
     explicit OwnerHasShipDesignAvailable(int id);
     explicit OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRefBase<int>>&& id);
-    virtual ~OwnerHasShipDesignAvailable();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1450,7 +1412,6 @@ private:
 struct FO_COMMON_API OwnerHasShipPartAvailable final : public ConditionBase {
     explicit OwnerHasShipPartAvailable(const std::string& name);
     explicit OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
-    virtual ~OwnerHasShipPartAvailable();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1476,7 +1437,6 @@ private:
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */
 struct FO_COMMON_API VisibleToEmpire final : public ConditionBase {
     explicit VisibleToEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-    virtual ~VisibleToEmpire();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1506,7 +1466,6 @@ private:
 struct FO_COMMON_API WithinDistance final : public ConditionBase {
     WithinDistance(std::unique_ptr<ValueRef::ValueRefBase<double>>&& distance,
                    std::unique_ptr<ConditionBase>&& condition);
-    virtual ~WithinDistance();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1537,7 +1496,6 @@ private:
 struct FO_COMMON_API WithinStarlaneJumps final : public ConditionBase {
     WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRefBase<int>>&& jumps,
                         std::unique_ptr<ConditionBase>&& condition);
-    virtual ~WithinStarlaneJumps();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1572,7 +1530,6 @@ struct FO_COMMON_API CanAddStarlaneConnection : ConditionBase {
         ConditionBase(),
         m_condition(std::move(condition))
     {}
-    virtual ~CanAddStarlaneConnection();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1599,7 +1556,6 @@ private:
   * in \a empire_ids. */
 struct FO_COMMON_API ExploredByEmpire final : public ConditionBase {
     explicit ExploredByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-    virtual ~ExploredByEmpire();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1688,7 +1644,6 @@ private:
   * empire with id \a empire_id */
 struct FO_COMMON_API FleetSupplyableByEmpire final : public ConditionBase {
     explicit FleetSupplyableByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-    virtual ~FleetSupplyableByEmpire();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1717,7 +1672,6 @@ private:
 struct FO_COMMON_API ResourceSupplyConnectedByEmpire final : public ConditionBase {
     ResourceSupplyConnectedByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
                                     std::unique_ptr<ConditionBase>&& condition);
-    virtual ~ResourceSupplyConnectedByEmpire();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1795,7 +1749,6 @@ private:
   * object that matches \a m_by_object_condition. */
 struct FO_COMMON_API OrderedBombarded final : public ConditionBase {
     OrderedBombarded(std::unique_ptr<ConditionBase>&& by_object_condition);
-    virtual ~OrderedBombarded();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1839,8 +1792,6 @@ struct FO_COMMON_API ValueTest final : public ConditionBase {
               ComparisonType comp2 = INVALID_COMPARISON,
               std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref3 = nullptr);
 
-    virtual ~ValueTest();
-
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
@@ -1880,7 +1831,6 @@ public:
     Location(ContentType content_type,
              std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name1,
              std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name2 = nullptr);
-    virtual ~Location();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1908,7 +1858,6 @@ private:
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API And final : public ConditionBase {
     And(std::vector<std::unique_ptr<ConditionBase>>&& operands);
-    virtual ~And();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1935,7 +1884,6 @@ private:
 /** Matches all objects that match at least one Condition in \a operands. */
 struct FO_COMMON_API Or final : public ConditionBase {
     Or(std::vector<std::unique_ptr<ConditionBase>>&& operands);
-    virtual ~Or();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1959,7 +1907,6 @@ private:
 /** Matches all objects that do not match the Condition \a operand. */
 struct FO_COMMON_API Not final : public ConditionBase {
     Not(std::unique_ptr<ConditionBase>&& operand);
-    virtual ~Not();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1988,7 +1935,6 @@ struct FO_COMMON_API Described final : public ConditionBase {
             m_condition(std::move(condition)),
         m_desc_stringtable_key(desc_stringtable_key)
     {}
-    virtual ~Described();
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,

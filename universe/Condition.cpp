@@ -244,8 +244,7 @@ struct ConditionBase::MatchHelper {
     const ScriptingContext& m_parent_context;
 };
 
-ConditionBase::~ConditionBase()
-{}
+ConditionBase::~ConditionBase() = default;
 
 bool ConditionBase::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -317,9 +316,6 @@ Number::Number(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_condition(std::move(condition))
-{}
-
-Number::~Number()
 {}
 
 bool Number::operator==(const ConditionBase& rhs) const {
@@ -492,8 +488,6 @@ Turn::Turn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
     m_high(std::move(high))
 {}
 
-Turn::~Turn() {}
-
 bool Turn::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -654,9 +648,6 @@ SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRefBase<int>>&& nu
     m_sort_key(std::move(sort_key_ref)),
     m_sorting_method(sorting_method),
     m_condition(std::move(condition))
-{}
-
-SortedNumberOf::~SortedNumberOf()
 {}
 
 bool SortedNumberOf::operator==(const ConditionBase& rhs) const {
@@ -1144,9 +1135,6 @@ EmpireAffiliation::EmpireAffiliation(EmpireAffiliationType affiliation) :
     m_affiliation(affiliation)
 {}
 
-EmpireAffiliation::~EmpireAffiliation()
-{}
-
 bool EmpireAffiliation::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -1475,8 +1463,6 @@ Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::str
     ConditionBase(),
     m_names(std::move(names))
 {}
-
-Homeworld::~Homeworld() {}
 
 bool Homeworld::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -1828,9 +1814,6 @@ Type::Type(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>&& type) :
     m_type(std::move(type))
 {}
 
-Type::~Type()
-{}
-
 bool Type::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -2015,8 +1998,6 @@ Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::strin
     ConditionBase(),
     m_names(std::move(names))
 {}
-
-Building::~Building() {}
 
 bool Building::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -2244,9 +2225,6 @@ HasSpecial::HasSpecial(const std::string& name) :
     m_capacity_high(nullptr),
     m_since_turn_low(nullptr),
     m_since_turn_high(nullptr)
-{}
-
-HasSpecial::~HasSpecial()
 {}
 
 bool HasSpecial::operator==(const ConditionBase& rhs) const {
@@ -2479,9 +2457,6 @@ HasTag::HasTag(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
     m_name(std::move(name))
 {}
 
-HasTag::~HasTag()
-{}
-
 bool HasTag::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -2613,8 +2588,6 @@ CreatedOnTurn::CreatedOnTurn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
     m_high(std::move(high))
 {}
 
-CreatedOnTurn::~CreatedOnTurn() {}
-
 bool CreatedOnTurn::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -2734,9 +2707,6 @@ unsigned int CreatedOnTurn::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Contains                                              //
 ///////////////////////////////////////////////////////////
-Contains::~Contains()
-{}
-
 bool Contains::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -2937,9 +2907,6 @@ unsigned int Contains::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ContainedBy                                           //
 ///////////////////////////////////////////////////////////
-ContainedBy::~ContainedBy()
-{}
-
 bool ContainedBy::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -3164,9 +3131,6 @@ InSystem::InSystem(std::unique_ptr<ValueRef::ValueRefBase<int>>&& system_id) :
     m_system_id(std::move(system_id))
 {}
 
-InSystem::~InSystem()
-{}
-
 bool InSystem::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -3326,9 +3290,6 @@ ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRefBase<int>>&& object_id) :
     m_object_id(std::move(object_id))
 {}
 
-ObjectID::~ObjectID()
-{}
-
 bool ObjectID::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -3464,8 +3425,6 @@ PlanetType::PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::Pla
     ConditionBase(),
     m_types(std::move(types))
 {}
-
-PlanetType::~PlanetType() {}
 
 bool PlanetType::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3650,8 +3609,6 @@ PlanetSize::PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::Pla
     ConditionBase(),
     m_sizes(std::move(sizes))
 {}
-
-PlanetSize::~PlanetSize() {}
 
 bool PlanetSize::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -3841,8 +3798,6 @@ PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::Value
     m_environments(std::move(environments)),
     m_species_name(std::move(species_name_ref))
 {}
-
-PlanetEnvironment::~PlanetEnvironment() {}
 
 bool PlanetEnvironment::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -4072,8 +4027,6 @@ Species::Species() :
     ConditionBase(),
     m_names()
 {}
-
-Species::~Species() {}
 
 bool Species::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -4323,8 +4276,6 @@ Enqueued::Enqueued(BuildType build_type,
     m_low(std::move(low)),
     m_high(std::move(high))
 {}
-
-Enqueued::~Enqueued() {}
 
 bool Enqueued::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -4623,8 +4574,6 @@ FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::str
     m_names(std::move(names))
 {}
 
-FocusType::~FocusType() {}
-
 bool FocusType::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -4812,8 +4761,6 @@ StarType::StarType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::StarTyp
     m_types(std::move(types))
 {}
 
-StarType::~StarType() {}
-
 bool StarType::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -4980,9 +4927,6 @@ DesignHasHull::DesignHasHull(std::unique_ptr<ValueRef::ValueRefBase<std::string>
     m_name(std::move(name))
 {}
 
-DesignHasHull::~DesignHasHull()
-{}
-
 bool DesignHasHull::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -5114,8 +5058,6 @@ DesignHasPart::DesignHasPart(std::unique_ptr<ValueRef::ValueRefBase<std::string>
     m_high(std::move(high)),
     m_name(std::move(name))
 {}
-
-DesignHasPart::~DesignHasPart() {}
 
 bool DesignHasPart::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -5298,8 +5240,6 @@ DesignHasPartClass::DesignHasPartClass(ShipPartClass part_class,
     m_class(std::move(part_class))
 {}
 
-DesignHasPartClass::~DesignHasPartClass() {}
-
 bool DesignHasPartClass::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -5467,9 +5407,6 @@ PredefinedShipDesign::PredefinedShipDesign(ValueRef::ValueRefBase<std::string>* 
     m_name(name)
 {}
 
-PredefinedShipDesign::~PredefinedShipDesign()
-{}
-
 bool PredefinedShipDesign::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -5609,9 +5546,6 @@ NumberedShipDesign::NumberedShipDesign(std::unique_ptr<ValueRef::ValueRefBase<in
     m_design_id(std::move(design_id))
 {}
 
-NumberedShipDesign::~NumberedShipDesign()
-{}
-
 bool NumberedShipDesign::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -5717,9 +5651,6 @@ unsigned int NumberedShipDesign::GetCheckSum() const {
 ProducedByEmpire::ProducedByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
     ConditionBase(),
     m_empire_id(std::move(empire_id))
-{}
-
-ProducedByEmpire::~ProducedByEmpire()
 {}
 
 bool ProducedByEmpire::operator==(const ConditionBase& rhs) const {
@@ -5837,9 +5768,6 @@ Chance::Chance(std::unique_ptr<ValueRef::ValueRefBase<double>>&& chance) :
     m_chance(std::move(chance))
 {}
 
-Chance::~Chance()
-{}
-
 bool Chance::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -5942,8 +5870,6 @@ MeterValue::MeterValue(MeterType meter,
     m_low(std::move(low)),
     m_high(std::move(high))
 {}
-
-MeterValue::~MeterValue() {}
 
 bool MeterValue::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6138,8 +6064,6 @@ ShipPartMeterValue::ShipPartMeterValue(std::unique_ptr<ValueRef::ValueRefBase<st
     m_high(std::move(high))
 {}
 
-ShipPartMeterValue::~ShipPartMeterValue() {}
-
 bool ShipPartMeterValue::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -6328,8 +6252,6 @@ EmpireMeterValue::EmpireMeterValue(std::unique_ptr<ValueRef::ValueRefBase<int>>&
     m_high(std::move(high))
 {}
 
-EmpireMeterValue::~EmpireMeterValue() {}
-
 bool EmpireMeterValue::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -6508,8 +6430,6 @@ EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile,
     m_high(std::move(high))
 {}
 
-EmpireStockpileValue::~EmpireStockpileValue() {}
-
 bool EmpireStockpileValue::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -6654,9 +6574,6 @@ OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&
     m_name(std::move(name))
 {}
 
-OwnerHasTech::~OwnerHasTech()
-{}
-
 bool OwnerHasTech::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -6781,9 +6698,6 @@ OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(std::unique_ptr<Val
     m_name(std::move(name))
 {}
 
-OwnerHasBuildingTypeAvailable::~OwnerHasBuildingTypeAvailable()
-{}
-
 bool OwnerHasBuildingTypeAvailable::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -6901,9 +6815,6 @@ OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int id) :
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRefBase<int>>&& id) :
     ConditionBase(),
     m_id(std::move(id))
-{}
-
-OwnerHasShipDesignAvailable::~OwnerHasShipDesignAvailable()
 {}
 
 bool OwnerHasShipDesignAvailable::operator==(const ConditionBase& rhs) const {
@@ -7025,9 +6936,6 @@ OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::V
     m_name(std::move(name))
 {}
 
-OwnerHasShipPartAvailable::~OwnerHasShipPartAvailable()
-{}
-
 bool OwnerHasShipPartAvailable::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -7142,9 +7050,6 @@ VisibleToEmpire::VisibleToEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& 
     m_empire_id(std::move(empire_id))
 {}
 
-VisibleToEmpire::~VisibleToEmpire()
-{}
-
 bool VisibleToEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -7256,8 +7161,6 @@ WithinDistance::WithinDistance(std::unique_ptr<ValueRef::ValueRefBase<double>>&&
     m_distance(std::move(distance)),
     m_condition(std::move(condition))
 {}
-
-WithinDistance::~WithinDistance() {}
 
 bool WithinDistance::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -7395,8 +7298,6 @@ WithinStarlaneJumps::WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRefBase<
     m_condition(std::move(condition))
 {}
 
-WithinStarlaneJumps::~WithinStarlaneJumps() {}
-
 bool WithinStarlaneJumps::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -7508,9 +7409,6 @@ unsigned int WithinStarlaneJumps::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CanAddStarlaneConnection                              //
 ///////////////////////////////////////////////////////////
-CanAddStarlaneConnection::~CanAddStarlaneConnection()
-{}
-
 bool CanAddStarlaneConnection::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -7957,9 +7855,6 @@ ExploredByEmpire::ExploredByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&
     m_empire_id(std::move(empire_id))
 {}
 
-ExploredByEmpire::~ExploredByEmpire()
-{}
-
 bool ExploredByEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -8178,9 +8073,6 @@ FleetSupplyableByEmpire::FleetSupplyableByEmpire(std::unique_ptr<ValueRef::Value
     m_empire_id(std::move(empire_id))
 {}
 
-FleetSupplyableByEmpire::~FleetSupplyableByEmpire()
-{}
-
 bool FleetSupplyableByEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -8305,8 +8197,6 @@ ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
     m_empire_id(std::move(empire_id)),
     m_condition(std::move(condition))
 {}
-
-ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire() {}
 
 bool ResourceSupplyConnectedByEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -8609,9 +8499,6 @@ OrderedBombarded::OrderedBombarded(std::unique_ptr<ConditionBase>&& by_object_co
     m_by_object_condition(std::move(by_object_condition))
 {}
 
-OrderedBombarded::~OrderedBombarded()
-{}
-
 bool OrderedBombarded::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -8816,9 +8703,6 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref1,
 {
     //DebugLogger() << "ValueTest(double)";
 }
-
-ValueTest::~ValueTest()
-{}
 
 bool ValueTest::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -9195,8 +9079,6 @@ Location::Location(ContentType content_type,
     m_content_type(content_type)
 {}
 
-Location::~Location() {}
-
 bool Location::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -9350,8 +9232,6 @@ And::And(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
     ConditionBase(),
     m_operands(std::move(operands))
 {}
-
-And::~And() {}
 
 bool And::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -9526,8 +9406,6 @@ Or::Or(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
     m_operands(std::move(operands))
 {}
 
-Or::~Or() {}
-
 bool Or::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -9688,9 +9566,6 @@ Not::Not(std::unique_ptr<ConditionBase>&& operand) :
     m_operand(std::move(operand))
 {}
 
-Not::~Not()
-{}
-
 bool Not::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -9774,9 +9649,6 @@ unsigned int Not::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Described                                             //
 ///////////////////////////////////////////////////////////
-Described::~Described()
-{}
-
 bool Described::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;

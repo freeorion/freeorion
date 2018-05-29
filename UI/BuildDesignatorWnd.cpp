@@ -21,6 +21,7 @@
 #include "../universe/Effect.h"
 #include "../universe/Condition.h"
 #include "../universe/Enums.h"
+#include "../universe/ValueRef.h"
 #include "../client/human/HumanClientApp.h"
 
 #include <GG/DrawUtil.h>
