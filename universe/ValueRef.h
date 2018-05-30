@@ -158,7 +158,7 @@ private:
 
 /** the constant value leaf ValueRef class. */
 template <class T>
-struct FO_COMMON_API Constant : public ValueRefBase<T>
+struct FO_COMMON_API Constant final : public ValueRefBase<T>
 {
     explicit Constant(T value);
 
@@ -239,7 +239,7 @@ private:
   * \a sampling_condition and the statistic indicated by \a stat_type is
   * calculated from them and returned. */
 template <class T>
-struct FO_COMMON_API Statistic : public Variable<T>
+struct FO_COMMON_API Statistic final : public Variable<T>
 {
     Statistic(std::unique_ptr<ValueRefBase<T>>&& value_ref,
               StatisticType stat_type,
@@ -294,7 +294,7 @@ private:
 /** The complex variable ValueRef class. The value returned by this node
   * is taken from the gamestate. */
 template <class T>
-struct FO_COMMON_API ComplexVariable : public Variable<T>
+struct FO_COMMON_API ComplexVariable final : public Variable<T>
 {
     explicit ComplexVariable(const std::string& variable_name,
                              std::unique_ptr<ValueRefBase<int>>&& int_ref1 = nullptr,
@@ -337,7 +337,7 @@ private:
   * from the ctor \a value_ref parameter's FromType value, static_cast to
   * ToType. */
 template <class FromType, class ToType>
-struct FO_COMMON_API StaticCast : public Variable<ToType>
+struct FO_COMMON_API StaticCast final : public Variable<ToType>
 {
     template <typename T>
     StaticCast(T&& value_ref,
@@ -378,7 +378,7 @@ private:
   * is taken from the ctor \a value_ref parameter's FromType value,
   * lexical_cast to std::string */
 template <class FromType>
-struct FO_COMMON_API StringCast : public Variable<std::string>
+struct FO_COMMON_API StringCast final : public Variable<std::string>
 {
     StringCast(std::unique_ptr<Variable<FromType>>&& value_ref);
     StringCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref);
@@ -410,7 +410,7 @@ private:
 /** Looks up a string ValueRef or vector of string ValueRefs, and returns
   * and returns the UserString equivalent(s). */
 template <class FromType>
-struct FO_COMMON_API UserStringLookup : public Variable<std::string> {
+struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
     explicit UserStringLookup(std::unique_ptr<Variable<FromType>>&& value_ref);
     explicit UserStringLookup(std::unique_ptr<ValueRefBase<FromType>>&& value_ref);
     ~UserStringLookup();
@@ -439,7 +439,7 @@ private:
 };
 
 /** Returns the in-game name of the object / empire / etc. with a specified id. */
-struct FO_COMMON_API NameLookup : public Variable<std::string> {
+struct FO_COMMON_API NameLookup final : public Variable<std::string> {
     enum LookupType {
         INVALID_LOOKUP = -1,
         OBJECT_NAME,
@@ -481,7 +481,7 @@ private:
   * mutiplication, division, or unary negation is performed on the child(ren)
   * of this node, and the result is returned. */
 template <class T>
-struct FO_COMMON_API Operation : public ValueRefBase<T>
+struct FO_COMMON_API Operation final : public ValueRefBase<T>
 {
     /** Binary operation ctor. */
     Operation(OpType op_type, std::unique_ptr<ValueRefBase<T>>&& operand1,
