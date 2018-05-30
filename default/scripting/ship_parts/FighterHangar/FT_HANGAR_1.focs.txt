@@ -16,7 +16,6 @@ Part
             activation = Source
             stackinggroup = "INTERCEPTOR_FAST_LAUNCH_EFFECT"
             effects = [
-                SetCapacity partname = "FT_BAY_1" value = Value + 2
                 SetMaxCapacity partname = "FT_BAY_1" value = Value + 2
             ]
     ]
