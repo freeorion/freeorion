@@ -639,7 +639,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
         SendNewGameStartMessages();
 }
 
-void UpdateEmpireSupply() {
+void UpdateEmpireSupply(bool precombat=false) {
     EmpireManager& empires = Empires();
 
     // Determine initial supply distribution and exchanging and resource pools for empires
@@ -648,7 +648,7 @@ void UpdateEmpireSupply() {
         if (empire->Eliminated())
             continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
 
-        empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propagate fleet and resource (same for both)
+        empire->UpdateSupplyUnobstructedSystems(precombat);  // determines which systems can propagate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propagate fleet and resourse supply (separately)
     }
 
@@ -3345,7 +3345,7 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // Re-determine supply distribution and exchanging and resource pools for empires
-    UpdateEmpireSupply();
+    UpdateEmpireSupply(true);
 
     // copy latest visible gamestate to each empire's known object state
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
