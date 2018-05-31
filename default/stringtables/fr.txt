@@ -339,11 +339,15 @@ PROJECT_BT_STOCKPILE_SHORT_DESC
 Transfère les PP vers le stock impérial
 
 PROJECT_BT_STOCKPILE_DESC
-'''Transfère les PP vers le stock impérial sur la planète où le projet est en file d'attente. Tout autre projet en file d'attente situé sous le projet de transfert sur une planète reliée par ligne d'approvisionnement, ne se verra pas allouer de PP.
+'''Les PP alloués au projet de Transfert Stock sont ajoutés au Stock Impérial. La quantité à transférer et le nombre de répétitions du transfert peuvent être spécifiés.
 
-Transfère seulement les PP disponibles sur cette planète; l'attribution des PP sur les planètes ne lui étant pas reliées par ligne d'approvisionnement ne sera pas affectée par ce projet.
+Seuls les PP produits au sein du même Groupe Ressource (soit aucun du Stock Impérial) sont alloués au projet de Transfert Stock.
 
-L'excédent de PP (PP non-alloués à un projet dans la file d'attente) sur cette planète ou tout autre emplacement, sera transféré vers le Stock, qu'un projet de Transfert Stock soit présent ou pas dans la file d'attente. Ce projet est utilisé pour transférer les PP vers le Stock même si d'autres projets situés sous celui-ci dans la file d'attente auraient pu se voir allouer les PP disponibles.'''
+L'excédent de PP (PP non-alloués à un projet dans la file d'attente) sur cette planète ou tout autre emplacement, sera transféré vers le Stock, qu'un projet de Transfert Stock soit présent ou pas dans la file d'attente. Les PP alloués à un projet de Transfert Stock sont invariablement envoyés vers le Stock, même si d'autres items de production sont ajoutés ultérieurement à la file d'attente.
+
+Exemple: Un empire désire puiser des PP dans le Stock au sein d'un Groupe Ressource secondaire, car ce dernier ne génère pas un nombre de PP suffisant. Dans cette optique, le stock nécessite d'être approvisionné à partir du Groupe Ressource principal. L'empire dispose de 100 PP d'Industrie dans le Groupe Ressource principal, sa limite d'usage du Stock est de 10 PP et l'empire désire avoir 10 PP toujours disponible dans le Stock. La file d'attente de Production contient des items sur les planètes du Groupe Ressource principal nécessitant 120 PP par tour, ce qui signifie que tous les PP disponibles seront utilisés.
+Afin de pouvoir utiliser les PP dans le Groupe Ressource secondaire, l'empire ajoute en tête de la file d'attente un projet de Transfert Stock d'une valeur de 10x sur une planète du Groupe Ressource principal.
+Étant donné que le projet de Transfert Stock est placé au-dessus des autres projets dans la file d'attente du Groupe Ressource principal, le projet est entièrement financé et augmentera donc le Stock de 10 PP au tour suivant. Pour assurer un transfert continu à chaque tour, la valeur de répétition du projet est réglée sur 99 fois.'''
 
 
 ##
@@ -4090,7 +4094,7 @@ Le panneau "Récapitulation de Production" affiche les Points de Production disp
 Si un système est sélectionné, deux colonnes sont visibles. La colonne de gauche correspond aux points de production à travers tout l'empire. La colonne de droite affiche les points de production pour le système sélectionné (absente si aucun système n'est sélectionné).
 "Points disponibles" fait référence aux PP disponibles pour la Production. La valeur de droite correspond au maximum de points disponibles pour le système sélectionné. Cette valeur peut être inférieure au total disponible lorsque tous les systèmes de votre empire ne sont pas reliés par lignes d'[[metertype METER_SUPPLY]].
 Le Stock correspond aux PP disponibles pour la Production, et provenant du Stock Impérial. Les Projets de Production sont autorisés à puiser par défaut dans le Stock Impérial, excepté si son usage a été individuellement bloqué pour un projet.
-D'une manière générale, la plupart des PP en excédent seront gaspillés et perdus, mais une partie de cette excédent sera transférée dans le Stock Impérial.
+Les PP non-alloués à un projet dans la file d'attente de Production seront automatiquement ajoutés au Stock Impérial.
 
 <u>Panneau Projets de Production</u>
 
