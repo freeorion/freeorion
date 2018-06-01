@@ -46,9 +46,15 @@ class Generator(object):
         if build_no == INVALID_BUILD_NO:
             print "WARNING: Can't determine git commit!"
 
-        if os.path.isfile(self.outfile) and not build_no == INVALID_BUILD_NO:
+        if os.path.isfile(self.outfile):
             with open(self.outfile) as check_file:
-                if build_no in check_file.read():
+                check_file_contents = check_file.read()
+                if build_no == INVALID_BUILD_NO:
+                    if version in check_file_contents:
+                        print "Version matches version in existing Version.cpp, skip regenerating it"
+                        return
+                elif build_no in check_file_contents:
+                    print "Build number matches build number in existing Version.cpp, skip regenerating it"
                     return
 
         try:
