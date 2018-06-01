@@ -626,7 +626,10 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
 
     ind_tag_mod = AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(get_ai_tag_grade(tag_list, "INDUSTRY"), 1.0)
     res_tag_mod = AIDependencies.SPECIES_RESEARCH_MODIFIER.get(get_ai_tag_grade(tag_list, "RESEARCH"), 1.0)
-    supply_tag_mod = AIDependencies.SPECIES_SUPPLY_MODIFIER.get(get_ai_tag_grade(tag_list, "SUPPLY"), 1)
+    if species:
+        supply_tag_mod = AIDependencies.SPECIES_SUPPLY_MODIFIER.get(get_ai_tag_grade(tag_list, "SUPPLY"), 1)
+    else:
+        supply_tag_mod = 0
 
     # determine the potential supply provided by owning this planet, and if the planet is currently populated by
     # the evaluated species, then save this supply value in a cache.
