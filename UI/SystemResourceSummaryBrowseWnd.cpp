@@ -69,7 +69,7 @@ namespace {
             return prod_queue_allocation_sum;
             break;
 
-        case RE_TRADE:
+        case RE_INFLUENCE:
         case RE_RESEARCH:
         case RE_STOCKPILE:
             // research/stockpile aren't consumed at a particular location, so none is consumed at any location
@@ -243,8 +243,8 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         resource_text = UserString("INDUSTRY_PRODUCTION");  break;
     case RE_RESEARCH:
         resource_text = UserString("RESEARCH_PRODUCTION");  break;
-    case RE_TRADE:
-        resource_text = UserString("TRADE_PRODUCTION");     break;
+    case RE_INFLUENCE:
+        resource_text = UserString("INFLUENCE_PRODUCTION"); break;
     case RE_STOCKPILE:
         resource_text = UserString("STOCKPILE_GENERATION"); break;
     default:
@@ -343,8 +343,8 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         resource_text = UserString("INDUSTRY_CONSUMPTION"); break;
     case RE_RESEARCH:
         resource_text = UserString("RESEARCH_CONSUMPTION"); break;
-    case RE_TRADE:
-        resource_text = UserString("TRADE_CONSUMPTION");    break;
+    case RE_INFLUENCE:
+        resource_text = UserString("INFLUENCE_CONSUMPTION");break;
     case RE_STOCKPILE:
         resource_text = UserString("STOCKPILE_USE");        break;
     default:
@@ -395,7 +395,7 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
         double difference = m_production - m_allocation;
 
         switch (m_resource_type) {
-        case RE_TRADE:
+        case RE_INFLUENCE:
         case RE_INDUSTRY:
             if (difference > 0.0) {
                 // show surplus

@@ -140,7 +140,7 @@ public:
     void    UpdateMonsterTravelRestrictions();
 
     /** Determines resource and supply distribution pathes and connections,
-      * updates research, production, trade spending,
+      * updates research, production, influence spending,
       * does population growth, updates current turn number, checks for
       * eliminated or victorious empires / players, sends new turn updates. */
     void    PostCombatProcessTurns();

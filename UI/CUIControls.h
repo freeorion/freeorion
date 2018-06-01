@@ -424,7 +424,7 @@ private:
 };
 
 /** Encapsulates an icon and text that goes with it in a single control.  For
-  * example, "[trade icon] +1" or "[population icon] 66 (+5)", where [... icon]
+  * example, "[research icon] +1" or "[population icon] 66 (+5)", where [... icon]
   * is an icon image, not text.
   * The icon may have one or two numerical values.  If one, just that number is
   * displayed.  If two, the first number is displayed followed by the second in

@@ -54,8 +54,8 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
     AddMeter(METER_INDUSTRY);
     AddMeter(METER_TARGET_RESEARCH);
     AddMeter(METER_RESEARCH);
-    AddMeter(METER_TARGET_TRADE);
-    AddMeter(METER_TRADE);
+    AddMeter(METER_TARGET_INFLUENCE);
+    AddMeter(METER_INFLUENCE);
 
     const std::vector<std::string>& part_names = Design()->Parts();
     for (const std::string& part_name : part_names) {
@@ -643,7 +643,7 @@ void Ship::ResetTargetMaxUnpairedMeters() {
     UniverseObject::GetMeter(METER_MAX_STRUCTURE)->ResetCurrent();
     UniverseObject::GetMeter(METER_TARGET_INDUSTRY)->ResetCurrent();
     UniverseObject::GetMeter(METER_TARGET_RESEARCH)->ResetCurrent();
-    UniverseObject::GetMeter(METER_TARGET_TRADE)->ResetCurrent();
+    UniverseObject::GetMeter(METER_TARGET_INFLUENCE)->ResetCurrent();
 
     UniverseObject::GetMeter(METER_DETECTION)->ResetCurrent();
     UniverseObject::GetMeter(METER_SPEED)->ResetCurrent();
@@ -736,8 +736,8 @@ void Ship::ClampMeters() {
     UniverseObject::GetMeter(METER_INDUSTRY)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_TARGET_RESEARCH)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_RESEARCH)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_TARGET_TRADE)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_TRADE)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_TARGET_INFLUENCE)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_INFLUENCE)->ClampCurrentToRange();
 
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_SPEED)->ClampCurrentToRange();

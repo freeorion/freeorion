@@ -121,7 +121,7 @@ namespace {
             case PC_TROOPS:
             case PC_RESEARCH:
             case PC_INDUSTRY:
-            case PC_TRADE:
+            case PC_INFLUENCE:
                 return part->Capacity();
                 break;
             case PC_GENERAL:

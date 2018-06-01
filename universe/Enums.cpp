@@ -19,7 +19,7 @@ MeterType ResourceToMeter(ResourceType type) {
     switch (type) {
     case RE_INDUSTRY:   return METER_INDUSTRY;
     case RE_RESEARCH:   return METER_RESEARCH;
-    case RE_TRADE:      return METER_TRADE;
+    case RE_INFLUENCE:  return METER_INFLUENCE;
     case RE_STOCKPILE:  return METER_STOCKPILE;
     default:
         assert(0);
@@ -32,7 +32,7 @@ MeterType ResourceToTargetMeter(ResourceType type) {
     switch (type) {
     case RE_INDUSTRY:   return METER_TARGET_INDUSTRY;
     case RE_RESEARCH:   return METER_TARGET_RESEARCH;
-    case RE_TRADE:      return METER_TARGET_TRADE;
+    case RE_INFLUENCE:  return METER_TARGET_INFLUENCE;
     case RE_STOCKPILE:  return METER_MAX_STOCKPILE;
     default:
         assert(0);
@@ -45,7 +45,7 @@ ResourceType MeterToResource(MeterType type) {
     switch (type) {
     case METER_INDUSTRY:    return RE_INDUSTRY;
     case METER_RESEARCH:    return RE_RESEARCH;
-    case METER_TRADE:       return RE_TRADE;
+    case METER_INFLUENCE:   return RE_INFLUENCE;
     case METER_STOCKPILE:   return RE_STOCKPILE;
     default:
         assert(0);
@@ -59,7 +59,7 @@ const std::map<MeterType, MeterType>& AssociatedMeterTypes() {
         {METER_POPULATION,      METER_TARGET_POPULATION},
         {METER_INDUSTRY,        METER_TARGET_INDUSTRY},
         {METER_RESEARCH,        METER_TARGET_RESEARCH},
-        {METER_TRADE,           METER_TARGET_TRADE},
+        {METER_INFLUENCE,       METER_TARGET_INFLUENCE},
         {METER_CONSTRUCTION,    METER_TARGET_CONSTRUCTION},
         {METER_HAPPINESS,       METER_TARGET_HAPPINESS},
         {METER_FUEL,            METER_MAX_FUEL},

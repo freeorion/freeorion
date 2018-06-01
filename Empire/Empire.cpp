@@ -81,7 +81,7 @@ Empire::Empire(const std::string& name, const std::string& player_name,
 void Empire::Init() {
     m_resource_pools[RE_RESEARCH] = std::make_shared<ResourcePool>(RE_RESEARCH);
     m_resource_pools[RE_INDUSTRY] = std::make_shared<ResourcePool>(RE_INDUSTRY);
-    m_resource_pools[RE_TRADE] =    std::make_shared<ResourcePool>(RE_TRADE);
+    m_resource_pools[RE_INFLUENCE]= std::make_shared<ResourcePool>(RE_INFLUENCE);
 
     m_eliminated = false;
 
@@ -2359,8 +2359,8 @@ void Empire::CheckProductionProgress() {
     SetResourceStockpile(RE_INDUSTRY, m_production_queue.ExpectedNewStockpileAmount());
 }
 
-void Empire::CheckTradeSocialProgress()
-{ m_resource_pools[RE_TRADE]->SetStockpile(m_resource_pools[RE_TRADE]->TotalAvailable()); }
+void Empire::CheckInfluenceProgress()
+{ m_resource_pools[RE_INFLUENCE]->SetStockpile(m_resource_pools[RE_INFLUENCE]->TotalAvailable()); }
 
 void Empire::SetColor(const GG::Clr& color)
 { m_color = color; }
@@ -2387,7 +2387,7 @@ void Empire::InitResourcePools() {
     }
     m_resource_pools[RE_RESEARCH]->SetObjects(res_centers);
     m_resource_pools[RE_INDUSTRY]->SetObjects(res_centers);
-    m_resource_pools[RE_TRADE]->SetObjects(res_centers);
+    m_resource_pools[RE_INFLUENCE]->SetObjects(res_centers);
 
     // get this empire's owned population centers
     std::vector<int> pop_centers;
@@ -2410,7 +2410,7 @@ void Empire::InitResourcePools() {
     }
     sets_set.insert(all_systems_set);
     m_resource_pools[RE_RESEARCH]->SetConnectedSupplyGroups(sets_set);
-    m_resource_pools[RE_TRADE]->SetConnectedSupplyGroups(sets_set);
+    m_resource_pools[RE_INFLUENCE]->SetConnectedSupplyGroups(sets_set);
 }
 
 void Empire::UpdateResourcePools() {
@@ -2419,7 +2419,7 @@ void Empire::UpdateResourcePools() {
     // which needs to be done simultaneously to keep things consistent)
     UpdateResearchQueue();
     UpdateProductionQueue();
-    UpdateTradeSpending();
+    UpdateInfluenceSpending();
     UpdatePopulationGrowth();
 }
 
@@ -2437,9 +2437,9 @@ void Empire::UpdateProductionQueue() {
     m_resource_pools[RE_INDUSTRY]->ChangedSignal();
 }
 
-void Empire::UpdateTradeSpending() {
-    m_resource_pools[RE_TRADE]->Update(); // recalculate total trade production
-    m_resource_pools[RE_TRADE]->ChangedSignal();
+void Empire::UpdateInfluenceSpending() {
+    m_resource_pools[RE_INFLUENCE]->Update(); // recalculate total influence production
+    m_resource_pools[RE_INFLUENCE]->ChangedSignal();
 }
 
 void Empire::UpdatePopulationGrowth()

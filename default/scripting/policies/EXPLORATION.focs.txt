@@ -20,7 +20,7 @@ Policy
                 DesignHasPartClass low = 0 high = 0 class = Bombard
                 DesignHasPartClass low = 0 high = 0 class = Research
                 DesignHasPartClass low = 0 high = 0 class = Industry
-                DesignHasPartClass low = 0 high = 0 class = Trade
+                DesignHasPartClass low = 0 high = 0 class = Influence
                 DesignHasPartClass low = 0 high = 0 class = ProductionLocation
             ]
             effects = SetSpeed value = Value + 20

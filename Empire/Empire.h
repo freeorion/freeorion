@@ -330,12 +330,9 @@ public:
       * of the techs that should be added to the known techs list. */
     std::vector<std::string> CheckResearchProgress();
     /** Eventually : Will check for social projects that have been completed and
-      * / or process ongoing social projects... (not sure exactly what form
-      * "social projects" will take or how they will work).  Also will update
-      * the empire's trade stockpile to account for trade production and
-      * expenditures. Currently: Deducts cost of maintenance of buildings from
-      * empire's trade stockpile */
-    void CheckTradeSocialProgress();
+      * / or process ongoing social projects, and update the empire's influence
+      * stockpile to account for influence production and expenditures.*/
+    void CheckInfluenceProgress();
 
     void SetColor(const GG::Clr& color);                 ///< Mutator for empire color
     void SetName(const std::string& name);               ///< Mutator for empire name
@@ -350,7 +347,7 @@ public:
 
     /** Resets production of resources and calculates allocated resources (on
       * each item in queues and overall) for each resource by calling
-      * UpdateResearchQueue, UpdateProductionQueue, UpdateTradeSpending.  Does
+      * UpdateResearchQueue, UpdateProductionQueue, UpdateInfluenceSpending.  Does
       * not actually "spend" resources, but just determines how much and on what
       * to spend.  Actual consumption of resources, removal of items from queue,
       * processing of finished items and population growth happens in various
@@ -362,12 +359,11 @@ public:
     /** Calls Update() on empire's production queue, which recalculates the PPs
       * spent on and number of turns left for each project in the queue. */
     void UpdateProductionQueue();
-    /** Eventually: Calls appropriate subsystem Update to calculate trade spent
-      * on social projects and maintenance of buildings.  Later call to
-      * CheckTradeSocialProgress() will then have the correct allocations of
-      * trade. Currently: Sums maintenance costs of all buildings owned by
-      * empire, sets m_maintenance_total_cost */
-    void UpdateTradeSpending();
+    /** Eventually: Calls appropriate subsystem Update to calculate influence
+      * spent on social projects and maintenance of buildings.  Later call to
+      * CheckInfluenceProgress() will then have the correct allocations of
+      * influence. */
+    void UpdateInfluenceSpending();
     /** Has m_population_pool recalculate all PopCenters' and empire's total
       * expected population growth */
     void UpdatePopulationGrowth();

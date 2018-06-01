@@ -3474,11 +3474,11 @@ Empire Detection
 MAP_DETECTION_TEXT
 Empire Detection Strength
 
-MAP_TRADE_TITLE
-Trade
+MAP_INFLUENCE_TITLE
+Influence
 
-MAP_TRADE_TEXT
-Empire total trade output. (Trade does nothing)
+MAP_INFLUENCE_TEXT
+Empire total influence output
 
 MAP_FLEET_SHIP_COUNT
 Total Ships
@@ -3525,8 +3525,8 @@ Industrial Output
 RESEARCH_PRODUCTION
 Research Output
 
-TRADE_PRODUCTION
-Trade Output
+INFLUENCE_PRODUCTION
+Influence Output
 
 STOCKPILE_GENERATION
 Stockpile Capacity Generation
@@ -3537,8 +3537,8 @@ Industrial Consumption
 RESEARCH_CONSUMPTION
 Research Consumption
 
-TRADE_CONSUMPTION
-Trade Consumption
+INFLUENCE_CONSUMPTION
+Influence Consumption
 
 STOCKPILE_USE
 Stockpile Capacity Use
@@ -3991,8 +3991,8 @@ Fleet Industry - Equal to the total industry output of ships in the fleet.
 FW_FLEET_RESEARCH_SUMMARY
 Fleet Research - Equal to the total research output of ships in the fleet.
 
-FW_FLEET_TRADE_SUMMARY
-Fleet Trade - Equal to the total trade output of ships in the fleet.
+FW_FLEET_INFLUENCE_SUMMARY
+Fleet Influence - Equal to the total influence output of ships in the fleet.
 
 FW_MERGE_SYSTEM_FLEETS
 Merge System Ships Into Fleet
@@ -5676,11 +5676,11 @@ METER_TARGET_RESEARCH_VALUE_LABEL
 METER_TARGET_RESEARCH_VALUE_DESC
 [[METER_RESEARCH_VALUE_DESC]]
 
-METER_TARGET_TRADE_VALUE_LABEL
-[[METER_TRADE_VALUE_LABEL]]
+METER_TARGET_INFLUENCE_VALUE_LABEL
+[[METER_INFLUENCE_VALUE_LABEL]]
 
-METER_TARGET_TRADE_VALUE_DESC
-[[METER_TRADE_VALUE_DESC]]
+METER_TARGET_INFLUENCE_VALUE_DESC
+[[METER_INFLUENCE_VALUE_DESC]]
 
 METER_TARGET_CONSTRUCTION_VALUE_LABEL
 [[METER_CONSTRUCTION_VALUE_LABEL]]
@@ -5785,11 +5785,11 @@ The tech at the top of the queue is given RP first. Any remaining RP are then gi
 
 Research does not require [[metertype METER_SUPPLY]] line connections to be used.'''
 
-METER_TRADE_VALUE_LABEL
-Trade
+METER_INFLUENCE_VALUE_LABEL
+Influence
 
-METER_TRADE_VALUE_DESC
-[[MAP_TRADE_TEXT]]
+METER_INFLUENCE_VALUE_DESC
+[[MAP_INFLUENCE_TEXT]]
 
 METER_CONSTRUCTION_VALUE_LABEL
 Infrastructure
@@ -5987,11 +5987,11 @@ A planet focused on Growth extends those benefits to other planets connected to 
 
 [[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
-TRADE_FOCUS_TITLE
-Trade Focus
+INFLUENCE_FOCUS_TITLE
+Influence Focus
 
-TRADE_FOCUS_TEXT
-Trade doesn't do anything. It is just a placeholder to show that more resources are planned.
+INFLUENCE_FOCUS_TEXT
+Influence isn't implemented yet.
 
 PROTECTION_FOCUS_TITLE
 Protection Focus
@@ -9119,8 +9119,8 @@ FOCUS_RESEARCH
 Research
 
 # Focus types
-FOCUS_TRADE
-Trade
+FOCUS_INFLUENCE
+Influence
 
 # Focus types
 FOCUS_LOGISTICS
@@ -9183,8 +9183,8 @@ METER_TARGET_RESEARCH
 Target Research
 
 # Meter types
-METER_TARGET_TRADE
-Target Trade
+METER_TARGET_INFLUENCE
+Target Influence
 
 # Meter types
 METER_TARGET_CONSTRUCTION
@@ -9243,8 +9243,8 @@ METER_RESEARCH
 Research
 
 # Meter types
-METER_TRADE
-Trade
+METER_INFLUENCE
+Influence
 
 # Meter types
 METER_CONSTRUCTION
@@ -9420,8 +9420,8 @@ INVALID_RESOURCE_TYPE
 invalid resource type
 
 # Resource types
-RE_TRADE
-trade
+RE_INFLUENCE
+influence
 
 # Resource types
 RE_INDUSTRY
@@ -9591,8 +9591,8 @@ PC_RESEARCH_DESC
 Research parts increase the [[metertype METER_RESEARCH]] generated from a ship. The ship may also require [[metertype METER_POPULATION]] to begin increasing the output.
 
 # Ship part classes
-PC_TRADE
-Trade
+PC_INFLUENCE
+Influence
 
 # Ship part classes
 PC_PRODUCTION_LOCATION
@@ -9831,8 +9831,8 @@ DESC_VAR_TARGETINDUSTRY
 DESC_VAR_TARGETRESEARCH
 [[METER_TARGET_RESEARCH]]
 
-DESC_VAR_TARGETTRADE
-[[METER_TARGET_TRADE]]
+DESC_VAR_TARGETINFLUENCE
+[[METER_TARGET_INFLUENCE]]
 
 DESC_VAR_TARGETCONSTRUCTION
 [[METER_TARGET_CONSTRUCTION]]
@@ -9867,8 +9867,8 @@ DESC_VAR_INDUSTRY
 DESC_VAR_RESEARCH
 [[METER_RESEARCH]]
 
-DESC_VAR_TRADE
-[[METER_TRADE]]
+DESC_VAR_INFLUENCE
+[[METER_INFLUENCE]]
 
 DESC_VAR_CONSTRUCTION
 [[METER_CONSTRUCTION]]
@@ -9909,11 +9909,11 @@ DESC_VAR_SECONDARY_STAT
 DESC_VAR_SIZE
 [[METER_SIZE]]
 
-DESC_VAR_TRADESTOCKPILE
-trade stockpile
+DESC_VAR_INFLUENCESTOCKPILE
+influence stockpile
 
-DESC_VAR_TRADEOUTPUT
-trade output
+DESC_VAR_INFLUENCEOUTPUT
+influence output
 
 DESC_VAR_INDUSTRYOUTPUT
 industry output
@@ -10940,7 +10940,7 @@ PLC_EXPLORATION
 Exploration
 
 PLC_EXPLORATION_DESC
-'''Increases speed of ships with no weapons, fighters, shields, armour, troops, colony pods, bombardment, research, industry, trade, production, or general parts.
+'''Increases speed of ships with no weapons, fighters, shields, armour, troops, colony pods, bombardment, research, industry, influence, production, or general parts.
 
 Detection, fuel, and engine parts are allowed.'''
 
@@ -14269,7 +14269,7 @@ RS_AUTOTRADER
 Autotrader
 
 RS_AUTOTRADER_DESC
-Generates trade for owner.
+Generates influence for owner.
 
 
 ##

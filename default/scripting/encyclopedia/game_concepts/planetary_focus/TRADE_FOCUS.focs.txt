@@ -1,6 +1,6 @@
 Article
-    name = "TRADE_FOCUS_TITLE"
+    name = "INFLUENCE_FOCUS_TITLE"
     category = "PLANETARY_FOCUS_TITLE"
     short_description = "PRODUCTION_ARTICLE_SHORT_DESC"
-    description = "TRADE_FOCUS_TEXT"
-    icon = "icons/focus/trade.png"
+    description = "INFLUENCE_FOCUS_TEXT"
+    icon = "icons/focus/influence.png"

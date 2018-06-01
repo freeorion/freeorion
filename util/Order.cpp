@@ -1264,7 +1264,7 @@ void ShipDesignOrder::ExecuteImpl() const {
         // be used to construct ships by that empire.
 
         // TODO: consider removing this order, so that an empire needs to use
-        // espionage or trade to gain access to a ship design made by another
+        // espionage or influence to gain access to a ship design made by another
         // player
 
         // check if empire is already remembering the design

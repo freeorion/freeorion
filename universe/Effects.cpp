@@ -527,7 +527,7 @@ std::string SetMeter::Dump(unsigned short ntabs) const {
     case METER_TARGET_POPULATION:   retval += "TargetPopulation"; break;
     case METER_TARGET_INDUSTRY:     retval += "TargetIndustry"; break;
     case METER_TARGET_RESEARCH:     retval += "TargetResearch"; break;
-    case METER_TARGET_TRADE:        retval += "TargetTrade"; break;
+    case METER_TARGET_INFLUENCE:    retval += "TargetInfluence"; break;
     case METER_TARGET_CONSTRUCTION: retval += "TargetConstruction"; break;
     case METER_TARGET_HAPPINESS:    retval += "TargetHappiness"; break;
 
@@ -544,7 +544,7 @@ std::string SetMeter::Dump(unsigned short ntabs) const {
     case METER_POPULATION:          retval += "Population"; break;
     case METER_INDUSTRY:            retval += "Industry"; break;
     case METER_RESEARCH:            retval += "Research"; break;
-    case METER_TRADE:               retval += "Trade"; break;
+    case METER_INFLUENCE:           retval += "Influence"; break;
     case METER_CONSTRUCTION:        retval += "Construction"; break;
     case METER_HAPPINESS:           retval += "Happiness"; break;
 

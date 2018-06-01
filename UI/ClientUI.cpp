@@ -186,9 +186,9 @@ std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     case METER_RESEARCH:
     case METER_TARGET_RESEARCH:
         icon_filename = "research.png";     break;
-    case METER_TRADE:
-    case METER_TARGET_TRADE:
-        icon_filename = "trade.png";        break;
+    case METER_INFLUENCE:
+    case METER_TARGET_INFLUENCE:
+        icon_filename = "influence.png";    break;
     case METER_CONSTRUCTION:
     case METER_TARGET_CONSTRUCTION:
         icon_filename = "construction.png"; break;
@@ -197,10 +197,10 @@ std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
         icon_filename = "happiness.png";    break;
     case METER_CAPACITY:
     case METER_MAX_CAPACITY:
-        icon_filename = "capacity.png";   break;
+        icon_filename = "capacity.png";     break;
     case METER_SECONDARY_STAT:
     case METER_MAX_SECONDARY_STAT:
-        icon_filename = "secondary.png";   break;
+        icon_filename = "secondary.png";    break;
     case METER_STRUCTURE:
     case METER_MAX_STRUCTURE:
         icon_filename = "structure.png";    break;

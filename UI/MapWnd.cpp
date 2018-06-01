@@ -1248,9 +1248,9 @@ void MapWnd::CompleteConstruction() {
     m_research->SetName("Research StatisticIcon");
     m_research->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleResearch, this));
 
-    m_trade = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_TRADE), 0, 3, false,
-                                             ICON_DUAL_WIDTH, m_btn_turn->Height());
-    m_trade->SetName("Trade StatisticIcon");
+    m_influence = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_INFLUENCE), 0, 3, false,
+                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
+    m_influence->SetName("Influence StatisticIcon");
 
     m_fleet = GG::Wnd::Create<StatisticIcon>(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
                                              0, 3, false,
@@ -2831,8 +2831,8 @@ void MapWnd::InitTurn() {
     // (unlike connections to signals from the sidepanel)
     Empire* this_client_empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (this_client_empire) {
-        this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshTradeResourceIndicator, this));
+        this_client_empire->GetResourcePool(RE_INFLUENCE)->ChangedSignal.connect(
+            boost::bind(&MapWnd::RefreshInfluenceResourceIndicator, this));
         this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal.connect(
             boost::bind(&MapWnd::RefreshResearchResourceIndicator, this));
         this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal.connect(
@@ -2890,7 +2890,7 @@ void MapWnd::InitTurn() {
     timer.EnterSection("refresh indicators");
     RefreshIndustryResourceIndicator();
     RefreshResearchResourceIndicator();
-    RefreshTradeResourceIndicator();
+    RefreshInfluenceResourceIndicator();
     RefreshFleetResourceIndicator();
     RefreshPopulationIndicator();
     RefreshDetectionIndicator();
@@ -6717,17 +6717,17 @@ void MapWnd::RefreshTurnButtonTooltip() {
         UserString("MAP_BTN_TURN_TOOLTIP"), btn_turn_tooltip));
 }
 
-void MapWnd::RefreshTradeResourceIndicator() {
+void MapWnd::RefreshInfluenceResourceIndicator() {
     Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {
-        m_trade->SetValue(0.0);
+        m_influence->SetValue(0.0);
         return;
     }
-    m_trade->SetValue(empire->ResourceStockpile(RE_TRADE));
-    m_trade->ClearBrowseInfoWnd();
-    m_trade->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    m_trade->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
-        UserString("MAP_TRADE_TITLE"), UserString("MAP_TRADE_TEXT")));
+    m_influence->SetValue(empire->ResourceStockpile(RE_INFLUENCE));
+    m_influence->ClearBrowseInfoWnd();
+    m_influence->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_influence->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
+        UserString("MAP_INFLUENCE_TITLE"), UserString("MAP_INFLUENCE_TEXT")));
 }
 
 void MapWnd::RefreshFleetResourceIndicator() {

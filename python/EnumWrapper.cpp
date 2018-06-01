@@ -72,16 +72,16 @@ namespace FreeOrionPython {
             .value("stockpile",         BT_STOCKPILE)
         ;
         enum_<ResourceType>("resourceType")
-            .value("industry",      RE_INDUSTRY)
-            .value("trade",         RE_TRADE)
-            .value("research",      RE_RESEARCH)
-            .value("stockpile",     RE_STOCKPILE)
+            .value("industry",          RE_INDUSTRY)
+            .value("influence",         RE_INFLUENCE)
+            .value("research",          RE_RESEARCH)
+            .value("stockpile",         RE_STOCKPILE)
         ;
         enum_<MeterType>("meterType")
             .value("targetPopulation",  METER_TARGET_POPULATION)
             .value("targetIndustry",    METER_TARGET_INDUSTRY)
             .value("targetResearch",    METER_TARGET_RESEARCH)
-            .value("targetTrade",       METER_TARGET_TRADE)
+            .value("targetInfluence",   METER_TARGET_INFLUENCE)
             .value("targetConstruction",METER_TARGET_CONSTRUCTION)
             .value("targetHappiness",   METER_TARGET_HAPPINESS)
 
@@ -100,7 +100,7 @@ namespace FreeOrionPython {
             .value("population",        METER_POPULATION)
             .value("industry",          METER_INDUSTRY)
             .value("research",          METER_RESEARCH)
-            .value("trade",             METER_TRADE)
+            .value("influence",         METER_INFLUENCE)
             .value("construction",      METER_CONSTRUCTION)
             .value("happiness",         METER_HAPPINESS)
 
@@ -177,7 +177,7 @@ namespace FreeOrionPython {
             .value("bombard",           PC_BOMBARD)
             .value("industry",          PC_INDUSTRY)
             .value("research",          PC_RESEARCH)
-            .value("trade",             PC_TRADE)
+            .value("influence",         PC_INFLUENCE)
             .value("productionLocation",PC_PRODUCTION_LOCATION)
         ;
         enum_<UnlockableItemType>("unlockableItemType")

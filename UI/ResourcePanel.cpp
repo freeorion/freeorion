@@ -109,8 +109,8 @@ namespace {
                           std::pair<MeterType, std::shared_ptr<StatisticIcon>> right)
     {
         if (left.second->GetValue() == right.second->GetValue()) {
-            if (left.first == METER_TRADE && right.first == METER_CONSTRUCTION) {
-                // swap order of METER_TRADE and METER_CONSTRUCTION in relation to
+            if (left.first == METER_INFLUENCE && right.first == METER_CONSTRUCTION) {
+                // swap order of METER_INFLUENCE and METER_CONSTRUCTION in relation to
                 // MeterType enum.
                 return false;
             }

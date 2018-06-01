@@ -23,8 +23,8 @@ parse::detail::simple_double_parser_rules::simple_double_parser_rules(const pars
         |   tok.TargetIndustry_
         |   tok.Research_
         |   tok.TargetResearch_
-        |   tok.Trade_
-        |   tok.TargetTrade_
+        |   tok.Influence_
+        |   tok.TargetInfluence_
         |   tok.Construction_
         |   tok.TargetConstruction_
         |   tok.Population_

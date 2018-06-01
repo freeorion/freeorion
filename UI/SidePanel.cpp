@@ -3324,7 +3324,7 @@ void SidePanel::RefreshImpl() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     // If all planets are owned by the same empire, then we show the Shields/Defense/Troops/Supply;
     // regardless, if there are any planets owned by the player in the system, we show
-    // Production/Research/Trade.
+    // Production/Research/Influnce.
     int all_owner_id = ALL_EMPIRES;
     bool all_planets_share_owner = true;
     std::vector<int> all_planets, player_planets;
@@ -3350,7 +3350,7 @@ void SidePanel::RefreshImpl() {
     const std::vector<std::pair<MeterType, MeterType>> resource_meters =
        {{METER_INDUSTRY, METER_TARGET_INDUSTRY},
         {METER_RESEARCH, METER_TARGET_RESEARCH},
-        //{METER_TRADE,    METER_TARGET_TRADE},
+        {METER_INFLUENCE,METER_TARGET_INFLUENCE},
         {METER_STOCKPILE,METER_MAX_STOCKPILE}};
     // general meters; show only if all planets are owned by same empire
     const std::vector<std::pair<MeterType, MeterType>> general_meters =

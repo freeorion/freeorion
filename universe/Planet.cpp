@@ -629,7 +629,7 @@ void Planet::Depopulate() {
 
     GetMeter(METER_INDUSTRY)->Reset();
     GetMeter(METER_RESEARCH)->Reset();
-    GetMeter(METER_TRADE)->Reset();
+    GetMeter(METER_INFLUENCE)->Reset();
     GetMeter(METER_CONSTRUCTION)->Reset();
 
     ClearFocus();
@@ -674,8 +674,8 @@ void Planet::Conquer(int conquerer) {
     GetMeter(METER_INDUSTRY)->BackPropagate();
     GetMeter(METER_RESEARCH)->SetCurrent(0.0f);
     GetMeter(METER_RESEARCH)->BackPropagate();
-    GetMeter(METER_TRADE)->SetCurrent(0.0f);
-    GetMeter(METER_TRADE)->BackPropagate();
+    GetMeter(METER_INFLUENCE)->SetCurrent(0.0f);
+    GetMeter(METER_INFLUENCE)->BackPropagate();
     GetMeter(METER_CONSTRUCTION)->SetCurrent(0.0f);
     GetMeter(METER_CONSTRUCTION)->BackPropagate();
     GetMeter(METER_DEFENSE)->SetCurrent(0.0f);
