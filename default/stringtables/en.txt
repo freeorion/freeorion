@@ -14635,8 +14635,17 @@ Homeworld
 CAPITAL_LABEL
 Capital
 
+BLD_STOCKPILING_CENTER_LABEL
+Imperial Entanglement Center
+
 CONCENTRATION_CAMPS_LABEL
 Concentration Camps
+
+INTERSTELLAR_ENTANGLEMENT_FACTORY_POPULATION_BONUS_LABEL
+Interstellar Entanglement Factory population based bonus
+
+INTERSTELLAR_ENTANGLEMENT_FACTORY_FIXED_BONUS_LABEL
+Interstellar Entanglement Factory fixed bonus
 
 ORBITAL_HAB_LABEL
 Orbital Habitation
