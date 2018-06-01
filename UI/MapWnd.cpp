@@ -1000,8 +1000,8 @@ void MapWnd::CompleteConstruction() {
 
     // turn button
     // determine size from the text that will go into the button, using a test year string
-    std::string turn_button_longest_reasonable_text =  boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) % "99999"); // it is unlikely a game will go over 100000 turns
-    std::string unready_button_longest_reasonable_text =  boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UNREADY")) % "99999");
+    std::string turn_button_longest_reasonable_text = boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) % "99999"); // it is unlikely a game will go over 100000 turns
+    std::string unready_button_longest_reasonable_text = boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UNREADY")) % "99999");
     m_btn_turn = Wnd::Create<CUIButton>(turn_button_longest_reasonable_text.size() > unready_button_longest_reasonable_text.size() ?
                                         turn_button_longest_reasonable_text :
                                         unready_button_longest_reasonable_text);
@@ -1340,6 +1340,10 @@ void MapWnd::CompleteConstruction() {
 
     layout->SetColumnStretch(layout_column, 1.0);
     layout->Add(m_research,         0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetColumnStretch(layout_column, 1.0);
+    layout->Add(m_influence,        0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetColumnStretch(layout_column, 1.0);
