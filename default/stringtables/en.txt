@@ -12894,7 +12894,7 @@ BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases [[metertype METER_SUPPLY]] line range by 2, [[metertype METER_TARGET_CONSTRUCTION]] by 20, [[metertype METER_DEFENSE]] by 5, and [[metertype METER_TROOPS]] by 6. Also sets the owner's Capital for the empire.
+'''Increases [[metertype METER_SUPPLY]] line range by 2, [[metertype METER_INFLUENCE]] by 1, [[metertype METER_TARGET_CONSTRUCTION]] by 20, [[metertype METER_DEFENSE]] by 5, and [[metertype METER_TROOPS]] by 6.
 
 Grants 1 economic policy slot.
 

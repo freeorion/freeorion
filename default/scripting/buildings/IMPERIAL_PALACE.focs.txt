@@ -2,7 +2,7 @@ BuildingType
     name = "BLD_IMPERIAL_PALACE"
     description = "BLD_IMPERIAL_PALACE_DESC"
     captureresult = destroy
-    buildcost = 10 * [[BUILDING_COST_MULTIPLIER]]
+    buildcost = 5 * [[BUILDING_COST_MULTIPLIER]] * (Statistic Count condition = And [Planet OwnedBy empire = Source.Owner])
     buildtime = 8
     location = And [
         Planet
@@ -63,7 +63,10 @@ BuildingType
                 OwnedBy empire = Source.ProducedByEmpireID
             ]
             stackinggroup = "IMPERIAL_PALACE_SUPPLY_EFFECT"
-            effects = SetMaxSupply value = Value + 2
+            effects = [
+                SetMaxSupply value = Value + 2
+                SetTargetInfluence value = Value + 1
+            ]
 
         EffectsGroup
             scope = And [
