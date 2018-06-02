@@ -57,7 +57,7 @@ void ResourcePanel::CompleteConstruction() {
     std::vector<std::pair<MeterType, MeterType>> meters;
 
     // small meter indicators - for use when panel is collapsed
-    for (MeterType meter : {METER_INDUSTRY, METER_RESEARCH,
+    for (MeterType meter : {METER_INDUSTRY, METER_RESEARCH, METER_INFLUENCE,
                             METER_SUPPLY, METER_STOCKPILE})
     {
         auto stat = GG::Wnd::Create<StatisticIcon>(
