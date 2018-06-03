@@ -11,6 +11,7 @@
 #include "../universe/System.h"
 #include "../universe/Species.h"
 #include "../util/Directories.h"
+#include "../util/base64_filter.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
@@ -95,6 +96,7 @@ namespace {
     const std::string UNABLE_TO_OPEN_FILE("Unable to open file");
 
     const std::string XML_COMPRESSED_MARKER("zlib-xml");
+    const std::string XML_COMPRESSED_BASE64_MARKER("zb64-xml");
     const std::string XML_DIRECT_MARKER("raw-xml");
     const std::string BINARY_MARKER("binary");
 }
@@ -174,7 +176,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                     // then contains a string for compressed second archive
                     // that contains the main gamestate info
                     save_preview_data.SetBinary(false);
-                    save_preview_data.save_format_marker = XML_COMPRESSED_MARKER;
+                    save_preview_data.save_format_marker = XML_COMPRESSED_BASE64_MARKER;
 
                     // allocate buffers for serialized gamestate
                     DebugLogger() << "Allocating buffers for XML serialization...";
@@ -218,6 +220,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                     // compression-filter gamestate into compressed string
                     boost::iostreams::filtering_ostreambuf o;
                     o.push(boost::iostreams::zlib_compressor());
+                    o.push(boost::iostreams::base64_encoder());
                     o.push(c_sink);
                     boost::iostreams::copy(s_source, o);
                     c_sink.flush();
@@ -409,6 +412,8 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
                 // set up filter to decompress data
                 boost::iostreams::filtering_istreambuf i;
                 i.push(boost::iostreams::zlib_decompressor());
+                if (ignored_save_preview_data.save_format_marker == XML_COMPRESSED_BASE64_MARKER)
+                    i.push(boost::iostreams::base64_decoder());
                 i.push(c_source);
                 boost::iostreams::copy(i, s_sink);
                 // The following line has been commented out because it caused an assertion in boost iostreams to fail
