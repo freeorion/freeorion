@@ -198,14 +198,17 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                     InsertDevice serial_inserter(serial_str);
                     boost::iostreams::stream<InsertDevice> s_sink(serial_inserter);
 
-                    // create archive with (preallocated) buffer...
-                    freeorion_xml_oarchive xoa(s_sink);
-                    // serialize main gamestate info
-                    xoa << BOOST_SERIALIZATION_NVP(player_save_game_data);
-                    xoa << BOOST_SERIALIZATION_NVP(empire_manager);
-                    xoa << BOOST_SERIALIZATION_NVP(species_manager);
-                    xoa << BOOST_SERIALIZATION_NVP(combat_log_manager);
-                    Serialize(xoa, universe);
+                    {
+                        // create archive with (preallocated) buffer...
+                        freeorion_xml_oarchive xoa(s_sink);
+                        // serialize main gamestate info
+                        xoa << BOOST_SERIALIZATION_NVP(player_save_game_data);
+                        xoa << BOOST_SERIALIZATION_NVP(empire_manager);
+                        xoa << BOOST_SERIALIZATION_NVP(species_manager);
+                        xoa << BOOST_SERIALIZATION_NVP(combat_log_manager);
+                        Serialize(xoa, universe);
+                    }
+
                     s_sink.flush();
 
                     // wrap gamestate string in iostream::stream to extract serialized data
