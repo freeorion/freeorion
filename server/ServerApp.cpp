@@ -1278,7 +1278,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     // so need to be reinitialized when loading based on the gamestate
     m_universe.InitializeSystemGraph();
 
-    UpdateEmpireSupply();
+    UpdateEmpireSupply(true);  // precombat type supply update
 
     std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
 
