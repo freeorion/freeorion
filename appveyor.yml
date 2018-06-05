@@ -30,6 +30,6 @@ before_build:
   - cd msvc2015
 
 build_script:
-    - msbuild FreeOrion.sln /property:Configuration=Release-XP /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /verbosity:minimal
+    - msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:Configuration=Release-XP /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /verbosity:minimal
 
 test: off
