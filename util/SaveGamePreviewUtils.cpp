@@ -31,6 +31,8 @@ namespace {
     const std::string XML_SAVE_FILE_DESCRIPTION("This is an XML archive FreeOrion saved game. Initial header information is uncompressed. The main gamestate information follows, possibly stored as zlib-comprssed XML archive in the last entry in the main archive.");
     const std::string BIN_SAVE_FILE_DESCRIPTION("This is binary archive FreeOrion saved game.");
 
+    const std::string XML_COMPRESSED_MARKER("zlib-xml");
+
     /// Splits time and date on separate lines for an ISO datetime string
     std::string split_time(const std::string& time) {
         std::string result = time;
@@ -81,6 +83,10 @@ namespace {
                 DebugLogger() << "Deserializing XML data";
                 freeorion_xml_iarchive ia(ifs);
                 ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
+
+                if (BOOST_VERSION >= 106600 && save_preview_data.save_format_marker == XML_COMPRESSED_MARKER)
+                    throw std::invalid_argument("Save Format Not Compatible with Boost Version " BOOST_LIB_VERSION);
+
                 ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
             }
 
