@@ -14635,8 +14635,17 @@ Planète Natale
 CAPITAL_LABEL
 Capitale
 
+BLD_STOCKPILING_CENTER_LABEL
+Centre d'Intrication Impériale
+
 CONCENTRATION_CAMPS_LABEL
 Camps de Concentration
+
+INTERSTELLAR_ENTANGLEMENT_FACTORY_POPULATION_BONUS_LABEL
+Complexe d'Intrication Interstellaire bonus selon Population
+
+INTERSTELLAR_ENTANGLEMENT_FACTORY_FIXED_BONUS_LABEL
+Complexe d'Intrication Interstellaire bonus fixe
 
 ORBITAL_HAB_LABEL
 Habitation orbitale
