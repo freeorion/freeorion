@@ -1,6 +1,7 @@
 target_sources(freeorioncommon
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/AppInterface.h
+        ${CMAKE_CURRENT_LIST_DIR}/base64_filter.h
         ${CMAKE_CURRENT_LIST_DIR}/blocking_combiner.h
         ${CMAKE_CURRENT_LIST_DIR}/CheckSums.h
         ${CMAKE_CURRENT_LIST_DIR}/Directories.h
