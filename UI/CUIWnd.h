@@ -13,9 +13,9 @@
 class CUI_MinRestoreButton : public GG::Button {
 public:
    /** the two modes of operation of this class of button: as a minimize button or as a restore button */
-   enum Mode {
-       MIN_BUTTON,
-       RESTORE_BUTTON
+   enum class Mode {
+       MINIMIZE,
+       RESTORE
    };
 
    CUI_MinRestoreButton();

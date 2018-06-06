@@ -44,7 +44,7 @@ namespace {
 ////////////////////////////////////////////////
 CUI_MinRestoreButton::CUI_MinRestoreButton() :
     GG::Button("", nullptr, ClientUI::WndInnerBorderColor()),
-    m_mode(MIN_BUTTON)
+    m_mode(Mode::MINIMIZE)
 {
     LeftClickedSignal.connect(
         boost::bind(&CUI_MinRestoreButton::Toggle, this));
@@ -56,7 +56,7 @@ void CUI_MinRestoreButton::Render() {
     GG::Clr color_to_use = ClientUI::WndInnerBorderColor();
     if (State() != BN_ROLLOVER)
         AdjustBrightness(color_to_use, BUTTON_DIMMING_SCALE_FACTOR);
-    if (m_mode == MIN_BUTTON) {
+    if (m_mode == Mode::MINIMIZE) {
         // draw a dash to signify the minimize command
         GG::Y middle_y = (lr.y + ul.y) / 2;
         glColor(color_to_use);
@@ -68,12 +68,12 @@ void CUI_MinRestoreButton::Render() {
 }
 
 void CUI_MinRestoreButton::Toggle() {
-    if (m_mode == MIN_BUTTON) {
+    if (m_mode == Mode::MINIMIZE) {
         PlayMinimizeSound();
-        m_mode = RESTORE_BUTTON;
+        m_mode = Mode::RESTORE;
     } else {
         PlayMaximizeSound();
-        m_mode = MIN_BUTTON;
+        m_mode = Mode::MINIMIZE;
     }
 }
 
