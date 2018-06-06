@@ -775,7 +775,7 @@ void CUIDropDownList::InitBuffer() {
 
     GG::Pt triangle_ul = GG::Pt(sz.x - triangle_width - margin * 5 / 2, GG::Y(2 * margin));
     GG::Pt triangle_lr = GG::Pt(sz.x - margin * 5 / 2, sz.y - 2 * margin);
-    BufferStoreIsoscelesTriangle(this->m_buffer, triangle_ul, triangle_lr, SHAPE_DOWN);
+    BufferStoreIsoscelesTriangle(this->m_buffer, triangle_ul, triangle_lr, ShapeOrientation::DOWN);
 
     GG::Pt btn_ul = GG::Pt(sz.x - outline_width - margin, GG::Y(margin));
     GG::Pt btn_lr = GG::Pt(sz.x - margin, sz.y - margin);

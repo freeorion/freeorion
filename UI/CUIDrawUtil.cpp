@@ -15,7 +15,7 @@ namespace {
                                        double& x1_, double& y1_, double& x2_, double& y2_, double& x3_, double& y3_)
     {
         switch (orientation) {
-        case SHAPE_UP:
+        case ShapeOrientation::UP:
             x1_ = Value(ul.x);
             y1_ = Value(lr.y);
             x2_ = Value(lr.x);
@@ -23,7 +23,7 @@ namespace {
             x3_ = Value((ul.x + lr.x) / 2.0);
             y3_ = Value(ul.y);
             break;
-        case SHAPE_DOWN:
+        case ShapeOrientation::DOWN:
             x1_ = Value(lr.x);
             y1_ = Value(ul.y);
             x2_ = Value(ul.x);
@@ -31,7 +31,7 @@ namespace {
             x3_ = Value((ul.x + lr.x) / 2.0);
             y3_ = Value(lr.y);
             break;
-        case SHAPE_LEFT:
+        case ShapeOrientation::LEFT:
             x1_ = Value(lr.x);
             y1_ = Value(lr.y);
             x2_ = Value(lr.x);
@@ -41,7 +41,7 @@ namespace {
             break;
         default:
             ErrorLogger() << "FindIsoscelesTriangleVertices passed invalid orientation";
-        case SHAPE_RIGHT:
+        case ShapeOrientation::RIGHT:
             x1_ = Value(ul.x);
             y1_ = Value(ul.y);
             x2_ = Value(ul.x);
