@@ -24,7 +24,7 @@ FO_COMMON_API GameRules& GetGameRules();
 /** Database of values that control how the game mechanics function. */
 class FO_COMMON_API GameRules {
 public:
-    enum Type : int {
+    enum class Type : int {
         INVALID = -1,
         TOGGLE,
         INT,
