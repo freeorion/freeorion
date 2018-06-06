@@ -46,11 +46,11 @@ namespace {
 
     /* returns prefix of filename used for icons for the indicated fleet button size type */
     std::string FleetIconSizePrefix(FleetButton::SizeType size_type) {
-        if (size_type == FleetButton::FLEET_BUTTON_LARGE)
+        if (size_type == FleetButton::SizeType::LARGE)
             return "big-";
-        else if (size_type == FleetButton::FLEET_BUTTON_MEDIUM)
+        else if (size_type == FleetButton::SizeType::MEDIUM)
             return "med-";
-        else if (size_type == FleetButton::FLEET_BUTTON_SMALL)
+        else if (size_type == FleetButton::SizeType::SMALL)
             return "sml-";
         else
             return "";
@@ -405,7 +405,7 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(std::shared_ptr<const F
 }
 
 std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<std::shared_ptr<const Fleet>>& fleets, FleetButton::SizeType size_type) {
-    if (size_type == FleetButton::FLEET_BUTTON_NONE || size_type == FleetButton::FLEET_BUTTON_TINY)
+    if (size_type == FleetButton::SizeType::NONE || size_type == FleetButton::SizeType::TINY)
         return std::vector<std::shared_ptr<GG::Texture>>();
 
     // get file name prefix for appropriate size of icon
@@ -465,10 +465,10 @@ std::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton:
     if (fleet_size < 1u)
         fleet_size = 1u; // because there's no zero-ship icon, and the one-ship icon is (as of this writing) blank, so is fitting for zero ships
 
-    if (size_type == FleetButton::FLEET_BUTTON_NONE)
+    if (size_type == FleetButton::SizeType::NONE)
         return nullptr;
 
-    if (size_type == FleetButton::FLEET_BUTTON_TINY) {
+    if (size_type == FleetButton::SizeType::TINY) {
         if (fleet_size > 1u)
             return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / "tiny-fleet-multi.png", false);
         else
@@ -491,11 +491,11 @@ std::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton:
 }
 
 std::shared_ptr<GG::Texture> FleetBlockadedIcon(FleetButton::SizeType size_type) {
-    if (size_type == FleetButton::FLEET_BUTTON_NONE)
+    if (size_type == FleetButton::SizeType::NONE)
         return nullptr;
 
     std::string size_prefix = FleetIconSizePrefix(size_type);
-    if (size_type == FleetButton::FLEET_BUTTON_TINY)
+    if (size_type == FleetButton::SizeType::TINY)
         size_prefix = "tiny-";
 
     std::shared_ptr<GG::Texture> retval = ClientUI::GetClientUI()->GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / (size_prefix + "blockade.png"), false);

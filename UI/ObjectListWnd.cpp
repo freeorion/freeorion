@@ -1271,10 +1271,10 @@ namespace {
             }
         } else if (obj->ObjectType() == OBJ_FLEET) {
             if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj)) {
-                auto size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
+                auto size_icon = FleetSizeIcon(fleet, FleetButton::SizeType::LARGE);
                 if (size_icon)
                     retval.push_back(size_icon);
-                auto head_icons = FleetHeadIcons(fleet, FleetButton::FLEET_BUTTON_LARGE);
+                auto head_icons = FleetHeadIcons(fleet, FleetButton::SizeType::LARGE);
                 std::copy(head_icons.begin(), head_icons.end(), std::back_inserter(retval));
             }
         } else if (obj->ObjectType() == OBJ_SYSTEM) {

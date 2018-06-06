@@ -15,17 +15,17 @@ class ScanlineControl;
 /** represents one or more fleets of an empire at a location on the map. */
 class FleetButton : public GG::Button {
 public:
-    enum SizeType {
-        FLEET_BUTTON_NONE,
-        FLEET_BUTTON_TINY,
-        FLEET_BUTTON_SMALL,
-        FLEET_BUTTON_MEDIUM,
-        FLEET_BUTTON_LARGE
+    enum class SizeType {
+        NONE,
+        TINY,
+        SMALL,
+        MEDIUM,
+        LARGE
     };
 
     /** \name Structors */ //@{
-    FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type = FLEET_BUTTON_LARGE);
-    FleetButton(int fleet_id, SizeType size_type = FLEET_BUTTON_LARGE);
+    FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type = SizeType::LARGE);
+    FleetButton(int fleet_id, SizeType size_type = SizeType::LARGE);
     void CompleteConstruction() override;
     virtual ~FleetButton();
     //@}

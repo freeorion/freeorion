@@ -5195,18 +5195,18 @@ double MapWnd::SystemHaloScaleFactor() const
 { return 1.0 + log10(ZoomFactor()); }
 
 FleetButton::SizeType MapWnd::FleetButtonSizeType() const {
-    // no FLEET_BUTTON_LARGE as these icons are too big for the map.  (they can be used in the FleetWnd, however)
+    // no SizeType::LARGE as these icons are too big for the map.  (they can be used in the FleetWnd, however)
     if      (ZoomFactor() > ClientUI::MediumFleetButtonZoomThreshold())
-        return FleetButton::FLEET_BUTTON_MEDIUM;
+        return FleetButton::SizeType::MEDIUM;
 
     else if (ZoomFactor() > ClientUI::SmallFleetButtonZoomThreshold())
-        return FleetButton::FLEET_BUTTON_SMALL;
+        return FleetButton::SizeType::SMALL;
 
     else if (ZoomFactor() > ClientUI::TinyFleetButtonZoomThreshold())
-        return FleetButton::FLEET_BUTTON_TINY;
+        return FleetButton::SizeType::TINY;
 
     else
-        return FleetButton::FLEET_BUTTON_NONE;
+        return FleetButton::SizeType::NONE;
 }
 
 void MapWnd::Zoom(int delta) {

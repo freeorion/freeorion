@@ -1484,11 +1484,11 @@ void FleetDataPanel::Refresh() {
         std::vector<std::shared_ptr<GG::Texture>>   icons;
         std::vector<GG::Flags<GG::GraphicStyle>>    styles;
 
-        std::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
+        std::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::SizeType::LARGE);
         icons.push_back(size_icon);
         styles.push_back(DataPanelIconStyle());
 
-        std::vector<std::shared_ptr<GG::Texture>> head_icons = FleetHeadIcons(fleet, FleetButton::FLEET_BUTTON_LARGE);
+        std::vector<std::shared_ptr<GG::Texture>> head_icons = FleetHeadIcons(fleet, FleetButton::SizeType::LARGE);
         std::copy(head_icons.begin(), head_icons.end(), std::back_inserter(icons));
         for (size_t i = 0; i < head_icons.size(); ++i)
             styles.push_back(DataPanelIconStyle());
