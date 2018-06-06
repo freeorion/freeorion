@@ -36,13 +36,13 @@ GameRules::Rule::Rule() :
     OptionsDB::Option()
 {}
 
-GameRules::Rule::Rule(RuleType rule_type_, const std::string& name_, const boost::any& value_,
+GameRules::Rule::Rule(Type type_, const std::string& name_, const boost::any& value_,
                       const boost::any& default_value_, const std::string& description_,
                       const ValidatorBase *validator_, bool engine_internal_,
                       const std::string& category_) :
     OptionsDB::Option(static_cast<char>(0), name_, value_, default_value_,
                       description_, validator_, engine_internal_, false, true, "setup.rules"),
-    rule_type(rule_type_),
+    type(type_),
     category(category_)
 {}
 
@@ -69,22 +69,22 @@ bool GameRules::RuleExists(const std::string& name) const {
     return m_game_rules.count(name);
 }
 
-bool GameRules::RuleExists(const std::string& name, RuleType rule_type) const {
-    if (rule_type == INVALID_RULE_TYPE)
+bool GameRules::RuleExists(const std::string& name, Type type) const {
+    if (type == Type::INVALID)
         return false;
     CheckPendingGameRules();
     auto rule_it = m_game_rules.find(name);
     if (rule_it == m_game_rules.end())
         return false;
-    return rule_it->second.rule_type == rule_type;
+    return rule_it->second.type == type;
 }
 
-GameRules::RuleType GameRules::GetRuleType(const std::string& name) const {
+GameRules::Type GameRules::GetType(const std::string& name) const {
     CheckPendingGameRules();
     auto rule_it = m_game_rules.find(name);
     if (rule_it == m_game_rules.end())
-        return INVALID_RULE_TYPE;
-    return rule_it->second.rule_type;
+        return Type::INVALID;
+    return rule_it->second.type;
 }
 
 bool GameRules::RuleIsInternal(const std::string& name) const {

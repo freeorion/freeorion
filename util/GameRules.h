@@ -24,32 +24,32 @@ FO_COMMON_API GameRules& GetGameRules();
 /** Database of values that control how the game mechanics function. */
 class FO_COMMON_API GameRules {
 public:
-    enum RuleType : int {
-        INVALID_RULE_TYPE = -1,
+    enum Type : int {
+        INVALID = -1,
         TOGGLE,
         INT,
         DOUBLE,
         STRING
     };
 
-    RuleType RuleTypeForType(bool dummy)
-    { return TOGGLE; }
-    RuleType RuleTypeForType(int dummy)
-    { return INT; }
-    RuleType RuleTypeForType(double dummy)
-    { return DOUBLE; }
-    RuleType RuleTypeForType(std::string dummy)
-    { return STRING; }
+    Type RuleTypeForType(bool dummy)
+    { return Type::TOGGLE; }
+    Type RuleTypeForType(int dummy)
+    { return Type::INT; }
+    Type RuleTypeForType(double dummy)
+    { return Type::DOUBLE; }
+    Type RuleTypeForType(std::string dummy)
+    { return Type::STRING; }
 
     struct FO_COMMON_API Rule : public OptionsDB::Option {
         Rule();
-        Rule(RuleType rule_type_, const std::string& name_, const boost::any& value_,
+        Rule(Type type_, const std::string& name_, const boost::any& value_,
              const boost::any& default_value_, const std::string& description_,
              const ValidatorBase *validator_, bool engine_internal_,
              const std::string& category_ = "");
         bool IsInternal() const { return this->storable; }
 
-        RuleType rule_type = INVALID_RULE_TYPE;
+        Type type = Type::INVALID;
         std::string category = "";
     };
 
@@ -63,8 +63,8 @@ public:
     std::unordered_map<std::string, Rule>::const_iterator end() const;
 
     bool RuleExists(const std::string& name) const;
-    bool RuleExists(const std::string& name, RuleType rule_type) const;
-    RuleType GetRuleType(const std::string& name) const;
+    bool RuleExists(const std::string& name, Type type) const;
+    Type GetType(const std::string& name) const;
     bool RuleIsInternal(const std::string& name) const;
 
     /** returns the description string for rule \a rule_name, or throws

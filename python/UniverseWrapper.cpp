@@ -237,8 +237,8 @@ namespace {
 
     bool RuleExistsAnyType(const GameRules& rules, const std::string& name)
     { return rules.RuleExists(name); }
-    bool RuleExistsWithType(const GameRules& rules, const std::string& name, GameRules::RuleType rule_type)
-    { return rules.RuleExists(name, rule_type); }
+    bool RuleExistsWithType(const GameRules& rules, const std::string& name, GameRules::Type type)
+    { return rules.RuleExists(name, type); }
 }
 
 namespace FreeOrionPython {

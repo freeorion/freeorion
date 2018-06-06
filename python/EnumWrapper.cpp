@@ -215,12 +215,12 @@ namespace FreeOrionPython {
             .value("ring",          RING)
             .value("random",        RANDOM)
         ;
-        enum_<GameRules::RuleType>("ruleType")
-            .value("invalid",       GameRules::INVALID_RULE_TYPE)
-            .value("toggle",        GameRules::TOGGLE)
-            .value("int",           GameRules::INT)
-            .value("double",        GameRules::DOUBLE)
-            .value("string",        GameRules::STRING)
+        enum_<GameRules::Type>("ruleType")
+            .value("invalid",       GameRules::Type::INVALID)
+            .value("toggle",        GameRules::Type::TOGGLE)
+            .value("int",           GameRules::Type::INT)
+            .value("double",        GameRules::Type::DOUBLE)
+            .value("string",        GameRules::Type::STRING)
         ;
         enum_<Networking::RoleType>("roleType")
             .value("host",                Networking::ROLE_HOST)

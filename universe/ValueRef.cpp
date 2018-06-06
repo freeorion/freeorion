@@ -1826,16 +1826,16 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return 0;
         try {
             // can cast boolean, int, or double-valued rules to int
-            switch (GetGameRules().GetRuleType(rule_name)) {
-            case GameRules::TOGGLE: {
+            switch (GetGameRules().GetType(rule_name)) {
+                case GameRules::Type::TOGGLE: {
                 return GetGameRules().Get<bool>(rule_name);
                 break;
             }
-            case GameRules::INT: {
+            case GameRules::Type::INT: {
                 return GetGameRules().Get<int>(rule_name);
                 break;
             }
-            case GameRules::DOUBLE: {
+            case GameRules::Type::DOUBLE: {
                 return static_cast<int>(GetGameRules().Get<double>(rule_name));
                 break;
             }
@@ -2038,16 +2038,16 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             return 0.0;
         try {
             // can cast boolean, int, or double-valued rules to double
-            switch (GetGameRules().GetRuleType(rule_name)) {
-            case GameRules::TOGGLE: {
+            switch (GetGameRules().GetType(rule_name)) {
+            case GameRules::Type::TOGGLE: {
                 return GetGameRules().Get<bool>(rule_name);
                 break;
             }
-            case GameRules::INT: {
+            case GameRules::Type::INT: {
                 return GetGameRules().Get<int>(rule_name);
                 break;
             }
-            case GameRules::DOUBLE: {
+            case GameRules::Type::DOUBLE: {
                 return GetGameRules().Get<double>(rule_name);
                 break;
             }
@@ -2600,20 +2600,20 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
             return "";
         try {
             // can cast boolean, int, double, or string-valued rules to strings
-            switch (GetGameRules().GetRuleType(rule_name)) {
-            case GameRules::TOGGLE: {
+            switch (GetGameRules().GetType(rule_name)) {
+            case GameRules::Type::TOGGLE: {
                 return std::to_string(GetGameRules().Get<bool>(rule_name));
                 break;
             }
-            case GameRules::INT: {
+            case GameRules::Type::INT: {
                 return std::to_string(GetGameRules().Get<int>(rule_name));
                 break;
             }
-            case GameRules::DOUBLE: {
+            case GameRules::Type::DOUBLE: {
                 return DoubleToString(GetGameRules().Get<double>(rule_name), 3, false);
                 break;
             }
-            case GameRules::STRING: {
+            case GameRules::Type::STRING: {
                 return GetGameRules().Get<std::string>(rule_name);
                 break;
             }
