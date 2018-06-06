@@ -27,6 +27,7 @@ Species
         [[GREAT_OFFENSE_TROOPS]]
 
         [[ULTIMATE_WEAPONS]]
+        [[GREAT_FUEL]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]

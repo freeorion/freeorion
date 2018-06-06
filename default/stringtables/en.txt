@@ -14300,8 +14300,23 @@ FAST_COLONIZATION_DESC
 SLOW_COLONIZATION_DESC
 −	Slow Colonization: +20% time to build colonies
 
+NO_FUEL_DESC
+−−−	Ships have zero [[metertype METER_FUEL]]
+
 BAD_FUEL_DESC
-−	Bad maximum [[metertype METER_FUEL]]: - 1
+−	Bad Maximum [[metertype METER_FUEL]]: -1
+
+AVERAGE_FUEL_DESC
+	Average Maximum [[metertype METER_FUEL]]: +0
+
+GOOD_FUEL_DESC
++	Good Maximum [[metertype METER_FUEL]]: +1
+
+GREAT_FUEL_DESC
+++	Great Maximum [[metertype METER_FUEL]]: +2
+
+ULTIMATE_FUEL_DESC
++++	Bad Maximum [[metertype METER_FUEL]]: +3
 
 GREAT_ASTEROID_INDUSTRY_DESC
 +	Good Asteroid Miners: + 0.2 [[metertype METER_INDUSTRY]] per population when Industry Focused in systems with owned asteroid belts.
@@ -14489,6 +14504,36 @@ GREAT_STOCKPILE_LABEL
 # %2% FIXME
 ULTIMATE_STOCKPILE_LABEL
 %2% Ultimate Stockpiling
+
+# %1% FIXME
+# %2% FIXME
+NO_FUEL_LABEL
+%2% No Fuel
+
+# %1% FIXME
+# %2% FIXME
+BAD_FUEL_LABEL
+%2% Bad Maximum Fuel
+
+# %1% FIXME
+# %2% FIXME
+AVERAGE_FUEL_LABEL
+%2% Average Maximum Fuel
+
+# %1% FIXME
+# %2% FIXME
+GOOD_FUEL_LABEL
+%2% Good Maximum Fuel
+
+# %1% FIXME
+# %2% FIXME
+GREAT_FUEL_LABEL
+%2% Great Maximum Fuel
+
+# %1% FIXME
+# %2% FIXME
+ULTIMATE_FUEL_LABEL
+%2% Ultimate Maximum Fuel
 
 # %1% FIXME
 # %2% FIXME
