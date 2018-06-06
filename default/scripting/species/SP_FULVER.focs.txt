@@ -8,10 +8,11 @@ Species
     CanColonize
 
     // TODO: BAD_HAPPINESS
-    // Future and change-oriented: TELEPATHIC, GOOD_ATTACKTROOPS,_WEAPONS,_STOCKPILE
+    // Future and change-oriented: TELEPATHIC, GOOD_WEAPONS,_STOCKPILE
+    // Balancing; instead of GOOD_ATTACKTROOPS: GREAT_FUEL
     // bad at preserving knowledge or society: BAD_RESEARCH,_DEFENSE_TROOPS
     // Never satisfied: BAD_HAPPINESS
-    tags = [ "LITHIC" "GOOD_STOCKPILE" "GOOD_WEAPONS" "BAD_RESEARCH" "AVERAGE_SUPPLY" "GOOD_ATTACKTROOPS" "TELEPATHIC" "PEDIA_LITHIC_SPECIES_CLASS"]
+    tags = [ "LITHIC" "GOOD_STOCKPILE" "GOOD_WEAPONS" "BAD_RESEARCH" "AVERAGE_SUPPLY" "GREAT_FUEL" "TELEPATHIC" "PEDIA_LITHIC_SPECIES_CLASS"]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -31,8 +32,9 @@ Species
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
-        [[GOOD_OFFENSE_TROOPS]]
+        [[AVERAGE_OFFENSE_TROOPS]]
         [[GOOD_WEAPONS]]
+        [[GREAT_FUEL]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
