@@ -44,9 +44,6 @@ public:
 
     explicit DestroyUniverseObject(int object_id);
 
-    virtual ~DestroyUniverseObject()
-    {}
-
     void Execute() const override;
 
     std::string Dump() const override;
@@ -64,9 +61,6 @@ public:
     SetOwner();
 
     SetOwner(int object_id, int new_owner_empire_id);
-
-    virtual ~SetOwner()
-    {}
 
     void Execute() const override;
 
@@ -87,9 +81,6 @@ public:
 
     AddStarlane(int system_1_id, int system_2_id);
 
-    virtual ~AddStarlane()
-    {}
-
     void Execute() const override;
 
     std::string Dump() const override;
@@ -108,9 +99,6 @@ public:
     RemoveStarlane();
 
     RemoveStarlane(int system_1_id, int system_2_id);
-
-    virtual ~RemoveStarlane()
-    {}
 
     void Execute() const override;
 
@@ -131,9 +119,6 @@ public:
 
     CreateSystem(double x, double y, StarType star_type);
 
-    virtual ~CreateSystem()
-    {}
-
     void Execute() const override;
 
     std::string Dump() const override;
@@ -153,9 +138,6 @@ public:
     CreatePlanet();
 
     CreatePlanet(int system_id, PlanetType planet_type, PlanetSize planet_size);
-
-    virtual ~CreatePlanet()
-    {}
 
     void Execute() const override;
 

@@ -404,9 +404,6 @@ SetMeter::SetMeter(MeterType meter,
     m_accounting_label(accounting_label ? *accounting_label : std::string())
 {}
 
-SetMeter::~SetMeter()
-{}
-
 void SetMeter::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) return;
     Meter* m = context.effect_target->GetMeter(m_meter);
@@ -600,8 +597,6 @@ SetShipPartMeter::SetShipPartMeter(MeterType meter,
     m_value(std::move(value))
 {}
 
-SetShipPartMeter::~SetShipPartMeter() {}
-
 void SetShipPartMeter::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         DebugLogger() << "SetShipPartMeter::Execute passed null target pointer";
@@ -782,9 +777,6 @@ SetEmpireMeter::SetEmpireMeter(std::unique_ptr<ValueRef::ValueRefBase<int>>&& em
     m_value(std::move(value))
 {}
 
-SetEmpireMeter::~SetEmpireMeter()
-{}
-
 void SetEmpireMeter::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         DebugLogger() << "SetEmpireMeter::Execute passed null target pointer";
@@ -892,9 +884,6 @@ SetEmpireStockpile::SetEmpireStockpile(std::unique_ptr<ValueRef::ValueRefBase<in
     m_value(std::move(value))
 {}
 
-SetEmpireStockpile::~SetEmpireStockpile()
-{}
-
 void SetEmpireStockpile::Execute(const ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
 
@@ -950,9 +939,6 @@ SetEmpireCapital::SetEmpireCapital(std::unique_ptr<ValueRef::ValueRefBase<int>>&
     m_empire_id(std::move(empire_id))
 {}
 
-SetEmpireCapital::~SetEmpireCapital()
-{}
-
 void SetEmpireCapital::Execute(const ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
 
@@ -991,9 +977,6 @@ unsigned int SetEmpireCapital::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SetPlanetType::SetPlanetType(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&& type) :
     m_type(std::move(type))
-{}
-
-SetPlanetType::~SetPlanetType()
 {}
 
 void SetPlanetType::Execute(const ScriptingContext& context) const {
@@ -1037,9 +1020,6 @@ SetPlanetSize::SetPlanetSize(std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>
     m_size(std::move(size))
 {}
 
-SetPlanetSize::~SetPlanetSize()
-{}
-
 void SetPlanetSize::Execute(const ScriptingContext& context) const {
     if (auto p = std::dynamic_pointer_cast<Planet>(context.effect_target)) {
         PlanetSize size = m_size->Eval(ScriptingContext(context, p->Size()));
@@ -1077,9 +1057,6 @@ unsigned int SetPlanetSize::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SetSpecies::SetSpecies(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species) :
     m_species_name(std::move(species))
-{}
-
-SetSpecies::~SetSpecies()
 {}
 
 void SetSpecies::Execute(const ScriptingContext& context) const {
@@ -1155,9 +1132,6 @@ SetOwner::SetOwner(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id) :
     m_empire_id(std::move(empire_id))
 {}
 
-SetOwner::~SetOwner()
-{}
-
 void SetOwner::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
@@ -1227,9 +1201,6 @@ SetSpeciesEmpireOpinion::SetSpeciesEmpireOpinion(
     m_opinion(std::move(opinion))
 {}
 
-SetSpeciesEmpireOpinion::~SetSpeciesEmpireOpinion()
-{}
-
 void SetSpeciesEmpireOpinion::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
@@ -1288,9 +1259,6 @@ SetSpeciesSpeciesOpinion::SetSpeciesSpeciesOpinion(
     m_opinion(std::move(opinion))
 {}
 
-SetSpeciesSpeciesOpinion::~SetSpeciesSpeciesOpinion()
-{}
-
 void SetSpeciesSpeciesOpinion::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
@@ -1347,9 +1315,6 @@ CreatePlanet::CreatePlanet(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&&
     m_size(std::move(size)),
     m_name(std::move(name)),
     m_effects_to_apply_after(std::move(effects_to_apply_after))
-{}
-
-CreatePlanet::~CreatePlanet()
 {}
 
 void CreatePlanet::Execute(const ScriptingContext& context) const {
@@ -1460,9 +1425,6 @@ CreateBuilding::CreateBuilding(std::unique_ptr<ValueRef::ValueRefBase<std::strin
     m_building_type_name(std::move(building_type_name)),
     m_name(std::move(name)),
     m_effects_to_apply_after(std::move(effects_to_apply_after))
-{}
-
-CreateBuilding::~CreateBuilding()
 {}
 
 void CreateBuilding::Execute(const ScriptingContext& context) const {
@@ -1584,9 +1546,6 @@ CreateShip::CreateShip(std::unique_ptr<ValueRef::ValueRefBase<int>>&& ship_desig
     m_species_name(std::move(species_name)),
     m_name(std::move(ship_name)),
     m_effects_to_apply_after(std::move(effects_to_apply_after))
-{}
-
-CreateShip::~CreateShip()
 {}
 
 void CreateShip::Execute(const ScriptingContext& context) const {
@@ -1769,9 +1728,6 @@ CreateField::CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& 
     m_effects_to_apply_after(std::move(effects_to_apply_after))
 {}
 
-CreateField::~CreateField()
-{}
-
 void CreateField::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         ErrorLogger() << "CreateField::Execute passed null target";
@@ -1923,9 +1879,6 @@ CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
     DebugLogger() << "Effect System created 2";
 }
 
-CreateSystem::~CreateSystem()
-{}
-
 void CreateSystem::Execute(const ScriptingContext& context) const {
     // pick a star type
     StarType star_type = STAR_NONE;
@@ -2061,9 +2014,6 @@ AddSpecial::AddSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& na
     m_capacity(std::move(capacity))
 {}
 
-AddSpecial::~AddSpecial()
-{}
-
 void AddSpecial::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         ErrorLogger() << "AddSpecial::Execute passed no target object";
@@ -2113,9 +2063,6 @@ RemoveSpecial::RemoveSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>
     m_name(std::move(name))
 {}
 
-RemoveSpecial::~RemoveSpecial()
-{}
-
 void RemoveSpecial::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         ErrorLogger() << "RemoveSpecial::Execute passed no target object";
@@ -2151,9 +2098,6 @@ unsigned int RemoveSpecial::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 AddStarlanes::AddStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition) :
     m_other_lane_endpoint_condition(std::move(other_lane_endpoint_condition))
-{}
-
-AddStarlanes::~AddStarlanes()
 {}
 
 void AddStarlanes::Execute(const ScriptingContext& context) const {
@@ -2220,9 +2164,6 @@ unsigned int AddStarlanes::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 RemoveStarlanes::RemoveStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition) :
     m_other_lane_endpoint_condition(std::move(other_lane_endpoint_condition))
-{}
-
-RemoveStarlanes::~RemoveStarlanes()
 {}
 
 void RemoveStarlanes::Execute(const ScriptingContext& context) const {
@@ -2293,9 +2234,6 @@ SetStarType::SetStarType(std::unique_ptr<ValueRef::ValueRefBase<StarType>>&& typ
     m_type(std::move(type))
 {}
 
-SetStarType::~SetStarType()
-{}
-
 void SetStarType::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         ErrorLogger() << "SetStarType::Execute given no target object";
@@ -2331,9 +2269,6 @@ unsigned int SetStarType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 MoveTo::MoveTo(std::unique_ptr<Condition::ConditionBase>&& location_condition) :
     m_location_condition(std::move(location_condition))
-{}
-
-MoveTo::~MoveTo()
 {}
 
 void MoveTo::Execute(const ScriptingContext& context) const {
@@ -2640,9 +2575,6 @@ MoveInOrbit::MoveInOrbit(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed
     m_focus_y(std::move(focus_y))
 {}
 
-MoveInOrbit::~MoveInOrbit()
-{}
-
 void MoveInOrbit::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         ErrorLogger() << "MoveInOrbit::Execute given no target object";
@@ -2790,9 +2722,6 @@ MoveTowards::MoveTowards(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed
     m_dest_y(std::move(dest_y))
 {}
 
-MoveTowards::~MoveTowards()
-{}
-
 void MoveTowards::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         ErrorLogger() << "MoveTowards::Execute given no target object";
@@ -2935,9 +2864,6 @@ unsigned int MoveTowards::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SetDestination::SetDestination(std::unique_ptr<Condition::ConditionBase>&& location_condition) :
     m_location_condition(std::move(location_condition))
-{}
-
-SetDestination::~SetDestination()
 {}
 
 void SetDestination::Execute(const ScriptingContext& context) const {
@@ -3098,9 +3024,6 @@ SetEmpireTechProgress::SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRefB
         : boost::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
 {}
 
-SetEmpireTechProgress::~SetEmpireTechProgress()
-{}
-
 void SetEmpireTechProgress::Execute(const ScriptingContext& context) const {
     if (!m_empire_id) return;
     Empire* empire = GetEmpire(m_empire_id->Eval(context));
@@ -3169,9 +3092,6 @@ GiveEmpireTech::GiveEmpireTech(std::unique_ptr<ValueRef::ValueRefBase<std::strin
     if (!m_empire_id)
         m_empire_id.reset(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")));
 }
-
-GiveEmpireTech::~GiveEmpireTech()
-{}
 
 void GiveEmpireTech::Execute(const ScriptingContext& context) const {
     if (!m_empire_id) return;
@@ -3274,9 +3194,6 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, 
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
-{}
-
-GenerateSitRepMessage::~GenerateSitRepMessage()
 {}
 
 void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
@@ -3481,9 +3398,6 @@ SetOverlayTexture::SetOverlayTexture(const std::string& texture, ValueRef::Value
     m_size(size)
 {}
 
-SetOverlayTexture::~SetOverlayTexture()
-{}
-
 void SetOverlayTexture::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
@@ -3559,9 +3473,6 @@ SetVisibility::SetVisibility(std::unique_ptr<ValueRef::ValueRefBase<Visibility>>
     m_empire_id(std::move(empire_id)),
     m_affiliation(affiliation),
     m_condition(std::move(of_objects))
-{}
-
-SetVisibility::~SetVisibility()
 {}
 
 void SetVisibility::Execute(const ScriptingContext& context) const {

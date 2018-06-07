@@ -151,7 +151,7 @@ private:
 
 /** Does nothing when executed. Useful for triggering side-effects of effect
   * execution without modifying the gamestate. */
-class FO_COMMON_API NoOp : public EffectBase {
+class FO_COMMON_API NoOp final : public EffectBase {
 public:
     NoOp();
 
@@ -174,14 +174,12 @@ private:
   * is set if \a max == true; otherwise the current value of the meter is set.
   * If the target of the Effect does not have the requested meter, nothing is
   * done. */
-class FO_COMMON_API SetMeter : public EffectBase {
+class FO_COMMON_API SetMeter final : public EffectBase {
 public:
 
     SetMeter(MeterType meter,
              std::unique_ptr<ValueRef::ValueRefBase<double>>&& value,
              const boost::optional<std::string>& accounting_label = boost::none);
-
-    virtual ~SetMeter();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -227,15 +225,13 @@ private:
   * affected (this is not the same at the slot type in which the part is
   * actually located, as a part might be mountable in both types, and
   * located in a different type than specified, and would be matched). */
-class FO_COMMON_API SetShipPartMeter : public EffectBase {
+class FO_COMMON_API SetShipPartMeter final : public EffectBase {
 public:
     /** Affects the \a meter_type meter that belongs to part(s) named \a
         part_name. */
     SetShipPartMeter(MeterType meter_type,
                      std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& part_name,
                      std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
-
-    virtual ~SetShipPartMeter();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -278,14 +274,12 @@ private:
 /** Sets the indicated meter on the empire with the indicated id to the
   * indicated value.  If \a meter is not a valid meter for empires,
   * does nothing. */
-class FO_COMMON_API SetEmpireMeter : public EffectBase {
+class FO_COMMON_API SetEmpireMeter final : public EffectBase {
 public:
     SetEmpireMeter(const std::string& meter, std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
 
     SetEmpireMeter(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id, const std::string& meter,
                    std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
-
-    virtual ~SetEmpireMeter();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -324,7 +318,7 @@ private:
 
 /** Sets the empire stockpile of the target's owning empire to \a value.  If
   * the target does not have exactly one owner, nothing is done. */
-class FO_COMMON_API SetEmpireStockpile : public EffectBase {
+class FO_COMMON_API SetEmpireStockpile final : public EffectBase {
 public:
     SetEmpireStockpile(ResourceType stockpile,
                        std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
@@ -332,8 +326,6 @@ public:
     SetEmpireStockpile(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
                        ResourceType stockpile,
                        std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
-
-    virtual ~SetEmpireStockpile();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -356,13 +348,11 @@ private:
 /** Makes the target planet the capital of its owner's empire.  If the target
   * object is not a planet, does not have an owner, or has more than one owner
   * the effect does nothing. */
-class FO_COMMON_API SetEmpireCapital : public EffectBase {
+class FO_COMMON_API SetEmpireCapital final : public EffectBase {
 public:
     explicit SetEmpireCapital();
 
     explicit SetEmpireCapital(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-
-    virtual ~SetEmpireCapital();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -384,11 +374,9 @@ private:
     type of a PT_ASTEROID or PT_GASGIANT planet will also change its size to SZ_TINY or SZ_HUGE, respectively.
     Similarly, changing type to PT_ASTEROID or PT_GASGIANT will also cause the size to change to SZ_ASTEROID or
     SZ_GASGIANT, respectively. */
-class FO_COMMON_API SetPlanetType : public EffectBase {
+class FO_COMMON_API SetPlanetType final : public EffectBase {
 public:
     explicit SetPlanetType(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&& type);
-
-    virtual ~SetPlanetType();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -411,11 +399,9 @@ private:
   * planet will also change its type to PT_BARREN.  Similarly, changing size to
   * SZ_ASTEROID or SZ_GASGIANT will also cause the type to change to PT_ASTEROID
   * or PT_GASGIANT, respectively. */
-class FO_COMMON_API SetPlanetSize : public EffectBase {
+class FO_COMMON_API SetPlanetSize final : public EffectBase {
 public:
     explicit SetPlanetSize(std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>&& size);
-
-    virtual ~SetPlanetSize();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -435,11 +421,9 @@ private:
 
 /** Sets the species on the target to \a species_name.  This works on planets
   * and ships, but has no effect on other objects. */
-class FO_COMMON_API SetSpecies : public EffectBase {
+class FO_COMMON_API SetSpecies final : public EffectBase {
 public:
     explicit SetSpecies(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species);
-
-    virtual ~SetSpecies();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -459,11 +443,9 @@ private:
 
 /** Sets empire \a empire_id as the owner of the target.  This has no effect if
   * \a empire_id was already the owner of the target object. */
-class FO_COMMON_API SetOwner : public EffectBase {
+class FO_COMMON_API SetOwner final : public EffectBase {
 public:
     explicit SetOwner(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
-
-    virtual ~SetOwner();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -483,13 +465,11 @@ private:
 
 /** Sets the opinion of Species \a species for empire with id \a empire_id to
   * \a opinion */
-class FO_COMMON_API SetSpeciesEmpireOpinion : public EffectBase {
+class FO_COMMON_API SetSpeciesEmpireOpinion final : public EffectBase {
 public:
     SetSpeciesEmpireOpinion(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
                             std::unique_ptr<ValueRef::ValueRefBase<double>>&& opinion);
-
-    virtual ~SetSpeciesEmpireOpinion();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -511,13 +491,11 @@ private:
 
 /** Sets the opinion of Species \a opinionated_species for other species
   * \a rated_species to \a opinion */
-class FO_COMMON_API SetSpeciesSpeciesOpinion : public EffectBase {
+class FO_COMMON_API SetSpeciesSpeciesOpinion final : public EffectBase {
 public:
     SetSpeciesSpeciesOpinion(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& opinionated_species_name,
                              std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& rated_species_name,
                              std::unique_ptr<ValueRef::ValueRefBase<double>>&& opinion);
-
-    virtual ~SetSpeciesSpeciesOpinion();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -539,14 +517,12 @@ private:
 
 /** Creates a new Planet with specified \a type and \a size at the system with
   * specified \a location_id */
-class FO_COMMON_API CreatePlanet : public EffectBase {
+class FO_COMMON_API CreatePlanet final : public EffectBase {
 public:
     CreatePlanet(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&& type,
                  std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>&& size,
                  std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                  std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
-
-    virtual ~CreatePlanet();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -568,13 +544,11 @@ private:
 };
 
 /** Creates a new Building with specified \a type on the \a target Planet. */
-class FO_COMMON_API CreateBuilding : public EffectBase {
+class FO_COMMON_API CreateBuilding final : public EffectBase {
 public:
     CreateBuilding(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& building_type_name,
                    std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                    std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
-
-    virtual ~CreateBuilding();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -597,7 +571,7 @@ private:
 /** Creates a new Ship with specified \a predefined_ship_design_name design
   * from those in the list of PredefinedShipDesignManager, and owned by the
   * empire with the specified \a empire_id */
-class FO_COMMON_API CreateShip : public EffectBase {
+class FO_COMMON_API CreateShip final : public EffectBase {
 public:
     CreateShip(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& predefined_ship_design_name,
                std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
@@ -610,8 +584,6 @@ public:
                std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
                std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
                std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
-
-    virtual ~CreateShip();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -636,7 +608,7 @@ private:
 
 /** Creates a new Field with specified \a field_type_name FieldType
   * of the specified \a size. */
-class FO_COMMON_API CreateField : public EffectBase {
+class FO_COMMON_API CreateField final : public EffectBase {
 public:
     CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& field_type_name,
                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& size,
@@ -649,8 +621,6 @@ public:
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& size,
                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                 std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
-
-    virtual ~CreateField();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -675,7 +645,7 @@ private:
 
 /** Creates a new system with the specified \a colour and at the specified
   * location. */
-class FO_COMMON_API CreateSystem : public EffectBase {
+class FO_COMMON_API CreateSystem final : public EffectBase {
 public:
     CreateSystem(std::unique_ptr<ValueRef::ValueRefBase< ::StarType>>&& type,
                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
@@ -687,8 +657,6 @@ public:
                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
                  std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                  std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
-
-    virtual ~CreateSystem();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -715,7 +683,7 @@ private:
   * as well.  Destroy effects delay the desctruction of their targets until
   * after other all effects have executed, to ensure the source or target of
   * other effects are present when they execute. */
-class FO_COMMON_API Destroy : public EffectBase {
+class FO_COMMON_API Destroy final : public EffectBase {
 public:
     Destroy();
 
@@ -735,14 +703,12 @@ private:
 };
 
 /** Adds the Special with the name \a name to the target object. */
-class FO_COMMON_API AddSpecial : public EffectBase {
+class FO_COMMON_API AddSpecial final : public EffectBase {
 public:
     explicit AddSpecial(const std::string& name, float capacity = 1.0f);
 
     explicit AddSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                         std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity = nullptr);
-
-    ~AddSpecial();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -766,13 +732,11 @@ private:
 
 /** Removes the Special with the name \a name to the target object.  This has
   * no effect if no such Special was already attached to the target object. */
-class FO_COMMON_API RemoveSpecial : public EffectBase {
+class FO_COMMON_API RemoveSpecial final : public EffectBase {
 public:
     explicit RemoveSpecial(const std::string& name);
 
     explicit RemoveSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
-
-    ~RemoveSpecial();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -792,11 +756,9 @@ private:
 
 /** Creates starlane(s) between the target system and systems that match
   * \a other_lane_endpoint_condition */
-class FO_COMMON_API AddStarlanes : public EffectBase {
+class FO_COMMON_API AddStarlanes final : public EffectBase {
 public:
     explicit AddStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition);
-
-    virtual ~AddStarlanes();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -816,11 +778,9 @@ private:
 
 /** Removes starlane(s) between the target system and systems that match
   * \a other_lane_endpoint_condition */
-class FO_COMMON_API RemoveStarlanes : public EffectBase {
+class FO_COMMON_API RemoveStarlanes final : public EffectBase {
 public:
     explicit RemoveStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition);
-
-    virtual ~RemoveStarlanes();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -840,11 +800,9 @@ private:
 
 /** Sets the star type of the target to \a type.  This has no effect on
   * non-System targets. */
-class FO_COMMON_API SetStarType : public EffectBase {
+class FO_COMMON_API SetStarType final : public EffectBase {
 public:
     explicit SetStarType(std::unique_ptr<ValueRef::ValueRefBase<StarType>>&& type);
-
-    virtual ~SetStarType();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -866,11 +824,9 @@ private:
   * the condition \a location_condition.  If multiple objects match the
   * condition, then one is chosen.  If no objects match the condition, then
   * nothing is done. */
-class FO_COMMON_API MoveTo : public EffectBase {
+class FO_COMMON_API MoveTo final : public EffectBase {
 public:
     explicit MoveTo(std::unique_ptr<Condition::ConditionBase>&& location_condition);
-
-    virtual ~MoveTo();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -891,7 +847,7 @@ private:
 /** Moves an UniverseObject to a location as though it was moving in orbit of
   * some object or position on the map.  Sign of \a speed indicates CCW / CW
   * rotation.*/
-class FO_COMMON_API MoveInOrbit : public EffectBase {
+class FO_COMMON_API MoveInOrbit final : public EffectBase {
 public:
     MoveInOrbit(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
                 std::unique_ptr<Condition::ConditionBase>&& focal_point_condition);
@@ -899,8 +855,6 @@ public:
     MoveInOrbit(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& focus_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& focus_y = nullptr);
-
-    virtual ~MoveInOrbit();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -923,7 +877,7 @@ private:
 
 /** Moves an UniverseObject a specified distance towards some object or
   * position on the map. */
-class FO_COMMON_API MoveTowards : public EffectBase {
+class FO_COMMON_API MoveTowards final : public EffectBase {
 public:
     MoveTowards(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
                 std::unique_ptr<Condition::ConditionBase>&& dest_condition);
@@ -931,8 +885,6 @@ public:
     MoveTowards(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& dest_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& dest_y = nullptr);
-
-    virtual ~MoveTowards();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -957,11 +909,9 @@ private:
   * matches the condition \a location_condition.  If multiple objects match the
   * condition, then one is chosen.  If no objects match the condition, then
   * nothing is done. */
-class FO_COMMON_API SetDestination : public EffectBase {
+class FO_COMMON_API SetDestination final : public EffectBase {
 public:
     explicit SetDestination(std::unique_ptr<Condition::ConditionBase>&& location_condition);
-
-    virtual ~SetDestination();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -980,7 +930,7 @@ private:
 };
 
 /** Sets aggression level of the target object. */
-class FO_COMMON_API SetAggression : public EffectBase {
+class FO_COMMON_API SetAggression final : public EffectBase {
 public:
     explicit SetAggression(bool aggressive);
 
@@ -1003,7 +953,7 @@ private:
 
 /** Causes the owner empire of the target object to win the game.  If the
   * target object has multiple owners, nothing is done. */
-class FO_COMMON_API Victory : public EffectBase {
+class FO_COMMON_API Victory final : public EffectBase {
 public:
     explicit Victory(const std::string& reason_string); // TODO: Make this a ValueRefBase<std::string>*
 
@@ -1026,13 +976,11 @@ private:
 
 /** Sets whether an empire has researched at tech, and how much research
   * progress towards that tech has been completed. */
-class FO_COMMON_API SetEmpireTechProgress : public EffectBase {
+class FO_COMMON_API SetEmpireTechProgress final : public EffectBase {
 public:
     SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
                           std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_progress,
                           std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr);
-
-    virtual ~SetEmpireTechProgress();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -1052,12 +1000,10 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class FO_COMMON_API GiveEmpireTech : public EffectBase {
+class FO_COMMON_API GiveEmpireTech final : public EffectBase {
 public:
     explicit GiveEmpireTech(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr);
-
-    virtual ~GiveEmpireTech();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -1082,7 +1028,7 @@ private:
   * which are substituted as string parameters %1%, %2%, %3%, etc. in the order
   * they are specified.  Extra parameters beyond those needed by \a message_string
   * are ignored, and missing parameters are left as blank text. */
-class FO_COMMON_API GenerateSitRepMessage : public EffectBase {
+class FO_COMMON_API GenerateSitRepMessage final : public EffectBase {
 public:
     using MessageParams =  std::vector<std::pair<
         std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>>;
@@ -1106,8 +1052,6 @@ public:
                           EmpireAffiliationType affiliation,
                           const std::string& label = "",
                           bool stringtable_lookup = true);
-
-    virtual ~GenerateSitRepMessage();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -1153,12 +1097,10 @@ private:
 };
 
 /** Applies an overlay texture to Systems. */
-class FO_COMMON_API SetOverlayTexture : public EffectBase {
+class FO_COMMON_API SetOverlayTexture final : public EffectBase {
 public:
     SetOverlayTexture(const std::string& texture, std::unique_ptr<ValueRef::ValueRefBase<double>>&& size);
     SetOverlayTexture(const std::string& texture, ValueRef::ValueRefBase<double>* size);
-
-    virtual ~SetOverlayTexture();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -1181,7 +1123,7 @@ private:
 };
 
 /** Applies a texture to Planets. */
-class FO_COMMON_API SetTexture : public EffectBase {
+class FO_COMMON_API SetTexture final : public EffectBase {
 public:
     explicit SetTexture(const std::string& texture);
 
@@ -1207,13 +1149,12 @@ private:
 
 /** Sets visibility of an object for an empire, independent of standard
   * visibility mechanics. */
-class FO_COMMON_API SetVisibility : public EffectBase {
+class FO_COMMON_API SetVisibility final : public EffectBase {
 public:
     SetVisibility(std::unique_ptr<ValueRef::ValueRefBase<Visibility>> vis,
                   EmpireAffiliationType affiliation,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr,
                   std::unique_ptr<Condition::ConditionBase>&& of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
-    virtual ~SetVisibility();
 
     void Execute(const ScriptingContext& context) const override;
 
@@ -1248,7 +1189,7 @@ private:
 
 /** Executes a set of effects if an execution-time condition is met, or an
   * alterative set of effects if the condition is not met. */
-class FO_COMMON_API Conditional : public EffectBase {
+class FO_COMMON_API Conditional final : public EffectBase {
 public:
     Conditional(std::unique_ptr<Condition::ConditionBase>&& target_condition,
                 std::vector<std::unique_ptr<EffectBase>>&& true_effects,

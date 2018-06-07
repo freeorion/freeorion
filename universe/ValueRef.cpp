@@ -2834,9 +2834,6 @@ NameLookup::NameLookup(std::unique_ptr<ValueRefBase<int>>&& value_ref, LookupTyp
     m_lookup_type(lookup_type)
 {}
 
-NameLookup::~NameLookup()
-{}
-
 bool NameLookup::operator==(const ValueRefBase<std::string>& rhs) const {
     if (&rhs == this)
         return true;

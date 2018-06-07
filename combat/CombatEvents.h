@@ -26,9 +26,6 @@ struct FO_COMMON_API BoutBeginEvent : public CombatEvent {
 
     BoutBeginEvent(int bout);
 
-    virtual ~BoutBeginEvent()
-    {}
-
     std::string DebugString() const override;
 
     std::string CombatLogDescription(int viewing_empire_id) const override;
@@ -49,9 +46,6 @@ struct FO_COMMON_API BoutEvent : public CombatEvent {
     BoutEvent();
 
     BoutEvent(int bout);
-
-    virtual ~BoutEvent()
-    {}
 
     void AddEvent(const CombatEventPtr& event);
 
@@ -87,9 +81,6 @@ struct FO_COMMON_API SimultaneousEvents : public CombatEvent {
     typedef std::shared_ptr<SimultaneousEvents> SimultaneousEventsPtr;
 
     SimultaneousEvents();
-
-    virtual ~SimultaneousEvents()
-    {}
 
     void AddEvent(const CombatEventPtr& event);
 
@@ -136,9 +127,6 @@ struct FO_COMMON_API InitialStealthEvent : public CombatEvent {
 
     InitialStealthEvent(const StealthInvisbleMap &);
 
-    virtual ~InitialStealthEvent()
-    {}
-
     std::string DebugString() const override;
 
     std::string CombatLogDescription(int viewing_empire_id) const override;
@@ -158,9 +146,6 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     StealthChangeEvent();
 
     StealthChangeEvent(int bout);
-
-    virtual ~StealthChangeEvent()
-    {}
 
     std::string DebugString() const override;
 
@@ -225,9 +210,6 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
                     const std::tuple<float, float, float> &power_shield_damage,
                     int attacker_owner_id_, int target_owner_id_);
 
-    virtual ~WeaponFireEvent()
-    {}
-
     std::string DebugString() const override;
 
     std::string CombatLogDescription(int viewing_empire_id) const override;
@@ -263,9 +245,6 @@ struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
 
     IncapacitationEvent(int bout_, int object_id_, int object_owner_id_);
 
-    virtual ~IncapacitationEvent()
-    {}
-
     std::string DebugString() const override;
 
     std::string CombatLogDescription(int viewing_empire_id) const override;
@@ -288,9 +267,6 @@ struct FO_COMMON_API FightersAttackFightersEvent : public CombatEvent {
     FightersAttackFightersEvent();
 
     FightersAttackFightersEvent(int bout);
-
-    virtual ~FightersAttackFightersEvent()
-    {}
 
     std::string DebugString() const override;
 
@@ -317,9 +293,6 @@ struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
 
     FighterLaunchEvent(int bout_, int launched_from_id_, int fighter_owner_empire_id_, int number_launched_);
 
-    virtual ~FighterLaunchEvent()
-    {}
-
     std::string DebugString() const override;
 
     std::string CombatLogDescription(int viewing_empire_id) const override;
@@ -342,9 +315,6 @@ struct FO_COMMON_API FightersDestroyedEvent : public CombatEvent {
     FightersDestroyedEvent();
 
     FightersDestroyedEvent(int bout);
-
-    virtual ~FightersDestroyedEvent()
-    {}
 
     std::string DebugString() const override;
 
@@ -372,9 +342,6 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
     WeaponsPlatformEvent();
 
     WeaponsPlatformEvent(int bout, int attacker_id, int attacker_owner_id_);
-
-    virtual ~WeaponsPlatformEvent()
-    {}
 
     void AddEvent(int round, int target_id, int target_owner_id_, std::string const & weapon_name_,
                   float power_, float shield_, float damage_);
