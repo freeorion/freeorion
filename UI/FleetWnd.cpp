@@ -1748,7 +1748,7 @@ void FleetDataPanel::UpdateAggressionToggle() {
         m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon()));
         m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetAutoMouseoverIcon()));
         m_aggression_toggle->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
-            FleetPassiveIcon(), UserString("FW_AUTO"), UserString("FW_AUTO_DESC")));
+            FleetAutoIcon(), UserString("FW_AUTO"), UserString("FW_AUTO_DESC")));
     }
 }
 
