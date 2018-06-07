@@ -34,7 +34,6 @@
 #include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 
-#include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/DrawUtil.h>
 #include <GG/DynamicGraphic.h>
 #include <GG/GUI.h>

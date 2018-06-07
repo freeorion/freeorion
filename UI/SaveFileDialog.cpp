@@ -112,10 +112,10 @@ namespace {
 
     bool Prompt(const std::string& question){
         std::shared_ptr<GG::Font> font = ClientUI::GetFont();
-        auto prompt = GG::Wnd::Create<GG::ThreeButtonDlg>(
+        auto prompt = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(
             PROMT_WIDTH, PROMPT_HEIGHT, question, font,
             ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::CtrlColor(), ClientUI::TextColor(),
-            std::size_t(2), UserString("YES"), UserString("CANCEL"), "");
+            2, UserString("YES"), UserString("CANCEL"));
         prompt->Run();
         return prompt->Result() == 0;
     }

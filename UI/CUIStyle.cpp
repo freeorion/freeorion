@@ -49,6 +49,12 @@ std::string CUIStyle::Translate(const std::string& text) const
     return UserString("ERROR");
 }
 
+std::shared_ptr<GG::Button> CUIStyle::NewButton(const std::string& str, const std::shared_ptr<GG::Font>& font,
+                                                GG::Clr color, GG::Clr text_color/* = CLR_BLACK*/,
+                                                GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) const
+{ return GG::Wnd::Create<CUIButton>(str); }
+
+
 std::shared_ptr<GG::DropDownList> CUIStyle::NewDropDownList(size_t num_shown_elements, GG::Clr color) const
 { return GG::Wnd::Create<CUIDropDownList>(num_shown_elements); }
 

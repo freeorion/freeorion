@@ -8,6 +8,10 @@ class CUIStyle : public GG::StyleFactory
 public:
     std::string Translate(const std::string& text) const override;
 
+    std::shared_ptr<GG::Button> NewButton(const std::string& str,
+                              const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+                              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const override;
+
     std::shared_ptr<GG::DropDownList> NewDropDownList(size_t num_shown_elements, GG::Clr color) const override;
 
     std::shared_ptr<GG::Edit> NewEdit(const std::string& str, const std::shared_ptr<GG::Font>& font,
