@@ -408,10 +408,12 @@ void TabBar::RemoveTab(const std::string& name)
 
 void TabBar::RecalcLeftRightButton()
 {
+    if (m_left_button)
+        m_left_button->Disable(m_first_tab_shown == 0);
+    if (m_left_button && m_right_button && m_tab_buttons.size())
+        m_right_button->Disable(m_tab_buttons.back()->Right() <= m_left_button->Left());
     if (Width() < m_tabs->Width() && !m_left_right_button_layout->Visible()) {
         m_left_right_button_layout->Show();
-        m_left_button->Disable(m_first_tab_shown == 0);
-        m_right_button->Disable(m_tab_buttons.back()->Right() <= m_left_button->Left());
     }
     if (m_tabs->Width() <= Width() && m_left_right_button_layout->Visible())
         m_left_right_button_layout->Hide();
