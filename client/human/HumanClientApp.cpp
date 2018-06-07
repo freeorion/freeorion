@@ -1404,30 +1404,6 @@ void HumanClientApp::ResetClientData(bool save_connection) {
     ClearPreviousPendingSaves(m_game_saves_in_progress);
 }
 
-namespace {
-    // Ask the player if they want to wait for the save game to complete
-    // The dialog automatically closes if the save completes while the user is waiting
-    class SaveGamePendingDialog : public GG::ThreeButtonDlg {
-        public:
-        SaveGamePendingDialog(bool reset, boost::signals2::signal<void()>& save_completed_signal) :
-            GG::ThreeButtonDlg(
-                GG::X(320), GG::Y(200), UserString("SAVE_GAME_IN_PROGRESS"),
-                ClientUI::GetFont(ClientUI::Pts()+2),
-                ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
-                ClientUI::CtrlColor(), ClientUI::TextColor(), 1,
-                (reset ? UserString("ABORT_SAVE_AND_RESET") : UserString("ABORT_SAVE_AND_EXIT")))
-        {
-            save_completed_signal.connect(
-                boost::bind(&SaveGamePendingDialog::SaveCompletedHandler, this));
-        }
-
-        void SaveCompletedHandler() {
-            DebugLogger() << "SaveGamePendingDialog::SaveCompletedHandler save game completed handled.";
-            m_done = true;
-        }
-    };
-}
-
 void HumanClientApp::ResetToIntro(bool skip_savegame)
 { ResetOrExitApp(true, skip_savegame); }
 
@@ -1450,7 +1426,25 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_cod
 
         if (!m_game_saves_in_progress.empty()) {
             DebugLogger() << "save game in progress. Checking with player.";
-            auto dlg = GG::Wnd::Create<SaveGamePendingDialog>(reset, this->SaveGamesCompletedSignal);
+            // Ask the player if they want to wait for the save game to complete
+            auto dlg = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(
+                GG::X(320), GG::Y(200), UserString("SAVE_GAME_IN_PROGRESS"),
+                ClientUI::GetFont(ClientUI::Pts()+2),
+                ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
+                ClientUI::CtrlColor(), ClientUI::TextColor(), 1,
+                (reset ?
+                    UserString("ABORT_SAVE_AND_RESET") :
+                    UserString("ABORT_SAVE_AND_EXIT")));
+            // The dialog automatically closes if the save completes while the
+            // user is waiting
+            this->SaveGamesCompletedSignal.connect(
+                [dlg](){
+                    DebugLogger() << "SaveGamePendingDialog::SaveCompletedHandler save game completed handled.";
+
+                    dlg->EndRun();
+                }
+            );
+
             dlg->Run();
         }
     }
