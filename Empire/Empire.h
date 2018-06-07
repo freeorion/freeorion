@@ -4,6 +4,7 @@
 #include "PopulationPool.h"
 #include "ProductionQueue.h"
 #include "ResearchQueue.h"
+#include "InfluenceQueue.h"
 #include "ResourcePool.h"
 #include "../util/Export.h"
 #include "../universe/Meter.h"
@@ -509,6 +510,7 @@ private:
     std::map<std::string, float>    m_research_progress;        ///< progress of partially-researched techs; fully researched techs are removed
 
     ProductionQueue                 m_production_queue;         ///< the queue of items being or waiting to be built
+    InfluenceQueue                  m_influence_queue;
 
     std::set<std::string>           m_available_building_types; ///< list of acquired BuildingType.  These are string names referencing BuildingType objects
     //! List of acquired ShipPart referenced by name.

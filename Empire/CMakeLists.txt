@@ -4,6 +4,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Empire.h
         ${CMAKE_CURRENT_LIST_DIR}/EmpireManager.h
         ${CMAKE_CURRENT_LIST_DIR}/Government.h
+        ${CMAKE_CURRENT_LIST_DIR}/InfluenceQueue.h
         ${CMAKE_CURRENT_LIST_DIR}/PopulationPool.h
         ${CMAKE_CURRENT_LIST_DIR}/ProductionQueue.h
         ${CMAKE_CURRENT_LIST_DIR}/ResearchQueue.h
@@ -14,6 +15,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Empire.cpp
         ${CMAKE_CURRENT_LIST_DIR}/EmpireManager.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Government.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/InfluenceQueue.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PopulationPool.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ProductionQueue.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ResearchQueue.cpp

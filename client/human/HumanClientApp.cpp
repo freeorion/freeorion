@@ -538,7 +538,6 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         ErrorLogger() << "HumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
         ResetToIntro(true);
     }
-
     SinglePlayerSetupData setup_data;
     setup_data.m_new_game = true;
     setup_data.m_filename.clear();  // not used for new game
