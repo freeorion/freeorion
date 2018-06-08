@@ -36,12 +36,6 @@ bool TechTreeLayout::Column::Fit(int index, TechTreeLayout::Node* node) {
     return true;
 }
 
-bool TechTreeLayout::Column::PlaceClosestFreeIndex(int index, TechTreeLayout::Node* node) {
-    if (Place(ClosestFreeIndex(index, node), node))
-        return true;
-    return false; //should never happen :-)
-}
-
 int TechTreeLayout::Column::ClosestFreeIndex(int index, TechTreeLayout::Node* node) {
     // search for free node nearest to ideal index:
     // start at ideal, then search in adjacent indices above and below
@@ -607,10 +601,8 @@ void TechTreeLayout::Node::DoLayout(std::vector<Column>& row_index, bool cat) {
     // if any parents or children have been placed, put this node in next free
     // space after the ideal node.  if no parents or children have been placed,
     // put node at start of row
-    if (count != 0)
-        row_index[depth].PlaceClosestFreeIndex(index / count, this);
-    else
-        row_index[depth].PlaceClosestFreeIndex(1, this);
+    int index_offset = (count != 0) ? index / count : 1;
+    row_index[depth].Place(row_index[depth].ClosestFreeIndex(index_offset, this), this);
 }
 
 void TechTreeLayout::Node::CreateEdges(double x_margin, double column_width, double row_height) {
