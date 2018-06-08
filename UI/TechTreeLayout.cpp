@@ -110,20 +110,6 @@ TechTreeLayout::Node* TechTreeLayout::Column::Seek(Node* m, int direction) {
     return n;
 }
 
-bool TechTreeLayout::Column::Swap(Node* m, Node* n) {
-    if (m->weight != n->weight) {
-        //if they have different size shifting would be needed
-        return false;
-    }
-    for (int i = 0; i < m->weight; i++) {
-        column[m->row + i] = n;
-        column[n->row + i] = m;
-    }
-    int t_row = m->row;
-    m->row = n->row;
-    n->row = t_row;
-    return true;
-}
 
 ////////////////
 // class Edge //
@@ -464,7 +450,14 @@ bool TechTreeLayout::Node::Wobble(Column& column) {
         new_dist   =    CalculateFamilyDistance(n->row);
         improvement = std::abs(dist) + std::abs(s_dist) - std::abs(new_dist) - std::abs(new_s_dist);
         if (improvement > 0.25) { // 0 produces endless loop
-            if (column.Swap(this, n)) {
+            if (weight == n->weight) {
+                for (int i = 0; i < weight; i++) {
+                    column.column[row + i] = n;
+                    column.column[n->row + i] = this;
+                }
+                int t_row = row;
+                row = n->row;
+                n->row = t_row;
                 //std::cout << "(S)" << m_name  << ":" << dist << " -> " << new_dist << " & "<< n->m_name  << ":" << s_dist << " -> " << new_s_dist << "\n";
                 return true;
             }

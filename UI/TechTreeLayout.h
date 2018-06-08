@@ -221,11 +221,8 @@ public:
 
     auto Seek(Node* m, int direction) -> Node*;
 
-    auto Swap(Node* m, Node* n) -> bool;
-
     auto Size() -> unsigned int;
 
-private:
     std::vector<TechTreeLayout::Node*> column;
 };
 
