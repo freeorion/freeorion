@@ -75,24 +75,6 @@ unsigned int TechTreeLayout::Column::Size() {
     return 0;
 }
 
-TechTreeLayout::Node* TechTreeLayout::Column::Seek(Node* m, int direction) {
-    if (!m || direction == 0)
-        return nullptr;
-
-    Node* n = nullptr;
-    int i = m->row;
-
-    // find next node adjacent to node m in requested direction
-    while (!n || n == m) {
-        if (i < 0 || i >= static_cast<int>(column.size()))
-            return nullptr;
-
-        n = column[i];
-        i += direction;
-    }
-    return n;
-}
-
 
 ////////////////
 // class Edge //
@@ -429,7 +411,19 @@ bool TechTreeLayout::Node::Wobble(Column& column) {
 
     // find neighbour
     int direction = (dist > 0) ? 1 : -1;
-    Node* n = column.Seek(this, direction);
+    Node* n = nullptr;
+    int i = row;
+
+    // find next node adjacent to node this in requested direction
+    while (!n || n == this) {
+        if (i < 0 || i >= static_cast<int>(column.column.size())) {
+            n = nullptr;
+            break;
+        }
+
+        n = column.column[i];
+        i += direction;
+    }
 
     // try to switch node with neighbour node
     if (n) {

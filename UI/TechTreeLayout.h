@@ -215,8 +215,6 @@ public:
 
     bool Place(int index, TechTreeLayout::Node* node);
 
-    Node* Seek(Node* m, int direction);
-
     unsigned int Size();
 
     std::vector<TechTreeLayout::Node*> column;
