@@ -211,8 +211,6 @@ class TechTreeLayout::Column {
 public:
     bool Fit(int index, TechTreeLayout::Node* node);
 
-    bool PlaceClosestFreeIndex(int index, TechTreeLayout::Node* node);
-
     int ClosestFreeIndex(int index, TechTreeLayout::Node* node);
 
     bool Place(int index, TechTreeLayout::Node* node);
