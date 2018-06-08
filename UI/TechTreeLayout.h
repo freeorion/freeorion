@@ -217,8 +217,6 @@ public:
 
     bool Place(int index, TechTreeLayout::Node* node);
 
-    bool Move(int to, TechTreeLayout::Node* node);
-
     Node* Seek(Node* m, int direction);
 
     unsigned int Size();
