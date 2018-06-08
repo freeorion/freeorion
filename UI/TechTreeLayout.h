@@ -221,11 +221,8 @@ public:
 
     Node* Seek(Node* m, int direction);
 
-    bool Swap(Node* m, Node* n);
-
     unsigned int Size();
 
-private:
     std::vector<TechTreeLayout::Node*> column;
 };
 
