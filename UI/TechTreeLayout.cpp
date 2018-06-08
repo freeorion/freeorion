@@ -25,11 +25,10 @@ bool TechTreeLayout::Column::Fit(int index, TechTreeLayout::Node* node) {
     if (0 >= index)
         return false;
 
-    int size = column.size();
-    if (index + node->weight > size)
+    if (index + node->weight > column.size())
         column.resize(index + node->weight, nullptr);
 
-    for (int j = index + node->weight; j-->index; ) {
+    for (int j = index + node->weight; j --> index;) {
         if (column[j] != nullptr && column[j] != node)
             return false;
     }
@@ -41,24 +40,23 @@ int TechTreeLayout::Column::ClosestFreeIndex(int index, TechTreeLayout::Node* no
     // start at ideal, then search in adjacent indices above and below
     // in order of increasing distance to find a free spot.
     int step = 0;
-    int i = index;
     while (true) {
-        i = i - step;
-        step = step + 1;
-        if (Fit(i, node))
-            return i;
+        index -= step;
+        step += 1;
+        if (Fit(index, node))
+            return index;
 
-        i = i + step;
-        step = step + 1;
-        if (Fit(i, node))
-            return i;
+        index += step;
+        step += 1;
+        if (Fit(index, node))
+            return index;
     }
     return -1; //should never happen :-)
 }
 
 bool TechTreeLayout::Column::Place(int index, TechTreeLayout::Node* node) {
     if (Fit(index, node)) {
-        for (int i = index + node->weight; i-->index; )
+        for (int i = index + node->weight; i --> index;)
             column[i] = node;
 
         node->row = index;
@@ -143,11 +141,10 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
 
 
     //4. do layout
-    std::vector<Column> row_index = std::vector<Column>(nodes_at_each_depth.size());
+    std::vector<Column> row_index(nodes_at_each_depth.size());
 
     // in what order do columns receive nodes?
-    std::vector<int> column_order;
-    column_order.reserve(nodes_at_each_depth.size());
+    std::vector<int> column_order(nodes_at_each_depth.size());
     // start with column with most nodes, progess outwards from it
     int first_column = 0;
     unsigned int max_column_nodes = 0;
@@ -197,23 +194,23 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
     //4.d. count used rows and columns
     unsigned int column_count = row_index.size();
     unsigned int row_count = 0;
-    for (int i = row_index.size(); i-->0;) {
+    for (int i = row_index.size(); i --> 0;) {
         unsigned int cur_row_count = 0;
-        for (unsigned int j = row_index[i].column.size(); j --> 0; ) {
+        for (unsigned int j = row_index[i].column.size(); j --> 0;) {
             if (row_index[i].column[j])
                 cur_row_count = j;
         }
         row_count = std::max(row_count, cur_row_count);
     }
     //4.e. set size
-    for (int i = m_nodes.size(); i --> 0 ; )
+    for (int i = m_nodes.size(); i --> 0 ;)
          m_nodes[i]->CalculateCoordinate(column_width, internal_height);
 
     m_width = column_count * column_width;
     m_height = row_count * internal_height;
 
     //5. create edges
-    for (int i = m_nodes.size(); i --> 0 ; )
+    for (int i = m_nodes.size(); i --> 0 ;)
         m_nodes[i]->CreateEdges(x_margin, column_width, internal_height);
 }
 
@@ -599,7 +596,7 @@ void TechTreeLayout::Node::DoLayout(std::vector<Column>& row_index, bool cat) {
 
 void TechTreeLayout::Node::CreateEdges(double x_margin, double column_width, double row_height) {
     assert(column_width > 0);
-    for (int i = children.size(); i --> 0; ) {
+    for (int i = children.size(); i --> 0;) {
         //find next real node and create coordinates
         Node* next = children[i];
         while (next->place_holder) {
@@ -631,17 +628,17 @@ void TechTreeLayout::Node::CreateEdges(double x_margin, double column_width, dou
 void TechTreeLayout::Node::Debug() const {
     DebugLogger() << "Tech - " << tech_name << " (" << m_x << "," << m_y << ") #" << depth << "\n";
     DebugLogger() << "  Parents - ";
-    for (int i = parents.size(); i --> 0; )
+    for (int i = parents.size(); i --> 0;)
         DebugLogger() << parents[i]->tech_name << "#" << parents[i]->depth;
 
     DebugLogger() << "\n";
     DebugLogger() << "  Children - ";
-    for (int i = children.size(); i --> 0; )
+    for (int i = children.size(); i --> 0;)
         DebugLogger() << children[i]->tech_name << "#" << children[i]->depth;;
 
     DebugLogger() << "\n";
 
-    for (int i = outgoing_edges.size(); i-->0; ) {
+    for (int i = outgoing_edges.size(); i --> 0;) {
         DebugLogger() << "     - ";
         outgoing_edges[i]->Debug();
     }
