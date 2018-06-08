@@ -2,7 +2,6 @@
 #define _TechTreeLayout_h_
 
 #include <map>
-#include <list>
 #include <string>
 #include <vector>
 
@@ -13,7 +12,7 @@
  * This class stores internal information for layouting the tech graph.
  * The whole space is organized in a table.
  * Every tech is assign a tech level, or depth, which is the maximum distance it is from start techs.
- * Every tech level (m_depth) is one column.
+ * Every tech level (depth) is one column.
  * The first column has depth 1 techs, 2nd column has depth 2 tech, etc.
  * An initial column is filled with techs grouped by category (may be middle or first, or ? column)
  * Nodes in adjacent columns are placed near the average of children or parent nodes in adjacent columns
@@ -113,8 +112,6 @@ class TechTreeLayout::Edge {
 public:
     Edge(std::string const & from, std::string const & to);
 
-    ~Edge();
-
     auto GetTechFrom() const -> std::string const &;
 
     auto GetTechTo() const -> std::string const &;
@@ -151,24 +148,7 @@ public:
 
     auto GetY() const -> GG::Y const;
 
-    auto GetDepth() const -> int;
-
-    auto GetTech() const -> std::string const &;
-
-    auto GetOutEdges() const -> std::vector<Edge *> const &;
-
-    auto GetNumberOfChildren() const -> int;
-
-    auto GetNumberOfParents() const -> int;
-
     void Debug() const;
-
-    auto IsFinalNode() const -> bool;
-
-    auto IsStartNode() const -> bool;
-
-    auto GetWeight() const -> int
-    { return m_weight; };
 
     auto operator<(Node const & y) const -> bool;
 
@@ -176,8 +156,6 @@ private:
     Node(Node* parent, Node* child, std::vector<Node*>& nodes);
 
     auto Wobble(Column & column) -> bool;
-
-    auto IsPlaceHolder() const -> bool;
 
     void AddChild(Node* node);
 
@@ -193,14 +171,27 @@ private:
 
     void CreateEdges(double x_margin, double column_width, double row_height);
 
+    std::vector<Node*> parents;
+
+    std::vector<Node*> children;
+
     //! depth 1 available at beginning 2 one requisite etc
-    int m_depth = -1;
+    int depth = -1;
 
     //! layout row, every node is organized in a straight tabelle system
-    int m_row = -1;
+    int row = -1;
 
-    //! name
-    std::string m_tech;
+    //! height in rows
+    const int weight;
+
+    std::string tech_name;
+
+    bool place_holder;
+
+    // primary child for layout
+    Node* primary_child = nullptr;
+
+    std::vector<Edge*> outgoing_edges;
 
     //! left border
     double m_x = 0.0;
@@ -213,27 +204,6 @@ private:
 
     //! height
     double m_height;
-
-    //! is place holder
-    bool m_place_holder;
-
-    //! height in cells for layouting
-    int m_children_rows = 0;
-
-    //! parents
-    std::vector<Node*> m_parents;
-
-    //! children
-    std::vector<Node*> m_children;
-
-    //! primary child for layout
-    Node* m_primary_child = nullptr;
-
-    //! outgoing edges
-    std::vector<Edge*> m_out_edges;
-
-    //! height in rows
-    int const m_weight;
 };
 
 
@@ -256,7 +226,7 @@ public:
     auto Size() -> unsigned int;
 
 private:
-    std::vector<TechTreeLayout::Node*> m_column;
+    std::vector<TechTreeLayout::Node*> column;
 };
 
 #endif
