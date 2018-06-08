@@ -73,17 +73,6 @@ bool TechTreeLayout::Column::Place(int index, TechTreeLayout::Node* node) {
     return false;
 }
 
-bool TechTreeLayout::Column::Move(int to, TechTreeLayout::Node* node) {
-    if (Fit(to, node)) {
-        for (int i = node->row + node->weight; i-->node->row; )
-            column[i] = nullptr;
-
-        Place(to, node);
-        return true;
-    }
-    return false;
-}
-
 unsigned int TechTreeLayout::Column::Size() {
     for (unsigned int i = column.size(); i --> 0; ) {
         if (column[i])
@@ -431,7 +420,12 @@ bool TechTreeLayout::Node::Wobble(Column& column) {
     new_dist = CalculateFamilyDistance(closest_free_index);
     double improvement = std::abs(dist) - std::abs(new_dist);
     if (improvement > 0.25) {
-        if (column.Move(closest_free_index , this)) {
+        if (column.Fit(closest_free_index, this)) {
+            for (int i = row + weight; i --> row; )
+                column.column[i] = nullptr;
+
+            column.Place(closest_free_index, this);
+
             //std::cout << m_name << ":" << dist << " -> " << new_dist <<"\n";
             return true;
         }

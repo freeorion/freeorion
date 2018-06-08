@@ -217,8 +217,6 @@ public:
 
     auto Place(int index, TechTreeLayout::Node* node) -> bool;
 
-    auto Move(int to, TechTreeLayout::Node* node) -> bool;
-
     auto Seek(Node* m, int direction) -> Node*;
 
     auto Size() -> unsigned int;
