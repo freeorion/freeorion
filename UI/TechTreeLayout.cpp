@@ -67,14 +67,6 @@ bool TechTreeLayout::Column::Place(int index, TechTreeLayout::Node* node) {
     return false;
 }
 
-unsigned int TechTreeLayout::Column::Size() {
-    for (unsigned int i = column.size(); i --> 0; ) {
-        if (column[i])
-            return i;
-    }
-    return 0;
-}
-
 
 ////////////////
 // class Edge //
@@ -205,8 +197,14 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
     //4.d. count used rows and columns
     unsigned int column_count = row_index.size();
     unsigned int row_count = 0;
-    for (int i = row_index.size(); i-->0;)
-        row_count = std::max(row_count, row_index[i].Size());
+    for (int i = row_index.size(); i-->0;) {
+        unsigned int cur_row_count = 0;
+        for (unsigned int j = row_index[i].column.size(); j --> 0; ) {
+            if (row_index[i].column[j])
+                cur_row_count = j;
+        }
+        row_count = std::max(row_count, cur_row_count);
+    }
     //4.e. set size
     for (int i = m_nodes.size(); i --> 0 ; )
          m_nodes[i]->CalculateCoordinate(column_width, internal_height);

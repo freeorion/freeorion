@@ -215,8 +215,6 @@ public:
 
     auto Place(int index, TechTreeLayout::Node* node) -> bool;
 
-    auto Size() -> unsigned int;
-
     std::vector<TechTreeLayout::Node*> column;
 };
 
