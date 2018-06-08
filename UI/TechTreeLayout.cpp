@@ -1,4 +1,6 @@
 #include "TechTreeLayout.h"
+
+#include "../universe/Tech.h"
 #include "../util/Logger.h"
 #include <algorithm>
 #include <cmath>
@@ -19,10 +21,6 @@ namespace  {
 //////////////////
 // class Column //
 //////////////////
-TechTreeLayout::Column::Column() :
-    m_column()
-{}
-
 bool TechTreeLayout::Column::Fit(int index, TechTreeLayout::Node* node) {
     if (0 >= index)
         return false;
@@ -160,29 +158,12 @@ void TechTreeLayout::Edge::Debug() const {
     DebugLogger() << "\n";
 }
 
-///////////////////////
-// class LayoutGraph //
-///////////////////////
-/**
- * creates a new empty graph
- */
-TechTreeLayout::TechTreeLayout() :
-    m_width(0),
-    m_height(0),
-    m_row_count(0),
-    m_column_count(0),
-    m_node_map(),
-    m_nodes()
-{}
-
 /**
  * releases all resources
  */
 TechTreeLayout::~TechTreeLayout() {
     for (Node* node : m_nodes)
         delete node;
-    m_nodes.clear();
-    m_node_map.clear();
 }
 
 /**
