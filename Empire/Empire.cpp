@@ -700,7 +700,7 @@ void Empire::UpdateUnobstructedFleets() {
     }
 }
 
-void Empire::UpdateSupplyUnobstructedSystems() {
+void Empire::UpdateSupplyUnobstructedSystems(bool precombat /*=false*/) {
     Universe& universe = GetUniverse();
 
     // get ids of systems partially or better visible to this empire.
@@ -714,10 +714,10 @@ void Empire::UpdateSupplyUnobstructedSystems() {
     for (int system_id : known_systems_vec)
         if (!known_destroyed_objects.count(system_id))
             known_systems_set.insert(system_id);
-    UpdateSupplyUnobstructedSystems(known_systems_set);
+    UpdateSupplyUnobstructedSystems(known_systems_set, precombat);
 }
 
-void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems) {
+void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems, bool precombat /*=false*/) {
     //DebugLogger() << "UpdateSupplyUnobstructedSystems for empire " << m_id;
     m_supply_unobstructed_systems.clear();
 
@@ -778,11 +778,13 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
                 // newly created ships are not allowed to block supply since they have not even potentially gone
                 // through a combat round at the present location.  Potential sources for such new ships are monsters
                 // created via Effect.  (Ships/fleets constructed by empires are currently created at a later stage of
-                // turn processing, but even if such were moved forward they should be similarly restricted.)  Because
-                // supply blocks are determined prior to turn advancement, we check against age zero here.  Because the
+                // turn processing, but even if such were moved forward they should be similarly restricted.)  For
+                // checks after combat and prior to turn advancement, we check against age zero here.  For checks
+                // after turn advancement but prior to combat we check against age 1.  Because the
                 // fleets themselves may be created and/or destroyed purely as organizational matters, we check ship
                 // age not fleet age.
-                if (fleet_at_war && fleet->MaxShipAgeInTurns() > 0) {
+                int cutoff_age = precombat ? 1 : 0;
+                if (fleet_at_war && fleet->MaxShipAgeInTurns() > cutoff_age) {
                     systems_containing_obstructing_objects.insert(system_id);
                     if (fleet->ArrivalStarlane() == system_id)
                         unrestricted_obstruction_systems.insert(system_id);
