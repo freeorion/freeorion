@@ -15,6 +15,7 @@ import json
 
 import EnumsAI
 from freeorion_tools import profile
+from logging import debug
 
 from _definitions import (ENUM_PREFIX, FALSE, FLOAT_PREFIX, INT_PREFIX, InvalidSaveGameException, NONE, PLACEHOLDER,
                           SET_PREFIX, TRUE, TUPLE_PREFIX, trusted_classes, )
@@ -25,11 +26,34 @@ def load_savegame_string(string):
     """
     :rtype: AIstate
     """
+    import base64
     import zlib
+
+    new_string = string
+    try:
+        new_string = base64.b64decode(string)
+    except TypeError as e:
+        # The base64 module docs only mention a TypeError exception, for wrong padding
+        # Older save files won't be base64 encoded, but seemingly that doesn't trigger
+        # an exception here;
+        debug("When trying to base64 decode savestate got exception: %s" % e)
+    try:
+        new_string = zlib.decompress(new_string)
+    except zlib.error:
+        pass  # probably an uncompressed (or wrongly base64 decompressed) string
+    try:
+        decoded_state = decode(new_string)
+        debug("Decoded a zlib-compressed and apparently base64-encoded save-state string.")
+        return decoded_state
+    except (InvalidSaveGameException, ValueError, TypeError) as e:
+        debug("Base64/zlib decoding path for savestate failed: %s" % e)
+
     try:
         string = zlib.decompress(string)
+        debug("zlib-decompressed a non-base64-encoded save-state string.")
     except zlib.error:
-        pass  # probably an uncompressed string
+        # probably an uncompressed string
+        debug("Will try decoding savestate string without base64 or zlib compression.")
     return decode(string)
 
 
