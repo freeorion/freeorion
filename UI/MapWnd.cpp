@@ -5592,7 +5592,12 @@ std::vector<int> MapWnd::FleetIDsOfFleetButtonsOverlapping(int fleet_id) const {
 
     const auto& it = m_fleet_buttons.find(fleet_id);
     if (it == m_fleet_buttons.end()) {
-        ErrorLogger() << "Couldn't find a FleetButton for fleet " << fleet_id;
+        auto vis_turn_map = GetUniverse().GetObjectVisibilityTurnMapByEmpire(fleet_id, HumanClientApp::GetApp()->EmpireID());
+        int vis_turn = -1;
+        if (vis_turn_map.find(VIS_BASIC_VISIBILITY) != vis_turn_map.end())
+            vis_turn = vis_turn_map[VIS_BASIC_VISIBILITY];
+        ErrorLogger() << "Couldn't find a FleetButton for fleet " << fleet_id 
+                      << " with last basic vis turn " << vis_turn;
         return fleet_ids;
     }
     const auto& fleet_btn = it->second;
