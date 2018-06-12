@@ -123,7 +123,7 @@ GameRule
 GameRule
     name = "RULE_THRESHOLD_HUMAN_PLAYER_WIN"
     description = "RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC"
-    category = "BALANCE"
+    category = "MULTIPLAYER"
     type = Integer
     default = 0
     min = 0
@@ -132,21 +132,21 @@ GameRule
 GameRule
     name = "RULE_ONLY_ALLIANCE_WIN"
     description = "RULE_ONLY_ALLIANCE_WIN_DESC"
-    category = "BALANCE"
+    category = "MULTIPLAYER"
     type = Toggle
     default = On
     
 GameRule
     name = "RULE_ALLOW_CONCEDE"
     description = "RULE_ALLOW_CONCEDE_DESC"
-    category = "CONTENT"
+    category = "MULTIPLAYER"
     type = Toggle
     default = Off
 
 GameRule
     name = "RULE_CONCEDE_COLONIES_THRESHOLD"
     description = "RULE_CONCEDE_COLONIES_THRESHOLD_DESC"
-    category = "CONTENT"
+    category = "MULTIPLAYER"
     type = Integer
     default = 1
     min = 0
