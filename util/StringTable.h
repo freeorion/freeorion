@@ -1,15 +1,11 @@
-#ifndef StringTable__h_
-#define StringTable__h_
+#ifndef StringTable_h_
+#define StringTable_h_
 
 #include <string>
 #include <map>
 #include <unordered_set>
 #include <mutex>
 #include <memory>
-
-// HACK! StringTable is renamed to StringTable_ because freeimage defines
-// a class StringTable too. If both are named identically, static linking
-// won't be possible.
 
 //! This is an implementation of a String Table for internationalization purposes.
 //! The table is built from a file of the following format:<br>
@@ -46,18 +42,18 @@
 //! <br>
 //! TESTFOUR<br>
 //! test four<br>
-class StringTable_ {
+class StringTable {
 public:
     //! \name Structors
     //!@{
-    StringTable_();  //!< default construction, uses default stringtable filename
+    StringTable();  //!< default construction, uses default stringtable filename
 
-    //! construct a StringTable_ from the given filename
-    //! @param filename A file containing the data for this StringTable_
-    //! @param lookups_fallback_table A StringTable_ to be used as fallback expansions lookup
-    StringTable_(const std::string& filename, std::shared_ptr<const StringTable_> lookups_fallback_table = nullptr);
+    //! construct a StringTable from the given filename
+    //! @param filename A file containing the data for this StringTable
+    //! @param lookups_fallback_table A StringTable to be used as fallback expansions lookup
+    StringTable(const std::string& filename, std::shared_ptr<const StringTable> lookups_fallback_table = nullptr);
 
-    ~StringTable_();
+    ~StringTable();
     //!@}
 
     //! \name Accessors
@@ -75,8 +71,8 @@ public:
 
     //! @param index The index of the string to lookup
     //! @return The string found at index in the table
-    inline const std::string& String(const std::string& index) const { return operator[] (index); } //!< Interface to operator() \see StringTable_::operator[]
-    inline const std::string& Language() const { return m_language; } //!< Returns the language of this StringTable_
+    inline const std::string& String(const std::string& index) const { return operator[] (index); } //!< Interface to operator() \see StringTable::operator[]
+    inline const std::string& Language() const { return m_language; } //!< Returns the language of this StringTable
     inline const std::string& Filename() const { return m_filename; } //!< accessor to the filename
     //!@}
 
@@ -84,13 +80,13 @@ private:
     //! \name Internal Functions
     //!@{
     //! Loads the String table file from m_filename
-    //! @param lookups_fallback_table A StringTable_ to be used as fallback expansions lookup
-    void Load(std::shared_ptr<const StringTable_> lookups_fallback_table = nullptr);
+    //! @param lookups_fallback_table A StringTable to be used as fallback expansions lookup
+    void Load(std::shared_ptr<const StringTable> lookups_fallback_table = nullptr);
     //!@}
 
     //! \name Data Members
     //!@{
-    std::string                             m_filename = "";    //!< the name of the file this StringTable_ was constructed with
+    std::string                             m_filename = "";    //!< the name of the file this StringTable was constructed with
     std::string                             m_language = "";    //!< A string containing the name of the language used
     std::map<std::string, std::string>      m_strings;
     mutable std::unordered_set<std::string> m_error_strings;
@@ -99,4 +95,4 @@ private:
     //!@}
 };
 
-#endif // StringTable__h_
+#endif // StringTable_h_

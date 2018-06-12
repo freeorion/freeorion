@@ -14,9 +14,9 @@ namespace {
     std::string GetDefaultStringTableFileName()
     { return PathToString(GetResourceDir() / "stringtables" / "en.txt"); }
 
-    std::map<std::string, std::shared_ptr<const StringTable_>>  stringtables;
-    std::recursive_mutex                                        stringtable_access_mutex;
-    bool                                                        stringtable_filename_init = false;
+    std::map<std::string, std::shared_ptr<const StringTable>>  stringtables;
+    std::recursive_mutex                                       stringtable_access_mutex;
+    bool                                                       stringtable_filename_init = false;
 
     /** Determines stringtable to use from users locale when stringtable filename is at default setting */
     void InitStringtableFileName() {
@@ -75,7 +75,7 @@ namespace {
             return option_filename;
     }
 
-    const StringTable_& GetStringTable(std::string stringtable_filename = "") {
+    const StringTable& GetStringTable(std::string stringtable_filename = "") {
         std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
 
         // get option-configured stringtable if no filename specified
@@ -85,7 +85,7 @@ namespace {
         // ensure the default stringtable is loaded first
         auto default_stringtable_it = stringtables.find(GetDefaultStringTableFileName());
         if (default_stringtable_it == stringtables.end()) {
-            auto table = std::make_shared<StringTable_>(GetDefaultStringTableFileName());
+            auto table = std::make_shared<StringTable>(GetDefaultStringTableFileName());
             stringtables[GetDefaultStringTableFileName()] = table;
             default_stringtable_it = stringtables.find(GetDefaultStringTableFileName());
         }
@@ -97,13 +97,13 @@ namespace {
 
         // if not already loaded, load, store, and return,
         // using default stringtable for fallback expansion lookups
-        auto table = std::make_shared<StringTable_>(stringtable_filename, default_stringtable_it->second);
+        auto table = std::make_shared<StringTable>(stringtable_filename, default_stringtable_it->second);
         stringtables[stringtable_filename] = table;
 
         return *table;
     }
 
-    const StringTable_& GetDefaultStringTable()
+    const StringTable& GetDefaultStringTable()
     { return GetStringTable(GetDefaultStringTableFileName()); }
 }
 

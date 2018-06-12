@@ -17,28 +17,28 @@ namespace {
 }
 
 // StringTable
-StringTable_::StringTable_():
+StringTable::StringTable():
     m_filename(DEFAULT_FILENAME)
 { Load(); }
 
-StringTable_::StringTable_(const std::string& filename, std::shared_ptr<const StringTable_> lookups_fallback_table):
+StringTable::StringTable(const std::string& filename, std::shared_ptr<const StringTable> lookups_fallback_table):
     m_filename(filename)
 { Load(lookups_fallback_table); }
 
-StringTable_::~StringTable_()
+StringTable::~StringTable()
 {}
 
-bool StringTable_::StringExists(const std::string& index) const {
+bool StringTable::StringExists(const std::string& index) const {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_strings.count(index);
 }
 
-bool StringTable_::Empty() const {
+bool StringTable::Empty() const {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_strings.empty();
 }
 
-const std::string& StringTable_::operator[] (const std::string& index) const {
+const std::string& StringTable::operator[] (const std::string& index) const {
     std::lock_guard<std::mutex> lock(m_mutex);
 
     auto it = m_strings.find(index);
@@ -49,13 +49,13 @@ const std::string& StringTable_::operator[] (const std::string& index) const {
     return *(error.first);
 }
 
-void StringTable_::Load(std::shared_ptr<const StringTable_> lookups_fallback_table) {
+void StringTable::Load(std::shared_ptr<const StringTable> lookups_fallback_table) {
     std::lock_guard<std::mutex> lock(m_mutex);
 
     if (lookups_fallback_table && !lookups_fallback_table->m_initialized) {
         // this prevents deadlock if two stringtables were to be loaded
         // simultaneously with eachother as fallback tables
-        ErrorLogger() << "StringTable_::Load given uninitialized stringtable as fallback. Ignoring.";
+        ErrorLogger() << "StringTable::Load given uninitialized stringtable as fallback. Ignoring.";
         lookups_fallback_table = nullptr;
     }
 
@@ -64,7 +64,7 @@ void StringTable_::Load(std::shared_ptr<const StringTable_> lookups_fallback_tab
 
     bool read_success = parse::read_file(path, file_contents);
     if (!read_success) {
-        ErrorLogger() << "StringTable_::Load failed to read file at path: " << path.string();
+        ErrorLogger() << "StringTable::Load failed to read file at path: " << path.string();
         //m_initialized intentionally left false
         return;
     }
