@@ -267,6 +267,8 @@ Balance
 CONTENT
 Content
 
+MULTIPLAYER
+Multiplayer
 
 ##
 ## Major errors
