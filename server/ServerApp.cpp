@@ -2145,7 +2145,7 @@ namespace {
             // update visibilities.
             for (const auto& empire_vis : combat_info.empire_object_visibility) {
                 for (const auto& object_vis : empire_vis.second) {
-                    if (object_vis.second > GetUniverse().GetObjectVisibilityByEmpire(empire_vis.first, object_vis.first))
+                    if (object_vis.second > GetUniverse().GetObjectVisibilityByEmpire(object_vis.first, empire_vis.first))
                         universe.SetEmpireObjectVisibility(empire_vis.first, object_vis.first, object_vis.second);
                 }
             }
