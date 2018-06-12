@@ -77,36 +77,34 @@ public:
     static const std::string BROWSE_PATH_TAG;
 
 protected:
-    void        Render_();
-    void        LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void        RClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void        LDoubleClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void        MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void        MouseLeave_();
+    void Render_();
+    void LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void RClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void LDoubleClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void MouseLeave_();
 
     virtual const std::vector<GG::Font::LineData>&  GetLineData() const = 0;
+    virtual const std::shared_ptr<GG::Font>&        GetFont() const = 0;
 
-    virtual const std::shared_ptr<GG::Font>& GetFont() const = 0;
+    virtual GG::Pt              TextUpperLeft() const = 0;
+    virtual GG::Pt              TextLowerRight() const = 0;
+    virtual void                SetLinkedText(const std::string& str) = 0;
+    virtual const std::string&  RawText() const = 0;    ///< returns text being displayed before any link formatting is added
 
-    virtual GG::Pt                                  TextUpperLeft() const = 0;
-    virtual GG::Pt                                  TextLowerRight() const = 0;
-    virtual void                                    SetLinkedText(const std::string& str) = 0;
-    virtual const std::string&                      RawText() const = 0;      ///< returns text being displayed before any link formatting is added
-
-    void        FindLinks();                        ///< finds the links in the text, with which to populate m_links.
-    void        LocateLinks();                      ///< calculates the physical locations of the links in m_links
-    void        MarkLinks();                        ///< wraps text for each link in text formatting tags so that the links appear visually distinct from other text
-    int         GetLinkUnderPt(const GG::Pt& pt);   ///< returns the index of the link under screen coordinate \a pt, or -1 if none
+    void FindLinks();                       ///< finds the links in the text, with which to populate m_links.
+    void LocateLinks();                     ///< calculates the physical locations of the links in m_links
+    void MarkLinks();                       ///< wraps text for each link in text formatting tags so that the links appear visually distinct from other text
+    int  GetLinkUnderPt(const GG::Pt& pt);  ///< returns the index of the link under screen coordinate \a pt, or -1 if none
 private:
     struct Link;
 
     std::string LinkDefaultFormatTag(const Link& link, const std::string& content) const;
     std::string LinkRolloverFormatTag(const Link& link, const std::string& content) const;
 
-    std::vector<Link>   m_links;
-    int                 m_rollover_link;
-    // Should be unique_ptr, but we don't have c++11
-    std::map<std::string, LinkDecoratorPtr > m_decorators;
+    std::vector<Link>                       m_links;
+    int                                     m_rollover_link;
+    std::map<std::string, LinkDecoratorPtr> m_decorators;
     static const LinkDecorator DEFAULT_DECORATOR;
 };
 
@@ -148,11 +146,9 @@ public:
 
     /** \name Accessors */ //@{
     GG::Pt TextUpperLeft() const override;
-
     GG::Pt TextLowerRight() const override;
 
     const std::vector<GG::Font::LineData>& GetLineData() const override;
-
     const std::shared_ptr<GG::Font>& GetFont() const override;
 
     /** Returns text displayed before link formatting is added. */
@@ -161,14 +157,10 @@ public:
 
     /** \name Mutators */ //@{
     void Render() override;
-
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void MouseLeave() override;
-
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     /** sets the text to \a str; may resize the window.  If the window was

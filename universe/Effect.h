@@ -122,26 +122,14 @@ public:
                          bool include_empire_meter_effects = false,
                          bool only_generate_sitrep_effects = false) const;
 
-    virtual std::string Dump(unsigned short ntabs = 0) const = 0;
-
-    virtual bool IsMeterEffect() const
-    { return false; }
-
-    virtual bool IsEmpireMeterEffect() const
-    { return false; }
-
-    virtual bool IsAppearanceEffect() const
-    { return false; }
-
-    virtual bool IsSitrepEffect() const
-    { return false; }
-
-    virtual bool IsConditionalEffect() const
-    { return false; }
-
-    virtual void SetTopLevelContent(const std::string& content_name) = 0;
-
-    virtual unsigned int GetCheckSum() const;
+    virtual std::string     Dump(unsigned short ntabs = 0) const = 0;
+    virtual bool            IsMeterEffect() const { return false; }
+    virtual bool            IsEmpireMeterEffect() const { return false; }
+    virtual bool            IsAppearanceEffect() const { return false; }
+    virtual bool            IsSitrepEffect() const { return false; }
+    virtual bool            IsConditionalEffect() const { return false; }
+    virtual void            SetTopLevelContent(const std::string& content_name) = 0;
+    virtual unsigned int    GetCheckSum() const;
 
 private:
     friend class boost::serialization::access;
@@ -155,14 +143,10 @@ class FO_COMMON_API NoOp final : public EffectBase {
 public:
     NoOp();
 
-    void Execute(const ScriptingContext& context) const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
-
-    unsigned int GetCheckSum() const override;
+    void            Execute(const ScriptingContext& context) const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    void            SetTopLevelContent(const std::string& content_name) override {}
+    unsigned int    GetCheckSum() const override;
 
 private:
     friend class boost::serialization::access;
@@ -194,20 +178,12 @@ public:
                  bool include_empire_meter_effects = false,
                  bool only_generate_sitrep_effects = false) const override;
 
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    bool IsMeterEffect() const override
-    { return true; }
-
-    void SetTopLevelContent(const std::string& content_name) override;
-
-    MeterType GetMeterType() const
-    { return m_meter; };
-
-    const std::string&  AccountingLabel() const
-    { return m_accounting_label; }
-
-    unsigned int GetCheckSum() const override;
+    std::string         Dump(unsigned short ntabs = 0) const override;
+    bool                IsMeterEffect() const override { return true; }
+    void                SetTopLevelContent(const std::string& content_name) override;
+    MeterType           GetMeterType() const { return m_meter; };
+    const std::string&  AccountingLabel() const { return m_accounting_label; }
+    unsigned int        GetCheckSum() const override;
 
 private:
     MeterType m_meter;
@@ -234,9 +210,7 @@ public:
                      std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
 
     void Execute(const ScriptingContext& context) const override;
-
     void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
-
     void Execute(const ScriptingContext& context,
                  const TargetSet& targets,
                  AccountingMap* accounting_map,
@@ -246,25 +220,17 @@ public:
                  bool include_empire_meter_effects = false,
                  bool only_generate_sitrep_effects = false) const override;
 
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    bool IsMeterEffect() const override
-    { return true; }
-
-    void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<std::string>* GetPartName() const
-    { return m_part_name.get(); }
-
-    MeterType GetMeterType() const
-    { return m_meter; }
-
-    unsigned int GetCheckSum() const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    bool            IsMeterEffect() const override { return true; }
+    void            SetTopLevelContent(const std::string& content_name) override;
+    const           ValueRef::ValueRefBase<std::string>* GetPartName() const { return m_part_name.get(); }
+    MeterType       GetMeterType() const { return m_meter; }
+    unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_part_name;
-    MeterType m_meter;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_value;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_part_name;
+    MeterType                                               m_meter;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -282,9 +248,7 @@ public:
                    std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
 
     void Execute(const ScriptingContext& context) const override;
-
     void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
-
     void Execute(const ScriptingContext& context,
                  const TargetSet& targets,
                  AccountingMap* accounting_map,
@@ -294,21 +258,15 @@ public:
                  bool include_empire_meter_effects = false,
                  bool only_generate_sitrep_effects = false) const override;
 
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    bool IsMeterEffect() const override
-    { return true; }
-
-    bool IsEmpireMeterEffect() const override
-    { return true; }
-
-    void SetTopLevelContent(const std::string& content_name) override;
-
-    unsigned int GetCheckSum() const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    bool            IsMeterEffect() const override { return true; }
+    bool            IsEmpireMeterEffect() const override { return true; }
+    void            SetTopLevelContent(const std::string& content_name) override;
+    unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
-    std::string m_meter;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>    m_empire_id;
+    std::string                                     m_meter;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_value;
 
     friend class boost::serialization::access;
@@ -322,22 +280,18 @@ class FO_COMMON_API SetEmpireStockpile final : public EffectBase {
 public:
     SetEmpireStockpile(ResourceType stockpile,
                        std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
-
     SetEmpireStockpile(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
                        ResourceType stockpile,
                        std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
-    ResourceType m_stockpile;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>    m_empire_id;
+    ResourceType                                    m_stockpile;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_value;
 
     friend class boost::serialization::access;
@@ -351,16 +305,12 @@ private:
 class FO_COMMON_API SetEmpireCapital final : public EffectBase {
 public:
     explicit SetEmpireCapital();
-
     explicit SetEmpireCapital(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
 
-    void Execute(const ScriptingContext& context) const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override;
-
-    unsigned int GetCheckSum() const override;
+    void            Execute(const ScriptingContext& context) const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    void            SetTopLevelContent(const std::string& content_name) override;
+    unsigned int    GetCheckSum() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
@@ -379,11 +329,8 @@ public:
     explicit SetPlanetType(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&& type);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
@@ -404,11 +351,8 @@ public:
     explicit SetPlanetSize(std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>&& size);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
@@ -426,11 +370,8 @@ public:
     explicit SetSpecies(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
@@ -448,11 +389,8 @@ public:
     explicit SetOwner(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
@@ -472,17 +410,14 @@ public:
                             std::unique_ptr<ValueRef::ValueRefBase<double>>&& opinion);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_species_name;
-    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_opinion;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_species_name;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>            m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_opinion;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -498,17 +433,14 @@ public:
                              std::unique_ptr<ValueRef::ValueRefBase<double>>&& opinion);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_opinionated_species_name;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_rated_species_name;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_opinion;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_opinionated_species_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_rated_species_name;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_opinion;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -525,18 +457,15 @@ public:
                  std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<PlanetType>> m_type;
-    std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>> m_size;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
-    std::vector<std::unique_ptr<EffectBase>> m_effects_to_apply_after;
+    std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>     m_type;
+    std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>     m_size;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_name;
+    std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -551,17 +480,14 @@ public:
                    std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_building_type_name;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
-    std::vector<std::unique_ptr<EffectBase>> m_effects_to_apply_after;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_building_type_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_name;
+    std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -586,20 +512,17 @@ public:
                std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_design_name;
-    std::unique_ptr<ValueRef::ValueRefBase<int>> m_design_id;
-    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_species_name;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
-    std::vector<std::unique_ptr<EffectBase>> m_effects_to_apply_after;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_design_name;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>            m_design_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>            m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_species_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_name;
+    std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -623,20 +546,17 @@ public:
                 std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_field_type_name;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_x;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_y;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_size;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
-    std::vector<std::unique_ptr<EffectBase>> m_effects_to_apply_after;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_field_type_name;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_x;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_y;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_size;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_name;
+    std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -659,19 +579,16 @@ public:
                  std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase< ::StarType>> m_type;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_x;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_y;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
-    std::vector<std::unique_ptr<EffectBase>> m_effects_to_apply_after;
+    std::unique_ptr<ValueRef::ValueRefBase< ::StarType>>    m_type;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_x;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_y;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_name;
+    std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -688,12 +605,8 @@ public:
     Destroy();
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
-
+    void SetTopLevelContent(const std::string& content_name) override {}
     unsigned int GetCheckSum() const override;
 
 private:
@@ -706,19 +619,14 @@ private:
 class FO_COMMON_API AddSpecial final : public EffectBase {
 public:
     explicit AddSpecial(const std::string& name, float capacity = 1.0f);
-
     explicit AddSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                         std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity = nullptr);
 
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<std::string>*  GetSpecialName() const
-    { return m_name.get(); }
-
+    const ValueRef::ValueRefBase<std::string>* GetSpecialName() const { return m_name.get(); }
     unsigned int GetCheckSum() const override;
 
 private:
@@ -735,15 +643,11 @@ private:
 class FO_COMMON_API RemoveSpecial final : public EffectBase {
 public:
     explicit RemoveSpecial(const std::string& name);
-
     explicit RemoveSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
@@ -761,11 +665,8 @@ public:
     explicit AddStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
@@ -782,13 +683,10 @@ class FO_COMMON_API RemoveStarlanes final : public EffectBase {
 public:
     explicit RemoveStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition);
 
-    void Execute(const ScriptingContext& context) const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override;
-
-    unsigned int GetCheckSum() const override;
+    void            Execute(const ScriptingContext& context) const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    void            SetTopLevelContent(const std::string& content_name) override;
+    unsigned int    GetCheckSum() const override;
 
 private:
     std::unique_ptr<Condition::ConditionBase> m_other_lane_endpoint_condition;
@@ -804,13 +702,10 @@ class FO_COMMON_API SetStarType final : public EffectBase {
 public:
     explicit SetStarType(std::unique_ptr<ValueRef::ValueRefBase<StarType>>&& type);
 
-    void Execute(const ScriptingContext& context) const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override;
-
-    unsigned int GetCheckSum() const override;
+    void            Execute(const ScriptingContext& context) const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    void            SetTopLevelContent(const std::string& content_name) override;
+    unsigned int    GetCheckSum() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRefBase<StarType>> m_type;
@@ -828,13 +723,10 @@ class FO_COMMON_API MoveTo final : public EffectBase {
 public:
     explicit MoveTo(std::unique_ptr<Condition::ConditionBase>&& location_condition);
 
-    void Execute(const ScriptingContext& context) const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override;
-
-    unsigned int GetCheckSum() const override;
+    void            Execute(const ScriptingContext& context) const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    void            SetTopLevelContent(const std::string& content_name) override;
+    unsigned int    GetCheckSum() const override;
 
 private:
     std::unique_ptr<Condition::ConditionBase> m_location_condition;
@@ -851,22 +743,18 @@ class FO_COMMON_API MoveInOrbit final : public EffectBase {
 public:
     MoveInOrbit(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
                 std::unique_ptr<Condition::ConditionBase>&& focal_point_condition);
-
     MoveInOrbit(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& focus_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& focus_y = nullptr);
 
-    void Execute(const ScriptingContext& context) const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override;
-
-    unsigned int GetCheckSum() const override;
+    void            Execute(const ScriptingContext& context) const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    void            SetTopLevelContent(const std::string& content_name) override;
+    unsigned int    GetCheckSum() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_speed;
-    std::unique_ptr<Condition::ConditionBase> m_focal_point_condition;
+    std::unique_ptr<Condition::ConditionBase>       m_focal_point_condition;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_focus_x;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_focus_y;
 
@@ -881,22 +769,18 @@ class FO_COMMON_API MoveTowards final : public EffectBase {
 public:
     MoveTowards(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
                 std::unique_ptr<Condition::ConditionBase>&& dest_condition);
-
     MoveTowards(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& dest_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& dest_y = nullptr);
 
-    void Execute(const ScriptingContext& context) const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override;
-
-    unsigned int GetCheckSum() const override;
+    void            Execute(const ScriptingContext& context) const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    void            SetTopLevelContent(const std::string& content_name) override;
+    unsigned int    GetCheckSum() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_speed;
-    std::unique_ptr<Condition::ConditionBase> m_dest_condition;
+    std::unique_ptr<Condition::ConditionBase>       m_dest_condition;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_dest_x;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_dest_y;
 
@@ -913,13 +797,10 @@ class FO_COMMON_API SetDestination final : public EffectBase {
 public:
     explicit SetDestination(std::unique_ptr<Condition::ConditionBase>&& location_condition);
 
-    void Execute(const ScriptingContext& context) const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override;
-
-    unsigned int GetCheckSum() const override;
+    void            Execute(const ScriptingContext& context) const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    void            SetTopLevelContent(const std::string& content_name) override;
+    unsigned int    GetCheckSum() const override;
 
 private:
     std::unique_ptr<Condition::ConditionBase> m_location_condition;
@@ -934,14 +815,10 @@ class FO_COMMON_API SetAggression final : public EffectBase {
 public:
     explicit SetAggression(bool aggressive);
 
-    void Execute(const ScriptingContext& context) const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
-
-    unsigned int GetCheckSum() const override;
+    void            Execute(const ScriptingContext& context) const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    void            SetTopLevelContent(const std::string& content_name) override {}
+    unsigned int    GetCheckSum() const override;
 
 private:
     bool m_aggressive;
@@ -957,14 +834,10 @@ class FO_COMMON_API Victory final : public EffectBase {
 public:
     explicit Victory(const std::string& reason_string); // TODO: Make this a ValueRefBase<std::string>*
 
-    void Execute(const ScriptingContext& context) const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
-
-    unsigned int GetCheckSum() const override;
+    void            Execute(const ScriptingContext& context) const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    void            SetTopLevelContent(const std::string& content_name) override {}
+    unsigned int    GetCheckSum() const override;
 
 private:
     std::string m_reason_string;
@@ -982,18 +855,15 @@ public:
                           std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_progress,
                           std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr);
 
-    void Execute(const ScriptingContext& context) const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override;
-
-    unsigned int GetCheckSum() const override;
+    void            Execute(const ScriptingContext& context) const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    void            SetTopLevelContent(const std::string& content_name) override;
+    unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_tech_name;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_research_progress;
-    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_tech_name;
+    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_research_progress;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>            m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1005,17 +875,14 @@ public:
     explicit GiveEmpireTech(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
                             std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr);
 
-    void Execute(const ScriptingContext& context) const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override;
-
-    unsigned int GetCheckSum() const override;
+    void            Execute(const ScriptingContext& context) const override;
+    std::string     Dump(unsigned short ntabs = 0) const override;
+    void            SetTopLevelContent(const std::string& content_name) override;
+    unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_tech_name;
-    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_tech_name;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>            m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1039,57 +906,44 @@ public:
                           EmpireAffiliationType affiliation,
                           const std::string label = "",
                           bool stringtable_lookup = true);
-
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           MessageParams&& message_parameters,
                           EmpireAffiliationType affiliation,
                           std::unique_ptr<Condition::ConditionBase>&& condition,
                           const std::string label = "",
                           bool stringtable_lookup = true);
-
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           MessageParams&& message_parameters,
                           EmpireAffiliationType affiliation,
                           const std::string& label = "",
                           bool stringtable_lookup = true);
 
-    void Execute(const ScriptingContext& context) const override;
-
-    bool IsSitrepEffect() const override
-    { return true; }
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    void SetTopLevelContent(const std::string& content_name) override;
-
-    const std::string& MessageString() const
-    { return m_message_string; }
-
-    const std::string& Icon() const
-    { return m_icon; }
+    void                Execute(const ScriptingContext& context) const override;
+    bool                IsSitrepEffect() const override     { return true; }
+    std::string         Dump(unsigned short ntabs = 0) const override;
+    void                SetTopLevelContent(const std::string& content_name) override;
+    const std::string&  MessageString() const               { return m_message_string; }
+    const std::string&  Icon() const                        { return m_icon; }
 
     std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>* >> MessageParameters() const;
 
-    ValueRef::ValueRefBase<int>* RecipientID() const
-    { return m_recipient_empire_id.get(); }
-
-    Condition::ConditionBase* GetCondition() const
-    { return m_condition.get(); }
-
-    EmpireAffiliationType Affiliation() const
-    { return m_affiliation; }
-
-    unsigned int GetCheckSum() const override;
+    ValueRef::ValueRefBase<int>*    RecipientID() const     { return m_recipient_empire_id.get(); }
+    Condition::ConditionBase*       GetCondition() const    { return m_condition.get(); }
+    EmpireAffiliationType           Affiliation() const     { return m_affiliation; }
+    unsigned int                    GetCheckSum() const override;
 
 private:
-    std::string m_message_string;
-    std::string m_icon;
-    std::vector<std::pair<std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>> m_message_parameters;
-    std::unique_ptr<ValueRef::ValueRefBase<int>> m_recipient_empire_id;
-    std::unique_ptr<Condition::ConditionBase> m_condition;
-    EmpireAffiliationType m_affiliation;
-    std::string m_label;
-    bool m_stringtable_lookup;
+    std::string             m_message_string;
+    std::string             m_icon;
+    std::vector<std::pair<std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>>
+                            m_message_parameters;
+    std::unique_ptr<ValueRef::ValueRefBase<int>>
+                            m_recipient_empire_id;
+    std::unique_ptr<Condition::ConditionBase>
+                            m_condition;
+    EmpireAffiliationType   m_affiliation;
+    std::string             m_label;
+    bool                    m_stringtable_lookup;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1103,14 +957,9 @@ public:
     SetOverlayTexture(const std::string& texture, ValueRef::ValueRefBase<double>* size);
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
-    bool IsAppearanceEffect() const override
-    { return true; }
-
+    bool IsAppearanceEffect() const override { return true; }
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
 
 private:
@@ -1130,13 +979,8 @@ public:
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
-
-    bool IsAppearanceEffect() const override
-    { return true; }
-
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
-
+    bool IsAppearanceEffect() const override { return true; }
+    void SetTopLevelContent(const std::string& content_name) override {}
     unsigned int GetCheckSum() const override;
 
 private:
@@ -1157,9 +1001,7 @@ public:
                   std::unique_ptr<Condition::ConditionBase>&& of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
 
     void Execute(const ScriptingContext& context) const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     void SetTopLevelContent(const std::string& content_name) override;
 
     ValueRef::ValueRefBase<Visibility>* GetVisibility() const

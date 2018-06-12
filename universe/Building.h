@@ -22,41 +22,28 @@ namespace Condition {
 class FO_COMMON_API Building : public UniverseObject {
 public:
     /** \name Accessors */ //@{
-    bool HostileToEmpire(int empire_id) const override;
-    std::set<std::string> Tags() const override;
-
-    bool HasTag(const std::string& name) const override;
-
-    UniverseObjectType ObjectType() const override;
-
-    std::string Dump(unsigned short ntabs = 0) const override;
-
-    int ContainerObjectID() const override
-    { return m_planet_id; }
-
-    bool ContainedBy(int object_id) const override;
+    bool                    HostileToEmpire(int empire_id) const override;
+    std::set<std::string>   Tags() const override;
+    bool                    HasTag(const std::string& name) const override;
+    UniverseObjectType      ObjectType() const override;
+    std::string             Dump(unsigned short ntabs = 0) const override;
+    int                     ContainerObjectID() const override { return m_planet_id; }
+    bool                    ContainedBy(int object_id) const override;
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     /** Returns the name of the BuildingType object for this building. */
-    const std::string& BuildingTypeName() const
-    { return m_building_type; };
-
+    const std::string&      BuildingTypeName() const    { return m_building_type; };
     int                     PlanetID() const            { return m_planet_id; }             ///< returns the ID number of the planet this building is on
-
     int                     ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this building
-
     bool                    OrderedScrapped() const     { return m_ordered_scrapped; }
     //@}
 
     /** \name Mutators */ //@{
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
-
-    void            SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
-
-    void            Reset();                            ///< resets any building state, and removes owners
-    void            SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
-
+    void SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
+    void Reset();                            ///< resets any building state, and removes owners
+    void SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
     void ResetTargetMaxUnpairedMeters() override;
     //@}
 
@@ -109,7 +96,7 @@ public:
     /** \name Accessors */ //@{
     const std::string&              Name() const            { return m_name; }              ///< returns the unique name for this type of building
     const std::string&              Description() const     { return m_description; }       ///< returns a text description of this type of building
-    std::string                     Dump(unsigned short ntabs = 0) const;                                           ///< returns a data file format representation of this object
+    std::string                     Dump(unsigned short ntabs = 0) const;                   ///< returns a data file format representation of this object
 
     bool                            ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
     float                           ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to build this building at this location by this empire
