@@ -11,7 +11,6 @@
 #include "Export.h"
 
 class OrderSet;
-class PathingEngine;
 class Universe;
 class UniverseObject;
 
@@ -35,10 +34,6 @@ void Serialize(Archive& oa, const std::map<int, std::shared_ptr<UniverseObject>>
 template <class Archive>
 void Serialize(Archive& oa, const OrderSet& order_set);
 
-/** Serializes \a pathing_engine to output archive \a oa. */
-template <class Archive>
-void Serialize(Archive& oa, const PathingEngine& pathing_engine);
-
 /** Deserializes \a universe from input archive \a ia. */
 template <class Archive>
 FO_COMMON_API void Deserialize(Archive& ia, Universe& universe);
@@ -50,9 +45,5 @@ void Deserialize(Archive& ia, std::map<int, std::shared_ptr<UniverseObject>>& ob
 /** Deserializes \a order_set from input archive \a ia. */
 template <class Archive>
 void Deserialize(Archive& ia, OrderSet& order_set);
-
-/** Deserializes \a pathing_engine from input archive \a ia. */
-template <class Archive>
-void Deserialize(Archive& ia, PathingEngine& pathing_engine);
 
 #endif // _Serialize_h_
