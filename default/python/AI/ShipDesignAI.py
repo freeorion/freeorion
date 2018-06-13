@@ -693,8 +693,13 @@ class DesignStats(object):
         self.asteroid_stealth = 0
         self.solar_stealth = 0
         self.fighter_capacity = 0
-        self.fighter_launch_rate = 0
+        self.fighter_launch_bays = 0
+        self.fighter_launch_bay_rate = 0
         self.fighter_damage = 0
+
+    @property
+    def fighter_launch_rate(self):
+        return self.fighter_launch_bay_rate * self.fighter_launch_bays
 
     def convert_to_combat_stats(self):
         """Return a tuple as expected by CombatRatingsAI"""
@@ -903,7 +908,7 @@ class ShipDesigner(object):
                 else:
                     self.design_stats.stealth = 0
             elif partclass in FIGHTER_BAY:
-                self.design_stats.fighter_launch_rate += capacity
+                self.design_stats.fighter_launch_bays += 1
             elif partclass in FIGHTER_HANGAR:
                 hangar_parts.add(part.name)
                 if len(hangar_parts) > 1:
@@ -913,6 +918,7 @@ class ShipDesigner(object):
                 else:
                     self.design_stats.fighter_capacity += self._calculate_hangar_capacity(part)
                     self.design_stats.fighter_damage = self._calculate_hangar_damage(part)
+                    self.design_stats.fighter_launch_bay_rate += self._calculate_fighter_launch_bay_rate(part)
 
         self._apply_hardcoded_effects()
 
@@ -1557,6 +1563,12 @@ class ShipDesigner(object):
         else:
             species_modifier = 0
         return base + species_modifier + tech_bonus
+
+    def _calculate_fighter_launch_bay_rate(self, hangar_part):
+        hangar_name = hangar_part.name
+        base = AIDependencies.LAUNCH_BAY_BASE_CAPACITY
+        hangar_bonus = AIDependencies.HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT.get(hangar_name, 0)
+        return base + hangar_bonus
 
     def _calculate_hangar_damage(self, hangar_part, ignore_species=False):
         hangar_name = hangar_part.name
