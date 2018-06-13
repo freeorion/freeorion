@@ -694,7 +694,7 @@ class DesignStats(object):
         self.solar_stealth = 0
         self.fighter_capacity = 0
         self.fighter_launch_bays = 0
-        self.fighter_launch_bay_rate = 0
+        self.fighter_launch_bay_rate = AIDependencies.LAUNCH_BAY_BASE_CAPACITY
         self.fighter_damage = 0
 
     @property
@@ -918,7 +918,7 @@ class ShipDesigner(object):
                 else:
                     self.design_stats.fighter_capacity += self._calculate_hangar_capacity(part)
                     self.design_stats.fighter_damage = self._calculate_hangar_damage(part)
-                    self.design_stats.fighter_launch_bay_rate += self._calculate_fighter_launch_bay_rate(part)
+                    self.design_stats.fighter_launch_bay_rate = self._calculate_fighter_launch_bay_rate(part)
 
         self._apply_hardcoded_effects()
 
