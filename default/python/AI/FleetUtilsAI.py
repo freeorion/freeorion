@@ -9,6 +9,7 @@ from universe_object import Planet, Fleet
 from ShipDesignAI import get_part_type
 from AIDependencies import INVALID_ID
 import AIDependencies
+import universe_object
 
 
 def stats_meet_reqs(stats, requirements):
@@ -105,6 +106,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
     # loop over systems in a breadth-first-search trying to find nearby suitable ships in fleet_pool_set
     while systems_enqueued and fleet_pool_set:
         this_system_id = systems_enqueued.pop(0)
+        this_system_obj = universe_object.System(this_system_id)
         systems_visited.append(this_system_id)
         accessible_fleets = foAI.foAIstate.systemStatus.get(this_system_id, {}).get('myFleetsAccessible', [])
         fleets_here = [fid for fid in accessible_fleets if fid in fleet_pool_set]
@@ -135,6 +137,11 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                 troop_capacity = count_troops_in_fleet(fleet_id)
                 if troop_capacity <= 0:
                     continue
+                # providing move_path_func in this fashion rather than directly importing here, in order
+                # to avoid a circular import problem
+                if 'target_system' in target_stats and 'move_path_func' in target_stats:
+                    if not target_stats['move_path_func'](fleet_id, this_system_obj, target_stats['target_system']):
+                        continue
 
             # check if we need additional rating vs planets
             this_rating_vs_planets = 0
