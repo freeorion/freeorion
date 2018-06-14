@@ -12,6 +12,7 @@ import EspionageAI
 import FleetUtilsAI
 import PlanetUtilsAI
 import universe_object
+from MoveUtilsAI import can_travel_to_system
 import ProductionAI
 import ColonisationAI
 import MilitaryAI
@@ -95,7 +96,8 @@ def get_invasion_fleets():
         # value to instead record how many base troopers have been queued, so that on later turns we can assess if the
         # process got delayed & perhaps more troopers need to be queued).
 
-        secure_ai_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE])
+        secure_ai_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE,
+                                                                                             MissionType.MILITARY])
 
         # Pass 1: identify qualifying base troop invasion targets
         for pid in invadable_planet_ids:  # TODO: reorganize
@@ -148,7 +150,7 @@ def get_invasion_fleets():
                     all_invasion_targeted_system_ids.add(planet.systemID)
                 # TODO: evaluate changes to situation, any more troops needed, etc.
                 continue  # already building for here
-            _, planet_troops = evaluate_invasion_planet(pid, secure_ai_fleet_missions, False)
+            _, planet_troops = evaluate_invasion_planet(pid, secure_ai_fleet_missions, True)
             sys_id = planet.systemID
             this_sys_status = foAI.foAIstate.systemStatus.get(sys_id, {})
             troop_tally = 0
@@ -189,8 +191,8 @@ def get_invasion_fleets():
             # For now, we assume what building base troopers is best so long as either (1) we would need no more than
             # MAX_BASE_TROOPERS_POOR_INVADERS base troop ships, or (2) our base troopers have more than 1 trooper per
             # ship and we would need no more than MAX_BASE_TROOPERS_GOOD_INVADERS base troop ships
-            if (n_bases <= MAX_BASE_TROOPERS_POOR_INVADERS or
-                    (troops_per_ship > 1 and n_bases <= MAX_BASE_TROOPERS_GOOD_INVADERS)):
+            if (n_bases > MAX_BASE_TROOPERS_POOR_INVADERS or
+                    (troops_per_ship > 1 and n_bases > MAX_BASE_TROOPERS_GOOD_INVADERS)):
                 print "ruling out base invasion troopers for %s due to high number (%d) required." % (planet, n_bases)
                 del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
                 continue
@@ -268,7 +270,8 @@ def assign_invasion_values(planet_ids):
     neighbor_values = {}
     neighbor_val_ratio = .95
     universe = fo.getUniverse()
-    secure_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE])
+    secure_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE,
+                                                                                MissionType.MILITARY])
     for pid in planet_ids:
         planet_values[pid] = neighbor_values.setdefault(pid, evaluate_invasion_planet(pid, secure_missions))
         print "planet %d, values %s" % (pid, planet_values[pid])
@@ -430,7 +433,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         s_fleet = universe.getFleet(secure_fleet_id)
         if not s_fleet or s_fleet.systemID != system_id:
             continue
-        if mission.type == MissionType.SECURE:
+        if mission.type in [MissionType.SECURE, MissionType.MILITARY]:
             target_obj = mission.target.get_object()
             if target_obj is not None and target_obj.id in secure_targets:
                 system_secured = True
@@ -501,6 +504,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
                ' - bldval: %s\n'
                ' - enemyval: %s') % (planet_score, planned_troops, troop_cost,
                                      threat_factor, detail, colony_base_value, bld_tally, enemy_val)
+        print (' - system secured: %s' % system_secured)
     return [planet_score, planned_troops]
 
 
@@ -522,7 +526,10 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
         found_fleets = []
         found_stats = {}
         min_stats = {'rating': 0, 'troopCapacity': ptroops}
-        target_stats = {'rating': 10, 'troopCapacity': ptroops + _TROOPS_SAFETY_MARGIN}
+        target_stats = {'rating': 10,
+                        'troopCapacity': ptroops + _TROOPS_SAFETY_MARGIN,
+                        'target_system': universe_object.System(sys_id),
+                        'move_path_func': can_travel_to_system}
         these_fleets = FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, found_stats,
                                                            starting_system=sys_id, fleet_pool_set=invasion_fleet_pool,
                                                            fleet_list=found_fleets)
