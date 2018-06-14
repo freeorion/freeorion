@@ -818,7 +818,6 @@ class ShipDesigner(object):
 
         :param partname_list: contains partnames as strings
         :type partname_list: list"""
-        warn("update_parts %s" % partname_list)
         self.partnames = partname_list
         self.parts = [get_part_type(part) for part in partname_list if part]
 
@@ -838,7 +837,6 @@ class ShipDesigner(object):
         :param ignore_species: toggles whether species piloting grades are considered in the stats.
         :type ignore_species: bool
         """
-        warn("update_stats")
         self._set_stats_to_default()
 
         if not self.hull:
@@ -906,14 +904,11 @@ class ShipDesigner(object):
                 else:
                     self.design_stats.stealth = 0
             elif partclass in FIGHTER_BAY:
-                warn("Append %s" % part.name)
                 bay_parts.append(part)
             elif partclass in FIGHTER_HANGAR:
-                warn("Found %s" % part.name)
                 hangar_part_names.add(part.name)
                 if len(hangar_part_names) > 1:
                     # enforce only one hangar part per design
-                    warn("ALREADY HANGARS %s" % hangar_part_names)
                     self.design_stats.fighter_capacity = 0
                     self.design_stats.fighter_damage = 0
                     self.design_stats.fighter_launch_rate = 0
@@ -922,11 +917,9 @@ class ShipDesigner(object):
                     self.design_stats.fighter_damage = self._calculate_hangar_damage(part)
 
         if len(bay_parts) > 0:
-            warn("HI")
             hangar_part_name = None
             for hangar_part_name in hangar_part_names:
                 break;
-            warn("HO %s %s" % (hangar_part_name, bay_parts))
             self.design_stats.fighter_launch_rate = self._calculate_fighter_launch_rate(bay_parts, hangar_part_name)
 
         self._apply_hardcoded_effects()
@@ -1578,7 +1571,6 @@ class ShipDesigner(object):
         bay_parts_capacity = 0
         for bay_part in bay_parts:
             bay_parts_capacity += bay_part.capacity
-        warn("bay_parts_capacity: %s  bay_parts_len: %s  hangar_bonus: %s  %s" % ( bay_parts_capacity, len(bay_parts), hangar_bonus, hangar_part_name) )
         return bay_parts_capacity + ( len(bay_parts) * hangar_bonus )
 
     def _calculate_hangar_damage(self, hangar_part, ignore_species=False):
@@ -1765,7 +1757,7 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
 
     def _rating_function(self):
         if self.design_stats.fighter_capacity < 1:
-            return -996
+            return INVALID_DESIGN_RATING
         combat_rating = self._combat_rating()
         speed_factor = self._speed_factor()
         fuel_factor = self._fuel_factor()
@@ -1773,7 +1765,7 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
 
     # TODO Implement _starting_guess() for faster convergence
 
-    def _filling_algorithm(self, available_parts, verbose=True):
+    def _filling_algorithm(self, available_parts, verbose=False):
         # Currently, only one type of hangar part is allowed due to game mechanics.
         # However, in the generic _filling_algorithm(), only one part is exchanged per time.
         # Therefore, after using (multiple) entries of one hangar part, the algorithm won't consider different parts.
@@ -1792,7 +1784,7 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
             debug("Found the following hangar parts: %s" % hangar_parts)
 
         # now, call the standard-algorithm with only one hangar part at a time and choose the best rated one.
-        best_rating = -998
+        best_rating = INVALID_DESIGN_RATING
         best_partlist = [""] * len(self.hull.slots)
         for this_hangar_part in hangar_parts:
             current_available_parts = {}
