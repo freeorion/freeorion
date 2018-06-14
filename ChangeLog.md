@@ -160,7 +160,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 #### AI
 
-- Made AI consisider cancelling colony buildings if a better species becomes available.
+- Made AI consider cancelling colony buildings if a better species becomes available.
 - Improved scout dispatch, to nearby instead of nearest to capital.
 - Improved fleet management during invasions.
 - Improved estimation of troop requirements for invasions.
@@ -220,7 +220,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Various FOCS values exposed: SpecialCapacity, SpecialAddedOnTurn, EmpireObjectVisibility, TurnTechResearched, LastTurnConquered, LastTurnAttackedByShip
 - Exposed FOCS value: HabitableSize (which replaces SizeAsDouble or SizeAsInt)
 - Parallelized and deferred content parsing, reducing program startup lag time.
-- Improved error logging when parsing and invalid ship design.
+- Improved error logging when parsing an invalid ship design.
 - Added checksums to parsed content, so that client and server content can be checked for consistency.
 - Universe object ID generation no longer requires clients to request a new ID from the server for each new object.
 - Don't autosave immediately after loading a game.
