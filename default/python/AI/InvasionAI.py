@@ -95,7 +95,8 @@ def get_invasion_fleets():
         # value to instead record how many base troopers have been queued, so that on later turns we can assess if the
         # process got delayed & perhaps more troopers need to be queued).
 
-        secure_ai_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE])
+        secure_ai_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE,
+                                                                                             MissionType.MILITARY])
 
         # Pass 1: identify qualifying base troop invasion targets
         for pid in invadable_planet_ids:  # TODO: reorganize
@@ -148,7 +149,7 @@ def get_invasion_fleets():
                     all_invasion_targeted_system_ids.add(planet.systemID)
                 # TODO: evaluate changes to situation, any more troops needed, etc.
                 continue  # already building for here
-            _, planet_troops = evaluate_invasion_planet(pid, secure_ai_fleet_missions, False)
+            _, planet_troops = evaluate_invasion_planet(pid, secure_ai_fleet_missions, True)
             sys_id = planet.systemID
             this_sys_status = foAI.foAIstate.systemStatus.get(sys_id, {})
             troop_tally = 0
@@ -268,7 +269,8 @@ def assign_invasion_values(planet_ids):
     neighbor_values = {}
     neighbor_val_ratio = .95
     universe = fo.getUniverse()
-    secure_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE])
+    secure_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE,
+                                                                                MissionType.MILITARY])
     for pid in planet_ids:
         planet_values[pid] = neighbor_values.setdefault(pid, evaluate_invasion_planet(pid, secure_missions))
         print "planet %d, values %s" % (pid, planet_values[pid])
@@ -430,7 +432,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         s_fleet = universe.getFleet(secure_fleet_id)
         if not s_fleet or s_fleet.systemID != system_id:
             continue
-        if mission.type == MissionType.SECURE:
+        if mission.type in [MissionType.SECURE, MissionType.MILITARY]:
             target_obj = mission.target.get_object()
             if target_obj is not None and target_obj.id in secure_targets:
                 system_secured = True
@@ -501,6 +503,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
                ' - bldval: %s\n'
                ' - enemyval: %s') % (planet_score, planned_troops, troop_cost,
                                      threat_factor, detail, colony_base_value, bld_tally, enemy_val)
+        print (' - system secured: %s' % system_secured)
     return [planet_score, planned_troops]
 
 
