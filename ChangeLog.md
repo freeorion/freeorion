@@ -10,9 +10,10 @@ Notable changes to the FreeOrion project will be documented in this file.
 ### Key Changes
 
 - Imperial stockpile
-    - Unallocated production is stored, and can be used on colonies that are disconnected from the empire supply network
-    - Withdrawl limits based on planet stockpile meters and indicated on map and production screen
-    - Techs, species, and planet focus settings affect stockpiling withdrawl limits
+    - Unallocated production is stored, and can be used on colonies even if they are are disconnected from the empire supply network
+    - Withdrawal limits are empire wide, based on planet stockpile meters and indicated on map and production screen
+    - Techs, species, and planet focus settings affect stockpiling withdrawal limits
+    - Stockpiling-focused species added: the Sly
 
 - Game rules options which can be modified or enabled to affect balance, content, and game mechanics
 
@@ -44,7 +45,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Added option to ignore hostile ships while auto-exploring.
     - Added ship design breakdown info to fleets indicator at top of screen.
     - Made pressing escape close open windows in last-opened first-closed order.
-    - Added system shield, defense, troops, and supply summary indicators to top of system sidpanel.
+    - Added system shield, defense, troops, and supply summary indicators to top of system sidepanel.
     - Let fleets window track moving fleets together.
     - Added an indicator that a fleet is blockaded.
 
@@ -80,7 +81,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Added server player name / passwords list, which can require players to password authenticate to join a server.
         - Players may be assigned roles, which control what they can do in the lobby.
     - Added optional timestamps to chat in multiplayer lobby and in-game chat.
-    - Ready button in multiplayer lobby will lock if not enough players, and unready if settings were changed by another player.
+    - Ready button in multiplayer lobby will lock if not enough players.
     - Added choice of client type in the network connection window.
     - Disambiguated "Player" connection type from "Human", which is also an in-game species.
     - Allowed joining an game being played as a moderator or observer.
@@ -105,7 +106,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Made chat history longer.
     - Prevented changing the resource directory during a running game.
     - Made resource directory changes when not running a game cause the content to be re-parsed.
-    - Various additional optimizations to GUI layout code, particulary when resizing windows.
+    - Various additional optimizations to GUI layout code, particularly when resizing windows.
     - Attempt to determine the system language when initializing stringtable option for the first time.
     - Added random species option to species droplists when setting up games.
     - Clicking the random seed button on the galaxy setup screen now sets the seed to "Random" which will be replaced by the server with a randomly-generated seed.
@@ -123,7 +124,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Added Replicon species.
 - Tweaked various default ship designs.
 - Replaced multiple fuel parts with upgrades to a single part.
-- Added Next Eradicator building.
+- Added Nest Eradicator building.
 - Added support for pedia articles for planets having different landscape images per-planet.
 - Added population statistic.
 - Added a sitrep when a ship naturally goes from 0.x to 1.x fuel.
@@ -152,11 +153,10 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Upgrades now don't happen during the pre-combat movement phase of turns.
 - Reduced cost of Transcendent Design tech.
 - Required gifted fleets to be stationary.
-- Ancient guardians self-destruction only triggers on planets, rather than all possible objects with species.
 - Gas Giant Generator now gives a smaller bonus if the planet is populated.
 - Reduced Space Elevator bonus for Gas Giants by 1.
 - Increased Colony Base hull cost to 3.
-- Newly created ships and monsters now cannot block supply.
+- Newly created ships and monsters now cannot block supply (until they have survived a turn) or enemy fleet movement.
 
 #### AI
 
@@ -174,6 +174,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 #### Bugs
 
+- Ancient guardians self-destruction only triggers on planets, rather than all possible objects with species.
 - Reduced incidence of the mouse cursor or starlanes disappearing.
 - Fixed issue where allied visibility of ship didn't include knowledge of the ship design.
 - Fixed issue preventing multiplayer games from starting with moderators or observers.
@@ -218,7 +219,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Added FOCS value refs: ternary and quaternary expressions, like binary comparison, but with a value to return if true, or values for both true or false.
 - Various FOCS values exposed: SpecialCapacity, SpecialAddedOnTurn, EmpireObjectVisibility, TurnTechResearched, LastTurnConquered, LastTurnAttackedByShip
 - Exposed FOCS value: HabitableSize (which replaces SizeAsDouble or SizeAsInt)
-- Parellelized and deferred content parsing, reducing program startup lag time.
+- Parallelized and deferred content parsing, reducing program startup lag time.
 - Improved error logging when parsing and invalid ship design.
 - Added checksums to parsed content, so that client and server content can be checked for consistency.
 - Universe object ID generation no longer requires clients to request a new ID from the server for each new object.
