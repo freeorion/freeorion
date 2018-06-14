@@ -189,8 +189,8 @@ def get_invasion_fleets():
             # For now, we assume what building base troopers is best so long as either (1) we would need no more than
             # MAX_BASE_TROOPERS_POOR_INVADERS base troop ships, or (2) our base troopers have more than 1 trooper per
             # ship and we would need no more than MAX_BASE_TROOPERS_GOOD_INVADERS base troop ships
-            if (n_bases <= MAX_BASE_TROOPERS_POOR_INVADERS or
-                    (troops_per_ship > 1 and n_bases <= MAX_BASE_TROOPERS_GOOD_INVADERS)):
+            if (n_bases > MAX_BASE_TROOPERS_POOR_INVADERS or
+                    (troops_per_ship > 1 and n_bases > MAX_BASE_TROOPERS_GOOD_INVADERS)):
                 print "ruling out base invasion troopers for %s due to high number (%d) required." % (planet, n_bases)
                 del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
                 continue
