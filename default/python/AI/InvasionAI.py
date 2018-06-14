@@ -12,6 +12,7 @@ import EspionageAI
 import FleetUtilsAI
 import PlanetUtilsAI
 import universe_object
+from MoveUtilsAI import can_travel_to_system
 import ProductionAI
 import ColonisationAI
 import MilitaryAI
@@ -525,7 +526,10 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
         found_fleets = []
         found_stats = {}
         min_stats = {'rating': 0, 'troopCapacity': ptroops}
-        target_stats = {'rating': 10, 'troopCapacity': ptroops + _TROOPS_SAFETY_MARGIN}
+        target_stats = {'rating': 10,
+                        'troopCapacity': ptroops + _TROOPS_SAFETY_MARGIN,
+                        'target_system': universe_object.System(sys_id),
+                        'move_path_func': can_travel_to_system}
         these_fleets = FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, found_stats,
                                                            starting_system=sys_id, fleet_pool_set=invasion_fleet_pool,
                                                            fleet_list=found_fleets)
