@@ -1,18 +1,19 @@
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-import FreeOrionAI as foAI
+
 import AIstate
-import universe_object
-from EnumsAI import MissionType
+import CombatRatingsAI
 import EspionageAI
 import FleetUtilsAI
-from CombatRatingsAI import combine_ratings, combine_ratings_list, rating_difference
+import FreeOrionAI as foAI
+import InvasionAI
 import PlanetUtilsAI
 import PriorityAI
 import ProductionAI
-import CombatRatingsAI
-from freeorion_tools import cache_by_turn
+import universe_object
 from AIDependencies import INVALID_ID
-from InvasionAI import MIN_INVASION_SCORE
+from CombatRatingsAI import combine_ratings, combine_ratings_list, rating_difference
+from EnumsAI import MissionType
+from freeorion_tools import cache_by_turn
 from turn_state import state
 
 MinThreat = 10  # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
@@ -696,11 +697,11 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
 
     num_targets = max(10, PriorityAI.allotted_outpost_targets)
     top_target_planets = ([pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allotted_invasion_targets()]
-                           if pscore > MIN_INVASION_SCORE] +
+                           if pscore > InvasionAI.MIN_INVASION_SCORE] +
                           [pid for pid, (pscore, spec) in foAI.foAIstate.colonisableOutpostIDs.items()[:num_targets]
-                           if pscore > MIN_INVASION_SCORE] +
+                           if pscore > InvasionAI.MIN_INVASION_SCORE] +
                           [pid for pid, (pscore, spec) in foAI.foAIstate.colonisablePlanetIDs.items()[:num_targets]
-                           if pscore > MIN_INVASION_SCORE])
+                           if pscore > InvasionAI.MIN_INVASION_SCORE])
     top_target_planets.extend(foAI.foAIstate.qualifyingTroopBaseTargets.keys())
     base_col_target_systems = PlanetUtilsAI.get_systems(top_target_planets)
     top_target_systems = []
