@@ -622,6 +622,7 @@ class AdditionalSpecifications(object):
         # TODO: Extend this framework according to needs of future implementations
         self.minimum_fuel = 0
         self.minimum_speed = 0
+        self.orbital = False
         self.minimum_structure = 1
         self.minimum_fighter_launch_rate = 0
         self.enemy_shields = 1  # to avoid spamming flak cannons
@@ -769,6 +770,8 @@ class ShipDesigner(object):
             max(0, self._minimum_structure() - (self.design_stats.structure + self._expected_organic_growth())),
             max(0, self._minimum_fighter_launch_rate() - self.design_stats.fighter_launch_rate)
         ])
+        if self._orbital() and self.design_stats.speed > 0:
+            rating = min(-100, rating - 99999)
         return rating if rating < 0 else self._rating_function()
 
     def _minimum_fuel(self):
@@ -776,6 +779,9 @@ class ShipDesigner(object):
 
     def _minimum_speed(self):
         return self.additional_specifications.minimum_speed
+
+    def _orbital(self):
+        return self.additional_specifications.orbital
 
     def _minimum_structure(self):
         return self.additional_specifications.minimum_structure
@@ -1846,6 +1852,9 @@ class OrbitalTroopShipDesigner(TroopShipDesignerBaseClass):
         TroopShipDesignerBaseClass.__init__(self)
         self.additional_specifications.minimum_speed = 0
         self.additional_specifications.minimum_fuel = 0
+        # require that the orbital trooper base have zero speed, otherwise once completed it won't be recognized as an
+        # orbital trooper base
+        self.additional_specifications.orbital = True
 
 
 class StandardTroopShipDesigner(TroopShipDesignerBaseClass):
