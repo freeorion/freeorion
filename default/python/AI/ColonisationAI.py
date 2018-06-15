@@ -135,6 +135,7 @@ def calc_max_pop(planet, species, detail):
         detail.append("boosts_PSM(%d from %s)" % (n_boosts, applicable_boosts))
 
     if planet.id in species.homeworlds:
+        detail.append('Homeworld (2)')
         base_pop_not_modified_by_species += 2
 
     def max_pop_size():
@@ -1556,3 +1557,28 @@ class OrbitalColonizationManager(object):
                 success = plan.assign_base(fid)
                 if success:
                     break
+
+
+def test_calc_max_pop():
+    """
+    Verify AI calculation of max population by comparing it with actual client
+    queried values.
+
+    This function may be called in debug mode in a running game and will compare
+    the actual target population meters on all planets owned by this AI with the
+    predicted maximum population. Any mismatch will be reported in chat.
+    """
+    from freeorion_tools import chat_human
+    chat_human("Verifying calculation of ColonisationAI.calc_max_pop()")
+    universe = fo.getUniverse()
+    for spec_name, planets in state.get_empire_planets_by_species().iteritems():
+        species = fo.getSpecies(spec_name)
+        for pid in planets:
+            planet = universe.getPlanet(pid)
+            detail = []
+            predicted = calc_max_pop(planet, species, detail)
+            actual = planet.initialMeterValue(fo.meterType.targetPopulation)
+            if actual != predicted:
+                error("Predicted pop of %.2f on %s but actually is %.2f; Details: %s" %
+                      (predicted, planet, actual, detail))
+    chat_human("Finished verification of ColonisationAI.calc_max_pop()")
