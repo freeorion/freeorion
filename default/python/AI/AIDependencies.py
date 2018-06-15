@@ -91,7 +91,7 @@ POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES = {
 #  - [[LATE_PRIORITY]] or later:
 POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES = {
     "GRO_SUBTER_HAB":  [0, 1, 1, 1, 1],
-    "CON_NDIM_STRUC":  [0, 2, 2, 2, 2],
+    "CON_NDIM_STRC":  [0, 2, 2, 2, 2],
     "CON_ORBITAL_HAB": [0, 1, 1, 1, 1],
 }
 
