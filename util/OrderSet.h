@@ -38,28 +38,30 @@ private:
     typedef std::map<int, OrderPtr> OrderMap;
 
 public:
-    typedef OrderMap::const_iterator    const_iterator;    ///< defines a public const_iterator type for OrderSet
+    typedef OrderMap::const_iterator const_iterator;            ///< defines a public const_iterator type for OrderSet
 
     /** \name Accessors */ //@{
-    const_iterator begin() const {return m_orders.begin();} ///< returns the begin const_iterator for the OrderSet
-    const_iterator end() const   {return m_orders.end();}   ///< returns the end const_iterator for the OrderSet
+    const_iterator  begin() const   { return m_orders.begin(); }///< returns the begin const_iterator for the OrderSet
+    const_iterator  end() const     { return m_orders.end(); }  ///< returns the end const_iterator for the OrderSet
+    std::size_t     size() const    { return m_orders.size(); }
+    bool            empty() const   { return m_orders.empty(); }
     //@}
 
     /** \name Mutators */ //@{
     /** Execute the \p order immediately on the client.
         Store the \p order in the OrderSet to be executed later on the server.
         Return an index that can be used to reference the order. */
-    int            IssueOrder(const OrderPtr& order);
-    int            IssueOrder(OrderPtr&& order);
+    int IssueOrder(const OrderPtr& order);
+    int IssueOrder(OrderPtr&& order);
 
     /** Applies all Orders in the OrderSet.  As of this writing, this is needed only after deserializing an OrderSet
         client-side during game loading. */
-    void           ApplyOrders();
+    void ApplyOrders();
 
     /** Try to Undo() \p order and if it succeeds remove the order from the
         set.  Return true if \p order exists and was successfully removed. */
-    bool           RescindOrder(int order);
-    void           Reset(); ///< clears all orders; should be called at the beginning of a new turn
+    bool RescindOrder(int order);
+    void Reset(); ///< clears all orders; should be called at the beginning of a new turn
     //@}
 
 private:
