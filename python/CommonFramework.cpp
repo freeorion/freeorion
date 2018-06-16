@@ -122,7 +122,6 @@ void PythonBase::HandleErrorAlreadySet() {
     return;
 }
 
-
 void PythonBase::Finalize() {
     if (Py_IsInitialized()) {
         Py_Finalize();

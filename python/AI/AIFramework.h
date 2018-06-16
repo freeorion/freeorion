@@ -12,17 +12,11 @@ public:
 
     /** Initializes AI Python modules. */
     bool InitModules() override;
-
     void GenerateOrders() override;
-
     void HandleChatMessage(int sender_id, const std::string& msg) override;
-
     void HandleDiplomaticMessage(const DiplomaticMessage& msg) override;
-
     void HandleDiplomaticStatusUpdate(const DiplomaticStatusUpdateInfo& u) override;
-
     void StartNewGame() override;
-
     void ResumeLoadedGame(const std::string& save_state_string) override;
 
     const std::string&  GetSaveStateString() override;

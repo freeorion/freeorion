@@ -7,9 +7,9 @@
 #include "../universe/Planet.h"
 #include "../universe/Tech.h"
 #include "../universe/Enums.h"
-#include "../util/SitRepEntry.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
+#include "../util/SitRepEntry.h"
 #include "SetWrapper.h"
 
 #include <GG/Clr.h>
@@ -30,12 +30,13 @@ namespace {
     // Research queue tests whether it contains a Tech by name, but Python needs
     // a __contains__ function that takes a *Queue::Element.  This helper
     // functions take an Element and returns the associated Tech name string.
-    const std::string&  TechFromResearchQueueElement(const ResearchQueue::Element& element)             { return element.name; }
+    const std::string&  TechFromResearchQueueElement(const ResearchQueue::Element& element)
+    { return element.name; }
 
-    std::vector<std::string> (TechManager::*TechNamesVoid)(void) const =                                &TechManager::TechNames;
+    std::vector<std::string> (TechManager::*TechNamesVoid)(void) const = &TechManager::TechNames;
     auto TechNamesMemberFunc = TechNamesVoid;
 
-    std::vector<std::string> (TechManager::*TechNamesCategory)(const std::string&) const =              &TechManager::TechNames;
+    std::vector<std::string> (TechManager::*TechNamesCategory)(const std::string&) const = &TechManager::TechNames;
     auto TechNamesCategoryMemberFunc = TechNamesCategory;
 
     std::vector<std::string>    TechRecursivePrereqs(const Tech& tech, int empire_id)
@@ -70,8 +71,8 @@ namespace {
     }
     auto GetEmpireSitRepFunc = GetSitRep;
 
-    const Meter*            (Empire::*EmpireGetMeter)(const std::string&) const =                &Empire::GetMeter;
-    
+    const Meter* (Empire::*EmpireGetMeter)(const std::string&) const = &Empire::GetMeter;
+
     template<class T1, class T2>
     struct PairToTupleConverter {
         static PyObject* convert(const std::pair<T1, T2>& pair) {
