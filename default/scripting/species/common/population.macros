@@ -52,7 +52,7 @@ GOOD_POPULATION
             description = "GOOD_POPULATION_DESC"
             scope = Source
             activation = Planet
-            priority = [[EARLY_TARGET_POPULATION_SCALING_PRIORITY]]
+            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetPopulation value = Value +0.25*abs(Value) accountinglabel = "GOOD_POPULATION_LABEL"
 '''
 
