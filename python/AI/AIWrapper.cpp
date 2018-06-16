@@ -7,6 +7,7 @@
 #include "../../util/i18n.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
+#include "../../util/OrderSet.h"
 #include "../../Empire/Empire.h"
 #include "../../Empire/EmpireManager.h"
 #include "../../Empire/Diplomacy.h"
@@ -24,6 +25,8 @@
 
 using boost::python::class_;
 using boost::python::def;
+using boost::python::no_init;
+using boost::noncopyable;
 using boost::python::return_value_policy;
 using boost::python::copy_const_reference;
 using boost::python::reference_existing_object;
@@ -85,7 +88,6 @@ namespace {
 
     boost::python::str GetUserDataDirWrapper()
     { return boost::python::str(PathToString(GetUserDataDir())); }
-
 }
 
 namespace FreeOrionPython {
@@ -115,15 +117,15 @@ namespace FreeOrionPython {
         def("playerName",               AIIntPlayerNameVoid,            return_value_policy<copy_const_reference>(), "Returns the name (string) of this AI player.");
         def("playerName",               AIIntPlayerNameInt,             return_value_policy<copy_const_reference>(), "Returns the name (string) of the player with the indicated playerID (int).");
 
-        def("playerID",                 AIInterface::PlayerID, "Returns the integer id of this AI player.");
-        def("empirePlayerID",           AIInterface::EmpirePlayerID, "Returns the player ID (int) of the player who is controlling the empire with the indicated empireID (int).");
+        def("playerID",                 AIInterface::PlayerID,          "Returns the integer id of this AI player.");
+        def("empirePlayerID",           AIInterface::EmpirePlayerID,    "Returns the player ID (int) of the player who is controlling the empire with the indicated empireID (int).");
         def("allPlayerIDs",             AIInterface::AllPlayerIDs,      return_value_policy<return_by_value>(), "Returns an object (intVec) that contains the player IDs of all players in the game.");
 
-        def("playerIsAI",               AIInterface::PlayerIsAI, "Returns True (boolean) if the player with the indicated playerID (int) is controlled by an AI and false (boolean) otherwise.");
-        def("playerIsHost",             AIInterface::PlayerIsHost, "Returns True (boolean) if the player with the indicated playerID (int) is the host player for the game and false (boolean) otherwise.");
+        def("playerIsAI",               AIInterface::PlayerIsAI,        "Returns True (boolean) if the player with the indicated playerID (int) is controlled by an AI and false (boolean) otherwise.");
+        def("playerIsHost",             AIInterface::PlayerIsHost,      "Returns True (boolean) if the player with the indicated playerID (int) is the host player for the game and false (boolean) otherwise.");
 
-        def("empireID",                 AIInterface::EmpireID, "Returns the empire ID (int) of this AI player's empire.");
-        def("playerEmpireID",           AIInterface::PlayerEmpireID, "Returns the empire ID (int) of the player with the specified player ID (int).");
+        def("empireID",                 AIInterface::EmpireID,          "Returns the empire ID (int) of this AI player's empire.");
+        def("playerEmpireID",           AIInterface::PlayerEmpireID,    "Returns the empire ID (int) of the player with the specified player ID (int).");
         def("allEmpireIDs",             AIInterface::AllEmpireIDs,      return_value_policy<return_by_value>(), "Returns an object (intVec) that contains the empire IDs of all empires in the game.");
 
         def("getEmpire",                AIIntGetEmpireVoid,             return_value_policy<reference_existing_object>(), "Returns the empire object (Empire) of this AI player");
@@ -131,12 +133,12 @@ namespace FreeOrionPython {
 
         def("getUniverse",              AIInterface::GetUniverse,       return_value_policy<reference_existing_object>(), "Returns the universe object (Universe)");
 
-        def("currentTurn",              AIInterface::CurrentTurn, "Returns the current game turn (int).");
+        def("currentTurn",              AIInterface::CurrentTurn,       "Returns the current game turn (int).");
 
-        def("getOptionsDBOptionStr", AIInterface::GetOptionsDBOptionStr, return_value_policy<return_by_value>(), "Returns the string value of option in OptionsDB or None if the option does not exist.");
-        def("getOptionsDBOptionInt", AIInterface::GetOptionsDBOptionInt, return_value_policy<return_by_value>(), "Returns the integer value of option in OptionsDB or None if the option does not exist.");
-        def("getOptionsDBOptionBool", AIInterface::GetOptionsDBOptionBool, return_value_policy<return_by_value>(), "Returns the bool value of option in OptionsDB or None if the option does not exist.");
-        def("getOptionsDBOptionDouble", AIInterface::GetOptionsDBOptionDouble, return_value_policy<return_by_value>(), "Returns the double value of option in OptionsDB or None if the option does not exist.");
+        def("getOptionsDBOptionStr",    AIInterface::GetOptionsDBOptionStr,     return_value_policy<return_by_value>(), "Returns the string value of option in OptionsDB or None if the option does not exist.");
+        def("getOptionsDBOptionInt",    AIInterface::GetOptionsDBOptionInt,     return_value_policy<return_by_value>(), "Returns the integer value of option in OptionsDB or None if the option does not exist.");
+        def("getOptionsDBOptionBool",   AIInterface::GetOptionsDBOptionBool,    return_value_policy<return_by_value>(), "Returns the bool value of option in OptionsDB or None if the option does not exist.");
+        def("getOptionsDBOptionDouble", AIInterface::GetOptionsDBOptionDouble,  return_value_policy<return_by_value>(), "Returns the double value of option in OptionsDB or None if the option does not exist.");
 
         def("getAIDir",                 AIInterface::GetAIDir,          return_value_policy<return_by_value>());
         def("getUserConfigDir",         GetUserConfigDirWrapper,        /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific configuration.");
@@ -170,18 +172,24 @@ namespace FreeOrionPython {
         def("issueAllowStockpileProductionOrder",   AIInterface::IssueAllowStockpileProductionOrder, "Orders the item on the production queue at index queueIndex (int) to be enabled (or disabled) to use the imperial stockpile. Returns 1 (int) on success or 0 (int) on failure if the queue index is less than 0 or greater than the largest indexed item on the queue.");
         def("issueCreateShipDesignOrder",           IssueCreateShipDesignOrderWrapper, "Orders the creation of a new ship design with the name (string), description (string), hull (string), parts vector partsVec (StringVec), graphic (string) and model (string). model should be left as an empty string as of this writing. There is currently no easy way to find the id of the new design, though the client's empire should have the new design after this order is issued successfully. Returns 1 (int) on success or 0 (int) on failure if any of the name, description, hull or graphic are empty strings, if the design is invalid (due to not following number and type of slot requirements for the hull) or if creating the design fails for some reason.");
 
+        class_<OrderSet, noncopyable>("OrderSet", no_init)
+            .add_property("size",       &OrderSet::size)
+            .add_property("empty",      &OrderSet::empty)
+        ;
+        def("getOrders",                &AIInterface::IssuedOrders,     return_value_policy<reference_existing_object>(), "Returns the orders the client empire has issued (OrderSet).");
+
         def("sendChatMessage",          AIInterface::SendPlayerChatMessage, "Sends the indicated message (string) to the player with the indicated recipientID (int) or to all players if recipientID is -1.");
         def("sendDiplomaticMessage",    AIInterface::SendDiplomaticMessage);
 
-        def("setSaveStateString",       SetStaticSaveStateString, "Sets the save state string (string). This is a persistant storage space for the AI script to retain state information when the game is saved and reloaded. Any AI state information to be saved should be stored in a single string (likely using Python's pickle module) and stored using this function when the prepareForSave() Python function is called.");
+        def("setSaveStateString",       SetStaticSaveStateString,       "Sets the save state string (string). This is a persistant storage space for the AI script to retain state information when the game is saved and reloaded. Any AI state information to be saved should be stored in a single string (likely using Python's pickle module) and stored using this function when the prepareForSave() Python function is called.");
         def("getSaveStateString",       GetStaticSaveStateString,       return_value_policy<copy_const_reference>(), "Returns the previously-saved state string (string). Can be used to retrieve the last-set save state string at any time, although this string is also passed to the resumeLoadedGame(savedStateString) Python function when a game is loaded, so this function isn't necessary to use if resumeLoadedGame stores the passed string. ");
 
-        def("doneTurn",                 AIInterface::DoneTurn, "Ends the AI player's turn, indicating to the server that all orders have been issued and turn processing may commence.");
-        def("userString",               make_function(&UserString,          return_value_policy<copy_const_reference>()));
-        def("userStringExists",         make_function(&UserStringExists,    return_value_policy<return_by_value>()));
+        def("doneTurn",                 AIInterface::DoneTurn,          "Ends the AI player's turn, indicating to the server that all orders have been issued and turn processing may commence.");
+        def("userString",               make_function(&UserString,      return_value_policy<copy_const_reference>()));
+        def("userStringExists",         make_function(&UserStringExists,return_value_policy<return_by_value>()));
         def("userStringList",           &GetUserStringList);
 
-        def("getGalaxySetupData",       AIInterface::GetGalaxySetupData,    return_value_policy<copy_const_reference>());
+        def("getGalaxySetupData",       AIInterface::GetGalaxySetupData,return_value_policy<copy_const_reference>());
 
         boost::python::scope().attr("INVALID_GAME_TURN") = INVALID_GAME_TURN;
     }
