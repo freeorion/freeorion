@@ -24,9 +24,6 @@
     <Filter Include="Header Files\python">
       <UniqueIdentifier>{c557a17d-9943-4611-b855-9107a2eb8cf0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\UI">
-      <UniqueIdentifier>{03d83d46-a82e-4853-8f25-511d50153b40}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\universe">
       <UniqueIdentifier>{f4507b16-fead-4c05-8cd7-5d33bc56a5ee}</UniqueIdentifier>
     </Filter>
@@ -59,6 +56,9 @@
     </Filter>
     <Filter Include="Source Files\python\AI">
       <UniqueIdentifier>{840c46ce-8edc-4578-83d0-a181cbe74a7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{03b7dbd3-a99a-4b9a-a838-acc16244db37}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -293,7 +293,7 @@
       <Filter>Source Files\python</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\DependencyVersions.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\util</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
