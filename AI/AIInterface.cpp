@@ -255,6 +255,9 @@ namespace AIInterface {
         empire->UpdateProductionQueue();
     }
 
+    OrderSet& IssuedOrders()
+    { return AIClientApp::GetApp()->Orders(); }
+
     int IssueFleetMoveOrder(int fleet_id, int destination_id) {
         auto fleet = GetFleet(fleet_id);
         if (!fleet) {

@@ -24,6 +24,7 @@ class DiplomaticMessage;
 class Universe;
 struct DiplomaticStatusUpdateInfo;
 struct GalaxySetupData;
+class OrderSet;
 
 /** @brief Base class allowing AI to recieve basic game events.
  *
@@ -321,6 +322,7 @@ namespace AIInterface {
     /** @} */
 
     /** \name Issuing orders */ /** @{ */
+    OrderSet& IssuedOrders();
 
     int IssueRenameOrder(int object_id, const std::string& new_name);
     int IssueScrapOrder(const std::vector<int>& object_ids);
