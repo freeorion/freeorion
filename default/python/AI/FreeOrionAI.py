@@ -324,7 +324,6 @@ def generateOrders():  # pylint: disable=invalid-name
             info("Issuing new orders anyway.")
 
     if turn == 1:
-        declare_war_on_all()
         human_player = fo.empirePlayerID(1)
         greet = diplomatic_corp.get_first_turn_greet_message()
         fo.sendChatMessage(human_player,
@@ -373,17 +372,6 @@ def generateOrders():  # pylint: disable=invalid-name
             statprof.start()
         except:
             pass
-
-
-# The following methods should probably be moved to the AIstate module,
-# to keep this module more focused on implementing required interface
-def declare_war_on_all():  # pylint: disable=invalid-name
-    """Used to declare war on all other empires (at start of game)"""
-    my_emp_id = fo.empireID()
-    for emp_id in fo.allEmpireIDs():
-        if emp_id != my_emp_id:
-            msg = fo.diplomaticMessage(my_emp_id, emp_id, fo.diplomaticMessageType.warDeclaration)
-            fo.sendDiplomaticMessage(msg)
 
 
 init_handlers(fo.getOptionsDBOptionStr("ai-config"), fo.getAIDir())
