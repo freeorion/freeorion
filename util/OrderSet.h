@@ -38,13 +38,25 @@ private:
     typedef std::map<int, OrderPtr> OrderMap;
 
 public:
-    typedef OrderMap::const_iterator const_iterator;            ///< defines a public const_iterator type for OrderSet
+    typedef OrderMap::const_iterator const_iterator;
+    typedef OrderMap::iterator iterator;
+    typedef OrderMap::value_type value_type;
+    typedef OrderMap::size_type size_type;
+    typedef OrderMap::key_type key_type;
+    typedef OrderMap::difference_type difference_type;
+    typedef OrderMap::key_compare key_compare;
 
     /** \name Accessors */ //@{
-    const_iterator  begin() const   { return m_orders.begin(); }///< returns the begin const_iterator for the OrderSet
-    const_iterator  end() const     { return m_orders.end(); }  ///< returns the end const_iterator for the OrderSet
-    std::size_t     size() const    { return m_orders.size(); }
-    bool            empty() const   { return m_orders.empty(); }
+    const_iterator  begin() const           { return m_orders.begin(); }///< returns the begin const_iterator for the OrderSet
+    const_iterator  end() const             { return m_orders.end(); }  ///< returns the end const_iterator for the OrderSet
+    iterator        begin()                 { return m_orders.begin(); }///< returns the begin const_iterator for the OrderSet
+    iterator        end()                   { return m_orders.end(); }  ///< returns the end const_iterator for the OrderSet
+    std::size_t     size() const            { return m_orders.size(); }
+    bool            empty() const           { return m_orders.empty(); }
+    iterator        find(const key_type& k) { return m_orders.find(k); }
+    void            erase(const key_type& k){ m_orders.erase(k); }
+    OrderPtr&       operator[](std::size_t i);
+    key_compare     key_comp() const        { return m_orders.key_comp(); }
     //@}
 
     /** \name Mutators */ //@{

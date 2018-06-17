@@ -8,6 +8,7 @@
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/OrderSet.h"
+#include "../../util/Order.h"
 #include "../../Empire/Empire.h"
 #include "../../Empire/EmpireManager.h"
 #include "../../Empire/Diplomacy.h"
@@ -173,9 +174,15 @@ namespace FreeOrionPython {
         def("issueCreateShipDesignOrder",           IssueCreateShipDesignOrderWrapper, "Orders the creation of a new ship design with the name (string), description (string), hull (string), parts vector partsVec (StringVec), graphic (string) and model (string). model should be left as an empty string as of this writing. There is currently no easy way to find the id of the new design, though the client's empire should have the new design after this order is issued successfully. Returns 1 (int) on success or 0 (int) on failure if any of the name, description, hull or graphic are empty strings, if the design is invalid (due to not following number and type of slot requirements for the hull) or if creating the design fails for some reason.");
 
         class_<OrderSet, noncopyable>("OrderSet", no_init)
+            .def(map_indexing_suite<OrderSet>())
             .add_property("size",       &OrderSet::size)
-            .add_property("empty",      &OrderSet::empty)
         ;
+
+        class_<Order, boost::noncopyable>("Order", no_init)
+            .add_property("empireID",   &Order::EmpireID)
+            .add_property("executed",   &Order::Executed)
+        ;
+
         def("getOrders",                &AIInterface::IssuedOrders,     return_value_policy<reference_existing_object>(), "Returns the orders the client empire has issued (OrderSet).");
 
         def("sendChatMessage",          AIInterface::SendPlayerChatMessage, "Sends the indicated message (string) to the player with the indicated recipientID (int) or to all players if recipientID is -1.");

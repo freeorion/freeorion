@@ -4,6 +4,17 @@
 #include "Order.h"
 
 
+namespace {
+    OrderPtr EMPTY_ORDER_PTR;
+}
+
+OrderPtr& OrderSet::operator[](std::size_t i) {
+    auto it = m_orders.find(i);
+    if (it == m_orders.end())
+        return EMPTY_ORDER_PTR;
+    return it->second;
+}
+
 int OrderSet::IssueOrder(const OrderPtr& order)
 { return IssueOrder(OrderPtr(order)); }
 
@@ -13,6 +24,8 @@ int OrderSet::IssueOrder(OrderPtr&& order) {
     // Insert the order into the m_orders map.  forward the rvalue to use the move constructor.
     auto inserted = m_orders.insert({retval, std::forward<OrderPtr>(order)});
     inserted.first->second->Execute();
+
+    TraceLogger() << "OrderSetIssueOrder m_orders size: " << m_orders.size();
 
     return retval;
 }

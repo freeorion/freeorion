@@ -78,7 +78,6 @@ protected:
 
 private:
     virtual void ExecuteImpl() const = 0;
-
     virtual bool UndoImpl() const;
 
     int m_empire = ALL_EMPIRES;
