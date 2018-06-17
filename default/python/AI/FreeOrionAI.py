@@ -313,7 +313,7 @@ def generateOrders():  # pylint: disable=invalid-name
     # TODO: Consider adding an option to clear AI orders after load (must save AIstate at turn start then)
     if fo.currentTurn() == foAIstate.last_turn_played:
         info("The AIstate indicates that this turn was already played.")
-        if not check_bool(get_option_dict().get('replay_turn_after_load', 'False')):
+        if not check_bool(get_option_dict().get('replay_turn_after_load', 'False')) and fo.currentTurn() > 1:
             info("Aborting new order generation. Orders from savegame will still be issued.")
             try:
                 fo.doneTurn()
