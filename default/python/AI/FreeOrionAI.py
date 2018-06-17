@@ -147,6 +147,7 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     diplomatic_corp = diplomatic_corp_configs.get(aggression_trait.key, DiplomaticCorp.DiplomaticCorp)()
     TechsListsAI.test_tech_integrity()
 
+    debug('Size of already issued orders: ' + str(fo.getOrders().size))
 
 def prepareForSave():  # pylint: disable=invalid-name
     """Called by client when the game is about to be saved, to let the Python AI know it should save any AI state
@@ -357,6 +358,9 @@ def generateOrders():  # pylint: disable=invalid-name
             error("Exception %s while trying to %s" % (e, action.__name__), exc_info=True)
     main_timer.stop_print_and_clear()
     turn_timer.stop_print_and_clear()
+    
+    debug('Size of issued orders: ' + str(fo.getOrders().size))
+    
     turn_timer.start("Server_Processing")
 
     try:
