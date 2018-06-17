@@ -1567,11 +1567,12 @@ class ShipDesigner(object):
         return base + species_modifier + tech_bonus
 
     def _calculate_fighter_launch_rate(self, bay_parts, hangar_part_name):
-        hangar_bonus = AIDependencies.HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT.get(hangar_part_name, 0)
-        bay_parts_capacity = 0
+        launch_rate = 0
+        bays_bonus = AIDependencies.HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT.get(hangar_part_name, {})
         for bay_part in bay_parts:
-            bay_parts_capacity += bay_part.capacity
-        return bay_parts_capacity + ( len(bay_parts) * hangar_bonus )
+            launch_rate += bay_part.capacity
+            launch_rate += bays_bonus.get(bay_part.name, 0)
+        return launch_rate
 
     def _calculate_hangar_damage(self, hangar_part, ignore_species=False):
         hangar_name = hangar_part.name
