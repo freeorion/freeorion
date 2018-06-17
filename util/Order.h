@@ -43,8 +43,11 @@ public:
 
     /** \name Accessors */ //@{
     /** Returns the ID of the Empire issuing the order. */
-    int EmpireID() const
-    { return m_empire; }
+    int EmpireID() const { return m_empire; }
+
+    /** Returns true iff this order has been executed (a second execution
+      * indicates server-side execution). */
+    bool Executed() const;
     //@}
 
     /** Executes the order on the Universe and Empires.
@@ -71,10 +74,6 @@ protected:
     /** Verifies that the empire ID in this order is valid and return the Empire pointer.
      *  Throws an std::runtime_error if not valid. */
     Empire* GetValidatedEmpire() const;
-
-    /** Returns true iff this order has been executed (a second execution
-     *  indicates server-side execution). */
-    bool Executed() const;
     //@}
 
 private:
