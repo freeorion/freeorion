@@ -727,13 +727,11 @@ void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 ///////////////////////////////////////
 // class CUIListBox
 ///////////////////////////////////////
-CUIListBox::CUIListBox(void):
+CUIListBox::CUIListBox(void) :
     ListBox(ClientUI::CtrlBorderColor(), ClientUI::CtrlColor())
 {
-    SelRowsChangedSignal.connect(-1,
-        &PlayListSelectSound);
-    DroppedRowSignal.connect(-1,
-        &PlayItemDropSound);
+    SelRowsChangedSignal.connect(-1,    &PlayListSelectSound);
+    DroppedRowSignal.connect(-1,        &PlayItemDropSound);
 }
 
 void CUIListBox::Render() {
