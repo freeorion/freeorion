@@ -919,7 +919,7 @@ class ShipDesigner(object):
         if len(bay_parts) > 0:
             hangar_part_name = None
             for hangar_part_name in hangar_part_names:
-                break;
+                break
             self.design_stats.fighter_launch_rate = self._calculate_fighter_launch_rate(bay_parts, hangar_part_name)
 
         self._apply_hardcoded_effects()
