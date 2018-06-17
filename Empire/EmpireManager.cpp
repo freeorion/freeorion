@@ -322,14 +322,14 @@ void EmpireManager::ResetDiplomacy() {
     // remove messages
     m_diplomatic_messages.clear();
 
-    // set all empires at peace with eachother (but not themselves)
+    // set all empires at war with each other (but not themselves)
     m_empire_diplomatic_statuses.clear();
     for (auto id_empire_1 : m_empire_map) {
         for (auto id_empire_2 : m_empire_map) {
             if (id_empire_1.first == id_empire_2.first)
                 continue;
             const std::pair<int, int> diplo_key = DiploKey(id_empire_1.first, id_empire_2.first);
-            m_empire_diplomatic_statuses[diplo_key] = DIPLO_PEACE;
+            m_empire_diplomatic_statuses[diplo_key] = DIPLO_WAR;
         }
     }
 }
