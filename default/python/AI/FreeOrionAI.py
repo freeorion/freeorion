@@ -304,6 +304,15 @@ def generateOrders():  # pylint: disable=invalid-name
     print "***************************************************************************"
     print "***************************************************************************"
 
+    # Do the war declarations before checking the 'replay_turn_after_load' option, so that if someone loads the
+    # initial galaxy creation autosave the AI's will still declare war
+    if turn == 1:
+        declare_war_on_all()
+        human_player = fo.empirePlayerID(1)
+        greet = diplomatic_corp.get_first_turn_greet_message()
+        fo.sendChatMessage(human_player,
+                           '%s (%s): [[%s]]' % (empire.name, get_trait_name_aggression(foAIstate.character), greet))
+
     # When loading a savegame, the AI will already have issued orders for this turn.
     # To avoid duplicate orders, generally try not to replay turns. However, for debugging
     # purposes it is often useful to replay the turn and observe varying results after
@@ -322,13 +331,6 @@ def generateOrders():  # pylint: disable=invalid-name
             return
         else:
             info("Issuing new orders anyway.")
-
-    if turn == 1:
-        declare_war_on_all()
-        human_player = fo.empirePlayerID(1)
-        greet = diplomatic_corp.get_first_turn_greet_message()
-        fo.sendChatMessage(human_player,
-                           '%s (%s): [[%s]]' % (empire.name, get_trait_name_aggression(foAIstate.character), greet))
 
     foAIstate.prepare_for_new_turn()
     turn_state.state.update()
