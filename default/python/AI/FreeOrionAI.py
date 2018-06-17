@@ -146,7 +146,7 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     global diplomatic_corp
     diplomatic_corp = diplomatic_corp_configs.get(aggression_trait.key, DiplomaticCorp.DiplomaticCorp)()
     TechsListsAI.test_tech_integrity()
-
+    
     debug('Size of already issued orders: ' + str(fo.getOrders().size))
 
 
