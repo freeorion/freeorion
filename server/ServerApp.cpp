@@ -3009,6 +3009,7 @@ void ServerApp::PreCombatProcessTurns() {
     // post-movement visibility update
     m_universe.UpdateEmpireObjectVisibilities();
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
+    m_universe.UpdateEmpireStaleObjectKnowledge();
 
     // SitRep for fleets having arrived at destinations
     for (auto& fleet : fleets) {
@@ -3089,7 +3090,10 @@ void ServerApp::ProcessCombats() {
     DisseminateSystemCombatInfo(combats);
     // update visibilities with any new info gleaned during combat
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
-
+    // update stale object info based on any mid- combat glimpses
+    // before visibiity is totally recalculated in the post combat processing
+    m_universe.UpdateEmpireStaleObjectKnowledge();
+    
     CreateCombatSitReps(combats);
 
     //CleanupSystemCombatInfo(combats); - NOTE: No longer needed since ObjectMap.Clear doesn't release any resources that aren't released in the destructor.
