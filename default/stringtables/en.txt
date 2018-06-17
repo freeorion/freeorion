@@ -9193,9 +9193,6 @@ local condition candidate
 DESC_VAR_ROOT_CANDIDATE
 root condition candidate
 
-DESC_STATISTIC
-statistic
-
 DESC_STAT_TYPE
 stat type
 
