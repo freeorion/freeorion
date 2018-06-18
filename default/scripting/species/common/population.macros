@@ -41,7 +41,7 @@ BAD_POPULATION
             description = "BAD_POPULATION_DESC"
             scope = Source
             activation = Planet
-            priority = [[DEFAULT_PRIORITY]]
+            priority = [[TARGET_POPULATION_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value -0.25*abs(Value) accountinglabel = "BAD_POPULATION_LABEL"
 '''
 
@@ -52,7 +52,7 @@ GOOD_POPULATION
             description = "GOOD_POPULATION_DESC"
             scope = Source
             activation = Planet
-            priority = [[EARLY_TARGET_POPULATION_SCALING_PRIORITY]]
+            priority = [[TARGET_POPULATION_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value +0.25*abs(Value) accountinglabel = "GOOD_POPULATION_LABEL"
 '''
 
