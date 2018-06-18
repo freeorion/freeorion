@@ -78,7 +78,10 @@ def calc_max_pop(planet, species, detail):
 
     tag_list = list(species.tags) if species else []
     pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
-    gaseous_adjustment = AIDependencies.GASEOUS_POP_FACTOR if "GASEOUS" in tag_list else 1.0
+    if planet.type == fo.planetType.gasGiant and "GASEOUS" in tag_list:
+        gaseous_adjustment = AIDependencies.GASEOUS_POP_FACTOR
+    else:
+        gaseous_adjustment = 1.0
 
     base_pop_modified_by_species = 0
     base_pop_not_modified_by_species = 0
