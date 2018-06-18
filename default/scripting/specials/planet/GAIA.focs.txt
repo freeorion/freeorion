@@ -48,7 +48,7 @@ Special
                 Object id = Source.PlanetID
                 Planet environment = Good
             ]
-            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = [
                 SetTargetPopulation value = Value + 3 * Target.HabitableSize accountinglabel = "GAIA_LABEL"
                 SetTargetHappiness value = Value + 5 accountinglabel = "GAIA_LABEL"

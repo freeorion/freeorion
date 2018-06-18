@@ -32,7 +32,7 @@ Special
             scope = Source
             activation = TargetPopulation low = 1
             accountinglabel = "WORLDTREE_LABEL"
-            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1
             
         EffectsGroup

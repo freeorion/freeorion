@@ -7,7 +7,7 @@ Special
         EffectsGroup
             scope = Source
             stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
-            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = [
                 AddSpecial name = "DIM_RIFT_SLAVE_SPECIAL"
                 SetTargetPopulation value = Value - 4
