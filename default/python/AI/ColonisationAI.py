@@ -154,8 +154,10 @@ def calc_max_pop(planet, species, detail):
         detail.append("Lightsensitive Star Bonus_PSM_late(%.1f)" % star_pop_mod)
 
     def max_pop_size():
-        species_effect = (pop_tag_mod - 1) * abs(base_pop_modified_by_species) * gaseous_adjustment
-        base_pop = base_pop_not_modified_by_species + base_pop_modified_by_species + species_effect
+        species_effect = (pop_tag_mod - 1) * abs(base_pop_modified_by_species)
+        gaseous_effect = (gaseous_adjustment - 1) * abs(base_pop_modified_by_species)
+        base_pop = (base_pop_not_modified_by_species + base_pop_modified_by_species
+                    + species_effect + gaseous_effect)
         return planet_size * base_pop + pop_const_mod
 
     if "PHOTOTROPHIC" in tag_list and max_pop_size() > 0:
