@@ -113,7 +113,7 @@ HOMEWORLD_BONUS_POPULATION
             ]
             activation = Planet
             stackinggroup = "HOMEWORLD_STACK"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 2 * Target.HabitableSize accountinglabel = "HOMEWORLD_BONUS"
 '''
 
@@ -132,7 +132,7 @@ HOMEWORLD_GROWTH_FOCUS_BOOST
                 Homeworld
             ]
             stackinggroup = "HOMEWORLD_STACK"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize accountinglabel = "HOMEWORLD_SUPPLY"
 '''
 
