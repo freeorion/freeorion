@@ -146,7 +146,7 @@ SELF_SUSTAINING_BONUS
                 HasTag name = "SELF_SUSTAINING"
             ]
             accountinglabel = "SELF_SUSTAINING_LABEL"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 3 * Target.HabitableSize  // Gets the same bonus as three growth specials
 '''
 
