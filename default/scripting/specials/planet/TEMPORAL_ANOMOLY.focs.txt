@@ -15,12 +15,12 @@ Special
                 Source
                 Focus type = "FOCUS_RESEARCH"
             ]
-            priority = [[EARLY_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_POST_SCALING_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * 25 * [[RESEARCH_PER_POP]]
 
         EffectsGroup
             scope = Object id = Source.PlanetID
-            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_POST_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value - 5 * Target.HabitableSize accountinglabel = "TEMPORAL_ANOMALY_SPECIAL"
     ]
     graphic = "icons/specials_huge/temporal_anomaly.png"

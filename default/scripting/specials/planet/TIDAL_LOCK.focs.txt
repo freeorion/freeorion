@@ -22,7 +22,7 @@ Special
         EffectsGroup
             scope = Object id = Source.PlanetID
 			activation = Species
-            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
+            priority = [[EARLY_TARGET_POPULATION_POST_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value - 1 * Target.HabitableSize accountinglabel = "TIDAL_LOCK_LABEL"
     ]
     graphic = "icons/specials_huge/tidal_lock.png"
