@@ -220,7 +220,7 @@ GASEOUS_BONUS
                 HasTag name = "GASEOUS"
             ]
             accountinglabel = "GASEOUS_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
+            priority = [[TARGET_POPULATION_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value - 0.5*abs(Value)
 '''
 
