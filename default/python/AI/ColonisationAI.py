@@ -80,6 +80,7 @@ def calc_max_pop(planet, species, detail):
     pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
     if planet.type == fo.planetType.gasGiant and "GASEOUS" in tag_list:
         gaseous_adjustment = AIDependencies.GASEOUS_POP_FACTOR
+        detail.append("GASEOUS adjustment: %.2f" % gaseous_adjustment)
     else:
         gaseous_adjustment = 1.0
 
@@ -169,11 +170,12 @@ def calc_max_pop(planet, species, detail):
         base_pop_not_modified_by_species += star_pop_mod
         detail.append("Phototropic Star Bonus_PSM_late(%0.1f)" % star_pop_mod)
 
-    detail.append("MaxPop = baseMaxPop + size*(psm_early + (species_mod - 1)*abs(psm_early) + psm_late)"
-                  " = %d + %d * (%d + (%.2f-1)*abs(%d) + %d) = %.2f" % (
+    detail.append("MaxPop = base + size*[psm_early + species_mod*abs(psm_early) psm_late]")
+    detail.append("       = %.2f + %d * [%.2f + %.2f*abs(%.2f) + %.2f]" % (
                     pop_const_mod, planet_size, base_pop_modified_by_species,
-                    pop_tag_mod, base_pop_modified_by_species, base_pop_not_modified_by_species, max_pop_size()))
-    detail.append("maxPop %.1f" % max_pop_size())
+                    (pop_tag_mod+gaseous_adjustment-2), base_pop_modified_by_species,
+                    base_pop_not_modified_by_species))
+    detail.append("       = %.2f" % max_pop_size())
     return max_pop_size()
 
 
@@ -1600,5 +1602,5 @@ def test_calc_max_pop():
             actual = planet.initialMeterValue(fo.meterType.targetPopulation)
             if actual != predicted:
                 error("Predicted pop of %.2f on %s but actually is %.2f; Details: %s" %
-                      (predicted, planet, actual, detail))
+                      (predicted, planet, actual, "\n".join(detail)))
     chat_human("Finished verification of ColonisationAI.calc_max_pop()")
