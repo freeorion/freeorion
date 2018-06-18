@@ -67,7 +67,7 @@ ENVIRONMENT_MODIFIER
                 Planet
                 Planet environment = Uninhabitable
             ]
-            priority = [[EARLY_TARGET_POPULATION_OVERRIDE_PRIORITY]]
+            priority = [[TARGET_POPULATION_OVERRIDE_PRIORITY]]
             effects = SetTargetPopulation value = -999 accountinglabel = "UNINHABTIABLE_ENVIRONMENT_LABEL"
 
         EffectsGroup
