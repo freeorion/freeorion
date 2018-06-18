@@ -40,7 +40,7 @@ POPULATION_BOOST_ORGANIC
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "@1@_STACK"
             accountinglabel = "GROWTH_SPECIAL_LABEL"
-            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize
 
         EffectsGroup
@@ -50,7 +50,7 @@ POPULATION_BOOST_ORGANIC
                 HasTag name = "ORGANIC"
             ]
             stackinggroup = "@1@_STACK"
-            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize  // Provides the bonus locally, no matter the focus
 '''
 
@@ -67,7 +67,7 @@ POPULATION_BOOST_ROBOTIC
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "@1@_STACK"
             accountinglabel = "GROWTH_SPECIAL_LABEL"
-            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize
 
         EffectsGroup
@@ -77,7 +77,7 @@ POPULATION_BOOST_ROBOTIC
                 HasTag name = "ROBOTIC"
             ]
             stackinggroup = "@1@_STACK"
-            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize  // Provides the bonus locally, no matter the focus
 '''
 
@@ -94,7 +94,7 @@ POPULATION_BOOST_LITHIC
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "@1@_STACK"
             accountinglabel = "GROWTH_SPECIAL_LABEL"
-            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize
 
         EffectsGroup
@@ -104,7 +104,7 @@ POPULATION_BOOST_LITHIC
                 HasTag name = "LITHIC"
             ]
             stackinggroup = "@1@_STACK"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize  // Provides the bonus locally, no matter the focus
 '''
 
