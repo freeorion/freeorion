@@ -137,6 +137,12 @@ def calc_max_pop(planet, species, detail):
     if planet.id in species.homeworlds:
         base_pop_not_modified_by_species += 2
 
+    if AIDependencies.TAG_LIGHT_SENSITIVE in tag_list:
+        star_type = fo.getUniverse().getSystem(planet.systemID).starType
+        star_pop_mod = AIDependencies.POP_MOD_LIGHTSENSITIVE_STAR_MAP.get(star_type, 0)
+        base_pop_not_modified_by_species += star_pop_mod
+        detail.append("Lightsensitive Star Bonus_PSM_late(%.1f)" % star_pop_mod)
+
     def max_pop_size():
         species_effect = (pop_tag_mod - 1) * abs(base_pop_modified_by_species) * gaseous_adjustment
         base_pop = base_pop_not_modified_by_species + base_pop_modified_by_species + species_effect
