@@ -67,6 +67,15 @@ def calc_max_pop(planet, species, detail):
     if planet_env == fo.planetEnvironment.uninhabitable:
         detail.append("Uninhabitable.")
         return 0
+
+    for bldg_id in planet.buildingIDs:
+        building = fo.getUniverse().getBuilding(bldg_id)
+        if not building:
+            continue
+        if building.buildingTypeName == "BLD_GATEWAY_VOID":
+            detail.append("Gateway to the void: Uninhabitable.")
+            return 0
+
     tag_list = list(species.tags) if species else []
     pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
     gaseous_adjustment = AIDependencies.GASEOUS_POP_FACTOR if "GASEOUS" in tag_list else 1.0
