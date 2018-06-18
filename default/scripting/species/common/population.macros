@@ -76,7 +76,7 @@ ENVIRONMENT_MODIFIER
                 Planet
                 Planet environment = Hostile
             ]
-            priority = [[EARLY_PRIORITY]]
+            priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value - 4 * Source.HabitableSize accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
 
         EffectsGroup
@@ -85,7 +85,7 @@ ENVIRONMENT_MODIFIER
                 Planet
                 Planet environment = Poor
             ]
-            priority = [[EARLY_PRIORITY]]
+            priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value - 2 * Source.HabitableSize accountinglabel = "POOR_ENVIRONMENT_LABEL"
 
 /*        EffectsGroup
@@ -94,13 +94,14 @@ ENVIRONMENT_MODIFIER
                 Planet
                 Planet environment = Adequate
             ]
+            priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 0 * Source.HabitableSize accountinglabel = "ADEQUATE_ENVIRONMENT_LABEL"
 */
 
         EffectsGroup
             scope = Source
             activation = Planet environment = Good
-            priority = [[EARLY_PRIORITY]]
+            priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 3 * Target.HabitableSize accountinglabel = "GOOD_ENVIRONMENT_LABEL"
 '''
 
