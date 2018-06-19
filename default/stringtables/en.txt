@@ -1240,6 +1240,9 @@ Start server in hostless mode. Server accepts players in the multiplayer lobby, 
 OPTIONS_DB_SKIP_CHECKSUM
 Skip comparing the resource directory checksums.  This allows faster startup when client and server are on the same machine, using the same resource directory.
 
+OPTIONS_DB_TESTING
+Linux only. AI will output log to console instead file for testing purpose.
+
 OPTIONS_DB_GENERATE_CONFIG_XML
 Uses default settings, settings from any existing config.xml file, and settings given on the command line to generate a config.xml file. This will overwrite the current config.xml file, if it exists.
 

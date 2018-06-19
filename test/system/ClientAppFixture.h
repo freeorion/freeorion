@@ -1,0 +1,29 @@
+#ifndef _ClientAppFixture_h_
+#define _ClientAppFixture_h_
+
+#include "client/ClientApp.h"
+
+class ClientAppFixture : public ClientApp {
+public:
+    ClientAppFixture();
+
+    bool PingLocalHostServer();
+    bool ConnectToLocalHostServer();
+
+    void HostSPGame(unsigned int num_AIs);
+    bool ProcessMessages(const boost::posix_time::ptime& start_time, int max_seconds);
+    bool HandleMessage(Message& msg);
+    void SendTurnOrders();
+    void SaveGame();
+
+    int EffectsProcessingThreads() const override;
+protected:
+    bool          m_game_started;   ///< Is server started the game?
+    std::set<int> m_ai_players;     ///< Ids of AI players in game.
+    std::set<int> m_ai_waiting;     ///< Ids of AI players not yet send orders.
+    bool          m_turn_done;      ///< Is server processed turn?
+    bool          m_save_completed; ///< Is server saved game?
+};
+
+#endif // _ClientAppFixture_h_
+

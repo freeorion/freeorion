@@ -23,6 +23,7 @@ public:
     ~Impl();
 
     bool SetLowPriority(bool low);
+    bool Terminate();
     void Kill();
     void Free();
 
@@ -74,6 +75,24 @@ void Process::Kill() {
     }
     DebugLogger() << "Process::Kill calling RequestTermination()";
     RequestTermination();
+}
+
+bool Process::Terminate() {
+    // Early exit if already killed.
+    if (!m_impl && m_empty && !m_low_priority)
+        return true;
+
+    bool result = true;
+    DebugLogger() << "Process::Terminate";
+    if (m_impl) {
+        DebugLogger() << "Process::Terminate calling m_impl->Terminate()";
+        result = m_impl->Terminate();
+    } else {
+        DebugLogger() << "Process::Terminate found no m_impl";
+    }
+    DebugLogger() << "Process::Terminate calling RequestTermination()";
+    RequestTermination();
+    return result;
 }
 
 void Process::RequestTermination() {
@@ -130,6 +149,12 @@ bool Process::Impl::SetLowPriority(bool low) {
         return (SetPriorityClass(m_process_info.hProcess, BELOW_NORMAL_PRIORITY_CLASS) != 0);
     else
         return (SetPriorityClass(m_process_info.hProcess, NORMAL_PRIORITY_CLASS) != 0);
+}
+
+bool Process::Impl::Terminate() {
+    // ToDo: Use actual WinAPI termination.
+    Kill();
+    return true;
 }
 
 void Process::Impl::Kill() {
@@ -223,6 +248,24 @@ bool Process::Impl::SetLowPriority(bool low) {
         return (setpriority(PRIO_PROCESS, m_process_id, 0) == 0);
 }
 
+bool Process::Impl::Terminate() {
+    if (m_free) {
+        DebugLogger() << "Process::Impl::Terminate called but m_free is true so returning with no action";
+        return true;
+    }
+    int status = -1;
+    DebugLogger() << "Process::Impl::Terminate calling kill(m_process_id, SIGINT)";
+    kill(m_process_id, SIGINT);
+    DebugLogger() << "Process::Impl::Terminate calling waitpid(m_process_id, &status, 0)";
+    waitpid(m_process_id, &status, 0);
+    DebugLogger() << "Process::Impl::Terminate done";
+    if (status != 0) {
+        WarnLogger() << "Process::Impl::Terminate got failure status " << status;
+        return false;
+    }
+    return true;
+}
+
 void Process::Impl::Kill() {
     if (m_free) {
         DebugLogger() << "Process::Impl::Kill called but m_free is true so returning with no action";
@@ -230,7 +273,7 @@ void Process::Impl::Kill() {
     }
     int status;
     DebugLogger() << "Process::Impl::Kill calling kill(m_process_id, SIGKILL)";
-    kill(m_process_id, SIGKILL); 
+    kill(m_process_id, SIGKILL);
     DebugLogger() << "Process::Impl::Kill calling waitpid(m_process_id, &status, 0)";
     waitpid(m_process_id, &status, 0);
     DebugLogger() << "Process::Impl::Kill done";
