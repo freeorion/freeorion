@@ -7566,7 +7566,7 @@ void MapWnd::DispatchFleetsExploring() {
     for (auto it = m_fleets_exploring.begin(); it != m_fleets_exploring.end();) {
         auto fleet = GetFleet(*it);
         if (!fleet || destroyed_objects.count(fleet->ID())) {
-            m_fleets_exploring.erase(it++); //this fleet can't explore anymore
+            it = m_fleets_exploring.erase(it); //this fleet can't explore anymore
         } else {
              if (fleet->MovePath().empty())
                 idle_fleets.insert(fleet->ID());
