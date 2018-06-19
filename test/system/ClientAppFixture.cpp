@@ -10,9 +10,11 @@
 #include "GG/GG/ClrConstants.h"
 
 #include <boost/format.hpp>
+#include <boost/uuid/nil_generator.hpp>
 
 ClientAppFixture::ClientAppFixture() :
-    m_game_started(false)
+    m_game_started(false),
+    m_cookie(boost::uuids::nil_uuid())
 {
 #ifdef FREEORION_LINUX
     // Dirty hack to output log to console.
@@ -36,6 +38,12 @@ bool ClientAppFixture::PingLocalHostServer()
 
 bool ClientAppFixture::ConnectToLocalHostServer()
 { return m_networking->ConnectToLocalHostServer(); }
+
+bool ClientAppFixture::ConnectToServer(const std::string& ip_address)
+{ return m_networking->ConnectToServer(ip_address); }
+
+void ClientAppFixture::DisconnectFromServer()
+{ return m_networking->DisconnectFromServer();  }
 
 void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
     auto game_rules = GetGameRules().GetRulesAsStrings();
@@ -90,6 +98,13 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
     }
 
     m_networking->SendMessage(HostSPGameMessage(setup_data));
+}
+
+void ClientAppFixture::JoinGame() {
+    m_lobby_updated = false;
+    m_networking->SendMessage(JoinGameMessage("TestPlayer",
+                                              Networking::CLIENT_TYPE_HUMAN_PLAYER,
+                                              m_cookie));
 }
 
 bool ClientAppFixture::ProcessMessages(const boost::posix_time::ptime& start_time, int max_seconds) {
@@ -195,6 +210,27 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
     case Message::SAVE_GAME_DATA_REQUEST:
         m_networking->SendMessage(ClientSaveDataMessage(Orders()));
         return true;
+    case Message::JOIN_GAME: {
+        int player_id;
+        ExtractJoinAckMessageData(msg, player_id, m_cookie);
+        m_networking->SetPlayerID(player_id);
+        return true;
+    }
+    case Message::HOST_ID: {
+        int host_id = Networking::INVALID_PLAYER_ID;
+        try {
+            host_id = boost::lexical_cast<int>(msg.Text());
+            m_networking->SetHostPlayerID(host_id);
+        } catch (const boost::bad_lexical_cast& ex) {
+            ErrorLogger() << "HOST_ID: Could not convert \"" << msg.Text() << "\" to host id";
+            return false;
+        }
+        return true;
+    }
+    case Message::LOBBY_UPDATE:
+        m_lobby_updated = true;
+        ExtractLobbyUpdateMessageData(msg, m_lobby_data);
+        return true;
     default:
         ErrorLogger() << "Unknown message type: " << msg.Type();
         return false;
@@ -215,5 +251,19 @@ void ClientAppFixture::SaveGame() {
     m_save_completed = false;
     m_networking->SendMessage(HostSaveGameInitiateMessage(path_string));
 
+}
+
+void ClientAppFixture::UpdateLobby() {
+    m_lobby_updated = false;
+    m_networking->SendMessage(LobbyUpdateMessage(m_lobby_data));
+}
+
+unsigned int ClientAppFixture::GetLobbyAICount() const {
+    unsigned int res = 0;
+    for (const auto& plr: m_lobby_data.m_players) {
+        if (plr.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            ++ res;
+    }
+    return res;
 }
 
