@@ -1506,7 +1506,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
         const Effect::EffectsGroup* last_effects_group   = nullptr;
         Effect::TargetsCauses*      group_targets_causes = nullptr;
 
-        for (const std::pair<Effect::SourcedEffectsGroup, Effect::TargetsAndCause>& targets_cause : targets_causes) {
+        for (const auto& targets_cause : targets_causes) {
             const Effect::SourcedEffectsGroup& sourced_effects_group = targets_cause.first;
             Effect::EffectsGroup* effects_group = sourced_effects_group.effects_group.get();
 

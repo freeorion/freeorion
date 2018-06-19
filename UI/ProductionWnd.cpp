@@ -199,34 +199,32 @@ namespace {
         void PreRender() override;
         void Render() override;
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-
-        void            UpdateQueue();
-        void            ItemQuantityChanged(int quant, int blocksize);
-        void            ItemBlocksizeChanged(int quant, int blocksize);
+        void ItemQuantityChanged(int quant, int blocksize);
+        void ItemBlocksizeChanged(int quant, int blocksize);
 
         static GG::Y    DefaultHeight();
 
         mutable boost::signals2::signal<void(int,int)>    PanelUpdateQuantSignal;
 
     private:
-        void            Draw(GG::Clr clr, bool fill);
-        void            DoLayout();
+        void Draw(GG::Clr clr, bool fill);
+        void DoLayout();
 
-        const ProductionQueue::Element  elem;
-        std::shared_ptr<GG::Label>                      m_name_text;
-        std::shared_ptr<GG::Label>                      m_location_text;
-        std::shared_ptr<GG::Label>                      m_PPs_and_turns_text;
-        std::shared_ptr<GG::Label>                      m_turns_remaining_until_next_complete_text;
-        std::shared_ptr<GG::StaticGraphic>              m_icon;
-        std::shared_ptr<MultiTurnProgressBar>           m_progress_bar;
-        std::shared_ptr<QuantitySelector>               m_quantity_selector;
-        std::shared_ptr<QuantitySelector>               m_block_size_selector;
-        bool                            m_in_progress;
-        int                             m_total_turns;
-        double                          m_turn_spending;
-        double                          m_total_cost;
-        double                          m_completed_progress;
-        bool                            m_order_issuing_enabled;
+        const ProductionQueue::Element          elem;
+        std::shared_ptr<GG::Label>              m_name_text;
+        std::shared_ptr<GG::Label>              m_location_text;
+        std::shared_ptr<GG::Label>              m_PPs_and_turns_text;
+        std::shared_ptr<GG::Label>              m_turns_remaining_until_next_complete_text;
+        std::shared_ptr<GG::StaticGraphic>      m_icon;
+        std::shared_ptr<MultiTurnProgressBar>   m_progress_bar;
+        std::shared_ptr<QuantitySelector>       m_quantity_selector;
+        std::shared_ptr<QuantitySelector>       m_block_size_selector;
+        bool                                    m_in_progress;
+        int                                     m_total_turns;
+        double                                  m_turn_spending;
+        double                                  m_total_cost;
+        double                                  m_completed_progress;
+        bool                                    m_order_issuing_enabled;
     };
 
     /////////////////////////////
