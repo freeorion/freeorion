@@ -1,0 +1,42 @@
+// usually each "level" of fuel allows two jumps fuel
+// (i.e. GREAT_FUEL is similar to GREAT_SUPPLY)
+NO_FUEL
+'''[[FUEL_EFFECTSGROUP(NO,0)]]
+'''
+
+BAD_FUEL
+'''[[FUEL_EFFECTSGROUP(BAD,Value - 1)]]
+'''
+
+AVERAGE_FUEL
+'''
+'''
+
+GOOD_FUEL
+'''[[FUEL_EFFECTSGROUP(GOOD,Value + 1)]]
+'''
+
+GREAT_FUEL
+'''[[FUEL_EFFECTSGROUP(GREAT,Value + 2)]]
+'''
+
+ULTIMATE_FUEL
+'''[[FUEL_EFFECTSGROUP(ULTIMATE,Value + 3)]]
+'''
+
+
+FUEL_EFFECTSGROUP
+'''     EffectsGroup
+            description = "@1@_FUEL_DESC"
+            scope = And [
+                Ship
+                Source
+            ]
+            accountinglabel = "@1@_FUEL_LABEL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetMaxFuel value = @2@
+'''
+
+
+#include "/scripting/common/priorities.macros"
+#include "/scripting/common/misc.macros"

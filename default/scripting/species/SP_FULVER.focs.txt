@@ -1,0 +1,53 @@
+Species
+    name = "SP_FULVER"
+    description = "SP_FULVER_DESC"
+    gameplay_description = "SP_FULVER_GAMEPLAY_DESC"
+    Playable
+    //Native
+    CanProduceShips
+    CanColonize
+
+    // TODO: BAD_HAPPINESS
+    // Future and change-oriented: TELEPATHIC, GOOD_WEAPONS,_STOCKPILE
+    // Balancing; instead of GOOD_ATTACKTROOPS: GREAT_FUEL
+    // bad at preserving knowledge or society: BAD_RESEARCH,_DEFENSE_TROOPS
+    // Never satisfied: BAD_HAPPINESS
+    tags = [ "LITHIC" "GOOD_STOCKPILE" "GOOD_WEAPONS" "BAD_RESEARCH" "AVERAGE_SUPPLY" "GREAT_FUEL" "TELEPATHIC" "PEDIA_LITHIC_SPECIES_CLASS"]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_STOCKPILE"
+
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[BAD_RESEARCH]]
+        [[GOOD_STOCKPILE]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[AVERAGE_OFFENSE_TROOPS]]
+        [[GOOD_WEAPONS]]
+        [[GREAT_FUEL]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[LARGE_PLANET]]
+        [[NARROW_EP]]
+        [[STANDARD_SHIP_SHIELDS]]
+    ]
+
+    [[TUNDRA_NARROW_EP]]
+
+    graphic = "icons/species/insectoid-01.png"
+
+#include "common/*.macros"
+
+#include "/scripting/common/*.macros"

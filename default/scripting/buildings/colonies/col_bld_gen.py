@@ -22,6 +22,7 @@ species_list = [
     ("SP_EAXAW", "icons/species/eaxaw.png"),
     ("SP_EGASSEM", "icons/species/egassem.png"),
     ("SP_ETTY", "icons/species/etty.png"),
+    ("SP_FULVER", "icons/species/insectoid-01.png"),
     ("SP_FURTHEST", "icons/species/furthest.png"),
     ("SP_GEORGE", "icons/species/george.png"),
     ("SP_GYSACHE", "icons/species/gysache.png"),
