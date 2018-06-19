@@ -183,7 +183,7 @@ void StringTable_::Load(std::shared_ptr<const StringTable_> lookups_fallback_tab
                 {
                     if (ref_check_it->second <= position) {
                         //DebugLogger() << "Popping from cyclic ref check: " << ref_check_it->first;
-                        cyclic_reference_check.erase(ref_check_it++);
+                        ref_check_it = cyclic_reference_check.erase(ref_check_it);
                     } else if (ref_check_it->second < position + match.length()) {
                         ErrorLogger() << "Expansion error in key expansion: [[" << ref_check_it->first << "]] having end " << ref_check_it->second;
                         ErrorLogger() << "         currently at expansion text position " << position << " with match length: " << match.length();
