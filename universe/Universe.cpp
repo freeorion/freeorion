@@ -2566,7 +2566,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
         for (auto stale_it = stale_set.begin(); stale_it != stale_set.end();) {
             int object_id = *stale_it;
             if (vis_map.count(object_id) || destroyed_set.count(object_id))
-                stale_set.erase(stale_it++);
+                stale_it = stale_set.erase(stale_it);
             else
                 ++stale_it;
         }
