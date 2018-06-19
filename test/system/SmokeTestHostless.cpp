@@ -25,7 +25,8 @@ namespace {
 BOOST_FIXTURE_TEST_SUITE(SmokeTestHostless, ClientAppFixture)
 
 /**
- * - Do start a server with hostless mode with save enabled if `FO_TEST_HOSTLESS_SAVE` was set.
+ * - Do start a server with hostless mode if `FO_TEST_HOSTLESS_LAUNCH_SERVER`  with save enabled
+ *   if `FO_TEST_HOSTLESS_SAVE` was set.
  * - Do connect to lobby to localhost server as a Player.
  * - Expect successfully connection to localhost server.
  * - Do add `FO_TEST_HOSTLESS_AIS` AIs to lobby (by default 2).
@@ -49,6 +50,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
     unsigned int num_games = 2;
     int num_turns = 2;
     bool save_game = true;
+    bool launch_server = true;
 
     const char *env_num_AIs = std::getenv("FO_TEST_HOSTLESS_AIS");
     if (env_num_AIs) {
@@ -77,6 +79,15 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         }
     }
 
+    const char *env_launch_server = std::getenv("FO_TEST_HOSTLESS_LAUNCH_SERVER");
+    if (env_launch_server) {
+        try {
+            launch_server = boost::lexical_cast<int>(env_launch_server) != 0;
+        } catch (...) {
+            // ignore
+        }
+    }
+
     const char *env_games = std::getenv("FO_TEST_HOSTLESS_GAMES");
     if (env_games) {
         try {
@@ -86,37 +97,40 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         }
     }
 
-    BOOST_REQUIRE(!PingLocalHostServer());
+    boost::optional<Process> server;
+    if (launch_server) {
+        BOOST_REQUIRE(!PingLocalHostServer());
 
-    std::string SERVER_CLIENT_EXE = ServerClientExe();
+        std::string SERVER_CLIENT_EXE = ServerClientExe();
 
-    BOOST_TEST_MESSAGE(SERVER_CLIENT_EXE);
+        BOOST_TEST_MESSAGE(SERVER_CLIENT_EXE);
 
 #ifdef FREEORION_MACOSX
-    // On OSX set environment variable DYLD_LIBRARY_PATH to python framework folder
-    // bundled with app, so the dynamic linker uses the bundled python library.
-    // Otherwise the dynamic linker will look for a correct python lib in system
-    // paths, and if it can't find it, throw an error and terminate!
-    // Setting environment variable here, spawned child processes will inherit it.
-    setenv("DYLD_LIBRARY_PATH", GetPythonHome().string().c_str(), 1);
+        // On OSX set environment variable DYLD_LIBRARY_PATH to python framework folder
+        // bundled with app, so the dynamic linker uses the bundled python library.
+        // Otherwise the dynamic linker will look for a correct python lib in system
+        // paths, and if it can't find it, throw an error and terminate!
+        // Setting environment variable here, spawned child processes will inherit it.
+        setenv("DYLD_LIBRARY_PATH", GetPythonHome().string().c_str(), 1);
 #endif
 
-    std::vector<std::string> args;
-    args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
-    args.push_back("--hostless");
-    args.push_back("--save.auto.hostless.enabled");
-    args.push_back(save_game ? "1" : "0");
-    args.push_back("--testing");
+        std::vector<std::string> args;
+        args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
+        args.push_back("--hostless");
+        args.push_back("--save.auto.hostless.enabled");
+        args.push_back(save_game ? "1" : "0");
+        args.push_back("--testing");
 
 #ifdef FREEORION_LINUX
-    // Dirty hack to output log to console.
-    args.push_back("--log-file");
-    args.push_back("/proc/self/fd/1");
+        // Dirty hack to output log to console.
+        args.push_back("--log-file");
+        args.push_back("/proc/self/fd/1");
 #endif
 
-    Process server = Process(SERVER_CLIENT_EXE, args);
+        server = Process(SERVER_CLIENT_EXE, args);
 
-    BOOST_TEST_MESSAGE("Server started.");
+        BOOST_TEST_MESSAGE("Server started.");
+    }
 
     for (unsigned int g = 0; g < num_games; ++g) {
         BOOST_TEST_MESSAGE(g << "Game. Connecting to server...");
@@ -230,7 +244,8 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         while (ProcessMessages(start_time, MAX_WAITING_SEC));
     }
 
-    BOOST_REQUIRE(server.Terminate());
+    if (launch_server && server)
+        BOOST_REQUIRE(server->Terminate());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
