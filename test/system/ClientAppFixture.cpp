@@ -43,7 +43,7 @@ bool ClientAppFixture::ConnectToServer(const std::string& ip_address)
 { return m_networking->ConnectToServer(ip_address); }
 
 void ClientAppFixture::DisconnectFromServer()
-{ return m_networking->DisconnectFromServer();  }
+{ return m_networking->DisconnectFromServer(); }
 
 void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
     auto game_rules = GetGameRules().GetRulesAsStrings();

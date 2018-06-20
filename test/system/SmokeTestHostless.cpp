@@ -39,7 +39,7 @@ BOOST_FIXTURE_TEST_SUITE(SmokeTestHostless, ClientAppFixture)
  * - Do disconnect from server.
  * - Do reconnect to server until number of played games reach `FO_TEST_HOSTLESS_GAMES`.
  * - Expect got to lobby.
- * - Expect AIs was preserved.
+ * - Expect number of AIs was preserved.
  * - Do repeat game steps.
  * - Expect all games processed correctly.
  * - Do shut down server.
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
     }
 
     for (unsigned int g = 0; g < num_games; ++g) {
-        BOOST_TEST_MESSAGE(g << "Game. Connecting to server...");
+        BOOST_TEST_MESSAGE("Game " << g << ". Connecting to server...");
 
         BOOST_REQUIRE(ConnectToServer("localhost"));
 
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
             BOOST_REQUIRE(GetLobbyAICount() == num_AIs);
 
         } else {
-            // other game should retain AI from previous game
+            // other game should retain number of AIs from previous game
             BOOST_REQUIRE(GetLobbyAICount() == num_AIs);
         }
 
