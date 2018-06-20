@@ -25,8 +25,8 @@ namespace {
 BOOST_FIXTURE_TEST_SUITE(SmokeTestHostless, ClientAppFixture)
 
 /**
- * - Do start a server with hostless mode if `FO_TEST_HOSTLESS_LAUNCH_SERVER`  with save enabled
- *   if `FO_TEST_HOSTLESS_SAVE` was set.
+ * - Do start a server with hostless mode if `FO_TEST_HOSTLESS_LAUNCH_SERVER` was set with save
+ *   enabled if `FO_TEST_HOSTLESS_SAVE` was set.
  * - Do connect to lobby to localhost server as a Player.
  * - Expect successfully connection to localhost server.
  * - Do add `FO_TEST_HOSTLESS_AIS` AIs to lobby (by default 2).
@@ -38,9 +38,10 @@ BOOST_FIXTURE_TEST_SUITE(SmokeTestHostless, ClientAppFixture)
  * - Expect turns're processing without error.
  * - Do disconnect from server.
  * - Do reconnect to server until number of played games reach `FO_TEST_HOSTLESS_GAMES`.
- * - Except got to lobby.
+ * - Expect got to lobby.
+ * - Expect AIs was preserved.
  * - Do repeat game steps.
- * - Except all games processed correctly.
+ * - Expect all games processed correctly.
  * - Do shut down server.
  * - Expect that serve and AIs were shut down.
  */
