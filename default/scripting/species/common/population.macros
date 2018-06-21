@@ -41,7 +41,7 @@ BAD_POPULATION
             description = "BAD_POPULATION_DESC"
             scope = Source
             activation = Planet
-            priority = [[DEFAULT_PRIORITY]]
+            priority = [[TARGET_POPULATION_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value -0.25*abs(Value) accountinglabel = "BAD_POPULATION_LABEL"
 '''
 
@@ -52,7 +52,7 @@ GOOD_POPULATION
             description = "GOOD_POPULATION_DESC"
             scope = Source
             activation = Planet
-            priority = [[EARLY_TARGET_POPULATION_SCALING_PRIORITY]]
+            priority = [[TARGET_POPULATION_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value +0.25*abs(Value) accountinglabel = "GOOD_POPULATION_LABEL"
 '''
 
@@ -67,7 +67,7 @@ ENVIRONMENT_MODIFIER
                 Planet
                 Planet environment = Uninhabitable
             ]
-            priority = [[EARLY_TARGET_POPULATION_OVERRIDE_PRIORITY]]
+            priority = [[TARGET_POPULATION_OVERRIDE_PRIORITY]]
             effects = SetTargetPopulation value = -999 accountinglabel = "UNINHABTIABLE_ENVIRONMENT_LABEL"
 
         EffectsGroup
@@ -76,7 +76,7 @@ ENVIRONMENT_MODIFIER
                 Planet
                 Planet environment = Hostile
             ]
-            priority = [[EARLY_PRIORITY]]
+            priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value - 4 * Source.HabitableSize accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
 
         EffectsGroup
@@ -85,7 +85,7 @@ ENVIRONMENT_MODIFIER
                 Planet
                 Planet environment = Poor
             ]
-            priority = [[EARLY_PRIORITY]]
+            priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value - 2 * Source.HabitableSize accountinglabel = "POOR_ENVIRONMENT_LABEL"
 
 /*        EffectsGroup
@@ -94,13 +94,14 @@ ENVIRONMENT_MODIFIER
                 Planet
                 Planet environment = Adequate
             ]
+            priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 0 * Source.HabitableSize accountinglabel = "ADEQUATE_ENVIRONMENT_LABEL"
 */
 
         EffectsGroup
             scope = Source
             activation = Planet environment = Good
-            priority = [[EARLY_PRIORITY]]
+            priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 3 * Target.HabitableSize accountinglabel = "GOOD_ENVIRONMENT_LABEL"
 '''
 
@@ -112,7 +113,7 @@ HOMEWORLD_BONUS_POPULATION
             ]
             activation = Planet
             stackinggroup = "HOMEWORLD_STACK"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 2 * Target.HabitableSize accountinglabel = "HOMEWORLD_BONUS"
 '''
 
@@ -131,7 +132,7 @@ HOMEWORLD_GROWTH_FOCUS_BOOST
                 Homeworld
             ]
             stackinggroup = "HOMEWORLD_STACK"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize accountinglabel = "HOMEWORLD_SUPPLY"
 '''
 
@@ -145,7 +146,7 @@ SELF_SUSTAINING_BONUS
                 HasTag name = "SELF_SUSTAINING"
             ]
             accountinglabel = "SELF_SUSTAINING_LABEL"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 3 * Target.HabitableSize  // Gets the same bonus as three growth specials
 '''
 
@@ -173,7 +174,7 @@ PHOTOTROPHIC_BONUS
                 TargetPopulation low = 0
             ]
             accountinglabel = "VERY_BRIGHT_STAR"
-            priority = [[EARLY_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 3 * Source.HabitableSize
 
         EffectsGroup
@@ -185,7 +186,7 @@ PHOTOTROPHIC_BONUS
                 TargetPopulation low = 0
             ]
             accountinglabel = "BRIGHT_STAR"
-            priority = [[EARLY_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1.5 * Source.HabitableSize
 
         EffectsGroup
@@ -196,7 +197,7 @@ PHOTOTROPHIC_BONUS
                 Star type = [Red Neutron]
             ]
             accountinglabel = "DIM_STAR"
-            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = SetTargetPopulation value = Value - 1 * Source.HabitableSize
 
         EffectsGroup
@@ -207,7 +208,7 @@ PHOTOTROPHIC_BONUS
                 Star type = [BlackHole NoStar]
             ]
             accountinglabel = "NO_STAR"
-            priority = [[EARLY_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = SetTargetPopulation value = Value - 10 * Source.HabitableSize
 '''
 
@@ -219,7 +220,7 @@ GASEOUS_BONUS
                 HasTag name = "GASEOUS"
             ]
             accountinglabel = "GASEOUS_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
+            priority = [[TARGET_POPULATION_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value - 0.5*abs(Value)
 '''
 

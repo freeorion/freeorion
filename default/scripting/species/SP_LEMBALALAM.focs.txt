@@ -59,7 +59,7 @@ Species
                 Planet
                 Not Planet environment = [ uninhabitable ]
             ]
-            priority = [[EARLY_TARGET_POPULATION_OVERRIDE_PRIORITY]]
+            priority = [[TARGET_POPULATION_OVERRIDE_PRIORITY]]
             effects =
                 SetTargetPopulation value = 5 accountinglabel = "IMMORTAL_LABEL"
 

@@ -1,15 +1,29 @@
 // Default = 100
 
-EARLY_TARGET_POPULATION_PRIORITY
+TARGET_POPULATION_BEFORE_SCALING_PRIORITY
 '''10'''
 
-EARLY_TARGET_POPULATION_SCALING_PRIORITY
+// 11 reserved for future use
+
+TARGET_POPULATION_SCALING_PRIORITY
 '''12'''
 
-EARLY_TARGET_POPULATION_OVERRIDE_PRIORITY
-'''15'''
+// 13 reserved for future use
+
+TARGET_POPULATION_AFTER_SCALING_PRIORITY
+'''14'''
+
+// 15 reserved for future use
+
+TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY
+'''16'''
+
+TARGET_POPULATION_OVERRIDE_PRIORITY
+'''17'''
 
 
+// Current population effects should happen after target population effects
+// But before industry/research effects which may depend on current population
 EARLY_FIRST_NATURAL_POPULATION_PRIORITY
 '''18'''
 

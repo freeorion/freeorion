@@ -36,7 +36,7 @@ Species
                 Star type = [Blue]
             ]
             accountinglabel = "VERY_BRIGHT_STAR"
-            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value - 2 * Source.HabitableSize
 
         EffectsGroup
@@ -46,7 +46,7 @@ Species
                 Star type = [White]
             ]
             accountinglabel = "BRIGHT_STAR"
-            priority = [[EARLY_TARGET_POPULATION_PRIORITY]]
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value - Source.HabitableSize
 
         // not for description

@@ -53,7 +53,7 @@ XENOPHOBIC_SELF
             ]
             stackinggroup = "XENOPHOBIC_POP_SELF"
             accountinglabel = "XENOPHOBIC_LABEL_SELF"
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = SetTargetPopulation value = Value - min(
                     max(Value, 0) * 0.4 * (1 - 0.8^[[XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT]]),
                     3 * Target.HabitableSize  // Cap malus at the self-sustaining bonus

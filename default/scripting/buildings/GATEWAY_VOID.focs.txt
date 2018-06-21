@@ -34,7 +34,7 @@ BuildingType
                 InSystem id = Source.SystemID
             ]
             activation = Turn low = Source.CreationTurn + 1
-            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
+            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]  // Overrides both target and current population effects
             effects = [
                 SetTargetPopulation value = min(Value, 0)
                 SetPopulation value = min(Value, 0)
