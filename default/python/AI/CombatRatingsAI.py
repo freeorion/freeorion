@@ -411,3 +411,18 @@ def rating_needed(target, current=0):
         return 0
     else:
         return target + current - 2 * (target * current)**0.5
+
+def rating_difference(first_rating, second_rating):
+
+    """Estimate the rating of an additional force rating needed to be added to the lesser of the given ratings
+     in order for it to match the the larger of the given ratings.
+
+    :param first_rating: rating of a first force
+    :type first_rating: float
+    :param second_rating: rating of a second force
+    :type second_rating: float
+    :return: Estimated missing rating for the lesser force to match the greater
+    :rtype: float
+    """
+
+    return rating_needed(max(first_rating, second_rating), min(first_rating, second_rating))
