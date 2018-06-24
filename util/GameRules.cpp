@@ -117,7 +117,7 @@ void GameRules::ClearExternalRules() {
     while (it != m_game_rules.end()) {
         bool engine_internal = it->second.storable; // OptionsDB::Option member used to store if this option is engine-internal
         if (!engine_internal)
-            m_game_rules.erase((it++)->first);      // note postfix operator++
+            it = m_game_rules.erase(it);
         else
             ++it;
     }
