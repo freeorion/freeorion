@@ -14778,7 +14778,7 @@ FOCUS_PROTECTION_LABEL
 Protection Focus
 
 GASEOUS_LABEL
-Bad Environment
+Gas Giant Environment
 
 XENOPHOBIC_LABEL_SELF
 Xenophobic Frenzy (other species nearby)
