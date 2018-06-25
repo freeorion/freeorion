@@ -1668,6 +1668,13 @@ std::vector<Font::LineData> Font::DetermineLines(
     const std::string& text, Flags<TextFormat>& format, X box_width,
     const std::vector<std::shared_ptr<TextElement>>& text_elements) const
 {
+    // HACK - Workaround for #2166
+    // On OSX, right clicking an unowned planet at game start may result in utf8::invalid_utf8 or utf8::not_enough_room
+    if (!utf8::is_valid(text.begin(), text.end())) {
+        std::cerr << "Invalid UTF8 in text: " << text;
+        return std::vector<Font::LineData>{};
+    }
+
     ValidateFormat(format);
 
     RenderState render_state;
