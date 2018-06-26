@@ -412,16 +412,16 @@ def rating_needed(target, current=0):
     else:
         return target + current - 2 * (target * current)**0.5
 
+
 def rating_difference(first_rating, second_rating):
 
-    """Estimate the rating of an additional force rating needed to be added to the lesser of the given ratings
-     in order for it to match the the larger of the given ratings.
+    """Return the absolute nonlinear difference between ratings.
 
     :param first_rating: rating of a first force
     :type first_rating: float
     :param second_rating: rating of a second force
     :type second_rating: float
-    :return: Estimated missing rating for the lesser force to match the greater
+    :return: Estimated rating by which the greater force (nonlinearly) exceeds the lesser
     :rtype: float
     """
 
