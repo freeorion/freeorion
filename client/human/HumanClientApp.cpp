@@ -514,7 +514,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     }
 
     bool ended_with_ok = false;
-    std::vector<std::pair<std::string, std::string>> game_rules = GetGameRules().GetRulesAsStrings();
+    auto game_rules = GetGameRules().GetRulesAsStrings();
     if (!quickstart) {
         auto galaxy_wnd = GG::Wnd::Create<GalaxySetupWnd>();
         galaxy_wnd->Run();
@@ -541,11 +541,11 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
         // GalaxySetupData
         setup_data.SetSeed(GetOptionsDB().Get<std::string>("setup.seed"));
-        setup_data.m_size = GetOptionsDB().Get<int>("setup.star.count");
-        setup_data.m_shape = GetOptionsDB().Get<Shape>("setup.galaxy.shape");
-        setup_data.m_age = GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
-        setup_data.m_starlane_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
-        setup_data.m_planet_density = GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density");
+        setup_data.m_size =             GetOptionsDB().Get<int>("setup.star.count");
+        setup_data.m_shape =            GetOptionsDB().Get<Shape>("setup.galaxy.shape");
+        setup_data.m_age =              GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
+        setup_data.m_starlane_freq =    GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
+        setup_data.m_planet_density =   GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density");
         setup_data.m_specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency");
         setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");
         setup_data.m_native_freq =      GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
