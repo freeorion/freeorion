@@ -782,6 +782,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         for sid, alloc, rvp, take_any, max_alloc in allocation_helper.allocation_by_groups.get(cat, []):
             if remaining_mil_rating <= 0:
                 break
+            alloc = min(remaining_mil_rating, alloc)
             base_allocs.add(sid)
             remaining_mil_rating = rating_difference(remaining_mil_rating,  alloc)
     for cat in ['otherTargets', 'accessibleTargets', 'exploreTargets']:
