@@ -183,7 +183,10 @@ class AllocationHelper(object):
         tup = (sys_id, min_rating, min_rating_vs_planets, take_any, max_rating)
         self.allocations.append(tup)
         self.allocation_by_groups.setdefault(group, []).append(tup)
-        self._remaining_rating = rating_difference(self._remaining_rating,  min_rating)
+        if self._remaining_rating <= min_rating:
+            self._remaining_rating = 0
+        else:
+            self._remaining_rating = rating_difference(self._remaining_rating, min_rating)
 
 
 class Allocator(object):
