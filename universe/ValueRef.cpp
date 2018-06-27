@@ -495,7 +495,7 @@ if (m_ref_type == EFFECT_TARGET_VALUE_REFERENCE) {                     \
 template <>
 PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     IF_CURRENT_VALUE(PlanetSize)
 
@@ -528,7 +528,7 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
 template <>
 PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     IF_CURRENT_VALUE(PlanetType)
 
@@ -567,7 +567,7 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
 template <>
 PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     IF_CURRENT_VALUE(PlanetEnvironment)
 
@@ -594,7 +594,7 @@ PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& cont
 template <>
 UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     IF_CURRENT_VALUE(UniverseObjectType)
 
@@ -626,7 +626,7 @@ UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& co
 template <>
 StarType Variable<StarType>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     IF_CURRENT_VALUE(StarType)
 
@@ -659,8 +659,6 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
 template <>
 Visibility Variable<Visibility>::Eval(const ScriptingContext& context) const
 {
-    // const std::string& property_name = m_property_name.back();
-
     IF_CURRENT_VALUE(Visibility)
 
     // As of this writing, there are no properties of objects that directly
@@ -675,7 +673,7 @@ Visibility Variable<Visibility>::Eval(const ScriptingContext& context) const
 template <>
 double Variable<double>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     IF_CURRENT_VALUE(float)
 
@@ -779,7 +777,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 template <>
 int Variable<int>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     IF_CURRENT_VALUE(int)
 
@@ -1016,10 +1014,9 @@ template <>
 std::vector<std::string> Variable<std::vector<std::string>>::Eval(
     const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     IF_CURRENT_VALUE(std::vector<std::string>)
-
 
     if (m_ref_type == NON_OBJECT_REFERENCE) {
         // add more non-object reference int functions here
@@ -1081,7 +1078,7 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
 template <>
 std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     IF_CURRENT_VALUE(std::string)
 
