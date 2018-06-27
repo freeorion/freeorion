@@ -1220,9 +1220,15 @@ namespace {
         } else if (item_name == "ENC_GAME_RULES") {
             const GameRules& rules = GetGameRules();
 
-            for (auto& rule : rules)
-                detailed_description += UserString(rule.first) + " : "
-                                     + rule.second.ValueToString() + "\n";
+            for (auto& rule : rules) {
+                if (rule.second.ValueIsDefault()) {
+                    detailed_description += UserString(rule.first) + " : "
+                                         + rule.second.ValueToString() + "\n";
+                } else {
+                    detailed_description += "<u>" + UserString(rule.first) + " : "
+                                         + rule.second.ValueToString() + "</u>\n";
+                }
+            }
             return;
         }
 

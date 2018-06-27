@@ -362,6 +362,7 @@ public:
         bool            SetToDefault();
         std::string     ValueToString() const;
         std::string     DefaultValueToString() const;
+        bool            ValueIsDefault() const;
 
         std::string     name;           ///< the name of the option
         char            short_name;     ///< the one character abbreviation of the option

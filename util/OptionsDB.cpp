@@ -122,13 +122,7 @@ bool OptionsDB::Option::SetFromString(const std::string& str) {
 }
 
 bool OptionsDB::Option::SetToDefault() {
-    bool changed = false;
-    if (!flag) {
-        changed = validator->String(value) != validator->String(default_value);
-    } else {
-        changed = (boost::lexical_cast<std::string>(boost::any_cast<bool>(value))
-                   != boost::lexical_cast<std::string>(boost::any_cast<bool>(default_value)));
-    }
+    bool changed = !ValueIsDefault();
     if (changed) {
         value = default_value;
         (*option_changed_sig_ptr)();
@@ -149,6 +143,9 @@ std::string OptionsDB::Option::DefaultValueToString() const {
     else
         return boost::lexical_cast<std::string>(boost::any_cast<bool>(default_value));
 }
+
+bool OptionsDB::Option::ValueIsDefault() const
+{ return ValueToString() == DefaultValueToString(); }
 
 
 /////////////////////////////////////////////
