@@ -105,7 +105,7 @@ void GLClientAndServerBufferBase<vtype>::createServerBuffer()
     glBindBuffer(GL_ARRAY_BUFFER, b_name);
     glBufferData(GL_ARRAY_BUFFER,
                  b_data.size() * sizeof(vtype),
-                 &b_data[0],
+                 b_data.empty() ? nullptr : &b_data[0],
                  GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -136,7 +136,7 @@ void GLRGBAColorBuffer::activate() const
         glColorPointer(4, GL_UNSIGNED_BYTE, 0, nullptr);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     } else {
-        glColorPointer(4, GL_UNSIGNED_BYTE, 0, &b_data[0]);
+        glColorPointer(4, GL_UNSIGNED_BYTE, 0, b_data.empty() ? nullptr: &b_data[0]);
     }
 }
 
@@ -171,7 +171,7 @@ void GL2DVertexBuffer::activate() const
         glVertexPointer(2, GL_FLOAT, 0, nullptr);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     } else {
-        glVertexPointer(2, GL_FLOAT, 0, &b_data[0]);
+        glVertexPointer(2, GL_FLOAT, 0, b_data.empty() ? nullptr: &b_data[0]);
     }
 }
 
@@ -190,7 +190,7 @@ void GLTexCoordBuffer::activate() const
         glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     } else {
-        glTexCoordPointer(2, GL_FLOAT, 0, &b_data[0]);
+        glTexCoordPointer(2, GL_FLOAT, 0, b_data.empty() ? nullptr: &b_data[0]);
     }
 }
 
@@ -212,7 +212,7 @@ void GL3DVertexBuffer::activate() const
         glVertexPointer(3, GL_FLOAT, 0, nullptr);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     } else {
-        glVertexPointer(3, GL_FLOAT, 0, &b_data[0]);
+        glVertexPointer(3, GL_FLOAT, 0, b_data.empty() ? nullptr: &b_data[0]);
     }
 }
 
@@ -231,7 +231,7 @@ void GLNormalBuffer::activate() const
         glNormalPointer(GL_FLOAT, 0, nullptr);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     } else {
-        glNormalPointer(GL_FLOAT, 0, &b_data[0]);
+        glNormalPointer(GL_FLOAT, 0, b_data.empty() ? nullptr: &b_data[0]);
     }
 }
 
