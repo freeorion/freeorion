@@ -41,6 +41,9 @@ namespace parse { namespace detail {
                         |   tok.Cos_    [ _c = ValueRef::COSINE ]
                         |   tok.Log_    [ _c = ValueRef::LOGARITHM ]
                         |   tok.Abs_    [ _c = ValueRef::ABS ]
+                        |   tok.Round_  [ _c = ValueRef::ROUND_NEAREST ]
+                        |   tok.Ceil_   [ _c = ValueRef::ROUND_UP ]
+                        |   tok.Floor_  [ _c = ValueRef::ROUND_DOWN ]
                     )
                     >> ('(' > expr > ')') [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass))) ]
                 )

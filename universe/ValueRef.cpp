@@ -3027,7 +3027,7 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
         }
 
         case NEGATE:
-            return -(LHS()->Eval(context));                     break;
+            return -(LHS()->Eval(context)); break;
 
         case EXPONENTIATE: {
             double op2 = RHS()->Eval(context);
@@ -3057,10 +3057,10 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
         }
 
         case SINE:
-            return std::sin(LHS()->Eval(context));              break;
+            return std::sin(LHS()->Eval(context)); break;
 
         case COSINE:
-            return std::cos(LHS()->Eval(context));              break;
+            return std::cos(LHS()->Eval(context)); break;
 
         case MINIMUM:
         case MAXIMUM: {
@@ -3130,6 +3130,19 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
             }
         }
 
+        case ROUND_NEAREST: {
+            return std::round(LHS()->Eval(context));
+            break;
+        }
+        case ROUND_UP: {
+            return std::ceil(LHS()->Eval(context));
+            break;
+        }
+        case ROUND_DOWN: {
+            return std::floor(LHS()->Eval(context));
+            break;
+        }
+
         default:    break;
     }
 
@@ -3164,7 +3177,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
         }
 
         case NEGATE:
-            return -LHS()->Eval(context);                           break;
+            return -LHS()->Eval(context); break;
 
         case EXPONENTIATE: {
             double op2 = RHS()->Eval(context);
@@ -3237,6 +3250,14 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
             if (!vr)
                 return 0;
             return vr->Eval(context);
+            break;
+        }
+
+        case ROUND_NEAREST:
+        case ROUND_UP:
+        case ROUND_DOWN: {
+            // integers don't need to be rounded...
+            return LHS()->Eval(context);
             break;
         }
 

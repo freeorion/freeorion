@@ -52,6 +52,7 @@
     (Capture)                                   \
     (CaptureResult)                             \
     (Category)                                  \
+    (Ceil)                                      \
     (Class)                                     \
     (ClockwiseNextPlanetType)                   \
     (Colony)                                    \
@@ -128,6 +129,7 @@
     (Fleet)                                     \
     (FleetID)                                   \
     (FleetSupplyableByEmpire)                   \
+    (Floor)                                     \
     (Foci)                                      \
     (Focus)                                     \
     (FocusType)                                 \
@@ -351,6 +353,7 @@
     (Retain)                                    \
     (RMS)                                       \
     (RootCandidate)                             \
+    (Round)                                     \
     (Scope)
 
 #define TOKEN_SEQ_11                            \

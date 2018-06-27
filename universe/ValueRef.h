@@ -2133,6 +2133,13 @@ std::string Operation<T>::Description() const
         return retval;
     }
 
+    if (m_op_type == ROUND_NEAREST)
+        return "round(" + LHS()->Description() + ")";
+    if (m_op_type == ROUND_UP)
+        return "ceil(" + LHS()->Description() + ")";
+    if (m_op_type == ROUND_DOWN)
+        return "floor(" + LHS()->Description() + ")";
+
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
     if (auto lhs = dynamic_cast<const Operation<T>*>(LHS())) {
@@ -2242,6 +2249,12 @@ std::string Operation<T>::Dump(unsigned short ntabs) const
         return retval;
     }
 
+    if (m_op_type == ROUND_NEAREST)
+        return "round(" + LHS()->Dump(ntabs) + ")";
+    if (m_op_type == ROUND_UP)
+        return "ceil(" + LHS()->Dump(ntabs) + ")";
+    if (m_op_type == ROUND_DOWN)
+        return "floor(" + LHS()->Dump(ntabs) + ")";
 
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;

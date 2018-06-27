@@ -60,7 +60,10 @@ namespace ValueRef {
         COMPARE_GREATER_THAN_OR_EQUAL,
         COMPARE_LESS_THAN,
         COMPARE_LESS_THAN_OR_EQUAL,
-        COMPARE_NOT_EQUAL
+        COMPARE_NOT_EQUAL,
+        ROUND_NEAREST,
+        ROUND_UP,
+        ROUND_DOWN
     };
 }
 
