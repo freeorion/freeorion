@@ -42,8 +42,6 @@ void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-BOOST_CLASS_VERSION(GalaxySetupData, 2);
-
 template void GalaxySetupData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void GalaxySetupData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
 template void GalaxySetupData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
@@ -77,8 +75,6 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(ordered_ship_hull_and_obsolete)
         & BOOST_SERIALIZATION_NVP(obsolete_ship_parts);
 }
-
-BOOST_CLASS_VERSION(SaveGameUIData, 2);
 
 template void SaveGameUIData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void SaveGameUIData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);

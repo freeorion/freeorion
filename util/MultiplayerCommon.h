@@ -28,9 +28,7 @@ FO_COMMON_API extern const int INVALID_GAME_TURN;
 struct FO_COMMON_API GalaxySetupData {
     /** \name Structors */ //@{
     GalaxySetupData();
-
     GalaxySetupData(const GalaxySetupData&) = default;
-
     GalaxySetupData(GalaxySetupData&& base);
     //@}
 
@@ -77,6 +75,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+BOOST_CLASS_VERSION(GalaxySetupData, 2);
+
+
 /** Contains the UI data that must be saved in save game files in order to
   * restore games to the users' last views. */
 struct FO_COMMON_API SaveGameUIData {
@@ -98,6 +99,9 @@ private:
     template <class Archive>
     void legacy_serialize(Archive& ar, const unsigned int version);
 };
+
+BOOST_CLASS_VERSION(SaveGameUIData, 2);
+
 
 /** The data for one empire necessary for game-setup during multiplayer loading. */
 struct FO_COMMON_API SaveGameEmpireData {
@@ -248,9 +252,9 @@ struct SinglePlayerSetupData : public GalaxySetupData {
     {}
     //@}
 
-    bool                                m_new_game;
-    std::string                         m_filename;
-    std::vector<PlayerSetupData>        m_players;
+    bool                            m_new_game;
+    std::string                     m_filename;
+    std::vector<PlayerSetupData>    m_players;
 
 private:
     friend class boost::serialization::access;
