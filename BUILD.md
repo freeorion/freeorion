@@ -23,7 +23,7 @@ FreeOrion depends on the following software to build:
   * [CMake] - 3.4 (Mac OS X) ; 3.1 or later (Other non-Windows)
   * A C++11 compliant compiler - Other Operating Systems
     * [GNU GCC] - 5.0 or later
-    * [Clang] - 3.9 or later
+    * [Clang] - 3.9 or later (4.0 or later on FreeBSD)
   * [Python] - 2.7.*
   * [Git]
 
