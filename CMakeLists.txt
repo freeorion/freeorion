@@ -204,11 +204,17 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         log_setup
         regex
         serialization
-        python
         signals
         system
         thread
     REQUIRED)
+if(${Boost_VERSION} GREATER 106699) # boost >= 1.67
+    find_package(Boost COMPONENTS python27 REQUIRED)
+    set(Boost_PYTHON_LIBRARY ${Boost_PYTHON27_LIBRARY})
+else()
+    find_package(Boost COMPONENTS python REQUIRED)
+endif()
+
 find_package(ZLIB REQUIRED)
 if(NOT BUILD_HEADLESS)
     find_package(Freetype REQUIRED)
