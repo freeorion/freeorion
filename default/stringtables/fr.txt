@@ -14681,7 +14681,7 @@ FOCUS_PROTECTION_LABEL
 Focus Protection
 
 GASEOUS_LABEL
-Environnement Rude
+Environnement Géante Gazeuse
 
 XENOPHOBIC_LABEL_SELF
 Frénésie xénophobe (autre espèce proche)
