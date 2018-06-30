@@ -1154,6 +1154,11 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                       << " established players but " << player_save_game_data.size()
                       << " entries in player save game data.  Could be ok... so not aborting, but might crash";
 
+
+    // set game rules for server based on those specified in setup data
+    GetGameRules().SetFromStrings(m_galaxy_setup_data.GetGameRules());
+
+
     // validate some connection info
     for (auto player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
