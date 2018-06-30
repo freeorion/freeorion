@@ -630,6 +630,8 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     DebugLogger() << "ServerApp::NewGameInitConcurrentWithJoiners";
 
     m_galaxy_setup_data = galaxy_setup_data;
+
+    // set game rules for server based on those specified in setup data
     GetGameRules().SetFromStrings(m_galaxy_setup_data.GetGameRules());
 
     // validate some connection info / determine which players need empires created
@@ -1144,12 +1146,13 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     }
 
     // ensure number of players connected and for which data are provided are consistent
-    if (player_id_to_save_game_data_index.size() != player_save_game_data.size()) {
+    if (player_id_to_save_game_data_index.size() != player_save_game_data.size())
         ErrorLogger() << "ServerApp::LoadGameInit passed index mapping and player save game data are of different sizes...";
-    }
-    if (m_networking.NumEstablishedPlayers() != player_save_game_data.size()) {
-        ErrorLogger() << "ServerApp::LoadGameInit has " << m_networking.NumEstablishedPlayers() << " established players but " << player_save_game_data.size() << " entries in player save game data.  Could be ok... so not aborting, but might crash";
-    }
+
+    if (m_networking.NumEstablishedPlayers() != player_save_game_data.size())
+        ErrorLogger() << "ServerApp::LoadGameInit has " << m_networking.NumEstablishedPlayers()
+                      << " established players but " << player_save_game_data.size()
+                      << " entries in player save game data.  Could be ok... so not aborting, but might crash";
 
     // validate some connection info
     for (auto player_connection_it = m_networking.established_begin();
