@@ -741,7 +741,7 @@ void OptionsWnd::CompleteConstruction() {
     IntOption(current_page, 0, "effects.server.threads",    UserString("OPTIONS_EFFECTS_THREADS_SERVER"));
     IntOption(current_page, 0, "effects.ai.threads",        UserString("OPTIONS_EFFECTS_THREADS_AI"));
     BoolOption(current_page, 0, "resource.shipdesign.saved.enabled",    UserString("OPTIONS_ADD_SAVED_DESIGNS"));
-    BoolOption(current_page, 0, "resource.shipdesign.default.enabled",  UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));
+    //BoolOption(current_page, 0, "resource.shipdesign.default.enabled",  UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));   // hidden due to issues with implementation when not enabled preventing designs from being added or recreated
     BoolOption(current_page, 0, "save.format.binary.enabled",    UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
     BoolOption(current_page, 0, "save.format.xml.zlib.enabled", UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
     BoolOption(current_page, 0, "ui.map.sitrep.invalid.shown", UserString("OPTIONS_VERBOSE_SITREP_DESC"));
