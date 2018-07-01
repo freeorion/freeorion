@@ -98,15 +98,8 @@ def test_class_encoding():
         assert type(loaded_obj) == type(obj)
 
         original_dict = loaded_obj.__dict__
-        original_keys = sorted(original_dict.keys())
-        original_values = sorted(original_dict.values())
-
         loaded_dict = loaded_obj.__dict__
-        loaded_keys = sorted(loaded_dict.keys())
-        loaded_values = sorted(loaded_dict.values())
 
-        assert original_keys == loaded_keys
-        assert loaded_values == original_values
         assert loaded_dict == original_dict
 
     with pytest.raises(savegame_codec.InvalidSaveGameException,
