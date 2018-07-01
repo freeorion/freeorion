@@ -19,15 +19,6 @@ BASIC_RESEARCH
             accountinglabel = "DIFFICULTY"
             priority = [[LATE_PRIORITY]]
             effects = SetTargetResearch value = Value * 2
-
-        // removes residual production from a dead planet
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                TargetPopulation high = 0
-            ]
-            effects = SetResearch value = 0
 '''
 
 NO_RESEARCH

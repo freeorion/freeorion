@@ -16,6 +16,18 @@ STANDARD_METER_GROWTH
                 min(abs(Value(Target.TargetIndustry) - Value), 1) *
                     (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.TargetIndustry))]))
             ]
+
+        // removes residual production from a dead planet
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                TargetPopulation high = 0
+            ]
+            effects = [
+                SetResearch value = 0
+                SetIndustry value = 0
+            ]
 '''
 
 STANDARD_CONSTRUCTION

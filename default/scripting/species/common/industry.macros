@@ -23,15 +23,6 @@ BASIC_INDUSTRY
             accountinglabel = "DIFFICULTY"
             priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value * 2
-
-        // removes residual production from a dead planet
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                TargetPopulation high = 0
-            ]
-            effects = SetIndustry value = 0
 '''
 
 BAD_INDUSTRY
