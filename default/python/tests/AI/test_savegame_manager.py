@@ -57,7 +57,7 @@ class OldStyleClass():
 
 
 def test_simple_object_encoding():
-    def test_encoding(obj):
+    def check_encoding(obj):
         retval = savegame_codec.encode(obj)
         assert retval
         assert isinstance(retval, str)
@@ -73,12 +73,12 @@ def test_simple_object_encoding():
             (1, 2, 3), [1, 2, 3], {1, 2, 3},
             {'a': 1, True: False, (1, 2): {1, 2, 3}, (1, 2, (3, (4,))): [1, 2, (3, 4), {1, 2, 3}]},
             ):
-        test_encoding(obj)
+        check_encoding(obj)
 
-    for obj in (lambda x: 1, test_encoding, OldStyleClass, DummyTestClass):
+    for obj in (lambda x: 1, check_encoding, OldStyleClass, DummyTestClass):
         with pytest.raises(savegame_codec.CanNotSaveGameException,
                            message="Could save unsupported, potentially dangerous object."):
-            test_encoding(obj)
+            check_encoding(obj)
 
 
 def test_class_encoding():
@@ -98,15 +98,8 @@ def test_class_encoding():
         assert type(loaded_obj) == type(obj)
 
         original_dict = loaded_obj.__dict__
-        original_keys = original_dict.keys().sort()
-        original_values = original_dict.values().sort()
-
         loaded_dict = loaded_obj.__dict__
-        loaded_keys = loaded_dict.keys().sort()
-        loaded_values = loaded_dict.values().sort()
 
-        assert original_keys == loaded_keys
-        assert loaded_values == original_values
         assert loaded_dict == original_dict
 
     with pytest.raises(savegame_codec.InvalidSaveGameException,
