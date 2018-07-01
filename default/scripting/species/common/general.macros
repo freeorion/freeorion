@@ -23,6 +23,7 @@ STANDARD_METER_GROWTH
             activation = And [
                 Planet
                 TargetPopulation high = 0
+                Population high = 0.1
             ]
             effects = [
                 SetResearch value = 0
