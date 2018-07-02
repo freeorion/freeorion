@@ -21,6 +21,7 @@ STANDARD_METER_GROWTH
                 TargetPopulation high = 0
                 Population high = 0.1
             ]
+            priority = [[END_CLEANUP_PRIORITY]]
             effects = [
                 SetResearch value = 0
                 SetIndustry value = 0
