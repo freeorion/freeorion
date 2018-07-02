@@ -2736,7 +2736,7 @@ void BasesListBox::ResetEmptyListPrompt()
 
 void CompletedDesignsListBox::ResetEmptyListPrompt() {
     if (!GetOptionsDB().Get<bool>("resource.shipdesign.saved.enabled")
-        /*&& !GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled")*/)
+        && false /*!GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled")*/)
     {
         SetEmptyPromptText(UserString("NO_SAVED_OR_DEFAULT_DESIGNS_ADDED_PROMPT"));
     } else {
