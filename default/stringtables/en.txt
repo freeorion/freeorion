@@ -14819,6 +14819,8 @@ Flux Interference
 SPATIAL_FLUX_BONUS
 Flux Drive Bonus
 
+DYING_POPULATION_LABEL
+Dying Population
 
 ##
 ## Tags
