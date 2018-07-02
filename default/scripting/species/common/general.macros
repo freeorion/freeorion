@@ -24,6 +24,8 @@ STANDARD_METER_GROWTH
             effects = [
                 SetResearch value = 0
                 SetIndustry value = 0
+                SetTargetIndustry value = 0
+                SetTargetResearch value = 0
             ]
 '''
 
