@@ -5,7 +5,7 @@ import universe_object
 from EnumsAI import MissionType
 import EspionageAI
 import FleetUtilsAI
-from CombatRatingsAI import combine_ratings
+from CombatRatingsAI import combine_ratings, combine_ratings_list, rating_difference
 import PlanetUtilsAI
 import PriorityAI
 import ProductionAI
@@ -183,7 +183,10 @@ class AllocationHelper(object):
         tup = (sys_id, min_rating, min_rating_vs_planets, take_any, max_rating)
         self.allocations.append(tup)
         self.allocation_by_groups.setdefault(group, []).append(tup)
-        self._remaining_rating -= min_rating
+        if self._remaining_rating <= min_rating:
+            self._remaining_rating = 0
+        else:
+            self._remaining_rating = rating_difference(self._remaining_rating, min_rating)
 
 
 class Allocator(object):
@@ -629,7 +632,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
 
     mil_fleets_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
     mil_needing_repair_ids, mil_fleets_ids = avail_mil_needing_repair(mil_fleets_ids, split_ships=True)
-    avail_mil_rating = sum(map(CombatRatingsAI.get_fleet_rating, mil_fleets_ids))
+    avail_mil_rating = combine_ratings_list(map(CombatRatingsAI.get_fleet_rating, mil_fleets_ids))
 
     if not mil_fleets_ids:
         if "Main" in thisround:
@@ -774,7 +777,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
                 break
             this_alloc = min(remaining_mil_rating, max_alloc)
             new_allocations.append((sid, this_alloc, alloc, rvp, take_any))
-            remaining_mil_rating -= this_alloc
+            remaining_mil_rating = rating_difference(remaining_mil_rating,  this_alloc)
 
     base_allocs = set()
     # for lower priority categories, first assign base_alloc around to all, then top up as available
@@ -782,8 +785,9 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         for sid, alloc, rvp, take_any, max_alloc in allocation_helper.allocation_by_groups.get(cat, []):
             if remaining_mil_rating <= 0:
                 break
+            alloc = min(remaining_mil_rating, alloc)
             base_allocs.add(sid)
-            remaining_mil_rating -= alloc
+            remaining_mil_rating = rating_difference(remaining_mil_rating,  alloc)
     for cat in ['otherTargets', 'accessibleTargets', 'exploreTargets']:
         for sid, alloc, rvp, take_any, max_alloc in allocation_helper.allocation_by_groups.get(cat, []):
             if sid not in base_allocs:
@@ -791,9 +795,10 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
             if remaining_mil_rating <= 0:
                 new_allocations.append((sid, alloc, alloc, rvp, take_any))
             else:
-                new_rating = min(remaining_mil_rating + alloc, max_alloc)
+                local_max_avail = combine_ratings(remaining_mil_rating, alloc)
+                new_rating = min(local_max_avail, max_alloc)
                 new_allocations.append((sid, new_rating, alloc, rvp, take_any))
-                remaining_mil_rating -= (new_rating - alloc)
+                remaining_mil_rating = rating_difference(local_max_avail, new_rating)
 
     if "Main" in thisround:
         _military_allocations = new_allocations

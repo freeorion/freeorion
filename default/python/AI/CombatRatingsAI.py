@@ -411,3 +411,18 @@ def rating_needed(target, current=0):
         return 0
     else:
         return target + current - 2 * (target * current)**0.5
+
+
+def rating_difference(first_rating, second_rating):
+
+    """Return the absolute nonlinear difference between ratings.
+
+    :param first_rating: rating of a first force
+    :type first_rating: float
+    :param second_rating: rating of a second force
+    :type second_rating: float
+    :return: Estimated rating by which the greater force (nonlinearly) exceeds the lesser
+    :rtype: float
+    """
+
+    return rating_needed(max(first_rating, second_rating), min(first_rating, second_rating))
