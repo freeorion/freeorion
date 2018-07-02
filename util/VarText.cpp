@@ -93,8 +93,12 @@ namespace {
             return boost::none;
         }
         T* object = GetByID(id);
-        if (!object)
-            return boost::none;
+        if (!object) {
+            if (std::is_same<T, const ShipDesign>::value)
+                return UserString("FW_UNKNOWN_DESIGN_NAME");
+            else
+                return boost::none;
+        }
 
         return WithTags(object->Name(), tag, data);
     }
