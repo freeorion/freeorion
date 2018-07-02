@@ -101,19 +101,19 @@ namespace {
         // if that log level is disabled.
         switch (log_level) {
         case LogLevel::trace:
-            TraceLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " - " << msg;
+            TraceLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
             break;
         case LogLevel::debug:
-            DebugLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " - " << msg;
+            DebugLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
             break;
         case LogLevel::info:
-            InfoLogger(python)  << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " - " << msg;
+            InfoLogger(python)  << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
             break;
         case LogLevel::warn:
-            WarnLogger(python)  << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " - " << msg;
+            WarnLogger(python)  << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
             break;
         case LogLevel::error:
-            ErrorLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " - " << msg;
+            ErrorLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
             break;
         }
     }
