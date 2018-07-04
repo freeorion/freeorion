@@ -2618,6 +2618,10 @@ namespace {
         auto hair_space_width = HairSpaceExtent().x;
         const std::string hair_space_str { u8"\u200A" };
         for (auto& it : retval) {
+            if (column1_species_extents.count(it.first) != 1) {
+                ErrorLogger() << "No column1 extent stored for " << it.first;
+                continue;
+            }
             auto distance = longest_width - column1_species_extents.at(it.first).x;
             std::size_t num_spaces = Value(distance) / Value(hair_space_width);
             for (std::size_t i = 0; i < num_spaces; ++i)
