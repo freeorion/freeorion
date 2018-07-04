@@ -2693,7 +2693,7 @@ namespace {
         const auto& filenames = PlanetEnvFilenames(planet->Type());
         if (!filenames.empty()) {
             auto env_img_tag = "<img src=\"encyclopedia/planet_environments/"
-                                    + filenames[planet_id % filenames.size()] + "\"></img>";
+                               + filenames[planet_id % filenames.size()] + "\"></img>";
             TraceLogger() << "Suitability report env image tag \"" << env_img_tag << "\"";
             detailed_description.append(env_img_tag);
         }
@@ -2715,7 +2715,7 @@ namespace {
             if (it->first > 0) {
                 if (!positive_header_placed) {
                     auto pos_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_POSITIVE_HEADER"))
-                                                % planet->PublicName(planet_id));
+                                          % planet->PublicName(planet_id));
                     TraceLogger() << "Suitability report positive header \"" << pos_header << "\"";
                     detailed_description.append(pos_header);
                     positive_header_placed = true;
@@ -2734,7 +2734,7 @@ namespace {
                         detailed_description += "\n\n";
 
                     auto neg_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_NEGATIVE_HEADER"))
-                                                % planet->PublicName(planet_id));
+                                          % planet->PublicName(planet_id));
                     TraceLogger() << "Suitability report regative header \"" << neg_header << "\"";
                     detailed_description.append(neg_header);
                     negative_header_placed = true;
