@@ -2584,7 +2584,7 @@ namespace {
         return retval;
     }
 
-    GG::Pt SingleTabExtent() {
+    GG::Pt HairSpaceExtent() {
         static GG::Pt retval;
         if (retval > GG::Pt(GG::X0, GG::Y0))
             return retval;
@@ -2592,8 +2592,9 @@ namespace {
         GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
         auto font = ClientUI::GetFont();
 
-        auto elems = font->ExpensiveParseFromTextToTextElements("\t", format);
-        auto lines = font->DetermineLines("\t", format, GG::X(1 << 15), elems);
+        const std::string hair_space_str { u8"\u200A" };
+        auto elems = font->ExpensiveParseFromTextToTextElements(hair_space_str, format);
+        auto lines = font->DetermineLines(hair_space_str, format, GG::X(1 << 15), elems);
         retval = font->TextExtent(lines);
         return retval;
     }
@@ -2620,12 +2621,13 @@ namespace {
         }
 
         // align end of column with end of longest row
-        auto single_tab_width = SingleTabExtent().x;
+        auto hair_space_width = HairSpaceExtent().x;
+        const std::string hair_space_str { u8"\u200A" };
         for (auto& it : retval) {
             auto distance = longest_width - column1_species_extents.at(it.first).x;
-            std::size_t num_tabs = Value(distance) / Value(single_tab_width);
-            for (std::size_t i = 0; i < num_tabs; ++i)
-                it.second.append("\t");
+            std::size_t num_spaces = Value(distance) / Value(hair_space_width);
+            for (std::size_t i = 0; i < num_spaces; ++i)
+                it.second.append(hair_space_str);
         }
 
         return retval;
