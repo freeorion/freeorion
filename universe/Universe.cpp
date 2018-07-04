@@ -86,7 +86,7 @@ namespace boost {
 }
 
 
-extern FO_COMMON_API const int ALL_EMPIRES            = -1;
+extern FO_COMMON_API const int ALL_EMPIRES = -1;
 
 /////////////////////////////////////////////
 // class Universe
@@ -201,7 +201,6 @@ void Universe::SetEmpireStats(Pending::Pending<EmpireStatsMap> future)
 
 const Universe::EmpireStatsMap& Universe::EmpireStats() const
 { return Pending::SwapPending(m_pending_empire_stats, m_empire_stats); }
-
 
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
     if (empire_id == ALL_EMPIRES)
@@ -863,7 +862,7 @@ namespace {
       * Stores target set of specified \a effects_groups and \a source_object_id
       * in \a targets_causes
       * NOTE: this method will modify target_objects temporarily, but restore
-      * its contents before returning. 
+      * its contents before returning.
       * This is a calleable class instead of an ordinary method so that we can
       * use it as work item in parallel scheduling.
       */
@@ -874,6 +873,7 @@ namespace {
             std::pair<bool, Effect::TargetSet>* Find(const Condition::ConditionBase* cond, bool insert);
             void MarkComplete(std::pair<bool, Effect::TargetSet>* cache_entry);
             void LockShared(boost::shared_lock<boost::shared_mutex>& guard);
+
         private:
             std::map<const Condition::ConditionBase*, std::pair<bool, Effect::TargetSet>> m_entries;
             boost::shared_mutex m_mutex;
@@ -894,9 +894,10 @@ namespace {
 
         /** Return a report of that state of this work item. */
         std::string GenerateReport() const;
+
     private:
-        // WARNING: do NOT copy the shared_pointers! Use raw pointers, shared_ptr may not be thread-safe. 
-        std::shared_ptr<Effect::EffectsGroup> m_effects_group;
+        // WARNING: do NOT copy the shared_pointers! Use raw pointers, shared_ptr may not be thread-safe.
+        std::shared_ptr<Effect::EffectsGroup>                   m_effects_group;
         const std::vector<std::shared_ptr<const UniverseObject>>* m_sources;
         EffectsCauseType                                        m_effect_cause_type;
         const std::string                                       m_specific_cause_name;
@@ -1024,6 +1025,7 @@ namespace {
         if (target_objects.empty()) {
             // move matches from default target candidates into target_set
             cond->Eval(source_context, matched_target_objects);
+
         } else {
             // move matches from candidates in target_objects into target_set
             Condition::ObjectSet& potential_target_objects =
@@ -1064,13 +1066,11 @@ namespace {
         return ss.str();
     }
 
-    void StoreTargetsAndCausesOfEffectsGroupsWorkItem::operator()()
-    {
+    void StoreTargetsAndCausesOfEffectsGroupsWorkItem::operator()() {
         ScopedTimer timer("StoreTargetsAndCausesOfEffectsGroups");
 
-
         // get objects matched by scope
-        const Condition::ConditionBase* scope = m_effects_group->Scope();
+        const auto* scope = m_effects_group->Scope();
         if (!scope) {
             TraceLogger(effects) << GenerateReport();
             return;
@@ -1090,25 +1090,43 @@ namespace {
             // skip inactive sources
             // FIXME: is it safe to move this out of the loop? 
             // Activation condition must not contain "Source" subconditions in that case
-            const Condition::ConditionBase* activation = m_effects_group->Activation();
+            const auto* activation = m_effects_group->Activation();
             if (activation && !activation->Eval(source_context, source))
                 continue;
 
             // if scope is source-invariant, use the source-invariant cache of condition results.
             // if scope depends on the source object, use a cache of condition results for that souce object.
             bool source_invariant = !source || scope->SourceInvariant();
-            ConditionCache* condition_cache = source_invariant ? m_invariant_cached_condition_matches : (*m_source_cached_condition_matches)[source_object_id].get();
-            // look up scope condition in the cache. if not found, calculate it and store in the cache. either way, return the result.
-            Effect::TargetSet& target_set = GetConditionMatches(scope,
-                                                                *condition_cache,
-                                                                source,
-                                                                source_context,
-                                                                target_objects,
-                                                                match_log);
-            {
-                boost::shared_lock<boost::shared_mutex> cache_guard;
+            ConditionCache* condition_cache = source_invariant ?
+                m_invariant_cached_condition_matches :
+                (*m_source_cached_condition_matches)[source_object_id].get();
 
+            // look up scope condition in the cache. if not found, calculate it
+            // and store in the cache. either way, return the result.
+            auto& target_set = GetConditionMatches(scope, *condition_cache,
+                                                   source, source_context,
+                                                   target_objects, match_log);
+
+            {
+                // As of this writing, this code is 4-5 years old and its author
+                // (cami) is long gone. I don't really understand the purpose
+                // of this lock and check of target_set, but my guess after a
+                // bit of looking at the code is that the above call to
+                // GetConditionMatches can be happening in several threads,
+                // and each could attempt to evaluate the same scope and source
+                // combination in parallel. Here, getting the shared_lock
+                // ensures that no other threads are currently modifying the
+                // cache. It should then be safe to check if the targets are
+                // empty, as it is assured that the emptiness is the result
+                // of evaluating the scope condition, and not an intermediate
+                // state of another thread's incomplete evaluation. After any
+                // thread has evaluated a scope/source combination, that result
+                // shouldn't be modified by any other thread, so can be used in
+                // the code below without access guards.
+
+                boost::shared_lock<boost::shared_mutex> cache_guard;
                 condition_cache->LockShared(cache_guard);
+
                 if (target_set.empty())
                     continue;
             }
