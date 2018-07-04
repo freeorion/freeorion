@@ -2622,6 +2622,7 @@ namespace {
 
         // align end of column with end of longest row
         auto hair_space_width = HairSpaceExtent().x;
+        auto hair_space_width_str = std::to_string(Value(hair_space_width));
         const std::string hair_space_str { u8"\u200A" };
         for (auto& it : retval) {
             if (column1_species_extents.count(it.first) != 1) {
@@ -2630,8 +2631,24 @@ namespace {
             }
             auto distance = longest_width - column1_species_extents.at(it.first).x;
             std::size_t num_spaces = Value(distance) / Value(hair_space_width);
+            TraceLogger() << it.first << " Num spaces: " << std::to_string(Value(longest_width))
+                          << " - " << std::to_string(Value(column1_species_extents.at(it.first).x))
+                          << " = " << std::to_string(Value(distance))
+                          << " / " << std::to_string(Value(hair_space_width))
+                          << " = " << std::to_string(num_spaces);;
             for (std::size_t i = 0; i < num_spaces; ++i)
                 it.second.append(hair_space_str);
+
+            TraceLogger() << "Species Suitability Column 1:\n\t" << it.first << " \"" << it.second << "\"" << [&]() {
+                    std::string out("");
+                    auto col_val = Value(column1_species_extents.at(it.first).x);
+                    out.append("\n\t\t(" + std::to_string(col_val) + " + (" + std::to_string(num_spaces) + " * " + hair_space_width_str);
+                    out.append(") = " + std::to_string(col_val + (num_spaces * Value(hair_space_width))) + ")");
+                    auto text_elements = font->ExpensiveParseFromTextToTextElements(it.second, format);
+                    auto lines = font->DetermineLines(it.second, format, GG::X(1 << 15), text_elements);
+                    out.append(" = " + std::to_string(Value(font->TextExtent(lines).x)));
+                    return out;
+                }();
         }
 
         return retval;
@@ -2675,8 +2692,10 @@ namespace {
         // show image of planet environment at the top of the suitability report
         const auto& filenames = PlanetEnvFilenames(planet->Type());
         if (!filenames.empty()) {
-            detailed_description += "<img src=\"encyclopedia/planet_environments/"
+            auto env_img_tag = "<img src=\"encyclopedia/planet_environments/"
                                     + filenames[planet_id % filenames.size()] + "\"></img>";
+            TraceLogger() << "Suitability report env image tag \"" << env_img_tag << "\"";
+            detailed_description.append(env_img_tag);
         }
 
         name = planet->PublicName(planet_id);
@@ -2695,30 +2714,38 @@ namespace {
 
             if (it->first > 0) {
                 if (!positive_header_placed) {
-                    detailed_description += str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_POSITIVE_HEADER"))
+                    auto pos_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_POSITIVE_HEADER"))
                                                 % planet->PublicName(planet_id));
+                    TraceLogger() << "Suitability report positive header \"" << pos_header << "\"";
+                    detailed_description.append(pos_header);
                     positive_header_placed = true;
                 }
 
-                detailed_description += str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
+                auto pos_row = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
                     % species_name_column1_it->second
                     % UserString(boost::lexical_cast<std::string>(it->second.second))
                     % (GG::RgbaTag(ClientUI::StatIncrColor()) + DoubleToString(it->first, 2, true) + "</rgba>"));
+                TraceLogger() << "Suitability report positive row \"" << pos_row << "\"";
+                detailed_description.append(pos_row);
 
             } else if (it->first <= 0) {
                 if (!negative_header_placed) {
                     if (positive_header_placed)
                         detailed_description += "\n\n";
 
-                    detailed_description += str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_NEGATIVE_HEADER"))
+                    auto neg_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_NEGATIVE_HEADER"))
                                                 % planet->PublicName(planet_id));
+                    TraceLogger() << "Suitability report regative header \"" << neg_header << "\"";
+                    detailed_description.append(neg_header);
                     negative_header_placed = true;
                 }
 
-                detailed_description += str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
+                auto neg_row = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
                     % species_name_column1_it->second
                     % UserString(boost::lexical_cast<std::string>(it->second.second))
                     % (GG::RgbaTag(ClientUI::StatDecrColor()) + DoubleToString(it->first, 2, true) + "</rgba>"));
+                TraceLogger() << "Suitability report negative row \"" << neg_row << "\"";
+                detailed_description.append(neg_row);
             }
 
             detailed_description += "\n";
