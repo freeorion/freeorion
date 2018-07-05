@@ -32,10 +32,10 @@ using std::vector;
 using std::string;
 
 namespace {
-    const GG::X SAVE_FILE_DIALOG_WIDTH ( 600 );
-    const GG::Y SAVE_FILE_DIALOG_HEIGHT ( 400 );
-    const GG::X SAVE_FILE_DIALOG_MIN_WIDTH ( 160 );
-    const GG::Y SAVE_FILE_DIALOG_MIN_HEIGHT ( 100 );
+    const GG::X SAVE_FILE_DIALOG_WIDTH(600);
+    const GG::Y SAVE_FILE_DIALOG_HEIGHT(400);
+    const GG::X SAVE_FILE_DIALOG_MIN_WIDTH(160);
+    const GG::Y SAVE_FILE_DIALOG_MIN_HEIGHT(100);
 
     const std::string SAVE_FILE_WND_NAME = "dialog.save";
 
@@ -93,8 +93,7 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     /// Creates a text control that support resizing and word wrap.
-    std::shared_ptr<GG::Label> CreateResizingText(const std::string& string, GG::X width)
-    {
+    std::shared_ptr<GG::Label> CreateResizingText(const std::string& string, GG::X width) {
         // Calculate the extent manually to ensure the control stretches to full
         // width when possible.  Otherwise it would always word break.
         GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
@@ -110,7 +109,7 @@ namespace {
         return text;
     }
 
-    bool Prompt(const std::string& question){
+    bool Prompt(const std::string& question) {
         std::shared_ptr<GG::Font> font = ClientUI::GetFont();
         auto prompt = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(
             PROMT_WIDTH, PROMPT_HEIGHT, question, font,
@@ -131,14 +130,14 @@ public:
         return columns;
     }
 
-    static std::shared_ptr<GG::Control> TitleForColumn(const SaveFileColumn& column)
-    {
+    static std::shared_ptr<GG::Control> TitleForColumn(const SaveFileColumn& column) {
         auto retval = GG::Wnd::Create<CUILabel>(column.Title(), GG::FORMAT_LEFT);
         retval->Resize(GG::Pt(GG::X1, ClientUI::GetFont()->Height()));
         return retval;
     }
 
-    static std::shared_ptr<GG::Control> CellForColumn(const SaveFileColumn& column, const FullPreview& full, GG::X max_width)
+    static std::shared_ptr<GG::Control> CellForColumn(const SaveFileColumn& column,
+                                                      const FullPreview& full, GG::X max_width)
     {
         GG::Clr color = ClientUI::TextColor();
         std::string value = ColumnInPreview(full, column.m_name);
@@ -381,7 +380,7 @@ public:
     void Init() override {
         SaveFileRow::Init();
         for (unsigned int i = 0; i < m_columns->size(); ++i) {
-            if (i==0) {
+            if (i == 0) {
                 auto label = GG::Wnd::Create<CUILabel>(PATH_DELIM_BEGIN + m_filename + PATH_DELIM_END,
                                                        GG::FORMAT_NOWRAP | GG::FORMAT_LEFT);
                 label->Resize(GG::Pt(DirectoryNameSize(), ClientUI::GetFont()->Height()));
@@ -395,7 +394,6 @@ public:
         }
 
         AdjustColumns();
-
         GetLayout()->PreRender();
     }
 
@@ -440,12 +438,11 @@ public:
         SaveFileRow::Init();
         VarText browse_text(UserStringNop("SAVE_DIALOG_ROW_BROWSE_TEMPLATE"));
 
-        for (const auto& column : *m_columns) {
+        for (const auto& column : *m_columns)
             push_back(SaveFileColumn::CellForColumn(column, m_full_preview, ClientWidth()));
-        }
-        for (const auto& column : *m_all_columns) {
+        for (const auto& column : *m_all_columns)
             browse_text.AddVariable(column.Name(), ColumnInPreview(m_full_preview, column.Name(), false));
-        }
+
         AdjustColumns();
         SetBrowseText(browse_text.GetText());
         GetLayout()->PreRender();
@@ -454,10 +451,9 @@ public:
     SortKeyType SortKey(std::size_t column) const override
     { return m_full_preview.preview.save_time; }
 
-    private:
+private:
     /** All possible columns. */
     std::shared_ptr<std::vector<SaveFileColumn>> m_all_columns;
-
     const FullPreview m_full_preview;
 };
 
@@ -529,9 +525,8 @@ public:
     /** Find local sub directories of \p path. */
     std::vector<std::string> FindLocalRelativeDirs(const fs::path& path) {
         std::vector<std::string> dirs;
-        if (path.has_parent_path() && path.parent_path() != path) {
-                dirs.push_back("..");
-        }
+        if (path.has_parent_path() && path.parent_path() != path)
+            dirs.push_back("..");
 
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(path); it != end_it; ++it) {
@@ -549,9 +544,8 @@ public:
 
     void LoadDirectories(const std::vector<std::string>& dirs) {
         std::vector<std::shared_ptr<Row>> rows;
-        for (const auto& dir : dirs) {
+        for (const auto& dir : dirs)
             rows.push_back(GG::Wnd::Create<SaveFileDirectoryRow>(m_visible_columns, dir));
-        }
 
         // Insert rows enmasse to avoid per insertion vector sort costs.
         Insert(rows);
@@ -775,6 +769,7 @@ void SaveFileDialog::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Fla
                 Confirm();
             }
         }
+
     } else if (key == GG::GGK_DELETE) { // Delete would be better, but gets eaten by someone
         // Ask to delete selection on Delete, if valid and not editing text
         if (CheckChoiceValidity() &&
@@ -783,6 +778,7 @@ void SaveFileDialog::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Fla
         {
             AskDelete();
         }
+
     } else {
         // The keypress may have changed our choice
         CheckChoiceValidity();
@@ -997,9 +993,8 @@ std::string SaveFileDialog::GetDirPath() const {
     const std::string& path_edit_text = m_current_dir_edit->Text();
 
     //DebugLogger() << "SaveFileDialog::GetDirPath text: " << path_edit_text << " valid UTF-8: " << utf8::is_valid(path_edit_text.begin(), path_edit_text.end());
-    if (!m_server_previews) {
+    if (!m_server_previews)
         return path_edit_text;
-    }
 
     std::string dir = path_edit_text;
 
@@ -1046,9 +1041,8 @@ void SaveFileDialog::SetDirPath(const string& dir_path) {
 
 std::string SaveFileDialog::Result() const {
     std::string choice = m_name_edit->Text();
-    if (choice.empty()) {
+    if (choice.empty())
         return "";
-    }
 
     fs::path choice_path = FilenameToPath(choice);
     fs::path current_dir = FilenameToPath(GetDirPath());

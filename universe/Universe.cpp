@@ -949,7 +949,10 @@ namespace {
         boost::unique_lock<boost::shared_mutex> unique_guard(m_mutex, boost::defer_lock_t());
         boost::shared_lock<boost::shared_mutex> shared_guard(m_mutex, boost::defer_lock_t());
 
-        if (insert) unique_guard.lock(); else shared_guard.lock();
+        if (insert)
+            unique_guard.lock();
+        else
+            shared_guard.lock();
 
         for (auto& entry : m_entries) {
             if (*cond == *(entry.first)) {
@@ -1022,6 +1025,7 @@ namespace {
         Effect::TargetSet* target_set = &cache_entry->second;
         Condition::ObjectSet& matched_target_objects =
             *reinterpret_cast<Condition::ObjectSet*>(target_set);
+
         if (target_objects.empty()) {
             // move matches from default target candidates into target_set
             cond->Eval(source_context, matched_target_objects);
