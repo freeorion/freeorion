@@ -502,7 +502,7 @@ fs::path RelativePath(const fs::path& from, const fs::path& to) {
 #if defined(FREEORION_WIN32)
 
 std::string PathToString(const fs::path& path) {
-    fs::path::string_type native_string = path.native();
+    fs::path::string_type native_string = path.generic_wstring();// path.native();
     std::string retval;
     utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
     return retval;
