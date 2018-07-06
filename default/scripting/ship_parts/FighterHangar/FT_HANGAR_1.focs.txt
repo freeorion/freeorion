@@ -10,6 +10,16 @@ Part
     buildtime = 1
     tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
     location = OwnedBy empire = Source.Owner
+    effectsgroups = [
+        EffectsGroup
+            scope = [[EMPIRE_OWNED_SHIP_WITH_PART(FT_BAY_1)]]
+            activation = Source
+            stackinggroup = "INTERCEPTOR_FAST_LAUNCH_EFFECT"
+            effects = [
+                SetMaxCapacity partname = "FT_BAY_1" value = Value + 2
+            ]
+    ]
     icon = "icons/ship_parts/fighter06.png"
 
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/techs/techs.macros"

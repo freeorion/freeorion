@@ -649,6 +649,11 @@ PILOT_FIGHTER_CAPACITY_MODIFIER_DICT = {
     "GREAT":    {},
     "ULTIMATE": {},
 }
+
+HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT = {
+    # hangar_name: {bay_name: effect, bay_name2: effect, ...}
+    "FT_HANGAR_1": {"FT_BAY_1": 2},
+}
 # </editor-fold>
 
 # <editor-fold desc="Extraordinary Species Rules">

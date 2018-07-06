@@ -856,7 +856,8 @@ class ShipDesigner(object):
 
         # read out part stats
         shield_counter = cloak_counter = detection_counter = colonization_counter = engine_counter = 0  # to deal with Non-stacking parts
-        hangar_parts = set()
+        hangar_part_names = set()
+        bay_parts = list()
         for part in self.parts:
             self.production_cost += local_cost_cache.get(part.name, part.productionCost(fo.empireID(), self.pid))
             self.production_time = max(self.production_time,
@@ -903,16 +904,23 @@ class ShipDesigner(object):
                 else:
                     self.design_stats.stealth = 0
             elif partclass in FIGHTER_BAY:
-                self.design_stats.fighter_launch_rate += capacity
+                bay_parts.append(part)
             elif partclass in FIGHTER_HANGAR:
-                hangar_parts.add(part.name)
-                if len(hangar_parts) > 1:
+                hangar_part_names.add(part.name)
+                if len(hangar_part_names) > 1:
                     # enforce only one hangar part per design
                     self.design_stats.fighter_capacity = 0
                     self.design_stats.fighter_damage = 0
+                    self.design_stats.fighter_launch_rate = 0
                 else:
                     self.design_stats.fighter_capacity += self._calculate_hangar_capacity(part)
                     self.design_stats.fighter_damage = self._calculate_hangar_damage(part)
+
+        if len(bay_parts) > 0:
+            hangar_part_name = None
+            for hangar_part_name in hangar_part_names:
+                break
+            self.design_stats.fighter_launch_rate = self._calculate_fighter_launch_rate(bay_parts, hangar_part_name)
 
         self._apply_hardcoded_effects()
 
@@ -1557,6 +1565,14 @@ class ShipDesigner(object):
         else:
             species_modifier = 0
         return base + species_modifier + tech_bonus
+
+    def _calculate_fighter_launch_rate(self, bay_parts, hangar_part_name):
+        launch_rate = 0
+        bays_bonus = AIDependencies.HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT.get(hangar_part_name, {})
+        for bay_part in bay_parts:
+            launch_rate += bay_part.capacity
+            launch_rate += bays_bonus.get(bay_part.name, 0)
+        return launch_rate
 
     def _calculate_hangar_damage(self, hangar_part, ignore_species=False):
         hangar_name = hangar_part.name
