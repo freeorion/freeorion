@@ -1,3 +1,36 @@
+STANDARD_METER_GROWTH
+'''
+        // increase or decrease towards target meter, when not recently conquered
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                (Source.LastTurnConquered < CurrentTurn)
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = [
+                SetResearch value = Value + min(max(Value(Target.TargetResearch) - Value, -1), 1)
+                SetIndustry value = Value + min(max(Value(Target.TargetIndustry) - Value, -1), 1)
+            ]
+
+        // removes residual production from a dead planet
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                TargetPopulation high = 0
+                Population high = 0.1
+            ]
+            accountinglabel = "DYING_POPULATION_LABEL"
+            priority = [[END_CLEANUP_PRIORITY]]
+            effects = [
+                SetResearch value = 0
+                SetIndustry value = 0
+                SetTargetIndustry value = 0
+                SetTargetResearch value = 0
+            ]
+'''
+
 STANDARD_CONSTRUCTION
 '''        EffectsGroup
             scope = Source
@@ -13,9 +46,7 @@ STANDARD_CONSTRUCTION
                 (Source.LastTurnAttackedByShip  < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetConstruction value = Value +
-                min(abs(Value(Target.TargetConstruction) - Value), 1) *
-                    (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.TargetConstruction))]))
+            effects = SetConstruction value = Value + min(max(Value(Target.TargetConstruction) - Value, -1), 1)
 '''
 
 FOCUS_CHANGE_PENALTY
