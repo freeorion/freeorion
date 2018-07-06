@@ -135,13 +135,13 @@ def test_class_encoding():
 
 def test_getstate_call():
     with TrustedScope():
-        with pytest.raises(Success, message="__getstate__ was not called during encoding.", match=""):
+        with pytest.raises(Success, message="__getstate__ was not called during encoding."):
             savegame_codec.encode(GetStateTester())
 
 
 def test_setstate_call():
     with TrustedScope():
-        with pytest.raises(Success, message="__setstate__ was not called during decoding.", match=""):
+        with pytest.raises(Success, message="__setstate__ was not called during decoding."):
             savegame_codec.decode(savegame_codec.encode(SetStateTester()))
 
 
