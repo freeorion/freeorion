@@ -9,11 +9,6 @@
 #include <boost/uuid/nil_generator.hpp>
 
 
-////////////////////////////////////////////////////////////
-// Galaxy Map orders
-////////////////////////////////////////////////////////////
-
-// exports for boost serialization of polymorphic Order hierarchy
 BOOST_CLASS_EXPORT(Order)
 BOOST_CLASS_VERSION(Order, 1)
 BOOST_CLASS_EXPORT(RenameOrder)
@@ -37,9 +32,8 @@ template <class Archive>
 void Order::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_empire);
-    /** m_executed is intentionally not serialized so that orders always deserialize with m_execute
-      = false.  See class comment for OrderSet.
-      ar    & BOOST_SERIALIZATION_NVP(m_executed); */
+    // m_executed is intentionally not serialized so that orders always
+    // deserialize with m_execute = false.  See class comment for OrderSet.
     if (Archive::is_loading::value && version < 1) {
         bool dummy_executed;
         ar  & boost::serialization::make_nvp("m_executed", dummy_executed);
@@ -158,9 +152,9 @@ void ShipDesignOrder::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_design_id);
 
     if (version >= 1) {
-        // UUID serialization as a primitive doesn't work as expected from the documentation
-        // ar & BOOST_SERIALIZATION_NVP(m_uuid);
-        // This workaround instead serializes a string representation.
+        // Serialization of m_uuid as a primitive doesn't work as expected from
+        // the documentation.  This workaround instead serializes a string
+        // representation.
         if (Archive::is_saving::value) {
             auto string_uuid = boost::uuids::to_string(m_uuid);
             ar & BOOST_SERIALIZATION_NVP(string_uuid);

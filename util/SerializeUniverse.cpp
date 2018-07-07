@@ -36,7 +36,8 @@ void ObjectMap::serialize(Archive& ar, const unsigned int version)
 {
     ar & BOOST_SERIALIZATION_NVP(m_objects);
 
-    // If loading from the archive, propagate the changes to the specialized maps.
+    // If loading from the archive, propagate the changes to the specialized
+    // maps.
     if (Archive::is_loading::value) {
         CopyObjectsToSpecializedMaps();
     }
@@ -72,7 +73,9 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     }
 
     if (Archive::is_loading::value) {
-        Clear();    // clean up any existing dynamically allocated contents before replacing containers with deserialized data
+        // clean up any existing dynamically allocated contents before replacing
+        // containers with deserialized data.
+        Clear();
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_universe_width);
@@ -155,7 +158,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
 
     if (Archive::is_saving::value) {
         DebugLogger() << "Universe::serialize : Cleaning up temporary data";
-        // clean up temporary objects in temporary ObjectMaps
+        // clean up temporary objects in temporary ObjectMaps.
         objects.Clear();
         for (auto& elko : empire_latest_known_objects)
         { elko.second.Clear(); }
@@ -163,7 +166,8 @@ void Universe::serialize(Archive& ar, const unsigned int version)
 
     if (Archive::is_loading::value) {
         DebugLogger() << "Universe::serialize : updating empires' latest known object destruction states";
-        // update known destroyed objects state in each empire's latest known objects
+        // update known destroyed objects state in each empire's latest known
+        // objects.
         for (auto& elko : m_empire_latest_known_objects) {
             auto destroyed_ids_it = m_empire_known_destroyed_object_ids.find(elko.first);
             if (destroyed_ids_it != m_empire_known_destroyed_object_ids.end())
@@ -296,9 +300,9 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
     TraceLogger() << "ship design serialize version: " << version << " : " << (Archive::is_saving::value ? "saving" : "loading");
 
     if (version >= 1) {
-        // UUID serialization as a primitive doesn't work as expected from the documentation
-        // ar & BOOST_SERIALIZATION_NVP(m_uuid);
-        // This workaround instead serializes a string representation.
+        // Serialization of m_uuid as a primitive doesn't work as expected from
+        // the documentation.  This workaround instead serializes a string
+        // representation.
         if (Archive::is_saving::value) {
             auto string_uuid = boost::uuids::to_string(m_uuid);
             ar & BOOST_SERIALIZATION_NVP(string_uuid);
