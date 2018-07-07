@@ -432,6 +432,7 @@ void ListBox::Row::SetColAlignments(const std::vector<Alignment>& aligns)
         return;
 
     m_col_alignments = aligns;
+    m_col_alignments.resize(m_cells.size(), ALIGN_NONE);
     auto&& layout = GetLayout();
     ValidateLayoutSize(layout.get(), aligns.size());
     for (std::size_t ii = 0; ii < m_cells.size(); ++ii) {
@@ -459,6 +460,7 @@ void ListBox::Row::SetColWidths(const std::vector<X>& widths)
         return;
 
     m_col_widths = widths;
+    m_col_widths.resize(m_cells.size(), GG::X(5));
     auto&& layout = GetLayout();
     ValidateLayoutSize(layout.get(), widths.size());
     for (std::size_t ii = 0; ii < m_cells.size(); ++ii) {
@@ -485,6 +487,7 @@ void ListBox::Row::SetColStretches(const std::vector<double>& stretches)
         return;
 
     m_col_stretches = stretches;
+    m_col_stretches.resize(m_cells.size(), 0.0);
     auto&& layout = GetLayout();
     ValidateLayoutSize(layout.get(), m_col_stretches.size());
     for (std::size_t ii = 0; ii < m_cells.size(); ++ii) {
