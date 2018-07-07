@@ -84,21 +84,21 @@ def test_encoding_simple_object(simple_object):
     check_encoding(simple_object)
 
 
-def test_ecoding_function():
+def test_encoding_function():
     with pytest.raises(savegame_codec.CanNotSaveGameException,
                        message="Could save function",
                        match="Class __builtin__.function is not trusted"):
         check_encoding(lambda: 0)
 
 
-def test_ecoding_old_style_class():
+def test_encoding_old_style_class():
     with pytest.raises(savegame_codec.CanNotSaveGameException,
-                       message="Could Old style class",
+                       message="Could save Old style class",
                        match="Encountered unsupported object test_savegame_manager.OldStyleClass \(<type 'classobj'>\)"):
         check_encoding(OldStyleClass)
 
 
-def test_ecoding_type():
+def test_encoding_type():
     with pytest.raises(savegame_codec.CanNotSaveGameException,
                        message="Could save untrusted class",
                        match="Class __builtin__.type is not trusted"):
