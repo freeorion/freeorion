@@ -512,6 +512,8 @@ fs::path FilenameToPath(const std::string& path_str) {
     // convert UTF-8 directory string to UTF-16
     boost::filesystem::path::string_type directory_native;
     utf8::utf8to16(path_str.begin(), path_str.end(), std::back_inserter(directory_native));
+    if (BOOST_VERSION >= 106300)
+        return fs::path(directory_native).generic_path();
     return fs::path(directory_native);
 }
 
