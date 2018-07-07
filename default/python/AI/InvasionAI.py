@@ -1,25 +1,24 @@
 import math
 from logging import debug, info, warn
 
-from turn_state import state
 import freeOrionAIInterface as fo
-from common.print_utils import Table, Text, Float
 
-import FreeOrionAI as foAI
-import AIstate
 import AIDependencies
+import AIstate
+import ColonisationAI
+import CombatRatingsAI
 import EspionageAI
 import FleetUtilsAI
-import PlanetUtilsAI
-import universe_object
-from MoveUtilsAI import can_travel_to_system
-import ProductionAI
-import ColonisationAI
+import FreeOrionAI as foAI
 import MilitaryAI
-from EnumsAI import MissionType, PriorityType
-import CombatRatingsAI
-from freeorion_tools import tech_is_complete, AITimer, get_partial_visibility_turn
+import PlanetUtilsAI
+import ProductionAI
+import universe_object
 from AIDependencies import INVALID_ID
+from EnumsAI import MissionType, PriorityType
+from common.print_utils import Table, Text, Float
+from freeorion_tools import tech_is_complete, AITimer, get_partial_visibility_turn
+from turn_state import state
 
 MAX_BASE_TROOPERS_GOOD_INVADERS = 20
 MAX_BASE_TROOPERS_POOR_INVADERS = 10
@@ -528,8 +527,7 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
         min_stats = {'rating': 0, 'troopCapacity': ptroops}
         target_stats = {'rating': 10,
                         'troopCapacity': ptroops + _TROOPS_SAFETY_MARGIN,
-                        'target_system': universe_object.System(sys_id),
-                        'move_path_func': can_travel_to_system}
+                        'target_system': universe_object.System(sys_id)}
         these_fleets = FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, found_stats,
                                                            starting_system=sys_id, fleet_pool_set=invasion_fleet_pool,
                                                            fleet_list=found_fleets)

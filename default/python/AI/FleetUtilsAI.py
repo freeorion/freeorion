@@ -2,14 +2,16 @@ import math
 from logging import error, warn
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-import FreeOrionAI as foAI
-from EnumsAI import MissionType, ShipRoleType
-import CombatRatingsAI
-from universe_object import Planet, Fleet
-from ShipDesignAI import get_part_type
-from AIDependencies import INVALID_ID
+
 import AIDependencies
+import CombatRatingsAI
+import FreeOrionAI as foAI
+import MoveUtilsAI
 import universe_object
+from AIDependencies import INVALID_ID
+from EnumsAI import MissionType, ShipRoleType
+from ShipDesignAI import get_part_type
+from universe_object import Planet, Fleet
 
 
 def stats_meet_reqs(stats, requirements):
@@ -137,10 +139,8 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                 troop_capacity = count_troops_in_fleet(fleet_id)
                 if troop_capacity <= 0:
                     continue
-                # providing move_path_func in this fashion rather than directly importing here, in order
-                # to avoid a circular import problem
-                if 'target_system' in target_stats and 'move_path_func' in target_stats:
-                    if not target_stats['move_path_func'](fleet_id, this_system_obj, target_stats['target_system']):
+                if 'target_system' in target_stats:
+                    if not MoveUtilsAI.can_travel_to_system(fleet_id, this_system_obj, target_stats['target_system']):
                         continue
 
             # check if we need additional rating vs planets
