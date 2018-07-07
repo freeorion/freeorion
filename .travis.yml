@@ -132,7 +132,7 @@ jobs:
       language: python
       python: 2.7.14
       before_install:
-        - pip install pytest==3.4.0
+        - pip install pytest==3.6.3
       script:
         - pytest
       env:
