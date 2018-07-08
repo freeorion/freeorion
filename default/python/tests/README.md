@@ -15,6 +15,6 @@ and can be executed on the local machine.
 If you want to run specific tests see
 [pytest documentation](https://docs.pytest.org/en/latest/usage.html#specifying-tests-selecting-tests)
 
-If you need to test module that is not in python path,
-add its to [conftest.py](conftest.py#L1),
+If you need to test a module that is not in the python path,
+add it to [conftest.py](conftest.py#L1),
 this file is executed before import of the test files.
