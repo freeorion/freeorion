@@ -14731,6 +14731,8 @@ Interférence Flux
 SPATIAL_FLUX_BONUS
 Bonus Propulsion Flux
 
+DYING_POPULATION_LABEL
+Population agonisante
 
 ##
 ## Tags
