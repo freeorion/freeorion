@@ -75,6 +75,6 @@ class TestCharacter(object):
         assert rejection_character.preferred_research_cutoff([10, 11, 12]) == 11
 
     def test_character_must_be_composed_of_traits(self):
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, message='Expect TypeError', match='All traits must be sub-classes of Trait'):
             not_a_trait = int(1)
             Character([LeftTrait, not_a_trait])

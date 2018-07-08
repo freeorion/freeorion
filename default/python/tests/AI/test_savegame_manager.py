@@ -1,6 +1,7 @@
 import pytest
 
 import savegame_codec
+from pytest import fixture
 
 
 class DummyTestClass(object):
@@ -56,35 +57,59 @@ class OldStyleClass():
     pass
 
 
-def test_simple_object_encoding():
-    def check_encoding(obj):
-        retval = savegame_codec.encode(obj)
-        assert retval
-        assert isinstance(retval, str)
+@fixture(
+    params=[
+        int(), float(), str(), bool(),
+        1, 1.2, 1.2e4, "TestString", True, False, None,
+        tuple(), set(), list(), dict(),
+        (1, 2, 3), [1, 2, 3], {1, 2, 3},
+        {'a': 1, True: False, (1, 2): {1, 2, 3}, (1, 2, (3, (4,))): [1, 2, (3, 4), {1, 2, 3}]}
+    ],
+    ids=str)
+def simple_object(request, ):
+    return request.param
 
-        restored_obj = savegame_codec.decode(retval)
-        assert type(restored_obj) == type(obj)
-        assert restored_obj == obj
 
-    for obj in (
-            int(), float(), str(), bool(),
-            1, 1.2, 1.2e4, "TestString", True, False, None,
-            tuple(), set(), list(), dict(),
-            (1, 2, 3), [1, 2, 3], {1, 2, 3},
-            {'a': 1, True: False, (1, 2): {1, 2, 3}, (1, 2, (3, (4,))): [1, 2, (3, 4), {1, 2, 3}]},
-            ):
-        check_encoding(obj)
+def check_encoding(obj):
+    retval = savegame_codec.encode(obj)
+    assert retval
+    assert isinstance(retval, str)
 
-    for obj in (lambda x: 1, check_encoding, OldStyleClass, DummyTestClass):
-        with pytest.raises(savegame_codec.CanNotSaveGameException,
-                           message="Could save unsupported, potentially dangerous object."):
-            check_encoding(obj)
+    restored_obj = savegame_codec.decode(retval)
+    assert type(restored_obj) == type(obj)
+    assert restored_obj == obj
+
+
+def test_encoding_simple_object(simple_object):
+    check_encoding(simple_object)
+
+
+def test_encoding_function():
+    with pytest.raises(savegame_codec.CanNotSaveGameException,
+                       message="Could save function",
+                       match="Class __builtin__.function is not trusted"):
+        check_encoding(lambda: 0)
+
+
+def test_encoding_old_style_class():
+    with pytest.raises(savegame_codec.CanNotSaveGameException,
+                       message="Could save Old style class",
+                       match="Encountered unsupported object test_savegame_manager.OldStyleClass \(<type 'classobj'>\)"):
+        check_encoding(OldStyleClass)
+
+
+def test_encoding_type():
+    with pytest.raises(savegame_codec.CanNotSaveGameException,
+                       message="Could save untrusted class",
+                       match="Class __builtin__.type is not trusted"):
+        check_encoding(list)
 
 
 def test_class_encoding():
     obj = DummyTestClass()
     with pytest.raises(savegame_codec.CanNotSaveGameException,
-                       message="Could save game eventhough test module should not be trusted!"):
+                       message="Could save game even though test module should not be trusted",
+                       match="Class test_savegame_manager.DummyTestClass is not trusted"):
         savegame_codec.encode(obj)
 
     with TrustedScope():
@@ -103,7 +128,8 @@ def test_class_encoding():
         assert loaded_dict == original_dict
 
     with pytest.raises(savegame_codec.InvalidSaveGameException,
-                       message="Could load object from untrusted module"):
+                       message="Could load object from untrusted module",
+                       match="DANGER DANGER - test_savegame_manager.DummyTestClass not trusted"):
         savegame_codec.decode(retval)
 
 
