@@ -273,15 +273,28 @@ namespace {
             part_type_name(part_name_),
             part_attack(part_attack_),
             fighters_launched(0),
-            fighter_damage(0.0f)
+            fighter_damage(0.0f),
+            precision(1),
+            targets()
+        {}
+        PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
+            float part_attack_, int precision, ) :
+            part_class(part_class_),
+            part_type_name(part_name_),
+            part_attack(part_attack_),
+            fighters_launched(0),
+            fighter_damage(0.0f),
+            precision(1),
+            targets()
         {}
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
                        int fighters_launched_, float fighter_damage_) :
             part_class(part_class_),
             part_type_name(part_name_),
-            part_attack(0.0f),
+            part_attack(0.0f),!t
             fighters_launched(fighters_launched_),
-            fighter_damage(fighter_damage_)
+            fighter_damage(fighter_damage_),
+            precision(2)
         {}
 
         ShipPartClass   part_class;
@@ -289,6 +302,7 @@ namespace {
         float           part_attack;        // for direct damage parts
         int             fighters_launched;  // for fighter bays, input value should be limited by ship available fighters to launch
         float           fighter_damage;     // for fighter bays, input value should be determined by ship fighter weapon setup
+        int             precision;          //
     };
 
     void AttackShipShip(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon,
@@ -1266,12 +1280,22 @@ namespace {
 
 
             // select target object
-            int target_idx = RandInt(0, valid_target_ids.size() - 1);
-            int target_id = *std::next(valid_target_ids.begin(), target_idx);
+            std::shared_ptr<UniverseObject> target;
+            for (int t = 1; t < weapon.precision; t++) {
+                int target_idx = RandInt(0, valid_target_ids.size() - 1);
+                int target_id = *std::next(valid_target_ids.begin(), target_idx);
 
-            auto target = combat_state.combat_info.objects.Object(target_id);
+                target = combat_state.combat_info.objects.Object(target_id);
+                if (!target) {
+                    ErrorLogger() << "AutoResolveCombat couldn't get target object with id " << target_id;
+                    continue;
+                }
+                if (weapon.AimsFor(target)) {
+                    // shooting
+                    break;
+                }
+            }
             if (!target) {
-                ErrorLogger() << "AutoResolveCombat couldn't get target object with id " << target_id;
                 continue;
             }
             DebugLogger(combat) << "Target: " << target->Name();
