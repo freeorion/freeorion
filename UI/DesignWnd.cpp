@@ -1128,8 +1128,8 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         displayed_designs->InsertHullBefore(hull_name);
     }
 
-    // If requested initialize the current designs to all designs known by the empire
-    if (GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled")) {
+    // If requested, initialize the current designs to all designs known by the empire
+    if (true) { //GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled")) {
         // While initializing a new game, before sending info to players, the
         // server should have added the default design ids to an empire's known
         // designs. Loop over these, and add them to "current" designs.
@@ -2736,7 +2736,7 @@ void BasesListBox::ResetEmptyListPrompt()
 
 void CompletedDesignsListBox::ResetEmptyListPrompt() {
     if (!GetOptionsDB().Get<bool>("resource.shipdesign.saved.enabled")
-        && !GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled"))
+        && false /*!GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled")*/)
     {
         SetEmptyPromptText(UserString("NO_SAVED_OR_DEFAULT_DESIGNS_ADDED_PROMPT"));
     } else {
@@ -3078,10 +3078,10 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     };
 
     // toggle the option to add all saved designs at game start.
-    const auto add_defaults = GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled");
-    auto toggle_add_default_designs_at_game_start_action = [add_defaults]() {
-        GetOptionsDB().Set<bool>("resource.shipdesign.default.enabled", !add_defaults);
-    };
+    const auto add_defaults = true;//GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled");
+    //auto toggle_add_default_designs_at_game_start_action = [add_defaults]() {
+    //    GetOptionsDB().Set<bool>("resource.shipdesign.default.enabled", !add_defaults);
+    //};
 
     // create popup menu with a commands in it
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
@@ -3105,9 +3105,9 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     // save design
     popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_SAVE"), false, false, save_design_action));
 
-    popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_DEFAULT_START"), false, add_defaults,
-                                    toggle_add_default_designs_at_game_start_action));
+    //popup->AddMenuItem(GG::MenuItem(true)); // separator
+    //popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_DEFAULT_START"), false, add_defaults,
+    //                                toggle_add_default_designs_at_game_start_action));
 
     popup->Run();
 }

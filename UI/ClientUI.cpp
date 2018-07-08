@@ -570,7 +570,7 @@ namespace {
 
         // Other
         db.Add("resource.shipdesign.saved.enabled",                     UserStringNop("OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS"),         true);
-        db.Add("resource.shipdesign.default.enabled",                   UserStringNop("OPTIONS_DB_ADD_DEFAULT_DESIGNS"),            true);
+        //db.Add("resource.shipdesign.default.enabled",                   UserStringNop("OPTIONS_DB_ADD_DEFAULT_DESIGNS"),            true);
 
     }
     bool temp_bool = RegisterOptions(&AddOptions);
