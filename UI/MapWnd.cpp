@@ -6749,7 +6749,10 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         true, stockpile_used, stockpile, expected_stockpile,
         true, stockpile_use_capacity));
 
-    if (total_PP_wasted > 0.05 || (total_PP_excess > (3 * stockpile_use_capacity))) {
+    // red "waste" icon if the non-project transfer to IS is more than either 3x per-turn use or 80% total output
+    // else yellow icon if the non-project transfer to IS is more than 20% total output, or if there is any transfer
+    // to IS and the IS is expected to be above 10x per-turn use.
+    if (total_PP_wasted > 0.05 || (total_PP_excess > std::min(3.0 * stockpile_use_capacity, 0.8 * total_PP_output))) {
         DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: "
                        << total_PP_spent << " and Industry Production: " << total_PP_output << ", wasting " << total_PP_wasted;
         boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
@@ -6767,7 +6770,8 @@ void MapWnd::RefreshIndustryResourceIndicator() {
             total_PP_output, total_PP_excess,
             true, stockpile_use_capacity, total_PP_to_stockpile, total_PP_wasted,
             UserString("MAP_PROD_CLICK_TO_OPEN")));
-    } else if (total_PP_to_stockpile > 0.05 && expected_stockpile > (10 * stockpile_use_capacity)) {
+    } else if (total_PP_to_stockpile > 0.05 && (expected_stockpile > (10 * stockpile_use_capacity) ||
+                                                total_PP_excess > 0.2 * total_PP_output)) {
         boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
         m_industry_wasted->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
                                                                 "warned_resource.png", false)));
