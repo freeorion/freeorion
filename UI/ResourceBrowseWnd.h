@@ -45,9 +45,8 @@ private:
     std::shared_ptr<GG::Label>  m_stockpile_change_points_label;
     std::shared_ptr<GG::Label>  m_stockpile_change_points;
     std::shared_ptr<GG::Label>  m_stockpile_change_points_P_label;
-    bool                        m_show_stockpile_limit = false;
-
     GG::Pt                      m_offset;
+    bool                        m_show_stockpile_limit = false;
 };
 
 class WastedStockpiledResourceBrowseWnd : public GG::BrowseInfoWnd {
