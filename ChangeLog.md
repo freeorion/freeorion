@@ -208,7 +208,6 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed combat log layout / scrollbar issues.
 - Fixed issues with compressed XML saves containing invalid XML.
 - Fixed issue where fleets which had never been moved since their creation were unable to enforce blockades.
-- Fixed segfault scrolling through tabs.
 - Use correct auto aggression icon for new fleet aggression button tooltip.
 - Fixed missing combat sensor ghosts.
 - Fixed issues with visibility of stale objects.
