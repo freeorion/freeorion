@@ -4,7 +4,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 
 
-## [v0.4.8] - 2017-06-14
+## [v0.4.8] - 2017-07-13
 
 
 ### Key Changes
@@ -55,7 +55,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Addded or adjusted tech list view colour highlighting, rounded borders, icon sizes.
     - Added research list tooltips.
     - List view scrollbar position should retain its position better.
-   
+
 - Production
     - Fixed erroneous early projected completion times for production queue items with multiple repetitions.
     - Added commands to split or duplicate production items on the queue.
@@ -115,7 +115,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Sorted researched techs list on empire pedia article by researched turn.
     - Made several GUI widgets react immediately to being pressed, instead of waiting until the mouse is released to complete the "click".
 
-#### Content
+#### Content / Gameplay
 
 - New Pedia articles, article categorization, extended articles, corrections
 - Translation updates: French, Russian
@@ -129,6 +129,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Added population statistic.
 - Added a sitrep when a ship naturally goes from 0.x to 1.x fuel.
 - Added the Flux Bubble hull.
+- Make the default diplomatic status be war rather than peace.
 - Game rules:
     - Enable random reseeding
     - Stockpile import limits
@@ -145,7 +146,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 #### Balance
 
 - Super testers now have perfect stealth, which allows testing without AI interference.
-- Restricted detector, stealth, and shield parts to one per ship.
+- Restricted engine, detector, stealth, and shield parts to one per ship.
 - Adjusted various species' balance.
 - Made scrying sphere set visibility to the greater of current and partial visibility.
 - Made telepathic detection set visibility to the greater of current and basic visibility.
@@ -157,6 +158,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Reduced Space Elevator bonus for Gas Giants by 1.
 - Increased Colony Base hull cost to 3.
 - Newly created ships and monsters now cannot block supply (until they have survived a turn) or enemy fleet movement.
+- Do not remove production/research on dying planets while there is still remaining population.
 
 #### AI
 
@@ -194,7 +196,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed issue with filenames with multi-byte characters being shown corrupted on Windows.
 - Fixed various other AI bugs and incorrect or outdated calculations.
 - Fixed memory leaks in content script parsers.
-- Fixed issues with fleet move pathes when fleet ownership is changed.
+- Fixed issues with fleet move paths when fleet ownership is changed.
 - Fixed issue with AI not setting research focus on planets without industry focus available.
 - Fixed issue when a blockaded fleet became not blockaded and its route became invalid.
 - Fixed potential crash when updating meters on many objects.
@@ -205,6 +207,10 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed issues with AIs replaying their turns when loading a game.
 - Fixed combat log layout / scrollbar issues.
 - Fixed issues with compressed XML saves containing invalid XML.
+- Fixed issue where fleets which had never been moved since their creation were unable to enforce blockades.
+- Use correct auto aggression icon for new fleet aggression button tooltip.
+- Fixed missing combat sensor ghosts.
+- Fixed issues with visibility of stale objects.
 
 #### Technical / Internal
 
