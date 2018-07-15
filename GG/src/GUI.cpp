@@ -37,13 +37,18 @@
 #include <GG/ZList.h>
 
 #if GG_HAVE_LIBPNG
-# if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wunused-local-typedefs"
-# endif
-# include "gilext/io/png_io.hpp"
-# if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
-#  pragma GCC diagnostic pop
+# if GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO
+#  if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#  endif
+#  include "gilext/io/png_io.hpp"
+#  include "gilext/io/png_io_v2_compat.hpp"
+#  if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
+#   pragma GCC diagnostic pop
+#  endif
+# else
+#  include <boost/gil/extension/io/png.hpp>
 # endif
 #endif
 
@@ -132,12 +137,15 @@ namespace {
         glPopClientAttrib();
 
         using namespace boost::gil;
-        png_write_view(filename,
-                       flipped_up_down_view(
-                           interleaved_view(Value(size.x),
-                                            Value(size.y),
-                                            static_cast<rgba8_pixel_t*>(static_cast<void*>(&bytes[0])),
-                                            Value(size.x) * sizeof(rgba8_pixel_t))));
+        write_view(
+            filename,
+            flipped_up_down_view(
+                interleaved_view(
+                    Value(size.x),
+                    Value(size.y),
+                    static_cast<rgba8_pixel_t*>(static_cast<void*>(&bytes[0])),
+                    Value(size.x) * sizeof(rgba8_pixel_t))),
+            png_tag());
 #endif
     }
 }
