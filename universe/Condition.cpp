@@ -8338,10 +8338,41 @@ namespace {
                 return false;
 
             // is candidate object connected to a subcondition matching object by resource supply?
+            // first check if candidate object is (or is a building on) a blockaded planet
+            // "isolated" objects are anything not in a non-blockaded system
+            bool is_isolated = true;
+            for (const auto& group : groups) {
+                if (group.count(candidate->SystemID())) {
+                    is_isolated = false;
+                    break;
+                }
+            }
+            if (is_isolated) {
+                // planets are still supply-connected to themselves even if blockaded
+                auto candidate_planet = std::dynamic_pointer_cast<const Planet>(candidate);
+                std::shared_ptr<const ::Building> building;
+                if (!candidate_planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
+                    candidate_planet = GetPlanet(building->PlanetID());
+                if (candidate_planet) {
+                    int candidate_planet_id = candidate_planet->ID();
+                    // can only match if the from_object is (or is on) the same planet
+                    for (auto& from_object : m_from_objects) {
+                        auto from_obj_planet = std::dynamic_pointer_cast<const Planet>(from_object);
+                        std::shared_ptr<const ::Building> from_building;
+                        if (!from_obj_planet && (from_building = std::dynamic_pointer_cast<const ::Building>(from_object)))
+                            from_obj_planet = GetPlanet(from_building->PlanetID());
+                        if (from_obj_planet && from_obj_planet->ID() == candidate_planet_id)
+                            return true;
+                    }
+                }
+                // candidate is isolated, but did not match planet for any test object
+                return false;
+            }
+            // candidate is not blockaded, so check for system group matches
             for (auto& from_object : m_from_objects) {
                 for (const auto& group : groups) {
                     if (group.count(from_object->SystemID())) {
-                        // found resource sharing group containing test object.  Does it also contain candidate?
+                        // found resource sharing group containing test object system.  Does it also contain candidate?
                         if (group.count(candidate->SystemID()))
                             return true;    // test object and candidate object are in same resourse sharing group
                         else
