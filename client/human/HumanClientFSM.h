@@ -36,6 +36,9 @@ struct TurnEnded : boost::statechart::event<TurnEnded> {};
 // Posted to advance the turn, including when auto-advancing the first turn
 struct AdvanceTurn : boost::statechart::event<AdvanceTurn> {};
 
+// Indicates that everything has been loaded.
+struct DoneLoading : boost::statechart::event<DoneLoading> {};
+
 /** The set of events used by the QuittingGame state. */
 class Process;
 struct StartQuittingGame : boost::statechart::event<StartQuittingGame> {
@@ -61,6 +64,8 @@ struct TerminateServer : boost::statechart::event<TerminateServer> {};
     (HostMPGameRequested)                                       \
     (JoinMPGameRequested)                                       \
     (TurnEnded)                                                 \
+    (AdvanceTurn)                                               \
+    (DoneLoading)                                               \
     (StartQuittingGame)                                         \
     (ShutdownServer)                                            \
     (WaitForDisconnect)                                         \
@@ -291,15 +296,25 @@ struct WaitingForGameStart : boost::statechart::state<WaitingForGameStart, Playi
     typedef boost::statechart::state<WaitingForGameStart, PlayingGame> Base;
 
     typedef boost::mpl::list<
+        boost::statechart::custom_reaction<DoneLoading>,
         boost::statechart::custom_reaction<GameStart>
     > reactions;
 
     WaitingForGameStart(my_context ctx);
     ~WaitingForGameStart();
 
+    boost::statechart::result react(const DoneLoading& msg);
     boost::statechart::result react(const GameStart& msg);
 
     CLIENT_ACCESSOR
+
+    //! Load data in an asyc thread.
+    void ProcessData(const Message& message);
+
+    //! Update UI in the GUI thread.
+    void ProcessUI(bool is_new_game, const SaveGameUIData& ui_data);
+
+    bool is_loading = false;  //!< true from GameStart to DoneLoading
 };
 
 

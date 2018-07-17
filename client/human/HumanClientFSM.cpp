@@ -8,6 +8,7 @@
 #include "../../network/Networking.h"
 #include "../../network/ClientNetworking.h"
 #include "../../util/i18n.h"
+#include "../../util/launch_async.h"
 #include "../util/GameRules.h"
 #include "../../util/OptionsDB.h"
 #include "../../UI/ChatWnd.h"
@@ -782,29 +783,59 @@ WaitingForGameStart::WaitingForGameStart(my_context ctx) :
 }
 
 WaitingForGameStart::~WaitingForGameStart()
-{ TraceLogger(FSM) << "(HumanClientFSM) ~WaitingForGameStart"; }
+{
+    TraceLogger(FSM) << "(HumanClientFSM) ~WaitingForGameStart";
+    if (is_loading)
+        WarnLogger(FSM) << "WaitingForGameStart did not finish loading";
+}
+
+boost::statechart::result WaitingForGameStart::react(const DoneLoading& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) WaitingForGameStart.DoneLoading";
+
+    if (!is_loading) {
+        WarnLogger(FSM) << "Received DoneLoading without loading";
+        return discard_event();
+    }
+
+    return transit<PlayingTurn>();
+}
 
 boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForGameStart.GameStart";
 
-    bool loaded_game_data;
-    bool ui_data_available;
-    SaveGameUIData ui_data;
-    bool save_state_string_available;
-    std::string save_state_string; // ignored - used by AI but not by human client
-    OrderSet orders;
-    bool single_player_game = false;
-    int empire_id = ALL_EMPIRES;
-    int current_turn = INVALID_GAME_TURN;
+    if (is_loading) {
+        WarnLogger(FSM) << "Received GameStart while loading";
+        return discard_event();
+    }
+
+    is_loading = true;
+    launch_async(std::bind(&WaitingForGameStart::ProcessData, this, msg.m_message));
+
+    return discard_event();
+}
+
+void WaitingForGameStart::ProcessData(const Message& message) {
+    TraceLogger(FSM) << "(HumanClientFSM) WaitingForGameStart.ProcessData";
+
     Client().PlayerStatus().clear();
     Client().Orders().Reset();
 
-    ExtractGameStartMessageData(msg.m_message,       single_player_game,             empire_id,
-                                current_turn,        Empires(),                      GetUniverse(),
-                                GetSpeciesManager(), GetCombatLogManager(),          GetSupplyManager(),
-                                Client().Players(),  Client().Orders(),              loaded_game_data,
-                                ui_data_available,   ui_data,                        save_state_string_available,
-                                save_state_string,   Client().GetGalaxySetupData());
+    bool            loaded_game_data = false;
+    bool            ui_data_available = false;
+    SaveGameUIData  ui_data;
+    bool            save_state_string_available = false;
+    std::string     save_state_string; // ignored - used by AI but not by human client
+    OrderSet        orders;
+    bool            single_player_game = false;
+    int             empire_id = ALL_EMPIRES;
+    int             current_turn = INVALID_GAME_TURN;
+
+    ExtractGameStartMessageData(message,                single_player_game,             empire_id,
+                                current_turn,           Empires(),                      GetUniverse(),
+                                GetSpeciesManager(),    GetCombatLogManager(),          GetSupplyManager(),
+                                Client().Players(),     Client().Orders(),              loaded_game_data,
+                                ui_data_available,      ui_data,                        save_state_string_available,
+                                save_state_string,      Client().GetGalaxySetupData());
 
     DebugLogger(FSM) << "Extracted GameStart message for turn: " << current_turn << " with empire: " << empire_id;
 
@@ -815,6 +846,13 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     GetGameRules().SetFromStrings(Client().GetGalaxySetupData().GetGameRules());
 
     bool is_new_game = !(loaded_game_data && ui_data_available);
+    Client().GetClientUI().PushWork(
+        std::bind(&WaitingForGameStart::ProcessUI, this, is_new_game, ui_data));
+}
+
+void WaitingForGameStart::ProcessUI(bool is_new_game, const SaveGameUIData& ui_data) {
+    TraceLogger(FSM) << "(HumanClientFSM) WaitingForGameStart.ProcessUI";
+
     Client().StartGame(is_new_game);
 
     if (!is_new_game)
@@ -826,7 +864,8 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
 
     Client().GetClientUI().GetPlayerListWnd()->Refresh();
 
-    return transit<PlayingTurn>();
+    is_loading = false;
+    context<HumanClientFSM>().process_event(DoneLoading());
 }
 
 
