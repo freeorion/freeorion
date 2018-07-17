@@ -3008,9 +3008,16 @@ void ServerApp::PreCombatProcessTurns() {
         if (fleet)
             fleet->ClearArrivalFlag();
     }
+    // first move unowned fleets, or an empire fleet landing on them could wrongly
+    // blockade them before they move
     for (auto& fleet : fleets) {
         // save for possible SitRep generation after moving...
-        if (fleet)
+        if (fleet && fleet->Unowned())
+            fleet->MovementPhase();
+    }
+    for (auto& fleet : fleets) {
+        // save for possible SitRep generation after moving...
+        if (fleet && !fleet->Unowned())
             fleet->MovementPhase();
     }
 
