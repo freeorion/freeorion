@@ -797,6 +797,8 @@ boost::statechart::result WaitingForGameStart::react(const DoneLoading& msg) {
         return discard_event();
     }
 
+    is_loading = false;
+
     return transit<PlayingTurn>();
 }
 
@@ -864,7 +866,6 @@ void WaitingForGameStart::ProcessUI(bool is_new_game, const SaveGameUIData& ui_d
 
     Client().GetClientUI().GetPlayerListWnd()->Refresh();
 
-    is_loading = false;
     context<HumanClientFSM>().process_event(DoneLoading());
 }
 

@@ -314,7 +314,7 @@ struct WaitingForGameStart : boost::statechart::state<WaitingForGameStart, Playi
     //! Update UI in the GUI thread.
     void ProcessUI(bool is_new_game, const SaveGameUIData& ui_data);
 
-    bool is_loading = false;  //!< true from GameStart to DoneLoading
+    volatile bool is_loading = false;  //!< true from GameStart to DoneLoading
 };
 
 
