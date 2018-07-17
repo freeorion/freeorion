@@ -1044,6 +1044,29 @@ std::vector<std::shared_ptr<GG::Texture>> ClientUI::GetPrefixedTextures(const bo
     return prefixed_textures_and_dist.first;
 }
 
+bool ClientUI::PushWork(std::function<void()> work)
+{
+    if (!work)
+        return false;
+    {
+        std::lock_guard<std::mutex> guard(m_work_mutex);
+        m_work_queue.push(std::move(work));
+    }
+    return true;
+}
+
+bool ClientUI::PopWork(std::function<void()>& work)
+{
+    {
+        std::lock_guard<std::mutex> guard(m_work_mutex);
+        if (m_work_queue.empty())
+            return false;
+        work = std::move(m_work_queue.front());
+        m_work_queue.pop();
+    }
+    return true;
+}
+
 void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data) {
     GetMapWnd()->RestoreFromSaveData(ui_data);
     m_ship_designs->Load(ui_data);

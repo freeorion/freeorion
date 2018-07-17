@@ -956,6 +956,9 @@ void HumanClientApp::HandleSystemEvents() {
     } else if (auto msg = Networking().GetMessage()) {
         HandleMessage(*msg);
     }
+    std::function<void()> work;
+    while (GetClientUI().PopWork(work))
+        work();
 }
 
 void HumanClientApp::RenderBegin() {

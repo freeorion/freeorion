@@ -13,6 +13,8 @@
 
 #include <map>
 #include <memory>
+#include <mutex>
+#include <queue>
 
 
 class Fleet;
@@ -114,6 +116,12 @@ public:
     std::vector<std::shared_ptr<GG::Texture>> GetPrefixedTextures(const boost::filesystem::path& dir,
                                                                   const std::string& prefix,
                                                                   bool mipmap = false);
+
+    /** Add work for the GUI thread. */
+    bool PushWork(std::function<void()> work);
+
+    /** Get and remove work for the GUI thread. */
+    bool PopWork(std::function<void()>& work);
     //!@}
 
     static ClientUI* GetClientUI();     //!< returns a pointer to the singleton ClientUI class
@@ -231,6 +239,9 @@ private:
     std::shared_ptr<MultiPlayerLobbyWnd>    m_multiplayer_lobby_wnd;//!< the multiplayer lobby
     std::shared_ptr<SaveFileDialog>         m_savefile_dialog = nullptr;
     std::shared_ptr<PasswordEnterWnd>       m_password_enter_wnd;   //!< the authentication window
+
+    std::mutex                              m_work_mutex;           //!< guards access to the work queue
+    std::queue<std::function<void()>>       m_work_queue;           //!< FIFO queue of work for the GUI thread
 
     PrefixedTextures                        m_prefixed_textures;
 
