@@ -739,54 +739,69 @@ BombardOrder::BombardOrder(int empire, int ship, int planet) :
     Order(empire),
     m_ship(ship),
     m_planet(planet)
-{}
-
-void BombardOrder::ExecuteImpl() const {
-    GetValidatedEmpire();
-    int empire_id = EmpireID();
-
-    auto ship = GetShip(m_ship);
-    if (!ship) {
-        ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get ship with id " << m_ship;
+{
+    if(!Check(empire, ship, planet))
         return;
+}
+
+bool BombardOrder::Check(int empire_id, int ship_id, int planet_id) {
+    auto ship = GetShip(ship_id);
+    if (!ship) {
+        ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get ship with id " << ship_id;
+        return false;
     }
     if (!ship->CanBombard()) {
         ErrorLogger() << "BombardOrder::ExecuteImpl got ship that can't bombard";
-        return;
+        return false;
     }
     if (!ship->OwnedBy(empire_id)) {
         ErrorLogger() << "BombardOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
-        return;
+        return false;
+    }
+    if (ship->TotalWeaponsDamage() <= 0.0f) {   // this will test the current meter values. potential issue if some local change sets these to zero even though they will be nonzero on server when bombard is processed before effects application / meter update
+        ErrorLogger() << "IssueBombardOrder : ship can't attack / bombard";
+        return false;
     }
 
-    auto planet = GetPlanet(m_planet);
+    auto planet = GetPlanet(planet_id);
     if (!planet) {
-        ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get planet with id " << m_planet;
-        return;
+        ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get planet with id " << planet_id;
+        return false;
     }
     if (planet->OwnedBy(empire_id)) {
         ErrorLogger() << "BombardOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
-        return;
+        return false;
     }
     if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
         ErrorLogger() << "BombardOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
-        return;
+        return false;
     }
-    if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_BASIC_VISIBILITY) {
+    if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < VIS_BASIC_VISIBILITY) {
         ErrorLogger() << "BombardOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
-        //return;
     }
 
     int ship_system_id = ship->SystemID();
     if (ship_system_id == INVALID_OBJECT_ID) {
         ErrorLogger() << "BombardOrder::ExecuteImpl given id of ship not in a system";
-        return;
+        return false;
     }
     int planet_system_id = planet->SystemID();
     if (ship_system_id != planet_system_id) {
         ErrorLogger() << "BombardOrder::ExecuteImpl given ids of ship and planet not in the same system";
-        return;
+        return false;
     }
+
+    return true;
+}
+
+void BombardOrder::ExecuteImpl() const {
+    GetValidatedEmpire();
+
+    if(!Check(EmpireID(), m_ship, m_planet))
+        return;
+
+    auto ship = GetShip(m_ship);
+    auto planet = GetPlanet(m_planet);
 
     // note: multiple ships, from same or different empires, can bombard the same planet on the same turn
     DebugLogger() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "

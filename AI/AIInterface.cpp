@@ -426,56 +426,10 @@ namespace AIInterface {
     }
 
     int IssueBombardOrder(int ship_id, int planet_id) {
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        if(!BombardOrder::Check(AIClientApp::GetApp()->EmpireID(), ship_id, planet_id))
+            return 0;
 
-        // make sure ship_id is a ship...
-        auto ship = GetShip(ship_id);
-        if (!ship) {
-            ErrorLogger() << "IssueBombardOrder : passed an invalid ship_id";
-            return 0;
-        }
-        if (ship->TotalWeaponsDamage() <= 0.0f) {   // this will test the current meter values. potential issue if some local change sets these to zero even though they will be nonzero on server when bombard is processed before effects application / meter update
-            ErrorLogger() << "IssueBombardOrder : ship can't attack / bombard";
-            return 0;
-        }
-        if (!ship->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueBombardOrder : ship isn't owned by the order-issuing empire";
-            return 0;
-        }
-
-
-        // verify that planet exists and is occupied by another empire
-        auto planet = GetPlanet(planet_id);
-        if (!planet) {
-            ErrorLogger() << "IssueBombardOrder : no planet with passed planet_id";
-            return 0;
-        }
-        if (planet->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueBombardOrder : planet is already owned by the order-issuing empire";
-            return 0;
-        }
-        if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
-            ErrorLogger() << "IssueBombardOrder : planet owned by an empire not at war with order-issuing empire";
-            return 0;
-        }
-        if (AIClientApp::GetApp()->GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < VIS_BASIC_VISIBILITY) {
-            ErrorLogger() << "IssueBombardOrder : planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
-            //return;
-        }
-
-
-        int ship_system_id = ship->SystemID();
-        if (ship_system_id == INVALID_OBJECT_ID) {
-            ErrorLogger() << "IssueBombardOrder : given id of ship not in a system";
-            return 0;
-        }
-        int planet_system_id = planet->SystemID();
-        if (ship_system_id != planet_system_id) {
-            ErrorLogger() << "IssueBombardOrder : given ids of ship and planet not in the same system";
-            return 0;
-        }
-
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<BombardOrder>(empire_id, ship_id, planet_id));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<BombardOrder>(AIClientApp::GetApp()->EmpireID(), ship_id, planet_id));
 
         return 1;
     }
