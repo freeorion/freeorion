@@ -435,20 +435,11 @@ namespace AIInterface {
     }
 
     int IssueAggressionOrder(int object_id, bool aggressive) {
-        int empire_id = AIClientApp::GetApp()->EmpireID();
-
-        auto fleet = GetFleet(object_id);
-        if (!fleet) {
-            ErrorLogger() << "IssueAggressionOrder : no fleet with passed id";
+        if(!AggressiveOrder::Check(AIClientApp::GetApp()->EmpireID(), object_id, aggressive))
             return 0;
-        }
-        if (!fleet->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueAggressionOrder : passed object_id of object not owned by player";
-            return 0;
-        }
 
         AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<AggressiveOrder>(empire_id, object_id, aggressive));
+            std::make_shared<AggressiveOrder>(AIClientApp::GetApp()->EmpireID(), object_id, aggressive));
 
         return 1;
     }

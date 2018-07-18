@@ -710,6 +710,8 @@ public:
     { return m_aggression; }
     //@}
 
+    static bool Check(int empire_id, int object_id, bool aggression);
+
 private:
     AggressiveOrder() = default;
 

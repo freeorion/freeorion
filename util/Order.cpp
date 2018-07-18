@@ -1227,15 +1227,35 @@ AggressiveOrder::AggressiveOrder(int empire, int object_id, bool aggression/* = 
     Order(empire),
     m_object_id(object_id),
     m_aggression(aggression)
-{}
+{
+    if (!Check(empire, object_id, aggression))
+        return;
+}
+
+bool AggressiveOrder::Check(int empire_id, int object_id, bool aggression) {
+    auto fleet = GetFleet(object_id);
+    if (!fleet) {
+        ErrorLogger() << "IssueAggressionOrder : no fleet with passed id";
+        return false;
+    }
+
+    if (!fleet->OwnedBy(empire_id)) {
+        ErrorLogger() << "IssueAggressionOrder : passed object_id of object not owned by player";
+        return false;
+    }
+
+    return true;
+}
 
 void AggressiveOrder::ExecuteImpl() const {
     GetValidatedEmpire();
-    int empire_id = EmpireID();
-    if (auto fleet = GetFleet(m_object_id)) {
-        if (fleet->OwnedBy(empire_id))
-            fleet->SetAggressive(m_aggression);
-    }
+
+    if (!Check(EmpireID(), m_object_id, m_aggression))
+        return;
+
+    auto fleet = GetFleet(m_object_id);
+
+    fleet->SetAggressive(m_aggression);
 }
 
 /////////////////////////////////////////////////////
