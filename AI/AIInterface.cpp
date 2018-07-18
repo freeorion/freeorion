@@ -500,24 +500,11 @@ namespace AIInterface {
     }
 
     int IssueChangeFocusOrder(int planet_id, const std::string& focus) {
-        int empire_id = AIClientApp::GetApp()->EmpireID();
-
-        auto planet = GetPlanet(planet_id);
-        if (!planet) {
-            ErrorLogger() << "IssueChangeFocusOrder : no planet with passed planet_id "<<planet_id;
+        if(!ChangeFocusOrder::Check(AIClientApp::GetApp()->EmpireID(), planet_id, focus))
             return 0;
-        }
-        if (!planet->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueChangeFocusOrder : empire does not own planet with passed planet_id";
-            return 0;
-        }
-        if (false) {    // todo: verify that focus is valid for specified planet
-            ErrorLogger() << "IssueChangeFocusOrder : invalid focus specified";
-            return 0;
-        }
 
         AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ChangeFocusOrder>(empire_id, planet_id, focus));
+            std::make_shared<ChangeFocusOrder>(AIClientApp::GetApp()->EmpireID(), planet_id, focus));
 
         return 1;
     }

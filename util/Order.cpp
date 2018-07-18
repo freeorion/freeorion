@@ -847,22 +847,39 @@ ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, const std::string& fo
     Order(empire),
     m_planet(planet),
     m_focus(focus)
-{}
+{
+    if (Check(empire, planet, focus))
+        return;
+}
+
+bool ChangeFocusOrder::Check(int empire_id, int planet_id, const std::string& focus) {
+    auto planet = GetPlanet(planet_id);
+
+    if (!planet) {
+        ErrorLogger() << "Illegal planet id specified in change planet focus order.";
+        return false;
+    }
+
+    if (!planet->OwnedBy(empire_id)) {
+        ErrorLogger() << "Empire attempted to issue change planet focus to another's planet.";
+        return false;
+    }
+
+    if (false) {    // todo: verify that focus is valid for specified planet
+        ErrorLogger() << "IssueChangeFocusOrder : invalid focus specified";
+        return false;
+    }
+
+    return true;
+}
 
 void ChangeFocusOrder::ExecuteImpl() const {
     GetValidatedEmpire();
 
-    auto planet = GetPlanet(PlanetID());
-
-    if (!planet) {
-        ErrorLogger() << "Illegal planet id specified in change planet focus order.";
+    if (Check(EmpireID(), m_planet, m_focus))
         return;
-    }
 
-    if (!planet->OwnedBy(EmpireID())) {
-        ErrorLogger() << "Empire attempted to issue change planet focus to another's planet.";
-        return;
-    }
+    auto planet = GetPlanet(m_planet);
 
     planet->SetFocus(m_focus);
 }

@@ -461,6 +461,8 @@ public:
     { return m_planet; }
     //@}
 
+    static bool Check(int empire_id, int planet_id, const std::string& focus);
+
 private:
     ChangeFocusOrder() = default;
 
