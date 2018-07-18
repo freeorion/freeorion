@@ -1301,20 +1301,65 @@ GiveObjectToEmpireOrder::GiveObjectToEmpireOrder(int empire, int object_id, int 
     Order(empire),
     m_object_id(object_id),
     m_recipient_empire_id(recipient)
-{}
+{
+    if (!Check(empire, object_id, recipient))
+        return;
+}
+
+bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_empire_id) {
+    if (GetEmpire(recipient_empire_id) == 0) {
+        ErrorLogger() << "IssueGiveObjectToEmpireOrder : given invalid recipient empire id";
+        return false;
+    }
+
+    if (Empires().GetDiplomaticStatus(empire_id, recipient_empire_id) != DIPLO_PEACE) {
+        ErrorLogger() << "IssueGiveObjectToEmpireOrder : attempting to give to empire not at peace";
+        return false;
+    }
+
+    auto obj = GetUniverseObject(object_id);
+    if (!obj) {
+        ErrorLogger() << "IssueGiveObjectToEmpireOrder : passed invalid object id";
+        return false;
+    }
+
+    if (!obj->OwnedBy(empire_id)) {
+        ErrorLogger() << "IssueGiveObjectToEmpireOrder : passed object not owned by player";
+        return false;
+    }
+
+    auto system = GetSystem(obj->SystemID());
+    if (!system) {
+        ErrorLogger() << "IssueGiveObjectToEmpireOrder : couldn't get system of object";
+        return false;
+    }
+
+    if (obj->ObjectType() != OBJ_FLEET && obj->ObjectType() != OBJ_PLANET) {
+        ErrorLogger() << "IssueGiveObjectToEmpireOrder : passed object that is not a fleet or planet";
+        return false;
+    }
+
+    auto system_objects = Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
+    if (std::any_of(system_objects.begin(), system_objects.end(),
+                     [recipient_empire_id](const std::shared_ptr<const UniverseObject> o){ return o->Owner() == recipient_empire_id; }))
+    {
+        ErrorLogger() << "IssueGiveObjectToEmpireOrder : recipient empire has nothing in system";
+        return false;
+    }
+
+    return true;
+}
 
 void GiveObjectToEmpireOrder::ExecuteImpl() const {
     GetValidatedEmpire();
-    int empire_id = EmpireID();
 
-    if (auto fleet = GetFleet(m_object_id)) {
-        if (fleet->OwnedBy(empire_id))
-            fleet->SetGiveToEmpire(m_recipient_empire_id);
+    if (!Check(EmpireID(), m_object_id, m_recipient_empire_id))
+        return;
 
-    } else if (auto planet = GetPlanet(m_object_id)) {
-        if (planet->OwnedBy(empire_id))
-            planet->SetGiveToEmpire(m_recipient_empire_id);
-    }
+    if (auto fleet = GetFleet(m_object_id))
+        fleet->SetGiveToEmpire(m_recipient_empire_id);
+    else if (auto planet = GetPlanet(m_object_id))
+        planet->SetGiveToEmpire(m_recipient_empire_id);
 }
 
 bool GiveObjectToEmpireOrder::UndoImpl() const {

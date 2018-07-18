@@ -752,6 +752,7 @@ public:
     { return m_recipient_empire_id; }
     //@}
 
+    static bool Check(int empire_id, int object_id, int recipient_empire_id);
 private:
     GiveObjectToEmpireOrder() = default;
 

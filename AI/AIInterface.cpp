@@ -285,56 +285,11 @@ namespace AIInterface {
     }
 
     int IssueGiveObjectToEmpireOrder(int object_id, int recipient_id) {
-        int empire_id = AIClientApp::GetApp()->EmpireID();
-
-        if (GetEmpire(recipient_id) == 0) {
-            ErrorLogger() << "IssueGiveObjectToEmpireOrder : given invalid recipient empire id";
+        if (!GiveObjectToEmpireOrder::Check(AIClientApp::GetApp()->EmpireID(), object_id, recipient_id))
             return 0;
-        }
-
-        if (Empires().GetDiplomaticStatus(empire_id, recipient_id) != DIPLO_PEACE) {
-            ErrorLogger() << "IssueGiveObjectToEmpireOrder : attempting to give to empire not at peace";
-            return 0;
-        }
-
-        auto obj = GetUniverseObject(object_id);
-        if (!obj) {
-            ErrorLogger() << "IssueGiveObjectToEmpireOrder : passed invalid object id";
-            return 0;
-        }
-
-        if (!obj->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueGiveObjectToEmpireOrder : passed object not owned by player";
-            return 0;
-        }
-
-        if (obj->ObjectType() != OBJ_FLEET && obj->ObjectType() != OBJ_PLANET) {
-            ErrorLogger() << "IssueGiveObjectToEmpireOrder : passed object that is not a fleet or planet";
-            return 0;
-        }
-
-        auto system = GetSystem(obj->SystemID());
-        if (!system) {
-            ErrorLogger() << "IssueGiveObjectToEmpireOrder : couldn't get system of object";
-            return 0;
-        }
-
-        // can only give to empires with something present to receive the gift
-        bool recipient_has_something_here = false;
-        auto system_objects = Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
-        for (auto& system_object : system_objects) {
-            if (system_object->Owner() == recipient_id) {
-                recipient_has_something_here = true;
-                break;
-            }
-        }
-        if (!recipient_has_something_here) {
-            ErrorLogger() << "IssueGiveObjectToEmpireOrder : recipient empire has nothing in system";
-            return 0;
-        }
 
         AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<GiveObjectToEmpireOrder>(empire_id, object_id, recipient_id));
+            std::make_shared<GiveObjectToEmpireOrder>(AIClientApp::GetApp()->EmpireID(), object_id, recipient_id));
 
         return 1;
     }
