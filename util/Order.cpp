@@ -613,62 +613,88 @@ InvadeOrder::InvadeOrder(int empire, int ship, int planet) :
     Order(empire),
     m_ship(ship),
     m_planet(planet)
-{}
-
-void InvadeOrder::ExecuteImpl() const {
-    GetValidatedEmpire();
-    int empire_id = EmpireID();
-
-    auto ship = GetShip(m_ship);
-    if (!ship) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl couldn't get ship with id " << m_ship;
+{
+    if(!Check(empire, ship, planet))
         return;
+}
+
+bool InvadeOrder::Check(int empire_id, int ship_id, int planet_id) {
+    // make sure ship_id is a ship...
+    auto ship = GetShip(ship_id);
+    if (!ship) {
+        ErrorLogger() << "IssueInvadeOrder : passed an invalid ship_id";
+        return false;
+    }
+
+    if (!ship->OwnedBy(empire_id)) {
+        ErrorLogger() << "IssueInvadeOrder : empire does not own passed ship";
+        return false;
     }
     if (!ship->HasTroops()) {
         ErrorLogger() << "InvadeOrder::ExecuteImpl got ship that can't invade";
-        return;
-    }
-    if (!ship->OwnedBy(empire_id)) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
-        return;
+        return false;
     }
 
-    auto planet = GetPlanet(m_planet);
+    // get fleet of ship
+    auto fleet = GetFleet(ship->FleetID());
+    if (!fleet) {
+        ErrorLogger() << "IssueInvadeOrder : ship with passed ship_id has invalid fleet_id";
+        return false;
+    }
+
+    // make sure player owns ship and its fleet
+    if (!fleet->OwnedBy(empire_id)) {
+        ErrorLogger() << "IssueInvadeOrder : empire does not own fleet of passed ship";
+        return false;
+    }
+
+    auto planet = GetPlanet(planet_id);
     if (!planet) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
-        return;
+        ErrorLogger() << "InvadeOrder::ExecuteImpl couldn't get planet with id " << planet_id;
+        return false;
     }
-    if (planet->Unowned() && planet->InitialMeterValue(METER_POPULATION) == 0.0) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl given unpopulated planet";
-        return;
+
+    if (ship->SystemID() != planet->SystemID()) {
+        ErrorLogger() << "InvadeOrder::ExecuteImpl given ids of ship and planet not in the same system";
+        return false;
     }
-    if (planet->InitialMeterValue(METER_SHIELD) > 0.0) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet with shield > 0";
-        return;
+
+    if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < VIS_BASIC_VISIBILITY) {
+        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
+        return false;
     }
+
     if (planet->OwnedBy(empire_id)) {
         ErrorLogger() << "InvadeOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
-        return;
-    }
-    if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
-        return;
-    }
-    if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_BASIC_VISIBILITY) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
-        //return;
+        return false;
     }
 
-    int ship_system_id = ship->SystemID();
-    if (ship_system_id == INVALID_OBJECT_ID) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl given id of ship not in a system";
-        return;
+    if (planet->Unowned() && planet->InitialMeterValue(METER_POPULATION) == 0.0) {
+        ErrorLogger() << "InvadeOrder::ExecuteImpl given unpopulated planet";
+        return false;
     }
-    int planet_system_id = planet->SystemID();
-    if (ship_system_id != planet_system_id) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl given ids of ship and planet not in the same system";
-        return;
+
+    if (planet->InitialMeterValue(METER_SHIELD) > 0.0) {
+        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet with shield > 0";
+        return false;
     }
+
+    if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
+        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
+        return false;
+    }
+
+    return true;
+}
+
+void InvadeOrder::ExecuteImpl() const {
+    GetValidatedEmpire();
+
+    if(!Check(EmpireID(), m_ship, m_planet))
+        return;
+
+    auto ship = GetShip(m_ship);
+    auto planet = GetPlanet(m_planet);
 
     // note: multiple ships, from same or different empires, can invade the same planet on the same turn
     DebugLogger() << "InvadeOrder::ExecuteImpl set for ship " << m_ship << " "

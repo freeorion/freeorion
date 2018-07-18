@@ -369,6 +369,8 @@ public:
     { return m_ship; }
     //@}
 
+    static bool Check(int empire_id, int ship_id, int planet_id);
+
 private:
     InvadeOrder() = default;
 

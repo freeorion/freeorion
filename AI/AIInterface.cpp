@@ -417,71 +417,10 @@ namespace AIInterface {
     }
 
     int IssueInvadeOrder(int ship_id, int planet_id) {
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        if(!InvadeOrder::Check(AIClientApp::GetApp()->EmpireID(), ship_id, planet_id))
+            return 0;
 
-        // make sure ship_id is a ship...
-        auto ship = GetShip(ship_id);
-        if (!ship) {
-            ErrorLogger() << "IssueInvadeOrder : passed an invalid ship_id";
-            return 0;
-        }
-
-        // get fleet of ship
-        auto fleet = GetFleet(ship->FleetID());
-        if (!fleet) {
-            ErrorLogger() << "IssueInvadeOrder : ship with passed ship_id has invalid fleet_id";
-            return 0;
-        }
-
-        // make sure player owns ship and its fleet
-        if (!fleet->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueInvadeOrder : empire does not own fleet of passed ship";
-            return 0;
-        }
-        if (!ship->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueInvadeOrder : empire does not own passed ship";
-            return 0;
-        }
-
-        // verify that planet exists and is occupied by another empire
-        auto planet = GetPlanet(planet_id);
-        if (!planet) {
-            ErrorLogger() << "IssueInvadeOrder : no planet with passed planet_id";
-            return 0;
-        }
-        bool owned_by_invader = planet->OwnedBy(empire_id);
-        bool unowned = planet->Unowned();
-        bool populated = planet->InitialMeterValue(METER_POPULATION) > 0.0f;
-        bool visible = AIClientApp::GetApp()->GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_PARTIAL_VISIBILITY;
-        bool vulnerable = planet->InitialMeterValue(METER_SHIELD) <= 0.0f;
-        float shields = planet->InitialMeterValue(METER_SHIELD);
-        std::string this_species = planet->SpeciesName();
-        //bool being_invaded = planet->IsAboutToBeInvaded();
-        bool invadable = !owned_by_invader && vulnerable && (populated || !unowned) && visible ;// && !being_invaded; a 'being_invaded' check prevents AI from invading with multiple ships at once, which is important
-        if (!invadable) {
-            ErrorLogger() << "IssueInvadeOrder : planet with passed planet_id " << planet_id
-                          << " and species " << this_species << " is not invadable due to one or more of: owned by invader empire, "
-                          << "not visible to invader empire, has shields above zero, or is already being invaded.";
-            if (!unowned)
-                ErrorLogger() << "IssueInvadeOrder : planet (id " << planet_id << ") is not unowned";
-            if (!visible)
-                ErrorLogger() << "IssueInvadeOrder : planet (id " << planet_id << ") is not visible";
-            if (!vulnerable)
-                ErrorLogger() << "IssueInvadeOrder : planet (id " << planet_id << ") is not vulnerable, shields at "<<shields;
-            return 0;
-        }
-
-        // verify that planet is in same system as the fleet
-        if (planet->SystemID() != fleet->SystemID()) {
-            ErrorLogger() << "IssueInvadeOrder : fleet and planet are not in the same system";
-            return 0;
-        }
-        if (ship->SystemID() == INVALID_OBJECT_ID) {
-            ErrorLogger() << "IssueInvadeOrder : ship is not in a system";
-            return 0;
-        }
-
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<InvadeOrder>(empire_id, ship_id, planet_id));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<InvadeOrder>(AIClientApp::GetApp()->EmpireID(), ship_id, planet_id));
 
         return 1;
     }
