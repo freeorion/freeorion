@@ -308,7 +308,14 @@ private:
 /** returns the singleton tech manager */
 FO_COMMON_API TechManager& GetTechManager();
 
-/** returns a pointer to the tech with the name \a name, or 0 if no such tech exists */
+//! @brief Returns the ::Tech identified by @p name
+//!
+//! @param name
+//! The identifying name of the requested ::Tech.
+//!
+//! @return
+//! A pointer to the ::Tech matching @p name or nullptr if no ::Tech with that
+//! name was found.
 FO_COMMON_API const Tech* GetTech(const std::string& name);
 
 /** returns a pointer to the tech category with the name \a name, or 0 if no such category exists */

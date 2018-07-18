@@ -141,15 +141,6 @@ namespace AIInterface {
         return it->second.host;
     }
 
-    const Universe& GetUniverse()
-    { return AIClientApp::GetApp()->GetUniverse(); }
-
-    const Tech* GetTech(const std::string& name)
-    { return TechManager::GetTechManager().GetTech(name); }
-
-    int CurrentTurn()
-    { return AIClientApp::GetApp()->CurrentTurn(); }
-
     object GetOptionsDBOptionStr(std::string const &option)
     { return GetOptionsDB().OptionExists(option) ? str(GetOptionsDB().Get<std::string>(option)) : str(); }
 
@@ -167,16 +158,6 @@ namespace AIInterface {
 
     const GalaxySetupData&  GetGalaxySetupData()
     { return AIClientApp::GetApp()->GetGalaxySetupData(); }
-
-    void InitTurn() {
-        //boost::timer turn_init_timer;
-
-        //InitMeterEstimatesAndDiscrepancies();
-        //UpdateMeterEstimates();
-        //UpdateResourcePools();
-
-        //DebugLogger() << "AIInterface::InitTurn time: " << (turn_init_timer.elapsed() * 1000.0);
-    }
 
     void InitMeterEstimatesAndDiscrepancies() {
         Universe& universe = AIClientApp::GetApp()->GetUniverse();
@@ -529,7 +510,7 @@ namespace AIInterface {
         bool owned_by_invader = planet->OwnedBy(empire_id);
         bool unowned = planet->Unowned();
         bool populated = planet->InitialMeterValue(METER_POPULATION) > 0.0f;
-        bool visible = GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_PARTIAL_VISIBILITY;
+        bool visible = AIClientApp::GetApp()->GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_PARTIAL_VISIBILITY;
         bool vulnerable = planet->InitialMeterValue(METER_SHIELD) <= 0.0f;
         float shields = planet->InitialMeterValue(METER_SHIELD);
         std::string this_species = planet->SpeciesName();
@@ -596,7 +577,7 @@ namespace AIInterface {
             ErrorLogger() << "IssueBombardOrder : planet owned by an empire not at war with order-issuing empire";
             return 0;
         }
-        if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < VIS_BASIC_VISIBILITY) {
+        if (AIClientApp::GetApp()->GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < VIS_BASIC_VISIBILITY) {
             ErrorLogger() << "IssueBombardOrder : planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
             //return;
         }

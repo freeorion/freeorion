@@ -39,7 +39,11 @@ public:
     /** Returns a IApp pointer to the singleton instance of the app. */
     static IApp* GetApp();
 
-    /** Returns applications copy of Universe. */
+    //! Returns the ::Universe known to this application
+    //!
+    //! @return
+    //! A constant reference to the single ::Universe instance representing the
+    //! known universe of this application.
     virtual Universe& GetUniverse() = 0;
 
     /** Start parsing universe object types on a separate thread. */
@@ -61,7 +65,9 @@ public:
 
     virtual std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) = 0;
 
-    /** Returns the current game turn. */
+    //! Returns the current game turn
+    //!
+    //! @return The number representing the current game turn.
     virtual int CurrentTurn() const = 0;
 
     static int MAX_AI_PLAYERS(); ///<Maximum number of AIs

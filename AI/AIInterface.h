@@ -213,28 +213,6 @@ namespace AIInterface {
      */
     const Empire* GetEmpire(int empire_id);
 
-    /** @brief Return the ::Universe known to this client
-     *
-     * @return A constant reference to the single ::Universe instance
-     *      representing the known universe of this client.
-     */
-    const Universe& GetUniverse();
-
-    /** @brief Return the ::Tech identified by @a name
-     *
-     * @param name The identifying name of the requested ::Tech.
-     *
-     * @return A pointer to the ::Tech matching @a name or nullptr if no ::Tech
-     *      with that name was found.
-     */
-    const Tech* GetTech(const std::string& name);
-
-    /** @brief Return the current game turn
-     *
-     * @return The number representing the current game turn.
-     */
-    int CurrentTurn();
-
     /** @brief Return the OptionsDB option @a option
      *
      * @return Return the OptionsDB option @a option or None if not set.
@@ -281,19 +259,6 @@ namespace AIInterface {
     /** @} */
 
     /** @name Game state prediction */ /** @{ */
-
-    /** @brief Initialize and update game state based last turn update
-     *
-     * Initialize and update game state by updating this client
-     *
-     * * Global ::Meter
-     * * ::ResourcePool
-     * * ::ProductionQueue
-     * * ::ResearchQueue
-     *
-     * instances based on the latest turn update.
-     */
-    void InitTurn();
 
     /** @brief Initialize and update the ::Universe ::Meter s
      *

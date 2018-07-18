@@ -61,8 +61,6 @@
 #include <boost/locale/date_time.hpp>
 
 
-const Tech* GetTech(const std::string& name);
-
 bool TextureFileNameCompare(const std::shared_ptr<GG::Texture> t1, const std::shared_ptr<GG::Texture> t2)
 { return t1 && t2 && t1->Path() < t2->Path(); }
 

@@ -2,6 +2,7 @@
 
 #include "../../AI/AIInterface.h"
 #include "../../universe/Universe.h"
+#include "../../util/AppInterface.h"
 #include "../../util/Directories.h"
 #include "../../util/Logger.h"
 #include "../../util/i18n.h"
@@ -132,9 +133,9 @@ namespace FreeOrionPython {
         def("getEmpire",                AIIntGetEmpireVoid,             return_value_policy<reference_existing_object>(), "Returns the empire object (Empire) of this AI player");
         def("getEmpire",                AIIntGetEmpireInt,              return_value_policy<reference_existing_object>(), "Returns the empire object (Empire) with the specified empire ID (int)");
 
-        def("getUniverse",              AIInterface::GetUniverse,       return_value_policy<reference_existing_object>(), "Returns the universe object (Universe)");
+        def("getUniverse",              GetUniverse,       return_value_policy<reference_existing_object>(), "Returns the universe object (Universe)");
 
-        def("currentTurn",              AIInterface::CurrentTurn,       "Returns the current game turn (int).");
+        def("currentTurn",              CurrentTurn,       "Returns the current game turn (int).");
 
         def("getOptionsDBOptionStr",    AIInterface::GetOptionsDBOptionStr,     return_value_policy<return_by_value>(), "Returns the string value of option in OptionsDB or None if the option does not exist.");
         def("getOptionsDBOptionInt",    AIInterface::GetOptionsDBOptionInt,     return_value_policy<return_by_value>(), "Returns the integer value of option in OptionsDB or None if the option does not exist.");
