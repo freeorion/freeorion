@@ -482,70 +482,92 @@ ColonizeOrder::ColonizeOrder(int empire, int ship, int planet) :
     Order(empire),
     m_ship(ship),
     m_planet(planet)
-{}
+{
+    if (!Check(empire, ship, planet))
+        return;
+}
 
-void ColonizeOrder::ExecuteImpl() const {
-    GetValidatedEmpire();
-    int empire_id = EmpireID();
-
-    auto ship = GetShip(m_ship);
+bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id) {
+    auto ship = GetShip(ship_id);
     if (!ship) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl couldn't get ship with id " << m_ship;
-        return;
+        ErrorLogger() << "ColonizeOrder::Check() : passed an invalid ship_id " << ship_id;
+        return false;
     }
-    if (!ship->CanColonize()) { // verifies that species exists and can colonize and that ship can colonize
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl got ship that can't colonize";
-        return;
+    auto fleet = GetFleet(ship->FleetID());
+    if (!fleet) {
+        ErrorLogger() << "ColonizeOrder::Check() : ship with passed ship_id has invalid fleet_id";
+        return false;
+    }
+
+    if (!fleet->OwnedBy(empire_id)) {
+        ErrorLogger() << "ColonizeOrder::Check() : empire does not own fleet of passed ship";
+        return 0;
     }
     if (!ship->OwnedBy(empire_id)) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
-        return;
+        ErrorLogger() << "ColonizeOrder::Check() : got ship that isn't owned by the order-issuing empire";
+        return false;
     }
 
-    float colonist_capacity = ship->ColonyCapacity();
+    if (!ship->CanColonize()) { // verifies that species exists and can colonize and that ship can colonize
+        ErrorLogger() << "ColonizeOrder::Check() : got ship that can't colonize";
+        return false;
+    }
 
-    auto planet = GetPlanet(m_planet);
+    auto planet = GetPlanet(planet_id);
+    float colonist_capacity = ship->ColonyCapacity();
     if (!planet) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
-        return;
+        ErrorLogger() << "ColonizeOrder::Check() : couldn't get planet with id " << planet_id;
+        return false;
     }
     if (planet->InitialMeterValue(METER_POPULATION) > 0.0f) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that already has population";
-        return;
+        ErrorLogger() << "ColonizeOrder::Check() : given planet that already has population";
+        return false;
     }
     if (!planet->Unowned() && planet->Owner() != empire_id) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that owned by another empire";
-        return;
+        ErrorLogger() << "ColonizeOrder::Check() : given planet that owned by another empire";
+        return false;
     }
     if (planet->OwnedBy(empire_id) && colonist_capacity == 0.0f) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that is already owned by empire and colony ship with zero capcity";
-        return;
+        ErrorLogger() << "ColonizeOrder::Check() : given planet that is already owned by empire and colony ship with zero capcity";
+        return false;
     }
-    if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_PARTIAL_VISIBILITY) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that empire has insufficient visibility of";
-        return;
+    if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < VIS_PARTIAL_VISIBILITY) {
+        ErrorLogger() << "ColonizeOrder::Check() : given planet that empire has insufficient visibility of";
+        return false;
     }
     if (colonist_capacity > 0.0f && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl nonzero colonist capacity, " << colonist_capacity
+        ErrorLogger() << "ColonizeOrder::Check() : nonzero colonist capacity, " << colonist_capacity
                       << ", and planet " << planet->Name() << " of type, " << planet->Type() << ", that ship's species, "
                       << ship->SpeciesName() << ", can't colonize";
-        return;
+        return false;
     }
 
     int ship_system_id = ship->SystemID();
     if (ship_system_id == INVALID_OBJECT_ID) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl given id of ship not in a system";
-        return;
+        ErrorLogger() << "ColonizeOrder::Check() : given id of ship not in a system";
+        return false;
     }
     int planet_system_id = planet->SystemID();
     if (ship_system_id != planet_system_id) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl given ids of ship and planet not in the same system";
-        return;
+        ErrorLogger() << "ColonizeOrder::Check() : given ids of ship and planet not in the same system";
+        return false;
     }
     if (planet->IsAboutToBeColonized()) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl given id planet that is already being colonized";
-        return;
+        ErrorLogger() << "ColonizeOrder::Check() : given id planet that is already being colonized";
+        return false;
     }
+
+    return true;
+}
+
+void ColonizeOrder::ExecuteImpl() const {
+    GetValidatedEmpire();
+
+    if (!Check(EmpireID(), m_ship, m_planet))
+        return;
+
+    auto ship = GetShip(m_ship);
+    auto planet = GetPlanet(m_planet);
 
     planet->SetIsAboutToBeColonized(true);
     ship->SetColonizePlanet(m_planet);

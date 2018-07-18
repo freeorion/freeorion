@@ -408,54 +408,10 @@ namespace AIInterface {
     }
 
     int IssueColonizeOrder(int ship_id, int planet_id) {
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        if (!ColonizeOrder::Check(AIClientApp::GetApp()->EmpireID(), ship_id, planet_id))
+            return 0;
 
-        // make sure ship_id is a ship...
-        auto ship = GetShip(ship_id);
-        if (!ship) {
-            ErrorLogger() << "IssueColonizeOrder : passed an invalid ship_id";
-            return 0;
-        }
-
-        // get fleet of ship
-        auto fleet = GetFleet(ship->FleetID());
-        if (!fleet) {
-            ErrorLogger() << "IssueColonizeOrder : ship with passed ship_id has invalid fleet_id";
-            return 0;
-        }
-
-        // make sure player owns ship and its fleet
-        if (!fleet->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueColonizeOrder : empire does not own fleet of passed ship";
-            return 0;
-        }
-        if (!ship->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueColonizeOrder : empire does not own passed ship";
-            return 0;
-        }
-
-        // verify that planet exists and is un-occupied.
-        auto planet = GetPlanet(planet_id);
-        if (!planet) {
-            ErrorLogger() << "IssueColonizeOrder : no planet with passed planet_id";
-            return 0;
-        }
-        if ((!planet->Unowned()) && !( planet->OwnedBy(empire_id) && planet->InitialMeterValue(METER_POPULATION) == 0.0f)) {
-            ErrorLogger() << "IssueColonizeOrder : planet with passed planet_id "<<planet_id<<" is already owned, or colonized by own empire";
-            return 0;
-        }
-
-        // verify that planet is in same system as the fleet
-        if (planet->SystemID() != fleet->SystemID()) {
-            ErrorLogger() << "IssueColonizeOrder : fleet and planet are not in the same system";
-            return 0;
-        }
-        if (ship->SystemID() == INVALID_OBJECT_ID) {
-            ErrorLogger() << "IssueColonizeOrder : ship is not in a system";
-            return 0;
-        }
-
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ColonizeOrder>(empire_id, ship_id, planet_id));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ColonizeOrder>(AIClientApp::GetApp()->EmpireID(), ship_id, planet_id));
 
         return 1;
     }
