@@ -363,46 +363,11 @@ namespace AIInterface {
     }
 
     int IssueFleetTransferOrder(int ship_id, int new_fleet_id) {
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        std::vector<int> ship_ids{ship_id};
+        if (!FleetTransferOrder::Check(AIClientApp::GetApp()->EmpireID(), new_fleet_id, ship_ids))
+            return 0;
 
-        auto ship = GetShip(ship_id);
-        if (!ship) {
-            ErrorLogger() << "IssueFleetTransferOrder : passed an invalid ship_id " << ship_id;
-            return 0;
-        }
-        int ship_sys_id = ship->SystemID();
-        if (ship_sys_id == INVALID_OBJECT_ID) {
-            ErrorLogger() << "IssueFleetTransferOrder : ship is not in a system";
-            return 0;
-        }
-        if (!ship->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueFleetTransferOrder : passed ship_id of ship not owned by player";
-            return 0;
-        }
-
-        auto fleet = GetFleet(new_fleet_id);
-        if (!fleet) {
-            ErrorLogger() << "IssueFleetTransferOrder : passed an invalid new_fleet_id " << new_fleet_id;
-            return 0;
-        }
-        int fleet_sys_id = fleet->SystemID();
-        if (fleet_sys_id == INVALID_OBJECT_ID) {
-            ErrorLogger() << "IssueFleetTransferOrder : new fleet is not in a system";
-            return 0;
-        }
-        if (!fleet->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueFleetTransferOrder : passed fleet_id "<< new_fleet_id << " of fleet not owned by player";
-            return 0;
-        }
-
-        if (fleet_sys_id != ship_sys_id) {
-            ErrorLogger() << "IssueFleetTransferOrder : new fleet in system " << fleet_sys_id << " and ship in system "<< ship_sys_id <<  " are not in the same system";
-            return 0;
-        }
-
-        std::vector<int> ship_ids;
-        ship_ids.push_back(ship_id);
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetTransferOrder>(empire_id, new_fleet_id, ship_ids));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetTransferOrder>(AIClientApp::GetApp()->EmpireID(), new_fleet_id, ship_ids));
 
         return 1;
     }

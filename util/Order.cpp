@@ -400,54 +400,76 @@ FleetTransferOrder::FleetTransferOrder(int empire, int dest_fleet,
     Order(empire),
     m_dest_fleet(dest_fleet),
     m_add_ships(ships)
-{}
+{
+    if (!Check(empire, dest_fleet, ships))
+        return;
+}
+
+bool FleetTransferOrder::Check(int empire_id, int dest_fleet_id, const std::vector<int>& ship_ids) {
+    auto fleet = GetFleet(dest_fleet_id);
+    if (!fleet) {
+        ErrorLogger() << "Empire attempted to move ships to a nonexistant fleet";
+        return false;
+    }
+    // check that destination fleet is owned by empire
+    if (!fleet->OwnedBy(empire_id)) {
+        ErrorLogger() << "IssueFleetTransferOrder : passed fleet_id "<< dest_fleet_id << " of fleet not owned by player";
+        return false;
+    }
+
+    if (fleet->SystemID() == INVALID_OBJECT_ID) {
+        ErrorLogger() << "IssueFleetTransferOrder : new fleet is not in a system";
+        return false;
+    }
+
+    bool invalid_ships {false};
+
+    for (auto ship : Objects().FindObjects<Ship>(ship_ids)) {
+        if (!ship) {
+            ErrorLogger() << "IssueFleetTransferOrder : passed an invalid ship_id";
+            invalid_ships = true;
+            break;
+        }
+
+        if (!ship->OwnedBy(empire_id)) {
+            ErrorLogger() << "IssueFleetTransferOrder : passed ship_id of ship not owned by player";
+            invalid_ships = true;
+            break;
+        }
+
+        if (ship->SystemID() == INVALID_OBJECT_ID) {
+            ErrorLogger() << "IssueFleetTransferOrder : ship is not in a system";
+            invalid_ships = true;
+            break;
+        }
+
+        if (ship->SystemID() != fleet->SystemID()) {
+            ErrorLogger() << "IssueFleetTransferOrder : passed ship is not in the same system as the target fleet";
+            invalid_ships = true;
+            break;
+        }
+    }
+
+    return !invalid_ships;
+}
 
 void FleetTransferOrder::ExecuteImpl() const {
     GetValidatedEmpire();
 
+    if (!Check(EmpireID(), DestinationFleet(), m_add_ships))
+        return;
+
     // look up the destination fleet
     auto target_fleet = GetFleet(DestinationFleet());
-    if (!target_fleet) {
-        ErrorLogger() << "Empire attempted to move ships to a nonexistant fleet";
-        return;
-    }
-    // check that destination fleet is owned by empire
-    if (!target_fleet->OwnedBy(EmpireID())) {
-        ErrorLogger() << "Empire attempted to move ships to a fleet it does not own";
-        return;
-    }
-    // verify that fleet is in a system
-    if (target_fleet->SystemID() == INVALID_OBJECT_ID) {
-        ErrorLogger() << "Empire attempted to transfer ships to/from fleet(s) not in a system";
-        return;
-    }
 
     // check that all ships are in the same system
     auto ships = Objects().FindObjects<Ship>(m_add_ships);
-
-    std::vector<std::shared_ptr<Ship>>  validated_ships;
-    validated_ships.reserve(m_add_ships.size());
-    std::vector<int>                    validated_ship_ids;
-    validated_ship_ids.reserve(m_add_ships.size());
-
-    for (auto& ship : ships) {
-        if (!ship->OwnedBy(EmpireID()))
-            continue;
-        if (ship->SystemID() != target_fleet->SystemID())
-            continue;
-        if (ship->FleetID() == target_fleet->ID())
-            continue;
-        validated_ships.push_back(ship);
-        validated_ship_ids.push_back(ship->ID());
-    }
-    if (validated_ships.empty())
-        return;
 
     GetUniverse().InhibitUniverseObjectSignals(true);
 
     // remove from old fleet(s)
     std::set<std::shared_ptr<Fleet>> modified_fleets;
-    for (auto& ship : validated_ships) {
+    for (auto& ship : ships) {
         if (auto source_fleet = GetFleet(ship->FleetID())) {
             source_fleet->RemoveShips({ship->ID()});
             modified_fleets.insert(source_fleet);
@@ -456,6 +478,12 @@ void FleetTransferOrder::ExecuteImpl() const {
     }
 
     // add to new fleet
+    std::vector<int> validated_ship_ids;
+    validated_ship_ids.reserve(m_add_ships.size());
+
+    for (auto& ship : ships)
+        validated_ship_ids.push_back(ship->ID());
+
     target_fleet->AddShips(validated_ship_ids);
 
     GetUniverse().InhibitUniverseObjectSignals(false);

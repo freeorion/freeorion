@@ -277,6 +277,8 @@ public:
     { return m_add_ships; }
     //@}
 
+    static bool Check(int empire_id, int dest_fleet_id, const std::vector<int>& ship_ids);
+
 private:
     FleetTransferOrder() = default;
 
