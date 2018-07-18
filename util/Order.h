@@ -215,6 +215,7 @@ public:
     { return m_route; }
     //@}
 
+    static bool Check(int empire_id, int fleet_id, int dest_fleet_id, bool append = false);
 private:
     FleetMoveOrder() = default;
 

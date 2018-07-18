@@ -261,25 +261,10 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
     m_route(),
     m_append(append)
 {
-    // perform sanity checks
+    if (!Check(empire_id, fleet_id, dest_system_id))
+        return;
+
     auto fleet = GetFleet(FleetID());
-    if (!fleet) {
-        ErrorLogger() << "Empire with id " << EmpireID() << " ordered fleet with id " << FleetID() << " to move, but no such fleet exists";
-        return;
-    }
-
-    auto destination_system = GetSystem(DestinationSystemID());
-    if (!destination_system) {
-        ErrorLogger() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id "
-                      << DestinationSystemID() << " but no such system exists / is known to exist";
-        return;
-    }
-
-    // verify that empire specified in order owns specified fleet
-    if (!fleet->OwnedBy(EmpireID()) ) {
-        ErrorLogger() << "Empire with id " << EmpireID() << " order to move but does not own fleet with id " << FleetID();
-        return;
-    }
 
     int start_system = fleet->SystemID();
     if (start_system == INVALID_OBJECT_ID)
@@ -294,73 +279,58 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
         m_route.push_back(start_system);
 }
 
-void FleetMoveOrder::ExecuteImpl() const {
-    GetValidatedEmpire();
-
-    auto fleet = GetFleet(FleetID());
+bool FleetMoveOrder::Check(int empire_id, int fleet_id, int dest_system_id, bool append) {
+    auto fleet = GetFleet(fleet_id);
     if (!fleet) {
-        ErrorLogger() << "Empire with id " << EmpireID() << " ordered fleet with id " << FleetID() << " to move, but no such fleet exists";
-        return;
+        ErrorLogger() << "Empire with id " << empire_id << " ordered fleet with id " << fleet_id << " to move, but no such fleet exists";
+        return false;
     }
 
-    auto destination_system = GetEmpireKnownSystem(DestinationSystemID(), EmpireID());
-    if (!destination_system) {
-        ErrorLogger() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system is known to that empire";
-        return;
-    }
-
-    // reject empty routes
-    if (m_route.empty()) {
-        ErrorLogger() << "Empire with id " << EmpireID() << " ordered fleet to move on empty route";
-        return;
-    }
-
-    // verify that empire specified in order owns specified fleet
-    if (!fleet->OwnedBy(EmpireID()) ) {
-        ErrorLogger() << "Empire with id " << EmpireID() << " order to move but does not own fleet with id " << FleetID();
-        return;
+    if (!fleet->OwnedBy(empire_id) ) {
+        ErrorLogger() << "Empire with id " << empire_id << " order to move but does not own fleet with id " << fleet_id;
+        return false;
     }
 
     int start_system = fleet->SystemID();
     if (start_system == INVALID_OBJECT_ID)
         start_system = fleet->NextSystemID();
 
+    auto dest_system = GetEmpireKnownSystem(dest_system_id, empire_id);
+    if (!dest_system) {
+        ErrorLogger() << "Empire with id " << empire_id << " ordered fleet to move to system with id " << dest_system_id << " but no such system is known to that empire";
+        return false;
+    }
+
+    if (dest_system_id != INVALID_OBJECT_ID && dest_system_id == start_system) {
+        DebugLogger() << "AIInterface::IssueFleetMoveOrder : pass destination system id (" << dest_system_id << ") that fleet is already in";
+        return false;
+    }
 
     // verify fleet route first system
-    int fleet_sys_id = fleet->SystemID();
-    if (!m_append || fleet->TravelRoute().empty()) {
-        if (fleet_sys_id != INVALID_OBJECT_ID) {
-            // fleet is in a system.  Its move path should also start from that system.
-            if (fleet_sys_id != start_system) {
-                ErrorLogger() << "Empire with id " << EmpireID()
-                              << " ordered a fleet to move from a system with id " << start_system
-                              << " that it is not at.  Fleet is located at system with id " << fleet_sys_id;
-                return;
-            }
-        } else {
-            // fleet is not in a system.  Its move path should start from the next system it is moving to.
-            int next_system = fleet->NextSystemID();
-            if (next_system != start_system) {
-                ErrorLogger() << "Empire with id " << EmpireID()
-                              << " ordered a fleet to move starting from a system with id " << start_system
-                              << ", but the fleet's next destination is system with id " << next_system;
-                return;
-            }
-        }
-    } else {
+    if (append && !fleet->TravelRoute().empty()) {
         // We should append and there is something to append to
         int last_system = fleet->TravelRoute().back();
         if (last_system != start_system) {
-            ErrorLogger() << "Empire with id " << EmpireID()
+            ErrorLogger() << "Empire with id " << empire_id
                           << " ordered a fleet to continue from system with id " << start_system
                           << ", but the fleet's current route won't lead there, it leads to system " << last_system;
-            return;
+            return false;
         }
     }
 
+    return true;
+}
+
+void FleetMoveOrder::ExecuteImpl() const {
+    GetValidatedEmpire();
+
+    if (!Check(EmpireID(), m_fleet, m_dest_system))
+        return;
 
     // convert list of ids to list of System
     std::list<int> route_list;
+
+    auto fleet = GetFleet(FleetID());
 
     if (m_append && !fleet->TravelRoute().empty()){
         route_list = fleet->TravelRoute();
@@ -368,9 +338,6 @@ void FleetMoveOrder::ExecuteImpl() const {
     }
 
     std::copy(m_route.begin(), m_route.end(), std::back_inserter(route_list));
-
-
-    // validate route.  Only allow travel between systems connected in series by starlanes known to this fleet's owner.
 
     // check destination validity: disallow movement that's out of range
     auto eta = fleet->ETA(fleet->MovePath(route_list));

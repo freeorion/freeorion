@@ -225,26 +225,10 @@ namespace AIInterface {
     { return AIClientApp::GetApp()->Orders(); }
 
     int IssueFleetMoveOrder(int fleet_id, int destination_id) {
-        auto fleet = GetFleet(fleet_id);
-        if (!fleet) {
-            ErrorLogger() << "IssueFleetMoveOrder : passed an invalid fleet_id";
+        if (!FleetMoveOrder::Check(AIClientApp::GetApp()->EmpireID(), fleet_id, destination_id))
             return 0;
-        }
 
-        int empire_id = AIClientApp::GetApp()->EmpireID();
-        if (!fleet->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueFleetMoveOrder : passed fleet_id of fleet not owned by player";
-            return 0;
-        }
-
-        int start_id = fleet->SystemID();
-        if (start_id == INVALID_OBJECT_ID)
-            start_id = fleet->NextSystemID();
-
-        if (destination_id != INVALID_OBJECT_ID && destination_id == start_id)
-            DebugLogger() << "AIInterface::IssueFleetMoveOrder : pass destination system id (" << destination_id << ") that fleet is already in";
-
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetMoveOrder>(empire_id, fleet_id, destination_id));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetMoveOrder>(AIClientApp::GetApp()->EmpireID(), fleet_id, destination_id));
 
         return 1;
     }
