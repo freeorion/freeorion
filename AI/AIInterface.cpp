@@ -265,21 +265,10 @@ namespace AIInterface {
     }
 
     int IssueScrapOrder(int object_id) {
-        int empire_id = AIClientApp::GetApp()->EmpireID();
-
-        auto obj = GetUniverseObject(object_id);
-
-        if (!obj) {
-            ErrorLogger() << "IssueScrapOrder : passed an invalid object_id";
+        if (ScrapOrder::Check(AIClientApp::GetApp()->EmpireID(), object_id))
             return 0;
-        }
 
-        if (!obj->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueScrapOrder : passed object_id of object not owned by player";
-            return 0;
-        }
-
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ScrapOrder>(empire_id, object_id));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ScrapOrder>(AIClientApp::GetApp()->EmpireID(), object_id));
 
         return 1;
     }

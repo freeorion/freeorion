@@ -1218,25 +1218,47 @@ void ShipDesignOrder::ExecuteImpl() const {
 ScrapOrder::ScrapOrder(int empire, int object_id) :
     Order(empire),
     m_object_id(object_id)
-{}
+{
+    if (Check(empire, object_id))
+        return;
+}
+
+bool ScrapOrder::Check(int empire_id, int object_id) {
+    auto obj = GetUniverseObject(object_id);
+
+    if (!obj) {
+        ErrorLogger() << "IssueScrapOrder : passed an invalid object_id";
+        return false;
+    }
+
+    if (!obj->OwnedBy(empire_id)) {
+        ErrorLogger() << "IssueScrapOrder : passed object_id of object not owned by player";
+        return false;
+    }
+
+    if (obj->ObjectType() != OBJ_SHIP && obj->ObjectType() != OBJ_BUILDING) {
+        ErrorLogger() << "ScrapOrder::Check : passed object that is not a ship or building";
+        return false;
+    }
+
+    auto ship = GetShip(object_id);
+    if (ship && ship->SystemID() == INVALID_OBJECT_ID) {
+        ErrorLogger() << "ScrapOrder::Check : can scrap a traveling ship";
+    }
+
+    return true;
+}
 
 void ScrapOrder::ExecuteImpl() const {
     GetValidatedEmpire();
-    int empire_id = EmpireID();
+
+    if (Check(EmpireID(), m_object_id))
+        return;
 
     if (auto ship = GetShip(m_object_id)) {
-        if (ship->SystemID() != INVALID_OBJECT_ID && ship->OwnedBy(empire_id)) {
-            ship->SetOrderedScrapped(true);
-            //DebugLogger() << "ScrapOrder::ExecuteImpl empire: " << empire_id
-            //                       << " on ship: " << ship->ID() << " at system: " << ship->SystemID()
-            //                       << " ... ordered scrapped?: " << ship->OrderedScrapped();
-        }
+        ship->SetOrderedScrapped(true);
     } else if (std::shared_ptr<Building> building = GetBuilding(m_object_id)) {
-        int planet_id = building->PlanetID();
-        if (auto planet = GetPlanet(planet_id)) {
-            if (building->OwnedBy(empire_id) && planet->OwnedBy(empire_id))
-                building->SetOrderedScrapped(true);
-        }
+        building->SetOrderedScrapped(true);
     }
 }
 

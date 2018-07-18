@@ -663,6 +663,7 @@ public:
     { return m_object_id; }
     //@}
 
+    static bool Check(int empire_id, int object_id);
 private:
     ScrapOrder() = default;
 
