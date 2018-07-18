@@ -144,7 +144,7 @@ private:
 class FO_COMMON_API NewFleetOrder : public Order {
 public:
     /** \name Structors */ //@{
-    NewFleetOrder(int empire, const std::string& fleet_names,
+    NewFleetOrder(int empire, const std::string& fleet_name,
                   const std::vector<int>& ship_ids,
                   bool aggressive);
     //@}
@@ -163,6 +163,7 @@ public:
     { return m_aggressive; }
     //@}
 
+    static bool Check(int empire, const std::string& fleet_name, const std::vector<int>& ship_ids, bool aggressive);
 private:
     NewFleetOrder() = default;
 

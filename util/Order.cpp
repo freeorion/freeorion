@@ -120,56 +120,72 @@ NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,
     m_fleet_id(INVALID_OBJECT_ID),
     m_ship_ids(ship_ids),
     m_aggressive(aggressive)
-{}
+{
+    if (!Check(empire, fleet_name, ship_ids, aggressive))
+        return;
+}
 
-void NewFleetOrder::ExecuteImpl() const {
-    GetValidatedEmpire();
+bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::vector<int>& ship_ids, bool aggressive) {
+    if (ship_ids.empty()) {
+        ErrorLogger() << "Empire attempted to create a new fleet without ships";
+        return false;
+    }
 
-    GetUniverse().InhibitUniverseObjectSignals(true);
-
-    if (m_ship_ids.empty())
-        return;   // nothing to do...
-
-    // validate specified ships
     int system_id = INVALID_OBJECT_ID;
-    std::vector<std::shared_ptr<Ship>> validated_ships;
-    std::vector<int>                   validated_ship_ids;
-    for (int ship_id : m_ship_ids) {
+
+    for (int ship_id : ship_ids) {
         // verify that empire is not trying to take ships from somebody else's fleet
         auto ship = GetShip(ship_id);
         if (!ship) {
             ErrorLogger() << "Empire attempted to create a new fleet with an invalid ship";
-            continue;
+            return false;
         }
-        if (!ship->OwnedBy(EmpireID())) {
-                ErrorLogger() << "Empire attempted to create a new fleet with ships from another's fleet.";
-                continue;
+        if (!ship->OwnedBy(empire)) {
+            ErrorLogger() << "Empire attempted to create a new fleet with ships from another's fleet.";
+            return false;
         }
         if (ship->SystemID() == INVALID_OBJECT_ID) {
             ErrorLogger() << "Empire to create a new fleet with traveling ships.";
-            continue;
+            return false;
         }
+
         if (system_id == INVALID_OBJECT_ID)
             system_id = ship->SystemID();
+
         if (ship->SystemID() != system_id) {
-                ErrorLogger() << "Empire attempted to make a new fleet from ship in the wrong system";
-                continue;
+            ErrorLogger() << "Empire attempted to make a new fleet from ship in the wrong system";
+            return false;
         }
-        validated_ships.push_back(ship);
-        validated_ship_ids.push_back(ship->ID());
     }
-    if (validated_ship_ids.empty())
-        return;
 
     if (system_id == INVALID_OBJECT_ID) {
         ErrorLogger() << "Empire attempted to create a new fleet outside a system";
-        return;
+        return false;
     }
     auto system = GetSystem(system_id);
     if (!system) {
         ErrorLogger() << "Empire attempted to create a new fleet in a nonexistant system";
-        return;
+        return false;
     }
+
+    return true;
+}
+
+void NewFleetOrder::ExecuteImpl() const {
+    GetValidatedEmpire();
+
+    if (!Check(EmpireID(), m_fleet_name, m_ship_ids, m_aggressive))
+        return;
+
+    GetUniverse().InhibitUniverseObjectSignals(true);
+
+    // validate specified ships
+    std::vector<std::shared_ptr<Ship>> validated_ships;
+    for (int ship_id : m_ship_ids)
+        validated_ships.push_back(GetShip(ship_id));
+
+    int system_id = validated_ships[0]->SystemID();
+    auto system = GetSystem(system_id);
 
     std::shared_ptr<Fleet> fleet;
     if (m_fleet_id == INVALID_OBJECT_ID) {
@@ -209,7 +225,7 @@ void NewFleetOrder::ExecuteImpl() const {
         }
         ship->SetFleetID(fleet->ID());
     }
-    fleet->AddShips(validated_ship_ids);
+    fleet->AddShips(m_ship_ids);
 
     if (m_fleet_name.empty())
         fleet->Rename(fleet->GenerateFleetName());

@@ -285,24 +285,11 @@ namespace AIInterface {
     }
 
     int IssueNewFleetOrder(const std::string& fleet_name, int ship_id) {
-        if (fleet_name.empty()) {
-            ErrorLogger() << "IssueNewFleetOrder : tried to create a nameless fleet";
-            return 0;
-        }
+        std::vector<int> ship_ids{ship_id};
+        if (!NewFleetOrder::Check(AIClientApp::GetApp()->EmpireID(), fleet_name, ship_ids, false))
+            return;
 
-        int empire_id = AIClientApp::GetApp()->EmpireID();
-        // make sure all ships exist and are owned just by this player
-        auto ship = GetShip(ship_id);
-        if (!ship) {
-            ErrorLogger() << "IssueNewFleetOrder : passed an invalid ship_id";
-            return 0;
-        }
-        if (!ship->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueNewFleetOrder : passed ship_id of ship not owned by player";
-            return 0;
-        }
-
-        auto order = std::make_shared<NewFleetOrder>(empire_id, fleet_name, std::vector<int>{ship_id}, false);
+        auto order = std::make_shared<NewFleetOrder>(AIClientApp::GetApp()->EmpireID(), fleet_name, ship_id, false);
         AIClientApp::GetApp()->Orders().IssueOrder(order);
 
         return order->FleetID();
