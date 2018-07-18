@@ -2677,20 +2677,18 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     // Rename ship context item
     if (ship->OwnedBy(client_empire_id) || ClientPlayerIsModerator()) {
         auto rename_action = [ship, client_empire_id]() {
-            std::string ship_name = ship->Name();
-            auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), ship_name);
+            auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), ship->Name());
             edit_wnd->Run();
 
-            std::string new_name = edit_wnd->Result();
-
-            if (!ClientPlayerIsModerator()) {
-                if (new_name != "" && new_name != ship_name) {
-                    HumanClientApp::GetApp()->Orders().IssueOrder(
-                        std::make_shared<RenameOrder>(client_empire_id, ship->ID(), new_name));
-                }
-            } else {
+            if (ClientPlayerIsModerator())
                 // TODO: Moderator action for renaming ships
-            }
+                return;
+
+            if (!RenameOrder::Check(client_empire_id, ship->ID(), edit_wnd->Result()))
+                return;
+
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<RenameOrder>(client_empire_id, ship->ID(), edit_wnd->Result()));
         };
         popup->AddMenuItem(GG::MenuItem(UserString("RENAME"), false, false, rename_action));
     }
@@ -3662,19 +3660,18 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         || ClientPlayerIsModerator())
     {
         auto rename_action = [fleet, client_empire_id]() {
-            std::string fleet_name = fleet->Name();
-            auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), fleet_name);
+            auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("ENTER_NEW_NAME"), fleet->Name());
             edit_wnd->Run();
 
-            std::string new_name = edit_wnd->Result();
-
             if (ClientPlayerIsModerator())
-                return; // todo: handle moderator actions for this...
+                // TODO: handle moderator actions for this...
+                return;
 
-            if (!new_name.empty() && new_name != fleet_name) {
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<RenameOrder>(client_empire_id, fleet->ID(), new_name));
-            }
+            if (!RenameOrder::Check(client_empire_id, fleet->ID(), edit_wnd->Result()))
+                return;
+
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<RenameOrder>(client_empire_id, fleet->ID(), edit_wnd->Result()));
         };
         popup->AddMenuItem(GG::MenuItem(UserString("RENAME"),                       false, false, rename_action));
         popup->AddMenuItem(GG::MenuItem(true));

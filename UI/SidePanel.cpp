@@ -807,16 +807,19 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
             ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
 
         auto rename_action = [this, system]() {
-            const std::string& old_name(system->Name());
-            auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_SYSTEM_NAME"), old_name);
+            auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_SYSTEM_NAME"), system->Name());
             edit_wnd->Run();
-            const std::string& new_name(edit_wnd->Result());
-            if (m_order_issuing_enabled && !new_name.empty() && new_name != old_name) {
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<RenameOrder>(HumanClientApp::GetApp()->EmpireID(), system->ID(), new_name));
-                if (SidePanel* side_panel = dynamic_cast<SidePanel*>(Parent().get()))
-                    side_panel->Refresh();
-            }
+
+            if (!m_order_issuing_enabled)
+                return;
+
+            if (!RenameOrder::Check(HumanClientApp::GetApp()->EmpireID(), system->ID(), edit_wnd->Result()))
+                return;
+
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<RenameOrder>(HumanClientApp::GetApp()->EmpireID(), system->ID(), edit_wnd->Result()));
+            if (SidePanel* side_panel = dynamic_cast<SidePanel*>(Parent().get()))
+                side_panel->Refresh();
         };
 
         if (m_order_issuing_enabled && system->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
@@ -2016,15 +2019,16 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         auto rename_action = [this, planet]() { // rename planet
             auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), planet->Name());
             edit_wnd->Run();
-            if (edit_wnd->Result() != ""
-                && edit_wnd->Result() != planet->Name()
-                && m_order_issuing_enabled)
-            {
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<RenameOrder>(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd->Result()));
-                Refresh();
-            }
 
+            if (!m_order_issuing_enabled)
+                return;
+
+            if (!RenameOrder::Check(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd->Result()))
+                return;
+
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<RenameOrder>(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd->Result()));
+            Refresh();
         };
         popup->AddMenuItem(GG::MenuItem(UserString("SP_RENAME_PLANET"), false, false, rename_action));
     }

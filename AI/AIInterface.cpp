@@ -265,24 +265,10 @@ namespace AIInterface {
     }
 
     int IssueRenameOrder(int object_id, const std::string& new_name) {
-        if (new_name.empty()) {
-            ErrorLogger() << "IssueRenameOrder : passed an empty new name";
+        if (!RenameOrder::Check(AIClientApp::GetApp()->EmpireID(), object_id, new_name))
             return 0;
-        }
 
-        int empire_id = AIClientApp::GetApp()->EmpireID();
-        auto obj = GetUniverseObject(object_id);
-
-        if (!obj) {
-            ErrorLogger() << "IssueRenameOrder : passed an invalid object_id";
-            return 0;
-        }
-        if (!obj->OwnedBy(empire_id)) {
-            ErrorLogger() << "IssueRenameOrder : passed object_id of object not owned by player";
-            return 0;
-        }
-
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<RenameOrder>(empire_id, object_id, new_name));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<RenameOrder>(AIClientApp::GetApp()->EmpireID(), object_id, new_name));
 
         return 1;
     }

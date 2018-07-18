@@ -62,43 +62,49 @@ RenameOrder::RenameOrder(int empire, int object, const std::string& name) :
     m_object(object),
     m_name(name)
 {
-    auto obj = GetUniverseObject(object);
-    if (!obj) {
-        ErrorLogger() << "RenameOrder::RenameOrder() : Attempted to rename nonexistant object with id " << object;
-        return;
-    }
-
-    if (m_name.empty()) {
-        ErrorLogger() << "RenameOrder::RenameOrder() : Attempted to name an object \"\".";
-        // make order do nothing
+    if (!Check(empire, object, name)) {
         m_object = INVALID_OBJECT_ID;
         return;
     }
 }
 
-void RenameOrder::ExecuteImpl() const {
-    GetValidatedEmpire();
+bool RenameOrder::Check(int empire, int object, const std::string& new_name) {
+    // disallow the name "", since that denotes an unknown object
+    if (new_name.empty()) {
+        ErrorLogger() << "RenameOrder::Check() : passed an empty new_name.";
+        return false;
+    }
 
-    auto obj = GetUniverseObject(m_object);
+    auto obj = GetUniverseObject(object);
 
     if (!obj) {
-        ErrorLogger() << "Attempted to rename nonexistant object with id " << m_object;
-        return;
+        ErrorLogger() << "RenameOrder::Check() : passed an invalid object.";
+        return false;
     }
 
     // verify that empire specified in order owns specified object
-    if (!obj->OwnedBy(EmpireID())) {
-        ErrorLogger() << "Empire (" << EmpireID()
-                      << ") specified in rename order does not own specified object which is owned by "
-                      << obj->Owner() << ".";
-        return;
+    if (!obj->OwnedBy(empire)) {
+        ErrorLogger() << "RenameOrder::Check() : Object " << object << " is"
+                      << " not owned by empire " << empire << ".";
+        return false;
     }
 
-    // disallow the name "", since that denotes an unknown object
-    if (m_name.empty()) {
-        ErrorLogger() << "Name \"\" specified in rename order is invalid.";
-        return;
+    if (obj->Name() == new_name) {
+        ErrorLogger() << "RenameOrder::Check() : Object " << object
+                      << " should renamed to the same name.";
+        return false;
     }
+
+    return true;
+}
+
+void RenameOrder::ExecuteImpl() const {
+    if (!Check(EmpireID(), m_object, m_name))
+        return;
+
+    GetValidatedEmpire();
+
+    auto obj = GetUniverseObject(m_object);
 
     obj->Rename(m_name);
 }

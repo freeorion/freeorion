@@ -111,6 +111,9 @@ public:
     { return m_name; }
     //@}
 
+    //! Returns true when the Order parameters are valid.
+    static bool Check(int empire, int object, const std::string& new_name);
+
 private:
     RenameOrder() = default;
 
