@@ -772,7 +772,8 @@ boost::statechart::result PlayingGame::react(const LobbyUpdate& msg) {
 // WaitingForGameStart
 ////////////////////////////////////////////////////////////
 WaitingForGameStart::WaitingForGameStart(my_context ctx) :
-    Base(ctx)
+    Base(ctx),
+    is_loading(false)
 {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForGameStart";
 

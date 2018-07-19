@@ -10,6 +10,7 @@
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/state_machine.hpp>
 
+#include <atomic>
 #include <chrono>
 
 // Human client-specific events not already defined in ClientFSMEvents.h
@@ -314,7 +315,7 @@ struct WaitingForGameStart : boost::statechart::state<WaitingForGameStart, Playi
     //! Update UI in the GUI thread.
     void ProcessUI(bool is_new_game, const SaveGameUIData& ui_data);
 
-    volatile bool is_loading = false;  //!< true from GameStart to DoneLoading
+    std::atomic<bool> is_loading;  //!< true from GameStart to DoneLoading
 };
 
 
