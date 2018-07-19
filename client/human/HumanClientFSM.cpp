@@ -782,8 +782,7 @@ WaitingForGameStart::WaitingForGameStart(my_context ctx) :
     Client().GetClientUI().GetMapWnd()->EnableOrderIssuing(false);
 }
 
-WaitingForGameStart::~WaitingForGameStart()
-{
+WaitingForGameStart::~WaitingForGameStart() {
     TraceLogger(FSM) << "(HumanClientFSM) ~WaitingForGameStart";
     if (is_loading)
         WarnLogger(FSM) << "WaitingForGameStart did not finish loading";
