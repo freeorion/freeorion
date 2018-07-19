@@ -275,26 +275,27 @@ namespace {
             fighters_launched(0),
             fighter_damage(0.0f),
             precision(1),
-            targets()
+            targets(0)
         {}
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
-            float part_attack_, int precision, ) :
+		       float part_attack_, int precision_, int targets_) :
             part_class(part_class_),
             part_type_name(part_name_),
             part_attack(part_attack_),
             fighters_launched(0),
             fighter_damage(0.0f),
-            precision(1),
-            targets()
+            precision(precision_),
+            targets(targets_)
         {}
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
                        int fighters_launched_, float fighter_damage_) :
             part_class(part_class_),
             part_type_name(part_name_),
-            part_attack(0.0f),!t
+            part_attack(0.0f),
             fighters_launched(fighters_launched_),
             fighter_damage(fighter_damage_),
-            precision(2)
+            precision(2),
+	    targets(0)
         {}
 
         ShipPartClass   part_class;
@@ -303,6 +304,17 @@ namespace {
         int             fighters_launched;  // for fighter bays, input value should be limited by ship available fighters to launch
         float           fighter_damage;     // for fighter bays, input value should be determined by ship fighter weapon setup
         int             precision;          //
+        int targets; // bitset?? enum set??
+
+        bool AimsFor(std::shared_ptr<UniverseObject> target)
+        {
+	  if (Fighter* derived = dynamic_cast<Fighter*>(target.get())) {
+	    ErrorLogger() << "Only a Fighter in sight - reroll if possible";
+	    return false;
+	  } else {
+	    return true;
+          }
+	}
     };
 
     void AttackShipShip(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon,
@@ -737,7 +749,7 @@ namespace {
                 if (part_attack > 0.0f && shots > 0) {
                     // attack for each shot...
                     for (int shot_count = 0; shot_count < shots; ++shot_count)
-                        retval.push_back(PartAttackInfo(part_class, part_name, part_attack));
+		      retval.push_back(PartAttackInfo(part_class, part_name, part_attack, 4, 1));
                 }
 
             } else if (part_class == PC_FIGHTER_HANGAR) {
@@ -1281,7 +1293,9 @@ namespace {
 
             // select target object
             std::shared_ptr<UniverseObject> target;
-            for (int t = 1; t < weapon.precision; t++) {
+	    DebugLogger() << "Target precision: " << std::to_string(weapon.precision);
+            for (int t = 1; t < weapon.precision + 1 ; t++) {
+	      if (t > 1) ErrorLogger() << "Find target - Round: " << std::to_string(t);
                 int target_idx = RandInt(0, valid_target_ids.size() - 1);
                 int target_id = *std::next(valid_target_ids.begin(), target_idx);
 
@@ -1290,7 +1304,8 @@ namespace {
                     ErrorLogger() << "AutoResolveCombat couldn't get target object with id " << target_id;
                     continue;
                 }
-                if (weapon.AimsFor(target)) {
+		PartAttackInfo pai = weapon;
+                if (pai.AimsFor(target)) {
                     // shooting
                     break;
                 }
@@ -1489,11 +1504,11 @@ namespace {
 
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"),
-                                             attack_planet->CurrentMeterValue(METER_DEFENSE)));
+                                             attack_planet->CurrentMeterValue(METER_DEFENSE),3,4));
 
         } else if (attack_fighter) {    // treat fighter damage as direct fire weapon
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("FT_WEAPON_1"),
-                                             attack_fighter->Damage()));
+                                             attack_fighter->Damage(),2,2));
         }
         return weapons;
     }
