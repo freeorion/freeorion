@@ -284,17 +284,6 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueNewFleetOrder(const std::string& fleet_name, int ship_id) {
-        std::vector<int> ship_ids{ship_id};
-        if (!NewFleetOrder::Check(AIClientApp::GetApp()->EmpireID(), fleet_name, ship_ids, false))
-            return;
-
-        auto order = std::make_shared<NewFleetOrder>(AIClientApp::GetApp()->EmpireID(), fleet_name, ship_id, false);
-        AIClientApp::GetApp()->Orders().IssueOrder(order);
-
-        return order->FleetID();
-    }
-
     int IssueGiveObjectToEmpireOrder(int object_id, int recipient_id) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
