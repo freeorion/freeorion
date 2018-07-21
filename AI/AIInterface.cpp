@@ -141,21 +141,6 @@ namespace AIInterface {
         return it->second.host;
     }
 
-    object GetOptionsDBOptionStr(std::string const &option)
-    { return GetOptionsDB().OptionExists(option) ? str(GetOptionsDB().Get<std::string>(option)) : str(); }
-
-    object GetOptionsDBOptionInt(std::string const &option)
-    { return GetOptionsDB().OptionExists(option) ? object(GetOptionsDB().Get<int>(option)) : object(); }
-
-    object GetOptionsDBOptionBool(std::string const &option)
-    { return GetOptionsDB().OptionExists(option) ? object(GetOptionsDB().Get<bool>(option)) : object(); }
-
-    object GetOptionsDBOptionDouble(std::string const &option)
-    { return GetOptionsDB().OptionExists(option) ? object(GetOptionsDB().Get<double>(option)) : object(); }
-
-    std::string GetAIDir()
-    { return (GetResourceDir() / GetOptionsDB().Get<std::string>("ai-path")).string(); }
-
     const GalaxySetupData&  GetGalaxySetupData()
     { return AIClientApp::GetApp()->GetGalaxySetupData(); }
 

@@ -213,43 +213,6 @@ namespace AIInterface {
      */
     const Empire* GetEmpire(int empire_id);
 
-    /** @brief Return the OptionsDB option @a option
-     *
-     * @return Return the OptionsDB option @a option or None if not set.
-     * @ throw boost::bad_any_cast if option exists but is not a string
-     */
-    boost::python::object GetOptionsDBOptionStr(std::string const &option);
-
-    /** @brief Return the OptionsDB option @a option
-     *
-     * @return Return the OptionsDB option @a option or None if not set.
-     * @ throw boost::bad_any_cast if option exists but is not an int
-     */
-    boost::python::object GetOptionsDBOptionInt(std::string const &option);
-
-    /** @brief Return the OptionsDB option @a option
-     *
-     * @return Return the OptionsDB option @a option or None if not set.
-     * @ throw boost::bad_any_cast if option exists but is not bool
-     */
-    boost::python::object GetOptionsDBOptionBool(std::string const &option);
-
-    /** @brief Return the OptionsDB option @a option
-     *
-     * @return Return the OptionsDB option @a option or None if not set.
-     * @ throw boost::bad_any_cast if option exists but is not a double
-     */
-    boost::python::object GetOptionsDBOptionDouble(std::string const &option);
-
-    /** @brief Return the canonical AI directory path
-     *
-     * The value depends on the ::OptionsDB `resource.path` and `ai-path` keys.
-     *
-     * @return The canonical path pointing to the directory containing all
-     *      python AI scripts.
-     */
-    std::string GetAIDir();
-
     /** @brief Return the ::GalaxySetupData of this game
      *
      * @return A reference to the ::GalaxySetupData used in this game session.
