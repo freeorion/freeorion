@@ -55,7 +55,6 @@ void NewFleetOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
         & BOOST_SERIALIZATION_NVP(m_fleet_name)
-        & BOOST_SERIALIZATION_NVP(m_system_id)
         & BOOST_SERIALIZATION_NVP(m_fleet_id)
         & BOOST_SERIALIZATION_NVP(m_ship_ids)
         & BOOST_SERIALIZATION_NVP(m_aggressive);

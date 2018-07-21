@@ -145,14 +145,11 @@ class FO_COMMON_API NewFleetOrder : public Order {
 public:
     /** \name Structors */ //@{
     NewFleetOrder(int empire, const std::string& fleet_names,
-                  int system_id, const std::vector<int>& ship_ids,
+                  const std::vector<int>& ship_ids,
                   bool aggressive);
     //@}
 
     /** \name Accessors */ //@{
-    int SystemID() const
-    { return m_system_id; }
-
     const std::string& FleetName() const
     { return m_fleet_name; }
 
@@ -180,7 +177,6 @@ private:
     void ExecuteImpl() const override;
 
     std::string m_fleet_name;
-    int m_system_id = INVALID_OBJECT_ID;
     /** m_fleet_id is mutable because ExecuteImpl generates the fleet id. */
     mutable int m_fleet_id;
     std::vector<int> m_ship_ids;

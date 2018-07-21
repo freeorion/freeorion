@@ -229,7 +229,7 @@ namespace {
 
         // create new fleet with ships
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<NewFleetOrder>(client_empire_id, "", system->ID(), ship_ids,AggressionForFleet(aggression, ship_ids)));
+            std::make_shared<NewFleetOrder>(client_empire_id, "", ship_ids, AggressionForFleet(aggression, ship_ids)));
     }
 
     void CreateNewFleetFromShipsWithDesign(const std::set<int>& ship_ids,

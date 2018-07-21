@@ -302,14 +302,7 @@ namespace AIInterface {
             return 0;
         }
 
-        // make sure all ships are at a system, and that all are at the same system
-        int system_id = ship->SystemID();
-        if (system_id == INVALID_OBJECT_ID) {
-            ErrorLogger() << "IssueNewFleetOrder : passed ship_id of ships at different locations";
-            return 0;
-        }
-
-        auto order = std::make_shared<NewFleetOrder>(empire_id, fleet_name, system_id, std::vector<int>{ship_id}, false);
+        auto order = std::make_shared<NewFleetOrder>(empire_id, fleet_name, std::vector<int>{ship_id}, false);
         AIClientApp::GetApp()->Orders().IssueOrder(order);
 
         return order->FleetID();
