@@ -289,7 +289,6 @@ namespace AIInterface {
     /** \name Issuing orders */ /** @{ */
     OrderSet& IssuedOrders();
 
-    int IssueScrapOrder(int object_id);
     int IssueFleetMoveOrder(int fleet_id, int destination_id);
 
     int IssueEnqueueTechOrder(const std::string& tech_name, int position);

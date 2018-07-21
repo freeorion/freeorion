@@ -264,15 +264,6 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueScrapOrder(int object_id) {
-        if (ScrapOrder::Check(AIClientApp::GetApp()->EmpireID(), object_id))
-            return 0;
-
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ScrapOrder>(AIClientApp::GetApp()->EmpireID(), object_id));
-
-        return 1;
-    }
-
     int IssueEnqueueTechOrder(const std::string& tech_name, int position) {
         const Tech* tech = GetTech(tech_name);
         if (!tech) {
