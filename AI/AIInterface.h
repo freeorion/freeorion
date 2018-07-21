@@ -291,7 +291,6 @@ namespace AIInterface {
 
     int IssueScrapOrder(int object_id);
     int IssueFleetMoveOrder(int fleet_id, int destination_id);
-    int IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids);
     int IssueNewFleetOrder(const std::string& fleet_name, int ship_id);
     int IssueGiveObjectToEmpireOrder(int object_id, int recipient_id);
 

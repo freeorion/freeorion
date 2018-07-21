@@ -284,58 +284,36 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids) {
-        if (ship_ids.empty()) {
-            ErrorLogger() << "IssueNewFleetOrder : passed empty vector of ship_ids";
-            return 0;
-        }
-
+    int IssueNewFleetOrder(const std::string& fleet_name, int ship_id) {
         if (fleet_name.empty()) {
             ErrorLogger() << "IssueNewFleetOrder : tried to create a nameless fleet";
             return 0;
         }
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        std::shared_ptr<const Ship> ship;
-
         // make sure all ships exist and are owned just by this player
-        for (int ship_id : ship_ids) {
-            ship = GetShip(ship_id);
-            if (!ship) {
-                ErrorLogger() << "IssueNewFleetOrder : passed an invalid ship_id";
-                return 0;
-            }
-            if (!ship->OwnedBy(empire_id)) {
-                ErrorLogger() << "IssueNewFleetOrder : passed ship_id of ship not owned by player";
-                return 0;
-            }
+        auto ship = GetShip(ship_id);
+        if (!ship) {
+            ErrorLogger() << "IssueNewFleetOrder : passed an invalid ship_id";
+            return 0;
+        }
+        if (!ship->OwnedBy(empire_id)) {
+            ErrorLogger() << "IssueNewFleetOrder : passed ship_id of ship not owned by player";
+            return 0;
         }
 
         // make sure all ships are at a system, and that all are at the same system
         int system_id = ship->SystemID();
         if (system_id == INVALID_OBJECT_ID) {
-            ErrorLogger() << "IssueNewFleetOrder : passed ship_ids of ships at different locations";
+            ErrorLogger() << "IssueNewFleetOrder : passed ship_id of ships at different locations";
             return 0;
         }
 
-        auto it = ship_ids.begin();
-        for (++it; it != ship_ids.end(); ++it) {
-            auto ship2 = GetShip(*it);
-            if (ship2->SystemID() != system_id) {
-                ErrorLogger() << "IssueNewFleetOrder : passed ship_ids of ships at different locations";
-                return 0;
-            }
-        }
-
+        std::vector<int> ship_ids{ship_id};
         auto order = std::make_shared<NewFleetOrder>(empire_id, fleet_name, system_id, ship_ids);
         AIClientApp::GetApp()->Orders().IssueOrder(order);
 
         return *order->FleetIDs().begin();
-    }
-
-    int IssueNewFleetOrder(const std::string& fleet_name, int ship_id) {
-        std::vector<int> ship_ids{ship_id};
-        return IssueNewFleetOrder(fleet_name, ship_ids);
     }
 
     int IssueGiveObjectToEmpireOrder(int object_id, int recipient_id) {
