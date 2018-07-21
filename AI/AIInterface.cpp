@@ -284,16 +284,6 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueGiveObjectToEmpireOrder(int object_id, int recipient_id) {
-        if (!GiveObjectToEmpireOrder::Check(AIClientApp::GetApp()->EmpireID(), object_id, recipient_id))
-            return 0;
-
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<GiveObjectToEmpireOrder>(AIClientApp::GetApp()->EmpireID(), object_id, recipient_id));
-
-        return 1;
-    }
-
     int IssueEnqueueTechOrder(const std::string& tech_name, int position) {
         const Tech* tech = GetTech(tech_name);
         if (!tech) {

@@ -134,6 +134,9 @@ namespace {
 
     int IssueAggressionOrder(int object_id, bool aggressive)
     { return Issue<AggressiveOrder>(object_id, aggressive); }
+
+    int IssueGiveObjectToEmpireOrder(int object_id, int recipient_id)
+    { return Issue<GiveObjectToEmpireOrder>(object_id, recipient_id); }
 }
 
 namespace FreeOrionPython {
@@ -205,7 +208,7 @@ namespace FreeOrionPython {
         def("issueInvadeOrder",                     IssueInvadeOrder);
         def("issueBombardOrder",                    IssueBombardOrder);
         def("issueAggressionOrder",                 IssueAggressionOrder);
-        def("issueGiveObjectToEmpireOrder",         AIInterface::IssueGiveObjectToEmpireOrder);
+        def("issueGiveObjectToEmpireOrder",         IssueGiveObjectToEmpireOrder);
         def("issueChangeFocusOrder",                IssueChangeFocusOrder, "Orders the planet with ID planetID (int) to use focus setting focus (string). Returns 1 (int) on success or 0 (int) on failure if the planet can't be found or isn't owned by this player, or if the specified focus is not valid on the planet.");
         def("issueEnqueueTechOrder",                AIInterface::IssueEnqueueTechOrder, "Orders the tech with name techName (string) to be added to the tech queue at position (int) on the queue. Returns 1 (int) on success or 0 (int) on failure if the indicated tech can't be found. Will return 1 (int) but do nothing if the indicated tech can't be enqueued by this player's empire.");
         def("issueDequeueTechOrder",                AIInterface::IssueDequeueTechOrder, "Orders the tech with name techName (string) to be removed from the queue. Returns 1 (int) on success or 0 (int) on failure if the indicated tech can't be found. Will return 1 (int) but do nothing if the indicated tech isn't on this player's empire's tech queue.");
