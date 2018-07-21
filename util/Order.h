@@ -153,17 +153,17 @@ public:
     int SystemID() const
     { return m_system_id; }
 
-    const std::vector<std::string>& FleetNames() const
-    { return m_fleet_names; }
+    const std::string& FleetName() const
+    { return m_fleet_name; }
 
-    const std::vector<int>& FleetIDs() const
-    { return m_fleet_ids; }
+    const int& FleetID() const
+    { return m_fleet_id; }
 
-    const std::vector<std::vector<int>>& ShipIDGroups() const
-    { return m_ship_id_groups; }
+    const std::vector<int>& ShipIDs() const
+    { return m_ship_ids; }
 
-    const std::vector<bool>& Aggressive() const
-    { return m_aggressives; }
+    bool Aggressive() const
+    { return m_aggressive; }
     //@}
 
 private:
@@ -179,12 +179,12 @@ private:
      */
     void ExecuteImpl() const override;
 
-    std::vector<std::string> m_fleet_names;
+    std::string m_fleet_name;
     int m_system_id = INVALID_OBJECT_ID;
-    /** m_fleet_ids is mutable because ExecuteImpl generates the fleet ids. */
-    mutable std::vector<int> m_fleet_ids;
-    std::vector<std::vector<int>> m_ship_id_groups;
-    std::vector<bool> m_aggressives;
+    /** m_fleet_id is mutable because ExecuteImpl generates the fleet id. */
+    mutable int m_fleet_id;
+    std::vector<int> m_ship_ids;
+    bool m_aggressive;
 
     friend class boost::serialization::access;
     template <class Archive>

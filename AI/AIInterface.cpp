@@ -312,7 +312,7 @@ namespace AIInterface {
         auto order = std::make_shared<NewFleetOrder>(empire_id, fleet_name, system_id, std::vector<int>{ship_id}, false);
         AIClientApp::GetApp()->Orders().IssueOrder(order);
 
-        return *order->FleetIDs().begin();
+        return order->FleetID();
     }
 
     int IssueGiveObjectToEmpireOrder(int object_id, int recipient_id) {

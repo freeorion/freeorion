@@ -117,11 +117,11 @@ NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,
                              const std::vector<int>& ship_ids,
                              bool aggressive) :
     Order(empire),
-    m_fleet_names(std::vector<std::string>{fleet_name}),
+    m_fleet_name(fleet_name),
     m_system_id(system_id),
-    m_fleet_ids(std::vector<int>{INVALID_OBJECT_ID}),
-    m_ship_id_groups(std::vector<std::vector<int>>{ship_ids}),
-    m_aggressives(std::vector<bool>{aggressive})
+    m_fleet_id(INVALID_OBJECT_ID),
+    m_ship_ids(ship_ids),
+    m_aggressive(aggressive)
 {}
 
 void NewFleetOrder::ExecuteImpl() const {
@@ -137,103 +137,81 @@ void NewFleetOrder::ExecuteImpl() const {
         return;
     }
 
-    if (m_fleet_names.empty())
-        return;
-    if (m_fleet_names.size() != m_fleet_ids.size()
-        || m_fleet_names.size() != m_ship_id_groups.size()
-        || m_fleet_names.size() != m_aggressives.size())
-    {
-        ErrorLogger() << "NewFleetOrder has inconsistent data container sizes...";
-        return;
-    }
-
     GetUniverse().InhibitUniverseObjectSignals(true);
-    std::vector<std::shared_ptr<Fleet>> created_fleets;
-    created_fleets.reserve(m_ship_id_groups.size());
 
-    std::unordered_set<std::shared_ptr<Fleet>> modified_fleets;
+    if (m_ship_ids.empty())
+        return;   // nothing to do...
 
-    // create fleet for each group of ships
-    for (int i = 0; i < static_cast<int>(m_ship_id_groups.size()); ++i) {
-        const auto& fleet_name =    m_fleet_names[i];
-        int         fleet_id =      m_fleet_ids[i];
-        const auto& ship_ids =      m_ship_id_groups[i];
-        bool        aggressive =    m_aggressives[i];
-
-        if (ship_ids.empty())
-            continue;   // nothing to do...
-
-        // validate specified ships
-        std::vector<std::shared_ptr<Ship>> validated_ships;
-        std::vector<int>                   validated_ships_ids;
-        for (int ship_id : ship_ids) {
-            // verify that empire is not trying to take ships from somebody else's fleet
-            auto ship = GetShip(ship_id);
-            if (!ship) {
-                ErrorLogger() << "Empire attempted to create a new fleet with an invalid ship";
-                continue;
-            }
-            if (!ship->OwnedBy(EmpireID())) {
+    // validate specified ships
+    std::vector<std::shared_ptr<Ship>> validated_ships;
+    std::vector<int>                   validated_ship_ids;
+    for (int ship_id : m_ship_ids) {
+        // verify that empire is not trying to take ships from somebody else's fleet
+        auto ship = GetShip(ship_id);
+        if (!ship) {
+            ErrorLogger() << "Empire attempted to create a new fleet with an invalid ship";
+            continue;
+        }
+        if (!ship->OwnedBy(EmpireID())) {
                 ErrorLogger() << "Empire attempted to create a new fleet with ships from another's fleet.";
                 continue;
-            }
-            if (ship->SystemID() != m_system_id) {
+        }
+        if (ship->SystemID() != m_system_id) {
                 ErrorLogger() << "Empire attempted to make a new fleet from ship in the wrong system";
                 continue;
-            }
-            validated_ships.push_back(ship);
-            validated_ships_ids.push_back(ship->ID());
         }
-        if (validated_ships.empty())
-            continue;
-
-        std::shared_ptr<Fleet> fleet;
-        if (fleet_id == INVALID_OBJECT_ID) {
-            // create fleet
-            fleet = GetUniverse().InsertNew<Fleet>(fleet_name, system->X(), system->Y(), EmpireID());
-            m_fleet_ids[i] = fleet->ID();
-        } else {
-            fleet = GetUniverse().InsertByEmpireWithID<Fleet>(
-                EmpireID(), fleet_id, fleet_name, system->X(), system->Y(), EmpireID());
-        }
-
-        if (!fleet) {
-            ErrorLogger() << "Unable to create fleet.";
-            return;
-        }
-
-        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
-        fleet->SetAggressive(aggressive);
-
-        // an ID is provided to ensure consistancy between server and client universes
-        GetUniverse().SetEmpireObjectVisibility(EmpireID(), fleet->ID(), VIS_FULL_VISIBILITY);
-
-        system->Insert(fleet);
-
-        // new fleet will get same m_arrival_starlane as fleet of the first ship in the list.
-        auto first_ship = validated_ships[0];
-        auto first_fleet = GetFleet(first_ship->FleetID());
-        if (first_fleet)
-            fleet->SetArrivalStarlane(first_fleet->ArrivalStarlane());
-
-        // remove ships from old fleet(s) and add to new
-        for (auto& ship : validated_ships) {
-            if (auto old_fleet = GetFleet(ship->FleetID())) {
-                modified_fleets.insert(old_fleet);
-                old_fleet->RemoveShips({ship->ID()});
-            }
-            ship->SetFleetID(fleet->ID());
-        }
-        fleet->AddShips(validated_ships_ids);
-
-        if (fleet_name.empty())
-            fleet->Rename(fleet->GenerateFleetName());
-
-        created_fleets.push_back(fleet);
+        validated_ships.push_back(ship);
+        validated_ship_ids.push_back(ship->ID());
     }
+    if (validated_ship_ids.empty())
+        return;
+
+    std::shared_ptr<Fleet> fleet;
+    if (m_fleet_id == INVALID_OBJECT_ID) {
+        // create fleet
+        fleet = GetUniverse().InsertNew<Fleet>(m_fleet_name, system->X(), system->Y(), EmpireID());
+        m_fleet_id = fleet->ID();
+    } else {
+        fleet = GetUniverse().InsertByEmpireWithID<Fleet>(
+            EmpireID(), m_fleet_id, m_fleet_name, system->X(), system->Y(), EmpireID());
+    }
+
+    if (!fleet) {
+        ErrorLogger() << "Unable to create fleet.";
+        return;
+    }
+
+    fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
+    fleet->SetAggressive(m_aggressive);
+
+    // an ID is provided to ensure consistancy between server and client universes
+    GetUniverse().SetEmpireObjectVisibility(EmpireID(), fleet->ID(), VIS_FULL_VISIBILITY);
+
+    system->Insert(fleet);
+
+    // new fleet will get same m_arrival_starlane as fleet of the first ship in the list.
+    auto first_ship = validated_ships[0];
+    auto first_fleet = GetFleet(first_ship->FleetID());
+    if (first_fleet)
+        fleet->SetArrivalStarlane(first_fleet->ArrivalStarlane());
+
+    std::unordered_set<std::shared_ptr<Fleet>> modified_fleets;
+    // remove ships from old fleet(s) and add to new
+    for (auto& ship : validated_ships) {
+        if (auto old_fleet = GetFleet(ship->FleetID())) {
+            modified_fleets.insert(old_fleet);
+            old_fleet->RemoveShips({ship->ID()});
+        }
+        ship->SetFleetID(fleet->ID());
+    }
+    fleet->AddShips(validated_ship_ids);
+
+    if (m_fleet_name.empty())
+        fleet->Rename(fleet->GenerateFleetName());
 
     GetUniverse().InhibitUniverseObjectSignals(false);
 
+    std::vector<std::shared_ptr<Fleet>> created_fleets{fleet};
     system->FleetsInsertedSignal(created_fleets);
     system->StateChangedSignal();
 
