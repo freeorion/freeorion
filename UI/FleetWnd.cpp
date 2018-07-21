@@ -186,11 +186,9 @@ namespace {
         return ContainsArmedShips(ship_ids);
     }
 
-    void CreateNewFleetsForShips(const std::vector<std::vector<int>>& ship_id_groups,
+    void CreateNewFleetFromShips(const std::vector<int>& ship_ids,
                                  NewFleetAggression aggression)
     {
-        if (ship_id_groups.empty())
-            return;
         if (ClientPlayerIsModerator())
             return; // todo: handle moderator actions for this...
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -202,79 +200,44 @@ namespace {
         Sound::TempUISoundDisabler sound_disabler;
 
         std::set<int> original_fleet_ids;           // ids of fleets from which ships were taken
-        std::set<int> systems_containing_new_fleets;// systems where new fleets are created. should be only one entry.
-
-        // compile data about new fleets to pass to order
-        std::vector<std::string>        order_fleet_names;
-        std::vector<std::vector<int>>   order_ship_id_groups;
-        std::vector<bool>               order_ship_aggressives;
-
 
         // validate ships in each group, and generate fleet names for those ships
-        for (const std::vector<int>& ship_ids : ship_id_groups) {
-            std::vector<std::shared_ptr<const Ship>> ships = Objects().FindObjects<const Ship>(ship_ids);
-            if (ships.empty())
-                continue;
-
-            std::shared_ptr<const Ship> first_ship = *ships.begin();
-            auto system = GetSystem(first_ship->SystemID());
-            if (!system)
-                continue;
-
-            systems_containing_new_fleets.insert(system->ID());
-
-            // validate that ships are in the same system and all owned by this
-            // client's empire.
-            // also record the fleets from which ships are taken
-            for (auto& ship : ships) {
-                if (ship->SystemID() != system->ID()) {
-                    ErrorLogger() << "CreateNewFleetsForShips passed ships with inconsistent system ids";
-                    continue;
-                }
-                if (!ship->OwnedBy(client_empire_id)) {
-                    ErrorLogger() << "CreateNewFleetsForShips passed ships not owned by this client's empire";
-                    return;
-                }
-
-                original_fleet_ids.insert(ship->FleetID());
-            }
-
-            // Request a generated fleet name
-            std::string fleet_name = "";
-
-            // add entry to order data
-            order_fleet_names.push_back(fleet_name);
-            order_ship_id_groups.push_back(ship_ids);
-        }
-
-        // sanity check
-        if (   systems_containing_new_fleets.size() != 1
-            || *systems_containing_new_fleets.begin() == INVALID_OBJECT_ID)
-        {
-            ErrorLogger() << "CreateNewFleetsForShips got ships in invalid or inconsistent system(s)";
+        std::vector<std::shared_ptr<const Ship>> ships = Objects().FindObjects<const Ship>(ship_ids);
+        if (ships.empty())
             return;
+
+        std::shared_ptr<const Ship> first_ship = *ships.begin();
+        auto system = GetSystem(first_ship->SystemID());
+        if (!system)
+            return;
+
+        // validate that ships are in the same system and all owned by this
+        // client's empire.
+        // also record the fleets from which ships are taken
+        for (auto& ship : ships) {
+             if (ship->SystemID() != system->ID()) {
+                 ErrorLogger() << "CreateNewFleetFromShips passed ships with inconsistent system ids";
+                 continue;
+             }
+             if (!ship->OwnedBy(client_empire_id)) {
+                 ErrorLogger() << "CreateNewFleetFromShips passed ships not owned by this client's empire";
+                 return;
+             }
+
+             original_fleet_ids.insert(ship->FleetID());
         }
 
-        // set / determine aggressiveness for new fleets
-        for (const std::vector<int>& ship_ids : order_ship_id_groups) {
-            order_ship_aggressives.push_back(AggressionForFleet(aggression, ship_ids));
-        }
+        // Request a generated fleet name
+        std::vector<std::string> order_fleet_names{""};
+        std::vector<std::vector<int>> order_ship_id_groups{ship_ids};
+        std::set<int> systems_containing_new_fleets{system->ID()};
+        std::vector<bool> order_ship_aggressives{AggressionForFleet(aggression, ship_ids)};
 
         // create new fleet with ships
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<NewFleetOrder>(client_empire_id, order_fleet_names,
                                        *systems_containing_new_fleets.begin(),
                                        order_ship_id_groups, order_ship_aggressives));
-    }
-
-    void CreateNewFleetFromShips(const std::vector<int>& ship_ids,
-                                 NewFleetAggression aggression)
-    {
-        DebugLogger() << "CreateNewFleetFromShips with " << ship_ids.size();
-        std::vector<std::vector<int>> ship_id_groups;
-        ship_id_groups.push_back(ship_ids);
-
-        CreateNewFleetsForShips(ship_id_groups, aggression);
     }
 
     void CreateNewFleetFromShipsWithDesign(const std::set<int>& ship_ids,
@@ -3627,19 +3590,17 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             auto ship_id_it = ship_ids_set.begin();
             ship_ids_set.erase(ship_id_it);
 
-            // assemble container of containers of ids of fleets to create.
-            // one ship id per vector
-            std::vector<std::vector<int>> ship_id_groups;
-            for (int ship_id : ship_ids_set) {
-                std::vector<int> single_id(1, ship_id);
-                ship_id_groups.push_back(single_id);
-            }
-
             NewFleetAggression new_aggression_setting = INVALID_FLEET_AGGRESSION;
             if (m_new_fleet_drop_target)
                 new_aggression_setting = m_new_fleet_drop_target->GetNewFleetAggression();
 
-            CreateNewFleetsForShips(ship_id_groups, new_aggression_setting);
+            // assemble container of containers of ids of fleets to create.
+            // one ship id per vector
+            for (int ship_id : ship_ids_set) {
+                CreateNewFleetFromShips(
+                    std::vector<int>{ship_id},
+                    new_aggression_setting);
+            }
         };
 
         auto split_per_design_action = [this, fleet]() {
