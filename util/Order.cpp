@@ -112,14 +112,6 @@ void RenameOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // CreateFleetOrder
 ////////////////////////////////////////////////
-NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,
-                             int system_id, const std::vector<int>& ship_ids,
-                             bool aggressive) :
-    NewFleetOrder(empire, std::vector<std::string>(1, fleet_name),
-                  system_id, std::vector<std::vector<int>>(1, ship_ids),
-                  std::vector<bool>(1, aggressive) )
-{}
-
 NewFleetOrder::NewFleetOrder(int empire, const std::vector<std::string>& fleet_names,
                              int system_id,
                              const std::vector<std::vector<int>>& ship_id_groups,
