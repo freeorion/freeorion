@@ -309,13 +309,7 @@ namespace AIInterface {
             return 0;
         }
 
-        auto order = std::make_shared<NewFleetOrder>(
-            empire_id,
-            std::vector<std::string>{fleet_name},
-            system_id,
-            std::vector<std::vector<int>>{std::vector<int>{ship_id}},
-            std::vector<bool>{false}
-        );
+        auto order = std::make_shared<NewFleetOrder>(empire_id, fleet_name, system_id, std::vector<int>{ship_id}, false);
         AIClientApp::GetApp()->Orders().IssueOrder(order);
 
         return *order->FleetIDs().begin();

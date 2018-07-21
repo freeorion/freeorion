@@ -144,9 +144,9 @@ private:
 class FO_COMMON_API NewFleetOrder : public Order {
 public:
     /** \name Structors */ //@{
-    NewFleetOrder(int empire, const std::vector<std::string>& fleet_names,
-                  int system_id, const std::vector<std::vector<int>>& ship_id_groups,
-                  const std::vector<bool>& aggressives);
+    NewFleetOrder(int empire, const std::string& fleet_names,
+                  int system_id, const std::vector<int>& ship_ids,
+                  bool aggressive);
     //@}
 
     /** \name Accessors */ //@{

@@ -112,16 +112,16 @@ void RenameOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // CreateFleetOrder
 ////////////////////////////////////////////////
-NewFleetOrder::NewFleetOrder(int empire, const std::vector<std::string>& fleet_names,
+NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,
                              int system_id,
-                             const std::vector<std::vector<int>>& ship_id_groups,
-                             const std::vector<bool>& aggressives) :
+                             const std::vector<int>& ship_ids,
+                             bool aggressive) :
     Order(empire),
-    m_fleet_names(fleet_names),
+    m_fleet_names(std::vector<std::string>{fleet_name}),
     m_system_id(system_id),
-    m_fleet_ids(std::vector<int>(m_fleet_names.size(), INVALID_OBJECT_ID)),
-    m_ship_id_groups(ship_id_groups),
-    m_aggressives(aggressives)
+    m_fleet_ids(std::vector<int>{INVALID_OBJECT_ID}),
+    m_ship_id_groups(std::vector<std::vector<int>>{ship_ids}),
+    m_aggressives(std::vector<bool>{aggressive})
 {}
 
 void NewFleetOrder::ExecuteImpl() const {

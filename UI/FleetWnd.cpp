@@ -227,17 +227,9 @@ namespace {
              original_fleet_ids.insert(ship->FleetID());
         }
 
-        // Request a generated fleet name
-        std::vector<std::string> order_fleet_names{""};
-        std::vector<std::vector<int>> order_ship_id_groups{ship_ids};
-        std::set<int> systems_containing_new_fleets{system->ID()};
-        std::vector<bool> order_ship_aggressives{AggressionForFleet(aggression, ship_ids)};
-
         // create new fleet with ships
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<NewFleetOrder>(client_empire_id, order_fleet_names,
-                                       *systems_containing_new_fleets.begin(),
-                                       order_ship_id_groups, order_ship_aggressives));
+            std::make_shared<NewFleetOrder>(client_empire_id, "", system->ID(), ship_ids,AggressionForFleet(aggression, ship_ids)));
     }
 
     void CreateNewFleetFromShipsWithDesign(const std::set<int>& ship_ids,
