@@ -357,8 +357,7 @@ namespace AIInterface {
     }
 
     int IssueNewFleetOrder(const std::string& fleet_name, int ship_id) {
-        std::vector<int> ship_ids;
-        ship_ids.push_back(ship_id);
+        std::vector<int> ship_ids{ship_id};
         return IssueNewFleetOrder(fleet_name, ship_ids);
     }
 
