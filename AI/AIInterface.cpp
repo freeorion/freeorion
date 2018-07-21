@@ -224,15 +224,6 @@ namespace AIInterface {
     OrderSet& IssuedOrders()
     { return AIClientApp::GetApp()->Orders(); }
 
-    int IssueFleetMoveOrder(int fleet_id, int destination_id) {
-        if (!FleetMoveOrder::Check(AIClientApp::GetApp()->EmpireID(), fleet_id, destination_id))
-            return 0;
-
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetMoveOrder>(AIClientApp::GetApp()->EmpireID(), fleet_id, destination_id));
-
-        return 1;
-    }
-
     int IssueEnqueueTechOrder(const std::string& tech_name, int position) {
         const Tech* tech = GetTech(tech_name);
         if (!tech) {

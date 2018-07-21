@@ -148,6 +148,9 @@ namespace {
     int IssueChangeFocusOrder(int planet_id, const std::string& focus)
     { return Issue<ChangeFocusOrder>(planet_id, focus); }
 
+    int IssueFleetMoveOrder(int fleet_id, int destination_id)
+    { return Issue<FleetMoveOrder>(fleet_id, destination_id); }
+
     int IssueColonizeOrder(int ship_id, int planet_id)
     { return Issue<ColonizeOrder>(ship_id, planet_id); }
 

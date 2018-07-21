@@ -252,8 +252,6 @@ namespace AIInterface {
     /** \name Issuing orders */ /** @{ */
     OrderSet& IssuedOrders();
 
-    int IssueFleetMoveOrder(int fleet_id, int destination_id);
-
     int IssueEnqueueTechOrder(const std::string& tech_name, int position);
     int IssueDequeueTechOrder(const std::string& tech_name);
 
