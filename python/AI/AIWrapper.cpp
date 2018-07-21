@@ -59,8 +59,6 @@ const Empire*       (*AIIntGetEmpireVoid)(void) =               &AIInterface::Ge
 const Empire*       (*AIIntGetEmpireInt)(int) =                 &AIInterface::GetEmpire;
 
 int                 (*AIIntNewFleet)(const std::string&, int) = &AIInterface::IssueNewFleetOrder;
-int                 (*AIIntScrap)(int)                        = &AIInterface::IssueScrapOrder;
-
 
 
 namespace {
@@ -190,7 +188,7 @@ namespace FreeOrionPython {
 
         def("issueFleetMoveOrder",                  AIInterface::IssueFleetMoveOrder, "Orders the fleet with indicated fleetID (int) to move to the system with the indicated destinationID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated fleet or system.");
         def("issueRenameOrder",                     IssueRenameOrder, "Orders the renaming of the object with indicated objectID (int) to the new indicated name (string). Returns 1 (int) on success or 0 (int) on failure due to this AI player not being able to rename the indicated object (which this player must fully own, and which must be a fleet, ship or planet).");
-        def("issueScrapOrder",                      AIIntScrap, "Orders the ship or building with the indicated objectID (int) to be scrapped. Returns 1 (int) on success or 0 (int) on failure due to not finding a ship or building with the indicated ID, or if the indicated ship or building is not owned by this AI client's empire.");
+        def("issueScrapOrder",                      AIInterface::IssueScrapOrder, "Orders the ship or building with the indicated objectID (int) to be scrapped. Returns 1 (int) on success or 0 (int) on failure due to not finding a ship or building with the indicated ID, or if the indicated ship or building is not owned by this AI client's empire.");
         def("issueNewFleetOrder",                   AIIntNewFleet, "Orders a new fleet to be created with the indicated name (string) and containing the indicated shipIDs (IntVec). The ships must be located in the same system and must all be owned by this player. Returns 1 (int) on success or 0 (int) on failure due to one of the noted conditions not being met.");
         def("issueFleetTransferOrder",              IssueFleetTransferOrder, "Orders the ship with ID shipID (int) to be transferred to the fleet with ID newFleetID. Returns 1 (int) on success, or 0 (int) on failure due to not finding the fleet or ship, or the client's empire not owning either, or the two not being in the same system (or either not being in a system) or the ship already being in the fleet.");
         def("issueColonizeOrder",                   IssueColonizeOrder, "Orders the ship with ID shipID (int) to colonize the planet with ID planetID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated ship or planet, this client's player not owning the indicated ship, the planet already being colonized, or the planet and ship not being in the same system.");

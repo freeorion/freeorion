@@ -264,38 +264,24 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueScrapOrder(const std::vector<int>& object_ids) {
-            if (object_ids.empty()) {
-                ErrorLogger() << "IssueScrapOrder : passed empty vector of object_ids";
-                return 0;
-            }
-
-            int empire_id = AIClientApp::GetApp()->EmpireID();
-
-            // make sure all objects exist and are owned just by this player
-            for (int object_id : object_ids) {
-                auto obj = GetUniverseObject(object_id);
-
-                if (!obj) {
-                    ErrorLogger() << "IssueScrapOrder : passed an invalid object_id";
-                    return 0;
-                }
-
-                if (!obj->OwnedBy(empire_id)) {
-                    ErrorLogger() << "IssueScrapOrder : passed object_id of object not owned by player";
-                    return 0;
-                }
-
-                AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ScrapOrder>(empire_id, object_id));
-            }
-
-            return 1;
-    }
-
     int IssueScrapOrder(int object_id) {
-        std::vector<int> object_ids;
-        object_ids.push_back(object_id);
-        return IssueScrapOrder(object_ids);
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+
+        auto obj = GetUniverseObject(object_id);
+
+        if (!obj) {
+            ErrorLogger() << "IssueScrapOrder : passed an invalid object_id";
+            return 0;
+        }
+
+        if (!obj->OwnedBy(empire_id)) {
+            ErrorLogger() << "IssueScrapOrder : passed object_id of object not owned by player";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ScrapOrder>(empire_id, object_id));
+
+        return 1;
     }
 
     int IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids) {
