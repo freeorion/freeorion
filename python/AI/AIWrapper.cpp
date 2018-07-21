@@ -1,6 +1,7 @@
 #include "AIWrapper.h"
 
 #include "../../AI/AIInterface.h"
+#include "../../client/ClientApp.h"
 #include "../../universe/Universe.h"
 #include "../../util/AppInterface.h"
 #include "../../util/Directories.h"
@@ -90,6 +91,41 @@ namespace {
 
     boost::python::str GetUserDataDirWrapper()
     { return boost::python::str(PathToString(GetUserDataDir())); }
+
+    template<typename OrderType, typename... Args>
+    int Issue(Args &&... args) {
+        auto app = ClientApp::GetApp();
+
+        if (!OrderType::Check(app->EmpireID(), std::forward<Args>(args)...))
+            return 0;
+
+        app->Orders().IssueOrder(std::make_shared<OrderType>(app->EmpireID(), std::forward<Args>(args)...));
+
+        return 1;
+    }
+
+    int IssueFleetTransferOrder(int ship_id, int new_fleet_id) {
+        std::vector<int> ship_ids{ship_id};
+        return Issue<FleetTransferOrder>(new_fleet_id, ship_ids);
+    }
+
+    int IssueRenameOrder(int object_id, const std::string& new_name)
+    { return Issue<RenameOrder>(object_id, new_name); }
+
+    int IssueChangeFocusOrder(int planet_id, const std::string& focus)
+    { return Issue<ChangeFocusOrder>(planet_id, focus); }
+
+    int IssueColonizeOrder(int ship_id, int planet_id)
+    { return Issue<ColonizeOrder>(ship_id, planet_id); }
+
+    int IssueInvadeOrder(int ship_id, int planet_id)
+    { return Issue<InvadeOrder>(ship_id, planet_id); }
+
+    int IssueBombardOrder(int ship_id, int planet_id)
+    { return Issue<BombardOrder>(ship_id, planet_id); }
+
+    int IssueAggressionOrder(int object_id, bool aggressive)
+    { return Issue<AggressiveOrder>(object_id, aggressive); }
 }
 
 namespace FreeOrionPython {
@@ -153,16 +189,16 @@ namespace FreeOrionPython {
         def("updateProductionQueue",                AIInterface::UpdateProductionQueue);
 
         def("issueFleetMoveOrder",                  AIInterface::IssueFleetMoveOrder, "Orders the fleet with indicated fleetID (int) to move to the system with the indicated destinationID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated fleet or system.");
-        def("issueRenameOrder",                     AIInterface::IssueRenameOrder, "Orders the renaming of the object with indicated objectID (int) to the new indicated name (string). Returns 1 (int) on success or 0 (int) on failure due to this AI player not being able to rename the indicated object (which this player must fully own, and which must be a fleet, ship or planet).");
+        def("issueRenameOrder",                     IssueRenameOrder, "Orders the renaming of the object with indicated objectID (int) to the new indicated name (string). Returns 1 (int) on success or 0 (int) on failure due to this AI player not being able to rename the indicated object (which this player must fully own, and which must be a fleet, ship or planet).");
         def("issueScrapOrder",                      AIIntScrap, "Orders the ship or building with the indicated objectID (int) to be scrapped. Returns 1 (int) on success or 0 (int) on failure due to not finding a ship or building with the indicated ID, or if the indicated ship or building is not owned by this AI client's empire.");
         def("issueNewFleetOrder",                   AIIntNewFleet, "Orders a new fleet to be created with the indicated name (string) and containing the indicated shipIDs (IntVec). The ships must be located in the same system and must all be owned by this player. Returns 1 (int) on success or 0 (int) on failure due to one of the noted conditions not being met.");
-        def("issueFleetTransferOrder",              AIInterface::IssueFleetTransferOrder, "Orders the ship with ID shipID (int) to be transferred to the fleet with ID newFleetID. Returns 1 (int) on success, or 0 (int) on failure due to not finding the fleet or ship, or the client's empire not owning either, or the two not being in the same system (or either not being in a system) or the ship already being in the fleet.");
-        def("issueColonizeOrder",                   AIInterface::IssueColonizeOrder, "Orders the ship with ID shipID (int) to colonize the planet with ID planetID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated ship or planet, this client's player not owning the indicated ship, the planet already being colonized, or the planet and ship not being in the same system.");
-        def("issueInvadeOrder",                     AIInterface::IssueInvadeOrder, "");
-        def("issueBombardOrder",                    AIInterface::IssueBombardOrder, "");
-        def("issueAggressionOrder",                 AIInterface::IssueAggressionOrder);
+        def("issueFleetTransferOrder",              IssueFleetTransferOrder, "Orders the ship with ID shipID (int) to be transferred to the fleet with ID newFleetID. Returns 1 (int) on success, or 0 (int) on failure due to not finding the fleet or ship, or the client's empire not owning either, or the two not being in the same system (or either not being in a system) or the ship already being in the fleet.");
+        def("issueColonizeOrder",                   IssueColonizeOrder, "Orders the ship with ID shipID (int) to colonize the planet with ID planetID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated ship or planet, this client's player not owning the indicated ship, the planet already being colonized, or the planet and ship not being in the same system.");
+        def("issueInvadeOrder",                     IssueInvadeOrder);
+        def("issueBombardOrder",                    IssueBombardOrder);
+        def("issueAggressionOrder",                 IssueAggressionOrder);
         def("issueGiveObjectToEmpireOrder",         AIInterface::IssueGiveObjectToEmpireOrder);
-        def("issueChangeFocusOrder",                AIInterface::IssueChangeFocusOrder, "Orders the planet with ID planetID (int) to use focus setting focus (string). Returns 1 (int) on success or 0 (int) on failure if the planet can't be found or isn't owned by this player, or if the specified focus is not valid on the planet.");
+        def("issueChangeFocusOrder",                IssueChangeFocusOrder, "Orders the planet with ID planetID (int) to use focus setting focus (string). Returns 1 (int) on success or 0 (int) on failure if the planet can't be found or isn't owned by this player, or if the specified focus is not valid on the planet.");
         def("issueEnqueueTechOrder",                AIInterface::IssueEnqueueTechOrder, "Orders the tech with name techName (string) to be added to the tech queue at position (int) on the queue. Returns 1 (int) on success or 0 (int) on failure if the indicated tech can't be found. Will return 1 (int) but do nothing if the indicated tech can't be enqueued by this player's empire.");
         def("issueDequeueTechOrder",                AIInterface::IssueDequeueTechOrder, "Orders the tech with name techName (string) to be removed from the queue. Returns 1 (int) on success or 0 (int) on failure if the indicated tech can't be found. Will return 1 (int) but do nothing if the indicated tech isn't on this player's empire's tech queue.");
         def("issueEnqueueBuildingProductionOrder",  AIInterface::IssueEnqueueBuildingProductionOrder, "Orders the building with name (string) to be added to the production queue at the location of the planet with id locationID. Returns 1 (int) on success or 0 (int) on failure if there is no such building or it is not available to this player's empire, or if the building can't be produced at the specified location.");

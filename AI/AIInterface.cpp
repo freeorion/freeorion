@@ -264,15 +264,6 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueRenameOrder(int object_id, const std::string& new_name) {
-        if (!RenameOrder::Check(AIClientApp::GetApp()->EmpireID(), object_id, new_name))
-            return 0;
-
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<RenameOrder>(AIClientApp::GetApp()->EmpireID(), object_id, new_name));
-
-        return 1;
-    }
-
     int IssueScrapOrder(const std::vector<int>& object_ids) {
             if (object_ids.empty()) {
                 ErrorLogger() << "IssueScrapOrder : passed empty vector of object_ids";
@@ -361,53 +352,6 @@ namespace AIInterface {
         return IssueNewFleetOrder(fleet_name, ship_ids);
     }
 
-    int IssueFleetTransferOrder(int ship_id, int new_fleet_id) {
-        std::vector<int> ship_ids{ship_id};
-        if (!FleetTransferOrder::Check(AIClientApp::GetApp()->EmpireID(), new_fleet_id, ship_ids))
-            return 0;
-
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetTransferOrder>(AIClientApp::GetApp()->EmpireID(), new_fleet_id, ship_ids));
-
-        return 1;
-    }
-
-    int IssueColonizeOrder(int ship_id, int planet_id) {
-        if (!ColonizeOrder::Check(AIClientApp::GetApp()->EmpireID(), ship_id, planet_id))
-            return 0;
-
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ColonizeOrder>(AIClientApp::GetApp()->EmpireID(), ship_id, planet_id));
-
-        return 1;
-    }
-
-    int IssueInvadeOrder(int ship_id, int planet_id) {
-        if(!InvadeOrder::Check(AIClientApp::GetApp()->EmpireID(), ship_id, planet_id))
-            return 0;
-
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<InvadeOrder>(AIClientApp::GetApp()->EmpireID(), ship_id, planet_id));
-
-        return 1;
-    }
-
-    int IssueBombardOrder(int ship_id, int planet_id) {
-        if(!BombardOrder::Check(AIClientApp::GetApp()->EmpireID(), ship_id, planet_id))
-            return 0;
-
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<BombardOrder>(AIClientApp::GetApp()->EmpireID(), ship_id, planet_id));
-
-        return 1;
-    }
-
-    int IssueAggressionOrder(int object_id, bool aggressive) {
-        if(!AggressiveOrder::Check(AIClientApp::GetApp()->EmpireID(), object_id, aggressive))
-            return 0;
-
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<AggressiveOrder>(AIClientApp::GetApp()->EmpireID(), object_id, aggressive));
-
-        return 1;
-    }
-
     int IssueGiveObjectToEmpireOrder(int object_id, int recipient_id) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
@@ -459,16 +403,6 @@ namespace AIInterface {
 
         AIClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<GiveObjectToEmpireOrder>(empire_id, object_id, recipient_id));
-
-        return 1;
-    }
-
-    int IssueChangeFocusOrder(int planet_id, const std::string& focus) {
-        if(!ChangeFocusOrder::Check(AIClientApp::GetApp()->EmpireID(), planet_id, focus))
-            return 0;
-
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ChangeFocusOrder>(AIClientApp::GetApp()->EmpireID(), planet_id, focus));
 
         return 1;
     }
