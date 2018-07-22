@@ -253,11 +253,10 @@ void NewFleetOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // FleetMoveOrder
 ////////////////////////////////////////////////
-FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int start_system_id, int dest_system_id,
+FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
                                bool append) :
     Order(empire_id),
     m_fleet(fleet_id),
-    m_start_system(start_system_id),
     m_dest_system(dest_system_id),
     m_route(),
     m_append(append)
@@ -282,13 +281,17 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int start_system_id,
         return;
     }
 
-    auto short_path = GetPathfinder()->ShortestPath(m_start_system, m_dest_system, EmpireID());
+    int start_system = fleet->SystemID();
+    if (start_system == INVALID_OBJECT_ID)
+        start_system = fleet->NextSystemID();
+
+    auto short_path = GetPathfinder()->ShortestPath(start_system, m_dest_system, EmpireID());
 
     std::copy(short_path.first.begin(), short_path.first.end(), std::back_inserter(m_route));
 
     // ensure a zero-length (invalid) route is not requested / sent to a fleet
     if (m_route.empty())
-        m_route.push_back(m_start_system);
+        m_route.push_back(start_system);
 }
 
 void FleetMoveOrder::ExecuteImpl() const {
@@ -318,24 +321,28 @@ void FleetMoveOrder::ExecuteImpl() const {
         return;
     }
 
+    int start_system = fleet->SystemID();
+    if (start_system == INVALID_OBJECT_ID)
+        start_system = fleet->NextSystemID();
+
 
     // verify fleet route first system
     int fleet_sys_id = fleet->SystemID();
     if (!m_append || fleet->TravelRoute().empty()) {
         if (fleet_sys_id != INVALID_OBJECT_ID) {
             // fleet is in a system.  Its move path should also start from that system.
-            if (fleet_sys_id != m_start_system) {
+            if (fleet_sys_id != start_system) {
                 ErrorLogger() << "Empire with id " << EmpireID()
-                              << " ordered a fleet to move from a system with id " << m_start_system
+                              << " ordered a fleet to move from a system with id " << start_system
                               << " that it is not at.  Fleet is located at system with id " << fleet_sys_id;
                 return;
             }
         } else {
             // fleet is not in a system.  Its move path should start from the next system it is moving to.
             int next_system = fleet->NextSystemID();
-            if (next_system != m_start_system) {
+            if (next_system != start_system) {
                 ErrorLogger() << "Empire with id " << EmpireID()
-                              << " ordered a fleet to move starting from a system with id " << m_start_system
+                              << " ordered a fleet to move starting from a system with id " << start_system
                               << ", but the fleet's next destination is system with id " << next_system;
                 return;
             }
@@ -343,9 +350,9 @@ void FleetMoveOrder::ExecuteImpl() const {
     } else {
         // We should append and there is something to append to
         int last_system = fleet->TravelRoute().back();
-        if (last_system != m_start_system) {
+        if (last_system != start_system) {
             ErrorLogger() << "Empire with id " << EmpireID()
-                          << " ordered a fleet to continue from system with id " << m_start_system
+                          << " ordered a fleet to continue from system with id " << start_system
                           << ", but the fleet's current route won't lead there, it leads to system " << last_system;
             return;
         }

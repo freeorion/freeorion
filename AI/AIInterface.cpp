@@ -244,7 +244,7 @@ namespace AIInterface {
         if (destination_id != INVALID_OBJECT_ID && destination_id == start_id)
             DebugLogger() << "AIInterface::IssueFleetMoveOrder : pass destination system id (" << destination_id << ") that fleet is already in";
 
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetMoveOrder>(empire_id, fleet_id, start_id, destination_id));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetMoveOrder>(empire_id, fleet_id, destination_id));
 
         return 1;
     }

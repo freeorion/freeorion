@@ -65,7 +65,6 @@ void FleetMoveOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
         & BOOST_SERIALIZATION_NVP(m_fleet)
-        & BOOST_SERIALIZATION_NVP(m_start_system)
         & BOOST_SERIALIZATION_NVP(m_dest_system)
         & BOOST_SERIALIZATION_NVP(m_route);
     if (version > 0) {
@@ -75,7 +74,7 @@ void FleetMoveOrder::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-BOOST_CLASS_VERSION(FleetMoveOrder, 1);
+BOOST_CLASS_VERSION(FleetMoveOrder, 2);
 
 template <class Archive>
 void FleetTransferOrder::serialize(Archive& ar, const unsigned int version)

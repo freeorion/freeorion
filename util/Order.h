@@ -197,7 +197,7 @@ private:
 class FO_COMMON_API FleetMoveOrder : public Order {
 public:
     /** \name Structors */ //@{
-    FleetMoveOrder(int empire_id, int fleet_id, int start_system_id, int dest_system_id,
+    FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
                    bool append = false);
     //@}
 
@@ -205,11 +205,6 @@ public:
     /** Returns ID of fleet selected in this order. */
     int FleetID() const
     { return m_fleet; }
-
-    /** Returns ID of system set as the start system for this order (the system
-        the route starts from). */
-    int StartSystemID() const
-    { return m_start_system; }
 
     /* Returns ID of system set as destination for this order. */
     int DestinationSystemID() const
@@ -237,7 +232,6 @@ private:
     void ExecuteImpl() const override;
 
     int m_fleet = INVALID_OBJECT_ID;
-    int m_start_system = INVALID_OBJECT_ID;
     int m_dest_system = INVALID_OBJECT_ID;
     std::vector<int> m_route;
     bool m_append = false;
