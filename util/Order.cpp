@@ -841,7 +841,7 @@ ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, const std::string& fo
     m_planet(planet),
     m_focus(focus)
 {
-    if (Check(empire, planet, focus))
+    if (!Check(empire, planet, focus))
         return;
 }
 
@@ -869,7 +869,7 @@ bool ChangeFocusOrder::Check(int empire_id, int planet_id, const std::string& fo
 void ChangeFocusOrder::ExecuteImpl() const {
     GetValidatedEmpire();
 
-    if (Check(EmpireID(), m_planet, m_focus))
+    if (!Check(EmpireID(), m_planet, m_focus))
         return;
 
     auto planet = GetPlanet(m_planet);
