@@ -22,6 +22,7 @@ class UniverseObject;
 class Empire;
 class ShipDesign;
 class GraphControl;
+struct EncyclopediaDetailPage;
 
 
 /** UI class that displays in-game encyclopedic information about game
@@ -107,9 +108,8 @@ private:
 
     bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
 
-    static std::list<std::pair <std::string, std::string>>              m_items;    // stores all items which have been observed in the past
-                                                                                    // .first == item type; .second == item.name
-    static std::list<std::pair <std::string, std::string>>::iterator    m_items_it; // stores actual position within m_items
+    static std::list<EncyclopediaDetailPage>            m_items;    // stores all items which have been observed in the past
+    static std::list<EncyclopediaDetailPage>::iterator  m_items_it; // stores actual position within m_items
 
     std::weak_ptr<const ShipDesign> m_incomplete_design;
 
