@@ -1004,9 +1004,10 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         }
 
         bool has_collision = false;
-        // check for color and names
+        // check for color, names, and IDs
         std::set<GG::Clr> psd_colors;
         std::set<std::string> psd_names;
+        std::set<int> psd_ids;
         for (auto& player : incoming_lobby_data.m_players) {
             if (psd_colors.count(player.second.m_empire_color) ||
                 psd_names.count(player.second.m_empire_name) ||
@@ -1021,16 +1022,26 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             }
 
             // check for roles and client types
-            const auto& player_it = server.Networking().GetPlayer(player.first);
-            if (player_it != server.Networking().established_end()) {
-
-                if ((player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
-                    !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) ||
-                    (player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
-                    !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR)) ||
-                    (player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
-                    !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER)))
-                {
+            if (player.first != Networking::INVALID_PLAYER_ID) {
+                const auto& player_it = server.Networking().GetPlayer(player.first);
+                if (player_it != server.Networking().established_end()) {
+                    if ((player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
+                        !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) ||
+                        (player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
+                        !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR)) ||
+                        (player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
+                        !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER)))
+                    {
+                        has_collision = true;
+                        break;
+                    }
+                } else {
+                    // player wasn't found
+                    // don't allow "ghost" records
+                    has_collision = true;
+                    break;
+                }
+                if (!psd_ids.insert(player.first).second) {
                     has_collision = true;
                     break;
                 }
