@@ -1505,6 +1505,8 @@ bool ServerApp::IsLocalHumanPlayer(int player_id) {
 }
 
 bool ServerApp::IsAvailableName(const std::string& player_name) const {
+    if (player_name.empty())
+        return false;
     for (auto it = m_networking.established_begin();
          it != m_networking.established_end(); ++it)
     {
@@ -3108,7 +3110,7 @@ void ServerApp::ProcessCombats() {
     // update stale object info based on any mid- combat glimpses
     // before visibiity is totally recalculated in the post combat processing
     m_universe.UpdateEmpireStaleObjectKnowledge();
-    
+
     CreateCombatSitReps(combats);
 
     //CleanupSystemCombatInfo(combats); - NOTE: No longer needed since ObjectMap.Clear doesn't release any resources that aren't released in the destructor.
