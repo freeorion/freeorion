@@ -945,6 +945,7 @@ void HumanClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) 
 }
 
 void HumanClientApp::HandleSystemEvents() {
+    // this function is called in the GUI thread before rendering each frame
     try {
         SDLGUI::HandleSystemEvents();
     } catch (const utf8::invalid_utf8& e) {
@@ -956,6 +957,7 @@ void HumanClientApp::HandleSystemEvents() {
     } else if (auto msg = Networking().GetMessage()) {
         HandleMessage(*msg);
     }
+    // execute ClientUI work that is awaiting execution
     std::function<void()> work;
     while (GetClientUI().PopWork(work))
         work();

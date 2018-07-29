@@ -117,10 +117,13 @@ public:
                                                                   const std::string& prefix,
                                                                   bool mipmap = false);
 
-    /** Add work for the GUI thread. */
+    /** Adds the function \a work to the internal FIFO queue.
+      * Returns \c true if the function was added and \c false if the function was invalid. */
     bool PushWork(std::function<void()> work);
 
-    /** Get and remove work for the GUI thread. */
+    /** Moves the next function from the internal FIFO queue into \a work.
+      * The function placed in \a work is expected to be executed exactly once by the calling code.
+      * Returns \c true if a function was placed in \a work, returns \c false otherwise. */
     bool PopWork(std::function<void()>& work);
     //!@}
 

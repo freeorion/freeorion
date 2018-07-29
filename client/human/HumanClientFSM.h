@@ -38,6 +38,7 @@ struct TurnEnded : boost::statechart::event<TurnEnded> {};
 struct AdvanceTurn : boost::statechart::event<AdvanceTurn> {};
 
 // Indicates that everything has been loaded.
+// What was loaded is determined by the current FSM state.
 struct DoneLoading : boost::statechart::event<DoneLoading> {};
 
 /** The set of events used by the QuittingGame state. */
@@ -309,7 +310,7 @@ struct WaitingForGameStart : boost::statechart::state<WaitingForGameStart, Playi
 
     CLIENT_ACCESSOR
 
-    //! Load data in an asyc thread.
+    //! Load data in an asyc thread to avoid freezing the UI.
     void ProcessData(const Message& message);
 
     //! Update UI in the GUI thread.

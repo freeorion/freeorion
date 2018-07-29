@@ -797,6 +797,7 @@ boost::statechart::result WaitingForGameStart::react(const DoneLoading& msg) {
         return discard_event();
     }
 
+    // the data has been loaded and the UI has been updated
     is_loading = false;
 
     return transit<PlayingTurn>();
@@ -810,6 +811,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
         return discard_event();
     }
 
+    // start an async thread to load the data (thread will call WaitingForGameStart::ProcessData)
     is_loading = true;
     launch_async(std::bind(&WaitingForGameStart::ProcessData, this, msg.m_message));
 
@@ -818,6 +820,10 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
 
 void WaitingForGameStart::ProcessData(const Message& message) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForGameStart.ProcessData";
+
+    // we are inside the async thread
+    // all the data will be processed and then the UI will be updated
+    // the UI will NOT freeze while this runs
 
     Client().PlayerStatus().clear();
     Client().Orders().Reset();
@@ -847,6 +853,10 @@ void WaitingForGameStart::ProcessData(const Message& message) {
 
     GetGameRules().SetFromStrings(Client().GetGalaxySetupData().GetGameRules());
 
+    // all the data has been processed, now we need to update the UI
+    // the UI must be updated in the GUI thread (the one that created the OpenGL context)
+    // we push the UI update as ClientUI work (HumanClientApp::HandleSystemEvents will call WaitingForGameStart::ProcessUI)
+
     bool is_new_game = !(loaded_game_data && ui_data_available);
     Client().GetClientUI().PushWork(
         std::bind(&WaitingForGameStart::ProcessUI, this, is_new_game, ui_data));
@@ -854,6 +864,10 @@ void WaitingForGameStart::ProcessData(const Message& message) {
 
 void WaitingForGameStart::ProcessUI(bool is_new_game, const SaveGameUIData& ui_data) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForGameStart.ProcessUI";
+
+    // we are inside the GUI thread (called from called from HumanClientApp::HandleSystemEvents as ClientUI work)
+    // all UI components will be updated
+    // the UI is frozen until this is done
 
     Client().StartGame(is_new_game);
 
@@ -866,6 +880,9 @@ void WaitingForGameStart::ProcessUI(bool is_new_game, const SaveGameUIData& ui_d
 
     Client().GetClientUI().GetPlayerListWnd()->Refresh();
 
+    // HumanClientFSM isn't being processed right now so we can't use transit<PlayingTurn>() and need an event for the FSM to react
+    // ideally HumanClientFSM would have it's own processing thread, but right now it is processed by the GUI thread in response to network messages
+    // post_event(DoneLoading()) would delay the event until the next network message is processed, so we use process_event(DoneLoading()) to get immediate results
     context<HumanClientFSM>().process_event(DoneLoading());
 }
 
