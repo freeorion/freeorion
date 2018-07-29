@@ -1,5 +1,6 @@
 #include "CombatSystem.h"
 #include "CombatEvents.h"
+#include "CombatTargetting.h"
 
 #include "../universe/Universe.h"
 #include "../util/GameRules.h"
@@ -48,6 +49,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     // add system to full / complete objects in combat - NOTE: changed from copy of system
     objects.Insert(system);
 
+    
 
     // find ships and their owners in system
     auto ships = Objects().FindObjects<Ship>(system->ShipIDs());
@@ -275,27 +277,27 @@ namespace {
             fighters_launched(0),
             fighter_damage(0.0f),
             precision(1),
-            targets(0)
+            preferred_targets(Targetting::NoPreference)
         {}
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
-		       float part_attack_, int precision_, int targets_) :
+		       float part_attack_, int precision_, Targetting::TriggerCondition targets_) :
             part_class(part_class_),
             part_type_name(part_name_),
             part_attack(part_attack_),
             fighters_launched(0),
             fighter_damage(0.0f),
             precision(precision_),
-            targets(targets_)
+            preferred_targets(targets_)
         {}
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
-                       int fighters_launched_, float fighter_damage_) :
+                       int fighters_launched_, float fighter_damage_, Targetting::TriggerCondition targets_) :
             part_class(part_class_),
             part_type_name(part_name_),
             part_attack(0.0f),
             fighters_launched(fighters_launched_),
             fighter_damage(fighter_damage_),
             precision(2),
-	    targets(0)
+	    preferred_targets(targets_)
         {}
 
         ShipPartClass   part_class;
@@ -304,16 +306,11 @@ namespace {
         int             fighters_launched;  // for fighter bays, input value should be limited by ship available fighters to launch
         float           fighter_damage;     // for fighter bays, input value should be determined by ship fighter weapon setup
         int             precision;          //
-        int targets; // bitset?? enum set??
+        Targetting::TriggerCondition preferred_targets;
 
         bool AimsFor(std::shared_ptr<UniverseObject> target)
         {
-	  if (Fighter* derived = dynamic_cast<Fighter*>(target.get())) {
-	    ErrorLogger() << "Only a Fighter in sight - reroll if possible";
-	    return false;
-	  } else {
-	    return true;
-          }
+	    return Targetting::isPreferredTarget(preferred_targets, target);
 	}
     };
 
@@ -749,7 +746,7 @@ namespace {
                 if (part_attack > 0.0f && shots > 0) {
                     // attack for each shot...
                     for (int shot_count = 0; shot_count < shots; ++shot_count)
-		      retval.push_back(PartAttackInfo(part_class, part_name, part_attack, 4, 1));
+		        retval.push_back(PartAttackInfo(part_class, part_name, part_attack, 4, Targetting::findPreferredTargets(part_name)));
                 }
 
             } else if (part_class == PC_FIGHTER_HANGAR) {
@@ -770,13 +767,15 @@ namespace {
         if (available_fighters > 0 && !part_fighter_launch_capacities.empty()) {
             for (auto& launch : part_fighter_launch_capacities) {
                 int to_launch = std::min(launch.second, available_fighters);
-
+		std::string part_name = launch.first;
                 DebugLogger() << "Ship " << ship->Name() << " launching " << to_launch << " fighters from bay part " << launch.first;
 
                 if (to_launch <= 0)
                     continue;
+
+		
                 retval.push_back(PartAttackInfo(PC_FIGHTER_BAY, launch.first, to_launch,
-                                                fighter_attack)); // attack may be 0; that's ok: decoys
+                                                fighter_attack, Targetting::findPreferredTargets(part_name))); // attack may be 0; that's ok: decoys
                 available_fighters -= to_launch;
                 if (available_fighters <= 0)
                     break;
@@ -851,13 +850,14 @@ namespace {
         }
 
         std::vector<int> AddFighters(int number, float damage, int owner_empire_id,
-                                     int from_ship_id, const std::string& species)
+                                     int from_ship_id, const std::string& species,
+			      Targetting::Prey hunted, Targetting::TriggerCondition preferred_prey)
         {
             std::vector<int> retval;
 
             for (int n = 0; n < number; ++n) {
                 // create / insert fighter into combat objectmap
-                auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id, species, damage);
+ 	        auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id, species, damage, hunted, preferred_prey);
                 fighter_ptr->SetID(next_fighter_id--);
                 fighter_ptr->Rename(UserString("OBJ_FIGHTER"));
                 combat_info.objects.Insert(fighter_ptr);
@@ -1383,15 +1383,17 @@ namespace {
                 continue;
 
             int attacker_owner_id = attacker->Owner();
-
+	    auto target_types = Targetting::findTargetTypes(weapon.part_type_name);
             DebugLogger(combat) << "Launching " << weapon.fighters_launched
                                 << " with damage " << weapon.fighter_damage
                                 << " for empire id: " << attacker_owner_id
-                                << " from ship id: " << attacker->ID();
+                                << " from ship id: " << attacker->ID()
+				<< " hunting for prey flags: " << target_types;
+
 
             std::vector<int> new_fighter_ids =
                 combat_state.AddFighters(weapon.fighters_launched, weapon.fighter_damage,
-                                         attacker_owner_id, attacker->ID(), species_name);
+                                         attacker_owner_id, attacker->ID(), species_name, target_types, weapon.preferred_targets);
 
             // combat event
             CombatEventPtr launch_event =

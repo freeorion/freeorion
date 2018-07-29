@@ -5,16 +5,18 @@
 #include "../Empire/EmpireManager.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
-
+#include "../combat/CombatTargetting.h"
 
 Fighter::Fighter()
 {}
 
-Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage) :
+Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, Targetting::Prey target_types, Targetting::TriggerCondition preferred_targets) :
     UniverseObject(),
     m_damage(damage),
     m_launched_from_id(launched_from_id),
-    m_species_name(species_name)
+    m_species_name(species_name),
+    m_target_types(target_types),
+    m_preferred_targets(preferred_targets)
 {
     this->SetOwner(empire_id);
     UniverseObject::Init();
@@ -48,6 +50,12 @@ const std::string& Fighter::SpeciesName() const
 
 void Fighter::SetDestroyed(bool destroyed)
 { m_destroyed = destroyed; }
+
+Targetting::Prey Fighter::TargetTypes() const
+{ return m_target_types; }
+
+Targetting::TriggerCondition Fighter::PreferredTargets() const
+{ return m_preferred_targets; }
 
 std::string Fighter::Dump(unsigned short ntabs) const {
     std::stringstream os;
