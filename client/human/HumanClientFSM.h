@@ -310,6 +310,7 @@ struct WaitingForGameStart : boost::statechart::state<WaitingForGameStart, Playi
 
     CLIENT_ACCESSOR
 
+private:
     //! Load data in an asyc thread to avoid freezing the UI.
     void ProcessData(const Message& message);
 
