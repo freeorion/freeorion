@@ -529,6 +529,9 @@ bool ServerNetworking::CheckCookie(boost::uuids::uuid cookie,
     return false;
 }
 
+int ServerNetworking::GetCookiesSize() const
+{ return m_cookies.size(); }
+
 bool ServerNetworking::SendMessageAll(const Message& message) {
     bool success = true;
     for (auto player_it = established_begin();

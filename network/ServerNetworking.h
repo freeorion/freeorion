@@ -115,6 +115,9 @@ public:
                      const std::string& player_name,
                      Networking::AuthRoles& roles,
                      bool& authenticated) const;
+
+    /** Returns count of stored cookies so we don't collide with reserved player names. */
+    int GetCookiesSize() const;
     //@}
 
     /** \name Mutators */ //@{

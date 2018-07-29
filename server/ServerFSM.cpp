@@ -852,7 +852,9 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
         bool collision = true;
         std::size_t t = 1;
-        while (t <= m_lobby_data->m_players.size() + 1 && collision) {
+        while (t <= m_lobby_data->m_players.size() + server.Networking().GetCookiesSize() + 1 &&
+            collision)
+        {
             collision = false;
             roles.Clear();
             if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
@@ -1855,7 +1857,9 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
 
             bool collision = true;
             std::size_t t = 1;
-            while (t <= m_lobby_data->m_players.size() + 1 && collision) {
+            while (t <= m_lobby_data->m_players.size() + server.Networking().GetCookiesSize() + 1 &&
+                collision)
+            {
                 collision = false;
                 roles.Clear();
                 if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
@@ -2242,7 +2246,9 @@ sc::result PlayingGame::react(const JoinGame& msg) {
 
         bool collision = true;
         std::size_t t = 1;
-        while (t <= server.Networking().NumEstablishedPlayers() + 1 && collision) {
+        while (t <= server.Networking().NumEstablishedPlayers() + server.Networking().GetCookiesSize() + 1 &&
+            collision)
+        {
             collision = false;
             roles.Clear();
             if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
