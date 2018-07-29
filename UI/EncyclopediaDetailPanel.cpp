@@ -2144,7 +2144,7 @@ namespace {
     std::string GetDetailedDescriptionBase(const ShipDesign* design) {
         std::string hull_link;
         if (!design->Hull().empty())
-                hull_link = LinkTaggedText(VarText::SHIP_HULL_TAG, design->Hull());
+            hull_link = LinkTaggedText(VarText::SHIP_HULL_TAG, design->Hull());
 
         std::string parts_list;
         std::map<std::string, int> non_empty_parts_count;
@@ -2168,8 +2168,10 @@ namespace {
         % parts_list);
     }
 
-    std::string GetDetailedDescriptionStats(const std::shared_ptr<Ship> ship, const ShipDesign* design,
-                                            float enemy_DR, std::set<float> enemy_shots, float cost)
+    std::string GetDetailedDescriptionStats(const std::shared_ptr<Ship> ship,
+                                            const ShipDesign* design,
+                                            float enemy_DR,
+                                            std::set<float> enemy_shots, float cost)
     {
         //The strength of a fleet is approximately weapons * armor, or
         //(weapons - enemyShield) * armor / (enemyWeapons - shield). This
