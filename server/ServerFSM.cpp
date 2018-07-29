@@ -1021,10 +1021,10 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 psd_names.emplace(player.second.m_player_name);
             }
 
-            // check for roles and client types
             if (player.first != Networking::INVALID_PLAYER_ID) {
                 const auto& player_it = server.Networking().GetPlayer(player.first);
                 if (player_it != server.Networking().established_end()) {
+                    // check for roles and client types
                     if ((player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
                         !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) ||
                         (player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
@@ -1042,6 +1042,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     break;
                 }
                 if (!psd_ids.insert(player.first).second) {
+                    // player id was already used
+                    // don't allow ID collision
                     has_collision = true;
                     break;
                 }
