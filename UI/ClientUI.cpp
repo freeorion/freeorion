@@ -1044,8 +1044,7 @@ std::vector<std::shared_ptr<GG::Texture>> ClientUI::GetPrefixedTextures(const bo
     return prefixed_textures_and_dist.first;
 }
 
-bool ClientUI::PushWork(std::function<void()> work)
-{
+bool ClientUI::PushWork(std::function<void()> work) {
     if (!work)
         return false;
     {
@@ -1055,8 +1054,7 @@ bool ClientUI::PushWork(std::function<void()> work)
     return true;
 }
 
-bool ClientUI::PopWork(std::function<void()>& work)
-{
+bool ClientUI::PopWork(std::function<void()>& work) {
     {
         std::lock_guard<std::mutex> guard(m_work_mutex);
         if (m_work_queue.empty())
