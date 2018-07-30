@@ -102,6 +102,14 @@ bool PythonServer::InitModules() {
     // Save AuthProvider instance in auth module's namespace
     m_python_module_auth.attr("__dict__")["auth_provider"] = m_python_module_auth.attr("AuthProvider")();
 
+    AddToSysPath(GetPythonChatDir());
+
+    // import chat script file
+    m_python_module_chat = import("chat");
+
+    // Save ChatProvider instance in chat module's namespace
+    m_python_module_chat.attr("__dict__")["chat_provider"] = m_python_module_chat.attr("ChatProvider")();
+
     DebugLogger() << "Server Python modules successfully initialized!";
     return true;
 }
@@ -158,6 +166,52 @@ bool PythonServer::IsSuccessAuthAndReturnRoles(const std::string& player_name, c
     return true;
 }
 
+bool PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& chat_history) {
+    boost::python::object chat_provider = m_python_module_chat.attr("__dict__")["chat_provider"];
+    if (!chat_provider) {
+        ErrorLogger() << "Unable to get Python object chat_provider";
+        return false;
+    }
+    boost::python::object f = chat_provider.attr("load_history");
+    if (!f) {
+        ErrorLogger() << "Unable to call Python method load_history";
+        return false;
+    }
+    boost::python::object r = f();
+    boost::python::extract<list> py_history(r);
+    if (py_history.check()) {
+        boost::python::stl_input_iterator<boost::python::tuple> entity_begin(py_history), entity_end;
+        for (auto& it = entity_begin; it != entity_end; ++ it) {
+            ChatHistoryEntity e;
+            e.m_timestamp = boost::posix_time::from_time_t(boost::python::extract<time_t>((*it)[0]));;
+            e.m_player_name = boost::python::extract<std::string>((*it)[1]);
+            e.m_text = boost::python::extract<std::string>((*it)[2]);
+            e.m_text_color = boost::python::extract<GG::Clr>((*it)[3]);
+            chat_history.push_back(e);
+        }
+    }
+
+    return true;
+}
+
+bool PythonServer::PutChatHistoryEntity(const ChatHistoryEntity& chat_history_entity) {
+    boost::python::object chat_provider = m_python_module_chat.attr("__dict__")["chat_provider"];
+    if (!chat_provider) {
+        ErrorLogger() << "Unable to get Python object chat_provider";
+        return false;
+    }
+    boost::python::object f = chat_provider.attr("put_history_entity");
+    if (!f) {
+        ErrorLogger() << "Unable to call Python method put_history_entity";
+        return false;
+    }
+
+    return f(boost::python::long_(to_time_t(chat_history_entity.m_timestamp)),
+             chat_history_entity.m_player_name,
+             chat_history_entity.m_text,
+             chat_history_entity.m_text_color);
+}
+
 bool PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
     // Confirm existence of the directory containing the universe generation
     // Python scripts and add it to Pythons sys.path to make sure Python will
@@ -207,3 +261,6 @@ const std::string GetPythonTurnEventsDir()
 
 const std::string GetPythonAuthDir()
 { return GetPythonDir() + "/auth"; }
+
+const std::string GetPythonChatDir()
+{ return GetPythonDir() + "/chat"; }

@@ -67,6 +67,7 @@ using boost::python::tuple;
 using boost::python::make_tuple;
 using boost::python::extract;
 using boost::python::len;
+using boost::python::long_;
 
 
 FO_COMMON_API extern const int INVALID_DESIGN_ID;

@@ -948,6 +948,37 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
     player_connection->SendMessage(DispatchCombatLogsMessage(logs));
 }
 
+void ServerApp::LoadChatHistory() {
+    // don't load history if it was already loaded
+    if (!m_chat_history.empty())
+        return;
+
+    bool success = false;
+    try {
+        m_python_server.SetCurrentDir(GetPythonChatDir());
+        // Call the Python load_history function
+        success = m_python_server.LoadChatHistory(m_chat_history);
+    } catch (boost::python::error_already_set err) {
+        success = false;
+        m_python_server.HandleErrorAlreadySet();
+        if (!m_python_server.IsPythonRunning()) {
+            ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
+            if (m_python_server.Initialize()) {
+                ErrorLogger() << "Python interpreter successfully restarted.";
+            } else {
+                ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
+                m_fsm->process_event(ShutdownServer());
+            }
+        }
+    }
+
+    if (!success) {
+        ErrorLogger() << "Python scripted chat failed.";
+        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
+                                                                      false));
+    }
+}
+
 void ServerApp::PushChatMessage(const std::string& text,
                                 const std::string& player_name,
                                 GG::Clr text_color,
@@ -959,6 +990,31 @@ void ServerApp::PushChatMessage(const std::string& text,
     chat.m_text_color = text_color;
     chat.m_text = text;
     m_chat_history.push_back(chat);
+
+    bool success = false;
+    try {
+        m_python_server.SetCurrentDir(GetPythonChatDir());
+        // Call the Python load_history function
+        success = m_python_server.PutChatHistoryEntity(chat);
+    } catch (boost::python::error_already_set err) {
+        success = false;
+        m_python_server.HandleErrorAlreadySet();
+        if (!m_python_server.IsPythonRunning()) {
+            ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
+            if (m_python_server.Initialize()) {
+                ErrorLogger() << "Python interpreter successfully restarted.";
+            } else {
+                ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
+                m_fsm->process_event(ShutdownServer());
+            }
+        }
+    }
+
+    if (!success) {
+        ErrorLogger() << "Python scripted chat failed.";
+        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
+                                                                      false));
+    }
 }
 
 namespace {
@@ -3108,7 +3164,7 @@ void ServerApp::ProcessCombats() {
     // update stale object info based on any mid- combat glimpses
     // before visibiity is totally recalculated in the post combat processing
     m_universe.UpdateEmpireStaleObjectKnowledge();
-    
+
     CreateCombatSitReps(combats);
 
     //CleanupSystemCombatInfo(combats); - NOTE: No longer needed since ObjectMap.Clear doesn't release any resources that aren't released in the destructor.
