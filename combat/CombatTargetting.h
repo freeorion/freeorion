@@ -7,7 +7,7 @@
 // hit a mark
 // wanted, sight, prey, target, preferredX, sought, aim, triggerCondition
 namespace Targetting {
-	enum PreyType { NoPreference = 0, PlanetPrey = 1, ShipPrey = 2, BoatPrey = 4 };
+	enum PreyType { NoPreference = 7, AllPrey = 7, PlanetPrey = 1, ShipPrey = 2, BoatPrey = 4 };
 		   
 
     typedef PreyType                           Prey;

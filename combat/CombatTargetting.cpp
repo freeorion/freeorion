@@ -1,4 +1,4 @@
-#include "Targetting.h"
+#include "CombatTargetting.h"
 
 bool Targetting::isPreferredTarget(Targetting::TriggerCondition condition,
 				   Targetting::Target target) {
@@ -20,4 +20,27 @@ bool Targetting::isPreferredTarget(Targetting::TriggerCondition condition,
 	return true;
     }
     return false;
+}
+
+Targetting::Prey Targetting::findTargetTypes(const std::string& part_name_) {
+	if (part_name.rfind("FT_", 0) == 0) {
+		return BoatPrey;
+	}
+	if (part_name.rfind("SR_", 0) == 0) {
+		return ShipPrey;
+
+
+	} 
+	// shouldnt happen
+	return AllPrey;
+}
+
+Targetting::TriggerCondition Targetting::findPreferredTargets(const std::string& part_name_) {
+    if ("FT_HANGAR_3" == part_name) {
+	return ShipPrey;
+    }
+    if ("FT_HANGAR_1" == part_name || "SR_WEAPON_0_1" == part_name) {
+        return BoatPrey;
+    }
+    return NoPreference;
 }
