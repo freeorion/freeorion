@@ -745,9 +745,10 @@ namespace {
                 float part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
                 int shots = static_cast<int>(ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name)); // secondary stat is shots per attack)
                 if (part_attack > 0.0f && shots > 0) {
+                        //auto precision = Targetting::findPrecision(Targetting::HunterType::Unknown, part_name);
                     // attack for each shot...
                     for (int shot_count = 0; shot_count < shots; ++shot_count)
-		        retval.push_back(PartAttackInfo(part_class, part_name, part_attack, 4, Targetting::findPreferredTargets(part_name)));
+                        retval.push_back(PartAttackInfo(part_class, part_name, part_attack, 1, Targetting::findPreferredTargets(part_name)));
                 }
 
             } else if (part_class == PC_FIGHTER_HANGAR) {
