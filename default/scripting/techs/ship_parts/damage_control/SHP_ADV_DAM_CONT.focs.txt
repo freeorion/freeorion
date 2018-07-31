@@ -15,6 +15,7 @@ Tech
             scope = And [
                 Ship
                 OwnedBy empire = Source.Owner
+                InSystem
                 Stationary
                 Turn low = LocalCandidate.System.LastTurnBattleHere + 1
             ]
