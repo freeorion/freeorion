@@ -108,7 +108,7 @@ bool PythonServer::InitModules() {
     m_python_module_chat = import("chat");
 
     // Save ChatProvider instance in chat module's namespace
-    m_python_module_chat.attr("__dict__")["chat_provider"] = m_python_module_chat.attr("ChatProvider")();
+    m_python_module_chat.attr("__dict__")["chat_history_provider"] = m_python_module_chat.attr("ChatHistoryProvider")();
 
     DebugLogger() << "Server Python modules successfully initialized!";
     return true;
@@ -167,9 +167,9 @@ bool PythonServer::IsSuccessAuthAndReturnRoles(const std::string& player_name, c
 }
 
 bool PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& chat_history) {
-    boost::python::object chat_provider = m_python_module_chat.attr("__dict__")["chat_provider"];
+    boost::python::object chat_provider = m_python_module_chat.attr("__dict__")["chat_history_provider"];
     if (!chat_provider) {
-        ErrorLogger() << "Unable to get Python object chat_provider";
+        ErrorLogger() << "Unable to get Python object chat_history_provider";
         return false;
     }
     boost::python::object f = chat_provider.attr("load_history");
@@ -195,9 +195,9 @@ bool PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& ch
 }
 
 bool PythonServer::PutChatHistoryEntity(const ChatHistoryEntity& chat_history_entity) {
-    boost::python::object chat_provider = m_python_module_chat.attr("__dict__")["chat_provider"];
+    boost::python::object chat_provider = m_python_module_chat.attr("__dict__")["chat_history_provider"];
     if (!chat_provider) {
-        ErrorLogger() << "Unable to get Python object chat_provider";
+        ErrorLogger() << "Unable to get Python object chat_history_provider";
         return false;
     }
     boost::python::object f = chat_provider.attr("put_history_entity");

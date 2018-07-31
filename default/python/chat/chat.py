@@ -6,7 +6,7 @@ from common.configure_logging import redirect_logging_to_freeorion_logger
 redirect_logging_to_freeorion_logger()
 
 
-class ChatProvider:
+class ChatHistoryProvider:
     def __init__(self):
         """
         Initializes ChatProvider. Doesn't accept arguments.
