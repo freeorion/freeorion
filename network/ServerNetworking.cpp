@@ -619,7 +619,8 @@ void ServerNetworking::UpdateCookie(boost::uuids::uuid cookie) {
 
     auto it = m_cookies.find(cookie);
     if (it != m_cookies.end()) {
-        it->second.expired = boost::posix_time::second_clock::local_time() + boost::posix_time::minutes(15);
+        it->second.expired = boost::posix_time::second_clock::local_time() +
+            boost::posix_time::minutes(GetOptionsDB().Get<int>("network.server.cookies.expire-minutes"));
     }
 }
 
