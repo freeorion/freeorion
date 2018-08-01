@@ -136,8 +136,8 @@ def get_best_ship_info(priority, loc=None):
                 break
         else:
             return None, None, None  # apparently can't build for this priority within the desired planet group
-        valid_locs = [pid for rating, pid, design_id, _, _ in best_designs if
-                      rating == top_rating and design_id == top_id and pid in planet_ids]
+        valid_locs = [pid_ for rating, pid_, design_id, _, _ in best_designs if
+                      rating == top_rating and design_id == top_id and pid_ in planet_ids]
         return top_id, fo.getShipDesign(top_id), valid_locs
     else:
         return None, None, None  # must be missing a Shipyard or other orbital (or missing tech)
@@ -385,8 +385,8 @@ def generate_production_orders():
                 sys_id = planet.systemID
                 queued_defenses[sys_id] = queued_defenses.get(sys_id, 0) + element.blocksize*element.remaining
                 defense_allocation += element.allocation
-        print "Queued Defenses:", ppstring([(str(universe.getSystem(sys_id)), num)
-                                            for sys_id, num in queued_defenses.items()])
+        print "Queued Defenses:", ppstring([(str(universe.getSystem(sid)), num)
+                                            for sid, num in queued_defenses.items()])
         for sys_id, pids in state.get_empire_planets_by_system(include_outposts=False).items():
             if foAI.foAIstate.systemStatus.get(sys_id, {}).get('fleetThreat', 1) > 0:
                 continue  # don't build orbital shields if enemy fleet present
@@ -431,7 +431,7 @@ def generate_production_orders():
                     break  # won't try building more than one shipyard at once, per colonizer
             else:  # no queued shipyards, get planets with target pop >=3, and queue a shipyard on the one with biggest current pop
                 planets = map(universe.getPlanet, state.get_empire_planets_with_species(spec_name))
-                pops = sorted([(planet.initialMeterValue(fo.meterType.population), planet.id) for planet in planets if (planet and planet.initialMeterValue(fo.meterType.targetPopulation) >= 3.0)])
+                pops = sorted([(planet_.initialMeterValue(fo.meterType.population), planet_.id) for planet_ in planets if (planet_ and planet_.initialMeterValue(fo.meterType.targetPopulation) >= 3.0)])
                 pids = [pid for pop, pid in pops if building_type.canBeProduced(empire.empireID, pid)]
                 if pids:
                     build_loc = pids[-1]
@@ -1292,7 +1292,7 @@ def generate_production_orders():
             species_map.setdefault(this_spec, []).append(loc)
         colony_build_choices = []
         for pid, (score, this_spec) in foAI.foAIstate.colonisablePlanetIDs.items():
-            colony_build_choices.extend(int(math.ceil(score))*[pid2 for pid2 in species_map.get(this_spec, []) if pid2 in planet_set])
+            colony_build_choices.extend(int(math.ceil(score))*[pid_ for pid_ in species_map.get(this_spec, []) if pid_ in planet_set])
 
         local_priorities = {}
         local_priorities.update(filtered_priorities)

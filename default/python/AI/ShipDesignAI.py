@@ -182,7 +182,7 @@ class ShipDesignCache(object):
         :param pid: None, int or list of ints
         """
         if pid is None:
-            planets = [pid for pid in self.hulls_for_planets]
+            planets = list(self.hulls_for_planets)
         elif isinstance(pid, int):
             planets = [pid]
         elif isinstance(pid, list):
@@ -201,7 +201,7 @@ class ShipDesignCache(object):
         :param pid: int or list of ints
         """
         if pid is None:
-            planets = [pid for pid in self.parts_for_planets]
+            planets = list(self.parts_for_planets)
         elif isinstance(pid, int):
             planets = [pid]
         elif isinstance(pid, list):
@@ -1791,7 +1791,7 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
             current_available_parts = {}
             forbidden_hangar_parts = {part for part in hangar_parts if part != this_hangar_part}
             for slot, partlist in available_parts.iteritems():
-                current_available_parts[slot] = [part for part in partlist if part not in forbidden_hangar_parts]
+                current_available_parts[slot] = [part_ for part_ in partlist if part_ not in forbidden_hangar_parts]
             this_rating, this_partlist = ShipDesigner._filling_algorithm(self, current_available_parts)
             if verbose:
                 debug("Best rating for part %s is %.2f with partlist %s" % (this_hangar_part, this_rating, this_partlist))
