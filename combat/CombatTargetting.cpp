@@ -59,8 +59,7 @@ Targetting::TriggerCondition Targetting::findPreferredTargets(const std::string&
     return NoPreference;
 }
 
-
-Targetting::Precision findPrecision(Targetting::HunterType hunting, const std::string& part_name) {
+Targetting::Precision Targetting::findPrecision(Targetting::HunterType hunting, const std::string& part_name) {
     if ( Targetting::HunterType::Unknown == hunting ) {
         if ( part_name.rfind("FT_",0) == 0 ) {
             hunting = Targetting::HunterType::Boat;
