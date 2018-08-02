@@ -11255,11 +11255,11 @@ PART_DESC_DIRECT_FIRE_STATS
 '''Урон [[encyclopedia DAMAGE_TITLE]]: %1%
 Выстрелов за атаку: %2%'''
 
-# %1% ship part damage done (fighters).
-# %2% number of deployable fighters.
+# %1% number of deployable fighters.
+# %2% ship part damage done (fighters).
 PART_DESC_HANGAR_STATS
-'''Урон [[encyclopedia DAMAGE_TITLE]]: %1%
-Количество истребителей: %2%'''
+'''Количество истребителей: %1%
+Урон [[encyclopedia DAMAGE_TITLE]]: %2%'''
 
 ##
 ## Ship parts
