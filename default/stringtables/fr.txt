@@ -12721,11 +12721,11 @@ PART_DESC_DIRECT_FIRE_STATS
 '''[[encyclopedia DAMAGE_TITLE]] par tir : %1%
 Tirs par Attaque : %2%'''
 
-# %1% ship part damage done (fighters).
-# %2% number of deployable fighters.
+# %1% number of deployable fighters.
+# %2% ship part damage done (fighters).
 PART_DESC_HANGAR_STATS
-'''[[encyclopedia DAMAGE_TITLE]] par tir : %2%
-Capacité [[encyclopedia FIGHTER_TECHS]] : %1%'''
+'''Capacité [[encyclopedia FIGHTER_TECHS]] : %1%
+[[encyclopedia DAMAGE_TITLE]] par tir : %2%'''
 
 
 ##
