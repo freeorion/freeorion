@@ -515,7 +515,7 @@ namespace FreeOrionPython {
         ///////////
         // Color //
         ///////////
-        class_<GG::Clr>("GGColor", no_init)
+        class_<GG::Clr>("GGColor", init<unsigned char, unsigned char, unsigned char, unsigned char>())
             .add_property("r",                  &GG::Clr::r)
             .add_property("g",                  &GG::Clr::g)
             .add_property("b",                  &GG::Clr::b)

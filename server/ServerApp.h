@@ -196,6 +196,9 @@ public:
     /** Send the requested combat logs to the client.*/
     void UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_connection);
 
+    /** Loads chat history via python script. */
+    void LoadChatHistory();
+
     void PushChatMessage(const std::string& text,
                          const std::string& player_name,
                          GG::Clr text_color,
