@@ -257,12 +257,22 @@ namespace {
         case Message::REQUEST_NEW_DESIGN_ID:    return "Request New Design ID";
         case Message::DISPATCH_NEW_DESIGN_ID:   return "Dispatch New Design ID";
         case Message::END_GAME:                 return "End Game";
+        case Message::AI_END_GAME_ACK:          return "Acknowledge Shut Down Server";
         case Message::MODERATOR_ACTION:         return "Moderator Action";
         case Message::SHUT_DOWN_SERVER:         return "Shut Down Server";
-        case Message::AI_END_GAME_ACK:          return "Acknowledge Shut Down Server";
         case Message::REQUEST_SAVE_PREVIEWS:    return "Request save previews";
+        case Message::DISPATCH_SAVE_PREVIEWS:   return "Dispatch save previews";
         case Message::REQUEST_COMBAT_LOGS:      return "Request combat logs";
-        default:                                return "Unknown Type";
+        case Message::DISPATCH_COMBAT_LOGS:     return "Dispatch combat logs";
+        case Message::LOGGER_CONFIG:            return "Logger config";
+        case Message::CHECKSUM:                 return "Checksum";
+        case Message::AUTH_REQUEST:             return "Authentication request";
+        case Message::AUTH_RESPONSE:            return "Authentication response";
+        case Message::CHAT_HISTORY:             return "Chat history";
+        case Message::SET_AUTH_ROLES:           return "Set authorization roles";
+        case Message::ELIMINATE_SELF:           return "Eliminate self";
+        case Message::UNREADY:                  return "Unready";
+        default:                                return std::string("Unknown Type(") + std::to_string(static_cast<int>(type)) + ")";
         };
     }
 }
