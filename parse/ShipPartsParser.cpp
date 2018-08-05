@@ -6,6 +6,7 @@
 #include "ParseImpl.h"
 #include "EnumParser.h"
 #include "ValueRefParser.h"
+#include "ConditionParser.h"
 #include "ConditionParserImpl.h"
 #include "CommonParamsParser.h"
 
@@ -75,6 +76,7 @@ namespace {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
+            using phoenix::new_;
             using phoenix::construct;
 
             qi::_1_type _1;
@@ -89,7 +91,17 @@ namespace {
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::matches_type matches_;
-
+            qi::eps_type eps;
+        qi::_val_type _val;
+        const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
+        const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
+        //        const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
+        /*
+            condition_parser_rule preferred_prey
+                %=    (label(tok.PreferredPrey_) > condition_parser)
+                |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
+                ;
+        */
             part_type
                 = ( tok.Part_
                 >   common_rules.more_common
@@ -104,6 +116,9 @@ namespace {
                 > -(label(tok.MountableSlotTypes_) > one_or_more_slots)
                 >   common_rules.common
                 >   label(tok.Icon_)        > tok.string
+                    //                >   preferred_prey
+                >   (label(tok.PreferredPrey_) > condition_parser) |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
+                > -(label(tok.Precision_) > double_rule)
                   ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
                       insert_parttype_(_r1, _3,
                                        construct<std::pair<boost::optional<double>, boost::optional<double>>>(_4, _5)
