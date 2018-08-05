@@ -1561,6 +1561,8 @@ bool ServerApp::IsLocalHumanPlayer(int player_id) {
 }
 
 bool ServerApp::IsAvailableName(const std::string& player_name) const {
+    if (player_name.empty())
+        return false;
     for (auto it = m_networking.established_begin();
          it != m_networking.established_end(); ++it)
     {

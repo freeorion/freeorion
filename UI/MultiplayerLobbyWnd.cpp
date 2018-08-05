@@ -730,11 +730,16 @@ void MultiPlayerLobbyWnd::ChatMessage(int player_id, const boost::posix_time::pt
     // look up player name by ID
     std::string player_name{UserString("PLAYER") + " " + std::to_string(player_id)};
     GG::Clr text_color{ClientUI::GetClientUI()->TextColor()};
-    for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.m_players) {
-        if (entry.first != player_id || entry.first == Networking::INVALID_PLAYER_ID)
-            continue;
-        player_name = entry.second.m_player_name;
-        text_color = entry.second.m_empire_color;
+    if (player_id != Networking::INVALID_PLAYER_ID) {
+        for (auto& entry : m_lobby_data.m_players) {
+            if (entry.first != player_id || entry.first == Networking::INVALID_PLAYER_ID)
+                continue;
+            player_name = entry.second.m_player_name;
+            text_color = entry.second.m_empire_color;
+        }
+    } else {
+        // It's a server message. Don't set player name.
+        player_name = "";
     }
 
     m_chat_wnd->HandlePlayerChatMessage(msg, player_name, text_color, timestamp, HumanClientApp::GetApp()->PlayerID());

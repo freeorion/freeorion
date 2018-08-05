@@ -385,7 +385,10 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
     const std::string&& formatted_timestamp = ClientUI::FormatTimestamp(timestamp);
     if (IsValidUTF8(formatted_timestamp))
         wrapped_text += formatted_timestamp;
-    wrapped_text += player_name + ": " + filtered_message + "</rgba>";
+    if (player_name.empty())
+        wrapped_text += filtered_message + "</rgba>";
+    else
+        wrapped_text += player_name + ": " + filtered_message + "</rgba>";
     TraceLogger() << "HandlePlayerChatMessage sender: " << player_name
                   << "  sender colour rgba tag: " << RgbaTag(text_color)
                   << "  filtered message: " << filtered_message
