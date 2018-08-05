@@ -731,7 +731,7 @@ void MultiPlayerLobbyWnd::ChatMessage(int player_id, const boost::posix_time::pt
     std::string player_name{UserString("PLAYER") + " " + std::to_string(player_id)};
     GG::Clr text_color{ClientUI::GetClientUI()->TextColor()};
     if (player_id != Networking::INVALID_PLAYER_ID) {
-        for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.m_players) {
+        for (auto& entry : m_lobby_data.m_players) {
             if (entry.first != player_id || entry.first == Networking::INVALID_PLAYER_ID)
                 continue;
             player_name = entry.second.m_player_name;
