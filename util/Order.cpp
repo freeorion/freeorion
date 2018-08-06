@@ -269,6 +269,8 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
     int start_system = fleet->SystemID();
     if (start_system == INVALID_OBJECT_ID)
         start_system = fleet->NextSystemID();
+    if (append && !fleet->TravelRoute().empty())
+        start_system = fleet->TravelRoute().back();
 
     auto short_path = GetPathfinder()->ShortestPath(start_system, m_dest_system, EmpireID());
 
