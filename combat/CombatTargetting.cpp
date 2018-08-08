@@ -4,6 +4,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
+#include "../universe/ShipDesign.h"
 #include "../universe/Fighter.h"
 
 #include "../util/Logger.h"
@@ -71,9 +72,14 @@ Targetting::Precision Targetting::findPrecision(Targetting::HunterType hunting, 
     case Targetting::HunterType::Boat:
             return 2;
     case Targetting::HunterType::Ship:
-        if (part_name == "SR_WEAPON_0_1") {
-            return 3;
-        }
+            if ( (part_name == "SR_WEAPON_0_1" ) || ( part_name =="SR_WEAPON_1_1") ) {
+                    const PartType* part = GetPartType(part_name);
+                    if (part) {
+                            return part->Precision();
+                    }
+                    return 8;
+            }
+            return 2;
     case Targetting::HunterType::Planet:
     case Targetting::HunterType::Unknown:
             return 1;

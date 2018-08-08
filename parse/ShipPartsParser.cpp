@@ -18,6 +18,8 @@
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>
 
+#include <tuple>
+
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS
@@ -34,22 +36,31 @@ namespace {
 
     void insert_parttype(std::map<std::string, std::unique_ptr<PartType>>& part_types,
                          ShipPartClass part_class,
-                         std::pair<boost::optional<double>, boost::optional<double>> capacity_and_stat2,
+                         std::tuple<boost::optional<double>, boost::optional<double>, boost::optional<int>> capacity_and_stat2_and,
                          const parse::detail::MovableEnvelope<CommonParams>& common_params,
                          const MoreCommonParams& more_common_params,
                          boost::optional<std::vector<ShipSlotType>> mountable_slot_types,
                          const std::string& icon,
                          bool no_default_capacity_effect,
+                         //                         boost::optional<int> precision, // std::unique_ptr<ValueRef::ValueRefBase<int>>&& production_time_,
+                         //                         parse::detail::MovableEnvelope<Condition::ConditionBase>& preferredPrey, //                            std::unique_ptr<Condition::ConditionBase>&& location_,
                          bool& pass)
     {
+            boost::optional<double> capacity, stat2;
+            boost::optional<int> precision;
+
+                        std::tie(capacity, stat2, precision) = capacity_and_stat2_and;
         auto part_type = boost::make_unique<PartType>(
             part_class,
-            (capacity_and_stat2.first ? *capacity_and_stat2.first : 0.0),
-            (capacity_and_stat2.second ? *capacity_and_stat2.second : 1.0),
+            (capacity  ? *capacity  : 0.0),
+            (stat2 ? *stat2 : 1.0),
             *common_params.OpenEnvelope(pass), more_common_params,
             (mountable_slot_types ? *mountable_slot_types : std::vector<ShipSlotType>()),
             icon,
-            !no_default_capacity_effect);
+            !no_default_capacity_effect,
+            (precision ? *precision : 7)//,
+            //            std::move(preferredPrey),
+             );
 
         part_types.insert(std::make_pair(part_type->Name(), std::move(part_type)));
     }
@@ -88,6 +99,8 @@ namespace {
             qi::_7_type _7;
             qi::_8_type _8;
             qi::_9_type _9;
+            phoenix::actor<boost::spirit::argument<9>> _10; // qi::_10_type is not predefined
+            phoenix::actor<boost::spirit::argument<10>> _11; // qi::_11_type is not predefined
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::matches_type matches_;
@@ -102,6 +115,9 @@ namespace {
                 |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
                 ;
         */
+        boost::optional<int> opttwo = 2;
+        auto blubb = std::tuple<boost::optional<int>, boost::optional<int>, boost::optional<int>>(opttwo, opttwo, opttwo);
+        
             part_type
                 = ( tok.Part_
                 >   common_rules.more_common
@@ -117,12 +133,15 @@ namespace {
                 >   common_rules.common
                 >   label(tok.Icon_)        > tok.string
                     //                >   preferred_prey
-                >   (label(tok.PreferredPrey_) > condition_parser) |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
                 > -(label(tok.Precision_) > double_rule)
+                > -(  (label(tok.PreferredPrey_) > condition_parser) |     eps [ _val = construct_movable_(new_<Condition::All>()) ] )
                   ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
                       insert_parttype_(_r1, _3,
-                                       construct<std::pair<boost::optional<double>, boost::optional<double>>>(_4, _5)
-                                       , _8, _2, _7, _9, _6, _pass) ]
+                                       construct<std::tuple<boost::optional<double>, boost::optional<double>, boost::optional<int>>>(_4, _5, _10)
+                                       , _8, _2, _7, _9, _6,
+                                       //                                       opttwo, //_10//, _11
+                                        _pass
+                                       ) ]
                 ;
 
             start
