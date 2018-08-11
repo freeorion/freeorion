@@ -13,8 +13,13 @@ class DummyTestClass(object):
         self.some_string = "TestString"
         self._some_private_var = "_Test"
         self.__some_more_private_var = "__Test"
-        self.some_dict = {'ABC': 123.1, (1, 2.3, 'ABC', "zz"): (1, (2, (3, 4)))}
-        self.some_list = [self.some_int, self.some_float, self.some_other_float, self.some_string]
+        self.some_dict = {"ABC": 123.1, (1, 2.3, "ABC", "zz"): (1, (2, (3, 4)))}
+        self.some_list = [
+            self.some_int,
+            self.some_float,
+            self.some_other_float,
+            self.some_string,
+        ]
         self.some_set = set(self.some_list)
         self.some_tuple = tuple(self.some_list)
 
@@ -23,14 +28,15 @@ class DummyTestClass(object):
 
 
 class TrustedScope(object):
-
     def __enter__(self):
         reload(savegame_codec)  # just to be sure
-        savegame_codec._definitions.trusted_classes.update({
-            __name__ + ".DummyTestClass": DummyTestClass,
-            __name__ + ".GetStateTester": GetStateTester,
-            __name__ + ".SetStateTester": SetStateTester,
-        })
+        savegame_codec._definitions.trusted_classes.update(
+            {
+                __name__ + ".DummyTestClass": DummyTestClass,
+                __name__ + ".GetStateTester": GetStateTester,
+                __name__ + ".SetStateTester": SetStateTester,
+            }
+        )
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         savegame_codec._definitions.trusted_classes.clear()
@@ -53,20 +59,40 @@ class SetStateTester(object):
         raise Success
 
 
-class OldStyleClass():
+class OldStyleClass:
     pass
 
 
 @fixture(
     params=[
-        int(), float(), str(), bool(),
-        1, 1.2, 1.2e4, "TestString", True, False, None,
-        tuple(), set(), list(), dict(),
-        (1, 2, 3), [1, 2, 3], {1, 2, 3},
-        {'a': 1, True: False, (1, 2): {1, 2, 3}, (1, 2, (3, (4,))): [1, 2, (3, 4), {1, 2, 3}]}
+        int(),
+        float(),
+        str(),
+        bool(),
+        1,
+        1.2,
+        1.2e4,
+        "TestString",
+        True,
+        False,
+        None,
+        tuple(),
+        set(),
+        list(),
+        dict(),
+        (1, 2, 3),
+        [1, 2, 3],
+        {1, 2, 3},
+        {
+            "a": 1,
+            True: False,
+            (1, 2): {1, 2, 3},
+            (1, 2, (3, (4,))): [1, 2, (3, 4), {1, 2, 3}],
+        },
     ],
-    ids=str)
-def simple_object(request, ):
+    ids=str,
+)
+def simple_object(request,):
     return request.param
 
 
@@ -85,31 +111,39 @@ def test_encoding_simple_object(simple_object):
 
 
 def test_encoding_function():
-    with pytest.raises(savegame_codec.CanNotSaveGameException,
-                       message="Could save function",
-                       match="Class __builtin__.function is not trusted"):
+    with pytest.raises(
+        savegame_codec.CanNotSaveGameException,
+        message="Could save function",
+        match="Class __builtin__.function is not trusted",
+    ):
         check_encoding(lambda: 0)
 
 
 def test_encoding_old_style_class():
-    with pytest.raises(savegame_codec.CanNotSaveGameException,
-                       message="Could save Old style class",
-                       match="Encountered unsupported object test_savegame_manager.OldStyleClass \(<type 'classobj'>\)"):
+    with pytest.raises(
+        savegame_codec.CanNotSaveGameException,
+        message="Could save Old style class",
+        match="Encountered unsupported object test_savegame_manager.OldStyleClass \(<type 'classobj'>\)",
+    ):
         check_encoding(OldStyleClass)
 
 
 def test_encoding_type():
-    with pytest.raises(savegame_codec.CanNotSaveGameException,
-                       message="Could save untrusted class",
-                       match="Class __builtin__.type is not trusted"):
+    with pytest.raises(
+        savegame_codec.CanNotSaveGameException,
+        message="Could save untrusted class",
+        match="Class __builtin__.type is not trusted",
+    ):
         check_encoding(list)
 
 
 def test_class_encoding():
     obj = DummyTestClass()
-    with pytest.raises(savegame_codec.CanNotSaveGameException,
-                       message="Could save game even though test module should not be trusted",
-                       match="Class test_savegame_manager.DummyTestClass is not trusted"):
+    with pytest.raises(
+        savegame_codec.CanNotSaveGameException,
+        message="Could save game even though test module should not be trusted",
+        match="Class test_savegame_manager.DummyTestClass is not trusted",
+    ):
         savegame_codec.encode(obj)
 
     with TrustedScope():
@@ -127,21 +161,27 @@ def test_class_encoding():
 
         assert loaded_dict == original_dict
 
-    with pytest.raises(savegame_codec.InvalidSaveGameException,
-                       message="Could load object from untrusted module",
-                       match="DANGER DANGER - test_savegame_manager.DummyTestClass not trusted"):
+    with pytest.raises(
+        savegame_codec.InvalidSaveGameException,
+        message="Could load object from untrusted module",
+        match="DANGER DANGER - test_savegame_manager.DummyTestClass not trusted",
+    ):
         savegame_codec.decode(retval)
 
 
 def test_getstate_call():
     with TrustedScope():
-        with pytest.raises(Success, message="__getstate__ was not called during encoding."):
+        with pytest.raises(
+            Success, message="__getstate__ was not called during encoding."
+        ):
             savegame_codec.encode(GetStateTester())
 
 
 def test_setstate_call():
     with TrustedScope():
-        with pytest.raises(Success, message="__setstate__ was not called during decoding."):
+        with pytest.raises(
+            Success, message="__setstate__ was not called during decoding."
+        ):
             savegame_codec.decode(savegame_codec.encode(SetStateTester()))
 
 

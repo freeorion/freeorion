@@ -9,8 +9,8 @@ import sys
 this_dir = os.path.dirname(__file__)
 
 sys.path.append(this_dir)
-sys.path.append(os.path.join(this_dir, '..', '..', 'python', 'AI/'))
-sys.path.append(os.path.join(this_dir, '..', '..', 'python'))
+sys.path.append(os.path.join(this_dir, "..", "..", "python", "AI/"))
+sys.path.append(os.path.join(this_dir, "..", "..", "python"))
 
 # Since the 'true' freeOrionAIInterface is not available during testing, this import loads the 'mock' freeOrionInterface
 # module into memory.  For testing purposes the mock interface provides values for certain constants which various

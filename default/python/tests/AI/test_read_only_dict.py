@@ -1,12 +1,7 @@
 import pytest
 from freeorion_tools import ReadOnlyDict
 
-dict_content = {
-    1: -1,
-    1.09: 1.1,
-    'abc': 'xyz',
-    (1, 2, 3): ('a', 1, (1, 2)),
-}
+dict_content = {1: -1, 1.09: 1.1, "abc": "xyz", (1, 2, 3): ("a", 1, (1, 2))}
 
 
 def test_dict_content():
@@ -29,11 +24,15 @@ def test_membership():
 def test_non_existing_keys():
     test_dict = ReadOnlyDict(dict_content)
     # check correct functionality if keys not in dict
-    assert 'INVALID_KEY' not in test_dict
-    assert test_dict.get('INVALID_KEY', -99999) == -99999
-    with pytest.raises(KeyError, message="Invalid key lookup didn't raise a KeyError", match="'INVALID_KEY'"):
+    assert "INVALID_KEY" not in test_dict
+    assert test_dict.get("INVALID_KEY", -99999) == -99999
+    with pytest.raises(
+        KeyError,
+        message="Invalid key lookup didn't raise a KeyError",
+        match="'INVALID_KEY'",
+    ):
         # noinspection PyStatementEffect
-        test_dict['INVALID_KEY']
+        test_dict["INVALID_KEY"]
 
 
 def test_str_conversion():
@@ -70,13 +69,20 @@ def test_deletion():
 
 def test_setitem():
     test_dict = ReadOnlyDict(dict_content)
-    with pytest.raises(TypeError, message='Can add items to the dict.',
-                       match="'ReadOnlyDict' object does not support item assignment"):
-        test_dict['INVALID_KEY'] = 1
-    assert 'INVALID_KEY' not in test_dict
+    with pytest.raises(
+        TypeError,
+        message="Can add items to the dict.",
+        match="'ReadOnlyDict' object does not support item assignment",
+    ):
+        test_dict["INVALID_KEY"] = 1
+    assert "INVALID_KEY" not in test_dict
 
 
 def test_nonhashable_values():
     # make sure can't store unhashable items (as heuristic for mutable items)
-    with pytest.raises(TypeError, message='Can store mutable items in dict', match="unhashable type: 'list'"):
+    with pytest.raises(
+        TypeError,
+        message="Can store mutable items in dict",
+        match="unhashable type: 'list'",
+    ):
         ReadOnlyDict({1: [1]})
