@@ -14,12 +14,7 @@ class DummyTestClass(object):
         self._some_private_var = "_Test"
         self.__some_more_private_var = "__Test"
         self.some_dict = {"ABC": 123.1, (1, 2.3, "ABC", "zz"): (1, (2, (3, 4)))}
-        self.some_list = [
-            self.some_int,
-            self.some_float,
-            self.some_other_float,
-            self.some_string,
-        ]
+        self.some_list = [self.some_int, self.some_float, self.some_other_float, self.some_string]
         self.some_set = set(self.some_list)
         self.some_tuple = tuple(self.some_list)
 
@@ -83,12 +78,7 @@ class OldStyleClass:
         (1, 2, 3),
         [1, 2, 3],
         {1, 2, 3},
-        {
-            "a": 1,
-            True: False,
-            (1, 2): {1, 2, 3},
-            (1, 2, (3, (4,))): [1, 2, (3, 4), {1, 2, 3}],
-        },
+        {"a": 1, True: False, (1, 2): {1, 2, 3}, (1, 2, (3, (4,))): [1, 2, (3, 4), {1, 2, 3}]},
     ],
     ids=str,
 )
@@ -171,17 +161,13 @@ def test_class_encoding():
 
 def test_getstate_call():
     with TrustedScope():
-        with pytest.raises(
-            Success, message="__getstate__ was not called during encoding."
-        ):
+        with pytest.raises(Success, message="__getstate__ was not called during encoding."):
             savegame_codec.encode(GetStateTester())
 
 
 def test_setstate_call():
     with TrustedScope():
-        with pytest.raises(
-            Success, message="__setstate__ was not called during decoding."
-        ):
+        with pytest.raises(Success, message="__setstate__ was not called during decoding."):
             savegame_codec.decode(savegame_codec.encode(SetStateTester()))
 
 

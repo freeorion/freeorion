@@ -1,8 +1,5 @@
 from character.character_module import Trait, Character, Aggression
-from character.character_strings_module import (
-    _make_aggression_based_function,
-    get_trait_name_aggression,
-)
+from character.character_strings_module import _make_aggression_based_function, get_trait_name_aggression
 
 
 def test_make_aggression_based_function():
@@ -40,7 +37,4 @@ def test_get_trait_name_aggression():
     assert get_trait_name_aggression(character) == "UserString GSETUP_TURTLE"
 
     nonaggressive_character = Character([UnknownTrait()])
-    assert (
-        get_trait_name_aggression(nonaggressive_character)
-        == "UserString UNKNOWN_VALUE_SYMBOL"
-    )
+    assert get_trait_name_aggression(nonaggressive_character) == "UserString UNKNOWN_VALUE_SYMBOL"

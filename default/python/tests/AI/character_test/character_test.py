@@ -9,9 +9,7 @@ class LeftTrait(Trait):
 class RightTrait(Trait):
     """A test Trait that injects values to be found by combiners"""
 
-    def may_explore_system(
-        self, monster_threat
-    ):  # pylint: disable=no-self-use,unused-argument
+    def may_explore_system(self, monster_threat):  # pylint: disable=no-self-use,unused-argument
         """Always reject. 1 parameter"""
         return False
 
@@ -19,9 +17,7 @@ class RightTrait(Trait):
         """Always reject. 0 parameters"""
         return False
 
-    def preferred_research_cutoff(
-        self, alternatives
-    ):  # pylint: disable=no-self-use,unused-argument
+    def preferred_research_cutoff(self, alternatives):  # pylint: disable=no-self-use,unused-argument
         """Pick 1st"""
         return alternatives[1]
 
@@ -79,10 +75,6 @@ class TestCharacter(object):
         assert rejection_character.preferred_research_cutoff([10, 11, 12]) == 11
 
     def test_character_must_be_composed_of_traits(self):
-        with pytest.raises(
-            TypeError,
-            message="Expect TypeError",
-            match="All traits must be sub-classes of Trait",
-        ):
+        with pytest.raises(TypeError, message="Expect TypeError", match="All traits must be sub-classes of Trait"):
             not_a_trait = int(1)
             Character([LeftTrait, not_a_trait])
