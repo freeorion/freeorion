@@ -167,6 +167,7 @@ private:
     std::string     m_icon = "";
     bool            m_add_standard_capacity_effect = false;
 
+// XXX Q: increase version somewhere?? Q2: is serialization of m_precision/m_preferred_prey actually necessary?
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -754,7 +755,9 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_exclusions)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_icon)
-        & BOOST_SERIALIZATION_NVP(m_add_standard_capacity_effect);
+        & BOOST_SERIALIZATION_NVP(m_add_standard_capacity_effect)
+        & BOOST_SERIALIZATION_NVP(m_precision)
+        & BOOST_SERIALIZATION_NVP(m_preferred_prey);
 }
 
 template <class Archive>
