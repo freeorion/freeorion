@@ -1275,9 +1275,11 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
         // refresh save game empire data
         boost::filesystem::path save_dir(GetServerSaveDir());
+        std::vector<PlayerSaveHeaderData> player_save_header_data;
         try {
             LoadEmpireSaveGameData((save_dir / m_lobby_data->m_save_game).string(),
-                                   m_lobby_data->m_save_game_empire_data);
+                                   m_lobby_data->m_save_game_empire_data,
+                                   player_save_header_data);
         } catch (const std::exception&) {
             // inform player who attempted to change the save file that there was a problem
             sender->SendMessage(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), false));

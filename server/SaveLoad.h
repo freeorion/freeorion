@@ -46,6 +46,7 @@ void LoadPlayerSaveHeaderData(const std::string& filename,
   * useful when selecting which player will control which empire when reloading
   * a saved game: player name, empire name, and empire colour (and empire id). */
 void LoadEmpireSaveGameData(const std::string& filename,
-                            std::map<int, SaveGameEmpireData>& empire_save_game_data);
+                            std::map<int, SaveGameEmpireData>& empire_save_game_data,
+                            std::vector<PlayerSaveHeaderData>& player_save_header_data);
 
 #endif
