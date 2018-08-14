@@ -1273,6 +1273,12 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             psd.second.m_save_game_empire_id = ALL_EMPIRES;
         }
 
+        // remove all AIs
+        m_lobby_data->m_players.remove_if([](const std::pair<int, PlayerSetupData>& plr) {
+            return plr.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER;
+        });
+        m_ai_next_index = 1;
+
         // refresh save game empire data
         boost::filesystem::path save_dir(GetServerSaveDir());
         std::vector<PlayerSaveHeaderData> player_save_header_data;
@@ -1280,6 +1286,27 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             LoadEmpireSaveGameData((save_dir / m_lobby_data->m_save_game).string(),
                                    m_lobby_data->m_save_game_empire_data,
                                    player_save_header_data);
+
+            for (const auto& pshd : player_save_header_data) {
+                if (pshd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+                    const auto& empire_data_it = m_lobby_data->m_save_game_empire_data.find(pshd.m_empire_id);
+                    if (empire_data_it != m_lobby_data->m_save_game_empire_data.end()) {
+                        PlayerSetupData player_setup_data;
+                        player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
+                        // don't use original names to prevent collision with manually added AIs
+                        player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
+                        player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                        player_setup_data.m_save_game_empire_id = pshd.m_empire_id;
+                        player_setup_data.m_empire_name =   empire_data_it->second.m_empire_name;
+                        player_setup_data.m_empire_color =  empire_data_it->second.m_color;
+                        if (m_lobby_data->m_seed != "")
+                            player_setup_data.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
+                        else
+                            player_setup_data.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
+                        m_lobby_data->m_players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
+                    }
+                }
+            }
         } catch (const std::exception&) {
             // inform player who attempted to change the save file that there was a problem
             sender->SendMessage(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), false));
