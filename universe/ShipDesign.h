@@ -91,7 +91,7 @@ public:
              std::vector<ShipSlotType> mountable_slot_types,
              const std::string& icon, bool add_standard_capacity_effect = true,
              int precision = 2
-             //, std::unique_ptr<Condition::ConditionBase>&& preferredPrey = nullptr
+             , std::unique_ptr<Condition::ConditionBase>&& preferredPrey = nullptr
              ); // XXX default value?
 
     ~PartType();

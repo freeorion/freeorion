@@ -36,20 +36,20 @@ namespace {
 
     void insert_parttype(std::map<std::string, std::unique_ptr<PartType>>& part_types,
                          ShipPartClass part_class,
-                         std::tuple<boost::optional<double>, boost::optional<double>, boost::optional<int>> capacity_and_stat2_and,
+                         std::tuple<boost::optional<double>, boost::optional<double>, boost::optional<int>, boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>>> capacity_and_stat2_and,
                          const parse::detail::MovableEnvelope<CommonParams>& common_params,
                          const MoreCommonParams& more_common_params,
                          boost::optional<std::vector<ShipSlotType>> mountable_slot_types,
                          const std::string& icon,
                          bool no_default_capacity_effect,
-                         //                         boost::optional<int> precision, // std::unique_ptr<ValueRef::ValueRefBase<int>>&& production_time_,
-                         //                         parse::detail::MovableEnvelope<Condition::ConditionBase>& preferredPrey, //                            std::unique_ptr<Condition::ConditionBase>&& location_,
                          bool& pass)
     {
             boost::optional<double> capacity, stat2;
             boost::optional<int> precision;
+            boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>> preferredPrey;
 
-                        std::tie(capacity, stat2, precision) = capacity_and_stat2_and;
+            std::tie(capacity, stat2, precision, preferredPrey) = capacity_and_stat2_and;
+
         auto part_type = boost::make_unique<PartType>(
             part_class,
             (capacity  ? *capacity  : 0.0),
@@ -58,8 +58,8 @@ namespace {
             (mountable_slot_types ? *mountable_slot_types : std::vector<ShipSlotType>()),
             icon,
             !no_default_capacity_effect,
-            (precision ? *precision : 7)//,
-            //            std::move(preferredPrey),
+            (precision ? *precision : 7),
+            (preferredPrey ? (*preferredPrey).OpenEnvelope(pass) : nullptr)
              );
 
         part_types.insert(std::make_pair(part_type->Name(), std::move(part_type)));
@@ -137,7 +137,7 @@ namespace {
                 > -(  (label(tok.PreferredPrey_) > condition_parser) |     eps [ _val = construct_movable_(new_<Condition::All>()) ] )
                   ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
                       insert_parttype_(_r1, _3,
-                                       construct<std::tuple<boost::optional<double>, boost::optional<double>, boost::optional<int>>>(_4, _5, _10)
+                                       construct<std::tuple<boost::optional<double>, boost::optional<double>, boost::optional<int>, boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>>>>(_4, _5, _10, _11)
                                        , _8, _2, _7, _9, _6,
                                        //                                       opttwo, //_10//, _11
                                         _pass

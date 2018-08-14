@@ -306,7 +306,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
                    CommonParams& common_params, const MoreCommonParams& more_common_params,
                    std::vector<ShipSlotType> mountable_slot_types,
                    const std::string& icon, bool add_standard_capacity_effect,
-                   int precision//, std::unique_ptr<Condition::ConditionBase>&& preferredPrey
+                   int precision, std::unique_ptr<Condition::ConditionBase>&& preferredPrey
                    ) :
     m_name(more_common_params.name),
     m_description(more_common_params.description),
