@@ -32,7 +32,7 @@ namespace Targetting {
     enum class HunterType { Unknown, Planet, Boat, Ship }; 
     typedef PreyType                           Prey;
     typedef std::shared_ptr<UniverseObject>  Target;
-    typedef Condition::ConditionBase* TriggerCondition;
+    typedef std::shared_ptr<Condition::ConditionBase> TriggerCondition;
     typedef int                           Precision;
 
     bool isPreferredTarget(TriggerCondition condition, Target target);

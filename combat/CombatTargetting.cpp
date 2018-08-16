@@ -34,7 +34,7 @@ bool Targetting::isPreferredTarget(Targetting::TriggerCondition condition,
 Targetting::TriggerCondition Targetting::preyAsTriggerCondition(const Targetting::Prey prey) {
         switch( prey ) {
         case Targetting::NoPreference:
-                return new Condition::All();
+                return std::make_shared<Condition::All>();
                 break;
         default:
                 // error

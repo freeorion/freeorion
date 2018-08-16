@@ -115,7 +115,7 @@ public:
 
     int                     Precision() const            { return m_precision; }
 //    const Condition::ConditionBase* PreferredPrey() const{ return m_preferred_prey.get(); }          ///< returns the condition XXXX
-    const Targetting::TriggerCondition PreferredPrey() const{ return m_preferred_prey.get(); }          ///< returns the condition XXXX
+    const Targetting::TriggerCondition PreferredPrey() const{ return m_preferred_prey; }          ///< returns the condition XXXX
 
     bool                    ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
     float                   ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to produce this part
@@ -162,7 +162,7 @@ private:
     std::set<std::string>                               m_tags;
 //    std::unique_ptr<ValueRef::ValueRefBase<int>>        
     int                                                 m_precision;
-    std::unique_ptr<Condition::ConditionBase>           m_preferred_prey;
+    Targetting::TriggerCondition                        m_preferred_prey;
     CommonParams::ConsumptionMap<MeterType>             m_production_meter_consumption;
     CommonParams::ConsumptionMap<std::string>           m_production_special_consumption;
     std::unique_ptr<Condition::ConditionBase>           m_location;
