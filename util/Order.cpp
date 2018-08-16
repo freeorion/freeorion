@@ -1195,7 +1195,7 @@ ScrapOrder::ScrapOrder(int empire, int object_id) :
     Order(empire),
     m_object_id(object_id)
 {
-    if (Check(empire, object_id))
+    if (!Check(empire, object_id))
         return;
 }
 
@@ -1228,7 +1228,7 @@ bool ScrapOrder::Check(int empire_id, int object_id) {
 void ScrapOrder::ExecuteImpl() const {
     GetValidatedEmpire();
 
-    if (Check(EmpireID(), m_object_id))
+    if (!Check(EmpireID(), m_object_id))
         return;
 
     if (auto ship = GetShip(m_object_id)) {
