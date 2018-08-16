@@ -10,12 +10,12 @@
 Fighter::Fighter()
 {}
 
-Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, Targetting::Prey target_types, Targetting::TriggerCondition preferred_targets) :
+Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, Targetting::Precision precision, Targetting::TriggerCondition preferred_targets) :
     UniverseObject(),
     m_damage(damage),
     m_launched_from_id(launched_from_id),
     m_species_name(species_name),
-    m_target_types(target_types),
+    m_precision(precision),
     m_preferred_targets(preferred_targets)
 {
     this->SetOwner(empire_id);
@@ -51,8 +51,8 @@ const std::string& Fighter::SpeciesName() const
 void Fighter::SetDestroyed(bool destroyed)
 { m_destroyed = destroyed; }
 
-Targetting::Prey Fighter::TargetTypes() const
-{ return m_target_types; }
+Targetting::Precision Fighter::Precision() const
+{ return m_precision; }
 
 Targetting::TriggerCondition Fighter::PreferredTargets() const
 { return m_preferred_targets; }

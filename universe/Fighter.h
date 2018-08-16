@@ -12,7 +12,7 @@
   * can be stored in the same container as other combat objects. */
 class FO_COMMON_API Fighter : public UniverseObject {
 public:
-    Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, Targetting::Prey target_types, Targetting::TriggerCondition preferred_targets);
+    Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, Targetting::Precision precision, Targetting::TriggerCondition preferred_targets);
     Fighter();
     ~Fighter();
 
@@ -31,7 +31,7 @@ public:
     int                         LaunchedFrom() const;
     const std::string&          SpeciesName() const;
     void                        SetDestroyed(bool destroyed = true);
-    Targetting::Prey            TargetTypes() const;
+    Targetting::Precision       Precision() const;
     Targetting::TriggerCondition PreferredTargets() const;
 
 protected:
@@ -42,7 +42,7 @@ private:
     bool        m_destroyed = false;                    // was attacked by anything -> destroyed
     int         m_launched_from_id = INVALID_OBJECT_ID; // from what object (ship?) was this fighter launched
     std::string m_species_name;
-    Targetting::Prey             m_target_types;        // what kinds of prey is this fighter
+    Targetting::Precision        m_precision;        // what kinds of prey is this fighter
     Targetting::TriggerCondition m_preferred_targets;   // what kinds of prey prefers this fighter to hunt
 };
 
