@@ -26,6 +26,8 @@
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
+#include "../combat/CombatTargetting.h"
+
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 namespace Condition {
     struct ConditionBase;
@@ -91,7 +93,9 @@ public:
              std::vector<ShipSlotType> mountable_slot_types,
              const std::string& icon, bool add_standard_capacity_effect = true,
              int precision = 2
-             , std::unique_ptr<Condition::ConditionBase>&& preferredPrey = nullptr
+             ,
+             //std::unique_ptr<Condition::ConditionBase>&& preferredPrey = nullptr
+             Targetting::TriggerCondition preferredPrey = nullptr
              ); // XXX default value?
 
     ~PartType();
@@ -110,7 +114,8 @@ public:
                             MountableSlotTypes() const  { return m_mountable_slot_types; }
 
     int                     Precision() const            { return m_precision; }
-    const Condition::ConditionBase* PreferredPrey() const{ return m_preferred_prey.get(); }          ///< returns the condition XXXX
+//    const Condition::ConditionBase* PreferredPrey() const{ return m_preferred_prey.get(); }          ///< returns the condition XXXX
+    const Targetting::TriggerCondition PreferredPrey() const{ return m_preferred_prey.get(); }          ///< returns the condition XXXX
 
     bool                    ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
     float                   ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to produce this part

@@ -2,6 +2,7 @@
 #define _CombatTargetting_h_
 
 #include "../universe/UniverseObject.h"
+#include "../universe/Condition.h"
 
 //  Big Picture:
 //    Hunters have a precision and preferred types of prey. This means that
@@ -31,7 +32,7 @@ namespace Targetting {
     enum class HunterType { Unknown, Planet, Boat, Ship }; 
     typedef PreyType                           Prey;
     typedef std::shared_ptr<UniverseObject>  Target;
-    typedef PreyType               TriggerCondition;
+    typedef Condition::ConditionBase* TriggerCondition;
     typedef int                           Precision;
 
     bool isPreferredTarget(TriggerCondition condition, Target target);
@@ -39,6 +40,7 @@ namespace Targetting {
     Precision findPrecision(HunterType hunting, const std::string& part_name);
     Prey findTargetTypes(const std::string& part_name);
     TriggerCondition findPreferredTargets(const std::string& part_name);
+    TriggerCondition preyAsTriggerCondition(Prey prey);
 }
 
 #endif // _CombatTargetting_h_

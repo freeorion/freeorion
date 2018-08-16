@@ -7,6 +7,7 @@
 #include "../util/CheckSums.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../combat/CombatTargetting.h"
 #include "Condition.h"
 #include "Effect.h"
 #include "Planet.h"
@@ -306,7 +307,9 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
                    CommonParams& common_params, const MoreCommonParams& more_common_params,
                    std::vector<ShipSlotType> mountable_slot_types,
                    const std::string& icon, bool add_standard_capacity_effect,
-                   int precision, std::unique_ptr<Condition::ConditionBase>&& preferredPrey
+                   int precision,
+                   //std::unique_ptr<Condition::ConditionBase>&& preferredPrey
+                   Targetting::TriggerCondition preferredPrey
                    ) :
     m_name(more_common_params.name),
     m_description(more_common_params.description),
@@ -326,8 +329,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     m_icon(icon),
     m_add_standard_capacity_effect(add_standard_capacity_effect),
     m_precision(precision),
-    //    m_preferred_prey(std::move(preferredPrey))
-    m_preferred_prey(nullptr)
+    m_preferred_prey(std::move(preferredPrey))
 {
     //TraceLogger() << "part type: " << m_name << " producible: " << m_producible << std::endl;
     Init(std::move(common_params.effects));

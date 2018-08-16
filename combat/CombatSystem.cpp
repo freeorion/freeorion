@@ -277,7 +277,7 @@ namespace {
             fighters_launched(0),
             fighter_damage(0.0f),
             precision(1),
-            preferred_targets(Targetting::NoPreference)
+            preferred_targets(Targetting::preyAsTriggerCondition(Targetting::NoPreference))
         {}
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
 		       float part_attack_, int precision_, Targetting::TriggerCondition targets_) :
@@ -1509,7 +1509,7 @@ namespace {
 
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"),
-                                             attack_planet->CurrentMeterValue(METER_DEFENSE),3,Targetting::ShipPrey));
+                                             attack_planet->CurrentMeterValue(METER_DEFENSE),3,Targetting::preyAsTriggerCondition(Targetting::ShipPrey)));
 
         } else if (attack_fighter) {    // treat fighter damage as direct fire weapon
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("FT_WEAPON_1"),
