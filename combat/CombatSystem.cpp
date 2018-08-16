@@ -730,7 +730,7 @@ namespace {
         std::set<std::string> seen_hangar_part_types;
         int available_fighters = 0;
         float fighter_attack = 0.0f;
-	std::string fighter_type = "";
+        Targetting::TriggerCondition fighter_preferred_prey;
         std::map<std::string, int> part_fighter_launch_capacities;
 
         // determine what ship does during combat, based on parts and their meters...
@@ -756,7 +756,7 @@ namespace {
                 if (!seen_hangar_part_types.count(part_name)) {
                     available_fighters += ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
                     seen_hangar_part_types.insert(part_name);
-		    fighter_type = part_name;
+		    fighter_preferred_prey = part->PreferredPrey();
 
                     // should only be one type of fighter per ship as of this writing
                     fighter_attack = ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name);  // secondary stat is fighter damage
@@ -778,7 +778,7 @@ namespace {
 
 		
                 retval.push_back(PartAttackInfo(PC_FIGHTER_BAY, launch.first, to_launch,
-                                                fighter_attack, Targetting::findPreferredTargets(fighter_type))); // attack may be 0; that's ok: decoys
+                                                fighter_attack, std::move(fighter_preferred_prey))); // attack may be 0; that's ok: decoys
                 available_fighters -= to_launch;
                 if (available_fighters <= 0)
                     break;

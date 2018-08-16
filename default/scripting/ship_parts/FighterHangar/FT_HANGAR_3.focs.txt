@@ -11,5 +11,7 @@ Part
     tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter04.png"
+    precision = 5
+    preferredPrey = Ship
 
 #include "/scripting/common/upkeep.macros"
