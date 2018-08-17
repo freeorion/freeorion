@@ -108,16 +108,7 @@ namespace {
         qi::_val_type _val;
         const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
         const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
-        //        const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
-        /*
-            condition_parser_rule preferred_prey
-                %=    (label(tok.PreferredPrey_) > condition_parser)
-                |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
-                ;
-        */
-        boost::optional<int> opttwo = 2;
-        auto blubb = std::tuple<boost::optional<int>, boost::optional<int>, boost::optional<int>>(opttwo, opttwo, opttwo);
-        
+
             part_type
                 = ( tok.Part_
                 >   common_rules.more_common
@@ -139,7 +130,6 @@ namespace {
                       insert_parttype_(_r1, _3,
                                        construct<std::tuple<boost::optional<double>, boost::optional<double>, boost::optional<int>, boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>>>>(_4, _5, _10, _11)
                                        , _8, _2, _7, _9, _6,
-                                       //                                       opttwo, //_10//, _11
                                         _pass
                                        ) ]
                 ;
