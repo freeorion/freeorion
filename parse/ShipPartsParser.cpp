@@ -58,7 +58,7 @@ namespace {
             (mountable_slot_types ? *mountable_slot_types : std::vector<ShipSlotType>()),
             icon,
             !no_default_capacity_effect,
-            (precision ? *precision : 7),
+            (precision ? *precision : 2),
             (preferredPrey ? (*preferredPrey).OpenEnvelope(pass) : nullptr)
              );
 
