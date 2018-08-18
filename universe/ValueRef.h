@@ -960,16 +960,26 @@ void Statistic<T>::SetTopLevelContent(const std::string& content_name)
 template <class T>
 T Statistic<T>::Eval(const ScriptingContext& context) const
 {
-    // the only statistic that can be computed on non-number property types
-    // and that is itself of a non-number type is the most common value
-    if (m_stat_type != MODE)
-        throw std::runtime_error("ValueRef evaluated with an invalid StatisticType for the return type.");
-
     Condition::ObjectSet condition_matches;
     GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
-    if (condition_matches.empty())
-        return T(-1);   // should be INVALID_T of enum types
+    // special case for IF statistic... return a T(1) for true.
+    if (m_stat_type == IF) {
+        if (condition_matches.empty())
+            return T(0);
+        else
+            return T(1);
+    }
+
+    // todo: consider allowing MAX and MIN using string sorting?
+
+    // the only other statistic that can be computed on non-number property
+    // types and that is itself of a non-number type is the most common value
+    if (m_stat_type != MODE) {
+        ErrorLogger() << "Statistic<std::string>::Eval has invalid statistic type: "
+                      << m_stat_type;
+        return T(-1);
+    }
 
     // evaluate property for each condition-matched object
     std::map<std::shared_ptr<const UniverseObject>, T> object_property_values;
@@ -1920,69 +1930,80 @@ template <class T>
 T Operation<T>::EvalImpl(const ScriptingContext& context) const
 {
     switch (m_op_type) {
-        case MAXIMUM:
-        case MINIMUM: {
-            // evaluate all operands, return smallest
-            std::set<T> vals;
-            for (auto& vr : m_operands) {
-                if (vr)
-                    vals.insert(vr->Eval(context));
-            }
-            if (m_op_type == MINIMUM)
-                return vals.empty() ? T(-1) : *vals.begin();
+    case TIMES: {
+        // useful for writing a "Statistic If" expression with arbitrary types.
+        // If returns T(0) or T(1) for nothing or something matching the
+        // sampling condition. This can be checked here by returning T(0) if
+        // the LHS operand is T(0) and just returning RHS() otherwise.
+        if (!LHS()->Eval(context))
+            return T(0);
+        return RHS()->Eval(context);
+        break;
+    }
+
+    case MAXIMUM:
+    case MINIMUM: {
+        // evaluate all operands, return smallest or biggest
+        std::set<T> vals;
+        for (auto& vr : m_operands) {
+            if (vr)
+                vals.insert(vr->Eval(context));
+        }
+        if (m_op_type == MINIMUM)
+            return vals.empty() ? T(-1) : *vals.begin();
+        else
+            return vals.empty() ? T(-1) : *vals.rbegin();
+        break;
+    }
+
+    case RANDOM_PICK: {
+        // select one operand, evaluate it, return result
+        if (m_operands.empty())
+            return T(-1);   // should be INVALID_T of enum types
+        unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
+        auto& vr = *std::next(m_operands.begin(), idx);
+        if (!vr)
+            return T(-1);   // should be INVALID_T of enum types
+        return vr->Eval(context);
+        break;
+    }
+
+    case COMPARE_EQUAL:
+    case COMPARE_GREATER_THAN:
+    case COMPARE_GREATER_THAN_OR_EQUAL:
+    case COMPARE_LESS_THAN:
+    case COMPARE_LESS_THAN_OR_EQUAL:
+    case COMPARE_NOT_EQUAL: {
+        const T&& lhs_val = LHS()->Eval(context);
+        const T&& rhs_val = RHS()->Eval(context);
+        bool test_result = false;
+        switch (m_op_type) {
+            case COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
+            case COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
+            case COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
+            case COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
+            case COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
+            case COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
+            default:    break;  // ??? do nothing, default to false
+        }
+        if (m_operands.size() < 3) {
+            return T(1);
+        } else if (m_operands.size() < 4) {
+            if (test_result)
+                return m_operands[2]->Eval(context);
             else
-                return vals.empty() ? T(-1) : *vals.rbegin();
-            break;
+                return T(0);
+        } else {
+            if (test_result)
+                return m_operands[2]->Eval(context);
+            else
+                return m_operands[3]->Eval(context);
         }
+        break;
+    }
 
-        case RANDOM_PICK: {
-            // select one operand, evaluate it, return result
-            if (m_operands.empty())
-                return T(-1);   // should be INVALID_T of enum types
-            unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
-            auto& vr = *std::next(m_operands.begin(), idx);
-            if (!vr)
-                return T(-1);   // should be INVALID_T of enum types
-            return vr->Eval(context);
-            break;
-        }
-
-        case COMPARE_EQUAL:
-        case COMPARE_GREATER_THAN:
-        case COMPARE_GREATER_THAN_OR_EQUAL:
-        case COMPARE_LESS_THAN:
-        case COMPARE_LESS_THAN_OR_EQUAL:
-        case COMPARE_NOT_EQUAL: {
-            const T&& lhs_val = LHS()->Eval(context);
-            const T&& rhs_val = RHS()->Eval(context);
-            bool test_result = false;
-            switch (m_op_type) {
-                case COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
-                case COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
-                case COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
-                case COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
-                case COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
-                case COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
-                default:    break;  // ??? do nothing, default to false
-            }
-            if (m_operands.size() < 3) {
-                return T(1);
-            } else if (m_operands.size() < 4) {
-                if (test_result)
-                    return m_operands[2]->Eval(context);
-                else
-                    return T(0);
-            } else {
-                if (test_result)
-                    return m_operands[2]->Eval(context);
-                else
-                    return m_operands[3]->Eval(context);
-            }
-            break;
-        }
-
-        default:
-            break;
+    default:
+        break;
     }
 
     throw std::runtime_error("ValueRef::Operation<T>::EvalImpl evaluated with an unknown or invalid OpType.");
