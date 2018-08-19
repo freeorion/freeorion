@@ -372,6 +372,21 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
 
 int Universe::GenerateObjectID() {
     auto new_id = m_object_id_allocator->NewID();
+
+    // repeat generation if ID not OK, but for limited attempts...
+    for (unsigned int tries = 100; tries > 0; --tries) {
+        // safety checks...
+        if (auto obj = m_objects.Object(new_id)) {
+            ErrorLogger() << "Generated ID " << new_id << " is already used by an object: " << obj->Dump();
+            new_id = m_object_id_allocator->NewID();
+        } else if (m_destroyed_object_ids.count(new_id)) {
+            ErrorLogger() << "Generated ID " << new_id << " was already used for a destroyed object";
+            new_id = m_object_id_allocator->NewID();
+        } else {
+            break;
+        }
+    }
+
     return new_id;
 }
 
