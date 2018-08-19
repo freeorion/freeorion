@@ -156,30 +156,29 @@ public:
     /** Returns the Visibility level of empire with id \a empire_id of
       * UniverseObject with id \a object_id as determined by calling
       * UpdateEmpireObjectVisibilities. */
-    Visibility              GetObjectVisibilityByEmpire(int object_id, int empire_id) const;
+    Visibility GetObjectVisibilityByEmpire(int object_id, int empire_id) const;
 
     /** Returns the map from Visibility level to turn number on which the empire
       * with id \a empire_id last had the various Visibility levels of the
       * UniverseObject with id \a object_id .  The returned map may be empty or
       * not have entries for all visibility levels, if the empire has not seen
       * the object at that visibility level yet. */
-    const VisibilityTurnMap&
-                            GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const;
+    const VisibilityTurnMap& GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const;
 
     /** Returns the set of specials attached to the object with id \a object_id
       * that the empire with id \a empire_id can see this turn. */
-    std::set<std::string>   GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const;
+    std::set<std::string> GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const;
 
     /** Return the Pathfinder */
-    std::shared_ptr<const Pathfinder>   GetPathfinder() const {return m_pathfinder;}
+    std::shared_ptr<const Pathfinder> GetPathfinder() const {return m_pathfinder;}
 
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects
       * were applied to the meter. */
-    const Effect::AccountingMap&        GetEffectAccountingMap() const {return m_effect_accounting_map;}
+    const Effect::AccountingMap& GetEffectAccountingMap() const {return m_effect_accounting_map;}
 
     const std::map<std::string, std::map<int, std::map<int, double>>>&
-                                        GetStatRecords() const { return m_stat_records; }
+    GetStatRecords() const { return m_stat_records; }
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
@@ -355,18 +354,18 @@ public:
     //@}
 
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
-    const bool&     UniverseObjectSignalsInhibited();
+    const bool& UniverseObjectSignalsInhibited();
 
     /** HACK! This must be set to the encoding empire's id when serializing a
       * Universe, so that only the relevant parts of the Universe are
       * serialized.  The use of this global variable is done just so I don't
       * have to rewrite any custom boost::serialization classes that implement
       * empire-dependent visibility. */
-    int&    EncodingEmpire();
+    int& EncodingEmpire();
 
-    double  UniverseWidth() const;
-    void    SetUniverseWidth(double width) { m_universe_width = width; }
-    bool    AllObjectsVisible() const { return m_all_objects_visible; }
+    double UniverseWidth() const;
+    void SetUniverseWidth(double width) { m_universe_width = width; }
+    bool AllObjectsVisible() const { return m_all_objects_visible; }
 
     /** \name Generators */ //@{
     /** InsertNew constructs and inserts a UniverseObject into the object map with a new
@@ -424,7 +423,6 @@ public:
 private:
     const EmpireStatsMap& EmpireStats() const;
 public:
-
     /** ObfuscateIDGenerator applies randomization to the IDAllocator to prevent clients from
         inferring too much information about other client's id generation activities. */
     void ObfuscateIDGenerator();
@@ -490,7 +488,7 @@ private:
       * processed objects_vec or whatever they were passed and cleared the
       * relevant effect accounting for those objects and meters. If an empty 
       * vector is passed, it will instead update all existing objects. */
-    void    UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, bool do_accounting);
+    void UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, bool do_accounting);
 
     ObjectMap                       m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
     EmpireObjectMap                 m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
@@ -527,17 +525,17 @@ private:
         Various unlocked items are kept as a Pending::Pending while being parsed and
         then transfered.  They are mutable to allow processing in const accessors. */
     ///@{
-    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>> m_pending_items = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>> m_pending_buildings = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>> m_pending_fleet_plans = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<MonsterFleetPlan>>>> m_pending_monster_fleet_plans = boost::none;
-    mutable boost::optional<Pending::Pending<EmpireStatsMap>> m_pending_empire_stats = boost::none;
+    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>>                            m_pending_items = boost::none;
+    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>>                            m_pending_buildings = boost::none;
+    mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>>          m_pending_fleet_plans = boost::none;
+    mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<MonsterFleetPlan>>>>   m_pending_monster_fleet_plans = boost::none;
+    mutable boost::optional<Pending::Pending<EmpireStatsMap>>                                   m_pending_empire_stats = boost::none;
 
-    mutable std::vector<ItemSpec> m_unlocked_items;
-    mutable std::vector<ItemSpec> m_unlocked_buildings;
-    mutable std::vector<std::unique_ptr<FleetPlan>> m_unlocked_fleet_plans;
-    mutable std::vector<std::unique_ptr<MonsterFleetPlan>> m_monster_fleet_plans;
-    mutable EmpireStatsMap m_empire_stats;
+    mutable std::vector<ItemSpec>                           m_unlocked_items;
+    mutable std::vector<ItemSpec>                           m_unlocked_buildings;
+    mutable std::vector<std::unique_ptr<FleetPlan>>         m_unlocked_fleet_plans;
+    mutable std::vector<std::unique_ptr<MonsterFleetPlan>>  m_monster_fleet_plans;
+    mutable EmpireStatsMap                                  m_empire_stats;
     ///@}
 
     /** Fills \a designs_to_serialize with ShipDesigns known to the empire with
