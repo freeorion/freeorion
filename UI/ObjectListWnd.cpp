@@ -61,6 +61,47 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
+    // returns a condition which matches objects with the specififed \a object_types
+    std::unique_ptr<Condition::ConditionBase> ConditionForObjectTypes(
+        const std::vector<UniverseObjectType>& object_types)
+    {
+        if (object_types.empty())
+            return boost::make_unique<Condition::None>();
+
+        if (object_types.size() == 1)
+            return boost::make_unique<Condition::Type>(*object_types.begin());
+
+        std::vector<std::unique_ptr<Condition::ConditionBase>> subconditions;
+        for (auto obj_type : object_types)
+            subconditions.emplace_back(boost::make_unique<Condition::Type>(obj_type));
+        return boost::make_unique<Condition::Or>(std::move(subconditions));
+    }
+
+    // returns default value (eg. 0 or an empty string) unless object is of
+    // specified type(s), in which case \a value_ref is evaluated and the
+    // result returned
+    template <typename T>
+    std::unique_ptr<ValueRef::ValueRefBase<T>> ObjectTypeFilteredRef(
+        const std::vector<UniverseObjectType>& object_types,
+        std::unique_ptr<ValueRef::ValueRefBase<T>>&& value_ref)
+    {
+        if (object_types.empty())
+            return boost::make_unique<ValueRef::Constant<T>>(T());
+
+        return boost::make_unique<ValueRef::Operation<T>>(  // evaluates and returns value_ref if contained Statistic returns a non-empty string
+            ValueRef::TIMES,
+            boost::make_unique<ValueRef::Statistic<T>>(     // returns non-empty string if the source object matches the object type condition
+                nullptr,                                    // property value value ref not used for IF statistic
+                ValueRef::IF,
+                boost::make_unique<Condition::And>(         // want this statistic to return true only if the source object has the specified object type, if there exists any object of that type in the universe
+                    boost::make_unique<Condition::Source>(),
+                    ConditionForObjectTypes(object_types)
+                )
+            ),
+            std::move(value_ref)
+        );
+    }
+
     std::unique_ptr<ValueRef::Variable<std::string>> StringValueRef(
         const std::string& token)
     {
@@ -201,7 +242,7 @@ namespace {
             col_types[{UserStringNop("PRODUCED_BY"),            ""}] =  EmpireNameValueRef("ProducedByEmpireID");
 
             // planet
-            col_types[{UserStringNop("SPECIES"),                    UserStringNop("PLANETS_SUBMENU")}]= UserStringValueRef("Species");
+            col_types[{UserStringNop("SPECIES"),                    UserStringNop("PLANETS_SUBMENU")}]= ObjectTypeFilteredRef<std::string>({OBJ_PLANET, OBJ_SHIP}, UserStringValueRef("Species"));
             col_types[{UserStringNop("FOCUS"),                      UserStringNop("PLANETS_SUBMENU")}]= UserStringValueRef("Focus");
             col_types[{UserStringNop("PREFERRED_FOCUS"),            UserStringNop("PLANETS_SUBMENU")}]= UserStringValueRef("PreferredFocus");
             col_types[{UserStringNop("TURNS_SINCE_FOCUS_CHANGE"),   UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<int>("TurnsSinceFocusChange");
@@ -219,7 +260,7 @@ namespace {
             col_types[{UserStringNop("LAST_TURN_ATTACKED_BY_SHIP"), UserStringNop("PLANETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnAttackedByShip");
 
             // ship/fleet
-            col_types[{UserStringNop("SPECIES"),                    UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Species");
+            col_types[{UserStringNop("SPECIES"),                    UserStringNop("FLEETS_SUBMENU")}] = ObjectTypeFilteredRef<std::string>({OBJ_PLANET, OBJ_SHIP}, UserStringValueRef("Species"));
             col_types[{UserStringNop("DESIGN_WND_DESIGN_NAME"),     UserStringNop("FLEETS_SUBMENU")}] = DesignNameValueRef("DesignID");
             col_types[{UserStringNop("LAST_TURN_ACTIVE_IN_BATTLE"), UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnActiveInBattle");
             col_types[{UserStringNop("LAST_TURN_RESUPPLIED"),       UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnResupplied");
@@ -1334,12 +1375,12 @@ public:
                 boost::bind(&ObjectPanel::ResourceCenterChanged, this));
     }
 
-    void                ResourceCenterChanged() {
+    void ResourceCenterChanged() {
         RefreshCache();
         RequirePreRender();
     }
 
-    std::string         SortKey(std::size_t column) const {
+    std::string SortKey(std::size_t column) const {
         if (column >= m_column_val_cache.size())
             RefreshCache();
         if (column >= m_column_val_cache.size())
@@ -1347,7 +1388,7 @@ public:
         return m_column_val_cache[column];
     }
 
-    int                 ObjectID() const { return m_object_id; }
+    int ObjectID() const { return m_object_id; }
 
     void PreRender() override {
         GG::Control::PreRender();
@@ -1368,7 +1409,7 @@ public:
         GG::FlatRectangle(UpperLeft(), LowerRight(), background_colour, border_colour, DATA_PANEL_BORDER);
     }
 
-    void                Select(bool b)
+    void Select(bool b)
     { m_selected = b; }
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -1378,7 +1419,7 @@ public:
             DoLayout();
     }
 
-    void                RefreshLayout() {
+    void RefreshLayout() {
         if (!m_initialized)
             return;
         GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER |
@@ -1431,13 +1472,13 @@ public:
         DoLayout();
     }
 
-    void                SetHasContents(bool has_contents)
+    void SetHasContents(bool has_contents)
     { m_has_contents = has_contents; }
 
-    mutable boost::signals2::signal<void ()>  ExpandCollapseSignal;
+    mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 private:
-    void                DoLayout() {
+    void DoLayout() {
         if (!m_initialized)
             return;
 
@@ -1478,19 +1519,19 @@ private:
         }
     }
 
-    void                ExpandCollapseButtonPressed() {
+    void ExpandCollapseButtonPressed() {
         m_expanded = !m_expanded;
         ExpandCollapseSignal();
     }
 
-    void                Init() {
+    void Init() {
         if (m_initialized)
             return;
         m_initialized = true;
         RefreshLayout();
     }
 
-    void                RefreshCache() const {
+    void RefreshCache() const {
         m_column_val_cache.clear();
         m_column_val_cache.reserve(NUM_COLUMNS);
         auto obj = GetUniverseObject(m_object_id);
@@ -1506,7 +1547,7 @@ private:
         }
     }
 
-    std::vector<std::shared_ptr<GG::Control>>   GetControls() {
+    std::vector<std::shared_ptr<GG::Control>> GetControls() {
         std::vector<std::shared_ptr<GG::Control>> retval;
 
         RefreshCache();
@@ -1577,25 +1618,25 @@ public:
     GG::ListBox::Row::SortKeyType SortKey(std::size_t column) const override
     { return m_panel ? m_panel->SortKey(column) : ""; }
 
-    int                     ObjectID() const {
+    int ObjectID() const {
         if (m_panel)
             return m_panel->ObjectID();
         return INVALID_OBJECT_ID;
     }
 
-    int                     ContainedByPanel() const
+    int ContainedByPanel() const
     { return m_container_object_panel; }
 
-    const std::set<int>&    ContainedPanels() const
+    const std::set<int>& ContainedPanels() const
     { return m_contained_object_panels; }
 
-    void                    SetContainedPanels(const std::set<int>& contained_object_panels) {
+    void SetContainedPanels(const std::set<int>& contained_object_panels) {
         m_contained_object_panels = contained_object_panels;
         m_panel->SetHasContents(!m_contained_object_panels.empty());
         m_panel->RequirePreRender();
     }
 
-    void                    Update()
+    void Update()
     { m_panel->RequirePreRender(); }
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -1608,10 +1649,10 @@ public:
         }
     }
 
-    void                    ExpandCollapseClicked()
+    void ExpandCollapseClicked()
     { ExpandCollapseSignal(m_panel ? m_panel->ObjectID() : INVALID_OBJECT_ID); }
 
-    mutable boost::signals2::signal<void (int)>   ExpandCollapseSignal;
+    mutable boost::signals2::signal<void (int)> ExpandCollapseSignal;
 private:
     std::shared_ptr<ObjectPanel>            m_panel;
     int                                     m_container_object_panel;
@@ -1877,10 +1918,10 @@ public:
             boost::bind(&ObjectListBox::UniverseObjectDeleted, this, _1));
     }
 
-    virtual         ~ObjectListBox()
+    virtual ~ObjectListBox()
     {}
 
-    void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         Wnd::SizeMove(ul, lr);
         if (old_size != Size()) {
@@ -1892,19 +1933,19 @@ public:
         }
     }
 
-    GG::Pt          ListRowSize() const
+    GG::Pt ListRowSize() const
     { return GG::Pt(ClientWidth(), ListRowHeight()); }
 
-    static GG::Y    ListRowHeight()
+    static GG::Y ListRowHeight()
     { return GG::Y(ClientUI::Pts() * 2); }
 
-    const Condition::ConditionBase* const                       FilterCondition() const
+    const Condition::ConditionBase* const FilterCondition() const
     { return m_filter_condition.get(); }
 
-    const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>   Visibilities() const
+    const std::map<UniverseObjectType, std::set<VIS_DISPLAY>> Visibilities() const
     { return m_visibilities; }
 
-    void            CollapseObject(int object_id = INVALID_OBJECT_ID) {
+    void CollapseObject(int object_id = INVALID_OBJECT_ID) {
         if (object_id == INVALID_OBJECT_ID) {
             for (auto& row : *this)
                 if (const ObjectRow* object_row = dynamic_cast<const ObjectRow*>(row.get()))
@@ -1915,7 +1956,7 @@ public:
         Refresh();
     }
 
-    void            ExpandObject(int object_id = INVALID_OBJECT_ID) {
+    void ExpandObject(int object_id = INVALID_OBJECT_ID) {
         if (object_id == INVALID_OBJECT_ID) {
             m_collapsed_objects.clear();
         } else {
@@ -1928,30 +1969,30 @@ public:
         return object_id != INVALID_OBJECT_ID && m_collapsed_objects.count(object_id);
     }
 
-    bool            AnythingCollapsed() const
+    bool AnythingCollapsed() const
     { return !m_collapsed_objects.empty(); }
 
-    void            SetFilterCondition(std::unique_ptr<Condition::ConditionBase>&& condition) {
+    void SetFilterCondition(std::unique_ptr<Condition::ConditionBase>&& condition) {
         m_filter_condition = std::move(condition);
         Refresh();
     }
 
-    void            SetVisibilityFilters(const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>& vis) {
+    void SetVisibilityFilters(const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>& vis) {
         if (vis != m_visibilities) {
             m_visibilities = vis;
             Refresh();
         }
     }
 
-    void            ClearContents() {
+    void ClearContents() {
         Clear();
         for (auto& entry : m_object_change_connections)
         { entry.second.disconnect(); }
         m_object_change_connections.clear();
     }
 
-    bool            ObjectShown(std::shared_ptr<const UniverseObject> obj,
-                                bool assume_visible_without_checking = false)
+    bool ObjectShown(std::shared_ptr<const UniverseObject> obj,
+                     bool assume_visible_without_checking = false)
     {
         if (!obj)
             return false;
@@ -1972,7 +2013,7 @@ public:
         return m_visibilities[type].count(SHOW_PREVIOUSLY_VISIBLE);
     }
 
-    void            Refresh() {
+    void Refresh() {
         std::size_t first_visible_queue_row = std::distance(this->begin(), this->FirstRowShown());
         ClearContents();
 
@@ -2160,7 +2201,7 @@ public:
             this->BringRowIntoView(std::next(this->begin(), first_visible_queue_row));
     }
 
-    void            UpdateObjectPanel(int object_id = INVALID_OBJECT_ID) {
+    void UpdateObjectPanel(int object_id = INVALID_OBJECT_ID) {
         if (object_id == INVALID_OBJECT_ID)
             return;
         for (auto& row : *this) {
@@ -2171,7 +2212,7 @@ public:
         }
     }
 
-    void            SortingClicked(int clicked_column) {
+    void SortingClicked(int clicked_column) {
         int                         old_sort_col =  this->SortCol();
         GG::Flags<GG::ListBoxStyle> old_style =     this->Style();
 
@@ -2204,11 +2245,11 @@ public:
     mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 private:
-    void            AddObjectRow(int object_id, int container, const std::set<int>& contents, int indent)
+    void AddObjectRow(int object_id, int container, const std::set<int>& contents, int indent)
     { AddObjectRow(object_id, container, contents, indent, this->end()); }
 
-    void            AddObjectRow(int object_id, int container, const std::set<int>& contents,
-                                 int indent, GG::ListBox::iterator it)
+    void AddObjectRow(int object_id, int container, const std::set<int>& contents,
+                      int indent, GG::ListBox::iterator it)
     {
         auto obj = GetUniverseObject(object_id);
         if (!obj)
@@ -2227,7 +2268,7 @@ private:
 
     // Removes row of indicated object, and all contained rows, recursively.
     // Also updates contents tracking of containing row, if any.
-    void            RemoveObjectRow(int object_id) {
+    void RemoveObjectRow(int object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
         int container_object_id = INVALID_OBJECT_ID;
@@ -2263,7 +2304,7 @@ private:
 
     // Removes row at indicated iterator location and its contained rows.
     // Does not adjust containing row.
-    void            RemoveObjectRow(GG::ListBox::iterator it) {
+    void RemoveObjectRow(GG::ListBox::iterator it) {
         if (it == this->end())
             return;
         ObjectRow* object_row = dynamic_cast<ObjectRow*>(it->get());
@@ -2289,7 +2330,7 @@ private:
         this->Erase(it);
     }
 
-    void            ObjectExpandCollapseClicked(int object_id) {
+    void ObjectExpandCollapseClicked(int object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
         if (ObjectCollapsed(object_id))
@@ -2299,7 +2340,7 @@ private:
         ExpandCollapseSignal();
     }
 
-    void            ObjectStateChanged(int object_id) {
+    void ObjectStateChanged(int object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
         auto obj = GetUniverseObject(object_id);
@@ -2314,7 +2355,7 @@ private:
             Refresh();
     }
 
-    void            UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj)
+    void UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj)
     { if (obj) RemoveObjectRow(obj->ID()); }
 
     std::map<int, boost::signals2::connection>          m_object_change_connections;
