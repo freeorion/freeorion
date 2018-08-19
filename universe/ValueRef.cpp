@@ -1321,16 +1321,25 @@ int Statistic<int>::Eval(const ScriptingContext& context) const
 template <>
 std::string Statistic<std::string>::Eval(const ScriptingContext& context) const
 {
-    // the only statistic that can be computed on non-number property types
-    // and that is itself of a non-number type is the most common value
-    if (m_stat_type != MODE)
-        throw std::runtime_error("ValueRef evaluated with an invalid StatisticType for the return type (string).");
-
     Condition::ObjectSet condition_matches;
     GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
     if (condition_matches.empty())
         return "";
+
+    // special case for IF statistic... return a non-empty string for true
+    if (m_stat_type == IF)
+        return " "; // not an empty string
+
+    // todo: consider allowing MAX and MIN using string sorting?
+
+    // the only other statistic that can be computed on non-number property
+    // types and that is itself of a non-number type is the most common value
+    if (m_stat_type != MODE) {
+        ErrorLogger() << "Statistic<std::string>::Eval has invalid statistic type: "
+                      << m_stat_type;
+        return "";
+    }
 
     // evaluate property for each condition-matched object
     std::map<std::shared_ptr<const UniverseObject>, std::string> object_property_values;
@@ -2924,6 +2933,16 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
     if (m_op_type == PLUS) {
         return LHS()->Eval(context) + RHS()->Eval(context);
 
+    } else if (m_op_type == TIMES) {
+        // useful for writing a "Statistic If" expression with strings. Number-
+        // valued types return 0 or 1 for nothing or something matching the sampling
+        // condition. For strings, an empty string indicates no matches, and non-empty
+        // string indicates matches, which is treated like a multiplicative identity
+        // operation, so just returns the RHS of the expression.
+        if (LHS()->Eval(context).empty())
+            return "";
+        return RHS()->Eval(context);
+
     } else if (m_op_type == MINIMUM || m_op_type == MAXIMUM) {
         // evaluate all operands, return sorted first/last
         std::set<std::string> vals;
@@ -3012,7 +3031,8 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
             double op1 = LHS()->Eval(context);
             if (op1 == 0.0)
                 return 0.0;
-            return op1 * RHS()->Eval(context); break;
+            return op1 * RHS()->Eval(context);
+            break;
         }
 
         case DIVIDE: {
@@ -3040,10 +3060,8 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
             break;
         }
 
-        case ABS: {
-            return std::abs(LHS()->Eval(context));
-            break;
-        }
+        case ABS:
+            return std::abs(LHS()->Eval(context)); break;
 
         case LOGARITHM: {
             double op1 = LHS()->Eval(context);
@@ -3127,20 +3145,15 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
             }
         }
 
-        case ROUND_NEAREST: {
-            return std::round(LHS()->Eval(context));
-            break;
-        }
-        case ROUND_UP: {
-            return std::ceil(LHS()->Eval(context));
-            break;
-        }
-        case ROUND_DOWN: {
-            return std::floor(LHS()->Eval(context));
-            break;
-        }
+        case ROUND_NEAREST:
+            return std::round(LHS()->Eval(context)); break;
+        case ROUND_UP:
+            return std::ceil(LHS()->Eval(context)); break;
+        case ROUND_DOWN:
+            return std::floor(LHS()->Eval(context)); break;
 
-        default:    break;
+        default:
+            break;
     }
 
     throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");

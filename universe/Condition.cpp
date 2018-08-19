@@ -26,6 +26,9 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/st_connected.hpp>
 
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
+
 using boost::io::str;
 
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
@@ -1812,6 +1815,11 @@ unsigned int Armed::GetCheckSum() const {
 Type::Type(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>&& type) :
     ConditionBase(),
     m_type(std::move(type))
+{}
+
+Type::Type(UniverseObjectType type) :
+    ConditionBase(),
+    m_type(boost::make_unique<ValueRef::Constant<UniverseObjectType>>(type))
 {}
 
 bool Type::operator==(const ConditionBase& rhs) const {
@@ -9263,6 +9271,14 @@ And::And(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
     ConditionBase(),
     m_operands(std::move(operands))
 {}
+
+And::And(std::unique_ptr<ConditionBase>&& operand1, std::unique_ptr<ConditionBase>&& operand2) :
+    ConditionBase()
+{
+    // would prefer to initialize the vector m_operands in the initializer list, but this is difficult with non-copyable unique_ptr parameters
+    m_operands.push_back(std::move(operand1));
+    m_operands.push_back(std::move(operand2));
+}
 
 bool And::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)

@@ -543,6 +543,7 @@ private:
 /** Matches all objects that are of UniverseObjectType \a type. */
 struct FO_COMMON_API Type final : public ConditionBase {
     explicit Type(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>&& type);
+    explicit Type(UniverseObjectType type);
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1748,7 +1749,7 @@ private:
 /** Matches the objects that have been targeted for bombardment by at least one
   * object that matches \a m_by_object_condition. */
 struct FO_COMMON_API OrderedBombarded final : public ConditionBase {
-    OrderedBombarded(std::unique_ptr<ConditionBase>&& by_object_condition);
+    explicit OrderedBombarded(std::unique_ptr<ConditionBase>&& by_object_condition);
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1857,7 +1858,8 @@ private:
 
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API And final : public ConditionBase {
-    And(std::vector<std::unique_ptr<ConditionBase>>&& operands);
+    explicit And(std::vector<std::unique_ptr<ConditionBase>>&& operands);
+    And(std::unique_ptr<ConditionBase>&& operand1, std::unique_ptr<ConditionBase>&& operand2);
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1883,7 +1885,7 @@ private:
 
 /** Matches all objects that match at least one Condition in \a operands. */
 struct FO_COMMON_API Or final : public ConditionBase {
-    Or(std::vector<std::unique_ptr<ConditionBase>>&& operands);
+    explicit Or(std::vector<std::unique_ptr<ConditionBase>>&& operands);
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1906,7 +1908,7 @@ private:
 
 /** Matches all objects that do not match the Condition \a operand. */
 struct FO_COMMON_API Not final : public ConditionBase {
-    Not(std::unique_ptr<ConditionBase>&& operand);
+    explicit Not(std::unique_ptr<ConditionBase>&& operand);
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
