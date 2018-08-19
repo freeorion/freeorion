@@ -303,11 +303,6 @@ bool FleetMoveOrder::Check(int empire_id, int fleet_id, int dest_system_id, bool
         return false;
     }
 
-    if (dest_system_id != INVALID_OBJECT_ID && dest_system_id == start_system) {
-        DebugLogger() << "AIInterface::IssueFleetMoveOrder : pass destination system id (" << dest_system_id << ") that fleet is already in";
-        return false;
-    }
-
     // verify fleet route first system
     if (append && !fleet->TravelRoute().empty()) {
         // We should append and there is something to append to
