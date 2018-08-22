@@ -529,10 +529,12 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
     }
 }
 
-void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameEmpireData>& empire_save_game_data) {
+void LoadEmpireSaveGameData(const std::string& filename,
+                            std::map<int, SaveGameEmpireData>& empire_save_game_data,
+                            std::vector<PlayerSaveHeaderData>& player_save_header_data)
+{
     SaveGamePreviewData                 ignored_save_preview_data;
     ServerSaveGameData                  ignored_server_save_game_data;
-    std::vector<PlayerSaveHeaderData>   ignored_player_save_header_data;
     GalaxySetupData                     ignored_galaxy_setup_data;
 
     ScopedTimer timer("LoadEmpireSaveGameData: " + filename, true);
@@ -552,7 +554,7 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
-            ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_header_data);
+            ia >> BOOST_SERIALIZATION_NVP(player_save_header_data);
             ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);
 
         } catch (...) {
@@ -565,7 +567,7 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
-            ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_header_data);
+            ia >> BOOST_SERIALIZATION_NVP(player_save_header_data);
             ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);
         }
         // skipping additional deserialization which is not needed for this function
