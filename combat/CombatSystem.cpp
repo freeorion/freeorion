@@ -306,11 +306,19 @@ namespace {
         int             fighters_launched;  // for fighter bays, input value should be limited by ship available fighters to launch
         float           fighter_damage;     // for fighter bays, input value should be determined by ship fighter weapon setup
         int             precision;          //
-        Targetting::TriggerCondition preferred_targets;
+    Targetting::TriggerCondition preferred_targets;
+      //    std::vector<Targetting::TriggerCondition> preferred_targets
+      //std::vector<Targetting::TriggerCondition> preferred_weights
+      //        std::map<Targetting::TriggerCondition, int> targets_preferred;
 
+      std::map<Targetting::TriggerCondition, int> targets_preferred = { {preferred_targets, 1} };
         bool AimsFor(std::shared_ptr<UniverseObject> target)
         {
-	    return Targetting::isPreferredTarget(preferred_targets, target);
+	  
+	  for (const auto& condition_preference : targets_preferred) {
+	    if (Targetting::isPreferredTarget(condition_preference.first, target)) return true;
+	  }
+	  return false;
 	}
     };
 
