@@ -277,10 +277,10 @@ namespace {
             fighters_launched(0),
             fighter_damage(0.0f),
             precision(1),
-            preferred_targets(Targetting::preyAsTriggerCondition(Targetting::NoPreference))
+            preferred_targets(Targetting::TriggerConditions(Targetting::preyAsTriggerCondition(Targetting::NoPreference), 1))
         {}
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
-		       float part_attack_, Targetting::Precision precision_, Targetting::TriggerCondition targets_) :
+                       float part_attack_, Targetting::Precision precision_, Targetting::TriggerConditions targets_) :
             part_class(part_class_),
             part_type_name(part_name_),
             part_attack(part_attack_),
@@ -290,14 +290,14 @@ namespace {
             preferred_targets(targets_)
         {}
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
-                       int fighters_launched_, float fighter_damage_, Targetting::Precision precision_, Targetting::TriggerCondition targets_) :
+                       int fighters_launched_, float fighter_damage_, Targetting::Precision precision_, Targetting::TriggerConditions targets_) :
             part_class(part_class_),
             part_type_name(part_name_),
             part_attack(0.0f),
             fighters_launched(fighters_launched_),
             fighter_damage(fighter_damage_),
             precision(precision_),
-	    preferred_targets(targets_)
+            preferred_targets(targets_)
         {}
 
         ShipPartClass   part_class;
@@ -306,20 +306,13 @@ namespace {
         int             fighters_launched;  // for fighter bays, input value should be limited by ship available fighters to launch
         float           fighter_damage;     // for fighter bays, input value should be determined by ship fighter weapon setup
         int             precision;          //
-    Targetting::TriggerCondition preferred_targets;
-      //    std::vector<Targetting::TriggerCondition> preferred_targets
-      //std::vector<Targetting::TriggerCondition> preferred_weights
-      //        std::map<Targetting::TriggerCondition, int> targets_preferred;
 
-      std::map<Targetting::TriggerCondition, int> targets_preferred = { {preferred_targets, 1} };
+       Targetting::TriggerConditions preferred_targets;
+
         bool AimsFor(std::shared_ptr<UniverseObject> target)
         {
-	  
-	  for (const auto& condition_preference : targets_preferred) {
-	    if (Targetting::isPreferredTarget(condition_preference.first, target)) return true;
-	  }
-	  return false;
-	}
+            return Targetting::isPreferredTarget(preferred_targets, target);
+        }
     };
 
     void AttackShipShip(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon,
@@ -755,8 +748,9 @@ namespace {
                 int shots = static_cast<int>(ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name)); // secondary stat is shots per attack)
                 if (part_attack > 0.0f && shots > 0) {
                     // attack for each shot...
-                    for (int shot_count = 0; shot_count < shots; ++shot_count)
-                        retval.push_back(PartAttackInfo(part_class, part_name, part_attack, part->Precision(), Targetting::findPreferredTargets(part_name)));
+		  Targetting::TriggerConditions preferredTargets(Targetting::findPreferredTargets(part_name), part->Precision());
+		  for (int shot_count = 0; shot_count < shots; ++shot_count)
+		      retval.push_back(PartAttackInfo(part_class, part_name, part_attack, part->Precision(), preferredTargets));
                 }
 
             } else if (part_class == PC_FIGHTER_HANGAR) {
@@ -765,7 +759,7 @@ namespace {
                     available_fighters += ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
                     seen_hangar_part_types.insert(part_name);
                     fighter_precision = part->Precision();
-		    fighter_preferred_prey = part->PreferredPrey();
+                    fighter_preferred_prey = part->PreferredPrey();
 
                     // should only be one type of fighter per ship as of this writing
                     fighter_attack = ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name);  // secondary stat is fighter damage
@@ -779,15 +773,15 @@ namespace {
         if (available_fighters > 0 && !part_fighter_launch_capacities.empty()) {
             for (auto& launch : part_fighter_launch_capacities) {
                 int to_launch = std::min(launch.second, available_fighters);
-		std::string part_name = launch.first;
+                std::string part_name = launch.first;
                 DebugLogger() << "Ship " << ship->Name() << " launching " << to_launch << " fighters from bay part " << launch.first;
 
                 if (to_launch <= 0)
                     continue;
 
-		
+		Targetting::TriggerConditions preferred_targets(fighter_preferred_prey, fighter_precision);
                 retval.push_back(PartAttackInfo(PC_FIGHTER_BAY, launch.first, to_launch,
-                                                fighter_attack, fighter_precision, std::move(fighter_preferred_prey))); // attack may be 0; that's ok: decoys
+                                                fighter_attack, fighter_precision, preferred_targets)); // attack may be 0; that's ok: decoys
                 available_fighters -= to_launch;
                 if (available_fighters <= 0)
                     break;
@@ -863,13 +857,13 @@ namespace {
 
         std::vector<int> AddFighters(int number, float damage, int owner_empire_id,
                                      int from_ship_id, const std::string& species,
-			      Targetting::Precision precision, Targetting::TriggerCondition preferred_prey)
+                                     Targetting::Precision precision, const Targetting::TriggerConditions& preferred_prey)
         {
             std::vector<int> retval;
 
             for (int n = 0; n < number; ++n) {
                 // create / insert fighter into combat objectmap
- 	        auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id, species, damage, precision, preferred_prey);
+                auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id, species, damage, precision, preferred_prey);
                 fighter_ptr->SetID(next_fighter_id--);
                 fighter_ptr->Rename(UserString("OBJ_FIGHTER"));
                 combat_info.objects.Insert(fighter_ptr);
@@ -1516,8 +1510,9 @@ namespace {
             }
 
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon
+            Targetting::TriggerConditions preferred_targets(Targetting::preyAsTriggerCondition(Targetting::ShipPrey), 3);
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"),
-                                             attack_planet->CurrentMeterValue(METER_DEFENSE),3,Targetting::preyAsTriggerCondition(Targetting::ShipPrey)));
+                                             attack_planet->CurrentMeterValue(METER_DEFENSE),3,preferred_targets));
 
         } else if (attack_fighter) {    // treat fighter damage as direct fire weapon
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("FT_WEAPON_1"),

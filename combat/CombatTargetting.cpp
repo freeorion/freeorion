@@ -11,6 +11,14 @@
 
 #include "../util/Logger.h"
 
+bool Targetting::isPreferredTarget(Targetting::TriggerConditions conditions,
+                                   Targetting::Target target) {
+    for (const auto& condition : conditions.conditions) {
+      if (Targetting::isPreferredTarget(condition, target)) return true;
+    }
+    return false;
+}
+
 bool Targetting::isPreferredTarget(Targetting::TriggerCondition condition,
                                    Targetting::Target target) {
     if (!condition) {
@@ -40,6 +48,9 @@ Targetting::TriggerCondition Targetting::preyAsTriggerCondition(const Targetting
                 // error
                 return nullptr;
         }
+}
+Targetting::TriggerConditions Targetting::preyAsTriggerConditions(const Targetting::Prey prey) {
+    return Targetting::TriggerConditions(Targetting::preyAsTriggerCondition(prey), 1);
 }
 Targetting::Prey Targetting::findTargetTypes(const std::string& part_name) {
         if (part_name.rfind("FT_", 0) == 0) {

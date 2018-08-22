@@ -12,7 +12,7 @@
   * can be stored in the same container as other combat objects. */
 class FO_COMMON_API Fighter : public UniverseObject {
 public:
-    Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, Targetting::Precision precision, Targetting::TriggerCondition preferred_targets);
+    Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, Targetting::Precision precision, Targetting::TriggerConditions preferred_targets);
     Fighter();
     ~Fighter();
 
@@ -26,13 +26,13 @@ public:
 
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
-    float                       Damage() const;
-    bool                        Destroyed() const;
-    int                         LaunchedFrom() const;
-    const std::string&          SpeciesName() const;
-    void                        SetDestroyed(bool destroyed = true);
-    Targetting::Precision       Precision() const;
-    Targetting::TriggerCondition PreferredTargets() const;
+    float                         Damage() const;
+    bool                          Destroyed() const;
+    int                           LaunchedFrom() const;
+    const std::string&            SpeciesName() const;
+    void                          SetDestroyed(bool destroyed = true);
+    Targetting::Precision         Precision() const;
+    Targetting::TriggerConditions PreferredTargets() const;
 
 protected:
     Fighter* Clone(int empire_id = ALL_EMPIRES) const override;
@@ -42,8 +42,8 @@ private:
     bool        m_destroyed = false;                    // was attacked by anything -> destroyed
     int         m_launched_from_id = INVALID_OBJECT_ID; // from what object (ship?) was this fighter launched
     std::string m_species_name;
-    Targetting::Precision        m_precision;        // what kinds of prey is this fighter
-    Targetting::TriggerCondition m_preferred_targets;   // what kinds of prey prefers this fighter to hunt
+    Targetting::Precision         m_precision;        // what kinds of prey is this fighter
+    Targetting::TriggerConditions m_preferred_targets;   // what kinds of prey prefers this fighter to hunt
 };
 
 #endif // _Fighter_h_
