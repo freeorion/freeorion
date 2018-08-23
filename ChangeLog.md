@@ -4,7 +4,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 
 
-## [v0.4.8] - 2017-07-13
+## [v0.4.8] - 2017-08-23
 
 
 ### Key Changes
@@ -52,7 +52,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Research
     - Items can be deleted from the research queue with ctrl + left click.
     - Added right click popup commands to research list view rows.
-    - Addded or adjusted tech list view colour highlighting, rounded borders, icon sizes.
+    - Added or adjusted tech list view colour highlighting, rounded borders, icon sizes.
     - Added research list tooltips.
     - List view scrollbar position should retain its position better.
 
@@ -117,7 +117,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 #### Content / Gameplay
 
-- New Pedia articles, article categorization, extended articles, corrections
+- New pedia articles, article categorization, extended articles, corrections
 - Translation updates: French, Russian
 - Added dimensional matrix engine part.
 - Made additional species playable.
@@ -135,7 +135,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Stockpile import limits
     - Ship, buildings, techs are 1 PP/RP and 1 turn to produce / research
     - Number of rounds of combat
-    - Enable experimentors
+    - Enable Experimentors
     - Enable super test takeover building
     - Enable conceding and max allowed colonies when conceding from a multiplayer game
     - Restrictions on allied victories
@@ -170,7 +170,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Added limit to troops in AI ship designs, to avoid waste.
 - Let AI grow larger (by adjusting limit on number of colonies it will attempt to create).
 - Made AI avoid blockaded starlanes when moving unarmed fleets.
-- Adjusted AI tech prioritites.
+- Adjusted AI tech priorities.
 - Made AI consider refueling when calculating fleet routes.
 - Improved AI interaction with stealthed planets.
 
@@ -198,7 +198,9 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed memory leaks in content script parsers.
 - Fixed issues with fleet move paths when fleet ownership is changed.
 - Fixed issue with AI not setting research focus on planets without industry focus available.
-- Fixed issue when a blockaded fleet became not blockaded and its route became invalid.
+- Fixed various issues with the movement blockading mechanic of fleets, space monsters, etc.
+    - Fixed issue when a blockaded fleet became not blockaded and its route became invalid.
+    - Fixed issue where fleets which had never been moved since their creation were unable to enforce blockades.
 - Fixed potential crash when updating meters on many objects.
 - Fixed erroneous / unnecessary cases of "Unknown" contributions to meter values in accounting tooltips.
 - Fixed issue where troop strength shown before a ground combat was inconsistent with what was actually used.
@@ -207,7 +209,6 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed issues with AIs replaying their turns when loading a game.
 - Fixed combat log layout / scrollbar issues.
 - Fixed issues with compressed XML saves containing invalid XML.
-- Fixed issue where fleets which had never been moved since their creation were unable to enforce blockades.
 - Use correct auto aggression icon for new fleet aggression button tooltip.
 - Fixed missing combat sensor ghosts.
 - Fixed issues with visibility of stale objects.
