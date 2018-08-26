@@ -36,7 +36,12 @@
 #include <boost/algorithm/string/case_conv.hpp>
 
 #if GG_HAVE_LIBPNG
-# include "gilext/io/png_dynamic_io.hpp"
+# if GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO
+#  include "gilext/io/png_dynamic_io.hpp"
+#  include "gilext/io/png_io_v2_compat.hpp"
+# else
+#  include <boost/gil/extension/io/png.hpp>
+# endif
 #endif
 
 #include <iostream>
@@ -241,12 +246,12 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
         // formats above.
 #if GG_HAVE_LIBPNG
         if (extension == ".png")
-            gil::png_read_image(path, image);
+            gil::read_image(filename, image, gil::image_read_settings<gil::png_tag>());
         else
 #endif
 #if GG_HAVE_LIBTIFF
         if (extension == ".tif" || extension == ".tiff")
-            gil::tiff_read_image(filename, image);
+            gil::read_image(filename, image, gil::image_read_settings<gil::tiff_tag>());
         else
 #endif
             throw BadFile("Texture file \"" + filename + "\" does not have a supported file extension");
@@ -256,14 +261,14 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
 #if GG_HAVE_LIBPNG
         if (extension == ".png") {
             gil::rgba8_image_t rgba_image;
-            gil::png_read_and_convert_image(path, rgba_image);
+            gil::read_and_convert_image(filename, rgba_image, gil::image_read_settings<gil::png_tag>());
             image.move_in(rgba_image);
         }
 #endif
 #if GG_HAVE_LIBTIFF
         if (extension == ".tif" || extension == ".tiff") {
             gil::rgba8_image_t rgba_image;
-            gil::tiff_read_and_convert_image(filename, rgba_image);
+            gil::read_and_convert_image(filename, rgba_image, gil::image_read_settings<gil::tiff_tag>());
             image.move_in(rgba_image);
         }
 #endif
