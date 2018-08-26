@@ -104,7 +104,6 @@ public:
 
     /** \name Structors */ //@{
     Universe();
-
     virtual ~Universe();
     //@}
 
@@ -127,6 +126,7 @@ public:
 
     /** Returns IDs of objects that have been destroyed. */
     const std::set<int>&    DestroyedObjectIds() const;
+    int                     HighestDestroyedObjectID() const;
 
     /** Returns IDs of objects that the Empire with id \a empire_id knows have
       * been destroyed.  Each empire's latest known objects data contains the

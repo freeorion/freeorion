@@ -248,6 +248,9 @@ public:
     /** Returns the IDs of all objects in this ObjectMap */
     std::vector<int>        FindObjectIDs() const;
 
+    /** Returns highest used object ID in this ObjectMap */
+    int                     HighestObjectID() const;
+
     /** iterators */
     // these first 4 are primarily for convenience
     iterator<>              begin();

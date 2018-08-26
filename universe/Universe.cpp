@@ -257,6 +257,12 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id/* = ALL_EMPIRES*/) 
 const std::set<int>& Universe::DestroyedObjectIds() const
 { return m_destroyed_object_ids; }
 
+int Universe::HighestDestroyedObjectID() const {
+    if (m_destroyed_object_ids.empty())
+        return INVALID_OBJECT_ID;
+    return *m_destroyed_object_ids.rbegin();
+}
+
 const std::set<int>& Universe::EmpireKnownDestroyedObjectIDs(int empire_id) const {
     auto it = m_empire_known_destroyed_object_ids.find(empire_id);
     if (it != m_empire_known_destroyed_object_ids.end())

@@ -156,6 +156,12 @@ std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) 
 std::vector<int> ObjectMap::FindObjectIDs() const
 { return FindObjectIDs<UniverseObject>(); }
 
+int ObjectMap::HighestObjectID() const {
+    if (m_objects.empty())
+        return INVALID_OBJECT_ID;
+    return m_objects.rbegin()->first;
+}
+
 ObjectMap::iterator<> ObjectMap::begin()
 { return begin<UniverseObject>(); }
 
