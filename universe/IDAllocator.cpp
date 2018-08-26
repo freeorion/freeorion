@@ -5,6 +5,7 @@
 #include "../util/Random.h"
 #include "../util/Serialize.h"
 #include "../util/Serialize.ipp"
+#include "../util/AppInterface.h"
 
 
 #include <limits>
@@ -51,6 +52,10 @@ IDAllocator::IDAllocator(const int server_id,
 }
 
 int IDAllocator::NewID() {
+    // increment next id for this client until next id is not an already-used id
+    IncrementNextAssignedId(m_empire_id, Objects().HighestObjectID());
+    IncrementNextAssignedId(m_empire_id, GetUniverse().HighestDestroyedObjectID());
+
     // Find the next id for this client in the table.
     auto&& it = m_empire_id_to_next_assigned_object_id.find(m_empire_id);
     if (it == m_empire_id_to_next_assigned_object_id.end()) {
