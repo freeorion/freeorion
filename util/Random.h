@@ -11,8 +11,10 @@
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/normal_distribution.hpp>
+#include <boost/random/discrete_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <ctime>
+#include <list>
 
 #include "Export.h"
 
@@ -36,6 +38,7 @@ typedef boost::variate_generator<GeneratorType&, boost::uniform_smallint<>>     
 typedef boost::variate_generator<GeneratorType&, boost::uniform_int<>>          IntDistType;
 typedef boost::variate_generator<GeneratorType&, boost::uniform_real<>>         DoubleDistType;
 typedef boost::variate_generator<GeneratorType&, boost::normal_distribution<>>  GaussianDistType;
+typedef boost::variate_generator<GeneratorType&, boost::random::discrete_distribution<>> DiscreteDistType;
 
 /** seeds the underlying random number generator used to drive all random number distributions */
 FO_COMMON_API void Seed(unsigned int seed);
@@ -52,6 +55,9 @@ FO_COMMON_API SmallIntDistType SmallIntDist(int min, int max);
 /** returns a functor that provides a uniform distribution of integers in the range [\a min, \a max]; 
     if the integers desired are smaller than 10000, SmallIntDist() may be used instead */
 IntDistType IntDist(int min, int max);
+
+/** returns a functor that provides a distribution of integers in the range [\a 0, \a weights->size()]; */
+FO_COMMON_API DiscreteDistType RandWeightedInt(const std::list<int> & weights);
 
 /** returns a functor that provides a uniform distribution of doubles in the range [\a min, \a max) */
 FO_COMMON_API DoubleDistType DoubleDist(double min, double max);

@@ -35,8 +35,8 @@ namespace Targetting {
     typedef std::shared_ptr<Condition::ConditionBase> TriggerCondition;
     typedef int                           Precision;
     struct TriggerConditions {
-      const std::vector<Targetting::TriggerCondition> conditions;
-      const std::vector<int> weights;
+      std::vector<Targetting::TriggerCondition> conditions;
+      std::vector<int> weights;
 
       TriggerConditions()
       {}
@@ -60,6 +60,8 @@ namespace Targetting {
     TriggerCondition findPreferredTargets(const std::string& part_name);
     TriggerCondition preyAsTriggerCondition(Prey prey);
     TriggerConditions preyAsTriggerConditions(Prey prey);
+    TriggerConditions combine(const TriggerConditions& one,const TriggerConditions& another);
+    TriggerConditions combine(TriggerConditions& one, TriggerCondition another, int weight);
 }
 
 #endif // _CombatTargetting_h_

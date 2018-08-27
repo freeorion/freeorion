@@ -728,6 +728,8 @@ namespace {
         if (!design)
             return retval;
 
+        Targetting::Precision design_precision = 0;
+        Targetting::TriggerConditions design_preferred_prey;
         std::set<std::string> seen_hangar_part_types;
         int available_fighters = 0;
         float fighter_attack = 0.0f;
@@ -736,7 +738,17 @@ namespace {
         std::map<std::string, int> part_fighter_launch_capacities;
 
         // determine what ship does during combat, based on parts and their meters...
-        for (const auto& part_name : design->Parts()) {
+        for (const auto& part_name : design->Parts()) { // first round - collect information
+            const PartType* part = GetPartType(part_name);
+            if (!part)
+                continue;
+            ShipPartClass part_class = part->Class();
+            if (part_class == PC_DETECTION){
+                design_precision = std::max(design_precision, part->Precision());
+                design_preferred_prey = Targetting::combine(design_preferred_prey, part->PreferredPrey(), part->Precision());
+            }
+        }
+        for (const auto& part_name : design->Parts()) { // second round
             const PartType* part = GetPartType(part_name);
             if (!part)
                 continue;
@@ -748,9 +760,10 @@ namespace {
                 int shots = static_cast<int>(ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name)); // secondary stat is shots per attack)
                 if (part_attack > 0.0f && shots > 0) {
                     // attack for each shot...
-		  Targetting::TriggerConditions preferredTargets(Targetting::findPreferredTargets(part_name), part->Precision());
-		  for (int shot_count = 0; shot_count < shots; ++shot_count)
-		      retval.push_back(PartAttackInfo(part_class, part_name, part_attack, part->Precision(), preferredTargets));
+                    Targetting::TriggerConditions tcs(Targetting::findPreferredTargets(part_name), part->Precision());
+                    auto preferredTargets = Targetting::combine(design_preferred_prey, tcs);
+                    for (int shot_count = 0; shot_count < shots; ++shot_count)
+                        retval.push_back(PartAttackInfo(part_class, part_name, part_attack, part->Precision(), preferredTargets));
                 }
 
             } else if (part_class == PC_FIGHTER_HANGAR) {
@@ -779,7 +792,7 @@ namespace {
                 if (to_launch <= 0)
                     continue;
 
-		Targetting::TriggerConditions preferred_targets(fighter_preferred_prey, fighter_precision);
+                Targetting::TriggerConditions preferred_targets(fighter_preferred_prey, fighter_precision);
                 retval.push_back(PartAttackInfo(PC_FIGHTER_BAY, launch.first, to_launch,
                                                 fighter_attack, fighter_precision, preferred_targets)); // attack may be 0; that's ok: decoys
                 available_fighters -= to_launch;

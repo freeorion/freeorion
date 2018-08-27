@@ -40,6 +40,11 @@ GaussianDistType GaussianDist(double mean, double sigma) {
     return GaussianDistType(gen, boost::normal_distribution<>(mean, sigma));
 }
 
+DiscreteDistType RandWeightedInt(const std::list<int> & weights) {
+    boost::mutex::scoped_lock lock(s_prng_mutex);
+    return DiscreteDistType(gen, boost::random::discrete_distribution<>(weights));
+}
+
 int RandSmallInt(int min, int max)
 { return (min == max ? min : SmallIntDist(min,max)()); }
 

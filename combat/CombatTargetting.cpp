@@ -26,9 +26,6 @@ bool Targetting::isPreferredTarget(Targetting::TriggerCondition condition,
             return true;
     }
 
-    DebugLogger() << "Use enemy object as context source for PreferredPrey condition";
-    // ScriptingContext context(target);
-    // ScriptingContext context();
     DebugLogger() << "Evaluate preferred prey condition";
     bool is_preferred = condition->Eval(target);
     auto obj_type = target->ObjectType();
@@ -65,7 +62,6 @@ Targetting::Prey Targetting::findTargetTypes(const std::string& part_name) {
 
 Targetting::TriggerCondition Targetting::findPreferredTargets(const std::string& part_name) {
     const PartType* part = GetPartType(part_name);
-    //const Condition::ConditionBase* condition = part->PreferredPrey();
     return part->PreferredPrey();
 }
 
@@ -97,4 +93,29 @@ Targetting::Precision Targetting::findPrecision(Targetting::HunterType hunting, 
             return 1;
     }
 
+}
+
+Targetting::TriggerConditions Targetting::combine(const Targetting::TriggerConditions& condition, const Targetting::TriggerConditions& another_condition) {
+
+    Targetting::TriggerConditions combined;
+    combined.conditions.reserve( condition.conditions.size() + another_condition.conditions.size() ); // preallocate memory
+    combined.conditions.insert( combined.conditions.end(), condition.conditions.begin(), condition.conditions.end() );
+    combined.conditions.insert( combined.conditions.end(), another_condition.conditions.begin(), another_condition.conditions.end() );
+
+    combined.weights.reserve( condition.weights.size() + another_condition.weights.size() ); // preallocate memory
+    combined.weights.insert( combined.weights.end(), condition.weights.begin(), condition.weights.end() );
+    combined.weights.insert( combined.weights.end(), another_condition.weights.begin(), another_condition.weights.end() );
+    return combined;
+
+}
+
+Targetting::TriggerConditions Targetting::combine(      Targetting::TriggerConditions& conditions,       Targetting::TriggerCondition condition, int weight) {
+    Targetting::TriggerConditions combined;
+    combined.conditions.reserve( conditions.conditions.size() + 1 );
+    combined.weights.reserve( conditions.weights.size() + 1 );
+
+    combined = conditions;
+    combined.conditions.push_back(condition);
+    combined.weights.push_back(weight);
+    return combined;
 }
