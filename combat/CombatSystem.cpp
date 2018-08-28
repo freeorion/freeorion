@@ -760,10 +760,9 @@ namespace {
                 int shots = static_cast<int>(ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name)); // secondary stat is shots per attack)
                 if (part_attack > 0.0f && shots > 0) {
                     // attack for each shot...
-                    Targetting::TriggerConditions tcs(Targetting::findPreferredTargets(part_name), part->Precision());
-                    auto preferredTargets = Targetting::combine(design_preferred_prey, tcs);
+                    auto preferredTargets = Targetting::combine(design_preferred_prey, Targetting::findPreferredTargets(part_name), part->Precision());
                     for (int shot_count = 0; shot_count < shots; ++shot_count)
-                        retval.push_back(PartAttackInfo(part_class, part_name, part_attack, part->Precision(), preferredTargets));
+                        retval.push_back(PartAttackInfo(part_class, part_name, part_attack, Targetting::findPrecision(preferredTargets), preferredTargets));
                 }
 
             } else if (part_class == PC_FIGHTER_HANGAR) {

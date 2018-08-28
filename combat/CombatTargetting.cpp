@@ -65,8 +65,15 @@ Targetting::TriggerCondition Targetting::findPreferredTargets(const std::string&
     return part->PreferredPrey();
 }
 
-Targetting::Precision Targetting::findPrecision(Targetting::HunterType hunting, const std::string& part_name) {
-    if ( Targetting::HunterType::Unknown == hunting ) {
+Targetting::Precision Targetting::findPrecision(const Targetting::TriggerConditions& conditions) {
+    //    std::vector<Precision>::iterator
+        auto result = std::max_element(conditions.weights.begin(), conditions.weights.end());
+    return *result;
+}
+
+Targetting::Precision Targetting::findPrecision(const Targetting::HunterType hunting_, const std::string& part_name) {
+    Targetting::HunterType hunting(hunting_);
+    if ( Targetting::HunterType::Unknown == hunting_ ) {
         if ( part_name.rfind("FT_",0) == 0 ) {
             hunting = Targetting::HunterType::Boat;
         } else if ( part_name.rfind("SR_",0) == 0 ) {

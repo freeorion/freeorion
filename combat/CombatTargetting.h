@@ -55,7 +55,9 @@ namespace Targetting {
     bool isPreferredTarget(TriggerCondition condition, Target target);
     bool isPreferredTarget(TriggerConditions condition, Target target);
 
-    Precision findPrecision(HunterType hunting, const std::string& part_name);
+    Precision findPrecision(const HunterType hunting, const std::string& part_name);
+    Precision findPrecision(const TriggerConditions& conditions);
+
     Prey findTargetTypes(const std::string& part_name);
     TriggerCondition findPreferredTargets(const std::string& part_name);
     TriggerCondition preyAsTriggerCondition(Prey prey);
