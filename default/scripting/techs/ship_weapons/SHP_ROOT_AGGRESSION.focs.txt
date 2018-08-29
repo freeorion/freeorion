@@ -10,6 +10,7 @@ Tech
         Item type = ShipPart name = "SR_WEAPON_1_1"
         Item type = ShipPart name = "GT_TROOP_POD"
         Item type = ShipPart name = "SR_WEAPON_0_1"
+        Item type = ShipPart name = "DT_BATTLE_SCANNER_1"
     ]
     effectsgroups = [
         [[WEAPON_BASE_EFFECTS(SR_WEAPON_0_1)]]

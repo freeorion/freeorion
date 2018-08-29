@@ -9,7 +9,7 @@ Part
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/spinal_antimatter.png"
-    precision = 5
+    precision = [[GOOD_PRECISION]]
     preferredPrey = And [
         Ship
         Or [
@@ -24,3 +24,4 @@ Part
 #include "shortrange.macros"
 
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/common/targetting.macros"

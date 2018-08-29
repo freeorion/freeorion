@@ -11,7 +11,11 @@ Part
     tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter04.png"
-    precision = 5
-    preferredPrey = Ship
+    precision = [[GOOD_PRECISION]]
+    preferredPrey = And [
+        Ship
+        Not [[TARGET_COMSAT]]
+    ]
 
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/common/targetting.macros"

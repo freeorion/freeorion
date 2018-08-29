@@ -20,7 +20,7 @@ Part
             ]
     ]
     icon = "icons/ship_parts/fighter06.png"
-    precision = 5
+    precision = [[GOOD_PRECISION]]
     preferredPrey = And [
         Not Ship
         Not Planet
@@ -28,3 +28,4 @@ Part
 
 #include "/scripting/common/upkeep.macros"
 #include "/scripting/techs/techs.macros"
+#include "/scripting/common/targetting.macros"

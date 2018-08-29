@@ -1,0 +1,12 @@
+// Use to identify comsat ships in preferredPrey conditions. Military ships should prefer other targets.
+TARGET_COMSAT
+'''And [  DesignHasHull name ="SH_COLONY_BASE"     ( PartsInShipDesign design = LocalCandidate.DesignID < 1 ) ]'''
+
+AVERAGE_PRECISION
+'''2'''
+
+GOOD_PRECISION
+'''4'''
+
+GREAT_PRECISION
+'''8'''

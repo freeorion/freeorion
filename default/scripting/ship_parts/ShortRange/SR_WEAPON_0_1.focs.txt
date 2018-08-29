@@ -13,7 +13,7 @@ Part
     effectsgroups =
         [[WEAPON_BASE_DEFAULT_EFFECTS(SR_WEAPON_0_1)]]
     icon = "icons/ship_parts/flak.png"
-    precision = 5
+    precision = [[GREAT_PRECISION]]
     preferredPrey = And [
         Not Ship
         Not Planet
@@ -22,3 +22,4 @@ Part
 #include "shortrange.macros"
 
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/common/targetting.macros"

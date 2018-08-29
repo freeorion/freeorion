@@ -11,5 +11,12 @@ Part
     tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter02.png"
+    precision = [[AVERAGE_PRECISION]]
+    preferredPrey = And [
+        // prefers to attack ships with flak
+        Ship
+        DesignHasPart low = 1 name = "SR_WEAPON_0_1"
+    ]
 
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/common/targetting.macros"

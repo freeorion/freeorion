@@ -1,0 +1,20 @@
+Part
+    name = "DT_BATTLE_SCANNER_1"
+    description = "DT_BATTLE_SCANNER_1_DESC"
+    class = Detection
+    capacity = [[GOOD_PRECISION]]
+    mountableSlotTypes = Internal
+    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 2
+    tags = [ "PEDIA_PC_DETECTION" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/detector-1.png"
+    precision = [[GOOD_PRECISION]]
+    preferredPrey = And [
+        Armed
+    ]
+
+#include "detection.macros"
+
+#include "/scripting/common/upkeep.macros"
+#include "/scripting/common/targetting.macros"

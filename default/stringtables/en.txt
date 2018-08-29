@@ -12911,19 +12911,19 @@ FT_HANGAR_1
 Interceptor Hangar
 
 FT_HANGAR_1_DESC
-Storage system for minimally armed fighters.
+Storage system for minimally armed space boats designed to destroy other space boats.
 
 FT_HANGAR_2
 Fighter Hangar
 
 FT_HANGAR_2_DESC
-Storage system for lightly armed fighters.
+Storage system for armed space boats. Will prefer to attack enemies with [[shippart SR_WEAPON_0_1]].
 
 FT_HANGAR_3
 Bomber Hangar
 
 FT_HANGAR_3_DESC
-Storage system for moderately armed fighters.
+Storage system for moderately armed space boats designed to attack enemy space ships.
 
 FT_HANGAR_4
 Hangar 4
@@ -12947,7 +12947,7 @@ SR_WEAPON_0_1
 Flak Cannon
 
 SR_WEAPON_0_1_DESC
-'''The flak cannon does negligible damage to most ships, but is inexpensive and effective at destroying fighters.
+'''The flak cannon does negligible damage to most ships, but is inexpensive and extremely precise at destroying space boats.
 
 Each flak cannon on a ship built by a species with the piloting trait will have an additional number of shots equal to 1 per piloting level (-1 shot for Bad Pilots).'''
 
@@ -13140,6 +13140,12 @@ Sensors
 
 DT_DETECTOR_4_DESC
 Very long-range detection.
+
+DT_BATTLE_SCANNER_1
+Battle Scanner
+
+DT_BATTLE_SCANNER_1_DESC
+Ship weapons prefer armed targets with good precision.
 
 FU_ENGINE_PART_LIMIT
 Only one engine part may be equipped on a ship.
