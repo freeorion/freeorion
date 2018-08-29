@@ -414,13 +414,13 @@ SD_LARGE_MARK_1
 Cruiser Ms
 
 SD_LARGE_MARK1_DESC
-Cruiser equipped for long range independent action with improved lasers and armor. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Cruiser equipped for long range independent action with improved weapons and armor. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_2
 Cruiser Lz
 
 SD_LARGE_MARK2_DESC
-Cruiser equipped for long range independent action . [[BLD_SHIPYARD_BASE_REQUIRED]]
+Cruiser equipped for long range independent action. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_3
 Destroyer Ms
