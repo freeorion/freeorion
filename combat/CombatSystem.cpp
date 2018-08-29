@@ -1322,6 +1322,7 @@ namespace {
                     ErrorLogger() << "AutoResolveCombat couldn't get target object with id " << target_id;
                     continue;
                 }
+
 		PartAttackInfo pai = weapon;
                 if (pai.AimsFor(target)) {
                     // shooting

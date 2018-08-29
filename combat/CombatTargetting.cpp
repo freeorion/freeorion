@@ -10,11 +10,34 @@
 #include "../universe/ValueRef.h"
 
 #include "../util/Logger.h"
+#include "../util/Random.h"
 
 bool Targetting::isPreferredTarget(Targetting::TriggerConditions conditions,
                                    Targetting::Target target) {
-    for (const auto& condition : conditions.conditions) {
-      if (Targetting::isPreferredTarget(condition, target)) return true;
+    const Precision highestWeight = Targetting::findPrecision(conditions);
+    for (long unsigned int i = 0; i < conditions.conditions.size(); i++) {
+        const auto& condition = conditions.conditions[i];
+        if (!condition) {
+            DebugLogger() << "No preferences. Target is perfect." ;
+            return true;
+        }
+
+        if (Targetting::isPreferredTarget(condition, target)) {
+            const int upper = std::round(highestWeight * 1.5f); // HEURISTIC
+            const int improbability = RandInt(0, upper);
+            const int luck = conditions.weights[i];
+            DebugLogger() << "Prioritized locking attempt" <<  [&improbability, &luck, &upper](){
+                                                                   std::stringstream ss;
+                                                                   ss << "( " << luck << "/" << upper << " ?>? " << improbability << "/" << upper << ")";
+                                                                   return ss.str();
+                                                               }();
+            if (luck > improbability) {
+                DebugLogger() << "Locked in target.";
+                return true;
+            } else {
+                DebugLogger() << "Couldnt acquire lock." ;
+            }
+        }
     }
     return false;
 }
@@ -26,7 +49,7 @@ bool Targetting::isPreferredTarget(Targetting::TriggerCondition condition,
             return true;
     }
 
-    DebugLogger() << "Evaluate preferred prey condition";
+    DebugLogger() << "Evaluate preferred prey condition" << condition->Description();
     bool is_preferred = condition->Eval(target);
     auto obj_type = target->ObjectType();
     if ( is_preferred ) {
