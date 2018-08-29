@@ -10039,11 +10039,41 @@ DESC_ORDERED_BOMBARDED
 DESC_ORDERED_BOMBARDED_NOT
 ''' that is not being bombarded by an object %1%'''
 
+DESC_AND_BEFORE_OPERANDS
+''''''
+
 DESC_AND_BETWEEN_OPERANDS
 ''' and'''
 
+DESC_AND_AFTER_OPERANDS
+''''''
+
+DESC_AND_BEFORE_SINGLE_OPERAND
+''''''
+
+DESC_AND_AFTER_SINGLE_OPERAND
+''''''
+
+DESC_NOT_AND_BEFORE_OPERANDS
+''' (not'''
+
+DESC_NOT_AND_BETWEEN_OPERANDS
+'''[[DESC_OR_NOT_BETWEEN_OPERANDS]]'''
+
+DESC_NOT_AND_AFTER_OPERANDS
+''' )'''
+
+DESC_NOT_AND_BEFORE_SINGLE_OPERAND
+''' not'''
+
+DESC_NOT_AND_AFTER_SINGLE_OPERAND
+''''''
+
 DESC_OR_BETWEEN_OPERANDS
 ''' or'''
+
+DESC_OR_NOT_BETWEEN_OPERANDS
+''' or not'''
 
 # %1% textual description of the lower turn limit.
 # %2% textual description of the upper turn limit.
