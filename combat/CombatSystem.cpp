@@ -309,7 +309,7 @@ namespace {
 
        Targetting::TriggerConditions preferred_targets;
 
-        bool AimsFor(std::shared_ptr<UniverseObject> target)
+        bool AimsFor(std::shared_ptr<UniverseObject> target) const
         {
             return Targetting::isPreferredTarget(preferred_targets, target);
         }
@@ -1312,8 +1312,9 @@ namespace {
             // select target object
             std::shared_ptr<UniverseObject> target;
             DebugLogger() << "Target precision: " << std::to_string(weapon.precision);
-            for (int t = 1; t < weapon.precision + 1 ; t++) {
-                DebugLogger() << "Find target - Round: " << std::to_string(t);
+            for (int t = 1; t < weapon.precision ; t++) {
+                // Do all but the last round of finding a valid target; the simple last round is separate for performance reasons
+                DebugLogger() << "Find target - Round: " << std::to_string(t) << " (try to lock it if it matches preferredPrey conditions)";
                 int target_idx = RandInt(0, valid_target_ids.size() - 1);
                 int target_id = *std::next(valid_target_ids.begin(), target_idx);
 
@@ -1323,10 +1324,21 @@ namespace {
                     continue;
                 }
 
-		PartAttackInfo pai = weapon;
-                if (pai.AimsFor(target)) {
+                if (weapon.AimsFor(target)) {
                     // shooting
                     break;
+                }
+                target = nullptr; // signal that last round should be executed
+            }
+            if (!target) {
+                DebugLogger() << "Find target - Round: " << std::to_string(weapon.precision) << " (Final round ignores preferredPrey condition)";
+                int target_idx = RandInt(0, valid_target_ids.size() - 1);
+                int target_id = *std::next(valid_target_ids.begin(), target_idx);
+
+                target = combat_state.combat_info.objects.Object(target_id);
+                if (!target) {
+                    ErrorLogger() << "AutoResolveCombat couldn't get target object with id " << target_id;
+                    continue;
                 }
             }
             if (!target) {
