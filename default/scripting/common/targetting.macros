@@ -2,6 +2,9 @@
 TARGET_COMSAT
 '''And [  DesignHasHull name ="SH_COLONY_BASE"     ( PartsInShipDesign design = LocalCandidate.DesignID < 1 ) ]'''
 
+BAD_PRECISION
+'''1'''
+
 AVERAGE_PRECISION
 '''2'''
 
