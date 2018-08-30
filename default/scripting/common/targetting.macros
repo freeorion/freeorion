@@ -5,6 +5,7 @@ TARGET_COMSAT
 // Use to identify potentially dangerous ships in preferredPrey conditions.
 TARGET_MAYBE_DANGEROUS
 '''Or [
+        Not Ship
         DesignHasPartClass class = Bombard
         DesignHasPartClass class = General
         DesignHasPartClass class = FighterBay
