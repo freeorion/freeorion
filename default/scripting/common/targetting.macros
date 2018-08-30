@@ -2,6 +2,16 @@
 TARGET_COMSAT
 '''And [  DesignHasHull name ="SH_COLONY_BASE"     ( PartsInShipDesign design = LocalCandidate.DesignID < 1 ) ]'''
 
+// Use to identify potentially dangerous ships in preferredPrey conditions.
+TARGET_MAYBE_DANGEROUS
+'''Or [
+        DesignHasPartClass class = Bombard
+        DesignHasPartClass class = General
+        DesignHasPartClass class = FighterBay
+        DesignHasPartClass class = ShortRange
+        DesignHasPartClass class = Troops
+    ]'''
+
 BAD_PRECISION
 '''1'''
 
