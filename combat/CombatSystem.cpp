@@ -1311,9 +1311,9 @@ namespace {
 
             // select target object
             std::shared_ptr<UniverseObject> target;
-	    DebugLogger() << "Target precision: " << std::to_string(weapon.precision);
+            DebugLogger() << "Target precision: " << std::to_string(weapon.precision);
             for (int t = 1; t < weapon.precision + 1 ; t++) {
-	      if (t > 1) ErrorLogger() << "Find target - Round: " << std::to_string(t);
+                DebugLogger() << "Find target - Round: " << std::to_string(t);
                 int target_idx = RandInt(0, valid_target_ids.size() - 1);
                 int target_id = *std::next(valid_target_ids.begin(), target_idx);
 

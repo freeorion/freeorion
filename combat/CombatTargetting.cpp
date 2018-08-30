@@ -14,7 +14,7 @@
 
 bool Targetting::isPreferredTarget(Targetting::TriggerConditions conditions,
                                    Targetting::Target target) {
-    const Precision highestWeight = Targetting::findPrecision(conditions);
+    const Precision highest_weight = Targetting::findPrecision(conditions);
     for (long unsigned int i = 0; i < conditions.conditions.size(); i++) {
         const auto& condition = conditions.conditions[i];
         if (!condition) {
@@ -23,7 +23,7 @@ bool Targetting::isPreferredTarget(Targetting::TriggerConditions conditions,
         }
 
         if (Targetting::isPreferredTarget(condition, target)) {
-            const int upper = std::round(highestWeight * 1.5f); // HEURISTIC
+            const int upper = std::round(highest_weight * 1.5f); // HEURISTIC
             const int improbability = RandInt(0, upper);
             const int luck = conditions.weights[i];
             DebugLogger() << "Prioritized locking attempt" <<  [&improbability, &luck, &upper](){
@@ -89,8 +89,7 @@ Targetting::TriggerCondition Targetting::findPreferredTargets(const std::string&
 }
 
 Targetting::Precision Targetting::findPrecision(const Targetting::TriggerConditions& conditions) {
-    //    std::vector<Precision>::iterator
-        auto result = std::max_element(conditions.weights.begin(), conditions.weights.end());
+    auto result = std::max_element(conditions.weights.begin(), conditions.weights.end());
     return *result;
 }
 
