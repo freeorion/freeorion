@@ -257,8 +257,9 @@ class Reporter(object):
         empire_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
         print "Resource Priorities:"
         resource_priorities = {}
+        aistate = get_aistate()
         for priority_type in get_priority_resource_types():
-            resource_priorities[priority_type] = get_aistate().get_priority(priority_type)
+            resource_priorities[priority_type] = aistate.get_priority(priority_type)
 
         sorted_priorities = resource_priorities.items()
         sorted_priorities.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
@@ -311,8 +312,9 @@ def weighted_sum_output(outputs):
 def assess_protection_focus(pinfo):
     """Return True if planet should use Protection Focus."""
     this_planet = pinfo.planet
-    sys_status = get_aistate().systemStatus.get(this_planet.systemID, {})
-    threat_from_supply = (0.25 * get_aistate().empire_standard_enemy_rating *
+    aistate = get_aistate()
+    sys_status = aistate.systemStatus.get(this_planet.systemID, {})
+    threat_from_supply = (0.25 * aistate.empire_standard_enemy_rating *
                           min(2, len(sys_status.get('enemies_nearly_supplied', []))))
     print "%s has regional+supply threat of %.1f" % (this_planet, threat_from_supply)
     regional_threat = sys_status.get('regional_threat', 0) + threat_from_supply
@@ -567,6 +569,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
     # smallest possible ratio of research to industry with an all industry focus
     maxi_ratio = cumulative_rp / max(0.01, cumulative_pp)
 
+    aistate = get_aistate()
     for adj_round in [1, 2, 3, 4]:
         for pid, pinfo in focus_manager.raw_planet_info.items():
             ii, tr = pinfo.possible_output[INDUSTRY]
@@ -595,7 +598,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
                 # TODO: add similar decision points by which research-rich planets
                 # might possibly choose to dither for industry points
                 if any((has_force,
-                        not get_aistate().character.may_dither_focus_to_gain_research(),
+                        not aistate.character.may_dither_focus_to_gain_research(),
                         target_rp >= priority_ratio * cumulative_pp)):
                     continue
 
@@ -647,7 +650,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
     got_algo = tech_is_complete("LRN_ALGO_ELEGANCE")
     for ratio, pid, pinfo in ratios:
         if priority_ratio < (target_rp / (target_pp + 0.0001)):  # we have enough RP
-            if ratio < 1.1 and get_aistate().character.may_research_heavily():
+            if ratio < 1.1 and aistate.character.may_research_heavily():
                 # but wait, RP is still super cheap relative to PP, maybe will take more RP
                 if priority_ratio < 1.5 * (target_rp / (target_pp + 0.0001)):
                     # yeah, really a glut of RP, stop taking RP
@@ -695,8 +698,9 @@ def set_planet_resource_foci():
     Reporter.print_resource_ai_header()
     resource_timer.start("Priority")
     # TODO: take into acct splintering of resource groups
-    production_priority = get_aistate().get_priority(PriorityType.RESOURCE_PRODUCTION)
-    research_priority = get_aistate().get_priority(PriorityType.RESOURCE_RESEARCH)
+    aistate = get_aistate()
+    production_priority = aistate.get_priority(PriorityType.RESOURCE_PRODUCTION)
+    research_priority = aistate.get_priority(PriorityType.RESOURCE_RESEARCH)
     priority_ratio = float(research_priority) / (production_priority + 0.0001)
 
     focus_manager = PlanetFocusManager()

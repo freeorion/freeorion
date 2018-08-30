@@ -35,7 +35,8 @@ def get_invasion_fleets():
     empire_id = fo.empireID()
 
     home_system_id = PlanetUtilsAI.get_capital_sys_id()
-    visible_system_ids = list(get_aistate().visInteriorSystemIDs) + list(get_aistate().visBorderSystemIDs)
+    aistate = get_aistate()
+    visible_system_ids = list(aistate.visInteriorSystemIDs) + list(aistate.visBorderSystemIDs)
 
     if home_system_id != INVALID_ID:
         accessible_system_ids = [sys_id for sys_id in visible_system_ids if
@@ -67,7 +68,7 @@ def get_invasion_fleets():
 
     invasion_timer.start("planning troop base production")
     reserved_troop_base_targets = []
-    if get_aistate().character.may_invade_with_bases():
+    if aistate.character.may_invade_with_bases():
         available_pp = {}
         for el in empire.planetsWithAvailablePP:  # keys are sets of ints; data is doubles
             avail_pp = el.data()
@@ -94,12 +95,12 @@ def get_invasion_fleets():
         # same as the source planet originally identified, but we could consider reevaluating that, or use that second
         # value to instead record how many base troopers have been queued, so that on later turns we can assess if the
         # process got delayed & perhaps more troopers need to be queued).
-        secure_ai_fleet_missions = get_aistate().get_fleet_missions_with_any_mission_types([MissionType.SECURE,
-                                                                                            MissionType.MILITARY])
+        secure_ai_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.SECURE,
+                                                                                      MissionType.MILITARY])
 
         # Pass 1: identify qualifying base troop invasion targets
         for pid in invadable_planet_ids:  # TODO: reorganize
-            if pid in get_aistate().qualifyingTroopBaseTargets:
+            if pid in aistate.qualifyingTroopBaseTargets:
                 continue
             planet = universe.getPlanet(pid)
             if not planet:
@@ -130,19 +131,19 @@ def get_invasion_fleets():
                     best_base_planet = pid2
                     best_trooper_count = troops_per_ship
             if best_base_planet != INVALID_ID:
-                get_aistate().qualifyingTroopBaseTargets.setdefault(pid, [best_base_planet, INVALID_ID])
+                aistate.qualifyingTroopBaseTargets.setdefault(pid, [best_base_planet, INVALID_ID])
 
         # Pass 2: for each target previously identified for base troopers, check that still qualifies and
         # check how many base troopers would be needed; if reasonable then queue up the troops and record this in
         # get_aistate().qualifyingTroopBaseTargets
-        for pid in get_aistate().qualifyingTroopBaseTargets.keys():
+        for pid in aistate.qualifyingTroopBaseTargets.keys():
             planet = universe.getPlanet(pid)
             if planet and planet.owner == empire_id:
-                del get_aistate().qualifyingTroopBaseTargets[pid]
+                del aistate.qualifyingTroopBaseTargets[pid]
                 continue
             if pid in invasion_targeted_planet_ids:  # TODO: consider overriding standard invasion mission
                 continue
-            if get_aistate().qualifyingTroopBaseTargets[pid][1] != -1:
+            if aistate.qualifyingTroopBaseTargets[pid][1] != -1:
                 reserved_troop_base_targets.append(pid)
                 if planet:
                     all_invasion_targeted_system_ids.add(planet.systemID)
@@ -150,12 +151,12 @@ def get_invasion_fleets():
                 continue  # already building for here
             _, planet_troops = evaluate_invasion_planet(pid, secure_ai_fleet_missions, True)
             sys_id = planet.systemID
-            this_sys_status = get_aistate().systemStatus.get(sys_id, {})
+            this_sys_status = aistate.systemStatus.get(sys_id, {})
             troop_tally = 0
             for _fid in this_sys_status.get('myfleets', []):
                 troop_tally += FleetUtilsAI.count_troops_in_fleet(_fid)
             if troop_tally > planet_troops:  # base troopers appear unneeded
-                del get_aistate().qualifyingTroopBaseTargets[pid]
+                del aistate.qualifyingTroopBaseTargets[pid]
                 continue
             if (planet.currentMeterValue(fo.meterType.shield) > 0 and
                     (this_sys_status.get('myFleetRating', 0) < 0.8 * this_sys_status.get('totalThreat', 0) or
@@ -163,7 +164,7 @@ def get_invasion_fleets():
                 # this system not secured, so ruling out invasion base troops for now
                 # don't immediately delete from qualifyingTroopBaseTargets or it will be opened up for regular troops
                 continue
-            loc = get_aistate().qualifyingTroopBaseTargets[pid][0]
+            loc = aistate.qualifyingTroopBaseTargets[pid][0]
             best_base_trooper_here = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, loc)[1]
             loc_planet = universe.getPlanet(loc)
             if best_base_trooper_here is None:  # shouldn't be possible at this point, but just to be safe
@@ -192,7 +193,7 @@ def get_invasion_fleets():
             if (n_bases > MAX_BASE_TROOPERS_POOR_INVADERS or
                     (troops_per_ship > 1 and n_bases > MAX_BASE_TROOPERS_GOOD_INVADERS)):
                 print "ruling out base invasion troopers for %s due to high number (%d) required." % (planet, n_bases)
-                del get_aistate().qualifyingTroopBaseTargets[pid]
+                del aistate.qualifyingTroopBaseTargets[pid]
                 continue
             print "Invasion base planning, need %d troops at %d pership, will build %d ships." % (
                 (planet_troops + 1), troops_per_ship, n_bases)
@@ -202,7 +203,7 @@ def get_invasion_fleets():
             if retval != 0:
                 all_invasion_targeted_system_ids.add(planet.systemID)
                 reserved_troop_base_targets.append(pid)
-                get_aistate().qualifyingTroopBaseTargets[pid][1] = loc
+                aistate.qualifyingTroopBaseTargets[pid][1] = loc
                 fo.issueChangeProductionQuantityOrder(empire.productionQueue.size - 1, 1, int(n_bases))
                 fo.issueRequeueProductionOrder(empire.productionQueue.size - 1, 0)
 
@@ -399,14 +400,15 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         if homeworld and homeworld.systemID != INVALID_ID and system_id != INVALID_ID:
             least_jumps_path = list(universe.leastJumpsPath(homeworld.systemID, system_id, empire_id))
             max_jumps = len(least_jumps_path)
-    system_status = get_aistate().systemStatus.get(system_id, {})
+    aistate = get_aistate()
+    system_status = aistate.systemStatus.get(system_id, {})
     system_fleet_treat = system_status.get('fleetThreat', 1000)
     system_monster_threat = system_status.get('monsterThreat', 0)
     sys_total_threat = system_fleet_treat + system_monster_threat + system_status.get('planetThreat', 0)
     max_path_threat = system_fleet_treat
     mil_ship_rating = MilitaryAI.cur_best_mil_ship_rating()
     for path_sys_id in least_jumps_path:
-        path_leg_status = get_aistate().systemStatus.get(path_sys_id, {})
+        path_leg_status = aistate.systemStatus.get(path_sys_id, {})
         path_leg_threat = path_leg_status.get('fleetThreat', 1000) + path_leg_status.get('monsterThreat', 0)
         if path_leg_threat > 0.5 * mil_ship_rating:
             clear_path = False
@@ -540,8 +542,9 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
                 these_fleets = found_fleets
         target = universe_object.Planet(planet_id)
         print "assigning invasion fleets %s to target %s" % (these_fleets, target)
+        aistate = get_aistate()
         for fleetID in these_fleets:
-            fleet_mission = get_aistate().get_fleet_mission(fleetID)
+            fleet_mission = aistate.get_fleet_mission(fleetID)
             fleet_mission.clear_fleet_orders()
             fleet_mission.clear_target()
             fleet_mission.set_target(mission_type, target)
@@ -553,6 +556,7 @@ def assign_invasion_bases():
     all_troopbase_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.ORBITAL_INVASION)
     available_troopbase_fleet_ids = set(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_troopbase_fleet_ids))
 
+    aistate = get_aistate()
     for fid in list(available_troopbase_fleet_ids):
         if fid not in available_troopbase_fleet_ids:  # entry may have been discarded in previous loop iterations
             continue
@@ -561,15 +565,15 @@ def assign_invasion_bases():
             continue
         sys_id = fleet.systemID
         system = universe.getSystem(sys_id)
-        available_planets = set(system.planetIDs).intersection(set(get_aistate().qualifyingTroopBaseTargets.keys()))
+        available_planets = set(system.planetIDs).intersection(set(aistate.qualifyingTroopBaseTargets.keys()))
         print "Considering Base Troopers in %s, found planets %s and registered targets %s with status %s" % (
             system.name, list(system.planetIDs), available_planets,
-            [(pid, get_aistate().qualifyingTroopBaseTargets[pid]) for pid in available_planets])
-        targets = [pid for pid in available_planets if get_aistate().qualifyingTroopBaseTargets[pid][1] != -1]
+            [(pid, aistate.qualifyingTroopBaseTargets[pid]) for pid in available_planets])
+        targets = [pid for pid in available_planets if aistate.qualifyingTroopBaseTargets[pid][1] != -1]
         if not targets:
             print "Failure: found no valid target for troop base in system %s" % system
             continue
-        status = get_aistate().systemStatus.get(sys_id, {})
+        status = aistate.systemStatus.get(sys_id, {})
         local_base_troops = set(status.get('myfleets', [])).intersection(available_troopbase_fleet_ids)
 
         target_id = INVALID_ID
@@ -596,14 +600,15 @@ def assign_invasion_bases():
             FleetUtilsAI.merge_fleet_a_into_b(fid2, fid)
             available_troopbase_fleet_ids.discard(fid2)
         available_troopbase_fleet_ids.discard(fid)
-        get_aistate().qualifyingTroopBaseTargets[target_id][1] = -1  # TODO: should probably delete
+        aistate.qualifyingTroopBaseTargets[target_id][1] = -1  # TODO: should probably delete
         target = universe_object.Planet(target_id)
-        fleet_mission = get_aistate().get_fleet_mission(fid)
+        fleet_mission = aistate.get_fleet_mission(fid)
         fleet_mission.set_target(MissionType.ORBITAL_INVASION, target)
 
 
 def assign_invasion_fleets_to_invade():
     """Assign fleet targets to invadable planets."""
+    aistate = get_aistate()
 
     assign_invasion_bases()
 
@@ -612,5 +617,5 @@ def assign_invasion_fleets_to_invade():
     send_invasion_fleets(invasion_fleet_ids, AIstate.invasionTargets, MissionType.INVASION)
     all_invasion_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.INVASION)
     for fid in FleetUtilsAI.extract_fleet_ids_without_mission_types(all_invasion_fleet_ids):
-        this_mission = get_aistate().get_fleet_mission(fid)
+        this_mission = aistate.get_fleet_mission(fid)
         this_mission.check_mergers(context="Post-send consolidation of unassigned troops")

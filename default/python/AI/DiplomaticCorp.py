@@ -34,12 +34,13 @@ class DiplomaticCorp(object):
         # TODO: remove the following early return once proper support for third party diplomatic history is added
         if message.recipient != fo.empireID():
             return
+        aistate = get_aistate()
         if message.type == fo.diplomaticMessageType.peaceProposal:
-            get_aistate().log_peace_request(message.sender, message.recipient)
+            aistate.log_peace_request(message.sender, message.recipient)
             proposal_sender_player = fo.empirePlayerID(message.sender)
-            attitude = get_aistate().character.attitude_to_empire(message.sender, get_aistate().diplomatic_logs)
+            attitude = aistate.character.attitude_to_empire(message.sender, aistate.diplomatic_logs)
             possible_acknowledgments = []
-            aggression = get_aistate().character.get_trait(Aggression)
+            aggression = aistate.character.get_trait(Aggression)
             if aggression.key <= fo.aggression.typical:
                 possible_acknowledgments = UserStringList("AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST")
                 if attitude > 0:
@@ -68,7 +69,7 @@ class DiplomaticCorp(object):
         elif message.type == fo.diplomaticMessageType.warDeclaration:
             # note: apparently this is currently (normally?) sent not as a warDeclaration,
             # but as a simple diplomatic_status_update to war
-            get_aistate().log_war_declaration(message.sender, message.recipient)
+            aistate.log_war_declaration(message.sender, message.recipient)
 
     @staticmethod
     def get_first_turn_greet_message():

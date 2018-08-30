@@ -76,17 +76,18 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     # initialize AIstate
     debug("Initializing AI state...")
     create_new_aistate(aggression_input)
-    aggression_trait = get_aistate().character.get_trait(Aggression)
+    aistate = get_aistate()
+    aggression_trait = aistate.character.get_trait(Aggression)
     debug("New game started, AI Aggression level %d (%s)" % (
-        aggression_trait.key, get_trait_name_aggression(get_aistate().character)))
-    get_aistate().session_start_cleanup()
+        aggression_trait.key, get_trait_name_aggression(aistate.character)))
+    aistate.session_start_cleanup()
     debug("Initialization of AI state complete!")
     debug("Trying to rename our homeworld...")
     planet_id = PlanetUtilsAI.get_capital()
     universe = fo.getUniverse()
     if planet_id is not None and planet_id != INVALID_ID:
         planet = universe.getPlanet(planet_id)
-        new_name = " ".join([random.choice(possible_capitals(get_aistate().character)).strip(), planet.name])
+        new_name = " ".join([random.choice(possible_capitals(aistate.character)).strip(), planet.name])
         debug("    Renaming to %s..." % new_name)
         res = fo.issueRenameOrder(planet_id, new_name)
         debug("    Result: %d; Planet is now named %s" % (res, planet.name))
@@ -110,11 +111,12 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     turn_timer.start("Server Processing")
 
     print "Resuming loaded game"
+    aistate = get_aistate()
     if not saved_state_string:
         error("AI given empty state-string to resume from; this is expected if the AI is assigned to an empire "
               "previously run by a human, but is otherwise an error. AI will be set to Aggressive.")
         create_new_aistate(fo.aggression.aggressive)
-        get_aistate().session_start_cleanup()
+        aistate.session_start_cleanup()
     else:
         try:
             # loading saved state
@@ -122,14 +124,14 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
         except Exception as e:
             # assigning new state
             create_new_aistate(fo.aggression.aggressive)
-            get_aistate().session_start_cleanup()
+            aistate.session_start_cleanup()
             error("Failed to load the AIstate from the savegame. The AI will"
                   " play with a fresh AIstate instance with aggression level set"
                   " to 'aggressive'. The behaviour of the AI may be different"
                   " than in the original session. The error raised was: %s"
                   % e, exc_info=True)
 
-    aggression_trait = get_aistate().character.get_trait(Aggression)
+    aggression_trait = aistate.character.get_trait(Aggression)
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
     global diplomatic_corp
@@ -261,9 +263,10 @@ def generateOrders():  # pylint: disable=invalid-name
     fo.updateResourcePools()
 
     turn = fo.currentTurn()
-    turn_uid = get_aistate().set_turn_uid()
+    aistate = get_aistate()
+    turn_uid = aistate.set_turn_uid()
     debug("\n\n\n" + "=" * 20)
-    debug("Starting turn %s (%s) of game: %s" % (turn, turn_uid, get_aistate().uid))
+    debug("Starting turn %s (%s) of game: %s" % (turn, turn_uid, aistate.uid))
     debug("=" * 20 + "\n")
 
     turn_timer.start("AI planning")
@@ -278,7 +281,7 @@ def generateOrders():  # pylint: disable=invalid-name
     planet = None
     if planet_id is not None:
         planet = universe.getPlanet(planet_id)
-    aggression_name = get_trait_name_aggression(get_aistate().character)
+    aggression_name = get_trait_name_aggression(aistate.character)
     print "***************************************************************************"
     print "*******  Log info for AI progress chart script. Do not modify.   **********"
     print ("Generating Orders")
@@ -302,7 +305,7 @@ def generateOrders():  # pylint: disable=invalid-name
     # new orders after a game load. Note that the orders from the original savegame are
     # still being issued and the AIstate was saved after those orders were issued.
     # TODO: Consider adding an option to clear AI orders after load (must save AIstate at turn start then)
-    if fo.currentTurn() == get_aistate().last_turn_played:
+    if fo.currentTurn() == aistate.last_turn_played:
         info("The AIstate indicates that this turn was already played.")
         if not check_bool(get_option_dict().get('replay_turn_after_load', 'False')):
             info("Aborting new order generation. Orders from savegame will still be issued.")
@@ -318,9 +321,9 @@ def generateOrders():  # pylint: disable=invalid-name
         human_player = fo.empirePlayerID(1)
         greet = diplomatic_corp.get_first_turn_greet_message()
         fo.sendChatMessage(human_player,
-                           '%s (%s): [[%s]]' % (empire.name, get_trait_name_aggression(get_aistate().character), greet))
+                           '%s (%s): [[%s]]' % (empire.name, get_trait_name_aggression(aistate.character), greet))
 
-    get_aistate().prepare_for_new_turn()
+    aistate.prepare_for_new_turn()
     turn_state.state.update()
     debug("Calling AI Modules")
     # call AI modules
@@ -357,7 +360,7 @@ def generateOrders():  # pylint: disable=invalid-name
     except Exception as e:
         error("Exception %s while trying doneTurn()" % e, exc_info=True)  # TODO move it to cycle above
     finally:
-        get_aistate().last_turn_played = fo.currentTurn()
+        aistate.last_turn_played = fo.currentTurn()
 
     if using_statprof:
         try:

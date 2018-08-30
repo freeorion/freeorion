@@ -236,7 +236,7 @@ def survey_universe():
         system_facilities.clear()
 
     # var setup done
-
+    aistate = get_aistate()
     for sys_id in universe.systemIDs:
         system = universe.getSystem(sys_id)
         if not system:
@@ -251,7 +251,7 @@ def survey_universe():
             planet = universe.getPlanet(pid)
             if not planet:
                 continue
-            if pid in get_aistate().colonisablePlanetIDs:
+            if pid in aistate.colonisablePlanetIDs:
                 empire_has_qualifying_planet = True
             if planet.size == fo.planetSize.asteroids:
                 local_ast = True
@@ -301,7 +301,7 @@ def survey_universe():
                             active_growth_specials.setdefault(special, []).append(pid)
             elif owner_id != -1:
                 if get_partial_visibility_turn(pid) >= current_turn - 1:  # only interested in immediately recent data
-                    get_aistate().misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(pid)
+                    aistate.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(pid)
 
         if empire_has_qualifying_planet:
             if local_ast:
@@ -311,7 +311,7 @@ def survey_universe():
 
         if sys_id in state.get_empire_planets_by_system():
             AIstate.empireStars.setdefault(system.starType, []).append(sys_id)
-            sys_status = get_aistate().systemStatus.setdefault(sys_id, {})
+            sys_status = aistate.systemStatus.setdefault(sys_id, {})
             if sys_status.get('fleetThreat', 0) > 0:
                 colony_status['colonies_under_attack'].append(sys_id)
             if sys_status.get('neighborThreat', 0) > 0:
@@ -383,7 +383,8 @@ def get_colony_fleets():
     evaluated_colony_planet_ids = list(state.get_unowned_empty_planets().union(state.get_empire_outposts()) - set(
         colony_targeted_planet_ids))  # places for possible colonyBase
 
-    outpost_base_manager = get_aistate().orbital_colonization_manager
+    aistate = get_aistate()
+    outpost_base_manager = aistate.orbital_colonization_manager
 
     for pid in evaluated_colony_planet_ids:  # TODO: reorganize
         planet = universe.getPlanet(pid)
@@ -422,8 +423,8 @@ def get_colony_fleets():
 
     sorted_planets = [(planet_id, score[:2]) for planet_id, score in sorted_planets if score[0] > 0]
     # export planets for other AI modules
-    get_aistate().colonisablePlanetIDs.clear()
-    get_aistate().colonisablePlanetIDs.update(sorted_planets)
+    aistate.colonisablePlanetIDs.clear()
+    aistate.colonisablePlanetIDs.update(sorted_planets)
 
     evaluated_outpost_planets = assign_colonisation_values(evaluated_outpost_planet_ids, MissionType.OUTPOST, None)
     # if outposted planet would be in supply range, let outpost value be best of outpost value or colonization value
@@ -441,8 +442,8 @@ def get_colony_fleets():
 
     sorted_outposts = [(planet_id, score[:2]) for planet_id, score in sorted_outposts if score[0] > 0]
     # export outposts for other AI modules
-    get_aistate().colonisableOutpostIDs.clear()
-    get_aistate().colonisableOutpostIDs.update(sorted_outposts)
+    aistate.colonisableOutpostIDs.clear()
+    aistate.colonisableOutpostIDs.update(sorted_outposts)
     colonization_timer.stop_print_and_clear()
 
 
@@ -1148,18 +1149,19 @@ def get_claimed_stars():
 
 def assign_colony_fleets_to_colonise():
 
-    get_aistate().orbital_colonization_manager.assign_bases_to_colonize()
+    aistate = get_aistate()
+    aistate.orbital_colonization_manager.assign_bases_to_colonize()
 
     # assign fleet targets to colonisable planets
     all_colony_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION)
     send_colony_ships(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_colony_fleet_ids),
-                      get_aistate().colonisablePlanetIDs.items(),
+                      aistate.colonisablePlanetIDs.items(),
                       MissionType.COLONISATION)
 
     # assign fleet targets to colonisable outposts
     all_outpost_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST)
     send_colony_ships(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_outpost_fleet_ids),
-                      get_aistate().colonisableOutpostIDs.items(),
+                      aistate.colonisableOutpostIDs.items(),
                       MissionType.OUTPOST)
 
 
@@ -1212,6 +1214,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
     print
     already_targeted = []
     # for planetID_value_pair in evaluatedPlanets:
+    aistate = get_aistate()
     while fleet_pool and potential_targets:
         target = potential_targets.pop(0)
         if target in already_targeted:
@@ -1221,10 +1224,10 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
             continue
         planet = universe.getPlanet(planet_id)
         sys_id = planet.systemID
-        if get_aistate().systemStatus.setdefault(sys_id, {}).setdefault('monsterThreat', 0) > 2000 \
-                or fo.currentTurn() < 20 and get_aistate().systemStatus[sys_id]['monsterThreat'] > 200:
+        if aistate.systemStatus.setdefault(sys_id, {}).setdefault('monsterThreat', 0) > 2000 \
+                or fo.currentTurn() < 20 and aistate.systemStatus[sys_id]['monsterThreat'] > 200:
             print "Skipping colonization of system %s due to Big Monster, threat %d" % (
-                universe.getSystem(sys_id), get_aistate().systemStatus[sys_id]['monsterThreat'])
+                universe.getSystem(sys_id), aistate.systemStatus[sys_id]['monsterThreat'])
             already_targeted.append(planet_id)
             continue
         this_spec = target[1][1]
@@ -1242,7 +1245,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
         fleet_id = this_fleet_list[0]
         already_targeted.append(planet_id)
         ai_target = universe_object.Planet(planet_id)
-        get_aistate().get_fleet_mission(fleet_id).set_target(mission_type, ai_target)
+        aistate.get_fleet_mission(fleet_id).set_target(mission_type, ai_target)
 
 
 def _print_empire_species_roster():
@@ -1489,11 +1492,12 @@ class OrbitalColonizationManager(object):
 
         # find enqueued bases which are no longer needed and dequeue those.
         items_to_dequeue = []
+        aistate = get_aistate()
         for idx, element in enumerate(fo.getEmpire().productionQueue):
             if element.buildType != EmpireProductionTypes.BT_SHIP or element.turnsLeft == -1:
                 continue
 
-            role = get_aistate().get_ship_role(element.designID)
+            role = aistate.get_ship_role(element.designID)
             if role != ShipRoleType.BASE_OUTPOST:
                 continue
 

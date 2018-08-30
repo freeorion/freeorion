@@ -136,12 +136,13 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
     sys_distances = sorted([(universe.jumpDistance(start_system_id, sys_id), sys_id)
                             for sys_id in drydock_system_ids])
 
-    fleet_rating = get_aistate().get_rating(fleet_id)
+    aistate = get_aistate()
+    fleet_rating = aistate.get_rating(fleet_id)
     for _, dock_sys_id in sys_distances:
         dock_system = universe_object.System(dock_sys_id)
         path = can_travel_to_system(fleet_id, start_system, dock_system)
 
-        path_rating = sum([get_aistate().systemStatus[path_sys.id]['totalThreat']
+        path_rating = sum([aistate.systemStatus[path_sys.id]['totalThreat']
                            for path_sys in path])
 
         SAFETY_MARGIN = 10
