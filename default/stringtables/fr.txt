@@ -267,6 +267,8 @@ BALANCE
 CONTENT
 Contenu
 
+MULTIPLAYER
+Multijoueurs
 
 ##
 ## Major errors
@@ -412,7 +414,7 @@ SD_LARGE_MARK_1
 Croiseur Ms
 
 SD_LARGE_MARK1_DESC
-Croiseur équipé de lasers améliorés et d'un blindage standard pour opérations indépendantes de longue portée. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Croiseur équipé d'un armement amélioré et d'un blindage standard pour opérations indépendantes de longue portée. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_2
 Croiseur Lz
@@ -1194,6 +1196,11 @@ Seuls les joueurs alliés gagnent
 RULE_ONLY_ALLIANCE_WIN_DESC
 Les joueurs alliés peuvent gagner collectivement si le nombre de joueurs humains au sein de leur alliance n'est pas supérieur au maximum de joueurs humains vainqueurs et s'il n'y a pas d'autres joueurs humains survivants.
 
+RULE_SHIP_PART_BASED_UPKEEP
+Activer Entretien des Équipements
+
+RULE_SHIP_PART_BASED_UPKEEP_DESC
+Calculer le coût d'entretien selon les équipements de l'astronef plutôt que selon le modèle d'astronef lui-même.
 
 ##
 ## Command-line and options database entries
@@ -1232,6 +1239,9 @@ Démarre le serveur en mode sans hôte. Le serveur accepte les joueurs dans le s
 
 OPTIONS_DB_SKIP_CHECKSUM
 Ignore le contrôle du dossier de ressources. Ceci permet un démarrage plus rapide lorsque le client et le serveur se trouve sur la même machine, utilisant le même dossier de ressources.
+
+OPTIONS_DB_TESTING
+Linux uniquement. L'IA enverra le fichier journal vers la console au lieu de créer un fichier externe.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Génère un fichier config.xml à partir des réglages contenus dans les fichiers config.xml existants et donnés dans la ligne de commande. Ceci écrasera le fichier config.xml actuel, s'il existe.
@@ -1354,6 +1364,9 @@ Définit le nombre minimum de joueurs humains requis pour démarrer une partie m
 
 OPTIONS_DB_MP_HUMAN_MAX
 Limite le nombre de joueurs humains dans une partie multijoueurs. Une valeur de -1 correspond à un nombre illimité.
+
+OPTIONS_DB_COOKIES_EXPIRE
+Valeur en minutes au-delà de laquelle le cookie enregistré sera considéré comme expiré.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position horizontale du centre du menu principal de l'écran d'introduction, en pourcentage de la largeur totale de la fenêtre de jeu ou du plein écran.
@@ -3075,6 +3088,10 @@ Impossible de créer le fichier persistent_config.xml, consultez le fichier log 
 MAP_BTN_TURN_UPDATE
 Tour %1%
 
+# %1% current turn number.
+MAP_BTN_TURN_UNREADY
+Réviser Ordres %1%
+
 # %1% number of frames currently displayed per second.
 MAP_INDICATOR_FPS
 %1% i/s
@@ -4384,6 +4401,17 @@ Modèle déjà existant
 # %1% name of the equivalent ship design.
 DESIGN_WND_KNOWN_DETAIL
 Ce modèle est une réplique de "%1%".
+
+DESIGN_WND_RENAME_FINISHED
+Renommer Modèle Finalisé
+
+# %1% name of the equivalent ship design.
+# %2% new name of the ship design.
+DESIGN_WND_RENAME_FINISHED_DETAIL
+'''Renommer modèle finalisé
+"%1%"
+en 
+"%2%"'''
 
 DESIGN_WND_COMPONENT_CONFLICT
 Modèle incompatible
@@ -7842,6 +7870,32 @@ Raison de la sédentarité:
 Les Volp-Uglush ayant à présent une société hautement complexe et intriquée, il leur est impossible de quitter Hive pour fonder ailleurs une nouvelle colonie, cela nécessitant un esprit d'indépendance et d'innovation leur faisant désormais défaut.
 '''
 
+SP_FULVER
+Fulver
+
+SP_FULVER_GAMEPLAY_DESC
+'''Fourmis précognitives insatisfaites.
+Préfèrent les planètes [[PT_TUNDRA]].
+[[encyclopedia LITHIC_SPECIES_TITLE]]
+'''
+
+SP_FULVER_DESC
+'''Biologie:
+Les Fulvers ont l'apparence de grandes fourmis nerveuses. Ces dernières sont dotées d'un cerveau quantique qui leur permet de prédire avec une grande efficacité tous les futurs proches possibles, rendant très difficile de les surprendre en situation de combat.
+
+Nom:
+La capacité de précognition est unique à l'espèce des Fulvers au sein du monde natal des Fulvers. Par conséquent, un "Fulver" est "Celui qui peut voir" toutes vos réactions possibles.
+
+Personnalité:
+Un Fulver préfère se concentrer sur sa force individuelle et vivre au jour le jour. Il favorise le plus souvent les outils et les décisions qui lui permettent d'appréhender le plus grand nombre de choix futurs. Ayant une mauvaise mémoire et étant dans l'impossibilité de prévoir le futur à long terme, les Fulvers ne peuvent pas entreprendre sur le long terme, dans le domaine scientifique ou la construction de structures défensives complexes. Se sentant entravés par ce nombre limité de choix, les Fulvers, constamment agités et insatisfaits, tentent cependant de surmonter leur condition.
+
+Raison de l'exode:
+Les possibilités infinies qu'offrent l'espace motivent grandement les Fulvers, leur permettant au final de développer une technologie efficace de voyage spatial. Atteignant constamment de nouvelles frontières, les Fulvers ne se soucient guère de ce qu'ils laissent derrière eux.
+
+Structure sociale:
+Leur obsession du futur proche empêche les Fulvers de bâtir des structures de long terme. Étant conscients en permanence de tous les choix possibles de leurs semblables et agissant en conséquence, la société des Fulvers peut être considérée au mieux comme une anarchie informelle.
+'''
+
 SP_FURTHEST  # translated
 Furthest
 
@@ -9182,9 +9236,6 @@ DESC_VAR_LOCAL_CANDIDATE
 DESC_VAR_ROOT_CANDIDATE
 éligible aux conditions d'origine
 
-DESC_STATISTIC
-statistique
-
 DESC_STAT_TYPE
 type de statistique
 
@@ -9431,8 +9482,17 @@ dernier tour où une bataille s'est déroulée ici
 DESC_COMPLEX
 Variable Complexe
 
-DESC_VARIABLE_NAME
-Nom de la Variable
+DESC_VAR_JUMPSBETWEEN
+voies spatiales entre les systèmes contenant les objets avec les ids %1% et %2%
+
+DESC_STATISTIC
+Statistique
+
+DESC_VAR_COUNT
+le nombre d'objets%2%
+
+DESC_VAR_IF
+0, ou 1 s'il existe tout objet%2%
 
 # FOCS variable reference description text.
 # %1% reference type of the FOCS variable.
@@ -9773,7 +9833,7 @@ DESC_DESIGN_HAS_PART_NOT
 #     matching a part class.
 # %3% textual description of the ship part class.
 DESC_DESIGN_HAS_PART_CLASS
-''' intégrant un équipement de classe %1%'''
+''' intégrant entre un %1% et %2% équipements de classe %3%'''
 
 # %1% textual description of the lower limit for the number of ship parts
 #     matching a part class.
@@ -9781,7 +9841,7 @@ DESC_DESIGN_HAS_PART_CLASS
 #     matching a part class.
 # %3% textual description of the ship part class.
 DESC_DESIGN_HAS_PART_CLASS_NOT
-''' n'intégrant pas un équipement de classe %1%'''
+''' n'intégrant pas entre un %1% et %2% équipements de classe %3%'''
 
 # %1% name of the ship design.
 DESC_PREDEFINED_SHIP_DESIGN
@@ -12553,6 +12613,12 @@ Colonie Furthest
 BLD_COL_FURTHEST_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_FURTHEST]]. [[BLD_COL_PART_2]] colonie Furthest [[BLD_COL_PART_3]].
 
+BLD_COL_FULVER
+Colonie Fulver
+
+BLD_COL_FULVER_DESC
+[[BLD_COL_PART_1]] colonie [[species SP_FULVER]]. [[BLD_COL_PART_2]] colonie Fulver [[BLD_COL_PART_3]].
+
 BLD_COL_GEORGE
 Colonie George
 
@@ -14365,8 +14431,23 @@ FAST_COLONIZATION_DESC
 SLOW_COLONIZATION_DESC
 −	Colonisation lente : +20% de délai pour bâtir une colonie.
 
+NO_FUEL_DESC
+−−−	Astronefs sans [[metertype METER_FUEL]]
+
 BAD_FUEL_DESC
-−	Mauvais en [[metertype METER_FUEL]] max : - 1
+−	Mauvais en [[metertype METER_FUEL]] max : -1
+
+AVERAGE_FUEL_DESC
+'''	Normal en [[metertype METER_FUEL]] max : +0'''
+
+GOOD_FUEL_DESC
++	Bon en [[metertype METER_FUEL]] max : +1
+
+GREAT_FUEL_DESC
+++	Excellent en [[metertype METER_FUEL]] max : +2
+
+ULTIMATE_FUEL_DESC
++++	Parfait en [[metertype METER_FUEL]] max : +3
 
 GREAT_ASTEROID_INDUSTRY_DESC
 +	Bons Mineurs sur Astéroïdes: + 0.2 en [[metertype METER_INDUSTRY]] par Population lorsque que le Focus Industrie est activé dans les systèmes abritant une Ceinture d'Astéroïdes colonisée par l'empire.
@@ -14554,6 +14635,36 @@ GREAT_STOCKPILE_LABEL
 # %2% FIXME
 ULTIMATE_STOCKPILE_LABEL
 %2% Parfait en Stock
+
+# %1% FIXME
+# %2% FIXME
+NO_FUEL_LABEL
+%2% Sans Carburant
+
+# %1% FIXME
+# %2% FIXME
+BAD_FUEL_LABEL
+%2% Mauvais en Carburant max
+
+# %1% FIXME
+# %2% FIXME
+AVERAGE_FUEL_LABEL
+%2% Normal en Carburant max
+
+# %1% FIXME
+# %2% FIXME
+GOOD_FUEL_LABEL
+%2% Bon en Carburant max
+
+# %1% FIXME
+# %2% FIXME
+GREAT_FUEL_LABEL
+%2% Excellent en Carburant max
+
+# %1% FIXME
+# %2% FIXME
+ULTIMATE_FUEL_LABEL
+%2% Parfait en Carburant max
 
 # %1% FIXME
 # %2% FIXME
