@@ -9833,7 +9833,7 @@ DESC_DESIGN_HAS_PART_NOT
 #     matching a part class.
 # %3% textual description of the ship part class.
 DESC_DESIGN_HAS_PART_CLASS
-''' that has a part of class %1%'''
+''' that contains between %1% and %2% parts of class %3%'''
 
 # %1% textual description of the lower limit for the number of ship parts
 #     matching a part class.
@@ -9841,7 +9841,7 @@ DESC_DESIGN_HAS_PART_CLASS
 #     matching a part class.
 # %3% textual description of the ship part class.
 DESC_DESIGN_HAS_PART_CLASS_NOT
-''' that does not have a part of class %1%'''
+''' that does not contain between %1% and %2% parts of class %3%'''
 
 # %1% name of the ship design.
 DESC_PREDEFINED_SHIP_DESIGN
