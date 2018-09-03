@@ -110,7 +110,7 @@ class Timer(object):
 
         for name in ordered_names:
             print(("{:<{name_width}} num: {:>6d}, mean: {:>6.2f} msec, std: {:>6.2f} msec, max: {:>6.2f} msec").
-                   format(name, number_samples[name], means[name], stds[name], maxes[name], name_width=max_header))
+                  format(name, number_samples[name], means[name], stds[name], maxes[name], name_width=max_header))
 
         print('=' * line_max_size)
 

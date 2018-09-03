@@ -107,7 +107,7 @@ def parse_config(option_string, config_dir):
 
     if option_string is not None and not isinstance(option_string, str):
         # probably called by unit test
-        print( "Specified option string is not a string: ", option_string, file=sys.stderr)
+        print("Specified option string is not a string: ", option_string, file=sys.stderr)
         return
 
     # get defaults; check if don't already exist and can write
