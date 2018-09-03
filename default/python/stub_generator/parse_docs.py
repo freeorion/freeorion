@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from logging import error
 import re
 
@@ -220,10 +222,10 @@ if __name__ == '__main__':
     # example1 = """getUserDataDir() -> str :\n    Returns path to directory where FreeOrion stores user specific data (config files, saves, etc.)."""
 
     info = Docs(example1, 1)
-    print "=" * 100
-    print "Arg string:", info.get_argument_string()
-    print "=" * 100
-    print "Doc string:\n", info.get_doc_string()
+    print("=" * 100)
+    print("Arg string:", info.get_argument_string())
+    print("=" * 100)
+    print("Doc string:\n", info.get_doc_string())
 
     # double standards
     # canBuild ['empire', 'buildType', 'str', 'int'], ['empire', 'buildType', 'int', 'int']

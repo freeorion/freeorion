@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 """configure_logging redirects print and the logger to use the freeorion server.
 
 Output redirected to the freeorion server prints in the appropriate log:
@@ -86,23 +88,23 @@ except ImportError as e:
         """A stub freeorion_logger for testing"""
         @staticmethod
         def debug(msg, *args):
-            print msg
+            print(msg)
 
         @staticmethod
         def info(msg, *args):
-            print msg
+            print(msg)
 
         @staticmethod
         def warn(msg, *args):
-            print msg
+            print(msg)
 
         @staticmethod
         def error(msg, *args):
-            print >> sys.stderr, msg
+            print(msg, file=sys.stderr)
 
         @staticmethod
         def fatal(msg, *args):
-            print >> sys.stderr, msg
+            print(msg, file=sys.stderr)
 
     freeorion_logger = _FreeOrionLoggerForTest()
 
@@ -203,7 +205,7 @@ def redirect_logging_to_freeorion_logger(initial_log_level=logging.DEBUG):
     if not hasattr(redirect_logging_to_freeorion_logger, "only_redirect_once"):
         sys.stdout = _stdXLikeStream(logging.DEBUG)
         sys.stderr = _stdXLikeStream(logging.ERROR)
-        print 'Python stdout and stderr are redirected to ai process.'
+        print('Python stdout and stderr are redirected to ai process.')
 
         logger = logging.getLogger()
         logger.addHandler(_create_narrow_handler(logging.DEBUG))

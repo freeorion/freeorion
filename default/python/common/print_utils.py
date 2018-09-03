@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 """
 Print utils.
 
@@ -9,7 +11,7 @@ from itertools import izip_longest
 from math import ceil
 
 
-def print_in_columns(items, columns=2):
+def print_in_columns(items, columns=2, printer=print):
     """
     Prints collection as columns.
 
@@ -21,6 +23,8 @@ def print_in_columns(items, columns=2):
     :type items: list|tuple
     :param columns: number of columns
     :type columns: int
+    :param printer: function to print result
+    :type printer: (str) -> None
     :return None:
     """
     row_count = int(ceil((float(len(items)) / columns)))
@@ -29,7 +33,7 @@ def print_in_columns(items, columns=2):
     template = '   '.join('%%-%ss' % w for w in column_widths)
 
     for row in zip(*text_columns):
-        print template % row
+        printer(template % row)
 
 
 class Base(object):
