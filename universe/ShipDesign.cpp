@@ -1131,7 +1131,7 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
     auto parts = parts_in;
 
     // ensure hull type exists
-    const HullType* hull_type = GetHullTypeManager().GetHullType(hull);
+    auto hull_type = GetHullTypeManager().GetHullType(hull);
     if (!hull_type) {
         is_valid = false;
         if (produce_log)
@@ -1185,34 +1185,38 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
     }
 
     // check part exclusions against other parts and hull
-    std::unordered_set<std::string> already_seen_component_names;
-    already_seen_component_names.insert(hull);
+    std::unordered_map<std::string, unsigned int> component_name_counts;
+    component_name_counts[hull] = 1;
+    for (auto part_name : parts)
+        component_name_counts[part_name]++;
+    component_name_counts.erase("");
 
     for (std::size_t ii = 0; ii < parts.size(); ++ii) {
-        auto& part_name =  parts[ii];
-
-        // Ignore empty slots which are valid.
+        const auto part_name = parts[ii];
+        // Ignore empty slots, which are valid.
         if (part_name.empty())
             continue;
 
-        // Remove parts that don't exist
+        // Parts must exist...
         const auto part_type = GetPartType(part_name);
         if (!part_type) {
             if (produce_log)
                 WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" not found"
                              << ". Removing \"" << part_name <<"\"";
             is_valid = false;
-            part_name.clear();
             continue;
         }
 
         for (const auto& excluded : part_type->Exclusions()) {
-            if (already_seen_component_names.count(excluded)) {
+            // confict if a different excluded part is present, or if there are
+            // two or more of a part that excludes itself
+            if ((excluded == part_name && component_name_counts[excluded] > 1) ||
+                (excluded != part_name && component_name_counts[excluded] > 0))
+            {
                 is_valid = false;
                 if (produce_log)
                     WarnLogger() << "Invalid ShipDesign part " << part_name << " conflicts with \""
                                  << excluded << "\". Removing \"" << part_name <<"\"";
-                part_name.clear();
                 continue;
             }
         }
@@ -1226,12 +1230,8 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
                               << boost::lexical_cast<std::string>(slot_type) << " slot"
                               << ". Removing \"" << part_name <<"\"";
             is_valid = false;
-            part_name.clear();
             continue;
         }
-
-        if (!part_name.empty())
-            already_seen_component_names.insert(part_name);
     }
 
     if (is_valid)
