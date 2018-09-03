@@ -74,7 +74,7 @@ class NsisInstScriptGenerator(Generator):
         accepted_dll_files = set(["GiGi.dll", "GiGiSDL.dll"])
         for dll_file in all_dll_files:
             if dll_file.startswith("boost_"):
-                if dll_file.partition("-")[0] in required_boost_libraries:
+                if dll_file.partition(".")[0] in required_boost_libraries:
                     accepted_dll_files.add(dll_file)
             else:
                 accepted_dll_files.add(dll_file)
