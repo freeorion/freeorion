@@ -9,7 +9,7 @@ from common.print_utils import print_in_columns
 import AIDependencies as Dep
 import AIstate
 import ColonisationAI
-import FreeOrionAI as foAI
+from aistate_interface import get_aistate
 import ShipDesignAI
 import TechsListsAI
 from freeorion_tools import chat_human, get_ai_tag_grade, tech_is_complete
@@ -58,11 +58,11 @@ HIGH = 42
 
 # TODO research AI no longer use this method, rename and move this method elsewhere
 def get_research_index():
-    return foAI.foAIstate.character.get_research_index()
+    return get_aistate().character.get_research_index()
 
 
 def has_low_aggression():
-    return foAI.foAIstate.character.prefer_research_low_aggression()
+    return get_aistate().character.prefer_research_low_aggression()
 
 
 def conditional_priority(func_if_true, func_if_false, cond_func):
@@ -120,7 +120,7 @@ def has_star(star_type):
 def if_enemies(true_val, false_val):
     return conditional_priority(true_val,
                                 false_val,
-                                cond_func=lambda: foAI.foAIstate.misc.get('enemies_sighted', {}))
+                                cond_func=lambda: get_aistate().misc.get('enemies_sighted', {}))
 
 
 def if_dict(this_dict, this_key, true_val, false_val):
@@ -219,7 +219,7 @@ def get_stealth_priority(tech_name=""):
 
 
 def get_xeno_genetics_priority(tech_name=""):
-    if not foAI.foAIstate.character.may_research_xeno_genetics_variances():
+    if not get_aistate().character.may_research_xeno_genetics_variances():
         return get_population_boost_priority()
     if has_only_bad_colonizers():
         # Empire only have lousy colonisers, xeno-genetics are really important for them
@@ -271,7 +271,7 @@ def get_hull_priority(tech_name):
         get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardTroopShipDesigner()),
         get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardColonisationShipDesigner()))
 
-    if foAI.foAIstate.misc.get('enemies_sighted', {}):
+    if get_aistate().misc.get('enemies_sighted', {}):
         aggression = 1
     else:
         aggression = 0.1
@@ -348,7 +348,7 @@ def init():
     """
     choices.init()
     # prefixes for tech search. Check for prefix will be applied in same order as they defined
-    defensive = foAI.foAIstate.character.prefer_research_defensive()
+    defensive = get_aistate().character.prefer_research_defensive()
     prefixes = [
         (Dep.DEFENSE_TECHS_PREFIX, 2.0 if defensive else if_enemies(1.0, 0.2)),
         (Dep.WEAPON_PREFIX, ship_usefulness(if_enemies(1.0, 0.2), MIL_IDX))
@@ -605,7 +605,7 @@ def get_research_queue_techs():
 
 
 def exclude_tech(tech_name):
-    return ((not foAI.foAIstate.character.may_research_tech(tech_name))
+    return ((not get_aistate().character.may_research_tech(tech_name))
             or tech_name in TechsListsAI.unusable_techs()
             or tech_name in Dep.UNRESEARCHABLE_TECHS)
 
@@ -615,7 +615,8 @@ def generate_classic_research_orders():
     report_adjustments = False
     empire = fo.getEmpire()
     empire_id = empire.empireID
-    enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted', {})
+    aistate = get_aistate()
+    enemies_sighted = aistate.misc.get('enemies_sighted', {})
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     print "Research Queue Management:"
     resource_production = empire.resourceProduction(fo.resourceType.research)
@@ -713,21 +714,21 @@ def generate_classic_research_orders():
             research_queue_list = get_research_queue_techs()
             def_techs = TechsListsAI.defense_techs_1()
             for def_tech in def_techs:
-                if (foAI.foAIstate.character.may_research_tech_classic(def_tech)
+                if (aistate.character.may_research_tech_classic(def_tech)
                         and def_tech not in research_queue_list[:5] and not tech_is_complete(def_tech)):
                     res = fo.issueEnqueueTechOrder(def_tech, min(3, len(research_queue_list)))
                     print "Empire is very defensive, so attempted to fast-track %s, got result %d" % (def_tech, res)
         if False:  # with current stats of Conc Camps, disabling this fast-track
             research_queue_list = get_research_queue_techs()
-            if "CON_CONC_CAMP" in research_queue_list and foAI.foAIstate.character.may_research_tech_classic("CON_CONC_CAMP"):
+            if "CON_CONC_CAMP" in research_queue_list and aistate.character.may_research_tech_classic("CON_CONC_CAMP"):
                 insert_idx = min(40, research_queue_list.index("CON_CONC_CAMP"))
             else:
                 insert_idx = max(0, min(40, len(research_queue_list) - 10))
-            if "SHP_DEFLECTOR_SHIELD" in research_queue_list and foAI.foAIstate.character.may_research_tech_classic("SHP_DEFLECTOR_SHIELD"):
+            if "SHP_DEFLECTOR_SHIELD" in research_queue_list and aistate.character.may_research_tech_classic("SHP_DEFLECTOR_SHIELD"):
                 insert_idx = min(insert_idx, research_queue_list.index("SHP_DEFLECTOR_SHIELD"))
             for cc_tech in ["CON_ARCH_PSYCH", "CON_CONC_CAMP"]:
                 if (cc_tech not in research_queue_list[:insert_idx + 1] and not tech_is_complete(cc_tech)
-                        and foAI.foAIstate.character.may_research_tech_classic(cc_tech)):
+                        and aistate.character.may_research_tech_classic(cc_tech)):
                     res = fo.issueEnqueueTechOrder(cc_tech, insert_idx)
                     msg = "Empire is very aggressive, so attempted to fast-track %s, got result %d" % (cc_tech, res)
                     if report_adjustments:
@@ -774,14 +775,14 @@ def generate_classic_research_orders():
     #
     # Supply range and detection range
     if False:  # disabled for now, otherwise just to help with cold-folding / organization
-        if len(foAI.foAIstate.colonisablePlanetIDs) == 0:
+        if len(aistate.colonisablePlanetIDs) == 0:
             best_colony_site_score = 0
         else:
-            best_colony_site_score = foAI.foAIstate.colonisablePlanetIDs.items()[0][1]
-        if len(foAI.foAIstate.colonisableOutpostIDs) == 0:
+            best_colony_site_score = aistate.colonisablePlanetIDs.items()[0][1]
+        if len(aistate.colonisableOutpostIDs) == 0:
             best_outpost_site_score = 0
         else:
-            best_outpost_site_score = foAI.foAIstate.colonisableOutpostIDs.items()[0][1]
+            best_outpost_site_score = aistate.colonisableOutpostIDs.items()[0][1]
         need_improved_scouting = (best_colony_site_score < 150 or best_outpost_site_score < 200)
 
         if need_improved_scouting:
@@ -840,7 +841,7 @@ def generate_classic_research_orders():
     # check to accelerate xeno_arch
     if True:  # just to help with cold-folding /  organization
         if (state.have_ruins and not tech_is_complete("LRN_XENOARCH")
-                and foAI.foAIstate.character.may_research_tech_classic("LRN_XENOARCH")):
+                and aistate.character.may_research_tech_classic("LRN_XENOARCH")):
             if artif_minds in research_queue_list:
                 insert_idx = 7 + research_queue_list.index(artif_minds)
             elif "GRO_SYMBIOTIC_BIO" in research_queue_list:
@@ -947,7 +948,7 @@ def generate_classic_research_orders():
                 insert_idx = num_techs_accelerated
                 for xg_tech in ["GRO_XENO_GENETICS", "GRO_GENETIC_ENG"]:
                     if (xg_tech not in research_queue_list[:1 + num_techs_accelerated] and not tech_is_complete(xg_tech)
-                            and foAI.foAIstate.character.may_research_tech_classic(xg_tech)):
+                            and aistate.character.may_research_tech_classic(xg_tech)):
                         res = fo.issueEnqueueTechOrder(xg_tech, insert_idx)
                         num_techs_accelerated += 1
                         msg = "Empire has poor colonizers, so attempted to fast-track %s, got result %d" % (xg_tech, res)
@@ -970,7 +971,7 @@ def generate_classic_research_orders():
                 insert_idx = num_techs_accelerated
                 for dt_ech in ["LRN_PHYS_BRAIN", "LRN_TRANSLING_THT", "LRN_PSIONICS", "LRN_DISTRIB_THOUGHT"]:
                     if (dt_ech not in research_queue_list[:insert_idx + 2] and not tech_is_complete(dt_ech)
-                            and foAI.foAIstate.character.may_research_tech_classic(dt_ech)):
+                            and aistate.character.may_research_tech_classic(dt_ech)):
                         res = fo.issueEnqueueTechOrder(dt_ech, insert_idx)
                         num_techs_accelerated += 1
                         insert_idx += 1
@@ -984,7 +985,7 @@ def generate_classic_research_orders():
     #
     # check to accelerate quant net
     if False:  # disabled for now, otherwise just to help with cold-folding / organization
-        if foAI.foAIstate.character.may_research_tech_classic("LRN_QUANT_NET") and (state.population_with_research_focus() >= 40):
+        if aistate.character.may_research_tech_classic("LRN_QUANT_NET") and (state.population_with_research_focus() >= 40):
             if not tech_is_complete("LRN_QUANT_NET"):
                 insert_idx = num_techs_accelerated  # TODO determine min target slot if reenabling
                 for qnTech in ["LRN_NDIM_SUBSPACE", "LRN_QUANT_NET"]:
@@ -1002,7 +1003,7 @@ def generate_classic_research_orders():
     # if we own a blackhole, accelerate sing_gen and conc camp
     if True:  # just to help with cold-folding / organization
         if (fo.currentTurn() > 50 and len(AIstate.empireStars.get(fo.starType.blackHole, [])) != 0 and
-                foAI.foAIstate.character.may_research_tech_classic("PRO_SINGULAR_GEN") and not tech_is_complete(Dep.PRO_SINGULAR_GEN) and
+                aistate.character.may_research_tech_classic("PRO_SINGULAR_GEN") and not tech_is_complete(Dep.PRO_SINGULAR_GEN) and
                 tech_is_complete(Dep.PRO_SOL_ORB_GEN)):
             # sing_tech_list = [ "LRN_GRAVITONICS" , "PRO_SINGULAR_GEN"]  # formerly also "CON_ARCH_PSYCH", "CON_CONC_CAMP",
             sing_gen_tech = fo.getTech(Dep.PRO_SINGULAR_GEN)

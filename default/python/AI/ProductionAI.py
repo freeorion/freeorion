@@ -11,7 +11,7 @@ import AIstate
 import ColonisationAI
 import CombatRatingsAI
 import FleetUtilsAI
-import FreeOrionAI as foAI
+from aistate_interface import get_aistate
 import MilitaryAI
 import PlanetUtilsAI
 import PriorityAI
@@ -216,7 +216,8 @@ def generate_production_orders():
     print
     print "  Total Available Production Points: %s" % total_pp
 
-    claimed_stars = foAI.foAIstate.misc.get('claimedStars', {})
+    aistate = get_aistate()
+    claimed_stars = aistate.misc.get('claimedStars', {})
     if claimed_stars == {}:
         for sType in AIstate.empireStars:
             claimed_stars[sType] = list(AIstate.empireStars[sType])
@@ -240,7 +241,7 @@ def generate_production_orders():
                 fo.updateProductionQueue()
 
     building_expense = 0.0
-    building_ratio = foAI.foAIstate.character.preferred_building_ratio([0.4, 0.35, 0.30])
+    building_ratio = aistate.character.preferred_building_ratio([0.4, 0.35, 0.30])
     print "Buildings present on all owned planets:"
     for pid in state.get_all_empire_planets():
         planet = universe.getPlanet(pid)
@@ -369,15 +370,16 @@ def generate_production_orders():
 
     print "best_pilot_facilities: \n %s" % best_pilot_facilities
 
-    max_defense_portion = foAI.foAIstate.character.max_defense_portion()
-    if foAI.foAIstate.character.check_orbital_production():
+    max_defense_portion = aistate.character.max_defense_portion()
+    if aistate.character.check_orbital_production():
         sys_orbital_defenses = {}
         queued_defenses = {}
         defense_allocation = 0.0
-        target_orbitals = foAI.foAIstate.character.target_number_of_orbitals()
+        target_orbitals = aistate.character.target_number_of_orbitals()
         print "Orbital Defense Check -- target Defense Orbitals: ", target_orbitals
         for element in production_queue:
-            if (element.buildType == EmpireProductionTypes.BT_SHIP) and (foAI.foAIstate.get_ship_role(element.designID) == ShipRoleType.BASE_DEFENSE):
+            if (element.buildType == EmpireProductionTypes.BT_SHIP) and (
+                    aistate.get_ship_role(element.designID) == ShipRoleType.BASE_DEFENSE):
                 planet = universe.getPlanet(element.locationID)
                 if not planet:
                     print >> sys.stderr, "Problem getting Planet for build loc %s" % element.locationID
@@ -388,17 +390,17 @@ def generate_production_orders():
         print "Queued Defenses:", ppstring([(str(universe.getSystem(sid)), num)
                                             for sid, num in queued_defenses.items()])
         for sys_id, pids in state.get_empire_planets_by_system(include_outposts=False).items():
-            if foAI.foAIstate.systemStatus.get(sys_id, {}).get('fleetThreat', 1) > 0:
+            if aistate.systemStatus.get(sys_id, {}).get('fleetThreat', 1) > 0:
                 continue  # don't build orbital shields if enemy fleet present
             if defense_allocation > max_defense_portion * total_pp:
                 break
             sys_orbital_defenses[sys_id] = 0
-            fleets_here = foAI.foAIstate.systemStatus.get(sys_id, {}).get('myfleets', [])
+            fleets_here = aistate.systemStatus.get(sys_id, {}).get('myfleets', [])
             for fid in fleets_here:
-                if foAI.foAIstate.get_fleet_role(fid) == MissionType.ORBITAL_DEFENSE:
+                if aistate.get_fleet_role(fid) == MissionType.ORBITAL_DEFENSE:
                     print "Found %d existing Orbital Defenses in %s :" % (
-                        foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0), universe.getSystem(sys_id))
-                    sys_orbital_defenses[sys_id] += foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0)
+                        aistate.fleetStatus.get(fid, {}).get('nships', 0), universe.getSystem(sys_id))
+                    sys_orbital_defenses[sys_id] += aistate.fleetStatus.get(fid, {}).get('nships', 0)
             for pid in pids:
                 sys_orbital_defenses[sys_id] += queued_defenses.get(pid, 0)
             if sys_orbital_defenses[sys_id] < target_orbitals:
@@ -556,7 +558,7 @@ def generate_production_orders():
 
     shipyard_type = fo.getBuildingType("BLD_SHIPYARD_BASE")
     building_name = "BLD_SHIPYARD_AST"
-    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.character.may_build_building(building_name):
+    if empire.buildingTypeAvailable(building_name) and aistate.character.may_build_building(building_name):
         queued_building_locs = [element.locationID for element in production_queue if (element.name == building_name)]
         if not queued_building_locs:
             building_type = fo.getBuildingType(building_name)
@@ -642,7 +644,7 @@ def generate_production_orders():
 
     building_name = "BLD_GAS_GIANT_GEN"
     max_gggs = 1
-    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.character.may_build_building(building_name):
+    if empire.buildingTypeAvailable(building_name) and aistate.character.may_build_building(building_name):
         queued_building_locs = [element.locationID for element in production_queue if (element.name == building_name)]
         building_type = fo.getBuildingType(building_name)
         for pid in state.get_all_empire_planets():  # TODO: check to ensure that a resource center exists in system, or GGG would be wasted
@@ -669,7 +671,7 @@ def generate_production_orders():
                         print "Enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, universe.getPlanet(pid).name, res)
 
     building_name = "BLD_SOL_ORB_GEN"
-    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.character.may_build_building(building_name):
+    if empire.buildingTypeAvailable(building_name) and aistate.character.may_build_building(building_name):
         already_got_one = 99
         for pid in state.get_all_empire_planets():
             planet = universe.getPlanet(pid)
@@ -731,7 +733,7 @@ def generate_production_orders():
     building_name = "BLD_ART_BLACK_HOLE"
     if (
         empire.buildingTypeAvailable(building_name) and
-        foAI.foAIstate.character.may_build_building(building_name) and
+        aistate.character.may_build_building(building_name) and
         len(AIstate.empireStars.get(fo.starType.red, [])) > 0
     ):
         already_got_one = False
@@ -781,7 +783,7 @@ def generate_production_orders():
                     print "problem queueing %s at planet %s" % (building_name, planet_used)
 
     building_name = "BLD_BLACK_HOLE_POW_GEN"
-    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.character.may_build_building(building_name):
+    if empire.buildingTypeAvailable(building_name) and aistate.character.may_build_building(building_name):
         already_got_one = False
         for pid in state.get_all_empire_planets():
             planet = universe.getPlanet(pid)
@@ -917,7 +919,7 @@ def generate_production_orders():
             continue
         for shipID in fleet.shipIDs:
             ship = universe.getShip(shipID)
-            if ship and (foAI.foAIstate.get_ship_role(ship.design.id) == ShipRoleType.CIVILIAN_COLONISATION):
+            if ship and (aistate.get_ship_role(ship.design.id) == ShipRoleType.CIVILIAN_COLONISATION):
                 colony_ship_map.setdefault(ship.speciesName, []).append(1)
 
     building_name = "BLD_CONC_CAMP"
@@ -948,7 +950,7 @@ def generate_production_orders():
                 if universe.getBuilding(bldg).buildingTypeName == building_name:
                     res = fo.issueScrapOrder(bldg)
                     print "Tried scrapping %s at planet %s, got result %d" % (building_name, planet.name, res)
-        elif foAI.foAIstate.character.may_build_building(building_name) and can_build_camp and (t_pop >= 36):
+        elif aistate.character.may_build_building(building_name) and can_build_camp and (t_pop >= 36):
             if (planet.focus == FocusType.FOCUS_GROWTH) or (AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials) or (pid == capital_id):
                 continue
                 # pass  # now that focus setting takes these into account, probably works ok to have conc camp, but let's not push it
@@ -1090,7 +1092,7 @@ def generate_production_orders():
     queued_clny_bld_locs = [element.locationID for element in production_queue
                             if (element.name.startswith('BLD_COL_') and
                                 empire_has_colony_bld_species(element.name))]
-    colony_bldg_entries = [entry for entry in foAI.foAIstate.colonisablePlanetIDs.items() if
+    colony_bldg_entries = [entry for entry in aistate.colonisablePlanetIDs.items() if
                            entry[1][0] > 60 and
                            entry[0] not in queued_clny_bld_locs and
                            entry[0] in state.get_empire_outposts() and
@@ -1161,7 +1163,7 @@ def generate_production_orders():
             else:
                 print "element %s is projected to never be completed as currently stands, but will remain on queue " % element.name
         elif element.buildType == EmpireProductionTypes.BT_SHIP:
-            this_role = foAI.foAIstate.get_ship_role(element.designID)
+            this_role = aistate.get_ship_role(element.designID)
             if this_role == ShipRoleType.CIVILIAN_COLONISATION:
                 this_spec = universe.getPlanet(element.locationID).speciesName
                 queued_colony_ships[this_spec] = queued_colony_ships.get(this_spec, 0) + element.remaining * element.blocksize
@@ -1183,18 +1185,18 @@ def generate_production_orders():
         fo.issueDequeueProductionOrder(queue_index)
 
     all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
-    total_military_ships = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in all_military_fleet_ids])
+    total_military_ships = sum([aistate.fleetStatus.get(fid, {}).get('nships', 0) for fid in all_military_fleet_ids])
     all_troop_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.INVASION)
-    total_troop_ships = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in all_troop_fleet_ids])
+    total_troop_ships = sum([aistate.fleetStatus.get(fid, {}).get('nships', 0) for fid in all_troop_fleet_ids])
     avail_troop_fleet_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_troop_fleet_ids))
-    total_available_troops = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in avail_troop_fleet_ids])
+    total_available_troops = sum([aistate.fleetStatus.get(fid, {}).get('nships', 0) for fid in avail_troop_fleet_ids])
     print "Trooper Status turn %d: %d total, with %d unassigned. %d queued, compared to %d total Military Attack Ships" % (current_turn, total_troop_ships,
                                                                                                                            total_available_troops, queued_troop_ships, total_military_ships)
     if (
         capital_id is not None and
         (current_turn >= 40 or can_prioritize_troops) and
-        foAI.foAIstate.systemStatus.get(capital_system_id, {}).get('fleetThreat', 0) == 0 and
-        foAI.foAIstate.systemStatus.get(capital_system_id, {}).get('neighborThreat', 0) == 0
+        aistate.systemStatus.get(capital_system_id, {}).get('fleetThreat', 0) == 0 and
+        aistate.systemStatus.get(capital_system_id, {}).get('neighborThreat', 0) == 0
     ):
         best_design_id, best_design, build_choices = get_best_ship_info(PriorityType.PRODUCTION_INVASION)
         if build_choices is not None and len(build_choices) > 0:
@@ -1204,7 +1206,7 @@ def generate_production_orders():
             troopers_needed = max(0, int(min(0.99 + (current_turn/20.0 - total_available_troops)/max(2, prod_time - 1), total_military_ships/3 - total_troop_ships)))
             ship_number = troopers_needed
             per_turn_cost = (float(prod_cost) / prod_time)
-            if troopers_needed > 0 and total_pp > 3*per_turn_cost*queued_troop_ships and foAI.foAIstate.character.may_produce_troops():
+            if troopers_needed > 0 and total_pp > 3*per_turn_cost*queued_troop_ships and aistate.character.may_produce_troops():
                 retval = fo.issueEnqueueShipProductionOrder(best_design_id, loc)
                 if retval != 0:
                     print "forcing %d new ship(s) to production queue: %s; per turn production cost %.1f" % (ship_number, best_design.name, ship_number*per_turn_cost)
@@ -1220,7 +1222,7 @@ def generate_production_orders():
     # get the highest production priorities
     production_priorities = {}
     for priority_type in get_priority_production_types():
-        production_priorities[priority_type] = int(max(0, (foAI.foAIstate.get_priority(priority_type)) ** 0.5))
+        production_priorities[priority_type] = int(max(0, (aistate.get_priority(priority_type)) ** 0.5))
 
     sorted_priorities = production_priorities.items()
     sorted_priorities.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
@@ -1291,7 +1293,7 @@ def generate_production_orders():
             this_spec = universe.getPlanet(loc).speciesName
             species_map.setdefault(this_spec, []).append(loc)
         colony_build_choices = []
-        for pid, (score, this_spec) in foAI.foAIstate.colonisablePlanetIDs.items():
+        for pid, (score, this_spec) in aistate.colonisablePlanetIDs.items():
             colony_build_choices.extend(int(math.ceil(score))*[pid_ for pid_ in species_map.get(this_spec, []) if pid_ in planet_set])
 
         local_priorities = {}
@@ -1473,7 +1475,7 @@ def build_ship_facilities(bld_name, best_pilot_facilities, top_locs=None):
     empire = fo.getEmpire()
     total_pp = empire.productionPoints
     __, prereq_bldg, this_cost, time = AIDependencies.SHIP_FACILITIES.get(bld_name, (None, '', -1, -1))
-    if not foAI.foAIstate.character.may_build_building(bld_name):
+    if not get_aistate().character.may_build_building(bld_name):
         return
     bld_type = fo.getBuildingType(bld_name)
     if not empire.buildingTypeAvailable(bld_name):
@@ -1570,7 +1572,7 @@ def find_automatic_historic_analyzer_candidates():
         fo.aggression.maniacal: (8, 5, 30)
     }
 
-    min_pp, turn_trigger, min_pp_per_additional = conditions.get(foAI.foAIstate.character.get_trait(Aggression).key,
+    min_pp, turn_trigger, min_pp_per_additional = conditions.get(get_aistate().character.get_trait(Aggression).key,
                                                                  (ARB_LARGE_NUMBER, ARB_LARGE_NUMBER, ARB_LARGE_NUMBER))
     max_enqueued = 1 if total_pp > min_pp or fo.currentTurn() > turn_trigger else 0
     max_enqueued += int(total_pp / min_pp_per_additional)
@@ -1605,12 +1607,11 @@ def get_number_of_queued_outpost_and_colony_ships():
     :rtype: int
     """
     num_ships = 0
+    considered_ship_roles = (ShipRoleType.CIVILIAN_OUTPOST, ShipRoleType.BASE_OUTPOST,
+                             ShipRoleType.BASE_COLONISATION, ShipRoleType.CIVILIAN_COLONISATION)
     for element in fo.getEmpire().productionQueue:
         if element.turnsLeft >= 0 and element.buildType == EmpireProductionTypes.BT_SHIP:
-            if foAI.foAIstate.get_ship_role(element.designID) in (ShipRoleType.CIVILIAN_OUTPOST,
-                                                                  ShipRoleType.BASE_OUTPOST,
-                                                                  ShipRoleType.BASE_COLONISATION,
-                                                                  ShipRoleType.CIVILIAN_COLONISATION):
+            if get_aistate().get_ship_role(element.designID) in considered_ship_roles:
                 num_ships += element.blocksize
     return num_ships
 

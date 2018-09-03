@@ -142,7 +142,7 @@ class State(object):
 
         :rtype: ReadOnlyDict[int, list[int]]
         """
-        # TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs
+        # TODO: as currently used, is duplicative with combo of get_aistate().popCtrSystemIDs
         if include_outposts not in self.__empire_planets_by_system:
             empire_id = fo.empireID()
             empire_planets = (x for x in self.__planet_info.itervalues()

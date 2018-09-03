@@ -2,10 +2,10 @@
 import random
 
 import freeOrionAIInterface as fo
-import FreeOrionAI as foAI
 from character.character_module import Aggression
 from character.character_strings_module import possible_greetings
 from freeorion_tools import UserStringList
+from aistate_interface import get_aistate
 
 
 def handle_pregame_chat(sender_player_id, message_txt):
@@ -34,12 +34,13 @@ class DiplomaticCorp(object):
         # TODO: remove the following early return once proper support for third party diplomatic history is added
         if message.recipient != fo.empireID():
             return
+        aistate = get_aistate()
         if message.type == fo.diplomaticMessageType.peaceProposal:
-            foAI.foAIstate.log_peace_request(message.sender, message.recipient)
+            aistate.log_peace_request(message.sender, message.recipient)
             proposal_sender_player = fo.empirePlayerID(message.sender)
-            attitude = foAI.foAIstate.character.attitude_to_empire(message.sender, foAI.foAIstate.diplomatic_logs)
+            attitude = aistate.character.attitude_to_empire(message.sender, aistate.diplomatic_logs)
             possible_acknowledgments = []
-            aggression = foAI.foAIstate.character.get_trait(Aggression)
+            aggression = aistate.character.get_trait(Aggression)
             if aggression.key <= fo.aggression.typical:
                 possible_acknowledgments = UserStringList("AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST")
                 if attitude > 0:
@@ -68,11 +69,11 @@ class DiplomaticCorp(object):
         elif message.type == fo.diplomaticMessageType.warDeclaration:
             # note: apparently this is currently (normally?) sent not as a warDeclaration,
             # but as a simple diplomatic_status_update to war
-            foAI.foAIstate.log_war_declaration(message.sender, message.recipient)
+            aistate.log_war_declaration(message.sender, message.recipient)
 
     @staticmethod
     def get_first_turn_greet_message():
-        greets = possible_greetings(foAI.foAIstate.character)
+        greets = possible_greetings(get_aistate().character)
         # no such entry
         if len(greets) == 1 and greets[0] == '?':
             greets = UserStringList("AI_FIRST_TURN_GREETING_BEGINNER")
@@ -84,7 +85,7 @@ class DiplomaticCorp(object):
         print "Received diplomatic status update to %s about empire %s and empire %s" % (
             status_update.status, status_update.empire1, status_update.empire2)
         if status_update.empire2 == fo.empireID() and status_update.status == fo.diplomaticStatus.war:
-            foAI.foAIstate.log_war_declaration(status_update.empire1, status_update.empire2)
+            get_aistate().log_war_declaration(status_update.empire1, status_update.empire2)
 
     def handle_midgame_chat(self, sender_player_id, message_txt):
         print "Midgame chat received from player %d, message: %s" % (sender_player_id, message_txt)

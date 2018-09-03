@@ -2,7 +2,7 @@ from heapq import heappush, heappop
 from collections import namedtuple
 from logging import warn, error
 
-import FreeOrionAI as foAI
+from aistate_interface import get_aistate
 import freeOrionAIInterface as fo
 import PlanetUtilsAI
 
@@ -102,7 +102,7 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0, m
         return None
 
     mission_type = (mission_type_override if mission_type_override is not None else
-                    foAI.foAIstate.get_fleet_mission(fleet_id))
+                    get_aistate().get_fleet_mission(fleet_id))
     may_travel_starlane_func = _STARLANE_TRAVEL_FUNC_MAP.get(mission_type, _more_careful_travel_starlane_func)
 
     path_info = find_path_with_resupply_generic(start, target, start_fuel, fleet.maxFuel,

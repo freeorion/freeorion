@@ -8,11 +8,11 @@ from fleet_orders import OrderMove, OrderPause, OrderOutpost, OrderColonize, Ord
 import AIstate
 import EspionageAI
 import FleetUtilsAI
-import FreeOrionAI as foAI
 import MoveUtilsAI
 import MilitaryAI
 import InvasionAI
 import CombatRatingsAI
+from aistate_interface import get_aistate
 from universe_object import System, Fleet, Planet
 from EnumsAI import MissionType
 from AIDependencies import INVALID_ID
@@ -153,7 +153,8 @@ class AIFleetMission(object):
         system_id = main_fleet.systemID
         if system_id == INVALID_ID:
             return  # can't merge fleets in middle of starlane
-        system_status = foAI.foAIstate.systemStatus[system_id]
+        aistate = get_aistate()
+        system_status = aistate.systemStatus[system_id]
 
         # if a combat mission, and only have final order (so must be at final target), don't try
         # merging if there is no local threat (it tends to lead to fleet object churn)
@@ -166,9 +167,9 @@ class AIFleetMission(object):
             return
 
         target_id = self.target.id if self.target else None
-        main_fleet_role = foAI.foAIstate.get_fleet_role(fleet_id)
+        main_fleet_role = aistate.get_fleet_role(fleet_id)
         for fid in other_fleets_here:
-            fleet_role = foAI.foAIstate.get_fleet_role(fid)
+            fleet_role = aistate.get_fleet_role(fid)
             if fleet_role not in COMPATIBLE_ROLES_MAP[main_fleet_role]:
                 continue
             fleet = universe.getFleet(fid)
@@ -177,7 +178,7 @@ class AIFleetMission(object):
                 continue
             if not (fleet.speed > 0 or main_fleet.speed == 0):  # TODO(Cjkjvfnby) Check this condition
                 continue
-            fleet_mission = foAI.foAIstate.get_fleet_mission(fid)
+            fleet_mission = aistate.get_fleet_mission(fid)
             do_merge = False
             need_left = 0
             if (main_fleet_role == MissionType.ORBITAL_DEFENSE) or (fleet_role == MissionType.ORBITAL_DEFENSE):
@@ -199,10 +200,10 @@ class AIFleetMission(object):
                         # TODO: should probably ensure that fleetA has aggression on now
                         do_merge = float(min(main_fleet.speed, fleet.speed))/max(main_fleet.speed, fleet.speed) >= 0.6
                     elif main_fleet.speed > 0:
-                        neighbors = foAI.foAIstate.systemStatus.get(system_id, {}).get('neighbors', [])
+                        neighbors = aistate.systemStatus.get(system_id, {}).get('neighbors', [])
                         if target == system_id and target_id in neighbors and self.type == MissionType.SECURE:
                             # consider 'borrowing' for work in neighbor system  # TODO check condition
-                            need_left = 1.5 * sum(foAI.foAIstate.systemStatus.get(nid, {}).get('fleetThreat', 0)
+                            need_left = 1.5 * sum(aistate.systemStatus.get(nid, {}).get('fleetThreat', 0)
                                                   for nid in neighbors if nid != target_id)
                             fleet_rating = CombatRatingsAI.get_fleet_rating(fid)
                             if need_left < fleet_rating:
@@ -315,8 +316,9 @@ class AIFleetMission(object):
             return  # TODO: check for best local target
         open_targets = []
         already_targeted = InvasionAI.get_invasion_targeted_planet_ids(system.planetIDs, MissionType.INVASION)
+        aistate = get_aistate()
         for pid in system.planetIDs:
-            if pid in already_targeted or (pid in foAI.foAIstate.qualifyingTroopBaseTargets):
+            if pid in already_targeted or (pid in aistate.qualifyingTroopBaseTargets):
                 continue
             planet = universe.getPlanet(pid)
             if planet.unowned or (planet.owner == empire_id):
@@ -406,6 +408,7 @@ class AIFleetMission(object):
             if (isinstance(fleet_order, (OrderColonize, OrderOutpost, OrderInvade)) and
                     self._check_abort_mission(fleet_order)):
                 return
+        aistate = get_aistate()
         for fleet_order in self.orders:
             if just_issued_move_order and self.fleet.get_object().systemID != last_move_target_id:
                 # having just issued a move order, we will normally stop issuing orders this turn, except that if there
@@ -443,7 +446,7 @@ class AIFleetMission(object):
                 print "CAN'T issue fleet order %s" % fleet_order
                 if isinstance(fleet_order, OrderMove):
                     this_system_id = fleet_order.target.id
-                    this_status = foAI.foAIstate.systemStatus.setdefault(this_system_id, {})
+                    this_status = aistate.systemStatus.setdefault(this_system_id, {})
                     threat_threshold = fo.currentTurn() * MilitaryAI.cur_best_mil_ship_rating() / 4.0
                     if this_status.get('monsterThreat', 0) > threat_threshold:
                         # if this move order is not this mil fleet's final destination, and blocked by Big Monster,
@@ -451,7 +454,7 @@ class AIFleetMission(object):
                         if (self.type not in (MissionType.MILITARY, MissionType.SECURE) or
                                 fleet_order != self.orders[-1]):
                             print "Aborting mission due to being blocked by Big Monster at system %d, threat %d" % (
-                                this_system_id, foAI.foAIstate.systemStatus[this_system_id]['monsterThreat'])
+                                this_system_id, aistate.systemStatus[this_system_id]['monsterThreat'])
                             print "Full set of orders were:"
                             for this_order in self.orders:
                                 print " - %s" % this_order
@@ -514,8 +517,7 @@ class AIFleetMission(object):
                             print "\t\t %s" % this_order
                         self.clear_fleet_orders()
                         self.clear_target()
-                        if foAI.foAIstate.get_fleet_role(fleet_id) in (MissionType.MILITARY,
-                                                                       MissionType.SECURE):
+                        if aistate.get_fleet_role(fleet_id) in (MissionType.MILITARY, MissionType.SECURE):
                             allocations = MilitaryAI.get_military_fleets(mil_fleets_ids=[fleet_id],
                                                                          try_reset=False,
                                                                          thisround="Fleet %d Reassignment" % fleet_id)
@@ -526,7 +528,7 @@ class AIFleetMission(object):
                         print "No Current Orders"
                 else:
                     # TODO: evaluate releasing a smaller portion or none of the ships
-                    system_status = foAI.foAIstate.systemStatus.setdefault(last_sys_target, {})
+                    system_status = aistate.systemStatus.setdefault(last_sys_target, {})
                     new_fleets = []
                     threat_present = system_status.get('totalThreat', 0) + system_status.get('neighborThreat', 0) > 0
                     target_system = universe.getSystem(last_sys_target)
@@ -547,7 +549,7 @@ class AIFleetMission(object):
                         print "Threat remains in target system; NOT releasing any ships."
                     new_military_fleets = []
                     for fleet_id in new_fleets:
-                        if foAI.foAIstate.get_fleet_role(fleet_id) in COMBAT_MISSION_TYPES:
+                        if aistate.get_fleet_role(fleet_id) in COMBAT_MISSION_TYPES:
                             new_military_fleets.append(fleet_id)
                     allocations = []
                     if new_military_fleets:
@@ -567,7 +569,7 @@ class AIFleetMission(object):
         fleet = universe.getFleet(fleet_id)
         if (not fleet) or fleet.empty or (fleet_id in universe.destroyedObjectIDs(fo.empireID())):
             # fleet was probably merged into another or was destroyed
-            foAI.foAIstate.delete_fleet_info(fleet_id)
+            get_aistate().delete_fleet_info(fleet_id)
             return
 
         # TODO: priority
@@ -627,7 +629,7 @@ class AIFleetMission(object):
         if nearest_dock == system.id:
             repair_limit = 0.99
         # if combat fleet, use military repair check
-        if foAI.foAIstate.get_fleet_role(fleet_id) in COMBAT_MISSION_TYPES:
+        if get_aistate().get_fleet_role(fleet_id) in COMBAT_MISSION_TYPES:
             return fleet_id in MilitaryAI.avail_mil_needing_repair([fleet_id], on_mission=bool(self.orders),
                                                                    repair_limit=repair_limit)[0]
         # TODO: Allow to split fleet to send only damaged ships to repair

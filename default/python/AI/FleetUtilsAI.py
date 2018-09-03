@@ -5,10 +5,10 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 import AIDependencies
 import CombatRatingsAI
-import FreeOrionAI as foAI
 import MoveUtilsAI
 import universe_object
 from AIDependencies import INVALID_ID
+from aistate_interface import get_aistate
 from EnumsAI import MissionType, ShipRoleType
 from ShipDesignAI import get_part_type
 from universe_object import Planet, Fleet
@@ -59,7 +59,7 @@ def get_targeted_planet_ids(planet_ids, mission_type):
     :return: Subset of *planet_ids* targeted by *mission_type*
     :rtype: list[int]
     """
-    selected_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([mission_type])
+    selected_fleet_missions = get_aistate().get_fleet_missions_with_any_mission_types([mission_type])
     targeted_planets = []
     for planet_id in planet_ids:
         # add planets that are target of a mission
@@ -106,11 +106,12 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
     systems_enqueued = [starting_system]
     systems_visited = []
     # loop over systems in a breadth-first-search trying to find nearby suitable ships in fleet_pool_set
+    aistate = get_aistate()
     while systems_enqueued and fleet_pool_set:
         this_system_id = systems_enqueued.pop(0)
         this_system_obj = universe_object.System(this_system_id)
         systems_visited.append(this_system_id)
-        accessible_fleets = foAI.foAIstate.systemStatus.get(this_system_id, {}).get('myFleetsAccessible', [])
+        accessible_fleets = aistate.systemStatus.get(this_system_id, {}).get('myFleetsAccessible', [])
         fleets_here = [fid for fid in accessible_fleets if fid in fleet_pool_set]
         # loop over all fleets in the system, split them if possible and select suitable ships
         while fleets_here:
@@ -128,7 +129,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
             if species:
                 for ship_id in fleet.shipIDs:
                     ship = universe.getShip(ship_id)
-                    if (ship and foAI.foAIstate.get_ship_role(ship.design.id) in colonization_roles and
+                    if (ship and aistate.get_ship_role(ship.design.id) in colonization_roles and
                             species == ship.speciesName):
                         break
                 else:  # no suitable species found
@@ -146,7 +147,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
             # check if we need additional rating vs planets
             this_rating_vs_planets = 0
             if 'ratingVsPlanets' in target_stats:
-                this_rating_vs_planets = foAI.foAIstate.get_rating(fleet_id, against_planets=True)
+                this_rating_vs_planets = aistate.get_rating(fleet_id, against_planets=True)
                 if this_rating_vs_planets <= 0 and cur_stats.get('rating', 0) >= target_stats.get('rating', 0):
                     # we already have enough general rating, so do not add any more warships useless against planets
                     continue
@@ -159,7 +160,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                 continue
             fleet_list.append(fleet_id)
 
-            this_rating = foAI.foAIstate.get_rating(fleet_id)
+            this_rating = aistate.get_rating(fleet_id)
             cur_stats['rating'] = CombatRatingsAI.combine_ratings(cur_stats.get('rating', 0), this_rating)
             if 'ratingVsPlanets' in target_stats:
                 cur_stats['ratingVsPlanets'] = CombatRatingsAI.combine_ratings(cur_stats.get('ratingVsPlanets', 0),
@@ -176,7 +177,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
             if all((
                     neighbor_id not in systems_visited,
                     neighbor_id not in systems_enqueued,
-                    neighbor_id in foAI.foAIstate.exploredSystemIDs
+                    neighbor_id in aistate.exploredSystemIDs
             )):
                 systems_enqueued.append(neighbor_id)
     # we ran out of systems or fleets to check but did not meet requirements yet.
@@ -207,6 +208,7 @@ def split_fleet(fleet_id):
     if len(list(fleet.shipIDs)) <= 1:  # fleet with only one ship cannot be split
         return []
     ship_ids = list(fleet.shipIDs)
+    aistate = get_aistate()
     for ship_id in ship_ids[1:]:
         new_fleet_id = fo.issueNewFleetOrder("Fleet %4d" % ship_id, ship_id)
         if new_fleet_id:
@@ -215,9 +217,9 @@ def split_fleet(fleet_id):
                 warn("Newly split fleet %d not available from universe" % new_fleet_id)
             fo.issueRenameOrder(new_fleet_id, "Fleet %4d" % new_fleet_id)  # to ease review of debugging logs
             fo.issueAggressionOrder(new_fleet_id, True)
-            foAI.foAIstate.update_fleet_rating(new_fleet_id)
+            aistate.update_fleet_rating(new_fleet_id)
             newfleets.append(new_fleet_id)
-            foAI.foAIstate.newlySplitFleets[new_fleet_id] = True
+            aistate.newlySplitFleets[new_fleet_id] = True
         else:
             if fleet.systemID == INVALID_ID:
                 warn("Tried to split ship id (%d) from fleet %d when fleet is in starlane" % (
@@ -225,10 +227,10 @@ def split_fleet(fleet_id):
             else:
                 warn("Got no fleet ID back after trying to split ship id (%d) from fleet %d" % (
                     ship_id, fleet_id))
-    foAI.foAIstate.get_fleet_role(fleet_id, force_new=True)
-    foAI.foAIstate.update_fleet_rating(fleet_id)
+    aistate.get_fleet_role(fleet_id, force_new=True)
+    aistate.update_fleet_rating(fleet_id)
     if newfleets:
-        foAI.foAIstate.ensure_have_fleet_missions(newfleets)
+        aistate.ensure_have_fleet_missions(newfleets)
     return newfleets
 
 
@@ -260,9 +262,10 @@ def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, 
         if need_rating != 0 and need_rating <= transferred_rating:
             break
     fleet_a = universe.getFleet(fleet_a_id)
+    aistate = get_aistate()
     if not fleet_a or fleet_a.empty or fleet_a_id in universe.destroyedObjectIDs(fo.empireID()):
-        foAI.foAIstate.delete_fleet_info(fleet_a_id)
-    foAI.foAIstate.update_fleet_rating(fleet_b_id)
+        aistate.delete_fleet_info(fleet_a_id)
+    aistate.update_fleet_rating(fleet_b_id)
 
 
 def fleet_has_ship_with_role(fleet_id, ship_role):
@@ -272,9 +275,10 @@ def fleet_has_ship_with_role(fleet_id, ship_role):
 
     if fleet is None:
         return False
+    aistate = get_aistate()
     for ship_id in fleet.shipIDs:
         ship = universe.getShip(ship_id)
-        if foAI.foAIstate.get_ship_role(ship.design.id) == ship_role:
+        if aistate.get_ship_role(ship.design.id) == ship_role:
             return True
     return False
 
@@ -289,10 +293,11 @@ def get_ship_id_with_role(fleet_id, ship_role, verbose=True):
 
     universe = fo.getUniverse()
     fleet = universe.getFleet(fleet_id)
+    aistate = get_aistate()
 
     for ship_id in fleet.shipIDs:
         ship = universe.getShip(ship_id)
-        if foAI.foAIstate.get_ship_role(ship.design.id) == ship_role:
+        if aistate.get_ship_role(ship.design.id) == ship_role:
             return ship_id
 
 
@@ -302,7 +307,7 @@ def get_empire_fleet_ids():
     universe = fo.getUniverse()
     empire_fleet_ids = []
     destroyed_object_ids = universe.destroyedObjectIDs(empire_id)
-    for fleet_id in set(list(universe.fleetIDs) + list(foAI.foAIstate.newlySplitFleets)):
+    for fleet_id in set(list(universe.fleetIDs) + list(get_aistate().newlySplitFleets)):
         fleet = universe.getFleet(fleet_id)
         if fleet is None:
             continue
@@ -315,8 +320,9 @@ def get_empire_fleet_ids_by_role(fleet_role):
     """Returns a list with fleet_ids that have the specified role."""
     fleet_ids = get_empire_fleet_ids()
     fleet_ids_with_role = []
+    aistate = get_aistate()
     for fleet_id in fleet_ids:
-        if foAI.foAIstate.get_fleet_role(fleet_id) != fleet_role:
+        if aistate.get_fleet_role(fleet_id) != fleet_role:
             continue
         fleet_ids_with_role.append(fleet_id)
     return fleet_ids_with_role
@@ -324,7 +330,8 @@ def get_empire_fleet_ids_by_role(fleet_role):
 
 def extract_fleet_ids_without_mission_types(fleets_ids):
     """Extracts a list with fleetIDs that have no mission."""
-    return [fleet_id for fleet_id in fleets_ids if not foAI.foAIstate.get_fleet_mission(fleet_id).type]
+    aistate = get_aistate()
+    return [fleet_id for fleet_id in fleets_ids if not aistate.get_fleet_mission(fleet_id).type]
 
 
 def assess_fleet_role(fleet_id):
@@ -340,10 +347,11 @@ def assess_fleet_role(fleet_id):
         return ShipRoleType.INVALID
 
     # count ship_roles
+    aistate = get_aistate()
     for ship_id in fleet.shipIDs:
         ship = universe.getShip(ship_id)
         if ship.design:
-            role = foAI.foAIstate.get_ship_role(ship.design.id)
+            role = aistate.get_ship_role(ship.design.id)
         else:
             role = ShipRoleType.INVALID
 
@@ -435,15 +443,16 @@ def generate_fleet_orders_for_fleet_missions():
     print "Securing Fleets: %s  (currently FLEET_MISSION_MILITARY should be used instead of this Role)" % (
         get_empire_fleet_ids_by_role(MissionType.SECURE))
 
+    aistate = get_aistate()
     if fo.currentTurn() < 50:
         print
         print "Explored systems:"
-        _print_systems_and_supply(foAI.foAIstate.get_explored_system_ids())
+        _print_systems_and_supply(aistate.get_explored_system_ids())
         print "Unexplored systems:"
-        _print_systems_and_supply(foAI.foAIstate.get_unexplored_system_ids())
+        _print_systems_and_supply(aistate.get_unexplored_system_ids())
         print
 
-    exploration_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.EXPLORATION])
+    exploration_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.EXPLORATION])
     if exploration_fleet_missions:
         print "Exploration targets:"
         for explorationAIFleetMission in exploration_fleet_missions:
@@ -451,7 +460,7 @@ def generate_fleet_orders_for_fleet_missions():
     else:
         print "Exploration targets: None"
 
-    colonisation_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.COLONISATION])
+    colonisation_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.COLONISATION])
     if colonisation_fleet_missions:
         print "Colonization targets: "
     else:
@@ -459,7 +468,7 @@ def generate_fleet_orders_for_fleet_missions():
     for colonisation_fleet_mission in colonisation_fleet_missions:
         print "    %s" % colonisation_fleet_mission
 
-    outpost_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.OUTPOST])
+    outpost_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.OUTPOST])
     if outpost_fleet_missions:
         print "Outpost targets: "
     else:
@@ -467,7 +476,7 @@ def generate_fleet_orders_for_fleet_missions():
     for outpost_fleet_mission in outpost_fleet_missions:
         print "    %s" % outpost_fleet_mission
 
-    outpost_base_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types(
+    outpost_base_fleet_missions = aistate.get_fleet_missions_with_any_mission_types(
         [MissionType.ORBITAL_OUTPOST])
     if outpost_base_fleet_missions:
         print "Outpost Base targets (must have been interrupted by combat): "
@@ -476,7 +485,7 @@ def generate_fleet_orders_for_fleet_missions():
     for outpost_fleet_mission in outpost_base_fleet_missions:
         print "    %s" % outpost_fleet_mission
 
-    invasion_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.INVASION])
+    invasion_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.INVASION])
     if invasion_fleet_missions:
         print "Invasion targets: "
     else:
@@ -484,7 +493,7 @@ def generate_fleet_orders_for_fleet_missions():
     for invasion_fleet_mission in invasion_fleet_missions:
         print "    %s" % invasion_fleet_mission
 
-    troop_base_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.ORBITAL_INVASION])
+    troop_base_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.ORBITAL_INVASION])
     if troop_base_fleet_missions:
         print "Invasion Base targets (must have been interrupted by combat): "
     else:
@@ -492,7 +501,7 @@ def generate_fleet_orders_for_fleet_missions():
     for invasion_fleet_mission in troop_base_fleet_missions:
         print "    %s" % invasion_fleet_mission
 
-    military_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.MILITARY])
+    military_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.MILITARY])
     if military_fleet_missions:
         print "General Military targets: "
     else:
@@ -500,7 +509,7 @@ def generate_fleet_orders_for_fleet_missions():
     for military_fleet_mission in military_fleet_missions:
         print "    %s" % military_fleet_mission
 
-    secure_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE])
+    secure_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.SECURE])
     if secure_fleet_missions:
         print "Secure targets: "
     else:
@@ -508,7 +517,7 @@ def generate_fleet_orders_for_fleet_missions():
     for secure_fleet_mission in secure_fleet_missions:
         print "    %s" % secure_fleet_mission
 
-    orb_defense_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.ORBITAL_DEFENSE])
+    orb_defense_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.ORBITAL_DEFENSE])
     if orb_defense_fleet_missions:
         print "Orbital Defense targets: "
     else:
@@ -516,7 +525,7 @@ def generate_fleet_orders_for_fleet_missions():
     for orb_defence_fleet_mission in orb_defense_fleet_missions:
         print "    %s" % orb_defence_fleet_mission
 
-    fleet_missions = foAI.foAIstate.get_all_fleet_missions()
+    fleet_missions = aistate.get_all_fleet_missions()
 
     for mission in fleet_missions:
         mission.generate_fleet_orders()
@@ -526,7 +535,8 @@ def issue_fleet_orders_for_fleet_missions():
     """Issues fleet orders."""
     print
     universe = fo.getUniverse()
-    fleet_missions = foAI.foAIstate.get_all_fleet_missions()
+    aistate = get_aistate()
+    fleet_missions = aistate.get_all_fleet_missions()
     thisround = 0
     while thisround < 3:
         thisround += 1
@@ -538,8 +548,8 @@ def issue_fleet_orders_for_fleet_missions():
             if not fleet or not fleet.shipIDs or fleet_id in universe.destroyedObjectIDs(fo.empireID()):
                 continue
             mission.issue_fleet_orders()
-        fleet_missions = foAI.foAIstate.misc.get('ReassignedFleetMissions', [])
-        foAI.foAIstate.misc['ReassignedFleetMissions'] = []
+        fleet_missions = aistate.misc.get('ReassignedFleetMissions', [])
+        aistate.misc['ReassignedFleetMissions'] = []
     print
 
 
@@ -605,7 +615,7 @@ def get_max_fuel(fleet_id):
 
 def get_fleet_upkeep():
     # TODO: Use new upkeep calculation
-    return 1 + AIDependencies.SHIP_UPKEEP * foAI.foAIstate.shipCount
+    return 1 + AIDependencies.SHIP_UPKEEP * get_aistate().shipCount
 
 
 def calculate_estimated_time_of_arrival(fleet_id, target_system_id):

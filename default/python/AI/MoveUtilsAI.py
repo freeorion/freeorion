@@ -1,7 +1,7 @@
 from logging import warn, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-import FreeOrionAI as foAI
+from aistate_interface import get_aistate
 import AIstate
 import universe_object
 import fleet_orders
@@ -60,7 +60,7 @@ def can_travel_to_system(fleet_id, start, target, ensure_return=False):
     target_distance_from_supply = -min(state.get_system_supply(target.id), 0)
 
     # low-aggression AIs may not travel far from supply
-    if not foAI.foAIstate.character.may_travel_beyond_supply(target_distance_from_supply):
+    if not get_aistate().character.may_travel_beyond_supply(target_distance_from_supply):
         debug("May not move %d out of supply" % target_distance_from_supply)
         return []
 
@@ -136,12 +136,13 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
     sys_distances = sorted([(universe.jumpDistance(start_system_id, sys_id), sys_id)
                             for sys_id in drydock_system_ids])
 
-    fleet_rating = foAI.foAIstate.get_rating(fleet_id)
+    aistate = get_aistate()
+    fleet_rating = aistate.get_rating(fleet_id)
     for _, dock_sys_id in sys_distances:
         dock_system = universe_object.System(dock_sys_id)
         path = can_travel_to_system(fleet_id, start_system, dock_system)
 
-        path_rating = sum([foAI.foAIstate.systemStatus[path_sys.id]['totalThreat']
+        path_rating = sum([aistate.systemStatus[path_sys.id]['totalThreat']
                            for path_sys in path])
 
         SAFETY_MARGIN = 10

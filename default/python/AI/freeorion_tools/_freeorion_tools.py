@@ -189,14 +189,14 @@ def cache_by_turn(func):
     Cache result is stored in savegame, will crash with picle error if result contains any boost object.
     """
     # avoid circular import
-    import FreeOrionAI as foAI
+    from aistate_interface import get_aistate
 
     @wraps(func)
     def wrapper():
-        if foAI.foAIstate is None:
+        if get_aistate() is None:
             return func()
         else:
-            cache = foAI.foAIstate.misc.setdefault('caches', {}).setdefault(func.__name__, {})
+            cache = get_aistate().misc.setdefault('caches', {}).setdefault(func.__name__, {})
             this_turn = fo.currentTurn()
             return cache[this_turn] if this_turn in cache else cache.setdefault(this_turn, func())
     return wrapper
