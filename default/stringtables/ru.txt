@@ -10597,13 +10597,13 @@ SHP_DEUTERIUM_TANK
 Емкость для дейтерия
 
 SHP_DEUTERIUM_TANK_DESC
-Разблокирует [[shippart FU_DEUTERIUM_TANK]] как одну из возможных деталей корабля
+Разблокирует [[shippart FU_BASIC_TANK]] как одну из возможных деталей корабля
 
 SHP_ANTIMATTER_TANK
 Емкость для антиматерий
 
 SHP_ANTIMATTER_TANK_DESC
-Разблокирует [[shippart FU_ANTIMATTER_TANK]] как одну из возможных деталей корабля
+Разблокирует [[shippart FU_BASIC_TANK]] как одну из возможных деталей корабля
 
 SHP_ZERO_POINT
 Генератор топлива с нулевой точкой
@@ -12852,7 +12852,7 @@ BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM
 BLD_BIONEURAL_REQUIRED_ANY_SYSTEM
 Эта часть корабля может быть построена только при наличии какой-либо единицы бионевральной модификации где-либо в империи или в империи союзника
 
- BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM
+BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM
 Эта часть корабля может быть построена только если есть [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] где-то в империи или империи союзника.
 
 NO_STACK_STEALTH_SHIP_PARTS
