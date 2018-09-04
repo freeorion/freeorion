@@ -12,7 +12,7 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 
-bool Targetting::isPreferredTarget(Targetting::TriggerConditions conditions,
+bool Targetting::IsPreferredTarget(Targetting::TriggerConditions conditions,
                                    Targetting::Target target) {
     const Precision highest_weight = Targetting::findPrecision(conditions);
     for (long unsigned int i = 0; i < conditions.conditions.size(); i++) {
@@ -22,7 +22,7 @@ bool Targetting::isPreferredTarget(Targetting::TriggerConditions conditions,
             return true;
         }
 
-        if (Targetting::isPreferredTarget(condition, target)) {
+        if (Targetting::IsPreferredTarget(condition, target)) {
             const int upper = std::round(highest_weight * 1.5f); // HEURISTIC
             const int improbability = RandInt(0, upper);
             const int luck = conditions.weights[i];
@@ -42,7 +42,7 @@ bool Targetting::isPreferredTarget(Targetting::TriggerConditions conditions,
     return false;
 }
 
-bool Targetting::isPreferredTarget(Targetting::TriggerCondition condition,
+bool Targetting::IsPreferredTarget(Targetting::TriggerCondition condition,
                                    Targetting::Target target) {
     if (!condition) {
             DebugLogger() << "No preferences. Target is perfect." ;
@@ -59,7 +59,7 @@ bool Targetting::isPreferredTarget(Targetting::TriggerCondition condition,
     }
     return is_preferred;
 }
-Targetting::TriggerCondition Targetting::preyAsTriggerCondition(const Targetting::Prey prey) {
+Targetting::TriggerCondition Targetting::PreyAsTriggerCondition(const Targetting::Prey prey) {
         switch( prey ) {
         case Targetting::NoPreference:
                 return std::make_shared<Condition::All>();
@@ -69,10 +69,10 @@ Targetting::TriggerCondition Targetting::preyAsTriggerCondition(const Targetting
                 return nullptr;
         }
 }
-Targetting::TriggerConditions Targetting::preyAsTriggerConditions(const Targetting::Prey prey) {
-    return Targetting::TriggerConditions(Targetting::preyAsTriggerCondition(prey), 1);
+Targetting::TriggerConditions Targetting::PreyAsTriggerConditions(const Targetting::Prey prey) {
+    return Targetting::TriggerConditions(Targetting::PreyAsTriggerCondition(prey), 1);
 }
-Targetting::Prey Targetting::findTargetTypes(const std::string& part_name) {
+Targetting::Prey Targetting::FindTargetTypes(const std::string& part_name) {
         if (part_name.rfind("FT_", 0) == 0) {
             return BoatPrey;
         }
@@ -83,17 +83,17 @@ Targetting::Prey Targetting::findTargetTypes(const std::string& part_name) {
         return AllPrey;
 }
 
-Targetting::TriggerCondition Targetting::findPreferredTargets(const std::string& part_name) {
+Targetting::TriggerCondition Targetting::FindPreferredTargets(const std::string& part_name) {
     const PartType* part = GetPartType(part_name);
     return part->PreferredPrey();
 }
 
-Targetting::Precision Targetting::findPrecision(const Targetting::TriggerConditions& conditions) {
+Targetting::Precision Targetting::FindPrecision(const Targetting::TriggerConditions& conditions) {
     auto result = std::max_element(conditions.weights.begin(), conditions.weights.end());
     return *result;
 }
 
-Targetting::Precision Targetting::findPrecision(const Targetting::HunterType hunting_, const std::string& part_name) {
+Targetting::Precision Targetting::FindPrecision(const Targetting::HunterType hunting_, const std::string& part_name) {
     Targetting::HunterType hunting(hunting_);
     if ( Targetting::HunterType::Unknown == hunting_ ) {
         if ( part_name.rfind("FT_",0) == 0 ) {
@@ -124,7 +124,7 @@ Targetting::Precision Targetting::findPrecision(const Targetting::HunterType hun
 
 }
 
-Targetting::TriggerConditions Targetting::combine(const Targetting::TriggerConditions& condition, const Targetting::TriggerConditions& another_condition) {
+Targetting::TriggerConditions Targetting::Combine(const Targetting::TriggerConditions& condition, const Targetting::TriggerConditions& another_condition) {
 
     Targetting::TriggerConditions combined;
     combined.conditions.reserve( condition.conditions.size() + another_condition.conditions.size() ); // preallocate memory
@@ -138,7 +138,7 @@ Targetting::TriggerConditions Targetting::combine(const Targetting::TriggerCondi
 
 }
 
-Targetting::TriggerConditions Targetting::combine(      Targetting::TriggerConditions& conditions,       Targetting::TriggerCondition condition, int weight) {
+Targetting::TriggerConditions Targetting::Combine(      Targetting::TriggerConditions& conditions,       Targetting::TriggerCondition condition, int weight) {
     Targetting::TriggerConditions combined;
     combined.conditions.reserve( conditions.conditions.size() + 1 );
     combined.weights.reserve( conditions.weights.size() + 1 );

@@ -52,18 +52,18 @@ namespace Targetting {
       {}
     };
 
-    bool isPreferredTarget(TriggerCondition condition, Target target);
-    bool isPreferredTarget(TriggerConditions condition, Target target);
+    bool IsPreferredTarget(TriggerCondition condition, Target target);
+    bool IsPreferredTarget(TriggerConditions condition, Target target);
 
-    Precision findPrecision(const HunterType hunting, const std::string& part_name);
-    Precision findPrecision(const TriggerConditions& conditions);
+    Precision FindPrecision(const HunterType hunting, const std::string& part_name);
+    Precision FindPrecision(const TriggerConditions& conditions);
 
-    Prey findTargetTypes(const std::string& part_name);
-    TriggerCondition findPreferredTargets(const std::string& part_name);
-    TriggerCondition preyAsTriggerCondition(Prey prey);
-    TriggerConditions preyAsTriggerConditions(Prey prey);
-    TriggerConditions combine(const TriggerConditions& one,const TriggerConditions& another);
-    TriggerConditions combine(TriggerConditions& one, TriggerCondition another, int weight);
+    Prey FindTargetTypes(const std::string& part_name);
+    TriggerCondition FindPreferredTargets(const std::string& part_name);
+    TriggerCondition PreyAsTriggerCondition(Prey prey);
+    TriggerConditions PreyAsTriggerConditions(Prey prey);
+    TriggerConditions Combine(const TriggerConditions& one,const TriggerConditions& another);
+    TriggerConditions Combine(TriggerConditions& one, TriggerCondition another, int weight);
 }
 
 #endif // _CombatTargetting_h_

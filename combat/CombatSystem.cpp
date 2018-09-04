@@ -297,11 +297,10 @@ namespace {
         float           fighter_damage;     // for fighter bays, input value should be determined by ship fighter weapon setup
         int             precision;          //
 
-       Targetting::TriggerConditions preferred_targets;
+        Targetting::TriggerConditions preferred_targets;
 
-        bool AimsFor(std::shared_ptr<UniverseObject> target) const
-        {
-            return Targetting::isPreferredTarget(preferred_targets, target);
+        bool PrefersTarget(std::shared_ptr<UniverseObject> target) const {
+            return Targetting::IsPreferredTarget(preferred_targets, target);
         }
     };
 
@@ -735,7 +734,7 @@ namespace {
             ShipPartClass part_class = part->Class();
             if (part_class == PC_DETECTION){
                 design_precision = std::max(design_precision, part->Precision());
-                design_preferred_prey = Targetting::combine(design_preferred_prey, part->PreferredPrey(), part->Precision());
+                design_preferred_prey = Targetting::Combine(design_preferred_prey, part->PreferredPrey(), part->Precision());
             }
         }
         for (const auto& part_name : design->Parts()) { // second round
@@ -750,9 +749,9 @@ namespace {
                 int shots = static_cast<int>(ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name)); // secondary stat is shots per attack)
                 if (part_attack > 0.0f && shots > 0) {
                     // attack for each shot...
-                    auto preferredTargets = Targetting::combine(design_preferred_prey, Targetting::findPreferredTargets(part_name), part->Precision());
+                    auto preferred_targets = Targetting::Combine(design_preferred_prey, Targetting::FindPreferredTargets(part_name), part->Precision());
                     for (int shot_count = 0; shot_count < shots; ++shot_count)
-                        retval.push_back(PartAttackInfo(part_class, part_name, part_attack, Targetting::findPrecision(preferredTargets), preferredTargets));
+                        retval.push_back(PartAttackInfo(part_class, part_name, part_attack, Targetting::FindPrecision(preferred_targets), preferred_targets));
                 }
 
             } else if (part_class == PC_FIGHTER_HANGAR) {
@@ -1314,7 +1313,7 @@ namespace {
                     continue;
                 }
 
-                if (weapon.AimsFor(target)) {
+                if (weapon.PrefersTarget(target)) {
                     // shooting
                     break;
                 }
@@ -1525,7 +1524,7 @@ namespace {
             }
 
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon
-            Targetting::TriggerConditions preferred_targets(Targetting::preyAsTriggerCondition(Targetting::ShipPrey), 3);
+            Targetting::TriggerConditions preferred_targets(Targetting::PreyAsTriggerCondition(Targetting::ShipPrey), 3);
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"),
                                              attack_planet->CurrentMeterValue(METER_DEFENSE),3,preferred_targets));
 
