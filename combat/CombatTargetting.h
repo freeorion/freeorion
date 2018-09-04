@@ -28,8 +28,19 @@
 //    The content may actually not be hardcoded, so this needs to change before merge.
 
 namespace Targetting {
-    enum PreyType { NoPreference = 7, AllPrey = 7, PlanetPrey = 1, ShipPrey = 2, BoatPrey = 4 };
-    enum class HunterType { Unknown, Planet, Boat, Ship }; 
+    enum PreyType {
+        NoPreference = 7,
+        AllPrey = 7,
+        PlanetPrey = 1,
+        ShipPrey = 2,
+        BoatPrey = 4
+    };
+    enum class HunterType {
+        Unknown,
+        Planet,
+        Boat,
+        Ship
+    };
     typedef PreyType                           Prey;
     typedef std::shared_ptr<UniverseObject>  Target;
     typedef std::shared_ptr<Condition::ConditionBase> TriggerCondition;

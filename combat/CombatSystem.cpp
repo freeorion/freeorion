@@ -299,9 +299,9 @@ namespace {
 
         Targetting::TriggerConditions preferred_targets;
 
-        bool PrefersTarget(std::shared_ptr<UniverseObject> target) const {
-            return Targetting::IsPreferredTarget(preferred_targets, target);
-        }
+        bool PrefersTarget(std::shared_ptr<UniverseObject> target) const
+        { return Targetting::IsPreferredTarget(preferred_targets, target); }
+
     };
 
     void AttackShipShip(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon,
@@ -729,8 +729,11 @@ namespace {
         // determine what ship does during combat, based on parts and their meters...
         for (const auto& part_name : design->Parts()) { // first round - collect information
             const PartType* part = GetPartType(part_name);
-            if (!part)
+            if (!part) {
+                if (!part_name.empty())
+                    ErrorLogger() << "ShipWeaponsStrengths couldn't get part " << part_name;
                 continue;
+            }
             ShipPartClass part_class = part->Class();
             if (part_class == PC_DETECTION){
                 design_precision = std::max(design_precision, part->Precision());
@@ -739,7 +742,7 @@ namespace {
         }
         for (const auto& part_name : design->Parts()) { // second round
             const PartType* part = GetPartType(part_name);
-            if (!part)
+            if (!part) // skip again - already logged an error first round
                 continue;
             ShipPartClass part_class = part->Class();
 
@@ -858,13 +861,15 @@ namespace {
 
         std::vector<int> AddFighters(int number, float damage, int owner_empire_id,
                                      int from_ship_id, const std::string& species,
-                                     Targetting::Precision precision, const Targetting::TriggerConditions& preferred_prey)
+                                     Targetting::Precision precision,
+                                     const Targetting::TriggerConditions& preferred_prey)
         {
             std::vector<int> retval;
 
             for (int n = 0; n < number; ++n) {
                 // create / insert fighter into combat objectmap
-                auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id, species, damage, precision, preferred_prey);
+                auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id, species, damage,
+                                                             precision, preferred_prey);
                 fighter_ptr->SetID(next_fighter_id--);
                 fighter_ptr->Rename(UserString("OBJ_FIGHTER"));
                 combat_info.objects.Insert(fighter_ptr);
@@ -1319,6 +1324,7 @@ namespace {
                 }
                 target = nullptr; // signal that last round should be executed
             }
+            // if there is still no target lock a randomly chosen target without checking preferences
             if (!target) {
                 DebugLogger() << "Find target - Round: " << std::to_string(weapon.precision) << " (Final round ignores preferredPrey condition)";
                 int target_idx = RandInt(0, valid_target_ids.size() - 1);
@@ -1405,14 +1411,15 @@ namespace {
             int attacker_owner_id = attacker->Owner();
             DebugLogger(combat) << "Launching " << weapon.fighters_launched
                                 << " with damage " << weapon.fighter_damage
-				<< " with precision: " << weapon.precision
+                                << " with precision: " << weapon.precision
                                 << " for empire id: " << attacker_owner_id
                                 << " from ship id: " << attacker->ID();
 
 
             std::vector<int> new_fighter_ids =
                 combat_state.AddFighters(weapon.fighters_launched, weapon.fighter_damage,
-                                         attacker_owner_id, attacker->ID(), species_name, weapon.precision, weapon.preferred_targets);
+                                         attacker_owner_id, attacker->ID(), species_name,
+                                         weapon.precision, weapon.preferred_targets);
 
             // combat event
             CombatEventPtr launch_event =
