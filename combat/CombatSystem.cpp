@@ -270,16 +270,6 @@ void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id)
 namespace {
     struct PartAttackInfo {
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
-                       float part_attack_) :
-            part_class(part_class_),
-            part_type_name(part_name_),
-            part_attack(part_attack_),
-            fighters_launched(0),
-            fighter_damage(0.0f),
-            precision(1),
-            preferred_targets(Targetting::TriggerConditions(Targetting::preyAsTriggerCondition(Targetting::NoPreference), 1))
-        {}
-        PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
                        float part_attack_, Targetting::Precision precision_, Targetting::TriggerConditions targets_) :
             part_class(part_class_),
             part_type_name(part_name_),
