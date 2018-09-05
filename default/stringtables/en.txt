@@ -1122,7 +1122,7 @@ RULE_ENABLE_SUPER_TESTER
 Enable Super-Tester Takeover
 
 RULE_ENABLE_SUPER_TESTER_DESC
-Enables Super-Tester Takeover building
+Enables [[BLD_SUPER_TEST]] building
 
 RULE_STOCKPILE_IMPORT_LIMITED
 Stockpile Import Limited
