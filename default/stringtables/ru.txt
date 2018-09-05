@@ -1136,12 +1136,6 @@ RULE_ONLY_ALLIANCE_WIN
 RULE_ONLY_ALLIANCE_WIN_DESC
 Игроки в альянсе могут побеждать вместе, если число человеческих игроков в их альянсе не превышает возможное количество людей-победителей для данной игры. При этом в галактике не должно оставаться других выживших игроков-людей.
 
-RULE_SHIP_PART_BASED_UPKEEP
-Ремонт только деталей
-
-RULE_SHIP_PART_BASED_UPKEEP_DESC
-Повреждения и последующий необходимый ремонт кораблей рассчитываются на основе только их деталей, а не самих кораблей.
-
 ##
 ## Command-line and options database entries
 ##
@@ -6442,7 +6436,7 @@ BEGINNER_HINT_06
 6: [[metertype METER_SUPPLY]] линии могут использоваться для пополнения запасов [[metertype METER_FUEL]] кораблей
 
 BEGINNER_HINT_07
-7: Некоторые здания, такие как [[buildingtype BLD_INDUSTRY_CENTER]], будут влиять на каждую планету, у которой есть соединяющая линия [linetype METER_SUPPLY]]. Другие, такие как [[buildingtype BLD_GAS_GIANT_GEN]], влияют только на систему в которой они построены. Проверьте раздел [[encyclopedia ENC_BUILDING_TYPE]], чтобы узнать о функциях различных зданий
+7: Некоторые здания, такие как [[buildingtype BLD_INDUSTRY_CENTER]], будут влиять на каждую планету, у которой есть соединяющая линия [metertype METER_SUPPLY]]. Другие, такие как [[buildingtype BLD_GAS_GIANT_GEN]], влияют только на систему в которой они построены. Проверьте раздел [[encyclopedia ENC_BUILDING_TYPE]], чтобы узнать о функциях различных зданий
 
 BEGINNER_HINT_08
 8: [[predefinedshipdesign SD_OUTPOST_SHIP]] можно установить [[encyclopedia OUTPOSTS_TITLE]] на любой невостребованной и видимой планете или астероиде в зоне досягаемости, если в этой системе нет вражеских кораблей
