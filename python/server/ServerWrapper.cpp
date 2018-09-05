@@ -1268,6 +1268,12 @@ namespace {
 
         return object(planet->CardinalSuffix());
     }
+
+     boost::python::str GetUserConfigDirWrapper()
+    { return boost::python::str(PathToString(GetUserConfigDir())); }
+
+    boost::python::str GetUserDataDirWrapper()
+    { return boost::python::str(PathToString(GetUserDataDir())); }
 }
 
 namespace FreeOrionPython {
@@ -1392,4 +1398,10 @@ namespace FreeOrionPython {
         def("planet_make_colony",                   PlanetMakeColony);
         def("planet_cardinal_suffix",               PlanetCardinalSuffix);
     }
+
+        /////////////////
+        //   Configs   //
+        /////////////////
+        def("get_user_config_dir",         GetUserConfigDirWrapper,        /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific configuration.");
+        def("get_user_data_dir",           GetUserDataDirWrapper,          /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific data (saves, etc.).");
 }
