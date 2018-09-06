@@ -1071,10 +1071,10 @@ RULE_NUM_COMBAT_ROUNDS_DESC
 How many rounds of combat occur each turn.
 
 RULE_RESEED_PRNG_SERVER
-More reproducible random generation
+Random Reseeding
 
 RULE_RESEED_PRNG_SERVER_DESC
-Give more predictable and reproducible values.
+With reseeding, replaying the same save or using the same settings and seed is not expected to produce the same random results. This is possibly preferable if players want to be sure that none of them can predict future random results based on previous random results
 
 RULE_SHIP_SPEED_FACTOR
 Ship Speed Scaling
