@@ -242,6 +242,21 @@ NOWHERE
 POPUP_MENU_PEDIA_PREFIX
 '''Помощь: '''
 
+GENERAL
+Основное
+
+TEST
+Тест
+
+BALANCE
+Балансировка
+
+CONTENT
+Галактика
+
+MULTIPLAYER
+Мультиплеер
+
 ##
 ## Major errors
 ##
@@ -260,7 +275,7 @@ FORMAT_LIST_DEFAULT_SINGLE_HEADER
 Есть один:
 
 FORMAT_LIST_DEFAULT_EMPTY_HEADER
-Отсутствует
+Отсутствует.
 
 # Used as a prefix for the FORMAT_LIST_[0-MANY]_ITEMS translation entries.
 FORMAT_LIST_DEFAULT_DUAL_HEADER
@@ -295,6 +310,27 @@ FORMAT_LIST_9_ITEMS
 
 FORMAT_LIST_10_ITEMS
 %1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10% и %11%
+
+##
+## Build Projects
+##
+
+PROJECT_BT_STOCKPILE
+Поставка ресурсов
+
+PROJECT_BT_STOCKPILE_SHORT_DESC
+Переносит очки промышленности в резервы империи.
+
+PROJECT_BT_STOCKPILE_DESC
+'''Очки производства, переданные с помощью [[PROJECT_BT_STOCKPILE]], добавляются к имперским резервам. Можно указать сумму перевода и как много раз должна повторяться передача.
+
+Только очки промышленности, поставляемые из групп снабжения (и не включенные в имперские резервы) могут быть направлены в [[PROJECT_BT_STOCKPILE]].
+
+Все не потраченные очки ресурсов переходят в имперские резервы (но не более верхнего предела), не важно, есть ли [[PROJECT_BT_STOCKPILE]] в очереди на производство, или нет - она лишь гарантирует отправку необходимого количества ресурсов в резервы, когда все очки производства полностью расходуются очередью производства, без излишков.
+
+Пример: империя хочет перенести очки промышленности из главной группы снабжения в одну из второстепенных, где эти очки не производятся. Для этого сперва очки нужно запасти в основной группе снабжения, где они образуются. В основной группе производится 100 очков промышленности за ход, а верхний предел резервов - 10. Производственная очередь требует 120 очков за ход, следовательно все имеющиеся у империи мощности будут уходить на неё.
+Чтобы иметь возможность передать что-либо нуждающейся группе, нужно внести в очередь на производство 10х [[PROJECT_BT_STOCKPILE]], поместив эти элементы в самый верх. Они должны производиться в основной группе снабжения, где наличествуют очки производства.
+Так как [[PROJECT_BT_STOCKPILE]] расположена выше остальных элементов очереди, её финансирование гарантируется, следовательно резервы империи будут точно пополняться на 10 очков производства за ход. Для стабильной, постоянной передачи ресурсов, число повторений для [[PROJECT_BT_STOCKPILE]] устанавливается 99.'''
 
 ##
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
@@ -926,7 +962,7 @@ SERVER_ALREADY_PLAYING_GAME
 На данный момент сервер не принимает игроков, так как игра уже была сыграна.
 
 ERROR_PYTHON_AI_CRASHED
-Во время ходя игрока %1% произошла ошибка.
+Во время хода игрока %1% произошла ошибка.
 
 ERROR_PLAYER_NAME_ALREADY_USED
 Имя игрока %1% уже используется.
@@ -938,10 +974,10 @@ ERROR_CLIENT_TYPE_NOT_ALLOWED
 Данный клиент запрещён.
 
 ERROR_NOT_ENOUGH_AI_PLAYERS
-Недостаточно игроков-ИИ.
+Недостаточно игроков-компьютеров.
 
 ERROR_TOO_MANY_AI_PLAYERS
-Слишком много игроков-ИИ.
+Слишком много игроков-компьютеров.
 
 ERROR_NOT_ENOUGH_HUMAN_PLAYERS
 Недостаточно игроков-людей.
@@ -951,6 +987,154 @@ ERROR_TOO_MANY_HUMAN_PLAYERS
 
 ERROR_CONNECTION_WAS_REPLACED
 Ваше подключение было изменено.
+
+ERROR_NONPLAYER_CANNOT_CONCEDE
+Только игроки могут признавать поражение.
+
+ERROR_CONCEDE_DISABLED
+Возможность признания поражения отключена.
+
+ERROR_CONCEDE_EXCEED_COLONIES
+Невозможно сдаться: у вашей империи ещё достаточно много колоний.
+
+ERROR_CONCEDE_LAST_HUMAN_PLAYER
+Нельзя признавать поражение при наличии в игре только одного игрока-человека.
+
+##
+## Game Rules
+##
+
+RULE_CHEAP_AND_FAST_TECH_RESEARCH
+Быстрые и дешёвые науки
+
+RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC
+Все науки стоят 1 очко исследований и изучаются за 1 ход.
+
+RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION
+Быстрые и дешёвые здания
+
+RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION_DESC
+Все строения стоят 1 очко промышленности и создаются за 1 ход.
+
+RULE_CHEAP_AND_FAST_SHIP_PRODUCTION
+Быстрые и дешёвые корабли
+
+RULE_CHEAP_AND_FAST_SHIP_PRODUCTION_DESC
+Все корабли стоят 1 очко промышленности и собираются за 1 ход.
+
+RULE_NUM_COMBAT_ROUNDS
+Этапов битвы за ход
+
+RULE_NUM_COMBAT_ROUNDS_DESC
+Какое количество этапов боя может произойти за каждый ход.
+
+RULE_SHIP_SPEED_FACTOR
+Скорость кораблей
+
+RULE_SHIP_SPEED_FACTOR_DESC
+Коэффициент умножения для параметров скорости корпусов кораблей и их деталей.
+
+RULE_SHIP_STRUCTURE_FACTOR
+Броня кораблей
+
+RULE_SHIP_STRUCTURE_FACTOR_DESC
+Коэффициент умножения для параметров защиты корпусов кораблей и деталей их брони.
+
+RULE_SHIP_HULL_COST_FACTOR
+Топливо кораблей
+
+RULE_SHIP_HULL_COST_FACTOR_DESC
+Коэффициент умножения для параметра расхода топлива у кораблей разных типов.
+
+RULE_SHIP_PART_COST_FACTOR
+Стоимость деталей
+
+RULE_SHIP_PART_COST_FACTOR_DESC
+Коэффициент умножения для стоимости отдельных деталей кораблей.
+
+RULE_BUILDING_COST_FACTOR
+Стоимость строений
+
+RULE_BUILDING_COST_FACTOR_DESC
+Коэффициент умножения стоимости различных строений.
+
+RULE_TECH_COST_FACTOR
+Стоимость исследований
+
+RULE_TECH_COST_FACTOR_DESC
+Коэффициент умножения затрат на изучение различных наук.
+
+RULE_ENABLE_EXPERIMENTORS
+Генерация Экспериментаторов
+
+RULE_ENABLE_EXPERIMENTORS_DESC
+Создает планету с Экспериментаторами во время генерации галактики.
+
+RULE_ENABLE_SUPER_TESTER
+Превращение в Супер-тестеров
+
+RULE_ENABLE_SUPER_TESTER_DESC
+Включает возможность построить [[BLD_SUPER_TEST]], которое превращает текущую расу в расу Супер-тестеров.
+
+RULE_STOCKPILE_IMPORT_LIMITED
+Предел импорта резервов
+
+RULE_STOCKPILE_IMPORT_LIMITED_DESC
+Активирует предел для импорта резервов за ход.
+
+RULE_STARLANES_EVERYWHERE
+Звёздные пути повсюду
+
+RULE_STARLANES_EVERYWHERE_DESC
+Звёздные пути образуются автоматически между любыми двумя ближайшими системами, вне зависимости от первоначальной формы галактики. Они также не отображаются на галактической карте, но всё же могут быть удалены в ходе игрового процесса.
+
+RULE_HABITABLE_SIZE_TINY
+Население крошечных планет
+
+RULE_HABITABLE_SIZE_SMALL
+Население маленьких планет
+
+RULE_HABITABLE_SIZE_MEDIUM
+Население средних планет
+
+RULE_HABITABLE_SIZE_LARGE
+Население больших планет
+
+RULE_HABITABLE_SIZE_HUGE
+Население огромных планет
+
+RULE_HABITABLE_SIZE_ASTEROIDS
+Население астероидов
+
+RULE_HABITABLE_SIZE_GASGIANT
+Население газовых гигантов
+
+RULE_HABITABLE_SIZE_DESC
+Значение, задающее максимальное число параметра [[encyclopedia POPULATION_TITLE_SHORT_DESC]] для планет данного размера.
+
+RULE_ALLOW_CONCEDE
+Разрешить признавать поражение
+
+RULE_ALLOW_CONCEDE_DESC
+Разрешает империям признавать поражение. При этом уничтожаются любые данные об этих империях. Далее игра продолжается среди оставшихся игроков.
+
+RULE_CONCEDE_COLONIES_THRESHOLD
+Колоний для поражения
+
+RULE_CONCEDE_COLONIES_THRESHOLD_DESC
+Империи, имеющие большее число колоний, чем это, не могут признавать поражение.
+
+RULE_THRESHOLD_HUMAN_PLAYER_WIN
+Максимум победителей
+
+RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC
+Максимальное число игроков-людей, которые могут победить в мультиплеере, когда в галактике больше не осталось других выживших игроков-людей.
+
+RULE_ONLY_ALLIANCE_WIN
+Побеждают только альянсы
+
+RULE_ONLY_ALLIANCE_WIN_DESC
+Игроки в альянсе могут побеждать вместе, если число человеческих игроков в их альянсе не превышает возможное количество людей-победителей для данной игры. При этом в галактике не должно оставаться других выживших игроков-людей.
 
 ##
 ## Command-line and options database entries
@@ -1674,6 +1858,90 @@ OPTIONS_DB_NETWORK_DISCOVERY_PORT
 OPTIONS_DB_NETWORK_MESSAGE_PORT
 Сетевой порт для обмена сообщениями клиент-сервер
 
+
+##
+## Option sections
+##
+
+OPTIONS_DB_SECTION_ALL
+Все опции
+
+OPTIONS_DB_SECTION_AUDIO
+Звук
+
+OPTIONS_DB_SECTION_AUDIO_MUSIC
+Фоновая музыка
+
+OPTIONS_DB_SECTION_AUDIO_EFFECTS
+Звуковые эффекты
+
+OPTIONS_DB_SECTION_AUDIO_EFFECTS_PATHS
+Звуковые эффекты (пути)
+
+OPTIONS_DB_SECTION_EFFECTS
+Эффекты
+
+OPTIONS_DB_SECTION_LOGGING
+Логи
+
+OPTIONS_DB_SECTION_MISC
+Разное
+
+OPTIONS_DB_SECTION_NETWORK
+Сервер и сеть
+
+OPTIONS_DB_SECTION_RAW
+All options with only raw description keys
+
+OPTIONS_DB_SECTION_RESOURCE
+Game data resources
+
+OPTIONS_DB_SECTION_SAVE
+Сохранение игры
+
+OPTIONS_DB_SECTION_SETUP
+Настройки старта новой игры
+
+OPTIONS_DB_SECTION_UI
+Пользовательский интерфейс
+
+OPTIONS_DB_SECTION_UI_COLORS
+Цвета
+
+OPTIONS_DB_SECTION_UI_CONTROL
+Управление (общее)
+
+OPTIONS_DB_SECTION_UI_HOTKEYS
+Горячие клавиши
+
+OPTIONS_DB_SECTION_UI_MAP
+Карта галактики
+
+OPTIONS_DB_SECTION_UI_MAP_FLEET
+Флоты (карта)
+
+OPTIONS_DB_SECTION_UI_FLEET
+Окно флота
+
+OPTIONS_DB_UI_WINDOW
+Окно (общее)
+
+OPTIONS_DB_SECTION_VERSION
+Версия
+
+OPTIONS_DB_SECTION_VIDEO
+Видео
+
+OPTIONS_DB_SECTION_VIDEO_FPS
+Кадров в секунду
+
+OPTIONS_DB_SECTION_VIDEO_FULLSCREEN
+Полноэкранный режим
+
+OPTIONS_DB_SECTION_VIDEO_WINDOWED
+Оконный режим
+
+
 ##
 ## File dialog
 ##
@@ -1775,7 +2043,7 @@ HOST_GAME_BN
 Создать новую игру
 
 JOIN_GAME_BN
-Присоединиться к игре как
+Присоединиться как
 
 REFRESH_LIST_BN
 Обновить
@@ -2564,7 +2832,10 @@ OPTIONS_FOLDER_SETTINGS
 Путь настроек
 
 OPTIONS_FOLDER_SAVE
-Путь сохранении
+Сохранения
+
+OPTIONS_SERVER_FOLDER_SAVE
+Сохранения (сервер)
 
 OPTIONS_LANGUAGE_FILE
 Языковые файлы
@@ -5101,7 +5372,7 @@ GREETINGS_INTRO
 Приветствую уважаемую сущность и Добро пожаловать во Вселенную FreeOrion!
 
 GREETINGS_GUIDE_REFERENCE
-Новичкам этой вселенной, возможно, особенно захочется познакомиться с [[encyclopedia QUICK_START_GUIDE_TITLE]]
+Новичкам этой вселенной, возможно, захочется ознакомиться с [[encyclopedia QUICK_START_GUIDE_TITLE]].
 
 GREETINGS_GUIDE_TEXT
 '''[[GREETINGS_INTRO]]
@@ -6165,7 +6436,7 @@ BEGINNER_HINT_06
 6: [[metertype METER_SUPPLY]] линии могут использоваться для пополнения запасов [[metertype METER_FUEL]] кораблей
 
 BEGINNER_HINT_07
-7: Некоторые здания, такие как [[buildingtype BLD_INDUSTRY_CENTER]], будут влиять на каждую планету, у которой есть соединяющая линия [linetype METER_SUPPLY]]. Другие, такие как [[buildingtype BLD_GAS_GIANT_GEN]], влияют только на систему в которой они построены. Проверьте раздел [[encyclopedia ENC_BUILDING_TYPE]], чтобы узнать о функциях различных зданий
+7: Некоторые здания, такие как [[buildingtype BLD_INDUSTRY_CENTER]], будут влиять на каждую планету, у которой есть соединяющая линия [metertype METER_SUPPLY]]. Другие, такие как [[buildingtype BLD_GAS_GIANT_GEN]], влияют только на систему в которой они построены. Проверьте раздел [[encyclopedia ENC_BUILDING_TYPE]], чтобы узнать о функциях различных зданий
 
 BEGINNER_HINT_08
 8: [[predefinedshipdesign SD_OUTPOST_SHIP]] можно установить [[encyclopedia OUTPOSTS_TITLE]] на любой невостребованной и видимой планете или астероиде в зоне досягаемости, если в этой системе нет вражеских кораблей
@@ -10875,10 +11146,10 @@ BLD_IMPERIAL_PALACE_DESC
 Символизирует императорскую власть и престиж и выполняет функции центра управления для владения империей'''
 
 BLD_SUPER_TEST
-Супертестерное поглощение
+Превращение в Супер-тестеров
 
 BLD_SUPER_TEST_DESC
-Переключает существующий вид планеты на Супер-Тестеры. Для официальных целей тестирования или для обмана
+Превращает расу планеты в расу Супер-тестеров. Для официальных целей тестирования или для обмана
 
 BLD_SHIPYARD_BASE
 Верфь
