@@ -242,18 +242,19 @@ namespace {
     bool RuleExistsWithType(const GameRules& rules, const std::string& name, GameRules::Type type)
     { return rules.RuleExists(name, type); }
 
-    boost::python::object GetOptionsDBOptionStr(std::string const &option)
+    boost::python::object GetOptionsDBOptionStr(const std::string &option)
     { return GetOptionsDB().OptionExists(option) ? boost::python::str(GetOptionsDB().Get<std::string>(option)) : boost::python::str(); }
 
-    boost::python::object GetOptionsDBOptionInt(std::string const &option)
+    boost::python::object GetOptionsDBOptionInt(const std::string &option)
     { return GetOptionsDB().OptionExists(option) ? boost::python::object(GetOptionsDB().Get<int>(option)) : boost::python::object(); }
 
-    boost::python::object GetOptionsDBOptionBool(std::string const &option)
+    boost::python::object GetOptionsDBOptionBool(const std::string &option)
     { return GetOptionsDB().OptionExists(option) ? boost::python::object(GetOptionsDB().Get<bool>(option)) : boost::python::object(); }
 
-    boost::python::object GetOptionsDBOptionDouble(std::string const &option)
+    boost::python::object GetOptionsDBOptionDouble(const std::string &option)
     { return GetOptionsDB().OptionExists(option) ? boost::python::object(GetOptionsDB().Get<double>(option)) : boost::python::object(); }
-     boost::python::str GetUserConfigDirWrapper()
+
+    boost::python::str GetUserConfigDirWrapper()
     { return boost::python::str(PathToString(GetUserConfigDir())); }
 
     boost::python::str GetUserDataDirWrapper()
