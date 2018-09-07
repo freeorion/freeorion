@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from time import time
 
 
@@ -38,19 +40,19 @@ class Timer(object):
         # TODO: Convert to use table code from here /python/common/print_utils.py#L116
 
         if not time_table:
-            print "NOT Time Table"
+            print("NOT Time Table")
             return
         max_header = max(len(x[0]) for x in time_table)
         line_max_size = max_header + 14
-        print
-        print 'Timing for %s:' % self.timer_name
-        print '=' * line_max_size
+        print()
+        print('Timing for %s:' % self.timer_name)
+        print('=' * line_max_size)
 
         for name, val in time_table:
-            print "%-*s %8d msec" % (max_header, name, val)
+            print("%-*s %8d msec" % (max_header, name, val))
 
-        print '-' * line_max_size
-        print ("Total: %8d msec" % sum(x[1] for x in time_table)).rjust(line_max_size)
+        print('-' * line_max_size)
+        print(("Total: %8d msec" % sum(x[1] for x in time_table)).rjust(line_max_size))
 
     def print_flat(self):
         """
@@ -102,15 +104,15 @@ class Timer(object):
 
         max_header = max(len(x) for x in ordered_names)
         line_max_size = max_header + 70
-        print
-        print 'Timing statistics for %s:' % self.timer_name
-        print '=' * line_max_size
+        print()
+        print('Timing statistics for %s:' % self.timer_name)
+        print('=' * line_max_size)
 
         for name in ordered_names:
-            print (("{:<{name_width}} num: {:>6d}, mean: {:>6.2f} msec, std: {:>6.2f} msec, max: {:>6.2f} msec").
-                   format(name, number_samples[name], means[name], stds[name], maxes[name], name_width=max_header))
+            print(("{:<{name_width}} num: {:>6d}, mean: {:>6.2f} msec, std: {:>6.2f} msec, max: {:>6.2f} msec").
+                  format(name, number_samples[name], means[name], stds[name], maxes[name], name_width=max_header))
 
-        print '=' * line_max_size
+        print('=' * line_max_size)
 
     def stop_and_print(self):
         """

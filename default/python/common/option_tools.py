@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os
 import sys
 from ConfigParser import SafeConfigParser
@@ -75,7 +77,7 @@ def _create_default_config_file(path):
         try:
             with open(unicode(path, 'utf-8'), 'w') as configfile:
                 config.write(configfile)
-            print "default config is dumped to %s" % path
+            print("default config is dumped to %s" % path)
         except IOError:
             sys.stderr.write("AI Config Error: could not write default config %s\n" % path)
     return config
@@ -105,7 +107,7 @@ def parse_config(option_string, config_dir):
 
     if option_string is not None and not isinstance(option_string, str):
         # probably called by unit test
-        print >> sys.stderr, "Specified option string is not a string: ", option_string
+        print("Specified option string is not a string: ", option_string, file=sys.stderr)
         return
 
     # get defaults; check if don't already exist and can write
@@ -124,7 +126,7 @@ def parse_config(option_string, config_dir):
     if option_string:
         config_files = [option_string]
         configs_read = config.read(config_files)
-        print "AI Config read config file(s): %s" % configs_read
+        print("AI Config read config file(s): %s" % configs_read)
         if len(configs_read) != len(config_files):
             sys.stderr.write("AI Config Error; could NOT read config file(s): %s\n"
                              % list(set(config_files).difference(configs_read)))

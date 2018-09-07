@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from functools import wraps
 
 handlers = {
@@ -10,11 +12,11 @@ handlers = {
 
 def _register(function_name, handler, is_post_handler):
     handlers.setdefault(function_name, [[], []])[is_post_handler].append(handler)
-    print 'Register "%s" %s "%s" execution' % (
+    print('Register "%s" %s "%s" execution' % (
         handler.__name__,
         'after' if is_post_handler else 'before',
         function_name
-    )
+    ))
 
 
 def register_pre_handler(function_name, handler):
