@@ -111,19 +111,18 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     turn_timer.start("Server Processing")
 
     print "Resuming loaded game"
-    aistate = get_aistate()
     if not saved_state_string:
         error("AI given empty state-string to resume from; this is expected if the AI is assigned to an empire "
               "previously run by a human, but is otherwise an error. AI will be set to Aggressive.")
-        create_new_aistate(fo.aggression.aggressive)
+        aistate = create_new_aistate(fo.aggression.aggressive)
         aistate.session_start_cleanup()
     else:
         try:
             # loading saved state
-            load_aistate(saved_state_string)
+            aistate = load_aistate(saved_state_string)
         except Exception as e:
             # assigning new state
-            create_new_aistate(fo.aggression.aggressive)
+            aistate = create_new_aistate(fo.aggression.aggressive)
             aistate.session_start_cleanup()
             error("Failed to load the AIstate from the savegame. The AI will"
                   " play with a fresh AIstate instance with aggression level set"
