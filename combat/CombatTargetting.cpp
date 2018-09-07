@@ -24,9 +24,10 @@ bool Targetting::IsPreferredTarget(Targetting::TriggerConditions conditions,
         }
 
         if (Targetting::IsPreferredTarget(condition, target)) {
-            const int upper = std::round(highest_weight * 1.5f); // HEURISTIC
+            const int scale = 10; // scale all compared values to remove artifacts from rounding
+            const int upper = std::round(highest_weight * 1.5f * scale); // HEURISTIC
             const int improbability = RandInt(0, upper);
-            const int luck = conditions.weights[i];
+            const int luck = conditions.weights[i] * scale;
             DebugLogger() << "Prioritized locking attempt" <<  [&improbability, &luck, &upper](){
                                                                    std::stringstream ss;
                                                                    ss << "( " << luck << "/" << upper << " ?>? " << improbability << "/" << upper << ")";
