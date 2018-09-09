@@ -1074,7 +1074,7 @@ RULE_RESEED_PRNG_SERVER
 Random Reseeding
 
 RULE_RESEED_PRNG_SERVER_DESC
-With reseeding, replaying the same save or using the same settings and seed is not expected to produce the same random results. This is possibly preferable if players want to be sure that none of them can predict future random results based on previous random results
+With reseeding, replaying the same save or using the same settings and seed is not expected to produce the same random results. This is possibly preferable if players want to be sure that none of them can predict future random results based on previous random results or if a player wants to 're-roll' the results of a battle or random effect when re-playing a turn, and not get the game results as a previous attempt
 
 RULE_SHIP_SPEED_FACTOR
 Ship Speed Scaling
