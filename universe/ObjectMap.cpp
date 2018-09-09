@@ -24,6 +24,16 @@
 #define FOR_EACH_MAP(f, ...)              { f(m_objects, ##__VA_ARGS__);            \
                                             FOR_EACH_SPECIALIZED_MAP(f, ##__VA_ARGS__); }
 
+#define FOR_EACH_EXISTING_MAP(f, ...)     { f(m_existing_objects, ##__VA_ARGS__);          \
+                                            f(m_existing_resource_centers, ##__VA_ARGS__); \
+                                            f(m_existing_pop_centers, ##__VA_ARGS__);      \
+                                            f(m_existing_ships, ##__VA_ARGS__);            \
+                                            f(m_existing_fleets, ##__VA_ARGS__);           \
+                                            f(m_existing_planets, ##__VA_ARGS__);          \
+                                            f(m_existing_systems, ##__VA_ARGS__);          \
+                                            f(m_existing_buildings, ##__VA_ARGS__);        \
+                                            f(m_existing_fields, ##__VA_ARGS__); }
+
 /////////////////////////////////////////////
 // class ObjectMap
 /////////////////////////////////////////////
@@ -225,23 +235,31 @@ std::shared_ptr<UniverseObject> ObjectMap::Remove(int id) {
     // and erase from pointer maps
     m_objects.erase(it);
     FOR_EACH_SPECIALIZED_MAP(EraseFromMap, id);
-    m_existing_objects.erase(id);
-    m_existing_buildings.erase(id);
-    m_existing_fields.erase(id);
-    m_existing_fleets.erase(id);
-    m_existing_ships.erase(id);
-    m_existing_planets.erase(id);
-    m_existing_pop_centers.erase(id);
-    m_existing_resource_centers.erase(id);
-    m_existing_systems.erase(id);
+    FOR_EACH_EXISTING_MAP(EraseFromMap, id);
     return result;
 }
 
-void ObjectMap::Clear()
-{ FOR_EACH_MAP(ClearMap); }
+void ObjectMap::Clear() {
+    FOR_EACH_MAP(ClearMap);
+    FOR_EACH_EXISTING_MAP(ClearMap);
+}
 
 void ObjectMap::swap(ObjectMap& rhs)
-{ FOR_EACH_MAP(SwapMap, rhs); }
+{
+    // SwapMap uses ObjectMap::Map<T> but this function isn't available for the existing maps,
+    // so the FOR_EACH_EXISTING_MAP macro doesn't work with with SwapMap
+    // and it is instead necessary to write them out explicitly.
+    m_existing_objects.swap(rhs.m_existing_objects);
+    m_existing_buildings.swap(rhs.m_existing_buildings);
+    m_existing_fields.swap(rhs.m_existing_fields);
+    m_existing_fleets.swap(rhs.m_existing_fleets);
+    m_existing_ships.swap(rhs.m_existing_ships);
+    m_existing_planets.swap(rhs.m_existing_planets);
+    m_existing_pop_centers.swap(rhs.m_existing_pop_centers);
+    m_existing_resource_centers.swap(rhs.m_existing_resource_centers);
+    m_existing_systems.swap(rhs.m_existing_systems);
+    FOR_EACH_MAP(SwapMap, rhs);
+}
 
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
     std::vector<int> result;
@@ -251,15 +269,7 @@ std::vector<int> ObjectMap::FindExistingObjectIDs() const {
 }
 
 void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_object_ids) {
-    m_existing_objects.clear();
-    m_existing_buildings.clear();
-    m_existing_fields.clear();
-    m_existing_fleets.clear();
-    m_existing_ships.clear();
-    m_existing_planets.clear();
-    m_existing_pop_centers.clear();
-    m_existing_resource_centers.clear();
-    m_existing_systems.clear();
+    FOR_EACH_EXISTING_MAP(ClearMap);
     for (const auto& entry : m_objects) {
         if (!entry.second)
             continue;
