@@ -104,15 +104,15 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller label;
-        const parse::conditions_parser_grammar condition_parser;
-        const parse::string_parser_grammar string_grammar;
-        parse::detail::tags_grammar tags_parser;
-        parse::detail::common_params_rules common_rules;
-        parse::capture_result_enum_grammar capture_result_enum;
-        parse::detail::rule<CaptureResult ()> capture;
-        building_type_rule          building_type;
-        start_rule                  start;
+        parse::detail::Labeller                 label;
+        const parse::conditions_parser_grammar  condition_parser;
+        const parse::string_parser_grammar      string_grammar;
+        parse::detail::tags_grammar             tags_parser;
+        parse::detail::common_params_rules      common_rules;
+        parse::capture_result_enum_grammar      capture_result_enum;
+        parse::detail::rule<CaptureResult ()>   capture;
+        building_type_rule                      building_type;
+        start_rule                              start;
     };
 }
 

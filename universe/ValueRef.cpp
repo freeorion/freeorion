@@ -2023,7 +2023,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
                 return 0.0;
         }
 
-        // if a key integer specified, get just that entry (for single empire or sum of all empires)
+        // if a key integer is specified, get just that entry (for single empire or sum of all empires)
         if (m_int_ref2) {
             int key_int = m_int_ref2->Eval(context);
             return GetFloatEmpirePropertySingleKey(empire_id, variable_name, key_int);
