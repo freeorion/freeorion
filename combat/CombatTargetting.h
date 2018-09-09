@@ -41,7 +41,6 @@ namespace Targetting {
         Boat,
         Ship
     };
-    typedef PreyType                           Prey;
     typedef std::shared_ptr<UniverseObject>  Target;
     typedef std::shared_ptr<Condition::ConditionBase> TriggerCondition;
     typedef int                           Precision;
@@ -69,10 +68,9 @@ namespace Targetting {
     Precision FindPrecision(const HunterType hunting, const std::string& part_name);
     Precision FindPrecision(const TriggerConditions& conditions);
 
-    Prey FindTargetTypes(const std::string& part_name);
     TriggerCondition FindPreferredTargets(const std::string& part_name);
-    TriggerCondition PreyAsTriggerCondition(Prey prey);
-    TriggerConditions PreyAsTriggerConditions(Prey prey);
+    TriggerCondition PreyAsTriggerCondition(PreyType prey);
+    TriggerConditions PreyAsTriggerConditions(PreyType prey);
     TriggerConditions Combine(const TriggerConditions& one,const TriggerConditions& another);
     TriggerConditions Combine(TriggerConditions& one, TriggerCondition another, int weight);
 }

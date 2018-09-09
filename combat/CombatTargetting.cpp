@@ -63,32 +63,33 @@ bool Targetting::IsPreferredTarget(Targetting::TriggerCondition condition,
     return is_preferred;
 }
 
-Targetting::TriggerCondition Targetting::PreyAsTriggerCondition(const Targetting::Prey prey)
+Targetting::TriggerCondition Targetting::PreyAsTriggerCondition(const Targetting::PreyType prey)
 {
+    std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>> p_obj;
     switch (prey) {
-    case Targetting::NoPreference:
+    case Targetting::PreyType::PlanetPrey:
+        p_obj = std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_PLANET));
+        break;
+    case Targetting::PreyType::BoatPrey:
+        p_obj = std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_FIGHTER));
+        break;
+    case Targetting::ShipPrey:
+        p_obj = std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_SHIP));
+        break;
+    case Targetting::AllPrey:
+        //case Targetting::PreyType::NoPreference:
         return std::make_shared<Condition::All>();
         break;
     default:
         // error
+        ErrorLogger() << "PreyAsTriggerCondition encountered unsupported PreyType " << prey << ".";
         return nullptr;
     }
+    return std::make_shared<Condition::Type>(move(p_obj));
 }
 
-Targetting::TriggerConditions Targetting::PreyAsTriggerConditions(const Targetting::Prey prey)
+Targetting::TriggerConditions Targetting::PreyAsTriggerConditions(const Targetting::PreyType prey)
 { return Targetting::TriggerConditions(Targetting::PreyAsTriggerCondition(prey), 1); }
-
-Targetting::Prey Targetting::FindTargetTypes(const std::string& part_name) {
-    // TODO: Probably this function should be removed
-    if (part_name.rfind("FT_", 0) == 0)
-        return BoatPrey;
-    
-    if (part_name.rfind("SR_", 0) == 0)
-        return ShipPrey;
-    
-    // shouldn't happen
-    return AllPrey;
-}
 
 Targetting::TriggerCondition Targetting::FindPreferredTargets(const std::string& part_name)
 {
@@ -100,38 +101,6 @@ Targetting::Precision Targetting::FindPrecision(const Targetting::TriggerConditi
 {
     auto result = std::max_element(conditions.weights.begin(), conditions.weights.end());
     return *result;
-}
-
-Targetting::Precision Targetting::FindPrecision(const Targetting::HunterType hunting_, const std::string& part_name)
-{
-    Targetting::HunterType hunting(hunting_);
-    if (Targetting::HunterType::Unknown == hunting_) {
-        if (part_name.rfind("FT_",0) == 0) {
-            hunting = Targetting::HunterType::Boat;
-        } else if (part_name.rfind("SR_",0) == 0) {
-            hunting = Targetting::HunterType::Ship;
-        }
-    }
-    switch (hunting) {
-    case Targetting::HunterType::Boat:
-        return 2;
-    case Targetting::HunterType::Ship:
-        if ((part_name == "SR_WEAPON_0_1" )||( part_name =="SR_WEAPON_1_1")) {
-            const PartType* part = GetPartType(part_name);
-            if (part)
-                return part->Precision();
-
-            return 8;
-        }
-        return 2;
-    case Targetting::HunterType::Planet:
-    case Targetting::HunterType::Unknown:
-        return 1;
-    default:
-        ErrorLogger() << "Got a lazy hunter weapon: " << part_name;
-        return 1;
-    }
-
 }
 
 Targetting::TriggerConditions Targetting::Combine(const Targetting::TriggerConditions& condition,
