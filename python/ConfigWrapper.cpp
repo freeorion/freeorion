@@ -32,25 +32,27 @@ namespace {
 namespace FreeOrionPython {
     void WrapConfig()
     {
-        // We provide the Python wrappers both with camelCase and with snake_case names,
-        // as these wrappers are used both by the AI and the universe generation scripts.
-        // The former still uses camelCase, while the latter uses snake_case, so we need
-        // to support both styles for the time being.
-
+#ifdef FREEORION_BUILD_AI
+        // For the AI client provide function names in camelCase,
+        // as that's still the preferred style there (for the time being)
         def("getOptionsDBOptionStr",    GetOptionsDBOptionStr,     return_value_policy<return_by_value>(), "Returns the string value of option in OptionsDB or None if the option does not exist.");
         def("getOptionsDBOptionInt",    GetOptionsDBOptionInt,     return_value_policy<return_by_value>(), "Returns the integer value of option in OptionsDB or None if the option does not exist.");
         def("getOptionsDBOptionBool",   GetOptionsDBOptionBool,    return_value_policy<return_by_value>(), "Returns the bool value of option in OptionsDB or None if the option does not exist.");
         def("getOptionsDBOptionDouble", GetOptionsDBOptionDouble,  return_value_policy<return_by_value>(), "Returns the double value of option in OptionsDB or None if the option does not exist.");
 
+        def("getUserConfigDir",         GetUserConfigDirWrapper,        /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific configuration.");
+        def("getUserDataDir",           GetUserDataDirWrapper,          /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific data (saves, etc.).");
+#endif
+
+#ifdef FREEORION_BUILD_SERVER
+        // For the server, provide the function names already in snake_case
         def("get_options_db_option_str",    GetOptionsDBOptionStr,     return_value_policy<return_by_value>(), "Returns the string value of option in OptionsDB or None if the option does not exist.");
         def("get_options_db_option_int",    GetOptionsDBOptionInt,     return_value_policy<return_by_value>(), "Returns the integer value of option in OptionsDB or None if the option does not exist.");
         def("get_options_db_option_bool",   GetOptionsDBOptionBool,    return_value_policy<return_by_value>(), "Returns the bool value of option in OptionsDB or None if the option does not exist.");
         def("get_options_db_option_double", GetOptionsDBOptionDouble,  return_value_policy<return_by_value>(), "Returns the double value of option in OptionsDB or None if the option does not exist.");
 
-        def("getUserConfigDir",         GetUserConfigDirWrapper,        /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific configuration.");
-        def("getUserDataDir",           GetUserDataDirWrapper,          /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific data (saves, etc.).");
-
         def("get_user_config_dir",         GetUserConfigDirWrapper,        /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific configuration.");
         def("get_user_data_dir",           GetUserDataDirWrapper,          /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific data (saves, etc.).");
+#endif
     }
 }
