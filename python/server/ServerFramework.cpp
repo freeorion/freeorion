@@ -36,6 +36,7 @@ BOOST_PYTHON_MODULE(freeorion) {
     FreeOrionPython::WrapEmpire();
     FreeOrionPython::WrapUniverseClasses();
     FreeOrionPython::WrapServer();
+    FreeOrionPython::WrapConfig();
 
     // STL Containers
     class_<std::vector<int>>("IntVec")

@@ -8,6 +8,7 @@ namespace FreeOrionPython {
     void WrapGameStateEnums();
     void WrapEmpire();
     void WrapLogger();
+    void WrapConfig();
 }
 
 #endif
