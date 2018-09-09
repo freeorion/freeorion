@@ -2926,9 +2926,6 @@ MAP_BTN_MESSAGES
 MAP_PRODUCTION_TITLE
 Промышленность
 
-MAP_PROD_WASTED_TITLE
-Теряемые мощности
-
 MAP_PROD_CLICK_TO_OPEN
 '''
 Нажмите здесь для открытия меню промышленности'''
@@ -2957,9 +2954,6 @@ RESOURCE_TT_USED
 
 RESOURCE_TT_EXCESS
 Избыток
-
-RESOURCE_TT_STOCKPILE_EFFIC
-КПД резервов
 
 RESOURCE_TT_TO_STOCKPILE
 Перейти в резервы
@@ -8642,9 +8636,6 @@ DESC_VAR_LASTTURNBATTLEHERE
 DESC_COMPLEX
 Совокупность переменных
 
-DESC_VARIABLE_NAME
-Имя переменной
-
 # FOCS variable reference description text.
 # %1% reference type of the FOCS variable.
 
@@ -13950,12 +13941,6 @@ AI_FIRST_TURN_GREETING_MSG608
 
 OPTIONS_PAGE_HOTKEYS
 Горячие клавиши
-
-HOTKEYS_Z_COMBAT
-Окно сражений
-
-HOTKEYS_MAP
-Окно карты
 
 HOTKEYS_GENERAL
 Общие клавиши
