@@ -244,8 +244,7 @@ void ObjectMap::Clear() {
     FOR_EACH_EXISTING_MAP(ClearMap);
 }
 
-void ObjectMap::swap(ObjectMap& rhs)
-{
+void ObjectMap::swap(ObjectMap& rhs) {
     // SwapMap uses ObjectMap::Map<T> but this function isn't available for the existing maps,
     // so the FOR_EACH_EXISTING_MAP macro doesn't work with with SwapMap
     // and it is instead necessary to write them out explicitly.
@@ -312,12 +311,12 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_obj
 
 void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     // determine all objects that some other object thinks contains them
-    std::map<int, std::set<int>>    contained_objs;
-    std::map<int, std::set<int>>    contained_planets;
-    std::map<int, std::set<int>>    contained_buildings;
-    std::map<int, std::set<int>>    contained_fleets;
-    std::map<int, std::set<int>>    contained_ships;
-    std::map<int, std::set<int>>    contained_fields;
+    std::map<int, std::set<int>> contained_objs;
+    std::map<int, std::set<int>> contained_planets;
+    std::map<int, std::set<int>> contained_buildings;
+    std::map<int, std::set<int>> contained_fleets;
+    std::map<int, std::set<int>> contained_ships;
+    std::map<int, std::set<int>> contained_fields;
 
     for (const auto& contained : *this) {
         if (destroyed_object_ids.count(contained->ID()))
