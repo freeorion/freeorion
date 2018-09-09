@@ -41,6 +41,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/date_time/posix_time/time_formatters.hpp>
+#include <boost/format.hpp>
 
 #include <ctime>
 #include <thread>
@@ -1374,6 +1375,12 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
 void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
     Universe& universe = GetUniverse();
+
+    // Set game UID. Needs to be done first so we can use ClockSeed to
+    // prevent reproducible UIDs.
+    ClockSeed();
+    GetGalaxySetupData().SetGameUID(GetGalaxySetupData().GetSeed() +
+                                    (boost::format("%09i") % RandInt(0, 999999999)).str());
 
     // Initialize RNG with provided seed to get reproducible universes
     int seed = 0;
