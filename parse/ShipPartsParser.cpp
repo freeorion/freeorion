@@ -1,5 +1,6 @@
 #define PHOENIX_LIMIT 11
 #define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
+#define FUSION_MAX_VECTOR_SIZE 20
 
 #include "Parse.h"
 
