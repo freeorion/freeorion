@@ -730,7 +730,7 @@ Pathfinder::~Pathfinder()
 {}
 
 namespace {
-    std::shared_ptr<const Fleet> FleetFromObject(std::shared_ptr<const UniverseObject> obj) {
+    std::shared_ptr<const Fleet> FleetFromObject(const std::shared_ptr<const UniverseObject>& obj) {
         std::shared_ptr<const Fleet> retval = std::dynamic_pointer_cast<const Fleet>(obj);
         if (!retval) {
             if (auto ship = std::dynamic_pointer_cast<const Ship>(obj))
@@ -826,7 +826,7 @@ namespace {
     typedef boost::variant<std::nullptr_t, int, std::pair<int, int>> GeneralizedLocationType;
 
     /** Return the location of \p obj.*/
-    GeneralizedLocationType GeneralizedLocation(std::shared_ptr<const UniverseObject> obj) {
+    GeneralizedLocationType GeneralizedLocation(const std::shared_ptr<const UniverseObject>& obj) {
         if (!obj)
             return nullptr;
 
