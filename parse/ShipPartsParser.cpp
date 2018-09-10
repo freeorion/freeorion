@@ -104,10 +104,6 @@ namespace {
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::matches_type matches_;
-            qi::eps_type eps;
-        qi::_val_type _val;
-        const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
-        const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             part_type
                 = ( tok.Part_
@@ -123,10 +119,9 @@ namespace {
                 > -(label(tok.MountableSlotTypes_) > one_or_more_slots)
                 >   common_rules.common
                 >   label(tok.Icon_)        > tok.string
-                    //                >   preferred_prey
                 > -(label(tok.Precision_) > double_rule)
-                > -(  (label(tok.PreferredPrey_) > condition_parser) |     eps [ _val = construct_movable_(new_<Condition::All>()) ] )
-                  ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
+                > -(label(tok.PreferredPrey_) > condition_parser)
+                    ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
                       insert_parttype_(_r1, _3,
                                        construct<std::tuple<boost::optional<double>, boost::optional<double>, boost::optional<int>, boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>>>>(_4, _5, _10, _11)
                                        , _8, _2, _7, _9, _6,
