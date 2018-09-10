@@ -1533,11 +1533,11 @@ namespace {
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon
             Targetting::TriggerConditions preferred_targets(Targetting::PreyAsTriggerCondition(Targetting::ShipPrey), 3);
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"),
-                                             attack_planet->CurrentMeterValue(METER_DEFENSE),3,preferred_targets));
+                                             attack_planet->CurrentMeterValue(METER_DEFENSE), 3, preferred_targets));
 
         } else if (attack_fighter) {    // treat fighter damage as direct fire weapon
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("FT_WEAPON_1"),
-                                             attack_fighter->Damage(),attack_fighter->Precision(),attack_fighter->PreferredTargets()));
+                                             attack_fighter->Damage(), attack_fighter->Precision(), attack_fighter->PreferredTargets()));
         }
         return weapons;
     }

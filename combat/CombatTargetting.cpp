@@ -48,8 +48,8 @@ bool Targetting::IsPreferredTarget(Targetting::TriggerCondition condition,
                                    Targetting::Target target)
 {
     if (!condition) {
-            DebugLogger() << "No preferences. Target is perfect." ;
-            return true;
+        DebugLogger() << "No preferences. Target is perfect." ;
+        return true;
     }
 
     DebugLogger() << "Evaluate preferred prey condition" << condition->Description();
