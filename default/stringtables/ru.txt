@@ -1141,7 +1141,7 @@ RULE_ONLY_ALLIANCE_WIN_DESC
 ##
 
 COMMAND_LINE_NOT_FOUND
-'''Совпадений не найдено'''
+Совпадений не найдено
 
 COMMAND_LINE_USAGE
 '''Используется: '''
@@ -1150,10 +1150,10 @@ COMMAND_LINE_DEFAULT
 '''По умолчанию: '''
 
 COMMAND_LINE_SECTIONS
-'''Настройки группы'''
+Настройки группы
 
 COMMAND_LINE_OPTIONS
-'''Настройки'''
+Настройки
 
 OPTIONS_DB_HELP
 '''Выводит это справочное сообщение.
@@ -1196,7 +1196,7 @@ OPTIONS_DB_FULLSCREEN
 Запускать игру в полноэкранном режиме. При нажатии клавиши "Применить" настройки могут применится сразу, или может потребоваться рестарт игры.
 
 OPTIONS_DB_FAKE_MODE_CHANGE
-'''Не изменять разрешение экрана в реальности. Вместо этого, игра открывается в окне, с выбранным разрешением и масштабом. Это позволяет избежать некоторых проблем, связанных с реальным изменением разрешения экрана, наблюдаемых в Линуксе.'''
+Не изменять разрешение экрана в реальности. Вместо этого, игра открывается в окне, с выбранным разрешением и масштабом. Это позволяет избежать некоторых проблем, связанных с реальным изменением разрешения экрана, наблюдаемых в Линуксе.
 
 OPTIONS_DB_FULLSCREEN_MONITOR_ID
 Выберите монитор для использования полноэкранного режима. Основной монитор должен иметь индекс 0. Может потребоваться рестарт, чтобы изменения применились.
@@ -1890,12 +1890,6 @@ OPTIONS_DB_SECTION_MISC
 OPTIONS_DB_SECTION_NETWORK
 Сервер и сеть
 
-OPTIONS_DB_SECTION_RAW
-All options with only raw description keys
-
-OPTIONS_DB_SECTION_RESOURCE
-Game data resources
-
 OPTIONS_DB_SECTION_SAVE
 Сохранение игры
 
@@ -2001,9 +1995,6 @@ INTRO_BTN_LOAD_GAME
 
 INTRO_BTN_OPTIONS
 Опции
-
-INTRO_BTN_PEDIA
-[[MAP_BTN_PEDIA]]
 
 INTRO_BTN_ABOUT
 Об игре
@@ -2935,9 +2926,6 @@ MAP_BTN_MESSAGES
 MAP_PRODUCTION_TITLE
 Промышленность
 
-MAP_PROD_WASTED_TITLE
-Теряемые мощности
-
 MAP_PROD_CLICK_TO_OPEN
 '''
 Нажмите здесь для открытия меню промышленности'''
@@ -2966,9 +2954,6 @@ RESOURCE_TT_USED
 
 RESOURCE_TT_EXCESS
 Избыток
-
-RESOURCE_TT_STOCKPILE_EFFIC
-КПД резервов
 
 RESOURCE_TT_TO_STOCKPILE
 Перейти в резервы
@@ -4750,7 +4735,7 @@ ENC_COMBAT_PLATFORM_TARGET_AND_DAMAGE
 ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS
 %2% не может повредить
 
-# %1% number of targets 
+# %1% number of targets
 # %2% name of ship unable to damage targets
 ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 %2% не может повредить %1% цели:
@@ -5942,14 +5927,14 @@ SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Поврежден неопознанный корабль
 
 SITREP_PLANET_ATTACKED_AT_SYSTEM
-В %system%: планета %planet% была атакована %empire%.  
+В %system%: планета %planet% была атакована %empire%.
 
 SITREP_PLANET_ATTACKED_AT_SYSTEM_LABEL
 Наша планета атакована
- 
+
 SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM
 В %system%: планета %planet% была атакована.
- 
+
 SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM_LABEL
 Ничья планета была атакована
 
@@ -8650,9 +8635,6 @@ DESC_VAR_LASTTURNBATTLEHERE
 
 DESC_COMPLEX
 Совокупность переменных
-
-DESC_VARIABLE_NAME
-Имя переменной
 
 # FOCS variable reference description text.
 # %1% reference type of the FOCS variable.
@@ -13131,11 +13113,13 @@ NO_STACK_STEALTH_SHIP_PARTS
 
 BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT
 Эта часть корабля может быть построена только если есть [[buildingtype BLD_SHIPYARD_AST_REF]] где-либо в империи или империи союзника.
+
 NO_STACK_SHIELDS_SHIP_PARTS
 [[metertype METER_SHIELD]] уменьшает [[encyclopedia DAMAGE_TITLE]], получаемый от каждого удара по щиту. На корабле может быть только один активный щит, эффекты от остальных не будут складываться.
 
 COLONY_SHIP_PARTS_MIN_POP
 Для любых модулей колонизации требуется, чтобы на планете, где они строятся, уровень населения был не менее трёх.
+
 COLONY_SHIP_PARTS_UPKEEP_COST
 Стоимость этой части корабля возрастает по мере расширения империи, так как увеличиваются расходы на содержание большой империи.
 
@@ -13958,12 +13942,6 @@ AI_FIRST_TURN_GREETING_MSG608
 OPTIONS_PAGE_HOTKEYS
 Горячие клавиши
 
-HOTKEYS_Z_COMBAT
-Окно сражений
-
-HOTKEYS_MAP
-Окно карты
-
 HOTKEYS_GENERAL
 Общие клавиши
 
@@ -14153,4 +14131,3 @@ SHIP_NAME_OTHER
 
 #include "../content_specific_parameters.txt"
 #include "../customizations/common_user_customizations.txt"
-
