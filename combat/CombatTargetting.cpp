@@ -113,9 +113,12 @@ Targetting::TriggerConditions Targetting::Combine(const Targetting::TriggerCondi
     return combined;
 }
 
-Targetting::TriggerConditions Targetting::Combine(Targetting::TriggerConditions& conditions,
-                                                  Targetting::TriggerCondition condition, int weight)
+const Targetting::TriggerConditions Targetting::Combine(const Targetting::TriggerConditions& conditions,
+                                                        const Targetting::TriggerCondition* condition, int weight)
 {
+    if (!condition) {
+        return conditions;
+    }
     Targetting::TriggerConditions combined;
     combined.conditions.reserve( conditions.conditions.size() + 1 );
     combined.weights.reserve( conditions.weights.size() + 1 );

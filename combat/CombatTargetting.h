@@ -35,44 +35,41 @@ namespace Targetting {
         ShipPrey = 2,
         BoatPrey = 4
     };
-    enum class HunterType {
-        Unknown,
-        Planet,
-        Boat,
-        Ship
-    };
+
     typedef std::shared_ptr<UniverseObject>  Target;
-    typedef std::shared_ptr<Condition::ConditionBase> TriggerCondition;
+    typedef Condition::ConditionBase TriggerCondition;
     typedef int                           Precision;
     struct TriggerConditions {
-      std::vector<Targetting::TriggerCondition> conditions;
-      std::vector<int> weights;
+        // XXX not intended to take ownership of conditions, but had to use a ptr type because ConditionBase is abstract so i cant put copies in the vector and i cant declare references; 
+        // XXX shared_ptr seems to be the least evil
+        std::vector<std::shared_ptr<Targetting::TriggerCondition>> conditions;
+        std::vector<int> weights;
 
-      TriggerConditions()
-      {}
+        TriggerConditions()
+        {}
 
-      TriggerConditions(const std::vector<Targetting::TriggerCondition>& conditions_, const std::vector<int>& weights_) :
-          conditions(conditions_),
-          weights(weights_)
-      {}
+        TriggerConditions(const std::vector<std::shared_ptr<Targetting::TriggerCondition>>&& conditions_, const std::vector<int>&& weights_) :
+            conditions(std::move(conditions_)),
+            weights(std::move(weights_))
+        {}
 
-      TriggerConditions(const Targetting::TriggerCondition& condition_, const int weight_) :
+        TriggerConditions(const std::shared_ptr<Targetting::TriggerCondition> condition_, const int weight_) :
             conditions({condition_}),
             weights({weight_})
-      {}
+        {}
     };
 
-    bool IsPreferredTarget(TriggerCondition condition, Target target);
-    bool IsPreferredTarget(TriggerConditions condition, Target target);
+    bool IsPreferredTarget(const TriggerCondition& condition, Target target);
+    bool IsPreferredTarget(const TriggerConditions& condition, Target target);
 
-    Precision FindPrecision(const HunterType hunting, const std::string& part_name);
     Precision FindPrecision(const TriggerConditions& conditions);
 
-    TriggerCondition FindPreferredTargets(const std::string& part_name);
-    TriggerCondition PreyAsTriggerCondition(PreyType prey);
+    TriggerCondition* FindPreferredTargets(const std::string& part_name);
+    TriggerCondition* PreyAsTriggerCondition(PreyType prey);
     TriggerConditions PreyAsTriggerConditions(PreyType prey);
-    TriggerConditions Combine(const TriggerConditions& one,const TriggerConditions& another);
-    TriggerConditions Combine(TriggerConditions& one, TriggerCondition another, int weight);
+    TriggerConditions Combine(const TriggerConditions& one, const TriggerConditions& another);
+    /* if the given condition exists, a copy with the appended condition gets returned */
+    const TriggerConditions Combine(const TriggerConditions& one, const TriggerCondition* another, int weight);
 }
 
 #endif // _CombatTargetting_h_
