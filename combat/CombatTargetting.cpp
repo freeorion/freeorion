@@ -12,7 +12,7 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 
-bool Targetting::IsPreferredTarget(Targetting::TriggerConditions conditions,
+bool Targetting::IsPreferredTarget(const Targetting::TriggerConditions& conditions,
                                    Targetting::Target target)
 {
     const Precision highest_weight = Targetting::FindPrecision(conditions);
@@ -23,7 +23,7 @@ bool Targetting::IsPreferredTarget(Targetting::TriggerConditions conditions,
             return true;
         }
 
-        if (Targetting::IsPreferredTarget(condition, target)) {
+        if (Targetting::IsPreferredTarget(*condition, target)) {
             const int scale = 10; // scale all compared values to remove artifacts from rounding
             const int upper = std::round(highest_weight * 1.5f * scale); // HEURISTIC
             const int improbability = RandInt(0, upper);
@@ -40,16 +40,16 @@ bool Targetting::IsPreferredTarget(Targetting::TriggerConditions conditions,
     return false;
 }
 
-bool Targetting::IsPreferredTarget(Targetting::TriggerCondition condition,
+bool Targetting::IsPreferredTarget(const Targetting::TriggerCondition& condition,
                                    Targetting::Target target)
 {
-    if (!condition) {
+    /*    if (!condition) {
         DebugLogger() << "No preferences. Target is perfect." ;
         return true;
-    }
+        }*///XXX
 
-    DebugLogger() << "Evaluate preferred prey condition" << condition->Description();
-    bool is_preferred = condition->Eval(target);
+    DebugLogger() << "Evaluate preferred prey condition" << condition.Description();
+    bool is_preferred = condition.Eval(target);
     auto obj_type = target->ObjectType();
     if (is_preferred) {
         DebugLogger() << "This " << obj_type << " ship should die! " ;
@@ -59,7 +59,7 @@ bool Targetting::IsPreferredTarget(Targetting::TriggerCondition condition,
     return is_preferred;
 }
 
-Targetting::TriggerCondition Targetting::PreyAsTriggerCondition(const Targetting::PreyType prey)
+std::unique_ptr<Targetting::TriggerCondition> Targetting::PreyAsTriggerCondition(const Targetting::PreyType prey)
 {
     std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>> p_obj;
     switch (prey) {
@@ -74,20 +74,21 @@ Targetting::TriggerCondition Targetting::PreyAsTriggerCondition(const Targetting
         break;
     case Targetting::AllPrey:
         //case Targetting::PreyType::NoPreference:
-        return std::make_shared<Condition::All>();
+        return boost::make_unique<Condition::All>();
         break;
     default:
         // error
         ErrorLogger() << "PreyAsTriggerCondition encountered unsupported PreyType " << prey << ".";
         return nullptr;
     }
-    return std::make_shared<Condition::Type>(move(p_obj));
+    //    return std::make_shared<Condition::Type>(move(p_obj));
+    return boost::make_unique<Condition::Type>(move(p_obj));
 }
 
 Targetting::TriggerConditions Targetting::PreyAsTriggerConditions(const Targetting::PreyType prey)
 { return Targetting::TriggerConditions(Targetting::PreyAsTriggerCondition(prey), 1); }
 
-Targetting::TriggerCondition Targetting::FindPreferredTargets(const std::string& part_name)
+Targetting::TriggerCondition* Targetting::FindPreferredTargets(const std::string& part_name)
 {
     const PartType* part = GetPartType(part_name);
     return part->PreferredPrey();
@@ -114,7 +115,7 @@ Targetting::TriggerConditions Targetting::Combine(const Targetting::TriggerCondi
 }
 
 const Targetting::TriggerConditions Targetting::Combine(const Targetting::TriggerConditions& conditions,
-                                                        const Targetting::TriggerCondition* condition, int weight)
+                                                        const Targetting::TriggerConditionP&& condition, int weight)
 {
     if (!condition) {
         return conditions;
@@ -123,7 +124,11 @@ const Targetting::TriggerConditions Targetting::Combine(const Targetting::Trigge
     combined.conditions.reserve( conditions.conditions.size() + 1 );
     combined.weights.reserve( conditions.weights.size() + 1 );
     combined = conditions;
-    combined.conditions.push_back(condition);
+    combined.conditions.push_back(std::move(condition));
     combined.weights.push_back(weight);
     return combined;
+}
+
+const Targetting::TriggerConditionP WrapCondition(const Targetting::TriggerCondition*&& condition) {
+    return std::shared_ptr<Targetting::TriggerCondition>(std::move(condition));
 }
