@@ -84,9 +84,7 @@ namespace Targetting {
     TriggerConditions PreyAsTriggerConditions(PreyType prey);
     TriggerConditions Combine(const TriggerConditions& one, const TriggerConditions& another);
     /* if the given condition exists, a copy with the appended condition gets returned. */
-    const TriggerConditionP WrapCondition(TriggerCondition* condition);
     const TriggerConditions Combine(const TriggerConditions& one, const TriggerConditionP&& another, int weight);
-    //     const TriggerConditions Combine(const TriggerConditions& one, std::shared_ptr<const TriggerCondition>&& another, int weight);
 }
 
 #endif // _CombatTargetting_h_
