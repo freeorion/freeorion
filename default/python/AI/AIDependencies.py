@@ -149,6 +149,9 @@ STEALTH_STRENGTHS_BY_SPECIES_TAG = {
     "ULTIMATE_STEALTH": PRIMARY_FOCS_STEALTH_LEVELS["HIGH_STEALTH"],
     "INFINITE_STEALTH": 500,  # used by super testers
 }
+
+FLD_ION_STORM = "FLD_ION_STORM"
+ION_STORM_STEALTH = 40
 # </editor-fold>
 
 # <editor-fold desc="Specials">

@@ -9,6 +9,7 @@ from collections import Mapping
 from functools import wraps
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+import AIDependencies
 
 # color wrappers for chat:
 RED = '<rgba 255 0 0 255>%s</rgba>'
@@ -347,3 +348,22 @@ def with_log_level(log_level):
 
         return wrapper
     return decorator
+
+
+def object_is_in_ion_storm(object_id):
+    # FIXME: This isn't working if we can not detect the ion storm
+    #        as is the case if the center of the storm is out of detection range
+    universe = fo.getUniverse()
+    universe_object = universe.getPlanet(object_id)
+    if not universe_object:
+        return False
+
+    for field_id in universe.fieldIDs:
+        field = universe.getField(field_id)
+        if field.fieldTypeName != AIDependencies.FLD_ION_STORM:
+            continue
+
+        if field.inField(universe_object):
+            return True
+
+    return False

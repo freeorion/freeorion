@@ -4,7 +4,7 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
 from AIDependencies import ALL_EMPIRES
 from EnumsAI import EmpireMeters
-from freeorion_tools import cache_by_session_with_turnwise_update
+from freeorion_tools import cache_by_session_with_turnwise_update, object_is_in_ion_storm
 
 
 def default_empire_detection_strength():
@@ -86,6 +86,9 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
         return default_result
     if species_name is None:
         species_name = planet.speciesName
+        verify_prediction = True
+    else:
+        verify_prediction = False
 
     # in case we are checking about aborting a colonization mission
     if empire == fo.empireID() and planet.ownedBy(empire):
@@ -113,6 +116,16 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
 
     total_stealth = planet_stealth + sum([AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(tag, 0)
                                           for tag in species_tags])
+
+    if verify_prediction:
+        meter_stealth = planet.currentMeterValue(fo.meterType.stealth)
+        predicted_stealth = total_stealth
+        if object_is_in_ion_storm(planet_id):
+            predicted_stealth += AIDependencies.ION_STORM_STEALTH
+        predicted_stealth = max(0., predicted_stealth)
+        if meter_stealth != predicted_stealth:
+            warn("Predicted stealth value for planet %s of %.1f but got %.1f" % (planet, predicted_stealth, meter_stealth))
+
     if isinstance(empire, int):
         empire_detection = get_empire_detection(empire)
     else:
