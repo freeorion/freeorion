@@ -129,6 +129,5 @@ const Targetting::TriggerConditions Targetting::Combine(const Targetting::Trigge
     return combined;
 }
 
-const Targetting::TriggerConditionP WrapCondition(const Targetting::TriggerCondition*&& condition) {
-    return std::shared_ptr<Targetting::TriggerCondition>(std::move(condition));
-}
+const Targetting::TriggerConditionP WrapCondition(Targetting::TriggerCondition* condition)
+{ return std::shared_ptr<Targetting::TriggerCondition>(std::move(condition)); }

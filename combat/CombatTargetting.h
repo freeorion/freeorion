@@ -36,43 +36,40 @@ namespace Targetting {
         BoatPrey = 4
     };
 
-    typedef std::shared_ptr<UniverseObject>                 Target;
-    typedef const Condition::ConditionBase                  TriggerCondition;
-    typedef std::shared_ptr<const Condition::ConditionBase> TriggerConditionP;
-    typedef int                                             Precision;
+    typedef std::shared_ptr<UniverseObject>                   Target;
+    typedef const ::Condition::ConditionBase                  TriggerCondition;
+    typedef std::shared_ptr<const ::Condition::ConditionBase> TriggerConditionP;
+    typedef int                                               Precision;
     struct TriggerConditions {
         // Currently ShipPart takes ownership of TriggerCondition using a unique_ptr
         // TriggerConditions takes ownership of conditions so it could become part of ShipDesign, Parts etc..
         // If ownership is not necessary we still not some kind of reference type, where shared_ptr seems to be a lesser evil
-        std::vector<std::shared_ptr<Targetting::TriggerCondition>> conditions;
+        std::vector<std::shared_ptr<TriggerCondition>> conditions;
         std::vector<int> weights;
 
         TriggerConditions()
         {}
 
-        TriggerConditions(const std::vector<Targetting::TriggerConditionP>&& conditions_, const std::vector<int>&& weights_) :
+        TriggerConditions(const std::vector<TriggerConditionP>&& conditions_, const std::vector<int>&& weights_) :
             conditions(std::move(conditions_)),
             weights(std::move(weights_))
         {}
-
+        /*
         TriggerConditions(const Targetting::TriggerConditionP&& condition_, const int weight_) :
             conditions({condition_}),
             weights({weight_})
         {}
-
-        TriggerConditions(const Targetting::TriggerConditionP& condition_, const int weight_) :
+        */
+        TriggerConditions(const TriggerConditionP& condition_, const int weight_) :
             conditions({condition_}),
             weights({weight_})
         {}
 
 
-        TriggerConditions(const Targetting::TriggerCondition* condition_, const int weight_) :
-            //            conditions({std::make_shared<Targetting::TriggerCondition>(condition_)}),
+        TriggerConditions(const TriggerCondition* condition_, const int weight_) :
+            conditions({std::shared_ptr<TriggerCondition>(condition_)}),
             weights({weight_})
-        {
-            std::shared_ptr<Targetting::TriggerCondition> condition__(condition_);
-            conditions.push_back(condition__);
-        }
+        {}
 
     };
 
@@ -87,7 +84,7 @@ namespace Targetting {
     TriggerConditions PreyAsTriggerConditions(PreyType prey);
     TriggerConditions Combine(const TriggerConditions& one, const TriggerConditions& another);
     /* if the given condition exists, a copy with the appended condition gets returned. */
-    const TriggerConditionP WrapCondition(const TriggerCondition*&& condition);
+    const TriggerConditionP WrapCondition(TriggerCondition* condition);
     const TriggerConditions Combine(const TriggerConditions& one, const TriggerConditionP&& another, int weight);
     //     const TriggerConditions Combine(const TriggerConditions& one, std::shared_ptr<const TriggerCondition>&& another, int weight);
 }

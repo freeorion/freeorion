@@ -739,10 +739,8 @@ namespace {
             ShipPartClass part_class = part->Class();
             if (part_class == PC_DETECTION){
                 design_precision = std::max(design_precision, part->Precision());
-                //XXX
-                Targetting::TriggerConditionP wrap = Targetting::WrapCondition(part->PreferredPrey());
-                    //design_preferred_prey = Targetting::Combine(design_preferred_prey, Targetting::WrapCondition(part->PreferredPrey()), part->Precision());
-                design_preferred_prey = Targetting::Combine(design_preferred_prey, std::move(wrap), part->Precision());
+                design_preferred_prey = Targetting::Combine(design_preferred_prey,
+                                                            Targetting::TriggerConditions(part->PreferredPrey(), part->Precision()));
             }
         }
         for (const auto& part_name : design->Parts()) { // second round
@@ -757,7 +755,9 @@ namespace {
                 int shots = static_cast<int>(ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name)); // secondary stat is shots per attack)
                 if (part_attack > 0.0f && shots > 0) {
                     // attack for each shot...
-                    auto preferred_targets = Targetting::Combine(design_preferred_prey, Targetting::WrapCondition(Targetting::FindPreferredTargets(part_name)), part->Precision());
+                    auto preferred_targets = Targetting::Combine(design_preferred_prey,
+                                                                 Targetting::TriggerConditions(Targetting::FindPreferredTargets(part_name),
+                                                                                               part->Precision()));
                     for (int shot_count = 0; shot_count < shots; ++shot_count)
                         retval.push_back(PartAttackInfo(part_class, part_name, part_attack, Targetting::FindPrecision(preferred_targets), preferred_targets));
                 }
@@ -769,6 +769,7 @@ namespace {
                     seen_hangar_part_types.insert(part_name);
                     fighter_precision = part->Precision();
                     fighter_preferred_prey = part->PreferredPrey();
+                    //XXX
                     //                    fighter_preferred_prey = std::make_shared<const Targetting::TriggerCondition>(part->PreferredPrey());
 
                     // should only be one type of fighter per ship as of this writing
