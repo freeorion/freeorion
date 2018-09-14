@@ -7,9 +7,9 @@
 
 #include "Serialize.ipp"
 
-#include <random>
 #include <boost/date_time/posix_time/time_serialize.hpp>
-#include <boost/format.hpp>
+#include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 
 template <class Archive>
@@ -34,10 +34,7 @@ void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
         ar & BOOST_SERIALIZATION_NVP(m_game_uid);
     } else {
         if (Archive::is_loading::value) {
-            std::default_random_engine generator;
-            std::uniform_int_distribution<int> distribution(0,999);
-
-            m_game_uid = m_seed + (boost::format("%03i") % distribution(generator)).str();
+            m_game_uid = boost::uuids::to_string(boost::uuids::random_generator()());
         }
     }
 }
