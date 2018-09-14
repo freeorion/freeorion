@@ -71,6 +71,11 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     ///////////////////
     FreeOrionPython::WrapGameStateEnums();
 
+    ///////////////////
+    //     Config    //
+    ///////////////////
+    FreeOrionPython::WrapConfig();
+
     ////////////////////
     // STL Containers //
     ////////////////////

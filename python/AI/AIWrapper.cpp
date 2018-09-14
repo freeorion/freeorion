@@ -82,18 +82,6 @@ namespace {
         return ret_list;
     }
 
-    boost::python::object GetOptionsDBOptionStr(std::string const &option)
-    { return GetOptionsDB().OptionExists(option) ? boost::python::str(GetOptionsDB().Get<std::string>(option)) : boost::python::str(); }
-
-    boost::python::object GetOptionsDBOptionInt(std::string const &option)
-    { return GetOptionsDB().OptionExists(option) ? boost::python::object(GetOptionsDB().Get<int>(option)) : boost::python::object(); }
-
-    boost::python::object GetOptionsDBOptionBool(std::string const &option)
-    { return GetOptionsDB().OptionExists(option) ? boost::python::object(GetOptionsDB().Get<bool>(option)) : boost::python::object(); }
-
-    boost::python::object GetOptionsDBOptionDouble(std::string const &option)
-    { return GetOptionsDB().OptionExists(option) ? boost::python::object(GetOptionsDB().Get<double>(option)) : boost::python::object(); }
-
     //! Return the canonical AI directory path
     //!
     //! The value depends on the ::OptionsDB `resource.path` and `ai-path` keys.
@@ -103,12 +91,6 @@ namespace {
     //! scripts.
     std::string GetAIDir()
     { return (GetResourceDir() / GetOptionsDB().Get<std::string>("ai-path")).string(); }
-
-    boost::python::str GetUserConfigDirWrapper()
-    { return boost::python::str(PathToString(GetUserConfigDir())); }
-
-    boost::python::str GetUserDataDirWrapper()
-    { return boost::python::str(PathToString(GetUserDataDir())); }
 
     template<typename OrderType, typename... Args>
     int Issue(Args &&... args) {
@@ -212,14 +194,7 @@ namespace FreeOrionPython {
 
         def("currentTurn",              CurrentTurn,       "Returns the current game turn (int).");
 
-        def("getOptionsDBOptionStr",    GetOptionsDBOptionStr,     return_value_policy<return_by_value>(), "Returns the string value of option in OptionsDB or None if the option does not exist.");
-        def("getOptionsDBOptionInt",    GetOptionsDBOptionInt,     return_value_policy<return_by_value>(), "Returns the integer value of option in OptionsDB or None if the option does not exist.");
-        def("getOptionsDBOptionBool",   GetOptionsDBOptionBool,    return_value_policy<return_by_value>(), "Returns the bool value of option in OptionsDB or None if the option does not exist.");
-        def("getOptionsDBOptionDouble", GetOptionsDBOptionDouble,  return_value_policy<return_by_value>(), "Returns the double value of option in OptionsDB or None if the option does not exist.");
-
         def("getAIDir",                 GetAIDir,                       return_value_policy<return_by_value>());
-        def("getUserConfigDir",         GetUserConfigDirWrapper,        /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific configuration.");
-        def("getUserDataDir",           GetUserDataDirWrapper,          /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific data (saves, etc.).");
 
         def("initMeterEstimatesDiscrepancies",      AIInterface::InitMeterEstimatesAndDiscrepancies);
         def("updateMeterEstimates",                 AIInterface::UpdateMeterEstimates);
