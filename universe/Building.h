@@ -115,7 +115,10 @@ public:
 
     const std::set<std::string>&    Tags() const            { return m_tags; }
     const Condition::ConditionBase* Location() const        { return m_location.get(); }          ///< returns the condition that determines the locations where this building can be produced
-    const Condition::ConditionBase* EnqueueLocation() const { return m_enqueue_location.get(); }  ///< returns the condition that determines the locations where this building can be enqueued (ie. put onto the production queue)
+    
+    /** Returns a condition that can be used by the UI to further filter (beyond the Location() requirement) where this building 
+        will be presented for enqueuing onto the production queue, to avoid clutter in the BuildDesignatorWnd. */
+    const Condition::ConditionBase* EnqueueLocation() const { return m_enqueue_location.get(); }  
 
     /** Returns the EffectsGroups that encapsulate the effects that buildings ofi
         this type have when operational. */
@@ -125,7 +128,7 @@ public:
     const std::string&              Icon() const            { return m_icon; }              ///< returns the name of the grapic file for this building type
 
     bool ProductionLocation(int empire_id, int location_id) const;  ///< returns true iff the empire with ID empire_id can produce this building at the location with location_id
-    bool EnqueueLocation(int empire_id, int location_id) const;     ///< returns true iff the empire with ID empire_id can enqueue this building at the location with location_id
+    bool EnqueueLocation(int empire_id, int location_id) const;     ///< returns true iff the empire with ID empire_id meets the requirements of the EnqueueLocation() UI filter method for this building at the location with location_id
 
     /** returns CaptureResult for empire with ID \a to_empire_id capturing from
       * empire with IDs \a from_empire_id the planet (or other UniverseObject)
