@@ -3,7 +3,7 @@ The TechsListAI module provides functions that describes dependencies between
 various technologies to help the AI decide which technologies should be
 researched next.
 """
-from logging import warn
+from logging import warn, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -635,9 +635,9 @@ def test_tech_integrity():
         TechGroup4,
         TechGroup5
     ]
-    print "Checking TechGroup integrity..."
+    debug("Checking TechGroup integrity...")
     for group in tech_groups:
-        print "Checking %s: " % group.__name__,
+        debug("Checking %s: " % group.__name__)
         error_occured = False
         this_group = group()
         techs = this_group.get_techs()
@@ -649,13 +649,13 @@ def test_tech_integrity():
             warn(err, exc_info=True)
             error_occured = True
         if not error_occured:
-            print "Seems to be OK!"
+            debug("Seems to be OK!")
 
 
 def sparse_galaxy_techs(index):
     # return primary_meta_techs()
     result = []
-    print "Choosing Research Techlist Index %d" % index
+    debug("Choosing Research Techlist Index %d" % index)
     if index == 0:
         result = TechGroup1a().get_techs()  # early org_hull
         result += TechGroup2A().get_techs()  # prioritizes growth & defense over weapons
@@ -696,7 +696,7 @@ def primary_meta_techs(index=0):
     # index = 1 - index
     result = []
 
-    print "Choosing Research Techlist Index %d" % index
+    debug("Choosing Research Techlist Index %d" % index)
     if index == 0:
         result = TechGroup1a().get_techs()  # early org_hull
         result += TechGroup2A().get_techs()  # prioritizes growth & defense over weapons
