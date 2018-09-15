@@ -14,8 +14,8 @@ def handle_pregame_chat(sender_player_id, message_txt):
         return
     possible_acknowledgments = UserStringList("AI_PREGAME_ACKNOWLEDGEMENTS__LIST")
     acknowledgement = random.choice(possible_acknowledgments)
-    print "Acknowledging pregame chat with initial message (from %d choices): '%s'" % (
-        len(possible_acknowledgments), acknowledgement)
+    debug("Acknowledging pregame chat with initial message (from %d choices): '%s'" % (
+        len(possible_acknowledgments), acknowledgement))
     fo.sendChatMessage(sender_player_id, acknowledgement)
 
 
