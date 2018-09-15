@@ -147,12 +147,12 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
 
         SAFETY_MARGIN = 10
         if SAFETY_MARGIN * path_rating <= fleet_rating:
-            print ("Drydock recommendation %s from %s for fleet %s with fleet rating %.1f and path rating %.1f."
-                   % (dock_system, start_system, universe.getFleet(fleet_id), fleet_rating, path_rating))
+            debug("Drydock recommendation %s from %s for fleet %s with fleet rating %.1f and path rating %.1f."
+                  % (dock_system, start_system, universe.getFleet(fleet_id), fleet_rating, path_rating))
             return dock_system.id
 
-    print ("No safe drydock recommendation from %s for fleet %s with fleet rating %.1f."
-           % (start_system, universe.getFleet(fleet_id), fleet_rating))
+    debug("No safe drydock recommendation from %s for fleet %s with fleet rating %.1f."
+          % (start_system, universe.getFleet(fleet_id), fleet_rating))
     return None
 
 
@@ -163,8 +163,8 @@ def get_safe_path_leg_to_dest(fleet_id, start_id, dest_id):
     this_path = can_travel_to_system(fleet_id, start_targ, dest_targ, ensure_return=False)
     path_ids = [targ.id for targ in this_path if targ.id != start_id] + [start_id]
     universe = fo.getUniverse()
-    print "Fleet %d requested safe path leg from %s to %s, found path %s" % (
-        fleet_id, universe.getSystem(start_id), universe.getSystem(dest_id), PlanetUtilsAI.sys_name_ids(path_ids))
+    debug("Fleet %d requested safe path leg from %s to %s, found path %s" % (
+        fleet_id, universe.getSystem(start_id), universe.getSystem(dest_id), PlanetUtilsAI.sys_name_ids(path_ids)))
     return path_ids[0]
 
 
@@ -202,5 +202,5 @@ def get_repair_fleet_order(fleet, current_system_id):
     if drydock_sys_id is None:
         return None
 
-    print "Ordering fleet %s to %s for repair" % (fleet, fo.getUniverse().getSystem(drydock_sys_id))
+    debug("Ordering fleet %s to %s for repair" % (fleet, fo.getUniverse().getSystem(drydock_sys_id)))
     return fleet_orders.OrderRepair(fleet, universe_object.System(drydock_sys_id))
