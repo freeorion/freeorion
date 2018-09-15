@@ -374,7 +374,6 @@ struct WaitingForSaveData : sc::state<WaitingForSaveData, WaitingForTurnEnd> {
         sc::deferral<SaveGameRequest>,
         sc::deferral<TurnOrders>,
         sc::deferral<RevokeReadiness>,
-        sc::deferral<PlayerChat>,
         sc::deferral<Diplomacy>
     > reactions;
 
