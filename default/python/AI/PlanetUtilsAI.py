@@ -1,4 +1,4 @@
-from logging import error
+from logging import error, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import ColonisationAI
@@ -57,8 +57,8 @@ def get_capital():
         if homeworld.owner == empire_id:
             return capital_id
         else:
-            print "Nominal Capitol %s does not appear to be owned by empire %d %s" % (
-                homeworld.name, empire_id, empire.name)
+            debug("Nominal Capitol %s does not appear to be owned by empire %d %s" % (
+                homeworld.name, empire_id, empire.name))
     empire_owned_planet_ids = get_owned_planets_by_empire(universe.planetIDs)
     peopled_planets = get_populated_planet_ids(empire_owned_planet_ids)
     if not peopled_planets:
