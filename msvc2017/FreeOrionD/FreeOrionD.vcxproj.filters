@@ -286,5 +286,8 @@
     <ClCompile Include="..\..\util\DependencyVersions.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\python\ConfigWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

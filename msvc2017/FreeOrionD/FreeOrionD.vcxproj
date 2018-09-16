@@ -198,6 +198,7 @@
     <ClCompile Include="..\..\combat\CombatSystem.cpp" />
     <ClCompile Include="..\..\network\ServerNetworking.cpp" />
     <ClCompile Include="..\..\python\CommonFramework.cpp" />
+    <ClCompile Include="..\..\python\ConfigWrapper.cpp" />
     <ClCompile Include="..\..\python\EmpireWrapper.cpp" />
     <ClCompile Include="..\..\python\EnumWrapper.cpp" />
     <ClCompile Include="..\..\python\LoggingWrapper.cpp" />
