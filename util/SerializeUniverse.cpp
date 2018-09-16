@@ -151,8 +151,13 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         }
     }
 
-    ar  & BOOST_SERIALIZATION_NVP(m_stat_records);
-    DebugLogger() << "Universe::serialize : " << serializing_label << " " << m_stat_records.size() << " types of statistic";
+    if (Archive::is_saving::value && (!m_stat_records_publish)) {
+        std::map<std::string, std::map<int, std::map<int, double>>> dummy_stat_records;
+        ar  & boost::serialization::make_nvp("m_stat_records", dummy_stat_records);
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_stat_records);
+        DebugLogger() << "Universe::serialize : " << serializing_label << " " << m_stat_records.size() << " types of statistic";
+    }
 
     DebugLogger() << "Universe::serialize : " << serializing_label << " done";
 

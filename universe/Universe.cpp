@@ -1098,7 +1098,7 @@ namespace {
                                      " cause: " + m_specific_cause_name);
 
             // skip inactive sources
-            // FIXME: is it safe to move this out of the loop? 
+            // FIXME: is it safe to move this out of the loop?
             // Activation condition must not contain "Source" subconditions in that case
             const auto* activation = m_effects_group->Activation();
             if (activation && !activation->Eval(source_context, source))
@@ -1578,7 +1578,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                     Effect::TargetsAndCause& targets_and_cause = targets_it->second;
                     Effect::TargetSet& targets = targets_and_cause.target_set;
 
-                    // this is a set difference/union algorithm: 
+                    // this is a set difference/union algorithm:
                     // targets              -= non_stacking_targets
                     // non_stacking_targets += targets
                     for (auto object_it = targets.begin();
@@ -2262,7 +2262,7 @@ namespace {
 
                         // special case for fleets: grant partial visibility if
                         // visible contained object is partially or better visible
-                        // this way fleet ownership is known to players who can 
+                        // this way fleet ownership is known to players who can
                         // see ships with partial or better visibility (and thus
                         // know the owner of the ships and thus should know the
                         // owners of the fleet)
@@ -2412,7 +2412,7 @@ namespace {
                                        Universe::EmpireObjectSpecialsMap& empire_object_visible_specials)
     {
         // make copy of input vis map, iterate over that, not the output as
-        // iterating over the output while modifying it would result in 
+        // iterating over the output while modifying it would result in
         // second-order visibility sharing (but only through allies with lower
         // empire id)
         auto input_eov_copy = empire_object_visibility;
@@ -2952,6 +2952,9 @@ void Universe::UpdateStatRecords() {
         }
     }
 }
+
+void Universe::SetStatRecordsPublish(bool publish /*= true*/)
+{ m_stat_records_publish = publish; }
 
 void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize,
                                          int encoding_empire) const

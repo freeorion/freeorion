@@ -351,6 +351,9 @@ public:
     void InhibitUniverseObjectSignals(bool inhibit = true);
 
     void UpdateStatRecords();
+
+    /** Sets whether to publish empire statistics to the players. */
+    void SetStatRecordsPublish(bool publish = true);
     //@}
 
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
@@ -464,7 +467,7 @@ private:
 
     /** Removes entries in \a targets_causes about effects groups acting
       * on objects in \a target_objects, and then repopulates for EffectsGroups
-      * that act on at least one of the objects in \a target_objects. If 
+      * that act on at least one of the objects in \a target_objects. If
       * \a target_objects is empty then default target candidates will be used. */
     void GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                               const std::vector<int>& target_objects);
@@ -486,7 +489,7 @@ private:
 
     /** Does actual updating of meter estimates after the public function have
       * processed objects_vec or whatever they were passed and cleared the
-      * relevant effect accounting for those objects and meters. If an empty 
+      * relevant effect accounting for those objects and meters. If an empty
       * vector is passed, it will instead update all existing objects. */
     void UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, bool do_accounting);
 
@@ -520,6 +523,7 @@ private:
 
     std::map<std::string, std::map<int, std::map<int, double>>>
                                     m_stat_records;                     ///< storage for statistics calculated for empires. Indexed by stat name (string), contains a map indexed by empire id, contains a map from turn number (int) to stat value (double).
+    bool                            m_stat_records_publish;             ///< send empire statistics to the players.
 
     /** @name Parsed items
         Various unlocked items are kept as a Pending::Pending while being parsed and
