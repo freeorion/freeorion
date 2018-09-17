@@ -6912,6 +6912,12 @@ At %system%: ship %ship% has sufficient fuel to resume starlane travel.
 EFFECT_SHIP_REFUELED_LABEL
 Ship Refueled
 
+EFFECT_POPULATION_LOSS_AFTER_CONQUEST
+At %system%: Heavy civilian casualties during conquest of %planet%.
+
+EFFECT_POPULATION_LOSS_AFTER_CONQUEST_LABEL
+Civilian Casualties
+
 HEAD_ON_A_SPIKE_MESSAGE
 The capital of the %empire% empire has fallen.
 

@@ -21,7 +21,72 @@ BASIC_POPULATION
                     min(Target.TargetPopulation, Value + Value*0.01*(Target.TargetPopulation + 1 - Value)))
               + (Statistic If condition = (Value >= Target.TargetPopulation) *
                     max(Target.TargetPopulation, Value - 0.1*(Value - Target.TargetPopulation)))
-            
+
+        // Remove population upon conquest
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                (Source.LastTurnConquered == CurrentTurn)
+                Random probability = 0.333
+            ]
+            stackinggroup = "POPULATION_LOSS_AFTER_CONQUEST"
+            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
+            effects = [
+                SetPopulation value = Value * 0.1
+                GenerateSitRepMessage
+                    message = "EFFECT_POPULATION_LOSS_AFTER_CONQUEST"
+                        label = "EFFECT_POPULATION_LOSS_AFTER_CONQUEST_LABEL"
+                        icon = "icons/meter/rebels.png"
+                        parameters = [
+                            tag = "system" data = Source.SystemID
+                            tag = "planet" data = Source.PlanetID
+                        ]
+                        empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                (Source.LastTurnConquered == CurrentTurn)
+                Random probability = 0.5  // effectively 1/3
+            ]
+            stackinggroup = "POPULATION_LOSS_AFTER_CONQUEST"
+            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
+            effects = [
+                SetPopulation value = Value * 0.15
+                GenerateSitRepMessage
+                    message = "EFFECT_POPULATION_LOSS_AFTER_CONQUEST"
+                        label = "EFFECT_POPULATION_LOSS_AFTER_CONQUEST_LABEL"
+                        icon = "icons/meter/rebels.png"
+                        parameters = [
+                            tag = "system" data = Source.SystemID
+                            tag = "planet" data = Source.PlanetID
+                        ]
+                        empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                (Source.LastTurnConquered == CurrentTurn)
+            ]
+            stackinggroup = "POPULATION_LOSS_AFTER_CONQUEST"
+            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
+            effects = [
+                SetPopulation value = Value * 0.2
+                GenerateSitRepMessage
+                    message = "EFFECT_POPULATION_LOSS_AFTER_CONQUEST"
+                        label = "EFFECT_POPULATION_LOSS_AFTER_CONQUEST_LABEL"
+                        icon = "icons/meter/rebels.png"
+                        parameters = [
+                            tag = "system" data = Source.SystemID
+                            tag = "planet" data = Source.PlanetID
+                        ]
+                        empire = Source.Owner
+            ]
         // Since all species have the same advanced focus effects and
         // infrastructure, the macros are stashed here were they don't
         // need to be manually included in each species macros.
