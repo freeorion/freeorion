@@ -2,6 +2,7 @@ import sys
 from traceback import print_exc
 from shlex import split
 import os
+from logging import error
 
 from common.option_tools import get_option_dict, HANDLERS
 
@@ -27,7 +28,7 @@ def init_handlers(config_str, search_dir):
             __import__(module)
         except Exception as e:
             for p in sys.path:
-                print p
-            print >> sys.stderr, "Fail to import handler %s with error %s" % (handler, e)
+                error(p)
+            error("Fail to import handler %s with error %s" % (handler, e))
             print_exc()
             exit(1)

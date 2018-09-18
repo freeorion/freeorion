@@ -1,10 +1,12 @@
+from __future__ import print_function
+
 import freeOrionAIInterface as fo
 from freeorion_tools import chat_human
 from code import InteractiveInterpreter
 from cStringIO import StringIO
 import logging
 import sys
-
+from logging import error
 
 interpreter = InteractiveInterpreter({'fo': fo})
 debug_mode = False
@@ -30,7 +32,7 @@ def handle_debug_chat(sender, message):
             chat_human("exiting debug mode")
         debug_mode = False
     elif debug_mode:
-        print '>', message,
+        print('>', message, end='')
         is_debug_chat = True
         out, err = [x.strip('\n') for x in shell(message)]
         if out:
@@ -42,7 +44,7 @@ def handle_debug_chat(sender, message):
         try:
             player_id = int(message[5:].strip())
         except ValueError as e:
-            print e
+            error(e)
             chat_human(str(e))
             return True
         if player_id == fo.playerID():

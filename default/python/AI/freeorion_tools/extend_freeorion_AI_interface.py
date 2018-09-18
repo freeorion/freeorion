@@ -42,6 +42,7 @@ import inspect
 import os
 from functools import wraps
 from itertools import izip_longest
+from logging import debug
 
 import freeOrionAIInterface as fo
 from _freeorion_tools import dict_from_map
@@ -128,6 +129,6 @@ def logger(callable_object, argument_wrappers=None):
         arguments.extend('%s=%s' % item for item in kwargs.items())
         res = callable_object(*args, **kwargs)
         frame = inspect.currentframe().f_back
-        print "%s:%s %s(%s) -> %s" % (os.path.basename(frame.f_code.co_filename), frame.f_lineno, callable_object.__name__, ', '.join(arguments), res)
+        debug("%s:%s %s(%s) -> %s", os.path.basename(frame.f_code.co_filename), frame.f_lineno, callable_object.__name__, ', '.join(arguments), res)
         return res
     return inner
