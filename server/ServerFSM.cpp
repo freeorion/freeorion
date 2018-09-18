@@ -2605,8 +2605,12 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
-        player->SendMessage(ServerSaveGameDataRequestMessage());
-        m_needed_reponses.insert(player_id);
+        if (const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id))) {
+            if (!empire->Eliminated()) {
+                player->SendMessage(ServerSaveGameDataRequestMessage());
+                m_needed_reponses.insert(player_id);
+            }
+        }
     }
 }
 
