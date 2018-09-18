@@ -386,7 +386,7 @@ def generate_production_orders():
                 sys_id = planet.systemID
                 queued_defenses[sys_id] = queued_defenses.get(sys_id, 0) + element.blocksize*element.remaining
                 defense_allocation += element.allocation
-        debug("Queued Defenses:", ppstring([(str(universe.getSystem(sid)), num)
+        debug("Queued Defenses: %s", ppstring([(str(universe.getSystem(sid)), num)
                                             for sid, num in queued_defenses.items()]))
         for sys_id, pids in state.get_empire_planets_by_system(include_outposts=False).items():
             if aistate.systemStatus.get(sys_id, {}).get('fleetThreat', 1) > 0:

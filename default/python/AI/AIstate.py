@@ -880,7 +880,7 @@ class AIstate(object):
         info(fleet_table)
         # Next string used in charts. Don't modify it!
         debug("Empire Ship Count: %s" % self.shipCount)
-        debug("Empire standard fighter summary: %s" % CombatRatingsAI.get_empire_standard_fighter().get_stats())
+        debug("Empire standard fighter summary: %s", (CombatRatingsAI.get_empire_standard_fighter().get_stats(), ))
         debug("------------------------")
 
     def get_explored_system_ids(self):

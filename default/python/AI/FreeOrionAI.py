@@ -287,9 +287,9 @@ def generateOrders():  # pylint: disable=invalid-name
     debug("Generating Orders")
     debug("EmpireID: {empire.empireID}"
           " Name: {empire.name}_{empire.empireID}_pid:{p_id}_{p_name}RIdx_{res_idx}_{aggression}"
-          " Turn: {turn}").format(empire=empire, p_id=fo.playerID(), p_name=fo.playerName(),
-                                  res_idx=ResearchAI.get_research_index(), turn=turn,
-                                  aggression=aggression_name.capitalize())
+          " Turn: {turn}".format(empire=empire, p_id=fo.playerID(), p_name=fo.playerName(),
+                                 res_idx=ResearchAI.get_research_index(), turn=turn,
+                                 aggression=aggression_name.capitalize()))
     debug("EmpireColors: {0.colour.r} {0.colour.g} {0.colour.b} {0.colour.a}".format(empire))
     if planet:
         debug("CapitalID: " + str(planet_id) + " Name: " + planet.name + " Species: " + planet.speciesName)

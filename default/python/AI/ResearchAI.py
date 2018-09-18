@@ -624,7 +624,7 @@ def generate_classic_research_orders():
     tlist = completed_techs + [" "] * 3
     tlines = zip(tlist[0::3], tlist[1::3], tlist[2::3])
     for tline in tlines:
-        debug("%25s %25s %25s", tline)
+        debug("%25s %25s %25s", *tline)
     debug('')
 
     #

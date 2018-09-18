@@ -273,7 +273,7 @@ def assign_invasion_values(planet_ids):
                                                                                MissionType.MILITARY])
     for pid in planet_ids:
         planet_values[pid] = neighbor_values.setdefault(pid, evaluate_invasion_planet(pid, secure_missions))
-        debug("planet %d, values %s" % (pid, planet_values[pid]))
+        debug("planet %d, values %s", pid, planet_values[pid])
         planet = universe.getPlanet(pid)
         species_name = (planet and planet.speciesName) or ""
         species = fo.getSpecies(species_name)
@@ -444,9 +444,8 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         debug("Invasion eval of %s\n"
               " - maxShields: %.1f\n"
               " - sysFleetThreat: %.1f\n"
-              " - sysMonsterThreat: %.1f") % (
-            planet, planet.currentMeterValue(fo.meterType.maxShield), system_fleet_treat,
-            system_monster_threat)
+              " - sysMonsterThreat: %.1f",
+              planet, planet.currentMeterValue(fo.meterType.maxShield), system_fleet_treat, system_monster_threat)
     enemy_val = 0
     if planet.owner != -1:  # value in taking this away from an enemy
         enemy_val = 20 * (planet.currentMeterValue(fo.meterType.targetIndustry) +
@@ -502,8 +501,8 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
               ' - planet detail: %s\n'
               ' - popval: %.1f\n'
               ' - bldval: %s\n'
-              ' - enemyval: %s') % (planet_score, planned_troops, troop_cost,
-                                    threat_factor, detail, colony_base_value, bld_tally, enemy_val)
+              ' - enemyval: %s',
+              planet_score, planned_troops, troop_cost, threat_factor, detail, colony_base_value, bld_tally, enemy_val)
         debug(' - system secured: %s' % system_secured)
     return [planet_score, planned_troops]
 
