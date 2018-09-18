@@ -1410,7 +1410,7 @@ sc::result MPLobby::react(const PlayerChat& msg) {
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
 
     if (sender->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER) {
-        GG::Clr text_color(255, 255, 255, 0);
+        GG::Clr text_color(255, 255, 255, 255);
         for (const auto& player : m_lobby_data->m_players) {
             if (player.first != sender->PlayerID())
                 continue;
@@ -2097,7 +2097,7 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
 
     if (sender->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER) {
-        GG::Clr text_color(255, 255, 255, 0);
+        GG::Clr text_color(255, 255, 255, 255);
         if (auto empire = GetEmpire(sender->PlayerID()))
             text_color = empire->Color();
 
