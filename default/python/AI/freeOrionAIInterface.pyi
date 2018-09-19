@@ -107,6 +107,10 @@ class GalaxySetupData(object):
         return galaxySetupOption()
 
     @property
+    def gameUID(self):
+        return str()
+
+    @property
     def maxAIAggression(self):
         return aggression()
 
@@ -795,6 +799,68 @@ class MeterTypeStringPair(object):
         pass
 
 
+class Order(object):
+    @property
+    def empireID(self):
+        pass
+
+    @property
+    def executed(self):
+        pass
+
+
+class OrderSet(object):
+    @property
+    def size(self):
+        pass
+
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
+
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
+
+
 class PairIntInt_IntMap(object):
     def __contains__(self, obj):
         """
@@ -1454,10 +1520,12 @@ class empire(object):
         """
         return bool()
 
-    def getMeter(self, meter_name):
+    def getMeter(self, string):
         """
-        :param meter_name:
-        :type meter_name: string
+        Returns the empire meter with the indicated name (string).
+
+        :param string:
+        :type string: str
         :rtype: meter
         """
         return meter()
@@ -2680,14 +2748,6 @@ class universeObject(object):
         """
         return float()
 
-    def nextTurnCurrentMeterValue(self, meter_type):
-        """
-        :param meter_type:
-        :type meter_type: meterType
-        :rtype: float
-        """
-        return float()
-
     def ownedBy(self, number):
         """
         :param number:
@@ -3107,10 +3167,12 @@ class buildType(Enum):
 
     building = None  # buildType(1, "building")
     ship = None  # buildType(2, "ship")
+    stockpile = None  # buildType(4, "stockpile")
 
 
 buildType.building = buildType(1, "building")
 buildType.ship = buildType(2, "ship")
+buildType.stockpile = buildType(4, "stockpile")
 
 
 class captureResult(Enum):
@@ -3753,6 +3815,15 @@ def getOptionsDBOptionStr(string):
     return object()
 
 
+def getOrders():
+    """
+    Returns the orders the client empire has issued (OrderSet).
+
+    :rtype: OrderSet
+    """
+    return OrderSet()
+
+
 def getPartType(string):
     """
     Returns the ship part (PartType) with the indicated name (string).
@@ -4070,7 +4141,7 @@ def issueInvadeOrder(number1, number2):
 
 def issueNewFleetOrder(string, number):
     """
-    Orders a new fleet to be created with the indicated name (string) and containing the indicated shipIDs (IntVec). The ships must be located in the same system and must all be owned by this player. Returns 1 (int) on success or 0 (int) on failure due to one of the noted conditions not being met.
+    Orders a new fleet to be created with the indicated name (string) and containing the indicated shipIDs (IntVec). The ships must be located in the same system and must all be owned by this player. Returns the new fleets id (int) on success or 0 (int) on failure due to one of the noted conditions not being met.
 
     :param string:
     :type string: str
