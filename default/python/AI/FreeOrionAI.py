@@ -5,6 +5,8 @@ from logging import debug, info, error
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
 # Logging is redirected before other imports so that import errors appear in log files.
+
+
 redirect_logging_to_freeorion_logger()
 
 import sys
@@ -34,7 +36,8 @@ import TechsListsAI
 import turn_state
 from aistate_interface import create_new_aistate, load_aistate, get_aistate
 from AIDependencies import INVALID_ID
-from freeorion_tools import handle_debug_chat, AITimer, init_handlers
+from freeorion_tools import handle_debug_chat, AITimer
+from common.handlers import init_handlers
 from common.listeners import listener
 from character.character_module import Aggression
 from character.character_strings_module import get_trait_name_aggression, possible_capitals
