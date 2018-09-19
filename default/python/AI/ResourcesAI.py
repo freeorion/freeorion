@@ -202,9 +202,9 @@ class Reporter(object):
 
         debug("-----------------------------------")
         debug("Planet Focus Assignments to achieve target RP/PP ratio of %.2f"
-               " from current target ratio of %.2f ( %.1f / %.1f )",
-               priority_ratio, current_research_target / (current_industry_target + 0.0001),
-               current_research_target, current_industry_target)
+              " from current target ratio of %.2f ( %.1f / %.1f )",
+              priority_ratio, current_research_target / (current_industry_target + 0.0001),
+              current_research_target, current_industry_target)
         debug("Max Industry assignments would result in target RP/PP ratio of %.2f ( %.1f / %.1f )",
               all_industry_research_target / (all_industry_industry_target + 0.0001),
               all_industry_research_target, all_industry_industry_target)

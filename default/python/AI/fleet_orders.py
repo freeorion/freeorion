@@ -58,8 +58,8 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
         if verbose:
             debug("trooper_move_reqs_met() allowing Invasion fleet %d to leave supply "
                   "because target (%s) has zero max shields or there is a military fleet assigned to secure "
-                  "the target system which will arrive at least 1 turn before the invasion fleet.") % (order.fleet.id,
-                                                                                                        invasion_planet)
+                  "the target system which will arrive at least 1 turn before the invasion fleet.",
+                  order.fleet.id, invasion_planet)
     return True
 
 

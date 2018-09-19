@@ -387,7 +387,7 @@ def generate_production_orders():
                 queued_defenses[sys_id] = queued_defenses.get(sys_id, 0) + element.blocksize*element.remaining
                 defense_allocation += element.allocation
         debug("Queued Defenses: %s", ppstring([(str(universe.getSystem(sid)), num)
-                                            for sid, num in queued_defenses.items()]))
+                                              for sid, num in queued_defenses.items()]))
         for sys_id, pids in state.get_empire_planets_by_system(include_outposts=False).items():
             if aistate.systemStatus.get(sys_id, {}).get('fleetThreat', 1) > 0:
                 continue  # don't build orbital shields if enemy fleet present
@@ -1042,7 +1042,7 @@ def generate_production_orders():
 
         max_dock_builds = int(0.8 + empire.productionPoints/120.0)
         debug("Considering building %s, found current and queued systems %s",
-            building_name, PlanetUtilsAI.sys_name_ids(cur_drydoc_sys.union(queued_sys)))
+              building_name, PlanetUtilsAI.sys_name_ids(cur_drydoc_sys.union(queued_sys)))
         for sys_id, pids in state.get_empire_planets_by_system(include_outposts=False).items():  # TODO: sort/prioritize in some fashion
             local_top_pilots = dict(top_pilot_systems.get(sys_id, []))
             local_drydocks = state.get_empire_drydocks().get(sys_id, [])
@@ -1152,8 +1152,8 @@ def generate_production_orders():
         element = production_queue[queue_index]
         block_str = "%d x " % element.blocksize  # ["a single ", "in blocks of %d "%element.blocksize][element.blocksize>1]
         debug("    %s%s  requiring %s  more turns; alloc: %.2f PP with cum. progress of %.1f  being built at %s",
-            block_str, element.name, element.turnsLeft, element.allocation,
-            element.progress, universe.getObject(element.locationID).name)
+              block_str, element.name, element.turnsLeft, element.allocation,
+              element.progress, universe.getObject(element.locationID).name)
         if element.turnsLeft == -1:
             if element.locationID not in state.get_all_empire_planets():
                 # dequeue_list.append(queue_index) #TODO add assessment of recapture -- invasion target etc.
