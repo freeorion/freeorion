@@ -152,8 +152,8 @@ void PythonAI::GenerateOrders() {
             throw;
 
         ErrorLogger() << "PythonAI::GenerateOrders : Python error caught.  Partial orders sent to server";
-        AIInterface::DoneTurn();
     }
+    AIInterface::DoneTurn();
     DebugLogger() << "PythonAI::GenerateOrders order generating time: " << (order_timer.elapsed() * 1000.0);
 }
 

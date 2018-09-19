@@ -222,9 +222,13 @@ def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
 
 @listener
 def generateOrders():  # pylint: disable=invalid-name
-    """Called once per turn to tell the Python AI to generate and issue orders to control its empire.
-    at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
-    and can be sent to the server for processing."""
+    """
+    Called once per turn to tell the Python AI to generate
+    and issue orders, i.e. to control its empire.
+
+    After leaving this function, the AI's turn will be finished
+    and its orders will be sent to the server.
+    """
     try:
         rules = fo.getGameRules()
         debug("Defined game rules:")
@@ -234,29 +238,15 @@ def generateOrders():  # pylint: disable=invalid-name
     except Exception as e:
         error("Exception %s when trying to get game rules" % e, exc_info=True)
 
+    # If nothing can be ordered anyway, exit early.
+    # Note that there is no need to update meters etc. in this case.
     empire = fo.getEmpire()
     if empire is None:
-        fatal("This client has no empire. Doing nothing to generate orders.")
-        try:
-            # early abort if no empire. no need to do meter calculations
-            # on last-seen gamestate if nothing can be ordered anyway...
-            #
-            # note that doneTurn() is issued on behalf of the client network
-            # id, not the empire id, so not having a correct empire id does
-            # not invalidate doneTurn()
-            fo.doneTurn()
-        except Exception as e:
-            error("Exception %s in doneTurn() on non-existent empire" % e, exc_info=True)
+        fatal("This client has no empire. Aborting order generation.")
         return
 
     if empire.eliminated:
-        debug("This empire has been eliminated. Aborting order generation")
-        try:
-            # early abort if already eliminated. no need to do meter calculations
-            # on last-seen gamestate if nothing can be ordered anyway...
-            fo.doneTurn()
-        except Exception as e:
-            error("Exception %s while trying doneTurn() on eliminated empire" % e, exc_info=True)
+        info("This empire has been eliminated. Aborting order generation.")
         return
 
     # This code block is required for correct AI work.
@@ -312,13 +302,8 @@ def generateOrders():  # pylint: disable=invalid-name
         info("The AIstate indicates that this turn was already played.")
         if not check_bool(get_option_dict().get('replay_turn_after_load', 'False')):
             info("Aborting new order generation. Orders from savegame will still be issued.")
-            try:
-                fo.doneTurn()
-            except Exception as e:
-                error("Exception %s while trying doneTurn()" % e, exc_info=True)
             return
-        else:
-            info("Issuing new orders anyway.")
+        info("Issuing new orders anyway.")
 
     if turn == 1:
         human_player = fo.empirePlayerID(1)
@@ -358,12 +343,7 @@ def generateOrders():  # pylint: disable=invalid-name
 
     turn_timer.start("Server_Processing")
 
-    try:
-        fo.doneTurn()
-    except Exception as e:
-        error("Exception %s while trying doneTurn()" % e, exc_info=True)  # TODO move it to cycle above
-    finally:
-        aistate.last_turn_played = fo.currentTurn()
+    aistate.last_turn_played = fo.currentTurn()
 
     if using_statprof:
         try:
