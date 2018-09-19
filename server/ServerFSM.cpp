@@ -586,13 +586,6 @@ MPLobby::MPLobby(my_context c) :
                     player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
 
                 m_lobby_data->m_players.push_back({player_id, player_setup_data});
-
-                player_connection->SetAuthRoles({
-                                Networking::ROLE_CLIENT_TYPE_MODERATOR,
-                                Networking::ROLE_CLIENT_TYPE_PLAYER,
-                                Networking::ROLE_CLIENT_TYPE_OBSERVER,
-                                Networking::ROLE_GALAXY_SETUP
-                                });
             } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
                 if (m_ai_next_index <= max_ai || max_ai < 0) {
                     PlayerSetupData player_setup_data;
