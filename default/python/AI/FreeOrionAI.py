@@ -1,6 +1,6 @@
 """The FreeOrionAI module contains the methods which can be made by the C AIInterface;
 these methods in turn activate other portions of the python AI code."""
-from logging import debug, info, error
+from logging import debug, info, error, fatal
 
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
@@ -65,7 +65,7 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
     empire = fo.getEmpire()
     if empire is None:
-        info("This client has no empire. Ignoring new game start message.")
+        fatal("This client has no empire. Ignoring new game start message.")
         return
 
     if empire.eliminated:
@@ -103,7 +103,7 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
 def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     """Called by client to when resume a loaded game."""
     if fo.getEmpire() is None:
-        info("This client has no empire. Doing nothing to resume loaded game.")
+        fatal("This client has no empire. Doing nothing to resume loaded game.")
         return
 
     if fo.getEmpire().eliminated:
@@ -147,7 +147,7 @@ def prepareForSave():  # pylint: disable=invalid-name
     in the state string so that they can be restored if the game is loaded."""
     empire = fo.getEmpire()
     if empire is None:
-        info("This client has no empire. Doing nothing to prepare for save.")
+        fatal("This client has no empire. Doing nothing to prepare for save.")
         return
 
     if empire.eliminated:
@@ -173,7 +173,7 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
     message_text is the text of the sent message."""
     empire = fo.getEmpire()
     if empire is None:
-        info("This client has no empire. Doing nothing to handle chat message.")
+        fatal("This client has no empire. Doing nothing to handle chat message.")
         return
 
     if empire.eliminated:
@@ -195,7 +195,7 @@ def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
     such as if another player declares war, accepts peace, or cancels a proposed peace treaty."""
     empire = fo.getEmpire()
     if empire is None:
-        debug("This client has no empire. Doing nothing to handle diplomatic message.")
+        fatal("This client has no empire. Doing nothing to handle diplomatic message.")
         return
 
     if empire.eliminated:
@@ -210,7 +210,7 @@ def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
     or may not include this player."""
     empire = fo.getEmpire()
     if empire is None:
-        debug("This client has no empire. Doing nothing to handle diplomatic status message.")
+        fatal("This client has no empire. Doing nothing to handle diplomatic status message.")
         return
 
     if empire.eliminated:
@@ -233,7 +233,7 @@ def generateOrders():  # pylint: disable=invalid-name
 
     empire = fo.getEmpire()
     if empire is None:
-        debug("This client has no empire. Doing nothing to generate orders.")
+        fatal("This client has no empire. Doing nothing to generate orders.")
         try:
             # early abort if no empire. no need to do meter calculations
             # on last-seen gamestate if nothing can be ordered anyway...

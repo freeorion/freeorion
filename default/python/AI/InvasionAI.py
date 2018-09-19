@@ -43,7 +43,7 @@ def get_invasion_fleets():
                                  (sys_id != INVALID_ID) and universe.systemsConnected(sys_id, home_system_id,
                                                                                       empire_id)]
     else:
-        warn("Empire has no identifiable homeworld; will treat all visible planets as accessible.")
+        debug("Empire has no identifiable homeworld; will treat all visible planets as accessible.")
         # TODO: check if any troop ships owned, use their system as home system
         accessible_system_ids = visible_system_ids
 
