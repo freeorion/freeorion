@@ -64,7 +64,7 @@ DerivedData
 /Xcode/Info.plist
 contents.xcworkspacedata
 
-# FreeOrion MSVC2010 project
+# FreeOrion MSVC project
 *.pdb
 *.log
 *.tlog
@@ -78,6 +78,11 @@ contents.xcworkspacedata
 *.exp
 *.opensdf
 *.res
+
+# Incremental build files
+*.ipdb
+*.ilk
+*.iobj
 
 # KDevelop4
 *.kdev4
