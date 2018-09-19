@@ -10634,7 +10634,7 @@ DEF_PLANET_CLOAK_DESC
 Путем фазирования пространственно-временного континуума частей планеты, ее [[metertype METER_STEALTH]] усиливается значительно
 
 SHP_FLEET_REPAIR
-Ремонтная площадка флота
+Ремонтная база флота
 
 SHP_FLEET_REPAIR_DESC
 Позволяет кораблям в радиусе [[metertype METER_SUPPLY]] ремонтировать повреждения в размере 10% от [[metertype METER_STRUCTURE]] за ход. Суммируется с [[tech SHP_BASIC_DAM_CONT]]. Не работает сразу после сражения только через ход
