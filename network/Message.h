@@ -122,7 +122,6 @@ public:
 
     GG_CLASS_ENUM(PlayerStatus,
         PLAYING_TURN,           ///< player is playing a turn, on the galax map
-        RESOLVING_COMBAT,       ///< player is resolving a combat interactively
         WAITING                 ///< player is waiting for others to submit orders, to resolve combats, or for turn processing to complete
     )
 

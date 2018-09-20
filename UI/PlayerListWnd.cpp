@@ -49,10 +49,6 @@ namespace {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ready.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> CombatIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "combat.png");
-        return retval;
-    }
     std::shared_ptr<GG::Texture> WarIcon() {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "war.png");
         return retval;
@@ -197,7 +193,6 @@ namespace {
             // render player status icon
             switch (m_player_status) {
             case Message::PLAYING_TURN:     PlayingIcon()->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
-            case Message::RESOLVING_COMBAT: CombatIcon()->OrthoBlit( UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
             case Message::WAITING:          WaitingIcon()->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
             default:    break;
             }
