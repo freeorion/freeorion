@@ -3,12 +3,12 @@ from logging import debug, error, info
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client # pylint: disable=import-error
 import FleetUtilsAI
 from EnumsAI import MissionType
-import universe_object
 import MoveUtilsAI
 import PlanetUtilsAI
 from AIDependencies import INVALID_ID
 from freeorion_tools import get_partial_visibility_turn
 from aistate_interface import get_aistate
+from target import TargetSystem
 
 graph_flags = set()
 border_unexplored_system_ids = set()
@@ -101,7 +101,7 @@ def assign_scouts_to_explore_systems():
         fleet_mission = aistate.get_fleet_mission(fleet_id)
         start = fleet_mission.get_location_target()
         for sys_id in needs_coverage:
-            target = universe_object.System(sys_id)
+            target = TargetSystem(sys_id)
             path = MoveUtilsAI.can_travel_to_system(fleet_id, start, target, ensure_return=True)
             if not path:
                 continue
@@ -117,7 +117,7 @@ def assign_scouts_to_explore_systems():
         debug("Remaining options: %s" % options)
         _, fleet_id, sys_id = options[0]
         fleet_mission = aistate.get_fleet_mission(fleet_id)
-        target = universe_object.System(sys_id)
+        target = TargetSystem(sys_id)
         info("Sending fleet %d to explore %s" % (fleet_id, target))
         fleet_mission.set_target(MissionType.EXPLORATION, target)
         options = [option for option in options if option[1] != fleet_id and option[2] != sys_id]

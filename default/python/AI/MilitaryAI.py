@@ -9,12 +9,12 @@ import InvasionAI
 import PlanetUtilsAI
 import PriorityAI
 import ProductionAI
-import universe_object
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from CombatRatingsAI import combine_ratings, combine_ratings_list, rating_difference
 from EnumsAI import MissionType
 from freeorion_tools import cache_by_turn
+from target import TargetSystem
 from turn_state import state
 
 MinThreat = 10  # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
@@ -834,7 +834,7 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
             if not fleet:
                 continue
             sys_id = fleet.systemID
-            target = universe_object.System(sys_id)
+            target = TargetSystem(sys_id)
             fleet_mission = aistate.get_fleet_mission(fleet_id)
             fleet_mission.clear_fleet_orders()
             fleet_mission.clear_target()
@@ -881,7 +881,7 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
                 these_fleets = found_fleets
         elif doing_main and _verbose_mil_reporting:
             debug("FULL+ military allocation for system %d ( %s ) -- requested allocation %8d, got %8d with fleets %s" % (sys_id, universe.getSystem(sys_id).name, alloc, found_stats.get('rating', 0), these_fleets))
-        target = universe_object.System(sys_id)
+        target = TargetSystem(sys_id)
         for fleet_id in these_fleets:
             fo.issueAggressionOrder(fleet_id, True)
             fleet_mission = aistate.get_fleet_mission(fleet_id)

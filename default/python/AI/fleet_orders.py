@@ -8,7 +8,7 @@ from aistate_interface import get_aistate
 import MilitaryAI
 import MoveUtilsAI
 import CombatRatingsAI
-from universe_object import Fleet, System, Planet
+from target import TargetFleet, TargetSystem, TargetPlanet
 
 
 def trooper_move_reqs_met(main_fleet_mission, order, verbose):
@@ -67,17 +67,17 @@ class AIFleetOrder(object):
     """Stores information about orders which can be executed."""
     TARGET_TYPE = None
     ORDER_NAME = ''
-    fleet = None  # type: fo.fleet
-    target = None  # type: universe_object.UniverseObject
+    fleet = None  # type: target.TargetFleet
+    target = None  # type: target.Target
 
     def __init__(self, fleet, target):
         """
         :param fleet: fleet to execute order
-        :type fleet: universe_object.Fleet
+        :type fleet: target.TargetFleet
         :param target: fleet target, depends of order type
-        :type target: universe_object.UniverseObject
+        :type target: target.Target
         """
-        if not isinstance(fleet, Fleet):
+        if not isinstance(fleet, TargetFleet):
             error("Order required fleet got %s" % type(fleet))
 
         if not isinstance(target, self.TARGET_TYPE):
@@ -90,7 +90,7 @@ class AIFleetOrder(object):
 
     def __setstate__(self, state):
         # construct the universe objects from stored ids
-        state["fleet"] = Fleet(state["fleet"])
+        state["fleet"] = TargetFleet(state["fleet"])
         target_type = state.pop("target_type")
         if state["target"] is not None:
             assert self.TARGET_TYPE.object_name == target_type
@@ -162,7 +162,7 @@ class AIFleetOrder(object):
 
 class OrderMove(AIFleetOrder):
     ORDER_NAME = 'move'
-    TARGET_TYPE = System
+    TARGET_TYPE = TargetSystem
 
     def can_issue_order(self, verbose=False):
         if not super(OrderMove, self).can_issue_order(verbose=verbose):
@@ -262,7 +262,7 @@ class OrderMove(AIFleetOrder):
 class OrderPause(AIFleetOrder):
     """Ensure Fleet at least temporarily halts movement at the target system."""
     ORDER_NAME = 'pause'
-    TARGET_TYPE = System
+    TARGET_TYPE = TargetSystem
 
     def is_valid(self):
         if not super(OrderPause, self).is_valid():
@@ -278,7 +278,7 @@ class OrderPause(AIFleetOrder):
 
 class OrderResupply(AIFleetOrder):
     ORDER_NAME = 'resupply'
-    TARGET_TYPE = System
+    TARGET_TYPE = TargetSystem
 
     def is_valid(self):
         if not super(OrderResupply, self).is_valid():
@@ -311,7 +311,7 @@ class OrderResupply(AIFleetOrder):
 
 class OrderOutpost(AIFleetOrder):
     ORDER_NAME = 'outpost'
-    TARGET_TYPE = Planet
+    TARGET_TYPE = TargetPlanet
 
     def is_valid(self):
         if not super(OrderOutpost, self).is_valid():
@@ -360,7 +360,7 @@ class OrderOutpost(AIFleetOrder):
 
 class OrderColonize(AIFleetOrder):
     ORDER_NAME = 'colonize'
-    TARGET_TYPE = Planet
+    TARGET_TYPE = TargetPlanet
 
     def issue_order(self):
         if not super(OrderColonize, self).issue_order():
@@ -412,12 +412,12 @@ class OrderDefend(AIFleetOrder):
         Used for orbital defense, have no real orders.
     """
     ORDER_NAME = 'defend'
-    TARGET_TYPE = System
+    TARGET_TYPE = TargetSystem
 
 
 class OrderInvade(AIFleetOrder):
     ORDER_NAME = 'invade'
-    TARGET_TYPE = Planet
+    TARGET_TYPE = TargetPlanet
 
     def is_valid(self):
         if not super(OrderInvade, self).is_valid():
@@ -499,7 +499,7 @@ class OrderInvade(AIFleetOrder):
 
 class OrderMilitary(AIFleetOrder):
     ORDER_NAME = 'military'
-    TARGET_TYPE = System
+    TARGET_TYPE = TargetSystem
 
     def is_valid(self):
         if not super(OrderMilitary, self).is_valid():
@@ -551,7 +551,7 @@ class OrderMilitary(AIFleetOrder):
 
 class OrderRepair(AIFleetOrder):
     ORDER_NAME = 'repair'
-    TARGET_TYPE = System
+    TARGET_TYPE = TargetSystem
 
     def is_valid(self):
         if not super(OrderRepair, self).is_valid():

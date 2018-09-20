@@ -4,12 +4,12 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 from AIDependencies import INVALID_ID
 
 
-class UniverseObject(object):
+class Target(object):
     """
     Stores information about AI target - its id and type.
     :type id: int
     """
-    object_name = 'universe_object'
+    object_name = 'target'
 
     def __init__(self, target_id):
         self.id = target_id
@@ -37,22 +37,22 @@ class UniverseObject(object):
     def get_system(self):
         """
         Returns the system that contains this object, or None.
-        :rtype: System | None
+        :rtype: TargetSystem | None
         """
         raise NotImplementedError()
 
 
-class Planet(UniverseObject):
+class TargetPlanet(Target):
     object_name = 'planet'
 
     def get_system(self):
         """
         Returns the system that contains this object, or None.
-        :rtype: System | None
+        :rtype: TargetSystem | None
         """
         universe = fo.getUniverse()
         planet = universe.getPlanet(self.id)
-        return System(planet.systemID)
+        return TargetSystem(planet.systemID)
 
     def get_object(self):
         """
@@ -61,13 +61,13 @@ class Planet(UniverseObject):
         return fo.getUniverse().getPlanet(self.id)
 
 
-class System(UniverseObject):
+class TargetSystem(Target):
     object_name = 'system'
 
     def get_system(self):
         """
         Returns this object.
-        :rtype: System
+        :rtype: TargetSystem
         """
         return self
 
@@ -75,7 +75,7 @@ class System(UniverseObject):
         return fo.getUniverse().getSystem(self.id)
 
 
-class Fleet(UniverseObject):
+class TargetFleet(Target):
     object_name = 'fleet'
 
     def get_current_system_id(self):
@@ -92,14 +92,14 @@ class Fleet(UniverseObject):
     def get_system(self):
         """
         Get current fleet location or target system if currently on starlane.
-        :rtype: System | None
+        :rtype: TargetSystem | None
         """
         universe = fo.getUniverse()
         fleet = universe.getFleet(self.id)
         system_id = fleet.nextSystemID
         if system_id == INVALID_ID:  # fleet is not moving
             system_id = fleet.systemID
-        return System(system_id)
+        return TargetSystem(system_id)
 
     def get_object(self):
         """
