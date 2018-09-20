@@ -43,7 +43,7 @@ def get_invasion_fleets():
                                  (sys_id != INVALID_ID) and universe.systemsConnected(sys_id, home_system_id,
                                                                                       empire_id)]
     else:
-        print "Warning: Empire has no identifiable homeworld; will treat all visible planets as accessible."
+        debug("Empire has no identifiable homeworld; will treat all visible planets as accessible.")
         # TODO: check if any troop ships owned, use their system as home system
         accessible_system_ids = visible_system_ids
 
@@ -61,10 +61,10 @@ def get_invasion_fleets():
     invasion_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.INVASION)
     num_invasion_fleets = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(invasion_fleet_ids))
 
-    print "Current Invasion Targeted SystemIDs: ", PlanetUtilsAI.sys_name_ids(AIstate.invasionTargetedSystemIDs)
-    print "Current Invasion Targeted PlanetIDs: ", PlanetUtilsAI.planet_string(invasion_targeted_planet_ids)
-    print invasion_fleet_ids and "Invasion Fleet IDs: %s" % invasion_fleet_ids or "Available Invasion Fleets: 0"
-    print "Invasion Fleets Without Missions: %s" % num_invasion_fleets
+    debug("Current Invasion Targeted SystemIDs: %s" % PlanetUtilsAI.sys_name_ids(AIstate.invasionTargetedSystemIDs))
+    debug("Current Invasion Targeted PlanetIDs: %s" % PlanetUtilsAI.planet_string(invasion_targeted_planet_ids))
+    debug(invasion_fleet_ids and "Invasion Fleet IDs: %s" % invasion_fleet_ids or "Available Invasion Fleets: 0")
+    debug("Invasion Fleets Without Missions: %s" % num_invasion_fleets)
 
     invasion_timer.start("planning troop base production")
     reserved_troop_base_targets = []
@@ -192,14 +192,14 @@ def get_invasion_fleets():
             # ship and we would need no more than MAX_BASE_TROOPERS_GOOD_INVADERS base troop ships
             if (n_bases > MAX_BASE_TROOPERS_POOR_INVADERS or
                     (troops_per_ship > 1 and n_bases > MAX_BASE_TROOPERS_GOOD_INVADERS)):
-                print "ruling out base invasion troopers for %s due to high number (%d) required." % (planet, n_bases)
+                debug("ruling out base invasion troopers for %s due to high number (%d) required." % (planet, n_bases))
                 del aistate.qualifyingTroopBaseTargets[pid]
                 continue
-            print "Invasion base planning, need %d troops at %d pership, will build %d ships." % (
-                (planet_troops + 1), troops_per_ship, n_bases)
+            debug("Invasion base planning, need %d troops at %d per ship, will build %d ships." % (
+                (planet_troops + 1), troops_per_ship, n_bases))
             retval = fo.issueEnqueueShipProductionOrder(col_design.id, loc)
-            print "Enqueueing %d Troop Bases at %s for %s" % (n_bases, PlanetUtilsAI.planet_string(loc),
-                                                              PlanetUtilsAI.planet_string(pid))
+            debug("Enqueueing %d Troop Bases at %s for %s" % (n_bases, PlanetUtilsAI.planet_string(loc),
+                                                              PlanetUtilsAI.planet_string(pid)))
             if retval != 0:
                 all_invasion_targeted_system_ids.add(planet.systemID)
                 reserved_troop_base_targets.append(pid)
@@ -273,7 +273,7 @@ def assign_invasion_values(planet_ids):
                                                                                MissionType.MILITARY])
     for pid in planet_ids:
         planet_values[pid] = neighbor_values.setdefault(pid, evaluate_invasion_planet(pid, secure_missions))
-        print "planet %d, values %s" % (pid, planet_values[pid])
+        debug("planet %d, values %s", pid, planet_values[pid])
         planet = universe.getPlanet(pid)
         species_name = (planet and planet.speciesName) or ""
         species = fo.getSpecies(species_name)
@@ -313,7 +313,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
 
     planet = universe.getPlanet(planet_id)
     if planet is None:
-        print "Invasion AI couldn't access any info for planet id %d" % planet_id
+        debug("Invasion AI couldn't access any info for planet id %d" % planet_id)
         return [0, 0]
 
     system_id = planet.systemID
@@ -441,12 +441,11 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     system_secured = system_secured and system_status.get('myFleetRating', 0)
 
     if verbose:
-        print ("Invasion eval of %s\n"
-               " - maxShields: %.1f\n"
-               " - sysFleetThreat: %.1f\n"
-               " - sysMonsterThreat: %.1f") % (
-            planet, planet.currentMeterValue(fo.meterType.maxShield), system_fleet_treat,
-            system_monster_threat)
+        debug("Invasion eval of %s\n"
+              " - maxShields: %.1f\n"
+              " - sysFleetThreat: %.1f\n"
+              " - sysMonsterThreat: %.1f",
+              planet, planet.currentMeterValue(fo.meterType.maxShield), system_fleet_treat, system_monster_threat)
     enemy_val = 0
     if planet.owner != -1:  # value in taking this away from an enemy
         enemy_val = 20 * (planet.currentMeterValue(fo.meterType.targetIndustry) +
@@ -495,16 +494,16 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     if clear_path:
         planet_score *= 1.5
     if verbose:
-        print (' - planet score: %.2f\n'
-               ' - planned troops: %.2f\n'
-               ' - projected troop cost: %.1f\n'
-               ' - threat factor: %s\n'
-               ' - planet detail: %s\n'
-               ' - popval: %.1f\n'
-               ' - bldval: %s\n'
-               ' - enemyval: %s') % (planet_score, planned_troops, troop_cost,
-                                     threat_factor, detail, colony_base_value, bld_tally, enemy_val)
-        print (' - system secured: %s' % system_secured)
+        debug(' - planet score: %.2f\n'
+              ' - planned troops: %.2f\n'
+              ' - projected troop cost: %.1f\n'
+              ' - threat factor: %s\n'
+              ' - planet detail: %s\n'
+              ' - popval: %.1f\n'
+              ' - bldval: %s\n'
+              ' - enemyval: %s',
+              planet_score, planned_troops, troop_cost, threat_factor, detail, colony_base_value, bld_tally, enemy_val)
+        debug(' - system secured: %s' % system_secured)
     return [planet_score, planned_troops]
 
 
@@ -534,14 +533,14 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
                                                            fleet_list=found_fleets)
         if not these_fleets:
             if not FleetUtilsAI.stats_meet_reqs(found_stats, min_stats):
-                print "Insufficient invasion troop allocation for system %d ( %s ) -- requested %s , found %s" % (
-                    sys_id, universe.getSystem(sys_id).name, min_stats, found_stats)
+                debug("Insufficient invasion troop allocation for system %d ( %s ) -- requested %s , found %s" % (
+                    sys_id, universe.getSystem(sys_id).name, min_stats, found_stats))
                 invasion_fleet_pool.update(found_fleets)
                 continue
             else:
                 these_fleets = found_fleets
         target = universe_object.Planet(planet_id)
-        print "assigning invasion fleets %s to target %s" % (these_fleets, target)
+        debug("assigning invasion fleets %s to target %s" % (these_fleets, target))
         aistate = get_aistate()
         for fleetID in these_fleets:
             fleet_mission = aistate.get_fleet_mission(fleetID)
@@ -566,12 +565,12 @@ def assign_invasion_bases():
         sys_id = fleet.systemID
         system = universe.getSystem(sys_id)
         available_planets = set(system.planetIDs).intersection(set(aistate.qualifyingTroopBaseTargets.keys()))
-        print "Considering Base Troopers in %s, found planets %s and registered targets %s with status %s" % (
+        debug("Considering Base Troopers in %s, found planets %s and registered targets %s with status %s" % (
             system.name, list(system.planetIDs), available_planets,
-            [(pid, aistate.qualifyingTroopBaseTargets[pid]) for pid in available_planets])
+            [(pid, aistate.qualifyingTroopBaseTargets[pid]) for pid in available_planets]))
         targets = [pid for pid in available_planets if aistate.qualifyingTroopBaseTargets[pid][1] != -1]
         if not targets:
-            print "Failure: found no valid target for troop base in system %s" % system
+            debug("Failure: found no valid target for troop base in system %s" % system)
             continue
         status = aistate.systemStatus.get(sys_id, {})
         local_base_troops = set(status.get('myfleets', [])).intersection(available_troopbase_fleet_ids)

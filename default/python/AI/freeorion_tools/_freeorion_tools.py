@@ -4,9 +4,9 @@ import cProfile
 import logging
 import pstats
 import re
-import sys
 from collections import Mapping
 from functools import wraps
+from logging import debug, error
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -140,7 +140,7 @@ def chat_human(message):
     human_id = [x for x in fo.allPlayerIDs() if fo.playerIsHost(x)][0]
     message = str(message)
     fo.sendChatMessage(human_id, message)
-    print "Chat Message to human: %s" % remove_tags(message)
+    debug("Chat Message to human: %s", remove_tags(message))
 
 
 def cache_by_session(func):
@@ -213,7 +213,7 @@ def tuple_to_dict(tup):
         try:
             return {k: v for k, v in [tup]}
         except:
-            print >> sys.stderr, "Can't convert tuple_list to dict: ", tup
+            error("Can't convert tuple_list to dict: %s", tup)
             return {}
 
 
@@ -229,7 +229,7 @@ def profile(func):
         sortby = 'cumulative'
         ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
         ps.print_stats()
-        print s.getvalue()
+        debug(s.getvalue())
         return retval
 
     return wrapper
@@ -274,7 +274,7 @@ class ReadOnlyDict(Mapping):
             try:
                 hash(v)
             except TypeError:
-                print >> sys.stderr, "Tried to store a non-hashable value in ReadOnlyDict"
+                error("Tried to store a non-hashable value in ReadOnlyDict")
                 raise
 
     def __getitem__(self, item):

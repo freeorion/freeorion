@@ -1,5 +1,5 @@
 import math
-from logging import error, warn
+from logging import error, warn, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -257,8 +257,8 @@ def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, 
         if transferred:
             transferred_rating = CombatRatingsAI.combine_ratings(transferred_rating, this_rating)
         else:
-            print "  *** transfer of ship %4d, formerly of fleet %4d, into fleet %4d failed; %s" % (
-                ship_id, fleet_a_id, fleet_b_id, (" context is %s" % context) if context else "")
+            debug("  *** transfer of ship %4d, formerly of fleet %4d, into fleet %4d failed; %s" % (
+                ship_id, fleet_a_id, fleet_b_id, (" context is %s" % context) if context else ""))
         if need_rating != 0 and need_rating <= transferred_rating:
             break
     fleet_a = universe.getFleet(fleet_a_id)
@@ -288,7 +288,7 @@ def get_ship_id_with_role(fleet_id, ship_role, verbose=True):
 
     if not fleet_has_ship_with_role(fleet_id, ship_role):
         if verbose:
-            print "No ship with role %s found." % ship_role
+            debug("No ship with role %s found." % ship_role)
         return None
 
     universe = fo.getUniverse()
@@ -343,7 +343,7 @@ def assess_fleet_role(fleet_id):
     ship_roles = {}
     fleet = universe.getFleet(fleet_id)
     if not fleet:
-        print "couldn't get fleet with id " + str(fleet_id)
+        debug("couldn't get fleet with id " + str(fleet_id))
         return ShipRoleType.INVALID
 
     # count ship_roles
@@ -422,7 +422,7 @@ def assess_ship_design_role(design):
     if any(p.partClass == fo.shipPartClass.detection for p in parts):
         return ShipRoleType.CIVILIAN_EXPLORATION
     else:   # if no suitable role found, use as (bad) scout as it still has inherent detection
-        print "AI Warning: defaulting ship role to 'exploration' for ship with parts: ", design.parts
+        warn("Defaulting ship role to 'exploration' for ship with parts: ", design.parts)
         return ShipRoleType.CIVILIAN_EXPLORATION
 
 
@@ -431,99 +431,99 @@ def generate_fleet_orders_for_fleet_missions():
     print("Generating fleet orders")
 
     # The following fleet lists are based on *Roles* -- Secure type missions are done by fleets with Military Roles
-    print "Fleets by Role\n"
-    print "Exploration Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.EXPLORATION)
-    print "Colonization Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.COLONISATION)
-    print "Outpost Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.OUTPOST)
-    print "Invasion Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.INVASION)
-    print "Military Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.MILITARY)
-    print "Orbital Defense Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_DEFENSE)
-    print "Outpost Base Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_OUTPOST)
-    print "Invasion Base Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_INVASION)
-    print "Securing Fleets: %s  (currently FLEET_MISSION_MILITARY should be used instead of this Role)" % (
-        get_empire_fleet_ids_by_role(MissionType.SECURE))
+    debug("Fleets by Role\n")
+    debug("Exploration Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.EXPLORATION))
+    debug("Colonization Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.COLONISATION))
+    debug("Outpost Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.OUTPOST))
+    debug("Invasion Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.INVASION))
+    debug("Military Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.MILITARY))
+    debug("Orbital Defense Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_DEFENSE))
+    debug("Outpost Base Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_OUTPOST))
+    debug("Invasion Base Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_INVASION))
+    debug("Securing Fleets: %s  (currently FLEET_MISSION_MILITARY should be used instead of this Role)" % (
+        get_empire_fleet_ids_by_role(MissionType.SECURE)))
 
     aistate = get_aistate()
     if fo.currentTurn() < 50:
-        print
-        print "Explored systems:"
+        debug('')
+        debug("Explored systems:")
         _print_systems_and_supply(aistate.get_explored_system_ids())
-        print "Unexplored systems:"
+        debug("Unexplored systems:")
         _print_systems_and_supply(aistate.get_unexplored_system_ids())
-        print
+        debug('')
 
     exploration_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.EXPLORATION])
     if exploration_fleet_missions:
-        print "Exploration targets:"
+        debug("Exploration targets:")
         for explorationAIFleetMission in exploration_fleet_missions:
-            print " - %s" % explorationAIFleetMission
+            debug(" - %s" % explorationAIFleetMission)
     else:
-        print "Exploration targets: None"
+        debug("Exploration targets: None")
 
     colonisation_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.COLONISATION])
     if colonisation_fleet_missions:
-        print "Colonization targets: "
+        debug("Colonization targets: ")
     else:
-        print "Colonization targets: None"
+        debug("Colonization targets: None")
     for colonisation_fleet_mission in colonisation_fleet_missions:
-        print "    %s" % colonisation_fleet_mission
+        debug("    %s" % colonisation_fleet_mission)
 
     outpost_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.OUTPOST])
     if outpost_fleet_missions:
-        print "Outpost targets: "
+        debug("Outpost targets: ")
     else:
-        print "Outpost targets: None"
+        debug("Outpost targets: None")
     for outpost_fleet_mission in outpost_fleet_missions:
-        print "    %s" % outpost_fleet_mission
+        debug("    %s" % outpost_fleet_mission)
 
     outpost_base_fleet_missions = aistate.get_fleet_missions_with_any_mission_types(
         [MissionType.ORBITAL_OUTPOST])
     if outpost_base_fleet_missions:
-        print "Outpost Base targets (must have been interrupted by combat): "
+        debug("Outpost Base targets (must have been interrupted by combat): ")
     else:
-        print "Outpost Base targets: None (as expected, due to expected timing of order submission and execution)"
+        debug("Outpost Base targets: None (as expected, due to expected timing of order submission and execution)")
     for outpost_fleet_mission in outpost_base_fleet_missions:
-        print "    %s" % outpost_fleet_mission
+        debug("    %s" % outpost_fleet_mission)
 
     invasion_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.INVASION])
     if invasion_fleet_missions:
-        print "Invasion targets: "
+        debug("Invasion targets: ")
     else:
-        print "Invasion targets: None"
+        debug("Invasion targets: None")
     for invasion_fleet_mission in invasion_fleet_missions:
-        print "    %s" % invasion_fleet_mission
+        debug("    %s" % invasion_fleet_mission)
 
     troop_base_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.ORBITAL_INVASION])
     if troop_base_fleet_missions:
-        print "Invasion Base targets (must have been interrupted by combat): "
+        debug("Invasion Base targets (must have been interrupted by combat): ")
     else:
-        print "Invasion Base targets: None (as expected, due to expected timing of order submission and execution)"
+        debug("Invasion Base targets: None (as expected, due to expected timing of order submission and execution)")
     for invasion_fleet_mission in troop_base_fleet_missions:
-        print "    %s" % invasion_fleet_mission
+        debug("    %s" % invasion_fleet_mission)
 
     military_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.MILITARY])
     if military_fleet_missions:
-        print "General Military targets: "
+        debug("General Military targets: ")
     else:
-        print "General Military targets: None"
+        debug("General Military targets: None")
     for military_fleet_mission in military_fleet_missions:
-        print "    %s" % military_fleet_mission
+        debug("    %s" % military_fleet_mission)
 
     secure_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.SECURE])
     if secure_fleet_missions:
-        print "Secure targets: "
+        debug("Secure targets: ")
     else:
-        print "Secure targets: None"
+        debug("Secure targets: None")
     for secure_fleet_mission in secure_fleet_missions:
-        print "    %s" % secure_fleet_mission
+        debug("    %s" % secure_fleet_mission)
 
     orb_defense_fleet_missions = aistate.get_fleet_missions_with_any_mission_types([MissionType.ORBITAL_DEFENSE])
     if orb_defense_fleet_missions:
-        print "Orbital Defense targets: "
+        debug("Orbital Defense targets: ")
     else:
-        print "Orbital Defense targets: None"
+        debug("Orbital Defense targets: None")
     for orb_defence_fleet_mission in orb_defense_fleet_missions:
-        print "    %s" % orb_defence_fleet_mission
+        debug("    %s" % orb_defence_fleet_mission)
 
     fleet_missions = aistate.get_all_fleet_missions()
 
@@ -533,14 +533,14 @@ def generate_fleet_orders_for_fleet_missions():
 
 def issue_fleet_orders_for_fleet_missions():
     """Issues fleet orders."""
-    print
+    debug('')
     universe = fo.getUniverse()
     aistate = get_aistate()
     fleet_missions = aistate.get_all_fleet_missions()
     thisround = 0
     while thisround < 3:
         thisround += 1
-        print "Issuing fleet orders round %d:" % thisround
+        debug("Issuing fleet orders round %d:" % thisround)
         for mission in fleet_missions:
             fleet_id = mission.fleet.id
             fleet = mission.fleet.get_object()
@@ -550,7 +550,7 @@ def issue_fleet_orders_for_fleet_missions():
             mission.issue_fleet_orders()
         fleet_missions = aistate.misc.get('ReassignedFleetMissions', [])
         aistate.misc['ReassignedFleetMissions'] = []
-    print
+    debug('')
 
 
 def _print_systems_and_supply(system_ids):
@@ -559,11 +559,9 @@ def _print_systems_and_supply(system_ids):
     fleet_supplyable_system_ids = empire.fleetSupplyableSystemIDs
     for system_id in system_ids:
         system = universe.getSystem(system_id)
-        if system:
-            print "  %s" % system,
-        else:
-            print "  S_%s<>" % system_id,
-        print 'supplied' if system_id in fleet_supplyable_system_ids else ''
+        debug('  %s%s' % (
+            system if system else "  S_%s<>" % system_id,
+            'supplied' if system_id in fleet_supplyable_system_ids else ''))
 
 
 def get_fighter_capacity_of_fleet(fleet_id):

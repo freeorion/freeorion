@@ -1,4 +1,5 @@
 import math
+from logging import debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -27,24 +28,24 @@ unmetThreat = 0
 
 def calculate_priorities():
     """Calculates the priorities of the AI player."""
-    print "\n", 10 * "=", "Preparing to Calculate Priorities", 10 * "="
+    debug("\n{0}Preparing to Calculate Priorities{0}".format(10 * "="))
     prioritiees_timer.start('setting Production Priority')
     aistate = get_aistate()
     aistate.set_priority(PriorityType.RESOURCE_PRODUCTION, 50)  # let this one stay fixed & just adjust Research
 
-    print "\n*** Calculating Research Priority ***\n"
+    debug("\n*** Calculating Research Priority ***\n")
     prioritiees_timer.start('setting Research Priority')
     aistate.set_priority(PriorityType.RESOURCE_RESEARCH, _calculate_research_priority())  # TODO: do univ _survey before this
 
-    print "\n*** Updating Colonization Status ***\n"
+    debug("\n*** Updating Colonization Status ***\n")
     prioritiees_timer.start('Evaluating Colonization Status')
     ColonisationAI.get_colony_fleets()  # sets aistate.colonisablePlanetIDs and many other values used by other modules
 
-    print "\n*** Updating Invasion Status ***\n"
+    debug("\n*** Updating Invasion Status ***\n")
     prioritiees_timer.start('Evaluating Invasion Status')
     InvasionAI.get_invasion_fleets()  # sets AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
 
-    print "\n*** Updating Military Status ***\n"
+    debug("\n*** Updating Military Status ***\n")
     prioritiees_timer.start('Evaluating Military Status')
     MilitaryAI.get_military_fleets()
 
@@ -84,9 +85,9 @@ def _calculate_industry_priority():  # currently only used to print status
     # currently, previously set to 50 in calculatePriorities(), this is just for reporting
     industry_priority = get_aistate().get_priority(PriorityType.RESOURCE_PRODUCTION)
 
-    print
-    print "Industry Production (current/target) : ( %.1f / %.1f ) at turn %s" % (industry_production, target_pp, fo.currentTurn())
-    print "Priority for Industry: %s" % industry_priority
+    debug('')
+    debug("Industry Production (current/target) : ( %.1f / %.1f ) at turn %s" % (industry_production, target_pp, fo.currentTurn()))
+    debug("Priority for Industry: %s" % industry_priority)
     return industry_priority
 
 
@@ -112,7 +113,7 @@ def _calculate_research_priority():
 
     milestone_techs = ["PRO_SENTIENT_AUTOMATION", "LRN_DISTRIB_THOUGHT", "LRN_QUANT_NET", "SHP_WEAPON_2_4", "SHP_WEAPON_3_2", "SHP_WEAPON_4_2"]
     milestones_done = [mstone for mstone in milestone_techs if tech_is_complete(mstone)]
-    print "Research Milestones accomplished at turn %d: %s" % (current_turn, milestones_done)
+    debug("Research Milestones accomplished at turn %d: %s" % (current_turn, milestones_done))
 
     total_pp = empire.productionPoints
     total_rp = empire.resourceProduction(fo.resourceType.research)
@@ -169,8 +170,8 @@ def _calculate_research_priority():
     if got_quant:
         research_priority = min(research_priority + 0.1 * industry_priority, research_priority * 1.3)
     research_priority = int(research_priority)
-    print "Research Production (current/target) : ( %.1f / %.1f )" % (total_rp, target_rp)
-    print "Priority for Research: %d (new target ~ %d RP)" % (research_priority, total_pp * research_priority / industry_priority)
+    debug("Research Production (current/target) : ( %.1f / %.1f )" % (total_rp, target_rp))
+    debug("Priority for Research: %d (new target ~ %d RP)" % (research_priority, total_pp * research_priority / industry_priority))
 
     if len(enemies_sighted) < (2 + current_turn/20.0):  # TODO: adjust for colonisation priority
         research_priority *= 1.2
@@ -205,11 +206,11 @@ def _calculate_exploration_priority():
     scouts_needed = max(0, desired_number_of_scouts - (num_scouts + queued_scout_ships))
     exploration_priority = int(40 * scouts_needed)
 
-    print
-    print "Number of Scouts: %s" % num_scouts
-    print "Number of Unexplored systems: %s" % num_unexplored_systems
-    print "Military size: %s" % mil_ships
-    print "Priority for scouts: %s" % exploration_priority
+    debug('')
+    debug("Number of Scouts: %s" % num_scouts)
+    debug("Number of Unexplored systems: %s" % num_unexplored_systems)
+    debug("Military size: %s" % mil_ships)
+    debug("Priority for scouts: %s" % exploration_priority)
 
     return exploration_priority
 
@@ -326,7 +327,7 @@ def _calculate_outpost_priority():
     # print
     # print "Number of Outpost Ships : " + str(num_outpost_ships)
     # print "Number of Colonisable outposts: " + str(num_outpost_planet_ids)
-    print "Priority for outpost ships: " + str(outpost_priority)
+    debug("Priority for outpost ships: %s" % outpost_priority)
 
     if outpost_priority < 1:
         return 0
@@ -474,8 +475,8 @@ def _calculate_military_priority():
     elif not (have_l2_weaps and enemies_sighted):
         military_priority /= 1.5
     fmt_string = "Calculating Military Priority:  min(t,40) + max(0,75 * ships_needed) \n\t  Priority: %d  \t ships_needed: %d \t defense_ships_needed: %d \t curShipRating: %.0f \t l1_weaps: %s \t enemies_sighted: %s"
-    print fmt_string % (military_priority, ships_needed, defense_ships_needed, cur_ship_rating, have_l1_weaps, enemies_sighted)
-    print "Source of milship demand: ", ships_needed_allocation
+    debug(fmt_string % (military_priority, ships_needed, defense_ships_needed, cur_ship_rating, have_l1_weaps, enemies_sighted))
+    debug("Source of milship demand: %s" % ships_needed_allocation)
 
     military_priority *= aistate.character.military_priority_scaling()
     return max(military_priority, 0)

@@ -146,7 +146,7 @@ class ShipCombatStats(object):
                     if part_damage != fighter_damage and fighter_damage > 0:
                         # the C++ code fails also in this regard, so FOCS content *should* not allow this.
                         # TODO: Depending on future implementation, might actually need to handle this case.
-                        print "WARNING: Multiple hangar types present on one ship, estimates expected to be wrong."
+                        warn("Multiple hangar types present on one ship, estimates expected to be wrong.")
                     fighter_damage = max(fighter_damage, part_damage)
         self._basic_stats = self.BasicStats(attacks, structure, shields)
         self._fighter_stats = self.FighterStats(fighter_capacity, fighter_launch_rate, fighter_damage)

@@ -103,7 +103,7 @@ class AIFleetMission(object):
         if self.type == mission_type and self.target == target:
             return
         if self.type or self.target:
-            print "Change mission assignment from %s:%s to %s:%s" % (self.type, self.target, mission_type, target)
+            debug("Change mission assignment from %s:%s to %s:%s" % (self.type, self.target, mission_type, target))
         self.type = mission_type
         self.target = target
 
@@ -343,7 +343,7 @@ class AIFleetMission(object):
         if target_id == INVALID_ID:
             return
 
-        print "\t AIFleetMission._check_retarget_invasion: splitting and retargetting fleet %d" % fleet_id
+        debug("\t Splitting and retargetting fleet %d" % fleet_id)
         new_fleets = FleetUtilsAI.split_fleet(fleet_id)
         self.clear_target()  # TODO: clear from foAIstate
         self.clear_fleet_orders()
@@ -396,9 +396,9 @@ class AIFleetMission(object):
         """issues AIFleetOrders which can be issued in system and moves to next one if is possible"""
         # TODO: priority
         order_completed = True
-        print
-        print "Checking orders for fleet %s (on turn %d), with mission type %s" % (
-            self.fleet.get_object(), fo.currentTurn(), self.type or 'No mission')
+
+        debug("\nChecking orders for fleet %s (on turn %d), with mission type %s" % (
+            self.fleet.get_object(), fo.currentTurn(), self.type or 'No mission'))
         if MissionType.INVASION == self.type:
             self._check_retarget_invasion()
         just_issued_move_order = False
@@ -418,20 +418,20 @@ class AIFleetMission(object):
                 if (not isinstance(fleet_order, OrderMove) or
                         self.need_to_pause_movement(last_move_target_id, fleet_order)):
                     break
-            print "Checking order: %s" % fleet_order
+            debug("Checking order: %s" % fleet_order)
             self.check_mergers(context=str(fleet_order))
             if fleet_order.can_issue_order(verbose=False):
                 if isinstance(fleet_order, OrderMove) and order_completed:  # only move if all other orders completed
-                    print "Issuing fleet order %s" % fleet_order
+                    debug("Issuing fleet order %s" % fleet_order)
                     fleet_order.issue_order()
                     just_issued_move_order = True
                     last_move_target_id = fleet_order.target.id
                 elif not isinstance(fleet_order, OrderMove):
-                    print "Issuing fleet order %s" % fleet_order
+                    debug("Issuing fleet order %s" % fleet_order)
                     fleet_order.issue_order()
                 else:
-                    print "NOT issuing (even though can_issue) fleet order %s" % fleet_order
-                print "Order issued: %s" % fleet_order.order_issued
+                    debug("NOT issuing (even though can_issue) fleet order %s" % fleet_order)
+                debug("Order issued: %s" % fleet_order.order_issued)
                 if not fleet_order.executed:
                     order_completed = False
             else:  # check that we're not held up by a Big Monster
@@ -443,7 +443,7 @@ class AIFleetMission(object):
                         order_completed = False
                     # Go on to the next order.
                     continue
-                print "CAN'T issue fleet order %s" % fleet_order
+                debug("CAN'T issue fleet order %s" % fleet_order)
                 if isinstance(fleet_order, OrderMove):
                     this_system_id = fleet_order.target.id
                     this_status = aistate.systemStatus.setdefault(this_system_id, {})
@@ -453,18 +453,18 @@ class AIFleetMission(object):
                         # release and hope for more effective reassignment
                         if (self.type not in (MissionType.MILITARY, MissionType.SECURE) or
                                 fleet_order != self.orders[-1]):
-                            print "Aborting mission due to being blocked by Big Monster at system %d, threat %d" % (
-                                this_system_id, aistate.systemStatus[this_system_id]['monsterThreat'])
-                            print "Full set of orders were:"
+                            debug("Aborting mission due to being blocked by Big Monster at system %d, threat %d" % (
+                                this_system_id, aistate.systemStatus[this_system_id]['monsterThreat']))
+                            debug("Full set of orders were:")
                             for this_order in self.orders:
-                                print " - %s" % this_order
+                                debug(" - %s" % this_order)
                             self.clear_fleet_orders()
                             self.clear_target()
                             return
                 break  # do not order the next order until this one is finished.
         else:  # went through entire order list
             if order_completed:
-                print "Final order is completed"
+                debug("Final order is completed")
                 orders = self.orders
                 last_order = orders[-1] if orders else None
                 universe = fo.getUniverse()
@@ -477,14 +477,14 @@ class AIFleetMission(object):
                             not planet.initialMeterValue(fo.meterType.population)):
                         warn("Fleet %d has tentatively completed its "
                              "colonize mission but will wait to confirm population." % self.fleet.id)
-                        print "    Order details are %s" % last_order
-                        print "    Order is valid: %s; issued: %s; executed: %s" % (
-                            last_order.is_valid(), last_order.order_issued, last_order.executed)
+                        debug("    Order details are %s" % last_order)
+                        debug("    Order is valid: %s; issued: %s; executed: %s" % (
+                            last_order.is_valid(), last_order.order_issued, last_order.executed))
                         if not last_order.is_valid():
                             source_target = last_order.fleet
                             target_target = last_order.target
-                            print "        source target validity: %s; target target validity: %s " % (
-                                bool(source_target), bool(target_target))
+                            debug("        source target validity: %s; target target validity: %s " % (
+                                bool(source_target), bool(target_target)))
                         return  # colonize order must not have completed yet
                 clear_all = True
                 last_sys_target = INVALID_ID
@@ -504,17 +504,17 @@ class AIFleetMission(object):
                             secure_type = "Invasion"
                         else:
                             secure_type = "Unidentified"
-                        print ("Fleet %d has completed initial stage of its mission "
-                               "to secure system %d (targeted for %s), "
-                               "may release a portion of ships" % (self.fleet.id, last_sys_target, secure_type))
+                        debug("Fleet %d has completed initial stage of its mission "
+                              "to secure system %d (targeted for %s), "
+                              "may release a portion of ships" % (self.fleet.id, last_sys_target, secure_type))
                         clear_all = False
                 fleet_id = self.fleet.id
                 if clear_all:
                     if orders:
-                        print "Fleet %d has completed its mission; clearing all orders and targets." % self.fleet.id
-                        print "Full set of orders were:"
+                        debug("Fleet %d has completed its mission; clearing all orders and targets." % self.fleet.id)
+                        debug("Full set of orders were:")
                         for this_order in orders:
-                            print "\t\t %s" % this_order
+                            debug("\t\t %s" % this_order)
                         self.clear_fleet_orders()
                         self.clear_target()
                         if aistate.get_fleet_role(fleet_id) in (MissionType.MILITARY, MissionType.SECURE):
@@ -525,7 +525,7 @@ class AIFleetMission(object):
                                 MilitaryAI.assign_military_fleets_to_systems(use_fleet_id_list=[fleet_id],
                                                                              allocations=allocations)
                     else:  # no orders
-                        print "No Current Orders"
+                        debug("No Current Orders")
                 else:
                     # TODO: evaluate releasing a smaller portion or none of the ships
                     system_status = aistate.systemStatus.setdefault(last_sys_target, {})
@@ -541,12 +541,12 @@ class AIFleetMission(object):
                                 threat_present = True
                                 break
                     if not threat_present:
-                        print "No current threat in target system; releasing a portion of ships."
+                        debug("No current threat in target system; releasing a portion of ships.")
                         # at least first stage of current task is done;
                         # release extra ships for potential other deployments
                         new_fleets = FleetUtilsAI.split_fleet(self.fleet.id)
                     else:
-                        print "Threat remains in target system; NOT releasing any ships."
+                        debug("Threat remains in target system; NOT releasing any ships.")
                     new_military_fleets = []
                     for fleet_id in new_fleets:
                         if aistate.get_fleet_role(fleet_id) in COMBAT_MISSION_TYPES:

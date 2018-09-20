@@ -21,6 +21,7 @@ on character suitable for the UI.
 For example:
 possible_capitals(Character([Aggression(0)])) returns ['Royal', 'Imperial'].
 """
+from logging import debug
 
 import character as character_package
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -52,7 +53,7 @@ class _CharacterTableFunction(object):
         elem = self.table[trait.key] if trait is not None else self.table[None]
         if self.post_process:
             elem = self.post_process(elem)
-        print "CharacterTable returns ", elem
+        debug("CharacterTable returns %s", elem)
         return elem
 
 

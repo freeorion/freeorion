@@ -28,9 +28,9 @@ def get_current_exploration_info():
             if fleet_mission.type == MissionType.EXPLORATION:
                 already_covered.add(fleet_mission.target.id)
                 if not fleet_mission.target:
-                    print "problem determining existing exploration target systems"
+                    debug("problem determining existing exploration target systems")
                 else:
-                    print "found existing exploration target: %s" % fleet_mission.target
+                    debug("found existing exploration target: %s" % fleet_mission.target)
     debug("Current exploration targets: %s" % already_covered)
     debug("Available scout fleets: %s" % available_scouts)
     return list(already_covered), available_scouts
@@ -44,14 +44,14 @@ def assign_scouts_to_explore_systems():
     if not border_unexplored_system_ids or (capital_sys_id == INVALID_ID):
         return
     exp_systems_by_dist = sorted((universe.linearDistance(capital_sys_id, x), x) for x in border_unexplored_system_ids)
-    print "Exploration system considering following system-distance pairs:\n  %s" % (
-        "\n  ".join("%3d: %5.1f" % (sys_id, dist) for (dist, sys_id) in exp_systems_by_dist))
+    debug("Exploration system considering following system-distance pairs:\n  %s" % (
+        "\n  ".join("%3d: %5.1f" % (sys_id, dist) for (dist, sys_id) in exp_systems_by_dist)))
     explore_list = [sys_id for dist, sys_id in exp_systems_by_dist]
 
     already_covered, available_scouts = get_current_exploration_info()
 
-    print "Explorable system IDs: %s" % explore_list
-    print "Already targeted: %s" % already_covered
+    debug("Explorable system IDs: %s" % explore_list)
+    debug("Already targeted: %s" % already_covered)
     aistate = get_aistate()
     needs_vis = aistate.misc.setdefault('needs_vis', [])
     check_list = aistate.needsEmergencyExploration + needs_vis + explore_list
@@ -61,13 +61,13 @@ def assign_scouts_to_explore_systems():
             if INVALID_ID in sys_list:
                 error("INVALID_ID found in " + name, exc_info=True)
     # emergency coverage can be due to invasion detection trouble, etc.
-    print "Check list: %s" % check_list
+    debug("Check list: %s" % check_list)
     needs_coverage = [sys_id for sys_id in check_list if sys_id not in already_covered and sys_id != INVALID_ID]
-    print "Needs coverage: %s" % needs_coverage
+    debug("Needs coverage: %s" % needs_coverage)
 
-    print "Available scouts & AIstate locs: %s" % [(x, aistate.fleetStatus.get(x, {}).get('sysID', INVALID_ID))
-                                                   for x in available_scouts]
-    print "Available scouts & universe locs: %s" % [(x, universe.getFleet(x).systemID) for x in available_scouts]
+    debug("Available scouts & AIstate locs: %s" % [(x, aistate.fleetStatus.get(x, {}).get('sysID', INVALID_ID))
+                                                   for x in available_scouts])
+    debug("Available scouts & universe locs: %s" % [(x, universe.getFleet(x).systemID) for x in available_scouts])
     if not needs_coverage or not available_scouts:
         return
 
@@ -81,7 +81,7 @@ def assign_scouts_to_explore_systems():
                 if sys_id in aistate.needsEmergencyExploration:
                     del aistate.needsEmergencyExploration[
                         aistate.needsEmergencyExploration.index(sys_id)]
-                print "system id %d already currently visible; skipping exploration" % sys_id
+                debug("system id %d already currently visible; skipping exploration" % sys_id)
                 needs_coverage.remove(sys_id)
                 continue
 
@@ -89,8 +89,8 @@ def assign_scouts_to_explore_systems():
         sys_status = aistate.systemStatus.setdefault(sys_id, {})
         if (not aistate.character.may_explore_system(sys_status.setdefault('monsterThreat', 0)) or (
                 fo.currentTurn() < 20 and aistate.systemStatus[sys_id]['monsterThreat'] > 0)):
-            print "Skipping exploration of system %d due to Big Monster, threat %d" % (
-                sys_id, aistate.systemStatus[sys_id]['monsterThreat'])
+            debug("Skipping exploration of system %d due to Big Monster, threat %d" % (
+                sys_id, aistate.systemStatus[sys_id]['monsterThreat']))
             needs_coverage.remove(sys_id)
             continue
 
@@ -151,7 +151,7 @@ def follow_vis_system_connections(start_system_id, home_system_id):
             visibility_turn_list = sorted(universe.getVisibilityTurnsMap(cur_system_id, empire_id).items(),
                                           key=lambda x: x[0].numerator)
             visibility_info = ', '.join('%s: %s' % (vis.name, turn) for vis, turn in visibility_turn_list)
-            print "%s previously %s. Visibility per turn: %s " % (system_header, pre_vis, visibility_info)
+            debug("%s previously %s. Visibility per turn: %s " % (system_header, pre_vis, visibility_info))
             status_info = []
         else:
             status_info = [system_header]
@@ -175,8 +175,8 @@ def follow_vis_system_connections(start_system_id, home_system_id):
                         aistate.visBorderSystemIDs.add(sys_id)
                         exploration_list.append(sys_id)
         if fo.currentTurn() < 50:
-            print '\n'.join(status_info)
-            print "----------------------------------------------------------"
+            debug('\n'.join(status_info))
+            debug("----------------------------------------------------------")
 
 
 def update_explored_systems():
@@ -185,9 +185,9 @@ def update_explored_systems():
     obs_lanes = empire.obstructedStarlanes()
     obs_lanes_list = [el for el in obs_lanes]  # should result in list of tuples (sys_id1, sys_id2)
     if obs_lanes_list:
-        print "Obstructed starlanes are: %s" % ', '.join('%s-%s' % item for item in obs_lanes_list)
+        debug("Obstructed starlanes are: %s" % ', '.join('%s-%s' % item for item in obs_lanes_list))
     else:
-        print "No obstructed Starlanes"
+        debug("No obstructed Starlanes")
     empire_id = fo.empireID()
     newly_explored = []
     still_unexplored = []
@@ -199,7 +199,7 @@ def update_explored_systems():
             aistate.unexploredSystemIDs.discard(sys_id)
             aistate.exploredSystemIDs.add(sys_id)
             system = universe.getSystem(sys_id)
-            print "Moved system %s from unexplored list to explored list" % system
+            debug("Moved system %s from unexplored list to explored list" % system)
             border_unexplored_system_ids.discard(sys_id)
             newly_explored.append(sys_id)
         else:

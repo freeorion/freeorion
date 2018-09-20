@@ -87,7 +87,7 @@ import abc
 from collections import Counter
 import math
 import random
-from logging import warn
+from logging import warn, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -493,7 +493,7 @@ class EmpireIDTrait(Trait):
     # can describe, "Look the 'Continuum' is behaving like a 1 modulo 2 character."
 
     def __init__(self, empire_id, aggression):
-        print "EmpireIDTrait initialized."
+        debug("EmpireIDTrait initialized.")
         self.id = empire_id
         self.aggression = aggression  # TODO remove when old research style get_research_index is removed
 
@@ -737,5 +737,5 @@ def get_trait_bypass_value(name, default, sentinel):
     if trait is None or trait == sentinel:
         trait = default
     else:
-        print "%s trait bypassed and set to %s for %s" % (name, repr(trait), fo.playerName())
+        debug("%s trait bypassed and set to %s for %s", name, repr(trait), fo.playerName())
     return trait

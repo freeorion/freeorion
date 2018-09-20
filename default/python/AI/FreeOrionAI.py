@@ -1,6 +1,6 @@
 """The FreeOrionAI module contains the methods which can be made by the C AIInterface;
 these methods in turn activate other portions of the python AI code."""
-from logging import debug, info, error
+from logging import debug, info, error, fatal
 
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
@@ -65,7 +65,7 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
     empire = fo.getEmpire()
     if empire is None:
-        print "This client has no empire. Ignoring new game start message."
+        fatal("This client has no empire. Ignoring new game start message.")
         return
 
     if empire.eliminated:
@@ -103,15 +103,15 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
 def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     """Called by client to when resume a loaded game."""
     if fo.getEmpire() is None:
-        print "This client has no empire. Doing nothing to resume loaded game."
+        fatal("This client has no empire. Doing nothing to resume loaded game.")
         return
 
     if fo.getEmpire().eliminated:
-        print "This empire has been eliminated. Ignoring resume loaded game."
+        info("This empire has been eliminated. Ignoring resume loaded game.")
         return
     turn_timer.start("Server Processing")
 
-    print "Resuming loaded game"
+    debug("Resuming loaded game")
     if not saved_state_string:
         error("AI given empty state-string to resume from; this is expected if the AI is assigned to an empire "
               "previously run by a human, but is otherwise an error. AI will be set to Aggressive.")
@@ -147,7 +147,7 @@ def prepareForSave():  # pylint: disable=invalid-name
     in the state string so that they can be restored if the game is loaded."""
     empire = fo.getEmpire()
     if empire is None:
-        print "This client has no empire. Doing nothing to prepare for save."
+        fatal("This client has no empire. Doing nothing to prepare for save.")
         return
 
     if empire.eliminated:
@@ -173,7 +173,7 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
     message_text is the text of the sent message."""
     empire = fo.getEmpire()
     if empire is None:
-        print "This client has no empire. Doing nothing to handle chat message."
+        fatal("This client has no empire. Doing nothing to handle chat message.")
         return
 
     if empire.eliminated:
@@ -195,7 +195,7 @@ def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
     such as if another player declares war, accepts peace, or cancels a proposed peace treaty."""
     empire = fo.getEmpire()
     if empire is None:
-        print "This client has no empire. Doing nothing to handle diplomatic message."
+        fatal("This client has no empire. Doing nothing to handle diplomatic message.")
         return
 
     if empire.eliminated:
@@ -210,7 +210,7 @@ def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
     or may not include this player."""
     empire = fo.getEmpire()
     if empire is None:
-        print "This client has no empire. Doing nothing to handle diplomatic status message."
+        fatal("This client has no empire. Doing nothing to handle diplomatic status message.")
         return
 
     if empire.eliminated:
@@ -226,14 +226,14 @@ def generateOrders():  # pylint: disable=invalid-name
     at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
     and can be sent to the server for processing."""
     rules = fo.getGameRules()
-    print "Defined game rules:"
+    debug("Defined game rules:")
     for rule in rules.getRulesAsStrings:
-        print "Name: " + rule.name + "  value: " + str(rule.value)
-    print "Rule RULE_NUM_COMBAT_ROUNDS value: " + str(rules.getInt("RULE_NUM_COMBAT_ROUNDS"))
+        debug("Name: " + rule.name + "  value: " + str(rule.value))
+    debug("Rule RULE_NUM_COMBAT_ROUNDS value: " + str(rules.getInt("RULE_NUM_COMBAT_ROUNDS")))
 
     empire = fo.getEmpire()
     if empire is None:
-        print "This client has no empire. Doing nothing to generate orders."
+        fatal("This client has no empire. Doing nothing to generate orders.")
         try:
             # early abort if no empire. no need to do meter calculations
             # on last-seen gamestate if nothing can be ordered anyway...
@@ -282,21 +282,21 @@ def generateOrders():  # pylint: disable=invalid-name
     if planet_id is not None:
         planet = universe.getPlanet(planet_id)
     aggression_name = get_trait_name_aggression(aistate.character)
-    print "***************************************************************************"
-    print "*******  Log info for AI progress chart script. Do not modify.   **********"
-    print ("Generating Orders")
-    print ("EmpireID: {empire.empireID}"
-           " Name: {empire.name}_{empire.empireID}_pid:{p_id}_{p_name}RIdx_{res_idx}_{aggression}"
-           " Turn: {turn}").format(empire=empire, p_id=fo.playerID(), p_name=fo.playerName(),
-                                   res_idx=ResearchAI.get_research_index(), turn=turn,
-                                   aggression=aggression_name.capitalize())
-    print "EmpireColors: {0.colour.r} {0.colour.g} {0.colour.b} {0.colour.a}".format(empire)
+    debug("***************************************************************************")
+    debug("*******  Log info for AI progress chart script. Do not modify.   **********")
+    debug("Generating Orders")
+    debug("EmpireID: {empire.empireID}"
+          " Name: {empire.name}_{empire.empireID}_pid:{p_id}_{p_name}RIdx_{res_idx}_{aggression}"
+          " Turn: {turn}".format(empire=empire, p_id=fo.playerID(), p_name=fo.playerName(),
+                                 res_idx=ResearchAI.get_research_index(), turn=turn,
+                                 aggression=aggression_name.capitalize()))
+    debug("EmpireColors: {0.colour.r} {0.colour.g} {0.colour.b} {0.colour.a}".format(empire))
     if planet:
-        print "CapitalID: " + str(planet_id) + " Name: " + planet.name + " Species: " + planet.speciesName
+        debug("CapitalID: " + str(planet_id) + " Name: " + planet.name + " Species: " + planet.speciesName)
     else:
-        print "CapitalID: None Currently Name: None Species: None "
-    print "***************************************************************************"
-    print "***************************************************************************"
+        debug("CapitalID: None Currently Name: None Species: None ")
+    debug("***************************************************************************")
+    debug("***************************************************************************")
 
     # When loading a savegame, the AI will already have issued orders for this turn.
     # To avoid duplicate orders, generally try not to replay turns. However, for debugging

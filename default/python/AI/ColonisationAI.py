@@ -357,16 +357,16 @@ def get_colony_fleets():
     outpost_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST)
     num_outpost_fleets = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(outpost_fleet_ids))
 
-    print "Colony Targeted SystemIDs: %s" % all_colony_targeted_system_ids
-    print "Colony Targeted PlanetIDs: %s" % colony_targeted_planet_ids
-    print colony_fleet_ids and "Colony Fleet IDs: %s" % colony_fleet_ids or "Available Colony Fleets: 0"
-    print "Colony Fleets Without Missions: %s" % num_colony_fleets
-    print
-    print "Outpost Targeted SystemIDs:", all_outpost_targeted_system_ids
-    print "Outpost Targeted PlanetIDs:", outpost_targeted_planet_ids
-    print outpost_fleet_ids and "Outpost Fleet IDs: %s" % outpost_fleet_ids or "Available Outpost Fleets: 0"
-    print "Outpost Fleets Without Missions: %s" % num_outpost_fleets
-    print
+    debug("Colony Targeted SystemIDs: %s" % all_colony_targeted_system_ids)
+    debug("Colony Targeted PlanetIDs: %s" % colony_targeted_planet_ids)
+    debug(colony_fleet_ids and "Colony Fleet IDs: %s" % colony_fleet_ids or "Available Colony Fleets: 0")
+    debug("Colony Fleets Without Missions: %s" % num_colony_fleets)
+    debug('')
+    debug("Outpost Targeted SystemIDs: %s" % all_outpost_targeted_system_ids)
+    debug("Outpost Targeted PlanetIDs: %s" % outpost_targeted_planet_ids)
+    debug(outpost_fleet_ids and "Outpost Fleet IDs: %s" % outpost_fleet_ids or "Available Outpost Fleets: 0")
+    debug("Outpost Fleets Without Missions: %s" % num_outpost_fleets)
+    debug('')
 
     # export targeted systems for other AI modules
     AIstate.colonyTargetedSystemIDs = all_colony_targeted_system_ids
@@ -626,7 +626,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     empire_research_list = [element.tech for element in empire.researchQueue]
     if planet is None:
         vis_map = universe.getVisibilityTurnsMap(planet_id, empire.empireID)
-        print "Planet %d object not available; visMap: %s" % (planet_id, vis_map)
+        debug("Planet %d object not available; visMap: %s" % (planet_id, vis_map))
         return 0
     # only count existing presence if not target planet
     # TODO: consider neighboring sytems for smaller contribution, and bigger contributions for
@@ -1182,10 +1182,10 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
     potential_targets = [(pid, (score, specName)) for (pid, (score, specName)) in evaluated_planets if
                          score > (0.8 * cost) and score > MINIMUM_COLONY_SCORE]
 
-    print "Colony/outpost ship matching: fleets %s to planets %s" % (fleet_pool, evaluated_planets)
+    debug("Colony/outpost ship matching: fleets %s to planets %s" % (fleet_pool, evaluated_planets))
 
     if try_all:
-        print "Trying best matches to current colony ships"
+        debug("Trying best matches to current colony ships")
         best_scores = dict(evaluated_planets)
         potential_targets = []
         for pid, ratings in all_colony_opportunities.items():
@@ -1210,8 +1210,8 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
                 report_str += "NoShip, "
             else:
                 report_str += "%s, " % ship.speciesName
-        print report_str
-    print
+        debug(report_str)
+    debug('')
     already_targeted = []
     # for planetID_value_pair in evaluatedPlanets:
     aistate = get_aistate()
@@ -1226,8 +1226,8 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
         sys_id = planet.systemID
         if aistate.systemStatus.setdefault(sys_id, {}).setdefault('monsterThreat', 0) > 2000 \
                 or fo.currentTurn() < 20 and aistate.systemStatus[sys_id]['monsterThreat'] > 200:
-            print "Skipping colonization of system %s due to Big Monster, threat %d" % (
-                universe.getSystem(sys_id), aistate.systemStatus[sys_id]['monsterThreat'])
+            debug("Skipping colonization of system %s due to Big Monster, threat %d" % (
+                universe.getSystem(sys_id), aistate.systemStatus[sys_id]['monsterThreat']))
             already_targeted.append(planet_id)
             continue
         this_spec = target[1][1]
@@ -1378,8 +1378,8 @@ class OrbitalColonizationPlan(object):
 
         # enqueue the design at the source planet
         retval = fo.issueEnqueueShipProductionOrder(best_ship, self.source)
-        print "Enqueueing Outpost Base at %s for %s with result %s" % (
-            universe.getPlanet(self.source), universe.getPlanet(self.target), retval)
+        debug("Enqueueing Outpost Base at %s for %s with result %s" % (
+            universe.getPlanet(self.source), universe.getPlanet(self.target), retval))
 
         if not retval:
             warn("Failed to enqueue outpost base at %s" % universe.getPlanet(self.source))
