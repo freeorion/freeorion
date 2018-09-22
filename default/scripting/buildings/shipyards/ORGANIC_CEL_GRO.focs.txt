@@ -7,8 +7,8 @@ BuildingType
     location = And [
         Planet
         Not Contains Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
-        [[LOCATION_ALLOW_ENQUEUE_IF_ENQUEUED(BLD_SHIPYARD_BASE)]]
-        [[LOCATION_ALLOW_BUILD_IF_ENQUEUED(BLD_SHIPYARD_ORG_ORB_INC)]]
+        [[LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_BASE)]]
+        [[LOCATION_ALLOW_BUILD_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_ORG_ORB_INC)]]
         OwnedBy empire = Source.Owner
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
