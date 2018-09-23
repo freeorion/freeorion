@@ -9533,19 +9533,33 @@ bool Or::SourceInvariant() const {
 }
 
 std::string Or::Description(bool negated/* = false*/) const {
+    std::string values_str;
     if (m_operands.size() == 1) {
-        return m_operands[0]->Description();
+        values_str += (!negated)
+            ? UserString("DESC_OR_BEFORE_SINGLE_OPERAND")
+            : UserString("DESC_NOT_OR_BEFORE_SINGLE_OPERAND");
+        values_str += m_operands[0]->Description();
+        values_str += (!negated)
+            ? UserString("DESC_OR_AFTER_SINGLE_OPERAND")
+            : UserString("DESC_NOT_OR_AFTER_SINGLE_OPERAND");
     } else {
         // TODO: use per-operand-type connecting language
-        std::string values_str;
+        values_str += (!negated)
+            ? UserString("DESC_OR_BEFORE_OPERANDS")
+            : UserString("DESC_NOT_OR_BEFORE_OPERANDS");
         for (unsigned int i = 0; i < m_operands.size(); ++i) {
             values_str += m_operands[i]->Description();
             if (i != m_operands.size() - 1) {
-                values_str += UserString("DESC_OR_BETWEEN_OPERANDS");
+                values_str += (!negated)
+                    ? UserString("DESC_OR_BETWEEN_OPERANDS")
+                    : UserString("DESC_NOT_OR_BETWEEN_OPERANDS");
             }
         }
-        return values_str;
+        values_str += (!negated)
+            ? UserString("DESC_OR_AFTER_OPERANDS")
+            : UserString("DESC_NOT_OR_AFTER_OPERANDS");
     }
+    return values_str;
 }
 
 std::string Or::Dump(unsigned short ntabs) const {
@@ -9637,7 +9651,7 @@ bool Not::SourceInvariant() const {
 }
 
 std::string Not::Description(bool negated/* = false*/) const
-{ return m_operand->Description(true); }
+{ return m_operand->Description(!negated); }
 
 std::string Not::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Not\n";

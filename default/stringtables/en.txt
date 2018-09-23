@@ -10040,13 +10040,13 @@ DESC_ORDERED_BOMBARDED_NOT
 ''' that is not being bombarded by an object %1%'''
 
 DESC_AND_BEFORE_OPERANDS
-''''''
+'''['''
 
 DESC_AND_BETWEEN_OPERANDS
 ''' and'''
 
 DESC_AND_AFTER_OPERANDS
-''''''
+''']'''
 
 DESC_AND_BEFORE_SINGLE_OPERAND
 ''''''
@@ -10054,26 +10054,67 @@ DESC_AND_BEFORE_SINGLE_OPERAND
 DESC_AND_AFTER_SINGLE_OPERAND
 ''''''
 
+# NOT AND Descriptions for expressions  ( not ( A and B and C ) )
+# We actually describe the the logically equivalent expression ( (not A) or (not B) or (not C) )
+# Describes the '( (not A) or' part
 DESC_NOT_AND_BEFORE_OPERANDS
-''' (not'''
+''' (either not'''
 
+# Describes the 'or (not B)' and 'or (not C)' parts
 DESC_NOT_AND_BETWEEN_OPERANDS
-'''[[DESC_OR_NOT_BETWEEN_OPERANDS]]'''
+''', or not'''
 
+# Describes the ')' part
 DESC_NOT_AND_AFTER_OPERANDS
 ''' )'''
 
+# Describes 'not ( AND [ A ] )' before A
 DESC_NOT_AND_BEFORE_SINGLE_OPERAND
 ''' not'''
 
+# Describes 'not ( AND [ A ] )' after A
 DESC_NOT_AND_AFTER_SINGLE_OPERAND
 ''''''
 
-DESC_OR_BETWEEN_OPERANDS
-''' or'''
 
-DESC_OR_NOT_BETWEEN_OPERANDS
-''' or not'''
+#### Describes the 'and (not ..)' in the expression ( (not A) and (not B) )
+###DESC_AND_NOT_BETWEEN_OPERANDS
+###''' and not'''
+
+DESC_OR_BEFORE_OPERANDS
+''' (either'''
+
+DESC_OR_BETWEEN_OPERANDS
+''', or'''
+
+DESC_OR_AFTER_OPERANDS
+''' )'''
+
+DESC_OR_BEFORE_SINGLE_OPERAND
+''''''
+
+DESC_OR_AFTER_SINGLE_OPERAND
+''''''
+
+# NOT OR Descriptions
+# Describes the 'not ( ' in the expression ( not ( A or B ) )
+# We actually describe the ' in the logically equivalent expression ( (not A) and (not B) )
+
+DESC_NOT_OR_BEFORE_OPERANDS
+''' [neither'''
+
+DESC_NOT_OR_BETWEEN_OPERANDS
+''', nor'''
+
+DESC_NOT_OR_AFTER_OPERANDS
+''' ]'''
+
+DESC_NOT_OR_BEFORE_SINGLE_OPERAND
+''' not'''
+
+DESC_NOT_OR_AFTER_SINGLE_OPERAND
+''''''
+
 
 # %1% textual description of the lower turn limit.
 # %2% textual description of the upper turn limit.
