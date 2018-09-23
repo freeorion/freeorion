@@ -36,6 +36,7 @@ class ConversionError(Exception):
 
     Automatically logs and chats to the host if raised.
     """
+
     def __init__(self, msg=""):
         error(msg, exc_info=True)
 
@@ -43,10 +44,8 @@ class ConversionError(Exception):
 def convert_to_version(state, version):
     """Convert a savegame AIstate to the next version.
 
-    :param state: savegame state, modified in function
-    :type state: dict
-    :param version: Version to convert to
-    :type version: int
+    :param dict state: savegame state, modified in function
+    :param int version: Version to convert to
     """
     debug("Trying to convert savegame state to version %d..." % version)
     current_version = state.get("version", -1)
@@ -345,9 +344,10 @@ class AIstate(object):
     def assess_enemy_supply(self):
         """
         Assesses where enemy empires have Supply
-        :return:a tuple of 2 dicts, each of which is keyed by system id, and each of which is a list of empire ids
-        1st dict-- enemies that actually have supply at this system
-        2nd dict-- enemies that have supply within 2 jumps from this system (if they clear obstructions)
+        :return: a tuple of 2 dicts, each of which is keyed by system id, and each of which is a list of empire ids
+        1st dict -- enemies that actually have supply at this system
+        2nd dict -- enemies that have supply within 2 jumps from this system (if they clear obstructions)
+        :rtype: (dict[int, list[int]], dict[int, list[int]])
         """
         enemy_ids = [_id for _id in fo.allEmpireIDs() if _id != fo.empireID()]
         actual_supply = {}
