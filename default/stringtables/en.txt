@@ -14447,7 +14447,7 @@ GREAT_FUEL_DESC
 ++	Great Maximum [[metertype METER_FUEL]]: +2
 
 ULTIMATE_FUEL_DESC
-+++	Bad Maximum [[metertype METER_FUEL]]: +3
++++	Ultimate Maximum [[metertype METER_FUEL]]: +3
 
 GREAT_ASTEROID_INDUSTRY_DESC
 +	Good Asteroid Miners: + 0.2 [[metertype METER_INDUSTRY]] per population when Industry Focused in systems with owned asteroid belts.
