@@ -422,7 +422,7 @@ def assess_ship_design_role(design):
     if any(p.partClass == fo.shipPartClass.detection for p in parts):
         return ShipRoleType.CIVILIAN_EXPLORATION
     else:   # if no suitable role found, use as (bad) scout as it still has inherent detection
-        warn("Defaulting ship role to 'exploration' for ship with parts: ", design.parts)
+        warn("Defaulting ship role to 'exploration' for ship with parts: %s", design.parts)
         return ShipRoleType.CIVILIAN_EXPLORATION
 
 
