@@ -10039,14 +10039,16 @@ DESC_ORDERED_BOMBARDED
 DESC_ORDERED_BOMBARDED_NOT
 ''' that is not being bombarded by an object %1%'''
 
+
+# AND Descriptions for expressions 'AND [ A B C ]'
 DESC_AND_BEFORE_OPERANDS
-'''['''
+''' ['''
 
 DESC_AND_BETWEEN_OPERANDS
-''' and'''
+''', and'''
 
 DESC_AND_AFTER_OPERANDS
-''']'''
+''' ]'''
 
 DESC_AND_BEFORE_SINGLE_OPERAND
 ''''''
@@ -10054,33 +10056,29 @@ DESC_AND_BEFORE_SINGLE_OPERAND
 DESC_AND_AFTER_SINGLE_OPERAND
 ''''''
 
-# NOT AND Descriptions for expressions  ( not ( A and B and C ) )
+# NOT AND Descriptions for expressions  'NOT AND [ A B C ]'
 # We actually describe the the logically equivalent expression ( (not A) or (not B) or (not C) )
-# Describes the '( (not A) or' part
+# Note: the operands (not A), (not B).. are handled in the descriptions of A, B.. respectively
 DESC_NOT_AND_BEFORE_OPERANDS
-''' (either not'''
+'''[[DESC_NOT_OR_BEFORE_OPERANDS]]'''
 
-# Describes the 'or (not B)' and 'or (not C)' parts
 DESC_NOT_AND_BETWEEN_OPERANDS
-''', or not'''
+'''[[DESC_NOT_OR_BETWEEN_OPERANDS]]'''
 
-# Describes the ')' part
 DESC_NOT_AND_AFTER_OPERANDS
-''' )'''
+'''[[DESC_NOT_OR_AFTER_OPERANDS]]'''
 
-# Describes 'not ( AND [ A ] )' before A
+
+# Description for 'not ( AND [ A ] )' expressions
+# Actually instead we describe 'OR [ not A ]' and leave the description of negation to A
 DESC_NOT_AND_BEFORE_SINGLE_OPERAND
-''' not'''
+'''[[DESC_OR_BEFORE_SINGLE_OPERAND]]'''
 
-# Describes 'not ( AND [ A ] )' after A
 DESC_NOT_AND_AFTER_SINGLE_OPERAND
-''''''
+'''[[DESC_OR_AFTER_SINGLE_OPERAND]]'''
 
 
-#### Describes the 'and (not ..)' in the expression ( (not A) and (not B) )
-###DESC_AND_NOT_BETWEEN_OPERANDS
-###''' and not'''
-
+# OR Descriptions: for expressions of the form ( A or B or C )
 DESC_OR_BEFORE_OPERANDS
 ''' (either'''
 
@@ -10096,24 +10094,26 @@ DESC_OR_BEFORE_SINGLE_OPERAND
 DESC_OR_AFTER_SINGLE_OPERAND
 ''''''
 
-# NOT OR Descriptions
-# Describes the 'not ( ' in the expression ( not ( A or B ) )
-# We actually describe the ' in the logically equivalent expression ( (not A) and (not B) )
 
+# NOT OR Descriptions; for expressions of the form 'NOT OR [ A B C ]'
+# We actually describe the logically equivalent expression 'AND [ (NOT A) (NOT B) (NOT C) ]'
+# Note: (NOT A), (NOT B).. are handled in the descriptions of A, B.. respectively
 DESC_NOT_OR_BEFORE_OPERANDS
-''' [neither'''
+'''[[DESC_AND_BEFORE_OPERANDS]]'''
 
 DESC_NOT_OR_BETWEEN_OPERANDS
-''', nor'''
+'''[[DESC_AND_BETWEEN_OPERANDS]]'''
 
 DESC_NOT_OR_AFTER_OPERANDS
-''' ]'''
+'''[[DESC_AND_AFTER_OPERANDS]]'''
 
+# for expressions of the form 'NOT OR [ A ]' we describe instead 'AND [ NOT A ]'
+# Note: (NOT A) is handled in the description of A
 DESC_NOT_OR_BEFORE_SINGLE_OPERAND
-''' not'''
+'''[[DESC_AND_BEFORE_SINGLE_OPERAND]]'''
 
 DESC_NOT_OR_AFTER_SINGLE_OPERAND
-''''''
+'''[[DESC_AND_AFTER_SINGLE_OPERAND]]'''
 
 
 # %1% textual description of the lower turn limit.

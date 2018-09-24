@@ -9349,17 +9349,18 @@ std::string And::Description(bool negated/* = false*/) const {
         values_str += (!negated)
             ? UserString("DESC_AND_BEFORE_SINGLE_OPERAND")
             : UserString("DESC_NOT_AND_BEFORE_SINGLE_OPERAND");
-        values_str += m_operands[0]->Description();
+        // Pushing the negation to the enclosed conditions
+        values_str += m_operands[0]->Description(negated);
         values_str += (!negated)
             ? UserString("DESC_AND_AFTER_SINGLE_OPERAND")
             : UserString("DESC_NOT_AND_AFTER_SINGLE_OPERAND");
     } else {
-        // TODO: use per-operand-type connecting language
         values_str += (!negated)
             ? UserString("DESC_AND_BEFORE_OPERANDS")
             : UserString("DESC_NOT_AND_BEFORE_OPERANDS");
         for (unsigned int i = 0; i < m_operands.size(); ++i) {
-            values_str += m_operands[i]->Description();
+            // Pushing the negation to the enclosed conditions
+            values_str += m_operands[i]->Description(negated);
             if (i != m_operands.size() - 1) {
                 values_str += (!negated)
                     ? UserString("DESC_AND_BETWEEN_OPERANDS")
@@ -9538,7 +9539,8 @@ std::string Or::Description(bool negated/* = false*/) const {
         values_str += (!negated)
             ? UserString("DESC_OR_BEFORE_SINGLE_OPERAND")
             : UserString("DESC_NOT_OR_BEFORE_SINGLE_OPERAND");
-        values_str += m_operands[0]->Description();
+        // Pushing the negation to the enclosed conditions
+        values_str += m_operands[0]->Description(negated);
         values_str += (!negated)
             ? UserString("DESC_OR_AFTER_SINGLE_OPERAND")
             : UserString("DESC_NOT_OR_AFTER_SINGLE_OPERAND");
@@ -9548,7 +9550,8 @@ std::string Or::Description(bool negated/* = false*/) const {
             ? UserString("DESC_OR_BEFORE_OPERANDS")
             : UserString("DESC_NOT_OR_BEFORE_OPERANDS");
         for (unsigned int i = 0; i < m_operands.size(); ++i) {
-            values_str += m_operands[i]->Description();
+            // Pushing the negation to the enclosed conditions
+            values_str += m_operands[i]->Description(negated);
             if (i != m_operands.size() - 1) {
                 values_str += (!negated)
                     ? UserString("DESC_OR_BETWEEN_OPERANDS")
