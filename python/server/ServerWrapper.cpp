@@ -1296,7 +1296,6 @@ namespace FreeOrionPython {
         def("user_string",                          make_function(&UserString,      return_value_policy<copy_const_reference>()));
         def("roman_number",                         RomanNumber);
         def("get_resource_dir",                     GetResourceDirWrapper);
-        def("get_user_config_dir",                  GetUserConfigDirWrapper);
 
         def("all_empires",                          AllEmpires);
         def("invalid_object",                       InvalidObjectID);
