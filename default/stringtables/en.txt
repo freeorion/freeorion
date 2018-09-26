@@ -1077,7 +1077,7 @@ RULE_RESEED_PRNG_SERVER
 Random Reseeding
 
 RULE_RESEED_PRNG_SERVER_DESC
-With reseeding, replaying the same save or using the same settings and seed is not expected to produce the same random results. This is possibly preferable if players want to be sure that none of them can predict future random results based on previous random results or if a player wants to 're-roll' the results of a battle or random effect when re-playing a turn, and not get the same results as a previous attempt
+With reseeding, replaying the same save or using the same settings and seed is not expected to produce the same random results. This is possibly preferable if players want to be sure that none of them can predict future random results based on previous random results or if a player wants to 're-roll' the results of a battle or random effect when re-playing a turn, and not get the same results as a previous attempt.
 
 RULE_SHIP_SPEED_FACTOR
 Ship Speed Scaling
@@ -5701,7 +5701,7 @@ GASEOUS_SPECIES_TITLE
 Gaseous Metabolism
 
 GASEOUS_SPECIES_TEXT
-[[encyclopedia GASEOUS_SPECIES_CLASS]] species have metabolisms based on elements which are in gaseous state in an earth-like environment. Most researchers actually agree that complex life based on a gaseous metabolism is physically impossible. Search for life on the most probable habitat, gas giants, gets mostly neglected. Although gas giant are really huge the habitable area is similar to a medium size planet. Also there exist no specials that boost the growth of gaseous species.
+[[encyclopedia GASEOUS_SPECIES_CLASS]] species have metabolisms based on elements which are in gaseous state in an earth-like environment. Most researchers actually agree that complex life based on a gaseous metabolism is physically impossible. Search for life on the most probable habitat, gas giants, gets mostly neglected. Although gas giants are really huge, the habitable area is similar to a medium size planet. Also there exist no specials that boost the growth of gaseous species.
 
 TELEPATHIC_TITLE
 Telepathy
@@ -7385,7 +7385,7 @@ SP_SLY_DESC
 '''Description:
 The Sly live in gas giants. The gas giants are so foreign to most species in the universe that, for most of their history, they have been overlooked.
 Not being able to build devices, they couldn't leave their homeworld. Recently, they were able to obtain necessary equipment and technology for spacefaring from traders in exchange for their knowledge of history.
-On the right diet Sly excrete refined fuel. When in system with a gas giant, a Sly-crewed ship will regenerate fuel.
+On the right diet, Sly excrete refined fuel. When in system with a gas giant, a Sly-crewed ship will regenerate fuel.
 
 Social Structure:
 The Sly are very long-lived and keep the songs alive in which the whole cultural knowledge is encoded. They are very open and curious towards the galaxy and the other species they are now finally able to encounter.
@@ -7895,7 +7895,7 @@ Personality:
 Fulver prefer to concentrate on their strength and prefer to live from day to day. Fulver often favor the tools and decisions which allows for the highest number of future choices. Having a bad memory and no capability for long term future prediction they are bad at long term commitments like science and building up defensive structures. Feeling locked in by the limited number of choices they are restless and unsatisfied and constantly try to overcome their situation.
 
 Reason for Leaving:
-The endless possibilites that space promises helped the Fulvers to concentrate and finally develop space-faring technology. Finally they are out going to the frontier and beyond not caring much for what they leave behind.
+The endless possibilities that space promises helped the Fulvers to concentrate and finally develop space-faring technology. Finally they are out going to the frontier and beyond not caring much for what they leave behind.
 
 Social Structure:
 The focus on the near future prevents the Fulver from building long-lasting structures. Knowing each others possible choices and reacting to these leads to a society which could be best described as an informal anarchy.
@@ -8115,7 +8115,7 @@ EXTINCT_MISIORLA_SPECIAL
 Misiorla Remains
 
 EXTINCT_MISIORLA_SPECIAL_DESC
-On this planet well, preserved bodies of the extinct species [[species SP_MISIORLA]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow production of a [[buildingtype BLD_COL_MISIORLA]] on [[metertype METER_SUPPLY]] connected planets.
+On this planet, well preserved bodies of the extinct species [[species SP_MISIORLA]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow production of a [[buildingtype BLD_COL_MISIORLA]] on [[metertype METER_SUPPLY]] connected planets.
 
 TECH_COL_MISIORLA
 Misiorla Resequencing
@@ -8613,7 +8613,7 @@ FOCUS_STOCKPILE
 Stockpile
 
 FOCUS_STOCKPILE_DESC
-Allows stockpile techs to boost stockpile withdrawl capacity
+Allows stockpile techs to boost stockpile withdrawal capacity
 
 # Focus types
 FOCUS_RESEARCH
@@ -10654,7 +10654,7 @@ Decoupling workforce and the means of production helps to produce just in time a
 This is an upgrade technology for the imperial stockpile. The [[metertype METER_STOCKPILE]] is increased by 6 plus an additional 0.02 per population.
 These improvements are cumulative with those provided by [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_VOID_PREDICTION]].
 
-This also unlocks the [[building BLD_STOCKPILING_CENTER]] which additionally increases the [[metertype METER_STOCKPILE]] by 0.1 per industry .'''
+This also unlocks the [[building BLD_STOCKPILING_CENTER]] which additionally increases the [[metertype METER_STOCKPILE]] by 0.1 per industry.'''
 
 PRO_VOID_PREDICTION
 Void Prediction
