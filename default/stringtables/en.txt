@@ -270,6 +270,7 @@ Content
 MULTIPLAYER
 Multiplayer
 
+
 ##
 ## Major errors
 ##
@@ -329,6 +330,7 @@ FORMAT_LIST_10_ITEMS
 
 FORMAT_LIST_MANY_ITEMS
 %1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
+
 
 ##
 ## Build Projects
@@ -1030,6 +1032,7 @@ Cannot concede; empire controls too many colonies.
 ERROR_CONCEDE_LAST_HUMAN_PLAYER
 Cannot concede from a game with only one human player.
 
+
 ##
 ## Game Rules
 ##
@@ -1201,6 +1204,7 @@ Use part-based upkeep
 
 RULE_SHIP_PART_BASED_UPKEEP_DESC
 Calculate upkeep based on ship parts instead of ships themselves.
+
 
 ##
 ## Command-line and options database entries
@@ -2476,6 +2480,7 @@ The Save Game button is disabled, either because this is a multiplayer game in w
 
 GAME_MENU_REALLY_CONCEDE
 Confirm conceding? This empire will be removed from the game.
+
 
 ##
 ## Save game dialog
@@ -14844,6 +14849,7 @@ Flux Drive Bonus
 
 DYING_POPULATION_LABEL
 Dying Population
+
 
 ##
 ## Tags
