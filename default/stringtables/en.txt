@@ -14443,7 +14443,7 @@ BAD_FUEL_DESC
 −	Bad Maximum [[metertype METER_FUEL]]: -1
 
 AVERAGE_FUEL_DESC
-	Average Maximum [[metertype METER_FUEL]]: +0
+'''	Average Maximum [[metertype METER_FUEL]]: +0'''
 
 GOOD_FUEL_DESC
 +	Good Maximum [[metertype METER_FUEL]]: +1
@@ -14464,7 +14464,7 @@ TELEPATHIC_DETECTION_DESC
 +	Telepathic Detection: can sense nearby populated planets.
 
 COMMUNAL_VISION_DESC
-	Communal Vision: shares visibility within the same species.
+'''	Communal Vision: shares visibility within the same species.'''
 
 
 ##
