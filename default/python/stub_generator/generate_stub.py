@@ -121,7 +121,11 @@ def make_stub(data, result_path, classes_to_ignore):
     enums_names = [x['name'] for x in enums]
 
     missed_instances = instance_names.symmetric_difference(clases_map).difference(classes_to_ignore)
-    warn("Classes without instances (%s): %s" % (len(missed_instances), ', '.join(sorted(missed_instances))))
+    warn(
+        "Classes without instances (%s): %s",
+        len(missed_instances),
+        ', '.join(sorted(missed_instances, key=str.lower))
+    )
 
     for instance in groups.get('instance', []):
         class_name = instance['class_name']
