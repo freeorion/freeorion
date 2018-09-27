@@ -6,12 +6,11 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
 import CombatRatingsAI
 import MoveUtilsAI
-import universe_object
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from EnumsAI import MissionType, ShipRoleType
 from ShipDesignAI import get_part_type
-from universe_object import Planet, Fleet
+from target import TargetPlanet, TargetFleet, TargetSystem
 
 
 def stats_meet_reqs(stats, requirements):
@@ -64,7 +63,7 @@ def get_targeted_planet_ids(planet_ids, mission_type):
     for planet_id in planet_ids:
         # add planets that are target of a mission
         for fleet_mission in selected_fleet_missions:
-            ai_target = Planet(planet_id)
+            ai_target = TargetPlanet(planet_id)
             if fleet_mission.has_target(mission_type, ai_target):
                 targeted_planets.append(planet_id)
     return targeted_planets
@@ -109,7 +108,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
     aistate = get_aistate()
     while systems_enqueued and fleet_pool_set:
         this_system_id = systems_enqueued.pop(0)
-        this_system_obj = universe_object.System(this_system_id)
+        this_system_obj = TargetSystem(this_system_id)
         systems_visited.append(this_system_id)
         accessible_fleets = aistate.systemStatus.get(this_system_id, {}).get('myFleetsAccessible', [])
         fleets_here = [fid for fid in accessible_fleets if fid in fleet_pool_set]
@@ -629,7 +628,7 @@ def get_fleet_system(fleet):
     """Return the current fleet location or the target system if currently on starlane.
 
     :param fleet:
-    :type fleet: universe_object.Fleet | int
+    :type fleet: target.TargetFleet | int
     :return: current system_id or target system_id if currently on starlane
     :rtype: int
     """
@@ -642,7 +641,7 @@ def get_current_and_max_structure(fleet):
     """Return a 2-tuple of the sums of structure and maxStructure meters of all ships in the fleet
 
     :param fleet:
-    :type fleet: int | universe_object.Fleet | fo.Fleet
+    :type fleet: int | target.TargetFleet | fo.Fleet
     :return: tuple of sums of structure and maxStructure meters of all ships in the fleet
     :rtype: (float, float)
     """
@@ -651,7 +650,7 @@ def get_current_and_max_structure(fleet):
     destroyed_ids = universe.destroyedObjectIDs(fo.empireID())
     if isinstance(fleet, int):
         fleet = universe.getFleet(fleet)
-    elif isinstance(fleet, Fleet):
+    elif isinstance(fleet, TargetFleet):
         fleet = fleet.get_object()
     if not fleet:
         return (0.0, 0.0)

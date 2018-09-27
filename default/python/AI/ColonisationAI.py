@@ -2,9 +2,9 @@ from logging import debug, warn, error, info
 from operator import itemgetter
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+
 from common.print_utils import Table, Text, Sequence, Bool, Float
 import AIDependencies
-import universe_object
 import AIstate
 import EspionageAI
 import FleetUtilsAI
@@ -14,6 +14,7 @@ import PriorityAI
 import ProductionAI
 import MilitaryAI
 from aistate_interface import get_aistate
+from target import TargetPlanet
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer, get_partial_visibility_turn
@@ -1244,7 +1245,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
             continue  # must have no compatible colony/outpost ships
         fleet_id = this_fleet_list[0]
         already_targeted.append(planet_id)
-        ai_target = universe_object.Planet(planet_id)
+        ai_target = TargetPlanet(planet_id)
         aistate.get_fleet_mission(fleet_id).set_target(mission_type, ai_target)
 
 
@@ -1346,7 +1347,7 @@ class OrbitalColonizationPlan(object):
             warn("Assigned a base to a plan that was already assigned a base to.")
             return False
         # give orders to perform the mission
-        target = universe_object.Planet(self.target)
+        target = TargetPlanet(self.target)
         fleet_mission = get_aistate().get_fleet_mission(fleet_id)
         fleet_mission.set_target(MissionType.ORBITAL_OUTPOST, target)
         self.fleet_id = fleet_id

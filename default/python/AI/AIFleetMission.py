@@ -13,7 +13,7 @@ import MilitaryAI
 import InvasionAI
 import CombatRatingsAI
 from aistate_interface import get_aistate
-from universe_object import System, Fleet, Planet
+from target import TargetSystem, TargetFleet, TargetPlanet
 from EnumsAI import MissionType
 from AIDependencies import INVALID_ID
 from freeorion_tools import get_partial_visibility_turn
@@ -58,24 +58,24 @@ class AIFleetMission(object):
     """
     Stores information about AI mission. Every mission has fleetID and AI targets depending upon AI fleet mission type.
     :type orders: list[AIFleetOrder]
-    :type target: universe_object.UniverseObject | None
+    :type target: target.Target | None
     """
 
     def __init__(self, fleet_id):
         self.orders = []
-        self.fleet = Fleet(fleet_id)
+        self.fleet = TargetFleet(fleet_id)
         self.type = None
         self.target = None
 
     def __setstate__(self, state):
         target_type = state.pop("target_type")
         if state["target"] is not None:
-            object_map = {Planet.object_name: Planet,
-                          System.object_name: System,
-                          Fleet.object_name: Fleet}
+            object_map = {TargetPlanet.object_name: TargetPlanet,
+                          TargetSystem.object_name: TargetSystem,
+                          TargetFleet.object_name: TargetFleet}
             state["target"] = object_map[target_type](state["target"])
 
-        state["fleet"] = Fleet(state["fleet"])
+        state["fleet"] = TargetFleet(state["fleet"])
         self.__dict__ = state
 
     def __getstate__(self):
@@ -98,7 +98,7 @@ class AIFleetMission(object):
         Set mission and target for this fleet.
 
         :type mission_type: MissionType
-        :type target: universe_object.UniverseObject
+        :type target: target.Target
         """
         if self.type == mission_type and self.target == target:
             return
@@ -117,7 +117,7 @@ class AIFleetMission(object):
         Check if fleet has specified mission_type and target.
 
         :type mission_type: MissionType
-        :type target: universe_object.UniverseObject
+        :type target: target.Target
         :rtype: bool
         """
         return self.type == mission_type and self.target == target
@@ -131,10 +131,10 @@ class AIFleetMission(object):
         Get a fleet order according to mission type and target.
 
         :type mission_type: MissionType
-        :type target: universe_object.UniverseObject
+        :type target: target.Target
         :rtype: AIFleetOrder
         """
-        fleet_target = Fleet(self.fleet.id)
+        fleet_target = TargetFleet(self.fleet.id)
         return ORDERS_FOR_MISSION[mission_type](fleet_target, target)
 
     def check_mergers(self, context=""):
@@ -217,7 +217,7 @@ class AIFleetMission(object):
         if not target:
             return False
         if mission_type == MissionType.EXPLORATION:
-            if isinstance(target, System):
+            if isinstance(target, TargetSystem):
                 empire = fo.getEmpire()
                 if not empire.hasExploredSystem(target.id):
                     return True
@@ -225,7 +225,7 @@ class AIFleetMission(object):
             fleet = self.fleet.get_object()
             if not fleet.hasOutpostShips:
                 return False
-            if isinstance(target, Planet):
+            if isinstance(target, TargetPlanet):
                 planet = target.get_object()
                 if planet.unowned:
                     return True
@@ -233,7 +233,7 @@ class AIFleetMission(object):
             fleet = self.fleet.get_object()
             if not fleet.hasColonyShips:
                 return False
-            if isinstance(target, Planet):
+            if isinstance(target, TargetPlanet):
                 planet = target.get_object()
                 population = planet.initialMeterValue(fo.meterType.population)
                 if planet.unowned or (planet.owner == fleet.owner and population == 0):
@@ -242,13 +242,13 @@ class AIFleetMission(object):
             fleet = self.fleet.get_object()
             if not fleet.hasTroopShips:
                 return False
-            if isinstance(target, Planet):
+            if isinstance(target, TargetPlanet):
                 planet = target.get_object()
                 # TODO remove latter portion of next check in light of invasion retargeting, or else correct logic
                 if not planet.unowned or planet.owner != fleet.owner:
                     return True
         elif mission_type in [MissionType.MILITARY, MissionType.SECURE, MissionType.ORBITAL_DEFENSE]:
-            if isinstance(target, System):
+            if isinstance(target, TargetSystem):
                 return True
         # TODO: implement other mission types
         return False
@@ -262,7 +262,7 @@ class AIFleetMission(object):
     def _check_abort_mission(self, fleet_order):
         """ checks if current mission (targeting a planet) should be aborted"""
         planet_stealthed = False
-        target_is_planet = fleet_order.target and isinstance(fleet_order.target, Planet)
+        target_is_planet = fleet_order.target and isinstance(fleet_order.target, TargetPlanet)
         planet = None
         if target_is_planet:
             planet = fleet_order.target.get_object()
@@ -357,7 +357,7 @@ class AIFleetMission(object):
                                                 fleet_pool_set=set(new_fleets), fleet_list=found_fleets)
         for fid in found_fleets:
             FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id)
-        target = Planet(target_id)
+        target = TargetPlanet(target_id)
         self.set_target(MissionType.INVASION, target)
         self.generate_fleet_orders()
 
@@ -642,9 +642,9 @@ class AIFleetMission(object):
         fleet = fo.getUniverse().getFleet(self.fleet.id)
         system_id = fleet.systemID
         if system_id >= 0:
-            return System(system_id)
+            return TargetSystem(system_id)
         else:  # in starlane, so return next system
-            return System(fleet.nextSystemID)
+            return TargetSystem(fleet.nextSystemID)
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.fleet == other.target

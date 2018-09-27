@@ -3,11 +3,11 @@ from logging import warn, debug
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from aistate_interface import get_aistate
 import AIstate
-import universe_object
 import fleet_orders
 import PlanetUtilsAI
 import pathfinding
 from AIDependencies import INVALID_ID, DRYDOCK_HAPPINESS_THRESHOLD
+from target import TargetSystem
 from turn_state import state
 
 
@@ -16,9 +16,9 @@ def create_move_orders_to_system(fleet, target):
     Create a list of move orders from the fleet's current system to the target system.
 
     :param fleet: Fleet to be moved
-    :type fleet: universe_object.Fleet
+    :type fleet: target.TargetFleet
     :param target: target system
-    :type target: universe_object.System
+    :type target: target.TargetSystem
     :return: list of move orders
     :rtype: list[fleet_orders.OrdersMove]
     """
@@ -45,16 +45,16 @@ def can_travel_to_system(fleet_id, start, target, ensure_return=False):
     :param fleet_id:
     :type fleet_id: int
     :param start:
-    :type start: universe_object.System
+    :type start: target.TargetSystem
     :param target:
-    :type target:  universe_object.System
+    :type target:  target.TargetSystem
     :param ensure_return:
     :type ensure_return: bool
     :return:
     :rtype: list
     """
     if start == target:
-        return [universe_object.System(start.id)]
+        return [TargetSystem(start.id)]
 
     debug("Requesting path for fleet %s from %s to %s" % (fo.getUniverse().getFleet(fleet_id), start, target))
     target_distance_from_supply = -min(state.get_system_supply(target.id), 0)
@@ -72,7 +72,7 @@ def can_travel_to_system(fleet_id, start, target, ensure_return=False):
         return []
 
     debug("Found valid path: %s" % str(path_info))
-    return [universe_object.System(sys_id) for sys_id in path_info.path]
+    return [TargetSystem(sys_id) for sys_id in path_info.path]
 
 
 def get_nearest_supplied_system(start_system_id):
@@ -82,7 +82,7 @@ def get_nearest_supplied_system(start_system_id):
     universe = fo.getUniverse()
 
     if start_system_id in fleet_supplyable_system_ids:
-        return universe_object.System(start_system_id)
+        return TargetSystem(start_system_id)
     else:
         min_jumps = 9999  # infinity
         supply_system_id = INVALID_ID
@@ -92,7 +92,7 @@ def get_nearest_supplied_system(start_system_id):
                 if least_jumps_len < min_jumps:
                     min_jumps = least_jumps_len
                     supply_system_id = system_id
-        return universe_object.System(supply_system_id)
+        return TargetSystem(supply_system_id)
 
 
 def get_best_drydock_system_id(start_system_id, fleet_id):
@@ -119,7 +119,7 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
         return None
 
     universe = fo.getUniverse()
-    start_system = universe_object.System(start_system_id)
+    start_system = TargetSystem(start_system_id)
     drydock_system_ids = set()
     for sys_id, pids in state.get_empire_drydocks().iteritems():
         if sys_id == INVALID_ID:
@@ -139,7 +139,7 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
     aistate = get_aistate()
     fleet_rating = aistate.get_rating(fleet_id)
     for _, dock_sys_id in sys_distances:
-        dock_system = universe_object.System(dock_sys_id)
+        dock_system = TargetSystem(dock_sys_id)
         path = can_travel_to_system(fleet_id, start_system, dock_system)
 
         path_rating = sum([aistate.systemStatus[path_sys.id]['totalThreat']
@@ -157,8 +157,8 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
 
 
 def get_safe_path_leg_to_dest(fleet_id, start_id, dest_id):
-    start_targ = universe_object.System(start_id)
-    dest_targ = universe_object.System(dest_id)
+    start_targ = TargetSystem(start_id)
+    dest_targ = TargetSystem(dest_id)
     # TODO actually get a safe path
     this_path = can_travel_to_system(fleet_id, start_targ, dest_targ, ensure_return=False)
     path_ids = [targ.id for targ in this_path if targ.id != start_id] + [start_id]
@@ -172,10 +172,10 @@ def get_resupply_fleet_order(fleet_target, current_system_target):
     """Return fleet_orders.OrderResupply to nearest supplied system.
 
     :param fleet_target: fleet that needs to be resupplied
-    :type fleet_target: universe_object.Fleet
+    :type fleet_target: target.TargetFleet
     # TODO check if we can remove this id, because fleet already have it.
     :param current_system_target: current system of fleet
-    :type current_system_target: universe_object.System
+    :type current_system_target: target.TargetSystem
     :return: order to resupply
     :rtype fleet_orders.OrderResupply
     """
@@ -189,7 +189,7 @@ def get_repair_fleet_order(fleet, current_system_id):
     """Return fleet_orders.OrderRepair for fleet to proceed to system with drydock.
 
     :param fleet: fleet that need to be repaired
-    :type fleet: universe_object.Fleet
+    :type fleet: target.TargetFleet
     # TODO check if we can remove this id, because fleet already have it.
     :param current_system_id: current location of the fleet, next system if currently on starlane.
     :type current_system_id: int
@@ -203,4 +203,4 @@ def get_repair_fleet_order(fleet, current_system_id):
         return None
 
     debug("Ordering fleet %s to %s for repair" % (fleet, fo.getUniverse().getSystem(drydock_sys_id)))
-    return fleet_orders.OrderRepair(fleet, universe_object.System(drydock_sys_id))
+    return fleet_orders.OrderRepair(fleet, TargetSystem(drydock_sys_id))

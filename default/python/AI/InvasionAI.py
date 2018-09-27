@@ -13,11 +13,11 @@ import FleetUtilsAI
 import MilitaryAI
 import PlanetUtilsAI
 import ProductionAI
-import universe_object
 from AIDependencies import INVALID_ID
 from EnumsAI import MissionType, PriorityType
 from common.print_utils import Table, Text, Float
 from freeorion_tools import tech_is_complete, AITimer, get_partial_visibility_turn
+from target import TargetPlanet, TargetSystem
 from turn_state import state
 
 MAX_BASE_TROOPERS_GOOD_INVADERS = 20
@@ -247,7 +247,7 @@ def get_invasion_targeted_planet_ids(planet_ids, mission_type):
     for pid in planet_ids:
         # add planets that are target of a mission
         for mission in invasion_feet_missions:
-            target = universe_object.Planet(pid)
+            target = TargetPlanet(pid)
             if mission.has_target(mission_type, target):
                 targeted_planets.append(pid)
     return targeted_planets
@@ -527,7 +527,7 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
         min_stats = {'rating': 0, 'troopCapacity': ptroops}
         target_stats = {'rating': 10,
                         'troopCapacity': ptroops + _TROOPS_SAFETY_MARGIN,
-                        'target_system': universe_object.System(sys_id)}
+                        'target_system': TargetSystem(sys_id)}
         these_fleets = FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, found_stats,
                                                            starting_system=sys_id, fleet_pool_set=invasion_fleet_pool,
                                                            fleet_list=found_fleets)
@@ -539,7 +539,7 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
                 continue
             else:
                 these_fleets = found_fleets
-        target = universe_object.Planet(planet_id)
+        target = TargetPlanet(planet_id)
         debug("assigning invasion fleets %s to target %s" % (these_fleets, target))
         aistate = get_aistate()
         for fleetID in these_fleets:
@@ -600,7 +600,7 @@ def assign_invasion_bases():
             available_troopbase_fleet_ids.discard(fid2)
         available_troopbase_fleet_ids.discard(fid)
         aistate.qualifyingTroopBaseTargets[target_id][1] = -1  # TODO: should probably delete
-        target = universe_object.Planet(target_id)
+        target = TargetPlanet(target_id)
         fleet_mission = aistate.get_fleet_mission(fid)
         fleet_mission.set_target(MissionType.ORBITAL_INVASION, target)
 
