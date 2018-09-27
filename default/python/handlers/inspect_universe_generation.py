@@ -37,7 +37,7 @@ def inspect_universe_generation_interface(*args, **kwargs):
             'PairIntInt_IntMap', 'RuleValueStringStringPair', 'ShipPartMeterMap', 'VisibilityIntMap',
             'AccountingInfoVec', 'IntSet', 'StringSet', 'StringVec',
         ),
-        path="universe_generation",
+        path=".",
     )
 
 
