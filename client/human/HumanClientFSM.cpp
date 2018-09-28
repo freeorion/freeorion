@@ -578,6 +578,31 @@ boost::statechart::result MPLobby::react(const ChatHistory& msg) {
     return discard_event();
 }
 
+boost::statechart::result MPLobby::react(const PlayerStatus& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) PlayerStatus.";
+    // ToDo: show it in player ready status
+
+    return discard_event();
+}
+
+boost::statechart::result MPLobby::react(const SaveGameComplete& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) SaveGameComplete.";
+    // ignore it
+
+    return discard_event();
+}
+
+boost::statechart::result MPLobby::react(const TurnProgress& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) TurnProgress.";
+
+    Message::TurnProgressPhase phase_id;
+    ExtractTurnProgressMessageData(msg.m_message, phase_id);
+    const auto& wnd = Client().GetClientUI().GetMultiPlayerLobbyWnd();
+    wnd->TurnPhaseUpdate(phase_id);
+
+    return discard_event();
+}
+
 
 ////////////////////////////////////////////////////////////
 // PlayingGame

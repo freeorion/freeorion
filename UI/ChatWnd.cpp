@@ -402,7 +402,7 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
 void MessageWnd::HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id)
 {}
 
-void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
+void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, bool prefixed /*= false*/) {
     std::string phase_str;
     switch (phase_id) {
     case Message::FLEET_MOVEMENT:
@@ -441,7 +441,10 @@ void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
         break;
     }
 
-    *m_display += phase_str + "\n";
+    if (prefixed)
+        *m_display += boost::str(FlexibleFormat(UserString("PLAYING_GAME")) % phase_str) + "\n";
+    else
+        *m_display += phase_str + "\n";
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
 }
 

@@ -754,6 +754,9 @@ void MultiPlayerLobbyWnd::ChatMessage(const std::string& message_text,
                                         HumanClientApp::GetApp()->PlayerID());
 }
 
+void MultiPlayerLobbyWnd::TurnPhaseUpdate(Message::TurnProgressPhase phase_id)
+{ m_chat_wnd->HandleTurnPhaseUpdate(phase_id, true); }
+
 namespace {
     void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData>>& psd) {
         DebugLogger() << "PlayerSetupData:";
