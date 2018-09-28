@@ -13,7 +13,7 @@ def get_member_info(name, member):
     if isinstance(member, property):
         info['getter'] = (member.fget.__name__, getdoc(member.fget))
     elif isroutine(member):
-        info['rutine'] = (member.__name__, getdoc(member))
+        info['routine'] = (member.__name__, getdoc(member))
     elif 'freeOrionAIInterface' in info['type']:
         info['value'] = str(member)
     elif isinstance(member, int):

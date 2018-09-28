@@ -146,7 +146,7 @@ def merge_args(name, raw_arg_types, is_class):
     return ['%s=None' % name for name in names] if use_keyword else names, zip(names, types)
 
 
-def normilize_rtype(rtype):
+def normalize_rtype(rtype):
     if rtype == 'iterator':
         return 'iter'
     return rtype
@@ -188,7 +188,7 @@ class Docs(object):
         args, rtypes, infos = zip(*res)
         if len(set(rtypes)) != 1:
             error("[%s] Different rtypes", name)
-        self.rtype = normilize_rtype(rtypes[0])
+        self.rtype = normalize_rtype(rtypes[0])
 
         # cut of first and last string if they are empty
         # we cant cut off all empty lines, because it can be inside docstring
