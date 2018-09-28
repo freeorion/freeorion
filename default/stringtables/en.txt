@@ -10058,11 +10058,82 @@ DESC_ORDERED_BOMBARDED
 DESC_ORDERED_BOMBARDED_NOT
 ''' that is not being bombarded by an object %1%'''
 
+
+# AND Descriptions for expressions 'AND [ A B C ]'
+DESC_AND_BEFORE_OPERANDS
+''' ['''
+
 DESC_AND_BETWEEN_OPERANDS
-''' and'''
+''', and'''
+
+DESC_AND_AFTER_OPERANDS
+''' ]'''
+
+DESC_AND_BEFORE_SINGLE_OPERAND
+''''''
+
+DESC_AND_AFTER_SINGLE_OPERAND
+''''''
+
+# NOT AND Descriptions for expressions  'NOT AND [ A B C ]'
+# We actually describe the the logically equivalent expression ( (not A) or (not B) or (not C) )
+# Note: the operands (not A), (not B).. are handled in the descriptions of A, B.. respectively
+DESC_NOT_AND_BEFORE_OPERANDS
+'''[[DESC_NOT_OR_BEFORE_OPERANDS]]'''
+
+DESC_NOT_AND_BETWEEN_OPERANDS
+'''[[DESC_NOT_OR_BETWEEN_OPERANDS]]'''
+
+DESC_NOT_AND_AFTER_OPERANDS
+'''[[DESC_NOT_OR_AFTER_OPERANDS]]'''
+
+
+# Description for 'not ( AND [ A ] )' expressions
+# Actually instead we describe 'OR [ not A ]' and leave the description of negation to A
+DESC_NOT_AND_BEFORE_SINGLE_OPERAND
+'''[[DESC_OR_BEFORE_SINGLE_OPERAND]]'''
+
+DESC_NOT_AND_AFTER_SINGLE_OPERAND
+'''[[DESC_OR_AFTER_SINGLE_OPERAND]]'''
+
+
+# OR Descriptions: for expressions of the form ( A or B or C )
+DESC_OR_BEFORE_OPERANDS
+''' (either'''
 
 DESC_OR_BETWEEN_OPERANDS
-''' or'''
+''', or'''
+
+DESC_OR_AFTER_OPERANDS
+''' )'''
+
+DESC_OR_BEFORE_SINGLE_OPERAND
+''''''
+
+DESC_OR_AFTER_SINGLE_OPERAND
+''''''
+
+
+# NOT OR Descriptions; for expressions of the form 'NOT OR [ A B C ]'
+# We actually describe the logically equivalent expression 'AND [ (NOT A) (NOT B) (NOT C) ]'
+# Note: (NOT A), (NOT B).. are handled in the descriptions of A, B.. respectively
+DESC_NOT_OR_BEFORE_OPERANDS
+'''[[DESC_AND_BEFORE_OPERANDS]]'''
+
+DESC_NOT_OR_BETWEEN_OPERANDS
+'''[[DESC_AND_BETWEEN_OPERANDS]]'''
+
+DESC_NOT_OR_AFTER_OPERANDS
+'''[[DESC_AND_AFTER_OPERANDS]]'''
+
+# for expressions of the form 'NOT OR [ A ]' we describe instead 'AND [ NOT A ]'
+# Note: (NOT A) is handled in the description of A
+DESC_NOT_OR_BEFORE_SINGLE_OPERAND
+'''[[DESC_AND_BEFORE_SINGLE_OPERAND]]'''
+
+DESC_NOT_OR_AFTER_SINGLE_OPERAND
+'''[[DESC_AND_AFTER_SINGLE_OPERAND]]'''
+
 
 # %1% textual description of the lower turn limit.
 # %2% textual description of the upper turn limit.
