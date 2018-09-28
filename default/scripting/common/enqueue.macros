@@ -1,3 +1,33 @@
+/* Allows the current building to be enqueued if the given prerequisite is built or enqueued.
+   Takes the prerequisite name as parameter; Usage:
+        [[LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_BASE)]]
+*/
+LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED
+'''Or  [
+            Contains And [
+                Building name = "@1@"
+                OwnedBy empire = Source.Owner
+            ]
+            // Allows enqueue if this is not enqueued but prerequisite @1@ is
+            And [
+                Enqueued type = Building name = "@1@"
+                Not Enqueued type = Building name = CurrentContent
+            ]
+        ]'''
+/* Allows the current building to be build if the given prerequisite is built or enqueued.
+   Takes the prerequisite name as parameter; Usage:
+        [[LOCATION_ALLOW_BUILD_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_ORBITAL_DRYDOCK)]]
+*/
+LOCATION_ALLOW_BUILD_IF_PREREQ_ENQUEUED
+'''Or  [
+            Contains And [
+                Building name = "@1@"
+                OwnedBy empire = Source.Owner
+            ]
+            Enqueued type = Building name = "@1@"
+        ]'''
+
+
 ENQUEUE_BUILD_ONE_PER_PLANET
 '''And [
         Not Contains Building name = CurrentContent

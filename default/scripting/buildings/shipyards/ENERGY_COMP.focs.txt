@@ -7,10 +7,7 @@ BuildingType
     location = And [
         Planet
         Not Contains Building name = "BLD_SHIPYARD_ENRG_COMP"
-        Contains And [
-            Building name = "BLD_SHIPYARD_BASE"
-            OwnedBy empire = Source.Owner
-        ]
+        [[LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_BASE)]]
         Or [
             Star type = [White Blue BlackHole]
             Enqueued type = Building name = "BLD_ART_BLACK_HOLE"

@@ -8,12 +8,6 @@ BuildingType
         Not Contains Building name = "BLD_SHIPYARD_AST"
         Planet type = Asteroids
         OwnedBy empire = Source.Owner
-
-        /* TODO: Check that one, seems to be weird */
-        Not Contains And [
-            Building name = "BLD_SHIPYARD_AST"
-            OwnedBy empire = Source.Owner
-        ]
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-5.png"
