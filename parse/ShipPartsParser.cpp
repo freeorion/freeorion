@@ -6,9 +6,10 @@
 
 #include "ParseImpl.h"
 #include "EnumParser.h"
-#include "ValueRefParser.h"
-#include "ConditionParser.h"
-#include "ConditionParserImpl.h"
+
+//#include "ValueRefParser.h"
+//#include "ConditionParser.h"
+//#include "ConditionParserImpl.h"
 #include "CommonParamsParser.h"
 
 #include "../universe/ShipDesign.h"
