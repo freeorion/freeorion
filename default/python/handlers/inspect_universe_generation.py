@@ -6,7 +6,7 @@ def inspect_universe_generation_interface(*args, **kwargs):
     import freeorion as fo
     tech = fo.getTech('LRN_ARTIF_MINDS')
     universe = fo.get_universe()
-    # empire = fo.get_empire(0)
+    empire = fo.get_empire(1)
     rules = fo.getGameRules()
     hull_type = fo.getHullType('SH_XENTRONIUM')
     species = fo.getSpecies('SP_ABADDONI')
@@ -29,7 +29,10 @@ def inspect_universe_generation_interface(*args, **kwargs):
             universe.effectAccounting,
             universe.buildingIDs,
             fo.get_galaxy_setup_data(),
-
+            empire,
+            empire.colour,
+            empire.productionQueue,
+            empire.researchQueue,
         ],
         classes_to_ignore=(
             'IntBoolMap', 'IntDblMap', 'IntFltMap', 'IntIntMap', 'IntPairVec', 'IntSetSet',
