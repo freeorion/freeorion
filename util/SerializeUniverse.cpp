@@ -151,7 +151,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         }
     }
 
-    if (Archive::is_saving::value && (!m_stat_records_publish)) {
+    if (Archive::is_saving::value && (!m_stat_records_publish) && m_encoding_empire != ALL_EMPIRES) {
         std::map<std::string, std::map<int, std::map<int, double>>> dummy_stat_records;
         ar  & boost::serialization::make_nvp("m_stat_records", dummy_stat_records);
     } else {
