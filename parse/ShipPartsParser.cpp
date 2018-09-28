@@ -100,8 +100,8 @@ namespace {
             qi::_7_type _7;
             qi::_8_type _8;
             qi::_9_type _9;
-            phoenix::actor<boost::spirit::argument<9>> _10; // qi::_10_type is not predefined
-            phoenix::actor<boost::spirit::argument<10>> _11; // qi::_11_type is not predefined
+//            phoenix::actor<boost::spirit::argument<9>> _10; // qi::_10_type is not predefined
+//            phoenix::actor<boost::spirit::argument<10>> _11; // qi::_11_type is not predefined
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::matches_type matches_;
@@ -124,7 +124,7 @@ namespace {
                 > -(label(tok.PreferredPrey_) > condition_parser)
                     ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
                       insert_parttype_(_r1, _3,
-                                       construct<std::tuple<boost::optional<double>, boost::optional<double>, boost::optional<int>, boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>>>>(_4, _5, _10, _11)
+                                       construct<std::tuple<boost::optional<double>, boost::optional<double>, boost::optional<int>, boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>>>>(_4, _5, 2, nullptr)
                                        , _8, _2, _7, _9, _6,
                                         _pass
                                        ) ]
