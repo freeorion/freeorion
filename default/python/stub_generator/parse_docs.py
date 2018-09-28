@@ -143,7 +143,7 @@ def merge_args(name, raw_arg_types, is_class):
               '\n    '.join(', '.join('(%s)%s' % (tp, name) for tp, name in arg_set) for arg_set in raw_arg_types))
         names, types = get_argument_names(raw_arg_types[0], is_class)
         use_keyword = False
-    return ['%s=None' % name for name in names] if use_keyword else names, zip(names, types)
+    return ['%s=None' % arg_name for arg_name in names] if use_keyword else names, zip(names, types)
 
 
 def normalize_rtype(rtype):
