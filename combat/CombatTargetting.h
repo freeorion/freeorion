@@ -24,7 +24,7 @@
 //       
 //    Content Setup Language
 //       Precion          'precision'     value in FOCS script for ship_parts
-//       TriggerCondition 'preferredPrey' condition in FOCS script for ship_parts
+//       const ::Condition::ConditionBase 'preferredPrey' condition in FOCS script for ship_parts
 //    The content may actually not be hardcoded, so this needs to change before merge.
 
 namespace Targetting {
@@ -37,54 +37,54 @@ namespace Targetting {
     };
 
     typedef std::shared_ptr<UniverseObject>                   Target;
-    typedef const ::Condition::ConditionBase                  TriggerCondition;
-    typedef std::shared_ptr<const ::Condition::ConditionBase> TriggerConditionP;
+//    typedef const ::Condition::ConditionBase                  TriggerCondition;
+//    typedef std::shared_ptr<const ::Condition::ConditionBase> std::shared_ptr<const ::Condition::ConditionBase>;
     typedef int                                               Precision;
     struct TriggerConditions {
-        // Currently ShipPart takes ownership of TriggerCondition using a unique_ptr
+        // Currently ShipPart takes ownership of trigger condition using a unique_ptr
         // TriggerConditions takes ownership of conditions so it could become part of ShipDesign, Parts etc..
         // If ownership is not necessary we still not some kind of reference type, where shared_ptr seems to be a lesser evil
-        std::vector<std::shared_ptr<TriggerCondition>> conditions;
+        std::vector<std::shared_ptr<const ::Condition::ConditionBase>> conditions;
         std::vector<int> weights;
 
         TriggerConditions()
         {}
 
-        TriggerConditions(const std::vector<TriggerConditionP>&& conditions_, const std::vector<int>&& weights_) :
+        TriggerConditions(const std::vector<std::shared_ptr<const ::Condition::ConditionBase>>&& conditions_, const std::vector<int>&& weights_) :
             conditions(std::move(conditions_)),
             weights(std::move(weights_))
         {}
         /*
-        TriggerConditions(const Targetting::TriggerConditionP&& condition_, const int weight_) :
+        TriggerConditions(const std::shared_ptr<const ::Condition::ConditionBase>&& condition_, const int weight_) :
             conditions({condition_}),
             weights({weight_})
         {}
         */
-        TriggerConditions(const TriggerConditionP& condition_, const int weight_) :
+        TriggerConditions(const std::shared_ptr<const ::Condition::ConditionBase>& condition_, const int weight_) :
             conditions({condition_}),
             weights({weight_})
         {}
 
 
-        TriggerConditions(const TriggerCondition* condition_, const int weight_) :
-            conditions({std::shared_ptr<TriggerCondition>(condition_)}),
+        TriggerConditions(const ::Condition::ConditionBase* condition_, const int weight_) :
+            conditions({std::shared_ptr<const ::Condition::ConditionBase>(condition_)}),
             weights({weight_})
         {}
 
     };
 
-    bool IsPreferredTarget(const TriggerCondition& condition, Target target);
+    bool IsPreferredTarget(const ::Condition::ConditionBase& condition, Target target);
     bool IsPreferredTarget(const TriggerConditions& condition, Target target);
 
     Precision FindPrecision(const TriggerConditions& conditions);
 
     /* returns nullptr if no preference */
-    TriggerCondition* FindPreferredTargets(const std::string& part_name);
-    std::unique_ptr<TriggerCondition> PreyAsTriggerCondition(PreyType prey);
+    const ::Condition::ConditionBase* FindPreferredTargets(const std::string& part_name);
+    std::unique_ptr<const ::Condition::ConditionBase> PreyAsTriggerCondition(PreyType prey);
     TriggerConditions PreyAsTriggerConditions(PreyType prey);
     TriggerConditions Combine(const TriggerConditions& one, const TriggerConditions& another);
     /* if the given condition exists, a copy with the appended condition gets returned. */
-    const TriggerConditions Combine(const TriggerConditions& one, const TriggerConditionP&& another, int weight);
+    const TriggerConditions Combine(const TriggerConditions& one, const std::shared_ptr<const ::Condition::ConditionBase>&& another, int weight);
 }
 
 #endif // _CombatTargetting_h_

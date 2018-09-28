@@ -40,7 +40,7 @@ bool Targetting::IsPreferredTarget(const Targetting::TriggerConditions& conditio
     return false;
 }
 
-bool Targetting::IsPreferredTarget(const Targetting::TriggerCondition& condition,
+bool Targetting::IsPreferredTarget(const ::Condition::ConditionBase& condition,
                                    Targetting::Target target)
 {
     /*    if (!condition) {
@@ -59,7 +59,7 @@ bool Targetting::IsPreferredTarget(const Targetting::TriggerCondition& condition
     return is_preferred;
 }
 
-std::unique_ptr<Targetting::TriggerCondition> Targetting::PreyAsTriggerCondition(const Targetting::PreyType prey)
+std::unique_ptr<const ::Condition::ConditionBase> Targetting::PreyAsTriggerCondition(const Targetting::PreyType prey)
 {
     std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>> p_obj;
     switch (prey) {
@@ -88,7 +88,7 @@ std::unique_ptr<Targetting::TriggerCondition> Targetting::PreyAsTriggerCondition
 Targetting::TriggerConditions Targetting::PreyAsTriggerConditions(const Targetting::PreyType prey)
 { return Targetting::TriggerConditions(Targetting::PreyAsTriggerCondition(prey), 1); }
 
-Targetting::TriggerCondition* Targetting::FindPreferredTargets(const std::string& part_name)
+const ::Condition::ConditionBase* Targetting::FindPreferredTargets(const std::string& part_name)
 {
     const PartType* part = GetPartType(part_name);
     return part->PreferredPrey();
@@ -115,7 +115,7 @@ Targetting::TriggerConditions Targetting::Combine(const Targetting::TriggerCondi
 }
 
 const Targetting::TriggerConditions Targetting::Combine(const Targetting::TriggerConditions& conditions,
-                                                        const Targetting::TriggerConditionP&& condition, int weight)
+                                                        const std::shared_ptr<const ::Condition::ConditionBase>&& condition, int weight)
 {
     if (!condition) {
         return conditions;

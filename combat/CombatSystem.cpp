@@ -723,8 +723,8 @@ namespace {
         std::set<std::string> seen_hangar_part_types;
         int available_fighters = 0;
         float fighter_attack = 0.0f;
-        //        std::shared_ptr<const Targetting::TriggerCondition> fighter_preferred_prey = nullptr;
-        const Targetting::TriggerCondition* fighter_preferred_prey = nullptr;
+        //        std::shared_ptr<const ::Condition::ConditionBase> fighter_preferred_prey = nullptr;
+        const ::Condition::ConditionBase* fighter_preferred_prey = nullptr;
         Targetting::Precision fighter_precision = 0;
         std::map<std::string, int> part_fighter_launch_capacities;
 
@@ -770,7 +770,7 @@ namespace {
                     fighter_precision = part->Precision();
                     fighter_preferred_prey = part->PreferredPrey();
                     //XXX
-                    //                    fighter_preferred_prey = std::make_shared<const Targetting::TriggerCondition>(part->PreferredPrey());
+                    //                    fighter_preferred_prey = std::make_shared<const ::Condition::ConditionBase>(part->PreferredPrey());
 
                     // should only be one type of fighter per ship as of this writing
                     fighter_attack = ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name);  // secondary stat is fighter damage
@@ -1538,7 +1538,7 @@ namespace {
             }
 
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon
-            std::shared_ptr<Targetting::TriggerCondition> preferred_targets_shared(Targetting::PreyAsTriggerCondition(Targetting::ShipPrey));
+            std::shared_ptr<const ::Condition::ConditionBase> preferred_targets_shared(Targetting::PreyAsTriggerCondition(Targetting::ShipPrey));
             Targetting::TriggerConditions preferred_targets_ref(preferred_targets_shared, 3);
             //Targetting::TriggerConditions preferred_targets(*Targetting::PreyAsTriggerCondition(Targetting::ShipPrey), 3);
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"),
