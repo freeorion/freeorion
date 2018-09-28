@@ -5,81 +5,15 @@
 # a C++ Boost-python process as part of the launch.
 
 
-class FleetPlan(object):
-    def ship_designs(self):
+class AccountingInfoVec(object):
+    def __contains__(self, obj):
         """
-        :rtype: list
+        :param obj:
+        :type obj: object
+        :rtype: bool
         """
-        return list()
+        return bool()
 
-    def name(self):
-        """
-        :rtype: object
-        """
-        return object()
-
-
-class GGColor(object):
-    @property
-    def a(self):
-        pass
-
-    @property
-    def r(self):
-        pass
-
-    @property
-    def b(self):
-        pass
-
-    @property
-    def g(self):
-        pass
-
-
-class GalaxySetupData(object):
-    @property
-    def specialsFrequency(self):
-        return galaxySetupOption()
-
-    @property
-    def age(self):
-        return galaxySetupOption()
-
-    @property
-    def starlaneFrequency(self):
-        return galaxySetupOption()
-
-    @property
-    def nativeFrequency(self):
-        return galaxySetupOption()
-
-    @property
-    def planetDensity(self):
-        return galaxySetupOption()
-
-    @property
-    def shape(self):
-        return galaxyShape()
-
-    @property
-    def seed(self):
-        return str()
-
-    @property
-    def monsterFrequency(self):
-        return galaxySetupOption()
-
-    @property
-    def size(self):
-        return int()
-
-    @property
-    def maxAIAggression(self):
-        return aggression()
-
-
-class IntBoolMap(object):
     def __delitem__(self, obj):
         """
         :param obj:
@@ -96,219 +30,17 @@ class IntBoolMap(object):
         """
         return object()
 
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
     def __iter__(self):
         """
         :rtype: object
         """
         return object()
-
-    def __setitem__(self, obj1, obj2):
-        """
-        :param obj1:
-        :type obj1: object
-        :param obj2:
-        :type obj2: object
-        :rtype: None
-        """
-        return None
 
     def __len__(self):
         """
         :rtype: int
         """
         return int()
-
-
-class IntDblMap(object):
-    def __delitem__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: None
-        """
-        return None
-
-    def __getitem__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: object
-        """
-        return object()
-
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
-    def __iter__(self):
-        """
-        :rtype: object
-        """
-        return object()
-
-    def __setitem__(self, obj1, obj2):
-        """
-        :param obj1:
-        :type obj1: object
-        :param obj2:
-        :type obj2: object
-        :rtype: None
-        """
-        return None
-
-    def __len__(self):
-        """
-        :rtype: int
-        """
-        return int()
-
-
-class IntFltMap(object):
-    def __delitem__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: None
-        """
-        return None
-
-    def __getitem__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: object
-        """
-        return object()
-
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
-    def __iter__(self):
-        """
-        :rtype: object
-        """
-        return object()
-
-    def __setitem__(self, obj1, obj2):
-        """
-        :param obj1:
-        :type obj1: object
-        :param obj2:
-        :type obj2: object
-        :rtype: None
-        """
-        return None
-
-    def __len__(self):
-        """
-        :rtype: int
-        """
-        return int()
-
-
-class IntIntMap(object):
-    def __delitem__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: None
-        """
-        return None
-
-    def __getitem__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: object
-        """
-        return object()
-
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
-    def __iter__(self):
-        """
-        :rtype: object
-        """
-        return object()
-
-    def __setitem__(self, obj1, obj2):
-        """
-        :param obj1:
-        :type obj1: object
-        :param obj2:
-        :type obj2: object
-        :rtype: None
-        """
-        return None
-
-    def __len__(self):
-        """
-        :rtype: int
-        """
-        return int()
-
-
-class IntPairVec(object):
-    def __delitem__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: None
-        """
-        return None
-
-    def extend(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: None
-        """
-        return None
-
-    def __getitem__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: object
-        """
-        return object()
-
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
-    def __iter__(self):
-        """
-        :rtype: object
-        """
-        return object()
 
     def __setitem__(self, obj1, obj2):
         """
@@ -328,22 +60,432 @@ class IntPairVec(object):
         """
         return None
 
+    def extend(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+
+class EffectCause(object):
+    @property
+    def causeType(self):
+        pass
+
+    @property
+    def customLabel(self):
+        pass
+
+    @property
+    def specificCause(self):
+        pass
+
+
+class FleetPlan(object):
+    def name(self):
+        """
+        :rtype: object
+        """
+        return object()
+
+    def ship_designs(self):
+        """
+        :rtype: list
+        """
+        return list()
+
+
+class GGColor(object):
+    @property
+    def a(self):
+        pass
+
+    @property
+    def b(self):
+        pass
+
+    @property
+    def g(self):
+        pass
+
+    @property
+    def r(self):
+        pass
+
+
+class GalaxySetupData(object):
+    @property
+    def age(self):
+        return galaxySetupOption()
+
+    @property
+    def gameUID(self):
+        return str()
+
+    @property
+    def maxAIAggression(self):
+        return aggression()
+
+    @property
+    def monsterFrequency(self):
+        return galaxySetupOption()
+
+    @property
+    def nativeFrequency(self):
+        return galaxySetupOption()
+
+    @property
+    def planetDensity(self):
+        return galaxySetupOption()
+
+    @property
+    def seed(self):
+        return str()
+
+    @property
+    def shape(self):
+        return galaxyShape()
+
+    @property
+    def size(self):
+        return int()
+
+    @property
+    def specialsFrequency(self):
+        return galaxySetupOption()
+
+    @property
+    def starlaneFrequency(self):
+        return galaxySetupOption()
+
+
+class GameRules(object):
+    @property
+    def empty(self):
+        return bool()
+
+    @property
+    def getRulesAsStrings(self):
+        return RuleValueStringsVec()
+
+    def getDescription(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: str
+        """
+        return str()
+
+    def getDouble(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: float
+        """
+        return float()
+
+    def getInt(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: int
+        """
+        return int()
+
+    def getString(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: str
+        """
+        return str()
+
+    def getToggle(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: bool
+        """
+        return bool()
+
+    def ruleExists(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: bool
+        """
+        return bool()
+
+    def ruleExistsWithType(self, string, rule_type):
+        """
+        :param string:
+        :type string: str
+        :param rule_type:
+        :type rule_type: ruleType
+        :rtype: bool
+        """
+        return bool()
+
+
+class IntBoolMap(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
     def __len__(self):
         """
         :rtype: int
         """
         return int()
 
-
-class IntSet(object):
-    def count(self, number):
+    def __setitem__(self, obj1, obj2):
         """
-        :param number:
-        :type number: int
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
+
+
+class IntDblMap(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
+    def __len__(self):
+        """
         :rtype: int
         """
         return int()
 
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
+
+
+class IntFltMap(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
+
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
+
+
+class IntIntMap(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
+
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
+
+
+class IntPairVec(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
+
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
+
+    def append(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def extend(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+
+class IntSet(object):
     def __contains__(self, number):
         """
         :param number:
@@ -364,6 +506,14 @@ class IntSet(object):
         """
         return int()
 
+    def count(self, number):
+        """
+        :param number:
+        :type number: int
+        :rtype: int
+        """
+        return int()
+
     def empty(self):
         """
         :rtype: bool
@@ -378,14 +528,6 @@ class IntSet(object):
 
 
 class IntSetSet(object):
-    def count(self, int_set):
-        """
-        :param int_set:
-        :type int_set: IntSet
-        :rtype: int
-        """
-        return int()
-
     def __contains__(self, int_set):
         """
         :param int_set:
@@ -406,6 +548,14 @@ class IntSetSet(object):
         """
         return int()
 
+    def count(self, int_set):
+        """
+        :param int_set:
+        :type int_set: IntSet
+        :rtype: int
+        """
+        return int()
+
     def empty(self):
         """
         :rtype: bool
@@ -420,15 +570,15 @@ class IntSetSet(object):
 
 
 class IntVec(object):
-    def __delitem__(self, obj):
+    def __contains__(self, obj):
         """
         :param obj:
         :type obj: object
-        :rtype: None
+        :rtype: bool
         """
-        return None
+        return bool()
 
-    def extend(self, obj):
+    def __delitem__(self, obj):
         """
         :param obj:
         :type obj: object
@@ -444,19 +594,17 @@ class IntVec(object):
         """
         return object()
 
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
     def __iter__(self):
         """
-        :rtype: iter
+        :rtype: object
         """
-        return iter()
+        return object()
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
 
     def __setitem__(self, obj1, obj2):
         """
@@ -476,33 +624,35 @@ class IntVec(object):
         """
         return None
 
-    def __len__(self):
+    def extend(self, obj):
         """
-        :rtype: int
+        :param obj:
+        :type obj: object
+        :rtype: None
         """
-        return int()
+        return None
 
 
 class ItemSpec(object):
     @property
-    def type(self):
+    def name(self):
         pass
 
     @property
-    def name(self):
+    def type(self):
         pass
 
 
 class ItemSpecVec(object):
-    def __delitem__(self, obj):
+    def __contains__(self, obj):
         """
         :param obj:
         :type obj: object
-        :rtype: None
+        :rtype: bool
         """
-        return None
+        return bool()
 
-    def extend(self, obj):
+    def __delitem__(self, obj):
         """
         :param obj:
         :type obj: object
@@ -518,19 +668,17 @@ class ItemSpecVec(object):
         """
         return object()
 
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
     def __iter__(self):
         """
         :rtype: object
         """
         return object()
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
 
     def __setitem__(self, obj1, obj2):
         """
@@ -550,14 +698,24 @@ class ItemSpecVec(object):
         """
         return None
 
-    def __len__(self):
+    def extend(self, obj):
         """
-        :rtype: int
+        :param obj:
+        :type obj: object
+        :rtype: None
         """
-        return int()
+        return None
 
 
-class MeterTypeMeterMap(object):
+class MeterTypeAccountingInfoVecMap(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
     def __delitem__(self, obj):
         """
         :param obj:
@@ -574,19 +732,17 @@ class MeterTypeMeterMap(object):
         """
         return object()
 
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
     def __iter__(self):
         """
         :rtype: object
         """
         return object()
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
 
     def __setitem__(self, obj1, obj2):
         """
@@ -598,11 +754,53 @@ class MeterTypeMeterMap(object):
         """
         return None
 
+
+class MeterTypeMeterMap(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
     def __len__(self):
         """
         :rtype: int
         """
         return int()
+
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
 
 
 class MeterTypeStringPair(object):
@@ -616,24 +814,6 @@ class MeterTypeStringPair(object):
 
 
 class MonsterFleetPlan(object):
-    def spawn_rate(self):
-        """
-        :rtype: float
-        """
-        return float()
-
-    def ship_designs(self):
-        """
-        :rtype: list
-        """
-        return list()
-
-    def spawn_limit(self):
-        """
-        :rtype: int
-        """
-        return int()
-
     def locations(self, item_list):
         """
         :param item_list:
@@ -648,8 +828,34 @@ class MonsterFleetPlan(object):
         """
         return object()
 
+    def ship_designs(self):
+        """
+        :rtype: list
+        """
+        return list()
+
+    def spawn_limit(self):
+        """
+        :rtype: int
+        """
+        return int()
+
+    def spawn_rate(self):
+        """
+        :rtype: float
+        """
+        return float()
+
 
 class PairIntInt_IntMap(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
     def __delitem__(self, obj):
         """
         :param obj:
@@ -666,19 +872,17 @@ class PairIntInt_IntMap(object):
         """
         return object()
 
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
     def __iter__(self):
         """
         :rtype: object
         """
         return object()
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
 
     def __setitem__(self, obj1, obj2):
         """
@@ -689,12 +893,6 @@ class PairIntInt_IntMap(object):
         :rtype: None
         """
         return None
-
-    def __len__(self):
-        """
-        :rtype: int
-        """
-        return int()
 
 
 class PlayerSetupData(object):
@@ -703,11 +901,11 @@ class PlayerSetupData(object):
         pass
 
     @property
-    def player_name(self):
+    def empire_name(self):
         pass
 
     @property
-    def empire_name(self):
+    def player_name(self):
         pass
 
     @property
@@ -715,7 +913,25 @@ class PlayerSetupData(object):
         pass
 
 
-class ShipPartMeterMap(object):
+class RuleValueStringStringPair(object):
+    @property
+    def name(self):
+        pass
+
+    @property
+    def value(self):
+        pass
+
+
+class RuleValueStringsVec(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
     def __delitem__(self, obj):
         """
         :param obj:
@@ -732,75 +948,17 @@ class ShipPartMeterMap(object):
         """
         return object()
 
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
     def __iter__(self):
         """
         :rtype: object
         """
         return object()
-
-    def __setitem__(self, obj1, obj2):
-        """
-        :param obj1:
-        :type obj1: object
-        :param obj2:
-        :type obj2: object
-        :rtype: None
-        """
-        return None
 
     def __len__(self):
         """
         :rtype: int
         """
         return int()
-
-
-class ShipSlotVec(object):
-    def __delitem__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: None
-        """
-        return None
-
-    def extend(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: None
-        """
-        return None
-
-    def __getitem__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: object
-        """
-        return object()
-
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
-    def __iter__(self):
-        """
-        :rtype: object
-        """
-        return object()
 
     def __setitem__(self, obj1, obj2):
         """
@@ -820,22 +978,128 @@ class ShipSlotVec(object):
         """
         return None
 
+    def extend(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+
+class ShipPartMeterMap(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
     def __len__(self):
         """
         :rtype: int
         """
         return int()
 
-
-class StringSet(object):
-    def count(self, string):
+    def __setitem__(self, obj1, obj2):
         """
-        :param string:
-        :type string: str
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
+
+
+class ShipSlotVec(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
+    def __len__(self):
+        """
         :rtype: int
         """
         return int()
 
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
+
+    def append(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def extend(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+
+class StringSet(object):
     def __contains__(self, string):
         """
         :param string:
@@ -856,6 +1120,14 @@ class StringSet(object):
         """
         return int()
 
+    def count(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: int
+        """
+        return int()
+
     def empty(self):
         """
         :rtype: bool
@@ -870,15 +1142,15 @@ class StringSet(object):
 
 
 class StringVec(object):
-    def __delitem__(self, obj):
+    def __contains__(self, obj):
         """
         :param obj:
         :type obj: object
-        :rtype: None
+        :rtype: bool
         """
-        return None
+        return bool()
 
-    def extend(self, obj):
+    def __delitem__(self, obj):
         """
         :param obj:
         :type obj: object
@@ -894,19 +1166,17 @@ class StringVec(object):
         """
         return object()
 
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
     def __iter__(self):
         """
         :rtype: iter
         """
         return iter()
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
 
     def __setitem__(self, obj1, obj2):
         """
@@ -926,14 +1196,24 @@ class StringVec(object):
         """
         return None
 
-    def __len__(self):
+    def extend(self, obj):
         """
-        :rtype: int
+        :param obj:
+        :type obj: object
+        :rtype: None
         """
-        return int()
+        return None
 
 
-class VisibilityIntMap(object):
+class TargetIDAccountingMapMap(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
     def __delitem__(self, obj):
         """
         :param obj:
@@ -950,19 +1230,17 @@ class VisibilityIntMap(object):
         """
         return object()
 
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
     def __iter__(self):
         """
         :rtype: object
         """
         return object()
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
 
     def __setitem__(self, obj1, obj2):
         """
@@ -974,11 +1252,53 @@ class VisibilityIntMap(object):
         """
         return None
 
+
+class VisibilityIntMap(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
     def __len__(self):
         """
         :rtype: int
         """
         return int()
+
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
 
 
 class buildingType(object):
@@ -992,11 +1312,21 @@ class buildingType(object):
 
     @property
     def dump(self):
-        return str()
+        pass
 
     @property
     def name(self):
         return str()
+
+    def canBeEnqueued(self, number1, number2):
+        """
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :rtype: bool
+        """
+        return bool()
 
     def canBeProduced(self, number1, number2):
         """
@@ -1007,26 +1337,6 @@ class buildingType(object):
         :rtype: bool
         """
         return bool()
-
-    def productionTime(self, number1, number2):
-        """
-        :param number1:
-        :type number1: int
-        :param number2:
-        :type number2: int
-        :rtype: int
-        """
-        return int()
-
-    def perTurnCost(self, number1, number2):
-        """
-        :param number1:
-        :type number1: int
-        :param number2:
-        :type number2: int
-        :rtype: float
-        """
-        return float()
 
     def captureResult(self, number1, number2, number3, boolean):
         """
@@ -1042,6 +1352,16 @@ class buildingType(object):
         """
         return captureResult()
 
+    def perTurnCost(self, number1, number2):
+        """
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :rtype: float
+        """
+        return float()
+
     def productionCost(self, number1, number2):
         """
         :param number1:
@@ -1052,34 +1372,34 @@ class buildingType(object):
         """
         return float()
 
-    def canBeEnqueued(self, number1, number2):
+    def productionTime(self, number1, number2):
         """
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype: bool
+        :rtype: int
         """
-        return bool()
+        return int()
 
 
 class diplomaticMessage(object):
     @property
-    def type(self):
-        pass
-
-    @property
     def recipient(self):
-        pass
+        return int()
 
     @property
     def sender(self):
-        pass
+        return int()
+
+    @property
+    def type(self):
+        return diplomaticMessageType()
 
 
 class diplomaticStatusUpdate(object):
     @property
-    def status(self):
+    def empire1(self):
         pass
 
     @property
@@ -1087,174 +1407,102 @@ class diplomaticStatusUpdate(object):
         pass
 
     @property
-    def empire1(self):
+    def status(self):
         pass
 
 
 class empire(object):
     @property
-    def capitalID(self):
-        return int()
-
-    @property
-    def productionPoints(self):
-        return float()
-
-    @property
-    def productionQueue(self):
-        return productionQueue()
-
-    @property
-    def exploredSystemIDs(self):
-        return IntSet()
-
-    @property
-    def planetsWithWastedPP(self):
-        return IntSetSet()
-
-    @property
-    def playerName(self):
-        return str()
-
-    @property
-    def fleetSupplyableSystemIDs(self):
-        return IntSet()
-
-    @property
-    def planetsWithAllocatedPP(self):
-        return resPoolMap()
-
-    @property
-    def won(self):
-        return bool()
-
-    @property
-    def availableShipParts(self):
-        return StringSet()
+    def allShipDesigns(self):
+        pass
 
     @property
     def availableBuildingTypes(self):
-        return StringSet()
-
-    @property
-    def systemSupplyRanges(self):
-        return IntFltMap()
-
-    @property
-    def allShipDesigns(self):
-        return IntSet()
-
-    @property
-    def planetsWithAvailablePP(self):
-        return resPoolMap()
-
-    @property
-    def researchQueue(self):
-        return researchQueue()
-
-    @property
-    def eliminated(self):
-        return bool()
-
-    @property
-    def empireID(self):
-        return int()
-
-    @property
-    def name(self):
-        return str()
-
-    @property
-    def colour(self):
-        return GGColor()
-
-    @property
-    def availableShipHulls(self):
-        return StringSet()
+        pass
 
     @property
     def availableShipDesigns(self):
-        return IntSet()
+        pass
 
     @property
-    def supplyUnobstructedSystems(self):
-        return IntSet()
+    def availableShipHulls(self):
+        pass
+
+    @property
+    def availableShipParts(self):
+        pass
 
     @property
     def availableTechs(self):
-        return StringSet()
+        pass
 
-    def resourceAvailable(self, resource_type):
-        """
-        :param resource_type:
-        :type resource_type: resourceType
-        :rtype: float
-        """
-        return float()
+    @property
+    def capitalID(self):
+        pass
 
-    def techResearched(self, string):
-        """
-        :param string:
-        :type string: str
-        :rtype: bool
-        """
-        return bool()
+    @property
+    def colour(self):
+        pass
 
-    def resourceProduction(self, resource_type):
-        """
-        :param resource_type:
-        :type resource_type: resourceType
-        :rtype: float
-        """
-        return float()
+    @property
+    def eliminated(self):
+        pass
 
-    def productionCostAndTime(self, production_queue_element):
-        """
-        :param production_queue_element:
-        :type production_queue_element: productionQueueElement
-        :rtype: object
-        """
-        return object()
+    @property
+    def empireID(self):
+        pass
 
-    def shipDesignAvailable(self, number):
-        """
-        :param number:
-        :type number: int
-        :rtype: bool
-        """
-        return bool()
+    @property
+    def exploredSystemIDs(self):
+        pass
 
-    def numSitReps(self, number):
-        """
-        :param number:
-        :type number: int
-        :rtype: int
-        """
-        return int()
+    @property
+    def fleetSupplyableSystemIDs(self):
+        pass
 
-    def getResourcePool(self, resource_type):
-        """
-        :param resource_type:
-        :type resource_type: resourceType
-        :rtype: resPool
-        """
-        return resPool()
+    @property
+    def name(self):
+        pass
 
-    def resourceStockpile(self, resource_type):
-        """
-        :param resource_type:
-        :type resource_type: resourceType
-        :rtype: float
-        """
-        return float()
+    @property
+    def planetsWithAllocatedPP(self):
+        pass
 
-    def hasExploredSystem(self, number):
-        """
-        :param number:
-        :type number: int
-        :rtype: bool
-        """
-        return bool()
+    @property
+    def planetsWithAvailablePP(self):
+        pass
+
+    @property
+    def planetsWithWastedPP(self):
+        pass
+
+    @property
+    def playerName(self):
+        pass
+
+    @property
+    def productionPoints(self):
+        pass
+
+    @property
+    def productionQueue(self):
+        pass
+
+    @property
+    def researchQueue(self):
+        pass
+
+    @property
+    def supplyUnobstructedSystems(self):
+        pass
+
+    @property
+    def systemSupplyRanges(self):
+        pass
+
+    @property
+    def won(self):
+        pass
 
     def buildingTypeAvailable(self, string):
         """
@@ -1263,24 +1511,6 @@ class empire(object):
         :rtype: bool
         """
         return bool()
-
-    def obstructedStarlanes(self):
-        """
-        :rtype: IntPairVec
-        """
-        return IntPairVec()
-
-    def population(self):
-        """
-        :rtype: float
-        """
-        return float()
-
-    def supplyProjections(self):
-        """
-        :rtype: IntIntMap
-        """
-        return IntIntMap()
 
     def canBuild(self, build_type, string, number):
         """
@@ -1293,6 +1523,24 @@ class empire(object):
         :rtype: bool
         """
         return bool()
+
+    def getMeter(self, string):
+        """
+        Returns the empire meter with the indicated name (string).
+
+        :param string:
+        :type string: str
+        :rtype: meter
+        """
+        return meter()
+
+    def getResourcePool(self, resource_type):
+        """
+        :param resource_type:
+        :type resource_type: resourceType
+        :rtype: resPool
+        """
+        return resPool()
 
     def getSitRep(self, number):
         """
@@ -1310,6 +1558,52 @@ class empire(object):
         """
         return techStatus()
 
+    def hasExploredSystem(self, number):
+        """
+        :param number:
+        :type number: int
+        :rtype: bool
+        """
+        return bool()
+
+    def numSitReps(self, number):
+        """
+        :param number:
+        :type number: int
+        :rtype: int
+        """
+        return int()
+
+    def obstructedStarlanes(self):
+        """
+        :rtype: IntPairVec
+        """
+        return IntPairVec()
+
+    def population(self):
+        """
+        :rtype: float
+        """
+        return float()
+
+    def preservedLaneTravel(self, number1, number2):
+        """
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :rtype: bool
+        """
+        return bool()
+
+    def productionCostAndTime(self, production_queue_element):
+        """
+        :param production_queue_element:
+        :type production_queue_element: productionQueueElement
+        :rtype: object
+        """
+        return object()
+
     def researchProgress(self, string):
         """
         :param string:
@@ -1317,6 +1611,52 @@ class empire(object):
         :rtype: float
         """
         return float()
+
+    def resourceAvailable(self, resource_type):
+        """
+        :param resource_type:
+        :type resource_type: resourceType
+        :rtype: float
+        """
+        return float()
+
+    def resourceProduction(self, resource_type):
+        """
+        :param resource_type:
+        :type resource_type: resourceType
+        :rtype: float
+        """
+        return float()
+
+    def resourceStockpile(self, resource_type):
+        """
+        :param resource_type:
+        :type resource_type: resourceType
+        :rtype: float
+        """
+        return float()
+
+    def shipDesignAvailable(self, number):
+        """
+        :param number:
+        :type number: int
+        :rtype: bool
+        """
+        return bool()
+
+    def supplyProjections(self):
+        """
+        :rtype: dict[int, int]
+        """
+        return dict()
+
+    def techResearched(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: bool
+        """
+        return bool()
 
 
 class fieldType(object):
@@ -1326,7 +1666,7 @@ class fieldType(object):
 
     @property
     def dump(self):
-        return str()
+        pass
 
     @property
     def name(self):
@@ -1336,59 +1676,39 @@ class fieldType(object):
 class hullType(object):
     @property
     def costTimeLocationInvariant(self):
-        pass
-
-    @property
-    def name(self):
-        pass
-
-    @property
-    def numSlots(self):
-        pass
-
-    @property
-    def structure(self):
-        pass
-
-    @property
-    def stealth(self):
-        pass
+        return bool()
 
     @property
     def fuel(self):
-        pass
+        return float()
+
+    @property
+    def name(self):
+        return str()
+
+    @property
+    def numSlots(self):
+        return int()
 
     @property
     def slots(self):
-        pass
+        return ShipSlotVec()
 
     @property
     def speed(self):
-        pass
+        return float()
 
     @property
     def starlaneSpeed(self):
-        pass
-
-    def productionCost(self, number1, number2):
-        """
-        :param number1:
-        :type number1: int
-        :param number2:
-        :type number2: int
-        :rtype: float
-        """
         return float()
 
-    def productionTime(self, number1, number2):
-        """
-        :param number1:
-        :type number1: int
-        :param number2:
-        :type number2: int
-        :rtype: int
-        """
-        return int()
+    @property
+    def stealth(self):
+        return float()
+
+    @property
+    def structure(self):
+        return float()
 
     def hasTag(self, string):
         """
@@ -1406,45 +1726,15 @@ class hullType(object):
         """
         return int()
 
-
-class meter(object):
-    @property
-    def current(self):
-        pass
-
-    @property
-    def initial(self):
-        pass
-
-    @property
-    def dump(self):
-        pass
-
-
-class partType(object):
-    @property
-    def mountableSlotTypes(self):
-        pass
-
-    @property
-    def costTimeLocationInvariant(self):
-        pass
-
-    @property
-    def capacity(self):
-        pass
-
-    @property
-    def name(self):
-        pass
-
-    @property
-    def partClass(self):
-        pass
-
-    @property
-    def secondaryStat(self):
-        pass
+    def productionCost(self, number1, number2):
+        """
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :rtype: float
+        """
+        return float()
 
     def productionTime(self, number1, number2):
         """
@@ -1456,14 +1746,44 @@ class partType(object):
         """
         return int()
 
-    def productionCost(self, number1, number2):
-        """
-        :param number1:
-        :type number1: int
-        :param number2:
-        :type number2: int
-        :rtype: float
-        """
+
+class meter(object):
+    @property
+    def current(self):
+        pass
+
+    @property
+    def dump(self):
+        pass
+
+    @property
+    def initial(self):
+        pass
+
+
+class partType(object):
+    @property
+    def capacity(self):
+        return float()
+
+    @property
+    def costTimeLocationInvariant(self):
+        return bool()
+
+    @property
+    def mountableSlotTypes(self):
+        return ShipSlotVec()
+
+    @property
+    def name(self):
+        return str()
+
+    @property
+    def partClass(self):
+        return shipPartClass()
+
+    @property
+    def secondaryStat(self):
         return float()
 
     def canMountInSlotType(self, ship_slot_type):
@@ -1474,12 +1794,28 @@ class partType(object):
         """
         return bool()
 
+    def productionCost(self, number1, number2):
+        """
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :rtype: float
+        """
+        return float()
+
+    def productionTime(self, number1, number2):
+        """
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :rtype: int
+        """
+        return int()
+
 
 class popCenter(object):
-    @property
-    def nextTurnPopGrowth(self):
-        pass
-
     @property
     def speciesName(self):
         pass
@@ -1491,19 +1827,19 @@ class productionQueue(object):
         pass
 
     @property
-    def empty(self):
-        pass
-
-    @property
-    def totalSpent(self):
-        pass
-
-    @property
     def empireID(self):
         pass
 
     @property
+    def empty(self):
+        pass
+
+    @property
     def size(self):
+        pass
+
+    @property
+    def totalSpent(self):
         pass
 
     def __getitem__(self, number):
@@ -1520,13 +1856,11 @@ class productionQueue(object):
         """
         return object()
 
-    def objectsWithWastedPP(self, res_pool):
+    def __len__(self):
         """
-        :param res_pool:
-        :type res_pool: resPool
-        :rtype: IntSetSet
+        :rtype: int
         """
-        return IntSetSet()
+        return int()
 
     def availablePP(self, res_pool):
         """
@@ -1536,20 +1870,22 @@ class productionQueue(object):
         """
         return resPoolMap()
 
-    def __len__(self):
+    def objectsWithWastedPP(self, res_pool):
         """
-        :rtype: int
+        :param res_pool:
+        :type res_pool: resPool
+        :rtype: IntSetSet
         """
-        return int()
+        return IntSetSet()
 
 
 class productionQueueElement(object):
     @property
-    def buildType(self):
+    def allocation(self):
         pass
 
     @property
-    def name(self):
+    def allowedStockpile(self):
         pass
 
     @property
@@ -1557,11 +1893,7 @@ class productionQueueElement(object):
         pass
 
     @property
-    def turnsLeft(self):
-        pass
-
-    @property
-    def allocation(self):
+    def buildType(self):
         pass
 
     @property
@@ -1573,11 +1905,23 @@ class productionQueueElement(object):
         pass
 
     @property
+    def name(self):
+        pass
+
+    @property
+    def paused(self):
+        pass
+
+    @property
     def progress(self):
         pass
 
     @property
     def remaining(self):
+        pass
+
+    @property
+    def turnsLeft(self):
         pass
 
 
@@ -1586,6 +1930,14 @@ class resPool(object):
 
 
 class resPoolMap(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
     def __delitem__(self, obj):
         """
         :param obj:
@@ -1602,19 +1954,17 @@ class resPoolMap(object):
         """
         return object()
 
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
     def __iter__(self):
         """
         :rtype: object
         """
         return object()
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
 
     def __setitem__(self, obj1, obj2):
         """
@@ -1626,22 +1976,8 @@ class resPoolMap(object):
         """
         return None
 
-    def __len__(self):
-        """
-        :rtype: int
-        """
-        return int()
-
 
 class researchQueue(object):
-    @property
-    def size(self):
-        pass
-
-    @property
-    def totalSpent(self):
-        pass
-
     @property
     def empireID(self):
         pass
@@ -1650,13 +1986,13 @@ class researchQueue(object):
     def empty(self):
         pass
 
-    def __getitem__(self, number):
-        """
-        :param number:
-        :type number: int
-        :rtype: researchQueueElement
-        """
-        return researchQueueElement()
+    @property
+    def size(self):
+        pass
+
+    @property
+    def totalSpent(self):
+        pass
 
     def __contains__(self, research_queue_element):
         """
@@ -1665,6 +2001,14 @@ class researchQueue(object):
         :rtype: bool
         """
         return bool()
+
+    def __getitem__(self, number):
+        """
+        :param number:
+        :type number: int
+        :rtype: researchQueueElement
+        """
+        return researchQueueElement()
 
     def __iter__(self):
         """
@@ -1703,10 +2047,6 @@ class researchQueueElement(object):
 
 class resourceCenter(object):
     @property
-    def turnsSinceFocusChange(self):
-        pass
-
-    @property
     def availableFoci(self):
         pass
 
@@ -1714,125 +2054,133 @@ class resourceCenter(object):
     def focus(self):
         pass
 
+    @property
+    def turnsSinceFocusChange(self):
+        pass
+
 
 class shipDesign(object):
     @property
-    def costTimeLocationInvariant(self):
-        return bool()
-
-    @property
-    def dump(self):
-        return str()
-
-    @property
-    def canColonize(self):
-        return bool()
-
-    @property
-    def hull_type(self):
-        return hullType()
-
-    @property
-    def tradeGeneration(self):
-        return float()
-
-    @property
-    def detection(self):
-        return float()
-
-    @property
-    def defense(self):
-        return float()
-
-    @property
-    def speed(self):
-        return float()
-
-    @property
-    def id(self):
-        return int()
-
-    @property
-    def isMonster(self):
-        return bool()
-
-    @property
-    def stealth(self):
-        return float()
-
-    @property
     def attack(self):
-        return float()
-
-    @property
-    def parts(self):
-        return StringVec()
-
-    @property
-    def fuel(self):
-        return float()
-
-    @property
-    def shields(self):
-        return float()
-
-    @property
-    def description(self):
-        return str()
-
-    @property
-    def isArmed(self):
-        return bool()
-
-    @property
-    def hull(self):
-        return str()
-
-    @property
-    def designedOnTurn(self):
-        return int()
-
-    @property
-    def colonyCapacity(self):
-        return float()
-
-    @property
-    def structure(self):
-        return float()
-
-    @property
-    def researchGeneration(self):
-        return float()
-
-    @property
-    def canInvade(self):
-        return bool()
-
-    @property
-    def name(self):
-        return str()
+        pass
 
     @property
     def attackStats(self):
-        return IntVec()
+        pass
 
     @property
-    def troopCapacity(self):
-        return float()
+    def canColonize(self):
+        pass
+
+    @property
+    def canInvade(self):
+        pass
+
+    @property
+    def colonyCapacity(self):
+        pass
+
+    @property
+    def costTimeLocationInvariant(self):
+        pass
+
+    @property
+    def defense(self):
+        pass
+
+    @property
+    def description(self):
+        pass
+
+    @property
+    def designedOnTurn(self):
+        pass
+
+    @property
+    def detection(self):
+        pass
+
+    @property
+    def dump(self):
+        pass
+
+    @property
+    def fuel(self):
+        pass
+
+    @property
+    def hasFighters(self):
+        pass
+
+    @property
+    def hull(self):
+        pass
+
+    @property
+    def hull_type(self):
+        pass
+
+    @property
+    def id(self):
+        pass
 
     @property
     def industryGeneration(self):
-        return float()
+        pass
 
-    def productionTime(self, number1, number2):
+    @property
+    def isArmed(self):
+        pass
+
+    @property
+    def isMonster(self):
+        pass
+
+    @property
+    def name(self):
+        pass
+
+    @property
+    def parts(self):
+        pass
+
+    @property
+    def researchGeneration(self):
+        pass
+
+    @property
+    def shields(self):
+        pass
+
+    @property
+    def speed(self):
+        pass
+
+    @property
+    def stealth(self):
+        pass
+
+    @property
+    def structure(self):
+        pass
+
+    @property
+    def tradeGeneration(self):
+        pass
+
+    @property
+    def troopCapacity(self):
+        pass
+
+    def perTurnCost(self, number1, number2):
         """
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype: int
+        :rtype: float
         """
-        return int()
+        return float()
 
     def productionCost(self, number1, number2):
         """
@@ -1854,15 +2202,15 @@ class shipDesign(object):
         """
         return bool()
 
-    def perTurnCost(self, number1, number2):
+    def productionTime(self, number1, number2):
         """
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype: float
+        :rtype: int
         """
-        return float()
+        return int()
 
 
 class sitrep(object):
@@ -1871,20 +2219,12 @@ class sitrep(object):
         pass
 
     @property
-    def typeString(self):
-        pass
-
-    @property
     def getTurn(self):
         pass
 
-    def getDataString(self, string):
-        """
-        :param string:
-        :type string: str
-        :rtype: str
-        """
-        return str()
+    @property
+    def typeString(self):
+        pass
 
     def getDataIDNumber(self, string):
         """
@@ -1894,27 +2234,35 @@ class sitrep(object):
         """
         return int()
 
+    def getDataString(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: str
+        """
+        return str()
+
 
 class special(object):
     @property
-    def name(self):
+    def description(self):
         return str()
 
     @property
     def dump(self):
-        return str()
+        pass
 
     @property
-    def spawnrate(self):
-        return float()
+    def name(self):
+        return str()
 
     @property
     def spawnlimit(self):
         return int()
 
     @property
-    def description(self):
-        return str()
+    def spawnrate(self):
+        return float()
 
     def initialCapacity(self, number):
         """
@@ -1927,32 +2275,24 @@ class special(object):
 
 class species(object):
     @property
-    def description(self):
-        return str()
-
-    @property
-    def dump(self):
-        return str()
-
-    @property
-    def tags(self):
-        return StringSet()
-
-    @property
     def canColonize(self):
         return bool()
-
-    @property
-    def foci(self):
-        return StringVec()
 
     @property
     def canProduceShips(self):
         return bool()
 
     @property
-    def preferredFocus(self):
+    def description(self):
         return str()
+
+    @property
+    def dump(self):
+        pass
+
+    @property
+    def foci(self):
+        return StringVec()
 
     @property
     def homeworlds(self):
@@ -1961,6 +2301,14 @@ class species(object):
     @property
     def name(self):
         return str()
+
+    @property
+    def preferredFocus(self):
+        return str()
+
+    @property
+    def tags(self):
+        return StringSet()
 
     def getPlanetEnvironment(self, planet_type):
         """
@@ -1977,16 +2325,12 @@ class tech(object):
         return str()
 
     @property
-    def unlockedItems(self):
-        return ItemSpecVec()
-
-    @property
     def description(self):
         return str()
 
     @property
-    def unlockedTechs(self):
-        return StringSet()
+    def name(self):
+        return str()
 
     @property
     def prerequisites(self):
@@ -1997,10 +2341,14 @@ class tech(object):
         return str()
 
     @property
-    def name(self):
-        return str()
+    def unlockedItems(self):
+        return ItemSpecVec()
 
-    def researchCost(self, number):
+    @property
+    def unlockedTechs(self):
+        return StringSet()
+
+    def perTurnCost(self, number):
         """
         :param number:
         :type number: int
@@ -2016,7 +2364,7 @@ class tech(object):
         """
         return StringVec()
 
-    def perTurnCost(self, number):
+    def researchCost(self, number):
         """
         :param number:
         :type number: int
@@ -2035,8 +2383,16 @@ class tech(object):
 
 class universe(object):
     @property
-    def shipIDs(self):
+    def allObjectIDs(self):
         return IntVec()
+
+    @property
+    def buildingIDs(self):
+        return IntVec()
+
+    @property
+    def effectAccounting(self):
+        return TargetIDAccountingMapMap()
 
     @property
     def fieldIDs(self):
@@ -2051,26 +2407,20 @@ class universe(object):
         return IntVec()
 
     @property
-    def buildingIDs(self):
-        return IntVec()
-
-    @property
-    def allObjectIDs(self):
+    def shipIDs(self):
         return IntVec()
 
     @property
     def systemIDs(self):
         return IntVec()
 
-    def jumpDistance(self, number1, number2):
+    def destroyedObjectIDs(self, number):
         """
-        :param number1:
-        :type number1: int
-        :param number2:
-        :type number2: int
-        :rtype: int
+        :param number:
+        :type number: int
+        :rtype: IntSet
         """
-        return int()
+        return IntSet()
 
     def dump(self):
         """
@@ -2078,15 +2428,49 @@ class universe(object):
         """
         return None
 
-    def linearDistance(self, number1, number2):
+    def getBuilding(self, number):
+        """
+        :param number:
+        :type number: int
+        :rtype: building
+        """
+        return building()
+
+    def getField(self, number):
+        """
+        :param number:
+        :type number: int
+        :rtype: field
+        """
+        return field()
+
+    def getFleet(self, number):
+        """
+        :param number:
+        :type number: int
+        :rtype: fleet
+        """
+        return fleet()
+
+    def getGenericShipDesign(self, string):
+        """
+        Returns the ship design (ShipDesign) with the indicated name (string).
+
+        :param string:
+        :type string: str
+        :rtype: shipDesign
+        """
+        return shipDesign()
+
+    def getImmediateNeighbors(self, number1, number2):
         """
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype: float
+        :rtype: IntVec
         """
-        return float()
+        return IntVec()
 
     def getObject(self, number):
         """
@@ -2112,17 +2496,33 @@ class universe(object):
         """
         return ship()
 
-    def systemsConnected(self, number1, number2, number3):
+    def getSystem(self, number):
+        """
+        :param number:
+        :type number: int
+        :rtype: system
+        """
+        return system()
+
+    def getSystemNeighborsMap(self, number1, number2):
         """
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :param number3:
-        :type number3: int
-        :rtype: bool
+        :rtype: IntDblMap
         """
-        return bool()
+        return IntDblMap()
+
+    def getVisibility(self, number1, number2):
+        """
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :rtype: visibility
+        """
+        return visibility()
 
     def getVisibilityTurnsMap(self, number1, number2):
         """
@@ -2130,9 +2530,21 @@ class universe(object):
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype: VisibilityIntMap
+        :rtype: dict[int, int]
         """
         return dict()
+
+    def jumpDistance(self, number1, number2):
+        """
+        If two system ids are passed or both objects are within a system, return the jump distance between the two systems. If one object (e.g. a fleet) is on a starlane, then calculate the jump distance from both ends of the starlane to the target system and return the smaller one.
+
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :rtype: int
+        """
+        return int()
 
     def leastJumpsPath(self, number1, number2, number3):
         """
@@ -2146,20 +2558,26 @@ class universe(object):
         """
         return IntVec()
 
-    def getFleet(self, number):
-        """
-        :param number:
-        :type number: int
-        :rtype: fleet
-        """
-        return fleet()
-
-    def getImmediateNeighbors(self, number1, number2):
+    def linearDistance(self, number1, number2):
         """
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
+        :rtype: float
+        """
+        return float()
+
+    def shortestNonHostilePath(self, number1, number2, number3):
+        """
+        Shortest sequence of System ids and distance from System (number1) to System (number2) with no hostile Fleets as determined by visibility of Empire (number3).  (number3) must be a valid empire.
+
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :param number3:
+        :type number3: int
         :rtype: IntVec
         """
         return IntVec()
@@ -2176,54 +2594,15 @@ class universe(object):
         """
         return IntVec()
 
-    def shortestNonHostilePath(self, number1, number2, number3):
-        """
-        Shortest sequence of System ids and distance from System (number1) to System (number2) with no hostile Fleets
-        as determined by visibility of Empire (number3).  (number3) must be a valid empire.
-
-        :param number1:
-        :type number1: int
-        :param number2:
-        :type number2: int
-        :param number3:
-        :type number3: int
-        :rtype: IntVec
-        """
-        return IntVec()
-
-    def updateMeterEstimates(self, item_list):
-        """
-        :param item_list:
-        :type item_list: list
-        :rtype: None
-        """
-        return None
-
-    def getField(self, number):
-        """
-        :param number:
-        :type number: int
-        :rtype: field
-        """
-        return field()
-
-    def destroyedObjectIDs(self, number):
-        """
-        :param number:
-        :type number: int
-        :rtype: IntSet
-        """
-        return IntSet()
-
-    def getSystemNeighborsMap(self, number1, number2):
+    def shortestPathDistance(self, number1, number2):
         """
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype: IntDblMap
+        :rtype: float
         """
-        return IntDblMap()
+        return float()
 
     def systemHasStarlane(self, number1, number2):
         """
@@ -2235,62 +2614,34 @@ class universe(object):
         """
         return bool()
 
-    def getGenericShipDesign(self, string):
-        """
-        Returns the ship design (ShipDesign) with the indicated name (string).
-
-        :param string:
-        :type string: str
-        :rtype: shipDesign
-        """
-        return shipDesign()
-
-    def getVisibility(self, number1, number2):
+    def systemsConnected(self, number1, number2, number3):
         """
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype: visibility
+        :param number3:
+        :type number3: int
+        :rtype: bool
         """
-        return visibility()
+        return bool()
 
-    def getSystem(self, number):
+    def updateMeterEstimates(self, item_list):
         """
-        :param number:
-        :type number: int
-        :rtype: system
+        :param item_list:
+        :type item_list: list
+        :rtype: None
         """
-        return system()
-
-    def getBuilding(self, number):
-        """
-        :param number:
-        :type number: int
-        :rtype: building
-        """
-        return building()
+        return None
 
 
 class universeObject(object):
     @property
-    def dump(self):
+    def ageInTurns(self):
         pass
 
     @property
-    def unowned(self):
-        pass
-
-    @property
-    def meters(self):
-        pass
-
-    @property
-    def owner(self):
-        pass
-
-    @property
-    def id(self):
+    def containedObjects(self):
         pass
 
     @property
@@ -2302,19 +2653,15 @@ class universeObject(object):
         pass
 
     @property
-    def containedObjects(self):
+    def dump(self):
         pass
 
     @property
-    def tags(self):
+    def id(self):
         pass
 
     @property
-    def ageInTurns(self):
-        pass
-
-    @property
-    def systemID(self):
+    def meters(self):
         pass
 
     @property
@@ -2322,21 +2669,69 @@ class universeObject(object):
         pass
 
     @property
+    def owner(self):
+        pass
+
+    @property
     def specials(self):
         pass
 
     @property
-    def y(self):
+    def systemID(self):
+        pass
+
+    @property
+    def tags(self):
+        pass
+
+    @property
+    def unowned(self):
         pass
 
     @property
     def x(self):
         pass
 
+    @property
+    def y(self):
+        pass
+
+    def containedBy(self, number):
+        """
+        :param number:
+        :type number: int
+        :rtype: bool
+        """
+        return bool()
+
     def contains(self, number):
         """
         :param number:
         :type number: int
+        :rtype: bool
+        """
+        return bool()
+
+    def currentMeterValue(self, meter_type):
+        """
+        :param meter_type:
+        :type meter_type: meterType
+        :rtype: float
+        """
+        return float()
+
+    def getMeter(self, meter_type):
+        """
+        :param meter_type:
+        :type meter_type: meterType
+        :rtype: meter
+        """
+        return meter()
+
+    def hasSpecial(self, string):
+        """
+        :param string:
+        :type string: str
         :rtype: bool
         """
         return bool()
@@ -2357,21 +2752,13 @@ class universeObject(object):
         """
         return float()
 
-    def containedBy(self, number):
+    def ownedBy(self, number):
         """
         :param number:
         :type number: int
         :rtype: bool
         """
         return bool()
-
-    def currentMeterValue(self, meter_type):
-        """
-        :param meter_type:
-        :type meter_type: meterType
-        :rtype: float
-        """
-        return float()
 
     def specialAddedOnTurn(self, string):
         """
@@ -2381,53 +2768,43 @@ class universeObject(object):
         """
         return int()
 
-    def ownedBy(self, number):
-        """
-        :param number:
-        :type number: int
-        :rtype: bool
-        """
-        return bool()
 
-    def getMeter(self, meter_type):
-        """
-        :param meter_type:
-        :type meter_type: meterType
-        :rtype: meter
-        """
-        return meter()
+class AccountingInfo(EffectCause):
+    @property
+    def meterChange(self):
+        pass
 
-    def hasSpecial(self, string):
-        """
-        :param string:
-        :type string: str
-        :rtype: bool
-        """
-        return bool()
+    @property
+    def meterRunningTotal(self):
+        pass
+
+    @property
+    def sourceID(self):
+        pass
 
 
 class building(universeObject):
     @property
     def buildingTypeName(self):
-        return str()
-
-    @property
-    def producedByEmpireID(self):
-        return int()
-
-    @property
-    def planetID(self):
-        return int()
+        pass
 
     @property
     def orderedScrapped(self):
-        return bool()
+        pass
+
+    @property
+    def planetID(self):
+        pass
+
+    @property
+    def producedByEmpireID(self):
+        pass
 
 
 class field(universeObject):
     @property
     def fieldTypeName(self):
-        return str()
+        pass
 
     def inField(self, base_object):
         """
@@ -2440,216 +2817,158 @@ class field(universeObject):
 
 class fleet(universeObject):
     @property
-    def hasOutpostShips(self):
-        return bool()
-
-    @property
-    def shipIDs(self):
-        return IntSet()
-
-    @property
-    def hasFighterShips(self):
-        return bool()
-
-    @property
-    def speed(self):
-        return float()
-
-    @property
-    def previousSystemID(self):
-        return int()
-
-    @property
-    def numShips(self):
-        return int()
-
-    @property
-    def hasColonyShips(self):
-        return bool()
+    def aggressive(self):
+        pass
 
     @property
     def canChangeDirectionEnRoute(self):
-        return bool()
-
-    @property
-    def nextSystemID(self):
-        return int()
-
-    @property
-    def finalDestinationID(self):
-        return int()
-
-    @property
-    def hasMonsters(self):
-        return bool()
-
-    @property
-    def hasArmedShips(self):
-        return bool()
-
-    @property
-    def fuel(self):
-        return float()
-
-    @property
-    def aggressive(self):
-        return bool()
-
-    @property
-    def hasTroopShips(self):
-        return bool()
-
-    @property
-    def maxFuel(self):
-        return float()
+        pass
 
     @property
     def empty(self):
-        return bool()
-
-
-class planet(universeObject, popCenter, resourceCenter):
-    @property
-    def originalType(self):
-        return planetType()
+        pass
 
     @property
-    def nextLargerPlanetSize(self):
-        return planetSize()
+    def finalDestinationID(self):
+        pass
 
     @property
-    def distanceFromOriginalType(self):
-        return int()
+    def fuel(self):
+        pass
 
     @property
-    def clockwiseNextPlanetType(self):
-        return planetType()
+    def hasArmedShips(self):
+        pass
 
     @property
-    def nextSmallerPlanetSize(self):
-        return planetSize()
+    def hasColonyShips(self):
+        pass
 
     @property
-    def buildingIDs(self):
-        return IntSet()
+    def hasFighterShips(self):
+        pass
 
     @property
-    def OrbitalPeriod(self):
-        return float()
+    def hasMonsters(self):
+        pass
 
     @property
-    def counterClockwiseNextPlanetType(self):
-        return planetType()
+    def hasOutpostShips(self):
+        pass
 
     @property
-    def RotationalPeriod(self):
-        return float()
+    def hasTroopShips(self):
+        pass
 
     @property
-    def type(self):
-        return planetType()
+    def maxFuel(self):
+        pass
 
     @property
-    def InitialOrbitalPosition(self):
-        return float()
+    def nextSystemID(self):
+        pass
 
     @property
-    def size(self):
-        return planetSize()
+    def numShips(self):
+        pass
 
-    def nextBetterPlanetTypeForSpecies(self, string):
-        """
-        :param string:
-        :type string: str
-        :rtype: planetType
-        """
-        return planetType()
+    @property
+    def previousSystemID(self):
+        pass
 
-    def environmentForSpecies(self, string):
-        """
-        :param string:
-        :type string: str
-        :rtype: planetEnvironment
-        """
-        return planetEnvironment()
+    @property
+    def shipIDs(self):
+        pass
 
-    def OrbitalPositionOnTurn(self, number):
-        """
-        :param number:
-        :type number: int
-        :rtype: float
-        """
-        return float()
+    @property
+    def speed(self):
+        pass
 
 
 class ship(universeObject):
     @property
-    def partMeters(self):
-        return ShipPartMeterMap()
-
-    @property
-    def speciesName(self):
-        return str()
-
-    @property
-    def orderedScrapped(self):
-        return bool()
-
-    @property
-    def isArmed(self):
-        return bool()
-
-    @property
-    def troopCapacity(self):
-        return float()
-
-    @property
-    def canColonize(self):
-        return bool()
-
-    @property
-    def canInvade(self):
-        return bool()
-
-    @property
-    def designID(self):
-        return int()
-
-    @property
-    def producedByEmpireID(self):
-        return int()
-
-    @property
-    def isMonster(self):
-        return bool()
-
-    @property
-    def design(self):
-        return shipDesign()
-
-    @property
-    def orderedInvadePlanet(self):
-        return int()
-
-    @property
-    def colonyCapacity(self):
-        return float()
-
-    @property
-    def fleetID(self):
-        return int()
+    def arrivedOnTurn(self):
+        pass
 
     @property
     def canBombard(self):
-        return bool()
+        pass
 
     @property
-    def speed(self):
-        return float()
+    def canColonize(self):
+        pass
+
+    @property
+    def canInvade(self):
+        pass
+
+    @property
+    def colonyCapacity(self):
+        pass
+
+    @property
+    def design(self):
+        pass
+
+    @property
+    def designID(self):
+        pass
+
+    @property
+    def fleetID(self):
+        pass
+
+    @property
+    def hasFighters(self):
+        pass
+
+    @property
+    def isArmed(self):
+        pass
+
+    @property
+    def isMonster(self):
+        pass
+
+    @property
+    def lastResuppliedOnTurn(self):
+        pass
+
+    @property
+    def lastTurnActiveInCombat(self):
+        pass
 
     @property
     def orderedColonizePlanet(self):
-        return int()
+        pass
+
+    @property
+    def orderedInvadePlanet(self):
+        pass
+
+    @property
+    def orderedScrapped(self):
+        pass
+
+    @property
+    def partMeters(self):
+        pass
+
+    @property
+    def producedByEmpireID(self):
+        pass
+
+    @property
+    def speciesName(self):
+        pass
+
+    @property
+    def speed(self):
+        pass
+
+    @property
+    def troopCapacity(self):
+        pass
 
     def currentPartMeterValue(self, meter_type, string):
         """
@@ -2674,44 +2993,44 @@ class ship(universeObject):
 
 class system(universeObject):
     @property
-    def numStarlanes(self):
-        return int()
-
-    @property
-    def fleetIDs(self):
-        return IntSet()
-
-    @property
-    def shipIDs(self):
-        return IntSet()
-
-    @property
-    def starlanesWormholes(self):
-        return IntBoolMap()
+    def buildingIDs(self):
+        pass
 
     @property
     def fieldIDs(self):
-        return IntSet()
+        pass
 
     @property
-    def numWormholes(self):
-        return int()
-
-    @property
-    def buildingIDs(self):
-        return IntSet()
-
-    @property
-    def starType(self):
-        return starType()
+    def fleetIDs(self):
+        pass
 
     @property
     def lastTurnBattleHere(self):
-        return int()
+        pass
+
+    @property
+    def numStarlanes(self):
+        pass
+
+    @property
+    def numWormholes(self):
+        pass
 
     @property
     def planetIDs(self):
-        return IntSet()
+        pass
+
+    @property
+    def shipIDs(self):
+        pass
+
+    @property
+    def starType(self):
+        pass
+
+    @property
+    def starlanesWormholes(self):
+        pass
 
     def HasStarlaneToSystemID(self, number):
         """
@@ -2730,6 +3049,92 @@ class system(universeObject):
         :rtype: bool
         """
         return bool()
+
+
+class planet(universeObject, popCenter, resourceCenter):
+    @property
+    def InitialOrbitalPosition(self):
+        pass
+
+    @property
+    def LastTurnAttackedByShip(self):
+        pass
+
+    @property
+    def LastTurnConquered(self):
+        pass
+
+    @property
+    def OrbitalPeriod(self):
+        pass
+
+    @property
+    def RotationalPeriod(self):
+        pass
+
+    @property
+    def buildingIDs(self):
+        pass
+
+    @property
+    def clockwiseNextPlanetType(self):
+        pass
+
+    @property
+    def counterClockwiseNextPlanetType(self):
+        pass
+
+    @property
+    def distanceFromOriginalType(self):
+        pass
+
+    @property
+    def habitableSize(self):
+        pass
+
+    @property
+    def nextLargerPlanetSize(self):
+        pass
+
+    @property
+    def nextSmallerPlanetSize(self):
+        pass
+
+    @property
+    def originalType(self):
+        pass
+
+    @property
+    def size(self):
+        pass
+
+    @property
+    def type(self):
+        pass
+
+    def OrbitalPositionOnTurn(self, number):
+        """
+        :param number:
+        :type number: int
+        :rtype: float
+        """
+        return float()
+
+    def environmentForSpecies(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: planetEnvironment
+        """
+        return planetEnvironment()
+
+    def nextBetterPlanetTypeForSpecies(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: planetType
+        """
+        return planetType()
 
 
 class Enum(int):
@@ -2766,10 +3171,12 @@ class buildType(Enum):
 
     building = None  # buildType(1, "building")
     ship = None  # buildType(2, "ship")
+    stockpile = None  # buildType(4, "stockpile")
 
 
 buildType.building = buildType(1, "building")
 buildType.ship = buildType(2, "ship")
+buildType.stockpile = buildType(4, "stockpile")
 
 
 class captureResult(Enum):
@@ -2793,15 +3200,23 @@ class diplomaticMessageType(Enum):
     noMessage = None  # diplomaticMessageType(-1, "noMessage")
     warDeclaration = None  # diplomaticMessageType(0, "warDeclaration")
     peaceProposal = None  # diplomaticMessageType(1, "peaceProposal")
-    acceptProposal = None  # diplomaticMessageType(2, "acceptProposal")
-    cancelProposal = None  # diplomaticMessageType(3, "cancelProposal")
+    acceptPeaceProposal = None  # diplomaticMessageType(2, "acceptPeaceProposal")
+    alliesProposal = None  # diplomaticMessageType(3, "alliesProposal")
+    acceptAlliesProposal = None  # diplomaticMessageType(4, "acceptAlliesProposal")
+    endAllies = None  # diplomaticMessageType(5, "endAllies")
+    cancelProposal = None  # diplomaticMessageType(6, "cancelProposal")
+    rejectProposal = None  # diplomaticMessageType(7, "rejectProposal")
 
 
 diplomaticMessageType.noMessage = diplomaticMessageType(-1, "noMessage")
 diplomaticMessageType.warDeclaration = diplomaticMessageType(0, "warDeclaration")
 diplomaticMessageType.peaceProposal = diplomaticMessageType(1, "peaceProposal")
-diplomaticMessageType.acceptProposal = diplomaticMessageType(2, "acceptProposal")
-diplomaticMessageType.cancelProposal = diplomaticMessageType(3, "cancelProposal")
+diplomaticMessageType.acceptPeaceProposal = diplomaticMessageType(2, "acceptPeaceProposal")
+diplomaticMessageType.alliesProposal = diplomaticMessageType(3, "alliesProposal")
+diplomaticMessageType.acceptAlliesProposal = diplomaticMessageType(4, "acceptAlliesProposal")
+diplomaticMessageType.endAllies = diplomaticMessageType(5, "endAllies")
+diplomaticMessageType.cancelProposal = diplomaticMessageType(6, "cancelProposal")
+diplomaticMessageType.rejectProposal = diplomaticMessageType(7, "rejectProposal")
 
 
 class diplomaticStatus(Enum):
@@ -2810,10 +3225,40 @@ class diplomaticStatus(Enum):
 
     war = None  # diplomaticStatus(0, "war")
     peace = None  # diplomaticStatus(1, "peace")
+    allied = None  # diplomaticStatus(2, "allied")
 
 
 diplomaticStatus.war = diplomaticStatus(0, "war")
 diplomaticStatus.peace = diplomaticStatus(1, "peace")
+diplomaticStatus.allied = diplomaticStatus(2, "allied")
+
+
+class effectsCauseType(Enum):
+    def __init__(self, numerator, name):
+        self.name = name
+
+    invalid = None  # effectsCauseType(-1, "invalid")
+    unknown = None  # effectsCauseType(0, "unknown")
+    inherent = None  # effectsCauseType(1, "inherent")
+    tech = None  # effectsCauseType(2, "tech")
+    building = None  # effectsCauseType(3, "building")
+    field = None  # effectsCauseType(4, "field")
+    special = None  # effectsCauseType(5, "special")
+    species = None  # effectsCauseType(6, "species")
+    shipPart = None  # effectsCauseType(7, "shipPart")
+    shipHull = None  # effectsCauseType(8, "shipHull")
+
+
+effectsCauseType.invalid = effectsCauseType(-1, "invalid")
+effectsCauseType.unknown = effectsCauseType(0, "unknown")
+effectsCauseType.inherent = effectsCauseType(1, "inherent")
+effectsCauseType.tech = effectsCauseType(2, "tech")
+effectsCauseType.building = effectsCauseType(3, "building")
+effectsCauseType.field = effectsCauseType(4, "field")
+effectsCauseType.special = effectsCauseType(5, "special")
+effectsCauseType.species = effectsCauseType(6, "species")
+effectsCauseType.shipPart = effectsCauseType(7, "shipPart")
+effectsCauseType.shipHull = effectsCauseType(8, "shipHull")
 
 
 class galaxySetupOption(Enum):
@@ -2883,26 +3328,28 @@ class meterType(Enum):
     maxStructure = None  # meterType(10, "maxStructure")
     maxDefense = None  # meterType(11, "maxDefense")
     maxSupply = None  # meterType(12, "maxSupply")
-    maxTroops = None  # meterType(13, "maxTroops")
-    population = None  # meterType(14, "population")
-    industry = None  # meterType(15, "industry")
-    research = None  # meterType(16, "research")
-    trade = None  # meterType(17, "trade")
-    construction = None  # meterType(18, "construction")
-    happiness = None  # meterType(19, "happiness")
-    capacity = None  # meterType(20, "capacity")
-    secondaryStat = None  # meterType(21, "secondaryStat")
-    fuel = None  # meterType(22, "fuel")
-    shield = None  # meterType(23, "shield")
-    structure = None  # meterType(24, "structure")
-    defense = None  # meterType(25, "defense")
-    supply = None  # meterType(26, "supply")
-    troops = None  # meterType(27, "troops")
-    rebels = None  # meterType(28, "rebels")
-    size = None  # meterType(29, "size")
-    stealth = None  # meterType(30, "stealth")
-    detection = None  # meterType(31, "detection")
-    speed = None  # meterType(32, "speed")
+    maxStockpile = None  # meterType(13, "maxStockpile")
+    maxTroops = None  # meterType(14, "maxTroops")
+    population = None  # meterType(15, "population")
+    industry = None  # meterType(16, "industry")
+    research = None  # meterType(17, "research")
+    trade = None  # meterType(18, "trade")
+    construction = None  # meterType(19, "construction")
+    happiness = None  # meterType(20, "happiness")
+    capacity = None  # meterType(21, "capacity")
+    secondaryStat = None  # meterType(22, "secondaryStat")
+    fuel = None  # meterType(23, "fuel")
+    shield = None  # meterType(24, "shield")
+    structure = None  # meterType(25, "structure")
+    defense = None  # meterType(26, "defense")
+    supply = None  # meterType(27, "supply")
+    stockpile = None  # meterType(28, "stockpile")
+    troops = None  # meterType(29, "troops")
+    rebels = None  # meterType(30, "rebels")
+    size = None  # meterType(31, "size")
+    stealth = None  # meterType(32, "stealth")
+    detection = None  # meterType(33, "detection")
+    speed = None  # meterType(34, "speed")
 
 
 meterType.targetPopulation = meterType(0, "targetPopulation")
@@ -2918,26 +3365,28 @@ meterType.maxShield = meterType(9, "maxShield")
 meterType.maxStructure = meterType(10, "maxStructure")
 meterType.maxDefense = meterType(11, "maxDefense")
 meterType.maxSupply = meterType(12, "maxSupply")
-meterType.maxTroops = meterType(13, "maxTroops")
-meterType.population = meterType(14, "population")
-meterType.industry = meterType(15, "industry")
-meterType.research = meterType(16, "research")
-meterType.trade = meterType(17, "trade")
-meterType.construction = meterType(18, "construction")
-meterType.happiness = meterType(19, "happiness")
-meterType.capacity = meterType(20, "capacity")
-meterType.secondaryStat = meterType(21, "secondaryStat")
-meterType.fuel = meterType(22, "fuel")
-meterType.shield = meterType(23, "shield")
-meterType.structure = meterType(24, "structure")
-meterType.defense = meterType(25, "defense")
-meterType.supply = meterType(26, "supply")
-meterType.troops = meterType(27, "troops")
-meterType.rebels = meterType(28, "rebels")
-meterType.size = meterType(29, "size")
-meterType.stealth = meterType(30, "stealth")
-meterType.detection = meterType(31, "detection")
-meterType.speed = meterType(32, "speed")
+meterType.maxStockpile = meterType(13, "maxStockpile")
+meterType.maxTroops = meterType(14, "maxTroops")
+meterType.population = meterType(15, "population")
+meterType.industry = meterType(16, "industry")
+meterType.research = meterType(17, "research")
+meterType.trade = meterType(18, "trade")
+meterType.construction = meterType(19, "construction")
+meterType.happiness = meterType(20, "happiness")
+meterType.capacity = meterType(21, "capacity")
+meterType.secondaryStat = meterType(22, "secondaryStat")
+meterType.fuel = meterType(23, "fuel")
+meterType.shield = meterType(24, "shield")
+meterType.structure = meterType(25, "structure")
+meterType.defense = meterType(26, "defense")
+meterType.supply = meterType(27, "supply")
+meterType.stockpile = meterType(28, "stockpile")
+meterType.troops = meterType(29, "troops")
+meterType.rebels = meterType(30, "rebels")
+meterType.size = meterType(31, "size")
+meterType.stealth = meterType(32, "stealth")
+meterType.detection = meterType(33, "detection")
+meterType.speed = meterType(34, "speed")
 
 
 class planetEnvironment(Enum):
@@ -3023,11 +3472,49 @@ class resourceType(Enum):
     industry = None  # resourceType(0, "industry")
     trade = None  # resourceType(1, "trade")
     research = None  # resourceType(2, "research")
+    stockpile = None  # resourceType(3, "stockpile")
 
 
 resourceType.industry = resourceType(0, "industry")
 resourceType.trade = resourceType(1, "trade")
 resourceType.research = resourceType(2, "research")
+resourceType.stockpile = resourceType(3, "stockpile")
+
+
+class roleType(Enum):
+    def __init__(self, numerator, name):
+        self.name = name
+
+    host = None  # roleType(0, "host")
+    clientTypeModerator = None  # roleType(1, "clientTypeModerator")
+    clientTypePlayer = None  # roleType(2, "clientTypePlayer")
+    clientTypeObserver = None  # roleType(3, "clientTypeObserver")
+    galaxySetup = None  # roleType(4, "galaxySetup")
+
+
+roleType.host = roleType(0, "host")
+roleType.clientTypeModerator = roleType(1, "clientTypeModerator")
+roleType.clientTypePlayer = roleType(2, "clientTypePlayer")
+roleType.clientTypeObserver = roleType(3, "clientTypeObserver")
+roleType.galaxySetup = roleType(4, "galaxySetup")
+
+
+class ruleType(Enum):
+    def __init__(self, numerator, name):
+        self.name = name
+
+    invalid = None  # ruleType(-1, "invalid")
+    toggle = None  # ruleType(0, "toggle")
+    int = None  # ruleType(1, "int")
+    double = None  # ruleType(2, "double")
+    string = None  # ruleType(3, "string")
+
+
+ruleType.invalid = ruleType(-1, "invalid")
+ruleType.toggle = ruleType(0, "toggle")
+ruleType.int = ruleType(1, "int")
+ruleType.double = ruleType(2, "double")
+ruleType.string = ruleType(3, "string")
 
 
 class shipPartClass(Enum):
@@ -3441,6 +3928,15 @@ def getFieldType(string):
     return fieldType()
 
 
+def getGameRules():
+    """
+    Returns the game rules manager, which can be used to look up the names (string) of rules are defined with what type (boolean / toggle, int, double, string), and what values the rules have in the current game.
+
+    :rtype: GameRules
+    """
+    return GameRules()
+
+
 def getHullType(string):
     """
     Returns the ship hull (HullType) with the indicated name (string).
@@ -3578,6 +4074,50 @@ def get_native_species():
     return list()
 
 
+def get_options_db_option_bool(string):
+    """
+    Returns the bool value of option in OptionsDB or None if the option does not exist.
+
+    :param string:
+    :type string: str
+    :rtype: object
+    """
+    return object()
+
+
+def get_options_db_option_double(string):
+    """
+    Returns the double value of option in OptionsDB or None if the option does not exist.
+
+    :param string:
+    :type string: str
+    :rtype: object
+    """
+    return object()
+
+
+def get_options_db_option_int(string):
+    """
+    Returns the integer value of option in OptionsDB or None if the option does not exist.
+
+    :param string:
+    :type string: str
+    :rtype: object
+    """
+    return object()
+
+
+def get_options_db_option_str(string):
+    """
+    Returns the string value of option in OptionsDB or None if the option does not exist.
+
+    :param string:
+    :type string: str
+    :rtype: object
+    """
+    return object()
+
+
 def get_owner(number):
     """
     :param number:
@@ -3629,6 +4169,24 @@ def get_universe_width():
     :rtype: float
     """
     return float()
+
+
+def get_user_config_dir():
+    """
+    Returns path to directory where FreeOrion stores user specific configuration.
+
+    :rtype: object
+    """
+    return object()
+
+
+def get_user_data_dir():
+    """
+    Returns path to directory where FreeOrion stores user specific data (saves, etc.).
+
+    :rtype: str
+    """
+    return str()
 
 
 def get_x(number):
@@ -3707,6 +4265,13 @@ def load_item_spec_list():
 
 
 def load_monster_fleet_plan_list():
+    """
+    :rtype: list
+    """
+    return list()
+
+
+def load_starting_buildings():
     """
     :rtype: list
     """
