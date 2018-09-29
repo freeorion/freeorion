@@ -113,8 +113,6 @@ ServerApp::ServerApp() :
         boost::bind(&ServerApp::HandleDiplomaticMessageChange,this, _1, _2));
 
     m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, _1, _2));
-
-    m_universe.SetStatRecordsPublish(GetOptionsDB().Get<bool>("network.server.publish-statistics"));
 }
 
 ServerApp::~ServerApp() {

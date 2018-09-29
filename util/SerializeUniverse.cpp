@@ -14,6 +14,8 @@
 #include "../universe/Field.h"
 #include "../universe/Universe.h"
 
+#include "OptionsDB.h"
+
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/nil_generator.hpp>
 
@@ -151,7 +153,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         }
     }
 
-    if (Archive::is_saving::value && (!m_stat_records_publish) && m_encoding_empire != ALL_EMPIRES) {
+    if (Archive::is_saving::value && (!GetOptionsDB().Get<bool>("network.server.publish-statistics")) && m_encoding_empire != ALL_EMPIRES) {
         std::map<std::string, std::map<int, std::map<int, double>>> dummy_stat_records;
         ar  & boost::serialization::make_nvp("m_stat_records", dummy_stat_records);
     } else {

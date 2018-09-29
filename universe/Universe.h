@@ -351,9 +351,6 @@ public:
     void InhibitUniverseObjectSignals(bool inhibit = true);
 
     void UpdateStatRecords();
-
-    /** Sets whether to publish empire statistics to the players. */
-    void SetStatRecordsPublish(bool publish = true);
     //@}
 
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
@@ -523,7 +520,6 @@ private:
 
     std::map<std::string, std::map<int, std::map<int, double>>>
                                     m_stat_records;                     ///< storage for statistics calculated for empires. Indexed by stat name (string), contains a map indexed by empire id, contains a map from turn number (int) to stat value (double).
-    bool                            m_stat_records_publish;             ///< send empire statistics to the players.
 
     /** @name Parsed items
         Various unlocked items are kept as a Pending::Pending while being parsed and
