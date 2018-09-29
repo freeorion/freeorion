@@ -1,11 +1,12 @@
-import PlanetUtilsAI
-import freeOrionAIInterface as fo
-
 from common.listeners import register_pre_handler
 from stub_generator import inspect
 
 
 def inspect_ai_interface():
+    # Put all related imports inside
+    import PlanetUtilsAI
+    import freeOrionAIInterface as fo
+
     capital_id = PlanetUtilsAI.get_capital()
     universe = fo.getUniverse()
     fleets_int_vector = universe.fleetIDs

@@ -19,6 +19,12 @@ from util import int_hash, seed_rng, report_error, error_list
 from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
 import universe_statistics
 
+from common.handlers import init_handlers
+from common.listeners import listener
+from common.option_tools import parse_config
+parse_config(fo.get_options_db_option_str("ai-config"), fo.get_user_config_dir())
+init_handlers(fo.get_options_db_option_str("ai-config"), None)
+
 
 class PyGalaxySetupData:
     """
@@ -61,6 +67,7 @@ def error_report():
     return error_list
 
 
+@listener
 def create_universe(psd_map):
     """
     Main universe generation function invoked from C++ code.

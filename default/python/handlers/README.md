@@ -16,6 +16,7 @@
     Debug prints required for charts. Started by default
   - `python\handlers\inspect_freeOrionAIInterface.py`:
     Code that create stub for `freeOrionAIInterface`. Must be launched with single AI player.
+  - `python\handlers\inspect_universe_generation.py` Code that create stub for `freeorion.pyi`
 
 ## Implementation
     Only AI handlers implementation is present now (`python\AI\freeorion_tools\handlers.py`),
