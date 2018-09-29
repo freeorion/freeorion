@@ -5,7 +5,7 @@ from logging import warn, error, debug
 from generate_stub import make_stub
 
 
-def get_member_info(member):
+def get_member_info(name, member):
     info = {
         'type': str(type(member)),
     }
@@ -13,7 +13,7 @@ def get_member_info(member):
     if isinstance(member, property):
         info['getter'] = (member.fget.__name__, getdoc(member.fget))
     elif isroutine(member):
-        info['rutine'] = (member.__name__, getdoc(member))
+        info['routine'] = (member.__name__, getdoc(member))
     elif 'freeOrionAIInterface' in info['type']:
         info['value'] = str(member)
     elif isinstance(member, int):
@@ -27,7 +27,8 @@ def get_member_info(member):
         if not len(member):
             info['value'] = member
     else:
-        warn('Unexpected member "%s":' % (type(member), member))
+        # instance properties will be already resolved
+        warn('[%s] Unexpected member "%s"(%s)', name, type(member), member)
     return info
 
 
@@ -57,25 +58,25 @@ def inspect_instance(instance):
                 type='instance',
                 attrs={},
                 parents=[str(parent.__name__) for parent in parents])
-    for name, member in getmembers(instance):
-        if name not in parent_attrs + ['__module__']:
-            info['attrs'][name] = get_member_info(member)
+    for attr_name, member in getmembers(instance):
+        if attr_name not in parent_attrs + ['__module__']:
+            info['attrs'][attr_name] = get_member_info('%s.%s' % (instance.__class__.__name__, attr_name), member)
     return info
 
 
-def inspect_boost_class(name, obj):
+def inspect_boost_class(class_name, obj):
     parents = obj.mro()[1:-2]
     parent_attrs = sum((dir(parent) for parent in obj.mro()[1:]), [])
 
     info = {'type': "boost_class",
-            'name': name,
+            'name': class_name,
             'attrs': {},
             'doc': getdoc(obj),
             'parents': [str(parent.__name__) for parent in parents]
             }
-    for name, member in getmembers(obj):
-        if name not in parent_attrs + ['__module__', '__instance_size__']:
-            info['attrs'][name] = get_member_info(member)
+    for attr_name, member in getmembers(obj):
+        if attr_name not in parent_attrs + ['__module__', '__instance_size__']:
+            info['attrs'][attr_name] = get_member_info('%s.%s' % (class_name, attr_name), member)
     return info
 
 
@@ -120,12 +121,12 @@ def _inspect(obj, instances):
             warn("Unknown: '%s' of type '%s': %s" % (name, type(member), member))
     for i, instance in enumerate(instances, start=2):
         if isinstance(instance, (basestring, int, long, float)):
-            warn("Argument number %s(1-based) is builtin python instance: (%s) %s" % (i, type(instance), instance))
+            warn("Argument number %s(1-based) is builtin python instance: (%s) %s", i, type(instance), instance)
             continue
         try:
             data.append(inspect_instance(instance))
         except Exception as e:
-            error("Error inspecting: '%s' with '%s': %s" % (type(instance), type(e), e))
+            error("Error inspecting: '%s' with '%s': %s", type(instance), type(e), e, exc_info=True)
     return data
 
 

@@ -63,7 +63,8 @@ normalization_dict = {
     'ShipPartMeterMap': 'ship_part_meter_map',
     'ShipSlotVec': 'ship_slot_vec',
     'special': 'special',
-    'IntFltMap': 'int_flt_map'
+    'IntFltMap': 'int_flt_map',
+    'ruleType': 'rule_type',
 }
 
 
@@ -110,7 +111,26 @@ def parse_name(txt):
     return [x[0] for x in args], return_type
 
 
-def merge_args(arg_types, is_class):
+def merge_args(name, raw_arg_types, is_class):
+    """
+    Merge multiple set of arguments together.
+
+    Single argument set is used as is.
+    If we have two unique argument sets, and on of them is empty, use keywords.
+    In other cases log error and use first one.
+
+    :param str name:
+    :param list[tuple] raw_arg_types:
+    :param bool is_class:
+    :rtype: (list[str], list[(str, str)])
+    """
+    # If wrapper define functions that have same name, and same arguments but different return types,
+    # it will come here with len(arg_types) >= 2, where all arguments set are the same.
+    size = len(raw_arg_types)
+    arg_types = sorted(set(raw_arg_types))
+    if len(arg_types) != size:
+        error("[%s] Duplicated argument types", name)
+
     if len(arg_types) == 1:
         names, types = get_argument_names(arg_types[0], is_class)
         use_keyword = False
@@ -118,13 +138,15 @@ def merge_args(arg_types, is_class):
         names, types = get_argument_names(filter(None, arg_types)[0], is_class)
         use_keyword = True
     else:
-        error('Cannot merge, use first argument group from:\n    %s\n' % '\n    '.join(', '.join('(%s)%s' % (tp, name) for tp, name in arg_set) for arg_set in arg_types))
-        names, types = get_argument_names(arg_types[0], is_class)
+        error('[%s] Cannot merge, use first argument group from:\n    %s\n',
+              name,
+              '\n    '.join(', '.join('(%s)%s' % (tp, name) for tp, name in arg_set) for arg_set in raw_arg_types))
+        names, types = get_argument_names(raw_arg_types[0], is_class)
         use_keyword = False
-    return ['%s=None' % name for name in names] if use_keyword else names, zip(names, types)
+    return ['%s=None' % arg_name for arg_name in names] if use_keyword else names, zip(names, types)
 
 
-def normilize_rtype(rtype):
+def normalize_rtype(rtype):
     if rtype == 'iterator':
         return 'iter'
     return rtype
@@ -148,7 +170,7 @@ class Docs(object):
         def parse_signature(line):
             expre = re.compile('(\w+)\((.*)\) -> (\w+)')
             name, args, rtype = expre.match(line).group(1, 2, 3)
-            args = re.findall('\((\w+)\) *(\w+)', args)
+            args = tuple(re.findall('\((\w+)\) *(\w+)', args))
             return name, args, rtype
 
         res = []
@@ -164,9 +186,9 @@ class Docs(object):
         self.resources = res
 
         args, rtypes, infos = zip(*res)
-        rtypes = set(rtypes)
-        assert len(rtypes) == 1, "Different rtypes for: %s in: %s" % (rtypes, text)
-        self.rtype = normilize_rtype(rtypes.pop())
+        if len(set(rtypes)) != 1:
+            error("[%s] Different rtypes", name)
+        self.rtype = normalize_rtype(rtypes[0])
 
         # cut of first and last string if they are empty
         # we cant cut off all empty lines, because it can be inside docstring
@@ -187,7 +209,7 @@ class Docs(object):
 
         # if docs are equals show only one of them
         self.header = sorted(doc_lines)
-        argument_declaration, args = merge_args(args, self.is_class)
+        argument_declaration, args = merge_args(name, args, self.is_class)
         self.argument_declaration = argument_declaration
         self.args = args
 

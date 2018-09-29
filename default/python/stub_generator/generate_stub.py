@@ -20,7 +20,7 @@ def handle_class(info):
         if attr['type'] == "<type 'property'>":
             properties.append((attr_name, attr.get('rtype', '')))
         elif attr['type'] == "<type 'instancemethod'>":
-            instance_methods.append(attr['rutine'])
+            instance_methods.append(attr['routine'])
         else:
             warn("Skipping '%s': %s" % (name, attr))
 
@@ -43,8 +43,8 @@ def handle_class(info):
             result.append('        %s' % return_text)
         result.append('')
 
-    for rutine_name, rutine_docs in instance_methods:
-        docs = Docs(rutine_docs, 2, is_class=True)
+    for routine_name, routine_docs in instance_methods:
+        docs = Docs(routine_docs, 2, is_class=True)
         # TODO: Subclass map-like classes from dict (or custom class) rather than this hack
         if docs.rtype in ('VisibilityIntMap', 'IntIntMap'):
             docs.rtype = 'dict[int, int]'
@@ -55,7 +55,7 @@ def handle_class(info):
             return_string = 'return %s()' % docs.rtype
 
         doc_string = docs.get_doc_string()
-        result.append('    def %s(%s):' % (rutine_name, docs.get_argument_string()))
+        result.append('    def %s(%s):' % (routine_name, docs.get_argument_string()))
         result.append(doc_string)
         result.append('        %s' % return_string)
         result.append('')
@@ -121,7 +121,11 @@ def make_stub(data, result_path, classes_to_ignore):
     enums_names = [x['name'] for x in enums]
 
     missed_instances = instance_names.symmetric_difference(clases_map).difference(classes_to_ignore)
-    warn("Classes without instances (%s): %s" % (len(missed_instances), ', '.join(sorted(missed_instances))))
+    warn(
+        "Classes without instances (%s): %s",
+        len(missed_instances),
+        ', '.join(sorted(missed_instances, key=str.lower))
+    )
 
     for instance in groups.get('instance', []):
         class_name = instance['class_name']
