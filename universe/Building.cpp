@@ -326,7 +326,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
 
 bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
     if (!m_enqueue_location)
-        return ProductionLocation(empire_id, location_id);
+        return true;
 
     auto location = GetUniverseObject(location_id);
     if (!location)
