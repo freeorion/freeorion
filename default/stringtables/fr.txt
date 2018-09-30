@@ -158,7 +158,7 @@ Flotte
 # Name for a newly created monster-only fleet.
 # %1% represents a unique number.
 NEW_MONSTER_FLEET_NAME
-Meute %1%
+Horde %1%
 
 # Name for a newly created colony-only fleet.
 # %1% represents a unique number.
@@ -270,6 +270,7 @@ Contenu
 MULTIPLAYER
 Multijoueurs
 
+
 ##
 ## Major errors
 ##
@@ -329,6 +330,7 @@ FORMAT_LIST_10_ITEMS
 
 #FORMAT_LIST_MANY_ITEMS
 #%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
+
 
 ##
 ## Build Projects
@@ -1030,6 +1032,7 @@ Impossible de capituler; l'empire contrôle trop de colonies.
 ERROR_CONCEDE_LAST_HUMAN_PLAYER
 Impossible de capituler dans une partie avec un seul joueur humain.
 
+
 ##
 ## Game Rules
 ##
@@ -1149,25 +1152,25 @@ RULE_STARLANES_EVERYWHERE_DESC
 Les Voies spatiales sont générées entre chaque paire de systèmes, indépendamment de toute géométrie. Toutefois, ces Voies peuvent toujours être supprimées durant une partie. Dans ce mode, les Voies ne sont pas affichées sur la carte galactique.
 
 RULE_HABITABLE_SIZE_TINY
-Taille habitable Minuscules Planètes
+Zone habitable Minuscules Planètes
 
 RULE_HABITABLE_SIZE_SMALL
-Taille habitable Petites Planètes
+Zone habitable Petites Planètes
 
 RULE_HABITABLE_SIZE_MEDIUM
-Taille habitable Moyennes Planètes
+Zone habitable Moyennes Planètes
 
 RULE_HABITABLE_SIZE_LARGE
-Taille habitable Grandes Planètes
+Zone habitable Grandes Planètes
 
 RULE_HABITABLE_SIZE_HUGE
-Taille habitable Immenses Planètes
+Zone habitable Immenses Planètes
 
 RULE_HABITABLE_SIZE_ASTEROIDS
-Taille habitable Astéroïdes
+Zone habitable Astéroïdes
 
 RULE_HABITABLE_SIZE_GASGIANT
-Taille habitable Géantes Gazeuses
+Zone habitable Géantes Gazeuses
 
 RULE_HABITABLE_SIZE_DESC
 Valeur utilisée pour ajuster les variations de [[encyclopedia POPULATION_TITLE_SHORT_DESC]] sur une planète de cette taille.
@@ -1201,6 +1204,7 @@ Activer Entretien des Équipements
 
 RULE_SHIP_PART_BASED_UPKEEP_DESC
 Calculer le coût d'entretien selon les équipements de l'astronef plutôt que selon le modèle d'astronef lui-même.
+
 
 ##
 ## Command-line and options database entries
@@ -1367,6 +1371,9 @@ Limite le nombre de joueurs humains dans une partie multijoueurs. Une valeur de 
 
 OPTIONS_DB_COOKIES_EXPIRE
 Valeur en minutes au-delà de laquelle le cookie enregistré sera considéré comme expiré.
+
+OPTIONS_DB_PUBLISH_STATISTICS
+Activer l'envoi des statistiques d'empire au joueur.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position horizontale du centre du menu principal de l'écran d'introduction, en pourcentage de la largeur totale de la fenêtre de jeu ou du plein écran.
@@ -2195,19 +2202,19 @@ SCONNECT_WINDOW_TITLE
 Connexion au Serveur
 
 LAN_GAME_LABEL
-Partie locale chez :
+Session locale chez :
 
 INTERNET_GAME_LABEL
-Partie Internet chez :
+Session Internet chez :
 
 PLAYER_NAME_LABEL
 Nom du joueur
 
 HOST_GAME_BN
-Héberger une partie
+Héberger une nouvelle partie
 
 JOIN_GAME_BN
-Rejoindre une partie comme
+Rejoindre partie en
 
 REFRESH_LIST_BN
 Rafraîchir
@@ -2476,6 +2483,7 @@ Le bouton "Sauvegarder" est désactivé, soit parce qu'il s'agit d'une partie mu
 
 GAME_MENU_REALLY_CONCEDE
 Confirmer la capitulation? Cet empire sera supprimé de cette partie.
+
 
 ##
 ## Save game dialog
@@ -10053,11 +10061,82 @@ DESC_ORDERED_BOMBARDED
 DESC_ORDERED_BOMBARDED_NOT
 ''' n'étant pas bombardé par un objet %1%'''
 
+
+# AND Descriptions for expressions 'AND [ A B C ]'
+DESC_AND_BEFORE_OPERANDS
+''' ['''
+
 DESC_AND_BETWEEN_OPERANDS
-''' et'''
+''', et'''
+
+DESC_AND_AFTER_OPERANDS
+''' ]'''
+
+DESC_AND_BEFORE_SINGLE_OPERAND
+''''''
+
+DESC_AND_AFTER_SINGLE_OPERAND
+''''''
+
+# NOT AND Descriptions for expressions  'NOT AND [ A B C ]'
+# We actually describe the the logically equivalent expression ( (not A) or (not B) or (not C) )
+# Note: the operands (not A), (not B).. are handled in the descriptions of A, B.. respectively
+DESC_NOT_AND_BEFORE_OPERANDS
+'''[[DESC_NOT_OR_BEFORE_OPERANDS]]'''
+
+DESC_NOT_AND_BETWEEN_OPERANDS
+'''[[DESC_NOT_OR_BETWEEN_OPERANDS]]'''
+
+DESC_NOT_AND_AFTER_OPERANDS
+'''[[DESC_NOT_OR_AFTER_OPERANDS]]'''
+
+
+# Description for 'not ( AND [ A ] )' expressions
+# Actually instead we describe 'OR [ not A ]' and leave the description of negation to A
+DESC_NOT_AND_BEFORE_SINGLE_OPERAND
+'''[[DESC_OR_BEFORE_SINGLE_OPERAND]]'''
+
+DESC_NOT_AND_AFTER_SINGLE_OPERAND
+'''[[DESC_OR_AFTER_SINGLE_OPERAND]]'''
+
+
+# OR Descriptions: for expressions of the form ( A or B or C )
+DESC_OR_BEFORE_OPERANDS
+''' (soit'''
 
 DESC_OR_BETWEEN_OPERANDS
-''' ou'''
+''', ou'''
+
+DESC_OR_AFTER_OPERANDS
+''' )'''
+
+DESC_OR_BEFORE_SINGLE_OPERAND
+''''''
+
+DESC_OR_AFTER_SINGLE_OPERAND
+''''''
+
+
+# NOT OR Descriptions; for expressions of the form 'NOT OR [ A B C ]'
+# We actually describe the logically equivalent expression 'AND [ (NOT A) (NOT B) (NOT C) ]'
+# Note: (NOT A), (NOT B).. are handled in the descriptions of A, B.. respectively
+DESC_NOT_OR_BEFORE_OPERANDS
+'''[[DESC_AND_BEFORE_OPERANDS]]'''
+
+DESC_NOT_OR_BETWEEN_OPERANDS
+'''[[DESC_AND_BETWEEN_OPERANDS]]'''
+
+DESC_NOT_OR_AFTER_OPERANDS
+'''[[DESC_AND_AFTER_OPERANDS]]'''
+
+# for expressions of the form 'NOT OR [ A ]' we describe instead 'AND [ NOT A ]'
+# Note: (NOT A) is handled in the description of A
+DESC_NOT_OR_BEFORE_SINGLE_OPERAND
+'''[[DESC_AND_BEFORE_SINGLE_OPERAND]]'''
+
+DESC_NOT_OR_AFTER_SINGLE_OPERAND
+'''[[DESC_AND_AFTER_SINGLE_OPERAND]]'''
+
 
 # %1% textual description of the lower turn limit.
 # %2% textual description of the upper turn limit.
@@ -14459,7 +14538,7 @@ TELEPATHIC_DETECTION_DESC
 +	Détection Télépathique: peut percevoir les planètes habitées proches.
 
 COMMUNAL_VISION_DESC
-	Vision Commune: partage ce qui est visible avec tout autre représentant de l'espèce dans l'univers.
+'''	Vision Commune: partage ce qui est visible avec tout autre représentant de l'espèce dans l'univers.'''
 
 
 ##
@@ -14844,6 +14923,7 @@ Bonus Propulsion Flux
 
 DYING_POPULATION_LABEL
 Population agonisante
+
 
 ##
 ## Tags
