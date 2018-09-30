@@ -1372,6 +1372,9 @@ Limit the number of human players allowed in a multiplayer game. Set to -1 for u
 OPTIONS_DB_COOKIES_EXPIRE
 Count of minutes after the cookie record will be considered expired.
 
+OPTIONS_DB_PUBLISH_STATISTICS
+Enable sending empire staticstics to the player.
+
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
 
