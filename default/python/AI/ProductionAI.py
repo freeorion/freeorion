@@ -407,7 +407,7 @@ def generate_production_orders():
                 for pid in pids:
                     best_design_id, col_design, build_choices = get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_DEFENSE, pid)
                     if not best_design_id:
-                        debug("no orbital defenses can be built at ", PlanetUtilsAI.planet_string(pid))
+                        debug("no orbital defenses can be built at %s", PlanetUtilsAI.planet_string(pid))
                         continue
                     retval = fo.issueEnqueueShipProductionOrder(best_design_id, pid)
                     debug("queueing %d Orbital Defenses at %s" % (num_needed, PlanetUtilsAI.planet_string(pid)))
