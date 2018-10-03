@@ -262,6 +262,10 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                 // player abnormally disconnected during a regular game
                 ErrorLogger(FSM) << "Player #" << id << ", named \""
                                  << player_connection->PlayerName() << "\"quit before empire was eliminated.";
+            } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER && !empire) {
+                // should be in ingame lobby
+                // update ingame lobby
+                UpdateIngameLobby();
             }
         }
     } else {
@@ -284,6 +288,43 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
             m_server.m_fsm->process_event(Hostless());
         } else {
             m_server.m_fsm->process_event(ShutdownServer());
+        }
+    }
+}
+
+void ServerFSM::UpdateIngameLobby() {
+    GalaxySetupData galaxy_data = m_server.GetGalaxySetupData();
+    MultiplayerLobbyData dummy_lobby_data(std::move(galaxy_data));
+    dummy_lobby_data.m_any_can_edit = false;
+    dummy_lobby_data.m_new_game = false;
+    dummy_lobby_data.m_start_locked = true;
+    for (auto player_it = m_server.m_networking.established_begin();
+        player_it != m_server.m_networking.established_end(); ++player_it)
+    {
+        PlayerSetupData player_setup_data;
+        int player_id = (*player_it)->PlayerID();
+        player_setup_data.m_player_id =   player_id;
+        player_setup_data.m_player_name = (*player_it)->PlayerName();
+        player_setup_data.m_client_type = (*player_it)->GetClientType();
+        if (const Empire* empire = GetEmpire(m_server.PlayerEmpireID(player_id))) {
+            player_setup_data.m_empire_name = empire->Name();
+            player_setup_data.m_empire_color = empire->Color();
+        } else {
+            player_setup_data.m_empire_color = GG::Clr(255, 255, 255, 255);
+        }
+        dummy_lobby_data.m_players.push_back({player_id, player_setup_data});
+    }
+    dummy_lobby_data.m_start_lock_cause = UserStringNop("SERVER_ALREADY_PLAYING_GAME");
+
+    // send it to all those without empire
+    // and who are CLIENT_TYPE_HUMAN_PLAYER
+    for (auto player_it = m_server.m_networking.established_begin();
+        player_it != m_server.m_networking.established_end(); ++player_it)
+    {
+        if ((*player_it)->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
+            !GetEmpire(m_server.PlayerEmpireID((*player_it)->PlayerID())))
+        {
+            (*player_it)->SendMessage(ServerLobbyUpdateMessage(dummy_lobby_data));
         }
     }
 }
@@ -2226,14 +2267,10 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                 // previous connection was dropped
                 // set empire link to new connection by name
                 // send playing game
-                if (!server.AddPlayerIntoGame(player_connection)) {
-                    player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_PLAYING_GAME")));
-                    server.Networking().Disconnect(player_connection);
-                }
-            } else {
-                player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_PLAYING_GAME")));
-                server.Networking().Disconnect(player_connection);
+                server.AddPlayerIntoGame(player_connection);
+                // In both cases update ingame lobby
             }
+            fsm.UpdateIngameLobby();
         }
     }
 }
@@ -2264,14 +2301,6 @@ sc::result PlayingGame::react(const JoinGame& msg) {
             // send authentication request
             player_connection->AwaitPlayer(client_type, client_version_string);
             player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
-            return discard_event();
-        }
-
-        if (client_type != Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
-            client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-        {
-            msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_PLAYING_GAME")));
-            Server().Networking().Disconnect(msg.m_player_connection);
             return discard_event();
         }
 
@@ -2308,6 +2337,7 @@ sc::result PlayingGame::react(const JoinGame& msg) {
         }
 
         if (collision) {
+            WarnLogger() << "Reject player " << original_player_name;
             player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
                                                         true));
             server.Networking().Disconnect(player_connection);
@@ -2382,6 +2412,19 @@ sc::result PlayingGame::react(const Error& msg) {
         DebugLogger(FSM) << "Fatal received.";
         return transit<ShuttingDownServer>();
     }
+    return discard_event();
+}
+
+sc::result PlayingGame::react(const LobbyUpdate& msg) {
+    TraceLogger(FSM) << "(ServerFSM) MPLobby.LobbyUpdate";
+    ServerApp& server = Server();
+    const Message& message = msg.m_message;
+    const PlayerConnectionPtr& sender = msg.m_player_connection;
+
+    // ignore data
+    sender->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_PLAYING_GAME")));
+    server.Networking().Disconnect(sender);
+
     return discard_event();
 }
 

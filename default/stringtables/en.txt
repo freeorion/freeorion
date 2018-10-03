@@ -2283,6 +2283,9 @@ Accept
 NOT_READY_BN
 Decline
 
+# %1% is a turn progress phase
+PLAYING_GAME
+Playing game: %1%
 
 ##
 ## Galaxy Setup Screen

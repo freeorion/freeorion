@@ -40,6 +40,7 @@ public:
                                 const std::string& player_name,
                                 GG::Clr text_color,
                                 const boost::posix_time::ptime& timestamp);
+    void            TurnPhaseUpdate(Message::TurnProgressPhase phase_id);
     void            LobbyUpdate(const MultiplayerLobbyData& lobby_data);
     void            Refresh();
     void            CleanupChat();

@@ -29,7 +29,7 @@ public:
                                             const boost::posix_time::ptime& timestamp,
                                             int recipient_player_id);
     void            HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id);
-    void            HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id);
+    void            HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, bool prefixed = false);
     void            HandleGameStatusUpdate(const std::string& text);
     void            HandleLogMessage(const std::string& text);
     void            Clear();
