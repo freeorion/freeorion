@@ -1,14 +1,11 @@
 #define PHOENIX_LIMIT 11
 #define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
-//#define FUSION_MAX_VECTOR_SIZE 20
 
 #include "Parse.h"
 
 #include "ParseImpl.h"
 #include "EnumParser.h"
-
 #include "ValueRefParser.h"
-//#include "ConditionParser.h"
 #include "ConditionParserImpl.h"
 #include "CommonParamsParser.h"
 
@@ -19,8 +16,6 @@
 #include <boost/spirit/include/phoenix.hpp>
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>
-
-#include <tuple>
 
 #define DEBUG_PARSERS 0
 
@@ -38,6 +33,7 @@ namespace {
 
     void insert_parttype(std::map<std::string, std::unique_ptr<PartType>>& part_types,
                          ShipPartClass part_class,
+                         std::pair<boost::optional<double>, boost::optional<double>> capacity_and_stat2,
                          const parse::detail::MovableEnvelope<CommonParams>& common_params,
                          const MoreCommonParams& more_common_params,
                          boost::optional<std::vector<ShipSlotType>> mountable_slot_types,
@@ -45,29 +41,19 @@ namespace {
                          bool no_default_capacity_effect,
                          bool& pass)
     {
-        
-            boost::optional<double> capacity, stat2;
-            boost::optional<int> precision;
-            boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>> preferredPrey;
-
-            //            std::tie(capacity, stat2, precision, preferredPrey) = capacity_and_stat2_and;
-
         auto part_type = boost::make_unique<PartType>(
             part_class,
-            (capacity  ? *capacity  : 0.0),
-            (stat2 ? *stat2 : 1.0),
+            (capacity_and_stat2.first ? *capacity_and_stat2.first : 0.0),
+            (capacity_and_stat2.second ? *capacity_and_stat2.second : 1.0),
             *common_params.OpenEnvelope(pass), more_common_params,
             (mountable_slot_types ? *mountable_slot_types : std::vector<ShipSlotType>()),
             icon,
-            !no_default_capacity_effect,
-            (precision ? *precision : 1),
-            (preferredPrey ? (*preferredPrey).OpenEnvelope(pass) : nullptr)
-             );
+            !no_default_capacity_effect);
 
         part_types.insert(std::make_pair(part_type->Name(), std::move(part_type)));
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_parttype_, insert_parttype, 8)
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_parttype_, insert_parttype, 9)
 
     using start_rule_payload = std::map<std::string, std::unique_ptr<PartType>>;
     using start_rule_signature = void(start_rule_payload&);
@@ -89,7 +75,6 @@ namespace {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
-            //            using phoenix::new_;
             using phoenix::construct;
 
             qi::_1_type _1;
@@ -101,8 +86,6 @@ namespace {
             qi::_7_type _7;
             qi::_8_type _8;
             qi::_9_type _9;
-//            phoenix::actor<boost::spirit::argument<9>> _10; // qi::_10_type is not predefined
-//            phoenix::actor<boost::spirit::argument<10>> _11; // qi::_11_type is not predefined
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::matches_type matches_;
@@ -121,13 +104,10 @@ namespace {
                 > -(label(tok.MountableSlotTypes_) > one_or_more_slots)
                 >   common_rules.common
                 >   label(tok.Icon_)        > tok.string
-                > -(label(tok.Precision_) > double_rule)
-                > -(label(tok.PreferredPrey_) > condition_parser)
-                    ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
+                  ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
                       insert_parttype_(_r1, _3,
-                                       _8, _2, _7, _9, _6,
-                                        _pass
-                                       ) ]
+                                       construct<std::pair<boost::optional<double>, boost::optional<double>>>(_4, _5)
+                                       , _8, _2, _7, _9, _6, _pass) ]
                 ;
 
             start
