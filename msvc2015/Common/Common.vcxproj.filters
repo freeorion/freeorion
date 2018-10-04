@@ -223,6 +223,9 @@
     <ClInclude Include="..\..\util\ModeratorAction.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\combat\CombatTargetting.h">
+      <Filter>Header Files\combat</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\combat\CombatSystem.h">
       <Filter>Header Files\combat</Filter>
     </ClInclude>
