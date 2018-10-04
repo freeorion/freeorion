@@ -154,6 +154,7 @@
     <ClInclude Include="..\..\combat\CombatEvents.h" />
     <ClInclude Include="..\..\combat\CombatLogManager.h" />
     <ClInclude Include="..\..\combat\CombatSystem.h" />
+    <ClInclude Include="..\..\combat\CombatTargetting.h" />
     <ClInclude Include="..\..\Empire\Diplomacy.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\ResearchQueue.h" />

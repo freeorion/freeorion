@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\combat\CombatSystem.h" />
+    <ClInclude Include="..\..\combat\CombatTargetting.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\ResearchQueue.h" />
     <ClInclude Include="..\..\Empire\ProductionQueue.h" />
@@ -195,6 +196,7 @@
     <ClInclude Include="..\..\util\XMLDoc.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\combat\CombatTargetting.cpp" />
     <ClCompile Include="..\..\combat\CombatSystem.cpp" />
     <ClCompile Include="..\..\network\ServerNetworking.cpp" />
     <ClCompile Include="..\..\python\CommonFramework.cpp" />
