@@ -33,7 +33,7 @@ namespace {
 
     void insert_parttype(std::map<std::string, std::unique_ptr<PartType>>& part_types,
                          ShipPartClass part_class,
-                         std::pair<boost::optional<double>, boost::optional<double>> capacity_and_stat2,
+                         std::tuple<boost::optional<double>, boost::optional<double>> capacity_and_stat2,
                          const parse::detail::MovableEnvelope<CommonParams>& common_params,
                          const MoreCommonParams& more_common_params,
                          boost::optional<std::vector<ShipSlotType>> mountable_slot_types,
@@ -41,10 +41,13 @@ namespace {
                          bool no_default_capacity_effect,
                          bool& pass)
     {
+        boost::optional<double> capacity, stat2;
+        std::tie(capacity, stat2) = capacity_and_stat2;
+
         auto part_type = boost::make_unique<PartType>(
             part_class,
-            (capacity_and_stat2.first ? *capacity_and_stat2.first : 0.0),
-            (capacity_and_stat2.second ? *capacity_and_stat2.second : 1.0),
+            (capacity  ? *capacity  : 0.0),
+            (stat2 ? *stat2 : 1.0),
             *common_params.OpenEnvelope(pass), more_common_params,
             (mountable_slot_types ? *mountable_slot_types : std::vector<ShipSlotType>()),
             icon,
@@ -106,7 +109,7 @@ namespace {
                 >   label(tok.Icon_)        > tok.string
                   ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
                       insert_parttype_(_r1, _3,
-                                       construct<std::pair<boost::optional<double>, boost::optional<double>>>(_4, _5)
+                                       construct<std::tuple<boost::optional<double>, boost::optional<double>>>(_4, _5)
                                        , _8, _2, _7, _9, _6, _pass) ]
                 ;
 
