@@ -621,6 +621,9 @@ bool Empire::ShipHullAvailable(const std::string& name) const
 const ProductionQueue& Empire::GetProductionQueue() const
 { return m_production_queue; }
 
+const InfluenceQueue& Empire::GetInfluenceQueue() const
+{ return m_influence_queue; }
+
 float Empire::ProductionStatus(int i) const {
     if (0 > i || i >= static_cast<int>(m_production_queue.size()))
         return -1.0f;
@@ -1201,7 +1204,7 @@ Empire::SitRepItr Empire::SitRepEnd() const
 { return m_sitrep_entries.end(); }
 
 float Empire::ProductionPoints() const
-{ return GetResourcePool(RE_INDUSTRY)->TotalOutput(); }
+{ return ResourceOutput(RE_INDUSTRY); }
 
 const std::shared_ptr<ResourcePool> Empire::GetResourcePool(ResourceType resource_type) const {
     auto it = m_resource_pools.find(resource_type);
