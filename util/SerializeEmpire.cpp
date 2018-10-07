@@ -205,15 +205,16 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         }
         ar  & boost::serialization::make_nvp("m_techs", dummy_string_int_map);
     } else {
-        ar  & BOOST_SERIALIZATION_NVP(m_techs)
-            & BOOST_SERIALIZATION_NVP(m_adopted_policies)
-            & BOOST_SERIALIZATION_NVP(m_initial_adopted_policies)
-            & BOOST_SERIALIZATION_NVP(m_available_policies);
+        ar  & BOOST_SERIALIZATION_NVP(m_techs);
 
-        if (Archive::is_loading::value && version < 2) {
+        if (Archive::is_loading::value && version < 3) {
             m_adopted_policies.clear();
             m_initial_adopted_policies.clear();
             m_available_policies.clear();
+        } else {
+            ar  & BOOST_SERIALIZATION_NVP(m_adopted_policies)
+                & BOOST_SERIALIZATION_NVP(m_initial_adopted_policies)
+                & BOOST_SERIALIZATION_NVP(m_available_policies);
         }
     }
 
@@ -225,9 +226,11 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         std::map<std::string, float> empty_research_progress;
         ProductionQueue empty_production_queue(m_id);
         std::set<std::string> empty_string_set;
+        InfluenceQueue empty_influence_queue(m_id);
         ar  & boost::serialization::make_nvp("m_research_queue", empty_research_queue)
             & boost::serialization::make_nvp("m_research_progress", empty_research_progress)
             & boost::serialization::make_nvp("m_production_queue", empty_production_queue)
+            & boost::serialization::make_nvp("m_influence_queue", empty_influence_queue)
             & boost::serialization::make_nvp("m_available_building_types", empty_string_set)
             & boost::serialization::make_nvp("m_available_part_types", empty_string_set)
             & boost::serialization::make_nvp("m_available_hull_types", empty_string_set);
@@ -238,6 +241,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         ar  & BOOST_SERIALIZATION_NVP(m_research_queue)
             & BOOST_SERIALIZATION_NVP(m_research_progress)
             & BOOST_SERIALIZATION_NVP(m_production_queue)
+            & BOOST_SERIALIZATION_NVP(m_influence_queue)
             & BOOST_SERIALIZATION_NVP(m_available_building_types)
             & boost::serialization::make_nvp("m_available_part_types", m_available_ship_parts)
             & boost::serialization::make_nvp("m_available_hull_types", m_available_ship_hulls);
