@@ -2283,6 +2283,9 @@ Accepter
 NOT_READY_BN
 Refuser
 
+# %1% is a turn progress phase
+PLAYING_GAME
+Partie en cours: %1%
 
 ##
 ## Galaxy Setup Screen
