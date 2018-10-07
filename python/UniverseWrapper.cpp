@@ -444,7 +444,7 @@ namespace FreeOrionPython {
                                                     return_value_policy<return_by_value>()
                                                 ))
 
-            .def("dump",                        &DumpObjects, return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
+            .def("dump",                        &DumpObjects)
         ;
 
         ////////////////////
