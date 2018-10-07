@@ -124,6 +124,37 @@ template void ProductionQueue::serialize<freeorion_xml_oarchive>(freeorion_xml_o
 template void ProductionQueue::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 template <typename Archive>
+void InfluenceQueue::Element::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(influence_type)
+        & BOOST_SERIALIZATION_NVP(name)
+        & BOOST_SERIALIZATION_NVP(empire_id)
+        & BOOST_SERIALIZATION_NVP(allocated_ip)
+        & BOOST_SERIALIZATION_NVP(progress)
+        & BOOST_SERIALIZATION_NVP(turns_left)
+        & BOOST_SERIALIZATION_NVP(paused);
+}
+
+template void InfluenceQueue::Element::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void InfluenceQueue::Element::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void InfluenceQueue::Element::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void InfluenceQueue::Element::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+
+template <class Archive>
+void InfluenceQueue::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_queue)
+        & BOOST_SERIALIZATION_NVP(m_projects_in_progress)
+        & BOOST_SERIALIZATION_NVP(m_total_IPs_spent)
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
+}
+
+template void InfluenceQueue::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void InfluenceQueue::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void InfluenceQueue::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void InfluenceQueue::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+
+template <class Archive>
 void Empire::PolicyAdoptionInfo::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(adoption_turn)

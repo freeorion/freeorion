@@ -1,17 +1,111 @@
 #include "InfluenceQueue.h"
 
 #include "Empire.h"
-#include "../universe/Enums.h"
-#include "../universe/Tech.h"
+#include "../universe/ValueRef.h"
 #include "../util/AppInterface.h"
+#include "../util/GameRules.h"
+#include "../util/ScopedTimer.h"
+
+#include <boost/range/numeric.hpp>
+#include <boost/range/adaptor/map.hpp>
+
+
+namespace {
+    const float EPSILON = 0.01f;
+
+    void AddRules(GameRules& rules) {
+    }
+    bool temp_bool = RegisterGameRules(&AddRules);
+
+    float CalculateNewInfluenceStockpile(int empire_id, float starting_stockpile, float project_transfer_to_stockpile,
+                                         float available_IP, float allocated_IP, float allocated_stockpile_IP)
+    {
+        TraceLogger() << "CalculateNewInfluenceStockpile for empire " << empire_id;
+        const Empire* empire = GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "CalculateNewInfluenceStockpile() passed null empire.  doing nothing.";
+            return 0.0f;
+        }
+        TraceLogger() << " ... stockpile used: " << allocated_stockpile_IP;
+        float new_contributions = available_IP - allocated_IP;
+        return starting_stockpile + new_contributions + project_transfer_to_stockpile - allocated_stockpile_IP;
+    }
+
+    /** Sets the allocated_IP value for each Element in the passed
+      * InfluenceQueue \a queue. Elements are allocated IP based on their need,
+      * the limits they can be given per turn, and the amount available to the
+      * empire. Also checks if elements will be completed this turn. */
+    void SetInfluenceQueueElementSpending(
+        float available_IP, float available_stockpile,
+        InfluenceQueue::QueueType& queue,
+        float& allocated_IP, float& allocated_stockpile_IP,
+        int& projects_in_progress, bool simulating)
+    {
+        projects_in_progress = 0;
+        allocated_IP = 0.0f;
+        allocated_stockpile_IP = 0.0f;
+
+        float dummy_IP_source = 0.0f;
+        float stockpile_transfer = 0.0f;
+
+        //DebugLogger() << "queue size: " << queue.size();
+        int i = 0;
+        for (auto& queue_element : queue) {
+            queue_element.allocated_ip = 0.0f;  // default, to be updated below...
+            if (queue_element.paused) {
+                TraceLogger() << "allocation: " << queue_element.allocated_ip
+                              << "  to: " << queue_element.name
+                              << "  due to it being paused";
+                ++i;
+                continue;
+            }
+
+            ++i;
+        }
+    }
+}
+
+
+/////////////////////////////
+// InfluenceQueue::Element //
+/////////////////////////////
+InfluenceQueue::Element::Element()
+{}
+
+InfluenceQueue::Element::Element(InfluenceType influence_type_, int empire_id_, bool paused_) :
+    influence_type(influence_type_),
+    empire_id(empire_id_),
+    paused(paused_)
+{
+    name = "";  // todo, depending on influence_type
+}
+
+InfluenceQueue::Element::Element(InfluenceType influence_type_, int empire_id_, std::string name_, bool paused_) :
+    influence_type(influence_type_),
+    name(name_),
+    empire_id(empire_id_),
+    paused(paused_)
+{}
 
 std::string InfluenceQueue::Element::Dump() const {
     std::stringstream retval;
     retval << "InfluenceQueue::Element: name: " << name << "  empire id: " << empire_id;
+    retval << "  allocated: " << allocated_ip << "  turns left: " << turns_left;
+    if (paused)
+        retval << "  (paused)";
     retval << "\n";
     return retval.str();
 }
 
+
+/////////////////////
+// InfluenceQueue //
+/////////////////////
+InfluenceQueue::InfluenceQueue(int empire_id) :
+    m_projects_in_progress(0),
+    m_expected_new_stockpile_amount(0),
+    m_empire_id(empire_id)
+{}
 
 int InfluenceQueue::ProjectsInProgress() const
 { return m_projects_in_progress; }
@@ -19,24 +113,11 @@ int InfluenceQueue::ProjectsInProgress() const
 float InfluenceQueue::TotalIPsSpent() const
 { return m_total_IPs_spent; }
 
-std::vector<std::string> InfluenceQueue::AllEnqueuedProjects() const {
-    std::vector<std::string> retval;
-    for (const auto& entry : m_queue)
-        retval.push_back(entry.name);
-    return retval;
-}
 
-std::string InfluenceQueue::Dump() const {
-    std::stringstream retval;
-    retval << "InfluenceQueue:\n";
-    float spent_rp{0.0f};
-    for (const auto& entry : m_queue) {
-        retval << " ... " << entry.Dump();
-        spent_rp += entry.allocated_rp;
-    }
-    retval << "InfluenceQueue Total Spent IP: " << spent_rp;
-    return retval.str();
-}
+float InfluenceQueue::AllocatedStockpileIP() const
+{ return 0.0f; } // todo
+
+
 
 bool InfluenceQueue::empty() const
 { return !m_queue.size(); }
@@ -50,9 +131,9 @@ InfluenceQueue::const_iterator InfluenceQueue::begin() const
 InfluenceQueue::const_iterator InfluenceQueue::end() const
 { return m_queue.end(); }
 
-InfluenceQueue::const_iterator InfluenceQueue::find(const std::string& tech_name) const {
+InfluenceQueue::const_iterator InfluenceQueue::find(const std::string& item_name) const {
     for (auto it = begin(); it != end(); ++it) {
-        if (it->name == tech_name)
+        if (it->name == item_name)
             return it;
     }
     return end();
@@ -63,190 +144,47 @@ const InfluenceQueue::Element& InfluenceQueue::operator[](int i) const {
     return m_queue[i];
 }
 
-void InfluenceQueue::Update(float IPs, const std::map<std::string, float>& research_progress) {
-    // status of all techs for this empire
+
+void InfluenceQueue::Update() {
     const Empire* empire = GetEmpire(m_empire_id);
-    if (!empire)
+    if (!empire) {
+        ErrorLogger() << "InfluenceQueue::Update passed null empire.  doing nothing.";
+        m_projects_in_progress = 0;
         return;
-
-    std::map<std::string, TechStatus> sim_tech_status_map;
-    for (const auto& tech : GetTechManager()) {
-        const std::string& tech_name = tech->Name();
-        sim_tech_status_map[tech_name] = empire->GetTechStatus(tech_name);
     }
 
-    SetTechQueueElementSpending(IPs, research_progress, sim_tech_status_map, m_queue,
-                                m_total_IPs_spent, m_projects_in_progress, m_empire_id);
+    ScopedTimer update_timer("InfluenceQueue::Update");
 
-    if (m_queue.empty()) {
-        InfluenceQueueChangedSignal();
-        return;    // nothing more to do...
-    }
+    float available_IP = empire->ResourceOutput(RE_INFLUENCE);
+    float stockpiled_IP = empire->ResourceStockpile(RE_INFLUENCE);
 
-    const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
 
-    // initialize status of everything to never getting done
-    for (Element& element : m_queue)
-        element.turns_left = -1;
+    // cache Influence item costs and times
+    // initialize Influence queue item completion status to 'never'
 
-    if (IPs <= EPSILON) {
-        InfluenceQueueChangedSignal();
-        return;    // nothing more to do if not enough IP...
-    }
 
-    boost::posix_time::ptime dp_time_start;
-    boost::posix_time::ptime dp_time_end;
 
-    // "Dynamic Programming" version of research queue simulator -- copy the queue simulator containers
-    // perform dynamic programming calculation of completion times, then after regular simulation is done compare results (if both enabled)
 
-    //record original order & progress
-    // will take advantage of fact that sets (& map keys) are by default kept in sorted order lowest to highest
-    std::map<std::string, float> dp_prog = research_progress;
-    std::map< std::string, int > orig_queue_order;
-    std::map<int, float> dpsim_research_progress;
-    for (unsigned int i = 0; i < m_queue.size(); ++i) {
-        std::string tname = m_queue[i].name;
-        orig_queue_order[tname] = i;
-        dpsim_research_progress[i] = dp_prog[tname];
-    }
-
-    std::map<std::string, TechStatus> dpsim_tech_status_map = sim_tech_status_map;
-
-    // initialize simulation_results with -1 for all techs, so that any techs that aren't
-    // finished in simulation by turn TOO_MANY_TURNS will be left marked as never to be finished
-    std::vector<int>  dpsimulation_results(m_queue.size(), -1);
-
-    const int DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
-
-    std::map<std::string, std::set<std::string>> waiting_for_prereqs;
-    std::set<int> dp_researchable_techs;
-
-    for (unsigned int i = 0; i < m_queue.size(); ++i) {
-        std::string techname = m_queue[i].name;
-        if (m_queue[i].paused)
-            continue;
-        const Tech* tech = GetTech(techname);
-        if (!tech)
-            continue;
-        if (dpsim_tech_status_map[techname] == TS_RESEARCHABLE) {
-            dp_researchable_techs.insert(i);
-        } else if (dpsim_tech_status_map[techname] == TS_UNRESEARCHABLE ||
-                   dpsim_tech_status_map[techname] == TS_HAS_RESEARCHED_PREREQ)
-        {
-            std::set<std::string> these_prereqs = tech->Prerequisites();
-            for (auto ptech_it = these_prereqs.begin(); ptech_it != these_prereqs.end();) {
-                if (dpsim_tech_status_map[*ptech_it] != TS_COMPLETE) {
-                    ++ptech_it;
-                } else {
-                    auto erase_it = ptech_it;
-                    ++ptech_it;
-                    these_prereqs.erase(erase_it);
-                }
-            }
-            waiting_for_prereqs[techname] = these_prereqs;
-        }
-    }
-
-    int dp_turns = 0;
-    //pp_still_available[turn-1] gives the IP still available in this resource pool at turn "turn"
-    std::vector<float> rp_still_available(DP_TURNS, IPs);  // initialize to the  full IP allocation for every turn
-
-    while ((dp_turns < DP_TURNS) && !(dp_researchable_techs.empty())) {// if we haven't used up our turns and still have techs to process
-        ++dp_turns;
-        std::map<int, bool> already_processed;
-        for (int tech_id : dp_researchable_techs) {
-            already_processed[tech_id] = false;
-        }
-        auto cur_tech_it = dp_researchable_techs.begin();
-        while ((rp_still_available[dp_turns-1] > EPSILON)) { // try to use up this turns IPs
-            if (cur_tech_it == dp_researchable_techs.end()) {
-                break; //will be wasting some IP this turn
-            }
-            int cur_tech = *cur_tech_it;
-            if (already_processed[cur_tech]) {
-                ++cur_tech_it;
-                continue;
-            }
-            already_processed[cur_tech] = true;
-            const std::string& tech_name = m_queue[cur_tech].name;
-            const Tech* tech = GetTech(tech_name);
-            float progress = dpsim_research_progress[cur_tech];
-            float tech_cost = tech->InfluenceCost(m_empire_id);
-            float IPs_needed = tech ? tech_cost * (1.0f - std::min(progress, 1.0f)) : 0.0f;
-            float IPs_per_turn_limit = tech ? tech->PerTurnCost(m_empire_id) : 1.0f;
-            float IPs_to_spend = std::min(std::min(IPs_needed, IPs_per_turn_limit), rp_still_available[dp_turns-1]);
-            progress += IPs_to_spend / std::max(EPSILON, tech_cost);
-            dpsim_research_progress[cur_tech] = progress;
-            rp_still_available[dp_turns-1] -= IPs_to_spend;
-            auto next_res_tech_it = cur_tech_it;
-            int next_res_tech_idx;
-            if (++next_res_tech_it == dp_researchable_techs.end()) {
-                next_res_tech_idx = m_queue.size()+1;
-            } else {
-                next_res_tech_idx = *(next_res_tech_it);
-            }
-
-            if (tech_cost - EPSILON <= progress * tech_cost) {
-                dpsim_tech_status_map[tech_name] = TS_COMPLETE;
-                dpsimulation_results[cur_tech] = dp_turns;
-#ifndef ORIG_RES_SIMULATOR
-                m_queue[cur_tech].turns_left = dp_turns;
-#endif
-                dp_researchable_techs.erase(cur_tech_it);
-                std::set<std::string> unlocked_techs;
-                if (tech)
-                    unlocked_techs = tech->UnlockedTechs();
-                for (std::string u_tech_name : unlocked_techs) {
-                    auto prereq_tech_it = waiting_for_prereqs.find(u_tech_name);
-                    if (prereq_tech_it != waiting_for_prereqs.end() ){
-                        std::set<std::string>& these_prereqs = prereq_tech_it->second;
-                        auto just_finished_it = these_prereqs.find(tech_name);
-                        if (just_finished_it != these_prereqs.end() ) {  //should always find it
-                            these_prereqs.erase(just_finished_it);
-                            if (these_prereqs.empty()) { // tech now fully unlocked
-                                int this_tech_idx = orig_queue_order[u_tech_name];
-                                dp_researchable_techs.insert(this_tech_idx);
-                                waiting_for_prereqs.erase(prereq_tech_it);
-                                already_processed[this_tech_idx] = true;    //doesn't get any allocation on current turn
-                                if (this_tech_idx < next_res_tech_idx ) {
-                                    next_res_tech_idx = this_tech_idx;
-                                }
-                            }
-                        } else { //couldnt find tech_name in prereqs list
-                            DebugLogger() << "InfluenceQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << u_tech_name << "but the latter disagreed";
-                        }
-                    } //else { //tech_name thinks itself a prereq for ytechName, but u_tech_name not in prereqs -- not a problem so long as u_tech_name not in our queue at all
-                      //  DebugLogger() << "InfluenceQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << u_tech_name << "but the latter disagreed";
-                      //}
-                }
-            }// if (tech->InfluenceCost() - EPSILON <= progress * tech_cost)
-            cur_tech_it = dp_researchable_techs.find(next_res_tech_idx);
-        }//while ((rp_still_available[dp_turns-1]> EPSILON))
-        //dp_time = dpsim_queue_timer.elapsed() * 1000;
-        // DebugLogger() << "ProductionQueue::Update queue dynamic programming sim time: " << dpsim_queue_timer.elapsed() * 1000.0;
-    } // while ((dp_turns < DP_TURNS ) && !(dp_researchable_techs.empty() ) )
-
+    //DebugLogger() << "InfluenceQueue::Update: Projections took "
+    //              << ((sim_time_end - sim_time_start).total_microseconds()) << " microseconds with "
+    //              << empire->ResourceOutput(RE_INFLUENCE) << " influence output";
     InfluenceQueueChangedSignal();
 }
 
-void InfluenceQueue::push_back(const std::string& tech_name, bool paused)
-{ m_queue.push_back(Element(tech_name, m_empire_id, 0.0f, -1, paused)); }
+void InfluenceQueue::push_back(const Element& element)
+{ m_queue.push_back(element); }
 
-void InfluenceQueue::insert(iterator it, const std::string& tech_name, bool paused)
-{ m_queue.insert(it, Element(tech_name, m_empire_id, 0.0f, -1, paused)); }
+void InfluenceQueue::insert(iterator it, const Element& element)
+{ m_queue.insert(it, element); }
 
-void InfluenceQueue::erase(iterator it) {
-    assert(it != end());
-    m_queue.erase(it);
+void InfluenceQueue::erase(int i) {
+    assert(i <= static_cast<int>(size()));
+    m_queue.erase(begin() + i);
 }
 
-InfluenceQueue::iterator InfluenceQueue::find(const std::string& tech_name) {
-    for (iterator it = begin(); it != end(); ++it) {
-        if (it->name == tech_name)
-            return it;
-    }
-    return end();
+InfluenceQueue::iterator InfluenceQueue::erase(iterator it) {
+    assert(it != end());
+    return m_queue.erase(it);
 }
 
 InfluenceQueue::iterator InfluenceQueue::begin()
@@ -255,9 +193,22 @@ InfluenceQueue::iterator InfluenceQueue::begin()
 InfluenceQueue::iterator InfluenceQueue::end()
 { return m_queue.end(); }
 
+InfluenceQueue::iterator InfluenceQueue::find(const std::string& item_name) {
+    for (auto it = begin(); it != end(); ++it) {
+        if (it->name == item_name)
+            return it;
+    }
+    return end();
+}
+
+InfluenceQueue::Element& InfluenceQueue::operator[](int i) {
+    assert(0 <= i && i < static_cast<int>(m_queue.size()));
+    return m_queue[i];
+}
+
 void InfluenceQueue::clear() {
     m_queue.clear();
     m_projects_in_progress = 0;
-    m_total_IPs_spent = 0.0f;
     InfluenceQueueChangedSignal();
 }
+
