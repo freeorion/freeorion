@@ -98,9 +98,9 @@ std::string InfluenceQueue::Element::Dump() const {
 }
 
 
-/////////////////////
+////////////////////
 // InfluenceQueue //
-/////////////////////
+////////////////////
 InfluenceQueue::InfluenceQueue(int empire_id) :
     m_projects_in_progress(0),
     m_expected_new_stockpile_amount(0),
@@ -113,11 +113,8 @@ int InfluenceQueue::ProjectsInProgress() const
 float InfluenceQueue::TotalIPsSpent() const
 { return m_total_IPs_spent; }
 
-
 float InfluenceQueue::AllocatedStockpileIP() const
 { return 0.0f; } // todo
-
-
 
 bool InfluenceQueue::empty() const
 { return !m_queue.size(); }
@@ -144,7 +141,6 @@ const InfluenceQueue::Element& InfluenceQueue::operator[](int i) const {
     return m_queue[i];
 }
 
-
 void InfluenceQueue::Update() {
     const Empire* empire = GetEmpire(m_empire_id);
     if (!empire) {
@@ -157,17 +153,23 @@ void InfluenceQueue::Update() {
 
     float available_IP = empire->ResourceOutput(RE_INFLUENCE);
     float stockpiled_IP = empire->ResourceStockpile(RE_INFLUENCE);
+    m_total_IPs_spent = 0.0f;
+
+    m_expected_new_stockpile_amount = stockpiled_IP + available_IP - m_total_IPs_spent;
+
+    //std::cout << "available IP: " << available_IP << "  stockpiled: " << stockpiled_IP << "  new expected: " << m_expected_new_stockpile_amount << std::endl;
 
 
     // cache Influence item costs and times
     // initialize Influence queue item completion status to 'never'
 
 
+    boost::posix_time::ptime sim_time_start;
+    boost::posix_time::ptime sim_time_end;
 
-
-    //DebugLogger() << "InfluenceQueue::Update: Projections took "
-    //              << ((sim_time_end - sim_time_start).total_microseconds()) << " microseconds with "
-    //              << empire->ResourceOutput(RE_INFLUENCE) << " influence output";
+    DebugLogger() << "InfluenceQueue::Update: Projections took "
+                  << ((sim_time_end - sim_time_start).total_microseconds()) << " microseconds with "
+                  << empire->ResourceOutput(RE_INFLUENCE) << " influence output";
     InfluenceQueueChangedSignal();
 }
 
