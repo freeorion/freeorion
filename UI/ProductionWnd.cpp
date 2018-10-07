@@ -1109,7 +1109,7 @@ void ProductionWnd::UpdateInfoPanel() {
     }
 
     const ProductionQueue& queue = empire->GetProductionQueue();
-    float PPs = empire->ProductionPoints();
+    float PPs = empire->ResourceOutput(RE_INDUSTRY);
     float total_queue_cost = queue.TotalPPsSpent();
     float stockpile = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
     float stockpile_use = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
