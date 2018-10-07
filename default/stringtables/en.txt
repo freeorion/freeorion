@@ -4763,6 +4763,15 @@ Neither the Saved Designs nor the Default Designs were added to the empire at ga
 ERROR_UNABLE_TO_WRITE_FILE
 Unable to write file:\n"%1%"
 
+
+
+##
+## Government window
+##
+
+GOVERNMENT_INFO_IP
+IP
+
 GOVERNMENT_WND_MAIN_PANEL_TITLE
 Government Policies
 
@@ -5183,6 +5192,9 @@ PP
 
 ENC_RP
 RP
+
+ENC_IP
+IP
 
 # Concise listing of costs required to produce item or research tech.
 # %1% cost to complete requested item or technology.

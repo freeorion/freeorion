@@ -6727,11 +6727,24 @@ void MapWnd::RefreshInfluenceResourceIndicator() {
         m_influence->SetValue(0.0);
         return;
     }
-    m_influence->SetValue(empire->ResourceStockpile(RE_INFLUENCE));
-    m_influence->ClearBrowseInfoWnd();
+    double total_IP_spent = empire->GetInfluenceQueue().TotalIPsSpent();
+    double total_IP_output = empire->GetResourcePool(RE_INFLUENCE)->TotalOutput();
+    double total_IP_target_output = empire->GetResourcePool(RE_INFLUENCE)->TargetOutput();
+    float  stockpile = empire->GetResourcePool(RE_INFLUENCE)->Stockpile();
+    float  stockpile_used = empire->GetInfluenceQueue().AllocatedStockpileIP();
+    float  expected_stockpile = empire->GetInfluenceQueue().ExpectedNewStockpileAmount();
+
+    float  stockpile_plusminus_next_turn = expected_stockpile - stockpile;
+    double total_IP_to_stockpile = expected_stockpile - stockpile + stockpile_used;
+
+    m_influence->SetValue(stockpile);
+    m_influence->SetValue(stockpile_plusminus_next_turn, 1);
+
     m_influence->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    m_influence->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
-        UserString("MAP_INFLUENCE_TITLE"), UserString("MAP_INFLUENCE_TEXT")));
+    m_influence->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
+        UserString("MAP_INFLUENCE_TITLE"), UserString("GOVERNMENT_INFO_IP"),
+        total_IP_spent, total_IP_output, total_IP_target_output,
+        true, stockpile_used, stockpile, expected_stockpile));
 }
 
 void MapWnd::RefreshFleetResourceIndicator() {
