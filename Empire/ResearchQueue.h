@@ -16,7 +16,8 @@ struct FO_COMMON_API ResearchQueue {
     /** The type of a single element in the research queue. */
     struct Element {
         explicit Element() = default;
-        Element(const std::string& name_, int empire_id_, float spending_, int turns_left_, bool paused_ = false) :
+        Element(const std::string& name_, int empire_id_, float spending_,
+                int turns_left_, bool paused_ = false) :
             name(name_),
             empire_id(empire_id_),
             allocated_rp(spending_),

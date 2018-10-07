@@ -153,8 +153,12 @@ const ResearchQueue::Element& ResearchQueue::operator[](int i) const {
 void ResearchQueue::Update(float RPs, const std::map<std::string, float>& research_progress) {
     // status of all techs for this empire
     const Empire* empire = GetEmpire(m_empire_id);
-    if (!empire)
+    if (!empire) {
+        ErrorLogger() << "ResearchQueue::Update passed null empire.  doing nothing.";
+        m_projects_in_progress = 0;
+        m_total_RPs_spent = 0.0f;
         return;
+    }
 
     std::map<std::string, TechStatus> sim_tech_status_map;
     for (const auto& tech : GetTechManager()) {
@@ -190,7 +194,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
     //record original order & progress
     // will take advantage of fact that sets (& map keys) are by default kept in sorted order lowest to highest
     std::map<std::string, float> dp_prog = research_progress;
-    std::map< std::string, int > orig_queue_order;
+    std::map<std::string, int> orig_queue_order;
     std::map<int, float> dpsim_research_progress;
     for (unsigned int i = 0; i < m_queue.size(); ++i) {
         std::string tname = m_queue[i].name;
@@ -202,7 +206,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
 
     // initialize simulation_results with -1 for all techs, so that any techs that aren't
     // finished in simulation by turn TOO_MANY_TURNS will be left marked as never to be finished
-    std::vector<int>  dpsimulation_results(m_queue.size(), -1);
+    std::vector<int> dpsimulation_results(m_queue.size(), -1);
 
     const int DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
 
