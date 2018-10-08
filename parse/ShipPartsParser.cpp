@@ -108,7 +108,7 @@ namespace {
                 >   common_rules.common
                 >   label(tok.Icon_)        > tok.string
                 > -(label(tok.Precision_) > double_rule)
-//                > -(label(tok.PreferredPrey_) > condition_parser)
+                > -(label(tok.PreferredPrey_) > condition_parser)
                   ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
                       insert_parttype_(_r1, _3,
                                        construct<std::tuple<boost::optional<double>, boost::optional<double>>>(_4, _5)
