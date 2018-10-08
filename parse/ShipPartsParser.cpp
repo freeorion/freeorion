@@ -1,6 +1,14 @@
 #define PHOENIX_LIMIT 12
 #define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
-
+#if (PHOENIX_LIMIT < 11)
+#  error "PHOENIX_LIMIT is set too low"
+#endif
+#if defined(FUSION_MAX_VECTOR_SIZE)
+#  if (FUSION_MAX_VECTOR_SIZE < 11)
+#    error "FUSION_MAX_VECTOR_SIZE is set below 11"
+#  endif
+#endif
+    
 #include "Parse.h"
 
 #include "ParseImpl.h"
