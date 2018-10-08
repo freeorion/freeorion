@@ -7,6 +7,8 @@
 #  if (FUSION_MAX_VECTOR_SIZE < 11)
 #    error "FUSION_MAX_VECTOR_SIZE is set below 11"
 #  endif
+#else
+#  define FUSION_MAX_VECTOR_SIZE 55
 #endif
     
 #include "Parse.h"
