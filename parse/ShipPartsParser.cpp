@@ -110,7 +110,7 @@ namespace {
                 > -(label(tok.MountableSlotTypes_) > one_or_more_slots)
                 >   common_rules.common
                 >   label(tok.Icon_)        > tok.string
-                > -(label(tok.Precision_) > double_rule)
+                > -(label(tok.Precision_) > int_rule)
                 > -(label(tok.PreferredPrey_) > condition_parser)
                   ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
                       insert_parttype_(_r1, _3,
