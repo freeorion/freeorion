@@ -1,8 +1,3 @@
-#define FUSION_MAX_VECTOR_SIZE 20
-#define PHOENIX_LIMIT 12
-#define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
-
-    
 #include "Parse.h"
 
 #include "ParseImpl.h"
@@ -45,7 +40,7 @@ namespace {
     {
         boost::optional<double> capacity, stat2;
         boost::optional<int> precision;
-        boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>> preferredPrey;
+ //       boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>> preferredPrey;
         std::tie(capacity, stat2, precision) = capacity_and_stat2_and;
 
         auto part_type = boost::make_unique<PartType>(
