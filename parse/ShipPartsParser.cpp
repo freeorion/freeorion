@@ -74,6 +74,7 @@ namespace {
             ship_slot_type_enum(tok),
             ship_part_class_enum(tok),
             double_rule(tok),
+            int_rule(tok),
             one_or_more_slots(ship_slot_type_enum)
         {
             namespace phoenix = boost::phoenix;
@@ -142,6 +143,7 @@ namespace {
         parse::detail::common_params_rules common_rules;
         parse::ship_slot_enum_grammar  ship_slot_type_enum;
         parse::ship_part_class_enum_grammar ship_part_class_enum;
+        parse::detail::int_grammar int_rule;
         parse::detail::double_grammar double_rule;
         parse::detail::single_or_bracketed_repeat<parse::ship_slot_enum_grammar> one_or_more_slots;
         part_type_rule                     part_type;
