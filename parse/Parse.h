@@ -7,10 +7,6 @@
 #   define FO_PARSE_API
 #endif
 
-#define FUSION_MAX_VECTOR_SIZE 20
-#define PHOENIX_LIMIT 12
-#define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
-
 #include "../universe/ValueRefFwd.h"
 
 #include <boost/filesystem/path.hpp>
