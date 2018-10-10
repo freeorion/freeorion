@@ -6,6 +6,7 @@ TARGET_COMSAT
 TARGET_MAYBE_DANGEROUS
 '''Or [
         Not Ship
+        Monster
         DesignHasPartClass class = Bombard
         DesignHasPartClass class = General
         DesignHasPartClass class = FighterBay
