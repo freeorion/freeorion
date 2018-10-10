@@ -81,8 +81,8 @@ namespace {
             common_rules(tok, label, condition_parser, string_grammar, tags_parser),
             ship_slot_type_enum(tok),
             ship_part_class_enum(tok),
-            double_rule(tok),
             int_rule(tok),
+            double_rule(tok),
             one_or_more_slots(ship_slot_type_enum)
         {
             namespace phoenix = boost::phoenix;

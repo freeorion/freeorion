@@ -160,9 +160,6 @@ private:
     std::unique_ptr<ValueRef::ValueRefBase<int>>        m_production_time;
     std::vector<ShipSlotType>                           m_mountable_slot_types;
     std::set<std::string>                               m_tags;
-//    std::unique_ptr<ValueRef::ValueRefBase<int>>        
-    int                                                 m_precision;
-    std::unique_ptr<const ::Condition::ConditionBase>       m_preferred_prey;
     CommonParams::ConsumptionMap<MeterType>             m_production_meter_consumption;
     CommonParams::ConsumptionMap<std::string>           m_production_special_consumption;
     std::unique_ptr<Condition::ConditionBase>           m_location;
@@ -171,6 +168,8 @@ private:
 
     std::string     m_icon = "";
     bool            m_add_standard_capacity_effect = false;
+    int                                                 m_precision;
+    std::unique_ptr<const ::Condition::ConditionBase>   m_preferred_prey;
 
 // XXX Q: increase version somewhere?? Q2: is serialization of m_precision/m_preferred_prey actually necessary?
     friend class boost::serialization::access;
