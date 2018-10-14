@@ -25,11 +25,27 @@ bool Targetting::IsPreferredTarget(const Targetting::TriggerConditions& conditio
 
         if (Targetting::IsPreferredTarget(*condition, target)) {
             const int scale = 10; // scale all compared values to remove artifacts from rounding
-            const int upper = std::round(highest_weight * 1.5f * scale); // HEURISTIC
-            const int improbability = RandInt(0, upper);
-            const int luck = conditions.weights[i] * scale;
-            DebugLogger() << "Prioritized locking attempt (? " << luck << "/" << upper << " >? " << improbability << "/" << upper << " ?)";
-            if (luck > improbability) {
+            const int universe = std::round(highest_weight *  1.5f * scale); // HEURISTIC scaling the chance of highest weighted conditions
+            const int max_locked = conditions.weights[i] * scale;
+            // HEURISTIC expanding the universe to lower chance of lower weights
+            // shift by one, as the real precision difference should be the number of rerolls, not the number of rolls
+            int light_universe_weight = conditions.weights[i]-1;
+            int heavy_universe_weight = highest_weight-1;
+            if (light_universe_weight < 1) {
+                // make a precision of 1 safe again for multiplication
+                heavy_universe_weight += (1 - light_universe_weight);
+                light_universe_weight = 1;
+            }
+            const int weighted_universe = (float)(universe * heavy_universe_weight) / (float)(light_universe_weight);
+            const int roll = RandInt(1, weighted_universe);
+            if (conditions.weights[i] == highest_weight) {
+                DebugLogger() << "Prioritized locking attempt. Lock if h <= " << max_locked << "/" << weighted_universe
+                              << ". Got h = " << roll << "; " << roll << "/" << weighted_universe << " (highest precision condition)";
+            } else {
+                DebugLogger() << "Prioritized locking attempt. Lock if w <= " << max_locked << "/" << weighted_universe
+                              << ". Got w = " << roll << "; " << roll << "/" << weighted_universe << " (weighted precision condition)";
+            }
+            if (max_locked >= roll) {
                 DebugLogger() << "Locked in target.";
                 return true;
             } else {
@@ -43,11 +59,6 @@ bool Targetting::IsPreferredTarget(const Targetting::TriggerConditions& conditio
 bool Targetting::IsPreferredTarget(const ::Condition::ConditionBase& condition,
                                    Targetting::Target target)
 {
-    /*    if (!condition) {
-        DebugLogger() << "No preferences. Target is perfect." ;
-        return true;
-        }*///XXX
-
     DebugLogger() << "Evaluate preferred prey condition" << condition.Description();
     bool is_preferred = condition.Eval(target);
     auto obj_type = target->ObjectType();
