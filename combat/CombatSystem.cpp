@@ -779,7 +779,6 @@ namespace {
         if (available_fighters > 0 && !part_fighter_launch_capacities.empty()) {
             for (auto& launch : part_fighter_launch_capacities) {
                 int to_launch = std::min(launch.second, available_fighters);
-                std::string part_name = launch.first;
                 DebugLogger() << "Ship " << ship->Name() << " launching " << to_launch << " fighters from bay part " << launch.first;
 
                 if (to_launch <= 0)
