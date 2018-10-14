@@ -13,19 +13,27 @@
 //  Design Choices:
 //    Combat Interpretation - Precision means number of rolls to find a preferred target
 //       Precision 1 or NoPreference means the old behavior (doesnt change chances to hit certain prey)
-//       Also if there are multiple sources defining preferred prey, it is used as a weight when randomly choosing a target.
-//       TBD: consider sources besides the curren weapon/hangar part
+//       Also if there are multiple sources defining preferred prey, precision is used as a weight when randomly choosing a target.
+//    ShipParts are responsible for condition ownership. For other conditions (i.e. planets), CombatTargetting is responsible.
+//
+//  Content Wiring:
+//    For planets: these shoot with a precision of 3 at space ships
+//    For space ships, the respective weapon part contributes the TriggerConditions to the shot
+//                     also detection parts work as "battle scanners" and contribute their TriggerCondition to the shot
+//    For space boats, the hangars part contributes the TriggerConditions to the shot
+//
+//    Content Setup Language (FOCS)
+//       Precision                        'precision'     value in FOCS script for ship_parts
+//       const ::Condition::ConditionBase 'preferredPrey' condition in FOCS script for ship_parts
 //
 //    Content Setup (examples) - in FOCS scripts
 //       Flak (SR_WEAPON_0_1)  - hunting space boats
 //       Bombers (FT_HANGAR_3) - mostly hunting space ships
+//       Fighters (FT_HANGAR_2) - slightly preferring to shoot at ships containing anti-boat guns (SR_WEAPON_0_1)
 //       Interceptors (FT_HANGAR_1) - mostly hunting space boats
-//    Attacking planets should be reconsidered (E.g. let ships prefer ships with precision 2); also glass cannon
-//       
-//    Content Setup Language
-//       Precion          'precision'     value in FOCS script for ship_parts
-//       const ::Condition::ConditionBase 'preferredPrey' condition in FOCS script for ship_parts
-//    The content may actually not be hardcoded, so this needs to change before merge.
+//    Attacking planets have their precision and preference hardwired (look for DEF_DEFENSE in CombatSystem.cpp)
+
+
 
 namespace Targetting {
     enum PreyType {
@@ -37,37 +45,21 @@ namespace Targetting {
     };
 
     typedef std::shared_ptr<UniverseObject>                   Target;
-//    typedef const ::Condition::ConditionBase                  TriggerCondition;
-//    typedef std::shared_ptr<const ::Condition::ConditionBase> std::shared_ptr<const ::Condition::ConditionBase>;
     typedef int                                               Precision;
     struct TriggerConditions {
-        // Currently ShipPart takes ownership of trigger condition using a unique_ptr
-        // TriggerConditions takes ownership of conditions so it could become part of ShipDesign, Parts etc..
-        // If ownership is not necessary we still not some kind of reference type, where shared_ptr seems to be a lesser evil
-        std::vector<std::shared_ptr<const ::Condition::ConditionBase>> conditions;
+        // Currently ShipPart takes ownership of trigger condition using a unique_ptr - should be moved to some ConditionManager
+        std::vector<const ::Condition::ConditionBase *> conditions;
         std::vector<int> weights;
 
         TriggerConditions()
         {}
 
-        TriggerConditions(const std::vector<std::shared_ptr<const ::Condition::ConditionBase>>&& conditions_, const std::vector<int>&& weights_) :
+        TriggerConditions(const std::vector<const ::Condition::ConditionBase *>&& conditions_, const std::vector<int>&& weights_) :
             conditions(std::move(conditions_)),
             weights(std::move(weights_))
         {}
-        /*
-        TriggerConditions(const std::shared_ptr<const ::Condition::ConditionBase>&& condition_, const int weight_) :
-            conditions({condition_}),
-            weights({weight_})
-        {}
-        */
-        TriggerConditions(const std::shared_ptr<const ::Condition::ConditionBase>& condition_, const int weight_) :
-            conditions({condition_}),
-            weights({weight_})
-        {}
-
-
         TriggerConditions(const ::Condition::ConditionBase* condition_, const int weight_) :
-            conditions({std::shared_ptr<const ::Condition::ConditionBase>(condition_)}),
+            conditions({condition_}),
             weights({weight_})
         {}
 
@@ -80,11 +72,15 @@ namespace Targetting {
 
     /* returns nullptr if no preference */
     const ::Condition::ConditionBase* FindPreferredTargets(const std::string& part_name);
-    std::unique_ptr<const ::Condition::ConditionBase> PreyAsTriggerCondition(PreyType prey);
-    TriggerConditions PreyAsTriggerConditions(PreyType prey);
+
+    /* gives access to static conditions */
+    const ::Condition::ConditionBase* PreyAsTriggerCondition(PreyType prey);
+
+    /* returns a new TriggerCondition with the priorities and preferences of both given TriggerConditions */ 
     TriggerConditions Combine(const TriggerConditions& one, const TriggerConditions& another);
+
     /* if the given condition exists, a copy with the appended condition gets returned. */
-    const TriggerConditions Combine(const TriggerConditions& one, const std::shared_ptr<const ::Condition::ConditionBase>&& another, int weight);
+    const TriggerConditions Combine(const TriggerConditions& one, const ::Condition::ConditionBase* another, int weight);
 }
 
 #endif // _CombatTargetting_h_

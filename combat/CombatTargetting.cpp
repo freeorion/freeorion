@@ -59,34 +59,32 @@ bool Targetting::IsPreferredTarget(const ::Condition::ConditionBase& condition,
     return is_preferred;
 }
 
-std::unique_ptr<const ::Condition::ConditionBase> Targetting::PreyAsTriggerCondition(const Targetting::PreyType prey)
+const ::Condition::ConditionBase* Targetting::PreyAsTriggerCondition(const Targetting::PreyType prey)
 {
-    std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>> p_obj;
+    static std::unique_ptr<::Condition::ConditionBase> is_boat =
+        boost::make_unique<::Condition::Type>(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_FIGHTER)));
+    static std::unique_ptr<::Condition::ConditionBase> is_planet =
+        boost::make_unique<::Condition::Type>(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_PLANET)));
+    static std::unique_ptr<::Condition::ConditionBase> is_ship =
+        boost::make_unique<::Condition::Type>(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_SHIP)));
+    static std::unique_ptr<::Condition::ConditionBase> is_any = boost::make_unique<Condition::All>();
+    // One could support mixed values by allowing bit patterns; e.g. returning static is_boat_or_ship Condition::And({is_boat,is_ship})
     switch (prey) {
     case Targetting::PreyType::PlanetPrey:
-        p_obj = std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_PLANET));
-        break;
+        return is_planet.get();
     case Targetting::PreyType::BoatPrey:
-        p_obj = std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_FIGHTER));
-        break;
+        return is_boat.get();
     case Targetting::ShipPrey:
-        p_obj = std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>(new ValueRef::Constant<UniverseObjectType>(OBJ_SHIP));
-        break;
+        return is_ship.get();
     case Targetting::AllPrey:
-        //case Targetting::PreyType::NoPreference:
-        return boost::make_unique<Condition::All>();
-        break;
+    //case Targetting::PreyType::NoPreference:
+        return is_any.get();
     default:
         // error
         ErrorLogger() << "PreyAsTriggerCondition encountered unsupported PreyType " << prey << ".";
         return nullptr;
     }
-    //    return std::make_shared<Condition::Type>(move(p_obj));
-    return boost::make_unique<Condition::Type>(move(p_obj));
 }
-
-Targetting::TriggerConditions Targetting::PreyAsTriggerConditions(const Targetting::PreyType prey)
-{ return Targetting::TriggerConditions(Targetting::PreyAsTriggerCondition(prey), 1); }
 
 const ::Condition::ConditionBase* Targetting::FindPreferredTargets(const std::string& part_name)
 {
@@ -115,7 +113,7 @@ Targetting::TriggerConditions Targetting::Combine(const Targetting::TriggerCondi
 }
 
 const Targetting::TriggerConditions Targetting::Combine(const Targetting::TriggerConditions& conditions,
-                                                        const std::shared_ptr<const ::Condition::ConditionBase>&& condition, int weight)
+                                                        const ::Condition::ConditionBase* condition, int weight)
 {
     if (!condition) {
         return conditions;

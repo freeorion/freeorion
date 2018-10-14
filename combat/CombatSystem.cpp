@@ -1538,11 +1538,9 @@ namespace {
             }
 
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon
-            std::shared_ptr<const ::Condition::ConditionBase> preferred_targets_shared(Targetting::PreyAsTriggerCondition(Targetting::ShipPrey));
-            Targetting::TriggerConditions preferred_targets_ref(preferred_targets_shared, 3);
-            //Targetting::TriggerConditions preferred_targets(*Targetting::PreyAsTriggerCondition(Targetting::ShipPrey), 3);
+            Targetting::TriggerConditions preferred_targets(Targetting::PreyAsTriggerCondition(Targetting::ShipPrey), 3);
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"),
-                                             attack_planet->CurrentMeterValue(METER_DEFENSE), 3, preferred_targets_ref));
+                                             attack_planet->CurrentMeterValue(METER_DEFENSE), 3, preferred_targets));
 
         } else if (attack_fighter) {    // treat fighter damage as direct fire weapon
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("FT_WEAPON_1"),
