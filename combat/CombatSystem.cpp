@@ -269,9 +269,8 @@ void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id)
 ////////////////////////////////////////////////
 namespace {
     struct PartAttackInfo {
-        typedef Targetting::TriggerConditions PartTriggerConditions;
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
-                       float part_attack_, Targetting::Precision precision_, const PartTriggerConditions targets_) :
+                       float part_attack_, Targetting::Precision precision_, const Targetting::TriggerConditions targets_) :
             part_class(part_class_),
             part_type_name(part_name_),
             part_attack(part_attack_),
@@ -281,7 +280,7 @@ namespace {
             preferred_targets(targets_)
         {}
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
-                       int fighters_launched_, float fighter_damage_, Targetting::Precision precision_, const PartTriggerConditions targets_) :
+                       int fighters_launched_, float fighter_damage_, Targetting::Precision precision_, const Targetting::TriggerConditions targets_) :
             part_class(part_class_),
             part_type_name(part_name_),
             part_attack(0.0f),
@@ -298,7 +297,7 @@ namespace {
         float           fighter_damage;     // for fighter bays, input value should be determined by ship fighter weapon setup
         int             precision;          //
 
-        const PartTriggerConditions preferred_targets;
+        const Targetting::TriggerConditions preferred_targets;
 
         bool PrefersTarget(std::shared_ptr<UniverseObject> target) const
         { return Targetting::IsPreferredTarget(preferred_targets, target); }
