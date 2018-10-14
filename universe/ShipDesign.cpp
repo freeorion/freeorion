@@ -707,7 +707,7 @@ unsigned int HullType::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_production_cost);
     CheckSums::CheckSumCombine(retval, m_production_time);
     CheckSums::CheckSumCombine(retval, m_producible);
-    //    CheckSums::CheckSumCombine(retval, m_slots); // FIXME uncommented cause of bleep when debugging
+    CheckSums::CheckSumCombine(retval, m_slots);
     CheckSums::CheckSumCombine(retval, m_tags);
     CheckSums::CheckSumCombine(retval, m_production_meter_consumption);
     CheckSums::CheckSumCombine(retval, m_production_special_consumption);
