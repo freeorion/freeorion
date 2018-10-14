@@ -25,6 +25,7 @@
 
 #include "../util/Export.h"
 #include "../util/Pending.h"
+#include "../util/CheckSums.h"
 
 #include "../combat/CombatTargetting.h"
 
@@ -274,6 +275,14 @@ public:
         {}
         ShipSlotType type;
         double x = 0.5, y = 0.5;
+        unsigned int GetCheckSum() const {
+            unsigned int ret = 404;
+            unsigned int& sum = ret;
+            CheckSums::CheckSumCombine(sum, x);
+            CheckSums::CheckSumCombine(sum, y);
+            CheckSums::CheckSumCombine(sum, type);
+            return ret;
+        }
     };
 
     /** \name Structors */ //@{
