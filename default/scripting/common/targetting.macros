@@ -1,8 +1,8 @@
-// Use to identify comsat ships in preferredPrey conditions. Military ships should prefer other targets.
+// Use to identify comsat ships in priorityTargets conditions. Military ships should prefer other targets.
 TARGET_COMSAT
 '''And [  DesignHasHull name ="SH_COLONY_BASE"     ( PartsInShipDesign design = LocalCandidate.DesignID < 1 ) ]'''
 
-// Use to identify potentially dangerous ships in preferredPrey conditions.
+// Use to identify potentially dangerous ships in priorityTargets conditions.
 TARGET_MAYBE_DANGEROUS
 '''Or [
         Not Ship

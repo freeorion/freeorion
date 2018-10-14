@@ -10,7 +10,7 @@ Part
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/spinal_antimatter.png"
     precision = [[GOOD_PRECISION]]
-    preferredPrey = And [
+    priorityTargets = And [
         Ship
         Or [
             Structure low = 80

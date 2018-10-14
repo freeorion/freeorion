@@ -96,7 +96,7 @@ public:
              std::vector<ShipSlotType> mountable_slot_types,
              const std::string& icon, bool add_standard_capacity_effect = true,
              int precision = 2,
-             std::unique_ptr<const ::Condition::ConditionBase>&& preferredPrey = nullptr
+             std::unique_ptr<const ::Condition::ConditionBase>&& priorityTargets = nullptr
              ); // XXX default value?
 
     ~PartType();
@@ -115,7 +115,7 @@ public:
                             MountableSlotTypes() const  { return m_mountable_slot_types; }
 
     int                     Precision() const            { return m_precision; }
-    const ::Condition::ConditionBase* PreferredPrey() const { return m_preferred_prey.get(); }          ///< returns the condition XXXX
+    const ::Condition::ConditionBase* PriorityTargets() const { return m_priority_targets.get(); }          ///< returns the condition XXXX
 
     bool                    ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
     float                   ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to produce this part
@@ -169,9 +169,9 @@ private:
     std::string     m_icon = "";
     bool            m_add_standard_capacity_effect = false;
     int                                                 m_precision;
-    std::unique_ptr<const ::Condition::ConditionBase>   m_preferred_prey;
+    std::unique_ptr<const ::Condition::ConditionBase>   m_priority_targets;
 
-// XXX Q: increase version somewhere?? Q2: is serialization of m_precision/m_preferred_prey actually necessary?
+// XXX Q: increase version somewhere?? Q2: is serialization of m_precision/m_priority_targets actually necessary?
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -761,7 +761,7 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_icon)
         & BOOST_SERIALIZATION_NVP(m_add_standard_capacity_effect)
         & BOOST_SERIALIZATION_NVP(m_precision)
-        & BOOST_SERIALIZATION_NVP(m_preferred_prey);
+        & BOOST_SERIALIZATION_NVP(m_priority_targets);
 }
 
 template <class Archive>

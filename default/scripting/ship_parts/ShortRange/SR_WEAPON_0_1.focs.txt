@@ -14,7 +14,7 @@ Part
         [[WEAPON_BASE_DEFAULT_EFFECTS(SR_WEAPON_0_1)]]
     icon = "icons/ship_parts/flak.png"
     precision = [[GREAT_PRECISION]]
-    preferredPrey = And [
+    priorityTargets = And [
         Not Ship
         Not Planet
     ]

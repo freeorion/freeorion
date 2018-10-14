@@ -12,7 +12,7 @@ Part
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter02.png"
     precision = [[AVERAGE_PRECISION]]
-    preferredPrey = And [
+    priorityTargets = And [
         // prefers to attack ships with flak
         Ship
         DesignHasPart low = 1 name = "SR_WEAPON_0_1"

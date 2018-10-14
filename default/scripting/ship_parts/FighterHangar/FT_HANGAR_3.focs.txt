@@ -12,7 +12,7 @@ Part
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter04.png"
     precision = [[GOOD_PRECISION]]
-    preferredPrey = And [
+    priorityTargets = And [
         Ship
         Not [[TARGET_COMSAT]]
     ]

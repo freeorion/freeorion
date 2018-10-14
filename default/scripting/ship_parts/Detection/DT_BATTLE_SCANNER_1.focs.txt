@@ -10,7 +10,7 @@ Part
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/detector-1.png"
     precision = [[GOOD_PRECISION]]
-    preferredPrey = And [
+    priorityTargets = And [
         Armed
     ]
 

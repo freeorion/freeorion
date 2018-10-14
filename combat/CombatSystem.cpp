@@ -277,7 +277,7 @@ namespace {
             fighters_launched(0),
             fighter_damage(0.0f),
             precision(precision_),
-            preferred_targets(targets_)
+            priority_targets(targets_)
         {}
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
                        int fighters_launched_, float fighter_damage_, Targetting::Precision precision_, const Targetting::TriggerConditions targets_) :
@@ -287,7 +287,7 @@ namespace {
             fighters_launched(fighters_launched_),
             fighter_damage(fighter_damage_),
             precision(precision_),
-            preferred_targets(targets_)
+            priority_targets(targets_)
         {}
 
         ShipPartClass   part_class;
@@ -297,10 +297,10 @@ namespace {
         float           fighter_damage;     // for fighter bays, input value should be determined by ship fighter weapon setup
         int             precision;          //
 
-        const Targetting::TriggerConditions preferred_targets;
+        const Targetting::TriggerConditions priority_targets;
 
         bool PrefersTarget(std::shared_ptr<UniverseObject> target) const
-        { return Targetting::IsPreferredTarget(preferred_targets, target); }
+        { return Targetting::IsPriorityTarget(priority_targets, target); }
 
     };
 
@@ -718,12 +718,11 @@ namespace {
             return retval;
 
         Targetting::Precision design_precision = 0;
-        Targetting::TriggerConditions design_preferred_prey;
+        Targetting::TriggerConditions design_priority_targets;
         std::set<std::string> seen_hangar_part_types;
         int available_fighters = 0;
         float fighter_attack = 0.0f;
-        //        std::shared_ptr<const ::Condition::ConditionBase> fighter_preferred_prey = nullptr;
-        const ::Condition::ConditionBase* fighter_preferred_prey = nullptr;
+        const ::Condition::ConditionBase* fighter_priority_targets = nullptr;
         Targetting::Precision fighter_precision = 0;
         std::map<std::string, int> part_fighter_launch_capacities;
 
@@ -738,8 +737,8 @@ namespace {
             ShipPartClass part_class = part->Class();
             if (part_class == PC_DETECTION){
                 design_precision = std::max(design_precision, part->Precision());
-                design_preferred_prey = Targetting::Combine(design_preferred_prey,
-                                                            Targetting::TriggerConditions(part->PreferredPrey(), part->Precision()));
+                design_priority_targets = Targetting::Combine(design_priority_targets,
+                                                            Targetting::TriggerConditions(part->PriorityTargets(), part->Precision()));
             }
         }
         for (const auto& part_name : design->Parts()) { // second round
@@ -754,11 +753,11 @@ namespace {
                 int shots = static_cast<int>(ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name)); // secondary stat is shots per attack)
                 if (part_attack > 0.0f && shots > 0) {
                     // attack for each shot...
-                    auto preferred_targets = Targetting::Combine(design_preferred_prey,
-                                                                 Targetting::TriggerConditions(Targetting::FindPreferredTargets(part_name),
+                    auto priority_targets = Targetting::Combine(design_priority_targets,
+                                                                 Targetting::TriggerConditions(Targetting::FindPriorityTargets(part_name),
                                                                                                part->Precision()));
                     for (int shot_count = 0; shot_count < shots; ++shot_count)
-                        retval.push_back(PartAttackInfo(part_class, part_name, part_attack, Targetting::FindPrecision(preferred_targets), preferred_targets));
+                        retval.push_back(PartAttackInfo(part_class, part_name, part_attack, Targetting::FindPrecision(priority_targets), priority_targets));
                 }
 
             } else if (part_class == PC_FIGHTER_HANGAR) {
@@ -767,10 +766,7 @@ namespace {
                     available_fighters += ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
                     seen_hangar_part_types.insert(part_name);
                     fighter_precision = part->Precision();
-                    fighter_preferred_prey = part->PreferredPrey();
-                    //XXX
-                    //                    fighter_preferred_prey = std::make_shared<const ::Condition::ConditionBase>(part->PreferredPrey());
-
+                    fighter_priority_targets = part->PriorityTargets();
                     // should only be one type of fighter per ship as of this writing
                     fighter_attack = ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name);  // secondary stat is fighter damage
                 }
@@ -789,9 +785,9 @@ namespace {
                 if (to_launch <= 0)
                     continue;
 
-                Targetting::TriggerConditions preferred_targets(fighter_preferred_prey, fighter_precision);
+                Targetting::TriggerConditions priority_targets(fighter_priority_targets, fighter_precision);
                 retval.push_back(PartAttackInfo(PC_FIGHTER_BAY, launch.first, to_launch,
-                                                fighter_attack, fighter_precision, preferred_targets)); // attack may be 0; that's ok: decoys
+                                                fighter_attack, fighter_precision, priority_targets)); // attack may be 0; that's ok: decoys
                 available_fighters -= to_launch;
                 if (available_fighters <= 0)
                     break;
@@ -868,14 +864,14 @@ namespace {
         std::vector<int> AddFighters(int number, float damage, int owner_empire_id,
                                      int from_ship_id, const std::string& species,
                                      Targetting::Precision precision,
-                                     const Targetting::TriggerConditions& preferred_prey)
+                                     const Targetting::TriggerConditions& priority_targets)
         {
             std::vector<int> retval;
 
             for (int n = 0; n < number; ++n) {
                 // create / insert fighter into combat objectmap
                 auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id, species, damage,
-                                                             precision, preferred_prey);
+                                                             precision, priority_targets);
                 fighter_ptr->SetID(next_fighter_id--);
                 fighter_ptr->Rename(UserString("OBJ_FIGHTER"));
                 combat_info.objects.Insert(fighter_ptr);
@@ -1314,7 +1310,7 @@ namespace {
             DebugLogger() << "Target precision: " << std::to_string(weapon.precision);
             for (int t = 1; t < weapon.precision ; t++) {
                 // Do all but the last round of finding a valid target; the simple last round is separate for performance reasons
-                DebugLogger() << "Find target - Round: " << std::to_string(t) << " (try to lock it if it matches preferredPrey conditions)";
+                DebugLogger() << "Find target - Round: " << std::to_string(t) << " (try to lock it if it matches priorityTargets conditions)";
                 int target_idx = RandInt(0, valid_target_ids.size() - 1);
                 int target_id = *std::next(valid_target_ids.begin(), target_idx);
 
@@ -1332,7 +1328,7 @@ namespace {
             }
             // if there is still no target lock a randomly chosen target without checking preferences
             if (!target) {
-                DebugLogger() << "Find target - Round: " << std::to_string(weapon.precision) << " (Final round ignores preferredPrey condition)";
+                DebugLogger() << "Find target - Round: " << std::to_string(weapon.precision) << " (Final round ignores priorityTargets condition)";
                 int target_idx = RandInt(0, valid_target_ids.size() - 1);
                 int target_id = *std::next(valid_target_ids.begin(), target_idx);
 
@@ -1425,7 +1421,7 @@ namespace {
             std::vector<int> new_fighter_ids =
                 combat_state.AddFighters(weapon.fighters_launched, weapon.fighter_damage,
                                          attacker_owner_id, attacker->ID(), species_name,
-                                         weapon.precision, weapon.preferred_targets);
+                                         weapon.precision, weapon.priority_targets);
 
             // combat event
             CombatEventPtr launch_event =
@@ -1537,13 +1533,13 @@ namespace {
             }
 
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon
-            Targetting::TriggerConditions preferred_targets(Targetting::PreyAsTriggerCondition(Targetting::ShipPrey), 3);
+            Targetting::TriggerConditions priority_targets(Targetting::PreyAsTriggerCondition(Targetting::ShipPrey), 3);
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"),
-                                             attack_planet->CurrentMeterValue(METER_DEFENSE), 3, preferred_targets));
+                                             attack_planet->CurrentMeterValue(METER_DEFENSE), 3, priority_targets));
 
         } else if (attack_fighter) {    // treat fighter damage as direct fire weapon
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("FT_WEAPON_1"),
-                                             attack_fighter->Damage(), attack_fighter->Precision(), attack_fighter->PreferredTargets()));
+                                             attack_fighter->Damage(), attack_fighter->Precision(), attack_fighter->PriorityTargets()));
         }
         return weapons;
     }

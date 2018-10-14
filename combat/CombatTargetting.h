@@ -24,7 +24,7 @@
 //
 //    Content Setup Language (FOCS)
 //       Precision                        'precision'     value in FOCS script for ship_parts
-//       const ::Condition::ConditionBase 'preferredPrey' condition in FOCS script for ship_parts
+//       const ::Condition::ConditionBase 'priorityTargets' condition in FOCS script for ship_parts
 //
 //    Content Setup (examples) - in FOCS scripts
 //       Flak (SR_WEAPON_0_1)  - hunting space boats
@@ -65,13 +65,13 @@ namespace Targetting {
 
     };
 
-    bool IsPreferredTarget(const ::Condition::ConditionBase& condition, Target target);
-    bool IsPreferredTarget(const TriggerConditions& condition, Target target);
+    bool IsPriorityTarget(const ::Condition::ConditionBase& condition, Target target);
+    bool IsPriorityTarget(const TriggerConditions& condition, Target target);
 
     Precision FindPrecision(const TriggerConditions& conditions);
 
     /* returns nullptr if no preference */
-    const ::Condition::ConditionBase* FindPreferredTargets(const std::string& part_name);
+    const ::Condition::ConditionBase* FindPriorityTargets(const std::string& part_name);
 
     /* gives access to static conditions */
     const ::Condition::ConditionBase* PreyAsTriggerCondition(PreyType prey);

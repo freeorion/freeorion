@@ -12,7 +12,7 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 
-bool Targetting::IsPreferredTarget(const Targetting::TriggerConditions& conditions,
+bool Targetting::IsPriorityTarget(const Targetting::TriggerConditions& conditions,
                                    Targetting::Target target)
 {
     const Precision highest_weight = Targetting::FindPrecision(conditions);
@@ -23,7 +23,7 @@ bool Targetting::IsPreferredTarget(const Targetting::TriggerConditions& conditio
             return true;
         }
 
-        if (Targetting::IsPreferredTarget(*condition, target)) {
+        if (Targetting::IsPriorityTarget(*condition, target)) {
             const int scale = 10; // scale all compared values to remove artifacts from rounding
             const int universe = std::round(highest_weight *  1.5f * scale); // HEURISTIC scaling the chance of highest weighted conditions
             const int max_locked = conditions.weights[i] * scale;
@@ -56,7 +56,7 @@ bool Targetting::IsPreferredTarget(const Targetting::TriggerConditions& conditio
     return false;
 }
 
-bool Targetting::IsPreferredTarget(const ::Condition::ConditionBase& condition,
+bool Targetting::IsPriorityTarget(const ::Condition::ConditionBase& condition,
                                    Targetting::Target target)
 {
     DebugLogger() << "Evaluate preferred prey condition" << condition.Description();
@@ -97,10 +97,10 @@ const ::Condition::ConditionBase* Targetting::PreyAsTriggerCondition(const Targe
     }
 }
 
-const ::Condition::ConditionBase* Targetting::FindPreferredTargets(const std::string& part_name)
+const ::Condition::ConditionBase* Targetting::FindPriorityTargets(const std::string& part_name)
 {
     const PartType* part = GetPartType(part_name);
-    return part->PreferredPrey();
+    return part->PriorityTargets();
 }
 
 Targetting::Precision Targetting::FindPrecision(const Targetting::TriggerConditions& conditions)

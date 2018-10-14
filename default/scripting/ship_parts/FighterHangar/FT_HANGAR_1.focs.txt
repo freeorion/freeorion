@@ -21,7 +21,7 @@ Part
     ]
     icon = "icons/ship_parts/fighter06.png"
     precision = [[GOOD_PRECISION]]
-    preferredPrey = And [
+    priorityTargets = And [
         Not Ship
         Not Planet
     ]

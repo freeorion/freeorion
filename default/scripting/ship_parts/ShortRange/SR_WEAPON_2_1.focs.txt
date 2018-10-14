@@ -13,7 +13,7 @@ Part
         [[WEAPON_BASE_DEFAULT_EFFECTS(SR_WEAPON_2_1)]]
     icon = "icons/ship_parts/laser.png"
     precision = [[AVERAGE_PRECISION]]
-    preferredPrey = [[TARGET_MAYBE_DANGEROUS]]
+    priorityTargets = [[TARGET_MAYBE_DANGEROUS]]
 
 #include "shortrange.macros"
 
