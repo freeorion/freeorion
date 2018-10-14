@@ -97,7 +97,7 @@ public:
              const std::string& icon, bool add_standard_capacity_effect = true,
              int precision = 2,
              std::unique_ptr<const ::Condition::ConditionBase>&& priorityTargets = nullptr
-             ); // XXX default value?
+             );
 
     ~PartType();
     //@}
@@ -115,7 +115,7 @@ public:
                             MountableSlotTypes() const  { return m_mountable_slot_types; }
 
     int                     Precision() const            { return m_precision; }
-    const ::Condition::ConditionBase* PriorityTargets() const { return m_priority_targets.get(); }          ///< returns the condition XXXX
+    const ::Condition::ConditionBase* PriorityTargets() const { return m_priority_targets.get(); }          ///< returns the condition
 
     bool                    ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
     float                   ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to produce this part
