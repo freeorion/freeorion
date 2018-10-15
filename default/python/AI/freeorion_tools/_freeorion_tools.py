@@ -4,6 +4,7 @@ import cProfile
 import logging
 import pstats
 import re
+import traceback
 from collections import Mapping
 from functools import wraps
 from logging import debug, error
@@ -347,3 +348,28 @@ def with_log_level(log_level):
 
         return wrapper
     return decorator
+
+
+def assertion_fails(cond, msg="", logger=logging.error):
+    """
+    Check if condition fails and if so, log a traceback but raise no Exception.
+
+    This is a useful functions for generic sanity checks and may be used to
+    replace manual error logging with more context provided by the traceback.
+
+    :param bool cond: condition to be asserted
+    :param str msg: additional info to be logged
+    :param func logger: may be used to override default log level (error)
+    :return: True if assertion failed, otherwise false.
+    """
+    if cond:
+        return False
+
+    if msg:
+        header = "Assertion failed: %s." % msg
+    else:
+        header = "Assertion failed!"
+    stack = traceback.extract_stack()[:-1]  # do not log this function
+    logger("%s Traceback (most recent call last): %s", header,
+           ''.join(traceback.format_list(stack)))
+    return True
