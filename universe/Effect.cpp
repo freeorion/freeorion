@@ -689,7 +689,8 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
         // deep inspection single ValueRef evaluation
         auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
         if (!op) {
-            ErrorLogger() << "SetShipPartMeter::Execute couldn't cast simple increment ValueRef to an Operation...";
+            ErrorLogger() << "SetShipPartMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
+            EffectBase::Execute(context, targets);
             return;
         }
         // RHS should be a ConstantExpr
