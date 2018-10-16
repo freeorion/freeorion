@@ -9,8 +9,25 @@
 
 #include <GG/GUI.h>
 
+#include <boost/optional.hpp>
+#include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+
+namespace {
+
+boost::optional<std::string> ReadFile(const boost::filesystem::path& file_path) {
+    boost::filesystem::ifstream fin(file_path);
+    if (!fin.is_open())
+        return boost::none;
+
+    std::stringstream buffer;
+    buffer << fin.rdbuf();
+
+    return buffer.str();
+}
+
+}
 
 ////////////////////////////////////////////
 //   About
@@ -35,15 +52,9 @@ void About::CompleteConstruction() {
     DoLayout();
 
     // Read in the copyright info from a file
-    boost::filesystem::ifstream fin(GetRootDataDir() / "default" / "COPYING");    // this is not GetResourceDir() / "COPYING" because if a mod or scenario is loaded that changes the settings directory, the copyright notice should be unchanged
-    if (!fin.is_open()) return;
-    std::string temp_str;
-    while (!fin.eof()) {
-        std::getline(fin, temp_str, '\n');
-        m_license_str.append(temp_str);
-        m_license_str.append("\n"); // To ensure new lines are read
-    }
-    fin.close();
+    // this is not GetResourceDir() / "COPYING" because if a mod or scenario is loaded
+    // that changes the settings directory, the copyright notice should be unchanged
+    m_license_str = ReadFile(GetRootDataDir() / "default" / "COPYING").value_or("");
 
     m_done_btn->LeftClickedSignal.connect(
         boost::bind(&GG::Wnd::EndRun, this));
