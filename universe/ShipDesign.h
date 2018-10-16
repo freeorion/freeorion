@@ -276,6 +276,7 @@ public:
         ShipSlotType type;
         double x = 0.5, y = 0.5;
         unsigned int GetCheckSum() const {
+	    TraceLogger() << "Slot.GetCheckSum:" << typeid(*this).name();
             unsigned int ret = 404;
             unsigned int& sum = ret;
             CheckSums::CheckSumCombine(sum, x);
@@ -373,10 +374,6 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
-
-namespace CheckSums {
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const HullType::Slot& slot);
-}
 
 /** Holds FreeOrion hull types */
 class FO_COMMON_API HullTypeManager {

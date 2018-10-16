@@ -150,15 +150,6 @@ namespace {
     }
 }
 
-namespace CheckSums {
-    void CheckSumCombine(unsigned int& sum, const HullType::Slot& slot) {
-        TraceLogger() << "CheckSumCombine(Slot): " << typeid(slot).name();
-        CheckSumCombine(sum, slot.x);
-        CheckSumCombine(sum, slot.y);
-        CheckSumCombine(sum, slot.type);
-    }
-}
-
 ////////////////////////////////////////////////
 // Free Functions                             //
 ////////////////////////////////////////////////
