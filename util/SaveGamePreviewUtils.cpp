@@ -65,7 +65,14 @@ namespace {
 
         DebugLogger() << "LoadSaveGamePreviewData: Loading preview from: " << path.string();
         try {
-            try {
+            // read the first five letters of the stream and check if it is opening an xml file
+            std::string xxx5(5, ' ');
+            ifs.read(&xxx5[0], 5);
+            const std::string xml5{"<?xml"};
+            // reset to start of stream
+            boost::iostreams::seek(ifs, 0, std::ios_base::beg);
+            // binary deserialization iff document is not xml
+            if (xml5 != xxx5) {
                 ScopedTimer timer("LoadSaveGamePreviewData (binary): " + path.string(), true);
 
                 // first attempt binary deserialziation
@@ -74,12 +81,7 @@ namespace {
                 ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
                 ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
 
-            } catch (...) {
-                // if binary deserialization failed, try more-portable XML deserialization
-
-                // reset to start of stream (attempted binary serialization will have consumed some input...)
-                boost::iostreams::seek(ifs, 0, std::ios_base::beg);
-
+            } else {
                 DebugLogger() << "Deserializing XML data";
                 freeorion_xml_iarchive ia(ifs);
                 ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
@@ -206,10 +208,16 @@ bool SaveFileWithValidHeader(const boost::filesystem::path& path) {
 
     DebugLogger() << "SaveFileWithValidHeader: Loading headers from: " << path.string();
     try {
-        try {
+        // read the first five letters of the stream and check if it is opening an xml file
+        std::string xxx5(5, ' ');
+        ifs.read(&xxx5[0], 5);
+        const std::string xml5{"<?xml"};
+        // reset to start of stream 
+        boost::iostreams::seek(ifs, 0, std::ios_base::beg);
+        // binary deserialization iff document is not xml
+        if (xml5 != xxx5) {
             ScopedTimer timer("SaveFileWithValidHeader (binary): " + path.string(), true);
 
-            // first attempt binary deserialziation
             freeorion_bin_iarchive ia(ifs);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
@@ -217,13 +225,7 @@ bool SaveFileWithValidHeader(const boost::filesystem::path& path) {
             ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_header_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_empire_save_game_data);
-
-        } catch (...) {
-            // if binary deserialization failed, try more-portable XML deserialization
-
-            // reset to start of stream (attempted binary serialization will have consumed some input...)
-            boost::iostreams::seek(ifs, 0, std::ios_base::beg);
-
+        } else {
             DebugLogger() << "Deserializing XML data";
             freeorion_xml_iarchive ia(ifs);
 
