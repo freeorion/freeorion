@@ -700,7 +700,8 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
         } else if (op->GetOpType() == ValueRef::MINUS) {
             increment = -increment;
         } else {
-            ErrorLogger() << "SetShipPartMeter::Execute got invalid increment optype (not PLUS or MINUS)";
+            ErrorLogger() << "SetShipPartMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
+            EffectBase::Execute(context, targets);
             return;
         }
         //DebugLogger() << "simple increment: " << increment;
