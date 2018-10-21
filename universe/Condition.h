@@ -381,6 +381,8 @@ struct FO_COMMON_API RootCandidate final : public ConditionBase {
     RootCandidate() : ConditionBase() {}
 
     bool operator==(const ConditionBase& rhs) const override;
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
     bool RootCandidateInvariant() const override
     { return false; }
     bool TargetInvariant() const override

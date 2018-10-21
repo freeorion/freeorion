@@ -1375,7 +1375,6 @@ void Source::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_co
 {
     if (parent_context.source)
         condition_non_targets.push_back(parent_context.source);
-    //DebugLogger() << "ConditionBase::Eval will check at most one source object rather than " << Objects().NumObjects() << " total objects";
 }
 
 unsigned int Source::GetCheckSum() const {
@@ -1407,6 +1406,14 @@ bool RootCandidate::Match(const ScriptingContext& local_context) const {
         return false;
     return local_context.condition_root_candidate == local_context.condition_local_candidate;
 }
+
+void RootCandidate::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                      ObjectSet& condition_non_targets) const
+{
+    if (parent_context.condition_root_candidate)
+        condition_non_targets.push_back(parent_context.condition_root_candidate);
+}
+
 
 unsigned int RootCandidate::GetCheckSum() const {
     unsigned int retval{0};
