@@ -4816,6 +4816,15 @@ ENC_HOMEWORLDS
 ENC_TEXTURES  # translated
 [Test - Textures]
 
+ENC_POP_CENTER
+Centre Population
+
+ENC_PROD_CENTER
+Centre Production
+
+ENC_FIGHTER
+Chasseur
+
 #ENC_TEXTURE_INFO
 #%4% -- %1% x %2% px @ %3% BPP<img src = "%4%"></img>
 
@@ -8440,11 +8449,11 @@ Planète
 
 # Universe object types
 OBJ_POP_CENTER
-Centre de Population
+Centre Population
 
 # Universe object types
 OBJ_PROD_CENTER
-Centre de Production
+Centre Production
 
 # Universe object types
 OBJ_SYSTEM
