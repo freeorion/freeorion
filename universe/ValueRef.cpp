@@ -8,6 +8,7 @@
 #include "Species.h"
 #include "System.h"
 #include "Field.h"
+#include "Fighter.h"
 #include "Pathfinder.h"
 #include "Universe.h"
 #include "UniverseObject.h"
@@ -828,6 +829,8 @@ double Variable<double>::Eval(const ScriptingContext& context) const
             return fleet->Damage();
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->TotalWeaponsDamage();
+        if (auto fighter = std::dynamic_pointer_cast<const Fighter>(object))
+            return fighter->Damage();
 
     } else if (property_name == "PropagatedSupplyRange") {
         const auto& ranges = GetSupplyManager().PropagatedSupplyRanges();
@@ -1079,6 +1082,13 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     }
     else if (property_name == "NumSpecials") {
         return object->Specials().size();
+
+    }
+    else if (property_name == "LaunchedFrom") {
+        if (auto fighter = std::dynamic_pointer_cast<const Fighter>(object))
+            return fighter->LaunchedFrom();
+        else
+            return INVALID_OBJECT_ID;
     }
 
     ErrorLogger() << "Variable<int>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
@@ -1207,6 +1217,8 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
             return planet->SpeciesName();
         else if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->SpeciesName();
+        else if (auto fighter = std::dynamic_pointer_cast<const Fighter>(object))
+            return fighter->SpeciesName();
 
     } else if (property_name == "Hull") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))

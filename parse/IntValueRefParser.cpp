@@ -47,6 +47,7 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
         |   tok.SpeciesID_
         |   tok.TurnsSinceFocusChange_
         |   tok.ETA_
+        |   tok.LaunchedFrom_
         ;
 
     free_variable_name

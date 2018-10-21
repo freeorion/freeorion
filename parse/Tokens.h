@@ -200,6 +200,7 @@
     (LastTurnBattleHere)                        \
     (LastTurnConquered)                         \
     (LastTurnResupplied)                        \
+    (LaunchedFrom)                              \
     (LeastHappySpecies)                         \
     (LocalCandidate)                            \
     (Location)                                  \
