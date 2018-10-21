@@ -122,6 +122,7 @@
 #define TOKEN_SEQ_4                             \
     (Field)                                     \
     (FieldType)                                 \
+    (Fighter)                                   \
     (FighterBay)                                \
     (FighterHangar)                             \
     (FighterWeapon)                             \

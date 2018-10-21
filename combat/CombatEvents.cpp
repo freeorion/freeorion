@@ -44,6 +44,7 @@ namespace {
         case OBJ_SYSTEM:
             return VarText::SYSTEM_ID_TAG;
         case OBJ_FIELD:
+        case OBJ_FIGHTER:
         default:
             return EMPTY_STRING;
         }

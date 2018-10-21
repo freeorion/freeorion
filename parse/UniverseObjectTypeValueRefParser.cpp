@@ -29,6 +29,7 @@ namespace parse { namespace detail {
             |   tok.ProductionCenter_   [ _val = OBJ_PROD_CENTER ]
             |   tok.System_             [ _val = OBJ_SYSTEM ]
             |   tok.Field_              [ _val = OBJ_FIELD ]
+            |   tok.Fighter_            [ _val = OBJ_FIGHTER ]
             ;
     }
 }

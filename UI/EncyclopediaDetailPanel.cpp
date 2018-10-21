@@ -1186,6 +1186,7 @@ namespace {
         case OBJ_FIELD:         return UserString("ENC_FIELD");         break;
         case OBJ_POP_CENTER:    return UserString("ENC_POP_CENTER");    break;
         case OBJ_PROD_CENTER:   return UserString("ENC_PROD_CENTER");   break;
+        case OBJ_FIGHTER:       return UserString("ENC_FIGHTER");       break;
         default:                return EMPTY_STRING;
         }
     }

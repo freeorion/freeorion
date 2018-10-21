@@ -4816,6 +4816,15 @@ ENC_HOMEWORLDS
 ENC_TEXTURES
 [Test - Textures]
 
+ENC_POP_CENTER
+Population Center
+
+ENC_PROD_CENTER
+Production Center
+
+ENC_FIGHTER
+Fighter
+
 ENC_TEXTURE_INFO
 %4% -- %1% x %2% px @ %3% BPP<img src = "%4%"></img>
 

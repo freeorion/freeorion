@@ -1329,7 +1329,7 @@ namespace {
         } else if (obj->ObjectType() == OBJ_FIELD) {
             if (auto field = std::dynamic_pointer_cast<const Field>(obj))
                 retval.push_back(ClientUI::FieldTexture(field->FieldTypeName()));
-        }
+        } // OBJ_FIGHTER shouldn't exist outside of combat, so ignored here
         if (retval.empty())
             retval.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "generic_object.png", true));
         return retval;
@@ -2019,7 +2019,7 @@ public:
                 system_planets[planet->SystemID()].insert(object_id);
             } else if (auto building = std::dynamic_pointer_cast<const Building>(obj)) {
                 planet_buildings[building->PlanetID()].insert(object_id);
-            }
+            } // OBJ_FIGHTER shouldn't exist outside combat, so ignored here
         }
 
         int indent = 0;

@@ -218,6 +218,7 @@ void ObjectMap::InsertCore(std::shared_ptr<UniverseObject> item, int empire_id/*
             case OBJ_SYSTEM:
                 m_existing_systems[item->ID()] = this_item;
                 break;
+            case OBJ_FIGHTER:
             default:
                 break;
         }
@@ -303,6 +304,7 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_obj
             case OBJ_SYSTEM:
                 m_existing_systems[entry.first] = this_item;
                 break;
+            case OBJ_FIGHTER:
             default:
                 break;
         }
@@ -357,7 +359,7 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     // set contained objects of all possible containers
     for (const auto& obj : *this) {
         if (obj->ObjectType() == OBJ_SYSTEM) {
-            std::shared_ptr<System> sys = std::dynamic_pointer_cast<System>(obj);
+            auto sys = std::dynamic_pointer_cast<System>(obj);
             if (!sys)
                 continue;
             sys->m_objects =    contained_objs[sys->ID()];
@@ -366,13 +368,15 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
             sys->m_fleets =     contained_fleets[sys->ID()];
             sys->m_ships =      contained_ships[sys->ID()];
             sys->m_fields =     contained_fields[sys->ID()];
+
         } else if (obj->ObjectType() == OBJ_PLANET) {
-            std::shared_ptr<Planet> plt = std::dynamic_pointer_cast<Planet>(obj);
+            auto plt = std::dynamic_pointer_cast<Planet>(obj);
             if (!plt)
                 continue;
             plt->m_buildings =  contained_buildings[plt->ID()];
+
         } else if (obj->ObjectType() == OBJ_FLEET) {
-            std::shared_ptr<Fleet> flt = std::dynamic_pointer_cast<Fleet>(obj);
+            auto flt = std::dynamic_pointer_cast<Fleet>(obj);
             if (!flt)
                 continue;
             flt->m_ships =      contained_ships[flt->ID()];
