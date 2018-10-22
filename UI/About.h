@@ -10,7 +10,7 @@ public:
     //! \name Structors
     //!@{
     About();
-    ~About();
+    ~About() = default;
     //!@}
     void CompleteConstruction() override;
 

@@ -64,9 +64,6 @@ void About::CompleteConstruction() {
         boost::bind(&About::ShowVision, this));
 }
 
-About::~About()
-{}
-
 void About::KeyPress(GG::Key key, std::uint32_t key_code_point,
                      GG::Flags<GG::ModKey> mod_keys)
 {
