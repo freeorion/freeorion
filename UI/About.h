@@ -25,7 +25,7 @@ public:
 private:
     void DoLayout();
 
-    std::shared_ptr<GG::Button>     m_done_btn;     //!< Done button
+    std::shared_ptr<GG::Button>     m_done;         //!< Done button
     std::shared_ptr<GG::Button>     m_license;      //!< License button
     std::shared_ptr<GG::Button>     m_vision;       //!< Vision button
     std::shared_ptr<GG::MultiEdit>  m_info;         //!< Displays the license or vision information

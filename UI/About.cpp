@@ -40,14 +40,14 @@ About::About():
 void About::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
-    m_done_btn = Wnd::Create<CUIButton>(UserString("DONE"));
+    m_done = Wnd::Create<CUIButton>(UserString("DONE"));
     m_license = Wnd::Create<CUIButton>(UserString("LICENSE"));
     m_vision = Wnd::Create<CUIButton>(UserString("VISION"));
     m_info = GG::Wnd::Create<CUIMultiEdit>(UserString("FREEORION_VISION"), GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     AttachChild(m_info);
     AttachChild(m_vision);
     AttachChild(m_license);
-    AttachChild(m_done_btn);
+    AttachChild(m_done);
 
     DoLayout();
 
@@ -56,7 +56,7 @@ void About::CompleteConstruction() {
     // that changes the settings directory, the copyright notice should be unchanged
     m_license_str = ReadFile(GetRootDataDir() / "default" / "COPYING").value_or("");
 
-    m_done_btn->LeftClickedSignal.connect(
+    m_done->LeftClickedSignal.connect(
         boost::bind(&GG::Wnd::EndRun, this));
     m_license->LeftClickedSignal.connect(
         boost::bind(&About::ShowLicense, this));
@@ -83,13 +83,13 @@ void About::DoLayout() {
 
     GG::Pt BUTTON_SIZE = m_vision->MinUsableSize();
     BUTTON_SIZE.x = std::max(BUTTON_SIZE.x, m_license->MinUsableSize().x);
-    BUTTON_SIZE.x = std::max(BUTTON_SIZE.x, m_done_btn->MinUsableSize().x);
+    BUTTON_SIZE.x = std::max(BUTTON_SIZE.x, m_done->MinUsableSize().x);
     BUTTON_SIZE.y = std::max(BUTTON_SIZE.y, m_license->MinUsableSize().y);
-    BUTTON_SIZE.y = std::max(BUTTON_SIZE.y, m_done_btn->MinUsableSize().y);
+    BUTTON_SIZE.y = std::max(BUTTON_SIZE.y, m_done->MinUsableSize().y);
 
     GG::Pt buttons_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(HORIZONTAL_SPACING, VERTICAL_SPACING);
     GG::Pt buttons_ul = buttons_lr - BUTTON_SIZE;
-    m_done_btn->SizeMove(buttons_ul, buttons_lr);
+    m_done->SizeMove(buttons_ul, buttons_lr);
 
     buttons_lr.x -= BUTTON_SIZE.x + HORIZONTAL_SPACING;
     buttons_ul.x -= BUTTON_SIZE.x + HORIZONTAL_SPACING;
