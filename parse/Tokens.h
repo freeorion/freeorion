@@ -57,6 +57,7 @@
     (ClockwiseNextPlanetType)                   \
     (Colony)                                    \
     (Colour)                                    \
+    (CombatTargets)                             \
     (Condition)                                 \
     (Construction)                              \
     (Consumption)                               \
