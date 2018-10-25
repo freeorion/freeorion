@@ -268,18 +268,20 @@ void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id)
 namespace {
     struct PartAttackInfo {
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
-                       float part_attack_) :
+                       float part_attack_, const ::Condition::ConditionBase* combat_targets_) :
             part_class(part_class_),
             part_type_name(part_name_),
             part_attack(part_attack_),
+            combat_targets(combat_targets_),
             fighters_launched(0),
             fighter_damage(0.0f)
         {}
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
-                       int fighters_launched_, float fighter_damage_) :
+                       int fighters_launched_, float fighter_damage_, const ::Condition::ConditionBase* combat_targets_) :
             part_class(part_class_),
             part_type_name(part_name_),
             part_attack(0.0f),
+            combat_targets(combat_targets_),
             fighters_launched(fighters_launched_),
             fighter_damage(fighter_damage_)
         {}
@@ -287,8 +289,10 @@ namespace {
         ShipPartClass   part_class;
         std::string     part_type_name;
         float           part_attack;        // for direct damage parts
+        const ::Condition::ConditionBase* combat_targets;
         int             fighters_launched;  // for fighter bays, input value should be limited by ship available fighters to launch
         float           fighter_damage;     // for fighter bays, input value should be determined by ship fighter weapon setup
+
     };
 
     void AttackShipShip(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon,
@@ -708,6 +712,7 @@ namespace {
         int available_fighters = 0;
         float fighter_attack = 0.0f;
         std::map<std::string, int> part_fighter_launch_capacities;
+        const ::Condition::ConditionBase* fighter_combat_targets = nullptr;
 
         // determine what ship does during combat, based on parts and their meters...
         for (const auto& part_name : design->Parts()) {
@@ -723,7 +728,7 @@ namespace {
                 if (part_attack > 0.0f && shots > 0) {
                     // attack for each shot...
                     for (int shot_count = 0; shot_count < shots; ++shot_count)
-                        retval.push_back(PartAttackInfo(part_class, part_name, part_attack));
+                        retval.push_back(PartAttackInfo(part_class, part_name, part_attack, part->CombatTargets()));
                 }
 
             } else if (part_class == PC_FIGHTER_HANGAR) {
@@ -731,6 +736,7 @@ namespace {
                 if (!seen_hangar_part_types.count(part_name)) {
                     available_fighters += ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
                     seen_hangar_part_types.insert(part_name);
+                    fighter_combat_targets = part->CombatTargets();
 
                     // should only be one type of fighter per ship as of this writing
                     fighter_attack = ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name);  // secondary stat is fighter damage
@@ -750,7 +756,7 @@ namespace {
                 if (to_launch <= 0)
                     continue;
                 retval.push_back(PartAttackInfo(PC_FIGHTER_BAY, launch.first, to_launch,
-                                                fighter_attack)); // attack may be 0; that's ok: decoys
+                                                fighter_attack, fighter_combat_targets)); // attack may be 0; that's ok: decoys
                 available_fighters -= to_launch;
                 if (available_fighters <= 0)
                     break;
@@ -825,13 +831,13 @@ namespace {
         }
 
         std::vector<int> AddFighters(int number, float damage, int owner_empire_id,
-                                     int from_ship_id, const std::string& species)
+                                     int from_ship_id, const std::string& species, const ::Condition::ConditionBase* combat_targets)
         {
             std::vector<int> retval;
 
             for (int n = 0; n < number; ++n) {
                 // create / insert fighter into combat objectmap
-                auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id, species, damage, nullptr);
+                auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id, species, damage, combat_targets);
                 fighter_ptr->SetID(next_fighter_id--);
                 fighter_ptr->Rename(UserString("OBJ_FIGHTER"));
                 combat_info.objects.Insert(fighter_ptr);
@@ -1352,7 +1358,7 @@ namespace {
 
             std::vector<int> new_fighter_ids =
                 combat_state.AddFighters(weapon.fighters_launched, weapon.fighter_damage,
-                                         attacker_owner_id, attacker->ID(), species_name);
+                                         attacker_owner_id, attacker->ID(), species_name, weapon.combat_targets);
 
             // combat event
             CombatEventPtr launch_event =
@@ -1465,11 +1471,11 @@ namespace {
 
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"),
-                                             attack_planet->CurrentMeterValue(METER_DEFENSE)));
+                                             attack_planet->CurrentMeterValue(METER_DEFENSE), nullptr));
 
         } else if (attack_fighter) {    // treat fighter damage as direct fire weapon
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("FT_WEAPON_1"),
-                                             attack_fighter->Damage()));
+                                             attack_fighter->Damage(), attack_fighter->CombatTargets()));
         }
         return weapons;
     }
