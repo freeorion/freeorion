@@ -2,6 +2,7 @@
 #define _Fighter_h_
 
 #include "UniverseObject.h"
+#include "../universe/Condition.h"
 #include "../util/Export.h"
 
 ////////////////////////////////////////////////
@@ -11,7 +12,7 @@
   * can be stored in the same container as other combat objects. */
 class FO_COMMON_API Fighter : public UniverseObject {
 public:
-    Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage);
+    Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, const ::Condition::ConditionBase* combat_targets);
     Fighter();
     ~Fighter();
 
@@ -25,6 +26,7 @@ public:
 
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
+    const ::Condition::ConditionBase* CombatTargets() const;
     float                       Damage() const;
     bool                        Destroyed() const;
     int                         LaunchedFrom() const;
@@ -39,6 +41,7 @@ private:
     bool        m_destroyed = false;                    // was attacked by anything -> destroyed
     int         m_launched_from_id = INVALID_OBJECT_ID; // from what object (ship?) was this fighter launched
     std::string m_species_name;
+    const ::Condition::ConditionBase* m_combat_targets;
 };
 
-#endif // _Ship_h_
+#endif // _Fighter_h_
