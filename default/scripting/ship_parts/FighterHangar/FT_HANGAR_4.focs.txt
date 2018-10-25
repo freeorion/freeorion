@@ -5,6 +5,9 @@ Part
     class = FighterHangar
     capacity = 1
     damage = 10
+    combatTargets = And [
+        Not Planet
+    ]
     mountableSlotTypes = Internal
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
