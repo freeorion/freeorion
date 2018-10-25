@@ -5,6 +5,10 @@ Part
     damage = 1
     shots = 3
     NoDefaultCapacityEffect
+    combatTargets = And [
+        Not Ship
+        Not Planet
+    ]
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
