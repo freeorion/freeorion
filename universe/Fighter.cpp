@@ -10,11 +10,12 @@
 Fighter::Fighter()
 {}
 
-Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage) :
+Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, const ::Condition::ConditionBase* combat_targets) :
     UniverseObject(),
     m_damage(damage),
     m_launched_from_id(launched_from_id),
-    m_species_name(species_name)
+    m_species_name(species_name),
+    m_combat_targets(combat_targets)
 {
     this->SetOwner(empire_id);
     UniverseObject::Init();
@@ -33,6 +34,9 @@ bool Fighter::HostileToEmpire(int empire_id) const
 
 UniverseObjectType Fighter::ObjectType() const
 { return OBJ_FIGHTER; }
+
+const ::Condition::ConditionBase* Fighter::CombatTargets() const
+{ return m_combat_targets; }
 
 float Fighter::Damage() const
 { return m_damage; }
@@ -80,4 +84,5 @@ void Fighter::Copy(std::shared_ptr<const UniverseObject> copied_object, int empi
 
     this->m_damage = copied_fighter->m_damage;
     this->m_destroyed= copied_fighter->m_destroyed;
+    this->m_combat_targets = copied_fighter->m_combat_targets;
 }

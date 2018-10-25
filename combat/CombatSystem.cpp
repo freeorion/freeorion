@@ -831,7 +831,7 @@ namespace {
 
             for (int n = 0; n < number; ++n) {
                 // create / insert fighter into combat objectmap
-                auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id, species, damage);
+                auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id, species, damage, nullptr);
                 fighter_ptr->SetID(next_fighter_id--);
                 fighter_ptr->Rename(UserString("OBJ_FIGHTER"));
                 combat_info.objects.Insert(fighter_ptr);
