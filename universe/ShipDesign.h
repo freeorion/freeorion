@@ -27,6 +27,7 @@
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
+
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 namespace Condition {
     struct ConditionBase;
@@ -90,7 +91,8 @@ public:
     PartType(ShipPartClass part_class, double capacity, double stat2,
              CommonParams& common_params, const MoreCommonParams& more_common_params,
              std::vector<ShipSlotType> mountable_slot_types,
-             const std::string& icon, bool add_standard_capacity_effect = true);
+             const std::string& icon, bool add_standard_capacity_effect = true,
+             std::unique_ptr<const ::Condition::ConditionBase>&& combat_targets = nullptr);
 
     ~PartType();
     //@}
@@ -104,6 +106,7 @@ public:
     float                   SecondaryStat() const;
 
     bool                    CanMountInSlotType(ShipSlotType slot_type) const;       ///< returns true if this part can be placed in a slot of the indicated type
+    const ::Condition::ConditionBase* CombatTargets() const { return m_combat_targets.get(); }          ///< returns the condition for possible targets
     const std::vector<ShipSlotType>&
                             MountableSlotTypes() const  { return m_mountable_slot_types; }
 
@@ -158,6 +161,7 @@ private:
 
     std::string     m_icon = "";
     bool            m_add_standard_capacity_effect = false;
+    std::unique_ptr<const ::Condition::ConditionBase>   m_combat_targets;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -746,7 +750,8 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_exclusions)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_icon)
-        & BOOST_SERIALIZATION_NVP(m_add_standard_capacity_effect);
+        & BOOST_SERIALIZATION_NVP(m_add_standard_capacity_effect)
+        & BOOST_SERIALIZATION_NVP(m_combat_targets);
 }
 
 template <class Archive>
