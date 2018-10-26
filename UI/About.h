@@ -5,7 +5,7 @@
 #include "CUIWnd.h"
 
 //! This is a screen showing license and vision
-class About : public CUIWnd {
+class About final : public CUIWnd {
 public:
     //! \name Structors
     //!@{
