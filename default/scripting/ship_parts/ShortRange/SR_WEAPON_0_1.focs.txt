@@ -6,8 +6,8 @@ Part
     shots = 3
     NoDefaultCapacityEffect
     combatTargets = And [
-        Not Ship
-        Not Planet
+        Fighter
+        OwnedBy affiliation = EnemyOf empire = Source.Owner
     ]
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]

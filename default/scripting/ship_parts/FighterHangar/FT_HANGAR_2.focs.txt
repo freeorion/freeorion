@@ -7,6 +7,7 @@ Part
     damage = 3
     combatTargets = And [
         Not Planet
+        OwnedBy affiliation = EnemyOf empire = Source.Owner
     ]
     mountableSlotTypes = Internal
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
