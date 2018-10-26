@@ -204,7 +204,6 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         log_setup
         regex
         serialization
-        signals
         system
         thread
     REQUIRED)
@@ -356,7 +355,6 @@ target_link_libraries(freeorioncommon
     ${Boost_LOG_SETUP_LIBRARY}
     ${Boost_REGEX_LIBRARY}
     ${Boost_SERIALIZATION_LIBRARY}
-    ${Boost_SIGNALS_LIBRARY}
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_THREAD_LIBRARY}
     ${ZLIB_LIBRARIES}
@@ -668,8 +666,6 @@ if(APPLE)
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_SERIALIZATION_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
-           ${CMAKE_COMMAND} -E copy_if_different "${Boost_SIGNALS_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
-        COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_SYSTEM_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_THREAD_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
@@ -772,7 +768,6 @@ if(WIN32)
         boost_python.dll
         boost_regex.dll
         boost_serialization.dll
-        boost_signals.dll
         boost_system.dll
         boost_thread.dll
         glew32.dll

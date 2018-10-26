@@ -91,7 +91,7 @@ if(NOT USE_STATIC_LIBS)
 endif()
 
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS date_time filesystem regex signals system thread log REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS date_time filesystem regex system thread log REQUIRED)
 
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
