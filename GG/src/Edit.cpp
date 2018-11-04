@@ -608,7 +608,7 @@ void Edit::AdjustView()
     X first_char_offset = FirstCharOffset();
     if (m_cursor_pos.second < m_first_char_shown) { // if the caret is at a place left of the current visible area
         if (m_first_char_shown - m_cursor_pos.second < 5) // if the caret is less than five characters before m_first_char_shown
-            m_first_char_shown = (0 <= m_first_char_shown - 5) ? m_first_char_shown - 5 : CP0; // try to move the caret by five characters
+            m_first_char_shown = (5 < m_first_char_shown) ? m_first_char_shown - 5 : CP0; // try to move the caret by five characters
         else // if the caret is more than five characters before m_first_char_shown, just move straight to that spot
             m_first_char_shown = m_cursor_pos.second;
     } else if (Length() && text_space <= (m_cursor_pos.second ? GetLineData()[0].char_data[Value(m_cursor_pos.second - 1)].extent : X0) - first_char_offset) { // if the caret is moving to a place right of the current visible area
