@@ -2,6 +2,7 @@
 #define _ValueRef_h_
 
 #include "Condition.h"
+#include "Universe.h"
 #include "../util/Export.h"
 #include "../util/i18n.h"
 #include "../util/Random.h"
@@ -41,12 +42,23 @@ struct ScriptingContext {
         source(source_)
     {}
 
-    ScriptingContext(std::shared_ptr<const UniverseObject> source_, std::shared_ptr<UniverseObject> target_) :
+    /** Context with source and visibility map to use when evalulating Visiblity
+      * conditions. Useful in combat resolution when the visibility of objects
+      * may be different from the overall universe visibility. */
+    ScriptingContext(std::shared_ptr<const UniverseObject> source_,
+                     const Universe::EmpireObjectVisibilityMap& visibility_map) :
+        source(source_),
+        empire_object_vis_map_override(visibility_map)
+    {}
+
+    ScriptingContext(std::shared_ptr<const UniverseObject> source_,
+                     std::shared_ptr<UniverseObject> target_) :
         source(source_),
         effect_target(target_)
     {}
 
-    ScriptingContext(std::shared_ptr<const UniverseObject> source_, std::shared_ptr<UniverseObject> target_,
+    ScriptingContext(std::shared_ptr<const UniverseObject> source_,
+                     std::shared_ptr<UniverseObject> target_,
                      const boost::any& current_value_) :
         source(source_),
         effect_target(target_),
@@ -74,12 +86,13 @@ struct ScriptingContext {
         effect_target(              parent_context.effect_target),
         condition_root_candidate(   parent_context.condition_root_candidate ?
                                         parent_context.condition_root_candidate :
-                                        condition_local_candidate_),                 // if parent context doesn't already have a root candidate, the new local candidate is the root
-        condition_local_candidate(  condition_local_candidate_),                     // new local candidate
+                                        condition_local_candidate_),    // if parent context doesn't already have a root candidate, the new local candidate is the root
+        condition_local_candidate(  condition_local_candidate_),        // new local candidate
         current_value(              parent_context.current_value)
     {}
 
-    ScriptingContext(std::shared_ptr<const UniverseObject> source_, std::shared_ptr<UniverseObject> target_,
+    ScriptingContext(std::shared_ptr<const UniverseObject> source_,
+                     std::shared_ptr<UniverseObject> target_,
                      const boost::any& current_value_,
                      std::shared_ptr<const UniverseObject> condition_root_candidate_,
                      std::shared_ptr<const UniverseObject> condition_local_candidate_) :
@@ -89,11 +102,12 @@ struct ScriptingContext {
         current_value(current_value_)
     {}
 
-    std::shared_ptr<const UniverseObject> source;
-    std::shared_ptr<UniverseObject> effect_target;
-    std::shared_ptr<const UniverseObject> condition_root_candidate;
-    std::shared_ptr<const UniverseObject> condition_local_candidate;
-    const boost::any current_value;
+    std::shared_ptr<const UniverseObject>   source;
+    std::shared_ptr<UniverseObject>         effect_target;
+    std::shared_ptr<const UniverseObject>   condition_root_candidate;
+    std::shared_ptr<const UniverseObject>   condition_local_candidate;
+    const boost::any                        current_value;
+    Universe::EmpireObjectVisibilityMap     empire_object_vis_map_override;
 };
 
 namespace ValueRef {
