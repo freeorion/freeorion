@@ -36,11 +36,6 @@ namespace {
 ////////////////////////////////////////////////
 // CombatInfo
 ////////////////////////////////////////////////
-CombatInfo::CombatInfo() :
-    turn(INVALID_GAME_TURN),
-    system_id(INVALID_OBJECT_ID)
-{}
-
 CombatInfo::CombatInfo(int system_id_, int turn_) :
     turn(turn_),
     system_id(system_id_)
@@ -234,11 +229,10 @@ void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisi
 }
 
 /** Requires system_id, empire_ids are initialized*/
-void CombatInfo::InitializeObjectVisibility()
-{
+void CombatInfo::InitializeObjectVisibility() {
     // system and empire visibility of all objects in it
     auto system = ::GetSystem(system_id);
-    std::set< int > local_object_ids = system->ContainedObjectIDs();
+    auto local_object_ids = system->ContainedObjectIDs();
     for (int empire_id : empire_ids) {
         if (empire_id == ALL_EMPIRES)
             continue;
@@ -252,8 +246,7 @@ void CombatInfo::InitializeObjectVisibility()
     }
 }
 
-void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id)
-{
+void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id) {
     auto attacker = objects.Object(attacker_id);
     auto target = objects.Object(target_id);
     // Also ensure that attacker (and their fleet if attacker was a ship) are
@@ -1231,7 +1224,7 @@ namespace {
             DebugLogger() << matched_targets.size() << " objects matched targeting condition";
 
 
-            // select target object
+            // select target object from matches
             int target_idx = RandInt(0, matched_targets.size() - 1);
             auto target = *std::next(matched_targets.begin(), target_idx);
 
@@ -1504,7 +1497,7 @@ namespace {
 
         int round = 1;  // counter of events during the current combat bout
 
-        // Planets are processed first so that they still have full power as intended,
+        // Planets are processed first so that they still have full power,
         // despite their attack power depending on something (their defence meter)
         // that processing shots at them may reduce.
         for (int attacker_id : shuffled_attackers) {

@@ -14,7 +14,7 @@
 struct CombatInfo {
 public:
     /** \name Structors */ //@{
-    CombatInfo();
+    CombatInfo() = default;
     CombatInfo(int system_id_, int turn_);  ///< ctor taking system id where combat occurs and game turn on which combat occurs
     //@}
 
@@ -25,20 +25,17 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    //void                        Clear();            ///< cleans up contents
-
     /** Returns System object in this CombatInfo's objects if one exists with
         id system_id. */
     std::shared_ptr<System> GetSystem();
 
     /** Reveal stealthed attacker to their target's empires. */
     void ForceAtLeastBasicVisibility(int attacker_id, int target_id);
-
     //@}
 
-    int                                 turn;                       ///< main game turn
-    int                                 system_id;                  ///< ID of system where combat is occurring (could be INVALID_OBJECT_ID ?)
-    std::set<int>                       empire_ids;                 ///< IDs of empires involved in combat
+    int                                 turn = INVALID_GAME_TURN;       ///< main game turn
+    int                                 system_id = INVALID_OBJECT_ID;  ///< ID of system where combat is occurring (could be INVALID_OBJECT_ID ?)
+    std::set<int>                       empire_ids;                     ///< IDs of empires involved in combat
     ObjectMap                           objects;                    ///< actual state of objects relevant to combat
     std::map<int, ObjectMap>            empire_known_objects;       ///< each empire's latest known state of objects relevant to combat
     std::set<int>                       damaged_object_ids;         ///< ids of objects damaged during this battle
