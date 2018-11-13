@@ -3109,14 +3109,14 @@ void ServerApp::PreCombatProcessTurns() {
     m_networking.SendMessageAll(TurnProgressMessage(Message::DOWNLOADING));
 
     // send partial turn updates to all players after orders and movement
-    // exclude those without alive empire and who are not Observer or Moderator
+    // exclude those without empire and who are not Observer or Moderator
     for (auto player_it = m_networking.established_begin();
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
         int empire_id = PlayerEmpireID(player->PlayerID());
         const Empire* empire = GetEmpire(empire_id);
-        if ((empire && !empire->Eliminated()) ||
+        if (empire ||
             player->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
             player->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
         {
@@ -3440,14 +3440,14 @@ void ServerApp::PostCombatProcessTurns() {
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns Sending turn updates to players";
     // send new-turn updates to all players
-    // exclude those without alive empire and who are not Observer or Moderator
+    // exclude those without empire and who are not Observer or Moderator
     for (auto player_it = m_networking.established_begin();
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
         int empire_id = PlayerEmpireID(player->PlayerID());
         const Empire* empire = GetEmpire(empire_id);
-        if ((empire && !empire->Eliminated()) ||
+        if (empire ||
             player->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
             player->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
         {
