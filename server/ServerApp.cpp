@@ -70,6 +70,15 @@ namespace {
     }
 };
 
+namespace {
+    /** Returns true if \a empire has been eliminated by the applicable
+      * definition of elimination.  As of this writing, elimination means
+      * having no ships and no planets. */
+    bool EmpireEliminated(int empire_id) {
+          return (Objects().FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
+                  Objects().FindObjects(OwnedVisitor<Ship>(empire_id)).empty());      // no ship
+      }
+}
 
 ////////////////////////////////////////////////
 // ServerApp
@@ -1818,7 +1827,9 @@ bool ServerApp::AllOrdersReceived() {
     DebugLogger() << "ServerApp::AllOrdersReceived for turn: " << m_current_turn;
     bool all_orders_received = true;
     for (const auto& empire_orders : m_turn_sequence) {
-        if (!empire_orders.second.second) {
+        if (EmpireEliminated(empire_orders.first)) {
+            DebugLogger() << " ... eliminated empire id: " << empire_orders.first;
+        } else if (!empire_orders.second.second) {
             DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
             all_orders_received = false;
         } else if (!empire_orders.second.first) {
@@ -1832,14 +1843,6 @@ bool ServerApp::AllOrdersReceived() {
 }
 
 namespace {
-    /** Returns true if \a empire has been eliminated by the applicable
-      * definition of elimination.  As of this writing, elimination means
-      * having no ships and no planets. */
-    bool EmpireEliminated(int empire_id) {
-          return (Objects().FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
-                  Objects().FindObjects(OwnedVisitor<Ship>(empire_id)).empty());      // no ship
-      }
-
     /** Compiles and return set of ids of empires that are controlled by a
       * human player.*/
     std::set<int> HumanControlledEmpires(const ServerApp* server_app,
