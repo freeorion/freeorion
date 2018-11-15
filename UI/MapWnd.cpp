@@ -990,7 +990,7 @@ void MapWnd::CompleteConstruction() {
 
     auto layout = GG::Wnd::Create<GG::Layout>(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
                                               m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
-                                              1, 23);
+                                              1, 25);
     layout->SetName("Toolbar Layout");
     m_toolbar->SetLayout(layout);
 
