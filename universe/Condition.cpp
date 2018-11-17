@@ -7083,11 +7083,6 @@ bool VisibleToEmpire::operator==(const ConditionBase& rhs) const {
 
 namespace {
     struct VisibleToEmpireSimpleMatch {
-        VisibleToEmpireSimpleMatch(int empire_id) :
-            m_empire_id(empire_id),
-            vis_map(EMPTY_VIS_MAP)
-        {}
-
         VisibleToEmpireSimpleMatch(int empire_id,
                                    const Universe::EmpireObjectVisibilityMap& vis_map) :
             m_empire_id(empire_id),
@@ -7115,7 +7110,6 @@ namespace {
 
         int m_empire_id;
         const Universe::EmpireObjectVisibilityMap& vis_map;
-        static const const Universe::EmpireObjectVisibilityMap EMPTY_VIS_MAP;
     };
 }
 
@@ -7130,7 +7124,8 @@ void VisibleToEmpire::Eval(const ScriptingContext& parent_context,
         // evaluate empire id once, and use to check all candidate objects
         std::shared_ptr<const UniverseObject> no_object;
         int empire_id = m_empire_id->Eval(ScriptingContext(parent_context, no_object));
-        EvalImpl(matches, non_matches, search_domain, VisibleToEmpireSimpleMatch(empire_id));
+        EvalImpl(matches, non_matches, search_domain,
+                 VisibleToEmpireSimpleMatch(empire_id, parent_context.empire_object_vis_map_override));
     } else {
         // re-evaluate empire id for each candidate object
         ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -7175,20 +7170,7 @@ bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
     }
 
     int empire_id = m_empire_id->Eval(local_context);
-
-    // if override is empty, use universe state
-    if (local_context.empire_object_vis_map_override.empty())
-        return candidate->GetVisibility(empire_id) > VIS_NO_VISIBILITY;
-
-    // if override specified, get visibility info from it
-    auto empire_it = local_context.empire_object_vis_map_override.find(empire_id);
-    if (empire_it == local_context.empire_object_vis_map_override.end())
-        return false;
-    const auto& object_map = empire_it->second;
-    auto object_it = object_map.find(candidate->ID());
-    if (object_it == object_map.end())
-        return false;
-    return object_it->second > VIS_NO_VISIBILITY;
+    return VisibleToEmpireSimpleMatch(empire_id, local_context.empire_object_vis_map_override)(candidate);
 }
 
 void VisibleToEmpire::SetTopLevelContent(const std::string& content_name) {
