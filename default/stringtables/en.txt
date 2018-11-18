@@ -5604,11 +5604,9 @@ GROWTH_FOCUS_TITLE
 Growth Focus
 
 GROWTH_FOCUS_TEXT
-'''The Growth Focus represents exporting rare materials and substances that can increase population of planets. Is only available in certain situations: on some homeworlds, and on planets with growth specials that can be exported.
+'''The Growth Focus represents exporting rare materials and substances that can increase the max Population of planets. Is only available in certain situations: on some homeworlds, and on planets with growth specials that can be exported.
 
-A planet focused on Growth increases the max Population only of other planets connected to it by [[metertype METER_SUPPLY]] lines.
-
-A Homeworld focused on Growth only helps other planets of the same species.
+A planet focused on Growth extends those benefits to other planets connected to it by [[metertype METER_SUPPLY]] lines, provided that the species of those other planets are of the right type, i.e., a Homeworld focused on Growth only helps other planets of the same species, and Growth Specials (and Growth Focus based on them) only help species with a respective type of [[encyclopedia METABOLISM_TITLE]].  The benefits from different types of applicable Growth Focus will stack with each other, but not from multiple sources of the identical specific type.
 
 [[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
@@ -14316,7 +14314,7 @@ GROWTH_SPECIAL_INDUSTRY_BOOST
 If this planet is set to the Industry Focus, target [[metertype METER_INDUSTRY]] is increased by 0.2 per Population.
 
 GROWTH_SPECIALS_ENTRY_LIST
-'''Growth Special planets focused on growth only help a single classification of species. Some specials function for organic species only, some for lithic species only, and some for robotic species only.
+'''Some specials function for organic species only, some for lithic species only, and some for robotic species only; no other [[encyclopedia METABOLISM_TITLE]] currently has applicable Growth Specials.
 
 [[encyclopedia ORGANIC_SPECIES_TITLE]] specials:
 [[special FRUIT_SPECIAL]] | [[special SPICE_SPECIAL]] | [[special PROBIOTIC_SPECIAL]]
