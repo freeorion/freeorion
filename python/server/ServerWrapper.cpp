@@ -346,9 +346,11 @@ namespace {
     }
 
     // Wrapper for preunlocked items
-    list LoadItemSpecList() {
+    list LoadItemSpecList(StartingEra era) {
         list py_items;
-        auto& items = GetUniverse().InitiallyUnlockedItems();
+        auto& items = era == STARTING_ERA_PREWARP ?
+            GetUniverse().InitiallyUnlockedItemsPrewarp() :
+            GetUniverse().InitiallyUnlockedItems();
         for (const auto& item : items) {
             py_items.append(object(item));
         }
@@ -356,9 +358,11 @@ namespace {
     }
 
     // Wrapper for starting buildings
-    list LoadStartingBuildings() {
+    list LoadStartingBuildings(StartingEra era) {
         list py_items;
-        auto& buildings = GetUniverse().InitiallyUnlockedBuildings();
+        auto& buildings = era == STARTING_ERA_PREWARP ?
+            GetUniverse().InitiallyUnlockedBuildingsPrewarp() :
+            GetUniverse().InitiallyUnlockedBuildings();
         for (auto building : buildings) {
             if (GetBuildingType(building.name))
                 py_items.append(object(building));
@@ -468,8 +472,10 @@ namespace {
         std::shared_ptr<FleetPlan> m_fleet_plan;
     };
 
-    list LoadFleetPlanList() {
+    list LoadFleetPlanList(StartingEra era) {
         list py_fleet_plans;
+        if (era == STARTING_ERA_PREWARP)
+            return py_fleet_plans;
         auto&& fleet_plans = GetUniverse().InitiallyUnlockedFleetPlans();
         for (FleetPlan* fleet_plan : fleet_plans) {
             py_fleet_plans.append(FleetPlanWrapper(fleet_plan));

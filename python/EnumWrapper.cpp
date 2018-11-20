@@ -185,6 +185,11 @@ namespace FreeOrionPython {
             .value("shipDesign",    UIT_SHIP_DESIGN)
             .value("tech",          UIT_TECH)
         ;
+        enum_<StartingEra>("startingEra")
+            .value("invalid",       INVALID_STARTING_ERA)
+            .value("prewarp",       STARTING_ERA_PREWARP)
+            .value("classical",     STARTING_ERA_CLASSICAL)
+        ;
         enum_<Aggression>("aggression")
             .value("invalid",       INVALID_AGGRESSION)
             .value("beginner",      BEGINNER)
