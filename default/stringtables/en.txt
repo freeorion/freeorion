@@ -11458,9 +11458,6 @@ Eliminates Penalties
 GAME_MAKE_WORK_SHORT_DESC
 Makes the Game Work
 
-TAME_MONSTER_SHORT_DESC
-Tames Space Monsters
-
 EXOBOT_SHORT_DESC
 Builds Exobot Citizens
 
@@ -12275,6 +12272,12 @@ Scattered Asteroid Hull
 
 SHP_SCAT_AST_HULL_DESC
 This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[metertype METER_SHIELD]] for all owned ships and allies' ships in the vicinity.
+
+SHP_SMALLORG_HULL
+Small Organic Hull
+
+SHP_SMALLORG_HULL_DESC
+During early experiments with [[tech SHP_DOMESTIC_MONSTER]], it was noticed that smaller space monsters are easier to tame, handle, and maintain than larger ones, allowing the growth of tiny hulls which are cheaper, simpler, and faster to produce than a full-grown [[shiphull SH_ORGANIC]].
 
 SHP_ORG_HULL
 Organic Hull
@@ -13974,6 +13977,19 @@ SH_CRYSTALLIZED_ASTEROID_DESC
 [[metertype METER_STEALTH]] is medium but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
 
 [[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED]]'''
+
+SH_SMALL_ORGANIC
+Small Organic Hull
+
+SH_SMALL_ORGANIC_DESC
+'''A tiny living hull with one external and one internal slot.
+Organic Growth: starts with 3 [[metertype METER_STRUCTURE]], but grows an additional 4 structure over 20 turns.
+
+[[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is low and [[metertype METER_SPEED]] is average.
+
+[[LIVING_HULL_AUTO_REGEN]]
+
+Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], but it is so small and simple that it does not require an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].'''
 
 SH_ORGANIC
 Organic Hull
