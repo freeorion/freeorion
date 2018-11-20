@@ -6081,11 +6081,37 @@ Ignoring is useful for hiding a reoccurring event, such as reminders to build a 
 Blocking is useful if some types of SitReps are unhelpful, such as once all of the [[encyclopedia BEGINNER_HINTS]] have been seen.
 '''
 
-RESEARCH_TECH_GUIDE_TITLE
+RESEARCH_BASIC_GUIDE_TITLE
 Researching Technologies
 
+RESEARCH_BASIC_GUIDE_SHORT_DESC
+Deciding what shall be researched next
+
+RESEARCH_BASIC_GUIDE_TEXT
+'''Research is key to success in the FreeOrion universe. Some technologies that can be researched allow the construction of novel buildings, ship hulls, or ship parts. Some increase research speed, production, maximum population, supply range, ship speed, detection strength and range, stealth, planet defense, or maximum stockpile extraction.
+
+To instruct the empire's scientists what to research next, click on one of the blue conical flasks in the title bar, opening the research window. When done, click on the flask again to close the research window.
+
+The main area of the research window shows a tree of technologies. Basic technologies are shown to the left, advanced technologies to the right. Lines indicate dependencies.
+The research window also shows the Research Queue, by default on the left side. Technologies will be researched in the order shown in the queue.
+
+The basic operations are as follows:
+
+*  To learn about the benefits of a technology, right-click on it in the tree and select "Pedia Lookup".
+
+*  To add a technology to the queue, perform a double left click on it in the tree. This automatically adds the required dependencies as well, if there are any.
+
+*  To remove a scheduled technology from the queue, right click on it in the queue and select "Remove from Queue".
+
+*  To change the order in which the scheduled technologies shall be researched, drag and drop them inside the queue.
+
+*  If you feel overwhelmed by the size of the tree, use the "Display" toolbar, by default shown near the bottom of the screen. Hovering the mouse over the buttons shows tooltips. Click the button labeled "All" to clear the screen, then click one of the buttons to the left of it to only show the technologies in a given category, for example in the "Ship Hulls" category.'''
+
+RESEARCH_TECH_GUIDE_TITLE
+Technology Effects
+
 RESEARCH_TECH_GUIDE_SHORT_DESC
-Research and unlock new items
+Details about the effects of researched technologies
 
 RESEARCH_TECH_GUIDE_TEXT
 '''Completing [[metertype METER_RESEARCH]] on a technology that unlocks an item will only give an empire the knowledge of how to construct that item. Actually constructing such an item may have other requirements, such as access to a certain resource.
