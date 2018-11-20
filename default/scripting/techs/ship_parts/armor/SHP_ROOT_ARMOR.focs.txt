@@ -3,8 +3,8 @@ Tech
     description = "SHP_ROOT_ARMOR_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     category = "SHIP_PARTS_CATEGORY"
-    researchcost = 1
-    researchturns = 1
+    researchcost = 8 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 2
     tags = [ "PEDIA_ARMOR_PART_TECHS" ]
     unlock = Item type = ShipPart name = "AR_STD_PLATE"
     graphic = "icons/tech/armor_plating.png"
