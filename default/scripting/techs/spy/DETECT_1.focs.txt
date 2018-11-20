@@ -3,10 +3,10 @@ Tech
     description = "SPY_DETECT_1_DESC"
     short_description = "DETECTION_SHORT_DESC"
     category = "SPY_CATEGORY"
-    researchcost = 1
-    researchturns = 1
-    Unresearchable
+    researchcost = 12 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
     tags = [ "PEDIA_SPY_CATEGORY" ]
+    unlock = Item type = ShipPart name = "DT_DETECTOR_1"
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -20,14 +20,7 @@ Tech
                 Not OwnerHasTech name = "SPY_DETECT_5"
             ]
             effects = SetDetection value = Value + 50
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Not OwnerHasTech name = "SPY_DETECT_2"
-                Not OwnerHasTech name = "SPY_DETECT_3"
-                Not OwnerHasTech name = "SPY_DETECT_4"
-                Not OwnerHasTech name = "SPY_DETECT_5"
-            ]
-            effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 10
     ]
+    graphic = "icons/ship_parts/detector-1.png"
+
+#include "/scripting/common/base_prod.macros"
