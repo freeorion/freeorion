@@ -18,6 +18,9 @@ FO_COMMON_API const std::string& TextForGalaxySetupSetting(GalaxySetupOption gso
 /// Returns a user readable string for a Shape
 FO_COMMON_API const std::string& TextForGalaxyShape(Shape shape);
 
+/// Returns a user readable string for a Starting Era
+FO_COMMON_API const std::string& TextForStartingEra(StartingEra e);
+
 /// Returns a user readable string for an Aggression
 FO_COMMON_API const std::string& TextForAIAggression(Aggression a);
 

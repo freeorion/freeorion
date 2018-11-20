@@ -9,6 +9,7 @@ enum PlanetEnvironment : int;
 enum MeterType : int;
 enum Shape : int;
 enum Aggression : int;
+enum StartingEra : int;
 enum GalaxySetupOption : int;
 enum EmpireAffiliationType : int;
 enum DiplomaticStatus : int;

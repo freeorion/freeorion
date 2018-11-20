@@ -2487,6 +2487,12 @@ Mature
 GSETUP_ANCIENT
 Ancient
 
+GSETUP_STARTING_ERA_PREWARP
+Pre-Warp
+
+GSETUP_STARTING_ERA_CLASSICAL
+Classical
+
 # AI aggression level.
 GSETUP_BEGINNER
 Beginner Mode
