@@ -117,6 +117,9 @@ class TechGroup1(TechGroup):
             "PRO_ROBOTIC_PROD",
         ])
         self.weapon.extend([
+            "SHP_ROOT_AGGRESSION",
+            "SHP_INVASION",
+            "SHP_WEAPON_0_1",
             "SHP_WEAPON_1_2",
             "SHP_FIGHTERS_1",
             "SHP_WEAPON_1_3",
@@ -134,7 +137,7 @@ class TechGroup1(TechGroup):
             "SHP_BASIC_HULL_3",
             "SHP_MIL_ROBO_CONT",
         ])
-        # always start with the same first 13 techs; leaves 2 econ, 3 weap, 1 hull
+        # always start with the same first 16 techs; leaves 2 econ, 3 weap, 1 hull
         self.enqueue(
             self.economy,
             self.economy,
@@ -142,8 +145,11 @@ class TechGroup1(TechGroup):
             self.economy,
             self.economy,
             self.defense,
+            self.weapon,
             self.armor,
             self.hull,
+            self.weapon,
+            self.weapon,
             self.economy,
             self.economy,
             self.economy,
