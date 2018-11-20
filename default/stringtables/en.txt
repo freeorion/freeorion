@@ -10613,6 +10613,12 @@ Genetic Engineering
 GRO_GENETIC_ENG_DESC
 The palette of genetics is as varied as the forms of life from which it borrows. Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existent or possible in nature. As well, genes may be altered prior to reinsertion, by altering the base codes directly, allowing entirely new genes to be created. Techniques are limited, however, to small modifications of existing genes that are available for study.
 
+CON_OUTPOST
+Outpost Automation
+
+CON_OUTPOST_DESC
+While building an uninhabited outpost avoids the complex challenges of transporting a substantial number of people through outer space, it is tricky in its own way: by the time the construction team finishes installation, the outpost must be capable of completely automatic operation.
+
 CON_REMOTE_COL
 Remote Colonization
 
