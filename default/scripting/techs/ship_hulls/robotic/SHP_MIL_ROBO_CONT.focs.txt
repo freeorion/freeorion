@@ -6,7 +6,10 @@ Tech
     researchcost = 12 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     tags = [ "PEDIA_ROBOTIC_HULL_TECHS" ]
-    prerequisites = "PRO_ROBOTIC_PROD"
+    prerequisites = [
+        "SHP_BASIC_HULL_3"
+        "PRO_ROBOTIC_PROD"
+    ]
     unlock = [
         Item type = ShipHull name = "SH_ROBOTIC"
         Item type = ShipPart name = "SH_ROBOTIC_INTERFACE_SHIELDS"

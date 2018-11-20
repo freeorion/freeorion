@@ -14,10 +14,6 @@ Hull
             Building name = "BLD_SHIPYARD_BASE"
             OwnedBy empire = Source.Owner
         ]
-        Contains And [
-            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy empire = Source.Owner
-        ]
         OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
