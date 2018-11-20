@@ -1,0 +1,6 @@
+// Note: All items that are not valid buildings will be ignored.
+
+Item type = Building name = "BLD_SHIPYARD_BASE"
+Item type = Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+Item type = Building name = "BLD_CULTURE_ARCHIVES"
+Item type = Building name = "BLD_IMPERIAL_PALACE"
