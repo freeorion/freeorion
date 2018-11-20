@@ -108,6 +108,7 @@ class TechGroup1(TechGroup):
         self.economy.extend([
             "LRN_PHYS_BRAIN",
             "GRO_PLANET_ECOL",
+            "CON_OUTPOST",
             "CON_REMOTE_COL",
             "LRN_ALGO_ELEGANCE",
             "GRO_SUBTER_HAB",
@@ -128,8 +129,9 @@ class TechGroup1(TechGroup):
             "SHP_MIL_ROBO_CONT",
             "SHP_ORG_HULL",
         ])
-        # always start with the same first 8 techs; leaves 2 econ, 3 weap, 1 hull
+        # always start with the same first 9 techs; leaves 2 econ, 3 weap, 1 hull
         self.enqueue(
+            self.economy,
             self.economy,
             self.economy,
             self.economy,

@@ -285,7 +285,7 @@ EXOBOT_TECH_NAME = "PRO_EXOBOTS"
 
 
 # Tech required to build outpost pods
-OUTPOSTING_TECH = "SHP_GAL_EXPLO"
+OUTPOSTING_TECH = "CON_OUTPOST"
 
 # <editor-fold desc="Supply techs">
 supply_range_techs = {
