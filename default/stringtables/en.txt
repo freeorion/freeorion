@@ -12052,11 +12052,17 @@ Multi-Spectral Shielding
 SHP_MULTISPEC_SHIELD_DESC
 Provides adequate shielding to allow a ship to enter into the heart of a star. Ships in a system with a star type other than [[STAR_BLACK]] and [[STAR_NEUTRON]], receive a mighty [[metertype METER_STEALTH]] bonus.
 
+SPY_DETECT_0
+Unaided Eye
+
+SPY_DETECT_0_DESC
+The default imperial [[encyclopedia DETECTION_TITLE]] is 10, and the default [[metertype METER_DETECTION]] of all planets is 25.
+
 SPY_DETECT_1
 Optical Scanner
 
 SPY_DETECT_1_DESC
-All colonies start the game with a [[metertype METER_DETECTION]] of 50, and the imperial [[encyclopedia DETECTION_TITLE]] to 10, and the ship part [[shippart DT_DETECTOR_1]] permits ships to reach the same level of detection.
+Unlocks the [[shippart DT_DETECTOR_1]] ship part and increases the [[metertype METER_DETECTION]] of all planets from 25 to 50.
 
 SPY_DETECT_2
 Active Radar

@@ -1,16 +1,12 @@
 Tech
-    name = "SPY_DETECT_2"
-    description = "SPY_DETECT_2_DESC"
+    name = "SPY_DETECT_0"
+    description = "SPY_DETECT_0_DESC"
     short_description = "DETECTION_SHORT_DESC"
     category = "SPY_CATEGORY"
-    researchcost = 50 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
+    Unresearchable
     tags = [ "PEDIA_SPY_CATEGORY" ]
-    prerequisites = "SPY_DETECT_1"
-    unlock = [
-        Item type = ShipPart name = "DT_DETECTOR_2"
-        Item type = Building name = "BLD_SCANNING_FACILITY"
-    ]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -18,21 +14,21 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             activation = And [
+                Not OwnerHasTech name = "SPY_DETECT_1"
+                Not OwnerHasTech name = "SPY_DETECT_2"
                 Not OwnerHasTech name = "SPY_DETECT_3"
                 Not OwnerHasTech name = "SPY_DETECT_4"
                 Not OwnerHasTech name = "SPY_DETECT_5"
             ]
-            effects = SetDetection value = Value + 75
+            effects = SetDetection value = Value + 25
 
         EffectsGroup
             scope = Source
             activation = And [
+                Not OwnerHasTech name = "SPY_DETECT_2"
                 Not OwnerHasTech name = "SPY_DETECT_3"
                 Not OwnerHasTech name = "SPY_DETECT_4"
                 Not OwnerHasTech name = "SPY_DETECT_5"
             ]
-            effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 30
+            effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 10
     ]
-    graphic = "icons/tech/active_radar.png"
-
-#include "/scripting/common/base_prod.macros"

@@ -128,6 +128,7 @@ class TechGroup1(TechGroup):
             "SHP_ROOT_ARMOR",
         ])
         self.defense.extend([
+            "SPY_DETECT_1",
             "DEF_ROOT_DEFENSE",
             "DEF_GARRISON_1",
             "DEF_DEFENSE_NET_1",
@@ -138,7 +139,7 @@ class TechGroup1(TechGroup):
             "SHP_MIL_ROBO_CONT",
             "SHP_ORG_HULL",
         ])
-        # always start with the same first 16 techs; leaves 2 econ, 3 weap, 1 hull
+        # always start with the same first 17 techs; leaves 2 econ, 3 weap, 1 hull
         self.enqueue(
             self.economy,
             self.economy,
@@ -148,6 +149,7 @@ class TechGroup1(TechGroup):
             self.defense,
             self.weapon,
             self.armor,
+            self.defense,
             self.hull,
             self.weapon,
             self.weapon,
