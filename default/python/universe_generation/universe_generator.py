@@ -42,6 +42,7 @@ class PyGalaxySetupData:
         self.specials_frequency = galaxy_setup_data.specialsFrequency
         self.monster_frequency = galaxy_setup_data.monsterFrequency
         self.native_frequency = galaxy_setup_data.nativeFrequency
+        self.starting_era = galaxy_setup_data.startingEra
         self.max_ai_aggression = galaxy_setup_data.maxAIAggression
         self.game_uid = galaxy_setup_data.gameUID
 
@@ -56,6 +57,7 @@ class PyGalaxySetupData:
         print "...Specials Frequency:", self.specials_frequency
         print "...Monster Frequency:", self.monster_frequency
         print "...Native Frequency:", self.native_frequency
+        print "...StartingEra:", self.starting_era
         print "...Max AI Aggression:", self.max_ai_aggression
         print "...Game UID:", self.game_uid
 
@@ -122,7 +124,7 @@ def create_universe(psd_map):
     # set up empires for each player
     seed_rng(seed_pool.pop())
     for empire, psd, home_system in zip(psd_map.keys(), psd_map.values(), home_systems):
-        if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name):
+        if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name, gsd):
             report_error("Python create_universe: couldn't set up empire for player %s" % psd.player_name)
 
     # assign names to all star systems and their planets
