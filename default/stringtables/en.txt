@@ -6591,6 +6591,39 @@ If you are a newcomer to this universe, please click on the word "[[GREETINGS_GU
 SITREP_WELCOME_LABEL
 Welcome
 
+TUTORIAL_HINTS
+Tutorial Hints
+
+SITREP_TUTORIAL_FLEET_INTRO
+[[TUTORIAL_TITLE]] [[encyclopedia TUTORIAL_FLEET_INTRO_TITLE]]
+
+SITREP_TUTORIAL_PRODUCTION_INTRO
+[[TUTORIAL_TITLE]] [[encyclopedia TUTORIAL_PRODUCTION_INTRO_TITLE]]: The new technology %tech% was just discovered.
+
+SITREP_TUTORIAL_PRODUCTION_YARD
+[[TUTORIAL_TITLE]] Hint: Don't forget to start building a [[buildingtype BLD_SHIPYARD_BASE]] now, such that you will be able to build ships as soon as possible after the first ship hull becomes available.
+
+SITREP_TUTORIAL_FOCUS
+[[TUTORIAL_TITLE]] [[encyclopedia TUTORIAL_FOCUS_TITLE]]
+
+SITREP_TUTORIAL_PRODUCTION_SHIP_HULL
+[[TUTORIAL_TITLE]] [[encyclopedia TUTORIAL_PRODUCTION_SHIP_TITLE]]: The new technology %tech% was just discovered.
+
+SITREP_TUTORIAL_PRODUCTION_SHIP_YARD
+[[TUTORIAL_TITLE]] [[encyclopedia TUTORIAL_PRODUCTION_SHIP_TITLE]]: The first [[buildingtype BLD_SHIPYARD_BASE]] was just built.
+
+SITREP_TUTORIAL_PRODUCTION_COLONY_TECH
+[[TUTORIAL_TITLE]] [[encyclopedia TUTORIAL_PRODUCTION_COLONY_TITLE]]: The new technology %tech% was just discovered.
+
+SITREP_TUTORIAL_PRODUCTION_COLONY_YARD
+[[TUTORIAL_TITLE]] [[encyclopedia TUTORIAL_PRODUCTION_COLONY_TITLE]]: The first [[buildingtype BLD_SHIPYARD_BASE]] was just built.
+
+SITREP_TUTORIAL_COLONY_POD
+[[TUTORIAL_TITLE]] [[encyclopedia TUTORIAL_COLONY_POD_TITLE]]
+
+SITREP_TUTORIAL_OUTPOST_POD
+[[TUTORIAL_TITLE]] [[encyclopedia TUTORIAL_OUTPOST_POD_TITLE]]
+
 SITREP_SYSTEM_GOT_INCOMING_WARNING
 At %system%: Next turn enemy ships arrive!
 
