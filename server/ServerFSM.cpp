@@ -1109,6 +1109,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 (m_lobby_data->m_specials_freq != incoming_lobby_data.m_specials_freq) ||
                 (m_lobby_data->m_monster_freq != incoming_lobby_data.m_monster_freq) ||
                 (m_lobby_data->m_native_freq != incoming_lobby_data.m_native_freq) ||
+                (m_lobby_data->m_starting_era != incoming_lobby_data.m_starting_era) ||
                 (m_lobby_data->m_ai_aggr != incoming_lobby_data.m_ai_aggr) ||
                 (m_lobby_data->m_new_game != incoming_lobby_data.m_new_game) ||
                 (m_lobby_data->m_game_rules != incoming_lobby_data.m_game_rules);
@@ -1144,6 +1145,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             m_lobby_data->m_specials_freq  = incoming_lobby_data.m_specials_freq;
             m_lobby_data->m_monster_freq   = incoming_lobby_data.m_monster_freq;
             m_lobby_data->m_native_freq    = incoming_lobby_data.m_native_freq;
+            m_lobby_data->m_starting_era   = incoming_lobby_data.m_starting_era;
             m_lobby_data->m_ai_aggr        = incoming_lobby_data.m_ai_aggr;
             m_lobby_data->m_game_rules     = incoming_lobby_data.m_game_rules;
 

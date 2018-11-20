@@ -81,6 +81,7 @@ GalaxySetupData::GalaxySetupData() :
     m_specials_freq(GALAXY_SETUP_MEDIUM),
     m_monster_freq(GALAXY_SETUP_MEDIUM),
     m_native_freq(GALAXY_SETUP_MEDIUM),
+    m_starting_era(STARTING_ERA_PREWARP),
     m_ai_aggr(MANIACAL)
 {}
 
@@ -94,6 +95,7 @@ GalaxySetupData::GalaxySetupData(GalaxySetupData&& base) :
     m_specials_freq(base.m_specials_freq),
     m_monster_freq(base.m_monster_freq),
     m_native_freq(base.m_native_freq),
+    m_starting_era(base.m_starting_era),
     m_ai_aggr(base.m_ai_aggr),
     m_game_rules(std::move(base.m_game_rules)),
     m_game_uid(std::move(base.m_game_uid))
@@ -147,6 +149,9 @@ GalaxySetupOption GalaxySetupData::GetNativeFreq() const {
         return m_native_freq;
     return static_cast<GalaxySetupOption>(GetIdx(4, m_seed + "natives"));       // need range 0-3 for native frequency
 }
+
+StartingEra GalaxySetupData::GetStartingEra() const
+{ return m_starting_era; }
 
 Aggression GalaxySetupData::GetAggression() const
 { return m_ai_aggr; }
