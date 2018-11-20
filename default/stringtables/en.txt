@@ -12476,6 +12476,14 @@ BLD_AUTO_HISTORY_ANALYSER_DESC
 
 An automated research center with enormous computing power that scours the digitalised cultural archives to come up with patterns, interdisciplinary parallels and lost or unfinished insights.'''
 
+BLD_IMPERIAL_WORKSHOPS
+Imperial Workshops
+
+BLD_IMPERIAL_WORKSHOPS_DESC
+'''Throughout the empire, the traditional products of the home planet are in high demand, in particular since durability and beauty have been much improved by using the most modern materials available today.
+
+Increases [[metertype METER_INDUSTRY]] on the planet by 5, but can only be built on a on a planet with [[buildingtype BLD_CULTURE_ARCHIVES]].'''
+
 BLD_IMPERIAL_PALACE
 Imperial Palace
 
@@ -12483,6 +12491,14 @@ BLD_IMPERIAL_PALACE_DESC
 '''Increases [[metertype METER_SUPPLY]] line range by 2, [[metertype METER_TARGET_CONSTRUCTION]] by 20, [[metertype METER_DEFENSE]] by 5, and [[metertype METER_TROOPS]] by 6. Also sets the owner's Capital for the empire.
 
 Represents imperial power and prestige and functions as a center of control for the empire's holdings.'''
+
+BLD_IMPERIAL_GARDENS
+Imperial Gardens
+
+BLD_IMPERIAL_GARDENS_DESC
+'''Extensive gardens around the palace, in a romantic or cosy or magnificent style, depending on the tastes of the local population.  Genetic engineering is employed to make many of the plants look even nicer.  Like in most capital cities, people don't complain about a higher population density as long as some parts of the city are sufficiently beautiful.
+
+Increases maximum population on the planet by 50%, but can only by built around the [[buildingtype BLD_IMPERIAL_PALACE]].'''
 
 BLD_SUPER_TEST
 Super-Tester Takeover
