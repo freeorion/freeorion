@@ -6,7 +6,10 @@ Tech
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
     tags = [ "PEDIA_GROWTH_CATEGORY" ]
-    prerequisites = "GRO_GENETIC_ENG"
+    prerequisites = [
+        "CON_REMOTE_COL"
+        "GRO_GENETIC_ENG"
+    ]
     unlock = Item type = ShipPart name = "CO_SUSPEND_ANIM_POD"
     graphic = "icons/tech/lifecycle_manipulation.png"
 
