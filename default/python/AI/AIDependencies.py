@@ -809,6 +809,12 @@ HULL_EFFECTS = {
         SHIELDS: 3,
     },
     # Organic line
+    "SH_SMALL_ORGANIC": {
+        REPAIR_PER_TURN: 1,
+        FUEL_PER_TURN: 0.2,
+        DETECTION: 10,
+        ORGANIC_GROWTH: (0.2, 4),
+    },
     "SH_ORGANIC": {
         REPAIR_PER_TURN: 2,
         FUEL_PER_TURN: 0.2,

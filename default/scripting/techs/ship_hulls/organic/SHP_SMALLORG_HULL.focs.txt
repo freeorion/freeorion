@@ -1,0 +1,16 @@
+Tech
+    name = "SHP_SMALLORG_HULL"
+    description = "SHP_SMALLORG_HULL_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    category = "SHIP_HULLS_CATEGORY"
+    researchcost = 6 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 2
+    tags = [ "PEDIA_ORGANIC_HULL_TECHS" ]
+    prerequisites = [
+        "SHP_CONSTRUCTION"
+        "SHP_DOMESTIC_MONSTER"
+    ]
+    unlock = Item type = ShipHull name = "SH_SMALL_ORGANIC"
+    graphic = "hulls_design/organic_hull.png"
+
+#include "/scripting/common/base_prod.macros"
