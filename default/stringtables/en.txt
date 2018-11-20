@@ -11835,7 +11835,19 @@ SHP_ROOT_AGGRESSION
 Aggression
 
 SHP_ROOT_AGGRESSION_DESC
-Allows basic weapons and [[shippart GT_TROOP_POD]]s.
+Allows basic weapons.
+
+SHP_WEAPON_0_1
+Flak
+
+SHP_WEAPON_0_1_DESC
+Defend against Fighters launching from enemy ships.
+
+SHP_INVASION
+Invasion
+
+SHP_INVASION_DESC
+Take over enemy planets and outposts.
 
 SHP_BOMBARD
 Bombardment

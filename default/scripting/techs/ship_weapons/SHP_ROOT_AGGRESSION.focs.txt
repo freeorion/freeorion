@@ -3,20 +3,41 @@ Tech
     description = "SHP_ROOT_AGGRESSION_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     category = "SHIP_WEAPONS_CATEGORY"
-    researchcost = 1
-    researchturns = 1
+    researchcost = 6 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
     tags = [ "PEDIA_SHIP_WEAPONS_CATEGORY" ]
-    unlock = [
-        Item type = ShipPart name = "SR_WEAPON_1_1"
-        Item type = ShipPart name = "GT_TROOP_POD"
-        Item type = ShipPart name = "SR_WEAPON_0_1"
-    ]
+    unlock = Item type = ShipPart name = "SR_WEAPON_1_1"
     effectsgroups = [
-        [[WEAPON_BASE_EFFECTS(SR_WEAPON_0_1)]]
         [[WEAPON_BASE_EFFECTS(SR_WEAPON_1_1)]]
     ]
-    graphic = "icons/tech/planetary_colonialism.png"
+    graphic = "icons/ship_parts/mass-driver-1.png"
+
+Tech
+    name = "SHP_WEAPON_0_1"
+    description = "SHP_WEAPON_0_1_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    category = "SHIP_WEAPONS_CATEGORY"
+    researchcost = 9 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
+    prerequisites = "SHP_ROOT_AGGRESSION"
+    unlock = Item type = ShipPart name = "SR_WEAPON_0_1"
+    effectsgroups = [
+        [[WEAPON_BASE_EFFECTS(SR_WEAPON_0_1)]]
+    ]
+    graphic = "icons/ship_parts/flak.png"
+
+Tech
+    name = "SHP_INVASION"
+    description = "SHP_INVASION_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    category = "SHIP_WEAPONS_CATEGORY"
+    researchcost = 9 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    tags = [ "PEDIA_SHIP_WEAPONS_CATEGORY" ]
+    prerequisites = "SHP_ROOT_AGGRESSION"
+    unlock = Item type = ShipPart name = "GT_TROOP_POD"
+    graphic = "icons/ship_parts/troops.png"
 
 #include "ship_weapons.macros"
-
 #include "/scripting/common/base_prod.macros"
