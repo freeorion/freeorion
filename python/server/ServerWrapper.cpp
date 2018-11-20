@@ -105,7 +105,8 @@ namespace {
 
     // Wrappers for generating sitrep messages
     void GenerateSitRep(int empire_id, const std::string& template_string,
-                        const dict& py_params, const std::string& icon)
+                        const dict& py_params, const std::string& icon,
+                        const std::string& label)
     {
         int sitrep_turn = CurrentTurn() + 1;
 
@@ -122,7 +123,7 @@ namespace {
         if (empire_id == ALL_EMPIRES) {
             for (const auto& entry : Empires()) {
                 entry.second->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn,
-                                                          icon, params));
+                                                          icon, params, label));
             }
         } else {
             Empire* empire = GetEmpire(empire_id);
@@ -130,14 +131,15 @@ namespace {
                 ErrorLogger() << "GenerateSitRep: couldn't get empire with ID " << empire_id;
                 return;
             }
-            empire->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn, icon, params));
+            empire->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn, icon, params, label));
         }
     }
 
     void GenerateSitRep1(int empire_id,
                          const std::string& template_string,
-                         const std::string& icon)
-    { GenerateSitRep(empire_id, template_string, dict(), icon); }
+                         const std::string& icon,
+                         const std::string& label)
+    { GenerateSitRep(empire_id, template_string, dict(), icon, label); }
 
     // Wrappers for Species / SpeciesManager class (member) functions
     object SpeciesPreferredFocus(const std::string& species_name) {
@@ -1396,5 +1398,7 @@ namespace FreeOrionPython {
         def("planet_make_outpost",                  PlanetMakeOutpost);
         def("planet_make_colony",                   PlanetMakeColony);
         def("planet_cardinal_suffix",               PlanetCardinalSuffix);
+
+        boost::python::scope().attr("INVALID_GAME_TURN") = INVALID_GAME_TURN;
     }
 }
