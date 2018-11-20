@@ -3,8 +3,8 @@ Tech
     description = "PRO_PREDICTIVE_STOCKPILING_DESC"
     short_description = "IMPERIAL_STOCKPILE_SHORT_DESC"
     category = "PRODUCTION_CATEGORY"
-    researchcost = 1
-    researchturns = 1
+    researchcost = 6 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 2
     tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     effectsgroups = [
         // Set initial meters
@@ -21,3 +21,4 @@ Tech
     ]
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/base_prod.macros"
