@@ -10967,6 +10967,30 @@ Increases [[metertype METER_SPEED]] of your ships by 20 when they are within 50 
 
 Effectively supplying ships, ordering general fleet movement and even organizing the movement of specific ships in battle requires a complex understanding of navigation and detection, and of methods of information acquisition.'''
 
+SHP_CONSTRUCTION
+Ship Construction
+
+SHP_CONSTRUCTION_DESC
+Allows building the basic infrastructure for the construction of spaceships.
+
+SHP_BASIC_HULL_1
+Small Ship Hulls
+
+SHP_BASIC_HULL_1_DESC
+Allows building small spaceships with a conventional hull design.
+
+SHP_BASIC_HULL_2
+Medium Ship Hulls
+
+SHP_BASIC_HULL_2_DESC
+Allows building a conventionally designed hull large enough to accomodate an internal module.
+
+SHP_BASIC_HULL_3
+Large Ship Hulls
+
+SHP_BASIC_HULL_3_DESC
+Allows building a conventionally designed hull with three external slots.
+
 SHP_MIL_ROBO_CONT
 Military Robotic Control
 

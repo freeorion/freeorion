@@ -127,15 +127,19 @@ class TechGroup1(TechGroup):
             "DEF_GARRISON_1",
         ])
         self.hull.extend([
+            "SHP_BASIC_HULL_2",
+            "SHP_BASIC_HULL_3",
             "SHP_MIL_ROBO_CONT",
         ])
-        # always start with the same first 10 techs; leaves 2 econ, 3 weap, 1 hull
+        # always start with the same first 12 techs; leaves 2 econ, 3 weap, 1 hull
         self.enqueue(
             self.economy,
             self.economy,
+            self.hull,
             self.economy,
             self.economy,
             self.defense,
+            self.hull,
             self.economy,
             self.economy,
             self.economy,
