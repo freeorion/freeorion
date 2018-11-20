@@ -6021,10 +6021,10 @@ There are several Field Types, each having a distinctive, somewhat diffuse, appe
 ##
 
 GENERAL_PEDIA_REFERENCE
-Information such as this is accessible via the "Pedia" [[encyclopedia ENC_INDEX]].
+Information about game concepts, game objects, and the user interface is available from the "Pedia" [[encyclopedia ENC_INDEX]].
 
 DETAILED_PEDIA_REFERENCE
-[[GENERAL_PEDIA_REFERENCE]]  The Pedia can be opened and closed via the purple icon bearing a question mark, in the upper right portion of the main [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]]. The Pedia can be navigated via hotlinks and via the arrows in the lower right corner of the Pedia window.
+[[GENERAL_PEDIA_REFERENCE]]  The Pedia can be opened and closed via the purple icon bearing a question mark, in the upper right portion of the main [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]]. The Pedia can be navigated via hotlinks and via the arrows in the lower right corner of the Pedia window. When the Pedia window hides parts of other windows that you want to look at, simply close it. Opening it again will always return to the article that you last looked at.
 
 GREETINGS_GUIDE_TITLE
 **Greetings**
@@ -6032,14 +6032,15 @@ GREETINGS_GUIDE_TITLE
 GREETINGS_INTRO
 Greetings Esteemed Entity, and Welcome to the FreeOrion Universe!
 
-GREETINGS_GUIDE_REFERENCE
-Newcomers to this universe may particularly wish to consult the [[encyclopedia QUICK_START_GUIDE_TITLE]].
-
 GREETINGS_GUIDE_TEXT
 '''[[GREETINGS_INTRO]]
 
-[[DETAILED_PEDIA_REFERENCE]]
-[[GREETINGS_GUIDE_REFERENCE]]
+You may be as surprised as we are, but you have just been elected Emperor of our new-founded empire. You certainly can't wait to command our fleet of spaceships, to direct our research, and to govern our planets... Oh well, admittedly our one and only planet so far, but that's likely among the things you came here to change, isn't it?
+
+For guidance what to do first, please continue to the tutorial article [[encyclopedia TUTORIAL_RESEARCH_INTRO_TITLE]].
+
+In case you should ever feel lost: [[DETAILED_PEDIA_REFERENCE]]
+
 
 FreeOrion is a free, open source, turn-based space empire and galactic conquest (4X) computer game being designed and built by the FreeOrion project. FreeOrion is inspired by the tradition of the Master of Orion games, but is not a clone or remake of that series or any other game.
 
@@ -6733,7 +6734,9 @@ SITREP_SHOWALL_TEMPLATES
 Show all blocked SitReps
 
 SITREP_WELCOME
-[[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
+'''[[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_INTRO]]
+If you are a newcomer to this universe, please click on the word "[[GREETINGS_GUIDE_TITLE]]" to help us get you started.
+'''
 
 SITREP_WELCOME_LABEL
 Welcome
