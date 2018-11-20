@@ -257,7 +257,8 @@ ETA_NEXT_TURN
 
 EffectsGroup
     scope = Source
-    activation = Turn low = 0 high = 100
+    // The first 3 turns typically show tutorial sitreps, so start after that.
+    activation = Turn low = 4 high = 100
     stackinggroup = "HINTSSYSTEM"
     effects = [
         GenerateSitrepMessage
