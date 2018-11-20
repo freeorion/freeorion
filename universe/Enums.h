@@ -147,6 +147,14 @@ GG_ENUM(Shape,
     GALAXY_SHAPES   ///< the number of shapes in this enum (leave this last)
 )
 
+/** levels of available technology at game start */
+GG_ENUM(StartingEra,
+    INVALID_STARTING_ERA = -1,
+    STARTING_ERA_PREWARP,
+    STARTING_ERA_CLASSICAL,
+    NUM_STARTING_ERAS
+)
+
 /** levels of AI Aggression during galaxy generation */
 GG_ENUM(Aggression,
     INVALID_AGGRESSION = -1,
