@@ -80,6 +80,7 @@ public:
     GalaxySetupOption               GetSpecialsFrequency() const;   //!< Returns the rarity of planetary and system specials
     GalaxySetupOption               GetMonsterFrequency() const;    //!< Returns the frequency of space monsters
     GalaxySetupOption               GetNativeFrequency() const;     //!< Returns the frequency of natives
+    StartingEra                     GetStartingEra() const;         //!< Returns the starting era
     Aggression                      GetAIAggression() const;        //!< Returns the  maximum AI aggression level 
 
     /** Returns the current preview image texture. */
@@ -127,6 +128,8 @@ private:
     std::shared_ptr<GG::DropDownList>   m_monster_freq_list;    //!< The frequency of monsters;
     std::shared_ptr<GG::Label>          m_native_freq_label;
     std::shared_ptr<GG::DropDownList>   m_native_freq_list;     //!< The frequency of natives;
+    std::shared_ptr<GG::Label>          m_starting_era_label;
+    std::shared_ptr<GG::DropDownList>   m_starting_era_list;    //!< The starting era;
     std::shared_ptr<GG::Label>          m_ai_aggression_label;
     std::shared_ptr<GG::DropDownList>   m_ai_aggression_list;   //!< The max aggression choices for AI opponents;
 

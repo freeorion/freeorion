@@ -62,6 +62,7 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
     setup_data.m_specials_freq =    GalaxySetupOption::GALAXY_SETUP_MEDIUM;
     setup_data.m_monster_freq =     GalaxySetupOption::GALAXY_SETUP_MEDIUM;
     setup_data.m_native_freq =      GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.m_starting_era =     StartingEra::STARTING_ERA_PREWARP;
     setup_data.m_ai_aggr =          Aggression::MANIACAL;
     setup_data.m_game_rules =       game_rules;
 
