@@ -1,0 +1,28 @@
+BuildingType
+    name = "BLD_IMPERIAL_GARDENS"
+    description = "BLD_IMPERIAL_GARDENS_DESC"
+    buildcost = 150 * [[BUILDING_COST_MULTIPLIER]]
+    buildtime = 5
+    location = And [
+        Planet
+        Contains Building name = "BLD_IMPERIAL_PALACE"
+        Not Contains Building name = "BLD_IMPERIAL_GARDENS"
+        OwnedBy empire = Source.Owner
+        TargetPopulation low = 1
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                NOT Population high = 0
+                OwnedBy empire = Source.Owner
+            ]
+            activation = Source
+            effects = SetTargetPopulation value = Value * 1.5
+    ]
+    icon = "icons/tech/living_planet.png"
+
+#include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"
