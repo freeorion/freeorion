@@ -3,6 +3,8 @@ Tech
     description = "SPY_ROOT_DECEPTION_DESC"
     short_description = "THEORY_SHORT_DESC"
     category = "SPY_CATEGORY"
-    researchcost = 1
-    researchturns = 1
+    researchcost = 20 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
     tags = [ "PEDIA_SPY_CATEGORY" "THEORY" ]
+
+#include "/scripting/common/base_prod.macros"
