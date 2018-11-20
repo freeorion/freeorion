@@ -28,7 +28,7 @@ namespace {
     const GG::Y PANEL_CONTROL_SPACING(33);
     const GG::X INDENTATION(20);
     const GG::X SPIN_WIDTH(128);
-    const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 10);
+    const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 11);
     const GG::X GalSetupWndWidth()
     { return GG::X(445 + FontBasedUpscale(300)); }
     const GG::Y GalSetupWndHeight()
@@ -149,6 +149,7 @@ namespace {
 
     // persistant between-executions game setup settings
     void AddOptions(OptionsDB& db) {
+        db.Add("setup.starting.era",            UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_ERA"),             STARTING_ERA_PREWARP,       RangedValidator<StartingEra>(STARTING_ERA_PREWARP, STARTING_ERA_CLASSICAL));
         db.Add("setup.empire.name",             UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_NAME"),              std::string(""),            Validator<std::string>());
         db.Add("setup.player.name",             UserStringNop("OPTIONS_DB_GAMESETUP_PLAYER_NAME"),              std::string(""),            Validator<std::string>());
         db.Add("setup.empire.color.index",      UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_COLOR"),             9,                          RangedValidator<int>(0, 100));
@@ -622,6 +623,13 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_native_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_native_freq_list->SetStyle(GG::LIST_NOSORT);
 
+    // starting era
+    m_starting_era_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_STARTING_ERA"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_starting_era_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_starting_era_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.starting.era")));
+    m_starting_era_list = GG::Wnd::Create<CUIDropDownList>(2);
+    m_starting_era_list->SetStyle(GG::LIST_NOSORT);
+
     // ai aggression
     m_ai_aggression_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_AI_AGGR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_ai_aggression_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
@@ -648,6 +656,8 @@ void GalaxySetupPanel::CompleteConstruction() {
     AttachChild(m_monster_freq_list);
     AttachChild(m_native_freq_label);
     AttachChild(m_native_freq_list);
+    AttachChild(m_starting_era_label);
+    AttachChild(m_starting_era_list);
     AttachChild(m_ai_aggression_label);
     AttachChild(m_ai_aggression_list);
 
@@ -674,6 +684,8 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_monster_freq_list->SelChangedSignal.connect(
         boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_native_freq_list->SelChangedSignal.connect(
+        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+    m_starting_era_list->SelChangedSignal.connect(
         boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_ai_aggression_list->SelChangedSignal.connect(
         boost::bind(&GalaxySetupPanel::SettingChanged, this));
@@ -740,6 +752,9 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_native_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_HIGH")));
     m_native_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_RANDOM")));
 
+    m_starting_era_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_STARTING_ERA_PREWARP")));
+    m_starting_era_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_STARTING_ERA_CLASSICAL")));
+
     m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_BEGINNER")));
     m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_TURTLE")));
     m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_CAUTIOUS")));
@@ -761,6 +776,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_specials_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency"));
     m_monster_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency"));
     m_native_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency"));
+    m_starting_era_list->Select(GetOptionsDB().Get<StartingEra>("setup.starting.era"));
     m_ai_aggression_list->Select(GetOptionsDB().Get<Aggression>("setup.ai.aggression"));
 
     TraceLogger() << "GalaxySetupPanel::CompleteConstruction settings changed signal...";
@@ -816,6 +832,9 @@ GalaxySetupOption GalaxySetupPanel::GetMonsterFrequency() const
 
 GalaxySetupOption GalaxySetupPanel::GetNativeFrequency() const
 { return GalaxySetupOption(m_native_freq_list->CurrentItemIndex()); }
+
+StartingEra GalaxySetupPanel::GetStartingEra() const
+{ return StartingEra(m_starting_era_list->CurrentItemIndex()); }
 
 Aggression GalaxySetupPanel::GetAIAggression() const
 { return Aggression(m_ai_aggression_list->CurrentItemIndex()); }
@@ -916,6 +935,14 @@ void GalaxySetupPanel::DoLayout() {
     control_ul += row_advance;
     control_lr += row_advance;
 
+    m_starting_era_label->SizeMove(label_ul, label_lr);
+    m_starting_era_list->SizeMove(control_ul, control_lr);
+
+    label_ul += row_advance;
+    label_lr += row_advance;
+    control_ul += row_advance;
+    control_lr += row_advance;
+
     m_ai_aggression_label->SizeMove(label_ul, label_lr);
     m_ai_aggression_list->SizeMove(control_ul, control_lr);
 }
@@ -936,6 +963,7 @@ void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
     m_specials_freq_list->Select(setup_data.m_specials_freq);
     m_monster_freq_list->Select(setup_data.m_monster_freq);
     m_native_freq_list->Select(setup_data.m_native_freq);
+    m_starting_era_list->Select(setup_data.m_starting_era);
     m_ai_aggression_list->Select(setup_data.m_ai_aggr);
 }
 
@@ -949,6 +977,7 @@ void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const {
     setup_data.m_specials_freq =    GetSpecialsFrequency();
     setup_data.m_monster_freq =     GetMonsterFrequency();
     setup_data.m_native_freq =      GetNativeFrequency();
+    setup_data.m_starting_era =     GetStartingEra();
     setup_data.m_ai_aggr =          GetAIAggression();
 }
 
@@ -1235,6 +1264,11 @@ void GalaxySetupWnd::OkClicked() {
         GetOptionsDB().Set("setup.native.frequency",    m_galaxy_setup_panel->GetNativeFrequency());
     } catch (const std::exception& e) {
         ErrorLogger() << "Caught exception setting native frequency from setup panel results: " << e.what();
+    }
+    try {
+        GetOptionsDB().Set("setup.starting.era",        m_galaxy_setup_panel->GetStartingEra());
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Caught exception setting starting era from setup panel results: " << e.what();
     }
     try {
         GetOptionsDB().Set("setup.ai.aggression",       m_galaxy_setup_panel->GetAIAggression());

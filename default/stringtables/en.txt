@@ -1820,6 +1820,9 @@ OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY
 Some natives can be technologically advanced and may create guard ships to protect their homeworlds, these will appear even if Monster Frequency is set to None.
 '''
 
+OPTIONS_DB_GAMESETUP_STARTING_ERA
+Level of available technology at game start.
+
 OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
 '''The maximum aggression level for AI opponents.
 
@@ -2415,6 +2418,9 @@ Monster Frequency
 
 GSETUP_NATIVE_FREQ
 Native Frequency
+
+GSETUP_STARTING_ERA
+Starting Era
 
 GSETUP_AI_AGGR
 Max AI Aggression
