@@ -11093,6 +11093,12 @@ Neutronium Extraction
 PRO_NEUTRONIUM_EXTRACTION_DESC
 The core of a [[STAR_NEUTRON]] star consists of degenerate neutron matter, compressed by gravity to a density far greater than the heaviest normal matter. This exotic material has numerous applications once extracted from the star, allowing production of otherwise impossible structures and ship parts.
 
+CON_SUPPLY_MOD
+Planet Supply Modifier
+
+CON_SUPPLY_MOD_DESC
+Modifies the supply range based on planet size.
+
 CON_ARCH_PSYCH
 Architectural Psychology
 
@@ -12134,6 +12140,12 @@ These four labels are
 "[[CUSTOM_3]]"
 "[[CUSTOM_4]]"
 '''
+
+SPY_MISC_SITREPS
+Various Sitreps
+
+SPY_MISC_SITREPS_DESC
+Various reports from the Empire Intelligence Agency.
 
 SHP_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings

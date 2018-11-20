@@ -1,0 +1,56 @@
+Tech
+    name = "SPY_MISC_SITREPS"
+    description = "SPY_MISC_SITREPS_DESC"
+    short_description = "SPY_CUSTOM_ADVISORIES"
+    category = "SPY_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    Unresearchable
+    tags = [ "PEDIA_SPY_CATEGORY" ]
+
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Turn low = 0 high = 0
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_WELCOME"
+                    label = "SITREP_WELCOME_LABEL"  // explicitly provided so that the custom SitRep intro message can share the same SitRepPanel filter
+                    icon = "icons/sitrep/fo_logo.png"
+                    empire = Source.Owner
+            ]
+
+        // generate sitrep for any planet that is about to increase to above the
+        // recolonizing population, while also having sufficient happiness to do
+        // do so
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                CanColonize
+
+                (LocalCandidate.Population              <  LocalCandidate.TargetPopulation)
+                (LocalCandidate.Population +
+                    LocalCandidate.Population*0.01*(LocalCandidate.TargetPopulation + 1 - LocalCandidate.Population)
+                    >= [[MIN_RECOLONIZING_SIZE]])
+
+                (LocalCandidate.TargetHappiness         >= [[MIN_RECOLONIZING_HAPPINESS]]           )
+                (LocalCandidate.Happiness               >= [[MIN_RECOLONIZING_HAPPINESS]] - 1       )
+                Or [
+                    (0.1 <= LocalCandidate.Population   <= ([[MIN_RECOLONIZING_SIZE]] - 0.001)      )
+                    (0.1 <= LocalCandidate.Happiness    <= ([[MIN_RECOLONIZING_HAPPINESS]] - 0.001) )
+                ]
+            ]
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_POP_THRESHOLD"
+                    label = "SITREP_POP_THRESHOLD_LABEL"
+                    icon = "icons/sitrep/colony_growth.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+    ]
+
+#include "/scripting/common/misc.macros"
