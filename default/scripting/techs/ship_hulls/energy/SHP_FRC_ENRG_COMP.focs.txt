@@ -7,6 +7,7 @@ Tech
     researchturns = 3
     tags = [ "PEDIA_ENERGY_HULL_TECHS" ]
     prerequisites = [
+        "SHP_CONSTRUCTION"
         "LRN_FORCE_FIELD"
     ]
     unlock = [

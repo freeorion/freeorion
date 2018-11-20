@@ -1,0 +1,13 @@
+Tech
+    name = "SHP_BASIC_HULL_2"
+    description = "SHP_BASIC_HULL_2_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    category = "SHIP_HULLS_CATEGORY"
+    researchcost = 6 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 2
+    tags = [ "PEDIA_SHIP_HULLS_CATEGORY" ]
+    prerequisites = "SHP_BASIC_HULL_1"
+    unlock = Item type = ShipHull name = "SH_BASIC_MEDIUM"
+    graphic = "icons/ship_hulls/basic-medium-hull_small.png"
+
+#include "/scripting/common/base_prod.macros"

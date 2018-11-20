@@ -6,7 +6,10 @@ Tech
     researchcost = 25 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     tags = [ "PEDIA_ASTEROID_HULL_TECHS" ]
-    prerequisites = "PRO_MICROGRAV_MAN"
+    prerequisites = [
+        "SHP_CONSTRUCTION"
+        "PRO_MICROGRAV_MAN"
+    ]
     unlock = [
         Item type = ShipHull name = "SH_SMALL_ASTEROID"
         Item type = ShipHull name = "SH_ASTEROID"
