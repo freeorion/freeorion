@@ -11,7 +11,7 @@ def tutorial_events():
             sent = tutorial_fleet_intro(empire)
         sent += tutorial_production_intro(empire)
         if empire_id in shipyards_built or sent == 0:
-            shown = tutorial_find_shown(empire)
+            shown = tutorial_find_shown_sitreps(empire)
         if empire_id in shipyards_built:
             sent += tutorial_production_ship(
                 empire, shipyards_built[empire_id] == current_turn)
@@ -129,8 +129,12 @@ def tutorial_production_intro(empire):
     return 0
 
 
-def tutorial_find_shown(empire):
-    """Check which sitreps were already shown to this empire."""
+def tutorial_find_shown_sitreps(empire):
+    """Check which sitreps were already shown to this empire,
+    only considering those tutorial-specific ones where the condition
+    triggering them may occur more than once, such that an explicit
+    check is needed whether they were already shown earlier.
+    """
     shown = {}
     num_sitreps = empire.numSitReps(fo.INVALID_GAME_TURN)
     sitrep_index = 0
