@@ -1,5 +1,6 @@
 import freeorion as fo
 
+
 def tutorial_events():
     current_turn = fo.current_turn()
     shipyards_built = tutorial_find_shipyards()
@@ -7,8 +8,7 @@ def tutorial_events():
         empire = fo.get_empire(empire_id)
         sent = 0
         if current_turn == 1:
-            tutorial_fleet_intro(empire)
-            sent = 1
+            sent = tutorial_fleet_intro(empire)
         sent += tutorial_production_intro(empire)
         if empire_id in shipyards_built or sent == 0:
             shown = tutorial_find_shown(empire)
@@ -44,10 +44,24 @@ def tutorial_find_shipyards():
 
 
 def tutorial_fleet_intro(empire):
-    system_id = fo.get_universe().getPlanet(empire.capitalID).systemID
+    planet = fo.get_universe().getPlanet(empire.capitalID)
+    if planet is None:
+        print >> sys.stderr, "fleet_intro:", empire.name, \
+            "capital planet", empire.capitalID, "does not exist"
+        return 0
+    system_id = planet.systemID
     fleet_id = fo.create_fleet("", system_id, empire.empireID)
-    fo.create_ship("", "SD_SCOUT", "", fleet_id)
-    print "tutorial: initial scout for", empire.name, \
+    if fleet_id == fo.invalid_object():
+        print >> sys.stderr, "fleet_intro:", \
+            "couldn't create initial scout fleet for", empire.name, \
+            "in system", system_id
+        return 0
+    if fo.create_ship("", "SD_SCOUT", "", fleet_id) == fo.invalid_object():
+        print >> sys.stderr, "fleet_intro:", \
+            "couldn't create initial scout ship for", empire.name, \
+            "in fleet", fleet_id
+        return 0
+    print "fleet_intro: initial scout for", empire.name, \
         "system =", system_id, "fleet =", fleet_id
     fo.generate_sitrep(
         empire.empireID,
@@ -55,6 +69,7 @@ def tutorial_fleet_intro(empire):
         "icons/sitrep/beginner_hint.png",
         "TUTORIAL_HINTS"
     )
+    return 1
 
 
 def tutorial_production_intro(empire):
