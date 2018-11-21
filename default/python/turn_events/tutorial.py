@@ -93,12 +93,12 @@ def tutorial_production_intro(empire):
         "CON_PLANET_DRIVE",
     ]
     current_turn = fo.current_turn()
-    res_techs = empire.researchedTechs
+    researched_techs = empire.researchedTechs
     turn = current_turn + 1
     for tech in building_techs:
-        if tech not in res_techs:
+        if tech not in researched_techs:
             continue
-        turn = res_techs[tech]
+        turn = researched_techs[tech]
         if turn < current_turn:
             print "production_intro:", \
                 empire.name, "knows", tech, "since turn", turn
@@ -115,8 +115,8 @@ def tutorial_production_intro(empire):
             "TUTORIAL_HINTS"
         )
         return 1
-    if "SHP_CONSTRUCTION" in res_techs and \
-            res_techs["SHP_CONSTRUCTION"] == current_turn:
+    if "SHP_CONSTRUCTION" in researched_techs and \
+            researched_techs["SHP_CONSTRUCTION"] == current_turn:
         print "production_intro sending sitrep:", \
             empire.name, "just discovered shipyard"
         fo.generate_sitrep(
