@@ -1821,7 +1821,7 @@ Some natives can be technologically advanced and may create guard ships to prote
 '''
 
 OPTIONS_DB_GAMESETUP_STARTING_ERA
-Level of available technology at game start.
+Level of known technology at game start.
 
 OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
 '''The maximum aggression level for AI opponents.
