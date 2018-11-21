@@ -37,7 +37,7 @@ def tutorial_find_shipyards():
         empire_id = building.producedByEmpireID
         if empire_id not in shipyards_built or \
                 shipyards_built[empire_id] > building.creationTurn:
-            print "tutorial: empire", empire_id, \
+            print "empire", empire_id, \
                 "built shipyard in turn", building.creationTurn
             shipyards_built[empire_id] = building.creationTurn
     return shipyards_built
@@ -164,7 +164,6 @@ def first_tech(empire, wanted_techs):
     tech_first = "NONE"
     for tech in wanted_techs:
         if tech not in empire.researchedTechs:
-            print "production_ship:", empire.name, "does not know", tech
             continue
         turn = empire.researchedTechs[tech]
         if turn_first > turn:
