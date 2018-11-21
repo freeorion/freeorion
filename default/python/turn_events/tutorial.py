@@ -16,7 +16,7 @@ def tutorial_events():
             sent += tutorial_production_ship(
                 empire, shipyards_built[empire_id] == current_turn)
             if "colony_pod" not in shown:
-                sent += tutotial_colony_pod(empire)
+                sent += tutorial_colony_pod(empire)
         if sent == 0 and "focus" not in shown:
             fo.generate_sitrep(
                 empire_id,
@@ -138,11 +138,11 @@ def tutorial_find_shown(empire):
         sitrep = empire.getSitRep(sitrep_index)
         if sitrep.typeString == "SITREP_TUTORIAL_OUTPOST_POD" or \
                 sitrep.typeString == "SITREP_TUTORIAL_COLONY_POD":
-            print "tutotial_colony_pod shown to", empire.name, \
+            print "tutorial_colony_pod shown to", empire.name, \
                 "on turn", sitrep.getTurn
             shown["colony_pod"] = sitrep.getTurn
         elif sitrep.typeString == "SITREP_TUTORIAL_FOCUS":
-            print "tutotial_focus shown to", empire.name, \
+            print "tutorial_focus shown to", empire.name, \
                 "on turn", sitrep.getTurn
             shown["focus"] = sitrep.getTurn
         if len(shown) == 2:
@@ -271,7 +271,7 @@ def tutorial_production_ship(empire, shipyard_is_new):
     return sent
 
 
-def tutotial_colony_pod(empire):
+def tutorial_colony_pod(empire):
     owned = empire.shipPartTypesOwned
     if "CO_OUTPOST_POD" in owned:
         print "sending sitrep:", empire.name, "has an outpost pod"
