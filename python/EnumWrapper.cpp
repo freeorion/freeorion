@@ -188,7 +188,7 @@ namespace FreeOrionPython {
         enum_<StartingEra>("startingEra")
             .value("invalid",       INVALID_STARTING_ERA)
             .value("prewarp",       STARTING_ERA_PREWARP)
-            .value("classical",     STARTING_ERA_CLASSICAL)
+            .value("advanced",      STARTING_ERA_ADVANCED)
         ;
         enum_<Aggression>("aggression")
             .value("invalid",       INVALID_AGGRESSION)

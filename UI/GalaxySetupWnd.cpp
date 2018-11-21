@@ -149,7 +149,7 @@ namespace {
 
     // persistant between-executions game setup settings
     void AddOptions(OptionsDB& db) {
-        db.Add("setup.starting.era",            UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_ERA"),             STARTING_ERA_PREWARP,       RangedValidator<StartingEra>(STARTING_ERA_PREWARP, STARTING_ERA_CLASSICAL));
+        db.Add("setup.starting.era",            UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_ERA"),             STARTING_ERA_PREWARP,       RangedValidator<StartingEra>(STARTING_ERA_PREWARP, STARTING_ERA_ADVANCED));
         db.Add("setup.empire.name",             UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_NAME"),              std::string(""),            Validator<std::string>());
         db.Add("setup.player.name",             UserStringNop("OPTIONS_DB_GAMESETUP_PLAYER_NAME"),              std::string(""),            Validator<std::string>());
         db.Add("setup.empire.color.index",      UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_COLOR"),             9,                          RangedValidator<int>(0, 100));
@@ -753,7 +753,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_native_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_RANDOM")));
 
     m_starting_era_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_STARTING_ERA_PREWARP")));
-    m_starting_era_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_STARTING_ERA_CLASSICAL")));
+    m_starting_era_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_STARTING_ERA_ADVANCED")));
 
     m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_BEGINNER")));
     m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_TURTLE")));
