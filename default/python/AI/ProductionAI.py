@@ -1559,7 +1559,7 @@ def _print_production_queue(after_turn=False):
     info(prod_queue_table)
 
 
-def find_capital_candidates(bld_to_build, bld_needed):
+def find_capital_candidates(building_to_build, building_needed):
     """
     Find possible locations for a capital building and return a subset of chosen building locations.
 
@@ -1596,12 +1596,12 @@ def find_capital_candidates(bld_to_build, bld_needed):
         if not planet or planet.currentMeterValue(fo.meterType.targetPopulation) < 1:
             continue
         buildings_here = [bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs)]
-        if planet and bld_needed in buildings_here and bld_to_build not in buildings_here:
+        if planet and building_needed in buildings_here and building_to_build not in buildings_here:
             possible_locations.add(pid)
 
     # check existing queued buildings and remove from possible locations
     queued_locs = {e.locationID for e in empire.productionQueue if e.buildType == EmpireProductionTypes.BT_BUILDING and
-                   e.name == bld_to_build}
+                   e.name == building_to_build}
 
     possible_locations -= queued_locs
     chosen_locations = []
@@ -1610,20 +1610,20 @@ def find_capital_candidates(bld_to_build, bld_needed):
     return chosen_locations
 
 
-def maybe_enqueue_capital_building(possible_building_types, bld_to_build, bld_needed):
+def maybe_enqueue_capital_building(possible_building_types, building_to_build, building_needed):
     retval = 0
-    if bld_to_build in possible_building_types:
+    if building_to_build in possible_building_types:
         universe = fo.getUniverse()
         empire = fo.getEmpire()
         production_queue = empire.productionQueue
-        for pid in find_capital_candidates(bld_to_build, bld_needed):
-            res = fo.issueEnqueueBuildingProductionOrder(bld_to_build, pid)
-            debug("Enqueueing %s at planet %s - result %d" % (bld_to_build, universe.getPlanet(pid), res))
+        for pid in find_capital_candidates(building_to_build, building_needed):
+            res = fo.issueEnqueueBuildingProductionOrder(building_to_build, pid)
+            debug("Enqueueing %s at planet %s - result %d" % (building_to_build, universe.getPlanet(pid), res))
             if res:
                 cost, time = empire.productionCostAndTime(production_queue[production_queue.size - 1])
                 retval += cost / time
                 res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
-                debug("Requeueing %s to front of build queue, with result %d" % (bld_to_build, res))
+                debug("Requeueing %s to front of build queue, with result %d" % (building_to_build, res))
     return retval
 
 
