@@ -1,16 +1,40 @@
 BuildingType
     name = "BLD_IMPERIAL_GARDENS"
     description = "BLD_IMPERIAL_GARDENS_DESC"
-    buildcost = 150 * [[BUILDING_COST_MULTIPLIER]]
-    buildtime = 5
+    buildcost = 120 * [[BUILDING_COST_MULTIPLIER]]
+    buildtime = 6
     location = And [
         Planet
+        OwnedBy empire = Source.Owner
         Contains Building name = "BLD_IMPERIAL_PALACE"
         Not Contains Building name = "BLD_IMPERIAL_GARDENS"
-        OwnedBy empire = Source.Owner
         TargetPopulation low = 1
+        Number low = 0 high = 0 condition = And [
+            Building name = "BLD_IMPERIAL_GARDENS"
+            OwnedBy empire = Source.Owner
+            ProducedByEmpire empire = Source.Owner
+        ]
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Contains Building name = "BLD_IMPERIAL_PALACE"
+        Not Contains Building name = "BLD_IMPERIAL_GARDENS"
+        TargetPopulation low = 1
+        Number low = 0 high = 0 condition = And [
+            Building name = "BLD_IMPERIAL_GARDENS"
+            OwnedBy empire = Source.Owner
+            ProducedByEmpire empire = Source.Owner
+        ]
+        Number low = 0 high = 0 condition = And [
+            Planet
+            Enqueued
+                type = Building
+                name = "BLD_IMPERIAL_GARDENS"
+                empire = Source.Owner
+                low = 1
+        ]
+    ]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -20,9 +44,11 @@ BuildingType
                 OwnedBy empire = Source.Owner
             ]
             activation = Source
-            effects = SetTargetPopulation value = Value * 1.5
+            priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
+            effects = SetTargetPopulation value = Value + Target.HabitableSize * 2
     ]
     icon = "icons/tech/living_planet.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
