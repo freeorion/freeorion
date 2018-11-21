@@ -7894,7 +7894,7 @@ Fulver
 SP_FULVER_GAMEPLAY_DESC
 '''Precognitive unsatisfied ants.
 Prefer [[PT_TUNDRA]]s.
-[[encyclopedia LITHIC_SPECIES_TITLE]]
+[[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_FULVER_DESC
