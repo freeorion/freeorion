@@ -26,8 +26,8 @@ def tutorial_events():
             )
 
 
-# Find the oldest basic shipyard built by each empire.
 def tutorial_find_shipyards():
+    """Find the oldest basic shipyard built by each empire."""
     shipyards_built = {}
     universe = fo.get_universe()
     for building_id in universe.buildingIDs:
@@ -114,8 +114,8 @@ def tutorial_production_intro(empire):
     return 0
 
 
-# Check which sitreps were already shown to this empire.
 def tutorial_find_shown(empire):
+    """Check which sitreps were already shown to this empire."""
     shown = {}
     num_sitreps = empire.numSitReps(fo.INVALID_GAME_TURN)
     sitrep_index = 0
@@ -136,10 +136,11 @@ def tutorial_find_shown(empire):
     return shown
 
 
-# Figure out which of the wanted_techs is known longest to the empire
-# and return the turn it was researched and its name,
-# or current_turn+1 and NONE if none of wanted_techs is known.
 def first_tech(empire, wanted_techs):
+    """Figure out which of the wanted_techs is known longest to the empire
+    and return the turn it was researched and its name,
+    or current_turn+1 and NONE if none of wanted_techs is known.
+    """
     turn_first = fo.current_turn() + 1
     tech_first = "NONE"
     for tech in wanted_techs:
