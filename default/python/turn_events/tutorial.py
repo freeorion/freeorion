@@ -51,7 +51,8 @@ def tutorial_fleet_intro(empire):
             "capital planet", empire.capitalID, "does not exist"
         return 0
     system_id = planet.systemID
-    fleet_id = fo.create_fleet("", system_id, empire.empireID)
+    fleet_id = fo.create_fleet(fo.user_string("FN_SCOUT_FLEET"),
+                               system_id, empire.empireID)
     if fleet_id == fo.invalid_object():
         print >> sys.stderr, "fleet_intro:", \
             "couldn't create initial scout fleet for", empire.name, \
