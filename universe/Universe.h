@@ -397,25 +397,6 @@ public:
     }
     //@}
 
-    /** Set items unlocked before turn 1 from \p future.*/
-    void SetInitiallyUnlockedItems(Pending::Pending<std::vector<ItemSpec>>&& future);
-    void SetInitiallyUnlockedItemsPrewarp(Pending::Pending<std::vector<ItemSpec>>&& future);
-    /** Items unlocked before turn 1.*/
-    const std::vector<ItemSpec>& InitiallyUnlockedItems() const;
-    const std::vector<ItemSpec>& InitiallyUnlockedItemsPrewarp() const;
-
-    /** Set buildings unlocked before turn 1 from \p future.*/
-    void SetInitiallyUnlockedBuildings(Pending::Pending<std::vector<ItemSpec>>&& future);
-    void SetInitiallyUnlockedBuildingsPrewarp(Pending::Pending<std::vector<ItemSpec>>&& future);
-    /** Buildings unlocked before turn 1.*/
-    const std::vector<ItemSpec>& InitiallyUnlockedBuildings() const;
-    const std::vector<ItemSpec>& InitiallyUnlockedBuildingsPrewarp() const;
-
-    /** Set fleets unlocked before turn 1 from \p future.*/
-    void SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>&& future);
-    /** Fleets unlocked before turn 1.*/
-    const std::vector<FleetPlan*> InitiallyUnlockedFleetPlans() const;
-
     /** Set items unlocked before turn 1 from \p future..*/
     void SetMonsterFleetPlans(Pending::Pending<std::vector<std::unique_ptr<MonsterFleetPlan>>>&& future);
     /** Items unlocked before turn 1.*/
@@ -529,19 +510,9 @@ private:
         Various unlocked items are kept as a Pending::Pending while being parsed and
         then transfered.  They are mutable to allow processing in const accessors. */
     ///@{
-    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>>                            m_pending_items = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>>                            m_pending_items_prewarp = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>>                            m_pending_buildings = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>>                            m_pending_buildings_prewarp = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>>          m_pending_fleet_plans = boost::none;
     mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<MonsterFleetPlan>>>>   m_pending_monster_fleet_plans = boost::none;
     mutable boost::optional<Pending::Pending<EmpireStatsMap>>                                   m_pending_empire_stats = boost::none;
 
-    mutable std::vector<ItemSpec>                           m_unlocked_items;
-    mutable std::vector<ItemSpec>                           m_unlocked_items_prewarp;
-    mutable std::vector<ItemSpec>                           m_unlocked_buildings;
-    mutable std::vector<ItemSpec>                           m_unlocked_buildings_prewarp;
-    mutable std::vector<std::unique_ptr<FleetPlan>>         m_unlocked_fleet_plans;
     mutable std::vector<std::unique_ptr<MonsterFleetPlan>>  m_monster_fleet_plans;
     mutable EmpireStatsMap                                  m_empire_stats;
     ///@}
