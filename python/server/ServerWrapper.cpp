@@ -348,33 +348,6 @@ namespace {
         empire->AddShipDesign(ship_design->ID());
     }
 
-    // Wrapper for preunlocked items
-    list LoadItemSpecList(StartingEra era) {
-        list py_items;
-        auto& items = era == STARTING_ERA_PREWARP ?
-            GetUniverse().InitiallyUnlockedItemsPrewarp() :
-            GetUniverse().InitiallyUnlockedItems();
-        for (const auto& item : items) {
-            py_items.append(object(item));
-        }
-        return py_items;
-    }
-
-    // Wrapper for starting buildings
-    list LoadStartingBuildings(StartingEra era) {
-        list py_items;
-        auto& buildings = era == STARTING_ERA_PREWARP ?
-            GetUniverse().InitiallyUnlockedBuildingsPrewarp() :
-            GetUniverse().InitiallyUnlockedBuildings();
-        for (auto building : buildings) {
-            if (GetBuildingType(building.name))
-                py_items.append(object(building));
-            else
-                ErrorLogger() << "The item " << building.name << " in the starting building list is not a building.";
-        }
-        return py_items;
-    }
-
     // Wrappers for ship designs and premade ship designs
     bool ShipDesignCreate(const std::string& name, const std::string& description,
                           const std::string& hull, const list& py_parts,
@@ -436,54 +409,6 @@ namespace {
             py_monster_designs.append(object(monster->Name(false)));
         }
         return list(py_monster_designs);
-    }
-
-    // Wrappers for starting fleet plans
-    class FleetPlanWrapper {
-    public:
-        // name ctors
-        FleetPlanWrapper(FleetPlan* fleet_plan) :
-            m_fleet_plan(std::make_shared<FleetPlan>(*fleet_plan))
-        {}
-
-        FleetPlanWrapper(const std::string& fleet_name, const list& py_designs)
-        {
-            std::vector<std::string> designs;
-            for (int i = 0; i < len(py_designs); i++) {
-                designs.push_back(extract<std::string>(py_designs[i]));
-            }
-            m_fleet_plan = std::make_shared<FleetPlan>(fleet_name, designs, false);
-        }
-
-        // name accessors
-        object Name()
-        { return object(m_fleet_plan->Name()); }
-
-        list ShipDesigns() {
-            list py_designs;
-            for (const auto& design_name : m_fleet_plan->ShipDesigns()) {
-                py_designs.append(object(design_name));
-            }
-            return list(py_designs);
-        }
-
-        const FleetPlan& GetFleetPlan()
-        { return *m_fleet_plan; }
-
-    private:
-        // Use shared_ptr insead of unique_ptr because boost::python requires a deleter
-        std::shared_ptr<FleetPlan> m_fleet_plan;
-    };
-
-    list LoadFleetPlanList(StartingEra era) {
-        list py_fleet_plans;
-        if (era == STARTING_ERA_PREWARP)
-            return py_fleet_plans;
-        auto&& fleet_plans = GetUniverse().InitiallyUnlockedFleetPlans();
-        for (FleetPlan* fleet_plan : fleet_plans) {
-            py_fleet_plans.append(FleetPlanWrapper(fleet_plan));
-        }
-        return py_fleet_plans;
     }
 
     // Wrappers for starting monster fleet plans
@@ -1286,10 +1211,6 @@ namespace FreeOrionPython {
             .def_readonly("empire_color",       &PlayerSetupData::m_empire_color)
             .def_readonly("starting_species",   &PlayerSetupData::m_starting_species_name);
 
-        class_<FleetPlanWrapper>("FleetPlan", init<const std::string&, const list&>())
-            .def("name",            &FleetPlanWrapper::Name)
-            .def("ship_designs",    &FleetPlanWrapper::ShipDesigns);
-
         class_<MonsterFleetPlanWrapper>("MonsterFleetPlan", init<const std::string&, const list&, double, int>())
             .def("name",                &MonsterFleetPlanWrapper::Name)
             .def("ship_designs",        &MonsterFleetPlanWrapper::ShipDesigns)
@@ -1340,9 +1261,6 @@ namespace FreeOrionPython {
         def("design_get_premade_list",              ShipDesignGetPremadeList);
         def("design_get_monster_list",              ShipDesignGetMonsterList);
 
-        def("load_item_spec_list",                  LoadItemSpecList);
-        def("load_starting_buildings",              LoadStartingBuildings);
-        def("load_fleet_plan_list",                 LoadFleetPlanList);
         def("load_monster_fleet_plan_list",         LoadMonsterFleetPlanList);
 
         def("get_name",                             GetName);

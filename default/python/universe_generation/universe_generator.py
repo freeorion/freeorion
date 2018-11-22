@@ -3,7 +3,10 @@ from common.configure_logging import redirect_logging_to_freeorion_logger
 # Logging is redirected before other imports so that import errors appear in log files.
 redirect_logging_to_freeorion_logger()
 
+import os.path
 import random
+import re
+import sys
 
 import freeorion as fo
 
@@ -69,6 +72,97 @@ def error_report():
     return error_list
 
 
+def read_starting_unlocks(starting_era):
+    starting_unlocks = {
+        "buildings": [],
+        "items": [],
+        "fleets": [],
+    }
+
+    unlock_dir = os.path.join(fo.get_resource_dir(), "scripting",
+                              "starting_unlocks")
+    if starting_era == fo.startingEra.prewarp:
+        buildings_inf = os.path.join(unlock_dir, "buildings-prewarp.inf")
+        items_inf = os.path.join(unlock_dir, "items-prewarp.inf")
+    else:
+        buildings_inf = os.path.join(unlock_dir, "buildings.inf")
+        items_inf = os.path.join(unlock_dir, "items.inf")
+        fleets_inf = os.path.join(unlock_dir, "fleets.inf")
+
+    comment_expr = re.compile(r'\s*(?://|$)')
+    try:
+        f = open(buildings_inf)
+    except IOError:
+        print >> sys.stderr, "Cannot read", buildings_inf
+    else:
+        expr = re.compile(r'.*Building\s+name\s+=\s+"(.+)"')
+        for line in f:
+            if comment_expr.match(line):
+                continue
+            match = expr.match(line)
+            if match is None:
+                print >> sys.stderr, "buildings.inf parse error:", line
+            else:
+                starting_unlocks["buildings"].append(match.group(1))
+        f.close()
+
+    try:
+        f = open(items_inf)
+    except IOError:
+        print >> sys.stderr, "Cannot read", items_inf
+    else:
+        expr = re.compile(r'.*Item\s+type\s+=\s+(.+?)\s+name\s+=\s+"(.+)"')
+        for line in f:
+            if comment_expr.match(line):
+                continue
+            match = expr.match(line)
+            if match is None:
+                print >> sys.stderr, "items.inf parse error:", line
+            else:
+                starting_unlocks["items"].append([match.group(1),
+                                                  match.group(2)])
+        f.close()
+
+    if starting_era == fo.startingEra.prewarp:
+        return starting_unlocks
+
+    try:
+        f = open(fleets_inf)
+    except IOError:
+        print >> sys.stderr, "Cannot read", fleets_inf
+    else:
+        name_expr = re.compile(r'.*name\s+=\s+"(.+)"')
+        ship_expr = re.compile(r'.*?"(.+)"')
+        fleet = None
+        for line in f:
+            match = name_expr.match(line)
+            if match is not None:
+                if fleet is not None:
+                    if len(fleet) > 1:
+                        starting_unlocks["fleets"].append(fleet)
+                    else:
+                        print >> sys.stderr, \
+                            "fleets.inf parse error: empty fleet", fleet[0]
+                fleet = [match.group(1)]
+                continue
+            match = ship_expr.match(line)
+            if match is None:
+                continue
+            if fleet is None:
+                print >> sys.stderr, \
+                    "fleets.inf parse error: ship outside fleet", line
+            else:
+                fleet.append(match.group(1))
+        if fleet is not None:
+            if len(fleet) > 1:
+                starting_unlocks["fleets"].append(fleet)
+            else:
+                print >> sys.stderr, \
+                    "fleets.inf parse error: empty fleet", fleet[0]
+        f.close()
+    return starting_unlocks
+
+
 @listener
 def create_universe(psd_map):
     """
@@ -122,9 +216,10 @@ def create_universe(psd_map):
     print "Home systems:", home_systems
 
     # set up empires for each player
+    starting_unlocks = read_starting_unlocks(gsd.starting_era)
     seed_rng(seed_pool.pop())
     for empire, psd, home_system in zip(psd_map.keys(), psd_map.values(), home_systems):
-        if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name, gsd):
+        if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name, starting_unlocks):
             report_error("Python create_universe: couldn't set up empire for player %s" % psd.player_name)
 
     # assign names to all star systems and their planets
