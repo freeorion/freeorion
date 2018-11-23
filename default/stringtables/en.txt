@@ -5889,7 +5889,7 @@ GENERAL_PEDIA_REFERENCE
 Information about game concepts, game objects, and the user interface is available from the "Pedia" [[encyclopedia ENC_INDEX]].
 
 DETAILED_PEDIA_REFERENCE
-[[GENERAL_PEDIA_REFERENCE]]  The Pedia can be opened and closed via the purple icon bearing a question mark, in the upper right portion of the main [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]]. The Pedia can be navigated via hotlinks and via the arrows in the lower right corner of the Pedia window. When the Pedia window hides parts of other windows that you want to look at, simply close it. Opening it again will always return to the article that you last looked at.
+[[GENERAL_PEDIA_REFERENCE]] The Pedia can be opened and closed via the purple icon bearing a question mark, in the upper right portion of the main [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]]. It can be navigated via hotlinks and via the arrows in the lower right corner of the Pedia window. When the Pedia window hides parts of other windows, simply close it. Opening it again will always return to the most recently viewed article.
 
 GREETINGS_GUIDE_TITLE
 **Greetings**
@@ -5900,14 +5900,11 @@ Greetings Esteemed Entity, and Welcome to the FreeOrion Universe!
 GREETINGS_GUIDE_TEXT
 '''[[GREETINGS_INTRO]]
 
-You may be as surprised as we are, but you have just been elected Emperor of our new-founded empire. You certainly can't wait to command our fleet of spaceships, to direct our research, and to govern our planets... Oh well, admittedly our one and only planet so far, but that's likely among the things you came here to change, isn't it?
-
-For guidance what to do first, please continue to the tutorial article [[encyclopedia TUTORIAL_RESEARCH_INTRO_TITLE]].
-
-In case you should ever feel lost: [[DETAILED_PEDIA_REFERENCE]]
-
-
 FreeOrion is a free, open source, turn-based space empire and galactic conquest (4X) computer game being designed and built by the FreeOrion project. FreeOrion is inspired by the tradition of the Master of Orion games, but is not a clone or remake of that series or any other game.
+
+Playing FreeOrion implies commanding fleets of spaceships, directing research, and governing the planets of an empire. For guidance on what to do first, continue to the tutorial article [[encyclopedia TUTORIAL_RESEARCH_INTRO_TITLE]].
+
+[[DETAILED_PEDIA_REFERENCE]]
 
 Further information is available at freeorion.org
 '''
@@ -5929,17 +5926,13 @@ TUTORIAL_RESEARCH_INTRO_SHORT_DESC
 Defining technology goals
 
 TUTORIAL_RESEARCH_INTRO_TEXT
-'''So you are our new Emperor?  Welcome, it is high time you showed up!
+'''Right now, the most important matter is research. The empire wants to expand to new planets, but it is lacking the required technology: it can't even build spaceships yet...
 
-I am your government advisor. My task is to make sure that you are aware of important subjects that require goverment attention, and to suggest possible ways of dealing with them.
+To enable space travel, one technology to build a suitable spaceship hull is required, for example a [[shiphull SH_BASIC_MEDIUM]], a [[shiphull SH_SPACE_FLUX_BUBBLE]], or a [[shiphull SH_SMALL_ORGANIC]]. To establish facilities on another planet, either [[tech CON_REMOTE_COL]] or [[tech CON_OUTPOST]] is needed. Besides, it is often useful to construct at least one unique building enhancing the capabilities of the empire's capital early on, like the [[buildingtype BLD_AUTO_HISTORY_ANALYSER]], the [[buildingtype BLD_IMPERIAL_WORKSHOPS]], or the [[buildingtype BLD_IMPERIAL_GARDENS]], each of which requires a specific technology. But of course, some other technologies might also prove useful sooner or later, in particular those boosting research, production, and population growth...
 
-Right now, the most important matter is research. As you certainly know, the empire wants to expand to new planets, but we are lacking the required technology: we don't even know how to build spaceships yet...
+To get started with research, look at the introductory article on [[encyclopedia RESEARCH_BASIC_GUIDE_TITLE]] and add a few entries to the research queue.
 
-Our scientists need instructions which topics they should focus on. If you want to hear my opinion, I think we will need one technology to build a suitable spaceship hull, for example a [[shiphull SH_BASIC_MEDIUM]], a [[shiphull SH_SPACE_FLUX_BUBBLE]], or a [[shiphull SH_SMALL_ORGANIC]]. And we definitely need to understand either [[tech CON_REMOTE_COL]] or [[tech CON_OUTPOST]] in order to establish facilities on another planet. But of course, all that is up to you to decide - some other technologies might also prove useful, sooner or later...
-
-So please look at the introductory article on [[encyclopedia RESEARCH_BASIC_GUIDE_TITLE]] and add a few entries to the research queue.
-
-That's all our government needs to decide today. Once you have defined the first few goals for our research, you can click the "Turn" button in the upper left corner of the screen.  Next turn, I'll come back to you with more information!'''
+That's all the government needs to decide right now. After defining the first few research goals, click the "Turn" button in the upper left corner of the screen. Next turn, another tutorial article will appear with more instructions.'''
 
 TUTORIAL_FLEET_INTRO_TITLE
 02: Introduction to Fleet Movement
@@ -5948,15 +5941,15 @@ TUTORIAL_FLEET_INTRO_SHORT_DESC
 Setting travel destinations
 
 TUTORIAL_FLEET_INTRO_TEXT
-'''Even though we cannot build our own spaceships yet, the Empire Intelligence Agency managed to get hold of a single small scouting vessel; please spare me explaining in detail how that came about... Anyway, that ship may prove quite useful to explore our surroundings, in particular to find planets suitable for settlement.
+'''Even though the empire cannot build its own spaceships yet, the Empire Intelligence Agency managed to procure a single small scouting vessel from abroad. That ship may prove quite useful to explore the surroundings, in particular to find planets suitable for settlement.
 
-In the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] right in front of you, you can see our star map, with our home system highlighted in the center, and if you look closely, you may even be able to see the ship next to it - a bit up and to the right. Yes, you are right, a ship looks tiny on a star map, and this isn't a big ship in the first place. Anyway, your crew is unsure which star system they should explore first, and they ask for your commands.
+The [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] shows a star map, with the empire's home system highlighted in the center, and with the ship depicted as a small arrowhead next to it - a bit up and to the right. The ship's crew is unsure which star system to explore first, and they ask for commands.
 
-So please have a brief look at our instructions for [[encyclopedia FLEET_MOVEMENT_ARTICLE_TITLE]] and set a course for the ship.
+So have a look at the instructions for [[encyclopedia FLEET_MOVEMENT_ARTICLE_TITLE]] and set a course for the ship.
 
-Today, that's all you have to decide, so you can once more click the "Turn" button afterwards. Of course, you can also have a look at the Research Window to check the progress our scientists have made - though they won't have reached any new discovery yet, i guess.
+That's all that needs to be decided right now, so the "Turn" button can be clicked again after setting a course for the ship. Of course, it is also possible to inspect the Research Window to check the progress scientists have made so far - though they won't have reached any new discovery yet.
 
-In the future, i'll come back to you on every turn that poses a new challenge.'''
+In the future, tutorial articles will be shown whenever there is a significant new challenge.'''
 
 TUTORIAL_PRODUCTION_INTRO_TITLE
 03: Introduction to Production
@@ -5965,18 +5958,19 @@ TUTORIAL_PRODUCTION_INTRO_SHORT_DESC
 Selecting items to be produced
 
 TUTORIAL_PRODUCTION_INTRO_TEXT
-'''Congratulations, your civil engineers just researched the first technology that permits your empire the construction of a building!
+'''Congratulations, civil engineers just researched the first technology that permits the construction of a building!
 
-I suggest that you tell your construction workers right away to actually start building it. For that purpose, click on one of the red cogwheels in the title bar to open the Production Window. You see two lists there: a list of "Producible Items" near the bottom, and the "Production Queue" on the left. To add an item to the production queue, simply perform a double left click on it in the list of producible items.
+Consider telling construction workers right away to actually start building it. For that purpose, click on one of the red cogwheels in the title bar to open the Production Window. Two lists appear there: a list of "[[PRODUCTION_WND_BUILD_ITEMS_TITLE]]" near the bottom, and the "Production Queue" on the left. To add an item to the production queue, simply perform a double left click on it in the list of producible items.
 
-After doing so, look at the queue to make sure that you scheduled the right building for construction. It would be bad if, for example, you accidentally ordered evacuation of the planet instead of the construction of the intended building. In case you scheduled the wrong item, you can cancel the order by right-clicking it in the production queue and selecting "Remove from Queue".
+After doing so, look at the queue to make sure that the intended building was scheduled for construction. It would be bad if, for example, evacuation of the planet was accidentally ordered instead of the construction of the desired building. If the wrong item was scheduled, the order can be canceled by right-clicking it in the production queue and selecting "[[DELETE_QUEUE_ITEM]]".
 
 Once the queue looks as intended, close the production window by clicking the red cogwheel in the title bar again.
 
-Given that research on a new technology was just completed, you should probably also revisit the Research Window to check that scientists still know what to work on next. And, of course, before clicking the "Turn" button again, never forget checking whether the crew of your spaceship still knows where to go next, or they might waste time sitting idle.
+Given that research on a new technology was just completed, also revisit the Research Window to check that scientists still know what to work on next. And, of course, before clicking the "Turn" button again, never forget to check whether spaceship crews still knows where to go next, or they might waste time sitting idle.
 
 
-Later on, when organization of your industry becomes more complicated, you may want to study the more detailed description of the [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]], but I doubt that you need all those details at this point.'''
+Later on, when organization of industry becomes more complicated, consider studying the more detailed description of the [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]], but those details are probably not yet required at this point.'''
+
 TUTORIAL_FOCUS_TITLE
 04: Introduction to Planetary Focus
 
@@ -5984,15 +5978,15 @@ TUTORIAL_FOCUS_SHORT_DESC
 Focussing on Research or Production
 
 TUTORIAL_FOCUS_TEXT
-'''Sometimes, research is more important than production - for example, when you are lacking several important technologies but don't know very useful buildings or ships that you could construct. But in other situations, production is more important than research - for example, if you have found several nearby planets suitable for colonization, and you already know how to build a [[predefinedshipdesign SD_COLONY_SHIP]]. Defining the planetary focus helps to adapt to such different situations.
+'''Sometimes, research is more important than production - for example, when the empire is lacking several important technologies and doesn't know very useful buildings or ships that could be constructed. But in other situations, production is more important than research - for example, if several nearby planets were discovered that are suitable for colonization and it is already known how to build a [[predefinedshipdesign SD_COLONY_SHIP]]. Defining the planetary focus helps to adapt to such different situations.
 
-To change the focus, first left click on your planet in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] to open the planet side panel.  Then, use the dropdown box to the right of the planet image to select either "Focus: Research" or "Focus: Industry".
+To change the focus, first left click on the planet in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] to open the planet side panel.  Then, use the dropdown box to the right of the planet image to select either "Focus: Research" or "Focus: Industry".
 
-You can see the difference it makes by clicking the double arrow to the right of the production icon (red cogwheel) and research icon (blue conical flask), opening a meter display, and also by hovering over the two icons. The difference is typically 0.2 research points and 0.2 production points multiplied by the population of your planet, but it may be larger or smaller if your species has boni or mali on research or production.
+The difference it makes can be inspected by clicking the double arrow to the right of the production icon (red cogwheel) and research icon (blue conical flask), opening a meter display, and also by hovering over the two icons. The difference is typically 0.2 research points and 0.2 production points multiplied by the population of the planet, but it may be larger or smaller for species having boni or mali on research or production.
 
-A focus change does not take full effect immediately. The population on the planet needs some time to shift the focus of their work. For that reason, hovering over the icons shows values for "This Turn", "Predicted Next Turn", "Change" (per turn), and "Target" - the latter is expected to be reached after some turns, sometimes after a few, sometimes after several.
+A focus change does not take full effect immediately. The population on the planet needs some time to shift the focus of their work. For that reason, hovering over the icons shows values for "[[TT_THIS_TURN]]", "[[TT_NEXT_TURN]]", "[[TT_CHANGE]]" (per turn), and "Target" - the latter is expected to be reached after some turns, sometimes after a few, sometimes after several.
 
-In many situations, it is best to use the preferred focus of your species and adapt your strategy to it - but occasionally, there just isn't a viable strategy with the preferred focus selected, and then it's better to ask your citizens to work in a way they don't particularly like or are not so good at than to fall behind because you simply don't get enough research or production.
+In many situations, it is best to use the preferred focus of the species and adapt the strategy to it - but occasionally, there just isn't a viable strategy with the preferred focus selected, and then it's better to ask citizens to work in a way they don't particularly like or are not so good at than to fall behind because the empire simply doesn't get enough research or production.
 
 For more details, see the Pedia articles on [[encyclopedia PLANETARY_FOCUS_TITLE]], [[metertype METER_RESEARCH]], [[metertype METER_INDUSTRY]], and [[encyclopedia ENC_SPECIES]].'''
 
@@ -6003,23 +5997,23 @@ TUTORIAL_PRODUCTION_SHIP_SHORT_DESC
 Designing and building a spaceship
 
 TUTORIAL_PRODUCTION_SHIP_TEXT
-'''Congratulations, your mechanical engineers researched the first technology that permits your empire the construction of spaceships, and the required [[buildingtype BLD_SHIPYARD_BASE]] has also been completed!
+'''Congratulations, mechanical engineers researched the first technology that permits the construction of spaceships, and the required [[buildingtype BLD_SHIPYARD_BASE]] has also been completed!
 
 To actually get a ship built, two steps are required: ship design and ship production.
 
-To create a design for your new ship, click the "Design" icon near the right end of the title bar. It looks a bit like a rocket with wings. This opens the Design Window.
+To create a design for the new ship, click the "[[MAP_BTN_DESIGN]]" icon near the right end of the title bar. It looks a bit like a rocket with wings. This opens the Design Window.
 
-First look at the "Design Starts" list box on the left hand side. Click on the "Finished" register card. If any finished designs are shown in the list after that, you can inspect them by performing double left clicks on them. If you are satisfied with one of them, you don't need to do anything in the design window, and you can proceed to the Production Window.
+First look at the "[[DESIGN_WND_STARTS]]" list box on the left hand side. Click on the "[[DESIGN_WND_FINISHED_DESIGNS]]" register card. If any finished designs are shown in the list after that, they can be inspected by performing double left clicks on them. If one of them is satisfactory for current purposes, nothing needs to be done in the design window, and the Production Window can be opened instead.
 
-If the list of "Finished" designs is empty or those available do not match your needs, you have to create your own ship design. For that purpose, first click on the "Hulls" register card in the "Design Starts" list box and double left click on one of the hulls shown in the list.
+If the list of "[[DESIGN_WND_FINISHED_DESIGNS]]" designs is empty or those available do not suit present needs, create your own ship design. For that purpose, first click on the "[[DESIGN_WND_HULLS]]" register card in the "[[DESIGN_WND_STARTS]]" list box and double left click on one of the hulls shown in the list.
 
-Once a big picture of the hull is shown near the bottom of the design window, you can see that it has one or more empty slots for adding ship parts. Left click on the "Ship Parts" in the top right corner of the design window to inspect them, and double click on them to add them to the design. You can also drag and drop ship parts.
+This displays a big picture of the hull near the bottom of the design window, with one or more empty slots for adding ship parts. Left click on the "[[DESIGN_WND_PART_PALETTE_TITLE]]" in the top right corner of the design window to inspect them, and double click on them to add them to the design. Drag and drop also works for ship parts.
 
-It is not required to fill all the slots; for some, there may not even be fitting parts available yet. Leaving slots empty gives you a cheaper but less capable ship.
+It is not required to fill all the slots; for some, there may not even be fitting parts available yet. Leaving slots empty results in a cheaper but less capable ship.
 
-When you are satisfied with the design, type in a "Design Name" and optionally a design "Description", click the "Add Finished Design" button, and click the "Design" (rocket) icon in the top right corner again to close the design window.
+When satisfied with the design, type in a "[[DESIGN_WND_DESIGN_NAME]]" and optionally a design "[[DESIGN_WND_DESIGN_DESCRIPTION]]", click the "[[DESIGN_WND_ADD_FINISHED]]" button, and click the "[[MAP_BTN_DESIGN]]" (rocket) icon in the top right corner again to close the design window.
 
-Now you can proceed to the Production Window (red cogwheel), and you will see the "Name" you provided for your new ship design in the list of "Producible Items". You can schedule production of a ship in exactly the same way as for a building: double left click to append it to the end of the "Production Queue", or right click for more options.
+Now proceed to the [[MAP_BTN_PRODUCTION]] Window (red cogwheel). The [[DESIGN_WND_DESIGN_NAME]] that was provided now appears in the list of "[[PRODUCTION_WND_BUILD_ITEMS_TITLE]]". Production of a ship is scheduled in exactly the same way as for a building: double left click to append it to the end of the "Production Queue", or right click for more options.
 
 For more details, see the Pedia article on the [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]].'''
 
@@ -6030,15 +6024,15 @@ TUTORIAL_PRODUCTION_COLONY_SHORT_DESC
 Building ships to colonize new planets
 
 TUTORIAL_PRODUCTION_COLONY_TEXT
-'''Congratulations, you just discovered the last technology needed to colonize new planets!
+'''Congratulations, the last technology needed to colonize new planets was just discovered!
 
-To establish a new colony, you need a ship containing either an [[shippart CO_OUTPOST_POD]] or a [[shippart CO_COLONY_POD]]. Have a look at the production window. If the list of "Producible Items" already contains an [[predefinedshipdesign SD_OUTPOST_SHIP]] or a [[predefinedshipdesign SD_COLONY_SHIP]], you can build that. But be careful to not confuse these with an [[predefinedshipdesign SD_OUTPOST_BASE]] or a [[predefinedshipdesign SD_COLONY_BASE]]: those lack a starlane drive and cannot leave the star system where they are built. If neither an [[SD_OUTPOST_SHIP]] nor a [[SD_COLONY_SHIP]] are available for construction, you have to create your own ship design as explained in the earlier tutorial article [[encyclopedia TUTORIAL_PRODUCTION_SHIP_TITLE]].
+To establish a new colony, a ship is needed which contains either an [[shippart CO_OUTPOST_POD]] or a [[shippart CO_COLONY_POD]]. Have a look at the production window. If the list of "[[PRODUCTION_WND_BUILD_ITEMS_TITLE]]" already contains an [[predefinedshipdesign SD_OUTPOST_SHIP]] or a [[predefinedshipdesign SD_COLONY_SHIP]], that is suitable. But be careful to not confuse these with an [[predefinedshipdesign SD_OUTPOST_BASE]] or a [[predefinedshipdesign SD_COLONY_BASE]]: those lack a starlane drive and cannot leave the star system where they are built. If neither an [[SD_OUTPOST_SHIP]] nor a [[SD_COLONY_SHIP]] is available for construction, create your own ship design as explained in the earlier tutorial article [[encyclopedia TUTORIAL_PRODUCTION_SHIP_TITLE]].
 
 A ship designed for colonization will typically only contain the single module or pod required, and all the other slots will be left empty, if there are any. That avoids making it unnecessarily expensive. Keep in mind that the ship can only be used once: it will be used up in the establishment of the outpost or colony on the target planet.
 
-If you have already discovered a planet suitable for colonization, consider starting construction of the ship right away. Remember, though, that if you establish an outpost using an [[shippart CO_OUTPOST_POD]], turning it into a populated colony requires that it is within [[metertype METER_SUPPLY]] range.
+If a planet suitable for colonization has already been discovered, consider starting construction of the ship right away. Remember, though, that turning an outpost established with an [[shippart CO_OUTPOST_POD]] into a populated colony requires that it is within [[metertype METER_SUPPLY]] range.
 
-Even if you have not yet discovered a suitable planet, starting construction early is often a good idea because it takes a long time: at least five turns for an [[shippart CO_OUTPOST_POD]], at least eight for a [[shippart CO_COLONY_POD]], and often even longer than that depending on your [[metertype METER_INDUSTRY]].'''
+Even if no suitable planet was discovered yet, starting construction early is often a good idea because it takes a long time: at least five turns for an [[shippart CO_OUTPOST_POD]], at least eight for a [[shippart CO_COLONY_POD]], and often even longer than that depending on [[metertype METER_INDUSTRY]].'''
 
 TUTORIAL_COLONIZE_TITLE
 07: Introduction to Colonization
@@ -6056,36 +6050,36 @@ TUTORIAL_OUTPOST_POD_SHORT_DESC
 Using the first outpost ship
 
 TUTORIAL_SUITABLE_TEXT
-'''To check whether a planet is suitable for your species, click on it in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] to open the planet side panel, then right click on the name of the planet and select "[[SP_PLANET_SUITABILITY]]".
+'''To check whether a planet is suitable for the species of the empire, click on it in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] to open the planet side panel, then right click on the name of the planet and select "[[SP_PLANET_SUITABILITY]]".
 
-If you have already explored many star systems such that clicking through all of them to find the best planet seems tedious, you can use the "[[MAP_BTN_OBJECTS]]" window: click on the icon showing three circles near the right end of the title bar. In the lower left corner of the [[MAP_BTN_OBJECTS]] window, click on the "[[FILTERS]]" button. In the popup, clear all checkboxes except selecting "[[VISIBLE]]" and "[[PREVIOUSLY_VISIBLE]]" in the "[[PLANETS_SUBMENU]]" column. In the left dropdown, select "[[PLANET_TYPE]]" instead of "[[ALL]]". In the right dropdown, select the planet type that is good for your species. Then click the "[[APPLY]]" button. In the resulting list, you can double click the planets to show them in the  [[MAP_WINDOW_ARTICLE_TITLE]]. If the list is empty, try again with planet types that are not good, but at least adequate for your species. The [[MAP_BTN_OBJECTS]] window is quite versatile and allows many different searches, but that is beyond the scope of this tutorial...'''
+If so many star systems have already been explored that clicking through all of them to find the best planet seems tedious, use the "[[MAP_BTN_OBJECTS]]" window: click on the icon showing three circles near the right end of the title bar. In the lower left corner of the [[MAP_BTN_OBJECTS]] window, click on the "[[FILTERS]]" button. In the popup, clear all checkboxes except selecting "[[VISIBLE]]" and "[[PREVIOUSLY_VISIBLE]]" in the "[[PLANETS_SUBMENU]]" column. In the left dropdown, select "[[PLANET_TYPE]]" instead of "[[ALL]]". In the right dropdown, select the planet type that is good for the empire's species. Then click the "[[APPLY]]" button. In the resulting list, double click the planets to show them in the [[MAP_WINDOW_ARTICLE_TITLE]]. If the list is empty, try again with planet types that are not good, but at least adequate for the empire's species. The [[MAP_BTN_OBJECTS]] window is quite versatile and allows many different searches, but that is beyond the scope of this tutorial...'''
 
 TUTORIAL_COLONIZE_TEXT
-Once your ship arrives in your star system of choice, click on the system in the [[MAP_WINDOW_ARTICLE_TITLE]] to open the planet side panel, then click on the "[[PL_COLONIZE]]" button. Be careful, if the second number on the button is zero or negative, the planet is not suitable for colonization by your species and the population of your colony will ultimtely die out.
+Once a colony or outpost ship arrives in the star system of choice, click on the system in the [[MAP_WINDOW_ARTICLE_TITLE]] to open the planet side panel, then click on the "[[PL_COLONIZE]]" button. Be careful, if the second number on the button is zero or negative, the planet is not suitable for colonization by the species and the population of the colony will ultimtely die out.
 
 TUTORIAL_COLONY_POD_TEXT
-'''Congratulations, you now have a colony ship - that is, a ship which features a [[shippart CO_COLONY_POD]] and which is capable of starlane travel, for example a [[predefinedshipdesign SD_COLONY_SHIP]].
+'''Congratulations, a ship capable of starlane travel is now available featuring a [[shippart CO_COLONY_POD]], for example a [[predefinedshipdesign SD_COLONY_SHIP]].
 
-You first need to move that ship to a star system containing a planet suitable for colonization by your species.
+Move that ship to a star system containing a planet suitable for colonization by the empire's species.
 
 [[TUTORIAL_SUITABLE_TEXT]]
 
 [[TUTORIAL_COLONIZE_TEXT]]
 
-The following turn, your new colony will already be inhabited, and you can govern it in the same way as you govern your home planet.
+The following turn, the new colony will already be inhabited, and it can be governed in the same way as the empire's home planet.
 
 [[TUTORIAL_END_TEXT]]'''
 
 TUTORIAL_OUTPOST_POD_TEXT
-'''Congratulations, you now have an outpost ship - that is, a ship which features an [[shippart CO_OUTPOST_POD]] and which is capable of starlane travel, for example an [[predefinedshipdesign SD_OUTPOST_SHIP]].
+'''Congratulations, a ship capable of starlane travel is now available featuring an [[shippart CO_OUTPOST_POD]], for example an [[predefinedshipdesign SD_OUTPOST_SHIP]].
 
-You first need to move that ship to a star system within [[metertype METER_SUPPLY]] range of your home planet containing a planet suitable for colonization by your species. In the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], supply range is indicated by starlanes depicted in the color of your empire, no matter whether they are thick or thin lines. An unclaimed system within [[METER_SUPPLY]] range of your empire is also surrounded by a single circle in the color of your empire. Be careful, you can use your ship to build an outpost outside of that range - but in that case, such a remote outpost will not be able to upgrade itself to an inhabited colony.
+Move that ship to a star system within [[metertype METER_SUPPLY]] range of the empire's home planet containing a planet suitable for colonization by the empire's species. In the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], supply range is indicated by starlanes depicted in the color of the empire, no matter whether they are thick or thin lines. An unclaimed system within [[METER_SUPPLY]] range of the empire is also surrounded by a single circle in the color of the empire. Be careful, an outpost can be built outside of that range - but in that case, such a remote outpost will not be able to upgrade itself to an inhabited colony.
 
 [[TUTORIAL_SUITABLE_TEXT]]
 
 [[TUTORIAL_COLONIZE_TEXT]]
 
-The next turn, an [[encyclopedia OUTPOSTS_TITLE]] will have been established on that planet. If it is within [[metertype METER_SUPPLY]] range, you can click on it in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], then open the [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]] and queue a colony building for your species for construction, which will take a handful of turns to complete.  After that, you will have a new inhabited colony which you can govern in the same way as you govern your home planet.
+The next turn, an [[encyclopedia OUTPOSTS_TITLE]] will have been established on that planet. If it is within [[metertype METER_SUPPLY]] range, click on it in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], then open the [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]] and queue a colony building for the empire's species for construction, which will take a handful of turns to complete. After that, it will turn into a new inhabited colony which can be governed in the same way as the empire's home planet.
 
 [[TUTORIAL_END_TEXT]]'''
 
@@ -6143,11 +6137,11 @@ The basic operations are as follows:
 
 *  To add a technology to the queue, perform a double left click on it in the tree. This automatically adds the required dependencies as well, if there are any.
 
-*  To remove a scheduled technology from the queue, right click on it in the queue and select "Remove from Queue".
+*  To remove a scheduled technology from the queue, right click on it in the queue and select "[[DELETE_QUEUE_ITEM]]".
 
 *  To change the order in which the scheduled technologies shall be researched, drag and drop them inside the queue.
 
-*  If you feel overwhelmed by the size of the tree, use the "Display" toolbar, by default shown near the bottom of the screen. Hovering the mouse over the buttons shows tooltips. Click the button labeled "All" to clear the screen, then click one of the buttons to the left of it to only show the technologies in a given category, for example in the "Ship Hulls" category.'''
+*  If the size of the tree feels overwhelming, use the "[[TECH_DISPLAY]]" toolbar, by default shown near the bottom of the screen. Hovering the mouse over the buttons shows tooltips. Click the button labeled "[[ALL]]" to clear the screen, then click one of the buttons to the left of it to only show the technologies in a given category, for example in the "[[SHIP_HULLS_CATEGORY]]" category.'''
 
 RESEARCH_TECH_GUIDE_TITLE
 Technology Effects
@@ -6585,8 +6579,7 @@ Show all blocked SitReps
 
 SITREP_WELCOME
 '''[[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_INTRO]]
-If you are a newcomer to this universe, please click on the word "[[GREETINGS_GUIDE_TITLE]]" to help us get you started.
-'''
+Information for newcomers to this universe is available by clicking on the word "[[GREETINGS_GUIDE_TITLE]]".'''
 
 SITREP_WELCOME_LABEL
 Welcome
@@ -6601,7 +6594,7 @@ SITREP_TUTORIAL_PRODUCTION_INTRO
 [[TUTORIAL_TITLE]] [[encyclopedia TUTORIAL_PRODUCTION_INTRO_TITLE]]: The new technology %tech% was just discovered.
 
 SITREP_TUTORIAL_PRODUCTION_YARD
-[[TUTORIAL_TITLE]] Hint: Don't forget to start building a [[buildingtype BLD_SHIPYARD_BASE]] now, such that you will be able to build ships as soon as possible after the first ship hull becomes available.
+[[TUTORIAL_TITLE]] Hint: Don't forget to start building a [[buildingtype BLD_SHIPYARD_BASE]] now, such that ships can be constructed as soon as possible after the first ship hull becomes available.
 
 SITREP_TUTORIAL_FOCUS
 [[TUTORIAL_TITLE]] [[encyclopedia TUTORIAL_FOCUS_TITLE]]
@@ -12504,7 +12497,9 @@ Imperial Gardens
 BLD_IMPERIAL_GARDENS_DESC
 '''Extensive gardens around the palace, in a romantic or cosy or magnificent style, depending on the tastes of the local population.  Genetic engineering is employed to make many of the plants look even nicer.  Like in most capital cities, people don't complain about a higher population density as long as some parts of the city are sufficiently beautiful.
 
-Increases maximum population on the planet by 50%, but can only by built around the [[buildingtype BLD_IMPERIAL_PALACE]].'''
+Increases Population capacity by planet size on the planet where it is built: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+
+It can only by built around the [[buildingtype BLD_IMPERIAL_PALACE]], and only if the empire doesn't have [[BLD_IMPERIAL_GARDENS]] yet.
 
 BLD_SUPER_TEST
 Super-Tester Takeover
@@ -14525,7 +14520,7 @@ BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED
 Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
 
 LIVING_HULL_AUTO_REGEN
-Living hull regenerates [[metertype METER_STRUCTURE]] and [[metertype METER_FUEL]] between combats.
+A living hull regenerates [[metertype METER_STRUCTURE]] and [[metertype METER_FUEL]] between combats.
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED
 Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
