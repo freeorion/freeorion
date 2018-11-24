@@ -72,95 +72,99 @@ def error_report():
     return error_list
 
 
-def read_starting_unlocks(starting_era):
-    starting_unlocks = {
-        "buildings": [],
-        "items": [],
-        "fleets": [],
-    }
+def parse_inf_file(filename, parse_function):
+    if filename is None:
+        return []
+    try:
+        f = open(filename)
+    except IOError:
+        print >> sys.stderr, "Cannot read", filename
+        return []
+    try:
+        result = parse_function(f)
+    finally:
+        f.close()
+    return result
 
+
+def read_buildings_inf(f):
+    result = []
+    comment_expr = re.compile(r'\s*(?://|$)')
+    building_expr = re.compile(r'.*Building\s+name\s+=\s+"(.+)"')
+    for line in f:
+        if comment_expr.match(line):
+            continue
+        match = building_expr.match(line)
+        if match is None:
+            print >> sys.stderr, "buildings.inf parse error:", line
+        else:
+            result.append(match.group(1))
+    return result
+
+
+def read_items_inf(f):
+    result = []
+    comment_expr = re.compile(r'\s*(?://|$)')
+    item_expr = re.compile(r'.*Item\s+type\s+=\s+(.+?)\s+name\s+=\s+"(.+)"')
+    for line in f:
+        if comment_expr.match(line):
+            continue
+        match = item_expr.match(line)
+        if match is None:
+            print >> sys.stderr, "items.inf parse error:", line
+        else:
+            result.append([match.group(1), match.group(2)])
+    return result
+
+
+def append_fleet(fleet_array, fleet):
+    if fleet is None:
+        return
+    if len(fleet) > 1:
+        fleet_array.append(fleet)
+    else:
+        print >> sys.stderr, "fleets.inf parse error: empty fleet", fleet[0]
+
+
+def read_fleets_inf(f):
+    result = []
+    name_expr = re.compile(r'.*name\s+=\s+"(.+)"')
+    ship_expr = re.compile(r'.*?"(.+)"')
+    fleet = None
+    for line in f:
+        match = name_expr.match(line)
+        if match is not None:
+            append_fleet(result, fleet)
+            fleet = [match.group(1)]
+            continue
+        match = ship_expr.match(line)
+        if match is None:
+            continue
+        if fleet is None:
+            print >> sys.stderr, \
+                "fleets.inf parse error: ship outside fleet", line
+        else:
+            fleet.append(match.group(1))
+    append_fleet(result, fleet)
+    return result
+
+
+def read_starting_unlocks(starting_era):
     unlock_dir = os.path.join(fo.get_resource_dir(), "scripting",
                               "starting_unlocks")
     if starting_era == fo.startingEra.prewarp:
         buildings_inf = os.path.join(unlock_dir, "buildings-prewarp.inf")
         items_inf = os.path.join(unlock_dir, "items-prewarp.inf")
+        fleets_inf = None  # no starting fleets in the prewarp era
     else:
         buildings_inf = os.path.join(unlock_dir, "buildings.inf")
         items_inf = os.path.join(unlock_dir, "items.inf")
         fleets_inf = os.path.join(unlock_dir, "fleets.inf")
-
-    comment_expr = re.compile(r'\s*(?://|$)')
-    try:
-        f = open(buildings_inf)
-    except IOError:
-        print >> sys.stderr, "Cannot read", buildings_inf
-    else:
-        expr = re.compile(r'.*Building\s+name\s+=\s+"(.+)"')
-        for line in f:
-            if comment_expr.match(line):
-                continue
-            match = expr.match(line)
-            if match is None:
-                print >> sys.stderr, "buildings.inf parse error:", line
-            else:
-                starting_unlocks["buildings"].append(match.group(1))
-        f.close()
-
-    try:
-        f = open(items_inf)
-    except IOError:
-        print >> sys.stderr, "Cannot read", items_inf
-    else:
-        expr = re.compile(r'.*Item\s+type\s+=\s+(.+?)\s+name\s+=\s+"(.+)"')
-        for line in f:
-            if comment_expr.match(line):
-                continue
-            match = expr.match(line)
-            if match is None:
-                print >> sys.stderr, "items.inf parse error:", line
-            else:
-                starting_unlocks["items"].append([match.group(1),
-                                                  match.group(2)])
-        f.close()
-
-    if starting_era == fo.startingEra.prewarp:
-        return starting_unlocks
-
-    try:
-        f = open(fleets_inf)
-    except IOError:
-        print >> sys.stderr, "Cannot read", fleets_inf
-    else:
-        name_expr = re.compile(r'.*name\s+=\s+"(.+)"')
-        ship_expr = re.compile(r'.*?"(.+)"')
-        fleet = None
-        for line in f:
-            match = name_expr.match(line)
-            if match is not None:
-                if fleet is not None:
-                    if len(fleet) > 1:
-                        starting_unlocks["fleets"].append(fleet)
-                    else:
-                        print >> sys.stderr, \
-                            "fleets.inf parse error: empty fleet", fleet[0]
-                fleet = [match.group(1)]
-                continue
-            match = ship_expr.match(line)
-            if match is None:
-                continue
-            if fleet is None:
-                print >> sys.stderr, \
-                    "fleets.inf parse error: ship outside fleet", line
-            else:
-                fleet.append(match.group(1))
-        if fleet is not None:
-            if len(fleet) > 1:
-                starting_unlocks["fleets"].append(fleet)
-            else:
-                print >> sys.stderr, \
-                    "fleets.inf parse error: empty fleet", fleet[0]
-        f.close()
-    return starting_unlocks
+    return {
+        "buildings": parse_inf_file(buildings_inf, read_buildings_inf),
+        "items":     parse_inf_file(items_inf,     read_items_inf),
+        "fleets":    parse_inf_file(fleets_inf,    read_fleets_inf),
+    }
 
 
 @listener
@@ -219,7 +223,9 @@ def create_universe(psd_map):
     starting_unlocks = read_starting_unlocks(gsd.starting_era)
     seed_rng(seed_pool.pop())
     for empire, psd, home_system in zip(psd_map.keys(), psd_map.values(), home_systems):
-        if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name, starting_unlocks):
+        if not setup_empire(empire, psd.empire_name, home_system,
+                            psd.starting_species, psd.player_name,
+                            starting_unlocks):
             report_error("Python create_universe: couldn't set up empire for player %s" % psd.player_name)
 
     # assign names to all star systems and their planets
