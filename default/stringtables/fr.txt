@@ -5604,11 +5604,9 @@ GROWTH_FOCUS_TITLE
 Focus Croissance
 
 GROWTH_FOCUS_TEXT
-'''Privilégier la Croissance signifie exporter des matériaux et substances rares afin de favoriser l'accroissement démographique sur une planète. Cela n'est possible que dans certains cas : sur quelques Planètes Natales et sur des planètes présentant une Particularité de Croissance pouvant être exportée.
+'''Privilégier la Croissance signifie exporter des matériaux et substances rares afin d'accroître la Population max d'une planète. Cela n'est possible que dans certains cas : sur quelques Planètes Natales et sur des planètes présentant une Particularité de Croissance pouvant être exportée.
 
-Une planète privilégiant la Croissance augmente la Population max des seules autres planètes lui étant reliées par lignes d'[[metertype METER_SUPPLY]].
-
-Une Planète Natale privilégiant la Croissance n'aide d'autres colonies à croître que si celles-ci abritent la même classification d'espèces.
+Une planète privilégiant la Croissance propage ces bénéfices aux autres planètes lui étant reliées par lignes d'[[metertype METER_SUPPLY]], à condition que les espèces peuplant ces autres planètes soient du type adéquat, c'est-à-dire qu'une Planète Natale privilégiant la Croissance favorise seulement les autres planètes peuplées par la même espèce, tandis que les Particularités de Croissance (et le Focus Croissance en corrélation) ne sont bénéfiques qu'aux espèces ayant le même type de [[encyclopedia METABOLISM_TITLE]]. Les bénéfices des différents types applicables de Focus Croissance s'additionnent, mais plusieurs sources d'un même type spécifique de Focus Croissance ne s'additionnent pas.
 
 [[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
@@ -7896,7 +7894,7 @@ Fulver
 SP_FULVER_GAMEPLAY_DESC
 '''Fourmis précognitives insatisfaites.
 Préfèrent les planètes [[PT_TUNDRA]].
-[[encyclopedia LITHIC_SPECIES_TITLE]]
+[[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_FULVER_DESC
@@ -14316,7 +14314,7 @@ GROWTH_SPECIAL_INDUSTRY_BOOST
 Si cette planète est réglée sur le Focus Industrie, sa Projection [[metertype METER_INDUSTRY]] augmente de 0.2 par Population.
 
 GROWTH_SPECIALS_ENTRY_LIST
-'''Les planètes présentant une Particularité de Croissance et réglées sur le Focus Croissance favorisent seulement une classification d'espèces. Certaines Particularités ne fonctionnent que pour les espèces organiques, d'autres pour les espèces lithiques, et enfin d'autres pour les espèces robotiques.
+'''Certaines Particularités ne fonctionnent que pour les espèces organiques, d'autres pour les espèces lithiques, et enfin d'autres pour les espèces robotiques. Aucun autre type de [[encyclopedia METABOLISM_TITLE]] ne dispose actuellement de Particularités de Croissance lui étant exclusivement applicables.
 
 Particularités pour [[encyclopedia ORGANIC_SPECIES_TITLE]] :
 [[special FRUIT_SPECIAL]] | [[special SPICE_SPECIAL]] | [[special PROBIOTIC_SPECIAL]]
