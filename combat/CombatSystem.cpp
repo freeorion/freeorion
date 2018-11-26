@@ -593,42 +593,6 @@ namespace {
         }
     }
 
-    bool ObjectTypeCanBeAttacked(std::shared_ptr<const UniverseObject> obj) {
-        if (!obj)
-            return false;
-
-        UniverseObjectType obj_type = obj->ObjectType();
-
-        if (obj_type == OBJ_SHIP || obj_type == OBJ_FIGHTER)
-            return true;
-
-        if (obj_type == OBJ_PLANET) {
-            if (!obj->Unowned() || obj->InitialMeterValue(METER_POPULATION) > 0.0f)
-                return true;
-            return false;
-        }
-
-        return false;
-    }
-
-    bool ObjectDiplomaticallyAttackableByEmpire(std::shared_ptr<const UniverseObject> obj,
-                                                int empire_id)
-    {
-        if (!obj)
-            return false;
-        if (obj->OwnedBy(empire_id))
-            return false;
-        if (obj->Unowned() && empire_id == ALL_EMPIRES)
-            return false;
-
-        if (empire_id != ALL_EMPIRES && !obj->Unowned() &&
-            Empires().GetDiplomaticStatus(empire_id, obj->Owner()) != DIPLO_WAR)
-        { return false; }
-
-        return true;
-    }
-
-
     bool ObjectCanAttack(std::shared_ptr<const UniverseObject> obj) {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
             return ship->IsArmed() || ship->HasFighters();
