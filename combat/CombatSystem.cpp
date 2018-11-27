@@ -756,15 +756,19 @@ namespace {
             return retval;
         }
 
-        // Return true if some empire that can attack has some targets that it can attack
+        // Return true if some empire has ships or fighters that can attack
+        // Doesn't consider diplomacy or other empires, as parts have arbitrary
+        // targeting conditions, including friendly fire
         bool CanSomeoneAttackSomething() const {
-            for (const auto& attacker : empire_infos) {
+            for (const auto& attacker_info : empire_infos) {
                 // does empire have something to attack with?
-                const EmpireCombatInfo& empire_info = attacker.second;
-                if (!empire_info.HasAttackers() && !empire_info.HasUnlauchedArmedFighters(combat_info))
+                const EmpireCombatInfo& attacker_empire_info = attacker_info.second;
+                if (!attacker_empire_info.HasAttackers() && !attacker_empire_info.HasUnlauchedArmedFighters(combat_info))
                     continue;
 
-                // todo: check if empire has any valid targets
+                // todo: check if any of these ships or fighters have targeting
+                // conditions that match anything present in this combat
+                return true;
             }
             return false;
         }
@@ -774,8 +778,7 @@ namespace {
             auto fighters_destroyed_event = std::make_shared<FightersDestroyedEvent>(bout);
             bool at_least_one_fighter_destroyed = false;
 
-            IncapacitationsEventPtr incaps_event =
-                std::make_shared<IncapacitationsEvent>();
+            IncapacitationsEventPtr incaps_event = std::make_shared<IncapacitationsEvent>();
 
             for (auto it = combat_info.objects.const_begin();
                  it != combat_info.objects.const_end(); ++it)
@@ -1481,7 +1484,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             break;
         }
 
-        DebugLogger(combat) << "Combat at " << system->Name() << " (" << combat_info.system_id << ") Bout " << bout;
+        DebugLogger(combat) << "Combat at " << system->Name() << " ("
+                            << combat_info.system_id << ") Bout " << bout;
 
         CombatRound(bout, combat_info, combat_state);
         last_bout = bout;
