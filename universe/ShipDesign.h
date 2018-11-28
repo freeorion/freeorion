@@ -106,14 +106,15 @@ public:
     float                   SecondaryStat() const;
 
     bool                    CanMountInSlotType(ShipSlotType slot_type) const;       ///< returns true if this part can be placed in a slot of the indicated type
-    const ::Condition::ConditionBase* CombatTargets() const { return m_combat_targets.get(); }          ///< returns the condition for possible targets
+    const ::Condition::ConditionBase*
+                            CombatTargets() const { return m_combat_targets.get(); }///< returns the condition for possible targets. may be nullptr if no condition was specified.
     const std::vector<ShipSlotType>&
-                            MountableSlotTypes() const  { return m_mountable_slot_types; }
+                            MountableSlotTypes() const { return m_mountable_slot_types; }
 
     bool                    ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
     float                   ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to produce this part
     int                     ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to produce this part
-    bool                    Producible() const      { return m_producible; }        ///< returns whether this part type is producible by players and appears on the design screen
+    bool                    Producible() const { return m_producible; }             ///< returns whether this part type is producible by players and appears on the design screen
 
     const CommonParams::ConsumptionMap<MeterType>&
                             ProductionMeterConsumption() const  { return m_production_meter_consumption; }
