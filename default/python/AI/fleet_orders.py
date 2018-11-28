@@ -460,38 +460,51 @@ class OrderInvade(AIFleetOrder):
         planet = self.target.get_object()
         fleet = self.fleet.get_object()
 
-        invasion_roles = (ShipRoleType.MILITARY_INVASION,
-                          ShipRoleType.BASE_INVASION)
+        invasion_roles = (ShipRoleType.BASE_INVASION,
+                          ShipRoleType.MILITARY_INVASION)
 
         debug("Issuing order: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
         # will track if at least one invasion troops successfully deployed
-        result = False
+        result = True
         aistate = get_aistate()
-        for ship_id in fleet.shipIDs:
-            ship = universe.getShip(ship_id)
-            role = aistate.get_ship_role(ship.design.id)
-            if role not in invasion_roles:
-                continue
-
-            debug("Ordering troop ship %d to invade %s" % (ship_id, planet))
-            result = fo.issueInvadeOrder(ship_id, planet_id) or result
+        overkill_margin = 2  # TODO: get from character module; allows a handful of extra troops to be immediately
+        #                            defending planet
+        troops_wanted = planet.currentMeterValue(fo.meterType.troops) + overkill_margin
+        troops_already_assigned = 0  # TODO: get from other fleets in same system
+        troops_assigned = 0
+        # Todo: evaluate all local troop ships (including other fleets) before using any, make sure base invasion troops
+        #       are used first, and that not too many altogether are used (choosing an optimal collection to use).
+        for invasion_role in invasion_roles:  # first checks base troops, then regular
             if not result:
-                shields = planet.currentMeterValue(fo.meterType.shield)
-                planet_stealth = planet.currentMeterValue(fo.meterType.stealth)
-                pop = planet.currentMeterValue(fo.meterType.population)
-                warn("Invasion order failed!")
-                debug(" -- planet has %.1f stealth, shields %.1f, %.1f population and "
-                      "is owned by empire %d" % (planet_stealth, shields, pop, planet.owner))
-                if 'needsEmergencyExploration' not in dir(aistate):
-                    aistate.needsEmergencyExploration = []
-                if fleet.systemID not in aistate.needsEmergencyExploration:
-                    aistate.needsEmergencyExploration.append(fleet.systemID)
-                    debug("Due to trouble invading, adding system %d to Emergency Exploration List" % fleet.systemID)
-                self.executed = False
-                # debug(universe.getPlanet(planet_id).dump())  # TODO: fix fo.UniverseObject.dump()
                 break
+            for ship_id in fleet.shipIDs:
+                if troops_already_assigned + troops_assigned >= troops_wanted:
+                    break
+                ship = universe.getShip(ship_id)
+                if aistate.get_ship_role(ship.design.id) != invasion_role:
+                    continue
+
+                debug("Ordering troop ship %d to invade %s" % (ship_id, planet))
+                result = fo.issueInvadeOrder(ship_id, planet_id) and result
+                if not result:
+                    shields = planet.currentMeterValue(fo.meterType.shield)
+                    planet_stealth = planet.currentMeterValue(fo.meterType.stealth)
+                    pop = planet.currentMeterValue(fo.meterType.population)
+                    warn("Invasion order failed!")
+                    debug(" -- planet has %.1f stealth, shields %.1f, %.1f population and "
+                          "is owned by empire %d" % (planet_stealth, shields, pop, planet.owner))
+                    if 'needsEmergencyExploration' not in dir(aistate):
+                        aistate.needsEmergencyExploration = []
+                    if fleet.systemID not in aistate.needsEmergencyExploration:
+                        aistate.needsEmergencyExploration.append(fleet.systemID)
+                        debug("Due to trouble invading, adding system %d to Emergency Exploration List" % fleet.systemID)
+                    self.executed = False
+                    # debug(universe.getPlanet(planet_id).dump())  # TODO: fix fo.UniverseObject.dump()
+                    break
+                troops_assigned += ship.troopCapacity
+        # TODO: split off unused troop ships into new fleet and give new orders this cycle
         if result:
-            debug("Successfully ordered troop ship(s) to invade %s" % planet)
+            debug("Successfully ordered %d troopers to invade %s" % (troops_assigned, planet))
             return True
         else:
             return False

@@ -27,7 +27,7 @@ class Target(object):
 
     def get_object(self):
         """
-        Returns fo.universeObject or None.
+        :rtype:  fo.universeObject | None
         """
         return None
 
