@@ -44,6 +44,8 @@ public:
     Universe::EmpireObjectVisibilityMap empire_object_visibility;       ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
     std::vector<CombatEventPtr>         combat_events;                  ///< list of combat attack events that occur in combat
 
+    float   GetMonsterDetection() const;
+
 private:
     void    GetEmpireIdsToSerialize(             std::set<int>&                         filtered_empire_ids,                int encoding_empire) const;
     void    GetObjectsToSerialize(               ObjectMap&                             filtered_objects,                   int encoding_empire) const;
@@ -54,7 +56,7 @@ private:
     void    GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisibilityMap&   filtered_empire_object_visibility,  int encoding_empire) const;
     void    GetCombatEventsToSerialize(          std::vector<CombatEventPtr>&           filtered_combat_events,             int encoding_empire) const;
 
-    void InitializeObjectVisibility();
+    void    InitializeObjectVisibility();
 
     friend class boost::serialization::access;
     template<class Archive>
