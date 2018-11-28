@@ -5082,7 +5082,7 @@ The ship %2% was destroyed
 # %1% unused
 # %2% name of empire
 ENC_COMBAT_INITIAL_STEALTH_LIST
-%2% empire can not target:
+%2% empire initially cannot detect:
 
 # %1 link to the attacking unit
 # %2 link to the defending unit.
