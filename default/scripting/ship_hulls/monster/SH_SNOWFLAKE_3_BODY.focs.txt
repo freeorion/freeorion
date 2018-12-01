@@ -19,6 +19,7 @@ Hull
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[MONSTER_SHIELD_REGENERATION]]
         EffectsGroup
             scope = Source
             activation = Source

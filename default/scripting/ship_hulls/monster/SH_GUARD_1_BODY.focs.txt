@@ -16,9 +16,11 @@ Hull
     tags = [ "UNOWNED_FRIENDLY" "PEDIA_HULL_MONSTER_GUARD" ]
     location = All
     effectsgroups = [
+        [[MONSTER_SHIELD_REGENERATION]]
         [[UNOWNED_OWNED_VISION_BONUS(POOR,20,20)]]
     ]
     icon = ""
     graphic = "icons/monsters/sentry.png"
 
 #include "../ship_hulls.macros"
+#include "monster.macros"

@@ -19,6 +19,7 @@ Hull
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
         [[MODERATE_VISION]]
+        [[MONSTER_SHIELD_REGENERATION]]
 
         EffectsGroup    // in systems with no other monsters, spawn trees
             scope = And [

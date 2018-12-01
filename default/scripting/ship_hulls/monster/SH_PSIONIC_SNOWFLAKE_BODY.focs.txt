@@ -20,6 +20,7 @@ Hull
         [[HUNT_SHIPS]]
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[MONSTER_SHIELD_REGENERATION]]
         [[EXCELLENT_VISION]]
 
         EffectsGroup

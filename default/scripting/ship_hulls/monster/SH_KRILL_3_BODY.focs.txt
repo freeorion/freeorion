@@ -93,6 +93,7 @@ Hull
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
         [[GOOD_VISION]]
+        [[MONSTER_SHIELD_REGENERATION]]
 
         EffectsGroup
             scope = And [
