@@ -23,6 +23,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[AVERAGE_DEFENSE_TROOPS]]
 
         [[ULTIMATE_DETECTION]]
