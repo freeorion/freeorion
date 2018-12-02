@@ -20,6 +20,7 @@ Hull
     effectsgroups = [
         [[GOOD_VISION]]
         [[INFINITE_FUEL]]
+        [[MONSTER_SHIELD_REGENERATION]]
     ]
     icon = ""
     graphic = "icons/monsters/kraken-5.png"

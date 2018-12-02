@@ -18,6 +18,7 @@ Hull
     tags = [ "UNOWNED_FRIENDLY" "PEDIA_HULL_MONSTER_GUARD" ]
     location = All
     effectsgroups = [
+        [[MONSTER_SHIELD_REGENERATION]]
         [[UNOWNED_OWNED_VISION_BONUS(MODERATE,40,30)]]
         EffectsGroup
             scope = Source

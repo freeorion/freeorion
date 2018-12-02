@@ -20,6 +20,7 @@ Hull
         [[HUNT_PLANETS]]
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[MONSTER_SHIELD_REGENERATION]]
 
         EffectsGroup
             scope = NumberOf number = 1 condition = And [

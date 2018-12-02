@@ -13,6 +13,7 @@ Hull
     location = All
     effectsgroups = [
         [[MODERATE_VISION]]
+        [[MONSTER_SHIELD_REGENERATION]]
 
         EffectsGroup    // remove self and recreate on first turn, so that trees start with age 0, and thus low initial health, instead of having thousands of structure at start of game
             scope = Source

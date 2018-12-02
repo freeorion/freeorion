@@ -21,6 +21,7 @@ Hull
     tags = [ "UNOWNED_FRIENDLY" "PEDIA_HULL_MONSTER_GUARD" ]
     location = All
     effectsgroups = [
+        [[MONSTER_SHIELD_REGENERATION]]
         [[UNOWNED_OWNED_VISION_BONUS(GOOD,50,50)]]
         EffectsGroup
             scope = Source
@@ -36,3 +37,4 @@ Hull
     graphic = "icons/monsters/warden.png"
 
 #include "../ship_hulls.macros"
+#include "monster.macros"

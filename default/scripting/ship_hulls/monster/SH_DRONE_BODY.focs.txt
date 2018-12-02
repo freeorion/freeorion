@@ -19,6 +19,7 @@ Hull
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
         [[MODERATE_VISION]]
+        [[MONSTER_SHIELD_REGENERATION]]
     ]
     icon = ""
     graphic = "icons/monsters/drone.png"

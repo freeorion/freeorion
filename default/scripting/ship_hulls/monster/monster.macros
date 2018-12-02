@@ -1,3 +1,12 @@
+MONSTER_SHIELD_REGENERATION
+'''EffectsGroup  // Increase shields to max when not in battle
+            scope = Source
+            activation = (Source.LastTurnActiveInBattle < CurrentTurn)
+            stackinggroup = "SHIELD_REGENERATION_EFFECT"
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetShield value = Target.MaxShield
+'''
+
 MONSTER_MOVE_ALWAYS
 '''EffectsGroup
             scope = And [
