@@ -287,27 +287,53 @@ void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id) {
 // AutoResolveCombat
 ////////////////////////////////////////////////
 namespace {
+    // if source is owned by ALL_EMPIRES, match objects owned by an empire
+    // if source is owned by an empire, match unowned objects and objects owned by enemies of source's owner empire
     Condition::ConditionBase* EnemyOfOwnerCondition() {
-        return new Condition::EmpireAffiliation(
-            boost::make_unique<ValueRef::Variable<int>>(
-                ValueRef::SOURCE_REFERENCE, "Owner"),
-            AFFIL_ENEMY);
+        return new Condition::Or(
+            boost::make_unique<Condition::And>(
+                boost::make_unique<Condition::EmpireAffiliation>(AFFIL_NONE),       // unowned candidate object
+                boost::make_unique<Condition::ValueTest>(
+                    boost::make_unique<ValueRef::Variable<int>>(
+                        ValueRef::SOURCE_REFERENCE, "Owner"),
+                    Condition::NOT_EQUAL,
+                    boost::make_unique<ValueRef::Variable<int>>(
+                        ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Owner"))),  // candidate and source have different owners (ie. not both unowned)
+
+            boost::make_unique<Condition::And>(
+                boost::make_unique<Condition::EmpireAffiliation>(AFFIL_ANY),        // candidate is owned by an empire
+                boost::make_unique<Condition::EmpireAffiliation>(                   // candidate is owned by enemy of source's owner
+                    boost::make_unique<ValueRef::Variable<int>>(
+                        ValueRef::SOURCE_REFERENCE, "Owner"), AFFIL_ENEMY)));
     }
 
-    const std::unique_ptr<Condition::ConditionBase> is_enemy_fighter =
-        boost::make_unique<Condition::And>(
-            boost::make_unique<Condition::Type>(OBJ_FIGHTER),
-            std::unique_ptr<Condition::ConditionBase>{EnemyOfOwnerCondition()});
+    //const std::unique_ptr<Condition::ConditionBase> is_enemy_fighter =
+    //    boost::make_unique<Condition::And>(
+    //        boost::make_unique<Condition::Type>(OBJ_FIGHTER),
+    //        std::unique_ptr<Condition::ConditionBase>{EnemyOfOwnerCondition()});
 
-    const std::unique_ptr<Condition::ConditionBase> is_enemy_planet =
-        boost::make_unique<Condition::And>(
-            boost::make_unique<Condition::Type>(OBJ_PLANET),
-            std::unique_ptr<Condition::ConditionBase>{EnemyOfOwnerCondition()});
+    //const std::unique_ptr<Condition::ConditionBase> is_enemy_planet =
+    //    boost::make_unique<Condition::And>(
+    //        boost::make_unique<Condition::Type>(OBJ_PLANET),
+    //        std::unique_ptr<Condition::ConditionBase>{EnemyOfOwnerCondition()});
 
     const std::unique_ptr<Condition::ConditionBase> is_enemy_ship =
         boost::make_unique<Condition::And>(
             boost::make_unique<Condition::Type>(OBJ_SHIP),
             std::unique_ptr<Condition::ConditionBase>{EnemyOfOwnerCondition()});
+
+    const std::unique_ptr<Condition::ConditionBase> is_armed_enemy =
+        boost::make_unique<Condition::And>(
+            std::unique_ptr<Condition::ConditionBase>{EnemyOfOwnerCondition()}, // enemies
+            boost::make_unique<Condition::Or>(
+                boost::make_unique<Condition::Armed>(),                         // ships with weapons
+                boost::make_unique<Condition::And>(
+                    boost::make_unique<Condition::Type>(OBJ_PLANET),
+                    boost::make_unique<Condition::MeterValue>(
+                        METER_DEFENSE,
+                        boost::make_unique<ValueRef::Constant<double>>(0.00001),
+                        nullptr))
+                    ));
 
     std::unique_ptr<Condition::ConditionBase> is_enemy{EnemyOfOwnerCondition()};
 
@@ -319,14 +345,14 @@ namespace {
             part_class(part_class_),
             part_type_name(part_name_),
             part_attack(part_attack_),
-            combat_targets(combat_targets_ ? combat_targets_ : is_enemy.get())
+            combat_targets(combat_targets_ ? combat_targets_ : is_armed_enemy.get())
         {}
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
                        int fighters_launched_, float fighter_damage_,
                        const ::Condition::ConditionBase* combat_targets_) :
             part_class(part_class_),
             part_type_name(part_name_),
-            combat_targets(combat_targets_ ? combat_targets_ : is_enemy.get()),
+            combat_targets(combat_targets_ ? combat_targets_ : is_armed_enemy.get()),
             fighters_launched(fighters_launched_),
             fighter_damage(fighter_damage_)
         {}
@@ -360,7 +386,7 @@ namespace {
         float shield = (target_shield ? target_shield->Current() : 0.0f);
 
         DebugLogger() << "AttackShipShip: attacker: " << attacker->Name()
-                      << "weapon: " << weapon.part_type_name << " power: " << power
+                      << "  weapon: " << weapon.part_type_name << " power: " << power
                       << "  target: " << target->Name() << " shield: " << target_shield->Current()
                       << " structure: " << target_structure->Current();
 
@@ -636,7 +662,7 @@ namespace {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
             return ship->IsArmed() || ship->HasFighters();
         } else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj)) {
-            return planet->InitialMeterValue(METER_DEFENSE) > 0.0f;
+            return planet->CurrentMeterValue(METER_DEFENSE) > 0.0f;
         } else if (auto fighter = std::dynamic_pointer_cast<const Fighter>(obj)) {
             return fighter->Damage() > 0.0f;
         } else {
@@ -1314,9 +1340,8 @@ namespace {
                 ErrorLogger() << "CombatRound couldn't get object with id " << attacker_id;
                 continue;
             }
-            if (attacker->ObjectType() != OBJ_PLANET) {
+            if (attacker->ObjectType() != OBJ_PLANET)
                 continue;   // fighter and ship attacks processed below
-            }
             if (!ObjectCanAttack(attacker)) {
                 DebugLogger() << "Planet " << attacker->Name() << " could not attack.";
                 continue;
