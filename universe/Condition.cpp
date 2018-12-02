@@ -9496,6 +9496,14 @@ Or::Or(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
     m_operands(std::move(operands))
 {}
 
+Or::Or(std::unique_ptr<ConditionBase>&& operand1, std::unique_ptr<ConditionBase>&& operand2) :
+    ConditionBase()
+{
+    // would prefer to initialize the vector m_operands in the initializer list, but this is difficult with non-copyable unique_ptr parameters
+    m_operands.push_back(std::move(operand1));
+    m_operands.push_back(std::move(operand2));
+}
+
 bool Or::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
