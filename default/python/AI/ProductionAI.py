@@ -1410,8 +1410,31 @@ def generate_production_orders():
                     if leading_block_pp > 0.5 * total_pp or (military_emergency and this_priority == PriorityType.PRODUCTION_MILITARY):
                         prioritized = True
                         fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
-                if (not prioritized) and (this_priority == PriorityType.PRODUCTION_INVASION):
-                    fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
+                if this_priority == PriorityType.PRODUCTION_INVASION:
+                    queued_troop_ships += ship_number
+                    if not prioritized:
+                        fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
+        # The AI will normally only consider queuing additional ships (above) the current queue is not using all the
+        # available PP; this can delay the AI from pursuing easy invasion targets.
+        # Queue an extra troopship if the following conditions are met:
+        #   i) currently dealing with our Capital ResourceGroup
+        #   ii) the invasion priority for this group is nonzero and the max priority, and
+        #   iii) there are minimal troopships already enqueued
+        invasion_priority = local_priorities.get(PriorityType.PRODUCTION_INVASION, 0)
+        if (capital_id in planet_set and
+                invasion_priority and
+                invasion_priority == max(local_priorities.values()) and
+                queued_troop_ships <= 2):  # todo get max from character module or otherwise calculate
+            best_design_id, best_design, build_choices = best_ships[PriorityType.PRODUCTION_INVASION]
+            loc = random.choice(build_choices)
+            retval = fo.issueEnqueueShipProductionOrder(best_design_id, loc)
+            if retval != 0:
+                per_turn_cost = (float(best_design.productionCost(empire.empireID, loc))/best_design.productionTime(
+                    empire.empireID, loc))
+                avail_pp -= per_turn_cost
+                debug("adding %d extra trooper at location %s to production queue: %s; per turn production cost %.1f\n",
+                      ship_number, PlanetUtilsAI.planet_string(loc), best_design.name, per_turn_cost)
+
         debug('')
     update_stockpile_use()
     fo.updateProductionQueue()
