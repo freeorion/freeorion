@@ -2447,7 +2447,14 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     const PlayerConnectionPtr& sender = msg.m_player_connection;
 
     auto order_set = boost::make_unique<OrderSet>();
-    ExtractTurnOrdersMessageData(message, *order_set);
+    try {
+        ExtractTurnOrdersMessageData(message, *order_set);
+    } catch (const std::exception& err) {
+        // incorrect turn orders. disconnect player with wrong client.
+        sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE")));
+        server.Networking().Disconnect(sender);
+        return discard_event();
+    }
 
     int player_id = sender->PlayerID();
     Networking::ClientType client_type = sender->GetClientType();
