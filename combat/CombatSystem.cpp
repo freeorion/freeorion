@@ -770,7 +770,7 @@ namespace {
         std::map<int, EmpireCombatInfo> empire_infos;               // empire specific information, indexed by empire id
         float                           monster_detection = 0.0f;   // monster (non-player combatants) detection strength
         CombatInfo&                     combat_info;
-        int                             next_fighter_id = -10001;   // give fighters negative ids so as to avoid clashes with any positiv-id of persistent UniverseObjects
+        int                             next_fighter_id = -10001;   // give fighters negative ids so as to avoid clashes with any positive-id of persistent UniverseObjects
 
         explicit AutoresolveInfo(CombatInfo& combat_info_) :
             combat_info(combat_info_)
@@ -973,6 +973,7 @@ namespace {
             InitialStealthEvent::StealthInvisbleMap report;
 
             float monster_detection = combat_info.GetMonsterDetection();
+            DebugLogger(combat) << " - Monster Detection Strength: " << monster_detection;
 
             // loop over all objects, noting which is visible by which empire
             for (const auto target : combat_info.objects) {
@@ -999,7 +1000,6 @@ namespace {
                             {target->ID(), visibility});
 
                         continue;
-
                     }
                     // player attacker: get visibility of target
                     Visibility visibility = VIS_NO_VISIBILITY;
