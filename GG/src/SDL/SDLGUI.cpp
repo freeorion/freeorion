@@ -781,11 +781,8 @@ void SDLGUI::HandleSystemEvents()
                     WindowMovedSignal(X(event.window.data1), Y(event.window.data2));
                     break;
                 case SDL_WINDOWEVENT_MINIMIZED:
-                    //SDL_EnableScreenSaver();
-                    break;
                 case SDL_WINDOWEVENT_MAXIMIZED:
                 case SDL_WINDOWEVENT_RESTORED:
-                    //SDL_DisableScreenSaver();
                     break;
                 case SDL_WINDOWEVENT_CLOSE:
                     WindowClosingSignal();
