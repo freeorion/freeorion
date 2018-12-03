@@ -739,6 +739,7 @@ namespace {
     // Information about a single empire during combat
     struct EmpireCombatInfo {
         std::set<int> attacker_ids;
+
         bool HasAttackers() const { return !attacker_ids.empty(); }
 
         bool HasUnlauchedArmedFighters(const CombatInfo& combat_info) const {
@@ -768,15 +769,14 @@ namespace {
     struct AutoresolveInfo {
         std::set<int>                   valid_attacker_object_ids;  // all objects that can attack
         std::map<int, EmpireCombatInfo> empire_infos;               // empire specific information, indexed by empire id
-        float                           monster_detection = 0.0f;   // monster (non-player combatants) detection strength
         CombatInfo&                     combat_info;
         int                             next_fighter_id = -10001;   // give fighters negative ids so as to avoid clashes with any positive-id of persistent UniverseObjects
 
         explicit AutoresolveInfo(CombatInfo& combat_info_) :
             combat_info(combat_info_)
         {
-            monster_detection = combat_info.GetMonsterDetection();
             PopulateAttackers();
+            UpdateCombatVisibility();
         }
 
         std::vector<int> AddFighters(int number, float damage, int owner_empire_id,
@@ -964,6 +964,44 @@ namespace {
             for (unsigned i = 0; i < swaps; ++i) {
                 int pos2 = RandInt(i, swaps - 1);
                 std::swap(shuffled[i], shuffled[pos2]);
+            }
+        }
+
+        float EmpireDetectionStrength(int empire_id) {
+            if (const auto* empire = GetEmpire(empire_id))
+                return empire->GetMeter("METER_DETECTION_STRENGTH")->Current();
+            return 0.0f;
+        }
+
+        // loop over objects to determine which is visible to whom in this
+        // combat based on pre-existing visibility info and local detection
+        // strength by empires and monsters
+        void UpdateCombatVisibility() {
+            // get detection strength for neutrals and all empires with involvement in the combat
+            std::map<int, float> empire_detection_strengths;
+            empire_detection_strengths[ALL_EMPIRES] = combat_info.GetMonsterDetection();
+            for (const auto& empire_pair : empire_infos)
+                empire_detection_strengths[empire_pair.first] = EmpireDetectionStrength(empire_pair.first);
+
+            // check all objects against all empires' detection strengths, and
+            // add visibility for anything detectable
+            for (const auto target : combat_info.objects) {
+                // for all empires, can they detect this object?
+                for (int attacking_empire_id : combat_info.empire_ids) {
+                    DebugLogger(combat) << "Target " << target->Name()
+                                        << " for viewing empire = "<< attacking_empire_id;
+
+                    float empire_detection_strength = empire_detection_strengths[attacking_empire_id];
+                    float target_stealth = target->CurrentMeterValue(METER_STEALTH);
+
+                    Visibility vis = combat_info.empire_object_visibility[attacking_empire_id][target->ID()];
+                    if (vis < VIS_BASIC_VISIBILITY && empire_detection_strength >= target_stealth) {
+                        combat_info.empire_object_visibility[attacking_empire_id][target->ID()] = vis;
+                        DebugLogger(combat) << " ... detected by empire detection at: " << vis;
+                    } else {
+                        DebugLogger(combat) << " ... already detected at: " << vis;
+                    }
+                }
             }
         }
 
