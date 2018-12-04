@@ -395,7 +395,9 @@ namespace {
         if (damage > 0.0f) {
             target_structure->AddToCurrent(-damage);
             damaged_object_ids.insert(target->ID());
-            DebugLogger(combat) << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
+            DebugLogger(combat) << "COMBAT: Ship " << attacker->Name() << " ("
+                                << attacker->ID() << ") does " << damage << " damage to Ship "
+                                << target->Name() << " (" << target->ID() << ")";
         }
 
         combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name,
@@ -1478,15 +1480,15 @@ namespace {
             // and will retain knowledge that the attacker exists after combat.
             for (auto this_attack : weapon_fire_events) {
                 Visibility pre_attack_visibility = VIS_NO_VISIBILITY;
-                auto empire_vis_it = combat_info.empire_object_visibility.find(this_attack->attacker_owner_id);
+                auto empire_vis_it = combat_info.empire_object_visibility.find(this_attack->target_owner_id);
                 if (empire_vis_it != combat_info.empire_object_visibility.end()) {
-                    auto obj_vis_it = empire_vis_it->second.find(this_attack->target_id);
+                    auto obj_vis_it = empire_vis_it->second.find(this_attack->attacker_id);
                     if (obj_vis_it != empire_vis_it->second.end())
                         pre_attack_visibility = obj_vis_it->second;
                 }
-                DebugLogger(combat) << "Pre-attack visibility Attacker: " << this_attack->attacker_id
-                                    << " (owner " << this_attack->attacker_owner_id << ") on "
-                                    << " Target: " << this_attack->target_id
+                DebugLogger(combat) << "Pre-attack visibility Target: " << this_attack->target_id
+                                    << " (owner " << this_attack->target_owner_id << ") of "
+                                    << " Attacker: " << this_attack->attacker_id
                                     << " was: " << boost::lexical_cast<std::string>(pre_attack_visibility);
 
                 if (pre_attack_visibility > VIS_NO_VISIBILITY)
@@ -1496,8 +1498,8 @@ namespace {
 
                 DebugLogger(combat) << " ... Setting post-attack visability to: "
                                     << boost::lexical_cast<std::string>(VIS_BASIC_VISIBILITY)
-                                    << " for empire " << this_attack->attacker_owner_id
-                                    << " of object " << this_attack->target_id;
+                                    << " for empire " << this_attack->target_owner_id
+                                    << " of object " << this_attack->attacker_id;
                 // record visibility change event due to attack
                 stealth_change_event->AddEvent(this_attack->attacker_id,
                                                this_attack->target_id,
