@@ -986,18 +986,24 @@ namespace {
             for (const auto& empire_pair : empire_infos)
                 empire_detection_strengths[empire_pair.first] = EmpireDetectionStrength(empire_pair.first);
 
+            for (const auto& emp_det : empire_detection_strengths)
+                DebugLogger(combat) << "Empire " << emp_det.first << " detection strength: " << emp_det.second;
+
             // check all objects against all empires' detection strengths, and
             // add visibility for anything detectable
             for (const auto target : combat_info.objects) {
                 // for all empires, can they detect this object?
                 for (int attacking_empire_id : combat_info.empire_ids) {
-                    DebugLogger(combat) << "Target " << target->Name()
-                                        << " for viewing empire = "<< attacking_empire_id;
-
                     float empire_detection_strength = empire_detection_strengths[attacking_empire_id];
                     float target_stealth = target->CurrentMeterValue(METER_STEALTH);
-
                     Visibility vis = combat_info.empire_object_visibility[attacking_empire_id][target->ID()];
+
+                    DebugLogger(combat) << "Target " << target->Name()
+                                        << "  with stealth " << target_stealth
+                                        << "  for viewing empire " << attacking_empire_id
+                                        << "  with detection strength " << target_stealth
+                                        << "  at initial visibility: " << vis;
+
                     if (vis < VIS_BASIC_VISIBILITY && empire_detection_strength >= target_stealth) {
                         vis = VIS_BASIC_VISIBILITY;
                         combat_info.empire_object_visibility[attacking_empire_id][target->ID()] = vis;
