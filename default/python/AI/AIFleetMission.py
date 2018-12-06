@@ -431,7 +431,8 @@ class AIFleetMission(object):
                     fleet_order.issue_order()
                 else:
                     debug("NOT issuing (even though can_issue) fleet order %s" % fleet_order)
-                debug("Order issued: %s" % fleet_order.order_issued)
+                status_words = tuple(["not", ""][_s] for _s in [fleet_order.order_issued, fleet_order.executed])
+                debug("Order %s issued and %s fully executed." % status_words)
                 if not fleet_order.executed:
                     order_completed = False
             else:  # check that we're not held up by a Big Monster
