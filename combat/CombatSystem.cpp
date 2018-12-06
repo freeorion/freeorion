@@ -322,6 +322,7 @@ namespace {
             boost::make_unique<Condition::Type>(OBJ_SHIP),
             std::unique_ptr<Condition::ConditionBase>{EnemyOfOwnerCondition()});
 
+    // todo: visibility requirement for targeting
     const std::unique_ptr<Condition::ConditionBase> is_armed_enemy =
         boost::make_unique<Condition::And>(
             std::unique_ptr<Condition::ConditionBase>{EnemyOfOwnerCondition()}, // enemies
@@ -999,7 +1000,9 @@ namespace {
                     Visibility vis = combat_info.empire_object_visibility[attacking_empire_id][target->ID()];
                     if (vis < VIS_BASIC_VISIBILITY && empire_detection_strength >= target_stealth) {
                         combat_info.empire_object_visibility[attacking_empire_id][target->ID()] = vis;
-                        DebugLogger(combat) << " ... detected by empire detection at: " << vis;
+                        DebugLogger(combat) << " ... newly detected by empire detection at: " << vis;
+                    } else if (vis < VIS_BASIC_VISIBILITY) {
+                        DebugLogger(combat) << " ... remains undetected at: " << vis;
                     } else {
                         DebugLogger(combat) << " ... already detected at: " << vis;
                     }
@@ -1007,41 +1010,18 @@ namespace {
             }
         }
 
-        /**Report for each empire the stealth objects in the combat. */
+        /** Report for each empire the stealthy objects in the combat. */
         InitialStealthEvent::StealthInvisbleMap ReportInvisibleObjects() const {
             DebugLogger(combat) << "Reporting Invisible Objects";
             InitialStealthEvent::StealthInvisbleMap report;
 
-            float monster_detection = combat_info.GetMonsterDetection();
-            DebugLogger(combat) << " - Monster Detection Strength: " << monster_detection;
-
-            // loop over all objects, noting which is visible by which empire
+            // loop over all objects, noting which is visible by which empire or neutrals
             for (const auto target : combat_info.objects) {
                 // for all empires, can they detect this object?
                 for (int attacking_empire_id : combat_info.empire_ids) {
                     DebugLogger(combat) << "Target " << target->Name() << " for viewing empire = "<< attacking_empire_id;
 
-                    if (attacking_empire_id == ALL_EMPIRES) {
-                        // monster / neutral planet attackers... need to have detection >= object stealth to initially see it
-
-                        Visibility visibility = VIS_NO_VISIBILITY;
-                        if (target->Unowned())
-                            visibility = VIS_PARTIAL_VISIBILITY;
-                        else if (monster_detection >= target->InitialMeterValue(METER_STEALTH))
-                            visibility = VIS_PARTIAL_VISIBILITY;
-                        else if (target->ObjectType() == OBJ_PLANET)
-                            visibility = VIS_BASIC_VISIBILITY;  // if not already visible through detection
-
-                        DebugLogger(combat) << " Target " << target->Name() << " "
-                                            << visibility << " to monsters and neutrals";
-                        // This adds information about invisible and basic visible objects and
-                        // trusts that the combat logger only informs player/ai of what they should know
-                        report[attacking_empire_id][target->Owner()].insert(
-                            {target->ID(), visibility});
-
-                        continue;
-                    }
-                    // player attacker: get visibility of target
+                    // get visibility of target to attacker empire
                     Visibility visibility = VIS_NO_VISIBILITY;
                     auto target_visible_it = combat_info.empire_object_visibility.find(target->Owner());
                     if (target_visible_it != combat_info.empire_object_visibility.end()) {
@@ -1053,10 +1033,14 @@ namespace {
 
                     // This adds information about invisible and basic visible objects and
                     // trusts that the combat logger only informs player/ai of what they should know
-                    DebugLogger(combat) << " Target " << target->Name() << " "
-                                        << visibility << " to empire " << attacking_empire_id;
-                    report[attacking_empire_id][target->Owner()].insert(
-                        {target->ID(), visibility});
+                    if (attacking_empire_id == ALL_EMPIRES) {
+                        DebugLogger(combat) << " Target " << target->Name() << " "
+                                            << visibility << " to monsters and neutrals";
+                    } else {
+                        DebugLogger(combat) << " Target " << target->Name() << " "
+                                            << visibility << " to empire " << attacking_empire_id;
+                    }
+                    report[attacking_empire_id][target->Owner()].insert({target->ID(), visibility});
                 }
             }
             return report;
