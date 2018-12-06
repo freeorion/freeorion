@@ -999,6 +999,7 @@ namespace {
 
                     Visibility vis = combat_info.empire_object_visibility[attacking_empire_id][target->ID()];
                     if (vis < VIS_BASIC_VISIBILITY && empire_detection_strength >= target_stealth) {
+                        vis = VIS_BASIC_VISIBILITY;
                         combat_info.empire_object_visibility[attacking_empire_id][target->ID()] = vis;
                         DebugLogger(combat) << " ... newly detected by empire detection at: " << vis;
                     } else if (vis < VIS_BASIC_VISIBILITY) {
