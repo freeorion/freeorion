@@ -1106,7 +1106,7 @@ namespace {
             Condition::ObjectSet possible_targets;
             std::copy(combat_state.combat_info.objects.const_begin(),
                       combat_state.combat_info.objects.const_end(),
-                      std::inserter(possible_targets, possible_targets.end()));
+                      std::back_inserter(possible_targets));
             Condition::ObjectSet matched_targets;
             ScriptingContext context(attacker); // attacker is source object for condition evaluation
 
