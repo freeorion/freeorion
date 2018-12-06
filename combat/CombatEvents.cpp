@@ -378,7 +378,7 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id) con
             for (const auto& attacker : target_empire.second) {
                 std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker.first, viewing_empire_id);
                 // Don't even report on targets with no_visibility it is supposed to be a surprise
-                if (attacker.second >= VIS_BASIC_VISIBILITY )
+                if (attacker.second >= VIS_BASIC_VISIBILITY)
                     cloaked_attackers.push_back(attacker_link);
             }
 

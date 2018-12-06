@@ -1001,7 +1001,7 @@ namespace {
                     DebugLogger(combat) << "Target " << target->Name()
                                         << "  with stealth " << target_stealth
                                         << "  for viewing empire " << attacking_empire_id
-                                        << "  with detection strength " << target_stealth
+                                        << "  with detection strength " << empire_detection_strength
                                         << "  at initial visibility: " << vis;
 
                     if (vis < VIS_BASIC_VISIBILITY && empire_detection_strength >= target_stealth) {
@@ -1068,7 +1068,7 @@ namespace {
                     empire_infos[obj->Owner()].attacker_ids.insert(it->ID());
                 }
 
-                DebugLogger(combat) << "Considerting object " << obj->Name() 
+                DebugLogger(combat) << "Considering object " << obj->Name()
                                     << " owned by " << std::to_string(obj->Owner())
                                     << (can_attack ? "... can attack" : "");
             }
