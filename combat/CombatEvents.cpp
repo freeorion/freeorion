@@ -346,11 +346,14 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id) con
         if (target_empire != attack_empire.second.end() &&
             !target_empire->second.empty())
         {
+            // Check Visibility levels of cloaked attackers, report those that
+            // are not visible.
             std::vector<std::string> cloaked_attackers;
             for (auto& attacker : target_empire->second) {
-                 std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker.first, viewing_empire_id);
-                // It doesn't matter if targets of viewing empire have no_visibility or basic_visibility
-                 cloaked_attackers.push_back(attacker_link);
+                if (attacker.second > VIS_NO_VISIBILITY)
+                    continue;
+                std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker.first, viewing_empire_id);
+                cloaked_attackers.push_back(attacker_link);
             }
 
             if (!cloaked_attackers.empty()) {
