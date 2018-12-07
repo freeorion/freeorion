@@ -1,0 +1,71 @@
+name: freeorion
+summary: turn-based space empire and galactic conquest (4X) computer game
+description: |
+  FreeOrion is a free, open source, turn-based space empire and galactic
+  conquest (4X) computer game being designed and built by the FreeOrion project.
+  FreeOrion is inspired by the tradition of the Master of Orion games, but is
+  not a clone or remake of that series or any other game.
+confinement: strict
+adopt-info: freeorion
+
+apps:
+    freeorion:
+        command: desktop-launch freeorion -S $SNAP_USER_COMMON/save
+        plugs: [home, pulseaudio, opengl, network, screen-inhibit-control, browser-support, x11]
+        desktop: share/applications/freeorion.desktop
+        environment:
+            LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/lib/freeorion
+            LIBGL_DRIVERS_PATH: $SNAP/usr/lib/x86_64-linux-gnu/dri
+parts:
+    freeorion:
+        source: .
+        override-build: |
+            sed -i.bak -e 's|Icon=freeorion$|Icon=${SNAP}/meta/gui/icon.png|g' ../src/freeorion.desktop
+            snapcraftctl build
+        plugin: cmake
+        override-pull: |
+            snapcraftctl pull
+            version="$(git describe --tags --always --dirty)"
+            case $version in
+                v*) version=$(echo $version | tail -c +2) ;;
+                *)  version=$(echo $version | head -c 32) ;;
+            esac
+            [ -n "$(echo $version | grep '-')" ] && grade=devel || grade=stable
+            snapcraftctl set-version "$version"
+            snapcraftctl set-grade "$grade"
+        override-prime: |
+            snapcraftctl prime
+            mkdir -p ${SNAPCRAFT_PRIME}/meta/gui
+            cp ${SNAPCRAFT_PART_SRC}/default/data/art/icons/FO_Icon_256x256.png ${SNAPCRAFT_PRIME}/meta/gui/icon.png
+        build-packages:
+            - cmake
+            - debhelper
+            - dpkg-dev
+            - libalut-dev
+            - libboost-all-dev
+            - libfreetype6-dev
+            - libgl1-mesa-dev
+            - libglew-dev
+            - libglu1-mesa-dev
+            - libjpeg-dev
+            - libogg-dev
+            - libopenal-dev
+            - libpng-dev
+            - libsdl2-dev
+            - libtiff-dev
+            - libvorbis-dev
+            - pkg-config
+            - python
+        stage-packages:
+            - mesa-utils
+            - libgl1-mesa-dri
+            - python
+        after: [ desktop-glib-only ]
+    desktop-glib-only:
+        source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+        source-subdir: glib-only
+        plugin: make
+        build-packages:
+          - libglib2.0-dev
+        stage-packages:
+          - libglib2.0-bin
