@@ -4,7 +4,6 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/CombatEvents.h
         ${CMAKE_CURRENT_LIST_DIR}/CombatLogManager.h
         ${CMAKE_CURRENT_LIST_DIR}/CombatSystem.h
-        ${CMAKE_CURRENT_LIST_DIR}/CombatTargetting.h
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/CombatEvent.cpp
         ${CMAKE_CURRENT_LIST_DIR}/CombatEvents.cpp
@@ -20,7 +19,6 @@ target_sources(freeoriond
 target_sources(freeorionca
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/CombatSystem.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/CombatTargetting.cpp
 )
 
 if(NOT BUILD_HEADLESS)
