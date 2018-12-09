@@ -500,6 +500,7 @@ class AIstate(object):
             mob_rating = CombatRatingsAI.combine_ratings_list(mob_ratings)
             lost_fleets = fleetsLostBySystem.get(sys_id, [])
             lost_fleet_rating = CombatRatingsAI.combine_ratings_list(lost_fleets)
+            debug("Just lost fleet rating %.1f in system %s", lost_fleet_rating, system)
 
             # under current visibility rules should not be possible to have any losses or other info here,
             # but just in case...
@@ -546,7 +547,9 @@ class AIstate(object):
             sys_status['mydefenses'] = {'overall': mypattack * myphealth, 'attack': mypattack, 'health': myphealth}
 
             # previous threat assessment could account for losses, ignore the losses now
-            if max(sys_status.get('totalThreat', 0), pattack * phealth) >= 0.6 * lost_fleet_rating:
+            if (lost_fleet_rating and
+                    lost_fleet_rating < max(sys_status.get('totalThreat', 0), pattack * phealth)):
+                debug("In system %s: Ignoring lost fleets since known threats could cause it.", system)
                 lost_fleet_rating = 0
 
             # TODO use sitrep combat info rather than estimating stealthed enemies by fleets lost to them
@@ -824,7 +827,6 @@ class AIstate(object):
         universe = fo.getUniverse()
         current_empire_fleets = FleetUtilsAI.get_empire_fleet_ids()
         self.shipCount = 0
-        destroyed_object_ids = universe.destroyedObjectIDs(fo.empireID())
 
         fleet_table = Table([
             Text('Fleet'), Float('Rating'), Float('Troops'),
@@ -851,12 +853,10 @@ class AIstate(object):
 
             # check if fleet is destroyed and if so, delete stored information
             if fleet_id not in current_empire_fleets:  # or fleet.empty:
-                # TODO(Morlic): Is this condition really correct? Seems like should actually be in destroyed object ids
-                if (fleet and self.__fleetRoleByID.get(fleet_id, -1) != -1 and
-                        fleet_id not in destroyed_object_ids and
-                        any(ship_id not in destroyed_object_ids for ship_id in fleet.shipIDs)):
-                    if not just_resumed:
-                        fleetsLostBySystem.setdefault(old_sys_id, []).append(max(rating, MilitaryAI.MinThreat))
+                debug("Just lost %s", fleet)
+                if not just_resumed:
+                    fleetsLostBySystem.setdefault(old_sys_id, []).append(
+                        max(rating, fleet_status.get('rating', 0.), MilitaryAI.MinThreat))
 
                 self.delete_fleet_info(fleet_id)
                 continue
