@@ -588,8 +588,11 @@ class AIstate(object):
                 # does NOT include mobile monsters
                 sys_status['enemy_threat'] = max(enemy_rating, 2*lost_fleet_rating - monster_rating)
                 sys_status['monsterThreat'] = monster_rating
-                sys_status['totalThreat'] = CombatRatingsAI.combine_ratings_list(
-                    [enemy_rating, mob_rating, monster_rating, pattack * phealth])
+                sys_status['totalThreat'] = CombatRatingsAI.combine_ratings_list([
+                    sys_status['fleetThreat'],
+                    sys_status['monsterThreat'],
+                    pattack * phealth,
+                ])
             sys_status['regional_fleet_threats'] = sys_status['local_fleet_threats'].copy()
             sys_status['fleetThreat'] = max(sys_status['fleetThreat'], sys_status.get('nest_threat', 0))
             sys_status['totalThreat'] = max(sys_status['totalThreat'], sys_status.get('nest_threat', 0))
