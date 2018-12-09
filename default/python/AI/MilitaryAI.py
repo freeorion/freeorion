@@ -631,7 +631,15 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
     all_military_fleet_ids = (mil_fleets_ids if mil_fleets_ids is not None
                               else FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY))
 
-    if try_reset and (fo.currentTurn() + empire_id) % 30 == 0 and thisround == "Main":
+    # Todo: This block had been originally added to address situations where fleet missions were not properly
+    #  terminating, leaving fleets stuck in stale deployments. Assess if this block is still needed at all; delete
+    #  if not, otherwise restructure the following code so that in event a reset is occurring greater priority is given
+    #  to providing military support to locations where a necessary Secure mission might have just been released (i.e.,
+    #  at invasion and colony/outpost targets where the troopships and colony ships are on their way), or else allow
+    #  only a partial reset which does not reset Secure missions.
+    enable_periodic_mission_reset = False
+    if enable_periodic_mission_reset and try_reset and (fo.currentTurn() + empire_id) % 30 == 0 and thisround == "Main":
+        debug("Resetting all Military missions as part of an automatic periodic reset to clear stale missions.")
         try_again(all_military_fleet_ids, try_reset=False, thisround=thisround + " Reset")
         return
 
