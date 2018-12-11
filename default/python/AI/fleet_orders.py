@@ -36,7 +36,7 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
                 if verbose:
                     debug("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
                           "because target (%s) has nonzero max shields and there is not yet a military fleet "
-                          "assigned to secure the target system.") % (order.fleet.id, invasion_planet)
+                          "assigned to secure the target system." % (order.fleet.id, invasion_planet))
                 return False
 
             # if there is a threat in the enemy system, do give military ships at least 1 turn to clear it
@@ -51,8 +51,8 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
                 if verbose:
                     debug("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
                           "because target (%s) has nonzero max shields and no assigned military fleet would arrive"
-                          "at least %d turn earlier than the invasion fleet") % (
-                                order.fleet.id, invasion_planet, delay_to_move_troops)
+                          "at least %d turn earlier than the invasion fleet" % (order.fleet.id, invasion_planet,
+                                                                                delay_to_move_troops))
                 return False
 
         if verbose:
@@ -218,8 +218,8 @@ class OrderMove(AIFleetOrder):
             if (my_other_fleet_rating > 3 * safety_factor * threat or
                     (is_military and total_rating_vs_planets > 2.5*p_threat and total_rating > safety_factor * threat)):
                 debug(("\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d"
-                       " because of sufficient empire fleet strength already at destination") %
-                      (self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat))
+                       " because of sufficient empire fleet strength already at destination" %
+                      (self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat)))
                 return True
             elif (threat == p_threat and
                   not self.fleet.get_object().aggressive and
@@ -228,14 +228,15 @@ class OrderMove(AIFleetOrder):
                 if verbose:
                     debug("\tAdvancing fleet %d (rating %d) at system %d (%s) "
                           "into system %d (%s) with planet threat %d because non aggressive"
-                          " and no other fleets present to trigger combat") % (
-                        self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat)
+                          " and no other fleets present to trigger combat" % (
+                        self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat))
                 return True
             else:
                 if verbose:
+                    _info = (self.fleet.id, fleet_rating, system_id, sys1_name,
+                            self.target.id, target_system_name, threat)
                     debug("\tHolding fleet %d (rating %d) at system %d (%s) "
-                          "before travelling to system %d (%s) with threat %d") % (
-                        self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat)
+                          "before travelling to system %d (%s) with threat %d" % _info)
                 needs_vis = aistate.misc.setdefault('needs_vis', [])
                 if self.target.id not in needs_vis:
                     needs_vis.append(self.target.id)
