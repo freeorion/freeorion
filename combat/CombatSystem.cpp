@@ -1104,9 +1104,15 @@ namespace {
             DebugLogger() << "Targeting condition: " << weapon.combat_targets->Dump();
 
             Condition::ObjectSet possible_targets;
-            std::copy(combat_state.combat_info.objects.const_begin(),
-                      combat_state.combat_info.objects.const_end(),
-                      std::back_inserter(possible_targets));
+            possible_targets.reserve(combat_state.combat_info.objects.NumObjects());
+            for (auto it = combat_state.combat_info.objects.begin();
+                 it != combat_state.combat_info.objects.end(); ++it)
+            { possible_targets.push_back(*it); }    // tried to do this with std::transform, but couldn't get it to compile
+            //std::transform(combat_state.combat_info.objects.const_begin(),
+            //               combat_state.combat_info.objects.const_end(),
+            //               std::back_inserter(possible_targets),
+            //               boost::bind(&ObjectMap::const_iterator<>::operator*, _1));
+
             Condition::ObjectSet matched_targets;
             ScriptingContext context(attacker); // attacker is source object for condition evaluation
 
