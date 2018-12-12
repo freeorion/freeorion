@@ -40,21 +40,21 @@ namespace {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingObjects().size());
         std::transform(Objects().ExistingObjects().begin(), Objects().ExistingObjects().end(),
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
     }
 
     void AddBuildingSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingBuildings().size());
         std::transform(Objects().ExistingBuildings().begin(), Objects().ExistingBuildings().end(),
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
     }
 
     void AddFieldSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingFields().size());
-        std::transform( Objects().ExistingFields().begin(), Objects().ExistingFields().end(),
-                        std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+        std::transform(Objects().ExistingFields().begin(), Objects().ExistingFields().end(),
+                       std::back_inserter(condition_non_targets),
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
     }
 
     void AddFleetSet(Condition::ObjectSet& condition_non_targets) {
@@ -94,9 +94,9 @@ namespace {
 
     void AddSystemSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingSystems().size());
-        std::transform( Objects().ExistingSystems().begin(), Objects().ExistingSystems().end(),
-                        std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+        std::transform(Objects().ExistingSystems().begin(), Objects().ExistingSystems().end(),
+                       std::back_inserter(condition_non_targets),
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     /** Used by 4-parameter ConditionBase::Eval function, and some of its
