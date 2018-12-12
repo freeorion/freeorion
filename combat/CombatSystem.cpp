@@ -1114,7 +1114,8 @@ namespace {
             //               boost::bind(&ObjectMap::const_iterator<>::operator*, _1));
 
             Condition::ObjectSet matched_targets;
-            ScriptingContext context(attacker); // attacker is source object for condition evaluation
+            // attacker is source object for condition evaluation. use combat-specific vis info.
+            ScriptingContext context(attacker, combat_state.combat_info.empire_object_visibility);
 
             weapon.combat_targets->Eval(context, matched_targets, possible_targets);
             if (matched_targets.empty()) {
