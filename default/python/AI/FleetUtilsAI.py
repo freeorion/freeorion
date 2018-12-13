@@ -72,7 +72,7 @@ def get_targeted_planet_ids(planet_ids, mission_type):
 # TODO: Avoid mutable arguments and use return values instead
 # TODO: Use Dijkstra's algorithm instead of BFS to consider starlane length
 def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
-                           fleet_pool_set, fleet_list, species=""):
+                           fleet_pool_set, fleet_list, species="", ensure_return=False):
     """Get fleets for a mission.
 
     Implements breadth-first search through systems starting at the **starting_sytem**.
@@ -97,6 +97,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
     :type fleet_list: list[int]
     :param species: species for colonization mission
     :type species: str
+    :param bool ensure_return: If true, fleet must have sufficient fuel to return into supply after mission
     :return: List of selected fleet_ids or empty list if couldn't meet minimum requirements.
     :rtype: list[int]
     """
@@ -124,6 +125,13 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                 new_fleets = split_fleet(fleet_id)
                 fleet_pool_set.update(new_fleets)
                 fleets_here.extend(new_fleets)
+
+            if ('target_system' in target_stats and
+                    not MoveUtilsAI.can_travel_to_system(fleet_id, this_system_obj,
+                                                         target_stats['target_system'],
+                                                         ensure_return=ensure_return)):
+                    continue
+
             # check species for colonization missions
             if species:
                 for ship_id in fleet.shipIDs:
@@ -139,9 +147,6 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                 troop_capacity = count_troops_in_fleet(fleet_id)
                 if troop_capacity <= 0:
                     continue
-                if 'target_system' in target_stats:
-                    if not MoveUtilsAI.can_travel_to_system(fleet_id, this_system_obj, target_stats['target_system']):
-                        continue
 
             # check if we need additional rating vs planets
             this_rating_vs_planets = 0
