@@ -7216,6 +7216,7 @@ Prefer [[PT_OCEAN]] planets.
 
 SP_SCYLIOR_DESC
 '''Description:
+<img src="species/scylior.png"></img>
 Scyliori are shelled cephalopods similar to a Nautilus. They possess advanced vision provided by four eyes and have four antennae containing millions of neuromasts, allowing the Scyliori to detect changes in water pressure and also electrical fields. Scyliori have three large, strong feeding tentacles which they use to grasp and hold tools or food while it is broken up by the beak and ingested.
 
 Chromatophores provide the race with their main form of communication. When two Scyliori wish to communicate with each other, they rapidly change the coloring and patterning of their skin.
@@ -7667,7 +7668,7 @@ Prefer [[PT_BARREN]] planets.
 '''
 
 SP_TRENCHERS_DESC
-''''''
+'''<img src="species/trenchers.png"></img>'''
 
 SP_RAAAGH
 Raaagh
@@ -7755,7 +7756,7 @@ Prefer [[PT_INFERNO]] planets.
 
 SP_UGMORS_DESC
 '''The Ugmors is a race of sentient yeast which uses rocks and minerals to make temporary bodies designed to perform specific tasks.
-
+<img src="species/ugmors.png"></img>
 Social Structure:
 The Larar drifts are the true center of the species. These masses of yeast sit on top of the hottest part of the lava seas and absorb energy. When enough energy is available a large colony of supercharged yeast will gather large rocks at the edge of the lava pool and join them together to form an Ugmor. The Ugmors were originally designed to get from one lava pool to another, but have since developed into a very complex society. The Larar drifts are not very intelligent on their own, acting as more of a central memory which carries out the directives of the most recent Ugmor to be privileged enough to return to the Larar drifts.
 
@@ -7810,6 +7811,7 @@ Prefers [[PT_INFERNO]] planets.
 
 SP_ABADDONI_DESC
 '''Description:
+<img src="species/abaddoni.png"></img>
 Abaddoni are shaped like a chicken egg on its side, roughly 0,8 meters tall and deep red with black spots. Their predominant feature is a large mouth starting at the point and extending back for a full third of the body.
 At the end of each of their 6 short crab like legs, is an inflatable sac which enables them to climb upside down. Because they grew up underground Abaddoni have no eyes, they mainly rely on smell and to a lesser extent sound and touch to navigate.
 
