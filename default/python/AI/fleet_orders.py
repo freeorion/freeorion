@@ -470,7 +470,8 @@ class OrderInvade(AIFleetOrder):
         aistate = get_aistate()
         overkill_margin = 2  # TODO: get from character module; allows a handful of extra troops to be immediately
         #                            defending planet
-        troops_wanted = planet.currentMeterValue(fo.meterType.troops) + overkill_margin
+        # invasion orders processed before regen takes place, so use initialMeterValue() here
+        troops_wanted = planet.initialMeterValue(fo.meterType.troops) + overkill_margin
         troops_already_assigned = 0  # TODO: get from other fleets in same system
         troops_assigned = 0
         # Todo: evaluate all local troop ships (including other fleets) before using any, make sure base invasion troops
