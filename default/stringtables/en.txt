@@ -1032,6 +1032,8 @@ Cannot concede; empire controls too many colonies.
 ERROR_CONCEDE_LAST_HUMAN_PLAYER
 Cannot concede from a game with only one human player.
 
+ERROR_INCOMPATIBLE_VERSION
+Server cannot properly read messages from your client, most likely due to incompatible game versions.
 
 ##
 ## Game Rules
