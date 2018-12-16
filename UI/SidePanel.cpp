@@ -413,8 +413,8 @@ namespace {
                true,                        Validator<bool>());
         db.Add("ui.map.sidepanel.planet.scanlane.color",    UserStringNop("OPTIONS_DB_UI_PLANET_FOG_CLR"),
                GG::Clr(0, 0, 0, 128),       Validator<GG::Clr>());
-        db.Add("UI.sidepanel-planet-blockaded-icon-size",   UserStringNop("OPTIONS_DB_UI_PLANET_BLOCKADED_ICON_SIZE"),
-               48,                          RangedValidator<int>(8, 128));
+        db.Add("UI.sidepanel-planet-status-icon-size",       UserStringNop("OPTIONS_DB_UI_PLANET_STATUS_ICON_SIZE"),
+               32,                          RangedValidator<int>(8, 128));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -550,7 +550,7 @@ private:
     std::shared_ptr<GG::Button>             m_invade_button;            ///< btn which can be pressed to invade this planet;
     std::shared_ptr<GG::Button>             m_bombard_button;           ///< btn which can be pressed to bombard this planet;
     std::shared_ptr<GG::DynamicGraphic>     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids;
-    GG::StaticGraphic*                      m_planet_blockaded_graphic; ///< image that is shown when a planet is blockaded by an enemy fleet
+    std::shared_ptr<GG::StaticGraphic>      m_planet_status_graphic;    ///< image that gives information about the planet status, like supply disconnection
     std::shared_ptr<RotatingPlanetControl>  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
     bool                                    m_selected;                 ///< is this planet panel selected
     bool                                    m_order_issuing_enabled;    ///< can orders be issues via this planet panel?
@@ -891,7 +891,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_invade_button(nullptr),
     m_bombard_button(nullptr),
     m_planet_graphic(nullptr),
-    m_planet_blockaded_graphic(nullptr),
+    m_planet_status_graphic(nullptr),
     m_rotating_planet_graphic(nullptr),
     m_selected(false),
     m_order_issuing_enabled(true),
@@ -1112,7 +1112,6 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
 
     DetachChildAndReset(m_planet_graphic);
     DetachChildAndReset(m_rotating_planet_graphic);
-    DetachChildAndReset(m_planet_blockaded_graphic);
 
     if (planet->Type() == PT_ASTEROIDS) {
         const auto& textures = GetAsteroidTextures();
@@ -1120,37 +1119,24 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
             return;
         GG::X texture_width = textures[0]->DefaultWidth();
         GG::Y texture_height = textures[0]->DefaultHeight();
-        planet_graphic_height = texture_height;
         GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - texture_width / 2 + 3), GG::Y0);
 
         m_planet_graphic = GG::Wnd::Create<GG::DynamicGraphic>(planet_image_pos.x, planet_image_pos.y,
-                                                               texture_width, texture_height, true,
-                                                               texture_width, texture_height, 0, textures,
-                                                               GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            texture_width, texture_height, true,
+            texture_width, texture_height, 0, textures,
+            GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         m_planet_graphic->SetFPS(GetAsteroidsFPS());
         m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
         AttachChild(m_planet_graphic);
         m_planet_graphic->Play();
-    } else if (planet->Type() < NUM_PLANET_TYPES) {
-        int planet_image_sz = PlanetDiameter(planet->Size());
-        planet_graphic_height = GG::Y(MaxPlanetDiameter());
-        GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - planet_image_sz / 2 + 3),
-                                GG::Y(MaxPlanetDiameter() / 2 - planet_image_sz / 2));
-        m_rotating_planet_graphic = GG::Wnd::Create<RotatingPlanetControl>(planet_image_pos.x, planet_image_pos.y,
-                                                                           m_planet_id, m_star_type);
-        AttachChild(m_rotating_planet_graphic);
     }
-
-    // add blockade graphic
-    if (!GetSupplyManager().SystemHasFleetSupply(planet->SystemID(), planet->Owner()) && (!planet->Unowned())) {
-        const std::shared_ptr<GG::Texture>& blockaded_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "blockade.png", true);
-        int texture_size = GetOptionsDB().Get<int>("UI.sidepanel-planet-blockaded-icon-size");
-
-        m_planet_blockaded_graphic = new GG::StaticGraphic(blockaded_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-        m_planet_blockaded_graphic->Resize(GG::Pt(GG::X(texture_size), GG::Y(texture_size)));
-        m_planet_blockaded_graphic->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() / 2 - texture_size / 2 + 3),
-                                           GG::Y(planet_graphic_height / 2 - texture_size / 2)));
-        AttachChild(m_planet_blockaded_graphic);
+    else if (planet->Type() < NUM_PLANET_TYPES) {
+        int planet_image_sz = PlanetDiameter(planet->Size());
+        GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - planet_image_sz / 2 + 3),
+            GG::Y(MaxPlanetDiameter() / 2 - planet_image_sz / 2));
+        m_rotating_planet_graphic = GG::Wnd::Create<RotatingPlanetControl>(planet_image_pos.x, planet_image_pos.y,
+            m_planet_id, m_star_type);
+        AttachChild(m_rotating_planet_graphic);
     }
 }
 
@@ -1856,10 +1842,50 @@ void SidePanel::PlanetPanel::Refresh() {
 
     ClearBrowseInfoWnd();
 
-    // set planetpanel blockade browse text
-    if (!GetSupplyManager().SystemHasFleetSupply(planet->SystemID(), planet->Owner()) && (!planet->Unowned()))
-        SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("PL_BLOCKADED"),
-                                                         boost::io::str(FlexibleFormat(UserString("PL_BLOCKADED_TOOLTIP")) % planet->Name())));
+    // create planet status marker
+    DetachChild(m_planet_status_graphic);
+    int planet_status_count = 0;
+    std::string planet_status_messages = "";
+    std::shared_ptr<GG::Texture> planet_status_texture;
+
+    // status: no supply
+    if (!GetSupplyManager().SystemHasFleetSupply(planet->SystemID(), planet->Owner()) && (!planet->Unowned())) {
+        planet_status_messages += boost::io::str(FlexibleFormat(UserString("OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY") + "\n")
+                                                 % planet->Name());
+        planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_supply.png", true);
+        planet_status_count++;
+    }
+
+    // status: attacked on previous turn
+    if (planet->LastTurnAttackedByShip() == CurrentTurn() - 1) {
+        planet_status_messages += boost::io::str(FlexibleFormat(UserString("OPTIONS_DB_UI_PLANET_STATUS_ATTACKED") + "\n")
+                                                 % planet->Name());
+        planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_attacked.png", true);
+        planet_status_count++;
+    }
+
+    // status: conquered on previous turn
+    if (planet->LastTurnConquered() == CurrentTurn() - 1) {
+        planet_status_messages += boost::io::str(FlexibleFormat(UserString("OPTIONS_DB_UI_PLANET_STATUS_CONQUERED") + "\n")
+                                                 % planet->Name());
+        planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_conquered.png", true);
+        planet_status_count++;
+    }
+
+    // status: several
+    if (planet_status_count > 1) {
+        planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_warning.png", true);
+    }
+
+    if (planet_status_count > 0 && planet_status_texture) {
+        int texture_size = GetOptionsDB().Get<int>("UI.sidepanel-planet-status-icon-size");
+        m_planet_status_graphic = GG::Wnd::Create<GG::StaticGraphic>(planet_status_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_planet_status_graphic->SizeMove(GG::Pt(GG::X(4), GG::Y(4)), GG::Pt(GG::X(texture_size+4), GG::Y(texture_size+4)));
+        m_planet_status_graphic->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("OPTIONS_DB_UI_PLANET_STATUS_ICON_TITLE"), planet_status_messages));
+        DebugLogger() << planet_status_messages;
+
+        AttachChild(m_planet_status_graphic);
+    }
 
     // set planetpanel stealth browse text
     if (client_empire_id != ALL_EMPIRES) {

@@ -1,4 +1,4 @@
-English
+﻿English
 
 # This is the English String Table file for FreeOrion
 #
@@ -1582,8 +1582,20 @@ Sets the color of the scan-line shading over field icons.
 OPTIONS_DB_UI_PLANET_FOG_CLR
 Sets the color of the scan-line shading over planet graphics on the sidepanel.
 
-OPTIONS_DB_UI_PLANET_BLOCKADED_ICON_SIZE
-Sets the size of the icon shown when a planet is blockaded.
+OPTIONS_DB_UI_PLANET_STATUS_ICON_SIZE
+Sets the size of the planet warnings icon.
+
+OPTIONS_DB_UI_PLANET_STATUS_ICON_TITLE
+Planet warning notification
+
+OPTIONS_DB_UI_PLANET_STATUS_ATTACKED
+%1% was attacked on the previous turn.
+
+OPTIONS_DB_UI_PLANET_STATUS_CONQUERED
+%1% was just conquered by our empire. Happiness will probably be reduced.
+
+OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY
+%1% has been cut off from supply. It can only use industry generated here.
 
 OPTIONS_DB_UI_SYSTEM_CIRCLES
 Toggles whether to draw circles around systems.
