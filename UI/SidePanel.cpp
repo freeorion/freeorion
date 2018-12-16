@@ -1122,20 +1122,19 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
         GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - texture_width / 2 + 3), GG::Y0);
 
         m_planet_graphic = GG::Wnd::Create<GG::DynamicGraphic>(planet_image_pos.x, planet_image_pos.y,
-            texture_width, texture_height, true,
-            texture_width, texture_height, 0, textures,
-            GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                                                               texture_width, texture_height, true,
+                                                               texture_width, texture_height, 0, textures,
+                                                               GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         m_planet_graphic->SetFPS(GetAsteroidsFPS());
         m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
         AttachChild(m_planet_graphic);
         m_planet_graphic->Play();
-    }
-    else if (planet->Type() < NUM_PLANET_TYPES) {
+    } else if (planet->Type() < NUM_PLANET_TYPES) {
         int planet_image_sz = PlanetDiameter(planet->Size());
         GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - planet_image_sz / 2 + 3),
-            GG::Y(MaxPlanetDiameter() / 2 - planet_image_sz / 2));
+                                GG::Y(MaxPlanetDiameter() / 2 - planet_image_sz / 2));
         m_rotating_planet_graphic = GG::Wnd::Create<RotatingPlanetControl>(planet_image_pos.x, planet_image_pos.y,
-            m_planet_id, m_star_type);
+                                                                           m_planet_id, m_star_type);
         AttachChild(m_rotating_planet_graphic);
     }
 }
