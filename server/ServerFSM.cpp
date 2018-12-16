@@ -2451,7 +2451,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         ExtractTurnOrdersMessageData(message, *order_set);
     } catch (const std::exception& err) {
         // incorrect turn orders. disconnect player with wrong client.
-        sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE")));
+        sender->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION")));
         server.Networking().Disconnect(sender);
         return discard_event();
     }
