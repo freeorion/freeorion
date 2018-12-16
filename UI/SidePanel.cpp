@@ -1839,8 +1839,6 @@ void SidePanel::PlanetPanel::Refresh() {
     if (m_specials_panel)
         m_specials_panel->Update();
 
-    ClearBrowseInfoWnd();
-
     // create planet status marker
     DetachChild(m_planet_status_graphic);
     int planet_status_count = 0;
@@ -1887,6 +1885,8 @@ void SidePanel::PlanetPanel::Refresh() {
     }
 
     // set planetpanel stealth browse text
+    ClearBrowseInfoWnd();
+
     if (client_empire_id != ALL_EMPIRES) {
         Empire* client_empire = GetEmpire(client_empire_id);
         Visibility visibility = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id);
