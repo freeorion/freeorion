@@ -1032,6 +1032,8 @@ Impossible de capituler; l'empire contrôle trop de colonies.
 ERROR_CONCEDE_LAST_HUMAN_PLAYER
 Impossible de capituler dans une partie avec un seul joueur humain.
 
+ERROR_INCOMPATIBLE_VERSION
+Le serveur ne peut pas lire correctement les messages de votre client, probablement en raison de versions incompatibles du jeu.
 
 ##
 ## Game Rules
