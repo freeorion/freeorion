@@ -111,22 +111,23 @@ class TechGroup1(TechGroup):
             "LRN_ALGO_ELEGANCE",
             "GRO_SUBTER_HAB",
             "LRN_ARTIF_MINDS",
-            "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             "PRO_ROBOTIC_PROD",
         ])
         self.weapon.extend([
             "SHP_WEAPON_1_2",
-            "SHP_FIGHTERS_1",
             "SHP_WEAPON_1_3",
+            "SHP_FIGHTERS_1",
             "SHP_WEAPON_1_4",
         ])
         self.defense.extend([
             "DEF_GARRISON_1",
+            "DEF_DEFENSE_NET_1",
         ])
         self.hull.extend([
             "SHP_MIL_ROBO_CONT",
+            "SHP_ORG_HULL",
         ])
-        # always start with the same first 7 techs; leaves 2 econ, 3 weap, 1 hull
+        # always start with the same first 8 techs; leaves 1 econ, 3 weap, 2 hull
         self.enqueue(
             self.economy,
             self.economy,
@@ -134,6 +135,7 @@ class TechGroup1(TechGroup):
             self.economy,
             self.economy,
             self.weapon,
+            self.defense,
             self.defense,
         )
 
@@ -145,7 +147,6 @@ class TechGroup1a(TechGroup1):
             self.weapon,
             self.weapon,
             self.weapon,
-            self.economy,
             self.economy,
             self.hull,
         )
@@ -160,7 +161,6 @@ class TechGroup1b(TechGroup1):
             self.economy,
             self.weapon,
             self.weapon,
-            self.economy,
         )
 
 
@@ -168,7 +168,6 @@ class TechGroup1SparseA(TechGroup1):
     def __init__(self):
         super(TechGroup1SparseA, self).__init__()
         self.enqueue(
-            self.economy,
             self.economy,
             self.hull,
             self.weapon,
@@ -185,16 +184,30 @@ class TechGroup1SparseB(TechGroup1):
         self.enqueue(
             self.economy,
             self.economy,
-            "PRO_FUSION_GEN",
-            "GRO_SYMBIOTIC_BIO",
             self.weapon,
-            self.weapon,
-            self.weapon,
-            "PRO_ORBITAL_GEN",
             self.hull,
             "SHP_ZORTRIUM_PLATE",
-            "SHP_SPACE_FLUX_DRIVE"
+            self.weapon,
+            "PRO_NANOTECH_PROD",
+            "PRO_SENTIENT_AUTOMATION",
+            "PRO_EXOBOTS",
+            "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
+            "GRO_GENETIC_MED",
+            "GRO_SYMBIOTIC_BIO",
+            "PRO_MICROGRAV_MAN",
+            "GRO_XENO_GENETICS",
+            "LRN_FORCE_FIELD",
+            "SHP_ASTEROID_HULLS",
+            "PRO_FUSION_GEN",
+            "SHP_WEAPON_2_1",
+            self.hull,
+            "SHP_MULTICELL_CAST",
+            "SHP_WEAPON_2_2",
+            "PRO_ORBITAL_GEN",
+            "SPY_DETECT_2",
+            "SHP_SPACE_FLUX_DRIVE",
         )
+        self.weapon = []
 
 
 class TechGroup1SparseC(TechGroup1):
@@ -203,16 +216,16 @@ class TechGroup1SparseC(TechGroup1):
         self.enqueue(
             self.economy,
             self.economy,
-            self.weapon,
-            "SHP_ORG_HULL",
-            self.weapon,
+            self.hull,
+            "SHP_MULTICELL_CAST",
             "PRO_NANOTECH_PROD",
-            "GRO_GENETIC_ENG",
             "PRO_SENTIENT_AUTOMATION",
+            self.weapon,
+            "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             "GRO_GENETIC_MED",
             "GRO_SYMBIOTIC_BIO",
-            "PRO_MICROGRAV_MAN",
             "PRO_EXOBOTS",
+            "PRO_MICROGRAV_MAN",
             "GRO_XENO_GENETICS",
             "SHP_ASTEROID_HULLS",
             "PRO_FUSION_GEN",
@@ -232,10 +245,11 @@ class TechGroup2(TechGroup):
     def __init__(self):
         super(TechGroup2, self).__init__()
         self.economy.extend([
-            "GRO_SYMBIOTIC_BIO",
             "PRO_FUSION_GEN",
             "PRO_SENTIENT_AUTOMATION",
             "PRO_EXOBOTS",
+            "GRO_SYMBIOTIC_BIO",
+            "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             # "PRO_MICROGRAV_MAN",  # handled by fast-forwarding when we have asteroids
             # "PRO_ORBITAL_GEN",    # handled by fast-forwarding when we have a GG
 
@@ -243,13 +257,8 @@ class TechGroup2(TechGroup):
         self.armor.extend([
             "SHP_ZORTRIUM_PLATE",
         ])
-        self.defense.extend([
-            "DEF_DEFENSE_NET_1",
-            "SPY_DETECT_2",
-            "DEF_GARRISON_2",
-            "LRN_FORCE_FIELD",
-        ])
         self.hull.extend([
+            "SHP_MULTICELL_CAST",
             "SHP_SPACE_FLUX_DRIVE",
             # "SHP_ASTEROID_HULLS",  # should be handled by fast-forwarding when having ASteroids
             # "SHP_DOMESTIC_MONSTER",  # should be handled by fast-forwarding when having nest
@@ -266,44 +275,57 @@ class TechGroup2(TechGroup):
 class TechGroup2A(TechGroup2):
     def __init__(self):
         super(TechGroup2A, self).__init__()
+        self.defense.extend([
+            "SPY_DETECT_2",
+            "DEF_GARRISON_2",
+            "LRN_FORCE_FIELD",
+        ])
         self.enqueue(
-            self.economy,
             self.armor,
+            self.economy,
+            self.economy,
+            self.economy,
+            self.defense,
             self.defense,
             self.hull,
-            self.economy,
-            self.defense,
-            self.defense,
             self.weapon,
             self.weapon,
             self.defense,
             self.economy,
+            self.economy,
             self.weapon,
             self.weapon,
             self.weapon,
-            self.economy
+            self.economy,
+            self.hull,
         )
 
 
 class TechGroup2B(TechGroup2):
     def __init__(self):
         super(TechGroup2B, self).__init__()
+        self.defense.extend([
+            "LRN_FORCE_FIELD",
+            "SPY_DETECT_2",
+            "DEF_GARRISON_2",
+        ])
         self.enqueue(
             self.armor,
+            self.economy,
+            self.economy,
+            self.defense,
             self.hull,
-            self.economy,
-            self.defense,
             self.weapon,
             self.weapon,
             self.economy,
-            self.defense,
             self.defense,
             self.defense,
             self.weapon,
             self.weapon,
             self.weapon,
             self.economy,
-            self.economy
+            self.economy,
+            self.hull,
         )
 
 
@@ -311,13 +333,13 @@ class TechGroup2SparseA(TechGroup2):
     def __init__(self):
         super(TechGroup2SparseA, self).__init__()
         self.enqueue(
+            self.armor,
             self.hull,
             self.economy,
             self.economy,
-            self.armor,
-            self.defense,
             self.economy,
             self.economy,
+            self.economy,
             self.defense,
             self.defense,
             self.weapon,
@@ -325,7 +347,8 @@ class TechGroup2SparseA(TechGroup2):
             self.defense,
             self.weapon,
             self.weapon,
-            self.weapon
+            self.weapon,
+            self.hull,
         )
 
 
@@ -333,21 +356,22 @@ class TechGroup2SparseB(TechGroup2):
     def __init__(self):
         super(TechGroup2SparseB, self).__init__()
         self.enqueue(
+            self.armor,
             self.hull,
             self.economy,
             self.economy,
             self.economy,
             self.economy,
-            self.defense,
+            self.economy,
             self.defense,
             self.weapon,
             self.weapon,
             self.defense,
             self.defense,
-            self.armor,
             self.weapon,
             self.weapon,
-            self.weapon
+            self.weapon,
+            self.hull,
         )
 
 
@@ -355,7 +379,6 @@ class TechGroup3(TechGroup):
     def __init__(self):
         super(TechGroup3, self).__init__()
         self.hull.extend([
-            "SHP_ORG_HULL",
             "SHP_ASTEROID_REFORM",
             "SHP_HEAVY_AST_HULL",
             "SHP_CONTGRAV_MAINT",
@@ -675,13 +698,13 @@ def sparse_galaxy_techs(index):
         result += TechGroup4().get_techs()
         result += TechGroup5().get_techs()  #
     elif index == 3:
-        result = TechGroup1SparseC().get_techs()  # early org_hull
+        result = TechGroup1SparseB().get_techs()  # early org_hull
         result += TechGroup2SparseB().get_techs()
         result += TechGroup3A().get_techs()
         result += TechGroup4().get_techs()
         result += TechGroup5().get_techs()  #
     elif index == 4:
-        result = TechGroup1SparseC().get_techs()  # early _lrn_artif_minds
+        result = TechGroup1SparseC().get_techs()  # early pro_sent_auto
         result += TechGroup2SparseB().get_techs()
         result += TechGroup3B().get_techs()  # faster plasma weaps
         result += TechGroup4().get_techs()
