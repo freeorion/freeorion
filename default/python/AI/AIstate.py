@@ -552,8 +552,7 @@ class AIstate(object):
                 planet = universe.getPlanet(pid)
                 if not planet:
                     continue
-                sighting_age = current_turn-partial_vis_turn
-                prating = self.assess_planet_threat(pid, sighting_age=current_turn - partial_vis_turn)
+                sighting_age = current_turn-get_partial_visibility_turn(pid)
                 if planet.ownedBy(empire_id):  # TODO: check for diplomatic status
                     regen_blocked = (sys_status.get('fleetThreat',0) + sys_status.get('monsterThreat',0)) > 0  # conservative
                     prating = self.assess_planet_threat(pid, sighting_age, regen_blocked)
