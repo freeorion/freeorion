@@ -437,8 +437,8 @@ class CapitalDefenseAllocator(Allocator):
 class PlanetDefenseAllocator(Allocator):
 
     _allocation_group = 'occupied'
-    _min_alloc_factor = 1.3
-    _max_alloc_factor = 2
+    _min_alloc_factor = 1.1
+    _max_alloc_factor = 1.5
     _potential_threat_factor = 0.5
     _military_reset_ratio = 0.8
 
@@ -471,8 +471,8 @@ class PlanetDefenseAllocator(Allocator):
 class TargetAllocator(Allocator):
 
     _allocation_group = 'otherTargets'
-    _min_alloc_factor = 1.4
-    _max_alloc_factor = 2
+    _min_alloc_factor = 1.3
+    _max_alloc_factor = 2.5
     _potential_threat_factor = 0.5
 
     def _calculate_threat(self):
@@ -523,7 +523,7 @@ class BlockadeAllocator(TargetAllocator):
 
 class LocalThreatAllocator(Allocator):
     _potential_threat_factor = 0
-    _min_alloc_factor = 1.4
+    _min_alloc_factor = 1.3
     _max_alloc_factor = 2
     _allocation_group = 'otherTargets'
 
@@ -541,8 +541,8 @@ class LocalThreatAllocator(Allocator):
 
 
 class InteriorTargetsAllocator(LocalThreatAllocator):
-    _max_alloc_factor = 3
-    _min_alloc_factor = 1.5
+    _max_alloc_factor = 2.5
+    _min_alloc_factor = 1.3
 
     def _calculate_threat(self):
         return self.threat_bias + self.safety_factor * self._local_threat()
@@ -556,7 +556,7 @@ class InteriorTargetsAllocator(LocalThreatAllocator):
 
 class ExplorationTargetAllocator(LocalThreatAllocator):
     _potential_threat_factor = 0.25
-    _max_alloc_factor = 2 * 1.4
+    _max_alloc_factor = 2.0
     _allocation_group = 'exploreTargets'
 
     def _calculate_threat(self):
