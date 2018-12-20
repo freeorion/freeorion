@@ -227,7 +227,8 @@ public:
     const std::string& ClientVersionString() const;
 
     /** Returns true iff the client's specified version string matches the
-      * version string of this server process. */
+      * version string of this server process so the server will enable binary serialization if it
+      * is allowed. */
     bool ClientVersionStringMatchesThisServer() const;
 
     /** Checks if client associated with this connection runs on the same
