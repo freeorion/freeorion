@@ -341,6 +341,9 @@ def generateOrders():  # pylint: disable=invalid-name
                    ResourcesAI.generate_resources_orders,
                    ]
 
+    from freeorion_tools import assertion_fails
+    print assertion_fails(False)
+    print assertion_fails(True)
     for action in action_list:
         try:
             main_timer.start(action.__name__)
