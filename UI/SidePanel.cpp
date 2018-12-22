@@ -550,7 +550,7 @@ private:
     std::shared_ptr<GG::Button>             m_invade_button;            ///< btn which can be pressed to invade this planet;
     std::shared_ptr<GG::Button>             m_bombard_button;           ///< btn which can be pressed to bombard this planet;
     std::shared_ptr<GG::DynamicGraphic>     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids;
-    std::shared_ptr<GG::StaticGraphic>      m_planet_status_graphic;    ///< image that gives information about the planet status, like supply disconnection
+    std::shared_ptr<CUIButton>              m_planet_status_btn;        ///< gives information about the planet status, like supply disconnection
     std::shared_ptr<RotatingPlanetControl>  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
     bool                                    m_selected;                 ///< is this planet panel selected
     bool                                    m_order_issuing_enabled;    ///< can orders be issues via this planet panel?
@@ -891,7 +891,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_invade_button(nullptr),
     m_bombard_button(nullptr),
     m_planet_graphic(nullptr),
-    m_planet_status_graphic(nullptr),
+    m_planet_status_btn(nullptr),
     m_rotating_planet_graphic(nullptr),
     m_selected(false),
     m_order_issuing_enabled(true),
@@ -1500,6 +1500,7 @@ void SidePanel::PlanetPanel::Refresh() {
         DetachChildAndReset(m_invade_button);
         DetachChildAndReset(m_bombard_button);
         DetachChildAndReset(m_specials_panel);
+        DetachChildAndReset(m_planet_status_btn);
 
         RequirePreRender();
         return;
@@ -1840,48 +1841,62 @@ void SidePanel::PlanetPanel::Refresh() {
         m_specials_panel->Update();
 
     // create planet status marker
-    DetachChild(m_planet_status_graphic);
-    int planet_status_count = 0;
-    std::string planet_status_messages = "";
-    std::shared_ptr<GG::Texture> planet_status_texture;
+    if (planet->OwnedBy(client_empire_id)) {
+        DetachChild(m_planet_status_btn);
+        std::vector<std::string> planet_status_messages;
+        std::shared_ptr<GG::Texture> planet_status_texture;
 
-    // status: no supply
-    if (!GetSupplyManager().SystemHasFleetSupply(planet->SystemID(), planet->Owner()) && (!planet->Unowned())) {
-        planet_status_messages += boost::io::str(FlexibleFormat(UserString("OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY") + "\n")
-                                                 % planet->Name());
-        planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_supply.png", true);
-        planet_status_count++;
-    }
+        // status: no supply
+        if (!GetSupplyManager().SystemHasFleetSupply(planet->SystemID(), planet->Owner())) {
+            planet_status_messages.emplace_back(boost::io::str(FlexibleFormat(
+                                                UserString("OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY")) % planet->Name()));
+            planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_supply.png", true);
+        }
 
-    // status: attacked on previous turn
-    if (planet->LastTurnAttackedByShip() == CurrentTurn() - 1) {
-        planet_status_messages += boost::io::str(FlexibleFormat(UserString("OPTIONS_DB_UI_PLANET_STATUS_ATTACKED") + "\n")
-                                                 % planet->Name());
-        planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_attacked.png", true);
-        planet_status_count++;
-    }
+        // status: attacked on previous turn
+        if (planet->LastTurnAttackedByShip() == CurrentTurn() - 1) {
+            planet_status_messages.emplace_back(boost::io::str(FlexibleFormat(
+                                                UserString("OPTIONS_DB_UI_PLANET_STATUS_ATTACKED")) % planet->Name()));
+            planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_attacked.png", true);
+        }
 
-    // status: conquered on previous turn
-    if (planet->LastTurnConquered() == CurrentTurn() - 1) {
-        planet_status_messages += boost::io::str(FlexibleFormat(UserString("OPTIONS_DB_UI_PLANET_STATUS_CONQUERED") + "\n")
-                                                 % planet->Name());
-        planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_conquered.png", true);
-        planet_status_count++;
-    }
+        // status: conquered on previous turn
+        if (planet->LastTurnConquered() == CurrentTurn() - 1) {
+            planet_status_messages.emplace_back(boost::io::str(FlexibleFormat(
+                                                UserString("OPTIONS_DB_UI_PLANET_STATUS_CONQUERED")) % planet->Name()));
+            planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_conquered.png", true);
+        }
 
-    // status: several
-    if (planet_status_count > 1) {
-        planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_warning.png", true);
-    }
+        // status: very unhappy
+        if ((planet->GetMeter(METER_HAPPINESS)->Current() <= 5) && (planet->GetMeter(METER_POPULATION)->Current() > 0)) {
+            planet_status_messages.emplace_back(boost::io::str(FlexibleFormat(
+                UserString("OPTIONS_DB_UI_PLANET_STATUS_UNHAPPY")) % planet->Name()));
+            planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_unhappy.png", true);
+        }
 
-    if (planet_status_count > 0 && planet_status_texture) {
-        int texture_size = GetOptionsDB().Get<int>("UI.sidepanel-planet-status-icon-size");
-        m_planet_status_graphic = GG::Wnd::Create<GG::StaticGraphic>(planet_status_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-        m_planet_status_graphic->SizeMove(GG::Pt(GG::X(4), GG::Y(4)), GG::Pt(GG::X(texture_size+4), GG::Y(texture_size+4)));
-        m_planet_status_graphic->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("OPTIONS_DB_UI_PLANET_STATUS_ICON_TITLE"), planet_status_messages));
-        DebugLogger() << planet_status_messages;
+        // status: bombarded (TBD)
 
-        AttachChild(m_planet_status_graphic);
+        // status: several
+        if (planet_status_messages.size() > 1) {
+            planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_warning.png", true);
+        }
+
+        if (planet_status_messages.size() > 0 && planet_status_texture) {
+            int texture_size = GetOptionsDB().Get<int>("UI.sidepanel-planet-status-icon-size");
+            m_planet_status_btn = Wnd::Create<CUIButton>(
+                GG::SubTexture(planet_status_texture),
+                GG::SubTexture(planet_status_texture),
+                GG::SubTexture(planet_status_texture));
+            m_planet_status_btn->SizeMove(GG::Pt(GG::X(4), GG::Y(4)), GG::Pt(GG::X(texture_size + 4), GG::Y(texture_size + 4)));
+
+            std::string tooltip_message;
+            for (std::string message : planet_status_messages)
+                { tooltip_message += message + "\n"; }
+            m_planet_status_btn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("OPTIONS_DB_UI_PLANET_STATUS_ICON_TITLE"),
+                                                  tooltip_message.substr(0, tooltip_message.size()-2)));
+            m_planet_status_btn->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+            AttachChild(m_planet_status_btn);
+        }
     }
 
     // set planetpanel stealth browse text

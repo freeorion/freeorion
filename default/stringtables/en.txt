@@ -1594,6 +1594,9 @@ OPTIONS_DB_UI_PLANET_STATUS_ATTACKED
 OPTIONS_DB_UI_PLANET_STATUS_CONQUERED
 %1% was just conquered by our empire. Happiness will probably be reduced.
 
+OPTIONS_DB_UI_PLANET_STATUS_UNHAPPY
+The population on %1% is very unhappy. It can not be used as a source for settlers.
+
 OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY
 %1% has been cut off from supply. Industry generated on this planet can only be used here.
 
