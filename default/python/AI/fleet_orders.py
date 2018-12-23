@@ -229,12 +229,13 @@ class OrderMove(AIFleetOrder):
                     debug("\tAdvancing fleet %d (rating %d) at system %d (%s) "
                           "into system %d (%s) with planet threat %d because non aggressive"
                           " and no other fleets present to trigger combat" % (
-                        self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat))
+                              self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name,
+                              threat))
                 return True
             else:
                 if verbose:
                     _info = (self.fleet.id, fleet_rating, system_id, sys1_name,
-                            self.target.id, target_system_name, threat)
+                             self.target.id, target_system_name, threat)
                     debug("\tHolding fleet %d (rating %d) at system %d (%s) "
                           "before travelling to system %d (%s) with threat %d" % _info)
                 needs_vis = aistate.misc.setdefault('needs_vis', [])
@@ -274,7 +275,7 @@ class OrderPause(AIFleetOrder):
         if not super(OrderPause, self).issue_order():
             return False
         # not executed until actually arrives at target system
-        self.excuted = self.fleet.get_current_system_id() == self.target.get_system().id
+        self.executed = self.fleet.get_current_system_id() == self.target.get_system().id
 
 
 class OrderResupply(AIFleetOrder):
@@ -499,7 +500,7 @@ class OrderInvade(AIFleetOrder):
                         aistate.needsEmergencyExploration = []
                     if fleet.systemID not in aistate.needsEmergencyExploration:
                         aistate.needsEmergencyExploration.append(fleet.systemID)
-                        debug("Due to trouble invading, adding system %d to Emergency Exploration List" % fleet.systemID)
+                        debug("Due to trouble invading, added system %d to Emergency Exploration List" % fleet.systemID)
                     self.executed = False
                     # debug(universe.getPlanet(planet_id).dump())  # TODO: fix fo.UniverseObject.dump()
                     break

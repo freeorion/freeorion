@@ -491,7 +491,6 @@ class AIstate(object):
             # update my fleet rating versus planets so that planet ratings can be more accurate
             my_ratings_against_planets_list = []
             for fid in sys_status['myfleets']:
-                this_rating = self.get_rating(fid, True, self.get_standard_enemy())
                 my_ratings_against_planets_list.append(self.get_rating(fid, against_planets=True))
                 sys_status['myFleetRatingVsPlanets'] = CombatRatingsAI.combine_ratings_list(
                     my_ratings_against_planets_list)
@@ -560,14 +559,14 @@ class AIstate(object):
                     continue
                 sighting_age = current_turn-get_partial_visibility_turn(pid)
                 if planet.ownedBy(empire_id):  # TODO: check for diplomatic status
-                    regen_blocked = (sys_status.get('fleetThreat',0) + sys_status.get('monsterThreat',0)) > 0  # conservative
+                    regen_blocked = (sys_status.get('fleetThreat', 0) + sys_status.get('monsterThreat', 0)) > 0
                     prating = self.assess_planet_threat(pid, sighting_age, regen_blocked)
                     mypattack += prating['attack']
                     myphealth += prating['health']
                 else:
                     # TODO: improve this regen determination, perhaps binomial of shots&targets
                     regen_blocked = (sys_status.get('myFleetRatingVsPlanets', 0) >
-                                  5 * (len(monster_ratings) + len(mob_ratings)))
+                                     5 * (len(monster_ratings) + len(mob_ratings)))
                     prating = self.assess_planet_threat(pid, sighting_age, regen_blocked)
                     pattack += prating['attack']
                     phealth += prating['health']
