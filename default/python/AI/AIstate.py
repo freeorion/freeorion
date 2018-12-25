@@ -16,7 +16,7 @@ import CombatRatingsAI
 import MilitaryAI
 import PlanetUtilsAI
 from freeorion_tools import get_partial_visibility_turn
-from AIDependencies import INVALID_ID
+from AIDependencies import INVALID_ID, TECH_NATIVE_SPECIALS
 from character.character_module import create_character, Aggression
 
 # moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
@@ -328,17 +328,33 @@ class AIstate(object):
         info(defense_table)
 
     def assess_planet_threat(self, pid, sighting_age=0):
-        sighting_age += 1  # play it safe
+        if sighting_age > 5:
+            sighting_age += 1  # play it safe
         universe = fo.getUniverse()
         planet = universe.getPlanet(pid)
         if not planet:
             return {'overall': 0, 'attack': 0, 'health': 0}
-        current_shields = planet.currentMeterValue(fo.meterType.shield)
+        init_shields = planet.initialMeterValue(fo.meterType.shield)
+        next_shields = planet.currentMeterValue(fo.meterType.shield)  # always assumes regen will occur
         max_shields = planet.currentMeterValue(fo.meterType.maxShield)
-        current_defense = planet.currentMeterValue(fo.meterType.defense)
+        init_defense = planet.initialMeterValue(fo.meterType.defense)
+        next_defense = planet.currentMeterValue(fo.meterType.defense)  # always assumes regen will occur
         max_defense = planet.currentMeterValue(fo.meterType.maxDefense)
-        shields = min(max_shields, current_shields + 2 * sighting_age)  # TODO: base off regen tech
-        defense = min(max_defense, current_defense + 2 * sighting_age)  # TODO: base off regen tech
+        for special, bonuses in TECH_NATIVE_SPECIALS.items():
+            if special in planet.specials and sighting_age > 0:
+                shield_bonus = bonuses.get('shields', 0)
+                defense_bonus = bonuses.get('defense', 0)
+                max_shields = max(max_shields, shield_bonus)
+                max_defense = max(max_defense, defense_bonus)
+                next_shields, init_shields = max(next_shields, shield_bonus), max(init_shields, shield_bonus)
+                next_defense, init_defense = max(next_defense, defense_bonus), max(init_defense, defense_bonus)
+        # TODO: get regens from knowledge of possessed tech
+        # note the max below is because sometimes the next value will be less than init
+        # (e.g. shields just after invasion)
+        shield_regen = max(1, next_shields - init_shields)
+        defense_regen = max(1, next_defense - init_defense)
+        shields = min(max_shields, init_shields + sighting_age * shield_regen)
+        defense = min(max_defense, init_defense + sighting_age * defense_regen)
         return {'overall': defense * (defense + shields), 'attack': defense, 'health': (defense + shields)}
 
     def assess_enemy_supply(self):
@@ -472,6 +488,13 @@ class AIstate(object):
             if system:
                 sys_status['name'] = system.name
 
+            # update my fleet rating versus planets so that planet ratings can be more accurate
+            my_ratings_against_planets_list = []
+            for fid in sys_status['myfleets']:
+                my_ratings_against_planets_list.append(self.get_rating(fid, against_planets=True))
+                sys_status['myFleetRatingVsPlanets'] = CombatRatingsAI.combine_ratings_list(
+                    my_ratings_against_planets_list)
+
             # update threats
             monster_ratings = []  # immobile
             enemy_ratings = []  # owned & mobile
@@ -534,7 +557,8 @@ class AIstate(object):
                 planet = universe.getPlanet(pid)
                 if not planet:
                     continue
-                prating = self.assess_planet_threat(pid, sighting_age=current_turn - partial_vis_turn)
+                sighting_age = current_turn - get_partial_visibility_turn(pid)
+                prating = self.assess_planet_threat(pid, sighting_age)
                 if planet.ownedBy(empire_id):  # TODO: check for diplomatic status
                     mypattack += prating['attack']
                     myphealth += prating['health']
@@ -603,9 +627,9 @@ class AIstate(object):
             # has been seen with Partial Vis, but is currently supply-blocked
             if partial_vis_turn > 0 and sys_id not in supply_unobstructed_systems:
                 sys_status['fleetThreat'] = max(sys_status['fleetThreat'], min_hidden_attack * min_hidden_health)
-                sys_status['totalThreat'] = max(
-                    sys_status['totalThreat'],
-                    ((pattack + min_hidden_attack) ** 0.8) * ((phealth + min_hidden_health) ** 0.6))
+                sys_status['totalThreat'] = max(sys_status['totalThreat'],
+                                                CombatRatingsAI.combine_ratings(sys_status.get('planetThreat', 0),
+                                                                                (min_hidden_attack*min_hidden_health)))
             if verbose and sys_status['fleetThreat'] > 0:
                 debug("%s intermediate status: %s" % (system, sys_status))
 

@@ -444,7 +444,8 @@ class AIFleetMission(object):
                         order_completed = False
                     # Go on to the next order.
                     continue
-                debug("CAN'T issue fleet order %s" % fleet_order)
+                debug("CAN'T issue fleet order %s because:" % fleet_order)
+                fleet_order.can_issue_order(verbose=True)
                 if isinstance(fleet_order, OrderMove):
                     this_system_id = fleet_order.target.id
                     this_status = aistate.systemStatus.setdefault(this_system_id, {})
