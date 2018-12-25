@@ -1432,8 +1432,8 @@ def generate_production_orders():
                 per_turn_cost = (float(best_design.productionCost(empire.empireID, loc))/best_design.productionTime(
                     empire.empireID, loc))
                 avail_pp -= per_turn_cost
-                debug("adding %d extra trooper at location %s to production queue: %s; per turn production cost %.1f\n",
-                      ship_number, PlanetUtilsAI.planet_string(loc), best_design.name, per_turn_cost)
+                debug("adding extra trooper at location %s to production queue: %s; per turn production cost %.1f\n",
+                      PlanetUtilsAI.planet_string(loc), best_design.name, per_turn_cost)
 
         debug('')
     update_stockpile_use()
