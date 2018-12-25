@@ -346,8 +346,8 @@ class AIstate(object):
                 defense_bonus = bonuses.get('defense', 0)
                 max_shields = max(max_shields, shield_bonus)
                 max_defense = max(max_defense, defense_bonus)
-                next_shields, init_shields = shield_bonus, shield_bonus
-                next_defense, init_defense = defense_bonus, defense_bonus
+                next_shields, init_shields = max(next_shields, shield_bonus), max(init_shields, shield_bonus)
+                next_defense, init_defense = max(next_defense, defense_bonus), max(init_defense, defense_bonus)
         # TODO: get regens from knowledge of possessed tech
         # note the max below is because sometimes the next value will be less than init
         # (e.g. shields just after invasion)
