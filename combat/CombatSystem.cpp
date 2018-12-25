@@ -48,7 +48,6 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     // add system to full / complete objects in combat - NOTE: changed from copy of system
     objects.Insert(system);
 
-
     // find ships and their owners in system
     auto ships = Objects().FindObjects<Ship>(system->ShipIDs());
 
@@ -79,6 +78,15 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     InitializeObjectVisibility();
 
     float neutral_monster_detection = GetMonsterDetection();
+
+    // system
+    std::string ship_known = "System " + system->Name() + " visible to empires: ";
+    for (int empire_id : empire_ids) {
+        // a system is always at least basically visible to an empire with an object in it
+        empire_known_objects[empire_id].Insert(GetEmpireKnownShip(system_id, empire_id));
+        ship_known += std::to_string(empire_id) + ", ";
+    }
+    DebugLogger(combat) << ship_known;
 
     // ships
     for (auto& ship : ships) {
