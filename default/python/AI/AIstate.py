@@ -557,7 +557,7 @@ class AIstate(object):
                 planet = universe.getPlanet(pid)
                 if not planet:
                     continue
-                sighting_age = current_turn-get_partial_visibility_turn(pid)
+                sighting_age = current_turn - get_partial_visibility_turn(pid)
                 prating = self.assess_planet_threat(pid, sighting_age)
                 if planet.ownedBy(empire_id):  # TODO: check for diplomatic status
                     mypattack += prating['attack']
