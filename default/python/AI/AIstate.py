@@ -342,12 +342,14 @@ class AIstate(object):
         next_defense = planet.currentMeterValue(fo.meterType.defense)  # always assumes regen will occur
         max_defense = planet.currentMeterValue(fo.meterType.maxDefense)
         shield_regen_turns = 0 if shield_regen_blocked else sighting_age
-        for special, bonus in TECH_NATIVE_SPECIALS:
+        for special, bonuses in TECH_NATIVE_SPECIALS.items():
             if special in planet.specials and sighting_age > 0:
-                max_shields = max(max_shields, bonus)
-                max_defense = max(max_defense, bonus)
-                next_shields, init_shields = bonus, bonus
-                next_defense, init_defense = bonus, bonus
+                shield_bonus = bonuses.get('shields', 0)
+                defense_bonus = bonuses.get('defense', 0)
+                max_shields = max(max_shields, shield_bonus)
+                max_defense = max(max_defense, defense_bonus)
+                next_shields, init_shields = shield_bonus, shield_bonus
+                next_defense, init_defense = defense_bonus, defense_bonus
         # TODO: get regens from knowledge of possessed tech
         # note the max below is because sometimes the next value will be less than init
         # (e.g. shields just after invasion)

@@ -241,10 +241,10 @@ PANOPTICON_DETECTION_BONUS = 10
 
 # <editor-fold desc="Native Tech/Defense related specials">
 # (special_name, defense&shield_bonus)
-TECH_NATIVE_SPECIALS = [
-    ("MODERATE_TECH_NATIVES_SPECIAL", 10),
-    ("HIGH_TECH_NATIVES_SPECIAL", 30),
-]
+TECH_NATIVE_SPECIALS = {
+    "MODERATE_TECH_NATIVES_SPECIAL": {'defense': 10, 'shield': 10},
+    "HIGH_TECH_NATIVES_SPECIAL": {'defense': 30, 'shield': 30},
+}
 # </editor-fold>
 
 
