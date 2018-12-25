@@ -7209,14 +7209,14 @@ SP_SCYLIOR  # translated
 Scylior
 
 SP_SCYLIOR_GAMEPLAY_DESC
-'''Nautiloïdes aquatiques dotés de trois tentacules.
+'''<img src="species/preview/scylior.png"></img>
+Nautiloïdes aquatiques dotés de trois tentacules.
 Préfèrent les Planètes [[PT_OCEAN]]s.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
 SP_SCYLIOR_DESC
 '''Description :
-<img src="species/scylior.png"></img>
 Les Scyliori sont des céphalopodes à coquille, semblables au nautile. Leurs quatre yeux leur procurent une vision excellente, tandis que leurs quatre antennes contenant des millions de neuromastes, les rendent sensibles à toute variation de pression sous-marine ou de champ électrique. Les Scyliori possèdent trois épais et puissants tentacules leur permettant de saisir outils et nourriture, laquelle est broyée par leur appendice buccal avant d'être ingérée.
 
 Des cellules chromatophores fournissent à l'espèce son principal moyen de communication. Lorsque deux Scyliori désirent communiquer, ils modifient à un rythme soutenu les couleurs et motifs dessinés sur leur peau.
@@ -7228,6 +7228,7 @@ Les Scyliori considèrent les restes d'un cerveau-ruche télépathe, qu'ils surn
 
 Histoire :
 Voici quelques millénaires, une expédition des Précurseurs découvrit une planète que L'Esprit contrôlait en totalité grâce à ses pouvoirs télépathiques. L'Esprit surgit sans tarder et commença à aspirer les connaissances des savants et de l'équipage présents à bord de l'astronef. Mais les savants parvinrent à prélever la majeure partie du cerveau de L'Esprit, et l'emportèrent comme spécimen. Ce qui demeura de L'Esprit survécut, cherchant inlassablement à récupérer les souvenirs qui lui avaient été enlevés. L'Esprit restait cependant une entité immobile, et n'avait rencontré jusqu'alors aucun organisme intelligent susceptible de lui prêter 'main forte'. Alors survinrent les Scyliori.
+<img src="species/scylior.png"></img>
 '''
 
 SP_GYSACHE  # translated
@@ -7662,7 +7663,8 @@ SP_TRENCHERS  # translated
 Trenchers
 
 SP_TRENCHERS_GAMEPLAY_DESC
-'''Robots énigmatiques munis de roues, se consacrant exclusivement à sculpter la surface de leur planète en courbes et spirales les plus élaborées.
+'''<img src="species/preview/trenchers.png"></img>
+Robots énigmatiques munis de roues, se consacrant exclusivement à sculpter la surface de leur planète en courbes et spirales les plus élaborées.
 Préfèrent les Planètes [[PT_BARREN]]s.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
@@ -7749,14 +7751,15 @@ SP_UGMORS  # translated
 Ugmors
 
 SP_UGMORS_GAMEPLAY_DESC
-'''Amas d'écume magmatique, pouvant s'agglomérer temporairement en golems.
+'''<img src="species/preview/ugmors.png"></img>
+Amas d'écume magmatique, pouvant s'agglomérer temporairement en golems.
 Préfèrent les Planètes [[PT_INFERNO]]s.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
 
 SP_UGMORS_DESC
 '''Les Ugmors sont une forme d'écume magmatique utilisant les roches et les minéraux pour fabriquer des entités temporaires, chacune conçue pour accomplir des tâches spécifiques.
-<img src="species/ugmors.png"></img>
+
 Structure sociale:
 Les Trappes de Larar sont le cœur biologique de l'espèce. Ces amas d'écume magmatique se trouvent sur la surface la plus chaude des mers de lave et en absorbe l'énergie. Lorsque suffisamment d'énergie est accumulée, ces masses de magma énergétiques commencent à rassembler des roches imposantes sur tout le pourtour des mers de lave, puis les imbriquent entre elles pour former un Ugmor. Les Ugmors furent à la base simplement conçus pour passer d'une mer de lave à l'autre, mais une société complexe s'est développée au fil du temps. Les Trappes de Larar ne peuvent pas être considérées comme un organisme intelligent, mais plutôt comme une mémoire centrale, lieu de convergence et d'activité de tous les Ugmors, pour lesquels réintégrer les Trappes de Larar est un privilège.
 
@@ -7767,6 +7770,7 @@ Un Ugmor peut revêtir plusieurs formes, mais ils sont tous constitués de roche
 
 Planète Natale:
 Le monde d'origine des Ugmors est une planète rocheuse à la période de rotation extrêmement rapide (une rotation complète toutes les 3 heures et demie). 30% de sa surface est recouverte de mers de lave et de métaux liquides.
+<img src="species/ugmors.png"></img>
 '''
 
 SP_GISGUFGTHRIM  # translated
@@ -7804,19 +7808,20 @@ SP_ABADDONI  # translated
 Abaddoni
 
 SP_ABADDONI_GAMEPLAY_DESC
-'''Organismes troglodytes généralement inoffensifs, et totalement soumis à un ordinateur central surprotecteur créé par ces derniers.
+'''<img src="species/preview/abaddoni.png"></img>
+Organismes troglodytes généralement inoffensifs, et totalement soumis à un ordinateur central surprotecteur créé par ces derniers.
 Préfèrent les Planètes [[PT_INFERNO]]s.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
 
 SP_ABADDONI_DESC
 '''Description:
-<img src="species/abaddoni.png"></img>
 Les Abaddoni ont une forme ovoïde d'environ 0.8 mètres de diamètre, arborent une profonde couleur rouge, tachetée de points noirs sur le dessus du corps. Leur caractéristique morphologique principale est une grande bouche s'étendant sur l'avant du corps à partir de ces points noirs, soit près d'un tiers de leur surface corporelle.
 À l'extrémité de chacune de leurs 6 pattes ressemblant à celles de crustacés, se trouve une sorte de sac gonflable qui leur permet de s'accrocher par effet de ventouse à n'importe quelle surface, quelle que soit son inclinaison. Comme les Abaddoni se développent en milieu souterrain, ils ne possèdent pas d'organe de vision, se référant ainsi principalement à leur odorat, et dans une moindre proportion, à l'ouïe et au toucher pour se déplacer.
 
 Structure sociale:
 L'espèce entière des Abaddonni vit sous le joug d'une intelligence artificielle sensible appelée Mère. Cette IA fut créée par les Abaddoni comme une assistante gouvernementale, mais elle prit lentement le dessus sur ses créateurs. À présent, chaque nouveau-né Abaddoni se voit implanter un transmetteur dans le cerveau, pour que Mère puisse connaître les pensées de chacun de ses sujets et pouvoir contrôler leurs fonctions vitales au besoin. Il n'y aucun semblant de structure sociale chez les Abaddoni: ils sont tous semblables, c'est-à-dire esclaves.
+<img src="species/abaddoni.png"></img>
 '''
 
 SP_ACIREMA  # translated
@@ -7943,7 +7948,8 @@ SP_BANFORO  # translated
 Banforo
 
 SP_BANFORO_GAMEPLAY_DESC
-'''Êtres adorables et contemplateurs d'étoiles.
+'''<img src="species/preview/banforo.png"></img>
+Êtres adorables et contemplateurs d'étoiles.
 Préfèrent les Planètes [[PT_BARREN]]s.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
@@ -7957,6 +7963,7 @@ Les Banforo sont très sociables et tissent des liens très forts entre eux. Les
 
 Raison de l'extinction:
 La raison de leur disparition n'a pas été clairement établie, mais la thèse scientifique opte pour un événement cosmique ayant rendu les conditions environnementales invivables pour les Banforo, sur une période de temps assez longue pour que leur nombre décline et que leur espèce finisse par s'éteindre.
+<img src="species/banforo.png"></img>
 '''
 
 SP_KILANDOW  # translated
