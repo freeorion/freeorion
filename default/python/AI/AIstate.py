@@ -327,8 +327,7 @@ class AIstate(object):
             ])
         info(defense_table)
 
-    def assess_planet_threat(self, pid, sighting_age=0, shield_regen_blocked=False):
-        shield_regen_blocked = shield_regen_blocked and sighting_age == 0
+    def assess_planet_threat(self, pid, sighting_age=0):
         if sighting_age > 5:
             sighting_age += 1  # play it safe
         universe = fo.getUniverse()
@@ -341,7 +340,6 @@ class AIstate(object):
         init_defense = planet.initialMeterValue(fo.meterType.defense)
         next_defense = planet.currentMeterValue(fo.meterType.defense)  # always assumes regen will occur
         max_defense = planet.currentMeterValue(fo.meterType.maxDefense)
-        shield_regen_turns = 0 if shield_regen_blocked else sighting_age
         for special, bonuses in TECH_NATIVE_SPECIALS.items():
             if special in planet.specials and sighting_age > 0:
                 shield_bonus = bonuses.get('shields', 0)
@@ -355,7 +353,7 @@ class AIstate(object):
         # (e.g. shields just after invasion)
         shield_regen = max(1, next_shields - init_shields)
         defense_regen = max(1, next_defense - init_defense)
-        shields = min(max_shields, init_shields + shield_regen_turns * shield_regen)
+        shields = min(max_shields, init_shields + sighting_age * shield_regen)
         defense = min(max_defense, init_defense + sighting_age * defense_regen)
         return {'overall': defense * (defense + shields), 'attack': defense, 'health': (defense + shields)}
 
@@ -560,16 +558,11 @@ class AIstate(object):
                 if not planet:
                     continue
                 sighting_age = current_turn-get_partial_visibility_turn(pid)
+                prating = self.assess_planet_threat(pid, sighting_age)
                 if planet.ownedBy(empire_id):  # TODO: check for diplomatic status
-                    regen_blocked = (sys_status.get('fleetThreat', 0) + sys_status.get('monsterThreat', 0)) > 0
-                    prating = self.assess_planet_threat(pid, sighting_age, regen_blocked)
                     mypattack += prating['attack']
                     myphealth += prating['health']
                 else:
-                    # TODO: improve this regen determination, perhaps binomial of shots&targets
-                    regen_blocked = (sys_status.get('myFleetRatingVsPlanets', 0) >
-                                     5 * (len(monster_ratings) + len(mob_ratings)))
-                    prating = self.assess_planet_threat(pid, sighting_age, regen_blocked)
                     pattack += prating['attack']
                     phealth += prating['health']
                     if any("_NEST_" in special for special in planet.specials):
