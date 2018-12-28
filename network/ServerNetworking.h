@@ -229,7 +229,7 @@ public:
     /** Returns true iff the client's specified version string matches the
       * version string of this server process so the server will enable binary serialization if it
       * is allowed. */
-    bool ClientVersionStringMatchesThisServer() const;
+    bool IsBinarySerializationEnabled() const;
 
     /** Checks if client associated with this connection runs on the same
         physical machine as the server */
