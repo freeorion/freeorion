@@ -663,6 +663,8 @@ void SDLGUI::SDLInit()
 
     // Now we can use the standard resizing call to make our window the size it belongs.
     SetVideoMode(m_app_width, m_app_height, m_fullscreen, m_fake_mode_change);
+
+    SDL_EnableScreenSaver();
 }
 
 void SDLGUI::GLInit()
@@ -779,11 +781,8 @@ void SDLGUI::HandleSystemEvents()
                     WindowMovedSignal(X(event.window.data1), Y(event.window.data2));
                     break;
                 case SDL_WINDOWEVENT_MINIMIZED:
-                    SDL_EnableScreenSaver();
-                    break;
                 case SDL_WINDOWEVENT_MAXIMIZED:
                 case SDL_WINDOWEVENT_RESTORED:
-                    SDL_DisableScreenSaver();
                     break;
                 case SDL_WINDOWEVENT_CLOSE:
                     WindowClosingSignal();
