@@ -250,6 +250,7 @@
     <ClInclude Include="..\..\util\CheckSums.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">
@@ -450,6 +451,7 @@
     <ClCompile Include="..\..\util\CheckSums.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
+    <ClCompile Include="StdAfx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\util\Version.cpp.in">
