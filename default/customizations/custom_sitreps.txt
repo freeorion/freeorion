@@ -104,6 +104,33 @@ EffectsGroup
             ]
             empire = Source.Owner
 
+EffectsGroup
+    scope = And [
+        Capital
+        Not OwnedBy empire = Source.Owner
+        Number low = 1 condition = And [
+            // maybe speed up by ORing subcategories
+            OwnedBy empire = Source.Owner
+            VisibleToEmpire empire = RootCandidate.Owner
+        ]
+    ]
+    activation = Or [
+       (CurrentTurn == TurnTechResearched empire = Source.Owner name = "SPY_DETECT_2")
+       (CurrentTurn == TurnTechResearched empire = Source.Owner name = "SPY_DETECT_3")
+       (CurrentTurn == TurnTechResearched empire = Source.Owner name = "SPY_DETECT_4")
+       (CurrentTurn == TurnTechResearched empire = Source.Owner name = "SPY_DETECT_5")
+    ]
+    priority = [[END_CLEANUP_PRIORITY]]
+    effects =
+        GenerateSitRepMessage
+            message = "SITREP_EMPIRE_TECH_RESEARCHED_DETECTION"
+            label = "SITREP_EMPIRE_TECH_RESEARCHED_DETECTION_LABEL"
+            icon = "icons/tech/active_radar.png"
+            parameters = [
+                tag = "empire"    data = Source.Owner
+                tag = "dstrength" data = EmpireMeterValue empire = Source.Owner meter = "METER_DETECTION_STRENGTH"
+            ]
+            empire = Target.Owner
 
 EffectsGroup
     scope = And [
