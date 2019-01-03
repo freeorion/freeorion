@@ -1889,9 +1889,9 @@ void SidePanel::PlanetPanel::Refresh() {
 
             std::string tooltip_message;
             for (std::string message : planet_status_messages)
-                { tooltip_message += message + "\n"; }
+                { tooltip_message += message + "\n\n"; }
             m_planet_status_graphic->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("OPTIONS_DB_UI_PLANET_STATUS_ICON_TITLE"),
-                                                  tooltip_message.substr(0, tooltip_message.size()-2)));
+                                                  tooltip_message.substr(0, tooltip_message.size()-4)));
             m_planet_status_graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             AttachChild(m_planet_status_graphic);
         }
