@@ -408,6 +408,7 @@
     <ClInclude Include="..\..\UI\PasswordEnterWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\FreeOrion.ico">
@@ -613,6 +614,7 @@
     <ClCompile Include="..\..\UI\PasswordEnterWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="StdAfx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\client\human\FreeOrion.rc">

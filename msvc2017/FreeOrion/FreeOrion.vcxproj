@@ -73,10 +73,11 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -85,19 +86,18 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;FREEORION_BUILD_HUMAN;FREEORION_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../../include/;../../GG/;../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile>
-      </PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>
-      </PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -114,19 +114,18 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;FREEORION_BUILD_HUMAN;FREEORION_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../../include/;../../GG/;../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile>
-      </PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>
-      </PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -258,6 +257,7 @@
     <ClInclude Include="..\..\util\VarText.h" />
     <ClInclude Include="..\..\util\Version.h" />
     <ClInclude Include="..\..\util\XMLDoc.h" />
+    <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\FreeOrion.ico" />
@@ -283,6 +283,11 @@
     <ClCompile Include="..\..\UI\CUIControls.cpp" />
     <ClCompile Include="..\..\UI\CUIDrawUtil.cpp" />
     <ClCompile Include="..\..\UI\CUILinkTextBlock.cpp" />
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClInclude Include="..\..\UI\CUILinkTextBlock.h" />
     <ClCompile Include="..\..\UI\CUIStyle.cpp" />
     <ClCompile Include="..\..\UI\CUIWnd.cpp" />

@@ -161,6 +161,7 @@
     <ClCompile Include="..\..\parse\VisibilityValueRefParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
+    <ClCompile Include="StdAfx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\parse\ConditionParser.h">
@@ -241,5 +242,6 @@
     <ClInclude Include="..\..\parse\CommonParamsParser.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
+    <ClInclude Include="StdAfx.h" />
   </ItemGroup>
 </Project>

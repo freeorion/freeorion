@@ -93,3 +93,8 @@ contents.xcworkspacedata
 
 # vim
 .*.sw?
+
+
+# Visual Studio
+.vs/
+.vscode/

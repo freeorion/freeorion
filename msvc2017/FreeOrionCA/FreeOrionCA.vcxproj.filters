@@ -251,6 +251,7 @@
     <ClInclude Include="..\..\python\CommonFramework.h">
       <Filter>Header Files\python</Filter>
     </ClInclude>
+    <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\client\ClientApp.cpp">
@@ -298,5 +299,6 @@
     <ClCompile Include="..\..\python\ConfigWrapper.cpp">
       <Filter>Source Files\python</Filter>
     </ClCompile>
+    <ClCompile Include="StdAfx.cpp" />
   </ItemGroup>
 </Project>
