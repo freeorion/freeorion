@@ -22,5 +22,16 @@ SHIP_PART_UPGRADE_RESUPPLY_CHECK
            ( LocalCandidate.LastTurnResupplied > TurnTechResearched empire = LocalCandidate.Owner name = @1@ )
 '''
 
+// In order to have all tech effects start in the same turn you can check
+// Usually only meter-relevant effects are applied in the turn a tech gets researched.
+OWNER_HAS_TECH_EFFECTIVE
+'''( CurrentTurn > TurnTechResearched empire = Source.Owner name = "@1@" )
+'''
+
+NOT_OWNER_HAS_TECH_EFFECTIVE
+'''
+                Or [ Not OwnerHasTech name ="@1@" (CurrentTurn == TurnTechResearched empire = Source.Owner name = "@1@") ]
+'''
+
 ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP
 ''' 1000000 '''

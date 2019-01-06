@@ -18,21 +18,44 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             activation = And [
-                Not OwnerHasTech name = "SPY_DETECT_3"
-                Not OwnerHasTech name = "SPY_DETECT_4"
-                Not OwnerHasTech name = "SPY_DETECT_5"
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_3)]]
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_4)]]
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_5)]]
+                [[OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_2)]]
             ]
             effects = SetDetection value = Value + 75
 
         EffectsGroup
             scope = Source
             activation = And [
-                Not OwnerHasTech name = "SPY_DETECT_3"
-                Not OwnerHasTech name = "SPY_DETECT_4"
-                Not OwnerHasTech name = "SPY_DETECT_5"
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_3)]]
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_4)]]
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_5)]]
+                [[OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_2)]]
             ]
             effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 30
+
+        EffectsGroup
+            scope = And [
+                Capital
+                Not OwnedBy empire = Source.Owner
+                Number low = 1 condition = And [
+                    OwnedBy empire = Source.Owner
+                    VisibleToEmpire empire = RootCandidate.Owner
+                ]
+            ]
+            activation = (CurrentTurn < 2 + TurnTechResearched empire = Source.Owner name = "SPY_DETECT_2")
+            effects = GenerateSitRepMessage
+                message = "SITREP_EMPIRE_TECH_RESEARCHED_DETECTION"
+                label = "SITREP_EMPIRE_TECH_RESEARCHED_DETECTION_LABEL"
+                icon = "icons/tech/active_radar.png"
+                parameters = [
+                    tag = "empire"  data = Source.Owner
+                ]
+                empire = Target.Owner
+
     ]
     graphic = "icons/tech/active_radar.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/techs/techs.macros"

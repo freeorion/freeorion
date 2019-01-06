@@ -6524,6 +6524,12 @@ SITREP_TECH_RESEARCHED
 SITREP_TECH_RESEARCHED_LABEL
 Tech Researched
 
+SITREP_EMPIRE_TECH_RESEARCHED_DETECTION
+The %empire% upgraded their detection technology.
+
+SITREP_EMPIRE_TECH_RESEARCHED_DETECTION_LABEL
+Enemy Tech Upgrade
+
 SITREP_TECH_UNLOCKED
 %tech% has been unlocked and can now be researched.
 

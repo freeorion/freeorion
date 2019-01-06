@@ -14,20 +14,22 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             activation = And [
-                Not OwnerHasTech name = "SPY_DETECT_2"
-                Not OwnerHasTech name = "SPY_DETECT_3"
-                Not OwnerHasTech name = "SPY_DETECT_4"
-                Not OwnerHasTech name = "SPY_DETECT_5"
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_2)]]
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_3)]]
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_4)]]
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_5)]]
             ]
             effects = SetDetection value = Value + 50
 
         EffectsGroup
             scope = Source
             activation = And [
-                Not OwnerHasTech name = "SPY_DETECT_2"
-                Not OwnerHasTech name = "SPY_DETECT_3"
-                Not OwnerHasTech name = "SPY_DETECT_4"
-                Not OwnerHasTech name = "SPY_DETECT_5"
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_2)]]
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_3)]]
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_4)]]
+                [[NOT_OWNER_HAS_TECH_EFFECTIVE(SPY_DETECT_5)]]
             ]
             effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 10
     ]
+
+#include "/scripting/techs/techs.macros"
