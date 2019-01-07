@@ -212,7 +212,7 @@ void PlayerConnection::SetCookie(boost::uuids::uuid cookie)
 const std::string& PlayerConnection::ClientVersionString() const
 { return m_client_version_string; }
 
-bool PlayerConnection::IsBinarySerializationEnabled() const {
+bool PlayerConnection::IsBinarySerializationUsed() const {
     return GetOptionsDB().Get<bool>("network.server.binary.enabled")
         && !m_client_version_string.empty()
         && m_client_version_string == FreeOrionVersionString();

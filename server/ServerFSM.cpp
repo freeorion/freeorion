@@ -2187,7 +2187,7 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
         action->Execute();
 
         // update player(s) of changed gamestate as result of action
-        bool use_binary_serialization = sender->IsBinarySerializationEnabled();
+        bool use_binary_serialization = sender->IsBinarySerializationUsed();
         sender->SendMessage(TurnProgressMessage(Message::DOWNLOADING));
         sender->SendMessage(TurnPartialUpdateMessage(server.PlayerEmpireID(player_id),
                                                      GetUniverse(), use_binary_serialization));
