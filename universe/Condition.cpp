@@ -232,7 +232,7 @@ std::string ConditionDescription(const std::vector<ConditionBase*>& conditions,
                                         }   }
 
 ///////////////////////////////////////////////////////////
-// ConditionBase                              //
+// ConditionBase                                         //
 ///////////////////////////////////////////////////////////
 struct ConditionBase::MatchHelper {
     MatchHelper(const ConditionBase* this_, const ScriptingContext& parent_context) :
@@ -1084,7 +1084,7 @@ unsigned int All::GetCheckSum() const {
 }
 
 ///////////////////////////////////////////////////////////
-// None                                                   //
+// None                                                  //
 ///////////////////////////////////////////////////////////
 void None::Eval(const ScriptingContext& parent_context,
                 ObjectSet& matches, ObjectSet& non_matches,
@@ -4034,7 +4034,7 @@ unsigned int PlanetEnvironment::GetCheckSum() const {
 }
 
 ///////////////////////////////////////////////////////////
-// Species                                              //
+// Species                                               //
 ///////////////////////////////////////////////////////////
 Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names) :
     ConditionBase(),

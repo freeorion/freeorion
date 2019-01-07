@@ -68,7 +68,7 @@ namespace parse { namespace detail {
         empire_meter_value1
             =   (
                 (omit_[tok.EmpireMeter_]
-                 >>  label(tok.Empire_))   >   int_rules.expr
+                >>  label(tok.Empire_))  >   int_rules.expr
                 >   label(tok.Meter_)    >   tok.string
                 >  -(label(tok.Low_)     >   double_rules.expr)
                 >  -(label(tok.High_)    >   double_rules.expr)
