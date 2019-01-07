@@ -98,9 +98,10 @@ namespace {
       * each PlayerRow. */
     class PlayerDataPanel : public GG::Control {
     public:
-        PlayerDataPanel(GG::X w, GG::Y h, int player_id) :
+        PlayerDataPanel(GG::X w, GG::Y h, int player_id, int empire_id) :
             Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
             m_player_id(player_id),
+            m_empire_id(empire_id),
             //m_player_name_text(nullptr),
             m_empire_name_text(nullptr),
             m_empire_ship_text(nullptr),
@@ -414,6 +415,7 @@ namespace {
         }
 
         int                     m_player_id;
+        int                     m_empire_id;
         //std::shared_ptr<GG::Label>            m_player_name_text;
         std::shared_ptr<GG::Label>              m_empire_name_text;
         std::shared_ptr<GG::Label>              m_empire_ship_text;
@@ -452,9 +454,10 @@ namespace {
     ////////////////////////////////////////////////
     class PlayerRow : public GG::ListBox::Row {
     public:
-        PlayerRow(GG::X w, GG::Y h, int player_id) :
+        PlayerRow(GG::X w, GG::Y h, int player_id, int empire_id) :
             GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
             m_player_id(player_id),
+            m_empire_id(empire_id),
             m_panel(nullptr)
         {
             SetName("PlayerRow");
@@ -464,12 +467,16 @@ namespace {
         void CompleteConstruction() override {
 
             GG::ListBox::Row::CompleteConstruction();
-            m_panel = GG::Wnd::Create<PlayerDataPanel>(Width(), Height(), m_player_id);
+            m_panel = GG::Wnd::Create<PlayerDataPanel>(Width(), Height(), m_player_id, m_empire_id);
             push_back(m_panel);
         }
 
         int     PlayerID() const {
             return m_player_id;
+        }
+
+        int     EmpireID() const {
+            return m_empire_id;
         }
 
         void    Update() {
@@ -494,6 +501,7 @@ namespace {
 
     private:
         int                 m_player_id;
+        int                 m_empire_id;
         std::shared_ptr<PlayerDataPanel>    m_panel;
     };
 }
@@ -609,15 +617,27 @@ void PlayerListWnd::Refresh() {
         ErrorLogger() << "PlayerListWnd::Refresh couldn't get client app!";
         return;
     }
-    const std::map<int, PlayerInfo>& players = app->Players();
 
     const GG::Pt row_size = m_player_list->ListRowSize();
 
-    for (const auto& player : players) {
-        int player_id = player.first;
-        auto player_row = GG::Wnd::Create<PlayerRow>(row_size.x, row_size.y, player_id);
+    // first fill empires
+    for (const auto& empire : Empires()) {
+        int player_id = app->EmpirePlayerID(empire.first);
+        auto player_row = GG::Wnd::Create<PlayerRow>(row_size.x, row_size.y, player_id, empire.first);
         m_player_list->Insert(player_row);
         player_row->Resize(row_size);
+    }
+
+    // second fill players without empires
+    const std::map<int, PlayerInfo>& players = app->Players();
+
+    for (const auto& player : players) {
+        if (player.second.empire_id == ALL_EMPIRES) {
+            int player_id = player.first;
+            auto player_row = GG::Wnd::Create<PlayerRow>(row_size.x, row_size.y, player_id, ALL_EMPIRES);
+            m_player_list->Insert(player_row);
+            player_row->Resize(row_size);
+        }
     }
 
     this->SetSelectedPlayers(initially_selected_players);
