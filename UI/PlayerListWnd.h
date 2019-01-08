@@ -42,6 +42,7 @@ private:
     void            PlayerDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void            PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     int             PlayerInRow(GG::ListBox::iterator it) const;
+    int             EmpireInRow(GG::ListBox::iterator it) const;
 
     std::shared_ptr<PlayerListBox>  m_player_list;
 };

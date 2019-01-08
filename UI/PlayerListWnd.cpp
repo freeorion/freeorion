@@ -236,26 +236,33 @@ namespace {
                 return;
             }
 
+            // empire name
+            std::string empire_name;
             const std::map<int, PlayerInfo>& players = app->Players();
 
             auto player_it = players.find(m_player_id);
-            if (player_it == players.end()) {
-                ErrorLogger() << "PlayerDataPanel::Update couldn't find player with id " << m_player_id;
-                return;
+            if (player_it != players.end()) {
+                const PlayerInfo& player_info = player_it->second;
+
+                m_player_type = player_info.client_type;
+                m_host = player_info.host;
+                empire_name = player_info.name;
+            } else {
+                m_player_type = Networking::INVALID_CLIENT_TYPE;
+                m_host = false;
             }
-            const PlayerInfo& player_info = player_it->second;
 
             // if player has an empire, get its name and colour.  (Some player types might not have empires...)
             GG::Clr empire_color = ClientUI::TextColor();
-            std::string empire_name;
-            const Empire* empire = GetEmpire(player_info.empire_id);
+            const Empire* empire = GetEmpire(m_empire_id);
             if (empire) {
                 empire_color = empire->Color();
+                // ignore player name
                 empire_name = empire->Name();
-                if (player_info.empire_id == ALL_EMPIRES || player_info.empire_id == app->EmpireID())
+                if (m_empire_id == ALL_EMPIRES || m_empire_id == app->EmpireID())
                     m_diplo_status = INVALID_DIPLOMATIC_STATUS;
                 else
-                    m_diplo_status = Empires().GetDiplomaticStatus(player_info.empire_id, app->EmpireID());
+                    m_diplo_status = Empires().GetDiplomaticStatus(m_empire_id, app->EmpireID());
                 if (empire->Won())
                     m_win_status = WON; // even if you later get eliminated, you still won
                 else if (empire->Eliminated())
@@ -337,8 +344,7 @@ namespace {
             m_empire_research_text->SetText(research_text);
             m_empire_detection_text->SetText(detection_text);
 
-            m_player_type = player_info.client_type;
-            m_host = player_info.host;
+
         }
 
         void            SetStatus(Message::PlayerStatus player_status)
@@ -742,8 +748,8 @@ namespace {
 
 void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // check that a valid player was clicked and that it wasn't this client's own player
-    int clicked_player_id = PlayerInRow(it);
-    if (clicked_player_id == Networking::INVALID_PLAYER_ID)
+    int clicked_empire_id = EmpireInRow(it);
+    if (clicked_empire_id == ALL_EMPIRES)
         return;
     const ClientApp* app = ClientApp::GetApp();
     if (!app) {
@@ -755,19 +761,9 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         return;
     int client_empire_id = app->EmpireID();
 
-    // get empire id of clicked player
-    const std::map<int, PlayerInfo>& players = app->Players();
-    auto clicked_player_it = players.find(clicked_player_id);
-    if (clicked_player_it == players.end()) {
-        ErrorLogger() << "PlayerListWnd::PlayerRightClicked couldn't find player with id " << clicked_player_id;
-        return;
-    }
-    const PlayerInfo& clicked_player_info = clicked_player_it->second;
-    int clicked_empire_id = clicked_player_info.empire_id;
-
     if (!GetEmpire(clicked_empire_id)) {
         ErrorLogger() << "PlayerListWnd::PlayerRightClicked tried to look up empire id "
-                      << clicked_empire_id << " for player " << clicked_player_id
+                      << clicked_empire_id
                       << " but couldn't find such an empire";
         return;
     }
@@ -798,7 +794,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     {
         // get diplomatic status between client and clicked empires
         DiplomaticStatus diplo_status = Empires().GetDiplomaticStatus(clicked_empire_id, client_empire_id);
-        if (diplo_status == INVALID_DIPLOMATIC_STATUS && clicked_player_id != client_player_id) {
+        if (diplo_status == INVALID_DIPLOMATIC_STATUS && clicked_empire_id != client_empire_id) {
             ErrorLogger() << "PlayerListWnd::PlayerRightClicked found invalid diplomatic status between client and clicked empires.";
             return;
         }
@@ -881,4 +877,14 @@ int PlayerListWnd::PlayerInRow(GG::ListBox::iterator it) const {
         return player_row->PlayerID();
 
     return Networking::INVALID_PLAYER_ID;
+}
+
+int PlayerListWnd::EmpireInRow(GG::ListBox::iterator it) const {
+    if (it == m_player_list->end())
+        return ALL_EMPIRES;
+
+    if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(it->get()))
+        return player_row->EmpireID();
+
+    return ALL_EMPIRES;
 }
