@@ -1385,6 +1385,9 @@ Count of minutes after the cookie record will be considered expired.
 OPTIONS_DB_PUBLISH_STATISTICS
 Enable sending empire staticstics to the player.
 
+OPTIONS_DB_HIDE_DETAILED_EMPIRES_DATA
+Disable sending research and production information about enemies' empires.
+
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
 

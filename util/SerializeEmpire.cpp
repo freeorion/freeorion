@@ -8,6 +8,8 @@
 #include "../Empire/Diplomacy.h"
 #include "../universe/Universe.h"
 
+#include "OptionsDB.h"
+
 #include "Serialize.ipp"
 #include <boost/serialization/version.hpp>
 
@@ -107,6 +109,10 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_eliminated)
         & BOOST_SERIALIZATION_NVP(m_victories);
 
+    bool visible = GetUniverse().AllObjectsVisible() ||
+        GetUniverse().EncodingEmpire() == ALL_EMPIRES ||
+        m_id == GetUniverse().EncodingEmpire();
+
     if (Archive::is_loading::value && version < 1) {
         // adapt set to map
         std::set<std::string> temp_stringset;
@@ -114,24 +120,39 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         m_techs.clear();
         for (auto& entry : temp_stringset)
             m_techs[entry] = BEFORE_FIRST_TURN;
+    } else if (Archive::is_saving::value && !visible && GetOptionsDB().Get<bool>("network.server.hide-detailed-empires-data")) {
+        std::map<std::string, int> empty_string_int_map;
+        ar  & boost::serialization::make_nvp("m_techs", empty_string_int_map);
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_techs);
     }
 
-    ar  & BOOST_SERIALIZATION_NVP(m_meters)
-        & BOOST_SERIALIZATION_NVP(m_research_queue)
-        & BOOST_SERIALIZATION_NVP(m_research_progress)
-        & BOOST_SERIALIZATION_NVP(m_production_queue)
-        & BOOST_SERIALIZATION_NVP(m_available_building_types)
-        & BOOST_SERIALIZATION_NVP(m_available_part_types)
-        & BOOST_SERIALIZATION_NVP(m_available_hull_types)
-        & BOOST_SERIALIZATION_NVP(m_supply_system_ranges)
+    ar  & BOOST_SERIALIZATION_NVP(m_meters);
+    if (Archive::is_saving::value && !visible && GetOptionsDB().Get<bool>("network.server.hide-detailed-empires-data")) {
+        ResearchQueue empty_research_queue(m_id);
+        std::map<std::string, float> empty_research_progress;
+        ProductionQueue empty_production_queue(m_id);
+        std::set<std::string> empty_string_set;
+        ar  & boost::serialization::make_nvp("m_research_queue", empty_research_queue)
+            & boost::serialization::make_nvp("m_research_progress", empty_research_progress)
+            & boost::serialization::make_nvp("m_production_queue", empty_production_queue)
+            & boost::serialization::make_nvp("m_available_building_types", empty_string_set)
+            & boost::serialization::make_nvp("m_available_part_types", empty_string_set)
+            & boost::serialization::make_nvp("m_available_hull_types", empty_string_set);
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_research_queue)
+            & BOOST_SERIALIZATION_NVP(m_research_progress)
+            & BOOST_SERIALIZATION_NVP(m_production_queue)
+            & BOOST_SERIALIZATION_NVP(m_available_building_types)
+            & BOOST_SERIALIZATION_NVP(m_available_part_types)
+            & BOOST_SERIALIZATION_NVP(m_available_hull_types);
+    }
+
+    ar  & BOOST_SERIALIZATION_NVP(m_supply_system_ranges)
         & BOOST_SERIALIZATION_NVP(m_supply_unobstructed_systems)
         & BOOST_SERIALIZATION_NVP(m_preserved_system_exit_lanes);
 
-    if (GetUniverse().AllObjectsVisible() ||
-        GetUniverse().EncodingEmpire() == ALL_EMPIRES ||
-        m_id == GetUniverse().EncodingEmpire())
+    if (visible)
     {
         ar  & boost::serialization::make_nvp("m_ship_designs", m_known_ship_designs);
         ar  & BOOST_SERIALIZATION_NVP(m_sitrep_entries)
