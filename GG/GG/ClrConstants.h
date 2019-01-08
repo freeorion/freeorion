@@ -35,28 +35,27 @@ namespace GG {
 
 // some useful color constants
 constexpr Clr CLR_ZERO = Clr(0, 0, 0, 0);
-extern GG_API const Clr CLR_BLACK;
-extern GG_API const Clr CLR_WHITE;
-extern GG_API const Clr CLR_GRAY;
-extern GG_API const Clr CLR_SHADOW;
-extern GG_API const Clr CLR_RED;
-extern GG_API const Clr CLR_GREEN;
-extern GG_API const Clr CLR_BLUE;
-extern GG_API const Clr CLR_CYAN;
-extern GG_API const Clr CLR_YELLOW;
-extern GG_API const Clr CLR_MAGENTA;
+constexpr Clr CLR_BLACK = Clr(0, 0, 0, 255);
+constexpr Clr CLR_WHITE = Clr(255, 255, 255, 255);
+constexpr Clr CLR_GRAY = Clr(127, 127, 127, 255);
+constexpr Clr CLR_SHADOW = Clr(127, 127, 127, 127);
+constexpr Clr CLR_RED = Clr(255, 0, 0, 255);
+constexpr Clr CLR_GREEN = Clr(0, 255, 0, 255);
+constexpr Clr CLR_BLUE = Clr(0, 0, 255, 255);
+constexpr Clr CLR_CYAN = Clr(0, 255, 255, 255);
+constexpr Clr CLR_YELLOW = Clr(255, 255, 0, 255);
+constexpr Clr CLR_MAGENTA = Clr(255, 0, 255, 255);
 
 constexpr Clr CLR_LIGHT_GRAY = Clr(192, 192, 192, 255);
-extern GG_API const Clr CLR_DARK_GRAY;
-extern GG_API const Clr CLR_PINK;
-extern GG_API const Clr CLR_DARK_RED;
-extern GG_API const Clr CLR_OLIVE;
-extern GG_API const Clr CLR_DARK_GREEN;
-extern GG_API const Clr CLR_TEAL;
-extern GG_API const Clr CLR_DARK_BLUE;
-extern GG_API const Clr CLR_PURPLE;
-extern GG_API const Clr CLR_ORANGE;
-
+constexpr Clr CLR_DARK_GRAY = Clr(64, 64, 64, 255);
+constexpr Clr CLR_PINK = Clr(255, 127, 127, 255);
+constexpr Clr CLR_DARK_RED = Clr(127, 0, 0, 255);
+constexpr Clr CLR_OLIVE = Clr(127, 127, 0, 255);
+constexpr Clr CLR_DARK_GREEN = Clr(0, 127, 0, 255);
+constexpr Clr CLR_TEAL = Clr(0, 127, 127, 255);
+constexpr Clr CLR_DARK_BLUE = Clr(0, 0, 127, 255);
+constexpr Clr CLR_PURPLE = Clr(127, 0, 127, 255);
+constexpr Clr CLR_ORANGE = Clr(255, 127, 0, 255);
 
 } // namespace GG
 

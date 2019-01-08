@@ -36,7 +36,6 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/Base.cpp
         ${CMAKE_CURRENT_LIST_DIR}/BrowseInfoWnd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Button.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/ClrConstants.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Control.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Cursor.cpp
         ${CMAKE_CURRENT_LIST_DIR}/DeferredLayout.cpp
