@@ -4570,11 +4570,10 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
     GG::GUI::GetGUI()->MoveUp(fleet_wnd);
     PushWndStack(fleet_wnd);
 
-    // if indicated fleet is already the only selected fleet in the active FleetWnd, 
-    // nothing to do.
-    if (m_selected_fleet_ids.size() == 1 && m_selected_fleet_ids.count(fleet->ID())){
+    // if indicated fleet is already the only selected fleet in the active FleetWnd, nothing to do.
+    if (m_selected_fleet_ids.size() == 1 && m_selected_fleet_ids.count(fleet->ID()))
         return;
-    }
+    
     // select fleet in FleetWnd.  this deselects all other fleets in the FleetWnd.
     // this->m_selected_fleet_ids will be updated by ActiveFleetWndSelectedFleetsChanged or ActiveFleetWndChanged
     // signals being emitted and connected to MapWnd::SelectedFleetsChanged

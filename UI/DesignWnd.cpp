@@ -3074,14 +3074,12 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     };
 
     auto movetotop_design_action = [&design, this]() {
-        auto saved_design = *design;
-        GetDisplayedDesignsManager().MoveBefore(saved_design.ID(), *GetDisplayedDesignsManager().OrderedIDs().begin());
+        GetDisplayedDesignsManager().MoveBefore(design->ID(), *GetDisplayedDesignsManager().OrderedIDs().begin());
         Populate();
     };
 
     auto movetobottom_design_action = [&design, this]() {
-        auto saved_design = *design;
-        GetDisplayedDesignsManager().MoveBefore(saved_design.ID(), INVALID_DESIGN_ID);
+        GetDisplayedDesignsManager().MoveBefore(design->ID(), INVALID_DESIGN_ID);
         Populate();
     };
 
@@ -3174,7 +3172,7 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
     // add all saved designs
     auto add_all_saved_designs_action = [&manager, &empire_id]() {
         DebugLogger() << "BasesListBox::BaseRightClicked AddAllSavedDesignsToDisplayedDesigns";
-        // add the items to the end of the existing list, int correct order
+        // add the items to the end of the existing list, in correct order
         // TODO: think about adding them at the front.
         auto design_uuids = manager.OrderedDesignUUIDs();
         for (auto it = design_uuids.rbegin(); it != design_uuids.rend(); ++it)
@@ -3191,15 +3189,15 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
     // create popup menu with a commands in it
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (design->Producible() && CanAddDesignToDisplayedDesigns(design))
-        popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),                   false, false, add_design_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_NOW"),     false, false, add_all_saved_designs_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),                 false, false, add_design_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_NOW"),   false, false, add_all_saved_designs_action));
     popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_SAVED"),          false, false, delete_saved_design_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_SAVED"),        false, false, delete_saved_design_action));
     popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"), false, false, movetotop_design_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, movetobottom_design_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_LIST_ITEM"),              false, false, movetotop_design_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_LIST_ITEM"),            false, false, movetobottom_design_action));
     popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_START"),   false, add_all,
+    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_START"), false, add_all,
                                    toggle_add_all_saved_game_start_action));
 
     popup->Run();

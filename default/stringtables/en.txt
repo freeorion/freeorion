@@ -3411,18 +3411,11 @@ Latest known [[metertype METER_STEALTH]] is out of date. Actual stealth exceeds 
 MENUITEM_SET_FOCUS
 Set focus
 
-MENUITEM_ENQUEUE_BUILDING_TOP
-Queue Building (top)
+MENUITEM_ENQUEUE_SHIPDESIGN
+Queue Ship
 
-MENUITEM_ENQUEUE_BUILDING_BOTTOM
-Queue Building (bottom)
-
-MENUITEM_ENQUEUE_SHIPDESIGN_TOP
-Queue Ship (top)
-
-MENUITEM_ENQUEUE_SHIPDESIGN_BOTTOM
-Queue Ship (bottom)
-
+MENUITEM_ENQUEUE_BUILDING
+Queue Building
 
 ##
 ## Side panel/Resources panel
@@ -4290,6 +4283,13 @@ Move to Queue Top
 
 MOVE_DOWN_QUEUE_ITEM
 Move to Queue Bottom
+
+MOVE_UP_LIST_ITEM
+Move to Top
+
+MOVE_DOWN_LIST_ITEM
+Move to Bottom
+
 
 SPLIT_INCOMPLETE
 Separate Current Repetition
