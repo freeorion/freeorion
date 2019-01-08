@@ -5,12 +5,12 @@
    modify it under the terms of the GNU Lesser General Public License
    as published by the Free Software Foundation; either version 2.1
    of the License, or (at your option) any later version.
-   
+
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
-    
+
    You should have received a copy of the GNU Lesser General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
@@ -18,7 +18,7 @@
 
    If you do not wish to comply with the terms of the LGPL please
    contact the author as other terms are available for a fee.
-    
+
    Zach Laine
    whatwasthataddress@gmail.com */
 
@@ -27,7 +27,6 @@
 
 using namespace GG;
 
-const Clr GG::CLR_ZERO(0, 0, 0, 0);
 const Clr GG::CLR_BLACK(0, 0, 0, 255);
 const Clr GG::CLR_WHITE(255, 255, 255, 255);
 const Clr GG::CLR_GRAY(127, 127, 127, 255);
@@ -39,7 +38,6 @@ const Clr GG::CLR_CYAN(0, 255, 255, 255);
 const Clr GG::CLR_YELLOW(255, 255, 0, 255);
 const Clr GG::CLR_MAGENTA(255, 0, 255, 255);
 
-const Clr GG::CLR_LIGHT_GRAY(192, 192, 192, 255);
 const Clr GG::CLR_DARK_GRAY(64, 64, 64, 255);
 const Clr GG::CLR_PINK(255, 127, 127, 255);
 const Clr GG::CLR_DARK_RED(127, 0, 0, 255);

@@ -27,6 +27,8 @@
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>
 
+#include <GG/ClrConstants.h>
+
 #include <iterator>
 
 class CombatLogManager;
@@ -986,8 +988,6 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // if got important lobby changes so players shoul reset their ready status
     bool has_important_changes = false;
 
-    const GG::Clr CLR_NONE = GG::Clr(0, 0, 0, 0);
-
     // store incoming lobby data.  clients can only change some of
     // this information (galaxy setup data, whether it is a new game and what
     // save file index to load) directly, so other data is skipped (list of
@@ -1020,7 +1020,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
                 psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
             {
-                psd.m_empire_color = CLR_NONE;
+                psd.m_empire_color = GG::CLR_ZERO;
                 // On OSX the following two lines must not be included.
                 // Clearing empire name and starting species name from
                 // PlayerSetupData causes a weird crash (bus error) deep
@@ -1033,7 +1033,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 psd.m_save_game_empire_id = ALL_EMPIRES;
 
             } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
-                if (psd.m_empire_color == CLR_NONE)
+                if (psd.m_empire_color == GG::CLR_ZERO)
                     psd.m_empire_color = GetUnusedEmpireColour(incoming_lobby_data.m_players);
                 if (psd.m_player_name.empty())
                     // ToDo: Should we translate player_name?
@@ -1048,7 +1048,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 }
 
             } else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-                if (psd.m_empire_color == CLR_NONE)
+                if (psd.m_empire_color == GG::CLR_ZERO)
                     psd.m_empire_color = GetUnusedEmpireColour(incoming_lobby_data.m_players);
                 if (psd.m_empire_name.empty())
                     psd.m_empire_name = psd.m_player_name;
@@ -1341,7 +1341,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // reset assigned empires in save game for all players.  new loaded game may not have the same set of empire IDs to choose from
         for (auto& psd : m_lobby_data->m_players) {
             psd.second.m_save_game_empire_id = ALL_EMPIRES;
-            psd.second.m_empire_color = CLR_NONE;
+            psd.second.m_empire_color = GG::CLR_ZERO;
         }
 
         // refresh save game empire data
