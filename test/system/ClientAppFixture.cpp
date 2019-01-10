@@ -182,6 +182,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
     }
     case Message::DIPLOMATIC_STATUS:
     case Message::PLAYER_CHAT:
+    case Message::CHAT_HISTORY:
         return true; // ignore
     case Message::PLAYER_STATUS: {
         int about_player_id;
