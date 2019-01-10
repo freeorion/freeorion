@@ -125,9 +125,9 @@ bool ClientAppFixture::ProcessMessages(const boost::posix_time::ptime& start_tim
             if (to_process) {
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 to_process = false;
-             } else {
-                 return true;
-             }
+            } else {
+                return true;
+            }
         }
     }
     ErrorLogger() << "Timeout";
