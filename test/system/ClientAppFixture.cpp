@@ -110,8 +110,10 @@ void ClientAppFixture::JoinGame() {
 bool ClientAppFixture::ProcessMessages(const boost::posix_time::ptime& start_time, int max_seconds) {
     bool to_process = true;
     while ((boost::posix_time::microsec_clock::local_time() - start_time).total_seconds() < max_seconds) {
-        if (!m_networking->IsConnected())
+        if (!m_networking->IsConnected()) {
+            ErrorLogger() << "Disconnected";
             return false;
+        }
         auto opt_msg = m_networking->GetMessage();
         if (opt_msg) {
             Message msg = *opt_msg;
@@ -128,6 +130,7 @@ bool ClientAppFixture::ProcessMessages(const boost::posix_time::ptime& start_tim
              }
         }
     }
+    ErrorLogger() << "Timeout";
     return false; // return on timeout
 }
 
@@ -177,6 +180,13 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
                                     save_state_string,       m_galaxy_setup_data);
 
         InfoLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
+
+        for (const auto& player : Players()) {
+            if (player.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+                m_ai_players.insert(player.first);
+        }
+        m_ai_waiting = m_ai_players;
+
         m_game_started = true;
         return true;
     }

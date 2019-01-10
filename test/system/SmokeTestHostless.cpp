@@ -181,14 +181,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
             BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
         }
 
-        for (const auto& player : Players()) {
-            if (player.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-                m_ai_players.insert(player.first);
-        }
-
         BOOST_REQUIRE(m_ai_players.size() == num_AIs);
-
-        m_ai_waiting = m_ai_players;
 
         start_time = boost::posix_time::microsec_clock::local_time();
         while (! m_ai_waiting.empty()) {
