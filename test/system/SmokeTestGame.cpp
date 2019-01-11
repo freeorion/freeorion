@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
         BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
     }
 
-    BOOST_REQUIRE(m_ai_players.size() == num_AIs);
+    BOOST_REQUIRE_EQUAL(m_ai_players.size(), num_AIs);
 
     BOOST_TEST_MESSAGE("Game started. Waiting AI for turns...");
 
