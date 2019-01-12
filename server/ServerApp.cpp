@@ -798,7 +798,7 @@ void ServerApp::SendNewGameStartMessages() {
         const PlayerConnectionPtr player_connection = *player_connection_it;
         int player_id = player_connection->PlayerID();
         int empire_id = PlayerEmpireID(player_id);
-        bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
+        bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
         player_connection->SendMessage(GameStartMessage(m_single_player_game,    empire_id,
                                                         m_current_turn,          m_empires,
                                                         m_universe,              GetSpeciesManager(),
@@ -1337,7 +1337,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         // when they end their turn
         auto orders = psgd.m_orders;
 
-        bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
+        bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
 
         if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // get save state string
@@ -1642,7 +1642,7 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
     std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
 
     Networking::ClientType client_type = player_connection->GetClientType();
-    bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
+    bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
 
     if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
         client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
@@ -1749,7 +1749,7 @@ bool ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) 
             orders_it->second.first = false;
 
             auto player_info_map = GetPlayerInfoMap();
-            bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
+            bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
 
             player_connection->SendMessage(GameStartMessage(
                 m_single_player_game, empire.first,
@@ -3120,7 +3120,7 @@ void ServerApp::PreCombatProcessTurns() {
             player->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
             player->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
         {
-            bool use_binary_serialization = player->ClientVersionStringMatchesThisServer();
+            bool use_binary_serialization = player->IsBinarySerializationUsed();
             player->SendMessage(TurnPartialUpdateMessage(PlayerEmpireID(player->PlayerID()),
                                                          m_universe, use_binary_serialization));
         }
@@ -3451,7 +3451,7 @@ void ServerApp::PostCombatProcessTurns() {
             player->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
             player->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
         {
-            bool use_binary_serialization = player->ClientVersionStringMatchesThisServer();
+            bool use_binary_serialization = player->IsBinarySerializationUsed();
             player->SendMessage(TurnUpdateMessage(empire_id, m_current_turn,
                                                   m_empires,                          m_universe,
                                                   GetSpeciesManager(),                GetCombatLogManager(),

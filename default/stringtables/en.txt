@@ -1917,6 +1917,9 @@ Automatically quits once any turns specified by --auto-advance-n-turns are compl
 OPTIONS_DB_BINARY_SERIALIZATION
 Use Binary serialization for saving games. Binary serialization is faster to save and load, but may not be possible to load on a different operating system.
 
+OPTIONS_DB_SERVER_BINARY_SERIALIZATION
+The server will use Binary serialization for client-server interaction if the client's version matches the server's version. Binary serialization is faster to transfer, but may not be compatible between different operating systems and architectures.
+
 OPTIONS_DB_XML_ZLIB_SERIALIZATION
 When saving games with XML serialization, compress most of the XML before writing the file. Compression substantially reduces save file sizes, but may make saves unloadable due to memory requirements to decompress the save data.
 

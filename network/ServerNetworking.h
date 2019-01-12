@@ -226,9 +226,8 @@ public:
     /** Returns the version string the client provided when joining. */
     const std::string& ClientVersionString() const;
 
-    /** Returns true iff the client's specified version string matches the
-      * version string of this server process. */
-    bool ClientVersionStringMatchesThisServer() const;
+    /** Checks if the server will enable binary serialization for this client's connection. */
+    bool IsBinarySerializationUsed() const;
 
     /** Checks if client associated with this connection runs on the same
         physical machine as the server */
