@@ -27,6 +27,8 @@
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>
 
+#include <GG/ClrConstants.h>
+
 #include <iterator>
 
 class CombatLogManager;
@@ -113,6 +115,11 @@ namespace {
             case Networking::CLIENT_TYPE_HUMAN_PLAYER:      ss << "PLAYER, "; break;
             default:                                        ss << "<invalid client type>, ";
             }
+            GG::Clr empire_color = entry.second.m_empire_color;
+            ss << "(" << static_cast<unsigned int>(empire_color.r)
+               << ", " << static_cast<unsigned int>(empire_color.g)
+               << ", " << static_cast<unsigned int>(empire_color.b)
+               << ", " << static_cast<unsigned int>(empire_color.a) << "), ";
             ss << entry.second.m_starting_species_name;
             if (entry.second.m_player_ready)
                 ss << ", Ready";
@@ -549,7 +556,9 @@ sc::result Idle::react(const Hostless&) {
 // MPLobby
 ////////////////////////////////////////////////////////////
 namespace {
-    GG::Clr GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData>>& psd) {
+    GG::Clr GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData>>& psd,
+                                  const std::map<int, SaveGameEmpireData> &sged = std::map<int, SaveGameEmpireData>())
+    {
         //DebugLogger(FSM) << "finding colours for empire of player " << player_name;
         GG::Clr empire_colour = GG::Clr(192, 192, 192, 255);
         for (const GG::Clr& possible_colour : EmpireColors()) {
@@ -562,6 +571,16 @@ namespace {
                 if (player_colour == possible_colour) {
                     colour_is_new = false;
                     break;
+                }
+            }
+
+            if (colour_is_new) {
+                for (const auto& entry : sged) {
+                    const GG::Clr& player_colour = entry.second.m_color;
+                    if (player_colour == possible_colour) {
+                        colour_is_new = false;
+                        break;
+                    }
                 }
             }
 
@@ -992,9 +1011,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
     if (sender->HasAuthRole(Networking::ROLE_GALAXY_SETUP)) {
 
-        DebugLogger(FSM) << "Get message from host or allowed player.";
-
-        const GG::Clr CLR_NONE = GG::Clr(0, 0, 0, 0);
+        DebugLogger(FSM) << "Get message from host or allowed player " << sender->PlayerID();
 
         // assign unique names / colours to any lobby entry that lacks them, or
         // remove empire / colours from observers
@@ -1003,7 +1020,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
                 psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
             {
-                psd.m_empire_color = CLR_NONE;
+                psd.m_empire_color = GG::CLR_ZERO;
                 // On OSX the following two lines must not be included.
                 // Clearing empire name and starting species name from
                 // PlayerSetupData causes a weird crash (bus error) deep
@@ -1016,7 +1033,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 psd.m_save_game_empire_id = ALL_EMPIRES;
 
             } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
-                if (psd.m_empire_color == CLR_NONE)
+                if (psd.m_empire_color == GG::CLR_ZERO)
                     psd.m_empire_color = GetUnusedEmpireColour(incoming_lobby_data.m_players);
                 if (psd.m_player_name.empty())
                     // ToDo: Should we translate player_name?
@@ -1031,7 +1048,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 }
 
             } else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-                if (psd.m_empire_color == CLR_NONE)
+                if (psd.m_empire_color == GG::CLR_ZERO)
                     psd.m_empire_color = GetUnusedEmpireColour(incoming_lobby_data.m_players);
                 if (psd.m_empire_name.empty())
                     psd.m_empire_name = psd.m_player_name;
@@ -1051,6 +1068,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 psd_names.count(player.second.m_player_name))
             {
                 has_collision = true;
+                WarnLogger(FSM) << "Got color, empire's name or player's name collision.";
                 break;
             } else {
                 psd_colors.emplace(player.second.m_empire_color);
@@ -1070,18 +1088,21 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                         !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER)))
                     {
                         has_collision = true;
+                        WarnLogger(FSM) << "Got unallowed client types.";
                         break;
                     }
                 } else {
                     // player wasn't found
                     // don't allow "ghost" records
                     has_collision = true;
+                    WarnLogger(FSM) << "Got missing player.";
                     break;
                 }
                 if (!psd_ids.insert(player.first).second) {
                     // player id was already used
                     // don't allow ID collision
                     has_collision = true;
+                    WarnLogger(FSM) << "Got player's id collision.";
                     break;
                 }
             }
@@ -1149,6 +1170,13 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
             // directly configurable lobby data
             m_lobby_data->m_new_game       = incoming_lobby_data.m_new_game;
+            if (m_lobby_data->m_new_game) {
+                // empty save data
+                m_lobby_data->m_save_game = "";
+                m_lobby_data->m_save_game_empire_data.clear();
+                // prevent updating lobby by having old and new file name equal
+                incoming_lobby_data.m_save_game = "";
+            }
 
             int ai_count = 0;
             for (const auto& plr : incoming_lobby_data.m_players) {
@@ -1302,11 +1330,6 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // update selected file index
         m_lobby_data->m_save_game = new_file;
 
-        // reset assigned empires in save game for all players.  new loaded game may not have the same set of empire IDs to choose from
-        for (auto& psd : m_lobby_data->m_players) {
-            psd.second.m_save_game_empire_id = ALL_EMPIRES;
-        }
-
         // remove all AIs from current lobby data,
         // so that when the save is loaded no AI state as appropriate,
         // without having potential extra AIs lingering from the previous
@@ -1314,6 +1337,12 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             return plr.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER;
         });
         m_ai_next_index = 1;
+
+        // reset assigned empires in save game for all players.  new loaded game may not have the same set of empire IDs to choose from
+        for (auto& psd : m_lobby_data->m_players) {
+            psd.second.m_save_game_empire_id = ALL_EMPIRES;
+            psd.second.m_empire_color = GG::CLR_ZERO;
+        }
 
         // refresh save game empire data
         boost::filesystem::path save_dir(GetServerSaveDir());
@@ -1345,6 +1374,12 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 else
                     player_setup_data.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
                 m_lobby_data->m_players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
+            }
+
+            // reset empire color of non-AI player to unused
+            for (auto& psd : m_lobby_data->m_players) {
+                if (psd.second.m_save_game_empire_id == ALL_EMPIRES)
+                    psd.second.m_empire_color = GetUnusedEmpireColour(m_lobby_data->m_players, m_lobby_data->m_save_game_empire_data);
             }
         } catch (const std::exception&) {
             // inform player who attempted to change the save file that there was a problem

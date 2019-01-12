@@ -74,7 +74,6 @@
     <ClCompile Include="..\..\GG\src\Base.cpp" />
     <ClCompile Include="..\..\GG\src\BrowseInfoWnd.cpp" />
     <ClCompile Include="..\..\GG\src\Button.cpp" />
-    <ClCompile Include="..\..\GG\src\ClrConstants.cpp" />
     <ClCompile Include="..\..\GG\src\Control.cpp" />
     <ClCompile Include="..\..\GG\src\Cursor.cpp" />
     <ClCompile Include="..\..\GG\src\DeferredLayout.cpp" />

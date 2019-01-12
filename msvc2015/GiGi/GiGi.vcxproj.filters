@@ -241,9 +241,6 @@
     <ClCompile Include="..\..\GG\src\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\GG\src\ClrConstants.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\GG\src\Control.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

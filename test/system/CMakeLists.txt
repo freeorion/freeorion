@@ -51,7 +51,6 @@ target_sources(fo_systemtest_game
     PRIVATE
         ${PROJECT_SOURCE_DIR}/client/ClientApp.cpp
         ${PROJECT_SOURCE_DIR}/client/ClientFSMEvents.cpp
-        ${PROJECT_SOURCE_DIR}/GG/src/ClrConstants.cpp
         ${PROJECT_SOURCE_DIR}/network/ClientNetworking.cpp
 )
 
