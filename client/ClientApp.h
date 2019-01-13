@@ -71,14 +71,14 @@ public:
     const std::map<int, PlayerInfo>& Players() const;
     /** @} */
 
-    /** @brief Return the player statuses in game
+    /** @brief Return the empire statuses in game
      *
      * @return Return a map containing PlayerStatus instances as value and
-     *      their player identifier as key.
+     *      their empire identifier as key.
      *
      * @{ */
-    std::map<int, Message::PlayerStatus>& PlayerStatus();
-    const std::map<int, Message::PlayerStatus>& PlayerStatus() const;
+    std::map<int, Message::PlayerStatus>& EmpireStatus();
+    const std::map<int, Message::PlayerStatus>& EmpireStatus() const;
     /** @} */
 
     /** @brief Return the ::Universe known to this client
@@ -172,8 +172,10 @@ public:
      *
      * @return The EmpireManager instance in charge of maintaining the Empire
      *      object instances.
-     */
+     * @{ */
     EmpireManager& Empires() override;
+    const EmpireManager& Empires() const;
+    /** @} */
 
     /** @brief Return the Empire identified by @a empire_id
      *
@@ -232,13 +234,13 @@ public:
      */
     void SetSinglePlayerGame(bool single_player = true);
 
-    /** @brief Set the Message::PlayerStatus @a status for @a player_id
+    /** @brief Set the Message::PlayerStatus @a status for @a empire_id
      *
-     * @param player_id A player identifier.
+     * @param player_id A empire identifier.
      * @param status The new Message::PlayerStatus of the player identified by
-     *      @a player_id.
+     *      @a empire_id.
      */
-    void SetPlayerStatus(int player_id, Message::PlayerStatus status);
+    void SetEmpireStatus(int empire_id, Message::PlayerStatus status);
 
     /** @brief Return the singleton instance of this Application
      *
@@ -264,11 +266,11 @@ protected:
     /** Indexed by player id, contains info about all players in the game */
 
     std::map<int, PlayerInfo>   m_player_info;
-    /** Indexed by player id, contains the last known PlayerStatus for each
-     *      player.
+    /** Indexed by empire id, contains the last known PlayerStatus for each
+     *      empire.
      */
     std::map<int, Message::PlayerStatus>
-                                m_player_status;
+                                m_empire_status;
 };
 
 #endif // _ClientApp_h_

@@ -248,7 +248,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         SaveGameUIData ui_data;         // ignored
         bool state_string_available;    // ignored, as save_state_string is sent even if not set by ExtractMessageData
         std::string save_state_string;
-        m_player_status.clear();
+        m_empire_status.clear();
 
         ExtractGameStartMessageData(msg,                     single_player_game,     m_empire_id,
                                     m_current_turn,          m_empires,              m_universe,

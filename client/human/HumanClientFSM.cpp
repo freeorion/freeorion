@@ -681,13 +681,13 @@ boost::statechart::result PlayingGame::react(const Disconnection& d) {
 
 boost::statechart::result PlayingGame::react(const PlayerStatus& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.PlayerStatus";
-    int about_player_id;
+    int ignore_about_player_id;
     Message::PlayerStatus status;
-    ExtractPlayerStatusMessageData(msg.m_message, about_player_id, status);
+    int about_empire_id;
+    ExtractPlayerStatusMessageData(msg.m_message, ignore_about_player_id, status, about_empire_id);
 
-    Client().SetPlayerStatus(about_player_id, status);
-    Client().GetClientUI().GetMessageWnd()->HandlePlayerStatusUpdate(status, about_player_id);
-    Client().GetClientUI().GetPlayerListWnd()->HandlePlayerStatusUpdate(status, about_player_id);
+    Client().SetEmpireStatus(about_empire_id, status);
+    Client().GetClientUI().GetPlayerListWnd()->HandleEmpireStatusUpdate(status, about_empire_id);
     // TODO: tell the map wnd or something else as well?
 
     return discard_event();
@@ -829,7 +829,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     bool single_player_game = false;
     int empire_id = ALL_EMPIRES;
     int current_turn = INVALID_GAME_TURN;
-    Client().PlayerStatus().clear();
+    Client().EmpireStatus().clear();
     Client().Orders().Reset();
 
     ExtractGameStartMessageData(msg.m_message,       single_player_game,             empire_id,
@@ -955,8 +955,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     // TODO: reselect last fleet if stored in save game ui data?
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % CurrentTurn()) + "\n");
-    Client().GetClientUI().GetMessageWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
-    Client().GetClientUI().GetPlayerListWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
+    Client().GetClientUI().GetPlayerListWnd()->HandleEmpireStatusUpdate(Message::PLAYING_TURN, Client().EmpireID());
 
     if (Client().GetApp()->GetClientType() != Networking::CLIENT_TYPE_HUMAN_OBSERVER)
         Client().GetClientUI().GetMapWnd()->EnableOrderIssuing(true);
@@ -1047,29 +1046,25 @@ boost::statechart::result PlayingTurn::react(const TurnEnded& msg) {
 
 boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingTurn.PlayerStatus";
-    int about_player_id;
+    int ignore_about_player_id;
     Message::PlayerStatus status;
-    ExtractPlayerStatusMessageData(msg.m_message, about_player_id, status);
+    int about_empire_id;
+    ExtractPlayerStatusMessageData(msg.m_message, ignore_about_player_id, status, about_empire_id);
 
-    Client().SetPlayerStatus(about_player_id, status);
-    Client().GetClientUI().GetMessageWnd()->HandlePlayerStatusUpdate(status, about_player_id);
-    Client().GetClientUI().GetPlayerListWnd()->HandlePlayerStatusUpdate(status, about_player_id);
+    Client().SetEmpireStatus(about_empire_id, status);
+    Client().GetClientUI().GetPlayerListWnd()->HandleEmpireStatusUpdate(status, about_empire_id);
 
     if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
         Client().GetClientUI().GetMapWnd()->AutoEndTurnEnabled())
     {
-        // check status of all non-mod non-obs players: are they all done their turns?
+        // check status of all empires: are they all done their turns?
         bool all_participants_waiting = true;
-        const auto& player_status = Client().PlayerStatus();
-        for (auto& entry : Client().Players()) {
-            int player_id = entry.first;
+        const auto& empire_status = Client().EmpireStatus();
+        for (auto& entry : Client().Empires()) {
+            int empire_id = entry.first;
 
-            if (entry.second.client_type != Networking::CLIENT_TYPE_AI_PLAYER &&
-                entry.second.client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER)
-            { continue; }   // only active participants matter...
-
-            auto status_it = player_status.find(player_id);
-            if (status_it == player_status.end()) {
+            auto status_it = empire_status.find(empire_id);
+            if (status_it == empire_status.end()) {
                 all_participants_waiting = false;
                 break;
             }

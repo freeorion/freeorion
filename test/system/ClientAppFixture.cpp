@@ -170,7 +170,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         SaveGameUIData ui_data;      // ignored
         bool state_string_available; // ignored
         std::string save_state_string;
-        m_player_status.clear();
+        m_empire_status.clear();
 
         ExtractGameStartMessageData(msg,                     single_player_game,     m_empire_id,
                                     m_current_turn,          m_empires,              m_universe,
@@ -195,12 +195,13 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
     case Message::CHAT_HISTORY:
         return true; // ignore
     case Message::PLAYER_STATUS: {
-        int about_player_id;
+        int ignore_about_player_id;
+        int about_empire_id;
         Message::PlayerStatus status;
-        ExtractPlayerStatusMessageData(msg, about_player_id, status);
+        ExtractPlayerStatusMessageData(msg, ignore_about_player_id, status, about_empire_id);
 
         if (status == Message::WAITING) {
-            m_ai_waiting.erase(about_player_id);
+            m_ai_waiting.erase(ignore_about_player_id);
         }
         return true;
     }
