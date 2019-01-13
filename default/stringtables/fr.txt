@@ -1917,6 +1917,9 @@ Quitter automatiquement une fois au tour spécifié par --auto-advance-n-turns (
 OPTIONS_DB_BINARY_SERIALIZATION
 Utilise la sérialisation binaire pour les fichiers de sauvegarde. La sérialisation binaire est plus rapide lors de la sauvegarde et du chargement, mais peut rencontrer des problèmes de compatibilité si le fichier de sauvegarde est utilisé sur un système d'exploitation différent.
 
+OPTIONS_DB_SERVER_BINARY_SERIALIZATION
+Le serveur utilisera la sérialisation binaire pour l'interaction client-serveur si la version client correspond à la version serveur. La sérialisation binaire est plus rapide à transmettre, mais peut s'avérer incompatible entre différents systèmes d'exploitation et architectures.
+
 OPTIONS_DB_XML_ZLIB_SERIALIZATION
 Lors d'une sauvegarde utilisant la sérialisation XML, compresser une grande partie du code XML avant de créer le fichier. La compression réduit substantiellement la taille du fichier de sauvegarde, mais peut rendre impossible le chargement dudit fichier en raison de la quantité de mémoire nécessaire pour décompresser les données de sauvegarde.
 
