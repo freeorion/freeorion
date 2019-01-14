@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
 
         if (g == 0) {
             // if first game lobby should be empty
-            BOOST_REQUIRE(GetLobbyAICount() == 0);
+            BOOST_REQUIRE_EQUAL(GetLobbyAICount(), 0);
 
             // fill lobby with AIs
             for (unsigned int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
@@ -162,12 +162,10 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
                     BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
                 }
             }
-            BOOST_REQUIRE(GetLobbyAICount() == num_AIs);
-
-        } else {
-            // other game should retain number of AIs from previous game
-            BOOST_REQUIRE(GetLobbyAICount() == num_AIs);
         }
+        // after filling first game there should be corrent number of AIs
+        // and other game should retain number of AIs from previous game
+        BOOST_REQUIRE_EQUAL(GetLobbyAICount(), num_AIs);
 
         // get ready
         for (auto& plr : m_lobby_data.m_players) {
@@ -181,14 +179,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
             BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
         }
 
-        for (const auto& player : Players()) {
-            if (player.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-                m_ai_players.insert(player.first);
-        }
-
-        BOOST_REQUIRE(m_ai_players.size() == num_AIs);
-
-        m_ai_waiting = m_ai_players;
+        BOOST_REQUIRE_EQUAL(m_ai_players.size(), num_AIs);
 
         start_time = boost::posix_time::microsec_clock::local_time();
         while (! m_ai_waiting.empty()) {

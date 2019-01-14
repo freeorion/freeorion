@@ -118,14 +118,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
         BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
     }
 
-    for (const auto& player : Players()) {
-        if (player.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-            m_ai_players.insert(player.first);
-    }
-
-    BOOST_REQUIRE(m_ai_players.size() == num_AIs);
-
-    m_ai_waiting = m_ai_players;
+    BOOST_REQUIRE_EQUAL(m_ai_players.size(), num_AIs);
 
     BOOST_TEST_MESSAGE("Game started. Waiting AI for turns...");
 
