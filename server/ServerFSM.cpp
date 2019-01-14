@@ -2812,8 +2812,7 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
     server.PostCombatProcessTurns();
 
     // update players that other empires are now playing their turn
-    for (const auto& empire : server.Empires())
-    {
+    for (const auto& empire : server.Empires()) {
         // inform all players that this empire is playing a turn
         for (auto recipient_player_it = server.m_networking.established_begin();
             recipient_player_it != server.m_networking.established_end();
