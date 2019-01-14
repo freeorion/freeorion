@@ -103,6 +103,8 @@ jobs:
       env:
         - NAME="Build FreeOrion"
       before_install:
+        - export HOMEBREW_LOGS="~/homebrew-logs"
+        - export HOMEBREW_TEMP="~/homebrew-temp"
         - brew install ccache
         - export PATH="/usr/local/opt/ccache/libexec:$PATH"
         - mkdir -p $HOME/.ccache;
