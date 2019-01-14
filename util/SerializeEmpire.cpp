@@ -121,8 +121,18 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         for (auto& entry : temp_stringset)
             m_techs[entry] = BEFORE_FIRST_TURN;
     } else if (Archive::is_saving::value && !visible && GetOptionsDB().Get<bool>("network.server.hide-detailed-empires-data")) {
-        std::map<std::string, int> empty_string_int_map;
-        ar  & boost::serialization::make_nvp("m_techs", empty_string_int_map);
+        std::map<std::string, int> dummy_string_int_map;
+        // show only known tech without disclosure turn
+        const Empire* encoding_empire = Empires().GetEmpire(GetUniverse().EncodingEmpire());
+        if (encoding_empire) {
+            for (const auto& tech : encoding_empire->m_techs) {
+                const auto it = m_techs.find(tech.first);
+                if (it != m_techs.end()) {
+                    dummy_string_int_map.emplace(tech.first, BEFORE_FIRST_TURN);
+                }
+            }
+        }
+        ar  & boost::serialization::make_nvp("m_techs", dummy_string_int_map);
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_techs);
     }
