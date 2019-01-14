@@ -186,9 +186,10 @@ public:
     void DropPlayerEmpireLink(int planet_id);
 
     /** Adds new player to running game.
-      * Search empire by player's name and return true if success and false if no empire found.
-      * Simply sends GAME_START message so established player knows he is in the game. */
-    bool AddPlayerIntoGame(const PlayerConnectionPtr& player_connection);
+      * Search empire by player's name and return empire id if success and ALL_EMPIRES if no empire found.
+      * Simply sends GAME_START message so established player knows he is in the game.
+      * Notificates the player about statuses of other empires. */
+    int AddPlayerIntoGame(const PlayerConnectionPtr& player_connection);
     //@}
 
     void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);

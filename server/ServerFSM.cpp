@@ -2302,9 +2302,20 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                 // previous connection was dropped
                 // set empire link to new connection by name
                 // send playing game
-                server.AddPlayerIntoGame(player_connection);
-                // In both cases update ingame lobby
+                int empire_id = server.AddPlayerIntoGame(player_connection);
+                if (empire_id != ALL_EMPIRES) {
+                    // notify other player that this empire revoked orders
+                    for (auto player_it = server.m_networking.established_begin();
+                         player_it != server.m_networking.established_end(); ++player_it)
+                    {
+                        PlayerConnectionPtr player_ctn = *player_it;
+                        player_ctn->SendMessage(PlayerStatusMessage(player_connection->PlayerID(),
+                                                                    Message::PLAYING_TURN,
+                                                                    empire_id));
+                    }
+                }
             }
+            // In both cases update ingame lobby
             fsm.UpdateIngameLobby();
         }
     }
@@ -2813,7 +2824,7 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
 
     // update players that other empires are now playing their turn
     for (const auto& empire : server.Empires()) {
-        // inform all players that this empire is playing a turn
+        // inform all players that this empire is playing a turn if not eliminated
         for (auto recipient_player_it = server.m_networking.established_begin();
             recipient_player_it != server.m_networking.established_end();
             ++recipient_player_it)
