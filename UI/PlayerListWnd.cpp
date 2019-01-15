@@ -597,7 +597,7 @@ void PlayerListWnd::HandleEmpireStatusUpdate(Message::PlayerStatus player_status
     for (auto& row : *m_player_list) {
         if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row.get())) {
             if (about_empire_id == ALL_EMPIRES) {
-                player_row->SetStatus(player_status);
+                WarnLogger() << "PlayerListWnd::HandleEmpireStatusUpdate got no empire";
             } else if (player_row->EmpireID() == about_empire_id) {
                 player_row->SetStatus(player_status);
                 return;
