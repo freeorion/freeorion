@@ -1653,6 +1653,16 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
                                                         GetSpeciesManager(), GetCombatLogManager(),
                                                         GetSupplyManager(), player_info_map,
                                                         m_galaxy_setup_data, use_binary_serialization));
+
+        // send other empires' statuses
+        for (const auto& empire : Empires()) {
+            auto other_orders_it = m_turn_sequence.find(empire.first);
+            bool ready = other_orders_it == m_turn_sequence.end() ||
+                    (other_orders_it->second.second && other_orders_it->second.first);
+            player_connection->SendMessage(PlayerStatusMessage(EmpirePlayerID(empire.first),
+                                                               ready ? Message::WAITING : Message::PLAYING_TURN,
+                                                               empire.first));
+        }
     } else {
         ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
     }
