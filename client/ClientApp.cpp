@@ -45,6 +45,9 @@ const GalaxySetupData& ClientApp::GetGalaxySetupData() const
 EmpireManager& ClientApp::Empires()
 { return m_empires; }
 
+const EmpireManager& ClientApp::Empires() const
+{ return m_empires; }
+
 Empire* ClientApp::GetEmpire(int empire_id)
 { return m_empires.GetEmpire(empire_id); }
 
@@ -101,16 +104,16 @@ const std::map<int, PlayerInfo>& ClientApp::Players() const
 std::map<int, PlayerInfo>& ClientApp::Players()
 { return m_player_info; }
 
-const std::map<int, Message::PlayerStatus>& ClientApp::PlayerStatus() const
-{ return m_player_status; }
+const std::map<int, Message::PlayerStatus>& ClientApp::EmpireStatus() const
+{ return m_empire_status; }
 
-std::map<int, Message::PlayerStatus>& ClientApp::PlayerStatus()
-{ return m_player_status; }
+std::map<int, Message::PlayerStatus>& ClientApp::EmpireStatus()
+{ return m_empire_status; }
 
-void ClientApp::SetPlayerStatus(int player_id, Message::PlayerStatus status) {
-    if (player_id == Networking::INVALID_PLAYER_ID)
+void ClientApp::SetEmpireStatus(int empire_id, Message::PlayerStatus status) {
+    if (empire_id == ALL_EMPIRES)
         return;
-    m_player_status[player_id] = status;
+    m_empire_status[empire_id] = status;
 }
 
 void ClientApp::StartTurn()

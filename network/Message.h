@@ -120,9 +120,10 @@ public:
         STARTING_AIS            ///< creating AI clients
     )
 
+    /// \todo change to EmpireStatus on compatibility breakage
     GG_CLASS_ENUM(PlayerStatus,
-        PLAYING_TURN,           ///< player is playing a turn, on the galax map
-        WAITING                 ///< player is waiting for others to submit orders, to resolve combats, or for turn processing to complete
+        PLAYING_TURN,           ///< empire is playing a turn, on the galax map
+        WAITING                 ///< empire is waiting for others to submit orders, to resolve combats, or for turn processing to complete
     )
 
     GG_CLASS_ENUM(EndGameReason,
@@ -248,7 +249,9 @@ FO_COMMON_API Message TurnOrdersMessage(const OrderSet& orders);
 FO_COMMON_API Message TurnProgressMessage(Message::TurnProgressPhase phase_id);
 
 /** creates a PLAYER_STATUS message. */
-FO_COMMON_API Message PlayerStatusMessage(int about_player_id, Message::PlayerStatus player_status);
+FO_COMMON_API Message PlayerStatusMessage(int about_player_id,
+                                          Message::PlayerStatus player_status,
+                                          int about_empire_id);
 
 /** creates a TURN_UPDATE message. */
 FO_COMMON_API Message TurnUpdateMessage(int empire_id, int current_turn,
@@ -419,7 +422,10 @@ FO_COMMON_API void ExtractClientSaveDataMessageData(const Message& msg, OrderSet
 
 FO_COMMON_API void ExtractTurnProgressMessageData(const Message& msg, Message::TurnProgressPhase& phase_id);
 
-FO_COMMON_API void ExtractPlayerStatusMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status);
+FO_COMMON_API void ExtractPlayerStatusMessageData(const Message& msg,
+                                                  int& about_player_id,
+                                                  Message::PlayerStatus& status,
+                                                  int& about_empire_id);
 
 FO_COMMON_API void ExtractHostSPGameMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string);
 

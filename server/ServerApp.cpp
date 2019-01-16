@@ -1653,6 +1653,16 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
                                                         GetSpeciesManager(), GetCombatLogManager(),
                                                         GetSupplyManager(), player_info_map,
                                                         m_galaxy_setup_data, use_binary_serialization));
+
+        // send other empires' statuses
+        for (const auto& empire : Empires()) {
+            auto other_orders_it = m_turn_sequence.find(empire.first);
+            bool ready = other_orders_it == m_turn_sequence.end() ||
+                    (other_orders_it->second.second && other_orders_it->second.first);
+            player_connection->SendMessage(PlayerStatusMessage(EmpirePlayerID(empire.first),
+                                                               ready ? Message::WAITING : Message::PLAYING_TURN,
+                                                               empire.first));
+        }
     } else {
         ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
     }
@@ -1728,42 +1738,59 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
 void ServerApp::DropPlayerEmpireLink(int player_id)
 { m_player_empire_ids.erase(player_id); }
 
-bool ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
+int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
+    int empire_id = ALL_EMPIRES;
     // search empire by player name
     for (auto empire : Empires()) {
         if (empire.second->PlayerName() == player_connection->PlayerName()) {
-            auto orders_it = m_turn_sequence.find(empire.first);
-            if (orders_it == m_turn_sequence.end()) {
-                WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire.first
-                             << " for \"" << player_connection->PlayerName()
-                             << "\" doesn't wait for orders";
-                return false;
-            }
-            // make a link to new connection
-            m_player_empire_ids[player_connection->PlayerID()] = empire.first;
-
-            const OrderSet dummy;
-            const OrderSet& orders = orders_it->second.second ? *orders_it->second.second : dummy;
-
-            // drop ready status
-            orders_it->second.first = false;
-
-            auto player_info_map = GetPlayerInfoMap();
-            bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
-
-            player_connection->SendMessage(GameStartMessage(
-                m_single_player_game, empire.first,
-                m_current_turn, m_empires, m_universe,
-                GetSpeciesManager(), GetCombatLogManager(),
-                GetSupplyManager(),  player_info_map, orders,
-                static_cast<const SaveGameUIData*>(nullptr),
-                m_galaxy_setup_data,
-                use_binary_serialization));
-
-            return true;
+            empire_id = empire.first;
+            break;
         }
     }
-    return false;
+
+    if (empire_id == ALL_EMPIRES)
+        return false;
+
+    auto orders_it = m_turn_sequence.find(empire_id);
+    if (orders_it == m_turn_sequence.end()) {
+        WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id
+                     << " for \"" << player_connection->PlayerName()
+                     << "\" doesn't wait for orders";
+        return false;
+    }
+
+    // make a link to new connection
+    m_player_empire_ids[player_connection->PlayerID()] = empire_id;
+
+    const OrderSet dummy;
+    const OrderSet& orders = orders_it->second.second ? *orders_it->second.second : dummy;
+
+    // drop ready status
+    orders_it->second.first = false;
+
+    auto player_info_map = GetPlayerInfoMap();
+    bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
+
+    player_connection->SendMessage(GameStartMessage(
+        m_single_player_game, empire_id,
+        m_current_turn, m_empires, m_universe,
+        GetSpeciesManager(), GetCombatLogManager(),
+        GetSupplyManager(),  player_info_map, orders,
+        static_cast<const SaveGameUIData*>(nullptr),
+        m_galaxy_setup_data,
+        use_binary_serialization));
+
+    // send other empires' statuses
+    for (const auto& empire : Empires()) {
+        auto other_orders_it = m_turn_sequence.find(empire.first);
+        bool ready = other_orders_it == m_turn_sequence.end() ||
+                (other_orders_it->second.second && other_orders_it->second.first);
+        player_connection->SendMessage(PlayerStatusMessage(EmpirePlayerID(empire.first),
+                                                           ready ? Message::WAITING : Message::PLAYING_TURN,
+                                                           empire.first));
+    }
+
+    return true;
 }
 
 bool ServerApp::IsHostless() const

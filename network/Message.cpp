@@ -374,12 +374,16 @@ Message TurnProgressMessage(Message::TurnProgressPhase phase_id) {
     return Message(Message::TURN_PROGRESS, os.str());
 }
 
-Message PlayerStatusMessage(int about_player_id, Message::PlayerStatus player_status) {
+Message PlayerStatusMessage(int about_player_id,
+                            Message::PlayerStatus player_status,
+                            int about_empire_id)
+{
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(about_player_id)
-           << BOOST_SERIALIZATION_NVP(player_status);
+           << BOOST_SERIALIZATION_NVP(player_status)
+           << BOOST_SERIALIZATION_NVP(about_empire_id);
     }
     return Message(Message::PLAYER_STATUS, os.str());
 }
@@ -1076,12 +1080,16 @@ void ExtractTurnProgressMessageData(const Message& msg, Message::TurnProgressPha
     }
 }
 
-void ExtractPlayerStatusMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status) {
+void ExtractPlayerStatusMessageData(const Message& msg,
+                                    int& about_player_id,
+                                    Message::PlayerStatus& status,
+                                    int& about_empire_id) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(about_player_id)
-           >> BOOST_SERIALIZATION_NVP(status);
+           >> BOOST_SERIALIZATION_NVP(status)
+           >> BOOST_SERIALIZATION_NVP(about_empire_id);
 
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractPlayerStatusMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus&) failed!  Message:\n"

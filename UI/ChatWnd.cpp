@@ -399,9 +399,6 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
 }
 
-void MessageWnd::HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id)
-{}
-
 void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, bool prefixed /*= false*/) {
     std::string phase_str;
     switch (phase_id) {

@@ -388,14 +388,13 @@ bool HumanClientApp::CanSaveNow() const {
         return false;
 
     // can't save while AIs are playing their turns...
-    for (const auto& entry : m_player_info) {
-        const PlayerInfo& info = entry.second;
-        if (info.client_type != Networking::CLIENT_TYPE_AI_PLAYER)
+    for (const auto& entry : Empires()) {
+        if (GetEmpireClientType(entry.first) != Networking::CLIENT_TYPE_AI_PLAYER)
             continue;   // only care about AIs
 
-        auto status_it = m_player_status.find(entry.first);
+        auto status_it = m_empire_status.find(entry.first);
 
-        if (status_it == this->m_player_status.end()) {
+        if (status_it == this->m_empire_status.end()) {
             return false;  // missing status for AI; can't assume it's ready
         }
         if (status_it->second != Message::WAITING) {

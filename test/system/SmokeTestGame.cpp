@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
         BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
     }
 
-    BOOST_REQUIRE_EQUAL(m_ai_players.size(), num_AIs);
+    BOOST_REQUIRE_EQUAL(m_ai_empires.size(), num_AIs);
 
     BOOST_TEST_MESSAGE("Game started. Waiting AI for turns...");
 
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
         SendTurnOrders();
 
         m_turn_done = false;
-        m_ai_waiting = m_ai_players;
+        m_ai_waiting = m_ai_empires;
 
         BOOST_TEST_MESSAGE("Turn done. Waiting server for update...");
         start_time = boost::posix_time::microsec_clock::local_time();

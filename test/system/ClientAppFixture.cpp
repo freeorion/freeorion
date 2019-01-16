@@ -170,7 +170,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         SaveGameUIData ui_data;      // ignored
         bool state_string_available; // ignored
         std::string save_state_string;
-        m_player_status.clear();
+        m_empire_status.clear();
 
         ExtractGameStartMessageData(msg,                     single_player_game,     m_empire_id,
                                     m_current_turn,          m_empires,              m_universe,
@@ -181,11 +181,11 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
 
         InfoLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
-        for (const auto& player : Players()) {
-            if (player.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-                m_ai_players.insert(player.first);
+        for (const auto& empire : Empires()) {
+            if (GetEmpireClientType(empire.first) == Networking::CLIENT_TYPE_AI_PLAYER)
+                m_ai_empires.insert(empire.first);
         }
-        m_ai_waiting = m_ai_players;
+        m_ai_waiting = m_ai_empires;
 
         m_game_started = true;
         return true;
@@ -195,12 +195,13 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
     case Message::CHAT_HISTORY:
         return true; // ignore
     case Message::PLAYER_STATUS: {
-        int about_player_id;
+        int ignore_about_player_id;
+        int about_empire_id;
         Message::PlayerStatus status;
-        ExtractPlayerStatusMessageData(msg, about_player_id, status);
+        ExtractPlayerStatusMessageData(msg, ignore_about_player_id, status, about_empire_id);
 
         if (status == Message::WAITING) {
-            m_ai_waiting.erase(about_player_id);
+            m_ai_waiting.erase(ignore_about_player_id);
         }
         return true;
     }

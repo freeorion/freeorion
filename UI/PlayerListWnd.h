@@ -21,7 +21,7 @@ public:
     //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-    void            HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id);
+    void            HandleEmpireStatusUpdate(Message::PlayerStatus player_status, int about_empire_id);
     void            Update();
     void            Refresh();
     void            Clear();

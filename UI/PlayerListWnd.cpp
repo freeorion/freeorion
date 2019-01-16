@@ -593,12 +593,12 @@ std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
     return retval;
 }
 
-void PlayerListWnd::HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id) {
+void PlayerListWnd::HandleEmpireStatusUpdate(Message::PlayerStatus player_status, int about_empire_id) {
     for (auto& row : *m_player_list) {
         if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row.get())) {
-            if (about_player_id == Networking::INVALID_PLAYER_ID) {
-                player_row->SetStatus(player_status);
-            } else if (player_row->PlayerID() == about_player_id) {
+            if (about_empire_id == ALL_EMPIRES) {
+                WarnLogger() << "PlayerListWnd::HandleEmpireStatusUpdate got no empire";
+            } else if (player_row->EmpireID() == about_empire_id) {
                 player_row->SetStatus(player_status);
                 return;
             }

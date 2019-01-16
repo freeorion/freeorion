@@ -2302,9 +2302,20 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                 // previous connection was dropped
                 // set empire link to new connection by name
                 // send playing game
-                server.AddPlayerIntoGame(player_connection);
-                // In both cases update ingame lobby
+                int empire_id = server.AddPlayerIntoGame(player_connection);
+                if (empire_id != ALL_EMPIRES) {
+                    // notify other player that this empire revoked orders
+                    for (auto player_it = server.m_networking.established_begin();
+                         player_it != server.m_networking.established_end(); ++player_it)
+                    {
+                        PlayerConnectionPtr player_ctn = *player_it;
+                        player_ctn->SendMessage(PlayerStatusMessage(player_connection->PlayerID(),
+                                                                    Message::PLAYING_TURN,
+                                                                    empire_id));
+                    }
+                }
             }
+            // In both cases update ingame lobby
             fsm.UpdateIngameLobby();
         }
     }
@@ -2530,15 +2541,17 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
             return discard_event();
         }
 
+        int empire_id = empire->EmpireID();
+
         for (const auto& id_and_order : *order_set) {
             auto& order = id_and_order.second;
             if (!order) {
                 ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) couldn't get order from order set!";
                 continue;
             }
-            if (empire->EmpireID() != order->EmpireID()) {
+            if (empire_id != order->EmpireID()) {
                 ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
-                                 << player_id << ") who controls empire " << empire->EmpireID()
+                                 << player_id << ") who controls empire " << empire_id
                                  << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
                 sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
                 return discard_event();
@@ -2547,16 +2560,15 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
         TraceLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Received orders from player " << player_id;
 
-        server.SetEmpireTurnOrders(empire->EmpireID(), std::move(order_set));
-    }
+        server.SetEmpireTurnOrders(empire_id, std::move(order_set));
 
-
-    // notify other player that this player submitted orders
-    for (auto player_it = server.m_networking.established_begin();
-         player_it != server.m_networking.established_end(); ++player_it)
-    {
-        PlayerConnectionPtr player_ctn = *player_it;
-        player_ctn->SendMessage(PlayerStatusMessage(player_id, Message::WAITING));
+        // notify other player that this empire submitted orders
+        for (auto player_it = server.m_networking.established_begin();
+             player_it != server.m_networking.established_end(); ++player_it)
+        {
+            PlayerConnectionPtr player_ctn = *player_it;
+            player_ctn->SendMessage(PlayerStatusMessage(player_id, Message::WAITING, empire_id));
+        }
     }
 
     // inform player who just submitted of their new status.  Note: not sure why
@@ -2599,20 +2611,22 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
             return discard_event();
         }
 
+        int empire_id = empire->EmpireID();
+
         TraceLogger(FSM) << "WaitingForTurnEnd.RevokeReadiness : Revoke orders from player " << player_id;
 
-        server.RevokeEmpireTurnReadyness(empire->EmpireID());
-    }
+        server.RevokeEmpireTurnReadyness(empire_id);
 
-    // inform player who just submitted of acknowledge revoking status.
-    sender->SendMessage(msg.m_message);
+        // inform player who just submitted of acknowledge revoking status.
+        sender->SendMessage(msg.m_message);
 
-    // notify other player that this player revoked orders
-    for (auto player_it = server.m_networking.established_begin();
-         player_it != server.m_networking.established_end(); ++player_it)
-    {
-        PlayerConnectionPtr player_ctn = *player_it;
-        player_ctn->SendMessage(PlayerStatusMessage(player_id, Message::PLAYING_TURN));
+        // notify other player that this empire revoked orders
+        for (auto player_it = server.m_networking.established_begin();
+             player_it != server.m_networking.established_end(); ++player_it)
+        {
+            PlayerConnectionPtr player_ctn = *player_it;
+            player_ctn->SendMessage(PlayerStatusMessage(player_id, Message::PLAYING_TURN, empire_id));
+        }
     }
 
     return discard_event();
@@ -2808,26 +2822,19 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
     server.ProcessCombats();
     server.PostCombatProcessTurns();
 
-    // update players that other players are now playing their turn
-    for (auto player_it = server.m_networking.established_begin();
-         player_it != server.m_networking.established_end();
-         ++player_it)
-    {
-        PlayerConnectionPtr player_ctn = *player_it;
-        if (player_ctn->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER ||
-            player_ctn->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-            player_ctn->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-            player_ctn->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+    // update players that other empires are now playing their turn
+    for (const auto& empire : server.Empires()) {
+        // inform all players that this empire is playing a turn if not eliminated
+        for (auto recipient_player_it = server.m_networking.established_begin();
+            recipient_player_it != server.m_networking.established_end();
+            ++recipient_player_it)
         {
-            // inform all players that this player is playing a turn
-            for (auto recipient_player_it = server.m_networking.established_begin();
-                recipient_player_it != server.m_networking.established_end();
-                ++recipient_player_it)
-            {
-                const PlayerConnectionPtr& recipient_player_ctn = *recipient_player_it;
-                recipient_player_ctn->SendMessage(PlayerStatusMessage(player_ctn->PlayerID(),
-                                                                      Message::PLAYING_TURN));
-            }
+            const PlayerConnectionPtr& recipient_player_ctn = *recipient_player_it;
+            recipient_player_ctn->SendMessage(PlayerStatusMessage(server.EmpirePlayerID(empire.first),
+                                                                  empire.second->Eliminated() ?
+                                                                      Message::WAITING :
+                                                                      Message::PLAYING_TURN,
+                                                                  empire.first));
         }
     }
 
