@@ -134,6 +134,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
     }
 
     for (unsigned int g = 0; g < num_games; ++g) {
+        m_game_started = false;
         BOOST_TEST_MESSAGE("Game " << g << ". Connecting to server...");
 
         BOOST_REQUIRE(ConnectToServer("localhost"));
