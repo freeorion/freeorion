@@ -73,7 +73,8 @@ struct ScriptingContext {
         effect_target(parent_context.effect_target),
         condition_root_candidate(parent_context.condition_root_candidate),
         condition_local_candidate(parent_context.condition_local_candidate),
-        current_value(current_value_)
+        current_value(current_value_),
+        empire_object_vis_map_override(parent_context.empire_object_vis_map_override)
     {}
 
     /** For recusrive evaluation of Conditions.  Keeps source and effect_target
@@ -82,13 +83,14 @@ struct ScriptingContext {
       * becomes the root candidate. */
     ScriptingContext(const ScriptingContext& parent_context,
                      std::shared_ptr<const UniverseObject> condition_local_candidate_) :
-        source(                     parent_context.source),
-        effect_target(              parent_context.effect_target),
-        condition_root_candidate(   parent_context.condition_root_candidate ?
-                                        parent_context.condition_root_candidate :
-                                        condition_local_candidate_),    // if parent context doesn't already have a root candidate, the new local candidate is the root
-        condition_local_candidate(  condition_local_candidate_),        // new local candidate
-        current_value(              parent_context.current_value)
+        source(                         parent_context.source),
+        effect_target(                  parent_context.effect_target),
+        condition_root_candidate(       parent_context.condition_root_candidate ?
+                                            parent_context.condition_root_candidate :
+                                            condition_local_candidate_),    // if parent context doesn't already have a root candidate, the new local candidate is the root
+        condition_local_candidate(      condition_local_candidate_),        // new local candidate
+        current_value(                  parent_context.current_value),
+        empire_object_vis_map_override( parent_context.empire_object_vis_map_override)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
