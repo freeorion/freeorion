@@ -234,7 +234,6 @@ namespace {
 
     class LazyScrollerLinkText : public LinkText {
     public:
-
         mutable boost::signals2::signal<void ()> ChangedSignal;
 
         LazyScrollerLinkText(
@@ -244,18 +243,17 @@ namespace {
             m_text( new std::string(str)),
             m_signals()
         {
-
             // Register for signals that might bring the text into view
-
-            if (CombatLogWnd const* log = FindParentOfType<CombatLogWnd>(&parent)) {
+            if (const auto* log = FindParentOfType<CombatLogWnd>(&parent)) {
                 m_signals.push_back(log->WndChangedSignal.connect(
                     boost::bind(&LazyScrollerLinkText::HandleMaybeVisible, this)));
             }
 
-            if (GG::ScrollPanel const * scroll_panel = FindParentOfType<GG::ScrollPanel>(&parent)) {
-                GG::Scroll const* scroll = scroll_panel->GetScroll();
+            if (const auto* scroll_panel = FindParentOfType<GG::ScrollPanel>(&parent)) {
+                const auto* scroll = scroll_panel->GetScroll();
                 m_signals.push_back(scroll->ScrolledAndStoppedSignal.connect(
-                    boost::bind(&LazyScrollerLinkText::HandleScrolledAndStopped, this, _1, _2, _3, _4)));
+                    boost::bind(&LazyScrollerLinkText::HandleScrolledAndStopped,
+                                this, _1, _2, _3, _4)));
 
             }
 
@@ -276,11 +274,11 @@ namespace {
                 return;
 
             // Check if any part of text is in the scrollers visible area
-            GG::ScrollPanel const* scroll_panel = FindParentOfType<GG::ScrollPanel>(Parent().get());
+            const auto* scroll_panel = FindParentOfType<GG::ScrollPanel>(Parent().get());
             if (scroll_panel && (scroll_panel->InClient(UpperLeft())
-                                 || scroll_panel->InClient(LowerRight())
-                                 || scroll_panel->InClient(GG::Pt(Right(), Top()))
-                                 || scroll_panel->InClient(GG::Pt(Left(), Bottom()))))
+                             || scroll_panel->InClient(LowerRight())
+                             || scroll_panel->InClient(GG::Pt(Right(), Top()))
+                             || scroll_panel->InClient(GG::Pt(Left(), Bottom()))))
             {
                 for (boost::signals2::connection& signal : m_signals)
                     signal.disconnect();
@@ -310,7 +308,8 @@ namespace {
 }
 
 std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(const std::string& text) {
-    auto links = GG::Wnd::Create<LazyScrollerLinkText>(m_wnd, GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
+    auto links = GG::Wnd::Create<LazyScrollerLinkText>(m_wnd, GG::X0, GG::Y0,
+                                                       text, m_font, GG::CLR_WHITE);
 
     links->SetTextFormat(m_text_format_flags);
 
@@ -322,8 +321,7 @@ std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(const std::string
     links->LinkClickedSignal.connect(m_wnd.LinkClickedSignal);
     links->LinkDoubleClickedSignal.connect(m_wnd.LinkDoubleClickedSignal);
     links->LinkRightClickedSignal.connect(m_wnd.LinkRightClickedSignal);
-    links->ChangedSignal.connect(
-        boost::bind(&CombatLogWnd::Impl::HandleWndChanged, this));
+    links->ChangedSignal.connect(boost::bind(&CombatLogWnd::Impl::HandleWndChanged, this));
 
     return links;
 }
@@ -345,10 +343,9 @@ void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id,
     }
 }
 
-
 // Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
-std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(GG::X w, int viewing_empire_id,
-                                                                             ConstCombatEventPtr event)
+std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(
+    GG::X w, int viewing_empire_id, ConstCombatEventPtr event)
 {
     std::vector<std::shared_ptr<GG::Wnd>> new_logs;
 
