@@ -222,13 +222,11 @@ std::string Ship::Dump(unsigned short ntabs) const {
     if (!m_part_meters.empty()) {
         os << " part meters: ";
         for (const auto& entry : m_part_meters) {
-        const std::string part_name = entry.first.second;
-        MeterType meter_type = entry.first.first;
-        const Meter& meter = entry.second;
-        os << part_name << " "
-           << meter_type
-           << ": " << meter.Current() << "  ";
-    }
+            const std::string part_name = entry.first.second;
+            MeterType meter_type = entry.first.first;
+            const Meter& meter = entry.second;
+            os << part_name << " " << meter_type << ": " << meter.Current() << "  ";
+        }
     }
     return os.str();
 }
@@ -576,12 +574,18 @@ void Ship::Resupply() {
     // this "upgrades" any direct-fire weapon parts to their latest-allowed
     // strengths, and replaces any lost fighters
     for (auto& entry : m_part_meters) {
-        auto max_it = m_part_meters.end();
-        if (entry.first.first == METER_CAPACITY) {
-            max_it = m_part_meters.find({METER_MAX_CAPACITY, entry.first.second});
-        } else if (entry.first.first == METER_SECONDARY_STAT) {
-            max_it = m_part_meters.find({METER_MAX_SECONDARY_STAT, entry.first.second});
+        const auto& part_name = entry.first.second;
+        MeterType meter_type = entry.first.first;
+        MeterType paired_meter_type = INVALID_METER_TYPE;
+        switch(meter_type) {
+        case METER_CAPACITY:        paired_meter_type = METER_MAX_CAPACITY;         break;
+        case METER_SECONDARY_STAT:  paired_meter_type = METER_MAX_SECONDARY_STAT;   break;
+        default:
+            break;
         }
+        if (paired_meter_type == INVALID_METER_TYPE)
+            continue;
+        auto max_it = m_part_meters.find({paired_meter_type, part_name});
         if (max_it == m_part_meters.end())
             continue;
 
@@ -645,15 +649,31 @@ void Ship::ResetTargetMaxUnpairedMeters() {
     UniverseObject::GetMeter(METER_SPEED)->ResetCurrent();
     //UniverseObject::GetMeter(METER_STEALTH)->ResetCurrent(); redundant with base class function
 
+    // max meters are always treated as target/max meters.
+    // other meters may be unpaired if there is no associated max or target meter
     for (auto& entry : m_part_meters) {
-        auto max_it = m_part_meters.end();
-        if (entry.first.first == METER_CAPACITY) {
-            max_it = m_part_meters.find({METER_MAX_CAPACITY, entry.first.second});
-        } else if (entry.first.first == METER_SECONDARY_STAT) {
-            max_it = m_part_meters.find({METER_MAX_SECONDARY_STAT, entry.first.second});
-        }
-        if (max_it != m_part_meters.end())
+        const auto& part_name = entry.first.second;
+        MeterType meter_type = entry.first.first;
+        MeterType paired_meter_type = INVALID_METER_TYPE;
+
+        switch(meter_type) {
+        case METER_MAX_CAPACITY:
+        case METER_MAX_SECONDARY_STAT:
+            entry.second.ResetCurrent();
             continue;
+            break;
+        case METER_CAPACITY:        paired_meter_type = METER_MAX_CAPACITY;         break;
+        case METER_SECONDARY_STAT:  paired_meter_type = METER_MAX_SECONDARY_STAT;   break;
+        default:
+            continue;
+            break;
+        }
+
+        auto max_it = m_part_meters.find({paired_meter_type, part_name});
+        if (max_it != m_part_meters.end())
+            continue;   // is a max/target meter associated with the meter, so don't treat this a target/max
+
+        // no associated target/max meter, so treat this meter as unpaired
         entry.second.ResetCurrent();
     }
 }
@@ -661,15 +681,32 @@ void Ship::ResetTargetMaxUnpairedMeters() {
 void Ship::ResetPairedActiveMeters() {
     UniverseObject::ResetPairedActiveMeters();
 
+    // meters are paired only if they are not max/target meters, and there is an associated max/target meter
     for (auto& entry : m_part_meters) {
-        auto max_it = m_part_meters.end();
-        if (entry.first.first == METER_CAPACITY) {
-            max_it = m_part_meters.find({METER_MAX_CAPACITY, entry.first.second});
-        } else if (entry.first.first == METER_SECONDARY_STAT) {
-            max_it = m_part_meters.find({METER_MAX_SECONDARY_STAT, entry.first.second});
+        const auto& part_name = entry.first.second;
+        MeterType meter_type = entry.first.first;
+        MeterType paired_meter_type = INVALID_METER_TYPE;
+
+        switch(meter_type) {
+        case METER_MAX_CAPACITY:
+        case METER_MAX_SECONDARY_STAT:
+            continue;   // is a max/target meter
+            break;
+        case METER_CAPACITY:        paired_meter_type = METER_MAX_CAPACITY;         break;
+        case METER_SECONDARY_STAT:  paired_meter_type = METER_MAX_SECONDARY_STAT;   break;
+        default:
+            continue;   // no associated max/target meter
+            break;
         }
-        if (max_it != m_part_meters.end())
-            entry.second.SetCurrent(entry.second.Initial());
+
+        auto max_it = m_part_meters.find({paired_meter_type, part_name});
+        if (max_it == m_part_meters.end())
+            continue;   // no associated max/target meter
+
+        // has an associated max/target meter.
+        //std::map<std::pair<MeterType, std::string>, Meter>::iterator
+        const Meter& max_target_meter = max_it->second;
+        entry.second.SetCurrent(max_target_meter.Initial());
     }
 }
 
@@ -682,18 +719,8 @@ void Ship::SetShipMetersToMax() {
     UniverseObject::GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
 
     // some part capacity meters may have an associated max capacity...
-    for (auto& entry : m_part_meters) {
-        auto max_it = m_part_meters.end();
-        if (entry.first.first == METER_CAPACITY) {
-            max_it = m_part_meters.find({METER_MAX_CAPACITY, entry.first.second});
-        } else if (entry.first.first == METER_SECONDARY_STAT) {
-            max_it = m_part_meters.find({METER_MAX_SECONDARY_STAT, entry.first.second});
-        }
-        if (max_it == m_part_meters.end())
-            continue;
-        max_it->second.SetCurrent(Meter::LARGE_VALUE);
+    for (auto& entry : m_part_meters)
         entry.second.SetCurrent(Meter::LARGE_VALUE);
-    }
 }
 
 void Ship::ClampMeters() {
@@ -717,25 +744,33 @@ void Ship::ClampMeters() {
 
     // clamp most part meters to basic range limits
     for (auto& entry : m_part_meters) {
-        if (entry.first.first == METER_CAPACITY || entry.first.first == METER_SECONDARY_STAT)
-            continue;
-        entry.second.ClampCurrentToRange();
+        MeterType meter_type = entry.first.first;
+        switch(meter_type) {
+        case METER_MAX_CAPACITY:
+        case METER_MAX_SECONDARY_STAT:
+            entry.second.ClampCurrentToRange();
+        default:
+            break;
+        }
     }
 
-    // special case extra clamping for paired CAPACTY meters dependent on their associated MAX_CAPACITY meter...
+    // special case extra clamping for paired active meters dependent
+    // on their associated max meter...
     for (auto& entry : m_part_meters) {
-        auto max_it = m_part_meters.end();
-        if (entry.first.first == METER_CAPACITY) {
-            max_it = m_part_meters.find({METER_MAX_CAPACITY, entry.first.second});
-        } else if (entry.first.first == METER_SECONDARY_STAT) {
-            max_it = m_part_meters.find({METER_MAX_SECONDARY_STAT, entry.first.second});
+        const auto& part_name = entry.first.second;
+        MeterType meter_type = entry.first.first;
+        MeterType paired_meter_type = INVALID_METER_TYPE;
+        switch(meter_type) {
+        case METER_CAPACITY:        paired_meter_type = METER_MAX_CAPACITY;         break;
+        case METER_SECONDARY_STAT:  paired_meter_type = METER_MAX_SECONDARY_STAT;   break;
+        default:
+            break;
         }
-
-        if (max_it == m_part_meters.end()) {
-            // no found max meter, revert to normal clamping for this meter
-            entry.second.ClampCurrentToRange();
+        if (paired_meter_type == INVALID_METER_TYPE)
             continue;
-        }
+        auto max_it = m_part_meters.find({paired_meter_type, part_name});
+        if (max_it == m_part_meters.end())
+            continue;
 
         const Meter& max_meter = max_it->second;
         entry.second.ClampCurrentToRange(Meter::DEFAULT_VALUE, max_meter.Current());

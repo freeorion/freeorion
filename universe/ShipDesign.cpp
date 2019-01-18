@@ -324,11 +324,28 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     m_icon(icon),
     m_add_standard_capacity_effect(add_standard_capacity_effect)
 {
-    //TraceLogger() << "part type: " << m_name << " producible: " << m_producible << std::endl;
     Init(std::move(common_params.effects));
 
     for (const std::string& tag : common_params.tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
+
+    TraceLogger() << "PartType::PartType: name: " << m_name
+                  << " description: " << m_description
+                  << " class: " << m_class
+                  << " capacity: " << m_capacity
+                  << " secondary stat: " << m_secondary_stat
+                  //<< " prod cost: " << m_production_cost
+                  //<< " prod time: " << m_production_time
+                  << " producible: " << m_producible
+                  //<< " mountable slot types: " << m_mountable_slot_types
+                  //<< " tags: " << m_tags
+                  //<< " prod meter consump: " << m_production_meter_consumption
+                  //<< " prod special consump: " << m_production_special_consumption
+                  //<< " location: " << m_location
+                  //<< " exclusions: " << m_exclusions
+                  //<< " effects: " << m_effects
+                  << " icon: " << m_icon
+                  << " add standard cap effect: " << m_add_standard_capacity_effect;
 }
 
 void PartType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects) {
@@ -577,7 +594,7 @@ HullType::HullType(const HullTypeStats& stats,
     m_graphic(graphic),
     m_icon(icon)
 {
-    //TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
+    TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
     Init(std::move(common_params.effects));
 
     for (const std::string& tag : common_params.tags)

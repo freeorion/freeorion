@@ -2181,6 +2181,7 @@ namespace {
     /** Clears and refills \a combats with CombatInfo structs for
       * every system where a combat should occur this turn. */
     void AssembleSystemCombatInfo(std::vector<CombatInfo>& combats) {
+        combats.clear();
         // for each system, find if a combat will occur in it, and if so, assemble
         // necessary information about that combat in combats
         for (int sys_id : GetUniverse().Objects().FindObjectIDs<System>()) {
@@ -3172,27 +3173,12 @@ void ServerApp::ProcessCombats() {
         if (auto system = combat_info.GetSystem())
             system->SetLastTurnBattleHere(CurrentTurn());
 
-        //// DEBUG
-        //const System* combat_system = combat_info.GetSystem();
-        //DebugLogger() << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
-        //DebugLogger() << combat_info.objects.Dump();
-        //for (const auto& eko : combat_info.empire_known_objects) {
-        //    DebugLogger() << "known objects for empire " << eko.first;
-        //    DebugLogger() << eko.second.Dump();
-        //}
-        //// END DEBUG
-
-        // find which human players are involved in this battle
-        std::set<int> human_empires_involved;
-        for (int empire_id : combat_info.empire_ids) {
-            if (human_controlled_empire_ids.count(empire_id))
-                human_empires_involved.insert(empire_id);
-        }
-
-        // if no human players are involved, resolve battle automatically
-        if (human_empires_involved.empty()) {
-            AutoResolveCombat(combat_info);
-            continue;
+        auto combat_system = combat_info.GetSystem();
+        DebugLogger(combat) << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
+        TraceLogger(combat) << combat_info.objects.Dump();
+        for (const auto& eko : combat_info.empire_known_objects) {
+            TraceLogger(combat) << "known objects for empire " << eko.first;
+            TraceLogger(combat) << eko.second.Dump();
         }
 
         AutoResolveCombat(combat_info);
