@@ -400,15 +400,14 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
     // Write Header text
-    DebugLogger(combat_log) << "Showing combat log #" << log_id << " with " << log->combat_events.size() << " events";
-
     auto system = GetSystem(log->system_id);
     const std::string& sys_name = (system ? system->PublicName(client_empire_id) : UserString("ERROR"));
+    DebugLogger(combat_log) << "Showing combat log #" << log_id << " at " << sys_name << " (" << log->system_id
+                            << ") with " << log->combat_events.size() << " events";
 
     AddRow(DecorateLinkText(str(FlexibleFormat(UserString("ENC_COMBAT_LOG_DESCRIPTION_STR"))
                                 % LinkTaggedIDText(VarText::SYSTEM_ID_TAG, log->system_id, sys_name)
-                                % log->turn) + "\n"
-                           ));
+                                % log->turn) + "\n"));
     AddRow(DecorateLinkText(UserString("COMBAT_INITIAL_FORCES")));
     AddRow(DecorateLinkText(CountsToText(CountByOwner(log->empire_ids, log->object_ids))));
 
@@ -420,10 +419,8 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     // Write Logs
     for (CombatEventPtr event : log->combat_events) {
         DebugLogger(combat_log) << "event debug info: " << event->DebugString();
-
-        for (auto&& wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event)) {
+        for (auto&& wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event))
             AddRow(std::move(wnd));
-        }
     }
 
     // Add a dummy row that the layout manager can use to add space.

@@ -233,9 +233,8 @@ std::string SimultaneousEvents::DebugString() const {
     return ss.str();
 }
 
-std::string SimultaneousEvents::CombatLogDescription(int viewing_empire_id) const {
-    return "";
-}
+std::string SimultaneousEvents::CombatLogDescription(int viewing_empire_id) const
+{ return ""; }
 
 std::vector<ConstCombatEventPtr> SimultaneousEvents::SubEvents(int viewing_empire_id) const {
     // Sort the events by viewing empire, then ALL_EMPIRES and then
@@ -300,95 +299,62 @@ void SimultaneousEvents::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchiv
 ///////// InitialStealthEvent /////////////
 //////////////////////////////////////////
 
-InitialStealthEvent::InitialStealthEvent() :
-    target_empire_id_to_invisble_obj_id()
+InitialStealthEvent::InitialStealthEvent()
 {}
 
-InitialStealthEvent::InitialStealthEvent(const StealthInvisbleMap &x) :
-    target_empire_id_to_invisble_obj_id(x)
+InitialStealthEvent::InitialStealthEvent(const EmpireToObjectVisibilityMap& x) :
+    empire_to_object_visibility(x)
 {}
 
 std::string InitialStealthEvent::DebugString() const {
     std::stringstream ss;
     ss << "InitialStealthEvent: ";
-    if (target_empire_id_to_invisble_obj_id.size() > 4) {
-        ss << target_empire_id_to_invisble_obj_id.size() << " events.";
-    } else {
-        for (const auto& attack_empire : target_empire_id_to_invisble_obj_id) {
-            ss << " Attacking Empire: " << EmpireLink(attack_empire.first) << "\n";
-            for (const auto& target_empire : attack_empire.second) {
-                ss << " Target Empire: " << EmpireLink(target_empire.first) << " Targets: ";
+    for (const auto& empire_object_vis : empire_to_object_visibility) {
+        ss << " Viewing Empire: " << EmpireLink(empire_object_vis.first) << "\n";
 
-                if (target_empire.second.size() > 4) {
-                    ss << target_empire.second.size() << " attackers.";
-                } else {
-                    for (const auto& attacker : target_empire.second) {
-                        ss << FighterOrPublicNameLink(ALL_EMPIRES, attacker.first, target_empire.first);
-                    }
-                }
-                ss << "\n";
-            }
+        for (const auto& viewed_object : empire_object_vis.second) {
+            const auto obj = GetUniverseObject(viewed_object.first);
+            int owner_id = obj ? obj->Owner() : ALL_EMPIRES;
+            ss << FighterOrPublicNameLink(ALL_EMPIRES, viewed_object.first, owner_id);
         }
+        ss << "\n";
     }
-
     return ss.str();
 }
 
 std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id) const {
+    DebugLogger() << "CombatLogDescription for InitialStealthEvent viewing empire empire: " << viewing_empire_id;
+
     std::string desc = "";
 
-    //Viewing empire stealth first
-    for (const auto& attack_empire : target_empire_id_to_invisble_obj_id) {
-        if (attack_empire.first == viewing_empire_id)
+    for (const auto& detector_empire : empire_to_object_visibility) {
+        int detector_empire_id = detector_empire.first;
+        DebugLogger() << "CombatLogDescription for InitialStealthEvent for detector empire: " << detector_empire_id;
+
+        const auto& visible_objects = detector_empire.second;
+        if (visible_objects.empty()) {
+            DebugLogger() << " ... no object info recorded for detector empire: " << detector_empire_id;
             continue;
-
-        auto target_empire = attack_empire.second.find(viewing_empire_id);
-        if (target_empire != attack_empire.second.end() &&
-            !target_empire->second.empty())
-        {
-            // Check Visibility levels of cloaked attackers, report those that
-            // are not visible.
-            std::vector<std::string> cloaked_attackers;
-            for (auto& attacker : target_empire->second) {
-                if (attacker.second > VIS_NO_VISIBILITY)
-                    continue;
-                std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker.first, viewing_empire_id);
-                cloaked_attackers.push_back(attacker_link);
-            }
-
-            if (!cloaked_attackers.empty()) {
-                desc += "\n"; //< Add \n at start of the report and between each empire
-                std::vector<std::string> attacker_empire_link(1, EmpireLink(attack_empire.first));
-                desc += FlexibleFormatList(attacker_empire_link, cloaked_attackers,
-                                           UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
-            }
         }
-    }
 
-    //Viewing empire defending
-    auto attack_empire = target_empire_id_to_invisble_obj_id.find(viewing_empire_id);
-    if (attack_empire != target_empire_id_to_invisble_obj_id.end() &&
-        !attack_empire->second.empty())
-    {
-        for (auto& target_empire : attack_empire->second) {
-            if (target_empire.first == viewing_empire_id)
+        // Check Visibility of objects, report those that are not visible.
+        std::vector<std::string> cloaked_attackers;
+        for (auto& object_vis : visible_objects) {
+            const auto obj = GetUniverseObject(object_vis.first);
+            const auto name = obj ? obj->Name() : UserString("UNKNOWN");
+            DebugLogger() << " ... object: " << name << " (" << object_vis.first << ") has vis: " << object_vis.second;
+            if (object_vis.second > VIS_NO_VISIBILITY)
                 continue;
+            std::string attacker_link = FighterOrPublicNameLink(
+                viewing_empire_id, object_vis.first, ALL_EMPIRES); // all empires specifies empire to use for link color if this is a fighter
+            cloaked_attackers.push_back(attacker_link);
+        }
 
-            std::vector<std::string> cloaked_attackers;
-            for (const auto& attacker : target_empire.second) {
-                std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker.first, viewing_empire_id);
-                // Don't even report on targets with no_visibility it is supposed to be a surprise
-                if (attacker.second >= VIS_BASIC_VISIBILITY)
-                    cloaked_attackers.push_back(attacker_link);
-            }
-
-            if (!cloaked_attackers.empty()) {
-                if (!desc.empty())
-                    desc += "\n";
-                std::vector<std::string> attacker_empire_link(1, EmpireLink(attack_empire->first));
-                desc += FlexibleFormatList(attacker_empire_link, cloaked_attackers,
-                                           UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
-            }
+        if (!cloaked_attackers.empty()) {
+            desc += "\n"; //< Add \n at start of the report and between each empire
+            std::vector<std::string> detector_empire_link(1, EmpireLink(detector_empire.first));
+            desc += FlexibleFormatList(detector_empire_link, cloaked_attackers,
+                                       UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
         }
     }
 
@@ -398,7 +364,7 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id) con
 template <class Archive>
 void InitialStealthEvent::serialize(Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-    ar & BOOST_SERIALIZATION_NVP(target_empire_id_to_invisble_obj_id);
+    ar & BOOST_SERIALIZATION_NVP(empire_to_object_visibility);
 }
 
 BOOST_CLASS_VERSION(InitialStealthEvent, 4)

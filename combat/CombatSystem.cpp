@@ -45,97 +45,29 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
         ErrorLogger() << "CombatInfo constructed with invalid system id: " << system_id;
         return;
     }
-    // add system to full / complete objects in combat - NOTE: changed from copy of system
+    // add system to objects in combat
     objects.Insert(system);
 
     // find ships and their owners in system
     auto ships = Objects().FindObjects<Ship>(system->ShipIDs());
-
     for (auto& ship : ships) {
-        // add owner to empires that have assets in this battle
+        // add owner of ships in system to empires that have assets in this battle
         empire_ids.insert(ship->Owner());
-
+        // add ships to objects in combat
         objects.Insert(ship);
     }
 
     // find planets and their owners in system
     auto planets = Objects().FindObjects<Planet>(system->PlanetIDs());
-
     for (auto& planet : planets) {
         // if planet is populated or has an owner, add owner to empires that have assets in this battle
         if (!planet->Unowned() || planet->InitialMeterValue(METER_POPULATION) > 0.0f)
             empire_ids.insert(planet->Owner());
-
+        // add planets to objects in combat
         objects.Insert(planet);
     }
 
-    // TODO: should buildings be considered?
-
-    // now that all participants in the battle have been found, loop through
-    // objects again to assemble each participant empire's latest
-    // known information about all objects in this battle
-
     InitializeObjectVisibility();
-
-    float neutral_monster_detection = GetMonsterDetection();
-
-    // system
-    std::string ship_known = "System " + system->Name() + " visible to empires: ";
-    for (int empire_id : empire_ids) {
-        // a system is always at least basically visible to an empire with an object in it
-        empire_known_objects[empire_id].Insert(GetEmpireKnownShip(system_id, empire_id));
-        ship_known += std::to_string(empire_id) + ", ";
-    }
-    DebugLogger(combat) << ship_known;
-
-    // ships
-    for (auto& ship : ships) {
-        int ship_id = ship->ID();
-        auto fleet = GetFleet(ship->FleetID());
-        if (!fleet) {
-            ErrorLogger() << "CombatInfo::CombatInfo couldn't get fleet with id "
-                          << ship->FleetID() << " in system " << system->Name() << " (" << system_id << ")";
-            continue;
-        }
-
-        std::string ship_known = "At " + system->Name() + " Ship " + std::to_string(ship_id) + " owned by empire "
-                               + std::to_string(ship->Owner()) + " visible to empires: ";
-        for (int empire_id : empire_ids) {
-            bool visible = false;
-
-            if (empire_id == ALL_EMPIRES) {
-                if (neutral_monster_detection >= ship->CurrentMeterValue(METER_STEALTH))
-                    visible = true;
-            } else if (GetUniverse().GetObjectVisibilityByEmpire(ship_id, empire_id) > VIS_BASIC_VISIBILITY ||
-                (fleet->Aggressive() &&
-                    (empire_id == ALL_EMPIRES ||
-                     fleet->Unowned() ||
-                     Empires().GetDiplomaticStatus(empire_id, fleet->Owner()) == DIPLO_WAR)))
-            {
-                visible = true;
-            }
-
-            if (visible) {
-                empire_known_objects[empire_id].Insert(GetEmpireKnownShip(ship->ID(), empire_id));
-                ship_known += std::to_string(empire_id) + ", ";
-            }
-        }
-        DebugLogger(combat) << ship_known;
-    }
-
-    // planets
-    for (auto& planet : planets) {
-        int planet_id = planet->ID();
-        std::string planet_known = "At " + system->Name() + " Planet " + std::to_string(planet_id) + " owned by empire " +
-                                    std::to_string(planet->Owner()) + " visible to empires: ";
-
-        for (int empire_id : empire_ids) {
-            // planets are always at least basically visible...
-            empire_known_objects[empire_id].Insert(GetEmpireKnownPlanet(planet->ID(), empire_id));
-            planet_known += std::to_string(empire_id) + ", ";
-        }
-        DebugLogger(combat) << planet_known;
-    }
 
     // after battle is simulated, any changes to latest known or actual objects
     // will be copied back to the main Universe's ObjectMap and the Universe's
@@ -242,9 +174,7 @@ void CombatInfo::GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int
 
 void CombatInfo::GetCombatEventsToSerialize(std::vector<CombatEventPtr>& filtered_combat_events,
                                             int encoding_empire) const
-{
-    filtered_combat_events = this->combat_events;
-}
+{ filtered_combat_events = this->combat_events; }
 
 void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisibilityMap&
                                                       filtered_empire_object_visibility,
@@ -253,26 +183,94 @@ void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisi
     filtered_empire_object_visibility = this->empire_object_visibility;
 }
 
-void CombatInfo::InitializeObjectVisibility() {
-    // Requires system_id and empire_ids to be initialized
-
-    // system and empire visibility of all objects in it
-    auto system = ::GetSystem(system_id);
-    if (!system) {
-        ErrorLogger() << "CombatInfo::InitializeObjectVisibility couldn't get system with id: " << system_id;
-        return;
+namespace {
+    // collect detection strengths of all empires (and neutrals) in \a combat_info
+    std::map<int, float> GetEmpiresDetectionStrengths(const CombatInfo& combat_info) {
+        std::map<int, float> retval;
+        for (auto empire_id : combat_info.empire_ids) {
+            const auto empire = GetEmpire(empire_id);
+            if (!empire)
+                continue;
+            const Meter* meter = empire->GetMeter("METER_DETECTION_STRENGTH");
+            float strength = meter ? meter->Current() : 0.0f;
+            retval[empire_id] = strength;
+        }
+        retval[ALL_EMPIRES] =  combat_info.GetMonsterDetection();
+        return retval;
     }
-    auto local_object_ids = system->ContainedObjectIDs();
+}
+
+void CombatInfo::InitializeObjectVisibility() {
+    // initialize combat-local visibility of objects by empires and combat-local
+    // empire ObjectMaps with object state info that empires know at start of battle
+    auto det_strengths = GetEmpiresDetectionStrengths(*this);
 
     for (int empire_id : empire_ids) {
-        if (empire_id == ALL_EMPIRES)
-            continue;
-        empire_known_objects[empire_id].Insert(GetEmpireKnownSystem(system->ID(), empire_id));
-        empire_object_visibility[empire_id][system->ID()] = GetUniverse().GetObjectVisibilityByEmpire(system->ID(), empire_id);
-        for (int object_id : local_object_ids) {
-            Visibility obj_vis = GetUniverse().GetObjectVisibilityByEmpire(object_id, empire_id);
-            if (obj_vis > VIS_NO_VISIBILITY)  // to ensure an empire doesn't wrongly get info that an object was present
-                empire_object_visibility[empire_id][object_id] = obj_vis;
+        DebugLogger() << "Initializing CombatInfo object visibility and known objects for empire: " << empire_id;
+
+        float empire_detection = det_strengths[empire_id];
+
+        for (auto obj : objects) {
+
+            if (obj->ObjectType() == OBJ_SYSTEM) {
+                // systems always visible to empires with objects in them
+                empire_object_visibility[empire_id][obj->ID()] = VIS_PARTIAL_VISIBILITY;
+                empire_known_objects[empire_id].Insert(obj);
+                DebugLogger() << "System " << obj->Name() << " always visible";
+
+            } else if (obj->ObjectType() == OBJ_PLANET) {
+                // planets always at least basically visible to empires with objects in them
+                Visibility vis = VIS_BASIC_VISIBILITY;
+                if (empire_id != ALL_EMPIRES) {
+                    Visibility vis_univ = GetUniverse().GetObjectVisibilityByEmpire(obj->ID(), empire_id);
+                    if (vis_univ > vis) {
+                        vis = vis_univ;
+                        DebugLogger() << "Planet " << obj->Name() << " visible from universe state";
+                    }
+                }
+                if (vis < VIS_PARTIAL_VISIBILITY && empire_detection >= obj->CurrentMeterValue(METER_STEALTH)) {
+                    vis = VIS_PARTIAL_VISIBILITY;
+                    DebugLogger() << "Planet " << obj->Name() << " visible empire stealth check: " << empire_detection << " >= " << obj->CurrentMeterValue(METER_STEALTH);
+                }
+                if (vis == VIS_BASIC_VISIBILITY) {
+                    DebugLogger() << "Planet " << obj->Name() << " has just basic visibility by default";
+                }
+
+                empire_object_visibility[empire_id][obj->ID()] = vis;
+                empire_known_objects[empire_id].Insert(obj);
+
+            } else if (obj->ObjectType() == OBJ_SHIP) {
+                // ships only visible if detected or they attack later in combat
+                Visibility vis = VIS_NO_VISIBILITY;
+                if (empire_id != ALL_EMPIRES) {
+                    Visibility vis_univ = GetUniverse().GetObjectVisibilityByEmpire(obj->ID(), empire_id);
+                    if (vis_univ > vis) {
+                        vis = vis_univ;
+                        DebugLogger() << "Ship " << obj->Name() << " visible from universe state";
+                    }
+                }
+                if (vis < VIS_PARTIAL_VISIBILITY && empire_detection >= obj->CurrentMeterValue(METER_STEALTH)) {
+                    vis = VIS_PARTIAL_VISIBILITY;
+                    DebugLogger() << "Ship " << obj->Name() << " visible empire stealth check: " << empire_detection << " >= " << obj->CurrentMeterValue(METER_STEALTH);
+                }
+                if (vis < VIS_PARTIAL_VISIBILITY) {
+                    if (auto ship = std::dynamic_pointer_cast<Ship>(obj)) {
+                        if (auto fleet = ::GetFleet(ship->FleetID())) {
+                            if (fleet->Aggressive()) {
+                                vis = VIS_PARTIAL_VISIBILITY;
+                                DebugLogger() << "Ship " << obj->Name() << " visible from aggressive fleet";
+                            }
+                        }
+                    }
+                }
+
+                if (vis > VIS_NO_VISIBILITY) {
+                    empire_object_visibility[empire_id][obj->ID()] = vis;
+                    empire_known_objects[empire_id].Insert(obj);
+                } else {
+                    DebugLogger() << "Ship " << obj->Name() << " initially hidden";
+                }
+            }
         }
     }
 }
@@ -331,16 +329,6 @@ namespace {
             ;
     }
 
-    //const std::unique_ptr<Condition::ConditionBase> is_enemy_fighter =
-    //    boost::make_unique<Condition::And>(
-    //        boost::make_unique<Condition::Type>(OBJ_FIGHTER),
-    //        std::unique_ptr<Condition::ConditionBase>{VisibleEnemyOfOwnerCondition()});
-
-    //const std::unique_ptr<Condition::ConditionBase> is_enemy_planet =
-    //    boost::make_unique<Condition::And>(
-    //        boost::make_unique<Condition::Type>(OBJ_PLANET),
-    //        std::unique_ptr<Condition::ConditionBase>{VisibleEnemyOfOwnerCondition()});
-
     const std::unique_ptr<Condition::ConditionBase> is_enemy_ship =
         boost::make_unique<Condition::And>(
             boost::make_unique<Condition::Type>(OBJ_SHIP),
@@ -359,8 +347,6 @@ namespace {
                         boost::make_unique<ValueRef::Constant<double>>(0.00001),
                         nullptr))
                     ));
-
-    std::unique_ptr<Condition::ConditionBase> is_enemy{VisibleEnemyOfOwnerCondition()};
 
 
     struct PartAttackInfo {
@@ -803,7 +789,6 @@ namespace {
             combat_info(combat_info_)
         {
             PopulateAttackers();
-            UpdateCombatVisibility();
         }
 
         std::vector<int> AddFighters(int number, float damage, int owner_empire_id,
@@ -1000,78 +985,42 @@ namespace {
             return 0.0f;
         }
 
-        // loop over objects to determine which is visible to whom in this
-        // combat based on pre-existing visibility info and local detection
-        // strength by empires and monsters
-        void UpdateCombatVisibility() {
-            // get detection strength for neutrals and all empires with involvement in the combat
-            std::map<int, float> empire_detection_strengths;
-            empire_detection_strengths[ALL_EMPIRES] = combat_info.GetMonsterDetection();
-            for (const auto& empire_pair : empire_infos)
-                empire_detection_strengths[empire_pair.first] = EmpireDetectionStrength(empire_pair.first);
-
-            for (const auto& emp_det : empire_detection_strengths)
-                DebugLogger(combat) << "Empire " << emp_det.first << " detection strength: " << emp_det.second;
-
-            // check all objects against all empires' detection strengths, and
-            // add visibility for anything detectable
-            for (const auto target : combat_info.objects) {
-                // for all empires, can they detect this object?
-                for (int attacking_empire_id : combat_info.empire_ids) {
-                    float empire_detection_strength = empire_detection_strengths[attacking_empire_id];
-                    float target_stealth = target->CurrentMeterValue(METER_STEALTH);
-                    Visibility vis = combat_info.empire_object_visibility[attacking_empire_id][target->ID()];
-
-                    DebugLogger(combat) << "Target " << target->Name()
-                                        << "  with stealth " << target_stealth
-                                        << "  for viewing empire " << attacking_empire_id
-                                        << "  with detection strength " << empire_detection_strength
-                                        << "  at initial visibility: " << vis;
-
-                    if (vis < VIS_BASIC_VISIBILITY && empire_detection_strength >= target_stealth) {
-                        vis = VIS_BASIC_VISIBILITY;
-                        combat_info.empire_object_visibility[attacking_empire_id][target->ID()] = vis;
-                        DebugLogger(combat) << " ... newly detected by empire detection at: " << vis;
-                    } else if (vis < VIS_BASIC_VISIBILITY) {
-                        DebugLogger(combat) << " ... remains undetected at: " << vis;
-                    } else {
-                        DebugLogger(combat) << " ... already detected at: " << vis;
-                    }
-                }
-            }
-        }
-
         /** Report for each empire the stealthy objects in the combat. */
-        InitialStealthEvent::StealthInvisbleMap ReportInvisibleObjects() const {
+        InitialStealthEvent::EmpireToObjectVisibilityMap ReportInvisibleObjects() const {
             DebugLogger(combat) << "Reporting Invisible Objects";
-            InitialStealthEvent::StealthInvisbleMap report;
+            InitialStealthEvent::EmpireToObjectVisibilityMap report;
 
             // loop over all objects, noting which is visible by which empire or neutrals
             for (const auto target : combat_info.objects) {
                 // for all empires, can they detect this object?
-                for (int attacking_empire_id : combat_info.empire_ids) {
-                    DebugLogger(combat) << "Target " << target->Name() << " for viewing empire = "<< attacking_empire_id;
-
+                for (int viewing_empire_id : combat_info.empire_ids) {
                     // get visibility of target to attacker empire
-                    Visibility visibility = VIS_NO_VISIBILITY;
-                    auto target_visible_it = combat_info.empire_object_visibility.find(target->Owner());
-                    if (target_visible_it != combat_info.empire_object_visibility.end()) {
-                        auto target_attacker_visibility_it = target_visible_it->second.find(target->ID());
-                        if (target_attacker_visibility_it != target_visible_it->second.end()) {
-                            visibility = target_attacker_visibility_it->second;
-                        }
+                    auto empire_vis_info_it = combat_info.empire_object_visibility.find(viewing_empire_id);
+                    if (empire_vis_info_it == combat_info.empire_object_visibility.end()) {
+                        DebugLogger() << " ReportInvisibleObjects found no visibility info for viewing empire " << viewing_empire_id;
+                        report[viewing_empire_id][target->ID()] = VIS_NO_VISIBILITY;
+                        continue;
+                    }
+                    auto target_visibility_for_empire_it = empire_vis_info_it->second.find(target->ID());
+                    if (target_visibility_for_empire_it == empire_vis_info_it->second.end()) {
+                        DebugLogger() << " ReportInvisibleObjects found no visibility record for viewing empire "
+                                      << viewing_empire_id << " for object " << target->ID();
+                        report[viewing_empire_id][target->ID()] = VIS_NO_VISIBILITY;
+                        continue;
+                    }
+
+                    Visibility vis = target_visibility_for_empire_it->second;
+                    if (viewing_empire_id == ALL_EMPIRES) {
+                        DebugLogger(combat) << " Target " << target->Name() << " (" << target->ID() << "): "
+                                            << vis << " to monsters and neutrals";
+                    } else {
+                        DebugLogger(combat) << " Target " << target->Name() << " (" << target->ID() << "): "
+                                            << vis << " to empire " << viewing_empire_id;
                     }
 
                     // This adds information about invisible and basic visible objects and
                     // trusts that the combat logger only informs player/ai of what they should know
-                    if (attacking_empire_id == ALL_EMPIRES) {
-                        DebugLogger(combat) << " Target " << target->Name() << " "
-                                            << visibility << " to monsters and neutrals";
-                    } else {
-                        DebugLogger(combat) << " Target " << target->Name() << " "
-                                            << visibility << " to empire " << attacking_empire_id;
-                    }
-                    report[attacking_empire_id][target->Owner()].insert({target->ID(), visibility});
+                    report[viewing_empire_id][target->ID()] = vis;
                 }
             }
             return report;
@@ -1125,7 +1074,7 @@ namespace {
                 DebugLogger() << "Weapon has no targeting condition?? Should have been set when initializing PartAttackInfo";
                 continue;
             }
-            DebugLogger() << "Targeting condition: " << weapon.combat_targets->Dump();
+            TraceLogger() << "Targeting condition: " << weapon.combat_targets->Dump();
 
             Condition::ObjectSet possible_targets;
             possible_targets.reserve(combat_state.combat_info.objects.NumObjects());
