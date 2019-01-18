@@ -932,7 +932,7 @@ namespace {
                     // on the next turn, so check that it has been attacked
                     // before excluding it from any remaining battle
                     if (!combat_info.damaged_object_ids.count(target_id)) {
-                        DebugLogger(combat) << "!! Planet " << target_id << "has not yet been attacked, "
+                        DebugLogger(combat) << "!! Planet " << target_id << " has not yet been attacked, "
                                             << "so will not yet be removed from battle, despite being essentially incapacitated";
                         return false;
                     }
@@ -1004,7 +1004,7 @@ namespace {
                     auto target_visibility_for_empire_it = empire_vis_info_it->second.find(target->ID());
                     if (target_visibility_for_empire_it == empire_vis_info_it->second.end()) {
                         DebugLogger() << " ReportInvisibleObjects found no visibility record for viewing empire "
-                                      << viewing_empire_id << " for object " << target->ID();
+                                      << viewing_empire_id << " for object " << target->Name() << " (" << target->ID() << ")";
                         report[viewing_empire_id][target->ID()] = VIS_NO_VISIBILITY;
                         continue;
                     }
@@ -1041,7 +1041,7 @@ namespace {
                     empire_infos[obj->Owner()].attacker_ids.insert(it->ID());
                 }
 
-                DebugLogger(combat) << "Considering object " << obj->Name()
+                DebugLogger(combat) << "Considering object " << obj->Name() << " (" << obj->ID() << ")"
                                     << " owned by " << std::to_string(obj->Owner())
                                     << (can_attack ? "... can attack" : "");
             }
@@ -1056,7 +1056,8 @@ namespace {
                          std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
     {
         if (weapons.empty()) {
-            DebugLogger(combat) << "no weapons' can't attack";
+            DebugLogger(combat) << "Attacker " << attacker->Name() << " ("
+                                << attacker->ID() << ") has no weapons, so can't attack";
             return;   // no ability to attack!
         }
 
@@ -1067,14 +1068,15 @@ namespace {
                 continue;
 
             // select object from valid targets for this object's owner
-            DebugLogger(combat) << "Attacking with weapon " << weapon.part_type_name
-                                << " with power " << weapon.part_attack;
+            DebugLogger(combat) << "Attacker " << attacker->Name() << " ("
+                                << attacker->ID() << ") attacks with weapon "
+                                << weapon.part_type_name << " with power " << weapon.part_attack;
 
             if (!weapon.combat_targets) {
-                DebugLogger() << "Weapon has no targeting condition?? Should have been set when initializing PartAttackInfo";
+                DebugLogger(combat) << "Weapon has no targeting condition?? Should have been set when initializing PartAttackInfo";
                 continue;
             }
-            TraceLogger() << "Targeting condition: " << weapon.combat_targets->Dump();
+            TraceLogger(combat) << "Targeting condition: " << weapon.combat_targets->Dump();
 
             Condition::ObjectSet possible_targets;
             possible_targets.reserve(combat_state.combat_info.objects.NumObjects());
@@ -1092,10 +1094,12 @@ namespace {
 
             weapon.combat_targets->Eval(context, matched_targets, possible_targets);
             if (matched_targets.empty()) {
-                DebugLogger() << "No objects matched targeting condition!";
+                DebugLogger(combat) << "No objects matched targeting condition!";
                 continue;
             }
-            DebugLogger() << matched_targets.size() << " objects matched targeting condition";
+            DebugLogger(combat) << matched_targets.size() << " objects matched targeting condition";
+            for (const auto& match : matched_targets)
+                TraceLogger(combat) << " ... " << match->Name() << " (" << match->ID() << ")";
 
 
             // select target object from matches
@@ -1103,10 +1107,10 @@ namespace {
             auto target = *std::next(matched_targets.begin(), target_idx);
 
             if (!target) {
-                ErrorLogger() << "AutoResolveCombat selected null target object?";
+                ErrorLogger(combat) << "AutoResolveCombat selected null target object?";
                 continue;
             }
-            DebugLogger(combat) << "Target: " << target->Name();
+            DebugLogger(combat) << "Selected target: " << target->Name() << " (" << target->ID() << ")";
             auto targetx = std::const_pointer_cast<UniverseObject>(target);
 
             // do actual attacks
@@ -1126,7 +1130,7 @@ namespace {
 
         const ShipDesign* design = ship->Design();
         if (!design) {
-            ErrorLogger() << "ReduceStoredFighterCount couldn't get ship design with id " << ship->DesignID();;
+            ErrorLogger(combat) << "ReduceStoredFighterCount couldn't get ship design with id " << ship->DesignID();;
             return;
         }
 
@@ -1216,7 +1220,7 @@ namespace {
 
         const ShipDesign* design = ship->Design();
         if (!design) {
-            ErrorLogger() << "ReduceStoredFighterCount couldn't get ship design with id " << ship->DesignID();;
+            ErrorLogger(combat) << "ReduceStoredFighterCount couldn't get ship design with id " << ship->DesignID();;
             return;
         }
 
@@ -1267,7 +1271,7 @@ namespace {
         for (auto& entry : ships_fighters_to_add_back) {
             auto ship = combat_info.objects.Object<Ship>(entry.first);
             if (!ship) {
-                ErrorLogger() << "Couldn't get ship with id " << entry.first << " for fighter to return to...";
+                ErrorLogger(combat) << "Couldn't get ship with id " << entry.first << " for fighter to return to...";
                 continue;
             }
             IncreaseStoredFighterCount(ship, entry.second);
@@ -1457,9 +1461,7 @@ namespace {
                     if (obj_vis_it != empire_vis_it->second.end())
                         pre_attack_visibility = obj_vis_it->second;
                 }
-                DebugLogger(combat) << "Pre-attack visibility Target: " << this_attack->target_id
-                                    << " (owner " << this_attack->target_owner_id << ") of "
-                                    << " Attacker: " << this_attack->attacker_id
+                DebugLogger(combat) << "Pre-attack visibility of Attacker " << this_attack->attacker_id
                                     << " was: " << boost::lexical_cast<std::string>(pre_attack_visibility);
 
                 if (pre_attack_visibility > VIS_NO_VISIBILITY)
