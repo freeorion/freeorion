@@ -5,10 +5,7 @@ Part
     class = FighterHangar
     capacity = 2
     damage = 0
-    combatTargets = And [
-        Not Planet
-        OwnedBy affiliation = EnemyOf empire = Source.Owner
-    ]
+    combatTargets = None
     mountableSlotTypes = Internal
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
