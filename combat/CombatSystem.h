@@ -29,10 +29,6 @@ public:
         id system_id. */
     std::shared_ptr<System> GetSystem();
 
-    /** Reveal stealthed attacker to their target's empires. */
-    void ForceAtLeastBasicVisibility(int attacker_id, int target_id);
-    //@}
-
     int                                 turn = INVALID_GAME_TURN;       ///< main game turn
     int                                 system_id = INVALID_OBJECT_ID;  ///< ID of system where combat is occurring (could be INVALID_OBJECT_ID ?)
     std::set<int>                       empire_ids;                     ///< IDs of empires involved in combat
