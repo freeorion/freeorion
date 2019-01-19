@@ -1298,7 +1298,7 @@ std::string EmpireAffiliation::Dump(unsigned short ntabs) const {
         retval += "Unowned";
 
     } else if (m_affiliation == AFFIL_ENEMY) {
-        retval += "OwnedBy affilition = EnemyOf";
+        retval += "OwnedBy affiliation = EnemyOf";
         if (m_empire_id)
             retval += " empire = " + m_empire_id->Dump(ntabs);
 
