@@ -7160,7 +7160,7 @@ std::string VisibleToEmpire::Description(bool negated/* = false*/) const {
 }
 
 std::string VisibleToEmpire::Dump(unsigned short ntabs) const
-{ return DumpIndent(ntabs) + "VisibleToEmpire empire_id = " + m_empire_id->Dump(ntabs) + "\n"; }
+{ return DumpIndent(ntabs) + "VisibleToEmpire empire = " + m_empire_id->Dump(ntabs) + "\n"; }
 
 bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
