@@ -17,15 +17,10 @@ public:
     ~Fighter();
 
     bool HostileToEmpire(int empire_id) const override;
-
     UniverseObjectType ObjectType() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
-
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
-
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
-
     const ::Condition::ConditionBase* CombatTargets() const;
     float                       Damage() const;
     bool                        Destroyed() const;
