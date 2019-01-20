@@ -7533,7 +7533,8 @@ SP_PHINNERT
 Phinnert
 
 SP_PHINNERT_GAMEPLAY_DESC
-'''Industrious Flying Monkeys.
+'''<img src="species/preview/phinnert.png"></img>
+Industrious Flying Monkeys.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -7546,6 +7547,7 @@ Life is much shorter for Phinnerts than for most other sentient life, owing to t
 
 Homeworld:
 Their planet has low gravity and a very thick atmosphere. Its composition is unique as it has a low proportion of heavier metals, but a much higher proportion of other heavy elements, particularly noble gases. It also has very stable tectonic formations meaning that the surface of the crust is very flat, and so is mostly covered with shallow, standing water. The entire world is like a giant everglade.
+<img src="species/phinnert.png"></img>
 '''
 
 SP_REPLICON

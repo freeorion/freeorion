@@ -7533,7 +7533,8 @@ SP_PHINNERT  # translated
 Phinnert
 
 SP_PHINNERT_GAMEPLAY_DESC
-'''Singes volants industrialisés.
+'''<img src="species/preview/phinnert.png"></img>
+Singes volants industrialisés.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -7546,6 +7547,7 @@ La vie est bien plus courte pour les Phinnerts que pour la majorité des espèce
 
 Planète Natale:
 Leur planète possède une faible gravité et une atmosphère très épaisse. Sa composition géologique est unique du fait de la faible proportion de métaux lourds, mais de la bien plus forte présence d'autres éléments lourds, particulièrement les gaz nobles. De son activité tectonique très stable, résulte une croûte terrestre très plate, qui par conséquent est principalement recouverte d'eaux stagnantes et peu profondes. La totalité de leur monde s'apparente à une zone marécageuse géante.
+<img src="species/phinnert.png"></img>
 '''
 
 SP_REPLICON  # translated
