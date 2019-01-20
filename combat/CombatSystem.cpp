@@ -904,7 +904,7 @@ namespace {
                 if (fighter && fighter->Destroyed()) {
                     // remove destroyed fighter's ID from lists of valid attackers and targets
                     valid_attacker_object_ids.erase(target_id);
-                    DebugLogger(combat) << "Removed destroyed fighter id: " << fighter->ID() << " from attackers and targets sets";
+                    DebugLogger(combat) << "Removed destroyed fighter id: " << fighter->ID() << " from attackers";
 
                     // Remove target from its empire's list of attackers
                     empire_infos[target->Owner()].attacker_ids.erase(target_id);
