@@ -794,6 +794,7 @@ namespace {
         std::map<int, EmpireCombatInfo> empire_infos;               // empire specific information, indexed by empire id
         CombatInfo&                     combat_info;
         int                             next_fighter_id = -10001;   // give fighters negative ids so as to avoid clashes with any positive-id of persistent UniverseObjects
+        std::set<int>                   destroyed_object_ids;       // objects that have been destroyed so far during this combat
 
         explicit AutoresolveInfo(CombatInfo& combat_info_) :
             combat_info(combat_info_)
@@ -872,9 +873,13 @@ namespace {
             {
                 auto obj = *it;
 
-                // Check if the target was destroyed and update lists if yes
+                // Check if object is already noted as destroyed; don't need to re-record this
+                if (destroyed_object_ids.count(obj->ID()))
+                    continue;
+                // Check if object is destroyed and update lists if yes
                 if (!CheckDestruction(obj))
                     continue;
+                destroyed_object_ids.insert(obj->ID());
 
                 if (obj->ObjectType() == OBJ_FIGHTER) {
                     fighters_destroyed_event->AddEvent(obj->Owner());
@@ -973,6 +978,7 @@ namespace {
         /// check if any empire has no remaining objects.
         /// If so, remove that empire's entry
         void CleanEmpires() {
+            DebugLogger(combat) << "CleanEmpires";
             auto temp = empire_infos;
 
             std::set<int> empire_ids_with_objects;
@@ -986,6 +992,16 @@ namespace {
                 }
             }
             empire_infos = temp;
+
+            if (!empire_infos.empty()) {
+                DebugLogger(combat) << "Empires with objects remaining:";
+                for (auto empire : empire_infos) {
+                    DebugLogger(combat) << " ... " << empire.first;
+                    for (auto obj_id : empire.second.attacker_ids) {
+                        TraceLogger(combat) << " ... ... " << obj_id;
+                    }
+                }
+            }
         }
 
         /// Clears and refills \a shuffled with attacker ids in a random order
