@@ -76,7 +76,7 @@ namespace parse { namespace detail {
             ;
 
         comparison_operator =
-            lit  ("==")   [ _val = Condition::EQUAL ]
+              lit("==")   [ _val = Condition::EQUAL ]
             | lit('=')    [ _val = Condition::EQUAL ]
             | lit(">=")   [ _val = Condition::GREATER_THAN_OR_EQUAL ]
             | lit('>')    [ _val = Condition::GREATER_THAN ]
@@ -86,7 +86,7 @@ namespace parse { namespace detail {
             ;
 
         string_comparison_operator =
-            lit  ("==")   [ _val = Condition::EQUAL ]
+              lit("==")   [ _val = Condition::EQUAL ]
             | lit('=')    [ _val = Condition::EQUAL ]
             | lit("!=")   [ _val = Condition::NOT_EQUAL ]
             ;
@@ -184,8 +184,8 @@ namespace parse { namespace detail {
 
             turn
                 = ( omit_[tok.Turn_]
-                    > -(label(tok.Low_)  > (castable_int_rules.flexible_int ))
-                    > -(label(tok.High_) > (castable_int_rules.flexible_int )))
+                > -(label(tok.Low_)  > (castable_int_rules.flexible_int ))
+                > -(label(tok.High_) > (castable_int_rules.flexible_int )))
                 [ _val = construct_movable_(new_<Condition::Turn>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
@@ -193,22 +193,22 @@ namespace parse { namespace detail {
 
             created_on_turn
                 = ( omit_[tok.CreatedOnTurn_]
-                    > -(label(tok.Low_)  > castable_int_rules.flexible_int )
-                    > -(label(tok.High_) > castable_int_rules.flexible_int ))
+                > -(label(tok.Low_)  > castable_int_rules.flexible_int )
+                > -(label(tok.High_) > castable_int_rules.flexible_int ))
                 [ _val = construct_movable_(new_<Condition::CreatedOnTurn>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
                 ;
 
             sorting_operator =
-                tok.MaximumNumberOf_ [ _val = Condition::SORT_MAX ]
+                    tok.MaximumNumberOf_ [ _val = Condition::SORT_MAX ]
                 |   tok.MinimumNumberOf_ [ _val = Condition::SORT_MIN ]
                 |   tok.ModeNumberOf_    [ _val = Condition::SORT_MODE ];
 
             number_of1
                 = ( omit_[tok.NumberOf_]
-                    > label(tok.Number_)    > castable_int_rules.flexible_int
-                    > label(tok.Condition_) > condition_parser)
+                >   label(tok.Number_)    > castable_int_rules.flexible_int
+                >   label(tok.Condition_) > condition_parser)
                 [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
@@ -257,22 +257,22 @@ namespace parse { namespace detail {
                 ;
 
             can_add_starlane
-                =  ( omit_[tok.CanAddStarlanesTo_]
-                     > label(tok.Condition_) > condition_parser)
+                = ( omit_[tok.CanAddStarlanesTo_]
+                >   label(tok.Condition_) > condition_parser)
                 [ _val = construct_movable_(new_<Condition::CanAddStarlaneConnection>(
                         deconstruct_movable_(_1, _pass))) ]
                 ;
 
             start
-                %=   has_special_capacity
+                %=  has_special_capacity
                 |   within_distance
                 |   within_starlane_jumps
                 |   number
-                |   comparison_trinary_int    // more complicated format that is strict extension of comparison_binary_int format, so needs to be tested before it
-                |   comparison_binary_int    //  first int ...
-                |   comparison_trinary_double    // more complicated format that is strict extension of comparison_binary_double format, so needs to be tested before it
+                |   comparison_trinary_int      // more complicated format that is strict extension of comparison_binary_int format, so needs to be tested before it
+                |   comparison_binary_int       //  first int ...
+                |   comparison_trinary_double   // more complicated format that is strict extension of comparison_binary_double format, so needs to be tested before it
                 |   comparison_binary_double    //  ... then double (which may include int(s) casted to double(s))...
-                |   comparison_trinary_string    // more complicated format that is strict extension of comparison_binary_string format, so needs to be tested before it
+                |   comparison_trinary_string   // more complicated format that is strict extension of comparison_binary_string format, so needs to be tested before it
                 |   comparison_binary_string    //  ... then string
                 |   turn
                 |   created_on_turn
