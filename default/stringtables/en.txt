@@ -5431,6 +5431,8 @@ METER_INDUSTRY_VALUE_DESC
 
 The Industry of a planet can be used for any production projects of [[metertype METER_SUPPLY]] line connected planets. Unallocated Industry gets added to the Imperial Stockpile.
 
+The Target Industry is the stable Industry output level a planet will approach, given the current factors influencing the Industry resources. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, and various other game effects. If these factors change, then the Target Industry value is likely to shift.
+
 For information on the interface, see [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
 
