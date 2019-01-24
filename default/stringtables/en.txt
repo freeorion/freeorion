@@ -5461,11 +5461,15 @@ Infrastructure
 METER_CONSTRUCTION_VALUE_DESC
 The term Infrastructure refers to technical structures that support a colonized planet: energy, transportation, telecommunication and social services for the citizens.
 
+The Target Infrastructure is the stable Infrastructure level a planet will approach, given the current factors influencing the planetary Infrastructure. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, and various other game effects. If these factors change, then the Target Infrastructure value is likely to shift.
+
 METER_HAPPINESS_VALUE_LABEL
 Happiness
 
 METER_HAPPINESS_VALUE_DESC
 The Happiness of a colony's population starts out low after initial colonization or after invasion, and may also be affected by other factors. A minimum Happiness of 5 is necessary for a colony to act as a source of settlers for colonizing other planets.
+
+The Target Happiness is the stable Happiness level a planet's population will approach, given the current factors influencing the planetary Happiness. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, and various other game effects. If these factors change, then the Target Happiness value is likely to shift.
 
 METER_CAPACITY_VALUE_LABEL
 Stat - Primary
