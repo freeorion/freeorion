@@ -265,7 +265,9 @@ namespace parse {
         detail::complex_variable_rule<double>   species_empire_opinion;
         detail::complex_variable_rule<double>   species_species_opinion;
         detail::complex_variable_rule<double>   special_capacity;
+        detail::complex_variable_rule<double>   part_meter;
         detail::complex_variable_rule<double>   start;
+        //        parse::ship_part_meter_enum_grammar     ship_part_meter_type_enum;
     };
 
     struct double_parser_rules : public detail::arithmetic_rules<double> {
