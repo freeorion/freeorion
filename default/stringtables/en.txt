@@ -8081,7 +8081,7 @@ GAIA_SPECIAL_DESC
 • [[SZ_MEDIUM]] (+9)
 • [[SZ_LARGE]] (+12)
 • [[SZ_HUGE]] (+15)
-and increases max [[metertype METER_HAPPINESS]] by 5.
+and increases [[metertype METER_TARGET_HAPPINESS]] by 5.
 
 This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of its population. If the world is a [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]], a substantial population bonus is added. If it is not, then it will slowly terraform itself in stages to eventually reach [[PE_GOOD]] (NB: [[species SP_EXOBOT]] do not have a [[PE_GOOD]] environment so it cannot improve beyond [[PE_ADEQUATE]] for them).'''
 
@@ -8089,7 +8089,7 @@ WORLDTREE_SPECIAL
 World Tree
 
 WORLDTREE_SPECIAL_DESC
-'''Increases [[metertype METER_SUPPLY]] by +1, [[metertype METER_DETECTION]] by +10, max Population by +1, and [[metertype METER_HAPPINESS]] on the planet that has the special by +5. Increases [[metertype METER_HAPPINESS]] on all other planets owned by the same empire by +1.
+'''Increases [[metertype METER_SUPPLY]] by +1, [[metertype METER_DETECTION]] by +10, max Population by +1, and [[metertype METER_TARGET_HAPPINESS]] on the planet that has the special by +5. Increases [[metertype METER_TARGET_HAPPINESS]] on all other planets owned by the same empire by +1.
 
 A gigantic tree has grown so large that its crown has left the atmosphere of the planet. Scientists suspect that it was planted by the Caretakers in ancient times.'''
 
@@ -8227,7 +8227,7 @@ PHILOSOPHER_SPECIAL
 Philosopher Planet
 
 PHILOSOPHER_SPECIAL_DESC
-'''As long as the Philosopher Planet is uninhabited, all inhabited planets in the same system have their [[metertype METER_TARGET_RESEARCH]] increased by 5. [[metertype METER_CONSTRUCTION]] on the Philosopher Planet is decreased by 20.
+'''As long as the Philosopher Planet is uninhabited, all inhabited planets in the same system have their [[metertype METER_TARGET_RESEARCH]] increased by 5. [[metertype METER_TARGET_CONSTRUCTION]] on the Philosopher Planet is decreased by 20.
 
 The lone remnant of a planet-sized space wandering species has found his final rest orbiting in this system like a normal planet. Having lived for thousands of years he lost the will and ability to travel and resorts to pondering about the mysteries of the universe he has seen and learned about. Eccentric and slightly demented he refuses to communicate with anything that isn't the size and shape of his kin, leaving scientists no choice but to ask questions via the planet they are living on. Understandably colonizing the Philosopher Planet will disturb him gravely and he will fall silent. Construction on his surface is difficult as is to be expected from a living being.'''
 
@@ -10932,7 +10932,7 @@ N-Dimensional Structures
 CON_NDIM_STRC_DESC
 '''Increases Population capacity by planet size on all habitable planets: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
 
-Also increases target [[metertype METER_CONSTRUCTION]] by 10 on populated planets.
+Also increases [[metertype METER_TARGET_CONSTRUCTION]] by 10 on populated planets.
 
 The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
 
@@ -12180,7 +12180,7 @@ BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases [[metertype METER_SUPPLY]] line range by 2, [[metertype METER_CONSTRUCTION]] by 20, [[metertype METER_DEFENSE]] by 5, and [[metertype METER_TROOPS]] by 6. Also sets the owner's Capital for the empire.
+'''Increases [[metertype METER_SUPPLY]] line range by 2, [[metertype METER_TARGET_CONSTRUCTION]] by 20, [[metertype METER_DEFENSE]] by 5, and [[metertype METER_TROOPS]] by 6. Also sets the owner's Capital for the empire.
 
 Represents imperial power and prestige and functions as a center of control for the empire's holdings.'''
 
@@ -12346,7 +12346,7 @@ BLD_MEGALITH
 Megalith
 
 BLD_MEGALITH_DESC
-'''This building may only be built in the owner empire's capital, where it further adds to the splendor of the [[buildingtype BLD_IMPERIAL_PALACE]]. All resource meters for the planet on which it is built are able to reach target in a single turn. This planet also receives an increase of 30 to [[metertype METER_CONSTRUCTION]]. Populated planets in the owning empire receive an increase of 1 to [[metertype METER_SUPPLY]] line range. Populated planets within two starlane jumps have their [[metertype METER_TROOPS]] increased by 10.
+'''This building may only be built in the owner empire's capital, where it further adds to the splendor of the [[buildingtype BLD_IMPERIAL_PALACE]]. All resource meters for the planet on which it is built are able to reach target in a single turn. This planet also receives an increase of 30 to [[metertype METER_TARGET_CONSTRUCTION]]. Populated planets in the owning empire receive an increase of 1 to [[metertype METER_SUPPLY]] line range. Populated planets within two starlane jumps have their [[metertype METER_TROOPS]] increased by 10.
 
 The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
 
@@ -12376,7 +12376,7 @@ BLD_GAIA_TRANS_DESC
 • [[SZ_MEDIUM]] (+9)
 • [[SZ_LARGE]] (+12)
 • [[SZ_HUGE]] (+15)
-and increases max [[metertype METER_HAPPINESS]] by 5.
+and increases [[metertype METER_TARGET_HAPPINESS]] by 5.
 
 Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
 
@@ -12507,7 +12507,7 @@ BLD_CONC_CAMP
 Concentration Camps
 
 BLD_CONC_CAMP_DESC
-'''Decreases the planet's population at a rate of 3 per turn, increases [[metertype METER_TARGET_INDUSTRY]] by 5 times the planet's population and sets the target [[metertype METER_HAPPINESS]] to 0.
+'''Decreases the planet's population at a rate of 3 per turn, increases [[metertype METER_TARGET_INDUSTRY]] by 5 times the planet's population and sets the [[metertype METER_TARGET_HAPPINESS]] to 0.
 
 Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently.'''
 
