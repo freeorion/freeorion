@@ -46,13 +46,13 @@ namespace parse {
         constant
             =   tok.string          [ _val = construct_movable_(new_<ValueRef::Constant<std::string>>(_1)) ]
             |  (    tok.CurrentContent_
-                    |   tok.ThisBuilding_
-                    |   tok.ThisField_
-                    |   tok.ThisHull_
-                    |   tok.ThisPart_   // various aliases for this reference in scripts, allowing scripter to use their preference
-                    |   tok.ThisTech_
-                    |   tok.ThisSpecies_
-                    |   tok.ThisSpecial_
+                |   tok.ThisBuilding_
+                |   tok.ThisField_
+                |   tok.ThisHull_
+                |   tok.ThisPart_   // various aliases for this reference in scripts, allowing scripter to use their preference
+                |   tok.ThisTech_
+                |   tok.ThisSpecies_
+                |   tok.ThisSpecial_
                ) [ _val = construct_movable_(new_<ValueRef::Constant<std::string>>(TOK_CURRENT_CONTENT)) ]
             ;
 
@@ -79,11 +79,11 @@ namespace parse {
             =   (
                 (
                     (
-                        tok.OneOf_      [ _c = ValueRef::RANDOM_PICK ]
-                        |   tok.Min_        [ _c = ValueRef::MINIMUM ]
-                        |   tok.Max_        [ _c = ValueRef::MAXIMUM ]
+                        tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]
+                    |   tok.Min_    [ _c = ValueRef::MINIMUM ]
+                    |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
                     )
-                    > ( '('  >   expr [ push_back(_d, _1) ]
+                    > (     '('  >   expr [ push_back(_d, _1) ]
                         > *(','  >   expr [ push_back(_d, _1) ] ) > ')' )
                     [ _val = construct_movable_(new_<ValueRef::Operation<std::string>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
                 )

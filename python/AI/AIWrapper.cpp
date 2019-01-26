@@ -52,11 +52,11 @@ using boost::python::extract;
 // Python AIInterface //
 ////////////////////////
 // disambiguation of overloaded functions
-const std::string&  (*AIIntPlayerNameVoid)(void) =              &AIInterface::PlayerName;
-const std::string&  (*AIIntPlayerNameInt)(int) =                &AIInterface::PlayerName;
+const std::string&  (*AIIntPlayerNameVoid)(void) =  &AIInterface::PlayerName;
+const std::string&  (*AIIntPlayerNameInt)(int) =    &AIInterface::PlayerName;
 
-const Empire*       (*AIIntGetEmpireVoid)(void) =               &AIInterface::GetEmpire;
-const Empire*       (*AIIntGetEmpireInt)(int) =                 &AIInterface::GetEmpire;
+const Empire*       (*AIIntGetEmpireVoid)(void) =   &AIInterface::GetEmpire;
+const Empire*       (*AIIntGetEmpireInt)(int) =     &AIInterface::GetEmpire;
 
 
 namespace {
@@ -64,14 +64,15 @@ namespace {
     static std::string s_save_state_string("");
 
     int IssueCreateShipDesignOrderWrapper(const std::string& name, const std::string& description,
-                                          const std::string& hull, boost::python::list partsList,
-                                          const std::string& icon, const std::string& model, bool nameDescInStringTable)
+                                          const std::string& hull, boost::python::list parts_list,
+                                          const std::string& icon, const std::string& model,
+                                          bool name_desc_in_stringtable)
     {
         std::vector<std::string> parts;
-        int const numParts = boost::python::len(partsList);
-        for (int i = 0; i < numParts; i++)
-            parts.push_back(boost::python::extract<std::string>(partsList[i]));
-        int result = AIInterface::IssueCreateShipDesignOrder(name, description, hull, parts, icon, model, nameDescInStringTable);
+        int const num_parts = boost::python::len(parts_list);
+        for (int i = 0; i < num_parts; i++)
+            parts.push_back(boost::python::extract<std::string>(parts_list[i]));
+        int result = AIInterface::IssueCreateShipDesignOrder(name, description, hull, parts, icon, model, name_desc_in_stringtable);
         return result;
     }
 

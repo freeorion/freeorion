@@ -54,7 +54,6 @@ namespace parse { namespace detail {
                 _a,
                 deconstruct_movable_(_b, _pass),
                 _c)) ]
-
             ;
 
         set_ship_part_meter
