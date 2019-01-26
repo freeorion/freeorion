@@ -1763,7 +1763,8 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
     m_player_empire_ids[player_connection->PlayerID()] = empire_id;
 
     const OrderSet dummy;
-    const OrderSet& orders = orders_it->second.second ? *orders_it->second.second : dummy;
+    const OrderSet& orders = static_cast<bool>(orders_it->second.second) && static_cast<bool>(orders_it->second.second->m_orders) ? *(orders_it->second.second->m_orders) : dummy;
+    const SaveGameUIData* ui_data = orders_it->second.second ? orders_it->second.second->m_ui_data.get() : nullptr;
 
     // drop ready status
     orders_it->second.first = false;
@@ -1776,7 +1777,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
         m_current_turn, m_empires, m_universe,
         GetSpeciesManager(), GetCombatLogManager(),
         GetSupplyManager(),  player_info_map, orders,
-        static_cast<const SaveGameUIData*>(nullptr),
+        ui_data,
         m_galaxy_setup_data,
         use_binary_serialization));
 
@@ -1818,7 +1819,7 @@ int ServerApp::EffectsProcessingThreads() const
 
 void ServerApp::AddEmpireTurn(int empire_id)
 {
-    m_turn_sequence[empire_id].second.reset(nullptr);
+    m_turn_sequence[empire_id].second.reset();
     m_turn_sequence[empire_id].first = false;
 }
 
@@ -1829,13 +1830,13 @@ void ServerApp::ClearEmpireTurnOrders() {
     for (auto& order : m_turn_sequence) {
         order.second.first = false;
         if (order.second.second) {
-            order.second.second.reset(nullptr);
+            order.second.second.reset();
         }
     }
 }
 
-void ServerApp::SetEmpireTurnOrders(int empire_id, std::unique_ptr<OrderSet>&& order_set)
-{ m_turn_sequence[empire_id] = std::make_pair(true, std::move(order_set)); }
+void ServerApp::SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveGameData>&& save_game_data)
+{ m_turn_sequence[empire_id] = std::make_pair(true, std::move(save_game_data)); }
 
 void ServerApp::RevokeEmpireTurnReadyness(int empire_id)
 { m_turn_sequence[empire_id].first = false; }
@@ -3056,12 +3057,16 @@ void ServerApp::PreCombatProcessTurns() {
 
     // execute orders
     for (const auto& empire_orders : m_turn_sequence) {
-        auto& order_set = empire_orders.second;
-        if (!order_set.second) {
+        auto& save_game_data = empire_orders.second;
+        if (!save_game_data.second) {
+            DebugLogger() << "No SaveGameData for empire " << empire_orders.first;
+            continue;
+        }
+        if (!save_game_data.second->m_orders) {
             DebugLogger() << "No OrderSet for empire " << empire_orders.first;
             continue;
         }
-        for (const auto& id_and_order : *order_set.second)
+        for (const auto& id_and_order : *save_game_data.second->m_orders)
             id_and_order.second->Execute();
     }
 

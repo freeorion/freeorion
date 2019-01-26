@@ -2492,7 +2492,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& sender = msg.m_player_connection;
 
-    auto order_set = boost::make_unique<OrderSet>();
+    auto order_set = std::make_shared<OrderSet>();
     auto ui_data = std::make_shared<SaveGameUIData>();
     bool ui_data_available = false;
     std::string save_state_string;
@@ -2564,7 +2564,9 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
         TraceLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Received orders from player " << player_id;
 
-        server.SetEmpireTurnOrders(empire_id, std::move(order_set));
+        server.SetEmpireSaveGameData(empire_id, boost::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id,
+                                                                   order_set,       ui_data,    save_state_string,
+                                                                   client_type));
 
         // notify other player that this empire submitted orders
         for (auto player_it = server.m_networking.established_begin();
@@ -2681,10 +2683,30 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
         return discard_event();
     }
 
-    context<WaitingForTurnEnd>().m_save_filename = message.Text();  // store requested save file name in Base state context so that sibling state can retreive it
+    const std::string& save_filename = message.Text(); // store requested save file name in Base state context so that sibling state can retreive it
 
-    // ToDo: save game
-    SendMessageToAllPlayers(ServerSaveGameCompleteMessage(context<WaitingForTurnEnd>().m_save_filename, 0));
+    ServerSaveGameData server_data(server.m_current_turn);
+
+    // retreive requested save name from Base state, which should have been
+    // set in WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
+    int bytes_written = 0;
+
+    std::vector<PlayerSaveGameData> player_save_game_data;
+
+    // save game...
+    try {
+        bytes_written = SaveGame(save_filename,     server_data,    player_save_game_data,
+                                 GetUniverse(),     Empires(),      GetSpeciesManager(),
+                                 GetCombatLogManager(),             server.m_galaxy_setup_data,
+                                 !server.m_single_player_game);
+
+    } catch (const std::exception& error) {
+        ErrorLogger(FSM) << "Catch std::exception: " << error.what();
+        SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));
+    }
+
+    // inform players that save is complete
+    SendMessageToAllPlayers(ServerSaveGameCompleteMessage(save_filename, bytes_written));
 
     return discard_event();
 }

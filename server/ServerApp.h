@@ -108,9 +108,9 @@ public:
       * an empire is eliminated from the game */
     void    RemoveEmpireTurn(int empire_id);
 
-    /** Adds turn orders for the given empire for the current turn. order_set
-      * will be freed when all processing is done for the turn */
-    void    SetEmpireTurnOrders(int empire_id, std::unique_ptr<OrderSet>&& order_set);
+    /** Adds save game data includes turn orders for the given empire for the current turn.
+      * \a save_game_data will be freed when all processing is done for the turn */
+    void    SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveGameData>&& save_game_data);
 
     /** Revokes turn order's ready state for the given empire. */
     void    RevokeEmpireTurnReadyness(int empire_id);
@@ -311,7 +311,7 @@ private:
       * The map contains ready state which should be true to advance turn and
       * pointer to orders from empire.
       * */
-    std::map<int, std::pair<bool, std::unique_ptr<OrderSet>>>      m_turn_sequence;
+    std::map<int, std::pair<bool, std::unique_ptr<PlayerSaveGameData>>>  m_turn_sequence;
 
     // Give FSM and its states direct access.  We are using the FSM code as a
     // control-flow mechanism; it is all notionally part of this class.
