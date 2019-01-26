@@ -280,6 +280,14 @@ ERROR_SOUND_INITIALIZATION_FAILED
 Check log files for more detailed messages.
 '''
 
+OPENGL_VERSION_LOW_TITLE
+OpenGL Version Low
+
+OPENGL_VERSION_LOW_TEXT
+'''The OpenGL version on this system is less than 2.0
+
+FreeOrion may crash while starting.'''
+
 # Used as a prefix for the FORMAT_LIST_[1-MANY]_ITEMS translation entries.
 FORMAT_LIST_DEFAULT_PLURAL_HEADER
 There are:
