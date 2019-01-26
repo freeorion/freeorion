@@ -2464,7 +2464,6 @@ sc::result PlayingGame::react(const Error& msg) {
 sc::result PlayingGame::react(const LobbyUpdate& msg) {
     TraceLogger(FSM) << "(ServerFSM) MPLobby.LobbyUpdate";
     ServerApp& server = Server();
-    const Message& message = msg.m_message;
     const PlayerConnectionPtr& sender = msg.m_player_connection;
 
     // ignore data
@@ -2508,6 +2507,10 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
     int player_id = sender->PlayerID();
     Networking::ClientType client_type = sender->GetClientType();
+
+    // ensure ui data availability flag is consistent with ui data
+    if (!ui_data_available)
+        ui_data.reset();
 
     if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
         // observers cannot submit orders. ignore.
@@ -2691,11 +2694,9 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
     // set in WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
     int bytes_written = 0;
 
-    std::vector<PlayerSaveGameData> player_save_game_data;
-
     // save game...
     try {
-        bytes_written = SaveGame(save_filename,     server_data,    player_save_game_data,
+        bytes_written = SaveGame(save_filename,     server_data,    server.GetPlayerSaveGameData(),
                                  GetUniverse(),     Empires(),      GetSpeciesManager(),
                                  GetCombatLogManager(),             server.m_galaxy_setup_data,
                                  !server.m_single_player_game);

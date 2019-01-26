@@ -86,6 +86,9 @@ public:
 
     /** Returns chat history buffer. */
     const boost::circular_buffer<ChatHistoryEntity>& GetChatHistory() const;
+
+    /** Extracts player save game data. */
+    std::vector<PlayerSaveGameData> GetPlayerSaveGameData() const;
     //@}
 
 

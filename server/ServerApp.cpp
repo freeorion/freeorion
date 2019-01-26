@@ -1800,6 +1800,16 @@ bool ServerApp::IsHostless() const
 const boost::circular_buffer<ChatHistoryEntity>& ServerApp::GetChatHistory() const
 { return m_chat_history; }
 
+std::vector<PlayerSaveGameData> ServerApp::GetPlayerSaveGameData() const {
+    std::vector<PlayerSaveGameData> player_save_game_data;
+    for (const auto& m_save_data : m_turn_sequence) {
+        if (m_save_data.second.second) {
+            player_save_game_data.push_back(*m_save_data.second.second);
+        }
+    }
+    return player_save_game_data;
+}
+
 Networking::ClientType ServerApp::GetEmpireClientType(int empire_id) const
 { return GetPlayerClientType(ServerApp::EmpirePlayerID(empire_id)); }
 
