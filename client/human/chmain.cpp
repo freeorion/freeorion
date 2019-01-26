@@ -37,7 +37,7 @@ unroll and hide the stack trace, print a message and still crash anyways. */
 // installed version of FO is run with the command-line flag added in as
 // appropriate.
 #ifdef FREEORION_WIN32
-const bool  STORE_FULLSCREEN_FLAG = false;
+const bool STORE_FULLSCREEN_FLAG = false;
 // Windows keeps good care of the resolution state itself,
 // so there is no reason to default to not touching it.
 const bool FAKE_MODE_CHANGE_FLAG = false;
@@ -257,9 +257,9 @@ int mainSetupAndRun() {
         bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
         bool fake_mode_change = GetOptionsDB().Get<bool>("video.fullscreen.fake.enabled");
 
-        std::pair<int, int> width_height = HumanClientApp::GetWindowWidthHeight();
+        auto width_height = HumanClientApp::GetWindowWidthHeight();
         int width(width_height.first), height(width_height.second);
-        std::pair<int, int> left_top = HumanClientApp::GetWindowLeftTop();
+        auto left_top = HumanClientApp::GetWindowLeftTop();
         int left(left_top.first), top(left_top.second);
 
 #ifdef FREEORION_WIN32

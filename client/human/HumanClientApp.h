@@ -32,18 +32,14 @@ public:
                    bool fullscreen, bool fake_mode_change);
 
     HumanClientApp(const HumanClientApp&) = delete;
-
     HumanClientApp(HumanClientApp&&) = delete;
-
     ~HumanClientApp() override;
 
     const HumanClientApp& operator=(const HumanClientApp&) = delete;
-
     HumanClientApp& operator=(const HumanClientApp&&) = delete;
 
     /** \name Accessors */ //@{
     int EffectsProcessingThreads() const override;
-
     bool SinglePlayerGame() const;  ///< returns true iff this game is a single-player game
     bool CanSaveNow() const;        ///< returns true / false to indicate whether this client can currently safely initiate a game save
     int  AutoTurnsLeft() const;     ///< returns number of turns left to execute automatically
@@ -57,7 +53,6 @@ public:
 
     /** \brief Handle UI and state updates with changes in turn phase. */
     void HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) override;
-
     void SetSinglePlayerGame(bool sp = true);
     void NewSinglePlayerGame(bool quickstart = false);
     void MultiPlayerGame();                     ///< shows multiplayer connection window, and then transitions to multiplayer lobby if connected
@@ -89,7 +84,6 @@ public:
       * to the server save directory. */
     void RequestSavePreviews(const std::string& relative_directory);
     void Autosave();                    ///< Autosaves the current game, iff autosaves are enabled and any turn number requirements are met
-
     void ContinueSinglePlayerGame();    ///< Load the newest single player autosave and continue playing game
     bool IsLoadGameAvailable() const;
     std::string SelectLoadFile();       ///< Lets the user select a multiplayer save to load
@@ -101,7 +95,6 @@ public:
     { return *m_ui.get(); }
 
     void Reinitialize();
-
     float GLVersion() const;
 
     void HandleSaveGameDataRequest();
@@ -183,16 +176,16 @@ private:
     /** The only instance of the ClientUI. */
     std::unique_ptr<ClientUI> m_ui;
 
-    bool m_single_player_game;  ///< true when this game is a single-player game
-    bool m_game_started;        ///< true when a game is currently in progress
-    bool m_connected;           ///< true if we are in a state in which we are supposed to be connected to the server
-    int  m_auto_turns;          ///< auto turn counter
-    bool m_have_window_focus;
+    bool m_single_player_game = true;   ///< true when this game is a single-player game
+    bool m_game_started = false;        ///< true when a game is currently in progress
+    bool m_connected = false;           ///< true if we are in a state in which we are supposed to be connected to the server
+    int  m_auto_turns = 0;              ///< auto turn counter
+    bool m_have_window_focus = true;
 
     /** Filenames of all in progress saves.  There maybe multiple saves in
         progress if a player and an autosave are initiated at the same time. */
-    std::queue<std::string>     m_game_saves_in_progress;
-    boost::signals2::signal<void ()> SaveGamesCompletedSignal;
+    std::queue<std::string>             m_game_saves_in_progress;
+    boost::signals2::signal<void ()>    SaveGamesCompletedSignal;
 };
 
 #endif // _HumanClientApp_h_
