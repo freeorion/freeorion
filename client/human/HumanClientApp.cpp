@@ -908,7 +908,7 @@ void HumanClientApp::Reinitialize() {
 float HumanClientApp::GLVersion() const
 { return GetGLVersion(); }
 
-void HumanClientApp::StartTurn() {
+void HumanClientApp::StartTurn(const SaveGameUIData &ui_data) {
     DebugLogger() << "HumanClientApp::StartTurn";
 
     if (const Empire* empire = GetEmpire(EmpireID())) {
@@ -930,7 +930,7 @@ void HumanClientApp::StartTurn() {
         Autosave();
     }
 
-    ClientApp::StartTurn();
+    ClientApp::StartTurn(ui_data);
     m_fsm->process_event(TurnEnded());
 }
 

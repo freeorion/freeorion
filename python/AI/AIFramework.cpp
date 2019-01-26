@@ -93,7 +93,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
     FreeOrionPython::SetWrapper<std::string>::Wrap("StringSet");
 }
- 
+
 //////////////////////
 //     PythonAI     //
 //////////////////////
@@ -190,7 +190,7 @@ void PythonAI::ResumeLoadedGame(const std::string& save_state_string) {
     resumeLoadedGamePythonFunction(FreeOrionPython::GetStaticSaveStateString());
 }
 
-const std::string& PythonAI::GetSaveStateString() {
+const std::string& PythonAI::GetSaveStateString() const {
     // call Python function that serializes AI state for storage in save file and sets s_save_state_string
     // to contain that string
     object prepareForSavePythonFunction = m_python_module_ai.attr("prepareForSave");

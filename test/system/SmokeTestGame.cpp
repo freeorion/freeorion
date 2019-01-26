@@ -127,8 +127,10 @@ BOOST_AUTO_TEST_CASE(host_server) {
         BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
     }
 
+    SaveGameUIData ui_data;
+
     while (m_current_turn <= num_turns) {
-        StartTurn();
+        StartTurn(ui_data);
 
         m_turn_done = false;
         m_ai_waiting = m_ai_empires;

@@ -1007,7 +1007,9 @@ boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
 }
 
 boost::statechart::result PlayingTurn::react(const AdvanceTurn& d) {
-    Client().StartTurn();
+    SaveGameUIData ui_data;
+    Client().GetClientUI().GetSaveGameUIData(ui_data);
+    Client().StartTurn(ui_data);
     return discard_event();
 }
 

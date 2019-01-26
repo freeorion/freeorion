@@ -36,7 +36,7 @@ using boost::python::str;
 namespace {
     const float DUMMY_FLOAT = 0.0f;
 }
-    
+
 //////////////////////////////////
 //          AI Base             //
 //////////////////////////////////
@@ -61,7 +61,7 @@ void AIBase::StartNewGame()
 void AIBase::ResumeLoadedGame(const std::string& save_state_string)
 {}
 
-const std::string& AIBase::GetSaveStateString() {
+const std::string& AIBase::GetSaveStateString() const {
     static std::string default_state_string("AIBase default save state string");
     DebugLogger() << "AIBase::GetSaveStateString() returning: " << default_state_string;
     return default_state_string;
@@ -377,7 +377,7 @@ namespace AIInterface {
             ErrorLogger() << "IssueChangeProductionStockpileOrder : passed queue_index outside range of items on queue.";
             return 0;
         }
-        
+
         AIClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ProductionQueueOrder>(empire_id, queue_index, use_stockpile, DUMMY_FLOAT, DUMMY_FLOAT));
 
@@ -433,7 +433,8 @@ namespace AIInterface {
 
     void DoneTurn() {
         DebugLogger() << "AIInterface::DoneTurn()";
-        AIClientApp::GetApp()->StartTurn(); // encodes order sets and sends turn orders message.  "done" the turn for the client, but "starts" the turn for the server
+        AIClientApp* app = AIClientApp::GetApp();
+        app->StartTurn(app->GetAI()->GetSaveStateString()); // encodes order sets and sends turn orders message.  "done" the turn for the client, but "starts" the turn for the server
     }
 
     void LogOutput(const std::string& log_text)

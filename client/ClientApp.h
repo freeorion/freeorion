@@ -161,8 +161,11 @@ public:
      */
     std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) override;
 
-    /** @brief Send the OrderSet to the server and start a new turn */
-    virtual void StartTurn();
+    /** @brief Send the OrderSet and UI data to the server and start a new turn */
+    virtual void StartTurn(const SaveGameUIData &ui_data);
+
+    /** @brief Send the OrderSet and AI state to the server and start a new turn */
+    virtual void StartTurn(const std::string& save_state_string);
 
     /** \brief Handle server acknowledgement of receipt of orders and clear
         the orders. */
@@ -260,8 +263,6 @@ protected:
     EmpireManager               m_empires;
     SupplyManager               m_supply_manager;
     OrderSet                    m_orders;
-    std::unique_ptr<SaveGameUIData> m_ui_data; ///< Saved UI data for non-AI players
-    std::string                 m_ai_data; ///< Saved AI state
     std::shared_ptr<ClientNetworking> m_networking;
     int                         m_empire_id;
     int                         m_current_turn;
