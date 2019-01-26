@@ -2258,8 +2258,13 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             return 0.0;
 
         MeterType meter_type = ValueRef::NameToMeter(meter_name);
+        if (meter_type != INVALID_METER_TYPE) {
+            if (m_return_immediate_value)
+                return ship->CurrentPartMeterValue(meter_type, part_name);
+            else
+                return ship->InitialPartMeterValue(meter_type, part_name);
+        }
 
-        return ship->CurrentPartMeterValue(meter_type, part_name);
     }
 
     return 0.0;
