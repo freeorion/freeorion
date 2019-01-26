@@ -97,7 +97,6 @@ public:
     void Reinitialize();
     float GLVersion() const;
 
-    void HandleSaveGameDataRequest();
     void UpdateCombatLogs(const Message& msg);
     /** Update any open SaveGameDialog with previews from the server. */
     void HandleSaveGamePreviews(const Message& msg);

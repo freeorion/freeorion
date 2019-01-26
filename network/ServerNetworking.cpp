@@ -242,7 +242,7 @@ namespace {
         case Message::LOBBY_EXIT:               return "Lobby Exit";
         case Message::START_MP_GAME:            return "Start MP Game";
         case Message::SAVE_GAME_INITIATE:       return "Save Game";
-        case Message::SAVE_GAME_DATA_REQUEST:   return "Save Game";
+        //case Message::SAVE_GAME_DATA_REQUEST: return "Save Game";
         case Message::SAVE_GAME_COMPLETE:       return "Save Game";
         case Message::LOAD_GAME:                return "Load Game";
         case Message::GAME_START:               return "Game Start";
@@ -251,7 +251,7 @@ namespace {
         case Message::TURN_ORDERS:              return "Turn Orders";
         case Message::TURN_PROGRESS:            return "Turn Progress";
         case Message::PLAYER_STATUS:            return "Player Status";
-        case Message::CLIENT_SAVE_DATA:         return "Client Save Data";
+        //case Message::CLIENT_SAVE_DATA:       return "Client Save Data";
         case Message::PLAYER_CHAT:              return "Player Chat";
         case Message::DIPLOMACY:                return "Diplomacy";
         case Message::DIPLOMATIC_STATUS:        return "Diplomatic Status";

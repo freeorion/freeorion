@@ -80,7 +80,6 @@ struct MessageEventBase {
     (TurnOrders)                            \
     (RevokeReadiness)                       \
     (CombatTurnOrders)                      \
-    (ClientSaveData)                        \
     (RequestCombatLogs)                     \
     (PlayerChat)                            \
     (Diplomacy)                             \
@@ -366,32 +365,6 @@ struct WaitingForTurnEndIdle : sc::state<WaitingForTurnEndIdle, WaitingForTurnEn
 
     SERVER_ACCESSOR
 };
-
-
-/** The substate of WaitingForTurnEnd in which a player has initiated a save
-  * and the server is waiting for all players to send their save data, after
-  * which the server will actually preform the save. */
-struct WaitingForSaveData : sc::state<WaitingForSaveData, WaitingForTurnEnd> {
-    typedef boost::mpl::list<
-        sc::custom_reaction<ClientSaveData>,
-        sc::deferral<SaveGameRequest>,
-        sc::deferral<TurnOrders>,
-        sc::deferral<RevokeReadiness>,
-        sc::deferral<Diplomacy>
-    > reactions;
-
-    WaitingForSaveData(my_context c);
-    ~WaitingForSaveData();
-
-    sc::result react(const ClientSaveData& msg);
-
-    std::set<int>                   m_needed_reponses;
-    std::set<int>                   m_players_responded;
-    std::vector<PlayerSaveGameData> m_player_save_game_data;
-
-    SERVER_ACCESSOR
-};
-
 
 /** The substate of PlayingGame in which the server has received turn orders
   * from players and is determining what happens between turns.  This includes

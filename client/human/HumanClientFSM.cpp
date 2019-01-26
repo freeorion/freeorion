@@ -876,14 +876,6 @@ WaitingForTurnData::WaitingForTurnData(my_context ctx) :
 WaitingForTurnData::~WaitingForTurnData()
 { TraceLogger(FSM) << "(HumanClientFSM) ~WaitingForTurnData"; }
 
-boost::statechart::result WaitingForTurnData::react(const SaveGameDataRequest& msg) {
-    TraceLogger(FSM) << "(HumanClientFSM) WaitingForTurnData.SaveGameDataRequest";
-    DebugLogger(FSM) << "Sending Save Game Data to Server";
-    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("SERVER_SAVE_INITIATE_ACK") + "\n");
-    Client().HandleSaveGameDataRequest();
-    return discard_event();
-}
-
 boost::statechart::result WaitingForTurnData::react(const SaveGameComplete& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForTurnData.SaveGameComplete";
 
@@ -989,14 +981,6 @@ PlayingTurn::PlayingTurn(my_context ctx) :
 
 PlayingTurn::~PlayingTurn()
 { TraceLogger(FSM) << "(HumanClientFSM) ~PlayingTurn"; }
-
-boost::statechart::result PlayingTurn::react(const SaveGameDataRequest& msg) {
-    TraceLogger(FSM) << "(HumanClientFSM) PlayingTurn.SaveGameDataRequest";
-    DebugLogger(FSM) << "Sending Save Game Data to Server";
-    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("SERVER_SAVE_INITIATE_ACK") + "\n");
-    Client().HandleSaveGameDataRequest();
-    return discard_event();
-}
 
 boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingTurn.SaveGameComplete";

@@ -975,7 +975,6 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::JOIN_GAME:                m_fsm->process_event(JoinGame(msg));                break;
     case Message::HOST_ID:                  m_fsm->process_event(HostID(msg));                  break;
     case Message::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg));             break;
-    case Message::SAVE_GAME_DATA_REQUEST:   m_fsm->process_event(SaveGameDataRequest(msg));     break;
     case Message::SAVE_GAME_COMPLETE:       m_fsm->process_event(SaveGameComplete(msg));        break;
     case Message::CHECKSUM:                 m_fsm->process_event(CheckSum(msg));                break;
     case Message::GAME_START:               m_fsm->process_event(GameStart(msg));               break;
@@ -997,14 +996,6 @@ void HumanClientApp::HandleMessage(Message& msg) {
     default:
         ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
     }
-}
-
-void HumanClientApp::HandleSaveGameDataRequest() {
-    if (INSTRUMENT_MESSAGE_HANDLING)
-        std::cerr << "HumanClientApp::HandleSaveGameDataRequest(" << Message::SAVE_GAME_DATA_REQUEST << ")\n";
-    SaveGameUIData ui_data;
-    m_ui->GetSaveGameUIData(ui_data);
-    m_networking->SendMessage(ClientSaveDataMessage(Orders(), ui_data));
 }
 
 void HumanClientApp::UpdateCombatLogs(const Message& msg){

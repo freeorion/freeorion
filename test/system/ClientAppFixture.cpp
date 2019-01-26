@@ -219,9 +219,6 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
     case Message::SAVE_GAME_COMPLETE:
         m_save_completed = true;
         return true;
-    case Message::SAVE_GAME_DATA_REQUEST:
-        m_networking->SendMessage(ClientSaveDataMessage(Orders()));
-        return true;
     case Message::JOIN_GAME: {
         int player_id;
         ExtractJoinAckMessageData(msg, player_id, m_cookie);
@@ -248,9 +245,6 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         return false;
     }
 }
-
-void ClientAppFixture::SendTurnOrders()
-{ m_networking->SendMessage(TurnOrdersMessage(OrderSet())); }
 
 void ClientAppFixture::SaveGame() {
     std::string save_filename = boost::io::str(boost::format("FreeOrionTestGame_%04d_%s%s") % CurrentTurn() % FilenameTimestamp() % SP_SAVE_FILE_EXTENSION);

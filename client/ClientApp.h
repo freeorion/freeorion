@@ -260,6 +260,8 @@ protected:
     EmpireManager               m_empires;
     SupplyManager               m_supply_manager;
     OrderSet                    m_orders;
+    std::unique_ptr<SaveGameUIData> m_ui_data; ///< Saved UI data for non-AI players
+    std::string                 m_ai_data; ///< Saved AI state
     std::shared_ptr<ClientNetworking> m_networking;
     int                         m_empire_id;
     int                         m_current_turn;

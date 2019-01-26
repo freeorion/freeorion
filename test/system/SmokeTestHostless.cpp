@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         }
 
         while (m_current_turn <= num_turns) {
-            SendTurnOrders();
+            StartTurn();
 
             m_turn_done = false;
             m_ai_waiting = m_ai_empires;
