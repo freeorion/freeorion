@@ -43,6 +43,8 @@
 #include <boost/date_time/posix_time/time_formatters.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #include <ctime>
 #include <thread>
@@ -690,7 +692,9 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
         // add empires to turn processing
         int empire_id = PlayerEmpireID(player_id);
         if (GetEmpire(empire_id))
-            AddEmpireTurn(empire_id);
+            AddEmpireTurn(empire_id, PlayerSaveGameData(player_id_and_setup.second.m_player_name, empire_id,
+                                                        nullptr, nullptr, std::string(),
+                                                        player_id_and_setup.second.m_client_type));
     }
 
     // update visibility information to ensure data sent out is up-to-date
@@ -1288,11 +1292,15 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         // the player controlling a particular empire might have a different
         // player ID than when the game was first created
         m_player_empire_ids[player_id] = empire_id;
+    }
 
-
+    for (const auto& psgd : player_save_game_data) {
+        int empire_id = psgd.m_empire_id;
         // add empires to turn processing, and restore saved orders and UI data or save state data
-        if (GetEmpire(empire_id)) {
-            AddEmpireTurn(empire_id);
+        Empire* empire = GetEmpire(empire_id);
+        if (empire) {
+            if (!empire->Eliminated())
+                AddEmpireTurn(empire_id, psgd);
         } else {
             ErrorLogger() << "ServerApp::LoadGameInit couldn't find empire with id " << empire_id << " to add to turn processing";
         }
@@ -1803,6 +1811,8 @@ const boost::circular_buffer<ChatHistoryEntity>& ServerApp::GetChatHistory() con
 std::vector<PlayerSaveGameData> ServerApp::GetPlayerSaveGameData() const {
     std::vector<PlayerSaveGameData> player_save_game_data;
     for (const auto& m_save_data : m_turn_sequence) {
+        DebugLogger() << "Empire " << m_save_data.first << " ready " << m_save_data.second.first
+            << " save_game_data " << m_save_data.second.second.get();
         if (m_save_data.second.second) {
             player_save_game_data.push_back(*m_save_data.second.second);
         }
@@ -1827,9 +1837,9 @@ Networking::ClientType ServerApp::GetPlayerClientType(int player_id) const {
 int ServerApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects.server.threads"); }
 
-void ServerApp::AddEmpireTurn(int empire_id)
+void ServerApp::AddEmpireTurn(int empire_id, const PlayerSaveGameData& psgd)
 {
-    m_turn_sequence[empire_id].second.reset();
+    m_turn_sequence[empire_id].second = boost::make_unique<PlayerSaveGameData>(psgd);
     m_turn_sequence[empire_id].first = false;
 }
 
@@ -1840,7 +1850,9 @@ void ServerApp::ClearEmpireTurnOrders() {
     for (auto& order : m_turn_sequence) {
         order.second.first = false;
         if (order.second.second) {
-            order.second.second.reset();
+            // reset only orders
+            // left UI data and AI state intact
+            order.second.second->m_orders.reset();
         }
     }
 }
@@ -1857,6 +1869,9 @@ bool ServerApp::AllOrdersReceived() {
     bool all_orders_received = true;
     for (const auto& empire_orders : m_turn_sequence) {
         if (!empire_orders.second.second) {
+            DebugLogger() << " ... no save data from empire id: " << empire_orders.first;
+            all_orders_received = false;
+        } else if (!empire_orders.second.second->m_orders) {
             DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
             all_orders_received = false;
         } else if (!empire_orders.second.first) {

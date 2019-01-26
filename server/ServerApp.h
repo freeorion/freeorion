@@ -103,14 +103,6 @@ public:
     /** creates an AI client child process for each element of \a AIs*/
     void    CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression = 4);
 
-    /**  Adds an existing empire to turn processing. The position the empire is
-      * in the vector is it's position in the turn processing.*/
-    void    AddEmpireTurn(int empire_id);
-
-    /** Removes an empire from turn processing. This is most likely called when
-      * an empire is eliminated from the game */
-    void    RemoveEmpireTurn(int empire_id);
-
     /** Adds save game data includes turn orders for the given empire for the current turn.
       * \a save_game_data will be freed when all processing is done for the turn */
     void    SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveGameData>&& save_game_data);
@@ -291,6 +283,14 @@ private:
     /** Called when this sever's EmpireManager changes the diplmatic message
       * between two empires. Updates those empires of the change. */
     void    HandleDiplomaticMessageChange(int empire1_id, int empire2_id);
+
+    /**  Adds an existing empire to turn processing. The position the empire is
+      * in the vector is it's position in the turn processing.*/
+    void    AddEmpireTurn(int empire_id, const PlayerSaveGameData& psgd);
+
+    /** Removes an empire from turn processing. This is most likely called when
+      * an empire is eliminated from the game */
+    void    RemoveEmpireTurn(int empire_id);
 
     boost::asio::io_service m_io_service;
     boost::asio::signal_set m_signals;
