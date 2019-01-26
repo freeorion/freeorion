@@ -2257,13 +2257,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (meter_name.empty())
             return 0.0;
 
-        MeterType meter_type;
-        if (meter_name.compare("MaxCapacity") == 0) {
-            meter_type = METER_MAX_CAPACITY;
-        }
-        meter_type = METER_CAPACITY;
-        //meter_type = METER_MAX_CAPACITY:
-        //METER_MAX_SECONDARY_STAT:
+        MeterType meter_type = ValueRef::NameToMeter(meter_name);
 
         return ship->CurrentPartMeterValue(meter_type, part_name);
     }
