@@ -6,19 +6,8 @@ Part
     capacity = 4
     damage = 1
     combatTargets = And [
-        Or [        // unowned target, when attacker is owned by an empire, and target is visible to that empire
-            And [
-                Unowned
-                (Source.Owner != LocalCandidate.Owner)
-                VisibleToEmpire empire = Source.Owner
-            ]
-            And [   // target owned by an empire, when attacker is owned by an enemy of the target's owner, and the target is visible to the attcker's owner
-                OwnedBy affiliation = AnyEmpire
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
-                VisibleToEmpire empire = Source.Owner
-            ]
-        ]
-        Or [ Ship Fighter ]
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        Fighter
     ]
     mountableSlotTypes = Internal
     buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
@@ -38,3 +27,4 @@ Part
 
 #include "/scripting/common/upkeep.macros"
 #include "/scripting/techs/techs.macros"
+#include "/scripting/ship_parts/targeting.macros"

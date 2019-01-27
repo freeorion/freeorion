@@ -12921,7 +12921,7 @@ FT_BAY_1_DESC
 Launch system for fighters.
 
 FT_HANGAR_0
-Hangar 0
+Decoy Hangar
 
 FT_HANGAR_0_DESC
 Storage system for unarmed decoy craft.
