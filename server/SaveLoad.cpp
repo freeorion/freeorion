@@ -333,8 +333,13 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
-        try {
-            // first attempt binary deserialziation
+        std::string signature(5, '\0');
+        if (!ifs.read(&signature[0], 5))
+            throw std::runtime_error(UNABLE_TO_OPEN_FILE);
+        boost::iostreams::seek(ifs, 0, std::ios_base::beg);
+
+        if (strncmp(signature.c_str(), "<?xml", 5)) {
+            // XML file format signature not found; try as binary
             freeorion_bin_iarchive ia(ifs);
             DebugLogger() << "Reading binary iarchive";
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
@@ -350,14 +355,10 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             Deserialize(ia, universe);
 
             DebugLogger() << "Done deserializing";
-        } catch (...) {
-            // if binary deserialization failed, try more-portable XML deserialization
-
-            // reset to start of stream (attempted binary serialization will have consumed some input...)
-            boost::iostreams::seek(ifs, 0, std::ios_base::beg);
-
+        } else {
             // create archive with (preallocated) buffer...
             freeorion_xml_iarchive xia(ifs);
+            DebugLogger() << "Reading XML iarchive";
             // read from save file: uncompressed header serialized data, with compressed main archive string at end...
             // deserialize uncompressed save header info
             xia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
@@ -458,18 +459,21 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
-        try {
-            // first attempt binary deserialziation
+        std::string signature(5, '\0');
+        if (!ifs.read(&signature[0], 5))
+            throw std::runtime_error(UNABLE_TO_OPEN_FILE);
+        boost::iostreams::seek(ifs, 0, std::ios_base::beg);
+
+        if (strncmp(signature.c_str(), "<?xml", 5)) {
+            // XML file format signature not found; try as binary
+            DebugLogger() << "Attempting binary deserialization...";
             freeorion_bin_iarchive ia(ifs);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
 
-        } catch(...) {
-            // if binary deserialization failed, try more-portable XML deserialization
-
-            // reset to start of stream (attempted binary serialization will have consumed some input...)
-            boost::iostreams::seek(ifs, 0, std::ios_base::beg);
+        } else {
+            DebugLogger() << "Attempting XML deserialization...";
             freeorion_xml_iarchive ia(ifs);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
@@ -498,8 +502,13 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
-        try {
-            // first attempt binary deserialziation
+        std::string signature(5, '\0');
+        if (!ifs.read(&signature[0], 5))
+            throw std::runtime_error(UNABLE_TO_OPEN_FILE);
+        boost::iostreams::seek(ifs, 0, std::ios_base::beg);
+
+        if (strncmp(signature.c_str(), "<?xml", 5)) {
+            // XML file format signature not found; try as binary
             DebugLogger() << "Attempting binary deserialization...";
             freeorion_bin_iarchive ia(ifs);
 
@@ -507,13 +516,8 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
             ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
             ia >> BOOST_SERIALIZATION_NVP(player_save_header_data);
-
-        } catch (...) {
-            // if binary deserialization failed, try more-portable XML deserialization
-            DebugLogger() << "Trying again with XML deserialization...";
-
-            // reset to start of stream (attempted binary serialization will have consumed some input...)
-            boost::iostreams::seek(ifs, 0, std::ios_base::beg);
+        } else {
+            DebugLogger() << "Attempting XML deserialization...";
             freeorion_xml_iarchive ia(ifs);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
@@ -521,6 +525,7 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
             ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
             ia >> BOOST_SERIALIZATION_NVP(player_save_header_data);
         }
+
         // skipping additional deserialization which is not needed for this function
         DebugLogger() << "Done reading player save game data...";
     } catch (const std::exception& e) {
@@ -547,8 +552,14 @@ void LoadEmpireSaveGameData(const std::string& filename,
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
-        try {
-            // first attempt binary deserialziation
+        std::string signature(5, '\0');
+        if (!ifs.read(&signature[0], 5))
+            throw std::runtime_error(UNABLE_TO_OPEN_FILE);
+        boost::iostreams::seek(ifs, 0, std::ios_base::beg);
+
+        if (strncmp(signature.c_str(), "<?xml", 5)) {
+            // XML file format signature not found; try as binary
+            DebugLogger() << "Attempting binary deserialization...";
             freeorion_bin_iarchive ia(ifs);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
@@ -557,11 +568,8 @@ void LoadEmpireSaveGameData(const std::string& filename,
             ia >> BOOST_SERIALIZATION_NVP(player_save_header_data);
             ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);
 
-        } catch (...) {
-            // if binary deserialization failed, try more-portable XML deserialization
-
-            // reset to start of stream (attempted binary serialization will have consumed some input...)
-            boost::iostreams::seek(ifs, 0, std::ios_base::beg);
+        } else {
+            DebugLogger() << "Attempting XML deserialization...";
             freeorion_xml_iarchive ia(ifs);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
