@@ -2234,7 +2234,8 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             return 0.0;
 
         return object->SpecialCapacity(special_name);
-    } else if (variable_name == "ShipPartMeter") {
+    }
+    else if (variable_name == "ShipPartMeter") {
         int object_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object_id = m_int_ref1->Eval(context);
@@ -2264,7 +2265,6 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             else
                 return ship->InitialPartMeterValue(meter_type, part_name);
         }
-
     }
 
     return 0.0;
@@ -2729,6 +2729,16 @@ std::string ComplexVariable<double>::Dump(unsigned short ntabs) const
             retval += " empire = " + m_int_ref1->Dump(ntabs);
         if (m_string_ref1)
             retval += " meter = " + m_string_ref1->Dump(ntabs);
+
+    }
+    else if (variable_name == "ShipPartMeter") {
+        // ShipPartMeter part = "SR_WEAPON_1_1" meter = Capacity object = Source.ID
+        if (m_string_ref1)
+            retval += " part = " + m_string_ref1->Dump(ntabs);
+        if (m_string_ref2)
+            retval += " meter = " + m_string_ref2->Dump(ntabs); // wrapped in quotes " but shouldn't be to be consistent with parser
+        if (m_int_ref1)
+            retval += " object = " + m_int_ref1->Dump(ntabs);
 
     }
     else if (variable_name == "DirectDistanceBetween" ||
