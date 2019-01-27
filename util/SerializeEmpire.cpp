@@ -122,7 +122,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             m_techs[entry] = BEFORE_FIRST_TURN;
     } else if (Archive::is_saving::value && !visible && !GetGameRules().Get<bool>("RULE_SHOW_DETAILED_EMPIRES_DATA")) {
         std::map<std::string, int> dummy_string_int_map;
-        // show only known tech without disclosure turn
+        // show other empire tech only if the current empire already knowns this tech without disclosure turn
+        // this allows to see effects if the empire learned appropriate tech
         const Empire* encoding_empire = Empires().GetEmpire(GetUniverse().EncodingEmpire());
         if (encoding_empire) {
             for (const auto& tech : encoding_empire->m_techs) {
@@ -139,6 +140,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
     ar  & BOOST_SERIALIZATION_NVP(m_meters);
     if (Archive::is_saving::value && !visible && !GetGameRules().Get<bool>("RULE_SHOW_DETAILED_EMPIRES_DATA")) {
+        // don't send what other empires building and researching
+        // and which building and ship parts are available to them
         ResearchQueue empty_research_queue(m_id);
         std::map<std::string, float> empty_research_progress;
         ProductionQueue empty_production_queue(m_id);
@@ -150,6 +153,9 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & boost::serialization::make_nvp("m_available_part_types", empty_string_set)
             & boost::serialization::make_nvp("m_available_hull_types", empty_string_set);
     } else {
+        // processing all data on deserialization, saving to savegame,
+        // sending data to the current empire itself,
+        // or rule allows to see all data
         ar  & BOOST_SERIALIZATION_NVP(m_research_queue)
             & BOOST_SERIALIZATION_NVP(m_research_progress)
             & BOOST_SERIALIZATION_NVP(m_production_queue)
@@ -162,8 +168,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_supply_unobstructed_systems)
         & BOOST_SERIALIZATION_NVP(m_preserved_system_exit_lanes);
 
-    if (visible)
-    {
+    if (visible) {
         ar  & boost::serialization::make_nvp("m_ship_designs", m_known_ship_designs);
         ar  & BOOST_SERIALIZATION_NVP(m_sitrep_entries)
             & BOOST_SERIALIZATION_NVP(m_resource_pools)
