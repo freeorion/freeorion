@@ -2,10 +2,13 @@
 
 #include "MovableEnvelope.h"
 #include "../universe/ValueRef.h"
-//#include "EnumParser.h"
+#include "EnumParser.h"
 #include <boost/spirit/include/phoenix.hpp>
 
 namespace parse {
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(std::string, MeterToName_, ValueRef::MeterToName, 1)
+
     double_complex_parser_grammar::double_complex_parser_grammar(
         const lexer& tok,
         detail::Labeller& label,
@@ -13,9 +16,8 @@ namespace parse {
         const detail::value_ref_grammar<std::string>& string_grammar
     ) :
         double_complex_parser_grammar::base_type(start, "double_complex_parser_grammar"),
-        simple_int_rules(tok)
-        //        ,
-        //        ship_part_meter_type_enum(tok)
+        simple_int_rules(tok),
+        ship_part_meter_type_enum(tok)
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
@@ -30,6 +32,7 @@ namespace parse {
         qi::_val_type _val;
         qi::_pass_type _pass;
         qi::omit_type omit_;
+
         const boost::phoenix::function<detail::construct_movable> construct_movable_;
         const boost::phoenix::function<detail::deconstruct_movable> deconstruct_movable_;
 
@@ -128,17 +131,17 @@ namespace parse {
         part_meter
             = ( tok.ShipPartMeter_
                 >   label(tok.Part_)    >   string_grammar
-                > label(tok.Name_) > string_grammar
-                //>   ship_part_meter_type_enum // probably Meter type
+                > label(tok.Meter_)
+                >   ship_part_meter_type_enum
                 >> label(tok.Object_)
                 >  simple_int
-               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_4, _pass),
                 nullptr,
                 nullptr,
                 deconstruct_movable_(_2, _pass),
-                deconstruct_movable_(_3, _pass) ))]
+                deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(MeterToName_(_3))), _pass) ))]
             ;
 
         special_capacity
