@@ -55,7 +55,7 @@ namespace parse { namespace detail {
             =   (
                 omit_[tok.ShipPartMeter_]
                 >   label(tok.Part_)    >   string_grammar
-                >   ship_part_meter_type_enum
+                >   label(tok.Meter_)   >   ship_part_meter_type_enum
                 >  -(label(tok.Low_)    >   double_rules.expr)
                 >  -(label(tok.High_)   >   double_rules.expr)
             ) [ _val = construct_movable_(new_<Condition::ShipPartMeterValue>(
