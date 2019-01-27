@@ -280,6 +280,14 @@ ERROR_SOUND_INITIALIZATION_FAILED
 Consultez le fichier log pour le détail des messages d'erreur.
 '''
 
+OPENGL_VERSION_LOW_TITLE
+Version OpenGL Insuffisante
+
+OPENGL_VERSION_LOW_TEXT
+'''La version OpenGL sur ce système est inférieure à 2.0
+
+FreeOrion peut s'interrompre inopinément durant le démarrage.'''
+
 # Used as a prefix for the FORMAT_LIST_[1-MANY]_ITEMS translation entries.
 FORMAT_LIST_DEFAULT_PLURAL_HEADER
 Engagés :
@@ -3221,7 +3229,7 @@ RESOURCE_TT_OUTPUT
 Capacité
 
 RESOURCE_TT_TARGET_OUTPUT
-Capacité prévue
+Projection Capacité
 
 RESOURCE_TT_USED
 Utilisée
@@ -5431,6 +5439,8 @@ METER_INDUSTRY_VALUE_DESC
 
 L'Industrie d'une planète peut participer à tout projet lancé sur les planètes qui lui sont reliées par lignes d'[[metertype METER_SUPPLY]] de l'empire. L'Industrie n'étant affectée à aucun projet durant un tour est ajoutée au Stock Impérial.
 
+La Projection Industrie est le niveau optimal de capacité en Industrie qu'une planète tend à approcher, compte tenu des différents facteurs influençant les ressources en Industrie. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Industrie est susceptible de fluctuer à son tour.
+
 Pour davantage d'informations sur l'interface de Production, consultez l'article [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
 
@@ -5439,6 +5449,8 @@ Recherche
 
 METER_RESEARCH_VALUE_DESC
 '''La Recherche, mesurée en Points de Recherche (PR), est utilisée par toutes les planètes de l'empire pour la découverte de nouvelles [[encyclopedia ENC_TECH]].
+
+La Projection Recherche est le niveau optimal de capacité en Recherche qu'une planète tend à approcher, compte tenu des différents facteurs influençant les ressources en Recherche. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Recherche est susceptible de fluctuer à son tour.
 
 L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie coûte 15 PR et requiert un minimum de 3 tours, seulement 5 PR par tour peuvent lui être alloués.
 Les PR sont affectés aux technologies à assimiler selon leur position dans la file d'attente : la technologie en tête de file est prioritaire. Les PR restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié : les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file. Si des PR restent non-alloués après que chaque technologie ait reçu son maximum autorisé de PR, ces PR en excédent sont automatiquement attribués à une ou plusieurs technologies déverrouillées et présentant le moins de PR nécessaires ou restants avant assimilation.
@@ -5455,13 +5467,17 @@ METER_CONSTRUCTION_VALUE_LABEL
 Infrastructure
 
 METER_CONSTRUCTION_VALUE_DESC
-L'Infrastructure englobe toutes les structures et organisations qui assurent la pérennité et la production des populations de l'empire : l'énergie, les transports, les télécommunications, les services sociaux, etc. Chaque colonie présente un indicateur 'Infrastructure'.
+'''L'Infrastructure englobe toutes les structures et organisations qui assurent la pérennité et la production des populations de l'empire : l'énergie, les transports, les télécommunications, les services sociaux, etc.
+
+La Projection Infrastructure est le niveau optimal d'Infrastructure qu'une planète tend à approcher, compte tenu des différents facteurs influençant l'Infrastructure planétaire. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Infrastructure est susceptible de fluctuer à son tour.'''
 
 METER_HAPPINESS_VALUE_LABEL
 Bonheur
 
 METER_HAPPINESS_VALUE_DESC
-Le Bonheur de la population d'une colonie est initialement faible suite au succès d'une colonisation ou d'une invasion, et peut également dépendre d'autres facteurs. Un Bonheur minimum de 5 est requis pour qu'une colonie puissent lancer la colonisation d'autres planètes.
+'''Le Bonheur de la population d'une colonie est initialement faible suite au succès d'une colonisation ou d'une invasion, et peut également dépendre d'autres facteurs. Un Bonheur minimum de 5 est requis pour qu'une colonie puissent lancer la colonisation d'autres planètes.
+
+La Projection Bonheur est le niveau optimal de Bonheur que la population d'une planète tend à approcher, compte tenu des différents facteurs influençant le Bonheur planétaire. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Bonheur est susceptible de fluctuer à son tour.'''
 
 METER_CAPACITY_VALUE_LABEL
 Stat - Primaire
@@ -8077,7 +8093,7 @@ GAIA_SPECIAL_DESC
 • [[SZ_MEDIUM]] (+9)
 • [[SZ_LARGE]] (+12)
 • [[SZ_HUGE]] (+15)
-et augmente son [[metertype METER_HAPPINESS]] max de 5.
+et augmente la [[metertype METER_TARGET_HAPPINESS]] de 5.
 
 Cette planète s'est muée en organisme vivant, ce qui la rend capable de se modifier et de s'adapter afin de satisfaire les besoins de sa population. Si l'[[encyclopedia ENVIRONMENT_TITLE]] devient parfait pour l'espèce, un bonus susbstantiel de Population sera acquis. Dans le cas contraire, la planète se terraformera lentement par paliers pour finalement atteindre une Habitabilité [[PE_GOOD]] pour l'espèce (NB: Les [[species SP_EXOBOT]]s ne s'adaptant parfaitement à aucun Environnement, une planète terraformée pour cette espèce ne pourra dépasser le stade [[PE_ADEQUATE]]).'''
 
@@ -8085,7 +8101,7 @@ WORLDTREE_SPECIAL
 Arbre Planétaire
 
 WORLDTREE_SPECIAL_DESC
-'''Augmente l'[[metertype METER_SUPPLY]] de +1, le [[metertype METER_DETECTION]] de +10, la Population max de +1, et le [[metertype METER_HAPPINESS]] de +5 sur la planète présentant cette Particularité. Augmente le [[metertype METER_HAPPINESS]] de +1 sur toutes les autres planètes appartenant au même empire.
+'''Augmente l'[[metertype METER_SUPPLY]] de +1, le [[metertype METER_DETECTION]] de +10, la Population max de +1, et la [[metertype METER_TARGET_HAPPINESS]] de +5 sur la planète présentant cette Particularité. Augmente la [[metertype METER_TARGET_HAPPINESS]] de +1 sur toutes les autres planètes appartenant au même empire.
 
 Un arbre gigantesque s'est développé à tel point que sa cime surplombe l'atmosphère de la planète. Les scientifiques pensent que cet arbre fut planté par les Soigneurs dans les temps ancestraux.'''
 
@@ -8093,7 +8109,7 @@ ANCIENT_RUINS_DEPLETED_SPECIAL
 Ruines Ancestrales (Exhumées)
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-'''Augmente la [[metertype METER_RESEARCH]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
 
 Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Mais une découverte de grande valeur y a déjà eu lieu.'''
 
@@ -8101,7 +8117,7 @@ ANCIENT_RUINS_SPECIAL
 Ruines Ancestrales
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-'''Augmente la [[metertype METER_RESEARCH]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
 
 Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Le premier empire prenant pied sur la planète et maîtrisant la [[tech LRN_XENOARCH]], acquiert gratuitement la maîtrise d'une technologie avancée, ou bien découvre une structure ou un astronef aux puissantes caractéristiques. La découverte de corps parfaitement conservés d'une espèce éteinte est également envisageable.'''
 
@@ -8164,7 +8180,7 @@ ECCENTRIC_ORBIT_SPECIAL
 Orbite Excentrissime
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''Augmente de 3 la [[metertype METER_RESEARCH]], mais réduit de 2 l'[[metertype METER_SUPPLY]].
+'''Augmente de 3 la [[metertype METER_TARGET_RESEARCH]], mais réduit de 2 l'[[metertype METER_SUPPLY]].
 
 L'orbite de la planète autour de son étoile est très excentrique : la distance de son aphélie est un très grand multiple de la distance de son périhélie. L'intensité de l'ensoleillement varie ainsi énormément au cours de l'année. Ces conditions variables ralentissent la gestion de l'approvisionnement sur la planète, mais s'avèrent un terrain exaltant pour la recherche scientifique.'''
 
@@ -8172,7 +8188,7 @@ TIDAL_LOCK_SPECIAL
 Rotation Synchrone
 
 TIDAL_LOCK_SPECIAL_DESC
-'''Augmente l'[[metertype METER_INDUSTRY]] de la planète de 0.2 par Population si le Focus [[metertype METER_INDUSTRY]] est activé. Diminue la Population selon la taille de la planète (quel que soit le Focus) :
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de la planète de 0.2 par Population si le Focus [[metertype METER_INDUSTRY]] est activé. Diminue la Population selon la taille de la planète (quel que soit le Focus) :
 • [[SZ_TINY]] (-1)
 • [[SZ_SMALL]] (-2)
 • [[SZ_MEDIUM]] (-3)
@@ -8185,7 +8201,7 @@ TEMPORAL_ANOMALY_SPECIAL
 Anomalie Temporelle
 
 TEMPORAL_ANOMALY_SPECIAL_DESC
-'''Augmente la [[metertype METER_RESEARCH]] sur cette planète de 5 par Population si le Focus [[metertype METER_RESEARCH]] est activé. Diminue la Population selon la taille de la planète (quel que soit le Focus) :
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de 5 par Population si le Focus [[metertype METER_RESEARCH]] est activé. Diminue la Population selon la taille de la planète (quel que soit le Focus) :
 • [[SZ_TINY]] (-5)
 • [[SZ_SMALL]] (-10)
 • [[SZ_MEDIUM]] (-15)
@@ -8207,7 +8223,7 @@ COMPUTRONIUM_SPECIAL
 Lune Ordinatrice
 
 COMPUTRONIUM_SPECIAL_DESC
-'''Lorsqu'une Lune Ordinatrice orbite autour d'une planète privilégiant la [[metertype METER_RESEARCH]], toutes les planètes de l'empire réglées sur le même Focus améliorent leur [[metertype METER_RESEARCH]] de 0.2 par Population.
+'''Lorsqu'une Lune Ordinatrice orbite autour d'une planète privilégiant la [[metertype METER_RESEARCH]], toutes les planètes de l'empire réglées sur le même Focus améliorent leur [[metertype METER_TARGET_RESEARCH]] de 0.2 par Population.
 
 Abandonnée par une civilisation dont le souvenir s'est effacé avec le temps, cette lune est en réalité un ordinateur d'une puissance de calcul inouïe. Elle peut effectuer des simulations et résoudre les équations les plus complexes en moins de temps qu'il ne faut pour les lui proposer.'''
 
@@ -8215,7 +8231,7 @@ HONEYCOMB_SPECIAL
 Réserve Alvéolaire
 
 HONEYCOMB_SPECIAL_DESC
-'''Lorsqu'une planète dotée d'une Réserve Alvéolaire privilégie l'[[metertype METER_INDUSTRY]], toutes les planètes de l'empire réglées sur le même Focus et lui étant reliées par ligne d'[[metertype METER_SUPPLY]], améliorent leur [[metertype METER_INDUSTRY]] de 0.5 par Population.
+'''Lorsqu'une planète dotée d'une Réserve Alvéolaire privilégie l'[[metertype METER_INDUSTRY]], toutes les planètes de l'empire réglées sur le même Focus et lui étant reliées par ligne d'[[metertype METER_SUPPLY]], améliorent leur [[metertype METER_TARGET_INDUSTRY]] de 0.5 par Population.
 
 La Réserve Alvéolaire est une planète qui fut utilisée comme telle par les Constructeurs dans les temps ancestraux. Quasiment la totalité des planètes aux alentours furent dépouillées de l'ensemble de leurs ressources puis détruites. Les matériaux récupérés furent triés et stockés séparément dans de gigantesques tubes creusés dans la croûte terrestre. Ces réserves abritent des éléments rares et de grande valeur, des molécules difficiles à synthétiser, et une vaste gamme de sources d'énergie. Ce que les Constructeurs désiraient créer à partir de ce trésor et la raison pour laquelle ils ne l'ont finalement pas utilisé, restent à ce jour un mystère.'''
 
@@ -8223,7 +8239,7 @@ PHILOSOPHER_SPECIAL
 Planète Métaphysique
 
 PHILOSOPHER_SPECIAL_DESC
-'''Aussi longtemps que la Planète Métaphysique demeure inhabitée, toutes les planètes habitées du même système stellaire voient leur [[metertype METER_RESEARCH]] accrue de 5 points. L'indicateur [[metertype METER_CONSTRUCTION]] d'une colonie installée sur une Planète Métaphysique est réduit de 20 points.
+'''Aussi longtemps que la Planète Métaphysique demeure inhabitée, toutes les planètes habitées du même système stellaire voient leur [[metertype METER_TARGET_RESEARCH]] augmenter de 5. La [[metertype METER_TARGET_CONSTRUCTION]] d'une colonie installée sur une Planète Métaphysique diminue de 20.
 
 L'unique et dernier représentant d'une espèce vagabonde de taille planétaire a trouvé sa dernière demeure près de cette étoile, autour de laquelle il orbite comme une planète normale. Âgé de milliers d'années, il a perdu l'envie et la capacité de voyager et se consacre désormais à la méditation sur tous les mystères de l'univers qu'il a rencontré au cours de sa longue existence. Déroutant et légèrement perturbé, il refuse de communiquer avec quiconque n'étant ni de sa taille ni de sa forme, ne laissant pas aux savants d'autres choix que de l'interroger via la voix de la planète sur laquelle ils résident. Sans surprise, coloniser la Planète Métaphysique la perturbe gravement et provoque un mutisme profond. La construction à sa surface s'avère difficile, comme il pouvait l'être présumé sur une entité vivante.'''
 
@@ -10479,7 +10495,7 @@ LRN_ALGO_ELEGANCE
 Élégance Algorithmique
 
 LRN_ALGO_ELEGANCE_DESC
-'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.1 par Population sur toutes les planètes en Focus Recherche.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.1 par Population sur toutes les planètes en Focus Recherche.
 
 Avec une difficulté grandissante des problèmes d'analyse de données, les démarches traditionnelles des performances algorithmiques deviennent moins efficaces, en raison des limitations de la complexité irréductible. À ce stade, de nouvelles formes et fonctions algorithmiques deviennent significatives: esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisée.'''
 
@@ -10503,7 +10519,7 @@ LRN_ARTIF_MINDS
 Intelligences Artificielles
 
 LRN_ARTIF_MINDS_DESC
-'''Augmente la Projection [[metertype METER_RESEARCH]] de 2 sur toutes les planètes.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 2 sur toutes les planètes.
 
 Alors que les ordinateurs traditionnels ont des capacités de calcul presque infinies, ils leur manquent cependant une qualité essentielle: la conscience. Bien que la définition complète du concept de conscience reste insaisissable, cette qualité peut être toutefois synthétisée et modifiée de manière convaincante. Ces recherches ouvrent de nouvelles voies en matière de sciences cognitives et de métaparadigmes.
 
@@ -10572,7 +10588,7 @@ LRN_QUANT_NET
 Réseau Quantique
 
 LRN_QUANT_NET_DESC
-'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.5 par Population sur toutes les planètes en Focus Recherche.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.5 par Population sur toutes les planètes en Focus Recherche.
 
 Un réseau massif de donnés, à l'échelle de l'empire, capable de transférer instantanément des informations entre deux lieux, plutôt que par le système lent et indirect des voies spatiales. Ce progrès facilite grandement la Recherche dans tout l'empire.
 
@@ -10688,7 +10704,7 @@ GRO_ENERGY_META
 Métabolisme d'Énergie Pure
 
 GRO_ENERGY_META_DESC
-'''Augmente le [[metertype METER_FUEL]] max de 2 sur tous les astronefs, la [[metertype METER_DEFENSE]] max de 5 sur toutes les planètes, les [[metertype METER_SHIELD]] max de 5 sur toutes les planètes, la Projection [[metertype METER_INDUSTRY]] de 0.2 par Population sur toutes les planètes en Focus Industrie, et la Projection [[metertype METER_RESEARCH]] de 0.5 par Population sur toutes les planètes en Focus Recherche.
+'''Augmente le [[metertype METER_FUEL]] max de 2 sur tous les astronefs, la [[metertype METER_DEFENSE]] max de 5 sur toutes les planètes, les [[metertype METER_SHIELD]] max de 5 sur toutes les planètes, la [[metertype METER_TARGET_INDUSTRY]] de 0.2 par Population sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de 0.5 par Population sur toutes les planètes en Focus Recherche.
 
 Tandis que la transformation d'une population entière en êtres de pure énergie s'avérerait peu pertinente, certaines tâches conviennent mieux à des individus dénués de corporalité. L'équipage d'un astronef par exemple, n'aurait plus besoin d'optimiser l'espace disponible pour les quartiers d'équipage ou le stockage des rations. Des êtres dotés d'une capacité de canalisation de l'énergie seraient en mesure d'améliorer les défenses et boucliers planétaires, ainsi que la production de ressources.
 
@@ -10743,7 +10759,7 @@ Dissocier le personnel et les moyens de production favorise un procédé optimal
 Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 6, plus un supplément de 0.02 par Population.
 Ces amélioriations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_VOID_PREDICTION]].
 
-Débloque également la structure [[building BLD_STOCKPILING_CENTER]], augmentant additionnellement le [[metertype METER_STOCKPILE]] de 0.1 par Industrie.'''
+Débloque également la structure [[building BLD_STOCKPILING_CENTER]], augmentant additionnellement le [[metertype METER_STOCKPILE]] de 0.1 par [[metertype METER_INDUSTRY]].'''
 
 PRO_VOID_PREDICTION
 Prédiction du Vide
@@ -10759,7 +10775,7 @@ PRO_MICROGRAV_MAN
 Production en Microgravité
 
 PRO_MICROGRAV_MAN_DESC
-'''Augmente l'[[metertype METER_INDUSTRY]] de 5 sur toutes les colonies en Focus Recherche situées dans des systèmes abritant des colonies ou avant-postes sur une Ceinture d'Astéroïdes. Plusieurs Ceintures d'Astéroïdes n'engendrent pas de bénéfices additionnels.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 5 sur toutes les colonies en Focus Recherche situées dans des systèmes abritant des colonies ou avant-postes sur une Ceinture d'Astéroïdes. Plusieurs Ceintures d'Astéroïdes n'engendrent pas de bénéfices additionnels.
 
 L'extraction de ressources minières sur des planétoïdes implique de nombreux challenges mais aussi de réelles opportunités en comparaison d'une exploitation planétaire classique. Ne disposant pas de la masse nécessaire pour la liquéfaction et la différenciation, les astéroïdes permettent un accès bien plus aisé à certains éléments lourds, tandis que l'absence de gravité rend l'extraction en vue d'une utilisation directe dans l'espace bien plus efficace. Par contre, la taille généralement limitée des astéroïdes requiert des infrastructures d'extraction auto-suffisantes et d'une grande mobilité. Par conséquent, les défis relatifs à un environnement en microgravité doivent être surmontés, nécessitant une refonte totale des méthodes traditionnelles.
 
@@ -10769,7 +10785,7 @@ PRO_ROBOTIC_PROD
 Production Robotisée
 
 PRO_ROBOTIC_PROD_DESC
-'''Augmente la Projection [[metertype METER_INDUSTRY]] de 0.1 par Population sur toutes les planètes en Focus Industrie.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.1 par Population sur toutes les planètes en Focus Industrie.
 
 Les Exobots, désignation sous laquelle ils sont communément connus, constituent l'aboutissement du design allié à la fonctionnalité. Robots conçus pour effectuer n'importe quelle tâche de production, de l'électronique microscopique à la construction à grande échelle, leur production de masse est aisée, tandis que leur utilisation reste la plus avantageuse dans les colonies assignant une haute priorité à l'industrie. Chaque monde privilégiant l'industrie se voit gratifiée d'une équipe d'Exobots, améliorant ainsi considérablement sa production industrielle.
 
@@ -10784,7 +10800,7 @@ PRO_FUSION_GEN
 Génération par Fusion
 
 PRO_FUSION_GEN_DESC
-'''Augmente la Projection [[metertype METER_INDUSTRY]] de 0.2 par Population sur toutes les planètes en Focus Industrie.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.2 par Population sur toutes les planètes en Focus Industrie.
 
 Les réacteurs de fusion nucléaire, bien que coûteux à produire et à entretenir, s'avèrent rentables pour les mondes industrialisés à forte consommation énergétique. La dépendance aux réacteurs basés sur la fission nucléaire deviendra peu à peu une relique du passé.
 
@@ -10808,7 +10824,7 @@ PRO_SENTIENT_AUTOMATION
 Automates Adaptatifs
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Augmente la Projection [[metertype METER_INDUSTRY]] de 5 sur toutes les planètes.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 5 sur toutes les planètes.
 
 En concevant des usines automatisées ne nécessitant aucune supervision directe, il devient alors possible d'accroître la production industrielle via un processus totalement autonome. Ces usines peuvent être construites et entretenues sur n'importe quelle planète, quel que soit son Focus, engendrant un bonus industriel dans tout l'empire.
 
@@ -10928,7 +10944,7 @@ Structures Multidimensionnelles
 CON_NDIM_STRC_DESC
 '''Accroît la Population max de toutes les planètes habitables selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
 
-Augmente également de 10 la Projection [[metertype METER_CONSTRUCTION]] des planètes habitées.
+Augmente également de 10 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées.
 
 Les facteurs principaux limitant la capacité de population d'une planète ne sont autres que les milieux environnementaux et l'espace disponible. En répartissant le développement des infrastructures de base sur de multiples dimensions, les limitations spatiales disparaissent, et dans des conditions environnementales idéales, le maximum de population d'une planète peut être considérablement accru.
 
@@ -11329,7 +11345,7 @@ LRN_DISTRIB_THOUGHT
 Centralisation Cérébrale
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.1 par Population sur toutes les planètes, quel que soit le Focus choisi.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.1 par Population sur toutes les planètes, quel que soit le Focus choisi.
 
 Le citoyen moyen gaspille littéralement ses capacités cérébrales, pourtant issues d'un des outils de calcul les plus fins de l'univers. En intégrant les cycles cérébraux inactifs d'une population suffisament importante au sein d'un réseau de simples émetteurs-récepteurs cybernétiques, la totalité des centres de recherche d'un empire peuvent accéder à une puissance de calcul considérable et peu coûteuse.'''
 
@@ -11337,7 +11353,7 @@ LRN_STELLAR_TOMOGRAPHY
 Tomographie Stellaire
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Augmente la Projection [[metertype METER_RESEARCH]] des planètes réglées sur le Focus Recherche, par Population et selon le type d'étoile :
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes réglées sur le Focus Recherche, par Population et selon le type d'étoile :
 * [[STAR_BLACK]] (x1)
 * [[STAR_NEUTRON]] (x0.75)
 * [[STAR_BLUE]] ou [[STAR_WHITE]] (x0.5)
@@ -11806,7 +11822,7 @@ Couverture Nuageuse Planétaire
 SPY_STEALTH_1_DESC
 '''Confère la Particularité [[special CLOUD_COVER_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 20 la [[metertype METER_STEALTH]] des planètes et des structures qui s'y trouvent.
 
-Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche de l'[[tech SPY_STEALTH_PART_1]], si cette dernière a été déjà effectuée.'''
+Le coût de [[metertype METER_RESEARCH]] de cette technologie est diminué de la valeur du coût de recherche de l'[[tech SPY_STEALTH_PART_1]], si cette dernière a été déjà effectuée.'''
 
 SPY_STEALTH_PART_1
 Affaiblissement Électromagnétique
@@ -11820,7 +11836,7 @@ Cendres Volcaniques Planétaires
 SPY_STEALTH_2_DESC
 '''Confère la Particularité [[special VOLCANIC_ASH_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 40 la [[metertype METER_STEALTH]] des planètes et des structures qui s'y trouvent.
 
-Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche de l'[[tech SPY_STEALTH_PART_2]], si cette dernière a été déjà effectuée.'''
+Le coût de [[metertype METER_RESEARCH]] de cette technologie est diminué de la valeur du coût de recherche de l'[[tech SPY_STEALTH_PART_2]], si cette dernière a été déjà effectuée.'''
 
 SPY_STEALTH_PART_2
 Absorption Radiative
@@ -11834,7 +11850,7 @@ Camouflage Dimensionnel Planétaire
 SPY_STEALTH_3_DESC
 '''Confère la Particularité [[special DIM_RIFT_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 60 la [[metertype METER_STEALTH]] des planètes et des structures qui s'y trouvent.
 
-Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche du [[tech SPY_STEALTH_PART_3]], si cette dernière a été déjà effectuée.'''
+Le coût de [[metertype METER_RESEARCH]] de cette technologie est diminué de la valeur du coût de recherche du [[tech SPY_STEALTH_PART_3]], si cette dernière a été déjà effectuée.'''
 
 SPY_STEALTH_PART_3
 Camouflage Dimensionnel
@@ -12152,7 +12168,7 @@ BLD_CULTURE_ARCHIVES
 Archives Culturelles
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Augmente la Projection [[metertype METER_RESEARCH]] de 5, ainsi que la Projection [[metertype METER_INDUSTRY]] de la moitié de la Population planétaire.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 5, ainsi que la [[metertype METER_TARGET_INDUSTRY]] de la moitié de la Population planétaire.
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, améliorant différents aspects de la productivité planétaire.'''
 
@@ -12160,7 +12176,7 @@ BLD_CULTURE_LIBRARY
 Bibliothèque Culturelle
 
 BLD_CULTURE_LIBRARY_DESC
-'''Augmente la Projection [[metertype METER_RESEARCH]] de 5.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 5.
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, octroyant ainsi un bonus à la Recherche. Cette structure sera détruite si la population planétaire est réduite à zéro.'''
 
@@ -12168,7 +12184,7 @@ BLD_AUTO_HISTORY_ANALYSER
 Analyseur Historique Automatisé
 
 BLD_AUTO_HISTORY_ANALYSER_DESC
-'''L' Analyseur Historique Automatisé peut être construit sur une planète abritant des [[buildingtype BLD_CULTURE_ARCHIVES]]. Augmente la Projection [[metertype METER_RESEARCH]] de 5.
+'''L' Analyseur Historique Automatisé peut être construit sur une planète abritant des [[buildingtype BLD_CULTURE_ARCHIVES]]. Augmente la [[metertype METER_TARGET_RESEARCH]] de 5.
 
 Un centre de recherche automatisé doté d'une énorme puissance de calcul, parcourant continuellement la multitude de données au sein des archives  culturelles, afin de faire émerger de possibles analogies, d'établir des parallèles interdisciplinaires, ou bien de redécouvrir des concepts tombés dans l'oubli ou non finalisés.'''
 
@@ -12176,7 +12192,7 @@ BLD_IMPERIAL_PALACE
 Palais Impérial
 
 BLD_IMPERIAL_PALACE_DESC
-'''Augmente de 2 la portée de l'[[metertype METER_SUPPLY]], l'[[metertype METER_CONSTRUCTION]] de 20, la [[metertype METER_DEFENSE]] de 5, et l'[[metertype METER_TROOPS]] de 6. Son emplacement définit également la Capitale de l'empire.
+'''Augmente de 2 la portée de l'[[metertype METER_SUPPLY]], la [[metertype METER_TARGET_CONSTRUCTION]] de 20, la [[metertype METER_DEFENSE]] de 5, et l'[[metertype METER_TROOPS]] de 6. Son emplacement définit également la Capitale de l'empire.
 
 Représente le pouvoir et le prestige impérial et remplit la fonction de centre de contrôle pour toutes les possessions de l'empire.'''
 
@@ -12312,7 +12328,7 @@ BLD_INDUSTRY_CENTER
 Centre Industriel
 
 BLD_INDUSTRY_CENTER_DESC
-'''Augmente l'[[metertype METER_INDUSTRY]] de 0.2 par Population sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le Focus Industrie.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.2 par Population sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le Focus Industrie.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 L'amélioration [[tech PRO_INDUSTRY_CENTER_II]] double le bonus de base.
@@ -12342,7 +12358,7 @@ BLD_MEGALITH
 Mégalithe
 
 BLD_MEGALITH_DESC
-'''Cette structure ne peut être construite que dans la Capitale de l'empire, amplifiant sa splendeur conjointement au [[buildingtype BLD_IMPERIAL_PALACE]] déjà existant. Tous les indicateurs de ressources de la planète sur laquelle le Mégalithe est construit peuvent atteindre leur optimum en un seul tour, tandis que l'indicateur [[metertype METER_CONSTRUCTION]] augmente de 30. De plus, la portée de l'[[metertype METER_SUPPLY]] augmente de 1 pour toutes les planètes habitées appartenant à l'empire. Les planètes habitées distantes de deux Voies spatiales ou moins verront leur [[metertype METER_TROOPS]] augmenter de 10.
+'''Cette structure ne peut être construite que dans la Capitale de l'empire, amplifiant sa splendeur conjointement au [[buildingtype BLD_IMPERIAL_PALACE]] déjà existant. Tous les indicateurs de ressources de la planète sur laquelle le Mégalithe est construit peuvent atteindre leur optimum en un seul tour, tandis que la [[metertype METER_TARGET_CONSTRUCTION]] augmente de 30. De plus, la portée de l'[[metertype METER_SUPPLY]] augmente de 1 pour toutes les planètes habitées appartenant à l'empire. Les planètes habitées distantes de deux Voies spatiales ou moins verront leur [[metertype METER_TROOPS]] augmenter de 10.
 
 Le Mégalithe est une structure si resplendissante et massive qu'elle tutoie littéralement les étoiles, procurant une inspiration illimitée à tous les architectes de l'empire.'''
 
@@ -12372,7 +12388,7 @@ BLD_GAIA_TRANS_DESC
 • [[SZ_MEDIUM]] (+9)
 • [[SZ_LARGE]] (+12)
 • [[SZ_HUGE]] (+15)
-et augmente le [[metertype METER_HAPPINESS]] max de 5.
+et augmente la [[metertype METER_TARGET_HAPPINESS]] de 5.
 
 Transforme une planète en Monde Gaia à l'aide d'un programme informatique cellulaire et conscient, quasiment d'essence divine. Cette planète, dont la contemplation procure un ravissement de tous les instants, est connue à travers toute la galaxie comme une célébration de la vie et de l'harmonie. Les habitants de ce monde pensent et agissent comme une partie d'un organisme planétaire unique, dans l'intérêt de ce dernier, celui-ci agissant en retour dans l'intérêt de ses habitants.'''
 
@@ -12380,7 +12396,7 @@ BLD_COLLECTIVE_NET
 Réseau de Pensée Collective
 
 BLD_COLLECTIVE_NET_DESC
-'''Augmente l'[[metertype METER_INDUSTRY]] de 0.5 par Population sur toutes les planètes en Focus Industrie, et la [[metertype METER_RESEARCH]] de 0.5 par Population sur toutes les planètes en Focus Recherche. Tout voyage sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.5 par Population sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de 0.5 par Population sur toutes les planètes en Focus Recherche. Tout voyage sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, résolvant des problèmes et faisant des découvertes qui s'avéreraient hors de portée pour un unique esprit, aussi brillant soit-il.'''
@@ -12397,7 +12413,7 @@ BLD_ENCLAVE_VOID
 Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-'''Augmente la Projection [[metertype METER_RESEARCH]] de 0.75 par Population sur toutes les planètes en Focus Recherche.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.75 par Population sur toutes les planètes en Focus Recherche.
 Les bonus de plusieurs exemplaires ne s'additionnent pas.
 
 La population entière d'une planète est modifiée génétiquement afin de l'harmoniser avec l'Esprit du Vide, et ainsi diffuser sa sagesse dans tout l'empire. Les habitants de l'Enclave du Vide sont considérés comme des prêtres, prophètes d'une pensée supérieure et d'un savoir suprême. Dans tous les domaines de grande importance pour la bonne marche de l'empire, leurs conseils et avis s'avèrent d'une grande valeur. Des émissaires de l'Enclave peuvent donc prendre part à tout projet impérial de Recherche et apporter ainsi une aide précieuse.'''
@@ -12418,7 +12434,7 @@ BLD_HYPER_DAM
 Barrage Hyperspatial
 
 BLD_HYPER_DAM_DESC
-'''Pour les planètes non-reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], augmente la Projection [[metertype METER_INDUSTRY]] de 1 par Population sur toutes les planètes reliées par lignes d'[[metertype METER_SUPPLY]] et réglées sur le Focus Industrie, mais diminue la Population de ces planètes selon leur taille : ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
+'''Pour les planètes non-reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], augmente la [[metertype METER_TARGET_INDUSTRY]] de 1 par Population sur toutes les planètes reliées par lignes d'[[metertype METER_SUPPLY]] et réglées sur le Focus Industrie, mais diminue la Population de ces planètes selon leur taille : ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 Une déchirure dans le tissu de l'univers, contrôlée et manipulée en toute sécurité. Chaque planète peut construire son propre barrage hyperspatial, mais un seul centre de contrôle est requis pour s'assurer que le continuum de l'espace-temps n'est pas endommagé. Par contre, toutes les planètes ayant recours à un barrage hyperspatial voient leur population souffrir de différents problèmes de santé, à moins que les planètes en question n'orbitent autour d'un [[STAR_BLACK]].
@@ -12435,7 +12451,7 @@ BLD_SOL_ORB_GEN
 Générateur Orbital Solaire
 
 BLD_SOL_ORB_GEN_DESC
-'''Augmente la Projection [[metertype METER_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]], par Population et selon le type d'étoile :
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]], par Population et selon le type d'étoile :
 * [[STAR_BLUE]] ou [[STAR_WHITE]] (x0.4)
 * [[STAR_YELLOW]] ou [[STAR_ORANGE]] (x0.2)
 * [[STAR_RED]] (x0.1)
@@ -12503,7 +12519,7 @@ BLD_CONC_CAMP
 Camps de Concentration
 
 BLD_CONC_CAMP_DESC
-'''Réduit la Population d'une planète de 3 par tour, et augmente la Projection [[metertype METER_INDUSTRY]] de 5 fois la population planétaire. La Projection [[metertype METER_HAPPINESS]] est réduite à 0.
+'''Réduit la Population d'une planète de 3 par tour, et augmente la [[metertype METER_TARGET_INDUSTRY]] de 5 fois la population planétaire. La [[metertype METER_TARGET_HAPPINESS]] est réduite à 0.
 
 Purger une planète d'une espèce indésirable permet l'introduction d'une espèce plus adaptée. En créant un réseau planétaire de camps de concentration conçus pour abattre les internés à la tâche, il est possible d'atteindre rapidement et efficacement le but fixé.'''
 
@@ -12517,7 +12533,7 @@ BLD_BLACK_HOLE_POW_GEN
 Générateur de Singularité
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-'''Augmente l'[[metertype METER_INDUSTRY]] de 1 par Population sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le Focus Industrie.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 1 par Population sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le Focus Industrie.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 [[BUILDING_AVAILABLE_ON_OUTPOSTS]], mais doit se trouver dans un système abritant un [[STAR_BLACK]].'''
@@ -12606,7 +12622,7 @@ BLD_GAS_GIANT_GEN
 Convertisseur de Géante Gazeuse
 
 BLD_GAS_GIANT_GEN_DESC
-'''Cette structure ne peut être construite que sur une [[PT_GASGIANT]] et augmente de 10 l'[[metertype METER_INDUSTRY]] sur les planètes du même système réglées sur le Focus Industrie.
+'''Cette structure ne peut être construite que sur une [[PT_GASGIANT]] et augmente de 10 la [[metertype METER_TARGET_INDUSTRY]] sur les planètes du même système réglées sur le Focus Industrie.
 Les bonus de plusieurs exemplaires dans le même système ne s'additionnent pas.
 
 Un puissant générateur conçu pour puiser l'énergie des Géantes Gazeuses.'''
@@ -14316,7 +14332,7 @@ quel que soit l'[[encyclopedia ENVIRONMENT_TITLE]] planétaire.
 Si cette planète est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]], le bonus s'applique également à tous les autres mondes connectés par lignes d'[[metertype METER_SUPPLY]] et peuplés d'espèces à'''
 
 GROWTH_SPECIAL_INDUSTRY_BOOST
-Si cette planète est réglée sur le Focus Industrie, sa Projection [[metertype METER_INDUSTRY]] augmente de 0.2 par Population.
+Si cette planète est réglée sur le Focus Industrie, sa [[metertype METER_TARGET_INDUSTRY]] augmente de 0.2 par Population.
 
 GROWTH_SPECIALS_ENTRY_LIST
 '''Certaines Particularités ne fonctionnent que pour les espèces organiques, d'autres pour les espèces lithiques, et enfin d'autres pour les espèces robotiques. Aucun autre type de [[encyclopedia METABOLISM_TITLE]] ne dispose actuellement de Particularités de Croissance lui étant exclusivement applicables.
