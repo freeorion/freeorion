@@ -1330,7 +1330,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         auto save_data_it = player_id_save_game_data.find(player_id);
         if (save_data_it != player_id_save_game_data.end()) {
             psgd = save_data_it->second;
-        } else {
+        }
+        if (!psgd.m_orders) {
             psgd.m_orders.reset(new OrderSet());    // need an empty order set pointed to for serialization in case no data is loaded but the game start message wants orders to send
         }
 
