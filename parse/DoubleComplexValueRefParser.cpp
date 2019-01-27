@@ -131,10 +131,8 @@ namespace parse {
         part_meter
             = ( tok.ShipPartMeter_
                 >   label(tok.Part_)    >   string_grammar
-                > label(tok.Meter_)
-                >   ship_part_meter_type_enum
-                >> label(tok.Object_)
-                >  simple_int
+                >   label(tok.Meter_)   >   ship_part_meter_type_enum
+                >   label(tok.Object_)  >   simple_int
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_4, _pass),
