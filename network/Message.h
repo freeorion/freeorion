@@ -72,7 +72,6 @@ public:
         LOBBY_EXIT,             ///< sent to server by clients when a player leaves the multiplayer lobby, or by server to clients when a player leaves the multiplayer lobby
         START_MP_GAME,          ///< sent to server (by the "host" client only) when the settings in the MP lobby are satisfactory and it is time to start the game
         SAVE_GAME_INITIATE,     ///< sent to server (by the "host" client only) when a game is to be saved
-        SAVE_GAME_DATA_REQUEST, ///< sent to clients by the server when the game is being saved and the server needs save state info from clients (removed)
         SAVE_GAME_COMPLETE,     ///< sent to clients (by the "host" client only) when a game has been saved and written to disk
         LOAD_GAME,              ///< sent to server (by the "host" client only) when a game is to be loaded
         GAME_START,             ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
@@ -81,7 +80,6 @@ public:
         TURN_ORDERS,            ///< sent to the server by a client that has orders to be processed at the end of a turn
         TURN_PROGRESS,          ///< sent to clients to display a turn progress message
         PLAYER_STATUS,          ///< sent to clients to inform them that a player has some status, such as having finished playing a turn and submitted orders, or is resolving combat, or is playing a turn normally
-        CLIENT_SAVE_DATA,       ///< sent to the server in response to a server request for the data needed to create a save file (removed)
         PLAYER_CHAT,            ///< sent when one player sends a chat message to another in multiplayer
         DIPLOMACY,              ///< sent by players to server or server to players to make or convey diplomatic proposals or declarations, or to accept / reject proposals from other players
         DIPLOMATIC_STATUS,      ///< sent by server to players to inform of mid-turn diplomatic status changes
