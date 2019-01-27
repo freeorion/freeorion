@@ -6,18 +6,7 @@ Part
     shots = 3
     NoDefaultCapacityEffect
     combatTargets = And [
-        Or [        // unowned target, when attacker is owned by an empire, and target is visible to that empire
-            And [
-                Unowned
-                (Source.Owner != LocalCandidate.Owner)
-                VisibleToEmpire empire = Source.Owner
-            ]
-            And [   // target owned by an empire, when attacker is owned by an enemy of the target's owner, and the target is visible to the attcker's owner
-                OwnedBy affiliation = AnyEmpire
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
-                VisibleToEmpire empire = Source.Owner
-            ]
-        ]
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
         Fighter
     ]
     mountableSlotTypes = External
@@ -30,5 +19,5 @@ Part
     icon = "icons/ship_parts/flak.png"
 
 #include "shortrange.macros"
-
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/ship_parts/targeting.macros"
