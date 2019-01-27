@@ -111,7 +111,6 @@ namespace parse {
             |   tok.TargetResearch_         [ _val = METER_TARGET_RESEARCH ]
             |   tok.TargetTrade_            [ _val = METER_TARGET_TRADE ]
             |   tok.TargetHappiness_        [ _val = METER_TARGET_HAPPINESS ]
-
             |   tok.MaxDefense_             [ _val = METER_MAX_DEFENSE ]
             |   tok.MaxFuel_                [ _val = METER_MAX_FUEL ]
             |   tok.MaxShield_              [ _val = METER_MAX_SHIELD ]
@@ -152,6 +151,8 @@ namespace parse {
             |   tok.MaxDamage_              [ _val = METER_MAX_CAPACITY ]
             |   tok.Capacity_               [ _val = METER_CAPACITY ]
             |   tok.Damage_                 [ _val = METER_CAPACITY ]
+            |   tok.SecondaryStat_          [ _val = METER_SECONDARY_STAT ]
+            |   tok.MaxSecondaryStat_       [ _val = METER_MAX_SECONDARY_STAT ]
             ;
     }
 
