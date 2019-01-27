@@ -12945,7 +12945,7 @@ FT_HANGAR_3_DESC
 Storage system for moderately armed fighters.
 
 FT_HANGAR_4
-Hangar 4
+Heavy-Bomber Hangar
 
 FT_HANGAR_4_DESC
 Storage system for heavily armed fighters.
