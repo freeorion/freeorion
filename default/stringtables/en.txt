@@ -1215,6 +1215,11 @@ Use part-based upkeep
 RULE_SHIP_PART_BASED_UPKEEP_DESC
 Calculate upkeep based on ship parts instead of ships themselves.
 
+RULE_SHOW_DETAILED_EMPIRES_DATA
+Show detailed empires data
+
+RULE_SHOW_DETAILED_EMPIRES_DATA_DESC
+Show research and production, researched buildings, parts, and hulls of all empires.
 
 ##
 ## Command-line and options database entries
@@ -1384,9 +1389,6 @@ Count of minutes after the cookie record will be considered expired.
 
 OPTIONS_DB_PUBLISH_STATISTICS
 Enable sending empire staticstics to the player.
-
-OPTIONS_DB_HIDE_DETAILED_EMPIRES_DATA
-Disable sending research and production information about enemies' empires.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.

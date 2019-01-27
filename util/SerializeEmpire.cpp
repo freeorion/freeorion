@@ -8,7 +8,7 @@
 #include "../Empire/Diplomacy.h"
 #include "../universe/Universe.h"
 
-#include "OptionsDB.h"
+#include "GameRules.h"
 
 #include "Serialize.ipp"
 #include <boost/serialization/version.hpp>
@@ -120,7 +120,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         m_techs.clear();
         for (auto& entry : temp_stringset)
             m_techs[entry] = BEFORE_FIRST_TURN;
-    } else if (Archive::is_saving::value && !visible && GetOptionsDB().Get<bool>("network.server.hide-detailed-empires-data")) {
+    } else if (Archive::is_saving::value && !visible && !GetGameRules().Get<bool>("RULE_SHOW_DETAILED_EMPIRES_DATA")) {
         std::map<std::string, int> dummy_string_int_map;
         // show only known tech without disclosure turn
         const Empire* encoding_empire = Empires().GetEmpire(GetUniverse().EncodingEmpire());
@@ -138,7 +138,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_meters);
-    if (Archive::is_saving::value && !visible && GetOptionsDB().Get<bool>("network.server.hide-detailed-empires-data")) {
+    if (Archive::is_saving::value && !visible && !GetGameRules().Get<bool>("RULE_SHOW_DETAILED_EMPIRES_DATA")) {
         ResearchQueue empty_research_queue(m_id);
         std::map<std::string, float> empty_research_progress;
         ProductionQueue empty_production_queue(m_id);

@@ -158,3 +158,10 @@ GameRule
     category = "BALANCE"
     type = Toggle
     default = Off
+
+GameRule
+    name = "RULE_SHOW_DETAILED_EMPIRES_DATA"
+    description = "RULE_SHOW_DETAILED_EMPIRES_DATA_DESC"
+    category = "MULTIPLAYER"
+    type = Toggle
+    default = On
