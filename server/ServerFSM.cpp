@@ -2568,8 +2568,8 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         TraceLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Received orders from player " << player_id;
 
         server.SetEmpireSaveGameData(empire_id, boost::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id,
-                                                                   order_set,       ui_data,    save_state_string,
-                                                                   client_type));
+                                     order_set, ui_data, save_state_string,
+                                     client_type));
 
         // notify other player that this empire submitted orders
         for (auto player_it = server.m_networking.established_begin();
@@ -2686,7 +2686,7 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
         return discard_event();
     }
 
-    const std::string& save_filename = message.Text(); // store requested save file name in Base state context so that sibling state can retreive it
+    std::string save_filename = message.Text(); // store requested save file name in Base state context so that sibling state can retreive it
 
     ServerSaveGameData server_data(server.m_current_turn);
 
@@ -2702,7 +2702,7 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
                                  !server.m_single_player_game);
 
     } catch (const std::exception& error) {
-        ErrorLogger(FSM) << "Catch std::exception: " << error.what();
+        ErrorLogger(FSM) << "While saving, catch std::exception: " << error.what();
         SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));
     }
 

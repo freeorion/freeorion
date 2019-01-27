@@ -406,11 +406,6 @@ FO_COMMON_API void ExtractTurnUpdateMessageData(const Message& msg, int empire_i
 
 FO_COMMON_API void ExtractTurnPartialUpdateMessageData(const Message& msg, int empire_id, Universe& universe);
 
-/*FO_COMMON_API void ExtractClientSaveDataMessageData(const Message& msg, OrderSet& orders,
-                                                    bool& ui_data_available, SaveGameUIData& ui_data,
-                                                    bool& save_state_string_available,
-                                                    std::string& save_state_string);*/
-
 FO_COMMON_API void ExtractTurnProgressMessageData(const Message& msg, Message::TurnProgressPhase& phase_id);
 
 FO_COMMON_API void ExtractPlayerStatusMessageData(const Message& msg,

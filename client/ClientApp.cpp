@@ -116,7 +116,7 @@ void ClientApp::SetEmpireStatus(int empire_id, Message::PlayerStatus status) {
     m_empire_status[empire_id] = status;
 }
 
-void ClientApp::StartTurn(const SaveGameUIData &ui_data)
+void ClientApp::StartTurn(const SaveGameUIData& ui_data)
 { m_networking->SendMessage(TurnOrdersMessage(m_orders, ui_data)); }
 
 void ClientApp::StartTurn(const std::string& save_state_string)

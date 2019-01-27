@@ -1297,8 +1297,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     for (const auto& psgd : player_save_game_data) {
         int empire_id = psgd.m_empire_id;
         // add empires to turn processing, and restore saved orders and UI data or save state data
-        Empire* empire = GetEmpire(empire_id);
-        if (empire) {
+        if (Empire* empire = GetEmpire(empire_id)) {
             if (!empire->Eliminated())
                 AddEmpireTurn(empire_id, psgd);
         } else {
@@ -1772,7 +1771,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
     m_player_empire_ids[player_connection->PlayerID()] = empire_id;
 
     const OrderSet dummy;
-    const OrderSet& orders = static_cast<bool>(orders_it->second.second) && static_cast<bool>(orders_it->second.second->m_orders) ? *(orders_it->second.second->m_orders) : dummy;
+    const OrderSet& orders = orders_it->second.second && orders_it->second.second->m_orders ? *(orders_it->second.second->m_orders) : dummy;
     const SaveGameUIData* ui_data = orders_it->second.second ? orders_it->second.second->m_ui_data.get() : nullptr;
 
     // drop ready status
@@ -1812,8 +1811,9 @@ const boost::circular_buffer<ChatHistoryEntity>& ServerApp::GetChatHistory() con
 std::vector<PlayerSaveGameData> ServerApp::GetPlayerSaveGameData() const {
     std::vector<PlayerSaveGameData> player_save_game_data;
     for (const auto& m_save_data : m_turn_sequence) {
-        DebugLogger() << "Empire " << m_save_data.first << " ready " << m_save_data.second.first
-            << " save_game_data " << m_save_data.second.second.get();
+        DebugLogger() << "ServerApp::GetPlayerSaveGameData() Empire " << m_save_data.first
+                      << " ready " << m_save_data.second.first
+                      << " save_game_data " << m_save_data.second.second.get();
         if (m_save_data.second.second) {
             player_save_game_data.push_back(*m_save_data.second.second);
         }

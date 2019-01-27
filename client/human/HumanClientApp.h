@@ -48,7 +48,7 @@ public:
 
     /** \name Mutators */ //@{
     void HandleTurnUpdate() override;           ///< Handle background events that need starting when the turn updates
-    void StartTurn(const SaveGameUIData &ui_data) override;
+    void StartTurn(const SaveGameUIData& ui_data) override;
     void UnreadyTurn();                         ///< Revoke ready state of turn orders.
 
     /** \brief Handle UI and state updates with changes in turn phase. */

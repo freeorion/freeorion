@@ -908,7 +908,7 @@ void HumanClientApp::Reinitialize() {
 float HumanClientApp::GLVersion() const
 { return GetGLVersion(); }
 
-void HumanClientApp::StartTurn(const SaveGameUIData &ui_data) {
+void HumanClientApp::StartTurn(const SaveGameUIData& ui_data) {
     DebugLogger() << "HumanClientApp::StartTurn";
 
     if (const Empire* empire = GetEmpire(EmpireID())) {

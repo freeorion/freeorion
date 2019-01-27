@@ -59,7 +59,7 @@ namespace {
         preview.number_of_empires = empire_save_game_data.size();
         preview.save_time = boost::posix_time::to_iso_extended_string(boost::posix_time::second_clock::local_time());
 
-        DebugLogger() << "player_save_game_data " << player_save_game_data.size();
+        DebugLogger() << "CompileSaveGamePreviewData(...) player_save_game_data size: " << player_save_game_data.size();
 
         if (player_save_game_data.empty()) {
             preview.main_player_name = UserString("NO_PLAYERS");
