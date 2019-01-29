@@ -5047,6 +5047,15 @@ ENC_COMBAT_RECOVER_STR
 ENC_COMBAT_UNKNOWN_OBJECT
 Unknown
 
+# %1% empire name
+# %2% species name
+# %3% fighter type name
+ENC_COMBAT_EMPIRE_FIGHTER_NAME
+%1% %2% %3%
+
+ENC_COMBAT_ROGUE
+Rogue
+
 # %1% number of combat round.
 ENC_ROUND_BEGIN
 '''
@@ -12923,11 +12932,17 @@ Launch system for fighters.
 FT_HANGAR_0
 Decoy Hangar
 
+FT_HANGAR_0_FIGHTER
+Decoy
+
 FT_HANGAR_0_DESC
 Storage system for unarmed decoy craft.
 
 FT_HANGAR_1
 Interceptor Hangar
+
+FT_HANGAR_1_FIGHTER
+Interceptor
 
 FT_HANGAR_1_DESC
 Storage system for minimally armed fighters.
@@ -12935,17 +12950,26 @@ Storage system for minimally armed fighters.
 FT_HANGAR_2
 Fighter Hangar
 
+FT_HANGAR_2_FIGHTER
+Fighter
+
 FT_HANGAR_2_DESC
 Storage system for lightly armed fighters.
 
 FT_HANGAR_3
 Bomber Hangar
 
+FT_HANGAR_3_FIGHTER
+Bomber
+
 FT_HANGAR_3_DESC
 Storage system for moderately armed fighters.
 
 FT_HANGAR_4
 Heavy-Bomber Hangar
+
+FT_HANGAR_4_FIGHTER
+Heavy-Bomber
 
 FT_HANGAR_4_DESC
 Storage system for heavily armed fighters.
@@ -12960,7 +12984,7 @@ FT_BAY_KRILL
 Krill Swarm
 
 FT_BAY_KRILL_DESC
-When Krill swarms are big enough, single Krills leave the swarm to attack ships the swarm encounters.
+When Krill swarms are big enough, single Krill leave the swarm to attack ships the swarm encounters.
 
 SR_WEAPON_0_1
 Flak Cannon
