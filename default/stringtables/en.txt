@@ -728,7 +728,7 @@ Black Kraken
 SM_BLACK_KRAKEN_DESC
 '''A powerful, unnatural-seeming space monster.
 
-Black Kraken are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[metertype METER_STEALTH]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out planets with visible buildings and attack their population.'''
+Black Kraken are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[metertype METER_STEALTH]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out planets with visible buildings and attack their [[metertype METER_POPULATION]].'''
 
 SM_SNOWFLAKE_1
 Small Snowflake
@@ -760,7 +760,7 @@ Psionic Snowflake
 SM_PSIONIC_SNOWFLAKE_DESC
 '''A monster with the power to neutralize the minds of organic beings.
 
-Psionic Snowflakes are bioengineered space monsters with dangerous weapons and the ability to take control of ships with [[encyclopedia ORGANIC_SPECIES_TITLE]] crews. A powerful fleet will be needed to fight them. They seek out and attack enemy space ships, forcing crews vulnerable to psychic attack to abandon their empire. They are also able to directly attack the population of planets.'''
+Psionic Snowflakes are bioengineered space monsters with dangerous weapons and the ability to take control of ships with [[encyclopedia ORGANIC_SPECIES_TITLE]] crews. A powerful fleet will be needed to fight them. They seek out and attack enemy space ships, forcing crews vulnerable to psychic attack to abandon their empire. They are also able to directly attack the [[metertype METER_POPULATION]] of planets.'''
 
 SM_JUGGERNAUT_1
 Small Juggernaut
@@ -792,7 +792,7 @@ Bloated Juggernaut
 SM_BLOATED_JUGGERNAUT_DESC
 '''A massive, sickly-looking space monster.
 
-Bloated Juggernauts are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[metertype METER_STEALTH]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out planets with visible buildings and attack their population.'''
+Bloated Juggernauts are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[metertype METER_STEALTH]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out planets with visible buildings and attack their [[metertype METER_POPULATION]].'''
 
 SM_CLOUD
 Space Cloud
@@ -1183,7 +1183,7 @@ RULE_HABITABLE_SIZE_GASGIANT
 Gas Giants Habitable size
 
 RULE_HABITABLE_SIZE_DESC
-Value used to adjust for [[encyclopedia POPULATION_TITLE_SHORT_DESC]] changes on a planet of this size.
+Value used to adjust for [[METER_POPULATION]] changes on a planet of this size.
 
 RULE_ALLOW_CONCEDE
 Allow Conceding
@@ -5603,7 +5603,7 @@ OUTPOSTS_TITLE
 Outpost
 
 OUTPOSTS_TEXT
-Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create [[metertype METER_SUPPLY]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. Building an Output requires a ship with an [[shippart CO_OUTPOST_POD]]. Outposts are also formed when the population of a colony drops to zero for any reason.
+Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no [[metertype METER_POPULATION]], and normally produce no resources. But they create [[metertype METER_SUPPLY]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. Building an Outpost requires a ship with an [[shippart CO_OUTPOST_POD]]. Outposts are also formed when the Population of a colony drops to zero for any reason.
 
 HOMEWORLDS_TITLE
 Homeworld
@@ -5625,7 +5625,7 @@ GROWTH_FOCUS_TITLE
 Growth Focus
 
 GROWTH_FOCUS_TEXT
-'''The Growth Focus represents exporting rare materials and substances that can increase the max Population of planets. Is only available in certain situations: on some homeworlds, and on planets with growth specials that can be exported.
+'''The Growth Focus represents exporting rare materials and substances that can increase the [[metertype METER_TARGET_POPULATION]] of planets. Is only available in certain situations: on some homeworlds, and on planets with growth specials that can be exported.
 
 A planet focused on Growth extends those benefits to other planets connected to it by [[metertype METER_SUPPLY]] lines, provided that the species of those other planets are of the right type, i.e., a Homeworld focused on Growth only helps other planets of the same species, and Growth Specials (and Growth Focus based on them) only help species with a respective type of [[encyclopedia METABOLISM_TITLE]].  The benefits from different types of applicable Growth Focus will stack with each other, but not from multiple sources of the identical specific type.
 
@@ -5693,25 +5693,25 @@ ORGANIC_SPECIES_TITLE
 Organic Metabolism
 
 ORGANIC_SPECIES_TEXT
-[[encyclopedia ORGANIC_SPECIES_CLASS]] species are more or less, 'life as we know it'. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth. Organic Growth specials are marked with a little green 'O' in the corner.
+[[encyclopedia ORGANIC_SPECIES_CLASS]] species are more or less, 'life as we know it'. These species' [[metertype METER_TARGET_POPULATION]] can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth. Organic Growth specials are marked with a little green 'O' in the corner.
 
 LITHIC_SPECIES_TITLE
 Lithic Metabolism
 
 LITHIC_SPECIES_TEXT
-[[encyclopedia LITHIC_SPECIES_CLASS]] species are silicon or mineral-based. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth. Lithic Growth specials are marked with a little grey 'L' in the corner.
+[[encyclopedia LITHIC_SPECIES_CLASS]] species are silicon or mineral-based. These species' [[metertype METER_TARGET_POPULATION]] can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth. Lithic Growth specials are marked with a little grey 'L' in the corner.
 
 ROBOTIC_SPECIES_TITLE
 Robotic Metabolism
 
 ROBOTIC_SPECIES_TEXT
-[[encyclopedia ROBOTIC_SPECIES_CLASS]] species are sapient machines. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Robotic Growth Special is colonized, and focused on Growth. Robotic Growth specials are marked with a little red 'R' in the corner.
+[[encyclopedia ROBOTIC_SPECIES_CLASS]] species are sapient machines. These species' [[metertype METER_TARGET_POPULATION]] can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Robotic Growth Special is colonized, and focused on Growth. Robotic Growth specials are marked with a little red 'R' in the corner.
 
 PHOTOTROPHIC_SPECIES_TITLE
 Phototrophic Metabolism
 
 PHOTOTROPHIC_SPECIES_TEXT
-'''[[encyclopedia PHOTOTROPHIC_SPECIES_CLASS]] species live mainly or entirely on sunlight. These species' max population is greatly influenced by the brightness of the local star and the planet size - the brighter or bigger, the better. Growth specials do not benefit them.
+'''[[encyclopedia PHOTOTROPHIC_SPECIES_CLASS]] species live mainly or entirely on sunlight. These species' [[metertype METER_TARGET_POPULATION]] is greatly influenced by the brightness of the local star and the planet size - the brighter or bigger, the better. Growth specials do not benefit them.
 
 Population changes:
 
@@ -5729,7 +5729,7 @@ SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Metabolism
 
 SELF_SUSTAINING_SPECIES_TEXT
-[[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] species may be energy or crystalline beings or something even stranger. Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three [[encyclopedia GROWTH_FOCUS_TITLE]] specials.
+[[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] species may be energy or crystalline beings or something even stranger. Their commonality is that they need no sustenance, so their [[metertype METER_TARGET_POPULATION]] is very high. While there are no specials that boost their growth, their Target Population is equal to a species that is provided with all three [[encyclopedia GROWTH_FOCUS_TITLE]] specials.
 
 GASEOUS_SPECIES_TITLE
 Gaseous Metabolism
@@ -5747,7 +5747,7 @@ XENOPHOBIC_SPECIES_TITLE
 Xenophobic
 
 XENOPHOBIC_SPECIES_TEXT
-'''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. A Xenophobic species of [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] will also find the presence of alien species nearby to be disruptive to its natural balances (whether due to some direct effect or simply due to wasted energies being applied to harassing the alien species, has not been determined) resulting in a reduced maximum population.
+'''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. A Xenophobic species of [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] will also find the presence of alien species nearby to be disruptive to its natural balances (whether due to some direct effect or simply due to wasted energies being applied to harassing the alien species, has not been determined) resulting in a reduced [[metertype METER_TARGET_POPULATION]].
 
 Xenophobic species start with [[tech CON_CONC_CAMP]].'''
 
@@ -5761,7 +5761,7 @@ EVACUATION_TITLE
 Evacuation Plan
 
 EVACUATION_TEXT
-'''The [[buildingtype BLD_EVACUATION]] when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[metertype METER_SUPPLY]] lines, one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disappears into the vastness of space.
+'''The [[buildingtype BLD_EVACUATION]] when built will remove the [[metertype METER_POPULATION]] of a planet. Each turn, some of the Population will be removed. If there are planets colonized by the same species with free space, and connected by [[metertype METER_SUPPLY]] lines, one will be randomly chosen and the Population will move there. If there are no appropriate planets available, the Population disappears into the vastness of space.
 During an evacuation, production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] deletes itself.'''
 
 AI_LEVELS_TITLE
@@ -7090,10 +7090,10 @@ BEGINNER_HINT_09
 9: [[predefinedshipdesign SD_COLONY_SHIP]]s take longer to build than [[predefinedshipdesign SD_OUTPOST_SHIP]]s, but they can settle planets outside of your [[metertype METER_SUPPLY]] range.
 
 BEGINNER_HINT_10
-10: With a system selected in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], right click on a planets picture in the system side panel to access the Planet Suitability report. This will tell you what species from your empire will be able to successfully settle that planet. Numbers in green show the maximum population that the planet could achieve if colonized by that species, red numbers indicate that the species would die out if they attempted to colonize.
+10: With a system selected in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], right click on a planets picture in the system side panel to access the Planet Suitability report. This will tell you what species from your empire will be able to successfully settle that planet. Numbers in green show the maximum [[metertype METER_POPULATION]] that the planet could achieve if colonized by that species, red numbers indicate that the species would die out if they attempted to colonize.
 
 BEGINNER_HINT_11
-11: Maximum populations that planets can achieve can be boosted by researching various growth techs. Rare specials can also increase the maximum population for species with certain metabolisms, see [[encyclopedia GROWTH_FOCUS_TITLE]] for more info on these specials.
+11: Maximum [[metertype METER_POPULATION]]s that planets can achieve can be boosted by researching various growth techs. Rare specials can also increase the [[metertype METER_TARGET_POPULATION]] for species with certain metabolisms, see [[encyclopedia GROWTH_FOCUS_TITLE]] for more info on these specials.
 
 BEGINNER_HINT_12
 12: Be on the lookout for planets with [[encyclopedia ENC_SPECIAL]]s, they usually indicate some special resource on that planet that may benefit your entire empire if utilized properly. Right click on a special's icon to access its 'Pedia entry and find out more!
@@ -7117,7 +7117,7 @@ BEGINNER_HINT_18
 18: [[encyclopedia FOCUS_TITLE]] - pay attention to the focus setting of new planets that are added to your empire, either from settling them or from conquering them. This setting controls if the planet focuses on industrial production or on research or on defense. Later in the game, more focus options may unlock as new [[encyclopedia ENC_TECH]] are researched, and different species may have different focus options available.
 
 BEGINNER_HINT_19
-19: A colony can be established on an [[encyclopedia OUTPOSTS_TITLE]] by constructing a colony building or by using a [[predefinedshipdesign SD_COLONY_SHIP]]. Most colony buildings require a [[metertype METER_SUPPLY]] connection to a planet with at least 5 [[metertype METER_HAPPINESS]], and 3 population. When a species is unlocked, such as when researching [[tech PRO_EXOBOTS]], this requirement for their colony building does not apply.
+19: A colony can be established on an [[encyclopedia OUTPOSTS_TITLE]] by constructing a colony building or by using a [[predefinedshipdesign SD_COLONY_SHIP]]. Most colony buildings require a [[metertype METER_SUPPLY]] connection to a planet with at least 5 [[metertype METER_HAPPINESS]], and 3 [[metertype METER_POPULATION]]. When a species is unlocked, such as when researching [[tech PRO_EXOBOTS]], this requirement for their colony building does not apply.
 
 BEGINNER_HINT_20
 20: Specific Situation Reports (like this one) can be temporarily ignored by right clicking on their icon and selecting one of the options. Reports of a certain type may be filtered out on a more permanent basis using the Filters menu at the bottom of this window. These beginner game hints are grouped as [[encyclopedia BEGINNER_HINTS]] in the filter list.
@@ -8087,7 +8087,7 @@ GAIA_SPECIAL
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Terraforms planets then increases max Population by planet size:
+'''Terraforms planets then increases [[metertype METER_TARGET_POPULATION]] by planet size:
 • [[SZ_TINY]] (+3)
 • [[SZ_SMALL]] (+6)
 • [[SZ_MEDIUM]] (+9)
@@ -8095,13 +8095,13 @@ GAIA_SPECIAL_DESC
 • [[SZ_HUGE]] (+15)
 and increases [[metertype METER_TARGET_HAPPINESS]] by 5.
 
-This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of its population. If the world is a [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]], a substantial population bonus is added. If it is not, then it will slowly terraform itself in stages to eventually reach [[PE_GOOD]] (NB: [[species SP_EXOBOT]] do not have a [[PE_GOOD]] environment so it cannot improve beyond [[PE_ADEQUATE]] for them).'''
+This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of its Population. If the world is a [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]], a substantial Population bonus is added. If it is not, then it will slowly terraform itself in stages to eventually reach [[PE_GOOD]] (NB: [[species SP_EXOBOT]] do not have a [[PE_GOOD]] environment so it cannot improve beyond [[PE_ADEQUATE]] for them).'''
 
 WORLDTREE_SPECIAL
 World Tree
 
 WORLDTREE_SPECIAL_DESC
-'''Increases [[metertype METER_SUPPLY]] by +1, [[metertype METER_DETECTION]] by +10, max Population by +1, and [[metertype METER_TARGET_HAPPINESS]] on the planet that has the special by +5. Increases [[metertype METER_TARGET_HAPPINESS]] on all other planets owned by the same empire by +1.
+'''Increases [[metertype METER_SUPPLY]] by +1, [[metertype METER_DETECTION]] by +10, [[metertype METER_TARGET_POPULATION]] by +1, and [[metertype METER_TARGET_HAPPINESS]] on the planet that has the special by +5. Increases [[metertype METER_TARGET_HAPPINESS]] on all other planets owned by the same empire by +1.
 
 A gigantic tree has grown so large that its crown has left the atmosphere of the planet. Scientists suspect that it was planted by the Caretakers in ancient times.'''
 
@@ -8109,7 +8109,7 @@ ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins (Excavated)
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by 1 per Population when Focus is set to Research.
+'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by 1 per [[metertype METER_POPULATION]] when Focus is set to Research.
 
 This planet holds the ruins of an unknown, advanced ancient race. A valuable discovery has already been made here.'''
 
@@ -8117,7 +8117,7 @@ ANCIENT_RUINS_SPECIAL
 Ancient Ruins
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by 1 per Population when Focus is set to Research.
+'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by 1 per [[metertype METER_POPULATION]] when Focus is set to Research.
 
 This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship. There's also a good chance that well preserved bodies of an extinct species will be found.'''
 
@@ -8188,7 +8188,7 @@ TIDAL_LOCK_SPECIAL
 Tidally Locked Rotation
 
 TIDAL_LOCK_SPECIAL_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on this planet by 0.2 per Population when Focus is set to [[metertype METER_INDUSTRY]]. Decreases population (regardless of Focus) depending on the planet size:
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on this planet by 0.2 per [[metertype METER_POPULATION]] when Focus is set to [[metertype METER_INDUSTRY]]. Decreases [[metertype METER_TARGET_POPULATION]] (regardless of Focus) depending on the planet size:
 • [[SZ_TINY]] (-1)
 • [[SZ_SMALL]] (-2)
 • [[SZ_MEDIUM]] (-3)
@@ -8201,7 +8201,7 @@ TEMPORAL_ANOMALY_SPECIAL
 Temporal Anomaly
 
 TEMPORAL_ANOMALY_SPECIAL_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by 5 per Population when Focus is set to [[metertype METER_RESEARCH]]. Decreases population (regardless of Focus) depending on the planet size:
+'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by 5 per [[metertype METER_POPULATION]] when Focus is set to [[metertype METER_RESEARCH]]. Decreases [[metertype METER_TARGET_POPULATION]] (regardless of Focus) depending on the planet size:
 • [[SZ_TINY]] (-5)
 • [[SZ_SMALL]] (-10)
 • [[SZ_MEDIUM]] (-15)
@@ -8223,7 +8223,7 @@ COMPUTRONIUM_SPECIAL
 Computronium Moon
 
 COMPUTRONIUM_SPECIAL_DESC
-'''When a planet with a Computronium Moon is focused on [[metertype METER_RESEARCH]], all research focused planets in the empire gain 0.2 [[metertype METER_TARGET_RESEARCH]] per Population.
+'''When a planet with a Computronium Moon is focused on [[metertype METER_RESEARCH]], all research focused planets in the empire gain 0.2 [[metertype METER_TARGET_RESEARCH]] per [[metertype METER_POPULATION]].
 
 Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
 
@@ -8231,7 +8231,7 @@ HONEYCOMB_SPECIAL
 Honeycomb
 
 HONEYCOMB_SPECIAL_DESC
-'''When a planet with a Honeycomb is focused on [[metertype METER_INDUSTRY]], all industry focused [[metertype METER_SUPPLY]] connected planets gain 0.5 [[metertype METER_TARGET_INDUSTRY]] per Population.
+'''When a planet with a Honeycomb is focused on [[metertype METER_INDUSTRY]], all industry focused [[metertype METER_SUPPLY]] connected planets gain 0.5 [[metertype METER_TARGET_INDUSTRY]] per [[metertype METER_POPULATION]].
 
 The Honeycomb is a planet that was prepared as a stash by the Builders in ancient times. Almost all other planets in surrounding systems were stripped of valuable materials and then dismantled. The materials were sorted and stored separately in gigantic tubes embedded into the planets crust. The sprectrum ranges from rare and valuable elementals to hard to produce molecules and a vast array of energy sources. What the Builders wanted to create with this treasure or why they didn't use it in the end, is unclear.'''
 
@@ -8291,7 +8291,7 @@ CONC_CAMP_MASTER_SPECIAL
 Pall of Death
 
 CONC_CAMP_MASTER_SPECIAL_DESC
-A visitor may not see [[buildingtype BLD_CONC_CAMP]] operating on this planet, but they have been operating relentlessly and exact a harsh toll on the population; a Pall of Death can be discerned by sensitive beings.
+A visitor may not see [[buildingtype BLD_CONC_CAMP]] operating on this planet, but they have been operating relentlessly and exact a harsh toll on the [[metertype METER_POPULATION]]; a Pall of Death can be discerned by sensitive beings.
 
 CONC_CAMP_SLAVE_SPECIAL
 Psychic Fatigue
@@ -9067,9 +9067,9 @@ PC_COLONY_DESC
 '''Colony parts integrate with a ship to provide the necessary equipment to establish ownership on a new planet.
 
 These parts may also increase the [[metertype METER_POPULATION]] on a ship.
-When colonizing a planet with a populated colony ship, a colony for the [[encyclopedia ENC_SPECIES]] is established, starting with the same population that was aboard the ship.
+When colonizing a planet with a populated colony ship, a colony for the [[encyclopedia ENC_SPECIES]] is established, starting with the same Population that was aboard the ship.
 
-A ship with no population will still have enough personnel to establish an [[encyclopedia OUTPOSTS_TITLE]].
+A ship with no Population will still have enough personnel to establish an [[encyclopedia OUTPOSTS_TITLE]].
 Outposts may construct a colony for any species in the empire within [[metertype METER_SUPPLY]] range, provided the source meets other criteria.
 The combination of outpost ship and local construction of a colony is cheaper than producing a populated colony ship.
 
@@ -10495,7 +10495,7 @@ LRN_ALGO_ELEGANCE
 Algorithmic Elegance
 
 LRN_ALGO_ELEGANCE_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all Research focused planets by 0.1 per Population.
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all Research focused planets by 0.1 per [[metertype METER_POPULATION]].
 
 With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity. At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.'''
 
@@ -10588,7 +10588,7 @@ LRN_QUANT_NET
 Quantum Networking
 
 LRN_QUANT_NET_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.5 per Population.
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.5 per [[metertype METER_POPULATION]].
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes. This advancement greatly facilitates research throughout the empire.
 
@@ -10610,7 +10610,7 @@ GRO_PLANET_ECOL
 Planetary Ecology
 
 GRO_PLANET_ECOL_DESC
-'''Increases the max population of [[PE_GOOD]] and [[PE_ADEQUATE]] planets by +1. This bonus is not cumulative with [[tech GRO_SYMBIOTIC_BIO]].
+'''Increases the [[metertype METER_TARGET_POPULATION]] of [[PE_GOOD]] and [[PE_ADEQUATE]] planets by +1. This bonus is not cumulative with [[tech GRO_SYMBIOTIC_BIO]].
 
 Agriculture and medical science can drastically increase survivability, allowing great increases in population and food production. Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it. Understanding natural ecology and its interaction to stresses permits the system to be modified and enhanced, and its benefits reaped for generations to come.'''
 
@@ -10630,7 +10630,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
-Increases the max Population of [[PE_GOOD]], [[PE_ADEQUATE]], and [[PE_POOR]] planets by planet size: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+Increases the [[metertype METER_TARGET_POPULATION]] of [[PE_GOOD]], [[PE_ADEQUATE]], and [[PE_POOR]] planets by planet size: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 GRO_GENETIC_MED
 Genetic Medicine
@@ -10642,7 +10642,7 @@ GRO_LIFECYCLE_MAN
 Lifecycle Manipulation
 
 GRO_LIFECYCLE_MAN_DESC
-'''In addition to the ship part, this tech also increases the population of new colonies produced with colony buildings to 3.
+'''In addition to the ship part, this tech also increases the [[metertype METER_POPULATION]] of new colonies produced with colony buildings to 3.
 
 Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, colonists can be transported much more efficiently, and the amount of colonists on a freshly built colony as well as the capacity of colony ships is greatly increased.
 
@@ -10658,7 +10658,7 @@ GRO_XENO_GENETICS
 Xenological Genetics
 
 GRO_XENO_GENETICS_DESC
-'''Increases the max Population on planets, depending on the planet suitability and planet size:
+'''Increases the [[metertype METER_TARGET_POPULATION]] on planets, depending on the planet suitability and planet size:
 
 • [[PE_ADEQUATE]] or [[PE_POOR]] planet: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10)
 • [[PE_HOSTILE]] planet: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5)
@@ -10679,7 +10679,7 @@ GRO_XENO_HYBRIDS
 Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
-'''Increases the max Population on planets, depending on the planet suitability and planet size:
+'''Increases the [[metertype METER_TARGET_POPULATION]] on planets, depending on the planet suitability and planet size:
 
 • [[PE_POOR]] planet: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5)
 • [[PE_HOSTILE]] planet: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10)
@@ -10704,7 +10704,7 @@ GRO_ENERGY_META
 Pure-Energy Metabolism
 
 GRO_ENERGY_META_DESC
-'''Increases max [[metertype METER_FUEL]] on all ships by 2, max [[metertype METER_DEFENSE]] on all planets by 5, max [[metertype METER_SHIELD]] on all planets by 5, [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.2 per Population, and [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.5 per Population.
+'''Increases max [[metertype METER_FUEL]] on all ships by 2, max [[metertype METER_DEFENSE]] on all planets by 5, max [[metertype METER_SHIELD]] on all planets by 5, [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.2 per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.5 per [[metertype METER_POPULATION]].
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -10746,7 +10746,7 @@ Reaching this state of sophistication, Generic Supplies can be used to construct
 
 This frees the imperial stockpile service from having to know which goods will be demanded exactly. Predicting the location and amount is enough.
 
-This is an upgrade technology for the imperial stockpile. The [[metertype METER_STOCKPILE]] is increased by 2, plus an additional 0.01 per population, plus an additional 3 for each growth-focused and stockpiling-focused planet.
+This is an upgrade technology for the imperial stockpile. The [[metertype METER_STOCKPILE]] is increased by 2, plus an additional 0.01 per [[metertype METER_POPULATION]], plus an additional 3 for each growth-focused and stockpiling-focused planet.
 These improvements are cumulative with that provided by [[tech PRO_PREDICTIVE_STOCKPILING]].'''
 
 PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
@@ -10756,7 +10756,7 @@ PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 '''Quantum entanglement of factory control rooms allows the operation of machines remotely from other star systems.
 Decoupling workforce and the means of production helps to produce just in time and increases efficiency of the imperial stockpile service.
 
-This is an upgrade technology for the imperial stockpile. The [[metertype METER_STOCKPILE]] is increased by 6 plus an additional 0.02 per population.
+This is an upgrade technology for the imperial stockpile. The [[metertype METER_STOCKPILE]] is increased by 6 plus an additional 0.02 per [[metertype METER_POPULATION]].
 These improvements are cumulative with those provided by [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_VOID_PREDICTION]].
 
 This also unlocks the [[building BLD_STOCKPILING_CENTER]] which additionally increases the [[metertype METER_STOCKPILE]] by 0.1 per [[metertype METER_INDUSTRY]].'''
@@ -10768,7 +10768,7 @@ PRO_VOID_PREDICTION_DESC
 '''While classic prediction always relies on statistical knowledge of the past, studying the chaotic wisdom of the void leads to robust predictions of first-time and freak occurences.
 For the imperial stockpile service, void prediction is the quintessential tool to deliver the right goods even before the need occurs.
 
-This is an upgrade technology for the imperial stockpile. The [[metertype METER_STOCKPILE]] is increased by 0.2 per population.
+This is an upgrade technology for the imperial stockpile. The [[metertype METER_STOCKPILE]] is increased by 0.2 per [[metertype METER_POPULATION]].
 These improvements are cumulative with those provided by [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].'''
 
 PRO_MICROGRAV_MAN
@@ -10785,7 +10785,7 @@ PRO_ROBOTIC_PROD
 Robotic Production
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.1 per Population.
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.1 per [[metertype METER_POPULATION]].
 
 Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
 
@@ -10800,7 +10800,7 @@ PRO_FUSION_GEN
 Fusion Generation
 
 PRO_FUSION_GEN_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by 0.2 per Population.
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by 0.2 per [[metertype METER_POPULATION]].
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -10936,13 +10936,13 @@ CON_ORBITAL_HAB
 Orbital Habitation
 
 CON_ORBITAL_HAB_DESC
-Increases Population capacity by planet size on all habitable planets: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+Increases [[metertype METER_TARGET_POPULATION]] by planet size on all habitable planets: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 CON_NDIM_STRC
 N-Dimensional Structures
 
 CON_NDIM_STRC_DESC
-'''Increases Population capacity by planet size on all habitable planets: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+'''Increases [[metertype METER_TARGET_POPULATION]] by planet size on all habitable planets: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
 
 Also increases [[metertype METER_TARGET_CONSTRUCTION]] by 10 on populated planets.
 
@@ -11264,7 +11264,7 @@ GRO_SUBTER_HAB
 Subterranean Habitation
 
 GRO_SUBTER_HAB_DESC
-Increases the max Population on all planets by planet size: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+Increases the [[metertype METER_TARGET_POPULATION]] on all planets by planet size: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 GRO_GENOME_BANK
 Genome Bank
@@ -11282,7 +11282,7 @@ GRO_TERRAFORM
 Terraforming
 
 GRO_TERRAFORM_DESC
-Changing the environmental type of a planet is a massive undertaking, the challenge of this process is to a large degree logistical. The precise method depends greatly on the type of planet to be changed and the desired result. However, in all cases much of the surface of the entire planet and its atmosphere needs to be converted to other types of molecules, vented into space or buried under the crust. As such, this process requires most of the planet to be accessible to the terraformers, and cannot be performed on a world with max population less than one.
+Changing the environmental type of a planet is a massive undertaking, the challenge of this process is to a large degree logistical. The precise method depends greatly on the type of planet to be changed and the desired result. However, in all cases much of the surface of the entire planet and its atmosphere needs to be converted to other types of molecules, vented into space or buried under the crust. As such, this process requires most of the planet to be accessible to the terraformers, and cannot be performed on a world with [[metertype METER_TARGET_POPULATION]] less than one.
 
 GRO_TERRAFORM_SHORT_DESC
 Allows terraforming
@@ -11306,8 +11306,8 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Increases the max Population on [[PE_HOSTILE]] planets by planet size: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
-Increases max [[metertype METER_TROOPS]] on all planets by 0.2 per Population.
+'''Increases the [[metertype METER_TARGET_POPULATION]] on [[PE_HOSTILE]] planets by planet size: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+Increases max [[metertype METER_TROOPS]] on all planets by 0.2 per [[metertype METER_POPULATION]].
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
@@ -11345,7 +11345,7 @@ LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with any focus by 0.1 per Population.
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with any focus by 0.1 per [[metertype METER_POPULATION]].
 
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
 
@@ -11353,7 +11353,7 @@ LRN_STELLAR_TOMOGRAPHY
 Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on planets with the Research focus, per Population and depending on the star type:
+'''Increases [[metertype METER_TARGET_RESEARCH]] on planets with the Research focus, per [[metertype METER_POPULATION]] and depending on the star type:
 * [[STAR_BLACK]] (x1)
 * [[STAR_NEUTRON]] (x0.75)
 * [[STAR_BLUE]] or [[STAR_WHITE]] (x0.5)
@@ -11513,7 +11513,7 @@ DEF_ROOT_DEFENSE
 Self Defense
 
 DEF_ROOT_DEFENSE_DESC
-'''Increases max [[metertype METER_SHIELD]] by 1 on each owned planet. Regenerates 1 [[metertype METER_SHIELD]] per turn, on turns when the planet has not been attacked in combat. For species with basic defensive troops, increases max [[metertype METER_TROOPS]] on the planet by 0.2 per population.
+'''Increases max [[metertype METER_SHIELD]] by 1 on each owned planet. Regenerates 1 [[metertype METER_SHIELD]] per turn, on turns when the planet has not been attacked in combat. For species with basic defensive troops, increases max [[metertype METER_TROOPS]] on the planet by 0.2 per [[metertype METER_POPULATION]].
 
 The concept of 'self defense' is at the root of many avenues of technological advance.'''
 
@@ -11527,7 +11527,7 @@ DEF_GARRISON_2
 Defensive Militia Training
 
 DEF_GARRISON_2_DESC
-Increases max [[metertype METER_TROOPS]] on all planets by 0.4 per population (modified by species defensive trait), and causes troops to regenerate by an additional 1 per turn.
+Increases max [[metertype METER_TROOPS]] on all planets by 0.4 per [[metertype METER_POPULATION]] (modified by species defensive trait), and causes troops to regenerate by an additional 1 per turn.
 
 DEF_GARRISON_3
 Planetary Fortification Network
@@ -11539,7 +11539,7 @@ DEF_GARRISON_4
 Planetary Guard Brigades
 
 DEF_GARRISON_4_DESC
-Increases max [[metertype METER_TROOPS]] on all planets by 0.4 per population (modified by species defensive trait), and causes troops to regenerate by an additional 3 per turn in addition to that from [[DEF_GARRISON_3]] and [[DEF_GARRISON_2]].
+Increases max [[metertype METER_TROOPS]] on all planets by 0.4 per [[metertype METER_POPULATION]] (modified by species defensive trait), and causes troops to regenerate by an additional 3 per turn in addition to that from [[DEF_GARRISON_3]] and [[DEF_GARRISON_2]].
 
 DEF_PLANET_CLOAK
 Planetary Cloaking Device
@@ -12154,7 +12154,7 @@ BLD_EVACUATION
 Evacuation System
 
 BLD_EVACUATION_DESC
-Remove population from this planet over several turns according to an [[encyclopedia EVACUATION_TITLE]]. If a suitable alternate planets are available, with the same species and sufficient extra capacity, population will move there.
+Remove [[metertype METER_POPULATION]] from this planet over several turns according to an [[encyclopedia EVACUATION_TITLE]]. If a suitable alternate planets are available, with the same species and sufficient extra capacity, Population will move there.
 
 BLD_OBSERVATORY
 Observatory
@@ -12168,7 +12168,7 @@ BLD_CULTURE_ARCHIVES
 Cultural Archives
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] by 5 and [[metertype METER_TARGET_INDUSTRY]] by half the planet's Population.
+'''Increases [[metertype METER_TARGET_RESEARCH]] by 5 and [[metertype METER_TARGET_INDUSTRY]] by half the planet's [[metertype METER_POPULATION]].
 
 Stores the sum accumulated knowledge from thousands of years of life on this planet, improving many aspects of planetary productivity.'''
 
@@ -12178,7 +12178,7 @@ Cultural Library
 BLD_CULTURE_LIBRARY_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] by 5.
 
-Stores the accumulated knowledge from thousands of years of life on this planet, giving a bonuses to research. This building will be destroyed when the population of the high tech natives reaches zero.'''
+Stores the accumulated knowledge from thousands of years of life on this planet, giving a bonuses to research. This building will be destroyed when the [[metertype METER_POPULATION]] of the high tech natives reaches zero.'''
 
 BLD_AUTO_HISTORY_ANALYSER
 Automated History Analyser
@@ -12306,7 +12306,7 @@ BLD_BIOTERROR_PROJECTOR
 Bioterror Projection Base
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Gives the planet on which it is built the Bioterror focus, which decreases Population on enemy planets within 4 starlane jumps at a rate of 2 per turn, provided the enemy empire does not contain a Genome Bank.
+'''Gives the planet on which it is built the Bioterror focus, which decreases [[metertype METER_POPULATION]] on enemy planets within 4 starlane jumps at a rate of 2 per turn, provided the enemy empire does not contain a Genome Bank.
 
 This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a [[buildingtype BLD_GENOME_BANK]] building in the enemy empire. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], provided it has a [[special RESONANT_MOON_SPECIAL]].'''
 
@@ -12328,7 +12328,7 @@ BLD_INDUSTRY_CENTER
 Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with Industry focus by 0.2 per Population.
+'''Initially provides a bonus to [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with Industry focus by 0.2 per [[metertype METER_POPULATION]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 [[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus.
@@ -12344,7 +12344,7 @@ Increases [[metertype METER_RESEARCH]] on its planet by 5, if that planet has re
 
 Learning to design devices for use by different species is crucial for developing universally usable tools.
 
-Each empire may contain an academy on up to six planets with different species. To support an academy, a planet's population must be happy, and at least three starlane jumps away from the nearest existing academy.'''
+Each empire may contain an academy on up to six planets with different species. To support an academy, a planet's [[metertype METER_POPULATION]] must be happy, and at least three starlane jumps away from the nearest existing academy.'''
 
 BLD_STOCKPILING_CENTER
 Imperial Entanglement Center
@@ -12382,7 +12382,7 @@ BLD_GAIA_TRANS
 Gaia Transformation
 
 BLD_GAIA_TRANS_DESC
-'''Adds the [[special GAIA_SPECIAL]] special to the planet which increases max Population for [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]]s, according to planet size:
+'''Adds the [[special GAIA_SPECIAL]] special to the planet which increases [[metertype METER_TARGET_POPULATION]] for [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]]s, according to planet size:
 • [[SZ_TINY]] (+3)
 • [[SZ_SMALL]] (+6)
 • [[SZ_MEDIUM]] (+9)
@@ -12396,7 +12396,7 @@ BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by 0.5 per Population, and [[metertype METER_TARGET_RESEARCH]] on Planets with the Research focus by 0.5 per Population. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by 0.5 per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on Planets with the Research focus by 0.5 per [[metertype METER_POPULATION]]. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
@@ -12413,7 +12413,7 @@ BLD_ENCLAVE_VOID
 Enclave of the Void
 
 BLD_ENCLAVE_VOID_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.75 per Population.
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.75 per [[metertype METER_POPULATION]].
 Multiple copies do not stack.
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
@@ -12434,7 +12434,7 @@ BLD_HYPER_DAM
 Hyperspatial Dam
 
 BLD_HYPER_DAM_DESC
-'''For planets not connected to a [[buildingtype BLD_BLACK_HOLE_POW_GEN]], increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets with the Industry focus by 1 per Population, but decreases Population on such planets by planet size: ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
+'''For planets not connected to a [[buildingtype BLD_BLACK_HOLE_POW_GEN]], increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets with the Industry focus by 1 per [[metertype METER_POPULATION]], but decreases [[metertype METER_TARGET_POPULATION]] on such planets by planet size: ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a [[STAR_BLACK]].
@@ -12451,7 +12451,7 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets, per Population and depending on the star type:
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets, per [[metertype METER_POPULATION]] and depending on the star type:
 * [[STAR_BLUE]] or [[STAR_WHITE]] (x0.4)
 * [[STAR_YELLOW]] or [[STAR_ORANGE]] (x0.2)
 * [[STAR_RED]] (x0.1)
@@ -12463,7 +12463,7 @@ BLD_CLONING_CENTER
 Cloning Center
 
 BLD_CLONING_CENTER_DESC
-'''Increases the max Population on all planets by planet size: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+'''Increases the [[metertype METER_TARGET_POPULATION]] on all planets by planet size: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 [[tech GRO_INDUSTRY_CLONE]] allows made-to-order populations to be produced industrially, significantly improving population.'''
 
@@ -12519,7 +12519,7 @@ BLD_CONC_CAMP
 Concentration Camps
 
 BLD_CONC_CAMP_DESC
-'''Decreases the planet's population at a rate of 3 per turn, increases [[metertype METER_TARGET_INDUSTRY]] by 5 times the planet's population and sets the [[metertype METER_TARGET_HAPPINESS]] to 0.
+'''Decreases the planet's [[metertype METER_POPULATION]] at a rate of 3 per turn, increases [[metertype METER_TARGET_INDUSTRY]] by 5 times the planet's [[metertype METER_POPULATION]] and sets the [[metertype METER_TARGET_HAPPINESS]] to 0.
 
 Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently.'''
 
@@ -12533,7 +12533,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with the Industry focus by 1 per Population.
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with the Industry focus by 1 per [[metertype METER_POPULATION]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 [[BUILDING_AVAILABLE_ON_OUTPOSTS]], but must be in a [[STAR_BLACK]] system.'''
@@ -12542,7 +12542,7 @@ BLD_PLANET_DRIVE
 Planetary Starlane Drive
 
 BLD_PLANET_DRIVE_DESC
-'''Allows a planet to move between star systems. An [[buildingtype BLD_LIGHTHOUSE]] is required within 200 uu of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], but cannot be used unless the planet is colonised.
+'''Allows a planet to move between star systems. An [[buildingtype BLD_LIGHTHOUSE]] is required within 200 uu of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the [[metertype METER_POPULATION]] of a planet will live even with support from the Interstellar Lighthouse. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], but cannot be used unless the planet is colonised.
 
 Due to a lack of UI targeting, either a [[buildingtype BLD_PLANET_BEACON]] or a ship equipped with a [[shippart SP_PLANET_BEACON]] currently required on the other end of the starlane. This building will destroy itself immediately, so that the planet can move to a different target system later.
 
@@ -13368,7 +13368,7 @@ CO_OUTPOST_POD
 Outpost Module
 
 CO_OUTPOST_POD_DESC
-'''[[encyclopedia OUTPOSTS_TITLE]] modules allow unmanned stations to be established. These may be placed on uninhabitable planets. They have no population, and normally produce no resources, but they do provide vision and create [[metertype METER_SUPPLY]] lines when the right tech is researched. Outposts can be upgraded to colonies.
+'''[[encyclopedia OUTPOSTS_TITLE]] modules allow unmanned stations to be established. These may be placed on uninhabitable planets. They have no [[metertype METER_POPULATION]], and normally produce no resources, but they do provide vision and create [[metertype METER_SUPPLY]] lines when the right tech is researched. Outposts can be upgraded to colonies.
 
 [[COLONY_SHIP_PARTS_UPKEEP_COST]]'''
 
@@ -14211,7 +14211,7 @@ BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED
 Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 MIN_POPULATION_THREE_REQUIRED
-Can only be built at a location with a population of at least three
+Can only be built at a location with a [[metertype METER_POPULATION]] of at least three
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED
 Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
@@ -14268,7 +14268,7 @@ NO_STACK_SHIELDS_SHIP_PARTS
 [[metertype METER_SHIELD]] reduce [[encyclopedia DAMAGE_TITLE]] sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.
 
 COLONY_SHIP_PARTS_MIN_POP
-All Colony class ship parts require the planet at which they are built to have a population of at least three.
+All Colony class ship parts require the planet at which they are built to have a [[metertype METER_POPULATION]] of at least three.
 
 COLONY_SHIP_PARTS_UPKEEP_COST
 The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.
@@ -14284,19 +14284,19 @@ SHIP_WEAPON_QUICKLY_REDUCE
 which allows ships to quickly reduce
 
 ENEMY_PLANET_ORGANIC_POP
-the Organic population of enemy planets
+the Organic [[metertype METER_POPULATION]] of enemy planets
 
 ENEMY_PLANET_ROBOTIC_POP
-the Robotic population of enemy planets
+the Robotic [[metertype METER_POPULATION]] of enemy planets
 
 ENEMY_PLANET_LITHIC_POP
-the Lithic population of enemy planets
+the Lithic [[metertype METER_POPULATION]] of enemy planets
 
 ENEMY_PLANET_PHOTOTROPHIC_POP
-the Phototrophic population of enemy planets
+the Phototrophic [[metertype METER_POPULATION]] of enemy planets
 
 ENEMY_PLANET_ANY_POP
-any population of enemy planets
+any [[metertype METER_POPULATION]] of enemy planets
 
 
 ##
@@ -14321,7 +14321,7 @@ GROWTH_SPECIAL_POPULATION_LITHIC_INCREASE
 [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
 
 GROWTH_SPECIAL_POPULATION_INCREASE
-'''species inhabiting this planet will have the maximum population boosted by planet size:
+'''species inhabiting this planet will have the [[metertype METER_TARGET_POPULATION]] boosted by planet size:
 • [[SZ_TINY]] (+1)
 • [[SZ_SMALL]] (+2)
 • [[SZ_MEDIUM]] (+3)
@@ -14332,7 +14332,7 @@ regardless of planetary [[encyclopedia ENVIRONMENT_TITLE]].
 If this planet is set to the [[encyclopedia GROWTH_FOCUS_TITLE]], the bonus is applied to all [[metertype METER_SUPPLY]] connected worlds inhabited by species with'''
 
 GROWTH_SPECIAL_INDUSTRY_BOOST
-If this planet is set to the Industry Focus, [[metertype METER_TARGET_INDUSTRY]] is increased by 0.2 per Population.
+If this planet is set to the Industry Focus, [[metertype METER_TARGET_INDUSTRY]] is increased by 0.2 per [[metertype METER_POPULATION]].
 
 GROWTH_SPECIALS_ENTRY_LIST
 '''Some specials function for organic species only, some for lithic species only, and some for robotic species only; no other [[encyclopedia METABOLISM_TITLE]] currently has applicable Growth Specials.
@@ -14409,7 +14409,7 @@ ULTIMATE_DEFENSE_TROOPS_DESC
 +++	Ultimate Defensive Ground [[metertype METER_TROOPS]]: 300%
 
 ANCIENT_DEFENSE_TROOPS_DESC
-+++	Ancient Defensive Ground [[metertype METER_TROOPS]]: 10 per population
++++	Ancient Defensive Ground [[metertype METER_TROOPS]]: 10 per [[metertype METER_POPULATION]]
 
 NO_OFFENSE_TROOPS_DESC
 −−−	No Offensive Ground [[metertype METER_TROOPS]]
@@ -14503,19 +14503,19 @@ NO_STOCKPILE_DESC
 −−	No [[metertype METER_STOCKPILE]]
 
 BAD_STOCKPILE_DESC
-−	Bad [[metertype METER_STOCKPILE]]: +0.01 per population
+−	Bad [[metertype METER_STOCKPILE]]: +0.01 per [[metertype METER_POPULATION]]
 
 AVERAGE_STOCKPILE_DESC
-'''	Average [[metertype METER_STOCKPILE]]: +0.02 per population'''
+'''	Average [[metertype METER_STOCKPILE]]: +0.02 per [[metertype METER_POPULATION]]'''
 
 GOOD_STOCKPILE_DESC
-+	Good [[metertype METER_STOCKPILE]]: +0.06 per population
++	Good [[metertype METER_STOCKPILE]]: +0.06 per [[metertype METER_POPULATION]]
 
 GREAT_STOCKPILE_DESC
-++	Great [[metertype METER_STOCKPILE]]: +0.2 per population
+++	Great [[metertype METER_STOCKPILE]]: +0.2 per [[metertype METER_POPULATION]]
 
 ULTIMATE_STOCKPILE_DESC
-+++	Ultimate [[metertype METER_STOCKPILE]]: +0.3 per population
++++	Ultimate [[metertype METER_STOCKPILE]]: +0.3 per [[metertype METER_POPULATION]]
 
 GOOD_SHIP_SHIELD_DESC
 +	Good ship [[metertype METER_SHIELD]]: +1
@@ -14560,10 +14560,10 @@ ULTIMATE_FUEL_DESC
 +++	Ultimate Maximum [[metertype METER_FUEL]]: +3
 
 GREAT_ASTEROID_INDUSTRY_DESC
-+	Good Asteroid Miners: + 0.2 [[metertype METER_INDUSTRY]] per population when Industry Focused in systems with owned asteroid belts.
++	Good Asteroid Miners: + 0.2 [[metertype METER_INDUSTRY]] per [[metertype METER_POPULATION]] when Industry Focused in systems with owned asteroid belts.
 
 LIGHT_SENSITIVE_DESC
-−	Light Sensitive: Population is reduced in systems with [[STAR_BLUE]] and to a lesser extend [[STAR_WHITE]] stars.
+−	Light Sensitive: [[metertype METER_POPULATION]] is reduced in systems with [[STAR_BLUE]] and to a lesser extend [[STAR_WHITE]] stars.
 
 TELEPATHIC_DETECTION_DESC
 +	Telepathic Detection: can sense nearby populated planets.
