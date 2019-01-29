@@ -1364,18 +1364,29 @@ namespace {
                          FighterLaunchesEventPtr& launches_event)
     {
         std::map<int, float> ships_fighters_to_add_back;
+        DebugLogger() << "Recovering fighters at end of combat...";
 
+        // count still-existing and not destroyed fighters at end of combat
         for (auto obj_it = combat_info.objects.begin();
              obj_it != combat_info.objects.end() && obj_it->ID() < 0; ++obj_it)
         {
             auto fighter = std::dynamic_pointer_cast<Fighter>(*obj_it);
             if (!fighter || fighter->Destroyed())
                 continue;   // destroyed fighters can't return
-            if (combat_info.destroyed_object_ids.count(fighter->LaunchedFrom()))
+            if (combat_info.destroyed_object_ids.count(fighter->LaunchedFrom())) {
+                DebugLogger() << " ... Fighter " << fighter->Name() << " (" << fighter->ID()
+                              << ") is from destroyed ship id" << fighter->LaunchedFrom()
+                              << " so can't be recovered";
                 continue;   // can't return to a destroyed ship
+            }
             ships_fighters_to_add_back[fighter->LaunchedFrom()]++;
         }
+        DebugLogger() << "Fighters left at end of combat:";
+        for (auto ship_fighter_count_pair : ships_fighters_to_add_back)
+            DebugLogger() << " ... from ship id " << ship_fighter_count_pair.first << " : " << ship_fighter_count_pair.second;
 
+
+        DebugLogger() << "Returning fighters to ships:";
         for (auto& entry : ships_fighters_to_add_back) {
             auto ship = combat_info.objects.Object<Ship>(entry.first);
             if (!ship) {
