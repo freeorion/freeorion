@@ -5429,7 +5429,12 @@ METER_POPULATION_VALUE_LABEL
 Population
 
 METER_POPULATION_VALUE_DESC
-An abstract value for the size of a colony, relative to differing species.
+'''The Population represents the size of a colony on a planet. Its maximum value depends on the [[encyclopedia ENC_SPECIES]] and how suitable the planet's [[encyclopedia ENVIRONMENT_TITLE]] is for that species. Many [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] output bonuses are linked to the Population size: larger Population gives more bonuses.
+
+A Population of at least three and a minimum [[metertype METER_HAPPINESS]] of 5 is necessary for a colony to act as a source of settlers for colonizing other planets. A colony ship has a population of Colonists, which is determined by the [[encyclopedia PC_COLONY]] capacity of the ship design. When colonizing a planet, the number of Colonists aboard the ship will be the starting Population on the newly settled planet.
+
+The Target Population is the stable Population size a planet will approach, given the current factors influencing the planetary Population. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, and various other game effects. If these factors change, then the Target Population value is likely to shift.
+'''
 
 METER_INDUSTRY_VALUE_LABEL
 Industry
@@ -5681,7 +5686,7 @@ Each [[encyclopedia ENC_SPECIES]] has its own environmental preferences, which d
 
 [[PE_UNINHABITABLE]] < [[PE_HOSTILE]] < [[PE_POOR]] < [[PE_ADEQUATE]] < [[PE_GOOD]]
 
-The planet suitability report can be displayed by right-cliking on a planet in the system sidepanel. A green number following the suitability data indicates the max population value if the species colonizes the planet, whereas a red number indicates that the population will stay idle or will decrease, to finally perish if the species attempts to colonize the planet.
+The planet suitability report can be displayed by right-cliking on a planet in the system sidepanel. A green number following the suitability data indicates the maximum [[metertype METER_POPULATION]] the planet could achieve if colonized by this species, whereas a red number indicates that the colony will be unviable, and Population will decrease over several turns until the Colonists have all died off and the colony is lost.
 
 When terraforming a planet (by [[metertype METER_RESEARCH]] or if the planet has the [[special GAIA_SPECIAL]] special) in order to better suit the species environmental preferences, the planet's original environment is modified by stages, until it finally reaches the [[PE_GOOD]] suitability for the species who wants to live on the planet. The terraforming stages can be checked on the suitability wheel displayed below.
 
@@ -9066,7 +9071,7 @@ Colonization
 PC_COLONY_DESC
 '''Colony parts integrate with a ship to provide the necessary equipment to establish ownership on a new planet.
 
-These parts may also increase the [[metertype METER_POPULATION]] on a ship.
+These parts may also increase the [[metertype METER_POPULATION]] on a ship (referred to as Colonists).
 When colonizing a planet with a populated colony ship, a colony for the [[encyclopedia ENC_SPECIES]] is established, starting with the same Population that was aboard the ship.
 
 A ship with no Population will still have enough personnel to establish an [[encyclopedia OUTPOSTS_TITLE]].
