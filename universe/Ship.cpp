@@ -681,7 +681,8 @@ void Ship::ResetTargetMaxUnpairedMeters() {
 void Ship::ResetPairedActiveMeters() {
     UniverseObject::ResetPairedActiveMeters();
 
-    // meters are paired only if they are not max/target meters, and there is an associated max/target meter
+    // meters are paired only if they are not max/target meters, and there is an
+    // associated max/target meter
     for (auto& entry : m_part_meters) {
         const auto& part_name = entry.first.second;
         MeterType meter_type = entry.first.first;
@@ -705,8 +706,7 @@ void Ship::ResetPairedActiveMeters() {
 
         // has an associated max/target meter.
         //std::map<std::pair<MeterType, std::string>, Meter>::iterator
-        const Meter& max_target_meter = max_it->second;
-        entry.second.SetCurrent(max_target_meter.Initial());
+        entry.second.SetCurrent(entry.second.Initial());
     }
 }
 
