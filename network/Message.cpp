@@ -384,6 +384,14 @@ Message TurnOrdersMessage(const OrderSet& orders, const std::string& save_state_
     return Message(Message::TURN_ORDERS, os.str());
 }
 
+Message TurnPartialOrdersMessage() {
+    std::ostringstream os;
+    {
+        freeorion_xml_oarchive oa(os);
+    }
+    return Message(Message::TURN_PARTIAL_ORDERS, os.str());
+}
+
 Message TurnProgressMessage(Message::TurnProgressPhase phase_id) {
     std::ostringstream os;
     {
@@ -916,9 +924,13 @@ void ExtractJoinAckMessageData(const Message& msg, int& player_id,
     }
 }
 
-void ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
-                                      SaveGameUIData& ui_data, bool& save_state_string_available,
-                                      std::string& save_state_string) {
+void ExtractTurnOrdersMessageData(const Message& msg,
+                                  OrderSet& orders,
+                                  bool& ui_data_available,
+                                  SaveGameUIData& ui_data,
+                                  bool& save_state_string_available,
+                                  std::string& save_state_string)
+{
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
@@ -938,7 +950,19 @@ void ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders, bool& ui
         }
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders) failed! Message probably long, so not outputting to log.\n"
+        ErrorLogger() << "ExtractTurnOrdersMessageData(const Message& msg, ...) failed! Message probably long, so not outputting to log.\n"
+                      << "Error: " << err.what();
+        throw err;
+    }
+}
+
+void ExtractTurnPartialOrdersMessageData(const Message& msg) {
+    try {
+        std::istringstream is(msg.Text());
+        freeorion_xml_iarchive ia(is);
+        DebugLogger() << "deserializing partial orders";
+    } catch (const std::exception& err) {
+        ErrorLogger() << "ExtractTurnPartialOrdersMessageData(const Message& msg) failed! Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
         throw err;
     }

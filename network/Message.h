@@ -102,7 +102,8 @@ public:
         CHAT_HISTORY,           ///< sent by server to client to show previous messages
         SET_AUTH_ROLES,         ///< sent by server to client to set authorization roles
         ELIMINATE_SELF,         ///< sent by client to server if the player wants to resign
-        UNREADY                 ///< sent by client to server to revoke ready state of turn orders and sent by server to client to acknowledge it
+        UNREADY,                ///< sent by client to server to revoke ready state of turn orders and sent by server to client to acknowledge it
+        TURN_PARTIAL_ORDERS     ///< sent to the server by a client that has changes in orders to be stored
     )
 
     GG_CLASS_ENUM(TurnProgressPhase,
@@ -245,6 +246,9 @@ FO_COMMON_API Message TurnOrdersMessage(const OrderSet& orders, const SaveGameUI
 
 /** creates a TURN_ORDERS message, without UI data but with a state string. */
 FO_COMMON_API Message TurnOrdersMessage(const OrderSet& orders, const std::string& save_state_string);
+
+/** creates a TURN_PARTIAL_ORDERS message. \todo give it some data */
+FO_COMMON_API Message TurnPartialOrdersMessage();
 
 /** creates a TURN_PROGRESS message. */
 FO_COMMON_API Message TurnProgressMessage(Message::TurnProgressPhase phase_id);
@@ -394,9 +398,14 @@ FO_COMMON_API void ExtractJoinGameMessageData(const Message& msg, std::string& p
 FO_COMMON_API void ExtractJoinAckMessageData(const Message& msg, int& player_id,
                                              boost::uuids::uuid& cookie);
 
-FO_COMMON_API void ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
-                                                SaveGameUIData& ui_data, bool& save_state_string_available,
+FO_COMMON_API void ExtractTurnOrdersMessageData(const Message& msg,
+                                                OrderSet& orders,
+                                                bool& ui_data_available,
+                                                SaveGameUIData& ui_data,
+                                                bool& save_state_string_available,
                                                 std::string& save_state_string);
+
+FO_COMMON_API void ExtractTurnPartialOrdersMessageData(const Message& msg);
 
 FO_COMMON_API void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
                                                 Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,

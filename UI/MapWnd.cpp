@@ -6138,8 +6138,10 @@ bool MapWnd::EndTurn() {
         HumanClientApp::GetApp()->UnreadyTurn();
     } else {
         ClientUI* cui = ClientUI::GetClientUI();
-        if (!cui)
+        if (!cui) {
+            ErrorLogger() << "MapWnd::EndTurn: No client UI available";
             return false;
+        }
         SaveGameUIData ui_data;
         cui->GetSaveGameUIData(ui_data);
         HumanClientApp::GetApp()->StartTurn(ui_data);
