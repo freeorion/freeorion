@@ -9,7 +9,7 @@
 
 #include <map>
 #include <memory>
-
+#include <set>
 
 class Order;
 
@@ -54,7 +54,7 @@ public:
     std::size_t     size() const            { return m_orders.size(); }
     bool            empty() const           { return m_orders.empty(); }
     iterator        find(const key_type& k) { return m_orders.find(k); }
-    void            erase(const key_type& k){ m_orders.erase(k); }
+    void            erase(const key_type& k){ RescindOrder(k);  }
     OrderPtr&       operator[](std::size_t i);
     key_compare     key_comp() const        { return m_orders.key_comp(); }
     //@}
@@ -77,7 +77,9 @@ public:
     //@}
 
 private:
-    OrderMap m_orders;
+    OrderMap      m_orders;
+    std::set<int> m_last_added_orders; ///< set of ids added/updated orders
+    std::set<int> m_last_deleted_orders; ///< set of ids deleted orders
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -89,6 +91,10 @@ template <class Archive>
 void OrderSet::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_orders);
+    if (Archive::is_loading::value) {
+        m_last_added_orders.clear();
+        m_last_deleted_orders.clear();
+    }
 }
 
 #endif // _OrderSet_h_

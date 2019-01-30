@@ -23,6 +23,7 @@ int OrderSet::IssueOrder(OrderPtr&& order) {
 
     // Insert the order into the m_orders map.  forward the rvalue to use the move constructor.
     auto inserted = m_orders.insert({retval, std::forward<OrderPtr>(order)});
+    m_last_added_orders.insert(retval);
     inserted.first->second->Execute();
 
     TraceLogger() << "OrderSetIssueOrder m_orders size: " << m_orders.size();
@@ -42,11 +43,15 @@ bool OrderSet::RescindOrder(int order) {
     if (it != m_orders.end()) {
         if (it->second->Undo()) {
             m_orders.erase(it);
+            m_last_deleted_orders.insert(it->first);
             retval = true;
         }
     }
     return retval;
 }
 
-void OrderSet::Reset()
-{ m_orders.clear(); }
+void OrderSet::Reset() {
+    m_orders.clear();
+    m_last_added_orders.clear();
+    m_last_deleted_orders.clear();
+}
