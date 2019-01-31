@@ -1,0 +1,29 @@
+// If unowned or owner has not unlocked the ship part yet.
+COMBAT_TARGETS_VISIBLE_ENEMY
+'''        Or [        // unowned target, when attacker is owned by an empire, and target is visible to that empire
+            And [
+                Unowned
+                (Source.Owner != LocalCandidate.Owner)
+                VisibleToEmpire empire = Source.Owner
+            ]
+            And [   // target owned by an empire, when attacker is owned by an enemy of the target's owner, and the target is visible to the attcker's owner
+                OwnedBy affiliation = AnyEmpire
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
+                VisibleToEmpire empire = Source.Owner
+            ]
+        ]
+'''
+
+COMBAT_TARGETS_NOT_DESTROYED_SHIP
+'''        And [
+            Ship
+            Not Structure high = 0
+        ]
+'''
+
+COMBAT_TARGETS_PLANET_WITH_DEFENSE
+'''         And [
+            Planet
+            Not Defense high = 0
+        ]
+'''

@@ -1219,7 +1219,7 @@ private:
   * value is >= \a low and <= \a high. */
 struct FO_COMMON_API MeterValue final : public ConditionBase {
     MeterValue(MeterType meter,
-               std::unique_ptr< ValueRef::ValueRefBase<double>>&& low,
+               std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
                std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
 
     bool operator==(const ConditionBase& rhs) const override;
@@ -1888,6 +1888,7 @@ private:
 /** Matches all objects that match at least one Condition in \a operands. */
 struct FO_COMMON_API Or final : public ConditionBase {
     explicit Or(std::vector<std::unique_ptr<ConditionBase>>&& operands);
+    Or(std::unique_ptr<ConditionBase>&& operand1, std::unique_ptr<ConditionBase>&& operand2);
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,

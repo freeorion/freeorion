@@ -227,7 +227,7 @@ namespace parse { namespace detail {
             ;
 
         start
-            %=    set_empire_meter_1
+            %=   set_empire_meter_1
             |    set_empire_meter_2
             |    give_empire_tech
             |    set_empire_tech_progress

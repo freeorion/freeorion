@@ -5,6 +5,10 @@ Part
     damage = 1
     shots = 3
     NoDefaultCapacityEffect
+    combatTargets = And [
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        Fighter
+    ]
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
@@ -15,5 +19,5 @@ Part
     icon = "icons/ship_parts/flak.png"
 
 #include "shortrange.macros"
-
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/ship_parts/targeting.macros"

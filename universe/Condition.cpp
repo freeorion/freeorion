@@ -40,21 +40,21 @@ namespace {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingObjects().size());
         std::transform(Objects().ExistingObjects().begin(), Objects().ExistingObjects().end(),
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
     }
 
     void AddBuildingSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingBuildings().size());
         std::transform(Objects().ExistingBuildings().begin(), Objects().ExistingBuildings().end(),
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
     }
 
     void AddFieldSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingFields().size());
-        std::transform( Objects().ExistingFields().begin(), Objects().ExistingFields().end(),
-                        std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+        std::transform(Objects().ExistingFields().begin(), Objects().ExistingFields().end(),
+                       std::back_inserter(condition_non_targets),
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
     }
 
     void AddFleetSet(Condition::ObjectSet& condition_non_targets) {
@@ -94,9 +94,9 @@ namespace {
 
     void AddSystemSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingSystems().size());
-        std::transform( Objects().ExistingSystems().begin(), Objects().ExistingSystems().end(),
-                        std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+        std::transform(Objects().ExistingSystems().begin(), Objects().ExistingSystems().end(),
+                       std::back_inserter(condition_non_targets),
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     /** Used by 4-parameter ConditionBase::Eval function, and some of its
@@ -232,7 +232,7 @@ std::string ConditionDescription(const std::vector<ConditionBase*>& conditions,
                                         }   }
 
 ///////////////////////////////////////////////////////////
-// ConditionBase                              //
+// ConditionBase                                         //
 ///////////////////////////////////////////////////////////
 struct ConditionBase::MatchHelper {
     MatchHelper(const ConditionBase* this_, const ScriptingContext& parent_context) :
@@ -1084,7 +1084,7 @@ unsigned int All::GetCheckSum() const {
 }
 
 ///////////////////////////////////////////////////////////
-// None                                                   //
+// None                                                  //
 ///////////////////////////////////////////////////////////
 void None::Eval(const ScriptingContext& parent_context,
                 ObjectSet& matches, ObjectSet& non_matches,
@@ -1298,7 +1298,7 @@ std::string EmpireAffiliation::Dump(unsigned short ntabs) const {
         retval += "Unowned";
 
     } else if (m_affiliation == AFFIL_ENEMY) {
-        retval += "OwnedBy affilition = EnemyOf";
+        retval += "OwnedBy affiliation = EnemyOf";
         if (m_empire_id)
             retval += " empire = " + m_empire_id->Dump(ntabs);
 
@@ -4034,7 +4034,7 @@ unsigned int PlanetEnvironment::GetCheckSum() const {
 }
 
 ///////////////////////////////////////////////////////////
-// Species                                              //
+// Species                                               //
 ///////////////////////////////////////////////////////////
 Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names) :
     ConditionBase(),
@@ -7083,17 +7083,33 @@ bool VisibleToEmpire::operator==(const ConditionBase& rhs) const {
 
 namespace {
     struct VisibleToEmpireSimpleMatch {
-        VisibleToEmpireSimpleMatch(int empire_id) :
-            m_empire_id(empire_id)
+        VisibleToEmpireSimpleMatch(int empire_id,
+                                   const Universe::EmpireObjectVisibilityMap& vis_map) :
+            m_empire_id(empire_id),
+            vis_map(vis_map)
         {}
 
         bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
-            return candidate->GetVisibility(m_empire_id) != VIS_NO_VISIBILITY;
+
+            // if override is empty, use universe state
+            if (vis_map.empty())
+                return candidate->GetVisibility(m_empire_id) > VIS_NO_VISIBILITY;
+
+            // if override specified, get visibility info from it
+            auto empire_it = vis_map.find(m_empire_id);
+            if (empire_it == vis_map.end())
+                return false;
+            const auto& object_map = empire_it->second;
+            auto object_it = object_map.find(candidate->ID());
+            if (object_it == object_map.end())
+                return false;
+            return object_it->second > VIS_NO_VISIBILITY;
         }
 
         int m_empire_id;
+        const Universe::EmpireObjectVisibilityMap& vis_map;
     };
 }
 
@@ -7108,7 +7124,8 @@ void VisibleToEmpire::Eval(const ScriptingContext& parent_context,
         // evaluate empire id once, and use to check all candidate objects
         std::shared_ptr<const UniverseObject> no_object;
         int empire_id = m_empire_id->Eval(ScriptingContext(parent_context, no_object));
-        EvalImpl(matches, non_matches, search_domain, VisibleToEmpireSimpleMatch(empire_id));
+        EvalImpl(matches, non_matches, search_domain,
+                 VisibleToEmpireSimpleMatch(empire_id, parent_context.empire_object_vis_map_override));
     } else {
         // re-evaluate empire id for each candidate object
         ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -7143,7 +7160,7 @@ std::string VisibleToEmpire::Description(bool negated/* = false*/) const {
 }
 
 std::string VisibleToEmpire::Dump(unsigned short ntabs) const
-{ return DumpIndent(ntabs) + "VisibleToEmpire empire_id = " + m_empire_id->Dump(ntabs) + "\n"; }
+{ return DumpIndent(ntabs) + "VisibleToEmpire empire = " + m_empire_id->Dump(ntabs) + "\n"; }
 
 bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -7152,7 +7169,8 @@ bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    return candidate->GetVisibility(m_empire_id->Eval(local_context)) != VIS_NO_VISIBILITY;
+    int empire_id = m_empire_id->Eval(local_context);
+    return VisibleToEmpireSimpleMatch(empire_id, local_context.empire_object_vis_map_override)(candidate);
 }
 
 void VisibleToEmpire::SetTopLevelContent(const std::string& content_name) {
@@ -9477,6 +9495,14 @@ Or::Or(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
     ConditionBase(),
     m_operands(std::move(operands))
 {}
+
+Or::Or(std::unique_ptr<ConditionBase>&& operand1, std::unique_ptr<ConditionBase>&& operand2) :
+    ConditionBase()
+{
+    // would prefer to initialize the vector m_operands in the initializer list, but this is difficult with non-copyable unique_ptr parameters
+    m_operands.push_back(std::move(operand1));
+    m_operands.push_back(std::move(operand2));
+}
 
 bool Or::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)

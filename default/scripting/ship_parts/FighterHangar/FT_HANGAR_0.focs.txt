@@ -5,6 +5,7 @@ Part
     class = FighterHangar
     capacity = 2
     damage = 0
+    combatTargets = None
     mountableSlotTypes = Internal
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
@@ -13,3 +14,4 @@ Part
     icon = "icons/ship_parts/fighter05.png"
 
 #include "/scripting/common/upkeep.macros"
+//#include "/scripting/ship_parts/targeting.macros"

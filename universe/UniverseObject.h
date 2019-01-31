@@ -125,64 +125,64 @@ public:
     /** copies data from \a copied_object to this object, limited to only copy
       * data about the copied object that is known to the empire with id
       * \a empire_id (or all data if empire_id is ALL_EMPIRES) */
-    virtual void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) = 0;
+    virtual void    Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) = 0;
 
-    void                    SetID(int id);                      ///< sets the ID number of the object to \a id
-    void                    Rename(const std::string& name);    ///< renames this object to \a name
+    void            SetID(int id);                      ///< sets the ID number of the object to \a id
+    void            Rename(const std::string& name);    ///< renames this object to \a name
 
     /** moves this object by relative displacements x and y. */
-    void                    Move(double x, double y);
+    void            Move(double x, double y);
 
     /** calls MoveTo(std::shared_ptr<const UniverseObject>) with the object
         pointed to by \a object_id. */
-    void                    MoveTo(int object_id);
+    void            MoveTo(int object_id);
 
     /** moves this object to exact map coordinates of specified \a object. */
-    void MoveTo(std::shared_ptr<UniverseObject> object);
+    void            MoveTo(std::shared_ptr<UniverseObject> object);
 
     /** moves this object to map coordinates (x, y). */
-    void                    MoveTo(double x, double y);
+    void            MoveTo(double x, double y);
 
 
     std::map<MeterType, Meter>&
-                            Meters() { return m_meters; }           ///< returns this UniverseObject's meters
-    Meter*                  GetMeter(MeterType type);               ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+                    Meters() { return m_meters; }           ///< returns this UniverseObject's meters
+    Meter*          GetMeter(MeterType type);               ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
     /** Sets all this UniverseObject's meters' initial values equal to their
         current values. */
-    virtual void BackPropagateMeters();
+    virtual void    BackPropagateMeters();
 
     /** Sets the empire that owns this object. */
-    virtual void SetOwner(int id);
+    virtual void    SetOwner(int id);
 
-    void                    SetSystem(int sys);                     ///< assigns this object to a System.  does not actually move object in universe
-    virtual void            AddSpecial(const std::string& name, float capacity = 0.0f); ///< adds the Special \a name to this object, if it is not already present
-    virtual void            RemoveSpecial(const std::string& name); ///< removes the Special \a name from this object, if it is already present
-    void                    SetSpecialCapacity(const std::string& name, float capacity);
+    void            SetSystem(int sys);                     ///< assigns this object to a System.  does not actually move object in universe
+    virtual void    AddSpecial(const std::string& name, float capacity = 0.0f); ///< adds the Special \a name to this object, if it is not already present
+    virtual void    RemoveSpecial(const std::string& name); ///< removes the Special \a name from this object, if it is already present
+    void            SetSpecialCapacity(const std::string& name, float capacity);
 
     /** Performs the movement that this object is responsible for this object's
       * actions during the movement phase of a turn. */
-    virtual void MovementPhase()
+    virtual void    MovementPhase()
     {};
 
     /** Sets current value of max, target and unpaired meters in in this
       * UniverseObject to Meter::DEFAULT_VALUE.  This should be done before any
       * Effects that alter these meter(s) act on the object. */
-    virtual void ResetTargetMaxUnpairedMeters();
+    virtual void    ResetTargetMaxUnpairedMeters();
 
     /** Sets current value of active paired meters (the non-max non-target
       * meters that have a max or target meter associated with them) back to
       * the initial value the meter had at the start of this turn. */
-    virtual void ResetPairedActiveMeters();
+    virtual void    ResetPairedActiveMeters();
 
     /** calls Clamp(min, max) on meters each meter in this UniverseObject, to
       * ensure that meter current values aren't outside the valid range for
       * each meter. */
-    virtual void ClampMeters();
+    virtual void    ClampMeters();
 
     /** performs the movement that this object is responsible for this object's
         actions during the pop growth/production/research phase of a turn. */
-    virtual void PopGrowthProductionResearchPhase()
+    virtual void    PopGrowthProductionResearchPhase()
     {};
     //@}
 

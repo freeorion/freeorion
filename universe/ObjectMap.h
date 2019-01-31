@@ -96,7 +96,8 @@ public:
 
     template <class T = UniverseObject>
     struct const_iterator : private std::map<int, std::shared_ptr<T>>::const_iterator {
-        const_iterator(const typename std::map<int, std::shared_ptr<T>>::const_iterator& base, const ObjectMap& owner) :
+        const_iterator(const typename std::map<int, std::shared_ptr<T>>::const_iterator& base,
+                       const ObjectMap& owner) :
             std::map<int, std::shared_ptr<T>>::const_iterator(base),
             m_owner(owner)
         { Refresh(); }

@@ -107,17 +107,16 @@ typedef std::shared_ptr<FighterLaunchesEvent> FighterLaunchesEventPtr;
     Note:  Because it is initialized with the unfiltered stealth information it
     contains information not availble to all empires. */
 struct FO_COMMON_API InitialStealthEvent : public CombatEvent {
-
-    /// a map of attacker empire id -> defender empire id -> set of (attacker ids, visibility)
-    typedef std::map<int, std::map<int, std::set<std::pair<int, Visibility>>>> StealthInvisbleMap;
+    typedef std::map<int, std::map<int, Visibility>> EmpireToObjectVisibilityMap;
 
     InitialStealthEvent();
-    InitialStealthEvent(const StealthInvisbleMap&);
+    InitialStealthEvent(const EmpireToObjectVisibilityMap& x);
+
     std::string DebugString() const override;
     std::string CombatLogDescription(int viewing_empire_id) const override;
 
 private:
-    StealthInvisbleMap target_empire_id_to_invisble_obj_id;
+    EmpireToObjectVisibilityMap empire_to_object_visibility;// filled by AutoresolveInfo::ReportInvisibleObjects
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -129,18 +128,21 @@ private:
 struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     StealthChangeEvent();
     StealthChangeEvent(int bout);
+
     std::string DebugString() const override;
     std::string CombatLogDescription(int viewing_empire_id) const override;
     std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const override;
     bool AreSubEventsEmpty(int viewing_empire_id) const override;
-    void AddEvent(int attacker_id_, int target_id_, int attacker_empire_, int target_empire_, Visibility new_visibility_);
+    void AddEvent(int attacker_id_, int target_id_, int attacker_empire_,
+                  int target_empire_, Visibility new_visibility_);
 
     struct StealthChangeEventDetail;
     typedef std::shared_ptr<StealthChangeEventDetail> StealthChangeEventDetailPtr;
     typedef std::shared_ptr<const StealthChangeEventDetail> ConstStealthChangeEventDetailPtr;
     struct StealthChangeEventDetail : public CombatEvent {
         StealthChangeEventDetail();
-        StealthChangeEventDetail(int attacker_id_, int target_id_, int attacker_empire_, int target_empire_, Visibility new_visibility_);
+        StealthChangeEventDetail(int attacker_id_, int target_id_, int attacker_empire_,
+                                 int target_empire_, Visibility new_visibility_);
 
         std::string DebugString() const override;
         std::string CombatLogDescription(int viewing_empire_id) const override;
@@ -165,7 +167,8 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/// An event that describes a single attack by one object or fighter against another object or fighter
+/// An event that describes a single attack by one object or fighter against
+/// another object or fighter
 struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
     typedef std::shared_ptr<WeaponFireEvent> WeaponFireEventPtr;
     typedef std::shared_ptr<const WeaponFireEvent> ConstWeaponFireEventPtr;
@@ -187,10 +190,7 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
     std::string DebugString() const override;
     std::string CombatLogDescription(int viewing_empire_id) const override;
     std::string CombatLogDetails(int viewing_empire_id) const override;
-
-    bool AreDetailsEmpty(int viewing_empire_id) const override
-    { return false; }
-
+    bool AreDetailsEmpty(int viewing_empire_id) const override { return false; }
     boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
 
     int bout;

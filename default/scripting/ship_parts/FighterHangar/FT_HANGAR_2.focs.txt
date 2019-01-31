@@ -5,6 +5,13 @@ Part
     class = FighterHangar
     capacity = 3
     damage = 3
+    combatTargets = And [
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        Or [
+            [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+            Fighter
+        ]
+    ]
     mountableSlotTypes = Internal
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
@@ -13,3 +20,4 @@ Part
     icon = "icons/ship_parts/fighter02.png"
 
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/ship_parts/targeting.macros"

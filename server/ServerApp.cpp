@@ -2206,19 +2206,28 @@ namespace {
     void DisseminateSystemCombatInfo(const std::vector<CombatInfo>& combats) {
         Universe& universe = GetUniverse();
 
-        // loop through resolved combat infos, updating actual main universe
-        // with changes from combat
+        // as of this writing, pointers to objects are inserted into combat
+        // ObjectMap, and these pointers refer to the main gamestate objects
+        // therefore, copying the combat result state back into the main
+        // gamestate object map isn't necessary, as these objects have already
+        // been updated by the combat processing. similarly, standard
+        // visibility updating will transfer the results to empires' known
+        // gamestate ObjectMaps.
         for (const CombatInfo& combat_info : combats) {
-            // indexed by fleet id, which empire ids to inform that a fleet is destroyed
-            std::map<int, std::set<int>> empires_to_update_of_fleet_destruction;
-
-            // update visibilities.
+            // update visibilities from combat, in case anything was revealed
+            // by shooting during combat
             for (const auto& empire_vis : combat_info.empire_object_visibility) {
                 for (const auto& object_vis : empire_vis.second) {
+                    if (object_vis.first < 0)
+                        continue;   // temporary fighter IDs
                     if (object_vis.second > GetUniverse().GetObjectVisibilityByEmpire(object_vis.first, empire_vis.first))
                         universe.SetEmpireObjectVisibility(empire_vis.first, object_vis.first, object_vis.second);
                 }
             }
+
+
+            // indexed by fleet id, which empire ids to inform that a fleet is destroyed
+            std::map<int, std::set<int>> empires_to_update_of_fleet_destruction;
 
             // update which empires know objects are destroyed.  this may
             // duplicate the destroyed object knowledge that is set when the
@@ -2234,8 +2243,8 @@ namespace {
                     //                       << " for empire " << empire_id;
                     universe.SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
 
-                    // should empire also be informed of potential fleet
-                    // destruction if all ships in the fleet are destroyed?
+                    // record if empire should be informed of potential fleet
+                    // destruction (which is checked later)
                     if (auto ship = GetShip(object_id)) {
                         if (ship->FleetID() != INVALID_OBJECT_ID)
                             empires_to_update_of_fleet_destruction[ship->FleetID()].insert(empire_id);
@@ -2249,7 +2258,7 @@ namespace {
             // destroyed
             std::set<int> all_destroyed_object_ids;
             for (int destroyed_object_id : combat_info.destroyed_object_ids) {
-                std::set<int> dest_obj_ids = universe.RecursiveDestroy(destroyed_object_id);
+                auto dest_obj_ids = universe.RecursiveDestroy(destroyed_object_id);
                 all_destroyed_object_ids.insert(dest_obj_ids.begin(), dest_obj_ids.end());
             }
 
@@ -3192,12 +3201,10 @@ void ServerApp::ProcessCombats() {
     // update visibilities with any new info gleaned during combat
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
     // update stale object info based on any mid- combat glimpses
-    // before visibiity is totally recalculated in the post combat processing
+    // before visibility is totally recalculated in the post combat processing
     m_universe.UpdateEmpireStaleObjectKnowledge();
 
     CreateCombatSitReps(combats);
-
-    //CleanupSystemCombatInfo(combats); - NOTE: No longer needed since ObjectMap.Clear doesn't release any resources that aren't released in the destructor.
 }
 
 void ServerApp::UpdateMonsterTravelRestrictions() {
