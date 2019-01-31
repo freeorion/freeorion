@@ -1215,6 +1215,11 @@ Use part-based upkeep
 RULE_SHIP_PART_BASED_UPKEEP_DESC
 Calculate upkeep based on ship parts instead of ships themselves.
 
+RULE_SHOW_DETAILED_EMPIRES_DATA
+Show detailed empires data
+
+RULE_SHOW_DETAILED_EMPIRES_DATA_DESC
+Show research and production, researched buildings, parts, and hulls of all empires.
 
 ##
 ## Command-line and options database entries
