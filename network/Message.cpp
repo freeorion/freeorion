@@ -10,6 +10,7 @@
 #include "../universe/Species.h"
 #include "../universe/Universe.h"
 #include "../util/OptionsDB.h"
+#include "../util/OrderSet.h"
 #include "../util/Serialize.h"
 #include "../util/ScopedTimer.h"
 #include "../util/i18n.h"
@@ -384,10 +385,12 @@ Message TurnOrdersMessage(const OrderSet& orders, const std::string& save_state_
     return Message(Message::TURN_ORDERS, os.str());
 }
 
-Message TurnPartialOrdersMessage() {
+Message TurnPartialOrdersMessage(const std::pair<OrderSet, std::set<int>>& orders_updates) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
+        Serialize(oa, orders_updates.first);
+        oa << boost::serialization::make_nvp("deleted", orders_updates.second);
     }
     return Message(Message::TURN_PARTIAL_ORDERS, os.str());
 }
@@ -956,11 +959,13 @@ void ExtractTurnOrdersMessageData(const Message& msg,
     }
 }
 
-void ExtractTurnPartialOrdersMessageData(const Message& msg) {
+void ExtractTurnPartialOrdersMessageData(const Message& msg, OrderSet& added, std::set<int>& deleted) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         DebugLogger() << "deserializing partial orders";
+        Deserialize(ia, added);
+        ia >> BOOST_SERIALIZATION_NVP(deleted);
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractTurnPartialOrdersMessageData(const Message& msg) failed! Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();

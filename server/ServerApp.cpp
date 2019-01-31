@@ -382,8 +382,8 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg, player_connection));      break;
     case Message::SAVE_GAME_INITIATE:       m_fsm->process_event(SaveGameRequest(msg, player_connection));  break;
     case Message::TURN_ORDERS:              m_fsm->process_event(TurnOrders(msg, player_connection));       break;
+    case Message::TURN_PARTIAL_ORDERS:      m_fsm->process_event(TurnPartialOrders(msg, player_connection));break;
     case Message::UNREADY:                  m_fsm->process_event(RevokeReadiness(msg, player_connection));  break;
-    //case Message::CLIENT_SAVE_DATA:       m_fsm->process_event(ClientSaveData(msg, player_connection));   break;
     case Message::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg, player_connection));       break;
     case Message::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg, player_connection));        break;
     case Message::MODERATOR_ACTION:         m_fsm->process_event(ModeratorAct(msg, player_connection));     break;
@@ -1860,6 +1860,20 @@ void ServerApp::ClearEmpireTurnOrders() {
 
 void ServerApp::SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveGameData>&& save_game_data)
 { m_turn_sequence[empire_id] = std::make_pair(true, std::move(save_game_data)); }
+
+void ServerApp::UpdatePartialOrders(int empire_id, const OrderSet& added, const std::set<int>& deleted) {
+    const auto& psgd = m_turn_sequence[empire_id].second;
+    if (psgd) {
+        if (psgd->m_orders) {
+            for (int id : deleted)
+                 psgd->m_orders->erase(id);
+            for (auto it : added)
+                 psgd->m_orders->insert(it);
+        } else {
+            psgd->m_orders = std::make_shared<OrderSet>(added);
+        }
+    }
+}
 
 void ServerApp::RevokeEmpireTurnReadyness(int empire_id)
 { m_turn_sequence[empire_id].first = false; }

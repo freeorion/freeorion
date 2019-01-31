@@ -167,6 +167,9 @@ public:
     /** @brief Send the OrderSet and AI state to the server and start a new turn */
     virtual void StartTurn(const std::string& save_state_string);
 
+    /** @brief Send turn orders updates to server without starting new turn */
+    void SendPartialOrders();
+
     /** \brief Handle server acknowledgement of receipt of orders and clear
         the orders. */
     virtual void HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id);

@@ -107,6 +107,10 @@ public:
       * \a save_game_data will be freed when all processing is done for the turn */
     void    SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveGameData>&& save_game_data);
 
+    /** Updated empire orders without changes in readiness status. Removes all \a deleted orders
+      * and insert \a added orders. */
+    void    UpdatePartialOrders(int empire_id, const OrderSet& added, const std::set<int>& deleted);
+
     /** Revokes turn order's ready state for the given empire. */
     void    RevokeEmpireTurnReadyness(int empire_id);
 

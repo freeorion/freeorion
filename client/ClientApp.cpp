@@ -122,6 +122,10 @@ void ClientApp::StartTurn(const SaveGameUIData& ui_data)
 void ClientApp::StartTurn(const std::string& save_state_string)
 { m_networking->SendMessage(TurnOrdersMessage(m_orders, save_state_string)); }
 
+void ClientApp::SendPartialOrders() {
+    m_networking->SendMessage(TurnPartialOrdersMessage(m_orders.ExtractChanges()));
+}
+
 void ClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
     switch (phase_id) {
     case Message::WAITING_FOR_PLAYERS:

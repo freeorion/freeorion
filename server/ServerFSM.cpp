@@ -2601,6 +2601,80 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     return discard_event();
 }
 
+sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
+    TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd.TurnPartialOrders";
+    ServerApp& server = Server();
+    const Message& message = msg.m_message;
+    const PlayerConnectionPtr& sender = msg.m_player_connection;
+
+    auto added = std::make_shared<OrderSet>();
+    std::set<int> deleted;
+    try {
+        ExtractTurnPartialOrdersMessageData(message, *added, deleted);
+    } catch (const std::exception& err) {
+        // incorrect turn orders. disconnect player with wrong client.
+        sender->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION")));
+        server.Networking().Disconnect(sender);
+        return discard_event();
+    }
+
+    int player_id = sender->PlayerID();
+    Networking::ClientType client_type = sender->GetClientType();
+
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+        // observers cannot submit orders. ignore.
+        ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player "
+                         << sender->PlayerName()
+                         << "(player id: " << player_id << ") "
+                               << "who is an observer and should not be sending orders. Orders being ignored.";
+        sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+        return discard_event();
+
+    } else if (client_type == Networking::INVALID_CLIENT_TYPE) {
+        // ??? lingering connection? shouldn't get to here. ignore.
+        ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player "
+                         << sender->PlayerName()
+                         << "(player id: " << player_id << ") "
+                               << "who has an invalid player type. The server is confused, and the orders being ignored.";
+        sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+        return discard_event();
+
+    } else if (client_type == Networking::CLIENT_TYPE_AI_PLAYER ||
+               client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+    {
+        // store empire orders and resume waiting for more
+        const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
+        if (!empire) {
+            ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) couldn't get empire for player with id:" << player_id;
+            sender->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
+            return discard_event();
+        }
+
+        int empire_id = empire->EmpireID();
+
+        for (const auto& id_and_order : *added) {
+            auto& order = id_and_order.second;
+            if (!order) {
+                ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) couldn't get order from order set!";
+                continue;
+            }
+            if (empire_id != order->EmpireID()) {
+                ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player " << empire->PlayerName() << "(id: "
+                                 << player_id << ") who controls empire " << empire_id
+                                 << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
+                sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+                return discard_event();
+            }
+        }
+
+        TraceLogger(FSM) << "WaitingForTurnEnd.TurnPartialOrders : Received partial orders from player " << player_id;
+
+        server.UpdatePartialOrders(empire_id, *added, deleted);
+    }
+
+    return discard_event();
+}
+
 sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
     TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd.RevokeReadiness";
     ServerApp& server = Server();

@@ -55,3 +55,19 @@ void OrderSet::Reset() {
     m_last_added_orders.clear();
     m_last_deleted_orders.clear();
 }
+
+std::pair<OrderSet, std::set<int>> OrderSet::ExtractChanges() {
+    OrderSet added_orders;
+    for(int added : m_last_added_orders) {
+        auto it = m_orders.find(added);
+        if (it != m_orders.end()) {
+            added_orders.m_orders.insert(*it);
+        } else {
+            m_last_deleted_orders.insert(added);
+        }
+    }
+    m_last_added_orders.clear();
+    std::set<int> deleted_orders = std::move(m_last_deleted_orders);
+    m_last_deleted_orders.clear();
+    return {added_orders, deleted_orders};
+}

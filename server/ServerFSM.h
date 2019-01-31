@@ -78,6 +78,7 @@ struct MessageEventBase {
     (LeaveGame)                             \
     (SaveGameRequest)                       \
     (TurnOrders)                            \
+    (TurnPartialOrders)                     \
     (RevokeReadiness)                       \
     (CombatTurnOrders)                      \
     (RequestCombatLogs)                     \
@@ -335,6 +336,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
 struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForTurnEndIdle> {
     typedef boost::mpl::list<
         sc::custom_reaction<TurnOrders>,
+        sc::custom_reaction<TurnPartialOrders>,
         sc::custom_reaction<RevokeReadiness>,
         sc::custom_reaction<CheckTurnEndConditions>
     > reactions;
@@ -343,6 +345,7 @@ struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForT
     ~WaitingForTurnEnd();
 
     sc::result react(const TurnOrders& msg);
+    sc::result react(const TurnPartialOrders& msg);
     sc::result react(const RevokeReadiness& msg);
     sc::result react(const CheckTurnEndConditions& c);
 
@@ -376,6 +379,7 @@ struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame> {
         sc::custom_reaction<ProcessTurn>,
         sc::deferral<SaveGameRequest>,
         sc::deferral<TurnOrders>,
+        sc::deferral<TurnPartialOrders>,
         sc::deferral<RevokeReadiness>,
         sc::deferral<Diplomacy>,
         sc::custom_reaction<CheckTurnEndConditions>

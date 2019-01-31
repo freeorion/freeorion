@@ -247,8 +247,8 @@ FO_COMMON_API Message TurnOrdersMessage(const OrderSet& orders, const SaveGameUI
 /** creates a TURN_ORDERS message, without UI data but with a state string. */
 FO_COMMON_API Message TurnOrdersMessage(const OrderSet& orders, const std::string& save_state_string);
 
-/** creates a TURN_PARTIAL_ORDERS message. \todo give it some data */
-FO_COMMON_API Message TurnPartialOrdersMessage();
+/** creates a TURN_PARTIAL_ORDERS message with orders changes. */
+FO_COMMON_API Message TurnPartialOrdersMessage(const std::pair<OrderSet, std::set<int>>& orders_updates);
 
 /** creates a TURN_PROGRESS message. */
 FO_COMMON_API Message TurnProgressMessage(Message::TurnProgressPhase phase_id);
@@ -405,7 +405,7 @@ FO_COMMON_API void ExtractTurnOrdersMessageData(const Message& msg,
                                                 bool& save_state_string_available,
                                                 std::string& save_state_string);
 
-FO_COMMON_API void ExtractTurnPartialOrdersMessageData(const Message& msg);
+FO_COMMON_API void ExtractTurnPartialOrdersMessageData(const Message& msg, OrderSet& added, std::set<int>& deleted);
 
 FO_COMMON_API void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
                                                 Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
