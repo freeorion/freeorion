@@ -378,7 +378,7 @@ void Number::Eval(const ScriptingContext& parent_context,
     ScriptingContext local_context(parent_context, no_object);
 
     if (!(
-                (!m_low || m_low->LocalCandidateInvariant())
+                (!m_low  || m_low->LocalCandidateInvariant())
              && (!m_high || m_high->LocalCandidateInvariant())
          )
        )
@@ -387,7 +387,7 @@ void Number::Eval(const ScriptingContext& parent_context,
     } else if (
                 !local_context.condition_root_candidate
                 && !(
-                        (!m_low || m_low->RootCandidateInvariant())
+                        (!m_low  || m_low->RootCandidateInvariant())
                      && (!m_high || m_high->RootCandidateInvariant())
                     )
               )

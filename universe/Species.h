@@ -75,11 +75,7 @@ private:
 
 /** Used by parser due to limits on number of sub-items per parsed main item. */
 struct SpeciesParams {
-    SpeciesParams() :
-        playable(false),
-        native(false),
-        can_colonize(false),
-        can_produce_ships(false)
+    SpeciesParams()
     {}
     SpeciesParams(bool playable_, bool native_, bool can_colonize_, bool can_produce_ships_) :
         playable(playable_),
@@ -87,18 +83,15 @@ struct SpeciesParams {
         can_colonize(can_colonize_),
         can_produce_ships(can_produce_ships_)
     {}
-    bool    playable;
-    bool    native;
-    bool    can_colonize;
-    bool    can_produce_ships;
+    bool playable = false;
+    bool native = false;
+    bool can_colonize = false;
+    bool can_produce_ships = false;
 };
 
 /** Used by parser due to limits on number of sub-items per parsed main item. */
 struct SpeciesStrings {
-    SpeciesStrings() :
-        name(),
-        desc(),
-        gameplay_desc()
+    SpeciesStrings()
     {}
     SpeciesStrings(const std::string& name_, const std::string& desc_,
                    const std::string& gameplay_desc_) :
@@ -106,9 +99,9 @@ struct SpeciesStrings {
         desc(desc_),
         gameplay_desc(gameplay_desc_)
     {}
-    std::string             name;
-    std::string             desc;
-    std::string             gameplay_desc;
+    std::string name;
+    std::string desc;
+    std::string gameplay_desc;
 };
 
 /** A predefined type of population that can exist on a PopulationCenter.
@@ -246,7 +239,7 @@ public:
     native_iterator     native_end() const;
 
     /** returns an ordered list of tags that should be considered for census listings. */
-    const CensusOrder& census_order() const;
+    const CensusOrder&  census_order() const;
 
     /** returns true iff this SpeciesManager is empty. */
     bool                empty() const;
@@ -337,7 +330,7 @@ private:
 
     /** sets the homeworld ids of species in this SpeciesManager to those
       * specified in \a species_homeworld_ids */
-    void    SetSpeciesHomeworlds(const std::map<std::string, std::set<int>>& species_homeworld_ids);
+    void SetSpeciesHomeworlds(const std::map<std::string, std::set<int>>& species_homeworld_ids);
 
     /** Assigns any m_pending_types to m_species. */
     void CheckPendingSpeciesTypes() const;
