@@ -170,6 +170,8 @@ void InGameMenu::Save() {
         return;
     }
 
+    app->SendPartialOrders();
+
     try {
         // When saving in multiplayer, you cannot see the old saves or
         // browse directories, only give a save file name.

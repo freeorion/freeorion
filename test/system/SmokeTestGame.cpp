@@ -130,6 +130,8 @@ BOOST_AUTO_TEST_CASE(host_server) {
     SaveGameUIData ui_data;
 
     while (m_current_turn <= num_turns) {
+        SendPartialOrders();
+
         StartTurn(ui_data);
 
         m_turn_done = false;

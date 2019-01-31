@@ -123,7 +123,10 @@ void ClientApp::StartTurn(const std::string& save_state_string)
 { m_networking->SendMessage(TurnOrdersMessage(m_orders, save_state_string)); }
 
 void ClientApp::SendPartialOrders() {
-    m_networking->SendMessage(TurnPartialOrdersMessage(m_orders.ExtractChanges()));
+    auto changes = m_orders.ExtractChanges();
+    if (changes.first.empty() && changes.second.empty())
+        return;
+    m_networking->SendMessage(TurnPartialOrdersMessage(changes));
 }
 
 void ClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
