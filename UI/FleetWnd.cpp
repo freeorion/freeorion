@@ -510,6 +510,9 @@ bool FleetUIManager::CloseAll() {
     m_active_fleet_wnd.reset();
     ActiveFleetWndChangedSignal();
 
+    // send order changes could be made on fleets
+    HumanClientApp::GetApp()->SendPartialOrders();
+
     return retval;
 }
 
@@ -529,6 +532,9 @@ void FleetUIManager::FleetWndClosing(FleetWnd* fleet_wnd) {
         m_active_fleet_wnd.reset();
         ActiveFleetWndChangedSignal();
     }
+
+    // send order changes could be made on this fleet
+    HumanClientApp::GetApp()->SendPartialOrders();
 }
 
 void FleetUIManager::FleetWndClicked(std::shared_ptr<FleetWnd> fleet_wnd) {
@@ -3491,7 +3497,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    
+
     // add a fleet popup command to send the fleet exploring, and stop it from exploring
     if (system
         && !ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID())

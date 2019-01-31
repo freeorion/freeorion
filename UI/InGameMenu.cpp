@@ -170,6 +170,7 @@ void InGameMenu::Save() {
         return;
     }
 
+    // send order changes could be made when player decide to save game
     app->SendPartialOrders();
 
     try {

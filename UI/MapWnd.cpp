@@ -6445,6 +6445,8 @@ void MapWnd::HideSidePanel() {
 void MapWnd::RestoreSidePanel() {
     if (m_sidepanel_open_before_showing_other)
         ReselectLastSystem();
+    // send order changes could be made in research, production or other windows
+    HumanClientApp::GetApp()->SendPartialOrders();
 }
 
 void MapWnd::ShowResearch() {
