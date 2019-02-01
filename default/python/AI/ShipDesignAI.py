@@ -314,13 +314,13 @@ class ShipDesignCache(object):
         for partname in parts_to_update:
             part = get_part_type(partname)
             for pid in pids:
-                self.production_cost.setdefault(pid, {})[partname] = part.productionCost(empire_id, pid)
-                self.production_time.setdefault(pid, {})[partname] = part.productionTime(empire_id, pid)
+                self.production_cost.setdefault(pid, {})[partname] = part.productionCost(empire_id, pid, INVALID_ID)
+                self.production_time.setdefault(pid, {})[partname] = part.productionTime(empire_id, pid, INVALID_ID)
         for hullname in hulls_to_update:
             hull = fo.getHullType(hullname)
             for pid in pids:
-                self.production_cost.setdefault(pid, {})[hullname] = hull.productionCost(empire_id, pid)
-                self.production_time.setdefault(pid, {})[hullname] = hull.productionTime(empire_id, pid)
+                self.production_cost.setdefault(pid, {})[hullname] = hull.productionCost(empire_id, pid, INVALID_ID)
+                self.production_time.setdefault(pid, {})[hullname] = hull.productionTime(empire_id, pid, INVALID_ID)
 
     def _build_cache_after_load(self):
         """Build cache after loading or starting a game.
@@ -858,17 +858,17 @@ class ShipDesigner(object):
         self.design_stats.fuel = self.hull.fuel
         self.design_stats.speed = self.hull.speed
         self.design_stats.stealth = self.hull.stealth
-        self.production_cost = local_cost_cache.get(self.hull.name, self.hull.productionCost(fo.empireID(), self.pid))
-        self.production_time = local_time_cache.get(self.hull.name, self.hull.productionTime(fo.empireID(), self.pid))
+        self.production_cost = local_cost_cache.get(self.hull.name, self.hull.productionCost(fo.empireID(), self.pid, INVALID_ID))
+        self.production_time = local_time_cache.get(self.hull.name, self.hull.productionTime(fo.empireID(), self.pid, INVALID_ID))
 
         # read out part stats
         shield_counter = cloak_counter = detection_counter = colonization_counter = engine_counter = 0  # to deal with Non-stacking parts
         hangar_part_names = set()
         bay_parts = list()
         for part in self.parts:
-            self.production_cost += local_cost_cache.get(part.name, part.productionCost(fo.empireID(), self.pid))
+            self.production_cost += local_cost_cache.get(part.name, part.productionCost(fo.empireID(), self.pid, INVALID_ID))
             self.production_time = max(self.production_time,
-                                       local_time_cache.get(part.name, part.productionTime(fo.empireID(), self.pid)))
+                                       local_time_cache.get(part.name, part.productionTime(fo.empireID(), self.pid, INVALID_ID)))
             partclass = part.partClass
             capacity = part.capacity if partclass not in WEAPONS else self._calculate_weapon_strength(part)
             if partclass in FUEL:
@@ -1275,9 +1275,9 @@ class ShipDesigner(object):
                         if len(shipPartsPerClass) == 1:
                             break
                         # cost_a = local_cost_cache[a.name]
-                        cost_a = local_cost_cache.get(a.name, a.productionCost(empire_id, self.pid))
+                        cost_a = local_cost_cache.get(a.name, a.productionCost(empire_id, self.pid, INVALID_ID))
                         for b in shipPartsPerClass:
-                            cost_b = local_cost_cache.get(b.name, b.productionCost(empire_id, self.pid))
+                            cost_b = local_cost_cache.get(b.name, b.productionCost(empire_id, self.pid, INVALID_ID))
                             if (b is not a
                                     and (b.capacity/cost_b - a.capacity/cost_a) > -1e-6
                                     and b.capacity >= a.capacity):
@@ -1717,17 +1717,17 @@ class WarShipDesigner(MilitaryShipDesignerBaseClass):
             weapon_part = max(weapons, key=self._calculate_weapon_strength)
             weapon = weapon_part.name
             idxweapon = available_parts.index(weapon)
-            cw = Cache.production_cost[self.pid].get(weapon, weapon_part.productionCost(fo.empireID(), self.pid))
+            cw = Cache.production_cost[self.pid].get(weapon, weapon_part.productionCost(fo.empireID(), self.pid, INVALID_ID))
             if armours:
                 armour_part = max(armours, key=_get_capacity)
                 armour = armour_part.name
                 idxarmour = available_parts.index(armour)
                 a = get_part_type(armour).capacity
-                ca = Cache.production_cost[self.pid].get(armour, armour_part.productionCost(fo.empireID(), self.pid))
+                ca = Cache.production_cost[self.pid].get(armour, armour_part.productionCost(fo.empireID(), self.pid, INVALID_ID))
                 s = num_slots
                 h = self.hull.structure
                 ch = Cache.production_cost[self.pid].get(self.hull.name,
-                                                         self.hull.productionCost(fo.empireID(), self.pid))
+                                                         self.hull.productionCost(fo.empireID(), self.pid, INVALID_ID))
                 if ca == cw:
                     n = (s+h/a)/2
                 else:
