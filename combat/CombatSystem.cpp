@@ -115,29 +115,6 @@ void CombatInfo::GetObjectsToSerialize(ObjectMap& filtered_objects, int encoding
     filtered_objects = this->objects;       // for now, include all objects in battle / system
 }
 
-void CombatInfo::GetEmpireKnownObjectsToSerialize(std::map<int, ObjectMap>& filtered_empire_known_objects,
-                                                  int encoding_empire) const
-{
-    if (&filtered_empire_known_objects == &this->empire_known_objects)
-        return;
-
-    for (auto& entry : filtered_empire_known_objects)
-    { entry.second.Clear(); }
-    filtered_empire_known_objects.clear();
-
-    if (encoding_empire == ALL_EMPIRES) {
-        filtered_empire_known_objects = this->empire_known_objects;
-        return;
-    }
-
-    // include only latest known objects for the encoding empire
-    auto it = this->empire_known_objects.find(encoding_empire);
-    if (it != this->empire_known_objects.end()) {
-        const ObjectMap& map = it->second;
-        filtered_empire_known_objects[encoding_empire].Copy(map, ALL_EMPIRES);
-    }
-}
-
 void CombatInfo::GetDamagedObjectsToSerialize(std::set<int>& filtered_damaged_objects,
                                               int encoding_empire) const
 {
@@ -216,7 +193,6 @@ void CombatInfo::InitializeObjectVisibility() {
             if (obj->ObjectType() == OBJ_SYSTEM) {
                 // systems always visible to empires with objects in them
                 empire_object_visibility[empire_id][obj->ID()] = VIS_PARTIAL_VISIBILITY;
-                empire_known_objects[empire_id].Insert(obj);
                 DebugLogger() << "System " << obj->Name() << " always visible";
 
             } else if (obj->ObjectType() == OBJ_PLANET) {
@@ -238,7 +214,6 @@ void CombatInfo::InitializeObjectVisibility() {
                 }
 
                 empire_object_visibility[empire_id][obj->ID()] = vis;
-                empire_known_objects[empire_id].Insert(obj);
 
             } else if (obj->ObjectType() == OBJ_SHIP) {
                 // ships only visible if detected or they attack later in combat
@@ -267,7 +242,6 @@ void CombatInfo::InitializeObjectVisibility() {
 
                 if (vis > VIS_NO_VISIBILITY) {
                     empire_object_visibility[empire_id][obj->ID()] = vis;
-                    empire_known_objects[empire_id].Insert(obj);
                 } else {
                     DebugLogger() << "Ship " << obj->Name() << " initially hidden";
                 }
@@ -1189,6 +1163,17 @@ namespace {
                 TraceLogger(combat) << " ... " << match->Name() << " (" << match->ID() << ")";
 
 
+            // if species has a targeting condition, apply that to the
+            // possible targets from the weapon
+
+            // option 1: species filter first
+            // exclude based on species or empire, then apply part conditions to exclude more
+            // can 
+
+            // option 2: part filter first
+            // exclude based on target type, then apply 
+
+
             // select target object from matches
             int target_idx = RandInt(0, matched_targets.size() - 1);
             auto target = *std::next(matched_targets.begin(), target_idx);
@@ -1663,14 +1648,6 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     combat_info.combat_events.push_back(launches_event);
 
     RecoverFighters(combat_info, last_bout, launches_event);
-
-    // ensure every participant knows what happened.
-    // TODO: assemble list of objects to copy for each empire. this should
-    //       include objects the empire already knows about with standard
-    //       visibility system, and also any objects the empire knows are
-    //       destroyed during this combat...
-    for (auto& entry : combat_info.empire_known_objects)
-    { entry.second.Copy(combat_info.objects); }
 
     DebugLogger(combat) << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
 

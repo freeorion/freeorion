@@ -2332,23 +2332,15 @@ namespace {
                     //DebugLogger() << "Object is destroyed and doesn't need a sitrep.";
                     continue;
                 // which empires know about this object?
-                for (const auto& empire_ko : combat_info.empire_known_objects) {
-                    //DebugLogger() << "Checking if empire " << empire_ko.first << " knows about the object.";
+                for (const auto& empire_ok : combat_info.empire_object_visibility) {
                     // does this empire know about this object?
-                    const ObjectMap& objects = empire_ko.second;
-                    if (!objects.Object(damaged_object_id)) {
-                        //DebugLogger() << "Nope.";
+                    const auto& empire_known_objects = empire_ok.second;
+                    if (!empire_known_objects.count(damaged_object_id))
                         continue;
-                    }
-                    //DebugLogger() << "Yep.";
-                    // empire knows about object, so generate a sitrep about it
-                    int empire_id = empire_ko.first;
-                    Empire* empire = GetEmpire(empire_id);
-                    if (!empire)
-                        continue;
-                    //DebugLogger() << "Creating sitrep.";
-                    empire->AddSitRepEntry(CreateCombatDamagedObjectSitRep(damaged_object_id, combat_info.system_id,
-                                                                           empire_id));
+                    int empire_id = empire_ok.first;
+                    if (auto empire = GetEmpire(empire_id))
+                        empire->AddSitRepEntry(CreateCombatDamagedObjectSitRep(
+                            damaged_object_id, combat_info.system_id, empire_id));
                 }
             }
         }
@@ -3185,10 +3177,6 @@ void ServerApp::ProcessCombats() {
         auto combat_system = combat_info.GetSystem();
         DebugLogger(combat) << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
         TraceLogger(combat) << combat_info.objects.Dump();
-        for (const auto& eko : combat_info.empire_known_objects) {
-            TraceLogger(combat) << "known objects for empire " << eko.first;
-            TraceLogger(combat) << eko.second.Dump();
-        }
 
         AutoResolveCombat(combat_info);
     }
