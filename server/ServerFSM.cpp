@@ -2464,7 +2464,6 @@ sc::result PlayingGame::react(const Error& msg) {
 sc::result PlayingGame::react(const LobbyUpdate& msg) {
     TraceLogger(FSM) << "(ServerFSM) MPLobby.LobbyUpdate";
     ServerApp& server = Server();
-    const Message& message = msg.m_message;
     const PlayerConnectionPtr& sender = msg.m_player_connection;
 
     // ignore data
@@ -2492,9 +2491,13 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& sender = msg.m_player_connection;
 
-    auto order_set = boost::make_unique<OrderSet>();
+    auto order_set = std::make_shared<OrderSet>();
+    auto ui_data = std::make_shared<SaveGameUIData>();
+    bool ui_data_available = false;
+    std::string save_state_string;
+    bool save_state_string_available = false;
     try {
-        ExtractTurnOrdersMessageData(message, *order_set);
+        ExtractTurnOrdersMessageData(message, *order_set, ui_data_available, *ui_data, save_state_string_available, save_state_string);
     } catch (const std::exception& err) {
         // incorrect turn orders. disconnect player with wrong client.
         sender->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION")));
@@ -2504,6 +2507,10 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
     int player_id = sender->PlayerID();
     Networking::ClientType client_type = sender->GetClientType();
+
+    // ensure ui data availability flag is consistent with ui data
+    if (!ui_data_available)
+        ui_data.reset();
 
     if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
         // observers cannot submit orders. ignore.
@@ -2560,7 +2567,9 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
         TraceLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Received orders from player " << player_id;
 
-        server.SetEmpireTurnOrders(empire_id, std::move(order_set));
+        server.SetEmpireSaveGameData(empire_id, boost::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id,
+                                     order_set, ui_data, save_state_string,
+                                     client_type));
 
         // notify other player that this empire submitted orders
         for (auto player_it = server.m_networking.established_begin();
@@ -2588,6 +2597,80 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
     // check conditions for ending this turn
     post_event(CheckTurnEndConditions());
+
+    return discard_event();
+}
+
+sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
+    TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd.TurnPartialOrders";
+    ServerApp& server = Server();
+    const Message& message = msg.m_message;
+    const PlayerConnectionPtr& sender = msg.m_player_connection;
+
+    auto added = std::make_shared<OrderSet>();
+    std::set<int> deleted;
+    try {
+        ExtractTurnPartialOrdersMessageData(message, *added, deleted);
+    } catch (const std::exception& err) {
+        // incorrect turn orders. disconnect player with wrong client.
+        sender->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION")));
+        server.Networking().Disconnect(sender);
+        return discard_event();
+    }
+
+    int player_id = sender->PlayerID();
+    Networking::ClientType client_type = sender->GetClientType();
+
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+        // observers cannot submit orders. ignore.
+        ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player "
+                         << sender->PlayerName()
+                         << "(player id: " << player_id << ") "
+                               << "who is an observer and should not be sending orders. Orders being ignored.";
+        sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+        return discard_event();
+
+    } else if (client_type == Networking::INVALID_CLIENT_TYPE) {
+        // ??? lingering connection? shouldn't get to here. ignore.
+        ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player "
+                         << sender->PlayerName()
+                         << "(player id: " << player_id << ") "
+                               << "who has an invalid player type. The server is confused, and the orders being ignored.";
+        sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+        return discard_event();
+
+    } else if (client_type == Networking::CLIENT_TYPE_AI_PLAYER ||
+               client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+    {
+        // store empire orders and resume waiting for more
+        const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
+        if (!empire) {
+            ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) couldn't get empire for player with id:" << player_id;
+            sender->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
+            return discard_event();
+        }
+
+        int empire_id = empire->EmpireID();
+
+        for (const auto& id_and_order : *added) {
+            auto& order = id_and_order.second;
+            if (!order) {
+                ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) couldn't get order from order set!";
+                continue;
+            }
+            if (empire_id != order->EmpireID()) {
+                ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player " << empire->PlayerName() << "(id: "
+                                 << player_id << ") who controls empire " << empire_id
+                                 << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
+                sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+                return discard_event();
+            }
+        }
+
+        TraceLogger(FSM) << "WaitingForTurnEnd.TurnPartialOrders : Received partial orders from player " << player_id;
+
+        server.UpdatePartialOrders(empire_id, *added, deleted);
+    }
 
     return discard_event();
 }
@@ -2677,125 +2760,29 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
         return discard_event();
     }
 
-    context<WaitingForTurnEnd>().m_save_filename = message.Text();  // store requested save file name in Base state context so that sibling state can retreive it
+    std::string save_filename = message.Text(); // store requested save file name in Base state context so that sibling state can retreive it
 
-    return transit<WaitingForSaveData>();
-}
+    ServerSaveGameData server_data(server.m_current_turn);
 
+    // retreive requested save name from Base state, which should have been
+    // set in WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
+    int bytes_written = 0;
 
-////////////////////////////////////////////////////////////
-// WaitingForSaveData
-////////////////////////////////////////////////////////////
-WaitingForSaveData::WaitingForSaveData(my_context c) :
-    my_base(c)
-{
-    TraceLogger(FSM) << "(ServerFSM) WaitingForSaveData";
-
-    ServerApp& server = Server();
-    for (auto player_it = server.m_networking.established_begin();
-         player_it != server.m_networking.established_end(); ++player_it)
-    {
-        PlayerConnectionPtr player = *player_it;
-        int player_id = player->PlayerID();
-        if (const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id))) {
-            if (!empire->Eliminated()) {
-                player->SendMessage(ServerSaveGameDataRequestMessage());
-                m_needed_reponses.insert(player_id);
-            }
-        }
-    }
-}
-
-WaitingForSaveData::~WaitingForSaveData()
-{ TraceLogger(FSM) << "(ServerFSM) ~WaitingForSaveData"; }
-
-sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
-    TraceLogger(FSM) << "(ServerFSM) WaitingForSaveData.ClientSaveData";
-    ServerApp& server = Server();
-    const Message& message = msg.m_message;
-    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
-
-    int player_id = player_connection->PlayerID();
-
-    // extract client save information in message
-    OrderSet received_orders;
-    auto ui_data = std::make_shared<SaveGameUIData>();
-    bool ui_data_available = false;
-    std::string save_state_string;
-    bool save_state_string_available = false;
-
+    // save game...
     try {
-        ExtractClientSaveDataMessageData(message, received_orders, ui_data_available, *ui_data, save_state_string_available, save_state_string);
+        bytes_written = SaveGame(save_filename,     server_data,    server.GetPlayerSaveGameData(),
+                                 GetUniverse(),     Empires(),      GetSpeciesManager(),
+                                 GetCombatLogManager(),             server.m_galaxy_setup_data,
+                                 !server.m_single_player_game);
+
     } catch (const std::exception& error) {
-        ErrorLogger(FSM) << "WaitingForSaveData::react(const ClientSaveData& msg) received invalid save data from player "
-                         << player_connection->PlayerName() << ". Error: " << error.what();
-        player_connection->SendMessage(ErrorMessage(UserStringNop("INVALID_CLIENT_SAVE_DATA_RECEIVED"), false));
-
-        // TODO: use whatever portion of message data was extracted, and leave the rest as defaults.
+        ErrorLogger(FSM) << "While saving, catch std::exception: " << error.what();
+        SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));
     }
 
-    // store recieved orders or already existing orders.  I'm not sure what's
-    // going on here with the two possible sets of orders.  apparently the
-    // received orders are ignored if there are already existing orders?
-    std::shared_ptr<OrderSet> order_set;
-    if (const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id))) {
-        const auto& existing_orders = server.m_turn_sequence[empire->EmpireID()].second;
-        if (existing_orders)
-            order_set.reset(new OrderSet(*existing_orders));
-        else
-            order_set.reset(new OrderSet(received_orders));
-    } else {
-        ErrorLogger(FSM) << "WaitingForSaveData::react(const ClientSaveData& msg) couldn't get empire for player " << player_id;
-        order_set.reset(new OrderSet(received_orders));
-    }
+    // inform players that save is complete
+    SendMessageToAllPlayers(ServerSaveGameCompleteMessage(save_filename, bytes_written));
 
-    // ensure ui data availability flag is consistent with ui data
-    if (!ui_data_available)
-        ui_data.reset();
-
-    // what type of client is this?
-    Networking::ClientType client_type = player_connection->GetClientType();
-
-
-    // pack data into struct
-    m_player_save_game_data.push_back(
-        PlayerSaveGameData(player_connection->PlayerName(),
-                           server.PlayerEmpireID(player_connection->PlayerID()),
-                           order_set,       ui_data,    save_state_string,
-                           client_type));
-
-
-    // if all players have responded, proceed with save and continue game
-    m_players_responded.insert(player_connection->PlayerID());
-    if (m_players_responded == m_needed_reponses) {
-        ServerSaveGameData server_data(server.m_current_turn);
-
-        // retreive requested save name from Base state, which should have been
-        // set in WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
-        const std::string& save_filename = context<WaitingForTurnEnd>().m_save_filename;
-        int bytes_written = 0;
-
-        // save game...
-        try {
-            bytes_written = SaveGame(save_filename,     server_data,    m_player_save_game_data,
-                                     GetUniverse(),     Empires(),      GetSpeciesManager(),
-                                     GetCombatLogManager(),             server.m_galaxy_setup_data,
-                                     !server.m_single_player_game);
-
-        } catch (const std::exception& error) {
-            ErrorLogger(FSM) << "Catch std::exception: " << error.what();
-            SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));
-        }
-
-        // inform players that save is complete
-        SendMessageToAllPlayers(ServerSaveGameCompleteMessage(save_filename, bytes_written));
-
-        DebugLogger(FSM) << "Finished ClientSaveData from within if.";
-        context<WaitingForTurnEnd>().m_save_filename = "";
-        return transit<WaitingForTurnEndIdle>();
-    }
-
-    DebugLogger(FSM) << "Finished ClientSaveData from outside of if.";
     return discard_event();
 }
 

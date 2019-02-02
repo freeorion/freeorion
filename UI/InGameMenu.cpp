@@ -170,6 +170,9 @@ void InGameMenu::Save() {
         return;
     }
 
+    // send order changes could be made when player decide to save game
+    app->SendPartialOrders();
+
     try {
         // When saving in multiplayer, you cannot see the old saves or
         // browse directories, only give a save file name.

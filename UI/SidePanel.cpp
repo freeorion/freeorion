@@ -2657,6 +2657,9 @@ void SidePanel::PlanetPanelContainer::SelectPlanet(int planet_id) {
             m_selected_planet_id = INVALID_OBJECT_ID;
             //std::cout << " ... no planet with requested ID found" << std::endl;
         }
+
+        // send order changes could be made on other planets
+        HumanClientApp::GetApp()->SendPartialOrders();
     }
 }
 

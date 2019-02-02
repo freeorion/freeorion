@@ -86,6 +86,9 @@ public:
 
     /** Returns chat history buffer. */
     const boost::circular_buffer<ChatHistoryEntity>& GetChatHistory() const;
+
+    /** Extracts player save game data. */
+    std::vector<PlayerSaveGameData> GetPlayerSaveGameData() const;
     //@}
 
 
@@ -100,17 +103,13 @@ public:
     /** creates an AI client child process for each element of \a AIs*/
     void    CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression = 4);
 
-    /**  Adds an existing empire to turn processing. The position the empire is
-      * in the vector is it's position in the turn processing.*/
-    void    AddEmpireTurn(int empire_id);
+    /** Adds save game data includes turn orders for the given empire for the current turn.
+      * \a save_game_data will be freed when all processing is done for the turn */
+    void    SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveGameData>&& save_game_data);
 
-    /** Removes an empire from turn processing. This is most likely called when
-      * an empire is eliminated from the game */
-    void    RemoveEmpireTurn(int empire_id);
-
-    /** Adds turn orders for the given empire for the current turn. order_set
-      * will be freed when all processing is done for the turn */
-    void    SetEmpireTurnOrders(int empire_id, std::unique_ptr<OrderSet>&& order_set);
+    /** Updated empire orders without changes in readiness status. Removes all \a deleted orders
+      * and insert \a added orders. */
+    void    UpdatePartialOrders(int empire_id, const OrderSet& added, const std::set<int>& deleted);
 
     /** Revokes turn order's ready state for the given empire. */
     void    RevokeEmpireTurnReadyness(int empire_id);
@@ -289,6 +288,14 @@ private:
       * between two empires. Updates those empires of the change. */
     void    HandleDiplomaticMessageChange(int empire1_id, int empire2_id);
 
+    /**  Adds an existing empire to turn processing. The position the empire is
+      * in the vector is it's position in the turn processing.*/
+    void    AddEmpireTurn(int empire_id, const PlayerSaveGameData& psgd);
+
+    /** Removes an empire from turn processing. This is most likely called when
+      * an empire is eliminated from the game */
+    void    RemoveEmpireTurn(int empire_id);
+
     boost::asio::io_service m_io_service;
     boost::asio::signal_set m_signals;
 
@@ -311,7 +318,7 @@ private:
       * The map contains ready state which should be true to advance turn and
       * pointer to orders from empire.
       * */
-    std::map<int, std::pair<bool, std::unique_ptr<OrderSet>>>      m_turn_sequence;
+    std::map<int, std::pair<bool, std::unique_ptr<PlayerSaveGameData>>>  m_turn_sequence;
 
     // Give FSM and its states direct access.  We are using the FSM code as a
     // control-flow mechanism; it is all notionally part of this class.

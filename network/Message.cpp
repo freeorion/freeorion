@@ -10,6 +10,7 @@
 #include "../universe/Species.h"
 #include "../universe/Universe.h"
 #include "../util/OptionsDB.h"
+#include "../util/OrderSet.h"
 #include "../util/Serialize.h"
 #include "../util/ScopedTimer.h"
 #include "../util/i18n.h"
@@ -356,13 +357,42 @@ Message JoinAckMessage(int player_id, boost::uuids::uuid cookie)
     return Message(Message::JOIN_GAME, os.str());
 }
 
-Message TurnOrdersMessage(const OrderSet& orders) {
+Message TurnOrdersMessage(const OrderSet& orders, const SaveGameUIData& ui_data) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
         Serialize(oa, orders);
+        bool ui_data_available = true;
+        bool save_state_string_available = false;
+        oa << BOOST_SERIALIZATION_NVP(ui_data_available)
+           << BOOST_SERIALIZATION_NVP(ui_data)
+           << BOOST_SERIALIZATION_NVP(save_state_string_available);
     }
     return Message(Message::TURN_ORDERS, os.str());
+}
+
+Message TurnOrdersMessage(const OrderSet& orders, const std::string& save_state_string) {
+    std::ostringstream os;
+    {
+        freeorion_xml_oarchive oa(os);
+        Serialize(oa, orders);
+        bool ui_data_available = false;
+        bool save_state_string_available = true;
+        oa << BOOST_SERIALIZATION_NVP(ui_data_available)
+           << BOOST_SERIALIZATION_NVP(save_state_string_available)
+           << BOOST_SERIALIZATION_NVP(save_state_string);
+    }
+    return Message(Message::TURN_ORDERS, os.str());
+}
+
+Message TurnPartialOrdersMessage(const std::pair<OrderSet, std::set<int>>& orders_updates) {
+    std::ostringstream os;
+    {
+        freeorion_xml_oarchive oa(os);
+        Serialize(oa, orders_updates.first);
+        oa << boost::serialization::make_nvp("deleted", orders_updates.second);
+    }
+    return Message(Message::TURN_PARTIAL_ORDERS, os.str());
 }
 
 Message TurnProgressMessage(Message::TurnProgressPhase phase_id) {
@@ -439,53 +469,8 @@ Message TurnPartialUpdateMessage(int empire_id, const Universe& universe,
     return Message(Message::TURN_PARTIAL_UPDATE, os.str());
 }
 
-Message ClientSaveDataMessage(const OrderSet& orders, const SaveGameUIData& ui_data) {
-    std::ostringstream os;
-    {
-        freeorion_xml_oarchive oa(os);
-        Serialize(oa, orders);
-        bool ui_data_available = true;
-        bool save_state_string_available = false;
-        oa << BOOST_SERIALIZATION_NVP(ui_data_available)
-           << BOOST_SERIALIZATION_NVP(ui_data)
-           << BOOST_SERIALIZATION_NVP(save_state_string_available);
-    }
-    return Message(Message::CLIENT_SAVE_DATA, os.str());
-}
-
-Message ClientSaveDataMessage(const OrderSet& orders, const std::string& save_state_string) {
-    std::ostringstream os;
-    {
-        freeorion_xml_oarchive oa(os);
-        Serialize(oa, orders);
-        bool ui_data_available = false;
-        bool save_state_string_available = true;
-        oa << BOOST_SERIALIZATION_NVP(ui_data_available)
-           << BOOST_SERIALIZATION_NVP(save_state_string_available)
-           << BOOST_SERIALIZATION_NVP(save_state_string);
-}
-    return Message(Message::CLIENT_SAVE_DATA, os.str());
-}
-
-Message ClientSaveDataMessage(const OrderSet& orders) {
-    std::ostringstream os;
-    {
-        freeorion_xml_oarchive oa(os);
-        Serialize(oa, orders);
-        bool ui_data_available = false;
-        bool save_state_string_available = false;
-        oa << BOOST_SERIALIZATION_NVP(ui_data_available)
-           << BOOST_SERIALIZATION_NVP(save_state_string_available);
-    }
-    return Message(Message::CLIENT_SAVE_DATA, os.str());
-}
-
 Message HostSaveGameInitiateMessage(const std::string& filename)
 { return Message(Message::SAVE_GAME_INITIATE, filename); }
-
-Message ServerSaveGameDataRequestMessage() {
-    return Message(Message::SAVE_GAME_DATA_REQUEST, DUMMY_EMPTY_MESSAGE);
-}
 
 Message ServerSaveGameCompleteMessage(const std::string& save_filename, int bytes_written) {
     std::ostringstream os;
@@ -942,15 +927,47 @@ void ExtractJoinAckMessageData(const Message& msg, int& player_id,
     }
 }
 
-void ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders) {
+void ExtractTurnOrdersMessageData(const Message& msg,
+                                  OrderSet& orders,
+                                  bool& ui_data_available,
+                                  SaveGameUIData& ui_data,
+                                  bool& save_state_string_available,
+                                  std::string& save_state_string)
+{
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
+        DebugLogger() << "deserializing orders";
         Deserialize(ia, orders);
+        DebugLogger() << "checking for ui data";
+        ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
+        if (ui_data_available) {
+            DebugLogger() << "deserializing UI data";
+            ia >> BOOST_SERIALIZATION_NVP(ui_data);
+        }
+        DebugLogger() << "checking for save state string";
+        ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
+        if (save_state_string_available) {
+            DebugLogger() << "deserializing save state string";
+            ia >> BOOST_SERIALIZATION_NVP(save_state_string);
+        }
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders) failed!  Message:\n"
-                      << msg.Text() << "\n"
+        ErrorLogger() << "ExtractTurnOrdersMessageData(const Message& msg, ...) failed! Message probably long, so not outputting to log.\n"
+                      << "Error: " << err.what();
+        throw err;
+    }
+}
+
+void ExtractTurnPartialOrdersMessageData(const Message& msg, OrderSet& added, std::set<int>& deleted) {
+    try {
+        std::istringstream is(msg.Text());
+        freeorion_xml_iarchive ia(is);
+        DebugLogger() << "deserializing partial orders";
+        Deserialize(ia, added);
+        ia >> BOOST_SERIALIZATION_NVP(deleted);
+    } catch (const std::exception& err) {
+        ErrorLogger() << "ExtractTurnPartialOrdersMessageData(const Message& msg) failed! Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
         throw err;
     }
@@ -1032,35 +1049,6 @@ void ExtractTurnPartialUpdateMessageData(const Message& msg, int empire_id, Univ
 
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtracturnPartialUpdateMessageData(...) failed!  Message probably long, so not outputting to log.\n"
-                      << "Error: " << err.what();
-        throw err;
-    }
-}
-
-void ExtractClientSaveDataMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
-                                      SaveGameUIData& ui_data, bool& save_state_string_available,
-                                      std::string& save_state_string)
-{
-    try {
-        std::istringstream is(msg.Text());
-        freeorion_xml_iarchive ia(is);
-        DebugLogger() << "deserializing orders";
-        Deserialize(ia, orders);
-        DebugLogger() << "checking for ui data";
-        ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
-        if (ui_data_available) {
-            DebugLogger() << "deserializing UI data";
-            ia >> BOOST_SERIALIZATION_NVP(ui_data);
-        }
-        DebugLogger() << "checking for save state string";
-        ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
-        if (save_state_string_available) {
-            DebugLogger() << "deserializing save state string";
-            ia >> BOOST_SERIALIZATION_NVP(save_state_string);
-        }
-
-    } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractClientSaveDataMessageData(...) failed!  Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
         throw err;
     }

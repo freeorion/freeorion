@@ -72,7 +72,6 @@ public:
         LOBBY_EXIT,             ///< sent to server by clients when a player leaves the multiplayer lobby, or by server to clients when a player leaves the multiplayer lobby
         START_MP_GAME,          ///< sent to server (by the "host" client only) when the settings in the MP lobby are satisfactory and it is time to start the game
         SAVE_GAME_INITIATE,     ///< sent to server (by the "host" client only) when a game is to be saved
-        SAVE_GAME_DATA_REQUEST, ///< sent to clients by the server when the game is being saved and the server needs save state info from clients
         SAVE_GAME_COMPLETE,     ///< sent to clients (by the "host" client only) when a game has been saved and written to disk
         LOAD_GAME,              ///< sent to server (by the "host" client only) when a game is to be loaded
         GAME_START,             ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
@@ -81,7 +80,6 @@ public:
         TURN_ORDERS,            ///< sent to the server by a client that has orders to be processed at the end of a turn
         TURN_PROGRESS,          ///< sent to clients to display a turn progress message
         PLAYER_STATUS,          ///< sent to clients to inform them that a player has some status, such as having finished playing a turn and submitted orders, or is resolving combat, or is playing a turn normally
-        CLIENT_SAVE_DATA,       ///< sent to the server in response to a server request for the data needed to create a save file
         PLAYER_CHAT,            ///< sent when one player sends a chat message to another in multiplayer
         DIPLOMACY,              ///< sent by players to server or server to players to make or convey diplomatic proposals or declarations, or to accept / reject proposals from other players
         DIPLOMATIC_STATUS,      ///< sent by server to players to inform of mid-turn diplomatic status changes
@@ -104,7 +102,8 @@ public:
         CHAT_HISTORY,           ///< sent by server to client to show previous messages
         SET_AUTH_ROLES,         ///< sent by server to client to set authorization roles
         ELIMINATE_SELF,         ///< sent by client to server if the player wants to resign
-        UNREADY                 ///< sent by client to server to revoke ready state of turn orders and sent by server to client to acknowledge it
+        UNREADY,                ///< sent by client to server to revoke ready state of turn orders and sent by server to client to acknowledge it
+        TURN_PARTIAL_ORDERS     ///< sent to the server by a client that has changes in orders to be stored
     )
 
     GG_CLASS_ENUM(TurnProgressPhase,
@@ -242,8 +241,14 @@ FO_COMMON_API Message HostMPAckMessage(int player_id);
   * This message should only be sent by the server.*/
 FO_COMMON_API Message JoinAckMessage(int player_id, boost::uuids::uuid cookie);
 
-/** creates a TURN_ORDERS message. */
-FO_COMMON_API Message TurnOrdersMessage(const OrderSet& orders);
+/** creates a TURN_ORDERS message, including UI data but without a state string. */
+FO_COMMON_API Message TurnOrdersMessage(const OrderSet& orders, const SaveGameUIData& ui_data);
+
+/** creates a TURN_ORDERS message, without UI data but with a state string. */
+FO_COMMON_API Message TurnOrdersMessage(const OrderSet& orders, const std::string& save_state_string);
+
+/** creates a TURN_PARTIAL_ORDERS message with orders changes. */
+FO_COMMON_API Message TurnPartialOrdersMessage(const std::pair<OrderSet, std::set<int>>& orders_updates);
 
 /** creates a TURN_PROGRESS message. */
 FO_COMMON_API Message TurnProgressMessage(Message::TurnProgressPhase phase_id);
@@ -264,23 +269,9 @@ FO_COMMON_API Message TurnUpdateMessage(int empire_id, int current_turn,
 FO_COMMON_API Message TurnPartialUpdateMessage(int empire_id, const Universe& universe,
                                                bool use_binary_serialization);
 
-/** creates a CLIENT_SAVE_DATA message, including UI data but without a state string. */
-FO_COMMON_API Message ClientSaveDataMessage(const OrderSet& orders, const SaveGameUIData& ui_data);
-
-/** creates a CLIENT_SAVE_DATA message, without UI data but with a state string. */
-FO_COMMON_API Message ClientSaveDataMessage(const OrderSet& orders, const std::string& save_state_string);
-
-/** creates a CLIENT_SAVE_DATA message, without UI data and without a state string. */
-FO_COMMON_API Message ClientSaveDataMessage(const OrderSet& orders);
-
 /** creates a SAVE_GAME_INITIATE request message.  This message should only be sent by
   * the host player.*/
 FO_COMMON_API Message HostSaveGameInitiateMessage(const std::string& filename);
-
-/** creates a SAVE_GAME_DATA_REQUEST data request message.  This message should
-    only be sent by the server to get game data from a client, or to respond to
-    the host player requesting a save be initiated. */
-FO_COMMON_API Message ServerSaveGameDataRequestMessage();
 
 /** creates a SAVE_GAME_COMPLETE complete message.  This message should only be
     sent by the server to inform clients that the last initiated save has been
@@ -407,18 +398,20 @@ FO_COMMON_API void ExtractJoinGameMessageData(const Message& msg, std::string& p
 FO_COMMON_API void ExtractJoinAckMessageData(const Message& msg, int& player_id,
                                              boost::uuids::uuid& cookie);
 
-FO_COMMON_API void ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders);
+FO_COMMON_API void ExtractTurnOrdersMessageData(const Message& msg,
+                                                OrderSet& orders,
+                                                bool& ui_data_available,
+                                                SaveGameUIData& ui_data,
+                                                bool& save_state_string_available,
+                                                std::string& save_state_string);
+
+FO_COMMON_API void ExtractTurnPartialOrdersMessageData(const Message& msg, OrderSet& added, std::set<int>& deleted);
 
 FO_COMMON_API void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
                                                 Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
                                                 SupplyManager& supply, std::map<int, PlayerInfo>& players);
 
 FO_COMMON_API void ExtractTurnPartialUpdateMessageData(const Message& msg, int empire_id, Universe& universe);
-
-FO_COMMON_API void ExtractClientSaveDataMessageData(const Message& msg, OrderSet& orders,
-                                                    bool& ui_data_available, SaveGameUIData& ui_data,
-                                                    bool& save_state_string_available,
-                                                    std::string& save_state_string);
 
 FO_COMMON_API void ExtractTurnProgressMessageData(const Message& msg, Message::TurnProgressPhase& phase_id);
 

@@ -17,7 +17,6 @@ public:
 
     bool ProcessMessages(const boost::posix_time::ptime& start_time, int max_seconds);
     bool HandleMessage(Message& msg);
-    void SendTurnOrders();
     void SaveGame();
     void UpdateLobby();
 

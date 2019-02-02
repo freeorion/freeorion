@@ -19,7 +19,7 @@ public:
     void StartNewGame() override;
     void ResumeLoadedGame(const std::string& save_state_string) override;
 
-    const std::string&  GetSaveStateString() override;
+    const std::string&  GetSaveStateString() const override;
 
 private:
     // reference to imported Python AI module

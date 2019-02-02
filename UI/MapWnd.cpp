@@ -5593,7 +5593,7 @@ std::vector<int> MapWnd::FleetIDsOfFleetButtonsOverlapping(int fleet_id) const {
         int vis_turn = -1;
         if (vis_turn_map.find(VIS_BASIC_VISIBILITY) != vis_turn_map.end())
             vis_turn = vis_turn_map[VIS_BASIC_VISIBILITY];
-        ErrorLogger() << "Couldn't find a FleetButton for fleet " << fleet_id 
+        ErrorLogger() << "Couldn't find a FleetButton for fleet " << fleet_id
                       << " with last basic vis turn " << vis_turn;
         return fleet_ids;
     }
@@ -6133,7 +6133,14 @@ bool MapWnd::EndTurn() {
     if (m_ready_turn) {
         HumanClientApp::GetApp()->UnreadyTurn();
     } else {
-        HumanClientApp::GetApp()->StartTurn();
+        ClientUI* cui = ClientUI::GetClientUI();
+        if (!cui) {
+            ErrorLogger() << "MapWnd::EndTurn: No client UI available";
+            return false;
+        }
+        SaveGameUIData ui_data;
+        cui->GetSaveGameUIData(ui_data);
+        HumanClientApp::GetApp()->StartTurn(ui_data);
     }
     return true;
 }
@@ -6434,6 +6441,8 @@ void MapWnd::HideSidePanel() {
 void MapWnd::RestoreSidePanel() {
     if (m_sidepanel_open_before_showing_other)
         ReselectLastSystem();
+    // send order changes could be made in research, production or other windows
+    HumanClientApp::GetApp()->SendPartialOrders();
 }
 
 void MapWnd::ShowResearch() {

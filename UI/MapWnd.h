@@ -412,7 +412,7 @@ private:
     bool ShowGraphs();
 
     void HideSidePanel();
-    void RestoreSidePanel();
+    void RestoreSidePanel(); //!< restores side panel, sends to server changes made in other windows
 
     bool ToggleResearch();
     void ShowResearch();

@@ -116,8 +116,18 @@ void ClientApp::SetEmpireStatus(int empire_id, Message::PlayerStatus status) {
     m_empire_status[empire_id] = status;
 }
 
-void ClientApp::StartTurn()
-{ m_networking->SendMessage(TurnOrdersMessage(m_orders)); }
+void ClientApp::StartTurn(const SaveGameUIData& ui_data)
+{ m_networking->SendMessage(TurnOrdersMessage(m_orders, ui_data)); }
+
+void ClientApp::StartTurn(const std::string& save_state_string)
+{ m_networking->SendMessage(TurnOrdersMessage(m_orders, save_state_string)); }
+
+void ClientApp::SendPartialOrders() {
+    auto changes = m_orders.ExtractChanges();
+    if (changes.first.empty() && changes.second.empty())
+        return;
+    m_networking->SendMessage(TurnPartialOrdersMessage(changes));
+}
 
 void ClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
     switch (phase_id) {

@@ -161,8 +161,14 @@ public:
      */
     std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) override;
 
-    /** @brief Send the OrderSet to the server and start a new turn */
-    virtual void StartTurn();
+    /** @brief Send the OrderSet and UI data to the server and start a new turn */
+    virtual void StartTurn(const SaveGameUIData& ui_data);
+
+    /** @brief Send the OrderSet and AI state to the server and start a new turn */
+    virtual void StartTurn(const std::string& save_state_string);
+
+    /** @brief Send turn orders updates to server without starting new turn */
+    void SendPartialOrders();
 
     /** \brief Handle server acknowledgement of receipt of orders and clear
         the orders. */

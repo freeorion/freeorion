@@ -28,7 +28,6 @@ struct MessageEventBase {
     (HostID)                                   \
     (LobbyUpdate)                              \
     (LobbyChat)                                \
-    (SaveGameDataRequest)                      \
     (SaveGameComplete)                         \
     (GameStart)                                \
     (TurnUpdate)                               \
