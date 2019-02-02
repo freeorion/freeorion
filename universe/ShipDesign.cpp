@@ -290,23 +290,14 @@ void PartTypeManager::CheckPendingPartTypes() const {
 // PartType
 ////////////////////////////////////////////////
 PartType::PartType() :
-    m_class(INVALID_SHIP_PART_CLASS),
-    m_production_cost(),
-    m_production_time(),
-    m_mountable_slot_types(),
-    m_tags(),
-    m_production_meter_consumption(),
-    m_production_special_consumption(),
-    m_location(),
-    m_exclusions(),
-    m_effects()
+    m_class(INVALID_SHIP_PART_CLASS)
 {}
 
 PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
                    CommonParams& common_params, const MoreCommonParams& more_common_params,
                    std::vector<ShipSlotType> mountable_slot_types,
                    const std::string& icon, bool add_standard_capacity_effect,
-                   std::unique_ptr<const ::Condition::ConditionBase>&& combat_targets) :
+                   std::unique_ptr<Condition::ConditionBase>&& combat_targets) :
     m_name(more_common_params.name),
     m_description(more_common_params.description),
     m_class(part_class),
@@ -316,13 +307,10 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     m_production_cost(std::move(common_params.production_cost)),
     m_production_time(std::move(common_params.production_time)),
     m_mountable_slot_types(mountable_slot_types),
-    m_tags(),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
     m_exclusions(more_common_params.exclusions),
-    m_effects(),
-    m_icon(icon),
     m_add_standard_capacity_effect(add_standard_capacity_effect),
     m_combat_targets(std::move(combat_targets))
 {
@@ -406,6 +394,8 @@ void PartType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
         m_production_time->SetTopLevelContent(m_name);
     if (m_location)
         m_location->SetTopLevelContent(m_name);
+    if (m_combat_targets)
+        m_combat_targets->SetTopLevelContent(m_name);
     for (auto&& effect : effects) {
         effect->SetTopLevelContent(m_name);
         m_effects.emplace_back(std::move(effect));

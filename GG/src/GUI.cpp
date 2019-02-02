@@ -627,8 +627,8 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                 }
                 // implement drop onto target if any of the dragged Wnds were accepted
                 if (!accepted_wnds.empty())
-                    curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDroppedOn, pos,
-                                                                  std::move(accepted_wnds), m_mod_keys));
+                    curr_wnd_under_cursor->HandleEvent(WndEvent(
+                        WndEvent::DragDroppedOn, pos, std::move(accepted_wnds), m_mod_keys));
             }
         }
     }

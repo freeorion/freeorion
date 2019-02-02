@@ -57,12 +57,12 @@ struct FO_COMMON_API CommonParams {
 
     std::unique_ptr<ValueRef::ValueRefBase<double>> production_cost;
     std::unique_ptr<ValueRef::ValueRefBase<int>>    production_time;
-    bool                                             producible;
-    std::set<std::string>                            tags;
-    ConsumptionMap<MeterType>                        production_meter_consumption;
-    ConsumptionMap<std::string>                      production_special_consumption;
-    std::unique_ptr<Condition::ConditionBase> location;
-    std::unique_ptr<Condition::ConditionBase> enqueue_location;
+    bool                                            producible;
+    std::set<std::string>                           tags;
+    ConsumptionMap<MeterType>                       production_meter_consumption;
+    ConsumptionMap<std::string>                     production_special_consumption;
+    std::unique_ptr<Condition::ConditionBase>       location;
+    std::unique_ptr<Condition::ConditionBase>       enqueue_location;
     std::vector<std::unique_ptr<Effect::EffectsGroup>> effects;
 };
 
@@ -92,7 +92,7 @@ public:
              CommonParams& common_params, const MoreCommonParams& more_common_params,
              std::vector<ShipSlotType> mountable_slot_types,
              const std::string& icon, bool add_standard_capacity_effect = true,
-             std::unique_ptr<const ::Condition::ConditionBase>&& combat_targets = nullptr);
+             std::unique_ptr<Condition::ConditionBase>&& combat_targets = nullptr);
 
     ~PartType();
     //@}
@@ -106,7 +106,7 @@ public:
     float                   SecondaryStat() const;
 
     bool                    CanMountInSlotType(ShipSlotType slot_type) const;       ///< returns true if this part can be placed in a slot of the indicated type
-    const ::Condition::ConditionBase*
+    const Condition::ConditionBase*
                             CombatTargets() const { return m_combat_targets.get(); }///< returns the condition for possible targets. may be nullptr if no condition was specified.
     const std::vector<ShipSlotType>&
                             MountableSlotTypes() const { return m_mountable_slot_types; }
@@ -143,8 +143,8 @@ public:
 private:
     void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects);
 
-    std::string     m_name = "";
-    std::string     m_description = "";
+    std::string     m_name;
+    std::string     m_description;
     ShipPartClass   m_class;
     float           m_capacity = 0.0f;
     float           m_secondary_stat = 0.0f;    // damage for a hangar bay, shots per turn for a weapon, etc.
@@ -159,10 +159,9 @@ private:
     std::unique_ptr<Condition::ConditionBase>           m_location;
     std::set<std::string>                               m_exclusions;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
-
-    std::string     m_icon = "";
-    bool            m_add_standard_capacity_effect = false;
-    std::unique_ptr<const ::Condition::ConditionBase>   m_combat_targets;
+    std::string                                         m_icon;
+    bool                                                m_add_standard_capacity_effect = false;
+    std::unique_ptr<Condition::ConditionBase>           m_combat_targets;
 
     friend class boost::serialization::access;
     template <class Archive>
