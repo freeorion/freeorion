@@ -1215,6 +1215,11 @@ Activer Entretien des Équipements
 RULE_SHIP_PART_BASED_UPKEEP_DESC
 Calculer le coût d'entretien selon les équipements de l'astronef plutôt que selon le modèle d'astronef lui-même.
 
+RULE_SHOW_DETAILED_EMPIRES_DATA
+Afficher les données détaillées des empires
+
+RULE_SHOW_DETAILED_EMPIRES_DATA_DESC
+Afficher la recherche et la production, les structures acquises, coques et équipements, de tous les empires.
 
 ##
 ## Command-line and options database entries
@@ -3422,12 +3427,11 @@ La dernière [[metertype METER_STEALTH]] connue est obsolète. La furtivité ré
 MENUITEM_SET_FOCUS
 Régler Focus
 
-MENUITEM_ENQUEUE_BUILDING
-Produire Structure
-
 MENUITEM_ENQUEUE_SHIPDESIGN
 Produire Astronef
 
+MENUITEM_ENQUEUE_BUILDING
+Produire Structure
 
 ##
 ## Side panel/Resources panel
@@ -4296,6 +4300,13 @@ Déplacer en haut de la file
 MOVE_DOWN_QUEUE_ITEM
 Déplacer en bas de la file
 
+MOVE_UP_LIST_ITEM
+Déplacer en tête de liste
+
+MOVE_DOWN_LIST_ITEM
+Déplacer en fin de liste
+
+
 SPLIT_INCOMPLETE
 Dissocier Répétition actuelle
 
@@ -5047,6 +5058,15 @@ ENC_COMBAT_RECOVER_STR
 ENC_COMBAT_UNKNOWN_OBJECT
 Inconnu
 
+# %1% empire name
+# %2% species name
+# %3% fighter type name
+ENC_COMBAT_EMPIRE_FIGHTER_NAME
+%3% %2% %1%
+
+ENC_COMBAT_ROGUE
+Rebelle
+
 # %1% number of combat round.
 ENC_ROUND_BEGIN
 '''
@@ -5082,7 +5102,7 @@ L'astronef %2% a été détruit
 # %1% unused
 # %2% name of empire
 ENC_COMBAT_INITIAL_STEALTH_LIST
-L'empire %2% ne peut pas cibler :
+L'empire %2% ne peut pas initialement détecter :
 
 # %1 link to the attacking unit
 # %2 link to the defending unit.
@@ -12542,7 +12562,7 @@ BLD_PLANET_DRIVE
 Navigateur Planétaire
 
 BLD_PLANET_DRIVE_DESC
-'''Permet à une planète de se déplacer entre les systèmes stellaires. Un [[buildingtype BLD_LIGHTHOUSE]] doit se trouver à une distance de 200 uu ou moins du système visé, afin que la planète y arrive en toute sécurité. Dans le cas contraire, la planète aura 50% de chance de se perdre ou d'être détruite durant son voyage. S'agissant dans tous les cas d'un périple dangereux, même si la planète arrive à bon port, seule la moitié de sa population survivra. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], mais ne peut pas être utilisée à moins que la planète ne soit colonisée.
+'''Permet à une planète de se déplacer entre les systèmes stellaires. Un [[buildingtype BLD_LIGHTHOUSE]] doit se trouver à une distance de 200 uu ou moins du système visé, afin que la planète y arrive en toute sécurité. Dans le cas contraire, la planète aura 50% de chance de se perdre ou d'être détruite durant son voyage. S'agissant dans tous les cas d'un périple dangereux, même si la planète arrive à bon port, seule la moitié de sa population survivra, qu'un Phare Interstellaire ait été utilisé ou non. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], mais ne peut pas être exploitée à moins que la planète ne soit colonisée.
 
 En raison d'un manque de précision du dispositif de navigation, une [[buildingtype BLD_PLANET_BEACON]], ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]], est nécessaire et doit se trouver à l'arrivée de la Voie spatiale empruntée. L'un comme l'autre s'auto-détruiront une fois utilisés, afin que la planète puisse événtuellement se déplacer vers un autre système si nécessaire.
 
@@ -12921,7 +12941,10 @@ FT_BAY_1_DESC
 Système de lancement pour chasseurs.
 
 FT_HANGAR_0
-Hangar 0
+Hangar Leurre
+
+FT_HANGAR_0_FIGHTER
+Leurre
 
 FT_HANGAR_0_DESC
 Système de stockage pour vaisseau leurre non-armé.
@@ -12929,11 +12952,17 @@ Système de stockage pour vaisseau leurre non-armé.
 FT_HANGAR_1
 Hangar Intercepteur
 
+FT_HANGAR_1_FIGHTER
+Intercepteur
+
 FT_HANGAR_1_DESC
 Système de stockage pour chasseurs faiblement armés.
 
 FT_HANGAR_2
 Hangar Chasseur
+
+FT_HANGAR_2_FIGHTER
+Chasseur
 
 FT_HANGAR_2_DESC
 Système de stockage pour chasseurs moyennement armés.
@@ -12941,11 +12970,17 @@ Système de stockage pour chasseurs moyennement armés.
 FT_HANGAR_3
 Hangar Bombardier
 
+FT_HANGAR_3_FIGHTER
+Bombardier
+
 FT_HANGAR_3_DESC
 Système de stockage pour chasseurs correctement armés.
 
 FT_HANGAR_4
-Hangar 4
+Hangar Bombardier Lourd
+
+FT_HANGAR_4_FIGHTER
+Bombardier Lourd
 
 FT_HANGAR_4_DESC
 Système de stockage pour chasseurs lourdement armés.
@@ -12960,7 +12995,7 @@ FT_BAY_KRILL
 Essaim Krill
 
 FT_BAY_KRILL_DESC
-Lorsque les essaims de Krill ont atteint une taille suffisante, certains Krills quittent l'essaim pour attaquer les astronefs rencontrés.
+Lorsque les essaims de Krill ont atteint une taille suffisante, un Krill quitte l'essaim pour attaquer les astronefs rencontrés.
 
 SR_WEAPON_0_1
 Canon Antiaérien
