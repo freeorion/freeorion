@@ -102,6 +102,7 @@ class MissionType(Enum):
     ORBITAL_DEFENSE = 12
     ORBITAL_INVASION = 13
     ORBITAL_OUTPOST = 14
+    PROTECT_REGION = 15
     # ORBITAL_COLONISATION = 15 Not implemented yet
 
 

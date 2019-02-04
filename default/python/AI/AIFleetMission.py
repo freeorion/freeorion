@@ -247,7 +247,8 @@ class AIFleetMission(object):
                 # TODO remove latter portion of next check in light of invasion retargeting, or else correct logic
                 if not planet.unowned or planet.owner != fleet.owner:
                     return True
-        elif mission_type in [MissionType.MILITARY, MissionType.SECURE, MissionType.ORBITAL_DEFENSE]:
+        elif mission_type in [MissionType.MILITARY, MissionType.SECURE,
+                              MissionType.ORBITAL_DEFENSE, MissionType.PROTECT_REGION]:
             if isinstance(target, TargetSystem):
                 return True
         # TODO: implement other mission types
@@ -397,8 +398,8 @@ class AIFleetMission(object):
         # TODO: priority
         order_completed = True
 
-        debug("\nChecking orders for fleet %s (on turn %d), with mission type %s" % (
-            self.fleet.get_object(), fo.currentTurn(), self.type or 'No mission'))
+        debug("\nChecking orders for fleet %s (on turn %d), with mission type %s and target %s",
+              self.fleet.get_object(), fo.currentTurn(), self.type or 'No mission', self.target or 'No Target')
         if MissionType.INVASION == self.type:
             self._check_retarget_invasion()
         just_issued_move_order = False
@@ -600,15 +601,19 @@ class AIFleetMission(object):
 
         if self.target:
             # for some targets fleet has to visit systems and therefore fleet visit them
-            system_to_visit = self.target.get_system()
+
+            system_to_visit = (self.target.get_system() if not self.type == MissionType.PROTECT_REGION
+                               else TargetSystem(self._get_target_for_protection_mission()))
+
             orders_to_visit_systems = MoveUtilsAI.create_move_orders_to_system(self.fleet, system_to_visit)
             # TODO: if fleet doesn't have enough fuel to get to final target, consider resetting Mission
             for fleet_order in orders_to_visit_systems:
                 self.orders.append(fleet_order)
 
             # also generate appropriate final orders
-            fleet_order = self._get_fleet_order_from_target(self.type, self.target)
-            self.orders.append(fleet_order)
+            if not self.type == MissionType.PROTECT_REGION:
+                fleet_order = self._get_fleet_order_from_target(self.type, self.target)
+                self.orders.append(fleet_order)
 
     def _need_repair(self, repair_limit=0.70):
         """Check if fleet needs to be repaired.
@@ -660,3 +665,42 @@ class AIFleetMission(object):
                                                                             (fleet and len(fleet.shipIDs)) or 0,
                                                                             CombatRatingsAI.get_fleet_rating(fleet_id),
                                                                             self.target or 'no target')
+
+    def _get_target_for_protection_mission(self):
+        universe = fo.getUniverse()
+        primary_objective = self.target.id
+        debug("Trying to find target for protection mission. Target: %s", self.target)
+        immediate_threat = MilitaryAI.get_system_local_threat(primary_objective)
+        if immediate_threat:
+            debug("Immediate threat! Moving to primary mission target")
+            return primary_objective
+        else:
+            debug("No immediate threats.")
+            # Try to eliminate neighbouring fleets
+            threat_list = sorted(map(
+                lambda x: (MilitaryAI.get_system_local_threat(x), x),
+                universe.getImmediateNeighbors(primary_objective, fo.empireID())
+            ), reverse=True)
+
+            if not threat_list:
+                # TODO: Move into second ring but needs more careful evaluation
+                debug("No neighboring threats. Moving to primary mission target")
+                return primary_objective
+
+            debug("%s", threat_list)
+            top_threat, candidate_system = threat_list[0]
+            if not top_threat:
+                debug("No neighboring threats. Moving to primary mission target")
+                return primary_objective
+
+            # TODO rate against threat in target system
+            # TODO only engage if can reach in 1 jump or leaves sufficient defense behind
+            fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
+            debug("This fleet rating: %d. Enemy Rating: %d", fleet_rating, top_threat)
+            safety_factor = get_aistate().character.military_safety_factor()
+            if fleet_rating < safety_factor*top_threat:
+                debug("Neighboring threat is too powerful. Moving to primary mission target")
+                return primary_objective  # do not engage!
+
+            debug("Engaging neighboring threat: %d", candidate_system)
+            return candidate_system
