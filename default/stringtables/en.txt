@@ -7235,7 +7235,8 @@ SP_GYSACHE
 Gysache
 
 SP_GYSACHE_GAMEPLAY_DESC
-'''Cowardly, freakish sheep-like herbivores.
+'''<img src="species/preview/gysache.png"></img>
+Cowardly, freakish sheep-like herbivores.
 Prefer [[PT_SWAMP]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -7252,6 +7253,7 @@ The Gysache are always wary of predators and are easily alarmed. Their natural r
 
 Homeworld:
 Their homeworld has a thick atmosphere of nitrogen, ammonia and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water.
+<img src="species/gysache.png"></img>
 '''
 
 SP_CHATO

@@ -7235,7 +7235,8 @@ SP_GYSACHE  # translated
 Gysache
 
 SP_GYSACHE_GAMEPLAY_DESC
-'''Herbivores craintifs insolites, organisation en troupeau.
+'''<img src="species/preview/gysache.png"></img>
+Herbivores craintifs insolites, organisation en troupeau.
 Préfèrent les Planètes [[PT_SWAMP]]s.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -7252,6 +7253,7 @@ Les Gysache sont constamment sur leur garde du fait des prédateurs et sont faci
 
 Monde d'origine:
 Leur Monde d'origine possède une épaisse atmosphère d'azote, d'ammoniaque et de dioxyde de carbone. Bien que très humide, leur environnement d'origine ne dispose pas d'étendues océaniques, seulement 5% de la surface planétaire étant recouverte d'eau. Ses principales caractéristiques topographiques sont des hauts plateaux balafrés de canyons abyssaux, dont les fonds contiennent le peu d'eau stagnante de la planète.
+<img src="species/gysache.png"></img>
 '''
 
 SP_CHATO  # translated
