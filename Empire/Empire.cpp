@@ -598,6 +598,7 @@ void Empire::Eliminate() {
     // uncleared after elimination
 
     m_capital_id = INVALID_OBJECT_ID;
+    // m_new_techs
     // m_techs
     m_research_queue.clear();
     m_research_progress.clear();
@@ -976,7 +977,7 @@ void Empire::SetResourceStockpile(ResourceType resource_type, float stockpile) {
 }
 
 void Empire::PlaceTechInQueue(const std::string& name, int pos/* = -1*/) {
-    if (name.empty() || TechResearched(name) || m_techs.count(name))
+    if (name.empty() || TechResearched(name) || m_techs.count(name) || m_new_techs.count(name))
         return;
     const Tech* tech = GetTech(name);
     if (!tech || !tech->Researchable())
@@ -1336,21 +1337,36 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
     }
 }
 
-void Empire::AddTech(const std::string& name) {
+void Empire::AddNewTech(const std::string& name) {
     const Tech* tech = GetTech(name);
     if (!tech) {
-        ErrorLogger() << "Empire::AddTech given and invalid tech: " << name;
+        ErrorLogger() << "Empire::AddNewTech given an invalid tech: " << name;
         return;
     }
 
-    if (!m_techs.count(name))
+    if (m_techs.count(name))
+        return;
+
+    auto result = m_new_techs.insert(name);
+    if (result.second)
         AddSitRepEntry(CreateTechResearchedSitRep(name));
+}
 
-    for (const ItemSpec& item : tech->UnlockedItems())
-        UnlockItem(item);  // potential infinite if a tech (in)directly unlocks itself?
+void Empire::ApplyNewTechs() {
+    for (auto new_tech : m_new_techs) {
+        const Tech* tech = GetTech(new_tech);
+        if (!tech) {
+            ErrorLogger() << "Empire::ApplyNewTech has an invalid entry in m_new_techs: " << new_tech;
+            return;
+        }
 
-    if (!m_techs.count(name))
-        m_techs[name] = CurrentTurn();
+        for (const ItemSpec& item : tech->UnlockedItems())
+            UnlockItem(item);  // potential infinite if a tech (in)directly unlocks itself?
+
+        if (!m_techs.count(new_tech))
+            m_techs[new_tech] = CurrentTurn();
+    }
+    m_new_techs.clear();
 }
 
 void Empire::UnlockItem(const ItemSpec& item) {
@@ -1368,7 +1384,7 @@ void Empire::UnlockItem(const ItemSpec& item) {
         AddShipDesign(GetPredefinedShipDesignManager().GetDesignID(item.name));
         break;
     case UIT_TECH:
-        AddTech(item.name);
+        AddNewTech(item.name);
         break;
     default:
         ErrorLogger() << "Empire::UnlockItem : passed ItemSpec with unrecognized UnlockableItemType";
@@ -1571,14 +1587,14 @@ namespace {
     }
 }
 
-void Empire::CheckResearchProgress() {
+std::vector<std::string> Empire::CheckResearchProgress() {
     SanitizeResearchQueue(m_research_queue);
 
     float spent_rp{0.0f};
     float total_rp_available = m_resource_pools[RE_RESEARCH]->TotalAvailable();
 
     // process items on queue
-    std::vector<std::string> to_erase;
+    std::vector<std::string> to_erase_and_add;
     for (auto& elem : m_research_queue) {
         const Tech* tech = GetTech(elem.name);
         if (!tech) {
@@ -1589,11 +1605,9 @@ void Empire::CheckResearchProgress() {
         float tech_cost = tech->ResearchCost(m_id);
         progress += elem.allocated_rp / std::max(EPSILON, tech_cost);
         spent_rp += elem.allocated_rp;
-        if (tech->ResearchCost(m_id) - EPSILON <= progress * tech_cost)
-            AddTech(elem.name);
-        if (GetTechStatus(elem.name) == TS_COMPLETE) {
+        if (tech->ResearchCost(m_id) - EPSILON <= progress * tech_cost) {
             m_research_progress.erase(elem.name);
-            to_erase.push_back(elem.name);
+            to_erase_and_add.push_back(elem.name);
         }
     }
 
@@ -1659,14 +1673,14 @@ void Empire::CheckResearchProgress() {
         rp_left_to_spend -= consumed_rp;
 
         if (tech->ResearchCost(m_id) - EPSILON <= m_research_progress[cost_tech.second] * tech_total_cost)
-            AddTech(cost_tech.second);
+            to_erase_and_add.push_back(cost_tech.second);
 
         //DebugLogger() << "... allocated: " << consumed_rp << " to increase progress by: " << progress_increase;
     }
 
     // remove completed items from queue (after consuming extra RP, as that
     // determination uses the contents of the queue as input)
-    for (const std::string& tech_name : to_erase) {
+    for (const std::string& tech_name : to_erase_and_add) {
         auto temp_it = m_research_queue.find(tech_name);
         if (temp_it != m_research_queue.end())
             m_research_queue.erase(temp_it);
@@ -1674,6 +1688,7 @@ void Empire::CheckResearchProgress() {
 
     // can uncomment following line when / if research stockpiling is enabled...
     // m_resource_pools[RE_RESEARCH]->SetStockpile(m_resource_pools[RE_RESEARCH]->TotalAvailable() - m_research_queue.TotalRPsSpent());
+    return to_erase_and_add;
 }
 
 void Empire::CheckProductionProgress() {
