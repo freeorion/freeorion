@@ -633,7 +633,7 @@ def get_fleet_system(fleet):
     """Return the current fleet location or the target system if currently on starlane.
 
     :param fleet:
-    :type fleet: target.TargetFleet | int
+    :type fleet: UniverseObject.TargetFleet | int
     :return: current system_id or target system_id if currently on starlane
     :rtype: int
     """
