@@ -33,7 +33,7 @@ def default_ship_stats():
     :return: Some weak standard ship
     :rtype: ShipCombatStats
     """
-    attacks = (4.0, 1)
+    attacks = (6.0, 1)
     structure = 15
     shields = 0
     fighters = 0
