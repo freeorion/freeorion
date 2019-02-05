@@ -8,7 +8,11 @@ from common.option_tools import get_option_dict, HANDLERS
 
 
 def init_handlers(config_str, search_dir):
-    handlers = split(get_option_dict()[HANDLERS])
+    try:
+        handlers = split(get_option_dict()[HANDLERS])
+    except KeyError:
+        error("Missing key in option dict: %s", HANDLERS)
+        handlers = []
 
     for handler in handlers:
         module = os.path.basename(handler)[:-3]
