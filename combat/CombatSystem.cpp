@@ -356,11 +356,17 @@ namespace {
                     boost::make_unique<Condition::Type>(OBJ_FIGHTER)),
                 boost::make_unique<Condition::And>(
                     boost::make_unique<Condition::Type>(OBJ_PLANET),
-                    boost::make_unique<Condition::Not>(
-                        boost::make_unique<Condition::MeterValue>(
-                            METER_DEFENSE,
-                            nullptr,
-                            boost::make_unique<ValueRef::Constant<double>>(0.0))))));
+                    boost::make_unique<Condition::Or>(
+                        boost::make_unique<Condition::Not>(
+                            boost::make_unique<Condition::MeterValue>(
+                                METER_DEFENSE,
+                                nullptr,
+                                boost::make_unique<ValueRef::Constant<double>>(0.0))),
+                        boost::make_unique<Condition::Not>(
+                            boost::make_unique<Condition::MeterValue>(
+                                METER_SHIELD,
+                                nullptr,
+                                boost::make_unique<ValueRef::Constant<double>>(0.0)))))));
 
 
     struct PartAttackInfo {
