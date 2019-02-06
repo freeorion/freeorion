@@ -10,12 +10,14 @@ target_compile_definitions(fo_unittest_parse
     PRIVATE
         -DFREEORION_BUILD_SERVER
         -DBOOST_TEST_DYN_LINK
+        -DBOOST_TEST_NO_LINK
 )
 
 target_include_directories(fo_unittest_parse
     PRIVATE
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/GG/
+        ${Boost_INCLUDE_DIRS}
 )
 
 target_link_libraries(fo_unittest_parse

@@ -14,7 +14,9 @@ target_compile_definitions(fo_systemtest_game
     PRIVATE
         -DFREEORION_BUILD_HUMAN
         -DBOOST_TEST_DYN_LINK
+        -DBOOST_TEST_NO_LINK
         -DBOOST_LOG_DYN_LINK
+        -DBOOST_LOG_NO_LINK
         -DBOOST_TEST_IGNORE_SIGCHLD
 )
 
@@ -22,6 +24,7 @@ target_include_directories(fo_systemtest_game
     PRIVATE
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/GG/
+        ${Boost_INCLUDE_DIRS}
 )
 
 target_link_libraries(fo_systemtest_game
