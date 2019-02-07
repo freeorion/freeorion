@@ -82,7 +82,7 @@ namespace parse { namespace detail {
         empire_meter_value2
             =   (
                 (omit_[tok.EmpireMeter_]
-                 >>  label(tok.Meter_))    >   tok.string
+                >>   label(tok.Meter_))  >   tok.string
                 >  -(label(tok.Low_)     >   double_rules.expr)
                 >  -(label(tok.High_)    >   double_rules.expr)
             ) [ _val = construct_movable_(new_<Condition::EmpireMeterValue>(
@@ -92,14 +92,14 @@ namespace parse { namespace detail {
             ;
 
         empire_meter_value
-            %=   empire_meter_value1
+            %=  empire_meter_value1
             |   empire_meter_value2
             ;
 
         start
-            %=   meter_value
-            |    ship_part_meter_value
-            |    empire_meter_value
+            %=  meter_value
+            |   ship_part_meter_value
+            |   empire_meter_value
             ;
 
         meter_value.name("MeterValue");

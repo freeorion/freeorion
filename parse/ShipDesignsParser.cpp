@@ -210,7 +210,6 @@ namespace {
         manifest_rule design_manifest;
         start_rule start;
     };
-
 }
 
 namespace parse {

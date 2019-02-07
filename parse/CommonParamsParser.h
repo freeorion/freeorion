@@ -19,7 +19,8 @@ namespace parse { namespace detail {
 
     struct common_params_rules {
         template <typename T>
-        using ConsumptionMapPackaged = std::map<T, std::pair<value_ref_payload<double>, boost::optional<condition_payload>>>;
+        using ConsumptionMapPackaged = std::map<T,
+            std::pair<value_ref_payload<double>, boost::optional<condition_payload>>>;
 
         using common_params_rule = rule<
             MovableEnvelope<CommonParams> (),

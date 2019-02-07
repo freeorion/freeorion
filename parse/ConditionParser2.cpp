@@ -46,7 +46,7 @@ namespace parse { namespace detail {
             ;
 
         enqueued
-            %=   enqueued1
+            %=  enqueued1
             |   enqueued3
             |   enqueued2 /* enqueued2 must come after enqueued3 or enqueued2 would always dominate because of its optional components*/
             |   enqueued4
@@ -54,7 +54,7 @@ namespace parse { namespace detail {
 
         enqueued1
             =   (   (omit_[tok.Enqueued_]
-                     >>  label(tok.Type_)   >>   omit_[tok.Building_])
+                    >>  label(tok.Type_)   >>   omit_[tok.Building_])
                     > -(label(tok.Name_)   >    string_grammar)
                     > -(label(tok.Empire_) >    int_rules.expr)
                     > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
@@ -69,7 +69,7 @@ namespace parse { namespace detail {
 
         enqueued2
             =   (   (omit_[tok.Enqueued_]
-                     >>  label(tok.Type_)   >>   omit_[tok.Ship_])
+                    >>  label(tok.Type_)   >>   omit_[tok.Ship_])
                     > -(label(tok.Design_) >    int_rules.expr)
                     > -(label(tok.Empire_) >    int_rules.expr)
                     > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
@@ -83,8 +83,8 @@ namespace parse { namespace detail {
 
         enqueued3
             =   (   (omit_[tok.Enqueued_]
-                     >>  label(tok.Type_)   >>   omit_[tok.Ship_]
-                     >>  label(tok.Name_)   ) >    string_grammar
+                    >>  label(tok.Type_)   >>   omit_[tok.Ship_]
+                    >>  label(tok.Name_) ) >    string_grammar
                     > -(label(tok.Empire_) >    int_rules.expr)
                     > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
                     > -(label(tok.High_)   >    castable_int_rules.flexible_int)
@@ -113,7 +113,7 @@ namespace parse { namespace detail {
             =   (   omit_[tok.DesignHasPart_]
                     > -(label(tok.Low_)   > castable_int_rules.flexible_int)
                     > -(label(tok.High_)  > castable_int_rules.flexible_int)
-                   >   label(tok.Name_)  > string_grammar
+                    >   label(tok.Name_)  > string_grammar
                 ) [ _val = construct_movable_(new_<Condition::DesignHasPart>(
                     deconstruct_movable_(_3, _pass),
                     deconstruct_movable_(_1, _pass),
@@ -124,7 +124,7 @@ namespace parse { namespace detail {
             =   (   omit_[tok.DesignHasPartClass_]
                     > -(label(tok.Low_)   > castable_int_rules.flexible_int)
                     > -(label(tok.High_)  > castable_int_rules.flexible_int)
-                   >   label(tok.Class_)  > ship_part_class_enum
+                    >   label(tok.Class_) > ship_part_class_enum
                 ) [ _val = construct_movable_(new_<Condition::DesignHasPartClass>(
                     _3,
                     deconstruct_movable_(_1, _pass),

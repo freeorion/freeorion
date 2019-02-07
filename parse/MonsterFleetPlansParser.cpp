@@ -27,7 +27,8 @@ namespace {
         const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
         const boost::optional<double>& spawn_rate,
         const boost::optional<int>& spawn_limit,
-        const boost::optional<parse::detail::condition_payload>& location, bool& pass)
+        const boost::optional<parse::detail::condition_payload>& location,
+        bool& pass)
     {
         plans.push_back(
             boost::make_unique<MonsterFleetPlan>(

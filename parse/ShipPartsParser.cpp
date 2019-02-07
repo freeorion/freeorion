@@ -31,10 +31,13 @@ namespace std {
 
 namespace parse {
     namespace detail {
-        typedef std::tuple<boost::optional<double>, boost::optional<double>, boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>>> OptCap_OptStat2_OptMoveableTargets;
+        typedef std::tuple<
+            boost::optional<double>,
+            boost::optional<double>,
+            boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>>
+        > OptCap_OptStat2_OptMoveableTargets;
     }
 }
-
 
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
@@ -106,20 +109,20 @@ namespace {
             qi::matches_type matches_;
 
             part_type
-                = ( tok.Part_
-                >   common_rules.more_common
-                >   label(tok.Class_)       > ship_part_class_enum
-                > -(  (label(tok.Capacity_)  > double_rule)
-                   | (label(tok.Damage_)    > double_rule)
+                = ( tok.Part_                                       // _1
+                >   common_rules.more_common                        // _2
+                >   label(tok.Class_)       > ship_part_class_enum  // _3
+                > -( (label(tok.Capacity_)  > double_rule)          // _4
+                   | (label(tok.Damage_)    > double_rule)          // _4
                    )
-                > -(  (label(tok.Damage_)    > double_rule )   // damage is secondary for fighters
-                   | (label(tok.Shots_)     > double_rule )   // shots is secondary for direct fire weapons
+                > -( (label(tok.Damage_)    > double_rule )         // _5 : damage is secondary stat for fighters
+                   | (label(tok.Shots_)     > double_rule )         // _5 : shots is secondary stat for direct fire weapons
                    )
-                > matches_[tok.NoDefaultCapacityEffect_]
-                > -(label(tok.CombatTargets_) > condition_parser)
-                > -(label(tok.MountableSlotTypes_) > one_or_more_slots)
-                >   common_rules.common
-                >   label(tok.Icon_)        > tok.string
+                > matches_[tok.NoDefaultCapacityEffect_]                // _6
+                > -(label(tok.CombatTargets_)       > condition_parser) // _7
+                > -(label(tok.MountableSlotTypes_)  > one_or_more_slots)// _8
+                >   common_rules.common                                 // _9
+                >   label(tok.Icon_)        > tok.string                // _10
                   ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
                       insert_parttype_(_r1, _3,
                                        construct<parse::detail::OptCap_OptStat2_OptMoveableTargets>(_4, _5, _7)
@@ -143,19 +146,19 @@ namespace {
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 
-        parse::detail::Labeller label;
-        const parse::conditions_parser_grammar condition_parser;
-        const parse::string_parser_grammar string_grammar;
-        parse::detail::tags_grammar tags_parser;
-        parse::detail::common_params_rules common_rules;
-        parse::ship_slot_enum_grammar  ship_slot_type_enum;
-        parse::ship_part_class_enum_grammar ship_part_class_enum;
-        parse::detail::double_grammar double_rule;
-        parse::detail::single_or_bracketed_repeat<parse::ship_slot_enum_grammar> one_or_more_slots;
-        part_type_rule                     part_type;
-        start_rule                         start;
+        parse::detail::Labeller                 label;
+        const parse::conditions_parser_grammar  condition_parser;
+        const parse::string_parser_grammar      string_grammar;
+        parse::detail::tags_grammar             tags_parser;
+        parse::detail::common_params_rules      common_rules;
+        parse::ship_slot_enum_grammar           ship_slot_type_enum;
+        parse::ship_part_class_enum_grammar     ship_part_class_enum;
+        parse::detail::double_grammar           double_rule;
+        parse::detail::single_or_bracketed_repeat<parse::ship_slot_enum_grammar>
+                                                one_or_more_slots;
+        part_type_rule                          part_type;
+        start_rule                              start;
     };
-
 }
 
 namespace parse {
