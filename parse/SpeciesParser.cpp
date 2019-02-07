@@ -35,29 +35,49 @@ namespace std {
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    void insert_species(std::map<std::string, std::unique_ptr<Species>>& species,
-                        const SpeciesStrings& strings,
-                        const boost::optional<std::vector<FocusType>>& foci,
-                        const boost::optional<std::string>& preferred_focus,
-                        const boost::optional<std::map<PlanetType, PlanetEnvironment>>& planet_environments,
-                        const boost::optional<parse::effects_group_payload>& effects,
-                        const SpeciesParams& params,
-                        const std::pair<std::set<std::string>, std::string>& tags_and_graphic,
-                        bool& pass)
+    struct SpeciesStuff {
+        SpeciesStuff(const boost::optional<std::vector<FocusType>>& foci_,
+                     const boost::optional<std::string>& preferred_focus_,
+                     const std::set<std::string>& tags_,
+                     const std::string& graphic_) :
+            foci(foci_),
+            preferred_focus(preferred_focus_),
+            tags(tags_),
+            graphic(graphic_)
+        {}
+
+        boost::optional<std::vector<FocusType>> foci;
+        boost::optional<std::string>            preferred_focus;
+        std::set<std::string>                   tags;
+        std::string                             graphic;
+    };
+
+
+    void insert_species(
+        std::map<std::string, std::unique_ptr<Species>>& species,
+        const SpeciesStrings& strings,
+        const boost::optional<std::map<PlanetType, PlanetEnvironment>>& planet_environments,
+        const boost::optional<parse::effects_group_payload>& effects,
+        boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>>& combat_targets,
+        const SpeciesParams& params,
+        const SpeciesStuff& foci_preferred_tags_graphic,
+        bool& pass)
     {
         auto species_ptr = boost::make_unique<Species>(
             strings,
-            (foci ? *foci : std::vector<FocusType>()),
-            (preferred_focus ? *preferred_focus : std::string()),
+            (foci_preferred_tags_graphic.foci ? *foci_preferred_tags_graphic.foci : std::vector<FocusType>()),
+            (foci_preferred_tags_graphic.preferred_focus ? *foci_preferred_tags_graphic.preferred_focus : std::string()),
             (planet_environments ? *planet_environments : std::map<PlanetType, PlanetEnvironment>()),
             (effects ? OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
+            (combat_targets ? (*combat_targets).OpenEnvelope(pass) : nullptr),
             params,
-            tags_and_graphic.first, tags_and_graphic.second);
+            foci_preferred_tags_graphic.tags,
+            foci_preferred_tags_graphic.graphic);
 
         species.insert(std::make_pair(species_ptr->Name(), std::move(species_ptr)));
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_species_, insert_species, 9)
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_species_, insert_species, 8)
 
 
     using start_rule_payload = std::pair<
@@ -94,6 +114,7 @@ namespace {
             qi::_6_type _6;
             qi::_7_type _7;
             qi::_8_type _8;
+            qi::_9_type _9;
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::_val_type _val;
@@ -146,20 +167,22 @@ namespace {
                 ;
 
             species
-                =  ( species_strings(_r1)
-                >    species_params
-                >    tags_parser
-                >   -foci
-                >   -as_string_[(label(tok.PreferredFocus_)        >> tok.string )]
-                >   -(label(tok.EffectsGroups_) > effects_group_grammar)
-                >   -(label(tok.Environments_)  > environment_map)
-                >    label(tok.Graphic_) > tok.string
-                   ) [ insert_species_(_r1, _1, _4, _5, _7, _6, _2,
-                                       construct<std::pair<std::set<std::string>, std::string>>(_3, _8), _pass) ]
+                = ( species_strings(_r1)// _1
+                >   species_params      // _2
+                >   tags_parser         // _3
+                >  -foci                // _4
+                >  -as_string_[(label(tok.PreferredFocus_)  >   tok.string )]           // _5
+                > -(label(tok.EffectsGroups_)               >   effects_group_grammar)  // _6
+                > -(label(tok.CombatTargets_)               >   condition_parser)       // _7
+                > -(label(tok.Environments_)                >   environment_map)        // _8
+                >   label(tok.Graphic_)                     >   tok.string              // _9
+                  ) [ insert_species_(_r1, _1, _8, _6, _7, _2,
+                                      construct<SpeciesStuff>(_4, _5, _3, _9),
+                                      _pass) ]
                 ;
 
             start
-                =   +species(_r1)
+                = +species(_r1)
                 ;
 
             focus_type.name("Focus");
@@ -186,19 +209,12 @@ namespace {
         }
 
         using focus_type_rule = parse::detail::rule<FocusType ()>;
-
         using foci_rule = parse::detail::rule<std::vector<FocusType> ()>;
-
         using environment_map_element_rule = parse::detail::rule<std::pair<PlanetType, PlanetEnvironment> ()>;
-
         using environment_map_rule = parse::detail::rule<std::map<PlanetType, PlanetEnvironment> ()>;
-
         using species_params_rule = parse::detail::rule<SpeciesParams ()>;
-
         using species_strings_rule = parse::detail::rule<SpeciesStrings (const start_rule_payload::first_type&)>;
-
         using species_rule = parse::detail::rule<void (start_rule_payload::first_type&)>;
-
         using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller                                    label;

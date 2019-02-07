@@ -25,7 +25,8 @@
 // FocusType                                   //
 /////////////////////////////////////////////////
 FocusType::FocusType(const std::string& name, const std::string& description,
-                     std::unique_ptr<Condition::ConditionBase>&& location, const std::string& graphic) :
+                     std::unique_ptr<Condition::ConditionBase>&& location,
+                     const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_location(std::move(location)),
@@ -93,6 +94,7 @@ Species::Species(const SpeciesStrings& strings,
                  const std::string& preferred_focus,
                  const std::map<PlanetType, PlanetEnvironment>& planet_environments,
                  std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+                 std::unique_ptr<Condition::ConditionBase>&& combat_targets,
                  const SpeciesParams& params,
                  const std::set<std::string>& tags,
                  const std::string& graphic) :
@@ -102,19 +104,18 @@ Species::Species(const SpeciesStrings& strings,
     m_foci(foci),
     m_preferred_focus(preferred_focus),
     m_planet_environments(planet_environments),
-    m_effects(),
-    m_location(),
+    m_combat_targets(std::move(combat_targets)),
     m_playable(params.playable),
     m_native(params.native),
     m_can_colonize(params.can_colonize),
     m_can_produce_ships(params.can_produce_ships),
-    m_tags(),
     m_graphic(graphic)
 {
     for (auto&& effect : effects)
         m_effects.emplace_back(std::move(effect));
 
     Init();
+
     for (const std::string& tag : tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
 }
@@ -123,11 +124,38 @@ Species::~Species()
 {}
 
 void Species::Init() {
-    if (m_location)
-        m_location->SetTopLevelContent(this->m_name);
     for (auto& effect : m_effects) {
         effect->SetTopLevelContent(m_name);
     }
+
+    if (!m_location) {
+        // set up a Condition structure to match popcenters that have
+        // (not uninhabitable) environment for this species
+        std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetEnvironment>>> environments_vec;
+        environments_vec.push_back(
+            boost::make_unique<ValueRef::Constant<PlanetEnvironment>>( ::PE_UNINHABITABLE));
+        auto this_species_name_ref =
+            boost::make_unique<ValueRef::Constant<std::string>>(m_name);  // m_name specifies this species
+        auto enviro_cond = std::unique_ptr<Condition::ConditionBase>(
+            boost::make_unique<Condition::Not>(
+                std::unique_ptr<Condition::ConditionBase>(
+                    boost::make_unique<Condition::PlanetEnvironment>(
+                        std::move(environments_vec), std::move(this_species_name_ref)))));
+
+        auto type_cond = std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::Type>(
+            boost::make_unique<ValueRef::Constant<UniverseObjectType>>( ::OBJ_POP_CENTER)));
+
+        std::vector<std::unique_ptr<Condition::ConditionBase>> operands;
+        operands.push_back(std::move(enviro_cond));
+        operands.push_back(std::move(type_cond));
+
+        m_location = std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::And>(std::move(operands)));
+    }
+    m_location->SetTopLevelContent(m_name);
+
+    if (!m_combat_targets)
+        m_combat_targets = boost::make_unique<Condition::All>();
+    m_combat_targets->SetTopLevelContent(m_name);
 
     TraceLogger() << "Species::Init: " << Dump();
 }
@@ -163,6 +191,8 @@ std::string Species::Dump(unsigned short ntabs) const {
             retval += effect->Dump(ntabs+2);
         retval += DumpIndent(ntabs+1) + "]\n";
     }
+    if (m_combat_targets)
+        retval += DumpIndent(ntabs+1) + "combattargets = " + m_combat_targets->Dump(ntabs+2);
     if (m_planet_environments.size() == 1) {
         retval += DumpIndent(ntabs+1) + "environments =\n";
         retval += DumpIndent(ntabs+2) + "type = " + PlanetTypeToString(m_planet_environments.begin()->first)
@@ -204,32 +234,6 @@ std::string Species::GameplayDescription() const {
     return result.str();
 }
 
-const Condition::ConditionBase* Species::Location() const {
-    if (!m_location) {
-        // set up a Condition structure to match popcenters that have (not uninhabitable) environment for this species
-        std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetEnvironment>>> environments_vec;
-        environments_vec.push_back(
-            boost::make_unique<ValueRef::Constant<PlanetEnvironment>>( ::PE_UNINHABITABLE));
-        auto this_species_name_ref =
-            boost::make_unique<ValueRef::Constant<std::string>>(m_name);  // m_name specifies this species
-        auto enviro_cond = std::unique_ptr<Condition::ConditionBase>(
-            boost::make_unique<Condition::Not>(
-                std::unique_ptr<Condition::ConditionBase>(
-                    boost::make_unique<Condition::PlanetEnvironment>(
-                        std::move(environments_vec), std::move(this_species_name_ref)))));
-
-        auto type_cond = std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::Type>(
-            boost::make_unique<ValueRef::Constant<UniverseObjectType>>( ::OBJ_POP_CENTER)));
-
-        std::vector<std::unique_ptr<Condition::ConditionBase>> operands;
-        operands.push_back(std::move(enviro_cond));
-        operands.push_back(std::move(type_cond));
-
-        m_location = std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::And>(std::move(operands)));
-    }
-    return m_location.get();
-}
-
 PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {
     auto it = m_planet_environments.find(planet_type);
     if (it == m_planet_environments.end())
@@ -253,8 +257,7 @@ namespace {
     }
 }
 
-PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const
-{
+PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const {
     // some types can't be terraformed
     if (initial_planet_type == PT_GASGIANT)
         return PT_GASGIANT;
@@ -352,6 +355,7 @@ unsigned int Species::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_foci);
     CheckSums::CheckSumCombine(retval, m_preferred_focus);
     CheckSums::CheckSumCombine(retval, m_planet_environments);
+    CheckSums::CheckSumCombine(retval, m_combat_targets);
     CheckSums::CheckSumCombine(retval, m_effects);
     CheckSums::CheckSumCombine(retval, m_location);
     CheckSums::CheckSumCombine(retval, m_playable);

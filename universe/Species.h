@@ -45,7 +45,8 @@ public:
     {}
 
     FocusType(const std::string& name, const std::string& description,
-              std::unique_ptr<Condition::ConditionBase>&& location, const std::string& graphic);
+              std::unique_ptr<Condition::ConditionBase>&& location,
+              const std::string& graphic);
 
     ~FocusType();
     //@}
@@ -117,6 +118,7 @@ public:
             const std::string& preferred_focus,
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
             std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+            std::unique_ptr<Condition::ConditionBase>&& combat_targets,
             const SpeciesParams& params,
             const std::set<std::string>& tags,
             const std::string& graphic);
@@ -134,7 +136,8 @@ public:
     const std::map<int, double>&            EmpireOpinions() const      { return m_empire_opinions; }       ///< returns the positive/negative opinions of this species about empires
     const std::map<std::string, double>&    OtherSpeciesOpinions() const{ return m_other_species_opinions; }///< returns the positive/negative opinions of this species about other species
 
-    const Condition::ConditionBase* Location() const;
+    const Condition::ConditionBase*         Location() const            { return m_location.get(); }        ///< returns the condition determining what planets on which this species may spawn
+    const Condition::ConditionBase*         CombatTargets() const       { return m_combat_targets.get(); }  ///< returns the condition for possible targets. may be nullptr if no condition was specified.
 
     std::string                     Dump(unsigned short ntabs = 0) const;                                           ///< returns a data file format representation of this object
     const std::vector<FocusType>&   Foci() const            { return m_foci; }              ///< returns the focus types this species can use
@@ -189,9 +192,9 @@ private:
     std::string                             m_preferred_focus;
     std::map<PlanetType, PlanetEnvironment> m_planet_environments;
 
-    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
-
-    mutable std::unique_ptr<Condition::ConditionBase>       m_location;
+    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
+    std::unique_ptr<Condition::ConditionBase>           m_location;
+    std::unique_ptr<Condition::ConditionBase>           m_combat_targets;
 
     bool                                    m_playable;
     bool                                    m_native;
