@@ -24,6 +24,9 @@ COMBAT_TARGETS_NOT_DESTROYED_SHIP
 COMBAT_TARGETS_PLANET_WITH_DEFENSE
 '''         And [
             Planet
-            Not Defense high = 0
+            Or [
+               Not Shields high = 0
+               Not Defense high = 0
+            ]
         ]
 '''
