@@ -84,11 +84,7 @@ FO_COMMON_API std::string ConditionDescription(const std::vector<ConditionBase*>
 
 /** The base class for all Conditions. */
 struct FO_COMMON_API ConditionBase {
-    ConditionBase() :
-        m_root_candidate_invariant(UNKNOWN_INVARIANCE),
-        m_target_invariant(UNKNOWN_INVARIANCE),
-        m_source_invariant(UNKNOWN_INVARIANCE)
-    {}
+    ConditionBase() {}
     virtual ~ConditionBase();
 
     virtual bool operator==(const ConditionBase& rhs) const;
@@ -147,9 +143,9 @@ struct FO_COMMON_API ConditionBase {
     { return 0; }
 
 protected:
-    mutable Invariance m_root_candidate_invariant;
-    mutable Invariance m_target_invariant;
-    mutable Invariance m_source_invariant;
+    mutable Invariance m_root_candidate_invariant = UNKNOWN_INVARIANCE;
+    mutable Invariance m_target_invariant = UNKNOWN_INVARIANCE;
+    mutable Invariance m_source_invariant = UNKNOWN_INVARIANCE;
 
 private:
     struct MatchHelper;
@@ -256,7 +252,7 @@ struct FO_COMMON_API SortedNumberOf final : public ConditionBase {
 private:
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_number;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_sort_key;
-    SortingMethod m_sorting_method;
+    SortingMethod m_sorting_method = SORT_RANDOM;
     std::unique_ptr<ConditionBase> m_condition;
 
     friend class boost::serialization::access;

@@ -141,9 +141,10 @@ namespace {
         return retval;
     }
 
-    std::map<std::string, bool> ConditionDescriptionAndTest(const std::vector<Condition::ConditionBase*>& conditions,
-                                                            const ScriptingContext& parent_context,
-                                                            std::shared_ptr<const UniverseObject> candidate_object/* = nullptr*/)
+    std::map<std::string, bool> ConditionDescriptionAndTest(
+        const std::vector<Condition::ConditionBase*>& conditions,
+        const ScriptingContext& parent_context,
+        std::shared_ptr<const UniverseObject> candidate_object/* = nullptr*/)
     {
         std::map<std::string, bool> retval;
 
@@ -638,8 +639,6 @@ unsigned int Turn::GetCheckSum() const {
 SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRefBase<int>>&& number,
                                std::unique_ptr<ConditionBase>&& condition) :
     m_number(std::move(number)),
-    m_sort_key(nullptr),
-    m_sorting_method(SORT_RANDOM),
     m_condition(std::move(condition))
 {}
 
@@ -673,9 +672,8 @@ bool SortedNumberOf::operator==(const ConditionBase& rhs) const {
 
 namespace {
     /** Random number genrator function to use with random_shuffle */
-    int CustomRandInt(int max_plus_one) {
-        return RandSmallInt(0, max_plus_one - 1);
-    }
+    int CustomRandInt(int max_plus_one)
+    { return RandSmallInt(0, max_plus_one - 1); }
     int (*CRI)(int) = CustomRandInt;
 
     /** Transfers the indicated \a number of objects, randomly selected from from_set to to_set */
@@ -758,6 +756,7 @@ namespace {
                         return;
                 }
             }
+
         } else if (sorting_method == SORT_MAX) {
             // move (number) objects with largest sort key (at end of map)
             // from the from_set into the to_set.
@@ -775,17 +774,19 @@ namespace {
                         return;
                 }
             }
+
         } else if (sorting_method == SORT_MODE) {
             // compile histogram of of number of times each sort key occurs
             std::map<float, unsigned int> histogram;
             for (const auto& entry : sort_key_objects) {
                 histogram[entry.first]++;
             }
+
             // invert histogram to index by number of occurances
             std::multimap<unsigned int, float> inv_histogram;
-            for (const auto& entry : histogram) {
+            for (const auto& entry : histogram)
                 inv_histogram.insert({entry.second, entry.first});
-            }
+
             // reverse-loop through inverted histogram to find which sort keys
             // occurred most frequently, and transfer objects with those sort
             // keys from from_set to to_set.
@@ -813,8 +814,9 @@ namespace {
                     }
                 }
             }
+
         } else {
-            DebugLogger() << "TransferSortedObjects given unknown sort method";
+             ErrorLogger() << "TransferSortedObjects given unknown sort method";
         }
     }
 }
