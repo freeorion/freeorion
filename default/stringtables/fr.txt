@@ -7260,7 +7260,8 @@ SP_CHATO  # translated
 Chato
 
 SP_CHATO_GAMEPLAY_DESC
-'''Entités cristallines sessiles chevauchant des animaux nommés Gormoshk.
+'''<img src="species/preview/chato.png"></img>
+Entités cristallines sessiles chevauchant des animaux nommés Gormoshk.
 Préfèrent les Planètes [[PT_TOXIC]]s.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 '''
@@ -7271,6 +7272,7 @@ Les Chato'matou'Gormoshk sont en réalité deux espèces reliées, bien qu'on ne
 
 Structure sociale:
 Dans la société Chato'matou, l'âge est le paramètre primordial, étant donné leur quasi-immortalité. Chaque commandement des anciens est respecté à la lettre et désobéir à un ancien est le plus grand des crimes au sein de la société Chato'matou. Ces organismes ont développé un système rendant possible la transmission instantanée de signaux à travers une colonie entière, leur permettant ainsi de communiquer entre eux à une vitesse proche de celle de la lumière. Cela améliore grandement les capacités mentales de l'espèce, puisque toutes nouvelles idées et théories peuvent être propagées instantanément à toute la colonie. Les Gormoshk sont considérés comme des montures de choix et sont la plupart du temps bien traités, mais restent toutefois de simples animaux pour leurs maîtres.
+<img src="species/chato.png"></img>
 '''
 
 SP_TRITH  # translated
