@@ -7297,7 +7297,8 @@ SP_CHATO
 Chato
 
 SP_CHATO_GAMEPLAY_DESC
-'''Sessile crystalline entities which ride the animal Gormoshk.
+'''<img src="encyclopedia/species/chato_banner.png"></img>
+Sessile crystalline entities which ride the animal Gormoshk.
 Prefer [[PT_TOXIC]] planets.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 '''
@@ -7308,6 +7309,8 @@ The Chato'matou'Gormoshk are actually two species together, however it is not en
 
 Social Structure:
 In Chato'matou society, age is the most important factor as they are nearly immortal. Every command the elders issue is obeyed at once and to disobey an elder is the greatest crime in Chato'matou society. They developed a system to transmit signals without delay throughout an entire colony, enabling them to converse with near the speed of light. This greatly enhanced the species mental capabilities, as all new ideas and theories could be instantly processed throughout the colony. The Gormoshk are valued as mounts and well cared for under normal circumstances, however they are also seen mostly as animals.
+
+<img src="encyclopedia/species/chato.png"></img>
 '''
 
 SP_TRITH
@@ -7844,7 +7847,8 @@ SP_ABADDONI
 Abaddoni
 
 SP_ABADDONI_GAMEPLAY_DESC
-'''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created.
+'''<img src="encyclopedia/species/abaddoni_banner.png"></img>
+A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created.
 Prefers [[PT_INFERNO]] planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
