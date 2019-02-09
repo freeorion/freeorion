@@ -1384,6 +1384,12 @@ Set the minimum number of human players required to start a multiplayer game.
 OPTIONS_DB_MP_HUMAN_MAX
 Limit the number of human players allowed in a multiplayer game. Set to -1 for unlimited.
 
+OPTIONS_DB_MP_CONN_HUMAN_MIN
+Server stop the playing game if count of active human player will be less than this value.
+
+OPTIONS_DB_MP_DISCONN_HUMAN_MAX
+Server stop the playing game if count of disconnected human player from non-eliminated empires exceeds or equals this value. Disabled if 0.
+
 OPTIONS_DB_COOKIES_EXPIRE
 Count of minutes after the cookie record will be considered expired.
 

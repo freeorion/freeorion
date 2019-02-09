@@ -241,50 +241,79 @@ ServerApp& ServerFSM::Server()
 void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     PlayerConnectionPtr& player_connection = d.m_player_connection;
     bool must_quit = false;
+    int id = Networking::INVALID_PLAYER_ID;
 
     if (player_connection->IsEstablished()) {
         // update cookie expire date
         // so player could reconnect within 15 minutes
         m_server.Networking().UpdateCookie(player_connection->Cookie());
 
-        int id = player_connection->PlayerID();
+        id = player_connection->PlayerID();
         DebugLogger(FSM) << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << id
                          << ", named \"" << player_connection->PlayerName() << "\".";
 
-        // Did an active player (AI or Human) disconnect?  If so, game is over
-        if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-            player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-        {
-            // can continue.  Select new host if necessary.
-            if (m_server.m_networking.PlayerIsHost(id))
-                m_server.SelectNewHost();
-
-        } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-                   player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER)
-        {
+        if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
+            // AI could safely disconnect only if empire was eliminated
+            const Empire* empire = GetEmpire(m_server.PlayerEmpireID(id));
+            if (empire && !empire->Eliminated()) {
+                must_quit = true;
+                // AI abnormally disconnected during a regular game
+                ErrorLogger(FSM) << "AI Player #" << id << ", named \""
+                                 << player_connection->PlayerName() << "\"quit before empire was eliminated.";
+            }
+        } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             const Empire* empire = GetEmpire(m_server.PlayerEmpireID(id));
             // eliminated and non-empire players can leave safely
             if (empire && !empire->Eliminated()) {
-                must_quit = true;
                 // player abnormally disconnected during a regular game
-                ErrorLogger(FSM) << "Player #" << id << ", named \""
+                WarnLogger(FSM) << "Player #" << id << ", named \""
                                  << player_connection->PlayerName() << "\"quit before empire was eliminated.";
-            } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER && !empire) {
-                // should be in ingame lobby
-                // update ingame lobby
-                UpdateIngameLobby();
+                // detach player from empire
+                m_server.DropPlayerEmpireLink(id);
             }
         }
     } else {
         DebugLogger(FSM) << "Client quit before id was assigned.";
     }
 
-    // independently of everything else, if there are no humans left, it's time to terminate
-    if (m_server.m_networking.empty()
-        || m_server.m_ai_client_processes.size() == m_server.m_networking.NumEstablishedPlayers())
-    {
+    int connected_count = 0;
+    int disconnected_count = 0;
+    for (const auto& empire : Empires()) {
+        if (!empire.second->Eliminated()) {
+            switch (m_server.GetEmpireClientType(empire.first)) {
+            case Networking::CLIENT_TYPE_HUMAN_PLAYER:
+                connected_count++;
+                break;
+            case Networking::INVALID_CLIENT_TYPE:
+                disconnected_count++;
+                break;
+            case Networking::CLIENT_TYPE_AI_PLAYER:
+                // ignore
+                break;
+            default:
+                ErrorLogger(FSM) << "Incorrect client type " << m_server.GetEmpireClientType(empire.first)
+                                 << " for empire #" << empire.first;
+                break;
+            }
+        }
+    }
+
+    // Stop server if connected human player count is less than limit
+    if (connected_count < GetOptionsDB().Get<int>("network.server.conn-human.min")) {
+        ErrorLogger(FSM) << "Too low connected human player " << connected_count
+                         << " expected " << GetOptionsDB().Get<int>("network.server.conn-human.min")
+                         << "; server terminating.";
         must_quit = true;
-        DebugLogger(FSM) << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
+    }
+
+    // Stop server if disconnected human player count exceeds limit and limit is set
+    if (GetOptionsDB().Get<int>("network.server.disconn-human.max") > 0 &&
+        disconnected_count >= GetOptionsDB().Get<int>("network.server.disconn-human.max"))
+    {
+        ErrorLogger(FSM) << "Too high disconnected human player " << disconnected_count
+                         << " expected " << GetOptionsDB().Get<int>("network.server.disconn-human.max")
+                         << "; server terminating.";
+        must_quit = true;
     }
 
     m_server.Networking().CleanupCookies();
@@ -296,6 +325,14 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         } else {
             m_server.m_fsm->process_event(ShutdownServer());
         }
+    } else {
+        // can continue.  Select new host if necessary.
+        if (m_server.m_networking.PlayerIsHost(id))
+            m_server.SelectNewHost();
+
+        // player list changed
+        // notify those in ingame lobby
+        UpdateIngameLobby();
     }
 }
 
