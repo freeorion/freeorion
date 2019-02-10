@@ -621,7 +621,8 @@ boost::uuids::uuid ServerNetworking::GenerateCookie(const std::string& player_na
     boost::uuids::uuid cookie = boost::uuids::random_generator()();
     m_cookies.erase(cookie); // remove previous cookie if exists
     m_cookies.emplace(cookie, CookieData(player_name,
-                                         boost::posix_time::second_clock::local_time() + boost::posix_time::minutes(15),
+                                         boost::posix_time::second_clock::local_time() +
+                                             boost::posix_time::minutes(GetOptionsDB().Get<int>("network.server.cookies.expire-minutes")),
                                          roles,
                                          authenticated));
     return cookie;
