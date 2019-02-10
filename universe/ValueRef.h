@@ -392,7 +392,6 @@ private:
 template <class FromType>
 struct FO_COMMON_API StringCast final : public Variable<std::string>
 {
-    StringCast(std::unique_ptr<Variable<FromType>>&& value_ref);
     StringCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref);
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
@@ -422,7 +421,6 @@ private:
   * and returns the UserString equivalent(s). */
 template <class FromType>
 struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
-    explicit UserStringLookup(std::unique_ptr<Variable<FromType>>&& value_ref);
     explicit UserStringLookup(std::unique_ptr<ValueRefBase<FromType>>&& value_ref);
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
@@ -1581,16 +1579,19 @@ void StaticCast<FromType, ToType>::serialize(Archive& ar, const unsigned int ver
 // StringCast                                            //
 ///////////////////////////////////////////////////////////
 template <class FromType>
-StringCast<FromType>::StringCast(std::unique_ptr<Variable<FromType>>&& value_ref) :
-    Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
-    m_value_ref(std::move(value_ref))
-{}
-
-template <class FromType>
 StringCast<FromType>::StringCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
-{}
+{
+    auto raw_ref_ptr = m_value_ref.get();
+    // if looking up a the results of ValueRef::Variable::Eval, can copy that
+    // ValueRef's internals to expose the reference type and property name from
+    // this ValueRef
+    if (auto var_ref = dynamic_cast<Variable<FromType>*>(raw_ref_ptr)) {
+        this->m_ref_type = var_ref->GetReferenceType();
+        this->m_property_name = var_ref->PropertyName();
+    }
+}
 
 template <class FromType>
 bool StringCast<FromType>::operator==(const ValueRefBase<std::string>& rhs) const
@@ -1689,16 +1690,19 @@ void StringCast<FromType>::serialize(Archive& ar, const unsigned int version)
 // UserStringLookup                                      //
 ///////////////////////////////////////////////////////////
 template <class FromType>
-UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<Variable<FromType>>&& value_ref) :
-    Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
-    m_value_ref(std::move(value_ref))
-{}
-
-template <class FromType>
 UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRefBase<FromType>>&& value_ref) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
-{}
+{
+    auto raw_ref_ptr = m_value_ref.get();
+    // if looking up a the results of ValueRef::Variable::Eval, can copy that
+    // ValueRef's internals to expose the reference type and property name from
+    // this ValueRef
+    if (auto var_ref = dynamic_cast<Variable<FromType>*>(raw_ref_ptr)) {
+        this->m_ref_type = var_ref->GetReferenceType();
+        this->m_property_name = var_ref->PropertyName();
+    }
+}
 
 template <class FromType>
 bool UserStringLookup<FromType>::operator==(const ValueRefBase<std::string>& rhs) const {
@@ -1706,8 +1710,7 @@ bool UserStringLookup<FromType>::operator==(const ValueRefBase<std::string>& rhs
         return true;
     if (typeid(rhs) != typeid(*this))
         return false;
-    const UserStringLookup& rhs_ =
-        static_cast<const UserStringLookup&>(rhs);
+    const UserStringLookup& rhs_ = static_cast<const UserStringLookup&>(rhs);
 
     if (m_value_ref == rhs_.m_value_ref) {
         // check next member
