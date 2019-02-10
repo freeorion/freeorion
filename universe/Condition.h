@@ -399,7 +399,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** There is no LocalCandidate condition.  To match any local candidate object,
+/** There is no LocalCandidate condition. To match any local candidate object,
   * use the All condition. */
 
 /** Matches the target of an effect being executed. */
@@ -1887,7 +1887,10 @@ private:
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API And final : public ConditionBase {
     explicit And(std::vector<std::unique_ptr<ConditionBase>>&& operands);
-    And(std::unique_ptr<ConditionBase>&& operand1, std::unique_ptr<ConditionBase>&& operand2);
+    And(std::unique_ptr<ConditionBase>&& operand1,
+        std::unique_ptr<ConditionBase>&& operand2,
+        std::unique_ptr<ConditionBase>&& operand3 = nullptr,
+        std::unique_ptr<ConditionBase>&& operand4 = nullptr);
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1914,7 +1917,10 @@ private:
 /** Matches all objects that match at least one Condition in \a operands. */
 struct FO_COMMON_API Or final : public ConditionBase {
     explicit Or(std::vector<std::unique_ptr<ConditionBase>>&& operands);
-    Or(std::unique_ptr<ConditionBase>&& operand1, std::unique_ptr<ConditionBase>&& operand2);
+    Or(std::unique_ptr<ConditionBase>&& operand1,
+       std::unique_ptr<ConditionBase>&& operand2,
+       std::unique_ptr<ConditionBase>&& operand3 = nullptr,
+       std::unique_ptr<ConditionBase>&& operand4 = nullptr);
 
     bool operator==(const ConditionBase& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,

@@ -9480,12 +9480,19 @@ And::And(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
     m_operands(std::move(operands))
 {}
 
-And::And(std::unique_ptr<ConditionBase>&& operand1, std::unique_ptr<ConditionBase>&& operand2) :
+And::And(std::unique_ptr<ConditionBase>&& operand1, std::unique_ptr<ConditionBase>&& operand2,
+         std::unique_ptr<ConditionBase>&& operand3, std::unique_ptr<ConditionBase>&& operand4) :
     ConditionBase()
 {
     // would prefer to initialize the vector m_operands in the initializer list, but this is difficult with non-copyable unique_ptr parameters
-    m_operands.push_back(std::move(operand1));
-    m_operands.push_back(std::move(operand2));
+    if (operand1)
+        m_operands.push_back(std::move(operand1));
+    if (operand2)
+        m_operands.push_back(std::move(operand2));
+    if (operand3)
+        m_operands.push_back(std::move(operand3));
+    if (operand4)
+        m_operands.push_back(std::move(operand4));
 }
 
 bool And::operator==(const ConditionBase& rhs) const {
@@ -9676,12 +9683,21 @@ Or::Or(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
     m_operands(std::move(operands))
 {}
 
-Or::Or(std::unique_ptr<ConditionBase>&& operand1, std::unique_ptr<ConditionBase>&& operand2) :
+Or::Or(std::unique_ptr<ConditionBase>&& operand1,
+       std::unique_ptr<ConditionBase>&& operand2,
+       std::unique_ptr<ConditionBase>&& operand3,
+       std::unique_ptr<ConditionBase>&& operand4) :
     ConditionBase()
 {
     // would prefer to initialize the vector m_operands in the initializer list, but this is difficult with non-copyable unique_ptr parameters
-    m_operands.push_back(std::move(operand1));
-    m_operands.push_back(std::move(operand2));
+    if (operand1)
+        m_operands.push_back(std::move(operand1));
+    if (operand2)
+        m_operands.push_back(std::move(operand2));
+    if (operand3)
+        m_operands.push_back(std::move(operand3));
+    if (operand4)
+        m_operands.push_back(std::move(operand4));
 }
 
 bool Or::operator==(const ConditionBase& rhs) const {

@@ -261,15 +261,14 @@ namespace {
         return new Condition::Or(
                 // unowned candidate object case
                 boost::make_unique<Condition::And>(
-                    boost::make_unique<Condition::And>(
-                        boost::make_unique<Condition::EmpireAffiliation>(AFFIL_NONE),   // unowned candidate object
+                    boost::make_unique<Condition::EmpireAffiliation>(AFFIL_NONE),   // unowned candidate object
 
-                        boost::make_unique<Condition::ValueTest>(           // when source object is owned (ie. not the same owner as the candidate object)
-                            boost::make_unique<ValueRef::Variable<int>>(
-                                ValueRef::SOURCE_REFERENCE, "Owner"),
-                            Condition::NOT_EQUAL,
-                            boost::make_unique<ValueRef::Variable<int>>(
-                                ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Owner"))),
+                    boost::make_unique<Condition::ValueTest>(           // when source object is owned (ie. not the same owner as the candidate object)
+                        boost::make_unique<ValueRef::Variable<int>>(
+                            ValueRef::SOURCE_REFERENCE, "Owner"),
+                        Condition::NOT_EQUAL,
+                        boost::make_unique<ValueRef::Variable<int>>(
+                            ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Owner")),
 
                     boost::make_unique<Condition::VisibleToEmpire>(     // when source object's owner empire can detect the candidate object
                         boost::make_unique<ValueRef::Variable<int>>(    // source's owner empire id
@@ -277,12 +276,11 @@ namespace {
 
                 // owned candidate object case
                 boost::make_unique<Condition::And>(
-                    boost::make_unique<Condition::And>(
-                        boost::make_unique<Condition::EmpireAffiliation>(AFFIL_ANY),    // candidate is owned by an empire
+                    boost::make_unique<Condition::EmpireAffiliation>(AFFIL_ANY),    // candidate is owned by an empire
 
-                        boost::make_unique<Condition::EmpireAffiliation>(               // candidate is owned by enemy of source's owner
-                            boost::make_unique<ValueRef::Variable<int>>(
-                                ValueRef::SOURCE_REFERENCE, "Owner"), AFFIL_ENEMY)),
+                    boost::make_unique<Condition::EmpireAffiliation>(               // candidate is owned by enemy of source's owner
+                        boost::make_unique<ValueRef::Variable<int>>(
+                            ValueRef::SOURCE_REFERENCE, "Owner"), AFFIL_ENEMY),
 
                     boost::make_unique<Condition::VisibleToEmpire>(     // when source empire can detect the candidate object
                         boost::make_unique<ValueRef::Variable<int>>(    // source's owner empire id
@@ -306,13 +304,14 @@ namespace {
 
     const std::unique_ptr<Condition::ConditionBase> is_enemy_ship =
         boost::make_unique<Condition::And>(
-            boost::make_unique<Condition::And>(
-                    boost::make_unique<Condition::Type>(OBJ_SHIP),
-                    boost::make_unique<Condition::Not>(
-                        boost::make_unique<Condition::MeterValue>(
-                            METER_STRUCTURE,
-                            nullptr,
-                            boost::make_unique<ValueRef::Constant<double>>(0.0)))),
+            boost::make_unique<Condition::Type>(OBJ_SHIP),
+
+            boost::make_unique<Condition::Not>(
+                boost::make_unique<Condition::MeterValue>(
+                    METER_STRUCTURE,
+                    nullptr,
+                    boost::make_unique<ValueRef::Constant<double>>(0.0))),
+
             std::unique_ptr<Condition::ConditionBase>{VisibleEnemyOfOwnerCondition()});
 
     const std::unique_ptr<Condition::ConditionBase> is_enemy_ship_fighter_or_armed_planet =
@@ -328,6 +327,7 @@ namespace {
                                 nullptr,
                                 boost::make_unique<ValueRef::Constant<double>>(0.0)))),
                     boost::make_unique<Condition::Type>(OBJ_FIGHTER)),
+
                 boost::make_unique<Condition::And>(
                     boost::make_unique<Condition::Type>(OBJ_PLANET),
                     boost::make_unique<Condition::Or>(
