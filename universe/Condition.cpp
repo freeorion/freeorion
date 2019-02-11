@@ -9340,7 +9340,7 @@ namespace {
 }
 
 CombatTarget::CombatTarget(ContentType content_type,
-                   std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+                           std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
     ConditionBase(),
     m_name(std::move(name)),
     m_content_type(content_type)
@@ -9363,8 +9363,8 @@ bool CombatTarget::operator==(const ConditionBase& rhs) const {
 }
 
 void CombatTarget::Eval(const ScriptingContext& parent_context,
-                    ObjectSet& matches, ObjectSet& non_matches,
-                    SearchDomain search_domain/* = NON_MATCHES*/) const
+                        ObjectSet& matches, ObjectSet& non_matches,
+                        SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ((!m_name || m_name->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
@@ -9382,8 +9382,9 @@ void CombatTarget::Eval(const ScriptingContext& parent_context,
             condition->Eval(parent_context, matches, non_matches, search_domain);
         } else {
             // if somehow in a cyclical loop because some content's location
-            // was defined as CombatTarget or if there is no location
-            // condition, match nothing
+            // was defined as CombatTarget or if there is no available combat
+            // targetting condition (eg. in valid content type, or name of
+            // a bit of content that doesn't exist), match nothing
             if (search_domain == MATCHES) {
                 non_matches.insert(non_matches.end(), matches.begin(), matches.end());
                 matches.clear();
