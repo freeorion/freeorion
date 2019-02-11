@@ -192,7 +192,7 @@ std::string Species::Dump(unsigned short ntabs) const {
         retval += DumpIndent(ntabs+1) + "]\n";
     }
     if (m_combat_targets)
-        retval += DumpIndent(ntabs+1) + "combattargets = " + m_combat_targets->Dump(ntabs+2);
+        retval += DumpIndent(ntabs+1) + "combatTargets = " + m_combat_targets->Dump(ntabs+2);
     if (m_planet_environments.size() == 1) {
         retval += DumpIndent(ntabs+1) + "environments =\n";
         retval += DumpIndent(ntabs+2) + "type = " + PlanetTypeToString(m_planet_environments.begin()->first)
