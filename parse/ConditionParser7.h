@@ -15,8 +15,9 @@ namespace parse { namespace detail {
         condition_parser_rule  contains;
         condition_parser_rule  contained_by;
         condition_parser_rule  star_type;
-        rule<Condition::ContentType ()> building_type;
+        rule<Condition::ContentType ()> content_type;
         condition_parser_rule  location;
+        condition_parser_rule  combat_targets;
         condition_parser_rule  owner_has_shippart_available;
         condition_parser_rule  start;
         star_type_parser_rules star_type_rules;

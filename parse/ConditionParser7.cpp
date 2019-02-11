@@ -68,24 +68,32 @@ namespace parse { namespace detail {
             [ _val = construct_movable_(new_<Condition::StarType>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
-        building_type =
-            tok.Building_   [ _val = Condition::CONTENT_BUILDING ]
+        content_type =
+                tok.Building_   [ _val = Condition::CONTENT_BUILDING ]
             |   tok.Species_    [ _val = Condition::CONTENT_SPECIES ]
             |   tok.Hull_       [ _val = Condition::CONTENT_SHIP_HULL ]
             |   tok.Part_       [ _val = Condition::CONTENT_SHIP_PART ]
             |   tok.Special_    [ _val = Condition::CONTENT_SPECIAL ]
             |   tok.Focus_      [ _val = Condition::CONTENT_FOCUS ];
 
-
         location
             =   (omit_[tok.Location_]
-                 >    label(tok.Type_) > building_type
-                 >    label(tok.Name_)   > string_grammar
-                 >  -(label(tok.Name_)   > string_grammar))
+                 >    label(tok.Type_)  >   content_type
+                 >    label(tok.Name_)  >   string_grammar
+                 >  -(label(tok.Name_)  >   string_grammar))
             [ _val = construct_movable_(new_<Condition::Location>(
                     _1,
                     deconstruct_movable_(_2, _pass),
                     deconstruct_movable_(_3, _pass))) ]
+            ;
+
+        combat_targets
+            =   (omit_[tok.CombatTargets_]
+                 >    label(tok.Type_)  >   content_type
+                 >    label(tok.Name_)  >   string_grammar)
+            [ _val = construct_movable_(new_<Condition::CombatTarget>(
+                    _1,
+                    deconstruct_movable_(_2, _pass))) ]
             ;
 
         owner_has_shippart_available
@@ -98,12 +106,13 @@ namespace parse { namespace detail {
             ;
 
         start
-            %=   ordered_bombarded_by
-            |    contains
-            |    contained_by
-            |    star_type
-            |    location
-            |    owner_has_shippart_available
+            %=  ordered_bombarded_by
+            |   contains
+            |   contained_by
+            |   star_type
+            |   location
+            |   combat_targets
+            |   owner_has_shippart_available
             ;
 
         ordered_bombarded_by.name("OrderedBombardedBy");
@@ -111,6 +120,7 @@ namespace parse { namespace detail {
         contained_by.name("ContainedBy");
         star_type.name("StarType");
         location.name("Location");
+        combat_targets.name("CombatTargets");
         owner_has_shippart_available.name("OwnerHasShipPartAvailable");
 
 #if DEBUG_CONDITION_PARSERS
@@ -119,6 +129,7 @@ namespace parse { namespace detail {
         debug(contained_by);
         debug(star_type);
         debug(location);
+        debug(combat_targets);
         debug(owner_has_shippart_available);
 #endif
     }
