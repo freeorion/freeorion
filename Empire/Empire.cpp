@@ -34,10 +34,11 @@ Empire::Empire() :
 { Init(); }
 
 Empire::Empire(const std::string& name, const std::string& player_name,
-               int empire_id, const GG::Clr& color) :
+               int empire_id, const GG::Clr& color, bool authenticated) :
     m_id(empire_id),
     m_name(name),
     m_player_name(player_name),
+    m_authenticated(authenticated),
     m_color(color),
     m_research_queue(m_id),
     m_production_queue(m_id)
@@ -67,6 +68,9 @@ const std::string& Empire::Name() const
 
 const std::string& Empire::PlayerName() const
 { return m_player_name; }
+
+bool Empire::IsAuthenticated() const
+{ return m_authenticated; }
 
 int Empire::EmpireID() const
 { return m_id; }
@@ -746,7 +750,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
     // fleets were not (meaning that the enemy fleets were continuing an existing blockade)
     // Friendly fleets can preserve available starlane accesss even if they are trying to leave the system
 
-    // Unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for 
+    // Unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for
     // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived
     // before you, or be in cahoots with someone who did.
     std::set<int> systems_containing_friendly_fleets;
@@ -837,7 +841,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
 
 void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id) {
     if (!m_supply_unobstructed_systems.count(start_system_id))
-        m_pending_system_exit_lanes[start_system_id].insert(dest_system_id); 
+        m_pending_system_exit_lanes[start_system_id].insert(dest_system_id);
     else { // if the system is unobstructed, mark all its lanes as avilable
         auto system = GetSystem(start_system_id);
         for (const auto& lane : system->StarlanesWormholes()) {
@@ -1067,7 +1071,7 @@ void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& nam
     }
 
     ProductionQueue::Element build(build_type, name, m_id, number, number, blocksize, location);
-    
+
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
         m_production_queue.push_back(build);
     else
@@ -1757,7 +1761,7 @@ void Empire::CheckProductionProgress() {
                 build_description = "Stockpile PP transfer";
                 break;
             }
-            default: 
+            default:
                 build_description = "unknown build type";
         }
 

@@ -107,9 +107,9 @@ void EmpireManager::BackPropagateMeters() {
 
 Empire* EmpireManager::CreateEmpire(int empire_id, const std::string& name,
                                     const std::string& player_name,
-                                    const GG::Clr& color)
+                                    const GG::Clr& color, bool authenticated)
 {
-    Empire* empire = new Empire(name, player_name, empire_id, color);
+    Empire* empire = new Empire(name, player_name, empire_id, color, authenticated);
     InsertEmpire(empire);
     return empire;
 }
@@ -217,7 +217,7 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
     int recipient_empire_id = message.RecipientEmpireID();
 
     DiplomaticStatus diplo_status = GetDiplomaticStatus(sender_empire_id, recipient_empire_id);
-    bool message_from_recipient_to_sender_available = DiplomaticMessageAvailable(recipient_empire_id, sender_empire_id); 
+    bool message_from_recipient_to_sender_available = DiplomaticMessageAvailable(recipient_empire_id, sender_empire_id);
     const DiplomaticMessage& existing_message_from_recipient_to_sender = GetDiplomaticMessage(recipient_empire_id, sender_empire_id);
     //bool message_from_sender_to_recipient_available = DiplomaticMessageAvailable(sender_empire_id, recipient_empire_id);
 

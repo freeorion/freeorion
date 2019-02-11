@@ -38,16 +38,17 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color);  ///< basic constructor
+    Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, bool authenticated);  ///< basic constructor
     ~Empire();
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&  Name() const;           ///< Returns the Empire's name
-    const std::string&  PlayerName() const;     ///< Returns the Empire's player's name
-    int                 EmpireID() const;       ///< Returns the Empire's unique numeric ID
-    const GG::Clr&      Color() const;          ///< Returns the Empire's color
-    int                 CapitalID() const;      ///< Returns the numeric ID of the empire's capital
+    const std::string&  Name() const;            ///< Returns the Empire's name
+    const std::string&  PlayerName() const;      ///< Returns the Empire's player's name
+    bool                IsAuthenticated() const; ///< Returns the Empire's player's authentication status
+    int                 EmpireID() const;        ///< Returns the Empire's unique numeric ID
+    const GG::Clr&      Color() const;           ///< Returns the Empire's color
+    int                 CapitalID() const;       ///< Returns the numeric ID of the empire's capital
 
     /** Return an object id that is owned by the empire or INVALID_OBJECT_ID. */
     int                 SourceID() const;
@@ -207,7 +208,7 @@ public:
     void PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item, int number,
                                 int blocksize, int location, int pos = -1);
     void SetProductionQuantity(int index, int quantity);     ///< Changes the remaining number to produce for queue item \a index to \a quantity
-    void SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize);   ///< Changes the remaining number and blocksize to produce for queue item \a index to \a quantity and \a blocksize 
+    void SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize);   ///< Changes the remaining number and blocksize to produce for queue item \a index to \a quantity and \a blocksize
     void SplitIncompleteProductionItem(int index);           ///< Adds a copy of the production item at position \a index below it in the queue, with one less quantity. Sets the quantity of the production item at position \a index to 1, retaining its incomplete progress.
     void DuplicateProductionItem(int index);                 ///< Adds a copy of the production item at position \a index below it in the queue, with no progress.
     void SetProductionRallyPoint(int index, int rally_point_id = INVALID_OBJECT_ID);  ///< Sets the rally point for ships produced by this produce, to which they are automatically ordered to move after they are produced.
@@ -261,7 +262,7 @@ public:
     /** Calculates systems that can propagate supply using this empire's own /
       * internal list of explored systems. */
     void UpdateSupplyUnobstructedSystems(bool precombat=false);
-    /** Updates fleet ArrivalStarlane to flag fleets of this empire that are not blockaded post-combat 
+    /** Updates fleet ArrivalStarlane to flag fleets of this empire that are not blockaded post-combat
      *  must be done after *all* noneliminated empires have updated their unobstructed systems* */
     void UpdateUnobstructedFleets();
     /** Records, in a list of pending updates, the start_system exit lane to the specified destination as accessible to this empire*/
@@ -376,6 +377,7 @@ private:
     int                             m_id = ALL_EMPIRES;         ///< Empire's unique numeric id
     std::string                     m_name;                     ///< Empire's name
     std::string                     m_player_name;              ///< Empire's Player's name
+    bool                            m_authenticated;            ///< Empire's Player's authentication status
     GG::Clr                         m_color;                    ///< Empire's color
     int                             m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
 

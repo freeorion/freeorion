@@ -319,6 +319,7 @@ void ServerFSM::UpdateIngameLobby() {
         } else {
             player_setup_data.m_empire_color = GG::Clr(255, 255, 255, 255);
         }
+        player_setup_data.m_authenticated = (*player_it)->IsAuthenticated();
         dummy_lobby_data.m_players.push_back({player_id, player_setup_data});
     }
     dummy_lobby_data.m_start_lock_cause = UserStringNop("SERVER_ALREADY_PLAYING_GAME");
@@ -644,6 +645,7 @@ MPLobby::MPLobby(my_context c) :
                     player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
                 else
                     player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
+                player_setup_data.m_authenticated = player_connection->IsAuthenticated();
 
                 m_lobby_data->m_players.push_back({player_id, player_setup_data});
             } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -688,6 +690,7 @@ MPLobby::MPLobby(my_context c) :
         player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
         // leaving save game empire id as default
         player_setup_data.m_client_type =           player_connection->GetClientType();
+        player_setup_data.m_authenticated =         player_connection->IsAuthenticated();
 
         player_connection->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
     }
@@ -840,6 +843,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
             player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
         else
             player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
+        player_setup_data.m_authenticated =  player_connection->IsAuthenticated();
 
         // after setting all details, push into lobby data
         m_lobby_data->m_players.push_back({player_id, player_setup_data});
@@ -1091,6 +1095,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                         WarnLogger(FSM) << "Got unallowed client types.";
                         break;
                     }
+                    // set correct authentication status
+                    player.second.m_authenticated = (*player_it)->IsAuthenticated();
                 } else {
                     // player wasn't found
                     // don't allow "ghost" records
