@@ -1194,7 +1194,41 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // limit count of AI
             auto max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
             if (ai_count <= max_ai || max_ai < 0) {
-                m_lobby_data->m_players    = incoming_lobby_data.m_players;
+                if (sender->HasAuthRole(Networking::ROLE_HOST)) {
+                    // don't check host.
+                    m_lobby_data->m_players    = incoming_lobby_data.m_players;
+                } else {
+                    // check player doesn't set protected empire to yourself
+                    bool incorrect_empire = false;
+                    for (const auto& plr : incoming_lobby_data.m_players) {
+                        if (plr.first != sender->PlayerID())
+                            continue;
+                        if (plr.second.m_save_game_empire_id != ALL_EMPIRES) {
+                            const auto empire_it = m_lobby_data->m_save_game_empire_data.find(plr.second.m_save_game_empire_id);
+                            if (empire_it != m_lobby_data->m_save_game_empire_data.end()) {
+                                if (empire_it->second.m_authenticated) {
+                                    if (empire_it->second.m_player_name != sender->PlayerName()) {
+                                        WarnLogger(FSM) << "Unauthorized access to protected empire \"" << empire_it->second.m_empire_name << "\"."
+                                                        << " Expected player \"" << empire_it->second.m_player_name << "\""
+                                                        << " got \"" << sender->PlayerName() << "\"";
+                                        incorrect_empire = true;
+                                    }
+                                }
+                            } else {
+                                WarnLogger(FSM) << "Unknown empire #" << plr.second.m_save_game_empire_id;
+                                incorrect_empire = true;
+                            }
+                        }
+                        break;
+                    }
+                    if (incorrect_empire) {
+                        has_important_changes = true;
+                        player_setup_data_changed = true;
+                    } else {
+                        // ToDo: non-host player could change only AI and himself
+                        m_lobby_data->m_players    = incoming_lobby_data.m_players;
+                    }
+                }
             } else {
                 has_important_changes = true;
             }
@@ -1308,6 +1342,30 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     i_player.second.m_player_ready = false;
                     player_setup_data_changed = true;
                 } else {
+                    // check loaded empire
+                    bool incorrect_empire = false;
+                    if (j_player.second.m_save_game_empire_id != ALL_EMPIRES) {
+                        const auto empire_it = m_lobby_data->m_save_game_empire_data.find(j_player.second.m_save_game_empire_id);
+                        if (empire_it != m_lobby_data->m_save_game_empire_data.end()) {
+                            if (empire_it->second.m_authenticated) {
+                                if (empire_it->second.m_player_name != sender->PlayerName()) {
+                                    WarnLogger(FSM) << "Unauthorized access to protected empire \"" << empire_it->second.m_empire_name << "\"."
+                                                    << " Expected player \"" << empire_it->second.m_player_name << "\""
+                                                    << " got \"" << sender->PlayerName() << "\"";
+                                    incorrect_empire = true;
+                                }
+                            }
+                        } else {
+                            WarnLogger(FSM) << "Unknown empire #" << j_player.second.m_save_game_empire_id;
+                            incorrect_empire = true;
+                        }
+                    }
+                    if (incorrect_empire) {
+                        i_player.second.m_player_ready = false;
+                        player_setup_data_changed = true;
+                        break;
+                    }
+
                     has_important_changes = IsPlayerChanged(i_player.second, j_player.second);
                     player_setup_data_changed = ! (i_player.second == j_player.second);
 
