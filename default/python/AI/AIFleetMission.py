@@ -30,12 +30,13 @@ ORDERS_FOR_MISSION = {
     MissionType.SECURE: OrderMilitary,
     MissionType.ORBITAL_INVASION: OrderInvade,
     MissionType.ORBITAL_OUTPOST: OrderOutpost,
-    MissionType.ORBITAL_DEFENSE: OrderDefend
+    MissionType.ORBITAL_DEFENSE: OrderDefend,
 }
 
 COMBAT_MISSION_TYPES = (
     MissionType.MILITARY,
-    MissionType.SECURE
+    MissionType.SECURE,
+    MissionType.PROTECT_REGION,
 )
 
 MERGEABLE_MISSION_TYPES = (
