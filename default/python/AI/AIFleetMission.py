@@ -520,6 +520,7 @@ class AIFleetMission(object):
                     # use military logic code below to determine if can release
                     # any or even all of the ships.
                     clear_all = False
+                    last_sys_target = self.target.id
 
                 fleet_id = self.fleet.id
                 if clear_all:
