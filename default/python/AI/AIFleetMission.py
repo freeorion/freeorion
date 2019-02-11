@@ -514,6 +514,13 @@ class AIFleetMission(object):
                               "to secure system %d (targeted for %s), "
                               "may release a portion of ships" % (self.fleet.id, last_sys_target, secure_type))
                         clear_all = False
+
+                # for PROTECT_REGION missions, only release fleet if no more threat
+                if self.type == MissionType.PROTECT_REGION:
+                    # use military logic code below to determine if can release
+                    # any or even all of the ships.
+                    clear_all = False
+
                 fleet_id = self.fleet.id
                 if clear_all:
                     if orders:
