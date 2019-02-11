@@ -36,6 +36,10 @@ FO_COMMON_API extern const int INVALID_DESIGN_ID;
 bool UserStringExists(const std::string& str);
 
 namespace {
+    const std::string EMPTY_STRING;
+}
+
+namespace {
     void AddAllObjectsSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingObjects().size());
         std::transform(Objects().ExistingObjects().begin(), Objects().ExistingObjects().end(),
@@ -9100,10 +9104,9 @@ namespace {
             break;
         }
         case CONTENT_SPECIES: {
-            auto s = GetSpecies(name1);
-            if (!s)
-                return nullptr;
-            return s->Location();
+            if (auto s = GetSpecies(name1))
+                return s->Location();
+            break;
         }
         case CONTENT_SHIP_HULL: {
             if (auto h = GetHullType(name1))
@@ -9120,7 +9123,7 @@ namespace {
                 return s->Location();
             break;
         }
-        case CONTENT_FOCUS : {
+        case CONTENT_FOCUS: {
             if (name2.empty())
                 return nullptr;
             // get species, then focus from that species
@@ -9136,6 +9139,18 @@ namespace {
             return nullptr;
         }
         return nullptr;
+    }
+
+    const std::string& GetContentTypeName(ContentType content_type) {
+        switch (content_type) {
+        case CONTENT_BUILDING:  return UserString("UIT_BUILDING");          break;
+        case CONTENT_SPECIES:   return UserString("ENC_SPECIES");           break;
+        case CONTENT_SHIP_HULL: return UserString("UIT_SHIP_HULL");         break;
+        case CONTENT_SHIP_PART: return UserString("UIT_SHIP_PART");         break;
+        case CONTENT_SPECIAL:   return UserString("ENC_SPECIAL");           break;
+        case CONTENT_FOCUS:     return UserString("PLANETARY_FOCUS_TITLE"); break;
+        default:                return EMPTY_STRING;                        break;
+        }
     }
 }
 
@@ -9225,15 +9240,14 @@ std::string Location::Description(bool negated/* = false*/) const {
     if (m_name2)
         name2_str = m_name2->Description();
 
-    std::string content_type_str;
-    // todo: get content type as string
+    std::string content_type_str = GetContentTypeName(m_content_type);
+    std::string name_str = (m_content_type == CONTENT_FOCUS ? name2_str : name1_str);
 
     return str(FlexibleFormat((!negated)
                ? UserString("DESC_LOCATION")
                : UserString("DESC_LOCATION_NOT"))
                % content_type_str
-               % name1_str
-               % name2_str);
+               % name_str);
 }
 
 std::string Location::Dump(unsigned short ntabs) const {
@@ -9291,6 +9305,169 @@ unsigned int Location::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_content_type);
 
     TraceLogger() << "GetCheckSum(Location): retval: " << retval;
+    return retval;
+}
+
+///////////////////////////////////////////////////////////
+// CombatTarget                                          //
+///////////////////////////////////////////////////////////
+namespace {
+    const ConditionBase* GetCombatTargetCondition(
+        ContentType content_type, const std::string& name)
+    {
+        if (name.empty())
+            return nullptr;
+        switch (content_type) {
+        case CONTENT_SPECIES: {
+            if (auto s = GetSpecies(name))
+                return s->CombatTargets();
+            break;
+        }
+        case CONTENT_SHIP_PART: {
+            if (auto p = GetPartType(name))
+                return p->CombatTargets();
+            break;
+        }
+        case CONTENT_BUILDING:
+        case CONTENT_SHIP_HULL:
+        case CONTENT_SPECIAL:
+        case CONTENT_FOCUS:
+        default:
+            return nullptr;
+        }
+        return nullptr;
+    }
+}
+
+CombatTarget::CombatTarget(ContentType content_type,
+                   std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
+    ConditionBase(),
+    m_name(std::move(name)),
+    m_content_type(content_type)
+{}
+
+bool CombatTarget::operator==(const ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const CombatTarget& rhs_ = static_cast<const CombatTarget&>(rhs);
+
+    if (m_content_type != rhs_.m_content_type)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_name)
+
+    return true;
+}
+
+void CombatTarget::Eval(const ScriptingContext& parent_context,
+                    ObjectSet& matches, ObjectSet& non_matches,
+                    SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = ((!m_name || m_name->LocalCandidateInvariant()) &&
+                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+
+    if (simple_eval_safe) {
+        // evaluate value and range limits once, use to match all candidates
+        std::shared_ptr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
+
+        std::string name = (m_name ? m_name->Eval(local_context) : "");
+
+        // get condition from content, apply to matches / non_matches
+        const auto condition = GetCombatTargetCondition(m_content_type, name);
+        if (condition && condition != this) {
+            condition->Eval(parent_context, matches, non_matches, search_domain);
+        } else {
+            // if somehow in a cyclical loop because some content's location
+            // was defined as CombatTarget or if there is no location
+            // condition, match nothing
+            if (search_domain == MATCHES) {
+                non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+                matches.clear();
+            }
+        }
+
+    } else {
+        // re-evaluate value and ranges for each candidate object
+        ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool CombatTarget::RootCandidateInvariant() const
+{ return (!m_name || m_name->RootCandidateInvariant()); }
+
+bool CombatTarget::TargetInvariant() const
+{ return (!m_name|| m_name->TargetInvariant()); }
+
+bool CombatTarget::SourceInvariant() const
+{ return (!m_name || m_name->SourceInvariant()); }
+
+std::string CombatTarget::Description(bool negated/* = false*/) const {
+    std::string name_str;
+    if (m_name)
+        name_str = m_name->Description();
+
+    std::string content_type_str = GetContentTypeName(m_content_type);
+
+    return str(FlexibleFormat((!negated)
+               ? UserString("DESC_COMBAT_TARGET")
+               : UserString("DESC_COMBAT_TARGET_NOT"))
+               % content_type_str
+               % name_str);
+}
+
+std::string CombatTarget::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "CombatTarget content_type = ";
+
+    switch (m_content_type) {
+    case CONTENT_BUILDING:  retval += "Building";   break;
+    case CONTENT_FOCUS:     retval += "Focus";      break;
+    case CONTENT_SHIP_HULL: retval += "Hull";       break;
+    case CONTENT_SHIP_PART: retval += "Part";       break;
+    case CONTENT_SPECIAL:   retval += "Special";    break;
+    case CONTENT_SPECIES:   retval += "Species";    break;
+    default:                retval += "???";
+    }
+
+    if (m_name)
+        retval += " name = " + m_name->Dump(ntabs);
+    return retval;
+}
+
+bool CombatTarget::Match(const ScriptingContext& local_context) const {
+    auto candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        ErrorLogger() << "CombatTarget::Match passed no candidate object";
+        return false;
+    }
+
+    std::string name = (m_name ? m_name->Eval(local_context) : "");
+
+    const auto condition = GetCombatTargetCondition(m_content_type, name);
+    if (!condition || condition == this)
+        return false;
+
+    // other Conditions' Match functions not directly callable, so can't do any
+    // better than just calling Eval for each candidate...
+    return condition->Eval(local_context, candidate);
+}
+
+void CombatTarget::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
+}
+
+unsigned int CombatTarget::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::CombatTarget");
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_content_type);
+
+    TraceLogger() << "GetCheckSum(CombatTarget): retval: " << retval;
     return retval;
 }
 

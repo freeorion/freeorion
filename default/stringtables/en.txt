@@ -10112,6 +10112,25 @@ DESC_ORDERED_BOMBARDED
 DESC_ORDERED_BOMBARDED_NOT
 ''' that is not being bombarded by an object %1%'''
 
+# %1% content type description, eg. species, building, focus, tech
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+DESC_LOCATION
+''' that is matched by the location condition of %1% %2%'''
+
+# %1% content type description, eg. species, building, focus, tech
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+DESC_LOCATION_NOT
+''' that is not matched by the location condition of %1% %2%'''
+
+# %1% content type description, eg. species, building, focus, tech
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+DESC_COMBAT_TARGET
+''' that is matched by the combat targets condition of %1% %2%'''
+
+# %1% content type description, eg. species, building, focus, tech
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+DESC_COMBAT_TARGET_NOT
+''' that is not matched by the combat targets condition of %1% %2%'''
 
 # AND Descriptions for expressions 'AND [ A B C ]'
 DESC_AND_BEFORE_OPERANDS

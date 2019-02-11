@@ -1854,6 +1854,36 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Matches objects that match the combat targeting condition of the specified
+  * content.  */
+struct FO_COMMON_API CombatTarget final : public ConditionBase {
+public:
+    CombatTarget(ContentType content_type,
+                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
+
+    bool operator==(const ConditionBase& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+    bool RootCandidateInvariant() const override;
+    bool TargetInvariant() const override;
+    bool SourceInvariant() const override;
+    std::string Description(bool negated = false) const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    unsigned int GetCheckSum() const override;
+
+private:
+    bool Match(const ScriptingContext& local_context) const override;
+
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
+    ContentType m_content_type;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API And final : public ConditionBase {
     explicit And(std::vector<std::unique_ptr<ConditionBase>>&& operands);
@@ -2366,6 +2396,14 @@ void Location::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_name1)
         & BOOST_SERIALIZATION_NVP(m_name2)
+        & BOOST_SERIALIZATION_NVP(m_content_type);
+}
+
+template <class Archive>
+void CombatTarget::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_content_type);
 }
 
