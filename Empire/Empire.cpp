@@ -2250,6 +2250,9 @@ void Empire::UpdateOwnedObjectCounters() {
     }
 }
 
+void Empire::SetAuthenticated(bool authenticated /*= true*/)
+{ m_authenticated = authenticated; }
+
 int Empire::TotalShipsOwned() const {
     // sum up counts for each ship design owned by this empire
     // (not using species ship counts, as an empire could potentially own a

@@ -328,6 +328,8 @@ public:
 
     void UpdateOwnedObjectCounters();
 
+    void SetAuthenticated(bool authenticated=true);
+
     int TotalShipsOwned() const;
     int TotalShipPartsOwned() const;    ///< Total number of parts for all owned ships in this empire
     int TotalBuildingsOwned() const;
