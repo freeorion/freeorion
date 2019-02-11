@@ -41,6 +41,7 @@ COMBAT_MISSION_TYPES = (
 MERGEABLE_MISSION_TYPES = (
     MissionType.MILITARY,
     MissionType.INVASION,
+    MissionType.PROTECT_REGION,
     MissionType.ORBITAL_INVASION,
     MissionType.SECURE,
     MissionType.ORBITAL_DEFENSE,
@@ -51,6 +52,7 @@ COMPATIBLE_ROLES_MAP = {
     MissionType.MILITARY: [MissionType.MILITARY],
     MissionType.ORBITAL_INVASION: [MissionType.ORBITAL_INVASION],
     MissionType.INVASION: [MissionType.INVASION],
+    MissionType.PROTECT_REGION: [MissionType.PROTECT_REGION],
 }
 
 
