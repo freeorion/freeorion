@@ -30,3 +30,17 @@ COMBAT_TARGETS_PLANET_WITH_DEFENSE
             ]
         ]
 '''
+
+
+// This should just considers fighters with the same targetting conditions (i.e. launched by the same hangar type
+// There would be a workaround to find out the relative balance of types of own hangar parts and use that for scaling
+// But probably its better to query the launching hangar part like: LaunchedByHangar = CurrentContent
+COMBAT_TARGETS_SPREAD_HANGAR
+'''[[COMBAT_TARGETS_SPREAD(And [ Fighter OwnedBy empire = Source.Owner ])]]'''
+
+// Calculates an efficient number for NumberOf conditions based on the number of total shots of weapon of that part type used
+// MaximumNumberOf number = [[COMBAT_TARGETS_SPREAD(shooter-shots-condition)]]
+// e.g. MaximumNumberOf number = [[COMBAT_TARGETS_SPREAD(And [ Fighter OwnedBy empire = Source.Owner ])]]
+// Takes a heuristical 20% extra spread 
+COMBAT_TARGETS_SPREAD
+'''(1.2 * Statistic Count condition = @1@)'''

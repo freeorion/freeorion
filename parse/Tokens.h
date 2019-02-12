@@ -521,6 +521,7 @@
     (TopPriorityEnqueuedTech)                   \
     (TopPriorityResearchableTech)               \
     (TopPriorityTransferrableTech)              \
+    (OrderedAlternativesOf)                            \
     (Toxic)                                     \
     (Trade)
 

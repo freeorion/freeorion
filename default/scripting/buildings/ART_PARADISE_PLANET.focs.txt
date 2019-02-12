@@ -5,9 +5,6 @@ BuildingType
     buildtime = 10
     location = And [
         Planet
-        Not Contains Building name = "BLD_ART_PLANET"
-        Not Contains Building name = "BLD_ART_FACTORY_PLANET"
-        Not Contains Building name = "BLD_ART_PARADISE_PLANET"
         OwnedBy empire = Source.Owner
         Planet type = [Asteroids GasGiant]
         OwnerHasTech name = "GRO_GAIA_TRANS"

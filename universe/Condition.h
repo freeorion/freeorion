@@ -1964,6 +1964,30 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Matches all objects that match the first matching Condition in \a operands. */
+struct FO_COMMON_API OrderedAlternativesOf final : public ConditionBase {
+    explicit OrderedAlternativesOf(std::vector<std::unique_ptr<ConditionBase>>&& operands);
+
+    bool operator==(const ConditionBase& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+    bool RootCandidateInvariant() const override;
+    bool TargetInvariant() const override;
+    bool SourceInvariant() const override;
+    std::string Description(bool negated = false) const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    const std::vector<ConditionBase*> Operands() const;
+    unsigned int GetCheckSum() const override;
+
+private:
+    std::vector<std::unique_ptr<ConditionBase>> m_operands;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Matches whatever its subcondition matches, but has a customized description
   * string that is returned by Description() by looking up in the stringtable. */
 struct FO_COMMON_API Described final : public ConditionBase {
@@ -2432,6 +2456,13 @@ void Not::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_operand);
+}
+
+template <class Archive>
+void OrderedAlternativesOf::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_operands);
 }
 
 template <class Archive>

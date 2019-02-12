@@ -34,6 +34,7 @@ namespace parse { namespace detail {
         condition_parser_rule                  and_;
         condition_parser_rule                  or_;
         condition_parser_rule                  not_;
+        condition_parser_rule                  ordered_alternatives_of;
         condition_parser_rule                  described;
         condition_parser_rule                  start;
     };

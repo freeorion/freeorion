@@ -7,7 +7,13 @@ Part
     damage = 1
     combatTargets = And [
         [[COMBAT_TARGETS_VISIBLE_ENEMY]]
-        Fighter
+        // Target "Bombers" first. If there are no enemy fighters present, target Ships
+        OrderedAlternativesOf [
+            MaximumNumberOf number = [[COMBAT_TARGETS_SPREAD_HANGAR]]
+                sortkey = LocalCandidate.Attack
+                condition = Fighter
+            Ship
+        ]
     ]
     mountableSlotTypes = Internal
     buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
