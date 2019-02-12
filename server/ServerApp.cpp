@@ -1752,18 +1752,18 @@ void ServerApp::DropPlayerEmpireLink(int player_id)
 { m_player_empire_ids.erase(player_id); }
 
 int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
-    Empire* empire_ptr = nullptr;
+    Empire* empire = nullptr;
     int empire_id = ALL_EMPIRES;
     // search empire by player name
-    for (auto empire : Empires()) {
-        if (empire.second->PlayerName() == player_connection->PlayerName()) {
-            empire_id = empire.first;
-            empire_ptr = empire.second;
+    for (auto e : Empires()) {
+        if (e.second->PlayerName() == player_connection->PlayerName()) {
+            empire_id = e.first;
+            empire = e.second;
             break;
         }
     }
 
-    if (empire_id == ALL_EMPIRES || empire_ptr == nullptr)
+    if (empire_id == ALL_EMPIRES || empire == nullptr)
         return false;
 
     auto orders_it = m_turn_sequence.find(empire_id);
@@ -1776,7 +1776,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
 
     // make a link to new connection
     m_player_empire_ids[player_connection->PlayerID()] = empire_id;
-    empire_ptr->SetAuthenticated(player_connection->IsAuthenticated());
+    empire->SetAuthenticated(player_connection->IsAuthenticated());
 
     const OrderSet dummy;
     const OrderSet& orders = orders_it->second.second && orders_it->second.second->m_orders ? *(orders_it->second.second->m_orders) : dummy;

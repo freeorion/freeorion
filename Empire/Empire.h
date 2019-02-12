@@ -328,7 +328,7 @@ public:
 
     void UpdateOwnedObjectCounters();
 
-    void SetAuthenticated(bool authenticated=true);
+    void SetAuthenticated(bool authenticated = true);
 
     int TotalShipsOwned() const;
     int TotalShipPartsOwned() const;    ///< Total number of parts for all owned ships in this empire
@@ -379,7 +379,9 @@ private:
     int                             m_id = ALL_EMPIRES;         ///< Empire's unique numeric id
     std::string                     m_name;                     ///< Empire's name
     std::string                     m_player_name;              ///< Empire's Player's name
-    bool                            m_authenticated;            ///< Empire's Player's authentication status
+    /** Empire's Player's authentication flag. Set if only player with empire's player's name
+        should play this empire. */
+    bool                            m_authenticated;
     GG::Clr                         m_color;                    ///< Empire's color
     int                             m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
 

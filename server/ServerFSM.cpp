@@ -1195,10 +1195,12 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             auto max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
             if (ai_count <= max_ai || max_ai < 0) {
                 if (sender->HasAuthRole(Networking::ROLE_HOST)) {
-                    // don't check host.
-                    m_lobby_data->m_players    = incoming_lobby_data.m_players;
+                    // don't check host player
+                    // treat host player as superuser or administrator
+                    m_lobby_data->m_players = incoming_lobby_data.m_players;
                 } else {
-                    // check player doesn't set protected empire to yourself
+                    // check players shouldn't set protected empire to themselves
+                    // if they don't have required player's name
                     bool incorrect_empire = false;
                     for (const auto& plr : incoming_lobby_data.m_players) {
                         if (plr.first != sender->PlayerID())
@@ -1225,8 +1227,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                         has_important_changes = true;
                         player_setup_data_changed = true;
                     } else {
-                        // ToDo: non-host player could change only AI and himself
-                        m_lobby_data->m_players    = incoming_lobby_data.m_players;
+                        // ToDo: non-host player should change only AI and himself
+                        m_lobby_data->m_players = incoming_lobby_data.m_players;
                     }
                 }
             } else {
