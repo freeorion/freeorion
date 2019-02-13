@@ -420,7 +420,7 @@ def get_colony_fleets():
     sorted_planets = evaluated_colony_planets.items()
     sorted_planets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
 
-    _print_colony_candidate_table(sorted_planets, show_detail=True)
+    _print_colony_candidate_table(sorted_planets, show_detail=False)
 
     sorted_planets = [(planet_id, score[:2]) for planet_id, score in sorted_planets if score[0] > 0]
     # export planets for other AI modules
