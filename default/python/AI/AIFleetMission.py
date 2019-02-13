@@ -435,7 +435,8 @@ class AIFleetMission(object):
             debug("Checking order: %s" % fleet_order)
             self.check_mergers(context=str(fleet_order))
             if fleet_order.can_issue_order(verbose=False):
-                if isinstance(fleet_order, OrderMove) and order_completed:  # only move if all other orders completed
+                # only move if all other orders completed
+                if isinstance(fleet_order, OrderMove) and order_completed:
                     debug("Issuing fleet order %s" % fleet_order)
                     fleet_order.issue_order()
                     just_issued_move_order = True
