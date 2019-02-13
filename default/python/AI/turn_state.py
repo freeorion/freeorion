@@ -116,7 +116,7 @@ class State(object):
             # This is only expected to happen if a system has no path to any supplied system.
             # As the current code should not allow such queries, this is logged as warning.
             # If future code breaks this assumption, feel free to adjust logging.
-            warn("Queried supply value of a system not mapped in empire.supplyProjections().")
+            warn("Queried supply value of a system not mapped in empire.supplyProjections(): %d" % sys_id)
             return -99  # pretend it is very far away from supply
         return retval
 
