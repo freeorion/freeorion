@@ -142,86 +142,44 @@ class AIFleetMission(object):
 
     def check_mergers(self, context=""):
         """
-        If possible and reasonable, merge this fleet with others.
+        Merge local fleets with same mission into this fleet.
 
         :param context: Context of the function call for logging purposes
         :type context: str
         """
-        debug("Considering to merge %s", self.fleet)
+        debug("Considering to merge %s", self.__str__())
         if self.type not in MERGEABLE_MISSION_TYPES:
-            debug("Not mergable.")
+            debug("Mission type does not allow merging.")
             return
+
+        if not self.target:
+            debug("Mission has no valid target - do not merge.")
+            return
+
         universe = fo.getUniverse()
-        empire_id = fo.empireID()
         fleet_id = self.fleet.id
         main_fleet = universe.getFleet(fleet_id)
-        system_id = main_fleet.systemID
-        if system_id == INVALID_ID:
-            debug("Invalid system")
-            return  # can't merge fleets in middle of starlane
-        aistate = get_aistate()
-        system_status = aistate.systemStatus[system_id]
+        main_fleet_system_id = main_fleet.systemID
+        if main_fleet_system_id == INVALID_ID:
+            debug("Can't merge: fleet in middle of starlane")
+            return
 
-        # if a combat mission, and only have final order (so must be at final target), don't try
-        # merging if there is no local threat (it tends to lead to fleet object churn)
-        destroyed_list = list(universe.destroyedObjectIDs(empire_id))
+        empire_id = fo.empireID()
+        destroyed_list = set(universe.destroyedObjectIDs(empire_id))
+        aistate = get_aistate()
+        system_status = aistate.systemStatus[main_fleet_system_id]
         other_fleets_here = [fid for fid in system_status.get('myFleetsAccessible', []) if fid != fleet_id and
                              fid not in destroyed_list and universe.getFleet(fid).ownedBy(empire_id)]
         if not other_fleets_here:
             debug("No other fleets here")
             return
 
-        target_id = self.target.id if self.target else None
-        main_fleet_role = aistate.get_fleet_role(fleet_id)
         for fid in other_fleets_here:
-            fleet_role = aistate.get_fleet_role(fid)
-            if fleet_role not in COMPATIBLE_ROLES_MAP[main_fleet_role]:
-                debug("Local candidate %d not compatible", fid)
-                continue
-            fleet = universe.getFleet(fid)
-
-            if not fleet or fleet.systemID != system_id or len(fleet.shipIDs) == 0:
-                debug("Local candidate %d invalid", fid)
-                continue
-            if not (fleet.speed > 0 or main_fleet.speed == 0):  # TODO(Cjkjvfnby) Check this condition
-                debug("Local candidate %d invalid", fid)
-                continue
             fleet_mission = aistate.get_fleet_mission(fid)
-            do_merge = False
-            need_left = 0
-            if (main_fleet_role == MissionType.ORBITAL_DEFENSE) or (fleet_role == MissionType.ORBITAL_DEFENSE):
-                if main_fleet_role == fleet_role:
-                    do_merge = True
-            elif (main_fleet_role == MissionType.ORBITAL_INVASION) or (fleet_role == MissionType.ORBITAL_INVASION):
-                if main_fleet_role == fleet_role:
-                    do_merge = False  # TODO: could allow merger if both orb invaders and both same target
-            elif not fleet_mission and (main_fleet.speed > 0) and (fleet.speed > 0):
-                debug("Local candidate %d invalid", fid)
-                do_merge = True
-            else:
-                if not self.target and (main_fleet.speed > 0 or fleet.speed == 0):
-                    do_merge = True
-                else:
-                    target = fleet_mission.target.id if fleet_mission.target else None
-                    if target == target_id:
-                        info("Military fleet %d (%d ships) has same target as %s fleet %d (%d ships). Merging former "
-                             "into latter." % (fid, fleet.numShips, fleet_role, fleet_id, len(main_fleet.shipIDs)))
-                        # TODO: should probably ensure that fleetA has aggression on now
-                        do_merge = float(min(main_fleet.speed, fleet.speed))/max(main_fleet.speed, fleet.speed) >= 0.6
-                    elif main_fleet.speed > 0:
-                        debug("different targets")
-                        neighbors = aistate.systemStatus.get(system_id, {}).get('neighbors', [])
-                        if target == system_id and target_id in neighbors and self.type == MissionType.SECURE:
-                            # consider 'borrowing' for work in neighbor system  # TODO check condition
-                            need_left = 1.5 * sum(aistate.systemStatus.get(nid, {}).get('fleetThreat', 0)
-                                                  for nid in neighbors if nid != target_id)
-                            fleet_rating = CombatRatingsAI.get_fleet_rating(fid)
-                            if need_left < fleet_rating:
-                                do_merge = True
-            if do_merge:
-                FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id, need_left,
-                                                  context="Order %s of mission %s" % (context, self))
-        return
+            if fleet_mission.type != self.type or fleet_mission.target != self.target:
+                debug("Local candidate %s does not have same mission." % fleet_mission)
+                continue
+            FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id, context="Order %s of mission %s" % (context, self))
 
     def _is_valid_fleet_mission_target(self, mission_type, target):
         if not target:
