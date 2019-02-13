@@ -311,6 +311,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
     m_exclusions(more_common_params.exclusions),
+    m_icon(icon),
     m_add_standard_capacity_effect(add_standard_capacity_effect),
     m_combat_targets(std::move(combat_targets))
 {
