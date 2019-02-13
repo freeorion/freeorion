@@ -523,7 +523,8 @@ class AIstate(object):
             mob_rating = CombatRatingsAI.combine_ratings_list(mob_ratings)
             lost_fleets = fleetsLostBySystem.get(sys_id, [])
             lost_fleet_rating = CombatRatingsAI.combine_ratings_list(lost_fleets)
-            debug("Just lost fleet rating %.1f in system %s", lost_fleet_rating, system)
+            if lost_fleet_rating:
+                debug("Just lost fleet rating %.1f in system %s", lost_fleet_rating, system)
 
             # under current visibility rules should not be possible to have any losses or other info here,
             # but just in case...
