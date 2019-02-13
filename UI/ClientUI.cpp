@@ -607,12 +607,6 @@ namespace {
 // ClientUI
 ////////////////////////////////////////////////
 ClientUI::ClientUI() :
-    m_map_wnd(nullptr),
-    m_message_wnd(nullptr),
-    m_player_list_wnd(nullptr),
-    m_intro_screen(nullptr),
-    m_multiplayer_lobby_wnd(nullptr),
-    m_password_enter_wnd(nullptr),
     m_ship_designs(new ShipDesignManager())
 {
     s_the_UI = this;

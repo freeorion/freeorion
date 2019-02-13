@@ -230,8 +230,8 @@ private:
 
     HSVClr  m_current_color;
     Clr     m_original_color;
-    bool    m_original_color_specified;
-    bool    m_color_was_picked;
+    bool    m_original_color_specified = true;
+    bool    m_color_was_picked = false;
 
     std::shared_ptr<HueSaturationPicker>      m_hue_saturation_picker;
     std::shared_ptr<ValuePicker>              m_value_picker;

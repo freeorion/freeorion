@@ -229,7 +229,7 @@ private:
     std::shared_ptr<PlayerListWnd>          m_player_list_wnd;      //!< the players list
     std::shared_ptr<IntroScreen>            m_intro_screen;         //!< splash screen / main menu when starting program
     std::shared_ptr<MultiPlayerLobbyWnd>    m_multiplayer_lobby_wnd;//!< the multiplayer lobby
-    std::shared_ptr<SaveFileDialog>         m_savefile_dialog = nullptr;
+    std::shared_ptr<SaveFileDialog>         m_savefile_dialog;
     std::shared_ptr<PasswordEnterWnd>       m_password_enter_wnd;   //!< the authentication window
 
     PrefixedTextures                        m_prefixed_textures;

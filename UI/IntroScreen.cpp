@@ -226,21 +226,7 @@ void CreditsWnd::Render() {
 // IntroScreen
 /////////////////////////////////
 IntroScreen::IntroScreen() :
-    GG::Wnd(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(), GG::NO_WND_FLAGS),
-    m_single_player(nullptr),
-    m_quick_start(nullptr),
-    m_multi_player(nullptr),
-    m_load_game(nullptr),
-    m_options(nullptr),
-    m_pedia(nullptr),
-    m_about(nullptr),
-    m_website(nullptr),
-    m_credits(nullptr),
-    m_exit_game(nullptr),
-    m_menu(nullptr),
-    m_splash(nullptr),
-    m_logo(nullptr),
-    m_version(nullptr)
+    GG::Wnd(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(), GG::NO_WND_FLAGS)
 {}
 
 void IntroScreen::CompleteConstruction() {

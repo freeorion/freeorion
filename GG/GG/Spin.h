@@ -166,7 +166,7 @@ private:
     std::shared_ptr<Button>    m_up_button;
     std::shared_ptr<Button>    m_down_button;
 
-    X          m_button_width;
+    X          m_button_width = GG::X(15);
 
     static void ValueChangedEcho(const T& value);
 };
@@ -181,16 +181,12 @@ Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<F
     m_step_size(step),
     m_min_value(min),
     m_max_value(max),
-    m_editable(edits),
-    m_edit(nullptr),
-    m_up_button(nullptr),
-    m_down_button(nullptr),
-    m_button_width(15)
+    m_editable(edits)
 {
     const auto& style = GetStyleFactory();
     Control::SetColor(color);
     m_edit = style->NewSpinEdit("", font, CLR_ZERO, text_color, CLR_ZERO);
-    std::shared_ptr<Font> small_font = GUI::GetGUI()->GetFont(font, static_cast<int>(font->PointSize() * 0.75));
+    auto small_font = GUI::GetGUI()->GetFont(font, static_cast<int>(font->PointSize() * 0.75));
     m_up_button = style->NewSpinIncrButton(small_font, color);
     m_down_button = style->NewSpinDecrButton(small_font, color);
 

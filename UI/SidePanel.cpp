@@ -1859,7 +1859,7 @@ void SidePanel::PlanetPanel::Refresh() {
             else {
                 visibility_info += "  " + UserString("PL_NEVER_SEEN");
                 ErrorLogger() << "Empire " << client_empire_id << " knows about planet " << planet->Name() <<
-                                          " (id: " << m_planet_id << ") without having seen it before!";
+                                 " (id: " << m_planet_id << ") without having seen it before!";
             }
 
             auto system = GetSystem(planet->SystemID());
