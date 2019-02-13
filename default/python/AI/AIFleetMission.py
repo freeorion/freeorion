@@ -165,8 +165,6 @@ class AIFleetMission(object):
 
         # if a combat mission, and only have final order (so must be at final target), don't try
         # merging if there is no local threat (it tends to lead to fleet object churn)
-        if self.type in COMBAT_MISSION_TYPES and len(self.orders) == 1 and not system_status.get('totalThreat', 0):
-            return
         destroyed_list = list(universe.destroyedObjectIDs(empire_id))
         other_fleets_here = [fid for fid in system_status.get('myFleetsAccessible', []) if fid != fleet_id and
                              fid not in destroyed_list and universe.getFleet(fid).ownedBy(empire_id)]
