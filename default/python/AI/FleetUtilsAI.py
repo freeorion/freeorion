@@ -8,6 +8,7 @@ import CombatRatingsAI
 import MoveUtilsAI
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
+from freeorion_tools import assertion_fails
 from EnumsAI import MissionType, ShipRoleType
 from ShipDesignAI import get_part_type
 from target import TargetPlanet, TargetFleet, TargetSystem
@@ -202,7 +203,7 @@ def split_fleet(fleet_id):
     universe = fo.getUniverse()
     empire_id = fo.empireID()
     fleet = universe.getFleet(fleet_id)
-    newfleets = []
+    new_fleets = []
 
     if fleet is None:
         return []
@@ -214,29 +215,48 @@ def split_fleet(fleet_id):
     ship_ids = list(fleet.shipIDs)
     aistate = get_aistate()
     for ship_id in ship_ids[1:]:
-        new_fleet_id = fo.issueNewFleetOrder("Fleet %4d" % ship_id, ship_id)
-        if new_fleet_id:
-            new_fleet = universe.getFleet(new_fleet_id)
-            if not new_fleet:
-                warn("Newly split fleet %d not available from universe" % new_fleet_id)
-            fo.issueRenameOrder(new_fleet_id, "Fleet %4d" % new_fleet_id)  # to ease review of debugging logs
-            fo.issueAggressionOrder(new_fleet_id, True)
-            aistate.update_fleet_rating(new_fleet_id)
-            newfleets.append(new_fleet_id)
-            aistate.newlySplitFleets[new_fleet_id] = True
-        else:
-            if fleet.systemID == INVALID_ID:
-                warn("Tried to split ship id (%d) from fleet %d when fleet is in starlane" % (
-                    ship_id, fleet_id))
-            else:
-                warn("Got no fleet ID back after trying to split ship id (%d) from fleet %d" % (
-                    ship_id, fleet_id))
+        new_fleet_id = split_ship_from_fleet(fleet_id, ship_id)
+        new_fleets.append(new_fleet_id)
+
     aistate.get_fleet_role(fleet_id, force_new=True)
     aistate.update_fleet_rating(fleet_id)
-    if newfleets:
-        aistate.ensure_have_fleet_missions(newfleets)
-    return newfleets
+    if new_fleets:
+        aistate.ensure_have_fleet_missions(new_fleets)
+    return new_fleets
 
+
+def split_ship_from_fleet(fleet_id, ship_id):
+    universe = fo.getUniverse()
+    fleet = universe.getFleet(fleet_id)
+    if assertion_fails(fleet is not None):
+        return
+
+    if assertion_fails(ship_id in fleet.shipIDs):
+        return
+
+    if assertion_fails(fleet.numShips > 1, "Can't split last ship from fleet"):
+        return
+
+    new_fleet_id = fo.issueNewFleetOrder("Fleet %4d" % ship_id, ship_id)
+    if new_fleet_id:
+        aistate = get_aistate()
+        new_fleet = universe.getFleet(new_fleet_id)
+        if not new_fleet:
+            warn("Newly split fleet %d not available from universe" % new_fleet_id)
+        debug("Successfully split ship %d from fleet %d into new fleet %d",
+              ship_id, fleet_id, new_fleet_id)
+        fo.issueRenameOrder(new_fleet_id, "Fleet %4d" % new_fleet_id)  # to ease review of debugging logs
+        fo.issueAggressionOrder(new_fleet_id, True)
+        aistate.update_fleet_rating(new_fleet_id)
+        aistate.newlySplitFleets[new_fleet_id] = True
+    else:
+        if fleet.systemID == INVALID_ID:
+            warn("Tried to split ship id (%d) from fleet %d when fleet is in starlane" % (
+                ship_id, fleet_id))
+        else:
+            warn("Got no fleet ID back after trying to split ship id (%d) from fleet %d" % (
+                ship_id, fleet_id))
+    return new_fleet_id
 
 def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, context=""):
     universe = fo.getUniverse()
