@@ -567,6 +567,12 @@ namespace { // file-scope constants and functions
 
 
 namespace GG {
+    std::ostream& operator<<(std::ostream& os, const Clr& clr)
+    {
+        os << "(" << +clr.r << ", " << +clr.g << ", " << +clr.b << ", " << +clr.a << ")";
+        return os;
+    }
+
     void glColor(Clr clr)
     { glColor4ub(clr.r, clr.g, clr.b, clr.a); }
 

@@ -240,7 +240,6 @@ private:
 };
 
 namespace GG {
-    std::ostream& operator<<(std::ostream& os, const Clr& clr);
     std::istream& operator>>(std::istream& is, Clr& clr);
 }
 

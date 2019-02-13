@@ -29,6 +29,8 @@
 #ifndef _GG_Clr_h_
 #define _GG_Clr_h_
 
+#include <GG/Export.h>
+
 #include <string>
 #include <stdexcept>
 #include <sstream>
@@ -53,9 +55,9 @@ struct Clr
 
     /** ctor that constructs a Clr from four ints that represent the color channels */
     constexpr Clr(unsigned char r_,
-        unsigned char g_,
-        unsigned char b_,
-        unsigned char a_) :
+                  unsigned char g_,
+                  unsigned char b_,
+                  unsigned char a_) :
         r(r_), g(g_), b(b_), a(a_)
         {}
     //@}
@@ -65,6 +67,9 @@ struct Clr
     unsigned char b;   ///< the blue channel
     unsigned char a;   ///< the alpha channel
 };
+
+GG_API std::ostream& operator<<(std::ostream& os, const Clr& pt);
+
 
 /** Named ctor that constructs a Clr from four floats that represent the color
     channels (each must be >= 0.0 and <= 1.0). */

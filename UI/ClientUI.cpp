@@ -1153,11 +1153,6 @@ int FontBasedUpscale(int x) {
 }
 
 namespace GG {
-    std::ostream& operator<<(std::ostream& os, const Clr& clr) {
-        os << "(" << +clr.r << "," << +clr.g << "," << +clr.b << "," << +clr.a << ")";
-        return os;
-    }
-
     std::istream& operator>>(std::istream& is, Clr& clr) {
         namespace classic = boost::spirit::classic;
         using classic::space_p;
