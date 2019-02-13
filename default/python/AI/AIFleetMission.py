@@ -148,7 +148,9 @@ class AIFleetMission(object):
         :param context: Context of the function call for logging purposes
         :type context: str
         """
+        debug("Considering to merge %s", self.fleet)
         if self.type not in MERGEABLE_MISSION_TYPES:
+            debug("Not mergable.")
             return
         universe = fo.getUniverse()
         empire_id = fo.empireID()
@@ -156,6 +158,7 @@ class AIFleetMission(object):
         main_fleet = universe.getFleet(fleet_id)
         system_id = main_fleet.systemID
         if system_id == INVALID_ID:
+            debug("Invalid system")
             return  # can't merge fleets in middle of starlane
         aistate = get_aistate()
         system_status = aistate.systemStatus[system_id]
@@ -168,6 +171,7 @@ class AIFleetMission(object):
         other_fleets_here = [fid for fid in system_status.get('myFleetsAccessible', []) if fid != fleet_id and
                              fid not in destroyed_list and universe.getFleet(fid).ownedBy(empire_id)]
         if not other_fleets_here:
+            debug("No other fleets here")
             return
 
         target_id = self.target.id if self.target else None
@@ -175,12 +179,15 @@ class AIFleetMission(object):
         for fid in other_fleets_here:
             fleet_role = aistate.get_fleet_role(fid)
             if fleet_role not in COMPATIBLE_ROLES_MAP[main_fleet_role]:
+                debug("Local candidate %d not compatible", fid)
                 continue
             fleet = universe.getFleet(fid)
 
             if not fleet or fleet.systemID != system_id or len(fleet.shipIDs) == 0:
+                debug("Local candidate %d invalid", fid)
                 continue
             if not (fleet.speed > 0 or main_fleet.speed == 0):  # TODO(Cjkjvfnby) Check this condition
+                debug("Local candidate %d invalid", fid)
                 continue
             fleet_mission = aistate.get_fleet_mission(fid)
             do_merge = False
@@ -192,6 +199,7 @@ class AIFleetMission(object):
                 if main_fleet_role == fleet_role:
                     do_merge = False  # TODO: could allow merger if both orb invaders and both same target
             elif not fleet_mission and (main_fleet.speed > 0) and (fleet.speed > 0):
+                debug("Local candidate %d invalid", fid)
                 do_merge = True
             else:
                 if not self.target and (main_fleet.speed > 0 or fleet.speed == 0):
@@ -204,6 +212,7 @@ class AIFleetMission(object):
                         # TODO: should probably ensure that fleetA has aggression on now
                         do_merge = float(min(main_fleet.speed, fleet.speed))/max(main_fleet.speed, fleet.speed) >= 0.6
                     elif main_fleet.speed > 0:
+                        debug("different targets")
                         neighbors = aistate.systemStatus.get(system_id, {}).get('neighbors', [])
                         if target == system_id and target_id in neighbors and self.type == MissionType.SECURE:
                             # consider 'borrowing' for work in neighbor system  # TODO check condition
