@@ -258,6 +258,7 @@ def split_ship_from_fleet(fleet_id, ship_id):
                 ship_id, fleet_id))
     return new_fleet_id
 
+
 def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, context=""):
     universe = fo.getUniverse()
     fleet_a = universe.getFleet(fleet_a_id)
