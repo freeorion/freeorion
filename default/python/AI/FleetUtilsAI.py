@@ -550,7 +550,19 @@ def generate_fleet_orders_for_fleet_missions():
         debug("    %s" % orb_defence_fleet_mission)
 
     fleet_missions = aistate.get_all_fleet_missions()
+    destroyed_objects = fo.getUniverse().destroyedObjectIDs(fo.empireID())
 
+    # merge fleets where appropriate before generating fleet orders.
+    # This allows us to consider the full fleet strength when determining
+    # e.g. whether to engage or avoid an enemy.
+    for mission in fleet_missions:
+        fleet_id = mission.fleet.id
+        fleet = mission.fleet.get_object()
+        if not fleet or not fleet.shipIDs or fleet_id in destroyed_objects:
+            continue
+        mission.check_mergers()
+    # get new set of fleet missions without fleets that are empty after merge
+    fleet_missions = aistate.get_all_fleet_missions()
     for mission in fleet_missions:
         mission.generate_fleet_orders()
 
