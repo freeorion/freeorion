@@ -583,6 +583,7 @@ class AIFleetMission(object):
                                                                      allocations=allocations)
 
     def _portion_of_fleet_needed_here(self):
+        # TODO check rating against planets
         if assertion_fails(self.type in COMBAT_MISSION_TYPES):
             error("%s" % self)
             return 0
@@ -704,6 +705,7 @@ class AIFleetMission(object):
                                                                             self.target or 'no target')
 
     def _get_target_for_protection_mission(self):
+        # TODO: Check rating vs planets
         universe = fo.getUniverse()
         primary_objective = self.target.id
         debug("Trying to find target for protection mission. Target: %s", self.target)
