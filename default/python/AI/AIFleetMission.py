@@ -1,4 +1,4 @@
-from logging import debug, info, warn
+from logging import debug, info, warn, error
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -16,8 +16,7 @@ from aistate_interface import get_aistate
 from target import TargetSystem, TargetFleet, TargetPlanet
 from EnumsAI import MissionType
 from AIDependencies import INVALID_ID
-from freeorion_tools import get_partial_visibility_turn
-
+from freeorion_tools import get_partial_visibility_turn, assertion_fails
 
 ORDERS_FOR_MISSION = {
     MissionType.EXPLORATION: OrderPause,
@@ -551,9 +550,11 @@ class AIFleetMission(object):
                         debug("No Current Orders")
                 else:
                     # TODO: evaluate releasing a smaller portion or none of the ships
-                    system_status = aistate.systemStatus.setdefault(last_sys_target, {})
-                    new_fleets = []
-                    threat_present = system_status.get('totalThreat', 0) + system_status.get('neighborThreat', 0) > 0
+                    potential_threat = CombatRatingsAI.combine_ratings(
+                        MilitaryAI.get_system_local_threat(last_sys_target),
+                        MilitaryAI.get_system_neighbor_threat(last_sys_target)
+                    )
+                    threat_present = potential_threat > 0
                     target_system = universe.getSystem(last_sys_target)
                     if not threat_present and target_system:
                         for pid in target_system.planetIDs:
@@ -569,7 +570,45 @@ class AIFleetMission(object):
                         # release extra ships for potential other deployments
                         new_fleets = FleetUtilsAI.split_fleet(self.fleet.id)
                     else:
-                        debug("Threat remains in target system; NOT releasing any ships.")
+                        debug("Threat remains in target system; Considering to release some ships.")
+                        new_fleets = []
+                        fleet_portion_to_remain = self._portion_of_fleet_needed_here()
+                        if fleet_portion_to_remain > 1:
+                            debug("Can not release fleet yet due to large threat.")
+                        elif fleet_portion_to_remain > 0:
+                            debug("Not all ships are needed here - considering releasing a few")
+                            fleet_remaining_rating = CombatRatingsAI.get_fleet_rating(fleet_id)
+                            fleet_min_rating = fleet_portion_to_remain * fleet_remaining_rating
+                            debug("Starting rating: %.1f, Target rating: %.1f",
+                                  fleet_remaining_rating, fleet_min_rating)
+                            allowance = CombatRatingsAI.rating_needed(fleet_remaining_rating, fleet_min_rating)
+                            debug("May release ships with total rating of %.1f", allowance)
+                            ship_ids = list(self.fleet.get_object().shipIDs)
+                            for ship_id in ship_ids:
+                                ship_rating = CombatRatingsAI.get_ship_rating(ship_id)
+                                debug("Considering to release ship %d with rating %.1f", ship_id, ship_rating)
+                                if ship_rating > allowance:
+                                    debug("Remaining rating insufficient. Not released.")
+                                    continue
+                                debug("Splitting from fleet.")
+                                new_fleet_id = FleetUtilsAI.split_ship_from_fleet(fleet_id, ship_id)
+                                if assertion_fails(new_fleet_id and new_fleet_id != INVALID_ID):
+                                    break
+                                new_fleets.append(new_fleet_id)
+                                fleet_remaining_rating = CombatRatingsAI.rating_difference(
+                                    fleet_remaining_rating, ship_rating)
+                                allowance = CombatRatingsAI.rating_difference(
+                                    fleet_remaining_rating, fleet_min_rating)
+                                debug("Remaining fleet rating: %.1f - Allowance: %.1f",
+                                      fleet_remaining_rating, allowance)
+                            if new_fleets:
+                                aistate.get_fleet_role(fleet_id, force_new=True)
+                                aistate.update_fleet_rating(fleet_id)
+                                aistate.ensure_have_fleet_missions(new_fleets)
+                        else:
+                            debug("Planetary defenses are deemed sufficient. Release fleet.")
+                            new_fleets = FleetUtilsAI.split_fleet(self.fleet.id)
+
                     new_military_fleets = []
                     for fleet_id in new_fleets:
                         if aistate.get_fleet_role(fleet_id) in COMBAT_MISSION_TYPES:
@@ -584,6 +623,27 @@ class AIFleetMission(object):
                     if allocations:
                         MilitaryAI.assign_military_fleets_to_systems(use_fleet_id_list=new_military_fleets,
                                                                      allocations=allocations)
+
+    def _portion_of_fleet_needed_here(self):
+        if assertion_fails(self.type in COMBAT_MISSION_TYPES):
+            error("%s" % self)
+            return 0
+        if assertion_fails(self.target and self.target.id != INVALID_ID):
+            error("%s" % self)
+            return 0
+        system_id = self.target.id
+        aistate = get_aistate()
+        local_defenses = MilitaryAI.get_my_defense_rating_in_system(system_id)
+        potential_threat = CombatRatingsAI.combine_ratings(
+            MilitaryAI.get_system_local_threat(system_id),
+            MilitaryAI.get_system_neighbor_threat(system_id)
+        )
+        safety_factor = aistate.character.military_safety_factor()
+        # consider safety factor just once here rather than everywhere below
+        potential_threat *= safety_factor
+
+        fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
+        return CombatRatingsAI.rating_needed(potential_threat, local_defenses) / float(fleet_rating)
 
     def generate_fleet_orders(self):
         """generates AIFleetOrders from fleets targets to accomplish"""
