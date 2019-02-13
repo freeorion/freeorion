@@ -28,6 +28,7 @@ ORDERS_FOR_MISSION = {
     # SECURE is mostly same as MILITARY, but waits for system removal from all targeted system lists
     # (invasion, colonization, outpost, blockade) before clearing
     MissionType.SECURE: OrderMilitary,
+    MissionType.PROTECT_REGION: OrderPause,
     MissionType.ORBITAL_INVASION: OrderInvade,
     MissionType.ORBITAL_OUTPOST: OrderOutpost,
     MissionType.ORBITAL_DEFENSE: OrderDefend,
@@ -622,9 +623,8 @@ class AIFleetMission(object):
                 self.orders.append(fleet_order)
 
             # also generate appropriate final orders
-            if not self.type == MissionType.PROTECT_REGION:
-                fleet_order = self._get_fleet_order_from_target(self.type, self.target)
-                self.orders.append(fleet_order)
+            fleet_order = self._get_fleet_order_from_target(self.type, self.target)
+            self.orders.append(fleet_order)
 
     def _need_repair(self, repair_limit=0.70):
         """Check if fleet needs to be repaired.
