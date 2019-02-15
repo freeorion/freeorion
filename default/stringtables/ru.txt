@@ -6634,7 +6634,7 @@ SP_SCYLIOR
 Скилиор
 
 SP_SCYLIOR_GAMEPLAY_DESC
-'''<img src="species/preview/scylior.png"></img>
+'''<img src="species/preview/scylior.jpg"></img>
 Морские головоногие моллюски с тремя щупальцами.
 Предпочитают [[PT_OCEAN]] планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -6660,7 +6660,7 @@ SP_GYSACHE
 Гисач
 
 SP_GYSACHE_GAMEPLAY_DESC
-'''<img src="species/preview/gysache.png"></img>
+'''<img src="species/preview/gysache.jpg"></img>
 Трусливые, причудливые травоядные, поведением напоминающие овец.
 Предпочитают [[PT_SWAMP]] планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -6685,7 +6685,7 @@ SP_CHATO
 Чато
 
 SP_CHATO_GAMEPLAY_DESC
-'''<img src="species/preview/chato.png"></img>
+'''<img src="species/preview/chato.jpg"></img>
 Неподвижные кристаллические сущности, ездящие верхом на существах под названием "Гормошк". 
 Предпочитают [[PT_TOXIC]] планеты.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
@@ -6965,7 +6965,7 @@ SP_PHINNERT
 Финнерт
 
 SP_PHINNERT_GAMEPLAY_DESC
-'''<img src="species/preview/phinnert.png"></img>
+'''<img src="species/preview/phinnert.jpg"></img>
 Трудолюбивые летающие обезьяны.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -7094,7 +7094,7 @@ SP_TRENCHERS
 Тренчеры
 
 SP_TRENCHERS_GAMEPLAY_DESC
-'''<img src="species/preview/trenchers.png"></img>
+'''<img src="species/preview/trenchers.jpg"></img>
 Загадочные колесные роботы, тщательно нарезающие на поверхности своей планеты кривые и спирали.
 Предпочитают [[PT_BARREN]] планеты
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -7180,7 +7180,7 @@ SP_UGMORS
 Угморы
 
 SP_UGMORS_GAMEPLAY_DESC
-'''<img src="species/preview/ugmors.png"></img>
+'''<img src="species/preview/ugmors.jpg"></img>
 Живущие в лаве сгустки дрожжей, временно формирующиеся в големов.
 Предпочитают [[PT_INFERNO]] планеты.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -7238,7 +7238,7 @@ SP_ABADDONI
 Абаддони
 
 SP_ABADDONI_GAMEPLAY_DESC
-'''<img src="species/preview/abaddoni.png"></img>
+'''<img src="species/preview/abaddoni.jpg"></img>
 Раса обитающих в пещерах существ, находящихся в рабстве у сверхконтролирующего компьютера, который они сами и создали.
 Предпочитают [[PT_INFERNO]] планеты.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -7376,7 +7376,7 @@ SP_BANFORO
 Банфоро
 
 SP_BANFORO_GAMEPLAY_DESC
-'''<img src="species/preview/banforo.png"></img>
+'''<img src="species/preview/banforo.jpg"></img>
 Симпатичные и усердные звёздные наблюдатели.
 Предпочитают [[PT_BARREN]] планеты
 [[encyclopedia LITHIC_SPECIES_TITLE]]

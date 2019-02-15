@@ -7209,7 +7209,7 @@ SP_SCYLIOR  # translated
 Scylior
 
 SP_SCYLIOR_GAMEPLAY_DESC
-'''<img src="species/preview/scylior.png"></img>
+'''<img src="species/preview/scylior.jpg"></img>
 Nautiloïdes aquatiques dotés de trois tentacules.
 Préfèrent les Planètes [[PT_OCEAN]]s.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -7235,7 +7235,7 @@ SP_GYSACHE  # translated
 Gysache
 
 SP_GYSACHE_GAMEPLAY_DESC
-'''<img src="species/preview/gysache.png"></img>
+'''<img src="species/preview/gysache.jpg"></img>
 Herbivores craintifs insolites, organisation en troupeau.
 Préfèrent les Planètes [[PT_SWAMP]]s.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -7260,7 +7260,7 @@ SP_CHATO  # translated
 Chato
 
 SP_CHATO_GAMEPLAY_DESC
-'''<img src="species/preview/chato.png"></img>
+'''<img src="species/preview/chato.jpg"></img>
 Entités cristallines sessiles chevauchant des animaux nommés Gormoshk.
 Préfèrent les Planètes [[PT_TOXIC]]s.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
@@ -7537,7 +7537,7 @@ SP_PHINNERT  # translated
 Phinnert
 
 SP_PHINNERT_GAMEPLAY_DESC
-'''<img src="species/preview/phinnert.png"></img>
+'''<img src="species/preview/phinnert.jpg"></img>
 Singes volants industrialisés.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -7669,7 +7669,7 @@ SP_TRENCHERS  # translated
 Trenchers
 
 SP_TRENCHERS_GAMEPLAY_DESC
-'''<img src="species/preview/trenchers.png"></img>
+'''<img src="species/preview/trenchers.jpg"></img>
 Robots énigmatiques munis de roues, se consacrant exclusivement à sculpter la surface de leur planète en courbes et spirales les plus élaborées.
 Préfèrent les Planètes [[PT_BARREN]]s.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -7757,7 +7757,7 @@ SP_UGMORS  # translated
 Ugmors
 
 SP_UGMORS_GAMEPLAY_DESC
-'''<img src="species/preview/ugmors.png"></img>
+'''<img src="species/preview/ugmors.jpg"></img>
 Amas d'écume magmatique, pouvant s'agglomérer temporairement en golems.
 Préfèrent les Planètes [[PT_INFERNO]]s.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -7814,7 +7814,7 @@ SP_ABADDONI  # translated
 Abaddoni
 
 SP_ABADDONI_GAMEPLAY_DESC
-'''<img src="species/preview/abaddoni.png"></img>
+'''<img src="species/preview/abaddoni.jpg"></img>
 Organismes troglodytes généralement inoffensifs, et totalement soumis à un ordinateur central surprotecteur créé par ces derniers.
 Préfèrent les Planètes [[PT_INFERNO]]s.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -7954,7 +7954,7 @@ SP_BANFORO  # translated
 Banforo
 
 SP_BANFORO_GAMEPLAY_DESC
-'''<img src="species/preview/banforo.png"></img>
+'''<img src="species/preview/banforo.jpg"></img>
 Êtres adorables et contemplateurs d'étoiles.
 Préfèrent les Planètes [[PT_BARREN]]s.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
