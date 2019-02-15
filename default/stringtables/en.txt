@@ -6175,6 +6175,9 @@ Parts
 HULL
 Hull
 
+ATTACK
+Total Weapon Damage
+
 OBJECT_TYPE
 Type
 
