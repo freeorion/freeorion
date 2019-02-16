@@ -104,7 +104,7 @@ public:
     //@}
 
 private:
-    void     ValidateStyle();   ///< ensures that the style flags are consistent
+    void ValidateStyle();   ///< ensures that the style flags are consistent
 
     SubTexture                      m_graphic;
     std::shared_ptr<VectorTexture>  m_vector_texture;

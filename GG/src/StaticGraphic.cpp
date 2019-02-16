@@ -92,7 +92,10 @@ StaticGraphic::StaticGraphic(const std::shared_ptr<VectorTexture>& texture,
     Control(X0, Y0, X1, Y1, flags),
     m_vector_texture(texture),
     m_style(style)
-{}
+{
+    ValidateStyle();  // correct any disagreements in the style flags
+    SetColor(CLR_WHITE);
+}
 
 Flags<GraphicStyle> StaticGraphic::Style() const
 { return m_style; }
@@ -101,7 +104,13 @@ Rect StaticGraphic::RenderedArea() const
 {
     Pt ul = UpperLeft(), lr = LowerRight();
     Pt window_sz(lr - ul);
-    Pt graphic_sz(m_graphic.Width(), m_graphic.Height());
+
+    Pt graphic_sz;
+    if (m_graphic.GetTexture())
+        graphic_sz = {m_graphic.Width(), m_graphic.Height()};
+    else if (m_vector_texture && m_vector_texture->TextureLoaded())
+        graphic_sz = m_vector_texture->Size();
+
     Pt pt1, pt2(graphic_sz); // (unscaled) default graphic size
     if (m_style & GRAPHIC_FITGRAPHIC) {
         if (m_style & GRAPHIC_PROPSCALE) {
