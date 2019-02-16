@@ -31,6 +31,8 @@ public:
     void Render(const Pt& pt1, const Pt& pt2) const;
 
     bool TextureLoaded() const;
+
+    Pt Size() const;
     //@}
 
     /** \name Mutators */ ///@{

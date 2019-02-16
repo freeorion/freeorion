@@ -292,6 +292,7 @@ public:
         GLint viewport[4];
         glGetIntegerv(GL_VIEWPORT, viewport);
 
+        std::cout << "Rendering " << NumShapes() << " shapes!" << std::endl;
 
         glPushAttrib(GL_ALL_ATTRIB_BITS);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -329,6 +330,13 @@ public:
     bool ImageLoaded() const
     { return nsvg_image.get(); }
 
+    Pt Size()
+    {
+        if (!nsvg_image)
+            return Pt();
+        return {GG::X(nsvg_image->width), GG::Y(nsvg_image->height)};
+    }
+
     std::shared_ptr<NSVGimage> nsvg_image;
 };
 
@@ -344,6 +352,9 @@ const boost::filesystem::path& VectorTexture::Path() const
 
 bool VectorTexture::TextureLoaded() const
 { return m_impl->ImageLoaded(); }
+
+Pt VectorTexture::Size() const
+{ return m_impl->Size(); }
 
 void VectorTexture::Render(const Pt& pt1, const Pt& pt2) const
 { m_impl->Render(pt1, pt2); }
