@@ -29,7 +29,7 @@ namespace {
     }
 
 
-    //// Begin code from https://github.com/VCVRack/Rack/blob/v0.6/src/widgets/SVGWidget.cpp
+    //// Begin code adapted from https://github.com/VCVRack/Rack/blob/v0.6/src/widgets/SVGWidget.cpp
 
     struct Vec {
         float x = 0.f;
@@ -93,12 +93,14 @@ namespace {
     }
 
     static void drawSVG(NVGcontext *vg, NSVGimage *svg) {
-        std::cout << "new image: svg->width x svg->height px" << std::endl;
+        //std::cout << "drawing image sized: " << svg->width << " x " << svg->height << " px" << std::endl;
         int shapeIndex = 0;
         // Iterate shape linked list
         for (NSVGshape *shape = svg->shapes; shape; shape = shape->next, shapeIndex++) {
-            //DEBUG_ONLY(printf("    new shape: %d id \"%s\", fillrule %d, from (%f, %f) to (%f, %f)\n", shapeIndex, shape->id, shape->fillRule, shape->bounds[0], shape->bounds[1], shape->bounds[2], shape->bounds[3]);)
-
+            //std::cout << "    new shape: " << shapeIndex << "  id: " << shape->id
+            //          << "  fillrule: " << shape->fillRule
+            //          << "  from (" << shape->bounds[0] << ", " << shape->bounds[1]
+            //          << ") to (" << shape->bounds[2] << ", " << shape->bounds[3] << ")" << std::endl;
             // Visibility
             if (!(shape->flags & NSVG_FLAGS_VISIBLE))
                 continue;
@@ -248,10 +250,18 @@ public:
 
         if (extension == ".svg") {
             try {
-                //fs::ifstream ifs(path, std::ios_base::binary);
+                nsvg_image.reset(nsvgParseFromFile(filename.c_str(), "px", 96.0f));
 
-                nsvg_image.reset(nsvgParseFromFile(path.generic_string().c_str(), "px", 96.0f));
-                std::cout << "SVG Loaded: " << path.generic_string() << std::endl;
+                if (nsvg_image)
+                    std::cout << "SVG Loaded: " << filename << std::endl;
+                else
+                    throw std::exception("null image pointer...");
+
+                //fs::ifstream ifs(path, std::ios_base::binary);
+                //std::ostringstream buf;
+                //buf << ifs.rdbuf();
+                //nsvg_image.reset(nsvgParse(buf.rdbuf(), "px", 96.0f));
+
 
             } catch (const std::exception& e) {
                 std::cerr << "SVG Load failed!: " << e.what() << std::endl;
@@ -261,29 +271,40 @@ public:
 
     void Render(const Pt& pt1, const Pt& pt2)
     {
-        glPushAttrib(GL_ALL_ATTRIB_BITS);
-        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        if (!nsvg_image)
+            return;
 
         float x0 = Value(pt1.x);
         float y0 = Value(pt1.y);
-        float w = Value((pt2 - pt1).x);
-        float h = Value((pt2 - pt1).y);
+        float draw_w = Value((pt2 - pt1).x);
+        float draw_h = Value((pt2 - pt1).y);
+
+        float img_w = nsvg_image->width;
+        if (img_w == 0.0f)
+            img_w = 1.0f;
+        float img_h = nsvg_image->height;
+        if (img_h == 0.0f)
+            img_h = 1.0f;
+
+        float draw_scale_x = draw_w / img_w;
+        float draw_scale_y = draw_h / img_h;
 
         GLint viewport[4];
         glGetIntegerv(GL_VIEWPORT, viewport);
 
+
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glPushMatrix();
+
         nvgBeginFrame(VG(), viewport[2] - viewport[0], viewport[3] - viewport[1], 1.0f);
-            nvgBeginPath(VG());
-            nvgRect(VG(), x0+w, y0+h, w,h);
-            nvgCircle(VG(), x0+w+120,y0+h+120, 10);
-            nvgPathWinding(VG(), NVG_HOLE);   // Mark circle as a hole.
-            nvgFillColor(VG(), nvgRGBA(255,192,0,255));
-            nvgFill(VG());
+
+        nvgTranslate(VG(), x0, y0);
+        nvgScale(VG(), draw_scale_x, draw_scale_y);
+        drawSVG(VG(), nsvg_image.get());
         nvgEndFrame(VG());
 
-        if (nsvg_image)
-            drawSVG(VG(), nsvg_image.get());
-
+        glPopMatrix();
         glPopClientAttrib();
         glPopAttrib();
 
