@@ -24,6 +24,9 @@
     <Filter Include="Header Files\RichText">
       <UniqueIdentifier>{d4c017e8-2997-4a5c-90e9-83bb0aea86be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\nanovg">
+      <UniqueIdentifier>{4603e095-151a-49f1-901e-8c72f0a2c8a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\GG\GG\Slider.h">
@@ -186,6 +189,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="..\..\GG\GG\VectorTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\GG\src\dialogs\FileDlg.cpp">
@@ -312,5 +318,11 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="..\..\GG\src\VectorTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GG\src\nanovg\nanovg.c">
+      <Filter>Source Files\nanovg</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
