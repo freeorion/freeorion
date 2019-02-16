@@ -139,6 +139,9 @@ add_compile_options(
 
     # Enable C++ Exception unwind mechanics with DLL support
     $<$<CXX_COMPILER_ID:MSVC>:/EHsc>
+
+    # Fix Fatal Error C1128: number of sections exceeded object file format limit : compile with /bigobj on SerializeEmpire.cpp
+    $<$<CXX_COMPILER_ID:MSVC>:/bigobj>
 )
 
 set_property(DIRECTORY APPEND
@@ -378,7 +381,7 @@ set_property(TARGET freeorionparseobj
 )
 
 if(WIN32)
-    set_property(TARGET freeorionparse
+    set_property(TARGET freeorionparseobj
         PROPERTY
         OUTPUT_NAME Parsers
     )

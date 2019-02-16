@@ -26,6 +26,7 @@ include_directories(
     SYSTEM
     ${OPENGL_INCLUDE_DIR}
     ${SDL_INCLUDE_DIR}
+    ${GLEW_INCLUDE_DIRS}
 )
 
 add_library(gigi_acceptance_runner OBJECT

@@ -86,6 +86,7 @@ if(NOT USE_STATIC_LIBS)
     add_definitions(
         -DBOOST_ALL_NO_LINK
         -DBOOST_ALL_DYN_LINK
+        -DBOOST_LOG_NO_LINK
         -DBOOST_LOG_DYN_LINK
     )
 endif()
