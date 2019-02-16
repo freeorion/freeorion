@@ -29,6 +29,8 @@ public:
 
     /** Renders to region between \a pt1 and \a pt2 */
     void Render(const Pt& pt1, const Pt& pt2) const;
+
+    bool TextureLoaded() const;
     //@}
 
     /** \name Mutators */ ///@{
@@ -48,9 +50,57 @@ public:
     //@}
 
 private:
-    boost::filesystem::path             m_path; ///< file path from which this Texture was constructed
+    VectorTexture(const VectorTexture& rhs);            ///< disabled
+    VectorTexture& operator=(const VectorTexture& rhs); ///< disabled
+
+    boost::filesystem::path             m_path;         ///< file path from which this VectorTexture was constructed
     std::shared_ptr<VectorTextureImpl>  m_impl;
 };
+
+/** \brief A singleton that loads and stores vector textures for use by GG.
+
+    This class is essentially a very thin wrapper around a map of VectorTexture
+    smart pointers, keyed on std::string texture names.  The user need only
+    request a texture through GetVectorTexture(); if the texture is not already
+    resident, it will be loaded. */
+class GG_API VectorTextureManager
+{
+public:
+    /** \name Accessors */ ///@{
+    const std::map<std::string, std::shared_ptr<VectorTexture>>& Textures() const;
+    //@}
+
+    /** \name Mutators */ ///@{
+    /** Returns a shared_ptr to the texture created from image file \a path.
+        If the texture is not present in the manager's pool, it will be loaded
+        from disk. */
+    std::shared_ptr<VectorTexture> GetTexture(const boost::filesystem::path& path);
+
+    /** Removes the manager's shared_ptr to the texture created from image
+        file \a path, if it exists.  \note Due to shared_ptr semantics, the
+        texture may not be deleted until much later. */
+    void                           FreeTexture(const boost::filesystem::path& path);
+
+    /** Removes the manager's shared_ptr to the texture stored with the name
+        \a name, if it exists.  \note Due to shared_ptr semantics, the
+        texture may not be deleted until much later. */
+    void                           FreeTexture(const std::string& name);
+    //@}
+
+private:
+    VectorTextureManager();
+    std::shared_ptr<VectorTexture> LoadTexture(const boost::filesystem::path& path);
+
+    /** Indexed by string, not path, because some textures may be stored by a
+        name and not loaded from a path. */
+    std::map<std::string, std::shared_ptr<VectorTexture>> m_textures;
+
+    friend GG_API VectorTextureManager& GetVectorTextureManager();
+};
+
+/** Returns the singleton VectorTextureManager instance. */
+GG_API VectorTextureManager& GetVectorTextureManager();
+
 
 } // namespace GG
 

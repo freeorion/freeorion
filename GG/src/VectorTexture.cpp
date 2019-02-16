@@ -253,7 +253,7 @@ public:
                 nsvg_image.reset(nsvgParseFromFile(filename.c_str(), "px", 96.0f));
 
                 if (nsvg_image)
-                    std::cout << "SVG Loaded: " << filename << std::endl;
+                    std::cout << "SVG Loaded: " << filename << "  with " << NumShapes() << " shapes" << std::endl;
                 else
                     throw std::exception("null image pointer...");
 
@@ -311,6 +311,24 @@ public:
         glEnable(GL_TEXTURE_2D);
     }
 
+    int NumShapes() const
+    {
+        if (!nsvg_image)
+            return 0;
+        if (!nsvg_image->shapes)
+            return 0;
+        int count = 0;
+        auto* shape = nsvg_image->shapes;
+        while (shape) {
+            ++count;
+            shape = shape->next;
+        }
+        return count;
+    }
+
+    bool ImageLoaded() const
+    { return nsvg_image.get(); }
+
     std::shared_ptr<NSVGimage> nsvg_image;
 };
 
@@ -324,6 +342,9 @@ VectorTexture::VectorTexture() :
 const boost::filesystem::path& VectorTexture::Path() const
 { return m_path; }
 
+bool VectorTexture::TextureLoaded() const
+{ return m_impl->ImageLoaded(); }
+
 void VectorTexture::Render(const Pt& pt1, const Pt& pt2) const
 { m_impl->Render(pt1, pt2); }
 
@@ -331,4 +352,48 @@ void VectorTexture::Load(const boost::filesystem::path& path)
 {
     m_impl->Load(path);
     m_path = path;
+}
+
+///////////////////////////////////////
+// class GG::VectorTextureManager
+///////////////////////////////////////
+
+VectorTextureManager::VectorTextureManager()
+{}
+
+const std::map<std::string, std::shared_ptr<VectorTexture>>& VectorTextureManager::Textures() const
+{ return m_textures; }
+
+std::shared_ptr<VectorTexture> VectorTextureManager::GetTexture(const boost::filesystem::path& path)
+{
+    std::map<std::string, std::shared_ptr<VectorTexture>>::iterator it = m_textures.find(path.generic_string());
+    if (it == m_textures.end()) { // if no such texture was found, attempt to load it now, using name as the filename
+        //std::cout << "VectorTextureManager::GetTexture storing new texture under name: " << path.generic_string();
+        return (m_textures[path.generic_string()] = LoadTexture(path));
+    } else { // otherwise, just return the texture we found
+        return it->second;
+    }
+}
+
+void VectorTextureManager::FreeTexture(const boost::filesystem::path& path)
+{ FreeTexture(path.generic_string()); }
+
+void VectorTextureManager::FreeTexture(const std::string& name)
+{
+    std::map<std::string, std::shared_ptr<VectorTexture>>::iterator it = m_textures.find(name);
+    if (it != m_textures.end())
+        m_textures.erase(it);
+}
+
+std::shared_ptr<VectorTexture> VectorTextureManager::LoadTexture(const boost::filesystem::path& path)
+{
+    auto temp = std::make_shared<VectorTexture>();
+    temp->Load(path);
+    return (m_textures[path.generic_string()] = temp);
+}
+
+VectorTextureManager& GG::GetVectorTextureManager()
+{
+    static VectorTextureManager manager;
+    return manager;
 }
