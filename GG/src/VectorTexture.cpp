@@ -270,7 +270,7 @@ public:
                 if (nsvg_image)
                     std::cout << "SVG Loaded: " << filename << "  with " << NumShapes() << " shapes" << std::endl;
                 else
-                    throw std::exception("null image pointer...");
+                    throw VectorTexture::BadFile("VectorTexture \"file\" \"" + filename + "\" gave a null image pointer");
 
                 //fs::ifstream ifs(path, std::ios_base::binary);
                 //std::ostringstream buf;
