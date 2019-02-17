@@ -58,6 +58,7 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/ScrollPanel.cpp
         ${CMAKE_CURRENT_LIST_DIR}/StaticGraphic.cpp
         ${CMAKE_CURRENT_LIST_DIR}/StyleFactory.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/svg.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TabWnd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TextControl.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Texture.cpp

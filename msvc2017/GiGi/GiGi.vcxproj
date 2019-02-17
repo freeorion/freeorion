@@ -106,6 +106,7 @@
     <ClCompile Include="..\..\GG\src\ScrollPanel.cpp" />
     <ClCompile Include="..\..\GG\src\StaticGraphic.cpp" />
     <ClCompile Include="..\..\GG\src\StyleFactory.cpp" />
+    <ClCompile Include="..\..\GG\src\svg.cpp" />
     <ClCompile Include="..\..\GG\src\TabWnd.cpp" />
     <ClCompile Include="..\..\GG\src\TextControl.cpp" />
     <ClCompile Include="..\..\GG\src\Texture.cpp" />

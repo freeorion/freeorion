@@ -324,5 +324,8 @@
     <ClCompile Include="..\..\GG\src\nanovg\nanovg.c">
       <Filter>Source Files\nanovg</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\GG\src\svg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
