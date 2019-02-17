@@ -88,6 +88,9 @@ public:
         if (!nsvg_image)
             return;
 
+        // clear any lingering GL errors
+        auto err = glGetError();
+
         float x0 = Value(ul.x);
         float y0 = Value(ul.y);
         float draw_w = Value((lr - ul).x);
