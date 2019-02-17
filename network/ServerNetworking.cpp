@@ -393,14 +393,14 @@ bool PlayerConnection::SyncWriteMessage(const Message& message) {
         ErrorLogger(network) << "PlayerConnection::WriteMessage(): player id = " << m_ID
                              << " error #" << error.value() << " \"" << error.message();
         boost::asio::high_resolution_timer t(m_service);
-        t.async_wait(boost::bind(&PlayerConnection::AsyncErrorHandler, this, error, boost::asio::placeholders::error));
+        t.async_wait(boost::bind(&PlayerConnection::AsyncErrorHandler, shared_from_this(), error, boost::asio::placeholders::error));
     }
 
     return (!error);
 }
 
-void PlayerConnection::AsyncErrorHandler(boost::system::error_code handled_error, boost::system::error_code error) {
-    EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
+void PlayerConnection::AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error, boost::system::error_code error) {
+    self->EventSignal(boost::bind(self->m_disconnected_callback, self));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
