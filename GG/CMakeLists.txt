@@ -147,7 +147,7 @@ endif()
 
 target_compile_definitions(GiGi
     PRIVATE
-
+        -DFONS_USE_FREETYPE
         # Starting with boost 1.68 boost::gil integrates support for
         # grayscale-alpha png images, so prefer their implementation
         # instead of our hacky gilext code.
