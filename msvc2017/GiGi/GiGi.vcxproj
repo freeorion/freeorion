@@ -69,6 +69,14 @@
     <ClInclude Include="..\..\GG\GG\Wnd.h" />
     <ClInclude Include="..\..\GG\GG\WndEvent.h" />
     <ClInclude Include="..\..\GG\GG\ZList.h" />
+    <ClInclude Include="..\..\GG\src\nanosvg\nanosvg.h" />
+    <ClInclude Include="..\..\GG\src\nanosvg\nanosvgrast.h" />
+    <ClInclude Include="..\..\GG\src\nanovg\fontstash.h" />
+    <ClInclude Include="..\..\GG\src\nanovg\nanovg.h" />
+    <ClInclude Include="..\..\GG\src\nanovg\nanovg_gl.h" />
+    <ClInclude Include="..\..\GG\src\nanovg\nanovg_gl_utils.h" />
+    <ClInclude Include="..\..\GG\src\nanovg\stb_image.h" />
+    <ClInclude Include="..\..\GG\src\nanovg\stb_truetype.h" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
