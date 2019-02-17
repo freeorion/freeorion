@@ -183,10 +183,11 @@ void StaticGraphic::Render()
     glColor(color_to_use);
     Rect rendered_area = RenderedArea();
 
-    if (m_graphic.GetTexture())
+    if (m_graphic.GetTexture()) {
         m_graphic.OrthoBlit(rendered_area.ul, rendered_area.lr);
-    else if (m_vector_texture && m_vector_texture->TextureLoaded())
+    } else if (m_vector_texture && m_vector_texture->TextureLoaded()) {
         m_vector_texture->Render(rendered_area.ul, rendered_area.lr);
+    }
 }
 
 void StaticGraphic::SetStyle(Flags<GraphicStyle> style)

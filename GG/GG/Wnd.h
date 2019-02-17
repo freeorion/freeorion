@@ -411,7 +411,7 @@ public:
 
     /** Returns the name of this Wnd.  This name is not used by GG in any way;
         it only exists for user convenience. */
-     const std::string& Name() const;
+    const std::string& Name() const;
 
     /** Returns the string key that defines the type of data that this Wnd
         represents in drag-and-drop drags.  Returns an empty string when this
@@ -512,7 +512,7 @@ public:
         corresponding Wnd is shown superimposed over this Wnd and its
         children.  Set the first time cutoff to 0 for immediate browse info
         display. */
-    const std::vector<BrowseInfoMode>&  BrowseModes() const;
+    const std::vector<BrowseInfoMode>& BrowseModes() const;
 
     /** Returns the text to display for browse info mode \a mode.  \throw
         std::out_of_range May throw std::out_of_range if \a mode is not a
