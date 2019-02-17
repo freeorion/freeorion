@@ -6175,6 +6175,9 @@ PARTS
 HULL
 Coque
 
+ATTACK
+Dommages Totaux Armement
+
 OBJECT_TYPE  # translated
 Type
 
@@ -10112,6 +10115,25 @@ DESC_ORDERED_BOMBARDED
 DESC_ORDERED_BOMBARDED_NOT
 ''' n'étant pas bombardé par un objet %1%'''
 
+# %1% content type description, eg. species, building, focus, tech
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+DESC_LOCATION
+''' qui correspond à la condition d'emplacement de %1% %2%'''
+
+# %1% content type description, eg. species, building, focus, tech
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+DESC_LOCATION_NOT
+''' qui ne correspond pas à la condition d'emplacement de %1% %2%'''
+
+# %1% content type description, eg. species, building, focus, tech
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+DESC_COMBAT_TARGET
+''' qui correspond à la condition de cibles de combat de %1% %2%'''
+
+# %1% content type description, eg. species, building, focus, tech
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+DESC_COMBAT_TARGET_NOT
+''' qui ne correspond pas à la condition de cibles de combat de %1% %2%'''
 
 # AND Descriptions for expressions 'AND [ A B C ]'
 DESC_AND_BEFORE_OPERANDS
