@@ -181,6 +181,9 @@ const boost::filesystem::path& VectorTexture::Path() const
 bool VectorTexture::TextureLoaded() const
 { return m_impl->ImageLoaded(); }
 
+int VectorTexture::NumShapes() const
+{ return m_impl->NumShapes(); }
+
 Pt VectorTexture::Size() const
 { return m_impl->Size(); }
 

@@ -30,6 +30,7 @@ public:
     /** Renders to region between \a pt1 and \a pt2 */
     void Render(const Pt& ul, const Pt& lr) const;
     bool TextureLoaded() const;
+    int NumShapes() const;
     Pt Size() const;
     //@}
 
