@@ -63,6 +63,7 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/Texture.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Timer.cpp
         ${CMAKE_CURRENT_LIST_DIR}/UnicodeCharsets.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/VectorTexture.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Wnd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/WndEvent.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ZList.cpp
