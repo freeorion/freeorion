@@ -269,15 +269,15 @@ public:
         }
     }
 
-    void Render(const Pt& pt1, const Pt& pt2)
+    void Render(const Pt& ul, const Pt& lr)
     {
         if (!nsvg_image)
             return;
 
-        float x0 = Value(pt1.x);
-        float y0 = Value(pt1.y);
-        float draw_w = Value((pt2 - pt1).x);
-        float draw_h = Value((pt2 - pt1).y);
+        float x0 = Value(ul.x);
+        float y0 = Value(ul.y);
+        float draw_w = Value((lr - ul).x);
+        float draw_h = Value((lr - ul).y);
 
         float img_w = nsvg_image->width;
         if (img_w == 0.0f)
@@ -292,7 +292,7 @@ public:
         GLint viewport[4];
         glGetIntegerv(GL_VIEWPORT, viewport);
 
-        std::cout << "Rendering " << NumShapes() << " shapes!" << std::endl;
+        //std::cout << "Rendering " << NumShapes() << " shapes!" << std::endl;
 
         glPushAttrib(GL_ALL_ATTRIB_BITS);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -300,9 +300,20 @@ public:
 
         nvgBeginFrame(VG(), viewport[2] - viewport[0], viewport[3] - viewport[1], 1.0f);
 
+        Rect r = ActiveScissorClippingRegion();
+        if (r != Rect()) {
+            float clip_x0 = Value(r.ul.x);
+            float clip_y0 = Value(r.ul.y);
+            float clip_w = Value(r.Width());
+            float clip_h = Value(r.Height());
+            nvgScissor(VG(), clip_x0, clip_y0, clip_w, clip_h);
+        }
+
         nvgTranslate(VG(), x0, y0);
         nvgScale(VG(), draw_scale_x, draw_scale_y);
+
         drawSVG(VG(), nsvg_image.get());
+
         nvgEndFrame(VG());
 
         glPopMatrix();
@@ -356,8 +367,8 @@ bool VectorTexture::TextureLoaded() const
 Pt VectorTexture::Size() const
 { return m_impl->Size(); }
 
-void VectorTexture::Render(const Pt& pt1, const Pt& pt2) const
-{ m_impl->Render(pt1, pt2); }
+void VectorTexture::Render(const Pt& ul, const Pt& lr) const
+{ m_impl->Render(ul, lr); }
 
 void VectorTexture::Load(const boost::filesystem::path& path)
 {

@@ -28,10 +28,8 @@ public:
     const boost::filesystem::path& Path() const;    ///< returns the file path from which this vector texture was loaded (default / empty if this vector texture was not loaded from a file)
 
     /** Renders to region between \a pt1 and \a pt2 */
-    void Render(const Pt& pt1, const Pt& pt2) const;
-
+    void Render(const Pt& ul, const Pt& lr) const;
     bool TextureLoaded() const;
-
     Pt Size() const;
     //@}
 
