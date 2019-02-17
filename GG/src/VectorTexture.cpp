@@ -23,7 +23,7 @@ namespace {
         static NVGcontext* s_vg = nullptr;
         if (!s_vg) {
             s_vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);   // leaks, as NVGcontext only defined in nanovg.c
-            std::cout << "Initialized NVGcontext!" << std::endl;
+           // std::cout << "Initialized NVGcontext!" << std::endl;
         }
         return s_vg;
     }
@@ -38,16 +38,16 @@ class VectorTextureImpl {
 public:
     void Load(const boost::filesystem::path& path)
     {
-        std::cout << "VectorTextureImpl::Load(" << path.generic_string() << ")" << std::endl;
+        //std::cout << "VectorTextureImpl::Load(" << path.generic_string() << ")" << std::endl;
 
         namespace fs = boost::filesystem;
 
         if (!fs::exists(path)) {
-            std::cerr << "VectorTexture::Load passed non-existant path: " << path.generic_string() << std::endl;
+            //std::cerr << "VectorTexture::Load passed non-existant path: " << path.generic_string() << std::endl;
             throw VectorTexture::BadFile("VectorTexture file \"" + path.generic_string() + "\" does not exist");
         }
         if (!fs::is_regular_file(path)) {
-            std::cerr << "VectorTexture::Load passed non-file path: " << path.generic_string() << std::endl;
+            //std::cerr << "VectorTexture::Load passed non-file path: " << path.generic_string() << std::endl;
             throw VectorTexture::BadFile("VectorTexture \"file\" \"" + path.generic_string() + "\" is not a file");
         }
 
@@ -71,13 +71,14 @@ public:
             try {
                 nsvg_image.reset(nsvgParseFromFile(filename.c_str(), "px", 96.0f));
 
-                if (nsvg_image)
-                    std::cout << "SVG Loaded: " << filename << "  with " << NumShapes() << " shapes" << std::endl;
-                else
+                if (nsvg_image) {
+                    //std::cout << "SVG Loaded: " << filename << "  with " << NumShapes() << " shapes" << std::endl;
+                } else {
                     throw VectorTexture::BadFile("VectorTexture \"file\" \"" + filename + "\" gave a null image pointer");
+                }
 
             } catch (const std::exception& e) {
-                std::cerr << "SVG Load failed!: " << e.what() << std::endl;
+                //std::cerr << "SVG Load failed!: " << e.what() << std::endl;
             }
         }
     }
