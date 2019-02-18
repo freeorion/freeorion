@@ -122,7 +122,8 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                 fleet_pool_set.remove(fleet_id)
                 continue
             # try splitting fleet
-            if len(list(fleet.shipIDs)) > 1:
+            if fleet.numShips > 1:
+                debug("Splitting candidate fleet to get ships for mission.")
                 new_fleets = split_fleet(fleet_id)
                 fleet_pool_set.update(new_fleets)
                 fleets_here.extend(new_fleets)
