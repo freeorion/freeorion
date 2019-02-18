@@ -106,7 +106,8 @@ class AIFleetMission(object):
         if self.type == mission_type and self.target == target:
             return
         if self.type or self.target:
-            debug("Change mission assignment from %s:%s to %s:%s" % (self.type, self.target, mission_type, target))
+            debug("%s: change mission assignment from %s:%s to %s:%s" % (
+                self.fleet, self.type, self.target, mission_type, target))
         self.type = mission_type
         self.target = target
 
