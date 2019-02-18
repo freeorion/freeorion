@@ -606,6 +606,16 @@ class AIFleetMission(object):
             MilitaryAI.get_system_local_threat(system_id),
             MilitaryAI.get_system_neighbor_threat(system_id)
         )
+        universe = fo.getUniverse()
+        system = universe.getSystem(system_id)
+
+        total_defense = total_shields = 0
+        for planet_id in system.planetIDs:
+            planet = universe.getPlanet(planet_id)
+            total_defense += planet.currentMeterValue(fo.meterType.defense)
+            total_shields += planet.currentMeterValue(fo.meterType.shield)
+        planetary_ratings = total_defense * (total_shields + total_defense)
+        potential_threat += planetary_ratings  # TODO: rewrite to return min rating vs planets as well
         safety_factor = aistate.character.military_safety_factor()
         # consider safety factor just once here rather than everywhere below
         potential_threat *= safety_factor
