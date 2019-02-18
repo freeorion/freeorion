@@ -652,7 +652,8 @@ class AIFleetMission(object):
 
             system_to_visit = (self.target.get_system() if not self.type == MissionType.PROTECT_REGION
                                else TargetSystem(self._get_target_for_protection_mission()))
-
+            if not system_to_visit:
+                return
             orders_to_visit_systems = MoveUtilsAI.create_move_orders_to_system(self.fleet, system_to_visit)
             # TODO: if fleet doesn't have enough fuel to get to final target, consider resetting Mission
             for fleet_order in orders_to_visit_systems:
@@ -725,19 +726,41 @@ class AIFleetMission(object):
         else:
             debug("No immediate threats.")
             # Try to eliminate neighbouring fleets
+            neighbors = universe.getImmediateNeighbors(primary_objective, fo.empireID())
             threat_list = sorted(map(
                 lambda x: (MilitaryAI.get_system_local_threat(x), x),
-                universe.getImmediateNeighbors(primary_objective, fo.empireID())
+                neighbors
             ), reverse=True)
 
             if not threat_list:
-                # TODO: Move into second ring but needs more careful evaluation
                 debug("No neighboring threats. Moving to primary mission target")
                 return primary_objective
 
             debug("%s", threat_list)
             top_threat, candidate_system = threat_list[0]
             if not top_threat:
+                # TODO: Move into second ring but needs more careful evaluation
+                # For now, consider staying at the current location if enemy
+                # owns a planet here which we can bombard.
+                current_system_id = self.fleet.get_current_system_id()
+                if current_system_id in neighbors:
+                    system = universe.getSystem(current_system_id)
+                    if assertion_fails(system is not None):
+                        return primary_objective
+                    empire_id = fo.empireID()
+                    for planet_id in system.planetIDs:
+                        planet = universe.getPlanet(planet_id)
+                        if (planet and
+                                not planet.ownedBy(empire_id) and
+                                not planet.unowned):
+                            debug("Currently no neighboring threats. "
+                                  "Staying for bombardment of planet %s", planet)
+                            self.clear_fleet_orders()
+                            self.set_target(MissionType.MILITARY, TargetSystem(current_system_id))
+                            self.generate_fleet_orders()
+                            self.issue_fleet_orders()
+                            return -1
+
                 debug("No neighboring threats. Moving to primary mission target")
                 return primary_objective
 
