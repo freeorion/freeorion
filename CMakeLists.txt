@@ -254,9 +254,9 @@ set_property(DIRECTORY APPEND
     PROPERTY COMPILE_DEFINITIONS
         # Disable Boost auto-linking
         # http://www.boost.org/doc/libs/1_59_0/libs/config/doc/html/index.html#boost_config.configuring_boost_for_your_platform.user_settable_options
-        BOOST_ALL_NO_LINK
+        BOOST_ALL_NO_LIB
 
-        # Boost iostreams doesn't honor BOOST_ALL_NO_LINK when linking zlib.
+        # Boost iostreams doesn't honor BOOST_ALL_NO_LIB when linking zlib.
         # It also tries to link by default to the boost in-source zlib librar,
         # which we don't want.
         # http://www.boost.org/doc/libs/1_59_0/boost/iostreams/detail/config/zlib.hpp

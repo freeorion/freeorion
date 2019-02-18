@@ -10,7 +10,7 @@ target_compile_definitions(fo_unittest_parse
     PRIVATE
         -DFREEORION_BUILD_SERVER
         -DBOOST_TEST_DYN_LINK
-        -DBOOST_TEST_NO_LINK
+        -DBOOST_TEST_NO_LIB
 )
 
 target_include_directories(fo_unittest_parse

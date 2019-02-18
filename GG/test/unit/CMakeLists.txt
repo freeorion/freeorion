@@ -32,7 +32,7 @@ add_executable(gg_unittest
 target_compile_definitions(gg_unittest
     PRIVATE
         -DBOOST_TEST_DYN_LINK
-        -DBOOST_TEST_NO_LINK
+        -DBOOST_TEST_NO_LIB
 )
 
 target_link_libraries(gg_unittest
