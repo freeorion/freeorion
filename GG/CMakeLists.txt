@@ -84,9 +84,9 @@ set(MINIMUM_BOOST_VERSION 1.58.0)
 
 if(NOT USE_STATIC_LIBS)
     add_definitions(
-        -DBOOST_ALL_NO_LINK
+        -DBOOST_ALL_NO_LIB
         -DBOOST_ALL_DYN_LINK
-        -DBOOST_LOG_NO_LINK
+        -DBOOST_LOG_NO_LIB
         -DBOOST_LOG_DYN_LINK
     )
 endif()

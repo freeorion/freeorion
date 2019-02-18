@@ -7,7 +7,7 @@ add_executable(fo_unittest_util
 target_compile_definitions(fo_unittest_util
     PRIVATE
         -DBOOST_TEST_DYN_LINK
-        -DBOOST_TEST_NO_LINK
+        -DBOOST_TEST_NO_LIB
 )
 
 target_include_directories(fo_unittest_util
