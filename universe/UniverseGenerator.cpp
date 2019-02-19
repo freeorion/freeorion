@@ -331,7 +331,7 @@ namespace {
         // "depth" level in tree of system currently being investigated
         int curDepth;
 
-        // iterators to set of starlanes, in graph, for the current system    
+        // iterators to set of starlanes, in graph, for the current system
         std::set<int>::iterator curSysLanesSetIter, curSysLanesSetEnd;
 
         // check for simple cases for quick termination
@@ -355,7 +355,7 @@ namespace {
         while (sysListIter != sysListEnd) {
             cur_sys_id = *sysListIter;
 
-            // check that iteration hasn't reached maxLaneJumps levels deep, which would 
+            // check that iteration hasn't reached maxLaneJumps levels deep, which would
             // mean that system2 isn't within maxLaneJumps starlane jumps of system1
             curDepth = (*accessibleSystemsMap.find(cur_sys_id)).second;
 
@@ -477,7 +477,7 @@ namespace {
                     auto dest2 = *laneSetIter2;
 
                     std::pair<int, int> lane2;
-                    if (cur_sys_id < dest2) 
+                    if (cur_sys_id < dest2)
                         lane2 = {cur_sys_id, dest2};
                     else
                         lane2 = {dest2, cur_sys_id};
@@ -881,6 +881,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
         int         empire_id =     player_id;
         std::string player_name =   entry.second.m_player_name;
         GG::Clr     empire_colour = entry.second.m_empire_color;
+        bool        authenticated = entry.second.m_authenticated;
 
         // validate or generate empire colour
         // ensure no other empire gets auto-assigned this colour automatically
@@ -908,7 +909,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
                       << " for player: " << player_name << " (with player id: " << player_id << ")";
 
         // create new Empire object through empire manager
-        Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour);
+        Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour, authenticated);
     }
 
     Empires().ResetDiplomacy();

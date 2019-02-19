@@ -319,6 +319,7 @@ void ServerFSM::UpdateIngameLobby() {
         } else {
             player_setup_data.m_empire_color = GG::Clr(255, 255, 255, 255);
         }
+        player_setup_data.m_authenticated = (*player_it)->IsAuthenticated();
         dummy_lobby_data.m_players.push_back({player_id, player_setup_data});
     }
     dummy_lobby_data.m_start_lock_cause = UserStringNop("SERVER_ALREADY_PLAYING_GAME");
@@ -644,6 +645,7 @@ MPLobby::MPLobby(my_context c) :
                     player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
                 else
                     player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
+                player_setup_data.m_authenticated = player_connection->IsAuthenticated();
 
                 m_lobby_data->m_players.push_back({player_id, player_setup_data});
             } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -688,6 +690,7 @@ MPLobby::MPLobby(my_context c) :
         player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
         // leaving save game empire id as default
         player_setup_data.m_client_type =           player_connection->GetClientType();
+        player_setup_data.m_authenticated =         player_connection->IsAuthenticated();
 
         player_connection->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
     }
@@ -840,6 +843,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
             player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
         else
             player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
+        player_setup_data.m_authenticated =  player_connection->IsAuthenticated();
 
         // after setting all details, push into lobby data
         m_lobby_data->m_players.push_back({player_id, player_setup_data});
@@ -1091,6 +1095,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                         WarnLogger(FSM) << "Got unallowed client types.";
                         break;
                     }
+                    // set correct authentication status
+                    player.second.m_authenticated = (*player_it)->IsAuthenticated();
                 } else {
                     // player wasn't found
                     // don't allow "ghost" records
@@ -1188,7 +1194,43 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // limit count of AI
             auto max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
             if (ai_count <= max_ai || max_ai < 0) {
-                m_lobby_data->m_players    = incoming_lobby_data.m_players;
+                if (sender->HasAuthRole(Networking::ROLE_HOST)) {
+                    // don't check host player
+                    // treat host player as superuser or administrator
+                    m_lobby_data->m_players = incoming_lobby_data.m_players;
+                } else {
+                    // check players shouldn't set protected empire to themselves
+                    // if they don't have required player's name
+                    bool incorrect_empire = false;
+                    for (const auto& plr : incoming_lobby_data.m_players) {
+                        if (plr.first != sender->PlayerID())
+                            continue;
+                        if (plr.second.m_save_game_empire_id != ALL_EMPIRES) {
+                            const auto empire_it = m_lobby_data->m_save_game_empire_data.find(plr.second.m_save_game_empire_id);
+                            if (empire_it != m_lobby_data->m_save_game_empire_data.end()) {
+                                if (empire_it->second.m_authenticated) {
+                                    if (empire_it->second.m_player_name != sender->PlayerName()) {
+                                        WarnLogger(FSM) << "Unauthorized access to protected empire \"" << empire_it->second.m_empire_name << "\"."
+                                                        << " Expected player \"" << empire_it->second.m_player_name << "\""
+                                                        << " got \"" << sender->PlayerName() << "\"";
+                                        incorrect_empire = true;
+                                    }
+                                }
+                            } else {
+                                WarnLogger(FSM) << "Unknown empire #" << plr.second.m_save_game_empire_id;
+                                incorrect_empire = true;
+                            }
+                        }
+                        break;
+                    }
+                    if (incorrect_empire) {
+                        has_important_changes = true;
+                        player_setup_data_changed = true;
+                    } else {
+                        // ToDo: non-host player should change only AI and himself
+                        m_lobby_data->m_players = incoming_lobby_data.m_players;
+                    }
+                }
             } else {
                 has_important_changes = true;
             }
@@ -1302,6 +1344,30 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     i_player.second.m_player_ready = false;
                     player_setup_data_changed = true;
                 } else {
+                    // check loaded empire
+                    bool incorrect_empire = false;
+                    if (j_player.second.m_save_game_empire_id != ALL_EMPIRES) {
+                        const auto empire_it = m_lobby_data->m_save_game_empire_data.find(j_player.second.m_save_game_empire_id);
+                        if (empire_it != m_lobby_data->m_save_game_empire_data.end()) {
+                            if (empire_it->second.m_authenticated) {
+                                if (empire_it->second.m_player_name != sender->PlayerName()) {
+                                    WarnLogger(FSM) << "Unauthorized access to protected empire \"" << empire_it->second.m_empire_name << "\"."
+                                                    << " Expected player \"" << empire_it->second.m_player_name << "\""
+                                                    << " got \"" << sender->PlayerName() << "\"";
+                                    incorrect_empire = true;
+                                }
+                            }
+                        } else {
+                            WarnLogger(FSM) << "Unknown empire #" << j_player.second.m_save_game_empire_id;
+                            incorrect_empire = true;
+                        }
+                    }
+                    if (incorrect_empire) {
+                        i_player.second.m_player_ready = false;
+                        player_setup_data_changed = true;
+                        break;
+                    }
+
                     has_important_changes = IsPlayerChanged(i_player.second, j_player.second);
                     player_setup_data_changed = ! (i_player.second == j_player.second);
 

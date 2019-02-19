@@ -86,6 +86,9 @@ void SaveGameEmpireData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_empire_name)
         & BOOST_SERIALIZATION_NVP(m_player_name)
         & BOOST_SERIALIZATION_NVP(m_color);
+    if (version >= 1) {
+        ar & BOOST_SERIALIZATION_NVP(m_authenticated);
+    }
 }
 
 template void SaveGameEmpireData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
@@ -148,6 +151,9 @@ void PlayerSetupData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_save_game_empire_id)
         & BOOST_SERIALIZATION_NVP(m_client_type)
         & BOOST_SERIALIZATION_NVP(m_player_ready);
+    if (version >= 1) {
+        ar & BOOST_SERIALIZATION_NVP(m_authenticated);
+    }
 }
 
 template void PlayerSetupData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);

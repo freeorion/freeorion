@@ -24,7 +24,7 @@ class UniverseObject;
 class FO_COMMON_API EmpireManager {
 public:
     /// Iterator over Empires
-    typedef std::map<int, Empire*>::iterator iterator; 
+    typedef std::map<int, Empire*>::iterator iterator;
 
     /// Const Iterator over Empires
     typedef std::map<int, Empire*>::const_iterator const_iterator;
@@ -77,7 +77,7 @@ public:
       * caller's responsibility to make sure that universe updates planet
       * ownership. */
     Empire*     CreateEmpire(int empire_id, const std::string& name, const std::string& player_name,
-                             const GG::Clr& color);
+                             const GG::Clr& color, bool authenticated);
 
     /** Removes and deletes all empires from the manager. */
     void        Clear();
