@@ -931,33 +931,32 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
             # assign remaining fleets to nearest systems to protect.
             all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
             avail_mil_fleet_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
+
+            def system_score(_fid, _sys_id):
+                """Helper function to rank systems by priority"""
+                jump_distance = universe.jumpDistance(_fid, _sys_id)
+                if get_system_local_threat(_sys_id):
+                    weight = 10
+                elif get_system_neighbor_threat(_sys_id):
+                    weight = 3
+                elif get_system_jump2_threat(_sys_id):
+                    weight = 1
+                else:
+                    weight = 1 / float(state.get_distance_to_enemy_supply(_sys_id))**1.25
+                return float(weight) / (jump_distance+1)
+
             for fid in avail_mil_fleet_ids:
                 fleet = universe.getFleet(fid)
                 FleetUtilsAI.get_fleet_system(fleet)
-                sys_distances = sorted([(universe.jumpDistance(fid, _sys_id), _sys_id)
+                sys_distances = sorted([(system_score(fid, _sys_id), _sys_id)
                                         for _sys_id in state.get_empire_planets_by_system()
-                                        ])
+                                        ], reverse=True)
                 if not sys_distances:
                     continue
 
-                # find nearest system where there is some threat (nearby)
-                for _, sys_id in sys_distances:
-                    if get_system_local_threat(sys_id):
-                        reason = "local_threat"
-                    elif get_system_neighbor_threat(sys_id):
-                        reason = "neighbor_threat"
-                    elif get_system_jump2_threat(sys_id):
-                        reason = "jump2_threat"
-                    else:
-                        continue
-                    debug("Assigning leftover %s to nearby system %d. Reason: %s",
-                          fleet, sys_id, reason)
-                    break
-                else:
-                    # no threat detected, may as well stay at closest system
-                    sys_id = sys_distances[0][1]
-                    debug("Assigning leftover %s to closest system %d "
-                          "- no priority system found.", fleet, sys_id)
+                sys_id = sys_distances[0][1]
+                debug("Assigning leftover %s to system %d "
+                      "- nothing better to do.", fleet, sys_id)
 
                 fleet_mission = aistate.get_fleet_mission(fid)
                 fleet_mission.clear_fleet_orders()
