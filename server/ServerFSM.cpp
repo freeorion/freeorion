@@ -276,16 +276,18 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         DebugLogger(FSM) << "Client quit before id was assigned.";
     }
 
-    int connected_count = 0;
-    int disconnected_count = 0;
+    // count of active (non-eliminated) empires, which currently have a connected human players
+    int empire_connected_plr_cnt = 0;
+    // count of active (non-eliminated) empires, which currently have a disconnected human players
+    int empire_disconnected_plr_cnt = 0;
     for (const auto& empire : Empires()) {
         if (!empire.second->Eliminated()) {
             switch (m_server.GetEmpireClientType(empire.first)) {
             case Networking::CLIENT_TYPE_HUMAN_PLAYER:
-                connected_count++;
+                empire_connected_plr_cnt++;
                 break;
             case Networking::INVALID_CLIENT_TYPE:
-                disconnected_count++;
+                empire_disconnected_plr_cnt++;
                 break;
             case Networking::CLIENT_TYPE_AI_PLAYER:
                 // ignore
@@ -298,19 +300,19 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         }
     }
 
-    // Stop server if connected human player count is less than limit
-    if (connected_count < GetOptionsDB().Get<int>("network.server.conn-human.min")) {
-        ErrorLogger(FSM) << "Too low connected human player " << connected_count
+    // Stop server if connected human player count is less than minimum
+    if (empire_connected_plr_cnt < GetOptionsDB().Get<int>("network.server.conn-human.min")) {
+        ErrorLogger(FSM) << "Too low connected human player " << empire_connected_plr_cnt
                          << " expected " << GetOptionsDB().Get<int>("network.server.conn-human.min")
                          << "; server terminating.";
         must_quit = true;
     }
 
-    // Stop server if disconnected human player count exceeds limit and limit is set
+    // Stop server if disconnected human player count exceeds maximum and maximum is set
     if (GetOptionsDB().Get<int>("network.server.disconn-human.max") > 0 &&
-        disconnected_count >= GetOptionsDB().Get<int>("network.server.disconn-human.max"))
+        empire_disconnected_plr_cnt >= GetOptionsDB().Get<int>("network.server.disconn-human.max"))
     {
-        ErrorLogger(FSM) << "Too high disconnected human player " << disconnected_count
+        ErrorLogger(FSM) << "Too high disconnected human player " << empire_disconnected_plr_cnt
                          << " expected " << GetOptionsDB().Get<int>("network.server.disconn-human.max")
                          << "; server terminating.";
         must_quit = true;
