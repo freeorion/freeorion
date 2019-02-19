@@ -770,7 +770,7 @@ class AIFleetMission(object):
                             self.set_target(MissionType.MILITARY, TargetSystem(current_system_id))
                             self.generate_fleet_orders()
                             self.issue_fleet_orders()
-                            return -1
+                            return INVALID_ID
 
                 debug("No neighboring threats. Moving to primary mission target")
                 return primary_objective
