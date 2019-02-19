@@ -497,6 +497,7 @@ class AIFleetMission(object):
                     # any or even all of the ships.
                     clear_all = False
                     last_sys_target = self.target.id
+                    debug("Check if PROTECT_REGION mission with target %d is finished.", last_sys_target)
 
                 fleet_id = self.fleet.id
                 if clear_all:
@@ -517,12 +518,12 @@ class AIFleetMission(object):
                     else:  # no orders
                         debug("No Current Orders")
                 else:
-                    # TODO: evaluate releasing a smaller portion or none of the ships
                     potential_threat = CombatRatingsAI.combine_ratings(
                         MilitaryAI.get_system_local_threat(last_sys_target),
                         MilitaryAI.get_system_neighbor_threat(last_sys_target)
                     )
                     threat_present = potential_threat > 0
+                    debug("Fleet threat present? %s", threat_present)
                     target_system = universe.getSystem(last_sys_target)
                     if not threat_present and target_system:
                         for pid in target_system.planetIDs:
@@ -530,6 +531,7 @@ class AIFleetMission(object):
                             if (planet and
                                     planet.owner != fo.empireID() and
                                     planet.currentMeterValue(fo.meterType.maxDefense) > 0):
+                                debug("Found local planetary threat: %s", planet)
                                 threat_present = True
                                 break
                     if not threat_present:
@@ -537,6 +539,10 @@ class AIFleetMission(object):
                         # at least first stage of current task is done;
                         # release extra ships for potential other deployments
                         new_fleets = FleetUtilsAI.split_fleet(self.fleet.id)
+                        if self.type == MissionType.PROTECT_REGION:
+                            self.clear_fleet_orders()
+                            self.clear_target()
+                            new_fleets.append(self.fleet.id)
                     else:
                         debug("Threat remains in target system; Considering to release some ships.")
                         new_fleets = []
