@@ -940,14 +940,30 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
                 if not sys_distances:
                     continue
 
+                # find nearest system where there is some threat (nearby)
+                for _, sys_id in sys_distances:
+                    if get_system_local_threat(sys_id):
+                        reason = "local_threat"
+                    elif get_system_neighbor_threat(sys_id):
+                        reason = "neighbor_threat"
+                    elif get_system_jump2_threat(sys_id):
+                        reason = "jump2_threat"
+                    else:
+                        continue
+                    debug("Assigning leftover %s to nearby system %d. Reason: %s",
+                          fleet, sys_id, reason)
+                    break
+                else:
+                    # no threat detected, may as well stay at closest system
+                    sys_id = sys_distances[0][1]
+                    debug("Assigning leftover %s to closest system %d "
+                          "- no priority system found.", fleet, sys_id)
+
                 fleet_mission = aistate.get_fleet_mission(fid)
                 fleet_mission.clear_fleet_orders()
-                fleet_mission.clear_target()
-                target_system = TargetSystem(sys_distances[0][1])
+                target_system = TargetSystem(sys_id)
                 fleet_mission.set_target(MissionType.PROTECT_REGION, target_system)
                 fleet_mission.generate_fleet_orders()
-                debug("Assigning fleet %s to protect clostest system %s - nothing better to do",
-                      fleet, target_system)
 
 
 @cache_by_turn
