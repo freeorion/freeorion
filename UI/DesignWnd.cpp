@@ -1140,7 +1140,7 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         std::set<int> ordered_ids(ids.begin(), ids.end());
 
         displayed_designs->InsertOrderedIDs(ordered_ids);
-    }/* else {
+    } else {
         // Remove the default designs from the empire's current designs.
         DebugLogger() << "Remove default designs from empire";
         const auto ids = empire->ShipDesigns();
@@ -1148,7 +1148,7 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
         }
-    }*/
+    }
 }
 
 void ShipDesignManager::Save(SaveGameUIData& data) const {
