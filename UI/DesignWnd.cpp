@@ -414,11 +414,11 @@ namespace {
     void DeleteFromDisplayedDesigns(const int design_id) {
         auto& manager = GetDisplayedDesignsManager();
 
-        //const auto empire_id = HumanClientApp::GetApp()->EmpireID();
-        //const auto maybe_obsolete = manager.IsObsolete(design_id);
-        //if (maybe_obsolete && !*maybe_obsolete)
-        //    HumanClientApp::GetApp()->Orders().IssueOrder(
-        //        std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
+        const auto empire_id = HumanClientApp::GetApp()->EmpireID();
+        const auto maybe_obsolete = manager.IsObsolete(design_id);
+        if (maybe_obsolete && !*maybe_obsolete)
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
         manager.Remove(design_id);
     }
 
