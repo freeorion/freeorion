@@ -2158,6 +2158,7 @@ public:
     //@}
 
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
+    mutable boost::signals2::signal<void (int)>                 DesignUpdatedSignal;
     mutable boost::signals2::signal<void (const std::string&, const std::vector<std::string>&)>
                                                                 DesignComponentsSelectedSignal;
     mutable boost::signals2::signal<void (const boost::uuids::uuid&)>  SavedDesignSelectedSignal;
@@ -3057,6 +3058,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     auto delete_design_action = [&design_id, this]() {
         DeleteFromDisplayedDesigns(design_id);
         Populate();
+        DesignUpdatedSignal(design_id);
     };
 
     auto rename_design_action = [&empire_id, &design_id, design, &design_row]() {
@@ -3334,6 +3336,7 @@ public:
     //@}
 
     mutable boost::signals2::signal<void (int)>                         DesignSelectedSignal;
+    mutable boost::signals2::signal<void (int)>                         DesignUpdatedSignal;
     mutable boost::signals2::signal<void (const std::string&, const std::vector<std::string>&)>
                                                                         DesignComponentsSelectedSignal;
     mutable boost::signals2::signal<void (const boost::uuids::uuid&)>   SavedDesignSelectedSignal;
@@ -3407,6 +3410,7 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
     m_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
     m_designs_list->DesignSelectedSignal.connect(DesignWnd::BaseSelector::DesignSelectedSignal);
+    m_designs_list->DesignUpdatedSignal.connect(DesignWnd::BaseSelector::DesignUpdatedSignal);
     m_designs_list->DesignClickedSignal.connect(DesignWnd::BaseSelector::DesignClickedSignal);
 
     m_saved_designs_list = GG::Wnd::Create<SavedDesignsListBox>(m_availabilities_state, SAVED_DESIGN_ROW_DROP_STRING);
@@ -3933,6 +3937,9 @@ public:
                              const std::string& name,
                              const std::string& desc);
 
+    /** Responds to the design being changed **/
+    void DesignChanged();
+
     /** Add a design. */
     std::pair<int, boost::uuids::uuid> AddDesign();
 
@@ -3977,7 +3984,6 @@ protected:
 private:
     void            Populate();                         //!< creates and places SlotControls for current hull
     void            DoLayout();                         //!< positions buttons, text entry boxes and SlotControls
-    void            DesignChanged();                    //!< responds to the design being changed
     void            DesignNameChanged();                //!< responds to the design name being changed
     void            RefreshIncompleteDesign() const;
     std::string     GetCleanDesignDump(const ShipDesign* ship_design);  //!< similar to ship design dump but without 'lookup_strings', icon and model entries
@@ -5006,6 +5012,8 @@ void DesignWnd::CompleteConstruction() {
 
     m_base_selector->DesignSelectedSignal.connect(
         boost::bind(static_cast<void (MainPanel::*)(int)>(&MainPanel::SetDesign), m_main_panel, _1));
+    m_base_selector->DesignUpdatedSignal.connect(
+        boost::bind(static_cast<void (MainPanel::*)()>(&MainPanel::DesignChanged), m_main_panel));
     m_base_selector->DesignComponentsSelectedSignal.connect(
         boost::bind(&MainPanel::SetDesignComponents, m_main_panel, _1, _2));
     m_base_selector->SavedDesignSelectedSignal.connect(
