@@ -2341,6 +2341,9 @@ Playing game: %1%
 PLAYER_ENTERED_GAME
 entered game
 
+PLAYER_LEFT_GAME
+left game
+
 ##
 ## Galaxy Setup Screen
 ##

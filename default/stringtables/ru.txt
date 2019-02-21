@@ -2106,6 +2106,9 @@ NOT_READY_BN
 PLAYER_ENTERED_GAME
 зашёл в игру
 
+PLAYER_LEFT_GAME
+покинул игру
+
 ##
 ## Galaxy Setup Screen
 ##
