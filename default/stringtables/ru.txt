@@ -2103,6 +2103,9 @@ READY_BN
 NOT_READY_BN
 Отклонить
 
+PLAYER_ENTERED_GAME
+зашёл в игру
+
 ##
 ## Galaxy Setup Screen
 ##

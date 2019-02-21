@@ -490,6 +490,19 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
             client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
             client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
         {
+            // add "player enter game" message
+            boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
+            std::string data = player_name + " [[" + UserStringNop("PLAYER_ENTERED_GAME") + "]]";
+            m_server.PushChatMessage(data, "", GG::CLR_WHITE, timestamp);
+
+            // send message to other players
+            for (auto it = m_server.m_networking.established_begin();
+                 it != m_server.m_networking.established_end(); ++it)
+            {
+                if (player_connection != (*it))
+                    (*it)->SendMessage(ServerPlayerChatMessage(Networking::INVALID_PLAYER_ID, timestamp, data));
+            }
+
             std::vector<std::reference_wrapper<const ChatHistoryEntity>> chat_history;
             for (const auto& elem : m_server.GetChatHistory()) {
                 chat_history.push_back(std::cref(elem));

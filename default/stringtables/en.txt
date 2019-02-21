@@ -2338,6 +2338,9 @@ Decline
 PLAYING_GAME
 Playing game: %1%
 
+PLAYER_ENTERED_GAME
+entered game
+
 ##
 ## Galaxy Setup Screen
 ##
