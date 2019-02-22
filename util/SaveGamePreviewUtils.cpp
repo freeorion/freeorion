@@ -36,7 +36,7 @@ namespace {
     /// Splits time and date on separate lines for an ISO datetime string
     std::string split_time(const std::string& time) {
         std::string result = time;
-        std::string::size_type pos = result.find("T");
+        std::string::size_type pos = result.find('T');
         if (pos != std::string::npos) {
             result.replace(pos, 1, "\n");
         }
