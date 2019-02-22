@@ -314,7 +314,6 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
 
     for (fs::directory_iterator it(path); it != end_it; ++it) {
         try {
-            std::string filename = PathToString(it->path().filename());
             if ((it->path().filename().extension() == extension) && !fs::is_directory(it->path())) {
                 if (LoadSaveGamePreviewData(*it, data)) {
                     // Add preview entry to list
