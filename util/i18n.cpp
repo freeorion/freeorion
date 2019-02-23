@@ -39,7 +39,7 @@ namespace {
         std::string lang {};
         try {
             lang = std::use_facet<boost::locale::info>(GetLocale()).language();
-        } catch(std::bad_cast) {
+        } catch(const std::bad_cast&) {
             WarnLogger() << "Detected language: Bad cast, falling back to default";
             return;
         }
@@ -118,7 +118,7 @@ std::locale GetLocale(const std::string& name) {
         locale_gen.locale_cache_enabled(true);
         try {
             InfoLogger() << "Global locale: " << std::use_facet<boost::locale::info>(locale_gen("")).name();
-        } catch (std::runtime_error) {
+        } catch (const std::runtime_error&) {
             ErrorLogger() << "Global locale: set to invalid locale, setting to C locale";
             std::locale::global(std::locale::classic());
         }
@@ -128,7 +128,7 @@ std::locale GetLocale(const std::string& name) {
     std::locale retval;
     try {
         retval = locale_gen(name);
-    } catch(std::runtime_error) {
+    } catch(const std::runtime_error&) {
         ErrorLogger() << "Requested locale \"" << name << "\" is not a valid locale for this operating system";
         return std::locale::classic();
     }

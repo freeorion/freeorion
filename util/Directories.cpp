@@ -416,7 +416,7 @@ void InitBinDir(const std::string& argv0) {
     try {
         fs::path binary_file = fs::system_complete(FilenameToPath(argv0));
         bin_dir = binary_file.branch_path();
-    } catch (fs::filesystem_error err) {
+    } catch (const fs::filesystem_error &) {
         bin_dir = fs::initial_path();
     }
 }
