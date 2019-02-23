@@ -29,6 +29,7 @@ namespace {
 // Empire //
 ////////////
 Empire::Empire() :
+    m_authenticated(false),
     m_research_queue(m_id),
     m_production_queue(m_id)
 { Init(); }
