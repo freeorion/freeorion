@@ -1720,12 +1720,12 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             key_string = m_string_ref1->Eval(context);
             if (key_string.empty())
                 return 0;
-        }
 
-        // if a string specified, get just that entry (for single empire, or
-        // summed for all empires)
-        if (m_string_ref1)
-            return GetIntEmpirePropertySingleKey(empire_id, variable_name, key_string);
+            // if a string specified, get just that entry (for single empire, or
+            // summed for all empires)
+            return GetIntEmpirePropertySingleKey(empire_id, variable_name,
+                                                 key_string);
+        }
 
         // if no string specified, get sum of all entries (for single empire
         // or summed for all empires)
