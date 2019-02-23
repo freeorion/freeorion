@@ -1244,7 +1244,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
             return species->PreferredFocus();
         return "";
 
-    } else if (property_name == "OwnerMostExpensiveEnqueuedTech") {
+    } else if (property_name == "OwnerLeastExpensiveEnqueuedTech") {
         const Empire* empire = GetEmpire(object->Owner());
         if (!empire)
             return "";
