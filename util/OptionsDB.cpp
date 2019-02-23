@@ -563,7 +563,7 @@ void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only) const {
         while (1 < elem_stack.size()) {
             std::string prev_section = PreviousSectionName(elem_stack);
             if (prev_section == section_name) {
-                section_name = "";
+                section_name.clear();
                 break;
             } else if (section_name.find(prev_section + '.') == 0) {
                 section_name = section_name.substr(prev_section.size() + 1);
