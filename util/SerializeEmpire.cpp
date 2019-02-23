@@ -234,7 +234,7 @@ void EmpireManager::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(messages);
 
     if (Archive::is_loading::value)
-        m_diplomatic_messages = messages;
+        m_diplomatic_messages = std::move(messages);
 }
 
 template void EmpireManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
