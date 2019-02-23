@@ -1011,13 +1011,11 @@ namespace {
         Effect::TargetSet&                                              target_objects,
         std::string&                                                    match_log)
     {
-        std::pair<bool, Effect::TargetSet>* cache_entry = nullptr;
-
         if (!cond)
             return EMPTY_TARGET_SET;
 
         // the passed-in cached_condition_matches are here expected be specific for the current source object
-        cache_entry = cached_condition_matches.Find(cond, false);
+        std::pair<bool, Effect::TargetSet>* cache_entry = cached_condition_matches.Find(cond, false);
         if (cache_entry)
             return cache_entry->second;
 

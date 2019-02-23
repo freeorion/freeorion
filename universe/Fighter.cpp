@@ -83,6 +83,6 @@ void Fighter::Copy(std::shared_ptr<const UniverseObject> copied_object, int empi
     UniverseObject::Copy(copied_object, VIS_FULL_VISIBILITY, std::set<std::string>());
 
     this->m_damage = copied_fighter->m_damage;
-    this->m_destroyed= copied_fighter->m_destroyed;
+    this->m_destroyed = copied_fighter->m_destroyed;
     this->m_combat_targets = copied_fighter->m_combat_targets;
 }
