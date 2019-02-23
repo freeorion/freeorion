@@ -258,7 +258,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
             const std::string& tech_name = m_queue[cur_tech].name;
             const Tech* tech = GetTech(tech_name);
             float progress = dpsim_research_progress[cur_tech];
-            float tech_cost = tech->ResearchCost(m_empire_id);
+            float tech_cost = tech ? tech->ResearchCost(m_empire_id) : 0.0f;
             float RPs_needed = tech ? tech_cost * (1.0f - std::min(progress, 1.0f)) : 0.0f;
             float RPs_per_turn_limit = tech ? tech->PerTurnCost(m_empire_id) : 1.0f;
             float RPs_to_spend = std::min(std::min(RPs_needed, RPs_per_turn_limit), rp_still_available[dp_turns-1]);
