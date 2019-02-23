@@ -1807,7 +1807,8 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
     for (int child_id : contained_ids)
         ForgetKnownObject(empire_id, child_id);
 
-    if (int container_id = obj->ContainerObjectID() != INVALID_OBJECT_ID) {
+    int container_id = obj->ContainerObjectID();
+    if (container_id != INVALID_OBJECT_ID) {
         if (auto container = objects.Object(container_id)) {
             if (auto system = std::dynamic_pointer_cast<System>(container))
                 system->Remove(object_id);
