@@ -91,7 +91,7 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
     if (short_name_)
         short_names[short_name_] = name;
 
-    auto name_it = name.rfind(".");
+    auto name_it = name.rfind('.');
     if (name_it != std::string::npos)
         sections.emplace(name.substr(0, name_it));
 
@@ -295,7 +295,7 @@ namespace {
     }
 
     bool OptionNameHasParentSection(const std::string& lhs, const std::string& rhs) {
-        auto it = lhs.find_last_of(".");
+        auto it = lhs.find_last_of('.');
         if (it == std::string::npos)
             return false;
         return lhs.substr(0, it) == rhs;
