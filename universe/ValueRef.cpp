@@ -1696,7 +1696,6 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     if (variable_name == "BuildingTypesOwned" ||
         variable_name == "BuildingTypesProduced" ||
         variable_name == "BuildingTypesScrapped" ||
-        variable_name == "SpeciesShipsDestroyed" ||
         variable_name == "SpeciesColoniesOwned" ||
         variable_name == "SpeciesPlanetsBombed" ||
         variable_name == "SpeciesPlanetsDepoped" ||
