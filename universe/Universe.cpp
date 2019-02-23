@@ -2415,7 +2415,7 @@ namespace {
         // second-order visibility sharing (but only through allies with lower
         // empire id)
         auto input_eov_copy = empire_object_visibility;
-        auto input_eovs_copy = empire_object_visible_specials;
+        // unused variable auto input_eovs_copy = empire_object_visible_specials;
         Universe& universe = GetUniverse();
 
         for (auto& empire_entry : Empires()) {
