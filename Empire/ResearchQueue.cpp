@@ -39,9 +39,7 @@ namespace {
                 ErrorLogger() << "SetTechQueueElementSpending couldn't find tech with name " << elem.name << " in the research status map";
                 continue;
             }
-            bool researchable = false;
-            if (status_it->second == TS_RESEARCHABLE)
-                researchable = true;
+            bool researchable = status_it->second == TS_RESEARCHABLE;
 
             if (researchable && !elem.paused) {
                 auto progress_it = research_progress.find(elem.name);
