@@ -224,6 +224,9 @@ void InGameMenu::Concede() {
 }
 
 void InGameMenu::Resign() {
+    // send order changes could be made when player decides to disconnect
+    HumanClientApp::GetApp()->SendPartialOrders();
+
     HumanClientApp::GetApp()->ResetToIntro(false);
     CloseClicked();
 }

@@ -1764,14 +1764,14 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
     }
 
     if (empire_id == ALL_EMPIRES || empire == nullptr)
-        return false;
+        return ALL_EMPIRES;
 
     auto orders_it = m_turn_sequence.find(empire_id);
     if (orders_it == m_turn_sequence.end()) {
         WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id
                      << " for \"" << player_connection->PlayerName()
                      << "\" doesn't wait for orders";
-        return false;
+        return ALL_EMPIRES;
     }
 
     // make a link to new connection
@@ -1807,7 +1807,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
                                                            empire.first));
     }
 
-    return true;
+    return empire_id;
 }
 
 bool ServerApp::IsHostless() const
