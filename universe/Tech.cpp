@@ -100,7 +100,8 @@ namespace CheckSums {
 ///////////////////////////////////////////////////////////
 Tech::TechInfo::TechInfo() :
     research_cost(nullptr),
-    research_turns(nullptr)
+    research_turns(nullptr),
+    researchable(false)
 {}
 
 Tech::TechInfo::TechInfo(const std::string& name_, const std::string& description_, const std::string& short_description_,

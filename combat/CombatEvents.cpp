@@ -561,7 +561,8 @@ WeaponFireEvent::WeaponFireEvent() :
     power(0.0f),
     shield(0.0f),
     damage(0.0f),
-    attacker_owner_id(ALL_EMPIRES)
+    attacker_owner_id(ALL_EMPIRES),
+    target_owner_id(INVALID_OBJECT_ID)
 {}
 
 WeaponFireEvent::WeaponFireEvent(
