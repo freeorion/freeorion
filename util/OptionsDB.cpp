@@ -115,7 +115,7 @@ bool OptionsDB::Option::SetFromString(const std::string& str) {
     }
 
     if (changed) {
-        value = value_;
+        value = std::move(value_);
         (*option_changed_sig_ptr)();
     }
     return changed;
