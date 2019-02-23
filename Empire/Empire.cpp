@@ -1143,9 +1143,9 @@ void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
 }
 
 void Empire::SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize) {
-    DebugLogger() << "Empire::SetProductionQuantityAndBlocksize() called for item "<< m_production_queue[index].item.name << "with new quant " << quantity << " and new blocksize " << blocksize;
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
         throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
+    DebugLogger() << "Empire::SetProductionQuantityAndBlocksize() called for item "<< m_production_queue[index].item.name << "with new quant " << quantity << " and new blocksize " << blocksize;
     if (quantity < 1)
         throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to set the quantity of a build run to a value less than zero.");
     if (m_production_queue[index].item.build_type == BT_BUILDING && ((1 < quantity) || ( 1 < blocksize) ))
