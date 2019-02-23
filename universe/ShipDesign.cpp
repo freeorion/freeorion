@@ -880,7 +880,7 @@ const std::string& ShipDesign::Name(bool stringtable_lookup /* = true */) const 
 }
 
 void ShipDesign::SetName(const std::string& name) {
-    if (!m_name.empty()) {
+    if (!name.empty() && !m_name.empty()) {
         m_name = name;
     }
 }

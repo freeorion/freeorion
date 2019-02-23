@@ -295,8 +295,7 @@ void Universe::RenameShipDesign(int design_id, const std::string& name/* = ""*/,
     }
     ShipDesign* design = design_it->second;
 
-    if (name != "")
-        design->SetName(name);
+    design->SetName(name);
     design->SetDescription(description);
 }
 
