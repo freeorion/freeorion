@@ -2720,7 +2720,7 @@ std::string ComplexVariable<double>::Dump(unsigned short ntabs) const
              variable_name == "PartCapacity" ||
              variable_name == "PartSecondaryStat")
     {
-        if (!m_string_ref1)
+        if (m_string_ref1)
             retval += " name = " + m_string_ref1->Dump(ntabs);
 
     }
