@@ -25,10 +25,6 @@
 
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-if(POLICY CMP0044)
-    cmake_policy(SET CMP0044 OLD)
-endif()
-
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
 
 
