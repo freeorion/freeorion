@@ -976,7 +976,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
             return discard_event();
         }
 
-        player_name = new_player_name;
+        player_name = std::move(new_player_name);
     }
 
     EstablishPlayer(player_connection, player_name, client_type, client_version_string, roles);
@@ -2495,7 +2495,7 @@ sc::result PlayingGame::react(const JoinGame& msg) {
             return discard_event();
         }
 
-        player_name = new_player_name;
+        player_name = std::move(new_player_name);
     }
 
     EstablishPlayer(player_connection, player_name, client_type,

@@ -1021,7 +1021,7 @@ namespace {
                     DebugLogger(combat) << "No objects left for empire with id: " << empire.first;
                 }
             }
-            empire_infos = temp;
+            empire_infos = std::move(temp);
 
             if (!empire_infos.empty()) {
                 DebugLogger(combat) << "Empires with objects remaining:";

@@ -919,7 +919,7 @@ void ServerApp::UpdateSavePreviews(const Message& msg,
     }
 
     PreviewInformation preview_information;
-    preview_information.folder = relative_directory_name;
+    preview_information.folder = std::move(relative_directory_name);
     preview_information.subdirectories = ListSaveSubdirectories(directory);
     LoadSaveGamePreviews(
         directory,
