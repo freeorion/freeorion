@@ -1086,6 +1086,7 @@ Font::Font() :
     m_underline_offset(0.0),
     m_underline_height(0.0),
     m_italics_offset(0.0),
+    m_super_sub_offset(0.0),
     m_shadow_offset(0.0),
     m_space_width(0)
 {}
@@ -1103,7 +1104,7 @@ Font::Font(const std::string& font_filename, unsigned int pts) :
     m_shadow_offset(0.0),
     m_space_width(0)
 {
-    if (m_font_filename != "") {
+    if (!m_font_filename.empty()) {
         detail::FTFaceWrapper wrapper;
         FT_Error error = GetFace(wrapper.m_face);
         CheckFace(wrapper.m_face, error);
