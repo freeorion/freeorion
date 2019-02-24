@@ -1220,7 +1220,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 m_lobby_data->m_save_game = "";
                 m_lobby_data->m_save_game_empire_data.clear();
                 // prevent updating lobby by having old and new file name equal
-                incoming_lobby_data.m_save_game = "";
+                incoming_lobby_data.m_save_game.clear();
             }
 
             int ai_count = 0;
