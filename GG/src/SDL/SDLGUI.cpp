@@ -990,7 +990,7 @@ void SDLGUI::ResetFramebuffer()
     if (m_fake_mode_change && m_fullscreen) {
         try {
             m_framebuffer.reset(new Framebuffer(Pt(m_app_width, m_app_height)));
-        } catch (FramebufferFailedException ex) {
+        } catch (const FramebufferFailedException &ex) {
             std::cerr << "Fake resolution change failed. Reason: \"" << ex.what() << "\". Reverting to real resolution change." << std::endl;
             m_fake_mode_change = false;
         }
