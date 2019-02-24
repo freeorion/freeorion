@@ -1248,8 +1248,6 @@ namespace {
             return;   // no ability to attack!
         }
 
-        static const std::string EMPTY_STRING;
-
         std::string species_name;
         auto attacker_ship = std::dynamic_pointer_cast<Ship>(attacker);
         if (attacker_ship)
