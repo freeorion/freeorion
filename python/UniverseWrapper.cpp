@@ -103,8 +103,7 @@ namespace {
     //void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                   &Universe::UpdateMeterEstimates;
 
     double                  LinearDistance(const Universe& universe, int system1_id, int system2_id) {
-        double retval = 9999999.9;  // arbitrary large value
-        retval = universe.GetPathfinder()->LinearDistance(system1_id, system2_id);
+        double retval = universe.GetPathfinder()->LinearDistance(system1_id, system2_id);
         return retval;
     }
     boost::function<double(const Universe&, int, int)> LinearDistanceFunc =                     &LinearDistance;
