@@ -1915,32 +1915,6 @@ namespace {
                   Objects().FindObjects(OwnedVisitor<Ship>(empire_id)).empty());      // no ship
       }
 
-    /** Compiles and return set of ids of empires that are controlled by a
-      * human player.*/
-    std::set<int> HumanControlledEmpires(const ServerApp* server_app,
-                                         const ServerNetworking& server_networking)
-    {
-        std::set<int> retval;
-        if (!server_app)
-            return retval;
-
-        for (auto it = server_networking.established_begin();
-             it != server_networking.established_end(); ++it)
-        {
-            auto player_connection = *it;
-            auto client_type = player_connection->GetClientType();
-            if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-                int player_id = player_connection->PlayerID();
-                int empire_id = server_app->PlayerEmpireID(player_id);
-                if (empire_id == ALL_EMPIRES || player_id == Networking::INVALID_PLAYER_ID)
-                    ErrorLogger() << "HumanControlledEmpires couldn't get a human player id or empire id";
-                else
-                    retval.insert(empire_id);
-            }
-        }
-        return retval;
-    }
-
     void GetEmpireFleetsAtSystem(std::map<int, std::set<int>>& empire_fleets, int system_id) {
         empire_fleets.clear();
         auto system = GetSystem(system_id);
@@ -3213,7 +3187,6 @@ void ServerApp::ProcessCombats() {
     DebugLogger() << "ServerApp::ProcessCombats";
     m_networking.SendMessageAll(TurnProgressMessage(Message::COMBAT));
 
-    std::set<int> human_controlled_empire_ids = HumanControlledEmpires(this, m_networking);
     std::vector<CombatInfo> combats;   // map from system ID to CombatInfo for that system
 
 
