@@ -207,7 +207,7 @@ void FileDlg::CompleteConstruction()
     AttachChild(m_files_label);
     AttachChild(m_file_types_label);
 
-    if (m_init_directory != "") {
+    if (!m_init_directory.empty()) {
 #if defined(_WIN32)
         // convert UTF-8 file name to UTF-16
         boost::filesystem::path::string_type directory_native;
@@ -571,7 +571,7 @@ void FileDlg::UpdateList()
     if (!m_in_win32_drive_selection) {
         // parent directory selector
         if ((s_working_dir.string() != s_working_dir.root_path().string() &&
-             s_working_dir.branch_path().string() != "") ||
+             !s_working_dir.branch_path().string().empty()) ||
             Win32Paths())
         {
             auto row = Wnd::Create<ListBox::Row>();
@@ -714,7 +714,7 @@ void FileDlg::OpenDirectory()
     } else if (directory == "..") {
         // move to parent directory of current directory
         if (s_working_dir.string() != s_working_dir.root_path().string() &&
-            s_working_dir.branch_path().string() != "")
+            !s_working_dir.branch_path().string().empty())
         {
             // move to new directory
             SetWorkingDirectory(s_working_dir.branch_path());
