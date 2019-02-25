@@ -74,17 +74,17 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shar
     m_button_layout->SetRowStretch(0, 1);
     m_button_layout->SetMinimumRowHeight(1, BUTTON_HEIGHT);
 
-    m_button_0 = style->NewButton((zero == "" ? (buttons < 3 ? "Ok" : "Yes") : zero),
+    m_button_0 = style->NewButton((zero.empty() ? (buttons < 3 ? "Ok" : "Yes") : zero),
                                   font, m_button_color, m_text_color);
     button_layout->Add(m_button_0, 0, 0);
 
     if (2 <= buttons) {
-        m_button_1 = style->NewButton((one == "" ? (buttons < 3 ? "Cancel" : "No") : one),
+        m_button_1 = style->NewButton((one.empty() ? (buttons < 3 ? "Cancel" : "No") : one),
                                       font, m_button_color, m_text_color);
         button_layout->Add(m_button_1, 0, 1);
     }
     if (3 <= buttons) {
-        m_button_2 = style->NewButton((two == "" ? "Cancel" : two),
+        m_button_2 = style->NewButton((two.empty() ? "Cancel" : two),
                                       font, m_button_color, m_text_color);
         button_layout->Add(m_button_2, 0, 2);
     }

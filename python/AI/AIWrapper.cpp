@@ -158,7 +158,7 @@ namespace FreeOrionPython {
     { s_save_state_string = new_state_string; }
 
     void ClearStaticSaveStateString()
-    { s_save_state_string = ""; }
+    { s_save_state_string.clear(); }
 
     /** Expose AIInterface to Python.
      *

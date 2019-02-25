@@ -90,7 +90,7 @@ namespace {
                     m_servers.push_back({address, m_server_name});
                 }
                 m_receive_successful = false;
-                m_server_name = "";
+                m_server_name.clear();
             }
         }
 
