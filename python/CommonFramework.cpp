@@ -99,7 +99,7 @@ bool PythonBase::Initialize()
             ErrorLogger() << "Unable to initialize FreeOrion Python modules";
             return false;
         }
-    } catch (error_already_set &err) {
+    } catch (error_already_set& err) {
         HandleErrorAlreadySet();
         return false;
     }

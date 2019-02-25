@@ -255,7 +255,7 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
         else
 #endif
             throw BadFile("Texture file \"" + filename + "\" does not have a supported file extension");
-    } catch (const std::ios_base::failure &) {
+    } catch (const std::ios_base::failure&) {
         // Second attempt -- If *_read_image() throws, see if we can convert
         // the image to RGBA.  This is needed for color-indexed images.
 #if GG_HAVE_LIBPNG

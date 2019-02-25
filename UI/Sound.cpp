@@ -221,7 +221,7 @@ Sound::Impl::Impl() :
 
     try {
         Enable();
-    } catch (InitializationFailureException const&) {
+    } catch (const InitializationFailureException&) {
         // Bury the exception because the GetSound() singleton may cause
         // the sound system to initialize at unpredictable times when
         // the user can't be usefully informed of the failure.

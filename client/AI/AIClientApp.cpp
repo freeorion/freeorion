@@ -157,7 +157,7 @@ void AIClientApp::Run() {
                 else
                     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-            } catch (boost::python::error_already_set) {
+            } catch (const boost::python::error_already_set&) {
                 /* If the python interpreter is still running then keep
                    going, otherwise exit.*/
                 m_AI->HandleErrorAlreadySet();
@@ -167,7 +167,7 @@ void AIClientApp::Run() {
         }
     } catch (const NormalExitException&) {
         // intentionally empty.
-    } catch (boost::python::error_already_set) {
+    } catch (const boost::python::error_already_set&) {
         HandlePythonAICrash();
     }
 

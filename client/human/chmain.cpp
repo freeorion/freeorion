@@ -311,7 +311,7 @@ int mainSetupAndRun() {
         ErrorLogger() << "main() caught exception(std::runtime_error): " << e.what();
         std::cerr << "main() caught exception(std::runtime_error): " << e.what() << std::endl;
         return 1;
-    } catch (const  boost::io::format_error& e) {
+    } catch (const boost::io::format_error& e) {
         ErrorLogger() << "main() caught exception(boost::io::format_error): " << e.what();
         std::cerr << "main() caught exception(boost::io::format_error): " << e.what() << std::endl;
         return 1;
