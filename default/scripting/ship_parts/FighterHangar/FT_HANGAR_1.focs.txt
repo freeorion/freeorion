@@ -12,7 +12,7 @@ Part
             MaximumNumberOf number = [[COMBAT_TARGETS_SPREAD_HANGAR]]
                 sortkey = LocalCandidate.Attack
                 condition = Fighter
-            Ship
+            [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
         ]
     ]
     mountableSlotTypes = Internal
