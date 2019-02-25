@@ -1384,6 +1384,12 @@ Définit le nombre minimum de joueurs humains requis pour démarrer une partie m
 OPTIONS_DB_MP_HUMAN_MAX
 Limite le nombre de joueurs humains dans une partie multijoueurs. Une valeur de -1 correspond à un nombre illimité.
 
+OPTIONS_DB_MP_CONN_HUMAN_MIN
+Nombre minimum de joueurs humains actifs, au-dessous duquel le serveur stoppera la partie en cours.
+
+OPTIONS_DB_MP_DISCONN_HUMAN_MAX
+Nombre maximum de joueurs, contrôlant des empires non-éliminés, pouvant être déconnectés du serveur avant que ce dernier ne stoppe la partie en cours. Désactivé pour une valeur de 0, c'est-à-dire que le serveur ne stoppera jamais la partie en raison de joueurs contrôlant un empire et ayant été déconnectés.
+
 OPTIONS_DB_COOKIES_EXPIRE
 Valeur en minutes au-delà de laquelle le cookie enregistré sera considéré comme expiré.
 
