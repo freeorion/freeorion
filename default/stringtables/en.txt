@@ -10211,7 +10211,7 @@ DESC_NOT_OR_AFTER_SINGLE_OPERAND
 
 # OrderedAlternativesOf Descriptions for expressions 'OrderedAlternativesOf [ A B C ]'
 DESC_ORDERED_ALTERNATIVES_BEFORE_OPERANDS
-''' {'''
+'''that matches the first matching condition {'''
 
 DESC_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS
 ''', else'''
@@ -10228,19 +10228,19 @@ DESC_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND
 # Expressions like  'NOT OrderedAlternativesOf [ A B C ]'
 # Note: returned matches rely on (NOT A), (NOT B).. and are handled in the descriptions of A, B.. respectively
 DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_OPERANDS
-'''that matches the first matching conditions' non-matching candidates: n{'''
+'''that matches the first matching conditions' non-matching candidates: {'''
 
 DESC_NOT_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS
 ''', else'''
 
 DESC_NOT_ORDERED_ALTERNATIVES_AFTER_OPERANDS
-''' }n'''
+''' }'''
 
 DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_SINGLE_OPERAND
-'''n{'''
+'''{'''
 
 DESC_NOT_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND
-'''(iff it also has non-matches)}n'''
+'''(iff it also has non-matches)}'''
 
 
 # %1% textual description of the lower turn limit.
