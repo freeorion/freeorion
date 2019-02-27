@@ -1964,7 +1964,10 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects that match the first matching Condition in \a operands. */
+/** Tests conditions in \a operands in order, to find the first condition that 
+  * matches at least one candidate object. Matches all objects that match that
+  * condaition, ignoring any conditions listed later. If no candidate matches
+  * any of the conditions, it matches nothing. */
 struct FO_COMMON_API OrderedAlternativesOf final : public ConditionBase {
     explicit OrderedAlternativesOf(std::vector<std::unique_ptr<ConditionBase>>&& operands);
 
