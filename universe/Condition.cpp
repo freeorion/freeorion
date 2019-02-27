@@ -7,6 +7,7 @@
 #include "Pathfinder.h"
 #include "Universe.h"
 #include "Building.h"
+#include "Fighter.h"
 #include "Fleet.h"
 #include "Ship.h"
 #include "ObjectMap.h"
@@ -5110,12 +5111,22 @@ namespace {
             if (!candidate)
                 return false;
 
-            // is it a ship?
-            auto ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
-            if (!ship)
-                return false;
+            auto fighter = std::dynamic_pointer_cast<const ::Fighter>(candidate);
+            const ShipDesign* design = nullptr;
+            if (fighter) {
+                // it is a fighter
+                auto carriers = Objects().FindObjects<Ship>( (std::vector<int> ) { fighter->LaunchedFrom() } );
+                if (carriers.empty())
+                    return false;
+                design = carriers.front()->Design();
+            } else {
+                // is it a ship?
+                auto ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
+                if (!ship)
+                    return false;
+                design = ship->Design();
+            }
             // with a valid design?
-            const ShipDesign* design = ship->Design();
             if (!design)
                 return false;
 
