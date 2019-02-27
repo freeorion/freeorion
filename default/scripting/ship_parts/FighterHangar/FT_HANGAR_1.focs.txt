@@ -8,19 +8,16 @@ Part
     combatTargets = And [
         // Consider only visible enemies as target
         [[COMBAT_TARGETS_VISIBLE_ENEMY]]
-        // Target "Bombers" first.
         OrderedAlternativesOf [
-            // Takes the N most dangerous enemy fighters as target
-            // N is the number of own interceptors multiplied by a spread multiplier
-            //  a higher spread ensures that interceptors rarely waste shots
-            //  a lower spread makes it more likely that the most dangerous enemies are taken down (while wasting more shots)
-            //  a spread of 1.2 has a good effectiveness
-            //  here we estimate the number of interceptors by the number of interceptor carriers (as you currently cant count the fighter objects)
-            //  estimating 4 interceptors per carrier usually will be too high in the last combat turn
-            //    we choose 3 instead, so at the beginning of the battle hitting the most dangerous targets for sure is emphasized, later spread is higher
-            MaximumNumberOf number = ( 1.2 * 3 * Statistic Count condition = [[OWN_INTERCEPTOR_CARRIER]] )
-                sortkey = LocalCandidate.Attack
-                condition = Fighter
+            // Target Bombers and Heavy Bombers first
+            And [
+                Fighter
+                Or [
+                   DesignHasPart name = "FT_HANGAR_3"
+                   DesignHasPart name = "FT_HANGAR_4"
+                ]
+            ]
+            Fighter
             // if no fighters: target enemy ships
             [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
         ]
@@ -40,33 +37,6 @@ Part
             ]
     ]
     icon = "icons/ship_parts/fighter06.png"
-
-// Trying to consider only with the same targetting conditions (i.e. launched by the same hangar type)
-// Currently this is implemented as workaround which accepts wrong values in rare cases
-// There would be a workaround to find out the relative balance of types of own hangar parts and use that for scaling
-// But probably its better to query the launching hangar part like: DesignHasPart name = CurrentContent
-// For own interceptors it is enough to check damage for a highest bound attack.
-//   fighters are always up-to-date (as they get recreated each turn)
-//   fighter damage DOES depend on species *_WEAPONS, taking 0.6 margin makes it work for most common cases
-//     GOOD FT_HANGAR_1 NO TECH           -> 1.5 Damage
-//     GRET FT_HANGAR_1 NO TECH           -> 2   Damage
-//     BAD  FT_HANGAR_2 NO TECH           -> 2   Damage
-//     AVRG FT_HANGAR_2 NO TECH           -> 3   Damage
-//
-//     GRET FT_HANGAR_1 SHP_FIGHTERS_2    -> 4   Damage
-//     BAD  FT_HANGAR_2 SHP_FIGHTERS_2    -> 4   Damage
-//     AVRG FT_HANGAR_2 SHP_FIGHTERS_2    -> 5   Damage
-//   THIS CONDITION WILL BE WRONG FOR SOME CASES (namely if you have GREAT and BAD pilots of different carrier types in the same battle)
-//   higher tech level makes this fail for less cases
-
-OWN_INTERCEPTOR_CARRIER
-'''And [ InSystem id = RootCandidate.SystemID Ship OwnedBy empire = Source.Owner DesignHasPart name = "FT_HANGAR_1" ]'''
-
-// 2019-02-27: currently will not match anything in count condition: Statistic Count condition = Fighter
-OWN_INTERCEPTOR
-'''And [ Fighter OwnedBy empire = Source.Owner DesignHasPart name "FT_HANGAR_1" ]'''
-
-
 
 #include "/scripting/common/upkeep.macros"
 #include "/scripting/techs/techs.macros"
