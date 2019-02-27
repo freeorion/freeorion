@@ -32,15 +32,21 @@ COMBAT_TARGETS_PLANET_WITH_DEFENSE
 '''
 
 
-// This should just considers fighters with the same targetting conditions (i.e. launched by the same hangar type
-// There would be a workaround to find out the relative balance of types of own hangar parts and use that for scaling
-// But probably its better to query the launching hangar part like: LaunchedByHangar = CurrentContent
-COMBAT_TARGETS_SPREAD_HANGAR
-'''[[COMBAT_TARGETS_SPREAD(And [ Fighter OwnedBy empire = Source.Owner ])]]'''
-
-// Calculates an efficient number for NumberOf conditions based on the number of total shots of weapon of that part type used
-// MaximumNumberOf number = [[COMBAT_TARGETS_SPREAD(shooter-shots-condition)]]
-// e.g. MaximumNumberOf number = [[COMBAT_TARGETS_SPREAD(And [ Fighter OwnedBy empire = Source.Owner ])]]
-// Takes a heuristical 20% extra spread 
-COMBAT_TARGETS_SPREAD
-'''(1.2 * Statistic Count condition = @1@)'''
+// If you have a group of ships attacking another group of ships as optimisation you can select a number of primary subtargets (e.g. the most dangerous enemies)
+// If you make the number too small you will hit the same target multiple times.
+// If you make the number too high you will hit targets which you did not intend to hit primarily.
+// COMBAT_TARGETS_WEAPON_SPREAD_HIT_ONCE calculates an number for NumberOf conditions for an attack group condition (ship attackers only) for wasting almost no shots.
+//  @1@ attack group condition (Filter the universe for the same kind of targeting)
+// This is based on the number of total shots of weapon of that part type used. Usage like:
+//   MaximumNumberOf number = [[COMBAT_TARGETS_SPREAD(attack-group-condition)]]
+// e.g. MaximumNumberOf number = [[COMBAT_TARGETS_SPREAD(And [ Ship OwnedBy empire = Source.Owner ])]]
+// Takes a heuristical 20% extra spread by default
+//
+// 2019-02-27: currently will not match anything in count condition: Statistic Count condition = Fighter
+// Possible extensions:
+//   adapt Count so it can cound Fighters and implement a COMBAT_TARGETS_FIGHTER_SPREAD
+//   implement COMBAT_TARGETS_WEAPON_SPREAD_KILL ... that calculates how many hits are necessary to kill the primary targets off
+//   adapt spread to species modifiers
+COMBAT_TARGETS_WEAPON_SPREAD_HIT_ONCE
+'''( 1.2 * ShipPartMeter part = CurrentContent meter = SecondaryStat object = RootCandidate * Statistic Count condition = And [ Ship @1@ ] )'''
+//spread * shots-per-current-ship-part                                                      * count of attackers in attack-group-condition
