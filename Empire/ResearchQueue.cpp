@@ -199,7 +199,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         dpsim_research_progress[i] = dp_prog[tname];
     }
 
-    std::map<std::string, TechStatus> dpsim_tech_status_map = sim_tech_status_map;
+    std::map<std::string, TechStatus> dpsim_tech_status_map = std::move(sim_tech_status_map);
 
     // initialize simulation_results with -1 for all techs, so that any techs that aren't
     // finished in simulation by turn TOO_MANY_TURNS will be left marked as never to be finished

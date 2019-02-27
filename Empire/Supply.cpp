@@ -650,7 +650,7 @@ void SupplyManager::Update() {
         }
 
         // save propagated results for next iteration
-        empire_propagating_supply_ranges = empire_propagating_supply_ranges_next;
+        empire_propagating_supply_ranges = std::move(empire_propagating_supply_ranges_next);
     }
 
     //// DEBUG

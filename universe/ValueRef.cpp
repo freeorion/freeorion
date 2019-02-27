@@ -284,7 +284,7 @@ std::string ReconstructName(const std::vector<std::string>& property_name,
         for (const std::string& property_name_part : property_name) {
             if (!retval.empty())
                 retval += '.';
-            retval += property_name_part.c_str();
+            retval += property_name_part;
         }
     }
 

@@ -91,7 +91,7 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
     if (short_name_)
         short_names[short_name_] = name;
 
-    auto name_it = name.rfind(".");
+    auto name_it = name.rfind('.');
     if (name_it != std::string::npos)
         sections.emplace(name.substr(0, name_it));
 
@@ -115,7 +115,7 @@ bool OptionsDB::Option::SetFromString(const std::string& str) {
     }
 
     if (changed) {
-        value = value_;
+        value = std::move(value_);
         (*option_changed_sig_ptr)();
     }
     return changed;
@@ -295,7 +295,7 @@ namespace {
     }
 
     bool OptionNameHasParentSection(const std::string& lhs, const std::string& rhs) {
-        auto it = lhs.find_last_of(".");
+        auto it = lhs.find_last_of('.');
         if (it == std::string::npos)
             return false;
         return lhs.substr(0, it) == rhs;
@@ -563,7 +563,7 @@ void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only) const {
         while (1 < elem_stack.size()) {
             std::string prev_section = PreviousSectionName(elem_stack);
             if (prev_section == section_name) {
-                section_name = "";
+                section_name.clear();
                 break;
             } else if (section_name.find(prev_section + '.') == 0) {
                 section_name = section_name.substr(prev_section.size() + 1);
@@ -760,7 +760,7 @@ void OptionsDB::SetFromXML(const XMLDoc& doc) {
 }
 
 void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name) {
-    std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
+    std::string option_name = section_name + (section_name.empty() ? "" : ".") + elem.Tag();
 
     if (!elem.children.empty()) {
         for (const XMLElement& child : elem.children)

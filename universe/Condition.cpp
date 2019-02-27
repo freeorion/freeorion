@@ -964,7 +964,7 @@ std::string SortedNumberOf::Description(bool negated/* = false*/) const {
     } else {
         std::string sort_key_str = m_sort_key->ConstantExpr() ? m_sort_key->Dump() : m_sort_key->Description();
 
-        std::string description_str, temp;
+        std::string description_str;
         switch (m_sorting_method) {
         case SORT_MAX:
             description_str = (!negated)
@@ -5846,7 +5846,6 @@ bool Chance::SourceInvariant() const
 { return !m_chance || m_chance->SourceInvariant(); }
 
 std::string Chance::Description(bool negated/* = false*/) const {
-    std::string value_str;
     if (m_chance->ConstantExpr()) {
         return str(FlexibleFormat((!negated)
             ? UserString("DESC_CHANCE_PERCENTAGE")

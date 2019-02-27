@@ -385,8 +385,8 @@ void SpeciesManager::serialize(Archive& ar, const unsigned int version)
         SetSpeciesHomeworlds(species_homeworlds);
         SetSpeciesEmpireOpinions(empire_opinions);
         SetSpeciesSpeciesOpinions(other_species_opinions);
-        m_species_object_populations = species_object_populations;
-        m_species_species_ships_destroyed = species_ships_destroyed;
+        m_species_object_populations = std::move(species_object_populations);
+        m_species_species_ships_destroyed = std::move(species_ships_destroyed);
     }
 }
 

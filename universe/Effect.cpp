@@ -1095,7 +1095,7 @@ void SetSpecies::Execute(const ScriptingContext& context) const {
         }
 
         if (preferred_available) {
-            new_focus = preferred_focus;
+            new_focus = std::move(preferred_focus);
         } else if (!available_foci.empty()) {
             new_focus = *available_foci.begin();
         }

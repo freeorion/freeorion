@@ -36,7 +36,7 @@ namespace {
     /// Splits time and date on separate lines for an ISO datetime string
     std::string split_time(const std::string& time) {
         std::string result = time;
-        std::string::size_type pos = result.find("T");
+        std::string::size_type pos = result.find('T');
         if (pos != std::string::npos) {
             result.replace(pos, 1, "\n");
         }
@@ -314,7 +314,6 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
 
     for (fs::directory_iterator it(path); it != end_it; ++it) {
         try {
-            std::string filename = PathToString(it->path().filename());
             if ((it->path().filename().extension() == extension) && !fs::is_directory(it->path())) {
                 if (LoadSaveGamePreviewData(*it, data)) {
                     // Add preview entry to list

@@ -57,7 +57,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
 
     const std::vector<std::string>& part_names = Design()->Parts();
     for (const std::string& part_name : part_names) {
-        if (part_name != "") {
+        if (!part_name.empty()) {
             const PartType* part = GetPartType(part_name);
             if (!part) {
                 ErrorLogger() << "Ship::Ship couldn't get part with name " << part_name;

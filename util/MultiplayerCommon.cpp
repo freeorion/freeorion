@@ -166,7 +166,7 @@ void GalaxySetupData::SetSeed(const std::string& seed) {
             new_seed += alphanum[RandSmallInt(0, (sizeof(alphanum) - 2))];
         DebugLogger() << "Set empty or requested random seed to " << new_seed;
     }
-    m_seed = new_seed;
+    m_seed = std::move(new_seed);
 }
 
 void GalaxySetupData::SetGameUID(const std::string& game_uid)

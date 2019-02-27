@@ -89,14 +89,14 @@ inline Clr FloatClr(float r, float g, float b, float a)
     */
 inline Clr HexClr(const std::string& hex_colour)
 {
-    GG::Clr retval = GG::Clr(0, 0, 0, 255);
-
     std::istringstream iss(hex_colour);
 
     unsigned long rgba = 0;
     if ((hex_colour.size() == 7 || hex_colour.size() == 9) &&
             '#' == iss.get() && !(iss >> std::hex >> rgba).fail())
     {
+        GG::Clr retval = GG::Clr(0, 0, 0, 255);
+
         if (hex_colour.size() == 7) {
             retval.r = (rgba >> 16) & 0xFF;
             retval.g = (rgba >> 8)  & 0xFF;

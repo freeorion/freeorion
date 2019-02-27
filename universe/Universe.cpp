@@ -295,8 +295,7 @@ void Universe::RenameShipDesign(int design_id, const std::string& name/* = ""*/,
     }
     ShipDesign* design = design_it->second;
 
-    if (name != "")
-        design->SetName(name);
+    design->SetName(name);
     design->SetDescription(description);
 }
 
@@ -2322,7 +2321,6 @@ namespace {
         // ensure systems on either side of a starlane along which a fleet is
         // moving are at least basically visible, so that the starlane itself can /
         // will be visible
-        std::vector<std::shared_ptr<const Fleet>> moving_fleets;
         for (auto& obj : objects.FindObjects(MovingFleetVisitor())) {
             if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID || obj->ObjectType() != OBJ_FLEET)
                 continue;
@@ -2416,7 +2414,7 @@ namespace {
         // second-order visibility sharing (but only through allies with lower
         // empire id)
         auto input_eov_copy = empire_object_visibility;
-        auto input_eovs_copy = empire_object_visible_specials;
+        // unused variable auto input_eovs_copy = empire_object_visible_specials;
         Universe& universe = GetUniverse();
 
         for (auto& empire_entry : Empires()) {
