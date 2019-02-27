@@ -32,7 +32,12 @@ PythonBase::PythonBase() :
     m_program_name(""),
 #endif
     m_python_module_error(nullptr)
-{}
+{
+#if defined(FREEORION_WIN32)
+    m_home_dir[0] = '\0';
+    m_program_name[0] = '\0';
+#endif
+}
 
 PythonBase::~PythonBase() {
     Finalize();
@@ -94,7 +99,7 @@ bool PythonBase::Initialize()
             ErrorLogger() << "Unable to initialize FreeOrion Python modules";
             return false;
         }
-    } catch (error_already_set &err) {
+    } catch (error_already_set& err) {
         HandleErrorAlreadySet();
         return false;
     }

@@ -238,7 +238,7 @@ namespace {
         if (cond && cond->SourceInvariant())
             cond->Eval(ScriptingContext(), permitted_objs, objs);
         else
-            permitted_objs = objs;
+            permitted_objs = std::move(objs);
 
         for (auto &obj : permitted_objs) {
             permitted_ids.append(obj->ID());

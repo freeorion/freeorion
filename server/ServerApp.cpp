@@ -514,7 +514,6 @@ void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_d
     // id == m_networking.HostPlayerID() should be the human player in
     // PlayerSetupData.  AI player connections are assigned one of the remaining
     // PlayerSetupData entries that is for an AI player.
-    std::map<int, PlayerSetupData> player_id_setup_data;
     const auto& player_setup_data = single_player_setup_data.m_players;
     NewGameInitConcurrentWithJoiners(single_player_setup_data, player_setup_data);
 }
@@ -920,7 +919,7 @@ void ServerApp::UpdateSavePreviews(const Message& msg,
     }
 
     PreviewInformation preview_information;
-    preview_information.folder = relative_directory_name;
+    preview_information.folder = std::move(relative_directory_name);
     preview_information.subdirectories = ListSaveSubdirectories(directory);
     LoadSaveGamePreviews(
         directory,
@@ -964,7 +963,7 @@ void ServerApp::LoadChatHistory() {
         m_python_server.SetCurrentDir(GetPythonChatDir());
         // Call the Python load_history function
         success = m_python_server.LoadChatHistory(m_chat_history);
-    } catch (boost::python::error_already_set err) {
+    } catch (const boost::python::error_already_set& err) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -1002,7 +1001,7 @@ void ServerApp::PushChatMessage(const std::string& text,
         m_python_server.SetCurrentDir(GetPythonChatDir());
         // Call the Python load_history function
         success = m_python_server.PutChatHistoryEntity(chat);
-    } catch (boost::python::error_already_set err) {
+    } catch (const boost::python::error_already_set& err) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -1443,7 +1442,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
         m_python_server.SetCurrentDir(GetPythonUniverseGeneratorDir());
         // Call the main Python universe generator function
         success = m_python_server.CreateUniverse(player_setup_data);
-    } catch (boost::python::error_already_set err) {
+    } catch (const boost::python::error_already_set& err) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -1500,7 +1499,7 @@ void ServerApp::ExecuteScriptedTurnEvents() {
         m_python_server.SetCurrentDir(GetPythonTurnEventsDir());
         // Call the main Python turn events function
         success = m_python_server.ExecuteTurnEvents();
-    } catch (boost::python::error_already_set err) {
+    } catch (const boost::python::error_already_set& err) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -1600,7 +1599,7 @@ bool ServerApp::IsAuthRequiredOrFillRoles(const std::string& player_name, Networ
         m_python_server.SetCurrentDir(GetPythonAuthDir());
         // Call the main Python turn events function
         success = m_python_server.IsRequireAuthOrReturnRoles(player_name, result, roles);
-    } catch (boost::python::error_already_set err) {
+    } catch (const boost::python::error_already_set& err) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -1629,7 +1628,7 @@ bool ServerApp::IsAuthSuccessAndFillRoles(const std::string& player_name, const 
         m_python_server.SetCurrentDir(GetPythonAuthDir());
         // Call the main Python turn events function
         success = m_python_server.IsSuccessAuthAndReturnRoles(player_name, auth, result, roles);
-    } catch (boost::python::error_already_set err) {
+    } catch (const boost::python::error_already_set& err) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -1915,32 +1914,6 @@ namespace {
           return (Objects().FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
                   Objects().FindObjects(OwnedVisitor<Ship>(empire_id)).empty());      // no ship
       }
-
-    /** Compiles and return set of ids of empires that are controlled by a
-      * human player.*/
-    std::set<int> HumanControlledEmpires(const ServerApp* server_app,
-                                         const ServerNetworking& server_networking)
-    {
-        std::set<int> retval;
-        if (!server_app)
-            return retval;
-
-        for (auto it = server_networking.established_begin();
-             it != server_networking.established_end(); ++it)
-        {
-            auto player_connection = *it;
-            auto client_type = player_connection->GetClientType();
-            if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-                int player_id = player_connection->PlayerID();
-                int empire_id = server_app->PlayerEmpireID(player_id);
-                if (empire_id == ALL_EMPIRES || player_id == Networking::INVALID_PLAYER_ID)
-                    ErrorLogger() << "HumanControlledEmpires couldn't get a human player id or empire id";
-                else
-                    retval.insert(empire_id);
-            }
-        }
-        return retval;
-    }
 
     void GetEmpireFleetsAtSystem(std::map<int, std::set<int>>& empire_fleets, int system_id) {
         empire_fleets.clear();
@@ -3214,7 +3187,6 @@ void ServerApp::ProcessCombats() {
     DebugLogger() << "ServerApp::ProcessCombats";
     m_networking.SendMessageAll(TurnProgressMessage(Message::COMBAT));
 
-    std::set<int> human_controlled_empire_ids = HumanControlledEmpires(this, m_networking);
     std::vector<CombatInfo> combats;   // map from system ID to CombatInfo for that system
 
 

@@ -281,7 +281,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
         Sound::GetSound().SetMusicVolume(GetOptionsDB().Get<int>("audio.music.volume"));
         Sound::GetSound().SetUISoundsVolume(GetOptionsDB().Get<int>("audio.effects.volume"));
-    } catch (Sound::InitializationFailureException const &) {
+    } catch (const Sound::InitializationFailureException&) {
         inform_user_sound_failed = true;
     }
 

@@ -1021,7 +1021,7 @@ namespace {
                     DebugLogger(combat) << "No objects left for empire with id: " << empire.first;
                 }
             }
-            empire_infos = temp;
+            empire_infos = std::move(temp);
 
             if (!empire_infos.empty()) {
                 DebugLogger(combat) << "Empires with objects remaining:";
@@ -1247,8 +1247,6 @@ namespace {
             DebugLogger(combat) << "no weapons' can't launch figters!";
             return;   // no ability to attack!
         }
-
-        static const std::string EMPTY_STRING;
 
         std::string species_name;
         auto attacker_ship = std::dynamic_pointer_cast<Ship>(attacker);

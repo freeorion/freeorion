@@ -976,7 +976,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
             return discard_event();
         }
 
-        player_name = new_player_name;
+        player_name = std::move(new_player_name);
     }
 
     EstablishPlayer(player_connection, player_name, client_type, client_version_string, roles);
@@ -1220,7 +1220,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 m_lobby_data->m_save_game = "";
                 m_lobby_data->m_save_game_empire_data.clear();
                 // prevent updating lobby by having old and new file name equal
-                incoming_lobby_data.m_save_game = "";
+                incoming_lobby_data.m_save_game.clear();
             }
 
             int ai_count = 0;
@@ -2495,7 +2495,7 @@ sc::result PlayingGame::react(const JoinGame& msg) {
             return discard_event();
         }
 
-        player_name = new_player_name;
+        player_name = std::move(new_player_name);
     }
 
     EstablishPlayer(player_connection, player_name, client_type,
