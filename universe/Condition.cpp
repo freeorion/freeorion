@@ -5111,17 +5111,20 @@ namespace {
             if (!candidate)
                 return false;
 
-            const ShipDesign* design = nullptr;
+            std::shared_ptr<const Ship> ship = nullptr;
             if (auto fighter = std::dynamic_pointer_cast<const ::Fighter>(candidate)) {
                 // it is a fighter
-                design = Objects().Object<Ship>(fighter->LaunchedFrom())->Design();
-            } else if (auto ship = std::dynamic_pointer_cast<const ::Ship>(candidate)) {
-                // ir is a ship
-                design = ship->Design();
+                ship = std::move(Objects().Object<Ship>(fighter->LaunchedFrom()));
             } else {
-                return false;
+                ship = std::move(std::dynamic_pointer_cast<const ::Ship>(candidate));
             }
+
+            // is it a ship
+            if (!ship)
+                return false;
+
             // with a valid design?
+            const ShipDesign* design = ship->Design();
             if (!design)
                 return false;
 
