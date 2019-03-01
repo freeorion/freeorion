@@ -5114,9 +5114,9 @@ namespace {
             std::shared_ptr<const Ship> ship = nullptr;
             if (auto fighter = std::dynamic_pointer_cast<const ::Fighter>(candidate)) {
                 // it is a fighter
-                ship = std::move(Objects().Object<Ship>(fighter->LaunchedFrom()));
+                ship = Objects().Object<Ship>(fighter->LaunchedFrom());
             } else {
-                ship = std::move(std::dynamic_pointer_cast<const ::Ship>(candidate));
+                ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
             }
 
             // is it a ship
