@@ -1218,15 +1218,13 @@ public:
     mutable boost::signals2::signal<void (const PartType*)> DoubleClickedSignal;
 
 private:
-    std::shared_ptr<GG::StaticGraphic>  m_icon;
-    std::shared_ptr<GG::StaticGraphic>  m_background;
-    const PartType*     m_part;
+    std::shared_ptr<GG::StaticGraphic>  m_icon = nullptr;
+    std::shared_ptr<GG::StaticGraphic>  m_background = nullptr;
+    const PartType*                     m_part = nullptr;
 };
 
 PartControl::PartControl(const PartType* part) :
     GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE),
-    m_icon(nullptr),
-    m_background(nullptr),
     m_part(part)
 {}
 
@@ -1790,10 +1788,9 @@ private:
     void HandlePartTypeClicked(const PartType*, GG::Flags<GG::ModKey>);
     void HandlePartTypeRightClicked(const PartType*, const GG::Pt& pt);
 
-    std::shared_ptr<PartsListBox>   m_parts_list;
-
+    std::shared_ptr<PartsListBox>                               m_parts_list = nullptr;
     std::map<ShipPartClass, std::shared_ptr<CUIStateButton>>    m_class_buttons;
-    std::shared_ptr<CUIStateButton>                             m_superfluous_parts_button;
+    std::shared_ptr<CUIStateButton>                             m_superfluous_parts_button = nullptr;
 
     // Holds the state of the availabilities filter.
     AvailabilityManager m_availabilities_state;
@@ -1807,8 +1804,6 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
     CUIWnd(UserString("DESIGN_WND_PART_PALETTE_TITLE"),
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE,
            config_name),
-    m_parts_list(nullptr),
-    m_superfluous_parts_button(nullptr),
     m_availabilities_state(false, true, false)
 {}
 
@@ -2200,7 +2195,7 @@ public:
         virtual void SetDisplayName(const std::string& name);
 
     private:
-        std::shared_ptr<HullAndNamePanel> m_hull_panel;
+        std::shared_ptr<HullAndNamePanel> m_hull_panel = nullptr;
     };
 
     class HullAndPartsListBoxRow : public BasesListBoxRow {
@@ -2210,6 +2205,7 @@ public:
         void CompleteConstruction() override;
         const std::string&              Hull() const    { return m_hull_name; }
         const std::vector<std::string>& Parts() const   { return m_parts; }
+
     protected:
         std::string                     m_hull_name;
         std::vector<std::string>        m_parts;
@@ -2221,7 +2217,7 @@ public:
         void CompleteConstruction() override;
         int DesignID() const { return m_design_id; }
     private:
-        int m_design_id;
+        int m_design_id = INVALID_DESIGN_ID;
     };
 
 protected:
@@ -2255,7 +2251,7 @@ protected:
 private:
     void InitRowSizes();
 
-    int                         m_empire_id_shown;
+    int                         m_empire_id_shown = ALL_EMPIRES;
     const AvailabilityManager&  m_availabilities_state;
     boost::signals2::connection m_empire_designs_changed_signal;
 };
@@ -2297,8 +2293,7 @@ void BasesListBox::HullAndNamePanel::SetDisplayName(const std::string& name) {
 }
 
 BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::string& name) :
-    CUIListBox::Row(w, h, BASES_LIST_BOX_DROP_TYPE),
-    m_hull_panel(nullptr)
+    CUIListBox::Row(w, h, BASES_LIST_BOX_DROP_TYPE)
 {
     if (hull.empty()) {
         ErrorLogger() << "No hull name provided for ship row display.";
@@ -2504,7 +2499,7 @@ public:
     EmptyHullsListBox(const AvailabilityManager& availabilities_state,
                       const boost::optional<std::string>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT"))
-    {};
+    {}
 
     void EnableOrderIssuing(bool enable = true) override;
 
@@ -2571,7 +2566,7 @@ public:
     MonstersListBox(const AvailabilityManager& availabilities_state,
                     const boost::optional<std::string>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
-    {};
+    {}
 
     void EnableOrderIssuing(bool enable = true) override;
 
@@ -2588,7 +2583,7 @@ public:
     AllDesignsListBox(const AvailabilityManager& availabilities_state,
                       const boost::optional<std::string>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
-    {};
+    {}
 
 protected:
     void PopulateCore() override;
@@ -4965,11 +4960,7 @@ void DesignWnd::MainPanel::ReplaceDesign() {
 // DesignWnd                                    //
 //////////////////////////////////////////////////
 DesignWnd::DesignWnd(GG::X w, GG::Y h) :
-    GG::Wnd(GG::X0, GG::Y0, w, h, GG::ONTOP | GG::INTERACTIVE),
-    m_detail_panel(nullptr),
-    m_base_selector(nullptr),
-    m_part_palette(nullptr),
-    m_main_panel(nullptr)
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::ONTOP | GG::INTERACTIVE)
 {}
 
 void DesignWnd::CompleteConstruction() {

@@ -564,18 +564,8 @@ std::list<std::pair<std::string, std::string>>::iterator
 
 EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags,
                                                  const std::string& config_name) :
-    CUIWnd(UserString("MAP_BTN_PEDIA"), flags, config_name, false),
-    m_name_text(nullptr),
-    m_cost_text(nullptr),
-    m_summary_text(nullptr),
-    m_description_rich_text(nullptr),
-    m_scroll_panel(nullptr),
-    m_icon(nullptr),
-    m_search_edit(nullptr),
-    m_graph(nullptr),
-    m_needs_refresh(false)
-{
-}
+    CUIWnd(UserString("MAP_BTN_PEDIA"), flags, config_name, false)
+{}
 
 void EncyclopediaDetailPanel::CompleteConstruction() {
     CUIWnd::CompleteConstruction();

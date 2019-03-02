@@ -88,10 +88,10 @@ private:
     void DesignNameChanged();
     void InitializeWindows();
 
-    std::shared_ptr<EncyclopediaDetailPanel>    m_detail_panel;
-    std::shared_ptr<BaseSelector>               m_base_selector;
-    std::shared_ptr<PartPalette>                m_part_palette;
-    std::shared_ptr<MainPanel>                  m_main_panel;
+    std::shared_ptr<EncyclopediaDetailPanel>    m_detail_panel = nullptr;
+    std::shared_ptr<BaseSelector>               m_base_selector = nullptr;
+    std::shared_ptr<PartPalette>                m_part_palette = nullptr;
+    std::shared_ptr<MainPanel>                  m_main_panel = nullptr;
 };
 
 #endif // _DesignWnd_h_
