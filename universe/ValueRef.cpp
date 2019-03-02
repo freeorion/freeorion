@@ -1244,7 +1244,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
             return species->PreferredFocus();
         return "";
 
-    } else if (property_name == "OwnerMostExpensiveEnqueuedTech") {
+    } else if (property_name == "OwnerLeastExpensiveEnqueuedTech") {
         const Empire* empire = GetEmpire(object->Owner());
         if (!empire)
             return "";
@@ -1696,11 +1696,9 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     if (variable_name == "BuildingTypesOwned" ||
         variable_name == "BuildingTypesProduced" ||
         variable_name == "BuildingTypesScrapped" ||
-        variable_name == "SpeciesShipsDestroyed" ||
         variable_name == "SpeciesColoniesOwned" ||
         variable_name == "SpeciesPlanetsBombed" ||
         variable_name == "SpeciesPlanetsDepoped" ||
-        variable_name == "SpeciesPlanetsOwned" ||
         variable_name == "SpeciesPlanetsInvaded" ||
         variable_name == "SpeciesShipsDestroyed" ||
         variable_name == "SpeciesShipsLost" ||
@@ -1720,12 +1718,12 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             key_string = m_string_ref1->Eval(context);
             if (key_string.empty())
                 return 0;
-        }
 
-        // if a string specified, get just that entry (for single empire, or
-        // summed for all empires)
-        if (m_string_ref1)
-            return GetIntEmpirePropertySingleKey(empire_id, variable_name, key_string);
+            // if a string specified, get just that entry (for single empire, or
+            // summed for all empires)
+            return GetIntEmpirePropertySingleKey(empire_id, variable_name,
+                                                 key_string);
+        }
 
         // if no string specified, get sum of all entries (for single empire
         // or summed for all empires)
@@ -2720,7 +2718,7 @@ std::string ComplexVariable<double>::Dump(unsigned short ntabs) const
              variable_name == "PartCapacity" ||
              variable_name == "PartSecondaryStat")
     {
-        if (!m_string_ref1)
+        if (m_string_ref1)
             retval += " name = " + m_string_ref1->Dump(ntabs);
 
     }

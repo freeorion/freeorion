@@ -72,7 +72,7 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
                 // have no previous info, so just use whatever is given
                 this_meter = copied_object_meter;
 
-            } else if (meter_already_known) {
+            } else {
                 // don't want to override legit meter history with sentinel values used for insufficiently visible objects
                 if (copied_object_meter.Initial() != Meter::LARGE_VALUE ||
                     copied_object_meter.Current() != Meter::LARGE_VALUE)

@@ -1010,13 +1010,11 @@ namespace {
         Effect::TargetSet&                                              target_objects,
         std::string&                                                    match_log)
     {
-        std::pair<bool, Effect::TargetSet>* cache_entry = nullptr;
-
         if (!cond)
             return EMPTY_TARGET_SET;
 
         // the passed-in cached_condition_matches are here expected be specific for the current source object
-        cache_entry = cached_condition_matches.Find(cond, false);
+        std::pair<bool, Effect::TargetSet>* cache_entry = cached_condition_matches.Find(cond, false);
         if (cache_entry)
             return cache_entry->second;
 
@@ -1806,7 +1804,8 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
     for (int child_id : contained_ids)
         ForgetKnownObject(empire_id, child_id);
 
-    if (int container_id = obj->ContainerObjectID() != INVALID_OBJECT_ID) {
+    int container_id = obj->ContainerObjectID();
+    if (container_id != INVALID_OBJECT_ID) {
         if (auto container = objects.Object(container_id)) {
             if (auto system = std::dynamic_pointer_cast<System>(container))
                 system->Remove(object_id);

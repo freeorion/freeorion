@@ -456,7 +456,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                 next_system = GetEmpireKnownSystem(*route_it, this->Owner());
                 if (next_system) {
                     //DebugLogger() << "Fleet::MovePath checking unrestriced lane travel";
-                    clear_exit = clear_exit || (next_system && next_system->ID() == m_arrival_starlane) ||
+                    clear_exit = clear_exit || next_system->ID() == m_arrival_starlane ||
                     (empire && empire->PreservedLaneTravel(cur_system->ID(), next_system->ID()));
                 }
             }

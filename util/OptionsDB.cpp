@@ -166,7 +166,7 @@ OptionsDB::OptionSection::OptionSection(const std::string& name_, const std::str
 // static(s)
 OptionsDB* OptionsDB::s_options_db = nullptr;
 
-OptionsDB::OptionsDB() {
+OptionsDB::OptionsDB() : m_dirty(false) {
     if (s_options_db)
         throw std::runtime_error("Attempted to create a duplicate instance of singleton class OptionsDB.");
 
