@@ -9964,10 +9964,12 @@ unsigned int Not::GetCheckSum() const {
     TraceLogger() << "GetCheckSum(Not): retval: " << retval;
     return retval;
 }
+
 ///////////////////////////////////////////////////////////
 // OrderedAlternativesOf
 ///////////////////////////////////////////////////////////
-OrderedAlternativesOf::OrderedAlternativesOf(std::vector<std::unique_ptr<ConditionBase>>&& operands) :
+OrderedAlternativesOf::OrderedAlternativesOf(
+    std::vector<std::unique_ptr<ConditionBase>>&& operands) :
     ConditionBase(),
     m_operands(std::move(operands))
 {}
@@ -9989,8 +9991,9 @@ bool OrderedAlternativesOf::operator==(const ConditionBase& rhs) const {
     return true;
 }
 
-void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-               ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
+                                 ObjectSet& matches, ObjectSet& non_matches,
+                                 SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     std::shared_ptr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
