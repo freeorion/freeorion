@@ -65,9 +65,18 @@
     <ClInclude Include="..\..\GG\GG\utf8\checked.h" />
     <ClInclude Include="..\..\GG\GG\utf8\core.h" />
     <ClInclude Include="..\..\GG\GG\utf8\unchecked.h" />
+    <ClInclude Include="..\..\GG\GG\VectorTexture.h" />
     <ClInclude Include="..\..\GG\GG\Wnd.h" />
     <ClInclude Include="..\..\GG\GG\WndEvent.h" />
     <ClInclude Include="..\..\GG\GG\ZList.h" />
+    <ClInclude Include="..\..\GG\src\nanosvg\nanosvg.h" />
+    <ClInclude Include="..\..\GG\src\nanosvg\nanosvgrast.h" />
+    <ClInclude Include="..\..\GG\src\nanovg\fontstash.h" />
+    <ClInclude Include="..\..\GG\src\nanovg\nanovg.h" />
+    <ClInclude Include="..\..\GG\src\nanovg\nanovg_gl.h" />
+    <ClInclude Include="..\..\GG\src\nanovg\nanovg_gl_utils.h" />
+    <ClInclude Include="..\..\GG\src\nanovg\stb_image.h" />
+    <ClInclude Include="..\..\GG\src\nanovg\stb_truetype.h" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +103,7 @@
     <ClCompile Include="..\..\GG\src\ListBox.cpp" />
     <ClCompile Include="..\..\GG\src\Menu.cpp" />
     <ClCompile Include="..\..\GG\src\MultiEdit.cpp" />
+    <ClCompile Include="..\..\GG\src\nanovg\nanovg.c" />
     <ClCompile Include="..\..\GG\src\PtRect.cpp" />
     <ClCompile Include="..\..\GG\src\RichText\BlockControl.cpp" />
     <ClCompile Include="..\..\GG\src\RichText\ImageBlock.cpp" />
@@ -104,11 +114,13 @@
     <ClCompile Include="..\..\GG\src\ScrollPanel.cpp" />
     <ClCompile Include="..\..\GG\src\StaticGraphic.cpp" />
     <ClCompile Include="..\..\GG\src\StyleFactory.cpp" />
+    <ClCompile Include="..\..\GG\src\svg.cpp" />
     <ClCompile Include="..\..\GG\src\TabWnd.cpp" />
     <ClCompile Include="..\..\GG\src\TextControl.cpp" />
     <ClCompile Include="..\..\GG\src\Texture.cpp" />
     <ClCompile Include="..\..\GG\src\Timer.cpp" />
     <ClCompile Include="..\..\GG\src\UnicodeCharsets.cpp" />
+    <ClCompile Include="..\..\GG\src\VectorTexture.cpp" />
     <ClCompile Include="..\..\GG\src\Wnd.cpp" />
     <ClCompile Include="..\..\GG\src\WndEvent.cpp" />
     <ClCompile Include="..\..\GG\src\ZList.cpp" />
@@ -206,7 +218,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_USRDLL;_DLL;GiGi_EXPORTS;GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_USRDLL;_DLL;GiGi_EXPORTS;GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO;FONS_USE_FREETYPE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../include/;../../../include;../../GG/;../../../include/freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>

@@ -25,6 +25,7 @@
 
 add_subdirectory(dialogs)
 add_subdirectory(RichText)
+add_subdirectory(nanovg)
 
 if(BUILD_SDL_DRIVER)
     add_subdirectory(SDL)
@@ -57,11 +58,13 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/ScrollPanel.cpp
         ${CMAKE_CURRENT_LIST_DIR}/StaticGraphic.cpp
         ${CMAKE_CURRENT_LIST_DIR}/StyleFactory.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/svg.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TabWnd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TextControl.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Texture.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Timer.cpp
         ${CMAKE_CURRENT_LIST_DIR}/UnicodeCharsets.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/VectorTexture.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Wnd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/WndEvent.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ZList.cpp

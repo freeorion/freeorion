@@ -443,11 +443,22 @@ namespace {
 
         } else if (dir_name == "ENC_TEXTURES") {
              for (auto tex : GG::GetTextureManager().Textures()) {
-                 std::string texture_info_str = boost::io::str(FlexibleFormat(UserString("ENC_TEXTURE_INFO")) %
-                                                               Value(tex.second->Width()) %
-                                                               Value(tex.second->Height()) %
-                                                               tex.second->BytesPP() %
-                                                               tex.first);
+                 std::string texture_info_str = boost::io::str(
+                     FlexibleFormat(UserString("ENC_TEXTURE_INFO")) %
+                     Value(tex.second->Width()) %
+                     Value(tex.second->Height()) %
+                     tex.second->BytesPP() %
+                     tex.first);
+                 sorted_entries_list.insert({tex.first, {texture_info_str, tex.first}});
+             }
+
+             for (auto tex: GG::GetVectorTextureManager().Textures()) {
+                 std::string texture_info_str = boost::io::str(
+                     FlexibleFormat(UserString("ENC_VECTOR_TEXTURE_INFO")) %
+                     Value(tex.second->Size().x) %
+                     Value(tex.second->Size().y) %
+                     tex.second->NumShapes() %
+                     tex.first);
                  sorted_entries_list.insert({tex.first, {texture_info_str, tex.first}});
              }
 

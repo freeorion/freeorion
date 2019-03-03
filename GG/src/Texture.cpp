@@ -515,10 +515,10 @@ SubTexture::SubTexture(const std::shared_ptr<const Texture>& texture) :
     m_width = texture->Width();
     m_height = texture->Height();
 
-    m_tex_coords[0] = 0.0;
-    m_tex_coords[1] = 0.0;
-    m_tex_coords[2] = 1.0;
-    m_tex_coords[3] = 1.0;
+    m_tex_coords[0] = 0.0f;
+    m_tex_coords[1] = 0.0f;
+    m_tex_coords[2] = 1.0f;
+    m_tex_coords[3] = 1.0f;
 }
 
 SubTexture::~SubTexture()
@@ -562,13 +562,20 @@ void SubTexture::OrthoBlit(const Pt& pt1, const Pt& pt2) const
 void SubTexture::OrthoBlit(const Pt& pt) const
 { if (m_texture) m_texture->OrthoBlit(pt, pt + Pt(m_width, m_height), m_tex_coords); }
 
+void SubTexture::Clear()
+{
+    m_texture.reset();
+    m_width = X0;
+    m_height = Y0;
+    m_tex_coords[0] = 0.0f;
+    m_tex_coords[1] = 0.0f;
+    m_tex_coords[2] = 1.0f;
+    m_tex_coords[3] = 1.0f;
+}
 
 ///////////////////////////////////////
 // class GG::TextureManager
 ///////////////////////////////////////
-// static member(s)
-bool TextureManager::s_il_initialized = false;
-
 TextureManager::TextureManager()
 {}
 

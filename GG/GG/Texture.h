@@ -204,6 +204,10 @@ public:
     void OrthoBlit(const Pt& pt) const;
     //@}
 
+    /** \name Mutators */ ///@{
+    void Clear();
+    //@}
+
     /** \name Exceptions */ ///@{
     /** The base class for SubTexture exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
@@ -219,10 +223,10 @@ public:
 
 private:
     /** shared_ptr to texture object with entire image. */
-    std::shared_ptr<const Texture> m_texture;
-    X                                m_width;
-    Y                                m_height;
-    GLfloat                          m_tex_coords[4];  ///< position of element within containing texture 
+    std::shared_ptr<const Texture>  m_texture;
+    X                               m_width;
+    Y                               m_height;
+    GLfloat                         m_tex_coords[4];    ///< position of element within containing texture 
 };
 
 /** \brief A singleton that loads and stores textures for use by GG.
@@ -261,20 +265,17 @@ public:
     /** Removes the manager's shared_ptr to the texture created from image
         file \a path, if it exists.  \note Due to shared_ptr semantics, the
         texture may not be deleted until much later. */
-    void                       FreeTexture(const boost::filesystem::path& path);
+    void                     FreeTexture(const boost::filesystem::path& path);
 
     /** Removes the manager's shared_ptr to the texture stored with the name
         \a name, if it exists.  \note Due to shared_ptr semantics, the
         texture may not be deleted until much later. */
-    void                       FreeTexture(const std::string& name);
+    void                     FreeTexture(const std::string& name);
     //@}
 
 private:
     TextureManager();
     std::shared_ptr<Texture> LoadTexture(const boost::filesystem::path& path, bool mipmap);
-
-    static bool s_created;
-    static bool s_il_initialized;
 
     /** Indexed by string, not path, because some textures may be stored by a
         name and not loaded from a path. */

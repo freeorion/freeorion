@@ -640,6 +640,13 @@ namespace GG {
         }
     }
 
+    Rect ActiveScissorClippingRegion()
+    {
+        if (g_scissor_clipping_rects.empty())
+            return Rect();
+        return g_scissor_clipping_rects.back();
+    }
+
     void BeginStencilClipping(Pt inner_ul, Pt inner_lr, Pt outer_ul, Pt outer_lr)
     {
         if (!g_stencil_bit) {

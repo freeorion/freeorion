@@ -66,6 +66,10 @@ namespace GG {
         There must be an outstanding call to BeginScissorClipping(). */
     GG_API void EndScissorClipping();
 
+    /** Returns the most recently begun and not yet ended scissor clipping
+        region. */
+    GG_API Rect ActiveScissorClippingRegion();
+
     /** Sets up a GL stencil, so that anything inside of the screen region
         defined by points \a inner_ul and \a inner_lr, or outside of the
         screen region defined by points \a outer_ul and \a outer_lr, is

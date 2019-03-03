@@ -49,7 +49,12 @@ namespace GG {
             auto texture = GetTextureManager().GetTexture(path);
             m_graphic = Wnd::Create<StaticGraphic>(texture, GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
         } catch (GG::Texture::BadFile&) {
-            // No can do inside GiGi.
+            try {
+                auto vector_texture = GetVectorTextureManager().GetTexture(path);
+                m_graphic = Wnd::Create<StaticGraphic>(vector_texture, GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
+            } catch (GG::Texture::BadFile&) {
+                // No can do inside GiGi.
+            }
         }
     }
 
