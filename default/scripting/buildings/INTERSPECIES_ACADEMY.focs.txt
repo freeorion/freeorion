@@ -91,7 +91,7 @@ BuildingType
             activation = Source
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[LATE_PRIORITY]]
-            effects = SetResearch value = Value + 5
+            effects = SetTargetResearch value = Value + 5
             
     ]
     icon = "icons/building/science-institute.png"
