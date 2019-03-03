@@ -728,7 +728,7 @@ Kraken Noir
 SM_BLACK_KRAKEN_DESC
 '''Un puissant Kraken Noir réputé comme surnaturel.
 
-Les Kraken Noirs sont des monstres spatiaux issus de la bio-ingénierie, incroyablement redoutables, d'une grande [[metertype METER_STEALTH]], et munis d'armes dangereuses. Une flotte puissante et une bonne [[encyclopedia DETECTION_TITLE]] seront nécessaires pour en découdre avec ces organismes, ces derniers attaquant les populations des planètes où les structures et bâtiments sont facilement détectables.'''
+Les Kraken Noirs sont des monstres spatiaux issus de la bio-ingénierie, incroyablement redoutables, d'une grande [[metertype METER_STEALTH]], et munis d'armes dangereuses. Une flotte puissante et une bonne [[encyclopedia DETECTION_TITLE]] seront nécessaires pour en découdre avec ces organismes, ces derniers visant en priorité les planètes où les structures et bâtiments sont facilement détectables et attaquant leur [[metertype METER_POPULATION]].'''
 
 SM_SNOWFLAKE_1
 Flocon de Neige Juvénile
@@ -760,7 +760,7 @@ Flocon de Neige Psionique
 SM_PSIONIC_SNOWFLAKE_DESC
 '''Un monstre capable de neutraliser l'esprit des êtres organiques.
 
-Les Flocons de Neige Psioniques sont des monstres spatiaux issues de la bio-ingénierie, munis d'armes dangereuses, ayant la capacité de prendre le contrôle des astronefs abritant un équipage à [[encyclopedia ORGANIC_SPECIES_TITLE]]. Une flotte puissante sera nécessaire pour les combattre. Chassant et attaquant les vaisseaux spatiaux ennemis, les Flocons de Neige Psioniques forcent les équipages vulnérables à leurs attaques psychiques à abandonner leur empire, et sont également capables d'attaquer directement les populations planétaires.'''
+Les Flocons de Neige Psioniques sont des monstres spatiaux issues de la bio-ingénierie, munis d'armes dangereuses, ayant la capacité de prendre le contrôle des astronefs abritant un équipage à [[encyclopedia ORGANIC_SPECIES_TITLE]]. Une flotte puissante sera nécessaire pour les combattre. Chassant et attaquant les vaisseaux spatiaux ennemis, les Flocons de Neige Psioniques forcent les équipages vulnérables à leurs attaques psychiques à abandonner leur empire, et sont également capables d'attaquer directement la [[metertype METER_POPULATION]] d'une planète.'''
 
 SM_JUGGERNAUT_1
 Mastodonte Juvénile
@@ -792,7 +792,7 @@ Mastodonte Déformé
 SM_BLOATED_JUGGERNAUT_DESC
 '''Un monstre spatial massif à l'allure repoussante.
 
-Les Mastodontes Déformés sont des monstres spatiaux issus de la bio-ingénierie, incroyablement résistants, d'une grande [[metertype METER_STEALTH]], et munis d'armes dangereuses. Une flotte puissante et une bonne [[encyclopedia DETECTION_TITLE]] seront nécessaires pour en découdre avec ces organismes, ces derniers attaquant les populations des planètes où les structures et bâtiments sont facilement détectables.'''
+Les Mastodontes Déformés sont des monstres spatiaux issus de la bio-ingénierie, incroyablement résistants, d'une grande [[metertype METER_STEALTH]], et munis d'armes dangereuses. Une flotte puissante et une bonne [[encyclopedia DETECTION_TITLE]] seront nécessaires pour en découdre avec ces organismes, ces derniers visant en priorité les planètes où les structures et bâtiments sont facilement détectables et attaquant leur [[metertype METER_POPULATION]].'''
 
 SM_CLOUD
 Nuage Spatial
@@ -1183,7 +1183,7 @@ RULE_HABITABLE_SIZE_GASGIANT
 Zone habitable Géantes Gazeuses
 
 RULE_HABITABLE_SIZE_DESC
-Valeur utilisée pour ajuster les variations de [[encyclopedia POPULATION_TITLE_SHORT_DESC]] sur une planète de cette taille.
+Valeur utilisée pour ajuster les variations de [[METER_POPULATION]] sur une planète de cette taille.
 
 RULE_ALLOW_CONCEDE
 Autoriser Capitulation
@@ -5455,7 +5455,12 @@ METER_POPULATION_VALUE_LABEL  # translated
 Population
 
 METER_POPULATION_VALUE_DESC
-Valeur abstraite représentant la taille d'une colonie, en fonction de l'espèce.
+'''La Population représente la taille d'une colonie sur une planète. Sa valeur maximale dépend de l'[[encyclopedia ENC_SPECIES]] et de son adaptation à l'[[encyclopedia ENVIRONMENT_TITLE]] d'une planète. Plusieurs bonus de capacité en [[metertype METER_INDUSTRY]] et en [[metertype METER_RESEARCH]] sont liés à la taille de la Population: plus la Population est importante, plus les bonus sont élevés.
+
+Une Population supérieure ou égale à 3 et un [[metertype METER_HAPPINESS]] minimum de 5 sont requis pour qu'une colonie puisse lancer la colonisation d'autres planètes. Un astronef colonisateur est peuplé de Colons, leur nombre étant déterminé par la capacité de [[encyclopedia PC_COLONY]] du modèle d'astronef. Lors de la colonisation d'une planète, le nombre de Colons à bord de l'astronef constituera la Population de départ sur une planète nouvellement colonisée.
+
+La Projection Population est la valeur optimale de Population qu'une planète tend à approcher, compte tenu des différents facteurs influençant la Population planétaire. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Population est susceptible de fluctuer à son tour.
+'''
 
 METER_INDUSTRY_VALUE_LABEL
 Industrie
@@ -5481,7 +5486,7 @@ La Projection Recherche est le niveau optimal de capacité en Recherche qu'une p
 L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie coûte 15 PR et requiert un minimum de 3 tours, seulement 5 PR par tour peuvent lui être alloués.
 Les PR sont affectés aux technologies à assimiler selon leur position dans la file d'attente : la technologie en tête de file est prioritaire. Les PR restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié : les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file. Si des PR restent non-alloués après que chaque technologie ait reçu son maximum autorisé de PR, ces PR en excédent sont automatiquement attribués à une ou plusieurs technologies déverrouillées et présentant le moins de PR nécessaires ou restants avant assimilation.
 
-À l'inverse de l'Industrie, la Recherche n'impose pas d'échanges matériels entre planètes et n'est donc pas dépendante des lignes d'[[metertype METER_SUPPLY]] de l'empire.'''
+À l'inverse de l'[[metertype METER_INDUSTRY]], la Recherche n'impose pas d'échanges matériels entre planètes et n'est donc pas dépendante des lignes d'[[metertype METER_SUPPLY]] de l'empire.'''
 
 METER_TRADE_VALUE_LABEL
 Commerce
@@ -5493,7 +5498,7 @@ METER_CONSTRUCTION_VALUE_LABEL
 Infrastructure
 
 METER_CONSTRUCTION_VALUE_DESC
-'''L'Infrastructure englobe toutes les structures et organisations qui assurent la pérennité et la production des populations de l'empire : l'énergie, les transports, les télécommunications, les services sociaux, etc.
+'''L'Infrastructure englobe toutes les structures et organisations qu'abrite une planète colonisée: l'énergie, les transports, les télécommunications, les services sociaux, etc.
 
 La Projection Infrastructure est le niveau optimal d'Infrastructure qu'une planète tend à approcher, compte tenu des différents facteurs influençant l'Infrastructure planétaire. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Infrastructure est susceptible de fluctuer à son tour.'''
 
@@ -5501,9 +5506,9 @@ METER_HAPPINESS_VALUE_LABEL
 Bonheur
 
 METER_HAPPINESS_VALUE_DESC
-'''Le Bonheur de la population d'une colonie est initialement faible suite au succès d'une colonisation ou d'une invasion, et peut également dépendre d'autres facteurs. Un Bonheur minimum de 5 est requis pour qu'une colonie puissent lancer la colonisation d'autres planètes.
+'''Le Bonheur de la [[metertype METER_POPULATION]] d'une colonie est initialement faible suite au succès d'une colonisation ou d'une invasion, et peut également dépendre d'autres facteurs. Un Bonheur minimum de 5 est requis pour qu'une colonie puisse lancer la colonisation d'autres planètes.
 
-La Projection Bonheur est le niveau optimal de Bonheur que la population d'une planète tend à approcher, compte tenu des différents facteurs influençant le Bonheur planétaire. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Bonheur est susceptible de fluctuer à son tour.'''
+La Projection Bonheur est le niveau optimal de Bonheur que la Population d'une planète tend à approcher, compte tenu des différents facteurs influençant le Bonheur planétaire. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Bonheur est susceptible de fluctuer à son tour.'''
 
 METER_CAPACITY_VALUE_LABEL
 Stat - Primaire
@@ -5629,7 +5634,7 @@ OUTPOSTS_TITLE
 Avant-Poste
 
 OUTPOSTS_TEXT
-Les Avant-Postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de population et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[metertype METER_SUPPLY]] de l'empire (à l'aide de la technologie appropriée) et augmenter sa zone de détection. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-Poste. Pour construire un Avant-Poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-Postes sont également créés lorsque la population d'une colonie tombe à zéro, quelle qu'en soit la raison.
+Les Avant-Postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de [[metertype METER_POPULATION]] et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[metertype METER_SUPPLY]] de l'empire (à l'aide de la technologie appropriée) et augmenter sa zone de détection. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-Poste. Pour construire un Avant-Poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-Postes sont également créés lorsque la Population d'une colonie tombe à zéro, quelle qu'en soit la raison.
 
 HOMEWORLDS_TITLE
 Planète Natale
@@ -5651,7 +5656,7 @@ GROWTH_FOCUS_TITLE
 Focus Croissance
 
 GROWTH_FOCUS_TEXT
-'''Privilégier la Croissance signifie exporter des matériaux et substances rares afin d'accroître la Population max d'une planète. Cela n'est possible que dans certains cas : sur quelques Planètes Natales et sur des planètes présentant une Particularité de Croissance pouvant être exportée.
+'''Privilégier la Croissance signifie exporter des matériaux et substances rares afin d'accroître la [[metertype METER_TARGET_POPULATION]] d'une planète. Cela n'est possible que dans certains cas : sur quelques Planètes Natales et sur des planètes présentant une Particularité de Croissance pouvant être exportée.
 
 Une planète privilégiant la Croissance propage ces bénéfices aux autres planètes lui étant reliées par lignes d'[[metertype METER_SUPPLY]], à condition que les espèces peuplant ces autres planètes soient du type adéquat, c'est-à-dire qu'une Planète Natale privilégiant la Croissance favorise seulement les autres planètes peuplées par la même espèce, tandis que les Particularités de Croissance (et le Focus Croissance en corrélation) ne sont bénéfiques qu'aux espèces ayant le même type de [[encyclopedia METABOLISM_TITLE]]. Les bénéfices des différents types applicables de Focus Croissance s'additionnent, mais plusieurs sources d'un même type spécifique de Focus Croissance ne s'additionnent pas.
 
@@ -5707,7 +5712,7 @@ Chaque [[encyclopedia ENC_SPECIES]] a ses propres préférences environnementale
 
 [[PE_UNINHABITABLE]] < [[PE_HOSTILE]] < [[PE_POOR]] < [[PE_ADEQUATE]] < [[PE_GOOD]]
 
-Le rapport d'Habitabilité d'une planète peut être affiché par un clic-droit sur une planète dans le panneau latéral. À la suite de la donnée d'Habitabilité, un nombre de couleur verte indique la population maximale pouvant être atteinte si l'espèce colonise la planète, tandis qu'un nombre de couleur rouge indique que la population n'évoluera pas ou diminuera, pour finalement disparaître si l'espèce tente de coloniser la planète.
+Le rapport d'Habitabilité d'une planète peut être affiché par un clic-droit sur une planète dans le panneau latéral. À la suite de la donnée d'Habitabilité, un nombre de couleur verte indique la [[metertype METER_POPULATION]] maximale que la planète peut atteindre si colonisée par cette espèce, tandis qu'un nombre de couleur rouge indique que la colonie ne sera pas viable. La Population diminuera sur plusieurs tours, jusqu'à ce que la totalité des Colons ait péri et que la colonie soit perdue.
 
 Lors de la terraformation d'une planète dans le but de mieux l'adapter aux préférences environnementales de l'espèce (via la [[metertype METER_RESEARCH]] ou si la planète dispose de la Particularité [[special GAIA_SPECIAL]]), l'Environnement d'origine de la planète est modifié par paliers, jusqu'à que ce dernier atteigne l'Habitabilité [[PE_GOOD]] pour l'espèce désirant vivre sur la planète. Les étapes de terraformation d'une planète peuvent être consultées ci-dessous sous la forme d'une représentation circulaire des différents types d'Environnement.
 
@@ -5719,27 +5724,27 @@ ORGANIC_SPECIES_TITLE
 Métabolisme Organique
 
 ORGANIC_SPECIES_TEXT
-Les espèces de type [[encyclopedia ORGANIC_SPECIES_CLASS]] sont plus ou moins 'la vie telle que nous la connaissons'. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[metertype METER_SUPPLY]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Organique sont marqués d'un petit 'O' vert.
+Les espèces de type [[encyclopedia ORGANIC_SPECIES_CLASS]] sont plus ou moins 'la vie telle que nous la connaissons'. La [[metertype METER_TARGET_POPULATION]] de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[metertype METER_SUPPLY]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Organique sont marqués d'un petit 'O' vert.
 
 LITHIC_SPECIES_TITLE
 Métabolisme Lithique
 
 LITHIC_SPECIES_TEXT
-Les espèces de type [[encyclopedia LITHIC_SPECIES_CLASS]] sont des organismes à base de silicium ou de minéraux. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[metertype METER_SUPPLY]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Lithique sont marqués d'un petit 'L' gris.
+Les espèces de type [[encyclopedia LITHIC_SPECIES_CLASS]] sont des organismes à base de silicium ou de minéraux. La [[metertype METER_TARGET_POPULATION]] de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[metertype METER_SUPPLY]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Lithique sont marqués d'un petit 'L' gris.
 
 ROBOTIC_SPECIES_TITLE
 Métabolisme Robotique
 
 ROBOTIC_SPECIES_TEXT
-Les espèces de type [[encyclopedia ROBOTIC_SPECIES_CLASS]] sont des machines douées de conscience. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[metertype METER_SUPPLY]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Robotique sont marqués d'un petit 'R' rouge.
+Les espèces de type [[encyclopedia ROBOTIC_SPECIES_CLASS]] sont des machines douées de conscience. La [[metertype METER_TARGET_POPULATION]] de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[metertype METER_SUPPLY]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Robotique sont marqués d'un petit 'R' rouge.
 
 PHOTOTROPHIC_SPECIES_TITLE
 Métabolisme Phototropique
 
 PHOTOTROPHIC_SPECIES_TEXT
-'''Les espèces de type [[encyclopedia PHOTOTROPHIC_SPECIES_CLASS]] vivent principalement, si ce n'est entièrement, de la lumière stellaire. La population maximale de ces espèces est fortement influencée par la luminosité de leur étoile et par la taille de leur planète - plus elles sont respectivement lumineuses ou grandes, plus le bénéfice est important. Les Particularités de Croissance n'ont aucun effet sur ces organismes.
+'''Les espèces de type [[encyclopedia PHOTOTROPHIC_SPECIES_CLASS]] vivent principalement, si ce n'est entièrement, de la lumière stellaire. La [[metertype METER_TARGET_POPULATION]] de ces espèces est fortement influencée par la luminosité de leur étoile et par la taille de leur planète - plus elles sont respectivement lumineuses ou grandes, plus le bénéfice est important. Les Particularités de Croissance n'ont aucun effet sur ces organismes.
 
-Influence sur la population:
+Influence sur la Population:
 
 * Étoile [[STAR_BLUE]]: ([[SZ_TINY]] +3) ([[SZ_SMALL]] +6) ([[SZ_MEDIUM]] +9) ([[SZ_LARGE]] +12) ([[SZ_HUGE]] +15)
 
@@ -5755,7 +5760,7 @@ SELF_SUSTAINING_SPECIES_TITLE
 Métabolisme Autosuffisant
 
 SELF_SUSTAINING_SPECIES_TEXT
-Les espèces de type [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] sont des organismes cristallins, voire purement énergétiques, et peut-être même d'une physiologie encore plus étrange. Leur constitution est telle qu'ils n'ont pas besoin d'apports vitaux, leur population maximale étant de ce fait très élevée. Tandis qu'aucune Particularité n'augmente leur Croissance, leur population maximale évolue plutôt à la manière d'une espèce profitant simultanément des trois Particularités basées sur le [[encyclopedia GROWTH_FOCUS_TITLE]].
+Les espèces de type [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] sont des organismes cristallins, voire purement énergétiques, et peut-être même d'une physiologie encore plus étrange. Leur constitution est telle qu'ils n'ont pas besoin d'apports vitaux, leur [[metertype METER_TARGET_POPULATION]] étant de ce fait très élevée. Tandis qu'aucune Particularité n'augmente leur Croissance, leur Projection Population évolue plutôt à la manière d'une espèce profitant simultanément des trois Particularités basées sur le [[encyclopedia GROWTH_FOCUS_TITLE]].
 
 GASEOUS_SPECIES_TITLE
 Métabolisme Gazeux
@@ -5773,7 +5778,7 @@ XENOPHOBIC_SPECIES_TITLE
 Xénophobe
 
 XENOPHOBIC_SPECIES_TEXT
-'''Les espèces xénophobes utilisent une partie de leur Industrie pour harceler les autres espèces se trouvant aux alentours. En conséquence, les espèces sujettes à ce harcèlement développeront un malus industriel. Une espèce Xénophobe et de [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] considère la présence d'espèces étrangères aux alentours comme une entrave à son équilibre naturel, ce qui entraîne une diminution de sa population maximale (il n'est toujours pas déterminé si cela est dû à des effets directs ou bien au fait que l'espèce gaspille des ressources dans le harcèlement des espèces étrangères).
+'''Les espèces xénophobes utilisent une partie de leur effort industriel pour harceler les autres espèces se trouvant aux alentours. En conséquence, les espèces sujettes à ce harcèlement développeront un malus industriel. Une espèce Xénophobe et de [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] considère la présence d'espèces étrangères aux alentours comme une entrave à son équilibre naturel, ce qui entraîne une diminution de sa [[metertype METER_TARGET_POPULATION]] (il n'est toujours pas déterminé si cela est dû à des effets directs ou bien au fait que l'espèce gaspille des ressources dans le harcèlement des espèces étrangères).
 
 La technologie [[tech CON_CONC_CAMP]] est disponible par défaut pour les espèces xénophobes.'''
 
@@ -5787,8 +5792,8 @@ EVACUATION_TITLE
 Plan d'Évacuation
 
 EVACUATION_TEXT
-'''La construction d'un [[buildingtype BLD_EVACUATION]] retire toute la population d'une planète. À chaque tour, une partie de la population est évacuée. S'il existe des planètes de l'empire colonisées par la même espèce, ayant de l'espace libre et étant connectées aux lignes d'[[metertype METER_SUPPLY]], l'une d'entre elles sera choisie au hasard et la population y sera déplacée. Si aucune planète appropriée n'est disponible, la population évacuée disparaîtra dans l'espace infini.
-Durant une évacuation, la production tombe à zéro. Quand une colonie est vidée de toute population, elle retourne à l'état d'[[encyclopedia OUTPOSTS_TITLE]]. L'empire en est toujours propriétaire, et peut lancer une nouvelle colonisation dès que le [[buildingtype BLD_EVACUATION]] est automatiquement détruit.'''
+'''La construction d'un [[buildingtype BLD_EVACUATION]] retire toute la [[metertype METER_POPULATION]] d'une planète. À chaque tour, une partie de la Population est évacuée. S'il existe des planètes de l'empire colonisées par la même espèce, ayant de l'espace libre et étant connectées aux lignes d'[[metertype METER_SUPPLY]], l'une d'entre elles sera choisie au hasard et la Population y sera déplacée. Si aucune planète appropriée n'est disponible, la Population évacuée disparaîtra dans l'espace infini.
+Durant une évacuation, la production tombe à zéro. Quand une colonie est vidée de toute Population, elle retourne à l'état d'[[encyclopedia OUTPOSTS_TITLE]]. L'empire en est toujours propriétaire, et peut lancer une nouvelle colonisation dès que le [[buildingtype BLD_EVACUATION]] est automatiquement détruit.'''
 
 AI_LEVELS_TITLE
 Niveaux d'Agressivité de l'IA
@@ -7119,10 +7124,10 @@ BEGINNER_HINT_09
 9: Un astronef [[predefinedshipdesign SD_COLONY_SHIP]] nécessite un délai de construction plus important qu'un astronef [[predefinedshipdesign SD_OUTPOST_SHIP]], mais ils rendent possible l'établissement de colonies sur des planètes au-delà de votre portée d'[[metertype METER_SUPPLY]].
 
 BEGINNER_HINT_10
-10: Lorsque qu'un système est sélectionné dans la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], un clic-droit sur l'image d'une planète dans le panneau latéral donnera accès au rapport d'Habitabilité de la planète. Celui-ci vous indiquera quelle espèce au sein de votre empire sera en mesure de s'établir avec succès sur cette planète. Les nombres verts indiquent le maximum de Population atteignable si la planète est colonisée par cette espèce. Les nombres rouges signalent que l'espèce finirait par périr si elle tentait de coloniser cette planète.
+10: Lorsque qu'un système est sélectionné dans la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], un clic-droit sur l'image d'une planète dans le panneau latéral donnera accès au rapport d'Habitabilité de la planète. Celui-ci vous indiquera quelle espèce au sein de votre empire sera en mesure de s'établir avec succès sur cette planète. Les nombres verts indiquent la [[metertype METER_POPULATION]] maximale atteignable si la planète est colonisée par cette espèce. Les nombres rouges signalent que l'espèce finirait par périr si elle tentait de coloniser cette planète.
 
 BEGINNER_HINT_11
-11: Les maximums de Population atteignables sur une planète peuvent être augmentés via la recherche de diverses technologies de Croissance. Certaines Particularités peuvent également accroître le maximum de Population pour les espèces d'un métabolisme donné. Consultez l'article [[encyclopedia GROWTH_FOCUS_TITLE]] pour plus d'informations sur ces Particularités.
+11: Les maximums de [[metertype METER_POPULATION]] atteignables sur une planète peuvent être augmentés via la recherche de diverses technologies de Croissance. Certaines Particularités peuvent également accroître la [[metertype METER_TARGET_POPULATION]] pour les espèces d'un métabolisme donné. Consultez l'article [[encyclopedia GROWTH_FOCUS_TITLE]] pour plus d'informations sur ces Particularités.
 
 BEGINNER_HINT_12
 12: Prêtez attention aux planètes dotées d'une [[encyclopedia ENC_SPECIAL]], ces dernières renferment parfois des ressources pouvant benéficier à l'ensemble de votre empire si celles-ci sont utilisées avec efficacité. Un clic-droit sur l'icône de la Particularité ouvrira l'article correspondant dans l'Encyclopédie.
@@ -7143,10 +7148,10 @@ BEGINNER_HINT_17
 17: Les [[metertype METER_SHIELD]] d'astronef constituent une défense contre chaque tir ennemi, réduisant les [[encyclopedia DAMAGE_TITLE]] subis de la valeur de solidité du Bouclier de l'astronef. La solidité d'un Bouclier peut être affecté par divers facteurs comme les tempêtes spatiales, le type d'étoile au sein du système, ou la proximité d'une Planète Capitale d'un Empire ayant été capturée.
 
 BEGINNER_HINT_18
-18: [[encyclopedia FOCUS_TITLE]] - Faites attention au réglage du Focus de chaque nouvelle planète intégrant votre empire, que ce soit par l'établissement d'une nouvelle colonie ou bien par conquête militaire. Ce réglage détermine si la planète privilégie l'Industrie, la Recherche ou la Défense. À mesure que la partie avance, de nouvelles possibilités de Focus peuvent être débloquées si les [[encyclopedia ENC_TECH]] requises sont maîtrisées, tandis que différentes espèces peuvent avoir différents types de Focus disponibles.
+18: [[encyclopedia FOCUS_TITLE]] - Faites attention au réglage du Focus de chaque nouvelle planète intégrant votre empire, que ce soit par l'établissement d'une nouvelle colonie ou bien par conquête militaire. Ce réglage détermine si la planète privilégie l'[[metertype METER_INDUSTRY]], la [[metertype METER_RESEARCH]] ou la [[metertype METER_DEFENSE]]. À mesure que la partie avance, de nouvelles possibilités de Focus peuvent être débloquées si les [[encyclopedia ENC_TECH]] requises sont maîtrisées, tandis que différentes espèces peuvent avoir différents types de Focus disponibles.
 
 BEGINNER_HINT_19
-19: Une nouvelle colonie peut être établie sur un [[encyclopedia OUTPOSTS_TITLE]] en y construisant une structure 'Colonie' ou bien à l'aide d'un astronef [[predefinedshipdesign SD_COLONY_SHIP]]. La plupart des structures 'Colonie' requièrent une connection d'[[metertype METER_SUPPLY]] à une planète présentant un indicateur [[metertype METER_HAPPINESS]] d'au moins 5, et une Population supérieure ou égale à 3. Lorsqu'une nouvelle espèce est débloquée, par exemple via la recherche de la technologie [[tech PRO_EXOBOTS]], ce pré-requis ne s'applique pas pour leur structure 'Colonie'.
+19: Une nouvelle colonie peut être établie sur un [[encyclopedia OUTPOSTS_TITLE]] en y construisant une structure 'Colonie' ou bien à l'aide d'un astronef [[predefinedshipdesign SD_COLONY_SHIP]]. La plupart des structures 'Colonie' requièrent une connection d'[[metertype METER_SUPPLY]] à une planète présentant un indicateur [[metertype METER_HAPPINESS]] d'au moins 5, et une [[metertype METER_POPULATION]] supérieure ou égale à 3. Lorsqu'une nouvelle espèce est débloquée, par exemple via la recherche de la technologie [[tech PRO_EXOBOTS]], ce pré-requis ne s'applique pas pour leur structure 'Colonie'.
 
 BEGINNER_HINT_20
 20: Les Rapports de Situation spécifiques (tel celui-ci) peuvent être temporairement ignorés via un clic-droit sur leur icône, puis en sélectionnant une des options proposées. Les Rapports d'un certain type peuvent également être filtrés en utilisant le menu 'Filtres' de la Fenêtre 'Rapport de Situation'. Les astuces de jeu destinées aux débutants sont regroupées sous la dénomination [[encyclopedia BEGINNER_HINTS]] dans la liste de filtres.
@@ -8116,7 +8121,7 @@ GAIA_SPECIAL  # translated
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Terraforme la planète puis accroît sa Population max selon la taille de la planète :
+'''Terraforme la planète puis accroît sa [[metertype METER_TARGET_POPULATION]] selon la taille de la planète :
 • [[SZ_TINY]] (+3)
 • [[SZ_SMALL]] (+6)
 • [[SZ_MEDIUM]] (+9)
@@ -8124,13 +8129,13 @@ GAIA_SPECIAL_DESC
 • [[SZ_HUGE]] (+15)
 et augmente la [[metertype METER_TARGET_HAPPINESS]] de 5.
 
-Cette planète s'est muée en organisme vivant, ce qui la rend capable de se modifier et de s'adapter afin de satisfaire les besoins de sa population. Si l'[[encyclopedia ENVIRONMENT_TITLE]] devient parfait pour l'espèce, un bonus susbstantiel de Population sera acquis. Dans le cas contraire, la planète se terraformera lentement par paliers pour finalement atteindre une Habitabilité [[PE_GOOD]] pour l'espèce (NB: Les [[species SP_EXOBOT]]s ne s'adaptant parfaitement à aucun Environnement, une planète terraformée pour cette espèce ne pourra dépasser le stade [[PE_ADEQUATE]]).'''
+Cette planète s'est muée en organisme vivant, ce qui la rend capable de se modifier et de s'adapter afin de satisfaire les besoins de sa Population. Si l'[[encyclopedia ENVIRONMENT_TITLE]] devient parfait pour l'espèce, un bonus susbstantiel de Population sera acquis. Dans le cas contraire, la planète se terraformera lentement par paliers pour finalement atteindre une Habitabilité [[PE_GOOD]] pour l'espèce (NB: Les [[species SP_EXOBOT]]s ne s'adaptant parfaitement à aucun Environnement, une planète terraformée pour cette espèce ne pourra dépasser le stade [[PE_ADEQUATE]]).'''
 
 WORLDTREE_SPECIAL
 Arbre Planétaire
 
 WORLDTREE_SPECIAL_DESC
-'''Augmente l'[[metertype METER_SUPPLY]] de +1, le [[metertype METER_DETECTION]] de +10, la Population max de +1, et la [[metertype METER_TARGET_HAPPINESS]] de +5 sur la planète présentant cette Particularité. Augmente la [[metertype METER_TARGET_HAPPINESS]] de +1 sur toutes les autres planètes appartenant au même empire.
+'''Augmente l'[[metertype METER_SUPPLY]] de +1, le [[metertype METER_DETECTION]] de +10, la [[metertype METER_TARGET_POPULATION]] de +1, et la [[metertype METER_TARGET_HAPPINESS]] de +5 sur la planète présentant cette Particularité. Augmente la [[metertype METER_TARGET_HAPPINESS]] de +1 sur toutes les autres planètes appartenant au même empire.
 
 Un arbre gigantesque s'est développé à tel point que sa cime surplombe l'atmosphère de la planète. Les scientifiques pensent que cet arbre fut planté par les Soigneurs dans les temps ancestraux.'''
 
@@ -8138,7 +8143,7 @@ ANCIENT_RUINS_DEPLETED_SPECIAL
 Ruines Ancestrales (Exhumées)
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de 1 par [[metertype METER_POPULATION]], si le Focus Recherche est sélectionné.
 
 Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Mais une découverte de grande valeur y a déjà eu lieu.'''
 
@@ -8146,7 +8151,7 @@ ANCIENT_RUINS_SPECIAL
 Ruines Ancestrales
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de 1 par [[metertype METER_POPULATION]], si le Focus Recherche est sélectionné.
 
 Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Le premier empire prenant pied sur la planète et maîtrisant la [[tech LRN_XENOARCH]], acquiert gratuitement la maîtrise d'une technologie avancée, ou bien découvre une structure ou un astronef aux puissantes caractéristiques. La découverte de corps parfaitement conservés d'une espèce éteinte est également envisageable.'''
 
@@ -8217,20 +8222,20 @@ TIDAL_LOCK_SPECIAL
 Rotation Synchrone
 
 TIDAL_LOCK_SPECIAL_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de la planète de 0.2 par Population si le Focus [[metertype METER_INDUSTRY]] est activé. Diminue la Population selon la taille de la planète (quel que soit le Focus) :
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de la planète de 0.2 par [[metertype METER_POPULATION]] si le Focus [[metertype METER_INDUSTRY]] est activé. Diminue la [[metertype METER_TARGET_POPULATION]] selon la taille de la planète (quel que soit le Focus) :
 • [[SZ_TINY]] (-1)
 • [[SZ_SMALL]] (-2)
 • [[SZ_MEDIUM]] (-3)
 • [[SZ_LARGE]] (-4)
 • [[SZ_HUGE]] (-5)
 
-Cette planète est en rotation synchrone lors de son orbite autour de son étoile. Les durées du jour et de l'année sont rigoureusement égales, ce qui signifie qu'une face de la planète est perpétuellement diurne tandis que l'autre est perpétuellement nocturne. La croissance de la population s'en trouve impactée, mais l'industrie tire profit des conditions stables à la surface de la planète.'''
+Cette planète est en rotation synchrone lors de son orbite autour de son étoile. Les durées du jour et de l'année sont rigoureusement égales, ce qui signifie qu'une face de la planète est perpétuellement diurne tandis que l'autre est perpétuellement nocturne. La croissance de la Population s'en trouve impactée, mais l'Industrie tire profit des conditions stables à la surface de la planète.'''
 
 TEMPORAL_ANOMALY_SPECIAL
 Anomalie Temporelle
 
 TEMPORAL_ANOMALY_SPECIAL_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de 5 par Population si le Focus [[metertype METER_RESEARCH]] est activé. Diminue la Population selon la taille de la planète (quel que soit le Focus) :
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de 5 par [[metertype METER_POPULATION]] si le Focus [[metertype METER_RESEARCH]] est activé. Diminue la [[metertype METER_TARGET_POPULATION]] selon la taille de la planète (quel que soit le Focus) :
 • [[SZ_TINY]] (-5)
 • [[SZ_SMALL]] (-10)
 • [[SZ_MEDIUM]] (-15)
@@ -8252,7 +8257,7 @@ COMPUTRONIUM_SPECIAL
 Lune Ordinatrice
 
 COMPUTRONIUM_SPECIAL_DESC
-'''Lorsqu'une Lune Ordinatrice orbite autour d'une planète privilégiant la [[metertype METER_RESEARCH]], toutes les planètes de l'empire réglées sur le même Focus améliorent leur [[metertype METER_TARGET_RESEARCH]] de 0.2 par Population.
+'''Lorsqu'une Lune Ordinatrice orbite autour d'une planète privilégiant la [[metertype METER_RESEARCH]], toutes les planètes de l'empire réglées sur le même Focus améliorent leur [[metertype METER_TARGET_RESEARCH]] de 0.2 par [[metertype METER_POPULATION]].
 
 Abandonnée par une civilisation dont le souvenir s'est effacé avec le temps, cette lune est en réalité un ordinateur d'une puissance de calcul inouïe. Elle peut effectuer des simulations et résoudre les équations les plus complexes en moins de temps qu'il ne faut pour les lui proposer.'''
 
@@ -8260,7 +8265,7 @@ HONEYCOMB_SPECIAL
 Réserve Alvéolaire
 
 HONEYCOMB_SPECIAL_DESC
-'''Lorsqu'une planète dotée d'une Réserve Alvéolaire privilégie l'[[metertype METER_INDUSTRY]], toutes les planètes de l'empire réglées sur le même Focus et lui étant reliées par ligne d'[[metertype METER_SUPPLY]], améliorent leur [[metertype METER_TARGET_INDUSTRY]] de 0.5 par Population.
+'''Lorsqu'une planète dotée d'une Réserve Alvéolaire privilégie l'[[metertype METER_INDUSTRY]], toutes les planètes de l'empire réglées sur le même Focus et lui étant reliées par ligne d'[[metertype METER_SUPPLY]], améliorent leur [[metertype METER_TARGET_INDUSTRY]] de 0.5 par [[metertype METER_POPULATION]].
 
 La Réserve Alvéolaire est une planète qui fut utilisée comme telle par les Constructeurs dans les temps ancestraux. Quasiment la totalité des planètes aux alentours furent dépouillées de l'ensemble de leurs ressources puis détruites. Les matériaux récupérés furent triés et stockés séparément dans de gigantesques tubes creusés dans la croûte terrestre. Ces réserves abritent des éléments rares et de grande valeur, des molécules difficiles à synthétiser, et une vaste gamme de sources d'énergie. Ce que les Constructeurs désiraient créer à partir de ce trésor et la raison pour laquelle ils ne l'ont finalement pas utilisé, restent à ce jour un mystère.'''
 
@@ -8320,13 +8325,13 @@ CONC_CAMP_MASTER_SPECIAL
 Voile Assassin
 
 CONC_CAMP_MASTER_SPECIAL_DESC
-Tous les [[buildingtype BLD_CONC_CAMP]] implantés sur la planète, fonctionnant sans relâche et exerçant une terreur répressive sur la population, peuvent être dissimulés à tout hôte par le Voile Assassin. Mais tout être sensible reste capable de percer à jour un Voile Assassin.
+Tous les [[buildingtype BLD_CONC_CAMP]] implantés sur la planète, fonctionnant sans relâche et exerçant une terreur répressive sur la [[metertype METER_POPULATION]], peuvent être dissimulés à tout hôte par le Voile Assassin. Mais tout être sensible reste capable de percer à jour un Voile Assassin.
 
 CONC_CAMP_SLAVE_SPECIAL
 Morosité Psychique
 
 CONC_CAMP_SLAVE_SPECIAL_DESC
-Les [[buildingtype BLD_CONC_CAMP]] n'opèrent peut-être plus aujourd'hui à la surface de la planète, mais leur souvenir est encore vif, et les restes de fosses communes sont encore parfois découverts. Une blessure psychique handicape la population, qui ne peut prospérer.
+Les [[buildingtype BLD_CONC_CAMP]] n'opèrent peut-être plus aujourd'hui à la surface de la planète, mais leur souvenir est encore vif, et les restes de fosses communes sont encore parfois découverts. Une blessure psychique handicape la [[metertype METER_POPULATION]], qui ne peut prospérer.
 
 CLOUD_COVER_MASTER_SPECIAL
 Émetteurs de Nuées
@@ -9095,10 +9100,10 @@ Colonisation
 PC_COLONY_DESC
 '''Les équipements de Colonisation d'un astronef fournissent les outils nécessaires afin de s'établir sur une nouvelle planète et en prendre possession.
 
-Ces équipements peuvent également augmenter la [[metertype METER_POPULATION]] sur un astronef.
-Lors de la colonisation d'une planète à l'aide d'un astronef colonisateur peuplé, une nouvelle colonie pour l'[[encyclopedia ENC_SPECIES]] est créée, débutant avec la même population que celle qui se trouvait à bord de l'astronef.
+Ces équipements peuvent également augmenter la [[metertype METER_POPULATION]] sur un astronef (Colons).
+Lors de la colonisation d'une planète à l'aide d'un astronef colonisateur peuplé, une nouvelle colonie pour l'[[encyclopedia ENC_SPECIES]] est créée, dont la Population de départ est égale à celle qui se trouvait à bord de l'astronef.
 
-Un astronef sans population disposera tout de même d'un personnel suffisant pour établir un [[encyclopedia OUTPOSTS_TITLE]].
+Un astronef sans Population disposera tout de même d'un personnel suffisant pour établir un [[encyclopedia OUTPOSTS_TITLE]].
 Un Avant-Poste peut fonder une colonie pour toute espèce de l'empire s'il se trouve à portée d'[[metertype METER_SUPPLY]], sous condition que la source d'approvisionnement satisfasse certains critères.
 La combinaison d'un astronef bâtisseur d'Avant-Poste et la fondation d'une colonie à cet emplacement est moins onéreuse que la production d'un astronef colonisateur peuplé.
 
@@ -10543,7 +10548,7 @@ LRN_ALGO_ELEGANCE
 Élégance Algorithmique
 
 LRN_ALGO_ELEGANCE_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.1 par Population sur toutes les planètes en Focus Recherche.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.1 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
 
 Avec une difficulté grandissante des problèmes d'analyse de données, les démarches traditionnelles des performances algorithmiques deviennent moins efficaces, en raison des limitations de la complexité irréductible. À ce stade, de nouvelles formes et fonctions algorithmiques deviennent significatives: esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisée.'''
 
@@ -10636,7 +10641,7 @@ LRN_QUANT_NET
 Réseau Quantique
 
 LRN_QUANT_NET_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.5 par Population sur toutes les planètes en Focus Recherche.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.5 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
 
 Un réseau massif de donnés, à l'échelle de l'empire, capable de transférer instantanément des informations entre deux lieux, plutôt que par le système lent et indirect des voies spatiales. Ce progrès facilite grandement la Recherche dans tout l'empire.
 
@@ -10658,7 +10663,7 @@ GRO_PLANET_ECOL
 Écologie Planétaire
 
 GRO_PLANET_ECOL_DESC
-'''Accroît de 1 la Population max des Planètes [[PE_GOOD]]s et [[PE_ADEQUATE]]s. Ce bonus ne s'additionne pas avec la technologie [[tech GRO_SYMBIOTIC_BIO]].
+'''Accroît de 1 la [[metertype METER_TARGET_POPULATION]] des Planètes [[PE_GOOD]]s et [[PE_ADEQUATE]]s. Ce bonus ne s'additionne pas avec la technologie [[tech GRO_SYMBIOTIC_BIO]].
 
 L'agriculture et la science médicale peuvent considérablement augmenter les chances de survie et entraîner d'importants accroissements de population ainsi que de production de nourriture. Toutefois, la croissance démographique se trouve limitée par la capacité en ressources naturelles de la planète et des biosphères qui la constituent. Comprendre les écosystèmes naturels et les contraintes qu'il subissent, permet la conservation et l'amélioration de l'environnement planétaire, au bénéfice des générations futures.'''
 
@@ -10678,7 +10683,7 @@ GRO_SYMBIOTIC_BIO
 Biologie Symbiotique
 
 GRO_SYMBIOTIC_BIO_DESC
-Accroît la Population max des Planètes [[PE_GOOD]]s, [[PE_ADEQUATE]]s et [[PE_POOR]]s selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+Accroît la [[metertype METER_TARGET_POPULATION]] des Planètes [[PE_GOOD]]s, [[PE_ADEQUATE]]s et [[PE_POOR]]s selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 GRO_GENETIC_MED
 Médecine Génétique
@@ -10690,7 +10695,7 @@ GRO_LIFECYCLE_MAN
 Manipulation du Cycle de Vie
 
 GRO_LIFECYCLE_MAN_DESC
-'''En plus du nouvel équipement d'astronef disponible, cette technologie augmente à 3 la Population des nouvelles colonies fondées à l'aide des <encyclopedia ENC_BUILDING_TYPE>structures</encyclopedia> de colonisation.
+'''En plus du nouvel équipement d'astronef disponible, cette technologie augmente à 3 la [[metertype METER_POPULATION]] des nouvelles colonies fondées à l'aide des <encyclopedia ENC_BUILDING_TYPE>structures</encyclopedia> de colonisation.
 
 Grâce aux manipulations chimiques et cryogéniques, les processus vitaux peuvent être interrompus de façon provisoire. Dans cet état, les organismes sont conservés indéfiniment, ne consomment aucune ressource et ne nécessitent qu'un très petit (non-vital) espace de stockage. À l'aide de cette technique, les colons peuvent voyager d'une manière bien plus efficace, tandis que sont grandement accrus le nombre initial de colons au sein d'une nouvelle colonie ainsi que la capacité d'accueil des astronefs de colonisation.
 
@@ -10706,7 +10711,7 @@ GRO_XENO_GENETICS
 Génétique Xénobiologique
 
 GRO_XENO_GENETICS_DESC
-'''Accroît la Population max des planètes, selon leur habitabilité et leur taille :
+'''Accroît la [[metertype METER_TARGET_POPULATION]] des planètes, selon leur habitabilité et leur taille :
 
 • Planète [[PE_ADEQUATE]] ou [[PE_POOR]]: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10)
 • Planète [[PE_HOSTILE]]: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5)
@@ -10727,7 +10732,7 @@ GRO_XENO_HYBRIDS
 Hybridation Xénobiologique
 
 GRO_XENO_HYBRIDS_DESC
-'''Accroît la Population max des planètes, selon leur habitabilité et leur taille :
+'''Accroît la [[metertype METER_TARGET_POPULATION]] des planètes, selon leur habitabilité et leur taille :
 
 • Planète [[PE_POOR]]: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5)
 • Planète [[PE_HOSTILE]]: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10)
@@ -10752,7 +10757,7 @@ GRO_ENERGY_META
 Métabolisme d'Énergie Pure
 
 GRO_ENERGY_META_DESC
-'''Augmente le [[metertype METER_FUEL]] max de 2 sur tous les astronefs, la [[metertype METER_DEFENSE]] max de 5 sur toutes les planètes, les [[metertype METER_SHIELD]] max de 5 sur toutes les planètes, la [[metertype METER_TARGET_INDUSTRY]] de 0.2 par Population sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de 0.5 par Population sur toutes les planètes en Focus Recherche.
+'''Augmente le [[metertype METER_FUEL]] max de 2 sur tous les astronefs, la [[metertype METER_DEFENSE]] max de 5 sur toutes les planètes, les [[metertype METER_SHIELD]] max de 5 sur toutes les planètes, la [[metertype METER_TARGET_INDUSTRY]] de 0.2 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de 0.5 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
 
 Tandis que la transformation d'une population entière en êtres de pure énergie s'avérerait peu pertinente, certaines tâches conviennent mieux à des individus dénués de corporalité. L'équipage d'un astronef par exemple, n'aurait plus besoin d'optimiser l'espace disponible pour les quartiers d'équipage ou le stockage des rations. Des êtres dotés d'une capacité de canalisation de l'énergie seraient en mesure d'améliorer les défenses et boucliers planétaires, ainsi que la production de ressources.
 
@@ -10794,7 +10799,7 @@ En atteignant ce degré de sophistication, les Stocks Génériques peuvent être
 
 Cela exempte le service du Stock Impérial de connaître à l'avance quels biens seront exactement demandés. Prévoir le lieu de la demande et les quantités s'avère désormais suffisant.
 
-Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 2, plus un supplément de 0.01 par Population, plus un supplément de 3 pour chaque planète réglée sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]] ou le [[encyclopedia GROWTH_FOCUS_TITLE]].
+Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 2, plus un supplément de 0.01 par [[metertype METER_POPULATION]], plus un supplément de 3 pour chaque planète réglée sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]] ou le [[encyclopedia GROWTH_FOCUS_TITLE]].
 Ces amélioriations sont cumulables avec le bonus de la technologie [[tech PRO_PREDICTIVE_STOCKPILING]].'''
 
 PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
@@ -10804,7 +10809,7 @@ PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 '''L'intrication quantique des salles de contrôle permet de manœuvrer des machines industrielles à distance à partir d'autres systèmes stellaires.
 Dissocier le personnel et les moyens de production favorise un procédé optimal de conception et augmente l'efficience du service de Stock Impérial.
 
-Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 6, plus un supplément de 0.02 par Population.
+Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 6, plus un supplément de 0.02 par [[metertype METER_POPULATION]].
 Ces amélioriations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_VOID_PREDICTION]].
 
 Débloque également la structure [[building BLD_STOCKPILING_CENTER]], augmentant additionnellement le [[metertype METER_STOCKPILE]] de 0.1 par [[metertype METER_INDUSTRY]].'''
@@ -10816,7 +10821,7 @@ PRO_VOID_PREDICTION_DESC
 '''Tandis que les prédictions classiques se basent invariablement sur la connaissance statistique des faits passés, l'étude de la mémoire chaotique du Vide mène à de solides prédictions de faits pourtant initiaux ou étranges.
 Pour le service du Stock Impérial, la Prédiction du Vide est l'instrument par excellence permettant de fournir les bons matériaux avant même que le besoin ne se manifeste.
 
-Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 0.2 par Population.
+Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 0.2 par [[metertype METER_POPULATION]].
 Ces amélioriations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].'''
 
 PRO_MICROGRAV_MAN
@@ -10833,7 +10838,7 @@ PRO_ROBOTIC_PROD
 Production Robotisée
 
 PRO_ROBOTIC_PROD_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.1 par Population sur toutes les planètes en Focus Industrie.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.1 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie.
 
 Les Exobots, désignation sous laquelle ils sont communément connus, constituent l'aboutissement du design allié à la fonctionnalité. Robots conçus pour effectuer n'importe quelle tâche de production, de l'électronique microscopique à la construction à grande échelle, leur production de masse est aisée, tandis que leur utilisation reste la plus avantageuse dans les colonies assignant une haute priorité à l'industrie. Chaque monde privilégiant l'industrie se voit gratifiée d'une équipe d'Exobots, améliorant ainsi considérablement sa production industrielle.
 
@@ -10848,7 +10853,7 @@ PRO_FUSION_GEN
 Génération par Fusion
 
 PRO_FUSION_GEN_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.2 par Population sur toutes les planètes en Focus Industrie.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.2 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie.
 
 Les réacteurs de fusion nucléaire, bien que coûteux à produire et à entretenir, s'avèrent rentables pour les mondes industrialisés à forte consommation énergétique. La dépendance aux réacteurs basés sur la fission nucléaire deviendra peu à peu une relique du passé.
 
@@ -10984,13 +10989,13 @@ CON_ORBITAL_HAB
 Habitation Orbitale
 
 CON_ORBITAL_HAB_DESC
-Accroît la Population max de toutes les planètes habitables selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+Accroît la [[metertype METER_TARGET_POPULATION]] de toutes les planètes habitables selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 CON_NDIM_STRC
 Structures Multidimensionnelles
 
 CON_NDIM_STRC_DESC
-'''Accroît la Population max de toutes les planètes habitables selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+'''Accroît la [[metertype METER_TARGET_POPULATION]] de toutes les planètes habitables selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
 
 Augmente également de 10 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées.
 
@@ -11312,7 +11317,7 @@ GRO_SUBTER_HAB
 Habitat Souterrain
 
 GRO_SUBTER_HAB_DESC
-Accroît la Population max de toutes les planètes selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+Accroît la [[metertype METER_TARGET_POPULATION]] de toutes les planètes selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 GRO_GENOME_BANK
 Banque du Génome
@@ -11330,7 +11335,7 @@ GRO_TERRAFORM
 Terraformation
 
 GRO_TERRAFORM_DESC
-Modifier le type d'environnement d'une planète est une entreprise titanesque, le challenge de ce processus résidant principalement dans l'immense logistique nécessaire. La méthode en question dépend quant à elle de l'environnement d'origine de la planète et du résultat désiré. Cependant, dans tous les cas, la quasi-totalité de la surface planétaire et de l'atmosphère nécessite d'être convertie en d'autres types de molécules, diffusées dans l'espace à modifier ou injectées sous la croûte terrestre. Par conséquent, le processus requiert que la majeure partie de la planète soit accessible aux terraformeurs, et ne peut être enclencher si la Population max est inférieure à un.
+Modifier le type d'environnement d'une planète est une entreprise titanesque, le challenge de ce processus résidant principalement dans l'immense logistique nécessaire. La méthode en question dépend quant à elle de l'environnement d'origine de la planète et du résultat désiré. Cependant, dans tous les cas, la quasi-totalité de la surface planétaire et de l'atmosphère nécessite d'être convertie en d'autres types de molécules, diffusées dans l'espace à modifier ou injectées sous la croûte terrestre. Par conséquent, le processus requiert que la majeure partie de la planète soit accessible aux terraformeurs, et ne peut être enclencher si la [[metertype METER_TARGET_POPULATION]] est inférieure à un.
 
 GRO_TERRAFORM_SHORT_DESC
 Permet la terraformation
@@ -11354,8 +11359,8 @@ GRO_CYBORG  # translated
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Accroît la Population max des Planètes [[PE_HOSTILE]]s selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
-Accroît l'[[metertype METER_TROOPS]] max de 0.2 par Population sur toutes les planètes.
+'''Accroît la [[metertype METER_TARGET_POPULATION]] des Planètes [[PE_HOSTILE]]s selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+Accroît l'[[metertype METER_TROOPS]] max de 0.2 par [[metertype METER_POPULATION]] sur toutes les planètes.
 
 Une fusion hautement polyvalente d'un organisme vivant et d'une machine, capable de s'adapter à un nombre considérable de situations. La génération spontanée d'organes spécialisés ainsi qu'une force bio-mécanique fortement accrue permettent aux cyborgs d'évoluer avec aisance dans quasiment tous les types d'environnement.'''
 
@@ -11393,7 +11398,7 @@ LRN_DISTRIB_THOUGHT
 Centralisation Cérébrale
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.1 par Population sur toutes les planètes, quel que soit le Focus choisi.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.1 par [[metertype METER_POPULATION]] sur toutes les planètes, quel que soit le Focus choisi.
 
 Le citoyen moyen gaspille littéralement ses capacités cérébrales, pourtant issues d'un des outils de calcul les plus fins de l'univers. En intégrant les cycles cérébraux inactifs d'une population suffisament importante au sein d'un réseau de simples émetteurs-récepteurs cybernétiques, la totalité des centres de recherche d'un empire peuvent accéder à une puissance de calcul considérable et peu coûteuse.'''
 
@@ -11401,7 +11406,7 @@ LRN_STELLAR_TOMOGRAPHY
 Tomographie Stellaire
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes réglées sur le Focus Recherche, par Population et selon le type d'étoile :
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes réglées sur le Focus Recherche, par [[metertype METER_POPULATION]] et selon le type d'étoile :
 * [[STAR_BLACK]] (x1)
 * [[STAR_NEUTRON]] (x0.75)
 * [[STAR_BLUE]] ou [[STAR_WHITE]] (x0.5)
@@ -11561,7 +11566,7 @@ DEF_ROOT_DEFENSE
 Auto-défense
 
 DEF_ROOT_DEFENSE_DESC
-'''Augmente les [[metertype METER_SHIELD]] max de 1 sur chaque planète appartenant à l'empire. Régénère 1 point de [[metertype METER_SHIELD]] par tour, seulement durant les tours où la planète n'est pas attaquée. Pour les espèces disposant de troupes de défense, augmente l'[[metertype METER_TROOPS]] max de 0.2 par Population sur la planète.
+'''Augmente les [[metertype METER_SHIELD]] max de 1 sur chaque planète appartenant à l'empire. Régénère 1 point de [[metertype METER_SHIELD]] par tour, seulement durant les tours où la planète n'est pas attaquée. Pour les espèces disposant de troupes de défense, augmente l'[[metertype METER_TROOPS]] max de 0.2 par [[metertype METER_POPULATION]] sur la planète.
 
 Le concept d'Auto-défense est à la racine de maints développements technologiques.'''
 
@@ -11575,7 +11580,7 @@ DEF_GARRISON_2
 Milice Planétaire Défensive
 
 DEF_GARRISON_2_DESC
-Augmente l'[[metertype METER_TROOPS]] max de 0.4 par Population sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de 1 par tour.
+Augmente l'[[metertype METER_TROOPS]] max de 0.4 par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de 1 par tour.
 
 DEF_GARRISON_3
 Réseau Fortication Planétaire
@@ -11587,7 +11592,7 @@ DEF_GARRISON_4
 Armée Planétaire Défensive
 
 DEF_GARRISON_4_DESC
-Augmente l'[[metertype METER_TROOPS]] max de 0.4 par Population sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de 3 par tour cumulable avec les bonus du [[DEF_GARRISON_3]] et de la [[DEF_GARRISON_2]].
+Augmente l'[[metertype METER_TROOPS]] max de 0.4 par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de 3 par tour cumulable avec les bonus du [[DEF_GARRISON_3]] et de la [[DEF_GARRISON_2]].
 
 DEF_PLANET_CLOAK
 Camouflage Planétaire
@@ -12202,7 +12207,7 @@ BLD_EVACUATION
 Système d'Évacuation
 
 BLD_EVACUATION_DESC
-Extrait la population de cette planète sur plusieurs tours selon un [[encyclopedia EVACUATION_TITLE]] prédéfini. Si une planète de remplacement avec un [[encyclopedia ENVIRONMENT_TITLE]] approprié est disponible et déjà peuplée par la même espèce, tout en disposant de suffisamment de place libre, la population y sera transférée.
+Extrait la [[metertype METER_POPULATION]] de cette planète sur plusieurs tours selon un [[encyclopedia EVACUATION_TITLE]] prédéfini. Si une planète de remplacement avec un [[encyclopedia ENVIRONMENT_TITLE]] approprié est disponible et déjà peuplée par la même espèce, tout en disposant de suffisamment de place libre, la Population y sera transférée.
 
 BLD_OBSERVATORY
 Observatoire
@@ -12216,7 +12221,7 @@ BLD_CULTURE_ARCHIVES
 Archives Culturelles
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 5, ainsi que la [[metertype METER_TARGET_INDUSTRY]] de la moitié de la Population planétaire.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 5, ainsi que la [[metertype METER_TARGET_INDUSTRY]] de la moitié de la [[metertype METER_POPULATION]] planétaire.
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, améliorant différents aspects de la productivité planétaire.'''
 
@@ -12226,7 +12231,7 @@ Bibliothèque Culturelle
 BLD_CULTURE_LIBRARY_DESC
 '''Augmente la [[metertype METER_TARGET_RESEARCH]] de 5.
 
-Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, octroyant ainsi un bonus à la Recherche. Cette structure sera détruite si la population planétaire est réduite à zéro.'''
+Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, octroyant ainsi un bonus à la Recherche. Cette structure sera détruite si la [[metertype METER_POPULATION]] planétaire est réduite à zéro.'''
 
 BLD_AUTO_HISTORY_ANALYSER
 Analyseur Historique Automatisé
@@ -12354,7 +12359,7 @@ BLD_BIOTERROR_PROJECTOR
 Base Bioterroriste
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Donne accès au Focus Bioterrorisme à la planète sur laquelle est construite la Base Bioterroriste. Cela a pour effet de réduire de 2 par tour la Population des planètes ennemies, seulement si ces dernières sont distantes de quatre Voies spatiales ou moins et si l'empire ennemi ne dispose pas d'une [[buildingtype BLD_GENOME_BANK]].
+'''Donne accès au Focus Bioterrorisme à la planète sur laquelle est construite la Base Bioterroriste. Cela a pour effet de réduire de 2 par tour la [[metertype METER_POPULATION]] des planètes ennemies, seulement si ces dernières sont distantes de quatre Voies spatiales ou moins et si l'empire ennemi ne dispose pas d'une [[buildingtype BLD_GENOME_BANK]].
 
 Cette base clandestine d'armements biologiques provoque des ravages sur les planètes ennemies à proximité, en réduisant progressivement la Population de ces dernières jusqu'à extermination totale. Cependant, de telles activités n'étant pas approuvées par les lois galactiques, cette structure ne peut être construite que sur une planète autour de laquelle orbite une [[special RESONANT_MOON_SPECIAL]], et s'avère sans effets si l'empire ennemi dispose d'une Banque du Génome. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], si une Lune Synchrone orbite également autour de ce dernier.'''
 
@@ -12376,7 +12381,7 @@ BLD_INDUSTRY_CENTER
 Centre Industriel
 
 BLD_INDUSTRY_CENTER_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.2 par Population sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le Focus Industrie.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.2 par [[metertype METER_POPULATION]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le Focus Industrie.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 L'amélioration [[tech PRO_INDUSTRY_CENTER_II]] double le bonus de base.
@@ -12392,7 +12397,7 @@ Augmente la [[metertype METER_RESEARCH]] de 5 sur la planète, si cette dernièr
 
 Apprendre à concevoir des dispositifs utilisables par différentes espèces est crucial afin de développer des outils universellement exploitables.
 
-Chaque empire peut abriter une académie sur une à six planètes peuplées par différentes espèces. Pour accueillir une académie, le Bonheur de la Population sur la planète doit être élevé et cette dernière doit se trouver à au moins trois Voies spatiales de l'académie existante la plus proche.'''
+Chaque empire peut abriter une académie sur une à six planètes peuplées par différentes espèces. Pour accueillir une académie, le [[metertype METER_HAPPINESS]] de la [[metertype METER_POPULATION]] sur la planète doit être élevé et cette dernière doit se trouver à au moins trois Voies spatiales de l'académie existante la plus proche.'''
 
 BLD_STOCKPILING_CENTER
 Centre d'Intrication Impériale
@@ -12430,7 +12435,7 @@ BLD_GAIA_TRANS
 Transformateur Gaia
 
 BLD_GAIA_TRANS_DESC
-'''Dote une planète de la Particularité [[special GAIA_SPECIAL]] et accroît la Population max pour les [[encyclopedia ENVIRONMENT_TITLE]]s à Habitabilité [[PE_GOOD]], selon la taille de la planète :
+'''Dote une planète de la Particularité [[special GAIA_SPECIAL]] et accroît la [[metertype METER_TARGET_POPULATION]] pour les [[encyclopedia ENVIRONMENT_TITLE]]s à Habitabilité [[PE_GOOD]], selon la taille de la planète :
 • [[SZ_TINY]] (+3)
 • [[SZ_SMALL]] (+6)
 • [[SZ_MEDIUM]] (+9)
@@ -12444,7 +12449,7 @@ BLD_COLLECTIVE_NET
 Réseau de Pensée Collective
 
 BLD_COLLECTIVE_NET_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.5 par Population sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de 0.5 par Population sur toutes les planètes en Focus Recherche. Tout voyage sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.5 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de 0.5 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche. Tout voyage sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, résolvant des problèmes et faisant des découvertes qui s'avéreraient hors de portée pour un unique esprit, aussi brillant soit-il.'''
@@ -12461,7 +12466,7 @@ BLD_ENCLAVE_VOID
 Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.75 par Population sur toutes les planètes en Focus Recherche.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.75 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
 Les bonus de plusieurs exemplaires ne s'additionnent pas.
 
 La population entière d'une planète est modifiée génétiquement afin de l'harmoniser avec l'Esprit du Vide, et ainsi diffuser sa sagesse dans tout l'empire. Les habitants de l'Enclave du Vide sont considérés comme des prêtres, prophètes d'une pensée supérieure et d'un savoir suprême. Dans tous les domaines de grande importance pour la bonne marche de l'empire, leurs conseils et avis s'avèrent d'une grande valeur. Des émissaires de l'Enclave peuvent donc prendre part à tout projet impérial de Recherche et apporter ainsi une aide précieuse.'''
@@ -12482,7 +12487,7 @@ BLD_HYPER_DAM
 Barrage Hyperspatial
 
 BLD_HYPER_DAM_DESC
-'''Pour les planètes non-reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], augmente la [[metertype METER_TARGET_INDUSTRY]] de 1 par Population sur toutes les planètes reliées par lignes d'[[metertype METER_SUPPLY]] et réglées sur le Focus Industrie, mais diminue la Population de ces planètes selon leur taille : ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
+'''Pour les planètes non-reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], augmente la [[metertype METER_TARGET_INDUSTRY]] de 1 par [[metertype METER_POPULATION]] sur toutes les planètes reliées par lignes d'[[metertype METER_SUPPLY]] et réglées sur le Focus Industrie, mais diminue la [[metertype METER_TARGET_POPULATION]] de ces planètes selon leur taille : ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 Une déchirure dans le tissu de l'univers, contrôlée et manipulée en toute sécurité. Chaque planète peut construire son propre barrage hyperspatial, mais un seul centre de contrôle est requis pour s'assurer que le continuum de l'espace-temps n'est pas endommagé. Par contre, toutes les planètes ayant recours à un barrage hyperspatial voient leur population souffrir de différents problèmes de santé, à moins que les planètes en question n'orbitent autour d'un [[STAR_BLACK]].
@@ -12499,7 +12504,7 @@ BLD_SOL_ORB_GEN
 Générateur Orbital Solaire
 
 BLD_SOL_ORB_GEN_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]], par Population et selon le type d'étoile :
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]], par [[metertype METER_POPULATION]] et selon le type d'étoile :
 * [[STAR_BLUE]] ou [[STAR_WHITE]] (x0.4)
 * [[STAR_YELLOW]] ou [[STAR_ORANGE]] (x0.2)
 * [[STAR_RED]] (x0.1)
@@ -12511,7 +12516,7 @@ BLD_CLONING_CENTER
 Centre de Clonage
 
 BLD_CLONING_CENTER_DESC
-'''Accroît la Population max de toutes les planètes selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+'''Accroît la [[metertype METER_TARGET_POPULATION]] de toutes les planètes selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 Le [[tech GRO_INDUSTRY_CLONE]] permet de produire industriellement des populations sur-mesure, améliorant considérablement leur croissance.'''
 
@@ -12567,7 +12572,7 @@ BLD_CONC_CAMP
 Camps de Concentration
 
 BLD_CONC_CAMP_DESC
-'''Réduit la Population d'une planète de 3 par tour, et augmente la [[metertype METER_TARGET_INDUSTRY]] de 5 fois la population planétaire. La [[metertype METER_TARGET_HAPPINESS]] est réduite à 0.
+'''Réduit la [[metertype METER_POPULATION]] d'une planète de 3 par tour, et augmente la [[metertype METER_TARGET_INDUSTRY]] de 5 fois la [[metertype METER_POPULATION]] planétaire. La [[metertype METER_TARGET_HAPPINESS]] est réduite à 0.
 
 Purger une planète d'une espèce indésirable permet l'introduction d'une espèce plus adaptée. En créant un réseau planétaire de camps de concentration conçus pour abattre les internés à la tâche, il est possible d'atteindre rapidement et efficacement le but fixé.'''
 
@@ -12581,7 +12586,7 @@ BLD_BLACK_HOLE_POW_GEN
 Générateur de Singularité
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 1 par Population sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le Focus Industrie.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 1 par [[metertype METER_POPULATION]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le Focus Industrie.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 [[BUILDING_AVAILABLE_ON_OUTPOSTS]], mais doit se trouver dans un système abritant un [[STAR_BLACK]].'''
@@ -12590,7 +12595,7 @@ BLD_PLANET_DRIVE
 Navigateur Planétaire
 
 BLD_PLANET_DRIVE_DESC
-'''Permet à une planète de se déplacer entre les systèmes stellaires. Un [[buildingtype BLD_LIGHTHOUSE]] doit se trouver à une distance de 200 uu ou moins du système visé, afin que la planète y arrive en toute sécurité. Dans le cas contraire, la planète aura 50% de chance de se perdre ou d'être détruite durant son voyage. S'agissant dans tous les cas d'un périple dangereux, même si la planète arrive à bon port, seule la moitié de sa population survivra, qu'un Phare Interstellaire ait été utilisé ou non. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], mais ne peut pas être exploitée à moins que la planète ne soit colonisée.
+'''Permet à une planète de se déplacer entre les systèmes stellaires. Un [[buildingtype BLD_LIGHTHOUSE]] doit se trouver à une distance de 200 uu ou moins du système visé, afin que la planète y arrive en toute sécurité. Dans le cas contraire, la planète aura 50% de chance de se perdre ou d'être détruite durant son voyage. S'agissant dans tous les cas d'un périple dangereux, même si la planète arrive à bon port, seule la moitié de sa [[metertype METER_POPULATION]] survivra, qu'un Phare Interstellaire ait été utilisé ou non. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], mais ne peut pas être exploitée à moins que la planète ne soit colonisée.
 
 En raison d'un manque de précision du dispositif de navigation, une [[buildingtype BLD_PLANET_BEACON]], ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]], est nécessaire et doit se trouver à l'arrivée de la Voie spatiale empruntée. L'un comme l'autre s'auto-détruiront une fois utilisés, afin que la planète puisse événtuellement se déplacer vers un autre système si nécessaire.
 
@@ -13431,7 +13436,7 @@ CO_OUTPOST_POD
 Module d'Avant-Poste
 
 CO_OUTPOST_POD_DESC
-'''Les Modules d'[[encyclopedia OUTPOSTS_TITLE]] permettent d'établir des stations non-habitées et peuvent être installés sur des planètes inhabitables. Ces modules n'ont aucune population et ne produisent normalement aucune ressource, mais permettent de découvrir une zone donnée et offrent une extension des lignes d'[[metertype METER_SUPPLY]] lorsque la technologie nécessaire est assimilée. Les Modules d'Avant-Poste peuvent évoluer en colonies.
+'''Les Modules d'[[encyclopedia OUTPOSTS_TITLE]] permettent d'établir des stations non-habitées et peuvent être installés sur des planètes inhabitables. Ces modules n'ont aucune [[metertype METER_POPULATION]] et ne produisent normalement aucune ressource, mais permettent de découvrir une zone donnée et offrent une extension des lignes d'[[metertype METER_SUPPLY]] lorsque la technologie nécessaire est assimilée. Les Modules d'Avant-Poste peuvent évoluer en colonies.
 
 [[COLONY_SHIP_PARTS_UPKEEP_COST]]'''
 
@@ -13646,7 +13651,7 @@ SH_NANOROBOTIC_DESC
 
 Sa [[metertype METER_STEALTH]] est standard de même que son [[metertype METER_DETECTION]], tandis que sa [[metertype METER_SPEED]] est moyenne.
 
-Ne peut être construit que dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], et d'une [[buildingtype BLD_SHIPYARD_CON_NANOROBO]].'''
+Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], et d'une [[buildingtype BLD_SHIPYARD_CON_NANOROBO]].'''
 
 SH_TITANIC
 Coque Titanesque
@@ -13666,7 +13671,7 @@ SH_TRANSSPATIAL_DESC
 
 Sa [[metertype METER_STEALTH]] est élevée, son [[metertype METER_DETECTION]] standard, tandis que sa [[metertype METER_SPEED]] est moyenne.
 
-Ne peut être construit que dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], et d'un [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]].'''
+Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], et d'un [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]].'''
 
 SH_LOGISTICS_FACILITATOR
 Coque Logistique
@@ -13676,7 +13681,7 @@ SH_LOGISTICS_FACILITATOR_DESC
 
 Sa [[metertype METER_STEALTH]] est standard de même que son [[metertype METER_DETECTION]], tandis que sa [[metertype METER_SPEED]] est moyenne.
 
-Ne peut être construit que dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], d'une [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], d'une [[buildingtype BLD_SHIPYARD_CON_GEOINT]], et d'un [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]].'''
+Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], d'une [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], d'une [[buildingtype BLD_SHIPYARD_CON_GEOINT]], et d'un [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]].'''
 
 SH_ASTEROID
 Coque Astéroïdale
@@ -13950,7 +13955,7 @@ SH_SOLAR_DESC
 
 Sa [[metertype METER_STRUCTURE]] est élevée, sa [[metertype METER_STEALTH]] est très faible, son [[metertype METER_DETECTION]] est standard et sa [[metertype METER_SPEED]] très élevée. Toutefois, cet astronef a la capacité de pénétrer une étoile et de s'y cacher, lui conférant ainsi une [[metertype METER_STEALTH]] parfaite sur la carte galactique, lorsqu'il se trouve dans un système abritant une étoile autre qu'une Étoile [[STAR_NEUTRON]] ou qu'un [[STAR_BLACK]], ainsi qu'en combat, lorsqu'il se dissimule dans une étoile adéquate.
 
-Cet astronef nécessite un gigantesque apport d'énergie lors de sa construction, cette dernière devant être collectée à partir des collisions entre particules et antiparticules aux abords de l'horizon des événements d'un [[STAR_BLACK]]. Il ne peut donc être construit que dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et d'une [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]].'''
+Cet astronef nécessite un gigantesque apport d'énergie lors de sa construction, cette dernière devant être collectée à partir des collisions entre particules et antiparticules aux abords de l'horizon des événements d'un [[STAR_BLACK]]. Il ne peut donc être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et d'une [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]].'''
 
 SH_BASIC_SMALL
 Coque Basique Légère
@@ -14241,10 +14246,10 @@ appartenant à l'empire, et augmentera proportionnellement à son éloignement; 
 # Keys used in Predefined Ship Designs and Ship Hulls sections
 
 BLD_SHIPYARD_BASE_REQUIRED
-Ne peut être construit que dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]].
+Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]].
 
 BLD_SHIPYARD_BASE_AST_REQUIRED
-Ne peut être construit que dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], au sein d'un système abritant une Ceinture d'Astéroïdes et un [[buildingtype BLD_SHIPYARD_AST]].
+Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], au sein d'un système abritant une Ceinture d'Astéroïdes et un [[buildingtype BLD_SHIPYARD_AST]].
 
 BLD_SHIPYARD_AST_REF_REQUIRED
 Un [[buildingtype BLD_SHIPYARD_AST_REF]] appartenant à l'empire est également requis au sein du même système.
@@ -14259,28 +14264,28 @@ BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED
 En raison de l'énorme apport d'énergie nécessaire, ne peut être construit qu'au sein d'un système abritant une Étoile [[STAR_BLUE]] ou un [[STAR_BLACK]], et dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]] et d'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]].
 
 BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED
-Ne peut être construit que dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]] et d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
+Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]] et d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED
-Ne peut être construit que dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], et d'une [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
+Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], et d'une [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
 
 LIVING_HULL_AUTO_REGEN
 Les coques vivantes régénèrent leur [[metertype METER_STRUCTURE]] et leur [[metertype METER_FUEL]] entre chaque combat.
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED
-Ne peut être construit que dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]] et d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]] et d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED
-Ne peut être construit que dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
+Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 MIN_POPULATION_THREE_REQUIRED
-Ne peut être construit que dans un lieu où la Population est supérieure ou égale à 3
+Ne peut être construit qu'en un lieu où la [[metertype METER_POPULATION]] est supérieure ou égale à 3
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED
-Ne peut être construit que dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
+Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED
-Ne peut être construit que dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], d'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
+Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], d'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
 
 # Other than Requirements
 
@@ -14331,7 +14336,7 @@ NO_STACK_SHIELDS_SHIP_PARTS
 Les [[metertype METER_SHIELD]] réduisent les [[encyclopedia DAMAGE_TITLE]] infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.
 
 COLONY_SHIP_PARTS_MIN_POP
-Toutes les classes d'astronefs colonisateurs requièrent de leur planète d'origine une Population supérieure ou égale à 3.
+Toutes les classes d'astronefs colonisateurs requièrent de leur planète d'origine une [[metertype METER_POPULATION]] supérieure ou égale à 3.
 
 COLONY_SHIP_PARTS_UPKEEP_COST
 Le coût de cet équipement augmente à mesure que l'empire s'étend en raison des coûts de gestion plus élevés d'un vaste empire.
@@ -14347,19 +14352,19 @@ SHIP_WEAPON_QUICKLY_REDUCE
 permettant aux astronefs de réduire rapidement
 
 ENEMY_PLANET_ORGANIC_POP
-la Population Organique des planètes ennemies
+la [[metertype METER_POPULATION]] Organique des planètes ennemies
 
 ENEMY_PLANET_ROBOTIC_POP
-la Population Robotique des planètes ennemies
+la [[metertype METER_POPULATION]] Robotique des planètes ennemies
 
 ENEMY_PLANET_LITHIC_POP
-la Population Lithique des planètes ennemies
+la [[metertype METER_POPULATION]] Lithique des planètes ennemies
 
 ENEMY_PLANET_PHOTOTROPHIC_POP
-la Population Phototropique des planètes ennemies
+la [[metertype METER_POPULATION]] Phototropique des planètes ennemies
 
 ENEMY_PLANET_ANY_POP
-toute Population des planètes ennemies
+toute [[metertype METER_POPULATION]] des planètes ennemies
 
 
 ##
@@ -14384,7 +14389,7 @@ GROWTH_SPECIAL_POPULATION_LITHIC_INCREASE
 Les espèces à [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
 
 GROWTH_SPECIAL_POPULATION_INCREASE
-'''habitant cette planète verront leur Population max augmenter selon la taille de la planète :
+'''habitant cette planète verront leur [[metertype METER_TARGET_POPULATION]] augmenter selon la taille de la planète :
 • [[SZ_TINY]] (+1)
 • [[SZ_SMALL]] (+2)
 • [[SZ_MEDIUM]] (+3)
@@ -14395,7 +14400,7 @@ quel que soit l'[[encyclopedia ENVIRONMENT_TITLE]] planétaire.
 Si cette planète est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]], le bonus s'applique également à tous les autres mondes connectés par lignes d'[[metertype METER_SUPPLY]] et peuplés d'espèces à'''
 
 GROWTH_SPECIAL_INDUSTRY_BOOST
-Si cette planète est réglée sur le Focus Industrie, sa [[metertype METER_TARGET_INDUSTRY]] augmente de 0.2 par Population.
+Si cette planète est réglée sur le Focus Industrie, sa [[metertype METER_TARGET_INDUSTRY]] augmente de 0.2 par [[metertype METER_POPULATION]].
 
 GROWTH_SPECIALS_ENTRY_LIST
 '''Certaines Particularités ne fonctionnent que pour les espèces organiques, d'autres pour les espèces lithiques, et enfin d'autres pour les espèces robotiques. Aucun autre type de [[encyclopedia METABOLISM_TITLE]] ne dispose actuellement de Particularités de Croissance lui étant exclusivement applicables.
@@ -14472,7 +14477,7 @@ ULTIMATE_DEFENSE_TROOPS_DESC
 +++	Parfait en [[metertype METER_TROOPS]] défensive : 300%
 
 ANCIENT_DEFENSE_TROOPS_DESC
-+++	[[metertype METER_TROOPS]] ancestrale défensive : 10 par Population
++++	[[metertype METER_TROOPS]] ancestrale défensive : 10 par [[metertype METER_POPULATION]]
 
 NO_OFFENSE_TROOPS_DESC
 −−−	Pas d'[[metertype METER_TROOPS]] offensive
@@ -14566,19 +14571,19 @@ NO_STOCKPILE_DESC
 −−	Aucun [[metertype METER_STOCKPILE]]
 
 BAD_STOCKPILE_DESC
-−	Mauvais en [[metertype METER_STOCKPILE]] : +0.01 par Population
+−	Mauvais en [[metertype METER_STOCKPILE]] : +0.01 par [[metertype METER_POPULATION]]
 
 AVERAGE_STOCKPILE_DESC
-'''	Normal en [[metertype METER_STOCKPILE]] : +0.02 par Population'''
+'''	Normal en [[metertype METER_STOCKPILE]] : +0.02 par [[metertype METER_POPULATION]]'''
 
 GOOD_STOCKPILE_DESC
-+	Bon en [[metertype METER_STOCKPILE]] : +0.06 par Population
++	Bon en [[metertype METER_STOCKPILE]] : +0.06 par [[metertype METER_POPULATION]]
 
 GREAT_STOCKPILE_DESC
-++	Excellent en [[metertype METER_STOCKPILE]] : +0.2 par Population
+++	Excellent en [[metertype METER_STOCKPILE]] : +0.2 par [[metertype METER_POPULATION]]
 
 ULTIMATE_STOCKPILE_DESC
-+++	Parfait en [[metertype METER_STOCKPILE]] : +0.3 par Population
++++	Parfait en [[metertype METER_STOCKPILE]] : +0.3 par [[metertype METER_POPULATION]]
 
 GOOD_SHIP_SHIELD_DESC
 +	Bons [[metertype METER_SHIELD]] d'astronefs : +1
@@ -14623,10 +14628,10 @@ ULTIMATE_FUEL_DESC
 +++	Parfait en [[metertype METER_FUEL]] max : +3
 
 GREAT_ASTEROID_INDUSTRY_DESC
-+	Bons Mineurs sur Astéroïdes: + 0.2 en [[metertype METER_INDUSTRY]] par Population lorsque que le Focus Industrie est activé dans les systèmes abritant une Ceinture d'Astéroïdes colonisée par l'empire.
++	Bons Mineurs sur Astéroïdes: + 0.2 en [[metertype METER_INDUSTRY]] par [[metertype METER_POPULATION]] lorsque que le Focus Industrie est activé dans les systèmes abritant une Ceinture d'Astéroïdes colonisée par l'empire.
 
 LIGHT_SENSITIVE_DESC
-−	Sensibilité à la lumière: la Population est réduite dans les systèmes abritant une Étoile [[STAR_BLUE]], et dans une moindre mesure, une Étoile [[STAR_WHITE]].
+−	Sensibilité à la lumière: la [[metertype METER_POPULATION]] est réduite dans les systèmes abritant une Étoile [[STAR_BLUE]], et dans une moindre mesure, une Étoile [[STAR_WHITE]].
 
 TELEPATHIC_DETECTION_DESC
 +	Détection Télépathique: peut percevoir les planètes habitées proches.
