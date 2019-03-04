@@ -9968,6 +9968,14 @@ unsigned int Not::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OrderedAlternativesOf
 ///////////////////////////////////////////////////////////
+void FCMoveContent(Condition::ObjectSet& from_set, Condition::ObjectSet& to_set) {
+    for (auto it = from_set.begin(); it != from_set.end(); ) {
+        to_set.push_back(*it);
+        *it = from_set.back();
+        from_set.pop_back();
+    }
+}
+
 OrderedAlternativesOf::OrderedAlternativesOf(
     std::vector<std::unique_ptr<ConditionBase>>&& operands) :
     ConditionBase(),
@@ -10038,25 +10046,16 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
                 found_sth = true;
             }
             // recreate previous state by moving back temp_non matches to non_matches
-            for (auto it = temp_non_matches.begin(); it != temp_non_matches.end(); ) {
-                non_matches.push_back(*it);
-                *it = temp_non_matches.back();
-                temp_non_matches.pop_back();
-            }
+            FCMoveContent(temp_non_matches, non_matches);
             if (found_sth) {
                 // descent into subcondition for NON_MATCHES
                 operand->Eval(local_context, matches, non_matches, NON_MATCHES);
                 break;
             }
         }
-        if (!found_sth) {
-            // NON_MATCHES could not find any matches -> so it should match all
-            for (auto it = matches.begin(); it != matches.end(); ) {
-                non_matches.push_back(*it);
-                *it = matches.back();
-                matches.pop_back();
-            }
-        }
+        // If NON_MATCHES could not find any matches it should match all
+        if (!found_sth)
+            FCMoveContent(matches, non_matches);
     } else /*(search_domain == MATCHES)*/ {
         // check all operand conditions on all objects in the matches set, collecting non matches temporarily
         // stop if the operand condition matches at least one item
@@ -10067,23 +10066,26 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
         // use a fresh set of possible matches
         for (auto& operand : m_operands) {
             // move back temp_non_matches
-            for (auto it = temp_non_matches.begin(); it != temp_non_matches.end(); ) {
-                matches.push_back(*it);
-                *it = temp_non_matches.back();
-                temp_non_matches.pop_back();
-            }
+            FCMoveContent(temp_non_matches, matches);
             // move non matches from_matches to temp_non_matches
             operand->Eval(local_context, matches, temp_non_matches, MATCHES);
             if (!matches.empty()) break;
+            // Check if other LocalCandidates (in the non_matches set) match
+            operand->Eval(local_context, matches, non_matches, NON_MATCHES);
+            if (!matches.empty()) {
+                // This operand should return the result, but no matches exist
+                // So all objects should go into the non_matches set
+                // move all matches to non_matches here
+                FCMoveContent(matches, non_matches);
+                // stop finding the operand
+                // temp_non_matches must still be moved to non_matches
+                break;
+            }
         }
 
         // non matching items were already moved from matches to temp_non_matches
         // move non matching items from temp_non_matches to non_matches
-        for (auto it = temp_non_matches.begin(); it != temp_non_matches.end(); ) {
-            non_matches.push_back(*it);
-            *it = temp_non_matches.back();
-            temp_non_matches.pop_back();
-        }
+        FCMoveContent(temp_non_matches, non_matches);
     }
 }
 
