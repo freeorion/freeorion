@@ -10009,32 +10009,17 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
         }
     }
 
-    // Expressions like  'NOT OrderedAlternativesOf [ A B C ]'
-    // matches all candidates which do not match the topmost condition which has matches
-    // which means the something like
-    // OrderedAlternativesOf [
-    //     And [
-    //         Number low = 1 condition = And [
-    //             Object id = OuterCandidate.ID
-    //             A
-    //         ]
-    //         Not A
-    //     ]
-    //     And [
-    //         Number low = 1 condition = And [
-    //             Object id = OuterCandidate.ID
-    //             B
-    //         ]
-    //         Not B
-    //     ]
-    //     And [
-    //         Number low = 1 condition = And [
-    //             Object id = OuterCandidate.ID
-    //             C
-    //         ]
-    //         Not C
-    //     ]
-    // ]
+    // OrderedAlternativesOf [ A B C ] matches all candidates which match the topmost condition.
+    // If any candidate matches A, then all candidates that match A are matched,
+    // or if no candidate matches A but any candidate matches B, then all candidates that match B are matched,
+    // or if no candidate matches A or B but any candidate matches C, then all candidates that match C are matched.
+    // If no candidate matches A, B, or C, then nothing is matched.
+    //
+    // Not OrderedAlternativesOf [ A B C ] finds the topmost condition which has matches and then matches its non-matches.
+    // If any candidate matches A, then all candidates that do not match A are matched,
+    // or if no candidates match A but any candidate matches B, then all candidates that do not match B are matched,
+    // or if no candidate matches A or B but any candidate matches C, then all candidates that do not match C are matched.
+    // If no candidate matches A, B, or C, then all candidates are matched.
     if (search_domain == NON_MATCHES) {
         // check all operand conditions on all objects in the non matches set
         // stop if the operand condition has at least one match
