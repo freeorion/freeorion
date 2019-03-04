@@ -10045,7 +10045,6 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
             }
             if (found_sth) {
                 // descent into subcondition for NON_MATCHES
-                ObjectSet temp_matches;
                 operand->Eval(local_context, matches, non_matches, NON_MATCHES);
                 break;
             }
@@ -10073,6 +10072,7 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
                 *it = temp_non_matches.back();
                 temp_non_matches.pop_back();
             }
+            // move non matches from_matches to temp_non_matches
             operand->Eval(local_context, matches, temp_non_matches, MATCHES);
             if (!matches.empty()) break;
         }
