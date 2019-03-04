@@ -10049,28 +10049,21 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
             // move those matching the current non-negated operand from non_matches to temp_non_matches
             operand->Eval(local_context, non_matches, temp_non_matches, MATCHES);
             if (!(non_matches.empty())) {
-                // i.e. the current operand should be used negated to move 
+                // i.e. the current operand should be used negated to move
                 found_sth = true;
-                // move back temp_non matches
-                non_matches.insert(non_matches.end(),
-                               std::make_move_iterator(temp_non_matches.begin()),
-                               std::make_move_iterator(temp_non_matches.end()));
-                temp_non_matches.clear();
+            }
+            // recreate previous state by moving back temp_non matches to non_matches
+            for (auto it = temp_non_matches.begin(); it != temp_non_matches.end(); ) {
+                non_matches.push_back(*it);
+                *it = temp_non_matches.back();
+                temp_non_matches.pop_back();
+            }
+            if (found_sth) {
                 // descent into subcondition for NON_MATCHES
                 ObjectSet temp_matches;
-                operand->Eval(local_context, temp_matches, non_matches, NON_MATCHES);
-                matches.insert(matches.end(),
-                               std::make_move_iterator(temp_matches.begin()),
-                               std::make_move_iterator(temp_matches.end()));
-                temp_matches.clear();
+                operand->Eval(local_context, matches, non_matches, NON_MATCHES);
                 break;
             }
-
-            // move back temp_non matches
-            matches.insert(matches.end(),
-                           std::make_move_iterator(temp_non_matches.begin()),
-                           std::make_move_iterator(temp_non_matches.end()));
-            temp_non_matches.clear();
         }
         if (!found_sth) {
             // NON_MATCHES could not find any matches -> so it should match all
@@ -10090,19 +10083,22 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
         // use a fresh set of possible matches
         for (auto& operand : m_operands) {
             // move back temp_non_matches
-            matches.insert(matches.end(),
-                           std::make_move_iterator(temp_non_matches.begin()),
-                           std::make_move_iterator(temp_non_matches.end()));
-            temp_non_matches.clear();
+            for (auto it = temp_non_matches.begin(); it != temp_non_matches.end(); ) {
+                matches.push_back(*it);
+                *it = temp_non_matches.back();
+                temp_non_matches.pop_back();
+            }
             operand->Eval(local_context, matches, temp_non_matches, MATCHES);
             if (!matches.empty()) break;
         }
 
         // non matching items were already moved from matches to temp_non_matches
         // move non matching items from temp_non_matches to non_matches
-        non_matches.insert(non_matches.end(),
-                           std::make_move_iterator(temp_non_matches.begin()),
-                           std::make_move_iterator(temp_non_matches.end()));
+        for (auto it = temp_non_matches.begin(); it != temp_non_matches.end(); ) {
+            non_matches.push_back(*it);
+            *it = temp_non_matches.back();
+            temp_non_matches.pop_back();
+        }
     }
 }
 
