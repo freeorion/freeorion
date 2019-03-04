@@ -10033,7 +10033,7 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
         // stop if the operand condition has at least one match
         // Return non-matches if there are any
         ObjectSet temp_non_matches;
-        temp_non_matches.reserve(matches.size());
+        temp_non_matches.reserve(non_matches.size());
         // try matching operand conditions until one matches
         bool found_sth = false;
         for (auto& operand : m_operands) {
@@ -10041,17 +10041,32 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
             //            operand->Eval(local_context, matches, temp_non_matches, MATCHES);
             // move those matching the current non-negated operand from non_matches to temp_non_matches
             operand->Eval(local_context, non_matches, temp_non_matches, MATCHES);
-            if (!(non_matches.empty())) {
+            if (!non_matches.empty()) {
                 // i.e. the current operand should be used negated to move
                 found_sth = true;
             }
             // recreate previous state by moving back temp_non matches to non_matches
             FCMoveContent(temp_non_matches, non_matches);
+
+            if (!found_sth) {
+                 // Also have to look at the other local candidates if there was a match
+                ObjectSet temp_matches;
+                temp_matches.reserve(matches.size());
+                operand->Eval(local_context, temp_matches, matches, NON_MATCHES);
+                if (!temp_matches.empty()) {
+                    // i.e. the current operand should be used negated to move
+                    found_sth = true;
+                }
+                // recreate previous state
+                FCMoveContent(temp_matches, matches);
+            }
+
             if (found_sth) {
                 // descent into subcondition for NON_MATCHES
                 operand->Eval(local_context, matches, non_matches, NON_MATCHES);
                 break;
             }
+            // try the next operand
         }
         // If NON_MATCHES could not find any matches it should match all
         if (!found_sth)
