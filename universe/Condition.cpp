@@ -9969,11 +9969,8 @@ unsigned int Not::GetCheckSum() const {
 // OrderedAlternativesOf
 ///////////////////////////////////////////////////////////
 void FCMoveContent(Condition::ObjectSet& from_set, Condition::ObjectSet& to_set) {
-    for (auto it = from_set.begin(); it != from_set.end(); ) {
-        to_set.push_back(*it);
-        *it = from_set.back();
-        from_set.pop_back();
-    }
+    to_set.insert(to_set.end(), from_set.begin(), from_set.end());
+    from_set.clear();
 }
 
 OrderedAlternativesOf::OrderedAlternativesOf(
