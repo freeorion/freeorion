@@ -26,7 +26,10 @@ Part
     location = OwnedBy empire = Source.Owner
     effectsgroups = [
         EffectsGroup
-            scope = [[EMPIRE_OWNED_SHIP_WITH_PART(FT_BAY_1)]]
+            scope = And [
+                Source
+                [[EMPIRE_OWNED_SHIP_WITH_PART(FT_BAY_1)]]
+            ]
             activation = Source
             stackinggroup = "INTERCEPTOR_FAST_LAUNCH_EFFECT"
             effects = [
