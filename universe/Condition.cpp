@@ -9969,7 +9969,9 @@ unsigned int Not::GetCheckSum() const {
 // OrderedAlternativesOf
 ///////////////////////////////////////////////////////////
 void FCMoveContent(Condition::ObjectSet& from_set, Condition::ObjectSet& to_set) {
-    to_set.insert(to_set.end(), from_set.begin(), from_set.end());
+    to_set.insert(to_set.end(),
+                  std::make_move_iterator(from_set.begin()),
+                  std::make_move_iterator(from_set.end()));
     from_set.clear();
 }
 
