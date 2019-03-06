@@ -45,7 +45,8 @@ namespace {
     std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empire_manager) {
         std::map<int, SaveGameEmpireData> retval;
         for (const auto& entry : Empires())
-            retval[entry.first] = SaveGameEmpireData(entry.first, entry.second->Name(), entry.second->PlayerName(), entry.second->Color(), entry.second->IsAuthenticated());
+            if (!entry.second->Eliminated())
+                retval[entry.first] = SaveGameEmpireData(entry.first, entry.second->Name(), entry.second->PlayerName(), entry.second->Color(), entry.second->IsAuthenticated());
         return retval;
     }
 
