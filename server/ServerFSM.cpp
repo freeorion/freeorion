@@ -748,6 +748,14 @@ void MPLobby::ValidateClientLimits() {
             ai_count++;
     }
 
+    const int human_connected_count = human_count;
+
+    // for load game consider as human all non-AI empires
+    // because human player could connect later in game
+    if (!m_lobby_data->m_new_game) {
+        human_count = m_lobby_data->m_save_game_empire_data.size() - ai_count;
+    }
+
     int min_ai = GetOptionsDB().Get<int>("network.server.ai.min");
     int max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
     if (max_ai >= 0 && max_ai < min_ai) {
@@ -762,11 +770,22 @@ void MPLobby::ValidateClientLimits() {
         max_human = min_human;
         GetOptionsDB().Set<int>("network.server.human.max", max_human);
     }
+    int min_connected = GetOptionsDB().Get<int>("network.server.conn-human.min");
+    int max_disconnected = GetOptionsDB().Get<int>("network.server.disconn-human.max");
 
     // restrict minimun number of human and ai players
     if (human_count < min_human) {
         m_lobby_data->m_start_locked = true;
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_HUMAN_PLAYERS");
+    } else if (human_connected_count < min_connected) {
+        m_lobby_data->m_start_locked = true;
+        m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_CONNECTED_HUMAN_PLAYERS");
+    } else if (max_disconnected > 0 &&
+        !m_lobby_data->m_new_game &&
+        static_cast<int>(m_lobby_data->m_save_game_empire_data.size()) - ai_count - human_connected_count >= max_disconnected)
+    {
+        m_lobby_data->m_start_locked = true;
+        m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_TOO_MANY_DISCONNECTED_HUMAN_PLAYERS");
     } else if (max_human >= 0 && human_count > max_human) {
         m_lobby_data->m_start_locked = true;
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_TOO_MANY_HUMAN_PLAYERS");

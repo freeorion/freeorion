@@ -1025,6 +1025,12 @@ Not enough human players.
 ERROR_TOO_MANY_HUMAN_PLAYERS
 Too many human players.
 
+ERROR_NOT_ENOUGH_CONNECTED_HUMAN_PLAYERS
+Not enough connected human players.
+
+ERROR_TOO_MANY_DISCONNECTED_HUMAN_PLAYERS
+Too many disconnected human players.
+
 ERROR_CONNECTION_WAS_REPLACED
 Your connection was replaced.
 
