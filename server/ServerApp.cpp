@@ -1765,6 +1765,9 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
     if (empire_id == ALL_EMPIRES || empire == nullptr)
         return ALL_EMPIRES;
 
+    if (empire->Eliminated())
+        return ALL_EMPIRES;
+
     auto orders_it = m_turn_sequence.find(empire_id);
     if (orders_it == m_turn_sequence.end()) {
         WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id
