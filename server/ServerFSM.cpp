@@ -323,6 +323,25 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     if (must_quit) {
         ErrorLogger(FSM) << "Unable to recover server terminating.";
         if (m_server.IsHostless()) {
+            if (GetOptionsDB().Get<bool>("save.auto.hostless.enabled")) {
+                // save game on exit
+                std::string save_filename = GetAutoSaveFileName();
+                ServerSaveGameData server_data(m_server.CurrentTurn());
+                int bytes_written = 0;
+                // save game...
+                try {
+                    bytes_written = SaveGame(save_filename,     server_data,    m_server.GetPlayerSaveGameData(),
+                                             GetUniverse(),     Empires(),      GetSpeciesManager(),
+                                             GetCombatLogManager(),             m_server.m_galaxy_setup_data,
+                                             !m_server.m_single_player_game);
+                } catch (const std::exception& error) {
+                    ErrorLogger(FSM) << "While saving, catch std::exception: " << error.what();
+                    SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));
+                }
+
+                // inform players that save is complete
+                SendMessageToAllPlayers(ServerSaveGameCompleteMessage(save_filename, bytes_written));
+            }
             m_server.m_fsm->process_event(Hostless());
         } else {
             m_server.m_fsm->process_event(ShutdownServer());
@@ -471,6 +490,18 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
     { m_server.Networking().Disconnect(conn); }
 
     return client_type != Networking::INVALID_CLIENT_TYPE;
+}
+
+std::string ServerFSM::GetAutoSaveFileName() {
+    std::string subdir = GetGalaxySetupData().GetGameUID();
+    boost::filesystem::path autosave_dir_path = GetServerSaveDir() / (subdir.empty() ? "auto" : subdir);
+    const auto& extension = MP_SAVE_FILE_EXTENSION;
+    // Add timestamp to autosave generated files
+    std::string datetime_str = FilenameTimestamp();
+
+    std::string save_filename = boost::io::str(boost::format("FreeOrion_%04d_%s%s") % m_server.CurrentTurn() % datetime_str % extension);
+    boost::filesystem::path save_path(autosave_dir_path / save_filename);
+    return save_path.string();
 }
 
 ////////////////////////////////////////////////////////////
@@ -2931,19 +2962,8 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
     }
 
     if (server.IsHostless() && GetOptionsDB().Get<bool>("save.auto.hostless.enabled")) {
-        std::string subdir = GetGalaxySetupData().GetGameUID();
-        boost::filesystem::path autosave_dir_path = GetServerSaveDir() / (subdir.empty() ? "auto" : subdir);
-        const auto& extension = MP_SAVE_FILE_EXTENSION;
-        // Add timestamp to autosave generated files
-        std::string datetime_str = FilenameTimestamp();
-
-        std::string save_filename = boost::io::str(boost::format("FreeOrion_%04d_%s%s") % server.CurrentTurn() % datetime_str % extension);
-
-        boost::filesystem::path save_path(autosave_dir_path / save_filename);
-
         PlayerConnectionPtr dummy_connection = nullptr;
-
-        post_event(SaveGameRequest(HostSaveGameInitiateMessage(save_path.string()), dummy_connection));
+        post_event(SaveGameRequest(HostSaveGameInitiateMessage(context<ServerFSM>().GetAutoSaveFileName()), dummy_connection));
     }
     return transit<WaitingForTurnEnd>();
 }

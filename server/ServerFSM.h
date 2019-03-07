@@ -137,6 +137,7 @@ struct ServerFSM : sc::state_machine<ServerFSM, Idle> {
                          Networking::ClientType client_type,
                          const std::string& client_version_string,
                          const Networking::AuthRoles& roles);
+    std::string GetAutoSaveFileName();
 
     std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
     std::shared_ptr<SinglePlayerSetupData>  m_single_player_setup_data;
