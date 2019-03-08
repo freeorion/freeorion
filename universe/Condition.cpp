@@ -10036,8 +10036,6 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
         // try matching operand conditions until one matches
         bool found_sth = false;
         for (auto& operand : m_operands) {
-            // move those non matching the current operand to temp_non_matches
-            //            operand->Eval(local_context, matches, temp_non_matches, MATCHES);
             // move those matching the current non-negated operand from non_matches to temp_non_matches
             operand->Eval(local_context, non_matches, temp_non_matches, MATCHES);
             if (!non_matches.empty()) {
