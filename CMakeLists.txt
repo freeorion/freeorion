@@ -27,6 +27,7 @@ message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 include(UseCompilerCache)
 find_compiler_cache(PROGRAM ccache)
 
+
 ##
 ## Global project configuration
 ##
@@ -161,6 +162,9 @@ set_property(DIRECTORY APPEND
         # Disable '<func>': The POSIX name for this item is deprecated." warning
         # https://msdn.microsoft.com/en-us/library/ttcz0bys.aspx
         $<$<PLATFORM_ID:Windows>:_CRT_NONSTDC_NO_WARNINGS>
+
+        # Suppress "Boost.Config is older than your compiler version" warning
+        $<$<PLATFORM_ID:Windows>:BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE>
 
         # Define platform specific macros
         $<$<PLATFORM_ID:Windows>:FREEORION_WIN32>
@@ -310,10 +314,14 @@ if(Apple)
     )
 endif()
 
+if(NOT WIN32)
+    add_library(freeorioncommon "")
+endif()
 
-add_library(freeorioncommon "")
 
 if(WIN32)
+    add_library(freeorioncommon STATIC "")
+
     set_property(TARGET freeorioncommon
         PROPERTY
         OUTPUT_NAME Common
@@ -380,13 +388,6 @@ set_property(TARGET freeorionparseobj
     POSITION_INDEPENDENT_CODE ON
 )
 
-if(WIN32)
-    set_property(TARGET freeorionparseobj
-        PROPERTY
-        OUTPUT_NAME Parsers
-    )
-endif()
-
 target_compile_options(freeorionparseobj
     PRIVATE
         $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
@@ -403,8 +404,18 @@ target_compile_definitions(freeorionparseobj
         -DFREEORION_BUILD_PARSE
 )
 
+if(NOT WIN32)
+    add_library(freeorionparse $<TARGET_OBJECTS:freeorionparseobj>)
+endif()
 
-add_library(freeorionparse $<TARGET_OBJECTS:freeorionparseobj>)
+if(WIN32)
+    add_library(freeorionparse STATIC $<TARGET_OBJECTS:freeorionparseobj>)
+
+    set_property(TARGET freeorionparse
+        PROPERTY
+        OUTPUT_NAME Parsers
+    )
+endif()
 
 target_compile_options(freeorionparse
     PRIVATE
@@ -472,7 +483,6 @@ target_link_libraries(freeoriond
 
 target_dependencies_copy_to_build(freeoriond)
 target_dependent_data_symlink_to_build(freeoriond ${PROJECT_SOURCE_DIR}/default)
-
 
 add_executable(freeorionca "")
 
@@ -626,6 +636,15 @@ if(NOT BUILD_HEADLESS)
 
     target_dependencies_copy_to_build(freeorion)
     target_dependent_data_symlink_to_build(freeorion ${PROJECT_SOURCE_DIR}/default)
+endif()
+
+if(WIN32)
+    add_custom_command(TARGET freeorion POST_BUILD
+        COMMAND
+            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python27.dll" "$<TARGET_FILE_DIR:freeorion>"
+        COMMAND
+            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python27.zip" "$<TARGET_FILE_DIR:freeorion>" 
+    )
 endif()
 
 if(APPLE)
