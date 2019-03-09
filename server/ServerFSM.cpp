@@ -2726,7 +2726,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
         server.SetEmpireSaveGameData(empire_id, boost::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id,
                                      order_set, ui_data, save_state_string,
-                                     client_type));
+                                     client_type, true));
 
         // notify other player that this empire submitted orders
         for (auto player_it = server.m_networking.established_begin();

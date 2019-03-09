@@ -693,7 +693,8 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
         if (GetEmpire(empire_id))
             AddEmpireTurn(empire_id, PlayerSaveGameData(player_id_and_setup.second.m_player_name, empire_id,
                                                         nullptr, nullptr, std::string(),
-                                                        player_id_and_setup.second.m_client_type));
+                                                        player_id_and_setup.second.m_client_type,
+                                                        false));
     }
 
     // update visibility information to ensure data sent out is up-to-date
@@ -1344,6 +1345,11 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             ErrorLogger() << "LoadGameInit got inconsistent empire ids between player save game data and result of PlayerEmpireID";
         }
 
+        // Revoke readiness only for online players so them could re-make orders of current turn.
+        // Without it server would advance turn because saves are made when all players sent orders
+        // and became ready.
+        RevokeEmpireTurnReadyness(empire_id);
+
         // restore saved orders.  these will be re-executed on client and
         // re-sent to the server (after possibly modification) by clients
         // when they end their turn
@@ -1670,7 +1676,7 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
         for (const auto& empire : Empires()) {
             auto other_orders_it = m_turn_sequence.find(empire.first);
             bool ready = other_orders_it == m_turn_sequence.end() ||
-                    (other_orders_it->second.second && other_orders_it->second.first);
+                    (other_orders_it->second && other_orders_it->second->m_ready);
             player_connection->SendMessage(PlayerStatusMessage(EmpirePlayerID(empire.first),
                                                                ready ? Message::WAITING : Message::PLAYING_TURN,
                                                                empire.first));
@@ -1792,11 +1798,12 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
     empire->SetAuthenticated(player_connection->IsAuthenticated());
 
     const OrderSet dummy;
-    const OrderSet& orders = orders_it->second.second && orders_it->second.second->m_orders ? *(orders_it->second.second->m_orders) : dummy;
-    const SaveGameUIData* ui_data = orders_it->second.second ? orders_it->second.second->m_ui_data.get() : nullptr;
+    const OrderSet& orders = orders_it->second && orders_it->second->m_orders ? *(orders_it->second->m_orders) : dummy;
+    const SaveGameUIData* ui_data = orders_it->second ? orders_it->second->m_ui_data.get() : nullptr;
 
     // drop ready status
-    orders_it->second.first = false;
+    if (orders_it->second)
+        orders_it->second->m_ready = false;
 
     auto player_info_map = GetPlayerInfoMap();
     bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
@@ -1814,7 +1821,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
     for (const auto& empire : Empires()) {
         auto other_orders_it = m_turn_sequence.find(empire.first);
         bool ready = other_orders_it == m_turn_sequence.end() ||
-                (other_orders_it->second.second && other_orders_it->second.first);
+                (other_orders_it->second && other_orders_it->second->m_ready);
         player_connection->SendMessage(PlayerStatusMessage(EmpirePlayerID(empire.first),
                                                            ready ? Message::WAITING : Message::PLAYING_TURN,
                                                            empire.first));
@@ -1833,10 +1840,9 @@ std::vector<PlayerSaveGameData> ServerApp::GetPlayerSaveGameData() const {
     std::vector<PlayerSaveGameData> player_save_game_data;
     for (const auto& m_save_data : m_turn_sequence) {
         DebugLogger() << "ServerApp::GetPlayerSaveGameData() Empire " << m_save_data.first
-                      << " ready " << m_save_data.second.first
-                      << " save_game_data " << m_save_data.second.second.get();
-        if (m_save_data.second.second) {
-            player_save_game_data.push_back(*m_save_data.second.second);
+                      << " save_game_data " << m_save_data.second.get();
+        if (m_save_data.second) {
+            player_save_game_data.push_back(*m_save_data.second);
         }
     }
     return player_save_game_data;
@@ -1860,30 +1866,27 @@ int ServerApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects.server.threads"); }
 
 void ServerApp::AddEmpireTurn(int empire_id, const PlayerSaveGameData& psgd)
-{
-    m_turn_sequence[empire_id].second = boost::make_unique<PlayerSaveGameData>(psgd);
-    m_turn_sequence[empire_id].first = false;
-}
+{ m_turn_sequence[empire_id] = boost::make_unique<PlayerSaveGameData>(psgd); }
 
 void ServerApp::RemoveEmpireTurn(int empire_id)
 { m_turn_sequence.erase(empire_id); }
 
 void ServerApp::ClearEmpireTurnOrders() {
     for (auto& order : m_turn_sequence) {
-        order.second.first = false;
-        if (order.second.second) {
+        if (order.second) {
             // reset only orders
             // left UI data and AI state intact
-            order.second.second->m_orders.reset();
+            order.second->m_orders.reset();
+            order.second->m_ready = false;
         }
     }
 }
 
 void ServerApp::SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveGameData>&& save_game_data)
-{ m_turn_sequence[empire_id] = std::make_pair(true, std::move(save_game_data)); }
+{ m_turn_sequence[empire_id] = std::move(save_game_data); }
 
 void ServerApp::UpdatePartialOrders(int empire_id, const OrderSet& added, const std::set<int>& deleted) {
-    const auto& psgd = m_turn_sequence[empire_id].second;
+    const auto& psgd = m_turn_sequence[empire_id];
     if (psgd) {
         if (psgd->m_orders) {
             for (int id : deleted)
@@ -1897,20 +1900,24 @@ void ServerApp::UpdatePartialOrders(int empire_id, const OrderSet& added, const 
 }
 
 void ServerApp::RevokeEmpireTurnReadyness(int empire_id)
-{ m_turn_sequence[empire_id].first = false; }
+{
+    const auto& psgd = m_turn_sequence[empire_id];
+    if (psgd)
+        psgd->m_ready = false;
+}
 
 bool ServerApp::AllOrdersReceived() {
     // debug output
     DebugLogger() << "ServerApp::AllOrdersReceived for turn: " << m_current_turn;
     bool all_orders_received = true;
     for (const auto& empire_orders : m_turn_sequence) {
-        if (!empire_orders.second.second) {
+        if (!empire_orders.second) {
             DebugLogger() << " ... no save data from empire id: " << empire_orders.first;
             all_orders_received = false;
-        } else if (!empire_orders.second.second->m_orders) {
+        } else if (!empire_orders.second->m_orders) {
             DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
             all_orders_received = false;
-        } else if (!empire_orders.second.first) {
+        } else if (!empire_orders.second->m_ready) {
             DebugLogger() << " ... not ready empire id: " << empire_orders.first;
             all_orders_received = false;
         } else {
@@ -3085,15 +3092,15 @@ void ServerApp::PreCombatProcessTurns() {
     // execute orders
     for (const auto& empire_orders : m_turn_sequence) {
         auto& save_game_data = empire_orders.second;
-        if (!save_game_data.second) {
+        if (!save_game_data) {
             DebugLogger() << "No SaveGameData for empire " << empire_orders.first;
             continue;
         }
-        if (!save_game_data.second->m_orders) {
+        if (!save_game_data->m_orders) {
             DebugLogger() << "No OrderSet for empire " << empire_orders.first;
             continue;
         }
-        for (const auto& id_and_order : *save_game_data.second->m_orders)
+        for (const auto& id_and_order : *save_game_data->m_orders)
             id_and_order.second->Execute();
     }
 
