@@ -70,6 +70,9 @@ Step by step procedure:
    * Unzip the SDK archive contents into the project directory.
    * Execute the `bootstrap.bat` within the project directory. This will clone
      the FreeOrion repository and place the dependencies at the correct place.
+   * If you want to create an out-of-source build using CMake, you should run 
+     `git clone https://github.com/freeorion/freeorion.git FreeOrion` in the 
+     `freeorion-project` directory, instead of running `bootstrap.bat`.
  * On Max OS X, Linux and other Operating Systems:
    * Navigate into the project directory.
    * Clone the project via Git:
@@ -111,6 +114,22 @@ Step by step procedure:
    * Compile the whole project by selecting the `Build` -> `Build Solution`
      menu entry.
 
+ * On Windows (cmake):
+   * Change into the `Freeorion` directory.
+   * Create a `build` directory, which will contain all compile FreeOrion
+     build artifacs.
+   * Change into the `build` directory on the command line.
+   * Execute cmake to generate Makefiles:
+
+     ```
+     cmake .. -G "Visual Studio 15 2017"
+     ```
+   * Compile the whole project by calling `MSBuild.exe -p:Configuration=Release FreeOrion.sln`
+     within the build directory. In case you want to utilize multiple CPU
+     cores, you can add the `-m` option to the command.
+   * Alternatively, you can compile the project by the Visual Studio GUI.
+
+
  * On Mac OS X:
    * Create a `build` directory, which will contain all compile FreeOrion
      build artifacs.
@@ -140,12 +159,17 @@ Step by step procedure:
      by invoking:
 
      ```
-     ln -s ../freeorion/default .
+     ln -s ../default .
      ```
 
 This will leave you with a build of FreeOrion executables.
 
- * `freeorion-project/FreeOrion` on Windows.
+ * `freeorion-project/FreeOrion` on Windows if you compile it with the 
+    standalone msvc project.
+ * `freeorion-project/Freeorion/build/Release` on Windows if you compile it 
+    with CMake. To run the executable without creating the symbolic link, you
+    can first change the directory to `freeorion-project/Freeorion`, then run
+    `./build/Release/FreeOrion.exe`.
  * `freeorion-project/build/Release` on Mac OS X.
  * `freeorion-project/freeorion/build` on Linux and other Operating Systems.
 
