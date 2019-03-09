@@ -175,6 +175,18 @@ namespace {
 
         return fatal;
     }
+
+    std::string GetAutoSaveFileName(int current_turn) {
+        std::string subdir = GetGalaxySetupData().GetGameUID();
+        boost::filesystem::path autosave_dir_path = GetServerSaveDir() / (subdir.empty() ? "auto" : subdir);
+        const auto& extension = MP_SAVE_FILE_EXTENSION;
+        // Add timestamp to autosave generated files
+        std::string datetime_str = FilenameTimestamp();
+
+        std::string save_filename = boost::io::str(boost::format("FreeOrion_%04d_%s%s") % current_turn % datetime_str % extension);
+        boost::filesystem::path save_path(autosave_dir_path / save_filename);
+        return save_path.string();
+    }
 }
 
 ////////////////////////////////////////////////////////////
@@ -325,7 +337,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         if (m_server.IsHostless()) {
             if (GetOptionsDB().Get<bool>("save.auto.hostless.enabled")) {
                 // save game on exit
-                std::string save_filename = GetAutoSaveFileName();
+                std::string save_filename = GetAutoSaveFileName(m_server.CurrentTurn());
                 ServerSaveGameData server_data(m_server.CurrentTurn());
                 int bytes_written = 0;
                 // save game...
@@ -492,17 +504,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
     return client_type != Networking::INVALID_CLIENT_TYPE;
 }
 
-std::string ServerFSM::GetAutoSaveFileName() {
-    std::string subdir = GetGalaxySetupData().GetGameUID();
-    boost::filesystem::path autosave_dir_path = GetServerSaveDir() / (subdir.empty() ? "auto" : subdir);
-    const auto& extension = MP_SAVE_FILE_EXTENSION;
-    // Add timestamp to autosave generated files
-    std::string datetime_str = FilenameTimestamp();
 
-    std::string save_filename = boost::io::str(boost::format("FreeOrion_%04d_%s%s") % m_server.CurrentTurn() % datetime_str % extension);
-    boost::filesystem::path save_path(autosave_dir_path / save_filename);
-    return save_path.string();
-}
 
 ////////////////////////////////////////////////////////////
 // Idle
@@ -2963,7 +2965,7 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
 
     if (server.IsHostless() && GetOptionsDB().Get<bool>("save.auto.hostless.enabled")) {
         PlayerConnectionPtr dummy_connection = nullptr;
-        post_event(SaveGameRequest(HostSaveGameInitiateMessage(context<ServerFSM>().GetAutoSaveFileName()), dummy_connection));
+        post_event(SaveGameRequest(HostSaveGameInitiateMessage(GetAutoSaveFileName(server.CurrentTurn())), dummy_connection));
     }
     return transit<WaitingForTurnEnd>();
 }
