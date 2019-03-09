@@ -278,8 +278,8 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
 
     // count of active (non-eliminated) empires, which currently have a connected human players
     int empire_connected_plr_cnt = 0;
-    // count of active (non-eliminated) empires, which currently have a disconnected human players
-    int empire_disconnected_plr_cnt = 0;
+    // count of active (non-eliminated) empires, which currently have a unconnected human players
+    int empire_unconnected_plr_cnt = 0;
     for (const auto& empire : Empires()) {
         if (!empire.second->Eliminated()) {
             switch (m_server.GetEmpireClientType(empire.first)) {
@@ -287,7 +287,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                 empire_connected_plr_cnt++;
                 break;
             case Networking::INVALID_CLIENT_TYPE:
-                empire_disconnected_plr_cnt++;
+                empire_unconnected_plr_cnt++;
                 break;
             case Networking::CLIENT_TYPE_AI_PLAYER:
                 // ignore
@@ -300,20 +300,20 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         }
     }
 
-    // Stop server if connected human player count is less than minimum
-    if (empire_connected_plr_cnt < GetOptionsDB().Get<int>("network.server.conn-human.min")) {
+    // Stop server if connected human player empires count is less than minimum
+    if (empire_connected_plr_cnt < GetOptionsDB().Get<int>("network.server.conn-human-empire-players.min")) {
         ErrorLogger(FSM) << "Too low connected human player " << empire_connected_plr_cnt
-                         << " expected " << GetOptionsDB().Get<int>("network.server.conn-human.min")
+                         << " expected " << GetOptionsDB().Get<int>("network.server.conn-human-empire-players.min")
                          << "; server terminating.";
         must_quit = true;
     }
 
-    // Stop server if disconnected human player count exceeds maximum and maximum is set
-    if (GetOptionsDB().Get<int>("network.server.disconn-human.max") > 0 &&
-        empire_disconnected_plr_cnt >= GetOptionsDB().Get<int>("network.server.disconn-human.max"))
+    // Stop server if unconnected human player empires count exceeds maximum and maximum is set
+    if (GetOptionsDB().Get<int>("network.server.unconn-human-empire-players.max") > 0 &&
+        empire_unconnected_plr_cnt >= GetOptionsDB().Get<int>("network.server.unconn-human-empire-players.max"))
     {
-        ErrorLogger(FSM) << "Too high disconnected human player " << empire_disconnected_plr_cnt
-                         << " expected " << GetOptionsDB().Get<int>("network.server.disconn-human.max")
+        ErrorLogger(FSM) << "Too high unconnected human player " << empire_unconnected_plr_cnt
+                         << " expected " << GetOptionsDB().Get<int>("network.server.unconn-human-empire-players.max")
                          << "; server terminating.";
         must_quit = true;
     }
@@ -748,6 +748,14 @@ void MPLobby::ValidateClientLimits() {
             ai_count++;
     }
 
+    const int human_connected_count = human_count;
+
+    // for load game consider as human all non-AI empires
+    // because human player could connect later in game
+    if (!m_lobby_data->m_new_game) {
+        human_count = m_lobby_data->m_save_game_empire_data.size() - ai_count;
+    }
+
     int min_ai = GetOptionsDB().Get<int>("network.server.ai.min");
     int max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
     if (max_ai >= 0 && max_ai < min_ai) {
@@ -762,11 +770,22 @@ void MPLobby::ValidateClientLimits() {
         max_human = min_human;
         GetOptionsDB().Set<int>("network.server.human.max", max_human);
     }
+    int min_connected_human_empire_players = GetOptionsDB().Get<int>("network.server.conn-human-empire-players.min");
+    int max_unconnected_human_empire_players = GetOptionsDB().Get<int>("network.server.unconn-human-empire-players.max");
 
     // restrict minimun number of human and ai players
     if (human_count < min_human) {
         m_lobby_data->m_start_locked = true;
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_HUMAN_PLAYERS");
+    } else if (human_connected_count < min_connected_human_empire_players) {
+        m_lobby_data->m_start_locked = true;
+        m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_CONNECTED_HUMAN_PLAYERS");
+    } else if (max_unconnected_human_empire_players > 0 &&
+        !m_lobby_data->m_new_game &&
+        static_cast<int>(m_lobby_data->m_save_game_empire_data.size()) - ai_count - human_connected_count >= max_unconnected_human_empire_players)
+    {
+        m_lobby_data->m_start_locked = true;
+        m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_TOO_MANY_UNCONNECTED_HUMAN_PLAYERS");
     } else if (max_human >= 0 && human_count > max_human) {
         m_lobby_data->m_start_locked = true;
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_TOO_MANY_HUMAN_PLAYERS");

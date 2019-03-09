@@ -60,8 +60,8 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         GetOptionsDB().Add<int>("network.server.ai.max", UserStringNop("OPTIONS_DB_MP_AI_MAX"), -1, Validator<int>());
         GetOptionsDB().Add<int>("network.server.human.min", UserStringNop("OPTIONS_DB_MP_HUMAN_MIN"), 0, Validator<int>());
         GetOptionsDB().Add<int>("network.server.human.max", UserStringNop("OPTIONS_DB_MP_HUMAN_MAX"), -1, Validator<int>());
-        GetOptionsDB().Add<int>("network.server.conn-human.min", UserStringNop("OPTIONS_DB_MP_CONN_HUMAN_MIN"), 1, Validator<int>());
-        GetOptionsDB().Add<int>("network.server.disconn-human.max", UserStringNop("OPTIONS_DB_MP_DISCONN_HUMAN_MAX"), 1, Validator<int>());
+        GetOptionsDB().Add<int>("network.server.conn-human-empire-players.min", UserStringNop("OPTIONS_DB_MP_CONN_HUMAN_MIN"), 1, Validator<int>());
+        GetOptionsDB().Add<int>("network.server.unconn-human-empire-players.max", UserStringNop("OPTIONS_DB_MP_UNCONN_HUMAN_MAX"), 1, Validator<int>());
         GetOptionsDB().Add<int>("network.server.cookies.expire-minutes", UserStringNop("OPTIONS_DB_COOKIES_EXPIRE"), 15, Validator<int>());
         GetOptionsDB().Add<bool>("network.server.publish-statistics", UserStringNop("OPTIONS_DB_PUBLISH_STATISTICS"), true, Validator<bool>());
         GetOptionsDB().Add("network.server.binary.enabled", UserStringNop("OPTIONS_DB_SERVER_BINARY_SERIALIZATION"), true);
