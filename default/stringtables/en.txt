@@ -1026,10 +1026,10 @@ ERROR_TOO_MANY_HUMAN_PLAYERS
 Too many human players.
 
 ERROR_NOT_ENOUGH_CONNECTED_HUMAN_PLAYERS
-Not enough connected human players.
+Not enough connected human empire players.
 
-ERROR_TOO_MANY_DISCONNECTED_HUMAN_PLAYERS
-Too many disconnected human players.
+ERROR_TOO_MANY_UNCONNECTED_HUMAN_PLAYERS
+Too many unconnected human empire players.
 
 ERROR_CONNECTION_WAS_REPLACED
 Your connection was replaced.
@@ -1393,8 +1393,8 @@ Limit the number of human players allowed in a multiplayer game. Set to -1 for u
 OPTIONS_DB_MP_CONN_HUMAN_MIN
 Minimum number of active human players, below which the server will stop the game being played.
 
-OPTIONS_DB_MP_DISCONN_HUMAN_MAX
-Maximum number of players, who control non-eliminated empires, who may be disconnected from the server before it stops the game being played. Disabled if 0, meaning the server will never stop the game due to empire-playing players being disconnected.
+OPTIONS_DB_MP_UNCONN_HUMAN_MAX
+Maximum number of players, who control non-eliminated empires, who may be unconnected from the server before it stops the game being played. Disabled if 0, meaning the server will never stop the game due to empire-playing players being unconnected.
 
 OPTIONS_DB_COOKIES_EXPIRE
 Count of minutes after the cookie record will be considered expired.
