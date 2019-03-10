@@ -343,6 +343,29 @@ namespace {
                                 nullptr,
                                 boost::make_unique<ValueRef::Constant<double>>(0.0)))))));
 
+    const std::unique_ptr<Condition::ConditionBase> if_source_is_planet_then_ships_else_all =
+        boost::make_unique<Condition::Or>(
+            boost::make_unique<Condition::And>(     // if source is a planet, match ships
+                boost::make_unique<Condition::Number>(
+                    boost::make_unique<ValueRef::Constant<int>>(1), // minimum objects matching subcondition
+                    nullptr,
+                    boost::make_unique<Condition::And>(             // subcondition: source is a planet
+                        boost::make_unique<Condition::Source>(),
+                        boost::make_unique<Condition::Type>(OBJ_PLANET)
+                    )
+                ),
+                boost::make_unique<Condition::Type>(OBJ_SHIP)
+            ),
+
+            boost::make_unique<Condition::Number>(  // if source is not a planet, match anything
+                nullptr,
+                boost::make_unique<ValueRef::Constant<int>>(0),     // maximum objects matching subcondition
+                boost::make_unique<Condition::And>(                 // subcondition: source is a planet
+                    boost::make_unique<Condition::Source>(),
+                    boost::make_unique<Condition::Type>(OBJ_PLANET)
+                )
+            )
+        );
 
     struct PartAttackInfo {
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
@@ -1313,7 +1336,7 @@ namespace {
 
     const Condition::ConditionBase* SpeciesTargettingCondition(const std::shared_ptr<UniverseObject>& attacker) {
         if (!attacker)
-            return nullptr;
+            return if_source_is_planet_then_ships_else_all.get();
 
         const Species* species = nullptr;
         if (auto attack_ship = std::dynamic_pointer_cast<Ship>(attacker))
@@ -1323,7 +1346,10 @@ namespace {
         else if (auto attack_fighter = std::dynamic_pointer_cast<Fighter>(attacker))
             species = GetSpecies(attack_fighter->SpeciesName());
 
-        return species ? species->CombatTargets() : nullptr;
+        if (!species || !species->CombatTargets())
+            return if_source_is_planet_then_ships_else_all.get();
+
+        return species->CombatTargets();
     }
 
     void ShootAllWeapons(std::shared_ptr<UniverseObject>& attacker,
@@ -1340,6 +1366,11 @@ namespace {
         }
 
         const auto* species_targetting_condition = SpeciesTargettingCondition(attacker);
+        if (!species_targetting_condition) {
+            ErrorLogger(combat) << "Null Species Targetting Condition...!?";
+            return;
+        }
+        TraceLogger(combat) << "Species targeting condition: " << species_targetting_condition->Dump();
 
         for (const PartAttackInfo& weapon : weapons) {
             // skip non-direct-fire weapons (as only direct fire weapons can "shoot").
@@ -1356,46 +1387,37 @@ namespace {
                 DebugLogger(combat) << "Weapon has no targeting condition?? Should have been set when initializing PartAttackInfo";
                 continue;
             }
-            TraceLogger(combat) << "Targeting condition: " << weapon.combat_targets->Dump();
+            TraceLogger(combat) << "Weapon targeting condition: " << weapon.combat_targets->Dump();
 
-            Condition::ObjectSet possible_targets;
-            possible_targets.reserve(combat_state.combat_info.objects.NumObjects());
+            Condition::ObjectSet targets;
+            targets.reserve(combat_state.combat_info.objects.NumObjects());
             for (auto it = combat_state.combat_info.objects.begin();
                  it != combat_state.combat_info.objects.end(); ++it)
-            { possible_targets.push_back(*it); }    // tried to do this with std::transform, but couldn't get it to compile
+            { targets.push_back(*it); }    // tried to do this with std::transform, but couldn't get it to compile
             //std::transform(combat_state.combat_info.objects.const_begin(),
             //               combat_state.combat_info.objects.const_end(),
-            //               std::back_inserter(possible_targets),
+            //               std::back_inserter(targets),
             //               boost::bind(&ObjectMap::const_iterator<>::operator*, _1));
 
-            Condition::ObjectSet matched_targets;
+            Condition::ObjectSet rejected_targets;
             // attacker is source object for condition evaluation. use combat-specific vis info.
             ScriptingContext context(attacker, combat_state.combat_info.empire_object_visibility);
 
-            weapon.combat_targets->Eval(context, matched_targets, possible_targets);
-            if (matched_targets.empty()) {
+            // apply species targeting condition and then weapon targeting condition
+            species_targetting_condition->Eval(context, targets, rejected_targets, Condition::MATCHES);
+            weapon.combat_targets->Eval(context, targets, rejected_targets, Condition::MATCHES);
+
+            if (targets.empty()) {
                 DebugLogger(combat) << "No objects matched targeting condition!";
                 continue;
             }
-            DebugLogger(combat) << matched_targets.size() << " objects matched targeting condition";
-            for (const auto& match : matched_targets)
+            DebugLogger(combat) << targets.size() << " objects matched targeting condition";
+            for (const auto& match : targets)
                 TraceLogger(combat) << " ... " << match->Name() << " (" << match->ID() << ")";
 
-
-            // if species has a targeting condition, apply that to the
-            // possible targets from the weapon
-
-            // option 1: species filter first
-            // exclude based on species or empire, then apply part conditions to exclude more
-            // can 
-
-            // option 2: part filter first
-            // exclude based on target type, then apply 
-
-
             // select target object from matches
-            int target_idx = RandInt(0, matched_targets.size() - 1);
-            auto target = *std::next(matched_targets.begin(), target_idx);
+            int target_idx = RandInt(0, targets.size() - 1);
+            auto target = *std::next(targets.begin(), target_idx);
 
             if (!target) {
                 ErrorLogger(combat) << "AutoResolveCombat selected null target object?";

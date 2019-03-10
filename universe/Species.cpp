@@ -153,9 +153,8 @@ void Species::Init() {
     }
     m_location->SetTopLevelContent(m_name);
 
-    if (!m_combat_targets)
-        m_combat_targets = boost::make_unique<Condition::All>();
-    m_combat_targets->SetTopLevelContent(m_name);
+    if (m_combat_targets)
+        m_combat_targets->SetTopLevelContent(m_name);
 
     TraceLogger() << "Species::Init: " << Dump();
 }
