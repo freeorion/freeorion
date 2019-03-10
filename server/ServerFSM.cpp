@@ -2950,10 +2950,12 @@ void WaitingForTurnEnd::SaveTimedoutHandler(const boost::system::error_code& err
     DebugLogger() << "Save timed out.";
     PlayerConnectionPtr dummy_connection = nullptr;
     Server().m_fsm->process_event(SaveGameRequest(HostSaveGameInitiateMessage(GetAutoSaveFileName(Server().CurrentTurn())), dummy_connection));
-    m_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.interval")));
-    m_timeout.async_wait(boost::bind(&WaitingForTurnEnd::SaveTimedoutHandler,
-                                     this,
-                                     boost::asio::placeholders::error));
+    if (GetOptionsDB().Get<int>("save.auto.interval") > 0) {
+        m_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.interval")));
+        m_timeout.async_wait(boost::bind(&WaitingForTurnEnd::SaveTimedoutHandler,
+                                         this,
+                                         boost::asio::placeholders::error));
+    }
 }
 
 ////////////////////////////////////////////////////////////
