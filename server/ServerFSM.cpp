@@ -2634,13 +2634,25 @@ sc::result PlayingGame::react(const LobbyUpdate& msg) {
 // WaitingForTurnEnd
 ////////////////////////////////////////////////////////////
 WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
-    my_base(c)
+    my_base(c),
+    m_timeout(Server().m_io_service)
 {
     TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd";
+    if (Server().IsHostless() && GetOptionsDB().Get<bool>("save.auto.hostless.enabled") &&
+        GetOptionsDB().Get<int>("save.auto.hostless.timeout") > 0)
+    {
+        m_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.hostless.timeout")));
+        m_timeout.async_wait(boost::bind(&WaitingForTurnEnd::SaveTimedoutHandler,
+                                         this,
+                                         boost::asio::placeholders::error));
+    }
 }
 
 WaitingForTurnEnd::~WaitingForTurnEnd()
-{ TraceLogger(FSM) << "(ServerFSM) ~WaitingForTurnEnd"; }
+{
+    TraceLogger(FSM) << "(ServerFSM) ~WaitingForTurnEnd";
+    m_timeout.cancel();
+}
 
 sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd.TurnOrders";
@@ -2931,6 +2943,20 @@ sc::result WaitingForTurnEnd::react(const SaveGameRequest& msg) {
     return discard_event();
 }
 
+void WaitingForTurnEnd::SaveTimedoutHandler(const boost::system::error_code& error) {
+    if (error) {
+        DebugLogger() << "Save timed out cancelled";
+        return;
+    }
+
+    DebugLogger() << "Save timed out.";
+    PlayerConnectionPtr dummy_connection = nullptr;
+    Server().m_fsm->process_event(SaveGameRequest(HostSaveGameInitiateMessage(GetAutoSaveFileName(Server().CurrentTurn())), dummy_connection));
+    m_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.hostless.timeout")));
+    m_timeout.async_wait(boost::bind(&WaitingForTurnEnd::SaveTimedoutHandler,
+                                     this,
+                                     boost::asio::placeholders::error));
+}
 
 ////////////////////////////////////////////////////////////
 // ProcessingTurn

@@ -1891,6 +1891,9 @@ Enable autosave when resigning or closing the game.
 OPTIONS_DB_AUTOSAVE_HOSTLESS
 Enable autosave in hostless mode.
 
+OPTIONS_DB_AUTOSAVE_HOSTLESS_TIMEOUT
+Duration in seconds when game will be saved in hostless mode after turn started. Prevents losing player orders on server crash. 0 if disabled.
+
 OPTIONS_DB_UI_MOUSE_LR_SWAP
 Swaps results of clicking left and right mouse buttons.
 

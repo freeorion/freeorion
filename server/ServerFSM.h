@@ -346,7 +346,10 @@ struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame> {
     sc::result react(const CheckTurnEndConditions& c);
     sc::result react(const SaveGameRequest& msg);
 
-    std::string m_save_filename;
+    void SaveTimedoutHandler(const boost::system::error_code& error);
+
+    std::string                        m_save_filename;
+    boost::asio::high_resolution_timer m_timeout;
 
     SERVER_ACCESSOR
 };
