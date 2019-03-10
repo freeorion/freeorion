@@ -1352,6 +1352,13 @@ namespace {
         return species->CombatTargets();
     }
 
+    void AddAllObjectsSet(ObjectMap& obj_map, Condition::ObjectSet& condition_non_targets) {
+        condition_non_targets.reserve(condition_non_targets.size() + obj_map.ExistingObjects().size());
+        std::transform(obj_map.ExistingObjects().begin(), obj_map.ExistingObjects().end(),  // ExistingObjects() here does not consider whether objects have been destroyed during this combat
+                       std::back_inserter(condition_non_targets),
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
+    }
+
     void ShootAllWeapons(std::shared_ptr<UniverseObject>& attacker,
                          AutoresolveInfo& combat_state, int bout, int round,
                          AttacksEventPtr& attacks_event,
@@ -1389,23 +1396,17 @@ namespace {
             }
             TraceLogger(combat) << "Weapon targeting condition: " << weapon.combat_targets->Dump();
 
-            Condition::ObjectSet targets;
-            targets.reserve(combat_state.combat_info.objects.NumObjects());
-            for (auto it = combat_state.combat_info.objects.begin();
-                 it != combat_state.combat_info.objects.end(); ++it)
-            { targets.push_back(*it); }    // tried to do this with std::transform, but couldn't get it to compile
-            //std::transform(combat_state.combat_info.objects.const_begin(),
-            //               combat_state.combat_info.objects.const_end(),
-            //               std::back_inserter(targets),
-            //               boost::bind(&ObjectMap::const_iterator<>::operator*, _1));
 
-            Condition::ObjectSet rejected_targets;
+            Condition::ObjectSet targets, rejected_targets;
+            AddAllObjectsSet(combat_state.combat_info.objects, targets);
+
             // attacker is source object for condition evaluation. use combat-specific vis info.
             ScriptingContext context(attacker, combat_state.combat_info.empire_object_visibility);
 
             // apply species targeting condition and then weapon targeting condition
             species_targetting_condition->Eval(context, targets, rejected_targets, Condition::MATCHES);
             weapon.combat_targets->Eval(context, targets, rejected_targets, Condition::MATCHES);
+
 
             if (targets.empty()) {
                 DebugLogger(combat) << "No objects matched targeting condition!";
