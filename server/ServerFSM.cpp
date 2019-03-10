@@ -2638,10 +2638,8 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
     m_timeout(Server().m_io_service)
 {
     TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd";
-    if (Server().IsHostless() && GetOptionsDB().Get<bool>("save.auto.hostless.enabled") &&
-        GetOptionsDB().Get<int>("save.auto.hostless.timeout") > 0)
-    {
-        m_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.hostless.timeout")));
+    if (GetOptionsDB().Get<int>("save.auto.timeout") > 0) {
+        m_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.timeout")));
         m_timeout.async_wait(boost::bind(&WaitingForTurnEnd::SaveTimedoutHandler,
                                          this,
                                          boost::asio::placeholders::error));
@@ -2952,7 +2950,7 @@ void WaitingForTurnEnd::SaveTimedoutHandler(const boost::system::error_code& err
     DebugLogger() << "Save timed out.";
     PlayerConnectionPtr dummy_connection = nullptr;
     Server().m_fsm->process_event(SaveGameRequest(HostSaveGameInitiateMessage(GetAutoSaveFileName(Server().CurrentTurn())), dummy_connection));
-    m_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.hostless.timeout")));
+    m_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.timeout")));
     m_timeout.async_wait(boost::bind(&WaitingForTurnEnd::SaveTimedoutHandler,
                                      this,
                                      boost::asio::placeholders::error));
