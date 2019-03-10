@@ -25,7 +25,7 @@ COMBAT_TARGETS_PLANET_WITH_DEFENSE
 '''         And [
             Planet
             Or [
-               Not Shields high = 0
+               Not Shield high = 0
                Not Defense high = 0
             ]
         ]
