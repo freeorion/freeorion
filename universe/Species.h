@@ -168,13 +168,13 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void    AddHomeworld(int homeworld_id);
-    void    RemoveHomeworld(int homeworld_id);
-    void    SetHomeworlds(const std::set<int>& homeworld_ids);
-    void    SetEmpireOpinions(const std::map<int, double>& opinions);
-    void    SetEmpireOpinion(int empire_id, double opinion);
-    void    SetOtherSpeciesOpinions(const std::map<std::string, double>& opinions);
-    void    SetOtherSpeciesOpinion(const std::string& species_name, double opinion);
+    void AddHomeworld(int homeworld_id);
+    void RemoveHomeworld(int homeworld_id);
+    void SetHomeworlds(const std::set<int>& homeworld_ids);
+    void SetEmpireOpinions(const std::map<int, double>& opinions);
+    void SetEmpireOpinion(int empire_id, double opinion);
+    void SetOtherSpeciesOpinions(const std::map<std::string, double>& opinions);
+    void SetOtherSpeciesOpinion(const std::string& species_name, double opinion);
     //@}
 
 private:
@@ -303,29 +303,28 @@ public:
     /** sets all species to have no homeworlds.  this is useful when generating
       * a new game, when any homeworlds species had in the previous game should
       * be removed before the new game's homeworlds are added. */
-    void    ClearSpeciesHomeworlds();
+    void ClearSpeciesHomeworlds();
 
     /** sets the opinions of species (indexed by name string) of empires (indexed
       * by id) as a double-valued number. */
-    void    SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, float>>& species_empire_opinions);
-    void    SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, float opinion);
+    void SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, float>>& species_empire_opinions);
+    void SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, float opinion);
 
     /** sets the opinions of species (indexed by name string) of other species
       * (indexed by name string) as a double-valued number. */
-    void    SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, float>>& species_species_opinions);
-    void    SetSpeciesSpeciesOpinion(const std::string& opinionated_species, const std::string& rated_species, float opinion);
+    void SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, float>>& species_species_opinions);
+    void SetSpeciesSpeciesOpinion(const std::string& opinionated_species, const std::string& rated_species, float opinion);
 
     /** clears all species opinion data */
-    void    ClearSpeciesOpinions();
+    void ClearSpeciesOpinions();
 
-    void    UpdatePopulationCounter();
+    void UpdatePopulationCounter();
 
     std::map<std::string, std::map<int, float>>&        SpeciesObjectPopulations(int encoding_empire = ALL_EMPIRES);
     std::map<std::string, std::map<std::string, int>>&  SpeciesShipsDestroyed(int encoding_empire = ALL_EMPIRES);
 
     /** Sets species types to the value of \p future. */
-    FO_COMMON_API void SetSpeciesTypes(Pending::Pending<std::pair<SpeciesTypeMap, CensusOrder>>&& future);
-
+    void SetSpeciesTypes(Pending::Pending<std::pair<SpeciesTypeMap, CensusOrder>>&& future);
     //@}
 
 private:
