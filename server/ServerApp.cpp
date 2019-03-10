@@ -1345,9 +1345,9 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             ErrorLogger() << "LoadGameInit got inconsistent empire ids between player save game data and result of PlayerEmpireID";
         }
 
-        // Revoke readiness only for online players so them could re-make orders of current turn.
-        // Without it server would advance turn because saves are made when all players sent orders
-        // and became ready.
+        // Revoke readiness only for online players so they can redo orders for the current turn.
+        // Without doing it, server would immediatly advance the turn because saves are made when
+        // all players sent orders and became ready.
         RevokeEmpireTurnReadyness(empire_id);
 
         // restore saved orders.  these will be re-executed on client and
