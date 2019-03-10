@@ -34,7 +34,7 @@ namespace {
         db.Add("save.format.binary.enabled",                UserStringNop("OPTIONS_DB_BINARY_SERIALIZATION"),   false);
         db.Add("save.format.xml.zlib.enabled",              UserStringNop("OPTIONS_DB_XML_ZLIB_SERIALIZATION"), true);
         db.Add("save.auto.hostless.enabled",                UserStringNop("OPTIONS_DB_AUTOSAVE_HOSTLESS"),      true);
-        db.Add<int>("save.auto.timeout",                    UserStringNop("OPTIONS_DB_AUTOSAVE_TIMEOUT"),       0, Validator<int>());
+        db.Add<int>("save.auto.interval",                   UserStringNop("OPTIONS_DB_AUTOSAVE_INTERVAL"),      0, Validator<int>());
 
         // AI Testing options-- the following options are to facilitate AI testing and do not currently have an options page widget;
         // they are intended to be changed via the command line and are not currently storable in the configuration file.
