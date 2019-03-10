@@ -2892,26 +2892,14 @@ sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
     return discard_event();
 }
 
-////////////////////////////////////////////////////////////
-// WaitingForTurnEndIdle
-////////////////////////////////////////////////////////////
-WaitingForTurnEndIdle::WaitingForTurnEndIdle(my_context c) :
-    my_base(c)
-{
-    TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEndIdle";
-}
-
-WaitingForTurnEndIdle::~WaitingForTurnEndIdle()
-{ TraceLogger(FSM) << "(ServerFSM) ~WaitingForTurnEndIdle"; }
-
-sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
-    TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEndIdle.SaveGameRequest";
+sc::result WaitingForTurnEnd::react(const SaveGameRequest& msg) {
+    TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd.SaveGameRequest";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     if (player_connection && !server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
-        ErrorLogger(FSM) << "WaitingForTurnEndIdle.SaveGameRequest : Player #" << player_connection->PlayerID()
+        ErrorLogger(FSM) << "WaitingForTurnEnd.SaveGameRequest : Player #" << player_connection->PlayerID()
                          << " attempted to initiate a game save, but is not the host.  Ignoring request connection.";
         player_connection->SendMessage(ErrorMessage(UserStringNop("NON_HOST_SAVE_REQUEST_IGNORED"), false));
         return discard_event();
@@ -2922,7 +2910,7 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
     ServerSaveGameData server_data(server.m_current_turn);
 
     // retreive requested save name from Base state, which should have been
-    // set in WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
+    // set in WaitingForTurnEnd::react(const SaveGameRequest& msg)
     int bytes_written = 0;
 
     // save game...

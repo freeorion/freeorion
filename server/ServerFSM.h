@@ -117,11 +117,6 @@ struct ShuttingDownServer;
 struct WaitingForTurnEnd;
 struct ProcessingTurn;
 
-// Substates of WaitingForTurnEnd
-struct WaitingForTurnEndIdle;
-struct WaitingForSaveData;
-
-
 #define SERVER_ACCESSOR private: ServerApp& Server() { return context<ServerFSM>().Server(); }
 
 /** The finite state machine that represents the server's operation. */
@@ -333,12 +328,13 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
 /** The substate of PlayingGame in which players are playing their turns and
   * the server is waiting for all players to finish their moves, after which
   * the server will process the turn. */
-struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForTurnEndIdle> {
+struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame> {
     typedef boost::mpl::list<
         sc::custom_reaction<TurnOrders>,
         sc::custom_reaction<TurnPartialOrders>,
         sc::custom_reaction<RevokeReadiness>,
-        sc::custom_reaction<CheckTurnEndConditions>
+        sc::custom_reaction<CheckTurnEndConditions>,
+        sc::custom_reaction<SaveGameRequest>
     > reactions;
 
     WaitingForTurnEnd(my_context c);
@@ -348,23 +344,9 @@ struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForT
     sc::result react(const TurnPartialOrders& msg);
     sc::result react(const RevokeReadiness& msg);
     sc::result react(const CheckTurnEndConditions& c);
+    sc::result react(const SaveGameRequest& msg);
 
     std::string m_save_filename;
-
-    SERVER_ACCESSOR
-};
-
-
-/** The default substate of WaitingForTurnEnd. */
-struct WaitingForTurnEndIdle : sc::state<WaitingForTurnEndIdle, WaitingForTurnEnd> {
-    typedef boost::mpl::list<
-        sc::custom_reaction<SaveGameRequest>
-    > reactions;
-
-    WaitingForTurnEndIdle(my_context c);
-    ~WaitingForTurnEndIdle();
-
-    sc::result react(const SaveGameRequest& msg);
 
     SERVER_ACCESSOR
 };
