@@ -1262,6 +1262,9 @@ Start server in single player host mode. This only allows clients on localhost t
 OPTIONS_DB_HOSTLESS
 Start server in hostless mode. Server accepts players in the multiplayer lobby, and returns to the lobby after the game session ends.
 
+OPTIONS_DB_HOSTLESS_AUTOSTART_LOAD
+Start server in hostless mode and load and start game from provided save file. Server accepts players in the playing game, and returns to the lobby after the game session ends.
+
 OPTIONS_DB_SKIP_CHECKSUM
 Skip comparing the resource directory checksums.  This allows faster startup when client and server are on the same machine, using the same resource directory.
 

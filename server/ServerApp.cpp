@@ -104,10 +104,11 @@ ServerApp::ServerApp() :
     InfoLogger() << FreeOrionVersionString();
     LogDependencyVersions();
 
-    m_fsm->initiate();
-
-    // Start parsing content
+    // Start parsing content before FSM initialization
+    // to have data initialized before autostart execution
     StartBackgroundParsing();
+
+    m_fsm->initiate();
 
     Empires().DiplomaticStatusChangedSignal.connect(
         boost::bind(&ServerApp::HandleDiplomaticStatusChange, this, _1, _2));

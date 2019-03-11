@@ -622,6 +622,59 @@ sc::result Idle::react(const Error& msg) {
 }
 
 sc::result Idle::react(const Hostless&) {
+    std::string autostart_load_filename = GetOptionsDB().Get<std::string>("hostless.autostart.load");
+    if (!autostart_load_filename.empty()) {
+        if (GetOptionsDB().Get<int>("network.server.conn-human-empire-players.min") > 0) {
+            throw std::invalid_argument("Autostart load file was choosed but the server wasn't allowed to play game without connected players");
+        }
+        std::shared_ptr<ServerSaveGameData> server_save_game_data(new ServerSaveGameData());
+        std::vector<PlayerSaveGameData> player_save_game_data;
+
+        try {
+            ServerApp& server = Server();
+
+            LoadGame(autostart_load_filename,   *server_save_game_data,
+                     player_save_game_data,     GetUniverse(),
+                     Empires(),                 GetSpeciesManager(),
+                     GetCombatLogManager(),     server.m_galaxy_setup_data);
+            int seed = 0;
+            try {
+                seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.m_seed);
+            } catch (...) {
+                try {
+                    boost::hash<std::string> string_hash;
+                    std::size_t h = string_hash(server.m_galaxy_setup_data.m_seed);
+                    seed = static_cast<unsigned int>(h);
+                } catch (...) {}
+            }
+            DebugLogger(FSM) << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed << "  interpreted as actual seed: " << seed;
+            Seed(seed);
+
+            std::shared_ptr<MultiplayerLobbyData> lobby_data(new MultiplayerLobbyData());
+            // fill lobby data with AI to start them with server
+            int ai_next_index = 1;
+            for (const auto& psgd : player_save_game_data) {
+                if (psgd.m_client_type != Networking::CLIENT_TYPE_AI_PLAYER)
+                    continue;
+                PlayerSetupData player_setup_data;
+                player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
+                player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++);
+                player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                player_setup_data.m_save_game_empire_id = psgd.m_empire_id;
+                lobby_data->m_players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
+            }
+
+            // copy locally stored data to common server fsm context so it can be
+            // retreived in WaitingForMPGameJoiners
+            context<ServerFSM>().m_lobby_data = lobby_data;
+            context<ServerFSM>().m_player_save_game_data = player_save_game_data;
+            context<ServerFSM>().m_server_save_game_data = server_save_game_data;
+        } catch (const std::exception& e) {
+            throw e;
+        }
+
+        return transit<WaitingForMPGameJoiners>();
+    }
     return transit<MPLobby>();
 }
 
