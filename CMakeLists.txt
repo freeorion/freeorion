@@ -118,6 +118,12 @@ if(NOT APPLE)
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif()
 
+if(MSVC)
+    # Remove default debug flags /Zi and /MDd to allow project-specific debug flag
+    STRING(REGEX REPLACE " /Zi" "" CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG})
+    STRING(REGEX REPLACE " /MDd" "" CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG})
+endif()
+
 add_compile_options(
     # Enable (almost) all warnings on compilers
     # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wall-316
@@ -143,6 +149,12 @@ add_compile_options(
 
     # Fix Fatal Error C1128: number of sections exceeded object file format limit : compile with /bigobj on SerializeEmpire.cpp
     $<$<CXX_COMPILER_ID:MSVC>:/bigobj>
+
+    # Produce pdb files in Debug configuration
+    $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:DEBUG>>:/Zi>
+ 
+    # Use the multithread-specific and DLL-specific version of the run-time library in Debug Configuration
+    $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:DEBUG>>:/MD>
 )
 
 set_property(DIRECTORY APPEND
@@ -388,6 +400,18 @@ set_property(TARGET freeorionparseobj
     POSITION_INDEPENDENT_CODE ON
 )
 
+if(MSVC)
+    # The debug information produced in this project is over the MSVC linking limit, remove it
+    get_target_property(PARSEOBJ_COMPILE_OPTIONS freeorionparseobj COMPILE_OPTIONS)
+    list(REMOVE_ITEM PARSEOBJ_COMPILE_OPTIONS 
+        "$<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:DEBUG>>:/Zi>"
+    )
+    set_target_properties(freeorionparseobj 
+        PROPERTIES
+        COMPILE_OPTIONS "${PARSEOBJ_COMPILE_OPTIONS}"
+    )
+endif()
+
 target_compile_options(freeorionparseobj
     PRIVATE
         $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
@@ -414,6 +438,18 @@ if(WIN32)
     set_property(TARGET freeorionparse
         PROPERTY
         OUTPUT_NAME Parsers
+    )
+endif()
+
+if(MSVC)
+    # The debug information produced in this project is over the MSVC linking limit, remove it
+    get_target_property(PARSE_COMPILE_OPTIONS freeorionparse COMPILE_OPTIONS)
+    list(REMOVE_ITEM PARSE_COMPILE_OPTIONS 
+        "$<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:DEBUG>>:/Zi>"
+    )
+    set_target_properties(freeorionparse
+        PROPERTIES
+        COMPILE_OPTIONS "${PARSEOBJ_COMPILE_OPTIONS}"
     )
 endif()
 
