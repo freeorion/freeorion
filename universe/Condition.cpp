@@ -10063,32 +10063,34 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
         // stop if the operand condition matches at least one item
         // if the operand condition does not match, restore the matches set by moving the temporary non-matches back
         ObjectSet temp_non_matches;
-        temp_non_matches.reserve(matches.size());
+        temp_non_matches.reserve(non_matches.size());
+        matches.reserve(std::max(matches.size(),non_matches.size()));
         // try matching operand conditions until one mateches
         // use a fresh set of possible matches
         for (auto& operand : m_operands) {
-            // move back temp_non_matches
+            // move back temp_non_matches from checking previous operand
             FCMoveContent(temp_non_matches, matches);
-            // move non matches from_matches to temp_non_matches
+
+            // try to apply the current operand
             operand->Eval(local_context, matches, temp_non_matches, MATCHES);
             if (!matches.empty()) {
-                break;
+                // Select this operand, temp_non_matches do not match
+                FCMoveContent(temp_non_matches, non_matches);
+                return;
             }
-            // Check if other LocalCandidates (in the non_matches set) match
+            // look for matches in the non_matches input set to figure out if we need to apply this operand
             operand->Eval(local_context, matches, non_matches, NON_MATCHES);
             if (!matches.empty()) {
-                // This operand should return the result, but no matches exist
-                // So all objects should go into the non_matches set
-                // move all matches to non_matches here
+                // This operand should be applied, but no matches exist in the matches innput set
+                // So all objects need to be moved into the non_matches set
                 FCMoveContent(matches, non_matches);
-                // stop finding the operand
-                // temp_non_matches must still be moved to non_matches
-                break;
+                FCMoveContent(temp_non_matches, non_matches);
+                return;
             }
         }
 
-        // non matching items were already moved from matches to temp_non_matches
-        // move non matching items from temp_non_matches to non_matches
+        // No operand condition was selected, or there are no matches. Move all objects to non_matches
+        // matches input set is already empty, else it's content would need to be moved
         FCMoveContent(temp_non_matches, non_matches);
     }
 }
