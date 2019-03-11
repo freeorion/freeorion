@@ -10028,36 +10028,36 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
     // or if no candidate matches A or B but any candidate matches C, then all candidates that do not match C are matched.
     // If no candidate matches A, B, or C, then all candidates are matched.
     if (search_domain == NON_MATCHES) {
-        // check all operand conditions on all objects in the non matches set
-        // stop if the operand condition has at least one match
-        // Return non-matches if there are any
+        // check each operand condition on objects in the input matches and non_matches sets, until an operand condition matches an object.
+        // if an operand condition is selected, apply it to the input non_matches set, moving matching candidates to matches.
+        // if no operand condition is selected, because no candidate is matched by any operand condition, then do nothing.
         ObjectSet temp_objects;
         temp_objects.reserve(std::max(matches.size(),non_matches.size()));
         // try matching operand conditions until one matches
         for (auto& operand : m_operands) {
-            // recreate state before checking last operand. Do it here to save moves if no operand gets selected
-            FCMoveContent(temp_objects, matches);
-
             operand->Eval(local_context, temp_objects, non_matches, NON_MATCHES);
             if (!temp_objects.empty()) {
-                // have selected the current operand condition to use, so apply it to the NON_MATCHES candidate set.
-                // in this case we alread did the application, so we use the results
+                // Select the current operand condition. Apply it to the NON_MATCHES candidate set.
+                // We alread did the application, so we use the results
                 FCMoveContent(temp_objects, matches);
                 return;
             }
-            // Also have to look at the other local candidates if there was a match
+            // Check if the operand condition matches an object in the other input set
             operand->Eval(local_context, matches, temp_objects, MATCHES);
             if (!matches.empty()) {
-                // have selected the current operand condition to use, so apply it to the NON_MATCHES candidate set.
-                // We already did the application before, but there were no matches. Move all objects to non_matches.
-                break;
+                // Select the current operand condition. Apply it to the NON_MATCHES candidate set.
+                // We already did the application before, but there were no matches.
+                // restore state before checking the operand.
+                FCMoveContent(temp_objects, matches);
+                return;
             }
 
+            // restore state before checking the operand.
+            FCMoveContent(temp_objects, matches);
             // try the next operand
         }
-        // No operand condition was selected, or there are no matches. Move all objects to non_matches
-        FCMoveContent(matches, non_matches);
-        FCMoveContent(temp_objects, non_matches);
+
+        // No operand condition was selected, nothing changed, done.
     } else /*(search_domain == MATCHES)*/ {
         // check all operand conditions on all objects in the matches set, collecting non matches temporarily
         // stop if the operand condition matches at least one item
@@ -10068,9 +10068,6 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
         // try matching operand conditions until one mateches
         // use a fresh set of possible matches
         for (auto& operand : m_operands) {
-            // move back temp_non_matches from checking previous operand
-            FCMoveContent(temp_non_matches, matches);
-
             // try to apply the current operand
             operand->Eval(local_context, matches, temp_non_matches, MATCHES);
             if (!matches.empty()) {
@@ -10081,17 +10078,18 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
             // look for matches in the non_matches input set to figure out if we need to apply this operand
             operand->Eval(local_context, matches, non_matches, NON_MATCHES);
             if (!matches.empty()) {
-                // This operand should be applied, but no matches exist in the matches innput set
+                // This operand should be applied, but no matching objects exist in the matches innput set
                 // So all objects need to be moved into the non_matches set
                 FCMoveContent(matches, non_matches);
                 FCMoveContent(temp_non_matches, non_matches);
                 return;
             }
+
+            // restore state before checking the operand
+            FCMoveContent(temp_non_matches, matches);
         }
 
-        // No operand condition was selected, or there are no matches. Move all objects to non_matches
-        // matches input set is already empty, else it's content would need to be moved
-        FCMoveContent(temp_non_matches, non_matches);
+        // No operand condition was selected. Nothing needed to be applied. State is restored. Done.
     }
 }
 
