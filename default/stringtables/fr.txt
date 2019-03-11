@@ -1025,6 +1025,12 @@ Pas assez de joueurs humains.
 ERROR_TOO_MANY_HUMAN_PLAYERS
 Trop de joueurs humains.
 
+ERROR_NOT_ENOUGH_CONNECTED_HUMAN_PLAYERS
+Pas assez de joueurs humains connectés contrôlant un empire.
+
+ERROR_TOO_MANY_UNCONNECTED_HUMAN_PLAYERS
+Trop de joueurs humains non-connectés contrôlant un empire.
+
 ERROR_CONNECTION_WAS_REPLACED
 Votre connection a été mise à jour.
 
@@ -1387,8 +1393,8 @@ Limite le nombre de joueurs humains dans une partie multijoueurs. Une valeur de 
 OPTIONS_DB_MP_CONN_HUMAN_MIN
 Nombre minimum de joueurs humains actifs, au-dessous duquel le serveur stoppera la partie en cours.
 
-OPTIONS_DB_MP_DISCONN_HUMAN_MAX
-Nombre maximum de joueurs, contrôlant des empires non-éliminés, pouvant être déconnectés du serveur avant que ce dernier ne stoppe la partie en cours. Désactivé pour une valeur de 0, c'est-à-dire que le serveur ne stoppera jamais la partie en raison de joueurs contrôlant un empire et ayant été déconnectés.
+OPTIONS_DB_MP_UNCONN_HUMAN_MAX
+Nombre maximum de joueurs, contrôlant des empires non-éliminés, pouvant être non-connectés au serveur avant que ce dernier ne stoppe la partie en cours. Désactivé pour une valeur de 0, c'est-à-dire que le serveur ne stoppera jamais la partie en raison de joueurs contrôlant un empire et étant non-connectés.
 
 OPTIONS_DB_COOKIES_EXPIRE
 Valeur en minutes au-delà de laquelle le cookie enregistré sera considéré comme expiré.
@@ -1884,6 +1890,9 @@ Active une sauvegarde automatique lors d'un abandon ou de la fermeture du jeu.
 
 OPTIONS_DB_AUTOSAVE_HOSTLESS
 Active la sauvegarde automatique en mode sans hôte.
+
+OPTIONS_DB_AUTOSAVE_INTERVAL
+Délai en secondes après le tour le plus récent ou dernière sauvegarde automatique, jusqu'à la prochaine sauvegarde automatique. Évite la perte des ordres du joueurs lors d'un crash de serveur. 0 si désactivé.
 
 OPTIONS_DB_UI_MOUSE_LR_SWAP
 Si activé, les effets des clics droit et gauche de la souris seront inversés.
@@ -4857,6 +4866,9 @@ Chasseur
 
 #ENC_TEXTURE_INFO
 #%4% -- %1% x %2% px @ %3% BPP<img src = "%4%"></img>
+
+ENC_VECTOR_TEXTURE_INFO
+%4% -- %1% x %2% px avec %3% formes<img src = "%4%"></img>
 
 ENC_INDEX
 Index de l'Encyclopédie
