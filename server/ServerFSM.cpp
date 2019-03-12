@@ -622,7 +622,7 @@ sc::result Idle::react(const Error& msg) {
 }
 
 sc::result Idle::react(const Hostless&) {
-    std::string autostart_load_filename = GetOptionsDB().Get<std::string>("hostless.autostart.load");
+    std::string autostart_load_filename = GetOptionsDB().Get<std::string>("load");
     if (!autostart_load_filename.empty()) {
         if (GetOptionsDB().Get<int>("network.server.conn-human-empire-players.min") > 0) {
             throw std::invalid_argument("Autostart load file was choosed but the server wasn't allowed to play game without connected players");

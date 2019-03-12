@@ -1262,9 +1262,6 @@ Start server in single player host mode. This only allows clients on localhost t
 OPTIONS_DB_HOSTLESS
 Start server in hostless mode. Server accepts players in the multiplayer lobby, and returns to the lobby after the game session ends.
 
-OPTIONS_DB_HOSTLESS_AUTOSTART_LOAD
-Start server in hostless mode and load and start game from provided save file. Server accepts players in the playing game, and returns to the lobby after the game session ends.
-
 OPTIONS_DB_SKIP_CHECKSUM
 Skip comparing the resource directory checksums.  This allows faster startup when client and server are on the same machine, using the same resource directory.
 
@@ -1931,7 +1928,7 @@ OPTIONS_DB_UI_SITREP_ICONSIZE
 Sets the sitrep icon width and height; default 16 (min 12, max 64).
 
 OPTIONS_DB_LOAD
-Loads the specified single-player save game.
+Loads and starts the specified single-player or multi-player save game.
 
 OPTIONS_DB_EFFECTS_THREADS_UI_DESC
 Specifies number of threads to use for effects processing in the user interface. More than one thread may lead to unpredictable crashes.

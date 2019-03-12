@@ -65,7 +65,6 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         GetOptionsDB().Add<int>("network.server.cookies.expire-minutes", UserStringNop("OPTIONS_DB_COOKIES_EXPIRE"), 15, Validator<int>());
         GetOptionsDB().Add<bool>("network.server.publish-statistics", UserStringNop("OPTIONS_DB_PUBLISH_STATISTICS"), true, Validator<bool>());
         GetOptionsDB().Add("network.server.binary.enabled", UserStringNop("OPTIONS_DB_SERVER_BINARY_SERIALIZATION"), true);
-        GetOptionsDB().Add<std::string>("hostless.autostart.load", UserStringNop("OPTIONS_DB_HOSTLESS_AUTOSTART_LOAD"), std::string());
 
         // if config.xml and persistent_config.xml are present, read and set options entries
         GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());
