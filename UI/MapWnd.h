@@ -100,9 +100,6 @@ public:
      * and on top.*/
     bool                        InDesignViewMode() const;
 
-    /** same, but for government window. */
-    bool                        InGovernmentViewMode() const;
-
     /** returns the currently set moderator action in this MapWnd's
       * ModeratorActionsWnd. */
     ModeratorActionSetting      GetModeratorActionSetting() const;
