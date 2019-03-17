@@ -17,8 +17,7 @@ public:
     //!@}
 
     /** \name Mutators */ //@{
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-
+    void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void            Refresh();
     //!@}
 
@@ -28,7 +27,7 @@ public:
     mutable boost::signals2::signal<void ()>    ClosingSignal;
 
 private:
-    void CloseClicked() override;
+    void            CloseClicked() override;
 
     void            DoLayout();
 
@@ -43,9 +42,9 @@ private:
     void            FilterClicked();
     void            CollapseExpandClicked();
 
-    std::shared_ptr<ObjectListBox>              m_list_box;
-    std::shared_ptr<GG::Button>                 m_filter_button;
-    std::shared_ptr<GG::Button>                 m_collapse_button;
+    std::shared_ptr<ObjectListBox>  m_list_box;
+    std::shared_ptr<GG::Button>     m_filter_button;
+    std::shared_ptr<GG::Button>     m_collapse_button;
 };
 
 #endif // _ObjectListWnd_h_

@@ -2377,7 +2377,6 @@ void ObjectListWnd::CompleteConstruction() {
     AttachChild(m_collapse_button);
 
     CUIWnd::CompleteConstruction();
-
     DoLayout();
 }
 
