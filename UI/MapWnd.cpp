@@ -84,6 +84,7 @@ namespace {
     const std::string MODERATOR_WND_NAME = "map.moderator";
     const std::string COMBAT_REPORT_WND_NAME = "combat.summary";
     const std::string MAP_SIDEPANEL_WND_NAME = "map.sidepanel";
+    const std::string GOVERNMENT_WND_NAME = "map.government";
 
     const GG::Y     ZOOM_SLIDER_HEIGHT(200);
     const GG::Y     SCALE_LINE_HEIGHT(20);
@@ -315,7 +316,7 @@ namespace {
         FleetDetailBrowseWnd(int empire_id, GG::X width) :
             GG::BrowseInfoWnd(GG::X0, GG::Y0, width, GG::Y(ClientUI::Pts())),
             m_empire_id(empire_id),
-            m_margin(5)
+            m_margin(LAYOUT_MARGIN)
         {
             GG::X value_col_width{(m_margin * 3) + (ClientUI::Pts() * 3)};
             m_col_widths = {width - value_col_width, value_col_width};
@@ -1515,6 +1516,18 @@ void MapWnd::CompleteConstruction() {
     // Combat report
     m_combat_report_wnd = GG::Wnd::Create<CombatReportWnd>(COMBAT_REPORT_WND_NAME);
 
+    // government window
+    m_government_wnd = GG::Wnd::Create<GovernmentWnd>(GOVERNMENT_WND_NAME);
+    // Wnd is manually closed by user
+    m_government_wnd->ClosingSignal.connect(
+        boost::bind(&MapWnd::HideGovernment, this));
+    if (m_government_wnd->Visible()) {
+        PushWndStack(m_government_wnd);
+        m_btn_government->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government_mouseover.png")));
+        m_btn_government->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government.png")));
+    }
+
+
     // position CUIWnds owned by the MapWnd
     InitializeWindows();
 
@@ -1563,12 +1576,6 @@ void MapWnd::CompleteConstruction() {
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
 
-    // government window
-    m_government_wnd = GG::Wnd::Create<GovernmentWnd>(AppWidth(), AppHeight() - m_toolbar->Height());
-    m_government_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
-    GG::GUI::GetGUI()->Register(m_government_wnd);
-    m_government_wnd->Hide();
-
     //////////////////
     // General Gamestate response signals
     //////////////////
@@ -1596,7 +1603,7 @@ void MapWnd::DoLayout() {
     m_research_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
     m_production_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
     m_design_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
-    m_government_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
+    m_government_wnd->ValidatePosition();
     m_sitrep_panel->ValidatePosition();
     m_object_list_wnd->ValidatePosition();
     m_pedia_panel->ValidatePosition();
@@ -1634,27 +1641,31 @@ void MapWnd::InitializeWindows() {
 
     // encyclopedia panel
     const GG::Pt pedia_ul(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->Bottom() + SITREP_PANEL_HEIGHT);
-    const GG::Pt pedia_wh(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    const GG::Pt pedia_wh(SITREP_PANEL_WIDTH*3/2, SITREP_PANEL_HEIGHT*3);
 
     // objects list
-    const GG::Pt object_list_ul(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN));
-    const GG::Pt object_list_wh(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    const GG::Pt object_list_ul(SCALE_LINE_MAX_WIDTH/2, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN));
+    const GG::Pt object_list_wh(SITREP_PANEL_WIDTH*2, SITREP_PANEL_HEIGHT*3);
 
     // moderator actions
     const GG::Pt moderator_ul(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN));
     const GG::Pt moderator_wh(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
 
     // Combat report
-    // These values were formerly in UI/CombatReport/CombatReportWnd.cpp
     const GG::Pt combat_log_ul(GG::X(150), GG::Y(50));
     const GG::Pt combat_log_wh(GG::X(400), GG::Y(300));
 
-    m_side_panel->       InitSizeMove(sidepanel_ul,   sidepanel_ul + sidepanel_wh);
-    m_sitrep_panel->     InitSizeMove(sitrep_ul,      sitrep_ul + sitrep_wh);
-    m_pedia_panel->      InitSizeMove(pedia_ul,       pedia_ul + pedia_wh);
-    m_object_list_wnd->  InitSizeMove(object_list_ul, object_list_ul + object_list_wh);
-    m_moderator_wnd->    InitSizeMove(moderator_ul,   moderator_ul + moderator_wh);
-    m_combat_report_wnd->InitSizeMove(combat_log_ul,  combat_log_ul + combat_log_wh);
+    // government window
+    const GG::Pt gov_ul(GG::X0, m_scale_line->Bottom() + m_scale_line->Height() + GG::Y(LAYOUT_MARGIN*2));
+    const GG::Pt gov_wh(SITREP_PANEL_WIDTH*2, SITREP_PANEL_HEIGHT*3);
+
+    m_side_panel->       InitSizeMove(sidepanel_ul,     sidepanel_ul + sidepanel_wh);
+    m_sitrep_panel->     InitSizeMove(sitrep_ul,        sitrep_ul + sitrep_wh);
+    m_pedia_panel->      InitSizeMove(pedia_ul,         pedia_ul + pedia_wh);
+    m_object_list_wnd->  InitSizeMove(object_list_ul,   object_list_ul + object_list_wh);
+    m_moderator_wnd->    InitSizeMove(moderator_ul,     moderator_ul + moderator_wh);
+    m_combat_report_wnd->InitSizeMove(combat_log_ul,    combat_log_ul + combat_log_wh);
+    m_government_wnd->   InitSizeMove(gov_ul,           gov_ul + gov_wh);
 }
 
 GG::Pt MapWnd::ClientUpperLeft() const
@@ -2520,6 +2531,7 @@ void MapWnd::RegisterWindows() {
         app->Register(m_side_panel);
         app->Register(m_combat_report_wnd);
         app->Register(m_moderator_wnd);
+        app->Register(m_government_wnd);
         // message and player list wnds are managed by the HumanClientFSM
     }
 }
@@ -2534,6 +2546,7 @@ void MapWnd::RemoveWindows() {
         app->Remove(m_side_panel);
         app->Remove(m_combat_report_wnd);
         app->Remove(m_moderator_wnd);
+        app->Remove(m_government_wnd);
         // message and player list wnds are managed by the HumanClientFSM
     }
 }
@@ -6102,8 +6115,6 @@ bool MapWnd::ReturnToMap() {
         ToggleResearch();
     } else if (wnd == m_design_wnd) {
         ToggleDesign();
-    } else if (wnd == m_government_wnd) {
-        ToggleGovernment();
     } else if (wnd == m_production_wnd) {
         ToggleProduction();
     } else if (wnd == m_pedia_panel) {
@@ -6123,6 +6134,8 @@ bool MapWnd::ReturnToMap() {
         HideEmpires();
     } else if (cui && wnd == cui->GetMessageWnd()) {
         HideMessages();
+    } else if (wnd == m_government_wnd) {
+        HideGovernment();
     } else {
         ErrorLogger() << "Unknown GG::Wnd " << wnd->Name() << " found in MapWnd::m_wnd_stack";
     }
@@ -7268,8 +7281,7 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     // the list of windows for which the fleet shortcuts are blacklisted.
     std::initializer_list<const GG::Wnd*> bl = {m_research_wnd.get(),
                                                 m_production_wnd.get(),
-                                                m_design_wnd.get(),
-                                                m_government_wnd.get()};
+                                                m_design_wnd.get()};
 
     hkm->Connect(boost::bind(&MapWnd::ZoomToPrevFleet, this), "ui.map.fleet.zoom.prev",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));

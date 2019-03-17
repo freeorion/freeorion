@@ -1,7 +1,6 @@
 #include "GovernmentWnd.h"
 
 #include "ClientUI.h"
-#include "CUIWnd.h"
 #include "CUIControls.h"
 #include "QueueListBox.h"   // for PromptRow
 #include "IconTextBrowseWnd.h"
@@ -39,8 +38,6 @@ struct Availability {
 namespace {
     const std::string   POLICY_CONTROL_DROP_TYPE_STRING = "Policy Control";
     const std::string   EMPTY_STRING = "";
-    const std::string   GOV_MAIN_WND_NAME = "government.edit";
-    const std::string   GOV_POLICY_PALETTE_WND_NAME = "government.policies";
     const GG::X         POLICY_CONTROL_WIDTH(54);
     const GG::Y         POLICY_CONTROL_HEIGHT(54);
     const GG::X         SLOT_CONTROL_WIDTH(60);
@@ -547,10 +544,10 @@ void PoliciesListBox::HideAllCategories(bool refresh_list) {
 //////////////////////////////////////////////////
 /** Contains graphical list of PolicyControl which can be dragged and dropped
   * onto slots to assign policies to those slots */
-class GovernmentWnd::PolicyPalette : public CUIWnd {
+class GovernmentWnd::PolicyPalette : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    PolicyPalette(const std::string& config_name);
+    PolicyPalette(GG::X w, GG::Y h);
     void CompleteConstruction() override;
     //@}
 
@@ -581,22 +578,18 @@ private:
     void HandlePolicyClicked(const Policy*, GG::Flags<GG::ModKey>);
     void HandlePolicyRightClicked(const Policy*, const GG::Pt& pt);
 
-    std::shared_ptr<PoliciesListBox>                        m_policies_list;
+    std::shared_ptr<PoliciesListBox>                        m_policies_list = nullptr;
     std::map<std::string, std::shared_ptr<CUIStateButton>>  m_category_buttons;
 
     // Holds the state of the availabilities filter.
-    AvailabilityManager                         m_availabilities_state;
+    AvailabilityManager                         m_availabilities_state{false, true, false};
     std::tuple<std::shared_ptr<CUIStateButton>, // first not used for obsolete for policies
                std::shared_ptr<CUIStateButton>,
-               std::shared_ptr<CUIStateButton>> m_availabilities_buttons;
+               std::shared_ptr<CUIStateButton>> m_availabilities_buttons{nullptr, nullptr, nullptr};
 };
 
-GovernmentWnd::PolicyPalette::PolicyPalette(const std::string& config_name) :
-    CUIWnd(UserString("GOVERNMENT_WND_POLICY_PALETTE_TITLE"),
-           GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE,
-           config_name),
-    m_policies_list(nullptr),
-    m_availabilities_state(false, true, false)
+GovernmentWnd::PolicyPalette::PolicyPalette(GG::X w, GG::Y h) :
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::ONTOP | GG::INTERACTIVE)
 {}
 
 void GovernmentWnd::PolicyPalette::CompleteConstruction() {
@@ -636,14 +629,16 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
     }
 
     auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
-    m_available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"),
+                                                         GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_available_button);
     m_available_button->CheckedSignal.connect(
         boost::bind(&GovernmentWnd::PolicyPalette::ToggleAvailability, this, Availability::Available));
     m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
 
     auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
-    m_unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"),
+                                                           GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_unavailable_button);
     m_unavailable_button->CheckedSignal.connect(
         boost::bind(&GovernmentWnd::PolicyPalette::ToggleAvailability, this, Availability::Future));
@@ -653,14 +648,13 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
     ShowAllCategories(false);
     Populate();
 
-    CUIWnd::CompleteConstruction();
+    GG::Wnd::CompleteConstruction();
 
     DoLayout();
-    SaveDefaultedOptions();
 }
 
 void GovernmentWnd::PolicyPalette::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    CUIWnd::SizeMove(ul, lr);
+    GG::Wnd::SizeMove(ul, lr);
     DoLayout();
 }
 
@@ -1137,10 +1131,10 @@ void PoliciesListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptable
 //////////////////////////////////////////////////
 // GovernmentWnd::MainPanel                     //
 //////////////////////////////////////////////////
-class GovernmentWnd::MainPanel : public CUIWnd {
+class GovernmentWnd::MainPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    MainPanel(const std::string& config_name);
+    MainPanel(GG::X w, GG::Y h);
     void CompleteConstruction() override;
     //@}
 
@@ -1149,7 +1143,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    //void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void Sanitize();
@@ -1180,17 +1174,12 @@ private:
     int FindEmptySlotForPolicy(const Policy* policy) const;
 
     std::vector<std::shared_ptr<PolicySlotControl>> m_slots;
-    std::shared_ptr<GG::StaticGraphic>              m_background_image;
-    std::shared_ptr<GG::Button>                     m_clear_button;
+    std::shared_ptr<GG::StaticGraphic>              m_background_image = nullptr;
+    std::shared_ptr<GG::Button>                     m_clear_button = nullptr;
 };
 
-GovernmentWnd::MainPanel::MainPanel(const std::string& config_name) :
-    CUIWnd(UserString("GOVERNMENT_WND_MAIN_PANEL_TITLE"),
-           GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE,
-           config_name),
-    m_slots(),
-    m_background_image(nullptr),
-    m_clear_button(nullptr)
+GovernmentWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::ONTOP | GG::INTERACTIVE)
 {}
 
 void GovernmentWnd::MainPanel::CompleteConstruction() {
@@ -1202,10 +1191,9 @@ void GovernmentWnd::MainPanel::CompleteConstruction() {
     m_clear_button->LeftClickedSignal.connect(
         boost::bind(&GovernmentWnd::MainPanel::ClearPolicies, this));
 
-    CUIWnd::CompleteConstruction();
+    GG::Wnd::CompleteConstruction();
 
     DoLayout();
-    SaveDefaultedOptions();
 }
 
 std::vector<std::string> GovernmentWnd::MainPanel::Policies() const {
@@ -1220,12 +1208,9 @@ std::vector<std::string> GovernmentWnd::MainPanel::Policies() const {
     return retval;
 }
 
-void GovernmentWnd::MainPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ CUIWnd::LClick(pt, mod_keys); }
-
 void GovernmentWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
-    CUIWnd::SizeMove(ul, lr);
+    GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size())
         DoLayout();
 }
@@ -1463,23 +1448,18 @@ void GovernmentWnd::MainPanel::AcceptDrops(const GG::Pt& pt,
 //////////////////////////////////////////////////
 // GovernmentWnd                                //
 //////////////////////////////////////////////////
-GovernmentWnd::GovernmentWnd(GG::X w, GG::Y h) :
-    GG::Wnd(GG::X0, GG::Y0, w, h, GG::ONTOP | GG::INTERACTIVE),
-    m_policy_palette(nullptr),
-    m_main_panel(nullptr)
+GovernmentWnd::GovernmentWnd(const std::string& config_name) :
+    CUIWnd(UserString("MAP_BTN_GOVERNMENT"),
+           GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
+           config_name, false)
 {}
 
 void GovernmentWnd::CompleteConstruction() {
-    GG::Wnd::CompleteConstruction();
-
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(ClipToClient);
 
-    m_main_panel = GG::Wnd::Create<MainPanel>(GOV_MAIN_WND_NAME);
-    m_policy_palette = GG::Wnd::Create<PolicyPalette>(GOV_POLICY_PALETTE_WND_NAME);
-    InitializeWindows();
-    HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
-        boost::bind(&GovernmentWnd::InitializeWindows, this));
+    m_main_panel = GG::Wnd::Create<MainPanel>(GG::X(100), GG::Y(100));
+    m_policy_palette = GG::Wnd::Create<PolicyPalette>(GG::X(100), GG::Y(100));
 
     AttachChild(m_main_panel);
     m_main_panel->Sanitize();
@@ -1489,21 +1469,20 @@ void GovernmentWnd::CompleteConstruction() {
         boost::bind(&GovernmentWnd::MainPanel::AddPolicy, m_main_panel, _1));
     m_policy_palette->ClearPolicySignal.connect(
         boost::bind(&GovernmentWnd::MainPanel::ClearPolicy, m_main_panel, _1));
+
+    CUIWnd::CompleteConstruction();
+    DoLayout();
 }
 
 void GovernmentWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
-    GG::Wnd::SizeMove(ul, lr);
-    if (old_size != Size()) {
-        m_policy_palette->ValidatePosition();
-        m_main_panel->ValidatePosition();
-    }
+    CUIWnd::SizeMove(ul, lr);
+    if (old_size != Size())
+        DoLayout();
 }
 
-void GovernmentWnd::Reset() {
-    m_policy_palette->Populate();
-    m_main_panel->Sanitize();
-}
+void GovernmentWnd::Reset()
+{ Refresh(); }
 
 void GovernmentWnd::Sanitize()
 { m_main_panel->Sanitize(); }
@@ -1513,28 +1492,20 @@ void GovernmentWnd::Refresh() {
     m_main_panel->Refresh();
 }
 
-void GovernmentWnd::Render()
-{ GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), GG::CLR_ZERO, 0); }
+void GovernmentWnd::DoLayout() {
+    const GG::Pt palette_ul(GG::X0, GG::Y0);
+    const GG::Pt palette_lr(palette_ul + GG::Pt(ClientWidth(), ClientHeight() / 2));
 
-void GovernmentWnd::InitializeWindows() {
-    const GG::X selector_width = GG::X(250);
-    const GG::X main_width = ClientWidth() - selector_width;
+    const GG::Pt main_ul(palette_ul + GG::Pt(GG::X0, ClientHeight() / 2));
+    const GG::Pt main_lr(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET));
 
-    const GG::Pt pedia_ul(selector_width, GG::Y0);
-    const GG::Pt pedia_wh(5*main_width/11, 2*ClientHeight()/5);
-
-    const GG::Pt main_ul(selector_width, pedia_ul.y + pedia_wh.y);
-    const GG::Pt main_wh(main_width, ClientHeight() - main_ul.y);
-
-    const GG::Pt palette_ul(selector_width + pedia_wh.x, pedia_ul.y);
-    const GG::Pt palette_wh(main_width - pedia_wh.x, pedia_wh.y);
-
-    const GG::Pt selector_ul(GG::X0, GG::Y0);
-    const GG::Pt selector_wh(selector_width, ClientHeight());
-
-    m_main_panel->      InitSizeMove(main_ul,      main_ul + main_wh);
-    m_policy_palette->  InitSizeMove(palette_ul,   palette_ul + palette_wh);
+    m_main_panel->SizeMove(main_ul, main_lr);
+    m_policy_palette->SizeMove(palette_ul, palette_lr);
 }
 
 void GovernmentWnd::EnableOrderIssuing(bool enable/* = true*/)
 {}
+
+void GovernmentWnd::CloseClicked()
+{ ClosingSignal(); }
+
