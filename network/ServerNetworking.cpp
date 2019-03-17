@@ -686,12 +686,11 @@ void ServerNetworking::Init() {
 }
 
 void ServerNetworking::AcceptNextConnection() {
-    PlayerConnectionPtr next_connection =
-        PlayerConnection::NewConnection(
-            m_player_connection_acceptor.get_executor().context(),
-            m_nonplayer_message_callback,
-            m_player_message_callback,
-            boost::bind(&ServerNetworking::DisconnectImpl, this, _1));
+    auto next_connection = PlayerConnection::NewConnection(
+        m_player_connection_acceptor.get_executor().context(),
+        m_nonplayer_message_callback,
+        m_player_message_callback,
+        boost::bind(&ServerNetworking::DisconnectImpl, this, _1));
     next_connection->EventSignal.connect(
         boost::bind(&ServerNetworking::EnqueueEvent, this, _1));
     m_player_connection_acceptor.async_accept(
