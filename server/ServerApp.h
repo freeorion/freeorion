@@ -333,7 +333,7 @@ private:
       * between two empires. Updates those empires of the change. */
     void    HandleDiplomaticMessageChange(int empire1_id, int empire2_id);
 
-    boost::asio::io_service m_io_service;
+    boost::asio::io_context m_io_context;
     boost::asio::signal_set m_signals;
 
     Universe                m_universe;

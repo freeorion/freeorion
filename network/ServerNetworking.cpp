@@ -23,7 +23,7 @@ namespace {
     on the local network and sends out responses to them. */
 class DiscoveryServer {
 public:
-    DiscoveryServer(boost::asio::io_service& io_service);
+    DiscoveryServer(boost::asio::io_context& io_context);
 
 private:
     void Listen();
@@ -52,12 +52,12 @@ namespace {
 ////////////////////////////////////////////////////////////////////////////////
 // PlayerConnection
 ////////////////////////////////////////////////////////////////////////////////
-PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
+PlayerConnection::PlayerConnection(boost::asio::io_context& io_context,
                                    MessageAndConnectionFn nonplayer_message_callback,
                                    MessageAndConnectionFn player_message_callback,
                                    ConnectionFn disconnected_callback) :
-    m_service(io_service),
-    m_socket(io_service),
+    m_service(io_context),
+    m_socket(io_context),
     m_ID(INVALID_PLAYER_ID),
     m_new_connection(true),
     m_client_type(Networking::INVALID_CLIENT_TYPE),
@@ -215,13 +215,13 @@ const std::string& PlayerConnection::ClientVersionString() const
 bool PlayerConnection::ClientVersionStringMatchesThisServer() const
 { return !m_client_version_string.empty() && m_client_version_string == FreeOrionVersionString(); }
 
-PlayerConnectionPtr PlayerConnection::NewConnection(boost::asio::io_service& io_service,
+PlayerConnectionPtr PlayerConnection::NewConnection(boost::asio::io_context& io_context,
                                                     MessageAndConnectionFn nonplayer_message_callback,
                                                     MessageAndConnectionFn player_message_callback,
                                                     ConnectionFn disconnected_callback)
 {
     return PlayerConnectionPtr(
-        new PlayerConnection(io_service, nonplayer_message_callback, player_message_callback,
+        new PlayerConnection(io_context, nonplayer_message_callback, player_message_callback,
                              disconnected_callback));
 }
 
@@ -393,8 +393,8 @@ void PlayerConnection::AsyncErrorHandler(boost::system::error_code handled_error
 ////////////////////////////////////////////////////////////////////////////////
 // DiscoveryServer
 ////////////////////////////////////////////////////////////////////////////////
-DiscoveryServer::DiscoveryServer(boost::asio::io_service& io_service) :
-    m_socket(io_service, udp::endpoint(udp::v4(), Networking::DiscoveryPort()))
+DiscoveryServer::DiscoveryServer(boost::asio::io_context& io_context) :
+    m_socket(io_context, udp::endpoint(udp::v4(), Networking::DiscoveryPort()))
 { Listen(); }
 
 void DiscoveryServer::Listen() {
@@ -421,20 +421,20 @@ bool ServerNetworking::EstablishedPlayer::operator()(
     const PlayerConnectionPtr& player_connection) const
 { return player_connection->EstablishedPlayer(); }
 
-ServerNetworking::ServerNetworking(boost::asio::io_service& io_service,
+ServerNetworking::ServerNetworking(boost::asio::io_context& io_context,
                                    MessageAndConnectionFn nonplayer_message_callback,
                                    MessageAndConnectionFn player_message_callback,
                                    ConnectionFn disconnected_callback) :
     m_host_player_id(Networking::INVALID_PLAYER_ID),
     m_discovery_server(nullptr),
-    m_player_connection_acceptor(io_service),
+    m_player_connection_acceptor(io_context),
     m_nonplayer_message_callback(nonplayer_message_callback),
     m_player_message_callback(player_message_callback),
     m_disconnected_callback(disconnected_callback)
 {
     if (!GetOptionsDB().Get<bool>("singleplayer")) {
         // only start discovery service for multiplayer servers.
-        m_discovery_server = new DiscoveryServer(io_service);
+        m_discovery_server = new DiscoveryServer(io_context);
     }
 
     Init();
@@ -673,7 +673,7 @@ void ServerNetworking::Init() {
 void ServerNetworking::AcceptNextConnection() {
     PlayerConnectionPtr next_connection =
         PlayerConnection::NewConnection(
-            m_player_connection_acceptor.get_io_service(),
+            m_player_connection_acceptor.get_executor().context(),
             m_nonplayer_message_callback,
             m_player_message_callback,
             boost::bind(&ServerNetworking::DisconnectImpl, this, _1));

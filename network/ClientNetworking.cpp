@@ -42,10 +42,10 @@ namespace {
     public:
         using ServerList = std::vector<std::pair<boost::asio::ip::address, std::string>>;
 
-        ServerDiscoverer(boost::asio::io_service& io_service) :
-            m_io_service(&io_service),
-            m_timer(io_service),
-            m_socket(io_service),
+        ServerDiscoverer(boost::asio::io_context& io_context) :
+            m_io_context(&io_context),
+            m_timer(io_context),
+            m_socket(io_context),
             m_recv_buf(),
             m_receive_successful(false),
             m_server_name()
@@ -56,7 +56,7 @@ namespace {
 
         void DiscoverServers() {
             using namespace boost::asio::ip;
-            udp::resolver resolver(*m_io_service);
+            udp::resolver resolver(*m_io_context);
             udp::resolver::query query(udp::v4(), "255.255.255.255",
                                        std::to_string(Networking::DiscoveryPort()),
                                        resolver_query_base::address_configured |
@@ -81,8 +81,8 @@ namespace {
                                 boost::asio::placeholders::bytes_transferred));
                 m_timer.expires_from_now(std::chrono::seconds(2));
                 m_timer.async_wait(boost::bind(&ServerDiscoverer::CloseSocket, this));
-                m_io_service->run();
-                m_io_service->reset();
+                m_io_context->run();
+                m_io_context->reset();
                 if (m_receive_successful) {
                     boost::asio::ip::address address = m_server_name == "localhost" ?
                         boost::asio::ip::address::from_string("127.0.0.1") :
@@ -121,7 +121,7 @@ namespace {
         void CloseSocket()
         { m_socket.close(); }
 
-        boost::asio::io_service*       m_io_service;
+        boost::asio::io_context*       m_io_context;
         boost::asio::high_resolution_timer m_timer;
         boost::asio::ip::udp::socket   m_socket;
 
@@ -233,7 +233,7 @@ private:
     int                             m_host_player_id;
     Networking::AuthRoles           m_roles;
 
-    boost::asio::io_service         m_io_service;
+    boost::asio::io_context         m_io_context;
     boost::asio::ip::tcp::socket    m_socket;
 
     // m_mutex guards m_incoming_message, m_rx_connected and m_tx_connected which are written by
@@ -262,8 +262,8 @@ private:
 ClientNetworking::Impl::Impl() :
     m_player_id(Networking::INVALID_PLAYER_ID),
     m_host_player_id(Networking::INVALID_PLAYER_ID),
-    m_io_service(),
-    m_socket(m_io_service),
+    m_io_context(),
+    m_socket(m_io_context),
     m_rx_connected(false),
     m_tx_connected(false),
     m_incoming_messages(m_mutex)
@@ -302,7 +302,7 @@ bool ClientNetworking::Impl::HasAuthRole(Networking::RoleType role) const
 ClientNetworking::ServerNames ClientNetworking::Impl::DiscoverLANServerNames() {
     if (!IsConnected())
         return ServerNames();
-    ServerDiscoverer discoverer(m_io_service);
+    ServerDiscoverer discoverer(m_io_context);
     discoverer.DiscoverServers();
     ServerNames names;
     for (const auto& server : discoverer.Servers()) {
@@ -325,7 +325,7 @@ bool ClientNetworking::Impl::ConnectToServer(
     auto deadline = start_time + timeout;
 
     using namespace boost::asio::ip;
-    tcp::resolver resolver(m_io_service);
+    tcp::resolver resolver(m_io_context);
     tcp::resolver::query query(ip_address,
                                std::to_string(Networking::MessagePort()),
                                boost::asio::ip::resolver_query_base::numeric_service);
@@ -347,8 +347,8 @@ bool ClientNetworking::Impl::ConnectToServer(
                 m_socket.async_connect(*it, boost::bind(&ClientNetworking::Impl::HandleConnection, this,
                                                         &it,
                                                         boost::asio::placeholders::error));
-                m_io_service.run();
-                m_io_service.reset();
+                m_io_context.run();
+                m_io_context.reset();
 
                 auto connection_time = Clock::now() - start_time;
 
@@ -435,7 +435,7 @@ void ClientNetworking::Impl::DisconnectFromServer() {
     }
 
     if (is_open)
-        m_io_service.post(boost::bind(&ClientNetworking::Impl::DisconnectFromServerImpl, this));
+        m_io_context.post(boost::bind(&ClientNetworking::Impl::DisconnectFromServerImpl, this));
 }
 
 void ClientNetworking::Impl::SetPlayerID(int player_id) {
@@ -455,7 +455,7 @@ void ClientNetworking::Impl::SendMessage(const Message& message) {
         return;
     }
     TraceLogger(network) << "ClientNetworking::SendMessage() : sending message " << message;
-    m_io_service.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, message));
+    m_io_context.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, message));
 }
 
 boost::optional<Message> ClientNetworking::Impl::GetMessage() {
@@ -504,12 +504,12 @@ void ClientNetworking::Impl::NetworkingThread(const std::shared_ptr<const Client
         if (!m_outgoing_messages.empty())
             AsyncWriteMessage();
         AsyncReadMessage(protect_from_destruction_in_other_thread);
-        m_io_service.run();
+        m_io_context.run();
     } catch (const boost::system::system_error& error) {
         HandleException(error);
     }
     m_outgoing_messages.clear();
-    m_io_service.reset();
+    m_io_context.reset();
     { // Mutex scope
         boost::mutex::scoped_lock lock(m_mutex);
         m_rx_connected = false;

@@ -2703,7 +2703,7 @@ const auto SHUTDOWN_POLLING_TIME = std::chrono::milliseconds(5000);
 ShuttingDownServer::ShuttingDownServer(my_context c) :
     my_base(c),
     m_player_id_ack_expected(),
-    m_timeout(Server().m_io_service, Clock::now() + SHUTDOWN_POLLING_TIME)
+    m_timeout(Server().m_io_context, Clock::now() + SHUTDOWN_POLLING_TIME)
 {
     TraceLogger(FSM) << "(ServerFSM) ShuttingDownServer";
 

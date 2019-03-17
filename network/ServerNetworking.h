@@ -58,7 +58,7 @@ public:
     typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::const_iterator>    const_established_iterator;
 
     /** \name Structors */ //@{
-    ServerNetworking(boost::asio::io_service& io_service,
+    ServerNetworking(boost::asio::io_context& io_context,
                      MessageAndConnectionFn nonplayer_message_callback,
                      MessageAndConnectionFn player_message_callback,
                      ConnectionFn disconnected_callback);
@@ -286,12 +286,12 @@ public:
 
     /** Creates a new PlayerConnection and returns it as a shared_ptr. */
     static PlayerConnectionPtr
-    NewConnection(boost::asio::io_service& io_service, MessageAndConnectionFn nonplayer_message_callback,
+    NewConnection(boost::asio::io_context& io_context, MessageAndConnectionFn nonplayer_message_callback,
                   MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
 
 private:
 
-    PlayerConnection(boost::asio::io_service& io_service, MessageAndConnectionFn nonplayer_message_callback,
+    PlayerConnection(boost::asio::io_context& io_context, MessageAndConnectionFn nonplayer_message_callback,
                      MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
     void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
     void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
@@ -299,7 +299,7 @@ private:
     bool SyncWriteMessage(const Message& message);
     void AsyncErrorHandler(boost::system::error_code handled_error, boost::system::error_code error);
 
-    boost::asio::io_service&        m_service;
+    boost::asio::io_context&        m_service;
     boost::asio::ip::tcp::socket    m_socket;
     Message::HeaderBuffer           m_incoming_header_buffer;
     Message                         m_incoming_message;
