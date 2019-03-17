@@ -181,7 +181,12 @@ private:
     int                             m_host_player_id;
 
     DiscoveryServer*                m_discovery_server;
+#if BOOST_VERSION >= 107000
+    boost::asio::basic_socket_acceptor<boost::asio::ip::tcp, boost::asio::io_context::executor_type>
+                                    m_player_connection_acceptor;
+#else
     boost::asio::ip::tcp::acceptor  m_player_connection_acceptor;
+#endif
     PlayerConnections               m_player_connections;
     std::queue<NullaryFn>           m_event_queue;
     std::unordered_map<boost::uuids::uuid, CookieData, boost::hash<boost::uuids::uuid>> m_cookies;
