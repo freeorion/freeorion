@@ -78,8 +78,8 @@ namespace {
 ////////////////////////////////////////////////
 ServerApp::ServerApp() :
     IApp(),
-    m_signals(m_io_service, SIGINT, SIGTERM),
-    m_networking(m_io_service,
+    m_signals(m_io_context, SIGINT, SIGTERM),
+    m_networking(m_io_context,
                  boost::bind(&ServerApp::HandleNonPlayerMessage, this, _1, _2),
                  boost::bind(&ServerApp::HandleMessage, this, _1, _2),
                  boost::bind(&ServerApp::PlayerDisconnected, this, _1)),
@@ -298,7 +298,7 @@ void ServerApp::Run() {
     DebugLogger() << "FreeOrion server waiting for network events";
     try {
         while (1) {
-            if (m_io_service.run_one())
+            if (m_io_context.run_one())
                 m_networking.HandleNextEvent();
             else
                 break;

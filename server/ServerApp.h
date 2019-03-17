@@ -296,7 +296,7 @@ private:
       * an empire is eliminated from the game */
     void    RemoveEmpireTurn(int empire_id);
 
-    boost::asio::io_service m_io_service;
+    boost::asio::io_context m_io_context;
     boost::asio::signal_set m_signals;
 
     Universe                m_universe;
