@@ -10063,31 +10063,34 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
         // Check each operand condition on objects in the input matches and non_matches sets, until an operand condition matches an object.
         // If an operand condition is selected, apply it to the input matches set, moving non-matching candidates to non_matches.
         // If no operand condition is selected, because no candidate is matched by any operand condition, then move all of the input matches into non_matches.
-        ObjectSet temp_non_matches;
-        temp_non_matches.reserve(non_matches.size());
-        matches.reserve(std::max(matches.size(),non_matches.size()));
+        ObjectSet temp_objects;
+        temp_objects.reserve(std::max(matches.size(),non_matches.size()));
 
         for (auto& operand : m_operands) {
             // Apply the current operand optimistically. Select it if there are any matching objects in the input sets 
-            operand->Eval(local_context, matches, temp_non_matches, MATCHES);
-            if (!matches.empty()) {
-                // Select and apply this operand. Objects in temp_non_matches do not match this condition.
-                FCMoveContent(temp_non_matches, non_matches);
+            operand->Eval(local_context, temp_objects, matches, NON_MATCHES);
+            // temp_objects are objects from input matches set which also match the operand
+            // matches are objects from input matches set which do not match the operand
+            if (!temp_objects.empty()) {
+                // Select and apply this operand. Objects in matches do not match this condition.
+                non_matches.reserve(matches.size() + non_matches.size());
+                FCMoveContent(matches, non_matches);
+                FCMoveContent(temp_objects, matches);
                 return;
             }
             // Select this operand if there are matching objects in the non_matches input set.
-            // Note: the empty matches set is used to temporarily store matches from the non_matches input set
-            operand->Eval(local_context, matches, non_matches, NON_MATCHES);
-            if (!matches.empty()) {
+            operand->Eval(local_context, temp_objects, non_matches, NON_MATCHES);
+            if (!temp_objects.empty()) {
                 // Select and apply this operand. But no matching objects exist in the matches input set,
                 // so all objects need to be moved into the non_matches set
+                non_matches.reserve(matches.size() + non_matches.size() + temp_objects.size());
                 FCMoveContent(matches, non_matches);
-                FCMoveContent(temp_non_matches, non_matches);
+                FCMoveContent(temp_objects, non_matches);
                 return;
             }
 
             // Operand was not selected. Restore state before. Try next operand.
-            FCMoveContent(temp_non_matches, matches);
+            FCMoveContent(temp_objects, matches);
         }
 
         // No operand condition was selected. Nothing needed to be applied. State is restored. Done.
