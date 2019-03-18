@@ -10075,7 +10075,8 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
                 FCMoveContent(temp_non_matches, non_matches);
                 return;
             }
-            // Select this operand if there are matching objects in the non_matches input set. 
+            // Select this operand if there are matching objects in the non_matches input set.
+            // Note: the empty matches set is used to temporarily store matches from the non_matches input set
             operand->Eval(local_context, matches, non_matches, NON_MATCHES);
             if (!matches.empty()) {
                 // Select and apply this operand. But no matching objects exist in the matches input set,
