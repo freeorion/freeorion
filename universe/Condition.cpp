@@ -10039,6 +10039,7 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
             if (!temp_objects.empty()) {
                 // Select the current operand condition. Apply it to the NON_MATCHES candidate set.
                 // We alread did the application, so we use the results
+                matches.reserve(temp_objects.size() + matches.size());
                 FCMoveContent(temp_objects, matches);
                 return;
             }
