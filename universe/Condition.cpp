@@ -7,6 +7,7 @@
 #include "Pathfinder.h"
 #include "Universe.h"
 #include "Building.h"
+#include "Fighter.h"
 #include "Fleet.h"
 #include "Ship.h"
 #include "ObjectMap.h"
@@ -5110,10 +5111,18 @@ namespace {
             if (!candidate)
                 return false;
 
-            // is it a ship?
-            auto ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
+            std::shared_ptr<const Ship> ship = nullptr;
+            if (auto fighter = std::dynamic_pointer_cast<const ::Fighter>(candidate)) {
+                // it is a fighter
+                ship = Objects().Object<Ship>(fighter->LaunchedFrom());
+            } else {
+                ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
+            }
+
+            // is it a ship
             if (!ship)
                 return false;
+
             // with a valid design?
             const ShipDesign* design = ship->Design();
             if (!design)
@@ -9952,6 +9961,243 @@ unsigned int Not::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_operand);
 
     TraceLogger() << "GetCheckSum(Not): retval: " << retval;
+    return retval;
+}
+
+///////////////////////////////////////////////////////////
+// OrderedAlternativesOf
+///////////////////////////////////////////////////////////
+void FCMoveContent(Condition::ObjectSet& from_set, Condition::ObjectSet& to_set) {
+    to_set.insert(to_set.end(),
+                  std::make_move_iterator(from_set.begin()),
+                  std::make_move_iterator(from_set.end()));
+    from_set.clear();
+}
+
+OrderedAlternativesOf::OrderedAlternativesOf(
+    std::vector<std::unique_ptr<ConditionBase>>&& operands) :
+    ConditionBase(),
+    m_operands(std::move(operands))
+{}
+
+bool OrderedAlternativesOf::operator==(const ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const OrderedAlternativesOf& rhs_ = static_cast<const OrderedAlternativesOf&>(rhs);
+
+    if (m_operands.size() != rhs_.m_operands.size())
+        return false;
+    for (unsigned int i = 0; i < m_operands.size(); ++i) {
+        CHECK_COND_VREF_MEMBER(m_operands.at(i))
+    }
+
+    return true;
+}
+
+void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
+                                 ObjectSet& matches, ObjectSet& non_matches,
+                                 SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    std::shared_ptr<const UniverseObject> no_object;
+    ScriptingContext local_context(parent_context, no_object);
+
+    if (m_operands.empty()) {
+        ErrorLogger() << "OrderedAlternativesOf::Eval given no operands!";
+        return;
+    }
+    for (auto& operand : m_operands) {
+        if (!operand) {
+            ErrorLogger() << "OrderedAlternativesOf::Eval given null operand!";
+            return;
+        }
+    }
+
+    // OrderedAlternativesOf [ A B C ] matches all candidates which match the topmost condition.
+    // If any candidate matches A, then all candidates that match A are matched,
+    // or if no candidate matches A but any candidate matches B, then all candidates that match B are matched,
+    // or if no candidate matches A or B but any candidate matches C, then all candidates that match C are matched.
+    // If no candidate matches A, B, or C, then nothing is matched.
+    //
+    // Not OrderedAlternativesOf [ A B C ] finds the topmost condition which has matches and then matches its non-matches.
+    // If any candidate matches A, then all candidates that do not match A are matched,
+    // or if no candidates match A but any candidate matches B, then all candidates that do not match B are matched,
+    // or if no candidate matches A or B but any candidate matches C, then all candidates that do not match C are matched.
+    // If no candidate matches A, B, or C, then all candidates are matched.
+    if (search_domain == NON_MATCHES) {
+        // Check each operand condition on objects in the input matches and non_matches sets, until an operand condition matches an object.
+        // If an operand condition is selected, apply it to the input non_matches set, moving matching candidates to matches.
+        // If no operand condition is selected, because no candidate is matched by any operand condition, then do nothing.
+        ObjectSet temp_objects;
+        temp_objects.reserve(std::max(matches.size(),non_matches.size()));
+
+        for (auto& operand : m_operands) {
+            operand->Eval(local_context, temp_objects, non_matches, NON_MATCHES);
+            if (!temp_objects.empty()) {
+                // Select the current operand condition. Apply it to the NON_MATCHES candidate set.
+                // We alread did the application, so we use the results
+                matches.reserve(temp_objects.size() + matches.size());
+                FCMoveContent(temp_objects, matches);
+                return;
+            }
+            // Check if the operand condition matches an object in the other input set
+            operand->Eval(local_context, matches, temp_objects, MATCHES);
+            if (!matches.empty()) {
+                // Select the current operand condition. Apply it to the NON_MATCHES candidate set.
+                // We already did the application before, but there were no matches.
+                // restore state before checking the operand
+                FCMoveContent(temp_objects, matches);
+                return;
+            }
+
+            // restore state before checking the operand
+            FCMoveContent(temp_objects, matches);
+            // try the next operand
+        }
+
+        // No operand condition was selected, nothing changed, done.
+    } else /*(search_domain == MATCHES)*/ {
+        // Check each operand condition on objects in the input matches and non_matches sets, until an operand condition matches an object.
+        // If an operand condition is selected, apply it to the input matches set, moving non-matching candidates to non_matches.
+        // If no operand condition is selected, because no candidate is matched by any operand condition, then move all of the input matches into non_matches.
+        ObjectSet temp_objects;
+        temp_objects.reserve(std::max(matches.size(),non_matches.size()));
+
+        for (auto& operand : m_operands) {
+            // Apply the current operand optimistically. Select it if there are any matching objects in the input sets 
+            operand->Eval(local_context, temp_objects, matches, NON_MATCHES);
+            // temp_objects are objects from input matches set which also match the operand
+            // matches are objects from input matches set which do not match the operand
+            if (!temp_objects.empty()) {
+                // Select and apply this operand. Objects in matches do not match this condition.
+                non_matches.reserve(matches.size() + non_matches.size());
+                FCMoveContent(matches, non_matches);
+                FCMoveContent(temp_objects, matches);
+                return;
+            }
+            // Select this operand if there are matching objects in the non_matches input set.
+            operand->Eval(local_context, temp_objects, non_matches, NON_MATCHES);
+            if (!temp_objects.empty()) {
+                // Select and apply this operand. But no matching objects exist in the matches input set,
+                // so all objects need to be moved into the non_matches set
+                non_matches.reserve(matches.size() + non_matches.size() + temp_objects.size());
+                FCMoveContent(matches, non_matches);
+                FCMoveContent(temp_objects, non_matches);
+                return;
+            }
+
+            // Operand was not selected. Restore state before. Try next operand.
+            FCMoveContent(temp_objects, matches);
+        }
+
+        // No operand condition was selected. Nothing needed to be applied. State is restored. Done.
+    }
+}
+
+bool OrderedAlternativesOf::RootCandidateInvariant() const {
+    if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
+        return m_root_candidate_invariant == INVARIANT;
+
+    for (auto& operand : m_operands) {
+        if (!operand->RootCandidateInvariant()) {
+            m_root_candidate_invariant = VARIANT;
+            return false;
+        }
+    }
+    m_root_candidate_invariant = INVARIANT;
+    return true;
+}
+
+bool OrderedAlternativesOf::TargetInvariant() const {
+    if (m_target_invariant != UNKNOWN_INVARIANCE)
+        return m_target_invariant == INVARIANT;
+
+    for (auto& operand : m_operands) {
+        if (!operand->TargetInvariant()) {
+            m_target_invariant = VARIANT;
+            return false;
+        }
+    }
+    m_target_invariant = INVARIANT;
+    return true;
+}
+
+bool OrderedAlternativesOf::SourceInvariant() const {
+    if (m_source_invariant != UNKNOWN_INVARIANCE)
+        return m_source_invariant == INVARIANT;
+
+    for (auto& operand : m_operands) {
+        if (!operand->SourceInvariant()) {
+            m_source_invariant = VARIANT;
+            return false;
+        }
+    }
+    m_source_invariant = INVARIANT;
+    return true;
+}
+
+std::string OrderedAlternativesOf::Description(bool negated/* = false*/) const {
+    std::string values_str;
+    if (m_operands.size() == 1) {
+        values_str += (!negated)
+            ? UserString("DESC_ORDERED_ALTERNATIVES_BEFORE_SINGLE_OPERAND")
+            : UserString("DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_SINGLE_OPERAND");
+        // Pushing the negation of matches to the enclosed conditions
+        values_str += m_operands[0]->Description(negated);
+        values_str += (!negated)
+            ? UserString("DESC_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND")
+            : UserString("DESC_NOT_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND");
+    } else {
+        // TODO: use per-operand-type connecting language
+        values_str += (!negated)
+            ? UserString("DESC_ORDERED_ALTERNATIVES_BEFORE_OPERANDS")
+            : UserString("DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_OPERANDS");
+        for (unsigned int i = 0; i < m_operands.size(); ++i) {
+            // Pushing the negation of matches to the enclosed conditions
+            values_str += m_operands[i]->Description(negated);
+            if (i != m_operands.size() - 1) {
+                values_str += (!negated)
+                    ? UserString("DESC_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS")
+                    : UserString("DESC_NOT_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS");
+            }
+        }
+        values_str += (!negated)
+            ? UserString("DESC_ORDERED_ALTERNATIVES_AFTER_OPERANDS")
+            : UserString("DESC_NOT_ORDERED_ALTERNATIVES_AFTER_OPERANDS");
+    }
+    return values_str;
+}
+
+std::string OrderedAlternativesOf::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "OrderedAlternativesOf [\n";
+    for (auto& operand : m_operands)
+        retval += operand->Dump(ntabs+1);
+    retval += DumpIndent(ntabs) + "]\n";
+    return retval;
+}
+
+void OrderedAlternativesOf::SetTopLevelContent(const std::string& content_name) {
+    for (auto& operand : m_operands) {
+        operand->SetTopLevelContent(content_name);
+    }
+}
+
+unsigned int OrderedAlternativesOf::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::OrderedAlternativesOf");
+    CheckSums::CheckSumCombine(retval, m_operands);
+
+    TraceLogger() << "GetCheckSum(OrderedAlternativesOf): retval: " << retval;
+    return retval;
+}
+
+const std::vector<ConditionBase*> OrderedAlternativesOf::Operands() const {
+    std::vector<ConditionBase*> retval(m_operands.size());
+    std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
+                   [](const std::unique_ptr<ConditionBase>& xx) {return xx.get();});
     return retval;
 }
 
