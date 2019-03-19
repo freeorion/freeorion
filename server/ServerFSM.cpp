@@ -629,7 +629,7 @@ sc::result Idle::react(const Hostless&) {
         return transit<MPLobby>();
 
     if (GetOptionsDB().Get<int>("network.server.conn-human-empire-players.min") > 0) {
-        throw std::invalid_argument("Autostart load file was choosed but the server wasn't allowed to play game without connected players");
+        throw std::invalid_argument("A save file to load and autostart in hostless mode was specified, but the server has a non-zero minimum number of connected players, so cannot be started without a connected player.");
     }
     std::shared_ptr<ServerSaveGameData> server_save_game_data(new ServerSaveGameData());
     std::vector<PlayerSaveGameData> player_save_game_data;
