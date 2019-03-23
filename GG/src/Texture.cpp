@@ -48,6 +48,10 @@
 #include <iomanip>
 #include <boost/scoped_array.hpp>
 
+#if BOOST_VERSION >= 107000
+#include <boost/variant/get.hpp>
+#endif
+
 
 using namespace GG;
 
@@ -279,12 +283,21 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
     m_default_height = Y(image.height());
     m_type = GL_UNSIGNED_BYTE;
 
+#if BOOST_VERSION >= 107000
+#define IF_IMAGE_TYPE_IS(image_prefix)                                  \
+    if (boost::get<image_prefix ## _image_t>(image)) {                  \
+        m_bytes_pp = sizeof(image_prefix ## _pixel_t);                  \
+        image_data = interleaved_view_get_raw_data(                     \
+            const_view(boost::get<image_prefix ## _image_t>(image)));   \
+    }
+#else
 #define IF_IMAGE_TYPE_IS(image_prefix)                                  \
     if (image.current_type_is<image_prefix ## _image_t>()) {            \
         m_bytes_pp = sizeof(image_prefix ## _pixel_t);                  \
         image_data = interleaved_view_get_raw_data(                     \
             const_view(image._dynamic_cast<image_prefix ## _image_t>())); \
     }
+#endif
 
     const unsigned char* image_data = nullptr;
 
