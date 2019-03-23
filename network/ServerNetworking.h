@@ -22,13 +22,12 @@ typedef boost::function<void (Message, PlayerConnectionPtr)> MessageAndConnectio
 typedef boost::function<void (PlayerConnectionPtr)> ConnectionFn;
 typedef boost::function<void ()> NullaryFn;
 
-/** Data associated with cookie
- */
+/** Data associated with cookie */
 struct CookieData {
-    std::string player_name;
-    boost::posix_time::ptime expired;
-    Networking::AuthRoles roles;
-    bool authenticated;
+    std::string                 player_name;
+    boost::posix_time::ptime    expired;
+    Networking::AuthRoles       roles;
+    bool                        authenticated;
 
     CookieData(const std::string& player_name_,
                const boost::posix_time::ptime& expired_,
@@ -38,8 +37,20 @@ struct CookieData {
         expired(expired_),
         roles(roles_),
         authenticated(authenticated_)
-    { }
+    {}
 };
+
+
+/** In Boost 1.66, io_service was replaced with a typedef of io_context.
+  * That typedef was removed in Boost 1.70 along with other interface changes.
+  * This code uses io_context for future compatibility and adds the typedef
+  * here for old versions of Boost. */
+#if BOOST_VERSION < 106600
+namespace boost { namespace asio {
+    typedef io_service io_context;
+}}
+#endif
+
 
 /** Encapsulates the networking facilities of the server.  This class listens
     for incoming UDP LAN server-discovery requests and TCP player connections.
