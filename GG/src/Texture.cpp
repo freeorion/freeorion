@@ -262,14 +262,14 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
         if (extension == ".png") {
             gil::rgba8_image_t rgba_image;
             gil::read_and_convert_image(filename, rgba_image, gil::image_read_settings<gil::png_tag>());
-            image.move_in(rgba_image);
+            image = std::move(rgba_image);
         }
 #endif
 #if GG_HAVE_LIBTIFF
         if (extension == ".tif" || extension == ".tiff") {
             gil::rgba8_image_t rgba_image;
             gil::read_and_convert_image(filename, rgba_image, gil::image_read_settings<gil::tiff_tag>());
-            image.move_in(rgba_image);
+            image = std::move(rgba_image);
         }
 #endif
     }
