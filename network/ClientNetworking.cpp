@@ -89,7 +89,11 @@ namespace {
                                 this,
                                 boost::asio::placeholders::error,
                                 boost::asio::placeholders::bytes_transferred));
+#if BOOST_VERSION >= 106600
+                m_timer.expires_after(std::chrono::seconds(2));
+#else
                 m_timer.expires_from_now(std::chrono::seconds(2));
+#endif
                 m_timer.async_wait(boost::bind(&ServerDiscoverer::CloseSocket, this));
                 m_io_context->run();
                 m_io_context->reset();
