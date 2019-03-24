@@ -33,6 +33,16 @@
 using boost::asio::ip::tcp;
 using namespace Networking;
 
+/** In Boost 1.66, io_service was replaced with a typedef of io_context.
+  * That typedef was removed in Boost 1.70 along with other interface changes.
+  * This code uses io_context for future compatibility and adds the typedef
+  * here for old versions of Boost. */
+#if BOOST_VERSION < 106600
+namespace boost { namespace asio {
+    typedef io_service io_context;
+}}
+#endif
+
 namespace {
     DeclareThreadSafeLogger(network);
 
@@ -121,16 +131,16 @@ namespace {
         void CloseSocket()
         { m_socket.close(); }
 
-        boost::asio::io_context*       m_io_context;
-        boost::asio::high_resolution_timer m_timer;
-        boost::asio::ip::udp::socket   m_socket;
+        boost::asio::io_context*            m_io_context;
+        boost::asio::high_resolution_timer  m_timer;
+        boost::asio::ip::udp::socket        m_socket;
 
-        std::array<char, 1024> m_recv_buf;
+        std::array<char, 1024>              m_recv_buf;
 
-        boost::asio::ip::udp::endpoint m_sender_endpoint;
-        bool                           m_receive_successful;
-        std::string                    m_server_name;
-        ServerList                     m_servers;
+        boost::asio::ip::udp::endpoint      m_sender_endpoint;
+        bool                                m_receive_successful;
+        std::string                         m_server_name;
+        ServerList                          m_servers;
     };
 }
 
