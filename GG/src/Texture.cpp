@@ -285,7 +285,7 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
 
 #if BOOST_VERSION >= 107000
 #define IF_IMAGE_TYPE_IS(image_prefix)                                  \
-    if (boost::get<image_prefix ## _image_t>(image)) {                  \
+    if (boost::get<image_prefix ## _image_t>(&image)) {                 \
         m_bytes_pp = sizeof(image_prefix ## _pixel_t);                  \
         image_data = interleaved_view_get_raw_data(                     \
             const_view(boost::get<image_prefix ## _image_t>(image)));   \
