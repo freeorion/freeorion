@@ -1928,7 +1928,7 @@ OPTIONS_DB_UI_SITREP_ICONSIZE
 Sets the sitrep icon width and height; default 16 (min 12, max 64).
 
 OPTIONS_DB_LOAD
-Loads the specified single-player save game.
+Loads and starts the specified single-player or multi-player save game. In multi-player, it requires hostless mode and no restriction on the minimum number of connected players, because the server will start with no connected players.
 
 OPTIONS_DB_EFFECTS_THREADS_UI_DESC
 Specifies number of threads to use for effects processing in the user interface. More than one thread may lead to unpredictable crashes.
