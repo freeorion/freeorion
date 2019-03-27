@@ -22,13 +22,12 @@ typedef boost::function<void (Message, PlayerConnectionPtr)> MessageAndConnectio
 typedef boost::function<void (PlayerConnectionPtr)> ConnectionFn;
 typedef boost::function<void ()> NullaryFn;
 
-/** Data associated with cookie
- */
+/** Data associated with cookie */
 struct CookieData {
-    std::string player_name;
-    boost::posix_time::ptime expired;
-    Networking::AuthRoles roles;
-    bool authenticated;
+    std::string                 player_name;
+    boost::posix_time::ptime    expired;
+    Networking::AuthRoles       roles;
+    bool                        authenticated;
 
     CookieData(const std::string& player_name_,
                const boost::posix_time::ptime& expired_,
@@ -38,8 +37,20 @@ struct CookieData {
         expired(expired_),
         roles(roles_),
         authenticated(authenticated_)
-    { }
+    {}
 };
+
+
+/** In Boost 1.66, io_service was replaced with a typedef of io_context.
+  * That typedef was removed in Boost 1.70 along with other interface changes.
+  * This code uses io_context for future compatibility and adds the typedef
+  * here for old versions of Boost. */
+#if BOOST_VERSION < 106600
+namespace boost { namespace asio {
+    typedef io_service io_context;
+}}
+#endif
+
 
 /** Encapsulates the networking facilities of the server.  This class listens
     for incoming UDP LAN server-discovery requests and TCP player connections.
@@ -58,7 +69,7 @@ public:
     typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::const_iterator>    const_established_iterator;
 
     /** \name Structors */ //@{
-    ServerNetworking(boost::asio::io_service& io_service,
+    ServerNetworking(boost::asio::io_context& io_context,
                      MessageAndConnectionFn nonplayer_message_callback,
                      MessageAndConnectionFn player_message_callback,
                      ConnectionFn disconnected_callback);
@@ -181,7 +192,12 @@ private:
     int                             m_host_player_id;
 
     DiscoveryServer*                m_discovery_server;
+#if BOOST_VERSION >= 107000
+    boost::asio::basic_socket_acceptor<boost::asio::ip::tcp, boost::asio::io_context::executor_type>
+                                    m_player_connection_acceptor;
+#else
     boost::asio::ip::tcp::acceptor  m_player_connection_acceptor;
+#endif
     PlayerConnections               m_player_connections;
     std::queue<NullaryFn>           m_event_queue;
     std::unordered_map<boost::uuids::uuid, CookieData, boost::hash<boost::uuids::uuid>> m_cookies;
@@ -285,12 +301,12 @@ public:
 
     /** Creates a new PlayerConnection and returns it as a shared_ptr. */
     static PlayerConnectionPtr
-    NewConnection(boost::asio::io_service& io_service, MessageAndConnectionFn nonplayer_message_callback,
+    NewConnection(boost::asio::io_context& io_context, MessageAndConnectionFn nonplayer_message_callback,
                   MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
 
 private:
 
-    PlayerConnection(boost::asio::io_service& io_service, MessageAndConnectionFn nonplayer_message_callback,
+    PlayerConnection(boost::asio::io_context& io_context, MessageAndConnectionFn nonplayer_message_callback,
                      MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
     void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
     void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
@@ -298,7 +314,7 @@ private:
     bool SyncWriteMessage(const Message& message);
     static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error, boost::system::error_code error);
 
-    boost::asio::io_service&        m_service;
+    boost::asio::io_context&        m_service;
     boost::asio::ip::tcp::socket    m_socket;
     Message::HeaderBuffer           m_incoming_header_buffer;
     Message                         m_incoming_message;
