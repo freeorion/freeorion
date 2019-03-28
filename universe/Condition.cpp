@@ -10057,7 +10057,7 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
             // try the next operand
         }
 
-        // No operand condition was selected, nothing changed, done.
+        // No operand condition was selected. State is restored. Nothing should be moved to matches input set
     } else /*(search_domain == MATCHES)*/ {
         // Check each operand condition on objects in the input matches and non_matches sets, until an operand condition matches an object.
         // If an operand condition is selected, apply it to the input matches set, moving non-matching candidates to non_matches.
@@ -10092,7 +10092,9 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
             FCMoveContent(temp_objects, matches);
         }
 
-        // No operand condition was selected. Nothing needed to be applied. State is restored. Done.
+        // No operand condition was selected. Objects in matches input set do not match, so move those to non_matches input set.
+        non_matches.reserve(matches.size() + non_matches.size());
+        FCMoveContent(matches, non_matches);
     }
 }
 
