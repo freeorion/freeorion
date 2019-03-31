@@ -1609,6 +1609,24 @@ Définit la couleur des rayures horizontales (brouillard de guerre) sur les icô
 OPTIONS_DB_UI_PLANET_FOG_CLR
 Définit la couleur des rayures horizontales (brouillard de guerre) sur les planètes non-visibles dans le panneau latéral.
 
+OPTIONS_DB_UI_PLANET_STATUS_ICON_SIZE
+Fixe la taille de l'icône de statut d'une planète.
+
+OPTIONS_DB_UI_PLANET_STATUS_ICON_TITLE
+Notification statut de planète
+
+OPTIONS_DB_UI_PLANET_STATUS_ATTACKED
+La planète %1% a été attaquée au tour précédent.
+
+OPTIONS_DB_UI_PLANET_STATUS_CONQUERED
+La planète %1% vient d'être conquise. Le Bonheur sera probablement réduit.
+
+OPTIONS_DB_UI_PLANET_STATUS_UNHAPPY
+La Population sur la planète %1% est très mécontente. Elle ne peut donc entreprendre aucune colonisation.
+
+OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY
+La planète %1% est déconnectée des lignes d'Approvisionnement. L'Industrie générée sur cette planète ne peut être utilisée que localement.
+
 OPTIONS_DB_UI_SYSTEM_CIRCLES
 Affiche/Cache sur la carte galactique les cercles entourant les icônes de systèmes stellaires.
 
@@ -1928,7 +1946,7 @@ OPTIONS_DB_UI_SITREP_ICONSIZE
 Définit la largeur et la hauteur des icônes du Rapport de Situation; par défaut 16 (min 12, max 64).
 
 OPTIONS_DB_LOAD
-Charge la partie solo sauvegardée spécifiée.
+Charge et démarre la partie sauvegardée solo ou multijoueurs spécifiée. En multijoueurs, nécessite le mode sans hôte et aucune restriction sur le nombre minimum de joueurs connectés, car le serveur démarrera sans joueurs connectés.
 
 OPTIONS_DB_EFFECTS_THREADS_UI_DESC
 Spécifie le nombre de threads simultanés pour le rendu des effets dans l'interface utilisateur. Plus d'un thread peut mener à des plantages inopinés.
