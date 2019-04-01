@@ -48,14 +48,6 @@ MERGEABLE_MISSION_TYPES = (
     MissionType.ORBITAL_DEFENSE,
 )
 
-COMPATIBLE_ROLES_MAP = {
-    MissionType.ORBITAL_DEFENSE: [MissionType.ORBITAL_DEFENSE],
-    MissionType.MILITARY: [MissionType.MILITARY],
-    MissionType.ORBITAL_INVASION: [MissionType.ORBITAL_INVASION],
-    MissionType.INVASION: [MissionType.INVASION],
-    MissionType.PROTECT_REGION: [MissionType.PROTECT_REGION],
-}
-
 
 class AIFleetMission(object):
     """
