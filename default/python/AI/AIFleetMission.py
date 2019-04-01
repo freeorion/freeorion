@@ -599,6 +599,7 @@ class AIFleetMission(object):
                                                                      allocations=allocations)
 
     def _portion_of_fleet_needed_here(self):
+        """Calculate the portion of the fleet needed in target system considering enemy forces."""
         # TODO check rating against planets
         if assertion_fails(self.type in COMBAT_MISSION_TYPES):
             error("%s" % self)
@@ -616,6 +617,7 @@ class AIFleetMission(object):
         universe = fo.getUniverse()
         system = universe.getSystem(system_id)
 
+        # tally planetary defenses
         total_defense = total_shields = 0
         for planet_id in system.planetIDs:
             planet = universe.getPlanet(planet_id)
@@ -623,8 +625,9 @@ class AIFleetMission(object):
             total_shields += planet.currentMeterValue(fo.meterType.shield)
         planetary_ratings = total_defense * (total_shields + total_defense)
         potential_threat += planetary_ratings  # TODO: rewrite to return min rating vs planets as well
-        safety_factor = aistate.character.military_safety_factor()
+
         # consider safety factor just once here rather than everywhere below
+        safety_factor = aistate.character.military_safety_factor()
         potential_threat *= safety_factor
 
         fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
@@ -732,6 +735,12 @@ class AIFleetMission(object):
                                                                             self.target or 'no target')
 
     def _get_target_for_protection_mission(self):
+        """Get a target for a PROTECT_REGION mission.
+
+        1) If primary target (system target of this mission) is under attack, move to primary target.
+        2) If neighbors of primary target have local fleets weaker than this fleet, may move to attack
+        3) If no neighboring fleets or strongest enemy fleet is too strong, move to primary target
+        """
         # TODO: Check rating vs planets
         universe = fo.getUniverse()
         primary_objective = self.target.id
@@ -750,7 +759,7 @@ class AIFleetMission(object):
             ), reverse=True)
 
             if not threat_list:
-                debug("No neighboring threats. Moving to primary mission target")
+                debug("No neighbors (?!). Moving to primary mission target")
                 return primary_objective
 
             debug("%s", threat_list)
@@ -778,11 +787,25 @@ class AIFleetMission(object):
                             self.issue_fleet_orders()
                             return INVALID_ID
 
+                # TODO consider attacking neighboring, non-military fleets
+                # - needs more careful evaluation against neighboring threats
+                # empire_id = fo.empireID()
+                # for sys_id in neighbors:
+                #     system = universe.getSystem(sys_id)
+                #     if assertion_fails(system is not None):
+                #         continue
+                #     local_fleets = system.fleetIDs
+                #     for fleet_id in local_fleets:
+                #         fleet = universe.getFleet(fleet_id)
+                #         if not fleet or fleet.ownedBy(empire_id):
+                #             continue
+                #         return sys_id
+
                 debug("No neighboring threats. Moving to primary mission target")
                 return primary_objective
 
             # TODO rate against threat in target system
-            # TODO only engage if can reach in 1 jump or leaves sufficient defense behind
+            # TODO only engage if can reach in 1 turn or leaves sufficient defense behind
             fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
             debug("This fleet rating: %d. Enemy Rating: %d", fleet_rating, top_threat)
             safety_factor = get_aistate().character.military_safety_factor()
