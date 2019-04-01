@@ -948,13 +948,11 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
             for fid in avail_mil_fleet_ids:
                 fleet = universe.getFleet(fid)
                 FleetUtilsAI.get_fleet_system(fleet)
-                sys_distances = sorted([(system_score(fid, _sys_id), _sys_id)
-                                        for _sys_id in state.get_empire_planets_by_system()
-                                        ], reverse=True)
-                if not sys_distances:
+                systems = state.get_empire_planets_by_system().keys()
+                if not systems:
                     continue
+                sys_id = max(systems, key=lambda x: system_score(fid, x))
 
-                sys_id = sys_distances[0][1]
                 debug("Assigning leftover %s to system %d "
                       "- nothing better to do.", fleet, sys_id)
 
