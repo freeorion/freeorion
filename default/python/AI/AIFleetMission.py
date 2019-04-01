@@ -160,6 +160,13 @@ class AIFleetMission(object):
         universe = fo.getUniverse()
         empire_id = fo.empireID()
 
+        fleet_id = self.fleet.id
+        main_fleet = universe.getFleet(fleet_id)
+        main_fleet_system_id = main_fleet.systemID
+        if main_fleet_system_id == INVALID_ID:
+            debug("Can't merge: fleet in middle of starlane")
+            return
+
         # only merge PROTECT_REGION if there is any threat near target
         if self.type == MissionType.PROTECT_REGION:
             neighbor_systems = universe.getImmediateNeighbors(self.target.id, empire_id)
@@ -167,13 +174,6 @@ class AIFleetMission(object):
                        for sys_id in neighbor_systems):
                 debug("Not merging PROTECT_REGION fleet - no threat nearby.")
                 return
-
-        fleet_id = self.fleet.id
-        main_fleet = universe.getFleet(fleet_id)
-        main_fleet_system_id = main_fleet.systemID
-        if main_fleet_system_id == INVALID_ID:
-            debug("Can't merge: fleet in middle of starlane")
-            return
 
         destroyed_list = set(universe.destroyedObjectIDs(empire_id))
         aistate = get_aistate()
