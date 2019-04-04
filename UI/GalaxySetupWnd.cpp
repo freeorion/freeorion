@@ -34,7 +34,6 @@ namespace {
     const GG::Y GalSetupWndHeight()
     { return GG::Y(FontBasedUpscale(29) + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT); }
     const GG::Pt PREVIEW_SZ(GG::X(300), GG::Y(222));
-    const bool ALLOW_NO_STARLANES = false;
 
     class RowContentsWnd : public GG::Control {
     public:
@@ -155,7 +154,7 @@ namespace {
         db.Add("setup.galaxy.shape",            UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_SHAPE"),             DISC,                       RangedValidator<Shape>(SPIRAL_2, RANDOM));
         db.Add("setup.galaxy.age",              UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),               GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
         db.Add("setup.planet.density",          UserStringNop("OPTIONS_DB_GAMESETUP_PLANET_DENSITY"),           GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
-        db.Add("setup.starlane.frequency",      UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"),       GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(ALLOW_NO_STARLANES ? GALAXY_SETUP_NONE : GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
+        db.Add("setup.starlane.frequency",      UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"),       GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
         db.Add("setup.specials.frequency",      UserStringNop("OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY"),       GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
         db.Add("setup.monster.frequency",       UserStringNop("OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY"),        GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
         db.Add("setup.native.frequency",        UserStringNop("OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY"),         GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
@@ -717,8 +716,6 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_galaxy_ages_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_ANCIENT")));
     m_galaxy_ages_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_RANDOM")));
 
-    if (ALLOW_NO_STARLANES)
-        m_starlane_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_NONE")));
     m_starlane_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_LOW")));
     m_starlane_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_MEDIUM")));
     m_starlane_freq_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_HIGH")));
@@ -761,7 +758,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("setup.galaxy.shape"));
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
     m_galaxy_ages_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age") - 1);
-    m_starlane_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency") - (ALLOW_NO_STARLANES ? 0 : 1));
+    m_starlane_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency") - 1);
     m_planet_density_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density") - 1);
     m_specials_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency"));
     m_monster_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency"));
@@ -806,7 +803,7 @@ GalaxySetupOption GalaxySetupPanel::GetAge() const
 { return GalaxySetupOption(m_galaxy_ages_list->CurrentItemIndex() + 1); }
 
 GalaxySetupOption GalaxySetupPanel::GetStarlaneFrequency() const
-{ return GalaxySetupOption(m_starlane_freq_list->CurrentItemIndex() + (ALLOW_NO_STARLANES ? 0 : 1)); }
+{ return GalaxySetupOption(m_starlane_freq_list->CurrentItemIndex() + 1); }
 
 GalaxySetupOption GalaxySetupPanel::GetPlanetDensity() const
 { return GalaxySetupOption(m_planet_density_list->CurrentItemIndex() + 1); }
@@ -934,7 +931,7 @@ void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
     m_galaxy_shapes_list->Select(setup_data.m_shape);
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
     m_galaxy_ages_list->Select(setup_data.m_age - 1);
-    m_starlane_freq_list->Select(setup_data.m_starlane_freq - (ALLOW_NO_STARLANES ? 0 : 1));
+    m_starlane_freq_list->Select(setup_data.m_starlane_freq - 1);
     m_planet_density_list->Select(setup_data.m_planet_density - 1);
     m_specials_freq_list->Select(setup_data.m_specials_freq);
     m_monster_freq_list->Select(setup_data.m_monster_freq);
