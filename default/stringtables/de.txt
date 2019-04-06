@@ -382,43 +382,43 @@ SM_KRILL_1
 Kleiner Krillschwarm
 
 SM_KRILL_1_DESC
-Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
+[[SM_KRILL_MACRO_1]]. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. [[SM_KRILL_MACRO_2]]
 
 SM_KRILL_2
 Mittlerer Krillschwarm
 
 SM_KRILL_2_DESC
-Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
+[[SM_KRILL_MACRO_1]]. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. [[SM_KRILL_MACRO_2]]
 
 SM_KRILL_3
 Großer Krillschwarm
 
 SM_KRILL_3_DESC
-Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Wenn ihre Anzahl hoch genug ist, beginnen sie ein aggressives Verhalten gegenüber Schiffen zu zeigen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
+[[SM_KRILL_MACRO_1]]. Wenn ihre Anzahl hoch genug ist, beginnen sie ein aggressives Verhalten gegenüber Schiffen zu zeigen. [[SM_KRILL_MACRO_2]]
 
 SM_KRILL_4
 Krillplage
 
 SM_KRILL_4_DESC
-Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Das Verhalten der des Krill ändert sich radikal, sobald ein kritischer Bestand von ungefähr 10 Millionen Individuen überschritten wurde. Der normalerweise scheue Krill attackiert nun Schiffe und orbitale Strukturen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
+[[SM_KRILL_MACRO_1]]. Das Verhalten der des Krill ändert sich radikal, sobald ein kritischer Bestand von ungefähr 10 Millionen Individuen überschritten wurde. Die normalerweise scheuen Krill attackieren nun Schiffe und orbitale Strukturen. [[SM_KRILL_MACRO_2]]
 
 SM_TREE
 Dysonwald
 
 SM_TREE_DESC
-Der Dysonwald setzt sich aus vielerlei im Weltraum entwickelten "Bäumen" mit dichtem Astwerk zusammen. Die Bäume ordnen sich in einem geeigneten Abstand als Hülle um ihren Wirtsstern an. Dysonwälder sind eine Gefahr für die Raumnavigation. Sie dehnen sich aus und es wird schwierig sie mit fortschreitendem Alter auszurotten. Von Zeit zu Zeit senden sie Samen aus um andere Sterne zu besiedeln.
+Der [[SM_TREE]] setzt sich aus vielerlei im Weltraum entwickelten "Bäumen" mit dichtem Astwerk zusammen. Diese Bäume ordnen sich in einem geeigneten Abstand als Hülle um ihren Wirtsstern an. Dysonwälder sind eine Gefahr für die Raumnavigation. Mit fortschreitendem Alter dehnen sie sich aus und es wird schwierig, sie auszurotten. Von Zeit zu Zeit senden sie Samen aus, um andere Sterne zu besiedeln. Diese Samen - [[predefinedshipdesign SM_FLOATER]] genannt - sind nur schwer zu orten.
 
 SM_FLOATER
 Schwimmer
 
 SM_FLOATER_DESC
-Gasgefüllter knollartiger Beutel, der im Weltraum umhertreibt.
+Gasgefüllter knollartiger Beutel, der im Weltraum umhertreibt. Von einem [[predefinedshipdesign SM_TREE]] stammend, wird dieser Samen in einem anderen System zu einem neuen Wald heranwachsen. Es ist ratsam, den [[SM_FLOATER]] vorher zu vernichten; allerdings sind die kleinen Samen ohne [[tech SPY_DETECT_2]]-Technologie kaum zu orten.
 
 SM_DRAGON
 Vakuumdrache
 
 SM_DRAGON_DESC
-Schreckliches, riesiges Monster, das im Raum auf Beutezug umherschleicht.
+Schreckliches, riesiges Monster, das im Raum auf Beutezug umherschleicht und bewohnte Systeme verwüstet.
 
 SM_DRONE
 Drohne
@@ -432,128 +432,167 @@ Drohnenfabrik
 SM_DRONE_FACTORY_DESC
 In einem lang vergessenen Krieg erbaut, um die vor ewigen Zeiten verschwundenen Erbauer zu schützen, erfüllt die Drohnenfabrik erstaunlicherweise immer noch ihre Funktion, langsam neue Drohnen zu erstellen.
 
+SM_GUARD_0
+Wartungsschiff
+
+SM_GUARD_0_DESC
+Ein unbemanntes Schiff der Vorläufer, das die Sternenstraßen in diesem System bewacht. Nur leicht bewaffnet, aber dennoch aggressiv.
+
 SM_GUARD_1
 Wache
 
 SM_GUARD_1_DESC
-Wache bewachen lässige Kleinigkeiten.
+Ein kleines unbemanntes Wachschiff, [[SM_GUARD_MACRO]].
 
 SM_GUARD_2
 Wächter
 
 SM_GUARD_2_DESC
-Wächter bewachen lässiges Zeug.
+Ein unbemanntes Wachschiff, [[SM_GUARD_MACRO]].
 
 SM_GUARD_3
 Aufseher
 
 SM_GUARD_3_DESC
-Aufseher bewachen wichtiges Zeug.
+Ein starkes unbemanntes Wachschiff, [[SM_GUARD_MACRO]].
 
 SM_KRAKEN_1
 Krakenlarve
 
 SM_KRAKEN_1_DESC
-In ihrer Larvenform ist der Kraken eine vorsichtige und harmlose Art der im Raum gebornen Fauna. Seine natürliche Beue sind Raumkrillschwärme, welche sie damit reguliert. Aber eine gut genährte Krakenlarve kann sich in eine größere und gefährlichere erwachsene Form weiterentwickeln.
+'''In ihrer Larvenform ist der Kraken eine vorsichtige und harmlose Art der im Raum gebornen Fauna. Seine natürliche Beute sind Raumkrillschwärme. Eine gut genährte Krakenlarve kann zu einer größeren und gefährlicheren erwachsenen Form heranwachsen.
+
+[[SM_KRAKEN_ENVIRONMENT]]'''
 
 SM_KRAKEN_2_DESC
-Ein gewaltiges, mittelschweres Weltraummonster.
+'''Ein mächtiges, mittelschweres Weltraummonster, dass sich von Krillschwärmen ernährt. Ein gut genährter Kraken zu einer noch größeren, gefährlicheren Form heranwachsen.
+
+[[SM_KRAKEN_ENVIRONMENT]]'''
 
 SM_KRAKEN_3
 Großer Kraken
 
 SM_KRAKEN_3_DESC
-Ein gewaltiges, schweres Weltraummonster.
+'''Ein gewaltiges und zähes Weltraummonster.
+
+[[SM_KRAKEN_ENVIRONMENT]]'''
+
+SM_WHITE_KRAKEN
+Weißer Kraken
+
+SM_WHITE_KRAKEN_DESC
+Ein weiß gefärbter prähistorischer Vorfahr des Krakenmonsters.
 
 SM_BLACK_KRAKEN
 Schwarzer Kraken
 
 SM_BLACK_KRAKEN_DESC
-Ein mächtiges, unnatürlich wirkendes Weltraummonster.
+'''Ein mächtiges, unnatürlich wirkendes Weltraummonster.
+
+Schwarze Kraken sind biotechnisch hergestellte Weltraummonster. Sie sind außerordentlich zäh, schwer bewaffnet und haben hohe [[metertype METER_STEALTH]]. Eine mächtige Flotte und hohe [[encyclopedia DETECTION_TITLE]] sind nötig, um sie aufzuspüren. Schwarze Kraken jagen nach Planeten mit sichtbaren Gebäuden und greifen dort die [[metertype METER_POPULATION]] an.'''
 
 SM_SNOWFLAKE_1
-Kleiner Schneeflocke
+Kleine Schneeflocke
 
 SM_SNOWFLAKE_1_DESC
-Ein gewaltiges, leichtgewichtiges Weltraummonster.
+'''Ein kleines, harmloses Weltraummonster mit hervorragendem Sehvermögen.
+
+[[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
 SM_SNOWFLAKE_2
 Schneeflocke
 
 SM_SNOWFLAKE_2_DESC
-Ein gewaltiges, leichtgewichtiges Weltraummonster.
+'''Ein leichtgewichtiges Weltraummonster mit hervorragendem Sehvermögen.
+
+[[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
 SM_SNOWFLAKE_3
-Großen Schneeflocke
+Große Schneeflocke
 
 SM_SNOWFLAKE_3_DESC
-Ein gewaltiges, leichtgewichtiges Weltraummonster.
+'''Ein gefährliches leichtgewichtiges Weltraummonster.
+
+[[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
 SM_PSIONIC_SNOWFLAKE
 Psionische Schneeflocke
 
 SM_PSIONIC_SNOWFLAKE_DESC
-Ein Monster, welches die Kraft besitzt den Verstand von organischen Wesen zu neutralisieren.
+'''Ein Monster, welches die Kraft besitzt, den Verstand von organischen Wesen zu neutralisieren.
+
+Psionische Schneeflocken sind biotechnisch hergestellte, stark bewaffnete Monster, die die Kontrolle über Schiffe mit [[encyclopedia ORGANIC_SPECIES_TITLE]]-Crews an sich reißen können. Eine mächtige Flotte ist nötig, um sie zu bekämpfen. Psionische Schneeflocken jagen nach feindlichen Raumschiffen, um sie anzugreifen oder zu übernehmen, können aber auch die [[metertype METER_POPULATION]] von Planeten direkt angreifen.'''
 
 SM_JUGGERNAUT_1
 Kleiner Koloss
 
 SM_JUGGERNAUT_1_DESC
-Ein gewaltiges, schwergewichtiges Weltraummonster.
+'''Ein schwergewichtiges Weltraummonster mit einem schwachen Schutzschild.
+
+[[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_JUGGERNAUT_2
 Koloss
 
 SM_JUGGERNAUT_2_DESC
-Ein gewaltiges, schwergewichtiges Weltraummonster.
+'''Ein schwergewichtiges Weltraummonster mit einem guten Schutzschild.
+
+[[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_JUGGERNAUT_3
 Großer Koloss
 
 SM_JUGGERNAUT_3_DESC
-Ein gewaltiges, schwergewichtiges Weltraummonster.
+'''Ein schwergewichtiges Weltraummonster mit einem kräftigen Schutzschild.
+
+[[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_BLOATED_JUGGERNAUT
 Aufgeblähter Koloss
 
 SM_BLOATED_JUGGERNAUT_DESC
-Ein massives, aber krankhaft aussehendes schwergewichtes Weltraummonster.
+'''Ein massives, aber krankhaft aussehendes Weltraummonster.
+
+Aufgeblähte Kolosse sind biotechnisch hergestellte Weltraummonster. Sie sind außerordentlich zäh, schwer bewaffnet und haben hohe [[metertype METER_STEALTH]]. Eine mächtige Flotte und hohe [[encyclopedia DETECTION_TITLE]] sind nötig, um sie aufzuspüren. Aufgeblähte Kolosse jagen nach Planeten mit sichtbaren Gebäuden und greifen dort die [[metertype METER_POPULATION]] an.'''
 
 SM_CLOUD
 Raumwolke
 
 SM_CLOUD_DESC
-Eine nebelartige Kreatur, welche [[metertype METER_STEALTH]] zu zufälligen Planeten hinzufügt.
+Eine nebelartige Kreatur, welche zufälligen Planeten [[metertype METER_STEALTH]] verleiht.
 
 SM_ASH
 Weltraumvulkan
 
 SM_ASH_DESC
-Eine nebelartige Kreatur, welche [[metertype METER_STEALTH]] zu zufälligen Planeten hinzufügt.
+Eine nebelartige Kreatur, welche zufälligen Planeten [[metertype METER_STEALTH]] verleiht.
 
 SM_DIM
 Dimensionswanderer
 
 SM_DIM_DESC
-Eine nebelartige Kreatur, welche [[metertype METER_STEALTH]] zu zufälligen Planeten hinzufügt.
+Eine nebelartige Kreatur, welche zufälligen Planeten [[metertype METER_STEALTH]] verleiht.
+
+SM_VOID
+Moloch der Leere
 
 SM_VOID_DESC
-Eine nebelartige Kreatur, welche [[metertype METER_STEALTH]] zu zufälligen Planeten hinzufügt.
+Eine nebelartige Kreatur, welche zufälligen Planeten [[metertype METER_STEALTH]] verleiht.
 
 SM_SNAIL
 Asteroidenschnecke
 
 SM_SNAIL_DESC
-Die Gehäuse der Asteroidenschnecken ähneln aufgrund ihrer auf Mineralien basiernden Ernährung stark normalen Asteroiden, was das Aufspüren erheblich erschwert.
+Ein ängstliches Monster, dass sich von Mineralien ernährt. Die resultierende Ähnlichkeit zu gewöhnlichen Asteroiden verleiht der [[SM_SNAIL]] erhöhte [[metertype METER_STEALTH]] in Asteroidengürteln.
 
 SM_DAMPENING_CLOUD
 Dämpfende Wolke
 
 SM_DAMPENING_CLOUD_DESC
-Eine kosmische Wolke aus hochenergetischen elektrischen Partikeln, welche eine Art von Empfindung erlangt hat. Sie wird von Energiefeldern angezogen und entlädt jedes größere Energiepotenzial, was dazu führt das ganze Raumschiffflotten innerhalb von Sekunden ihres Treibstoffes beraubt werden können.
+Eine kosmische Wolke aus hochenergetischen Partikeln mit einer Art Empfindungsvermögen. Sie vermeidet die Energiesignaturen bevölkerter Kolonien, wird von potentiellen Energiereserven hingegen angezogen und stiehlt nahen Fahrzeugen den [[metertype METER_FUEL]].
 
 SM_ACIREMA_GUARD
-Acirema Wächterschiff
+Acirema-Wächterschiff
 
 SM_ACIREMA_GUARD_DESC
 Ein unbemanntes bewaffnetes Schiff, welches von den Acirema zur Bewachung des Systems gebaut wurde.
@@ -562,13 +601,17 @@ SM_EXP_OUTPOST
 Experiment Null
 
 SM_EXP_OUTPOST_DESC
-Ein Außenpostenschiff, welches von den Experimentors gebaut wurde um experimentelle Asurüstung zwischen Galaxien zu transportieren.
+'''Ein uraltes Werk der Experimentoren, welches [[encyclopedia DAMAGE_TITLE]] und [[metertype METER_SHIELD]] reduziert.
+
+[[SM_EXP_OUTPOST]] bewacht den Außenposten der Experimentoren in dieser Galaxie. Anstatt direkt anzugreifen, füllt es das gesamte System mit Billiarden winziger Einheiten, die Schilde und Waffen schwächen. Nur die beste Ausrüstung lässt sich unter diesen Umständen noch effektiv einsetzen.'''
 
 SM_COSMIC_DRAGON
 Kosmischer Drache
 
 SM_COSMIC_DRAGON_DESC
-Ein furchteregendes Weltraummonster mit der Macht ganze Sternensysteme zu zerstören.
+'''Ein furchteregendes Weltraummonster mit der Macht, ganze Sternensysteme zu zerstören.
+
+Kosmische Drachen sind biotechnisch hergestellte Weltraummonster. Sie sind außerordentlich zäh, schwer bewaffnet und haben hohe [[metertype METER_STEALTH]]. Eine mächtige Flotte und hohe [[encyclopedia DETECTION_TITLE]] sind nötig, um sie aufzuspüren. Kosmische Drachen jagen nach bevölkerten Planeten und können ganze Sternensysteme vaporisieren.'''
 
 
 ##
@@ -6189,6 +6232,29 @@ Ein gewaltiges mittelgewichtiges Weltraummonster.
 
 SH_BLACK_KRAKEN_BODY
 Schwarzkrakenkörper
+
+
+##
+## Monsters Macros
+##
+
+SM_KRILL_MACRO_1
+Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommunizieren Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt
+
+SM_KRILL_MACRO_2
+Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
+
+SM_GUARD_MACRO
+von den Vorläufern dazu programmiert, das System gegen Eindringlinge zu verteidigen.
+
+SM_KRAKEN_ENVIRONMENT
+Bevorzugte Umbebung: Gasriesen. Krakennester finden sich für gewöhnlich im Orbit von Gasriesen, und in Systemen mit Gasriesen können Kraken heranreifen.
+
+SM_SNOWFLAKE_ENVIRONMENT
+Bevorzugte Umbebung: Kleine Planeten. Schneeflockennester finden sich für gewöhnlich im Orbit von kleinen Planeten, und in Systemen mit kleinen Planeten können Schneeflocken heranreifen.
+
+#SM_JUGGERNAUT_ENVIRONMENT
+Bevorzugte Umbebung: Asteroiden. Kolossnester finden sich für gewöhnlich in Asteroidengürteln, und in Systemen mit Asteroidengürteln können Kolosse heranreifen.
 
 
 ##
