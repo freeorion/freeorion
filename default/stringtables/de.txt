@@ -6245,7 +6245,7 @@ SM_KRILL_MACRO_2
 Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
 
 SM_GUARD_MACRO
-von den Vorläufern dazu programmiert, das System gegen Eindringlinge zu verteidigen.
+von den Vorläufern dazu programmiert, das System gegen Eindringlinge zu verteidigen
 
 SM_KRAKEN_ENVIRONMENT
 Bevorzugte Umbebung: Gasriesen. Krakennester finden sich für gewöhnlich im Orbit von Gasriesen, und in Systemen mit Gasriesen können Kraken heranreifen.
@@ -6253,7 +6253,7 @@ Bevorzugte Umbebung: Gasriesen. Krakennester finden sich für gewöhnlich im Orb
 SM_SNOWFLAKE_ENVIRONMENT
 Bevorzugte Umbebung: Kleine Planeten. Schneeflockennester finden sich für gewöhnlich im Orbit von kleinen Planeten, und in Systemen mit kleinen Planeten können Schneeflocken heranreifen.
 
-#SM_JUGGERNAUT_ENVIRONMENT
+SM_JUGGERNAUT_ENVIRONMENT
 Bevorzugte Umbebung: Asteroiden. Kolossnester finden sich für gewöhnlich in Asteroidengürteln, und in Systemen mit Asteroidengürteln können Kolosse heranreifen.
 
 
