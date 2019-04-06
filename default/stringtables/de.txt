@@ -521,7 +521,7 @@ Psionische Schneeflocke
 SM_PSIONIC_SNOWFLAKE_DESC
 '''Ein Monster, welches die Kraft besitzt, den Verstand von organischen Wesen zu neutralisieren.
 
-Psionische Schneeflocken sind biotechnisch hergestellte, stark bewaffnete Monster, die die Kontrolle über Schiffe mit [[encyclopedia ORGANIC_SPECIES_TITLE]]-Crews an sich reißen können. Eine mächtige Flotte ist nötig, um sie zu bekämpfen. Psionische Schneeflocken jagen nach feindlichen Raumschiffen, um sie anzugreifen oder zu übernehmen, können aber auch die [[metertype METER_POPULATION]] von Planeten direkt angreifen.'''
+Psionische Schneeflocken sind biotechnisch hergestellte, stark bewaffnete Monster, die die Kontrolle über Schiffe mit [[encyclopedia ORGANIC_SPECIES_TITLE]]-Besatzung an sich reißen können. Eine mächtige Flotte ist nötig, um sie zu bekämpfen. Psionische Schneeflocken jagen nach feindlichen Raumschiffen, um sie anzugreifen oder zu übernehmen, können aber auch die [[metertype METER_POPULATION]] von Planeten direkt angreifen.'''
 
 SM_JUGGERNAUT_1
 Kleiner Koloss
