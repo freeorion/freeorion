@@ -5797,25 +5797,48 @@ Neue Erfahrungen und die Weiterentwicklung der Produktionsanlagen ermöglichen e
 ##
 
 BLD_EVACUATION
-Evakuierung
+Evakuierungssystem
 
 BLD_EVACUATION_DESC
-Entfernt die Bevölkerung dieses Planeten über mehrere Runden. Wenn einen Ersatzplanet mit der gleichen Spezies und genügend Platz verfügbar ist, wird die Bevölkerung dorthin befördert.
+Entfernt die [[metertype METER_POPULATION]] dieses Planeten über mehrere Runden gemäß dem [[encyclopedia EVACUATION_TITLE]]. Wenn einen Ersatzplanet mit der gleichen Spezies und genügend Platz verfügbar ist, wird die Bevölkerung dorthin befördert.
 
 BLD_OBSERVATORY
 Observatorium
 
+BLD_OBSERVATORY_DESC
+'''Enthüllt der gesamten Galaxis jede Runde einen zufälligen Stern. Sollte dieser Stern bereits entdeckt oder erkundet sein, wird kein neuer Stern enthüllt.
+
+Eine Beobachtungseinrichtung zur Lokalisierung und Kartierung von Sternen, insbesondere solche, die über das Sternstraßennetzwerk erreichbar sind.'''
+
 BLD_CULTURE_ARCHIVES
 Kulturelle Archive
 
+BLD_CULTURE_ARCHIVES_DESC
+'''Erhöht [[metertype METER_TARGET_RESEARCH]] um 5 und [[metertype METER_TARGET_INDUSTRY]] um die Hälfte der [[metertype METER_POPULATION]] des Planeten.
+
+Speichert das über tausende von Jahren angesammelte Wissen dieses Planeten. Verbessert Produktivität in vielerlei Hinsicht.'''
+
 BLD_CULTURE_LIBRARY
 Kulturelle Bibliothek
+
+BLD_CULTURE_LIBRARY_DESC
+'''Erhöht [[metertype METER_TARGET_RESEARCH]] um 5.
+
+Speichert das über tausende von Jahren angesammelte Wissen dieses Planeten.  Sollte die [[metertype METER_POPULATION]] der Eingeborenen dieses Planeten auf null fallen, wird dieses Gebäude zerstört.'''
+
+BLD_AUTO_HISTORY_ANALYSER
+Automatischer Geschichtsauswerter
+
+BLD_AUTO_HISTORY_ANALYSER_DESC
+'''Kann nur auf Planeten gebaut werden, welche [[buildingtype BLD_CULTURE_ARCHIVES]] besitzen. Erhöht [[metertype METER_TARGET_RESEARCH]] um 5.
+
+Ein automatisiertes Forschungszentrum, welches mit enormer Rechenleistung die digitalen Archive durchforstet, um Muster, fachübergreifende Parallelen sowie verlorene oder unvollstandige Einblicke zu finden.'''
 
 BLD_IMPERIAL_PALACE
 Imperialer Palast
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases [[metertype METER_SUPPLY]] line range by 1, [[metertype METER_CONSTRUCTION]] by 20, [[metertype METER_DEFENSE]] by 5, and [[metertype METER_TROOPS]] by 3. Also sets the owner's Capital for the empire.
+'''Erhöht Reichweite der [[metertype METER_SUPPLY]]slinie um 1, [[metertype METER_CONSTRUCTION]] um 20, [[metertype METER_DEFENSE]] um 5 sowie [[metertype METER_TROOPS]] um 3. Markiert die Heimatwelt des Imperiums.
 
 Der imperiale Palast spiegelt die Macht und das Ansehen eines Imperiums wider, und fungiert als Steuerzentrale über die Besitztümer des Imperiums.'''
 
@@ -5823,40 +5846,132 @@ BLD_SHIPYARD_BASE
 Einfache Werft
 
 BLD_SHIPYARD_BASE_DESC
-Orbitale Produktionsanlage für den Bau interstellarer militärischer Raumschiffe. Diese Werft muss existieren, um Schiffe auf diesem Planeten produzieren zu können. Sie kann durch den Bau zusätzlicher Gebäude im selben System aufgerüstet werden. Es können keine Werftaufrüstungen gebaut werden, ohne daß diese Werft verfügbar ist.
+Orbitale Produktionsanlage für den Bau interstellarer militärischer Raumschiffe. Diese Werft muss existieren, um Schiffe auf diesem Planeten produzieren zu können. Sie kann durch den Bau zusätzlicher Gebäude im selben System aufgerüstet werden. Es können keine Werftaufrüstungen gebaut werden, bevor diese Werft verfügbar ist.
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK
 Orbitales Trockendock
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-'''Dies ist eine Aufrüstung der [[buildingtype BLD_SHIPYARD_BASE]]. Diese wird für die Herstellung aller größeren Schiffshüllen und weitere Werftaufrüstungen benötigt. Diese Erweiterung bietet auch die Fähigkeit beschädigte Schiffe in einer einzigen Runde zu reparieren.
+'''Dies ist eine Aufrüstung für [[buildingtype BLD_SHIPYARD_BASE]]en. Sie wird für die Herstellung aller größeren Schiffsrümpfe sowie für weitere Werftaufrüstungen benötigt. Diese Aufrüstung kann außerdem die [[metertype METER_STRUCTURE]] beschädigter Schiffe reparieren.
 
-When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly. Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.'''
+Beim Bau eines großen interstellaren Fahrzeuges ist es unpraktisch, die schweren Bauteile per Weltraumlift zu befördern. Weitaus praktischer ist es, die Bauteile zum Zusammenbau im Orbit vor Ort zu konstruieren, um sich den Transport von der Planetenoberfläche zu ersparen.'''
+
+BLD_SHIPYARD_CON_NANOROBO
+Nanobot-Verarbeitungseinheit
+
+BLD_SHIPYARD_CON_NANOROBO_DESC
+'''Dies ist eine Aufrüstung für [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]]  Sie ermöglicht die Herstellung des [[shiphull SH_NANOROBOTIC]]s und, zusammen mit anderen Gebäuden, des [[shiphull SH_LOGISTICS_FACILITATOR]]s.
+
+Die Herstellung von Millionen winziger Wartungsroboter und ihrer Verbindung zu einer zentralen KI benötigt weit umfangreichere Produktionsanlagen, als die eines einfachen Robotikrumpfes. Dieses Gebäude ist in der Lage, fortschrittlichere Robotikrümpfe zu konstruieren.'''
+
+BLD_SHIPYARD_CON_GEOINT
+Geo-Integrierte Anlage
+
+BLD_SHIPYARD_CON_GEOINT_DESC
+'''Dies ist eine Aufrüstung für [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] Sie ermöglicht die Herstellung des [[shiphull SH_TITANIC]]s, des [[shiphull SH_SELF_GRAVITATING]]s und, zusammen mit anderen Gebäuden, des [[shiphull SH_LOGISTICS_FACILITATOR]]s.
+
+Wenn die Anforderungen einer Schiffswert die Möglichkeiten der Planetenoberfläche übersteigt, so macht es nur Sinn, selbige Oberfläche aus der Gleichung zu entfernen und die Werft in den Planeten selbst zu integrieren. Eine Anlage, die vom tiefen Untergrund bis hoch über die geosynchrone Umlaufbahn reicht, kann von allen geologischen Aspekten ihres Planeten gebrauch machen.'''
+
+BLD_SHIPYARD_CON_ADV_ENGINE
+Fortgeschrittenes Maschinendock
+
+BLD_SHIPYARD_CON_ADV_ENGINE_DESC
+'''Dies ist eine Aufrüstung für [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]]. Sie ermöglicht die Herstellung des [[shiphull SH_TRANSSPATIAL]]s, des [[shippart FU_TRANSPATIAL_DRIVE]]s und, zusammen mit anderen Gebäuden, des [[shiphull SH_LOGISTICS_FACILITATOR]]s.
+
+Eine hochentwickelte Konstruktionsanlage speziell für den Bau des [[FU_TRANSPATIAL_DRIVE]]s.'''
+
+BLD_SHIPYARD_AST
+Asteroidenverarbeitung
+
+BLD_SHIPYARD_AST_DESC
+'''Dieses Gebäude wird für die Herstellung aller Asteroidenrümpfe sowie für weitere Aufrüstungen der Astroidenverarbeitung benötigt. Dieses Gebäude kann nur auf Asteroidengürteln gebaut werden, einschließlich [[encyclopedia OUTPOSTS_TITLE]].
+
+Eine gewaltige Produktionsanlage, in der Asteroiden ausgehöhlt und für den Einsatz als Schiffsrumpf vorbereitet werden. Eine [[buildingtype BLD_SHIPYARD_BASE]] im gleichen System verarbeitet diese dann zu einem fertigen Rumpf.'''
+
+BLD_SHIPYARD_AST_REF
+Asteroidenuwandlungsanlage
+
+BLD_SHIPYARD_AST_REF_DESC
+'''Dies ist eine Aufrüstung für die [[buildingtype BLD_SHIPYARD_AST]]. Sie ermöglicht die Herstellung des [[shiphull SH_MINIASTEROID_SWARM]]s, des [[shiphull SH_SCATTERED_ASTEROID]]s und des [[shiphull SH_CRYSTALLIZED_ASTEROID]]s. Des Weiteren ermöglicht dieses Gebäude allen Werften, einschließlich derer in verbündeten Imperien, die Herstellung von [[shippart AR_ROCK_PLATE]] und [[shippart AR_CRYSTAL_PLATE]].
+
+Eine komplexe Produktionsstätte, in der Asteroiden zertrümmert, verschweißt, zerlegt und zusammengesetzt werden, um sie für den Einsatz als Raumschiffkomponenten vorzubereiten.'''
+
+BLD_SHIPYARD_ORG_ORB_INC
+Orbitalinkubator
+
+BLD_SHIPYARD_ORG_ORB_INC_DESC
+'''Dies ist eine Aufrüstung für [[buildingtype BLD_SHIPYARD_BASE]]en und wird für die Herstellung aller organische Rümpfe sowie für alle zusammenhängenden Werftaufrüstungen benötigt. Dieses Gebäude ermöglicht die Herstellung des [[shiphull SH_ORGANIC]]s, des [[shiphull SH_SYMBIOTIC]]s and [[shiphull SH_STATIC_MULTICELLULAR]]s.
+
+Eine Schiffswert, die an die Bedürtnisse heranwachsender Weltallkreaturen angepasst ist. Damit die lebenden Schiffe wachsen und gedeihen können, müssen in der Werft die exakt richtigen Bedingungen herrschen. Daher führt Schaden an der Werft häufig zum Tod aller unfertigen Schiffe.'''
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB
-Zellwachstum Kammer
+Zellwachstumskammer
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC
-'''Das ist eine Verbesserung vom [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] und ermöglicht die Entwicklung von [[shiphull SH_PROTOPLASMIC]]s, [[shiphull SH_SYMBIOTIC]]s und [[shiphull SH_BIOADAPTIVE]]s. Das Vorhandensein dieser Verbesserung und die [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] auf dem Planeten erlaubt die Entwicklung des [[shiphull SH_ENDOSYMBIOTIC]] und [[shiphull SH_SENTIENT]].
+'''Dies ist eine Aufrüstung des [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]]s und ermöglicht die Entwicklung des [[shiphull SH_PROTOPLASMIC]]s, des [[shiphull SH_SYMBIOTIC]]s und des [[shiphull SH_BIOADAPTIVE]]s. Das Vorhandensein dieser Aufrüstung und der [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] auf dem selben Planeten ermöglicht die Entwicklung des [[shiphull SH_ENDOSYMBIOTIC]]s und des [[shiphull SH_SENTIENT]]s.
 
-Eine Werft Verbesserung die darauf zielt, die Größe von einzelligen Organismen um wirklich massive Proportionen zu erhöhen.'''
+Eine spezialisierte Werftaufrüstung, die die Größe einzelliger Organismen auf enorme Ausmaße bringen kann.'''
+
+BLD_SHIPYARD_ORG_XENO_FAC
+Xeno-Koordinierungseinrichtung
+
+BLD_SHIPYARD_ORG_XENO_FAC_DESC
+'''Dies ist eine Aufrüstung des [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]]s und ermöglicht die Entwicklung des [[shiphull SH_ENDOMORPHIC]]s und [[shiphull SH_RAVENOUS]]s.  Das Vorhandensein dieser Aufrüstung und der [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] auf dem selben Planeten ermöglicht die Entwicklung des [[shiphull SH_ENDOSYMBIOTIC]]s und des [[shiphull SH_SENTIENT]]s.
+
+Eine Einrichtung, die eine vollkommen symbiotische Beziehung zwischen Schiff und Besatzung schafft.'''
+
+BLD_SHIPYARD_ENRG_COMP
+Energieverdichter
+
+BLD_SHIPYARD_ENRG_COMP_DESC
+'''Dies ist eine Aufrüstung für [[buildingtype BLD_SHIPYARD_BASE]]en und wird für die Bildung aller Energierümpfe sowie für alle zusammenhängenden Werftaufrüstungen benötigt.
+
+Da Energie aus einem hochenergetischen Stern abgezapft werden muss, ist der Bau nur möglich in Systemen der Sternentypen [[STAR_BLUE]], [[STAR_WHITE]] oder [[STAR_BLACK]].
+
+Eine hochspezialisierte Schiffswerft, in der Schiffskomponenten aus zusammengepresster Energie gebaut und montiert werden. Dies ist ein delikater Prozess, weshalb selbst geringer [[encyclopedia DAMAGE_TITLE]] an der Werft zu einer gewaltigen Explosion führt.'''
+
+BLD_SHIPYARD_ENRG_SOLAR
+Sonnenbehälter
+
+BLD_SHIPYARD_ENRG_SOLAR_DESC
+'''Dies ist eine Aufrüstung für den [[buildingtype BLD_SHIPYARD_ENRG_COMP]] und ermöglicht die Bildung des [[shiphull SH_SOLAR]]s.
+
+Da enorme Mengen Energie abgezapft werden müssen, ist der Bau nur in Systemen mit einem [[STAR_BLACK]] möglich.
+
+Allein die Herstellung einer Miniatursonne ist schon eine enorme Aufgabe. Die Herstellung von einer, an die sich Schiffsteile anbringen lassen, ist nur umso enormer.'''
 
 BLD_BIOTERROR_PROJECTOR
-Bioterror Angriffsbasis
+Bioterror-Verbreitungsbasis
+
+BLD_BIOTERROR_PROJECTOR_DESC
+'''Verleiht der Kolonie den [[FOCUS_BIOTERROR]]-Fokus, welcher auf allen Feindplaneten, die nicht weiter als 4 Sternstraßensprünge entfernt sind, die [[metertype METER_POPULATION]] um 2 pro Runde reduziert, sofern das feindliche Imperium keine [[buildingtype BLD_GENOME_BANK]] hat.
+
+Diese verborgene Biowaffenbasis verwüstet alle feindlichen Planeten in Reichweite. Die Öffentlichkeit missbilligt solch ein Vorgehen aber, und die Basis kann nur auf Planeten mit einem resonanten Mond errichtet werden. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], sofern ein [[special RESONANT_MOON_SPECIAL]] vorhanden ist.'''
 
 BLD_LIGHTHOUSE
 Interstellarer Leuchtturm
+
+BLD_LIGHTHOUSE_DESC
+Reduziert die [[metertype METER_STEALTH]] aller Objekte im System um 30 und erhöht die [[metertype METER_SPEED]] aller verbündeten Schiffe innerhalb von 50uu um 20. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] and unterstützt den Einsatz von [[buildingtype BLD_PLANET_DRIVE]]en.
+
+BLD_SCANNING_FACILITY
+Scananlage
+
+BLD_SCANNING_FACILITY_DESC
+'''Erhöht die [[metertype METER_DETECTION]] des Planeten um 75.
+
+Durch die Kombination von Langstreckenscannern und Computeranalyse kann ein größerer Bereich nach Objekten abgesucht werden.'''
 
 BLD_INDUSTRY_CENTER
 Industriezentrum
 
 BLD_INDUSTRY_CENTER_DESC
-'''Gibt einen Bonus von 0.2 pro Bevölkerung auf [[metertype METER_INDUSTRY]] für alle über [[metertype METER_SUPPLY]] verbundenen Planeten mit Industrie.
+'''Erhöht auf allen Planeten mit Industriefokus, die über die [[metertype METER_SUPPLY]]slinie verbunden sind, [[metertype METER_TARGET_INDUSTRY]] um 0,2 pro [[metertype METER_POPULATION]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
-Die [[tech PRO_INDUSTRY_CENTER_II]] Aufrüstung verdoppelt den Bonus.
+Die Verbesserung [[tech PRO_INDUSTRY_CENTER_II]] erhöht den Bonus auf das doppelte.
 
-Die [[tech PRO_INDUSTRY_CENTER_III]] Aufrüstung erhöht den Bonus auf das dreifache des Grundbonuses.'''
+Die Verbesserung [[tech PRO_INDUSTRY_CENTER_III]] erhöht den Bonus auf das dreifache.
 
 #BLD_MEGALITH
 #Megalith
