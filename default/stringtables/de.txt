@@ -5889,7 +5889,7 @@ BLD_SHIPYARD_AST_DESC
 Eine gewaltige Produktionsanlage, in der Asteroiden ausgehöhlt und für den Einsatz als Schiffsrumpf vorbereitet werden. Eine [[buildingtype BLD_SHIPYARD_BASE]] im gleichen System verarbeitet diese dann zu einem fertigen Rumpf.'''
 
 BLD_SHIPYARD_AST_REF
-Asteroidenuwandlungsanlage
+Asteroidenumwandlungsanlage
 
 BLD_SHIPYARD_AST_REF_DESC
 '''Dies ist eine Aufrüstung für die [[buildingtype BLD_SHIPYARD_AST]]. Sie ermöglicht die Herstellung des [[shiphull SH_MINIASTEROID_SWARM]]s, des [[shiphull SH_SCATTERED_ASTEROID]]s und des [[shiphull SH_CRYSTALLIZED_ASTEROID]]s. Des Weiteren ermöglicht dieses Gebäude allen Werften, einschließlich derer in verbündeten Imperien, die Herstellung von [[shippart AR_ROCK_PLATE]] und [[shippart AR_CRYSTAL_PLATE]].
@@ -5944,9 +5944,9 @@ BLD_BIOTERROR_PROJECTOR
 Bioterror-Verbreitungsbasis
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Verleiht der Kolonie den [[FOCUS_BIOTERROR]]-Fokus, welcher auf allen Feindplaneten, die nicht weiter als 4 Sternstraßensprünge entfernt sind, die [[metertype METER_POPULATION]] um 2 pro Runde reduziert, sofern das feindliche Imperium keine [[buildingtype BLD_GENOME_BANK]] hat.
+'''Verleiht der Kolonie den [[FOCUS_BIOTERROR]]-Fokus, welcher auf allen Feindplaneten, die nicht weiter als 4 Sternstraßensprünge entfernt sind, die [[metertype METER_POPULATION]] um 2 pro Runde reduziert, sofern das betroffene Imperium keine [[buildingtype BLD_GENOME_BANK]] hat.
 
-Diese verborgene Biowaffenbasis verwüstet alle feindlichen Planeten in Reichweite. Die Öffentlichkeit missbilligt solch ein Vorgehen aber, und die Basis kann nur auf Planeten mit einem resonanten Mond errichtet werden. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], sofern ein [[special RESONANT_MOON_SPECIAL]] vorhanden ist.'''
+Diese verborgene Biowaffenbasis verwüstet alle feindlichen Planeten in Reichweite. Die Öffentlichkeit missbilligt solch ein Vorgehen aber und die Basis kann nur auf Planeten mit einem resonanten Mond errichtet werden. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], sofern ein [[special RESONANT_MOON_SPECIAL]] vorhanden ist.'''
 
 BLD_LIGHTHOUSE
 Interstellarer Leuchtturm
@@ -5971,71 +5971,344 @@ BLD_INDUSTRY_CENTER_DESC
 
 Die Verbesserung [[tech PRO_INDUSTRY_CENTER_II]] erhöht den Bonus auf das doppelte.
 
-Die Verbesserung [[tech PRO_INDUSTRY_CENTER_III]] erhöht den Bonus auf das dreifache.
+Die Verbesserung [[tech PRO_INDUSTRY_CENTER_III]] erhöht den Bonus auf das dreifache.'''
+
+BLD_INTERSPECIES_ACADEMY
+Spezies-InterDesign-Akademie
+
+BLD_INTERSPECIES_ACADEMY_DESC
+'''Erhöht Vorratsbildung um 10, wenn dieser Planet auf Vorrat fokussiert ist.
+Erhöht [[metertype METER_RESEARCH]] um 5, wenn dieser Planet auf Forschung fokussiert ist.
+
+Zum Entwerfen universell verwendbarer Werkzeuge ist ein Verständis der physischen Möglichkeiten anderer Spezies unabdingbar.
+
+Ein Imperium kann auf bis zu sechs Planeten Akademien unterhalten. Jede Akademie benötigt eine zufriedene [[metertype METER_POPULATION]] einer anderen Spezies und muss mindestens drei Sternstraßensprünge von den anderen Akademien entfernt sein.'''
 
 #BLD_MEGALITH
 #Megalith
+
+BLD_MEGALITH_DESC
+'''Kann nur auf der Heimatwelt des Imperiums mit [[buildingtype BLD_IMPERIAL_PALACE]] errichtet werden. Wenn vorhanden, erreichen alle Ressourcenmeter auf dem Planeten ihre Zielwerte in nur einem Zug.
+Erhöht [[metertype METER_TARGET_CONSTRUCTION]] um 30. Erhöht [[metertype METER_SUPPLY]] auf allen Planeten im Imperium um 1. Erhöht [[metertype METER_TROOPS]] aller bevölkerter Planeten innerhalb von 2 Sternstraßensprüngen um 10.
+
+Ein außergewöhnlich großer Sternenkratzer mit einem Durchmesser von mehreren Kilometern. Eine Inspiration für Architekten im gesamten Imperium.'''
 
 BLD_SPACE_ELEVATOR
 Weltraumlift
 
 BLD_SPACE_ELEVATOR_DESC
-'''Doubles [[metertype METER_SUPPLY]] line range on the planet on which it is built.
+'''Beseitigt die Auswirkungen der Planetengröße auf [[metertype METER_SUPPLY]] und erhöht [[METER_SUPPLY]] um 3.
 
-Die Nanokonstruktion eröffnet die Möglichkeit Kabel zu erschaffen, welche zugfest genug sind, um über den geostationären Orbit zu reichen. Magnetisch am Kabel beförderte Fähren sind den teuren, ineffizienten und hochgefährlichen Raketenstarts überlegen. Ein enormes und nahezu unzerreissbares Kabel, das an einem Ende mit einem Satelliten im niedrigen geostationären Orbit verbunden ist, und an dessen Ende zum Planeten hin sich eine Startplattform befindet.'''
+Die Nanokonstruktion eröffnet die Möglichkeit, Kabel zu erschaffen, welche zugfest genug sind, um über den geostationären Orbit zu reichen. Magnetisch am Kabel beförderte Fähren sind den teuren, ineffizienten und hochgefährlichen Raketenstarts überlegen. Ein enormes und nahezu unzerreissbares Kabel, das an einem Ende mit einem Satelliten im niedrigen geostationären Orbit verbunden ist, und an dessen Ende zum Planeten hin sich eine Startplattform befindet.'''
 
 BLD_GENOME_BANK
 Genombank
 
 BLD_GENOME_BANK_DESC
-'''Gibt dem Imperium Imunität gegen Bioterror.
+'''Verleiht dem Imperium Imunität gegen Bioterror.
 
 Die größte jemals erfasste Datenbank. Die Genombank beinhaltet Genkarten der Genome eines jeden dem Imperium bekannten Organismus. Diese Datenbank ist von unschätzbarem Wert bei der Behandlung von Krankheiten.'''
 
-BLD_GAIA_TRANS_DESC
-'''Increases max Population according to planet size; Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
+BLD_GAIA_TRANS
+Gaia-Umwandlung
 
-Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
+BLD_GAIA_TRANS_DESC
+'''Verleiht dem Planeten die Besonderheit [[special GAIA_SPECIAL]]. Diese erhöht [[metertype METER_TARGET_POPULATION]] auf [[PE_GOOD]]en [[encyclopedia ENVIRONMENT_TITLE]]en, entsprechend der Planetengröße:
+• [[SZ_TINY]] (+3)
+• [[SZ_SMALL]] (+6)
+• [[SZ_MEDIUM]] (+9)
+• [[SZ_LARGE]] (+12)
+• [[SZ_HUGE]] (+15)
+Erhöht außerdem [[metertype METER_TARGET_HAPPINESS]] um 5.
+
+Durch einen zellenbasierten, denkenden, fast schon gottgleichen Supercomputer wird der Planet in eine Gaia-Welt umgewandelt - ein Monument des Lebens und der Harmonie, ein Wunder, gefeiert in der gesamten Galaxie. Die Bewohner dieser Welt sind Teil eines größeren Ganzen, in Denken und Handeln stets einander dienlich.'''
 
 BLD_COLLECTIVE_NET
 Kollektives Gedankennetzwerk
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases [[metertype METER_INDUSTRY]] on planets with the Industry focus by 0.5 per Population, and [[metertype METER_RESEARCH]] on Planets with the Research focus by 0.5 per Population. Sternstraße travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Erhöht [[metertype METER_TARGET_INDUSTRY]] auf Planeten mit Industriefokus um 0,5 pro [[metertype METER_POPULATION]] und [[metertype METER_TARGET_RESEARCH]] auf Planeten mit Forschungsfokus um 0,5 pro [[metertype METER_POPULATION]]. Sternstraßensprünge innerhalb von 200uu stören die Funktion dieses Gebäudes und negieren den Bonus.
+[[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
-Durch die Übertragung eines Geistes in den Cyberspace können unzählige Wesen vereint agieren und so Probleme lösen und Gedanken fassen, die einem einzelnen Wesen nicht möglich wären.'''
+Durch die Übertragung des Geistes in den Cyberspace können unzählige Wesen vereint agieren und so Probleme lösen und Gedanken fassen, die einem einzelnen Wesen nicht möglich wären.'''
+
+BLD_GATEWAY_VOID
+Portal der Leere
+
+BLD_GATEWAY_VOID_DESC
+'''Das vollständige Sperren eines ganzen Systems stellt eine effektive Verteidigungsmaßnahme dar. Alle Schiffe, die dieses System betreten und nicht sofort weiterfliegen, werden vernichtet und alle Kolonien im System werden zu [[encyclopedia OUTPOSTS_TITLE]] reduziert. Die [[metertype METER_STEALTH]] aller Objekte im System steigt um 1000, womit sie praktisch unsichtbar wären.
+
+Ein dimensionaler Riss, welche die zerstörerische Macht des Geists der Leere auf eine einzelne Region konzentrieren kann.'''
 
 BLD_ENCLAVE_VOID
 Enklave der Leere
 
 BLD_ENCLAVE_VOID_DESC
-'''Increases target [[metertype METER_RESEARCH]] on all planets with the Research focus by 0.75 per Population.
+'''Erhöht [[metertype METER_TARGET_RESEARCH]] auf allen Planeten um 0,75 pro [[metertype METER_POPULATION]].
+Weitere Instanzen dieses Gebäudes haben keinen zusätzlichen Effekt.
 
 Die Bevölkerung eines ganzen Planeten wird genetisch auf den Geist der Leere ausgerichtet und widmet sich ganz der Aufgabe, seine Weisheit dem Imperium mitzuteilen. Die Mitglieder der Enklave der Leere werden als Priester erachtet und als Vermittler höherer Weisheit. In allen wichtigen Angelegenheiten des Imperiums wird ihr Rat eingeholt. Botschafter der Enklave können auch ausgesandt werden, um bei Forschungsprojekten des Imperiums mitzuwirken.'''
 
 BLD_ART_BLACK_HOLE
 Künstliches schwarzes Loch
 
+BLD_ART_BLACK_HOLE_DESC
+Durch Überladung der Schwerkraft bei gleichbleibender Energie können Sterne zum Kollaps gebracht werden, was ein [[STAR_BLACK]] erzeugt. Dies funktioniert jedoch nur bei [[STAR_RED]]en Sternen, da der interne Druck heißerer Sterne zu hoch ist, um überwunden zu werden. Dieser Prozess kann auch von einem [[encyclopedia OUTPOSTS_TITLE]] aus durchführt werden.
+
+BLD_BLACK_HOLE_COLLAPSER
+Schwarzes-Loch-Kollabierer
+
+BLD_BLACK_HOLE_COLLAPSER_DESC
+Erschafft einen [[fieldtype FLD_SUBSPACE_RIFT]] mit 100uu Radius um das Gebäude herum.
+
 BLD_HYPER_DAM
 Hyperspatialdamm
 
+BLD_HYPER_DAM_DESC
+'''Energieversorgung für über [[metertype METER_SUPPLY]] verbundene Planeten mit Industriefokus, aber ohne Zugriff auf einen [[buildingtype BLD_BLACK_HOLE_POW_GEN]]. Erhöht [[metertype METER_TARGET_INDUSTRY]] auf solchen Planeten um 1 pro [[metertype METER_POPULATION]], aber reduziert [[metertype METER_TARGET_POPULATION]] entsprechend der Planetengröße:
+• ([[SZ_TINY]] -1)
+• ([[SZ_SMALL]] -2)
+• ([[SZ_MEDIUM]] -3)
+• ([[SZ_LARGE]] -4)
+• ([[SZ_HUGE]] -5)
+[[NO_STACK_SUPPLY_CONNECTION_TEXT]]
+
+Ein kontrollierter Riss in der Struktur des Universums, genutzt als Energiequelle. Jeder Planet unterhält eigene Dämme, während ein einzelnes Kontrollzentrum dafür sorgt, dass das Zeit-Raum-Kontinuum unter der Belastung nicht zusammenbricht. Der Einsatz eines Dammes hat für die Bevölkerung gesundheitliche Folgen, außer in Systemen mit einem [[STAR_BLACK]].
+
+Dieses Gebäude hat keinen Nutzen für Planeten, die mit einem [[buildingtype BLD_BLACK_HOLE_POW_GEN]] verbunden sind, stellt aber eine Alternative dar, falls ein solcher nicht gebaut werden kann.'''
+
+BLD_SOL_ACCEL
+Solarbeschleuniger
+
+BLD_SOL_ACCEL_DESC
+Beschleunigt die natürlichen Prozesse eines Sterns, um ihn künstlich zu altern. Der Stern wird um eine Stufe älter, gemäß der folgenden Reihenfolge: [[STAR_BLUE]], [[STAR_WHITE]], [[STAR_YELLOW]], [[STAR_ORANGE]], [[STAR_RED]]. Dieser Prozess kann auch von einem [[encyclopedia OUTPOSTS_TITLE]] aus durchgeführt werden.
+
+BLD_SOL_ORB_GEN
+Sonnenorbitgenerator
+
+BLD_SOL_ORB_GEN_DESC
+'''Erhöht [[metertype METER_TARGET_INDUSTRY]] auf via [[metertype METER_SUPPLY]] verbundenen Planeten proportional zur [[metertype METER_POPULATION]], abhängig von der Farbe des Sterns:
+* [[STAR_BLUE]] oder [[STAR_WHITE]] (x0,4)
+* [[STAR_YELLOW]] oder [[STAR_ORANGE]] (x0,2)
+* [[STAR_RED]] (x0,1)
+[[NO_STACK_SUPPLY_CONNECTION_TEXT]] Der höchste Bonus ist gültig.
+
+Ein elektrischer Generator in niedriger Umlaufbahn, welcher aus der Sonne, die er umkreist, Energie gewinnt. Da unterschiedliche Sterne unterschiedliche Mengen Energie abgeben, hängt die Effizienz des Generators vom Typ des Sterns ab. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
+
+BLD_CLONING_CENTER
+Kloncenter
+
+BLD_CLONING_CENTER_DESC
+'''Erhöht [[metertype METER_TARGET_POPULATION]] auf allen Planeten entsprechend ihrer Größe:
+• ([[SZ_TINY]] +1)
+• ([[SZ_SMALL]] +2)
+• ([[SZ_MEDIUM]] +3)
+• ([[SZ_LARGE]] +4)
+• ([[SZ_HUGE]] +5)
+
+Das [[tech GRO_INDUSTRY_CLONE]] ermöglicht die industrielle Anfertigung ganzer Völker und schafft so neue Bewohner für das Imperium.'''
+
+BLD_TERRAFORM
+Terraformation
+
+BLD_TERRAFORM_DESC
+Wandelt den Planeten in eine Welt um, die dem bevorzugten [[encyclopedia ENVIRONMENT_TITLE]] der Einwohnerspezies einen Schritt näher ist.
+
+BLD_TERRAFORM_REVERT
+Terraform-Umkehr
+
+BLD_TERRAFORM_REVERT_DESC
+Wandelt den Planeten einen Schritt in Richtung seines ursprünglichen [[encyclopedia ENVIRONMENT_TITLE]]s um.
+
+BLD_REMOTE_TERRAFORM
+Fern-Terraformation
+
+BLD_REMOTE_TERRAFORM_DESC
+Wandelt einen Planeten in eine Welt um, die dem bevorzugten [[encyclopedia ENVIRONMENT_TITLE]] der Einwohnerspezies einen Schritt näher ist. Dieser Prozess kann auch von einem [[encyclopedia OUTPOSTS_TITLE]] aus durchgeführt werden.
+
+BLD_NEST_ERADICATOR
+Nestbeseitiger
+
+BLD_NEST_ERADICATOR_DESC
+Entfernt ein [[encyclopedia KRAKEN_NEST_SPECIAL]], [[encyclopedia SNOWFLAKE_NEST_SPECIAL]] oder [[encyclopedia JUGGERNAUT_NEST_SPECIAL]] von dem Planeten. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].
+
+BLD_NEUTRONIUM_EXTRACTOR
+Neutroniumextrahierer
+
+BLD_NEUTRONIUM_EXTRACTOR_DESC
+'''Gewährt dem Imperium Zugriff auf Neutronium, welches einer [[buildingtype BLD_NEUTRONIUM_FORGE]] die Herstellung von Schiffsbauteilen wie der [[shippart AR_NEUTRONIUM_PLATE]] ermöglicht.
+[[BUILDING_AVAILABLE_ON_OUTPOSTS]].
+
+Um aus Neutronium Bauteile herzustellen, muss es erst aus [[STAR_NEUTRON]]en extrahiert werden. Das gewonnene Neutronium wird anschließend zu [[BLD_NEUTRONIUM_FORGE]]n verfrachtet.'''
+
+BLD_NEUTRONIUM_FORGE
+Neutroniumschmiede
+
+BLD_NEUTRONIUM_FORGE_DESC
+'''Dies ist eine Aufrüstung für [[buildingtype BLD_SHIPYARD_BASE]]en. Sie wird für die Herstellung von Schiffen mit Neutroniumbauteilen benötigt.
+
+Die industrielle Verarbeitung von Neutronium ist nur in hochspezialisierten Anlagen möglich, welche auf [[encyclopedia OUTPOSTS_TITLE]] nicht errichtet werden können.
+[[MACRO_NEUTRONIUM_BUILDINGS]]'''
+
+BLD_NEUTRONIUM_SYNTH
+Neutroniumsynthesierer
+
+BLD_NEUTRONIUM_SYNTH_DESC
+'''Gewährt dem Imperium Zugriff auf Neutronium, welches einer [[buildingtype BLD_NEUTRONIUM_FORGE]] die Herstellung von Schiffsbauteilen wie der [[shippart AR_NEUTRONIUM_PLATE]] ermöglicht. Der Bau eines [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] wird somit überflüssig.
+
+Ein antikes Gebäude, das Neutronium herstellen kann.'''
+
 BLD_CONC_CAMP
-Arbeitslager
+Konzentrationslager
+
+BLD_CONC_CAMP_DESC
+'''Reduziert [[metertype METER_POPULATION]] um 3 pro Zug, erhöht [[metertype METER_TARGET_INDUSTRY]] um das fünffache der [[metertype METER_POPULATION]] und reduziert [[metertype METER_TARGET_HAPPINESS]] auf null.
+
+Die Einführung einer besseren Bewohnerspezies setzt das Verschwinden der ungewollten voraus. Durch ein planetenumfassendes Netzwerk von Lagern, in denen sich Insassen wortwörtlich zu Tode arbeiten, kann dieses Ziel schnell und effizient realisiert werden.'''
+
+BLD_CONC_CAMP_REMNANT
+Lagerruinen
+
+BLD_CONC_CAMP_REMNANT_DESC
+Obwohl die Behörden den Einsatz der [[buildingtype BLD_CONC_CAMP]] leugnen, wissen die Einwohner, was hier passiert ist.
+
+BLD_BLACK_HOLE_POW_GEN
+Schwarzes-Loch-Generator
+
+BLD_BLACK_HOLE_POW_GEN_DESC
+'''Erhöht auf allen via [[metertype METER_SUPPLY]] verbundenen Planeten mit Industriefokus [[metertype METER_TARGET_INDUSTRY]] um 1 per [[metertype METER_POPULATION]].
+[[NO_STACK_SUPPLY_CONNECTION_TEXT]]
+
+[[BUILDING_AVAILABLE_ON_OUTPOSTS]], setzt aber ein [[STAR_BLACK]] im System voraus.'''
 
 BLD_PLANET_DRIVE
-Planetary Sternstraße Drive
+Planetarer Sternenantrieb
+
+BLD_PLANET_DRIVE_DESC
+'''Ermöglicht einem Planeten die Reise zu anderen Systemen. Um einen erfolgreiche Passage zu gewährleisten, wird ein [[buildingtype BLD_LIGHTHOUSE]] innerhalb von 200uu des Zielsystems vorausgesetzt. Andernfalls besteht eine Wahrscheinlichkeit von 50%, das der Planet zerstört wird. Selbst im Idealfall ist die Reise aber noch hochgefährlich und nur die Hälfte der [[metertype METER_POPULATION]] wird den Transit überleben, unabhängig von Vorhandensein eines Leuchtturms. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], benötigt aber eine Kolonie, um in Betrieb genommen zu werden.
+
+Da manuelles Steuern nicht möglich ist, wird eine [[buildingtype BLD_PLANET_BEACON]] oder ein Schiff mit einer [[shippart SP_PLANET_BEACON]] am Zielort benötigt. Das Gebäude zerstört sich anschließend selbst, um eine spätere Weiterreise zu erlauben.
+
+Um den Antrieb zu nutzen, muss vorher im benachbarten Zielsystem eine [[buildingtype BLD_PLANET_BEACON]] oder eine [[shippart SP_PLANET_BEACON]] platziert werden. Dann wird der Fokus des Planeten auf Planetenantrieb gesetzt, um den Transit einzuleiten. Eine Bake kann nicht im selben Zug zum Einsatz kommen, in dem sie fertiggebaut wurde beziehungsweise eingetroffen ist.'''
+
+BLD_PLANET_BEACON
+Planetarbake
+
+BLD_PLANET_BEACON_DESC
+'''Kennzeichnet das Ziel für den [[buildingtype BLD_PLANET_DRIVE]]. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
 
 BLD_ART_PLANET
 Künstlicher Planet
 
+BLD_ART_PLANET_DESC
+'''Wandelt einen Asteroidengürtel oder Gasriesen in einen künstlichen Planeten um. Aus [[PT_ASTEROIDS]] werden [[SZ_TINY]]e [[PT_BARREN]]e Planeten und aus [[PT_GASGIANT]]n werden [[SZ_HUGE]]e [[PT_BARREN]]e Planeten. [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]'''
+
+BLD_ART_FACTORY_PLANET
+Künstliche Fabrikwelt
+
+BLD_ART_FACTORY_PLANET_DESC
+Wandelt einen Asteroidengürtel oder Gasriesen in einen künstlichen Planeten um und bevölkert ihn mit [[species SP_EXOBOT]]s. Aus [[PT_ASTEROIDS]] werden [[SZ_TINY]]e [[PT_BARREN]]e Planeten und aus [[PT_GASGIANT]]n werden [[SZ_HUGE]]e [[PT_BARREN]]e Planeten.. [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]
+
+BLD_ART_PARADISE_PLANET
+Künstliche Paradieswelt
+
+BLD_ART_PARADISE_PLANET_DESC
+'''Wandelt einen Asteroidengürtel oder Gasriesen in einen künstlichen Planeten um. Aus [[PT_ASTEROIDS]] werden [[SZ_TINY]]e [[PT_BARREN]]e Planeten und aus [[PT_GASGIANT]]n werden [[SZ_HUGE]]e [[PT_BARREN]]e Planeten. Der Planet erhält zudem die [[special GAIA_SPECIAL]]-Besonderheit, welche den Planeten schrittweise umwandelt, bis er perfekt zu seinen Bewohnern passt.
+[[ARTIFICIAL_PLANET_PROCESS_LOCATION]]'''
+
 BLD_ART_MOON
 Künstlicher Mond
+
+BLD_ART_MOON_DESC
+'''Formt einen künstlichen Mond mit identischer Umlaufzeit und Rotationsperiode. Verleiht dem Planeten die Besonderheit [[special RESONANT_MOON_SPECIAL]].
+
+Dies kann nicht auf einem [[PT_GASGIANT]]n oder Asteroidengürtel gebaut werden.
+
+Während natürliche Satelliten für Planetenkörper keineswegs ungewöhnlich sind, sind Monde, deren Umlaufzeit ihrer Rotationsperiode gleicht, äußerst selten. Ein solcher Satellit hätte eine dem Planeten stets abgewandte Seite, auf der sich riesige Bauten, die sonst vom Planeten aus leicht zu erkennen wären, vollkommen heimlich errichten ließen, außer Sicht der ahnungslosen Einwohner. Schiffe im Orbit des Planeten könnten sich außerdem leichter vor Angreifern verbergen.'''
+
+BLD_SOL_ACCEL
+Solarverjüngerer
+
+BLD_SOL_ACCEL_DESC
+Versorgt einen Stern mit zusätzlichem Brennstoff, um ihn künstlich zu verjüngern. Der Stern wird um eine Stufe jünger, gemäß der folgenden Reihenfolge: [[STAR_RED]], [[STAR_ORANDE]], [[STAR_YELLOW]], [[STAR_WHITE]], [[STAR_BLUE]]. Dieser Prozess kann auch von einem [[encyclopedia OUTPOSTS_TITLE]] aus durchgeführt werden.
+
+BLD_TRANSFORMER
+Transformer
+
+BLD_TRANSFORMER_DESC
+Ein vielseitiges, extrem teures Gebäude, dass den Effekt anderer Gebäude replizieren kann. Wird aktiviert, indem ein entsprechender Fokus gewählt wird. Kann den Effekt der Gebäudetypen [[buildingtype BLD_BIOTERROR_PROJECTOR]], [[buildingtype BLD_STARGATE]], [[buildingtype BLD_PLANET_DRIVE]] und [[buildingtype BLD_SPATIAL_DISTORT_GEN]] nachahmen, sofern die entsprechende Technologie bereits verfügbar ist.
+
+BLD_PLANET_CLOAK
+Planetares Tarngerät
+
+BLD_PLANET_CLOAK_DESC
+'''Verleiht dem Planeten einen hohen Bonus auf [[metertype METER_STEALTH]].
+
+EIne Tarnvorrichtung, die stark genug ist, ganze Welten zu verbergen.'''
+
+BLD_SPATIAL_DISTORT_GEN
+Raumstörungserzeuger
+
+BLD_SPATIAL_DISTORT_GEN_DESC
+Ändert die dimensionalen Eigenschaften angrenzender Sternstraßen. Feindschiffe, die sich auf das System zu bewegen, werden bis zu ihrer Ankunft jeden Zug um 40uu zurückgedrängt. Wird durch den Raumstörungsfokus aktiviert.
+
+BLD_STARGATE
+Sternentor
+
+BLD_STARGATE_DESC
+'''Schafft eine Abkürzung durch die Raumzeit zwischen diesem und anderen [[BLD_STARGATE]]en im Imperium. Der Energieverbrauch des Tores, während es verwendet wird, ist hoch genug, um den ganzen Planeten zu lähmen. Aufgrund von Quantumschwankungen ist es unmöglich, den Ankunftsort eines Schiffes zu bestimmen, während mehr als ein Tor empfangsbereit ist.
+
+Um das Tor zu nutzen, muss der Fokus des Startplaneten auf [[FOCUS_STARGATE_SEND]] und der Fokus des Zielplaneten auf [[FOCUS_STARGATE_RECEIVE]] gestellt werden.'''
+
+BLD_GAS_GIANT_GEN
+Gasriesengenerator
+
+BLD_GAS_GIANT_GEN_DESC
+'''Kann nur auf [[PT_GASGIANT]]n errichtet werden und gewährt 10 [[metertype METER_TARGET_INDUSTRY]] an alle Planeten mit Industriefokus im selben System. Weitere [[BLD_GAS_GIANT_GENERATOR]]en im selben System haben keinen Effekt.
+
+Ein Stromgenerator, der aus [[PT_GASGIANT]]en Energie gewinnt.'''
+
+BLD_STARLANE_BORE
+Sternstraßenbohrer
+
+BLD_STARLANE_BORE_DESC
+Erschafft eine neue Sternstraße zum nächtgelegen möglichen System. Die Straße kann keine existierenden Straßen überschneiden oder zu nahe an anderen Systemen vorbei gehen.
+
+BLD_STARLANE_NEXUS
+Sternstraßenkonnex
+
+BLD_STARLANE_NEXUS_DESC
+Erschafft neue Sternstraßen zu umliegenden Systemen, sofern die entstehenden Straßen keine existierenden Straßen überschneiden oder zu nahe an anderen Systemen vorbei gehen würden.
+
+BLD_XENORESURRECTION_LAB
+Xeno-Reanimierungslabor
+
+BLD_XENORESURRECTION_LAB_DESC
+Sammelt Proben ausgestorbener Spezies, die in [[special ANCIENT_RUINS_SPECIAL]] gefunden wurden. Ermöglicht die Kolonisierung von via [[metertype METER_SUPPLY]] verbundener Planeten mit ausgestorbenen Spezies. Kann nur auf Planeten gebaut werden, in denen in Ruinen gut erhaltene Leichen ausgestorbener Spezies ausgegraben wurden.
 
 BLD_COLONY_BASE
 Siedlungsbasis
 
 BLD_COLONY_BASE_DESC
 Erstellt ein [[predefinedshipdesign SD_COLONY_BASE]], welches zur Besiedlung eines Planeten im gleichen System genutzt werden kann. Kann nur auf Planeten gebaut werden, die eine Bevölkerung von 3 oder mehr haben.
+
+BLD_EXPERIMENTOR_OUTPOST
+Experimentor-Außenposten
+
+BLD_EXPERIMENTOR_OUTPOST_DESC
+Erin Außenposten der Experimentoren, zuständig für höchst komplexe Experimente. Dient zusätzlich als Tarnvorrichtung, um potentielle Störenfriede abzuhalten.
+
+BLD_NOVA_BOMB_ACTIVATOR
+Novabombenauslöser
+
+BLD_NOVA_BOMB_ACTIVATOR_DESC
+Aktiviert alle [[shippart SP_NOVA_BOMB]]n in bis zu einem Sternensprung Entfernung.
+
+BLD_SCRYING_SPHERE
+Hellsichtskugel
+
+BLD_SCRYING_SPHERE_DESC
+Macht alle Planeten sichtbar, die ebenfalls eine [[BLD_SCRYING_SPHERE]] haben.
 
 
 ##
