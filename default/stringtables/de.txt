@@ -6649,24 +6649,211 @@ Bevorzugte Umbebung: Asteroiden. Kolossnester finden sich für gewöhnlich in As
 ## Buildings macros
 ##
 
+BUILDING_AVAILABLE_ON_OUTPOSTS
+Dieses Gebäude kann auch auf [[encyclopedia OUTPOSTS_TITLE]] errichtet werden
+
+NO_STACK_SUPPLY_CONNECTION_TEXT
+Weitere Gebäude dieser Art innerhalb der gleichen [[metertype METER_SUPPLY]]slinie haben keinen zusätzlichen Effekt.
+
+MACRO_NEUTRONIUM_BUILDINGS
+Um Neutronium nutzen zu können, braucht das Imperium einen [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] in einem [[STAR_NEUTRON]]system oder Zugriff aud einen [[buildingtype BLD_NEUTRONIUM_SYNTH]], sowie eine [[buildingtype BLD_NEUTRONIUM_FORGE]] auf dem Planeten, auf dem Neutronium verwendet werden soll.
+
+ARTIFICIAL_PLANET_PROCESS_LOCATION
+Dieser Prozess muss in einem [[encyclopedia OUTPOSTS_TITLE]] auf einem Gasriesen oder einem Asteroidengürtel durchgeführt werden.
+
+BLD_COL_PART_1
+Dieses Gebäude kann nur auf einem [[encyclopedia OUTPOSTS_TITLE]] errichtet werden und erweitert den [[OUTPOSTS_TITLE]] in eine
+
+BLD_COL_PART_2
+Die Mindestbauzeit variiert abhängig vom Abstand in Sternstraßensprüngen zur nächstgelegenen
+
+BLD_COL_PART_3
+des Imperiums; ein größerer Abstand führt zu längerer Bauzeit. Diese Varianz lässt sich durch Technologien rezduieren, die schnellere Kolonisierungsschiffe ermöglichen, wie z.B. Triebwerke und schnellere Rümpfe.
+
+
+# Macro keys formatting for ship designs, hulls or parts:
+# BLD_SHIPYARD_TYPE1_TYPE2_REQUIRED (required building type(s) owned by
+#                                    empire only in the same system)
+# ANY_SYSTEM (building owned in any system by empire or ally)
+# Any other key formatting is self-explanatory (e.g. LIVING_HULL_AUTO_REGEN)
+
+##
+## Ship design/hull macros
+##
+
+# Keys used in Predefined Ship Designs and Ship Hulls sections
+
+BLD_SHIPYARD_BASE_REQUIRED
+Zum Bau muss vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]] vorhanden sein.
+
+BLD_SHIPYARD_BASE_AST_REQUIRED
+Zum Bau muss vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]] vorhanden sein. Ein Asteroidengürtel mit [[buildingtype BLD_SHIPYARD_AST]] im gleichen System wird vorrausgesetzt.
+
+BLD_SHIPYARD_AST_REF_REQUIRED
+Eine [[buildingtype BLD_SHIPYARD_AST_REF]] im gleichen System wird ebenfalls benötigt.
+
+BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM
+Zur Herstellung wird eine [[buildingtype BLD_SHIPYARD_AST_REF]] in diesem oder einem verbündeten Imperium benötigt.
+
+BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED
+Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]] und ein [[buildingtype BLD_SHIPYARD_ENRG_COMP]] vorhanden sein. Aufgrund des hohen Energiebedarfs ist der Bau nur in Systemen mit einem [[STAR_BLUE]]en oder [[STAR_WHITE]]en Stern oder einem schwarzem Loch möglich.
+
+BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED
+Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]] und ein [[buildingtype BLD_SHIPYARD_ENRG_COMP]] vorhanden sein. Aufgrund des immensen Energiebedarfs ist der Bau nur in Systemen mit einem [[STAR_BLUE]]en Stern oder einem schwarzen Loch möglich.
+
+BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED
+Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]] und ein[[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] vorhanden sein.
+
+BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED
+Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]], eine [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] und eine [[buildingtype BLD_SHIPYARD_CON_GEOINT]] vorhanden sein.
+
+LIVING_HULL_AUTO_REGEN
+Lebende Rümpfe stellen zwischen Gefechten [[metertype METER_STRUCTURE]] und [[metertype METER_FUEL]] wieder her.
+
+BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED
+Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]] und ein[[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] vorhanden sein.
+
+BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED
+Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]], ein [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] und eine [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] vorhanden sein.
+
+MIN_POPULATION_THREE_REQUIRED
+Zum Bau muss vor Ort eine [[metertype METER_POPULATION]] von mindestens drei vorhanden sein.
+
+BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED
+Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]], ein [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]]und eine [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] vorhanden sein.
+
+BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED
+Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]], ein [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], eine [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] und eine [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] vorhanden sein.
+
+# Other than Requirements
+
+SHIPDESIGN_DETECTION_RESEARCH_TIPS
+Weitere [[metertype METER_RESEARCH]] zur Verbesserung der [[metertype METER_DETECTION]] würde bessere Konstruktionen ermöglichen.
+
+SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY
+welches Millionen von Bürgern sicher zu neuen Kolonien transportieren kann
+
+SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY
+welches viele Millionen von Bürgern sicher zu neuen Kolonien transportieren kann
+
+SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM
+Kolonie auf einem bewohnbaren Planeten im selben System
+
+SHIPDESIGN_OUTPOSTS_CAPACITY
+zur Gründung eines [[encyclopedia OUTPOSTS_TITLE]] auf einem unbewohnbaren Planeten
+
+SHIPDESIGN_NO_TRAVEL
+Dieses Schiff kann keine Sternstraßen bereisen.
+
+SHIPDESIGN_PLANET_INVASION
+[[metertype METER_TROOPS]] und Ausrüstung zum Einmarsch auf feindliche Planeten
+
+
+##
+## Ship part/tech application macros
+##
+
+# Keys used in Ship Parts and Technology Application sections
+
+BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM
+Zur Herstellung werden eine [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] und eine [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] in diesem oder einem verbündeten Imperium benötigt.
+
+BLD_BIONEURAL_REQUIRED_ANY_SYSTEM
+Zur Herstellung wird eine Bioneurale Anpassungseinheit in diesem oder einem verbündeten Imperium benötigt.
+
+BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM
+Zur Herstellung wird ein [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] in diesem oder einem verbündeten Imperium benötigt.
+
+NO_STACK_STEALTH_SHIP_PARTS
+Weitere Tarnvorrichtungen am Schiff haben keinen zusätzlichen Effekt.
+
+BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT
+Zur Herstellung wird eine [[buildingtype BLD_SHIPYARD_AST_REF]] auf einem Asteroidengürtel in diesem oder einem verbündeten Imperium benötigt.
+
+NO_STACK_SHIELDS_SHIP_PARTS
+[[metertype METER_SHIELD]] reduziert mit jedem Treffer erlittenen [[encyclopedia DAMAGE_TITLE]] entsprechend ihrer Stärke. Jedes Schiff kann nur einen aktiven Schildgenerator haben, weitere Generatoren haben keinen zusätzlichen Effekt.
+
+COLONY_SHIP_PARTS_MIN_POP
+Kolonisierungsschiffe können nur auf Planeten mit einer [[metertype METER_POPULATION]] von mindestens 3 gebaut werden.
+
+COLONY_SHIP_PARTS_UPKEEP_COST
+Je weiter das Imperium wächst, destso größer werden dessen Unterhaltungskosten, was sich in höheren Preisen für dieses Bauteil widerspiegelt.
+
+TROOP_POD_OPERATION_TEXT
+'''  * Die Truppen können nur für eine einzige Invasion genutzt werden.
+  * Die Transportschiffe führen beim Einmarsch eine harte Landung aus und sind anschließend unbrauchbar.'''
+
+SHIP_WEAPON_GRADUALLY_REDUCE
+zur graduellen Auslöschung
+
+SHIP_WEAPON_QUICKLY_REDUCE
+zur schnellen Auslöschung
+
+ENEMY_PLANET_ORGANIC_POP
+der organischen [[metertype METER_POPULATION]] von Feindplaneten
+
+ENEMY_PLANET_ROBOTIC_POP
+the robotischen [[metertype METER_POPULATION]] von Feindplaneten
+
+ENEMY_PLANET_LITHIC_POP
+the lithischen [[metertype METER_POPULATION]] von Feindplaneten
+
+ENEMY_PLANET_PHOTOTROPHIC_POP
+the phototropen [[metertype METER_POPULATION]] von Feindplaneten
+
+ENEMY_PLANET_ANY_POP
+jeglicher [[metertype METER_POPULATION]] von Feindplaneten
+
 
 ##
 ## Tech macros
 ##
+
+COLONY_BUILDING_TIME_DECREASE
+Unter anderem reduziert diese Technologie den nötigen Zeitaufwand, um neue Kolonien in größerer Entfernung zur relevanten Spezies zu gründen.
 
 
 ##
 ## Growth macros
 ##
 
-#GROWTH_SPECIAL_POPULATION_ORGANIC_INCREASE
-#[[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]].
+GROWTH_SPECIAL_POPULATION_ORGANIC_INCREASE
+[[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] organischer [[METER_POPULATION]].
 
-#GROWTH_SPECIAL_POPULATION_ROBOTIC_INCREASE
-#[[encyclopedia ROBOTIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ROBOTIC_SPECIES_TITLE]].
+GROWTH_SPECIAL_POPULATION_ROBOTIC_INCREASE
+[[encyclopedia ROBOTIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] robotischer [[METER_POPULATION]].
 
-#GROWTH_SPECIAL_POPULATION_LITHIC_INCREASE
-#[[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
+GROWTH_SPECIAL_POPULATION_LITHIC_INCREASE
+[[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] lithischer [[METER_POPULATION]].
+
+GROWTH_SPECIAL_POPULATION_INCREASE
+'''wird auf diesem Planeten begünstigt. Eine entsprechende Bewohnerspezies erhält [[metertype METER_TARGET_POPULATION]], abhängig von der Planetengröße:
+• [[SZ_TINY]] (+1)
+• [[SZ_SMALL]] (+2)
+• [[SZ_MEDIUM]] (+3)
+• [[SZ_LARGE]] (+4)
+• [[SZ_HUGE]] (+5)
+Der [[encyclopedia ENVIRONMENT_TITLE]] hat hierauf keine Auswirkung.
+
+Wenn dieser Planet [[encyclopedia GROWTH_FOCUS_TITLE]] hat, gilt obengenannter Bonus für alle via [[metertype METER_SUPPLY]] verbundenen Welten mit'''
+
+GROWTH_SPECIAL_INDUSTRY_BOOST
+Erhöht [[metertype METER_TARGET_INDUSTRY]] um 0,2 pro [[metertype METER_POPULATION]], solange dieser Planet Industriefokus hat.
+
+GROWTH_SPECIALS_ENTRY_LIST
+'''Mansche Besonderheiten wirken sich nur auf organische Spezies aus, manche nur auf robotische und manche nur auf lithische; Für andere [[encyclopedia METABOLISM_TITLE]] gibt es derzeit keine zutreffenden Wachstumsbesonderheiten.
+
+Besonderheiten für [[encyclopedia ORGANIC_SPECIES_TITLE]]:
+[[special FRUIT_SPECIAL]] | [[special SPICE_SPECIAL]] | [[special PROBIOTIC_SPECIAL]]
+
+Besonderheiten für [[encyclopedia ROBOTIC_SPECIES_TITLE]]:
+[[special MONOPOLE_SPECIAL]] | [[special SUPERCONDUCTOR_SPECIAL]] | [[special POSITRONIUM_SPECIAL]]
+
+Besonderheiten für [[encyclopedia LITHIC_SPECIES_TITLE]]:
+[[special MINERALS_SPECIAL]] | [[special ELERIUM_SPECIAL]] | [[special CRYSTALS_SPECIAL]] '''
+
+#GROWTH_SPECIAL_LABEL
+#Planet <i>%1%</i> [[TT_SPECIAL]]
 
 
 ##
