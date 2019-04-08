@@ -104,6 +104,17 @@ ServerApp::ServerApp() :
     InfoLogger() << FreeOrionVersionString();
     LogDependencyVersions();
 
+    m_galaxy_setup_data.m_seed = GetOptionsDB().Get<std::string>("setup.seed");
+    m_galaxy_setup_data.m_size = GetOptionsDB().Get<int>("setup.star.count");
+    m_galaxy_setup_data.m_shape = GetOptionsDB().Get<Shape>("setup.galaxy.shape");
+    m_galaxy_setup_data.m_age = GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
+    m_galaxy_setup_data.m_starlane_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
+    m_galaxy_setup_data.m_planet_density = GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density");
+    m_galaxy_setup_data.m_specials_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency");
+    m_galaxy_setup_data.m_monster_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");
+    m_galaxy_setup_data.m_native_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
+    m_galaxy_setup_data.m_ai_aggr = GetOptionsDB().Get<Aggression>("setup.ai.aggression");
+
     // Start parsing content before FSM initialization
     // to have data initialized before autostart execution
     StartBackgroundParsing();
