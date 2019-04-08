@@ -149,21 +149,10 @@ namespace {
 
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
-        db.Add("setup.seed",                    UserStringNop("OPTIONS_DB_GAMESETUP_SEED"),                     std::string("0"),           Validator<std::string>());
-        db.Add("setup.star.count",              UserStringNop("OPTIONS_DB_GAMESETUP_STARS"),                    150,                        RangedValidator<int>(10, 5000));
-        db.Add("setup.galaxy.shape",            UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_SHAPE"),             DISC,                       RangedValidator<Shape>(SPIRAL_2, RANDOM));
-        db.Add("setup.galaxy.age",              UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),               GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
-        db.Add("setup.planet.density",          UserStringNop("OPTIONS_DB_GAMESETUP_PLANET_DENSITY"),           GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
-        db.Add("setup.starlane.frequency",      UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"),       GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
-        db.Add("setup.specials.frequency",      UserStringNop("OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY"),       GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
-        db.Add("setup.monster.frequency",       UserStringNop("OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY"),        GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
-        db.Add("setup.native.frequency",        UserStringNop("OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY"),         GALAXY_SETUP_MEDIUM,        RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
         db.Add("setup.empire.name",             UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_NAME"),              std::string(""),            Validator<std::string>());
         db.Add("setup.player.name",             UserStringNop("OPTIONS_DB_GAMESETUP_PLAYER_NAME"),              std::string(""),            Validator<std::string>());
         db.Add("setup.empire.color.index",      UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_COLOR"),             9,                          RangedValidator<int>(0, 100));
         db.Add("setup.initial.species",         UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME"),    std::string("SP_HUMAN"),    Validator<std::string>());
-        db.Add("setup.ai.player.count",         UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"),           6,                          RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
-        db.Add("setup.ai.aggression",           UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"),        MANIACAL,                   RangedValidator<Aggression>(BEGINNER, MANIACAL));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
