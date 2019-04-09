@@ -156,7 +156,7 @@ class AIFleetMission(object):
         main_fleet = universe.getFleet(fleet_id)
         main_fleet_system_id = main_fleet.systemID
         if main_fleet_system_id == INVALID_ID:
-            debug("Can't merge: fleet in middle of starlane")
+            debug("Can't merge: fleet in middle of starlane.")
             return
 
         # only merge PROTECT_REGION if there is any threat near target
@@ -593,11 +593,9 @@ class AIFleetMission(object):
     def _portion_of_fleet_needed_here(self):
         """Calculate the portion of the fleet needed in target system considering enemy forces."""
         # TODO check rating against planets
-        if assertion_fails(self.type in COMBAT_MISSION_TYPES):
-            error("%s" % self)
+        if assertion_fails(self.type in COMBAT_MISSION_TYPES, msg=str(self)):
             return 0
-        if assertion_fails(self.target and self.target.id != INVALID_ID):
-            error("%s" % self)
+        if assertion_fails(self.target and self.target.id != INVALID_ID, msg=str(self)):
             return 0
         system_id = self.target.id
         aistate = get_aistate()
