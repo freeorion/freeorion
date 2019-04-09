@@ -728,10 +728,10 @@ class AIFleetMission(object):
         """Get a target for a PROTECT_REGION mission.
 
         1) If primary target (system target of this mission) is under attack, move to primary target.
-        2) If neighbors of primary target have local fleets weaker than this fleet, may move to attack
-        3) If no neighboring fleets or strongest enemy fleet is too strong, move to primary target
+        2) If neighbors of primary target have local enemy forces weaker than this fleet, may move to attack
+        3) If no neighboring fleets or strongest enemy force is too strong, move to defend primary target
         """
-        # TODO: Check rating vs planets
+        # TODO: Also check fleet rating vs planets in decision making below not only vs fleets
         universe = fo.getUniverse()
         primary_objective = self.target.id
         debug("Trying to find target for protection mission. Target: %s", self.target)
