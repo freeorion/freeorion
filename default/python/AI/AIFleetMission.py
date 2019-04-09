@@ -1,4 +1,4 @@
-from logging import debug, warn, error
+from logging import debug, warn
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
