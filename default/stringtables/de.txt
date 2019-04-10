@@ -6349,47 +6349,237 @@ Angriffsschaden: %1%
 FT_WEAPON_1
 Jägerbewaffnung
 
+FT_WEAPON_1_DESC
+Prototyp-Waffensystem für Jagdflieger. Nicht als Schiffsbewaffnung geeignet.
+
+FT_BAY_1
+Startrampe
+
+FT_BAY_1_DESC
+Ein Dock, aus dem Jagdflieger abheben können. 
+
+FT_HANGAR_0
+Lockvogelhangar
+
+FT_HANGAR_0_FIGHTER
+Lockvogel
+
+FT_HANGAR_0_DESC
+Lagersystem für unbewaffnete Köderflieger.
+
+FT_HANGAR_1
+Abfangjägerhangar
+
+FT_HANGAR_1_FIGHTER
+Abfangjäger
+
+FT_HANGAR_1_DESC
+Lagersystem für minimal bewaffnete Kampfflieger.
+
+FT_HANGAR_2
+Jagdfliegerhangar
+
+FT_HANGAR_2_FIGHTER
+Jagdflieger
+
+FT_HANGAR_2_DESC
+Lagersystem für leicht bewaffnete Kampfflieger.
+
+FT_HANGAR_3
+Jagdbomberhangar
+
+FT_HANGAR_3_FIGHTER
+Jagdbomber
+
+FT_HANGAR_3_DESC
+Lagersystem für moderat bewaffnete Kampfflieger.
+
+FT_HANGAR_4
+Kampfbomberhangar
+
+FT_HANGAR_4_FIGHTER
+Kampfbomber
+
+FT_HANGAR_4_DESC
+Lagersystem für schwer bewaffnete Kampfflieger.
+
+FT_HANGAR_KRILL
+Krillschwarm
+
+FT_HANGAR_KRILL_DESC
+Krillschwarm
+
+FT_BAY_KRILL
+Krillschwarm
+
+FT_BAY_KRILL_DESC
+Wenn ein ausreichend großer Krillschwarm Raumschiffen begegnet, verlassen einzelne Krill den Schwarm, um anzugreifen.
+
+SR_WEAPON_0_1
+Flugabwehrkanone
+
+SR_WEAPON_0_1_DESC
+'''Verursacht an Schiffen nur geringfügigen [[encyclopedia DAMAGE_TITLE]], ist aber kostengünstig und effektiv gegen Jagdflieger.
+
+[[SR_WEAPON_0_1]]n erhalten 1 zusätzlichen Schuss für jeden Level in der Pilotenfähigkeit der Spezies, die sie konstruiert hat (-1 Schuss für schlechte Piloten).'''
+
 SR_WEAPON_1_1
 Massenkatapult
 
 SR_WEAPON_1_1_DESC
-Der Massenkatapult, die Grundbewaffnung.
+'''Die Grundbewaffnung für Kriegsschiffe. Weitere Erforschung der Waffentechnik erhöht den verursachten [[encyclopedia DAMAGE_TITLE]].
+
+[[SR_WEAPON_1_1]]e verursachen 1 Punkt zusätzlichen [[encyclopedia DAMAGE_TITLE]] für jeden Level in der Pilotenfähigkeit der Spezies, die sie konstruiert hat (-1 Schaden für schlechte Piloten).'''
 
 SR_WEAPON_2_1
 Laserwaffe
 
 SR_WEAPON_2_1_DESC
-Der Laser, eine leistungsfähigere Schiffswaffe als der Massenkatapult.
+'''Eine leistungsfähigere Schiffswaffe als das Massenkatapult. Weitere Erforschung der Waffentechnik erhöht den verursachten [[encyclopedia DAMAGE_TITLE]].
+
+[[SR_WEAPON_2_1]]n verursachen 2 Punkte zusätzlichen [[DAMAGE_TITLE]] für jeden Level in der Pilotenfähigkeit der Spezies, die sie konstruiert hat (-2 Schaden für schlechte Piloten). Auf Schiffen mit [[shiphull SH_ORGANIC]] kann ein [[shippart SP_SOLAR_CONCENTRATOR]] den [[DAMAGE_TITLE]] ebenfalls steigern.'''
 
 SR_WEAPON_3_1
-Plasmakanonen
+Plasmakanone
 
 SR_WEAPON_3_1_DESC
-Die Plasmakanone, eine leistungsfähigere Schiffswaffe als der Laser.
+'''Eine leistungsfähigere Schiffswaffe als der Laser. Weitere Erforschung der Waffentechnik erhöht den verursachten [[encyclopedia DAMAGE_TITLE]].
+
+[[SR_WEAPON_3_1]]n verursachen 3 Punkte zusätzlichen [[encyclopedia DAMAGE_TITLE]] für jeden Level in der Pilotenfähigkeit der Spezies, die sie konstruiert hat (-3 Schaden für schlechte Piloten).'''
 
 SR_WEAPON_4_1
 Todesstrahl
 
 SR_WEAPON_4_1_DESC
-Der Todesstrahl, die ultimative Schiffswaffe.
+'''Eine leistungsfähigere Schiffswaffe als die Plasmakanone. Weitere Erforschung der Waffentechnik erhöht den verursachten [[encyclopedia DAMAGE_TITLE]].
+
+[[SR_WEAPON_4_1]]en verursachen 5 Punkte zusätzlichen [[encyclopedia DAMAGE_TITLE]] für jeden Level in der Pilotenfähigkeit der Spezies, die sie konstruiert hat (-5 Schaden für schlechte Piloten).'''
+
+SR_SPINAL_ANTIMATTER
+Antimateriekanone
+
+SR_SPINAL_ANTIMATTER_DESC
+Ein großes, rückenmontiertes Massenkatapult, welches mit Antimaterie feuert.
+
+SR_JAWS
+Kiefer
+
+SR_JAWS_DESC
+Maul eines Weltraummonsters, dass Schiffe beschädigen kann. Die größten Monster können sogar ganze Flotten verschlingen.
+
+SR_SPINES
+Klaue
+
+SR_SPINES_DESC
+Gliedmaß eines Weltraummonsters, kann mit nur einem Schlag schweren Schaden verursachen.
+
+SR_TENTACLE
+Tentakel
+
+SR_TENTACLE_DESC
+Gliedmaß eines Kraken, das Schiffe beschädigen kann.
+
+SR_PLASMA_DISCHARGE
+Plasmaausstoß
+
+SR_PLASMA_DISCHARGE_DESC
+Plasmaangriff eines Weltraummonsters, kann die meisten Panzerungen schmelzen.
+
+SR_ICE_BEAM
+Riesenlaser
+
+SR_ICE_BEAM_DESC
+Schusswaffe, die in den Körper eines Monsters integriert wurde.
 
 SR_ION_CANNON
 Ionenkanone
 
 SR_ION_CANNON_DESC
-Akzeptable Durchschlagskraft und Masse
+Akzeptable Durchschlagskraft und Masse.
 
 PD_PULSE_LASER
 Impulslaser
 
 PD_PULSE_LASER_DESC
-Kurze Reichweite, hohe Feuerrate
+Kurze Reichweite, hohe Feuerrate.
+
+PD_PHASOR
+Phaser
+
+PD_PHASOR_DESC
+Schnelle, starke Waffe zur Punktverteidigung.
+
+PD_PARTICLE_BEAM
+Partikelstrahl
+
+PD_PARTICLE_BEAM_DESC
+Ultimative Waffe für Punktverteidigung.
+
+FI_INTERCEPTOR
+Abfangjäger
+
+FI_INTERCEPTOR_DESC
+Zwölf schnelle Abfangjäger, die Raketen und feindliche Jäger abwehren.
+
+FI_BOMBER
+Jagdbomber
+
+FI_BOMBER_DESC
+Sechs Jagdbomber, die auf Schiffe und Planeten feuern können.
+
+FI_RECON
+Aufklärungsjäger
+
+FI_RECON_DESC
+Zwölf schnelle, unbewaffnete Jäger zur Aufklärung.
+
+FI_BIOINTERCEPTOR
+Bio-Abfangjäger
+
+FI_BIOINTERCEPTOR_DESC
+Sechsunddreißig lebende Abfangjäger, die Raketen und feindliche Jäger abwehren. Deutlich leistungsfähiger als gewöhnliche Abfangjäger. [[BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM]]
+
+FI_BIOBOMBER
+Bio-Jagdbomber
+
+FI_BIOBOMBER_DESC
+Achtzehn Jagdbomber, die auf Schiffe und Planeten feuern können. Deutlich leistungsfähiger als gewöhnliche Jagdbomber. [[BLD_BIONEURAL_REQUIRED_ANY_SYSTEM]]
 
 LR_NUCLEAR_MISSILE
-Atomare Rakete
+Atomrakete
 
 LR_NUCLEAR_MISSILE_DESC
-Hohe Reichweite und akzeptable Durchschlagskraft
+Hohe Reichweite und akzeptable Durchschlagskraft.
+
+LR_SPECTRAL_MISSILE
+Spektralrakete
+
+LR_SPECTRAL_MISSILE_DESC
+Eine schnelle Tarnrakete.
+
+LR_NEUTRONIUM_PLATE_NUC_MIS
+Neutroniumüberzogene Atomrakete
+
+LR_NEUTRONIUM_PLATE_NUC_MIS_DESC
+Schwer gepanzerte Atomrakete.
+
+LR_NEUTRONIUM_PLATE_SPEC_MIS
+Neutroniumüberzogene Spektralrakete
+
+LR_NEUTRONIUM_PLATE_SPEC_MIS_DESC
+Schwer gepanzerte Spektralrakete.
+
+LR_ANTIMATTER_TORPEDO
+Antimaterietorpedo
+
+LR_ANTIMATTER_TORPEDO_DESC
+Eine schnelle Langstreckenrakete, angetrieben durch den [[tech SHP_SPACE_FLUX_DRIVE]] und ausgestattet mit einem mächtigen Antimaterie-Sprengkopf. [[BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM]]
+
+LR_PLASMA_TORPEDO
+Plasmatorpedo
+
+LR_PLASMA_TORPEDO_DESC
+Eine schnelle Langstreckenrakete mit exzellenter [[metertype METER_STEALTH]], angetrieben durch den [[tech SHP_TRANSSPACE_DRIVE]] und ausgestattet mit einem verheerenden Plasmasprengkopf. [[BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM]]
 
 DT_DETECTOR_1
 Optischer Scanner
@@ -6415,92 +6605,371 @@ Sensoren
 DT_DETECTOR_4_DESC
 Überlangstreckenaufklärung.
 
+FU_ENGINE_PART_LIMIT
+Schiffe können nur ein Triebwerk haben.
+
+FU_IMPROVED_ENGINE_COUPLINGS
+Verbesserte Triebwerkkopplung
+
+FU_IMPROVED_ENGINE_COUPLINGS_DESC
+'''Bessere Bauteile bedeuten bessere Leistung.
+
+- Erhöht [[metertype METER_SPEED]] um 20.
+- [[FU_ENGINE_PART_LIMIT]]'''
+
+FU_N_DIMENSIONAL_ENGINE_MATRIX
+N-Dimensionale Triebwerkmatrix
+
+FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
+'''Durch Forschung am N-Dimensionalen Subraum konnte eine effizientere Triebwerkmatrix enteickelt werden.
+
+- Erhöht [[metertype METER_SPEED]] um 40.
+- [[FU_ENGINE_PART_LIMIT]]'''
+
+FU_SINGULARITY_ENGINE_CORE
+Singularitätstriebkern
+
+FU_SINGULARITY_ENGINE_CORE_DESC
+'''Eine kleinere Variante des [[buildingtype BLD_HYPER_DAM]]s zum Einsatz auf Schiffen. Steigert die Stromerzeugung immens.
+
+- Erhöht [[metertype METER_SPEED]] um 80.
+- [[FU_ENGINE_PART_LIMIT]]'''
+
+FU_TRANSPATIAL_DRIVE
+Zwischenraumantrieb
+
+FU_TRANSPATIAL_DRIVE_DESC
+'''Ein unglaublich starker Antrieb, der die Raumzeit krümmt.
+
+- Erhöht [[metertype METER_SPEED]] um 60
+- Erhöht [[metertype METER_STEALTH]] um 40
+- [[NO_STACK_STEALTH_SHIP_PARTS]]
+- [[FU_ENGINE_PART_LIMIT]]'''
+
 FU_BASIC_TANK
-Zusatz Treibstofftank
+Zusatztank
 
 FU_BASIC_TANK_DESC
-Erhöht die [[metertype METER_FUEL]]kapazität, was einen zusätzlichen Sprung erlaubt. Weiterentwicklungen erlauben weitere Sprünge pro Tank.
+Erhöht die [[metertype METER_FUEL]]kapazität, was einen zusätzlichen Sprung ermöglicht. Weiterentwicklungen erlauben weitere Sprünge pro Tank.
 
 FU_ZERO_FUEL
 Nullpunkt-Treibstoffgenerator
+
+FU_ZERO_FUEL_DESC
+Sammelt Energie aus Nullpunktgeneration und wandelt sie in [[metertype METER_FUEL]] um.
 
 FU_RAMSCOOP
 Bussardkollektor 
 
 FU_RAMSCOOP_DESC
-Erzeugt langsam [[metertype METER_FUEL]] in Sternensystemen indem es den Wasserstoff im interplanetaren Raum sammelt.
+Erzeugt langsam [[metertype METER_FUEL]] in Sternensystemen, indem es den Wasserstoff im interplanetaren Raum sammelt.
 
 ST_CLOAK_1
 Elektromagnetische Dämpfung
 
 ST_CLOAK_1_DESC
-'''Weak Cloaking (+20)
+'''Schwache Tarnung (+20)
 
-Verbessert die [[metertype METER_STEALTH]] des Schiffes auf dem es installiert wurde, indem es die Elektromagnetische Abstrahlung der Schiffssysteme dämpft. Kann nur kleine Emissionsmengen kompensieren, und wird von vorhandenen Schiffsteilen die hohe Strahlungsmengen abgeben überladen. [[metertype METER_STEALTH]]-causing ship parts do not stack.'''
+Verbessert die [[metertype METER_STEALTH]] des Schiffes, auf dem es installiert wurde, indem es die elektromagnetische Abstrahlung der Schiffssysteme dämpft. Kann nur kleine Emissionsmengen kompensieren und wird von vorhandenen Schiffsteilen, die hohe Strahlungsmengen abgeben, überladen. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
+
+ST_CLOAK_2
+Absorptionsfeld
+
+ST_CLOAK_2_DESC
+'''Moderate Tarnung (+40)
+
+Verbessert die [[metertype METER_STEALTH]] des Schiffes, auf dem es installiert wurde, indem es das Schiff mit einem Absorptionsfeld umgibt es und damit quasi in einen idealen schwarzen Körper umwandelt. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
+
+ST_CLOAK_3
+Dimensionsmantel
+
+ST_CLOAK_3_DESC
+'''Gute Tarnung (+60)
+
+Verbessert die [[metertype METER_STEALTH]] des Schiffes, auf dem es installiert wurde, indem es das Schiff in einem Dimensionsriss verstackt. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
+
+ST_CLOAK_4
+Phasenmantel
+
+ST_CLOAK_4_DESC
+'''Sehr gute Tarnung (+80)
+
+Verbessert die [[metertype METER_STEALTH]] des Schiffes, auf dem es installiert wurde, indem es die Frequenzen aller Materiewellen moduliert und sie der Umgebungsstrahlung angleicht. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
 
 AR_STD_PLATE
 Standardpanzerplatten
 
 AR_STD_PLATE_DESC
-Erhöht die [[metertype METER_STRUCTURE]] der Schiffshülle. Standardpanzerplatten bieten nur mäßige Erweiterung zur Widerstandsfähigkeit eines Schiffsrumpfes.
+Erhöht die [[metertype METER_STRUCTURE]] des Schiffsrumpfs. Standardpanzerplatten bieten eine nur mäßige Erweiterung der Widerstandsfähigkeit.
 
 AR_ZORTRIUM_PLATE
-Zortrium Panzerplatten
+Zortriumpanzerplatten
 
 AR_ZORTRIUM_PLATE_DESC
-Erhöht die [[metertype METER_STRUCTURE]] der Schiffshülle. Stärkere Abwehr als [[shippart AR_STD_PLATE]].
+Erhöht die [[metertype METER_STRUCTURE]] des Schiffsrumpfs. Bietet höheren Widerstand als [[shippart AR_STD_PLATE]].
 
 AR_DIAMOND_PLATE
-Diamant Panzerplatten
+Diamantpanzerplatten
 
 AR_DIAMOND_PLATE_DESC
-Erhöht die [[metertype METER_STRUCTURE]] der Schiffshülle. Stärkere Abwehr als [[shippart AR_ZORTRIUM_PLATE]].
+Erhöht die [[metertype METER_STRUCTURE]] des Schiffsrumpfs. Bietet höheren Widerstand als [[shippart AR_ZORTRIUM_PLATE]].
 
 AR_XENTRONIUM_PLATE
-Xentronium Panzerplatten
+Xentroniumpanzerplatten
 
 AR_XENTRONIUM_PLATE_DESC
-Erhöht die [[metertype METER_STRUCTURE]] der Schiffshülle. Äußerst starke und haltbare Panzerplatten.
+Erhöht die [[metertype METER_STRUCTURE]] des Schiffsrumpfs. Extrem starke und robuste Panzerplatten.
 
 AR_ROCK_PLATE
-Gestein Panzerplatten
+Gesteinpanzerplatten
+
+AR_ROCK_PLATE_DESC
+Erhöht die [[metertype METER_STRUCTURE]] des Schiffsrumpfs. Eine billige, robuste Alternative zu Legierungen. [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT]]
 
 AR_CRYSTAL_PLATE
-Kristall Panzerplatten
+Kristallpanzerplatten
+
+AR_CRYSTAL_PLATE_DESC
+Erhöht die [[metertype METER_STRUCTURE]] des Schiffsrumpfs. Eine äußerst robuste Panzerung, mit modernen Kristallisierungstechniken hergestellt. [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT]]
 
 AR_NEUTRONIUM_PLATE
-Neutronium Panzerplatten
+Neutroniumpanzerplatten
+
+AR_NEUTRONIUM_PLATE_DESC
+Erhöht die [[metertype METER_STRUCTURE]] des Schiffsrumpfs. Die stärkste und widerstandsfähigste Panzerung. [[MACRO_NEUTRONIUM_BUILDINGS]]
 
 AR_PRECURSOR_PLATE
-Vorläufer Panzerplatten
+Vorläuferpanzerplatten
+
+AR_PRECURSOR_PLATE_DESC
+Erhöht die [[metertype METER_STRUCTURE]] des Schiffsrumpfs. Bemerkenswert wirksame Panzerung aus unbekanntem Material.
 
 SH_DEFENSE_GRID
-Verteidigungsperimeter
+Schutzfeld
+
+SH_DEFENSE_GRID_DESC
+'''Verleiht einen einfachen [[metertype METER_SHIELD]], der erlittenen [[encyclopedia DAMAGE_TITLE]] durch schwächere Waffen absorbiert oder zumindest deutlich verringert.
+
+[[NO_STACK_SHIELDS_SHIP_PARTS]]'''
 
 SH_DEFLECTOR
 Deflektorschild
+
+SH_DEFLECTOR_DESC
+'''Verleiht einen verbesserten [[metertype METER_SHIELD]], der erlittenen [[encyclopedia DAMAGE_TITLE]] durch mittlere Waffen absorbiert oder zumindest deutlich verringert.
+
+[[NO_STACK_SHIELDS_SHIP_PARTS]]'''
+
+SH_PLASMA
+Plasmaschild
+
+SH_PLASMA_DESC
+'''Verleiht einen starken [[metertype METER_SHIELD]], der erlittenen [[encyclopedia DAMAGE_TITLE]] durch fortschrittliche Waffen absorbiert oder zumindest deutlich verringert.
+
+[[NO_STACK_SHIELDS_SHIP_PARTS]]'''
+
+SH_BLACK
+Schwarzschild
+
+SH_BLACK_DESC
+'''Der stärkste [[metertype METER_SHIELD]], kann nur von den mächtigsten Waffen durchdrungen werden. Entwicklung und Herstellung kosten entsprechend.
+
+[[NO_STACK_SHIELDS_SHIP_PARTS]]'''
+
+SH_MULTISPEC
+Multispectraler Schild
+
+SH_MULTISPEC_DESC
+'''Mächtiger [[metertype METER_SHIELD]], der das Schiff sogar im Inneren von Sternen schützt. Erhöht [[metertype METER_STEALTH]] beim Aufenthalt in Sternsystemen ohne [[STAR_BLACK]] oder [[STAR_NEUTRON]] und lässt das Schiff im Kampf Sterne betreten.
+
+[[NO_STACK_SHIELDS_SHIP_PARTS]]'''
+
+SH_ROBOTIC_INTERFACE_SHIELDS
+Robotikinterface: Schild
+
+SH_ROBOTIC_INTERFACE_SHIELDS_DESC
+'''Verleiht [[metertype METER_SHIELD]] für jedes Schiff mit [[SH_ROBOTIC_INTERFACE_SHIELDS]] vor Ort. Jedes zusätzliche Schiff verleiht einen geringeren Bonus, der höchstmögliche Wert beträgt 20. Kann nur in Schiffen mit [[encyclopedia HULL_LINE_ROBOTIC]] und [[encyclopedia ROBOTIC_SPECIES_TITLE]]-Besatzung genutzt werden.
+
+Robotische Spezies sind in der Lage, sich zu einem Netzwerk zu verbinden und dadurch ihre Rechenleistung drastisch zu erhöhen. [[SH_ROBOTIC_INTERFACE_SHIELDS]] nutzt dieses Netzwerk, um die Flugbahn eintreffender Geschosse zu berechnen und durch gezieltes Fokussieren des Schutzschildes abzuwehren.'''
 
 CO_COLONY_POD
 Besiedlungsmodul
 
 CO_COLONY_POD_DESC
-'''Grundlegende Einrichtungen für Siedler um die Reise zu einem neuen Planeten zu überleben. Ermöglicht es einem Schiff neue Welten zu besiedeln.
+'''Grundlegende Einrichtungen für Siedler, um die Reise zu einem neuen Planeten zu überleben. Ermöglicht es einem Schiff, neue Welten zu besiedeln.
 
-Alle Siedlungschiffstypen benötigen auf dem Planet, wo sie gebaut werden sollen, eine Bevölkerung von mindestens 3.'''
+[[COLONY_SHIP_PARTS_MIN_POP]] [[COLONY_SHIP_PARTS_UPKEEP_COST]]'''
 
 CO_SUSPEND_ANIM_POD
-Kälteschlaf Besiedlungsmodul
+Kälteschlaf-Besiedlungsmodul
 
 CO_SUSPEND_ANIM_POD_DESC
-'''Siedler werden während der Reise im Kälteschlaf gehalten, was die Notwendigkeit zur Versorgung beseitigt und die Anzahl der Kolonisten, die transportiert werden können, drastisch erhöht.
+'''Siedler werden während der Reise im Kälteschlaf gehalten, was die Notwendigkeit der Nahrungsversorgung beseitigt und die Anzahl der Kolonisten, die transportiert werden können, drastisch erhöht.
 
-Alle Siedlungschiffstypen benötigen auf dem Planet, wo sie gebaut werden sollen, eine Bevölkerung von mindestens 3.'''
+[[COLONY_SHIP_PARTS_MIN_POP]] [[COLONY_SHIP_PARTS_UPKEEP_COST]]'''
+
+CO_OUTPOST_POD
+Außenpostenmodul
+
+CO_OUTPOST_POD_DESC
+'''Ermöglicht die Gründung unbemannter Stationen auf unbewohnbaren Planeten. [[encyclopedia OUTPOSTS_TITLE]] haben keine [[metertype METER_POPULATION]] und produzieren normalerweise keine Ressourcen, können aber die Umgebung überwachen und bilden [[metertype METER_SUPPLY]]slinien, sofern bestimmte Technologien erforscht sind. [[OUTPOSTS_TITLE]] können zu Kolonien erweitert werden.
+
+[[COLONY_SHIP_PARTS_UPKEEP_COST]]'''
 
 GT_TROOP_POD
-Bodentruppen Kapsel
+Bodentruppenkapsel
 
 GT_TROOP_POD_DESC
-Trägt eine Brigade Boden[[metertype METER_TROOPS]], samt Ausrüstung, die auf einen Planeten eingesetzt werden kann.
+'''Trägt zwei Einheiten Bodentruppen samt Ausrüstung, die auf einem Planeten eingesetzt werden kann. Können nur auf Planeten mit mindestens 2 [[metertype METER_TROOPS]] gebaut werden.
+
+[[TROOP_POD_OPERATION_TEXT]]'''
+
+GT_TROOP_POD_2
+Cyborg-Bodentruppenkapsel
+
+GT_TROOP_POD_2_DESC
+'''Trägt vier Einheiten von kybernetisch verbesserter Bodentruppen samt Ausrüstung, die auf einem Planeten eingesetzt werden kann. Können nur auf Planeten mit mindestens 4 [[metertype METER_TROOPS]] gebaut werden.
+
+[[TROOP_POD_OPERATION_TEXT]]'''
+
+SP_PLANET_BEACON
+Mobile Planetarbake
+
+SP_PLANET_BEACON_DESC
+Kennzeichnet das Ziel für den [[buildingtype BLD_PLANET_DRIVE]]. Zum Einsatz muss das Schiff einen Zug lang seine Position halten und der Planet muss in einem verbundenen System sein. 
+
+SP_DISTORTION_MODULATOR
+Verzerrungsmodulator
+
+SP_DISTORTION_MODULATOR_DESC
+Unterscheidet zwischen natürlichen geometrischen Unregelmäßigkeiten und Feindschiffen durch Manipulation der von nahen Objekten verursachten Raumzeitverzerrungen. Reduziert [[metertype METER_STEALTH]] aller Objekte im System um 20. Weitere [[SP_DISTORTION_MODULATOR]] im gleichen System haben keinen weiteren Effekt.
+
+SP_CLOUD
+Wolkengenerator
+
+SP_ASH
+Aschegenerator
+
+SP_DIM
+Dimensionsspalter
+
+SP_VOID
+Leere-Entlader
+
+SP_DEATH_SPORE
+Todessporen
+
+SP_DEATH_SPORE_DESC
+Eine biologische Waffe [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]].
+
+SP_BIOTERM
+Bioterminierer
+
+SP_BIOTERM_DESC
+Eine mächtige biologische Waffe [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]].
+
+SP_EMP
+Elektromagnetischer Impulsgenerator
+
+SP_EMP_DESC
+Eine elektrische Waffe [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_ROBOTIC_POP]].
+
+SP_EMO
+Elektromagnetischer Überladungsgenerator
+
+SP_EMO_DESC
+Eine mächtige elektrische Waffe [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ROBOTIC_POP]].
+
+SP_SONIC
+Schallschockwelle
+
+SP_SONIC_DESC
+Eine Vibrationswaffe [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_LITHIC_POP]].
+
+SP_GRV
+Schwerkraftimpulsgenerator
+
+SP_GRV_DESC
+Eine mächtige Vibrationswaffe [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_LITHIC_POP]].
+
+SP_DARK_RAY
+Finsterstrahl
+
+SP_DARK_RAY_DESC
+Eine negative Energie-Waffe [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_PHOTOTROPHIC_POP]].
+
+SP_VOID_SHADOW
+Leereschatten
+
+SP_VOID_SHADOW_DESC
+Eine mächtige negative Energie-Waffe [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_PHOTOTROPHIC_POP]].
+
+SP_CHAOS_WAVE
+Chaoswelle
+
+SP_CHAOS_WAVE_DESC
+'''Eine mächtige Waffe [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ANY_POP]].
+WARNUNG: Entfernt auch die [[special GAIA_SPECIAL]]-Besonderheit, falls vorhanden.'''
+
+SP_NOVA_BOMB
+Novabombe
+
+SP_NOVA_BOMB_DESC
+Eine Waffe, die ganze Systeme auslöschen kann. Wird ausgelöst durch ein Signal von einem [[buildingtype BLD_NOVA_BOMB_ACTIVATOR]] in einem System, dass höchstens einen Sternstraßensprung entfernt ist.
+
+SP_KRILL_SPAWNER
+Krillerzeuger
+
+SP_KRILL_SPAWNER_DESC
+Erzeugt [[predefinedshipdesign SM_KRILL_1]] in Systemen mit unbesetzten [[PT_ASTEROIDS]], die noch kein Krillmonster beinhalten. Erhöht auf unbewaffneten Schiffen [[metertype METER_STEALTH]] substanziell. ([[NO_STACK_STEALTH_SHIP_PARTS]])
+
+SP_SOLAR_CONCENTRATOR
+Solarkonzentrator
+
+SP_SOLAR_CONCENTRATOR_DESC
+Nutzt den phototropischen Effekt von Schiffen mit [[encyclopedia HULL_LINE_ORGANIC]], um [[tech SHP_WEAPON_2_1]]n zu verstärken. Die Effizienz hängt von der Helligkeit des örtlichen Sterns ab. Zu erwarten ist ein Schadensbonus zwischen 1,5 und 4,5. Die Erforschung von [[tech SHP_SOLAR_CONNECTION]]-Technologie wird empfohlen, um den Effekt zu maximieren.
+
+SHP_SOLAR_CONNECTION
+Solarnetz
+
+SHP_SOLAR_CONNECTION_DESC
+Eine Erweiterung für den [[shippart SP_SOLAR_CONCENTRATOR]]. Erlaubt es der Besatzung, ein Energienetz zwischen Schiffen des selben Imperiums anzulegen. Das [[SHP_SOLAR_CONNECTION]] sammelt zusätzlichen Photonen, die gleichmäßig zwischen allen Schiffen mit [[encyclopedia HULL_LINE_ORGANIC]] aufgeteilt werden. Theoretisch kann die Intensität von [[tech SHP_WEAPON_2_1]]n im Idealfall um bis zu 130% erhöht werden. Realistischere Schätzungen prognostizieren eine Steigerung um 80% bei 100 Konzentratoren, bei 20 Konzentratoren eine Steigerung um 50%. Die dünnen [[SHP_SOLAR_CONNECTION]] reißen beim Eintritt in eine Sternstraße, der Effekt endet kurz darauf.
+
+SHP_SOLAR_CONNECTION_SHORT_DESC
+Bildet ein Energienetz zwischen [[SP_SOLAR_CONCENTRATOR]]en.
+
+SHP_ORGANIC_WAR_ADAPTION
+Organische Kriegsanpassung
+
+SHP_ORGANIC_WAR_ADAPTION_DESC
+Schiffe mit [[encyclopedia HULL_LINE_ORGANIC]] können Photonenenergie sammeln und sie an andere Schiffssysteme weiterleiten, um sie zu verstärken.
+
+SHP_ORGANIC_WAR_ADAPTION_SHORT_DESC
+Erhöht die Stärke von [[SR_WEAPON_2_1]] abhängig vom Stern.
+
+PR_MOBILE_ASSEMBLER
+Mobile Schiffswerft
+
+PR_MOBILE_ASSEMBLER_DESC
+Ermöglicht den Bau von Schiffen abseits von Planeten.
+
+RS_AUTOLAB
+Automatisches Labos
+
+RS_AUTOLAB_DESC
+Generiert Forschung.
+
+RS_AUTOFACTORY
+Automatische Fabrik
+
+RS_AUTOFACTORY_DESC
+Generiert Produktion.
+
+RS_AUTOTRADER
+Automatischer Händler
+
+RS_AUTOTRADER_DESC
+Generiert Handel.
 
 
 ##
