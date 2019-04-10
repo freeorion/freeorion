@@ -6765,7 +6765,7 @@ BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM
 Zur Herstellung wird ein [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] in diesem oder einem verbündeten Imperium benötigt.
 
 NO_STACK_STEALTH_SHIP_PARTS
-Weitere Tarnvorrichtungen am Schiff haben keinen zusätzlichen Effekt.
+Nur der höchste Tarnungsbonus aller Schiffskomponenten ist gültig.
 
 BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT
 Zur Herstellung wird eine [[buildingtype BLD_SHIPYARD_AST_REF]] auf einem Asteroidengürtel in diesem oder einem verbündeten Imperium benötigt.
