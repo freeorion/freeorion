@@ -167,6 +167,31 @@ bool PythonServer::IsSuccessAuthAndReturnRoles(const std::string& player_name, c
     return true;
 }
 
+bool PythonServer::FillListPlayers(std::list<PlayerSetupData>& players) const {
+    boost::python::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
+    if (!auth_provider) {
+        ErrorLogger() << "Unable to get Python object auth_provider";
+        return false;
+    }
+    boost::python::object f = auth_provider.attr("list_players");
+    if (!f) {
+        ErrorLogger() << "Unable to call Python method list_players";
+        return false;
+    }
+    boost::python::object r = f();
+    boost::python::extract<list> py_players(r);
+    if (py_players.check()) {
+        boost::python::stl_input_iterator<PlayerSetupData> players_begin(py_players), players_end;
+        for (auto& it = players_begin; it != players_end; ++ it) {
+            players.push_back(*it);
+        }
+    } else {
+        DebugLogger() << "Wrong players list data: check returns " << boost::python::extract<std::string>(boost::python::str(r))();
+        return false;
+    }
+    return true;
+}
+
 bool PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& chat_history) {
     boost::python::object chat_provider = m_python_module_chat.attr("__dict__")["chat_history_provider"];
     if (!chat_provider) {
