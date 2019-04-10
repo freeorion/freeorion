@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
     BOOST_TEST_MESSAGE("First messages processed. Starting game...");
 
     unsigned int num_AIs = 2;
-    int num_turns = 2;
+    int num_turns = 3;
     bool save_game = true;
 
     const char *env_num_AIs = std::getenv("FO_TEST_GAME_AIS");
