@@ -291,6 +291,10 @@ def get_fleet_rating_against_planets(fleet_id):
     return FleetCombatStats(fleet_id, consider_refuel=False).get_rating_vs_planets()
 
 
+def get_ship_rating(ship_id, enemy_stats=None):
+    return ShipCombatStats(ship_id, consider_refuel=False).get_rating(enemy_stats)
+
+
 @cache_by_session
 def _get_species_grades(species_name, grade_type):
     spec_tags = []

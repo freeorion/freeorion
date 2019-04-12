@@ -902,6 +902,8 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
             fleet_mission.clear_target()
             if sys_id in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + AIstate.invasionTargetedSystemIDs):
                 mission_type = MissionType.SECURE
+            elif state.get_empire_planets_by_system(sys_id):
+                mission_type = MissionType.PROTECT_REGION
             else:
                 mission_type = MissionType.MILITARY
             fleet_mission.set_target(mission_type, target)
@@ -921,10 +923,44 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
         round += 1
         thisround = "Extras Remaining Round %d" % round if round < last_round else last_round_name
         if avail_mil_fleet_ids:
-            debug("Still have available military fleets: %s" % avail_mil_fleet_ids)
+            debug("Round %s - still have available military fleets: %s", thisround, avail_mil_fleet_ids)
             allocations = get_military_fleets(mil_fleets_ids=avail_mil_fleet_ids, try_reset=False, thisround=thisround)
         if allocations:
             assign_military_fleets_to_systems(use_fleet_id_list=avail_mil_fleet_ids, allocations=allocations, round=round)
+        else:
+            # assign remaining fleets to nearest systems to protect.
+            all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
+            avail_mil_fleet_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
+
+            def system_score(_fid, _sys_id):
+                """Helper function to rank systems by priority"""
+                jump_distance = universe.jumpDistance(_fid, _sys_id)
+                if get_system_local_threat(_sys_id):
+                    weight = 10
+                elif get_system_neighbor_threat(_sys_id):
+                    weight = 3
+                elif get_system_jump2_threat(_sys_id):
+                    weight = 1
+                else:
+                    weight = 1 / float(state.get_distance_to_enemy_supply(_sys_id))**1.25
+                return float(weight) / (jump_distance+1)
+
+            for fid in avail_mil_fleet_ids:
+                fleet = universe.getFleet(fid)
+                FleetUtilsAI.get_fleet_system(fleet)
+                systems = state.get_empire_planets_by_system().keys()
+                if not systems:
+                    continue
+                sys_id = max(systems, key=lambda x: system_score(fid, x))
+
+                debug("Assigning leftover %s to system %d "
+                      "- nothing better to do.", fleet, sys_id)
+
+                fleet_mission = aistate.get_fleet_mission(fid)
+                fleet_mission.clear_fleet_orders()
+                target_system = TargetSystem(sys_id)
+                fleet_mission.set_target(MissionType.PROTECT_REGION, target_system)
+                fleet_mission.generate_fleet_orders()
 
 
 @cache_by_turn

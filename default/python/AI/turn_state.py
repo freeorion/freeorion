@@ -39,6 +39,7 @@ class State(object):
 
         # supply info - negative values indicate jumps away from supply
         self.__system_supply = {}  # map from system_id to supply
+        self.__distance_to_enemy_supply = {}  # map from system_id to closest enemy supply
         self.__systems_by_jumps_to_supply = {}  # map from supply to list of system_ids
         self.__empire_planets_by_system = {}
 
@@ -102,6 +103,12 @@ class State(object):
         for key in self.__systems_by_jumps_to_supply:
             self.__systems_by_jumps_to_supply[key] = tuple(self.__systems_by_jumps_to_supply[key])
 
+        enemies = [fo.getEmpire(_id) for _id in fo.allEmpireIDs() if _id != fo.empireID()]
+        for enemy in enemies:
+            for sys_id, supply_val in enemy.supplyProjections().items():
+                self.__distance_to_enemy_supply[sys_id] = min(
+                    self.get_distance_to_enemy_supply(sys_id), -supply_val)
+
     def get_system_supply(self, sys_id):
         """Get the supply level of a system.
 
@@ -135,6 +142,9 @@ class State(object):
                  "Interpreting the query as supply_tier=0 (indicating system in supply).")
             supply_tier = 0
         return self.__systems_by_jumps_to_supply.get(supply_tier, tuple())
+
+    def get_distance_to_enemy_supply(self, sys_id):
+        return self.__distance_to_enemy_supply.get(sys_id, 999)
 
     def get_empire_planets_by_system(self, sys_id=None, include_outposts=True):
         """
@@ -264,6 +274,5 @@ class State(object):
 
     def set_medium_pilot_rating(self, value):
         self.__medium_pilot_rating = value
-
 
 state = State()

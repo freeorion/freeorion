@@ -103,6 +103,7 @@ class MissionType(Enum):
     ORBITAL_INVASION = 13
     ORBITAL_OUTPOST = 14
     # ORBITAL_COLONISATION = 15 Not implemented yet
+    PROTECT_REGION = 16
 
 
 class ShipRoleType(Enum):  # this is also used in determining fleetRoles

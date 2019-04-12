@@ -1,4 +1,4 @@
-from logging import debug, info, warn
+from logging import debug, warn
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -16,8 +16,7 @@ from aistate_interface import get_aistate
 from target import TargetSystem, TargetFleet, TargetPlanet
 from EnumsAI import MissionType
 from AIDependencies import INVALID_ID
-from freeorion_tools import get_partial_visibility_turn
-
+from freeorion_tools import get_partial_visibility_turn, assertion_fails
 
 ORDERS_FOR_MISSION = {
     MissionType.EXPLORATION: OrderPause,
@@ -28,30 +27,26 @@ ORDERS_FOR_MISSION = {
     # SECURE is mostly same as MILITARY, but waits for system removal from all targeted system lists
     # (invasion, colonization, outpost, blockade) before clearing
     MissionType.SECURE: OrderMilitary,
+    MissionType.PROTECT_REGION: OrderPause,
     MissionType.ORBITAL_INVASION: OrderInvade,
     MissionType.ORBITAL_OUTPOST: OrderOutpost,
-    MissionType.ORBITAL_DEFENSE: OrderDefend
+    MissionType.ORBITAL_DEFENSE: OrderDefend,
 }
 
 COMBAT_MISSION_TYPES = (
     MissionType.MILITARY,
-    MissionType.SECURE
+    MissionType.SECURE,
+    MissionType.PROTECT_REGION,
 )
 
 MERGEABLE_MISSION_TYPES = (
     MissionType.MILITARY,
     MissionType.INVASION,
+    MissionType.PROTECT_REGION,
     MissionType.ORBITAL_INVASION,
     MissionType.SECURE,
     MissionType.ORBITAL_DEFENSE,
 )
-
-COMPATIBLE_ROLES_MAP = {
-    MissionType.ORBITAL_DEFENSE: [MissionType.ORBITAL_DEFENSE],
-    MissionType.MILITARY: [MissionType.MILITARY],
-    MissionType.ORBITAL_INVASION: [MissionType.ORBITAL_INVASION],
-    MissionType.INVASION: [MissionType.INVASION],
-}
 
 
 class AIFleetMission(object):
@@ -103,7 +98,8 @@ class AIFleetMission(object):
         if self.type == mission_type and self.target == target:
             return
         if self.type or self.target:
-            debug("Change mission assignment from %s:%s to %s:%s" % (self.type, self.target, mission_type, target))
+            debug("%s: change mission assignment from %s:%s to %s:%s" % (
+                self.fleet, self.type, self.target, mission_type, target))
         self.type = mission_type
         self.target = target
 
@@ -139,79 +135,53 @@ class AIFleetMission(object):
 
     def check_mergers(self, context=""):
         """
-        If possible and reasonable, merge this fleet with others.
+        Merge local fleets with same mission into this fleet.
 
         :param context: Context of the function call for logging purposes
         :type context: str
         """
+        debug("Considering to merge %s", self.__str__())
         if self.type not in MERGEABLE_MISSION_TYPES:
+            debug("Mission type does not allow merging.")
             return
+
+        if not self.target:
+            debug("Mission has no valid target - do not merge.")
+            return
+
         universe = fo.getUniverse()
         empire_id = fo.empireID()
+
         fleet_id = self.fleet.id
         main_fleet = universe.getFleet(fleet_id)
-        system_id = main_fleet.systemID
-        if system_id == INVALID_ID:
-            return  # can't merge fleets in middle of starlane
-        aistate = get_aistate()
-        system_status = aistate.systemStatus[system_id]
-
-        # if a combat mission, and only have final order (so must be at final target), don't try
-        # merging if there is no local threat (it tends to lead to fleet object churn)
-        if self.type in COMBAT_MISSION_TYPES and len(self.orders) == 1 and not system_status.get('totalThreat', 0):
+        main_fleet_system_id = main_fleet.systemID
+        if main_fleet_system_id == INVALID_ID:
+            debug("Can't merge: fleet in middle of starlane.")
             return
-        destroyed_list = list(universe.destroyedObjectIDs(empire_id))
+
+        # only merge PROTECT_REGION if there is any threat near target
+        if self.type == MissionType.PROTECT_REGION:
+            neighbor_systems = universe.getImmediateNeighbors(self.target.id, empire_id)
+            if not any(MilitaryAI.get_system_local_threat(sys_id)
+                       for sys_id in neighbor_systems):
+                debug("Not merging PROTECT_REGION fleet - no threat nearby.")
+                return
+
+        destroyed_list = set(universe.destroyedObjectIDs(empire_id))
+        aistate = get_aistate()
+        system_status = aistate.systemStatus[main_fleet_system_id]
         other_fleets_here = [fid for fid in system_status.get('myFleetsAccessible', []) if fid != fleet_id and
                              fid not in destroyed_list and universe.getFleet(fid).ownedBy(empire_id)]
         if not other_fleets_here:
+            debug("No other fleets here")
             return
 
-        target_id = self.target.id if self.target else None
-        main_fleet_role = aistate.get_fleet_role(fleet_id)
         for fid in other_fleets_here:
-            fleet_role = aistate.get_fleet_role(fid)
-            if fleet_role not in COMPATIBLE_ROLES_MAP[main_fleet_role]:
-                continue
-            fleet = universe.getFleet(fid)
-
-            if not fleet or fleet.systemID != system_id or len(fleet.shipIDs) == 0:
-                continue
-            if not (fleet.speed > 0 or main_fleet.speed == 0):  # TODO(Cjkjvfnby) Check this condition
-                continue
             fleet_mission = aistate.get_fleet_mission(fid)
-            do_merge = False
-            need_left = 0
-            if (main_fleet_role == MissionType.ORBITAL_DEFENSE) or (fleet_role == MissionType.ORBITAL_DEFENSE):
-                if main_fleet_role == fleet_role:
-                    do_merge = True
-            elif (main_fleet_role == MissionType.ORBITAL_INVASION) or (fleet_role == MissionType.ORBITAL_INVASION):
-                if main_fleet_role == fleet_role:
-                    do_merge = False  # TODO: could allow merger if both orb invaders and both same target
-            elif not fleet_mission and (main_fleet.speed > 0) and (fleet.speed > 0):
-                do_merge = True
-            else:
-                if not self.target and (main_fleet.speed > 0 or fleet.speed == 0):
-                    do_merge = True
-                else:
-                    target = fleet_mission.target.id if fleet_mission.target else None
-                    if target == target_id:
-                        info("Military fleet %d (%d ships) has same target as %s fleet %d (%d ships). Merging former "
-                             "into latter." % (fid, fleet.numShips, fleet_role, fleet_id, len(main_fleet.shipIDs)))
-                        # TODO: should probably ensure that fleetA has aggression on now
-                        do_merge = float(min(main_fleet.speed, fleet.speed))/max(main_fleet.speed, fleet.speed) >= 0.6
-                    elif main_fleet.speed > 0:
-                        neighbors = aistate.systemStatus.get(system_id, {}).get('neighbors', [])
-                        if target == system_id and target_id in neighbors and self.type == MissionType.SECURE:
-                            # consider 'borrowing' for work in neighbor system  # TODO check condition
-                            need_left = 1.5 * sum(aistate.systemStatus.get(nid, {}).get('fleetThreat', 0)
-                                                  for nid in neighbors if nid != target_id)
-                            fleet_rating = CombatRatingsAI.get_fleet_rating(fid)
-                            if need_left < fleet_rating:
-                                do_merge = True
-            if do_merge:
-                FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id, need_left,
-                                                  context="Order %s of mission %s" % (context, self))
-        return
+            if fleet_mission.type != self.type or fleet_mission.target != self.target:
+                debug("Local candidate %s does not have same mission." % fleet_mission)
+                continue
+            FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id, context="Order %s of mission %s" % (context, self))
 
     def _is_valid_fleet_mission_target(self, mission_type, target):
         if not target:
@@ -247,7 +217,8 @@ class AIFleetMission(object):
                 # TODO remove latter portion of next check in light of invasion retargeting, or else correct logic
                 if not planet.unowned or planet.owner != fleet.owner:
                     return True
-        elif mission_type in [MissionType.MILITARY, MissionType.SECURE, MissionType.ORBITAL_DEFENSE]:
+        elif mission_type in [MissionType.MILITARY, MissionType.SECURE,
+                              MissionType.ORBITAL_DEFENSE, MissionType.PROTECT_REGION]:
             if isinstance(target, TargetSystem):
                 return True
         # TODO: implement other mission types
@@ -397,8 +368,8 @@ class AIFleetMission(object):
         # TODO: priority
         order_completed = True
 
-        debug("\nChecking orders for fleet %s (on turn %d), with mission type %s" % (
-            self.fleet.get_object(), fo.currentTurn(), self.type or 'No mission'))
+        debug("\nChecking orders for fleet %s (on turn %d), with mission type %s and target %s",
+              self.fleet.get_object(), fo.currentTurn(), self.type or 'No mission', self.target or 'No Target')
         if MissionType.INVASION == self.type:
             self._check_retarget_invasion()
         just_issued_move_order = False
@@ -421,7 +392,8 @@ class AIFleetMission(object):
             debug("Checking order: %s" % fleet_order)
             self.check_mergers(context=str(fleet_order))
             if fleet_order.can_issue_order(verbose=False):
-                if isinstance(fleet_order, OrderMove) and order_completed:  # only move if all other orders completed
+                # only move if all other orders completed
+                if isinstance(fleet_order, OrderMove) and order_completed:
                     debug("Issuing fleet order %s" % fleet_order)
                     fleet_order.issue_order()
                     just_issued_move_order = True
@@ -510,6 +482,15 @@ class AIFleetMission(object):
                               "to secure system %d (targeted for %s), "
                               "may release a portion of ships" % (self.fleet.id, last_sys_target, secure_type))
                         clear_all = False
+
+                # for PROTECT_REGION missions, only release fleet if no more threat
+                if self.type == MissionType.PROTECT_REGION:
+                    # use military logic code below to determine if can release
+                    # any or even all of the ships.
+                    clear_all = False
+                    last_sys_target = self.target.id
+                    debug("Check if PROTECT_REGION mission with target %d is finished.", last_sys_target)
+
                 fleet_id = self.fleet.id
                 if clear_all:
                     if orders:
@@ -529,10 +510,12 @@ class AIFleetMission(object):
                     else:  # no orders
                         debug("No Current Orders")
                 else:
-                    # TODO: evaluate releasing a smaller portion or none of the ships
-                    system_status = aistate.systemStatus.setdefault(last_sys_target, {})
-                    new_fleets = []
-                    threat_present = system_status.get('totalThreat', 0) + system_status.get('neighborThreat', 0) > 0
+                    potential_threat = CombatRatingsAI.combine_ratings(
+                        MilitaryAI.get_system_local_threat(last_sys_target),
+                        MilitaryAI.get_system_neighbor_threat(last_sys_target)
+                    )
+                    threat_present = potential_threat > 0
+                    debug("Fleet threat present? %s", threat_present)
                     target_system = universe.getSystem(last_sys_target)
                     if not threat_present and target_system:
                         for pid in target_system.planetIDs:
@@ -540,6 +523,7 @@ class AIFleetMission(object):
                             if (planet and
                                     planet.owner != fo.empireID() and
                                     planet.currentMeterValue(fo.meterType.maxDefense) > 0):
+                                debug("Found local planetary threat: %s", planet)
                                 threat_present = True
                                 break
                     if not threat_present:
@@ -547,8 +531,50 @@ class AIFleetMission(object):
                         # at least first stage of current task is done;
                         # release extra ships for potential other deployments
                         new_fleets = FleetUtilsAI.split_fleet(self.fleet.id)
+                        if self.type == MissionType.PROTECT_REGION:
+                            self.clear_fleet_orders()
+                            self.clear_target()
+                            new_fleets.append(self.fleet.id)
                     else:
-                        debug("Threat remains in target system; NOT releasing any ships.")
+                        debug("Threat remains in target system; Considering to release some ships.")
+                        new_fleets = []
+                        fleet_portion_to_remain = self._portion_of_fleet_needed_here()
+                        if fleet_portion_to_remain > 1:
+                            debug("Can not release fleet yet due to large threat.")
+                        elif fleet_portion_to_remain > 0:
+                            debug("Not all ships are needed here - considering releasing a few")
+                            fleet_remaining_rating = CombatRatingsAI.get_fleet_rating(fleet_id)
+                            fleet_min_rating = fleet_portion_to_remain * fleet_remaining_rating
+                            debug("Starting rating: %.1f, Target rating: %.1f",
+                                  fleet_remaining_rating, fleet_min_rating)
+                            allowance = CombatRatingsAI.rating_needed(fleet_remaining_rating, fleet_min_rating)
+                            debug("May release ships with total rating of %.1f", allowance)
+                            ship_ids = list(self.fleet.get_object().shipIDs)
+                            for ship_id in ship_ids:
+                                ship_rating = CombatRatingsAI.get_ship_rating(ship_id)
+                                debug("Considering to release ship %d with rating %.1f", ship_id, ship_rating)
+                                if ship_rating > allowance:
+                                    debug("Remaining rating insufficient. Not released.")
+                                    continue
+                                debug("Splitting from fleet.")
+                                new_fleet_id = FleetUtilsAI.split_ship_from_fleet(fleet_id, ship_id)
+                                if assertion_fails(new_fleet_id and new_fleet_id != INVALID_ID):
+                                    break
+                                new_fleets.append(new_fleet_id)
+                                fleet_remaining_rating = CombatRatingsAI.rating_difference(
+                                    fleet_remaining_rating, ship_rating)
+                                allowance = CombatRatingsAI.rating_difference(
+                                    fleet_remaining_rating, fleet_min_rating)
+                                debug("Remaining fleet rating: %.1f - Allowance: %.1f",
+                                      fleet_remaining_rating, allowance)
+                            if new_fleets:
+                                aistate.get_fleet_role(fleet_id, force_new=True)
+                                aistate.update_fleet_rating(fleet_id)
+                                aistate.ensure_have_fleet_missions(new_fleets)
+                        else:
+                            debug("Planetary defenses are deemed sufficient. Release fleet.")
+                            new_fleets = FleetUtilsAI.split_fleet(self.fleet.id)
+
                     new_military_fleets = []
                     for fleet_id in new_fleets:
                         if aistate.get_fleet_role(fleet_id) in COMBAT_MISSION_TYPES:
@@ -563,6 +589,39 @@ class AIFleetMission(object):
                     if allocations:
                         MilitaryAI.assign_military_fleets_to_systems(use_fleet_id_list=new_military_fleets,
                                                                      allocations=allocations)
+
+    def _portion_of_fleet_needed_here(self):
+        """Calculate the portion of the fleet needed in target system considering enemy forces."""
+        # TODO check rating against planets
+        if assertion_fails(self.type in COMBAT_MISSION_TYPES, msg=str(self)):
+            return 0
+        if assertion_fails(self.target and self.target.id != INVALID_ID, msg=str(self)):
+            return 0
+        system_id = self.target.id
+        aistate = get_aistate()
+        local_defenses = MilitaryAI.get_my_defense_rating_in_system(system_id)
+        potential_threat = CombatRatingsAI.combine_ratings(
+            MilitaryAI.get_system_local_threat(system_id),
+            MilitaryAI.get_system_neighbor_threat(system_id)
+        )
+        universe = fo.getUniverse()
+        system = universe.getSystem(system_id)
+
+        # tally planetary defenses
+        total_defense = total_shields = 0
+        for planet_id in system.planetIDs:
+            planet = universe.getPlanet(planet_id)
+            total_defense += planet.currentMeterValue(fo.meterType.defense)
+            total_shields += planet.currentMeterValue(fo.meterType.shield)
+        planetary_ratings = total_defense * (total_shields + total_defense)
+        potential_threat += planetary_ratings  # TODO: rewrite to return min rating vs planets as well
+
+        # consider safety factor just once here rather than everywhere below
+        safety_factor = aistate.character.military_safety_factor()
+        potential_threat *= safety_factor
+
+        fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
+        return CombatRatingsAI.rating_needed(potential_threat, local_defenses) / float(fleet_rating)
 
     def generate_fleet_orders(self):
         """generates AIFleetOrders from fleets targets to accomplish"""
@@ -600,7 +659,11 @@ class AIFleetMission(object):
 
         if self.target:
             # for some targets fleet has to visit systems and therefore fleet visit them
-            system_to_visit = self.target.get_system()
+
+            system_to_visit = (self.target.get_system() if not self.type == MissionType.PROTECT_REGION
+                               else TargetSystem(self._get_target_for_protection_mission()))
+            if not system_to_visit:
+                return
             orders_to_visit_systems = MoveUtilsAI.create_move_orders_to_system(self.fleet, system_to_visit)
             # TODO: if fleet doesn't have enough fuel to get to final target, consider resetting Mission
             for fleet_order in orders_to_visit_systems:
@@ -660,3 +723,85 @@ class AIFleetMission(object):
                                                                             (fleet and len(fleet.shipIDs)) or 0,
                                                                             CombatRatingsAI.get_fleet_rating(fleet_id),
                                                                             self.target or 'no target')
+
+    def _get_target_for_protection_mission(self):
+        """Get a target for a PROTECT_REGION mission.
+
+        1) If primary target (system target of this mission) is under attack, move to primary target.
+        2) If neighbors of primary target have local enemy forces weaker than this fleet, may move to attack
+        3) If no neighboring fleets or strongest enemy force is too strong, move to defend primary target
+        """
+        # TODO: Also check fleet rating vs planets in decision making below not only vs fleets
+        universe = fo.getUniverse()
+        primary_objective = self.target.id
+        debug("Trying to find target for protection mission. Target: %s", self.target)
+        immediate_threat = MilitaryAI.get_system_local_threat(primary_objective)
+        if immediate_threat:
+            debug("Immediate threat! Moving to primary mission target")
+            return primary_objective
+        else:
+            debug("No immediate threats.")
+            # Try to eliminate neighbouring fleets
+            neighbors = universe.getImmediateNeighbors(primary_objective, fo.empireID())
+            threat_list = sorted(map(
+                lambda x: (MilitaryAI.get_system_local_threat(x), x),
+                neighbors
+            ), reverse=True)
+
+            if not threat_list:
+                debug("No neighbors (?!). Moving to primary mission target")
+                return primary_objective
+
+            debug("%s", threat_list)
+            top_threat, candidate_system = threat_list[0]
+            if not top_threat:
+                # TODO: Move into second ring but needs more careful evaluation
+                # For now, consider staying at the current location if enemy
+                # owns a planet here which we can bombard.
+                current_system_id = self.fleet.get_current_system_id()
+                if current_system_id in neighbors:
+                    system = universe.getSystem(current_system_id)
+                    if assertion_fails(system is not None):
+                        return primary_objective
+                    empire_id = fo.empireID()
+                    for planet_id in system.planetIDs:
+                        planet = universe.getPlanet(planet_id)
+                        if (planet and
+                                not planet.ownedBy(empire_id) and
+                                not planet.unowned):
+                            debug("Currently no neighboring threats. "
+                                  "Staying for bombardment of planet %s", planet)
+                            self.clear_fleet_orders()
+                            self.set_target(MissionType.MILITARY, TargetSystem(current_system_id))
+                            self.generate_fleet_orders()
+                            self.issue_fleet_orders()
+                            return INVALID_ID
+
+                # TODO consider attacking neighboring, non-military fleets
+                # - needs more careful evaluation against neighboring threats
+                # empire_id = fo.empireID()
+                # for sys_id in neighbors:
+                #     system = universe.getSystem(sys_id)
+                #     if assertion_fails(system is not None):
+                #         continue
+                #     local_fleets = system.fleetIDs
+                #     for fleet_id in local_fleets:
+                #         fleet = universe.getFleet(fleet_id)
+                #         if not fleet or fleet.ownedBy(empire_id):
+                #             continue
+                #         return sys_id
+
+                debug("No neighboring threats. Moving to primary mission target")
+                return primary_objective
+
+            # TODO rate against threat in target system
+            # TODO only engage if can reach in 1 turn or leaves sufficient defense behind
+            fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
+            debug("This fleet rating: %d. Enemy Rating: %d", fleet_rating, top_threat)
+            safety_factor = get_aistate().character.military_safety_factor()
+            if fleet_rating < safety_factor*top_threat:
+                debug("Neighboring threat is too powerful. Moving to primary mission target")
+                return primary_objective  # do not engage!
+
+            debug("Engaging neighboring threat: %d", candidate_system)
+            return candidate_system
