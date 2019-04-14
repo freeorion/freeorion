@@ -181,6 +181,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
 
         InfoLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
+        m_ai_empires.clear();
         for (const auto& empire : Empires()) {
             if (GetEmpireClientType(empire.first) == Networking::CLIENT_TYPE_AI_PLAYER)
                 m_ai_empires.insert(empire.first);
@@ -201,7 +202,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         ExtractPlayerStatusMessageData(msg, ignore_about_player_id, status, about_empire_id);
 
         if (status == Message::WAITING) {
-            m_ai_waiting.erase(ignore_about_player_id);
+            m_ai_waiting.erase(about_empire_id);
         }
         return true;
     }
