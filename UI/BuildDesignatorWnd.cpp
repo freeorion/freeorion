@@ -37,7 +37,7 @@ namespace {
     const std::string PROD_SIDEPANEL_WND_NAME = "production.sidepanel";
 
     void    AddOptions(OptionsDB& db)
-    { db.Add("ui." + PROD_PEDIA_WND_NAME + ".hidden.enabled", UserStringNop("OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN"), false, Validator<bool>()); }
+    { db.Add("ui." + PROD_PEDIA_WND_NAME + ".hidden.enabled", UserStringNop("OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN"), false); }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     //////////////////////////////////

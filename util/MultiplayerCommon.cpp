@@ -28,13 +28,13 @@ namespace {
         db.Add<std::string>("log-level",                    UserStringNop("OPTIONS_DB_LOG_LEVEL"),              "",
                             OrValidator<std::string>(LogLevelValidator(), DiscreteValidator<std::string>("")),  false);
         db.Add<std::string>("log-file",                     UserStringNop("OPTIONS_DB_LOG_FILE"),               "",
-                            Validator<std::string>() ,                                                          false);
+                            Validator<std::string>(),                                                           false);
         // Default stringtable filename is deferred to i18n.cpp::InitStringtableFileName to determine if user specified
         db.Add<std::string>("resource.stringtable.path",    UserStringNop("OPTIONS_DB_STRINGTABLE_FILENAME"),   "");
         db.Add("save.format.binary.enabled",                UserStringNop("OPTIONS_DB_BINARY_SERIALIZATION"),   false);
         db.Add("save.format.xml.zlib.enabled",              UserStringNop("OPTIONS_DB_XML_ZLIB_SERIALIZATION"), true);
         db.Add("save.auto.hostless.enabled",                UserStringNop("OPTIONS_DB_AUTOSAVE_HOSTLESS"),      true);
-        db.Add<int>("save.auto.interval",                   UserStringNop("OPTIONS_DB_AUTOSAVE_INTERVAL"),      0, Validator<int>());
+        db.Add<int>("save.auto.interval",                   UserStringNop("OPTIONS_DB_AUTOSAVE_INTERVAL"),      0);
         db.Add<std::string>("load",                         UserStringNop("OPTIONS_DB_LOAD"),                   "", Validator<std::string>(), false);
 
         // AI Testing options-- the following options are to facilitate AI testing and do not currently have an options page widget;

@@ -28,14 +28,9 @@ namespace {
 
     /** Adds options related to SitRepPanel to Options DB. */
     void AddOptions(OptionsDB& db) {
-        db.Add("ui.map.sitrep.invalid.shown",
-               UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"),
-               false, Validator<bool>());
-        db.Add<std::string>("ui.map.sitrep.hidden.stringlist",
-                            UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"),
-                            "");
-        db.Add("ui.map.sitrep.icon.size",
-               UserStringNop("OPTIONS_DB_UI_SITREP_ICONSIZE"),
+        db.Add("ui.map.sitrep.invalid.shown",                   UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"),            false);
+        db.Add<std::string>("ui.map.sitrep.hidden.stringlist",  UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"),   "");
+        db.Add("ui.map.sitrep.icon.size",                       UserStringNop("OPTIONS_DB_UI_SITREP_ICONSIZE"),
                24, RangedValidator<int>(12, 64));
     }
     bool temp_bool = RegisterOptions(&AddOptions);

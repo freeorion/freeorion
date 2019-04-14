@@ -140,8 +140,7 @@ void Hotkey::AddOptions(OptionsDB& db) {
     for (const auto& entry : *s_hotkeys) {
         const Hotkey& hotkey = entry.second;
         std::string n = hotkey.m_name + ".hotkey";
-        db.Add(n, hotkey.GetDescription(),
-               hotkey.ToString(), Validator<std::string>());
+        db.Add(n, hotkey.GetDescription(), hotkey.ToString());
     }
 }
 

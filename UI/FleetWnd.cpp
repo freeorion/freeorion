@@ -341,8 +341,8 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("ui.fleet.aggression", UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"), INVALID_FLEET_AGGRESSION, Validator<NewFleetAggression>());
-        db.Add("ui.fleet.scanline.color", UserStringNop("OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR"), GG::Clr(24, 24, 24, 192), Validator<GG::Clr>());
+        db.Add("ui.fleet.aggression", UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"), INVALID_FLEET_AGGRESSION);
+        db.Add("ui.fleet.scanline.color", UserStringNop("OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR"), GG::Clr(24, 24, 24, 192));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

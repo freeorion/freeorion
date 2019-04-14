@@ -37,40 +37,36 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("ui.research.tree.spacing.horizontal", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING"), 0.25, RangedStepValidator<double>(0.25, 0.25, 4.0));
-        db.Add("ui.research.tree.spacing.vertical", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING"), 0.75, RangedStepValidator<double>(0.25, 0.25, 4.0));
-        db.Add("ui.research.tree.zoom.scale", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"), 1.0, RangedStepValidator<double>(1.0, -25.0, 10.0));
-        db.Add("ui.research.control.graphic.size", UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"), 3.0, RangedStepValidator<double>(0.25, 0.5,  12.0));
-        db.Add("ui." + RES_PEDIA_WND_NAME + ".hidden.enabled", UserStringNop("OPTIONS_DB_RESEARCH_PEDIA_HIDDEN"), false, Validator<bool>());
+        db.Add("ui.research.tree.spacing.horizontal",           UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING"),
+               0.25,                    RangedStepValidator<double>(0.25, 0.25, 4.0));
+        db.Add("ui.research.tree.spacing.vertical",             UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING"),
+               0.75,                    RangedStepValidator<double>(0.25, 0.25, 4.0));
+        db.Add("ui.research.tree.zoom.scale",                   UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"),
+               1.0,                     RangedStepValidator<double>(1.0, -25.0, 10.0));
+        db.Add("ui.research.control.graphic.size",              UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"),
+               3.0,                     RangedStepValidator<double>(0.25, 0.5,  12.0));
+        db.Add("ui." + RES_PEDIA_WND_NAME + ".hidden.enabled",  UserStringNop("OPTIONS_DB_RESEARCH_PEDIA_HIDDEN"), false);
 
         // TechListBox::TechRow column widths
         int default_pts = 16;
-        db.Add("ui.research.list.column.graphic.width",     UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_GRAPHIC"),
+        db.Add("ui.research.list.column.graphic.width",         UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_GRAPHIC"),
                default_pts * 3,         StepValidator<int>(1));
-        db.Add("ui.research.list.column.name.width",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_NAME"),
+        db.Add("ui.research.list.column.name.width",            UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_NAME"),
                default_pts * 18,        StepValidator<int>(1));
-        db.Add("ui.research.list.column.cost.width",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_COST"),
+        db.Add("ui.research.list.column.cost.width",            UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_COST"),
                default_pts * 8,         StepValidator<int>(1));
-        db.Add("ui.research.list.column.time.width",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_TIME"),
+        db.Add("ui.research.list.column.time.width",            UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_TIME"),
                default_pts * 6,         StepValidator<int>(1));
-        db.Add("ui.research.list.column.category.width",    UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_CATEGORY"),
+        db.Add("ui.research.list.column.category.width",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_CATEGORY"),
                default_pts * 12,        StepValidator<int>(1));
-        db.Add("ui.research.list.column.description.width", UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_DESCRIPTION"),
+        db.Add("ui.research.list.column.description.width",     UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_DESCRIPTION"),
                default_pts * 18,        StepValidator<int>(1));
 
         // Default status for TechTreeControl filter.
-        db.Add<bool>("ui.research.status.unresearchable.shown",
-                     UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_UNRESEARCHABLE"),
-                     false,        Validator<bool>());
-        db.Add<bool>("ui.research.status.partial.shown",
-                     UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_HAS_RESEARCHED_PREREQ"),
-                     true,         Validator<bool>());
-        db.Add<bool>("ui.research.status.researchable.shown",
-                     UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_RESEARCHABLE"),
-                     true,         Validator<bool>());
-        db.Add<bool>("ui.research.status.completed.shown",
-                     UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_COMPLETED"),
-                     true,         Validator<bool>());
+        db.Add<bool>("ui.research.status.unresearchable.shown", UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_UNRESEARCHABLE"),         false);
+        db.Add<bool>("ui.research.status.partial.shown",        UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_HAS_RESEARCHED_PREREQ"),  true);
+        db.Add<bool>("ui.research.status.researchable.shown",   UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_RESEARCHABLE"),           true);
+        db.Add<bool>("ui.research.status.completed.shown",      UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_COMPLETED"),              true);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -115,7 +111,7 @@ namespace {
 }
 
 ///////////////////////////
-// TechRowBrowseWnd //
+//   TechRowBrowseWnd    //
 ///////////////////////////
 std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name, int empire_id) {
     const Empire* empire = GetEmpire(empire_id);

@@ -49,7 +49,7 @@ namespace {
                                  T def, ValidatorBase const & validator) {
         std::string option_root = "ai.trait." + root + ".";
         std::string user_string_root = "OPTIONS_DB_AI_CONFIG_TRAIT_"+ROOT;
-        db.Add<bool>(option_root + "force.enabled", UserStringNop(user_string_root + "_FORCE"), false, Validator<bool>());
+        db.Add<bool>(option_root + "force.enabled", UserStringNop(user_string_root + "_FORCE"), false);
         db.Add<T>(option_root + "default", UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator);
 
         for (int ii = 1; ii <= IApp::MAX_AI_PLAYERS(); ++ii) {
