@@ -2523,8 +2523,7 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                          player_it != server.m_networking.established_end(); ++player_it)
                     {
                         PlayerConnectionPtr player_ctn = *player_it;
-                        player_ctn->SendMessage(PlayerStatusMessage(player_connection->PlayerID(),
-                                                                    Message::PLAYING_TURN,
+                        player_ctn->SendMessage(PlayerStatusMessage(Message::PLAYING_TURN,
                                                                     empire_id));
                     }
                 }
@@ -2804,7 +2803,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
              player_it != server.m_networking.established_end(); ++player_it)
         {
             PlayerConnectionPtr player_ctn = *player_it;
-            player_ctn->SendMessage(PlayerStatusMessage(player_id, Message::WAITING, empire_id));
+            player_ctn->SendMessage(PlayerStatusMessage(Message::WAITING, empire_id));
         }
     }
 
@@ -2936,7 +2935,7 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
              player_it != server.m_networking.established_end(); ++player_it)
         {
             PlayerConnectionPtr player_ctn = *player_it;
-            player_ctn->SendMessage(PlayerStatusMessage(player_id, Message::PLAYING_TURN, empire_id));
+            player_ctn->SendMessage(PlayerStatusMessage(Message::PLAYING_TURN, empire_id));
         }
     }
 
@@ -3053,8 +3052,7 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
             ++recipient_player_it)
         {
             const PlayerConnectionPtr& recipient_player_ctn = *recipient_player_it;
-            recipient_player_ctn->SendMessage(PlayerStatusMessage(server.EmpirePlayerID(empire.first),
-                                                                  empire.second->Eliminated() ?
+            recipient_player_ctn->SendMessage(PlayerStatusMessage(empire.second->Eliminated() ?
                                                                       Message::WAITING :
                                                                       Message::PLAYING_TURN,
                                                                   empire.first));

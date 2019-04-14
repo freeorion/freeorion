@@ -196,10 +196,9 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
     case Message::CHAT_HISTORY:
         return true; // ignore
     case Message::PLAYER_STATUS: {
-        int ignore_about_player_id;
         int about_empire_id;
         Message::PlayerStatus status;
-        ExtractPlayerStatusMessageData(msg, ignore_about_player_id, status, about_empire_id);
+        ExtractPlayerStatusMessageData(msg, status, about_empire_id);
 
         if (status == Message::WAITING) {
             m_ai_waiting.erase(about_empire_id);
