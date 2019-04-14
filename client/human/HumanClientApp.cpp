@@ -103,7 +103,6 @@ namespace {
         db.Add("save.auto.turn.interval",                   UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),                     1,                  RangedValidator<int>(1, 50));
         db.Add("save.auto.file.limit",                      UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),                     10,                 RangedValidator<int>(1, 10000));
         db.Add("save.auto.initial.enabled",                 UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),           true,               Validator<bool>());
-        db.Add("save.auto.exit.enabled",                    UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),                true,               Validator<bool>());
         db.Add("ui.input.mouse.button.swap.enabled",        UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),                   false);
         db.Add("ui.input.keyboard.repeat.delay",            UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),              360,                RangedValidator<int>(0, 1000));
         db.Add("ui.input.keyboard.repeat.interval",         UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"),           20,                 RangedValidator<int>(0, 1000));

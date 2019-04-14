@@ -335,7 +335,9 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     if (must_quit) {
         ErrorLogger(FSM) << "Unable to recover server terminating.";
         if (m_server.IsHostless()) {
-            if (GetOptionsDB().Get<bool>("save.auto.hostless.enabled")) {
+            if (GetOptionsDB().Get<bool>("save.auto.hostless.enabled") &&
+                GetOptionsDB().Get<bool>("save.auto.exit.enabled"))
+            {
                 // save game on exit
                 std::string save_filename = GetAutoSaveFileName(m_server.CurrentTurn());
                 ServerSaveGameData server_data(m_server.CurrentTurn());
@@ -2449,6 +2451,31 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
 
 sc::result PlayingGame::react(const ShutdownServer& msg) {
     TraceLogger(FSM) << "(ServerFSM) PlayingGame.ShutdownServer";
+
+    ServerApp& server = Server();
+
+    if (server.IsHostless() &&
+        GetOptionsDB().Get<bool>("save.auto.hostless.enabled") &&
+        GetOptionsDB().Get<bool>("save.auto.exit.enabled"))
+    {
+        // save game on exit
+        std::string save_filename = GetAutoSaveFileName(server.CurrentTurn());
+        ServerSaveGameData server_data(server.CurrentTurn());
+        int bytes_written = 0;
+        // save game...
+        try {
+            bytes_written = SaveGame(save_filename,     server_data,    server.GetPlayerSaveGameData(),
+                                     GetUniverse(),     Empires(),      GetSpeciesManager(),
+                                     GetCombatLogManager(),             server.m_galaxy_setup_data,
+                                     !server.m_single_player_game);
+        } catch (const std::exception& error) {
+            ErrorLogger(FSM) << "While saving, catch std::exception: " << error.what();
+            SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));
+        }
+
+        // inform players that save is complete
+        SendMessageToAllPlayers(ServerSaveGameCompleteMessage(save_filename, bytes_written));
+    }
 
     return transit<ShuttingDownServer>();
 }

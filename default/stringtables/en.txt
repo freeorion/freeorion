@@ -1904,7 +1904,7 @@ OPTIONS_DB_AUTOSAVE_GALAXY_CREATION
 Enable autosave after the galaxy is created before any game play.
 
 OPTIONS_DB_AUTOSAVE_GAME_CLOSE
-Enable autosave when resigning or closing the game.
+Enable autosave when resigning or closing the game. In multiplayer hostless mode, enable autosaves when the server closes a game due to player disconnection or when the server is terminated.
 
 OPTIONS_DB_AUTOSAVE_HOSTLESS
 Enable autosave in hostless mode.
