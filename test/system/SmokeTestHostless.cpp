@@ -48,8 +48,8 @@ BOOST_FIXTURE_TEST_SUITE(SmokeTestHostless, ClientAppFixture)
 
 BOOST_AUTO_TEST_CASE(hostless_server) {
     unsigned int num_AIs = 2;
-    unsigned int num_games = 2;
-    int num_turns = 2;
+    unsigned int num_games = 3;
+    int num_turns = 3;
     bool save_game = true;
     bool launch_server = true;
 
