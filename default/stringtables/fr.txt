@@ -1904,7 +1904,7 @@ OPTIONS_DB_AUTOSAVE_GALAXY_CREATION
 Active une sauvegarde automatique dès que la galaxie est créée et avant toute action de jeu.
 
 OPTIONS_DB_AUTOSAVE_GAME_CLOSE
-Active une sauvegarde automatique lors d'un abandon ou de la fermeture du jeu.
+Active une sauvegarde automatique lors d'un abandon ou de la fermeture du jeu. En mode multijoueurs sans hôte, active une sauvegarde automatique lorsque le serveur ferme une partie suite à la déconnexion d'un joueur ou lorsque le serveur est arrêté.
 
 OPTIONS_DB_AUTOSAVE_HOSTLESS
 Active la sauvegarde automatique en mode sans hôte.
