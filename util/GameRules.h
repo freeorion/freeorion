@@ -75,8 +75,8 @@ public:
       * std::runtime_error if no such rule exists. */
     std::shared_ptr<const ValidatorBase> GetValidator(const std::string& rule_name) const;
 
-    /** returns all contained rules as name and value string pairs. */
-    std::vector<std::pair<std::string, std::string>> GetRulesAsStrings() const;
+    /** returns all contained rules as map of name and value string. */
+    std::map<std::string, std::string> GetRulesAsStrings() const;
 
     template <typename T>
     T       Get(const std::string& name) const
@@ -118,7 +118,7 @@ public:
         it->second.SetFromValue(value);
     }
 
-    void    SetFromStrings(const std::vector<std::pair<std::string, std::string>>& names_values);
+    void    SetFromStrings(const std::map<std::string, std::string>& names_values);
 
     /** Removes game rules that were added without being specified as
         engine internal. */

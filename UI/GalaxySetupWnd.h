@@ -22,7 +22,7 @@ public:
     void CompleteConstruction() override;
 
     /** \name Accessors*/ //!@{
-    std::vector<std::pair<std::string, std::string>> GetRulesAsStrings() const;
+    std::map<std::string, std::string> GetRulesAsStrings() const;
     //!@}
 
     mutable boost::signals2::signal<void ()> SettingsChangedSignal;
@@ -80,7 +80,7 @@ public:
     GalaxySetupOption               GetSpecialsFrequency() const;   //!< Returns the rarity of planetary and system specials
     GalaxySetupOption               GetMonsterFrequency() const;    //!< Returns the frequency of space monsters
     GalaxySetupOption               GetNativeFrequency() const;     //!< Returns the frequency of natives
-    Aggression                      GetAIAggression() const;        //!< Returns the  maximum AI aggression level 
+    Aggression                      GetAIAggression() const;        //!< Returns the  maximum AI aggression level
 
     /** Returns the current preview image texture. */
     std::shared_ptr<GG::Texture> PreviewImage() const;
@@ -152,7 +152,7 @@ public:
     GG::Clr                 EmpireColor() const;
     const std::string&      StartingSpeciesName() const;
     int                     NumberAIs() const;
-    std::vector<std::pair<std::string, std::string>>
+    std::map<std::string, std::string>
                             GetRulesAsStrings() const;
     //!@}
 

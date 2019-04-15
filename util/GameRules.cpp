@@ -129,18 +129,18 @@ void GameRules::ResetToDefaults() {
         it.second.SetToDefault();
 }
 
-std::vector<std::pair<std::string, std::string>> GameRules::GetRulesAsStrings() const {
+std::map<std::string, std::string> GameRules::GetRulesAsStrings() const {
     CheckPendingGameRules();
-    std::vector<std::pair<std::string, std::string>> retval;
+    std::map<std::string, std::string> retval;
     for (const auto& rule : m_game_rules)
-        retval.push_back({rule.first, rule.second.ValueToString()});
+        retval.insert({rule.first, rule.second.ValueToString()});
     return retval;
 }
 
 void GameRules::Add(Pending::Pending<GameRules>&& future)
 { m_pending_rules = std::move(future); }
 
-void GameRules::SetFromStrings(const std::vector<std::pair<std::string, std::string>>& names_values) {
+void GameRules::SetFromStrings(const std::map<std::string, std::string>& names_values) {
     CheckPendingGameRules();
     DebugLogger() << "Setting Rules from Strings:";
     for (const auto& entry : names_values)
