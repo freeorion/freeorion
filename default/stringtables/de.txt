@@ -6977,61 +6977,445 @@ Generiert Handel.
 ##
 
 SH_ROBOTIC
-Robotische Hülle
+Robotikrumpf
+
+SH_ROBOTIC_DESC
+'''Ein vollkommen automatischer Rumpf, dessen Funktiosweise den Prinzipien der [[tech SHP_MIL_ROBO_CONT]] entspricht. Hat vier externe sowie einen intenen Steckplatz und repariert jede Runde 2 Punkte [[metertype METER_STRUCTURE]], sofern das Schiff nicht in einen Kampf verwickelt ist.
+
+[[metertype METER_STEALTH]] ist durchschnittlich, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist durchschnittlich.
+
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
+
+SH_SPATIAL_FLUX
+Raumflussrumpf
+
+SH_SPATIAL_FLUX_DESC
+'''Dieser kleine Rumpf kann dank des [[tech SHP_SPACE_FLUX_DRIVE]]s mit guter Geschwindigkeit über weite Distanzen reisen. Er hat allerdings nur zwei externe Steckplätze und nur geringe [[metertype METER_STRUCTURE]]. 
+
+Beginnt mit einer [[metertype METER_STEALTH]] von 15. Der Wert erhöht sich um 10 im Stillstand, aber um 30 pro Zug wenn in Transit. Technologische Verbesserungen wie z.B. [[tech SPY_STEALTH_PART_1]] erhöhen [[METER_STEALTH]] um je 10 Punkte.
+
+[[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist durchschnittlich.
+
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
+
+SH_SPACE_FLUX_BUBBLE
+Raumflussblasenrumpf
+
+SH_SPACE_FLUX_BUBBLE_DESC
+'''Dieser kleine Rumpf kann dank des [[tech SHP_SPACE_FLUX_DRIVE]]s mit guter Geschwindigkeit über weite Distanzen reisen. Er hat allerdings nur einen internen Steckplatz und nur geringe [[metertype METER_STRUCTURE]]. 
+
+Beginnt mit einer [[metertype METER_STEALTH]] von 15. Der Wert erhöht sich um 10 im Stillstand, aber um 30 pro Zug wenn in Transit. Technologische Verbesserungen wie z.B. [[tech SPY_STEALTH_PART_1]] erhöhen [[METER_STEALTH]] um je 10 Punkte.
+
+[[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist durchschnittlich.
+
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
+
+SH_SELF_GRAVITATING
+Eigengravitierender Rumpf
+
+SH_SELF_GRAVITATING_DESC
+'''Dieser Rumpf ist gewaltig in Größe wie auch in Stärke. Mit sechs externen, zwei internen und sogar einem Kernsteckplatz ist dieser Rumpf einer der fortschrittlichsten überhaupt. Er ist außerdem sehr robust, mit hoher [[metertype METER_STRUCTURE]].
+
+[[metertype METER_STEALTH]] is gering, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist durchschnittlich.
+
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]'''
+
+SH_NANOROBOTIC
+Nanorobotischer Rumpf
+
+SH_NANOROBOTIC_DESC
+'''Dieser große automatisierter Rumpf verwendet Millionen von Nanorobotern, um sich selbst zu reparieren. Er hat sechs externe und einen internen Steckplatz. Zwischen Kämpfen können die Nanobots durch schnelle Reparaturen durchführen und jede Runde die [[metertype METER_STRUCTURE]] des Schiffes um ihren derzeitigen Wert wiederherstellen.
+
+[[metertype METER_STEALTH]] ist durchschnittlich, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist durchschnittlich.
+
+Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]], eine [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] und eine [[buildingtype BLD_SHIPYARD_CON_NANOROBO]] vorhanden sein.'''
+
+SH_TITANIC
+Titanenrumpf
+
+SH_TITANIC_DESC
+'''Nur durch meisterhafte Ingenieurskunst lässt sich ein Rumpf dieser Größe überhaupt zum Bewegen zu bringen. Er hat sechzehn externe, drei interne und einen Kernsteckplatz und sehr hohe [[metertype METER_STRUCTURE]]. Die enorme Größe des [[SH_TITANIC]] macht ein Verstecken nahezu unmöglich, selbst mit fortschrittlicher Tarntechnologie.
+
+[[metertype METER_STEALTH]] ist sehr gering, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist durchschnittlich.
+
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]'''
+
+SH_TRANSSPATIAL
+Zwischenraumrumpf
+
+SH_TRANSSPATIAL_DESC
+'''Ein experimenteller Rumpf, primär zum Testen neuer Technologien; er hat  einen externen und einen Kernsteckplatz und sehr geringe [[metertype METER_STRUCTURE]]. Der [[SH_TRANSSPATIAL]] wurde zusammen mit dem [[shippart FU_TRANSPATIAL_DRIVE]] entwickelt, mit dem er sich als höchst effektiver Späher einsetzen lässt.
+
+[[metertype METER_STEALTH]] ist hoch, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist durchschnittlich.
+
+Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]], eine [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] und ein [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] vorhanden sein.'''
+
+SH_LOGISTICS_FACILITATOR
+Logistikvermittler
+
+SH_LOGISTICS_FACILITATOR_DESC
+'''Flaggschiff zur Organisation von Besatzungen und anderen Objekten inmitten von Gefechten. Verfügt über sieben externe, zwei interne und einen Kernsteckplatz. Die eingebaute Flotte getarnter Frachter ermöglicht den Transport von Personal und Material während eines Kampfes, so dass alle verbündeten Schiffe sich auch in Zügen, in denen sie an einem Kampf teilgenommen haben, reparieren könnenn; in Zügen zwischen Kämpfen stellen alle Schiffe ihre [[metertype METER_STRUCTURE]] um ihren aktuellen Betrag wieder her, bis sie ganz repariert sind.
+
+[[metertype METER_STEALTH]] ist durchschnittlich, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist durchschnittlich.
+
+Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]], eine [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], eine [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], eine [[buildingtype BLD_SHIPYARD_CON_GEOINT]] und ein [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] vorhanden sein.'''
+
+SH_ASTEROID
+Asteroidenrumpf
+
+SH_ASTEROID_DESC
+'''Gebaut aus einem Asteroiden mittlerer Größe und recht kostengünstig. Geräumiger als ein [[shiphull SH_BASIC_LARGE]], mit vier externen und zwei internen Steckplätzen.
+
+[[metertype METER_STEALTH]] ist durchschnittlich, steigt aber deutlich in Systemen mit Asteroidengürteln und im Kampf beim Verstecken in Asteroidengürteln. [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist gering.
+
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]]'''
+
+SH_SMALL_ASTEROID
+Kleiner Asteroidenrumpf
+
+SH_SMALL_ASTEROID_DESC
+'''Gebaut aus einem kleinen Asteroiden. Verfügt über nur einen externen und einen internen Steckplatz.
+
+[[metertype METER_STEALTH]] ist durchschnittlich, steigt aber deutlich in Systemen mit Asteroidengürteln und im Kampf beim Verstecken in Asteroidengürteln. [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist gering.
+
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]]'''
+
+SH_HEAVY_ASTEROID
+Schwerer Asteroidenrumpf
+
+SH_HEAVY_ASTEROID_DESC
+'''Gebaut aus einem riesigen Asteroiden. Verfügt über sechs externe und drei interne Steckplätze.
+
+[[metertype METER_STEALTH]] ist durchschnittlich, steigt aber deutlich in Systemen mit Asteroidengürteln und im Kampf beim Verstecken in Asteroidengürteln. [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist gering.
+
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]]'''
+
+SH_CAMOUFLAGE_ASTEROID
+Getarnter Asteroidenrumpf
+
+SH_CAMOUFLAGE_ASTEROID_DESC
+'''Entworfen, um im Aussehen einem echten Asteroiden zu gleichen. Verfügt über vier interne Steckplätze, aber keine externen.
+
+[[metertype METER_STEALTH]] ist hoch und steigt zusätzlich in Systemen mit Asteroidengürteln und im Kampf beim Verstecken in Asteroidengürteln. [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist gering.
+
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]]'''
+
+SH_SMALL_CAMOUFLAGE_ASTEROID
+Kleiner Getarnter Asteroidenrumpf
+
+SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
+'''Verwendet auf der Außenseite die gleichen Bauteile wie der reguläre Getarnte Asteroidenrumpf, allerdings in deutlich kleinerer Ausführung, um seinen [[metertype METER_STEALTH]]-Bonus nicht zu verlieren. Verfügt über einen externen und einen internen Steckplatz.
+
+[[metertype METER_STEALTH]] ist sehr hoch und steigt zusätzlich in Systemen mit Asteroidengürteln und im Kampf beim Verstecken in Asteroidengürteln. [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist gering.
+
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]]'''
+
+SH_AGREGATE_ASTEROID
+Zusammengesetzter Asteroidenrumpf
+
+SH_AGREGATE_ASTEROID_DESC
+'''Ein massiver Rumpf, geformt die Kombination mehrerer großer Asteroiden. Verfügt über fünfzehn externe und vier interne Steckplätze.
+
+[[metertype METER_STEALTH]] ist durchschnittlich, steigt aber deutlich in Systemen mit Asteroidengürteln und im Kampf beim Verstecken in Asteroidengürteln. [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist gering.
+
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED]]'''
+
+SH_MINIASTEROID_SWARM
+Schwarmasteroidenrumpf
+
+SH_MINIASTEROID_SWARM_DESC
+'''Gebaut aus einem kleinen Asteroiden, von dem etliche Mini-Asteroiden abgebrochen wurden, die wiederum vom Rumpf aus gesteuert werden. Der Schwarm schützt das eigentliche Schiff und verleiht so einen Bonus auf [[metertype METER_SHIELD]]. Der Rumpf verfügt über zwei externe Steckplätze, aber keine internen. [[metertype METER_STRUCTURE]] ist sehr gering.
+
+[[metertype METER_STEALTH]] ist sehr hoch und steigt zusätzlich in Systemen mit Asteroidengürteln und im Kampf beim Verstecken in Asteroidengürteln. [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist gering.
+
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED]]'''
+
+SH_SCATTERED_ASTEROID
+Streuasteroidenrumpf
+
+SH_SCATTERED_ASTEROID_DESC
+'''Flaggschiff, gebaut aus mehreren großen Asteroiden, von denen einige zum eigentlichen Rumpf kombiniert wurden und andere in Mini-Asteroiden zerbrochen wurden, die wiederum vom Rumpf aus gesteuert werden. Diese Asteroiden schützen nicht nur das Schiff selbst, sondern alle verbündeten Schiffe im System und verleihen ihnen allen einen Bonus auf [[metertype METER_SHIELD]]. Dieser Rumpf verfügt über fünfzehn externe und vier interne Steckplätze. [[metertype METER_STRUCTURE]] ist hoch.
+
+[[metertype METER_STEALTH]] ist durchschnittlich, steigt aber deutlich in Systemen mit Asteroidengürteln und im Kampf beim Verstecken in Asteroidengürteln. [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist gering.
+
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED]]'''
+
+SH_CRYSTALLIZED_ASTEROID
+Kristallisierter Astroidenrumpf
+
+SH_CRYSTALLIZED_ASTEROID_DESC
+'''Gebaut aus einem Asteroiden mittlerer Größe, welcher mit speziellen Kristallisierungstechniken erhärtet wurde. Wie der reguläre [[shiphull SH_ASTEROID]] hat dieser Rumpf vier externe und zwei interne Steckplätze. [[metertype METER_STRUCTURE]] ist extrem hoch.
+
+[[metertype METER_STEALTH]] ist durchschnittlich, steigt aber deutlich in Systemen mit Asteroidengürteln und im Kampf beim Verstecken in Asteroidengürteln. [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist gering.
+
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED]]'''
+
+SH_ORGANIC
+Organischer Rumpf
+
+SH_ORGANIC_DESC
+'''Ein lebender Rumpf mit drei externen und einem internen Steckplatz.
+Organisches Wachstum: Startet mit 5 [[metertype METER_STRUCTURE]], aber wächst um 5 [[metertype METER_STRUCTURE]] über 25 Züge.
+
+[[metertype METER_STEALTH]] ist durchschnittlich, [[metertype METER_DETECTION]] ist gering und [[metertype METER_SPEED]] ist hoch.
+
+Eine billiger, vielseitiger Rumpf, der verschiedene Rollen ausfüllen kann, aber mit fortschreitender Technologie voraussichtlich obsolet wird. Mit geringer [[METER_DETECTION]] ist der Rumpf für Aufklärer weniger geeignet als für Kriegsschiffe.
+
+[[LIVING_HULL_AUTO_REGEN]]
+
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]'''
+
+SH_STATIC_MULTICELLULAR
+Statischer Mehrzellerrumpf
+
+SH_STATIC_MULTICELLULAR_DESC
+'''Obwohl er organisch ist, lebt dieser Rumpf nicht, da er durch Vielzellenguss hergestellt wurde. Die Flexibilität des Innenraums und fehlende Notwendigkeit interner Organe erhöht das Fassungsvermögen, aber ohne lebende Systeme ist eine natürliche Erholung nicht möglich. Der Rumpf hat drei externe und zwei interne Steckplätze.
+
+[[metertype METER_STEALTH]] ist durchschnittlich, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist hoch.
+
+Eine billiger, vielseitiger Rumpf, der verschiedene Rollen ausfüllen kann,  aber in keiner heraussticht. Dieser Rumpf regeneriert weder [[metertype METER_STRUCTURE]], noch [[metertype METER_FUEL]] zwischen Kämpfen.
+
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]'''
+
+SH_ENDOMORPHIC
+Endomorphischer Rumpf
+
+SH_ENDOMORPHIC_DESC
+'''Ein halblebendiger Rumpf mit vier externen und zwei internen Steckplätzen.
+Organisches Wachstum: Startet mit 5 [[metertype METER_STRUCTURE]], aber wächst um 15 [[metertype METER_STRUCTURE]] über 30 Züge.
+
+[[metertype METER_STEALTH]] ist durchschnittlich, [[metertype METER_DETECTION]] ist hoch und [[metertype METER_SPEED]] ist hoch.
+
+Hat Potential als Kriegsschiff.
+
+Dieser Rumpf regeneriert weder [[metertype METER_STRUCTURE]], noch [[metertype METER_FUEL]] zwischen Kämpfen.
+
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]'''
+
+SH_SYMBIOTIC
+Symbiotischer Rumpf
+
+SH_SYMBIOTIC_DESC
+'''Ein lebender Rumpf mit zwei externen und zwei internen Steckplätzen. Steht mit seiner Besatzung in einer symbiotischen Beziehung, was [[metertype METER_STEALTH]] und Geschwindigkeit erhöht.
+Organisches Wachstum: Startet mit 10 [[metertype METER_STRUCTURE]], aber wächst um 10 [[metertype METER_STRUCTURE]] über 50 Züge.
+
+[[metertype METER_STEALTH]] ist hoch, [[metertype METER_DETECTION]] ist hoch und [[metertype METER_SPEED]] ist hoch.
+
+Mit wenigen externen Steckplätzen ist dieser Rumpf für die Frontlinie ungeeignet, aber die internen Steckplätze, [[METER_DETECTION]] und [[METER_STEALTH]] verleihen ihm Potential als Aufklärer oder Plünderer. 
+
+[[LIVING_HULL_AUTO_REGEN]]
+
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]'''
+
+SH_PROTOPLASMIC
+Protoplasmischer Rumpf
+
+SH_PROTOPLASMIC_DESC
+'''Ein lebender Rumpf mit zwei externen und drei internen Steckplätzen
+Organisches Wachstum: Startet mit 5 [[metertype METER_STRUCTURE]], aber wächst um 25 [[metertype METER_STRUCTURE]] über 50 Züge.
+
+[[metertype METER_STEALTH]] ist sehr hoch, [[metertype METER_DETECTION]] ist hoch und [[metertype METER_SPEED]] ist hoch.
+
+Mit wenigen externen Steckplätzen ist dieser Rumpf für die Frontlinie ungeeignet, aber die internen Steckplätze, [[METER_DETECTION]] und [[METER_STEALTH]] verleihen ihm Potential als Aufklärer oder Plünderer. 
+
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED]]'''
+
+SH_ENDOSYMBIOTIC
+Endosymbiotischer Rumpf
+
+SH_ENDOSYMBIOTIC_DESC
+'''Dieser lebende einzellige Rumpf steht mit seiner Besatzung in einer symbiotischen Beziehung. Die Besatzung lebt im Zellplasma und fungiert als Organellen. Der Rumpf hat vier externe und drei interne Steckplätze.
+Organisches Wachstum: Startet mit 5 [[metertype METER_STRUCTURE]], aber wächst um 15 [[metertype METER_STRUCTURE]] über 30 Züge.
+
+[[metertype METER_STEALTH]] ist hoch, [[metertype METER_DETECTION]] ist hoch und [[metertype METER_SPEED]] ist hoch.
+
+[[LIVING_HULL_AUTO_REGEN]]
+
+Eignet sich hervorragend als Kriegsschiff, Aufklärer oder Plünderer.
+
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED]]'''
+
+SH_RAVENOUS
+Gefräßiger Rumpf
+
+SH_RAVENOUS_DESC
+'''Dieser nichtlebende organische Rumpf - oder 'Zombie'-Rumpf - wurde aus dem Blut und Fleisch seiner Brüder gebaut. Er hat fünf externe und zwei interne Steckplätze.
+Organisches Wachstum: Startet mit 5 [[metertype METER_STRUCTURE]], aber wächst um 20 [[metertype METER_STRUCTURE]] über 40 Züge.
+
+[[metertype METER_STEALTH]] ist durchschnittlich, [[metertype METER_DETECTION]] ist sehr hoch und [[metertype METER_SPEED]] ist hoch.
+
+Hat großes Potential als schnelles, mächtiges Kriegsschiff.
+
+Dieser Rumpf erhält keinen Bonus auf die Regeneration von [[metertype METER_STRUCTURE]] oder [[metertype METER_FUEL]].
+
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]'''
+
+SH_BIOADAPTIVE
+Bio-Adaptiver Rumpf
+
+SH_BIOADAPTIVE_DESC
+'''Ein lebender Rumpf mit Körper und Geist in Einklang, Meister der Heilung und Ausdauer. Er hat drei externe und drei interne Steckplätze.
+Organisches Wachstum: Startet mit 15 [[metertype METER_STRUCTURE]], aber wächst um 25 [[metertype METER_STRUCTURE]] über 50 Züge.
+
+[[metertype METER_STEALTH]] ist sehr hoch, [[metertype METER_DETECTION]] ist sehr hoch und [[metertype METER_SPEED]] ist hoch.
+
+Hat großes Potential als getarntes Kriegsschiff, Aufklärer oder Plünderer.
+
+Dieser lebende Rumpf regeneriert außerhalb von Kämpfen und Blockaden mit jedem Zug [[metertype METER_STRUCTURE]] gleich ihrem derzeitigen Wert. Ein Schiff mit mindestens halber Struktur ist so in nur einem Zug vollkommen repariert. Außerdem regeneriert der Rumpf mit jeden Zug 0,2 [[metertype METER_FUEL]].
+
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED]]'''
+
+SH_SENTIENT
+Empfindungsfähiger Rumpf
+
+SH_SENTIENT_DESC
+'''Ein ichbewusstes organisches Flaggschiff mit exzellenten analytischen Fähigkeiten und immenser Speicherkapazität, mit der es verbündete Schiffe anleitet und ihnen im Gefecht Informationen und taktische Hinweise zukommen lässt. Dadurch erhöht sich bei verbündeten Begleitschiffen [[metertype METER_STEALTH]] und [[metertype METER_DETECTION]]. Der Rumpf hat sechs externe, drei interne und einen Kernsteckplatz.
+Organisches Wachstum: Startet mit 12 [[metertype METER_STRUCTURE]], aber wächst um 45 [[metertype METER_STRUCTURE]] über 45 Züge.
+
+[[metertype METER_STEALTH]] ist sehr hoch, [[metertype METER_DETECTION]] ist sehr hoch und [[metertype METER_SPEED]] ist hoch.
+
+[[LIVING_HULL_AUTO_REGEN]]
+
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED]]'''
+
+SH_COMPRESSED_ENERGY
+Pressenergierumpf
+
+SH_COMPRESSED_ENERGY_DESC
+'''Ein schneller Rumpf aus verdichteter Energie mit einem einzigen externen Steckplatz.
+
+[[metertype METER_STRUCTURE]] is gering, [[metertype METER_STEALTH]] ist sehr hoch, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist sehr hoch.
+
+[[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]'''
+
+SH_ENERGY_FRIGATE
+Energiefregatte
+
+SH_ENERGY_FRIGATE_DESC
+'''Kombiniert verdichtete Energie und Kriegsschifftechnologie zu einem schnellen, aber zerbrechlichen Angriffschiff.
+
+[[metertype METER_STRUCTURE]] und [[metertype METER_STEALTH]] sind durchschnittlich, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist sehr hoch.
+
+[[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]'''
+
+SH_FRACTAL_ENERGY
+Fraktalenergierumpf
+
+SH_FRACTAL_ENERGY_DESC
+'''Obwohl dieser Rumpf klein ist, ermöglicht seine fraktale Oberfläche das Anbringen von weit mehr Bauteilen als auf glatten Oberflächen. Der Rumpf hat vierzehn externe Steckplätze, aber keine internen.
+
+[[metertype METER_STRUCTURE]] ist durchschnittlich, [[metertype METER_STEALTH]] ist gering, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] sit sehr hoch.
+
+[[BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED]]'''
+
+SH_QUANTUM_ENERGY
+Quantenenergierumpf
+
+SH_QUANTUM_ENERGY_DESC
+'''Dieser Rumpf vergrößert Energieschwankungen, um sich selbst zu verstärken. Er hat sieben externe und drei interne Steckplätze.
+
+[[metertype METER_STRUCTURE]] ist durchschnittlich, [[metertype METER_STEALTH]] ist gering, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist sehr hoch.
+
+[[BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED]]'''
+
+SH_SOLAR
+Solarrumpf
+
+SH_SOLAR_DESC
+'''Dieses mächtige Flaggschiff ist im Grunde eine Miniatursonne und ist daher eine exzellente [[metertype METER_FUEL]]- und Lichtquelle. Alle freundlichen Schiffe füllen außerhalb von Kämpfen ihren [[METER_FUEL]] vollständig auf, Feindschiffe im System verlieren an [[metertype METER_STEALTH]]. Dieser Rumpf hat sechzehn externe, vier interne und einen Kernsteckplatz und damit ein größeres Fassungsvermögen als jeder andere Rumpf.
+
+[[metertype METER_STRUCTURE]] ist hoch, [[metertype METER_STEALTH]] ist sehr gering, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist sehr hoch. Das Schiff ist außerdem in der Lage, sich in Sternen zu verstecken. In Systemem mit einem Stern (ausschließlich [[STAR_BLACK]] oder [[STAR_NEUTRON]]) erhält das Schiff perfekte [[metertype METER_STEALTH]] auf der Karte und, wenn es sich versteckt, im Gefecht.
+
+Die Konstruktion dieses Rumpfes benötigt immense Mengen an Energie, die aus Partikel-Antipartikel-Kollisionen aus dem Ereignishorizint schwarzer Löcher gewonnen werden muss. Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]], ein [[buildingtype BLD_SHIPYARD_ENRG_COMP]] und ein [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]] vorhanden sein.'''
 
 SH_BASIC_SMALL
 Kleiner Standardrumpf
 
 SH_BASIC_SMALL_DESC
-'''Ein kleiner interstellarer Standardrumpf. Verglichen mit anderen Standardrümpfen, kann er einen Sprung mehr ausführen.
+'''Ein kleiner interstellarer Standardrumpf. Nur ein externer Steckplatz,  kann er einen Sprung mehr ausführen als die anderen Standardrümpfe.
 
-Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]], um ein solches Schiff zu bauen.'''
+[[metertype METER_STEALTH]] ist durchschnittlich, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist durchschnittlich.
+
+[[BLD_SHIPYARD_BASE_REQUIRED]]'''
 
 SH_BASIC_MEDIUM
 Mittelgroßer Standardrumpf
 
 SH_BASIC_MEDIUM_DESC
-'''Ein mittelgroßer Schiffsrumpf für interstellare Reisen.
+'''Ein mittelgroßer Schiffsrumpf für interstellare Reisen. Verfügt über zwei externe und einen internen Steckplatz.
 
-Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]], um ein solches Schiff zu bauen.'''
+[[metertype METER_STEALTH]] ist durchschnittlich, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist gering.
+
+[[BLD_SHIPYARD_BASE_REQUIRED]]'''
 
 SH_BASIC_LARGE
 Großer Basisrumpf
 
 SH_BASIC_LARGE_DESC
-'''Ein großer Schiffsrumpf für interstellare Reisen.
+'''Ein großer Schiffsrumpf für interstellare Reisen. Verfügt über drei externe und einen internen Steckplatz.
 
-Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]], um ein solches Schiff zu bauen.'''
+[[metertype METER_STEALTH]] ist durchschnittlich, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist gering.
+
+[[BLD_SHIPYARD_BASE_REQUIRED]]'''
+
+SHP_XENTRONIUM_HULL
+Xentroniumgepanzerter Rumpf
+
+SH_XENTRONIUM
+Xentroniumrumpf
+
+SH_XENTRONIUM_DESC
+'''Hauptsächlich aus Xentronium konstruiert. Trotz seiner geringen Größe hat dieser Rumpf extrem hohe [[metertype METER_STRUCTURE]]. Verfügt über vier externe und einen Kernsteckplatz.
+
+[[metertype METER_STEALTH]] ist durchschnittlich und [[metertype METER_DETECTION]] ist durchschnittlich.'''
 
 SH_COLONY_BASE
-Siedlungsbasis Rumpf
+Siedler-Basisrumpf
 
 SH_COLONY_BASE_DESC
-Ein Rumpf konzipiert zum Gründen einer Siedlung auf einem anderen Planet dieses Systems. Er kann nicht zwischen Systeme navigieren oder sich schnell im System bewegen.
+Konzipiert zum Gründen einer Siedlung auf einem anderen Planet im selben System. Kann sein System nivht verlassen oder sich schnell im System bewegen und hat nur einen internen Steckplatz.
 
 SH_FLOATER_BODY
-Gebrechlicher Körper
+Schwimmerkörper
 
 SH_FLOATER_BODY_DESC
-Kleiner gebrechlicher Körper, der keinen nennenswerten Schäden standhält.
+Kleiner gebrechlicher Körper, der keinem nennenswerten [[encyclopedia DAMAGE_TITLE]] standhält.
 
 SH_TREE_BODY
-Immobiler Körper
+Baumkörper
 
 SH_TREE_BODY_DESC
-Starrer baumförmigen Körper, der nicht in der Lage ist, sich zwischen den Systemen zu bewegen.
+Starrer baumförmigen Körper, der nicht in der Lage ist, sich zwischen Systemen zu bewegen.
 
 SH_STRONG_MONSTER_BODY
-Kräftiger Körper
+Drachenkörper
 
 SH_STRONG_MONSTER_BODY_DESC
-Großer starker Körper mit furchterregenden natürlichen Waffen und starker natürlicher Rüstung.
+Großer, kräftiger Körper mit furchterregenden natürlichen Waffen und starker natürlicher Panzerung.
 
 SH_GUARD_MONSTER_BODY
-Wache Rumpf
+Wächterrumpf
 
 SH_GUARD_MONSTER_BODY_DESC
 Ein starker Rumpf für Monster der Wächterklasse.
+
+SH_GUARD_0_BODY
+Wartungsrumpf
+
+SH_GUARD_0_BODY_DESC
+Ein einfacher Rumpf für Wartungsschiffe.
+
+SH_GUARD_1_BODY
+Wacherumpf
+
+SH_GUARD_1_BODY_DESC
+Ein einfacher Rumpf für Monster der Wächterklasse.
+
+SH_GUARD_3_BODY
+Aufseherrumpf
+
+SH_GUARD_3_BODY_DESC
+Ein mächtiger Rumpf für Monster der Wächterklasse.
 
 SH_KRILL_1_BODY
 Krillkörper 1
@@ -7073,7 +7457,7 @@ SH_KRAKEN_1_BODY
 Larvalkrakenkörper
 
 SH_KRAKEN_1_BODY_DESC
-Ein gewaltiges mittelgewichtiges Weltraummonster.
+Ein gewaltiges leichtgewichtiges Weltraummonster.
 
 SH_KRAKEN_2_BODY
 Krakenkörper
@@ -7085,11 +7469,88 @@ SH_KRAKEN_3_BODY
 Großer Krakenkörper
 
 SH_KRAKEN_3_BODY_DESC
-Ein gewaltiges mittelgewichtiges Weltraummonster.
+Ein gewaltiges schwergewichtiges Weltraummonster.
+
+SH_WHITE_KRAKEN_BODY
+Weißkrakenkörper
+
+SH_WHITE_KRAKEN_BODY_DESC
+Der prähistorische weiße Vorfahr des Krakenmonsters.
 
 SH_BLACK_KRAKEN_BODY
 Schwarzkrakenkörper
 
+SH_BLACK_KRAKEN_BODY_DESC
+Ein monströser schwarzer Kraken, der eine unnatürliche Aura ausstrahlt.
+
+SH_SNOWFLAKE_1_BODY
+Kleiner Schneeflockenkörper
+
+SH_SNOWFLAKE_1_BODY_DESC
+Ein gefährliches leichtgewichtiges Weltraummonster.
+
+SH_SNOWFLAKE_2_BODY
+Schneeflockenkörper
+
+SH_SNOWFLAKE_2_BODY_DESC
+Ein gefährliches leichtgewichtiges Weltraummonster.
+
+SH_SNOWFLAKE_3_BODY
+Großer Schneeflockenkörper
+
+SH_SNOWFLAKE_3_BODY_DESC
+Ein gefährliches leichtgewichtiges Weltraummonster.
+
+SH_PSIONIC_SNOWFLAKE_BODY
+Psionischer Schneeflockenkörper
+
+SH_PSIONIC_SNOWFLAKE_BODY_DESC
+Ein psychisch begabtes Weltraummonster.
+
+SH_JUGGERNAUT_1_BODY
+Kleiner Kolosskörper
+
+SH_JUGGERNAUT_1_BODY_DESC
+Ein beeindruckendes schwergewichtiges Weltraummonster.
+
+SH_JUGGERNAUT_2_BODY
+Kolosskörper
+
+SH_JUGGERNAUT_2_BODY_DESC
+Ein beeindruckendes schwergewichtiges Weltraummonster.
+
+SH_JUGGERNAUT_3_BODY
+Großer Kolosskörper
+
+SH_JUGGERNAUT_3_BODY_DESC
+Ein beeindruckendes schwergewichtiges Weltraummonster.
+
+SH_BLOATED_JUGGERNAUT_BODY
+Aufgeblähter Kolosskörper
+
+SH_BLOATED_JUGGERNAUT_BODY_DESC
+Ein widernatürlich großes Weltraummonster.
+
+SH_NEBULOUS_BODY
+Nebliger Körper
+
+#SH_EXP_OUTPOST_HULL
+#Experimentor Outpost Hull
+
+#SH_EXP_OUTPOST_HULL_DESC
+#A hull used by the Experimentors use to transport experimental equipment to other galaxies.
+
+SH_COSMIC_DRAGON_BODY
+Kosmischer Drachenkörper
+
+SH_COSMIC_DRAGON_BODY_DESC
+Ein fürchterlicher Weltraumdrache, so groß wie ein kleiner Planet.
+
+SH_DAMPENING_CLOUD_BODY
+Wolkenkörper
+
+SH_DAMPENING_CLOUD_BODY_DESC
+Eine kosmische Wolke aus hochenergetischen Partikeln.
 
 ##
 ## Monsters Macros
