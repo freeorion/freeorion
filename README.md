@@ -128,7 +128,7 @@ accompanying license file.
 [FreeOrion Development]: https://github.com/freeorion/freeorion
 [Debian Package]: https://packages.debian.org/source/sid/freeorion
 [Ubuntu Package]: https://launchpad.net/ubuntu/+source/freeorion
-[Fedora Package]: https://admin.fedoraproject.org/pkgdb/package/rpms/freeorion/
+[Fedora Package]: https://apps.fedoraproject.org/packages/freeorion
 [Void package]: https://github.com/voidlinux/void-packages/tree/master/srcpkgs/freeorion
 [ArchLinux Package]: https://aur.archlinux.org/packages/freeorion/
 [GPL v2]: https://www.gnu.org/licenses/gpl-2.0.txt
