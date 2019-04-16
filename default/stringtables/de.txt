@@ -6319,10 +6319,10 @@ Macht alle Planeten sichtbar, die ebenfalls eine [[BLD_SCRYING_SPHERE]] haben.
 # %2% hull base fuel capacity.
 # %3% hull base starlane speed.
 # %4% hull base structure value.
-#HULL_DESC
-#'''[[metertype METER_SPEED]]: %1%
-#[[metertype METER_FUEL]]: %2%
-#[[metertype METER_STRUCTURE]]: %4%'''
+HULL_DESC
+'''[[metertype METER_SPEED]]: %1%
+[[metertype METER_FUEL]]: %2%
+[[metertype METER_STRUCTURE]]: %4%'''
 
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
@@ -6336,10 +6336,22 @@ Stärke: %1%
 PART_DESC_SHIELD_STRENGTH
 Schildstärke: %1%
 
+# %1% ship part strength (detection).
+PART_DESC_DETECTION
+[[metertype METER_DETECTION]]: %1%
+
 # %1% ship part damage done (direct fire weapons).
 # %2% number of shots done per attack.
 PART_DESC_DIRECT_FIRE_STATS
-Angriffsschaden: %1%
+'''[[encyclopedia DAMAGE_TITLE]]: %1%
+Kadenz: %2%/Runde'''
+
+# %1% number of deployable fighters.
+# %2% ship part damage done (fighters).
+PART_DESC_HANGAR_STATS
+'''Fliegerkapazität: %1%
+[[encyclopedia DAMAGE_TITLE]]: %2%'''
+
 
 
 ##
