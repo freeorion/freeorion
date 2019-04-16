@@ -90,7 +90,9 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    /** adds a rule, optionally with a custom validator */
+    /** adds a rule, optionally with a custom validator.
+        Register option setup.rules.{NAME} to override default value and
+        option setup.rules.server-locked.{NAME} to block rule changes from players */
     template <class T>
     void    Add(const std::string& name, const std::string& description,
                 const std::string& category, T default_value,
@@ -100,9 +102,17 @@ public:
         auto it = m_game_rules.find(name);
         if (it != m_game_rules.end())
             throw std::runtime_error("GameRules::Add<>() : Rule " + name + " was added twice.");
-        m_game_rules[name] = Rule(RuleTypeForType(T()), name, default_value, default_value,
-                                  description, validator.Clone(), engine_interal, category);
-        DebugLogger() << "Added game rule named " << name << " with default value " << default_value;
+        if (!GetOptionsDB().OptionExists("setup.rules.server-locked." + name)) {
+            GetOptionsDB().Add<bool>("setup.rules.server-locked." + name, description, false);
+        }
+        if (!GetOptionsDB().OptionExists("setup.rules." + name)) {
+            GetOptionsDB().Add<T>("setup.rules." + name, description, default_value,
+                                  validator);
+        }
+        T value = GetOptionsDB().Get<T>("setup.rules." + name);
+        m_game_rules[name] = Rule(RuleTypeForType(T()), name, value, value, description,
+                                  validator.Clone(), engine_interal, category);
+        DebugLogger() << "Added game rule named " << name << " with default value " << value;
     }
 
     /** Adds rules from the \p future. */
