@@ -803,6 +803,26 @@ MPLobby::MPLobby(my_context c) :
             server.Networking().Disconnect(player_connection);
         }
 
+        // check if there weren't previous AIs
+        if (m_ai_next_index == 1) {
+            // use AI count from option
+            const int ai_count = GetOptionsDB().Get<int>("setup.ai.player.count");
+            while (m_ai_next_index <= ai_count && (m_ai_next_index <= max_ai || max_ai < 0)) {
+                PlayerSetupData player_setup_data;
+                player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
+                player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
+                player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                player_setup_data.m_empire_name =   GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
+                player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
+                if (m_lobby_data->m_seed != "")
+                    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+                else
+                    player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
+
+                m_lobby_data->m_players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
+            }
+        }
+
         ValidateClientLimits();
 
         server.Networking().SendMessageAll(ServerLobbyUpdateMessage(*m_lobby_data));

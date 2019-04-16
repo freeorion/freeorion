@@ -120,6 +120,8 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         args.push_back("--hostless");
         args.push_back("--save.auto.hostless.enabled");
         args.push_back(save_game ? "1" : "0");
+        args.push_back("--setup.ai.player.count");
+        args.push_back("0");
         args.push_back("--testing");
 
 #ifdef FREEORION_LINUX
