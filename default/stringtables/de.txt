@@ -6207,7 +6207,7 @@ BLD_ART_FACTORY_PLANET
 Künstliche Fabrikwelt
 
 BLD_ART_FACTORY_PLANET_DESC
-Wandelt einen Asteroidengürtel oder Gasriesen in einen künstlichen Planeten um und bevölkert ihn mit [[species SP_EXOBOT]]s. Aus [[PT_ASTEROIDS]] werden [[SZ_TINY]]e [[PT_BARREN]]e Planeten und aus [[PT_GASGIANT]]n werden [[SZ_HUGE]]e [[PT_BARREN]]e Planeten.. [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]
+Wandelt einen Asteroidengürtel oder Gasriesen in einen künstlichen Planeten um und bevölkert ihn mit [[species SP_EXOBOT]]s. Aus [[PT_ASTEROIDS]] werden [[SZ_TINY]]e [[PT_BARREN]]e Planeten und aus [[PT_GASGIANT]]n werden [[SZ_HUGE]]e [[PT_BARREN]]e Planeten. [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]
 
 BLD_ART_PARADISE_PLANET
 Künstliche Paradieswelt
@@ -6966,7 +6966,7 @@ PR_MOBILE_ASSEMBLER_DESC
 Ermöglicht den Bau von Schiffen abseits von Planeten.
 
 RS_AUTOLAB
-Automatisches Labos
+Automatisches Labor
 
 RS_AUTOLAB_DESC
 Generiert Forschung.
@@ -7735,13 +7735,13 @@ ENEMY_PLANET_ORGANIC_POP
 der organischen [[metertype METER_POPULATION]] von Feindplaneten
 
 ENEMY_PLANET_ROBOTIC_POP
-the robotischen [[metertype METER_POPULATION]] von Feindplaneten
+der robotischen [[metertype METER_POPULATION]] von Feindplaneten
 
 ENEMY_PLANET_LITHIC_POP
-the lithischen [[metertype METER_POPULATION]] von Feindplaneten
+der lithischen [[metertype METER_POPULATION]] von Feindplaneten
 
 ENEMY_PLANET_PHOTOTROPHIC_POP
-the phototropen [[metertype METER_POPULATION]] von Feindplaneten
+der phototropen [[metertype METER_POPULATION]] von Feindplaneten
 
 ENEMY_PLANET_ANY_POP
 jeglicher [[metertype METER_POPULATION]] von Feindplaneten
