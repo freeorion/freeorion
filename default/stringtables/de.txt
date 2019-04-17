@@ -6166,7 +6166,7 @@ BLD_GAIA_TRANS
 Gaia-Umwandlung
 
 BLD_GAIA_TRANS_DESC
-'''Verleiht dem Planeten die Besonderheit [[special GAIA_SPECIAL]]. Diese erhöht [[metertype METER_TARGET_POPULATION]] auf [[PE_GOOD]]en [[encyclopedia ENVIRONMENT_TITLE]]en, entsprechend der Planetengröße:
+'''Verleiht dem Planeten die Besonderheit [[special GAIA_SPECIAL]]. Diese erhöht [[metertype METER_TARGET_POPULATION]] in einer [[PE_GOOD]]en [[encyclopedia ENVIRONMENT_TITLE]], entsprechend der Planetengröße:
 • [[SZ_TINY]] (+3)
 • [[SZ_SMALL]] (+6)
 • [[SZ_MEDIUM]] (+9)
@@ -6265,19 +6265,19 @@ BLD_TERRAFORM
 Terraformation
 
 BLD_TERRAFORM_DESC
-Wandelt den Planeten in eine Welt um, die dem bevorzugten [[encyclopedia ENVIRONMENT_TITLE]] der Einwohnerspezies einen Schritt näher ist.
+Wandelt den Planeten in eine Welt um, die der bevorzugten [[encyclopedia ENVIRONMENT_TITLE]] der Einwohnerspezies einen Schritt näher ist.
 
 BLD_TERRAFORM_REVERT
 Terraform-Umkehr
 
 BLD_TERRAFORM_REVERT_DESC
-Wandelt den Planeten einen Schritt in Richtung seines ursprünglichen [[encyclopedia ENVIRONMENT_TITLE]]s um.
+Wandelt den Planeten einen Schritt in Richtung seiner ursprünglichen [[encyclopedia ENVIRONMENT_TITLE]]s um.
 
 BLD_REMOTE_TERRAFORM
 Fern-Terraformation
 
 BLD_REMOTE_TERRAFORM_DESC
-Wandelt einen Planeten in eine Welt um, die dem bevorzugten [[encyclopedia ENVIRONMENT_TITLE]] der Einwohnerspezies einen Schritt näher ist. Dieser Prozess kann auch von einem [[encyclopedia OUTPOSTS_TITLE]] aus durchgeführt werden.
+Wandelt einen Planeten in eine Welt um, die der bevorzugten [[encyclopedia ENVIRONMENT_TITLE]] der Einwohnerspezies einen Schritt näher ist. Dieser Prozess kann auch von einem [[encyclopedia OUTPOSTS_TITLE]] aus durchgeführt werden.
 
 BLD_NEST_ERADICATOR
 Nestbeseitiger
@@ -7928,7 +7928,7 @@ GROWTH_SPECIAL_POPULATION_INCREASE
 • [[SZ_MEDIUM]] (+3)
 • [[SZ_LARGE]] (+4)
 • [[SZ_HUGE]] (+5)
-Der [[encyclopedia ENVIRONMENT_TITLE]] hat hierauf keine Auswirkung.
+Die [[encyclopedia ENVIRONMENT_TITLE]] hat hierauf keine Auswirkung.
 
 Wenn dieser Planet [[encyclopedia GROWTH_FOCUS_TITLE]] hat, gilt obengenannter Bonus für alle via [[metertype METER_SUPPLY]] verbundenen Welten mit'''
 
