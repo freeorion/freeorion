@@ -681,10 +681,9 @@ boost::statechart::result PlayingGame::react(const Disconnection& d) {
 
 boost::statechart::result PlayingGame::react(const PlayerStatus& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.PlayerStatus";
-    int ignore_about_player_id;
     Message::PlayerStatus status;
     int about_empire_id;
-    ExtractPlayerStatusMessageData(msg.m_message, ignore_about_player_id, status, about_empire_id);
+    ExtractPlayerStatusMessageData(msg.m_message, status, about_empire_id);
 
     Client().SetEmpireStatus(about_empire_id, status);
     Client().GetClientUI().GetPlayerListWnd()->HandleEmpireStatusUpdate(status, about_empire_id);
@@ -1032,10 +1031,9 @@ boost::statechart::result PlayingTurn::react(const TurnEnded& msg) {
 
 boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingTurn.PlayerStatus";
-    int ignore_about_player_id;
     Message::PlayerStatus status;
     int about_empire_id;
-    ExtractPlayerStatusMessageData(msg.m_message, ignore_about_player_id, status, about_empire_id);
+    ExtractPlayerStatusMessageData(msg.m_message, status, about_empire_id);
 
     Client().SetEmpireStatus(about_empire_id, status);
     Client().GetClientUI().GetPlayerListWnd()->HandleEmpireStatusUpdate(status, about_empire_id);

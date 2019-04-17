@@ -254,8 +254,7 @@ FO_COMMON_API Message TurnPartialOrdersMessage(const std::pair<OrderSet, std::se
 FO_COMMON_API Message TurnProgressMessage(Message::TurnProgressPhase phase_id);
 
 /** creates a PLAYER_STATUS message. */
-FO_COMMON_API Message PlayerStatusMessage(int about_player_id,
-                                          Message::PlayerStatus player_status,
+FO_COMMON_API Message PlayerStatusMessage(Message::PlayerStatus player_status,
                                           int about_empire_id);
 
 /** creates a TURN_UPDATE message. */
@@ -416,7 +415,6 @@ FO_COMMON_API void ExtractTurnPartialUpdateMessageData(const Message& msg, int e
 FO_COMMON_API void ExtractTurnProgressMessageData(const Message& msg, Message::TurnProgressPhase& phase_id);
 
 FO_COMMON_API void ExtractPlayerStatusMessageData(const Message& msg,
-                                                  int& about_player_id,
                                                   Message::PlayerStatus& status,
                                                   int& about_empire_id);
 

@@ -1400,8 +1400,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             auto other_orders_it = m_turn_sequence.find(empire.first);
             bool ready = other_orders_it == m_turn_sequence.end() ||
                     (other_orders_it->second && other_orders_it->second->m_ready);
-            (*player_connection_it)->SendMessage(PlayerStatusMessage(EmpirePlayerID(empire.first),
-                                                                     ready ? Message::WAITING : Message::PLAYING_TURN,
+            (*player_connection_it)->SendMessage(PlayerStatusMessage(ready ? Message::WAITING : Message::PLAYING_TURN,
                                                                      empire.first));
         }
     }
@@ -1720,8 +1719,7 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
             auto other_orders_it = m_turn_sequence.find(empire.first);
             bool ready = other_orders_it == m_turn_sequence.end() ||
                     (other_orders_it->second && other_orders_it->second->m_ready);
-            player_connection->SendMessage(PlayerStatusMessage(EmpirePlayerID(empire.first),
-                                                               ready ? Message::WAITING : Message::PLAYING_TURN,
+            player_connection->SendMessage(PlayerStatusMessage(ready ? Message::WAITING : Message::PLAYING_TURN,
                                                                empire.first));
         }
     } else {
@@ -1799,8 +1797,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
         player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player_ctn = *player_it;
-        player_ctn->SendMessage(PlayerStatusMessage(player_id,
-                                                    Message::WAITING,
+        player_ctn->SendMessage(PlayerStatusMessage(Message::WAITING,
                                                     empire_id));
     }
 
@@ -1865,8 +1862,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
         auto other_orders_it = m_turn_sequence.find(empire.first);
         bool ready = other_orders_it == m_turn_sequence.end() ||
                 (other_orders_it->second && other_orders_it->second->m_ready);
-        player_connection->SendMessage(PlayerStatusMessage(EmpirePlayerID(empire.first),
-                                                           ready ? Message::WAITING : Message::PLAYING_TURN,
+        player_connection->SendMessage(PlayerStatusMessage(ready ? Message::WAITING : Message::PLAYING_TURN,
                                                            empire.first));
     }
 
