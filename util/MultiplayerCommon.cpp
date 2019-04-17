@@ -154,7 +154,7 @@ GalaxySetupOption GalaxySetupData::GetNativeFreq() const {
 Aggression GalaxySetupData::GetAggression() const
 { return m_ai_aggr; }
 
-const std::vector<std::pair<std::string, std::string>>& GalaxySetupData::GetGameRules() const
+const std::map<std::string, std::string>& GalaxySetupData::GetGameRules() const
 { return m_game_rules; }
 
 const std::string& GalaxySetupData::GetGameUID() const

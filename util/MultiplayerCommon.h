@@ -43,7 +43,7 @@ struct FO_COMMON_API GalaxySetupData {
     GalaxySetupOption   GetMonsterFreq() const;
     GalaxySetupOption   GetNativeFreq() const;
     Aggression          GetAggression() const;
-    const std::vector<std::pair<std::string, std::string>>&
+    const std::map<std::string, std::string>&
                         GetGameRules() const;
     const std::string&  GetGameUID() const;
     //@}
@@ -65,7 +65,7 @@ struct FO_COMMON_API GalaxySetupData {
     GalaxySetupOption   m_monster_freq;
     GalaxySetupOption   m_native_freq;
     Aggression          m_ai_aggr;
-    std::vector<std::pair<std::string, std::string>>
+    std::map<std::string, std::string>
                         m_game_rules;
     std::string         m_game_uid;
 
@@ -75,7 +75,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(GalaxySetupData, 2);
+BOOST_CLASS_VERSION(GalaxySetupData, 3);
 
 
 /** Contains the UI data that must be saved in save game files in order to

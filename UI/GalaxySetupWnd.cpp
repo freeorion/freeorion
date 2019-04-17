@@ -221,10 +221,10 @@ void GameRulesPanel::CompleteConstruction() {
     m_tabs->SetCurrentWnd(0);
 }
 
-std::vector<std::pair<std::string, std::string>> GameRulesPanel::GetRulesAsStrings() const {
-    std::vector<std::pair<std::string, std::string>> retval;
+std::map<std::string, std::string> GameRulesPanel::GetRulesAsStrings() const {
+    std::map<std::string, std::string> retval;
     for (const auto& entry : m_rules)
-        retval.push_back(entry);
+        retval.insert(entry);
     return retval;
 }
 
@@ -1071,7 +1071,7 @@ const std::string& GalaxySetupWnd::StartingSpeciesName() const
 int GalaxySetupWnd::NumberAIs() const
 { return m_number_ais_spin->Value(); }
 
-std::vector<std::pair<std::string, std::string>> GalaxySetupWnd::GetRulesAsStrings() const
+std::map<std::string, std::string> GalaxySetupWnd::GetRulesAsStrings() const
 { return m_game_rules_panel->GetRulesAsStrings(); }
 
 void GalaxySetupWnd::Render() {
