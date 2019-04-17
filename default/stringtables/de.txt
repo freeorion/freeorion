@@ -287,91 +287,244 @@ FORMAT_LIST_10_ITEMS
 ##
 
 SD_CARRIER
-Prototyp Raumträger
+Geleitträger
 
 SD_CARRIER_DESC
-Prototypentwurf, welcher Jäger in den Kampf sendet, anstatt Geschütze zu nutzen.
+Trägerschiff, welches Abfangjäger in den Kampf sendet, um andere Kriegsschiffe zu beschützen.
+
+SD_CARRIER_2
+Flottenträger
+
+SD_CARRIER_2_DESC
+Trägerschiff für Offensivflotten, ausgestattet mit Bombergeschwadern und Massenkatapult.
 
 SD_SCOUT
-Kundschafter
+Erkundungsschiff
 
 SD_SCOUT_DESC
-Kleines und billiges unbewaffnetes Schiff entworfen für Aufklärung und Erforschung. Weitere [[metertype METER_RESEARCH]], welche die [[metertype METER_DETECTION]] verbessert, würde bessere Entwürfe ermöglichen. Dieses Schiff kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
+Kleines und billiges unbewaffnetes Schiff für Aufklärungs- und Erkundungsmissionen. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_SCOUT_2
-Radarkundschafter
+Radarschiff
+
+SD_SCOUT_2_DESC
+Kleines und billiges unbewaffnetes Schiff mit verbesserter [[metertype METER_DETECTION]] für Aufklärungs- und Erkundungsmissionen. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_SCOUT_3
-Scannerkundschafter
+Scannerschiff
+
+SD_SCOUT_3_DESC
+Kleines und billiges unbewaffnetes Schiff mit verbesserter [[metertype METER_DETECTION]] für Aufklärungs- und Erkundungsmissionen. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_SCOUT_4
-Sensorkundschafter
+Sensorenschiff
+
+SD_SCOUT_4_DESC
+Kleines und billiges unbewaffnetes Schiff mit verbesserter [[metertype METER_DETECTION]] für Aufklärungs- und Erkundungsmissionen. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ENG_SCOUT
-Energiekundschafter
+Energieaufklärer
+
+SD_ENG_SCOUT_DESC
+Kleines und billiges unbewaffnetes Schiff für Aufklärungs- und Erkundungsmissionen. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
 
 SD_SMALL_MARK_1
-Korvette (M)
+Korvette Ms
+
+SD_SMALL_MARK1_DESC
+Kleines, billiges Schiff mit Massenkatapult. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_MARK_1
-Fregatte (M1)
+Fregatte Ms
 
 SD_MARK1_DESC
-Einfache Fregatte mit Massenkatapult. Kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
+Einfache Fregatte mit Massenkatapult. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_1
-Kreuzer (M)
+Kreuzer Ms
+
+SD_LARGE_MARK1_DESC
+Kriegsschiff, das für unabhängige Einsätze ausgerüstet wurde. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_2
-Kreuzer (L)
+Kreuzer Lz
+
+SD_LARGE_MARK2_DESC
+Kriegsschiff, dss für unabhängige Einsätze ausgerüstet wurde. Bewaffnung und Panzerung wurden verbessert. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_3
-Zerstörer (M)
+Zerstörer Ms
+
+SD_LARGE_MARK3_DESC
+Kriegsschiff, das für den Einsatz in Flotten ausgerüstet wurde. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_4
-Zerstörer (L)
+Zerstörer Lz
+
+SD_LARGE_MARK4_DESC
+Kriegsschiff, dass für den Einsatz in Flotten ausgerüstet wurde. Bewaffnung und Panzerung wurden verbessert. [[BLD_SHIPYARD_BASE_REQUIRED]]
+
+SD_ROBOTIC_OUTPOST
+Robotik-Außenpostenschiff
+
+SD_ROBOTIC_OUTPOST_DESC
+Kann auf fernen Welten [[OUTPOSTS_TITLE]] errichten.
+
+SD_ROBO_FLUX_SCOUT
+Flux-Aufklärer
+
+SD_ROBO_FLUX_SCOUT_DESC
+Schneller Aufklärer mit Tarnfähigkeit.
+
+SD_ROBO_FLUX_TROOPS
+Flux-Truppenträger
+
+SD_ROBO_FLUX_TROOPS_DESC
+Schneller Truppentransporter.
+
+SD_ROBO_FLUX_TROOPS_HVY
+Flux-Cyborgträger
+
+SD_ROBO_FLUX_TROOPS_HVY_DESC
+Schneller Transporter für fortschrittliche Kampftruppen.
+
+SD_ROBOTIC1
+Robokreuzer MFs
+
+SD_ROBOTIC1_DESC
+Kriegsschiff, geeignet für Flotten und unabhängige Einsätze. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+
+SD_ROBOTIC2
+Zerstörer MFs-SF
+
+SD_ROBOTIC2_DESC
+Robotisches Kriegsschiff, das für den Einsatz in Flotten ausgerüstet wurde. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+
+SD_ROBOTIC3
+Robokreuzer Lzv
+
+SD_ROBOTIC3_DESC
+Robotisches Kriegsschiff, das für unabhängige Einsätze ausgerüstet wurde. [[BLD_SHIPYARD_BASE_REQUIRED]]
+
+SD_ROBOTIC_CARRIER1
+Flottenträger MBs
+
+SD_ROBOTIC_CARRIER1_DESC
+Trägerschiff für Offensivflotten. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+
+SD_ROBOTIC_CARRIER2
+Flottenträger LBz
+
+SD_ROBOTIC_CARRIER2_DESC
+Trägerschiff für Offensivflotten. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+
+SD_ROBOTIC_CARRIER3
+Geleitträger MAs
+
+SD_ROBOTIC_CARRIER3_DESC
+Trägerschiff für den Einsatz in Konvois und Vorposten. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_GRAVITATING1
-Gravitierend I
+Schlachtschiff PFd-DS
 
 SD_GRAVITATING1_DESC
-Massives Kriegsschiff bewaffnet und gepanzert mit der neusten Technologie. Preis entsprechend.
+Massives Kriegsschiff, das für den Einsatz in Flotten ausgerüstet wurde. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+
+SD_GRAVITATING2
+Battleship TFx-SS
+
+SD_GRAVITATING2_DESC
+Massives Kriegsschiff, bewaffnet und gepanzert mit der neusten Technologie. Entsprechend teuer. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+
+#SD_ROBO_TITAN1
+#Dreadnaught
+
+SD_ROBO_TITAN1_DESC
+Massives Kriegsschiff, bewaffnet und gepanzert mit der neusten Technologie. Entsprechend teuer. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+
+SD_AST_1
+Felszerstörer (L)
+
+SD_AST_1_DESC
+Asteroidenschiff, das für den Einsatz in Flotten ausgerüstet wurde. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_COLONY_SHIP
 Siedlungsschiff
 
 SD_COLONY_SHIP_DESC
-Unbewaffnetes Schiff fähig Millionen von Bürger sicher zum Ort einer neuen Siedlung zu bringen.
+Unbewaffnetes Schiff, [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]]. EIne [[buildingtype BLD_SHIPYARD_BASE]] ist ebenfalls erforderlich.
+
+SD_CRYONIC_COLONY_SHIP
+Kryostase-Siedlungsschiff
+
+SD_CRYONIC_COLONY_SHIP_DESC
+Unbewaffnetes Schiff, [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]]. EIne [[buildingtype BLD_SHIPYARD_BASE]] ist ebenfalls erforderlich.
 
 SD_OUTPOST_SHIP
 Außenpostenschiff
 
 SD_OUTPOST_SHIP_DESC
-Unbewaffnetes Schiff, fähig einen Außenposten auf einer unbewohnbaren Welt zu erstellen.
+Unbewaffnetes Schiff [[SHIPDESIGN_OUTPOSTS_CAPACITY]].  [[BLD_SHIPYARD_BASE_REQUIRED]]
+
+SD_ORG_OUTPOST_SHIP
+Organisches Außenpostenschiff
+
+SD_ORG_OUTPOST_SHIP_DESC
+Unbewaffnetes organisches Schiff [[SHIPDESIGN_OUTPOSTS_CAPACITY]]. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
 
 SD_COLONY_BASE
 Siedlungsbasis
 
 SD_COLONY_BASE_DESC
-Unbewaffnetes Schiff, nur fähig eine Siedlung in dem System zu gründen, in welchem es gebaut wurde.
+Unbewaffnetes Schiff, dass eine [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]] gründen kann. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+
+SD_CRYONIC_COLONY_BASE
+Kryostase-Siedlungsbasis
+
+SD_CRYONIC_COLONY_BASE_DESC
+Unbewaffnetes Schiff, dass eine große [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]] gründen kann. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_OUTPOST_BASE
 Außenpostenbasis
 
 SD_OUTPOST_BASE_DESC
-Unbewaffnetes Schiff, nur fähig einen Außenposten in dem System zu gründen, in welchem es gebaut wurde.
+Unbewaffnetes Schiff [[SHIPDESIGN_OUTPOSTS_CAPACITY]] in dem System, in dem es gebaut wurde. [[SHIPDESIGN_NO_TRAVEL]]
+
+SD_BASE_DECOY
+Kommunikationssatellit
+
+SD_BASE_DECOY_DESC
+Unbewaffneter Satellit, welcher die planetare Abwehr auch gegen passive Feinde auslösen kann, aber ansonsten nur als Ziel für feindliches Feuer dient. Kann auf allen Planeten gebaut werden, deren Bewohner Schiffe bauen können. Eine [[buildingtype BLD_SHIPYARD_BASE]] wird nicht benötigt.
+
+SD_TROOP_DROP
+Truppenschiff
+
+SD_TROOP_DROP_DESC
+Transportiert einen Verband von [[SHIPDESIGN_PLANET_INVASION]] im selben System.
+
+SD_TROOP_DROP_HVY
+Cyborgtruppenschiff
+
+SD_TROOP_DROP_HVY_DESC
+Transportiert einen Verband fortschrittlicher [[SHIPDESIGN_PLANET_INVASION]] im selben System.
+
+SD_SMALL_TROOP_SHIP
+Kleiner Truppentransporter
+
+SD_SMALL_TROOP_SHIP_DESC
+Transportiert einen Verband von [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_REQUIRED]].
 
 SD_TROOP_SHIP
 Truppentransporter
 
 SD_TROOP_SHIP_DESC
-Transportiert eine Brigade [[metertype METER_TROOPS]] mit Ausrüstung, welcher zur Einnahme eines Planeten genutzt werden können.
+Transportiert drei Verbände von [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_REQUIRED]].
 
 SD_DRAGON_TOOTH
 Drachenzahn
 
 SD_DRAGON_TOOTH_DESC
-Alter Schiffsentwurf mit fortgeschrittener Bewaffnung und Verteidigungssysteme.
+Antiker Schiffsentwurf mit fortschrittlicher Bewaffnung und Verteidigungssystemen. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 
 ##
@@ -7644,10 +7797,10 @@ BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED
 Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]] und ein [[buildingtype BLD_SHIPYARD_ENRG_COMP]] vorhanden sein. Aufgrund des immensen Energiebedarfs ist der Bau nur in Systemen mit einem [[STAR_BLUE]]en Stern oder einem schwarzen Loch möglich.
 
 BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED
-Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]] und ein[[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] vorhanden sein.
+Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]] und ein [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] vorhanden sein.
 
 BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED
-Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]], eine [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] und eine [[buildingtype BLD_SHIPYARD_CON_GEOINT]] vorhanden sein.
+Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]], ein [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] und eine [[buildingtype BLD_SHIPYARD_CON_GEOINT]] vorhanden sein.
 
 LIVING_HULL_AUTO_REGEN
 Lebende Rümpfe stellen zwischen Gefechten [[metertype METER_STRUCTURE]] und [[metertype METER_FUEL]] wieder her.
@@ -7659,7 +7812,7 @@ BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED
 Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]], ein [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] und eine [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] vorhanden sein.
 
 MIN_POPULATION_THREE_REQUIRED
-Zum Bau muss vor Ort eine [[metertype METER_POPULATION]] von mindestens drei vorhanden sein.
+Zum Bau muss vor Ort eine [[metertype METER_POPULATION]] von mindestens drei vorhanden sein
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED
 Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]], ein [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]]und eine [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] vorhanden sein.
@@ -7688,7 +7841,7 @@ SHIPDESIGN_NO_TRAVEL
 Dieses Schiff kann keine Sternstraßen bereisen.
 
 SHIPDESIGN_PLANET_INVASION
-[[metertype METER_TROOPS]] und Ausrüstung zum Einmarsch auf feindliche Planeten
+[[metertype METER_TROOPS]]n und Ausrüstung zum Einmarsch auf feindliche Planeten
 
 
 ##
