@@ -7296,7 +7296,8 @@ SP_HAPPY  # translated
 Happybirthday
 
 SP_HAPPY_GAMEPLAY_DESC
-'''Robots submersibles abandonnés et solitaires, programmés pour chanter "Happy Birthday" à intervalles réguliers.
+'''<img src="species/preview/happybirthdays.jpg"></img>
+Robots submersibles abandonnés et solitaires, programmés pour chanter "Happy Birthday" à intervalles réguliers.
 Préfèrent les Planètes [[PT_OCEAN]]s.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
@@ -7317,6 +7318,8 @@ Le processus de colonisation est lent et l'industrie peu efficace, en raison du 
 
 Histoire: Triste.
 Que ce soit leur exploration solitaire de leur planète natale, leur abandon par leurs créateurs, ou leur quête incessante d'amitié, l'existence des Happybirthdays est triste et solitaire.
+
+<img src="species/happybirthdays.png"></img>
 '''
 
 SP_HHHOH  # translated

@@ -7296,7 +7296,8 @@ SP_HAPPY
 Happybirthday
 
 SP_HAPPY_GAMEPLAY_DESC
-'''Abandoned, lonely underwater robots, programmed to sing "happy birthday" to themselves at regular intervals.
+'''<img src="species/preview/happybirthdays.jpg"></img>
+Abandoned, lonely underwater robots, programmed to sing "happy birthday" to themselves at regular intervals.
 Prefer [[PT_OCEAN]] planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
@@ -7317,6 +7318,8 @@ Colonization is slow and industry inefficient due to species-wide depression, so
 
 History: Sad.
 Whether it is the initial lonely quest to explore their homeworld, their abandonment by their creators, the interval war, or their quest into space to find friendship, their existence has been a sad, depressing and lonely one.
+
+<img src="species/happybirthdays.png"></img>
 '''
 
 SP_HHHOH
