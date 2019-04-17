@@ -1671,6 +1671,34 @@ bool ServerApp::IsAuthSuccessAndFillRoles(const std::string& player_name, const 
     return result;
 }
 
+std::list<PlayerSetupData> ServerApp::FillListPlayers() {
+    std::list<PlayerSetupData> result;
+    bool success = false;
+    try {
+        m_python_server.SetCurrentDir(GetPythonAuthDir());
+        success = m_python_server.FillListPlayers(result);
+    } catch (const boost::python::error_already_set& err) {
+        success = false;
+        m_python_server.HandleErrorAlreadySet();
+        if (!m_python_server.IsPythonRunning()) {
+            ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
+            if (m_python_server.Initialize()) {
+                ErrorLogger() << "Python interpreter successfully restarted.";
+            } else {
+                ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
+                m_fsm->process_event(ShutdownServer());
+            }
+        }
+    }
+
+    if (!success) {
+        ErrorLogger() << "Python scripted player list failed.";
+        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
+                                                                      false));
+    }
+    return result;
+}
+
 void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
     std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
 

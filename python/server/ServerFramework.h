@@ -18,6 +18,7 @@ public:
     bool ExecuteTurnEvents();    // Wraps call to the main Python turn events function
     bool IsRequireAuthOrReturnRoles(const std::string& player_name, bool &result, Networking::AuthRoles& roles) const; // Wraps call to AuthProvider's method is_require_auth
     bool IsSuccessAuthAndReturnRoles(const std::string& player_name, const std::string& auth, bool &result, Networking::AuthRoles& roles) const; // Wraps call to AuthProvider's method is_success_auth
+    bool FillListPlayers(std::list<PlayerSetupData>& players) const; // Wraps call to AuthProvider's method list_player
     bool LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& chat_history); // Wraps call to ChatProvider's method load_history
     bool PutChatHistoryEntity(const ChatHistoryEntity& chat_history_entity); // Wraps call to ChatProvider's method put_history_entity
 
