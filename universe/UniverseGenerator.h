@@ -68,10 +68,10 @@ protected:
  * values.  Useful when creating new object after applying effects. */
 void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map);
 
-/** Set the population of unowned planets to a random fraction of 
+/** Set the population of unowned planets to a random fraction of
  * their target values. */
 void SetNativePopulationValues(ObjectMap& object_map);
-    
+
 /** Creates starlanes and adds them systems already generated. */
 void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length);
 
@@ -81,7 +81,7 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length);
 bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name);
 
 /** Creates Empires objects for each entry in \a player_setup_data with
- * empire id equal to the specified player ids (so that the calling code
+ * empire ids equal to the corresponding map keys (so that the calling code
  * can know which empire belongs to which player). */
 void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data);
 

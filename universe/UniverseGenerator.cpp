@@ -872,13 +872,12 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
 
     // create empire objects and do some basic initilization for each player
     for (const auto& entry : player_setup_data) {
-        int         player_id =     entry.first;
-        if (player_id == Networking::INVALID_PLAYER_ID)
-            ErrorLogger() << "InitEmpires player id (" << player_id << ") is invalid";
+        // use map key for empire ID so that the calling code can get the
+        // correct empire for each player in player_setup_data
+        int         empire_id =     entry.first;
+        if (empire_id == ALL_EMPIRES)
+            ErrorLogger() << "InitEmpires empire id (" << empire_id << ") is invalid";
 
-        // use player ID for empire ID so that the calling code can get the
-        // correct empire for each player ID  in player_setup_data
-        int         empire_id =     player_id;
         std::string player_name =   entry.second.m_player_name;
         GG::Clr     empire_colour = entry.second.m_empire_color;
         bool        authenticated = entry.second.m_authenticated;
@@ -906,7 +905,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
         std::string empire_name = UserString("EMPIRE") + std::to_string(empire_id);
 
         DebugLogger() << "Universe::InitEmpires creating new empire" << " with ID: " << empire_id
-                      << " for player: " << player_name << " (with player id: " << player_id << ")";
+                      << " for player: " << player_name;
 
         // create new Empire object through empire manager
         Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour, authenticated);

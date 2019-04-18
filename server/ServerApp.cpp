@@ -540,8 +540,8 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
     // available (human) and names (for AI clients which didn't have an ID
     // before now because the lobby data was set up without connected/established
     // clients for the AIs.
-    std::map<int, PlayerSetupData> player_id_setup_data;
     const auto& player_setup_data = multiplayer_lobby_data.m_players;
+    std::vector<PlayerSetupData> psds;
 
     for (const auto& entry : player_setup_data) {
         const PlayerSetupData& psd = entry.second;
@@ -561,13 +561,23 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
                 const PlayerConnectionPtr player_connection = *established_player_it;
                 if (player_connection->PlayerID() == player_id)
                 {
-                    player_id_setup_data[player_id] = psd;
+                    PlayerSetupData new_psd = psd;
+                    new_psd.m_player_id = player_id;
+                    psds.emplace_back(std::move(new_psd));
                     found_matched_id_connection = true;
                     break;
                 }
             }
-            if (!found_matched_id_connection)
-                ErrorLogger() << "ServerApp::NewMPGameInit couldn't find player setup data for human player with id: " << player_id;
+            if (!found_matched_id_connection) {
+                if (player_id != Networking::INVALID_PLAYER_ID) {
+                    ErrorLogger() << "ServerApp::NewMPGameInit couldn't find player setup data for human player with id: " << player_id << " player name: " << psd.m_player_name;
+                } else {
+                    // There is no player currently connected for the current setup data. A player
+                    // may connect later, at which time they may be assigned to this data or the
+                    // corresponding empire.
+                    psds.push_back(psd);
+                }
+            }
 
         } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // All AI player setup data, as determined from their client type, is
@@ -585,7 +595,9 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
                 {
                     // assign name-matched AI client's player setup data to appropriate AI connection
                     int player_id = player_connection->PlayerID();
-                    player_id_setup_data[player_id] = psd;
+                    PlayerSetupData new_psd = psd;
+                    new_psd.m_player_id = player_id;
+                    psds.emplace_back(std::move(new_psd));
                     found_matched_name_connection = true;
                     break;
                 }
@@ -600,12 +612,6 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
             // created for them.
             ErrorLogger() << "ServerApp::NewMPGameInit skipping unsupported client type in player setup data";
         }
-    }
-
-    std::vector<PlayerSetupData> psds;
-    for (auto& id_and_psd : player_id_setup_data) {
-        id_and_psd.second.m_player_id = id_and_psd.first;
-        psds.push_back(id_and_psd.second);
     }
 
     NewGameInitConcurrentWithJoiners(multiplayer_lobby_data, psds);
@@ -650,17 +656,18 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     GetGameRules().SetFromStrings(m_galaxy_setup_data.GetGameRules());
 
     // validate some connection info / determine which players need empires created
-    std::map<int, PlayerSetupData> active_players_id_setup_data;
+    std::map<int, PlayerSetupData> active_empire_id_setup_data;
+    int next_empire_id = 1;
     for (const auto& psd : player_setup_data) {
         if (!psd.m_player_name.empty()
             && (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER
                 || psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER))
         {
-            active_players_id_setup_data[psd.m_player_id] = psd;
+            active_empire_id_setup_data[next_empire_id++] = psd;
         }
     }
 
-    if (active_players_id_setup_data.empty()) {
+    if (active_empire_id_setup_data.empty()) {
         ErrorLogger() << "ServerApp::NewGameInitConcurrentWithJoiners found no active players!";
         m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
         return;
@@ -681,7 +688,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 
     // m_current_turn set above so that every UniverseObject created before game
     // starts will have m_created_on_turn BEFORE_FIRST_TURN
-    GenerateUniverse(active_players_id_setup_data);
+    GenerateUniverse(active_empire_id_setup_data);
 
 
     // after all game initialization stuff has been created, set current turn to 0 and apply only GenerateSitRep Effects
@@ -692,16 +699,15 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     //can set current turn to 1 for start of game
     m_current_turn = 1;
 
-    // record empires for each active player: ID of empire and player should
-    // be the same when creating a new game. Note: active_players_id_setup_data
-    // contains only ids of players who control an empire; observers and
+    // record empires for each active player. Note: active_empire_id_setup_data
+    // contains only data of players who control an empire; observers and
     // moderators are not included.
-    for (const auto& player_id_and_setup : active_players_id_setup_data) {
-        int player_id = player_id_and_setup.first;
-        m_player_empire_ids[player_id] = player_id;
+    for (const auto& player_id_and_setup : active_empire_id_setup_data) {
+        int empire_id = player_id_and_setup.first;
+        if (player_id_and_setup.second.m_player_id != Networking::INVALID_PLAYER_ID)
+            m_player_empire_ids[player_id_and_setup.second.m_player_id] = empire_id;
 
         // add empires to turn processing
-        int empire_id = PlayerEmpireID(player_id);
         if (GetEmpire(empire_id))
             AddEmpireTurn(empire_id, PlayerSaveGameData(player_id_and_setup.second.m_player_name, empire_id,
                                                         nullptr, nullptr, std::string(),
@@ -759,7 +765,7 @@ bool ServerApp::NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& pla
     }
 
     // ensure number of players connected and for which data are provided are consistent
-    if (m_networking.NumEstablishedPlayers() != player_id_setup_data.size()) {
+    if (m_networking.NumEstablishedPlayers() != player_id_setup_data.size() && !IsHostless()) {
         ErrorLogger() << "ServerApp::NewGameInitVerifyJoiners has " << m_networking.NumEstablishedPlayers()
                       << " established players but " << player_id_setup_data.size() << " players in setup data.";
         return false;
