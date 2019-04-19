@@ -32,13 +32,13 @@ public:
         STRING
     };
 
-    Type RuleTypeForType(bool dummy)
+    static inline constexpr Type RuleTypeForType(bool dummy)
     { return Type::TOGGLE; }
-    Type RuleTypeForType(int dummy)
+    static inline constexpr Type RuleTypeForType(int dummy)
     { return Type::INT; }
-    Type RuleTypeForType(double dummy)
+    static inline constexpr Type RuleTypeForType(double dummy)
     { return Type::DOUBLE; }
-    Type RuleTypeForType(std::string dummy)
+    static inline Type RuleTypeForType(std::string dummy)
     { return Type::STRING; }
 
     struct FO_COMMON_API Rule : public OptionsDB::Option {
