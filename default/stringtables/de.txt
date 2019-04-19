@@ -8,6 +8,7 @@ Deutsch
 # * shivu
 # * Markus Sinner [kroddn]
 # * Martin Wuttke [thesilentone]
+# * Patrick Lübcke [PaddiLu]
 #
 # Notes: to avoid potential conflict with functional keys in other files, do not
 # make any stringtable keys beginning with "FUNCTIONAL_".
@@ -3912,43 +3913,370 @@ Bevorzugt ozeanische Planeten.
 ## Specials
 ##
 
-#MODERATE_TECH_NATIVES_SPECIAL
-#Moderate Tech Natives
+MODERATE_TECH_NATIVES_SPECIAL
+Fortschrittliche Eingeborene
 
-#HIGH_TECH_NATIVES_SPECIAL
-#High Tech Natives
+MODERATE_TECH_NATIVES_SPECIAL_DESC
+Die Ureinwohner dieses Planeten sind technologisch recht weit entwickelt, weshalb sie Angriffe und Invasionen besser abwehren können, solange sie noch keinem Imperium angehören.
+
+HIGH_TECH_NATIVES_SPECIAL
+High Tech-Eingeborene
+
+HIGH_TECH_NATIVES_SPECIAL_DESC
+Die Ureinwohner dieses Planeten sind technologisch sehr hoch entwickelt, weshalb sie Angriffe und Invasionen weit besser abwehren können, solange sie noch keinem Imperium angehören.
 
 #GAIA_SPECIAL
 #Gaia
 
+GAIA_SPECIAL_DESC
+'''Terraformiert diesen Planeten und erhöht anschließend [[metertype METER_TARGET_POPULATION]], entsprechend der Planetengröße:
+• [[SZ_TINY]] (+3)
+• [[SZ_SMALL]] (+6)
+• [[SZ_MEDIUM]] (+9)
+• [[SZ_LARGE]] (+12)
+• [[SZ_HUGE]] (+15)
+Erhöht außerdem [[metertype METER_TARGET_HAPPINESS]] um 5.
+
+Dieser Planet wurde in einen lebenden Organismus umgewandelt, welcher sich den Vorlieben seiner Bewohner anpassen kann. Wenn dieser Planet eine [[PE_GOOD]]e [[encyclopedia ENVIRONMENT_TITLE]] hat, erhält er einen hohen Bonus auf [[METER_POPULATION]]. Andernfalls terraformiert er sich selbst stufenweise, um sich seinen Bewohnern anzupassen. (Für [[species SP_EXOBOT]]s gibt es keine [[encyclopedia ENVIRONMENT_TITLE]], der besser ist als [[PE_ADEQUATE]].)'''
+
+WORLDTREE_SPECIAL
+Weltenbaum
+
+WORLDTREE_SPECIAL_DESC
+'''Erhöht [[metertype METER_SUPPLY]] um 1, [[metertype METER_DETECTION]] um 10, [[metertype METER_TARGET_POPULATION]] um 1 und [[metertype METER_TARGET_HAPPINESS]] um 5. Erhöht [[metertype METER_TARGET_HAPPINESS]] auf allen anderen Planeten im selben Imperium um 1.
+
+Ein riesiger Baum, dessen Krone aus der Atmosphäre des Planeten herausragt. Wissenschaftler vermuten, dass er vor langer Zeit von den Weltenplegern gepflanzt wurde.'''
+
 ANCIENT_RUINS_DEPLETED_SPECIAL
-Uralte Ruinen
+Uralte Ruinen (Ausgegraben)
+
+ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
+'''Erhöht [[metertype METER_TARGET_RESEARCH]] um den Wert der [[metertype METER_POPULATION]], solange der Fokus des Planeten auf Forschung steht.
+
+Diesen Planeten zieren die Ruinen einer vergessenen, hochentwickelten Kultur. Die wertvollsten Funde wurden bereits gesichert.'''
 
 ANCIENT_RUINS_SPECIAL
 Uralte Ruinen
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-'''Increases [[metertype METER_RESEARCH]] on this planet by 1 per Population when Focus is set to Research.
+'''Erhöht [[metertype METER_TARGET_RESEARCH]] um den Wert der [[metertype METER_POPULATION]], solange der Fokus des Planeten auf Forschung steht.
 
-Auf diesem Planet befinden sich die Überreste einer uralten, technologisch forschrittlichen Rasse. Das erster Imperium, welches die Technologie tech [[tech LRN_XENOARCH]] erforscht hat und diesen Planeten in Besitz nimmt erhält eine kostenlose fortgeschrittene Technologie oder entdeckt ein mächtiges Gebäude oder Schiff.'''
+Diesen Planeten zieren die Ruinen einer vergessenen, hochentwickelten Kultur. Das erste Imperium mit erforschter [[tech LRN_XENOARCH]], das diesen Planeten besitzt, erhält eine forschrittliche Technologie oder entdeckt ein mächtiges Gebäude oder Schiff. Zudem finden sich möglicherweise gut erhaltene Überreste einer ausgestorbenen Spezies.'''
+
+EXTINCT_BANFORO_SPECIAL
+Banforo-Überreste
+
+EXTINCT_BANFORO_SPECIAL_DESC
+Auf diesem Planeten wurden gut erhaltene Leichen der ausgestorbenen [[species SP_BANFORO]] entdeckt. Ein [[buildingtype BLD_XENORESURRECTION_LAB]] hier ermöglicht den Bau einer [[buildingtype BLD_COL_BANFORO]] auf einem durch [[metertype METER_SUPPLY]] verbundenen Planeten.
+
+TECH_COL_BANFORO
+Banforo-Resequenzierung
+
+TECH_COL_BANFORO_DESC
+Ermöglicht die Wiederherstellung der uralten [[species SP_BANFORO]]-Spezies.
+
+EXTINCT_KILANDOW_SPECIAL
+Kilandow-Gebeine
+
+EXTINCT_KILANDOW_SPECIAL_DESC
+Auf diesem Planeten wurden gut erhaltene Leichen der ausgestorbenen [[species SP_KILANDOW]] entdeckt. Ein [[buildingtype BLD_XENORESURRECTION_LAB]] hier ermöglicht den Bau einer [[buildingtype BLD_COL_KILANDOW]] auf einem durch [[metertype METER_SUPPLY]] verbundenen Planeten.
+
+TECH_COL_KILANDOW
+Kilandow-Resequenzierung
+
+TECH_COL_KILANDOW_DESC
+Ermöglicht die Wiederherstellung der uralten [[species SP_KILANDOW]]-Spezies.
+
+EXTINCT_MISIORLA_SPECIAL
+Misiorla-Fossilien
+
+EXTINCT_MISIORLA_SPECIAL_DESC
+Auf diesem Planeten wurden gut erhaltene Leichen der ausgestorbenen [[species SP_MISIORLA]] entdeckt. Ein [[buildingtype BLD_XENORESURRECTION_LAB]] hier ermöglicht den Bau einer [[buildingtype BLD_COL_MISIORLA]] auf einem durch [[metertype METER_SUPPLY]] verbundenen Planeten.
+
+TECH_COL_MISIORLA
+Misiorla-Resequenzierung
+
+TECH_COL_MISIORLA_DESC
+Ermöglicht die Wiederherstellung der uralten [[species SP_MISIORLA]]-Spezies.
+
+EXTINCT_UNLOCK_SHORT_DESC
+Schaltet eine ausgestorbene Spezies frei.
+
+PANOPTICON_SPECIAL
+Panopticon-Komplex
+
+PANOPTICON_SPECIAL_DESC
+'''Erhöht die [[encyclopedia DETECTION_TITLE]] des Imperiums um 10 und die [[metertype METER_DETECTION]] des Planeten um 75.
+
+Tief unter der Oberfläche dieses Planeten verborgen liegt das Panopticon, ein mächtiges Relikt einer unbekannten Zivilisation. Es kann die Daten der Ortungsgeräte eines ganzen Imperiums auswerten und selbst den kleinsten Details und lückenhaftesten Daten wertvolle Informationen abgewinnen.'''
 
 FORTRESS_SPECIAL
 Festung
 
+FORTRESS_SPECIAL_DESC
+'''Erhöht [[metertype METER_SHIELD]] um 100, [[metertype METER_DEFENSE]] um 30, [[metertype METER_TROOPS]] um 30 und [[metertype METER_DETECTION]] um 30. Mit jedem Zug erholen sich [[METER_SHIELD]] um 5 und [[METER_DEFENSE]] um 1. Minen reduzieren die [[metertype METER_STRUCTURE]] feindlicher Schiffe im System um zusätzliche 3 Punkte pro Zug. In jedem Zug besteht eine Wahrscheinlichkeit von 5%, dass eine [[SM_GUARD_1]] erzeugt wird, die das System beschützt, sofern noch keine vorhanden ist.
+
+Dieser Planet wurde von den Vorläufern auf alle Angriffe vorbereitet. Er ist vollgepackt mit planetaren Schilden, Waffen und Überwachungssensoren, mit denen er jeder Belagerung standhalten kann. Alle Anlagen sind noch immer voll funktionstüchtig und überraschend nutzerfreundlich.'''
+
 ECCENTRIC_ORBIT_SPECIAL
 Exzentrischer Orbit
+
+ECCENTRIC_ORBIT_SPECIAL_DESC
+'''Erhöht [[metertype METER_TARGET_RESEARCH]] um 3, aber reduziert [[metertype METER_SUPPLY]] um 2.
+
+Die Umlaufbahn dieses Planeten ist sehr exzentrisch. Sein Abstand zu seinem Stern, und damit die Stärke der Bestrahlung, variiert über das Jahr hinweg deutlich. Die wechselhaften Verhältnisse erschweren jegliche [[METER_SUPPLY]] durch den Planeten, sind für Forschungsprojekte allerdings hilfreich.'''
+
+TIDAL_LOCK_SPECIAL
+Gebundene Rotation
+
+TIDAL_LOCK_SPECIAL_DESC
+'''Erhöht [[metertype METER_TARGET_INDUSTRY]] um 0,2 pro [[metertype METER_POPULATION]], solange der Fokus des Planeten auf [[metertype METER_INDUSTRY]] steht. Reduziert [[metertype METER_TARGET_POPULATION]] (unabhängig vom Fokus) je nach Planetengröße:
+• [[SZ_TINY]] (-1)
+• [[SZ_SMALL]] (-2)
+• [[SZ_MEDIUM]] (-3)
+• [[SZ_LARGE]] (-4)
+• [[SZ_HUGE]] (-5)
+
+Dieser Planet steht mit seinem Stern in gebundener Rotation. Auf einer Seite ist dauerhaft Tag, auf der anderen herrscht ewige Nacht. Dies schränkt das Bevölkerungswachstum ein, aber die stabilen Bedingungen sind der örtlichen Industrie sehr zuträglich.'''
+
+TEMPORAL_ANOMALY_SPECIAL
+Temporale Anomalie
+
+TEMPORAL_ANOMALY_SPECIAL_DESC
+'''Erhöht [[metertype METER_TARGET_RESEARCH]] um 5 pro [[metertype METER_POPULATION]], solange der Fokus des Planeten auf [[metertype METER_RESEARCH]] steht. Reduziert [[metertype METER_TARGET_POPULATION]] (unabhängig vom Fokus) je nach Planetengröße:
+• [[SZ_TINY]] (-5)
+• [[SZ_SMALL]] (-10)
+• [[SZ_MEDIUM]] (-15)
+• [[SZ_LARGE]] (-20)
+• [[SZ_HUGE]] (-25)
+
+Der Fluss der Zeit ist auf diesem Planeten gestört. Die scheinbar willkürlichen Änderungen der temporalen Geschwindigkeit sind für Lebensformen so verwirrend, dass ein soziales oder produktives Leben nahezu unmöglich ist. Nur durch gute Vorbereitung und extreme Anpassungsfähigkeit lässt sich hier eine Kolonie errichten.
+Dafür ermöglicht diese Anomalie aber auch das Durchführen von Experimenten, die auf normalen Planeten schlichtweg nicht machbar wären.'''
+
+RESONANT_MOON_SPECIAL
+Resonanzmond
+
+RESONANT_MOON_SPECIAL_DESC
+'''Erhöht [[metertype METER_STEALTH]] von Gebäuden auf diesem Planeten und von eigenen Schiffen in diesem System um 10.
+
+Dieser Planet hat einen natürlichen Satelliten, dessen Umlaufzeit genauso lang ist, wie seine Rotationsperiode. Daher hat der Mond eine "dunkle Seite", die dem Planeten stets abgewandt ist und sich hervorragend für Geheimanlagen eignet. Der Bereich zwischen Mond und Planet ist zudem ein gutes Versteck für Gebäude und Flotten.  
+
+COMPUTRONIUM_SPECIAL
+Computroniummond
+
+COMPUTRONIUM_SPECIAL_DESC
+'''Solange dieser Planet auf [[metertype METER_RESEARCH]] fokussiert ist, erhalten alle Planeten im Imperium, die auf [[METER_RESEARCH]] fokussiert sind, 0,2 [[metertype METER_TARGET_RESEARCH]] pro [[metertype METER_POPULATION]].
+
+Der Mond dieses Planeten ist in Wirklichkeit ein von einer verschwundenen Zivilisation erbauter, gigantischer Supercomputer, der komplexe Berechnungen und Simulationen schneller durchführt, als man sie eingeben kann.'''
+
+HONEYCOMB_SPECIAL
+Honigwabe
+
+HONEYCOMB_SPECIAL_DESC
+'''Solange dieser Planet auf [[metertype METER_INDUSTRY]] fokussiert ist, erhalten alle via [[metertype METER_SUPPLY]] verbundenen Planeten, die auf [[METER_INDUSTRY]] fokussiert sind, 0,5 [[metertype METER_TARGET_INDUSTRY]] pro [[metertype METER_POPULATION]].
+
+Die Honigwabe ist ein Planet, der von den Erbauern vor langer Zeit zu einem Lager umfunktioniert wurde. Nahezu alle Planeten in den umliegenden Systemen wurden vollständig abgebaut und ihre Bestandteile lagern nun getrennt sortiert in gigantischen Röhren in der Planetenkruste. Der Bestand reicht von seltenen und wertvollen Elementen über schwer herstellbare Moleküle bis hin zu einer Vielzahl an Energiequellen. Die Absicht hinter dieser Ansammlung ist unklar, ebenso wie der Grund, warum sie nie zum Einsatz kam.
+
+PHILOSOPHER_SPECIAL
+Philosophenplanet
+
+PHILOSOPHER_SPECIAL_DESC
+'''Reduziert [[metertype METER_TARGET_CONSTRUCTION]] um 20. Solange dieser Planet unbewohnt ist, erhöht er [[metertype METER_TARGET_RESEARCH]] um 5 auf allen bewohnten Planeten im selben System. 
+
+Der letzte Verbliebene einer planetengroßen Nomadenspezies hat sich im Orbit dieses Systems zur Ruhe gesetzt. Nach tausenden von Lebensjahren hat er den Willen und die Fähigkeit zum Reisen verloren und verbringt seine Zeit nun damit, über die Mysterien des Universums zu sinnieren. Exzentrisch und leicht dement, wie er nun ist, spricht er nur mit jenen, deren Form und Größe seiner Art entsprechen, weshalb Wissenschaftler nur über die Planeten, auf denen sie leben, mit ihm kommunizieren können. Verständlicherweise würde es den [[PHILOSOPHER_SPECIAL]] sehr verstören, kolonisiert zu werden, und Konstruktionen auf seiner Oberfläche wären so schwierig, wie es bei einem lebenden Wesen zu erwarten wäre.'''
+
+ABANDONED_COLONY_SPECIAL
+Verlassene Kolonie
+
+ABANDONED_COLONY_SPECIAL_DESC
+Eine alte, aufgegebene Kolonie. Manche der [[metertype METER_CONSTRUCTION]]en hier könnten noch einen Nutzen haben.
+
+KRAKEN_NEST_SPECIAL
+Krakennest
+
+KRAKEN_NEST_SPECIAL_DESC
+Irgendwann werden hier junge Kraken entstehen. Mit Wissen über [[tech SHP_DOMESTIC_MONSTER]] lassen sie sich zähmen.
 
 SNOWFLAKE_NEST_SPECIAL
 Schneeflockennest
 
+KRAKEN_NEST_SPECIAL_DESC
+Irgendwann werden hier junge Schneeflocken entstehen. Mit Wissen über [[tech SHP_DOMESTIC_MONSTER]] lassen sie sich zähmen.
+
 JUGGERNAUT_NEST_SPECIAL
-Nest der Kolosse
+Kolossnest
+
+KRAKEN_NEST_SPECIAL_DESC
+Irgendwann werden hier junge Kolosse entstehen. Mit Wissen über [[tech SHP_DOMESTIC_MONSTER]] lassen sie sich zähmen.
+
+KRAKEN_IN_THE_ICE_SPECIAL
+Kraken im Eis
+
+KRAKEN_IN_THE_ICE_SPECIAL_DESC
+'''Mit genug Wissen über [[tech SHP_DOMESTIC_MONSTER]] und [[tech LRN_XENOARCH]] könnte ein [[buildingtype BLD_XENORESURRECTION_LAB]] auf diesem Planeten den [[predefinedshipdesign SM_WHITE_KRAKEN]] wiederbeleben und kontrollieren.
+
+Tief unter der eisigen Kruste dieses Planeten liegt ein prähistorischer weißer Vorfahr der heutigen Krakenmonster.'''
 
 HEAD_ON_A_SPIKE_SPECIAL
 Kopf auf einem Pfahl
 
+HEAD_ON_A_SPIKE_SPECIAL_DESC
+'''Der Kopf des einstmaligen Imperators ruht aufgespießt für alle sichtbar und erfüllt die Herzen aller Feinde mit Furcht.
+
+Schiffe anderer Imperien innerhalb von 100uu, ob feindlich oder nicht, verlieren leicht an [[metertype METER_SHIELD]], [[metertype METER_STRUCTURE]] und Waffenstärke.'''
+
+HEAD_ON_A_SPIKE_SPECIAL_EFFECT
+Angsterfüllt
+
+CONC_CAMP_MASTER_SPECIAL
+Mantel des Todes
+
+CONC_CAMP_MASTER_SPECIAL_DESC
+Die [[buildingtype BLD_CONC_CAMP]] haben der [[metertype METER_POPULATION]] dieses Planeten schwer zugesetzt; Sie sind zwar vor den Blicken von Besuchern verborgen, aber sensitive Wesen können das Leiden in der Luft spüren.
+
+CONC_CAMP_SLAVE_SPECIAL
+Geistige Erschöpfung
+
+CONC_CAMP_SLAVE_SPECIAL_DESC
+Auch wenn heute keine [[buildingtype BLD_CONC_CAMP]] mehr auf diesem Planeten betrieben werden, sind die Erinnerungen noch frisch und Überreste wie schlecht versteckte Massengräber kommen noch immer gelegentlich zu Tage. Die [[metertype METER_POPULATION]] leidet an einer seelischen Wunde und kann nicht gedeihen.
+
+CLOUD_COVER_MASTER_SPECIAL
+Wolkenbrut
+
+CLOUD_COVER_MASTER_SPECIAL_DESC
+Auf diesem Planeten leben fliegende Kreaturen, die Feuchtigkeit absondern und so dichte Wolken verursachen. Später in ihrem Lebenszyklus werden sie sich eingraben und dabei vulkanische Aktivität verursachen.
+
+CLOUD_COVER_SLAVE_SPECIAL
+Wolkenmantel
+
+CLOUD_COVER_SLAVE_SPECIAL_DESC
+Dieser Planet hat ungewöhnlich dicke Wolken, die [[metertype METER_STEALTH]] um 20 erhöhen. Dies könnte natürliche Ursachen haben, aber auch mit Weltraummonstern oder [[tech SPY_STEALTH_1]]-Technologie zusammenhängen.
+
+VOLCANIC_ASH_MASTER_SPECIAL
+Versteckte Wühler
+
+VOLCANIC_ASH_MASTER_SPECIAL_DESC
+Monster wühlen im Kern dieses Planeten herum, was hohe vulkanische Aktivität verursacht. Diese Kreaturen durchlaufen eine dort Metamorphose und wachsen bald zu Kreaturen heran, die dimensionalene Risse in das Raumgefüge reißen können.
+
+VOLCANIC_ASH_SLAVE_SPECIAL
+Vulkanasche
+
+VOLCANIC_ASH_SLAVE_SPECIAL_DESC
+Dieser Planet ist in Aschewolken gehüllt, die [[metertype METER_STEALTH]] um 40 erhöhen. Dies könnte natürliche Ursachen haben, aber auch mit Weltraummonstern oder [[tech SPY_STEALTH_2]]-Technologie zusammenhängen.
+
+DIM_RIFT_MASTER_SPECIAL
+Dimensionswühler
+
+DIM_RIFT_MASTER_SPECIAL_DESC
+Monster wühlen im Kern dieses Planeten herum, was Dimensionsrisse im Inneren und in der Umgebung des Planeten verursacht. Diese Kreaturen sind bald erwachsen und werden dann versuchen, den Planeten in die Leere zu zerren.
+
+DIM_RIFT_SLAVE_SPECIAL
+Dimensionsriss
+
+DIM_RIFT_SLAVE_SPECIAL_DESC
+Die Oberfläche dieses Planeten ist zum Teil durch einen dimensionalen Riss verdeckt, was [[metertype METER_STEALTH]] um 60 erhöht. Dies könnte natürliche Ursachen haben, aber auch mit Weltraummonstern oder [[tech SPY_STEALTH_3]]-Technologie zusammenhängen.
+
+VOID_MASTER_SPECIAL
+Leeremonster
+
+VOID_MASTER_SPECIAL_DESC
+Monster im Kern dieses Planeten zerren selbigen in die Leere. Das könnte irgendwann zu Problemen führen.
+
+VOID_SLAVE_SPECIAL
+Leere-Umwandlung
+
+VOID_SLAVE_SPECIAL_DESC
+Dieser Planet existiert zum Teil in unserem Universum, zum Teil in der Leere, was [[metertype METER_STEALTH]] um 80 erhöht. Dies könnte natürliche Ursachen haben, aber auch mit Weltraummonstern oder [[tech SPY_STEALTH_4]]-Technologie zusammenhängen.
+
+DERELICT_SPECIAL2
+Aufklärerwrack
+
+DERELICT_SPECIAL3
+Tankerwrack
+
+DERELICT_SPECIAL_DESC
+Ein uraltes Wrack einer unbekannten Spezies. Wer weiß, was es verbirgt…
+
+ACCRETION_DISC_SPECIAL
+Akkretionsscheibe
+
+ACCRETION_DISC_SPECIAL_DESC
+Eine Akkretionsscheibe ist ein scheibenförmiges Gebilde aus loser Materie, das um ein massives Objekt rotiert. Reduziert auf allen Planeten im betroffenen System [[metertype METER_SUPPLY]] um 1.
+
+SUPERNOVA_SPECIAL
+Neue Supernova
+
+SUPERNOVA_SPECIAL2
+Junge Supernova
+
+SUPERNOVA_SPECIAL3
+Reife Supernova
+
+SUPERNOVA_SPECIAL4
+Supernovaüberrest
+
+SUPERNOVA_SPECIAL_DESC
+In diesem System hat sich vor relativ kurzer Zeit eine Supernova ereignet. Wo einst ein majestätisches Sternensystem war, sind nun nur noch Trümmer übrig.
+
+NOVA_BOMB_ACTIVATOR_SPECIAL
+Novabombenauslöser
+
+NOVA_BOMB_ACTIVATOR_SPECIAL_DESC
+Diese Region ist auf dimensionaler Ebene höchst instabil und bringt alle Novabomben in Reichweite zur Detonation.
+
+PROBIOTIC_SPECIAL
+Ursuppe
+
+PROBIOTIC_SPECIAL_DESC
+Die große Vielfalt an einzigartigen Einzellern lässt sich für verschiedene medizinische und pharmazeutische Zwecke nutzen.
+
+FRUIT_SPECIAL
+Frucht der Weltenpfleger
+
+FRUIT_SPECIAL_DESC
+Was zunächst wie ein Wald aussieht, ist tatsächlich Teil eines symbiotischen Organismus, der einen ganzen Kontinent umfasst. Dessen Früchte enthalten komplexe organische Chemikalien, die alle Arten von organischem Leben begünstigen.
+
+SPICE_SPECIAL
+Ki-Spice
+
+SPICE_SPECIAL_DESC
+Das Ökosystem auf diesem Planeten produziert eine besondere Substanz, die auf organische Wesen lebensverlängernd, gedankenklärend und sinnesschärfend wirkt.
+
+MONOPOLE_SPECIAL
+Monopol-Magnete
+
+MONOPOLE_SPECIAL_DESC
+Mit [[MONOPOLE_SPECIAL]]n kann man stärkere Roboter bauen!
+
+SUPERCONDUCTOR_SPECIAL
+Raumtemperatursupraleiter
+
+SUPERCONDUCTOR_SPECIAL_DESC
+Mit [[SUPERCONDUCTOR_SPECIAL]]n kann man schnellere Roboter bauen!
+
+POSITRONIUM_SPECIAL
+Positroniumasche
+
+POSITRONIUM_SPECIAL_DESC
+Mit [[POSITRONIUM_SPECIAL]] kann man klügere Roboter bauen!
+
 MINERALS_SPECIAL
 Mineralienreichtum
+
+MINERALS_SPECIAL_DESC
+Dieser Planet ist reich an Mineralienvorkommen, was Produktion oder Lithisches Wachstum beschleunigt.
+
+CRYSTALS_SPECIAL
+Silmalinkristalle
+
+CRYSTALS_SPECIAL_DESC
+Dieser Planet ist reich an Mineralienvorkommen, was Produktion oder Lithisches Wachstum beschleunigt.
+
+ELERIUM_SPECIAL
+Natürliches Elerium
+
+ELERIUM_SPECIAL_DESC
+Dieser Planet hat reine Eleriumvorkommen, was Produktion oder Lithisches Wachstum beschleunigt.
 
 
 ##
