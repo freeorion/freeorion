@@ -1325,7 +1325,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             m_lobby_data->m_native_freq    = incoming_lobby_data.m_native_freq;
             m_lobby_data->m_ai_aggr        = incoming_lobby_data.m_ai_aggr;
 
-            // copy only allowed rules
+            // copy rules from incoming lobby data to server lobby data, only if those rules are
+            // not locked by the server
             for (const auto& incoming_rule : incoming_lobby_data.m_game_rules) {
                 if (GetOptionsDB().OptionExists("setup.rules.server-locked." + incoming_rule.first) &&
                     !GetOptionsDB().Get<bool>("setup.rules.server-locked." + incoming_rule.first))
