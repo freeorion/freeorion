@@ -7866,7 +7866,7 @@ SH_COLONY_BASE
 Siedler-Basisrumpf
 
 SH_COLONY_BASE_DESC
-Konzipiert zum Gründen einer Siedlung auf einem anderen Planet im selben System. Kann sein System nivht verlassen oder sich schnell im System bewegen und hat nur einen internen Steckplatz.
+Konzipiert zum Gründen einer Siedlung auf einem anderen Planeten im selben System. Kann sein System nicht verlassen oder sich schnell im System bewegen und hat nur einen internen Steckplatz.
 
 SH_FLOATER_BODY
 Schwimmerkörper
