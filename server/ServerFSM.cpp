@@ -1080,6 +1080,8 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
         std::string new_player_name = player_name;
 
+        // Try numeric suffixes to get unique name which isn't equal to other player or empire name
+        // or registered for authentication.
         bool collision = true;
         std::size_t t = 1;
         while (collision &&
@@ -1102,7 +1104,10 @@ sc::result MPLobby::react(const JoinGame& msg) {
                 new_player_name = player_name + std::to_string(++t); // start alternative names from 2
         }
 
+        // There is a small chance of unsolveable collision in case of sequential player names are
+        // registered for authentication
         if (collision) {
+            ErrorLogger(FSM) << "MPLobby::react(const JoinGame& msg): couldn't find free player name for \"" << original_player_name << "\"";
             player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
                                                         true));
             server.Networking().Disconnect(player_connection);
@@ -2232,7 +2237,10 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
                 new_player_name = player_name + std::to_string(++t); // start alternative names from 2
         }
 
+        // There is a small chance of unsolveable collision in case of sequential player names are
+        // registered for authentication
         if (collision) {
+            ErrorLogger(FSM) << "WaitingForMPGameJoiners::react(const JoinGame& msg): couldn't find free player name for \"" << original_player_name << "\"";
             player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
                                                         true));
             server.Networking().Disconnect(player_connection);
