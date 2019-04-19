@@ -36,7 +36,7 @@ namespace {
         db.Add("save.auto.hostless.enabled",                UserStringNop("OPTIONS_DB_AUTOSAVE_HOSTLESS"),      true);
         db.Add<int>("save.auto.interval",                   UserStringNop("OPTIONS_DB_AUTOSAVE_INTERVAL"),      0);
         db.Add<std::string>("load",                         UserStringNop("OPTIONS_DB_LOAD"),                   "", Validator<std::string>(), false);
-        db.Add("save.auto.exit.enabled",                    UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),    true, Validator<bool>());
+        db.Add("save.auto.exit.enabled",                    UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),    true);
 
         // Common galaxy settings
         db.Add("setup.seed",                                UserStringNop("OPTIONS_DB_GAMESETUP_SEED"),         std::string("0"), Validator<std::string>());
