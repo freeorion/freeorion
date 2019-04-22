@@ -49,7 +49,7 @@ namespace {
         db.Add("setup.monster.frequency",                   UserStringNop("OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY"), GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
         db.Add("setup.native.frequency",                    UserStringNop("OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY"), GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
         db.Add("setup.ai.player.count",                     UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"), 6, RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
-        db.Add("setup.ai.aggression", UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"),        MANIACAL,                   RangedValidator<Aggression>(BEGINNER, MANIACAL));
+        db.Add("setup.ai.aggression",                       UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"), MANIACAL, RangedValidator<Aggression>(BEGINNER, MANIACAL));
 
         // AI Testing options-- the following options are to facilitate AI testing and do not currently have an options page widget;
         // they are intended to be changed via the command line and are not currently storable in the configuration file.

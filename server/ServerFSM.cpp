@@ -814,7 +814,7 @@ MPLobby::MPLobby(my_context c) :
                 player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
                 player_setup_data.m_empire_name =   GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
                 player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
-                if (m_lobby_data->m_seed != "")
+                if (!m_lobby_data->m_seed.empty())
                     player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
                 else
                     player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
