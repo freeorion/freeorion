@@ -37,49 +37,84 @@
 namespace {
     const std::string OPEN_TAG = "[[";
     const std::string CLOSE_TAG = "]]";
+    const std::string SEPARATOR = ",";
 
     /** Converts (first, last) to a string, looks it up as a key in the
-      * stringtable, then then appends this to the end of a string. */
+      * stringtable, then then appends this to the end of the string str. */
     struct UserStringSubstituteAndAppend {
         UserStringSubstituteAndAppend(std::string& str) :
             m_str(str)
-        {}
+        {
+            //std::cout << "UserStringSubstituteAndAppend with str:" << str << std::endl;
+        }
 
         void operator()(const char* first, const char* last) const {
             std::string token(first, last);
             if (token.empty() || !UserStringExists(token))
                 return;
             m_str += UserString(token);
+            //std::cout << "str at end of UserStringSubstituteAndAppend operator():" << m_str << std::endl;
         }
 
-        std::string&    m_str;
+        std::string& m_str;
     };
 
     // sticks a sequence of characters onto the end of a string
     struct StringAppend {
         StringAppend(std::string& str) :
             m_str(str)
-        {}
+        {
+            //std::cout << "StringAppend with str:" << str << std::endl;
+        }
 
-        void operator()(const char* first, const char* last) const
-        { m_str += std::string(first, last); }
+        void operator()(const char* first, const char* last) const {
+            m_str += std::string(first, last);
+            //std::cout << "str at end of StringAppend operator():" << m_str << std::endl;
+        }
 
-        std::string&    m_str;
+        std::string& m_str;
     };
 
+    /** Converts (first, last) to a string, and calls boost::format
+      * with it as the parameter to substitite to the string str. */
+    struct StringFormat {
+        StringFormat(std::string& str) :
+            m_str(str)
+        {
+            //std::cout << "StringFormat with str:" << str << std::endl;
+        }
+
+        void operator()(const char* first, const char* last) const {
+            std::string temp = m_str;
+            std::string param_str(first, last);
+
+            m_str = boost::str(FlexibleFormat(temp) % param_str);
+            //std::cout << "str at end of StringFormat operator():" << m_str << std::endl;
+        }
+
+        std::string& m_str;
+    };
 
     std::string StringtableTextSubstitute(const std::string& input) {
         std::string retval;
 
-        // set up parser
+        // set up parser to match "[[STRINGTABLE_KEY,Param Text]]" and replace it with
+        // the result of looking up STRINGTABLE_KEY in the stringtable and then using
+        // boost::format to replace any instances of %N% with "Param Text", where N
+        // starts at 1 and increases by 1 for each substitition applied
+
         namespace classic = boost::spirit::classic;
-        classic::rule<> token = *(classic::anychar_p - classic::space_p - CLOSE_TAG.c_str());
+        classic::rule<> token = *(classic::anychar_p - classic::space_p - CLOSE_TAG.c_str() - SEPARATOR.c_str());
+
+        classic::rule<> substitution = OPEN_TAG.c_str() >> token[UserStringSubstituteAndAppend(retval)]
+                                     >> *(SEPARATOR.c_str() >> token[StringFormat(retval)]) >> CLOSE_TAG.c_str();
+
         classic::rule<> var = OPEN_TAG.c_str() >> token[UserStringSubstituteAndAppend(retval)] >> CLOSE_TAG.c_str();
         classic::rule<> non_var = classic::anychar_p - OPEN_TAG.c_str();
 
         // parse and substitute variables
         try {
-            classic::parse(input.c_str(), *(non_var[StringAppend(retval)] | var));
+            classic::parse(input.c_str(), *(non_var[StringAppend(retval)] | substitution | var ));
         } catch (const std::exception&) {
             ErrorLogger() << "StringtableTextSubstitute caught exception when parsing input: " << input;
         }
