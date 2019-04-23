@@ -227,8 +227,10 @@ def generateOrders():  # pylint: disable=invalid-name
     and can be sent to the server for processing."""
     rules = fo.getGameRules()
     debug("Defined game rules:")
-    for rule in rules.getRulesAsStrings:
-        debug("Name: " + rule.name + "  value: " + str(rule.value))
+    print rules
+    print rules.getRulesAsStrings()
+    for rule_name, rule_value in rules.getRulesAsStrings().items():
+        debug("%s: %s", rule_name, rule_value)
     debug("Rule RULE_NUM_COMBAT_ROUNDS value: " + str(rules.getInt("RULE_NUM_COMBAT_ROUNDS")))
 
     empire = fo.getEmpire()

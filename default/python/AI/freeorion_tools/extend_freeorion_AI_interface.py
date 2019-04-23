@@ -69,6 +69,7 @@ def to_str(prefix, id, name):
 def patch_interface():
     fo.universe.getVisibilityTurnsMap = to_dict(fo.universe.getVisibilityTurnsMap)
     fo.empire.supplyProjections = to_dict(fo.empire.supplyProjections)
+    fo.GameRules.getRulesAsStrings = to_dict(fo.GameRules.getRulesAsStrings)
 
     fo.to_str = to_str
 
