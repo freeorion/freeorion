@@ -778,7 +778,7 @@ namespace FreeOrionPython {
 
         class_<GameRules, noncopyable>("GameRules", no_init)
             .add_property("empty",              make_function(&GameRules::Empty,                return_value_policy<return_by_value>()))
-            .def("getRulesAsStrings",			make_function(&GameRules::GetRulesAsStrings,	return_value_policy<return_by_value>()))
+            .def("getRulesAsStrings",           make_function(&GameRules::GetRulesAsStrings,    return_value_policy<return_by_value>()))
             .def("ruleExists",                  RuleExistsAnyType)
             .def("ruleExistsWithType",          RuleExistsWithType)
             .def("getDescription",              make_function(&GameRules::GetDescription,       return_value_policy<copy_const_reference>()))

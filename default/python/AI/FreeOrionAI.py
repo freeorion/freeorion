@@ -232,7 +232,7 @@ def generateOrders():  # pylint: disable=invalid-name
             debug("%s: %s", rule_name, rule_value)
         debug("Rule RULE_NUM_COMBAT_ROUNDS value: " + str(rules.getInt("RULE_NUM_COMBAT_ROUNDS")))
     except Exception as e:
-        error("Exception %s when trying to get game rules" %e , exc_info=True)
+        error("Exception %s when trying to get game rules" % e, exc_info=True)
 
     empire = fo.getEmpire()
     if empire is None:
