@@ -152,10 +152,6 @@ class GameRules(object):
     def empty(self):
         pass
 
-    @property
-    def getRulesAsStrings(self):
-        pass
-
     def getDescription(self, string):
         """
         :param string:
@@ -179,6 +175,12 @@ class GameRules(object):
         :rtype: int
         """
         return int()
+
+    def getRulesAsStrings(self):
+        """
+        :rtype: StringsMap
+        """
+        return StringsMap()
 
     def getString(self, string):
         """
@@ -204,12 +206,12 @@ class GameRules(object):
         """
         return bool()
 
-    def ruleExistsWithType(self, string, arg):
+    def ruleExistsWithType(self, string, rule_type):
         """
         :param string:
         :type string: str
-        :param arg:
-        :type arg: ruleType
+        :param rule_type:
+        :type rule_type: ruleType
         :rtype: bool
         """
         return bool()
@@ -909,80 +911,6 @@ class PairIntInt_IntMap(object):
         return None
 
 
-class RuleValueStringStringPair(object):
-    @property
-    def name(self):
-        pass
-
-    @property
-    def value(self):
-        pass
-
-
-class RuleValueStringsVec(object):
-    def __contains__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: bool
-        """
-        return bool()
-
-    def __delitem__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: None
-        """
-        return None
-
-    def __getitem__(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: object
-        """
-        return object()
-
-    def __iter__(self):
-        """
-        :rtype: object
-        """
-        return object()
-
-    def __len__(self):
-        """
-        :rtype: int
-        """
-        return int()
-
-    def __setitem__(self, obj1, obj2):
-        """
-        :param obj1:
-        :type obj1: object
-        :param obj2:
-        :type obj2: object
-        :rtype: None
-        """
-        return None
-
-    def append(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: None
-        """
-        return None
-
-    def extend(self, obj):
-        """
-        :param obj:
-        :type obj: object
-        :rtype: None
-        """
-        return None
-
-
 class ShipPartMeterMap(object):
     def __contains__(self, obj):
         """
@@ -1196,6 +1124,54 @@ class StringVec(object):
         """
         :param obj:
         :type obj: object
+        :rtype: None
+        """
+        return None
+
+
+class StringsMap(object):
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: object
+        """
+        return object()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
+
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
         :rtype: None
         """
         return None
