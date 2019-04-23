@@ -225,13 +225,14 @@ def generateOrders():  # pylint: disable=invalid-name
     """Called once per turn to tell the Python AI to generate and issue orders to control its empire.
     at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
     and can be sent to the server for processing."""
-    rules = fo.getGameRules()
-    debug("Defined game rules:")
-    print rules
-    print rules.getRulesAsStrings()
-    for rule_name, rule_value in rules.getRulesAsStrings().items():
-        debug("%s: %s", rule_name, rule_value)
-    debug("Rule RULE_NUM_COMBAT_ROUNDS value: " + str(rules.getInt("RULE_NUM_COMBAT_ROUNDS")))
+    try:
+        rules = fo.getGameRules()
+        debug("Defined game rules:")
+        for rule_name, rule_value in rules.getRulesAsStrings().items():
+            debug("%s: %s", rule_name, rule_value)
+        debug("Rule RULE_NUM_COMBAT_ROUNDS value: " + str(rules.getInt("RULE_NUM_COMBAT_ROUNDS")))
+    except Exception as e:
+        error("Exception %s when trying to get game rules" %e , exc_info=True)
 
     empire = fo.getEmpire()
     if empire is None:
