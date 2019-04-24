@@ -771,18 +771,14 @@ namespace FreeOrionPython {
             .add_property("gameUID",            make_function(&GalaxySetupData::GetGameUID,         return_value_policy<return_by_value>()),
                                                 &GalaxySetupData::SetGameUID);
 
-        //std::vector<std::pair<std::string, std::string>>
-        class_<std::pair<std::string, std::string>>("RuleValueStringStringPair")
-            .add_property("name",   &std::pair<std::string, std::string>::first)
-            .add_property("value",  &std::pair<std::string, std::string>::second)
-        ;
-        class_<std::vector<std::pair<std::string, std::string>>>("RuleValueStringsVec")
-            .def(boost::python::vector_indexing_suite<std::vector<std::pair<std::string, std::string>>, true>())
+
+        class_<std::map<std::string, std::string>>("StringsMap")
+            .def(boost::python::map_indexing_suite<std::map<std::string, std::string>, true>())
         ;
 
         class_<GameRules, noncopyable>("GameRules", no_init)
             .add_property("empty",              make_function(&GameRules::Empty,                return_value_policy<return_by_value>()))
-            .add_property("getRulesAsStrings",  make_function(&GameRules::GetRulesAsStrings,    return_value_policy<return_by_value>()))
+            .def("getRulesAsStrings",           make_function(&GameRules::GetRulesAsStrings,    return_value_policy<return_by_value>()))
             .def("ruleExists",                  RuleExistsAnyType)
             .def("ruleExistsWithType",          RuleExistsWithType)
             .def("getDescription",              make_function(&GameRules::GetDescription,       return_value_policy<copy_const_reference>()))
