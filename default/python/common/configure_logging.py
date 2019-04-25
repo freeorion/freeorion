@@ -149,6 +149,7 @@ class _stdXLikeStream(object):
     def flush(self):
         pass
 
+
 class _LoggerHandler(logging.Handler):
     """A handler to send logs to the C++ process."""
     def __init__(self, level):

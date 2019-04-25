@@ -7,6 +7,7 @@ from common.configure_logging import redirect_logging_to_freeorion_logger
 # Logging is redirected before other imports so that import errors appear in log files.
 redirect_logging_to_freeorion_logger()
 
+import os
 import sys
 import random
 
@@ -40,6 +41,7 @@ from common.listeners import listener
 from character.character_module import Aggression
 from character.character_strings_module import get_trait_name_aggression, possible_capitals
 
+
 main_timer = AITimer('timer', write_log=True)
 turn_timer = AITimer('bucket', write_log=True)
 
@@ -63,6 +65,20 @@ diplomatic_corp = None
 def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=invalid-name
     """Called by client when a new game is started (but not when a game is loaded).
     Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
+
+    import unittest
+    loader = unittest.TestLoader()
+    testSuite = loader.discover(os.path.join(fo.getAIDir(), 'test'))
+    runner = unittest.TextTestRunner()
+    result = runner.run(testSuite)
+    for failure in result.failures:
+        error(failure)
+    for failure in result.errors:
+        error(failure)
+    if result.failures or result.errors:
+        fatal("Crashing AI client due to failed unittest.")
+        exit(1)
+
     empire = fo.getEmpire()
     if empire is None:
         fatal("This client has no empire. Ignoring new game start message.")
