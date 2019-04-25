@@ -146,6 +146,8 @@ class _stdXLikeStream(object):
             del line_number
             del function_name
 
+    def flush(self):
+        pass
 
 class _LoggerHandler(logging.Handler):
     """A handler to send logs to the C++ process."""
