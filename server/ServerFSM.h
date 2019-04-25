@@ -276,7 +276,6 @@ struct WaitingForMPGameJoiners : sc::state<WaitingForMPGameJoiners, ServerFSM> {
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
     std::shared_ptr<ServerSaveGameData>     m_server_save_game_data;
     std::set<std::string>                   m_expected_ai_player_names;
-    int                                     m_num_expected_players;
 
     SERVER_ACCESSOR
 };

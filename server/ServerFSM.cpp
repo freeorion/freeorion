@@ -1080,6 +1080,8 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
         std::string new_player_name = player_name;
 
+        // Try numeric suffixes to get unique name which isn't equal to other player or empire name
+        // or registered for authentication.
         bool collision = true;
         std::size_t t = 1;
         while (collision &&
@@ -1102,7 +1104,10 @@ sc::result MPLobby::react(const JoinGame& msg) {
                 new_player_name = player_name + std::to_string(++t); // start alternative names from 2
         }
 
+        // There is a small chance of unsolveable collision in case of sequential player names are
+        // registered for authentication
         if (collision) {
+            ErrorLogger(FSM) << "MPLobby::react(const JoinGame& msg): couldn't find free player name for \"" << original_player_name << "\"";
             player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
                                                         true));
             server.Networking().Disconnect(player_connection);
@@ -2097,16 +2102,13 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     my_base(c),
     m_lobby_data(context<ServerFSM>().m_lobby_data),
     m_player_save_game_data(context<ServerFSM>().m_player_save_game_data),
-    m_server_save_game_data(context<ServerFSM>().m_server_save_game_data),
-    m_num_expected_players(0)
+    m_server_save_game_data(context<ServerFSM>().m_server_save_game_data)
 {
     TraceLogger(FSM) << "(ServerFSM) WaitingForMPGameJoiners";
     context<ServerFSM>().m_lobby_data.reset();
     context<ServerFSM>().m_player_save_game_data.clear();
     context<ServerFSM>().m_server_save_game_data.reset();
     ServerApp& server = Server();
-
-    m_num_expected_players = m_lobby_data->m_players.size();
 
     std::vector<PlayerSetupData> player_setup_data;
     m_expected_ai_player_names.clear();
@@ -2200,62 +2202,64 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             }
         }
 
-        // verify that there is room left for this player
-        int already_connected_players = m_expected_ai_player_names.size() + server.m_networking.NumEstablishedPlayers();
-        if (already_connected_players >= m_num_expected_players) {
-            // too many human players
-            ErrorLogger(FSM) << "WaitingForSPGameJoiners.JoinGame : A human player attempted to join the game but there was not enough room.  Terminating connection.";
-            server.m_networking.Disconnect(player_connection);
-        } else {
+        std::string original_player_name = player_name;
 
-            std::string original_player_name = player_name;
+        // Remove AI prefix to distinguish Human from AI.
+        std::string ai_prefix = UserString("AI_PLAYER") + "_";
+        while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
+            player_name.erase(0, ai_prefix.size());
+        if (player_name.empty())
+            player_name = "_";
 
-            // Remove AI prefix to distinguish Human from AI.
-            std::string ai_prefix = UserString("AI_PLAYER") + "_";
-            while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
-                player_name.erase(0, ai_prefix.size());
-            if(player_name.empty())
-                player_name = "_";
+        std::string new_player_name = player_name;
 
-            std::string new_player_name = player_name;
-
-            bool collision = true;
-            std::size_t t = 1;
-            while (collision &&
-                   t <= m_lobby_data->m_players.size() + server.Networking().GetCookiesSize() + 1)
-            {
-                collision = false;
-                roles.Clear();
-                if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
-                    collision = true;
-                } else {
-                    for (std::pair<int, PlayerSetupData>& plr : m_lobby_data->m_players) {
-                        if (plr.second.m_empire_name == new_player_name) {
-                            collision = true;
-                            break;
-                        }
+        // Try numeric suffixes to get unique name which isn't equal to other player or empire name
+        // or registered for authentication.
+        bool collision = true;
+        std::size_t t = 1;
+        while (collision &&
+               t <= m_lobby_data->m_players.size() + server.Networking().GetCookiesSize() + 1)
+        {
+            collision = false;
+            roles.Clear();
+            if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
+                collision = true;
+            } else {
+                for (std::pair<int, PlayerSetupData>& plr : m_lobby_data->m_players) {
+                    if (plr.second.m_empire_name == new_player_name) {
+                        collision = true;
+                        break;
                     }
                 }
-
-                if (collision)
-                    new_player_name = player_name + std::to_string(++t); // start alternative names from 2
             }
 
-            if (collision) {
-                player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
-                                                            true));
-                server.Networking().Disconnect(player_connection);
-                return discard_event();
-            }
+            if (collision)
+                new_player_name = player_name + std::to_string(++t); // start alternative names from 2
+        }
 
-            if (!player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) {
+        // There is a small chance of unsolveable collision in case of sequential player names are
+        // registered for authentication
+        if (collision) {
+            ErrorLogger(FSM) << "WaitingForMPGameJoiners::react(const JoinGame& msg): couldn't find free player name for \"" << original_player_name << "\"";
+            player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
+                                                        true));
+            server.Networking().Disconnect(player_connection);
+            return discard_event();
+        }
+
+        if (!player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) {
+            if (player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER))
+                client_type = Networking::CLIENT_TYPE_HUMAN_OBSERVER;
+            else if (player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR))
+                client_type = Networking::CLIENT_TYPE_HUMAN_MODERATOR;
+            else {
                 player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
                 server.Networking().Disconnect(player_connection);
                 return discard_event();
             }
-
-            fsm.EstablishPlayer(player_connection, new_player_name, client_type, client_version_string, roles);
         }
+
+        fsm.EstablishPlayer(player_connection, new_player_name, client_type, client_version_string, roles);
     } else {
         ErrorLogger(FSM) << "WaitingForMPGameJoiners::react(const JoinGame& msg): Received JoinGame message with invalid client type: " << client_type;
         return discard_event();
@@ -2309,27 +2313,24 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
         for (const auto& conn : to_disconnect)
         { server.Networking().Disconnect(conn); }
 
-        // verify that there is room left for this player
-        int already_connected_players = m_expected_ai_player_names.size() + server.m_networking.NumEstablishedPlayers();
-        if (already_connected_players >= m_num_expected_players) {
-            // too many human players
-            ErrorLogger(FSM) << "WaitingForSPGameJoiners.JoinGame : A human player attempted to join the game but there was not enough room.  Terminating connection.";
-            server.m_networking.Disconnect(player_connection);
-        } else {
-            // expected human player
-
-            if (!player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) {
+        // expected human player
+        if (!player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) {
+            if (player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER))
+                client_type = Networking::CLIENT_TYPE_HUMAN_OBSERVER;
+            else if (player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR))
+                client_type = Networking::CLIENT_TYPE_HUMAN_MODERATOR;
+            else {
                 player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
                 server.Networking().Disconnect(player_connection);
                 return discard_event();
             }
-
-            fsm.EstablishPlayer(player_connection,
-                                player_name,
-                                client_type,
-                                player_connection->ClientVersionString(),
-                                roles);
         }
+
+        fsm.EstablishPlayer(player_connection,
+                            player_name,
+                            client_type,
+                            player_connection->ClientVersionString(),
+                            roles);
     } else {
         // non-human player
         ErrorLogger(FSM) << "WaitingForMPGameJoiners.AuthResponse : A non-human player attempted to join the game.";
@@ -2348,7 +2349,7 @@ sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
     TraceLogger(FSM) << "(ServerFSM) WaitingForMPGameJoiners.CheckStartConditions";
     ServerApp& server = Server();
 
-    if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
+    if (m_expected_ai_player_names.empty()) {
         if (!server.m_python_server.IsPythonRunning()) {
             post_event(ShutdownServer());
             return discard_event();
