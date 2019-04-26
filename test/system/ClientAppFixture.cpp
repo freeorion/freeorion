@@ -240,6 +240,14 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         m_lobby_updated = true;
         ExtractLobbyUpdateMessageData(msg, m_lobby_data);
         return true;
+    case Message::ERROR_MSG: {
+            int player_id;
+            std::string problem;
+            bool fatal;
+            ExtractErrorMessageData(msg, player_id, problem, fatal);
+            ErrorLogger() << "Catch " << (fatal ? "fatal " : "") << "error " << problem << " from player " << player_id;
+        }
+        return false;
     default:
         ErrorLogger() << "Unknown message type: " << msg.Type();
         return false;
