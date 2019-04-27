@@ -64,7 +64,6 @@ public:
 protected:
     /** \name Structors */ ///@{
     Control();
-
     Control(X x, Y y, X w, Y h, Flags<WndFlag> flags = INTERACTIVE);
     //@}
 
@@ -72,8 +71,8 @@ protected:
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
-    Clr  m_color;    ///< the color of the control
-    bool m_disabled; ///< whether or not this control is disabled
+    Clr  m_color;               ///< the color of the control
+    bool m_disabled = false;    ///< whether or not this control is disabled
 };
 
 } // namespace GG
