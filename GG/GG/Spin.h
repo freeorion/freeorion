@@ -89,20 +89,20 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    Pt MinUsableSize() const override;
+    Pt      MinUsableSize() const override;
 
-    T      Value() const;              ///< returns the current value of the control's text
-    T      StepSize() const;           ///< returns the step size of the control
-    T      MinValue() const;           ///< returns the minimum value of the control
-    T      MaxValue() const;           ///< returns the maximum value of the control
-    bool   Editable() const;           ///< returns true if the spinbox can have its value typed in directly
+    T       Value() const;              ///< returns the current value of the control's text
+    T       StepSize() const;           ///< returns the step size of the control
+    T       MinValue() const;           ///< returns the minimum value of the control
+    T       MaxValue() const;           ///< returns the maximum value of the control
+    bool    Editable() const;           ///< returns true if the spinbox can have its value typed in directly
 
-    X      ButtonWidth() const;        ///< returns the width used for the up and down buttons
+    X       ButtonWidth() const;        ///< returns the width used for the up and down buttons
 
-    Clr    TextColor() const;          ///< returns the text color
-    Clr    InteriorColor() const;      ///< returns the the interior color of the control
-    Clr    HiliteColor() const;        ///< returns the color used to render hiliting around selected text
-    Clr    SelectedTextColor() const;  ///< returns the color used to render selected text
+    Clr     TextColor() const;          ///< returns the text color
+    Clr     InteriorColor() const;      ///< returns the the interior color of the control
+    Clr     HiliteColor() const;        ///< returns the color used to render hiliting around selected text
+    Clr     SelectedTextColor() const;  ///< returns the color used to render selected text
 
     mutable ValueChangedSignalType ValueChangedSignal; ///< the value changed signal object for this Spin
     //@}
@@ -135,9 +135,9 @@ protected:
     enum {BORDER_THICK = 2, PIXEL_MARGIN = 5};
 
     /** \name Accessors */ ///@{
-    Button*     UpButton() const;   ///< returns a pointer to the Button control used as this control's up button
-    Button*     DownButton() const; ///< returns a pointer to the Button control used as this control's down button
-    Edit*       GetEdit() const;    ///< returns a pointer to the Edit control used to render this control's text and accept keyboard input
+    Button* UpButton() const;   ///< returns a pointer to the Button control used as this control's up button
+    Button* DownButton() const; ///< returns a pointer to the Button control used as this control's down button
+    Edit*   GetEdit() const;    ///< returns a pointer to the Edit control used to render this control's text and accept keyboard input
     //@}
 
     /** \name Mutators */ ///@{
@@ -147,7 +147,7 @@ protected:
     virtual void SetEditTextFromValue();
     //@}
 
-    std::shared_ptr<Edit>      m_edit;
+    std::shared_ptr<Edit> m_edit;
 
 private:
     void ConnectSignals();
@@ -163,8 +163,8 @@ private:
 
     bool       m_editable;
 
-    std::shared_ptr<Button>    m_up_button;
-    std::shared_ptr<Button>    m_down_button;
+    std::shared_ptr<Button> m_up_button;
+    std::shared_ptr<Button> m_down_button;
 
     X          m_button_width = GG::X(15);
 
@@ -379,6 +379,11 @@ Edit* Spin<T>::GetEdit() const
 template<class T>
 void Spin<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
+    if (Disabled()) {
+        Control::KeyPress(key, key_code_point, mod_keys);
+        return;
+    }
+
     switch (key) {
     case GGK_HOME:
         SetValueImpl(m_min_value, true);
@@ -406,12 +411,15 @@ void Spin<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
 template<class T>
 void Spin<T>::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
-    for (int i = 0; i < move; ++i) {
+    if (Disabled()) {
+        Control::MouseWheel(pt, move, mod_keys);
+        return;
+    }
+
+    for (int i = 0; i < move; ++i)
         IncrImpl(true);
-    }
-    for (int i = 0; i < -move; ++i) {
+    for (int i = 0; i < -move; ++i)
         DecrImpl(true);
-    }
 }
 
 template<class T>
