@@ -683,6 +683,18 @@ sc::result Idle::react(const Hostless&) {
     std::vector<PlayerSaveGameData> player_save_game_data;
     if (autostart_load_filename.empty()) {
         DebugLogger(FSM) << "Start new game";
+        server.InitializePython();
+        std::list<PlayerSetupData> human_players = server.FillListPlayers();
+
+        for (auto& player_setup_data : human_players) {
+            DebugLogger(FSM) << "Create player " << player_setup_data.m_player_name;
+            player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
+            player_setup_data.m_client_type =   Networking::CLIENT_TYPE_HUMAN_PLAYER;
+            player_setup_data.m_empire_color =  GetUnusedEmpireColour(lobby_data->m_players);
+            player_setup_data.m_authenticated = true;
+            lobby_data->m_players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
+        }
+
         const SpeciesManager& sm = GetSpeciesManager();
         auto max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
         const int ai_count = GetOptionsDB().Get<int>("setup.ai.player.count");
