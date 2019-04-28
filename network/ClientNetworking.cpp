@@ -356,7 +356,12 @@ bool ClientNetworking::Impl::ConnectToServer(
     try {
         while(!IsConnected() && Clock::now() < deadline) {
             for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
-                m_socket.close();
+                try {
+                    m_socket.close();
+                } catch (const std::exception& e) {
+                    ErrorLogger(network) << "ConnectToServer() : unable to close socket due to exception: " << e.what();
+                    m_socket = boost::asio::ip::tcp::socket(m_io_context);
+                }
 
                 m_socket.async_connect(*it, boost::bind(&ClientNetworking::Impl::HandleConnection, this,
                                                         &it,
