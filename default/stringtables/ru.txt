@@ -2104,10 +2104,10 @@ NOT_READY_BN
 Отклонить
 
 PLAYER_ENTERED_GAME
-зашёл в игру
+%1% зашёл в игру
 
 PLAYER_LEFT_GAME
-покинул игру
+%1% покинул игру
 
 ##
 ## Galaxy Setup Screen

@@ -287,7 +287,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         }
         // add "player left game" message
         boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
-        std::string data = player_connection->PlayerName() + " [[" + UserStringNop("PLAYER_LEFT_GAME") + "]]";
+        std::string data = (boost::format("[[PLAYER_LEFT_GAME,%s]]") % player_connection->PlayerName()).str();
         m_server.PushChatMessage(data, "", GG::CLR_WHITE, timestamp);
 
         // send message to other players
@@ -504,7 +504,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         {
             // add "player enter game" message
             boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
-            std::string data = player_name + " [[" + UserStringNop("PLAYER_ENTERED_GAME") + "]]";
+            std::string data = (boost::format("[[PLAYER_ENTERED_GAME,%s]]") % player_connection->PlayerName()).str();
             m_server.PushChatMessage(data, "", GG::CLR_WHITE, timestamp);
 
             // send message to other players
@@ -994,7 +994,7 @@ sc::result MPLobby::react(const Disconnection& d) {
 
         // add "player left game" message
         boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
-        std::string data = player_connection->PlayerName() + " [[" + UserStringNop("PLAYER_LEFT_GAME") + "]]";
+        std::string data = (boost::format("[[PLAYER_LEFT_GAME,%s]]") % player_connection->PlayerName()).str();
         server.PushChatMessage(data, "", GG::CLR_WHITE, timestamp);
 
         // send message to other players

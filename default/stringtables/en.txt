@@ -2338,11 +2338,13 @@ Decline
 PLAYING_GAME
 Playing game: %1%
 
+# %1% is a player name
 PLAYER_ENTERED_GAME
-entered game
+%1% entered game
 
+# %1% is a player name
 PLAYER_LEFT_GAME
-left game
+%1% left game
 
 ##
 ## Galaxy Setup Screen
