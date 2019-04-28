@@ -33,6 +33,9 @@ a branch with a concise name; if the branch implements an issue call it
 `fix-<Issue Number>`.  To publish your contribution, create a [Pull Request] and
 wait for feedback from the developers.
 
+By submitting a pull request, you agree to license its contents under the applicable
+[FreeOrion license(s)].
+
 To ensure your PR won't be rejected, please make sure that:
 
 * The code changes match the [Code Standards].  For Python code we follow
@@ -71,3 +74,4 @@ when working within the FreeOrion project.  Those are:
 [Pull Request]: https://help.github.com/articles/proposing-changes-to-your-work-with-pull-requests/
 [Commit Messages]: http://chris.beams.io/posts/git-commit/
 [PEP 8]: https://www.python.org/dev/peps/pep-0008/
+[FreeOrion license(s)]: https://github.com/freeorion/freeorion/blob/master/default/COPYING
