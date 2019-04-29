@@ -277,9 +277,42 @@ class ShipTester(UniverseObjectTester):
             self.objects_to_test.extend(map(universe.getShip, universe.getFleet(fid).shipIDs))
 
 
+class PartTypeTester(PropertyTester):
+    class_to_test = fo.partType
+    properties = deepcopy(PropertyTester.properties)
+    properties.update({
+        "name": {
+            TYPE: str,
+        },
+        "partClass": {
+            TYPE: int,
+        },
+        "capacity": {
+            TYPE: float,
+        },
+        "secondaryStat": {
+            TYPE: float,
+        },
+        "mountableSlotTypes": {
+            TYPE: fo.ShipSlotVec,
+        },
+        "costTimeLocationInvariant": {
+            TYPE: bool,
+        },
+    })
+
+    def setUp(self):
+        universe = fo.getUniverse()
+        ships = map(universe.getShip, universe.shipIDs)
+        self.objects_to_test = []
+        for ship in ships:
+            design = ship.design
+            self.objects_to_test.extend([fo.getPartType(part) for part in design.parts if part])
+
+
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
-    test_classes = [UniverseObjectTester, UniverseTester, FleetTester, ShipTester]
+    test_classes = [UniverseObjectTester, UniverseTester, FleetTester, ShipTester, PartTypeTester]
     for test_class in test_classes:
         if issubclass(test_class, PropertyTester):
             # generate the tests from setup data
