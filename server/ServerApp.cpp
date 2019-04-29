@@ -226,13 +226,14 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         args.push_back(GetOptionsDB().Get<std::string>("log-level"));
     }
 
-#ifdef FREEORION_LINUX
     if (GetOptionsDB().Get<bool>("testing")) {
+        args.push_back("--testing");
+#ifdef FREEORION_LINUX
         // Dirty hack to output log to console.
         args.push_back("--log-file");
         args.push_back("/proc/self/fd/1");
-    }
 #endif
+    }
 
     args.push_back("--ai-path");
     args.push_back(GetOptionsDB().Get<std::string>("ai-path"));

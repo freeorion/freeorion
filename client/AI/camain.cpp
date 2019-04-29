@@ -44,6 +44,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     InitDirs((args.empty() ? "" : *args.begin()));
 #endif
 
+    GetOptionsDB().AddFlag("testing", UserStringNop("OPTIONS_DB_TESTING"), false);
     GetOptionsDB().Add<std::string>('h', "help", UserStringNop("OPTIONS_DB_HELP"), "NOOP",
                                     Validator<std::string>(), false);
 
