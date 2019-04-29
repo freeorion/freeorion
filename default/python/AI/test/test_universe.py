@@ -53,7 +53,7 @@ class PropertyTester(unittest.TestCase):
                 self.__test_property(property, obj, **kwargs)
         return _test_case
 
-    def __test_property(self, property_to_test, obj, type=None, read_only=None, additional_tests=[]):
+    def __test_property(self, property_to_test, obj, type=None, read_only=True, additional_tests=[]):
         self.assertIn(property_to_test, dir(obj))
         property_to_test = getattr(self.class_to_test, property_to_test)
         return_value = property_to_test.fget(obj)
@@ -62,10 +62,9 @@ class PropertyTester(unittest.TestCase):
         else:
             self.assertIsNone(return_value)
 
-        if read_only is True:
+        if read_only:
             self.assertIsNone(property_to_test.fset)
-
-        if read_only is False:
+        else:
             property_to_test.fset(obj, type())
             self.assertEqual(property_to_test.fget(obj), type())
             property_to_test.fset(obj, return_value)
@@ -83,55 +82,42 @@ class UniverseObjectTester(PropertyTester):
     properties.update({
         "id": {
             TYPE: int,
-            READ_ONLY: True,
         },
         "name": {
             TYPE: str,
-            READ_ONLY: True,
         },
         "x": {
             TYPE: float,
-            READ_ONLY: True,
         },
         "y": {
             TYPE: float,
-            READ_ONLY: True,
         },
         "systemID": {
             TYPE: int,
-            READ_ONLY: True,
         },
         "unowned": {
             TYPE: bool,
-            READ_ONLY: True,
         },
         "owner": {
             TYPE: int,
-            READ_ONLY: True,
         },
         "creationTurn": {
             TYPE: int,
-            READ_ONLY: True,
         },
         "ageInTurns": {
             TYPE: int,
-            READ_ONLY: True,
         },
         "containedObjects": {
             TYPE: fo.IntSet,
-            READ_ONLY: True,
         },
         "containerObject": {
             TYPE: int,
-            READ_ONLY: True,
         },
         "tags": {
             TYPE: fo.StringSet,
-            READ_ONLY: True,
         },
         "meters": {
             TYPE: fo.MeterTypeMeterMap,
-            READ_ONLY: True,
         },
     })
 
@@ -147,69 +133,54 @@ class FleetTester(UniverseObjectTester):
     properties.update({
         "fuel": {
             TYPE: float,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [greater_or_equal(0)],
         },
         "maxFuel": {
             TYPE: float,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [greater_or_equal(0)],
         },
         "finalDestinationID": {
             TYPE: int,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [is_equal(INVALID_ID)],
         },
         "previousSystemID": {
             TYPE: int,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [is_equal(INVALID_ID)],
         },
         "nextSystemID": {
             TYPE: int,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [is_equal(INVALID_ID)],
         },
         "aggressive": {
             TYPE: bool,
-            READ_ONLY: True,
         },
         "speed": {
             TYPE: float,
-            READ_ONLY: True,
         },
         "hasMonsters": {
             TYPE: bool,
-            READ_ONLY: True,
         },
         "hasFighterShips": {
             TYPE: bool,
-            READ_ONLY: True,
         },
         "hasColonyShips": {
             TYPE: bool,
-            READ_ONLY: True,
         },
         "hasOutpostShips": {
             TYPE: bool,
-            READ_ONLY: True,
         },
         "hasTroopShips": {
             TYPE: bool,
-            READ_ONLY: True,
         },
         "numShips": {
             TYPE: int,
-            READ_ONLY: True,
         },
         "empty": {
             TYPE: int,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [is_false()],
         },
         "shipIDs": {
             TYPE: fo.IntSet,
-            READ_ONLY: True,
         },
     })
 
@@ -226,96 +197,75 @@ class ShipTester(UniverseObjectTester):
     properties.update({
         "design": {
             TYPE: fo.shipDesign,
-            READ_ONLY: True,
         },
         "designID": {
             TYPE: int,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [greater_or_equal(0)],
         },
         "fleetID": {
             TYPE: int,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [greater_or_equal(0)],
         },
         "producedByEmpireID": {
             TYPE: int,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [greater_or_equal(INVALID_ID)],
         },
         "arrivedOnTurn": {
             TYPE: int,
-            READ_ONLY: True,
         },
         "lastResuppliedOnTurn": {
             TYPE: int,
-            READ_ONLY: True,
         },
         "lastTurnActiveInCombat": {
             TYPE: int,
-            READ_ONLY: True,
         },
         "isMonster": {
             TYPE: bool,
-            READ_ONLY: True,
         },
         "isArmed": {
             TYPE: bool,
-            READ_ONLY: True,
         },
         "hasFighters": {
             TYPE: bool,
-            READ_ONLY: True,
         },
         "canColonize": {
             TYPE: bool,
-            READ_ONLY: True,
         },
         "canInvade": {
             TYPE: bool,
-            READ_ONLY: True,
         },
         "canBombard": {
             TYPE: bool,
-            READ_ONLY: True,
         },
         "speciesName": {
             TYPE: str,
-            READ_ONLY: True,
         },
         "speed": {
             TYPE: float,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [greater_or_equal(0)],
         },
         "colonyCapacity": {
             TYPE: float,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [greater_or_equal(0)],
         },
         "troopCapacity": {
             TYPE: float,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [greater_or_equal(0)],
         },
         "orderedScrapped": {
             TYPE: bool,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [is_false()],
         },
         "orderedColonizePlanet": {
             TYPE: int,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [is_equal(INVALID_ID)],
         },
         "orderedInvadePlanet": {
             TYPE: int,
-            READ_ONLY: True,
             ADDITIONAL_TESTS: [is_equal(INVALID_ID)],
         },
         "partMeters": {
             TYPE: fo.ShipPartMeterMap,
-            READ_ONLY: True,
         },
     })
 
