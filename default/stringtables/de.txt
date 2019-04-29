@@ -6791,6 +6791,199 @@ Hellsichtskugel
 BLD_SCRYING_SPHERE_DESC
 Macht alle Planeten sichtbar, die ebenfalls eine [[BLD_SCRYING_SPHERE]] haben.
 
+BLD_COL_ABADDONI
+Abaddoni-Kolonie
+
+BLD_COL_ABADDONI_DESC
+[[BLD_COL_PART_1]] [[species SP_ABADDONI]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_ABADDONI]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_BANFORO
+Banforo-Kolonie
+
+BLD_COL_BANFORO_DESC
+[[BLD_COL_PART_1]] [[species SP_BANFORO]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_BANFORO]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_CHATO
+Chato-Kolonie
+
+BLD_COL_CHATO_DESC
+[[BLD_COL_PART_1]] [[species SP_CHATO]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_CHATO]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_CRAY
+Cray-Kolonie
+
+BLD_COL_CRAY_DESC
+[[BLD_COL_PART_1]] [[species SP_CRAY]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_CRAY]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_DERTHREAN
+Derthrean-Kolonie
+
+BLD_COL_DERTHREAN_DESC
+[[BLD_COL_PART_1]] [[species SP_DERTHREAN]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_DERTHREAN]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_EAXAW
+Eaxaw-Kolonie
+
+BLD_COL_EAXAW_DESC
+[[BLD_COL_PART_1]] [[species SP_EAXAW]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_EAXAW]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_EGASSEM
+Egassem-Kolonie
+
+BLD_COL_EGASSEM_DESC
+[[BLD_COL_PART_1]] [[species SP_EGASSEM]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_EGASSEM]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_ETTY
+Etty-Kolonie
+
+BLD_COL_ETTY_DESC
+[[BLD_COL_PART_1]] [[species SP_ETTY]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_ETTY]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_FURTHEST
+Furthest-Kolonie
+
+BLD_COL_FURTHEST_DESC
+[[BLD_COL_PART_1]] [[species SP_FURTHEST]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_FURTHEST]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_FULVER
+Fulver-Kolonie
+
+BLD_COL_FULVER_DESC
+[[BLD_COL_PART_1]] [[species SP_FULVER]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_FULVER]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_GEORGE
+George-Kolonie
+
+BLD_COL_GEORGE_DESC
+[[BLD_COL_PART_1]] [[species SP_GEORGE]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_GEORGE]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_GYSACHE
+Gysache-Kolonie
+
+BLD_COL_GYSACHE_DESC
+[[BLD_COL_PART_1]] [[species SP_GYSACHE]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_GYSACHE]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_HAPPY
+Happybirthday-Kolonie
+
+BLD_COL_HAPPY_DESC
+[[BLD_COL_PART_1]] [[species SP_HAPPY]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_HAPPY]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_HHHOH
+Hhhoh-Kolonie
+
+BLD_COL_HHHOH_DESC
+[[BLD_COL_PART_1]] [[species SP_HHHOH]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_HHHOH]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_HUMAN
+Menschenkolonie
+
+BLD_COL_HUMAN_DESC
+[[BLD_COL_PART_1]] [[species SP_HUMAN]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_HUMAN]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_KILANDOW
+Kilandow-Kolonie
+
+BLD_COL_KILANDOW_DESC
+[[BLD_COL_PART_1]] [[species SP_KILANDOW]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_KILANDOW]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_KOBUNTURA
+Kobuntura-Kolonie
+
+BLD_COL_KOBUNTURA_DESC
+[[BLD_COL_PART_1]] [[species SP_KOBUNTURA]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_KOBUNTURA]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_LAENFA
+Laenfa-Kolonie
+
+BLD_COL_LAENFA_DESC
+[[BLD_COL_PART_1]] [[species SP_LAENFA]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_LAENFA]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_MISIORLA
+Misiorla-Kolonie
+
+BLD_COL_MISIORLA_DESC
+[[BLD_COL_PART_1]] [[species SP_MISIORLA]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_MISIORLA]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_MUURSH
+Mu Ursh-Kolonie
+
+BLD_COL_MUURSH_DESC
+[[BLD_COL_PART_1]] [[species SP_MUURSH]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_MUURSH]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_PHINNERT
+Phinnert-Kolonie
+
+BLD_COL_PHINNERT_DESC
+[[BLD_COL_PART_1]] [[species SP_PHINNERT]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_PHINNERT]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_REPLICON
+Replicon-Kolonie
+
+BLD_COL_REPLICON_DESC
+[[BLD_COL_PART_1]] [[species SP_REPLICON]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_REPLICON]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_SCYLIOR
+Scylior-Kolonie
+
+BLD_COL_SCYLIOR_DESC
+[[BLD_COL_PART_1]] [[species SP_SCYLIOR]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_SCYLIOR]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_SETINON
+Setinon-Kolonie
+
+BLD_COL_SETINON_DESC
+[[BLD_COL_PART_1]] [[species SP_SETINON]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_SETINON]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_SILEXIAN
+Silexian-Kolonie
+
+BLD_COL_SILEXIAN_DESC
+[[BLD_COL_PART_1]] [[species SP_SILEXIAN]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_SILEXIAN]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_SLY
+Sly-Kolonie
+
+BLD_COL_SLY_DESC
+[[BLD_COL_PART_1]] [[species SP_SLY]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_SLY]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_SSLITH
+Sslith-Kolonie
+
+BLD_COL_SSLITH_DESC
+[[BLD_COL_PART_1]] [[species SP_SSLITH]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_SSLITH]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_TAEGHIRUS
+Tae Ghirus-Kolonie
+
+BLD_COL_TAEGHIRUS_DESC
+[[BLD_COL_PART_1]] [[species SP_TAEGHIRUS]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_TAEGHIRUS]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_TRITH
+Trith-Kolonie
+
+BLD_COL_TRITH_DESC
+[[BLD_COL_PART_1]] [[species SP_TRITH]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_TRITH]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_UGMORS
+Ugmors-Kolonie
+
+BLD_COL_UGMORS_DESC
+[[BLD_COL_PART_1]] [[species SP_UGMORS]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_UGMORS]]-Kolonie [[BLD_COL_PART_3]].
+
+BLD_COL_EXOBOT
+Exobot-Kolonie
+
+BLD_COL_EXOBOT_DESC
+Dieses Gebäude kann nur auf einem [[encyclopedia OUTPOSTS_TITLE]] errichtet werden und erweitert den [[OUTPOSTS_TITLE]] in eine [[species SP_EXOBOT]]-Kolonie. Die Exobots werden als Teil der Kolonie vor Ort gebaut und müssen daher nicht von einer anderen Exobot-Kolonie bereitgestellt werden. Die Kolonie muss zum Bau aber dennoch durch einen bewohnten Planeten des Imperiums versorgt werden und ist außerdem teurer als andere Kolonien.
+
+BLD_COL_SUPER_TEST
+Supertester-Kolonie
+
+BLD_COL_SUPER_TEST_DESC
+[[BLD_COL_PART_1]] Supertester-Kolonie. [[BLD_COL_PART_2]] Supertester-Kolonie [[BLD_COL_PART_3]].
+
+
 
 ##
 ## Hull and ship part description templates
@@ -8027,11 +8220,11 @@ Ein widernatürlich großes Weltraummonster.
 SH_NEBULOUS_BODY
 Nebliger Körper
 
-#SH_EXP_OUTPOST_HULL
-#Experimentor Outpost Hull
+SH_EXP_OUTPOST_HULL
+Experimentoren-Außenpostenrumpf
 
-#SH_EXP_OUTPOST_HULL_DESC
-#A hull used by the Experimentors use to transport experimental equipment to other galaxies.
+SH_EXP_OUTPOST_HULL_DESC
+Ein Rumpf, mit dem die Experimentoren Versuchsausrüstung in andere Galaxien befördern.
 
 SH_COSMIC_DRAGON_BODY
 Kosmischer Drachenkörper
