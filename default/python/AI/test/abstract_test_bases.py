@@ -2,15 +2,8 @@ import unittest
 
 
 class PropertyTester(unittest.TestCase):
-    # hack: we don't want unittest to run this abstract test base.
-    # Therefore, we override this classes run function to do nothing.
     class_to_test = None
     properties = {}
-
-    def __init__(self, *args, **kwargs):
-        super(PropertyTester, self).__init__(*args, **kwargs)
-        if self.__class__ == PropertyTester:
-            self.run = lambda self, *args, **kwargs: None
 
     @classmethod
     def generate_tests(cls):
