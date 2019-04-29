@@ -41,7 +41,6 @@ from common.listeners import listener
 from character.character_module import Aggression
 from character.character_strings_module import get_trait_name_aggression, possible_capitals
 
-
 main_timer = AITimer('timer', write_log=True)
 turn_timer = AITimer('bucket', write_log=True)
 
@@ -69,7 +68,7 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     import unittest
     loader = unittest.TestLoader()
     testSuite = loader.discover(os.path.join(fo.getAIDir(), 'test'))
-    runner = unittest.TextTestRunner()
+    runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(testSuite)
     for failure in result.failures:
         error(failure)
