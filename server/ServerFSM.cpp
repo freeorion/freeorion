@@ -285,6 +285,18 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                 m_server.DropPlayerEmpireLink(id);
             }
         }
+        // add "player left game" message
+        boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
+        std::string data = std::string("[[") + UserStringNop("PLAYER_LEFT_GAME") + "," + player_connection->PlayerName() + "]]";
+        m_server.PushChatMessage(data, "", GG::CLR_WHITE, timestamp);
+
+        // send message to other players
+        for (auto it = m_server.m_networking.established_begin();
+             it != m_server.m_networking.established_end(); ++it)
+        {
+            if (player_connection != (*it))
+                (*it)->SendMessage(ServerPlayerChatMessage(Networking::INVALID_PLAYER_ID, timestamp, data));
+        }
     } else {
         DebugLogger(FSM) << "Client quit before id was assigned.";
     }
@@ -490,6 +502,19 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
             client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
             client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
         {
+            // add "player enter game" message
+            boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
+            std::string data = std::string("[[") + UserStringNop("PLAYER_ENTERED_GAME") + "," + player_connection->PlayerName() + "]]";
+            m_server.PushChatMessage(data, "", GG::CLR_WHITE, timestamp);
+
+            // send message to other players
+            for (auto it = m_server.m_networking.established_begin();
+                 it != m_server.m_networking.established_end(); ++it)
+            {
+                if (player_connection != (*it))
+                    (*it)->SendMessage(ServerPlayerChatMessage(Networking::INVALID_PLAYER_ID, timestamp, data));
+            }
+
             std::vector<std::reference_wrapper<const ChatHistoryEntity>> chat_history;
             for (const auto& elem : m_server.GetChatHistory()) {
                 chat_history.push_back(std::cref(elem));
@@ -965,6 +990,19 @@ sc::result MPLobby::react(const Disconnection& d) {
         // drop ready flag as player list changed
         for (auto& plrs : m_lobby_data->m_players) {
             plrs.second.m_player_ready = false;
+        }
+
+        // add "player left game" message
+        boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
+        std::string data = std::string("[[") + UserStringNop("PLAYER_LEFT_GAME") + "," + player_connection->PlayerName() + "]]";
+        server.PushChatMessage(data, "", GG::CLR_WHITE, timestamp);
+
+        // send message to other players
+        for (auto it = server.m_networking.established_begin();
+             it != server.m_networking.established_end(); ++it)
+        {
+            if (player_connection != (*it))
+                (*it)->SendMessage(ServerPlayerChatMessage(Networking::INVALID_PLAYER_ID, timestamp, data));
         }
     } else {
         DebugLogger(FSM) << "MPLobby.Disconnection : Disconnecting player (" << id << ") was not in lobby";
