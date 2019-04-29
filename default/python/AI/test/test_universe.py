@@ -6,6 +6,18 @@ import freeOrionAIInterface as fo
 from AIDependencies import INVALID_ID
 
 
+def greater_or_equal(arg):
+    return unittest.TestCase.assertGreaterEqual, arg
+
+
+def is_equal(arg):
+    return unittest.TestCase.assertGreaterEqual, arg
+
+
+def is_false():
+    return (unittest.TestCase.assertFalse,)
+
+
 TYPE = "type"
 READ_ONLY = "read_only"
 ADDITIONAL_TESTS = "additional_tests"
@@ -20,6 +32,9 @@ class UniverseTester(unittest.TestCase):
 class PropertyTester(unittest.TestCase):
     # hack: we don't want unittest to run this abstract test base.
     # Therefore, we override this classes run function to do nothing.
+    class_to_test = None
+    properties = {}
+
     def __init__(self, *args, **kwargs):
         super(PropertyTester, self).__init__(*args, **kwargs)
         if self.__class__ == PropertyTester:
@@ -63,77 +78,67 @@ class PropertyTester(unittest.TestCase):
 class UniverseObjectTester(PropertyTester):
     # hack: we don't want unittest to run this abstract test base.
     # Therefore, we override this classes run function to do nothing.
-    properties = {
-            "id": {
-                TYPE: int,
-                READ_ONLY: True,
-            },
-            "name": {
-                TYPE: str,
-                READ_ONLY: True,
-            },
-            "x": {
-                TYPE: float,
-                READ_ONLY: True,
-            },
-            "y": {
-                TYPE: float,
-                READ_ONLY: True,
-            },
-            "systemID": {
-                TYPE: int,
-                READ_ONLY: True,
-            },
-            "unowned": {
-                TYPE: bool,
-                READ_ONLY: True,
-            },
-            "owner": {
-                TYPE: int,
-                READ_ONLY: True,
-            },
-            "creationTurn": {
-                TYPE: int,
-                READ_ONLY: True,
-            },
-            "ageInTurns": {
-                TYPE: int,
-                READ_ONLY: True,
-            },
-            "containedObjects": {
-                TYPE: fo.IntSet,
-                READ_ONLY: True,
-            },
-            "containerObject": {
-                TYPE: int,
-                READ_ONLY: True,
-            },
-            "tags": {
-                TYPE: fo.StringSet,
-                READ_ONLY: True,
-            },
-            "meters": {
-                TYPE: fo.MeterTypeMeterMap,
-                READ_ONLY: True,
-            },
-    }
+    class_to_test = fo.universeObject
+    properties = deepcopy(PropertyTester.properties)
+    properties.update({
+        "id": {
+            TYPE: int,
+            READ_ONLY: True,
+        },
+        "name": {
+            TYPE: str,
+            READ_ONLY: True,
+        },
+        "x": {
+            TYPE: float,
+            READ_ONLY: True,
+        },
+        "y": {
+            TYPE: float,
+            READ_ONLY: True,
+        },
+        "systemID": {
+            TYPE: int,
+            READ_ONLY: True,
+        },
+        "unowned": {
+            TYPE: bool,
+            READ_ONLY: True,
+        },
+        "owner": {
+            TYPE: int,
+            READ_ONLY: True,
+        },
+        "creationTurn": {
+            TYPE: int,
+            READ_ONLY: True,
+        },
+        "ageInTurns": {
+            TYPE: int,
+            READ_ONLY: True,
+        },
+        "containedObjects": {
+            TYPE: fo.IntSet,
+            READ_ONLY: True,
+        },
+        "containerObject": {
+            TYPE: int,
+            READ_ONLY: True,
+        },
+        "tags": {
+            TYPE: fo.StringSet,
+            READ_ONLY: True,
+        },
+        "meters": {
+            TYPE: fo.MeterTypeMeterMap,
+            READ_ONLY: True,
+        },
+    })
 
-    def __init__(self, *args, **kwargs):
-        super(UniverseObjectTester, self).__init__(*args, **kwargs)
-        if self.__class__ == UniverseObjectTester:
-            self.run = lambda self, *args, **kwargs: None
-
-
-def greater_or_equal(arg):
-    return unittest.TestCase.assertGreaterEqual, arg
-
-
-def is_equal(arg):
-    return unittest.TestCase.assertGreaterEqual, arg
-
-
-def is_false():
-    return (unittest.TestCase.assertFalse,)
+    def setUp(self):
+        universe = fo.getUniverse()
+        object_ids = list(universe.allObjectIDs)
+        self.objects_to_test = map(universe.getObject, object_ids)
 
 
 class FleetTester(UniverseObjectTester):
@@ -200,7 +205,7 @@ class FleetTester(UniverseObjectTester):
         "empty": {
             TYPE: int,
             READ_ONLY: True,
-            ADDITIONAL_TESTS: [(unittest.TestCase.assertFalse,)],
+            ADDITIONAL_TESTS: [is_false()],
         },
         "shipIDs": {
             TYPE: fo.IntSet,
@@ -209,7 +214,6 @@ class FleetTester(UniverseObjectTester):
     })
 
     def setUp(self):
-        super(FleetTester, self).setUp()
         universe = fo.getUniverse()
         fleet_ids = list(universe.fleetIDs)
         self.objects_to_test = map(universe.getFleet, fleet_ids)
@@ -316,7 +320,6 @@ class ShipTester(UniverseObjectTester):
     })
 
     def setUp(self):
-        super(ShipTester, self).setUp()
         universe = fo.getUniverse()
         fleet_ids = list(universe.fleetIDs)
         self.objects_to_test = []
@@ -324,9 +327,13 @@ class ShipTester(UniverseObjectTester):
             self.objects_to_test.extend(map(universe.getShip, universe.getFleet(fid).shipIDs))
 
 
-
-
-
-
-FleetTester.generate_tests()
-ShipTester.generate_tests()
+def load_tests(loader, tests, pattern):
+    suite = unittest.TestSuite()
+    test_classes = [UniverseObjectTester, UniverseTester, FleetTester, ShipTester]
+    for test_class in test_classes:
+        if issubclass(test_class, PropertyTester):
+            # generate the tests from setup data
+            test_class.generate_tests()
+        tests = loader.loadTestsFromTestCase(test_class)
+        suite.addTests(tests)
+    return suite
