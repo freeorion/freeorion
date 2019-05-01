@@ -1919,7 +1919,7 @@ OPTIONS_DB_MUSIC_VOLUME
 The volume (0 to 255) at which music should be played.
 
 OPTIONS_DB_QUICKSTART
-Starts a new quick-start game, bypassing the main menu.
+Starts a new quick-start game, bypassing the main menu in single-player or lobby in multi-player. In multi-player, it requires hostless mode and no restriction on the minimum number of connected players, because the server will start with no connected players.
 
 OPTIONS_DB_CONTINUE
 Continues play from latest save, bypassing the main menu.

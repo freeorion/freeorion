@@ -130,7 +130,6 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().Add<bool>("video.fullscreen.fake.enabled",   UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),       FAKE_MODE_CHANGE_FLAG);
         GetOptionsDB().Add<int>("video.monitor.id",                 UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"),  0,
                                 RangedValidator<int>(0, 5));
-        GetOptionsDB().AddFlag('q', "quickstart",                   UserStringNop("OPTIONS_DB_QUICKSTART"),             false);
         GetOptionsDB().AddFlag("continue",                          UserStringNop("OPTIONS_DB_CONTINUE"),               false);
         GetOptionsDB().AddFlag("auto-quit",                         UserStringNop("OPTIONS_DB_AUTO_QUIT"),              false);
         GetOptionsDB().Add<int>("auto-advance-n-turns",             UserStringNop("OPTIONS_DB_AUTO_N_TURNS"),           0,
