@@ -157,11 +157,17 @@ add_compile_options(
     $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:DEBUG>>:/MD>
 )
 
+# Determine minimum Windows target (see FreeOrion SDK)
+if(WIN32)
+    string(REGEX REPLACE "^v([1-9][0-9]*)(.*)$" "\\1;\\2" _VS_PLATFORM_TOOLSET "${CMAKE_VS_PLATFORM_TOOLSET}")
+    list(GET _VS_PLATFORM_TOOLSET 1 _VS_PLATFORM_TOOLSET_TARGET)
+endif()
+
 set_property(DIRECTORY APPEND
     PROPERTY COMPILE_DEFINITIONS
-        # Set minimum Windows target version to WindowsXP
+        # Set minimum Windows target version to WindowsXP or Vista depending on toolset
         # https://msdn.microsoft.com/en-us/library/aa383745.aspx
-        $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=_WIN32_WINNT_WINXP>
+        $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=$<IF:$<STREQUAL:${_VS_PLATFORM_TOOLSET_TARGET},"_xp">,_WIN32_WINNT_WINXP,_WIN32_WINNT_VISTA>>
         # Default to unicode variants when using Win32 API
         # https://msdn.microsoft.com/en-us/library/dybsewaf.aspx
         $<$<PLATFORM_ID:Windows>:_UNICODE>
