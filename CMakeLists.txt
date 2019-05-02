@@ -13,7 +13,7 @@ set(CMAKE_OSX_ARCHITECTURES x86_64 CACHE STRING "Set the architecture the univer
 IF(CMAKE_GENERATOR STREQUAL "Xcode")
   set(CMAKE_CONFIGURATION_TYPES Release)
 ELSE()
-  set(CMAKE_CONFIGURATION_TYPES Debug Release)
+  set(CMAKE_CONFIGURATION_TYPES Debug RelWithDebInfo Release)
 ENDIF()
 IF(NOT CMAKE_BUILD_TYPE)
   MESSAGE(STATUS "Setting build type to 'Release' as none was specified.")
@@ -410,7 +410,7 @@ if(MSVC)
     # The debug information produced in this project is over the MSVC linking limit, remove it
     get_target_property(PARSEOBJ_COMPILE_OPTIONS freeorionparseobj COMPILE_OPTIONS)
     list(REMOVE_ITEM PARSEOBJ_COMPILE_OPTIONS 
-        "$<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:DEBUG>>:/Zi>"
+        "$<$<AND:$<CXX_COMPILER_ID:MSVC>,$<OR:$<CONFIG:DEBUG>,$<CONFIG:RELWITHDEBINFO>>>:/Zi>"
     )
     set_target_properties(freeorionparseobj 
         PROPERTIES
