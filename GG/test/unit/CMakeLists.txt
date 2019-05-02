@@ -35,6 +35,11 @@ target_compile_definitions(gg_unittest
         -DBOOST_TEST_NO_LIB
 )
 
+target_include_directories(gg_unittest
+    PRIVATE
+        ${Boost_INCLUDE_DIRS}
+)
+
 target_link_libraries(gg_unittest
     GiGi
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
