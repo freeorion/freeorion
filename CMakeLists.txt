@@ -121,6 +121,7 @@ endif()
 if(MSVC)
     # Remove default debug flags /Zi and /MDd to allow project-specific debug flag
     STRING(REGEX REPLACE " /Zi" "" CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG})
+    STRING(REGEX REPLACE " /Zi" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO ${CMAKE_CXX_FLAGS_RELWITHDEBINFO})
     STRING(REGEX REPLACE " /MDd" "" CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG})
 endif()
 
@@ -150,8 +151,8 @@ add_compile_options(
     # Fix Fatal Error C1128: number of sections exceeded object file format limit : compile with /bigobj on SerializeEmpire.cpp
     $<$<CXX_COMPILER_ID:MSVC>:/bigobj>
 
-    # Produce pdb files in Debug configuration
-    $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:DEBUG>>:/Zi>
+    # Produce pdb files in Debug and RelWithDebInfo configuration
+    $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<OR:$<CONFIG:DEBUG>,$<CONFIG:RELWITHDEBINFO>>>:/Zi>
  
     # Use the multithread-specific and DLL-specific version of the run-time library in Debug Configuration
     $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:DEBUG>>:/MD>
@@ -453,7 +454,7 @@ if(MSVC)
     # The debug information produced in this project is over the MSVC linking limit, remove it
     get_target_property(PARSE_COMPILE_OPTIONS freeorionparse COMPILE_OPTIONS)
     list(REMOVE_ITEM PARSE_COMPILE_OPTIONS 
-        "$<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:DEBUG>>:/Zi>"
+        "$<$<AND:$<CXX_COMPILER_ID:MSVC>,$<OR:$<CONFIG:DEBUG>,$<CONFIG:RELWITHDEBINFO>>>:/Zi>"
     )
     set_target_properties(freeorionparse
         PROPERTIES
