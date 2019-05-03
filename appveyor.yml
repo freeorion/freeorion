@@ -44,8 +44,12 @@ build_script:
       pushd build &&
       cmake -G "Visual Studio 15 2017" -T v140_xp -DBUILD_TESTING=On .. &&
       cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" &&
-      cmake --build . --target unittest --config "Release" -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" &&
       popd
     )
 
-test: off
+test_script:
+  - if "%BUILD_SYSTEM%" == "CMAKE" (
+      pushd build &&
+      cmake --build . --target unittest --config "Release" -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" &&
+      popd
+    )
