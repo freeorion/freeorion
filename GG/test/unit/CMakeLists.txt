@@ -33,6 +33,8 @@ target_compile_definitions(gg_unittest
     PRIVATE
         -DBOOST_TEST_DYN_LINK
         -DBOOST_TEST_NO_LIB
+        -DBOOST_ALL_DYN_LINK
+        -DBOOST_ALL_NO_LIB
 )
 
 target_include_directories(gg_unittest
