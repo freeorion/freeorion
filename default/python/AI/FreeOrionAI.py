@@ -61,10 +61,7 @@ debug('Python paths %s' % sys.path)
 diplomatic_corp = None
 
 
-def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=invalid-name
-    """Called by client when a new game is started (but not when a game is loaded).
-    Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
-
+def run_unit_tests():
     import unittest
     loader = unittest.TestLoader()
     testSuite = loader.discover(os.path.join(fo.getAIDir(), 'test'))
@@ -77,6 +74,13 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     if result.failures or result.errors:
         fatal("Crashing AI client due to failed unittest.")
         exit(1)
+
+
+def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=invalid-name
+    """Called by client when a new game is started (but not when a game is loaded).
+    Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
+    if fo.getOptionsDBOptionBool("testing") or get_option_dict().get('run_unit_tests', False):
+        run_unit_tests()
 
     empire = fo.getEmpire()
     if empire is None:
