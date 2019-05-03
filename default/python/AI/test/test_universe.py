@@ -95,16 +95,24 @@ class UniverseObjectTester(PropertyTester):
 
     def test_ownedBy_owner(self):
         for obj in self.objects_to_test:
+            retval = obj.ownedBy(obj.owner)
+            self.assertIsInstance(retval, bool)
             if obj.owner != INVALID_ID:
-                self.assertTrue(obj.ownedBy(obj.owner))
+                self.assertTrue(retval)
             else:
-                self.assertFalse(obj.ownedBy(obj.owner))
+                self.assertFalse(retval)
 
-    def test_ownedBy_nonowner(self):
+    def test_ownedBy_invalid_id(self):
         for obj in self.objects_to_test:
-            self.assertFalse(obj.ownedBy(obj.owner + 1))
-            self.assertFalse(obj.ownedBy(-1))
-            self.assertFalse(obj.ownedBy(obj.owner - 1))
+            retval = obj.ownedBy(INVALID_ID)
+            self.assertIsInstance(retval, bool)
+            self.assertFalse(retval)
+
+    def test_ownedBy_not_owner(self):
+        for obj in self.objects_to_test:
+            retval = obj.ownedBy(obj.owner + 1)
+            self.assertIsInstance(retval, bool)
+            self.assertFalse(retval)
 
     def test_ownedBy_invalid_args(self):
         for obj in self.objects_to_test:
@@ -127,10 +135,74 @@ class UniverseObjectTester(PropertyTester):
             self.assertIsInstance(retval, bool)
             self.assertFalse(retval)
 
-    def test_hasSpecial_correct_usage(self):
+    def test_hasSpecial_contained_special(self):
         for obj in self.objects_to_test:
             for special in obj.specials:
-                self.assertTrue(obj.hasSpecial(special))
+                retval = obj.hasSpecial(special)
+                self.assertIsInstance(retval, bool)
+                self.assertTrue(retval)
+
+    def test_contains_no_args(self):
+        for obj in self.objects_to_test:
+            self.assertRaises(Exception, obj.contains)
+
+    def test_contains_invalid_args(self):
+        for obj in self.objects_to_test:
+            for arg in (float(), str(), None):
+                self.assertRaises(Exception, obj.contains, arg)
+
+    def test_contains_invalid_id(self):
+        for obj in self.objects_to_test:
+            retval = obj.contains(INVALID_ID)
+            self.assertIsInstance(retval, bool)
+            self.assertFalse(retval)
+
+    def test_contains_contained_objects(self):
+        for obj in self.objects_to_test:
+            for contained_obj in obj.containedObjects:
+                retval = obj.contains(contained_obj)
+                self.assertIsInstance(retval, bool)
+                self.assertTrue(retval)
+
+    def test_contains_not_contained_object(self):
+        universe = fo.getUniverse()
+        for obj in self.objects_to_test:
+            for universe_object in universe.allObjectIDs:
+                if universe_object in obj.containedObjects:
+                    continue
+                retval = obj.contains(universe_object)
+                self.assertIsInstance(retval, bool)
+                self.assertFalse(retval)
+
+    def test_containedBy_no_args(self):
+        for obj in self.objects_to_test:
+            self.assertRaises(Exception, obj.containedBy)
+
+    def test_containedBy_invalid_args(self):
+        for obj in self.objects_to_test:
+            for arg in (float(), str(), None):
+                self.assertRaises(Exception, obj.containedBy, arg)
+
+    def test_containedBy_invalid_id(self):
+        for obj in self.objects_to_test:
+            retval = obj.containedBy(INVALID_ID)
+            self.assertIsInstance(retval, bool)
+            self.assertFalse(retval)
+
+    def test_containedBy_container(self):
+        for obj in self.objects_to_test:
+            retval = obj.containedBy(obj.containerObject)
+            self.assertIsInstance(retval, bool)
+            if obj.containerObject == INVALID_ID:
+                self.assertFalse(retval)
+            else:
+                self.assertTrue(retval)
+
+    def test_containedBy_not_container(self):
+        for obj in self.objects_to_test:
+            retval = obj.containedBy(obj.containerObject + 1)
+            self.assertIsInstance(retval, bool)
+            self.assertFalse(retval)
 
 
 class FleetTester(UniverseObjectTester):
