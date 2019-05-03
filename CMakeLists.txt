@@ -56,7 +56,7 @@ if(BUILD_TESTING)
 
     if(NOT TARGET unittest)
         add_custom_target(unittest
-            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure --build-config $<CONFIG>
             COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
         )
     endif()
