@@ -4,6 +4,7 @@ import unittest
 class PropertyTester(unittest.TestCase):
     class_to_test = None
     properties = {}
+    longMessage = True
 
     @classmethod
     def generate_tests(cls):
