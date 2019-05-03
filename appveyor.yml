@@ -47,9 +47,4 @@ build_script:
       popd
     )
 
-test_script:
-  - if "%BUILD_SYSTEM%" == "CMAKE" (
-      pushd build &&
-      cmake --build . --target unittest --config "Release" -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" &&
-      popd
-    )
+test: off
