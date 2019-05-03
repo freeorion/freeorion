@@ -243,7 +243,6 @@ namespace FreeOrionPython {
         def("setSaveStateString",       SetStaticSaveStateString,       "Sets the save state string (string). This is a persistant storage space for the AI script to retain state information when the game is saved and reloaded. Any AI state information to be saved should be stored in a single string (likely using Python's pickle module) and stored using this function when the prepareForSave() Python function is called.");
         def("getSaveStateString",       GetStaticSaveStateString,       return_value_policy<copy_const_reference>(), "Returns the previously-saved state string (string). Can be used to retrieve the last-set save state string at any time, although this string is also passed to the resumeLoadedGame(savedStateString) Python function when a game is loaded, so this function isn't necessary to use if resumeLoadedGame stores the passed string. ");
 
-        def("doneTurn",                 AIInterface::DoneTurn,          "Ends the AI player's turn, indicating to the server that all orders have been issued and turn processing may commence.");
         def("userString",               make_function(&UserString,      return_value_policy<copy_const_reference>()));
         def("userStringExists",         make_function(&UserStringExists,return_value_policy<return_by_value>()));
         def("userStringList",           &GetUserStringList);
