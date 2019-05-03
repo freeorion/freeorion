@@ -88,6 +88,50 @@ class UniverseObjectTester(PropertyTester):
             self.assertIsInstance(retval, str)
             self.assertTrue(retval)
 
+    def test_dump_takes_no_args(self):
+        for obj in self.objects_to_test:
+            for arg in (int(), float(), str(), None):
+                self.assertRaises(Exception, obj.dump, arg)
+
+    def test_ownedBy_owner(self):
+        for obj in self.objects_to_test:
+            if obj.owner != INVALID_ID:
+                self.assertTrue(obj.ownedBy(obj.owner))
+            else:
+                self.assertFalse(obj.ownedBy(obj.owner))
+
+    def test_ownedBy_nonowner(self):
+        for obj in self.objects_to_test:
+            self.assertFalse(obj.ownedBy(obj.owner + 1))
+            self.assertFalse(obj.ownedBy(-1))
+            self.assertFalse(obj.ownedBy(obj.owner - 1))
+
+    def test_ownedBy_invalid_args(self):
+        for obj in self.objects_to_test:
+            self.assertRaises(Exception, obj.ownedBy)
+            for arg in (float(), str(), None):
+                self.assertRaises(Exception, obj.ownedBy, arg)
+
+    def test_hasSpecial_invalid_args(self):
+        for obj in self.objects_to_test:
+            for arg in (int(), float(), None):
+                self.assertRaises(Exception, obj.hasSpecial, arg)
+
+    def test_hasSpecial_no_args(self):
+        for obj in self.objects_to_test:
+            self.assertRaises(Exception, obj.hasSpecial)
+
+    def test_hasSpecial_empty_string(self):
+        for obj in self.objects_to_test:
+            retval = obj.hasSpecial("")
+            self.assertIsInstance(retval, bool)
+            self.assertFalse(retval)
+
+    def test_hasSpecial_correct_usage(self):
+        for obj in self.objects_to_test:
+            for special in obj.specials:
+                self.assertTrue(obj.hasSpecial(special))
+
 
 class FleetTester(UniverseObjectTester):
     class_to_test = fo.fleet
