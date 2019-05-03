@@ -145,7 +145,8 @@ ResearchQueue::const_iterator ResearchQueue::find(const std::string& tech_name) 
 }
 
 const ResearchQueue::Element& ResearchQueue::operator[](int i) const {
-    assert(0 <= i && i < static_cast<int>(m_queue.size()));
+    if (i < 0 || i >= static_cast<int>(m_queue.size()))
+        throw std::out_of_range("Tried to access ResearchQueue element out of bounds");
     return m_queue[i];
 }
 
@@ -323,7 +324,8 @@ void ResearchQueue::insert(iterator it, const std::string& tech_name, bool pause
 { m_queue.insert(it, Element(tech_name, m_empire_id, 0.0f, -1, paused)); }
 
 void ResearchQueue::erase(iterator it) {
-    assert(it != end());
+    if (it == end())
+        throw std::out_of_range("Tried to erase ResearchQueue element out of bounds");
     m_queue.erase(it);
 }
 
