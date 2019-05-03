@@ -3,6 +3,7 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         unit_test_framework
         log
         log_setup
+        thread
     REQUIRED)
 
 add_executable(fo_systemtest_game
@@ -33,6 +34,7 @@ target_link_libraries(fo_systemtest_game
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
     ${Boost_LOG_LIBRARY}
     ${Boost_LOG_SETUP_LIBRARY}
+    ${Boost_THREAD_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
