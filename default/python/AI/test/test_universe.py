@@ -82,6 +82,12 @@ class UniverseObjectTester(PropertyTester):
         object_ids = list(universe.allObjectIDs)
         self.objects_to_test = map(universe.getObject, object_ids)
 
+    def test_dump(self):
+        for obj in self.objects_to_test:
+            retval = obj.dump()
+            self.assertIsInstance(retval, str)
+            self.assertTrue(retval)
+
 
 class FleetTester(UniverseObjectTester):
     class_to_test = fo.fleet
