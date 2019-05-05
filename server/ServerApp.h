@@ -209,6 +209,8 @@ public:
 
     ServerNetworking&           Networking();     ///< returns the networking object for the server
 
+    void ExpireTurn(); ///< Sets turn expired timeout
+
 private:
     void    Run();          ///< initializes app state, then executes main event handler/render loop (Poll())
 
@@ -310,6 +312,7 @@ private:
     PythonServer            m_python_server;
     std::map<int, int>      m_player_empire_ids;    ///< map from player id to empire id that the player controls.
     int                     m_current_turn;         ///< current turn number
+    bool                    m_turn_expired;         ///< true when turn exceeds its timeout
     std::vector<Process>    m_ai_client_processes;  ///< AI client child processes
     bool                    m_single_player_game;   ///< true when the game being played is single-player
     GalaxySetupData         m_galaxy_setup_data;    ///< stored setup data for the game currently being played

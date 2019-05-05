@@ -2468,11 +2468,34 @@ sc::result WaitingForMPGameJoiners::react(const Error& msg) {
 // PlayingGame
 ////////////////////////////////////////////////////////////
 PlayingGame::PlayingGame(my_context c) :
-    my_base(c)
-{ TraceLogger(FSM) << "(ServerFSM) PlayingGame"; }
+    my_base(c),
+    m_turn_timeout(Server().m_io_context)
+{
+    TraceLogger(FSM) << "(ServerFSM) PlayingGame";
+    if (GetOptionsDB().Get<long>("network.server.turn-timeout.first-turn-time") > 0) {
+        // Set first turn advance to absolute time point
+        m_turn_timeout.expires_at(std::chrono::time_point<std::chrono::high_resolution_clock>(std::chrono::seconds(GetOptionsDB().Get<long>("network.server.turn-timeout.first-turn-time"))));
+        m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                              this,
+                                              boost::asio::placeholders::error));
+    } else if (GetOptionsDB().Get<int>("network.server.turn-timeout.interval") > 0) {
+        // Set turn advance after time interval
+#if BOOST_VERSION >= 106600
+        m_turn_timeout.expires_after(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.interval")));
+#else
+        m_turn_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.interval")));
+#endif
+        m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                              this,
+                                              boost::asio::placeholders::error));
+    }
+}
 
 PlayingGame::~PlayingGame()
-{ TraceLogger(FSM) << "(ServerFSM) ~PlayingGame"; }
+{
+    TraceLogger(FSM) << "(ServerFSM) ~PlayingGame";
+    m_turn_timeout.cancel();
+}
 
 sc::result PlayingGame::react(const PlayerChat& msg) {
     TraceLogger(FSM) << "(ServerFSM) PlayingGame.PlayerChat";
@@ -2816,6 +2839,13 @@ sc::result PlayingGame::react(const LobbyUpdate& msg) {
     server.Networking().Disconnect(sender);
 
     return discard_event();
+}
+
+void PlayingGame::TurnTimedoutHandler(const boost::system::error_code& error) {
+    DebugLogger(FSM) << "(ServerFSM) PlayingGame::TurnTimedoutHandler";
+    Server().ExpireTurn();
+    // check if AI players made their orders and advance turn
+    Server().m_fsm->process_event(CheckTurnEndConditions());
 }
 
 ////////////////////////////////////////////////////////////
