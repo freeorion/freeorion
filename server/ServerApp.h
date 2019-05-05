@@ -89,6 +89,8 @@ public:
 
     /** Extracts player save game data. */
     std::vector<PlayerSaveGameData> GetPlayerSaveGameData() const;
+
+    bool IsTurnExpired() const;
     //@}
 
 
@@ -192,6 +194,9 @@ public:
       * Simply sends GAME_START message so established player knows he is in the game.
       * Notificates the player about statuses of other empires. */
     int AddPlayerIntoGame(const PlayerConnectionPtr& player_connection);
+
+    /** Sets turn expired timeout */
+    void ExpireTurn();
     //@}
 
     void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);
@@ -208,9 +213,6 @@ public:
                          const boost::posix_time::ptime& timestamp);
 
     ServerNetworking&           Networking();     ///< returns the networking object for the server
-
-    void ExpireTurn(); ///< Sets turn expired timeout
-
 private:
     void    Run();          ///< initializes app state, then executes main event handler/render loop (Poll())
 

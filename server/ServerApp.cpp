@@ -1046,6 +1046,9 @@ void ServerApp::PushChatMessage(const std::string& text,
 void ServerApp::ExpireTurn()
 { m_turn_expired = true; }
 
+bool ServerApp::IsTurnExpired() const
+{ return m_turn_expired; }
+
 namespace {
     /** Verifies that a human player is connected with the indicated \a id. */
     bool HumanPlayerWithIdConnected(const ServerNetworking& sn, int id) {
