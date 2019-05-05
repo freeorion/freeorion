@@ -2843,6 +2843,18 @@ sc::result PlayingGame::react(const LobbyUpdate& msg) {
 
 void PlayingGame::TurnTimedoutHandler(const boost::system::error_code& error) {
     DebugLogger(FSM) << "(ServerFSM) PlayingGame::TurnTimedoutHandler";
+    if (GetOptionsDB().Get<int>("network.server.turn-timeout.interval") > 0) {
+#if BOOST_VERSION >= 106600
+        auto turn_expired_time = m_turn_timeout.expiry();
+#else
+        auto turn_expired_time = m_turn_timeout.expires_at();
+#endif
+        turn_expired_time += std::chrono::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.interval"));
+        m_turn_timeout.expires_at(turn_expired_time);
+        m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                              this,
+                                              boost::asio::placeholders::error));
+    }
     Server().ExpireTurn();
     // check if AI players made their orders and advance turn
     Server().m_fsm->process_event(CheckTurnEndConditions());
