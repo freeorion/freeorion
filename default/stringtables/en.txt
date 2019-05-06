@@ -1406,7 +1406,7 @@ OPTIONS_DB_FIRST_TURN_TIME
 Absolute time point in seconds since epoch. If 0 first turn advance will happen after expiring interval.
 
 OPTIONS_DB_TIMEOUT_INTERVAL
-Interval in seconds between turn advances. If 0 turn advances by timeout are disabled.
+Maximum interval in seconds between turn advances. If 0 turn advances by timeout are disabled.
 
 OPTIONS_DB_TIMEOUT_FIXED_INTERVAL
 If enabled interval between turn advances are strictly equals, turn doesn't advance until timeout expires.
