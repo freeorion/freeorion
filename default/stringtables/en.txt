@@ -1403,13 +1403,13 @@ OPTIONS_DB_PUBLISH_STATISTICS
 Enable sending empire staticstics to the player.
 
 OPTIONS_DB_FIRST_TURN_TIME
-Absolute time point in seconds since epoch. If 0 it isn't used.
+Absolute time point in seconds since epoch. If 0 first turn advance will happen after expiring interval.
 
 OPTIONS_DB_TIMEOUT_INTERVAL
 Interval in seconds between turn advances. If 0 turn advances by timeout are disabled.
 
 OPTIONS_DB_TIMEOUT_FIXED_INTERVAL
-Await for turn expiration even if all players are ready.
+If enabled interval between turn advances are strictly equals, turn doesn't advance until timeout expires.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
