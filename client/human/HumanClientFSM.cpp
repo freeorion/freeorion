@@ -857,6 +857,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
         Client().Autosave();
 
     Client().GetClientUI().GetPlayerListWnd()->Refresh();
+    Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
 
     return transit<PlayingTurn>();
 }
@@ -915,6 +916,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     Client().HandleTurnUpdate();
 
     Client().GetClientUI().GetPlayerListWnd()->Refresh();
+    Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
 
     return transit<PlayingTurn>();
 }
@@ -1081,6 +1083,7 @@ boost::statechart::result PlayingTurn::react(const TurnTimeout& msg) {
     } catch (const boost::bad_lexical_cast& ex) {
         ErrorLogger(FSM) << "PlayingGame::react(const TurnTimout& msg) could not convert \"" << text << "\" to timeout";
     }
+    Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(timeout_remain);
     return discard_event();
 }
 

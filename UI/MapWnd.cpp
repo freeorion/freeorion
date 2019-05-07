@@ -1030,7 +1030,7 @@ void MapWnd::CompleteConstruction() {
 
     auto layout = GG::Wnd::Create<GG::Layout>(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
                                               m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
-                                              1, 22);
+                                              1, 23);
     layout->SetName("Toolbar Layout");
     m_toolbar->SetLayout(layout);
 
@@ -1066,6 +1066,18 @@ void MapWnd::CompleteConstruction() {
     ToggleAutoEndTurn();    // toggle twice to set textures without changing default setting state
     ToggleAutoEndTurn();
 
+    // timeout remain label
+    // determine size from the text that will go into label, using a test time string
+    std::string timeout_seconds_longest_reasonable_text = boost::io::str(FlexibleFormat(UserString("MAP_TIMEOUT_SECONDS")) % 59); // seconds part never exceeds 59
+    std::string timeout_mins_secs_longest_reasonable_text = boost::io::str(FlexibleFormat(UserString("MAP_TIMEOUT_MINS_SECS")) % 59 % 59); // seconds and minutes part never exceeds 59
+    std::string timeout_hrs_mins_longest_reasonable_text = boost::io::str(FlexibleFormat(UserString("MAP_TIMEOUT_HRS_MINS")) % 999 % 59); // minutes part never exceeds 59, turn interval hopefully doesn't exceed month
+    const auto& timeout_1_longest_reasonable_text = timeout_seconds_longest_reasonable_text.size() > timeout_mins_secs_longest_reasonable_text.size() ?
+                                                    timeout_seconds_longest_reasonable_text :
+                                                    timeout_mins_secs_longest_reasonable_text;
+    m_timeout_remain = Wnd::Create<CUILabel>(timeout_hrs_mins_longest_reasonable_text.size() > timeout_1_longest_reasonable_text.size() ?
+                                             timeout_hrs_mins_longest_reasonable_text :
+                                             timeout_1_longest_reasonable_text);
+    m_timeout_remain->Resize(m_timeout_remain->MinUsableSize());
 
     // FPS indicator
     m_FPS = GG::Wnd::Create<FPSIndicator>();
@@ -1346,6 +1358,11 @@ void MapWnd::CompleteConstruction() {
     layout->Add(m_btn_auto_turn,    0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
+    layout->SetMinimumColumnWidth(layout_column, m_timeout_remain->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_timeout_remain,   0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
     layout->SetMinimumColumnWidth(layout_column, GG::X(ClientUI::Pts()*4));
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_FPS,              0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
@@ -1615,6 +1632,9 @@ void MapWnd::CompleteConstruction() {
 
     // Connect keyboard accelerators for map
     ConnectKeyboardAcceleratorSignals();
+
+    m_timeout_clock.Stop();
+    m_timeout_clock.Connect(this);
 }
 
 MapWnd::~MapWnd()
@@ -4546,7 +4566,7 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
 
     // find if there is a FleetWnd for this fleet already open.
     auto fleet_wnd = manager.WndForFleetID(fleet->ID());
-    
+
     // if there isn't a FleetWnd for this fleet open, need to open one
     if (!fleet_wnd) {
         // Add any overlapping fleet buttons for moving or offroad fleets.
@@ -4573,7 +4593,7 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
     // if indicated fleet is already the only selected fleet in the active FleetWnd, nothing to do.
     if (m_selected_fleet_ids.size() == 1 && m_selected_fleet_ids.count(fleet->ID()))
         return;
-    
+
     // select fleet in FleetWnd.  this deselects all other fleets in the FleetWnd.
     // this->m_selected_fleet_ids will be updated by ActiveFleetWndSelectedFleetsChanged or ActiveFleetWndChanged
     // signals being emitted and connected to MapWnd::SelectedFleetsChanged
@@ -6051,6 +6071,43 @@ void MapWnd::Sanitize() {
     m_line_between_systems = {INVALID_OBJECT_ID, INVALID_OBJECT_ID};
 
     DetachChildren();
+}
+
+void MapWnd::ResetTimeoutClock(int timeout) {
+    m_timeout_time = timeout <= 0 ?
+                     std::chrono::time_point<std::chrono::high_resolution_clock>() :
+                     std::chrono::high_resolution_clock::now() + std::chrono::high_resolution_clock::duration(std::chrono::seconds(timeout));
+
+    TimerFiring(0, &m_timeout_clock);
+}
+
+void MapWnd::TimerFiring(unsigned int ticks, GG::Timer* timer) {
+    std::chrono::high_resolution_clock::duration remaining = m_timeout_time - std::chrono::high_resolution_clock::now();
+    auto remaining_sec = std::chrono::duration_cast<std::chrono::seconds>(remaining);
+    if (remaining_sec.count() <= 0) {
+        m_timeout_clock.Stop();
+        m_timeout_remain->SetText("");
+        return;
+    }
+
+    int sec_part = remaining_sec.count() % 60;
+    int min_part = remaining_sec.count() / 60 % 60;
+    int hour_part = remaining_sec.count() / 3600;
+
+    if (hour_part == 0) {
+        if (min_part == 0) {
+            m_timeout_remain->SetText(boost::io::str(FlexibleFormat(UserString("MAP_TIMEOUT_SECONDS")) % sec_part));
+        } else {
+            m_timeout_remain->SetText(boost::io::str(FlexibleFormat(UserString("MAP_TIMEOUT_MINS_SECS")) % min_part % sec_part));
+        }
+    } else {
+         m_timeout_remain->SetText(boost::io::str(FlexibleFormat(UserString("MAP_TIMEOUT_HRS_MINS")) % hour_part % min_part));
+    }
+
+    if (!m_timeout_clock.Running()) {
+        m_timeout_clock.Reset(GG::GUI::GetGUI()->Ticks());
+        m_timeout_clock.Start();
+    }
 }
 
 void MapWnd::PushWndStack(std::shared_ptr<GG::Wnd> wnd) {

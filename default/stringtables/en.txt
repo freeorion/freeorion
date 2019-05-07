@@ -3171,6 +3171,20 @@ Turn %1%
 MAP_BTN_TURN_UNREADY
 Revise Orders %1%
 
+# %1% number of seconds
+MAP_TIMEOUT_SECONDS
+%1% seconds
+
+# %1% number of minutes
+# %2% number of seconds
+MAP_TIMEOUT_MINS_SECS
+%1% mins %2% secs
+
+# %1% number of hours
+# %2% number of minutes
+MAP_TIMEOUT_HRS_MINS
+%1% hrs %2% mins
+
 # %1% number of frames currently displayed per second.
 MAP_INDICATOR_FPS
 %1% FPS
