@@ -27,6 +27,7 @@
 #include <boost/uuid/nil_generator.hpp>
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <GG/ClrConstants.h>
 
@@ -2472,18 +2473,27 @@ PlayingGame::PlayingGame(my_context c) :
     m_turn_timeout(Server().m_io_context)
 {
     TraceLogger(FSM) << "(ServerFSM) PlayingGame";
-    if (GetOptionsDB().Get<long>("network.server.turn-timeout.first-turn-time") > 0) {
+
+    if (!GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time").empty()) {
         // Set first turn advance to absolute time point
-        m_turn_timeout.expires_at(std::chrono::time_point<std::chrono::high_resolution_clock>(std::chrono::seconds(GetOptionsDB().Get<long>("network.server.turn-timeout.first-turn-time"))));
-        m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
-                                              this,
-                                              boost::asio::placeholders::error));
-    } else if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
+        try {
+            m_turn_timeout.expires_at(boost::posix_time::time_from_string(GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time")));
+            m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                                  this,
+                                                  boost::asio::placeholders::error));
+            return;
+        } catch (...) {
+            WarnLogger(FSM) << "(ServerFSM) PlayingGame: Cann't parse first turn time: "
+                            << GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time");
+        }
+    }
+
+    if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
         // Set turn advance after time interval
 #if BOOST_VERSION >= 106600
-        m_turn_timeout.expires_after(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
+        m_turn_timeout.expires_after(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
 #else
-        m_turn_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
+        m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
 #endif
         m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
                                               this,
@@ -2857,7 +2867,7 @@ void PlayingGame::TurnTimedoutHandler(const boost::system::error_code& error) {
 #else
         auto turn_expired_time = m_turn_timeout.expires_at();
 #endif
-        turn_expired_time += std::chrono::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval"));
+        turn_expired_time += boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval"));
         m_turn_timeout.expires_at(turn_expired_time);
         m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
                                               this,
@@ -2893,9 +2903,9 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
         playing_game.m_turn_timeout.cancel();
         if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
 #if BOOST_VERSION >= 106600
-            playing_game.m_turn_timeout.expires_after(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
+            playing_game.m_turn_timeout.expires_after(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
 #else
-            playing_game.m_turn_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
+            playing_game.m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
 #endif
             playing_game.m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
                                                                &playing_game,

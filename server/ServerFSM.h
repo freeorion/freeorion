@@ -13,6 +13,7 @@
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/state_machine.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
+#include <boost/asio/deadline_timer.hpp>
 
 #include <memory>
 #include <set>
@@ -321,7 +322,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
                          const Networking::AuthRoles& roles);
     void TurnTimedoutHandler(const boost::system::error_code& error);
 
-    boost::asio::high_resolution_timer m_turn_timeout;
+    boost::asio::deadline_timer m_turn_timeout;
 
     SERVER_ACCESSOR
 };
