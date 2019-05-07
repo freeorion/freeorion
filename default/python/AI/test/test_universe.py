@@ -3,20 +3,10 @@ from copy import deepcopy
 
 import freeOrionAIInterface as fo
 
-from abstract_test_bases import PropertyTester
 from AIDependencies import INVALID_ID
 
-
-def greater_or_equal(arg):
-    return unittest.TestCase.assertGreaterEqual, arg
-
-
-def is_equal(arg):
-    return unittest.TestCase.assertGreaterEqual, arg
-
-
-def is_false():
-    return (unittest.TestCase.assertFalse,)
+from abstract_test_bases import PropertyTester
+from utils import greater_or_equal, is_equal, is_false
 
 
 TYPE = "type"
