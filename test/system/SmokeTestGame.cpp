@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
     args.push_back("--testing");
     
     args.push_back("--log-level");
-    args.push_back("warn");
+    args.push_back("info");
 #ifdef FREEORION_LINUX
     // Dirty hack to output log to console.
     args.push_back("--log-file");
