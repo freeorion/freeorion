@@ -2490,11 +2490,7 @@ PlayingGame::PlayingGame(my_context c) :
 
     if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
         // Set turn advance after time interval
-#if BOOST_VERSION >= 106600
-        m_turn_timeout.expires_after(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
-#else
         m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
-#endif
         m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
                                               this,
                                               boost::asio::placeholders::error));
@@ -2862,11 +2858,7 @@ void PlayingGame::TurnTimedoutHandler(const boost::system::error_code& error) {
     if (GetOptionsDB().Get<bool>("network.server.turn-timeout.fixed-interval") &&
         GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0)
     {
-#if BOOST_VERSION >= 106600
-        auto turn_expired_time = m_turn_timeout.expiry();
-#else
         auto turn_expired_time = m_turn_timeout.expires_at();
-#endif
         turn_expired_time += boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval"));
         m_turn_timeout.expires_at(turn_expired_time);
         m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
@@ -2902,11 +2894,7 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
         auto& playing_game = context<PlayingGame>();
         playing_game.m_turn_timeout.cancel();
         if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
-#if BOOST_VERSION >= 106600
-            playing_game.m_turn_timeout.expires_after(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
-#else
             playing_game.m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
-#endif
             playing_game.m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
                                                                &playing_game,
                                                                boost::asio::placeholders::error));
