@@ -7,6 +7,7 @@ from common.configure_logging import redirect_logging_to_freeorion_logger
 # Logging is redirected before other imports so that import errors appear in log files.
 redirect_logging_to_freeorion_logger()
 
+import logging
 import os
 import sys
 import random
@@ -17,7 +18,7 @@ import freeOrionAIInterface as fo  # interface used to interact with FreeOrion A
 from common.option_tools import parse_config, get_option_dict, check_bool
 parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())
 
-from freeorion_tools import patch_interface
+from freeorion_tools import patch_interface, with_log_level
 patch_interface()
 
 import ColonisationAI
@@ -61,6 +62,7 @@ debug('Python paths %s' % sys.path)
 diplomatic_corp = None
 
 
+@with_log_level(logging.WARNING)
 def run_unit_tests():
     import unittest
     loader = unittest.TestLoader()
@@ -79,6 +81,9 @@ def run_unit_tests():
 def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=invalid-name
     """Called by client when a new game is started (but not when a game is loaded).
     Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
+    if fo.getOptionsDBOptionBool("testing"):
+        logging.getLogger().setLevel(logging.WARNING)
+
     if fo.getOptionsDBOptionBool("testing") or get_option_dict().get('run_unit_tests', False):
         run_unit_tests()
 
