@@ -6,6 +6,10 @@ class PropertyTester(unittest.TestCase):
     properties = {}
     longMessage = True
 
+    TYPE = "type"
+    READ_ONLY = "read_only"
+    ADDITIONAL_TESTS = "additional_tests"
+
     @classmethod
     def generate_tests(cls):
         for property in cls.properties:
