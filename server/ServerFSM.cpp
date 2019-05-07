@@ -2691,6 +2691,14 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
             }
             // In both cases update ingame lobby
             fsm.UpdateIngameLobby();
+
+            // send timeout data
+            if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
+                auto remaining = m_turn_timeout.expires_from_now();
+                player_connection->SendMessage(TurnTimeoutMessage(remaining.total_seconds()));
+            } else {
+                player_connection->SendMessage(TurnTimeoutMessage(0));
+            }
         }
     }
 }
@@ -2889,9 +2897,10 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
                                          boost::asio::placeholders::error));
     }
 
+    auto& playing_game = context<PlayingGame>();
+
     // reset turn timer if there no fixed interval
     if (!GetOptionsDB().Get<bool>("network.server.turn-timeout.fixed-interval")) {
-        auto& playing_game = context<PlayingGame>();
         playing_game.m_turn_timeout.cancel();
         if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
             playing_game.m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
@@ -2899,6 +2908,13 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
                                                                &playing_game,
                                                                boost::asio::placeholders::error));
         }
+    }
+
+    if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
+        auto remaining = playing_game.m_turn_timeout.expires_from_now();
+        Server().Networking().SendMessageAll(TurnTimeoutMessage(remaining.total_seconds()));
+    } else {
+        Server().Networking().SendMessageAll(TurnTimeoutMessage(0));
     }
 }
 

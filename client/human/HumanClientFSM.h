@@ -343,7 +343,8 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame> {
         boost::statechart::custom_reaction<TurnUpdate>,
         boost::statechart::custom_reaction<TurnEnded>,
         boost::statechart::custom_reaction<PlayerStatus>,
-        boost::statechart::custom_reaction<DispatchCombatLogs>
+        boost::statechart::custom_reaction<DispatchCombatLogs>,
+        boost::statechart::custom_reaction<TurnTimeout>
     > reactions;
 
     PlayingTurn(my_context ctx);
@@ -355,6 +356,7 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame> {
     boost::statechart::result react(const TurnEnded& d);
     boost::statechart::result react(const PlayerStatus& msg);
     boost::statechart::result react(const DispatchCombatLogs& msg);
+    boost::statechart::result react(const TurnTimeout& msg);
 
     CLIENT_ACCESSOR
 };

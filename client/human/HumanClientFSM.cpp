@@ -1072,6 +1072,18 @@ boost::statechart::result PlayingTurn::react(const DispatchCombatLogs& msg) {
     return discard_event();
 }
 
+boost::statechart::result PlayingTurn::react(const TurnTimeout& msg) {
+    DebugLogger(FSM) << "(PlayerFSM) PlayingGame::TurnTimeout message received: " << msg.m_message.Text();
+    const std::string& text = msg.m_message.Text();
+    int timeout_remain = 0;
+    try {
+        timeout_remain = boost::lexical_cast<int>(text);
+    } catch (const boost::bad_lexical_cast& ex) {
+        ErrorLogger(FSM) << "PlayingGame::react(const TurnTimout& msg) could not convert \"" << text << "\" to timeout";
+    }
+    return discard_event();
+}
+
 
 ////////////////////////////////////////////////////////////
 // QuittingGame
