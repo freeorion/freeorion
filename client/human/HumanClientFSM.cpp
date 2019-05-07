@@ -857,6 +857,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
         Client().Autosave();
 
     Client().GetClientUI().GetPlayerListWnd()->Refresh();
+    Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
 
     return transit<PlayingTurn>();
 }
@@ -915,6 +916,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     Client().HandleTurnUpdate();
 
     Client().GetClientUI().GetPlayerListWnd()->Refresh();
+    Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
 
     return transit<PlayingTurn>();
 }
