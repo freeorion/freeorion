@@ -9,9 +9,9 @@ from abstract_test_bases import PropertyTester
 from utils import greater_or_equal, is_equal, is_false
 
 
-TYPE = "type"
-READ_ONLY = "read_only"
-ADDITIONAL_TESTS = "additional_tests"
+TYPE = PropertyTester.TYPE
+READ_ONLY = PropertyTester.READ_ONLY
+ADDITIONAL_TESTS = PropertyTester.ADDITIONAL_TESTS
 
 
 class UniverseTester(unittest.TestCase):

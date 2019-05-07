@@ -63,6 +63,7 @@ class GalaxySetupDataTester(PropertyTester):
     def setUp(self):
         self.objects_to_test = [fo.getGalaxySetupData()]
 
+
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
     test_classes = [GalaxySetupDataTester]
