@@ -195,7 +195,7 @@ public:
       * Notificates the player about statuses of other empires. */
     int AddPlayerIntoGame(const PlayerConnectionPtr& player_connection);
 
-    /** Sets turn expired timeout */
+    /** Sets turn to be expired. Server doesn't wait for human player turns. */
     void ExpireTurn();
     //@}
 
