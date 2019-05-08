@@ -1406,7 +1406,7 @@ OPTIONS_DB_FIRST_TURN_TIME
 Absolute time point in format "2019-01-20 11:59:59" in UTC. If empty, first turn advance will happen after expiring interval. Requires fixed interval to be enabled.
 
 OPTIONS_DB_TIMEOUT_INTERVAL
-Maximum interval in seconds between turn advances. If 0, turn advances by timeout are disabled, and turns will only advance once all players ended their turn.
+Maximum interval in seconds between turn advances. If 0, turn advances by timeout are disabled, and turns will only advance once all players have ended their turn.
 
 OPTIONS_DB_TIMEOUT_FIXED_INTERVAL
 Turns advance after fixed intervals, regardless of when and whether players have submitted turn orders.
