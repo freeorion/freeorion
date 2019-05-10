@@ -13,6 +13,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/functional/hash.hpp>
 
+#include <chrono>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -128,6 +129,7 @@ public:
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     void KeyRelease(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
+    void TimerFiring(unsigned int ticks, GG::Timer* timer) override;
 
     void DoLayout();
 
@@ -200,6 +202,7 @@ public:
     void RegisterPopup(const std::shared_ptr<MapWndPopup>& popup);              //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void RemovePopup(MapWndPopup* popup);        //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
     void Sanitize();                             //!< sanitizes the MapWnd after a game
+    void ResetTimeoutClock(int timeout);         //!< start count down \a timeout seconds
     //!@}
 
     void SetFleetExploring(const int fleet_id);
@@ -560,6 +563,8 @@ private:
     std::shared_ptr<GG::Button>     m_btn_auto_turn = nullptr;  //!< button that toggles whether to automatically end turns;
     bool                            m_auto_end_turn = false;    //!< should turns be ended automatically by this client?
     bool                            m_ready_turn = false;       //!< is turn orders are ready and sent to server?
+    std::shared_ptr<GG::Label>      m_timeout_remain = nullptr; //!< label to show remaining time
+    GG::Timer                       m_timeout_clock{1000};      //!< clock to update remaining time
     std::list<std::weak_ptr<MapWndPopup>> m_popups;             //!< list of currently active popup windows
     bool                            m_menu_showing = false;     //!< set during ShowMenu() to prevent reentrency
     int                             m_current_owned_system;
@@ -586,6 +591,9 @@ private:
 
     /// indicates that refresh fleet button work should be done before rendering.
     bool                            m_deferred_refresh_fleet_buttons = false;
+
+    std::chrono::time_point<std::chrono::high_resolution_clock>
+                                    m_timeout_time;
 
     friend struct IntroMenu;
     friend struct WaitingForGameStart;

@@ -27,6 +27,7 @@
 #include <boost/uuid/nil_generator.hpp>
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <GG/ClrConstants.h>
 
@@ -2468,11 +2469,39 @@ sc::result WaitingForMPGameJoiners::react(const Error& msg) {
 // PlayingGame
 ////////////////////////////////////////////////////////////
 PlayingGame::PlayingGame(my_context c) :
-    my_base(c)
-{ TraceLogger(FSM) << "(ServerFSM) PlayingGame"; }
+    my_base(c),
+    m_turn_timeout(Server().m_io_context)
+{
+    TraceLogger(FSM) << "(ServerFSM) PlayingGame";
+
+    if (!GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time").empty()) {
+        // Set first turn advance to absolute time point
+        try {
+            m_turn_timeout.expires_at(boost::posix_time::time_from_string(GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time")));
+            m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                                  this,
+                                                  boost::asio::placeholders::error));
+            return;
+        } catch (...) {
+            WarnLogger(FSM) << "(ServerFSM) PlayingGame: Cann't parse first turn time: "
+                            << GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time");
+        }
+    }
+
+    if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
+        // Set turn advance after time interval
+        m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
+        m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                              this,
+                                              boost::asio::placeholders::error));
+    }
+}
 
 PlayingGame::~PlayingGame()
-{ TraceLogger(FSM) << "(ServerFSM) ~PlayingGame"; }
+{
+    TraceLogger(FSM) << "(ServerFSM) ~PlayingGame";
+    m_turn_timeout.cancel();
+}
 
 sc::result PlayingGame::react(const PlayerChat& msg) {
     TraceLogger(FSM) << "(ServerFSM) PlayingGame.PlayerChat";
@@ -2662,6 +2691,14 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
             }
             // In both cases update ingame lobby
             fsm.UpdateIngameLobby();
+
+            // send timeout data
+            if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
+                auto remaining = m_turn_timeout.expires_from_now();
+                player_connection->SendMessage(TurnTimeoutMessage(remaining.total_seconds()));
+            } else {
+                player_connection->SendMessage(TurnTimeoutMessage(0));
+            }
         }
     }
 }
@@ -2818,6 +2855,29 @@ sc::result PlayingGame::react(const LobbyUpdate& msg) {
     return discard_event();
 }
 
+void PlayingGame::TurnTimedoutHandler(const boost::system::error_code& error) {
+    DebugLogger(FSM) << "(ServerFSM) PlayingGame::TurnTimedoutHandler";
+
+    if (error) {
+        DebugLogger() << "Turn timed out cancelled";
+        return;
+    }
+
+    if (GetOptionsDB().Get<bool>("network.server.turn-timeout.fixed-interval") &&
+        GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0)
+    {
+        auto turn_expired_time = m_turn_timeout.expires_at();
+        turn_expired_time += boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval"));
+        m_turn_timeout.expires_at(turn_expired_time);
+        m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                              this,
+                                              boost::asio::placeholders::error));
+    }
+    Server().ExpireTurn();
+    // check if AI players made their orders and advance turn
+    Server().m_fsm->process_event(CheckTurnEndConditions());
+}
+
 ////////////////////////////////////////////////////////////
 // WaitingForTurnEnd
 ////////////////////////////////////////////////////////////
@@ -2835,6 +2895,26 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
         m_timeout.async_wait(boost::bind(&WaitingForTurnEnd::SaveTimedoutHandler,
                                          this,
                                          boost::asio::placeholders::error));
+    }
+
+    auto& playing_game = context<PlayingGame>();
+
+    // reset turn timer if there no fixed interval
+    if (!GetOptionsDB().Get<bool>("network.server.turn-timeout.fixed-interval")) {
+        playing_game.m_turn_timeout.cancel();
+        if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
+            playing_game.m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
+            playing_game.m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                                               &playing_game,
+                                                               boost::asio::placeholders::error));
+        }
+    }
+
+    if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
+        auto remaining = playing_game.m_turn_timeout.expires_from_now();
+        Server().Networking().SendMessageAll(TurnTimeoutMessage(remaining.total_seconds()));
+    } else {
+        Server().Networking().SendMessageAll(TurnTimeoutMessage(0));
     }
 }
 
@@ -3084,8 +3164,12 @@ sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
 
     // no moderator; wait for all player orders to be submitted before
     // processing turn.
-    if (server.AllOrdersReceived()) {
-        // if all players have submitted orders, proceed to turn processing
+    if (server.AllOrdersReceived() &&
+        (server.IsTurnExpired() ||
+        !GetOptionsDB().Get<bool>("network.server.turn-timeout.fixed-interval")))
+    {
+        // if all players have submitted orders and the server doesn't wait until fixed turn timeout
+        // expires, proceed to turn processing
         TraceLogger(FSM) << "WaitingForTurnEnd.TurnOrders : All orders received.";
         post_event(ProcessTurn());
         return transit<ProcessingTurn>();

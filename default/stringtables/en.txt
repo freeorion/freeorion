@@ -1402,6 +1402,15 @@ Count of minutes after the cookie record will be considered expired.
 OPTIONS_DB_PUBLISH_STATISTICS
 Enable sending empire staticstics to the player.
 
+OPTIONS_DB_FIRST_TURN_TIME
+Absolute time point in format "2019-01-20 11:59:59" in UTC. If empty, first turn advance will happen after expiring interval. Requires fixed interval to be enabled.
+
+OPTIONS_DB_TIMEOUT_INTERVAL
+Maximum interval in seconds between turn advances. If 0, turn advances by timeout are disabled, and turns will only advance once all players have ended their turn.
+
+OPTIONS_DB_TIMEOUT_FIXED_INTERVAL
+Turns advance after fixed intervals, regardless of when and whether players have submitted turn orders.
+
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
 
@@ -3161,6 +3170,20 @@ Turn %1%
 # %1% current turn number.
 MAP_BTN_TURN_UNREADY
 Revise Orders %1%
+
+# %1% number of seconds
+MAP_TIMEOUT_SECONDS
+%1% seconds
+
+# %1% number of minutes
+# %2% number of seconds
+MAP_TIMEOUT_MINS_SECS
+%1% mins %2% secs
+
+# %1% number of hours
+# %2% number of minutes
+MAP_TIMEOUT_HRS_MINS
+%1% hrs %2% mins
 
 # %1% number of frames currently displayed per second.
 MAP_INDICATOR_FPS

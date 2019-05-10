@@ -89,6 +89,8 @@ public:
 
     /** Extracts player save game data. */
     std::vector<PlayerSaveGameData> GetPlayerSaveGameData() const;
+
+    bool IsTurnExpired() const;
     //@}
 
 
@@ -192,6 +194,9 @@ public:
       * Simply sends GAME_START message so established player knows he is in the game.
       * Notificates the player about statuses of other empires. */
     int AddPlayerIntoGame(const PlayerConnectionPtr& player_connection);
+
+    /** Sets turn to be expired. Server doesn't wait for human player turns. */
+    void ExpireTurn();
     //@}
 
     void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);
@@ -208,7 +213,6 @@ public:
                          const boost::posix_time::ptime& timestamp);
 
     ServerNetworking&           Networking();     ///< returns the networking object for the server
-
 private:
     void    Run();          ///< initializes app state, then executes main event handler/render loop (Poll())
 
@@ -310,6 +314,7 @@ private:
     PythonServer            m_python_server;
     std::map<int, int>      m_player_empire_ids;    ///< map from player id to empire id that the player controls.
     int                     m_current_turn;         ///< current turn number
+    bool                    m_turn_expired;         ///< true when turn exceeds its timeout
     std::vector<Process>    m_ai_client_processes;  ///< AI client child processes
     bool                    m_single_player_game;   ///< true when the game being played is single-player
     GalaxySetupData         m_galaxy_setup_data;    ///< stored setup data for the game currently being played

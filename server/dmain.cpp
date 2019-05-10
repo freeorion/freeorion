@@ -63,6 +63,9 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         GetOptionsDB().Add<int>("network.server.cookies.expire-minutes", UserStringNop("OPTIONS_DB_COOKIES_EXPIRE"), 15);
         GetOptionsDB().Add<bool>("network.server.publish-statistics", UserStringNop("OPTIONS_DB_PUBLISH_STATISTICS"), true);
         GetOptionsDB().Add("network.server.binary.enabled", UserStringNop("OPTIONS_DB_SERVER_BINARY_SERIALIZATION"), true);
+        GetOptionsDB().Add<std::string>("network.server.turn-timeout.first-turn-time", UserStringNop("OPTIONS_DB_FIRST_TURN_TIME"), "");
+        GetOptionsDB().Add<int>("network.server.turn-timeout.max-interval", UserStringNop("OPTIONS_DB_TIMEOUT_INTERVAL"), 0);
+        GetOptionsDB().Add<bool>("network.server.turn-timeout.fixed-interval", UserStringNop("OPTIONS_DB_TIMEOUT_FIXED_INTERVAL"), false);
 
         // if config.xml and persistent_config.xml are present, read and set options entries
         GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());

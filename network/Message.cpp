@@ -395,6 +395,9 @@ Message TurnPartialOrdersMessage(const std::pair<OrderSet, std::set<int>>& order
     return Message(Message::TURN_PARTIAL_ORDERS, os.str());
 }
 
+Message TurnTimeoutMessage(int timeout_remaining)
+{ return Message(Message::TURN_TIMEOUT, std::to_string(timeout_remaining)); }
+
 Message TurnProgressMessage(Message::TurnProgressPhase phase_id) {
     std::ostringstream os;
     {

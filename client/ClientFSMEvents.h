@@ -41,7 +41,8 @@ struct MessageEventBase {
     (EndGame)                                  \
     (CheckSum)                                 \
     (AuthRequest)                              \
-    (ChatHistory)
+    (ChatHistory)                              \
+    (TurnTimeout)
 
 
 #define DECLARE_MESSAGE_EVENT(r, data, name)                            \

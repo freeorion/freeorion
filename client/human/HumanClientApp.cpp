@@ -992,6 +992,7 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::AUTH_REQUEST:             m_fsm->process_event(AuthRequest(msg));             break;
     case Message::CHAT_HISTORY:             m_fsm->process_event(ChatHistory(msg));             break;
     case Message::SET_AUTH_ROLES:           HandleSetAuthRoles(msg);                            break;
+    case Message::TURN_TIMEOUT:             m_fsm->process_event(TurnTimeout(msg));             break;
     default:
         ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
     }

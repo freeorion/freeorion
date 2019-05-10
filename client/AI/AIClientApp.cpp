@@ -398,6 +398,9 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
+    case Message::TURN_TIMEOUT:
+        break;
+
     default: {
         ErrorLogger() << "AIClientApp::HandleMessage : Received unknown Message type code " << msg.Type();
         break;

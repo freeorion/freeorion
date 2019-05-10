@@ -681,6 +681,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 
     // set server state info for new game
     m_current_turn = BEFORE_FIRST_TURN;
+    m_turn_expired = false;
 
     // create universe and empires for players
     DebugLogger() << "ServerApp::NewGameInitConcurrentWithJoiners: Creating Universe";
@@ -1041,6 +1042,12 @@ void ServerApp::PushChatMessage(const std::string& text,
                                                                       false));
     }
 }
+
+void ServerApp::ExpireTurn()
+{ m_turn_expired = true; }
+
+bool ServerApp::IsTurnExpired() const
+{ return m_turn_expired; }
 
 namespace {
     /** Verifies that a human player is connected with the indicated \a id. */
@@ -1965,20 +1972,31 @@ void ServerApp::RevokeEmpireTurnReadyness(int empire_id)
 
 bool ServerApp::AllOrdersReceived() {
     // debug output
-    DebugLogger() << "ServerApp::AllOrdersReceived for turn: " << m_current_turn;
+    DebugLogger() << "ServerApp::AllOrdersReceived for turn: " << m_current_turn
+                  << (m_turn_expired ? " (expired)" : "");
     bool all_orders_received = true;
     for (const auto& empire_orders : m_turn_sequence) {
+        bool empire_orders_received = true;
         if (!empire_orders.second) {
             DebugLogger() << " ... no save data from empire id: " << empire_orders.first;
-            all_orders_received = false;
+            empire_orders_received = false;
         } else if (!empire_orders.second->m_orders) {
             DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
-            all_orders_received = false;
+            empire_orders_received = false;
         } else if (!empire_orders.second->m_ready) {
             DebugLogger() << " ... not ready empire id: " << empire_orders.first;
-            all_orders_received = false;
+            empire_orders_received = false;
         } else {
             DebugLogger() << " ... have orders from empire id: " << empire_orders.first;
+        }
+        if (!empire_orders_received) {
+            if (GetEmpireClientType(empire_orders.first) != Networking::CLIENT_TYPE_AI_PLAYER
+                && m_turn_expired)
+            {
+                DebugLogger() << " ...... turn expired for empire id: " << empire_orders.first;
+            } else {
+                all_orders_received = false;
+            }
         }
     }
     return all_orders_received;
@@ -3570,6 +3588,7 @@ void ServerApp::PostCombatProcessTurns() {
                                                   use_binary_serialization));
         }
     }
+    m_turn_expired = false;
     DebugLogger() << "ServerApp::PostCombatProcessTurns done";
 }
 

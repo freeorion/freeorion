@@ -103,7 +103,8 @@ public:
         SET_AUTH_ROLES,         ///< sent by server to client to set authorization roles
         ELIMINATE_SELF,         ///< sent by client to server if the player wants to resign
         UNREADY,                ///< sent by client to server to revoke ready state of turn orders and sent by server to client to acknowledge it
-        TURN_PARTIAL_ORDERS     ///< sent to the server by a client that has changes in orders to be stored
+        TURN_PARTIAL_ORDERS,    ///< sent to the server by a client that has changes in orders to be stored
+        TURN_TIMEOUT            ///< sent by server to client to notify about remaining time before turn advance
     )
 
     GG_CLASS_ENUM(TurnProgressPhase,
@@ -249,6 +250,9 @@ FO_COMMON_API Message TurnOrdersMessage(const OrderSet& orders, const std::strin
 
 /** creates a TURN_PARTIAL_ORDERS message with orders changes. */
 FO_COMMON_API Message TurnPartialOrdersMessage(const std::pair<OrderSet, std::set<int>>& orders_updates);
+
+/** creates a TURN_TIMEOUT message with remaining time \a timeout_. */
+FO_COMMON_API Message TurnTimeoutMessage(int timeout_remainig);
 
 /** creates a TURN_PROGRESS message. */
 FO_COMMON_API Message TurnProgressMessage(Message::TurnProgressPhase phase_id);
