@@ -686,7 +686,8 @@ ProductionQueue::const_iterator ProductionQueue::find(int i) const
 { return (0 <= i && i < static_cast<int>(size())) ? (begin() + i) : end(); }
 
 const ProductionQueue::Element& ProductionQueue::operator[](int i) const {
-    assert(0 <= i && i < static_cast<int>(m_queue.size()));
+    if (i < 0 || i >= static_cast<int>(m_queue.size()))
+        throw std::out_of_range("Tried to access ProductionQueue element out of bounds");
     return m_queue[i];
 }
 
@@ -888,12 +889,14 @@ void ProductionQueue::insert(iterator it, const Element& element)
 { m_queue.insert(it, element); }
 
 void ProductionQueue::erase(int i) {
-    assert(i <= static_cast<int>(size()));
+    if (i < 0 || i >= static_cast<int>(m_queue.size()))
+        throw std::out_of_range("Tried to erase ProductionQueue item out of bounds.");
     m_queue.erase(begin() + i);
 }
 
 ProductionQueue::iterator ProductionQueue::erase(iterator it) {
-    assert(it != end());
+    if (it == end())
+        throw std::out_of_range("Tried to erase ProductionQueue item out of bounds.");
     return m_queue.erase(it);
 }
 
@@ -907,7 +910,8 @@ ProductionQueue::iterator ProductionQueue::find(int i)
 { return (0 <= i && i < static_cast<int>(size())) ? (begin() + i) : end(); }
 
 ProductionQueue::Element& ProductionQueue::operator[](int i) {
-    assert(0 <= i && i < static_cast<int>(m_queue.size()));
+    if (i < 0 || i >= static_cast<int>(m_queue.size()))
+        throw std::out_of_range("Tried to access ProductionQueue element out of bounds");
     return m_queue[i];
 }
 
