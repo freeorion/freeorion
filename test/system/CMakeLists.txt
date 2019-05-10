@@ -67,10 +67,9 @@ foreach(_TEST ${FO_TEST_GAME})
         PRIVATE
         ${_TEST}.cpp
     )
-    # ToDo: Change `--catch_system_errors=no` to `yes` after moving to boost >= 1.59
     add_test(
         NAME ${_TEST}
-        COMMAND fo_systemtest_game --log_level=message "--run_test=${_TEST}" --catch_system_error=no
+        COMMAND fo_systemtest_game --log_level=message "--run_test=${_TEST}" --catch_system_error=yes
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
 endforeach()
