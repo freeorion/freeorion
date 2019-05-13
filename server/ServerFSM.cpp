@@ -776,6 +776,8 @@ sc::result Idle::react(const Hostless&) {
         }
     }
 
+    lobby_data->m_game_rules = GetGameRules().GetRulesAsStrings();
+
     // copy locally stored data to common server fsm context so it can be
     // retreived in WaitingForMPGameJoiners
     context<ServerFSM>().m_lobby_data = lobby_data;
