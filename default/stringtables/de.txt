@@ -4100,13 +4100,13 @@ Irgendwann werden hier junge Kraken entstehen. Mit Wissen über [[tech SHP_DOMES
 SNOWFLAKE_NEST_SPECIAL
 Schneeflockennest
 
-KRAKEN_NEST_SPECIAL_DESC
+SNOWFLAKE_NEST_SPECIAL_DESC
 Irgendwann werden hier junge Schneeflocken entstehen. Mit Wissen über [[tech SHP_DOMESTIC_MONSTER]] lassen sie sich zähmen.
 
 JUGGERNAUT_NEST_SPECIAL
 Kolossnest
 
-KRAKEN_NEST_SPECIAL_DESC
+JUGGERNAUT_NEST_SPECIAL_DESC
 Irgendwann werden hier junge Kolosse entstehen. Mit Wissen über [[tech SHP_DOMESTIC_MONSTER]] lassen sie sich zähmen.
 
 KRAKEN_IN_THE_ICE_SPECIAL
@@ -6707,10 +6707,10 @@ Dies kann nicht auf einem [[PT_GASGIANT]]n oder Asteroidengürtel gebaut werden.
 
 Während natürliche Satelliten für Planetenkörper keineswegs ungewöhnlich sind, sind Monde, deren Umlaufzeit ihrer Rotationsperiode gleicht, äußerst selten. Ein solcher Satellit hätte eine dem Planeten stets abgewandte Seite, auf der sich riesige Bauten, die sonst vom Planeten aus leicht zu erkennen wären, vollkommen heimlich errichten ließen, außer Sicht der ahnungslosen Einwohner. Schiffe im Orbit des Planeten könnten sich außerdem leichter vor Angreifern verbergen.'''
 
-BLD_SOL_ACCEL
+BLD_SOL_REJUV
 Solarverjüngerer
 
-BLD_SOL_ACCEL_DESC
+BLD_SOL_REJUV_DESC
 Versorgt einen Stern mit zusätzlichem Brennstoff, um ihn künstlich zu verjüngern. Der Stern wird um eine Stufe jünger, gemäß der folgenden Reihenfolge: [[STAR_RED]], [[STAR_ORANDE]], [[STAR_YELLOW]], [[STAR_WHITE]], [[STAR_BLUE]]. Dieser Prozess kann auch von einem [[encyclopedia OUTPOSTS_TITLE]] aus durchgeführt werden.
 
 BLD_TRANSFORMER
@@ -6745,7 +6745,7 @@ BLD_GAS_GIANT_GEN
 Gasriesengenerator
 
 BLD_GAS_GIANT_GEN_DESC
-'''Kann nur auf [[PT_GASGIANT]]n errichtet werden und gewährt 10 [[metertype METER_TARGET_INDUSTRY]] an alle Planeten mit Industriefokus im selben System. Weitere [[BLD_GAS_GIANT_GENERATOR]]en im selben System haben keinen Effekt.
+'''Kann nur auf [[PT_GASGIANT]]n errichtet werden und gewährt 10 [[metertype METER_TARGET_INDUSTRY]] an alle Planeten mit Industriefokus im selben System. Weitere [[BLD_GAS_GIANT_GEN]]en im selben System haben keinen Effekt.
 
 Ein Stromgenerator, der aus [[PT_GASGIANT]]en Energie gewinnt.'''
 
