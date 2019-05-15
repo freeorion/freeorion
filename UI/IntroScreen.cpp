@@ -467,8 +467,7 @@ void IntroScreen::PreRender() {
 
     button_ul.y += GG::Y(button_cell_height) * 0.75;
     button_lr.y += GG::Y(button_cell_height) * 0.75;
-    m_menu->AttachChild(m_exit_game);
-    m_exit_game->SizeMove(button_ul, button_lr);
+    place_button(m_menu.get(), m_exit_game);
 
     // position menu window
     GG::Pt ul(Width()  * GetOptionsDB().Get<double>("ui.intro.menu.center.x") - mainmenu_width/2,
