@@ -6634,7 +6634,7 @@ SP_SCYLIOR
 Скилиор
 
 SP_SCYLIOR_GAMEPLAY_DESC
-'''<img src="species/preview/scylior.jpg"></img>
+'''<img src="species/preview/scylior.png"></img>
 Морские головоногие моллюски с тремя щупальцами.
 Предпочитают [[PT_OCEAN]] планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -6660,7 +6660,7 @@ SP_GYSACHE
 Гисач
 
 SP_GYSACHE_GAMEPLAY_DESC
-'''<img src="species/preview/gysache.jpg"></img>
+'''<img src="species/preview/gysache.png"></img>
 Трусливые, причудливые травоядные, поведением напоминающие овец.
 Предпочитают [[PT_SWAMP]] планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -6685,7 +6685,7 @@ SP_CHATO
 Чато
 
 SP_CHATO_GAMEPLAY_DESC
-'''<img src="species/preview/chato.jpg"></img>
+'''<img src="species/preview/chato.png"></img>
 Неподвижные кристаллические сущности, ездящие верхом на существах под названием "Гормошк". 
 Предпочитают [[PT_TOXIC]] планеты.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
@@ -6704,7 +6704,8 @@ SP_TRITH
 Трит
 
 SP_TRITH_GAMEPLAY_DESC
-'''Яростные ксенофобы-телепаты.
+'''<img src="species/preview/trith.png"></img>
+Яростные ксенофобы-телепаты.
 Предпочитают [[PT_DESERT]] планеты.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
@@ -6715,13 +6716,14 @@ SP_TRITH_DESC
 
 Социальный строй:
 Общественный строй Тритов - это теократия, возглавляемая священниками Каран-Дора (Бога Разума). Все они объединены общей единственной целью - уничтожить все прочие мыслящие расы, чтобы заставить замолчать их шумящие во Вселенной мысли.
+<img src="species/trith.png"></img>
 '''
 
 SP_HAPPY
 День Рождения
 
 SP_HAPPY_GAMEPLAY_DESC
-'''<img src="species/preview/happybirthdays.jpg"></img>
+'''<img src="species/preview/happybirthdays.png"></img>
 Заброшенные, одинокие подводные роботы, запрограммированные для того, чтобы распевать себе «С Днем Рождения» через равные промежутки времени.
 Предпочитают [[PT_OCEAN]] планеты.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
@@ -6968,7 +6970,7 @@ SP_PHINNERT
 Финнерт
 
 SP_PHINNERT_GAMEPLAY_DESC
-'''<img src="species/preview/phinnert.jpg"></img>
+'''<img src="species/preview/phinnert.png"></img>
 Трудолюбивые летающие обезьяны.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -7097,7 +7099,7 @@ SP_TRENCHERS
 Тренчеры
 
 SP_TRENCHERS_GAMEPLAY_DESC
-'''<img src="species/preview/trenchers.jpg"></img>
+'''<img src="species/preview/trenchers.png"></img>
 Загадочные колесные роботы, тщательно нарезающие на поверхности своей планеты кривые и спирали.
 Предпочитают [[PT_BARREN]] планеты
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -7183,7 +7185,7 @@ SP_UGMORS
 Угморы
 
 SP_UGMORS_GAMEPLAY_DESC
-'''<img src="species/preview/ugmors.jpg"></img>
+'''<img src="species/preview/ugmors.png"></img>
 Живущие в лаве сгустки дрожжей, временно формирующиеся в големов.
 Предпочитают [[PT_INFERNO]] планеты.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -7241,7 +7243,7 @@ SP_ABADDONI
 Абаддони
 
 SP_ABADDONI_GAMEPLAY_DESC
-'''<img src="species/preview/abaddoni.jpg"></img>
+'''<img src="species/preview/abaddoni.png"></img>
 Раса обитающих в пещерах существ, находящихся в рабстве у сверхконтролирующего компьютера, который они сами и создали.
 Предпочитают [[PT_INFERNO]] планеты.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -7379,7 +7381,7 @@ SP_BANFORO
 Банфоро
 
 SP_BANFORO_GAMEPLAY_DESC
-'''<img src="species/preview/banforo.jpg"></img>
+'''<img src="species/preview/banforo.png"></img>
 Симпатичные и усердные звёздные наблюдатели.
 Предпочитают [[PT_BARREN]] планеты
 [[encyclopedia LITHIC_SPECIES_TITLE]]

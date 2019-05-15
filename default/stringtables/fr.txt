@@ -7209,7 +7209,7 @@ SP_SCYLIOR  # translated
 Scylior
 
 SP_SCYLIOR_GAMEPLAY_DESC
-'''<img src="species/preview/scylior.jpg"></img>
+'''<img src="species/preview/scylior.png"></img>
 Nautiloïdes aquatiques dotés de trois tentacules.
 Préfèrent les Planètes [[PT_OCEAN]]s.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -7235,7 +7235,7 @@ SP_GYSACHE  # translated
 Gysache
 
 SP_GYSACHE_GAMEPLAY_DESC
-'''<img src="species/preview/gysache.jpg"></img>
+'''<img src="species/preview/gysache.png"></img>
 Herbivores craintifs insolites, organisation en troupeau.
 Préfèrent les Planètes [[PT_SWAMP]]s.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -7260,7 +7260,7 @@ SP_CHATO  # translated
 Chato
 
 SP_CHATO_GAMEPLAY_DESC
-'''<img src="species/preview/chato.jpg"></img>
+'''<img src="species/preview/chato.png"></img>
 Entités cristallines sessiles chevauchant des animaux nommés Gormoshk.
 Préfèrent les Planètes [[PT_TOXIC]]s.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
@@ -7279,7 +7279,8 @@ SP_TRITH  # translated
 Trith
 
 SP_TRITH_GAMEPLAY_DESC
-'''Télépathes xénophobes tourmentés.
+'''<img src="species/preview/trith.png"></img>
+Télépathes xénophobes tourmentés.
 Préfèrent les Planètes [[PT_RADIATED]]s.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
@@ -7290,13 +7291,14 @@ Les Trith sont un mélange de matière et d'énergie psychique. Leur physionomie
 
 Structure sociale:
 La société Trith est une théocratie dominée par les prêtres de Quaran-Dor (le Dieu de l'Esprit). Ils ont prêté le serment solennel de réduire au silence toutes les autres espèces pensantes, afin d'atténuer le fracas spirituel incessant qui parcourt l'Univers.
+<img src="species/trith.png"></img>
 '''
 
 SP_HAPPY  # translated
 Happybirthday
 
 SP_HAPPY_GAMEPLAY_DESC
-'''<img src="species/preview/happybirthdays.jpg"></img>
+'''<img src="species/preview/happybirthdays.png"></img>
 Robots submersibles abandonnés et solitaires, programmés pour chanter "Happy Birthday" à intervalles réguliers.
 Préfèrent les Planètes [[PT_OCEAN]]s.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
@@ -7540,7 +7542,7 @@ SP_PHINNERT  # translated
 Phinnert
 
 SP_PHINNERT_GAMEPLAY_DESC
-'''<img src="species/preview/phinnert.jpg"></img>
+'''<img src="species/preview/phinnert.png"></img>
 Singes volants industrialisés.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -7672,7 +7674,7 @@ SP_TRENCHERS  # translated
 Trenchers
 
 SP_TRENCHERS_GAMEPLAY_DESC
-'''<img src="species/preview/trenchers.jpg"></img>
+'''<img src="species/preview/trenchers.png"></img>
 Robots énigmatiques munis de roues, se consacrant exclusivement à sculpter la surface de leur planète en courbes et spirales les plus élaborées.
 Préfèrent les Planètes [[PT_BARREN]]s.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -7760,7 +7762,7 @@ SP_UGMORS  # translated
 Ugmors
 
 SP_UGMORS_GAMEPLAY_DESC
-'''<img src="species/preview/ugmors.jpg"></img>
+'''<img src="species/preview/ugmors.png"></img>
 Amas d'écume magmatique, pouvant s'agglomérer temporairement en golems.
 Préfèrent les Planètes [[PT_INFERNO]]s.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -7817,7 +7819,7 @@ SP_ABADDONI  # translated
 Abaddoni
 
 SP_ABADDONI_GAMEPLAY_DESC
-'''<img src="species/preview/abaddoni.jpg"></img>
+'''<img src="species/preview/abaddoni.png"></img>
 Organismes troglodytes généralement inoffensifs, et totalement soumis à un ordinateur central surprotecteur créé par ces derniers.
 Préfèrent les Planètes [[PT_INFERNO]]s.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -7957,7 +7959,7 @@ SP_BANFORO  # translated
 Banforo
 
 SP_BANFORO_GAMEPLAY_DESC
-'''<img src="species/preview/banforo.jpg"></img>
+'''<img src="species/preview/banforo.png"></img>
 Êtres adorables et contemplateurs d'étoiles.
 Préfèrent les Planètes [[PT_BARREN]]s.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
