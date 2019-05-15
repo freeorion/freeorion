@@ -86,7 +86,8 @@ ServerApp::ServerApp() :
     m_fsm(new ServerFSM(*this)),
     m_current_turn(INVALID_GAME_TURN),
     m_single_player_game(false),
-    m_chat_history(1000)
+    m_chat_history(1000),
+    m_turn_expired(false)
 {
     // Force the log file if requested.
     if (GetOptionsDB().Get<std::string>("log-file").empty()) {
@@ -1043,8 +1044,10 @@ void ServerApp::PushChatMessage(const std::string& text,
     }
 }
 
-void ServerApp::ExpireTurn()
-{ m_turn_expired = true; }
+void ServerApp::ExpireTurn() {
+    InfoLogger() << "Turn was set to expired";
+    m_turn_expired = true;
+}
 
 bool ServerApp::IsTurnExpired() const
 { return m_turn_expired; }
