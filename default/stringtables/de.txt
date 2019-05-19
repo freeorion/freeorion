@@ -6711,7 +6711,7 @@ BLD_SOL_REJUV
 Solarverjüngerer
 
 BLD_SOL_REJUV_DESC
-Versorgt einen Stern mit zusätzlichem Brennstoff, um ihn künstlich zu verjüngern. Der Stern wird um eine Stufe jünger, gemäß der folgenden Reihenfolge: [[STAR_RED]], [[STAR_ORANDE]], [[STAR_YELLOW]], [[STAR_WHITE]], [[STAR_BLUE]]. Dieser Prozess kann auch von einem [[encyclopedia OUTPOSTS_TITLE]] aus durchgeführt werden.
+Versorgt einen Stern mit zusätzlichem Brennstoff, um ihn künstlich zu verjüngern. Der Stern wird um eine Stufe jünger, gemäß der folgenden Reihenfolge: [[STAR_RED]], [[STAR_ORANGE]], [[STAR_YELLOW]], [[STAR_WHITE]], [[STAR_BLUE]]. Dieser Prozess kann auch von einem [[encyclopedia OUTPOSTS_TITLE]] aus durchgeführt werden.
 
 BLD_TRANSFORMER
 Transformer
