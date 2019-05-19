@@ -1402,6 +1402,15 @@ Valeur en minutes au-delà de laquelle le cookie enregistré sera considéré co
 OPTIONS_DB_PUBLISH_STATISTICS
 Activer l'envoi des statistiques d'empire au joueur.
 
+OPTIONS_DB_FIRST_TURN_TIME
+Référence de temps absolu au format "2019-01-20 11:59:59" UTC. Si vide, la fin du premier tour interviendra après l'intervalle d'expiration. Nécessite l'activation de l'intervalle fixe.
+
+OPTIONS_DB_TIMEOUT_INTERVAL
+Intervalle maximum en secondes entre la validation de chaque tour. Si 0, la fin du tour par temps limite est désactivée, et le passage au tour suivant interviendra seulement une fois que tous les joueurs auront terminé leur tour.
+
+OPTIONS_DB_TIMEOUT_FIXED_INTERVAL
+Le passage au tour suivant est exécuté à intervalle fixe, indépendamment du fait que les joueurs aient envoyé ou non leurs ordres pour le tour en cours.
+
 OPTIONS_DB_UI_MAIN_MENU_X
 Position horizontale du centre du menu principal de l'écran d'introduction, en pourcentage de la largeur totale de la fenêtre de jeu ou du plein écran.
 
@@ -1451,7 +1460,7 @@ OPTIONS_DB_UI_SOUND_BUTTON_CLICK
 Adresse du fichier son à jouer lorsqu'un bouton est cliqué.
 
 OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK
-Adresse du fichier son à jouer lorsque le bouton de Tour est cliqué.
+Adresse du fichier son à jouer lorsque le bouton Tour est cliqué.
 
 OPTIONS_DB_UI_SOUND_NEWTURN_TOGGLE
 Active/Désactive la lecture d'un fichier son au début d'un nouveau tour.
@@ -1919,7 +1928,7 @@ OPTIONS_DB_MUSIC_VOLUME
 Fixe le volume sonore de la musique (de 0 à 255).
 
 OPTIONS_DB_QUICKSTART
-Lance une nouvelle partie en court-circuitant le menu principal.
+Lance une nouvelle partie en court-circuitant le menu principal en mode solo ou le salon en multijoueurs. En multijoueurs, nécessite le mode sans hôte et aucune restriction sur le nombre minimum de joueurs connectés, car le serveur démarrera sans joueurs connectés.
 
 OPTIONS_DB_CONTINUE
 Reprend une partie depuis la sauvegarde la plus récente, sans passer par le menu principal.
@@ -2337,6 +2346,14 @@ Refuser
 # %1% is a turn progress phase
 PLAYING_GAME
 Partie en cours: %1%
+
+# %1% is a player name
+PLAYER_ENTERED_GAME
+%1% a rejoint la partie
+
+# %1% is a player name
+PLAYER_LEFT_GAME
+%1% a quitté la partie
 
 ##
 ## Galaxy Setup Screen
@@ -3154,13 +3171,27 @@ Tour %1%
 MAP_BTN_TURN_UNREADY
 Réviser Ordres %1%
 
+# %1% number of seconds
+MAP_TIMEOUT_SECONDS
+%1% secondes
+
+# %1% number of minutes
+# %2% number of seconds
+MAP_TIMEOUT_MINS_SECS  # translated
+%1% mins %2% secs
+
+# %1% number of hours
+# %2% number of minutes
+MAP_TIMEOUT_HRS_MINS  # translated
+%1% hrs %2% mins
+
 # %1% number of frames currently displayed per second.
 MAP_INDICATOR_FPS
 %1% i/s
 
 # %1% number of 'universe units' which the bar scale on the map represents.
-#MAP_SCALE_INDICATOR
-#<s>%1% uu</s>
+MAP_SCALE_INDICATOR  # translated
+<s>%1% uu</s>
 
 MAP_BTN_MENU  # translated
 Menu
