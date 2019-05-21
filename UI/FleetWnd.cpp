@@ -534,7 +534,9 @@ void FleetUIManager::FleetWndClosing(FleetWnd* fleet_wnd) {
     }
 
     // send order changes could be made on this fleet
-    HumanClientApp::GetApp()->SendPartialOrders();
+    auto app = HumanClientApp::GetApp();
+    if (app)
+        app->SendPartialOrders();
 }
 
 void FleetUIManager::FleetWndClicked(std::shared_ptr<FleetWnd> fleet_wnd) {

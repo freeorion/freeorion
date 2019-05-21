@@ -123,6 +123,8 @@ void ClientApp::StartTurn(const std::string& save_state_string)
 { m_networking->SendMessage(TurnOrdersMessage(m_orders, save_state_string)); }
 
 void ClientApp::SendPartialOrders() {
+    if (!this || !m_networking || !m_networking->IsTxConnected())
+        return;
     auto changes = m_orders.ExtractChanges();
     if (changes.first.empty() && changes.second.empty())
         return;
