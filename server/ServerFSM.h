@@ -88,7 +88,8 @@ struct MessageEventBase {
     (ModeratorAct)                          \
     (AuthResponse)                          \
     (EliminateSelf)                         \
-    (Error)
+    (Error)                                 \
+    (ExternalReserved)
 
 
 #define DECLARE_MESSAGE_EVENT(r, data, name)                                            \

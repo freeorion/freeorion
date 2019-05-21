@@ -105,6 +105,9 @@ ServerApp::ServerApp() :
     InfoLogger() << FreeOrionVersionString();
     LogDependencyVersions();
 
+    // Output external message number value so it could be used with external applications
+    InfoLogger() << "External reserved message value: " << std::to_string(static_cast<int>(Message::EXTERNAL_RESERVED));
+
     m_galaxy_setup_data.m_seed = GetOptionsDB().Get<std::string>("setup.seed");
     m_galaxy_setup_data.m_size = GetOptionsDB().Get<int>("setup.star.count");
     m_galaxy_setup_data.m_shape = GetOptionsDB().Get<Shape>("setup.galaxy.shape");
@@ -470,6 +473,9 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr p
             DebugLogger() << "ServerApp::HandleNonPlayerMessage received Message::SHUT_DOWN_SERVER from the sole "
                           << "connected player, who is local and so the request is being honored; server shutting down.";
             m_fsm->process_event(ShutdownServer());
+        } else if (player_connection->IsLocalConnection() && msg.Type() == Message::EXTERNAL_RESERVED) {
+            DebugLogger() << "ServerApp::HandleNonPlayerMessage received Message::EXTERNAL_RESERVED from local connection";
+            m_fsm->process_event(ExternalReserved(msg, player_connection));
         } else {
             ErrorLogger() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
                                             << msg.Type() << "\" for a non-player Message.  Terminating connection.";

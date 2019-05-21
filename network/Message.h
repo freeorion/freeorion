@@ -104,7 +104,8 @@ public:
         ELIMINATE_SELF,         ///< sent by client to server if the player wants to resign
         UNREADY,                ///< sent by client to server to revoke ready state of turn orders and sent by server to client to acknowledge it
         TURN_PARTIAL_ORDERS,    ///< sent to the server by a client that has changes in orders to be stored
-        TURN_TIMEOUT            ///< sent by server to client to notify about remaining time before turn advance
+        TURN_TIMEOUT,           ///< sent by server to client to notify about remaining time before turn advance
+        EXTERNAL_RESERVED       ///< sent to the server by an external application for custom reaction
     )
 
     GG_CLASS_ENUM(TurnProgressPhase,

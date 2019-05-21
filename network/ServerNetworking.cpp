@@ -273,6 +273,9 @@ namespace {
         case Message::SET_AUTH_ROLES:           return "Set authorization roles";
         case Message::ELIMINATE_SELF:           return "Eliminate self";
         case Message::UNREADY:                  return "Unready";
+        case Message::TURN_PARTIAL_ORDERS:      return "Partial orders";
+        case Message::TURN_TIMEOUT:             return "Turn timeout";
+        case Message::EXTERNAL_RESERVED:        return "External(reserved)";
         default:                                return std::string("Unknown Type(") + std::to_string(static_cast<int>(type)) + ")";
         };
     }
