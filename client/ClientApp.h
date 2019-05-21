@@ -25,13 +25,10 @@ protected:
 
 public:
     ClientApp(const ClientApp&) = delete;
-
     ClientApp(ClientApp&&) = delete;
-
     ~ClientApp() override = default;
 
     const ClientApp& operator=(const ClientApp&) = delete;
-
     ClientApp& operator=(ClientApp&&) = delete;
 
     /** @brief Return the player identifier of this client
@@ -232,13 +229,6 @@ public:
     /** @brief Handle the turn update.
      */
     virtual void HandleTurnUpdate() {}
-
-    /** @brief Set whether the current game is a single player game or not
-     *
-     * @param single_player Set true if the game is a single player game,
-     *      false if not.
-     */
-    void SetSinglePlayerGame(bool single_player = true);
 
     /** @brief Set the Message::PlayerStatus @a status for @a empire_id
      *
