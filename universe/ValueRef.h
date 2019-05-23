@@ -316,7 +316,8 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
                              std::unique_ptr<ValueRefBase<int>>&& int_ref2 = nullptr,
                              std::unique_ptr<ValueRefBase<int>>&& int_ref3 = nullptr,
                              std::unique_ptr<ValueRefBase<std::string>>&& string_ref1 = nullptr,
-                             std::unique_ptr<ValueRefBase<std::string>>&& string_ref2 = nullptr);
+                             std::unique_ptr<ValueRefBase<std::string>>&& string_ref2 = nullptr,
+                             bool return_immediate_value = false);
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
@@ -484,9 +485,11 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** An arithmetic operation node ValueRef class.  One of addition, subtraction,
-  * mutiplication, division, or unary negation is performed on the child(ren)
-  * of this node, and the result is returned. */
+/** An arithmetic operation node ValueRef class. Unary or binary operations such
+  * as addition, mutiplication, negation, exponentiation, rounding,
+  * value substitution, value comparisons, or random value selection or
+  * random number generation are performed on the child(ren) of this node, and
+  * the result is returned. */
 template <class T>
 struct FO_COMMON_API Operation final : public ValueRefBase<T>
 {
@@ -529,10 +532,10 @@ private:
     void    CacheConstValue();
     T       EvalImpl(const ScriptingContext& context) const;
 
-    OpType                          m_op_type;
+    OpType                                          m_op_type = TIMES;
     std::vector<std::unique_ptr<ValueRefBase<T>>>   m_operands;
-    bool                            m_constant_expr = false;
-    T                               m_cached_const_value;
+    bool                                            m_constant_expr = false;
+    T                                               m_cached_const_value = T();
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1235,18 +1238,15 @@ ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
                                     std::unique_ptr<ValueRefBase<int>>&& int_ref2,
                                     std::unique_ptr<ValueRefBase<int>>&& int_ref3,
                                     std::unique_ptr<ValueRefBase<std::string>>&& string_ref1,
-                                    std::unique_ptr<ValueRefBase<std::string>>&& string_ref2) :
-    Variable<T>(NON_OBJECT_REFERENCE, std::vector<std::string>(1, variable_name)),
+                                    std::unique_ptr<ValueRefBase<std::string>>&& string_ref2,
+                                    bool return_immediate_value) :
+    Variable<T>(NON_OBJECT_REFERENCE, std::vector<std::string>(1, variable_name), return_immediate_value),
     m_int_ref1(std::move(int_ref1)),
     m_int_ref2(std::move(int_ref2)),
     m_int_ref3(std::move(int_ref3)),
     m_string_ref1(std::move(string_ref1)),
     m_string_ref2(std::move(string_ref2))
-{
-    //std::cout << "ComplexVariable: " << variable_name << ", "
-    //          << int_ref1 << ", " << int_ref2 << ", "
-    //          << string_ref1 << ", " << string_ref2 << std::endl;
-}
+{}
 
 template <class T>
 bool ComplexVariable<T>::operator==(const ValueRefBase<T>& rhs) const
@@ -1258,6 +1258,8 @@ bool ComplexVariable<T>::operator==(const ValueRefBase<T>& rhs) const
     const ComplexVariable<T>& rhs_ = static_cast<const ComplexVariable<T>&>(rhs);
 
     if (this->m_property_name != rhs_.m_property_name)
+        return false;
+    if (this->m_return_immediate_value != rhs_.m_return_immediate_value)
         return false;
 
     if (m_int_ref1 == rhs_.m_int_ref1) {

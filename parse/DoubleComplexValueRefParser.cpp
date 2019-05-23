@@ -76,7 +76,7 @@ namespace parse {
             = (     tok.DirectDistanceBetween_
                  >  label(tok.Object_) > simple_int
                  >  label(tok.Object_) > simple_int
-              )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
                 deconstruct_movable_(_3, _pass),
@@ -93,7 +93,7 @@ namespace parse {
                         tok.ShortestPath_
                     >   label(tok.Object_) > simple_int
                     >   label(tok.Object_) > simple_int
-                )       [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
                 deconstruct_movable_(_3, _pass),
@@ -105,7 +105,7 @@ namespace parse {
 
 
         species_empire_opinion
-            = ( species_opinion
+            = (     species_opinion
                 >> (label(tok.Empire_) >  simple_int)
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 construct<std::string>(TOK_SPECIES_EMPIRE_OPINION),
@@ -117,7 +117,7 @@ namespace parse {
             ;
 
         species_species_opinion
-            = ( species_opinion
+            = (     species_opinion
                 >> (label(tok.Species_) >  string_grammar)
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 construct<std::string>(TOK_SPECIES_SPECIES_OPINION),
@@ -128,32 +128,52 @@ namespace parse {
                 deconstruct_movable_(_2, _pass))) ]
             ;
 
-        part_meter
-            = ( tok.ShipPartMeter_
+        unwrapped_part_meter
+            = (     tok.ShipPartMeter_
                 >   label(tok.Part_)    >   string_grammar
                 >   label(tok.Meter_)   >   ship_part_meter_type_enum
                 >   label(tok.Object_)  >   simple_int
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
-                _1,
-                deconstruct_movable_(_4, _pass),
-                nullptr,
-                nullptr,
-                deconstruct_movable_(_2, _pass),
-                deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(MeterToName_(_3))), _pass) ))]
+                    _1,                                     // variable_name
+                    deconstruct_movable_(_4, _pass),        // int_ref1
+                    nullptr,                                // int_ref2
+                    nullptr,                                // int_ref3
+                    deconstruct_movable_(_2, _pass),        // string_ref1
+                    deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(MeterToName_(_3))), _pass),   // string_ref2
+                    false                                   // return_immediate_value
+                  ))]
+            ;
+
+        value_wrapped_part_meter
+            = (     omit_[tok.Value_] >> '('
+                >   tok.ShipPartMeter_
+                >   label(tok.Part_)    >   string_grammar
+                >   label(tok.Meter_)   >   ship_part_meter_type_enum
+                >   label(tok.Object_)  >   simple_int
+                >>  ')'
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                    _1,                                     // variable_name
+                    deconstruct_movable_(_4, _pass),        // int_ref1
+                    nullptr,                                // int_ref2
+                    nullptr,                                // int_ref3
+                    deconstruct_movable_(_2, _pass),        // string_ref1
+                    deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(MeterToName_(_3))), _pass),   // string_ref2
+                    true                                    // return_immediate_value
+                  ))]
             ;
 
         special_capacity
-            = ( tok.SpecialCapacity_
-                >  label(tok.Name_) > string_grammar
-                >> label(tok.Object_)
-                >  simple_int
+            = (     tok.SpecialCapacity_
+                >   label(tok.Name_) > string_grammar
+                >>  label(tok.Object_)
+                >   simple_int
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
-                _1,
-                deconstruct_movable_(_3, _pass),
-                nullptr,
-                nullptr,
-                deconstruct_movable_(_2, _pass),
-                nullptr ))]
+                _1,                                 // variable_name
+                deconstruct_movable_(_3, _pass),    // int_ref1
+                nullptr,                            // int_ref2
+                nullptr,                            // int_ref3
+                deconstruct_movable_(_2, _pass),    // string_ref1
+                nullptr ))]                         // string_ref2
             ;
 
         start
@@ -163,7 +183,8 @@ namespace parse {
             |   shortest_path
             |   species_empire_opinion
             |   species_species_opinion
-            |   part_meter
+            |   unwrapped_part_meter
+            |   value_wrapped_part_meter
             |   special_capacity
             ;
 
@@ -174,7 +195,8 @@ namespace parse {
         species_empire_opinion.name("SpeciesOpinion (of empire)");
         species_species_opinion.name("SpeciesOpinion (of species)");
         special_capacity.name("SpecialCapacity");
-        part_meter.name("ShipPartMeter");
+        unwrapped_part_meter.name("ShipPartMeter");
+        value_wrapped_part_meter.name("ShipPartMeter (immediate value)");
 
 #if DEBUG_DOUBLE_COMPLEX_PARSERS
         debug(name_property_rule);
@@ -184,7 +206,8 @@ namespace parse {
         debug(species_empire_opinion);
         debug(species_species_opinion);
         debug(special_capacity);
-        debug(part_meter);
+        debug(unwrapped_part_meter);
+        debug(value_wrapped_part_meter);
 #endif
     }
 }
