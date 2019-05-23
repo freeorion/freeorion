@@ -194,7 +194,8 @@ FO_COMMON_API Message HostSPGameMessage(const SinglePlayerSetupData& setup_data)
 /** creates a minimal HOST_MP_GAME message used to initiate multiplayer "lobby" setup*/
 FO_COMMON_API Message HostMPGameMessage(const std::string& host_player_name);
 
-/** creates a JOIN_GAME message.  The sender's player name, client type, and cookie are sent in the message.*/
+/** creates a JOIN_GAME message.  The sender's player name, client type, and
+  * cookie are sent in the message.*/
 FO_COMMON_API Message JoinGameMessage(const std::string& player_name,
                                       Networking::ClientType client_type,
                                       boost::uuids::uuid cookie);
@@ -203,31 +204,32 @@ FO_COMMON_API Message JoinGameMessage(const std::string& player_name,
 FO_COMMON_API Message HostIDMessage(int host_player_id);
 
 /** creates a GAME_START message.  Contains the initial game state visible to the player.*/
-FO_COMMON_API Message GameStartMessage(bool single_player_game, int empire_id, int current_turn,
-                                       const EmpireManager& empires, const Universe& universe,
-                                       const SpeciesManager& species, CombatLogManager& combat_logs,
-                                       const SupplyManager& supply, const std::map<int, PlayerInfo>& players,
-                                       const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
+FO_COMMON_API Message GameStartMessage(
+    bool single_player_game, int empire_id, int current_turn,
+    const EmpireManager& empires, const Universe& universe,
+    const SpeciesManager& species, CombatLogManager& combat_logs,
+    const SupplyManager& supply, const std::map<int, PlayerInfo>& players,
+    const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a GAME_START message.  Contains the initial game state visible to
   * the player.  Also includes data loaded from a saved game. */
-FO_COMMON_API Message GameStartMessage(bool single_player_game, int empire_id, int current_turn,
-                                       const EmpireManager& empires, const Universe& universe,
-                                       const SpeciesManager& species, CombatLogManager& combat_logs,
-                                       const SupplyManager& supply,
-                                       const std::map<int, PlayerInfo>& players, const OrderSet& orders,
-                                       const SaveGameUIData* ui_data,
-                                       const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
+FO_COMMON_API Message GameStartMessage(
+    bool single_player_game, int empire_id, int current_turn,
+    const EmpireManager& empires, const Universe& universe,
+    const SpeciesManager& species, CombatLogManager& combat_logs,
+    const SupplyManager& supply, const std::map<int, PlayerInfo>& players,
+    const OrderSet& orders, const SaveGameUIData* ui_data,
+    const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a GAME_START message.  Contains the initial game state visible to
   * the player.  Also includes state string loaded from a saved game. */
-FO_COMMON_API Message GameStartMessage(bool single_player_game, int empire_id, int current_turn,
-                                       const EmpireManager& empires, const Universe& universe,
-                                       const SpeciesManager& species, CombatLogManager& combat_logs,
-                                       const SupplyManager& supply,
-                                       const std::map<int, PlayerInfo>& players, const OrderSet& orders,
-                                       const std::string* save_state_string,
-                                       const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
+FO_COMMON_API Message GameStartMessage(
+    bool single_player_game, int empire_id, int current_turn,
+    const EmpireManager& empires, const Universe& universe,
+    const SpeciesManager& species, CombatLogManager& combat_logs,
+    const SupplyManager& supply, const std::map<int, PlayerInfo>& players,
+    const OrderSet& orders, const std::string* save_state_string,
+    const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID
   * of the receiving player.  This message should only be sent by the server.*/
