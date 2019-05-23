@@ -40,6 +40,7 @@
 #include <GG/Cursor.h>
 #include <GG/utf8/checked.h>
 
+#include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -198,6 +199,12 @@ void HumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
     db.Add("video.windowed.height", UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
     db.Add("video.windowed.left", UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),  DEFAULT_LEFT,        OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));
     db.Add("video.windowed.top", UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),    DEFAULT_TOP,         RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
+}
+
+std::string HumanClientApp::EncodeServerAddressOption(const std::string& server) {
+    std::string server_encoded = boost::replace_all_copy(server, ".", "_");
+    boost::replace_all(server_encoded, ":", "_");
+    return "network.server.cookie._" + server_encoded;
 }
 
 HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const std::string& name,
@@ -665,9 +672,10 @@ void HumanClientApp::MultiPlayerGame() {
     } else {
         boost::uuids::uuid cookie = boost::uuids::nil_uuid();
         try {
-            if (!GetOptionsDB().OptionExists("network.server.cookie." + server_dest))
-                GetOptionsDB().Add<std::string>("network.server.cookie." + server_dest, "OPTIONS_DB_SERVER_COOKIE", "");
-            std::string cookie_str = GetOptionsDB().Get<std::string>("network.server.cookie." + server_dest);
+            std::string cookie_option = EncodeServerAddressOption(server_dest);
+            if (!GetOptionsDB().OptionExists(cookie_option))
+                GetOptionsDB().Add<std::string>(cookie_option, "OPTIONS_DB_SERVER_COOKIE", "");
+            std::string cookie_str = GetOptionsDB().Get<std::string>(cookie_option);
             boost::uuids::string_generator gen;
             cookie = gen(cookie_str);
         } catch(const std::exception& err) {
