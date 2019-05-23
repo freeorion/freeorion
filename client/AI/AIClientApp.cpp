@@ -328,6 +328,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
 
     case Message::TURN_UPDATE: {
+        m_orders.Reset();
         //DebugLogger() << "AIClientApp::HandleMessage : extracting turn update message data";
         ExtractTurnUpdateMessageData(msg,                     m_empire_id,        m_current_turn,
                                      m_empires,               m_universe,         GetSpeciesManager(),

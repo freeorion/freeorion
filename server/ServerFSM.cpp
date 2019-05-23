@@ -3006,7 +3006,8 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
             }
         }
 
-        TraceLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Received orders from player " << player_id;
+        DebugLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Received orders from player " << player_id
+                         << " for empire " << empire_id << " count of " << order_set->size();
 
         server.SetEmpireSaveGameData(empire_id, boost::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id,
                                      order_set, ui_data, save_state_string,

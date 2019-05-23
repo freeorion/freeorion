@@ -132,23 +132,6 @@ void ClientApp::SendPartialOrders() {
 }
 
 void ClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
-    switch (phase_id) {
-    case Message::WAITING_FOR_PLAYERS:
-        // Orders have been received by server, so clear the orders.
-        m_orders.Reset();
-        break;
-    case Message::FLEET_MOVEMENT:
-    case Message::COMBAT:
-    case Message::EMPIRE_PRODUCTION:
-    case Message::PROCESSING_ORDERS:
-    case Message::COLONIZE_AND_SCRAP:
-    case Message::DOWNLOADING:
-    case Message::LOADING_GAME:
-    case Message::GENERATING_UNIVERSE:
-    case Message::STARTING_AIS:
-    default:
-        break;
-    }
 }
 
 OrderSet& ClientApp::Orders()
