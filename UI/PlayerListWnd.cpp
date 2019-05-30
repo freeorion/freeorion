@@ -25,6 +25,12 @@ namespace {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ai.png");
         return retval;
     }
+
+    std::shared_ptr<GG::Texture> MessageIcon() {
+        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png");
+        return retval;
+    }
+
     std::shared_ptr<GG::Texture> HumanIcon() {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "human.png");
         return retval;
@@ -325,6 +331,12 @@ namespace {
                 }
             }
 
+            // render incoming diplomatic message icon, if there is one
+            const DiplomaticMessage& incoming_message_to_client =
+                Empires().GetDiplomaticMessage(m_player_id, app->PlayerID());
+            if (incoming_message_to_client.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
+                MessageIcon()->OrthoBlit(UpperLeft() + m_diplo_msg_ul, UpperLeft() + m_diplo_msg_ul + ICON_SIZE);
+
             // render player status icon
             switch (m_player_status) {
             case Message::PLAYING_TURN:     PlayingIcon()->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
@@ -513,6 +525,9 @@ namespace {
             m_diplo_status_icon_ul = GG::Pt(left, top);
             left += GG::X(IconSize()) + PAD;
 
+            m_diplo_msg_ul = GG::Pt(left, top);
+            left += GG::X(IconSize());
+
             //m_player_name_text->SizeMove(GG::Pt(left, top), GG::Pt(left + PLAYER_NAME_WIDTH, bottom));
             //left += PLAYER_NAME_WIDTH;
 
@@ -587,6 +602,7 @@ namespace {
         std::shared_ptr<DiplomaticStatusIndicator> m_allied_indicator;
 
         GG::Pt                  m_diplo_status_icon_ul;
+        GG::Pt                  m_diplo_msg_ul;
         GG::Pt                  m_ship_icon_ul;
         GG::Pt                  m_planet_icon_ul;
         GG::Pt                  m_production_icon_ul;
