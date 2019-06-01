@@ -121,6 +121,9 @@ public:
         OSX will not tolerate static initialization of SDL, to check screen size. */
     static void AddWindowSizeOptionsAfterMainStart(OptionsDB& db);
 
+    /** Converts server address to correct option name */
+    static std::string EncodeServerAddressOption(const std::string& server);
+
     /** If hosting then send the logger state to the server. */
     void            SendLoggingConfigToServer();
 

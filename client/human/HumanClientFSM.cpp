@@ -344,7 +344,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
 
         if (!cookie.is_nil()) {
             try {
-                std::string cookie_option = "network.server.cookie." + Client().Networking().Destination();
+                std::string cookie_option = HumanClientApp::EncodeServerAddressOption(Client().Networking().Destination());
                 GetOptionsDB().Remove(cookie_option);
                 GetOptionsDB().Add(cookie_option, "OPTIONS_DB_SERVER_COOKIE", boost::uuids::to_string(cookie));
                 GetOptionsDB().Commit();
