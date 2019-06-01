@@ -92,6 +92,86 @@ namespace {
 
 
     ////////////////////////////////////////////////
+    // DiplomaticStatusIndicator
+    ////////////////////////////////////////////////
+    /** Shows specified diplomatic status from specified empire to each other empire. */
+    class DiplomaticStatusIndicator : public GG::Control {
+    public:
+        DiplomaticStatusIndicator(GG::X w, GG::Y h, int empire_id, DiplomaticStatus diplo_status) :
+            Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
+            m_empire_id(empire_id),
+            m_empire_ids(),
+            m_diplo_status(diplo_status),
+            m_icon(nullptr)
+        {}
+
+        void Update() {
+            const ClientApp* app = ClientApp::GetApp();
+            if (!app) {
+                ErrorLogger() << "DiplomaticStatusIndicator::Render couldn't get client app!";
+                return;
+            }
+
+            // pick icon and tooltip text for diplo status
+            switch (m_diplo_status) {
+            case DIPLO_WAR:
+                m_icon = WarIcon();
+                break;
+            case DIPLO_PEACE:
+                m_icon = PeaceIcon();
+                break;
+            case DIPLO_ALLIED:
+                m_icon = AlliedIcon();
+                break;
+            default:
+                m_icon = UnknownIcon();
+                break;
+            }
+
+            // add color for each empire with specified diplomatic status
+            m_empire_ids.clear();
+
+            for (const auto& empire : Empires()) {
+                int empire_id = empire.second->EmpireID();
+
+                if (empire.second->Eliminated()) continue;
+                if (m_empire_id == empire_id) continue;
+
+                if (Empires().GetDiplomaticStatus(empire_id, m_empire_id) == m_diplo_status) {
+                    m_empire_ids.emplace_back(empire_id);
+                }
+            }
+        }
+
+        void Render() override {
+            int ICON_SIZE = IconSize();
+            GG::Pt ul = UpperLeft();
+            const GG::Clr& border_clr = ClientUI::WndOuterBorderColor();
+
+            // diplomatic status icon
+            glColor(GG::CLR_WHITE);
+            m_icon->OrthoBlit(ul, ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE)));
+
+            // empire color squares
+            for (const auto& empire_id : m_empire_ids) {
+                const GG::Clr& square_color = GetEmpire(empire_id)->Color();
+                GG::Pt square_ul = ul + GG::Pt(GG::X(empire_id * (ICON_SIZE + PAD)), GG::Y0);
+                GG::FlatRectangle(square_ul, square_ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE)), square_color, border_clr, DATA_PANEL_BORDER);
+            }
+        }
+
+    private:
+        int                                        m_empire_id;
+        std::vector<int>                           m_empire_ids;
+        DiplomaticStatus                           m_diplo_status;
+        std::shared_ptr<GG::Texture>               m_icon;
+
+        int IconSize() const { return Value(Height()); }
+        int PAD = 3;
+    };
+
+
+    ////////////////////////////////////////////////
     // PlayerDataPanel
     ////////////////////////////////////////////////
     /** Represents a player.  This class is used as the sole Control in
@@ -109,6 +189,9 @@ namespace {
             m_empire_production_text(nullptr),
             m_empire_research_text(nullptr),
             m_empire_detection_text(nullptr),
+            m_war_indicator(nullptr),
+            m_peace_indicator(nullptr),
+            m_allied_indicator(nullptr),
             m_diplo_status(INVALID_DIPLOMATIC_STATUS),
             m_player_status(Message::PLAYING_TURN),
             m_player_type(Networking::INVALID_CLIENT_TYPE),
@@ -130,6 +213,10 @@ namespace {
             m_empire_research_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
             m_empire_detection_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
 
+            m_war_indicator =      GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DIPLO_WAR);
+            m_peace_indicator =    GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DIPLO_PEACE);
+            m_allied_indicator =   GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DIPLO_ALLIED);
+
             //AttachChild(m_player_name_text);
             AttachChild(m_empire_name_text);
             AttachChild(m_empire_ship_text);
@@ -137,6 +224,9 @@ namespace {
             AttachChild(m_empire_production_text);
             AttachChild(m_empire_research_text);
             AttachChild(m_empire_detection_text);
+            AttachChild(m_war_indicator);
+            AttachChild(m_peace_indicator);
+            AttachChild(m_allied_indicator);
 
             DoLayout();
             Update();
@@ -210,7 +300,12 @@ namespace {
             if (m_host)
                 HostIcon()->OrthoBlit(UpperLeft() + m_host_icon_ul, UpperLeft() + m_host_icon_ul + ICON_SIZE);
 
+            // render diplomatic status indicators
+            m_war_indicator->Render();
+            m_peace_indicator->Render();
+            m_allied_indicator->Render();
 
+            // render win/lose icon
             switch (m_win_status)
             {
             case WON:     WonIcon()->OrthoBlit(UpperLeft() + m_win_status_icon_ul, UpperLeft() + m_win_status_icon_ul + ICON_SIZE); break;
@@ -344,7 +439,9 @@ namespace {
             m_empire_research_text->SetText(research_text);
             m_empire_detection_text->SetText(detection_text);
 
-
+            m_war_indicator->Update();
+            m_peace_indicator->Update();
+            m_allied_indicator->Update();
         }
 
         void            SetStatus(Message::PlayerStatus player_status)
@@ -362,11 +459,11 @@ namespace {
             const GG::X EMPIRE_RESEARCH_WIDTH(ClientUI::Pts()   * 16/5);
             const GG::X EMPIRE_DETECTION_WIDTH(ClientUI::Pts()  * 16/5);
 
-
             GG::X left(DATA_PANEL_BORDER);
             GG::Y top(DATA_PANEL_BORDER);
             GG::Y bottom(ClientHeight());
             GG::X PAD(3);
+            int constant_width = (Empires().NumEmpires() + 1) * (IconSize() + Value(PAD));
 
             m_diplo_status_icon_ul = GG::Pt(left, top);
             left += GG::X(IconSize()) + PAD;
@@ -418,17 +515,31 @@ namespace {
 
             m_win_status_icon_ul = GG::Pt(left, top);
             left += GG::X(IconSize()) + PAD;
+
+            m_war_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + constant_width), bottom));
+            left += constant_width;
+
+            m_peace_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + constant_width), bottom));
+            left += constant_width;
+
+            m_allied_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + constant_width), bottom));
+            left += constant_width;
+
         }
 
         int                     m_player_id;
         int                     m_empire_id;
-        //std::shared_ptr<GG::Label>            m_player_name_text;
-        std::shared_ptr<GG::Label>              m_empire_name_text;
-        std::shared_ptr<GG::Label>              m_empire_ship_text;
-        std::shared_ptr<GG::Label>              m_empire_planet_text;
-        std::shared_ptr<GG::Label>              m_empire_production_text;
-        std::shared_ptr<GG::Label>              m_empire_research_text;
-        std::shared_ptr<GG::Label>              m_empire_detection_text;
+        //std::shared_ptr<GG::Label>               m_player_name_text;
+        std::shared_ptr<GG::Label>                 m_empire_name_text;
+        std::shared_ptr<GG::Label>                 m_empire_ship_text;
+        std::shared_ptr<GG::Label>                 m_empire_planet_text;
+        std::shared_ptr<GG::Label>                 m_empire_production_text;
+        std::shared_ptr<GG::Label>                 m_empire_research_text;
+        std::shared_ptr<GG::Label>                 m_empire_detection_text;
+
+        std::shared_ptr<DiplomaticStatusIndicator> m_war_indicator;
+        std::shared_ptr<DiplomaticStatusIndicator> m_peace_indicator;
+        std::shared_ptr<DiplomaticStatusIndicator> m_allied_indicator;
 
         GG::Pt                  m_diplo_status_icon_ul;
         GG::Pt                  m_ship_icon_ul;
