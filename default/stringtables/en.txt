@@ -7325,7 +7325,8 @@ SP_SCYLIOR
 Scylior
 
 SP_SCYLIOR_GAMEPLAY_DESC
-'''Three-tentacled, aquatic nautiloids.
+'''<img src="species/preview/scylior.png"></img>
+Three-tentacled, aquatic nautiloids.
 Prefer [[PT_OCEAN]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -7343,13 +7344,15 @@ The remnant of a once-mighty telepathic hive brain, referred to as 'the Mind', i
 
 History:
 Millennia ago an expedition of the precursors discovered the Mind controlling the whole planet with his telepathic powers. The Mind immediately reached out and began copying the knowledge of the scientists and their ship crew, but the scientists cut out most of the Mind's brain and took it with them as a sample. The rest survived and lusted to recover the memories that had been taken from it. The Mind, however, was immobile, and for the time being, had no nearby intelligent beings to act as it's hands. Enter the Scyliori.
+<img src="species/scylior.png"></img>
 '''
 
 SP_GYSACHE
 Gysache
 
 SP_GYSACHE_GAMEPLAY_DESC
-'''Cowardly, freakish sheep-like herbivores.
+'''<img src="species/preview/gysache.png"></img>
+Cowardly, freakish sheep-like herbivores.
 Prefer [[PT_SWAMP]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -7366,13 +7369,15 @@ The Gysache are always wary of predators and are easily alarmed. Their natural r
 
 Homeworld:
 Their homeworld has a thick atmosphere of nitrogen, ammonia and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water.
+<img src="species/gysache.png"></img>
 '''
 
 SP_CHATO
 Chato
 
 SP_CHATO_GAMEPLAY_DESC
-'''Sessile crystalline entities which ride the animal Gormoshk.
+'''<img src="species/preview/chato.png"></img>
+Sessile crystalline entities which ride the animal Gormoshk.
 Prefer [[PT_TOXIC]] planets.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 '''
@@ -7383,13 +7388,15 @@ The Chato'matou'Gormoshk are actually two species together, however it is not en
 
 Social Structure:
 In Chato'matou society, age is the most important factor as they are nearly immortal. Every command the elders issue is obeyed at once and to disobey an elder is the greatest crime in Chato'matou society. They developed a system to transmit signals without delay throughout an entire colony, enabling them to converse with near the speed of light. This greatly enhanced the species mental capabilities, as all new ideas and theories could be instantly processed throughout the colony. The Gormoshk are valued as mounts and well cared for under normal circumstances, however they are also seen mostly as animals.
+<img src="species/chato.png"></img>
 '''
 
 SP_TRITH
 Trith
 
 SP_TRITH_GAMEPLAY_DESC
-'''Bereaved xenophobic telepaths.
+'''<img src="species/preview/trith.png"></img>
+Bereaved xenophobic telepaths.
 Prefer [[PT_RADIATED]] planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
@@ -7400,13 +7407,15 @@ The Trith are a mixture of matter and enormous psychic energies. Their shape is 
 
 Social Structure:
 The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind). They are united in the single goal of eliminating all other thinking species to silence the thought-noise in the universe.
+<img src="species/trith.png"></img>
 '''
 
 SP_HAPPY
 Happybirthday
 
 SP_HAPPY_GAMEPLAY_DESC
-'''Abandoned, lonely underwater robots, programmed to sing "happy birthday" to themselves at regular intervals.
+'''<img src="species/preview/happybirthdays.png"></img>
+Abandoned, lonely underwater robots, programmed to sing "happy birthday" to themselves at regular intervals.
 Prefer [[PT_OCEAN]] planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
@@ -7427,6 +7436,8 @@ Colonization is slow and industry inefficient due to species-wide depression, so
 
 History: Sad.
 Whether it is the initial lonely quest to explore their homeworld, their abandonment by their creators, the interval war, or their quest into space to find friendship, their existence has been a sad, depressing and lonely one.
+
+<img src="species/happybirthdays.png"></img>
 '''
 
 SP_HHHOH
@@ -7647,7 +7658,8 @@ SP_PHINNERT
 Phinnert
 
 SP_PHINNERT_GAMEPLAY_DESC
-'''Industrious Flying Monkeys.
+'''<img src="species/preview/phinnert.png"></img>
+Industrious Flying Monkeys.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -7660,6 +7672,7 @@ Life is much shorter for Phinnerts than for most other sentient life, owing to t
 
 Homeworld:
 Their planet has low gravity and a very thick atmosphere. Its composition is unique as it has a low proportion of heavier metals, but a much higher proportion of other heavy elements, particularly noble gases. It also has very stable tectonic formations meaning that the surface of the crust is very flat, and so is mostly covered with shallow, standing water. The entire world is like a giant everglade.
+<img src="species/phinnert.png"></img>
 '''
 
 SP_REPLICON
@@ -7777,13 +7790,14 @@ SP_TRENCHERS
 Trenchers
 
 SP_TRENCHERS_GAMEPLAY_DESC
-'''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
+'''<img src="species/preview/trenchers.png"></img>
+Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
 Prefer [[PT_BARREN]] planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
 SP_TRENCHERS_DESC
-''''''
+'''<img src="species/trenchers.png"></img>'''
 
 SP_RAAAGH
 Raaagh
@@ -7864,7 +7878,8 @@ SP_UGMORS
 Ugmors
 
 SP_UGMORS_GAMEPLAY_DESC
-'''Lava-dwelling yeast piles, which form temporary golems.
+'''<img src="species/preview/ugmors.png"></img>
+Lava-dwelling yeast piles, which form temporary golems.
 Prefer [[PT_INFERNO]] planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
@@ -7882,6 +7897,7 @@ An Ugmor can take on many shapes, but all of them consist of rocks or sheets of 
 
 Homeworld:
 The Ugmor homeworld is a rocky planet that rotates very quickly (once every 3 and a half hours). 30% of its surface is covered by seas of lava and liquid metals.
+<img src="species/ugmors.png"></img>
 '''
 
 SP_GISGUFGTHRIM
@@ -7919,18 +7935,21 @@ SP_ABADDONI
 Abaddoni
 
 SP_ABADDONI_GAMEPLAY_DESC
-'''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created.
+'''<img src="species/preview/abaddoni.png"></img>
+A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created.
 Prefers [[PT_INFERNO]] planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
 
 SP_ABADDONI_DESC
 '''Description:
+
 Abaddoni are shaped like a chicken egg on its side, roughly 0,8 meters tall and deep red with black spots. Their predominant feature is a large mouth starting at the point and extending back for a full third of the body.
 At the end of each of their 6 short crab like legs, is an inflatable sac which enables them to climb upside down. Because they grew up underground Abaddoni have no eyes, they mainly rely on smell and to a lesser extent sound and touch to navigate.
 
 Social Structure:
 The entire Abaddonnian species lives in a dictatorship ruled by a sentient artificial intelligence called Mother. This AI was created by the Abaddoni as a governmental assistant, but slowly took over. Now every newborn Abaddoni gets a wireless transmitter placed into the brain, for Mother to read their thoughts and being able to terminate them when necessary. There is no real social structure between the Abaddoni, they are all the same - slaves.
+<img src="species/abaddoni.png"></img>
 '''
 
 SP_ACIREMA
@@ -8057,7 +8076,8 @@ SP_BANFORO
 Banforo
 
 SP_BANFORO_GAMEPLAY_DESC
-'''Cute, sedulous star gazers.
+'''<img src="species/preview/banforo.png"></img>
+Cute, sedulous star gazers.
 Prefer [[PT_BARREN]] planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
@@ -8071,6 +8091,7 @@ The Banforo are very social towards each other and share strong bonds. Resources
 
 Reason for Extinction:
 It hasn't been sufficiently clarified, but scientists suspect that a cosmic event made the environment unbearable for the Banforo for a time so long that their numbers were dwindling to ultimately zero.
+<img src="species/banforo.png"></img>
 '''
 
 SP_KILANDOW

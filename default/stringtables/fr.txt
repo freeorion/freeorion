@@ -7325,7 +7325,8 @@ SP_SCYLIOR  # translated
 Scylior
 
 SP_SCYLIOR_GAMEPLAY_DESC
-'''Nautiloïdes aquatiques dotés de trois tentacules.
+'''<img src="species/preview/scylior.png"></img>
+Nautiloïdes aquatiques dotés de trois tentacules.
 Préfèrent les Planètes [[PT_OCEAN]]s.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -7343,13 +7344,15 @@ Les Scyliori considèrent les restes d'un cerveau-ruche télépathe, qu'ils surn
 
 Histoire :
 Voici quelques millénaires, une expédition des Précurseurs découvrit une planète que L'Esprit contrôlait en totalité grâce à ses pouvoirs télépathiques. L'Esprit surgit sans tarder et commença à aspirer les connaissances des savants et de l'équipage présents à bord de l'astronef. Mais les savants parvinrent à prélever la majeure partie du cerveau de L'Esprit, et l'emportèrent comme spécimen. Ce qui demeura de L'Esprit survécut, cherchant inlassablement à récupérer les souvenirs qui lui avaient été enlevés. L'Esprit restait cependant une entité immobile, et n'avait rencontré jusqu'alors aucun organisme intelligent susceptible de lui prêter 'main forte'. Alors survinrent les Scyliori.
+<img src="species/scylior.png"></img>
 '''
 
 SP_GYSACHE  # translated
 Gysache
 
 SP_GYSACHE_GAMEPLAY_DESC
-'''Herbivores craintifs insolites, organisation en troupeau.
+'''<img src="species/preview/gysache.png"></img>
+Herbivores craintifs insolites, organisation en troupeau.
 Préfèrent les Planètes [[PT_SWAMP]]s.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -7366,13 +7369,15 @@ Les Gysache sont constamment sur leur garde du fait des prédateurs et sont faci
 
 Monde d'origine:
 Leur Monde d'origine possède une épaisse atmosphère d'azote, d'ammoniaque et de dioxyde de carbone. Bien que très humide, leur environnement d'origine ne dispose pas d'étendues océaniques, seulement 5% de la surface planétaire étant recouverte d'eau. Ses principales caractéristiques topographiques sont des hauts plateaux balafrés de canyons abyssaux, dont les fonds contiennent le peu d'eau stagnante de la planète.
+<img src="species/gysache.png"></img>
 '''
 
 SP_CHATO  # translated
 Chato
 
 SP_CHATO_GAMEPLAY_DESC
-'''Entités cristallines sessiles chevauchant des animaux nommés Gormoshk.
+'''<img src="species/preview/chato.png"></img>
+Entités cristallines sessiles chevauchant des animaux nommés Gormoshk.
 Préfèrent les Planètes [[PT_TOXIC]]s.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 '''
@@ -7383,13 +7388,15 @@ Les Chato'matou'Gormoshk sont en réalité deux espèces reliées, bien qu'on ne
 
 Structure sociale:
 Dans la société Chato'matou, l'âge est le paramètre primordial, étant donné leur quasi-immortalité. Chaque commandement des anciens est respecté à la lettre et désobéir à un ancien est le plus grand des crimes au sein de la société Chato'matou. Ces organismes ont développé un système rendant possible la transmission instantanée de signaux à travers une colonie entière, leur permettant ainsi de communiquer entre eux à une vitesse proche de celle de la lumière. Cela améliore grandement les capacités mentales de l'espèce, puisque toutes nouvelles idées et théories peuvent être propagées instantanément à toute la colonie. Les Gormoshk sont considérés comme des montures de choix et sont la plupart du temps bien traités, mais restent toutefois de simples animaux pour leurs maîtres.
+<img src="species/chato.png"></img>
 '''
 
 SP_TRITH  # translated
 Trith
 
 SP_TRITH_GAMEPLAY_DESC
-'''Télépathes xénophobes tourmentés.
+'''<img src="species/preview/trith.png"></img>
+Télépathes xénophobes tourmentés.
 Préfèrent les Planètes [[PT_RADIATED]]s.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
@@ -7400,13 +7407,15 @@ Les Trith sont un mélange de matière et d'énergie psychique. Leur physionomie
 
 Structure sociale:
 La société Trith est une théocratie dominée par les prêtres de Quaran-Dor (le Dieu de l'Esprit). Ils ont prêté le serment solennel de réduire au silence toutes les autres espèces pensantes, afin d'atténuer le fracas spirituel incessant qui parcourt l'Univers.
+<img src="species/trith.png"></img>
 '''
 
 SP_HAPPY  # translated
 Happybirthday
 
 SP_HAPPY_GAMEPLAY_DESC
-'''Robots submersibles abandonnés et solitaires, programmés pour chanter "Happy Birthday" à intervalles réguliers.
+'''<img src="species/preview/happybirthdays.png"></img>
+Robots submersibles abandonnés et solitaires, programmés pour chanter "Happy Birthday" à intervalles réguliers.
 Préfèrent les Planètes [[PT_OCEAN]]s.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
@@ -7427,6 +7436,8 @@ Le processus de colonisation est lent et l'industrie peu efficace, en raison du 
 
 Histoire: Triste.
 Que ce soit leur exploration solitaire de leur planète natale, leur abandon par leurs créateurs, ou leur quête incessante d'amitié, l'existence des Happybirthdays est triste et solitaire.
+
+<img src="species/happybirthdays.png"></img>
 '''
 
 SP_HHHOH  # translated
@@ -7647,7 +7658,8 @@ SP_PHINNERT  # translated
 Phinnert
 
 SP_PHINNERT_GAMEPLAY_DESC
-'''Singes volants industrialisés.
+'''<img src="species/preview/phinnert.png"></img>
+Singes volants industrialisés.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -7660,6 +7672,7 @@ La vie est bien plus courte pour les Phinnerts que pour la majorité des espèce
 
 Planète Natale:
 Leur planète possède une faible gravité et une atmosphère très épaisse. Sa composition géologique est unique du fait de la faible proportion de métaux lourds, mais de la bien plus forte présence d'autres éléments lourds, particulièrement les gaz nobles. De son activité tectonique très stable, résulte une croûte terrestre très plate, qui par conséquent est principalement recouverte d'eaux stagnantes et peu profondes. La totalité de leur monde s'apparente à une zone marécageuse géante.
+<img src="species/phinnert.png"></img>
 '''
 
 SP_REPLICON  # translated
@@ -7777,13 +7790,14 @@ SP_TRENCHERS  # translated
 Trenchers
 
 SP_TRENCHERS_GAMEPLAY_DESC
-'''Robots énigmatiques munis de roues, se consacrant exclusivement à sculpter la surface de leur planète en courbes et spirales les plus élaborées.
+'''<img src="species/preview/trenchers.png"></img>
+Robots énigmatiques munis de roues, se consacrant exclusivement à sculpter la surface de leur planète en courbes et spirales les plus élaborées.
 Préfèrent les Planètes [[PT_BARREN]]s.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
 #SP_TRENCHERS_DESC
-#''''''
+#'''<img src="species/trenchers.png"></img>'''
 
 SP_RAAAGH  # translated
 Raaagh
@@ -7864,7 +7878,8 @@ SP_UGMORS  # translated
 Ugmors
 
 SP_UGMORS_GAMEPLAY_DESC
-'''Amas d'écume magmatique, pouvant s'agglomérer temporairement en golems.
+'''<img src="species/preview/ugmors.png"></img>
+Amas d'écume magmatique, pouvant s'agglomérer temporairement en golems.
 Préfèrent les Planètes [[PT_INFERNO]]s.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
@@ -7882,6 +7897,7 @@ Un Ugmor peut revêtir plusieurs formes, mais ils sont tous constitués de roche
 
 Planète Natale:
 Le monde d'origine des Ugmors est une planète rocheuse à la période de rotation extrêmement rapide (une rotation complète toutes les 3 heures et demie). 30% de sa surface est recouverte de mers de lave et de métaux liquides.
+<img src="species/ugmors.png"></img>
 '''
 
 SP_GISGUFGTHRIM  # translated
@@ -7919,7 +7935,8 @@ SP_ABADDONI  # translated
 Abaddoni
 
 SP_ABADDONI_GAMEPLAY_DESC
-'''Organismes troglodytes généralement inoffensifs, et totalement soumis à un ordinateur central surprotecteur créé par ces derniers.
+'''<img src="species/preview/abaddoni.png"></img>
+Organismes troglodytes généralement inoffensifs, et totalement soumis à un ordinateur central surprotecteur créé par ces derniers.
 Préfèrent les Planètes [[PT_INFERNO]]s.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
@@ -7931,6 +7948,7 @@ Les Abaddoni ont une forme ovoïde d'environ 0.8 mètres de diamètre, arborent 
 
 Structure sociale:
 L'espèce entière des Abaddonni vit sous le joug d'une intelligence artificielle sensible appelée Mère. Cette IA fut créée par les Abaddoni comme une assistante gouvernementale, mais elle prit lentement le dessus sur ses créateurs. À présent, chaque nouveau-né Abaddoni se voit implanter un transmetteur dans le cerveau, pour que Mère puisse connaître les pensées de chacun de ses sujets et pouvoir contrôler leurs fonctions vitales au besoin. Il n'y aucun semblant de structure sociale chez les Abaddoni: ils sont tous semblables, c'est-à-dire esclaves.
+<img src="species/abaddoni.png"></img>
 '''
 
 SP_ACIREMA  # translated
@@ -8057,7 +8075,8 @@ SP_BANFORO  # translated
 Banforo
 
 SP_BANFORO_GAMEPLAY_DESC
-'''Êtres adorables et contemplateurs d'étoiles.
+'''<img src="species/preview/banforo.png"></img>
+Êtres adorables et contemplateurs d'étoiles.
 Préfèrent les Planètes [[PT_BARREN]]s.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
@@ -8071,6 +8090,7 @@ Les Banforo sont très sociables et tissent des liens très forts entre eux. Les
 
 Raison de l'extinction:
 La raison de leur disparition n'a pas été clairement établie, mais la thèse scientifique opte pour un événement cosmique ayant rendu les conditions environnementales invivables pour les Banforo, sur une période de temps assez longue pour que leur nombre décline et que leur espèce finisse par s'éteindre.
+<img src="species/banforo.png"></img>
 '''
 
 SP_KILANDOW  # translated
