@@ -13,7 +13,7 @@ set(CMAKE_OSX_ARCHITECTURES x86_64 CACHE STRING "Set the architecture the univer
 IF(CMAKE_GENERATOR STREQUAL "Xcode")
   set(CMAKE_CONFIGURATION_TYPES Release)
 ELSE()
-  set(CMAKE_CONFIGURATION_TYPES Debug Release)
+  set(CMAKE_CONFIGURATION_TYPES Debug RelWithDebInfo Release)
 ENDIF()
 IF(NOT CMAKE_BUILD_TYPE)
   MESSAGE(STATUS "Setting build type to 'Release' as none was specified.")
@@ -26,6 +26,7 @@ message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 
 include(UseCompilerCache)
 find_compiler_cache(PROGRAM ccache)
+
 
 ##
 ## Global project configuration
@@ -55,7 +56,7 @@ if(BUILD_TESTING)
 
     if(NOT TARGET unittest)
         add_custom_target(unittest
-            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure --build-config $<CONFIG>
             COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
         )
     endif()
@@ -117,6 +118,13 @@ if(NOT APPLE)
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif()
 
+if(MSVC)
+    # Remove default debug flags /Zi and /MDd to allow project-specific debug flag
+    STRING(REGEX REPLACE " /Zi" "" CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG})
+    STRING(REGEX REPLACE " /Zi" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO ${CMAKE_CXX_FLAGS_RELWITHDEBINFO})
+    STRING(REGEX REPLACE " /MDd" "" CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG})
+endif()
+
 add_compile_options(
     # Enable (almost) all warnings on compilers
     # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wall-316
@@ -142,13 +150,28 @@ add_compile_options(
 
     # Fix Fatal Error C1128: number of sections exceeded object file format limit : compile with /bigobj on SerializeEmpire.cpp
     $<$<CXX_COMPILER_ID:MSVC>:/bigobj>
+
+    # Produce pdb files in Debug and RelWithDebInfo configuration
+    $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<OR:$<CONFIG:DEBUG>,$<CONFIG:RELWITHDEBINFO>>>:/Zi>
+ 
+    # Use the multithread-specific and DLL-specific version of the run-time library in Debug Configuration
+    $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:DEBUG>>:/MD>
 )
+
+# Determine minimum Windows target (see FreeOrion SDK)
+if(WIN32)
+    string(REGEX REPLACE "^v([1-9][0-9]*)(.*)$" "\\1;\\2" _VS_PLATFORM_TOOLSET "${CMAKE_VS_PLATFORM_TOOLSET}")
+    message( STATUS "Toolset ${CMAKE_VS_PLATFORM_TOOLSET} regex ${_VS_PLATFORM_TOOLSET}")
+    list(GET _VS_PLATFORM_TOOLSET 1 _VS_PLATFORM_TOOLSET_TARGET)
+    message( STATUS "Target ${_VS_PLATFORM_TOOLSET_TARGET}")
+endif()
 
 set_property(DIRECTORY APPEND
     PROPERTY COMPILE_DEFINITIONS
-        # Set minimum Windows target version to WindowsXP
+        # Set minimum Windows target version to WindowsXP or Vista depending on toolset
         # https://msdn.microsoft.com/en-us/library/aa383745.aspx
-        $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=_WIN32_WINNT_WINXP>
+        # Use numeric to correctly compare it in <boost\log\detail\config.hpp>
+        $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=$<IF:$<STREQUAL:${_VS_PLATFORM_TOOLSET_TARGET},_xp>,0x0501,0x0600>>
         # Default to unicode variants when using Win32 API
         # https://msdn.microsoft.com/en-us/library/dybsewaf.aspx
         $<$<PLATFORM_ID:Windows>:_UNICODE>
@@ -161,6 +184,9 @@ set_property(DIRECTORY APPEND
         # Disable '<func>': The POSIX name for this item is deprecated." warning
         # https://msdn.microsoft.com/en-us/library/ttcz0bys.aspx
         $<$<PLATFORM_ID:Windows>:_CRT_NONSTDC_NO_WARNINGS>
+
+        # Suppress "Boost.Config is older than your compiler version" warning
+        $<$<PLATFORM_ID:Windows>:BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE>
 
         # Define platform specific macros
         $<$<PLATFORM_ID:Windows>:FREEORION_WIN32>
@@ -310,10 +336,14 @@ if(Apple)
     )
 endif()
 
+if(NOT WIN32)
+    add_library(freeorioncommon "")
+endif()
 
-add_library(freeorioncommon "")
 
 if(WIN32)
+    add_library(freeorioncommon STATIC "")
+
     set_property(TARGET freeorioncommon
         PROPERTY
         OUTPUT_NAME Common
@@ -364,6 +394,14 @@ target_link_libraries(freeorioncommon
     ${CORE_FOUNDATION_LIBRARY}
 )
 
+if(WIN32 AND ${Boost_VERSION} GREATER 106699) # boost >= 1.67
+    # fix https://github.com/boostorg/uuid/issues/68
+    find_library(BCRYPT_LIBRARY bcrypt)
+    target_link_libraries(freeorioncommon
+        ${BCRYPT_LIBRARY}
+    )
+endif()
+
 add_dependencies(freeorioncommon freeorionversion)
 
 
@@ -380,10 +418,15 @@ set_property(TARGET freeorionparseobj
     POSITION_INDEPENDENT_CODE ON
 )
 
-if(WIN32)
-    set_property(TARGET freeorionparseobj
-        PROPERTY
-        OUTPUT_NAME Parsers
+if(MSVC)
+    # The debug information produced in this project is over the MSVC linking limit, remove it
+    get_target_property(PARSEOBJ_COMPILE_OPTIONS freeorionparseobj COMPILE_OPTIONS)
+    list(REMOVE_ITEM PARSEOBJ_COMPILE_OPTIONS 
+        "$<$<AND:$<CXX_COMPILER_ID:MSVC>,$<OR:$<CONFIG:DEBUG>,$<CONFIG:RELWITHDEBINFO>>>:/Zi>"
+    )
+    set_target_properties(freeorionparseobj 
+        PROPERTIES
+        COMPILE_OPTIONS "${PARSEOBJ_COMPILE_OPTIONS}"
     )
 endif()
 
@@ -403,8 +446,30 @@ target_compile_definitions(freeorionparseobj
         -DFREEORION_BUILD_PARSE
 )
 
+if(NOT WIN32)
+    add_library(freeorionparse $<TARGET_OBJECTS:freeorionparseobj>)
+endif()
 
-add_library(freeorionparse $<TARGET_OBJECTS:freeorionparseobj>)
+if(WIN32)
+    add_library(freeorionparse STATIC $<TARGET_OBJECTS:freeorionparseobj>)
+
+    set_property(TARGET freeorionparse
+        PROPERTY
+        OUTPUT_NAME Parsers
+    )
+endif()
+
+if(MSVC)
+    # The debug information produced in this project is over the MSVC linking limit, remove it
+    get_target_property(PARSE_COMPILE_OPTIONS freeorionparse COMPILE_OPTIONS)
+    list(REMOVE_ITEM PARSE_COMPILE_OPTIONS 
+        "$<$<AND:$<CXX_COMPILER_ID:MSVC>,$<OR:$<CONFIG:DEBUG>,$<CONFIG:RELWITHDEBINFO>>>:/Zi>"
+    )
+    set_target_properties(freeorionparse
+        PROPERTIES
+        COMPILE_OPTIONS "${PARSEOBJ_COMPILE_OPTIONS}"
+    )
+endif()
 
 target_compile_options(freeorionparse
     PRIVATE
@@ -472,7 +537,6 @@ target_link_libraries(freeoriond
 
 target_dependencies_copy_to_build(freeoriond)
 target_dependent_data_symlink_to_build(freeoriond ${PROJECT_SOURCE_DIR}/default)
-
 
 add_executable(freeorionca "")
 
@@ -626,6 +690,15 @@ if(NOT BUILD_HEADLESS)
 
     target_dependencies_copy_to_build(freeorion)
     target_dependent_data_symlink_to_build(freeorion ${PROJECT_SOURCE_DIR}/default)
+endif()
+
+if(WIN32)
+    add_custom_command(TARGET freeorion POST_BUILD
+        COMMAND
+            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python27.dll" "$<TARGET_FILE_DIR:freeorion>"
+        COMMAND
+            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python27.zip" "$<TARGET_FILE_DIR:freeorion>" 
+    )
 endif()
 
 if(APPLE)

@@ -11,6 +11,7 @@
 
 #include <boost/format.hpp>
 #include <boost/uuid/nil_generator.hpp>
+#include <boost/thread/thread.hpp>
 
 ClientAppFixture::ClientAppFixture() :
     m_game_started(false),

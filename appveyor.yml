@@ -2,6 +2,11 @@ os: Visual Studio 2017
 
 version: ci-{build}
 
+environment:
+  matrix:
+    - BUILD_SYSTEM: CMAKE
+    - BUILD_SYSTEM: MSVC
+
 init:
   - git config --global core.eol native
   - git config --global core.autocrlf true
@@ -24,9 +29,22 @@ install:
   - cd freeorion
 
 before_build:
-  - cd msvc2017
+  - if "%BUILD_SYSTEM%" == "MSVC" (
+      cd msvc2017
+    )
+  - if "%BUILD_SYSTEM%" == "CMAKE" (
+      mkdir build
+    )
 
 build_script:
-    - msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /property:PlatformToolset=v140_xp /property:Configuration=Release-XP /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /verbosity:minimal
+  - if "%BUILD_SYSTEM%" == "MSVC" (
+      msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /property:PlatformToolset=v140_xp /property:Configuration=Release-XP /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /verbosity:minimal
+    )
+  - if "%BUILD_SYSTEM%" == "CMAKE" (
+      pushd build &&
+      cmake -G "Visual Studio 15 2017" -T v140_xp -DBUILD_TESTING=On .. &&
+      cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" &&
+      popd
+    )
 
 test: off
