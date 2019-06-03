@@ -760,6 +760,7 @@ ASTEROID_STEALTH = "ASTEROID_STEALTH"
 SOLAR_STEALTH = "SOLAR_STEALTH"
 SPEED = "SPEED"
 FUEL = "FUEL"
+FUEL_EFFICIENCY = "FUEL_EFFICIENCY"
 SHIELDS = "SHIELDS"
 STRUCTURE = "STRUCTURE"
 DETECTION = "DETECTION"            # do only specify for hulls if irregular detection
@@ -782,6 +783,20 @@ TECH_EFFECTS = {
     "GRO_ENERGY_META": {FUEL: 2},
 }
 
+HULL_TAG_EFFECTS = {
+    "SMALL_HULL": {
+        FUEL_EFFICIENCY: 2,
+    },
+    "MEDIUM_HULL": {
+        FUEL_EFFICIENCY: 1,
+    },
+    "LARGE_HULL": {
+        FUEL_EFFICIENCY: 0.5,
+    },
+    "HUGE_HULL": {
+        FUEL_EFFICIENCY: 0.25,
+    },
+}
 HULL_EFFECTS = {
     # "HULLNAME": { Token1: Value1, Token2: Value2, ...}
     # Robotic line

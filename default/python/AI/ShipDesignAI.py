@@ -805,6 +805,14 @@ class ShipDesigner(object):
         self.production_cost = 9999
         self.production_time = 1
 
+    def _hull_efficiency(self):
+        for tag in AIDependencies.HULL_TAG_EFFECTS:
+            if self.hull.hasTag(tag):
+                if AIDependencies.FUEL_EFFICIENCY in AIDependencies.HULL_TAG_EFFECTS[tag]:
+                    return AIDependencies.HULL_TAG_EFFECTS[tag][AIDependencies.FUEL_EFFICIENCY]
+        # hull size defaults to medium hull value
+        return AIDependencies.HULL_TAG_EFFECTS["MEDIUM_HULL"][AIDependencies.FUEL_EFFICIENCY]
+
     def update_hull(self, hullname):
         """Set hull of the design.
 
@@ -1542,9 +1550,10 @@ class ShipDesigner(object):
         # base fuel
         tank_name = fuel_part.name
         base = fuel_part.capacity
+        hull_multiplier = self._hull_efficiency()
         tech_bonus = _get_tech_bonus(AIDependencies.FUEL_TANK_UPGRADE_DICT, tank_name)
         # There is no per part species modifier
-        return base + tech_bonus
+        return ( base + tech_bonus ) * hull_multiplier
 
     def _calculate_weapon_strength(self, weapon_part, ignore_species=False):
         # base damage
