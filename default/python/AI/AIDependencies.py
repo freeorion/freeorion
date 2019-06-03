@@ -779,6 +779,9 @@ HULL_EFFECTS = {
     "SH_ROBOTIC": {
         REPAIR_PER_TURN: 2,
     },
+    "SH_SPACE_FLUX_BUBBLE": {
+        STEALTH_MODIFIER: -30,
+    },
     "SH_SPATIAL_FLUX": {
         STEALTH_MODIFIER: -30,
     },
