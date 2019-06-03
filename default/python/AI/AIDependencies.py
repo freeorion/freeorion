@@ -340,6 +340,15 @@ DEFENSE_SHIELDS_TECHS = [
 ]
 # </editor-fold>
 
+# <editor-fold desc="Fuel techs">
+FUEL_TANK_UPGRADE_DICT = {
+    # "PARTNAME": tuple((tech_name, fuel_upgrade), (tech_name2, fuel_upgrade2), ...)
+    "FU_BASIC_TANK": (("SHP_DEUTERIUM_TANK", 1), ("SHP_ANTIMATTER_TANK", 3)),
+    "FU_RAMSCOOP": (),
+    "FU_ZERO_FUEL": (),
+}
+# </editor-fold>
+
 # <editor-fold desc="Weapon techs">
 # TODO (Morlic): Consider using only 1 dict with (capacity, secondaryStat) tuple as entries
 WEAPON_UPGRADE_DICT = {
@@ -778,6 +787,9 @@ HULL_EFFECTS = {
     # Robotic line
     "SH_ROBOTIC": {
         REPAIR_PER_TURN: 2,
+    },
+    "SH_SPACE_FLUX_BUBBLE": {
+        STEALTH_MODIFIER: -30,
     },
     "SH_SPATIAL_FLUX": {
         STEALTH_MODIFIER: -30,

@@ -865,7 +865,7 @@ class ShipDesigner(object):
             partclass = part.partClass
             capacity = part.capacity if partclass not in WEAPONS else self._calculate_weapon_strength(part)
             if partclass in FUEL:
-                self.design_stats.fuel += capacity
+                self.design_stats.fuel += self._calculate_fuel_capacity(part)
             elif partclass in ENGINES:
                 engine_counter += 1
                 if engine_counter == 1:
@@ -1004,7 +1004,7 @@ class ShipDesigner(object):
                 self.design_stats.detection += AIDependencies.BASE_DETECTION
 
         # TODO establish framework for conditional effects and get rid of this
-        if self.hull.name == "SH_SPATIAL_FLUX":
+        if self.hull.name in ["SH_SPATIAL_FLUX", "SH_SPACE_FLUX_BUBBLE"]:
             self.design_stats.stealth += 10
             relevant_stealth_techs = [
                 "SPY_STEALTH_PART_1", "SPY_STEALTH_PART_2",
@@ -1537,6 +1537,14 @@ class ShipDesigner(object):
         :rtype: bool
         """
         return any(part.partClass in partclass for part in self.parts)
+
+    def _calculate_fuel_capacity(self, fuel_part, ignore_species=False):
+        # base fuel
+        tank_name = fuel_part.name
+        base = fuel_part.capacity
+        tech_bonus = _get_tech_bonus(AIDependencies.FUEL_TANK_UPGRADE_DICT, tank_name)
+        # There is no per part species modifier
+        return base + tech_bonus
 
     def _calculate_weapon_strength(self, weapon_part, ignore_species=False):
         # base damage
