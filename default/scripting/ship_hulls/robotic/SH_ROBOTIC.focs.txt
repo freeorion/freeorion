@@ -14,7 +14,7 @@ Hull
     ]
     buildCost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 2
-    tags = [ "ROBOTIC_HULL" "PEDIA_HULL_LINE_ROBOTIC" ]
+    tags = [ "ROBOTIC_HULL" "PEDIA_HULL_LINE_ROBOTIC" "LARGE_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -42,6 +42,7 @@ Hull
             activation = Source
             effects = SetStructure value = Value + 2
 
+        [[LARGE_HULL_FUEL]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
