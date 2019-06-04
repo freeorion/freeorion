@@ -882,7 +882,7 @@ namespace {
         float fighter_attack = 0.0f;
         std::string fighter_name = UserString("OBJ_FIGHTER");
         std::map<std::string, int> part_fighter_launch_capacities;
-        const ::Condition::ConditionBase* part_combat_targets = nullptr;
+        const ::Condition::ConditionBase* fighter_combat_targets = nullptr;
 
         // determine what ship does during combat, based on parts and their meters...
         for (const auto& part_name : design->Parts()) {
@@ -890,7 +890,7 @@ namespace {
             if (!part)
                 continue;
             ShipPartClass part_class = part->Class();
-            part_combat_targets = part->CombatTargets();
+            const ::Condition::ConditionBase* part_combat_targets = part->CombatTargets();
 
             // direct weapon and fighter-related parts all handled differently...
             if (part_class == PC_DIRECT_WEAPON) {
@@ -920,6 +920,8 @@ namespace {
                     TraceLogger(combat) << "ShipWeaponsStrengths for ship " << ship->Name() << " (" << ship->ID() << ") "
                                         << "when launching fighters, part " << part->Name() << " with targeting condition: "
                                         << part_combat_targets->Dump();
+                    if (!fighter_combat_targets)
+                        fighter_combat_targets = part_combat_targets;
 
                     if (UserStringExists(part->Name() + "_FIGHTER"))
                         fighter_name = UserString(part->Name() + "_FIGHTER");
@@ -938,14 +940,17 @@ namespace {
                 int to_launch = std::min(launch.second, available_fighters);
 
                 TraceLogger(combat) << "ShipWeaponsStrengths " << ship->Name() << " can launch " << to_launch
-                                    << " fighters named \"" << fighter_name << "\" from bay part " << launch.first
-                                    << " ... with targeting condition: " << part_combat_targets->Dump();
+                                    << " fighters named \"" << fighter_name << "\" from bay part " << launch.first;
+                if (fighter_combat_targets)
+                    TraceLogger(combat) << " ... with targeting condition: " << fighter_combat_targets->Dump();
+                else
+                    TraceLogger(combat) << " ... with no targeting condition: ";
 
                 if (to_launch <= 0)
                     continue;
                 retval.push_back(PartAttackInfo(PC_FIGHTER_BAY, launch.first, to_launch,
                                                 fighter_attack, fighter_name,
-                                                part_combat_targets)); // attack may be 0; that's ok: decoys
+                                                fighter_combat_targets)); // attack may be 0; that's ok: decoys
                 available_fighters -= to_launch;
                 if (available_fighters <= 0)
                     break;
