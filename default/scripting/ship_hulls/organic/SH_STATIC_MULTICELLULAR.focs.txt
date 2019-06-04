@@ -14,7 +14,7 @@ Hull
     ]
     buildCost = 18 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 4
-    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" ]
+    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" "MEDIUM_HULL" ]
     location = And [
        // Contains And [
         //    Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -31,6 +31,7 @@ Hull
         OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
+        [[MEDIUM_HULL_FUEL]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

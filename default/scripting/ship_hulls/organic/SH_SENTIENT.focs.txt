@@ -19,7 +19,7 @@ Hull
     ]
     buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 8
-    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" ]
+    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" "LARGE_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -62,6 +62,7 @@ Hull
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure value = Value + min(Source.Age*1, 45)
 
+        [[LARGE_HULL_FUEL]]
         [[LIVING_HULL_EFFECTS_GROUPS]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
