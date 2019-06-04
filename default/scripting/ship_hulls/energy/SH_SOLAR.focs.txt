@@ -36,7 +36,7 @@ Hull
     ]
     buildCost = 250.0 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime =8
-    tags = [ "ENERGY_HULL" "PEDIA_HULL_LINE_ENERGY" ]
+    tags = [ "ENERGY_HULL" "PEDIA_HULL_LINE_ENERGY" "HUGE_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ENRG_COMP"
@@ -88,6 +88,7 @@ Hull
             stackinggroup = "FLAGSHIP_EFFECT_SOLAR"
             effects = SetStealth value = Value - 100
 
+        [[HUGE_HULL_FUEL]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
