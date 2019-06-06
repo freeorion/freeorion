@@ -20,7 +20,6 @@
 using boost::python::object;
 using boost::python::class_;
 using boost::python::import;
-using boost::python::error_already_set;
 using boost::python::dict;
 using boost::python::list;
 using boost::python::vector_indexing_suite;

@@ -168,6 +168,7 @@ void AIClientApp::Run() {
     } catch (const NormalExitException&) {
         // intentionally empty.
     } catch (const boost::python::error_already_set&) {
+        m_AI->HandleErrorAlreadySet();
         HandlePythonAICrash();
     }
 
