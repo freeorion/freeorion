@@ -326,6 +326,7 @@ private:
     bool                            m_authenticated;
     Networking::AuthRoles           m_roles;
     boost::uuids::uuid              m_cookie;
+    bool                            m_valid;
 
     MessageAndConnectionFn          m_nonplayer_message_callback;
     MessageAndConnectionFn          m_player_message_callback;
