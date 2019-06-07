@@ -3641,11 +3641,35 @@ void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
     DiplomaticStatus status = Empires().GetDiplomaticStatus(empire1_id, empire2_id);
     DiplomaticStatusUpdateInfo update(empire1_id, empire2_id, status);
 
+    boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
+    std::string text;
+
+    switch (status) {
+    case DIPLO_WAR:
+        text = "[[" + boost::str(FlexibleFormat(UserString("MESSAGES_WAR_DECLARATION"))
+            % GetEmpire(empire1_id)->Name()
+            % GetEmpire(empire2_id)->Name()) + "]]";
+        break;
+    case DIPLO_PEACE:
+        text = "[[" + boost::str(FlexibleFormat(UserString("MESSAGES_PEACE_TREATY"))
+            % GetEmpire(empire1_id)->Name()
+            % GetEmpire(empire2_id)->Name()) + "]]";
+        break;
+    case DIPLO_ALLIED:
+        text = "[[" + boost::str(FlexibleFormat(UserString("MESSAGES_ALLIANCE"))
+            % GetEmpire(empire1_id)->Name()
+            % GetEmpire(empire2_id)->Name()) + "]]";
+        break;
+    default:
+        ErrorLogger() << "ServerApp::HandleDiplomaticStatusChange: no valid diplomatic status found.";
+    }
+
     for (auto player_it = m_networking.established_begin();
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
         player->SendMessage(DiplomaticStatusMessage(update));
+        player->SendMessage(ServerPlayerChatMessage(Networking::INVALID_PLAYER_ID, timestamp, text));
     }
 }
 

@@ -6188,7 +6188,7 @@ MESSAGES_WAR_DECLARATION
 %1 and %2 are now at war.
 
 MESSAGES_PEACE_TREATY
-%1 and %2 have signed a peace treaty.
+%1 and %2 are now at peace.
 
 MESSAGES_ALLIANCE
 %1 and %2 have entered an alliance.
