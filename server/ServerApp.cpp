@@ -3646,19 +3646,19 @@ void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
 
     switch (status) {
     case DIPLO_WAR:
-        text = "[[" + boost::str(FlexibleFormat(UserString("MESSAGES_WAR_DECLARATION"))
-            % GetEmpire(empire1_id)->Name()
-            % GetEmpire(empire2_id)->Name()) + "]]";
+        text = "[[MESSAGES_WAR_DECLARATION,"
+            + GetEmpire(empire1_id)->Name() + ","
+            + GetEmpire(empire2_id)->Name() + "]]";
         break;
     case DIPLO_PEACE:
-        text = "[[" + boost::str(FlexibleFormat(UserString("MESSAGES_PEACE_TREATY"))
-            % GetEmpire(empire1_id)->Name()
-            % GetEmpire(empire2_id)->Name()) + "]]";
+        text = "[[MESSAGES_PEACE_TREATY,"
+            + GetEmpire(empire1_id)->Name() + ","
+            + GetEmpire(empire2_id)->Name() + "]]";
         break;
     case DIPLO_ALLIED:
-        text = "[[" + boost::str(FlexibleFormat(UserString("MESSAGES_ALLIANCE"))
-            % GetEmpire(empire1_id)->Name()
-            % GetEmpire(empire2_id)->Name()) + "]]";
+        text = "[[MESSAGES_ALLIANCE,"
+            + GetEmpire(empire1_id)->Name() + ","
+            + GetEmpire(empire2_id)->Name() + "]]";
         break;
     default:
         ErrorLogger() << "ServerApp::HandleDiplomaticStatusChange: no valid diplomatic status found.";

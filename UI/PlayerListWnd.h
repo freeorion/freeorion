@@ -22,6 +22,7 @@ public:
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void            HandleEmpireStatusUpdate(Message::PlayerStatus player_status, int about_empire_id);
+    void            HandleDiplomaticMessageChange(int empire1_id, int empire2_id);
     void            Update();
     void            Refresh();
     void            Clear();

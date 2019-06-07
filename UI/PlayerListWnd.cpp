@@ -746,7 +746,7 @@ void PlayerListWnd::CompleteConstruction() {
     Empires().DiplomaticStatusChangedSignal.connect(
         boost::bind(&PlayerListWnd::Update, this));
     Empires().DiplomaticMessageChangedSignal.connect(
-        boost::bind(&PlayerListWnd::Update, this));
+        boost::bind(&PlayerListWnd::PlayerListWnd::HandleDiplomaticMessageChange, this, _1, _2));
     DoLayout();
 
     Refresh();
@@ -777,6 +777,21 @@ void PlayerListWnd::HandleEmpireStatusUpdate(Message::PlayerStatus player_status
         }
     }
 }
+
+void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id) {
+    Update();
+
+    const ClientApp* app = ClientApp::GetApp();
+    if (!app) {
+        ErrorLogger() << "PlayerListWnd::HandleDiplomaticMessageChange couldn't get client app!";
+        return;
+    }
+
+    // only show PlayerListWnd if player is affected
+    if ((empire1_id == app->PlayerID()) || (empire2_id == app->PlayerID()))
+        Show();
+}
+
 
 void PlayerListWnd::Update() {
     for (auto& row : *m_player_list) {

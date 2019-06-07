@@ -6184,14 +6184,17 @@ Received unexpected turn update from server.
 MESSAGES_PANEL_TITLE
 Messages
 
+# %1% and %2% are empire names
 MESSAGES_WAR_DECLARATION
-%1 and %2 are now at war.
+<rgba 255 0 0 255>%1% and %2% are now at war.
 
+# %1% and %2% are empire names
 MESSAGES_PEACE_TREATY
-%1 and %2 are now at peace.
+<rgba 0 0 255 255>%1% and %2% are now at peace.
 
+# %1% and %2% are empire names
 MESSAGES_ALLIANCE
-%1 and %2 have entered an alliance.
+<rgba 0 255 0 255>%1% and %2% have entered an alliance.
 
 
 ##
