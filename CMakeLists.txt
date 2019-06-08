@@ -196,6 +196,15 @@ set_property(DIRECTORY APPEND
         $<$<PLATFORM_ID:OpenBSD>:FREEORION_OPENBSD>
 )
 
+if(WIN32 AND MSVC AND MSVC_VERSION GREATER_EQUAL 1900) # _MSC_VER >= 1900
+    # fix https://bugs.python.org/issue36020
+    # ToDo: remove after fix will be applied in python-cmake
+    set_property(DIRECTORY APPEND
+        PROPERTY COMPILE_DEFINITIONS
+        HAVE_SNPRINTF
+    )
+endif()
+
 if(WIN32 AND MSVC)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
