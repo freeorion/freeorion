@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iomanip>
 #include <cctype>
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/cast.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <GG/Button.h>
@@ -204,6 +205,18 @@ void ServerConnectWnd::PopulateServerList() {
         auto row = GG::Wnd::Create<GG::ListBox::Row>();
         row->push_back(GG::Wnd::Create<CUILabel>(server));
         m_servers_lb->Insert(row);
+    }
+    std::set<std::string> known_servers;
+    GetOptionsDB().FindOptions(known_servers, "network.known-servers", true);
+    for (const auto& option : known_servers) {
+        if (boost::algorithm::ends_with(option, ".address")) {
+            if (!GetOptionsDB().OptionExists(option))
+                GetOptionsDB().Add<std::string>(option, "OPTIONS_DB_SERVER_COOKIE", "");
+            std::string server = GetOptionsDB().Get<std::string>(option);
+            auto row = GG::Wnd::Create<GG::ListBox::Row>();
+            row->push_back(GG::Wnd::Create<CUILabel>(server));
+            m_servers_lb->Insert(row);
+        }
     }
 }
 

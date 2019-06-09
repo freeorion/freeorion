@@ -204,7 +204,7 @@ void HumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
 std::string HumanClientApp::EncodeServerAddressOption(const std::string& server) {
     std::string server_encoded = boost::replace_all_copy(server, ".", "_");
     boost::replace_all(server_encoded, ":", "_");
-    return "network.server.cookie._" + server_encoded;
+    return "network.known-servers._" + server_encoded;
 }
 
 HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const std::string& name,
@@ -673,9 +673,11 @@ void HumanClientApp::MultiPlayerGame() {
         boost::uuids::uuid cookie = boost::uuids::nil_uuid();
         try {
             std::string cookie_option = EncodeServerAddressOption(server_dest);
-            if (!GetOptionsDB().OptionExists(cookie_option))
-                GetOptionsDB().Add<std::string>(cookie_option, "OPTIONS_DB_SERVER_COOKIE", "");
-            std::string cookie_str = GetOptionsDB().Get<std::string>(cookie_option);
+            if (!GetOptionsDB().OptionExists(cookie_option + ".cookie"))
+                GetOptionsDB().Add<std::string>(cookie_option + ".cookie", "OPTIONS_DB_SERVER_COOKIE", "");
+            if (!GetOptionsDB().OptionExists(cookie_option + ".address"))
+                GetOptionsDB().Add<std::string>(cookie_option + ".address", "OPTIONS_DB_SERVER_COOKIE", server_dest);
+            std::string cookie_str = GetOptionsDB().Get<std::string>(cookie_option + ".cookie");
             boost::uuids::string_generator gen;
             cookie = gen(cookie_str);
         } catch(const std::exception& err) {
