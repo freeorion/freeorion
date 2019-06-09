@@ -5,6 +5,7 @@
 #include "CommonWrappers.h"
 
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/python/tuple.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
@@ -17,6 +18,8 @@ using boost::python::exec;
 using boost::python::dict;
 using boost::python::list;
 using boost::python::extract;
+using boost::python::handle;
+using boost::python::borrowed;
 
 namespace fs = boost::filesystem;
 
@@ -99,7 +102,7 @@ bool PythonBase::Initialize()
             ErrorLogger() << "Unable to initialize FreeOrion Python modules";
             return false;
         }
-    } catch (error_already_set& err) {
+    } catch (const error_already_set& err) {
         HandleErrorAlreadySet();
         return false;
     }
@@ -125,7 +128,23 @@ void PythonBase::HandleErrorAlreadySet() {
         return;
     }
 
-    PyErr_Print();
+    PyObject *extype, *value, *traceback;
+    PyErr_Fetch(&extype, &value, &traceback);
+    if (!extype)
+        return;
+
+    object o_extype(handle<>(borrowed(extype)));
+    object o_value(handle<>(borrowed(value)));
+    object o_traceback(handle<>(borrowed(traceback)));
+
+    object mod_traceback = import("traceback");
+    object lines = mod_traceback.attr("format_exception")(o_extype, o_value, o_traceback);
+    for (int i = 0; i < len(lines); ++i) {
+        std::string line = extract<std::string>(lines[i])();
+        boost::algorithm::trim_right(line);
+        ErrorLogger() << line;
+    }
+
     return;
 }
 
@@ -172,7 +191,7 @@ std::vector<std::string> PythonBase::ErrorReport() {
 
         list py_err_list;
         try { py_err_list = extract<list>(f()); }
-        catch (error_already_set err) {
+        catch (const error_already_set& err) {
             HandleErrorAlreadySet();
             return err_list;
         }

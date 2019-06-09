@@ -146,7 +146,7 @@ void PythonAI::GenerateOrders() {
         object generateOrdersPythonFunction = m_python_module_ai.attr("generateOrders");
         //DebugLogger() << "PythonAI::GenerateOrders : generating orders";
         generateOrdersPythonFunction();
-    } catch (error_already_set err) {
+    } catch (const error_already_set& err) {
         HandleErrorAlreadySet();
         if (!IsPythonRunning())
             throw;

@@ -59,7 +59,6 @@ using boost::python::return_internal_reference;
 
 using boost::python::object;
 using boost::python::import;
-using boost::python::error_already_set;
 using boost::python::exec;
 using boost::python::dict;
 using boost::python::list;
