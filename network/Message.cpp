@@ -866,8 +866,10 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
 
             ia >> BOOST_SERIALIZATION_NVP(players)
                >> BOOST_SERIALIZATION_NVP(loaded_game_data);
+            TraceLogger() << "ExtractGameStartMessage players and loaded_game_data=" << loaded_game_data << " deserialization time " << (deserialize_timer.elapsed() * 1000.0);
             if (loaded_game_data) {
                 Deserialize(ia, orders);
+                TraceLogger() << "ExtractGameStartMessage orders deserialization time " << (deserialize_timer.elapsed() * 1000.0);
                 ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
                 if (ui_data_available)
                     ia >> BOOST_SERIALIZATION_NVP(ui_data);
@@ -879,11 +881,13 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                 save_state_string_available = false;
             }
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+            TraceLogger() << "ExtractGameStartMessage galaxy setup data deserialization time " << (deserialize_timer.elapsed() * 1000.0);
         }
 
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractGameStartMessageData(...) failed!  Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
+        TraceLogger() << "Message: " << msg.Text();
         throw err;
     }
 }
