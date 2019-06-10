@@ -7462,7 +7462,8 @@ SP_EAXAW
 Eaxaw
 
 SP_EAXAW_GAMEPLAY_DESC
-'''Evil amazonian xenophobic aggressive worms.
+'''<img src="species/preview/eaxaw.png"></img>
+Evil amazonian xenophobic aggressive worms.
 Prefer [[PT_TERRAN]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
@@ -7476,6 +7477,7 @@ Eaxaw are organized into matriarchal breeding groups. A female keeps a "harem" o
 
 History:
 A long time ago a derelict ship of the Precursors crashed on the Eaxaw homeworld. As the Eaxaw learned some of the ship's secrets they deduced that there were other intelligent species. Their great matriarchal council soon issued its greatest proclamation: "All of this must go!"
+<img src="species/eaxaw.png"></img>
 '''
 
 SP_DERTHREAN

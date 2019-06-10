@@ -7462,7 +7462,8 @@ SP_EAXAW  # translated
 Eaxaw
 
 SP_EAXAW_GAMEPLAY_DESC
-'''Vers amazones agressifs et xénophobes.
+'''<img src="species/preview/eaxaw.png"></img>
+Vers amazones agressifs et xénophobes.
 Préfèrent les Planètes [[PT_TERRAN]]s.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
@@ -7476,6 +7477,7 @@ Les Eaxaw sont organisés en groupes matriarcaux de reproduction. Une femelle do
 
 Histoire:
 Il y a bien longtemps, un vaisseau abandonné des Précurseurs s'écrasa sur la planète d'origine des Eaxaw. Alors qu'ils découvraient certains de ses secrets, ils devinrent conscients que d'autres espèces intelligentes peuplaient l'Univers. La Grande Chambre Matriarcal édicta alors sa plus fameuse proclamation : "Tous doivent périr!".
+<img src="species/eaxaw.png"></img>
 '''
 
 SP_DERTHREAN  # translated
