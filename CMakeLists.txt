@@ -196,9 +196,10 @@ set_property(DIRECTORY APPEND
         $<$<PLATFORM_ID:OpenBSD>:FREEORION_OPENBSD>
 )
 
-if(WIN32 AND MSVC AND MSVC_VERSION GREATER_EQUAL 1900) # _MSC_VER >= 1900
+if(WIN32 AND MSVC AND NOT (MSVC_VERSION LESS 1900)) # _MSC_VER >= 1900
     # fix https://bugs.python.org/issue36020
     # ToDo: remove after fix will be applied in python-cmake
+    # ToDo: use GREATER_EQUAL after updating to cmake >= 3.7
     set_property(DIRECTORY APPEND
         PROPERTY COMPILE_DEFINITIONS
         HAVE_SNPRINTF
