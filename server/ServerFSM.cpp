@@ -707,9 +707,11 @@ sc::result Idle::react(const Hostless&) {
     std::shared_ptr<MultiplayerLobbyData> lobby_data(new MultiplayerLobbyData(std::move(server.m_galaxy_setup_data)));
     std::shared_ptr<ServerSaveGameData> server_save_game_data(new ServerSaveGameData());
     std::vector<PlayerSaveGameData> player_save_game_data;
+    server.InitializePython();
+    server.LoadChatHistory();
     if (autostart_load_filename.empty()) {
         DebugLogger(FSM) << "Start new game";
-        server.InitializePython();
+
         std::list<PlayerSetupData> human_players = server.FillListPlayers();
 
         for (auto& player_setup_data : human_players) {
