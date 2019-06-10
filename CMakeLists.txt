@@ -210,10 +210,22 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         thread
     REQUIRED)
 if(${Boost_VERSION} GREATER 106699) # boost >= 1.67
-    find_package(Boost COMPONENTS python27 REQUIRED)
-    set(Boost_PYTHON_LIBRARY ${Boost_PYTHON27_LIBRARY})
+    find_package(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} REQUIRED)
+    set(Boost_PYTHON_LIBRARY ${Boost_PYTHON${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_LIBRARY})
 else()
-    find_package(Boost COMPONENTS python REQUIRED)
+    # boost python suffixes are determined by distributives
+    # try different alternatives
+    find_package(Boost OPTIONAL_COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR})
+    if(Boost_PYTHON${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_FOUND)
+        set(Boost_PYTHON_LIBRARY ${Boost_PYTHON${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_LIBRARY})
+    else()
+        find_package(Boost OPTIONAL_COMPONENTS python-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR})
+        if(Boost_PYTHON-PY${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_FOUND)
+            set(Boost_PYTHON_LIBRARY ${Boost_PYTHON-PY${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_LIBRARY})
+        else()
+            find_package(Boost COMPONENTS python REQUIRED)
+        endif()
+    endif()
 endif()
 
 find_package(ZLIB REQUIRED)
