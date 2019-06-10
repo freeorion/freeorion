@@ -130,12 +130,12 @@ void PythonBase::HandleErrorAlreadySet() {
 
     PyObject *extype, *value, *traceback;
     PyErr_Fetch(&extype, &value, &traceback);
-    if (!extype)
+    if (extype == nullptr)
         return;
 
     object o_extype(handle<>(borrowed(extype)));
     object o_value(handle<>(borrowed(value)));
-    object o_traceback(handle<>(borrowed(traceback)));
+    object o_traceback = traceback != nullptr ? object(handle<>(borrowed(traceback))) : object();
 
     object mod_traceback = import("traceback");
     object lines = mod_traceback.attr("format_exception")(o_extype, o_value, o_traceback);
