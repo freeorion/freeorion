@@ -65,7 +65,8 @@ PlayerConnection::PlayerConnection(boost::asio::io_context& io_context,
     m_cookie(boost::uuids::nil_uuid()),
     m_nonplayer_message_callback(nonplayer_message_callback),
     m_player_message_callback(player_message_callback),
-    m_disconnected_callback(disconnected_callback)
+    m_disconnected_callback(disconnected_callback),
+    m_valid(true)
 {}
 
 PlayerConnection::~PlayerConnection() {
@@ -113,7 +114,7 @@ void PlayerConnection::Start()
 { AsyncReadMessage(); }
 
 bool PlayerConnection::SendMessage(const Message& message) {
-    return SyncWriteMessage(message);
+    return m_valid ? SyncWriteMessage(message) : false;
 }
 
 bool PlayerConnection::IsEstablished() const {
@@ -390,8 +391,10 @@ bool PlayerConnection::SyncWriteMessage(const Message& message) {
     boost::asio::write(m_socket, buffers, error);
 
     if (error) {
-        ErrorLogger(network) << "PlayerConnection::WriteMessage(): player id = " << m_ID
-                             << " error #" << error.value() << " \"" << error.message();
+        m_valid = false;
+        ErrorLogger(network) << "PlayerConnection::SyncWriteMessage(): player id = " << m_ID
+                             << " message " << MessageTypeName(message.Type())
+                             << " error #" << error.value() << " \"" << error.message() << "\"";
         boost::asio::high_resolution_timer t(m_service);
         t.async_wait(boost::bind(&PlayerConnection::AsyncErrorHandler, shared_from_this(), error, boost::asio::placeholders::error));
     }
