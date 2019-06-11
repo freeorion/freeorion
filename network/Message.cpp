@@ -873,9 +873,11 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                 ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
                 if (ui_data_available)
                     ia >> BOOST_SERIALIZATION_NVP(ui_data);
+                TraceLogger() << "ExtractGameStartMessage UI data " << ui_data_available << " deserialization time " << (deserialize_timer.elapsed() * 1000.0);
                 ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
                 if (save_state_string_available)
                     ia >> BOOST_SERIALIZATION_NVP(save_state_string);
+                TraceLogger() << "ExtractGameStartMessage save state " << save_state_string_available << " deserialization time " << (deserialize_timer.elapsed() * 1000.0);
             } else {
                 ui_data_available = false;
                 save_state_string_available = false;
