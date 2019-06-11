@@ -262,6 +262,11 @@ namespace AIInterface {
             return 0;
         }
 
+        if (!empire->EnqueuableItem(BT_BUILDING, item_name, location_id)) {
+            ErrorLogger() << "IssueEnqueueBuildingProductionOrder : specified item_name and location_id that don't indicate an item that can be enqueued at that location";
+            return 0;
+        }
+
         AIClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ProductionQueueOrder>(empire_id, ProductionQueue::ProductionItem(BT_BUILDING, item_name), 1, location_id));
 
