@@ -7,6 +7,7 @@ jobs:
   include:
     - stage: lint
       os: linux
+      dist: xenial
       language: python
       python: 2.7.14
       before_install:
@@ -20,6 +21,7 @@ jobs:
         - NAME="Lint Python script"
     - stage: build
       os: linux
+      dist: xenial
       language: shell
       services:
         - docker
@@ -63,6 +65,7 @@ jobs:
           branch: master
     - stage: build
       os: linux
+      dist: xenial
       language: cpp
       services:
         - docker
@@ -131,6 +134,7 @@ jobs:
         - ccache --show-stats
     - stage: test
       os: linux
+      dist: xenial
       language: python
       python: 2.7.14
       before_install:
