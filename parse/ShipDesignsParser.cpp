@@ -233,6 +233,7 @@ namespace parse {
         const auto& scripts = ListScripts(path, permissive_mode);
 
         for (const auto& file : scripts) {
+            TraceLogger() << "Parse ship design file " << file.filename();
             if (file.filename() == "ShipDesignOrdering.focs.txt" ) {
                 manifest_file = file;
                 continue;

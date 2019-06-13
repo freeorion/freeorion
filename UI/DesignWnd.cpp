@@ -1107,7 +1107,7 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         return;
     }
 
-    DebugLogger() << "ShipDesignManager initializing.";
+    DebugLogger() << "ShipDesignManager initializing. New game " << is_new_game;
 
     m_displayed_designs = boost::make_unique<DisplayedShipDesignManager>();
     auto displayed_designs = dynamic_cast<DisplayedShipDesignManager*>(m_displayed_designs.get());
@@ -1149,6 +1149,8 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
                 std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
         }
     }*/
+
+    TraceLogger() << "ShipDesignManager initialized";
 }
 
 void ShipDesignManager::Save(SaveGameUIData& data) const {
