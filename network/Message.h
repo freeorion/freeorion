@@ -408,6 +408,7 @@ FO_COMMON_API void ExtractTurnOrdersMessageData(const Message& msg,
                                                 OrderSet& orders,
                                                 bool& ui_data_available,
                                                 SaveGameUIData& ui_data,
+                                                bool& ui_data_failed,
                                                 bool& save_state_string_available,
                                                 std::string& save_state_string);
 

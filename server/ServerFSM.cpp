@@ -2937,16 +2937,20 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     auto order_set = std::make_shared<OrderSet>();
     auto ui_data = std::make_shared<SaveGameUIData>();
     bool ui_data_available = false;
+    bool ui_data_failed = false;
     std::string save_state_string;
     bool save_state_string_available = false;
     try {
-        ExtractTurnOrdersMessageData(message, *order_set, ui_data_available, *ui_data, save_state_string_available, save_state_string);
+        ExtractTurnOrdersMessageData(message, *order_set, ui_data_available, *ui_data, ui_data_failed, save_state_string_available, save_state_string);
     } catch (const std::exception& err) {
         // incorrect turn orders. disconnect player with wrong client.
         sender->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION")));
         server.Networking().Disconnect(sender);
         return discard_event();
     }
+
+    if (ui_data_failed)
+        sender->SendMessage(ErrorMessage(UserStringNop("ERROR_UI_DATA_CORRUPTED"), false));
 
     int player_id = sender->PlayerID();
     Networking::ClientType client_type = sender->GetClientType();

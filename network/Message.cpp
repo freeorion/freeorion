@@ -880,6 +880,10 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                         ErrorLogger() << "ExtractGameStartMessageData(...) UI data failed! Error: " << err.what();
                         ui_data = SaveGameUIData();
                         ui_data_failed = true;
+                        // input stream could be left in incorrect state
+                        // don't deserialize save_state_string
+                        save_state_string_available = false;
+                        return;
                     }
                 }
                 TraceLogger() << "ExtractGameStartMessage UI data " << ui_data_available << " deserialization time " << (deserialize_timer.elapsed() * 1000.0);
@@ -945,6 +949,7 @@ void ExtractTurnOrdersMessageData(const Message& msg,
                                   OrderSet& orders,
                                   bool& ui_data_available,
                                   SaveGameUIData& ui_data,
+                                  bool& ui_data_failed,
                                   bool& save_state_string_available,
                                   std::string& save_state_string)
 {
@@ -957,7 +962,18 @@ void ExtractTurnOrdersMessageData(const Message& msg,
         ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
         if (ui_data_available) {
             DebugLogger() << "deserializing UI data";
-            ia >> BOOST_SERIALIZATION_NVP(ui_data);
+            ui_data_failed = false;
+            try {
+                ia >> BOOST_SERIALIZATION_NVP(ui_data);
+            } catch (const std::exception& err) {
+                ErrorLogger() << "ExtractTurnOrdersMessageData(...) UI data failed! Error: " << err.what();
+                ui_data = SaveGameUIData();
+                ui_data_failed = true;
+                // input stream could be left in incorrect state
+                // don't deserialize save_state_string
+                save_state_string_available = false;
+                return;
+            }
         }
         DebugLogger() << "checking for save state string";
         ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
