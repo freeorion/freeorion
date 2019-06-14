@@ -244,6 +244,7 @@ namespace {
         sink_frontend.set_formatter(
             expr::stream
             << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
+            << " {" << thread_id << "}"
             << " [" << log_severity << "] "
             << DisplayName(channel_name)
             << " : " << log_src_filename << ":" << log_src_linenum << " : "
@@ -353,6 +354,7 @@ void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_
 
     // Add global attributes to all records
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
+    logging::core::get()->add_global_attribute("ThreadID", attr::current_thread_id());
 
     SetLoggerThresholdCore("", default_log_level_threshold);
 

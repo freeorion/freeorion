@@ -52,6 +52,7 @@ namespace {
         sink_frontend.set_formatter(
             expr::stream
             << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
+            << " {" << thread_id << "}"
             << " [" << log_severity << "] "
             << expr::message
         );
