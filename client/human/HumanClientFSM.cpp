@@ -862,8 +862,12 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     bool is_new_game = !(loaded_game_data && ui_data_available);
     Client().StartGame(is_new_game);
 
+    TraceLogger(FSM) << "Restoring UI data from save data...";
+
     if (!is_new_game)
         Client().GetClientUI().RestoreFromSaveData(ui_data);
+
+    TraceLogger(FSM) << "UI data from save data restored";
 
     // if I am the host on the first turn, do an autosave.
     if (is_new_game && Client().Networking().PlayerIsHost(Client().PlayerID()))
