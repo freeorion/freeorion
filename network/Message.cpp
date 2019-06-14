@@ -198,8 +198,8 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             Serialize(oa, universe);
             bool loaded_game_data = false;
             oa << BOOST_SERIALIZATION_NVP(players)
+               << BOOST_SERIALIZATION_NVP(galaxy_setup_data)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
-            oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
             freeorion_xml_oarchive oa(os);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
@@ -213,8 +213,8 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             Serialize(oa, universe);
             bool loaded_game_data = false;
             oa << BOOST_SERIALIZATION_NVP(players)
+               << BOOST_SERIALIZATION_NVP(galaxy_setup_data)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
-            oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
     }
     return Message(Message::GAME_START, os.str());
@@ -244,6 +244,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             Serialize(oa, universe);
             bool loaded_game_data = true;
             oa << BOOST_SERIALIZATION_NVP(players)
+               << BOOST_SERIALIZATION_NVP(galaxy_setup_data)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
             Serialize(oa, orders);
             bool ui_data_available = (ui_data != nullptr);
@@ -252,7 +253,6 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                 oa << boost::serialization::make_nvp("ui_data", *ui_data);
             bool save_state_string_available = false;
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
-            oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
             freeorion_xml_oarchive oa(os);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
@@ -266,6 +266,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             Serialize(oa, universe);
             bool loaded_game_data = true;
             oa << BOOST_SERIALIZATION_NVP(players)
+               << BOOST_SERIALIZATION_NVP(galaxy_setup_data)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
             Serialize(oa, orders);
             bool ui_data_available = (ui_data != nullptr);
@@ -274,7 +275,6 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                 oa << boost::serialization::make_nvp("ui_data", *ui_data);
             bool save_state_string_available = false;
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
-            oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
     }
     return Message(Message::GAME_START, os.str());
@@ -304,6 +304,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             Serialize(oa, universe);
             bool loaded_game_data = true;
             oa << BOOST_SERIALIZATION_NVP(players)
+               << BOOST_SERIALIZATION_NVP(galaxy_setup_data)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
             Serialize(oa, orders);
             bool ui_data_available = false;
@@ -312,7 +313,6 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             if (save_state_string_available)
                 oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
-            oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
             freeorion_xml_oarchive oa(os);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
@@ -326,6 +326,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             Serialize(oa, universe);
             bool loaded_game_data = true;
             oa << BOOST_SERIALIZATION_NVP(players)
+               << BOOST_SERIALIZATION_NVP(galaxy_setup_data)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
             Serialize(oa, orders);
             bool ui_data_available = false;
@@ -334,7 +335,6 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             if (save_state_string_available)
                 oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
-            oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
     }
     return Message(Message::GAME_START, os.str());
@@ -820,6 +820,7 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
 
 
                 ia >> BOOST_SERIALIZATION_NVP(players)
+                   >> BOOST_SERIALIZATION_NVP(galaxy_setup_data)
                    >> BOOST_SERIALIZATION_NVP(loaded_game_data);
                 if (loaded_game_data) {
                     Deserialize(ia, orders);
@@ -833,7 +834,6 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                     ui_data_available = false;
                     save_state_string_available = false;
                 }
-                ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
             } catch (...) {
                 try_xml = true;
             }
@@ -865,8 +865,9 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
 
 
             ia >> BOOST_SERIALIZATION_NVP(players)
+               >> BOOST_SERIALIZATION_NVP(galaxy_setup_data)
                >> BOOST_SERIALIZATION_NVP(loaded_game_data);
-            TraceLogger() << "ExtractGameStartMessage players and loaded_game_data=" << loaded_game_data << " deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            TraceLogger() << "ExtractGameStartMessage players, galaxy setup and loaded_game_data=" << loaded_game_data << " deserialization time " << (deserialize_timer.elapsed() * 1000.0);
             if (loaded_game_data) {
                 Deserialize(ia, orders);
                 TraceLogger() << "ExtractGameStartMessage orders deserialization time " << (deserialize_timer.elapsed() * 1000.0);
@@ -882,8 +883,6 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                 ui_data_available = false;
                 save_state_string_available = false;
             }
-            ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
-            TraceLogger() << "ExtractGameStartMessage galaxy setup data deserialization time " << (deserialize_timer.elapsed() * 1000.0);
         }
 
     } catch (const std::exception& err) {
