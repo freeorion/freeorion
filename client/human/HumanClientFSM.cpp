@@ -835,7 +835,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     bool loaded_game_data;
     bool ui_data_available;
     SaveGameUIData ui_data;
-    bool ui_data_failed;
+    bool ui_data_failed = false;
     bool save_state_string_available;
     std::string save_state_string; // ignored - used by AI but not by human client
     OrderSet orders;
@@ -854,6 +854,9 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
 
     DebugLogger(FSM) << "Extracted GameStart message for turn: " << current_turn << " with empire: " << empire_id;
 
+    if (ui_data_failed)
+        ClientUI::MessageBox(UserString("ERROR_UI_DATA_CORRUPTED"), false);
+
     Client().SetSinglePlayerGame(single_player_game);
     Client().SetEmpireID(empire_id);
     Client().SetCurrentTurn(current_turn);
@@ -863,12 +866,16 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     bool is_new_game = !(loaded_game_data && ui_data_available);
     Client().StartGame(is_new_game);
 
-    TraceLogger(FSM) << "Restoring UI data from save data...";
-
-    if (!is_new_game)
-        Client().GetClientUI().RestoreFromSaveData(ui_data);
-
-    TraceLogger(FSM) << "UI data from save data restored";
+    if (!is_new_game && !ui_data_failed) {
+        TraceLogger(FSM) << "Restoring UI data from save data...";
+        try {
+            Client().GetClientUI().RestoreFromSaveData(ui_data);
+            TraceLogger(FSM) << "UI data from save data restored";
+        } catch (const std::exception& err) {
+            ErrorLogger(FSM) << "Cann't restore UI data" << err.what();
+            ClientUI::MessageBox(UserString("ERROR_UI_DATA_CORRUPTED"), false);
+        }
+    }
 
     // if I am the host on the first turn, do an autosave.
     if (is_new_game && Client().Networking().PlayerIsHost(Client().PlayerID()))

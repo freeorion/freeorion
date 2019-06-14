@@ -1038,6 +1038,7 @@ std::vector<std::shared_ptr<GG::Texture>> ClientUI::GetPrefixedTextures(const bo
 
 void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data) {
     GetMapWnd()->RestoreFromSaveData(ui_data);
+    TraceLogger() << "Restore ship designs from UI data";
     m_ship_designs->Load(ui_data);
 }
 
