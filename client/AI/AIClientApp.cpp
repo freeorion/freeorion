@@ -247,6 +247,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         bool loaded_game_data;
         bool ui_data_available;         // ignored
         SaveGameUIData ui_data;         // ignored
+        bool ui_data_failed;            // ignored
         bool state_string_available;    // ignored, as save_state_string is sent even if not set by ExtractMessageData
         std::string save_state_string;
         m_empire_status.clear();
@@ -255,8 +256,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
                                     m_current_turn,          m_empires,              m_universe,
                                     GetSpeciesManager(),     GetCombatLogManager(),  GetSupplyManager(),
                                     m_player_info,           m_orders,               loaded_game_data,
-                                    ui_data_available,       ui_data,                state_string_available,
-                                    save_state_string,       m_galaxy_setup_data);
+                                    ui_data_available,       ui_data,                ui_data_failed,
+                                    state_string_available,  save_state_string,      m_galaxy_setup_data);
 
         DebugLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 

@@ -392,8 +392,9 @@ FO_COMMON_API void ExtractGameStartMessageData(const Message& msg, bool& single_
                                                SupplyManager& supply,
                                                std::map<int, PlayerInfo>& players, OrderSet& orders,
                                                bool& loaded_game_data, bool& ui_data_available,
-                                               SaveGameUIData& ui_data, bool& save_state_string_available,
-                                               std::string& save_state_string, GalaxySetupData& galaxy_setup_data);
+                                               SaveGameUIData& ui_data, bool& ui_data_failed,
+                                               bool& save_state_string_available, std::string& save_state_string,
+                                               GalaxySetupData& galaxy_setup_data);
 
 FO_COMMON_API void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
                                               Networking::ClientType& client_type,

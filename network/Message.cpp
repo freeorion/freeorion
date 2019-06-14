@@ -789,8 +789,9 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                                  EmpireManager& empires, Universe& universe, SpeciesManager& species,
                                  CombatLogManager& combat_logs, SupplyManager& supply,
                                  std::map<int, PlayerInfo>& players, OrderSet& orders, bool& loaded_game_data,
-                                 bool& ui_data_available, SaveGameUIData& ui_data, bool& save_state_string_available,
-                                 std::string& save_state_string, GalaxySetupData& galaxy_setup_data)
+                                 bool& ui_data_available, SaveGameUIData& ui_data, bool& ui_data_failed,
+                                 bool& save_state_string_available, std::string& save_state_string,
+                                 GalaxySetupData& galaxy_setup_data)
 {
     try {
         bool try_xml = false;
@@ -863,7 +864,6 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
             Deserialize(ia, universe);
             DebugLogger() << "ExtractGameStartMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
-
             ia >> BOOST_SERIALIZATION_NVP(players)
                >> BOOST_SERIALIZATION_NVP(galaxy_setup_data)
                >> BOOST_SERIALIZATION_NVP(loaded_game_data);
@@ -872,8 +872,16 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                 Deserialize(ia, orders);
                 TraceLogger() << "ExtractGameStartMessage orders deserialization time " << (deserialize_timer.elapsed() * 1000.0);
                 ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
-                if (ui_data_available)
-                    ia >> BOOST_SERIALIZATION_NVP(ui_data);
+                if (ui_data_available) {
+                    ui_data_failed = false;
+                    try {
+                        ia >> BOOST_SERIALIZATION_NVP(ui_data);
+                    } catch (const std::exception& err) {
+                        ErrorLogger() << "ExtractGameStartMessageData(...) UI data failed! Error: " << err.what();
+                        ui_data = SaveGameUIData();
+                        ui_data_failed = true;
+                    }
+                }
                 TraceLogger() << "ExtractGameStartMessage UI data " << ui_data_available << " deserialization time " << (deserialize_timer.elapsed() * 1000.0);
                 ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
                 if (save_state_string_available)

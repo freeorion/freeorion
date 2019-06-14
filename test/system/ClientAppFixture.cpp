@@ -169,6 +169,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         bool loaded_game_data;       // ignored
         bool ui_data_available;      // ignored
         SaveGameUIData ui_data;      // ignored
+        bool ui_data_failure;        // ignored
         bool state_string_available; // ignored
         std::string save_state_string;
         m_empire_status.clear();
@@ -177,8 +178,8 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
                                     m_current_turn,          m_empires,              m_universe,
                                     GetSpeciesManager(),     GetCombatLogManager(),  GetSupplyManager(),
                                     m_player_info,           m_orders,               loaded_game_data,
-                                    ui_data_available,       ui_data,                state_string_available,
-                                    save_state_string,       m_galaxy_setup_data);
+                                    ui_data_available,       ui_data,                ui_data_failure,
+                                    state_string_available,  save_state_string,      m_galaxy_setup_data);
 
         InfoLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 

@@ -835,6 +835,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     bool loaded_game_data;
     bool ui_data_available;
     SaveGameUIData ui_data;
+    bool ui_data_failed;
     bool save_state_string_available;
     std::string save_state_string; // ignored - used by AI but not by human client
     OrderSet orders;
@@ -844,12 +845,12 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     Client().EmpireStatus().clear();
     Client().Orders().Reset();
 
-    ExtractGameStartMessageData(msg.m_message,       single_player_game,             empire_id,
-                                current_turn,        Empires(),                      GetUniverse(),
-                                GetSpeciesManager(), GetCombatLogManager(),          GetSupplyManager(),
-                                Client().Players(),  Client().Orders(),              loaded_game_data,
-                                ui_data_available,   ui_data,                        save_state_string_available,
-                                save_state_string,   Client().GetGalaxySetupData());
+    ExtractGameStartMessageData(msg.m_message,               single_player_game,    empire_id,
+                                current_turn,                Empires(),             GetUniverse(),
+                                GetSpeciesManager(),         GetCombatLogManager(), GetSupplyManager(),
+                                Client().Players(),          Client().Orders(),     loaded_game_data,
+                                ui_data_available,           ui_data,               ui_data_failed,
+                                save_state_string_available, save_state_string,     Client().GetGalaxySetupData());
 
     DebugLogger(FSM) << "Extracted GameStart message for turn: " << current_turn << " with empire: " << empire_id;
 
