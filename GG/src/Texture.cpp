@@ -69,21 +69,7 @@ namespace {
 ///////////////////////////////////////
 // class GG::Texture
 ///////////////////////////////////////
-Texture::Texture() :
-    m_bytes_pp(0),
-    m_width(0),
-    m_height(0),
-    m_wrap_s(GL_REPEAT),
-    m_wrap_t(GL_REPEAT),
-    m_min_filter(GL_LINEAR_MIPMAP_LINEAR),
-    m_mag_filter(GL_LINEAR),
-    m_mipmaps(false),
-    m_opengl_id(0),
-    m_format(GL_INVALID_ENUM),
-    m_type(GL_INVALID_ENUM),
-    m_tex_coords(),
-    m_default_width(0),
-    m_default_height(0)
+Texture::Texture()
 { Clear(); }
 
 Texture::~Texture()

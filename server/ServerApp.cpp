@@ -84,10 +84,7 @@ ServerApp::ServerApp() :
                  boost::bind(&ServerApp::HandleMessage, this, _1, _2),
                  boost::bind(&ServerApp::PlayerDisconnected, this, _1)),
     m_fsm(new ServerFSM(*this)),
-    m_current_turn(INVALID_GAME_TURN),
-    m_single_player_game(false),
-    m_chat_history(1000),
-    m_turn_expired(false)
+    m_chat_history(1000)
 {
     // Force the log file if requested.
     if (GetOptionsDB().Get<std::string>("log-file").empty()) {

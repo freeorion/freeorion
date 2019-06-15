@@ -144,22 +144,24 @@ private:
 
     boost::filesystem::path m_path;     ///< file path from which this Texture was constructed
 
-    unsigned int m_bytes_pp;
-    X            m_width;
-    Y            m_height;
+    unsigned int m_bytes_pp = 0;
+    X            m_width = GG::X0;
+    Y            m_height = GG::Y0;
 
-    GLenum       m_wrap_s, m_wrap_t;
-    GLenum       m_min_filter, m_mag_filter;
+    GLenum       m_wrap_s = GL_REPEAT;
+    GLenum       m_wrap_t = GL_REPEAT;
+    GLenum       m_min_filter = GL_LINEAR_MIPMAP_LINEAR;
+    GLenum       m_mag_filter = GL_LINEAR;
 
-    bool         m_mipmaps;
-    GLuint       m_opengl_id;   ///< OpenGL texture ID
-    GLenum       m_format;
-    GLenum       m_type;
+    bool         m_mipmaps = false;
+    GLuint       m_opengl_id = 0;   ///< OpenGL texture ID
+    GLenum       m_format = GL_INVALID_ENUM;
+    GLenum       m_type = GL_INVALID_ENUM;
 
     /// each of these is used for a non-power-of-two-sized graphic loaded into a power-of-two-sized texture
-    GLfloat      m_tex_coords[4];  ///< the texture coords used to blit from this texture by default (reflecting original image width and height)
-    X            m_default_width;  ///< the original width and height of this texture to be used in blitting 
-    Y            m_default_height;
+    GLfloat      m_tex_coords[4] = {0.0f, 0.0f, 0.0f, 0.0f};    ///< the texture coords used to blit from this texture by default (reflecting original image width and height)
+    X            m_default_width = GG::X0;                      ///< the original width and height of this texture to be used in blitting 
+    Y            m_default_height = GG::Y0;
 };
 
 /** \brief This class is a convenient way to store the info needed to use a

@@ -312,13 +312,14 @@ private:
     ServerNetworking        m_networking;
     ServerFSM*              m_fsm;
     PythonServer            m_python_server;
-    std::map<int, int>      m_player_empire_ids;    ///< map from player id to empire id that the player controls.
-    int                     m_current_turn;         ///< current turn number
-    bool                    m_turn_expired;         ///< true when turn exceeds its timeout
-    std::vector<Process>    m_ai_client_processes;  ///< AI client child processes
-    bool                    m_single_player_game;   ///< true when the game being played is single-player
-    GalaxySetupData         m_galaxy_setup_data;    ///< stored setup data for the game currently being played
-    boost::circular_buffer<ChatHistoryEntity> m_chat_history; ///< Stored last chat messages.
+    std::map<int, int>      m_player_empire_ids;                ///< map from player id to empire id that the player controls.
+    int                     m_current_turn = INVALID_GAME_TURN; ///< current turn number
+    bool                    m_turn_expired = false;             ///< true when turn exceeds its timeout
+    std::vector<Process>    m_ai_client_processes;              ///< AI client child processes
+    bool                    m_single_player_game = false;       ///< true when the game being played is single-player
+    GalaxySetupData         m_galaxy_setup_data;                ///< stored setup data for the game currently being played
+    boost::circular_buffer<ChatHistoryEntity> m_chat_history;   ///< Stored last chat messages.
+
 
     /** Turn sequence map is used for turn processing. Each empire is added at
       * the start of a game or reload and then the map maintains OrderSets for
