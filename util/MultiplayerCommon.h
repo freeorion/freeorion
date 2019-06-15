@@ -96,8 +96,6 @@ private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
-    template <class Archive>
-    void legacy_serialize(Archive& ar, const unsigned int version);
 };
 
 BOOST_CLASS_VERSION(SaveGameUIData, 2);
