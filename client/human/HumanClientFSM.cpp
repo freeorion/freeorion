@@ -872,7 +872,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
             Client().GetClientUI().RestoreFromSaveData(ui_data);
             TraceLogger(FSM) << "UI data from save data restored";
         } catch (const std::exception& err) {
-            ErrorLogger(FSM) << "Cann't restore UI data" << err.what();
+            ErrorLogger(FSM) << "Can't restore UI data" << err.what();
             ClientUI::MessageBox(UserString("ERROR_UI_DATA_CORRUPTED"), false);
         }
     }

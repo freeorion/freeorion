@@ -1050,7 +1050,7 @@ ERROR_INCOMPATIBLE_VERSION
 Server cannot properly read messages from your client, most likely due to incompatible game versions.
 
 ERROR_UI_DATA_CORRUPTED
-Cann't restore UI data from the game. Game can start, but interface options and ship desings was lost.
+Can't restore UI data from the game. Game can start, but interface options and ship desings was lost.
 
 ##
 ## Game Rules
