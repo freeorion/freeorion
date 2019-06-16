@@ -35,22 +35,23 @@ namespace {
         db.Add("save.format.xml.zlib.enabled",              UserStringNop("OPTIONS_DB_XML_ZLIB_SERIALIZATION"), true);
         db.Add("save.auto.hostless.enabled",                UserStringNop("OPTIONS_DB_AUTOSAVE_HOSTLESS"),      true);
         db.Add<int>("save.auto.interval",                   UserStringNop("OPTIONS_DB_AUTOSAVE_INTERVAL"),      0);
-        db.Add<std::string>("load",                         UserStringNop("OPTIONS_DB_LOAD"),                   "", Validator<std::string>(), false);
+        db.Add<std::string>("load",                         UserStringNop("OPTIONS_DB_LOAD"),                   "",                     Validator<std::string>(), false);
         db.Add("save.auto.exit.enabled",                    UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),    true);
         db.AddFlag('q', "quickstart",                       UserStringNop("OPTIONS_DB_QUICKSTART"),             false);
 
         // Common galaxy settings
-        db.Add("setup.seed",                                UserStringNop("OPTIONS_DB_GAMESETUP_SEED"),         std::string("0"), Validator<std::string>());
-        db.Add("setup.star.count",                          UserStringNop("OPTIONS_DB_GAMESETUP_STARS"),        150, RangedValidator<int>(10, 5000));
-        db.Add("setup.galaxy.shape",                        UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_SHAPE"), DISC, RangedValidator<Shape>(SPIRAL_2, RANDOM));
-        db.Add("setup.galaxy.age",                          UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),   GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
-        db.Add("setup.planet.density",                      UserStringNop("OPTIONS_DB_GAMESETUP_PLANET_DENSITY"), GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
-        db.Add("setup.starlane.frequency",                  UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"), GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
-        db.Add("setup.specials.frequency",                  UserStringNop("OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY"), GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
-        db.Add("setup.monster.frequency",                   UserStringNop("OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY"), GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
-        db.Add("setup.native.frequency",                    UserStringNop("OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY"), GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
-        db.Add("setup.ai.player.count",                     UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"), 6, RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
-        db.Add("setup.ai.aggression",                       UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"), MANIACAL, RangedValidator<Aggression>(BEGINNER, MANIACAL));
+        db.Add("setup.seed",                UserStringNop("OPTIONS_DB_GAMESETUP_SEED"),                         std::string("0"),       Validator<std::string>());
+        db.Add("setup.star.count",          UserStringNop("OPTIONS_DB_GAMESETUP_STARS"),                        150,                    RangedValidator<int>(10, 5000));
+        db.Add("setup.galaxy.shape",        UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_SHAPE"),                 DISC,                   RangedValidator<Shape>(SPIRAL_2, RANDOM));
+        db.Add("setup.galaxy.age",          UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),                   GALAXY_SETUP_MEDIUM,    RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
+        db.Add("setup.planet.density",      UserStringNop("OPTIONS_DB_GAMESETUP_PLANET_DENSITY"),               GALAXY_SETUP_MEDIUM,    RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
+        db.Add("setup.starlane.frequency",  UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"),           GALAXY_SETUP_MEDIUM,    RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
+        db.Add("setup.specials.frequency",  UserStringNop("OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY"),           GALAXY_SETUP_MEDIUM,    RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
+        db.Add("setup.monster.frequency",   UserStringNop("OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY"),            GALAXY_SETUP_MEDIUM,    RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
+        db.Add("setup.native.frequency",    UserStringNop("OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY"),             GALAXY_SETUP_MEDIUM,    RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
+        db.Add("setup.ai.player.count",     UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"),               6,                      RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
+        db.Add("setup.ai.aggression",       UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"),            MANIACAL,               RangedValidator<Aggression>(BEGINNER, MANIACAL));
+
 
         // AI Testing options-- the following options are to facilitate AI testing and do not currently have an options page widget;
         // they are intended to be changed via the command line and are not currently storable in the configuration file.
