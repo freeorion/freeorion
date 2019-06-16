@@ -818,6 +818,26 @@ void OptionsDB::AddSection(const std::string& name, const std::string& descripti
     }
 }
 
+template <>
+std::vector<std::string> OptionsDB::Get<std::vector<std::string>>(const std::string& name) const
+{
+    auto it = m_options.find(name);
+    if (!OptionExists(it))
+        throw std::runtime_error("OptionsDB::Get<std::vector<std::string>>() : Attempted to get nonexistent option \"" + name + "\".");
+    try {
+        return boost::any_cast<std::vector<std::string>>(it->second.value);
+    } catch (const boost::bad_any_cast& e) {
+        ErrorLogger() << "bad any cast converting value option named: " << name << ". Returning default value instead";
+        try {
+            return boost::any_cast<std::vector<std::string>>(it->second.default_value);
+        } catch (const boost::bad_any_cast& e) {
+            ErrorLogger() << "bad any cast converting default value of std::vector<std::string> option named: " << name << ". Returning empty vector instead";
+            return std::vector<std::string>();
+        }
+    }
+}
+
+
 std::string ListToString(const std::vector<std::string>& input_list) {
     // list input strings in comma-separated-value format
     std::string retval;
@@ -840,4 +860,3 @@ std::vector<std::string> StringToList(const std::string& input_string) {
         retval.push_back(token);
     return retval;
 }
-

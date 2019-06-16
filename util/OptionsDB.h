@@ -142,8 +142,13 @@ public:
         try {
             return boost::any_cast<T>(it->second.value);
         } catch (const boost::bad_any_cast& e) {
-            ErrorLogger() << "bad any cast converting option named: " << name;
-            throw;
+            ErrorLogger() << "bad any cast converting value option named: " << name << ". Returning default value instead";
+            try {
+                return boost::any_cast<T>(it->second.default_value);
+            } catch (const boost::bad_any_cast& e) {
+                ErrorLogger() << "bad any cast converting default value of option named: " << name << ". Returning data-type default value instead: " << T();
+                return T();
+            }
         }
     }
 
@@ -159,8 +164,8 @@ public:
         try {
             return boost::any_cast<T>(it->second.default_value);
         } catch (const boost::bad_any_cast& e) {
-            ErrorLogger() << "bad any cast converting option named: " << name;
-            throw;
+            ErrorLogger() << "bad any cast converting default value of option named: " << name << "  returning type default value instead";
+            return T();
         }
     }
 
@@ -257,7 +262,7 @@ public:
                     // This option was previously specified externally but was not recognized at the time, attempt to parse the value found there
                     value = validator.Validate(it->second.ValueToString());
                 } catch (boost::bad_lexical_cast&) {
-                    ErrorLogger() << "OptionsDB::Add<>() : Option " << name << " was given the value \"" << it->second.ValueToString() << "\" from the command line or a config file but that value couldn't be converted to the correct type, using default value instead.";
+                    ErrorLogger() << "OptionsDB::Add<>() : Option " << name << " was given the value from the command line or a config file that cannot be converted to the correct type. Using default value instead.";
                 }
             }
         }
@@ -416,17 +421,17 @@ private:
     /** indicates whether the option referenced by \a it has been added to this
         OptionsDB.  Overloaded for convenient use within other OptionsDB
         functions */
-    bool        OptionExists(std::map<std::string, Option>::const_iterator it) const
+    bool OptionExists(std::map<std::string, Option>::const_iterator it) const
     { return it != m_options.end() && it->second.recognized; }
 
     /** indicates whether the current value of the option references by \a is
         the default value for that option */
-    bool        IsDefaultValue(std::map<std::string, Option>::const_iterator it) const
+    bool IsDefaultValue(std::map<std::string, Option>::const_iterator it) const
     { return it != m_options.end() && it->second.ValueToString() == it->second.DefaultValueToString(); }
 
     OptionsDB();
 
-    void        SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name);
+    void SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name);
 
     /** Determine known option sections and which options each contains
      *  A special "root" section is added for determined top-level sections */
@@ -447,11 +452,16 @@ bool OptionsDB::Option::SetFromValue(const T& value_) {
 
     bool changed = false;
 
-    if (!flag) {
-        changed = validator->String(value) != validator->String(value_);
-    } else {
-        changed = (boost::lexical_cast<std::string>(boost::any_cast<bool>(value))
-                   != boost::lexical_cast<std::string>(boost::any_cast<bool>(value_)));
+    try {
+        if (!flag) {
+            changed = validator->String(value) != validator->String(value_);
+        } else {
+            changed = (boost::lexical_cast<std::string>(boost::any_cast<bool>(value))
+                    != boost::lexical_cast<std::string>(boost::any_cast<bool>(value_)));
+        }
+    } catch (...) {
+        ErrorLogger() << "Exception thrown when setting option value, probably due to the previous value being invalid?";
+        changed = true;
     }
 
     if (changed) {
@@ -461,6 +471,9 @@ bool OptionsDB::Option::SetFromValue(const T& value_) {
     return changed;
 }
 
+// needed because std::vector<std::string> is not streamable
+template <>
+FO_COMMON_API std::vector<std::string> OptionsDB::Get<std::vector<std::string>>(const std::string& name) const;
 
 
 #endif // _OptionsDB_h_
