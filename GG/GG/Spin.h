@@ -517,15 +517,15 @@ void Spin<T>::ValueChangedEcho(const T& value)
 
 namespace spin_details {
     // provides a typesafe mod function
-    template <class T> inline 
+    template <class T> inline
     T mod (T dividend, T divisor) {return static_cast<T>(dividend % divisor);}
 
     // template specializations
-    template <> inline 
+    template <> inline
     float mod<float> (float dividend, float divisor) {return std::fmod(dividend, divisor);}
-    template <> inline 
+    template <> inline
     double mod<double> (double dividend, double divisor) {return std::fmod(dividend, divisor);}
-    template <> inline 
+    template <> inline
     long double mod<long double> (long double dividend, long double divisor) {return std::fmod(dividend, divisor);}
 
     // provides a typesafe div function
@@ -533,11 +533,11 @@ namespace spin_details {
     T div (T dividend, T divisor) {return static_cast<T>(dividend / divisor);}
 
     // template specializations
-    template <> inline 
+    template <> inline
     float div<float> (float dividend, float divisor) {return std::floor(dividend / divisor);}
-    template <> inline 
+    template <> inline
     double div<double> (double dividend, double divisor) {return std::floor(dividend / divisor);}
-    template <> inline 
+    template <> inline
     long double div<long double> (long double dividend, long double divisor) {return std::floor(dividend / divisor);}
 } // namespace spin_details
 
