@@ -493,7 +493,11 @@ void HumanClientApp::StartServer() {
         args.push_back("--singleplayer");
         args.push_back("--skip-checksum");
     }
+    DebugLogger() << "Launching server process with args: ";
+    for (auto arg : args)
+        DebugLogger() << arg;
     m_server_process = Process(SERVER_CLIENT_EXE, args);
+    DebugLogger() << "... finished launching server process.";
 }
 
 void HumanClientApp::FreeServer() {
@@ -523,6 +527,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     bool ended_with_ok = false;
     auto game_rules = GetGameRules().GetRulesAsStrings();
     if (!quickstart) {
+        DebugLogger() << "Initializing galaxy setup window";
         auto galaxy_wnd = GG::Wnd::Create<GalaxySetupWnd>();
         galaxy_wnd->Run();
         ended_with_ok = galaxy_wnd->EndedWithOk();

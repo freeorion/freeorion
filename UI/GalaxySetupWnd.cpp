@@ -537,7 +537,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
 
 void GalaxySetupPanel::CompleteConstruction() {
     GG::Control::CompleteConstruction();
-
+    DebugLogger() << "GalaxySetupPanel::CompleteConstruction";
     Sound::TempUISoundDisabler sound_disabler;
 
     // seed
@@ -960,8 +960,20 @@ GalaxySetupWnd::GalaxySetupWnd() :
 void GalaxySetupWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
 
-    m_galaxy_setup_panel = GG::Wnd::Create<GalaxySetupPanel>();
-    m_game_rules_panel = GG::Wnd::Create<GameRulesPanel>();
+    DebugLogger() << "GalaxySetupWnd::CompleteConstruction";
+
+    try {
+        m_galaxy_setup_panel = GG::Wnd::Create<GalaxySetupPanel>();
+    } catch (const boost::bad_any_cast& e) {
+        ErrorLogger() << "bad any cast creating galaxy setup panel: " << e.what();
+        throw;
+    }
+    try {
+        m_game_rules_panel = GG::Wnd::Create<GameRulesPanel>();
+    } catch (const boost::bad_any_cast& e) {
+        ErrorLogger() << "bad any cast creating game rules panel: " << e.what();
+        throw;
+    }
 
     const GG::X LABELS_WIDTH = (GalaxySetupPanel::DefaultWidth() - 5) / 2;
 
@@ -1032,16 +1044,11 @@ void GalaxySetupWnd::CompleteConstruction() {
     DoLayout();
     SaveDefaultedOptions();
 
-    m_galaxy_setup_panel->ImageChangedSignal.connect(
-        boost::bind(&GalaxySetupWnd::PreviewImageChanged, this, _1));
-    m_player_name_edit->EditedSignal.connect(
-        boost::bind(&GalaxySetupWnd::PlayerNameChanged, this, _1));
-    m_empire_name_edit->EditedSignal.connect(
-        boost::bind(&GalaxySetupWnd::EmpireNameChanged, this, _1));
-    m_ok->LeftClickedSignal.connect(
-        boost::bind(&GalaxySetupWnd::OkClicked, this));
-    m_cancel->LeftClickedSignal.connect(
-        boost::bind(&GalaxySetupWnd::CancelClicked, this));
+    m_galaxy_setup_panel->ImageChangedSignal.connect(boost::bind(&GalaxySetupWnd::PreviewImageChanged,  this, _1));
+    m_player_name_edit->EditedSignal.connect(        boost::bind(&GalaxySetupWnd::PlayerNameChanged,    this, _1));
+    m_empire_name_edit->EditedSignal.connect(        boost::bind(&GalaxySetupWnd::EmpireNameChanged,    this, _1));
+    m_ok->LeftClickedSignal.connect(                 boost::bind(&GalaxySetupWnd::OkClicked,            this));
+    m_cancel->LeftClickedSignal.connect(             boost::bind(&GalaxySetupWnd::CancelClicked,        this));
 
     PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
 
