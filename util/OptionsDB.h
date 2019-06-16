@@ -139,7 +139,12 @@ public:
         auto it = m_options.find(name);
         if (!OptionExists(it))
             throw std::runtime_error("OptionsDB::Get<>() : Attempted to get nonexistent option \"" + name + "\".");
-        return boost::any_cast<T>(it->second.value);
+        try {
+            return boost::any_cast<T>(it->second.value);
+        } catch (const boost::bad_any_cast& e) {
+            ErrorLogger() << "bad any cast converting option named: " << name;
+            throw;
+        }
     }
 
     /** returns the default value of option \a name. Note that the exact type
@@ -151,7 +156,12 @@ public:
         auto it = m_options.find(name);
         if (!OptionExists(it))
             throw std::runtime_error("OptionsDB::GetDefault<>() : Attempted to get nonexistent option \"" + name + "\".");
-        return boost::any_cast<T>(it->second.default_value);
+        try {
+            return boost::any_cast<T>(it->second.default_value);
+        } catch (const boost::bad_any_cast& e) {
+            ErrorLogger() << "bad any cast converting option named: " << name;
+            throw;
+        }
     }
 
     bool IsDefaultValue(const std::string& name) const {
