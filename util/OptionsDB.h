@@ -112,29 +112,29 @@ public:
 
     /** indicates whether an option with name \a name has been added to this
         OptionsDB. */
-    bool        OptionExists(const std::string& name) const
+    bool OptionExists(const std::string& name) const
     { return m_options.count(name) && m_options.at(name).recognized; }
 
     /** write back the optionDB's state to the XML config file
         if it has changed since it was last saved. */
-    void        Commit();
+    void Commit();
 
     /** Write any options that are not at default value to persistent config, replacing any existing file
      *
      *  @returns bool If file was successfully written
      */
-    bool        CommitPersistent();
+    bool CommitPersistent();
 
     /** validates a value for an option. throws std::runtime_error if no option
       * \a name exists.  throws bad_lexical_cast if \a value cannot be
       * converted to the type of the option \a name. */
-    void        Validate(const std::string& name, const std::string& value) const;
+    void Validate(const std::string& name, const std::string& value) const;
 
     /** returns the value of option \a name. Note that the exact type of item
       * stored in the option \a name must be known in advance.  This means that
       * Get() must be called as Get<int>("foo"), etc. */
     template <class T>
-    T           Get(const std::string& name) const
+    T Get(const std::string& name) const
     {
         auto it = m_options.find(name);
         if (!OptionExists(it))
@@ -146,7 +146,7 @@ public:
       * of item stored in the option \a name must be known in advance.  This
       * means that GetDefault() must be called as Get<int>("foo"), etc. */
     template <class T>
-    T           GetDefault(const std::string& name) const
+    T GetDefault(const std::string& name) const
     {
         auto it = m_options.find(name);
         if (!OptionExists(it))
@@ -154,7 +154,7 @@ public:
         return boost::any_cast<T>(it->second.default_value);
     }
 
-    bool        IsDefaultValue(const std::string& name) const {
+    bool IsDefaultValue(const std::string& name) const {
         auto it = m_options.find(name);
         if (!OptionExists(it))
             throw std::runtime_error("OptionsDB::IsDefaultValue<>() : Attempted to get nonexistent option \"" + name + "\".");
@@ -177,7 +177,7 @@ public:
     std::shared_ptr<const ValidatorBase> GetValidator(const std::string& option_name) const;
 
     /** writes a usage message to \a os */
-    void        GetUsage(std::ostream& os, const std::string& command_line = "", bool allow_unrecognized = false) const;
+    void GetUsage(std::ostream& os, const std::string& command_line = "", bool allow_unrecognized = false) const;
 
     /** @brief  Saves the contents of the options DB to the @p doc XMLDoc.
      *
@@ -186,11 +186,11 @@ public:
      * @param[in] non_default_only Do not include options which are set to their
      *      default value, is unrecognized, or is "version.string"
      */
-    void        GetXML(XMLDoc& doc, bool non_default_only = false) const;
+    void GetXML(XMLDoc& doc, bool non_default_only = false) const;
 
     /** find all registered Options that begin with \a prefix and store them in
       * \a ret. If \p allow_unrecognized then include unrecognized options. */
-    void        FindOptions(std::set<std::string>& ret, const std::string& prefix, bool allow_unrecognized = false) const;
+    void FindOptions(std::set<std::string>& ret, const std::string& prefix, bool allow_unrecognized = false) const;
 
     /** the option changed signal object for the given option */
     OptionChangedSignalType&        OptionChangedSignal(const std::string& option);
@@ -200,9 +200,9 @@ public:
 
     /** adds an Option, optionally with a custom validator */
     template <class T>
-    void        Add(const std::string& name, const std::string& description, T default_value,
-                    const ValidatorBase& validator = Validator<T>(), bool storable = true,
-                    const std::string& section = std::string())
+    void Add(const std::string& name, const std::string& description, T default_value,
+             const ValidatorBase& validator = Validator<T>(), bool storable = true,
+             const std::string& section = std::string())
     {
         auto it = m_options.find(name);
         boost::any value = default_value;
@@ -230,9 +230,9 @@ public:
     /** adds an Option with an alternative one-character shortened name,
       * optionally with a custom validator */
     template <class T>
-    void        Add(char short_name, const std::string& name, const std::string& description, T default_value,
-                    const ValidatorBase& validator = Validator<T>(), bool storable = true,
-                    const std::string& section = std::string())
+    void Add(char short_name, const std::string& name, const std::string& description, T default_value,
+             const ValidatorBase& validator = Validator<T>(), bool storable = true,
+             const std::string& section = std::string())
     {
         auto it = m_options.find(name);
         boost::any value = default_value;
@@ -260,8 +260,8 @@ public:
     /** adds a flag Option, which is treated as a boolean value with a default
       * of false.  Using the flag on the command line at all indicates that its
       * value it set to true. */
-    void        AddFlag(const std::string& name, const std::string& description,
-                        bool storable = true, const std::string& section = std::string())
+    void AddFlag(const std::string& name, const std::string& description,
+                 bool storable = true, const std::string& section = std::string())
     {
         auto it = m_options.find(name);
         bool value = false;
@@ -283,9 +283,9 @@ public:
     /** adds an Option with an alternative one-character shortened name, which
       * is treated as a boolean value with a default of false.  Using the flag
       * on the command line at all indicates that its value it set to true. */
-    void        AddFlag(char short_name, const std::string& name,
-                        const std::string& description, bool storable = true,
-                        const std::string& section = std::string())
+    void AddFlag(char short_name, const std::string& name,
+                 const std::string& description, bool storable = true,
+                 const std::string& section = std::string())
     {
         auto it = m_options.find(name);
         bool value = false;
@@ -305,15 +305,15 @@ public:
     }
 
     /** removes an Option */
-    void        Remove(const std::string& name);
+    void Remove(const std::string& name);
 
     /** removes all unrecognized Options that begin with \a prefix.  A blank
       * string will remove all unrecognized Options. */
-    void        RemoveUnrecognized(const std::string& prefix = "");
+    void RemoveUnrecognized(const std::string& prefix = "");
 
     /** sets the value of option \a name to \a value */
     template <class T>
-    void        Set(const std::string& name, const T& value)
+    void Set(const std::string& name, const T& value)
     {
         auto it = m_options.find(name);
         if (!OptionExists(it))
@@ -323,7 +323,7 @@ public:
 
     /** Set the default value of option @p name to @p value */
     template <class T>
-    void        SetDefault(const std::string& name, const T& value) {
+    void SetDefault(const std::string& name, const T& value) {
         std::map<std::string, Option>::iterator it = m_options.find(name);
         if (!OptionExists(it))
             throw std::runtime_error("Attempted to set default value of nonexistent option \"" + name + "\".");
@@ -335,16 +335,16 @@ public:
     /** if an xml file exists at \a file_path and has the same version tag as \a version, fill the
       * DB options contained in that file (read the file using XMLDoc, then fill the DB using SetFromXML)
       * if the \a version string is empty, bypass that check */
-    void        SetFromFile(const boost::filesystem::path& file_path,
-                            const std::string& version = "");
+    void SetFromFile(const boost::filesystem::path& file_path,
+                     const std::string& version = "");
 
     /** fills some or all of the options of the DB from values passed in from
       * the command line */
-    void        SetFromCommandLine(const std::vector<std::string>& args);
+    void SetFromCommandLine(const std::vector<std::string>& args);
 
     /** fills some or all of the options of the DB from values stored in
       * XMLDoc \a doc */
-    void        SetFromXML(const XMLDoc& doc);
+    void SetFromXML(const XMLDoc& doc);
 
     struct FO_COMMON_API Option {
         Option();
