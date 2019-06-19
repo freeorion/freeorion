@@ -79,13 +79,23 @@ public:
     std::map<std::string, std::string> GetRulesAsStrings() const;
 
     template <typename T>
-    T       Get(const std::string& name) const
+    T Get(const std::string& name) const
     {
         CheckPendingGameRules();
         auto it = m_game_rules.find(name);
         if (it == m_game_rules.end())
             throw std::runtime_error("GameRules::Get<>() : Attempted to get nonexistent rule \"" + name + "\".");
-        return boost::any_cast<T>(it->second.value);
+        try {
+            return boost::any_cast<T>(it->second.value);
+        } catch (const boost::bad_any_cast& e) {
+            ErrorLogger() << "bad any cast converting value of game rule named: " << name << ". Returning default value instead";
+            try {
+                return boost::any_cast<T>(it->second.default_value);
+            } catch (const boost::bad_any_cast& e) {
+                ErrorLogger() << "bad any cast converting default value of game rule named: " << name << ". Returning data-type default value instead: " << T();
+                return T();
+            }
+        }
     }
     //@}
 
@@ -94,9 +104,9 @@ public:
         Adds option setup.rules.{RULE_NAME} to override default value and
         option setup.rules.server-locked.{RULE_NAME} to block rule changes from players */
     template <class T>
-    void    Add(const std::string& name, const std::string& description,
-                const std::string& category, T default_value,
-                bool engine_interal, const ValidatorBase& validator = Validator<T>())
+    void Add(const std::string& name, const std::string& description,
+             const std::string& category, T default_value,
+             bool engine_interal, const ValidatorBase& validator = Validator<T>())
     {
         CheckPendingGameRules();
         auto it = m_game_rules.find(name);
@@ -119,7 +129,7 @@ public:
     void Add(Pending::Pending<GameRules>&& future);
 
     template <typename T>
-    void    Set(const std::string& name, const T& value)
+    void Set(const std::string& name, const T& value)
     {
         CheckPendingGameRules();
         auto it = m_game_rules.find(name);
@@ -128,14 +138,14 @@ public:
         it->second.SetFromValue(value);
     }
 
-    void    SetFromStrings(const std::map<std::string, std::string>& names_values);
+    void SetFromStrings(const std::map<std::string, std::string>& names_values);
 
     /** Removes game rules that were added without being specified as
         engine internal. */
-    void    ClearExternalRules();
+    void ClearExternalRules();
 
     /** Resets all rules to default values. */
-    void    ResetToDefaults();
+    void ResetToDefaults();
     //@}
 
 private:
