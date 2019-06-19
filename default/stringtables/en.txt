@@ -3943,8 +3943,17 @@ Diplomacy
 PEACE
 Peace
 
+AT_PEACE_WITH
+At peace with
+
 WAR
 War
+
+AT_WAR_WITH
+At war with
+
+ALLIED_WITH
+Allied with
 
 WAR_DECLARATION
 Declare War

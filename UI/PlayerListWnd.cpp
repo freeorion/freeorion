@@ -98,21 +98,16 @@ namespace {
     class DiplomaticStatusIndicator : public GG::Control {
     public:
         DiplomaticStatusIndicator(GG::X w, GG::Y h, int empire_id, DiplomaticStatus diplo_status) :
-            Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
+            Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
             m_empire_id(empire_id),
             m_empire_ids(),
             m_diplo_status(diplo_status),
             m_icon(nullptr)
         {}
 
-        void Update() {
-            const ClientApp* app = ClientApp::GetApp();
-            if (!app) {
-                ErrorLogger() << "DiplomaticStatusIndicator::Render couldn't get client app!";
-                return;
-            }
+        void CompleteConstruction() override {
+            GG::Control::CompleteConstruction();
 
-            // pick icon and tooltip text for diplo status
             switch (m_diplo_status) {
             case DIPLO_WAR:
                 m_icon = WarIcon();
@@ -128,7 +123,16 @@ namespace {
                 break;
             }
 
-            // add color for each empire with specified diplomatic status
+        }
+
+        void Update() {
+            const ClientApp* app = ClientApp::GetApp();
+            if (!app) {
+                ErrorLogger() << "DiplomaticStatusIndicator::Render couldn't get client app!";
+                return;
+            }
+
+            // add id for each empire with specified diplomatic status
             m_empire_ids.clear();
 
             for (const auto& empire : Empires()) {
@@ -141,6 +145,38 @@ namespace {
                     m_empire_ids.emplace_back(empire_id);
                 }
             }
+
+            // generate tooltip text
+            std::string tooltip_title = "";
+            std::string tooltip_text = "";
+
+            switch (m_diplo_status) {
+            case DIPLO_WAR:
+                tooltip_title = UserString("AT_WAR_WITH") + ":";
+                break;
+            case DIPLO_PEACE:
+                tooltip_title = UserString("AT_PEACE_WITH") + ":";
+                break;
+            case DIPLO_ALLIED:
+                tooltip_title = UserString("ALLIED_WITH") + ":";
+                break;
+            default:
+                break;
+            }
+
+            if (m_empire_ids.size() == 0)
+                tooltip_text += UserString("NONE");
+
+            for (int empire_id : m_empire_ids) {
+                const Empire* empire = GetEmpire(empire_id);
+                if (!empire) continue;
+
+                tooltip_text += GG::RgbaTag(empire->Color()) + empire->Name();
+            }
+
+            // add tooltip
+            SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(tooltip_title, tooltip_text));
+            SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
         }
 
         void Render() override {
@@ -159,6 +195,9 @@ namespace {
                 GG::FlatRectangle(square_ul, square_ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE)), square_color, border_clr, DATA_PANEL_BORDER);
             }
         }
+
+        void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override { ForwardEventToParent(); }
+        void RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override { ForwardEventToParent(); }
 
     private:
         int                                        m_empire_id;
