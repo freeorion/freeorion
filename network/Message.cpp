@@ -864,10 +864,12 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
             Deserialize(ia, universe);
             DebugLogger() << "ExtractGameStartMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
-            ia >> BOOST_SERIALIZATION_NVP(players)
-               >> BOOST_SERIALIZATION_NVP(galaxy_setup_data)
-               >> BOOST_SERIALIZATION_NVP(loaded_game_data);
-            TraceLogger() << "ExtractGameStartMessage players, galaxy setup and loaded_game_data=" << loaded_game_data << " deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            ia >> BOOST_SERIALIZATION_NVP(players);
+            TraceLogger() << "ExtractGameStartMessage players deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+            TraceLogger() << "ExtractGameStartMessage galaxy setup deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            ia >> BOOST_SERIALIZATION_NVP(loaded_game_data);
+            TraceLogger() << "ExtractGameStartMessage loaded_game_data=" << loaded_game_data << " deserialization time " << (deserialize_timer.elapsed() * 1000.0);
             if (loaded_game_data) {
                 Deserialize(ia, orders);
                 TraceLogger() << "ExtractGameStartMessage orders deserialization time " << (deserialize_timer.elapsed() * 1000.0);
@@ -896,7 +898,6 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                 save_state_string_available = false;
             }
         }
-
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractGameStartMessageData(...) failed!  Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
