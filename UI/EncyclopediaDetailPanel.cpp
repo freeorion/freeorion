@@ -1519,6 +1519,8 @@ namespace {
             }
         }
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
+            // TODO: Consider using UserString instead of hard-coded english text here...
+            // Not a high priority as it's mainly inteded for debugging.
             if (!building_type->ProductionCostTimeLocationInvariant()) {
                 if (building_type->Cost() && !building_type->Cost()->ConstantExpr())
                     detailed_description += "\n\nProduction Cost:\n" + building_type->Cost()->Dump();
