@@ -1768,6 +1768,9 @@ OPTIONS_DB_GAMESETUP_SEED
 '''The seed used for randomly generating the galaxy.
 Galaxies generated with the same settings and the same seed will be identical.'''
 
+OPTIONS_DB_GAMESETUP_UID
+'''The game UID for new games. Server-only option can be used for predictable game name on hostless servers.'''
+
 OPTIONS_DB_GAMESETUP_STARS
 '''The approximate number of systems in the galaxy to be generated.
 

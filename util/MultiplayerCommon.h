@@ -288,6 +288,16 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
         m_save_game_empire_data()
     {}
 
+    MultiplayerLobbyData(const GalaxySetupData& base) :
+        GalaxySetupData(base),
+        m_any_can_edit(false),
+        m_new_game(true),
+        m_start_locked(false),
+        m_players(),
+        m_save_game(),
+        m_save_game_empire_data()
+    {}
+
     MultiplayerLobbyData(GalaxySetupData&& base) :
         GalaxySetupData(std::move(base)),
         m_any_can_edit(false),
