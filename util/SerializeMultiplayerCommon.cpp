@@ -120,7 +120,28 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
     }
     ar  & BOOST_SERIALIZATION_NVP(ordered_ship_hull_and_obsolete);
     TraceLogger() << "SaveGameUIData::serialize ship hull processed";
-    ar  & BOOST_SERIALIZATION_NVP(obsolete_ship_parts);
+    if (Archive::is_saving::value || version >= 4) {
+        std::map<std::string, int> ordered_obsolete_ship_parts;
+
+        if (Archive::is_saving::value) {
+            // populate temp container
+            ordered_obsolete_ship_parts = std::move(std::map<std::string, int>(obsolete_ship_parts.begin(), obsolete_ship_parts.end()));
+            // serialize into archive
+            ar & BOOST_SERIALIZATION_NVP(ordered_obsolete_ship_parts);
+        } else {
+            // deserialize into temp container
+            ar & BOOST_SERIALIZATION_NVP(ordered_obsolete_ship_parts);
+
+            // extract from temp container
+            obsolete_ship_parts = std::move(std::unordered_map<std::string, int>(ordered_obsolete_ship_parts.begin(), ordered_obsolete_ship_parts.end()));
+        }
+    } else {    // is_loading with version < 4
+        try {
+            ar  & BOOST_SERIALIZATION_NVP(obsolete_ship_parts);
+        } catch (...) {
+            ErrorLogger() << "Deserializing obsolete ship parts failed.";
+        }
+    }
     TraceLogger() << "SaveGameUIData::serialize obsoleted ship parts processed " << obsolete_ship_parts.size()
                   << " items. Bucket count " << obsolete_ship_parts.bucket_count();
 }
