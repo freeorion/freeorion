@@ -112,6 +112,7 @@ ServerApp::ServerApp() :
     m_galaxy_setup_data.m_monster_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");
     m_galaxy_setup_data.m_native_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
     m_galaxy_setup_data.m_ai_aggr = GetOptionsDB().Get<Aggression>("setup.ai.aggression");
+    m_galaxy_setup_data.m_game_uid = GetOptionsDB().Get<std::string>("setup.game.uid");
 
     // Start parsing content before FSM initialization
     // to have data initialized before autostart execution
@@ -1437,7 +1438,8 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     // Set game UID. Needs to be done first so we can use ClockSeed to
     // prevent reproducible UIDs.
     ClockSeed();
-    GetGalaxySetupData().SetGameUID(boost::uuids::to_string(boost::uuids::random_generator()()));
+    if (GetOptionsDB().Get<std::string>("setup.game.uid").empty())
+        GetGalaxySetupData().SetGameUID(boost::uuids::to_string(boost::uuids::random_generator()()));
 
     // Initialize RNG with provided seed to get reproducible universes
     int seed = 0;
