@@ -1058,7 +1058,6 @@ public:
     GG::Pt ClientLowerRight() const override;
 
     void PreRender() override;
-
     void Render() override;
 
     void DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
@@ -1068,9 +1067,7 @@ public:
                     GG::Flags<GG::ModKey> mod_keys) override;
 
     void DragDropLeave() override;
-
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
-
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     bool                Selected() const;
@@ -1090,38 +1087,38 @@ protected:
                          const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
-    void                ToggleAggression();
+    void ToggleAggression();
 
-    void                Refresh();
-    void                RefreshStateChangedSignals();
+    void Refresh();
+    void RefreshStateChangedSignals();
 
-    void                SetStatIconValues();
-    void                UpdateAggressionToggle();
-    void                DoLayout();
-    void                Init();
-    void                ColorTextForSelect();
+    void SetStatIconValues();
+    void UpdateAggressionToggle();
+    void DoLayout();
+    void Init();
+    void ColorTextForSelect();
 
     const int           m_fleet_id;
     int                 m_system_id;
     const bool          m_is_new_fleet_drop_target;
     NewFleetAggression  m_new_fleet_aggression;
 
-    bool                m_needs_refresh = true;
+    bool m_needs_refresh = true;
 
-    boost::signals2::connection              m_fleet_connection;
-    std::vector<boost::signals2::connection> m_ship_connections;
+    boost::signals2::connection                     m_fleet_connection;
+    std::vector<boost::signals2::connection>        m_ship_connections;
 
-    std::shared_ptr<GG::Control>        m_fleet_icon = nullptr;
-    std::shared_ptr<GG::Label>          m_fleet_name_text = nullptr;
-    std::shared_ptr<GG::Label>          m_fleet_destination_text = nullptr;
-    std::shared_ptr<GG::Button>         m_aggression_toggle = nullptr;
-    std::vector<std::shared_ptr<GG::StaticGraphic>>  m_fleet_icon_overlays;
-    std::shared_ptr<ScanlineControl>    m_scanline_control = nullptr;
+    std::shared_ptr<GG::Control>                    m_fleet_icon = nullptr;
+    std::shared_ptr<GG::Label>                      m_fleet_name_text = nullptr;
+    std::shared_ptr<GG::Label>                      m_fleet_destination_text = nullptr;
+    std::shared_ptr<GG::Button>                     m_aggression_toggle = nullptr;
+    std::vector<std::shared_ptr<GG::StaticGraphic>> m_fleet_icon_overlays;
+    std::shared_ptr<ScanlineControl>                m_scanline_control = nullptr;
 
-    std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>>   m_stat_icons;   // statistic icons and associated meter types
+    std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_stat_icons; // statistic icons and associated meter types
 
-    bool                m_selected = false;
-    bool                m_initialized = false;
+    bool m_selected = false;
+    bool m_initialized = false;
 };
 
 FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
@@ -1879,7 +1876,7 @@ public:
         m_order_issuing_enabled(order_issuing_enabled)
     { InitRowSizes(); }
 
-    void            EnableOrderIssuing(bool enable) {
+    void EnableOrderIssuing(bool enable) {
         m_order_issuing_enabled = enable;
     }
 
@@ -2097,7 +2094,7 @@ public:
         }
     }
 
-    GG::Pt          ListRowSize() const
+    GG::Pt ListRowSize() const
     { return GG::Pt(Width() - RightMargin() - 5, ListRowHeight()); }
 
 protected:
@@ -2161,7 +2158,7 @@ protected:
     }
 
 private:
-    void            HighlightRow(iterator row_it) {
+    void HighlightRow(iterator row_it) {
         if (row_it == end())
             return;
 
@@ -2185,7 +2182,7 @@ private:
         m_highlighted_row_it = row_it;
     }
 
-    void            ClearHighlighting() {
+    void ClearHighlighting() {
         if (m_highlighted_row_it == end())
             return;
 
@@ -2239,13 +2236,13 @@ private:
         m_highlighted_row_it = end();
     }
 
-    void            InitRowSizes() {
+    void InitRowSizes() {
         SetNumCols(1);
         ManuallyManageColProps();
     }
 
     iterator    m_highlighted_row_it;
-    bool        m_order_issuing_enabled;
+    bool        m_order_issuing_enabled = false;
 };
 
 ////////////////////////////////////////////////
@@ -2266,7 +2263,7 @@ public:
         Refresh();
     }
 
-    void            Refresh() {
+    void Refresh() {
         ScopedTimer timer("ShipsListBox::Refresh");
 
         auto fleet = GetFleet(m_fleet_id);
@@ -2309,7 +2306,7 @@ public:
         SelRowsChangedSignal(this->Selections());
     }
 
-    void            SetFleet(int fleet_id) {
+    void SetFleet(int fleet_id) {
         if (m_fleet_id == fleet_id)
             return;
 
@@ -2317,7 +2314,7 @@ public:
         Refresh();
     }
 
-    void            EnableOrderIssuing(bool enable) {
+    void EnableOrderIssuing(bool enable) {
         m_order_issuing_enabled = enable;
     }
 
@@ -2393,12 +2390,12 @@ public:
         }
     }
 
-    GG::Pt          ListRowSize() const
+    GG::Pt ListRowSize() const
     { return GG::Pt(Width() - 5 - RightMargin(), ListRowHeight()); }
 
 private:
-    int     m_fleet_id;
-    bool    m_order_issuing_enabled;
+    int  m_fleet_id = INVALID_OBJECT_ID;
+    bool m_order_issuing_enabled = false;
 };
 
 ////////////////////////////////////////////////
@@ -2415,38 +2412,34 @@ public:
 
     int             FleetID() const;
     std::set<int>   SelectedShipIDs() const;    ///< returns ids of ships selected in the detail panel's ShipsListBox
-
     void            SetFleet(int fleet_id);                         ///< sets the currently-displayed Fleet.  setting to INVALID_OBJECT_ID shows no fleet
     void            SelectShips(const std::set<int>& ship_ids);///< sets the currently-selected ships in the ships list
 
-    void            Refresh();
-
-    void            EnableOrderIssuing(bool enabled = true);
+    void Refresh();
+    void EnableOrderIssuing(bool enabled = true);
 
     /** emitted when the set of selected ships changes */
     mutable boost::signals2::signal<void (const ShipsListBox::SelectionSet&)> SelectedShipsChangedSignal;
     mutable boost::signals2::signal<void (int)>                               ShipRightClickedSignal;
 
 private:
-    int             GetShipIDOfListRow(GG::ListBox::iterator it) const; ///< returns the ID number of the ship in row \a row_idx of the ships listbox
-    void            DoLayout();
-    void            UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
-    void            ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
-    void            ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    int             ShipInRow(GG::ListBox::iterator it) const;
+    int  GetShipIDOfListRow(GG::ListBox::iterator it) const; ///< returns the ID number of the ship in row \a row_idx of the ships listbox
+    void DoLayout();
+    void UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
+    void ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
+    void ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    int  ShipInRow(GG::ListBox::iterator it) const;
 
-    int                         m_fleet_id;
-    bool                        m_order_issuing_enabled;
-    boost::signals2::connection m_fleet_connection;
-
-    std::shared_ptr<ShipsListBox>               m_ships_lb;
+    int                             m_fleet_id = INVALID_OBJECT_ID;
+    bool                            m_order_issuing_enabled = false;
+    boost::signals2::connection     m_fleet_connection;
+    std::shared_ptr<ShipsListBox>   m_ships_lb = nullptr;
 };
 
-FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled, GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/) :
+FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled,
+                                   GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/) :
     GG::Wnd(GG::X0, GG::Y0, w, h, flags),
-    m_fleet_id(INVALID_OBJECT_ID),
-    m_order_issuing_enabled(order_issuing_enabled),
-    m_ships_lb(nullptr)
+    m_order_issuing_enabled(order_issuing_enabled)
 {
     SetName("FleetDetailPanel");
     SetChildClippingMode(ClipToClient);
@@ -2775,14 +2768,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
                    GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
                    const std::string& config_name) :
     MapWndPopup("", flags | GG::RESIZABLE, config_name),
-    m_fleet_ids(),
-    m_empire_id(ALL_EMPIRES),
-    m_system_id(INVALID_OBJECT_ID),
-    m_order_issuing_enabled(order_issuing_enabled),
-    m_fleets_lb(nullptr),
-    m_new_fleet_drop_target(nullptr),
-    m_fleet_detail_panel(nullptr),
-    m_stat_icons()
+    m_order_issuing_enabled(order_issuing_enabled)
 {
     if (!fleet_ids.empty()) {
         if (auto fleet = GetFleet(*fleet_ids.begin()))
