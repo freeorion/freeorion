@@ -766,7 +766,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!empire)
         return true;
 
-    // check that item is both enqueuable and producible, since most buildings currently have 
+    // check that item is both enqueuable and producible, since most buildings currently have
     // nonselective EnqueueLocation conditions
     bool enqueuable_here = empire->EnqueuableItem(BT_BUILDING, name, m_production_location) &&
                            empire->ProducibleItem(BT_BUILDING, name, m_production_location);
