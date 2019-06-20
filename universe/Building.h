@@ -114,11 +114,15 @@ public:
                                     ProductionSpecialConsumption() const{ return m_production_special_consumption; }
 
     const std::set<std::string>&    Tags() const            { return m_tags; }
-    const Condition::ConditionBase* Location() const        { return m_location.get(); }          ///< returns the condition that determines the locations where this building can be produced
-    
-    /** Returns a condition that can be used by the UI to further filter (beyond the Location() requirement) where this building 
-        will be presented for enqueuing onto the production queue, to avoid clutter in the BuildDesignatorWnd. */
-    const Condition::ConditionBase* EnqueueLocation() const { return m_enqueue_location.get(); }  
+    const Condition::ConditionBase* Location() const        { return m_location.get(); }    ///< returns the condition that determines the locations where this building can be produced
+
+    /** Returns a condition that can be used by the UI to further filter (beyond
+      * the Location() requirement) where this building will be presented for
+      * enqueuing onto the production queue, to avoid clutter in the
+      * BuildDesignatorWnd. Example usage: Buildings that are already enqueued
+      * at a production location are hidden so they don't appear in the list of
+      * available items that can be enqueued/produced (again) at that location. */
+    const Condition::ConditionBase* EnqueueLocation() const { return m_enqueue_location.get(); }
 
     /** Returns the EffectsGroups that encapsulate the effects that buildings ofi
         this type have when operational. */
