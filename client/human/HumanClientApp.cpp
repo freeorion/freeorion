@@ -508,6 +508,7 @@ void HumanClientApp::FreeServer() {
 }
 
 void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
+    TraceLogger() << "HumanClientApp::NewSinglePlayerGame start";
     ClearPreviousPendingSaves(m_game_saves_in_progress);
 
     if (!GetOptionsDB().Get<bool>("network.server.external.force")) {
@@ -529,103 +530,109 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     if (!quickstart) {
         DebugLogger() << "Initializing galaxy setup window";
         auto galaxy_wnd = GG::Wnd::Create<GalaxySetupWnd>();
+        TraceLogger() << "Running galaxy setup window";
         galaxy_wnd->Run();
         ended_with_ok = galaxy_wnd->EndedWithOk();
+        TraceLogger() << "Setup ran, " << (ended_with_ok ? "ended with OK" : "ended without OK");
         if (ended_with_ok)
             game_rules = galaxy_wnd->GetRulesAsStrings();
+        TraceLogger() << "Got rules as strings";
     }
+
 
     m_connected = m_networking->ConnectToLocalHostServer();
     if (!m_connected) {
+        DebugLogger() << "Not connected; returning to intro screen and showing timed out error";
         ResetToIntro(true);
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
         return;
     }
 
-    if (quickstart || ended_with_ok) {
-
-        SinglePlayerSetupData setup_data;
-        setup_data.m_new_game = true;
-        setup_data.m_filename.clear();  // not used for new game
-
-        // get values stored in options from previous time game was run or
-        // from just having run GalaxySetupWnd
-
-        // GalaxySetupData
-        setup_data.SetSeed(GetOptionsDB().Get<std::string>("setup.seed"));
-        setup_data.m_size =             GetOptionsDB().Get<int>("setup.star.count");
-        setup_data.m_shape =            GetOptionsDB().Get<Shape>("setup.galaxy.shape");
-        setup_data.m_age =              GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
-        setup_data.m_starlane_freq =    GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
-        setup_data.m_planet_density =   GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density");
-        setup_data.m_specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency");
-        setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");
-        setup_data.m_native_freq =      GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
-        setup_data.m_ai_aggr =          GetOptionsDB().Get<Aggression>("setup.ai.aggression");
-        setup_data.m_game_rules =       game_rules;
-
-
-        // SinglePlayerSetupData contains a map of PlayerSetupData, for
-        // the human and AI players.  Need to compile this information
-        // from the specified human options and number of requested AIs
-
-        // Human player setup data
-        PlayerSetupData human_player_setup_data;
-        human_player_setup_data.m_player_name = GetOptionsDB().Get<std::string>("setup.player.name");
-        human_player_setup_data.m_empire_name = GetOptionsDB().Get<std::string>("setup.empire.name");
-
-        // DB stores index into array of available colours, so need to get that array to look up value of index.
-        // if stored value is invalid, use a default colour
-        const std::vector<GG::Clr>& empire_colours = EmpireColors();
-        int colour_index = GetOptionsDB().Get<int>("setup.empire.color.index");
-        if (colour_index >= 0 && colour_index < static_cast<int>(empire_colours.size()))
-            human_player_setup_data.m_empire_color = empire_colours[colour_index];
-        else
-            human_player_setup_data.m_empire_color = GG::CLR_GREEN;
-
-        human_player_setup_data.m_starting_species_name = GetOptionsDB().Get<std::string>("setup.initial.species");
-        if (human_player_setup_data.m_starting_species_name == "1")
-            human_player_setup_data.m_starting_species_name = "SP_HUMAN";   // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
-
-        if (human_player_setup_data.m_starting_species_name != "RANDOM" &&
-            !GetSpecies(human_player_setup_data.m_starting_species_name))
-        {
-            const SpeciesManager& sm = GetSpeciesManager();
-            if (sm.NumPlayableSpecies() < 1)
-                human_player_setup_data.m_starting_species_name.clear();
-            else
-                human_player_setup_data.m_starting_species_name = sm.playable_begin()->first;
-        }
-
-        human_player_setup_data.m_save_game_empire_id = ALL_EMPIRES; // not used for new games
-        human_player_setup_data.m_client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
-
-        // add to setup data players
-        setup_data.m_players.push_back(human_player_setup_data);
-
-
-        // AI player setup data.  One entry for each requested AI
-        int num_AIs = GetOptionsDB().Get<int>("setup.ai.player.count");
-        for (int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
-            PlayerSetupData ai_setup_data;
-
-            ai_setup_data.m_player_name = "AI_" + std::to_string(ai_i);
-            ai_setup_data.m_empire_name.clear();                // leave blank, to be set by server in Universe::GenerateEmpires
-            ai_setup_data.m_empire_color = GG::CLR_ZERO;        // to be set by server
-            ai_setup_data.m_starting_species_name.clear();      // leave blank, to be set by server
-            ai_setup_data.m_save_game_empire_id = ALL_EMPIRES;  // not used for new games
-            ai_setup_data.m_client_type = Networking::CLIENT_TYPE_AI_PLAYER;
-
-            setup_data.m_players.push_back(ai_setup_data);
-        }
-
-        m_networking->SendMessage(HostSPGameMessage(setup_data));
-        m_fsm->process_event(HostSPGameRequested());
-
-    } else {
+    if (!(quickstart || ended_with_ok)) {
         ErrorLogger() << "HumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
         ResetToIntro(true);
     }
+
+    SinglePlayerSetupData setup_data;
+    setup_data.m_new_game = true;
+    setup_data.m_filename.clear();  // not used for new game
+
+    // get values stored in options from previous time game was run or
+    // from just having run GalaxySetupWnd
+
+    // GalaxySetupData
+    setup_data.SetSeed(GetOptionsDB().Get<std::string>("setup.seed"));
+    setup_data.m_size =             GetOptionsDB().Get<int>("setup.star.count");
+    setup_data.m_shape =            GetOptionsDB().Get<Shape>("setup.galaxy.shape");
+    setup_data.m_age =              GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
+    setup_data.m_starlane_freq =    GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
+    setup_data.m_planet_density =   GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density");
+    setup_data.m_specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency");
+    setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");
+    setup_data.m_native_freq =      GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
+    setup_data.m_ai_aggr =          GetOptionsDB().Get<Aggression>("setup.ai.aggression");
+    setup_data.m_game_rules =       game_rules;
+
+
+    // SinglePlayerSetupData contains a map of PlayerSetupData, for
+    // the human and AI players.  Need to compile this information
+    // from the specified human options and number of requested AIs
+
+    // Human player setup data
+    PlayerSetupData human_player_setup_data;
+    human_player_setup_data.m_player_name = GetOptionsDB().Get<std::string>("setup.player.name");
+    human_player_setup_data.m_empire_name = GetOptionsDB().Get<std::string>("setup.empire.name");
+
+    // DB stores index into array of available colours, so need to get that array to look up value of index.
+    // if stored value is invalid, use a default colour
+    const std::vector<GG::Clr>& empire_colours = EmpireColors();
+    int colour_index = GetOptionsDB().Get<int>("setup.empire.color.index");
+    if (colour_index >= 0 && colour_index < static_cast<int>(empire_colours.size()))
+        human_player_setup_data.m_empire_color = empire_colours[colour_index];
+    else
+        human_player_setup_data.m_empire_color = GG::CLR_GREEN;
+
+    human_player_setup_data.m_starting_species_name = GetOptionsDB().Get<std::string>("setup.initial.species");
+    if (human_player_setup_data.m_starting_species_name == "1")
+        human_player_setup_data.m_starting_species_name = "SP_HUMAN";   // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
+
+    if (human_player_setup_data.m_starting_species_name != "RANDOM" &&
+        !GetSpecies(human_player_setup_data.m_starting_species_name))
+    {
+        const SpeciesManager& sm = GetSpeciesManager();
+        if (sm.NumPlayableSpecies() < 1)
+            human_player_setup_data.m_starting_species_name.clear();
+        else
+            human_player_setup_data.m_starting_species_name = sm.playable_begin()->first;
+    }
+
+    human_player_setup_data.m_save_game_empire_id = ALL_EMPIRES; // not used for new games
+    human_player_setup_data.m_client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
+
+    // add to setup data players
+    setup_data.m_players.push_back(human_player_setup_data);
+
+
+    // AI player setup data.  One entry for each requested AI
+    int num_AIs = GetOptionsDB().Get<int>("setup.ai.player.count");
+    for (int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
+        PlayerSetupData ai_setup_data;
+
+        ai_setup_data.m_player_name = "AI_" + std::to_string(ai_i);
+        ai_setup_data.m_empire_name.clear();                // leave blank, to be set by server in Universe::GenerateEmpires
+        ai_setup_data.m_empire_color = GG::CLR_ZERO;        // to be set by server
+        ai_setup_data.m_starting_species_name.clear();      // leave blank, to be set by server
+        ai_setup_data.m_save_game_empire_id = ALL_EMPIRES;  // not used for new games
+        ai_setup_data.m_client_type = Networking::CLIENT_TYPE_AI_PLAYER;
+
+        setup_data.m_players.push_back(ai_setup_data);
+    }
+
+
+    TraceLogger() << "Sending host SP setup message";
+    m_networking->SendMessage(HostSPGameMessage(setup_data));
+    m_fsm->process_event(HostSPGameRequested());
+    TraceLogger() << "HumanClientApp::NewSinglePlayerGame done";
 }
 
 void HumanClientApp::MultiPlayerGame() {
