@@ -642,39 +642,27 @@ namespace {
         void SetShipIcon();
         void Refresh();
         void DoLayout();
-
         void Init();
 
-        bool m_initialized   = false;;
-        bool m_needs_refresh = true;
-
-        int                                m_ship_id;
-        std::shared_ptr<GG::StaticGraphic> m_ship_icon;
-        /// An overlays for orders like scrap, colonize, invade, bombard destroy etc.
-        std::vector<std::shared_ptr<GG::StaticGraphic>> m_ship_icon_overlays;
-        std::shared_ptr<ScanlineControl>   m_scanline_control;
-        std::shared_ptr<GG::Label>         m_ship_name_text;
-        std::shared_ptr<GG::Label>         m_design_name_text;
-
-        /// statistic icons and associated meter types
-        std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_stat_icons;
-
-        bool                        m_selected;
-        boost::signals2::connection m_ship_connection;
-        boost::signals2::connection m_fleet_connection;
+        bool                                m_initialized = false;
+        bool                                m_needs_refresh = true;
+        int                                 m_ship_id = INVALID_OBJECT_ID;
+        std::shared_ptr<GG::StaticGraphic>  m_ship_icon = nullptr;
+        std::vector<std::shared_ptr<GG::StaticGraphic>>
+                                            m_ship_icon_overlays;   /// An overlays for orders like scrap, colonize, invade, bombard destroy etc.
+        std::shared_ptr<ScanlineControl>    m_scanline_control = nullptr;
+        std::shared_ptr<GG::Label>          m_ship_name_text = nullptr;
+        std::shared_ptr<GG::Label>          m_design_name_text = nullptr;
+        std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>>
+                                            m_stat_icons;           /// statistic icons and associated meter types
+        bool                                m_selected = false;
+        boost::signals2::connection         m_ship_connection;
+        boost::signals2::connection         m_fleet_connection;
     };
 
     ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
         Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-        m_initialized(false),
-        m_ship_id(ship_id),
-        m_ship_icon(nullptr),
-        m_ship_icon_overlays(),
-        m_scanline_control(nullptr),
-        m_ship_name_text(nullptr),
-        m_design_name_text(nullptr),
-        m_stat_icons(),
-        m_selected(false)
+        m_ship_id(ship_id)
     {
         SetChildClippingMode(ClipToClient);
         RequireRefresh();
