@@ -36,7 +36,6 @@ MultiIconValueIndicator::MultiIconValueIndicator(
     GG::X w, const std::vector<int>& object_ids,
     const std::vector<std::pair<MeterType, MeterType>>& meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
-    m_icons(),
     m_meter_types(meter_types),
     m_object_ids(object_ids)
 {}
@@ -47,16 +46,16 @@ void MultiIconValueIndicator::CompleteConstruction() {
     SetName("MultiIconValueIndicator");
 
     GG::X x(EDGE_PAD);
-    for (const std::pair<MeterType, MeterType>& meter_type : m_meter_types) {
+    for (const auto& meter_type : m_meter_types) {
         const MeterType PRIMARY_METER_TYPE = meter_type.first;
         // get icon texture.
-        std::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(PRIMARY_METER_TYPE);
+        auto texture = ClientUI::MeterIcon(PRIMARY_METER_TYPE);
 
         // special case for population meter for an indicator showing only a
         // single popcenter: icon is species icon, rather than generic pop icon
         if (PRIMARY_METER_TYPE == METER_POPULATION && m_object_ids.size() == 1) {
-	    if (auto pc = GetPopCenter(*m_object_ids.begin()))
-		texture = ClientUI::SpeciesIcon(pc->SpeciesName());
+            if (auto pc = GetPopCenter(*m_object_ids.begin()))
+                texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
 
         m_icons.push_back(GG::Wnd::Create<StatisticIcon>(texture, 0.0, 3, false, IconWidth(), IconHeight()));
