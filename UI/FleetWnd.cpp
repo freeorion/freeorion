@@ -1088,22 +1088,19 @@ protected:
 
 private:
     void ToggleAggression();
-
     void Refresh();
     void RefreshStateChangedSignals();
-
     void SetStatIconValues();
     void UpdateAggressionToggle();
     void DoLayout();
     void Init();
     void ColorTextForSelect();
 
-    const int           m_fleet_id;
-    int                 m_system_id;
-    const bool          m_is_new_fleet_drop_target;
-    NewFleetAggression  m_new_fleet_aggression;
-
-    bool m_needs_refresh = true;
+    const int           m_fleet_id = INVALID_OBJECT_ID;
+    int                 m_system_id = INVALID_OBJECT_ID;
+    const bool          m_is_new_fleet_drop_target = false;
+    NewFleetAggression  m_new_fleet_aggression = FLEET_PASSIVE;
+    bool                m_needs_refresh = true;
 
     boost::signals2::connection                     m_fleet_connection;
     std::vector<boost::signals2::connection>        m_ship_connections;
@@ -1124,10 +1121,7 @@ private:
 FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_fleet_id(fleet_id),
-    m_system_id(INVALID_OBJECT_ID),
-    m_is_new_fleet_drop_target(false),
-    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting()),
-    m_fleet_icon_overlays()
+    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting())
 {
     RequireRefresh();
     SetChildClippingMode(ClipToClient);
@@ -1135,11 +1129,9 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
 
 FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_drop_target) :
     Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-    m_fleet_id(INVALID_OBJECT_ID),
     m_system_id(system_id),
     m_is_new_fleet_drop_target(new_fleet_drop_target),
-    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting()),
-    m_fleet_icon_overlays()
+    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting())
 {
     RequirePreRender();
     SetChildClippingMode(ClipToClient);
@@ -1834,8 +1826,7 @@ namespace {
     public:
         FleetRow(int fleet_id, GG::X w, GG::Y h) :
             GG::ListBox::Row(w, h, GetFleet(fleet_id) ? FLEET_DROP_TYPE_STRING : ""),
-            m_fleet_id(fleet_id),
-            m_panel(nullptr)
+            m_fleet_id(fleet_id)
         {
             SetName("FleetRow");
             SetChildClippingMode(ClipToClient);
@@ -1856,10 +1847,11 @@ namespace {
                 m_panel->Resize(Size());
         }
 
-        int             FleetID() const {return m_fleet_id;}
+        int  FleetID() const { return m_fleet_id; }
+
     private:
-        int             m_fleet_id;
-        std::shared_ptr<FleetDataPanel> m_panel;
+        int                             m_fleet_id = INVALID_OBJECT_ID;
+        std::shared_ptr<FleetDataPanel> m_panel = nullptr;
     };
 }
 
@@ -2241,8 +2233,8 @@ private:
         ManuallyManageColProps();
     }
 
-    iterator    m_highlighted_row_it;
-    bool        m_order_issuing_enabled = false;
+    iterator m_highlighted_row_it;
+    bool     m_order_issuing_enabled = false;
 };
 
 ////////////////////////////////////////////////
