@@ -147,7 +147,7 @@ namespace {
     };
 
 
-    // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
+    // persistant between-executions game setup settings
     void AddOptions(OptionsDB& db) {
         db.Add("setup.empire.name",             UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_NAME"),              std::string(""),            Validator<std::string>());
         db.Add("setup.player.name",             UserStringNop("OPTIONS_DB_GAMESETUP_PLAYER_NAME"),              std::string(""),            Validator<std::string>());
@@ -647,8 +647,10 @@ void GalaxySetupPanel::CompleteConstruction() {
     AttachChild(m_ai_aggression_label);
     AttachChild(m_ai_aggression_list);
 
+    TraceLogger() << "GalaxySetupPanel::CompleteConstruction layout";
     DoLayout();
 
+    TraceLogger() << "GalaxySetupPanel::CompleteConstruction connecting signals and loading textures";
     m_random->LeftClickedSignal.connect(
         boost::bind(&GalaxySetupPanel::RandomClicked, this));
     m_seed_edit->FocusUpdateSignal.connect(
@@ -689,6 +691,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_textures[RANDOM] =      ClientUI::GetTexture(ClientUI::ArtDir() / "gp_random.png");
 
     // fill droplists
+    TraceLogger() << "GalaxySetupPanel::CompleteConstruction filling droplists";
     m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_2ARM")));
     m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_3ARM")));
     m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_4ARM")));
@@ -741,6 +744,8 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_MANIACAL")));
 
     // initial settings from stored results or defaults
+    TraceLogger() << "GalaxySetupPanel::CompleteConstruction selecting stored settings or defaults";
+
     SetSeed(GetOptionsDB().Get<std::string>("setup.seed"), true);
     m_seed_edit->Disable(GetSeed() == "RANDOM");
     m_stars_spin->SetValue(GetOptionsDB().Get<int>("setup.star.count"));
@@ -754,7 +759,9 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_native_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency"));
     m_ai_aggression_list->Select(GetOptionsDB().Get<Aggression>("setup.ai.aggression"));
 
+    TraceLogger() << "GalaxySetupPanel::CompleteConstruction settings changed signal...";
     SettingsChangedSignal();
+    TraceLogger() << "GalaxySetupPanel::CompleteConstruction done";
 }
 
 void GalaxySetupPanel::RandomClicked() {

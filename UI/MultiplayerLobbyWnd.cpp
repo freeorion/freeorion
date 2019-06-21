@@ -560,14 +560,18 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 void MultiPlayerLobbyWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
 
+    TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction";
+
     m_chat_wnd = GG::Wnd::Create<MessageWnd>(GG::INTERACTIVE, "mplobby.chat");
 
     m_any_can_edit = GG::Wnd::Create<CUIStateButton>(UserString("EDITABLE_GALAXY_SETTINGS"), GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
     m_any_can_edit->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_any_can_edit->SetBrowseText(UserString("EDITABLE_GALAXY_SETTINGS_DESC"));
 
+    TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction creating galaxy setup panel";
     m_galaxy_setup_panel = GG::Wnd::Create<GalaxySetupPanel>(GALAXY_SETUP_PANEL_WIDTH, GALAXY_SETUP_PANEL_HEIGHT);
 
+    TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction creating buttons";
     m_new_load_game_buttons = GG::Wnd::Create<GG::RadioButtonGroup>(GG::VERTICAL);
     m_new_load_game_buttons->AddButton(
         GG::Wnd::Create<CUIStateButton>(UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
@@ -582,6 +586,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_players_lb_headers = GG::Wnd::Create<PlayerLabelRow>();
     m_players_lb_headers->SetMinSize(GG::Pt(GG::X(0), PlayerRowHeight() + PlayerFontHeight()));
 
+    TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction creating players list box";
     m_players_lb = GG::Wnd::Create<CUIListBox>();
     m_players_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     m_players_lb->LockColWidths();
@@ -594,6 +599,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     }
     m_players_lb->SetColHeaders(m_players_lb_headers);
 
+    TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction creating ready and cancel buttons";
     m_ready_bn = Wnd::Create<CUIButton>(UserString("READY_BN"));
     m_cancel_bn = Wnd::Create<CUIButton>(UserString("CANCEL"));
 
@@ -611,11 +617,13 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     AttachChild(m_cancel_bn);
     AttachChild(m_start_conditions_text);
 
+    TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction positioning and layout";
     ResetDefaultPosition();
     SetMinSize(GG::Pt(LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT));
     DoLayout();
     SaveDefaultedOptions();
 
+    TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction default new game settings";
     // default settings (new game)
     m_new_load_game_buttons->SetCheck(0);
     PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
@@ -637,9 +645,11 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_cancel_bn->LeftClickedSignal.connect(
         boost::bind(&MultiPlayerLobbyWnd::CancelClicked, this));
 
+    TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction finishing...";
     CUIWnd::CompleteConstruction();
 
     Refresh();
+    TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction done";
 }
 
 MultiPlayerLobbyWnd::PlayerLabelRow::PlayerLabelRow(GG::X width /* = GG::X(580)*/) :
