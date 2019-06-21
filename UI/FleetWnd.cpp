@@ -993,7 +993,6 @@ namespace {
     bool ShipDataPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
         if (event.Type() != GG::WndEvent::RClick || !w)
             return false;
-        const GG::Pt& pt = event.Point();
 
         MeterType meter_type = INVALID_METER_TYPE;
         for (const auto& meter_type_stat_icon_pair : m_stat_icons) {
@@ -1013,6 +1012,7 @@ namespace {
         bool retval = false;
         auto zoom_article_action = [&retval, &meter_string]() { retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string);};
 
+        auto pt = event.Point();
         auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
         if (!meter_title.empty()) {
@@ -1370,10 +1370,43 @@ void FleetDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 bool FleetDataPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     //std::cout << "FleetDataPanel::EventFilter " << EventTypeName(event) << std::endl << std::flush;
 
-    if (w == this)
+    if (w == this || !w)
         return false;
 
     switch (event.Type()) {
+    case GG::WndEvent::RClick: {
+        MeterType meter_type = INVALID_METER_TYPE;
+        for (const auto& meter_type_stat_icon_pair : m_stat_icons) {
+            if (!meter_type_stat_icon_pair.second || meter_type_stat_icon_pair.second.get() != w)
+                continue;
+            meter_type = meter_type_stat_icon_pair.first;
+            break;
+        }
+        if (meter_type == INVALID_METER_TYPE)
+            return false;
+
+        std::string meter_string = boost::lexical_cast<std::string>(meter_type);
+        std::string meter_title;
+        if (UserStringExists(meter_string))
+            meter_title = UserString(meter_string);
+
+        bool retval = false;
+        auto zoom_article_action = [&retval, &meter_string]() { retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string);};
+
+        auto pt = event.Point();
+        auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+
+        if (!meter_title.empty()) {
+            std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
+                                                                    meter_title);
+            popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_article_action));
+        }
+        popup->Run();
+
+        return retval;
+        break;
+    }
+
     case GG::WndEvent::DragDropEnter:
     case GG::WndEvent::DragDropHere:
     case GG::WndEvent::CheckDrops:
@@ -1386,6 +1419,7 @@ bool FleetDataPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
         HandleEvent(event);
         return true;
         break;
+
     default:
         return false;
     }
@@ -1790,20 +1824,20 @@ void FleetDataPanel::Init() {
         int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
         std::vector<std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext;
-        meters_icons_browsetext.emplace_back(METER_SIZE, FleetCountIcon(), "FW_FLEET_COUNT_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_CAPACITY, DamageIcon(), "FW_FLEET_DAMAGE_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_SECONDARY_STAT, FightersIcon(), "FW_FLEET_FIGHTER_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_TROOPS, TroopIcon(), "FW_FLEET_TROOP_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_POPULATION, ColonyIcon(), "FW_FLEET_COLONY_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_INDUSTRY, IndustryIcon(), "FW_FLEET_INDUSTRY_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_RESEARCH, ResearchIcon(), "FW_FLEET_RESEARCH_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_TRADE, TradeIcon(), "FW_FLEET_TRADE_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_STRUCTURE, ClientUI::MeterIcon(METER_STRUCTURE), "FW_FLEET_STRUCTURE_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_SHIELD, ClientUI::MeterIcon(METER_SHIELD), "FW_FLEET_SHIELD_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_FUEL, ClientUI::MeterIcon(METER_FUEL), "FW_FLEET_FUEL_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_SPEED, ClientUI::MeterIcon(METER_SPEED), "FW_FLEET_SPEED_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_SIZE,            FleetCountIcon(),                       "FW_FLEET_COUNT_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_CAPACITY,        DamageIcon(),                           "FW_FLEET_DAMAGE_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_SECONDARY_STAT,  FightersIcon(),                         "FW_FLEET_FIGHTER_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_TROOPS,          TroopIcon(),                            "FW_FLEET_TROOP_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_POPULATION,      ColonyIcon(),                           "FW_FLEET_COLONY_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_INDUSTRY,        IndustryIcon(),                         "FW_FLEET_INDUSTRY_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_RESEARCH,        ResearchIcon(),                         "FW_FLEET_RESEARCH_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_TRADE,           TradeIcon(),                            "FW_FLEET_TRADE_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_STRUCTURE,       ClientUI::MeterIcon(METER_STRUCTURE),   "FW_FLEET_STRUCTURE_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_SHIELD,          ClientUI::MeterIcon(METER_SHIELD),      "FW_FLEET_SHIELD_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_FUEL,            ClientUI::MeterIcon(METER_FUEL),        "FW_FLEET_FUEL_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_SPEED,           ClientUI::MeterIcon(METER_SPEED),       "FW_FLEET_SPEED_SUMMARY");
 
-        for (const std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>& entry : meters_icons_browsetext) {
+        for (const auto& entry : meters_icons_browsetext) {
             auto icon = GG::Wnd::Create<StatisticIcon>(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
             m_stat_icons.push_back({std::get<0>(entry), icon});
             icon->SetBrowseModeTime(tooltip_delay);
