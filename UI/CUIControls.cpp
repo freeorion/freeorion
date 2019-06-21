@@ -1318,13 +1318,7 @@ namespace {
 
 StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                              GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
-    GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-    m_num_values(0),
-    m_values(),
-    m_digits(),
-    m_show_signs(),
-    m_icon(nullptr),
-    m_text(nullptr)
+    GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE)
 {
     m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
 }
@@ -1336,9 +1330,7 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_num_values(1),
     m_values(std::vector<double>(1, value)),
     m_digits(std::vector<int>(1, digits)),
-    m_show_signs(std::vector<bool>(1, showsign)),
-    m_icon(nullptr),
-    m_text(nullptr)
+    m_show_signs(std::vector<bool>(1, showsign))
 {
     m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
 }
@@ -1351,9 +1343,7 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_num_values(2),
     m_values(std::vector<double>(2, 0.0)),
     m_digits(std::vector<int>(2, 2)),
-    m_show_signs(std::vector<bool>(2, false)),
-    m_icon(nullptr),
-    m_text(nullptr)
+    m_show_signs(std::vector<bool>(2, false))
 {
     m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
 

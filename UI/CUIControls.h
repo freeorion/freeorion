@@ -447,8 +447,8 @@ public:
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
-    double          GetValue(int index = 0) const;
-    GG::Pt          MinUsableSize() const override;
+    double GetValue(int index = 0) const;
+    GG::Pt MinUsableSize() const override;
     //@}
 
     /** \name Mutators */ //@{
@@ -469,24 +469,22 @@ public:
 
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void            SetValue(double value, int index = 0);  ///< sets displayed \a value with \a index
+    void SetValue(double value, int index = 0);  ///< sets displayed \a value with \a index
     //@}
 
     mutable boost::signals2::signal<void ()>    LeftClickedSignal;
     mutable boost::signals2::signal<void ()>    RightClickedSignal;
 
 private:
-    void            DoLayout();
-    GG::Clr         ValueColor(int index) const;        ///< returns colour in which to draw value
+    void    DoLayout();
+    GG::Clr ValueColor(int index) const;    ///< returns colour in which to draw value
 
-    int                 m_num_values;
-
-    std::vector<double> m_values;
-    std::vector<int>    m_digits;
-    std::vector<bool>   m_show_signs;
-
-    std::shared_ptr<GG::StaticGraphic>  m_icon;
-    std::shared_ptr<GG::Label>          m_text;
+    int                                 m_num_values = 0;
+    std::vector<double>                 m_values;
+    std::vector<int>                    m_digits;
+    std::vector<bool>                   m_show_signs;
+    std::shared_ptr<GG::StaticGraphic>  m_icon = nullptr;
+    std::shared_ptr<GG::Label>          m_text = nullptr;
 };
 
 class CUIToolBar : public GG::Control {
