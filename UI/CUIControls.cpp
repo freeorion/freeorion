@@ -1410,13 +1410,17 @@ void StatisticIcon::RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys
 { ForwardEventToParent(); }
 
 void StatisticIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    if (!Disabled())
-        LeftClickedSignal();
+    if (Disabled())
+        return;
+    LeftClickedSignal();
+    ForwardEventToParent();
 }
 
 void StatisticIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    if (!Disabled())
-        RightClickedSignal();
+    if (Disabled())
+        return;
+    RightClickedSignal();
+    ForwardEventToParent();
 }
 
 void StatisticIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
