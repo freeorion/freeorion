@@ -199,15 +199,13 @@ public:
     mutable boost::signals2::signal<void (const Policy*)> DoubleClickedSignal;
 
 private:
-    std::shared_ptr<GG::StaticGraphic>  m_icon;
-    std::shared_ptr<GG::StaticGraphic>  m_background;
-    const Policy*                       m_policy;
+    std::shared_ptr<GG::StaticGraphic>  m_icon = nullptr;
+    std::shared_ptr<GG::StaticGraphic>  m_background = nullptr;
+    const Policy*                       m_policy = nullptr;
 };
 
 PolicyControl::PolicyControl(const Policy* policy) :
     GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE),
-    m_icon(nullptr),
-    m_background(nullptr),
     m_policy(policy)
 {}
 
@@ -1459,16 +1457,19 @@ void GovernmentWnd::CompleteConstruction() {
     SetChildClippingMode(ClipToClient);
 
     m_main_panel = GG::Wnd::Create<MainPanel>(GG::X(100), GG::Y(100));
-    m_policy_palette = GG::Wnd::Create<PolicyPalette>(GG::X(100), GG::Y(100));
-
     AttachChild(m_main_panel);
     m_main_panel->Sanitize();
 
+    m_policy_palette = GG::Wnd::Create<PolicyPalette>(GG::X(100), GG::Y(100));
     AttachChild(m_policy_palette);
     m_policy_palette->PolicyDoubleClickedSignal.connect(
         boost::bind(&GovernmentWnd::MainPanel::AddPolicy, m_main_panel, _1));
     m_policy_palette->ClearPolicySignal.connect(
         boost::bind(&GovernmentWnd::MainPanel::ClearPolicy, m_main_panel, _1));
+
+    auto zoom_to_policy_action = [](const Policy* policy, GG::Flags<GG::ModKey> modkeys) { ClientUI::GetClientUI()->ZoomToPolicy(policy->Name()); };
+    m_main_panel->PolicyClickedSignal.connect(zoom_to_policy_action);
+    m_policy_palette->PolicyClickedSignal.connect(zoom_to_policy_action);
 
     CUIWnd::CompleteConstruction();
     DoLayout();
