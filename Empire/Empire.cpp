@@ -182,16 +182,15 @@ void Empire::SetCapitalID(int id) {
 void Empire::AdoptPolicy(const std::string& name, const std::string& category,
                          bool adopt, int slot)
 {   // todo: add error message if passed empty policy name or category
+    if (name.empty()) {
+        ErrorLogger() << "Empire::AdoptPolicy given empty policy name";
+        return;
+    }
+
     if (!adopt) {
         // revoke policy
-        if (m_adopted_policies.count(name)) {
-            // un-adopt policy
+        if (m_adopted_policies.count(name))
             m_adopted_policies.erase(name);
-
-            if (!m_initial_adopted_policies.count(name)) {
-                // todo: refund adoption cost if adoption was this turn
-            }
-        }
         return;
     }
 
@@ -201,12 +200,39 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
         return;
     }
 
-    // todo: check that there is sufficient influence to adopt policy.
-    // todo: if not, abort adoption
+    // does policy exist?
+    const auto policy = GetPolicy(name);
+    if (!policy) {
+        ErrorLogger() << "Empire::AdoptPolicy can't find policy with name: " << name;
+        return;
+    }
+
+    // check that empire has sufficient influence to adopt policy, after
+    // also adopting any other policies that were adopted this turn
+    // add up all other policy adoption costs for this turn
+    double other_this_turn_adopted_policies_cost = 0.0;
+    for (const auto& policy_entry : m_adopted_policies) {
+        if (policy_entry.second.adoption_turn != CurrentTurn())
+            continue;
+        auto pre_adptd_policy = GetPolicy(policy_entry.first);
+        if (!pre_adptd_policy) {
+            ErrorLogger() << "Empire::AdoptPolicy couldn't find policy named " << policy_entry.first << " that was supposedly already adopted this turn (" << CurrentTurn() << ")";
+            continue;
+        }
+        other_this_turn_adopted_policies_cost += pre_adptd_policy->AdoptionCost(m_id);
+    }
+
+    double total_this_turn_policy_adoption_cost = policy->AdoptionCost(m_id) + other_this_turn_adopted_policies_cost;
+    double available_ip = ResourceStockpile(RE_INDUSTRY);
+
+    if (available_ip < total_this_turn_policy_adoption_cost) {
+        ErrorLogger() << "Empire::AdoptPolicy insufficient ip: " << available_ip << " / " << total_this_turn_policy_adoption_cost << " to adopt additional policy this turn";
+        return;
+    }
 
     // check that policy is not already adopted
     if (m_adopted_policies.count(name)) {
-        DebugLogger() << "Empire::AdoptPolicy policy " << name << "  already adopted in category "
+        ErrorLogger() << "Empire::AdoptPolicy policy " << name << "  already adopted in category "
                       << m_adopted_policies[name].category << "  in slot "
                       << m_adopted_policies[name].slot_in_category << "  on turn "
                       << m_adopted_policies[name].adoption_turn;

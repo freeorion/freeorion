@@ -470,14 +470,14 @@ private:
     int                             m_id = ALL_EMPIRES;         ///< Empire's unique numeric id
     std::string                     m_name;                     ///< Empire's name
     std::string                     m_player_name;              ///< Empire's Player's name
+
     /** Empire's Player's authentication flag. Set if only player with empire's player's name
         should play this empire. */
     bool                            m_authenticated;
+
     GG::Clr                         m_color;                    ///< Empire's color
     int                             m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
 
-    std::map<std::string, int>          m_adopted_policy_turns;     ///< map from policy name to turn on which policy was adopted
-    std::map<std::string, std::string>  m_adopted_policy_categories;///< map from policy name to name of category in which policy was adopted
     struct PolicyAdoptionInfo {
         PolicyAdoptionInfo();
         PolicyAdoptionInfo(int turn, const std::string& cat, int slot);
