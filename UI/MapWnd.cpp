@@ -1422,12 +1422,9 @@ void MapWnd::CompleteConstruction() {
     layout->SetCellMargin(5);
     layout->SetBorderMargin(5);
 
-    layout->RenderOutline(true);
-
     ///////////////////
     // Misc widgets on map screen
     ///////////////////
-
     // scale line
     m_scale_line = GG::Wnd::Create<MapScaleLine>(GG::X(LAYOUT_MARGIN),   GG::Y(LAYOUT_MARGIN) + m_toolbar->Height(),
                                                  SCALE_LINE_MAX_WIDTH,   SCALE_LINE_HEIGHT);
