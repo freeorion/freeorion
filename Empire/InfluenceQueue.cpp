@@ -1,6 +1,7 @@
 #include "InfluenceQueue.h"
 
 #include "Empire.h"
+#include "Government.h"
 #include "../universe/ValueRef.h"
 #include "../util/AppInterface.h"
 #include "../util/GameRules.h"
@@ -153,7 +154,20 @@ void InfluenceQueue::Update() {
 
     float available_IP = empire->ResourceOutput(RE_INFLUENCE);
     float stockpiled_IP = empire->ResourceStockpile(RE_INFLUENCE);
-    m_total_IPs_spent = 0.0f;
+
+    float spending_on_policy_adoption_ip = 0.0f;
+    for (auto policy_turn : empire->TurnsPoliciesAdopted()) {
+        if (policy_turn.second != CurrentTurn())
+            continue;
+        auto policy = GetPolicy(policy_turn.first);
+        if (!policy) {
+            ErrorLogger() << "InfluenceQueue::Update couldn't get policy supposedly adopted this turn: " << policy_turn.first;
+            continue;
+        }
+        spending_on_policy_adoption_ip += policy->AdoptionCost(m_empire_id);
+    }
+
+    m_total_IPs_spent = spending_on_policy_adoption_ip;
 
     m_expected_new_stockpile_amount = stockpiled_IP + available_IP - m_total_IPs_spent;
 
