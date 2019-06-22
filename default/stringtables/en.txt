@@ -5198,6 +5198,10 @@ IP
 ENC_COST_AND_TURNS_STR
 %1% %2% and %3% Turns
 
+# same, but without turns
+ENC_COST_STR
+%1% %2%
+
 ENC_VERB_PRODUCE_STR
 produce
 

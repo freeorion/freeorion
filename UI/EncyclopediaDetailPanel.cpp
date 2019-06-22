@@ -1429,7 +1429,7 @@ namespace {
         name = UserString(item_name);
         texture = ClientUI::PolicyIcon(item_name);
         cost = policy->AdoptionCost(client_empire_id);
-        cost_units = UserString("ENC_RP");
+        cost_units = UserString("ENC_IP");
         general_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR"))
             % UserString(policy->Category())
             % ""
@@ -3108,6 +3108,10 @@ void EncyclopediaDetailPanel::RefreshImpl() {
             % DoubleToString(cost, 3, false)
             % cost_units
             % turns));
+    } else if (cost != 0.0) {
+        m_cost_text->SetText(str(FlexibleFormat(UserString("ENC_COST_STR"))
+            % DoubleToString(cost, 3, false)
+            % cost_units));
     }
 
     if (!detailed_description.empty())
