@@ -1267,9 +1267,6 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     const std::string& category_name = m_slots[slot]->SlotCategory();
     int order_slot = m_slots[slot]->CategoryIndex();
 
-    // update contents of slot in UI
-    m_slots[slot]->SetPolicy(policy);
-
     // check if adopting or revoking a policy, adjust order accordingly
     bool adopt = policy;
     const std::string& oder_policy_name = (policy ? policy->Name() : initial_policy_name);
@@ -1279,6 +1276,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     HumanClientApp::GetApp()->Orders().IssueOrder(order);
 
     // update UI after policy changes
+    Populate();
     GetUniverse().UpdateMeterEstimates();
     SidePanel::Refresh();
     FleetUIManager::GetFleetUIManager().RefreshAll();
