@@ -7,7 +7,7 @@
 class GovernmentWnd : public CUIWnd {
 public:
     //! \name Structors //!@{
-    GovernmentWnd(const std::string& config_name = "");
+    explicit GovernmentWnd(const std::string& config_name = "");
     void CompleteConstruction() override;
     //!@}
 
