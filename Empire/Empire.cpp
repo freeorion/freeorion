@@ -208,7 +208,7 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     }
 
     // check that empire has sufficient influence to adopt policy, after
-    // also adopting any other policies that were adopted this turn
+    // also adopting any other policies that were first adopted this turn
     // add up all other policy adoption costs for this turn
     double other_this_turn_adopted_policies_cost = 0.0;
     for (const auto& policy_entry : m_adopted_policies) {
@@ -224,10 +224,15 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     }
     DebugLogger() << "Empire::AdoptPolicy : Combined already adopted policies this turn cost " << other_this_turn_adopted_policies_cost;
 
-    double total_this_turn_policy_adoption_cost = policy->AdoptionCost(m_id) + other_this_turn_adopted_policies_cost;
+    // if policy not already adopted at start of this turn, it costs its adoption cost to adopt on this turn
+    // if it was adopted at the start of this turn, it doens't cost anything to re-adopt this turn.
+    double adoption_cost = 0.0;
+    if (m_initial_adopted_policies.find(name) == m_initial_adopted_policies.end())
+        adoption_cost = policy->AdoptionCost(m_id);
+    double total_this_turn_policy_adoption_cost = adoption_cost + other_this_turn_adopted_policies_cost;
     double available_ip = ResourceStockpile(RE_INFLUENCE);
-    DebugLogger() << "Empire::AdoptPolicy : Want to adopt policy " << name << " with cost " << policy->AdoptionCost(m_id)
-                  << " and total this turn adoption cost " << total_this_turn_policy_adoption_cost
+    DebugLogger() << "Empire::AdoptPolicy : Want to adopt policy " << name << " with cost to (re)adopt this turn " << adoption_cost
+                  << " and total this-turn adoption cost " << total_this_turn_policy_adoption_cost
                   << " and have " << available_ip << " IP available";
 
     if (available_ip < total_this_turn_policy_adoption_cost) {
@@ -300,8 +305,14 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
         }
     }
 
-    // adopt policy in requested category on this turn
-    m_adopted_policies[name] = {CurrentTurn(), category, slot};
+    // adopt policy in requested category on this turn, unless it was already
+    // adopted at the start of this turn, in which case restore / keep its
+    // previous adtoption turn
+    int adoption_turn = CurrentTurn();
+    auto it = m_initial_adopted_policies.find(name);
+    if (it != m_initial_adopted_policies.end())
+        adoption_turn = it->second.adoption_turn;
+    m_adopted_policies[name] = {adoption_turn, category, slot};
 
     DebugLogger() << "Empire::AdoptPolicy policy " << name << "  adopted in category "
                   << m_adopted_policies[name].category << "  in slot "
