@@ -1768,6 +1768,9 @@ OPTIONS_DB_GAMESETUP_SEED
 '''La Graine de hasard initie la génération d'une galaxie.
 Les galaxies générées avec les mêmes options et la même Graine de hasard seront identiques.'''
 
+OPTIONS_DB_GAMESETUP_UID
+'''L'UID de la partie pour les nouvelles parties. L'option serveur-seul peut être utilisée pour obtenir un nom de partie prévisible sur les serveurs sans hôte.'''
+
 OPTIONS_DB_GAMESETUP_STARS
 '''Le nombre approximatif de systèmes stellaires à générer dans la galaxie.
 
@@ -7945,6 +7948,7 @@ Préfèrent les Planètes [[PT_INFERNO]]s.
 
 SP_ABADDONI_DESC
 '''Description:
+
 Les Abaddoni ont une forme ovoïde d'environ 0.8 mètres de diamètre, arborent une profonde couleur rouge, tachetée de points noirs sur le dessus du corps. Leur caractéristique morphologique principale est une grande bouche s'étendant sur l'avant du corps à partir de ces points noirs, soit près d'un tiers de leur surface corporelle.
 À l'extrémité de chacune de leurs 6 pattes ressemblant à celles de crustacés, se trouve une sorte de sac gonflable qui leur permet de s'accrocher par effet de ventouse à n'importe quelle surface, quelle que soit son inclinaison. Comme les Abaddoni se développent en milieu souterrain, ils ne possèdent pas d'organe de vision, se référant ainsi principalement à leur odorat, et dans une moindre proportion, à l'ouïe et au toucher pour se déplacer.
 
