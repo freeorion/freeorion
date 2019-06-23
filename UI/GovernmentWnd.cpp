@@ -1253,7 +1253,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
         return;
     }
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = GetEmpire(empire_id);  // may be nullptr
+    Empire* empire = GetEmpire(empire_id);  // may be nullptr
     if (!empire) {
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy has no empire to set policies for";
         return;
@@ -1276,6 +1276,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     HumanClientApp::GetApp()->Orders().IssueOrder(order);
 
     // update UI after policy changes
+    empire->UpdateInfluenceSpending();
     Populate();
     GetUniverse().UpdateMeterEstimates();
     SidePanel::Refresh();

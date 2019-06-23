@@ -219,16 +219,22 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
             ErrorLogger() << "Empire::AdoptPolicy couldn't find policy named " << policy_entry.first << " that was supposedly already adopted this turn (" << CurrentTurn() << ")";
             continue;
         }
+        DebugLogger() << "Empire::AdoptPolicy : Already adopted policy this turn: " << policy_entry.first << " with cost " << pre_adptd_policy->AdoptionCost(m_id);
         other_this_turn_adopted_policies_cost += pre_adptd_policy->AdoptionCost(m_id);
     }
+    DebugLogger() << "Empire::AdoptPolicy : Combined already adopted policies this turn cost " << other_this_turn_adopted_policies_cost;
 
     double total_this_turn_policy_adoption_cost = policy->AdoptionCost(m_id) + other_this_turn_adopted_policies_cost;
-    double available_ip = ResourceStockpile(RE_INDUSTRY);
+    double available_ip = ResourceStockpile(RE_INFLUENCE);
+    DebugLogger() << "Empire::AdoptPolicy : Want to adopt policy " << name << " with cost " << policy->AdoptionCost(m_id)
+                  << " and total this turn adoption cost " << total_this_turn_policy_adoption_cost
+                  << " and have " << available_ip << " IP available";
 
     if (available_ip < total_this_turn_policy_adoption_cost) {
         ErrorLogger() << "Empire::AdoptPolicy insufficient ip: " << available_ip << " / " << total_this_turn_policy_adoption_cost << " to adopt additional policy this turn";
         return;
     }
+    DebugLogger() << "Empire::AdoptPolicy sufficient IP: " << available_ip << " / " << total_this_turn_policy_adoption_cost << " to adopt additional policy this turn";
 
     // check that policy is not already adopted
     if (m_adopted_policies.count(name)) {
@@ -2392,7 +2398,16 @@ void Empire::CheckProductionProgress() {
 }
 
 void Empire::CheckInfluenceProgress() {
-    m_resource_pools[RE_INFLUENCE]->SetStockpile(m_resource_pools[RE_INFLUENCE]->TotalAvailable());
+    DebugLogger() << "========Empire::CheckProductionProgress=======";
+    // following commented line should be redundant, as previous call to
+    // UpdateResourcePools should have generated necessary info
+    // m_influence_queue.Update();
+
+    auto spending = m_influence_queue.TotalIPsSpent();
+    auto new_stockpile = m_influence_queue.ExpectedNewStockpileAmount();
+    DebugLogger() << "Empire::CheckInfluenceProgress spending " << spending << " and setting stockpile to " << new_stockpile;
+
+    m_resource_pools[RE_INFLUENCE]->SetStockpile(new_stockpile);
 }
 
 void Empire::SetColor(const GG::Clr& color)
