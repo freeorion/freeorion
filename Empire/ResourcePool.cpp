@@ -47,7 +47,6 @@ float ResourcePool::GroupOutput(int object_id) const {
     return 0.0f;
 }
 
-
 float ResourcePool::TargetOutput() const {
     float retval = 0.0f;
     for (const auto& entry : m_connected_object_groups_resource_target_output)
@@ -101,7 +100,10 @@ void ResourcePool::SetConnectedSupplyGroups(const std::set<std::set<int>>& conne
 { m_connected_system_groups = connected_system_groups; }
 
 void ResourcePool::SetStockpile(float d)
-{ m_stockpile = d; }
+{
+    DebugLogger() << "ResourcePool " << boost::lexical_cast<std::string>(m_type) << " set to " << d;
+    m_stockpile = d;
+}
 
 void ResourcePool::Update() {
     //DebugLogger() << "ResourcePool::Update for type " << m_type;

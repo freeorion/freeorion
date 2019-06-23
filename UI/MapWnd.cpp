@@ -6733,6 +6733,9 @@ void MapWnd::RefreshInfluenceResourceIndicator() {
     m_influence->SetValue(stockpile);
     m_influence->SetValue(stockpile_plusminus_next_turn, 1);
 
+    DebugLogger() << "MapWnd::RefreshInfluenceResourceIndicator stockpile: " << stockpile
+                  << " plusminus: " << stockpile_plusminus_next_turn;
+
     m_influence->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_influence->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_INFLUENCE_TITLE"), UserString("GOVERNMENT_INFO_IP"),

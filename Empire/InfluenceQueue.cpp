@@ -103,8 +103,6 @@ std::string InfluenceQueue::Element::Dump() const {
 // InfluenceQueue //
 ////////////////////
 InfluenceQueue::InfluenceQueue(int empire_id) :
-    m_projects_in_progress(0),
-    m_expected_new_stockpile_amount(0),
     m_empire_id(empire_id)
 {}
 
@@ -171,19 +169,16 @@ void InfluenceQueue::Update() {
 
     m_expected_new_stockpile_amount = stockpiled_IP + available_IP - m_total_IPs_spent;
 
-    //std::cout << "available IP: " << available_IP << "  stockpiled: " << stockpiled_IP << "  new expected: " << m_expected_new_stockpile_amount << std::endl;
+    DebugLogger() << "InfluenceQueue::Update : available IP: " << available_IP << "  stockpiled: " << stockpiled_IP << "  new expected: " << m_expected_new_stockpile_amount << std::endl;
 
+    //// cache Influence item costs and times
+    //// initialize Influence queue item completion status to 'never'
+    //boost::posix_time::ptime sim_time_start;
+    //boost::posix_time::ptime sim_time_end;
 
-    // cache Influence item costs and times
-    // initialize Influence queue item completion status to 'never'
-
-
-    boost::posix_time::ptime sim_time_start;
-    boost::posix_time::ptime sim_time_end;
-
-    DebugLogger() << "InfluenceQueue::Update: Projections took "
-                  << ((sim_time_end - sim_time_start).total_microseconds()) << " microseconds with "
-                  << empire->ResourceOutput(RE_INFLUENCE) << " influence output";
+    //DebugLogger() << "InfluenceQueue::Update: Projections took "
+    //              << ((sim_time_end - sim_time_start).total_microseconds()) << " microseconds with "
+    //              << empire->ResourceOutput(RE_INFLUENCE) << " influence output";
     InfluenceQueueChangedSignal();
 }
 

@@ -908,9 +908,10 @@ PolicyOrder::PolicyOrder(int empire, const std::string& name,
 
 void PolicyOrder::ExecuteImpl() const {
     auto empire = GetValidatedEmpire();
-
-    // todo: validate order
-
+    if (m_adopt)
+        DebugLogger() << "PolicyOrder adopt " << m_policy_name << " in category " << m_category << " in slot " << m_slot;
+    else
+        DebugLogger() << "PolicyOrder revoke " << m_policy_name << " from category " << m_category << " in slot " << m_slot;
     empire->AdoptPolicy(m_policy_name, m_category, m_adopt, m_slot);
 }
 
