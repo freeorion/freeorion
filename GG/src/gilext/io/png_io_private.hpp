@@ -43,14 +43,14 @@ template<> struct png_color_type<rgb_t>        { BOOST_STATIC_CONSTANT(int,color
 template<> struct png_color_type<rgba_t>       { BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_RGBA); };
 
 template <typename Channel,typename ColorSpace> struct png_is_supported {BOOST_STATIC_CONSTANT(bool,value=false);};
-template <> struct png_is_supported<bits8,gray_t>        {BOOST_STATIC_CONSTANT(bool,value=true);};
-template <> struct png_is_supported<bits8,gray_alpha_t>  {BOOST_STATIC_CONSTANT(bool,value=true);};
-template <> struct png_is_supported<bits8,rgb_t>         {BOOST_STATIC_CONSTANT(bool,value=true);};
-template <> struct png_is_supported<bits8,rgba_t>        {BOOST_STATIC_CONSTANT(bool,value=true);};
-template <> struct png_is_supported<bits16,gray_t>       {BOOST_STATIC_CONSTANT(bool,value=true);};
-template <> struct png_is_supported<bits16,gray_alpha_t> {BOOST_STATIC_CONSTANT(bool,value=true);};
-template <> struct png_is_supported<bits16,rgb_t>        {BOOST_STATIC_CONSTANT(bool,value=true);};
-template <> struct png_is_supported<bits16,rgba_t>       {BOOST_STATIC_CONSTANT(bool,value=true);};
+template <> struct png_is_supported<boost::uint8_t,gray_t>        {BOOST_STATIC_CONSTANT(bool,value=true);};
+template <> struct png_is_supported<boost::uint8_t,gray_alpha_t>  {BOOST_STATIC_CONSTANT(bool,value=true);};
+template <> struct png_is_supported<boost::uint8_t,rgb_t>         {BOOST_STATIC_CONSTANT(bool,value=true);};
+template <> struct png_is_supported<boost::uint8_t,rgba_t>        {BOOST_STATIC_CONSTANT(bool,value=true);};
+template <> struct png_is_supported<boost::uint16_t,gray_t>       {BOOST_STATIC_CONSTANT(bool,value=true);};
+template <> struct png_is_supported<boost::uint16_t,gray_alpha_t> {BOOST_STATIC_CONSTANT(bool,value=true);};
+template <> struct png_is_supported<boost::uint16_t,rgb_t>        {BOOST_STATIC_CONSTANT(bool,value=true);};
+template <> struct png_is_supported<boost::uint16_t,rgba_t>       {BOOST_STATIC_CONSTANT(bool,value=true);};
 
 template <typename Channel> struct png_bit_depth {BOOST_STATIC_CONSTANT(int,bit_depth=sizeof(Channel)*8);};
 
@@ -61,49 +61,49 @@ struct png_read_support_private {
     BOOST_STATIC_CONSTANT(int,color_type=0);
 };
 template <>
-struct png_read_support_private<bits8,gray_t> {
+struct png_read_support_private<boost::uint8_t,gray_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=8);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_GRAY);
 };
 template <>
-struct png_read_support_private<bits8,gray_alpha_t> {
+struct png_read_support_private<boost::uint8_t,gray_alpha_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=8);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_GRAY_ALPHA);
 };
 template <>
-struct png_read_support_private<bits8,rgb_t> {
+struct png_read_support_private<boost::uint8_t,rgb_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=8);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_RGB);
 };
 template <>
-struct png_read_support_private<bits8,rgba_t> {
+struct png_read_support_private<boost::uint8_t,rgba_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=8);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_RGBA);
 };
 template <>
-struct png_read_support_private<bits16,gray_t> {
+struct png_read_support_private<boost::uint16_t,gray_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=16);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_GRAY);
 };
 template <>
-struct png_read_support_private<bits16,gray_alpha_t> {
+struct png_read_support_private<boost::uint16_t,gray_alpha_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=16);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_GRAY_ALPHA);
 };
 template <>
-struct png_read_support_private<bits16,rgb_t> {
+struct png_read_support_private<boost::uint16_t,rgb_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=16);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_RGB);
 };
 template <>
-struct png_read_support_private<bits16,rgba_t> {
+struct png_read_support_private<boost::uint16_t,rgba_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=16);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_RGBA);
@@ -116,49 +116,49 @@ struct png_write_support_private {
     BOOST_STATIC_CONSTANT(int,color_type=0);
 };
 template <>
-struct png_write_support_private<bits8,gray_t> {
+struct png_write_support_private<boost::uint8_t,gray_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=8);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_GRAY);
 };
 template<>
-struct png_write_support_private<bits8,gray_alpha_t> {
+struct png_write_support_private<boost::uint8_t,gray_alpha_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=8);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_GRAY_ALPHA);
 };
 template <>
-struct png_write_support_private<bits8,rgb_t> {
+struct png_write_support_private<boost::uint8_t,rgb_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=8);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_RGB);
 };
 template <>
-struct png_write_support_private<bits8,rgba_t> {
+struct png_write_support_private<boost::uint8_t,rgba_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=8);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_RGBA);
 };
 template <>
-struct png_write_support_private<bits16,gray_t> {
+struct png_write_support_private<boost::uint16_t,gray_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=16);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_GRAY);
 };
 template <>
-struct png_write_support_private<bits16,gray_alpha_t> {
+struct png_write_support_private<boost::uint16_t,gray_alpha_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=16);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_GRAY_ALPHA);
 };
 template <>
-struct png_write_support_private<bits16,rgb_t> {
+struct png_write_support_private<boost::uint16_t,rgb_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=16);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_RGB);
 };
 template <>
-struct png_write_support_private<bits16,rgba_t> {
+struct png_write_support_private<boost::uint16_t,rgba_t> {
     BOOST_STATIC_CONSTANT(bool,is_supported=true);
     BOOST_STATIC_CONSTANT(int,bit_depth=16);
     BOOST_STATIC_CONSTANT(int,color_type=PNG_COLOR_TYPE_RGBA);
