@@ -11,7 +11,7 @@ Hull
     ]
     buildCost = 11 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 2
-    tags = [ "PEDIA_HULL_LINE_ROBOTIC" "SMALL_HULL" ]
+    tags = [ "PEDIA_HULL_LINE_ROBOTIC" "GREAT_FUEL_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -35,7 +35,7 @@ Hull
             accountinglabel = "SPATIAL_FLUX_BONUS"
             effects = SetStealth value = Value + 10 + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_PART_1" ) + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_PART_2" ) + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_PART_3" ) + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_4" )
 
-        [[SMALL_HULL_FUEL]]
+        [[GREAT_FUEL_HULL]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

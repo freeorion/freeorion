@@ -811,7 +811,7 @@ class ShipDesigner(object):
                 if AIDependencies.FUEL_EFFICIENCY in AIDependencies.HULL_TAG_EFFECTS[tag]:
                     return AIDependencies.HULL_TAG_EFFECTS[tag][AIDependencies.FUEL_EFFICIENCY]
         # hull size defaults to medium hull value
-        return AIDependencies.HULL_TAG_EFFECTS["MEDIUM_HULL"][AIDependencies.FUEL_EFFICIENCY]
+        return AIDependencies.HULL_TAG_EFFECTS["GOOD_FUEL_HULL"][AIDependencies.FUEL_EFFICIENCY]
 
     def update_hull(self, hullname):
         """Set hull of the design.

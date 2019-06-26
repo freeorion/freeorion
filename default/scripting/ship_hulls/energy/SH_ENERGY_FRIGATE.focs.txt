@@ -14,7 +14,7 @@ Hull
     ]
     buildCost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 3
-    tags = [ "PEDIA_HULL_LINE_ENERGY" "MEDIUM_HULL" ]
+    tags = [ "PEDIA_HULL_LINE_ENERGY" "GOOD_FUEL_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ENRG_COMP"
@@ -28,7 +28,7 @@ Hull
         Star type = [White Blue BlackHole]
     ]
     effectsgroups = [
-        [[MEDIUM_HULL_FUEL]]
+        [[GOOD_FUEL_HULL]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

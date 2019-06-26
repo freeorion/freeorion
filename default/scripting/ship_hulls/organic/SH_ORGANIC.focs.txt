@@ -13,7 +13,7 @@ Hull
     ]
     buildCost = 14 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 3
-    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" "MEDIUM_HULL" ]
+    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" "GOOD_FUEL_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_ORB_INC"
@@ -40,7 +40,7 @@ Hull
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure value = Value + min(Source.Age*0.2, 5)
 
-        [[MEDIUM_HULL_FUEL]]
+        [[GOOD_FUEL_HULL]]
         [[LIVING_HULL_BASE_FUEL_REGEN]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]

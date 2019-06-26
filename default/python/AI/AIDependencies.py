@@ -784,16 +784,16 @@ TECH_EFFECTS = {
 }
 
 HULL_TAG_EFFECTS = {
-    "SMALL_HULL": {
+    "GREAT_FUEL_HULL": {
         FUEL_EFFICIENCY: 2,
     },
-    "MEDIUM_HULL": {
+    "GOOD_FUEL_HULL": {
         FUEL_EFFICIENCY: 1,
     },
-    "LARGE_HULL": {
+    "AVERAGE_FUEL_HULL": {
         FUEL_EFFICIENCY: 0.5,
     },
-    "HUGE_HULL": {
+    "BAD_FUEL_HULL": {
         FUEL_EFFICIENCY: 0.25,
     },
 }

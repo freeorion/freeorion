@@ -10,13 +10,13 @@ Hull
     ]
     buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 2
-    tags = [ "PEDIA_HULL_LINE_GENERIC" "SMALL_HULL" ]
+    tags = [ "PEDIA_HULL_LINE_GENERIC" "GREAT_FUEL_HULL" ]
     location = Contains And [
         Building name = "BLD_SHIPYARD_BASE"
         OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
-        [[SMALL_HULL_FUEL]]
+        [[GREAT_FUEL_HULL]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
