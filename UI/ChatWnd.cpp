@@ -429,6 +429,9 @@ void MessageWnd::CompleteConstruction() {
 
     m_history.push_front("");
 
+     Empires().DiplomaticStatusChangedSignal.connect(
+         boost::bind(&MessageWnd::HandleDiplomaticStatusChange, this, _1, _2));
+
     DoLayout();
     SaveDefaultedOptions();
 }
@@ -441,8 +444,13 @@ void MessageWnd::DoLayout() {
                      GG::Pt(ClientWidth() - GG::X(CUIWnd::INNER_BORDER_ANGLE_OFFSET), ClientHeight()));
 }
 
-void MessageWnd::CloseClicked()
-{ ClosingSignal(); }
+void MessageWnd::CloseClicked() {
+    StopFlash();
+    ClosingSignal();
+}
+
+void MessageWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ StopFlash(); }
 
 void MessageWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
@@ -535,6 +543,21 @@ void MessageWnd::HandleGameStatusUpdate(const std::string& text) {
 void MessageWnd::HandleLogMessage(const std::string& text) {
     *m_display += text;
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
+}
+
+void MessageWnd::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
+    const ClientApp* app = ClientApp::GetApp();
+    if (!app) {
+        ErrorLogger() << "PlayerListWnd::PlayerRightClicked couldn't get client app!";
+        return;
+    }
+    int client_empire_id = app->EmpireID();
+
+    // if client empire is concerned by diplomatic status change, show message window
+    if ((empire1_id == client_empire_id) || (empire2_id == client_empire_id)) {
+        Flash();
+        Show();
+    }
 }
 
 void MessageWnd::Clear()

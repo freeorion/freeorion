@@ -31,6 +31,7 @@ public:
     void            HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, bool prefixed = false);
     void            HandleGameStatusUpdate(const std::string& text);
     void            HandleLogMessage(const std::string& text);
+    void            HandleDiplomaticStatusChange(int empire1_id, int empire2_id);
     void            Clear();
     void            OpenForInput();
     //@}
@@ -44,7 +45,8 @@ public:
     mutable boost::signals2::signal<void ()> ClosingSignal;
 
 private:
-    void CloseClicked() override;
+    void            CloseClicked() override;
+    void            LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     void            DoLayout();
     void            MessageEntered();
