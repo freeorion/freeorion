@@ -1553,7 +1553,7 @@ class ShipDesigner(object):
         hull_multiplier = self._hull_efficiency()
         tech_bonus = _get_tech_bonus(AIDependencies.FUEL_TANK_UPGRADE_DICT, tank_name)
         # There is no per part species modifier
-        return ( base + tech_bonus ) * hull_multiplier
+        return (base + tech_bonus) * hull_multiplier
 
     def _calculate_weapon_strength(self, weapon_part, ignore_species=False):
         # base damage
