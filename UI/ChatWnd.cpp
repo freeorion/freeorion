@@ -429,8 +429,8 @@ void MessageWnd::CompleteConstruction() {
 
     m_history.push_front("");
 
-     Empires().DiplomaticStatusChangedSignal.connect(
-         boost::bind(&MessageWnd::HandleDiplomaticStatusChange, this, _1, _2));
+    Empires().DiplomaticStatusChangedSignal.connect(
+        boost::bind(&MessageWnd::HandleDiplomaticStatusChange, this, _1, _2));
 
     DoLayout();
     SaveDefaultedOptions();
@@ -553,8 +553,8 @@ void MessageWnd::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
     }
     int client_empire_id = app->EmpireID();
 
-    // if client empire is concerned by diplomatic status change, show message window
-    if ((empire1_id == client_empire_id) || (empire2_id == client_empire_id)) {
+    // if client empire is target of diplomatic status change, show message window
+    if (empire2_id == client_empire_id) {
         Flash();
         Show();
     }

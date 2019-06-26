@@ -786,10 +786,30 @@ void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id
         ErrorLogger() << "PlayerListWnd::HandleDiplomaticMessageChange couldn't get client app!";
         return;
     }
+    int client_empire_id = app->PlayerID();
 
-    // only show PlayerListWnd if player is affected
-    if ((empire1_id == app->PlayerID()) || (empire2_id == app->PlayerID()))
+    DiplomaticMessage message = Empires().GetDiplomaticMessage(empire1_id, empire2_id);
+    bool active_message = message.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE;
+
+    // only show PlayerListWnd if there is a new diplomatic offer for the client empire
+    if (active_message && (empire2_id == client_empire_id)) {
         Show();
+        Flash();
+    };
+
+    // if there is no more pending messages, stop flashing
+    active_message = false;
+    for (const auto& empire : Empires()) {
+        message = Empires().GetDiplomaticMessage(empire.first, client_empire_id);
+        if (message.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE) {
+            active_message = true;
+            break;
+        }
+    }
+
+    if (!active_message)
+        StopFlash();
+
 }
 
 
@@ -883,8 +903,10 @@ void PlayerListWnd::DoLayout()
         m_player_list->SizeMove(GG::Pt(), GG::Pt(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)));
 }
 
-void PlayerListWnd::CloseClicked()
-{ ClosingSignal(); }
+void PlayerListWnd::CloseClicked() {
+    ClosingSignal();
+    StopFlash();
+}
 
 void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     // mark as selected all PlayerDataPanel that are in \a rows and mark as not
