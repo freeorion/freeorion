@@ -318,7 +318,10 @@ void CUIWnd::Render() {
         glDrawArrays(GL_LINE_LOOP,      m_buffer_indices[0].first, m_buffer_indices[0].second);
 
     } else {
-        glColor(ClientUI::WndColor());
+        if (m_flashing && GG::GUI::GetGUI()->Ticks() % (m_flash_duration * 2) > m_flash_duration)
+            glColor(GG::LightColor(ClientUI::WndColor()));
+        else
+            glColor(ClientUI::WndColor());
         glDrawArrays(GL_TRIANGLE_FAN,   m_buffer_indices[1].first, m_buffer_indices[1].second);
         glColor(ClientUI::WndOuterBorderColor());
         glDrawArrays(GL_LINE_LOOP,      m_buffer_indices[1].first, m_buffer_indices[1].second);
