@@ -172,7 +172,7 @@ AVERAGE_BASE_FUEL_REGEN
 '''
 
 GREAT_FUEL_HULL
-'''[[HULL_FUEL_EFFECTSGROUP(SMALL,Value * 2)]]
+'''[[HULL_FUEL_EFFECTSGROUP(GREAT,Value * 2)]]
 '''
 
 GOOD_FUEL_HULL
@@ -180,11 +180,11 @@ GOOD_FUEL_HULL
 '''
 
 AVERAGE_FUEL_HULL
-'''[[HULL_FUEL_EFFECTSGROUP(LARGE,Value * 0.5)]]
+'''[[HULL_FUEL_EFFECTSGROUP(AVERAGE,Value * 0.5)]]
 '''
 
-VERY_AVERAGE_FUEL_HULL
-'''[[HULL_FUEL_EFFECTSGROUP(HUGE,Value * 0.25)]]
+BAD_FUEL_HULL
+'''[[HULL_FUEL_EFFECTSGROUP(BAD,Value * 0.25)]]
 '''
 
 HULL_FUEL_EFFECTSGROUP
@@ -196,7 +196,7 @@ HULL_FUEL_EFFECTSGROUP
             ]
             accountinglabel = "@1@_HULL_FUEL_LABEL"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetMaxFuel value = @2@ * Statistic If Condition = And [ Object id = Source.ID HasTag name = "@1@_HULL" ]
+            effects = SetMaxFuel value = @2@ * Statistic If Condition = And [ Object id = Source.ID HasTag name = "@1@_FUEL_HULL" ]
 '''
 
 #include "/scripting/common/priorities.macros"
