@@ -53,7 +53,7 @@ import AIDependencies
 import CombatRatingsAI
 import FleetUtilsAI
 from AIDependencies import INVALID_ID
-from freeorion_tools import UserString, tech_is_complete
+from freeorion_tools import UserString, tech_is_complete, get_ai_tag_grade
 from turn_state import state
 
 # Define meta classes for the ship parts  TODO storing as set may not be needed anymore
@@ -810,8 +810,7 @@ class ShipDesigner(object):
             if self.hull.hasTag(tag):
                 if AIDependencies.FUEL_EFFICIENCY in AIDependencies.HULL_TAG_EFFECTS[tag]:
                     return AIDependencies.HULL_TAG_EFFECTS[tag][AIDependencies.FUEL_EFFICIENCY]
-        # hull size defaults to medium hull value
-        return AIDependencies.HULL_TAG_EFFECTS["GOOD_FUEL_HULL"][AIDependencies.FUEL_EFFICIENCY]
+        return AIDependencies.DEFAULT_FUEL_EFFICIENCY
 
     def update_hull(self, hullname):
         """Set hull of the design.
@@ -861,6 +860,15 @@ class ShipDesigner(object):
         self.design_stats.stealth = self.hull.stealth
         self.production_cost = local_cost_cache.get(self.hull.name, self.hull.productionCost(fo.empireID(), self.pid))
         self.production_time = local_time_cache.get(self.hull.name, self.hull.productionTime(fo.empireID(), self.pid))
+
+        # calculate hull stat effects
+        if self.species and not ignore_species:
+            self.design_stats.fuel +=_get_species_fuel_bonus(self.species)
+        # TODO tech hull fuel effects
+        if self.design_stats.fuel < 0:
+            self.design_stats.fuel = 0
+        else:
+            self.design_stats.fuel *= self._hull_efficiency()
 
         # read out part stats
         shield_counter = cloak_counter = detection_counter = colonization_counter = engine_counter = 0  # to deal with Non-stacking parts
@@ -2383,3 +2391,7 @@ def _get_tech_bonus(upgrade_dict, part_name):
         total_tech_bonus += bonus if tech_is_complete(tech) else 0
         # TODO: Error checking if tech is actually a valid tech (tech_is_complete simply returns false)
     return total_tech_bonus
+
+def _get_species_fuel_bonus(species_name):
+    species_tags = fo.getSpecies(species_name).tags
+    return AIDependencies.SPECIES_FUEL_MODIFIER.get(get_ai_tag_grade(species_tags, "FUEL"), 0)
