@@ -11,7 +11,7 @@ Hull
         ]
     buildCost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 3
-    tags = [ "PEDIA_HULL_LINE_ROBOTIC" "GOOD_FUEL_HULL" ]
+    tags = [ "PEDIA_HULL_LINE_ROBOTIC" "GOOD_FUEL_EFFICIENCY" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
@@ -28,7 +28,7 @@ Hull
         OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
-        [[GOOD_FUEL_HULL]]
+        [[GOOD_FUEL_EFFICIENCY]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

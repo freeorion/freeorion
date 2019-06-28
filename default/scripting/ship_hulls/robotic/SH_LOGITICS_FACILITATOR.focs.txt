@@ -19,7 +19,7 @@ Hull
     ]
     buildCost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 8
-    tags = [ "ROBOTIC_HULL" "PEDIA_HULL_LINE_ROBOTIC" "BAD_FUEL_HULL" ]
+    tags = [ "ROBOTIC_HULL" "PEDIA_HULL_LINE_ROBOTIC" "BAD_FUEL_EFFICIENCY" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
@@ -83,7 +83,7 @@ Hull
             priority = [[VERY_LATE_PRIORITY]]
             effects = SetStructure value = max((Target.Structure + ( Target.Structure/10 )), (Target.Structure + 20))
 
-        [[BAD_FUEL_HULL]]
+        [[BAD_FUEL_EFFICIENCY]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
