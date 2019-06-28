@@ -189,7 +189,7 @@ BAD_FUEL_HULL
 
 HULL_FUEL_EFFECTSGROUP
 '''     EffectsGroup
-            description = "@1@_HULL_FUEL_DESC"
+            description = "HULL_FUEL_EFFICIENCY_DESC"
             scope = And [
                 Ship
                 Source

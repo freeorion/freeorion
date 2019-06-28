@@ -15145,8 +15145,34 @@ Cloak Cross-Interference
 TRANSPATIAL_CLOAK_INTERACTION
 Transpatial Drive - Cloak Interaction
 
+FUEL_TITLE
+Fuel
+
+FUEL_EFFICIENCY_TITLE
+Fuel Efficiency
+
+FUEL_REFUEL_EFFICIENCY_TEXT
+'''Fuel allows ships to travel the starlanes outside of [[metertype METER_SUPPLY]] of your empire. Fuel is consumed for each starlane traversed outside of supply; stopping within [[metertype METER_SUPPLY]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[metertype METER_SUPPLY]] lines, fuel will slowly regenerate. The amount of fuel a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> has depends on the [[encyclopedia ENC_SHIP_HULL]] used, but it can also be increased using some [[encyclopedia ENC_SHIP_PART]]s.
+
+Ship hulls have a great (200%%), good (100%%), normal (50%%), or bad (30%%) efficiency which determines how effective the base fuel can be used. 50%% efficiency means you can use half the base fuel for jumps. 200%% efficiency means you can do two jumps per base fuel. Fuel efficiency typically decreases with hull mass, so only very small ships have a high fuel efficiency.'''
+
 BASE_FUEL_REGEN_LABEL
 Stationary Fuel Regen
+
+FUEL_EFFICIENCY_DESC
+[[FUEL_EFFICIENCY_TITLE]]
+
+GREAT_HULL_FUEL_LABEL
+Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 200%%
+
+GOOD_HULL_FUEL_LABEL
+Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 100%%
+
+AVERAGE_HULL_FUEL_LABEL
+Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 50%%
+
+BAD_HULL_FUEL_LABEL
+Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 30%%
 
 SPATIAL_FLUX_MALUS
 Flux Interference
