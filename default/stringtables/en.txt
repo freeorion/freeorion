@@ -5600,7 +5600,11 @@ METER_FUEL_VALUE_LABEL
 Fuel
 
 METER_FUEL_VALUE_DESC
-Fuel allows ships to travel the starlanes outside of [[metertype METER_SUPPLY]] of your empire. Fuel is consumed for each starlane traversed outside of supply; stopping within [[metertype METER_SUPPLY]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[metertype METER_SUPPLY]] lines, fuel will slowly regenerate. The amount of fuel a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> has depends on the [[encyclopedia ENC_SHIP_HULL]] used, but it can also be increased using some [[encyclopedia ENC_SHIP_PART]]s.
+'''Fuel allows ships to travel the starlanes outside of [[metertype METER_SUPPLY]] of your empire. Fuel is consumed for each starlane traversed outside of supply; stopping within [[metertype METER_SUPPLY]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[metertype METER_SUPPLY]] lines, fuel will slowly regenerate.
+
+The effective amount of fuel a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> has depends mainly on the [[encyclopedia FUEL_EFFICIENCY_TITLE]] of the [[encyclopedia ENC_SHIP_HULL]]. Fuel efficiency modifies the base fuel capacity of a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> which depends on the [[encyclopedia ENC_SHIP_HULL]] used, but it can also be increased using some [[encyclopedia ENC_SHIP_PART]]s.
+
+The game always show the effective fuel levels, details about the efficiency effect can be seen in the mouse over.'''
 
 METER_SHIELD_VALUE_LABEL
 Shields
@@ -15152,9 +15156,11 @@ FUEL_EFFICIENCY_TITLE
 Fuel Efficiency
 
 FUEL_REFUEL_EFFICIENCY_TEXT
-'''Fuel allows ships to travel the starlanes outside of [[metertype METER_SUPPLY]] of your empire. Fuel is consumed for each starlane traversed outside of supply; stopping within [[metertype METER_SUPPLY]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[metertype METER_SUPPLY]] lines, fuel will slowly regenerate. The amount of fuel a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> has depends on the [[encyclopedia ENC_SHIP_HULL]] used, but it can also be increased using some [[encyclopedia ENC_SHIP_PART]]s.
+'''[[metertype METER_FUEL]] allows ships to travel the starlanes outside of [[metertype METER_SUPPLY]] of your empire. Fuel is consumed for each starlane traversed outside of supply; stopping within [[metertype METER_SUPPLY]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[metertype METER_SUPPLY]] lines, fuel will slowly regenerate.
 
-Ship hulls have a great (200%), good (100%), normal (50%), or bad (30%) efficiency which determines how effective the base fuel capacity can be used. 50% efficiency means you can use half the base fuel capacity for jumps. 200% efficiency means you can do two jumps per base fuel capacity. Fuel efficiency typically decreases with hull mass, so only very small ships have a high fuel efficiency and huge ships struggle outside of [[metertype METER_SUPPLY]].'''
+The base fuel capacity of a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> depends on the [[encyclopedia ENC_SHIP_HULL]] used, but it can also be increased using some [[encyclopedia ENC_SHIP_PART]]s.
+
+Ship hulls have a great (200%), good (100%), normal (50%), or bad (30%) efficiency which determines how effective the base fuel capacity can be used. 50% efficiency means you can use half the base fuel capacity for jumps. 200% efficiency means you can do two jumps per base fuel capacity. Fuel efficiency typically decreases with hull mass, so only very small ships have a high fuel efficiency and huge ships struggle outside of [[metertype METER_SUPPLY]]. The game always show the effective fuel levels.'''
 
 BASE_FUEL_REGEN_LABEL
 Stationary Fuel Regen
