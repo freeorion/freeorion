@@ -1027,7 +1027,7 @@ class ShipDesigner(object):
             parse_tokens(AIDependencies.HULL_EFFECTS[self.hull.name], is_hull=True)
 
         # fuel effects
-        if self.species and not ignore_species:
+        if not ignore_species:
             self.design_stats.fuel += _get_species_fuel_bonus(self.species)
         # TODO tech hull fuel effects
         # set fuel to zero for NO_FUEL species (-100 fuel bonus)
@@ -2394,5 +2394,7 @@ def _get_tech_bonus(upgrade_dict, part_name):
 
 
 def _get_species_fuel_bonus(species_name):
+    if not species_name:
+        return 0
     species_tags = fo.getSpecies(species_name).tags
     return AIDependencies.SPECIES_FUEL_MODIFIER.get(get_ai_tag_grade(species_tags, "FUEL"), 0)
