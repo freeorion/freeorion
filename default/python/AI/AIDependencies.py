@@ -796,7 +796,7 @@ HULL_TAG_EFFECTS = {
         FUEL_EFFICIENCY: 0.5,
     },
     "BAD_FUEL_HULL": {
-        FUEL_EFFICIENCY: 0.25,
+        FUEL_EFFICIENCY: 0.3,
     },
 }
 
