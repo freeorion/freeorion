@@ -861,15 +861,6 @@ class ShipDesigner(object):
         self.production_cost = local_cost_cache.get(self.hull.name, self.hull.productionCost(fo.empireID(), self.pid))
         self.production_time = local_time_cache.get(self.hull.name, self.hull.productionTime(fo.empireID(), self.pid))
 
-        # calculate hull stat effects
-        if self.species and not ignore_species:
-            self.design_stats.fuel += _get_species_fuel_bonus(self.species)
-        # TODO tech hull fuel effects
-        if self.design_stats.fuel < 0:
-            self.design_stats.fuel = 0
-        else:
-            self.design_stats.fuel *= self._hull_fuel_efficiency()
-
         # read out part stats
         shield_counter = cloak_counter = detection_counter = colonization_counter = engine_counter = 0  # to deal with Non-stacking parts
         hangar_part_names = set()
@@ -881,7 +872,7 @@ class ShipDesigner(object):
             partclass = part.partClass
             capacity = part.capacity if partclass not in WEAPONS else self._calculate_weapon_strength(part)
             if partclass in FUEL:
-                self.design_stats.fuel += self._calculate_fuel_capacity(part)
+                self.design_stats.fuel += self._calculate_fuel_part_capacity(part)
             elif partclass in ENGINES:
                 engine_counter += 1
                 if engine_counter == 1:
@@ -938,7 +929,7 @@ class ShipDesigner(object):
                 break
             self.design_stats.fighter_launch_rate = self._calculate_fighter_launch_rate(bay_parts, hangar_part_name)
 
-        self._apply_hardcoded_effects()
+        self._apply_hardcoded_effects(ignore_species)
 
         if self.species and not ignore_species:
             shields_grade = CombatRatingsAI.get_species_shield_grade(self.species)
@@ -947,7 +938,7 @@ class ShipDesigner(object):
                 troops_grade = CombatRatingsAI.get_species_troops_grade(self.species)
                 self.design_stats.troops = CombatRatingsAI.weight_attack_troops(self.design_stats.troops, troops_grade)
 
-    def _apply_hardcoded_effects(self):
+    def _apply_hardcoded_effects(self, ignore_species=False):
         """Update stats that can not be read out by the AI yet, i.e. applied by effects.
 
         This function should contain *all* hardcoded effects for hulls/parts to be considered by the AI
@@ -1034,6 +1025,16 @@ class ShipDesigner(object):
             self.design_stats.detection += AIDependencies.BASE_DETECTION
         else:
             parse_tokens(AIDependencies.HULL_EFFECTS[self.hull.name], is_hull=True)
+
+        # fuel effects
+        if self.species and not ignore_species:
+            self.design_stats.fuel += _get_species_fuel_bonus(self.species)
+        # TODO tech hull fuel effects
+        # set fuel to zero for NO_FUEL species (-100 fuel bonus)
+        if self.design_stats.fuel < 0:
+            self.design_stats.fuel = 0
+        else:
+            self.design_stats.fuel *= self._hull_fuel_efficiency()
 
         for partname in set(self.partnames):
             if partname in AIDependencies.PART_EFFECTS:
@@ -1554,14 +1555,13 @@ class ShipDesigner(object):
         """
         return any(part.partClass in partclass for part in self.parts)
 
-    def _calculate_fuel_capacity(self, fuel_part, ignore_species=False):
+    def _calculate_fuel_part_capacity(self, fuel_part, ignore_species=False):
         # base fuel
         tank_name = fuel_part.name
         base = fuel_part.capacity
-        hull_multiplier = self._hull_efficiency()
         tech_bonus = _get_tech_bonus(AIDependencies.FUEL_TANK_UPGRADE_DICT, tank_name)
         # There is no per part species modifier
-        return (base + tech_bonus) * hull_multiplier
+        return base + tech_bonus
 
     def _calculate_weapon_strength(self, weapon_part, ignore_species=False):
         # base damage
