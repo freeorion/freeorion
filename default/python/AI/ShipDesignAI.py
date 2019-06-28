@@ -805,7 +805,7 @@ class ShipDesigner(object):
         self.production_cost = 9999
         self.production_time = 1
 
-    def _hull_efficiency(self):
+    def _hull_fuel_efficiency(self):
         for tag in AIDependencies.HULL_TAG_EFFECTS:
             if self.hull.hasTag(tag):
                 if AIDependencies.FUEL_EFFICIENCY in AIDependencies.HULL_TAG_EFFECTS[tag]:
@@ -868,7 +868,7 @@ class ShipDesigner(object):
         if self.design_stats.fuel < 0:
             self.design_stats.fuel = 0
         else:
-            self.design_stats.fuel *= self._hull_efficiency()
+            self.design_stats.fuel *= self._hull_fuel_efficiency()
 
         # read out part stats
         shield_counter = cloak_counter = detection_counter = colonization_counter = engine_counter = 0  # to deal with Non-stacking parts
