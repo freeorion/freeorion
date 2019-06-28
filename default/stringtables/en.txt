@@ -13407,7 +13407,7 @@ FU_BASIC_TANK
 Extra Fuel Tank
 
 FU_BASIC_TANK_DESC
-Increases [[metertype METER_FUEL]] capacity, allowing an additional jump. Later technologies further increase the number of additional jumps per tank.
+Increases [[metertype METER_FUEL]] capacity, allowing additional jumps depending on [[encyclopedia FUEL_EFFICIENCY_TITLE]]. Later technologies further increase the number of additional jumps per tank.
 
 FU_ZERO_FUEL
 Zero-Point Fuel Generator
@@ -15154,7 +15154,7 @@ Fuel Efficiency
 FUEL_REFUEL_EFFICIENCY_TEXT
 '''Fuel allows ships to travel the starlanes outside of [[metertype METER_SUPPLY]] of your empire. Fuel is consumed for each starlane traversed outside of supply; stopping within [[metertype METER_SUPPLY]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[metertype METER_SUPPLY]] lines, fuel will slowly regenerate. The amount of fuel a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> has depends on the [[encyclopedia ENC_SHIP_HULL]] used, but it can also be increased using some [[encyclopedia ENC_SHIP_PART]]s.
 
-Ship hulls have a great (200%%), good (100%%), normal (50%%), or bad (30%%) efficiency which determines how effective the base fuel can be used. 50%% efficiency means you can use half the base fuel for jumps. 200%% efficiency means you can do two jumps per base fuel. Fuel efficiency typically decreases with hull mass, so only very small ships have a high fuel efficiency.'''
+Ship hulls have a great (200%), good (100%), normal (50%), or bad (30%) efficiency which determines how effective the base fuel capacity can be used. 50% efficiency means you can use half the base fuel capacity for jumps. 200% efficiency means you can do two jumps per base fuel capacity. Fuel efficiency typically decreases with hull mass, so only very small ships have a high fuel efficiency and huge ships struggle outside of [[metertype METER_SUPPLY]].'''
 
 BASE_FUEL_REGEN_LABEL
 Stationary Fuel Regen
