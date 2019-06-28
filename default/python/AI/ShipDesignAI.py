@@ -863,7 +863,7 @@ class ShipDesigner(object):
 
         # calculate hull stat effects
         if self.species and not ignore_species:
-            self.design_stats.fuel +=_get_species_fuel_bonus(self.species)
+            self.design_stats.fuel += _get_species_fuel_bonus(self.species)
         # TODO tech hull fuel effects
         if self.design_stats.fuel < 0:
             self.design_stats.fuel = 0
@@ -2391,6 +2391,7 @@ def _get_tech_bonus(upgrade_dict, part_name):
         total_tech_bonus += bonus if tech_is_complete(tech) else 0
         # TODO: Error checking if tech is actually a valid tech (tech_is_complete simply returns false)
     return total_tech_bonus
+
 
 def _get_species_fuel_bonus(species_name):
     species_tags = fo.getSpecies(species_name).tags
