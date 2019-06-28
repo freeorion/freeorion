@@ -11,7 +11,7 @@ Tech
         "LRN_FORCE_FIELD"
     ]
     effectsgroups = [
-        [[PART_UPGRADE_MAXFUEL_EFFECTS(SHP_ANTIMATTER_TANK_EFFECT,3)]]
+        [[PART_UPGRADE_MAXFUEL_EFFECTS(SHP_ANTIMATTER_TANK_EFFECT,1.5)]]
     ]
     graphic = "icons/ship_parts/antimatter_tank.png"
 

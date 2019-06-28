@@ -10895,7 +10895,7 @@ GRO_ENERGY_META
 Pure-Energy Metabolism
 
 GRO_ENERGY_META_DESC
-'''Increases max [[metertype METER_FUEL]] on all ships by 2, max [[metertype METER_DEFENSE]] on all planets by 5, max [[metertype METER_SHIELD]] on all planets by 5, [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.2 per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.5 per [[metertype METER_POPULATION]].
+'''Increases max [[metertype METER_FUEL]] on all ships by 1, max [[metertype METER_DEFENSE]] on all planets by 5, max [[metertype METER_SHIELD]] on all planets by 5, [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.2 per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.5 per [[metertype METER_POPULATION]].
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -14751,19 +14751,19 @@ NO_FUEL_DESC
 −−−	Ships have zero [[metertype METER_FUEL]]
 
 BAD_FUEL_DESC
-−	Bad Maximum [[metertype METER_FUEL]]: -1
+−	Bad Maximum [[metertype METER_FUEL]]: -0.5
 
 AVERAGE_FUEL_DESC
 '''	Average Maximum [[metertype METER_FUEL]]: +0'''
 
 GOOD_FUEL_DESC
-+	Good Maximum [[metertype METER_FUEL]]: +1
++	Good Maximum [[metertype METER_FUEL]]: +0.5
 
 GREAT_FUEL_DESC
-++	Great Maximum [[metertype METER_FUEL]]: +2
+++	Great Maximum [[metertype METER_FUEL]]: +1
 
 ULTIMATE_FUEL_DESC
-+++	Ultimate Maximum [[metertype METER_FUEL]]: +3
++++	Ultimate Maximum [[metertype METER_FUEL]]: +1.5
 
 GREAT_ASTEROID_INDUSTRY_DESC
 +	Good Asteroid Miners: + 0.2 [[metertype METER_INDUSTRY]] per [[metertype METER_POPULATION]] when Industry Focused in systems with owned asteroid belts.
@@ -15160,7 +15160,7 @@ FUEL_REFUEL_EFFICIENCY_TEXT
 
 The base fuel capacity of a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> depends on the [[encyclopedia ENC_SHIP_HULL]] used, but it can also be increased using some [[encyclopedia ENC_SHIP_PART]]s.
 
-Ship hulls have a great (200%), good (100%), normal (50%), or bad (30%) efficiency which determines how effective the base fuel capacity can be used. 50% efficiency means you can use half the base fuel capacity for jumps. 200% efficiency means you can do two jumps per base fuel capacity. Fuel efficiency typically decreases with hull mass, so only very small ships have a high fuel efficiency and huge ships struggle outside of [[metertype METER_SUPPLY]]. The game always show the effective fuel levels.'''
+Ship hulls have a great (400%), good (200%), normal (100%), or bad (60%) efficiency which determines how effective the base fuel capacity can be used. 60% efficiency means for five base fuel you get three jumps. 200% efficiency means you can do two jumps per base fuel capacity. Fuel efficiency typically decreases with hull mass, so only very small ships have a high fuel efficiency and huge ships struggle outside of [[metertype METER_SUPPLY]]. The game always show the effective fuel levels.'''
 
 BASE_FUEL_REGEN_LABEL
 Stationary Fuel Regen
@@ -15169,16 +15169,16 @@ FUEL_EFFICIENCY_DESC
 [[FUEL_EFFICIENCY_TITLE]]
 
 GREAT_HULL_FUEL_LABEL
-Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 200%%
+Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 400%%
 
 GOOD_HULL_FUEL_LABEL
-Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 100%%
+Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 200%%
 
 AVERAGE_HULL_FUEL_LABEL
-Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 50%%
+Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 100%%
 
 BAD_HULL_FUEL_LABEL
-Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 30%%
+Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 60%%
 
 SPATIAL_FLUX_MALUS
 Flux Interference

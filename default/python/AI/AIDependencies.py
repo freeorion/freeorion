@@ -343,7 +343,7 @@ DEFENSE_SHIELDS_TECHS = [
 # <editor-fold desc="Fuel techs">
 FUEL_TANK_UPGRADE_DICT = {
     # "PARTNAME": tuple((tech_name, fuel_upgrade), (tech_name2, fuel_upgrade2), ...)
-    "FU_BASIC_TANK": (("SHP_DEUTERIUM_TANK", 1), ("SHP_ANTIMATTER_TANK", 3)),
+    "FU_BASIC_TANK": (("SHP_DEUTERIUM_TANK", 0.5), ("SHP_ANTIMATTER_TANK", 1.5)),
     "FU_RAMSCOOP": (),
     "FU_ZERO_FUEL": (),
 }
@@ -620,7 +620,7 @@ SPECIES_RESEARCH_MODIFIER = {'NO': 0.0, 'BAD': 0.75, 'GOOD': 1.5, 'GREAT': 2.0, 
 SPECIES_INDUSTRY_MODIFIER = {'NO': 0.0, 'BAD': 0.75, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 3.0}
 SPECIES_POPULATION_MODIFIER = {'BAD': 0.75, 'GOOD': 1.25}
 SPECIES_SUPPLY_MODIFIER = {'VERY_BAD': -1, 'BAD': 0, 'AVERAGE': 1, 'GREAT': 2, 'ULTIMATE': 3}
-SPECIES_FUEL_MODIFIER = {'NO': -100, 'BAD': -1, 'AVERAGE': 0, 'GOOD': 1, 'GREAT': 2, 'ULTIMATE': 3}
+SPECIES_FUEL_MODIFIER = {'NO': -100, 'BAD': -0.5, 'AVERAGE': 0, 'GOOD': 0.5, 'GREAT': 1, 'ULTIMATE': 1.5}
 
 # <editor-fold desc="XenoResurrectionSpecies">
 EXTINCT_SPECIES = [
@@ -787,16 +787,16 @@ TECH_EFFECTS = {
 DEFAULT_FUEL_EFFICIENCY = 1
 HULL_TAG_EFFECTS = {
     "GREAT_FUEL_EFFICIENCY": {
-        FUEL_EFFICIENCY: 2,
+        FUEL_EFFICIENCY: 4,
     },
     "GOOD_FUEL_EFFICIENCY": {
-        FUEL_EFFICIENCY: 1,
+        FUEL_EFFICIENCY: 2,
     },
     "AVERAGE_FUEL_EFFICIENCY": {
-        FUEL_EFFICIENCY: 0.5,
+        FUEL_EFFICIENCY: 1,
     },
     "BAD_FUEL_EFFICIENCY": {
-        FUEL_EFFICIENCY: 0.3,
+        FUEL_EFFICIENCY: 0.6,
     },
 }
 

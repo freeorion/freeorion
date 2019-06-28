@@ -2,7 +2,7 @@ Hull
     name = "SH_QUANTUM_ENERGY"
     description = "SH_QUANTUM_ENERGY_DESC"
     speed = 120
-    fuel = 5
+    fuel = 2.5
     stealth = -15
     structure = 50
     slots = [

@@ -2,7 +2,7 @@ Hull
     name = "SH_LOGISTICS_FACILITATOR"
     description = "SH_LOGISTICS_FACILITATOR_DESC"
     speed = 80
-    fuel = 3
+    fuel = 1.5
     stealth = 5
     structure = 110
     slots = [

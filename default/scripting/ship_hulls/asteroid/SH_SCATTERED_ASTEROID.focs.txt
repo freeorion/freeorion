@@ -2,7 +2,7 @@ Hull
     name = "SH_SCATTERED_ASTEROID"
     description = "SH_SCATTERED_ASTEROID_DESC"
     speed = 60
-    fuel = 2
+    fuel = 1
     stealth = 5
     structure = 140
     slots = [

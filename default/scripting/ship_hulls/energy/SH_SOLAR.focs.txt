@@ -2,7 +2,7 @@ Hull
     name = "SH_SOLAR"
     description = "SH_SOLAR_DESC"
     speed = 120
-    fuel = 5
+    fuel = 2.5
     stealth = -55
     structure = 100
     slots = [

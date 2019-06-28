@@ -2,7 +2,7 @@ Hull
     name = "SH_FRACTAL_ENERGY"
     description = "SH_FRACTAL_ENERGY_DESC"
     speed = 120
-    fuel = 5
+    fuel = 2.5
     stealth = -5
     structure = 40
     slots = [

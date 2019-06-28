@@ -2,7 +2,7 @@ Hull
     name = "SH_ENERGY_FRIGATE"
     description = "SH_ENERGY_FRIGATE_DESC"
     speed = 120
-    fuel = 4
+    fuel = 2
     stealth = 5
     structure = 15
     slots = [

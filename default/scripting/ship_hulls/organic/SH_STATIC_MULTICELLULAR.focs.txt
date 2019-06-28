@@ -2,7 +2,7 @@ Hull
     name = "SH_STATIC_MULTICELLULAR"
     description = "SH_STATIC_MULTICELLULAR_DESC"
     speed = 100
-    fuel = 2
+    fuel = 1
     stealth = 5
     structure = 16
     slots = [

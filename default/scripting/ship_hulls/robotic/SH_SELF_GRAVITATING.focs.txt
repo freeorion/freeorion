@@ -2,7 +2,7 @@ Hull
     name = "SH_SELF_GRAVITATING"
     description = "SH_SELF_GRAVITATING_DESC"
     speed = 80
-    fuel = 3
+    fuel = 1.5
     stealth = -5
     structure = 100
     slots = [
