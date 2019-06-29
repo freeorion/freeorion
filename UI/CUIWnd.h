@@ -142,6 +142,12 @@ public:
 
     void Show() override;
 
+    void Flash() { m_flashing = true; };
+
+    void StopFlash() { m_flashing = false; };
+
+    void SetFlashDuration(int ms) { m_flash_duration = ms; }
+
     void            ToggleMinimized() { MinimizeClicked(); }
     void            Close()           { CloseClicked(); }
     void            ValidatePosition();                                 //!< calls SizeMove() to trigger position-checking and position the window entirely within the parent window/app window
@@ -203,6 +209,9 @@ protected:
     bool                    m_minimized = false;    //!< true if the window is currently minimized
     bool                    m_pinable;              //!< true if the window is able to be pinned
     bool                    m_pinned = false;       //!< true if the window is currently pinned
+    bool                    m_flashing = false;     //!< true if the window is currently flashing
+
+    int                     m_flash_duration = 1000;//!< time in milliseconds to switch between bright and dark
 
     GG::Pt                  m_drag_offset;          //!< offset from the lower-right corner of the point being used to drag-resize
     GG::Pt                  m_original_size;        //!< keeps track of the size of the window before resizing

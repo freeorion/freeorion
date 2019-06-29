@@ -318,11 +318,13 @@ void CUIWnd::Render() {
         glDrawArrays(GL_LINE_LOOP,      m_buffer_indices[0].first, m_buffer_indices[0].second);
 
     } else {
-        glColor(ClientUI::WndColor());
+        bool flashing = m_flashing && GG::GUI::GetGUI()->Ticks() % (m_flash_duration * 2) > m_flash_duration;
+
+        flashing ? glColor(GG::LightColor(ClientUI::WndColor())) : glColor(ClientUI::WndColor());
         glDrawArrays(GL_TRIANGLE_FAN,   m_buffer_indices[1].first, m_buffer_indices[1].second);
-        glColor(ClientUI::WndOuterBorderColor());
+        flashing ? glColor(GG::LightColor(ClientUI::WndOuterBorderColor())) : glColor(ClientUI::WndOuterBorderColor());
         glDrawArrays(GL_LINE_LOOP,      m_buffer_indices[1].first, m_buffer_indices[1].second);
-        glColor(ClientUI::WndInnerBorderColor());
+        flashing ? glColor(GG::LightColor(ClientUI::WndInnerBorderColor())) : glColor(ClientUI::WndInnerBorderColor());
         glDrawArrays(GL_LINE_LOOP,      m_buffer_indices[2].first, m_buffer_indices[2].second);
 
         if (m_resizable) {
