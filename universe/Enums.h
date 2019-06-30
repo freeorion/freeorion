@@ -216,17 +216,6 @@ GG_ENUM(BuildType,
     NUM_BUILD_TYPES
 )
 
-/** The general type of an influence project. Projects may cause some effects to
-  * occur in the universe, or just consume influence points. */
-GG_ENUM(InfluenceType,
-    INVALID_INFLUENCE_TYPE = -1,
-    IP_NOT_INFLUENCING,     ///< non-project
-    IP_CHANGE_POLICIES,     ///< the chosen policies of an empires government have changed and the influence cost to support this must be paid
-    IP_PROJECT,             ///< a project may produce effects while on the queue
-    IP_STOCKPILE,
-    NUM_INFLUENCE_TYPES
-)
-
 /** Types of resources that planets can produce */
 GG_ENUM(ResourceType,
     INVALID_RESOURCE_TYPE = -1,

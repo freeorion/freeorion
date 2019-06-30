@@ -126,12 +126,9 @@ template void ProductionQueue::serialize<freeorion_xml_iarchive>(freeorion_xml_i
 template <typename Archive>
 void InfluenceQueue::Element::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(influence_type)
-        & BOOST_SERIALIZATION_NVP(name)
+    ar  & BOOST_SERIALIZATION_NVP(name)
         & BOOST_SERIALIZATION_NVP(empire_id)
         & BOOST_SERIALIZATION_NVP(allocated_ip)
-        & BOOST_SERIALIZATION_NVP(progress)
-        & BOOST_SERIALIZATION_NVP(turns_left)
         & BOOST_SERIALIZATION_NVP(paused);
 }
 

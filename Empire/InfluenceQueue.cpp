@@ -14,8 +14,8 @@
 namespace {
     const float EPSILON = 0.01f;
 
-    void AddRules(GameRules& rules) {
-    }
+    void AddRules(GameRules& rules)
+    {}
     bool temp_bool = RegisterGameRules(&AddRules);
 
     float CalculateNewInfluenceStockpile(int empire_id, float starting_stockpile, float project_transfer_to_stockpile,
@@ -70,28 +70,10 @@ namespace {
 /////////////////////////////
 // InfluenceQueue::Element //
 /////////////////////////////
-InfluenceQueue::Element::Element()
-{}
-
-InfluenceQueue::Element::Element(InfluenceType influence_type_, int empire_id_, bool paused_) :
-    influence_type(influence_type_),
-    empire_id(empire_id_),
-    paused(paused_)
-{
-    name = "";  // todo, depending on influence_type
-}
-
-InfluenceQueue::Element::Element(InfluenceType influence_type_, int empire_id_, std::string name_, bool paused_) :
-    influence_type(influence_type_),
-    name(name_),
-    empire_id(empire_id_),
-    paused(paused_)
-{}
-
 std::string InfluenceQueue::Element::Dump() const {
     std::stringstream retval;
     retval << "InfluenceQueue::Element: name: " << name << "  empire id: " << empire_id;
-    retval << "  allocated: " << allocated_ip << "  turns left: " << turns_left;
+    retval << "  allocated: " << allocated_ip;
     if (paused)
         retval << "  (paused)";
     retval << "\n";
@@ -102,9 +84,10 @@ std::string InfluenceQueue::Element::Dump() const {
 ////////////////////
 // InfluenceQueue //
 ////////////////////
-InfluenceQueue::InfluenceQueue(int empire_id) :
-    m_empire_id(empire_id)
-{}
+bool InfluenceQueue::InQueue(const std::string& name) const {
+    return std::count_if(m_queue.begin(), m_queue.end(),
+                       [name](const Element& e){ return e.name == name; });
+}
 
 int InfluenceQueue::ProjectsInProgress() const
 { return m_projects_in_progress; }
