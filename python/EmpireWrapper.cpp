@@ -2,6 +2,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
 #include "../Empire/Diplomacy.h"
+#include "../Empire/InfluenceQueue.h"
 #include "../universe/Predicates.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/UnlockableItem.h"
@@ -27,10 +28,12 @@
 
 
 namespace {
-    // Research queue tests whether it contains a Tech by name, but Python needs
+    // Queues test whether they contain items by name, but Python needs
     // a __contains__ function that takes a *Queue::Element.  This helper
-    // functions take an Element and returns the associated Tech name string.
+    // functions take an Element and returns the associated name string.
     const std::string&  TechFromResearchQueueElement(const ResearchQueue::Element& element)
+    { return element.name; }
+    const std::string&  NameFromInfluenceQueueElement(const InfluenceQueue::Element& element)
     { return element.name; }
 
     std::vector<std::string> (TechManager::*TechNamesVoid)(void) const = &TechManager::TechNames;
@@ -52,6 +55,8 @@ namespace {
     auto InQueueFromResearchQueueElementFunc =
         boost::bind(&ResearchQueue::InQueue, boost::placeholders::_1,
                     boost::bind(TechFromResearchQueueElement, boost::placeholders::_2));
+    auto InQueueFromInfluenceQueueElementFunc =
+        boost::bind(&InfluenceQueue::InQueue, _1, boost::bind(NameFromInfluenceQueueElement, _2));
 
     // ProductionQueue::Element contains a ProductionItem which contains details of the item on the queue.  Need helper
     // functions to get the details about the item in the Element without adding extra pointless exposed classes to
@@ -65,6 +70,9 @@ namespace {
 
     const ProductionQueue::Element&
                         (ProductionQueue::*ProductionQueueOperatorSquareBrackets)(int) const =          &ProductionQueue::operator[];
+    const InfluenceQueue::Element&
+                        (InfluenceQueue::*InfluenceQueueOperatorSquareBrackets)(int) const =            &InfluenceQueue::operator[];
+
 
     const SitRepEntry&  GetSitRep(const Empire& empire, int index) {
         static SitRepEntry EMPTY_ENTRY;
@@ -384,30 +392,6 @@ namespace FreeOrionPython {
                                                     "Returns the empire meter with the indicated name (string).")
         ;
 
-        ////////////////////
-        // Research Queue //
-        ////////////////////
-        class_<ResearchQueue::Element>("researchQueueElement", no_init)
-            .def_readonly("tech",                   &ResearchQueue::Element::name)
-            .def_readonly("allocation",             &ResearchQueue::Element::allocated_rp)
-            .def_readonly("turnsLeft",              &ResearchQueue::Element::turns_left)
-        ;
-        class_<ResearchQueue, noncopyable>("researchQueue", no_init)
-            .def("__iter__",                        iterator<ResearchQueue>())  // ResearchQueue provides STL container-like interface to contained queue
-            .def("__getitem__",                     &ResearchQueue::operator[],                     return_internal_reference<>())
-            .def("__len__",                         &ResearchQueue::size)
-            .add_property("size",                   &ResearchQueue::size)
-            .add_property("empty",                  &ResearchQueue::empty)
-            .def("inQueue",                         &ResearchQueue::InQueue)
-            .def("__contains__",                    make_function(
-                                                        boost::bind(InQueueFromResearchQueueElementFunc, _1, _2),
-                                                        return_value_policy<return_by_value>(),
-                                                        boost::mpl::vector<bool, const ResearchQueue*, const ResearchQueue::Element&>()
-                                                    ))
-            .add_property("totalSpent",             &ResearchQueue::TotalRPsSpent)
-            .add_property("empireID",               &ResearchQueue::EmpireID)
-        ;
-
         //////////////////////
         // Production Queue //
         //////////////////////
@@ -449,6 +433,30 @@ namespace FreeOrionPython {
             .def("objectsWithWastedPP",             make_function(&ProductionQueue::ObjectsWithWastedPP,return_value_policy<return_by_value>()))
             ;
 
+        ////////////////////
+        // Research Queue //
+        ////////////////////
+        class_<ResearchQueue::Element>("researchQueueElement", no_init)
+            .def_readonly("tech",                   &ResearchQueue::Element::name)
+            .def_readonly("allocation",             &ResearchQueue::Element::allocated_rp)
+            .def_readonly("turnsLeft",              &ResearchQueue::Element::turns_left)
+        ;
+        class_<ResearchQueue, noncopyable>("researchQueue", no_init)
+            .def("__iter__",                        iterator<ResearchQueue>())  // ResearchQueue provides STL container-like interface to contained queue
+            .def("__getitem__",                     &ResearchQueue::operator[],                         return_internal_reference<>())
+            .def("__len__",                         &ResearchQueue::size)
+            .add_property("size",                   &ResearchQueue::size)
+            .add_property("empty",                  &ResearchQueue::empty)
+            .def("inQueue",                         &ResearchQueue::InQueue)
+            .def("__contains__",                    make_function(
+                                                        boost::bind(InQueueFromResearchQueueElementFunc, _1, _2),
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<bool, const ResearchQueue*, const ResearchQueue::Element&>()
+                                                    ))
+            .add_property("totalSpent",             &ResearchQueue::TotalRPsSpent)
+            .add_property("empireID",               &ResearchQueue::EmpireID)
+        ;
+
         //////////////////
         //     Tech     //
         //////////////////
@@ -488,6 +496,29 @@ namespace FreeOrionPython {
         class_<UnlockableItem>("UnlockableItem", init<UnlockableItemType, const std::string&>())
             .add_property("type",               &UnlockableItem::type)
             .add_property("name",               &UnlockableItem::name)
+        ;
+
+        ///////////////////////
+        //  Influence Queue  //
+        ///////////////////////
+        class_<InfluenceQueue::Element>("influenceQueueElement", no_init)
+            .def_readonly("name",                   &InfluenceQueue::Element::name)
+            .def_readonly("allocation",             &InfluenceQueue::Element::allocated_ip)
+        ;
+        class_<InfluenceQueue, noncopyable>("influenceQueue", no_init)
+            .def("__iter__",                        iterator<InfluenceQueue>())  // InfluenceQueue provides STL container-like interface to contained queue
+            .def("__getitem__",                     InfluenceQueueOperatorSquareBrackets,               return_internal_reference<>())
+            .def("__len__",                         &InfluenceQueue::size)
+            .add_property("size",                   &InfluenceQueue::size)
+            .add_property("empty",                  &InfluenceQueue::empty)
+            .def("inQueue",                         &InfluenceQueue::InQueue)
+            .def("__contains__",                    make_function(
+                                                        boost::bind(InQueueFromInfluenceQueueElementFunc, _1, _2),
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<bool, const InfluenceQueue*, const InfluenceQueue::Element&>()
+                                                    ))
+            .add_property("totalSpent",             &InfluenceQueue::TotalIPsSpent)
+            .add_property("empireID",               &InfluenceQueue::EmpireID)
         ;
 
         ///////////////////
