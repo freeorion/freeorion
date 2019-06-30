@@ -26,5 +26,3 @@ Policy
             effects = SetSpeed value = Value + 20
     ]
     graphic = "icons/policies/exploration.png"
-
-#include "/scripting/common/priorities.macros"

@@ -18,7 +18,7 @@ Policy
         EffectsGroup
             scope = And [
                 Capital
-                OwnedBy empire = Source.Owner            
+                OwnedBy empire = Source.Owner
             ]
             effects = SetEmpireMeter
                 empire = Source.Owner
@@ -29,5 +29,3 @@ Policy
                                    )
     ]
     graphic = "icons/policies/continuous_scanning.png"
-
-#include "/scripting/common/priorities.macros"

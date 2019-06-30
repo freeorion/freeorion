@@ -5,5 +5,3 @@ Policy
     category = "MILITARY_CATEGORY"
     adoptioncost = 10
     graphic = "icons/policies/design_simplicity.png"
-
-#include "/scripting/common/priorities.macros"

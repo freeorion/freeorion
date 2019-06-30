@@ -5,5 +5,3 @@ Policy
     category = "SOCIAL_CATEGORY"
     adoptioncost = 10
     graphic = "icons/focus/growth.png"
-
-#include "/scripting/common/priorities.macros"
