@@ -10985,6 +10985,14 @@ On ships with telepathic species, increases max shields by 2.'''
 PLC_PSYONIC_SHIELDS_SHORT_DESC
 Generates Shields
 
+PLC_STOCKPILE_LIQUIDATION
+Stockpile Liquidation
+
+PLC_STOCKPILE_LIQUIDATION_DESC
+Doubles stockpiling on stockpile-focused planets.
+
+PLC_STOCKPILE_LIQUIDATION_SHORT_DESC
+Increases stockpiling
 
 ##
 ## Technology categories
