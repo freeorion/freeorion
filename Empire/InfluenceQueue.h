@@ -49,7 +49,7 @@ struct FO_COMMON_API InfluenceQueue {
     typedef QueueType::const_iterator const_iterator;
 
     /** \name Structors */ //@{
-    InfluenceQueue::InfluenceQueue(int empire_id) :
+    explicit InfluenceQueue(int empire_id) :
         m_empire_id(empire_id)
     {}
     //@}
