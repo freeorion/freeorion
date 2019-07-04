@@ -377,6 +377,7 @@ FIGHTER_DAMAGE_UPGRADE_DICT = {
     "FT_HANGAR_2": (("SHP_FIGHTERS_2", 2), ("SHP_FIGHTERS_3", 3), ("SHP_FIGHTERS_4", 5)),
     "FT_HANGAR_3": (("SHP_FIGHTERS_2", 3), ("SHP_FIGHTERS_3", 4), ("SHP_FIGHTERS_4", 7)),
     "FT_HANGAR_4": (),
+    "FT_HANGAR_DRONES": (),
 }
 
 FIGHTER_CAPACITY_UPGRADE_DICT = {
@@ -385,6 +386,7 @@ FIGHTER_CAPACITY_UPGRADE_DICT = {
     "FT_HANGAR_2": (),
     "FT_HANGAR_3": (),
     "FT_HANGAR_4": (),
+    "FT_HANGAR_DRONES": (),
 }
 
 # DO NOT TOUCH THIS ENTRY BUT UPDATE WEAPON_UPGRADE_DICT INSTEAD!
@@ -652,10 +654,10 @@ PILOT_ROF_MODIFIER_DICT = {
 PILOT_FIGHTERDAMAGE_MODIFIER_DICT = {
     # TRAIT:    {hangar_name: effect, hangar_name2: effect2,...}
     "NO":       {},
-    "BAD":      {"FT_HANGAR_1": -1, "FT_HANGAR_2": -2, "FT_HANGAR_3": -3, "FT_HANGAR_4": -4},
-    "GOOD":     {"FT_HANGAR_1":  1, "FT_HANGAR_2":  2, "FT_HANGAR_3":  3, "FT_HANGAR_4": 4},
-    "GREAT":    {"FT_HANGAR_1":  2, "FT_HANGAR_2":  4, "FT_HANGAR_3":  6, "FT_HANGAR_4": 8},
-    "ULTIMATE": {"FT_HANGAR_1":  3, "FT_HANGAR_2":  6, "FT_HANGAR_3":  9, "FT_HANGAR_4": 12},
+    "BAD":      {"FT_HANGAR_1": -1, "FT_HANGAR_2": -2, "FT_HANGAR_3": -3, "FT_HANGAR_4": -4, "FT_HANGAR_DRONES": 0},
+    "GOOD":     {"FT_HANGAR_1":  1, "FT_HANGAR_2":  2, "FT_HANGAR_3":  3, "FT_HANGAR_4": 4, "FT_HANGAR_DRONES": 0},
+    "GREAT":    {"FT_HANGAR_1":  2, "FT_HANGAR_2":  4, "FT_HANGAR_3":  6, "FT_HANGAR_4": 8, "FT_HANGAR_DRONES": 0},
+    "ULTIMATE": {"FT_HANGAR_1":  3, "FT_HANGAR_2":  6, "FT_HANGAR_3":  9, "FT_HANGAR_4": 12, "FT_HANGAR_DRONES": 0},
 }
 
 PILOT_FIGHTER_CAPACITY_MODIFIER_DICT = {
@@ -670,6 +672,7 @@ PILOT_FIGHTER_CAPACITY_MODIFIER_DICT = {
 HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT = {
     # hangar_name: {bay_name: effect, bay_name2: effect, ...}
     "FT_HANGAR_1": {"FT_BAY_1": 2},
+    "FT_HANGAR_DRONES": {"FT_BAY_1": 4},
 }
 # </editor-fold>
 
