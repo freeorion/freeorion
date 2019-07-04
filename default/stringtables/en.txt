@@ -11793,7 +11793,7 @@ SHP_DRONES
 Interception Drones
 
 SHP_DRONES_DESC
-'''Enables an empire to build unmanned anti-fighter drones using Drone Hangars and Launch Bays. Drones are smaller and can be started more efficiently than manned spacecraft.'''
+'''Enables an empire to build unmanned drones using Drone Hangars and Launch Bays. Drones have light weapons but are powerful enough to destroy fighters. Drones are smaller and can be started more efficiently than manned spacecraft.'''
 
 SHP_WEAPON_1_2
 Mass Driver 2
@@ -13150,7 +13150,7 @@ FT_HANGAR_DRONES
 Drone Hangar
 
 FT_HANGAR_DRONES_DESC
-Storage system for a swarm of anti-fighter drones. A launch bay is able to field six drones per turn. These drones are designed to launch independently shoot down enemy fighters and draw fire. The drones not affected by the aptness of the pilots nor available weapon technology.
+Storage system for a swarm of drones for fighting fighters. A launch bay is able to field six drones per turn. These drones are designed to autonomously launch, bring down enemy fighters and draw fire. The drones will attack all moving non-friendly objects namely enemy fighters and ships. Drones not affected by the aptness of the carrier's pilots nor available weapon technology.
 
 FT_HANGAR_KRILL
 Krill Swarm
