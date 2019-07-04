@@ -2,6 +2,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
 #include "../Empire/Diplomacy.h"
+#include "../Empire/Government.h"
 #include "../Empire/InfluenceQueue.h"
 #include "../universe/Predicates.h"
 #include "../universe/UniverseObject.h"
@@ -41,6 +42,12 @@ namespace {
 
     std::vector<std::string> (TechManager::*TechNamesCategory)(const std::string&) const = &TechManager::TechNames;
     auto TechNamesCategoryMemberFunc = TechNamesCategory;
+
+    std::vector<std::string> (PolicyManager::*PolicyNamesVoid)(void) const = &PolicyManager::PolicyNames;
+    auto PolicyNamesMemberFunc = PolicyNamesVoid;
+
+    std::vector<std::string> (PolicyManager::*PolicyNamesCategory)(const std::string&) const = &PolicyManager::PolicyNames;
+    auto PolicyNamesCategoryMemberFunc = PolicyNamesCategory;
 
     std::vector<std::string>    TechRecursivePrereqs(const Tech& tech, int empire_id)
     { return GetTechManager().RecursivePrereqs(tech.Name(), empire_id); }
@@ -520,6 +527,32 @@ namespace FreeOrionPython {
             .add_property("totalSpent",             &InfluenceQueue::TotalIPsSpent)
             .add_property("empireID",               &InfluenceQueue::EmpireID)
         ;
+
+        //////////////////
+        //    Policy    //
+        //////////////////
+        class_<Policy, noncopyable>("policy", no_init)
+            .add_property("name",                   make_function(&Policy::Name,                return_value_policy<copy_const_reference>()))
+            .add_property("description",            make_function(&Policy::Description,         return_value_policy<copy_const_reference>()))
+            .add_property("shortDescription",       make_function(&Policy::ShortDescription,    return_value_policy<copy_const_reference>()))
+            .add_property("category",               make_function(&Policy::Category,            return_value_policy<copy_const_reference>()))
+            .def("adoptionCost",                    &Policy::AdoptionCost)
+        ;
+
+        def("getPolicy",                            &GetPolicy,                                 return_value_policy<reference_existing_object>(), "Returns the policy (Policy) with the indicated name (string).");
+        def("getPolicyCategories",                  &PolicyManager::PolicyCategories,           return_value_policy<return_by_value>(), "Returns the names of all policy categories (StringVec).");
+
+        boost::python::object policiesFunc = make_function(boost::bind(PolicyNamesMemberFunc, &(GetPolicyManager())),
+                                                           return_value_policy<boost::python::return_by_value>(),
+                                                           boost::mpl::vector<std::vector<std::string>>());
+        boost::python::setattr(policiesFunc, "__doc__", boost::python::str("Returns the names of all policies (StringVec)."));
+        def("policies", policiesFunc);
+
+        boost::python::object policiesInCategoryFunc = make_function(boost::bind(PolicyNamesCategoryMemberFunc, &(GetPolicyManager()), _1),
+                                                                     return_value_policy<return_by_value>(),
+                                                                     boost::mpl::vector<std::vector<std::string>, const std::string&>());
+        boost::python::setattr(policiesInCategoryFunc, "__doc__", boost::python::str("Returns the names of all policies (StringVec) in the indicated policy category name (string)."));
+        def("policiesInCategory", policiesInCategoryFunc);
 
         ///////////////////
         //  SitRepEntry  //
