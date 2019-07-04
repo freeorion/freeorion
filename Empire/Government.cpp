@@ -138,6 +138,15 @@ std::vector<std::string> PolicyManager::PolicyNames() const {
     return retval;
 }
 
+std::vector<std::string> PolicyManager::PolicyNames(const std::string& name) const {
+    CheckPendingPolicies();
+    std::vector<std::string> retval;
+    for (const auto& policy : m_policies)
+        if (policy.second->Category() == name)
+            retval.push_back(policy.first);
+    return retval;
+}
+
 std::set<std::string> PolicyManager::PolicyCategories() const {
     CheckPendingPolicies();
     std::set<std::string> retval;

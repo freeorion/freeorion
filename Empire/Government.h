@@ -82,6 +82,8 @@ public:
     /** returns the policy with the name \a name; you should use the free function GetPolicy() instead */
     const Policy*               GetPolicy(const std::string& name) const;
     std::vector<std::string>    PolicyNames() const;
+    /** returns list of names of policies in specified category */
+    std::vector<std::string>    PolicyNames(const std::string& name) const;
     std::set<std::string>       PolicyCategories() const;
     unsigned int                GetCheckSum() const;
 
