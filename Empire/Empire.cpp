@@ -207,6 +207,13 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
         return;
     }
 
+    // is category appropriate?
+    if (!policy->Category().empty() && policy->Category() != category) {
+        ErrorLogger() << "Empire::AdoptPolicy asked to handle policy " << name << " in category " << category
+                      << " but that policy has category " << policy->Category();
+        return;
+    }
+
     // check that empire has sufficient influence to adopt policy, after
     // also adopting any other policies that were first adopted this turn
     // add up all other policy adoption costs for this turn
