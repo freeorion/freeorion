@@ -315,7 +315,7 @@ namespace {
 
             std::unique_ptr<Condition::ConditionBase>{VisibleEnemyOfOwnerCondition()});
 
-    const std::unique_ptr<Condition::ConditionBase> is_enemy_ship_fighter_or_armed_planet =
+    const std::unique_ptr<Condition::ConditionBase> is_enemy_ship_fighter_or_planet =
         boost::make_unique<Condition::And>(
             std::unique_ptr<Condition::ConditionBase>{VisibleEnemyOfOwnerCondition()},  // enemies
             boost::make_unique<Condition::Or>(
@@ -329,19 +329,7 @@ namespace {
                                 boost::make_unique<ValueRef::Constant<double>>(0.0)))),
                     boost::make_unique<Condition::Type>(OBJ_FIGHTER)),
 
-                boost::make_unique<Condition::And>(
-                    boost::make_unique<Condition::Type>(OBJ_PLANET),
-                    boost::make_unique<Condition::Or>(
-                        boost::make_unique<Condition::Not>(
-                            boost::make_unique<Condition::MeterValue>(
-                                METER_DEFENSE,
-                                nullptr,
-                                boost::make_unique<ValueRef::Constant<double>>(0.0))),
-                        boost::make_unique<Condition::Not>(
-                            boost::make_unique<Condition::MeterValue>(
-                                METER_SHIELD,
-                                nullptr,
-                                boost::make_unique<ValueRef::Constant<double>>(0.0)))))));
+                boost::make_unique<Condition::Type>(OBJ_PLANET)));
 
     const std::unique_ptr<Condition::ConditionBase> if_source_is_planet_then_ships_else_all =
         boost::make_unique<Condition::Or>(
@@ -898,7 +886,7 @@ namespace {
                 int shots = static_cast<int>(ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name)); // secondary stat is shots per attack)
                 if (part_attack > 0.0f && shots > 0) {
                     if (!part_combat_targets)
-                        part_combat_targets = is_enemy_ship_fighter_or_armed_planet.get();
+                        part_combat_targets = is_enemy_ship_fighter_or_planet.get();
 
                     // attack for each shot...
                     for (int shot_count = 0; shot_count < shots; ++shot_count)
