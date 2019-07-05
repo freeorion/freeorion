@@ -7,7 +7,7 @@ Tech
     researchturns = 3
     tags = [ "PEDIA_FIGHTER_TECHS" ]
     prerequisites = [
-        "FIGHTERS_1"
+        "SHP_FIGHTERS_1"
         "LRN_ARTIF_MINDS"
     ]
     unlock = [
