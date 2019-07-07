@@ -46,6 +46,7 @@ public:
     const_iterator      end() const;
 
     int                 NumEmpires() const;
+    int                 NumEliminatedEmpires() const;
 
     DiplomaticStatus            GetDiplomaticStatus(int empire1, int empire2) const;
     std::set<int>               GetEmpireIDsWithDiplomaticStatusWithEmpire(int empire_id,

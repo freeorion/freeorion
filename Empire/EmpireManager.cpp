@@ -53,6 +53,16 @@ EmpireManager::const_iterator EmpireManager::end() const
 int EmpireManager::NumEmpires() const
 { return m_empire_map.size(); }
 
+int EmpireManager::NumEliminatedEmpires() const {
+    int eliminated_count = 0;
+
+    for (const auto& empire : m_empire_map)
+        if (empire.second->Eliminated())
+            eliminated_count++;
+
+    return eliminated_count;
+}
+
 std::string EmpireManager::Dump() const {
     std::string retval = "Empires:\n";
     for (const auto& entry : m_empire_map)

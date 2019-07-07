@@ -188,11 +188,16 @@ namespace {
             glColor(GG::CLR_WHITE);
             m_icon->OrthoBlit(ul, ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE)));
 
-            // empire color squares
-            for (const auto& empire_id : m_empire_ids) {
-                const GG::Clr& square_color = GetEmpire(empire_id)->Color();
-                GG::Pt square_ul = ul + GG::Pt(GG::X(empire_id * (ICON_SIZE + PAD)), GG::Y0);
-                GG::FlatRectangle(square_ul, square_ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE)), square_color, border_clr, DATA_PANEL_BORDER);
+            // empire color squares; move squares to the left if empire with lower id was eliminated
+            int square_position = 0;
+            for (const auto& empire : Empires()) {
+                if (empire.second->Eliminated()) continue;
+                square_position++;
+                if (std::find(m_empire_ids.begin(), m_empire_ids.end(), empire.first) != m_empire_ids.end()) {
+                    const GG::Clr& square_color = GetEmpire(empire.first)->Color();
+                    GG::Pt square_ul = ul + GG::Pt(GG::X(square_position * (ICON_SIZE + PAD)), GG::Y0);
+                    GG::FlatRectangle(square_ul, square_ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE)), square_color, border_clr, DATA_PANEL_BORDER);
+                }
             }
         }
 
@@ -502,7 +507,8 @@ namespace {
             GG::Y top(DATA_PANEL_BORDER);
             GG::Y bottom(ClientHeight());
             GG::X PAD(3);
-            int constant_width = (Empires().NumEmpires() + 1) * (IconSize() + Value(PAD));
+
+            int diplo_status_width = (Empires().NumEmpires() - Empires().NumEliminatedEmpires() + 1) * (IconSize() + Value(PAD));
 
             m_diplo_status_icon_ul = GG::Pt(left, top);
             left += GG::X(IconSize()) + PAD;
@@ -555,14 +561,14 @@ namespace {
             m_win_status_icon_ul = GG::Pt(left, top);
             left += GG::X(IconSize()) + PAD;
 
-            m_war_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + constant_width), bottom));
-            left += constant_width;
+            m_war_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + diplo_status_width), bottom));
+            left += diplo_status_width;
 
-            m_peace_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + constant_width), bottom));
-            left += constant_width;
+            m_peace_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + diplo_status_width), bottom));
+            left += diplo_status_width;
 
-            m_allied_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + constant_width), bottom));
-            left += constant_width;
+            m_allied_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + diplo_status_width), bottom));
+            left += diplo_status_width;
 
         }
 
