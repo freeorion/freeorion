@@ -370,6 +370,10 @@ namespace FreeOrionPython {
             .add_property("adoptedPolicies",        &Empire::AdoptedPolicies)
             .add_property("categoriesSlotPolicies", &Empire::CategoriesSlotsPoliciesAdopted)
             .add_property("turnsPoliciesAdopted",   &Empire::TurnsPoliciesAdopted)
+            .add_property("availablePolicies",      &Empire::AvailablePolicies)
+            .def("policyAvailable",                 &Empire::PolicyAvailable)
+            .add_property("totalPolicySlots",       &Empire::TotalPolicySlots)
+            .add_property("emptyPolicySlots",       &Empire::EmptyPolicySlots)
 
             .def("canBuild",                        BuildableItemBuilding)
             .def("canBuild",                        BuildableItemShip)
