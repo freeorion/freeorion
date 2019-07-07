@@ -3946,8 +3946,17 @@ Diplomatie
 PEACE
 Paix
 
+AT_PEACE_WITH
+En paix avec
+
 WAR
 Guerre
+
+AT_WAR_WITH
+En guerre avec
+
+ALLIED_WITH
+Allié avec
 
 WAR_DECLARATION
 Déclarer la guerre
