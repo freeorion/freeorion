@@ -47,6 +47,13 @@ STANDARD_CONSTRUCTION
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetConstruction value = Value + min(max(Value(Target.TargetConstruction) - Value, -1), 1)
+
+        EffectsGroup    // always ensure minimum value of one, as this is necessary for being attacked
+            scope = Source
+            activation = Planet
+            // has to happen after e.g. FORCE_ENERGY_STRC effects which also happens at AFTER_ALL_TARGET_MAX_METERS_PRIORITY
+            priority = [[METER_OVERRIDE_PRIORITY]]
+            effects = SetConstruction value = max(Value, 1)
 '''
 
 FOCUS_CHANGE_PENALTY
