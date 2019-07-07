@@ -293,10 +293,24 @@ namespace FreeOrionPython {
         boost::python::to_python_converter<FloatIntPair, FloatIntPairConverter>();
 
         class_<ResourcePool, std::shared_ptr<ResourcePool>, boost::noncopyable>("resPool", boost::python::no_init);
+
         //FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
         FreeOrionPython::SetWrapper<IntSet>::Wrap("IntSetSet");
+
         class_<std::map<std::set<int>, float>>("resPoolMap")
             .def(boost::python::map_indexing_suite<std::map<std::set<int>, float>, true>())
+        ;
+
+        class_<std::map<std::string, int>>("StringIntMap")
+            .def(boost::python::map_indexing_suite<std::map<std::string, int>, true>())
+        ;
+
+        class_<std::map<int, std::string>>("IntStringMap")
+            .def(boost::python::map_indexing_suite<std::map<int, std::string>, true>())
+        ;
+
+        class_<std::map<std::string, std::map<int, std::string>>>("String_IntStringMap_Map")
+            .def(boost::python::map_indexing_suite<std::map<std::string, std::map<int, std::string>>, true>())
         ;
 
         ///////////////////
@@ -349,6 +363,13 @@ namespace FreeOrionPython {
             .def("getTechStatus",                   &Empire::GetTechStatus)
             .def("researchProgress",                &Empire::ResearchProgress)
             .add_property("researchQueue",          make_function(&Empire::GetResearchQueue,        return_internal_reference<>()))
+
+            .def("policyAdopted",                   &Empire::PolicyAdopted)
+            .def("turnPolicyAdopted",               &Empire::TurnPolicyAdopted)
+            .def("slotPolicyAdoptedIn",             &Empire::SlotPolicyAdoptedIn)
+            .add_property("adoptedPolicies",        &Empire::AdoptedPolicies)
+            .add_property("categoriesSlotPolicies", &Empire::CategoriesSlotsPoliciesAdopted)
+            .add_property("turnsPoliciesAdopted",   &Empire::TurnsPoliciesAdopted)
 
             .def("canBuild",                        BuildableItemBuilding)
             .def("canBuild",                        BuildableItemShip)
@@ -526,6 +547,9 @@ namespace FreeOrionPython {
                                                     ))
             .add_property("totalSpent",             &InfluenceQueue::TotalIPsSpent)
             .add_property("empireID",               &InfluenceQueue::EmpireID)
+
+            .add_property("allocatedStockpileIP",   &InfluenceQueue::AllocatedStockpileIP)
+            .add_property("expectedNewStockpile",   &InfluenceQueue::ExpectedNewStockpileAmount)
         ;
 
         //////////////////
