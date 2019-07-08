@@ -194,7 +194,7 @@ namespace {
                 if (empire.second->Eliminated()) continue;
                 square_position++;
                 if (std::find(m_empire_ids.begin(), m_empire_ids.end(), empire.first) != m_empire_ids.end()) {
-                    const GG::Clr& square_color = GetEmpire(empire.first)->Color();
+                    const GG::Clr& square_color = empire.second->Color();
                     GG::Pt square_ul = ul + GG::Pt(GG::X(square_position * (ICON_SIZE + PAD)), GG::Y0);
                     GG::FlatRectangle(square_ul, square_ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE)), square_color, border_clr, DATA_PANEL_BORDER);
                 }
