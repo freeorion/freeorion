@@ -367,13 +367,13 @@ namespace FreeOrionPython {
             .def("policyAdopted",                   &Empire::PolicyAdopted)
             .def("turnPolicyAdopted",               &Empire::TurnPolicyAdopted)
             .def("slotPolicyAdoptedIn",             &Empire::SlotPolicyAdoptedIn)
-            .add_property("adoptedPolicies",        &Empire::AdoptedPolicies)
-            .add_property("categoriesSlotPolicies", &Empire::CategoriesSlotsPoliciesAdopted)
-            .add_property("turnsPoliciesAdopted",   &Empire::TurnsPoliciesAdopted)
-            .add_property("availablePolicies",      &Empire::AvailablePolicies)
+            .add_property("adoptedPolicies",        make_function(&Empire::AdoptedPolicies,                 return_value_policy<return_by_value>()))
+            .add_property("categoriesSlotPolicies", make_function(&Empire::CategoriesSlotsPoliciesAdopted,  return_value_policy<return_by_value>()))
+            .add_property("turnsPoliciesAdopted",   make_function(&Empire::TurnsPoliciesAdopted,            return_value_policy<return_by_value>()))
+            .add_property("availablePolicies",      make_function(&Empire::AvailablePolicies,               return_value_policy<copy_const_reference>()))
             .def("policyAvailable",                 &Empire::PolicyAvailable)
-            .add_property("totalPolicySlots",       &Empire::TotalPolicySlots)
-            .add_property("emptyPolicySlots",       &Empire::EmptyPolicySlots)
+            .add_property("totalPolicySlots",       make_function(&Empire::TotalPolicySlots,                return_value_policy<return_by_value>()))
+            .add_property("emptyPolicySlots",       make_function(&Empire::EmptyPolicySlots,                return_value_policy<return_by_value>()))
 
             .def("canBuild",                        BuildableItemBuilding)
             .def("canBuild",                        BuildableItemShip)
@@ -392,7 +392,7 @@ namespace FreeOrionPython {
 
             .def("population",                      &Empire::Population)
 
-            .def("preservedLaneTravel",          &Empire::PreservedLaneTravel)
+            .def("preservedLaneTravel",             &Empire::PreservedLaneTravel)
             .add_property("fleetSupplyableSystemIDs",   make_function(
                                                             empireFleetSupplyableSystemIDsFunc,
                                                             return_value_policy<copy_const_reference>(),
