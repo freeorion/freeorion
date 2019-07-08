@@ -327,11 +327,65 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
                   << m_adopted_policies[name].adoption_turn;
 }
 
-void Empire::AuditPolicies() {
-    // todo: make sure all adopted policies are allowed to be adopted by this
-    //       empire, and revoke any that aren't allowed, such as due to not
-    //       having enough slots of the relevant type.
+void Empire::UpdatePolicies() {
+    // remove any unrecognized policies and uncategorized policies
+    auto policies_temp = m_adopted_policies;
+    for (auto policy_pair : policies_temp) {
+        const auto* policy = GetPolicy(policy_pair.first);
+        if (!policy) {
+            ErrorLogger() << "UpdatePolicies couldn't find policy with name: " << policy_pair.first;
+            m_adopted_policies.erase(policy_pair.first);
+            continue;
+        }
 
+        if (policy_pair.second.category.empty()) {
+            ErrorLogger() << "UpdatePolicies found policy " << policy_pair.first << " in empty category?";
+            m_adopted_policies.erase(policy_pair.first);
+        }
+    }
+
+    // check that there are enough slots for adopted policies in their current slots
+    std::map<std::string, int> total_category_slot_counts = TotalPolicySlots(); // how many slots in each category
+    std::set<std::string> categories_needing_rearrangement;                     // which categories have a problem
+    std::map<std::string, std::map<int, int>> category_slot_policy_counts;      // how many policies in each slot of each category
+    for (auto policy_pair : m_adopted_policies) {
+        const auto& cat = policy_pair.second.category;
+        const auto& slot = policy_pair.second.slot_in_category;
+        const auto& slot_count = category_slot_policy_counts[cat][slot]++;
+        if (slot_count > 1 || policy_pair.second.slot_in_category >= total_category_slot_counts[cat])
+        { categories_needing_rearrangement.insert(cat); }
+    }
+
+    // if a category has too many policies or a slot number conflict, rearrange it
+    // and remove the excess policies
+    for (const auto& cat : categories_needing_rearrangement) {
+        policies_temp = m_adopted_policies;
+
+        // all adopted policies in this category, sorted by slot and adoption turn (lower first)
+        std::multimap<std::pair<int, int>, std::string> slots_turns_policies;
+        for (auto policy_pair : policies_temp) {
+            if (policy_pair.second.category != cat)
+                continue;
+            auto slot = policy_pair.second.slot_in_category;
+            auto turn = policy_pair.second.adoption_turn;
+            slots_turns_policies.insert(std::make_pair(std::make_pair(slot, turn), policy_pair.first));
+            m_adopted_policies.erase(policy_pair.first);    // remove everything from adopted policies in this category...
+        }
+        // re-add in category up to limit, ordered priority by original slot and adoption turn
+        int added = 0;
+        for (auto slot_turn_policy_pair : slots_turns_policies) {
+            if (added >= total_category_slot_counts[cat])
+                break;  // can't add more...
+            m_adopted_policies[slot_turn_policy_pair.second] = {
+                slot_turn_policy_pair.first.second, cat, slot_turn_policy_pair.first.first};
+        }
+    }
+
+    // update counters of how many turns each policy has been adopted
+    for (auto policy_pair : m_adopted_policies)
+        m_policy_adoption_total_duration[policy_pair.first]++;  // assumes default initialization to 0
+
+    // update initial adopted policies for next turn
     m_initial_adopted_policies = m_adopted_policies;
 }
 

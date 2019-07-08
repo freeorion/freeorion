@@ -204,14 +204,16 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_techs);
 
-        if (Archive::is_loading::value && version < 3) {
+        if (Archive::is_loading::value && version < 4) {
             m_adopted_policies.clear();
             m_initial_adopted_policies.clear();
             m_available_policies.clear();
+            m_policy_adoption_total_duration.clear();
         } else {
             ar  & BOOST_SERIALIZATION_NVP(m_adopted_policies)
                 & BOOST_SERIALIZATION_NVP(m_initial_adopted_policies)
-                & BOOST_SERIALIZATION_NVP(m_available_policies);
+                & BOOST_SERIALIZATION_NVP(m_available_policies)
+                & BOOST_SERIALIZATION_NVP(m_policy_adoption_total_duration);
         }
     }
 

@@ -3158,11 +3158,11 @@ namespace {
             planet->UpdateFocusHistory();
     }
 
-    /** Check validity of adopted policies, and overwrite initial adopted
-      * policies with those currently adopted */
+    /** Check validity of adopted policies, overwrite initial adopted
+      * policies with those currently adopted, update adopted turns counters. */
     void UpdateEmpirePolicies() {
         for (auto id_empire_pair : Empires())
-            id_empire_pair.second->AuditPolicies();
+            id_empire_pair.second->UpdatePolicies();
     }
 
     /** Deletes empty fleets. */
