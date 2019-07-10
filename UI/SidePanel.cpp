@@ -1847,7 +1847,7 @@ void SidePanel::PlanetPanel::Refresh() {
         std::shared_ptr<GG::Texture> planet_status_texture;
 
         // status: no supply
-        if (!GetSupplyManager().SystemHasFleetSupply(planet->SystemID(), planet->Owner())) {
+        if (!GetSupplyManager().SystemHasFleetSupply(planet->SystemID(), planet->Owner(), true)) {
             planet_status_messages.emplace_back(boost::io::str(FlexibleFormat(
                                                 UserString("OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY")) % planet->Name()));
             planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_supply.png", true);
