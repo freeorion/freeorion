@@ -341,6 +341,11 @@ namespace {
                             boost::make_unique<Condition::MeterValue>(
                                 METER_SHIELD,
                                 nullptr,
+                                boost::make_unique<ValueRef::Constant<double>>(0.0))),
+                        boost::make_unique<Condition::Not>(
+                            boost::make_unique<Condition::MeterValue>(
+                                METER_CONSTRUCTION,
+                                nullptr,
                                 boost::make_unique<ValueRef::Constant<double>>(0.0)))))));
 
     const std::unique_ptr<Condition::ConditionBase> if_source_is_planet_then_ships_else_all =
