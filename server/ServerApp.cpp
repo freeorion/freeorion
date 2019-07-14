@@ -1769,15 +1769,19 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
         return false;
     }
 
-    // test if there other human players in the game
+    // test if there other human or disconnected players in the game
     bool other_human_player = false;
     for (auto& empires : Empires()) {
         if (!empires.second->Eliminated() &&
-            empire_id != empires.second->EmpireID() &&
-            GetEmpireClientType(empires.second->EmpireID()) == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+            empire_id != empires.second->EmpireID())
         {
-            other_human_player = true;
-            break;
+            Networking::ClientType other_client_type = GetEmpireClientType(empires.second->EmpireID());
+            if (other_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+                other_client_type == Networking::INVALID_CLIENT_TYPE)
+            {
+                other_human_player = true;
+                break;
+            }
         }
     }
     if (!other_human_player) {
