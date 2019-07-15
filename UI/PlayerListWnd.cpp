@@ -809,7 +809,6 @@ void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id
 
     if (!active_message)
         StopFlash();
-
 }
 
 

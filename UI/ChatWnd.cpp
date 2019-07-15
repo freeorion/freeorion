@@ -591,7 +591,7 @@ void MessageWnd::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
         ErrorLogger() << "MessageWnd::HandleDiplomaticStatusChange: no valid diplomatic status found.";
     }
 
-    *m_display += text;
+    *m_display += text + "\n";
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
 
     // if client empire is target of diplomatic status change, show message window
