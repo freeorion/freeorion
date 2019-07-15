@@ -70,16 +70,6 @@ namespace {
         }
         return ALL_EMPIRES;
     }
-
-    std::string ColorToRgbTag(const GG::Clr color) {
-        std::string color_str = "<rgba ";
-        color_str += std::to_string(color.r) + " ";
-        color_str += std::to_string(color.g) + " ";
-        color_str += std::to_string(color.b) + " ";
-        color_str += std::to_string(color.a) + ">";
-
-        return color_str;
-    }
 };
 
 
@@ -3651,42 +3641,11 @@ void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
     DiplomaticStatus status = Empires().GetDiplomaticStatus(empire1_id, empire2_id);
     DiplomaticStatusUpdateInfo update(empire1_id, empire2_id, status);
 
-    boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
-    std::string text;
-
-    const Empire* empire1 = GetEmpire(empire1_id);
-    const Empire* empire2 = GetEmpire(empire2_id);
-
-    std::string empire1_clr_str = ColorToRgbTag(empire1->Color());
-    std::string empire2_clr_str = ColorToRgbTag(empire2->Color());
-    std::string white_clr_str = "<rgba 255 255 255 255>";
-
-    switch (status) {
-    case DIPLO_WAR:
-        text = "[[MESSAGES_WAR_DECLARATION,"
-            + empire1_clr_str + empire1->Name() + white_clr_str + ","
-            + empire2_clr_str + empire2->Name() + white_clr_str + "]]";
-        break;
-    case DIPLO_PEACE:
-        text = "[[MESSAGES_PEACE_TREATY,"
-            + empire1_clr_str + empire1->Name() + white_clr_str + ","
-            + empire2_clr_str + empire2->Name() + white_clr_str + "]]";
-        break;
-    case DIPLO_ALLIED:
-        text = "[[MESSAGES_ALLIANCE,"
-            + empire1_clr_str + empire1->Name() + white_clr_str + ","
-            + empire2_clr_str + empire2->Name() + white_clr_str + "]]";
-        break;
-    default:
-        ErrorLogger() << "ServerApp::HandleDiplomaticStatusChange: no valid diplomatic status found.";
-    }
-
     for (auto player_it = m_networking.established_begin();
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
         player->SendMessage(DiplomaticStatusMessage(update));
-        player->SendMessage(ServerPlayerChatMessage(Networking::INVALID_PLAYER_ID, timestamp, text));
     }
 }
 
