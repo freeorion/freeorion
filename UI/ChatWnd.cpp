@@ -491,7 +491,7 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
     // if client empire is target of message, show message window
     const ClientApp* app = ClientApp::GetApp();
     if (!app) {
-        ErrorLogger() << "MessageWnd::HandleDiplomaticStatusChange couldn't get client app!";
+        ErrorLogger() << "MessageWnd::HandlePlayerChatMessage couldn't get client app!";
         return;
     }
     int client_empire_id = app->EmpireID();  
