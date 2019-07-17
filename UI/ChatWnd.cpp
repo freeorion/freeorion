@@ -557,33 +557,38 @@ namespace {
                 net.SendMessage(PlayerChatMessage(text, recipient_id));
         }
     }
+}
 
-    void HandleTextCommand(const std::string& text) {
-        if (text.size() < 2)
-            return;
+void MessageWnd::HandleTextCommand(const std::string& text) {
+    if (text.size() < 2)
+        return;
 
-        // extract command and parameters substrings
-        std::string command, params;
-        std::string::size_type space_pos = text.find_first_of(' ');
-        command = boost::trim_copy(text.substr(1, space_pos));
-        if (command.empty())
-            return;
-        if (space_pos != std::string::npos)
-            params = boost::trim_copy(text.substr(space_pos, std::string::npos));
+    // extract command and parameters substrings
+    std::string command, params;
+    std::string::size_type space_pos = text.find_first_of(' ');
+    command = boost::trim_copy(text.substr(1, space_pos));
+    if (command.empty())
+        return;
+    if (space_pos != std::string::npos)
+        params = boost::trim_copy(text.substr(space_pos, std::string::npos));
 
-        ClientUI* client_ui = ClientUI::GetClientUI();
-        if (!client_ui)
-            return;
+    ClientUI* client_ui = ClientUI::GetClientUI();
+    if (!client_ui)
+        return;
 
-        // execute command matching understood syntax
-        if (boost::iequals(command, "zoom") && !params.empty()) {
-            client_ui->ZoomToObject(params) || client_ui->ZoomToContent(params, true);   // params came from chat, so will be localized, so should be reverse looked up to find internal name from human-readable name for zooming to content
-        } else if (boost::iequals(command, "pedia")) {
-            if (params.empty())
-                client_ui->ZoomToEncyclopediaEntry(UserStringNop("ENC_INDEX"));
-            else
-                client_ui->ZoomToContent(params, true);
-        }
+    // execute command matching understood syntax
+    if (boost::iequals(command, "zoom") && !params.empty()) {
+        client_ui->ZoomToObject(params) || client_ui->ZoomToContent(params, true);   // params came from chat, so will be localized, so should be reverse looked up to find internal name from human-readable name for zooming to content
+    }
+    else if (boost::iequals(command, "pedia")) {
+        if (params.empty())
+            client_ui->ZoomToEncyclopediaEntry(UserStringNop("ENC_INDEX"));
+        else
+            client_ui->ZoomToContent(params, true);
+    }
+    else if (boost::iequals(command, "help")) {
+        *m_display += UserString("MESSAGES_HELP_COMMAND") + "\n";
+        m_display_show_time = GG::GUI::GetGUI()->Ticks();
     }
 }
 
