@@ -6224,9 +6224,13 @@ MESSAGES_ALLIANCE
 %1% and %2% have entered an alliance.
 
 MESSAGES_HELP_COMMAND
-'''/pedia [article]: open the specified article in the pedia.
+'''/pedia [article]: open the specified article in the pedia
+/pm [player] [message]: sends private message to specified player
 /zoom [object]: zoom to the specified universe object (system, planet, ship, fleet or building)
 '''
+
+MESSAGES_PLAYER_NOT_FOUND
+Specified player not found.
 
 
 ##

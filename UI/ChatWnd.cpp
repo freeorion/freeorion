@@ -622,6 +622,35 @@ namespace {
                 net.SendMessage(PlayerChatMessage(text, recipient_id));
         }
     }
+
+    int ExtractPlayerID(const std::string& text) {
+        const ClientApp* app = ClientApp::GetApp();
+        if (!app) {
+            ErrorLogger() << "ChatWnd.cpp ExtractPlayerID couldn't get client app!";
+            return Networking::INVALID_PLAYER_ID;
+        }
+        const std::map<int, PlayerInfo>& players = app->Players();
+        std::string::size_type space_pos = text.find_first_of(' ');
+        std::string player_name = boost::trim_copy(text.substr(0, space_pos));
+
+        DebugLogger() << "ChatWnd::ExtractPlayerID name " << player_name;
+
+        for (auto& player : players) {
+            if (boost::iequals(player.second.name, player_name)) {
+                return player.first;
+            }
+        }
+
+        return Networking::INVALID_PLAYER_ID;
+    }
+
+    std::string ExtractMessage(const std::string& text) {
+        std::string::size_type space_pos = text.find_first_of(' ');
+        std::string message = boost::trim_copy(text.substr(space_pos, std::string::npos));
+        DebugLogger() << "ChatWnd::ExtractMessage " << message;
+        return message;
+    }
+
 }
 
 void MessageWnd::HandleTextCommand(const std::string& text) {
@@ -654,6 +683,20 @@ void MessageWnd::HandleTextCommand(const std::string& text) {
     else if (boost::iequals(command, "help")) {
         *m_display += UserString("MESSAGES_HELP_COMMAND") + "\n";
         m_display_show_time = GG::GUI::GetGUI()->Ticks();
+    }
+    else if (boost::iequals(command, "pm")) {
+        int player_id = ExtractPlayerID(params);
+        std::string message = ExtractMessage(params);
+
+        if (player_id != Networking::INVALID_PLAYER_ID) {
+            std::set<int> recipient;
+            recipient.insert(player_id);
+            SendChatMessage(message, recipient);
+            DebugLogger() << "ChatWnd::HandleTextCommand: send message " << message << " to player id " << player_id;
+        }
+        else {
+            *m_display += UserString("MESSAGES_PLAYER_NOT_FOUND") + "\n";
+        }
     }
 }
 
