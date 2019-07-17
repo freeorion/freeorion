@@ -50,6 +50,7 @@ private:
     void            LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
 
     void            DoLayout();
+    void            HandleTextCommand(const std::string& text);
     void            MessageEntered();
     void            MessageHistoryUpRequested();
     void            MessageHistoryDownRequested();

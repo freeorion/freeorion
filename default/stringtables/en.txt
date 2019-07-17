@@ -6223,6 +6223,11 @@ MESSAGES_PEACE_TREATY
 MESSAGES_ALLIANCE
 %1% and %2% have entered an alliance.
 
+MESSAGES_HELP_COMMAND
+'''/pedia [article]: open the specified article in the pedia.
+/zoom [object]: zoom to the specified universe object (system, planet, ship, fleet or building)
+'''
+
 
 ##
 ## Players list
