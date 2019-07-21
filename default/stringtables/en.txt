@@ -6186,7 +6186,7 @@ Messages
 
 MESSAGES_HELP_COMMAND
 '''/pedia [article]: open the specified article in the pedia.
-/zoom [object]: zoom to the specified universe object (system, planet, ship, fleet or building)
+/zoom [object]: zoom to the specified universe object (system, planet, ship, fleet, or building)
 '''
 
 
