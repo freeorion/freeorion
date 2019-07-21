@@ -171,7 +171,7 @@ namespace {
                 const Empire* empire = GetEmpire(empire_id);
                 if (!empire) continue;
 
-                tooltip_text += GG::RgbaTag(empire->Color()) + empire->Name();
+                tooltip_text += GG::RgbaTag(empire->Color()) + empire->Name() + "\n";
             }
 
             // add tooltip
