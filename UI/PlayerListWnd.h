@@ -35,7 +35,8 @@ public:
     mutable boost::signals2::signal<void ()>    ClosingSignal;
 
 private:
-    void CloseClicked() override;
+    void            CloseClicked() override;
+    void            LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     void            DoLayout();
 
