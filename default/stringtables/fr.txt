@@ -7456,7 +7456,8 @@ SP_HHHOH  # translated
 Hhhoh
 
 SP_HHHOH_GAMEPLAY_DESC
-'''Mammouths gigantesques et lents, dotés d'une multi-trompe.
+'''<img src="species/preview/hhhoh.png"></img>
+Mammouths gigantesques et lents, dotés d'une multi-trompe.
 Préfèrent les Planètes [[PT_TUNDRA]].
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -7468,6 +7469,8 @@ Les Hhhoh se déplacent à l'aide de leurs deux puissantes pattes avant, tandis 
 
 Comportement:
 Les Hhhoh se considèrent comme des pragmatiques sociables. Les anciens sont vénérés et respectés, et peuvent atteindre un âge de 230 ans. Leur particularité physique et leur physiologie font que cette espèce a une aversion pour les comportements hâtifs et les décisions précipitées.
+
+<img src="species/hhhoh.png"></img>
 '''
 
 SP_EAXAW  # translated
