@@ -1026,16 +1026,6 @@ class ShipDesigner(object):
         else:
             parse_tokens(AIDependencies.HULL_EFFECTS[self.hull.name], is_hull=True)
 
-        # fuel effects
-        if not ignore_species:
-            self.design_stats.fuel += _get_species_fuel_bonus(self.species)
-        # TODO tech hull fuel effects
-        # set fuel to zero for NO_FUEL species (-100 fuel bonus)
-        if self.design_stats.fuel < 0:
-            self.design_stats.fuel = 0
-        else:
-            self.design_stats.fuel *= self._hull_fuel_efficiency()
-
         for partname in set(self.partnames):
             if partname in AIDependencies.PART_EFFECTS:
                 parse_tokens(AIDependencies.PART_EFFECTS[partname])
@@ -1043,6 +1033,15 @@ class ShipDesigner(object):
         for tech in AIDependencies.TECH_EFFECTS:
             if tech_is_complete(tech):
                 parse_tokens(AIDependencies.TECH_EFFECTS[tech])
+
+        # fuel effects (besides already handled FUEL TECH_EFFECTS e.g. GRO_ENERGY_META)
+        if not ignore_species:
+            self.design_stats.fuel += _get_species_fuel_bonus(self.species)
+        # set fuel to zero for NO_FUEL species (-100 fuel bonus)
+        if self.design_stats.fuel < 0:
+            self.design_stats.fuel = 0
+        else:
+            self.design_stats.fuel *= self._hull_fuel_efficiency()
 
     def add_design(self, verbose=True):
         """Add a real (i.e. gameobject) ship design of the current configuration.

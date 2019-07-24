@@ -781,7 +781,7 @@ TECH_EFFECTS = {
     "SHP_FLEET_REPAIR": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # 10% of max structure
     "SHP_ADV_DAM_CONT": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # 10% of max structure
     "SHP_INTSTEL_LOG": {SPEED: 20},  # technically not correct, but as approximation good enough...
-    "GRO_ENERGY_META": {FUEL: 2},
+    "GRO_ENERGY_META": {FUEL: 1},
 }
 
 DEFAULT_FUEL_EFFICIENCY = 1
