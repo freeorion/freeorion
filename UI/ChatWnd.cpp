@@ -429,6 +429,9 @@ void MessageWnd::CompleteConstruction() {
 
     m_history.push_front("");
 
+    Empires().DiplomaticStatusChangedSignal.connect(
+        boost::bind(&MessageWnd::HandleDiplomaticStatusChange, this, _1, _2));
+
     DoLayout();
     SaveDefaultedOptions();
 }
@@ -441,8 +444,13 @@ void MessageWnd::DoLayout() {
                      GG::Pt(ClientWidth() - GG::X(CUIWnd::INNER_BORDER_ANGLE_OFFSET), ClientHeight()));
 }
 
-void MessageWnd::CloseClicked()
-{ ClosingSignal(); }
+void MessageWnd::CloseClicked() {
+    StopFlash();
+    ClosingSignal();
+}
+
+void MessageWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ StopFlash(); }
 
 void MessageWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
@@ -479,6 +487,18 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
 
     *m_display += wrapped_text + "\n";
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
+
+    // if client empire is target of message, show message window
+    const ClientApp* app = ClientApp::GetApp();
+    if (!app) {
+        ErrorLogger() << "MessageWnd::HandlePlayerChatMessage couldn't get client app!";
+        return;
+    }
+    int client_empire_id = app->EmpireID();  
+    if (recipient_player_id == client_empire_id) {
+        Flash();
+        Show();
+    }
 }
 
 void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, bool prefixed /*= false*/) {
@@ -535,6 +555,50 @@ void MessageWnd::HandleGameStatusUpdate(const std::string& text) {
 void MessageWnd::HandleLogMessage(const std::string& text) {
     *m_display += text;
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
+}
+
+void MessageWnd::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
+    const ClientApp* app = ClientApp::GetApp();
+    if (!app) {
+        ErrorLogger() << "MessageWnd::HandleDiplomaticStatusChange couldn't get client app!";
+        return;
+    }
+
+    int client_empire_id = app->EmpireID();
+    DiplomaticStatus status = Empires().GetDiplomaticStatus(empire1_id, empire2_id);
+    std::string text;
+
+    const Empire* empire1 = GetEmpire(empire1_id);
+    const Empire* empire2 = GetEmpire(empire2_id);
+
+    std::string empire1_str = GG::RgbaTag(empire1->Color()) + empire1->Name() + "</rgba>";
+    std::string empire2_str = GG::RgbaTag(empire2->Color()) + empire2->Name() + "</rgba>";
+
+    switch (status) {
+    case DIPLO_WAR:
+        text = boost::str(FlexibleFormat(UserString("MESSAGES_WAR_DECLARATION"))
+                   % empire1_str % empire2_str);
+        break;
+    case DIPLO_PEACE:
+        text = boost::str(FlexibleFormat(UserString("MESSAGES_PEACE_TREATY"))
+                   % empire1_str % empire2_str);
+        break;
+    case DIPLO_ALLIED:
+        text = boost::str(FlexibleFormat(UserString("MESSAGES_ALLIANCE"))
+                   % empire1_str % empire2_str);
+        break;
+    default:
+        ErrorLogger() << "MessageWnd::HandleDiplomaticStatusChange: no valid diplomatic status found.";
+    }
+
+    *m_display += text + "\n";
+    m_display_show_time = GG::GUI::GetGUI()->Ticks();
+
+    // if client empire is target of diplomatic status change, show message window
+    if (empire2_id == client_empire_id) {
+        Flash();
+        Show();
+    }
 }
 
 void MessageWnd::Clear()
@@ -617,6 +681,7 @@ void MessageWnd::MessageEntered() {
     }
 
     m_edit->Clear();
+    StopFlash();
 }
 
 void MessageWnd::MessageHistoryUpRequested() {

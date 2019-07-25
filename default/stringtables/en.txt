@@ -6184,6 +6184,18 @@ Received unexpected turn update from server.
 MESSAGES_PANEL_TITLE
 Messages
 
+# %1% and %2% are color coded empire names
+MESSAGES_WAR_DECLARATION
+%1% and %2% are now at war.
+
+# %1% and %2% are color coded empire names
+MESSAGES_PEACE_TREATY
+%1% and %2% are now at peace.
+
+# %1% and %2% are color coded empire names
+MESSAGES_ALLIANCE
+%1% and %2% have entered an alliance.
+
 
 ##
 ## Players list

@@ -25,6 +25,12 @@ namespace {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ai.png");
         return retval;
     }
+
+    std::shared_ptr<GG::Texture> MessageIcon() {
+        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png");
+        return retval;
+    }
+
     std::shared_ptr<GG::Texture> HumanIcon() {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "human.png");
         return retval;
@@ -325,6 +331,12 @@ namespace {
                 }
             }
 
+            // render incoming diplomatic message icon, if there is one
+            const DiplomaticMessage& incoming_message_to_client =
+                Empires().GetDiplomaticMessage(m_player_id, app->PlayerID());
+            if (incoming_message_to_client.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
+                MessageIcon()->OrthoBlit(UpperLeft() + m_diplo_msg_ul, UpperLeft() + m_diplo_msg_ul + ICON_SIZE);
+
             // render player status icon
             switch (m_player_status) {
             case Message::PLAYING_TURN:     PlayingIcon()->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
@@ -513,6 +525,9 @@ namespace {
             m_diplo_status_icon_ul = GG::Pt(left, top);
             left += GG::X(IconSize()) + PAD;
 
+            m_diplo_msg_ul = GG::Pt(left, top);
+            left += GG::X(IconSize());
+
             //m_player_name_text->SizeMove(GG::Pt(left, top), GG::Pt(left + PLAYER_NAME_WIDTH, bottom));
             //left += PLAYER_NAME_WIDTH;
 
@@ -587,6 +602,7 @@ namespace {
         std::shared_ptr<DiplomaticStatusIndicator> m_allied_indicator;
 
         GG::Pt                  m_diplo_status_icon_ul;
+        GG::Pt                  m_diplo_msg_ul;
         GG::Pt                  m_ship_icon_ul;
         GG::Pt                  m_planet_icon_ul;
         GG::Pt                  m_production_icon_ul;
@@ -730,7 +746,7 @@ void PlayerListWnd::CompleteConstruction() {
     Empires().DiplomaticStatusChangedSignal.connect(
         boost::bind(&PlayerListWnd::Update, this));
     Empires().DiplomaticMessageChangedSignal.connect(
-        boost::bind(&PlayerListWnd::Update, this));
+        boost::bind(&PlayerListWnd::PlayerListWnd::HandleDiplomaticMessageChange, this, _1, _2));
     DoLayout();
 
     Refresh();
@@ -761,6 +777,40 @@ void PlayerListWnd::HandleEmpireStatusUpdate(Message::PlayerStatus player_status
         }
     }
 }
+
+void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id) {
+    Update();
+
+    const ClientApp* app = ClientApp::GetApp();
+    if (!app) {
+        ErrorLogger() << "PlayerListWnd::HandleDiplomaticMessageChange couldn't get client app!";
+        return;
+    }
+    int client_empire_id = app->PlayerID();
+
+    DiplomaticMessage message = Empires().GetDiplomaticMessage(empire1_id, empire2_id);
+    bool active_message = message.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE;
+
+    // only show PlayerListWnd if there is a new diplomatic offer for the client empire
+    if (active_message && (empire2_id == client_empire_id)) {
+        Show();
+        Flash();
+    };
+
+    // if there is no more pending messages, stop flashing
+    active_message = false;
+    for (const auto& empire : Empires()) {
+        message = Empires().GetDiplomaticMessage(empire.first, client_empire_id);
+        if (message.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE) {
+            active_message = true;
+            break;
+        }
+    }
+
+    if (!active_message)
+        StopFlash();
+}
+
 
 void PlayerListWnd::Update() {
     for (auto& row : *m_player_list) {
@@ -852,8 +902,13 @@ void PlayerListWnd::DoLayout()
         m_player_list->SizeMove(GG::Pt(), GG::Pt(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)));
 }
 
-void PlayerListWnd::CloseClicked()
-{ ClosingSignal(); }
+void PlayerListWnd::CloseClicked() {
+    ClosingSignal();
+    StopFlash();
+}
+
+void PlayerListWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ StopFlash(); }
 
 void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     // mark as selected all PlayerDataPanel that are in \a rows and mark as not
