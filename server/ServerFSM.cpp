@@ -430,6 +430,7 @@ void ServerFSM::UpdateIngameLobby() {
     dummy_lobby_data.m_any_can_edit = false;
     dummy_lobby_data.m_new_game = false;
     dummy_lobby_data.m_start_locked = true;
+    dummy_lobby_data.m_save_game_current_turn = m_server.CurrentTurn();
     for (auto player_it = m_server.m_networking.established_begin();
         player_it != m_server.m_networking.established_end(); ++player_it)
     {
