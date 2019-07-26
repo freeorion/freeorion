@@ -1680,7 +1680,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         try {
             LoadEmpireSaveGameData((save_dir / m_lobby_data->m_save_game).string(),
                                    m_lobby_data->m_save_game_empire_data,
-                                   player_save_header_data);
+                                   player_save_header_data,
+                                   *m_lobby_data);
 
             // read all AI players from save game and add them into current lobby
             // with appropriate empire's data
