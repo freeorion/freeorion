@@ -5981,7 +5981,7 @@ SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Уничтожена ничейная планета
 
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
-Уничтожено строение %building% империи %empire%, на планете %planet%, в системе %system%.
+Уничтожено строение %building% империи %empire% на планете %planet% в системе %system%.
 
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
 Уничтожено строение империи
@@ -6020,7 +6020,7 @@ SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM
 В %system%: планета %planet% была атакована.
 
 SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM_LABEL
-Ничейная планета была атакована
+Планета была атакована
 
 SITREP_GROUND_BATTLE
 Наземная битва на планете %planet%.
@@ -6113,7 +6113,7 @@ SITREP_POP_THRESHOLD_LABEL
 Порог колонизации
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
-Внимание: Наблюдения за %rawtext% %predefinedshipdesign% сообщают о наличии аванпоста %species% в %system%!
+WARNING: Наблюдения за %rawtext% %predefinedshipdesign% сообщают о %species% в %system%!
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL
 Экспериментальный монстр
@@ -6221,7 +6221,7 @@ EFFECT_MONSTER_SPAWNING_LABEL
 Появился монстр
 
 EFFECT_GAIAN_TERRAFORM
-На %planet%: планета с Гайей терраморфировала себя, чтобы лучше приспособиться к своим жителям.
+На %planet%: планета с [[special GAIA_SPECIAL]] терраформировала себя, чтобы лучше приспособиться к своим жителям.
 
 EFFECT_GAIAN_TERRAFORM_LABEL
 Терраформирование Гайи
