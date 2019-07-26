@@ -49,6 +49,7 @@ void LoadPlayerSaveHeaderData(const std::string& filename,
 void LoadEmpireSaveGameData(const std::string& filename,
                             std::map<int, SaveGameEmpireData>& empire_save_game_data,
                             std::vector<PlayerSaveHeaderData>& player_save_header_data,
-                            GalaxySetupData& galaxy_setup_data);
+                            GalaxySetupData& galaxy_setup_data,
+                            int &current_turn);
 
 #endif
