@@ -162,6 +162,10 @@ void SaveGameEmpireData::serialize(Archive& ar, const unsigned int version)
     if (version >= 1) {
         ar & BOOST_SERIALIZATION_NVP(m_authenticated);
     }
+    if (version >= 2) {
+        ar & BOOST_SERIALIZATION_NVP(m_eliminated);
+        ar & BOOST_SERIALIZATION_NVP(m_won);
+    }
 }
 
 template void SaveGameEmpireData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
