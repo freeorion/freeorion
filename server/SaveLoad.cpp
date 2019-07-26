@@ -539,11 +539,12 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
 
 void LoadEmpireSaveGameData(const std::string& filename,
                             std::map<int, SaveGameEmpireData>& empire_save_game_data,
-                            std::vector<PlayerSaveHeaderData>& player_save_header_data)
+                            std::vector<PlayerSaveHeaderData>& player_save_header_data,
+                            GalaxySetupData& galaxy_setup_data)
 {
     SaveGamePreviewData                 ignored_save_preview_data;
     ServerSaveGameData                  ignored_server_save_game_data;
-    GalaxySetupData                     ignored_galaxy_setup_data;
+    GalaxySetupData                     saved_galaxy_setup_data;
 
     ScopedTimer timer("LoadEmpireSaveGameData: " + filename, true);
 
@@ -566,7 +567,7 @@ void LoadEmpireSaveGameData(const std::string& filename,
             freeorion_bin_iarchive ia(ifs);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
-            ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
+            ia >> BOOST_SERIALIZATION_NVP(saved_galaxy_setup_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
             ia >> BOOST_SERIALIZATION_NVP(player_save_header_data);
             ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);
@@ -576,7 +577,7 @@ void LoadEmpireSaveGameData(const std::string& filename,
             freeorion_xml_iarchive ia(ifs);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
-            ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
+            ia >> BOOST_SERIALIZATION_NVP(saved_galaxy_setup_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
             ia >> BOOST_SERIALIZATION_NVP(player_save_header_data);
             ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);
@@ -587,4 +588,16 @@ void LoadEmpireSaveGameData(const std::string& filename,
         ErrorLogger() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadEmpireSaveGameData exception: " << ": " << e.what();
         throw e;
     }
+    galaxy_setup_data.m_seed = saved_galaxy_setup_data.m_seed;
+    galaxy_setup_data.m_size = saved_galaxy_setup_data.m_size;
+    galaxy_setup_data.m_shape = saved_galaxy_setup_data.m_shape;
+    galaxy_setup_data.m_age = saved_galaxy_setup_data.m_age;
+    galaxy_setup_data.m_starlane_freq = saved_galaxy_setup_data.m_starlane_freq;
+    galaxy_setup_data.m_planet_density = saved_galaxy_setup_data.m_planet_density;
+    galaxy_setup_data.m_specials_freq = saved_galaxy_setup_data.m_specials_freq;
+    galaxy_setup_data.m_monster_freq = saved_galaxy_setup_data.m_monster_freq;
+    galaxy_setup_data.m_native_freq = saved_galaxy_setup_data.m_native_freq;
+    galaxy_setup_data.m_ai_aggr = saved_galaxy_setup_data.m_ai_aggr;
+    galaxy_setup_data.m_game_rules = saved_galaxy_setup_data.m_game_rules;
+    galaxy_setup_data.m_game_uid = saved_galaxy_setup_data.m_game_uid;
 }

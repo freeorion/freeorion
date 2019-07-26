@@ -44,9 +44,11 @@ void LoadPlayerSaveHeaderData(const std::string& filename,
 
 /** Loads from a savefile \a filename some basic empire information that is
   * useful when selecting which player will control which empire when reloading
-  * a saved game: player name, empire name, and empire colour (and empire id). */
+  * a saved game: player name, empire name, and empire colour (and empire id).
+  * Also loads galaxy setup data to show it in lobby window. */
 void LoadEmpireSaveGameData(const std::string& filename,
                             std::map<int, SaveGameEmpireData>& empire_save_game_data,
-                            std::vector<PlayerSaveHeaderData>& player_save_header_data);
+                            std::vector<PlayerSaveHeaderData>& player_save_header_data,
+                            GalaxySetupData& galaxy_setup_data);
 
 #endif
