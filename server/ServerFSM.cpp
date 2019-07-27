@@ -1474,7 +1474,10 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                         if (plr.second.m_save_game_empire_id != ALL_EMPIRES) {
                             const auto empire_it = m_lobby_data->m_save_game_empire_data.find(plr.second.m_save_game_empire_id);
                             if (empire_it != m_lobby_data->m_save_game_empire_data.end()) {
-                                if (empire_it->second.m_authenticated) {
+                                if (empire_it->second.m_eliminated) {
+                                    WarnLogger(FSM) << "Trying to take over eliminated empire \"" << empire_it->second.m_empire_name << "\"";
+                                    incorrect_empire = true;
+                                } else if (empire_it->second.m_authenticated) {
                                     if (empire_it->second.m_player_name != sender->PlayerName()) {
                                         WarnLogger(FSM) << "Unauthorized access to protected empire \"" << empire_it->second.m_empire_name << "\"."
                                                         << " Expected player \"" << empire_it->second.m_player_name << "\""
@@ -1615,7 +1618,10 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     if (j_player.second.m_save_game_empire_id != ALL_EMPIRES) {
                         const auto empire_it = m_lobby_data->m_save_game_empire_data.find(j_player.second.m_save_game_empire_id);
                         if (empire_it != m_lobby_data->m_save_game_empire_data.end()) {
-                            if (empire_it->second.m_authenticated) {
+                            if (empire_it->second.m_eliminated) {
+                                WarnLogger(FSM) << "Trying to take over eliminated empire \"" << empire_it->second.m_empire_name << "\"";
+                                incorrect_empire = true;
+                            } else if (empire_it->second.m_authenticated) {
                                 if (empire_it->second.m_player_name != sender->PlayerName()) {
                                     WarnLogger(FSM) << "Unauthorized access to protected empire \"" << empire_it->second.m_empire_name << "\"."
                                                     << " Expected player \"" << empire_it->second.m_player_name << "\""
