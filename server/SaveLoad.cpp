@@ -540,10 +540,11 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
 void LoadEmpireSaveGameData(const std::string& filename,
                             std::map<int, SaveGameEmpireData>& empire_save_game_data,
                             std::vector<PlayerSaveHeaderData>& player_save_header_data,
-                            GalaxySetupData& galaxy_setup_data)
+                            GalaxySetupData& galaxy_setup_data,
+                            int& current_turn)
 {
     SaveGamePreviewData                 ignored_save_preview_data;
-    ServerSaveGameData                  ignored_server_save_game_data;
+    ServerSaveGameData                  saved_server_save_game_data;
     GalaxySetupData                     saved_galaxy_setup_data;
 
     ScopedTimer timer("LoadEmpireSaveGameData: " + filename, true);
@@ -568,7 +569,7 @@ void LoadEmpireSaveGameData(const std::string& filename,
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(saved_galaxy_setup_data);
-            ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
+            ia >> BOOST_SERIALIZATION_NVP(saved_server_save_game_data);
             ia >> BOOST_SERIALIZATION_NVP(player_save_header_data);
             ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);
 
@@ -578,7 +579,7 @@ void LoadEmpireSaveGameData(const std::string& filename,
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(saved_galaxy_setup_data);
-            ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
+            ia >> BOOST_SERIALIZATION_NVP(saved_server_save_game_data);
             ia >> BOOST_SERIALIZATION_NVP(player_save_header_data);
             ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);
         }
@@ -600,4 +601,6 @@ void LoadEmpireSaveGameData(const std::string& filename,
     galaxy_setup_data.m_ai_aggr = saved_galaxy_setup_data.m_ai_aggr;
     galaxy_setup_data.m_game_rules = saved_galaxy_setup_data.m_game_rules;
     galaxy_setup_data.m_game_uid = saved_galaxy_setup_data.m_game_uid;
+
+    current_turn = saved_server_save_game_data.m_current_turn;
 }

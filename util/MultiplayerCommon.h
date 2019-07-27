@@ -285,7 +285,8 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
         m_start_locked(false),
         m_players(),
         m_save_game(),
-        m_save_game_empire_data()
+        m_save_game_empire_data(),
+        m_save_game_current_turn(0)
     {}
 
     MultiplayerLobbyData(const GalaxySetupData& base) :
@@ -295,7 +296,8 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
         m_start_locked(false),
         m_players(),
         m_save_game(),
-        m_save_game_empire_data()
+        m_save_game_empire_data(),
+        m_save_game_current_turn(0)
     {}
 
     MultiplayerLobbyData(GalaxySetupData&& base) :
@@ -305,7 +307,8 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
         m_start_locked(false),
         m_players(),
         m_save_game(),
-        m_save_game_empire_data()
+        m_save_game_empire_data(),
+        m_save_game_current_turn(0)
     {}
     //@}
 
@@ -320,6 +323,7 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
 
     std::string                                 m_save_game;            //< File name of a save file
     std::map<int, SaveGameEmpireData>           m_save_game_empire_data;// indexed by empire_id
+    int                                         m_save_game_current_turn;
 
     std::string                                 m_start_lock_cause;
 
@@ -328,6 +332,8 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+BOOST_CLASS_VERSION(MultiplayerLobbyData, 1);
 
 /** The data structure stores information about latest chat massages. */
 struct FO_COMMON_API ChatHistoryEntity {

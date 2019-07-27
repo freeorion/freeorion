@@ -430,6 +430,7 @@ void ServerFSM::UpdateIngameLobby() {
     dummy_lobby_data.m_any_can_edit = false;
     dummy_lobby_data.m_new_game = false;
     dummy_lobby_data.m_start_locked = true;
+    dummy_lobby_data.m_save_game_current_turn = m_server.CurrentTurn();
     for (auto player_it = m_server.m_networking.established_begin();
         player_it != m_server.m_networking.established_end(); ++player_it)
     {
@@ -1682,7 +1683,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             LoadEmpireSaveGameData((save_dir / m_lobby_data->m_save_game).string(),
                                    m_lobby_data->m_save_game_empire_data,
                                    player_save_header_data,
-                                   *m_lobby_data);
+                                   *m_lobby_data,
+                                   m_lobby_data->m_save_game_current_turn);
 
             // read all AI players from save game and add them into current lobby
             // with appropriate empire's data
