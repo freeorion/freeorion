@@ -28,7 +28,7 @@ Hull
     ]
     buildCost = 60.0 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 3
-    tags = [ "ASTEROID_HULL" "PEDIA_HULL_LINE_ASTEROIDS" ]
+    tags = [ "ASTEROID_HULL" "PEDIA_HULL_LINE_ASTEROIDS" "HUGE_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -58,6 +58,7 @@ Hull
             ]
             effects = SetStealth value = Value + 40
 
+        [[HUGE_HULL_FUEL]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]

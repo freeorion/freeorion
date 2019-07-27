@@ -17,7 +17,7 @@ Tech
                 Ship
                 OwnedBy empire = Source.Owner
             ]
-            effects = SetMaxFuel value = Value + 2
+            effects = SetMaxFuel value = Value + 1
 
         EffectsGroup
             scope = And [

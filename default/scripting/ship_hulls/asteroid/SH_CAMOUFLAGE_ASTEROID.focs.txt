@@ -2,7 +2,7 @@ Hull
     name = "SH_CAMOUFLAGE_ASTEROID"
     description = "SH_CAMOUFLAGE_ASTEROID_DESC"
     speed = 60
-    fuel = 4
+    fuel = 2
     stealth = 25
     structure = 40
     slots = [
@@ -13,7 +13,7 @@ Hull
     ]
     buildCost = 16.0 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 2
-    tags = [ "ASTEROID_HULL" "PEDIA_HULL_LINE_ASTEROIDS" ]
+    tags = [ "ASTEROID_HULL" "PEDIA_HULL_LINE_ASTEROIDS" "AVERAGE_FUEL_EFFICIENCY" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -37,6 +37,7 @@ Hull
             accountinglabel = "ASTEROID_FIELD_STEALTH"
             effects = SetStealth value = Value + 40
 
+        [[AVERAGE_FUEL_EFFICIENCY]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

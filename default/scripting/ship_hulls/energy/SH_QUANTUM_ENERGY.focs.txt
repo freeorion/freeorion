@@ -2,7 +2,7 @@ Hull
     name = "SH_QUANTUM_ENERGY"
     description = "SH_QUANTUM_ENERGY_DESC"
     speed = 120
-    fuel = 5
+    fuel = 2.5
     stealth = -15
     structure = 50
     slots = [
@@ -19,7 +19,7 @@ Hull
     ]
     buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 5
-    tags = [ "ENERGY_HULL" "PEDIA_HULL_LINE_ENERGY" ]
+    tags = [ "ENERGY_HULL" "PEDIA_HULL_LINE_ENERGY" "AVERAGE_FUEL_EFFICIENCY" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ENRG_COMP"
@@ -33,6 +33,7 @@ Hull
         Star type = [Blue BlackHole]
     ]
     effectsgroups = [
+        [[AVERAGE_FUEL_EFFICIENCY]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

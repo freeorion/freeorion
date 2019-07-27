@@ -2,7 +2,7 @@ Hull
     name = "SH_SELF_GRAVITATING"
     description = "SH_SELF_GRAVITATING_DESC"
     speed = 80
-    fuel = 3
+    fuel = 1.5
     stealth = -5
     structure = 100
     slots = [
@@ -18,7 +18,7 @@ Hull
     ]
     buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 2
-    tags = [ "ROBOTIC_HULL" "PEDIA_HULL_LINE_ROBOTIC" ]
+    tags = [ "ROBOTIC_HULL" "PEDIA_HULL_LINE_ROBOTIC" "BAD_FUEL_EFFICIENCY" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_CON_GEOINT"
@@ -35,6 +35,7 @@ Hull
         OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
+        [[BAD_FUEL_EFFICIENCY]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

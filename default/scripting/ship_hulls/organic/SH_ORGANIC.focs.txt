@@ -2,7 +2,7 @@ Hull
     name = "SH_ORGANIC"
     description = "SH_ORGANIC_DESC"
     speed = 90
-    fuel = 2
+    fuel = 1
     stealth = 5
     structure = 5
     slots = [
@@ -13,7 +13,7 @@ Hull
     ]
     buildCost = 14 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 3
-    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" ]
+    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" "GOOD_FUEL_EFFICIENCY" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_ORB_INC"
@@ -40,6 +40,7 @@ Hull
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure value = Value + min(Source.Age*0.2, 5)
 
+        [[GOOD_FUEL_EFFICIENCY]]
         [[LIVING_HULL_BASE_FUEL_REGEN]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]

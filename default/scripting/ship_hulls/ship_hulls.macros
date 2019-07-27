@@ -171,4 +171,32 @@ AVERAGE_BASE_FUEL_REGEN
    [[REFUEL_MESSAGE(0.1001)]]
 '''
 
+GREAT_FUEL_EFFICIENCY
+'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(GREAT,Value * 4)]]
+'''
+
+GOOD_FUEL_EFFICIENCY
+'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(GOOD,Value * 2)]]
+'''
+
+AVERAGE_FUEL_EFFICIENCY
+'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(AVERAGE,Value * 1)]]
+'''
+
+BAD_FUEL_EFFICIENCY
+'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(BAD,Value * 0.6)]]
+'''
+
+HULL_FUEL_EFFICIENCY_EFFECTSGROUP
+'''     EffectsGroup
+            description = "HULL_FUEL_EFFICIENCY_DESC"
+            scope = And [
+                Ship
+                Source
+            ]
+            accountinglabel = "@1@_FUEL_EFFICIENCY_LABEL"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetMaxFuel value = @2@ * Statistic If Condition = And [ Object id = Source.ID HasTag name = "@1@_FUEL_EFFICIENCY" ]
+'''
+
 #include "/scripting/common/priorities.macros"

@@ -53,7 +53,7 @@ import AIDependencies
 import CombatRatingsAI
 import FleetUtilsAI
 from AIDependencies import INVALID_ID
-from freeorion_tools import UserString, tech_is_complete
+from freeorion_tools import UserString, tech_is_complete, get_ai_tag_grade
 from turn_state import state
 
 # Define meta classes for the ship parts  TODO storing as set may not be needed anymore
@@ -805,6 +805,13 @@ class ShipDesigner(object):
         self.production_cost = 9999
         self.production_time = 1
 
+    def _hull_fuel_efficiency(self):
+        for tag in AIDependencies.HULL_TAG_EFFECTS:
+            if self.hull.hasTag(tag):
+                if AIDependencies.FUEL_EFFICIENCY in AIDependencies.HULL_TAG_EFFECTS[tag]:
+                    return AIDependencies.HULL_TAG_EFFECTS[tag][AIDependencies.FUEL_EFFICIENCY]
+        return AIDependencies.DEFAULT_FUEL_EFFICIENCY
+
     def update_hull(self, hullname):
         """Set hull of the design.
 
@@ -865,7 +872,7 @@ class ShipDesigner(object):
             partclass = part.partClass
             capacity = part.capacity if partclass not in WEAPONS else self._calculate_weapon_strength(part)
             if partclass in FUEL:
-                self.design_stats.fuel += self._calculate_fuel_capacity(part)
+                self.design_stats.fuel += self._calculate_fuel_part_capacity(part)
             elif partclass in ENGINES:
                 engine_counter += 1
                 if engine_counter == 1:
@@ -922,7 +929,7 @@ class ShipDesigner(object):
                 break
             self.design_stats.fighter_launch_rate = self._calculate_fighter_launch_rate(bay_parts, hangar_part_name)
 
-        self._apply_hardcoded_effects()
+        self._apply_hardcoded_effects(ignore_species)
 
         if self.species and not ignore_species:
             shields_grade = CombatRatingsAI.get_species_shield_grade(self.species)
@@ -931,7 +938,7 @@ class ShipDesigner(object):
                 troops_grade = CombatRatingsAI.get_species_troops_grade(self.species)
                 self.design_stats.troops = CombatRatingsAI.weight_attack_troops(self.design_stats.troops, troops_grade)
 
-    def _apply_hardcoded_effects(self):
+    def _apply_hardcoded_effects(self, ignore_species=False):
         """Update stats that can not be read out by the AI yet, i.e. applied by effects.
 
         This function should contain *all* hardcoded effects for hulls/parts to be considered by the AI
@@ -1026,6 +1033,15 @@ class ShipDesigner(object):
         for tech in AIDependencies.TECH_EFFECTS:
             if tech_is_complete(tech):
                 parse_tokens(AIDependencies.TECH_EFFECTS[tech])
+
+        # fuel effects (besides already handled FUEL TECH_EFFECTS e.g. GRO_ENERGY_META)
+        if not ignore_species:
+            self.design_stats.fuel += _get_species_fuel_bonus(self.species)
+        # set fuel to zero for NO_FUEL species (-100 fuel bonus)
+        if self.design_stats.fuel < 0:
+            self.design_stats.fuel = 0
+        else:
+            self.design_stats.fuel *= self._hull_fuel_efficiency()
 
     def add_design(self, verbose=True):
         """Add a real (i.e. gameobject) ship design of the current configuration.
@@ -1538,7 +1554,7 @@ class ShipDesigner(object):
         """
         return any(part.partClass in partclass for part in self.parts)
 
-    def _calculate_fuel_capacity(self, fuel_part, ignore_species=False):
+    def _calculate_fuel_part_capacity(self, fuel_part, ignore_species=False):
         # base fuel
         tank_name = fuel_part.name
         base = fuel_part.capacity
@@ -2374,3 +2390,10 @@ def _get_tech_bonus(upgrade_dict, part_name):
         total_tech_bonus += bonus if tech_is_complete(tech) else 0
         # TODO: Error checking if tech is actually a valid tech (tech_is_complete simply returns false)
     return total_tech_bonus
+
+
+def _get_species_fuel_bonus(species_name):
+    if not species_name:
+        return 0
+    species_tags = fo.getSpecies(species_name).tags
+    return AIDependencies.SPECIES_FUEL_MODIFIER.get(get_ai_tag_grade(species_tags, "FUEL"), 0)

@@ -2,7 +2,7 @@ Hull
     name = "SH_SENTIENT"
     description = "SH_SENTIENT_DESC"
     speed = 100
-    fuel = 2
+    fuel = 1
     stealth = 25
     structure = 12
     slots = [
@@ -19,7 +19,7 @@ Hull
     ]
     buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 8
-    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" ]
+    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" "AVERAGE_FUEL_EFFICIENCY" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -62,6 +62,7 @@ Hull
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure value = Value + min(Source.Age*1, 45)
 
+        [[AVERAGE_FUEL_EFFICIENCY]]
         [[LIVING_HULL_EFFECTS_GROUPS]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]

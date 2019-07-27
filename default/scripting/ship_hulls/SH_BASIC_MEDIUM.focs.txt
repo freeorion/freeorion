@@ -2,7 +2,7 @@ Hull
     name = "SH_BASIC_MEDIUM"
     description = "SH_BASIC_MEDIUM_DESC"
     speed = 60
-    fuel = 3
+    fuel = 1.5
     stealth = 5
     structure = 10
     slots = [
@@ -12,12 +12,13 @@ Hull
     ]
     buildCost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 2
-    tags = [ "PEDIA_HULL_LINE_GENERIC" ]
+    tags = [ "PEDIA_HULL_LINE_GENERIC" "GOOD_FUEL_EFFICIENCY" ]
     location = Contains And [
         Building name = "BLD_SHIPYARD_BASE"
         OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
+        [[GOOD_FUEL_EFFICIENCY]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

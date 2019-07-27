@@ -2,13 +2,13 @@ Hull
     name = "SH_COMPRESSED_ENERGY"
     description = "SH_COMPRESSED_ENERGY_DESC"
     speed = 120
-    fuel = 5
+    fuel = 2.5
     stealth = 45
     structure = 10
     slots = Slot type = External position = (0.65, 0.40)
     buildCost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 2
-    tags = [ "ENERGY_HULL" "PEDIA_HULL_LINE_ENERGY" ]
+    tags = [ "ENERGY_HULL" "PEDIA_HULL_LINE_ENERGY" "GOOD_FUEL_EFFICIENCY" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ENRG_COMP"
@@ -22,6 +22,7 @@ Hull
         Star type = [White Blue BlackHole]
     ]
     effectsgroups = [
+        [[GOOD_FUEL_EFFICIENCY]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

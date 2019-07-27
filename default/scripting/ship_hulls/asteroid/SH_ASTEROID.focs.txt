@@ -2,7 +2,7 @@ Hull
     name = "SH_ASTEROID"
     description = "SH_ASTEROID_DESC"
     speed = 60
-    fuel = 2
+    fuel = 1
     stealth = 5
     structure = 30
     slots = [
@@ -15,7 +15,7 @@ Hull
     ]
     buildCost = 20.0 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 2
-    tags = [ "ASTEROID_HULL" "PEDIA_HULL_LINE_ASTEROIDS" ]
+    tags = [ "ASTEROID_HULL" "PEDIA_HULL_LINE_ASTEROIDS" "AVERAGE_FUEL_EFFICIENCY" ]
     location = And [
         Planet
         Contains And [
@@ -31,6 +31,7 @@ Hull
         ]
     ]
     effectsgroups = [
+        [[AVERAGE_FUEL_EFFICIENCY]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[ASTEROID_FIELD_STEALTH_BONUS]]
         [[REGULAR_HULL_DETECTION]]
