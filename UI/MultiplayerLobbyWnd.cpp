@@ -485,6 +485,52 @@ namespace {
         bool                                     m_initial_disabled;
     };
 
+    // Row for empire without assigned player
+    struct LoadGameEmpireRow : PlayerRow {
+        LoadGameEmpireRow(const SaveGameEmpireData& save_game_empire_data, bool disabled) :
+            PlayerRow(),
+            m_save_game_empire_data(save_game_empire_data),
+            m_initial_disabled(disabled)
+        {}
+
+        void CompleteConstruction() override {
+            PlayerRow::CompleteConstruction();
+
+            auto type_drop = GG::Wnd::Create<TypeSelector>(GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, m_initial_disabled);
+            push_back(type_drop);
+            type_drop->TypeChangedSignal.connect(
+                boost::bind(&LoadGameEmpireRow::PlayerTypeChanged, this, _1));
+            // player name text
+            push_back(GG::Wnd::Create<CUILabel>(""));
+            // empire name
+            push_back(GG::Wnd::Create<CUILabel>(m_save_game_empire_data.m_empire_name));
+            // empire colour selector (disabled, so acts as colour indicator)
+            m_color_selector = GG::Wnd::Create<EmpireColorSelector>(PlayerFontHeight() + PlayerRowMargin());
+            m_color_selector->SelectColor(m_save_game_empire_data.m_color);
+            m_color_selector->Disable();
+            push_back(m_color_selector);
+            // original empire player name from saved game
+            push_back(GG::Wnd::Create<CUILabel>(m_save_game_empire_data.m_player_name));
+            // ready state
+            push_back(GG::Wnd::Create<CUILabel>(""));
+            // host
+            push_back(GG::Wnd::Create<CUILabel>(""));
+        }
+    private:
+        void PlayerTypeChanged(Networking::ClientType type) {
+            m_player_data.m_client_type = type;
+            m_player_data.m_empire_name =         m_save_game_empire_data.m_empire_name;
+            m_player_data.m_empire_color =        m_save_game_empire_data.m_color;
+            m_player_data.m_save_game_empire_id = m_save_game_empire_data.m_empire_id;
+            DataChangedSignal();
+        }
+
+        std::shared_ptr<EmpireColorSelector> m_color_selector;
+        int                                  m_empire_id;
+        const SaveGameEmpireData&            m_save_game_empire_data;
+        bool                                 m_initial_disabled;
+    };
+
     // Row for indicating that an AI client should be added to the game
     struct EmptyPlayerRow : PlayerRow {
         EmptyPlayerRow() :
@@ -934,6 +980,9 @@ void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
 
             // empty rows that are still showing no player don't need to be sent to the server.
 
+        } else if (const LoadGameEmpireRow* empire_row = dynamic_cast<const LoadGameEmpireRow*>(player_row)) {
+            if (empire_row->m_player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+                m_lobby_data.m_players.push_back({Networking::INVALID_PLAYER_ID, empire_row->m_player_data});
         } else {
             // all other row types pass along data directly
             m_lobby_data.m_players.push_back({player_row->m_player_id, player_row->m_player_data});
@@ -995,6 +1044,25 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
             psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
             psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         { is_other_ready = is_other_ready && psd.m_player_ready; }
+    }
+
+    // add rows for unassigned empires and adds "Add AI" to assign AI to empire
+    if (!m_lobby_data.m_new_game) {
+        for (const auto& save_game_empire_data : m_lobby_data.m_save_game_empire_data) {
+            bool is_assigned = false;
+            for (const auto& player : m_lobby_data.m_players) {
+                if (player.second.m_save_game_empire_id == save_game_empire_data.second.m_empire_id) {
+                    is_assigned = true;
+                    break;
+                }
+            }
+            if (!is_assigned) {
+                auto row = GG::Wnd::Create<LoadGameEmpireRow>(save_game_empire_data.second, !HasAuthRole(Networking::ROLE_GALAXY_SETUP));
+                m_players_lb->Insert(row);
+                row->DataChangedSignal.connect(
+                    boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
+            }
+        }
     }
 
     // on host, add extra empty row, which the host can use to select
