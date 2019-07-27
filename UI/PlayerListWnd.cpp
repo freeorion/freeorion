@@ -910,6 +910,11 @@ void PlayerListWnd::CloseClicked() {
 void PlayerListWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { StopFlash(); }
 
+void PlayerListWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
+    CUIWnd::LDrag(pt, move, mod_keys);
+    StopFlash();
+}
+
 void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     // mark as selected all PlayerDataPanel that are in \a rows and mark as not
     // selected all PlayerDataPanel that aren't in \a rows

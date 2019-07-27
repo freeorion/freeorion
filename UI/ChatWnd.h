@@ -47,6 +47,7 @@ public:
 private:
     void            CloseClicked() override;
     void            LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void            LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
 
     void            DoLayout();
     void            MessageEntered();
