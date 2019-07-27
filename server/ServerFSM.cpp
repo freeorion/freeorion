@@ -1327,7 +1327,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 psd_names.count(player.second.m_player_name))
             {
                 has_collision = true;
-                WarnLogger(FSM) << "Got color, empire's name or player's name collision.";
+                WarnLogger(FSM) << "Got color, empire's name or player's name collision for player "
+                                << player.second.m_player_name << "(" << player.first << ")";
                 break;
             } else {
                 psd_colors.emplace(player.second.m_empire_color);
