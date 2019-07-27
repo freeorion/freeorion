@@ -19,7 +19,7 @@
 #include <algorithm>
 
 namespace {
-    const int           DATA_PANEL_BORDER = 1;
+    const int DATA_PANEL_BORDER = 1;
 
     std::shared_ptr<GG::Texture> AIIcon() {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ai.png");
@@ -811,7 +811,6 @@ void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id
         StopFlash();
 }
 
-
 void PlayerListWnd::Update() {
     for (auto& row : *m_player_list) {
         if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row.get()))
@@ -907,8 +906,10 @@ void PlayerListWnd::CloseClicked() {
     StopFlash();
 }
 
-void PlayerListWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ StopFlash(); }
+void PlayerListWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    CUIWnd::LClick(pt, mod_keys);
+    StopFlash();
+}
 
 void PlayerListWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
     CUIWnd::LDrag(pt, move, mod_keys);
