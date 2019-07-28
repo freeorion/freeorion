@@ -4221,6 +4221,17 @@ Category
 TECH_WND_LIST_COLUMN_DESCRIPTION
 Description
 
+##
+## Government Wnd
+##
+
+POLICY_LOCKED
+Policy Unavailable
+
+POLICY_ADOPTABLE_COST
+Policy Adoptable for %1% IP
+
+
 
 ##
 ## Production info panel

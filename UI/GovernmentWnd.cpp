@@ -167,6 +167,37 @@ namespace {
     }
 }
 
+namespace {
+    //////////////////////////
+    //    PolicyBroseWnd    //
+    //////////////////////////
+    std::shared_ptr<GG::BrowseInfoWnd> PolicyBroseWnd(const std::string& policy_name) {
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* empire = GetEmpire(empire_id);
+        const Policy* policy = GetPolicy(policy_name);
+        if (!policy)
+            return nullptr;
+
+        std::string main_text;
+
+        main_text += UserString(policy->Category()) + " - ";
+        main_text += UserString(policy->ShortDescription()) + "\n\n";
+
+        if (empire) {
+            if (!empire->PolicyAvailable(policy_name)) {
+                main_text += UserString("POLICY_LOCKED") + "\n\n";
+            } else {
+                auto cost = policy->AdoptionCost(empire_id);
+                main_text += boost::io::str(FlexibleFormat(UserString("POLICY_ADOPTABLE_COST")) % cost)  + "\n\n";
+            }
+        }
+
+        main_text += UserString(policy->Description());
+
+        return GG::Wnd::Create<IconTextBrowseWnd>(
+            ClientUI::PolicyIcon(policy_name), UserString(policy_name), main_text);
+    }
+}
 //////////////////////////////////////////////////
 // PolicyControl                                //
 //////////////////////////////////////////////////
@@ -237,11 +268,7 @@ void PolicyControl::CompleteConstruction() {
 
     //DebugLogger() << "PolicyControl::PolicyControl policy name: " << m_policy->Name();
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
-        ClientUI::PolicyIcon(m_policy->Name()),
-        UserString(m_policy->Name()) + " (" + UserString(m_policy->Category()) + ")",
-        UserString(m_policy->Description())
-    ));
+    SetBrowseInfoWnd(PolicyBroseWnd(m_policy->Name()));
 }
 
 void PolicyControl::Render() {}
