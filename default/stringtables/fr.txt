@@ -5600,7 +5600,11 @@ METER_FUEL_VALUE_LABEL
 Carburant
 
 METER_FUEL_VALUE_DESC
-Le carburant permet aux astronefs de parcourir les Voies spatiales non-situées dans les zones d'[[metertype METER_SUPPLY]] de l'empire. En dehors de ces dernières, un astronef brûle 1 unité de carburant pour chaque Voie spatiale parcourue. Un arrêt d'un astronef sur les lignes d'[[metertype METER_SUPPLY]] de l'empire permet de refaire le plein en carburant. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant seulement s'il est immobile (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale). La quantité initiale de carburant qu'embarque un <encyclopedia ENC_SHIP_DESIGN>Modèle d'Astronef</encyclopedia> dépend de son type de <encyclopedia ENC_SHIP_HULL>Coque</encyclopedia>, et peut être augmentée à l'aide de certains <encyclopedia ENC_SHIP_PART>Équipements d'Astronef</encyclopedia>.
+'''Le carburant permet aux astronefs de parcourir les Voies spatiales situées hors des zones d'[[metertype METER_SUPPLY]] de l'empire. En dehors de ces dernières, un astronef consomme du carburant pour chaque Voie spatiale parcourue (soit un voyage). Un arrêt d'un astronef sur les lignes d'[[metertype METER_SUPPLY]] de l'empire permet de refaire le plein en carburant. S'il voyage au-delà des lignes d'approvisionnement de son empire ou de celles d'un allié, un astronef récupérera lentement son carburant seulement s'il est immobile (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale).
+
+La quantité effective de carburant qu'embarque un <encyclopedia ENC_SHIP_DESIGN>Modèle d'Astronef</encyclopedia> est déterminée par le [[encyclopedia FUEL_EFFICIENCY_TITLE]] de la <encyclopedia ENC_SHIP_HULL>Coque</encyclopedia> de l'astronef. Le Rendement Carburant modifie la capacité de base en carburant d'un <encyclopedia ENC_SHIP_DESIGN>Modèle d'Astronef</encyclopedia>, selon la [[encyclopedia ENC_SHIP_HULL]] utilisée, mais cette capacité peut toutefois être augmentée à l'aide de certains <encyclopedia ENC_SHIP_PART>Équipements d'Astronef</encyclopedia>.
+
+Le jeu affichera continuellement les niveaux effectifs de carburant, en fonction du Rendement Carburant. Les détails à propos de l'effet de Rendement peuvent être consultés via l'infobulle de la coque d'astronef.'''
 
 METER_SHIELD_VALUE_LABEL
 Boucliers
@@ -6183,6 +6187,18 @@ Réception d'un état de tour inattendu de la part du serveur.
 
 MESSAGES_PANEL_TITLE  # translated
 Messages
+
+# %1% and %2% are color coded empire names
+MESSAGES_WAR_DECLARATION
+%1% et %2% sont à présent en guerre.
+
+# %1% and %2% are color coded empire names
+MESSAGES_PEACE_TREATY
+%1% et %2% sont à présent en paix.
+
+# %1% and %2% are color coded empire names
+MESSAGES_ALLIANCE
+%1% et %2% ont forgé une alliance.
 
 
 ##
@@ -10891,7 +10907,7 @@ GRO_ENERGY_META
 Métabolisme d'Énergie Pure
 
 GRO_ENERGY_META_DESC
-'''Augmente le [[metertype METER_FUEL]] max de 2 sur tous les astronefs, la [[metertype METER_DEFENSE]] max de 5 sur toutes les planètes, les [[metertype METER_SHIELD]] max de 5 sur toutes les planètes, la [[metertype METER_TARGET_INDUSTRY]] de 0.2 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de 0.5 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
+'''Augmente le [[metertype METER_FUEL]] max de 1 sur tous les astronefs (avant mise à l'échelle selon le [[encyclopedia FUEL_EFFICIENCY_TITLE]]), la [[metertype METER_DEFENSE]] max de 5 sur toutes les planètes, les [[metertype METER_SHIELD]] max de 5 sur toutes les planètes, la [[metertype METER_TARGET_INDUSTRY]] de 0.2 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de 0.5 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
 
 Tandis que la transformation d'une population entière en êtres de pure énergie s'avérerait peu pertinente, certaines tâches conviennent mieux à des individus dénués de corporalité. L'équipage d'un astronef par exemple, n'aurait plus besoin d'optimiser l'espace disponible pour les quartiers d'équipage ou le stockage des rations. Des êtres dotés d'une capacité de canalisation de l'énergie seraient en mesure d'améliorer les défenses et boucliers planétaires, ainsi que la production de ressources.
 
@@ -13407,7 +13423,7 @@ FU_BASIC_TANK
 Réservoir Additionnel de Carburant
 
 FU_BASIC_TANK_DESC
-Augmente la capacité en [[metertype METER_FUEL]] d'un astronef, permettant un voyage supplémentaire sur une Voie spatiale. Des technologies plus avancées augmenteront le nombre de voyages supplémentaires pour chaque réservoir de carburant équipant un astronef.
+Augmente la capacité en [[metertype METER_FUEL]] d'un astronef, permettant des voyages supplémentaires sur les Voies spatiales en fonction du [[encyclopedia FUEL_EFFICIENCY_TITLE]]. Des technologies plus avancées augmenteront le nombre de voyages supplémentaires pour chaque réservoir de carburant équipant un astronef.
 
 FU_ZERO_FUEL
 Générateur Zero-Point de Carburant
@@ -14747,19 +14763,19 @@ NO_FUEL_DESC
 −−−	Astronefs sans [[metertype METER_FUEL]]
 
 BAD_FUEL_DESC
-−	Mauvais en [[metertype METER_FUEL]] max : -1
+−	Mauvais en [[metertype METER_FUEL]] max : -0.5
 
 AVERAGE_FUEL_DESC
 '''	Normal en [[metertype METER_FUEL]] max : +0'''
 
 GOOD_FUEL_DESC
-+	Bon en [[metertype METER_FUEL]] max : +1
++	Bon en [[metertype METER_FUEL]] max : +0.5
 
 GREAT_FUEL_DESC
-++	Excellent en [[metertype METER_FUEL]] max : +2
+++	Excellent en [[metertype METER_FUEL]] max : +1
 
 ULTIMATE_FUEL_DESC
-+++	Parfait en [[metertype METER_FUEL]] max : +3
++++	Parfait en [[metertype METER_FUEL]] max : +1.5
 
 GREAT_ASTEROID_INDUSTRY_DESC
 +	Bons Mineurs sur Astéroïdes: + 0.2 en [[metertype METER_INDUSTRY]] par [[metertype METER_POPULATION]] lorsque que le Focus Industrie est activé dans les systèmes abritant une Ceinture d'Astéroïdes colonisée par l'empire.
@@ -15145,8 +15161,36 @@ Brouillage Camouflage
 TRANSPATIAL_CLOAK_INTERACTION
 Interaction Propulsion Transpatiale - Camouflage
 
+FUEL_TITLE
+Carburant
+
+FUEL_EFFICIENCY_TITLE
+Rendement Carburant
+
+FUEL_REFUEL_EFFICIENCY_TEXT
+'''Le [[metertype METER_FUEL]] permet aux astronefs de parcourir les Voies spatiales situées hors des zones d'[[metertype METER_SUPPLY]] de l'empire. En dehors de ces dernières, un astronef consomme du carburant pour chaque Voie spatiale parcourue (soit un voyage). Un arrêt d'un astronef sur les lignes d'[[metertype METER_SUPPLY]] de l'empire permet de refaire le plein en carburant. S'il voyage au-delà des lignes d'approvisionnement de son empire ou de celles d'un allié, un astronef récupérera lentement son carburant seulement s'il est immobile (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale).
+
+La capacité de base en carburant d'un <encyclopedia ENC_SHIP_DESIGN>Modèle d'Astronef</encyclopedia> est déterminée par la [[encyclopedia ENC_SHIP_HULL]] utilisée, mais cette capacité peut toutefois être augmentée à l'aide de certains <encyclopedia ENC_SHIP_PART>Équipements d'Astronef</encyclopedia>.
+
+Les coques d'astronef offrent un rendement excellent (400%), bon (200%), normal (100%), ou mauvais (60%), ce qui détermine avec quelle efficacité la capacité de base en carburant peut être utilisée. Un rendement de 60% signifie que pour une capacité de base de 5, 3 voyages sont possibles. Un rendement de 200% permet 2 voyages par capacité de base en carburant. Le Rendement Carburant décroît généralement avec la masse de la coque. Par conséquent, seuls les très petits astronefs disposent d'un rendement carburant élevé tandis que les astronefs massifs ont une mobilité réduite hors des zones d'[[metertype METER_SUPPLY]]. Le jeu affichera continuellement les niveaux effectifs de carburant, en fonction du Rendement Carburant.'''
+
 BASE_FUEL_REGEN_LABEL
 Récupération Stationnaire Carburant
+
+FUEL_EFFICIENCY_DESC
+[[FUEL_EFFICIENCY_TITLE]]
+
+GREAT_FUEL_EFFICIENCY_LABEL
+Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 400%%
+
+GOOD_FUEL_EFFICIENCY_LABEL
+Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 200%%
+
+AVERAGE_FUEL_EFFICIENCY_LABEL
+Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 100%%
+
+BAD_FUEL_EFFICIENCY_LABEL
+Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 60%%
 
 SPATIAL_FLUX_MALUS
 Interférence Flux
