@@ -431,6 +431,7 @@ void ServerFSM::UpdateIngameLobby() {
     dummy_lobby_data.m_new_game = false;
     dummy_lobby_data.m_start_locked = true;
     dummy_lobby_data.m_save_game_current_turn = m_server.CurrentTurn();
+    dummy_lobby_data.m_save_game_empire_data = CompileSaveGameEmpireData();
     for (auto player_it = m_server.m_networking.established_begin();
         player_it != m_server.m_networking.established_end(); ++player_it)
     {
@@ -440,6 +441,7 @@ void ServerFSM::UpdateIngameLobby() {
         player_setup_data.m_player_name = (*player_it)->PlayerName();
         player_setup_data.m_client_type = (*player_it)->GetClientType();
         if (const Empire* empire = GetEmpire(m_server.PlayerEmpireID(player_id))) {
+            player_setup_data.m_save_game_empire_id = empire->EmpireID();
             player_setup_data.m_empire_name = empire->Name();
             player_setup_data.m_empire_color = empire->Color();
         } else {
