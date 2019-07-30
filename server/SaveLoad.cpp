@@ -42,13 +42,6 @@
 namespace fs = boost::filesystem;
 
 namespace {
-    std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empire_manager) {
-        std::map<int, SaveGameEmpireData> retval;
-        for (const auto& entry : Empires())
-            retval[entry.first] = SaveGameEmpireData(entry.first, entry.second->Name(), entry.second->PlayerName(), entry.second->Color(), entry.second->IsAuthenticated(), entry.second->Eliminated(), entry.second->Won());
-        return retval;
-    }
-
     void CompileSaveGamePreviewData(const ServerSaveGameData& server_save_game_data,
                                     const std::vector<PlayerSaveGameData>& player_save_game_data,
                                     const std::map<int, SaveGameEmpireData>& empire_save_game_data,
@@ -103,6 +96,13 @@ namespace {
     const std::string BINARY_MARKER("binary");
 }
 
+std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData() {
+    std::map<int, SaveGameEmpireData> retval;
+    for (const auto& entry : Empires())
+        retval[entry.first] = SaveGameEmpireData(entry.first, entry.second->Name(), entry.second->PlayerName(), entry.second->Color(), entry.second->IsAuthenticated(), entry.second->Eliminated(), entry.second->Won());
+    return retval;
+}
+
 int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_game_data,
              const std::vector<PlayerSaveGameData>& player_save_game_data, const Universe& universe,
              const EmpireManager& empire_manager, const SpeciesManager& species_manager,
@@ -117,7 +117,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
     GetUniverse().EncodingEmpire() = ALL_EMPIRES;
 
     DebugLogger() << "Compiling save empire and preview data";
-    std::map<int, SaveGameEmpireData> empire_save_game_data = CompileSaveGameEmpireData(empire_manager);
+    std::map<int, SaveGameEmpireData> empire_save_game_data = CompileSaveGameEmpireData();
     SaveGamePreviewData save_preview_data;
     CompileSaveGamePreviewData(server_save_game_data, player_save_game_data,
                                empire_save_game_data, save_preview_data);
