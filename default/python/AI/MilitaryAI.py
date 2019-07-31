@@ -942,7 +942,7 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
                 elif get_system_jump2_threat(_sys_id):
                     weight = 1
                 else:
-                    weight = 1 / float(state.get_distance_to_enemy_supply(_sys_id))**1.25
+                    weight = 1 / max(.5, float(state.get_distance_to_enemy_supply(_sys_id)))**1.25
                 return float(weight) / (jump_distance+1)
 
             for fid in avail_mil_fleet_ids:
