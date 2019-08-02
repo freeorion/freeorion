@@ -7532,7 +7532,8 @@ SP_LAENFA
 Laenfa
 
 SP_LAENFA_GAMEPLAY_DESC
-'''Sneaky, telepathic, sentient vines.
+'''<img src="species/preview/laenfa.png"></img>
+Sneaky, telepathic, sentient vines.
 Prefer [[PT_OCEAN]] planets.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
@@ -7543,6 +7544,7 @@ The Laenfa are long and vine-like, able to attach and detach into any number of 
 
 Social Structure:
 The Laenfa have a unified culture due to their telepathy but because their telepathic communication weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret but takes into account the voices of all Laenfa it is able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goals of gaining knowledge of other species and protecting knowledge of themselves.
+<img src="species/laenfa.png"></img>
 '''
 
 SP_SLY

@@ -7532,7 +7532,8 @@ SP_LAENFA  # translated
 Laenfa
 
 SP_LAENFA_GAMEPLAY_DESC
-'''Vignes sensibles, télépathes, et insidieuses.
+'''<img src="species/preview/laenfa.png"></img>
+Vignes sensibles, télépathes, et insidieuses.
 Préfèrent les Planètes [[PT_OCEAN]]s.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
@@ -7543,6 +7544,7 @@ Les Laenfa sont de longs organismes végétaux semblables à des vignes, capable
 
 Structure sociale:
 Les Laenfa jouissent d'une culture unifiée due à la télépathie, mais comme leur capacité télépathique s'affaiblit avec la distance, le tronc central de la vigne est en charge des décisions importantes. Cette vigne centrale gère seule les arbitrages, mais prend en compte les voix des Laenfa qu'elle est en mesure de détecter. Les Laenfa évoluent donc à la manière d'un super-organisme, chaque individu œuvrant pour le collectif, dont le but est d'acquérir le savoir des autres espèces et de protéger le leur.
+<img src="species/laenfa.png"></img>
 '''
 
 SP_SLY  # translated
