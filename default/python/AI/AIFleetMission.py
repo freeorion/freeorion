@@ -771,11 +771,7 @@ class AIFleetMission(object):
                                 not planet.unowned):
                             debug("Currently no neighboring threats. "
                                   "Staying for bombardment of planet %s", planet)
-                            self.clear_fleet_orders()
-                            self.set_target(MissionType.MILITARY, TargetSystem(current_system_id))
-                            self.generate_fleet_orders()
-                            self.issue_fleet_orders()
-                            return INVALID_ID
+                            return current_system_id
 
                 # TODO consider attacking neighboring, non-military fleets
                 # - needs more careful evaluation against neighboring threats
