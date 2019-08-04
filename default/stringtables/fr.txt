@@ -5757,6 +5757,8 @@ Focus Stock
 STOCKPILE_FOCUS_TEXT
 '''Le Focus Stock augmente le [[metertype METER_STOCKPILE]] d'une planète.
 
+Une Planète Natale privilégiant le Stock favorise également les autres planètes peuplées par la même espèce, en y augmentant le [[metertype METER_STOCKPILE]] de 0.04 par [[metertype METER_POPULATION]].
+
 [[METER_STOCKPILE_VALUE_DESC]]'''
 
 ARMOR_TITLE
@@ -10938,7 +10940,7 @@ Cette tâche s'avère difficile étant donné que le service doit présager du m
 Les PP inutilisés sont transférés automatiquement au Stock Impérial de Production.
 Un projet de la file d'attente de Production puise automatiquement dans le Stock Impérial si son usage n'a pas été explicitement bloqué pour le projet en question.
 
-Il s'agit donc de la technologie de base du Stock Impérial, augmentant de 1 le [[metertype METER_STOCKPILE]] des planètes réglées sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]] ou le [[encyclopedia GROWTH_FOCUS_TITLE]].'''
+Il s'agit donc de la technologie de base du Stock Impérial, augmentant de 1 le [[metertype METER_STOCKPILE]] des planètes réglées sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]].'''
 
 PRO_GENERIC_SUPPLIES
 Stocks Génériques
@@ -10951,7 +10953,7 @@ En atteignant ce degré de sophistication, les Stocks Génériques peuvent être
 
 Cela exempte le service du Stock Impérial de connaître à l'avance quels biens seront exactement demandés. Prévoir le lieu de la demande et les quantités s'avère désormais suffisant.
 
-Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 2, plus un supplément de 0.01 par [[metertype METER_POPULATION]], plus un supplément de 3 pour chaque planète réglée sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]] ou le [[encyclopedia GROWTH_FOCUS_TITLE]].
+Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 2, plus un supplément de 0.01 par [[metertype METER_POPULATION]], plus un supplément de 3 pour chaque planète réglée sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]].
 Ces amélioriations sont cumulables avec le bonus de la technologie [[tech PRO_PREDICTIVE_STOCKPILING]].'''
 
 PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
@@ -12827,7 +12829,7 @@ BLD_GAS_GIANT_GEN
 Convertisseur de Géante Gazeuse
 
 BLD_GAS_GIANT_GEN_DESC
-'''Cette structure ne peut être construite que sur une [[PT_GASGIANT]] et augmente de 10 la [[metertype METER_TARGET_INDUSTRY]] sur les planètes du même système réglées sur le Focus Industrie.
+'''Cette structure ne peut être construite que sur une [[PT_GASGIANT]] et augmente de 10 la [[metertype METER_TARGET_INDUSTRY]] sur les planètes du même système réglées sur le Focus Industrie. Si le [[BLD_GAS_GIANT_GEN]] est construit sur une [[PT_GASGIANT]] inhabitée, le bonus de [[metertype METER_TARGET_INDUSTRY]] n'est que de 5.
 Les bonus de plusieurs exemplaires dans le même système ne s'additionnent pas.
 
 Un puissant générateur conçu pour puiser l'énergie des Géantes Gazeuses.'''
@@ -15673,6 +15675,9 @@ Tout sélectionner
 
 HOTKEY_DESELECT
 Désélectionner
+
+HOTKEY_AUTOCOMPLETE
+Autocompléter mot saisi
 
 HOTKEY_FOCUS_PREV_WND
 Champ précédent
