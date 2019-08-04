@@ -56,6 +56,24 @@ STANDARD_STOCKPILE
                 min(abs(Value(Target.MaxStockpile) - Value), 1) *
                     (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.MaxStockpile))]))
 
+        // increase stockpile for species if Homeworld is set to stockpile focus
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Species name = Source.Species
+                Not Homeworld name = Source.Species
+            ]
+            activation = And [
+                Planet
+                Focus type = "FOCUS_STOCKPILE"
+                Homeworld
+            ]
+            stackinggroup = "HOMEWORLD_STOCKPILE_FOCUS_BONUS_LABEL"
+            accountinglabel = "HOMEWORLD_STOCKPILE_FOCUS_BONUS_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetMaxStockpile value = (Value +  2 * Target.Population * [[STOCKPILE_PER_POP]])
+
         // removes residual stockpile capacity from a dead planet
         EffectsGroup
             scope = Source

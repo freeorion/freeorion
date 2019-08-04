@@ -12,10 +12,7 @@ Tech
             scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
-                Or [
-                    Focus type = "FOCUS_GROWTH"
-                    Focus type = "FOCUS_STOCKPILE"
-                ]
+                Focus type = "FOCUS_STOCKPILE"
             ]
             effects = SetMaxStockpile value = Value + 1
     ]
