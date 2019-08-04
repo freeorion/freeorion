@@ -228,12 +228,10 @@ private:
     typedef std::map<std::string, ConditionalConnectionList> Connections;
 
     /// A set of connected shortcuts.
-    Connections             m_connections;
-    std::map<std::string, GG::GUI::AcceleratorSignalType*>
-                            m_signals;
-    std::set<boost::signals2::connection>
-                            m_internal_connections;
-    static HotkeyManager*   s_singleton;
+    Connections                                             m_connections;
+    std::map<std::string, GG::GUI::AcceleratorSignalType*>  m_signals;
+    std::set<boost::signals2::connection>                   m_internal_connections;
+    static HotkeyManager*                                   s_singleton;
 };
 
 #endif

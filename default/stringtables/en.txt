@@ -15674,6 +15674,9 @@ Select All
 HOTKEY_DESELECT
 Deselect
 
+HOTKEY_AUTOCOMPLETE
+Autocomplete Typed Word
+
 HOTKEY_FOCUS_PREV_WND
 Previous Control
 

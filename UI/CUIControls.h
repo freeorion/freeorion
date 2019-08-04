@@ -311,6 +311,8 @@ public:
     explicit CUIEdit(const std::string& str);
     //@}
 
+    void CompleteConstruction() override;
+
     /** \name Mutators */ //@{
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point,
@@ -318,6 +320,7 @@ public:
     void GainingFocus() override;
     void LosingFocus() override;
     void Render() override;
+    virtual bool AutoComplete() { return false; };
     //@}
 
     mutable boost::signals2::signal<void ()> GainingFocusSignal;

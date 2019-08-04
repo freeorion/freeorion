@@ -178,6 +178,7 @@ public:
 
     //! \name Mutators //@{
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
+    bool AutoComplete() override;   //!< Autocomplete current word
     //@}
 
     /** emitted when user presses enter/return while entering text */
@@ -187,7 +188,6 @@ public:
 
 private:
     void FindGameWords();                    //!< Finds all game words for autocomplete
-    void AutoComplete();                     //!< Autocomplete current word
 
     /** AutoComplete helper function */
     bool CompleteWord(const std::set<std::string>& names, const std::string& partial_word,
@@ -197,9 +197,9 @@ private:
     // Set for autocomplete game words
     std::set<std::string>       m_game_words;
 
-    // Repeated tabs variables
+    // Repeated autocomplete variables
      std::vector<std::string>   m_auto_complete_choices;
-     unsigned int               m_repeated_tab_count;
+     unsigned int               m_repeated_tab_count = 0;
      std::string                m_last_line_read;
      std::string                m_last_game_word;
 };
@@ -208,11 +208,7 @@ private:
 // MessageWndEdit //
 ////////////////////
 MessageWndEdit::MessageWndEdit() :
-    CUIEdit(""),
-    m_auto_complete_choices(),
-    m_repeated_tab_count(0),
-    m_last_line_read(),
-    m_last_game_word()
+    CUIEdit("")
 {}
 
 void MessageWndEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
@@ -291,12 +287,12 @@ void MessageWndEdit::FindGameWords() {
     }
  }
 
-void MessageWndEdit::AutoComplete() {
+bool MessageWndEdit::AutoComplete() {
     std::string full_line = this->Text();
 
     // Check for repeated tab
     // if current line is same as the last read line
-    if (m_last_line_read != "" && boost::equals(full_line, m_last_line_read)){
+    if (m_last_line_read != "" && boost::equals(full_line, m_last_line_read)) {
         if (m_repeated_tab_count >= m_auto_complete_choices.size())
             m_repeated_tab_count = 0;
 
@@ -314,8 +310,10 @@ void MessageWndEdit::AutoComplete() {
             m_last_line_read = this->Text();
         }
         ++m_repeated_tab_count;
-    }
-    else {
+
+        return true;    // indicates to calling signal that a hotkey press was processed
+
+    } else {
         bool exact_match = false;
 
         auto cursor_pos = this->CursorPosn();
@@ -327,7 +325,7 @@ void MessageWndEdit::AutoComplete() {
                 ++word_start;
             std::string partial_word = full_line.substr(word_start, Value(cursor_pos.first - word_start));
             if (partial_word.empty())
-                return;
+                return true;    // indicates to calling signal that a hotkey press was processed
 
             // Find game words to try an autocomplete
             FindGameWords();
@@ -347,6 +345,8 @@ void MessageWndEdit::AutoComplete() {
                 CompleteWord(m_game_words, partial_word, cursor_pos, full_line);
         }
     }
+
+    return true;    // indicates to calling signal that a hotkey press was processed
 }
 
 bool MessageWndEdit::CompleteWord(const std::set<std::string>& names, const std::string& partial_word,
@@ -357,25 +357,19 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names, const std:
     m_auto_complete_choices.clear();
     m_repeated_tab_count = 0;
 
-    bool partial_word_match = false;
     std::string game_word;
 
     // Check if the partial_word is contained in any game words
     for (const std::string& temp_game_word : names) {
         if (temp_game_word.size() >= partial_word.size()) {
+            // Add all possible word choices for repeated tab
             std::string game_word_partial = temp_game_word.substr(0, partial_word.size());
-
-            if (boost::iequals(game_word_partial, partial_word)) {
-                if (game_word_partial != "") {
-                    // Add all possible word choices for repeated tab
-                    m_auto_complete_choices.push_back(temp_game_word);
-                    partial_word_match = true;
-                }
-            }
+            if (!game_word_partial.empty() && boost::iequals(game_word_partial, partial_word))
+                m_auto_complete_choices.push_back(temp_game_word);
         }
     }
 
-    if (!partial_word_match)
+    if (m_auto_complete_choices.empty())
         return false;
 
     // Grab first autocomplete choice

@@ -212,8 +212,9 @@ namespace {
         Hotkey::AddHotkey("ui.select.all",                  UserStringNop("HOTKEY_SELECT_ALL"),                                 GG::GGK_a,                      GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("ui.select.none",                 UserStringNop("HOTKEY_DESELECT"),                                   GG::GGK_d,                      GG::MOD_KEY_CTRL);
 
-        Hotkey::AddHotkey("ui.focus.prev",                  UserStringNop("HOTKEY_FOCUS_PREV_WND"),                             GG::GGK_TAB,                    GG::MOD_KEY_SHIFT);
-        Hotkey::AddHotkey("ui.focus.next",                  UserStringNop("HOTKEY_FOCUS_NEXT_WND"),                             GG::GGK_TAB);
+        // stepping through UI controls doesn't really work as of this writing, so I'm commenting out these hotkey commands
+        //Hotkey::AddHotkey("ui.focus.prev",                  UserStringNop("HOTKEY_FOCUS_PREV_WND"),                             GG::GGK_NONE);
+        //Hotkey::AddHotkey("ui.focus.next",                  UserStringNop("HOTKEY_FOCUS_NEXT_WND"),                             GG::GGK_NONE);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -7266,10 +7267,10 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->Connect(boost::bind(&GG::GUI::FocusWndSelectAll, GG::GUI::GetGUI()), "ui.select.all");
     hkm->Connect(boost::bind(&GG::GUI::FocusWndDeselect, GG::GUI::GetGUI()), "ui.select.none");
 
-    hkm->Connect(boost::bind(&GG::GUI::SetPrevFocusWndInCycle, GG::GUI::GetGUI()), "ui.focus.prev",
-                 NoModalWndsOpenCondition);
-    hkm->Connect(boost::bind(&GG::GUI::SetNextFocusWndInCycle, GG::GUI::GetGUI()), "ui.focus.next",
-                 NoModalWndsOpenCondition);
+    //hkm->Connect(boost::bind(&GG::GUI::SetPrevFocusWndInCycle, GG::GUI::GetGUI()), "ui.focus.prev",
+    //             NoModalWndsOpenCondition);
+    //hkm->Connect(boost::bind(&GG::GUI::SetNextFocusWndInCycle, GG::GUI::GetGUI()), "ui.focus.next",
+    //             NoModalWndsOpenCondition);
 
     hkm->RebuildShortcuts();
 }

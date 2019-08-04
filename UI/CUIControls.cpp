@@ -5,6 +5,7 @@
 #include "CUIDrawUtil.h"
 #include "IconTextBrowseWnd.h"
 #include "Sound.h"
+#include "Hotkeys.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
@@ -28,6 +29,11 @@
 
 
 namespace {
+    void AddOptions(OptionsDB& db) {
+        Hotkey::AddHotkey("ui.autocomplete",    UserStringNop("HOTKEY_AUTOCOMPLETE"),   GG::GGK_TAB);
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
+
     void PlayButtonClickSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.press.sound.path"), true); }
 
@@ -875,9 +881,16 @@ void CUIDropDownList::EnableDropArrow()
 CUIEdit::CUIEdit(const std::string& str) :
     Edit(str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(),
          ClientUI::TextColor(), ClientUI::CtrlColor())
-{
+{}
+
+void CUIEdit::CompleteConstruction() {
     EditedSignal.connect(-1, &PlayTextTypingSound);
     SetHiliteColor(ClientUI::EditHiliteColor());
+
+    HotkeyManager* hkm = HotkeyManager::GetManager();
+    auto fx = boost::bind(&CUIEdit::AutoComplete, this);
+    hkm->Connect(fx, "ui.autocomplete", FocusWindowCondition(this));
+    hkm->RebuildShortcuts();
 }
 
 void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -919,6 +932,7 @@ void CUIEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
         GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText());
 
     // todo: italicize, underline selected text with ctrl-i or ctrl-u
+    // ... though maybe better with a hotkey?
 
     } else {
         GG::Edit::KeyPress(key, key_code_point, mod_keys);
