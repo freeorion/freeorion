@@ -3,6 +3,6 @@ Policy
     description = "PLC_MARINE_RECRUITMENT_DESC"
     short_description = "PLC_MARINE_RECRUITMENT_SHORT_DESC"
     category = "MILITARY_CATEGORY"
-    adoptioncost = 10
+    adoptioncost = 5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = OwnedBy empire = Source.Owner
     graphic = "icons/meter/troops.png"
 
