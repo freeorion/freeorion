@@ -49,4 +49,4 @@ FieldType
             ]
             effects = Destroy
     ]
-    graphic = "nebulae/nebula8.png"
+    graphic = "fields/molecular_cloud.png"
