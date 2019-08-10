@@ -415,9 +415,9 @@ namespace {
         auto& manager = GetDisplayedDesignsManager();
 
         const auto empire_id = HumanClientApp::GetApp()->EmpireID();
-        const auto maybe_obsolete = manager.IsObsolete(design_id);
+        const auto maybe_obsolete = manager.IsObsolete(design_id);  // purpose of this obsolescence check is unclear... author didn't comment
         if (maybe_obsolete && !*maybe_obsolete)
-            HumanClientApp::GetApp()->Orders().IssueOrder(
+            HumanClientApp::GetApp()->Orders().IssueOrder(          // erase design id order : empire should forget this design
                 std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
         manager.Remove(design_id);
     }
@@ -1130,7 +1130,7 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         displayed_designs->InsertHullBefore(hull_name);
     }
 
-    // If requested initialize the current designs to all designs known by the empire
+    // If requested, initialize the current designs to all designs known by the empire
     if (GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled")) {
         // While initializing a new game, before sending info to players, the
         // server should have added the default design ids to an empire's known
@@ -1140,8 +1140,10 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         std::set<int> ordered_ids(ids.begin(), ids.end());
 
         displayed_designs->InsertOrderedIDs(ordered_ids);
+
     } else {
         // Remove the default designs from the empire's current designs.
+        // Purpose and logic of this is unclear... author didn't comment upon inquiry, but having this here reportedly fixes some issues...
         DebugLogger() << "Remove default designs from empire";
         const auto ids = empire->ShipDesigns();
         for (const auto design_id : ids) {
