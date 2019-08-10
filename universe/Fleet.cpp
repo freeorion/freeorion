@@ -269,10 +269,10 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     }
 
     // blockade debug logging
-    DebugLogger() << "Fleet::MovePath for fleet " << this->Name() << " ID(" << this->ID() <<") and route:";
+    TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << " ID(" << this->ID() <<") and route:";
     for (int waypoint : route)
-        DebugLogger() << "Fleet::MovePath ... " << waypoint;
-    DebugLogger() << "Fleet::MovePath END of Route ";
+        TraceLogger() << "Fleet::MovePath ... " << waypoint;
+    TraceLogger() << "Fleet::MovePath END of Route ";
 
     // get iterator pointing to std::shared_ptr<System> on route that is the first after where this fleet is currently.
     // if this fleet is in a system, the iterator will point to the system after the current in the route
@@ -293,9 +293,9 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         return retval;
     }
 
-    DebugLogger() << "initial cur system: " << (cur_system ? cur_system->Name() : "(none)") <<
-                              "  prev system: " << (prev_system ? prev_system->Name() : "(none)") <<
-                              "  next system: " << (next_system ? next_system->Name() : "(none)");
+    TraceLogger() << "initial cur system: " << (cur_system ? cur_system->Name() : "(none)")
+                  << "  prev system: " << (prev_system ? prev_system->Name() : "(none)")
+                  << "  next system: " << (next_system ? next_system->Name() : "(none)");
 
 
     bool is_post_blockade = false;
@@ -305,15 +305,15 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         {
             if (BlockadedAtSystem(cur_system->ID(), next_system->ID())){
                 // blockade debug logging
-                DebugLogger() << "Fleet::MovePath checking blockade from "<< cur_system->ID() << " to "<< next_system->ID();
-                DebugLogger() << "Fleet::MovePath finds system " <<cur_system->Name() << " (" <<cur_system->ID() <<
-                                            ") blockaded for fleet " << this->Name();
+                TraceLogger() << "Fleet::MovePath checking blockade from "<< cur_system->ID() << " to "<< next_system->ID();
+                TraceLogger() << "Fleet::MovePath finds system " <<cur_system->Name() << " (" <<cur_system->ID()
+                              << ") blockaded for fleet " << this->Name();
                 is_post_blockade = true;
             } else {
                 // blockade debug logging, but only for the more complex situations
                 if (next_system->ID() != m_arrival_starlane && !unobstructed_systems.count(cur_system->ID())) {
-                    DebugLogger() << "Fleet::MovePath checking blockade from "<< cur_system->ID() << " to " << next_system->ID();
-                    DebugLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID()
+                    TraceLogger() << "Fleet::MovePath checking blockade from "<< cur_system->ID() << " to " << next_system->ID();
+                    TraceLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID()
                                   << ") NOT blockaded for fleet " << this->Name();
                 }
             }
@@ -447,7 +447,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
             cur_x = cur_system->X();    // update positions to ensure no round-off-errors
             cur_y = cur_system->Y();
 
-            DebugLogger() << " ... arrived at system: " << cur_system->Name();
+            TraceLogger() << " ... arrived at system: " << cur_system->Name();
 
             bool clear_exit = cur_system->ID() == m_arrival_starlane; //just part of the test for the moment
             // attempt to get next system on route, to update next system.  if new current
@@ -457,23 +457,24 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                 // update next system on route and distance to it from current position
                 next_system = GetEmpireKnownSystem(*route_it, this->Owner());
                 if (next_system) {
-                    DebugLogger() << "Fleet::MovePath checking unrestriced lane travel from Sys("
+                    TraceLogger() << "Fleet::MovePath checking unrestriced lane travel from Sys("
                                   <<  cur_system->ID() << ") to Sys(" << (next_system && next_system->ID()) << ")";
                     clear_exit = clear_exit || next_system->ID() == m_arrival_starlane ||
                     (empire && empire->PreservedLaneTravel(cur_system->ID(), next_system->ID()));
                 }
             }
             if (flag_blockades && !clear_exit) {
-                DebugLogger() << "Fleet::MovePath checking blockades at system " << cur_system->Name() << " (" << cur_system->ID() <<
-                                 ") for fleet " << this->Name() << " travelling to system " << (*route_it);
+                TraceLogger() << "Fleet::MovePath checking blockades at system " << cur_system->Name()
+                              << " (" << cur_system->ID() << ") for fleet " << this->Name()
+                              << " travelling to system " << (*route_it);
                 if (cur_system && next_system && BlockadedAtSystem(cur_system->ID(), next_system->ID())) {
                     // blockade debug logging
-                    DebugLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID() <<
-                                     ") blockaded for fleet " << this->Name();
+                    TraceLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID()
+                                  << ") blockaded for fleet " << this->Name();
                     is_post_blockade = true;
                 } else {
-                    DebugLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID() <<
-                                     ") NOT blockaded for fleet " << this->Name();
+                    TraceLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID()
+                                  << ") NOT blockaded for fleet " << this->Name();
                 }
             }
 
@@ -504,7 +505,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         }
 
         // blockade debug logging
-        DebugLogger() << "Fleet::MovePath for fleet " << this->Name() << " id " << this->ID() << " adding node at sysID " 
+        TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << " id " << this->ID() << " adding node at sysID " 
                       << (cur_system ? cur_system->ID() : INVALID_OBJECT_ID) << " with post blockade status " 
                       << is_post_blockade << " and ETA " << turns_taken;
 
@@ -531,9 +532,9 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     if (turns_taken == TOO_LONG)
         turns_taken = ETA_NEVER;
     // blockade debug logging
-    DebugLogger() << "Fleet::MovePath for fleet " << this->Name()<<" id "<<this->ID()<<" adding node at sysID "<<
-                        (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID) << " with post blockade status " << is_post_blockade <<
-                        " and ETA " << turns_taken;
+    TraceLogger() << "Fleet::MovePath for fleet " << this->Name()<<" id "<<this->ID()<<" adding node at sysID "
+                  << (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID) << " with post blockade status "
+                  << is_post_blockade << " and ETA " << turns_taken;
 
     retval.emplace_back(cur_x, cur_y, true, turns_taken,
                         (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID),
@@ -1183,7 +1184,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         return false;
     }
     bool not_yet_in_system = SystemID() != start_system_id;
-    
+
     if (!not_yet_in_system && m_arrival_starlane == dest_system_id)
         return false;
 
@@ -1204,7 +1205,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         if (empire->PreservedLaneTravel(start_system_id, dest_system_id)) {
             return false;
         } else {
-            DebugLogger() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering travel from system (" << start_system_id << ") to system (" << dest_system_id << ")";
+            TraceLogger() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering travel from system (" << start_system_id << ") to system (" << dest_system_id << ")";
         }
     }
 
