@@ -138,7 +138,7 @@ class ShipCombatStats(object):
                 elif pc == fo.shipPartClass.fighterBay:
                     fighter_launch_rate += ship.currentPartMeterValue(fo.meterType.capacity, partname)
                 elif pc == fo.shipPartClass.fighterHangar:
-                    fighter_capacity += ship.currentPartMeterValue(meter_choice, partname)
+                    fighter_capacity = ship.currentPartMeterValue(meter_choice, partname)
                     part_damage = ship.currentPartMeterValue(fo.meterType.secondaryStat, partname)
                     if part_damage != fighter_damage and fighter_damage > 0:
                         # the C++ code fails also in this regard, so FOCS content *should* not allow this.
