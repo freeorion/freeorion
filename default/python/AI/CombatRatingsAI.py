@@ -77,13 +77,10 @@ class ShipCombatStats(object):
 
     class FighterStats(object):
         """ Stores fighter-related stats """
-        def __init__(self, stat_tuple=None, capacity=0, launch_rate=0, damage=0):
-            if stat_tuple and isinstance(stat_tuple, tuple):
-                self.capacity, self.launch_rate, self.damage = stat_tuple
-            else:
-                self.capacity = capacity
-                self.launch_rate = launch_rate
-                self.damage = damage
+        def __init__(self, capacity, launch_rate, damage):
+            self.capacity = capacity
+            self.launch_rate = launch_rate
+            self.damage = damage
 
         def __str__(self):
             return str(self.get_stats())
