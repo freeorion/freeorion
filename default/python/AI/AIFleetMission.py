@@ -670,7 +670,9 @@ class AIFleetMission(object):
                 self.orders.append(fleet_order)
 
             # also generate appropriate final orders
-            fleet_order = self._get_fleet_order_from_target(self.type, self.target)
+            fleet_order = self._get_fleet_order_from_target(self.type,
+                                                            self.target if not self.type == MissionType.PROTECT_REGION
+                                                            else system_to_visit)
             self.orders.append(fleet_order)
 
     def _need_repair(self, repair_limit=0.70):
