@@ -223,6 +223,7 @@ def split_fleet(fleet_id):
     aistate.update_fleet_rating(fleet_id)
     if new_fleets:
         aistate.ensure_have_fleet_missions(new_fleets)
+
     return new_fleets
 
 
@@ -250,6 +251,10 @@ def split_ship_from_fleet(fleet_id, ship_id):
         fo.issueAggressionOrder(new_fleet_id, True)
         aistate.update_fleet_rating(new_fleet_id)
         aistate.newlySplitFleets[new_fleet_id] = True
+        # register the new fleets so AI logic is aware of them
+        sys_status = aistate.systemStatus.setdefault(fleet.systemID, {})
+        sys_status['myfleets'].append(new_fleet_id)
+        sys_status['myFleetsAccessible'].append(new_fleet_id)
     else:
         if fleet.systemID == INVALID_ID:
             warn("Tried to split ship id (%d) from fleet %d when fleet is in starlane" % (
