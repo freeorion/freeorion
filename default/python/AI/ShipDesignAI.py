@@ -1635,6 +1635,8 @@ class MilitaryShipDesignerBaseClass(ShipDesigner):
 
     def __init__(self):
         super(MilitaryShipDesignerBaseClass, self).__init__()
+        self.additional_specifications.minimum_fuel = 2
+        self.additional_specifications.minimum_speed = 30
 
     def _adjusted_production_cost(self):
         # as military ships are grouped up in fleets, their power rating scales quadratic in numbers.
@@ -1678,9 +1680,7 @@ class WarShipDesigner(MilitaryShipDesignerBaseClass):
                               15000, 20000, 25000, 30000, 35000, 40000, 50000, 70000, 1000000])
 
     def __init__(self):
-        ShipDesigner.__init__(self)
-        self.additional_specifications.minimum_fuel = 1
-        self.additional_specifications.minimum_speed = 30
+        super(WarShipDesigner, self).__init__()
         self.additional_specifications.expected_turns_till_fight = 10 if fo.currentTurn() < 50 else 5
 
     def _rating_function(self):
@@ -1774,9 +1774,7 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
     NAME_THRESHOLDS = sorted([0, 1000])
 
     def __init__(self):
-        ShipDesigner.__init__(self)
-        self.additional_specifications.minimum_fuel = 1
-        self.additional_specifications.minimum_speed = 30
+        super(CarrierShipDesigner, self).__init__()
         self.additional_specifications.expected_turns_till_fight = 10 if fo.currentTurn() < 50 else 5
         self.additional_specifications.minimum_fighter_launch_rate = 1
 
