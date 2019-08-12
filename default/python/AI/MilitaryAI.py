@@ -872,6 +872,7 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
     for sys_id, alloc, minalloc, rvp, takeAny in these_allocations:
         if not doing_main and not avail_mil_fleet_ids:
             break
+        debug("Allocating for: %s", TargetSystem(sys_id))
         found_fleets = []
         found_stats = {}
         ensure_return = sys_id not in set(AIstate.colonyTargetedSystemIDs
@@ -883,17 +884,24 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
             cur_stats=found_stats, starting_system=sys_id, fleet_pool_set=avail_mil_fleet_ids,
             fleet_list=found_fleets, ensure_return=ensure_return)
         if not these_fleets:
+            debug("Could not allocate any fleets.")
             if not found_fleets or not (FleetUtilsAI.stats_meet_reqs(found_stats, {'rating': minalloc}) or takeAny):
                 if doing_main:
                     if _verbose_mil_reporting:
-                        debug("NO available/suitable military allocation for system %d ( %s ) -- requested allocation %8d, found available rating %8d in fleets %s" % (sys_id, universe.getSystem(sys_id).name, minalloc, found_stats.get('rating', 0), found_fleets))
+                        debug("NO available/suitable military allocation for system %d ( %s ) "
+                              "-- requested allocation %8d, found available rating %8d in fleets %s"
+                              % (sys_id, universe.getSystem(sys_id).name, minalloc,
+                                 found_stats.get('rating', 0), found_fleets))
                 avail_mil_fleet_ids.update(found_fleets)
                 continue
             else:
                 these_fleets = found_fleets
-        elif doing_main and _verbose_mil_reporting:
-            debug("FULL+ military allocation for system %d ( %s ) -- requested allocation %8d, got %8d with fleets %s"
-                  % (sys_id, universe.getSystem(sys_id).name, alloc, found_stats.get('rating', 0), these_fleets))
+        else:
+            debug("Assigning fleets %s to target %s", these_fleets, TargetSystem(sys_id))
+            if doing_main and _verbose_mil_reporting:
+                debug("FULL+ military allocation for system %d ( %s )"
+                      " -- requested allocation %8d, got %8d with fleets %s"
+                      % (sys_id, universe.getSystem(sys_id).name, alloc, found_stats.get('rating', 0), these_fleets))
         target = TargetSystem(sys_id)
         for fleet_id in these_fleets:
             fo.issueAggressionOrder(fleet_id, True)

@@ -261,6 +261,7 @@ def split_ship_from_fleet(fleet_id, ship_id):
 
 
 def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, context=""):
+    debug("Merging fleet %s into %s", TargetFleet(fleet_a_id), TargetFleet(fleet_b_id))
     universe = fo.getUniverse()
     fleet_a = universe.getFleet(fleet_a_id)
     fleet_b = universe.getFleet(fleet_b_id)
