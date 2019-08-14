@@ -736,13 +736,15 @@ class AIFleetMission(object):
         # TODO: Also check fleet rating vs planets in decision making below not only vs fleets
         universe = fo.getUniverse()
         primary_objective = self.target.id
-        debug("Trying to find target for protection mission. Target: %s", self.target)
+        fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
+        debug("%s finding target for protection mission (primary target %s). Fleet Rating: %.1f",
+              self.fleet, self.target, fleet_rating)
         immediate_threat = MilitaryAI.get_system_local_threat(primary_objective)
         if immediate_threat:
-            debug("Immediate threat! Moving to primary mission target")
+            debug("  Immediate threat! Moving to primary mission target")
             return primary_objective
         else:
-            debug("No immediate threats.")
+            debug("  No immediate threats.")
             # Try to eliminate neighbouring fleets
             neighbors = universe.getImmediateNeighbors(primary_objective, fo.empireID())
             threat_list = sorted(map(
@@ -751,10 +753,12 @@ class AIFleetMission(object):
             ), reverse=True)
 
             if not threat_list:
-                debug("No neighbors (?!). Moving to primary mission target")
+                debug("  No neighbors (?!). Moving to primary mission target")
                 return primary_objective
-
-            debug("%s", threat_list)
+            else:
+                debug("  Neighboring threats:")
+                for threat, sys_id in threat_list:
+                    debug("    %s - %.1f", TargetSystem(sys_id), threat)
             top_threat, candidate_system = threat_list[0]
             if not top_threat:
                 # TODO: Move into second ring but needs more careful evaluation
@@ -794,12 +798,10 @@ class AIFleetMission(object):
 
             # TODO rate against threat in target system
             # TODO only engage if can reach in 1 turn or leaves sufficient defense behind
-            fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
-            debug("This fleet rating: %d. Enemy Rating: %d", fleet_rating, top_threat)
             safety_factor = get_aistate().character.military_safety_factor()
             if fleet_rating < safety_factor*top_threat:
-                debug("Neighboring threat is too powerful. Moving to primary mission target")
+                debug("  Neighboring threat is too powerful. Moving to primary mission target")
                 return primary_objective  # do not engage!
 
-            debug("Engaging neighboring threat: %d", candidate_system)
+            debug("  Engaging neighboring threat: %s", TargetSystem(candidate_system))
             return candidate_system
