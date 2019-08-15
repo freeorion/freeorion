@@ -217,7 +217,7 @@ namespace parse { namespace detail {
             (
                 label(tok.Tag_)  >  tok.string [ _a = _1 ] >
                 label(tok.Data_)
-                >  ( int_rules.expr      [ _b = construct_movable_(new_<ValueRef::StringCast<int>>(deconstruct_movable_(_1, _pass))) ]
+                >  (   int_rules.expr    [ _b = construct_movable_(new_<ValueRef::StringCast<int>>(deconstruct_movable_(_1, _pass))) ]
                      | double_rules.expr [ _b = construct_movable_(new_<ValueRef::StringCast<double>>(deconstruct_movable_(_1, _pass))) ]
                      | tok.string        [ _b = construct_movable_(new_<ValueRef::Constant<std::string>>(_1)) ]
                      | string_grammar    [ _b = _1 ]

@@ -72,7 +72,7 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        using  strings_rule = parse::detail::rule<void (ArticleMap&)>;
+        using strings_rule = parse::detail::rule<void (ArticleMap&)>;
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 

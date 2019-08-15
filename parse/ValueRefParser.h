@@ -246,7 +246,7 @@ namespace parse {
             detail::Labeller& label,
             const detail::condition_parser_grammar& condition_parser,
             const detail::value_ref_grammar<std::string>& string_grammar);
-        detail::simple_int_parser_rules  simple_int_rules;
+        detail::simple_int_parser_rules simple_int_rules;
         int_complex_parser_grammar int_complex_grammar;
     };
 
