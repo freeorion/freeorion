@@ -32,7 +32,7 @@ private:
     boost::asio::ip::udp::socket   m_socket;
     boost::asio::ip::udp::endpoint m_remote_endpoint;
 
-    std::array<char, 32> m_recv_buffer;
+    std::array<char, 32> m_recv_buffer = {};
 };
 
 namespace {
@@ -397,9 +397,9 @@ bool PlayerConnection::SyncWriteMessage(const Message& message) {
     return (!error);
 }
 
-void PlayerConnection::AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error, boost::system::error_code error) {
-    self->EventSignal(boost::bind(self->m_disconnected_callback, self));
-}
+void PlayerConnection::AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error,
+                                         boost::system::error_code error)
+{ self->EventSignal(boost::bind(self->m_disconnected_callback, self)); }
 
 ////////////////////////////////////////////////////////////////////////////////
 // DiscoveryServer
@@ -409,19 +409,35 @@ DiscoveryServer::DiscoveryServer(boost::asio::io_context& io_context) :
 { Listen(); }
 
 void DiscoveryServer::Listen() {
+    m_recv_buffer.fill('\0');
     m_socket.async_receive_from(
-        boost::asio::buffer(m_recv_buffer), m_remote_endpoint,
+        boost::asio::buffer(m_recv_buffer),
+        m_remote_endpoint,
         boost::bind(&DiscoveryServer::HandleReceive, this,
                     boost::asio::placeholders::error));
 }
 
 void DiscoveryServer::HandleReceive(const boost::system::error_code& error) {
-    if (!error &&
-        std::string(m_recv_buffer.begin(), m_recv_buffer.end()) == DISCOVERY_QUESTION) {
+    auto message = std::string(m_recv_buffer.begin(), m_recv_buffer.end());
+
+    if (!error && message == DISCOVERY_QUESTION) {
+        auto reply = DISCOVERY_ANSWER + boost::asio::ip::host_name();
         m_socket.send_to(
-            boost::asio::buffer(DISCOVERY_ANSWER + boost::asio::ip::host_name()),
+            boost::asio::buffer(reply),
             m_remote_endpoint);
+        DebugLogger(network) << "Discovery server received from: " << m_remote_endpoint
+                             << "\nmessage: " << message
+                             << "\nreplied: " << reply;
+
+    } else if (!error) {
+        ErrorLogger(network) << "Discovery server received and ignored from: " << m_remote_endpoint
+                             << "\nmessage: " << message;
+
+    } else {
+        ErrorLogger(network) << "Discovery server received and ignored error: " << error
+                             << "\nfrom: " << m_remote_endpoint;
     }
+
     Listen();
 }
 
@@ -659,7 +675,7 @@ void ServerNetworking::CleanupCookies() {
 
 void ServerNetworking::Init() {
     // use a dual stack (ipv6 + ipv4) socket
-    tcp::endpoint endpoint(tcp::v6(), Networking::MessagePort());
+    tcp::endpoint message_endpoint(tcp::v6(), Networking::MessagePort());
 
     if (GetOptionsDB().Get<bool>("singleplayer")) {
         // when hosting a single player game only accept connections from
@@ -667,23 +683,24 @@ void ServerNetworking::Init() {
         // interface.
         // This should prevent unnecessary triggering of Desktop Firewalls as
         // reported by various users when running single player games.
-        endpoint.address(boost::asio::ip::address_v4::loopback());
+        message_endpoint.address(boost::asio::ip::address_v4::loopback());
     }
 
-    m_player_connection_acceptor.open(endpoint.protocol());
+    m_player_connection_acceptor.open(message_endpoint.protocol());
     m_player_connection_acceptor.set_option(
         boost::asio::socket_base::reuse_address(true));
-    if (endpoint.protocol() == boost::asio::ip::tcp::v6())
+    if (message_endpoint.protocol() == boost::asio::ip::tcp::v6())
         m_player_connection_acceptor.set_option(
             boost::asio::ip::v6_only(false));  // may be true by default on some systems
     m_player_connection_acceptor.set_option(
         boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
-    m_player_connection_acceptor.bind(endpoint);
+    m_player_connection_acceptor.bind(message_endpoint);
     m_player_connection_acceptor.listen();
-    AcceptNextConnection();
+
+    AcceptNextMessagingConnection();
 }
 
-void ServerNetworking::AcceptNextConnection() {
+void ServerNetworking::AcceptNextMessagingConnection() {
     auto next_connection = PlayerConnection::NewConnection(
 #if BOOST_VERSION >= 106600
         m_player_connection_acceptor.get_executor().context(),
@@ -697,20 +714,20 @@ void ServerNetworking::AcceptNextConnection() {
         boost::bind(&ServerNetworking::EnqueueEvent, this, _1));
     m_player_connection_acceptor.async_accept(
         next_connection->m_socket,
-        boost::bind(&ServerNetworking::AcceptConnection,
+        boost::bind(&ServerNetworking::AcceptPlayerMessagingConnection,
                     this,
                     next_connection,
                     boost::asio::placeholders::error));
 }
 
-void ServerNetworking::AcceptConnection(PlayerConnectionPtr player_connection,
-                                        const boost::system::error_code& error)
+void ServerNetworking::AcceptPlayerMessagingConnection(PlayerConnectionPtr player_connection,
+                                                       const boost::system::error_code& error)
 {
     if (!error) {
-        TraceLogger(network) << "ServerNetworking::AcceptConnection : connected to new player";
+        TraceLogger(network) << "ServerNetworking::AcceptPlayerMessagingConnection : connected to new player";
         m_player_connections.insert(player_connection);
         player_connection->Start();
-        AcceptNextConnection();
+        AcceptNextMessagingConnection();
     } else {
         throw error;
     }
