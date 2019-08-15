@@ -3,6 +3,10 @@
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
+#include "../universe/ValueRef.h"
+
+//TODO: replace with std::make_unique when transitioning to C++14
+#include <boost/smart_ptr/make_unique.hpp>
 
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
@@ -32,7 +36,7 @@ private:
     boost::asio::ip::udp::socket   m_socket;
     boost::asio::ip::udp::endpoint m_remote_endpoint;
 
-    std::array<char, 32> m_recv_buffer = {};
+    std::array<char, 1024> m_recv_buffer = {};
 };
 
 namespace {
@@ -418,25 +422,45 @@ void DiscoveryServer::Listen() {
 }
 
 void DiscoveryServer::HandleReceive(const boost::system::error_code& error) {
-    auto message = std::string(m_recv_buffer.begin(), m_recv_buffer.end());
+    if (error) {
+        ErrorLogger(network) << "DiscoveryServer received and ignored error: " << error
+                             << "\nfrom: " << m_remote_endpoint;
+        Listen();
+        return;
+    }
 
-    if (!error && message == DISCOVERY_QUESTION) {
+    auto message = std::string(m_recv_buffer.begin(), m_recv_buffer.end());
+    message.erase(std::find(message.begin(), message.end(), '\0'), message.end());
+    boost::trim(message);
+
+    if (message == DISCOVERY_QUESTION) {
         auto reply = DISCOVERY_ANSWER + boost::asio::ip::host_name();
         m_socket.send_to(
             boost::asio::buffer(reply),
             m_remote_endpoint);
-        DebugLogger(network) << "Discovery server received from: " << m_remote_endpoint
+        DebugLogger(network) << "DiscoveryServer received from: " << m_remote_endpoint // operator<< outputs "IP:port"
                              << "\nmessage: " << message
                              << "\nreplied: " << reply;
-
-    } else if (!error) {
-        ErrorLogger(network) << "Discovery server received and ignored from: " << m_remote_endpoint
-                             << "\nmessage: " << message;
-
-    } else {
-        ErrorLogger(network) << "Discovery server received and ignored error: " << error
-                             << "\nfrom: " << m_remote_endpoint;
+        Listen();
+        return;
     }
+
+
+    DebugLogger(network) << "DiscoveryServer evaluating FOCS expression: " << message;
+    std::string reply;
+    try {
+        auto value_ref = boost::make_unique<ValueRef::StringCast<int>>(
+            boost::make_unique<ValueRef::Variable<int>>(
+                ValueRef::NON_OBJECT_REFERENCE, message));
+        reply = value_ref->Eval(ScriptingContext());
+        DebugLogger() << "DiscoveryServer result: " << reply;
+
+    } catch (...) {
+        ErrorLogger(network) << "DiscoveryServer got exception while evaluating FOCS expression";
+        reply = "FOCS ERROR";
+    }
+
+    m_socket.send_to(boost::asio::buffer(reply), m_remote_endpoint);
 
     Listen();
 }
