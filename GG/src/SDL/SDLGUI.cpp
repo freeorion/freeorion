@@ -382,7 +382,7 @@ namespace {
                 default:
                     std::stringstream ss;
                     ss << "Framebuffer creation failed. Status: " << m_status;
-                    return ss.str().c_str();
+                    return to_cstr(std::move(ss).str());
             }
         }
     private:
