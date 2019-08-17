@@ -72,12 +72,16 @@ namespace parse {
 
     /** Find all FOCS scripts (files with .focs.txt suffix) in \p path.  If \p allow_permissive =
         true then if \p path is not empty and there are no .focs.txt files allow all files to qualify.*/
-    FO_PARSE_API std::vector< boost::filesystem::path > ListScripts(const boost::filesystem::path& path, bool permissive = false);
+    FO_PARSE_API std::vector<boost::filesystem::path> ListScripts(const boost::filesystem::path& path, bool permissive = false);
 
     FO_PARSE_API void file_substitution(std::string& text, const boost::filesystem::path& file_search_path);
-    FO_PARSE_API void process_include_substitutions(std::string& text, 
-                                                    const boost::filesystem::path& file_search_path, 
+    FO_PARSE_API void process_include_substitutions(std::string& text,
+                                                    const boost::filesystem::path& file_search_path,
                                                     std::set<boost::filesystem::path>& files_included);
+
+    FO_PARSE_API bool int_free_variable(std::string& text);
+    FO_PARSE_API bool double_free_variable(std::string& text);
+    FO_PARSE_API bool string_free_variable(std::string& text);
 }
 
 #endif
