@@ -1,5 +1,6 @@
 #include "ValueRefParser.h"
 
+#include "Parse.h"
 #include "ConditionParserImpl.h"
 #include "EnumValueRefRules.h"
 #include "MovableEnvelope.h"

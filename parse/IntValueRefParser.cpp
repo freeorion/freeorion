@@ -1,5 +1,6 @@
 #include "ValueRefParser.h"
 
+#include "Parse.h"
 #include "MovableEnvelope.h"
 #include "../universe/ValueRef.h"
 
