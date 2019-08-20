@@ -379,10 +379,14 @@ namespace {
                     return "The requested framebuffer format was unsupported";
                 case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
                     return "One of the framebuffer attachments is incomplete.";
+                case GL_FRAMEBUFFER_UNDEFINED:
+                    return "The default framebuffer does not exist.";
+                case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
+                    return "At least one picture must be attached to the framebuffer.";
+                case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+                    return "All populated color attachments are not from textures of the same target.";
                 default:
-                    std::stringstream ss;
-                    ss << "Framebuffer creation failed. Status: " << m_status;
-                    return ss.str().c_str();
+                    return "Framebuffer creation failed with an unhandled exception.";
             }
         }
     private:
