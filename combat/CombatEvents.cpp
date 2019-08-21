@@ -628,24 +628,33 @@ boost::optional<int> WeaponFireEvent::PrincipalFaction(int viewing_empire_id) co
 template <class Archive>
 void WeaponFireEvent::serialize(Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-    ar & BOOST_SERIALIZATION_NVP(bout)
-       & BOOST_SERIALIZATION_NVP(round)
-       & BOOST_SERIALIZATION_NVP(attacker_id)
-       & BOOST_SERIALIZATION_NVP(target_id)
-       & BOOST_SERIALIZATION_NVP(weapon_name)
-       & BOOST_SERIALIZATION_NVP(power)
-       & BOOST_SERIALIZATION_NVP(shield)
-       & BOOST_SERIALIZATION_NVP(damage)
-       & BOOST_SERIALIZATION_NVP(target_owner_id)
-       & BOOST_SERIALIZATION_NVP(attacker_owner_id);
 
-    if (version < 3) {
-        int target_destroyed = 0;
-        ar & BOOST_SERIALIZATION_NVP (target_destroyed);
+    if (version < 5) {
+        ar & BOOST_SERIALIZATION_NVP(bout)
+           & BOOST_SERIALIZATION_NVP(round)
+           & BOOST_SERIALIZATION_NVP(attacker_id)
+           & BOOST_SERIALIZATION_NVP(target_id)
+           & BOOST_SERIALIZATION_NVP(weapon_name)
+           & BOOST_SERIALIZATION_NVP(power)
+           & BOOST_SERIALIZATION_NVP(shield)
+           & BOOST_SERIALIZATION_NVP(damage)
+           & BOOST_SERIALIZATION_NVP(target_owner_id)
+           & BOOST_SERIALIZATION_NVP(attacker_owner_id);
+    } else {
+        ar & boost::serialization::make_nvp("b", bout)
+           & boost::serialization::make_nvp("r", round)
+           & boost::serialization::make_nvp("a", attacker_id)
+           & boost::serialization::make_nvp("t", target_id)
+           & boost::serialization::make_nvp("w", weapon_name)
+           & boost::serialization::make_nvp("p", power)
+           & boost::serialization::make_nvp("s", shield)
+           & boost::serialization::make_nvp("d", damage)
+           & boost::serialization::make_nvp("to", target_owner_id)
+           & boost::serialization::make_nvp("ao", attacker_owner_id);
     }
 }
 
-BOOST_CLASS_VERSION(WeaponFireEvent, 4)
+BOOST_CLASS_VERSION(WeaponFireEvent, 5)
 BOOST_CLASS_EXPORT(WeaponFireEvent)
 
 template
@@ -721,11 +730,18 @@ boost::optional<int> IncapacitationEvent::PrincipalFaction(int viewing_empire_id
 template <class Archive>
 void IncapacitationEvent::serialize (Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-    ar & BOOST_SERIALIZATION_NVP(bout)
-       & BOOST_SERIALIZATION_NVP(object_id)
-       & BOOST_SERIALIZATION_NVP(object_owner_id);
+    if (version < 2) {
+        ar & BOOST_SERIALIZATION_NVP(bout)
+           & BOOST_SERIALIZATION_NVP(object_id)
+           & BOOST_SERIALIZATION_NVP(object_owner_id);
+    } else {
+        ar & boost::serialization::make_nvp("b", bout)
+           & boost::serialization::make_nvp("i", object_id)
+           & boost::serialization::make_nvp("o", object_owner_id);
+    }
 }
 
+BOOST_CLASS_VERSION(IncapacitationEvent, 2)
 BOOST_CLASS_EXPORT(IncapacitationEvent)
 
 template
@@ -1129,9 +1145,9 @@ template <class Archive>
 void WeaponsPlatformEvent::serialize(Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
     ar & BOOST_SERIALIZATION_NVP(bout)
-        & BOOST_SERIALIZATION_NVP(attacker_id)
-        & BOOST_SERIALIZATION_NVP(attacker_owner_id)
-        & BOOST_SERIALIZATION_NVP(events);
+       & BOOST_SERIALIZATION_NVP(attacker_id)
+       & BOOST_SERIALIZATION_NVP(attacker_owner_id)
+       & BOOST_SERIALIZATION_NVP(events);
 }
 
 BOOST_CLASS_VERSION(WeaponsPlatformEvent, 4)
