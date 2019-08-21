@@ -2,17 +2,16 @@ Hull
     name = "SH_HEAVY_ASTEROID"
     description = "SH_HEAVY_ASTEROID_DESC"
     speed = 60
-    fuel = 1
+    fuel = 2
     stealth = 5
     structure = 50
     slots = [
-        Slot type = External position = (0.30, 0.25)
         Slot type = External position = (0.45, 0.25)
         Slot type = External position = (0.60, 0.25)
+        Slot type = External position = (0.30, 0.50)
         Slot type = External position = (0.75, 0.50)
         Slot type = External position = (0.52, 0.75)
         Slot type = External position = (0.68, 0.75)
-        Slot type = Internal position = (0.30, 0.50)
         Slot type = Internal position = (0.45, 0.50)
         Slot type = Internal position = (0.60, 0.50)
     ]

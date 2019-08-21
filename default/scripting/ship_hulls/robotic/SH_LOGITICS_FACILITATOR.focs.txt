@@ -2,13 +2,12 @@ Hull
     name = "SH_LOGISTICS_FACILITATOR"
     description = "SH_LOGISTICS_FACILITATOR_DESC"
     speed = 80
-    fuel = 1.5
+    fuel = 2
     stealth = 5
     structure = 110
     slots = [
         Slot type = External position = (0.10, 0.15)
-        Slot type = External position = (0.22, 0.15)
-        Slot type = External position = (0.34, 0.15)
+        Slot type = External position = (0.28, 0.15)
         Slot type = External position = (0.46, 0.15)
         Slot type = External position = (0.58, 0.15)
         Slot type = External position = (0.70, 0.15)
