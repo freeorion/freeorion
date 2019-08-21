@@ -982,9 +982,9 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, bool allow_use
 {}
 
 void ProductionQueueOrder::ExecuteImpl() const {
-    auto empire = GetValidatedEmpire();
-
     try {
+        auto empire = GetValidatedEmpire();
+
         if (m_item.build_type == BT_BUILDING || m_item.build_type == BT_SHIP || m_item.build_type == BT_STOCKPILE) {
             DebugLogger() << "ProductionQueueOrder place " << m_item.Dump();
             empire->PlaceProductionOnQueue(m_item, m_number, 1, m_location, m_new_index);

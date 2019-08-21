@@ -33,8 +33,12 @@ int OrderSet::IssueOrder(OrderPtr&& order) {
 
 void OrderSet::ApplyOrders() {
     DebugLogger() << "OrderSet::ApplyOrders() executing " << m_orders.size() << " orders";
-    for (auto& order : m_orders)
-        order.second->Execute();
+    try {
+        for (auto& order : m_orders)
+            order.second->Execute();
+    } catch (std::exception e) {
+        ErrorLogger() << "Caught exception executing orders: " << e.what();
+    }
 }
 
 bool OrderSet::RescindOrder(int order) {
