@@ -970,7 +970,14 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
     // Return them to the client
     DebugLogger() << "UpdateCombatLogs returning " << logs.size()
                   << " logs to player " << player_connection->PlayerID();
-    player_connection->SendMessage(DispatchCombatLogsMessage(logs));
+
+    try {
+        player_connection->SendMessage(DispatchCombatLogsMessage(logs));
+    } catch (std::exception e) {
+        ErrorLogger() << "caught exception sending combat logs message: " << e.what();
+        std::vector<std::pair<int, const CombatLog>> empty_logs;
+        player_connection->SendMessage(DispatchCombatLogsMessage(empty_logs));
+    }
 }
 
 void ServerApp::LoadChatHistory() {
