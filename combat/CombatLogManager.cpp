@@ -118,14 +118,17 @@ void CombatLog::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(empire_ids)
         & BOOST_SERIALIZATION_NVP(object_ids)
         & BOOST_SERIALIZATION_NVP(damaged_object_ids)
-        & BOOST_SERIALIZATION_NVP(destroyed_object_ids)
-        & BOOST_SERIALIZATION_NVP(combat_events);
+        & BOOST_SERIALIZATION_NVP(destroyed_object_ids);
 
-    // Store state of fleet at this battle.
-    // Used to show summaries of past battles.
-    if (version >= 1) {
-        ar & BOOST_SERIALIZATION_NVP(participant_states);
+    if (combat_events.size() > 1)
+        TraceLogger() << "CombatLog::serialize turn " << turn << "  combat at " << system_id << "  combat events size: " << combat_events.size();
+    try {
+        ar  & BOOST_SERIALIZATION_NVP(combat_events);
+    } catch (std::exception e) {
+        ErrorLogger() << "combat events serializing failed!: caught exception: " << e.what();
     }
+
+    ar & BOOST_SERIALIZATION_NVP(participant_states);
 }
 
 template

@@ -558,8 +558,13 @@ Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatL
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
-        oa << BOOST_SERIALIZATION_NVP(logs);
+        try {
+            oa << BOOST_SERIALIZATION_NVP(logs);
+        } catch (std::exception e) {
+            ErrorLogger() << "Caught exception serializing combat logs: " << e.what();
+        }
     }
+
     return Message(Message::DISPATCH_COMBAT_LOGS, os.str());
 }
 
