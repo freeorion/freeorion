@@ -58,15 +58,10 @@ PlayerConnection::PlayerConnection(boost::asio::io_context& io_context,
                                    ConnectionFn disconnected_callback) :
     m_service(io_context),
     m_socket(io_context),
-    m_ID(INVALID_PLAYER_ID),
-    m_new_connection(true),
-    m_client_type(Networking::INVALID_CLIENT_TYPE),
-    m_authenticated(false),
     m_cookie(boost::uuids::nil_uuid()),
     m_nonplayer_message_callback(nonplayer_message_callback),
     m_player_message_callback(player_message_callback),
-    m_disconnected_callback(disconnected_callback),
-    m_valid(true)
+    m_disconnected_callback(disconnected_callback)
 {}
 
 PlayerConnection::~PlayerConnection() {

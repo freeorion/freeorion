@@ -318,15 +318,15 @@ private:
     boost::asio::ip::tcp::socket    m_socket;
     Message::HeaderBuffer           m_incoming_header_buffer;
     Message                         m_incoming_message;
-    int                             m_ID;
+    int                             m_ID = Networking::INVALID_PLAYER_ID;
     std::string                     m_player_name;
-    bool                            m_new_connection;
-    Networking::ClientType          m_client_type;
+    bool                            m_new_connection = true;
+    Networking::ClientType          m_client_type = Networking::INVALID_CLIENT_TYPE;
     std::string                     m_client_version_string;
-    bool                            m_authenticated;
+    bool                            m_authenticated = false;
     Networking::AuthRoles           m_roles;
     boost::uuids::uuid              m_cookie;
-    bool                            m_valid;
+    bool                            m_valid = true;
 
     MessageAndConnectionFn          m_nonplayer_message_callback;
     MessageAndConnectionFn          m_player_message_callback;

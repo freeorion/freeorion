@@ -89,7 +89,7 @@ public:
             return;
 
         // clear any lingering GL errors
-        auto err = glGetError();
+        glGetError();
 
         float x0 = Value(ul.x);
         float y0 = Value(ul.y);
