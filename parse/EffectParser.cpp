@@ -42,7 +42,7 @@ namespace parse {
     /** effects_parser_grammar::Impl holds the rules for
         effects_parser_grammar. */
     struct effects_parser_grammar::Impl {
-        Impl (const effects_parser_grammar& effects_parser_grammar,
+        Impl(const effects_parser_grammar& effects_parser_grammar,
             const lexer& tok,
             detail::Labeller& label,
             const detail::condition_parser_grammar& condition_parser,

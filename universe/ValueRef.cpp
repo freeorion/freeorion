@@ -1110,7 +1110,7 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
     IF_CURRENT_VALUE(std::vector<std::string>)
 
     if (m_ref_type == NON_OBJECT_REFERENCE) {
-        // add more non-object reference int functions here
+        // add more non-object reference string vector functions here
         ErrorLogger() << "std::vector<std::string>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
         if (context.source)
             ErrorLogger() << "source: " << context.source->ObjectType() << " "
@@ -1177,6 +1177,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         if (property_name == "GalaxySeed")
             return GetGalaxySetupData().GetSeed();
 
+        // add more non-object reference string functions here
         ErrorLogger() << "Variable<std::string>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
         if (context.source)
             ErrorLogger() << "source: " << context.source->ObjectType() << " "

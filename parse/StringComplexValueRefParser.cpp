@@ -73,7 +73,7 @@ namespace parse { namespace detail {
             ;
 
         start
-            %=   game_rule
+            %=  game_rule
             |   empire_ref
             |   empire_empire_ref
             ;

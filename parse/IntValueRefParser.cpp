@@ -1,5 +1,6 @@
 #include "ValueRefParser.h"
 
+#include "Parse.h"
 #include "MovableEnvelope.h"
 #include "../universe/ValueRef.h"
 
@@ -128,4 +129,21 @@ parse::int_arithmetic_rules::int_arithmetic_rules(
         |   statistic_expr
         |   int_complex_grammar
         ;
+}
+
+namespace parse {
+    bool int_free_variable(std::string& text) {
+        const lexer tok;
+        boost::spirit::qi::in_state_type in_state;
+        parse::detail::simple_int_parser_rules simple_int_rules(tok);
+
+        text_iterator first = text.begin();
+        text_iterator last = text.end();
+        token_iterator it = tok.begin(first, last);
+
+        bool success = boost::spirit::qi::phrase_parse(
+            it, tok.end(), simple_int_rules.free_variable_name, in_state("WS")[tok.self]);
+
+        return success;
+    }
 }

@@ -183,9 +183,9 @@ public:
 
 private:
     void Init();
-    void AcceptNextConnection();
-    void AcceptConnection(PlayerConnectionPtr player_connection,
-                          const boost::system::error_code& error);
+    void AcceptNextMessagingConnection();
+    void AcceptPlayerMessagingConnection(PlayerConnectionPtr player_connection,
+                                         const boost::system::error_code& error);
     void DisconnectImpl(PlayerConnectionPtr player_connection);
     void EnqueueEvent(const NullaryFn& fn);
 

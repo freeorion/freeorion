@@ -1,5 +1,7 @@
 #include "ValueRefParser.h"
 
+#include "Parse.h"
+#include "ConditionParserImpl.h"
 #include "EnumValueRefRules.h"
 #include "MovableEnvelope.h"
 #include "../universe/ValueRef.h"
@@ -161,4 +163,19 @@ namespace parse {
     detail::value_ref_rule<std::string> primary_expr;
     detail::reference_token_rule variable_scope_rule;
     detail::name_token_rule container_type_rule;
-};
+
+
+    bool string_free_variable(std::string& text) {
+        const lexer tok;
+        boost::spirit::qi::in_state_type in_state;
+
+        text_iterator first = text.begin();
+        text_iterator last = text.end();
+        token_iterator it = tok.begin(first, last);
+
+        bool success = boost::spirit::qi::phrase_parse(
+            it, tok.end(), tok.GalaxySeed_, in_state("WS")[tok.self]);
+
+        return success;
+    }
+}
