@@ -333,7 +333,7 @@ namespace FreeOrionPython {
         class_<Meter, noncopyable>("meter", no_init)
             .add_property("current",            &Meter::Current)
             .add_property("initial",            &Meter::Initial)
-            .def("dump",                        &Meter::Dump, return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
+            .def("dump",                        &Meter::Dump,                       return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
 
         ////////////////////
@@ -578,7 +578,7 @@ namespace FreeOrionPython {
                                                 ))
 
             .def("productionLocationForEmpire", &ShipDesign::ProductionLocation)
-            .def("dump",                        &ShipDesign::Dump, return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
+            .def("dump",                        &ShipDesign::Dump,                          return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
         def("validShipDesign",                  ValidDesignHullAndParts, "Returns true (boolean) if the passed hull (string) and parts (StringVec) make up a valid ship design, and false (boolean) otherwise. Valid ship designs don't have any parts in slots that can't accept that type of part, and contain only hulls and parts that exist (and may also need to contain the correct number of parts - this needs to be verified).");
         def("getShipDesign",                    &GetShipDesign,                             return_value_policy<reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated id number (int).");
@@ -732,7 +732,7 @@ namespace FreeOrionPython {
             .add_property("description",        &Special::Description)
             .add_property("spawnrate",          make_function(&Special::SpawnRate,      return_value_policy<return_by_value>()))
             .add_property("spawnlimit",         make_function(&Special::SpawnLimit,     return_value_policy<return_by_value>()))
-            .def("dump",                        &Special::Dump)
+            .def("dump",                        &Special::Dump,                         return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
             .def("initialCapacity",             SpecialInitialCapacityOnObject)
         ;
         def("getSpecial",                       &GetSpecial,                            return_value_policy<reference_existing_object>(), "Returns the special (Special) with the indicated name (string).");
