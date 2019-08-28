@@ -2,14 +2,13 @@ Hull
     name = "SH_SELF_GRAVITATING"
     description = "SH_SELF_GRAVITATING_DESC"
     speed = 80
-    fuel = 1.5
+    fuel = 2
     stealth = -5
     structure = 100
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.35, 0.15)
         Slot type = External position = (0.50, 0.15)
-        Slot type = External position = (0.65, 0.15)
         Slot type = External position = (0.40, 0.80)
         Slot type = Core     position = (0.50, 0.50)
         Slot type = External position = (0.80, 0.50)
