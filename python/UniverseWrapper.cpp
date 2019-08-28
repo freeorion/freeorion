@@ -333,7 +333,7 @@ namespace FreeOrionPython {
         class_<Meter, noncopyable>("meter", no_init)
             .add_property("current",            &Meter::Current)
             .add_property("initial",            &Meter::Initial)
-            .add_property("dump",               &Meter::Dump)
+            .def("dump",                        &Meter::Dump, return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
 
         ////////////////////
@@ -473,7 +473,7 @@ namespace FreeOrionPython {
             .def("hasTag",                      &UniverseObject::HasTag)
             .add_property("meters",             make_function(ObjectMeters,                 return_internal_reference<>()))
             .def("getMeter",                    make_function(ObjectGetMeter,               return_internal_reference<>()))
-            .add_property("dump",               &UniverseObject::Dump)
+            .def("dump",                        &UniverseObject::Dump,                      return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
 
         ///////////////////
@@ -578,7 +578,7 @@ namespace FreeOrionPython {
                                                 ))
 
             .def("productionLocationForEmpire", &ShipDesign::ProductionLocation)
-            .add_property("dump",               &ShipDesign::Dump)
+            .def("dump",                        &ShipDesign::Dump, return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
         def("validShipDesign",                  ValidDesignHullAndParts, "Returns true (boolean) if the passed hull (string) and parts (StringVec) make up a valid ship design, and false (boolean) otherwise. Valid ship designs don't have any parts in slots that can't accept that type of part, and contain only hulls and parts that exist (and may also need to contain the correct number of parts - this needs to be verified).");
         def("getShipDesign",                    &GetShipDesign,                             return_value_policy<reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated id number (int).");
@@ -643,7 +643,7 @@ namespace FreeOrionPython {
             .def("canBeEnqueued",               &EnqueueLocationTest)  //(int empire_id, int location_id)
             .add_property("costTimeLocationInvariant",
                                                 &BuildingType::ProductionCostTimeLocationInvariant)
-            .add_property("dump",               &BuildingType::Dump)
+            .def("dump",                        &BuildingType::Dump,                        return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
         def("getBuildingType",                  &GetBuildingType,                           return_value_policy<reference_existing_object>(), "Returns the building type (BuildingType) with the indicated name (string).");
         ////////////////////
@@ -719,7 +719,7 @@ namespace FreeOrionPython {
         class_<FieldType, noncopyable>("fieldType", no_init)
             .add_property("name",               make_function(&FieldType::Name,             return_value_policy<copy_const_reference>()))
             .add_property("description",        make_function(&FieldType::Description,      return_value_policy<copy_const_reference>()))
-            .add_property("dump",               &FieldType::Dump)
+            .def("dump",                        &FieldType::Dump,                           return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
         def("getFieldType",                     &GetFieldType,                           return_value_policy<reference_existing_object>());
 
@@ -732,7 +732,7 @@ namespace FreeOrionPython {
             .add_property("description",        &Special::Description)
             .add_property("spawnrate",          make_function(&Special::SpawnRate,      return_value_policy<return_by_value>()))
             .add_property("spawnlimit",         make_function(&Special::SpawnLimit,     return_value_policy<return_by_value>()))
-            .add_property("dump",               &Special::Dump)
+            .def("dump",                        &Special::Dump)
             .def("initialCapacity",             SpecialInitialCapacityOnObject)
         ;
         def("getSpecial",                       &GetSpecial,                            return_value_policy<reference_existing_object>(), "Returns the special (Special) with the indicated name (string).");
@@ -751,7 +751,7 @@ namespace FreeOrionPython {
             .add_property("tags",               make_function(&Species::Tags,           return_value_policy<return_by_value>()))
             // TODO: const std::vector<FocusType>& Species::Foci()
             .def("getPlanetEnvironment",        &Species::GetPlanetEnvironment)
-            .add_property("dump",               &Species::Dump)
+            .def("dump",                        &Species::Dump,                         return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
         def("getSpecies",                       &GetSpecies,                            return_value_policy<reference_existing_object>(), "Returns the species (Species) with the indicated name (string).");
     }
