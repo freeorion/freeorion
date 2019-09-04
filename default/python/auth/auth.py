@@ -9,6 +9,9 @@ import sys
 
 import freeorion as fo
 
+# Constants defined by the C++ game engine
+NO_TEAM_ID = -1
+
 
 class AuthProvider:
     def __init__(self):
@@ -72,5 +75,6 @@ class AuthProvider:
                 psd.player_name = player_name
                 psd.empire_name = player_name
                 psd.starting_species = "RANDOM"
+                psd.starting_team = NO_TEAM_ID
                 players.append(psd)
         return players

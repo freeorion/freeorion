@@ -235,7 +235,8 @@ struct PlayerSetupData {
         m_save_game_empire_id(ALL_EMPIRES),
         m_client_type(Networking::INVALID_CLIENT_TYPE),
         m_player_ready(false),
-        m_authenticated(false)
+        m_authenticated(false),
+        m_starting_team(Networking::NO_TEAM_ID)
     {}
     //@}
 
@@ -248,6 +249,7 @@ struct PlayerSetupData {
     Networking::ClientType  m_client_type;          ///< is this player an AI, human player or...?
     bool                    m_player_ready;         ///< if player ready to play.
     bool                    m_authenticated;        ///< if player was authenticated
+    int                     m_starting_team;        ///< team id or -1 if no team.
 
 private:
     friend class boost::serialization::access;
@@ -257,7 +259,7 @@ private:
 bool FO_COMMON_API operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
 bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
 
-BOOST_CLASS_VERSION(PlayerSetupData, 1);
+BOOST_CLASS_VERSION(PlayerSetupData, 2);
 
 /** The data needed to establish a new single player game.  If \a m_new_game
   * is true, a new game is to be started, using the remaining members besides

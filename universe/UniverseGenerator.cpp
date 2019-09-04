@@ -905,11 +905,26 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
         std::string empire_name = UserString("EMPIRE") + std::to_string(empire_id);
 
         DebugLogger() << "Universe::InitEmpires creating new empire" << " with ID: " << empire_id
-                      << " for player: " << player_name;
+                      << " for player: " << player_name << " in team: " << entry.second.m_starting_team;
 
         // create new Empire object through empire manager
         Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour, authenticated);
     }
 
     Empires().ResetDiplomacy();
+
+    for (const auto& entry : player_setup_data) {
+        if (entry.second.m_starting_team < 0)
+            continue;
+
+        for (const auto& other_entry : player_setup_data) {
+            if (entry.first == other_entry.first)
+                continue;
+
+            if (entry.second.m_starting_team != other_entry.second.m_starting_team)
+                continue;
+
+            Empires().SetDiplomaticStatus(entry.first, other_entry.first, DIPLO_ALLIED);
+        }
+    }
 }
