@@ -269,7 +269,8 @@ struct PlayingGame : boost::statechart::state<PlayingGame, HumanClientFSM, Waiti
         boost::statechart::custom_reaction<TurnProgress>,
         boost::statechart::custom_reaction<TurnPartialUpdate>,
         boost::statechart::custom_reaction<LobbyUpdate>,
-        boost::statechart::custom_reaction<TurnTimeout>
+        boost::statechart::custom_reaction<TurnTimeout>,
+        boost::statechart::custom_reaction<PlayerInfoMsg>
     > reactions;
 
     PlayingGame(my_context ctx);
@@ -288,6 +289,7 @@ struct PlayingGame : boost::statechart::state<PlayingGame, HumanClientFSM, Waiti
     boost::statechart::result react(const TurnPartialUpdate& msg);
     boost::statechart::result react(const LobbyUpdate& msg);
     boost::statechart::result react(const TurnTimeout& msg);
+    boost::statechart::result react(const PlayerInfoMsg& msg);
 
     CLIENT_ACCESSOR
 };

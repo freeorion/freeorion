@@ -325,6 +325,10 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
+    case Message::PLAYER_INFO:
+        ExtractPlayerInfoMessageData(msg, m_player_info);
+        break;
+
     case Message::SAVE_GAME_COMPLETE:
         break;
 

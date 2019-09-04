@@ -811,6 +811,12 @@ boost::statechart::result PlayingGame::react(const TurnTimeout& msg) {
     return discard_event();
 }
 
+boost::statechart::result PlayingGame::react(const PlayerInfoMsg& msg) {
+    DebugLogger(FSM) << "(PlayerFSM) PlayingGame::PlayerInfoMsg message received: " << msg.m_message.Text();
+    ExtractPlayerInfoMessageData(msg.m_message, Client().Players());
+    Client().GetClientUI().GetPlayerListWnd()->Refresh();
+    return discard_event();
+}
 
 ////////////////////////////////////////////////////////////
 // WaitingForGameStart
