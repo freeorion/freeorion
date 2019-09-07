@@ -24,6 +24,9 @@ namespace {
         // makes all buildings cost 1 PP and take 1 turn to produce
         rules.Add<int>("RULE_NUM_COMBAT_ROUNDS", "RULE_NUM_COMBAT_ROUNDS_DESC",
                        "", 3, true, RangedValidator<int>(1, 20));
+        rules.Add<bool>("RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE", "RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE_DESC",
+                        "", false, true);
+
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 

@@ -230,7 +230,7 @@ void CombatInfo::InitializeObjectVisibility() {
                     vis = VIS_PARTIAL_VISIBILITY;
                     DebugLogger() << "Ship " << obj->Name() << " visible empire stealth check: " << empire_detection << " >= " << obj->CurrentMeterValue(METER_STEALTH);
                 }
-                if (vis < VIS_PARTIAL_VISIBILITY) {
+                if (vis < VIS_PARTIAL_VISIBILITY && GetGameRules().Get<bool>("RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE")) {
                     if (auto ship = std::dynamic_pointer_cast<Ship>(obj)) {
                         if (auto fleet = ::GetFleet(ship->FleetID())) {
                             if (fleet->Aggressive()) {

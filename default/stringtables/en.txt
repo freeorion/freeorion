@@ -1089,6 +1089,12 @@ Combat Rounds
 RULE_NUM_COMBAT_ROUNDS_DESC
 How many rounds of combat occur each turn.
 
+RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE
+Aggressive Ships Combat Visible
+
+RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE_DESC
+Ships in fleets that are set to control their system start combat visible to all empires, regardless of their stealth and detection levels.
+
 RULE_RESEED_PRNG_SERVER
 Random Reseeding
 
