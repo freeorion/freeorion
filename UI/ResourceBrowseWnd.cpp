@@ -212,17 +212,17 @@ bool ResourceBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const
 
 void ResourceBrowseWnd::InitBuffer() {
     GG::Pt sz = Size();
-    const GG::Y ROW_HEIGHT(ClientUI::Pts()*4/3);
+    const float ROW_HEIGHT(ClientUI::Pts()*4.0/3.0);
 
     m_buffer.clear();
 
-    m_buffer.store(Value(sz.x), Value(ROW_HEIGHT));
-    m_buffer.store(0.0f,        Value(ROW_HEIGHT));
+    m_buffer.store(static_cast<float>(Value(sz.x)), ROW_HEIGHT);
+    m_buffer.store(0.0f,                            ROW_HEIGHT);
 
-    m_buffer.store(0.0f,        0.0f);
-    m_buffer.store(Value(sz.x), 0.0f);
-    m_buffer.store(Value(sz.x), Value(sz.y));
-    m_buffer.store(0.0f,        Value(sz.y));
+    m_buffer.store(0.0f,                            0.0f);
+    m_buffer.store(static_cast<float>(Value(sz.x)), 0.0f);
+    m_buffer.store(static_cast<float>(Value(sz.x)), static_cast<float>(Value(sz.y)));
+    m_buffer.store(0.0f,                            static_cast<float>(Value(sz.y)));
     m_buffer.createServerBuffer();
 }
 
@@ -412,17 +412,17 @@ bool WastedStockpiledResourceBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::si
 
 void WastedStockpiledResourceBrowseWnd::InitBuffer() {
     GG::Pt sz = Size();
-    const GG::Y ROW_HEIGHT(ClientUI::Pts()*4/3);
+    const float ROW_HEIGHT(ClientUI::Pts()*4.0/3.0);
 
     m_buffer.clear();
 
-    m_buffer.store(Value(sz.x), Value(ROW_HEIGHT));
-    m_buffer.store(0.0f,        Value(ROW_HEIGHT));
+    m_buffer.store(static_cast<float>(Value(sz.x)), ROW_HEIGHT);
+    m_buffer.store(0.0f,                            ROW_HEIGHT);
 
-    m_buffer.store(0.0f,        0.0f);
-    m_buffer.store(Value(sz.x), 0.0f);
-    m_buffer.store(Value(sz.x), Value(sz.y));
-    m_buffer.store(0.0f,        Value(sz.y));
+    m_buffer.store(0.0f,                            0.0f);
+    m_buffer.store(static_cast<float>(Value(sz.x)), 0.0f);
+    m_buffer.store(static_cast<float>(Value(sz.x)), static_cast<float>(Value(sz.y)));
+    m_buffer.store(0.0f,                            static_cast<float>(Value(sz.y)));
     m_buffer.createServerBuffer();
 }
 

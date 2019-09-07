@@ -176,11 +176,11 @@ public:
     /** \name Accessors */ ///@{
     /** Returns true iff FlagSpec contains \a flag. */
     bool contains(FlagType flag) const
-    { return m_flags.count(flag); }
+    { return m_flags.count(flag) != 0; }
     /** Returns true iff \a flag is a "permanent" flag -- a flag used
         internally by the GG library, as opposed to a user-added flag. */
     bool permanent(FlagType flag) const
-    { return m_permanent.count(flag); }
+    { return m_permanent.count(flag) != 0; }
     /** Returns an iterator to \a flag, if flag is in the FlagSpec, or end()
         otherwise. */
     const_iterator find(FlagType flag) const
