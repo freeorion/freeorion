@@ -543,8 +543,10 @@ void GalaxySetupPanel::CompleteConstruction() {
     // seed
     m_seed_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SEED"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_seed_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    TraceLogger() << "GalaxySetupPanel::CompleteConstruction attempting to access common galaxy settings from OptionsDB";
     m_seed_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.seed")));
     m_seed = GetOptionsDB().Get<std::string>("setup.seed");
+    TraceLogger() << "GalaxySetupPanel::CompleteConstruction got seed and seed label";
     if (m_seed == "RANDOM" || m_seed.empty()) {
         m_seed = "RANDOM";
         m_seed_edit = GG::Wnd::Create<CUIEdit>(UserString("GSETUP_RANDOM"));

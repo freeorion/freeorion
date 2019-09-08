@@ -616,14 +616,7 @@ ClientUI::ClientUI() :
     if (GetOptionsDB().Get<bool>("window-reset"))
         CUIWnd::InvalidateUnusedOptions();
 
-    m_message_wnd = GG::Wnd::Create<MessageWnd>(GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | GG::RESIZABLE |
-                                                CLOSABLE | PINABLE, MESSAGE_WND_NAME);
-    m_player_list_wnd = GG::Wnd::Create<PlayerListWnd>(PLAYER_LIST_WND_NAME);
     InitializeWindows();
-
-    m_intro_screen = GG::Wnd::Create<IntroScreen>();
-    m_multiplayer_lobby_wnd = GG::Wnd::Create<MultiPlayerLobbyWnd>();
-    m_password_enter_wnd = GG::Wnd::Create<PasswordEnterWnd>();
 
     GetOptionsDB().OptionChangedSignal("video.fullscreen.width").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, true));
@@ -668,14 +661,24 @@ MapWnd const* ClientUI::GetMapWndConst() const {
     return m_map_wnd.get();
 }
 
-std::shared_ptr<MessageWnd> ClientUI::GetMessageWnd()
-{ return m_message_wnd; }
+std::shared_ptr<MessageWnd> ClientUI::GetMessageWnd() {
+    if (!m_message_wnd)
+        m_message_wnd = GG::Wnd::Create<MessageWnd>(GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | GG::RESIZABLE |
+                                                    CLOSABLE | PINABLE, MESSAGE_WND_NAME);
+    return m_message_wnd;
+}
 
-std::shared_ptr<PlayerListWnd> ClientUI::GetPlayerListWnd()
-{ return m_player_list_wnd; }
+std::shared_ptr<PlayerListWnd> ClientUI::GetPlayerListWnd() {
+    if (!m_player_list_wnd)
+        m_player_list_wnd = GG::Wnd::Create<PlayerListWnd>(PLAYER_LIST_WND_NAME);
+    return m_player_list_wnd;
+}
 
-std::shared_ptr<IntroScreen> ClientUI::GetIntroScreen()
-{ return m_intro_screen; }
+std::shared_ptr<IntroScreen> ClientUI::GetIntroScreen() {
+    if (!m_intro_screen)
+        m_intro_screen = GG::Wnd::Create<IntroScreen>();
+    return m_intro_screen;
+}
 
 void ClientUI::ShowIntroScreen() {
     if (m_map_wnd) {
@@ -685,9 +688,9 @@ void ClientUI::ShowIntroScreen() {
     }
 
     // Update intro screen Load & Continue buttons if all savegames are deleted.
-    m_intro_screen->RequirePreRender();
+    GetIntroScreen()->RequirePreRender();
 
-    HumanClientApp::GetApp()->Register(m_intro_screen);
+    HumanClientApp::GetApp()->Register(GetIntroScreen());
     HumanClientApp::GetApp()->Remove(m_message_wnd);
     HumanClientApp::GetApp()->Remove(m_player_list_wnd);
     HumanClientApp::GetApp()->Remove(m_multiplayer_lobby_wnd);
@@ -700,18 +703,23 @@ void ClientUI::ShowMultiPlayerLobbyWnd() {
         m_map_wnd->Hide();
     }
 
-    HumanClientApp::GetApp()->Register(m_multiplayer_lobby_wnd);
+    HumanClientApp::GetApp()->Register(GetMultiPlayerLobbyWnd());
     HumanClientApp::GetApp()->Remove(m_message_wnd);
     HumanClientApp::GetApp()->Remove(m_player_list_wnd);
     HumanClientApp::GetApp()->Remove(m_intro_screen);
 }
 
-std::shared_ptr<MultiPlayerLobbyWnd> ClientUI::GetMultiPlayerLobbyWnd()
-{ return m_multiplayer_lobby_wnd; }
+std::shared_ptr<MultiPlayerLobbyWnd> ClientUI::GetMultiPlayerLobbyWnd() {
+    if (!m_multiplayer_lobby_wnd)
+        m_multiplayer_lobby_wnd = GG::Wnd::Create<MultiPlayerLobbyWnd>();
+    return m_multiplayer_lobby_wnd;
+}
 
-std::shared_ptr<PasswordEnterWnd> ClientUI::GetPasswordEnterWnd()
-{ return m_password_enter_wnd; }
-
+std::shared_ptr<PasswordEnterWnd> ClientUI::GetPasswordEnterWnd() {
+    if (!m_password_enter_wnd)
+        m_password_enter_wnd = GG::Wnd::Create<PasswordEnterWnd>();
+    return m_password_enter_wnd;
+}
 
 std::shared_ptr<SaveFileDialog> ClientUI::GetSaveFileDialog()
 { return m_savefile_dialog; }
@@ -978,8 +986,8 @@ void ClientUI::InitializeWindows() {
     const GG::Pt player_list_ul(MESSAGE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT);
     const GG::Pt player_list_wh(PLAYER_LIST_PANEL_WIDTH, PANEL_HEIGHT);
 
-    m_message_wnd->    InitSizeMove(message_ul,     message_ul + message_wh);
-    m_player_list_wnd->InitSizeMove(player_list_ul, player_list_ul + player_list_wh);
+    GetMessageWnd()->InitSizeMove(message_ul,     message_ul + message_wh);
+    GetPlayerListWnd()->InitSizeMove(player_list_ul, player_list_ul + player_list_wh);
 }
 
 void ClientUI::HandleSizeChange(bool fullscreen) const {
