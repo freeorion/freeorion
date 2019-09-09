@@ -200,7 +200,8 @@ bool operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs) {
             lhs.m_player_name == rhs.m_player_name &&
             lhs.m_save_game_empire_id == rhs.m_save_game_empire_id &&
             lhs.m_starting_species_name == rhs.m_starting_species_name &&
-            lhs.m_player_ready == rhs.m_player_ready;
+            lhs.m_player_ready == rhs.m_player_ready &&
+            lhs.m_starting_team == rhs.m_starting_team;
 }
 
 bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs)
