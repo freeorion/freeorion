@@ -3577,7 +3577,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         && !ClientPlayerIsModerator()
        )
     {
-        auto split_damage_action = [&damaged_ship_ids]() { CreateNewFleetFromShips(damaged_ship_ids, FLEET_PASSIVE); };
+        NewFleetAggression nfa = fleet->Aggressive() ? FLEET_AGGRESSIVE : FLEET_PASSIVE;
+        auto split_damage_action = [&damaged_ship_ids, nfa]() { CreateNewFleetFromShips(damaged_ship_ids, nfa); };
         popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_DAMAGED_FLEET"),     false, false, split_damage_action));
     }
 
