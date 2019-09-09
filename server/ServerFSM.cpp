@@ -452,8 +452,10 @@ void ServerFSM::UpdateIngameLobby() {
     }
     dummy_lobby_data.m_start_lock_cause = UserStringNop("SERVER_ALREADY_PLAYING_GAME");
 
-    // send it to all those without empire
-    // and who are CLIENT_TYPE_HUMAN_PLAYER
+    auto player_info_map = m_server.GetPlayerInfoMap();
+
+    // send it to all either in the ingame lobby
+    // or in the playing game
     for (auto player_it = m_server.m_networking.established_begin();
         player_it != m_server.m_networking.established_end(); ++player_it)
     {
@@ -461,6 +463,8 @@ void ServerFSM::UpdateIngameLobby() {
             !GetEmpire(m_server.PlayerEmpireID((*player_it)->PlayerID())))
         {
             (*player_it)->SendMessage(ServerLobbyUpdateMessage(dummy_lobby_data));
+        } else {
+            (*player_it)->SendMessage(PlayerInfoMessage(player_info_map));
         }
     }
 }

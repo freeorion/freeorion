@@ -42,7 +42,8 @@ struct MessageEventBase {
     (CheckSum)                                 \
     (AuthRequest)                              \
     (ChatHistory)                              \
-    (TurnTimeout)
+    (TurnTimeout)                              \
+    (PlayerInfoMsg)
 
 
 #define DECLARE_MESSAGE_EVENT(r, data, name)                            \

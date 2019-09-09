@@ -104,7 +104,8 @@ public:
         ELIMINATE_SELF,         ///< sent by client to server if the player wants to resign
         UNREADY,                ///< sent by client to server to revoke ready state of turn orders and sent by server to client to acknowledge it
         TURN_PARTIAL_ORDERS,    ///< sent to the server by a client that has changes in orders to be stored
-        TURN_TIMEOUT            ///< sent by server to client to notify about remaining time before turn advance
+        TURN_TIMEOUT,           ///< sent by server to client to notify about remaining time before turn advance
+        PLAYER_INFO             ///< sent by server to client to notify about changes in the player data
     )
 
     GG_CLASS_ENUM(TurnProgressPhase,
@@ -366,6 +367,9 @@ FO_COMMON_API Message EliminateSelfMessage();
 /** creates a UNREADY message to revoke ready state of turn orders or acknowledge it */
 FO_COMMON_API Message UnreadyMessage();
 
+/** creates a PLAYER_INFO message to notify player about changes in the player list. */
+FO_COMMON_API Message PlayerInfoMessage(const std::map<int, PlayerInfo>& players);
+
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////
@@ -453,5 +457,7 @@ FO_COMMON_API void ExtractAuthRequestMessageData(const Message& msg, std::string
 FO_COMMON_API void ExtractAuthResponseMessageData(const Message& msg, std::string& player_name, std::string& auth);
 
 FO_COMMON_API void ExtractSetAuthorizationRolesMessage(const Message &msg, Networking::AuthRoles& roles);
+
+FO_COMMON_API void ExtractPlayerInfoMessageData(const Message &msg, std::map<int, PlayerInfo>& players);
 
 #endif // _Message_h_

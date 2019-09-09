@@ -687,6 +687,15 @@ Message EliminateSelfMessage()
 Message UnreadyMessage()
 { return Message(Message::UNREADY, DUMMY_EMPTY_MESSAGE); }
 
+Message PlayerInfoMessage(const std::map<int, PlayerInfo>& players) {
+    std::ostringstream os;
+    {
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(players);
+    }
+    return Message(Message::PLAYER_INFO, os.str());
+}
+
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////
@@ -1309,3 +1318,15 @@ void ExtractAuthResponseMessageData(const Message& msg, std::string& player_name
 
 void ExtractSetAuthorizationRolesMessage(const Message &msg, Networking::AuthRoles& roles)
 { roles.SetText(msg.Text()); }
+
+void ExtractPlayerInfoMessageData(const Message &msg, std::map<int, PlayerInfo>& players) {
+    try {
+        std::istringstream is(msg.Text());
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(players);
+    } catch(const std::exception& err) {
+        ErrorLogger() << "ExtractPlayerInfo(const Message &msg, std::map<int, PlayerInfo>& players) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
+    }
+}
