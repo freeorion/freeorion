@@ -826,9 +826,8 @@ void Fleet::MovementPhase() {
     // is the fleet stuck in a system for a whole turn?
     if (current_system) {
         ///update m_arrival_starlane if no blockade, if needed
-        if (supply_unobstructed_systems.count(SystemID())) {
+        if (supply_unobstructed_systems.count(SystemID()))
             m_arrival_starlane = SystemID();//allows departure via any starlane
-        }
 
         // in a system.  if there is no system after the current one in the
         // path, or the current and next nodes have the same system id, that
@@ -851,41 +850,27 @@ void Fleet::MovementPhase() {
             stopped = BlockadedAtSystem(SystemID(), next_sys_id);
         }
 
-        if (stopped) {
-            //// fuel regeneration for ships in stationary fleet
-            //if (FinalDestinationID() == INVALID_OBJECT_ID ||
-            //    FinalDestinationID() == SystemID())
-            //{
-            //    for (auto& ship : ships) {
-            //        if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
-            //            fuel_meter->AddToCurrent(0.1001f);  // .0001 to prevent rounding down
-            //            fuel_meter->BackPropagate();
-            //        }
-            //    }
-            //}
+        if (stopped)
             return;
 
-        } else {
-            // record previous system on fleet's path, and the starlane along
-            // which it will arrive at the next system (for blockading purposes)
-            m_arrival_starlane = SystemID();
-            m_prev_system = SystemID();
+        // record previous system on fleet's path, and the starlane along
+        // which it will arrive at the next system (for blockading purposes)
+        m_arrival_starlane = SystemID();
+        m_prev_system = SystemID();
 
-            // remove fleet and ships from system they are departing
-            current_system->Remove(ID());
-            SetSystem(INVALID_OBJECT_ID);
-            for (auto& ship : ships) {
-                current_system->Remove(ship->ID());
-                ship->SetSystem(INVALID_OBJECT_ID);
-            }
+        // remove fleet and ships from system they are departing
+        current_system->Remove(ID());
+        SetSystem(INVALID_OBJECT_ID);
+        for (auto& ship : ships) {
+            current_system->Remove(ship->ID());
+            ship->SetSystem(INVALID_OBJECT_ID);
         }
     }
 
 
     // if fleet not moving, nothing more to do.
-    if (move_path.empty() || move_path.size() == 1) {
+    if (move_path.empty() || move_path.size() == 1)
         return;
-    }
 
 
     // move fleet in sequence to MovePathNodes it can reach this turn
