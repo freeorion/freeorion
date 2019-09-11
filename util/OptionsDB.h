@@ -448,7 +448,7 @@ private:
 template <typename T>
 bool OptionsDB::Option::SetFromValue(const T& value_) {
     if (value.type() != typeid(T))
-        throw boost::bad_any_cast();
+        ErrorLogger() << "OptionsDB::Option::SetFromValue expected type " << value.type().name() << " but got value of type " << typeid(T).name();
 
     bool changed = false;
 
