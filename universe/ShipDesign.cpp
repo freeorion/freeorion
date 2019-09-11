@@ -1300,6 +1300,9 @@ void ShipDesign::BuildStatCaches() {
     m_structure =       hull->Structure();
     m_speed =           hull->Speed();
 
+    bool has_fighter_bays = false;
+    bool has_fighter_hangars = false;
+
     for (const std::string& part_name : m_parts) {
         if (part_name.empty())
             continue;
@@ -1320,8 +1323,10 @@ void ShipDesign::BuildStatCaches() {
             m_is_armed = true;
             break;
         case PC_FIGHTER_BAY:
+            has_fighter_bays = true;
+            break;
         case PC_FIGHTER_HANGAR:
-            m_has_fighters = true;
+            has_fighter_hangars = true;
             break;
         case PC_COLONY:
             m_colony_capacity += part->Capacity();
@@ -1365,6 +1370,7 @@ void ShipDesign::BuildStatCaches() {
         default:
             break;
         }
+        m_has_fighters = has_fighter_bays && has_fighter_hangars;
 
         m_num_part_types[part_name]++;
         if (part_class > INVALID_SHIP_PART_CLASS && part_class < NUM_SHIP_PART_CLASSES)
