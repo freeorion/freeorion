@@ -2200,7 +2200,7 @@ namespace {
                     continue;
                 // an unarmed Monster will not trigger combat
                 if (  (fleet->Aggressive() || fleet->Unowned())  &&
-                      (fleet->HasArmedShips() || fleet->HasFighterShips() || !fleet->Unowned())  )
+                      (fleet->HasArmedShips() || !fleet->Unowned())  )
                 {
                     if (!empires_with_aggressive_fleets_here.count(empire_id))
                         DebugLogger(combat) << "\t Empire " << empire_id << " has at least one aggressive fleet present";
@@ -2721,7 +2721,7 @@ namespace {
             // find which empires have aggressive armed ships in system
             std::set<int> empires_with_armed_ships_in_system;
             for (auto& fleet : Objects().FindObjects<const Fleet>(system->FleetIDs())) {
-                if (fleet->Aggressive() && (fleet->HasArmedShips() || fleet->HasFighterShips()))
+                if (fleet->Aggressive() && fleet->HasArmedShips())
                     empires_with_armed_ships_in_system.insert(fleet->Owner());  // may include ALL_EMPIRES, which is fine; this makes monsters prevent colonization
             }
 
@@ -3354,7 +3354,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
             // before you, or be in cahoots with someone who did.
             bool unrestricted = ((fleet->ArrivalStarlane() == system->ID())
                                  && fleet->Aggressive()
-                                 && (fleet->HasArmedShips() || fleet->HasFighterShips()));
+                                 && fleet->HasArmedShips());
             if (fleet->Unowned()) {
                 monsters.push_back(fleet);
                 if (unrestricted)

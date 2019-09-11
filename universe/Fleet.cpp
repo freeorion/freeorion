@@ -1247,11 +1247,10 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         // ageas since fleets can be created/destroyed as purely organizational matters.  Since these checks are
         // pertinent just during those stages of turn processing immediately following turn number advancement,
         // whereas the new ships were created just prior to turn advamcenemt, we require age greater than 1.
-        // 
         if (fleet->MaxShipAgeInTurns() <= 1)
             continue;
         // These are the most costly checks.  Do them last
-        if (!fleet->HasArmedShips() && !fleet->HasFighterShips())
+        if (!fleet->HasArmedShips())
             continue;
 
         // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
