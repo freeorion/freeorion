@@ -5436,7 +5436,7 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags<GG::ModKey> mod_keys) {
         if (system_id == INVALID_OBJECT_ID)
             ClearProjectedFleetMovementLines();
         else
-            PlotFleetMovement(system_id, true, mod_keys &  GG::MOD_KEY_SHIFT);
+            PlotFleetMovement(system_id, !m_ready_turn, mod_keys &  GG::MOD_KEY_SHIFT);
         SystemRightClickedSignal(system_id);
     }
 }
