@@ -1190,6 +1190,7 @@ void GalaxySetupWnd::PlayerNameChanged(const std::string& name)
 { m_ok->Disable(name.empty()); }
 
 void GalaxySetupWnd::OkClicked() {
+    TraceLogger() << "GalaxySetupWnd::OkClicked start";
     // record selected galaxy setup options as new defaults
     try {
         GetOptionsDB().Set("setup.seed",                m_galaxy_setup_panel->GetSeed());
@@ -1271,6 +1272,8 @@ void GalaxySetupWnd::OkClicked() {
     } catch (const std::exception& e) {
         ErrorLogger() << "Caught exception committing options from panel results: " << e.what();
     }
+
+    TraceLogger() << "GalaxySetupWnd::OkClicked end";
 
     m_ended_with_ok = true;
     m_done = true;
