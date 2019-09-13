@@ -562,6 +562,7 @@ namespace FreeOrionPython {
             .add_property("canInvade",          make_function(&ShipDesign::HasTroops,       return_value_policy<return_by_value>()))
             .add_property("isArmed",            make_function(&ShipDesign::IsArmed,         return_value_policy<return_by_value>()))
             .add_property("hasFighters",        make_function(&ShipDesign::HasFighters,     return_value_policy<return_by_value>()))
+            .add_property("hasDirectWeapons",   make_function(&ShipDesign::HasDirectWeapons,return_value_policy<return_by_value>()))
             .add_property("isMonster",          make_function(&ShipDesign::IsMonster,       return_value_policy<return_by_value>()))
             .def("productionCost",              &ShipDesign::ProductionCost)
             .def("productionTime",              &ShipDesign::ProductionTime)
