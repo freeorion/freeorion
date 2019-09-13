@@ -532,6 +532,7 @@ public:
     bool                            HasTroops() const       { return (m_troop_capacity > 0.0f); }
     bool                            CanBombard() const      { return m_can_bombard; }
     bool                            IsArmed() const         { return m_is_armed; }
+    bool                            HasDirectWeapons() const{ return m_has_direct_weapons; }
     bool                            HasFighters() const     { return m_has_fighters; }
     bool                            IsMonster() const       { return m_is_monster; }
 
@@ -622,8 +623,9 @@ private:
 
     // Note that these are fine to compute on demand and cache here -- it is
     // not necessary to serialize them.
-    bool    m_is_armed = false;
+    bool    m_has_direct_weapons = false;
     bool    m_has_fighters = false;
+    bool    m_is_armed = false;
     bool    m_can_bombard = false;
     float   m_detection = 0.0f;
     float   m_colony_capacity = 0.0f;
