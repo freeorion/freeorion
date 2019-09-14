@@ -17,7 +17,7 @@ struct GalaxySetupData;
 class GameRulesPanel : public GG::Control {
 public:
     /** \name Structors*/ //!@{
-    GameRulesPanel(GG::X w = GG::X(FontBasedUpscale(305)), GG::Y h = GG::Y(330));
+    GameRulesPanel(GG::X w = GG::X1, GG::Y h = GG::Y1);
     //!@}
     void CompleteConstruction() override;
 
