@@ -765,6 +765,7 @@ CUIDropDownList::CUIDropDownList(size_t num_shown_elements) :
 {
     SetInteriorColor(ClientUI::CtrlColor());
     SetMinSize(GG::Pt(MinSize().x, CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT));
+    SetChildClippingMode(ClipToClient);
 }
 
 void CUIDropDownList::InitBuffer() {
