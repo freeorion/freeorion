@@ -404,6 +404,7 @@ namespace {
             GG::ListBox::Row::CompleteConstruction();
             auto species_label = GG::Wnd::Create<CUILabel>(UserString(Name()), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             push_back(species_label);
+            SetChildClippingMode(ClipToClient);
         }
     };
 }
@@ -419,12 +420,10 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
     auto drop = GG::Wnd::Create<CUIDropDownList>(5);
     drop->Resize(GG::Pt(SPIN_WIDTH, drop->MinUsableSize().y));
 
-    if (auto desc_val =
-        std::dynamic_pointer_cast<const DiscreteValidator<std::string>>(validator))
-    {
+    if (auto desc_val = std::dynamic_pointer_cast<const DiscreteValidator<std::string>>(validator)) {
         // add rows for all allowed options
         for (auto& poss : desc_val->m_values)
-            drop->Insert(GG::Wnd::Create<UserStringRow>(poss, drop->Width(), drop->Height() - 4));
+            auto it = drop->Insert(GG::Wnd::Create<UserStringRow>(poss, drop->Width(), drop->Height() - 4));
     }
     // select a row by default, preferably based on set rule value
     if (!drop->Empty()) {
