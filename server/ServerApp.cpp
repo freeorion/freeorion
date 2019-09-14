@@ -3611,9 +3611,10 @@ void ServerApp::CheckForEmpireElimination() {
     for (auto& entry : Empires()) {
         if (entry.second->Eliminated())
             continue;   // don't double-eliminate an empire
-        else if (EmpireEliminated(entry.first))
+        else if (EmpireEliminated(entry.first)) {
             entry.second->Eliminate();
-        else {
+            RemoveEmpireTurn(entry.first);
+        } else {
             surviving_empires.insert(entry.second);
             // empires could be controlled only by connected AI client, connected human client, or
             // disconnected human client.
