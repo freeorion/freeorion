@@ -143,6 +143,25 @@ namespace FreeOrionPython {
             .value("war",               DiplomaticStatus::DIPLO_WAR)
             .value("peace",             DiplomaticStatus::DIPLO_PEACE)
             .value("allied",            DiplomaticStatus::DIPLO_ALLIED)
+            .value("sharedSupply",      DiplomaticStatus::DIPLO_SHARED_SUPPLY)
+        ;
+        py::enum_<DiplomaticMessage::Type>("diplomaticMessageType")
+            .value("noMessage",             DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
+            .value("warDeclaration",        DiplomaticMessage::WAR_DECLARATION)
+
+            .value("peaceProposal",         DiplomaticMessage::PEACE_PROPOSAL)
+            .value("acceptPeaceProposal",   DiplomaticMessage::ACCEPT_PEACE_PROPOSAL)
+
+            .value("supplyProposal",        DiplomaticMessage::SHARED_SUPPLY_PROPOSAL)
+            .value("acceptSupplyProposal",  DiplomaticMessage::ACCEPT_SHARED_SUPPLY_PROPOSAL)
+            .value("endSupply",             DiplomaticMessage::STOP_SHARING_SUPPLY_DECLARATION)
+
+            .value("alliesProposal",        DiplomaticMessage::ALLIES_PROPOSAL)
+            .value("acceptAlliesProposal",  DiplomaticMessage::ACCEPT_ALLIES_PROPOSAL)
+            .value("endAllies",             DiplomaticMessage::END_ALLIANCE_DECLARATION)
+
+            .value("cancelProposal",        DiplomaticMessage::CANCEL_PROPOSAL)
+            .value("rejectProposal",        DiplomaticMessage::REJECT_PROPOSAL)
         ;
         py::enum_<DiplomaticMessage::Type>("diplomaticMessageType")
             .value("noMessage",             DiplomaticMessage::Type::INVALID)

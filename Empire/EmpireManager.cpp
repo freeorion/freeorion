@@ -75,10 +75,11 @@ std::string EmpireManager::DumpDiplomacy() const {
             continue;
         retval += " * " + empire1->Name() + " / " + empire2->Name() + " : ";
         switch (entry.second) {
-        case DiplomaticStatus::DIPLO_WAR:     retval += "War";    break;
-        case DiplomaticStatus::DIPLO_PEACE:   retval += "Peace";  break;
-        case DiplomaticStatus::DIPLO_ALLIED:  retval += "Allied";  break;
-        default:            retval += "?";      break;
+        case DiplomaticStatus::DIPLO_WAR:           retval += "War";          break;
+        case DiplomaticStatus::DIPLO_PEACE:         retval += "Peace";        break;
+        case DiplomaticStatus::DIPLO_ALLIED:        retval += "Allied";       break;
+        case DiplomaticStatus::DIPLO_SHARED_SUPPLY: retval += "SharedSupply"; break;
+        default:                                    retval += "?";            break;
         }
         retval += "\n";
     }
@@ -275,6 +276,27 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
         }
         break;
     }
+
+    case DiplomaticMessage::Type::SHARED_SUPPLY_PROPOSAL: {
+        if (diplo_status == DiplomaticStatus::DIPLO_PEACE && !message_from_recipient_to_sender_available) {
+            SetDiplomaticMessage(message);
+
+        } else if (diplo_status == DiplomaticStatus::DIPLO_PEACE && message_from_recipient_to_sender_available) {
+            if (existing_message_from_recipient_to_sender.GetType() ==
+                DiplomaticMessage::Type::SHARED_SUPPLY_PROPOSAL)
+            {
+                // somehow multiple allies proposals sent by players to eachother
+                // cancel and remove
+                RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
+                RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
+                SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DiplomaticStatus::DIPLO_ALLIED);
+            }
+        }
+        break;
+    }
+
+    case DiplomaticMessage::Type::ACCEPT_SHARED_SUPPLY_PROPOSAL:
+    case DiplomaticMessage::Type::STOP_SHARING_SUPPLY_DECLARATION:
 
     case DiplomaticMessage::Type::ALLIES_PROPOSAL: {
         if (diplo_status == DiplomaticStatus::DIPLO_PEACE && !message_from_recipient_to_sender_available) {

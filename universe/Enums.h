@@ -62,7 +62,7 @@ FO_ENUM(
     ((NUM_METER_TYPES))
 )
 
-/** types of diplomatic empire affiliations to another empire*/
+/** types of empire affiliations to another empire*/
 FO_ENUM(
     (EmpireAffiliationType),
     ((INVALID_EMPIRE_AFFIL_TYPE, -1))
@@ -76,6 +76,16 @@ FO_ENUM(
     ((AFFIL_HUMAN))     ///< empire controlled by a human player
 
     ((NUM_AFFIL_TYPES)) ///< keep last, the number of affiliation types
+
+/** diplomatic statuses between empires*/
+FO_ENUM(
+    (DiplomaticStatus),
+    ((INVALID_DIPLOMATIC_STATUS, -1))
+    ((DIPLO_WAR))
+    ((DIPLO_PEACE))
+    ((DIPLO_ALLIED))
+    ((DISP_SHARED_SUPPLY))
+    ((NUM_DIPLO_STATUSES))
 )
 
 

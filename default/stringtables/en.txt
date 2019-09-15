@@ -4155,6 +4155,9 @@ At war with
 ALLIED_WITH
 Allied with
 
+SHARING_SUPPLY_WITH
+Sharing supply with
+
 WAR_DECLARATION
 Declare War
 

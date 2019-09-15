@@ -45,16 +45,19 @@ std::string DiplomaticMessage::Dump() const {
     retval += "Dimplomatic message from : " + std::to_string(m_sender_empire) +
               " to: " + std::to_string(m_recipient_empire) + " about: ";
     switch (m_type) {
-    case Type::WAR_DECLARATION:           retval += "War Declaration";            break;
-    case Type::PEACE_PROPOSAL:            retval += "Peace Proposal";             break;
-    case Type::ACCEPT_PEACE_PROPOSAL:     retval += "Accept Peace Proposal";      break;
-    case Type::ALLIES_PROPOSAL:           retval += "Allies Proposal";            break;
-    case Type::ACCEPT_ALLIES_PROPOSAL:    retval += "Accept Allies Proposal";     break;
-    case Type::END_ALLIANCE_DECLARATION:  retval += "End Alliance Declaration";   break;
-    case Type::CANCEL_PROPOSAL:           retval += "Cancel Proposal";            break;
-    case Type::REJECT_PROPOSAL:           retval += "Reject Proposal";            break;
-    case Type::INVALID:
-    default:                              retval += "Invalid / Unknown";          break;
+    case Type::WAR_DECLARATION:                 retval += "War Declaration";                break;
+    case Type::PEACE_PROPOSAL:                  retval += "Peace Proposal";                 break;
+    case Type::ACCEPT_PEACE_PROPOSAL:           retval += "Accept Peace Proposal";          break;
+    case Type::ALLIES_PROPOSAL:                 retval += "Allies Proposal";                break;
+    case Type::ACCEPT_ALLIES_PROPOSAL:          retval += "Accept Allies Proposal";         break;
+    case Type::END_ALLIANCE_DECLARATION:        retval += "End Alliance Declaration";       break;
+    case Type::CANCEL_PROPOSAL:                 retval += "Cancel Proposal";                break;
+    case Type::REJECT_PROPOSAL:                 retval += "Reject Proposal";                break;
+    case Type::SHARED_SUPPLY_PROPOSAL:          retval += "Shared Supply Proposal";         break;
+    case Type::ACCEPT_SHARED_SUPPLY_PROPOSAL:   retval += "Accept Shared Supply Proposal";  break;
+    case Type::STOP_SHARING_SUPPLY_DECLARATION: retval += "Stop Sharing Supply Declaration";break;
+    case Type::INVALID_DIPLOMATIC_MESSAGE_TYPE:
+    default:                                    retval += "Invalid / Unknown";              break;
     }
     return retval;
 }
@@ -100,3 +103,13 @@ DiplomaticMessage CancelDiplomaticMessage(int sender_empire_id, int recipient_em
 
 DiplomaticMessage RejectProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
 { return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::REJECT_PROPOSAL); }
+
+DiplomaticMessage SharedSupplyProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::SHARED_SUPPLY_PROPOSAL); }
+
+DiplomaticMessage AcceptSharedSupplyDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::ACCEPT_SHARED_SUPPLY_PROPOSAL); }
+
+DiplomaticMessage StopSharingSupplyDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::STOP_SHARING_SUPPLY_DECLARATION); }
+

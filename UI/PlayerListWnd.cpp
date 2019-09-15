@@ -60,6 +60,10 @@ namespace {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "peace.png");
         return retval;
     }
+    std::shared_ptr<GG::Texture> SharedSupplyIcon() {
+        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "shared_supply.png");
+        return retval;
+    }
     std::shared_ptr<GG::Texture> AlliedIcon() {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "allied.png");
         return retval;
@@ -119,6 +123,9 @@ namespace {
             case DiplomaticStatus::DIPLO_ALLIED:
                 m_icon = AlliedIcon();
                 break;
+            case DiplomaticStatus::DIPLO_SHARED_SUPPLY:
+                m_icon = SharedSupplyIcon();
+                break;
             default:
                 m_icon = UnknownIcon();
                 break;
@@ -157,6 +164,9 @@ namespace {
                 break;
             case DiplomaticStatus::DIPLO_PEACE:
                 tooltip_title = UserString("AT_PEACE_WITH") + ":";
+                break;
+            case DiplomaticStatus::DIPLO_SHARED_SUPPLY:
+                tooltip_title = UserString("SHARING_SUPPLY_WITH") + " ";
                 break;
             case DiplomaticStatus::DIPLO_ALLIED:
                 tooltip_title = UserString("ALLIED_WITH") + ":";
@@ -244,9 +254,10 @@ namespace {
             m_empire_research_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
             m_empire_detection_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
 
-            m_war_indicator =      GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DiplomaticStatus::DIPLO_WAR);
-            m_peace_indicator =    GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DiplomaticStatus::DIPLO_PEACE);
-            m_allied_indicator =   GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DiplomaticStatus::DIPLO_ALLIED);
+            m_war_indicator =      GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DIPLO_WAR);
+            m_peace_indicator =    GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DIPLO_PEACE);
+            m_supply_indicator =   GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DIPLO_SHARED_SUPPLY);
+            m_allied_indicator =   GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DIPLO_ALLIED);
 
             //AttachChild(m_player_name_text);
             AttachChild(m_empire_name_text);
@@ -257,6 +268,7 @@ namespace {
             AttachChild(m_empire_detection_text);
             AttachChild(m_war_indicator);
             AttachChild(m_peace_indicator);
+            AttachChild(m_supply_indicator);
             AttachChild(m_allied_indicator);
 
             DoLayout();
@@ -337,6 +349,7 @@ namespace {
             // render diplomatic status indicators
             m_war_indicator->Render();
             m_peace_indicator->Render();
+            m_supply_indicator->Render();
             m_allied_indicator->Render();
 
             // render win/lose icon
@@ -416,7 +429,7 @@ namespace {
             const std::set<int>& this_client_stale_object_info       = GetUniverse().EmpireStaleKnowledgeObjectIDs(HumanClientApp::GetApp()->EmpireID());
 
             if (empire) {
-                for (auto& ship : objects.all<Ship>()) {
+            for (auto& ship : objects.all<Ship>()) {
                     if (ship->Owner() == empire->EmpireID()
                         && !this_client_known_destroyed_objects.count(ship->ID())
                         && !this_client_stale_object_info.count(ship->ID())) {
@@ -424,7 +437,7 @@ namespace {
                     }
                 }
 
-                for (auto& planet : objects.all<Planet>()) {
+            for (auto& planet : objects.all<Planet>()) {
                     if (planet->Owner() == empire->EmpireID()) {
                         empires_planet_count      += 1;
                         empires_production_points += planet->GetMeter(MeterType::METER_INDUSTRY)->Initial();
@@ -458,10 +471,15 @@ namespace {
 
             m_war_indicator->Update();
             m_peace_indicator->Update();
+            m_supply_indicator->Update();
             m_allied_indicator->Update();
         }
+
+        void SetStatus(Message::PlayerStatus player_status)
+        { m_player_status = player_status; }
+
     private:
-        int IconSize() const   { return Value(Height()) - 2; }
+        int IconSize() const { return Value(Height()) - 2; }
 
         void DoLayout() {
             const GG::X PLAYER_NAME_WIDTH(ClientUI::Pts()       * 10);
@@ -539,9 +557,11 @@ namespace {
             m_peace_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + diplo_status_width), bottom));
             left += diplo_status_width;
 
-            m_allied_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + diplo_status_width), bottom));
+            m_supply_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + diplo_status_width), bottom));
             left += diplo_status_width;
 
+            m_allied_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + diplo_status_width), bottom));
+            left += diplo_status_width;
         }
 
         int                                         m_player_id;
@@ -556,6 +576,7 @@ namespace {
 
         std::shared_ptr<DiplomaticStatusIndicator>  m_war_indicator;
         std::shared_ptr<DiplomaticStatusIndicator>  m_peace_indicator;
+        std::shared_ptr<DiplomaticStatusIndicator>  m_supply_indicator;
         std::shared_ptr<DiplomaticStatusIndicator>  m_allied_indicator;
 
         GG::Pt                  m_diplo_status_icon_ul;
@@ -570,8 +591,9 @@ namespace {
         GG::Pt                  m_host_icon_ul;
         GG::Pt                  m_win_status_icon_ul;
 
-        DiplomaticStatus        m_diplo_status;
-        Networking::ClientType  m_player_type;
+        DiplomaticStatus        m_diplo_status = DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
+        Message::PlayerStatus   m_player_status = Message::PLAYING_TURN;
+        Networking::ClientType  m_player_type = Networking::INVALID_CLIENT_TYPE;
         bool                    m_host = false;
         enum : int {
             WON,
@@ -895,7 +917,7 @@ namespace {
         const int client_empire_id, const int clicked_empire_id,
         const std::function<DiplomaticMessage(int, int)>& message)
     {
-        auto& networking = HumanClientApp::GetApp()->Networking();
+        auto &networking = HumanClientApp::GetApp()->Networking();
         return boost::bind(&ClientNetworking::SendMessage, &networking,
                            DiplomacyMessage(message(client_empire_id, clicked_empire_id)));
     }
@@ -963,11 +985,19 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         bool show_peace_cancel = false;
         bool show_peace_reject = false;
         bool show_peace_accept = false;
+
+        bool show_supply_end = false;
+        bool show_supply_propose = false;
+        bool show_supply_cancel = false;
+        bool show_supply_reject = false;
+        bool show_supply_accept = false;
+
         bool show_allies_end = false;
         bool show_allies_propose = false;
         bool show_allies_cancel = false;
         bool show_allies_reject = false;
         bool show_allies_accept = false;
+
         bool show_declare_war = false;
 
         if (existing_message_from_this_player_to_clicked_empire.GetType() == DiplomaticMessage::Type::PEACE_PROPOSAL)
@@ -1005,6 +1035,18 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             popup->AddMenuItem(GG::MenuItem(UserString("PEACE_ACCEPT"),             false, false, peace_accept_action));
         if (show_peace_reject)
             popup->AddMenuItem(GG::MenuItem(UserString("PEACE_REJECT"),             false, false, proposal_reject_action));
+
+        if (show_supply_end)
+            popup->AddMenuItem(GG::MenuItem(UserString("END_SUPPLY_DECLARATION"),   false, false, end_supply_declaration_action));
+        if (show_supply_propose)
+            popup->AddMenuItem(GG::MenuItem(UserString("SUPPLY_PROPOSAL"),          false, false, supply_proposal_action));
+        if (show_supply_cancel)
+            popup->AddMenuItem(GG::MenuItem(UserString("SUPPLY_PROPOSAL_CANCEL"),   false, false, supply_cancel_action));
+        if (show_supply_accept)
+            popup->AddMenuItem(GG::MenuItem(UserString("SUPPLY_ACCEPT"),            false, false, supply_accept_action));
+        if (show_supply_reject)
+            popup->AddMenuItem(GG::MenuItem(UserString("SUPPLY_REJECT"),            false, false, supply_reject_action));
+
         if (show_allies_end)
             popup->AddMenuItem(GG::MenuItem(UserString("END_ALLIANCE_DECLARATION"), false, false, end_alliance_declaration_action));
         if (show_allies_propose)
@@ -1015,6 +1057,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             popup->AddMenuItem(GG::MenuItem(UserString("ALLIES_PROPOSAL_CANCEL"),   false, false, proposal_cancel_action));
         if (show_allies_reject)
             popup->AddMenuItem(GG::MenuItem(UserString("ALLIES_REJECT"),            false, false, proposal_reject_action));
+
         if (show_declare_war)
             popup->AddMenuItem(GG::MenuItem(UserString("WAR_DECLARATION"),          false, false, war_declaration_action));
     }
