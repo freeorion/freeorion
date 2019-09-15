@@ -28,6 +28,7 @@ public:
     int                     SenderEmpireID() const { return m_sender_empire; }
     int                     RecipientEmpireID() const { return m_recipient_empire; }
     std::string             Dump() const;
+    bool                    IsAllowed() const; ///< Tells if this dimplomatic message allowed by game rules
 
 private:
     int                     m_sender_empire;

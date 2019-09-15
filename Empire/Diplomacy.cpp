@@ -1,6 +1,22 @@
 #include "Diplomacy.h"
 
+#include "../util/GameRules.h"
+#include "../util/i18n.h"
+
 FO_COMMON_API extern const int ALL_EMPIRES;
+
+namespace {
+    void AddRules(GameRules& rules) {
+        // determine if diplomacy allowed
+        rules.Add<std::string>("RULE_DIPLOMACY", "RULE_DIPLOMACY_DESC",
+                               "MULTIPLAYER", "ALLOWED_FOR_ALL", false,
+                               DiscreteValidator<std::string>(std::set<std::string>({
+                                   "RULE_DIPLOMACY_ALLOWED_FOR_ALL",
+                                   "RULE_DIPLOMACY_FORBIDDEN_FOR_ALL"
+                               })));
+    }
+    bool temp_bool = RegisterGameRules(&AddRules);
+}
 
 DiplomaticMessage::DiplomaticMessage() :
     m_sender_empire(ALL_EMPIRES),
@@ -40,6 +56,10 @@ std::string DiplomaticMessage::Dump() const {
     default:                        retval += "Invalid / Unknown";          break;
     }
     return retval;
+}
+
+bool DiplomaticMessage::IsAllowed() const {
+    return GetGameRules().Get<std::string>("RULE_DIPLOMACY") != UserStringNop("RULE_DIPLOMACY_FORBIDDEN_FOR_ALL");
 }
 
 

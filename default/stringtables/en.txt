@@ -1233,6 +1233,18 @@ Show detailed empires data
 RULE_SHOW_DETAILED_EMPIRES_DATA_DESC
 Show research and production, researched buildings, parts, and hulls of all empires.
 
+RULE_DIPLOMACY
+Allowed diplomacy
+
+RULE_DIPLOMACY_DESC
+Manages diplomatic restrictions between players. By default all interactions are allowed.
+
+RULE_DIPLOMACY_ALLOWED_FOR_ALL
+All Allowed
+
+RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
+All Forbidden
+
 ##
 ## Command-line and options database entries
 ##
