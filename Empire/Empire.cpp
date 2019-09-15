@@ -768,7 +768,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
         }
 
         //DebugLogger() << "Fleet " << fleet->ID() << " is in system " << system_id << " with next system " << fleet->NextSystemID() << " and is owned by " << fleet->Owner() << " armed: " << fleet->HasArmedShips() << " and agressive: " << fleet->Aggressive();
-        if ((fleet->HasArmedShips() || fleet->HasFighterShips()) && fleet->Aggressive()) {
+        if (fleet->HasArmedShips() && fleet->Aggressive()) {
             if (fleet->OwnedBy(m_id)) {
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                     systems_containing_friendly_fleets.insert(system_id);
@@ -2072,7 +2072,7 @@ void Empire::CheckProductionProgress() {
                 for (auto& next_fleet : fleets) {
                     // rename fleet, given its id and the ship that is in it
                     next_fleet->Rename(next_fleet->GenerateFleetName());
-                    next_fleet->SetAggressive(next_fleet->HasArmedShips() || next_fleet->HasFighterShips());
+                    next_fleet->SetAggressive(next_fleet->HasArmedShips());
 
                     if (rally_point_id != INVALID_OBJECT_ID) {
                         if (GetSystem(rally_point_id)) {

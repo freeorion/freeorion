@@ -81,7 +81,7 @@ public:
     float   Speed() const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
     bool    CanChangeDirectionEnRoute() const   { return false; }               ///< Returns true iff this fleet can change its direction while in interstellar space.
     bool    HasMonsters() const;                ///< returns true iff this fleet contains monster ships.
-    bool    HasArmedShips() const;              ///< Returns true if there is at least one armed ship in the fleet.
+    bool    HasArmedShips() const;              ///< Returns true if there is at least one armed ship in the fleet, meaning it has direct fire weapons or fighters that can be launched and that do damage
     bool    HasFighterShips() const;            ///< Returns true if there is at least one ship with fighters in the fleet.
     bool    HasColonyShips() const;             ///< Returns true if there is at least one colony ship with nonzero capacity in the fleet.
     bool    HasOutpostShips() const;            ///< Returns true if there is at least one colony ship with zero capacity in the fleet

@@ -864,7 +864,7 @@ namespace {
 
     bool ObjectCanAttack(std::shared_ptr<const UniverseObject> obj) {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
-            return ship->IsArmed() || ship->HasFighters();
+            return ship->IsArmed();
         } else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj)) {
             return planet->CurrentMeterValue(METER_DEFENSE) > 0.0f;
         } else if (auto fighter = std::dynamic_pointer_cast<const Fighter>(obj)) {

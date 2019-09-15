@@ -55,7 +55,7 @@ namespace {
 
         fleet->AddShips({ship->ID()});
         ship->SetFleetID(fleet->ID());
-        fleet->SetAggressive(fleet->HasArmedShips() || fleet->HasFighterShips());
+        fleet->SetAggressive(fleet->HasArmedShips());
 
         return fleet;
     }

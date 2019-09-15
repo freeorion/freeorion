@@ -243,19 +243,18 @@ bool Ship::IsMonster() const {
 }
 
 bool Ship::IsArmed() const {
-    const ShipDesign* design = Design();
-    if (design)
-        return design->IsArmed();
-    else
-        return false;
+    if (TotalWeaponsDamage(0.0f, false) > 0.0f)
+        return true;    // has non-fighter weapons
+    if (HasFighters() && (TotalWeaponsDamage(0.0f, true) > 0.0f))
+        return true;    // has no non-fighter weapons but has launchable fighters that do damage
+    return false;
 }
 
 bool Ship::HasFighters() const {
     const ShipDesign* design = Design();
-    if (design)
-        return design->HasFighters();
-    else
+    if (!design || !design->HasFighters())  // ensures ship has ability to launch fighters
         return false;
+    return FighterCount() >= 1.0f;          // ensures ship currently has fighters to launch
 }
 
 bool Ship::CanColonize() const {
