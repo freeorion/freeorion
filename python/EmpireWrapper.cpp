@@ -71,9 +71,7 @@ namespace {
     }
     auto GetEmpireSitRepFunc = GetSitRep;
 
-    const std::string&  GetTypeString(const SitRepEntry& sitrep) {
-        return sitrep.GetTemplateString();
-    }
+    const std::string&  GetTypeString(const SitRepEntry& sitrep)    { return sitrep.GetTemplateString(); }
     auto GetSitRepTypeStringFunc = GetTypeString;
 
     const Meter* (Empire::*EmpireGetMeter)(const std::string&) const = &Empire::GetMeter;

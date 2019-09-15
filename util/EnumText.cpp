@@ -35,11 +35,9 @@ const std::string& TextForGalaxyShape(Shape shape) {
 
 const std::string& TextForStartingEra(StartingEra e) {
     switch (e) {
-        case STARTING_ERA_PREWARP:
-                            return UserString("GSETUP_STARTING_ERA_PREWARP");
-        case STARTING_ERA_ADVANCED:
-                            return UserString("GSETUP_STARTING_ERA_ADVANCED");
-        default:            return EMPTY_STRING;
+        case STARTING_ERA_PREWARP:  return UserString("GSETUP_STARTING_ERA_PREWARP");
+        case STARTING_ERA_ADVANCED: return UserString("GSETUP_STARTING_ERA_ADVANCED");
+        default:                    return EMPTY_STRING;
     }
 }
 
