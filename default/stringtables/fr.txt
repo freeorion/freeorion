@@ -1089,6 +1089,12 @@ Passes de Combat
 RULE_NUM_COMBAT_ROUNDS_DESC
 Nombre de passes de combat se déroulant à chaque tour.
 
+RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE
+Visibilité astronefs en mode Agression
+
+RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE_DESC
+Les astronefs au sein d'une flotte en mode Agression débutent les combats en étant visibles pour tous les empires, indépendamment des niveaux de Furtivité et de Capacité de Détection.
+
 RULE_RESEED_PRNG_SERVER
 Regénération aléatoire
 
