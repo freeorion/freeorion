@@ -99,7 +99,7 @@ GalaxySetupData::GalaxySetupData() :
     m_specials_freq(GALAXY_SETUP_MEDIUM),
     m_monster_freq(GALAXY_SETUP_MEDIUM),
     m_native_freq(GALAXY_SETUP_MEDIUM),
-    m_starting_era(STARTING_ERA_PREWARP),
+    m_starting_era(STARTING_ERA_ADVANCED),
     m_ai_aggr(MANIACAL)
 {}
 

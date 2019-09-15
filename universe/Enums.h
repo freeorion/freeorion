@@ -150,8 +150,8 @@ GG_ENUM(Shape,
 /** levels of available technology at game start */
 GG_ENUM(StartingEra,
     INVALID_STARTING_ERA = -1,
-    STARTING_ERA_PREWARP,
     STARTING_ERA_ADVANCED,
+    STARTING_ERA_PREWARP,
     NUM_STARTING_ERAS
 )
 
