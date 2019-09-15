@@ -12731,7 +12731,7 @@ BLD_IMPERIAL_GARDENS_DESC
 
 Increases Population capacity by planet size on the planet where it is built: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
 
-It can only by built around the [[buildingtype BLD_IMPERIAL_PALACE]], and only if the empire doesn't have [[BLD_IMPERIAL_GARDENS]] yet.
+It can only by built around the [[buildingtype BLD_IMPERIAL_PALACE]], and only if the empire doesn't have [[BLD_IMPERIAL_GARDENS]] yet.'''
 
 BLD_SUPER_TEST
 Super-Tester Takeover
