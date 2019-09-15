@@ -423,7 +423,7 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
     if (auto desc_val = std::dynamic_pointer_cast<const DiscreteValidator<std::string>>(validator)) {
         // add rows for all allowed options
         for (auto& poss : desc_val->m_values)
-            auto it = drop->Insert(GG::Wnd::Create<UserStringRow>(poss, drop->Width(), drop->Height() - 4));
+            drop->Insert(GG::Wnd::Create<UserStringRow>(poss, drop->Width(), drop->Height() - 4));
     }
     // select a row by default, preferably based on set rule value
     if (!drop->Empty()) {
