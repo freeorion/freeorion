@@ -36,7 +36,7 @@ void OrderSet::ApplyOrders() {
     try {
         for (auto& order : m_orders)
             order.second->Execute();
-    } catch (std::exception e) {
+    } catch (const std::exception& e) {
         ErrorLogger() << "Caught exception executing orders: " << e.what();
     }
 }
