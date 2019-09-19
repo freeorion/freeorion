@@ -245,7 +245,20 @@ std::string SupplyManager::Dump(int empire_id) const {
 
 namespace {
     float EmpireTotalSupplyRangeSumInSystem(int empire_id, int system_id) {
-        return 0.0f;
+        if (empire_id == ALL_EMPIRES || system_id == INVALID_OBJECT_ID)
+            return 0.0f;
+        const auto sys = GetSystem(system_id);
+        if (!sys)
+            return 0.0f;
+
+        float accumulator = 0.0f;
+
+        for (auto obj : Objects().FindObjects(sys->ObjectIDs())) {
+            if (!obj || !obj->OwnedBy(empire_id) || (obj->Meters().count(METER_SUPPLY) < 1))
+                continue;
+            accumulator += obj->CurrentMeterValue(METER_SUPPLY);
+        }
+        return accumulator;
     }
 
     float DistanceBetweenObjects(int obj1_id, int obj2_id) {
