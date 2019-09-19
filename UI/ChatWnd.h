@@ -27,7 +27,8 @@ public:
                                             const std::string& player_name,
                                             GG::Clr text_color,
                                             const boost::posix_time::ptime& timestamp,
-                                            int recipient_player_id);
+                                            int recipient_player_id,
+                                            bool pm);
     void            HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, bool prefixed = false);
     void            HandleGameStatusUpdate(const std::string& text);
     void            HandleLogMessage(const std::string& text);

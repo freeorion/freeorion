@@ -1825,13 +1825,13 @@ sc::result MPLobby::react(const PlayerChat& msg) {
     const PlayerConnectionPtr& sender = msg.m_player_connection;
 
     std::string data;
-    int receiver;
-    ExtractPlayerChatMessageData(message, receiver, data);
+    std::set<int> recipients;
+    bool pm;
+    ExtractPlayerChatMessageData(message, recipients, data, pm);
 
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
 
-    if (receiver == Networking::INVALID_PLAYER_ID &&
-        sender->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER)
+    if (recipients.empty() && sender->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER)
     {
         GG::Clr text_color(255, 255, 255, 255);
         for (const auto& player : m_lobby_data->m_players) {
@@ -1842,14 +1842,15 @@ sc::result MPLobby::react(const PlayerChat& msg) {
         server.PushChatMessage(data, sender->PlayerName(), text_color, timestamp);
     }
 
-    if (receiver == Networking::INVALID_PLAYER_ID) { // the receiver is everyone
+    if (recipients.empty()) { // the receiver is everyone
         for (auto it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-            (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp, data));
+            (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp, data, pm));
         }
     } else {
-        auto it = server.m_networking.GetPlayer(receiver);
-        if (it != server.m_networking.established_end())
-            (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp, data));
+        for (auto it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
+            if (recipients.find((*it)->PlayerID()) != recipients.end())
+                (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp, data, pm));
+        }
     }
 
     return discard_event();
@@ -2538,13 +2539,13 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
     const PlayerConnectionPtr& sender = msg.m_player_connection;
 
     std::string data;
-    int receiver;
-    ExtractPlayerChatMessageData(message, receiver, data);
+    std::set<int> recipients;
+    bool pm;
+    ExtractPlayerChatMessageData(message, recipients, data, pm);
 
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
 
-    if (receiver == Networking::INVALID_PLAYER_ID &&
-        sender->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER)
+    if (recipients.empty() && sender->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER)
     {
         GG::Clr text_color(255, 255, 255, 255);
         if (auto empire = GetEmpire(sender->PlayerID()))
@@ -2556,12 +2557,12 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
     for (auto it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
     {
-        if (receiver == Networking::INVALID_PLAYER_ID ||
-            receiver == (*it)->PlayerID())
+        // send message to: (1) specified recipients, (2) all if no recipient  specified, (3) sender
+        if (recipients.find((*it)->PlayerID()) != recipients.end() || recipients.empty()
+            || ((*it)->PlayerID() == sender->PlayerID()))
         {
-            (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(),
-                                                       timestamp,
-                                                       data));
+            (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp,
+                                                       data, pm));
         }
     }
     return discard_event();

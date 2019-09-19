@@ -802,7 +802,7 @@ void MultiPlayerLobbyWnd::ChatMessage(int player_id, const boost::posix_time::pt
         player_name = "";
     }
 
-    m_chat_wnd->HandlePlayerChatMessage(msg, player_name, text_color, timestamp, HumanClientApp::GetApp()->PlayerID());
+    m_chat_wnd->HandlePlayerChatMessage(msg, player_name, text_color, timestamp, HumanClientApp::GetApp()->PlayerID(), false);  // no pm messages for MP lobby yet
 }
 
 void MultiPlayerLobbyWnd::ChatMessage(const std::string& message_text,
@@ -811,7 +811,7 @@ void MultiPlayerLobbyWnd::ChatMessage(const std::string& message_text,
                                       const boost::posix_time::ptime& timestamp)
 {
     m_chat_wnd->HandlePlayerChatMessage(message_text, player_name, text_color, timestamp,
-                                        HumanClientApp::GetApp()->PlayerID());
+                                        HumanClientApp::GetApp()->PlayerID(), false);
 }
 
 void MultiPlayerLobbyWnd::TurnPhaseUpdate(Message::TurnProgressPhase phase_id)

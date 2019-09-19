@@ -469,17 +469,21 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
                                          const std::string& player_name,
                                          GG::Clr text_color,
                                          const boost::posix_time::ptime& timestamp,
-                                         int recipient_player_id)
+                                         int recipient_player_id,
+                                         bool pm)
 {
     std::string filtered_message = StringtableTextSubstitute(text);
     std::string wrapped_text = RgbaTag(text_color);
+    std::string pm_text = "";
+    if (pm)
+        pm_text = UserString("MESSAGES_WHISPER");
     const std::string&& formatted_timestamp = ClientUI::FormatTimestamp(timestamp);
     if (IsValidUTF8(formatted_timestamp))
         wrapped_text += formatted_timestamp;
     if (player_name.empty())
         wrapped_text += filtered_message + "</rgba>";
     else
-        wrapped_text += player_name + ": " + filtered_message + "</rgba>";
+        wrapped_text += player_name + pm_text + ": " + filtered_message + "</rgba>";
     TraceLogger() << "HandlePlayerChatMessage sender: " << player_name
                   << "  sender colour rgba tag: " << RgbaTag(text_color)
                   << "  filtered message: " << filtered_message
@@ -611,16 +615,14 @@ void MessageWnd::OpenForInput() {
 }
 
 namespace {
-    void SendChatMessage(const std::string& text, std::set<int> recipients) {
-        ClientNetworking& net = HumanClientApp::GetApp()->Networking();
-
-        if (recipients.empty()) {
-            net.SendMessage(PlayerChatMessage(text));
-        } else {
-            recipients.insert(HumanClientApp::GetApp()->PlayerID());   // ensure recipient sees own sent message
-            for (int recipient_id : recipients)
-                net.SendMessage(PlayerChatMessage(text, recipient_id));
+    void SendChatMessage(const std::string& text, std::set<int> recipients, bool pm) {
+        const ClientApp* app = ClientApp::GetApp();
+        if (!app) {
+            ErrorLogger() << "ChatWnd.cpp SendChatMessage couldn't get client app!";
+            return;
         }
+        ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+        net.SendMessage(PlayerChatMessage(text, recipients, pm));
     }
 
     int ExtractPlayerID(const std::string& text) {
@@ -629,11 +631,11 @@ namespace {
             ErrorLogger() << "ChatWnd.cpp ExtractPlayerID couldn't get client app!";
             return Networking::INVALID_PLAYER_ID;
         }
-        const std::map<int, PlayerInfo>& players = app->Players();
         std::string::size_type space_pos = text.find_first_of(' ');
+        if (space_pos == std::string::npos)
+            return Networking::INVALID_PLAYER_ID;
         std::string player_name = boost::trim_copy(text.substr(0, space_pos));
-
-        DebugLogger() << "ChatWnd::ExtractPlayerID name " << player_name;
+        const std::map<int, PlayerInfo>& players = app->Players();
 
         for (auto& player : players) {
             if (boost::iequals(player.second.name, player_name)) {
@@ -646,8 +648,9 @@ namespace {
 
     std::string ExtractMessage(const std::string& text) {
         std::string::size_type space_pos = text.find_first_of(' ');
+        if (space_pos == std::string::npos)
+            return "";
         std::string message = boost::trim_copy(text.substr(space_pos, std::string::npos));
-        DebugLogger() << "ChatWnd::ExtractMessage " << message;
         return message;
     }
 
@@ -691,11 +694,10 @@ void MessageWnd::HandleTextCommand(const std::string& text) {
         if (player_id != Networking::INVALID_PLAYER_ID) {
             std::set<int> recipient;
             recipient.insert(player_id);
-            SendChatMessage(message, recipient);
-            DebugLogger() << "ChatWnd::HandleTextCommand: send message " << message << " to player id " << player_id;
+            SendChatMessage(message, recipient, true);
         }
         else {
-            *m_display += UserString("MESSAGES_PLAYER_NOT_FOUND") + "\n";
+            *m_display += UserString("MESSAGES_INVALID") + "\n";
         }
     }
 }
@@ -706,6 +708,7 @@ void MessageWnd::MessageEntered() {
         return;
 
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
+    bool pm = false;
 
     // update history
     if (m_history.size() == 1 || m_history[1] != trimmed_text) {
@@ -724,9 +727,11 @@ void MessageWnd::MessageEntered() {
     } else {
         // otherwise, treat message as chat and send to recipients
         std::set<int> recipients;
-        if (PlayerListWnd* player_list_wnd = ClientUI::GetClientUI()->GetPlayerListWnd().get())
+        if (PlayerListWnd* player_list_wnd = ClientUI::GetClientUI()->GetPlayerListWnd().get()) {
             recipients = player_list_wnd->SelectedPlayerIDs();
-        SendChatMessage(trimmed_text, recipients);
+            pm = !(player_list_wnd->SelectedPlayerIDs().empty());
+        }
+        SendChatMessage(trimmed_text, recipients, pm);
     }
 
     m_edit->Clear();

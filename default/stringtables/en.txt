@@ -6229,9 +6229,11 @@ MESSAGES_HELP_COMMAND
 /zoom [object]: zoom to the specified universe object (system, planet, ship, fleet or building)
 '''
 
-MESSAGES_PLAYER_NOT_FOUND
-Specified player not found.
+MESSAGES_WHISPER
+(Whispers)
 
+MESSAGES_INVALID
+Invalid player or no message entered.
 
 ##
 ## Players list
