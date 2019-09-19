@@ -8,6 +8,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Fleet.h"
 #include "../universe/Enums.h"
+#include "../universe/Predicates.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 
@@ -244,21 +245,40 @@ std::string SupplyManager::Dump(int empire_id) const {
 }
 
 namespace {
-    float EmpireTotalSupplyRangeSumInSystem(int empire_id, int system_id) {
+    std::pair<float, float> EmpireTotalSupplyRangeSumInSystem(int empire_id, int system_id) {
         if (empire_id == ALL_EMPIRES || system_id == INVALID_OBJECT_ID)
-            return 0.0f;
+            return {0.0f, 0.0f};
         const auto sys = GetSystem(system_id);
         if (!sys)
-            return 0.0f;
+            return {0.0f, 0.0f};
 
-        float accumulator = 0.0f;
+        float accumulator_current = 0.0f;
+        float accumulator_max = 0.0f;
 
         for (auto obj : Objects().FindObjects(sys->ObjectIDs())) {
-            if (!obj || !obj->OwnedBy(empire_id) || (obj->Meters().count(METER_SUPPLY) < 1))
+            if (!obj || !obj->OwnedBy(empire_id))
                 continue;
-            accumulator += obj->CurrentMeterValue(METER_SUPPLY);
+            if (obj->Meters().count(METER_SUPPLY) > 0)
+                accumulator_current += obj->CurrentMeterValue(METER_SUPPLY);
+            if (obj->Meters().count(METER_MAX_SUPPLY) > 0)
+                accumulator_max += obj->CurrentMeterValue(METER_MAX_SUPPLY);
         }
-        return accumulator;
+        return {accumulator_current, accumulator_max};
+    }
+
+    float EmpireTotalSupplyRange(int empire_id) {
+        if (empire_id == ALL_EMPIRES)
+            return 0.0f;
+
+        float accumulator_current = 0.0f;
+
+        for (auto obj : Objects().FindObjects(OwnedVisitor<UniverseObject>(empire_id))) {
+            if (!obj || !obj->OwnedBy(empire_id))
+                continue;
+            if (obj->Meters().count(METER_SUPPLY) > 0)
+                accumulator_current += obj->CurrentMeterValue(METER_SUPPLY);
+        }
+        return accumulator_current;
     }
 
     float DistanceBetweenObjects(int obj1_id, int obj2_id) {
@@ -299,9 +319,11 @@ void SupplyManager::Update() {
     // map from empire id to which systems are obstructed for it for supply
     // propagation
     std::map<int, std::set<int>> empire_supply_unobstructed_systems;
-    // map from empire id to map from system id to sum of supply source ranges
-    // owned by empire in that in system
-    std::map<int, std::map<int, float>> empire_system_supply_range_sums;
+    // map from empire id to map from system id to pair of sum of supply source
+    // ranges and max ranges of objects owned by empire in that in system
+    std::map<int, std::map<int, std::pair<float, float>>> empire_system_supply_range_sums;
+    // map from empire id to total supply range sum of objects it owns
+    std::map<int, float> empire_total_supply_range_sums;
 
     for (const auto& entry : Empires()) {
         const Empire* empire = entry.second;
@@ -318,6 +340,7 @@ void SupplyManager::Update() {
             empire_system_supply_range_sums[empire_id_pair.first][sys_id_pair.first] =
                 EmpireTotalSupplyRangeSumInSystem(empire_id_pair.first, sys_id_pair.first);
         }
+        empire_total_supply_range_sums[empire_id_pair.first] = EmpireTotalSupplyRange(empire_id_pair.first);
     }
 
 
@@ -470,11 +493,14 @@ void SupplyManager::Update() {
                     bonus += 0.3f;
 
                 // sum of all supply sources in this system
-                bonus += empire_system_supply_range_sums[empire_id][sys_id] / 1000.0f;
+                bonus += empire_system_supply_range_sums[empire_id][sys_id].first / 1000.0f;
+                // sum of max supply of sourses in this system
+                bonus += empire_system_supply_range_sums[empire_id][sys_id].second / 100000.0f;
+                bonus += empire_total_supply_range_sums[empire_id] / 100000000.0f;
 
                 // distance to supply source from here
                 float propagated_distance_to_supply_source = std::max(1.0f, empire_supply_it->second.second);
-                bonus += 0.0001f / propagated_distance_to_supply_source;
+                bonus += propagated_distance_to_supply_source / 10000.0f;
 
                 // store ids of empires indexed by adjusted propgated range, in order to sort by range
                 float propagated_range = empire_supply_it->second.first;
