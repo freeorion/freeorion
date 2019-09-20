@@ -9,8 +9,8 @@ STANDARD_METER_GROWTH
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [
-                SetResearch value = Value + min(max(Value(Target.TargetResearch) - Value, -1), 1)
-                SetIndustry value = Value + min(max(Value(Target.TargetIndustry) - Value, -1), 1)
+                SetResearch value = Value + min(max(Value(Target.TargetResearch) - Value, -1), min(1, Value(Target.Happiness) - 4))
+                SetIndustry value = Value + min(max(Value(Target.TargetIndustry) - Value, -1), min(1, Value(Target.Happiness) - 4))
             ]
 
         // removes residual production from a dead planet
