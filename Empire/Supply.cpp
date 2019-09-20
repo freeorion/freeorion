@@ -515,15 +515,35 @@ void SupplyManager::Update() {
             // at least two empires have supply sources here...
             // check if one is stronger
 
-            // remove supply for all empires except the top-ranged empire here
-            // if there is a tie for top-ranged, remove all
+            // remove supply for all empires except the top-ranged empire here,
+            // or one of the empires at the top if all top empires are allies
             auto range_empire_it = empire_ranges_here.rbegin();
             int top_range_empire_id = ALL_EMPIRES;
             if (range_empire_it->second.size() == 1) {
                 // if just one empire has the most range, it is the top empire
                 top_range_empire_id = *(range_empire_it->second.begin());
+            } else {
+                // if all empires that share the top range are allies, pick one
+                // to be the top empire
+                const auto& top_empires = range_empire_it->second;
+                bool any_non_allied_pair = false;
+                for (auto id1 : top_empires) {
+                    if (id1 == ALL_EMPIRES) continue;
+                    for (auto id2 : top_empires) {
+                        if (id2 == ALL_EMPIRES || id2 <= id1) continue;
+                        if (Empires().GetDiplomaticStatus(id1, id2) != DIPLO_ALLIED) {
+                            any_non_allied_pair = true;
+                            break;
+                        }
+                    }
+                }
+                if (!any_non_allied_pair) {
+                    // arbitrarily pick the lowest ID empire
+                    top_range_empire_id = *(range_empire_it->second.begin());
+                }
             }
             //DebugLogger() << "top ranged empire here: " << top_range_empire_id;
+
 
             // remove range entries and traversals for all but the top empire
             // (or all empires if there is no single top empire)
@@ -733,7 +753,6 @@ void SupplyManager::Update() {
 
 
 
-    // TEST STUFF FOR INTER-EMPIRE-MERGING
     auto ally_merged_supply_starlane_traversals = m_supply_starlane_traversals;
 
     // add connections into allied empire systems when their obstructed lane
@@ -785,8 +804,6 @@ void SupplyManager::Update() {
                 output_empire_ids.insert(sys_id);
         }
     }
-
-    // END TEST STUFF FOR INTER-EMPIRE-MERGING
 
 
 
