@@ -1746,6 +1746,32 @@ namespace {
                                launches_event);
 
                 DebugLogger(combat) << "Attacker: " << attacker->Name();
+
+                // Set launching carrier as at least basically visible to other empires.
+                if (launches_event) {
+                    for (auto detector_empire_id : combat_info.empire_ids) {
+                        Visibility initial_vis = combat_info.empire_object_visibility[detector_empire_id][attacker_id];
+                        TraceLogger(combat) << "Pre-attack visibility of launching carrier id: " << attacker_id
+                                            << " by empire: " << detector_empire_id << " was: " << initial_vis;
+
+                        if (initial_vis >= VIS_BASIC_VISIBILITY)
+                            continue;
+
+                        combat_info.empire_object_visibility[detector_empire_id][attacker_id] = VIS_BASIC_VISIBILITY;
+
+                        DebugLogger(combat) << " ... Setting post-attack visability to " << VIS_BASIC_VISIBILITY;
+
+                        // record visibility change event due to attack
+                        // FIXME attacker, TARGET, attacker empire, target empire, visibility
+                        auto stealth_change_event = std::make_shared<StealthChangeEvent>(bout);
+                        stealth_change_event->AddEvent(attacker_id,
+                                                       attacker_id,
+                                                       attacker->Owner(),
+                                                       detector_empire_id,
+                                                       VIS_BASIC_VISIBILITY);
+                    }
+                }
+
             }
 
             if (!launches_event->AreSubEventsEmpty(ALL_EMPIRES))
