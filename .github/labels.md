@@ -42,6 +42,15 @@ affected by.  This should help developers to identify if they have required
 knowledge or interests to handle the issue.  There should be at least one
 component listed for an Issue.
 
+#### Label category `priority`
+
+The priority labels help developers and contributors to prioritize the Issue/PR,
+to focus their efforts more efficiently. There are only two `priority:*` labels,
+for high and low priority. Assigning no `priority:*` label means the Issue/PR
+has "standard"/"normal"/"medium" priority, which is the default (and should
+apply to the majority of issues/PRs). Priority may change over the lifetime of
+the Issue/PR.
+
 #### Label category `status`
 
 With the status category developers, managers or issue reporters can check if
@@ -157,6 +166,20 @@ mainly players and server hosters.  When writing _in-game_ manuals this label
 should be used in conjunction with `component:art music text assets`; when this
 Issue addresses external documentation like the FO wiki add the
 `component:infrastructure` label.
+
+#### Label `priority:high`
+
+The Issue/PR is very urgent or important and should be addressed/finished as
+soon as possible, and developers/contributors should focus their efforts on them
+before other things. Usually applied to critical bugs and features relevant for
+upcoming releases.
+
+#### Label `priority:low`
+
+The Issue/PR is of minor importance/urgency and can be set aside for more
+important or urgent things. Usually applied to e.g. nice-to-have features or
+bugs that are more of cosmetic nature or a minor annoyance than something that
+impedes or breaks gameplay.
 
 #### Label `status:cherry-pick for release`
 
