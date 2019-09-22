@@ -26,7 +26,7 @@ rule of thumb there is at least one label from every category that needs to be
 applied to an issue but use common sense to check if the label is appropriate or
 not for the specific Issue/PR.
 
-Currently there are three categories:
+Currently there are four categories:
 
 
 #### Label category `category`
