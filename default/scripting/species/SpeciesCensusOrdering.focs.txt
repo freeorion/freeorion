@@ -17,3 +17,4 @@ SpeciesCensusOrdering
     tag = "ROBOTIC"
     tag = "SELF_SUSTAINING"
     tag = "TELEPATHIC"
+    tag = "GASEOUS"
