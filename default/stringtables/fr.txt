@@ -1233,6 +1233,18 @@ Afficher les données détaillées des empires
 RULE_SHOW_DETAILED_EMPIRES_DATA_DESC
 Afficher la recherche et la production, les structures acquises, coques et équipements, de tous les empires.
 
+RULE_DIPLOMACY
+Interactions Diplomatie
+
+RULE_DIPLOMACY_DESC
+Gère les restrictions en matière de diplomatie entre les joueurs. Par défaut, toutes les interactions sont autorisées.
+
+RULE_DIPLOMACY_ALLOWED_FOR_ALL
+Toutes autorisées
+
+RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
+Toutes interdites
+
 ##
 ## Command-line and options database entries
 ##

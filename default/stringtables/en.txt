@@ -15252,6 +15252,9 @@ Self-Sustaining
 TELEPATHIC
 Telepathic
 
+GASEOUS
+Gaseous
+
 ORBITAL
 Orbital
 
