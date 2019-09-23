@@ -1429,6 +1429,9 @@ Maximum interval in seconds between turn advances. If 0, turn advances by timeou
 OPTIONS_DB_TIMEOUT_FIXED_INTERVAL
 Turns advance after fixed intervals, regardless of when and whether players have submitted turn orders.
 
+OPTIONS_DB_CLIENT_MESSAGE_SIZE_MAX
+Limit of client message size in bytes.
+
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
 

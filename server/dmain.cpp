@@ -67,6 +67,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         GetOptionsDB().Add<int>("network.server.turn-timeout.max-interval", UserStringNop("OPTIONS_DB_TIMEOUT_INTERVAL"), 0);
         GetOptionsDB().Add<bool>("network.server.turn-timeout.fixed-interval", UserStringNop("OPTIONS_DB_TIMEOUT_FIXED_INTERVAL"), false);
         GetOptionsDB().Add<std::string>("setup.game.uid", UserStringNop("OPTIONS_DB_GAMESETUP_UID"), "");
+        GetOptionsDB().Add<int>("network.server.client-message-size.max", UserStringNop("OPTIONS_DB_CLIENT_MESSAGE_SIZE_MAX"), 0);
 
         // if config.xml and persistent_config.xml are present, read and set options entries
         GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());
