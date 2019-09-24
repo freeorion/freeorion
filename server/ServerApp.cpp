@@ -3375,7 +3375,7 @@ void ServerApp::PostCombatProcessTurns() {
             continue;   // skip eliminated empires
 
         for (const auto& tech : empire->CheckResearchProgress()) {
-            empire->AddNewTech(tech);
+            empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(tech);
         }
         empire->CheckProductionProgress();
         empire->CheckTradeSocialProgress();

@@ -217,8 +217,8 @@ public:
     void ResumeProduction(int index);
     void AllowUseImperialPP(int index, bool allow=true);  ///< Allows or disallows the use of the imperial stockpile for production
 
-    void AddNewTech(const std::string& name);           ///< Inserts the given Tech into the Empire's list of innovations. Call ApplyAddedTech to make it effective.
-    void ApplyNewTechs();                          ///< Moves all Techs from the Empire's list of innovations into the Empire's list of available technologies.
+    void AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& name);    ///< Inserts the given Tech into the Empire's list of innovations. Call ApplyAddedTech to make it effective.
+    void ApplyNewTechs();                            ///< Moves all Techs from the Empire's list of innovations into the Empire's list of available technologies.
     void UnlockItem(const ItemSpec& item);           ///< Adds a given producible item (Building, Ship Hull, Ship part) to the list of available items.
     void AddBuildingType(const std::string& name);   ///< Inserts the given BuildingType into the Empire's list of available BuldingTypes.
     void AddPartType(const std::string& name);       ///< Inserts the given ship PartType into the Empire's list of available BuldingTypes.
@@ -387,7 +387,7 @@ private:
     bool                            m_eliminated = false;       ///< Whether the empire has lost
     std::set<std::string>           m_victories;                ///< The ways that the empire has won, if any
 
-    std::set<std::string>           m_new_techs;                ///< names of researched but not yet effective technologies, and turns on which they were acquired.
+    std::set<std::string>           m_newly_researched_techs;                ///< names of researched but not yet effective technologies, and turns on which they were acquired.
     std::map<std::string, int>      m_techs;                    ///< names of researched technologies, and turns on which they were acquired.
     std::map<std::string, Meter>    m_meters;                   ///< empire meters, including ratings scales used by species to judge empires
 

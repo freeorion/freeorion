@@ -3111,7 +3111,7 @@ void GiveEmpireTech::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    empire->AddNewTech(tech_name);
+    empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(tech_name);
 }
 
 std::string GiveEmpireTech::Dump(unsigned short ntabs) const {
