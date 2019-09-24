@@ -432,6 +432,17 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         assert(bytes_transferred <= Message::HeaderBufferSize);
         if (bytes_transferred == Message::HeaderBufferSize) {
             BufferToHeader(m_incoming_header_buffer, m_incoming_message);
+            size_t msg_size = m_incoming_header_buffer[Message::Parts::SIZE];
+            if (GetOptionsDB().Get<int>("network.server.client-message-size.max") > 0 &&
+                msg_size > GetOptionsDB().Get<int>("network.server.client-message-size.max"))
+            {
+                ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
+                                     << "too big message " << msg_size << " bytes ";
+                boost::system::error_code error;
+                m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+                m_socket.close();
+                return;
+            }
             m_incoming_message.Resize(m_incoming_header_buffer[Message::Parts::SIZE]);
             boost::asio::async_read(
                 m_socket,
