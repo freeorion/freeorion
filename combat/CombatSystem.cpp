@@ -260,34 +260,34 @@ namespace {
     // if source is owned by an empire, match unowned objects and objects owned by enemies of source's owner empire
     Condition::ConditionBase* VisibleEnemyOfOwnerCondition() {
         return new Condition::Or(
-                // unowned candidate object case
-                boost::make_unique<Condition::And>(
-                    boost::make_unique<Condition::EmpireAffiliation>(AFFIL_NONE),   // unowned candidate object
+            // unowned candidate object case
+            boost::make_unique<Condition::And>(
+                boost::make_unique<Condition::EmpireAffiliation>(AFFIL_NONE),   // unowned candidate object
 
-                    boost::make_unique<Condition::ValueTest>(           // when source object is owned (ie. not the same owner as the candidate object)
-                        boost::make_unique<ValueRef::Variable<int>>(
-                            ValueRef::SOURCE_REFERENCE, "Owner"),
-                        Condition::NOT_EQUAL,
-                        boost::make_unique<ValueRef::Variable<int>>(
-                            ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Owner")),
+                boost::make_unique<Condition::ValueTest>(           // when source object is owned (ie. not the same owner as the candidate object)
+                    boost::make_unique<ValueRef::Variable<int>>(
+                        ValueRef::SOURCE_REFERENCE, "Owner"),
+                    Condition::NOT_EQUAL,
+                    boost::make_unique<ValueRef::Variable<int>>(
+                        ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Owner")),
 
-                    boost::make_unique<Condition::VisibleToEmpire>(     // when source object's owner empire can detect the candidate object
-                        boost::make_unique<ValueRef::Variable<int>>(    // source's owner empire id
-                            ValueRef::SOURCE_REFERENCE, "Owner"))),
+                boost::make_unique<Condition::VisibleToEmpire>(     // when source object's owner empire can detect the candidate object
+                    boost::make_unique<ValueRef::Variable<int>>(    // source's owner empire id
+                        ValueRef::SOURCE_REFERENCE, "Owner"))),
 
-                // owned candidate object case
-                boost::make_unique<Condition::And>(
-                    boost::make_unique<Condition::EmpireAffiliation>(AFFIL_ANY),    // candidate is owned by an empire
+            // owned candidate object case
+            boost::make_unique<Condition::And>(
+                boost::make_unique<Condition::EmpireAffiliation>(AFFIL_ANY),    // candidate is owned by an empire
 
-                    boost::make_unique<Condition::EmpireAffiliation>(               // candidate is owned by enemy of source's owner
-                        boost::make_unique<ValueRef::Variable<int>>(
-                            ValueRef::SOURCE_REFERENCE, "Owner"), AFFIL_ENEMY),
+                boost::make_unique<Condition::EmpireAffiliation>(               // candidate is owned by enemy of source's owner
+                    boost::make_unique<ValueRef::Variable<int>>(
+                        ValueRef::SOURCE_REFERENCE, "Owner"), AFFIL_ENEMY),
 
-                    boost::make_unique<Condition::VisibleToEmpire>(     // when source empire can detect the candidate object
-                        boost::make_unique<ValueRef::Variable<int>>(    // source's owner empire id
-                            ValueRef::SOURCE_REFERENCE, "Owner"))
-                ))
-            ;
+                boost::make_unique<Condition::VisibleToEmpire>(     // when source empire can detect the candidate object
+                    boost::make_unique<ValueRef::Variable<int>>(    // source's owner empire id
+                        ValueRef::SOURCE_REFERENCE, "Owner"))
+            ))
+        ;
     }
 
     const std::unique_ptr<Condition::ConditionBase> is_enemy_ship_or_fighter =

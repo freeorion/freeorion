@@ -142,9 +142,8 @@ std::string BoutBeginEvent::DebugString() const {
     return ss.str();
 }
 
-std::string BoutBeginEvent::CombatLogDescription(int viewing_empire_id) const {
-    return str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout);
-}
+std::string BoutBeginEvent::CombatLogDescription(int viewing_empire_id) const
+{ return str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout); }
 
 template <class Archive>
 void BoutBeginEvent::serialize(Archive& ar, const unsigned int version) {
@@ -171,10 +170,12 @@ void BoutBeginEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& a
 ///////// BoutEvent /////////////
 //////////////////////////////////////////
 BoutEvent::BoutEvent():
-    bout(-1), events() {}
+    bout(-1)
+{}
 
 BoutEvent::BoutEvent(int _bout):
-    bout(_bout), events() {}
+    bout(_bout)
+{}
 
 void BoutEvent::AddEvent(const CombatEventPtr& event)
 { events.push_back(event); }
@@ -191,9 +192,8 @@ std::string BoutEvent::CombatLogDescription(int viewing_empire_id) const {
 
 std::vector<ConstCombatEventPtr> BoutEvent::SubEvents(int viewing_empire_id) const {
     std::vector<ConstCombatEventPtr> all_events;
-    for (CombatEventPtr event : events) {
+    for (CombatEventPtr event : events)
         all_events.push_back(event);
-    }
     return all_events;
 }
 
@@ -201,7 +201,7 @@ template <class Archive>
 void BoutEvent::serialize(Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
     ar & BOOST_SERIALIZATION_NVP(bout)
-        & BOOST_SERIALIZATION_NVP(events);
+       & BOOST_SERIALIZATION_NVP(events);
 }
 
 BOOST_CLASS_VERSION(BoutEvent, 4)
@@ -225,7 +225,8 @@ void BoutEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, co
 //////////////////////////////////////////
 
 SimultaneousEvents::SimultaneousEvents() :
-    events() {}
+    events()
+{}
 
 void SimultaneousEvents::AddEvent(const CombatEventPtr& event)
 { events.push_back(event); }
@@ -391,21 +392,18 @@ void InitialStealthEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchi
 //////////////////////////////////////////
 
 StealthChangeEvent::StealthChangeEvent() :
-    bout(-1),
-    events()
+    bout(-1)
 {}
 
 StealthChangeEvent::StealthChangeEvent(int bout_) :
-    bout(bout_),
-    events()
+    bout(bout_)
 {}
 
 StealthChangeEvent::StealthChangeEventDetail::StealthChangeEventDetail() :
     attacker_id(INVALID_OBJECT_ID),
     target_id(INVALID_OBJECT_ID),
     attacker_empire_id(INVALID_OBJECT_ID),
-    target_empire_id(INVALID_OBJECT_ID),
-    visibility()
+    target_empire_id(INVALID_OBJECT_ID)
 {}
 
 StealthChangeEvent::StealthChangeEventDetail::StealthChangeEventDetail(
@@ -426,7 +424,6 @@ std::string StealthChangeEvent::StealthChangeEventDetail::DebugString() const {
 }
 
 std::string StealthChangeEvent::StealthChangeEventDetail::CombatLogDescription(int viewing_empire_id) const {
-
     std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker_id, attacker_empire_id);
     std::string target_link = FighterOrPublicNameLink(viewing_empire_id, target_id, target_empire_id);
     std::string empire_link = EmpireLink(target_empire_id);
@@ -439,8 +436,9 @@ std::string StealthChangeEvent::StealthChangeEventDetail::CombatLogDescription(i
 }
 
 
-void StealthChangeEvent::AddEvent(int attacker_id_, int target_id_, int attacker_empire_
-                             , int target_empire_, Visibility new_visibility_) {
+void StealthChangeEvent::AddEvent(int attacker_id_, int target_id_, int attacker_empire_,
+                                  int target_empire_, Visibility new_visibility_)
+{
     events[target_empire_].push_back(
         std::make_shared<StealthChangeEventDetail>(
             attacker_id_, target_id_, attacker_empire_, target_empire_, new_visibility_));
@@ -474,9 +472,8 @@ std::string StealthChangeEvent::CombatLogDescription(int viewing_empire_id) cons
     std::string desc = "";
     for (const auto& target : events) {
         std::vector<std::string> uncloaked_attackers;
-        for (const auto event : target.second) {
+        for (const auto event : target.second)
             uncloaked_attackers.push_back(FighterOrPublicNameLink(viewing_empire_id, event->attacker_id, event->attacker_empire_id));
-        }
 
         if (!uncloaked_attackers.empty()) {
             if (!desc.empty())
@@ -492,17 +489,14 @@ std::string StealthChangeEvent::CombatLogDescription(int viewing_empire_id) cons
     return desc;
 }
 
-bool StealthChangeEvent::AreSubEventsEmpty(int viewing_empire_id) const {
-    return events.empty();
-}
+bool StealthChangeEvent::AreSubEventsEmpty(int viewing_empire_id) const
+{ return events.empty(); }
+
 std::vector<ConstCombatEventPtr> StealthChangeEvent::SubEvents(int viewing_empire_id) const {
     std::vector<ConstCombatEventPtr> all_events;
-    for (const auto& target : events) {
-
-        for (const auto event : target.second){
+    for (const auto& target : events)
+        for (const auto event : target.second)
             all_events.push_back(std::dynamic_pointer_cast<CombatEvent>(event));
-        }
-    }
     return all_events;
 }
 
@@ -577,9 +571,6 @@ WeaponFireEvent::WeaponFireEvent(
     attacker_id(attacker_id_),
     target_id( target_id_),
     weapon_name(weapon_name_),
-    power(),
-    shield(),
-    damage(),
     attacker_owner_id(attacker_owner_id_),
     target_owner_id(target_owner_id_)
 { std::tie(power, shield, damage) = power_shield_damage; }
@@ -725,9 +716,8 @@ std::string IncapacitationEvent::CombatLogDescription(int viewing_empire_id) con
     return str(FlexibleFormat(template_str) % owner_string % object_link);
 }
 
-boost::optional<int> IncapacitationEvent::PrincipalFaction(int viewing_empire_id) const {
-    return object_owner_id;
-}
+boost::optional<int> IncapacitationEvent::PrincipalFaction(int viewing_empire_id) const
+{ return object_owner_id; }
 
 
 template <class Archive>
@@ -765,13 +755,11 @@ void IncapacitationEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchi
 //////////////////////////////////////////
 
 FightersAttackFightersEvent::FightersAttackFightersEvent() :
-    bout(-1),
-    events()
+    bout(-1)
 {}
 
 FightersAttackFightersEvent::FightersAttackFightersEvent(int bout_) :
-    bout(bout_),
-    events()
+    bout(bout_)
 {}
 
 void FightersAttackFightersEvent::AddEvent(int attacker_empire_, int target_empire_)
@@ -799,7 +787,8 @@ std::string FightersAttackFightersEvent::CombatLogDescription(int viewing_empire
     // then the remainder.
     auto show_events_for_empire =
         [&ss, &num_events_remaining, &events_to_show, &viewing_empire_id]
-        (boost::optional<int> show_attacker) {
+        (boost::optional<int> show_attacker)
+    {
             int attacker_empire;
             int target_empire;
             for (const auto& index_and_event : events_to_show) {
@@ -901,9 +890,8 @@ std::string FighterLaunchEvent::CombatLogDescription(int viewing_empire_id) cons
               % std::abs(number_launched));
 }
 
-boost::optional<int> FighterLaunchEvent::PrincipalFaction(int viewing_empire_id) const {
-    return fighter_owner_empire_id;
-}
+boost::optional<int> FighterLaunchEvent::PrincipalFaction(int viewing_empire_id) const
+{ return fighter_owner_empire_id; }
 
 template <class Archive>
 void FighterLaunchEvent::serialize (Archive& ar, const unsigned int version) {
@@ -935,13 +923,11 @@ void FighterLaunchEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchiv
 //////////////////////////////////////////
 
 FightersDestroyedEvent::FightersDestroyedEvent() :
-    bout(-1),
-    events()
+    bout(-1)
 {}
 
 FightersDestroyedEvent::FightersDestroyedEvent(int bout_) :
-    bout(bout_),
-    events()
+    bout(bout_)
 {}
 
 void FightersDestroyedEvent::AddEvent(int target_empire_)
@@ -969,7 +955,8 @@ std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id) 
     // ALL_EMPIRES and then the remainder.
     auto show_events_for_empire =
         [&ss, &num_events_remaining, &events_to_show, &viewing_empire_id]
-        (boost::optional<int> show_empire_id) {
+        (boost::optional<int> show_empire_id)
+    {
             int count;
             int target_empire_id;
             for (const auto& index_and_event : events_to_show) {
@@ -992,7 +979,7 @@ std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id) 
                 if (count == 1) {
                     const std::string& template_str = UserString("ENC_COMBAT_FIGHTER_INCAPACITATED_STR");
                     ss << str(FlexibleFormat(template_str) % target_empire_link % target_link);
-                }else {
+                } else {
                     const std::string& template_str = UserString("ENC_COMBAT_FIGHTER_INCAPACITATED_REPEATED_STR");
                     ss << str(FlexibleFormat(template_str) % count_str % target_empire_link % target_link);
                 }
@@ -1041,20 +1028,19 @@ void FightersDestroyedEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iar
 WeaponsPlatformEvent::WeaponsPlatformEvent() :
     bout(-1),
     attacker_id(INVALID_OBJECT_ID),
-    attacker_owner_id(INVALID_OBJECT_ID),
-    events()
+    attacker_owner_id(INVALID_OBJECT_ID)
 {}
 
 WeaponsPlatformEvent::WeaponsPlatformEvent(int bout_, int attacker_id_, int attacker_owner_id_) :
     bout(bout_),
     attacker_id(attacker_id_),
-    attacker_owner_id(attacker_owner_id_),
-    events()
+    attacker_owner_id(attacker_owner_id_)
 {}
 
 void WeaponsPlatformEvent::AddEvent(
     int round_, int target_id_, int target_owner_id_, std::string const & weapon_name_,
-    float power_, float shield_, float damage_) {
+    float power_, float shield_, float damage_)
+{
     events[target_id_].push_back(
         std::make_shared<WeaponFireEvent>(
             bout, round_, attacker_id, target_id_, weapon_name_,
@@ -1066,11 +1052,9 @@ std::string WeaponsPlatformEvent::DebugString() const {
     std::stringstream desc;
     desc << "WeaponsPlatformEvent bout = " << bout << " attacker_id = "
         << attacker_id << " attacker_owner = "<< attacker_owner_id;
-    for (const auto& target : events) {
-        for (const auto attack : target.second) {
+    for (const auto& target : events)
+        for (const auto attack : target.second)
             desc << std::endl << attack->DebugString();
-        }
-    }
     return desc.str();
 }
 
@@ -1091,13 +1075,11 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id) co
                                     fire_event->target_owner_id));
 
         double damage = 0.0f;
-        for (auto attack_it : target.second) {
+        for (auto attack_it : target.second)
             damage += attack_it->damage;
-        }
 
         if (damage <= 0.0f) {
             undamaged_target_links.push_back(target_public_name);
-
         } else {
             damaged_target_links.push_back(
                 str(FlexibleFormat(UserString("ENC_COMBAT_PLATFORM_TARGET_AND_DAMAGE"))
@@ -1126,23 +1108,19 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id) co
     return desc;
 }
 
-bool WeaponsPlatformEvent::AreSubEventsEmpty(int viewing_empire_id) const {
-    return events.empty();
-}
+bool WeaponsPlatformEvent::AreSubEventsEmpty(int viewing_empire_id) const
+{ return events.empty(); }
 
 std::vector<ConstCombatEventPtr> WeaponsPlatformEvent::SubEvents(int viewing_empire_id) const {
     std::vector<ConstCombatEventPtr> all_events;
-    for (const auto& target : events) {
-        for (auto event : target.second) {
+    for (const auto& target : events)
+        for (auto event : target.second)
             all_events.push_back(std::dynamic_pointer_cast<CombatEvent>(event));
-        }
-    }
     return all_events;
 }
 
-boost::optional<int> WeaponsPlatformEvent::PrincipalFaction(int viewing_empire_id) const {
-    return attacker_owner_id;
-}
+boost::optional<int> WeaponsPlatformEvent::PrincipalFaction(int viewing_empire_id) const
+{ return attacker_owner_id; }
 
 template <class Archive>
 void WeaponsPlatformEvent::serialize(Archive& ar, const unsigned int version) {
