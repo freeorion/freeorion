@@ -213,9 +213,9 @@ public:
     void SetProductionRallyPoint(int index, int rally_point_id = INVALID_OBJECT_ID);  ///< Sets the rally point for ships produced by this produce, to which they are automatically ordered to move after they are produced.
     void MoveProductionWithinQueue(int index, int new_index);///< Moves \a tech from the production queue, if it is in the production queue already.
     void RemoveProductionFromQueue(int index);               ///< Removes the produce at position \a index in the production queue, if such an index exists.
-    void PauseProduction(int index);
-    void ResumeProduction(int index);
-    void AllowUseImperialPP(int index, bool allow=true);  ///< Allows or disallows the use of the imperial stockpile for production
+    void PauseProduction(int index);                         ///< Sets the production of produce at postion \a index paused, if such an index exists
+    void ResumeProduction(int index);                        ///< Sets the production of produce at postion \a index unpaused, if such an index exists
+    void AllowUseImperialPP(int index, bool allow=true);     ///< Allows or disallows the use of the imperial stockpile for production
 
     void AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& name);    ///< Inserts the given Tech into the Empire's list of innovations. Call ApplyAddedTech to make it effective.
     void ApplyNewTechs();                            ///< Moves all Techs from the Empire's list of innovations into the Empire's list of available technologies.
