@@ -1508,6 +1508,9 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     if (!success)
         ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_UNIVERSE_GENERATION_ERRORS"), false));
 
+    for (auto& empire : Empires()) {
+        empire.second->ApplyNewTechs();
+    }
 
     DebugLogger() << "Applying first turn effects and updating meters";
 
@@ -3460,7 +3463,9 @@ void ServerApp::PostCombatProcessTurns() {
         if (empire->Eliminated())
             continue;   // skip eliminated empires
 
-        empire->CheckResearchProgress();
+        for (const auto& tech : empire->CheckResearchProgress()) {
+            empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(tech);
+        }
         empire->CheckProductionProgress();
         empire->CheckTradeSocialProgress();
     }
@@ -3492,7 +3497,6 @@ void ServerApp::PostCombatProcessTurns() {
     // store initial values of meters for this turn.
     m_universe.BackPropagateObjectMeters();
     empires.BackPropagateMeters();
-
 
     // check for loss of empire capitals
     for (auto& entry : empires) {
@@ -3559,6 +3563,14 @@ void ServerApp::PostCombatProcessTurns() {
     for (auto& entry : empires)
         entry.second->UpdateOwnedObjectCounters();
     GetSpeciesManager().UpdatePopulationCounter();
+
+
+    // apply new techs
+    for (auto& entry : empires) {
+        Empire* empire = entry.second;
+        if (empire && !empire->Eliminated())
+            empire->ApplyNewTechs();
+    }
 
 
     // indicate that the clients are waiting for their new gamestate
