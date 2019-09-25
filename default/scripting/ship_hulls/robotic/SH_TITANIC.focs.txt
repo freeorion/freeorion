@@ -2,7 +2,7 @@ Hull
     name = "SH_TITANIC"
     description = "SH_TITANIC_DESC"
     speed = 80
-    fuel = 1.5
+    fuel = 2
     stealth = -35
     structure = 160
     slots = [
@@ -13,7 +13,8 @@ Hull
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = External position = (0.70, 0.15)
-        Slot type = External position = (0.80, 0.15)
+        //Slot type = External position = (0.80, 0.15)
+        Slot type = External position = (0.85, 0.50)
         Slot type = External position = (0.10, 0.85)
         Slot type = External position = (0.20, 0.85)
         Slot type = External position = (0.30, 0.85)
@@ -21,7 +22,7 @@ Hull
         Slot type = External position = (0.50, 0.85)
         Slot type = External position = (0.60, 0.85)
         Slot type = External position = (0.70, 0.85)
-        Slot type = External position = (0.80, 0.85)
+        //Slot type = External position = (0.80, 0.85)
         Slot type = Internal position = (0.30, 0.50)
         Slot type = Internal position = (0.60, 0.50)
         Slot type = Internal position = (0.70, 0.50)
