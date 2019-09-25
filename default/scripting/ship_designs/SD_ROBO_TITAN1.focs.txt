@@ -11,7 +11,6 @@ ShipDesign
         "SR_WEAPON_4_1"
         "SR_WEAPON_4_1"
         "SR_WEAPON_4_1"
-        "SR_WEAPON_4_1"
         "AR_XENTRONIUM_PLATE"
         "AR_XENTRONIUM_PLATE"
         "FT_BAY_1"
