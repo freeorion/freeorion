@@ -7,7 +7,6 @@ ShipDesign
         "SR_WEAPON_3_1"
         "SR_WEAPON_3_1"
         "SR_WEAPON_3_1"
-        "SR_WEAPON_3_1"
         "SR_WEAPON_0_1"
         ""
         "AR_DIAMOND_PLATE"
