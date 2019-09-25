@@ -1749,7 +1749,7 @@ namespace {
                 DebugLogger(combat) << "Attacker: " << attacker->Name();
 
                 // Set launching carrier as at least basically visible to other empires.
-                if (launches_event) {
+                if (!launches_event->AreSubEventsEmpty(ALL_EMPIRES)) {
                     for (auto detector_empire_id : combat_info.empire_ids) {
                         Visibility initial_vis = combat_info.empire_object_visibility[detector_empire_id][attacker_id];
                         TraceLogger(combat) << "Pre-attack visibility of launching carrier id: " << attacker_id
