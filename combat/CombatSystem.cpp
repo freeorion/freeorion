@@ -1720,6 +1720,7 @@ namespace {
                 attacks_event->AddEvent(platform_event);
         }
 
+        auto stealth_change_event = std::make_shared<StealthChangeEvent>(bout);
 
         // Launch fighters (which can attack in any subsequent combat bouts).
         // There is no point to launching fighters during the last bout, since
@@ -1746,6 +1747,31 @@ namespace {
                                launches_event);
 
                 DebugLogger(combat) << "Attacker: " << attacker->Name();
+
+                // Set launching carrier as at least basically visible to other empires.
+                if (!launches_event->AreSubEventsEmpty(ALL_EMPIRES)) {
+                    for (auto detector_empire_id : combat_info.empire_ids) {
+                        Visibility initial_vis = combat_info.empire_object_visibility[detector_empire_id][attacker_id];
+                        TraceLogger(combat) << "Pre-attack visibility of launching carrier id: " << attacker_id
+                                            << " by empire: " << detector_empire_id << " was: " << initial_vis;
+
+                        if (initial_vis >= VIS_BASIC_VISIBILITY)
+                            continue;
+
+                        combat_info.empire_object_visibility[detector_empire_id][attacker_id] = VIS_BASIC_VISIBILITY;
+
+                        DebugLogger(combat) << " ... Setting post-attack visability to " << VIS_BASIC_VISIBILITY;
+
+                        // record visibility change event due to attack
+                        // FIXME attacker, TARGET, attacker empire, target empire, visibility
+                        stealth_change_event->AddEvent(attacker_id,
+                                                       attacker_id,
+                                                       attacker->Owner(),
+                                                       detector_empire_id,
+                                                       VIS_BASIC_VISIBILITY);
+                    }
+                }
+
             }
 
             if (!launches_event->AreSubEventsEmpty(ALL_EMPIRES))
@@ -1755,7 +1781,6 @@ namespace {
 
         // Create weapon fire events and mark attackers as visible to other battle participants
         auto attacks_this_bout = attacks_event->SubEvents(ALL_EMPIRES);
-        auto stealth_change_event = std::make_shared<StealthChangeEvent>(bout);
         for (auto this_event : attacks_this_bout) {
             // Generate attack events
             std::vector<std::shared_ptr<const WeaponFireEvent>> weapon_fire_events;
