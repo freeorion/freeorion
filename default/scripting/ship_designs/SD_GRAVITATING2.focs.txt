@@ -7,7 +7,6 @@ ShipDesign
         "SR_WEAPON_4_1"
         "SR_WEAPON_4_1"
         "SR_WEAPON_4_1"
-        "SR_WEAPON_4_1"
         "SR_WEAPON_0_1"
         "FU_SINGULARITY_ENGINE_CORE"
         "AR_XENTRONIUM_PLATE"
