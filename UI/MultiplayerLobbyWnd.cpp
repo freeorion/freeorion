@@ -394,6 +394,10 @@ namespace {
             for (auto it = m_save_game_empire_data.begin();
                  it != m_save_game_empire_data.end(); ++it)
             {
+                // don't allow to select eliminated empire
+                if (it->second.m_eliminated)
+                    continue;
+
                 // insert row into droplist of empires for this player row
                 m_empire_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(it->second.m_empire_name));
 
