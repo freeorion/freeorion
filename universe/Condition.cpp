@@ -5953,6 +5953,9 @@ namespace {
         case METER_TARGET_RESEARCH:     return "TargetResearch";     break;
         case METER_TARGET_TRADE:        return "TargetTrade";        break;
         case METER_TARGET_CONSTRUCTION: return "TargetConstruction"; break;
+        case METER_TARGET_HAPPINESS:    return "TargetHappiness";    break;
+        case METER_MAX_CAPACITY:        return "MaxCapacity";        break;
+        case METER_MAX_SECONDARY_STAT:  return "MaxSecondaryStat";   break;
         case METER_MAX_FUEL:            return "MaxFuel";            break;
         case METER_MAX_SHIELD:          return "MaxShield";          break;
         case METER_MAX_STRUCTURE:       return "MaxStructure";       break;
@@ -5965,16 +5968,21 @@ namespace {
         case METER_RESEARCH:            return "Research";           break;
         case METER_TRADE:               return "Trade";              break;
         case METER_CONSTRUCTION:        return "Construction";       break;
+        case METER_HAPPINESS:           return "Happiness";          break;
+        case METER_CAPACITY:            return "Capacity";           break;
+        case METER_SECONDARY_STAT:      return "SecondaryStat";      break;
         case METER_FUEL:                return "Fuel";               break;
         case METER_SHIELD:              return "Shield";             break;
         case METER_STRUCTURE:           return "Structure";          break;
         case METER_DEFENSE:             return "Defense";            break;
         case METER_SUPPLY:              return "Supply";             break;
         case METER_STOCKPILE:           return "Stockpile";          break;
+        case METER_TROOPS:              return "Troops";             break;
+        case METER_REBEL_TROOPS:        return "RebelTroops";        break;
+        case METER_SIZE:                return "Size";               break;
         case METER_STEALTH:             return "Stealth";            break;
         case METER_DETECTION:           return "Detection";          break;
         case METER_SPEED:               return "Speed";              break;
-        case METER_CAPACITY:            return "Capacity";           break;
         default:                        return "?Meter?";            break;
         }
     }
