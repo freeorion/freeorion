@@ -938,8 +938,14 @@ void MPLobby::ValidateClientLimits() {
 
     // for load game consider as human all non-AI empires
     // because human player could connect later in game
+    int non_eliminated_empires_count = 0;
     if (!m_lobby_data->m_new_game) {
-        human_count = m_lobby_data->m_save_game_empire_data.size() - ai_count;
+        for (const auto& empire_data : m_lobby_data->m_save_game_empire_data) {
+            if (!empire_data.second.m_eliminated)
+                non_eliminated_empires_count ++;
+        }
+
+        human_count = non_eliminated_empires_count - ai_count;
     }
 
     int min_ai = GetOptionsDB().Get<int>("network.server.ai.min");
@@ -968,7 +974,7 @@ void MPLobby::ValidateClientLimits() {
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_NOT_ENOUGH_CONNECTED_HUMAN_PLAYERS");
     } else if (max_unconnected_human_empire_players > 0 &&
         !m_lobby_data->m_new_game &&
-        static_cast<int>(m_lobby_data->m_save_game_empire_data.size()) - ai_count - human_connected_count >= max_unconnected_human_empire_players)
+        non_eliminated_empires_count - ai_count - human_connected_count >= max_unconnected_human_empire_players)
     {
         m_lobby_data->m_start_locked = true;
         m_lobby_data->m_start_lock_cause = UserStringNop("ERROR_TOO_MANY_UNCONNECTED_HUMAN_PLAYERS");
