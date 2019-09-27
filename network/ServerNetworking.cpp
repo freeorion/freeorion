@@ -432,7 +432,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         assert(bytes_transferred <= Message::HeaderBufferSize);
         if (bytes_transferred == Message::HeaderBufferSize) {
             BufferToHeader(m_incoming_header_buffer, m_incoming_message);
-            size_t msg_size = m_incoming_header_buffer[Message::Parts::SIZE];
+            auto msg_size = m_incoming_header_buffer[Message::Parts::SIZE];
             if (GetOptionsDB().Get<int>("network.server.client-message-size.max") > 0 &&
                 msg_size > GetOptionsDB().Get<int>("network.server.client-message-size.max"))
             {
