@@ -28,12 +28,12 @@ public:
     void Free();
 
 private:
-    bool                m_free;
+    bool                m_free = false;
 #if defined(FREEORION_WIN32)
-    STARTUPINFOW         m_startup_info;
-    PROCESS_INFORMATION  m_process_info;
+    STARTUPINFOW        m_startup_info;
+    PROCESS_INFORMATION m_process_info;
 #elif defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
-    pid_t                m_process_id;
+    pid_t               m_process_id;
 #endif
 };
 
@@ -109,9 +109,7 @@ void Process::Free() {
 
 #if defined(FREEORION_WIN32)
 
-Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) :
-    m_free(false)
-{
+Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) {
     std::wstring wcmd;
     std::wstring wargs;
 
@@ -212,9 +210,7 @@ void Process::Impl::Kill() {
 #include <sys/wait.h>
 
 
-Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) :
-    m_free(false)
-{
+Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) {
     std::vector<char*> args;
     for (unsigned int i = 0; i < argv.size(); ++i) {
         args.push_back(const_cast<char*>(&(const_cast<std::string&>(argv[i])[0])));

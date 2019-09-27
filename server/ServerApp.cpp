@@ -361,11 +361,7 @@ void ServerApp::CleanupAIs() {
         ErrorLogger() << "ServerApp::CleanupAIs() exception while killing processes";
     }
 
-    try {
-        m_ai_client_processes.clear();
-    } catch (...) {
-        ErrorLogger() << "ServerApp::CleanupAIs() exception while clearing client processes";
-    }
+    m_ai_client_processes.clear();
 }
 
 void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
