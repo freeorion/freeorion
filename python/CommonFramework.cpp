@@ -86,24 +86,31 @@ bool PythonBase::Initialize()
 
         // add the directory containing common Python modules used by all Python scripts to Python sys.path
         AddToSysPath(GetPythonCommonDir());
+    } catch (...) {
+        ErrorLogger() << "Unable to initialize FreeOrion Python namespace and set path";
+        return false;
+    }
 
-        // allow the "freeorion_logger" C++ module to be imported within Python code
-        try {
-            initfreeorion_logger();
-        } catch (...) {
-            ErrorLogger() << "Unable to initialize FreeOrion Python logging module";
-            return false;
-        }
+    // allow the "freeorion_logger" C++ module to be imported within Python code
+    try {
+        initfreeorion_logger();
+    } catch (...) {
+        ErrorLogger() << "Unable to initialize FreeOrion Python logging module";
+        return false;
+    }
 
+    try {
         // Allow C++ modules implemented by derived classes to be imported
         // within Python code
-
         if (!InitModules()) {
             ErrorLogger() << "Unable to initialize FreeOrion Python modules";
             return false;
         }
     } catch (const error_already_set& err) {
         HandleErrorAlreadySet();
+        return false;
+    } catch (...) {
+        ErrorLogger() << "Unable to initialize FreeOrion Python modules (exception caught)";
         return false;
     }
 

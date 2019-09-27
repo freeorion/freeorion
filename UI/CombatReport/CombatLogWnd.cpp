@@ -208,9 +208,11 @@ namespace {
     template <typename T>
     T const* FindParentOfType(GG::Wnd const* parent) {
         GG::Wnd const * iwnd = parent;
-        T const* type_T = nullptr;
-        while (iwnd && !(type_T = dynamic_cast<const T*>(iwnd))){
+        T const* type_T = dynamic_cast<const T*>(iwnd);
+        while (iwnd && !type_T) {
             iwnd = iwnd->Parent().get();
+            if (iwnd)
+                type_T = dynamic_cast<const T*>(iwnd);
         }
         return type_T;
     }
@@ -240,7 +242,7 @@ namespace {
             GG::Wnd & parent, GG::X x, GG::Y y, const std::string& str,
             const std::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK) :
             LinkText(x, y, UserString("ELLIPSIS"), font, color),
-            m_text( new std::string(str)),
+            m_text(new std::string(str)),
             m_signals()
         {
             // Register for signals that might bring the text into view
@@ -254,7 +256,6 @@ namespace {
                 m_signals.push_back(scroll->ScrolledAndStoppedSignal.connect(
                     boost::bind(&LazyScrollerLinkText::HandleScrolledAndStopped,
                                 this, _1, _2, _3, _4)));
-
             }
 
             // Parent doesn't contain any of the expected parents so just
