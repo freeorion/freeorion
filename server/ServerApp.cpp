@@ -1811,15 +1811,21 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     // empire elimination
     empire->Eliminate();
 
-    // unclaim ships and systems
+    // destroy owned ships
+    for (auto& obj : Objects().FindObjects(OwnedVisitor<Ship>(empire_id))) {
+        obj->SetOwner(ALL_EMPIRES);
+        GetUniverse().RecursiveDestroy(obj->ID());
+    }
+    // destroy owned buildings
+    for (auto& obj : Objects().FindObjects(OwnedVisitor<Building>(empire_id))) {
+        obj->SetOwner(ALL_EMPIRES);
+        GetUniverse().RecursiveDestroy(obj->ID());
+    }
+    // unclaim owned planets
     for (int planet_id : planet_ids) {
         auto planet = GetPlanet(planet_id);
         if (planet)
             planet->Reset();
-    }
-    for (auto& obj : Objects().FindObjects(OwnedVisitor<Ship>(empire_id))) {
-        obj->SetOwner(ALL_EMPIRES);
-        GetUniverse().RecursiveDestroy(obj->ID());
     }
 
     // Don't wait for turn
