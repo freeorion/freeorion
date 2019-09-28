@@ -1,6 +1,7 @@
 #include "MultiplayerCommon.h"
 
 #include "Directories.h"
+#include "GameRules.h"
 #include "i18n.h"
 #include "LoggerWithOptionsDB.h"
 #include "OptionsDB.h"
@@ -61,6 +62,24 @@ namespace {
                             Validator<std::string>(),                                                           false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    void AddRules(GameRules& rules) {
+        rules.Add<int>("RULE_THRESHOLD_HUMAN_PLAYER_WIN", "RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC",
+                       "MULTIPLAYER", 0, true,  RangedValidator<int>(0, 999));
+
+        rules.Add<bool>("RULE_ONLY_ALLIANCE_WIN", "RULE_ONLY_ALLIANCE_WIN_DESC",
+                       "MULTIPLAYER", true, true);
+
+        rules.Add<bool>("RULE_ALLOW_CONCEDE", "RULE_ALLOW_CONCEDE_DESC",
+                       "MULTIPLAYER", false, true);
+
+        rules.Add<int>("RULE_CONCEDE_COLONIES_THRESHOLD", "RULE_CONCEDE_COLONIES_THRESHOLD_DESC",
+                       "MULTIPLAYER", 1, true,  RangedValidator<int>(0, 9999));
+
+        rules.Add<bool>("RULE_SHOW_DETAILED_EMPIRES_DATA", "RULE_SHOW_DETAILED_EMPIRES_DATA_DESC",
+                       "MULTIPLAYER", true, true);
+    }
+    bool temp_bool2 = RegisterGameRules(&AddRules);
 }
 
 /////////////////////////////////////////////////////

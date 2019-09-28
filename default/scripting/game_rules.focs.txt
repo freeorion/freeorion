@@ -121,47 +121,8 @@ GameRule
     max = 999
 
 GameRule
-    name = "RULE_THRESHOLD_HUMAN_PLAYER_WIN"
-    description = "RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC"
-    category = "MULTIPLAYER"
-    type = Integer
-    default = 0
-    min = 0
-    max = 999
-
-GameRule
-    name = "RULE_ONLY_ALLIANCE_WIN"
-    description = "RULE_ONLY_ALLIANCE_WIN_DESC"
-    category = "MULTIPLAYER"
-    type = Toggle
-    default = On
-    
-GameRule
-    name = "RULE_ALLOW_CONCEDE"
-    description = "RULE_ALLOW_CONCEDE_DESC"
-    category = "MULTIPLAYER"
-    type = Toggle
-    default = Off
-
-GameRule
-    name = "RULE_CONCEDE_COLONIES_THRESHOLD"
-    description = "RULE_CONCEDE_COLONIES_THRESHOLD_DESC"
-    category = "MULTIPLAYER"
-    type = Integer
-    default = 1
-    min = 0
-    max = 9999
-
-GameRule
     name = "RULE_SHIP_PART_BASED_UPKEEP"
     description = "RULE_SHIP_PART_BASED_UPKEEP_DESC"
     category = "BALANCE"
     type = Toggle
     default = Off
-
-GameRule
-    name = "RULE_SHOW_DETAILED_EMPIRES_DATA"
-    description = "RULE_SHOW_DETAILED_EMPIRES_DATA_DESC"
-    category = "MULTIPLAYER"
-    type = Toggle
-    default = On
