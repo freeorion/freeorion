@@ -128,6 +128,7 @@ REFUEL_MESSAGE
     activation = And [
         Stationary
         (Source.Fuel < 1)
+        (Source.MaxFuel >= 1)
         (Source.Fuel
          + @1@ * (Statistic If Condition = Turn low = Source.ArrivedOnTurn + 1)
          + 0.1 * (Statistic If Condition = DesignHasPart name = "FU_RAMSCOOP")
@@ -197,6 +198,17 @@ HULL_FUEL_EFFICIENCY_EFFECTSGROUP
             accountinglabel = "@1@_FUEL_EFFICIENCY_LABEL"
             priority = [[VERY_LATE_PRIORITY]]
             effects = SetMaxFuel value = @2@ * Statistic If Condition = And [ Object id = Source.ID HasTag name = "@1@_FUEL_EFFICIENCY" ]
+
+     EffectsGroup
+            description = "MAX_FUEL_LESS_THAN_ONE_DESC"
+            scope = And [
+                Ship
+                Source
+                MaxFuel high = 0.9999
+            ]
+            accountinglabel = "MAX_FUEL_LESS_THAN_ONE_LABEL"
+            priority = [[METER_OVERRIDE_PRIORITY]]
+            effects = SetMaxFuel value = 0
 '''
 
 #include "/scripting/common/priorities.macros"
