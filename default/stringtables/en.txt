@@ -15217,6 +15217,12 @@ Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 100%%
 BAD_FUEL_EFFICIENCY_LABEL
 Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 60%%
 
+MAX_FUEL_LESS_THAN_ONE_DESC
+Refueling Impossible
+
+MAX_FUEL_LESS_THAN_ONE_LABEL
+Fuel Tank Too Small for Refuel (Max Fuel < 1.0)
+
 SPATIAL_FLUX_MALUS
 Flux Interference
 
