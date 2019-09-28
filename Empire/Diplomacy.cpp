@@ -9,7 +9,7 @@ namespace {
     void AddRules(GameRules& rules) {
         // determine if diplomacy allowed
         rules.Add<std::string>("RULE_DIPLOMACY", "RULE_DIPLOMACY_DESC",
-                               "MULTIPLAYER", "ALLOWED_FOR_ALL", false,
+                               "MULTIPLAYER", "ALLOWED_FOR_ALL", true,
                                DiscreteValidator<std::string>(std::set<std::string>({
                                    "RULE_DIPLOMACY_ALLOWED_FOR_ALL",
                                    "RULE_DIPLOMACY_FORBIDDEN_FOR_ALL"
