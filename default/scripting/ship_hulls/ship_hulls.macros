@@ -204,11 +204,12 @@ HULL_FUEL_EFFICIENCY_EFFECTSGROUP
             scope = And [
                 Ship
                 Source
-                MaxFuel high = 0.9999
+                // Issue #2567: using Not (Value(Source.MaxFuel) >= 1.0) here in the scope condition wrongly matches any object
             ]
             accountinglabel = "MAX_FUEL_LESS_THAN_ONE_LABEL"
             priority = [[METER_OVERRIDE_PRIORITY]]
-            effects = SetMaxFuel value = 0
+            effects = If condition = Not (Value(Source.MaxFuel) >= 1) effects = SetMaxFuel value = 0
+            // Issue #2567: using Value(Source.Fuel < 1) wrongly matches any object
 '''
 
 #include "/scripting/common/priorities.macros"
