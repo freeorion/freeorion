@@ -1429,6 +1429,9 @@ Intervalle maximum en secondes entre la validation de chaque tour. Si 0, la fin 
 OPTIONS_DB_TIMEOUT_FIXED_INTERVAL
 Le passage au tour suivant est exécuté à intervalle fixe, indépendamment du fait que les joueurs aient envoyé ou non leurs ordres pour le tour en cours.
 
+OPTIONS_DB_CLIENT_MESSAGE_SIZE_MAX
+Limite de taille en octets des messages client.
+
 OPTIONS_DB_UI_MAIN_MENU_X
 Position horizontale du centre du menu principal de l'écran d'introduction, en pourcentage de la largeur totale de la fenêtre de jeu ou du plein écran.
 
@@ -15214,6 +15217,12 @@ Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 100%%
 BAD_FUEL_EFFICIENCY_LABEL
 Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 60%%
 
+MAX_FUEL_LESS_THAN_ONE_DESC
+Ravitaillement en Carburant impossible
+
+MAX_FUEL_LESS_THAN_ONE_LABEL
+Réservoir trop petit pour Ravitaillement (Carburant Max < 1.0)
+
 SPATIAL_FLUX_MALUS
 Interférence Flux
 
@@ -15251,6 +15260,9 @@ Autosuffisant
 
 TELEPATHIC
 Télépathique
+
+GASEOUS
+Gazeux
 
 ORBITAL  # translated
 Orbital
