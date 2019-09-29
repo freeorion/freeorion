@@ -103,7 +103,7 @@ SitRepEntry CreateBuildingBuiltSitRep(int building_id, int planet_id) {
 SitRepEntry CreateTechUnlockedSitRep(const std::string& tech_name) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_TECH_UNLOCKED"),
-        CurrentTurn() + 1,
+        CurrentTurn() <= 0 ? BEFORE_FIRST_TURN + 1 : CurrentTurn(),
         "icons/sitrep/tech_unlocked.png",
         UserStringNop("SITREP_TECH_UNLOCKED_LABEL"), true);
     sitrep.AddVariable(VarText::TECH_TAG,          tech_name);
@@ -113,7 +113,7 @@ SitRepEntry CreateTechUnlockedSitRep(const std::string& tech_name) {
 SitRepEntry CreateBuildingTypeUnlockedSitRep(const std::string& building_type_name) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_BUILDING_TYPE_UNLOCKED"),
-        CurrentTurn() + 1,
+        CurrentTurn() <= 0 ? BEFORE_FIRST_TURN + 1 : CurrentTurn(),
         "icons/sitrep/building_type_unlocked.png",
         UserStringNop("SITREP_BUILDING_TYPE_UNLOCKED_LABEL"), true);
     sitrep.AddVariable(VarText::BUILDING_TYPE_TAG,  building_type_name);
@@ -123,7 +123,7 @@ SitRepEntry CreateBuildingTypeUnlockedSitRep(const std::string& building_type_na
 SitRepEntry CreateShipHullUnlockedSitRep(const std::string& ship_hull_name) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_SHIP_HULL_UNLOCKED"),
-        CurrentTurn() + 1,
+        CurrentTurn() <= 0 ? BEFORE_FIRST_TURN + 1 : CurrentTurn(),
         "icons/sitrep/ship_hull_unlocked.png",
         UserStringNop("SITREP_SHIP_HULL_UNLOCKED_LABEL"), true);
     sitrep.AddVariable(VarText::SHIP_HULL_TAG,      ship_hull_name);
@@ -133,7 +133,7 @@ SitRepEntry CreateShipHullUnlockedSitRep(const std::string& ship_hull_name) {
 SitRepEntry CreateShipPartUnlockedSitRep(const std::string& ship_part_name) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_SHIP_PART_UNLOCKED"),
-        CurrentTurn() + 1,
+        CurrentTurn() <= 0 ? BEFORE_FIRST_TURN + 1 : CurrentTurn(),
         "icons/sitrep/ship_part_unlocked.png",
         UserStringNop("SITREP_SHIP_PART_UNLOCKED_LABEL"), true);
     sitrep.AddVariable(VarText::SHIP_PART_TAG,      ship_part_name);
