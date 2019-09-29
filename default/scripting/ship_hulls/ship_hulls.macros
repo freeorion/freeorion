@@ -192,8 +192,8 @@ HULL_FUEL_EFFICIENCY_EFFECTSGROUP
 '''     EffectsGroup
             description = "HULL_FUEL_EFFICIENCY_DESC"
             scope = And [
-                Ship
                 Source
+                Ship
             ]
             accountinglabel = "@1@_FUEL_EFFICIENCY_LABEL"
             priority = [[VERY_LATE_PRIORITY]]
@@ -202,8 +202,8 @@ HULL_FUEL_EFFICIENCY_EFFECTSGROUP
      EffectsGroup
             description = "MAX_FUEL_LESS_THAN_ONE_DESC"
             scope = And [
-                Ship
                 Source
+                Ship
             ]
             accountinglabel = "MAX_FUEL_LESS_THAN_ONE_LABEL"
             priority = [[METER_OVERRIDE_PRIORITY]]
