@@ -1357,6 +1357,10 @@ void Empire::AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& n
     auto result = m_newly_researched_techs.insert(name);
     if (result.second)
         AddSitRepEntry(CreateTechResearchedSitRep(name));
+
+    // Unlock items now as the SitReps get generated already for CurrentTurn()+1
+    for (const ItemSpec& item : tech->UnlockedItems())
+        UnlockItem(item);  // potential infinite if a tech (in)directly unlocks itself?
 }
 
 void Empire::ApplyNewTechs() {
@@ -1367,9 +1371,8 @@ void Empire::ApplyNewTechs() {
             continue;
         }
 
-        for (const ItemSpec& item : tech->UnlockedItems())
-            UnlockItem(item);  // potential infinite if a tech (in)directly unlocks itself?
-
+        // Items are already unlocked
+        // Register the techs with CurrentTurn() as this gets called after turn increase
         if (!m_techs.count(new_tech))
             m_techs[new_tech] = CurrentTurn();
     }
