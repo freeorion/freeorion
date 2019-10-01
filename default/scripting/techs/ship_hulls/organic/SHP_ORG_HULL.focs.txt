@@ -6,11 +6,8 @@ Tech
     researchcost = 8 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     tags = [ "PEDIA_ORGANIC_HULL_TECHS" ]
-    prerequisites = "SHP_DOMESTIC_MONSTER"
-    unlock = [
-        Item type = ShipHull name = "SH_ORGANIC"
-        Item type = Building name = "BLD_SHIPYARD_ORG_ORB_INC"
-    ]
+    prerequisites = "SHP_SMALLORG_HULL"
+    unlock = Item type = ShipHull name = "SH_ORGANIC"
     graphic = "hulls_design/organic_hull.png"
 
 #include "/scripting/common/base_prod.macros"

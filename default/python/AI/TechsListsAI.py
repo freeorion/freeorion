@@ -108,29 +108,51 @@ class TechGroup1(TechGroup):
         self.economy.extend([
             "LRN_PHYS_BRAIN",
             "GRO_PLANET_ECOL",
+            "CON_OUTPOST",
+            "CON_REMOTE_COL",
             "LRN_ALGO_ELEGANCE",
             "GRO_SUBTER_HAB",
             "LRN_ARTIF_MINDS",
             "PRO_ROBOTIC_PROD",
         ])
         self.weapon.extend([
+            "SHP_ROOT_AGGRESSION",
+            "SHP_INVASION",
+            "SHP_WEAPON_0_1",
             "SHP_WEAPON_1_2",
             "SHP_WEAPON_1_3",
             "SHP_FIGHTERS_1",
             "SHP_WEAPON_1_4",
         ])
+        self.armor.extend([
+            "SHP_ROOT_ARMOR",
+        ])
         self.defense.extend([
+            "SPY_DETECT_1",
+            "DEF_ROOT_DEFENSE",
             "DEF_GARRISON_1",
             "DEF_DEFENSE_NET_1",
         ])
         self.hull.extend([
+            "SHP_BASIC_HULL_2",
+            "SHP_BASIC_HULL_3",
             "SHP_MIL_ROBO_CONT",
             "SHP_ORG_HULL",
         ])
-        # always start with the same first 8 techs; leaves 1 econ, 3 weap, 2 hull
+        # always start with the same first 17 techs; leaves 2 econ, 3 weap, 1 hull
         self.enqueue(
             self.economy,
             self.economy,
+            self.hull,
+            self.economy,
+            self.economy,
+            self.defense,
+            self.weapon,
+            self.armor,
+            self.defense,
+            self.hull,
+            self.weapon,
+            self.weapon,
             self.economy,
             self.economy,
             self.economy,

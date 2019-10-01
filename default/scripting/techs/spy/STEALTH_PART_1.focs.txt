@@ -6,7 +6,10 @@ Tech
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     tags = [ "PEDIA_STEALTH_PART_TECHS" ]
-    prerequisites = "SPY_DETECT_2"
+    prerequisites = [
+        "SPY_ROOT_DECEPTION"
+        "SPY_DETECT_2"
+    ]
     unlock = Item type = ShipPart name = "ST_CLOAK_1"
     graphic = "icons/ship_parts/cloak-1.png"
 

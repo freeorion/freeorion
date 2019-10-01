@@ -163,12 +163,6 @@ namespace {
 void ServerApp::StartBackgroundParsing() {
     IApp::StartBackgroundParsing();
     const auto& rdir = GetResourceDir();
-    m_universe.SetInitiallyUnlockedItems(
-        Pending::StartParsing(parse::items, rdir / "scripting/starting_unlocks/items.inf"));
-    m_universe.SetInitiallyUnlockedBuildings(
-        Pending::StartParsing(parse::starting_buildings, rdir / "scripting/starting_unlocks/buildings.inf"));
-    m_universe.SetInitiallyUnlockedFleetPlans(
-        Pending::StartParsing(parse::fleet_plans, rdir / "scripting/starting_unlocks/fleets.inf"));
     m_universe.SetMonsterFleetPlans(
         Pending::StartParsing(parse::monster_fleet_plans, rdir / "scripting/monster_fleets.inf"));
     m_universe.SetEmpireStats(

@@ -42,6 +42,7 @@ struct FO_COMMON_API GalaxySetupData {
     GalaxySetupOption   GetSpecialsFreq() const;
     GalaxySetupOption   GetMonsterFreq() const;
     GalaxySetupOption   GetNativeFreq() const;
+    StartingEra         GetStartingEra() const;
     Aggression          GetAggression() const;
     const std::map<std::string, std::string>&
                         GetGameRules() const;
@@ -64,6 +65,7 @@ struct FO_COMMON_API GalaxySetupData {
     GalaxySetupOption   m_specials_freq;
     GalaxySetupOption   m_monster_freq;
     GalaxySetupOption   m_native_freq;
+    StartingEra         m_starting_era;
     Aggression          m_ai_aggr;
     std::map<std::string, std::string>
                         m_game_rules;

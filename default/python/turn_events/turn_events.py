@@ -9,6 +9,7 @@ from math import sin, cos, pi, hypot
 
 import freeorion as fo
 from universe_tables import MONSTER_FREQUENCY
+from tutorial import tutorial_events
 
 
 def execute_turn_events():
@@ -67,5 +68,8 @@ def execute_turn_events():
                 monster = fo.create_monster(monster_type, monster_fleet)
                 if monster == fo.invalid_object():
                     print >> sys.stderr, "Turn events: unable to create monster in fleet"
+
+    if fo.get_galaxy_setup_data().startingEra == fo.startingEra.prewarp:
+        tutorial_events()
 
     return True

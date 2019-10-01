@@ -1,0 +1,62 @@
+Article
+    name = "TUTORIAL_TITLE"
+    category = "CATEGORY_GUIDES"
+    short_description = "TUTORIAL_TITLE"
+    description = "TUTORIAL_TEXT"
+    icon = "icons/FO_Icon_64x64.png"
+
+Article
+    name = "TUTORIAL_RESEARCH_INTRO_TITLE"
+    category = "TUTORIAL_TITLE"
+    short_description = "TUTORIAL_RESEARCH_INTRO_SHORT_DESC"
+    description = "TUTORIAL_RESEARCH_INTRO_TEXT"
+    icon = "icons/buttons/research_mouseover.png"
+
+Article
+    name = "TUTORIAL_FLEET_INTRO_TITLE"
+    category = "TUTORIAL_TITLE"
+    short_description = "TUTORIAL_FLEET_INTRO_SHORT_DESC"
+    description = "TUTORIAL_FLEET_INTRO_TEXT"
+    icon = "icons/sitrep/fleet_arrived.png"
+
+Article
+    name = "TUTORIAL_PRODUCTION_INTRO_TITLE"
+    category = "TUTORIAL_TITLE"
+    short_description = "TUTORIAL_PRODUCTION_INTRO_SHORT_DESC"
+    description = "TUTORIAL_PRODUCTION_INTRO_TEXT"
+    icon = "icons/buttons/production_mouseover.png"
+
+Article
+    name = "TUTORIAL_FOCUS_TITLE"
+    category = "TUTORIAL_TITLE"
+    short_description = "TUTORIAL_FOCUS_SHORT_DESC"
+    description = "TUTORIAL_FOCUS_TEXT"
+    icon = "icons/meter/construction.png"
+
+Article
+    name = "TUTORIAL_PRODUCTION_SHIP_TITLE"
+    category = "TUTORIAL_TITLE"
+    short_description = "TUTORIAL_PRODUCTION_SHIP_SHORT_DESC"
+    description = "TUTORIAL_PRODUCTION_SHIP_TEXT"
+    icon = "icons/ship_hulls/basic-small-hull_small.png"
+
+Article
+    name = "TUTORIAL_PRODUCTION_COLONY_TITLE"
+    category = "TUTORIAL_TITLE"
+    short_description = "TUTORIAL_PRODUCTION_COLONY_SHORT_DESC"
+    description = "TUTORIAL_PRODUCTION_COLONY_TEXT"
+    icon = "icons/ship_parts/habitation_domes.png"
+
+Article
+    name = "TUTORIAL_COLONY_POD_TITLE"
+    category = "TUTORIAL_TITLE"
+    short_description = "TUTORIAL_COLONY_POD_SHORT_DESC"
+    description = "TUTORIAL_COLONY_POD_TEXT"
+    icon = "icons/ship_parts/colony_pod.png"
+
+Article
+    name = "TUTORIAL_OUTPOST_POD_TITLE"
+    category = "TUTORIAL_TITLE"
+    short_description = "TUTORIAL_OUTPOST_POD_SHORT_DESC"
+    description = "TUTORIAL_OUTPOST_POD_TEXT"
+    icon = "icons/ship_parts/habitation_domes.png"

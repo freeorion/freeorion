@@ -1,4 +1,11 @@
 Article
+    name = "RESEARCH_BASIC_GUIDE_TITLE"
+    category = "CATEGORY_GUIDES"
+    short_description = "RESEARCH_BASIC_GUIDE_SHORT_DESC"
+    description = "RESEARCH_BASIC_GUIDE_TEXT"
+    icon = "icons/buttons/research_mouseover.png"
+
+Article
     name = "RESEARCH_TECH_GUIDE_TITLE"
     category = "CATEGORY_GUIDES"
     short_description = "RESEARCH_TECH_GUIDE_SHORT_DESC"

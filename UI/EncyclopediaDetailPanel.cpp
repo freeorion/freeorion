@@ -1215,6 +1215,7 @@ namespace {
                 % TextForGalaxySetupSetting(gsd.m_specials_freq)
                 % TextForGalaxySetupSetting(gsd.m_monster_freq)
                 % TextForGalaxySetupSetting(gsd.m_native_freq)
+                % TextForStartingEra(gsd.m_starting_era)
                 % TextForAIAggression(gsd.m_ai_aggr)
                 % gsd.m_game_uid);
 

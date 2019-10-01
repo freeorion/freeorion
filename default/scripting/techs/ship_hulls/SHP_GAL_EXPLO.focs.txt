@@ -1,107 +1,12 @@
 Tech
     name = "SHP_GAL_EXPLO"
     description = "SHP_GAL_EXPLO_DESC"
-    short_description = "THEORY_SHORT_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 1
-    tags = [ "PEDIA_SHIP_PARTS_CATEGORY" "THEORY" ]
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                OwnedBy empire = Source.Owner
-                Planet size = Tiny
-            ]
-            accountinglabel = "TINY_PLANET_LABEL"
-            effects = SetMaxSupply value = Value + 2
-
-        EffectsGroup
-            scope = And [
-                OwnedBy empire = Source.Owner
-                Planet size = Small
-            ]
-            accountinglabel = "SMALL_PLANET_LABEL"
-            effects = SetMaxSupply value = Value + 1
-
-        EffectsGroup
-            scope = And [
-                OwnedBy empire = Source.Owner
-                Planet size = Large
-            ]
-            accountinglabel = "LARGE_PLANET_LABEL"
-            effects = SetMaxSupply value = Value - 1
-
-        EffectsGroup
-            scope = And [
-                OwnedBy empire = Source.Owner
-                Planet size = Huge
-            ]
-            accountinglabel = "HUGE_PLANET_LABEL"
-            effects = SetMaxSupply value = Value - 2
-
-        EffectsGroup
-            scope = And [
-                OwnedBy empire = Source.Owner
-                Planet type = GasGiant
-            ]
-            accountinglabel = "GAS_GIANT_LABEL"
-            effects = SetMaxSupply value = Value - 1
-
-        EffectsGroup    // outpost supply increases 1 per turn up to max
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                Not Species
-            ]
-            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetSupply value = Min(Value(Target.MaxSupply), Value + 1)
-
-
-        // generate sitrep for any planet that is about to increase to above the
-        // recolonizing population, while also having sufficient happiness to do
-        // do so
-        EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                CanColonize
-                
-                (LocalCandidate.Population              <  LocalCandidate.TargetPopulation)
-                (LocalCandidate.Population +
-                    LocalCandidate.Population*0.01*(LocalCandidate.TargetPopulation + 1 - LocalCandidate.Population)
-                    >= [[MIN_RECOLONIZING_SIZE]])
-                    
-                (LocalCandidate.TargetHappiness         >= [[MIN_RECOLONIZING_HAPPINESS]]           )
-                (LocalCandidate.Happiness               >= [[MIN_RECOLONIZING_HAPPINESS]] - 1       )
-                Or [
-                    (0.1 <= LocalCandidate.Population   <= ([[MIN_RECOLONIZING_SIZE]] - 0.001)      )
-                    (0.1 <= LocalCandidate.Happiness    <= ([[MIN_RECOLONIZING_HAPPINESS]] - 0.001) )
-                ]
-            ]
-            effects = [
-                GenerateSitRepMessage
-                    message = "SITREP_POP_THRESHOLD"
-                    label = "SITREP_POP_THRESHOLD_LABEL"
-                    icon = "icons/sitrep/colony_growth.png"
-                    parameters = [
-                        tag = "planet" data = Target.ID
-                    ]
-                    empire = Source.Owner
-                ]
-
-        EffectsGroup
-            scope = Source
-            activation = Turn low = 0 high = 0
-            effects = [
-                GenerateSitRepMessage
-                    message = "SITREP_WELCOME"
-                    label = "SITREP_WELCOME_LABEL"  // explicitly provided so that the custom SitRep intro message can share the same SitRepPanel filter
-                    icon = "icons/sitrep/fo_logo.png"
-                    empire = Source.Owner
-                ]
-    ]
+    researchturns = 2
+    tags = [ "PEDIA_SHIP_PARTS_CATEGORY" ]
+    unlock = Item type = ShipPart name = "FU_BASIC_TANK"
     graphic = "icons/tech/galactic_exploration.png"
 
-#include "/scripting/common/misc.macros"
-#include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"

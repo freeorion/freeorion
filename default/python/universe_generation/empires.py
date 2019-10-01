@@ -445,7 +445,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
     return home_systems
 
 
-def setup_empire(empire, empire_name, home_system, starting_species, player_name):
+def setup_empire(empire, empire_name, home_system, starting_species, player_name, starting_unlocks):
     """
     Sets up various aspects of an empire, like empire name, homeworld, etc.
     """
@@ -500,14 +500,15 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
 
     # give homeworld starting buildings
     print "Player", player_name, ": add starting buildings to homeworld"
-    for item in fo.load_starting_buildings():
-        fo.create_building(item.name, homeworld, empire)
+    for item_name in starting_unlocks["buildings"]:
+        fo.create_building(item_name, homeworld, empire)
 
     # unlock starting techs, buildings, hulls, ship parts, etc.
-    # use default content file
     print "Player", player_name, ": add unlocked items"
-    for item in fo.load_item_spec_list():
-        fo.empire_unlock_item(empire, item.type, item.name)
+    for item_type, item_name in starting_unlocks["items"]:
+        item_type = item_type[0].lower() + item_type[1:]
+        item_type = fo.unlockableItemType.__dict__[item_type]
+        fo.empire_unlock_item(empire, item_type, item_name)
 
     # add premade ship designs to empire
     print "Player", player_name, ": add premade ship designs"
@@ -517,19 +518,19 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     # add starting fleets to empire
     # use default content file
     print "Player", player_name, ": add starting fleets"
-    fleet_plans = fo.load_fleet_plan_list()
-    for fleet_plan in fleet_plans:
+    for fleet_plan in starting_unlocks["fleets"]:
         # first, create the fleet
-        fleet = fo.create_fleet(fleet_plan.name(), home_system, empire)
+        fleet_name = fo.user_string(fleet_plan[0])
+        fleet = fo.create_fleet(fleet_name, home_system, empire)
         # if the fleet couldn't be created, report an error and try to continue with the next fleet plan
         if fleet == fo.invalid_object():
-            report_error("Python setup empire: couldn't create fleet %s" % fleet_plan.name())
+            report_error("Python setup_empire: couldn't create fleet %s" % fleet_name)
             continue
         # second, iterate over the list of ship design names in the fleet plan
-        for ship_design in fleet_plan.ship_designs():
+        for ship_design in fleet_plan[1:]:
             # create a ship in the fleet
             # if the ship couldn't be created, report an error and try to continue with the next ship design
             if fo.create_ship("", ship_design, starting_species, fleet) == fo.invalid_object():
-                report_error("Python setup empire: couldn't create ship %s for fleet %s"
-                             % (ship_design, fleet_plan.name()))
+                report_error("Python setup_empire: couldn't create ship %s for fleet %s"
+                             % (ship_design, fleet_name))
     return True

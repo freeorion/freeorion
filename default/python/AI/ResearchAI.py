@@ -176,7 +176,7 @@ def get_initial_research_target():
 def get_ship_tech_usefulness(tech, ship_designer):
     this_tech = fo.getTech(tech)
     if not this_tech:
-        debug("Invalid Tech specified")
+        debug("Invalid Tech specified: %s", tech)
         return 0
     unlocked_items = this_tech.unlockedItems
     unlocked_hulls = []
@@ -1034,12 +1034,14 @@ def generate_classic_research_orders():
                         fo.issueEnqueueTechOrder("SHP_WEAPON_4_2", max(0, idx - 18))
 
     # TODO: Remove the following example code
+    return
+
     # Example/Test code for the new ShipDesigner functionality
     techs = ["SHP_WEAPON_4_2", "SHP_TRANSSPACE_DRIVE", "SHP_INTSTEL_LOG", "SHP_ASTEROID_HULLS", ""]
     for tech in techs:
         this_tech = fo.getTech(tech)
         if not this_tech:
-            debug("Invalid Tech specified")
+            debug("Invalid Tech specified: %s", tech)
             continue
         unlocked_items = this_tech.unlockedItems
         unlocked_hulls = []

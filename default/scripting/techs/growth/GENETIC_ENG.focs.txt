@@ -1,11 +1,12 @@
 Tech
     name = "GRO_GENETIC_ENG"
     description = "GRO_GENETIC_ENG_DESC"
-    short_description = "THEORY_SHORT_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     category = "GROWTH_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
-    tags = [ "PEDIA_GROWTH_CATEGORY" "THEORY" ]
+    tags = [ "PEDIA_GROWTH_CATEGORY" ]
+    unlock = Item type = Building name = "BLD_IMPERIAL_GARDENS"
     graphic = "icons/tech/genetic_engineering.png"
 
 #include "/scripting/common/base_prod.macros"

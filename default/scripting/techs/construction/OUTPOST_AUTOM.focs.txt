@@ -1,0 +1,13 @@
+Tech
+    name = "CON_OUTPOST"
+    description = "CON_OUTPOST_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 4 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 2
+    tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
+    prerequisites = "PRO_ROBOTIC_PROD"
+    unlock = Item type = ShipPart name = "CO_OUTPOST_POD"
+    graphic = "icons/ship_parts/habitation_domes.png"
+
+#include "/scripting/common/base_prod.macros"

@@ -71,6 +71,9 @@ namespace {
     }
     auto GetEmpireSitRepFunc = GetSitRep;
 
+    const std::string&  GetTypeString(const SitRepEntry& sitrep)    { return sitrep.GetTemplateString(); }
+    auto GetSitRepTypeStringFunc = GetTypeString;
+
     const Meter* (Empire::*EmpireGetMeter)(const std::string&) const = &Empire::GetMeter;
 
     template<class T1, class T2>
@@ -85,6 +88,8 @@ namespace {
     typedef std::pair<int, int> IntPair;
 
     typedef std::set<int> IntSet;
+
+    typedef std::map<std::string, int> String_IntMap;
 
     typedef std::map<std::pair<int, int>,int > PairIntInt_IntMap;
 
@@ -258,6 +263,10 @@ namespace FreeOrionPython {
             .def(boost::python::map_indexing_suite<PairIntInt_IntMap, true>())
         ;
 
+        class_<String_IntMap>("String_IntMap")
+            .def(boost::python::map_indexing_suite<String_IntMap, true>())
+        ;
+
         boost::python::to_python_converter<IntPair, myIntIntPairConverter>();
 
         class_<std::vector<IntPair>>("IntPairVec")
@@ -293,6 +302,7 @@ namespace FreeOrionPython {
             .add_property("allShipDesigns",         make_function(&Empire::ShipDesigns,             return_value_policy<return_by_value>()))
             .add_property("availableShipDesigns",   make_function(&Empire::AvailableShipDesigns,    return_value_policy<return_by_value>()))
             .add_property("availableShipParts",     make_function(&Empire::AvailableShipParts,      return_value_policy<copy_const_reference>()))
+            .add_property("shipPartTypesOwned",     make_function(&Empire::ShipPartTypesOwned,      return_internal_reference<>()))
             .add_property("availableShipHulls",     make_function(&Empire::AvailableShipHulls,      return_value_policy<copy_const_reference>()))
             .add_property("productionQueue",        make_function(&Empire::GetProductionQueue,      return_internal_reference<>()))
             .def("productionCostAndTime",           make_function(
@@ -317,6 +327,7 @@ namespace FreeOrionPython {
                                                     ))
 
             .def("techResearched",                  &Empire::TechResearched)
+            .add_property("researchedTechs",        make_function(&Empire::ResearchedTechs,         return_internal_reference<>()))
             .add_property("availableTechs",         make_function(
                                                         ResearchTechNamesFunc,
                                                         return_value_policy<return_by_value>(),
@@ -485,7 +496,11 @@ namespace FreeOrionPython {
         //  SitRepEntry  //
         ///////////////////
         class_<SitRepEntry, noncopyable>("sitrep", no_init)
-            .add_property("typeString",         make_function(&SitRepEntry::GetTemplateString,  return_value_policy<copy_const_reference>()))
+            .add_property("typeString",         make_function(
+                                                    GetSitRepTypeStringFunc,
+                                                    return_value_policy<copy_const_reference>(),
+                                                    boost::mpl::vector<const std::string&, const SitRepEntry&>()
+                                                ))
             .def("getDataString",               make_function(&SitRepEntry::GetDataString,      return_value_policy<copy_const_reference>()))
             .def("getDataIDNumber",             &SitRepEntry::GetDataIDNumber)
             .add_property("getTags",            make_function(&SitRepEntry::GetVariableTags,    return_value_policy<return_by_value>()))

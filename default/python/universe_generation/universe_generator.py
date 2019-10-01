@@ -3,7 +3,10 @@ from common.configure_logging import redirect_logging_to_freeorion_logger
 # Logging is redirected before other imports so that import errors appear in log files.
 redirect_logging_to_freeorion_logger()
 
+import os.path
 import random
+import re
+import sys
 
 import freeorion as fo
 
@@ -42,6 +45,7 @@ class PyGalaxySetupData:
         self.specials_frequency = galaxy_setup_data.specialsFrequency
         self.monster_frequency = galaxy_setup_data.monsterFrequency
         self.native_frequency = galaxy_setup_data.nativeFrequency
+        self.starting_era = galaxy_setup_data.startingEra
         self.max_ai_aggression = galaxy_setup_data.maxAIAggression
         self.game_uid = galaxy_setup_data.gameUID
 
@@ -56,6 +60,7 @@ class PyGalaxySetupData:
         print "...Specials Frequency:", self.specials_frequency
         print "...Monster Frequency:", self.monster_frequency
         print "...Native Frequency:", self.native_frequency
+        print "...StartingEra:", self.starting_era
         print "...Max AI Aggression:", self.max_ai_aggression
         print "...Game UID:", self.game_uid
 
@@ -65,6 +70,101 @@ def error_report():
     Can be called from C++ to retrieve a list of errors that occurred during universe generation
     """
     return error_list
+
+
+def parse_inf_file(filename, parse_function):
+    if filename is None:
+        return []
+    try:
+        f = open(filename)
+    except IOError:
+        print >> sys.stderr, "Cannot read", filename
+        return []
+    try:
+        result = parse_function(f)
+    finally:
+        f.close()
+    return result
+
+
+def read_buildings_inf(f):
+    result = []
+    comment_expr = re.compile(r'\s*(?://|$)')
+    building_expr = re.compile(r'.*Building\s+name\s+=\s+"(.+)"')
+    for line in f:
+        if comment_expr.match(line):
+            continue
+        match = building_expr.match(line)
+        if match is None:
+            print >> sys.stderr, "buildings.inf parse error:", line
+        else:
+            result.append(match.group(1))
+    return result
+
+
+def read_items_inf(f):
+    result = []
+    comment_expr = re.compile(r'\s*(?://|$)')
+    item_expr = re.compile(r'.*Item\s+type\s+=\s+(.+?)\s+name\s+=\s+"(.+)"')
+    for line in f:
+        if comment_expr.match(line):
+            continue
+        match = item_expr.match(line)
+        if match is None:
+            print >> sys.stderr, "items.inf parse error:", line
+        else:
+            result.append([match.group(1), match.group(2)])
+    return result
+
+
+def append_fleet(fleet_array, fleet):
+    if fleet is None:
+        return
+    if len(fleet) > 1:
+        fleet_array.append(fleet)
+    else:
+        print >> sys.stderr, "fleets.inf parse error: empty fleet", fleet[0]
+
+
+def read_fleets_inf(f):
+    result = []
+    name_expr = re.compile(r'.*name\s+=\s+"(.+)"')
+    ship_expr = re.compile(r'.*?"(.+)"')
+    fleet = None
+    for line in f:
+        match = name_expr.match(line)
+        if match is not None:
+            append_fleet(result, fleet)
+            fleet = [match.group(1)]
+            continue
+        match = ship_expr.match(line)
+        if match is None:
+            continue
+        if fleet is None:
+            print >> sys.stderr, \
+                "fleets.inf parse error: ship outside fleet", line
+        else:
+            fleet.append(match.group(1))
+    append_fleet(result, fleet)
+    return result
+
+
+def read_starting_unlocks(starting_era):
+    unlock_dir = os.path.join(fo.get_resource_dir(), "scripting",
+                              "starting_unlocks")
+    if starting_era == fo.startingEra.prewarp:
+        buildings_inf = os.path.join(unlock_dir, "buildings-prewarp.inf")
+        items_inf = os.path.join(unlock_dir, "items-prewarp.inf")
+        fleets_inf = None  # no starting fleets in the prewarp era
+    else:
+        buildings_inf = os.path.join(unlock_dir, "buildings.inf")
+        items_inf = os.path.join(unlock_dir, "items.inf")
+        fleets_inf = os.path.join(unlock_dir, "fleets.inf")
+    return {
+        "buildings": parse_inf_file(buildings_inf, read_buildings_inf),
+        "items":     parse_inf_file(items_inf,     read_items_inf),
+        "fleets":    parse_inf_file(fleets_inf,    read_fleets_inf),
+    }
 
 
 @listener
@@ -120,9 +220,12 @@ def create_universe(psd_map):
     print "Home systems:", home_systems
 
     # set up empires for each player
+    starting_unlocks = read_starting_unlocks(gsd.starting_era)
     seed_rng(seed_pool.pop())
     for empire, psd, home_system in zip(psd_map.keys(), psd_map.values(), home_systems):
-        if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name):
+        if not setup_empire(empire, psd.empire_name, home_system,
+                            psd.starting_species, psd.player_name,
+                            starting_unlocks):
             report_error("Python create_universe: couldn't set up empire for player %s" % psd.player_name)
 
     # assign names to all star systems and their planets
