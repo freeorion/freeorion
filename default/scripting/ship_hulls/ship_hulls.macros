@@ -192,23 +192,26 @@ HULL_FUEL_EFFICIENCY_EFFECTSGROUP
 '''     EffectsGroup
             description = "HULL_FUEL_EFFICIENCY_DESC"
             scope = And [
-                Ship
                 Source
+                Ship
             ]
             accountinglabel = "@1@_FUEL_EFFICIENCY_LABEL"
             priority = [[VERY_LATE_PRIORITY]]
             effects = SetMaxFuel value = @2@ * Statistic If Condition = And [ Object id = Source.ID HasTag name = "@1@_FUEL_EFFICIENCY" ]
 
+     // If a ship has less than one maximum fuel it will never be able to travel out of supply so refueling does not make sense.
+     // In order to communicate that and to prevent wrong refuel sitreps, we set the maximum fuel for that case to zero
+     // I need the final MaxFuel value to decide if we should zero it.
+     // Scope and activation conditions are evaluated before the effects so using an If condition = Value() in effects expression instead
      EffectsGroup
             description = "MAX_FUEL_LESS_THAN_ONE_DESC"
             scope = And [
-                Ship
                 Source
-                MaxFuel high = 0.9999
+                Ship
             ]
             accountinglabel = "MAX_FUEL_LESS_THAN_ONE_LABEL"
             priority = [[METER_OVERRIDE_PRIORITY]]
-            effects = SetMaxFuel value = 0
+            effects = If condition = (Value(Source.MaxFuel) < 1) effects = SetMaxFuel value = 0
 '''
 
 #include "/scripting/common/priorities.macros"
