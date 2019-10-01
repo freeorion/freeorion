@@ -58,7 +58,7 @@ std::string SitRepEntry::Dump() const {
 SitRepEntry CreateTechResearchedSitRep(const std::string& tech_name) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_TECH_RESEARCHED"),
-        CurrentTurn() + 1,
+        CurrentTurn(),
         "icons/sitrep/tech_researched.png",
         UserStringNop("SITREP_TECH_RESEARCHED_LABEL"), true);
     sitrep.AddVariable(VarText::TECH_TAG,          tech_name);

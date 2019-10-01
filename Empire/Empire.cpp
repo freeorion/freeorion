@@ -1355,8 +1355,6 @@ void Empire::AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& n
 
     // Mark given tech to be granted at next turn. If it was already marked, skip writing a SitRep message
     auto result = m_newly_researched_techs.insert(name);
-    if (result.second)
-        AddSitRepEntry(CreateTechResearchedSitRep(name));
 }
 
 void Empire::ApplyNewTechs() {
@@ -1370,8 +1368,10 @@ void Empire::ApplyNewTechs() {
         for (const ItemSpec& item : tech->UnlockedItems())
             UnlockItem(item);  // potential infinite if a tech (in)directly unlocks itself?
 
-        if (!m_techs.count(new_tech))
+        if (!m_techs.count(new_tech)) {
             m_techs[new_tech] = CurrentTurn();
+            AddSitRepEntry(CreateTechResearchedSitRep(new_tech));
+        }
     }
     m_newly_researched_techs.clear();
 }
