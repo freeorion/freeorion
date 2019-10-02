@@ -181,6 +181,14 @@ important or urgent things. Usually applied to e.g. nice-to-have features or
 bugs that are more of cosmetic nature or a minor annoyance than something that
 impedes or breaks gameplay.
 
+#### Label `status:abandoned`
+
+The contributor providing the PR has stopped working on it and either explicitely
+stated that they have no intentions or cannot be expected to resume their work
+(e.g. because they left the project with no intentions of coming back). Also, no
+one is going to pick up the PR for them, so it can be sufficiently safely assumed
+that the PR will never be finished.
+
 #### Label `status:cherry-pick for release`
 
 The PR should be applied to the currently open release branch.  Use this label
