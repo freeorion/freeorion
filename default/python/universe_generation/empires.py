@@ -519,17 +519,29 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     print "Player", player_name, ": add starting fleets"
     fleet_plans = fo.load_fleet_plan_list()
     for fleet_plan in fleet_plans:
+        # should fleet be aggressive? check if any ships are armed.
+        should_be_aggressive = False
+        for ship_design in fleet_plan.ship_designs():
+            design = fo.getPredefinedShipDesign(ship_design)
+            if design is None:
+                report_error("Looked up null design with name %s", ship_design)
+            elif design.isArmed:
+                should_be_aggressive = True
+                break
+        
         # first, create the fleet
-        fleet = fo.create_fleet(fleet_plan.name(), home_system, empire)
+        fleet = fo.create_fleet(fleet_plan.name(), home_system, empire, should_be_aggressive)
         # if the fleet couldn't be created, report an error and try to continue with the next fleet plan
         if fleet == fo.invalid_object():
             report_error("Python setup empire: couldn't create fleet %s" % fleet_plan.name())
             continue
+        
         # second, iterate over the list of ship design names in the fleet plan
         for ship_design in fleet_plan.ship_designs():
             # create a ship in the fleet
             # if the ship couldn't be created, report an error and try to continue with the next ship design
             if fo.create_ship("", ship_design, starting_species, fleet) == fo.invalid_object():
-                report_error("Python setup empire: couldn't create ship %s for fleet %s"
+                report_error("Python setup empire: couldn't create ship of design %s for fleet %s"
                              % (ship_design, fleet_plan.name()))
+    
     return True

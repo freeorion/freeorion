@@ -767,7 +767,7 @@ namespace {
         return building->ID();
     }
 
-    int CreateFleet(const std::string& name, int system_id, int empire_id) {
+    int CreateFleet(const std::string& name, int system_id, int empire_id, bool aggressive = false) {
         // Get system and check if it exists
         auto system = Objects().Object<System>(system_id);
         if (!system) {
@@ -790,6 +790,8 @@ namespace {
             // ...no name has been specified, so we have to generate one using the new fleet id
             fleet->Rename(UserString("OBJ_FLEET") + " " + std::to_string(fleet->ID()));
         }
+
+        fleet->SetAggressive(aggressive);
 
         // return fleet ID
         return fleet->ID();
@@ -864,7 +866,6 @@ namespace {
         // add ship to fleet, this also moves the ship to the
         // fleets location and inserts it into the system
         fleet->AddShips({ship->ID()});
-        fleet->SetAggressive(fleet->HasArmedShips());
         ship->SetFleetID(fleet->ID());
 
         // set the meters of the ship to max values
@@ -879,7 +880,7 @@ namespace {
     }
 
     int CreateMonsterFleet(int system_id)
-    { return CreateFleet(UserString("MONSTERS"), system_id, ALL_EMPIRES); }
+    { return CreateFleet(UserString("MONSTERS"), system_id, ALL_EMPIRES, true); }
 
     int CreateMonster(const std::string& design_name, int fleet_id)
     { return CreateShip(NewMonsterName(), design_name, "", fleet_id); }
