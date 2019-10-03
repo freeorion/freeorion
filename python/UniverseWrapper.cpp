@@ -583,6 +583,8 @@ namespace FreeOrionPython {
         ;
         def("validShipDesign",                  ValidDesignHullAndParts, "Returns true (boolean) if the passed hull (string) and parts (StringVec) make up a valid ship design, and false (boolean) otherwise. Valid ship designs don't have any parts in slots that can't accept that type of part, and contain only hulls and parts that exist (and may also need to contain the correct number of parts - this needs to be verified).");
         def("getShipDesign",                    &GetShipDesign,                             return_value_policy<reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated id number (int).");
+        def("getPredefinedShipDesign",          &GetPredefinedShipDesign,                   return_value_policy<reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated name (string).");
+
 
         class_<PartType, noncopyable>("partType", no_init)
             .add_property("name",               make_function(&PartType::Name,              return_value_policy<copy_const_reference>()))
