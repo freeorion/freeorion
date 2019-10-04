@@ -218,6 +218,11 @@ template void Empire::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&,
 template void Empire::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void Empire::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
+namespace {
+    std::pair<int, int> DiploKey(int id1, int ind2)
+    { return std::make_pair(std::max(id1, ind2), std::min(id1, ind2)); }
+}
+
 template <class Archive>
 void EmpireManager::serialize(Archive& ar, const unsigned int version)
 {
@@ -233,8 +238,34 @@ void EmpireManager::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_empire_diplomatic_statuses)
         & BOOST_SERIALIZATION_NVP(messages);
 
-    if (Archive::is_loading::value)
+    if (Archive::is_loading::value) {
         m_diplomatic_messages = std::move(messages);
+
+        // erase invalid empire diplomatic statuses
+        std::vector<std::pair<int, int>> to_erase;
+        for (auto r : m_empire_diplomatic_statuses) {
+            auto e1 = r.first.first;
+            auto e2 = r.first.second;
+            if (m_empire_map.count(e1) < 1 || m_empire_map.count(e2) < 1) {
+                to_erase.push_back({e1, e2});
+                ErrorLogger() << "Erased invalid diplomatic status between empires " << e1 << " and " << e2;
+            }
+        }
+        for (auto p : to_erase)
+            m_empire_diplomatic_statuses.erase(p);
+
+        // add missing empire diplomatic statuses
+        for (auto e1 : m_empire_map) {
+            for (auto e2 : m_empire_map) {
+                if (e1.first >= e2.first)
+                    continue;
+                auto dk = DiploKey(e1.first, e2.first);
+                if (m_empire_diplomatic_statuses.count(dk) < 1)
+                    m_empire_diplomatic_statuses[dk] = DIPLO_WAR;
+                ErrorLogger() << "Added missing diplomatic status (default WAR) between empires " << e1.first << " and " << e2.first;
+            }
+        }
+    }
 }
 
 template void EmpireManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
