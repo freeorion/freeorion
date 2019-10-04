@@ -814,7 +814,7 @@ boost::statechart::result PlayingGame::react(const TurnTimeout& msg) {
 boost::statechart::result PlayingGame::react(const PlayerInfoMsg& msg) {
     DebugLogger(FSM) << "(PlayerFSM) PlayingGame::PlayerInfoMsg message received: " << msg.m_message.Text();
     ExtractPlayerInfoMessageData(msg.m_message, Client().Players());
-    Client().GetClientUI().GetPlayerListWnd()->Refresh();
+    Client().GetClientUI().GetPlayerListWnd()->Refresh(false);
     return discard_event();
 }
 
@@ -879,7 +879,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     if (is_new_game && Client().Networking().PlayerIsHost(Client().PlayerID()))
         Client().Autosave();
 
-    Client().GetClientUI().GetPlayerListWnd()->Refresh();
+    Client().GetClientUI().GetPlayerListWnd()->Refresh(true);
     Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
 
     return transit<PlayingTurn>();
@@ -939,7 +939,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
 
     Client().HandleTurnUpdate();
 
-    Client().GetClientUI().GetPlayerListWnd()->Refresh();
+    Client().GetClientUI().GetPlayerListWnd()->Refresh(true);
     Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
 
     return transit<PlayingTurn>();

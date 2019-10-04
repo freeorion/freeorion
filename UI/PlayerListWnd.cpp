@@ -503,6 +503,9 @@ namespace {
         void            SetStatus(Message::PlayerStatus player_status)
         { m_player_status = player_status; }
 
+        Message::PlayerStatus Status() const
+        { return m_player_status; }
+
     private:
         int             IconSize() const   { return Value(Height()) - 2; }
 
@@ -657,6 +660,12 @@ namespace {
             return m_empire_id;
         }
 
+        Message::PlayerStatus Status() const {
+            if (m_panel)
+                return m_panel->Status();
+            return Message::PLAYING_TURN;
+        }
+
         void    Update() {
             if (m_panel)
                 m_panel->Update();
@@ -749,7 +758,7 @@ void PlayerListWnd::CompleteConstruction() {
         boost::bind(&PlayerListWnd::PlayerListWnd::HandleDiplomaticMessageChange, this, _1, _2));
     DoLayout();
 
-    Refresh();
+    Refresh(true);
 }
 
 std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
@@ -761,6 +770,23 @@ std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
         int selected_player_id = PlayerInRow(it);
         if (selected_player_id != Networking::INVALID_PLAYER_ID)
             retval.insert(selected_player_id);
+    }
+    return retval;
+}
+
+std::set<int> PlayerListWnd::ReadyEmpiresIDs() const {
+    std::set<int> retval;
+    for (auto it = m_player_list->begin(); it != m_player_list->end(); ++it) {
+        PlayerRow* row = dynamic_cast<PlayerRow*>(it->get());
+        if (!row)
+            continue;
+
+        int empire_id = row->EmpireID();
+        if (empire_id == ALL_EMPIRES)
+            continue;
+
+        if (row->Status() == Message::WAITING)
+            retval.insert(empire_id);
     }
     return retval;
 }
@@ -818,8 +844,9 @@ void PlayerListWnd::Update() {
     }
 }
 
-void PlayerListWnd::Refresh() {
+void PlayerListWnd::Refresh(bool clean_empire_status) {
     std::set<int> initially_selected_players = this->SelectedPlayerIDs();
+    std::set<int> ready_empires = this->ReadyEmpiresIDs();
 
     m_player_list->Clear();
 
@@ -835,6 +862,8 @@ void PlayerListWnd::Refresh() {
     for (const auto& empire : Empires()) {
         int player_id = app->EmpirePlayerID(empire.first);
         auto player_row = GG::Wnd::Create<PlayerRow>(row_size.x, row_size.y, player_id, empire.first);
+        if (!clean_empire_status && (ready_empires.find(empire.first) != ready_empires.end()))
+            player_row->SetStatus(Message::WAITING);
         m_player_list->Insert(player_row);
         player_row->Resize(row_size);
     }

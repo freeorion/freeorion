@@ -16,6 +16,7 @@ public:
 
     //! \name Accessors //@{
     std::set<int>   SelectedPlayerIDs() const;
+    std::set<int>   ReadyEmpiresIDs() const; ///< Returns set of ready empires to restore them on updating player list
     //@}
 
     //! \name Mutators //@{
@@ -24,7 +25,7 @@ public:
     void            HandleEmpireStatusUpdate(Message::PlayerStatus player_status, int about_empire_id);
     void            HandleDiplomaticMessageChange(int empire1_id, int empire2_id);
     void            Update();
-    void            Refresh();
+    void            Refresh(bool clean_empire_status);
     void            Clear();
 
     void            SetSelectedPlayers(const std::set<int>& player_ids);
