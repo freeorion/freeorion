@@ -1428,7 +1428,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         for (const auto& empire : Empires()) {
             auto other_orders_it = m_turn_sequence.find(empire.first);
             bool ready = other_orders_it == m_turn_sequence.end() ||
-                    (other_orders_it->second && other_orders_it->second->m_ready);
+                (other_orders_it->second && other_orders_it->second->m_ready);
             (*player_connection_it)->SendMessage(PlayerStatusMessage(ready ? Message::WAITING : Message::PLAYING_TURN,
                                                                      empire.first));
         }
@@ -1895,7 +1895,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
         m_single_player_game, empire_id,
         m_current_turn, m_empires, m_universe,
         GetSpeciesManager(), GetCombatLogManager(),
-        GetSupplyManager(),  player_info_map, orders,
+        GetSupplyManager(), player_info_map, orders,
         ui_data,
         m_galaxy_setup_data,
         use_binary_serialization));
@@ -1904,7 +1904,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
     for (const auto& empire : Empires()) {
         auto other_orders_it = m_turn_sequence.find(empire.first);
         bool ready = other_orders_it == m_turn_sequence.end() ||
-                (other_orders_it->second && other_orders_it->second->m_ready);
+            (other_orders_it->second && other_orders_it->second->m_ready);
         player_connection->SendMessage(PlayerStatusMessage(ready ? Message::WAITING : Message::PLAYING_TURN,
                                                            empire.first));
     }
@@ -1981,8 +1981,7 @@ void ServerApp::UpdatePartialOrders(int empire_id, const OrderSet& added, const 
     }
 }
 
-void ServerApp::RevokeEmpireTurnReadyness(int empire_id)
-{
+void ServerApp::RevokeEmpireTurnReadyness(int empire_id) {
     const auto& psgd = m_turn_sequence[empire_id];
     if (psgd)
         psgd->m_ready = false;
@@ -1996,8 +1995,17 @@ bool ServerApp::AllOrdersReceived() {
     for (const auto& empire_orders : m_turn_sequence) {
         bool empire_orders_received = true;
         if (!empire_orders.second) {
-            DebugLogger() << " ... no save data from empire id: " << empire_orders.first;
-            empire_orders_received = false;
+            const auto empire = GetEmpire(empire_orders.first);
+            if (!empire) {
+                ErrorLogger() << " ... invalid empire id in turn sequence: "<< empire_orders.first;
+                continue;
+            } else if (empire->Eliminated()) {
+                ErrorLogger() << " ... eliminated empire in turn sequence: " << empire_orders.first;
+                continue;
+            } else {
+                DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
+                empire_orders_received = false;
+            }
         } else if (!empire_orders.second->m_orders) {
             DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
             empire_orders_received = false;
