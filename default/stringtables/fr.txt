@@ -11617,8 +11617,8 @@ LRN_PSY_DOM
 Domination Psychique
 
 LRN_PSY_DOM_DESC
-'''A 10% de chance de prendre le contrôle des astronefs ennemis avec équipages non-télépathiques, et se trouvant dans le même système qu'une planète en Focus Domination, à moins que l'empire ennemi ne maîtrise également la [[tech LRN_PSY_DOM]].
-Immunise également contre la prise de contrôle d'un astronef par un [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]].
+'''A 10% de chance de prendre le contrôle des astronefs ennemis avec équipages non-télépathiques, et se trouvant dans le même système qu'une planète en Focus Domination, à moins que l'empire ennemi ne maîtrise également la [[tech LRN_PSY_DOM]]. Le Focus Domination ne peut être activé que sur une planète colonisée par une espèce télépathique.
+Réduit la probabilité de prise de contrôle d'un astronef par un [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]].
 
 Il est difficile de soumettre un individu conscient à un contrôle mental total par une entité étrangère, et ce contre son gré. En manipulant cependant les durées de soumission, la force mentale accumulée par une population sur plusieurs heures peut être canalisée sur un unique individu durant quelques secondes, engendrant ainsi une compulsion quasi-irrésistible de se joindre à l'esprit unifié.'''
 
