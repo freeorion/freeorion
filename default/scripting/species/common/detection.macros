@@ -1,3 +1,16 @@
+// param1: value
+NATIVE_PLANETARY_DETECTION
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Unowned
+            ]
+            accountinglabel = "NATIVE_PLANETARY_DETECTION_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetDetection value = Value + @1@
+'''
+
 BAD_DETECTION
 '''EffectsGroup
             description = "BAD_DETECTION_DESC"
