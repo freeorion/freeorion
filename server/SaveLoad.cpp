@@ -392,13 +392,13 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
                         DebugLogger() << "Based on header info for uncompressed state string, attempting to reserve: " << ignored_save_preview_data.uncompressed_text_size << " bytes";
                         serial_str.reserve(ignored_save_preview_data.uncompressed_text_size);
                     } else {
-                        serial_str.reserve(    std::pow(2.0, 29.0));
+                        serial_str.reserve(std::pow(2.0, 29.0));
                     }
                     if (ignored_save_preview_data.compressed_text_size > 0) {
                         DebugLogger() << "Based on header info for compressed state string, attempting to reserve: " << ignored_save_preview_data.compressed_text_size << " bytes";
                         compressed_str.reserve(ignored_save_preview_data.compressed_text_size);
                     } else {
-                        compressed_str.reserve(    std::pow(2.0, 26.0));
+                        compressed_str.reserve(std::pow(2.0, 26.0));
                     }
                 } catch (...) {
                     DebugLogger() << "Unable to preallocate full deserialization buffers. Attempting deserialization with dynamic buffer allocation.";
