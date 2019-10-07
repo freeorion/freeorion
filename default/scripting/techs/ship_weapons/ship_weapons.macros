@@ -19,28 +19,12 @@ WEAPON_BASE_EFFECTS
             accountinglabel = "@1@"
             effects = SetCapacity partname = "@1@" value = Value + [[ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP]]
 
-// Inform the researching empire that ships in supply will get upgraded before next combat
-          EffectsGroup
-           scope = Source
-           activation = (CurrentTurn == TurnTechResearched empire = Source.Owner name = CurrentContent)
-           effects =
-             GenerateSitRepMessage
-              message = "SITREP_WEAPON_UPGRADE_IMMINENT"
-              label = "SITREP_WEAPON_UPGRADE_IMMINENT_LABEL"
-              icon = "icons/tech/active_radar.png"
-              parameters = [
-                  tag = "empire"    data = Source.Owner
-                  tag = "shippart"  data = @1@
-              ]
-              empire = Target.Owner
-
-
 '''
 
 // @1@ part name
 // @2@ value added to max capacity
 WEAPON_UPGRADE_CAPACITY_EFFECTS
-'''
+'''   [
         EffectsGroup
             scope = And [
                         [[EMPIRE_OWNED_SHIP_WITH_PART]]
@@ -48,6 +32,25 @@ WEAPON_UPGRADE_CAPACITY_EFFECTS
             ]
             accountinglabel = "@1@"
             effects = SetMaxCapacity partname = "@1@" value = Value + @2@
-            '''
+
+// Inform the researching empire that ships in supply will get upgraded before next combat
+        EffectsGroup
+           scope = Source
+           activation = (CurrentTurn == TurnTechResearched empire = Source.Owner name = CurrentContent)
+           effects =
+             GenerateSitRepMessage
+              message = "SITREP_WEAPON_UPGRADE_IMMINENT %empire%  %shippart%  %rawtext:t%"
+              label = "SITREP_WEAPON_UPGRADE_IMMINENT_LABEL"
+              NoStringTableLookup
+              icon = "icons/tech/active_radar.png"
+              parameters = [
+                  tag = "empire"    data = Source.Owner
+                  tag = "shippart"  data = "@1@"
+                  tag = "t"   data = CurrentContent
+              ]
+              empire = Target.Owner
+
+
+      ]'''
 
 #include "../techs.macros"
