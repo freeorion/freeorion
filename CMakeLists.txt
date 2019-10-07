@@ -68,7 +68,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 if(WIN32)
     # Location of the FreeOrionSDK root
-    set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/..")
+    set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/.." CACHE PATH "Location of the FreeOrionSDK root")
     # Search dependency DLLs inside FreeOrionSDK
     target_dependencies_add_search_path("${CMAKE_PREFIX_PATH}/bin")
     set(CMAKE_INSTALL_BINDIR ".")
