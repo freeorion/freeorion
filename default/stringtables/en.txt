@@ -6576,7 +6576,7 @@ SITREP_EMPIRE_TECH_RESEARCHED_DETECTION
 The %empire% [[encyclopedia DETECTION_TITLE]] has upgraded to %rawtext:dstrength%
 
 SITREP_EMPIRE_TECH_RESEARCHED_DETECTION_LABEL
-Enemy Tech Upgrade
+Empire Detection Tech Upgrade
 
 SITREP_TECH_UNLOCKED
 %tech% has been unlocked and can now be researched.
