@@ -159,9 +159,9 @@ void AdjustBrightness(GG::Clr& color, int amount, bool jointly_capped)
         int maxVal = std::max(std::max(color.r, color.g), color.b);
         amount = std::min(amount, 255-maxVal);
     }
-    color.r = std::max(0, std::min(color.r + amount, 255));
-    color.g = std::max(0, std::min(color.g + amount, 255));
-    color.b = std::max(0, std::min(color.b + amount, 255));
+    color.r = static_cast<unsigned char>(std::max(0, std::min(color.r + amount, 255)));
+    color.g = static_cast<unsigned char>(std::max(0, std::min(color.g + amount, 255)));
+    color.b = static_cast<unsigned char>(std::max(0, std::min(color.b + amount, 255)));
 }
 
 void AdjustBrightness(GG::Clr& color, double amount, bool jointly_capped)
@@ -170,15 +170,15 @@ void AdjustBrightness(GG::Clr& color, double amount, bool jointly_capped)
         int maxVal = std::max(std::max(color.r, color.g), color.b);
         amount = std::min(amount, 255.0/maxVal);
     }
-    color.r = std::max(0, std::min(static_cast<int>(color.r * amount), 255));
-    color.g = std::max(0, std::min(static_cast<int>(color.g * amount), 255));
-    color.b = std::max(0, std::min(static_cast<int>(color.b * amount), 255));
+    color.r = static_cast<unsigned char>(std::max(0, std::min(static_cast<int>(color.r * amount), 255)));
+    color.g = static_cast<unsigned char>(std::max(0, std::min(static_cast<int>(color.g * amount), 255)));
+    color.b = static_cast<unsigned char>(std::max(0, std::min(static_cast<int>(color.b * amount), 255)));
 }
 
 GG::Clr OpaqueColor(const GG::Clr& color)
 {
     GG::Clr retval = color;
-    retval.a = 255;
+    retval.a = static_cast<unsigned char>(255);
     return retval;
 }
 
