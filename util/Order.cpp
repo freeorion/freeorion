@@ -1305,7 +1305,8 @@ bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_
         return false;
     }
 
-    if (Empires().GetDiplomaticStatus(empire_id, recipient_empire_id) != DIPLO_PEACE) {
+    auto dip = Empires().GetDiplomaticStatus(empire_id, recipient_empire_id);
+    if (dip < DIPLO_PEACE) {
         ErrorLogger() << "IssueGiveObjectToEmpireOrder : attempting to give to empire not at peace";
         return false;
     }
