@@ -6573,7 +6573,7 @@ SITREP_TECH_RESEARCHED_LABEL
 Tech Researched
 
 SITREP_EMPIRE_TECH_RESEARCHED_DETECTION
-The %empire% upgraded their detection technology to %rawtext:dstrength% [[encyclopedia DETECTION_TITLE]]
+The %empire% [[encyclopedia DETECTION_TITLE]] has upgraded to %rawtext:dstrength%
 
 SITREP_EMPIRE_TECH_RESEARCHED_DETECTION_LABEL
 Enemy Tech Upgrade
