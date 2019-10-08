@@ -2060,7 +2060,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
                 continue;
             if (peaceful_empires_in_system.count(obj->Owner()))
                 continue;
-            if (Empires().GetDiplomaticStatus(client_empire_id, obj->Owner()) != DIPLO_PEACE)
+            if (Empires().GetDiplomaticStatus(client_empire_id, obj->Owner()) < DIPLO_PEACE)
                 continue;
             peaceful_empires_in_system.insert(obj->Owner());
         }
