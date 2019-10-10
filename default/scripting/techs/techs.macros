@@ -19,7 +19,7 @@ EMPIRE_OWNED_SHIP_WITH_PART
 // SHIP_PART_UPGRADE_RESUPPLY_CHECK(CurrentContent)
 SHIP_PART_UPGRADE_RESUPPLY_CHECK
 '''
-           ( LocalCandidate.LastTurnResupplied > TurnTechResearched empire = LocalCandidate.Owner name = @1@ )
+           ( LocalCandidate.LastTurnResupplied >= TurnTechResearched empire = LocalCandidate.Owner name = @1@ )
 '''
 
 ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP

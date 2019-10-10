@@ -35,21 +35,19 @@ WEAPON_UPGRADE_CAPACITY_EFFECTS
 
 // Inform the researching empire that ships in supply will get upgraded before next combat
         EffectsGroup
-           scope = Source
-           activation = (CurrentTurn == TurnTechResearched empire = Source.Owner name = CurrentContent)
-           effects =
-             GenerateSitRepMessage
-              message = "SITREP_WEAPON_UPGRADE_IMMINENT %empire%  %shippart%  %rawtext:t%"
-              label = "SITREP_WEAPON_UPGRADE_IMMINENT_LABEL"
-              NoStringTableLookup
+            scope = Source
+            activation = (CurrentTurn == TurnTechResearched empire = Source.Owner name = CurrentContent)
+            effects = GenerateSitRepMessage
+              message = "SITREP_WEAPONS_UPGRADED"
+              label = "SITREP_WEAPONS_UPGRADED_LABEL"
               icon = "icons/tech/active_radar.png"
               parameters = [
                   tag = "empire"    data = Source.Owner
                   tag = "shippart"  data = "@1@"
-                  tag = "t"   data = CurrentContent
+                  tag = "tech"   data = CurrentContent
+                  tag = "dam"   data = @2@
               ]
               empire = Target.Owner
-
 
       ]'''
 
