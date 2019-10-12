@@ -6617,6 +6617,12 @@ SITREP_BUILDING_TYPE_UNLOCKED
 SITREP_BUILDING_TYPE_UNLOCKED_LABEL
 Building Type Unlocked
 
+SITREP_WEAPONS_UPGRADED
+All %shippart% weapons on supplied ships have been upgraded to %tech%. Upgraded weapons do %rawtext:dam% extra damage per shot
+
+SITREP_WEAPONS_UPGRADED_LABEL
+Weapon Tech Upgrade
+
 SITREP_COMBAT_SYSTEM
 At %system%: there was %combat%.
 
