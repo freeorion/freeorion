@@ -620,26 +620,27 @@ Message ChatHistoryMessage(const std::vector<std::reference_wrapper<const ChatHi
     return Message(Message::CHAT_HISTORY, os.str());
 }
 
-Message PlayerChatMessage(const std::string& data, int receiver) {
+Message PlayerChatMessage(const std::string& data, std::set<int> recipients, bool pm) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
-        oa << BOOST_SERIALIZATION_NVP(receiver)
-           << BOOST_SERIALIZATION_NVP(data);
+        oa << BOOST_SERIALIZATION_NVP(recipients)
+           << BOOST_SERIALIZATION_NVP(data)
+           << BOOST_SERIALIZATION_NVP(pm);
     }
     return Message(Message::PLAYER_CHAT, os.str());
 }
 
-Message ServerPlayerChatMessage(int sender,
-                                const boost::posix_time::ptime& timestamp,
-                                const std::string& data)
+Message ServerPlayerChatMessage(int sender, const boost::posix_time::ptime& timestamp,
+                                const std::string& data, bool pm)
 {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(sender)
            << BOOST_SERIALIZATION_NVP(timestamp)
-           << BOOST_SERIALIZATION_NVP(data);
+           << BOOST_SERIALIZATION_NVP(data)
+           << BOOST_SERIALIZATION_NVP(pm);
     }
     return Message(Message::PLAYER_CHAT, os.str());
 }
@@ -765,12 +766,13 @@ void ExtractChatHistoryMessage(const Message& msg, std::vector<ChatHistoryEntity
     }
 }
 
-void ExtractPlayerChatMessageData(const Message& msg, int& receiver, std::string& data) {
+void ExtractPlayerChatMessageData(const Message& msg, std::set<int>& recipients, std::string& data, bool& pm) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
-        ia >> BOOST_SERIALIZATION_NVP(receiver)
-           >> BOOST_SERIALIZATION_NVP(data);
+        ia >> BOOST_SERIALIZATION_NVP(recipients)
+           >> BOOST_SERIALIZATION_NVP(data)
+           >> BOOST_SERIALIZATION_NVP(pm);
 
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractPlayerChatMessageData(const Message& msg, int& receiver, std::string& data) failed! Message:\n"
@@ -781,16 +783,16 @@ void ExtractPlayerChatMessageData(const Message& msg, int& receiver, std::string
 }
 
 void ExtractServerPlayerChatMessageData(const Message& msg,
-                                        int& sender,
-                                        boost::posix_time::ptime& timestamp,
-                                        std::string& data)
+                                        int& sender, boost::posix_time::ptime& timestamp,
+                                        std::string& data, bool& pm)
 {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(sender)
            >> BOOST_SERIALIZATION_NVP(timestamp)
-           >> BOOST_SERIALIZATION_NVP(data);
+           >> BOOST_SERIALIZATION_NVP(data)
+           >> BOOST_SERIALIZATION_NVP(pm);
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractServerPlayerChatMessageData(const Message& msg, int& sender, std::string& data) failed! Message:\n"
                       << msg.Text() << "\n"

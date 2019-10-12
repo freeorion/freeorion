@@ -422,7 +422,9 @@ namespace AIInterface {
     }
 
     void SendPlayerChatMessage(int recipient_player_id, const std::string& message_text) {
-        AIClientApp::GetApp()->Networking().SendMessage(PlayerChatMessage(message_text, recipient_player_id));
+        std::set<int> recipients;
+        recipients.emplace(recipient_player_id);
+        AIClientApp::GetApp()->Networking().SendMessage(PlayerChatMessage(message_text, recipients, false));
     }
 
     void SendDiplomaticMessage(const DiplomaticMessage& diplo_message) {

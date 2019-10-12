@@ -489,7 +489,8 @@ boost::statechart::result MPLobby::react(const PlayerChat& msg) {
     int player_id;
     boost::posix_time::ptime timestamp;
     std::string data;
-    ExtractServerPlayerChatMessageData(msg.m_message, player_id, timestamp, data);
+    bool pm;
+    ExtractServerPlayerChatMessageData(msg.m_message, player_id, timestamp, data, pm);
 
     Client().GetClientUI().GetMultiPlayerLobbyWnd()->ChatMessage(player_id, timestamp, data);
     return discard_event();
@@ -647,7 +648,8 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
     std::string text;
     int sending_player_id;
     boost::posix_time::ptime timestamp;
-    ExtractServerPlayerChatMessageData(msg.m_message, sending_player_id, timestamp, text);
+    bool pm;
+    ExtractServerPlayerChatMessageData(msg.m_message, sending_player_id, timestamp, text, pm);
 
     std::string player_name{UserString("PLAYER") + " " + std::to_string(sending_player_id)};
     GG::Clr text_color{Client().GetClientUI().TextColor()};
@@ -664,7 +666,7 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
         player_name = "";
     }
 
-    Client().GetClientUI().GetMessageWnd()->HandlePlayerChatMessage(text, player_name, text_color, timestamp, Client().PlayerID());
+    Client().GetClientUI().GetMessageWnd()->HandlePlayerChatMessage(text, player_name, text_color, timestamp, Client().PlayerID(), pm);
 
     return discard_event();
 }

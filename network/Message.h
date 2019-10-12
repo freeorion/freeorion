@@ -338,13 +338,12 @@ FO_COMMON_API Message ChatHistoryMessage(const std::vector<std::reference_wrappe
 
 /** creates an PLAYER_CHAT message containing a chat string to be broadcast to player \a receiver, or all players if \a
     receiver is Networking::INVALID_PLAYER_ID. Note that the receiver of this message is always the server.*/
-FO_COMMON_API Message PlayerChatMessage(const std::string& text, int receiver = Networking::INVALID_PLAYER_ID);
+FO_COMMON_API Message PlayerChatMessage(const std::string& text, std::set<int> recipients, bool pm);
 
 /** creates an PLAYER_CHAT message containing a chat string from \a sender at \a timestamp to be displayed in chat.
     This message should only be sent by the server.*/
-FO_COMMON_API Message ServerPlayerChatMessage(int sender,
-                                              const boost::posix_time::ptime& timestamp,
-                                              const std::string& text);
+FO_COMMON_API Message ServerPlayerChatMessage(int sender, const boost::posix_time::ptime& timestamp,
+                                              const std::string& text, bool pm = false);
 
 /** creates a START_MP_GAME used to finalize the multiplayer lobby setup.*/
 FO_COMMON_API Message StartMPGameMessage();
@@ -383,12 +382,11 @@ FO_COMMON_API void ExtractLobbyUpdateMessageData(const Message& msg, Multiplayer
 
 FO_COMMON_API void ExtractChatHistoryMessage(const Message& msg, std::vector<ChatHistoryEntity>& chat_history);
 
-FO_COMMON_API void ExtractPlayerChatMessageData(const Message& msg, int& receiver, std::string& data);
+FO_COMMON_API void ExtractPlayerChatMessageData(const Message& msg, std::set<int>& recipients, std::string& data, bool& pm);
 
 FO_COMMON_API void ExtractServerPlayerChatMessageData(const Message& msg,
-                                                      int& sender,
-                                                      boost::posix_time::ptime& timestamp,
-                                                      std::string& data);
+                                                      int& sender, boost::posix_time::ptime& timestamp,
+                                                      std::string& data, bool& pm);
 
 FO_COMMON_API void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, int& empire_id,
                                                int& current_turn, EmpireManager& empires, Universe& universe,
