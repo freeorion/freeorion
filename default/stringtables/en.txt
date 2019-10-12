@@ -6269,6 +6269,9 @@ Planets
 FLEETS_SUBMENU
 Fleet / Ships
 
+PLANET_ENVIRONMENTS_SUBMENU
+Environment For Species
+
 ID
 ID
 

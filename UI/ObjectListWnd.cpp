@@ -172,6 +172,19 @@ namespace {
             boost::make_unique<ValueRef::Variable<int>>(ValueRef::SOURCE_REFERENCE, "SystemID"));
     }
 
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> PlanetEnvForSpecies(
+        const std::string& species_name)
+    {
+        return ObjectTypeFilteredRef<std::string>({OBJ_PLANET},
+            boost::make_unique<ValueRef::UserStringLookup<PlanetEnvironment>>(
+                boost::make_unique<ValueRef::ComplexVariable<PlanetEnvironment>>(
+                    "PlanetEnvironmentForSpecies",
+                    boost::make_unique<ValueRef::Variable<int>>(ValueRef::SOURCE_REFERENCE, "ID"),
+                    nullptr,
+                    nullptr,
+                    boost::make_unique<ValueRef::Constant<std::string>>(species_name))));
+    }
+
     template <typename T>
     std::unique_ptr<ValueRef::Variable<std::string>> UserStringCastedValueRef(
         const std::string& token)
@@ -254,8 +267,8 @@ namespace {
             col_types[{UserStringNop("PLANET_ENVIRONMENT"),         UserStringNop("PLANETS_SUBMENU")}]= UserStringCastedValueRef<PlanetEnvironment>("PlanetEnvironment");
             col_types[{UserStringNop("SUPPLY_RANGE"),               UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<double>("PropagatedSupplyRange");
             col_types[{UserStringNop("AVAILABLE_FOCI"),             UserStringNop("PLANETS_SUBMENU")}]= UserStringVecValueRef("AvailableFoci");
-            col_types[{UserStringNop("LAST_TURN_CONQUERED"),        UserStringNop("PLANETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnConquered");
-            col_types[{UserStringNop("LAST_TURN_ATTACKED_BY_SHIP"), UserStringNop("PLANETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnAttackedByShip");
+            col_types[{UserStringNop("LAST_TURN_CONQUERED"),        UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<int>("LastTurnConquered");
+            col_types[{UserStringNop("LAST_TURN_ATTACKED_BY_SHIP"), UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<int>("LastTurnAttackedByShip");
 
             // ship/fleet
             col_types[{UserStringNop("SPECIES"),                    UserStringNop("FLEETS_SUBMENU")}] = ObjectTypeFilteredRef<std::string>({OBJ_PLANET, OBJ_SHIP}, UserStringValueRef("Species"));
@@ -272,6 +285,11 @@ namespace {
             col_types[{UserStringNop("PARTS"),                      UserStringNop("FLEETS_SUBMENU")}] = UserStringVecValueRef("Parts");
             col_types[{UserStringNop("ATTACK"),                     UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<double>("Attack");
 
+            // planet environments species
+            for (const auto& entry : GetSpeciesManager())
+                col_types[{entry.first,                             UserStringNop("PLANET_ENVIRONMENTS_SUBMENU")}] = PlanetEnvForSpecies(entry.first);
+
+            // all meters
             for (MeterType meter = MeterType(0); meter <= METER_SPEED;  // the meter(s) after METER_SPEED are part-specific
                  meter = MeterType(meter + 1))
             {
@@ -298,7 +316,7 @@ namespace {
         return ClientUI::Pts()*10;
     }
 
-    /** unused function.  Kept because it will be useful if some make persistent column widths
+    /** unused function.  Kept because it will be useful for making persistent column widths
     void SetColumnWidth(int column, int width) {
         if (column < 0)
             return;
@@ -373,7 +391,7 @@ namespace {
     template <class enumT>
     std::unique_ptr<ValueRef::ValueRefBase<enumT>> CopyEnumValueRef(const ValueRef::ValueRefBase<enumT>* const value_ref) {
         if (auto constant = dynamic_cast<const ValueRef::Constant<enumT>*>(value_ref))
-        { return boost::make_unique<ValueRef::Constant<enumT>>(constant->Value()); }
+            return boost::make_unique<ValueRef::Constant<enumT>>(constant->Value());
         return boost::make_unique<ValueRef::Constant<enumT>>(enumT(-1));
     }
 
@@ -1726,9 +1744,27 @@ private:
         };
         popup->AddMenuItem(GG::MenuItem("", false, current_column_type.empty(), empty_col_action));
 
-        GG::MenuItem meters_submenu(UserString("METERS_SUBMENU"),   false, false);
-        GG::MenuItem planets_submenu(UserString("PLANETS_SUBMENU"), false, false);
-        GG::MenuItem fleets_submenu(UserString("FLEETS_SUBMENU"),   false, false);
+        GG::MenuItem meters_submenu(UserString("METERS_SUBMENU"),           false, false);
+        GG::MenuItem planets_submenu(UserString("PLANETS_SUBMENU"),         false, false);
+        GG::MenuItem env_submenu(UserString("PLANET_ENVIRONMENTS_SUBMENU"), false, false);
+        GG::MenuItem fleets_submenu(UserString("FLEETS_SUBMENU"),           false, false);
+
+        for (const auto& entry : available_column_types) {
+            const auto& new_column_type = entry.first.first;
+            bool check = (current_column_type == new_column_type);
+            const std::string& menu_label = UserString(new_column_type);
+
+            auto col_action = [this, column_id, new_column_type]() {
+                // set clicked column to show the selected column type info
+                SetColumnName(column_id, new_column_type);
+                ColumnsChangedSignal();
+            };
+
+            if (entry.first.second == "PLANET_ENVIRONMENTS_SUBMENU")
+                env_submenu.next_level.push_back(
+                    GG::MenuItem(menu_label,  false, check, col_action));
+        }
+        planets_submenu.next_level.push_back(std::move(env_submenu));
 
         for (const auto& entry : available_column_types) {
             const auto& new_column_type = entry.first.first;
