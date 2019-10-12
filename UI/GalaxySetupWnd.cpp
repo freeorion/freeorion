@@ -1091,9 +1091,8 @@ void GalaxySetupWnd::Render() {
 }
 
 void GalaxySetupWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
-    if (!m_ok->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) // Same behaviour as if "OK" was pressed
-        OkClicked();
-    else if (key == GG::GGK_ESCAPE) // Same behaviour as if "Cancel" was pressed
+    // Enter is no longer accepted as OK as it could clash with ALT-Enter
+    if (key == GG::GGK_ESCAPE) // Same behaviour as if "Cancel" was pressed
         CancelClicked();
 }
 
