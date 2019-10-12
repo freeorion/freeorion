@@ -1396,7 +1396,25 @@ PlanetType ComplexVariable<PlanetType>::Eval(const ScriptingContext& context) co
 
 template <>
 PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
-{ return INVALID_PLANET_ENVIRONMENT; }
+{
+    const std::string& variable_name = m_property_name.back();
+
+    if (variable_name == "PlanetEnvironmentForSpecies") {
+        int planet_id = INVALID_OBJECT_ID;
+        if (m_int_ref1)
+            planet_id = m_int_ref1->Eval(context);
+        const auto planet = GetPlanet(planet_id);
+        if (!planet)
+            return INVALID_PLANET_ENVIRONMENT;
+
+        std::string species_name;
+        if (m_string_ref1)
+            species_name = m_string_ref1->Eval(context);
+        return planet->EnvironmentForSpecies(species_name);
+    }
+
+    return INVALID_PLANET_ENVIRONMENT;
+}
 
 template <>
 UniverseObjectType ComplexVariable<UniverseObjectType>::Eval(const ScriptingContext& context) const
