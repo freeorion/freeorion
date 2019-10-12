@@ -1760,23 +1760,6 @@ private:
                 ColumnsChangedSignal();
             };
 
-            if (entry.first.second == "PLANET_ENVIRONMENTS_SUBMENU")
-                env_submenu.next_level.push_back(
-                    GG::MenuItem(menu_label,  false, check, col_action));
-        }
-        planets_submenu.next_level.push_back(std::move(env_submenu));
-
-        for (const auto& entry : available_column_types) {
-            const auto& new_column_type = entry.first.first;
-            bool check = (current_column_type == new_column_type);
-            const std::string& menu_label = UserString(new_column_type);
-
-            auto col_action = [this, column_id, new_column_type]() {
-                // set clicked column to show the selected column type info
-                SetColumnName(column_id, new_column_type);
-                ColumnsChangedSignal();
-            };
-
             // put meters into root or submenus...
             if (entry.first.second.empty())
                 popup->AddMenuItem(GG::MenuItem(menu_label, false, check, col_action));
@@ -1786,6 +1769,9 @@ private:
             else if (entry.first.second == "PLANETS_SUBMENU")
                 planets_submenu.next_level.push_back(
                     GG::MenuItem(menu_label, false, check, col_action));
+            else if (entry.first.second == "PLANET_ENVIRONMENTS_SUBMENU")
+                env_submenu.next_level.push_back(
+                    GG::MenuItem(menu_label,  false, check, col_action));
             else if (entry.first.second == "FLEETS_SUBMENU")
                 fleets_submenu.next_level.push_back(
                     GG::MenuItem(menu_label,  false, check, col_action));
@@ -1793,6 +1779,7 @@ private:
         }
         popup->AddMenuItem(std::move(meters_submenu));
         popup->AddMenuItem(std::move(planets_submenu));
+        popup->AddMenuItem(std::move(env_submenu));
         popup->AddMenuItem(std::move(fleets_submenu));
 
         popup->Run();
