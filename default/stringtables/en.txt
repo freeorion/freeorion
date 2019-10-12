@@ -3477,8 +3477,9 @@ PL_TYPE_SIZE
 # %1% the planet size as text (small, medium, large, ...).
 # %2% type of the planet environment (desert, oceanic, terran, ...).
 # %3% suitability of the planet for a concrete species (adequate, hostile, ...).
+# %4% species name for which suitability applies (Human, Trith, ...).
 PL_TYPE_SIZE_ENV
-%1% %2% (%3%)
+%1% %2% (%4%: %3%)
 
 PL_NO_VISIBILITY
 Planet is not currently visible.

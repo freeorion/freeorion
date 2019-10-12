@@ -1665,7 +1665,8 @@ void SidePanel::PlanetPanel::Refresh() {
         env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
                                        % GetPlanetSizeName(planet)
                                        % GetPlanetTypeName(planet)
-                                       % GetPlanetEnvironmentName(planet, species_name));
+                                       % GetPlanetEnvironmentName(planet, species_name)
+                                       % UserString(species_name));
 
 
     if (Disabled() || !(can_colonize || being_colonized || invadable || being_invaded)) {
