@@ -1740,8 +1740,20 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
             // if a string specified, get just that entry (for single empire, or
             // summed for all empires)
-            return GetIntEmpirePropertySingleKey(empire_id, variable_name,
-                                                 key_string);
+            if (variable_name != "TurnTechResearched") {
+                return GetIntEmpirePropertySingleKey(empire_id, variable_name,
+                                                     key_string);
+            } else {
+                // special case for techs: make unresearched-tech's research-turn a big number
+                if (const auto* empire = GetEmpire(empire_id)) {
+                    if (empire->TechResearched(key_string))
+                        return GetIntEmpirePropertySingleKey(empire_id, variable_name,
+                                                             key_string);
+                    return IMPOSSIBLY_LARGE_TURN;
+                }
+                return GetIntEmpirePropertySingleKey(empire_id, variable_name,
+                                                     key_string);
+            }
         }
 
         // if no string specified, get sum of all entries (for single empire
