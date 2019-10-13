@@ -3742,9 +3742,10 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
         if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
             auto ungift_action = [fleet]() {
-                for (const auto& id_and_order : HumanClientApp::GetApp()->Orders()) {
-                    if (std::shared_ptr<GiveObjectToEmpireOrder> order =
-                        std::dynamic_pointer_cast<GiveObjectToEmpireOrder>(id_and_order.second))
+                const OrderSet orders = HumanClientApp::GetApp()->Orders();
+                for (const auto& id_and_order : orders) {
+                    if (auto order = std::dynamic_pointer_cast<
+                        GiveObjectToEmpireOrder>(id_and_order.second))
                     {
                         if (order->ObjectID() == fleet->ID()) {
                             HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
