@@ -3471,14 +3471,15 @@ Annuler bombardement
 
 # %1% the planet size as text (small, medium, large, ...).
 # %2% type of the planet environment (desert, oceanic, terran, ...).
-#PL_TYPE_SIZE
-#%1% %2%
+PL_TYPE_SIZE
+%1% %2%
 
 # %1% the planet size as text (small, medium, large, ...).
 # %2% type of the planet environment (desert, oceanic, terran, ...).
 # %3% suitability of the planet for a concrete species (adequate, hostile, ...).
-#PL_TYPE_SIZE_ENV
-#%1% %2% (%3%)
+# %4% species name for which suitability applies (Human, Trith, ...).
+PL_TYPE_SIZE_ENV
+%1% %2% (%4%: %3%)
 
 PL_NO_VISIBILITY
 La planète n'est pas visible actuellement.
@@ -6223,6 +6224,17 @@ MESSAGES_PEACE_TREATY
 MESSAGES_ALLIANCE
 %1% et %2% ont forgé une alliance.
 
+MESSAGES_HELP_COMMAND
+'''/pedia [article]: ouvre l'article spécifié dans l'Encyclopédie
+/pm [player] [message]: envoie un message privé au joueur spécifié
+/zoom [object]: zoome sur l'objet spécifié (système, planète, astronef, flotte ou structure)
+'''
+
+MESSAGES_WHISPER
+(Chuchotements)
+
+MESSAGES_INVALID
+Joueur invalide ou aucun message saisi.
 
 ##
 ## Players list
@@ -6267,6 +6279,9 @@ Planètes
 
 FLEETS_SUBMENU
 Flotte / Astronefs
+
+PLANET_ENVIRONMENTS_SUBMENU
+Environnement pour l'espèce
 
 #ID
 #ID
@@ -6572,6 +6587,12 @@ La technologie %tech% a été assimilée.
 SITREP_TECH_RESEARCHED_LABEL
 Technologie assimilée
 
+SITREP_EMPIRE_TECH_RESEARCHED_DETECTION
+La [[encyclopedia DETECTION_TITLE]] de %empire% a été améliorée à %rawtext:dstrength%
+
+SITREP_EMPIRE_TECH_RESEARCHED_DETECTION_LABEL
+Amélioration technologique Détection impériale
+
 SITREP_TECH_UNLOCKED
 La technologie %tech% a été débloquée et peut désormais être assimilée grâce à la Recherche.
 
@@ -6595,6 +6616,12 @@ La structure %buildingtype% a été débloquée et peut désormais être constru
 
 SITREP_BUILDING_TYPE_UNLOCKED_LABEL
 Structure débloquée
+
+SITREP_WEAPONS_UPGRADED
+Tous les armements %shippart% des astronefs à portée d'approvisionnement ont été améliorés par la technologie %tech%. Les armements améliorés infligent des dommages supplémentaires de %rawtext:dam% par tir.
+
+SITREP_WEAPONS_UPGRADED_LABEL
+Amélioration technologique Armement
 
 SITREP_COMBAT_SYSTEM
 Dans %system% : un %combat% a eu lieu.
