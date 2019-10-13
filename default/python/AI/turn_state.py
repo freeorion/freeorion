@@ -1,6 +1,5 @@
 from collections import namedtuple
-from logging import warn
-
+from logging import warn, error
 from freeorion_tools import ReadOnlyDict
 
 import freeOrionAIInterface as fo
@@ -105,6 +104,10 @@ class State(object):
 
         enemies = [fo.getEmpire(_id) for _id in fo.allEmpireIDs() if _id != fo.empireID()]
         for enemy in enemies:
+            if enemy is None:
+                error('Got None for enemy empire!')
+                continue
+
             for sys_id, supply_val in enemy.supplyProjections().items():
                 self.__distance_to_enemy_supply[sys_id] = min(
                     self.get_distance_to_enemy_supply(sys_id), -supply_val)
