@@ -41,9 +41,9 @@ public:
                                const std::chrono::nanoseconds& duration)
     {
         ss << std::setw(8) << std::right;
-        if (duration >= std::chrono::milliseconds(10))
+        if (duration >= std::chrono::milliseconds(2))
             ss << std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() << " ms";
-        else if (duration >= std::chrono::microseconds(10))
+        else if (duration >= std::chrono::microseconds(2))
             ss << std::chrono::duration_cast<std::chrono::microseconds>(duration).count() << " µs";
         else
             ss << std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count() << " ns";
