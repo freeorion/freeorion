@@ -103,10 +103,13 @@ namespace AIInterface {
         return ALL_EMPIRES; // default invalid value
     }
 
-    std::vector<int>  AllEmpireIDs() {
+    std::vector<int> AllEmpireIDs() {
         std::vector<int> empire_ids;
-        for (auto& entry : AIClientApp::GetApp()->Players())
-            empire_ids.push_back(entry.second.empire_id);
+        for (auto& entry : AIClientApp::GetApp()->Players()) {
+            auto empire_id = entry.second.empire_id;
+            if (empire_id != ALL_EMPIRES)
+                empire_ids.push_back(empire_id);
+        }
         return empire_ids;
     }
 
