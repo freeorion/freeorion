@@ -322,7 +322,8 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
                          const Networking::AuthRoles& roles);
     void TurnTimedoutHandler(const boost::system::error_code& error);
 
-    boost::asio::deadline_timer m_turn_timeout;
+    boost::asio::deadline_timer                     m_turn_timeout;
+    std::chrono::high_resolution_clock::time_point  m_start;
 
     SERVER_ACCESSOR
 };
@@ -351,8 +352,9 @@ struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame> {
 
     void SaveTimedoutHandler(const boost::system::error_code& error);
 
-    std::string                        m_save_filename;
-    boost::asio::high_resolution_timer m_timeout;
+    std::string                                     m_save_filename;
+    boost::asio::high_resolution_timer              m_timeout;
+    std::chrono::high_resolution_clock::time_point  m_start;
 
     SERVER_ACCESSOR
 };
@@ -378,6 +380,8 @@ struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame> {
 
     sc::result react(const ProcessTurn& u);
     sc::result react(const CheckTurnEndConditions& c);
+
+    std::chrono::high_resolution_clock::time_point m_start;
 
     SERVER_ACCESSOR
 };

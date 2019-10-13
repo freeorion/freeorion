@@ -2499,7 +2499,8 @@ sc::result WaitingForMPGameJoiners::react(const Error& msg) {
 ////////////////////////////////////////////////////////////
 PlayingGame::PlayingGame(my_context c) :
     my_base(c),
-    m_turn_timeout(Server().m_io_context)
+    m_turn_timeout(Server().m_io_context),
+    m_start(std::chrono::high_resolution_clock::now())
 {
     TraceLogger(FSM) << "(ServerFSM) PlayingGame";
 
@@ -2526,8 +2527,10 @@ PlayingGame::PlayingGame(my_context c) :
     }
 }
 
-PlayingGame::~PlayingGame()
-{
+PlayingGame::~PlayingGame() {
+    auto duration = std::chrono::high_resolution_clock::now() - m_start;
+    DebugLogger(FSM) << "PlayingGame time: " << std::chrono::duration_cast<std::chrono::seconds>(duration).count() << " s";
+
     TraceLogger(FSM) << "(ServerFSM) ~PlayingGame";
     m_turn_timeout.cancel();
 }
@@ -2914,7 +2917,8 @@ void PlayingGame::TurnTimedoutHandler(const boost::system::error_code& error) {
 ////////////////////////////////////////////////////////////
 WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
     my_base(c),
-    m_timeout(Server().m_io_context)
+    m_timeout(Server().m_io_context),
+    m_start(std::chrono::high_resolution_clock::now())
 {
     TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd";
     if (GetOptionsDB().Get<int>("save.auto.interval") > 0) {
@@ -2950,6 +2954,9 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
 }
 
 WaitingForTurnEnd::~WaitingForTurnEnd() {
+    auto duration = std::chrono::high_resolution_clock::now() - m_start;
+    DebugLogger(FSM) << "WaitingForTurnEnd time: " << std::chrono::duration_cast<std::chrono::seconds>(duration).count() << " s";
+
     TraceLogger(FSM) << "(ServerFSM) ~WaitingForTurnEnd";
     m_timeout.cancel();
 }
@@ -3294,8 +3301,14 @@ void WaitingForTurnEnd::SaveTimedoutHandler(const boost::system::error_code& err
 // ProcessingTurn
 ////////////////////////////////////////////////////////////
 ProcessingTurn::ProcessingTurn(my_context c) :
-    my_base(c)
-{ TraceLogger(FSM) << "(ServerFSM) ProcessingTurn"; }
+    my_base(c),
+    m_start(std::chrono::high_resolution_clock::now())
+{
+    auto duration = std::chrono::high_resolution_clock::now() - m_start;
+    DebugLogger(FSM) << "ProcessingTurn time: " << std::chrono::duration_cast<std::chrono::seconds>(duration).count() << " s";
+
+    TraceLogger(FSM) << "(ServerFSM) ProcessingTurn";
+}
 
 ProcessingTurn::~ProcessingTurn()
 { TraceLogger(FSM) << "(ServerFSM) ~ProcessingTurn"; }
