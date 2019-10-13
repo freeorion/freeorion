@@ -53,4 +53,4 @@ FieldType
             effects = Destroy
 
     ]
-    graphic = "fields/rainbow_storm.png"
+    graphic = "fields/ion_storm.png"
