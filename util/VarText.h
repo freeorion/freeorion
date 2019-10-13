@@ -180,7 +180,7 @@ protected:
 
     //! If true the #m_template_string will be looked up in the stringtable
     //! prior to substitution for variables.
-    bool m_stringtable_lookup_flag;
+    bool m_stringtable_lookup_flag = false;
 
     //! Maps variable tags into values, which are used during text substitution.
     std::map<std::string, std::string> m_variables;

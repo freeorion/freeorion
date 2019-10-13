@@ -237,8 +237,7 @@ const std::string VarText::FIELD_TYPE_TAG = "fieldtype";
 const std::string VarText::METER_TYPE_TAG = "metertype";
 
 
-VarText::VarText() :
-    m_stringtable_lookup_flag(false)
+VarText::VarText()
 {}
 
 VarText::VarText(const std::string& template_string, bool stringtable_lookup/* = true*/) :
