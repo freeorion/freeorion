@@ -154,7 +154,7 @@ void PythonAI::GenerateOrders() {
         ErrorLogger() << "PythonAI::GenerateOrders : Python error caught.  Partial orders sent to server";
     }
     AIInterface::DoneTurn();
-    DebugLogger() << "PythonAI::GenerateOrders order generating time: " << (order_timer.elapsed() * 1000.0);
+    DebugLogger() << "PythonAI::GenerateOrders order generating time: " << (order_timer.elapsed() * 1000.0) << " ms";
 }
 
 void PythonAI::HandleChatMessage(int sender_id, const std::string& msg) {
