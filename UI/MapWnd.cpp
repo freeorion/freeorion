@@ -2714,6 +2714,7 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
     // and is not a moderator
     HumanClientApp* app = HumanClientApp::GetApp();
     bool moderator = false;
+    bool observer = false;
     m_btn_turn->Disable(HumanClientApp::GetApp()->SinglePlayerGame() && !enable);
     if (!app) {
         enable = false;
@@ -2725,14 +2726,21 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
             enable = false;
             m_btn_turn->Disable(true);
         }
+        observer = (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER);
     }
 
     m_moderator_wnd->EnableActions(enable && moderator);
     m_ready_turn = !enable;
-    m_btn_turn->SetText(boost::io::str(FlexibleFormat(m_ready_turn && !HumanClientApp::GetApp()->SinglePlayerGame() ?
-                                                      UserString("MAP_BTN_TURN_UNREADY") :
-                                                      UserString("MAP_BTN_TURN_UPDATE")) %
-                                       std::to_string(CurrentTurn())));
+
+    std::string button_label;
+    if (!moderator && !observer && m_ready_turn && !HumanClientApp::GetApp()->SinglePlayerGame()) {
+        // multiplayer game with a participating player who has sent orders
+        button_label = UserString("MAP_BTN_TURN_UNREADY");
+    } else {
+        button_label = UserString("MAP_BTN_TURN_UPDATE");
+    }
+
+    m_btn_turn->SetText(boost::io::str(FlexibleFormat(button_label) % std::to_string(CurrentTurn())));
     m_side_panel->EnableOrderIssuing(enable);
     m_production_wnd->EnableOrderIssuing(enable);
     m_research_wnd->EnableOrderIssuing(enable);
