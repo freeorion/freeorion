@@ -58,7 +58,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         GetOptionsDB().Add<int>("network.server.ai.max", UserStringNop("OPTIONS_DB_MP_AI_MAX"), -1);
         GetOptionsDB().Add<int>("network.server.human.min", UserStringNop("OPTIONS_DB_MP_HUMAN_MIN"), 0);
         GetOptionsDB().Add<int>("network.server.human.max", UserStringNop("OPTIONS_DB_MP_HUMAN_MAX"), -1);
-        GetOptionsDB().Add<int>("network.server.conn-human-empire-players.min", UserStringNop("OPTIONS_DB_MP_CONN_HUMAN_MIN"), 1);
+        GetOptionsDB().Add<int>("network.server.conn-human-empire-players.min", UserStringNop("OPTIONS_DB_MP_CONN_HUMAN_MIN"), 0);
         GetOptionsDB().Add<int>("network.server.unconn-human-empire-players.max", UserStringNop("OPTIONS_DB_MP_UNCONN_HUMAN_MAX"), 1);
         GetOptionsDB().Add<int>("network.server.cookies.expire-minutes", UserStringNop("OPTIONS_DB_COOKIES_EXPIRE"), 15);
         GetOptionsDB().Add<bool>("network.server.publish-statistics", UserStringNop("OPTIONS_DB_PUBLISH_STATISTICS"), true);
