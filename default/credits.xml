@@ -3,7 +3,6 @@
   <CREDITS>
     <GROUP name="LEAD">
       <PERSON name="Geoff Topping"            nick="Geoff the Medio"  task="Programming, Design"/>
-      <PERSON name=""                         nick="Dilvish"          task="Programming, Design"/>
       <PERSON name=""                         nick="Vezzra"           task="Release Management, Design"/>
     </GROUP>
     <GROUP name="LEAD EMERITUS">
@@ -15,6 +14,7 @@
       <PERSON name="Anton Ruonala"            nick="Miu"              task="Graphics"/>
       <PERSON name="Jonathan Hill"            nick="Obiwan"           task="Graphics"/>
       <PERSON name="Kenneth Welch"            nick="LithiumMongoose"  task="Audio"/>
+      <PERSON name=""                         nick="Dilvish"          task="Programming, Design"/>
     </GROUP>
     <GROUP name="PROGRAMMING">
       <PERSON name="Joseph Bissonnette"       nick="Oceanmachine"     task="Programming, Game Design"/>
@@ -70,6 +70,7 @@
       <PERSON name="Ingo Schwarze"            nick="ischwarze"        task="Programming"/>
       <PERSON name=""                         nick="agrrr3"           task="Programming"/>
       <PERSON name=""                         nick="OlafPettersson"   task="Programming"/>
+      <PERSON name=""                         nick="swaqvalley"       task="Programming"/>
     </GROUP>
     <GROUP name="GAMEDESIGN and CONTENT">
       <PERSON name="Krum Stanoev"             nick=""                 task="Game Design"/>
@@ -116,6 +117,7 @@
       <PERSON name="Viktor Hahn"              nick="Unnamed"          task="Graphics"/>
       <PERSON name="Fabian Hernandez"         nick="coCoKNIght"       task="Graphics"/>
       <PERSON name="Holger Motz"              nick="Captain M"        task="Graphics"/>
+      <PERSON name="Daria Sharonova"          nick="Bestary"          task="Graphics, Russian Translation"/>
     </GROUP>
     <GROUP name="AUDIO">
       <PERSON name="Scott R. Looney"          nick="metaphysician"    task="Audio"/>
@@ -144,7 +146,6 @@
       <PERSON name="Stefano Peris"            nick="LordStephen77"    task="Italian Translation"/>
       <PERSON name=""                         nick="nikqz"            task="Russian Translation"/>
       <PERSON name="Iaroslav Gridin"          nick="Voker57"          task="Russian Translation"/>
-      <PERSON name="Daria Sharonova"          nick="Bestary"          task="Russian Translation"/>
     </GROUP>
     <GROUP name="EXTERNAL RESOURCES">
       <RESOURCE author="Adam Evans"  license="CC-BY 2.0"  title="Andromeda Galaxy (with h-alpha).jpg"
