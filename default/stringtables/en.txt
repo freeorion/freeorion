@@ -2579,6 +2579,9 @@ The Save Game button is disabled, either because this is a multiplayer game in w
 GAME_MENU_REALLY_CONCEDE
 Confirm conceding? This empire will be removed from the game.
 
+GAME_MENU_CONFIRM_NOT_READY
+Confirm quit? Orders not finalized.
+
 
 ##
 ## Save game dialog

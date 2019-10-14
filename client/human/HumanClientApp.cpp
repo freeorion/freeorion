@@ -1436,13 +1436,31 @@ void HumanClientApp::ExitSDL(int exit_code)
 { SDLGUI::ExitApp(exit_code); }
 
 void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_code /* = 0*/) {
+    if (m_exit_handled) return;
+    m_exit_handled = true;
     DebugLogger() << (reset ? "HumanClientApp::ResetToIntro" : "HumanClientApp::ExitApp");
 
     auto was_playing = m_game_started;
     m_game_started = false;
 
-    // Only save if not exiting due to an error.
+    // Only save or allow user to cancel if not exiting due to an error.
     if (!skip_savegame) {
+        // Check if this is a multiplayer game and the player has not set status to ready
+        if (was_playing && !m_single_player_game && m_empire_status[m_empire_id] != Message::WAITING) {
+            std::shared_ptr<GG::Font> font = ClientUI::GetFont();
+            auto prompt = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(
+                GG::X(275), GG::Y(75), UserString("GAME_MENU_CONFIRM_NOT_READY"), font,
+                ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::CtrlColor(), ClientUI::TextColor(),
+                2, UserString("YES"), UserString("CANCEL"));
+            prompt->Run();
+            if (prompt->Result() != 0) {
+                // User aborted exit/resign, reset variables
+                m_game_started = was_playing;
+                m_exit_handled = false;
+                return;
+            }
+        }
+
         if (was_playing && GetOptionsDB().Get<bool>("save.auto.exit.enabled"))
             Autosave();
 
@@ -1480,6 +1498,8 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_cod
         after_server_shutdown_action = std::bind(&HumanClientApp::ExitSDL, this, exit_code);
 
     m_fsm->process_event(StartQuittingGame(m_server_process, std::move(after_server_shutdown_action)));
+    
+    m_exit_handled = false;
 }
 
 void HumanClientApp::InitAutoTurns(int auto_turns) {

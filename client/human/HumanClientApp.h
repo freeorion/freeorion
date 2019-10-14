@@ -180,6 +180,7 @@ private:
 
     bool m_single_player_game = true;   ///< true when this game is a single-player game
     bool m_game_started = false;        ///< true when a game is currently in progress
+    bool m_exit_handled = false;        ///< true when the exit logic is already being handled
     bool m_connected = false;           ///< true if we are in a state in which we are supposed to be connected to the server
     int  m_auto_turns = 0;              ///< auto turn counter
     bool m_have_window_focus = true;
