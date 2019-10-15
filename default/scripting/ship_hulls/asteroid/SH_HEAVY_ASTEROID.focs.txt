@@ -2,7 +2,7 @@ Hull
     name = "SH_HEAVY_ASTEROID"
     description = "SH_HEAVY_ASTEROID_DESC"
     speed = 60
-    fuel = 2
+    fuel = 1.2
     stealth = 5
     structure = 50
     slots = [

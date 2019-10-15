@@ -173,19 +173,19 @@ AVERAGE_BASE_FUEL_REGEN
 '''
 
 GREAT_FUEL_EFFICIENCY
-'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(GREAT,Value * 4)]]
+'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(GREAT, 4)]]
 '''
 
 GOOD_FUEL_EFFICIENCY
-'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(GOOD,Value * 2)]]
+'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(GOOD, 2)]]
 '''
 
 AVERAGE_FUEL_EFFICIENCY
-'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(AVERAGE,Value * 1)]]
+'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(AVERAGE, 1)]]
 '''
 
 BAD_FUEL_EFFICIENCY
-'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(BAD,Value * 0.6)]]
+'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(BAD, 0.6)]]
 '''
 
 HULL_FUEL_EFFICIENCY_EFFECTSGROUP
@@ -197,7 +197,7 @@ HULL_FUEL_EFFICIENCY_EFFECTSGROUP
             ]
             accountinglabel = "@1@_FUEL_EFFICIENCY_LABEL"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetMaxFuel value = @2@ * Statistic If Condition = And [ Object id = Source.ID HasTag name = "@1@_FUEL_EFFICIENCY" ]
+            effects = SetMaxFuel value = ((Value - HullFuel name = ThisHull) * @2@ + HullFuel name = ThisHull ) * Statistic If Condition = And [ Object id = Source.ID HasTag name = "@1@_FUEL_EFFICIENCY" ]
 
      // If a ship has less than one maximum fuel it will never be able to travel out of supply so refueling does not make sense.
      // In order to communicate that and to prevent wrong refuel sitreps, we set the maximum fuel for that case to zero
