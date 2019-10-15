@@ -3241,7 +3241,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
                 continue;
 
             DiplomaticStatus status = Empires().GetDiplomaticStatus(recipient_id, empire_id.first);
-            if (status == DIPLO_PEACE)
+            if (status >= DIPLO_PEACE)
                 recipient_empire_ids.insert(empire_id.first);
         }
         break;
@@ -3507,7 +3507,7 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
                 continue;
 
             DiplomaticStatus status = Empires().GetDiplomaticStatus(empire_id, empire_entry.first);
-            if (status == DIPLO_PEACE)
+            if (status >= DIPLO_PEACE)
                 empire_ids.insert(empire_entry.first);
         }
         break;

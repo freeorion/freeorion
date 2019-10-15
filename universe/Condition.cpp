@@ -1193,7 +1193,7 @@ namespace {
                 if (m_empire_id == candidate->Owner())
                     return false;
                 DiplomaticStatus status = Empires().GetDiplomaticStatus(m_empire_id, candidate->Owner());
-                return (status == DIPLO_PEACE);
+                return (status >= DIPLO_PEACE);
                 break;
             }
 
