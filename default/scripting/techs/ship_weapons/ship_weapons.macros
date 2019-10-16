@@ -40,7 +40,7 @@ WEAPON_UPGRADE_CAPACITY_EFFECTS
             effects = GenerateSitRepMessage
               message = "SITREP_WEAPONS_UPGRADED"
               label = "SITREP_WEAPONS_UPGRADED_LABEL"
-              icon = "icons/tech/categories/ship_weapons.png"
+              icon = "icons/sitrep/weapon_upgrade.png"
               parameters = [
                   tag = "empire"    data = Source.Owner
                   tag = "shippart"  data = "@1@"

@@ -121,7 +121,7 @@ EffectsGroup
         GenerateSitRepMessage
             message = "SITREP_EMPIRE_TECH_RESEARCHED_DETECTION"
             label = "SITREP_EMPIRE_TECH_RESEARCHED_DETECTION_LABEL"
-            icon = "icons/tech/active_radar.png"
+            icon = "icons/meter/detection.png"
             parameters = [
                 tag = "empire"    data = Source.Owner
                 tag = "dstrength" data = EmpireMeterValue empire = Source.Owner meter = "METER_DETECTION_STRENGTH"
