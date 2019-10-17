@@ -1,7 +1,7 @@
 #include "Directories.h"
 
 #include "OptionsDB.h"
-
+#include "i18n.h"
 #include <GG/utf8/checked.h>
 #include "../universe/Enums.h"
 
@@ -532,9 +532,22 @@ fs::path FilenameToPath(const std::string& path_str)
 std::string FilenameTimestamp() {
     boost::posix_time::time_facet* facet = new boost::posix_time::time_facet("%Y%m%d_%H%M%S");
     std::stringstream date_stream;
-    date_stream.imbue(std::locale(date_stream.getloc(), facet));
+
+    date_stream.imbue(std::locale(date_stream.getloc(), facet));// alternate locales: GetLocale("en_US.UTF-8") or GetLocale("ja_JA.UTF-8") or date_stream.getloc()
     date_stream << boost::posix_time::microsec_clock::local_time();
-    return date_stream.str();
+    std::string retval = date_stream.str();
+    TraceLogger() << "Filename initial timestamp: " << retval << " is valid utf8?: " << utf8::is_valid(retval.begin(), retval.end());
+
+    // replace spaces and colons with safer chars for filenames
+    std::replace(retval.begin(), retval.end(), ' ', '_');
+    std::replace(retval.begin(), retval.end(), ':', '-');
+
+    // filter non-filename-safe characters that are valid single-byte UTF-8 characters, in case the default locale for this system has weird chars in the time-date format
+    auto do_remove = [](char c) -> bool { return !std::isalnum(c) && c <= 127 && c != '_' && c != '-'; };
+    retval.erase(std::remove_if(retval.begin(), retval.end(), do_remove), retval.end());
+    TraceLogger() << "Filename filtered timestamp: " << retval << " is valid utf8?: " << utf8::is_valid(retval.begin(), retval.end());
+
+    return retval;
 }
 
 /**  \brief Return a vector of absolute paths to files in the given path
