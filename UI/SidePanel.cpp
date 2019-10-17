@@ -1196,6 +1196,8 @@ namespace {
 
     /** Content tags that note if a Ship should be auto-selected for bombarding a Planet.
      *  These tags are determined from the TAG_BOMBARD_PREFIX tags of @a ship and potentially match those of a Planet.
+     *  For example, a planet might have a "ROBOTIC" tag because its species does, and if the ship has
+     *  the corresponding "CTRL_BOMBARD_ROBOTIC" tag, the ship would be auto-selected to bombard that planet.
      *  If the Ship contains the content tag defined in TAG_BOMBARD_ALWAYS, only that tag will be returned.
      */
     std::vector<std::string> BombardTagsForShip(std::shared_ptr<const Ship> ship) {
