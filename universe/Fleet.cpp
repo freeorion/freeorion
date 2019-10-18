@@ -793,7 +793,7 @@ void Fleet::MovementPhase() {
         supply_unobstructed_systems.insert(empire->SupplyUnobstructedSystems().begin(),
                                            empire->SupplyUnobstructedSystems().end());
 
-    std::vector<std::shared_ptr<Ship>> ships = Objects().FindObjects<Ship>(m_ships);
+    auto ships = Objects().FindObjects<Ship>(m_ships);
 
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
@@ -813,7 +813,11 @@ void Fleet::MovementPhase() {
          move_path.back().object_id != m_travel_route.back())
     {
         auto shortened_route = TruncateRouteToEndAtSystem(m_travel_route, Owner(), move_path.back().object_id);
-        SetRoute(shortened_route);
+        try {
+            SetRoute(shortened_route);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Caught exception in Fleet MovementPhase shorentning route: " << e.what();
+        }
         move_path = MovePath();
     }
 
@@ -1018,7 +1022,11 @@ void Fleet::CalculateRouteTo(int target_system_id) {
 
     //DebugLogger() << "Fleet::CalculateRoute";
     if (target_system_id == INVALID_OBJECT_ID) {
-        SetRoute(route);
+        try {
+            SetRoute(route);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Caught exception in Fleet CalculateRouteTo: " << e.what();
+        }
         return; 
     }
 
@@ -1027,7 +1035,11 @@ void Fleet::CalculateRouteTo(int target_system_id) {
 
         if (!GetSystem(target_system_id)) {
             // destination system doesn't exist or doesn't exist in known universe, so can't move to it.  leave route empty.
-            SetRoute(route);
+            try {
+                SetRoute(route);
+            } catch (const std::exception& e) {
+                ErrorLogger() << "Caught exception in Fleet CalculateRouteTo: " << e.what();
+            }
             return;
         }
 
@@ -1038,7 +1050,11 @@ void Fleet::CalculateRouteTo(int target_system_id) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                           << " fleet's previous: " << m_prev_system << " or moving to: " << target_system_id;
         }
-        SetRoute(path.first);
+        try {
+            SetRoute(path.first);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Caught exception in Fleet CalculateRouteTo: " << e.what();
+        }
         return;
     }
 
@@ -1113,11 +1129,15 @@ void Fleet::CalculateRouteTo(int target_system_id) {
         dist_y = obj->Y() - this->Y();
         double dist2 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
 
-        // pick whichever path is quicker
-        if (dist1 + path1.second < dist2 + path2.second) {
-            SetRoute(path1.first);
-        } else {
-            SetRoute(path2.first);
+        try {
+            // pick whichever path is quicker
+            if (dist1 + path1.second < dist2 + path2.second) {
+                SetRoute(path1.first);
+            } else {
+                SetRoute(path2.first);
+            }
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Caught exception in Fleet CalculateRouteTo: " << e.what();
         }
 
     } else {
@@ -1129,7 +1149,11 @@ void Fleet::CalculateRouteTo(int target_system_id) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                           << " fleet's next: " << m_next_system << " or destination: " << dest_system_id;
         }
-        SetRoute(path.first);
+        try {
+            SetRoute(path.first);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Caught exception in Fleet CalculateRouteTo: " << e.what();
+        }
     }
 }
 

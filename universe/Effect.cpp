@@ -141,7 +141,11 @@ namespace {
 
 
         // set fleet with newly recalculated route
-        fleet->SetRoute(route_pair.first);
+        try {
+            fleet->SetRoute(route_pair.first);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Caught exception updating fleet route in effect code: " << e.what();
+        }
     }
 
     std::string GenerateSystemName() {
@@ -2921,7 +2925,11 @@ void SetDestination::Execute(const ScriptingContext& context) const {
     if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_OUT_OF_RANGE)
         return;
 
-    target_fleet->SetRoute(route_list);
+    try {
+        target_fleet->SetRoute(route_list);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Caught exception in Effect::SetDestination setting fleet route: " << e.what();
+    }
 }
 
 std::string SetDestination::Dump(unsigned short ntabs) const
