@@ -121,7 +121,7 @@ void ResourceCenter::ClearFocus() {
 }
 
 void ResourceCenter::UpdateFocusHistory() {
-    DebugLogger() << "ResourceCenter::UpdateFocusHistory: focus: " << m_focus
+    TraceLogger() << "ResourceCenter::UpdateFocusHistory: focus: " << m_focus
                   << "  initial focus: " << m_focus_turn_initial
                   << "  turns since change initial: " << m_last_turn_focus_changed_turn_initial;
     if (m_focus != m_focus_turn_initial) {

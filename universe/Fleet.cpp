@@ -249,7 +249,15 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     float fuel =       Fuel();
     float max_fuel =   MaxFuel();
 
-    //DebugLogger() << "Fleet " << this->Name() << " movePath fuel: " << fuel << " sys id: " << this->SystemID();
+    auto RouteNums = [route]() {
+        std::stringstream ss;
+        for (int waypoint : route)
+            ss << waypoint << " ";
+        return ss.str();
+    };
+    TraceLogger() << "Fleet::MovePath for Fleet " << this->Name() << " (" << this->ID()
+                  << ") fuel: " << fuel << " at sys id: " << this->SystemID() << "  route: "
+                  << RouteNums();
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
     const Empire* empire = GetEmpire(this->Owner());
@@ -268,11 +276,6 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         return retval;      // can't move => path is just this system with explanatory ETA
     }
 
-    // blockade debug logging
-    TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << " ID(" << this->ID() <<") and route:";
-    for (int waypoint : route)
-        TraceLogger() << "Fleet::MovePath ... " << waypoint;
-    TraceLogger() << "Fleet::MovePath END of Route ";
 
     // get iterator pointing to std::shared_ptr<System> on route that is the first after where this fleet is currently.
     // if this fleet is in a system, the iterator will point to the system after the current in the route
@@ -289,21 +292,20 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     auto prev_system = GetSystem(this->PreviousSystemID()); // may be 0 if this fleet is not moving or ordered to move
     auto next_system = GetSystem(*route_it);                // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
     if (!next_system) {
-        ErrorLogger() << "Fleet::MovePath couldn't get next system with id " << *route_it << " for this fleet " << this->Name();
+        ErrorLogger() << "Fleet::MovePath couldn't get next system with id " << *route_it << " for fleet " << this->Name() << "(" << this->ID() << ")";
         return retval;
     }
 
-    TraceLogger() << "initial cur system: " << (cur_system ? cur_system->Name() : "(none)")
-                  << "  prev system: " << (prev_system ? prev_system->Name() : "(none)")
-                  << "  next system: " << (next_system ? next_system->Name() : "(none)");
+    TraceLogger() << "Initial cur system: " << (cur_system ? cur_system->Name() : "(none)") << "(" << (cur_system ? cur_system->ID() : -1) << ")"
+                  << "  prev system: " << (prev_system ? prev_system->Name() : "(none)") << "(" << (prev_system ? prev_system->ID() : -1) << ")"
+                  << "  next system: " << (next_system ? next_system->Name() : "(none)") << "(" << (next_system ? next_system->ID() : -1) << ")";
 
 
     bool is_post_blockade = false;
     if (cur_system) {
         //DebugLogger() << "Fleet::MovePath starting in system "<< SystemID();
-        if (flag_blockades)
-        {
-            if (BlockadedAtSystem(cur_system->ID(), next_system->ID())){
+        if (flag_blockades) {
+            if (BlockadedAtSystem(cur_system->ID(), next_system->ID())) {
                 // blockade debug logging
                 TraceLogger() << "Fleet::MovePath checking blockade from "<< cur_system->ID() << " to "<< next_system->ID();
                 TraceLogger() << "Fleet::MovePath finds system " <<cur_system->Name() << " (" <<cur_system->ID()
@@ -348,11 +350,10 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         // each loop iteration moves the current position to the next location of interest along the move
         // path, and then adds a node at that position.
 
-        //DebugLogger() << " starting iteration";
-        //if (cur_system)
-        //    DebugLogger() << "     at system " << cur_system->Name() << " with id " << cur_system->ID();
-        //else
-        //    DebugLogger() << "     at (" << cur_x << ", " << cur_y << ")";
+        if (cur_system)
+            TraceLogger() << "Starting iteration at system " << cur_system->Name() << " (" << cur_system->ID() << ")";
+        else
+            TraceLogger() << "Starting iteration at (" << cur_x << ", " << cur_y << ")";
 
         // Make sure that there actually still is a starlane between the two systems
         // we are between
@@ -366,8 +367,10 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         }
         if (prev_or_cur) {
             if (!prev_or_cur->HasStarlaneTo(next_system->ID())) {
-                DebugLogger() << "Fleet::MovePath: No starlane connection between systems " << prev_or_cur->ID() << " and " << next_system->ID()
-                                       << ". Abandoning the rest of the route.";
+                DebugLogger() << "Fleet::MovePath for Fleet " << this->Name() << " (" << this->ID()
+                              << ") No starlane connection between systems " << prev_or_cur->Name() << "(" << prev_or_cur->ID()
+                              << ")  and " << next_system->Name() << "(" << next_system->ID()
+                              << "). Abandoning the rest of the route. Route was: " << RouteNums();
                 return retval;
             }
         }
@@ -541,7 +544,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                         (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
                         (next_system ? next_system->ID() : INVALID_OBJECT_ID),
                         is_post_blockade);
-    //DebugLogger() << "Fleet::MovePath for fleet " << this->Name()<<" id "<<this->ID()<<" is complete";
+    TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << "(" << this->ID() << ") is complete";
 
     return retval;
 }
