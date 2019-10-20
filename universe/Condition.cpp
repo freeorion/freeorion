@@ -38,9 +38,9 @@ bool UserStringExists(const std::string& str);
 
 namespace {
     const std::string EMPTY_STRING;
-}
 
-namespace {
+    DeclareThreadSafeLogger(conditions);
+
     void AddAllObjectsSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingObjects().size());
         std::transform(Objects().ExistingObjects().begin(), Objects().ExistingObjects().end(),
@@ -7269,6 +7269,7 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
         && (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
+        TraceLogger(conditions) << "WithinDistance::Eval simple case";
 
         std::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
@@ -7282,6 +7283,7 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
         EvalImpl(matches, non_matches, search_domain, WithinDistanceSimpleMatch(subcondition_matches, distance));
     } else {
         // re-evaluate contained objects for each candidate object
+        TraceLogger(conditions) << "WithinDistance::Eval full case";
         ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
@@ -9545,6 +9547,17 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         }
     }
 
+    auto ObjList = [](auto objs) {
+        std::stringstream ss;
+        for (const auto& obj : objs)
+            ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
+        return ss.str();
+    };
+
+    TraceLogger(conditions) << "And::Eval searching " << (search_domain == MATCHES ? "matches" : "non_matches")
+                            << " with input matches (" << matches.size() << "): " << ObjList(matches)
+                            << " and input non_matches(" << non_matches.size() << "): " << ObjList(non_matches);
+
     if (search_domain == NON_MATCHES) {
         ObjectSet partly_checked_non_matches;
         partly_checked_non_matches.reserve(non_matches.size());
@@ -9552,11 +9565,15 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // move items in non_matches set that pass first operand condition into
         // partly_checked_non_matches set
         m_operands[0]->Eval(local_context, partly_checked_non_matches, non_matches, NON_MATCHES);
+        TraceLogger(conditions) << "Subcondition: " << m_operands[0]->Dump()
+                                <<"\npartly_checked_non_matches (" << partly_checked_non_matches.size() << "): " << ObjList(partly_checked_non_matches);
 
         // move items that don't pass one of the other conditions back to non_matches
         for (unsigned int i = 1; i < m_operands.size(); ++i) {
             if (partly_checked_non_matches.empty()) break;
             m_operands[i]->Eval(local_context, partly_checked_non_matches, non_matches, MATCHES);
+            TraceLogger(conditions) << "Subcondition: " << m_operands[i]->Dump()
+                                    <<"\npartly_checked_non_matches (" << partly_checked_non_matches.size() << "): " << ObjList(partly_checked_non_matches);
         }
 
         // merge items that passed all operand conditions into matches
@@ -9572,11 +9589,15 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         for (auto& operand : m_operands) {
             if (matches.empty()) break;
             operand->Eval(local_context, matches, non_matches, MATCHES);
+            TraceLogger(conditions) << "Subcondition: " << operand->Dump()
+                                    <<"\nremaining matches (" << matches.size() << "): " << ObjList(matches);
         }
 
         // items already in non_matches set are not checked, and remain in non_matches set
         // even if they pass all operand conditions
     }
+    TraceLogger(conditions) << "And::Eval final matches (" << matches.size() << "): " << ObjList(matches)
+                            << " and non_matches (" << non_matches.size() << "): " << ObjList(non_matches);
 }
 
 bool And::RootCandidateInvariant() const {

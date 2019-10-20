@@ -245,6 +245,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     RegisterLoggerWithOptionsDB("combat_log");
     RegisterLoggerWithOptionsDB("combat");
     RegisterLoggerWithOptionsDB("effects");
+    RegisterLoggerWithOptionsDB("conditions");
     RegisterLoggerWithOptionsDB("FSM");
     RegisterLoggerWithOptionsDB("network");
     RegisterLoggerWithOptionsDB("python");

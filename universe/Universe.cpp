@@ -37,6 +37,7 @@ FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 namespace {
     DeclareThreadSafeLogger(effects);
+    DeclareThreadSafeLogger(conditions);
 }
 
 #if defined(_MSC_VER)
@@ -913,12 +914,13 @@ namespace {
         boost::shared_mutex*                                    m_global_mutex;
 
         static Effect::TargetSet& GetConditionMatches(
-            const Condition::ConditionBase*    cond,
-            ConditionCache&                    cached_condition_matches,
-            std::shared_ptr<const UniverseObject> source,
-            const ScriptingContext&            source_context,
-            Effect::TargetSet&                 target_objects,
-            std::string&                       match_log);
+            const Condition::ConditionBase*         cond,
+            ConditionCache&                         cached_condition_matches,
+            std::shared_ptr<const UniverseObject>   source,
+            const ScriptingContext&                 source_context,
+            Effect::TargetSet&                      target_objects,
+            std::string&                            match_log,
+            const std::string&                      specific_cause_name);
     };
 
     StoreTargetsAndCausesOfEffectsGroupsWorkItem::StoreTargetsAndCausesOfEffectsGroupsWorkItem(
@@ -1008,7 +1010,8 @@ namespace {
         std::shared_ptr<const UniverseObject>                           source,
         const ScriptingContext&                                         source_context,
         Effect::TargetSet&                                              target_objects,
-        std::string&                                                    match_log)
+        std::string&                                                    match_log, // output
+        const std::string&                                              specific_cause_name)
     {
         if (!cond)
             return EMPTY_TARGET_SET;
@@ -1024,10 +1027,14 @@ namespace {
             return cache_entry->second; // some other thread was faster creating the cache entry
 
         // no cached result. calculate it...
-
         Effect::TargetSet* target_set = &cache_entry->second;
         Condition::ObjectSet& matched_target_objects =
             *reinterpret_cast<Condition::ObjectSet*>(target_set);
+
+
+        TraceLogger(conditions) << "Evaluating condition matches for source: " << (source ? source->Name() : "(null)")
+                                << "(" << (source ? source->ID() : INVALID_OBJECT_ID)
+                                << ") with specific cause: " << specific_cause_name;
 
         if (target_objects.empty()) {
             // move matches from default target candidates into target_set
@@ -1048,7 +1055,8 @@ namespace {
         // log condition scope matches, except for Source
         if (!(dynamic_cast<const Condition::Source*>(cond))) {
             std::stringstream ss;
-            ss << "\nGenerated new target set, for Condition: " << cond->Dump() << "\n    targets: (";
+            ss << "\nGenerated new target set, for Source: " << source->Name() << "(" << source->ID()
+               << ") and Condition: " << cond->Dump() << "\n    targets: (";
             for (const auto& obj : *target_set)
                 ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
             ss << ")";
@@ -1118,7 +1126,8 @@ namespace {
             // and store in the cache. either way, return the result.
             auto& target_set = GetConditionMatches(scope, *condition_cache,
                                                    source, source_context,
-                                                   target_objects, match_log);
+                                                   target_objects, match_log,
+                                                   m_specific_cause_name);
 
             {
                 // As of this writing, this code is 4-5 years old and its author
