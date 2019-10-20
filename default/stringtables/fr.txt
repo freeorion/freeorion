@@ -2579,6 +2579,9 @@ Le bouton "Sauvegarder" est désactivé, soit parce qu'il s'agit d'une partie mu
 GAME_MENU_REALLY_CONCEDE
 Confirmer la capitulation? Cet empire sera supprimé de cette partie.
 
+GAME_MENU_CONFIRM_NOT_READY
+Confirmer quitter? Ordres non finalisés.
+
 
 ##
 ## Save game dialog
@@ -5409,7 +5412,7 @@ DIPLOMACY_TITLE
 Diplomatie
 
 DIPLOMACY_TEXT
-Liste non-exhaustive des aspects de Diplomatie :
+Liste des politiques de Diplomatie :
 
 METABOLISM_TITLE
 Métabolisme
@@ -5445,10 +5448,14 @@ SYSTEM_BLOCKADE_TITLE
 Blocus Système
 
 SYSTEM_BLOCKADE_TEXT
-'''Une flotte armée et en mode Agression arrivant dans un système, établira un blocus de ce système contre tous les empires ennemis (si ce système n'est pas déjà soumis à un blocus). Une fois le blocus établi, la propagation de l'[[metertype METER_SUPPLY]] est interrompue pour l'empire soumis au blocus. De plus, si cet empire possède des colonies au sein de ce système, la production générée par ces colonies peut être utilisée seulement sur la planète dont elle est originaire. Si un combat a lieu simultanément au blocus, les effets fonctionnant seulement si aucun combat n'est en cours, tels que la [[encyclopedia ORBITAL_DRYDOCK_REPAIR_TITLE]] et l'augmentation de l'indicateur [[metertype METER_TROOPS]], sont suspendus pour le tour en cours.
-Lors d'un blocus, tous les accès par Voies spatiales au système bloqué seront gardés par la force appliquant le blocus. Par conséquent, toutes forces hostiles entrant dans le système ne pourra en sortir que par la Voie spatiale empruntée pour y entrer. Toutefois, si des flottes supplémentaires de l'empire bloqué entrent dans le système par d'autres Voies spatiales, ces entrées deviendront alors également disponibles comme sorties. Si toutes les flottes armées appartenant à l'empire bloqué sont détruites ou quittent le système avant l'arrivée de nouvelles flottes de l'empire, les points de sortie précédemment ouverts seront à nouveau bloqués.
+'''Une flotte armée et en mode Agression arrivant dans un système, établira un blocus de ce système contre tous les empires avec lesquels la flotte est en [[encyclopedia WAR_TITLE]] (si ce système n'est pas déjà soumis à un blocus). Une fois le blocus établi, la propagation de l'[[metertype METER_SUPPLY]] est interrompue pour l'empire soumis au blocus.
+
+Lors d'un blocus, tous les accès par Voies spatiales au système bloqué seront gardés par la force appliquant le blocus. Par conséquent, toutes forces hostiles entrant dans le système ne pourra en sortir que par la Voie spatiale empruntée pour y entrer. Toutefois, si des flottes supplémentaires de l'empire bloqué entrent dans le système par d'autres Voies spatiales, ces entrées deviendront alors également disponibles comme sorties. Si toutes les flottes armées appartenant à l'empire bloqué sont détruites ou quittent le système avant l'arrivée de nouvelles flottes de ce même empire, les points de sortie précédemment ouverts seront à nouveau bloqués.
+
 Les flottes alliées n'ont pas d'impact direct sur l'interruption de l'Approvisionnement et la disponibilité des Voies spatiales, si ce n'est aider à l'élimination des forces de l'empire exerçant le blocus.
+
 Si des flottes de deux empires hostiles ou plus arrivent simultanément dans un système non soumis à un blocus, aucun des deux empires ou plus n'établira un blocus à l'encontre de l'autre, mais ces derniers bloqueront le système contre tout autre empire hostile voulant éventuellement accéder au système par la suite.
+
 Les Monstres spatiaux peuvent également établir des blocus. Cependant, si une flotte de l'empire est bloquée par un monstre spatial, le blocus sera interrompu dès qu'un combat aura eu lieu, permettant ainsi à la flotte de l'empire de quitter le système par n'importe quelle Voie spatiale, ou bien d'établir à son tour un blocus à l'encontre du monstre. De plus, si la flotte bloquée est armée et en mode Agression, la propagation de l'Approvisionnement sera rétablie. Si un Monstre spatial et une flotte de l'empire entrent dans le système simultanément, la flotte de l'empire pourra agir en premier et établir un blocus contre le Monstre.'''
 
 
@@ -5663,7 +5670,9 @@ Les lignes d'approvisionnement sont représentées par les Voies spatiales aux c
 
 Les Voies spatiales d'approvisionnement essentielles d'un empire (les lignes les plus directes reliant les systèmes producteurs de ressources de chaque Groupe Ressource) auront une épaisseur plus importante que les Voies spatiales non-essentielles. Si les PP sont gaspillés au sein d'un Groupe Ressource, les bandes extérieures des Voies Spatiales auront une couleur spécifique.
 
-Les lignes d'approvisionnement peuvent également servir à ravitailler en [[metertype METER_FUEL]] les astronefs.'''
+Les lignes d'approvisionnement peuvent également servir à ravitailler en [[metertype METER_FUEL]] les astronefs.
+
+Les lignes d'approvisionnement seront bloquées par les astronefs ennemis armés appartenant aux empires avec lesquels l'empire est en [[encyclopedia WAR_TITLE]]. À l'opposé du spectre diplomatique, les empires sous traité d'[[encyclopedia ALLIANCE_TITLE]] partageront leurs lignes d'approvisionnement ainsi que tous les bénéfices y étant associés.'''
 
 METER_STOCKPILE_VALUE_LABEL
 Stock
@@ -5723,11 +5732,29 @@ METER_DETECTION_STRENGTH_VALUE_LABEL
 METER_DETECTION_STRENGTH_VALUE_DESC
 [[DETECTION_TEXT]]
 
+WAR_TITLE
+Guerre
+
+WAR_TEXT
+La Guerre est le statut diplomatique par défaut entre empires. Les astronefs armés imposeront un [[encyclopedia SYSTEM_BLOCKADE_TITLE]] envers les astronefs ennemis, bloqueront les lignes d'[[metertype METER_SUPPLY]], feront obstacle aux politiques ennemies de colonisation, et engageront le combat contre tout astronef ennemi. Les planètes ennemies peuvent être soumises à des invasions ou des bombardements.
+
 PEACE_TITLE
 Paix
 
 PEACE_TEXT
-La paix est le rapport diplomatique entre empires ayant convenu de ne pas attaquer planètes et astronefs, de ne pas bloquer les lignes d'[[metertype METER_SUPPLY]] et de ne pas faire obstacle à l'essor des colonies de chacun d'entre eux.
+La Paix est le statut diplomatique entre empires ayant convenu de ne pas attaquer mutuellement leurs planètes et astronefs, de ne pas imposer un [[encyclopedia SYSTEM_BLOCKADE_TITLE]] envers leurs astronefs respectifs, de ne pas bloquer leurs lignes d'[[metertype METER_SUPPLY]], et de ne pas faire obstacle aux actions de colonisation de chacun d'entre eux. La Paix est le niveau minimum requis de diplomatie pour que les [[encyclopedia GIFTING_TITLE]] entre empires soient permis.
+
+ALLIANCE_TITLE
+Alliance
+
+ALLIANCE_TEXT
+L'Alliance est le statut diplomatique le plus cordial entre empires. Les empires alliés partagent leurs zones de visibilité et leurs lignes d'[[metertype METER_SUPPLY]]. Les empires alliés peuvent partager la victoire finale si la Règle de Partie correspondante est activée.
+
+GIFTING_TITLE
+Dons
+
+GIFTING_TEXT
+Les empires jouissant de relations diplomatiques suffisamment cordiales ([[encyclopedia PEACE_TITLE]] ou plus), peuvent s'offrir réciproquement des planètes ou des flottes, à condition que l'empire recevant le don soit présent (via un astronef ou une planète) dans le même système où se trouve l'objet étant offert.
 
 OUTPOSTS_TITLE
 Avant-Poste
