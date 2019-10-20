@@ -49,15 +49,10 @@
 #include <ctime>
 #include <thread>
 
-namespace {
-    DeclareThreadSafeLogger(effects);
-}
-
 namespace fs = boost::filesystem;
 
-void Seed(unsigned int seed);
-
 namespace {
+    DeclareThreadSafeLogger(effects);
     DeclareThreadSafeLogger(combat);
 
     //If there's only one other empire, return their ID:
@@ -71,6 +66,8 @@ namespace {
         return ALL_EMPIRES;
     }
 };
+
+void Seed(unsigned int seed);
 
 
 ////////////////////////////////////////////////
