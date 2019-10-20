@@ -538,11 +538,11 @@ std::string Constant<Visibility>::Dump(unsigned short ntabs) const
 
 template <>
 std::string Constant<int>::Dump(unsigned short ntabs) const
-{ return Description(); }
+{ return std::to_string(m_value); }
 
 template <>
 std::string Constant<double>::Dump(unsigned short ntabs) const
-{ return Description(); }
+{ return std::to_string(m_value); }
 
 template <>
 std::string Constant<std::string>::Dump(unsigned short ntabs) const
