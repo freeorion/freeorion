@@ -148,8 +148,7 @@ EffectsGroup
             ]
             VisibleToEmpire empire = Source.Owner
         ]
-        // Only warn if enemies are incoming
-        WithinDistance distance = 120 condition = And [
+        Number low = 1 condition = And [
             Fleet
             Not Stationary
             Or [
