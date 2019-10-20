@@ -1063,10 +1063,16 @@ namespace {
     std::string StoreTargetsAndCausesOfEffectsGroupsWorkItem::GenerateReport() const {
         boost::unique_lock<boost::shared_mutex> guard(*m_global_mutex);
         std::stringstream ss;
-        ss << "StoreTargetsAndCausesOfEffectsGroups: effects_group: "
-           << m_effects_group->AccountingLabel()
-           << "  specific_cause: " << m_specific_cause_name
-           << "  sources: ";
+        ss << "StoreTargetsAndCausesOfEffectsGroups:";
+        if (!m_effects_group->AccountingLabel().empty())
+            ss << "  accounting label: " << m_effects_group->AccountingLabel();
+        if (!m_effects_group->GetDescription().empty())
+            ss << "  description: " << m_effects_group->GetDescription();
+        if (!m_effects_group->TopLevelContent().empty())
+            ss << "  content: " << m_effects_group->TopLevelContent();
+        if (!m_specific_cause_name.empty())
+            ss << "  specific_cause: " << m_specific_cause_name;
+        ss << "  sources: ";
         for (const auto& obj : *m_sources)
             ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
         ss << ")";
