@@ -1666,6 +1666,10 @@ namespace {
         int round = 1;  // counter of events during the current combat bout
 
 
+        // todo: cache results of GetWeapons(attacker) to avoid re-calling multiple times per combat.
+        // todo: and pass into ShootAllWeapons which also calls that function
+
+
         // Process planets attacks first so that they still have full power,
         // despite their attack power depending on something (their defence meter)
         // that processing shots at them may reduce.
