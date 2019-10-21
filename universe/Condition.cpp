@@ -9547,7 +9547,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         }
     }
 
-    auto ObjList = [](auto objs) {
+    auto ObjList = [](const ObjectSet& objs) -> std::string {
         std::stringstream ss;
         for (const auto& obj : objs)
             ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
