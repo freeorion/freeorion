@@ -3701,14 +3701,18 @@ void Conditional::Execute(const ScriptingContext& context,
         *reinterpret_cast<const Condition::ObjectSet*>(&targets);
     Condition::ObjectSet matches = potential_target_objects;
     Condition::ObjectSet non_matches;
-    if (m_target_condition)
-        m_target_condition->Eval(context, matches, non_matches,
-                                 Condition::MATCHES);
+
+    if (m_target_condition) {
+        if (!m_target_condition->TargetInvariant())
+            ErrorLogger() << "Conditional::Execute has a subcondition that depends on the target object. The subcondition is currently evaluated once to pick the targets, so when evaluating it, there is no defined target object. Instead use RootCandidate.";
+
+        m_target_condition->Eval(context, matches, non_matches, Condition::MATCHES);
+    }
+
 
     // execute true and false effects to target matches and non-matches respectively
     if (!matches.empty() && !m_true_effects.empty()) {
-        Effect::TargetSet& match_targets =
-            *reinterpret_cast<Effect::TargetSet*>(&matches);
+        Effect::TargetSet& match_targets = *reinterpret_cast<Effect::TargetSet*>(&matches);
         for (const auto& effect : m_true_effects) {
             effect->Execute(context, match_targets, accounting_map,
                             effect_cause,
@@ -3718,8 +3722,7 @@ void Conditional::Execute(const ScriptingContext& context,
         }
     }
     if (!non_matches.empty() && !m_false_effects.empty()) {
-        Effect::TargetSet& non_match_targets =
-            *reinterpret_cast<Effect::TargetSet*>(&non_matches);
+        Effect::TargetSet& non_match_targets = *reinterpret_cast<Effect::TargetSet*>(&non_matches);
         for (const auto& effect : m_false_effects) {
             effect->Execute(context, non_match_targets, accounting_map,
                             effect_cause,
