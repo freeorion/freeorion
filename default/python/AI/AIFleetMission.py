@@ -543,6 +543,7 @@ class AIFleetMission(object):
                             debug("Can not release fleet yet due to large threat.")
                         elif fleet_portion_to_remain > 0:
                             debug("Not all ships are needed here - considering releasing a few")
+                            # TODO: Rate against specific enemy threat cause
                             fleet_remaining_rating = CombatRatingsAI.get_fleet_rating(fleet_id)
                             fleet_min_rating = fleet_portion_to_remain * fleet_remaining_rating
                             debug("Starting rating: %.1f, Target rating: %.1f",
@@ -620,6 +621,7 @@ class AIFleetMission(object):
         safety_factor = aistate.character.military_safety_factor()
         potential_threat *= safety_factor
 
+        # TODO: Rate against specific threat here
         fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
         return CombatRatingsAI.rating_needed(potential_threat, local_defenses) / float(fleet_rating)
 
@@ -736,6 +738,7 @@ class AIFleetMission(object):
         # TODO: Also check fleet rating vs planets in decision making below not only vs fleets
         universe = fo.getUniverse()
         primary_objective = self.target.id
+        # TODO: Rate against specific threats
         fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
         debug("%s finding target for protection mission (primary target %s). Fleet Rating: %.1f",
               self.fleet, self.target, fleet_rating)

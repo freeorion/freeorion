@@ -3,6 +3,7 @@ from logging import warn
 
 import freeOrionAIInterface as fo
 import FleetUtilsAI
+from aistate_interface import get_aistate
 from EnumsAI import MissionType
 from freeorion_tools import get_ai_tag_grade, dict_to_tuple, tuple_to_dict, cache_by_session
 from ShipDesignAI import get_part_type
@@ -167,7 +168,9 @@ class ShipCombatStats(object):
     def get_rating(self, enemy_stats=None, ignore_fighters=False):
         """Calculate a rating against specified enemy.
 
-        :param enemy_stats: Enemy stats to be rated against
+        If no enemy is specified, will rate against the empire standard enemy
+
+        :param enemy_stats: Enemy stats to be rated against - if None
         :type enemy_stats: ShipCombatStats
         :param ignore_fighters: If True, acts as if fighters are not launched
         :type ignore_fighters: bool
@@ -177,6 +180,10 @@ class ShipCombatStats(object):
         # adjust base stats according to enemy stats
         def _rating():
             return my_total_attack * my_structure
+
+        # The fighter rating calculations are heavily based upon the enemy stats.
+        # So, for now, we compare at least against a certain standard enemy.
+        enemy_stats = enemy_stats or get_aistate().get_standard_enemy()
 
         my_attacks, my_structure, my_shields = self.get_basic_stats()
         e_avg_attack = 1
