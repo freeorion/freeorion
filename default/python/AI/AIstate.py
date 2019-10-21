@@ -861,7 +861,7 @@ class AIstate(object):
         # need to loop over a copy as entries are deleted in loop
         for fleet_id in list(self.__fleetRoleByID):
             fleet_status = self.fleetStatus.setdefault(fleet_id, {})
-            rating = CombatRatingsAI.get_fleet_rating(fleet_id, self.get_standard_enemy())
+            rating = CombatRatingsAI.get_fleet_rating(fleet_id)
             old_sys_id = fleet_status.get('sysID', -2)  # TODO: Introduce helper function instead
             fleet = universe.getFleet(fleet_id)
             if fleet:

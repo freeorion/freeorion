@@ -275,6 +275,8 @@ def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, 
     system_id = fleet_a.systemID
     if fleet_b.systemID != system_id:
         return 0
+
+    # TODO: Should this rate against specific enemy?
     remaining_rating = CombatRatingsAI.get_fleet_rating(fleet_a_id)
     transferred_rating = 0
     for ship_id in fleet_a.shipIDs:

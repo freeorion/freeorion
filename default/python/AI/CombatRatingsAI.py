@@ -3,6 +3,7 @@ from logging import warn
 
 import freeOrionAIInterface as fo
 import FleetUtilsAI
+from aistate_interface import get_aistate
 from EnumsAI import MissionType
 from freeorion_tools import get_ai_tag_grade, dict_to_tuple, tuple_to_dict, cache_by_session
 from ShipDesignAI import get_part_type
@@ -77,13 +78,10 @@ class ShipCombatStats(object):
 
     class FighterStats(object):
         """ Stores fighter-related stats """
-        def __init__(self, stat_tuple=None, capacity=0, launch_rate=0, damage=0):
-            if stat_tuple and isinstance(stat_tuple, tuple):
-                self.capacity, self.launch_rate, self.damage = stat_tuple
-            else:
-                self.capacity = capacity
-                self.launch_rate = launch_rate
-                self.damage = damage
+        def __init__(self, capacity, launch_rate, damage):
+            self.capacity = capacity
+            self.launch_rate = launch_rate
+            self.damage = damage
 
         def __str__(self):
             return str(self.get_stats())
@@ -141,7 +139,8 @@ class ShipCombatStats(object):
                 elif pc == fo.shipPartClass.fighterBay:
                     fighter_launch_rate += ship.currentPartMeterValue(fo.meterType.capacity, partname)
                 elif pc == fo.shipPartClass.fighterHangar:
-                    fighter_capacity += ship.currentPartMeterValue(meter_choice, partname)
+                    # for hangars, capacity meter is already counting contributions from ALL hangars.
+                    fighter_capacity = ship.currentPartMeterValue(meter_choice, partname)
                     part_damage = ship.currentPartMeterValue(fo.meterType.secondaryStat, partname)
                     if part_damage != fighter_damage and fighter_damage > 0:
                         # the C++ code fails also in this regard, so FOCS content *should* not allow this.
@@ -169,7 +168,9 @@ class ShipCombatStats(object):
     def get_rating(self, enemy_stats=None, ignore_fighters=False):
         """Calculate a rating against specified enemy.
 
-        :param enemy_stats: Enemy stats to be rated against
+        If no enemy is specified, will rate against the empire standard enemy
+
+        :param enemy_stats: Enemy stats to be rated against - if None
         :type enemy_stats: ShipCombatStats
         :param ignore_fighters: If True, acts as if fighters are not launched
         :type ignore_fighters: bool
@@ -179,6 +180,10 @@ class ShipCombatStats(object):
         # adjust base stats according to enemy stats
         def _rating():
             return my_total_attack * my_structure
+
+        # The fighter rating calculations are heavily based upon the enemy stats.
+        # So, for now, we compare at least against a certain standard enemy.
+        enemy_stats = enemy_stats or get_aistate().get_standard_enemy()
 
         my_attacks, my_structure, my_shields = self.get_basic_stats()
         e_avg_attack = 1

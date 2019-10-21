@@ -185,6 +185,7 @@ class OrderMove(AIFleetOrder):
         aistate = get_aistate()
         main_fleet_mission = aistate.get_fleet_mission(self.fleet.id)
 
+        # TODO: Rate against specific enemies here
         fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
         fleet_rating_vs_planets = CombatRatingsAI.get_fleet_rating_against_planets(self.fleet.id)
         target_sys_status = aistate.systemStatus.get(self.target.id, {})
