@@ -463,7 +463,6 @@ void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
     if (old_size != GG::Wnd::Size()) {
         DoLayout();
-        Update();
         if (!m_sitreps_lb->Empty())
             m_sitreps_lb->SetFirstRowShown(std::next(m_sitreps_lb->begin(),
                                                      first_visible_queue_row));
