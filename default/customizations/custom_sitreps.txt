@@ -148,7 +148,11 @@ EffectsGroup
             ]
             VisibleToEmpire empire = Source.Owner
         ]
-        Number low = 1 condition = And [
+    ]
+    activation = Source
+    priority = [[END_CLEANUP_PRIORITY]]
+    effects = If
+        condition = Number low = 1 condition = And [
             Fleet
             Not Stationary
             Or [
@@ -159,11 +163,7 @@ EffectsGroup
             Turn low = [[ETA_NEXT_TURN]] high = [[ETA_NEXT_TURN]]
             (RootCandidate.ID = LocalCandidate.NextSystemID)
         ]
-    ]
-    activation = Source
-    priority = [[END_CLEANUP_PRIORITY]]
-    effects =
-        GenerateSitRepMessage
+        effects = GenerateSitRepMessage
             message = "SITREP_SYSTEM_GOT_INCOMING_WARNING"
             label = "SITREP_SYSTEM_GOT_INCOMING_WARNING_LABEL"
             icon = "icons/meter/ammo.png"
