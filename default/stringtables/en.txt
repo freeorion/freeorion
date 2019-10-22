@@ -5624,7 +5624,7 @@ Fuel
 METER_FUEL_VALUE_DESC
 '''Fuel allows ships to travel the starlanes outside of [[metertype METER_SUPPLY]] of your empire. Fuel is consumed for each starlane traversed outside of supply; stopping within [[metertype METER_SUPPLY]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[metertype METER_SUPPLY]] lines, fuel will slowly regenerate.
 
-The effective amount of fuel a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> is scaled by the [[encyclopedia FUEL_EFFICIENCY_TITLE]] of the [[encyclopedia ENC_SHIP_HULL]]. Fuel efficiency modifies the base fuel capacity of a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> which depends on the [[encyclopedia ENC_SHIP_HULL]] used, but it can also be increased using some [[encyclopedia ENC_SHIP_PART]]s.
+The effective amount of fuel a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> depends on the base fuel of the hull and additional fuel effects scaled by the [[encyclopedia FUEL_EFFICIENCY_TITLE]] of the [[encyclopedia ENC_SHIP_HULL]]. Fuel efficiency changes the effective capacity of fuel [[encyclopedia ENC_SHIP_PART]]s and will multiply any other fuel-modifying effects.
 
 The game will always show the effective fuel levels, after scaling for hull efficiency. Details about the efficiency effect can be seen in the mouse over.'''
 
@@ -15224,7 +15224,7 @@ FUEL_REFUEL_EFFICIENCY_TEXT
 
 The base fuel capacity of a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> depends on the [[encyclopedia ENC_SHIP_HULL]] used, but it can also be increased using some [[encyclopedia ENC_SHIP_PART]]s.
 
-Ship hulls have a great (400%), good (200%), normal (100%), or bad (60%) efficiency which determines how effective the base fuel capacity can be used. 60% efficiency means for five base fuel you get three jumps. 200% efficiency means you can do two jumps per base fuel capacity. Fuel efficiency typically decreases with hull mass, so only very small ships have a high fuel efficiency and huge ships struggle outside of [[metertype METER_SUPPLY]]. The game will always show the effective fuel levels, after scaling for hull efficiency.'''
+Ship hulls have a great (400%), good (200%), normal (100%), or bad (60%) efficiency which determines the effectiveness of any additional fuel parts or other fuel-modifying effects. Fuel efficiency typically decreases with hull mass, so only very small ships have a high fuel efficiency and huge ships struggle outside of [[metertype METER_SUPPLY]]. The game will always show the effective fuel levels, after scaling for hull efficiency.'''
 
 BASE_FUEL_REGEN_LABEL
 Stationary Fuel Regen
