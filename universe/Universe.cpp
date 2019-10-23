@@ -2288,8 +2288,9 @@ namespace {
         }   // end for container objects
     }
 
-    void PropagateVisibilityToSystemsAlongStarlanes(const ObjectMap& objects,
-                                                    Universe::EmpireObjectVisibilityMap& empire_object_visibility) {
+    void PropagateVisibilityToSystemsAlongStarlanes(
+        const ObjectMap& objects, Universe::EmpireObjectVisibilityMap& empire_object_visibility)
+    {
         for (auto& system : objects.FindObjects<System>()) {
             int system_id = system->ID();
 

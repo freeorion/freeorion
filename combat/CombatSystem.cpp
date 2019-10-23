@@ -158,9 +158,7 @@ void CombatInfo::GetCombatEventsToSerialize(std::vector<CombatEventPtr>& filtere
 void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisibilityMap&
                                                       filtered_empire_object_visibility,
                                                       int encoding_empire) const
-{
-    filtered_empire_object_visibility = this->empire_object_visibility;
-}
+{ filtered_empire_object_visibility = this->empire_object_visibility; }
 
 namespace {
     // collect detection strengths of all empires (and neutrals) in \a combat_info
