@@ -261,8 +261,10 @@ void EmpireManager::serialize(Archive& ar, const unsigned int version)
                     continue;
                 auto dk = DiploKey(e1.first, e2.first);
                 if (m_empire_diplomatic_statuses.count(dk) < 1)
+                {
                     m_empire_diplomatic_statuses[dk] = DIPLO_WAR;
-                ErrorLogger() << "Added missing diplomatic status (default WAR) between empires " << e1.first << " and " << e2.first;
+                    ErrorLogger() << "Added missing diplomatic status (default WAR) between empires " << e1.first << " and " << e2.first;
+                }
             }
         }
     }
