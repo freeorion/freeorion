@@ -1447,7 +1447,10 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_cod
     // Only save or allow user to cancel if not exiting due to an error.
     if (!skip_savegame) {
         // Check if this is a multiplayer game and the player has not set status to ready
-        if (was_playing && !m_single_player_game && m_empire_status[m_empire_id] != Message::WAITING) {
+        if (was_playing && !m_single_player_game && 
+            m_empire_status[m_empire_id] != Message::WAITING &&
+            GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+        {
             std::shared_ptr<GG::Font> font = ClientUI::GetFont();
             auto prompt = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(
                 GG::X(275), GG::Y(75), UserString("GAME_MENU_CONFIRM_NOT_READY"), font,
