@@ -30,6 +30,7 @@ public:
     typedef std::map<int, Empire*>::const_iterator const_iterator;
 
     /** \name Structors */ //@{
+    EmpireManager();
     virtual ~EmpireManager();
 
     const EmpireManager& operator=(EmpireManager& rhs); ///< assignment operator (move semantics)
@@ -90,8 +91,6 @@ public:
     mutable DiploSignalType DiplomaticMessageChangedSignal;
 
 private:
-    EmpireManager();
-
     std::string DumpDiplomacy() const;
 
     /** Adds the given empire to the manager. */
