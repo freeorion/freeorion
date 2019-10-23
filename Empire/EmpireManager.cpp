@@ -28,6 +28,13 @@ const EmpireManager& EmpireManager::operator=(EmpireManager& rhs) {
     Clear();
     m_empire_map = rhs.m_empire_map;
     rhs.m_empire_map.clear();
+
+    m_empire_diplomatic_statuses = rhs.m_empire_diplomatic_statuses;
+    rhs.m_empire_diplomatic_statuses.clear();
+
+    m_diplomatic_messages = rhs.m_diplomatic_messages;
+    rhs.m_diplomatic_messages.clear();
+
     return *this;
 }
 
