@@ -440,16 +440,30 @@ void CompleteXDGMigration() {
 const fs::path GetResourceDir() {
     // if resource dir option has been set, use specified location. otherwise,
     // use default location
+
+    static fs::path resource_dir_cached;
+    static bool is_valid = false;
+
     std::string options_resource_dir = GetOptionsDB().Get<std::string>("resource.path");
     fs::path dir = FilenameToPath(options_resource_dir);
-    if (fs::exists(dir) && fs::is_directory(dir))
+
+    if (dir != resource_dir_cached) {
+        // changed resource dir since last call - check if specified location is valid dir
+        resource_dir_cached = dir;
+        is_valid = (fs::exists(dir) && fs::is_directory(dir));
+    }
+
+    if (is_valid)
         return dir;
 
-    dir = GetOptionsDB().GetDefault<std::string>("resource.path");
-    if (!fs::is_directory(dir) || !fs::exists(dir))
-        dir = FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource.path"));
+    static fs::path default_dir = []() {
+        fs::path dir = GetOptionsDB().GetDefault<std::string>("resource.path");
+        if (!fs::is_directory(dir) || !fs::exists(dir))
+            dir = FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource.path"));
+        return dir;
+    }();
 
-    return dir;
+    return default_dir;
 }
 
 const fs::path GetConfigPath() {
