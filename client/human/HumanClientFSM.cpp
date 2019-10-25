@@ -621,7 +621,6 @@ PlayingGame::PlayingGame(my_context ctx) :
 
     Client().Register(Client().GetClientUI().GetMapWnd());
     Client().GetClientUI().GetMapWnd()->Show();
-    Client().GetClientUI().GetMessageWnd()->Clear();
 }
 
 PlayingGame::~PlayingGame() {
