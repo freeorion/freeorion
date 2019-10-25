@@ -529,6 +529,9 @@ boost::statechart::result MPLobby::react(const GameStart& msg) {
     Client().GetClientUI().GetMapWnd()->Sanitize();
     Client().Remove(Client().GetClientUI().GetMultiPlayerLobbyWnd());
     Client().Register(Client().GetClientUI().GetMessageWnd());
+
+    Client().GetClientUI().GetMessageWnd()->SetChatText(chat_text);
+
     return transit<WaitingForGameStart>();
 }
 
