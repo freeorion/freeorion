@@ -770,6 +770,9 @@ GG::Rect MultiPlayerLobbyWnd::CalculatePosition() const {
 bool MultiPlayerLobbyWnd::LoadGameSelected() const
 { return m_new_load_game_buttons->CheckedButton() == 1; }
 
+std::string MultiPlayerLobbyWnd::GetChatText() const
+{ return m_chat_wnd->GetText(); }
+
 void MultiPlayerLobbyWnd::Render() {
     CUIWnd::Render();
     GG::Pt image_ul = g_preview_ul + ClientUpperLeft(), image_lr = image_ul + PREVIEW_SZ;

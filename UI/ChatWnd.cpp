@@ -453,6 +453,9 @@ void MessageWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKe
     StopFlash();
 }
 
+std::string MessageWnd::GetText() const
+{ return *m_display; }
+
 void MessageWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
     CUIWnd::SizeMove(ul, lr);
@@ -499,7 +502,7 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
         ErrorLogger() << "MessageWnd::HandlePlayerChatMessage couldn't get client app!";
         return;
     }
-    int client_empire_id = app->EmpireID();  
+    int client_empire_id = app->EmpireID();
     if (recipient_player_id == client_empire_id) {
         Flash();
         Show();

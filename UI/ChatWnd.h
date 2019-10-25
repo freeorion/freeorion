@@ -18,6 +18,10 @@ public:
     void CompleteConstruction() override;
     //@}
 
+    //! \name Acessors */ //@{
+    std::string GetText() const;
+    //@}
+
     //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 

@@ -524,8 +524,11 @@ boost::statechart::result MPLobby::react(const GameStart& msg) {
     // transitioning into WaitingForGameStart
     post_event(msg);
 
+    std::string chat_text = Client().GetClientUI().GetMultiPlayerLobbyWnd()->GetChatText();
+
     Client().GetClientUI().GetMapWnd()->Sanitize();
     Client().Remove(Client().GetClientUI().GetMultiPlayerLobbyWnd());
+    Client().Register(Client().GetClientUI().GetMessageWnd());
     return transit<WaitingForGameStart>();
 }
 
@@ -828,7 +831,6 @@ WaitingForGameStart::WaitingForGameStart(my_context ctx) :
 {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForGameStart";
 
-    Client().Register(Client().GetClientUI().GetMessageWnd());
     Client().Register(Client().GetClientUI().GetPlayerListWnd());
 
     Client().GetClientUI().GetMapWnd()->EnableOrderIssuing(false);
