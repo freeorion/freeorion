@@ -35,7 +35,7 @@ FieldType
                 GenerateSitRepMessage
                     message = "EFFECT_NEBULA"
                     label = "EFFECT_NEBULA_LABEL"
-                    icon = "nebulae/nebula15.png"
+                    icon = "icons/buttons/addstar.png"
                     parameters = [
                         tag = "system" data = Source.SystemID
                         ]
@@ -43,6 +43,18 @@ FieldType
                 ]
 
         [[CREATE_PLANETS]]
+
+        EffectsGroup    // make ships slower, reduce detection, increase stealth
+            scope = And [
+                Ship
+                WithinDistance distance = Source.Size condition = Source
+            ]
+            stackinggroup = "NEBULA_SHIP_EFFECTS"
+            effects = [
+                SetSpeed value = Value - 20
+                SetStealth value = Value + 20
+                SetDetection value = Value - 20
+            ]
 
         EffectsGroup    // dissipate when small
             scope = Source
