@@ -311,13 +311,19 @@ private:
     void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
     void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncReadMessage();
-    static void AsyncWriteMessage(PlayerConnectionPtr self, Message message);
+    void AsyncWriteMessage();
+    static void HandleMessageWrite(PlayerConnectionPtr self,
+                                   boost::system::error_code error,
+                                   std::size_t bytes_transferred);
+    static void SendMessageImpl(PlayerConnectionPtr self, Message message);
     static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error, boost::system::error_code error);
 
     boost::asio::io_context&        m_service;
     boost::asio::ip::tcp::socket    m_socket;
     Message::HeaderBuffer           m_incoming_header_buffer;
     Message                         m_incoming_message;
+    Message::HeaderBuffer           m_outgoing_header;
+    std::list<Message>              m_outgoing_messages;
     int                             m_ID = Networking::INVALID_PLAYER_ID;
     std::string                     m_player_name;
     bool                            m_new_connection = true;
