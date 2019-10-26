@@ -187,9 +187,11 @@ void PlayerConnection::Start()
 { AsyncReadMessage(); }
 
 void PlayerConnection::SendMessage(const Message& message) {
-    if (m_valid) {
-        SyncWriteMessage(message);
+    if (!m_valid) {
+        ErrorLogger(network) << "PlayerConnection::SendMessage can't send message when not transmit connected";
+        return;
     }
+    m_service.post(boost::bind(&PlayerConnection::AsyncWriteMessage, shared_from_this(), message));
 }
 
 bool PlayerConnection::IsEstablished() const {
@@ -464,7 +466,7 @@ void PlayerConnection::AsyncReadMessage() {
                                         boost::asio::placeholders::bytes_transferred));
 }
 
-void PlayerConnection::SyncWriteMessage(const Message& message) {
+void PlayerConnection::AsyncWriteMessage(PlayerConnectionPtr self, Message message) {
     // Synchronously write and asynchronously signal the errors.  This prevents PlayerConnections
     // being removed from the list while iterating to transmit to multiple receivers.
     Message::HeaderBuffer header_buf;
@@ -474,15 +476,15 @@ void PlayerConnection::SyncWriteMessage(const Message& message) {
     buffers.push_back(boost::asio::buffer(message.Data(), message.Size()));
 
     boost::system::error_code error;
-    boost::asio::write(m_socket, buffers, error);
+    boost::asio::write(self->m_socket, buffers, error);
 
     if (error) {
-        m_valid = false;
-        ErrorLogger(network) << "PlayerConnection::SyncWriteMessage(): player id = " << m_ID
+        self->m_valid = false;
+        ErrorLogger(network) << "PlayerConnection::SyncWriteMessage(): player id = " << self->m_ID
                              << " message " << MessageTypeName(message.Type())
                              << " error #" << error.value() << " \"" << error.message() << "\"";
-        boost::asio::high_resolution_timer t(m_service);
-        t.async_wait(boost::bind(&PlayerConnection::AsyncErrorHandler, shared_from_this(), error, boost::asio::placeholders::error));
+        boost::asio::high_resolution_timer t(self->m_service);
+        t.async_wait(boost::bind(&PlayerConnection::AsyncErrorHandler, self, error, boost::asio::placeholders::error));
     }
 }
 

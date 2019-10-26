@@ -311,7 +311,7 @@ private:
     void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
     void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncReadMessage();
-    void SyncWriteMessage(const Message& message);
+    static void AsyncWriteMessage(PlayerConnectionPtr self, Message message);
     static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error, boost::system::error_code error);
 
     boost::asio::io_context&        m_service;
