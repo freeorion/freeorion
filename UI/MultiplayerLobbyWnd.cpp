@@ -364,11 +364,12 @@ namespace {
 
     // Row for player info when loading a game
     struct LoadGamePlayerRow : PlayerRow {
-        LoadGamePlayerRow(const PlayerSetupData& player_data, int player_id, const std::map<int, SaveGameEmpireData>& save_game_empire_data, bool disabled) :
+        LoadGamePlayerRow(const PlayerSetupData& player_data, int player_id, const std::map<int, SaveGameEmpireData>& save_game_empire_data, bool disabled, bool in_game) :
             PlayerRow(player_data, player_id),
             m_empire_list(nullptr),
             m_save_game_empire_data(save_game_empire_data),
-            m_initial_disabled(disabled)
+            m_initial_disabled(disabled),
+            m_in_game(in_game)
         {}
 
         void CompleteConstruction() override {
@@ -402,13 +403,14 @@ namespace {
                 m_empire_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(it->second.m_empire_name));
 
                 // attempt to choose a default empire to be selected in this
-                // player row.  if this empire row matches this player data's
-                // save gamge empire id, or if this empire row's player name
-                // matches this player data's player name, select the row
+                // player row. If this empire row matches this player data's
+                // save game empire id, or if this empire row's player name
+                // matches this player data's player name in loading game,
+                // select the row
                 if ((it->first == m_player_data.m_save_game_empire_id) ||
                         (m_player_data.m_save_game_empire_id == ALL_EMPIRES &&
-                         it->second.m_player_name == m_player_data.m_player_name)
-                   )
+                         it->second.m_player_name == m_player_data.m_player_name &&
+                         !m_in_game))
                 {
                     m_empire_list->Select(--m_empire_list->end());
                     m_player_data.m_empire_name =           it->second.m_empire_name;
@@ -487,6 +489,7 @@ namespace {
         std::shared_ptr<GG::DropDownList>                        m_empire_list;
         const std::map<int, SaveGameEmpireData>& m_save_game_empire_data;
         bool                                     m_initial_disabled;
+        bool                                     m_in_game;
     };
 
     // Row for empire without assigned player
@@ -1025,7 +1028,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
 
         } else {
             bool immutable_row = (!HasAuthRole(Networking::ROLE_HOST) && (data_player_id != HumanClientApp::GetApp()->PlayerID()) && !(psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER && HasAuthRole(Networking::ROLE_GALAXY_SETUP))) || m_lobby_data.m_save_game_empire_data.empty();
-            auto row = GG::Wnd::Create<LoadGamePlayerRow>(psd, data_player_id, m_lobby_data.m_save_game_empire_data, immutable_row);
+            auto row = GG::Wnd::Create<LoadGamePlayerRow>(psd, data_player_id, m_lobby_data.m_save_game_empire_data, immutable_row, m_lobby_data.m_in_game);
             m_players_lb->Insert(row);
             row->DataChangedSignal.connect(
                 boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
