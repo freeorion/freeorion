@@ -35,7 +35,7 @@ FieldType
                 GenerateSitRepMessage
                     message = "EFFECT_NEBULA"
                     label = "EFFECT_NEBULA_LABEL"
-                    icon = "buttons/addstar.png"
+                    icon = "icons/buttons/addstar.png"
                     parameters = [
                         tag = "system" data = Source.SystemID
                         ]
