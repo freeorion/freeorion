@@ -19,12 +19,16 @@ def execute_turn_events():
     systems = fo.get_systems()
     radius = fo.get_universe_width() / 2.0
     if random() < max(0.0003 * radius, 0.03):
-        if random() < 0.4:
+        random_float = random()
+        if random_float < 0.4:
             field_type = "FLD_MOLECULAR_CLOUD"
             size = 5.0
-        else:
+        if (random_float > 0.4) and (random_float < 0.8):
             field_type = "FLD_ION_STORM"
             size = 5.0
+        else:
+            field_type = "FLD_NANITE_SWARM"
+            size = 3.0
 
         x = y = radius
         dist_from_center = 0.0

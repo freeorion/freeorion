@@ -1,0 +1,47 @@
+FieldType
+    name = "FLD_NANITE_SWARM"
+    description = "FLD_NANITE_SWARM_DESC"
+    stealth = 0.01
+    tags = [ "EXOTIC" ]
+    effectsgroups = [
+        EffectsGroup    // move around
+            scope = Source
+            effects = [
+                SetSpeed value = 10
+                MoveTowards speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
+                MoveInOrbit speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
+            ]
+
+        EffectsGroup    // grow size when young
+            scope = Source
+            activation = And [
+                (Source.Age <= max((UniverseWidth ^ 1.1) / 50, 20))
+                Size high = 50
+            ]
+            effects = SetSize value = Value + min(max(Value * RandomNumber(0.05, 0.1), 1.0), 3.0)
+
+        EffectsGroup    // shrink size when old
+            scope = Source
+            activation = (Source.Age >= max((UniverseWidth ^ 1.1) / 50, 20))
+            effects = SetSize value = Value - min(max(Value * RandomNumber(0.05, 0.1), 1.0), 3.0)
+
+        EffectsGroup    // increase ship structure
+            scope = And [
+                Ship
+                WithinDistance distance = Source.Size condition = Source
+            ]
+            stackinggroup = "NANITE_SWARM_SHIP_REPAIR"
+            effects = [
+                SetStructure value = Value + 5
+            ]
+
+        EffectsGroup    // after reaching a certain age, dissipate when small
+            scope = Source
+            activation = And [
+                (Source.Age >= 10)
+                Size high = 10
+            ]
+            effects = Destroy
+
+    ]
+    graphic = "fields/nanite_swarm.png"
