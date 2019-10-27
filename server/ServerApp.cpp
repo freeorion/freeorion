@@ -1847,15 +1847,38 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
 void ServerApp::DropPlayerEmpireLink(int player_id)
 { m_player_empire_ids.erase(player_id); }
 
-int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
+int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, int target_empire_id) {
     Empire* empire = nullptr;
     int empire_id = ALL_EMPIRES;
-    // search empire by player name
-    for (auto e : Empires()) {
-        if (e.second->PlayerName() == player_connection->PlayerName()) {
-            empire_id = e.first;
-            empire = e.second;
-            break;
+    std::list<std::string> delegation = GetPlayerDelegation(player_connection->PlayerName());
+    if (target_empire_id == ALL_EMPIRES) {
+        if (!delegation.empty())
+            return ALL_EMPIRES;
+        // search empire by player name
+        for (auto e : Empires()) {
+            if (e.second->PlayerName() == player_connection->PlayerName()) {
+                empire_id = e.first;
+                empire = e.second;
+                break;
+            }
+        }
+    } else {
+        // use provided empire and test if it's player himself or one of delegated
+        empire_id = target_empire_id;
+        empire = Empires().GetEmpire(target_empire_id);
+        if (empire == nullptr)
+            return ALL_EMPIRES;
+
+        if (empire->PlayerName() != player_connection->PlayerName()) {
+            bool matched = false;
+            for (const auto& delegated : delegation) {
+                if (empire->PlayerName() == delegated) {
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched)
+                return ALL_EMPIRES;
         }
     }
 
@@ -1907,6 +1930,35 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
     }
 
     return empire_id;
+}
+
+std::list<std::string> ServerApp::GetPlayerDelegation(const std::string& player_name) {
+    std::list<std::string> result;
+    bool success = false;
+    try {
+        m_python_server.SetCurrentDir(GetPythonAuthDir());
+        // Call the auth provider function get_player_delegation
+        success = m_python_server.GetPlayerDelegation(player_name, result);
+    } catch (const boost::python::error_already_set& err) {
+        success = false;
+        m_python_server.HandleErrorAlreadySet();
+        if (!m_python_server.IsPythonRunning()) {
+            ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
+            if (m_python_server.Initialize()) {
+                ErrorLogger() << "Python interpreter successfully restarted.";
+            } else {
+                ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
+                m_fsm->process_event(ShutdownServer());
+            }
+        }
+    }
+
+    if (!success) {
+        ErrorLogger() << "Python scripted authentication failed.";
+        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
+                                                                      false));
+    }
+    return result;
 }
 
 bool ServerApp::IsHostless() const

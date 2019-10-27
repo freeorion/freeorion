@@ -78,3 +78,7 @@ class AuthProvider:
                 psd.starting_team = NO_TEAM_ID
                 players.append(psd)
         return players
+
+    def get_player_delegation(self, player_name):
+        """Returns list of players delegated by this player"""
+        return []

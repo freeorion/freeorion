@@ -191,6 +191,32 @@ bool PythonServer::FillListPlayers(std::list<PlayerSetupData>& players) const {
     return true;
 }
 
+bool PythonServer::GetPlayerDelegation(const std::string& player_name, std::list<std::string> &result) const {
+    boost::python::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
+    if (!auth_provider) {
+        ErrorLogger() << "Unable to get Python object auth_provider";
+        return false;
+    }
+    boost::python::object f = auth_provider.attr("get_player_delegation");
+    if (!f) {
+        ErrorLogger() << "Unable to call Python method get_player_delegation";
+        return false;
+    }
+    boost::python::object r = f(player_name);
+    boost::python::extract<list> py_players(r);
+    if (py_players.check()) {
+        boost::python::stl_input_iterator<std::string> players_begin(py_players), players_end;
+        for (auto& it = players_begin; it != players_end; ++ it) {
+            result.push_back(*it);
+        }
+    } else {
+        DebugLogger() << "Wrong delegated players list data: check returns " << boost::python::extract<std::string>(boost::python::str(r))();
+        return false;
+    }
+
+    return true;
+}
+
 bool PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& chat_history) {
     boost::python::object chat_provider = m_python_module_chat.attr("__dict__")["chat_history_provider"];
     if (!chat_provider) {

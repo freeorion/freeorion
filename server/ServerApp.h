@@ -190,10 +190,14 @@ public:
     void DropPlayerEmpireLink(int planet_id);
 
     /** Adds new player to running game.
-      * Search empire by player's name and return empire id if success and ALL_EMPIRES if no empire found.
+      * Search empire by player's name or delegation list if \a target_empire_id set and return
+      * empire id if success and ALL_EMPIRES if no empire found.
       * Simply sends GAME_START message so established player knows he is in the game.
       * Notificates the player about statuses of other empires. */
-    int AddPlayerIntoGame(const PlayerConnectionPtr& player_connection);
+    int AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, int target_empire_id);
+
+    /** Get list of players delegated by \a player_name */
+    std::list<std::string> GetPlayerDelegation(const std::string& player_name);
 
     /** Sets turn to be expired. Server doesn't wait for human player turns. */
     void ExpireTurn();
