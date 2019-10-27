@@ -294,7 +294,8 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
         m_players(),
         m_save_game(),
         m_save_game_empire_data(),
-        m_save_game_current_turn(0)
+        m_save_game_current_turn(0),
+        m_in_game(false)
     {}
 
     MultiplayerLobbyData(const GalaxySetupData& base) :
@@ -305,7 +306,8 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
         m_players(),
         m_save_game(),
         m_save_game_empire_data(),
-        m_save_game_current_turn(0)
+        m_save_game_current_turn(0),
+        m_in_game(false)
     {}
 
     MultiplayerLobbyData(GalaxySetupData&& base) :
@@ -316,7 +318,8 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
         m_players(),
         m_save_game(),
         m_save_game_empire_data(),
-        m_save_game_current_turn(0)
+        m_save_game_current_turn(0),
+        m_in_game(false)
     {}
     //@}
 
@@ -334,6 +337,7 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
     int                                         m_save_game_current_turn;
 
     std::string                                 m_start_lock_cause;
+    bool                                        m_in_game; ///< In-game lobby
 
 private:
     friend class boost::serialization::access;
@@ -341,7 +345,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(MultiplayerLobbyData, 1);
+BOOST_CLASS_VERSION(MultiplayerLobbyData, 2);
 
 /** The data structure stores information about latest chat massages. */
 struct FO_COMMON_API ChatHistoryEntity {

@@ -429,6 +429,7 @@ void ServerFSM::UpdateIngameLobby() {
     MultiplayerLobbyData dummy_lobby_data(std::move(galaxy_data));
     dummy_lobby_data.m_any_can_edit = false;
     dummy_lobby_data.m_new_game = false;
+    dummy_lobby_data.m_in_game = true;
     dummy_lobby_data.m_start_locked = true;
     dummy_lobby_data.m_save_game_current_turn = m_server.CurrentTurn();
     dummy_lobby_data.m_save_game_empire_data = CompileSaveGameEmpireData();
