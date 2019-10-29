@@ -1041,7 +1041,7 @@ class ShipDesigner(object):
         if self.design_stats.fuel < 0:
             self.design_stats.fuel = 0
         else:
-            self.design_stats.fuel *= self._hull_fuel_efficiency()
+            self.design_stats.fuel = (self.design_stats.fuel - self.hull.fuel) * self._hull_fuel_efficiency() + self.hull.fuel
 
     def add_design(self, verbose=True):
         """Add a real (i.e. gameobject) ship design of the current configuration.
