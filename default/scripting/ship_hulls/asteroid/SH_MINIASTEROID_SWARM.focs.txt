@@ -2,7 +2,7 @@ Hull
     name = "SH_MINIASTEROID_SWARM"
     description = "SH_MINIASTEROID_SWARM_DESC"
     speed = 60
-    fuel = 2
+    fuel = 4
     stealth = 35
     structure = 11
     slots = [

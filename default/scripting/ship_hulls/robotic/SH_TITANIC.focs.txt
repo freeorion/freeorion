@@ -2,7 +2,7 @@ Hull
     name = "SH_TITANIC"
     description = "SH_TITANIC_DESC"
     speed = 80
-    fuel = 2
+    fuel = 1.2
     stealth = -35
     structure = 160
     slots = [
