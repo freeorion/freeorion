@@ -315,7 +315,7 @@ namespace {
 
             std::unique_ptr<Condition::ConditionBase>{VisibleEnemyOfOwnerCondition()});
 
-    const std::unique_ptr<Condition::ConditionBase> is_enemy_ship_fighter_or_armed_planet =
+    const std::unique_ptr<Condition::ConditionBase> is_enemy_ship_fighter_or_armed_planet_no_comsat =
         boost::make_unique<Condition::And>(
             std::unique_ptr<Condition::ConditionBase>{VisibleEnemyOfOwnerCondition()},  // enemies
             boost::make_unique<Condition::Or>(
@@ -326,7 +326,47 @@ namespace {
                             boost::make_unique<Condition::MeterValue>(
                                 METER_STRUCTURE,
                                 nullptr,
-                                boost::make_unique<ValueRef::Constant<double>>(0.0)))),
+                                boost::make_unique<ValueRef::Constant<double>>(0.0))),
+                        boost::make_unique<Condition::Not>(
+                             boost::make_unique<Condition::And>(   // comsat
+                                boost::make_unique<Condition::MeterValue>(
+                                    METER_MAX_FUEL,
+                                    nullptr,
+                                    boost::make_unique<ValueRef::Constant<double>>(0.0)),
+                                boost::make_unique<Condition::Or>(
+                                boost::make_unique<Condition::Or>(
+                                boost::make_unique<Condition::Or>(
+                                boost::make_unique<Condition::Or>(
+                                boost::make_unique<Condition::Or>(
+                                    boost::make_unique<Condition::DesignHasPartClass>(
+                                         PC_DIRECT_WEAPON,
+                                         boost::make_unique<ValueRef::Constant<int>>(1),
+                                         nullptr),
+                                    boost::make_unique<Condition::DesignHasPartClass>(
+                                         PC_TROOPS,
+                                         boost::make_unique<ValueRef::Constant<int>>(1),
+                                         nullptr)),
+                                    boost::make_unique<Condition::And>(
+                                         boost::make_unique<Condition::DesignHasPartClass>(
+                                             PC_FIGHTER_HANGAR,
+                                             boost::make_unique<ValueRef::Constant<int>>(1),
+                                             nullptr),
+                                         boost::make_unique<Condition::DesignHasPartClass>(
+                                             PC_FIGHTER_BAY,
+                                             boost::make_unique<ValueRef::Constant<int>>(1),
+                                             nullptr))),
+                                    boost::make_unique<Condition::DesignHasPartClass>(
+                                         PC_COLONY,
+                                         boost::make_unique<ValueRef::Constant<int>>(1),
+                                         nullptr)),
+                                    boost::make_unique<Condition::DesignHasPartClass>(
+                                         PC_GENERAL,
+                                         boost::make_unique<ValueRef::Constant<int>>(1),
+                                         nullptr)),
+                                    boost::make_unique<Condition::DesignHasPartClass>(
+                                         PC_BOMBARD,
+                                         boost::make_unique<ValueRef::Constant<int>>(1),
+                                         nullptr))))),
                     boost::make_unique<Condition::Type>(OBJ_FIGHTER)),
 
                 boost::make_unique<Condition::And>(
@@ -903,7 +943,7 @@ namespace {
                 int shots = static_cast<int>(ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name)); // secondary stat is shots per attack)
                 if (part_attack > 0.0f && shots > 0) {
                     if (!part_combat_targets)
-                        part_combat_targets = is_enemy_ship_fighter_or_armed_planet.get();
+                        part_combat_targets = is_enemy_ship_fighter_or_armed_planet_no_comsat.get();
 
                     // attack for each shot...
                     for (int shot_count = 0; shot_count < shots; ++shot_count)
