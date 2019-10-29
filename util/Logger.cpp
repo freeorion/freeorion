@@ -307,7 +307,6 @@ namespace {
             std::lock_guard<std::mutex> lock(m_mutex);
 
             auto used_threshold = ForcedThreshold() ? *ForcedThreshold() : threshold;
-            logging::core::get()->reset_filter();
             m_min_channel_severity[source] = used_threshold;
             logging::core::get()->set_filter(m_min_channel_severity);
 
