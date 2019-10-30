@@ -3200,6 +3200,19 @@ Start Turn
 MAP_BTN_TURN_TOOLTIP_DESC_OBS
 Observers are unable to start turn processing.
 
+MAP_BTN_TURN_TOOLTIP_DESC_MOD
+'''Starts turn processing even if some players have not sent their orders to the server.
+Turn processing will be executed with the following sequence:
+
+<u>Order execution</u>
+Colonisation, invasion, bombardment, gifting, scrapping and fleet movement
+
+<u>Combat resolution</u>
+
+<u>Production, Research and Growth</u>
+Effect execution, production of ships and buildings, unlocking of new technologies, population growth, update of supply propagation
+'''
+
 MAP_BTN_TURN_TOOLTIP_DESC_WAIT
 Waiting for other players to send their orders. Click again to revise orders.
 

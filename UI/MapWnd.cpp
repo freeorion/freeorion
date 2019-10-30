@@ -6706,11 +6706,13 @@ void MapWnd::RefreshTurnButtonTooltip() {
             btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_SP");
         else
             btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_MP");
+        if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+            btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_MOD");
     }
     if (m_ready_turn && !app->SinglePlayerGame())
         btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_WAIT");
     if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
-        btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_OBS");  
+        btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_OBS");
 
     m_btn_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_turn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
