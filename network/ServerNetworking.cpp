@@ -186,8 +186,10 @@ bool PlayerConnection::IsLocalConnection() const
 void PlayerConnection::Start()
 { AsyncReadMessage(); }
 
-bool PlayerConnection::SendMessage(const Message& message) {
-    return m_valid ? SyncWriteMessage(message) : false;
+void PlayerConnection::SendMessage(const Message& message) {
+    if (m_valid) {
+        SyncWriteMessage(message);
+    }
 }
 
 bool PlayerConnection::IsEstablished() const {
@@ -462,7 +464,7 @@ void PlayerConnection::AsyncReadMessage() {
                                         boost::asio::placeholders::bytes_transferred));
 }
 
-bool PlayerConnection::SyncWriteMessage(const Message& message) {
+void PlayerConnection::SyncWriteMessage(const Message& message) {
     // Synchronously write and asynchronously signal the errors.  This prevents PlayerConnections
     // being removed from the list while iterating to transmit to multiple receivers.
     Message::HeaderBuffer header_buf;
@@ -482,8 +484,6 @@ bool PlayerConnection::SyncWriteMessage(const Message& message) {
         boost::asio::high_resolution_timer t(m_service);
         t.async_wait(boost::bind(&PlayerConnection::AsyncErrorHandler, shared_from_this(), error, boost::asio::placeholders::error));
     }
-
-    return (!error);
 }
 
 void PlayerConnection::AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error,
@@ -602,14 +602,12 @@ bool ServerNetworking::CheckCookie(boost::uuids::uuid cookie,
 int ServerNetworking::GetCookiesSize() const
 { return m_cookies.size(); }
 
-bool ServerNetworking::SendMessageAll(const Message& message) {
-    bool success = true;
+void ServerNetworking::SendMessageAll(const Message& message) {
     for (auto player_it = established_begin();
         player_it != established_end(); ++player_it)
     {
-        success = success && (*player_it)->SendMessage(message);
+        (*player_it)->SendMessage(message);
     }
-    return success;
 }
 
 void ServerNetworking::Disconnect(int id) {

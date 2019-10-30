@@ -132,8 +132,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    /** Sends a synchronous message \a message to the player indicated in the message and returns true on success. */
-    bool SendMessageAll(const Message& message);
+    /** Sends a synchronous message \a message to the all established players. */
+    void SendMessageAll(const Message& message);
 
     /** Disconnects the server from player \a id. */
     void Disconnect(int id);
@@ -266,8 +266,8 @@ public:
     /** Starts the connection reading incoming messages on its socket. */
     void Start();
 
-    /** Sends \a synchronous message to out on the connection and return true on success. */
-    bool SendMessage(const Message& message);
+    /** Sends \a synchronous message to out on the connection. */
+    void SendMessage(const Message& message);
 
     /** Set player properties to use them after authentication successed. */
     void AwaitPlayer(Networking::ClientType client_type,
@@ -311,7 +311,7 @@ private:
     void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
     void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncReadMessage();
-    bool SyncWriteMessage(const Message& message);
+    void SyncWriteMessage(const Message& message);
     static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error, boost::system::error_code error);
 
     boost::asio::io_context&        m_service;

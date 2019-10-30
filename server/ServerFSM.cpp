@@ -3376,12 +3376,11 @@ ShuttingDownServer::ShuttingDownServer(my_context c) :
     // Inform all players that the game is ending.  Only check the AIs for acknowledgement, because
     // they are the server's child processes.
     for (PlayerConnectionPtr player : server.m_networking) {
-        auto good_connection = player->SendMessage(EndGameMessage(Message::PLAYER_DISCONNECT));
+        player->SendMessage(EndGameMessage(Message::PLAYER_DISCONNECT));
         if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
-            if (good_connection) {
-                // Only expect acknowledgement from sockets that are up.
-                m_player_id_ack_expected.insert(player->PlayerID());
-            }
+            // If sending message will result in error it will be processed in Disconnection
+            // handle.
+            m_player_id_ack_expected.insert(player->PlayerID());
         }
     }
 
