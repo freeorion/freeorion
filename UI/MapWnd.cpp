@@ -1051,6 +1051,9 @@ void MapWnd::CompleteConstruction() {
         boost::bind(&MapWnd::EndTurn, this));
     m_btn_turn->LeftClickedSignal.connect(
         &PlayTurnButtonClickSound);
+    m_btn_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_btn_turn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
+        UserString("MAP_BTN_TURN_TOOLTIP"), UserString("MAP_BTN_TURN_TOOLTIP_DESC")));
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 

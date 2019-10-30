@@ -1,4 +1,4 @@
-English
+﻿English
 
 # This is the English String Table file for FreeOrion
 #
@@ -3193,6 +3193,20 @@ Unable to create persistent_config.xml, check log file for details.
 # %1% current turn number.
 MAP_BTN_TURN_UPDATE
 Turn %1%
+
+MAP_BTN_TURN_TOOLTIP
+Start Turn
+
+MAP_BTN_TURN_TOOLTIP_DESC
+'''Starts turn processing with the following sequence:
+
+<u>Order execution</u>
+Fleet movement, Colonisation, Invasion, Bombardment etc.
+
+<u>Combat resolution</u>
+
+<u>Production and Research</u>
+'''
 
 # %1% current turn number.
 MAP_BTN_TURN_UNREADY
