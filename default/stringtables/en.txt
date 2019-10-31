@@ -905,6 +905,12 @@ Meteor Blizzard
 FLD_METEOR_BLIZZARD_DESC
 Mysterious but also dangerous appearance of meteors. Reduces [[metertype METER_STRUCTURE]] by 5 per turn, but also generates one [[metertype METER_RESEARCH]] per ship affected due to scientific examination of the phenomenom.
 
+FLD_VOID_RIFT
+Void Rift
+
+FLD_VOID_RIFT_DESC
+Anomalous rift in space that reduces ship movement by 50%.
+
 
 ##
 ## Predefined starting fleets
