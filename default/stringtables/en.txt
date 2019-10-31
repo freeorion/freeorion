@@ -899,6 +899,12 @@ Nanite Swarm
 FLD_NANITE_SWARM_DESC
 A swarm of ancient robotic particles that attach themselves to ship hulls, repairing ship structure by 5 per turn.
 
+FLD_METEOR_BLIZZARD
+Meteor Blizzard
+
+FLD_METEOR_BLIZZARD_DESC
+Mysterious but also dangerous appearance of meteors. Reduces [[metertype METER_STRUCTURE]] by 5 per turn, but also generates one [[metertype METER_RESEARCH]] per ship affected due to scientific examination of the phenomenom.
+
 
 ##
 ## Predefined starting fleets

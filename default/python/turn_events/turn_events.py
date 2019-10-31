@@ -20,15 +20,18 @@ def execute_turn_events():
     radius = fo.get_universe_width() / 2.0
     if random() < max(0.0003 * radius, 0.03):
         random_float = random()
-        if random_float < 0.4:
+        if random_float < 0.3:
             field_type = "FLD_MOLECULAR_CLOUD"
             size = 5.0
-        if (random_float > 0.4) and (random_float < 0.8):
+        if (random_float > 0.3) and (random_float < 0.5):
             field_type = "FLD_ION_STORM"
             size = 5.0
-        else:
+        if (random_float > 0.5) and (random_float < 0.7):
             field_type = "FLD_NANITE_SWARM"
-            size = 3.0
+            size = 5.0
+        else:
+            field_type = "FLD_METEOR_BLIZZARD"
+            size = 5.0
 
         x = y = radius
         dist_from_center = 0.0
