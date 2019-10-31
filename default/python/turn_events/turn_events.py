@@ -5,7 +5,7 @@ from common.configure_logging import redirect_logging_to_freeorion_logger
 redirect_logging_to_freeorion_logger()
 
 import sys
-from random import random, uniform, choice
+from random import random, uniform, randint, choice
 from math import sin, cos, pi, hypot
 
 import freeorion as fo
@@ -18,24 +18,17 @@ def execute_turn_events():
     # creating fields
     systems = fo.get_systems()
     radius = fo.get_universe_width() / 2.0
-    if random() < max(0.0003 * radius, 0.03):
-        random_float = random()
-        if random_float < 0.2:
-            field_type = "FLD_MOLECULAR_CLOUD"
-            size = 5.0
-        if (random_float > 0.2) and (random_float < 0.4):
-            field_type = "FLD_ION_STORM"
-            size = 5.0
-        if (random_float > 0.4) and (random_float < 0.6):
-            field_type = "FLD_NANITE_SWARM"
-            size = 5.0
-        if (random_float > 0.6) and (random_float < 0.8):
-            field_type = "FLD_METEOR_BLIZZARD"
-            size = 5.0
-        else:
-            field_type = "FLD_VOID_RIFT"
-            size = 5.0
+    field_types = {
+        1: "FLD_MOLECULAR_CLOUD",
+        2: "FLD_ION_STORM",
+        3: "FLD_NANITE_SWARM",
+        4: "FLD_METEOR_BLIZZARD",
+        5: "FLD_VOID_RIFT"
+    }
 
+    if random() < max(0.0003 * radius, 0.03):
+        field_type = field_types.get(randint(1, 5), "FLD_ERROR")
+        size = 5.0
         x = y = radius
         dist_from_center = 0.0
         while (dist_from_center < radius) or any(hypot(fo.get_x(s) - x, fo.get_y(s) - y) < 50.0 for s in systems):
