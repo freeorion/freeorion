@@ -330,7 +330,7 @@ namespace {
                         boost::make_unique<Condition::Not>(
                              boost::make_unique<Condition::And>(   // comsat
                                 boost::make_unique<Condition::MeterValue>(
-                                    METER_MAX_FUEL,
+                                    METER_SPEED,
                                     nullptr,
                                     boost::make_unique<ValueRef::Constant<double>>(0.0)),
                                 boost::make_unique<Condition::Or>(
