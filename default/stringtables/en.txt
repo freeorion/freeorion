@@ -1219,7 +1219,7 @@ RULE_ONLY_ALLIANCE_WIN
 Only allied players win
 
 RULE_ONLY_ALLIANCE_WIN_DESC
-Allied players could win together if the number of human players in their alliance is no large than the maximum human player winners and there are no other human player survivors.
+Allied players can win together if the number of human players in their alliance is no more than the maximum human player winners and there are no other human player survivors.
 
 RULE_SHIP_PART_BASED_UPKEEP
 Use part-based upkeep
