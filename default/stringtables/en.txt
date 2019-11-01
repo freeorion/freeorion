@@ -873,7 +873,7 @@ FLD_NEBULA_1
 Nebula
 
 FLD_NEBULA_1_DESC
-Cloud of hydrogen gas that could coalesce to form a new star. Ship [[metertype METER_SPEED]] and [[metertype METER_DETECTION]]are reduced by 20, [[metertype METER_STEALTH]] is increased by 20.
+Cloud of hydrogen gas that could coalesce to form a new star. Ship [[metertype METER_SPEED]] and [[metertype METER_DETECTION]] are reduced by 20, [[metertype METER_STEALTH]] is increased by 20.
 
 FLD_NEBULA_2
 [[FLD_NEBULA_1]]
@@ -897,19 +897,19 @@ FLD_NANITE_SWARM
 Nanite Swarm
 
 FLD_NANITE_SWARM_DESC
-A swarm of ancient robotic particles that attach themselves to ship hulls, repairing ship structure by 5 per turn.
+A swarm of ancient robotic particles that attach themselves to ship hulls, repairing ship [[metertype METER_STRUCTURE]] by 5 per turn. Harvesting of particles creates one unit of [[metertype METER_INDUSTRY]] per turn.
 
 FLD_METEOR_BLIZZARD
 Meteor Blizzard
 
 FLD_METEOR_BLIZZARD_DESC
-Mysterious but also dangerous appearance of meteors. Reduces [[metertype METER_STRUCTURE]] by 5 per turn, but also generates one [[metertype METER_RESEARCH]] per ship affected due to scientific examination of the phenomenom.
+Mystical and mysterious appearance of meteors. Generates one [[metertype METER_RESEARCH]] per ship due to scientific examination of the phenomenom.
 
 FLD_VOID_RIFT
 Void Rift
 
 FLD_VOID_RIFT_DESC
-Anomalous rift in space that reduces ship movement by 50%.
+Anomalous rift in space that reduces ship [[metertype METER_SPEED]] by 50%.
 
 
 ##

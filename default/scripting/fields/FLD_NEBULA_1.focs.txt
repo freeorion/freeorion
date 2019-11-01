@@ -6,7 +6,7 @@ FieldType
         EffectsGroup    // shrink slowly when in no-star system
             scope = Source
             activation = And [
-                Size low = 2 high = 180
+                Size low = 2 high = 120
                 Star type = NoStar
             ]
             effects =
@@ -15,7 +15,7 @@ FieldType
         EffectsGroup    // shrink slowly when in no-star system
             scope = Source
             activation = And [
-                Size low = 180
+                Size low = 120
                 Star type = NoStar
             ]
             effects =
@@ -47,7 +47,7 @@ FieldType
         EffectsGroup    // make ships slower, reduce detection, increase stealth
             scope = And [
                 Ship
-                WithinDistance distance = Source.Size condition = Source
+                WithinDistance distance = Source.Size * 0.9 condition = Source
             ]
             stackinggroup = "NEBULA_SHIP_EFFECTS"
             effects = [

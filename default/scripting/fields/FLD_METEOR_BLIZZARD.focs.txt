@@ -8,7 +8,7 @@ FieldType
             scope = Source
             effects = [
                 SetSpeed value = 5
-                MoveTowards speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
+                MoveTowards speed = Source.Speed/2.8 x = UniverseCentreX y = UniverseCentreY
                 MoveInOrbit speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
             ]
 
@@ -28,12 +28,11 @@ FieldType
         EffectsGroup    // damage ship structure, grant research
             scope = And [
                 Ship
-                WithinDistance distance = Source.Size condition = Source
+                WithinDistance distance = Source.Size * 0.9 condition = Source
             ]
             stackinggroup = "METEOR_BLIZZARD_SHIP_EFFECTS"
             effects = [
-                SetStructure value = Value - 5
-                SetResearch value = 1
+                SetResearch value = max(1, Value)
             ]
 
         EffectsGroup    // after reaching a certain age, dissipate when small
