@@ -16,3 +16,14 @@ PROBIOTIC_SPECIAL
 SPICE_SPECIAL
 SUPERCONDUCTOR_SPECIAL
 '''
+
+
+## FUNCTIONAL_HULL_DESC_TAGS_LIST is an ordered, whitespace separated list,
+# defining which hull tags on HULLs which are shown in the given order in the hull description.
+# There should be corresponding HULL_DESC_* stringtable entries (e.g. HULL_DESC_GREAT_FUEL_EFFICIENCY)
+FUNCTIONAL_HULL_DESC_TAGS_LIST
+'''BAD_FUEL_EFFICIENCY
+AVERAGE_FUEL_EFFICIENCY
+GOOD_FUEL_EFFICIENCY
+GREAT_FUEL_EFFICIENCY
+'''
