@@ -1354,7 +1354,7 @@ void Empire::AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& n
         return;
 
     // Mark given tech to be granted at next turn. If it was already marked, skip writing a SitRep message
-    auto result = m_newly_researched_techs.insert(name);
+    m_newly_researched_techs.insert(name);
 }
 
 void Empire::ApplyNewTechs() {
