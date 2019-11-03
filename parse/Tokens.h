@@ -425,6 +425,7 @@
     (ShipDesign)                                \
     (ShipDesignOrdering)                        \
     (ShipDesignsDestroyed)                      \
+    (ShipDesignsInProduction)                   \
     (ShipDesignsLost)                           \
     (ShipDesignsOwned)                          \
     (ShipDesignsProduced)                       \

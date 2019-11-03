@@ -2224,6 +2224,16 @@ void Empire::UpdateOwnedObjectCounters() {
         m_ship_designs_owned[ship->DesignID()]++;
     }
 
+    // ships in the queue for which production started
+    m_ship_designs_in_production.clear();
+    for (const auto& elem : m_production_queue) {
+        ProductionQueue::ProductionItem item = elem.item;
+
+        if ((item.build_type == BT_SHIP) && (elem.progress > 0.0f)) {
+            m_ship_designs_in_production[item.design_id] += elem.blocksize;
+        }
+    }
+
     // update ship part counts
     m_ship_part_types_owned.clear();
     m_ship_part_class_owned.clear();

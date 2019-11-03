@@ -349,6 +349,8 @@ public:
 
     std::map<std::string, int>& SpeciesPlanetsInvaded() { return m_species_planets_invaded; }
 
+    std::map<int, int>&         ShipDesignsInProduction() { return m_ship_designs_in_production; }
+
     std::map<std::string, int>& SpeciesShipsProduced()  { return m_species_ships_produced; }
     std::map<int, int>&         ShipDesignsProduced()   { return m_ship_designs_produced; }
 
@@ -423,6 +425,8 @@ private:
     std::map<std::string, int>      m_species_colonies_owned;   ///< how many colonies of each species does this empire currently own?
     int                             m_outposts_owned = 0;       ///< how many uncolonized outposts does this empire currently own?
     std::map<std::string, int>      m_building_types_owned;     ///< how many buildings does this empire currently own?
+
+    std::map<int, int>              m_ship_designs_in_production;   ///< how many ships of each design has this empire in active production in its production queue
 
     std::map<int, int>              m_empire_ships_destroyed;   ///< how many ships of each empire has this empire destroyed?
     std::map<int, int>              m_ship_designs_destroyed;   ///< how many ships of each design has this empire destroyed?
