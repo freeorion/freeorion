@@ -1368,8 +1368,8 @@ namespace {
 
         static std::vector<std::string> hull_tags_to_describe = UserStringList("FUNCTIONAL_HULL_DESC_TAGS_LIST");
         for (const std::string tag : hull_tags_to_describe) {
-            if(hull->HasTag(tag)) {
-                if(UserStringExists("HULL_DESC_" + tag)) {
+            if (hull->HasTag(tag)) {
+                if (UserStringExists("HULL_DESC_" + tag)) {
                     detailed_description += "\n\n" + UserString("HULL_DESC_" + tag);
                 } else {
                     detailed_description += "\n\n" + tag;
