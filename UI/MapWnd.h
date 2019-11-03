@@ -212,6 +212,8 @@ public:
 
 
 private:
+    void RefreshTurnButtonTooltip();
+
     void RefreshTradeResourceIndicator();
     void RefreshFleetResourceIndicator();
     void RefreshResearchResourceIndicator();

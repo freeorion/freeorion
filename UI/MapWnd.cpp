@@ -1051,6 +1051,7 @@ void MapWnd::CompleteConstruction() {
         boost::bind(&MapWnd::EndTurn, this));
     m_btn_turn->LeftClickedSignal.connect(
         &PlayTurnButtonClickSound);
+    RefreshTurnButtonTooltip();
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
@@ -2741,6 +2742,7 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
     }
 
     m_btn_turn->SetText(boost::io::str(FlexibleFormat(button_label) % std::to_string(CurrentTurn())));
+    RefreshTurnButtonTooltip();
     m_side_panel->EnableOrderIssuing(enable);
     m_production_wnd->EnableOrderIssuing(enable);
     m_research_wnd->EnableOrderIssuing(enable);
@@ -2801,6 +2803,8 @@ void MapWnd::InitTurn() {
     // set turn button to current turn
     m_btn_turn->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
                                        std::to_string(turn_number)));
+    RefreshTurnButtonTooltip();
+
     m_ready_turn = false;
     MoveChildUp(m_btn_turn);
 
@@ -6691,6 +6695,28 @@ bool MapWnd::KeyboardZoomIn() {
 bool MapWnd::KeyboardZoomOut() {
     Zoom(-1);
     return true;
+}
+
+void MapWnd::RefreshTurnButtonTooltip() {
+    auto app = HumanClientApp::GetApp();
+    std::string btn_turn_tooltip;
+
+    if (!m_ready_turn) {
+        if (app->SinglePlayerGame())
+            btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_SP");
+        else
+            btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_MP");
+        if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+            btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_MOD");
+    }
+    if (m_ready_turn && !app->SinglePlayerGame())
+        btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_WAIT");
+    if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+        btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_OBS");
+
+    m_btn_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_btn_turn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
+        UserString("MAP_BTN_TURN_TOOLTIP"), btn_turn_tooltip));
 }
 
 void MapWnd::RefreshTradeResourceIndicator() {
