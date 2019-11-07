@@ -7,6 +7,10 @@ environment:
     - BUILD_SYSTEM: CMAKE
     - BUILD_SYSTEM: MSVC
 
+matrix:
+  allow_failures:
+    - BUILD_SYSTEM: CMAKE
+
 init:
   - git config --global core.eol native
   - git config --global core.autocrlf true
@@ -43,7 +47,7 @@ build_script:
   - if "%BUILD_SYSTEM%" == "CMAKE" (
       pushd build &&
       cmake -G "Visual Studio 15 2017" -T v140_xp -DBUILD_TESTING=On .. &&
-      cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" &&
+      cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /verbosity:minimal &&
       popd
     )
 
