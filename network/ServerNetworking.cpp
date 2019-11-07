@@ -187,9 +187,11 @@ void PlayerConnection::Start()
 { AsyncReadMessage(); }
 
 void PlayerConnection::SendMessage(const Message& message) {
-    if (m_valid) {
-        SyncWriteMessage(message);
+    if (!m_valid) {
+        ErrorLogger(network) << "PlayerConnection::SendMessage can't send message when not transmit connected";
+        return;
     }
+    m_service.post(boost::bind(&PlayerConnection::SendMessageImpl, shared_from_this(), message));
 }
 
 bool PlayerConnection::IsEstablished() const {
@@ -464,26 +466,51 @@ void PlayerConnection::AsyncReadMessage() {
                                         boost::asio::placeholders::bytes_transferred));
 }
 
-void PlayerConnection::SyncWriteMessage(const Message& message) {
-    // Synchronously write and asynchronously signal the errors.  This prevents PlayerConnections
-    // being removed from the list while iterating to transmit to multiple receivers.
-    Message::HeaderBuffer header_buf;
-    HeaderToBuffer(message, header_buf);
-    std::vector<boost::asio::const_buffer> buffers;
-    buffers.push_back(boost::asio::buffer(header_buf));
-    buffers.push_back(boost::asio::buffer(message.Data(), message.Size()));
+void PlayerConnection::SendMessageImpl(PlayerConnectionPtr self, Message message) {
+    bool start_write = self->m_outgoing_messages.empty();
+    self->m_outgoing_messages.push_back(Message());
+    swap(self->m_outgoing_messages.back(), message);
+    if (start_write)
+        self->AsyncWriteMessage();
+}
 
-    boost::system::error_code error;
-    boost::asio::write(m_socket, buffers, error);
-
-    if (error) {
-        m_valid = false;
-        ErrorLogger(network) << "PlayerConnection::SyncWriteMessage(): player id = " << m_ID
-                             << " message " << MessageTypeName(message.Type())
-                             << " error #" << error.value() << " \"" << error.message() << "\"";
-        boost::asio::high_resolution_timer t(m_service);
-        t.async_wait(boost::bind(&PlayerConnection::AsyncErrorHandler, shared_from_this(), error, boost::asio::placeholders::error));
+void PlayerConnection::AsyncWriteMessage() {
+    if (!m_valid) {
+        ErrorLogger(network) << "PlayerConnection::AsyncWriteMessage(): player id = " << m_ID
+                             << ". Socket is closed. Dropping message.";
+        return;
     }
+
+    HeaderToBuffer(m_outgoing_messages.front(), m_outgoing_header);
+    std::vector<boost::asio::const_buffer> buffers;
+    buffers.push_back(boost::asio::buffer(m_outgoing_header));
+    buffers.push_back(boost::asio::buffer(m_outgoing_messages.front().Data(),
+                                          m_outgoing_messages.front().Size()));
+    boost::asio::async_write(m_socket, buffers,
+                             boost::bind(&PlayerConnection::HandleMessageWrite, shared_from_this(),
+                                         boost::asio::placeholders::error,
+                                         boost::asio::placeholders::bytes_transferred));
+}
+
+void PlayerConnection::HandleMessageWrite(PlayerConnectionPtr self,
+                                          boost::system::error_code error,
+                                          std::size_t bytes_transferred)
+{
+    if (error) {
+        self->m_valid = false;
+        ErrorLogger(network) << "PlayerConnection::AsyncWriteMessage(): player id = " << self->m_ID
+                             << " error #" << error.value() << " \"" << error.message() << "\"";
+        boost::asio::high_resolution_timer t(self->m_service);
+        t.async_wait(boost::bind(&PlayerConnection::AsyncErrorHandler, self, error, boost::asio::placeholders::error));
+        return;
+    }
+
+    if (static_cast<int>(bytes_transferred) != static_cast<int>(Message::HeaderBufferSize) + self->m_outgoing_header[Message::Parts::SIZE])
+        return;
+
+    self->m_outgoing_messages.pop_front();
+    if (!self->m_outgoing_messages.empty())
+        self->AsyncWriteMessage();
 }
 
 void PlayerConnection::AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error,
