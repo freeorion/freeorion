@@ -1734,7 +1734,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 if (psd.second.m_save_game_empire_id == ALL_EMPIRES)
                     psd.second.m_empire_color = GetUnusedEmpireColour(m_lobby_data->m_players, m_lobby_data->m_save_game_empire_data);
             }
-        } catch (const std::exception&) {
+        } catch (...) {
             // inform player who attempted to change the save file that there was a problem
             sender->SendMessage(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), false));
             // revert to old save file
@@ -1784,7 +1784,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     DebugLogger(FSM) << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed << "  interpreted as actual seed: " << seed;
                     Seed(seed);
 
-                } catch (const std::exception&) {
+                } catch (...) {
                     SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
                     return discard_event();
                 }
@@ -1895,7 +1895,7 @@ sc::result MPLobby::react(const StartMPGame& msg) {
                 DebugLogger(FSM) << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed << "  interpreted as actual seed: " << seed;
                 Seed(seed);
 
-            } catch (const std::exception&) {
+            } catch (...) {
                 SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
                 return discard_event();
             }
@@ -2167,7 +2167,7 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
                          m_player_save_game_data,   GetUniverse(),          Empires(),
                          GetSpeciesManager(),       GetCombatLogManager(),  server.m_galaxy_setup_data);
 
-            } catch (const std::exception&) {
+            } catch (...) {
                 SendMessageToHost(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
                 return transit<Idle>();
             }

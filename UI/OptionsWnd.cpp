@@ -133,7 +133,7 @@ namespace {
             fs::path path = FilenameToPath(file);
             return boost::algorithm::ends_with(file, STRINGTABLE_FILE_SUFFIX) &&
                 fs::exists(path) && !fs::is_directory(path);
-        } catch (const std::exception&) {
+        } catch (...) {
         }
         return false;
     }
@@ -145,7 +145,7 @@ namespace {
             fs::path path = FilenameToPath(file);
             return boost::algorithm::ends_with(file, FONT_FILE_SUFFIX) &&
                 fs::exists(path) && !fs::is_directory(path);
-        } catch (const std::exception&) {
+        } catch (...) {
         }
         return false;
     }
@@ -157,7 +157,7 @@ namespace {
             fs::path path = FilenameToPath(file);
             return boost::algorithm::ends_with(file, MUSIC_FILE_SUFFIX) &&
                 fs::exists(path) && !fs::is_directory(path);
-        } catch (const std::exception&) {
+        } catch (...) {
         }
         return false;
     }
@@ -169,7 +169,7 @@ namespace {
             fs::path path = FilenameToPath(file);
             return boost::algorithm::ends_with(file, SOUND_FILE_SUFFIX) &&
                 fs::exists(path) && !fs::is_directory(path);
-        } catch (const std::exception&) {
+        } catch (...) {
         }
         return false;
     }
@@ -180,7 +180,7 @@ namespace {
         try {
             fs::path path = FilenameToPath(file);
             return fs::exists(path) && fs::is_directory(path);
-        } catch (const std::exception&) {
+        } catch (...) {
         }
         return false;
     }

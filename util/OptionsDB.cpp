@@ -748,7 +748,7 @@ void OptionsDB::SetFromFile(const boost::filesystem::path& file_path,
                                     version == doc.root_node.Child("version").Child("string").Text()))
             { GetOptionsDB().SetFromXML(doc); }
         }
-    } catch (const std::exception&) {
+    } catch (...) {
         std::cerr << UserString("UNABLE_TO_READ_CONFIG_XML")  << ": "
                   << file_path << std::endl;
     }

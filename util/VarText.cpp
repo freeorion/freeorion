@@ -57,7 +57,7 @@ namespace {
         int object_id = INVALID_OBJECT_ID;
         try {
             object_id = boost::lexical_cast<int>(data);
-        } catch (const std::exception&) {
+        } catch (...) {
             return boost::none;
         }
         auto obj = GetUniverseObject(object_id);
@@ -98,7 +98,7 @@ namespace {
         int id{};
         try {
             id = boost::lexical_cast<int>(data);
-        } catch (const std::exception&) {
+        } catch (...) {
             return boost::none;
         }
         T* object = GetByID(id);

@@ -214,7 +214,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         if (GetOptionsDB().Get<bool>("generate-config-xml")) {
             try {
                 GetOptionsDB().Commit();
-            } catch (const std::exception&) {
+            } catch (...) {
                 std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
             }
         }

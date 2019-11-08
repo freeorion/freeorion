@@ -162,7 +162,7 @@ namespace {
                 //| var
                 )
             );
-        } catch (const std::exception&) {
+        } catch (...) {
             ErrorLogger() << "StringtableTextSubstitute caught exception when parsing input: " << input;
         }
 
