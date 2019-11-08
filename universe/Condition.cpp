@@ -7511,7 +7511,8 @@ namespace {
         dy2 /= mag;
 
 
-        const float MAX_LANE_DOT_PRODUCT = 0.98f;   // magic limit copied from CullAngularlyTooCloseLanes in UniverseGenerator
+        const float MAX_LANE_DOT_PRODUCT = 0.87f;   // magic limit adjusted to allow no more than 12 starlanes from a system
+                                                    // arccos(0.87) = 0.515594 rad = 29.5 degrees
 
         float dp = (dx1 * dx2) + (dy1 * dy2);
         //TraceLogger() << "systems: " << sys1->UniverseObject::Name() << "  " << lane1_sys2->UniverseObject::Name() << "  " << lane2_sys2->UniverseObject::Name() << "  dp: " << dp << std::endl;
@@ -7579,7 +7580,7 @@ namespace {
         // d = |1O| cos(a) = (1O).(12) / |12|
         // d = -(O1).(12 / |12|)
 
-        const float MIN_PERP_DIST = 10; // magic limit, in units of universe units (uu)
+        const float MIN_PERP_DIST = 20; // magic limit, in units of universe units (uu)
 
         float perp_dist = std::abs(v_o1_x*v_12_x + v_o1_y*v_12_y);
 
