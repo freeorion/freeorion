@@ -124,7 +124,7 @@ void CombatLog::serialize(Archive& ar, const unsigned int version)
         TraceLogger() << "CombatLog::serialize turn " << turn << "  combat at " << system_id << "  combat events size: " << combat_events.size();
     try {
         ar  & BOOST_SERIALIZATION_NVP(combat_events);
-    } catch (std::exception e) {
+    } catch (const std::exception& e) {
         ErrorLogger() << "combat events serializing failed!: caught exception: " << e.what();
     }
 
