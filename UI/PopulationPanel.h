@@ -3,9 +3,9 @@
 
 #include "AccordionPanel.h"
 #include "../universe/EnumsFwd.h"
+#include "../universe/UniverseObject.h"
 
 #include <memory>
-
 
 class MultiIconValueIndicator;
 class MultiMeterStatusBar;
@@ -50,7 +50,7 @@ private:
     void ExpandCollapseButtonPressed();
 
     /** object id for the PopulationCenter that this panel displays */
-    int m_popcenter_id;
+    int m_popcenter_id = INVALID_OBJECT_ID;
 
     /** returns the PopCenter object with id m_popcenter_id */
     std::shared_ptr<const PopCenter> GetPopCenter() const;
@@ -59,9 +59,9 @@ private:
     std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_meter_stats;
 
     /** textually / numerically indicates population */
-    std::shared_ptr<MultiIconValueIndicator> m_multi_icon_value_indicator;
+    std::shared_ptr<MultiIconValueIndicator> m_multi_icon_value_indicator = nullptr;
     /** graphically indicates meter values */
-    std::shared_ptr<MultiMeterStatusBar> m_multi_meter_status_bar;
+    std::shared_ptr<MultiMeterStatusBar> m_multi_meter_status_bar = nullptr;
 
     /** map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false) */
     static std::map<int, bool> s_expanded_map;

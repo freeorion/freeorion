@@ -28,26 +28,24 @@ namespace {
 
 PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     AccordionPanel(w, GG::Y(ClientUI::Pts()*2)),
-    m_popcenter_id(object_id),
-    m_meter_stats(),
-    m_multi_icon_value_indicator(nullptr),
-    m_multi_meter_status_bar(nullptr)
+    m_popcenter_id(object_id)
 {}
 
 void PopulationPanel::CompleteConstruction() {
     AccordionPanel::CompleteConstruction();
     SetName("PopulationPanel");
 
-    auto pop = GetPopCenter();
-    if (!pop)
-        throw std::invalid_argument("Attempted to construct a PopulationPanel with an object id is not a PopCenter");
-
     m_expand_button->LeftPressedSignal.connect(
         boost::bind(&PopulationPanel::ExpandCollapseButtonPressed, this));
 
     const auto obj = GetUniverseObject(m_popcenter_id);
     if (!obj) {
-        ErrorLogger() << "Invalid object id " << m_popcenter_id;
+        ErrorLogger() << "Attempted to construct a PopulationPanel with an invalid object id " << m_popcenter_id;
+        return;
+    }
+    auto pop = GetPopCenter();
+    if (!pop) {
+        ErrorLogger() << "Attempted to construct a PopulationPanel with an object id that is not a popcenter: " << m_popcenter_id;
         return;
     }
 
@@ -157,8 +155,10 @@ void PopulationPanel::Update() {
     }
 
     // meter bar displays population stats
-    m_multi_meter_status_bar->Update();
-    m_multi_icon_value_indicator->Update();
+    if (m_multi_meter_status_bar)
+        m_multi_meter_status_bar->Update();
+    if (m_multi_icon_value_indicator)
+        m_multi_icon_value_indicator->Update();
 
     // tooltips
     for (auto& meter_stat : m_meter_stats) {
@@ -189,9 +189,8 @@ void PopulationPanel::ExpandCollapseButtonPressed()
 void PopulationPanel::DoLayout() {
     AccordionPanel::DoLayout();
 
-    for (const auto& meter_stat : m_meter_stats) {
+    for (const auto& meter_stat : m_meter_stats)
         DetachChild(meter_stat.second);
-    }
 
     // detach / hide meter bars and large resource indicators
     DetachChild(m_multi_meter_status_bar);
@@ -220,7 +219,7 @@ void PopulationPanel::DoLayout() {
         }
 
         Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
-    } else {
+    } else if (m_multi_icon_value_indicator && m_multi_meter_status_bar) {
         // attach and show meter bars and large resource indicators
         GG::Y top = Top();
 
@@ -243,7 +242,7 @@ void PopulationPanel::DoLayout() {
 std::shared_ptr<const PopCenter> PopulationPanel::GetPopCenter() const {
     auto pop = ::GetPopCenter(m_popcenter_id);
     if (!pop) {
-        ErrorLogger() << "PopulationPanel tried to get an object with an invalid m_popcenter_id";
+        ErrorLogger() << "PopulationPanel tried to get an object with an invalid m_popcenter_id: " << m_popcenter_id;
         return nullptr;
     }
     return pop;
