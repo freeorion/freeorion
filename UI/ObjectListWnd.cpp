@@ -2603,13 +2603,14 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         if (menuitem_id > MENUITEM_SET_FOCUS_BASE)
             popup->AddMenuItem(std::move(focusMenuItem));
 
+        GG::MenuItem ship_menu_item_top(UserString("MENUITEM_ENQUEUE_SHIPDESIGN_TO_TOP_OF_QUEUE"), false, false);
         GG::MenuItem ship_menu_item(UserString("MENUITEM_ENQUEUE_SHIPDESIGN"), false, false);
         for (auto design_it = avail_designs.begin();
              design_it != avail_designs.end() && ship_menuitem_id < MENUITEM_SET_BUILDING_BASE; ++design_it)
         {
             ship_menuitem_id++;
 
-            auto produce_ship_action = [this, design_it, app, cur_empire, &focus_ship_building_common_action]() {
+            auto produce_ship_action = [this, design_it, app, cur_empire, &focus_ship_building_common_action](int pos) {
                 int ship_design = design_it->first;
                 bool needs_queue_update(false);
                 for (const auto& entry : m_list_box->Selections()) {
@@ -2620,8 +2621,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID()) || !cur_empire->ProducibleItem(BT_SHIP, ship_design, row->ObjectID()))
                         continue;
                     ProductionQueue::ProductionItem ship_item(BT_SHIP, ship_design);
-                    app->Orders().IssueOrder(std::make_shared<
-                        ProductionQueueOrder>(app->EmpireID(), ship_item, 1, row->ObjectID()));
+                    app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(app->EmpireID(), ship_item, 1, row->ObjectID(), pos));
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)
@@ -2629,20 +2629,26 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
                 focus_ship_building_common_action();
             };
+            auto produce_ship_action_top = std::bind(produce_ship_action, 0);
+            auto produce_ship_action_bottom = std::bind(produce_ship_action, -1);
 
             std::stringstream out;
             out << GetShipDesign(design_it->first)->Name() << " (" << design_it->second << ")";
-            ship_menu_item.next_level.push_back(GG::MenuItem(out.str(), false, false, produce_ship_action));
+            ship_menu_item_top.next_level.push_back(GG::MenuItem(out.str(), false, false, produce_ship_action_top));
+            ship_menu_item.next_level.push_back(GG::MenuItem(out.str(), false, false, produce_ship_action_bottom));
         }
 
-        if (ship_menuitem_id > MENUITEM_SET_SHIP_BASE)
+        if (ship_menuitem_id > MENUITEM_SET_SHIP_BASE) {
+            popup->AddMenuItem(std::move(ship_menu_item_top));
             popup->AddMenuItem(std::move(ship_menu_item));
+	}
 
+        GG::MenuItem building_menu_item_top(UserString("MENUITEM_ENQUEUE_BUILDING_TO_TOP_OF_QUEUE"), false, false);
         GG::MenuItem building_menu_item(UserString("MENUITEM_ENQUEUE_BUILDING"), false, false);
         for (auto& entry : avail_blds) {
             bld_menuitem_id++;
 
-            auto produce_building_action = [this, entry, app, cur_empire, &focus_ship_building_common_action]() {
+            auto produce_building_action = [this, entry, app, cur_empire, &focus_ship_building_common_action](int pos) {
                 std::string bld = entry.first;
                 bool needs_queue_update(false);
                 for (const auto& selection : m_list_box->Selections()) {
@@ -2657,7 +2663,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                         continue;
                     }
                     ProductionQueue::ProductionItem bld_item(BT_BUILDING, bld);
-                    app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(app->EmpireID(), bld_item, 1, row->ObjectID()));
+                    app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(app->EmpireID(), bld_item, 1, row->ObjectID(), pos));
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)
@@ -2665,14 +2671,19 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
                 focus_ship_building_common_action();
             };
+            auto produce_building_action_top = std::bind(produce_building_action, 0);
+            auto produce_building_action_bottom = std::bind(produce_building_action, -1);
 
             std::stringstream out;
             out << UserString(entry.first) << " (" << entry.second << ")";
-            building_menu_item.next_level.push_back(GG::MenuItem(out.str(), false, false, produce_building_action));
+            building_menu_item_top.next_level.push_back(GG::MenuItem(out.str(), false, false, produce_building_action_top));
+            building_menu_item.next_level.push_back(GG::MenuItem(out.str(), false, false, produce_building_action_bottom));
         }
 
-        if (bld_menuitem_id > MENUITEM_SET_BUILDING_BASE)
+        if (bld_menuitem_id > MENUITEM_SET_BUILDING_BASE) {
+            popup->AddMenuItem(std::move(building_menu_item_top));
             popup->AddMenuItem(std::move(building_menu_item));
+        }
     }
     // moderator actions...
     if (moderator) {
