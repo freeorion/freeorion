@@ -71,7 +71,7 @@ ADD_AI_PLAYER
 Ajouter une IA
 
 OBSERVER
-Observateur
+Spectateur
 
 MODERATOR
 Modérateur
@@ -3198,6 +3198,43 @@ Tour %1%
 MAP_BTN_TURN_UNREADY
 Réviser Ordres %1%
 
+MAP_BTN_TURN_TOOLTIP
+Lancer Tour
+
+MAP_BTN_TURN_TOOLTIP_DESC_SP
+'''Lance le traitement du tour selon la séquence suivante:
+
+[[MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO]]
+'''
+
+MAP_BTN_TURN_TOOLTIP_DESC_MP
+'''Envoie les ordres au serveur. Le traitement du tour sera exécuté selon la séquence suivante:
+
+[[MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO]]
+'''
+
+MAP_BTN_TURN_TOOLTIP_DESC_OBS
+Les spectateurs ne peuvent pas lancer le traitement d'un tour.
+
+MAP_BTN_TURN_TOOLTIP_DESC_MOD
+'''Lance le traitement du tour même si certains joueurs n'ont pas envoyé leurs ordres au serveur.
+Le traitement du tour sera exécuté selon la séquence suivante:
+
+[[MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO]]
+'''
+
+MAP_BTN_TURN_TOOLTIP_DESC_WAIT
+En attente des ordres des autres joueurs. Cliquez à nouveau pour réviser vos ordres.
+
+MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO
+'''<u>Exécution Ordres</u>
+Colonisation, Invasion, Bombardement, Dons, Démolition et Déplacement des Flottes
+
+<u>Résolution Combats</u>
+
+<u>Production, Recherche et Croissance</u>
+Application des effets, production des astronefs et structures, déverrouillage des nouvelles technologies, croissance de la Population, mise à jour de la propagation de l'Approvisionnement'''
+
 # %1% number of seconds
 MAP_TIMEOUT_SECONDS
 %1% secondes
@@ -4523,7 +4560,7 @@ DESIGN_INVALID
 Modèle invalide
 
 DESIGN_INV_MODERATOR
-Les modérateurs et observateurs ne peuvent pas créer ou modifier des modèles d'astronefs.
+Les modérateurs et spectateurs ne peuvent pas créer ou modifier des modèles d'astronefs.
 
 DESIGN_INV_NO_HULL
 Démarrer la conception d'un astronef par le choix de la coque.
@@ -15259,17 +15296,29 @@ Récupération Stationnaire Carburant
 FUEL_EFFICIENCY_DESC
 [[FUEL_EFFICIENCY_TITLE]]
 
-GREAT_FUEL_EFFICIENCY_LABEL
-Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 400%%
-
-GOOD_FUEL_EFFICIENCY_LABEL
-Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 200%%
+BAD_FUEL_EFFICIENCY_LABEL
+Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 60%%
 
 AVERAGE_FUEL_EFFICIENCY_LABEL
 Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 100%%
 
-BAD_FUEL_EFFICIENCY_LABEL
-Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 60%%
+GOOD_FUEL_EFFICIENCY_LABEL
+Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 200%%
+
+GREAT_FUEL_EFFICIENCY_LABEL
+Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 400%%
+
+HULL_DESC_BAD_FUEL_EFFICIENCY
+[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 60%
+
+HULL_DESC_AVERAGE_FUEL_EFFICIENCY
+[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 100%
+
+HULL_DESC_GOOD_FUEL_EFFICIENCY
+[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 200%
+
+HULL_DESC_GREAT_FUEL_EFFICIENCY
+[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 400%
 
 MAX_FUEL_LESS_THAN_ONE_DESC
 Ravitaillement en Carburant impossible
