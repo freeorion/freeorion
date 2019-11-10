@@ -53,6 +53,6 @@ FieldType
                 AddSpecial name = "ACCRETION_DISC_SPECIAL"
             ]
     ]
-    graphic = "nebulae/nebula12.png"
+    graphic = "fields/star_forming_nebula_1.png"
 
 #include "fields.macros"
