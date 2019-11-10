@@ -997,7 +997,7 @@ namespace {
         std::set<int>                   valid_attacker_object_ids;  // all objects that can attack
         std::map<int, EmpireCombatInfo> empire_infos;               // empire specific information, indexed by empire id
         CombatInfo&                     combat_info;
-        int                             next_fighter_id = -10001;   // give fighters negative ids so as to avoid clashes with any positive-id of persistent UniverseObjects
+        int                             next_fighter_id = -1000001; // give fighters negative ids so as to avoid clashes with any positive-id of persistent UniverseObjects
         std::set<int>                   destroyed_object_ids;       // objects that have been destroyed so far during this combat
 
         explicit AutoresolveInfo(CombatInfo& combat_info_) :
