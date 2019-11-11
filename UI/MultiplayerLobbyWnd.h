@@ -26,6 +26,8 @@ public:
     GG::Pt MinUsableSize() const override;
 
     bool            LoadGameSelected() const;
+
+    std::string     GetChatText() const;
     //@}
 
     /** \name Mutators */ //@{
