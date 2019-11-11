@@ -502,8 +502,10 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
         ErrorLogger() << "MessageWnd::HandlePlayerChatMessage couldn't get client app!";
         return;
     }
-    int client_empire_id = app->EmpireID();
-    if (recipient_player_id == client_empire_id) {
+    // only show and flash message window if other player sent message
+    const std::map<int, PlayerInfo>& players = app->Players();
+    const auto it = players.find(app->PlayerID());
+    if (it == players.end() || it->second.name != player_name) {
         Flash();
         Show();
     }
