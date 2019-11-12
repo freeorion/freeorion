@@ -320,7 +320,7 @@ namespace {
                 ErrorLogger() << "PlayerDataPanel::Render couldn't get client app!";
                 return;
             }
-            if (m_player_id != app->PlayerID()) {
+            if (m_empire_id != app->EmpireID()) {
                 // render diplomacy icon
                 switch (m_diplo_status) {
                 case DIPLO_WAR:                 WarIcon()->OrthoBlit(    UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
@@ -333,7 +333,7 @@ namespace {
 
             // render incoming diplomatic message icon, if there is one
             const DiplomaticMessage& incoming_message_to_client =
-                Empires().GetDiplomaticMessage(m_player_id, app->PlayerID());
+                Empires().GetDiplomaticMessage(m_empire_id, app->EmpireID());
             if (incoming_message_to_client.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
                 MessageIcon()->OrthoBlit(UpperLeft() + m_diplo_msg_ul, UpperLeft() + m_diplo_msg_ul + ICON_SIZE);
 
@@ -812,7 +812,9 @@ void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id
         ErrorLogger() << "PlayerListWnd::HandleDiplomaticMessageChange couldn't get client app!";
         return;
     }
-    int client_empire_id = app->PlayerID();
+    int client_empire_id = app->EmpireID();
+    if (client_empire_id == ALL_EMPIRES)
+        return;
 
     DiplomaticMessage message = Empires().GetDiplomaticMessage(empire1_id, empire2_id);
     bool active_message = message.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE;
