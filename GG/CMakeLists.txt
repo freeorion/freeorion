@@ -153,6 +153,7 @@ target_compile_definitions(GiGi
         # instead of our hacky gilext code.
         $<$<VERSION_LESS:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.68>:GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO>
         $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.67>:BOOST_GIL_IO_ENABLE_GRAY_ALPHA>
+        $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.71>:BOOST_GIL_USES_MP11>
 )
 
 target_include_directories(GiGi SYSTEM
