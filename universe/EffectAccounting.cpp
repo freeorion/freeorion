@@ -22,8 +22,18 @@ Effect::EffectCause::EffectCause(EffectsCauseType cause_type_, const std::string
 Effect::AccountingInfo::AccountingInfo() :
     EffectCause(),
     source_id(INVALID_OBJECT_ID),
-    meter_change(0.0),
-    running_meter_total(0.0)
+    meter_change(0.0f),
+    running_meter_total(0.0f)
+{}
+
+Effect::AccountingInfo::AccountingInfo(
+    int source_id_, EffectsCauseType cause_type_, float meter_change_,
+    float running_meter_total_, const std::string& specific_cause_,
+    const std::string& custom_label_) :
+    EffectCause(cause_type_, specific_cause_, custom_label_),
+    source_id(source_id_),
+    meter_change(meter_change_),
+    running_meter_total(running_meter_total_)
 {}
 
 bool Effect::AccountingInfo::operator==(const Effect::AccountingInfo& rhs) const {

@@ -257,6 +257,7 @@ namespace {
         if (meter_it == meter_map.end() || meter_it->second.empty())
             return boost::none;
 
+        //DebugLogger() << "GetAccountingInfo() map load?: " << effect_accounting_map.load_factor() << " / " << effect_accounting_map.max_load_factor();
         return meter_it->second;
     }
 }

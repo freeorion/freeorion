@@ -4,6 +4,7 @@
 
 #include "EnumsFwd.h"
 
+#include <boost/container/flat_map.hpp>
 #include <memory>
 #include <map>
 #include <string>
@@ -32,6 +33,10 @@ namespace Effect {
       * by effects groups acting on meters of objects. */
     struct FO_COMMON_API AccountingInfo : public EffectCause {
         AccountingInfo();
+        AccountingInfo(int source_id_, EffectsCauseType cause_type_, float meter_change_,
+                       float running_meter_total_, const std::string& specific_cause_ = "",
+                       const std::string& custom_label_ = "");
+
         bool operator==(const AccountingInfo& rhs) const;
 
         int     source_id;          ///< source object of effect
@@ -41,7 +46,7 @@ namespace Effect {
 
     /** Effect accounting information for all meters of all objects that are
       * acted on by effects. */
-    typedef std::map<int, std::map<MeterType, std::vector<AccountingInfo>>> AccountingMap;
+    typedef std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>> AccountingMap;
 
     /** Combination of targets and cause for an effects group. */
     struct TargetsAndCause {
@@ -61,11 +66,11 @@ namespace Effect {
     };
 
     /** Discrepancy between meter's value at start of turn, and the value that
-      * this client calculate that the meter should have with the knowledge
+      * this client calculates that the meter should have with the knowledge
       * available -> the unknown factor affecting the meter.  This is used
       * when generating effect accounting, in the case where the expected
       * and actual meter values don't match. */
-    typedef std::map<int, std::map<MeterType, double>> DiscrepancyMap;
+    typedef std::unordered_map<int, boost::container::flat_map<MeterType, double>> DiscrepancyMap;
 
     /** Map from (effects group and source object) to target set of for
       * that effects group with that source object.  A multimap is used
