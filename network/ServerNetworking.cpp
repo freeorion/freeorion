@@ -30,8 +30,34 @@ namespace {
 class DiscoveryServer {
 public:
     DiscoveryServer(boost::asio::io_context& io_context) :
-        m_socket(io_context, udp::endpoint(udp::v6(), Networking::DiscoveryPort()))
-    { Listen(); }
+        m_socket(io_context)
+    {
+        // use a dual stack (ipv6 + ipv4) socket
+        udp::endpoint discovery_endpoint(udp::v6(), Networking::DiscoveryPort());
+
+        if (GetOptionsDB().Get<bool>("singleplayer")) {
+            // when hosting a single player game only accept connections from
+            // the localhost via the loopback interface instead of the any
+            // interface.
+            // This should prevent unnecessary triggering of Desktop Firewalls as
+            // reported by various users when running single player games.
+            discovery_endpoint.address(boost::asio::ip::address_v4::loopback());
+        }
+
+        try {
+            m_socket = udp::socket(io_context, discovery_endpoint);
+        } catch (const std::exception &e) {
+            ErrorLogger(network) << "DiscoveryServer cannot open IPv6 socket: " << e.what()
+                                 << ". Fallback to IPv4";
+            discovery_endpoint = udp::endpoint(udp::v4(), Networking::DiscoveryPort());
+            if (GetOptionsDB().Get<bool>("singleplayer"))
+                discovery_endpoint.address(boost::asio::ip::address_v4::loopback());
+
+            m_socket = udp::socket(io_context, discovery_endpoint);
+        }
+
+        Listen();
+    }
 
 private:
     void Listen() {
@@ -754,7 +780,17 @@ void ServerNetworking::Init() {
         message_endpoint.address(boost::asio::ip::address_v4::loopback());
     }
 
-    m_player_connection_acceptor.open(message_endpoint.protocol());
+    try {
+        m_player_connection_acceptor.open(message_endpoint.protocol());
+    } catch (const std::exception &e) {
+        ErrorLogger(network) << "Server cannot open IPv6 socket: " << e.what()
+                             << ". Fallback to IPv4";
+        message_endpoint = tcp::endpoint(tcp::v4(), Networking::MessagePort());
+        if (GetOptionsDB().Get<bool>("singleplayer"))
+            message_endpoint.address(boost::asio::ip::address_v4::loopback());
+
+        m_player_connection_acceptor.open(message_endpoint.protocol());
+    }
     m_player_connection_acceptor.set_option(
         boost::asio::socket_base::reuse_address(true));
     if (message_endpoint.protocol() == boost::asio::ip::tcp::v6())
