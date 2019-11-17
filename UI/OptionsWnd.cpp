@@ -619,6 +619,7 @@ void OptionsWnd::CompleteConstruction() {
     CreateSectionHeader(current_page, 0,                                        UserString("OPTIONS_GALAXY_MAP_GENERAL"));
     BoolOption(current_page,   0, "ui.map.background.gas.shown",                UserString("OPTIONS_GALAXY_MAP_GAS"));
     BoolOption(current_page,   0, "ui.map.background.starfields.shown",         UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
+    DoubleOption(current_page, 0, "ui.map.background.starfields.scale",         UserString("OPTIONS_GALAXY_MAP_STARFIELDS_SCALE"));
     BoolOption(current_page,   0, "ui.map.scale.legend.shown",                  UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
     BoolOption(current_page,   0, "ui.map.scale.circle.shown",                  UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"));
     BoolOption(current_page,   0, "ui.map.zoom.slider.shown",                   UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
