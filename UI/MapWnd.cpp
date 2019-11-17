@@ -1874,7 +1874,7 @@ void MapWnd::RenderStarfields() {
     }
 
 
-    glPointSize(std::min(5.0, 0.5 * ZoomFactor()));
+    glPointSize(std::max(std::min(5.0, 1.25 * ZoomFactor()), 0.75));
     glEnable(GL_POINT_SMOOTH);
     glDisable(GL_TEXTURE_2D);
 
