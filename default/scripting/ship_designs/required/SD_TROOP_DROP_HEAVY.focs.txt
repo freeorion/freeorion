@@ -5,5 +5,7 @@ ShipDesign
     hull = "SH_COLONY_BASE"
     parts = [
         "GT_TROOP_POD_2"
+        "GT_TROOP_POD_2"
+        "GT_TROOP_POD_2"
     ]
     model = "mark1"

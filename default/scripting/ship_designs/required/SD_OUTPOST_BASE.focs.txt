@@ -3,5 +3,9 @@ ShipDesign
     uuid = "08a58b08-0929-496d-84fc-faa91424ca16"
     description = "SD_OUTPOST_BASE_DESC"
     hull = "SH_COLONY_BASE"
-    parts = "CO_OUTPOST_POD"
+    parts = [
+        "CO_OUTPOST_POD"
+        ""
+        ""
+    ]
     model = "seed"

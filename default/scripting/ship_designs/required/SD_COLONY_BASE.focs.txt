@@ -3,6 +3,10 @@ ShipDesign
     uuid = "08a58b08-0929-496d-84fc-faa91424ca11"
     description = "SD_COLONY_BASE_DESC"
     hull = "SH_COLONY_BASE"
-    parts = "CO_COLONY_POD"
+    parts = [
+        "CO_COLONY_POD"
+        ""
+        ""
+    ]
     icon = "icons/ship_hulls/colony_base_hull_small.png"  // These designs may specify a ship icon, but if not the hull's icon is used.
     model = "seed"
