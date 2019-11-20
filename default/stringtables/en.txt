@@ -14233,7 +14233,7 @@ SH_BASIC_SMALL
 Basic Small Hull
 
 SH_BASIC_SMALL_DESC
-'''A small, basic interstellar hull. It has only one external slot but can make an extra jump compared to other basic hulls.
+'''A small, basic interstellar hull. It has only one external slot but is very efficient at starlane travel.
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
