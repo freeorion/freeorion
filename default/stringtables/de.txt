@@ -8018,7 +8018,7 @@ SH_BASIC_SMALL
 Kleiner Standardrumpf
 
 SH_BASIC_SMALL_DESC
-'''Ein kleiner interstellarer Standardrumpf. Nur ein externer Steckplatz,  kann er einen Sprung mehr ausführen als die anderen Standardrümpfe.
+'''Ein kleiner interstellarer Standardrumpf. Hat nur einen externen Steckplatz, kann dafür sehr effizient Sternensprünge durchführen.
 
 [[metertype METER_STEALTH]] ist durchschnittlich, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist durchschnittlich.
 
