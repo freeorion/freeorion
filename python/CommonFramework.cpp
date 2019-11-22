@@ -82,7 +82,8 @@ bool PythonBase::Initialize()
     try {
         // get main namespace, needed to run other interpreted code
         object py_main = import("__main__");
-        m_namespace = extract<dict>(py_main.attr("__dict__"));
+        dict py_namespace = extract<dict>(py_main.attr("__dict__"));
+        m_namespace = py_namespace;
 
         // add the directory containing common Python modules used by all Python scripts to Python sys.path
         AddToSysPath(GetPythonCommonDir());
@@ -157,6 +158,14 @@ void PythonBase::HandleErrorAlreadySet() {
 
 void PythonBase::Finalize() {
     if (Py_IsInitialized()) {
+        // cleanup python objects before interpterer shutdown
+        m_system_exit = object();
+        m_namespace = boost::none;
+        if (m_python_module_error != nullptr) {
+            (*m_python_module_error) = object();
+            m_python_module_error = nullptr;
+        }
+
         Py_Finalize();
         DebugLogger() << "Cleaned up FreeOrion Python interface";
     }
@@ -170,7 +179,7 @@ void PythonBase::SetCurrentDir(const std::string dir) {
     std::string script = "import os\n"
     "os.chdir(r'" + dir + "')\n"
     "print 'Python current directory set to', os.getcwd()";
-    exec(script.c_str(), m_namespace, m_namespace);
+    exec(script.c_str(), *m_namespace, *m_namespace);
 }
 
 void PythonBase::AddToSysPath(const std::string dir) {
@@ -180,7 +189,7 @@ void PythonBase::AddToSysPath(const std::string dir) {
     }
     std::string script = "import sys\n"
         "sys.path.append(r'" + dir + "')";
-    exec(script.c_str(), m_namespace, m_namespace);
+    exec(script.c_str(), *m_namespace, *m_namespace);
 }
 
 void PythonBase::SetErrorModule(object& module)
