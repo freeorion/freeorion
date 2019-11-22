@@ -6,7 +6,7 @@ redirect_logging_to_freeorion_logger()
 
 import sys
 from random import random, uniform, randint, choice
-from math import sin, cos, pi, hypot
+from math import sin, cos, pi
 
 import freeorion as fo
 from universe_tables import MONSTER_FREQUENCY
