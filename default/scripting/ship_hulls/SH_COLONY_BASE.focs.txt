@@ -4,9 +4,13 @@ Hull
     speed = 0
     fuel = 0
     stealth = 5
-    structure = 2
-    slots = Slot type = Internal position = (0.50, 0.50)
-    buildCost = 3
+    structure = 3
+    slots = [
+        Slot type = Internal position = (0.38, 0.50)
+        Slot type = Internal position = (0.50, 0.50)
+        Slot type = Internal position = (0.62, 0.50)
+    ]
+    buildCost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 3
     tags = [ "PEDIA_HULL_LINE_GENERIC" ]
     location = OwnedBy empire = Source.Owner
@@ -16,3 +20,5 @@ Hull
     graphic = "hulls_design/colony_base_hull.png"
 
 #include "ship_hulls.macros"
+
+#include "/scripting/common/upkeep.macros"
