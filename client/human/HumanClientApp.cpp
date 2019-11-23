@@ -1597,9 +1597,8 @@ void HumanClientApp::OpenURL(const std::string& url) {
 
     // execute open command
     int rv = system(command.c_str());
-    if (rv != 0) {
-        ErrorLogger() << "HumanClientApp::OpenURL `" << command << "` have returned a non-zero exit code.";
-    }
+    if (rv != 0)
+        ErrorLogger() << "HumanClientApp::OpenURL `" << command << "` returned a non-zero exit code: " << rv;
 }
 
 void HumanClientApp::BrowsePath(const boost::filesystem::path& browse_path) {
