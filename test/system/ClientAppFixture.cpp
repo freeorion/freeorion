@@ -196,6 +196,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
     case Message::PLAYER_CHAT:
     case Message::CHAT_HISTORY:
     case Message::TURN_TIMEOUT:
+    case Message::PLAYER_INFO:
         return true; // ignore
     case Message::PLAYER_STATUS: {
         int about_empire_id;
