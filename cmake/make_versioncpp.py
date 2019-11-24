@@ -119,7 +119,7 @@ if system() == 'Windows':
 if system() == 'Darwin':
     generators.append(Generator('Xcode/Info.plist.in', 'Xcode/Info.plist'))
 
-version = "0.4.8+"
+version = "0.4.9"
 branch = ""
 build_no = INVALID_BUILD_NO
 
