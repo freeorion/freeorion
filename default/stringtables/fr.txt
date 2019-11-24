@@ -1330,6 +1330,9 @@ Rendu de la densité gazeuse qui donne sa forme à la galaxie. Peut ralentir l'a
 OPTIONS_DB_GALAXY_MAP_STARFIELDS
 Rendu du champ d'étoiles sur lequel se détachent les systèmes. Peut ralentir l'affichage sur les machines les plus anciennes.
 
+OPTIONS_DB_GALAXY_MAP_STARFIELDS_SCALE
+Fixe la taille du fond stellaire autour des systèmes.
+
 OPTIONS_DB_GALAXY_MAP_SCALE_LINE
 Affiche la barre d'échelle des distances sur la carte galactique.
 
@@ -2872,7 +2875,10 @@ OPTIONS_GALAXY_MAP_GAS
 Rendu du fond nébuleux de la galaxie
 
 OPTIONS_GALAXY_MAP_STARFIELDS
-Rendu du fond étoilé de la galaxie
+Rendu du fond stellaire de la galaxie
+
+OPTIONS_GALAXY_MAP_STARFIELDS_SCALE
+Taille des étoiles du fond stellaire de la galaxie
 
 OPTIONS_GALAXY_MAP_SCALE_LINE
 Barre d'échelle des distances galactiques
