@@ -341,8 +341,6 @@ public:
 
     /** \name Mutators */ //@{
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void KeyPress(GG::Key key, std::uint32_t key_code_point,
-                  GG::Flags<GG::ModKey> mod_keys) override;
     void SetText(const std::string& str) override;
     void AcceptPastedText(const std::string& text) override;
     //@}

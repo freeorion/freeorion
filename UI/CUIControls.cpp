@@ -989,53 +989,12 @@ void CensoredCUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
+    // omits copy command from base CUIEdit
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),         false, false, hotkey_paste_action));
     popup->AddMenuItem(GG::MenuItem(true)); // separator
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
     popup->Run();
-}
-
-void CensoredCUIEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
-                               GG::Flags<GG::ModKey> mod_keys)
-{
-    if (Disabled()) {
-        CUIEdit::KeyPress(key, key_code_point, mod_keys);
-        return;
-    }
-
-    bool shift_down = mod_keys & (GG::MOD_KEY_LSHIFT | GG::MOD_KEY_RSHIFT);
-    //bool ctrl_down = mod_keys & (GG::MOD_KEY_CTRL | GG::MOD_KEY_RCTRL);
-    //bool numlock_on = mod_keys & GG::MOD_KEY_NUM;
-
-    if (key == GG::GGK_DELETE && shift_down) {
-        GG::GUI::GetGUI()->CutWndText(this);    // should just copy the placeholder character
-
-    } else if (key == GG::GGK_INSERT && shift_down) {
-        GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText());
-
-    } else if (key == GG::GGK_BACKSPACE) {
-        if (MultiSelected()) {
-            ClearSelected();
-
-        } else if (0 < m_cursor_pos.first) {
-            // delete character before cursor
-            m_cursor_pos.second = m_cursor_pos.first--;
-            ClearSelected();
-        }
-
-    } else if (key == GG::GGK_DELETE) {
-        if (MultiSelected()) {
-            ClearSelected();
-
-        } else {
-            m_cursor_pos.second = m_cursor_pos.first + 1;
-            ClearSelected();
-        }
-
-    } else {
-        CUIEdit::KeyPress(key, key_code_point, mod_keys);
-    }
 }
 
 void CensoredCUIEdit::SetText(const std::string& str) {
