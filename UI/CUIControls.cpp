@@ -1109,7 +1109,7 @@ void CensoredCUIEdit::ClearSelected() {
     auto it = m_raw_text.begin() + Value(low);
     auto end_it = m_raw_text.begin() + Value(high);
 
-    if (it == end_it)
+    if (it == m_raw_text.end() || it == end_it)
         return;
 
     m_raw_text.erase(it, end_it);
