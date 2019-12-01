@@ -3,6 +3,7 @@ Part
     description = "SR_SPINAL_ANTIMATTER_DESC"
     class = ShortRange
     damage = 100
+    combatTargets = [[DEFAULT_SHIP_WEAPON_COMBAT_TARGETS]]
     mountableSlotTypes = Core
     buildcost = 250 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 4
@@ -13,3 +14,4 @@ Part
 #include "shortrange.macros"
 
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/ship_parts/targeting.macros"

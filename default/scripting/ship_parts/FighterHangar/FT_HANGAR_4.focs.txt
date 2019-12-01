@@ -6,7 +6,7 @@ Part
     capacity = 1
     damage = 10
     combatTargets = OrderedAlternativesOf [
-        And [ [[COMBAT_TARGETS_VISIBLE_ENEMY]]  [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]] ]
+        [[DEFAULT_SHIP_WEAPON_COMBAT_TARGETS]]
         And [ [[COMBAT_TARGETS_VISIBLE_ENEMY]]  Fighter ]
     ]
     mountableSlotTypes = Internal

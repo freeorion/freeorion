@@ -4,6 +4,7 @@ Part
     class = ShortRange
     damage = 15
     NoDefaultCapacityEffect
+    combatTargets = [[DEFAULT_SHIP_WEAPON_COMBAT_TARGETS]]
     mountableSlotTypes = External
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 4
@@ -16,3 +17,4 @@ Part
 #include "shortrange.macros"
 
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/ship_parts/targeting.macros"
