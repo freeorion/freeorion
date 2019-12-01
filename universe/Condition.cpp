@@ -883,7 +883,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     // matches, or those left in matches while the rest are moved into non_matches
     ObjectSet matched_objects;
     matched_objects.reserve(number);
-    TransferSortedObjects(number, m_sort_key.get(), local_context, m_sorting_method, all_subcondition_matches, matched_objects);
+    TransferSortedObjects(number, m_sort_key.get(), parent_context, m_sorting_method, all_subcondition_matches, matched_objects);
 
     // put objects back into matches and non_target sets as output...
 
