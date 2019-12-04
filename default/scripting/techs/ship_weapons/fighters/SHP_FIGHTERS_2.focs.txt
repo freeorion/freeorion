@@ -23,6 +23,8 @@ Tech
             ]
             accountinglabel = "SHP_FIGHTERS_2"
             effects = [
+// FIXME WTF Target.DesignId is accepted but returns zero while Target.DesignID does the right thing
+// TODO also test/document (PartOfClassInShipDesign class = FighterWeapon design = Target.DesignID) 
                 SetMaxCapacity      partname = "FT_HANGAR_1" value = Value + (PartsInShipDesign name = "FT_HANGAR_1" design = Target.DesignID)
                 SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 2
                 SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 3
