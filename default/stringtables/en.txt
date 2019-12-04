@@ -13326,7 +13326,7 @@ SR_WEAPON_1_1
 Mass Driver
 
 SR_WEAPON_1_1_DESC
-'''The Mass Driver, a basic weapon.
+'''The Mass Driver, a basic weapon. Attacks ships and planets.
 
 Upgrading the weapon technology will increase the shot damage.
 
@@ -13336,7 +13336,7 @@ SR_WEAPON_2_1
 Laser Weapon
 
 SR_WEAPON_2_1_DESC
-'''The Laser, a more powerful ship's weapon than the Mass Driver.
+'''The Laser, a more powerful ship's weapon than the Mass Driver. Attacks ships and planets.
 
 Upgrading the weapon technology will increase the shot damage.
 
@@ -13346,7 +13346,7 @@ SR_WEAPON_3_1
 Plasma Cannons
 
 SR_WEAPON_3_1_DESC
-'''The Plasma Cannon, a more powerful ship's weapon than the Laser.
+'''The Plasma Cannon, a more powerful ship's weapon than the Laser. Attacks ships and planets.
 
 Upgrading the weapon technology will increase the shot damage.
 
@@ -13356,7 +13356,7 @@ SR_WEAPON_4_1
 Death Ray
 
 SR_WEAPON_4_1_DESC
-'''The Death Ray, a more powerful ship's weapon than the Plasma Cannon.
+'''The Death Ray, a more powerful ship's weapon than the Plasma Cannon. Attacks ships and planets.
 
 Upgrading the weapon technology will increase the shot damage.
 
@@ -13366,7 +13366,7 @@ SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon
 
 SR_SPINAL_ANTIMATTER_DESC
-A huge spinal mount mass driver firing heavy projectiles made of antimatter.
+A huge spinal mount mass driver firing heavy projectiles made of antimatter. Attacks ships and planets.
 
 SR_JAWS
 Jaws
