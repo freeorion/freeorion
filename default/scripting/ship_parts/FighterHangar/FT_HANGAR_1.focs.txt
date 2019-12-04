@@ -5,19 +5,9 @@ Part
     class = FighterHangar
     capacity = 4
     damage = 1
-    combatTargets = OrderedAlternativesOf [
-        // Target Bombers and Heavy Bombers first
-        And [
-            [[COMBAT_TARGETS_VISIBLE_ENEMY]]
-            Fighter
-            Or [
-               DesignHasPart name = "FT_HANGAR_3"
-               DesignHasPart name = "FT_HANGAR_4"
-            ]
-        ]
-        And [ [[COMBAT_TARGETS_VISIBLE_ENEMY]]  Fighter ]
-        // if no fighters: target enemy ships
-        And [ [[COMBAT_TARGETS_VISIBLE_ENEMY]]  [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]] ]
+    combatTargets = And [
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        Fighter
     ]
     mountableSlotTypes = Internal
     buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
