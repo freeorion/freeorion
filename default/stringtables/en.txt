@@ -13282,7 +13282,7 @@ FT_HANGAR_2_FIGHTER
 Fighter
 
 FT_HANGAR_2_DESC
-Storage system for lightly armed fighters.
+Storage system for lightly armed fighters. Can attack enemy ships and fighters.
 
 FT_HANGAR_3
 Bomber Hangar
