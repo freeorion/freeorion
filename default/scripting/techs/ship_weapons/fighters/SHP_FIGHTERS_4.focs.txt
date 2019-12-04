@@ -23,7 +23,7 @@ Tech
             ]
             accountinglabel = "SHP_FIGHTERS_3"
             effects = [
-                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 1
+                SetMaxCapacity      partname = "FT_HANGAR_1" value = Value + (PartsInShipDesign name = "FT_HANGAR_1" design = Target.DesignID)
                 SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 5
                 SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 7
                 ]

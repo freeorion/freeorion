@@ -11937,19 +11937,19 @@ SHP_FIGHTERS_2
 Laser Fighters
 
 SHP_FIGHTERS_2_DESC
-Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have laser weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 2 and [[shippart FT_HANGAR_3]] by 3.
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have laser weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 2 and [[shippart FT_HANGAR_3]] by 3. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
 
 SHP_FIGHTERS_3
 Plasma Fighters
 
 SHP_FIGHTERS_3_DESC
-Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have plasma weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 3 and [[shippart FT_HANGAR_3]] by 4.
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have plasma weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 3 and [[shippart FT_HANGAR_3]] by 4. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
 
 SHP_FIGHTERS_4
 Death Ray Fighters
 
 SHP_FIGHTERS_4_DESC
-Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have death ray weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 5 and [[shippart FT_HANGAR_3]] by 7.
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have death ray weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 5 and [[shippart FT_HANGAR_3]] by 7. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
 
 SHP_WEAPON_1_2
 Mass Driver 2
@@ -13255,7 +13255,7 @@ FT_BAY_1
 Launch Bay
 
 FT_BAY_1_DESC
-Launch system for fighters.
+Launch system for fighters. Launches [[FT_HANGAR_1_FIGHTER]] faster: Can launch all fighters in a single [[shippart FT_HANGAR_1]].
 
 FT_HANGAR_0
 Decoy Hangar
@@ -13273,7 +13273,7 @@ FT_HANGAR_1_FIGHTER
 Interceptor
 
 FT_HANGAR_1_DESC
-Storage system for minimally armed fighters. Can attack enemy fighters only.
+Storage system for minimally armed fighters. Can attack enemy fighters only. Launches faster: A [[shippart FT_BAY_1]] can launch all fighters in a single [[shippart FT_HANGAR_1]].
 
 FT_HANGAR_2
 Fighter Hangar
