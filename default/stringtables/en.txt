@@ -13273,7 +13273,7 @@ FT_HANGAR_1_FIGHTER
 Interceptor
 
 FT_HANGAR_1_DESC
-Storage system for minimally armed fighters.
+Storage system for minimally armed fighters. Can attack enemy fighters only.
 
 FT_HANGAR_2
 Fighter Hangar
