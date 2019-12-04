@@ -13365,7 +13365,7 @@ FT_HANGAR_3_FIGHTER
 Bomber
 
 FT_HANGAR_3_DESC
-Storage system for moderately armed fighters.
+Storage system for moderately armed fighters. Can attack enemy ships only.
 
 FT_HANGAR_4
 Heavy-Bomber Hangar
