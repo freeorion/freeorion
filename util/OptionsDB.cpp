@@ -800,7 +800,8 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
         try {
             m_dirty |= option.SetFromString(elem.Text());
         } catch (const std::exception& e) {
-            ErrorLogger() << "OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attempting to set option \"" << option_name << "\": " << e.what();
+            ErrorLogger() << "OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attempting to set option \""
+                          << option_name << "\" to \"" << elem.Text() << "\": " << e.what();
         }
     }
 }
