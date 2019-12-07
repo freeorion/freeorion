@@ -94,31 +94,51 @@ namespace {
         return boost::str(boost::format("<%1% %2%>%3%</%1%>") % tag % id % meat);
     }
 
-    /// Returns true, if the \a object should be counted in initial and/or destroyed empire forces
-    bool ShouldObjectBeShownInEmpireForces(std::shared_ptr<UniverseObject> object) {
-        return object && (object->ObjectType() == OBJ_SHIP ||
-                          (object->GetMeter(METER_POPULATION) &&
-                           object->InitialMeterValue(METER_POPULATION) > 0.0f));
-    }
-
-    using EmpireForces = std::vector<std::shared_ptr<UniverseObject>>;
-
-    /// Selects ships and populated planets in \a objects and stores them in collections
-    /// for each empire.
-    std::map<int, EmpireForces> ForcesByOwner(const std::set<int>& owners,
-                                              const std::set<int>& objects) {
-        std::map<int, EmpireForces> forces_by_owner;
+    /// Segregates \a objects into categories based on \a categories and ownership;
+    /// only applies to objects owned by one of \a owners;
+    /// within a category, sorts by \a order
+    std::map<int, std::vector<std::vector<std::shared_ptr<UniverseObject>>>> SegregateForces(
+        const std::set<int>& owners,
+        const std::set<int>& objects,
+        std::vector<std::function<bool(std::shared_ptr<UniverseObject>)>> categories,
+        std::function<bool(std::shared_ptr<UniverseObject>, std::shared_ptr<UniverseObject>)> order) {
+        decltype(SegregateForces(owners, objects, categories, order)) forces;
 
         for (int object_id : objects) {
-            // gets destroyed objects, so this function can be used for initial combat forces even
-            // if some are destroyed during the combat
             auto object = Objects().Object(object_id);
-            if (ShouldObjectBeShownInEmpireForces(object)) {
-                forces_by_owner[object->Owner()].push_back(object);
+            if (!object)
+                continue;
+
+            if (owners.count(object->Owner()) == 0)
+                continue;
+
+            auto& owner_forces = forces[object->Owner()];
+            if (owner_forces.empty())
+                owner_forces.resize(categories.size());
+
+            for (size_t i = 0; i < categories.size(); ++i) {
+                const auto& category = categories[i];
+                if (category(object)) {
+                    auto& owner_forces_category = owner_forces[i];
+                    owner_forces_category.insert(
+                        std::upper_bound(owner_forces_category.begin(), owner_forces_category.end(),
+                                         object, order),
+                        object);  // Insertion sort
+                    break;        // Place only in one category
+                }
             }
         }
 
-        return forces_by_owner;
+        return forces;
+    }
+
+    bool IsShip(std::shared_ptr<UniverseObject> object) {
+        return object->ObjectType() == UniverseObjectType::OBJ_SHIP;
+    }
+
+    bool HasPopulation(std::shared_ptr<UniverseObject> object) {
+              return object->GetMeter(METER_POPULATION) &&
+               object->InitialMeterValue(METER_POPULATION) > 0.0f;  
     }
 
     std::string EmpireIdToText(int empire_id) {
@@ -137,63 +157,56 @@ namespace {
         return ss.str();
     }
 
-    /// Used to sort empire foces for display
-    class ForcesSorter {
+    class OrderByNameAndId {
     public:
-        ForcesSorter(int viewing_empire_id_)
+        explicit OrderByNameAndId(int viewing_empire_id_ = ALL_EMPIRES)
             : viewing_empire_id(viewing_empire_id_) {
             }
-                    
+
         bool operator()(const std::shared_ptr<UniverseObject>& lhs,
                         const std::shared_ptr<UniverseObject>& rhs) {
-            if (TypeComparison(lhs->ObjectType(), rhs))
-                return true;
+            const auto& lhs_public_name = lhs->PublicName(viewing_empire_id);
+            const auto& rhs_public_name = rhs->PublicName(viewing_empire_id);
+            if (lhs_public_name != rhs_public_name) {
+#if defined(FREEORION_MACOSX)
+                // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α
+                // I, X β I, X α II
+                return lhs_public_name < rhs_public_name;
+#else
+                return GetLocale("en_US.UTF-8").operator()(lhs_public_name, rhs_public_name);
+#endif
+            }
 
-            if (TypeComparison(rhs->ObjectType(), lhs))
-                return false;
-
-            const std::string lhs_public_name = lhs->PublicName(viewing_empire_id);
-            const std::string rhs_public_name = rhs->PublicName(viewing_empire_id);
-            if (lhs_public_name < rhs_public_name)
-                return true;
-
-            if (lhs_public_name > rhs_public_name)
-                return false;
-
+            // ID used for stable sorting of objects with non-unique name
             return lhs->ID() < rhs->ID();
         }
 
-        static bool TypeComparison(UniverseObjectType type,
-                                   const std::shared_ptr<UniverseObject>& object) {
-            return type < object->ObjectType();
-        }
-
     private:
-        int viewing_empire_id;
+        const int viewing_empire_id;
     };
 
-    /// converts to text representation of empire \a forces
-    std::string ForcesToText(int viewing_empire_id,
-                             const EmpireForces& forces,
-                             const std::string& delimiter = ", ",
-                             const std::string& type_delimiter = "\n-\n") {
+    std::string ForcesToText(
+        int viewing_empire_id,
+        const std::vector<std::vector<std::shared_ptr<UniverseObject>>>& forces,
+        const std::string& delimiter = ", ",
+        const std::string& category_delimiter = "\n-\n") {
         std::stringstream ss;
-        EmpireForces forces_sorted = forces;
-        std::sort(forces_sorted.begin(), forces_sorted.end(), ForcesSorter{viewing_empire_id});
 
-        for (auto it = forces_sorted.begin(); it != forces_sorted.end();) {
-            if (it != forces_sorted.begin())
-                ss << type_delimiter;
+        bool first_category = true;
+        for (const auto& category : forces) {
+            if (category.empty())
+                continue;
+            if (first_category)
+                first_category = false;
+            else
+                ss << category_delimiter;
 
-            const auto first_of_type = it;
-            const auto first_of_next_type =
-                std::upper_bound(first_of_type, forces_sorted.end(), (*first_of_type)->ObjectType(),
-                                 ForcesSorter::TypeComparison);
-
-            for (; it != first_of_next_type; ++it) {
-                if (it != first_of_type)
+            bool first_in_category = true;
+            for (const auto& object : category) {
+                if (first_in_category )
+                    first_in_category = false;
+                else
                     ss << delimiter;
-                auto object = *it;
                 ss << WrapWithTagAndId(object->PublicName(viewing_empire_id),
                                        LinkTag(object->ObjectType()), object->ID());
             }
@@ -202,7 +215,7 @@ namespace {
         // TODO: This appends unicode character U+200B (zero-width space); this is a workaround for
         // a bug in LinkText class, which prevents linkifying of the last entry when it's at the end
         // of the string
-        if (!forces_sorted.empty())
+        if (!first_category)
             ss << "​";
 
         return ss.str();
@@ -288,7 +301,7 @@ namespace {
                                    CombatLogWnd::Impl& log_,
                                    int viewing_empire_id_,
                                    int empire_id,
-                                   EmpireForces forces_);
+                                   std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces_);
 
         ~EmpireForcesAccordionPanel();
 
@@ -296,12 +309,13 @@ namespace {
 
     private:
         void ToggleExpansion();
+        static size_t CountForces(std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces);
 
         CombatLogWnd::Impl& log;
         const int viewing_empire_id;
         std::shared_ptr<LinkText> title;
         std::shared_ptr<LinkText> details;
-        EmpireForces forces;
+        std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces;
 
         // distance between expansion symbol and text
         static const unsigned int BORDER_MARGIN = 5;
@@ -311,11 +325,11 @@ namespace {
                                                            CombatLogWnd::Impl& log_,
                                                            int viewing_empire_id_,
                                                            int empire_id,
-                                                           EmpireForces forces_)
+                                                           std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces_)
         : AccordionPanel(w, GG::Y(ClientUI::Pts()), true),
           log(log_),
           viewing_empire_id(viewing_empire_id_),
-          title(log.DecorateLinkText(CountToText(empire_id, forces_.size()))),
+          title(log.DecorateLinkText(CountToText(empire_id, CountForces(forces_)))),
           forces(std::move(forces_)) {}
 
     void EmpireForcesAccordionPanel::CompleteConstruction() {
@@ -352,6 +366,14 @@ namespace {
         }
 
         SetCollapsed(new_collapsed);
+    }
+
+    size_t EmpireForcesAccordionPanel::CountForces(
+        std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces) {
+        size_t n = 0;
+        for (const auto& owner_forces : forces)
+            n += owner_forces.size();
+        return n;
     }
 }
 
@@ -576,13 +598,20 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
                                 % LinkTaggedIDText(VarText::SYSTEM_ID_TAG, log->system_id, sys_name)
                                 % log->turn) + "\n"));
 
+
     AddRow(DecorateLinkText(UserString("COMBAT_INITIAL_FORCES")));
-    for (const auto& empire_forces : ForcesByOwner(log->empire_ids, log->object_ids))
+    const auto initial_forces =
+        SegregateForces(log->empire_ids, log->object_ids, {IsShip, HasPopulation},
+                        OrderByNameAndId(client_empire_id));
+    for (const auto& empire_forces : initial_forces)
         AddRow(GG::Wnd::Create<EmpireForcesAccordionPanel>(
             GG::X0, *this, client_empire_id, empire_forces.first, empire_forces.second));
 
     AddRow(DecorateLinkText("\n" + UserString("COMBAT_SUMMARY_DESTROYED")));
-    for (const auto& empire_forces : ForcesByOwner(log->empire_ids, log->destroyed_object_ids))
+    const auto destroyed_forces =
+        SegregateForces(log->empire_ids, log->destroyed_object_ids, {IsShip, HasPopulation},
+                        OrderByNameAndId(client_empire_id));
+    for (const auto& empire_forces : destroyed_forces)
         AddRow(GG::Wnd::Create<EmpireForcesAccordionPanel>(
             GG::X0, *this, client_empire_id, empire_forces.first, empire_forces.second));
 
