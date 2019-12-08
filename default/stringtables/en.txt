@@ -13312,7 +13312,7 @@ SR_WEAPON_0_1
 Flak Cannon
 
 SR_WEAPON_0_1_DESC
-'''The flak cannon does negligible damage to most ships, but is inexpensive and effective at destroying fighters.
+'''The flak cannon is inexpensive and effective at destroying fighters, but does not target ships or planets.
 
 Each flak cannon on a ship built by a species with the piloting trait will have an additional number of shots equal to 1 per piloting level (-1 shot for Bad Pilots).'''
 
