@@ -560,7 +560,7 @@ Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatL
         freeorion_xml_oarchive oa(os);
         try {
             oa << BOOST_SERIALIZATION_NVP(logs);
-        } catch (std::exception e) {
+        } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception serializing combat logs: " << e.what();
         }
     }

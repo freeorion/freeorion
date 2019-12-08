@@ -966,7 +966,7 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
 
     try {
         player_connection->SendMessage(DispatchCombatLogsMessage(logs));
-    } catch (std::exception e) {
+    } catch (const std::exception& e) {
         ErrorLogger() << "caught exception sending combat logs message: " << e.what();
         std::vector<std::pair<int, const CombatLog>> empty_logs;
         player_connection->SendMessage(DispatchCombatLogsMessage(empty_logs));

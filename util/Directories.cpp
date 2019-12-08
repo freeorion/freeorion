@@ -347,7 +347,7 @@ void InitBinDir(const std::string& argv0) {
                 problem = true;
         }
 
-    } catch (fs::filesystem_error err) {
+    } catch (...) {
         problem = true;
     }
 
