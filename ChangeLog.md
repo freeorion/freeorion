@@ -3,6 +3,7 @@
 Notable changes to the FreeOrion project will be documented in this file.
 
 
+
 ## [v0.4.9] - 2019-12-??
 
 #### Key Changes
@@ -11,10 +12,11 @@ Notable changes to the FreeOrion project will be documented in this file.
 -- Hostless servers can be started without connected players and left running for players to join to play their turns asynchronously
 -- Empires in a game can be restricted to certain players based on username-password authentication
 -- Known / previously joined servers are saved and appear in the servers list of the connection window
--- Chat history persists and is sent to players that connect to a server, and is shared between the lobby and in-game
+-- Chat is shared between the lobby and in-game
+-- Chat history persists and is sent to players that connect to a server
 -- The chat / message window flashes when a message is received
--- The lobby shows galaxy setup data from a loaded save
--- The lobby shows empires without assigned players as separate rows
+-- The lobby shows galaxy setup data for a loaded save or the game being played on the server
+-- The lobby shows empires without assigned players as separate rows when loading a save or for the game being played on the server
 -- Servers can have fixed game rule settings
 -- Added an optional server turn timer
 
