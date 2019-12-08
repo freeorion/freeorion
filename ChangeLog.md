@@ -9,22 +9,22 @@ Notable changes to the FreeOrion project will be documented in this file.
 #### Key Changes
 
 - Multiplayer enhancements
--- Hostless servers can be started without connected players and left running for players to join to play their turns asynchronously
--- Empires in a game can be restricted to certain players based on username-password authentication
--- Known / previously joined servers are saved and appear in the servers list of the connection window
--- Chat is shared between the lobby and in-game
--- Chat history persists and is sent to players that connect to a server
--- The chat / message window flashes when a message is received
--- The lobby shows galaxy setup data for a loaded save or the game being played on the server
--- The lobby shows empires without assigned players as separate rows when loading a save or for the game being played on the server
--- Servers can have fixed game rule settings
--- Added an optional server turn timer
+    - Hostless servers can be started without connected players and left running for players to join to play their turns asynchronously
+    - Empires in a game can be restricted to certain players based on username-password authentication
+    - Known / previously joined servers are saved and appear in the servers list of the connection window
+    - Chat is shared between the lobby and in-game
+    - Chat history persists and is sent to players that connect to a server
+    - The chat / message window flashes when a message is received
+    - The lobby shows galaxy setup data for a loaded save or the game being played on the server
+    - The lobby shows empires without assigned players as separate rows when loading a save or for the game being played on the server
+    - Servers can have fixed game rule settings
+    - Added an optional server turn timer
 
 - Combat targeting
--- Flak targets only fighters
--- Interceptors preferentially target bombers, then any fighters, then ships
--- Bombers preferentially target ships, then fighters
--- Species can also affect targeting
+    - Flak targets only fighters
+    - Interceptors preferentially target bombers, then any fighters, then ships
+    - Bombers preferentially target ships, then fighters
+    - Species can also affect targeting
 
 - Ship hulls have fuel efficiency, which scales the additional fuel from fuel parts and other fuel-adding content
 
@@ -32,170 +32,170 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 #### Graphics / Interface
 
--Chat box text commands:
-    -/pm to send a private message to another player. Private messages from other players are flagged with (Whispers)
-    -/help to give a list of commands
+- Chat box text commands:
+    - /pm to send a private message to another player. Private messages from other players are flagged with (Whispers)
+    - /help to give a list of commands
 
--Multiplayer
-    -Lobby automatically adds AIs and assigns them to AI empires when loading a game
-    -Eliminated empires can't have players assigned in lobby
-    -Added player left game and player entered chat notifications
-    -Observers and moderators are informed when joining about empires' readiness
-    -Added icon to empires list to indicate an incoming diplomatic message
-    -New icons for empire diplomatic status (War, Peace, Alliance)
-    -Prevented selection of eliminated empires in lobby
-    -Lobby galaxy setup settings use common client defaults (shared with single player)
+- Multiplayer
+    - Lobby automatically adds AIs and assigns them to AI empires when loading a game
+    - Eliminated empires can't have players assigned in lobby
+    - Added player left game and player entered chat notifications
+    - Observers and moderators are informed when joining about empires' readiness
+    - Added icon to empires list to indicate an incoming diplomatic message
+    - New icons for empire diplomatic status (War, Peace, Alliance)
+    - Prevented selection of eliminated empires in lobby
+    - Lobby galaxy setup settings use common client defaults (shared with single player)
 
--Galaxy Map
-    -Added option to scale size of background starfield stars
-    -New graphics for ion storm, star forming nebulae, accretion disk, and molecular cloud
-    -Added tooltips to the turn button to explain turn processing event order
+- Galaxy Map
+    - Added option to scale size of background starfield stars
+    - New graphics for ion storm, star forming nebulae, accretion disk, and molecular cloud
+    - Added tooltips to the turn button to explain turn processing event order
 
--Fleets
-    -Disabled issuing fleet move orders after orders have been sent to the server in multiplayer games (unless orders are revised)
-    -Made fleets of damaged ships split from an existing fleet have the same aggression as the existing fleet instead of always being passive
-    -Added right-click popup menus for Fleets window meter icons
-    -Fleets window or sidepanel move to the render order top when a fleet or system is shown, even if the shown fleet or system didn't change
+- Fleets
+    - Disabled issuing fleet move orders after orders have been sent to the server in multiplayer games (unless orders are revised)
+    - Made fleets of damaged ships split from an existing fleet have the same aggression as the existing fleet instead of always being passive
+    - Added right-click popup menus for Fleets window meter icons
+    - Fleets window or sidepanel move to the render order top when a fleet or system is shown, even if the shown fleet or system didn't change
 
--Pedia
-    -Underlined modified rules for the current game on the the pedia page listing game rules
-    -Reorganized contents of species pedia pages
-    -Hull descriptions list the tags applied to a hull
+- Pedia
+    - Underlined modified rules for the current game on the the pedia page listing game rules
+    - Reorganized contents of species pedia pages
+    - Hull descriptions list the tags applied to a hull
 
--Objects List
-    -Added columns for environment rating for species on planets
-    -Added total weapon damage column
+- Objects List
+    - Added columns for environment rating for species on planets
+    - Added total weapon damage column
 
--Galaxy setup
-    -Made pressing enter not act as clicking OK in Galaxy Setup to avoid conflict with Alt-Enter to switch to/from fullscreen
-    -Split multiplayer-related game rules into a separate tab
+- Galaxy setup
+    - Made pressing enter not act as clicking OK in Galaxy Setup to avoid conflict with Alt-Enter to switch to/from fullscreen
+    - Split multiplayer-related game rules into a separate tab
 
--Misc
-    -Added popup commands to add ships or buildings to the top of the production queue
-    -Enabled more flexible renaming of designs in Design window
-    -Added new art for many species
-    -Reduced minimum FPS limit to 0.1 when the game window is unfocused
-    -Added a confirmation popup to close the program when OS window is closed, including indication if multiplayer game orders haven't been sent
-    -Indicated species with which a planet would be colonized and for which habitability and population info in being displayed on sidepanel
-    -Rearranged the display order of sitreps
-    -Added gaseous metabolism to the census window
-    -Various GUI layout tweaks
-    -Added warning when stockpile contributions would put the stockpile above ten turns of maximum-rate extraction
+- Misc
+    - Added popup commands to add ships or buildings to the top of the production queue
+    - Enabled more flexible renaming of designs in Design window
+    - Added new art for many species
+    - Reduced minimum FPS limit to 0.1 when the game window is unfocused
+    - Added a confirmation popup to close the program when OS window is closed, including indication if multiplayer game orders haven't been sent
+    - Indicated species with which a planet would be colonized and for which habitability and population info in being displayed on sidepanel
+    - Rearranged the display order of sitreps
+    - Added gaseous metabolism to the census window
+    - Various GUI layout tweaks
+    - Added warning when stockpile contributions would put the stockpile above ten turns of maximum-rate extraction
 
 #### Content / Gameplay
 
--Translation updates: French, German, Russian
--Various pedia article additions, updates, and corrections
--Added sitreps for weapon upgrades and detection upgrades
--Display "Unknown Design" rather than an error when lookup up an unknown design
--Players are informed of diplomatic status changes between empires
--Added a server option to enable/disable informing players about empire statistics
--Advanced shipyards can be enqueued if their prerequisites are enqueued, even if the prerequisites aren't yet produced
--Added the Fulver species
--Added game rules:
-    -Allow or restrict diplomacy between players
-    -Aggressive fleets are always visible at the start of combat
-    -Enable a part-based upkeep calculation rather than ship-based
-    -Empires are only told that another empire has researched a tech when both empires have researched it - currently may break client-side meter estimate calculations
+- Translation updates: French, German, Russian
+- Various pedia article additions, updates, and corrections
+- Added sitreps for weapon upgrades and detection upgrades
+- Display "Unknown Design" rather than an error when lookup up an unknown design
+- Players are informed of diplomatic status changes between empires
+- Added a server option to enable/disable informing players about empire statistics
+- Advanced shipyards can be enqueued if their prerequisites are enqueued, even if the prerequisites aren't yet produced
+- Added the Fulver species
+- Added game rules:
+    - Allow or restrict diplomacy between players
+    - Aggressive fleets are always visible at the start of combat
+    - Enable a part-based upkeep calculation rather than ship-based
+    - Empires are only told that another empire has researched a tech when both empires have researched it - currently may break client-side meter estimate calculations
 
 #### Balance
 
--Increased colony base hull cost and added internal slots to mitigate "comsat" defense strategies
--Made colony base hull cost scale like other hulls with fleet upkeep and ship hull cost multiplier rule
--Adjusted hull fuel levels and numbers of slots for various hulls after adding hull fuel efficiency
--Increased spacing between systems and starlanes generated by the Starlane Nexus
--Conceding from a game destroys all an empire's buildings 
--Made Scylior BAD_SUPPLY and BAD_FUEL
--Planets with dying population no longer have their production and research zeroed, avoiding an issue where temporary disconnection from a growth special would cause sudden loss of resource output
--Added some additional tie-breaking checks when deciding what empire can supply in a system
--Stockpile focus is allowed on all colonies, but growth focus gives no stockpiling bonus
--Stockpile focus on a homeworld gives an extra bonus
--Combat
-    -Launching fighters uncloaks ships
-    -Firing weapons uncloaks ships to all empires in combat, not just the owner of the target being fired upon
-    -Planets have an effective minimum infrastructure of 1 to trigger combat each turn to ensure there are no turns when invading isn't allowed due to cycling of meter growth and combat occurring
-    -Interceptors launch at double the rate of other fighters
+- Increased colony base hull cost and added internal slots to mitigate "comsat" defense strategies
+- Made colony base hull cost scale like other hulls with fleet upkeep and ship hull cost multiplier rule
+- Adjusted hull fuel levels and numbers of slots for various hulls after adding hull fuel efficiency
+- Increased spacing between systems and starlanes generated by the Starlane Nexus
+- Conceding from a game destroys all an empire's buildings 
+- Made Scylior BAD_SUPPLY and BAD_FUEL
+- Planets with dying population no longer have their production and research zeroed, avoiding an issue where temporary disconnection from a growth special would cause sudden loss of resource output
+- Added some additional tie-breaking checks when deciding what empire can supply in a system
+- Stockpile focus is allowed on all colonies, but growth focus gives no stockpiling bonus
+- Stockpile focus on a homeworld gives an extra bonus
+- Combat
+    - Launching fighters uncloaks ships
+    - Firing weapons uncloaks ships to all empires in combat, not just the owner of the target being fired upon
+    - Planets have an effective minimum infrastructure of 1 to trigger combat each turn to ensure there are no turns when invading isn't allowed due to cycling of meter growth and combat occurring
+    - Interceptors launch at double the rate of other fighters
 
 #### AI
 
--Improved AI judgement about fleet strengths and ship capacities with fighters
--Improved AI estimation of a standard enemy if no intel is available
--Improved AI assessment of enemy planet threat with respect to shield regeneration
--Made AI aware of fuel tech effects on fuel parts
--Raised AI minimum fuel requirements for warship designs to 2
--Fixed issues with AI merging and splitting fleets
--Added a fleet mission to protect a region
--Fixes issues with ships and fleets that are idle or after finishing missions
--Fixed AI divide by zero error when there was enemy supply in a system where the AI has a planet
--Fixed AI getting confused about whether a produced enqueue order was successful
--Made AI aware of stealth effects of Spatial Flux Bubble Hull
--Made AI more aggressive and less inclined to used doomstacks that it never moves
--Fixed AI picking ships that didn't have enough fuel to do a mission
--Reduced AI invasion overkill / waste
--Made AI consider lost fleets when determining unknown threats
+- Improved AI judgement about fleet strengths and ship capacities with fighters
+- Improved AI estimation of a standard enemy if no intel is available
+- Improved AI assessment of enemy planet threat with respect to shield regeneration
+- Made AI aware of fuel tech effects on fuel parts
+- Raised AI minimum fuel requirements for warship designs to 2
+- Fixed issues with AI merging and splitting fleets
+- Added a fleet mission to protect a region
+- Fixes issues with ships and fleets that are idle or after finishing missions
+- Fixed AI divide by zero error when there was enemy supply in a system where the AI has a planet
+- Fixed AI getting confused about whether a produced enqueue order was successful
+- Made AI aware of stealth effects of Spatial Flux Bubble Hull
+- Made AI more aggressive and less inclined to used doomstacks that it never moves
+- Fixed AI picking ships that didn't have enough fuel to do a mission
+- Reduced AI invasion overkill / waste
+- Made AI consider lost fleets when determining unknown threats
 
 #### Bugs
 
--Fixed potential crash in password entry box
--Fixed log level filters briefly not applying while being set
--Fixed laggy UI updates when resizing the sitreps window
--Fixed potential crash when setting fleet routes
--Fixed issue where generated filename timestamps could include invalid filename characters on systems with some languages
--Fixed issue where being in an alliance wasn't considered as being at peace for some conditions where it should
--Fixed issues with gifting objects between empires, particularly when allied
--Reordered timing of newly researched tech effects being active so that sitreps about tech research are shown on the same turn that techs take effect
--Fixed minor rendering quirks
--Fixed issue where fleets moving through a system but getting blockaded would lose track of their desired exit starlane
--Fixed text autocomplete in chat by pressing (default) TAB key
--Fixed issue where attempting to drag a window causing resizing instead
--Fixed crash when closing the application window while in a game with the Fleets window open
--Fixed issue where revising orders on a multiplayer server would result in previously-issued orders being lost
--Fixed issue where arriving enemy fleet sitreps were inconsistent if an effect modified the fleet's destination on the same turn as it was expected to arrive
--Fixed issue where arriving enemy fleet sitreps weren't being shown due to limits on how far the fleet could be from the system
--Fixed Interspecies Academy modifying current instead of target research meter
--Fixed some potential internal crashes
--Fixed issue where paired/active meters were reset to the value of the corresponding target/max meter
--Fixed issue where empire colours in a saved game could conflict with player colours in the multiplayer lobby
--Fixed server crash when receiving turn orders from incompatible client
--Fixed issue where shield regeneration could apply twice
--Fixed issue where monster shields wouldn't regenerate
--Fixed crash when editing long strings in a narrow window
--Fixed issue where certain ship part meter effects could not work
--Fixed issue where scrap orders couldn't be issued
--Made unowned fleets move before empire fleets, which avoids some issues with blockades
--Fixed issue with blockade determination so that blockaded planets are still connected to themselves
--Fixed issue with fleets that had never moved being unable to enforce blockades
--Fixed issue where loaded games weren't setting the server rules to those in the save
--Resolved some issues with premade ship designs being added (or not added) at start of game
--Fixed potential issues with invalid UTF8 strings when doing multi-line text layout
--Fixed issue with incorrect refueling calculations when determining move paths for fleets
--Fixed issue with combat log scrollbars
--Fixed error when observer or moderator clients joined a test server
--Fixed undefined behaviour when reporting a FramebufferFailedException when initializing OpenGL
+- Fixed potential crash in password entry box
+- Fixed log level filters briefly not applying while being set
+- Fixed laggy UI updates when resizing the sitreps window
+- Fixed potential crash when setting fleet routes
+- Fixed issue where generated filename timestamps could include invalid filename characters on systems with some languages
+- Fixed issue where being in an alliance wasn't considered as being at peace for some conditions where it should
+- Fixed issues with gifting objects between empires, particularly when allied
+- Reordered timing of newly researched tech effects being active so that sitreps about tech research are shown on the same turn that techs take effect
+- Fixed minor rendering quirks
+- Fixed issue where fleets moving through a system but getting blockaded would lose track of their desired exit starlane
+- Fixed text autocomplete in chat by pressing (default) TAB key
+- Fixed issue where attempting to drag a window causing resizing instead
+- Fixed crash when closing the application window while in a game with the Fleets window open
+- Fixed issue where revising orders on a multiplayer server would result in previously-issued orders being lost
+- Fixed issue where arriving enemy fleet sitreps were inconsistent if an effect modified the fleet's destination on the same turn as it was expected to arrive
+- Fixed issue where arriving enemy fleet sitreps weren't being shown due to limits on how far the fleet could be from the system
+- Fixed Interspecies Academy modifying current instead of target research meter
+- Fixed some potential internal crashes
+- Fixed issue where paired/active meters were reset to the value of the corresponding target/max meter
+- Fixed issue where empire colours in a saved game could conflict with player colours in the multiplayer lobby
+- Fixed server crash when receiving turn orders from incompatible client
+- Fixed issue where shield regeneration could apply twice
+- Fixed issue where monster shields wouldn't regenerate
+- Fixed crash when editing long strings in a narrow window
+- Fixed issue where certain ship part meter effects could not work
+- Fixed issue where scrap orders couldn't be issued
+- Made unowned fleets move before empire fleets, which avoids some issues with blockades
+- Fixed issue with blockade determination so that blockaded planets are still connected to themselves
+- Fixed issue with fleets that had never moved being unable to enforce blockades
+- Fixed issue where loaded games weren't setting the server rules to those in the save
+- Resolved some issues with premade ship designs being added (or not added) at start of game
+- Fixed potential issues with invalid UTF8 strings when doing multi-line text layout
+- Fixed issue with incorrect refueling calculations when determining move paths for fleets
+- Fixed issue with combat log scrollbars
+- Fixed error when observer or moderator clients joined a test server
+- Fixed undefined behaviour when reporting a FramebufferFailedException when initializing OpenGL
 
 ### Technical / Internal
 
--Added basic support for a UDP message interface to query the server containing simple FOCS expressions
--Improved compatibility with various Boost library versions
--Use asynchronous messaging for all communication between client and server processes, not just from clients to server
--Added safeguards on incoming message size before allocating memory to store it, to prevent denial of service attacks
--Various extensions / additions to the Python APIs
--Adjusted what ships are considered armed: direct weapons with > 0 damage, or fighters present that can be launched and that have > 0 damage, and not directly dependent on the ship design, which doesn't account for some weapon-modifying effects
--Ship designs must have fighter bays and hangars to be considered as having fighters, rather than needing just one of those part types
--Capped the per-message number of combat log entries sent to clients to avoid sending an overly large single message
--Reordered some save game data to avoid breaking a save file (as much) if the UI data is corrupted
--Fixed issue where obsolete ship designs were being stored and serialized in C++11 containers that weren't handled correctly by the serialization library
--Added an option to set a game unique ID number, which is useful for multiplayer servers
--Python errors are output to logging instead of stderr
--Hostless servers autosave when shutting down
--Added an OrderedAlternativesOf condition that will use the first condition in its list of subconditions that matches something
--Added SVG rendering in pedia, and allowed SVG images to be included in articles
--Reworked timing of clients sending save state info to avoid potential save corruption
--A warning popup should be shown if the client's OpenGL version is < 2.0
--Added mechanism for chat messages to have automatic string formatting and stringtable substitutions when displayed
--Added an option to enable/disable network binary serialization
--Screensaver is no longer enabled/disabled in response to window minimize, maximize, or restore events
--Prevent AIs from replaying turns after loading a game, unless specified in configuration
+- Added basic support for a UDP message interface to query the server containing simple FOCS expressions
+- Improved compatibility with various Boost library versions
+- Use asynchronous messaging for all communication between client and server processes, not just from clients to server
+- Added safeguards on incoming message size before allocating memory to store it, to prevent denial of service attacks
+- Various extensions / additions to the Python APIs
+- Adjusted what ships are considered armed: direct weapons with > 0 damage, or fighters present that can be launched and that have > 0 damage, and not directly dependent on the ship design, which doesn't account for some weapon-modifying effects
+- Ship designs must have fighter bays and hangars to be considered as having fighters, rather than needing just one of those part types
+- Capped the per-message number of combat log entries sent to clients to avoid sending an overly large single message
+- Reordered some save game data to avoid breaking a save file (as much) if the UI data is corrupted
+- Fixed issue where obsolete ship designs were being stored and serialized in C++11 containers that weren't handled correctly by the serialization library
+- Added an option to set a game unique ID number, which is useful for multiplayer servers
+- Python errors are output to logging instead of stderr
+- Hostless servers autosave when shutting down
+- Added an OrderedAlternativesOf condition that will use the first condition in its list of subconditions that matches something
+- Added SVG rendering in pedia, and allowed SVG images to be included in articles
+- Reworked timing of clients sending save state info to avoid potential save corruption
+- A warning popup should be shown if the client's OpenGL version is < 2.0
+- Added mechanism for chat messages to have automatic string formatting and stringtable substitutions when displayed
+- Added an option to enable/disable network binary serialization
+- Screensaver is no longer enabled/disabled in response to window minimize, maximize, or restore events
+- Prevent AIs from replaying turns after loading a game, unless specified in configuration
 
 
 ## [v0.4.8] - 2018-08-23
