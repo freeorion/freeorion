@@ -4,7 +4,7 @@ Part
     class = FighterBay
     capacity = 2
     mountableSlotTypes = External
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
     tags = [ "PEDIA_PC_FIGHTER_BAY" ]
     location = OwnedBy empire = Source.Owner

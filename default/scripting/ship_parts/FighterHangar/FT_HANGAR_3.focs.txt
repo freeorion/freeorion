@@ -4,13 +4,13 @@ Part
     exclusions = [ "FT_HANGAR_0" "FT_HANGAR_1" "FT_HANGAR_2" "FT_HANGAR_4" ]
     class = FighterHangar
     capacity = 2
-    damage = 5
+    damage = 6
     combatTargets = And [
         [[COMBAT_TARGETS_VISIBLE_ENEMY]]
         [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
     ]
     mountableSlotTypes = Internal
-    buildcost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
     tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
     location = OwnedBy empire = Source.Owner
