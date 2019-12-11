@@ -130,6 +130,7 @@ accompanying license file.
 [Debian Package]: https://packages.debian.org/source/sid/freeorion
 [Ubuntu Package]: https://launchpad.net/ubuntu/+source/freeorion
 [Fedora Package]: https://apps.fedoraproject.org/packages/freeorion
+[openSUSE Package]: https://build.opensuse.org/package/show/games/freeorion
 [Void package]: https://github.com/voidlinux/void-packages/tree/master/srcpkgs/freeorion
 [ArchLinux Package]: https://aur.archlinux.org/packages/freeorion/
 [GPL v2]: https://www.gnu.org/licenses/gpl-2.0.txt
