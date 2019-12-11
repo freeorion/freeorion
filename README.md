@@ -59,6 +59,7 @@ packages via the command line.
   * [Fedora package] stable release: `# dnf install freeorion`
   * [Void package] stable release: `# xbps-install freeorion`
   * [ArchLinux package] stable release
+  * [openSUSE] stable relase: # zypper in freeorion
 
 ## Directories
 * install directory  
