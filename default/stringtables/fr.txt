@@ -13312,7 +13312,7 @@ SR_WEAPON_0_1
 Canon Antiaérien
 
 SR_WEAPON_0_1_DESC
-'''Le Canon Antiaérien inflige des dommages négligeables à la plupart des astronefs, mais reste bon marché et efficace pour contrer les chasseurs.
+'''Le Canon Antiaérien est peu coûteux et efficace pour contrer les chasseurs, mais ne permet pas de cibler les astronefs et planètes.
 
 Chaque Canon Antiaérien monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", aura un nombre additionnel de tirs égal à 1 par rang de Pilotes (-1 tir pour "Mauvais Pilotes").'''
 
