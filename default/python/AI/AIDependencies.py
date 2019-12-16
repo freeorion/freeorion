@@ -379,15 +379,15 @@ WEAPON_ROF_UPGRADE_DICT = {
 
 FIGHTER_DAMAGE_UPGRADE_DICT = {
     # "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
-    "FT_HANGAR_1": (("SHP_FIGHTERS_2", 1), ("SHP_FIGHTERS_3", 1), ("SHP_FIGHTERS_4", 1)),
-    "FT_HANGAR_2": (("SHP_FIGHTERS_2", 2), ("SHP_FIGHTERS_3", 3), ("SHP_FIGHTERS_4", 5)),
-    "FT_HANGAR_3": (("SHP_FIGHTERS_2", 3), ("SHP_FIGHTERS_3", 4), ("SHP_FIGHTERS_4", 7)),
+    "FT_HANGAR_1": (("SHP_FIGHTERS_2", 0), ("SHP_FIGHTERS_3", 0), ("SHP_FIGHTERS_4", 0)),
+    "FT_HANGAR_2": (("SHP_FIGHTERS_2", 2), ("SHP_FIGHTERS_3", 2), ("SHP_FIGHTERS_4", 2)),
+    "FT_HANGAR_3": (("SHP_FIGHTERS_2", 3), ("SHP_FIGHTERS_3", 3), ("SHP_FIGHTERS_4", 3)),
     "FT_HANGAR_4": (),
 }
 
 FIGHTER_CAPACITY_UPGRADE_DICT = {
     # "PARTNAME": tuple((tech_name, capacity_upgrade), (tech_name2, capacity_upgrade2), ...)
-    "FT_HANGAR_1": (),
+    "FT_HANGAR_1": (("SHP_FIGHTERS_2", 1), ("SHP_FIGHTERS_3", 1), ("SHP_FIGHTERS_4", 1)),
     "FT_HANGAR_2": (),
     "FT_HANGAR_3": (),
     "FT_HANGAR_4": (),
@@ -658,11 +658,12 @@ PILOT_ROF_MODIFIER_DICT = {
 
 PILOT_FIGHTERDAMAGE_MODIFIER_DICT = {
     # TRAIT:    {hangar_name: effect, hangar_name2: effect2,...}
+    # TODO FT_HANGAR_1 fighters are not able to attack ships so pilot damage modifier does not apply
     "NO":       {},
-    "BAD":      {"FT_HANGAR_1": -1, "FT_HANGAR_2": -2, "FT_HANGAR_3": -3, "FT_HANGAR_4": -4},
-    "GOOD":     {"FT_HANGAR_1":  1, "FT_HANGAR_2":  2, "FT_HANGAR_3":  3, "FT_HANGAR_4": 4},
-    "GREAT":    {"FT_HANGAR_1":  2, "FT_HANGAR_2":  4, "FT_HANGAR_3":  6, "FT_HANGAR_4": 8},
-    "ULTIMATE": {"FT_HANGAR_1":  3, "FT_HANGAR_2":  6, "FT_HANGAR_3":  9, "FT_HANGAR_4": 12},
+    "BAD":      {"FT_HANGAR_1":  0, "FT_HANGAR_2": -2, "FT_HANGAR_3": -3, "FT_HANGAR_4": -4},
+    "GOOD":     {"FT_HANGAR_1":  0, "FT_HANGAR_2":  2, "FT_HANGAR_3":  3, "FT_HANGAR_4": 4},
+    "GREAT":    {"FT_HANGAR_1":  0, "FT_HANGAR_2":  4, "FT_HANGAR_3":  6, "FT_HANGAR_4": 8},
+    "ULTIMATE": {"FT_HANGAR_1":  0, "FT_HANGAR_2":  6, "FT_HANGAR_3":  9, "FT_HANGAR_4": 12},
 }
 
 PILOT_FIGHTER_CAPACITY_MODIFIER_DICT = {
@@ -675,8 +676,8 @@ PILOT_FIGHTER_CAPACITY_MODIFIER_DICT = {
 }
 
 HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT = {
-    # hangar_name: {bay_name: effect, bay_name2: effect, ...}
-    "FT_HANGAR_1": {"FT_BAY_1": 2},
+    # hangar_name: {bay_name: ((tech_name, effect), ...), bay_name2: ((tech_name, effect), ...}
+    "FT_HANGAR_1": {"FT_BAY_1": (("SHP_FIGHTERS_1", 1), ("SHP_FIGHTERS_2", 1), ("SHP_FIGHTERS_3", 1), ("SHP_FIGHTERS_4", 1))},
 }
 # </editor-fold>
 
