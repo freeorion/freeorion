@@ -25,7 +25,13 @@ BuildingType
             scope = And [
                 Ship
                 InSystem id = Source.SystemID
-                OwnedBy empire = Source.Owner
+                Or [
+                    OwnedBy empire = Source.Owner
+                    And [
+                        ((GameRule name = "RULE_ENABLE_ALLIED_REPAIR") > 0)
+                        OwnedBy affiliation = AllyOf empire = Source.Owner
+                    ]
+                ]
                 Structure high = LocalCandidate.MaxStructure - 0.001
             ]
             activation = And [
@@ -54,7 +60,13 @@ BuildingType
             scope = And [
                 Ship
                 InSystem id = Source.SystemID
-                OwnedBy empire = Source.Owner
+                Or [
+                    OwnedBy empire = Source.Owner
+                    And [
+                        ((GameRule name = "RULE_ENABLE_ALLIED_REPAIR") > 0)
+                        OwnedBy affiliation = AllyOf empire = Source.Owner
+                    ]
+                ]
                 Structure low = LocalCandidate.MaxStructure - 
                     [[ORB_DRYDOCK_REPAIR_VAL(LocalCandidate.MaxStructure)]] - 0.001
                     high = LocalCandidate.MaxStructure - 0.001
@@ -85,7 +97,13 @@ BuildingType
             scope = And [
                 Ship
                 InSystem id = Source.SystemID
-                OwnedBy empire = Source.Owner
+                Or [
+                    OwnedBy empire = Source.Owner
+                    And [
+                        ((GameRule name = "RULE_ENABLE_ALLIED_REPAIR") > 0)
+                        OwnedBy affiliation = AllyOf empire = Source.Owner
+                    ]
+                ]
                 Structure high = LocalCandidate.MaxStructure -
                     [[ORB_DRYDOCK_REPAIR_VAL(LocalCandidate.MaxStructure)]]
                 Turn low = LocalCandidate.ArrivedOnTurn + 1
@@ -115,7 +133,13 @@ BuildingType
             scope = And [
                 Ship
                 InSystem id = Source.SystemID
-                OwnedBy empire = Source.Owner
+                Or [
+                    OwnedBy empire = Source.Owner
+                    And [
+                        ((GameRule name = "RULE_ENABLE_ALLIED_REPAIR") > 0)
+                        OwnedBy affiliation = AllyOf empire = Source.Owner
+                    ]
+                ]
                 Structure high = LocalCandidate.MaxStructure - 0.001
                 Turn low = LocalCandidate.ArrivedOnTurn + 1
                 (Source.Planet.Happiness < [[CONST_ORB_DRYDOCK_MIN_HAPPY]])
@@ -176,7 +200,13 @@ PLANET_OWNED_DRYDOCK_HIGHEST_HAPPINESS
 '''MaximumNumberOf Number = 1 SortKey = LocalCandidate.Happiness Condition = And [
     Planet
     InSystem id = Source.SystemID
-    OwnedBy empire = Source.Owner
+    Or [
+        OwnedBy empire = Source.Owner
+        And [
+            ((GameRule name = "RULE_ENABLE_ALLIED_REPAIR") > 0)
+            OwnedBy affiliation = AllyOf empire = Source.Owner
+        ]
+    ]
     Contains
         Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
 ]

@@ -16,11 +16,18 @@ Tech
                 Ship
                 InSystem
                 Stationary
-                OwnedBy empire = Source.Owner
+                Or [
+                    OwnedBy empire = Source.Owner
+                    And [
+                        ((GameRule name = "RULE_ENABLE_ALLIED_REPAIR") > 0)
+                        OwnedBy affiliation = AllyOf empire = Source.Owner
+                    ]
+                ]
                 Turn low = LocalCandidate.System.LastTurnBattleHere + 1
                 Structure high = LocalCandidate.MaxStructure - 0.001
                 ResupplyableBy empire = Source.Owner
             ]
+	    stackinggroup = "FLEET_REPAIR"
             effects = SetStructure value = Value + (Target.MaxStructure/10)
 
 #include "/scripting/common/base_prod.macros"
