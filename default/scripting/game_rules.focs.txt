@@ -126,3 +126,10 @@ GameRule
     category = "BALANCE"
     type = Toggle
     default = Off
+
+GameRule
+    name = "RULE_ENABLE_ALLIED_REPAIR"
+    description = "RULE_ENABLE_ALLIED_REPAIR_DESC"
+    category = "MULTIPLAYER"
+    type = Toggle
+    default = Off
