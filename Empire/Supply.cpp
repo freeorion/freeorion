@@ -115,10 +115,8 @@ const std::map<int, float>& SupplyManager::PropagatedSupplyRanges(int empire_id)
     return emp_it->second;
 }
 
-const std::map<int, float>& SupplyManager::PropagatedSupplyDistances() const {
-    std::cout << "GLAARB" << std::endl;
-    return m_propagated_supply_distances;
-}
+const std::map<int, float>& SupplyManager::PropagatedSupplyDistances() const
+{ return m_propagated_supply_distances; }
 
 const std::map<int, float>& SupplyManager::PropagatedSupplyDistances(int empire_id) const {
     auto emp_it = m_empire_propagated_supply_distances.find(empire_id);
