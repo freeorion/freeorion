@@ -1275,7 +1275,7 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
     }
 
     DebugLogger() << "Empire::ConquerProductionQueueItemsAtLocation: conquering items located at "
-                           << location_id << " to empire " << empire_id;
+                  << location_id << " to empire " << empire_id;
 
     Empire* to_empire = GetEmpire(empire_id);    // may be null
     if (!to_empire && empire_id != ALL_EMPIRES) {
