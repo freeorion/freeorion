@@ -97,6 +97,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Aggressive fleets are always visible at the start of combat
     - Enable a part-based upkeep calculation rather than ship-based
     - Empires are only told that another empire has researched a tech when both empires have researched it - currently may break client-side meter estimate calculations
+    - Allow Drydocks building and Fleet Field Repair tech to repair ships of allied empires
 
 #### Balance
 

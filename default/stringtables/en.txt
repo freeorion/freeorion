@@ -1227,6 +1227,12 @@ Use part-based upkeep
 RULE_SHIP_PART_BASED_UPKEEP_DESC
 Calculate upkeep based on ship parts instead of ships themselves.
 
+RULE_ENABLE_ALLIED_REPAIR
+Drydocks and Fleet Field Repair repair allied ships
+
+RULE_ENABLE_ALLIED_REPAIR_DESC
+Allow Drydocks building and Fleet Field Repair tech to repair ships of allied empires.
+
 RULE_SHOW_DETAILED_EMPIRES_DATA
 Show detailed empires data
 
