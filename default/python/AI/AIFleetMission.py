@@ -539,7 +539,7 @@ class AIFleetMission(object):
                         debug("Threat remains in target system; Considering to release some ships.")
                         new_fleets = []
                         fleet_portion_to_remain = self._portion_of_fleet_needed_here()
-                        if fleet_portion_to_remain > 1:
+                        if fleet_portion_to_remain >= 1:
                             debug("Can not release fleet yet due to large threat.")
                         elif fleet_portion_to_remain > 0:
                             debug("Not all ships are needed here - considering releasing a few")
@@ -623,7 +623,7 @@ class AIFleetMission(object):
 
         # TODO: Rate against specific threat here
         fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
-        return CombatRatingsAI.rating_needed(potential_threat, local_defenses) / float(fleet_rating)
+        return CombatRatingsAI.rating_needed(potential_threat, local_defenses) / float(max(fleet_rating, 1.))
 
     def generate_fleet_orders(self):
         """generates AIFleetOrders from fleets targets to accomplish"""
