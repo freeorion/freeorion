@@ -3107,6 +3107,8 @@ namespace {
                         contained_obj->SetOwner(recipient_empire_id);
                 }
                 gifted_obj->SetOwner(recipient_empire_id);
+
+                Empire::ConquerProductionQueueItemsAtLocation(gifted_obj->ID(), recipient_empire_id);
             }
         }
     }
