@@ -1227,6 +1227,12 @@ Activer Entretien des Équipements
 RULE_SHIP_PART_BASED_UPKEEP_DESC
 Calculer le coût d'entretien selon les équipements de l'astronef plutôt que selon le modèle d'astronef lui-même.
 
+RULE_ENABLE_ALLIED_REPAIR
+Réparation en Cale Sèche et Spatiale pour astronefs alliés
+
+RULE_ENABLE_ALLIED_REPAIR_DESC
+Autorise la structure Cale Sèche Orbitale et la technologie Réparation Spatiale à réparer les astronefs des empires alliés.
+
 RULE_SHOW_DETAILED_EMPIRES_DATA
 Afficher les données détaillées des empires
 
