@@ -12742,7 +12742,7 @@ BLD_GATEWAY_VOID
 Gateway to the Void
 
 BLD_GATEWAY_VOID_DESC
-'''The ability to close off a system almost entirely can be useful for an empire on the defensive. Any ships who enter this system without passing through on the same turn are destroyed, and all colonies within are immediately reduced to [[encyclopedia OUTPOSTS_TITLE]] status. The [[metertype METER_STEALTH]] of all objects within the system is increased by 1000, making them almost impossible to detect.
+'''The ability to close off a system almost entirely can be useful for an empire on the defensive. Any ships that enter this system without passing through on the same turn are destroyed, and all colonies within are immediately reduced to [[encyclopedia OUTPOSTS_TITLE]] status. The [[metertype METER_STEALTH]] of all objects within the system is increased by 1000, making them almost impossible to detect.
 
 A dimensional tear capable of magnifying the destructive potential of the Void Mind in a localized region.'''
 
@@ -12959,7 +12959,7 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a [[PT_GASGIANT]] and gives a +10 [[metertype METER_INDUSTRY]] bonus to planets with the Industry focus in the same system. If the [[BLD_GAS_GIANT_GEN]] is build on an inhabited gas giant it gives only a +5 [[metertype METER_INDUSTRY]] bonus.
+'''This building can only be constructed at a [[PT_GASGIANT]] and gives a +10 [[metertype METER_INDUSTRY]] bonus to planets with the Industry focus in the same system. If the [[BLD_GAS_GIANT_GEN]] is built on an inhabited gas giant it gives only a +5 [[metertype METER_INDUSTRY]] bonus.
 Multiple copies in the same system do not stack.
 
 A power generator designed to harvest the energy of a [[PT_GASGIANT]].'''
