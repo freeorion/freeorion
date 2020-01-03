@@ -1187,7 +1187,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
       * system post-combat which can detect this fleet.  Fleets arriving at the
       * same time do not blockade each other. Unrestricted lane access (i.e,
       * (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for
-      * order of arrival -- if an enemy has unrestricted l*ane access and you
+      * order of arrival -- if an enemy has unrestricted lane access and you
       * don't, they must have arrived before you, or be in cahoots with someone
       * who did. */
 
