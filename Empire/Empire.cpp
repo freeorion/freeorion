@@ -724,7 +724,7 @@ void Empire::UpdateSupplyUnobstructedSystems(bool precombat /*=false*/) {
 }
 
 void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems, bool precombat /*=false*/) {
-    //DebugLogger() << "UpdateSupplyUnobstructedSystems for empire " << m_id;
+    DebugLogger() << "UpdateSupplyUnobstructedSystems for empire " << m_id;
     m_supply_unobstructed_systems.clear();
 
     // get systems with historically at least partial visibility
@@ -799,10 +799,24 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
         }
     }
 
-    //std::stringstream ss;
-    //for (int obj_id : systems_containing_obstructing_objects)
-    //{ ss << obj_id << ", "; }
-    //DebugLogger() << "systems with obstructing objects for empire " << m_id << " : " << ss.str();
+    std::stringstream ss;
+    for (int obj_id : systems_containing_obstructing_objects)
+    { ss << obj_id << ", "; }
+    DebugLogger() << "Systems with obstructing objects for empire " << m_name << " (" << m_id << ") : " << ss.str();
+
+    std::stringstream ss2;
+    for (auto sys_lanes : m_preserved_system_exit_lanes) {
+        ss2 << "[Sys: " << sys_lanes.first << " : (";
+        for (auto lane : sys_lanes.second)
+        { ss2 << lane << " "; }
+        ss2 << ")]  ";
+    }
+    DebugLogger() << "Preserved System-Lanes for empire " << m_name << " (" << m_id << ") : " << ss2.str();
+
+    std::stringstream ss3;
+    for (auto sys_id : systems_with_lane_preserving_fleets)
+    { ss3 << sys_id << ", "; }
+    DebugLogger() << "Systems with lane-preserving fleets for empire " << m_name << " (" << m_id << ") : " << ss3.str();
 
 
     // check each potential supplyable system for whether it can propagate supply.
@@ -816,27 +830,35 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
         // if system is explored, then whether it can propagate supply depends
         // on what friendly / enemy ships and planets are in the system
 
-        if (unrestricted_friendly_systems.count(sys_id))
-            // if there are unrestricted friendly ships, supply can propagate
+        if (unrestricted_friendly_systems.count(sys_id)) {
+            // in unrestricted friendly systems, supply can propagate
             m_supply_unobstructed_systems.insert(sys_id);
-        else if (systems_containing_friendly_fleets.count(sys_id)) {
+
+        } else if (systems_containing_friendly_fleets.count(sys_id)) {
+            // if there are unrestricted friendly ships, and no unrestricted enemy fleets, supply can propagate
             if (!unrestricted_obstruction_systems.count(sys_id))
-                // if there are (previously) restricted friendly ships, and no unrestricted enemy fleets, supply can propagate
                 m_supply_unobstructed_systems.insert(sys_id);
-        } else if (!systems_containing_obstructing_objects.count(sys_id))
+
+        } else if (!systems_containing_obstructing_objects.count(sys_id)) {
+            // if there are no friendly fleets or obstructing enemy fleets, supply can propagate
             m_supply_unobstructed_systems.insert(sys_id);
-        else if (!systems_with_lane_preserving_fleets.count(sys_id)) {
-            // otherwise, if system contains no friendly fleets capable of
-            // maintaining lane access but does contain an unfriendly fleet,
-            // so it is obstructed, so isn't included in the unobstructed
-            // systems set.  Furthermore, this empire's available system exit
+
+        } else if (!systems_with_lane_preserving_fleets.count(sys_id)) {
+            // if there are obstructing enemy fleets but no friendly fleets that could maintain
+            // lane access, supply cannot propagate and this empire's available system exit
             // lanes for this system are cleared
             if (!m_preserved_system_exit_lanes[sys_id].empty()) {
-                //DebugLogger() << "Empire::UpdateSupplyUnobstructedSystems clearing available lanes for system ("<<sys_id<<"); available lanes were:";
-                //for (int system_id : m_preserved_system_exit_lanes[sys_id])
-                //    DebugLogger() << "...... "<< system_id;
-                m_preserved_system_exit_lanes[sys_id].clear();
+                std::stringstream ssca;
+                ssca << "Empire::UpdateSupplyUnobstructedSystems clearing preserved lanes for system ("
+                     << sys_id << "); available lanes were:";
+                for (int system_id : m_preserved_system_exit_lanes[sys_id])
+                    ssca << system_id << ", ";
+                DebugLogger() << ssca.str();
             }
+            m_preserved_system_exit_lanes[sys_id].clear();
+
+        } else {
+            DebugLogger() << "Empire::UpdateSupplyUnobstructedSystems : Restricted system " << sys_id << " with no friendly fleets, no obustrcting enemy fleets, and no lane-preserving fleets";
         }
     }
 }
