@@ -1009,6 +1009,13 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return INVALID_OBJECT_ID;
 
     }
+    else if (property_name == "ArrivalStarlaneID") {
+        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
+            return fleet->ArrivalStarlane();
+        else
+            return INVALID_OBJECT_ID;
+
+    }
     else if (property_name == "NearestSystemID") {
         if (object->SystemID() != INVALID_OBJECT_ID)
             return object->SystemID();

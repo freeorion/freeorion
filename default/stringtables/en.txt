@@ -6449,6 +6449,9 @@ Next System
 PREV_SYSTEM
 Previous System
 
+ARRIVAL_STARLANE
+Arrived From System
+
 LAST_TURN_BATTLE_HERE
 Last Turn Battle Here
 
