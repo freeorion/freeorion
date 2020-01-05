@@ -621,8 +621,8 @@ void UpdateEmpireSupply(bool precombat=false) {
         if (empire->Eliminated())
             continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
 
-        empire->UpdateSupplyUnobstructedSystems(precombat);  // determines which systems can propagate fleet and resource (same for both)
-        empire->UpdateSystemSupplyRanges();         // sets range systems can propagate fleet and resourse supply (separately)
+        empire->UpdateSupplyUnobstructedSystems(precombat); // determines which systems can propagate fleet and resource (same for both)
+        empire->UpdateSystemSupplyRanges();                 // sets range systems can propagate fleet and resourse supply (separately)
     }
 
     GetSupplyManager().Update();
@@ -3293,6 +3293,15 @@ void ServerApp::PreCombatProcessTurns() {
 
     // player notifications
     m_networking.SendMessageAll(TurnProgressMessage(Message::FLEET_MOVEMENT));
+
+
+    // Update system-obstruction after orders, colonization, invasion, gifting, scrapping
+    for (auto& entry : Empires()) {
+        Empire* empire = entry.second;
+        if (empire->Eliminated())
+            continue;
+        empire->UpdateSupplyUnobstructedSystems(true);
+    }
 
 
     // fleet movement
