@@ -1360,14 +1360,14 @@ void StatisticIcon::RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys
 void StatisticIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (Disabled())
         return;
-    LeftClickedSignal();
+    LeftClickedSignal(pt);
     ForwardEventToParent();
 }
 
 void StatisticIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (Disabled())
         return;
-    RightClickedSignal();
+    RightClickedSignal(pt);
     ForwardEventToParent();
 }
 
