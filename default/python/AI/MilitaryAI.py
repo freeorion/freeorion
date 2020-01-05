@@ -61,7 +61,7 @@ def get_preferred_max_military_portion_for_single_battle():
     size of the the military grows, this portion is further reduced to promote pursuit of multiple battlefronts in
     parallel as opposed to single battlefronts against heavily defended positions.
 
-    :return: a number in range (0:1] for preferred max portion of miltary to be allocated to a single battle
+    :return: a number in range (0:1] for preferred max portion of military to be allocated to a single battle
     :rtype: float
     """
     # TODO: this is a roughcut first pass, needs plenty of refinement
@@ -974,7 +974,7 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
 @cache_by_turn
 def get_tot_mil_rating():
     """
-    Give an assessment of total miltary rating considering all fleets as if distributed to separate systems.
+    Give an assessment of total military rating considering all fleets as if distributed to separate systems.
 
     :return: a military rating value
     :rtype: float
@@ -986,7 +986,7 @@ def get_tot_mil_rating():
 @cache_by_turn
 def get_concentrated_tot_mil_rating():
     """
-    Give an assessment of total miltary rating as if all fleets were merged into a single mega-fleet.
+    Give an assessment of total military rating as if all fleets were merged into a single mega-fleet.
 
     :return: a military rating value
     :rtype: float

@@ -483,7 +483,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     cost_score = (normalized_cost**2 / 50.0) * troop_cost
 
     base_score = colony_base_value + bld_tally + tech_tally + enemy_val - cost_score
-    # If the AI does have enough total miltary to attack this target, and the target is more than minimally valuable,
+    # If the AI does have enough total military to attack this target, and the target is more than minimally valuable,
     # don't let the threat_factor discount the adjusted value below MIN_INVASION_SCORE +1, so that if there are no
     # other targets the AI could still pursue this one.  Otherwise, scoring pressure from
     # MilitaryAI.get_preferred_max_military_portion_for_single_battle might prevent the AI from attacking heavily

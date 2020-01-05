@@ -1068,7 +1068,7 @@ def revise_threat_factor(threat_factor, planet_value, system_id, min_planet_valu
     """
     Check if the threat_factor should be made less severe.
 
-    If the AI does have enough total miltary to secure this system, and the target has more than minimal value,
+    If the AI does have enough total military to secure this system, and the target has more than minimal value,
     don't let the threat_factor discount the adjusted value below min_planet_value +1, so that if there are no
     other targets the AI could still pursue this one.  Otherwise, scoring pressure from
     MilitaryAI.get_preferred_max_military_portion_for_single_battle might prevent the AI from pursuing a heavily
