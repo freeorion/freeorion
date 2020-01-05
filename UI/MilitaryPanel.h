@@ -20,8 +20,6 @@ public:
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
-    bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
-
     int PlanetID() const { return m_planet_id; }
     //@}
 
