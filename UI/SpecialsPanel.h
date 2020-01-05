@@ -22,7 +22,6 @@ public:
     void Render() override;
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-    bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
     void Update();          ///< regenerates indicators according specials on object
     //@}
 

@@ -103,7 +103,20 @@ void SpecialsPanel::Update() {
             ClientUI::SpecialIcon(special->Name()), UserString(special->Name()), desc));
         m_icons[entry.first] = graphic;
 
-        graphic->InstallEventFilter(shared_from_this());
+        auto special_name = entry.first;
+
+        graphic->RightClickedSignal.connect([special_name](const GG::Pt& pt) {
+            auto zoom_action = [special_name]() {
+                ClientUI::GetClientUI()->ZoomToSpecial(special_name);
+            };
+
+            auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+            std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(special_name));
+
+            popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_action));
+
+            popup->Run();
+        });
     }
 
     const GG::X AVAILABLE_WIDTH = Width() - EDGE_PAD;
@@ -128,30 +141,4 @@ void SpecialsPanel::Update() {
     } else {
         Resize(GG::Pt(Width(), y + SPECIAL_ICON_HEIGHT + EDGE_PAD*2));
     }
-}
-
-bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
-    if (event.Type() != GG::WndEvent::RClick)
-        return false;
-    const GG::Pt& pt = event.Point();
-
-    for (const auto& entry : m_icons) {
-        if (entry.second.get() != w)
-            continue;
-
-        bool retval = false;
-        auto zoom_action = [&entry, &retval]() {
-            retval = true;
-            ClientUI::GetClientUI()->ZoomToSpecial(entry.first);
-        };
-
-        auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-        std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(entry.first));
-
-        popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_action));
-
-        popup->Run();
-        return retval;
-    }
-    return false;
 }
