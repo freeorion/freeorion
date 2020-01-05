@@ -627,7 +627,6 @@ namespace {
         void Render() override;
         void PreRender() override;
 
-        bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
         void Select(bool b);
@@ -978,7 +977,18 @@ namespace {
             auto icon = GG::Wnd::Create<StatisticIcon>(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
             m_stat_icons.push_back({entry.first, icon});
             AttachChild(icon);
-            icon->InstallEventFilter(shared_from_this());
+            std::string meter_string = boost::lexical_cast<std::string>(entry.first);
+
+            icon->RightClickedSignal.connect([meter_string](const GG::Pt& pt) {
+                auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
+                std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
+                                                                        UserString(meter_string));
+
+                auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+                popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_article_action));
+
+                popup->Run();
+            });
         }
 
         // bookkeeping
@@ -989,42 +999,6 @@ namespace {
             m_fleet_connection = fleet->StateChangedSignal.connect(
                 boost::bind(&ShipDataPanel::RequireRefresh, this));
     }
-
-    bool ShipDataPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
-        if (event.Type() != GG::WndEvent::RClick || !w)
-            return false;
-
-        MeterType meter_type = INVALID_METER_TYPE;
-        for (const auto& meter_type_stat_icon_pair : m_stat_icons) {
-            if (!meter_type_stat_icon_pair.second || meter_type_stat_icon_pair.second.get() != w)
-                continue;
-            meter_type = meter_type_stat_icon_pair.first;
-            break;
-        }
-        if (meter_type == INVALID_METER_TYPE)
-            return false;
-
-        std::string meter_string = boost::lexical_cast<std::string>(meter_type);
-        std::string meter_title;
-        if (UserStringExists(meter_string))
-            meter_title = UserString(meter_string);
-
-        bool retval = false;
-        auto zoom_article_action = [&retval, &meter_string]() { retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string);};
-
-        auto pt = event.Point();
-        auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-
-        if (!meter_title.empty()) {
-            std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
-                                                                    meter_title);
-            popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_article_action));
-        }
-        popup->Run();
-
-        return retval;
-    }
-
 
     ////////////////////////////////////////////////
     // ShipRow
