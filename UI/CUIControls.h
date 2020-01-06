@@ -443,7 +443,7 @@ public:
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
-    double GetValue(int index = 0) const;
+    double GetValue(size_t index = 0) const;
     GG::Pt MinUsableSize() const override;
     //@}
 
@@ -465,7 +465,7 @@ public:
 
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void SetValue(double value, int index = 0);  ///< sets displayed \a value with \a index
+    void SetValue(double value, size_t index = 0);  ///< sets displayed \a value with \a index
     //@}
 
     mutable boost::signals2::signal<void ()>    LeftClickedSignal;
@@ -473,7 +473,7 @@ public:
 
 private:
     void    DoLayout();
-    GG::Clr ValueColor(int index) const;    ///< returns colour in which to draw value
+    GG::Clr ValueColor(size_t index) const;    ///< returns colour in which to draw value
 
     /// The value, precision and sign of the statistic value
     std::vector<std::tuple<double, int, bool>> m_values;

@@ -1323,15 +1323,13 @@ void StatisticIcon::PreRender() {
     DoLayout();
 }
 
-double StatisticIcon::GetValue(int index) const {
-    if (index < 0) throw std::invalid_argument("negative index passed to StatisticIcon::Value");
+double StatisticIcon::GetValue(size_t index) const {
     if (index > 1) throw std::invalid_argument("index greater than 1 passed to StatisticIcon::Value.  Only 1 or 2 values, with indices 0 or 1, supported.");
     if (index >= m_values.size()) throw std::invalid_argument("index greater than largest index available passed to StatisticIcon::Value");
     return std::get<0>(m_values[index]);
 }
 
-void StatisticIcon::SetValue(double value, int index) {
-    if (index < 0) throw std::invalid_argument("negative index passed to StatisticIcon::SetValue");
+void StatisticIcon::SetValue(double value, size_t index) {
     if (index > 1) throw std::invalid_argument("index greater than 1 passed to StatisticIcon::SetValue.  Only 1 or 2 values, with indices 0 or 1, supported.");
     if (index + 1 > m_values.size()) {
         auto entry = std::tuple<double, int, bool>(m_values[0]);
@@ -1424,8 +1422,8 @@ void StatisticIcon::DoLayout() {
     }
 }
 
-GG::Clr StatisticIcon::ValueColor(int index) const {
-    if (m_values.empty() || index >= m_values.size() || index < 0)
+GG::Clr StatisticIcon::ValueColor(size_t index) const {
+    if (m_values.empty() || index >= m_values.size())
         return ClientUI::TextColor();
 
     int effectiveSign = EffectiveSign(std::get<0>(m_values.at(index)));
