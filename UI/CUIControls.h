@@ -438,11 +438,6 @@ public:
     StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                   double value, int digits, bool showsign,
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with one value
-
-    StatisticIcon(const std::shared_ptr<GG::Texture> texture,
-                  double value0, double value1, int digits0, int digits1,
-                  bool showsign0, bool showsign1,
-                  GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with two values
     //@}
 
     void CompleteConstruction() override;

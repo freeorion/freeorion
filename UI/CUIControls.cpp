@@ -1309,26 +1309,6 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
     m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
 }
 
-StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
-                             double value0, double value1, int digits0, int digits1,
-                             bool showsign0, bool showsign1,
-                             GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
-    GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-    m_num_values(2),
-    m_values(std::vector<double>(2, 0.0)),
-    m_digits(std::vector<int>(2, 2)),
-    m_show_signs(std::vector<bool>(2, false))
-{
-    m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
-
-    m_values[0] = value0;
-    m_values[1] = value1;
-    m_digits[0] = digits0;
-    m_digits[1] = digits1;
-    m_show_signs[0] = showsign0;
-    m_show_signs[1] = showsign1;
-}
-
 void StatisticIcon::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
