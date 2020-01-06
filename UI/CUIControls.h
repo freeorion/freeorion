@@ -475,12 +475,10 @@ private:
     void    DoLayout();
     GG::Clr ValueColor(int index) const;    ///< returns colour in which to draw value
 
-    int                                 m_num_values = 0;
-    std::vector<double>                 m_values;
-    std::vector<int>                    m_digits;
-    std::vector<bool>                   m_show_signs;
-    std::shared_ptr<GG::StaticGraphic>  m_icon = nullptr;
-    std::shared_ptr<GG::Label>          m_text = nullptr;
+    /// The value, precision and sign of the statistic value
+    std::vector<std::tuple<double, int, bool>> m_values;
+    std::shared_ptr<GG::StaticGraphic>         m_icon = nullptr;
+    std::shared_ptr<GG::Label>                 m_text = nullptr;
 };
 
 class CUIToolBar : public GG::Control {
