@@ -1385,16 +1385,26 @@ void StatisticIcon::DoLayout() {
 
     // Precompute text elements
     GG::Font::TextAndElementsAssembler text_elements(*ClientUI::GetFont());
-    text_elements.AddOpenTag(ValueColor(0))
+    text_elements.AddOpenTag(ClientUI::TextColor())
         .AddText(DoubleToString(std::get<0>(m_values[0]), std::get<1>(m_values[0]), std::get<2>(m_values[0])))
         .AddCloseTag("rgba");
-    if (m_values.size() > 1)
+    if (m_values.size() > 1) {
+        GG::Clr clr = ClientUI::TextColor();
+
+        int effectiveSign = EffectiveSign(std::get<0>(m_values.at(1)));
+
+        if (effectiveSign == -1)
+            clr = ClientUI::StatDecrColor();
+        if (effectiveSign == 1)
+            clr = ClientUI::StatIncrColor();
+
         text_elements
             .AddText(" (")
-            .AddOpenTag(ValueColor(1))
+            .AddOpenTag(clr)
             .AddText(DoubleToString(std::get<0>(m_values[1]), std::get<1>(m_values[1]), std::get<2>(m_values[1])))
             .AddCloseTag("rgba")
             .AddText(")");
+    }
 
     // Calculate location and format
     GG::Flags<GG::TextFormat> format;
@@ -1420,20 +1430,6 @@ void StatisticIcon::DoLayout() {
        m_text->SetText(text_elements.Text(), text_elements.Elements());
        m_text->SizeMove(text_ul, text_lr);
     }
-}
-
-GG::Clr StatisticIcon::ValueColor(size_t index) const {
-    if (m_values.empty() || index >= m_values.size())
-        return ClientUI::TextColor();
-
-    int effectiveSign = EffectiveSign(std::get<0>(m_values.at(index)));
-
-    if (index == 0) return ClientUI::TextColor();
-
-    if (effectiveSign == -1) return ClientUI::StatDecrColor();
-    if (effectiveSign == 1) return ClientUI::StatIncrColor();
-
-    return ClientUI::TextColor();
 }
 
 GG::Pt StatisticIcon::MinUsableSize() const {

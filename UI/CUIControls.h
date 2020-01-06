@@ -473,7 +473,6 @@ public:
 
 private:
     void    DoLayout();
-    GG::Clr ValueColor(size_t index) const;    ///< returns colour in which to draw value
 
     /// The value, precision and sign of the statistic value
     std::vector<std::tuple<double, int, bool>> m_values;
