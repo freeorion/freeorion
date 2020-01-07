@@ -3,7 +3,7 @@
 #include "EffectParser.h"
 
 #include "../universe/ConditionBase.h"
-#include "../universe/Effect.h"
+#include "../universe/EffectAccounting.h"
 #include "../universe/Special.h"
 #include "../universe/ValueRefBase.h"
 

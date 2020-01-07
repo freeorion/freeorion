@@ -8,7 +8,6 @@
 #include "../parse/Parse.h"
 #include "../universe/Building.h"
 #include "../universe/ConditionBase.h"
-#include "../universe/Effect.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"

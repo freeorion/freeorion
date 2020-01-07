@@ -1,6 +1,6 @@
 #include "Tech.h"
 
-#include "Effect.h"
+#include "EffectAccounting.h"
 #include "UniverseObject.h"
 #include "ObjectMap.h"
 #include "../util/OptionsDB.h"
