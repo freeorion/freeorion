@@ -11,7 +11,6 @@
 #include "CommonParamsParser.h"
 
 #include "../universe/ShipDesign.h"
-#include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>

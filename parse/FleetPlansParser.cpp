@@ -3,6 +3,7 @@
 #include "ParseImpl.h"
 #include "MovableEnvelope.h"
 
+#include "../universe/ConditionBase.h"
 #include "../universe/UniverseGenerator.h"
 #include "../util/Directories.h"
 

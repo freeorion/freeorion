@@ -1,7 +1,6 @@
 #ifndef _UniverseGenerator_h_
 #define _UniverseGenerator_h_
 
-#include "Condition.h"
 #include "Universe.h"
 
 

@@ -8,7 +8,6 @@
 #include "ConditionParser6.h"
 #include "ConditionParser7.h"
 
-#include "../universe/Condition.h"
 
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>

@@ -4,6 +4,7 @@
 #include "MovableEnvelope.h"
 #include "ConditionParserImpl.h"
 
+#include "../universe/ConditionBase.h"
 #include "../universe/Universe.h"
 #include "../universe/UniverseGenerator.h"
 #include "../util/Directories.h"

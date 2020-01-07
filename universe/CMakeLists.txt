@@ -1,6 +1,7 @@
 target_sources(freeorioncommon
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/Building.h
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionBase.h
         ${CMAKE_CURRENT_LIST_DIR}/Condition.h
         ${CMAKE_CURRENT_LIST_DIR}/EffectAccounting.h
         ${CMAKE_CURRENT_LIST_DIR}/Effect.h

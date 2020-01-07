@@ -2,7 +2,7 @@
 
 #include "ConditionParserImpl.h"
 #include "../universe/Effect.h"
-#include "../universe/Condition.h"
+#include "../universe/ConditionBase.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

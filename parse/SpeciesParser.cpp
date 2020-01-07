@@ -8,7 +8,7 @@
 #include "ConditionParserImpl.h"
 #include "MovableEnvelope.h"
 
-#include "../universe/Condition.h"
+#include "../universe/ConditionBase.h"
 #include "../universe/Effect.h"
 #include "../universe/Species.h"
 
