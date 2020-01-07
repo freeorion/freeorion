@@ -6,7 +6,7 @@
 #include "Predicates.h"
 #include "Universe.h"
 #include "Enums.h"
-#include "ValueRef.h"
+#include "ValueRefBase.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/OptionsDB.h"
@@ -15,6 +15,7 @@
 #include "../util/GameRules.h"
 #include "../util/CheckSums.h"
 #include "../util/ScopedTimer.h"
+#include "../util/i18n.h"
 
 #include <boost/filesystem/fstream.hpp>
 

@@ -1,6 +1,7 @@
 #include "ServerWrapper.h"
 
 #include "../../universe/ConditionBase.h"
+#include "../../universe/ScriptingContext.h"
 #include "../../universe/Species.h"
 #include "../../universe/Special.h"
 #include "../../universe/System.h"
@@ -14,7 +15,6 @@
 #include "../../universe/Universe.h"
 #include "../../universe/UniverseGenerator.h"
 #include "../../universe/Enums.h"
-#include "../../universe/ValueRef.h"
 
 #include "../../server/ServerApp.h"
 #include "../../util/Directories.h"

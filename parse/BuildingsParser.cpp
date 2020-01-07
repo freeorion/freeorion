@@ -8,7 +8,8 @@
 
 #include "../universe/Building.h"
 #include "../universe/Enums.h"
-#include "../universe/ValueRef.h"
+#include "../universe/ConditionBase.h"
+#include "../universe/ValueRefBase.h"
 
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>

@@ -3,7 +3,7 @@
 #include "ValueRefParser.h"
 #include "EnumValueRefRules.h"
 #include "../universe/Effect.h"
-#include "../universe/ValueRef.h"
+#include "../universe/ValueRefBase.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

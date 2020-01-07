@@ -1,7 +1,7 @@
 #include "ConditionParser5.h"
 
 #include "../universe/Condition.h"
-#include "../universe/ValueRef.h"
+#include "../universe/ValueRefBase.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
