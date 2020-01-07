@@ -3,7 +3,7 @@
 #include "ParseImpl.h"
 #include "EffectParser.h"
 
-#include "../universe/Effect.h"
+#include "../universe/EffectAccounting.h"
 #include "../universe/Field.h"
 
 #include <boost/spirit/include/phoenix.hpp>

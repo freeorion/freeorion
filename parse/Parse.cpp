@@ -7,7 +7,6 @@
 #include "ValueRefParser.h"
 
 #include "../universe/Tech.h"
-#include "../universe/Effect.h"
 #include "../util/Logger.h"
 #include "../util/Directories.h"
 

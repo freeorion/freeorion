@@ -9,7 +9,7 @@
 #include "MovableEnvelope.h"
 
 #include "../universe/ConditionBase.h"
-#include "../universe/Effect.h"
+#include "../universe/EffectAccounting.h"
 #include "../universe/Species.h"
 
 #include <boost/spirit/include/phoenix.hpp>

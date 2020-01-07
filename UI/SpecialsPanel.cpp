@@ -3,7 +3,7 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
-#include "../universe/Effect.h"
+#include "../universe/EffectAccounting.h"
 #include "../universe/Special.h"
 #include "../universe/UniverseObject.h"
 #include "../client/human/HumanClientApp.h"

@@ -6,7 +6,7 @@
 #include "ValueRefParser.h"
 #include "MovableEnvelope.h"
 
-#include "../universe/Effect.h"
+#include "../universe/EffectAccounting.h"
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
 #include "../universe/ValueRefBase.h"

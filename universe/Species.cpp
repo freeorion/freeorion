@@ -1,7 +1,7 @@
 #include "Species.h"
 
 #include "Condition.h"
-#include "Effect.h"
+#include "EffectAccounting.h"
 #include "PopCenter.h"
 #include "Ship.h"
 #include "UniverseObject.h"

@@ -6,7 +6,7 @@
 #include "../util/Logger.h"
 #include "../util/GameRules.h"
 #include "../universe/Building.h"
-#include "../universe/Effect.h"
+#include "../universe/EffectAccounting.h"
 #include "../universe/Planet.h"
 #include "../universe/PopCenter.h"
 #include "../universe/Ship.h"

@@ -5,6 +5,8 @@
 #include "EnumsFwd.h"
 
 #include <boost/container/flat_map.hpp>
+#include <boost/serialization/access.hpp>
+
 #include <memory>
 #include <map>
 #include <string>
@@ -14,10 +16,20 @@
 #include "../util/Export.h"
 
 class UniverseObject;
+struct ScriptingContext;
+
+namespace Condition {
+    struct ConditionBase;
+}
 
 namespace Effect {
+    struct AccountingInfo;
     class EffectsGroup;
+
     typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
+    /** Effect accounting information for all meters of all objects that are
+      * acted on by effects. */
+    typedef std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>> AccountingMap;
 
     /** Description of cause of an effect: the general cause type, and the
       * specific cause.  eg. Building and a particular BuildingType. */
@@ -29,25 +41,6 @@ namespace Effect {
         std::string         specific_cause; ///< name of specific cause, eg. "Wonder Farm", "Antenna Mk. VI"
         std::string         custom_label;   ///< script-specified accounting label for this effect cause
     };
-
-    /** Accounting information about what the causes are and changes produced
-      * by effects groups acting on meters of objects. */
-    struct FO_COMMON_API AccountingInfo : public EffectCause {
-        AccountingInfo();
-        AccountingInfo(int source_id_, EffectsCauseType cause_type_, float meter_change_,
-                       float running_meter_total_, const std::string& specific_cause_ = "",
-                       const std::string& custom_label_ = "");
-
-        bool operator==(const AccountingInfo& rhs) const;
-
-        int     source_id;          ///< source object of effect
-        float   meter_change;       ///< net change on meter due to this effect, as best known by client's empire
-        float   running_meter_total;///< meter total as of this effect.
-    };
-
-    /** Effect accounting information for all meters of all objects that are
-      * acted on by effects. */
-    typedef std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>> AccountingMap;
 
     /** Combination of targets and cause for an effects group. */
     struct TargetsAndCause {
@@ -66,13 +59,6 @@ namespace Effect {
         std::shared_ptr<EffectsGroup> effects_group;
     };
 
-    /** Discrepancy between meter's value at start of turn, and the value that
-      * this client calculates that the meter should have with the knowledge
-      * available -> the unknown factor affecting the meter.  This is used
-      * when generating effect accounting, in the case where the expected
-      * and actual meter values don't match. */
-    typedef std::unordered_map<int, boost::container::flat_map<MeterType, double>> DiscrepancyMap;
-
     /** Map from (effects group and source object) to target set of for
       * that effects group with that source object.  A multimap is used
       * so that a single source object can have multiple instances of the
@@ -80,6 +66,138 @@ namespace Effect {
       * of the same effects group due to having multiple copies of the same
       * ship part in its design. */
     typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> TargetsCauses;
+
+    /** The base class for all Effects.  When an Effect is executed, the source
+    * object (the object to which the Effect or its containing EffectGroup is
+    * attached) and the target object are both required.  Note that this means
+    * that ValueRefs contained within Effects can refer to values in either the
+    * source or target objects. */
+    class FO_COMMON_API EffectBase {
+    public:
+        virtual ~EffectBase();
+
+        virtual void Execute(const ScriptingContext& context) const = 0;
+
+        virtual void Execute(const ScriptingContext& context, const TargetSet& targets) const;
+
+        void Execute(const TargetsCauses& targets_causes,
+                    AccountingMap* accounting_map,
+                    bool only_meter_effects = false,
+                    bool only_appearance_effects = false,
+                    bool include_empire_meter_effects = false,
+                    bool only_generate_sitrep_effects = false) const;
+
+        virtual void Execute(const ScriptingContext& context,
+                            const TargetSet& targets,
+                            AccountingMap* accounting_map,
+                            const EffectCause& effect_cause,
+                            bool only_meter_effects = false,
+                            bool only_appearance_effects = false,
+                            bool include_empire_meter_effects = false,
+                            bool only_generate_sitrep_effects = false) const;
+
+        virtual std::string     Dump(unsigned short ntabs = 0) const = 0;
+        virtual bool            IsMeterEffect() const { return false; }
+        virtual bool            IsEmpireMeterEffect() const { return false; }
+        virtual bool            IsAppearanceEffect() const { return false; }
+        virtual bool            IsSitrepEffect() const { return false; }
+        virtual bool            IsConditionalEffect() const { return false; }
+        virtual void            SetTopLevelContent(const std::string& content_name) = 0;
+        virtual unsigned int    GetCheckSum() const;
+
+    private:
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version);
+    };
+
+    /** Accounting information about what the causes are and changes produced
+      * by effects groups acting on meters of objects. */
+    struct FO_COMMON_API AccountingInfo : public EffectCause {
+        AccountingInfo();
+        AccountingInfo(int source_id_, EffectsCauseType cause_type_, float meter_change_,
+                       float running_meter_total_, const std::string& specific_cause_ = "",
+                       const std::string& custom_label_ = "");
+
+        bool operator==(const AccountingInfo& rhs) const;
+
+        int     source_id;          ///< source object of effect
+        float   meter_change;       ///< net change on meter due to this effect, as best known by client's empire
+        float   running_meter_total;///< meter total as of this effect.
+    };
+
+    /** Discrepancy between meter's value at start of turn, and the value that
+      * this client calculates that the meter should have with the knowledge
+      * available -> the unknown factor affecting the meter.  This is used
+      * when generating effect accounting, in the case where the expected
+      * and actual meter values don't match. */
+    typedef std::unordered_map<int, boost::container::flat_map<MeterType, double>> DiscrepancyMap;
+
+    /** Contains one or more Effects, a Condition which indicates the objects in
+    * the scope of the Effect(s), and a Condition which indicates whether or not
+    * the Effect(s) will be executed on the objects in scope during the current
+    * turn.  Since Conditions operate on sets of objects (usually all objects in
+    * the universe), the activation condition bears some explanation.  It exists
+    * to allow an EffectsGroup to be activated or suppressed based on the source
+    * object only (the object to which the EffectsGroup is attached).  It does
+    * this by considering the "universe" containing only the source object. If
+    * the source object meets the activation condition, the EffectsGroup will be
+    * active in the current turn. */
+    class FO_COMMON_API EffectsGroup {
+    public:
+        EffectsGroup(std::unique_ptr<Condition::ConditionBase>&& scope,
+                    std::unique_ptr<Condition::ConditionBase>&& activation,
+                    std::vector<std::unique_ptr<EffectBase>>&& effects,
+                    const std::string& accounting_label = "",
+                    const std::string& stacking_group = "", int priority = 0,
+                    const std::string& description = "",
+                    const std::string& content_name = "");
+        virtual ~EffectsGroup();
+
+        /** execute all effects in group */
+        void    Execute(const TargetsCauses& targets_causes,
+                        AccountingMap* accounting_map = nullptr,
+                        bool only_meter_effects = false,
+                        bool only_appearance_effects = false,
+                        bool include_empire_meter_effects = false,
+                        bool only_generate_sitrep_effects = false) const;
+
+        const std::string&              StackingGroup() const       { return m_stacking_group; }
+        Condition::ConditionBase*       Scope() const               { return m_scope.get(); }
+        Condition::ConditionBase*       Activation() const          { return m_activation.get(); }
+        const std::vector<EffectBase*>  EffectsList() const;
+        const std::string&              GetDescription() const;
+        const std::string&              AccountingLabel() const     { return m_accounting_label; }
+        int                             Priority() const            { return m_priority; }
+        std::string                     Dump(unsigned short ntabs = 0) const;
+        bool                            HasMeterEffects() const;
+        bool                            HasAppearanceEffects() const;
+        bool                            HasSitrepEffects() const;
+
+        void                            SetTopLevelContent(const std::string& content_name);
+        const std::string&              TopLevelContent() const { return m_content_name; }
+
+        virtual unsigned int            GetCheckSum() const;
+
+    protected:
+        std::unique_ptr<Condition::ConditionBase>   m_scope;
+        std::unique_ptr<Condition::ConditionBase>   m_activation;
+        std::string                 m_stacking_group;
+        std::vector<std::unique_ptr<EffectBase>>    m_effects;
+        std::string                 m_accounting_label;
+        int                         m_priority;
+        std::string                 m_description;
+        std::string                 m_content_name;
+
+    private:
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version);
+    };
+
+    /** Returns a single string which `Dump`s a vector of EffectsGroups. */
+    FO_COMMON_API std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_groups);
+
 }
 
 #endif

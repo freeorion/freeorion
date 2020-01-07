@@ -4,7 +4,6 @@
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
-#include "../universe/Effect.h"
 #include "../universe/ResourceCenter.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/Enums.h"
