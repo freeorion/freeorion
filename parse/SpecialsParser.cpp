@@ -2,9 +2,10 @@
 
 #include "EffectParser.h"
 
-#include "../universe/ValueRef.h"
+#include "../universe/ConditionBase.h"
 #include "../universe/Effect.h"
 #include "../universe/Special.h"
+#include "../universe/ValueRefBase.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 //TODO: replace with std::make_unique when transitioning to C++14

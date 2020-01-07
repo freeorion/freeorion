@@ -2,11 +2,13 @@
 
 #include "Empire.h"
 #include "../universe/Building.h"
+#include "../universe/ConditionBase.h"
 #include "../universe/ShipDesign.h"
-#include "../universe/ValueRef.h"
+#include "../universe/ValueRefBase.h"
 #include "../util/AppInterface.h"
 #include "../util/GameRules.h"
 #include "../util/ScopedTimer.h"
+#include "../util/i18n.h"
 
 #include <boost/range/numeric.hpp>
 #include <boost/range/adaptor/map.hpp>

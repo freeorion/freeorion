@@ -4,8 +4,7 @@
 #include "ValueRefParser.h"
 #include "ConditionParserImpl.h"
 #include "MovableEnvelope.h"
-
-#include "../universe/ValueRef.h"
+#include "../universe/ValueRefBase.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

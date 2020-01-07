@@ -12,8 +12,8 @@
 #include "Planet.h"
 #include "System.h"
 #include "Species.h"
-#include "ValueRef.h"
 #include "Enums.h"
+#include "ConditionBase.h"
 
 #include <limits>
 

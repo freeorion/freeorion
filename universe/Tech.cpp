@@ -11,7 +11,7 @@
 #include "../util/ScopedTimer.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
-#include "ValueRef.h"
+#include "ValueRefBase.h"
 #include "Enums.h"
 
 #include <boost/filesystem/fstream.hpp>

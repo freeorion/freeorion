@@ -27,6 +27,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Universe.h
         ${CMAKE_CURRENT_LIST_DIR}/Pathfinder.h
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/ValueRefBase.h
         ${CMAKE_CURRENT_LIST_DIR}/ValueRef.h
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefFwd.h
     PRIVATE
