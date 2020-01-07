@@ -9,7 +9,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "ValueRef.h"
-#include "Condition.h"
+#include "ConditionBase.h"
 #include "Pathfinder.h"
 #include "Universe.h"
 #include "UniverseObject.h"

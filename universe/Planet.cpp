@@ -6,7 +6,6 @@
 #include "System.h"
 #include "Predicates.h"
 #include "Species.h"
-#include "Condition.h"
 #include "Universe.h"
 #include "ValueRef.h"
 #include "Enums.h"

@@ -9,7 +9,6 @@
 #include "MovableEnvelope.h"
 #include "../universe/EnumsFwd.h"
 #include "../universe/ShipDesign.h"
-#include "../universe/Condition.h"
 #include "../universe/Effect.h"
 
 #include <boost/spirit/include/qi.hpp>

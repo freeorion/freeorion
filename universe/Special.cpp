@@ -1,6 +1,6 @@
 #include "Special.h"
 
-#include "Condition.h"
+#include "ConditionBase.h"
 #include "Effect.h"
 #include "UniverseObject.h"
 #include "ValueRef.h"

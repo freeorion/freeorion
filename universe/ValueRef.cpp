@@ -12,7 +12,6 @@
 #include "Pathfinder.h"
 #include "Universe.h"
 #include "UniverseObject.h"
-#include "Condition.h"
 #include "Enums.h"
 #include "Tech.h"
 #include "../Empire/EmpireManager.h"
