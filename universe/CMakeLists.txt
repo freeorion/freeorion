@@ -16,6 +16,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/PopCenter.h
         ${CMAKE_CURRENT_LIST_DIR}/Predicates.h
         ${CMAKE_CURRENT_LIST_DIR}/ResourceCenter.h
+        ${CMAKE_CURRENT_LIST_DIR}/ScriptingContext.h
         ${CMAKE_CURRENT_LIST_DIR}/ShipDesign.h
         ${CMAKE_CURRENT_LIST_DIR}/Ship.h
         ${CMAKE_CURRENT_LIST_DIR}/Special.h
