@@ -30,10 +30,8 @@
 #ifndef _GG_StrongTypedef_h_
 #define _GG_StrongTypedef_h_
 
-#include <boost/static_assert.hpp>
-#include <boost/type_traits/is_integral.hpp>
-
 #include <iostream>
+#include <type_traits>
 
 
 namespace GG {
@@ -267,7 +265,8 @@ inline std::size_t Value(std::size_t s)
         struct ConvertibleToBoolDummy {int _;};                         \
                                                                         \
     public:                                                             \
-        BOOST_STATIC_ASSERT((boost::is_integral<type>::value));         \
+        static_assert((std::is_integral<type>::value),                  \
+            "Creating an strong integral without passing an integral type"); \
                                                                         \
         typedef type value_type;                                        \
                                                                         \
