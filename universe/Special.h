@@ -2,8 +2,6 @@
 #define _Special_h_
 
 
-#include "ValueRefFwd.h"
-
 #include <boost/serialization/nvp.hpp>
 #include <boost/optional/optional.hpp>
 
@@ -21,6 +19,10 @@ namespace Effect {
 }
 namespace Condition {
     struct ConditionBase;
+}
+namespace ValueRef {
+    template <typename T>
+    struct ValueRefBase;
 }
 
 /** A predefined set of EffectsGroups that can be attached to a UniverseObject

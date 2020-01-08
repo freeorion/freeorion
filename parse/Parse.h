@@ -7,8 +7,6 @@
 #   define FO_PARSE_API
 #endif
 
-#include "../universe/ValueRefFwd.h"
-
 #include <boost/filesystem/path.hpp>
 #include <boost/uuid/uuid.hpp>
 
@@ -28,6 +26,11 @@ class Species;
 struct EncyclopediaArticle;
 class GameRules;
 struct ItemSpec;
+
+namespace ValueRef {
+    template <typename T>
+    struct ValueRefBase;
+}
 
 namespace parse {
     FO_PARSE_API std::map<std::string, std::unique_ptr<BuildingType>> buildings(const boost::filesystem::path& path);

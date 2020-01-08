@@ -3,7 +3,6 @@
 
 
 #include "EnumsFwd.h"
-#include "ValueRefFwd.h"
 #include "ConditionBase.h"
 
 #include "../util/Export.h"
@@ -16,6 +15,11 @@
 #include <string>
 #include <vector>
 
+
+namespace ValueRef {
+    template <typename T>
+    struct ValueRefBase;
+}
 
 /** this namespace holds ConditionBase and its subclasses; these classes
   * represent predicates about UniverseObjects used by, for instance, the

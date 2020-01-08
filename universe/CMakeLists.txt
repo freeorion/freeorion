@@ -29,7 +29,6 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObject.h
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefBase.h
         ${CMAKE_CURRENT_LIST_DIR}/ValueRef.h
-        ${CMAKE_CURRENT_LIST_DIR}/ValueRefFwd.h
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/Building.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Condition.cpp

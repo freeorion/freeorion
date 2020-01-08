@@ -151,9 +151,6 @@
     <ClInclude Include="..\..\universe\ValueRef.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\ValueRefFwd.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\util\AppInterface.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>

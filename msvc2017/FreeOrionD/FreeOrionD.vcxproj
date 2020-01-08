@@ -174,7 +174,6 @@
     <ClInclude Include="..\..\universe\UniverseGenerator.h" />
     <ClInclude Include="..\..\universe\UniverseObject.h" />
     <ClInclude Include="..\..\universe\ValueRef.h" />
-    <ClInclude Include="..\..\universe\ValueRefFwd.h" />
     <ClInclude Include="..\..\util\AppInterface.h" />
     <ClInclude Include="..\..\util\binreloc.h" />
     <ClInclude Include="..\..\util\Directories.h" />

@@ -209,9 +209,6 @@
     <ClInclude Include="..\..\util\XMLDoc.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\ValueRefFwd.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\universe\ObjectMap.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
