@@ -191,7 +191,6 @@
     <ClInclude Include="..\..\universe\Pathfinder.h" />
     <ClInclude Include="..\..\universe\UniverseObject.h" />
     <ClInclude Include="..\..\universe\ValueRef.h" />
-    <ClInclude Include="..\..\universe\ValueRefFwd.h" />
     <ClInclude Include="..\..\util\AppInterface.h" />
     <ClInclude Include="..\..\util\CheckSums.h" />
     <ClInclude Include="..\..\util\Directories.h" />

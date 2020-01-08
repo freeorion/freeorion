@@ -3,7 +3,6 @@
 
 
 #include "EnumsFwd.h"
-#include "ValueRefFwd.h"
 #include "ObjectMap.h"
 #include "UniverseObject.h"
 #include "../util/Pending.h"

@@ -3,7 +3,6 @@
 
 #include "UniverseObject.h"
 #include "ObjectMap.h"
-#include "ValueRefFwd.h"
 #include "ShipDesign.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
@@ -16,6 +15,10 @@ namespace Effect {
 }
 namespace Condition {
     struct ConditionBase;
+}
+namespace ValueRef {
+    template <typename T>
+    struct ValueRefBase;
 }
 
 /** A Building UniverseObject type. */
