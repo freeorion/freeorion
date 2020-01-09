@@ -9,7 +9,7 @@ environment:
 
 matrix:
   allow_failures:
-    - BUILD_SYSTEM: CMAKE
+    - BUILD_SYSTEM: MSVC
 
 init:
   - git config --global core.eol native
