@@ -3,7 +3,6 @@
 
 
 #include <boost/serialization/access.hpp>
-#include <boost/type_traits/remove_const.hpp>
 
 #include "../util/Export.h"
 
@@ -12,6 +11,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <type_traits>
 
 
 struct UniverseObjectVisitor;
