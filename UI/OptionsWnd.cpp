@@ -16,16 +16,8 @@
 #include <GG/Layout.h>
 #include <GG/TabWnd.h>
 
-//boost::spirit::classic pulls in windows.h which in turn defines the macros
-//MessageBox, PlaySound, min and max. Disabling the generation of the min and
-// max macros and undefining those should avoid name collisions with std c++
-// library and FreeOrion function names.
-#define NOMINMAX
-#include <boost/spirit/include/classic.hpp>
-#ifdef FREEORION_WIN32
-#  undef MessageBox
-#  undef PlaySound
-#endif
+#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/phoenix_operator.hpp>
 
 #include <boost/format.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -1266,9 +1258,12 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
             if (!drop_list_row)
                 return;
             int w, h;
-            namespace classic = boost::spirit::classic;
-            classic::rule<> resolution_p = classic::int_p[classic::assign_a(w)] >> classic::str_p(" x ") >> classic::int_p[classic::assign_a(h)];
-            classic::parse(drop_list_row->Name().c_str(), resolution_p);
+            namespace phx = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+            qi::parse(
+                drop_list_row->Name().begin(), drop_list_row->Name().end(),
+                (qi::int_[phx::ref(w) = qi::_1] >> " x " >> qi::int_[phx::ref(h) = qi::_1])
+            );
             GetOptionsDB().Set<int>("video.fullscreen.width", w);
             GetOptionsDB().Set<int>("video.fullscreen.height", h);
         }
