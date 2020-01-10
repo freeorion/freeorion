@@ -438,17 +438,12 @@ public:
     StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                   double value, int digits, bool showsign,
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with one value
-
-    StatisticIcon(const std::shared_ptr<GG::Texture> texture,
-                  double value0, double value1, int digits0, int digits1,
-                  bool showsign0, bool showsign1,
-                  GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with two values
     //@}
 
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
-    double GetValue(int index = 0) const;
+    double GetValue(size_t index = 0) const;
     GG::Pt MinUsableSize() const override;
     //@}
 
@@ -470,7 +465,7 @@ public:
 
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void SetValue(double value, int index = 0);  ///< sets displayed \a value with \a index
+    void SetValue(double value, size_t index = 0);  ///< sets displayed \a value with \a index
     //@}
 
     mutable boost::signals2::signal<void ()>    LeftClickedSignal;
@@ -478,14 +473,11 @@ public:
 
 private:
     void    DoLayout();
-    GG::Clr ValueColor(int index) const;    ///< returns colour in which to draw value
 
-    int                                 m_num_values = 0;
-    std::vector<double>                 m_values;
-    std::vector<int>                    m_digits;
-    std::vector<bool>                   m_show_signs;
-    std::shared_ptr<GG::StaticGraphic>  m_icon = nullptr;
-    std::shared_ptr<GG::Label>          m_text = nullptr;
+    /// The value, precision and sign of the statistic value
+    std::vector<std::tuple<double, int, bool>> m_values;
+    std::shared_ptr<GG::StaticGraphic>         m_icon = nullptr;
+    std::shared_ptr<GG::Label>                 m_text = nullptr;
 };
 
 class CUIToolBar : public GG::Control {
