@@ -127,7 +127,10 @@ ServerApp::ServerApp() :
 
 ServerApp::~ServerApp() {
     DebugLogger() << "ServerApp::~ServerApp";
-    m_python_server.Finalize();
+
+    // Calling Py_Finalize here causes segfault when m_python_server destructing with its python
+    // object fields
+
     CleanupAIs();
     delete m_fsm;
     DebugLogger() << "Server exited cleanly.";
