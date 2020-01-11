@@ -88,14 +88,14 @@ class State(object):
                 continue
             if building.buildingTypeName == AIDependencies.BLD_SHIPYARD_ORBITAL_DRYDOCK and building.ownedBy(empire_id):
                 drydocks.setdefault(building.systemID, []).append(building.planetID)
-        self.__drydock_locations = ReadOnlyDict({k: tuple(v) for k, v in drydocks.iteritems()})
+        self.__drydock_locations = ReadOnlyDict({k: tuple(v) for k, v in drydocks.items()})
 
     def __update_supply(self):
         """
         Update information about supply.
         """
         self.__system_supply.update(fo.getEmpire().supplyProjections())
-        for sys_id, supply_val in self.__system_supply.iteritems():
+        for sys_id, supply_val in self.__system_supply.items():
             self.__systems_by_jumps_to_supply.setdefault(min(0, supply_val), []).append(sys_id)
 
         # By converting the lists to immutable tuples now, we don't have to return copies when queried.
@@ -158,13 +158,13 @@ class State(object):
         # TODO: as currently used, is duplicative with combo of get_aistate().popCtrSystemIDs
         if include_outposts not in self.__empire_planets_by_system:
             empire_id = fo.empireID()
-            empire_planets = (x for x in self.__planet_info.itervalues()
+            empire_planets = (x for x in self.__planet_info.values()
                               if x.owner == empire_id and (x.species_name or include_outposts))
             result = {}
             for x in empire_planets:
                 result.setdefault(x.system_id, []).append(x.pid)
             self.__empire_planets_by_system[include_outposts] = ReadOnlyDict(
-                    {k: tuple(v) for k, v in result.iteritems()}
+                    {k: tuple(v) for k, v in result.items()}
             )
         if sys_id is not None:
             return self.__empire_planets_by_system[include_outposts].get(sys_id, tuple())
@@ -177,15 +177,15 @@ class State(object):
         :rtype: frozenset[int]
         """
         empire_id = fo.empireID()
-        return frozenset(x.pid for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name)
+        return frozenset(x.pid for x in self.__planet_info.values() if x.owner == empire_id and x.species_name)
 
     def get_empire_outposts(self):
         empire_id = fo.empireID()
-        return tuple(x.pid for x in self.__planet_info.itervalues() if x.owner == empire_id and not x.species_name)
+        return tuple(x.pid for x in self.__planet_info.values() if x.owner == empire_id and not x.species_name)
 
     def get_all_empire_planets(self):
         empire_id = fo.empireID()
-        return tuple(x.pid for x in self.__planet_info.itervalues() if x.owner == empire_id)
+        return tuple(x.pid for x in self.__planet_info.values() if x.owner == empire_id)
 
     def get_empire_planets_with_species(self, species_name):
         """
@@ -207,7 +207,7 @@ class State(object):
         """
         empire_id = fo.empireID()
         result = {}
-        for x in (x for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name):
+        for x in (x for x in self.__planet_info.values() if x.owner == empire_id and x.species_name):
             result.setdefault(x.species_name, []).append(x.pid)
         return result
 
@@ -216,7 +216,7 @@ class State(object):
 
         :rtype: set[int]
         """
-        return {x.pid for x in self.__planet_info.itervalues() if x.owner == INVALID_ID and not x.species_name}
+        return {x.pid for x in self.__planet_info.values() if x.owner == INVALID_ID and not x.species_name}
 
     def get_number_of_colonies(self):
         return len(self.get_inhabited_planets())

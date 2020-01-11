@@ -83,7 +83,7 @@ def ppstring(foo):
     if isinstance(foo, list):
         return "[" + ",".join(map(ppstring, foo)) + "]"
     elif isinstance(foo, dict):
-        return "{" + ",".join([ppstring(k) + ":" + ppstring(v) for k, v in foo.iteritems()]) + "}"
+        return "{" + ",".join([ppstring(k) + ":" + ppstring(v) for k, v in foo.items()]) + "}"
     elif isinstance(foo, tuple):
         return "(" + ",".join(map(ppstring, foo)) + ")"
     elif isinstance(foo, set) or isinstance(foo, frozenset):
@@ -204,7 +204,7 @@ def cache_by_turn(func):
 
 
 def dict_to_tuple(dic):
-    return tuple(dic.iteritems())
+    return tuple(dic.items())
 
 
 def tuple_to_dict(tup):
@@ -271,7 +271,7 @@ class ReadOnlyDict(Mapping):
 
     def __init__(self, *args, **kwargs):
         self._data = dict(*args, **kwargs)
-        for k, v in self._data.iteritems():
+        for k, v in self._data.items():
             try:
                 hash(v)
             except TypeError:

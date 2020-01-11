@@ -1,3 +1,4 @@
+from __future__ import print_function
 from logging import debug, warn, error, info
 from operator import itemgetter
 
@@ -207,7 +208,7 @@ def rate_planetary_piloting(pid):
 
 @cache_by_turn
 def get_supply_tech_range():
-    return sum(_range for _tech, _range in AIDependencies.supply_range_techs.iteritems() if tech_is_complete(_tech))
+    return sum(_range for _tech, _range in AIDependencies.supply_range_techs.items() if tech_is_complete(_tech))
 
 
 def survey_universe():
@@ -1266,7 +1267,7 @@ def _print_empire_species_roster():
         this_row.extend(grade_map.get(get_ai_tag_grade(species_tags, tag).upper(), "o") for tag in grade_tags)
         this_row.append([tag for tag in species_tags if not any(s in tag for s in grade_tags) and 'PEDIA' not in tag])
         species_table.add_row(this_row)
-    print
+    print()
     info(species_table)
 
 
@@ -1504,7 +1505,7 @@ class OrbitalColonizationManager(object):
 
             self.num_enqueued_bases += 1
             # check if a target for this base remains
-            original_target = next((target for target, plan in unaccounted_plans.iteritems() if
+            original_target = next((target for target, plan in unaccounted_plans.items() if
                                     plan.source == element.locationID and plan.base_enqueued), None)
             if original_target:
                 debug("Base built at %d still has its original target." % element.locationID)
@@ -1513,7 +1514,7 @@ class OrbitalColonizationManager(object):
 
             # the original target may be no longer valid but maybe there is another
             # orbital colonization plan which wasn't started yet and has the same source planet
-            alternative_target = next((target for target, plan in unaccounted_plans.iteritems()
+            alternative_target = next((target for target, plan in unaccounted_plans.items()
                                        if plan.source == element.locationID), None)
             if alternative_target:
                 debug("Reassigning base built at %d to new target %d as old target is no longer valid" % (
@@ -1524,7 +1525,7 @@ class OrbitalColonizationManager(object):
 
             # final try: unstarted plans with source in the same system
             target_system = universe.getSystem(universe.getPlanet(element.locationID).systemID)
-            alternative_plan = next((plan for target, plan in unaccounted_plans.iteritems()
+            alternative_plan = next((plan for target, plan in unaccounted_plans.items()
                                      if plan.source in target_system.planetIDs and not plan.base_enqueued
                                      and not plan.base_assigned), None)
             if alternative_plan:
@@ -1554,7 +1555,7 @@ class OrbitalColonizationManager(object):
         if not empire.techResearched(OUTPOSTING_TECH):
             return
 
-        considered_plans = [plan for plan in self._colonization_plans.itervalues()
+        considered_plans = [plan for plan in self._colonization_plans.values()
                             if not plan.base_enqueued and plan.score > MINIMUM_COLONY_SCORE]
         queue_limit = max(1, int(2*empire.productionPoints / outpod_pod_cost()))
         for colonization_plan in sorted(considered_plans, key=lambda x: x.score, reverse=True):
@@ -1577,7 +1578,7 @@ class OrbitalColonizationManager(object):
             sys_id = fleet.systemID
             system = universe.getSystem(sys_id)
 
-            avail_plans = [plan for plan in self._colonization_plans.itervalues()
+            avail_plans = [plan for plan in self._colonization_plans.values()
                            if plan.target in system.planetIDs and not plan.base_assigned]
             avail_plans.sort(key=lambda x: x.score, reverse=True)
             for plan in avail_plans:
@@ -1598,7 +1599,7 @@ def test_calc_max_pop():
     from freeorion_tools import chat_human
     chat_human("Verifying calculation of ColonisationAI.calc_max_pop()")
     universe = fo.getUniverse()
-    for spec_name, planets in state.get_empire_planets_by_species().iteritems():
+    for spec_name, planets in state.get_empire_planets_by_species().items():
         species = fo.getSpecies(spec_name)
         for pid in planets:
             planet = universe.getPlanet(pid)

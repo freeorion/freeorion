@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import random
 
 import freeorion as fo
@@ -80,7 +82,7 @@ def populate_monster_fleet(fleet_plan, system):
         if fo.create_monster(design, monster_fleet) == fo.invalid_object():
             raise MapGenerationError("Python generate_monsters: unable to create monster %s" % design)
 
-    print "Spawn", fleet_plan.name(), "at", fo.get_name(system)
+    print("Spawn", fleet_plan.name(), "at", fo.get_name(system))
 
 
 def generate_monsters(monster_freq, systems):
@@ -94,7 +96,7 @@ def generate_monsters(monster_freq, systems):
     # a value of 0 means no monsters, in this case return immediately
     if basic_chance <= 0:
         return
-    print "Default monster spawn chance:", basic_chance
+    print("Default monster spawn chance:", basic_chance)
     expectation_tally = 0.0
     actual_tally = 0
 
@@ -131,15 +133,15 @@ def generate_monsters(monster_freq, systems):
                                          for design in fp.ship_designs()])}
 
     # dump a list of all monster fleets meeting these conditions and their properties to the log
-    print "Monster fleets available for generation at game start:"
+    print("Monster fleets available for generation at game start:")
     fp_location_cache = {}
     for fleet_plan in fleet_plans:
-        print "...", fleet_plan.name(), ": spawn rate", fleet_plan.spawn_rate(),
-        print "/ spawn limit", fleet_plan.spawn_limit(),
-        print "/ effective chance", basic_chance * fleet_plan.spawn_rate(),
+        print("...", fleet_plan.name(), ": spawn rate", fleet_plan.spawn_rate(), end=' ')
+        print("/ spawn limit", fleet_plan.spawn_limit(), end=' ')
+        print("/ effective chance", basic_chance * fleet_plan.spawn_rate(), end=' ')
         fp_location_cache[fleet_plan] = set(fleet_plan.locations(systems))
-        print ("/ can be spawned at", len(fp_location_cache[fleet_plan]),
-               "of", len(systems), "systems")
+        print("/ can be spawned at", len(fp_location_cache[fleet_plan]),
+              "of", len(systems), "systems")
         if fleet_plan.name() in nest_name_map.values():
             universe_statistics.tracked_monsters_chance[fleet_plan.name()] = basic_chance * fleet_plan.spawn_rate()
 
@@ -202,14 +204,14 @@ def generate_monsters(monster_freq, systems):
             report_error(str(err))
             continue
 
-    print "Actual # monster fleets placed: %d; Total Placement Expectation: %.1f" % (actual_tally, expectation_tally)
+    print("Actual # monster fleets placed: %d; Total Placement Expectation: %.1f" % (actual_tally, expectation_tally))
     # finally, compile some statistics to be dumped to the log later
     universe_statistics.monsters_summary = [
-        (fp.name(), fp.spawn_limit() - counter) for fp, counter in spawn_limits.iteritems()
+        (fp.name(), fp.spawn_limit() - counter) for fp, counter in spawn_limits.items()
     ]
     universe_statistics.tracked_monsters_tries.update(tracked_plan_tries)
     universe_statistics.tracked_monsters_summary.update(tracked_plan_counts)
     universe_statistics.tracked_monsters_location_summary.update(
-        (fp.name(), count) for fp, count in tracked_plan_valid_locations.iteritems())
+        (fp.name(), count) for fp, count in tracked_plan_valid_locations.items())
     universe_statistics.tracked_nest_location_summary.update(
         (nest_name_map[nest], count) for nest, count in tracked_nest_valid_locations.items())

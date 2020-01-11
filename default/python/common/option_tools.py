@@ -69,9 +69,9 @@ def _create_default_config_file(path):
     """
     config = SafeConfigParser()
     presets = _get_preset_default_ai_options()
-    for section, entries in presets.iteritems():
+    for section, entries in presets.items():
         config.add_section(section)
-        for k, v in entries.iteritems():
+        for k, v in entries.items():
             config.set(section, k, str(v))
     if path:
         try:

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import random
 import sys
 from itertools import product
@@ -115,7 +116,7 @@ def generate_systems(pos_list, gsd):
                 break
         else:
             # Intentionally non-modal.  Should be a warning.
-            print >> sys.stderr, ("Python generate_systems: place planets in system %d at position (%.2f, %.2f) failed"
-                                  % (system, position[0], position[1]))
+            print(("Python generate_systems: place planets in system %d at position (%.2f, %.2f) failed"
+                   % (system, position[0], position[1])))
 
     return sys_list

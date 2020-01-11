@@ -19,7 +19,7 @@ def random_name(size):
     It rotates between consonants and vowels.
     Rotation is global first letter depends on prev calls.
     """
-    return ''.join(next(_random_letter_generator) for _ in xrange(size)).capitalize()
+    return ''.join(next(_random_letter_generator) for _ in range(size)).capitalize()
 
 
 def get_name_list(name_list):

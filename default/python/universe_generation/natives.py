@@ -1,3 +1,4 @@
+from __future__ import print_function
 import itertools
 import random
 
@@ -34,15 +35,15 @@ def generate_natives(native_freq, systems, empire_home_systems):
     native_safe_planets = set(itertools.chain.from_iterable(
         [fo.sys_get_planets(s) for s in systems if s not in empire_exclusions]))
 
-    print "Number of planets far enough from players for natives to be allowed:", len(native_safe_planets)
+    print("Number of planets far enough from players for natives to be allowed:", len(native_safe_planets))
     # if there are no "native safe" planets at all, we can stop here
     if not native_safe_planets:
         return
 
     # get all native species
     native_species = fo.get_native_species()
-    print "Species that can be added as natives:"
-    print "... " + "\n... ".join(native_species)
+    print("Species that can be added as natives:")
+    print("... " + "\n... ".join(native_species))
 
     # create a map with a list for each planet type containing the species
     # for which this planet type is a good environment
@@ -94,7 +95,7 @@ def generate_natives(native_freq, systems, empire_home_systems):
             # if no, and there is at least one available focus, just take the first of the list
             # otherwise don't set any focus
             fo.planet_set_focus(candidate, available_foci[0])
-        print "Added native", natives, "to planet", fo.get_name(candidate)
+        print("Added native", natives, "to planet", fo.get_name(candidate))
 
         # increase the statistics counter for this native species, so a species summary can be dumped to the log later
         universe_statistics.species_summary[natives] += 1

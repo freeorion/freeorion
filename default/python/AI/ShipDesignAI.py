@@ -384,7 +384,7 @@ class ShipDesignCache(object):
                     corrupted.append(designname)
         for corrupted_entry in corrupted:
             del self.design_id_by_name[corrupted_entry]
-            bad_ref = next(iter([_key for _key, _val in self.map_reference_design_name.iteritems()
+            bad_ref = next(iter([_key for _key, _val in self.map_reference_design_name.items()
                                  if _val == corrupted_entry]), None)
             if bad_ref is not None:
                 del self.map_reference_design_name[bad_ref]
@@ -654,7 +654,7 @@ class AdditionalSpecifications(object):
             self.max_enemy_weapon_strength = max(enemy_attack_stats.keys())
             n = 0
             d = 0
-            for dmg, count in enemy_attack_stats.iteritems():
+            for dmg, count in enemy_attack_stats.items():
                 d += dmg*count
                 n += count
             self.avg_enemy_weapon_strength = d/n
@@ -1265,7 +1265,7 @@ class ShipDesigner(object):
                     partclass = tup[1].partClass
                     if partclass in check_for_redundance:
                         partclass_dict[partclass].append(tup[1])
-                for shipPartsPerClass in partclass_dict.itervalues():
+                for shipPartsPerClass in partclass_dict.values():
                     for a in shipPartsPerClass:
                         if a.capacity == 0:  # TODO: Modify this if effects of items get hardcoded
                             part_dict[slottype].remove((a.name, a))
@@ -1371,7 +1371,7 @@ class ShipDesigner(object):
                         for j in range_parts:
                             current_parts += current_filling[j] * [parts[s][j]]
                     else:
-                        for j in xrange(len(total_filling[s])):
+                        for j in range(len(total_filling[s])):
                             other_parts += total_filling[s][j] * [parts[s][j]]
                 self.update_parts(other_parts + current_parts)
                 current_rating = self.evaluate()
@@ -1407,7 +1407,7 @@ class ShipDesigner(object):
         slot_filling = {}
         for slot in number_of_slots_by_slottype:
             slot_filling[slot] = []
-            for j in xrange(len(total_filling[slot])):
+            for j in range(len(total_filling[slot])):
                 slot_filling[slot] += total_filling[slot][j] * [parts[slot][j]]
         for slot in self.hull.slots:
             partlist.append(slot_filling[slot].pop())
@@ -1812,7 +1812,7 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
         for this_hangar_part in hangar_parts:
             current_available_parts = {}
             forbidden_hangar_parts = {part for part in hangar_parts if part != this_hangar_part}
-            for slot, partlist in available_parts.iteritems():
+            for slot, partlist in available_parts.items():
                 current_available_parts[slot] = [part_ for part_ in partlist if part_ not in forbidden_hangar_parts]
             this_rating, this_partlist = ShipDesigner._filling_algorithm(self, current_available_parts)
             if verbose:
@@ -2358,7 +2358,7 @@ def recursive_dict_diff(dict_new, dict_old, dict_diff, diff_level_threshold=0):
     """
     NO_DIFF = 9999
     min_diff_level = NO_DIFF
-    for key, value in dict_new.iteritems():
+    for key, value in dict_new.items():
         if key not in dict_old:
             dict_diff[key] = copy.deepcopy(value)
             min_diff_level = 0

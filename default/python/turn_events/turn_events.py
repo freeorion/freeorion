@@ -1,9 +1,9 @@
+from __future__ import print_function
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
 # Logging is redirected before other imports so that import errors appear in log files.
 redirect_logging_to_freeorion_logger()
 
-import sys
 from random import random, uniform, choice
 from math import sin, cos, pi, hypot
 
@@ -12,7 +12,7 @@ from universe_tables import MONSTER_FREQUENCY
 
 
 def execute_turn_events():
-    print "Executing turn events for turn", fo.current_turn()
+    print("Executing turn events for turn", fo.current_turn())
 
     # creating fields
     systems = fo.get_systems()
@@ -33,9 +33,9 @@ def execute_turn_events():
             x = radius + (dist_from_center * sin(angle))
             y = radius + (dist_from_center * cos(angle))
 
-        print "...creating new", field_type, "field, at distance", dist_from_center, "from center"
+        print("...creating new", field_type, "field, at distance", dist_from_center, "from center")
         if fo.create_field(field_type, x, y, size) == fo.invalid_object():
-            print >> sys.stderr, "Turn events: couldn't create new field"
+            print("Turn events: couldn't create new field")
 
     # creating monsters
     gsd = fo.get_galaxy_setup_data()
@@ -52,20 +52,20 @@ def execute_turn_events():
         # search for systems without planets or fleets
         candidates = [s for s in systems if len(fo.sys_get_planets(s)) <= 0 and len(fo.sys_get_fleets(s)) <= 0]
         if not candidates:
-            print >> sys.stderr, "Turn events: unable to find system for monster spawn"
+            print("Turn events: unable to find system for monster spawn")
         else:
             system = choice(candidates)
-            print "...creating new", monster_type, "at", fo.get_name(system)
+            print("...creating new", monster_type, "at", fo.get_name(system))
 
             # create monster fleet
             monster_fleet = fo.create_monster_fleet(system)
             # if fleet creation fails, report an error
             if monster_fleet == fo.invalid_object():
-                print >> sys.stderr, "Turn events: unable to create new monster fleet"
+                print("Turn events: unable to create new monster fleet")
             else:
                 # create monster, if creation fails, report an error
                 monster = fo.create_monster(monster_type, monster_fleet)
                 if monster == fo.invalid_object():
-                    print >> sys.stderr, "Turn events: unable to create monster in fleet"
+                    print("Turn events: unable to create monster in fleet")
 
     return True

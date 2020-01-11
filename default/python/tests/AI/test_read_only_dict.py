@@ -20,7 +20,7 @@ def test_dict_content():
 def test_membership():
     test_dict = ReadOnlyDict(dict_content)
     # check for membership checks and retrieval
-    for key, value in dict_content.iteritems():
+    for key, value in dict_content.items():
         assert key in test_dict
         assert test_dict[key] == value
         assert test_dict.get(key, -99999) == value

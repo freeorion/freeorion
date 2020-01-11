@@ -191,15 +191,15 @@ class ShipCombatStats(object):
             e_attacks, e_structure, e_shields = enemy_stats.get_basic_stats()
             if e_attacks:
                 e_num_attacks = sum(n for n in e_attacks.values())
-                e_total_attack = sum(n*dmg for dmg, n in e_attacks.iteritems())
+                e_total_attack = sum(n*dmg for dmg, n in e_attacks.items())
                 e_avg_attack = e_total_attack / e_num_attacks
-                e_net_attack = sum(n*max(dmg - my_shields, .001) for dmg, n in e_attacks.iteritems())
+                e_net_attack = sum(n*max(dmg - my_shields, .001) for dmg, n in e_attacks.items())
                 e_net_attack = max(e_net_attack, .1*e_total_attack)
                 shield_factor = e_total_attack / e_net_attack
                 my_structure *= max(1, shield_factor)
-            my_total_attack = sum(n*max(dmg - e_shields, .001) for dmg, n in my_attacks.iteritems())
+            my_total_attack = sum(n*max(dmg - e_shields, .001) for dmg, n in my_attacks.items())
         else:
-            my_total_attack = sum(n*dmg for dmg, n in my_attacks.iteritems())
+            my_total_attack = sum(n*dmg for dmg, n in my_attacks.items())
             my_structure += my_shields
 
         if ignore_fighters:

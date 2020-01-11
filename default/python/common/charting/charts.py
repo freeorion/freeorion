@@ -17,6 +17,7 @@
 # Change dataDir to '<user>/AppData/Roaming/'
 
 
+from __future__ import print_function
 import pylab
 import os
 import sys
@@ -33,7 +34,7 @@ def show_only_some(x, pos):
 
 
 def parse_file(file_name, ai=True):
-        print "processing file ", file_name
+        print("processing file ", file_name)
         sys.stdout.flush()
         got_colors = False
         got_species = False
@@ -100,9 +101,9 @@ def main():
     A1log = glob(dataDir + os.sep + "AI_1.log")
 
     if not os.path.exists(dataDir + os.sep + "freeorion.log"):
-        print "can't find freeorion.log"
+        print("can't find freeorion.log")
     elif A1log and (A1log[0] in logfiles) and (os.path.getmtime(dataDir + os.sep + "freeorion.log") < os.path.getmtime(A1log[0]) - 300):
-        print "freeorion.log file is stale ( more than 5 minutes older than AI_1.log) and will be skipped"
+        print("freeorion.log file is stale ( more than 5 minutes older than AI_1.log) and will be skipped")
     else:
         data, details = parse_file(dataDir + os.sep + "freeorion.log", False)
         if len(data.get('PP', [])) > 0:
@@ -118,7 +119,7 @@ def main():
             # print "path ", path, "logtime diff: %.1f"%(A1Time -logtime)
             if logtime < A1Time - 300:
                 del logfiles[logfiles.index(path)]
-                print "skipping stale logfile ", path
+                print("skipping stale logfile ", path)
     for lfile in logfiles:
         try:
             data, details = parse_file(lfile, True)
@@ -126,13 +127,13 @@ def main():
             empireColors[details['name']] = details['color']
             species[details['name']] = details['species']
         except:
-            print "error processing %s" % lfile
-            print "Error: exception triggered and caught: ", traceback.format_exc()
+            print("error processing %s" % lfile)
+            print("Error: exception triggered and caught: ", traceback.format_exc())
 
-    print
+    print()
     for plotType in doPlotTypes:
 
-        print "--------------------"
+        print("--------------------")
         if plotType == "PP":
             caption = "Production"
         elif plotType == "RP":
@@ -181,24 +182,26 @@ def main():
             ax.set_yscale('log', basey=10)
 
         if playerName not in allData:
-            print "\t\t\tcan't find playerData in allData\n"
+            print("\t\t\tcan't find playerData in allData\n")
         else:
             if playerName in empireColors:
                 turnsP = allData[playerName].get("turnsP", [])
                 thisData = allData.get(playerName, {}).get(plotType, [])
-                print "plotting with color for player: ", playerName, "data min/max: ", min(allData[playerName].get(plotType, [])), ' | ', max(allData[playerName].get(plotType, []))
+                print("plotting with color for player: ", playerName, "data min/max: ",
+                      min(allData[playerName].get(plotType, [])), ' | ', max(allData[playerName].get(plotType, [])))
                 pylab.plot(turnsP, thisData, 'o-', color=empireColors[playerName], label="%s - %.1f" % (playerName, sum(thisData)), linewidth=2.0)
             else:
-                print "plotting withOUT color for player: ", playerName, "data min/max: ", min(allData[playerName].get(plotType, [])), ' | ', max(allData[playerName].get(plotType, []))
+                print("plotting withOUT color for player: ", playerName, "data min/max: ",
+                      min(allData[playerName].get(plotType, [])), ' | ', max(allData[playerName].get(plotType, [])))
                 pylab.plot(turnsP, allData[playerName].get(plotType, []), 'bx-', label=playerName, linewidth=2.0)
-        print "Ranked by ", plotType
+        print("Ranked by ", plotType)
         for rank, name in rankings[::-1]:
-            print name
+            print(name)
             if name in empireColors:
                 adata = allData[name].get(plotType, [])
                 pylab.plot(range(turns[0], turns[0] + len(adata)), adata, color=empireColors[name], label="%s: %s - %.1f" % (name, species[name], sum(adata)), linewidth=2.0)
             else:
-                print "can't find empire color for ", name
+                print("can't find empire color for ", name)
                 # pylab.plot(range(turns[0], turns[0]+len(allData[name])), allData[name].get(plotType, []), label="(%d) "%(empires.index(name)+1)+name+" : "+species[name], linewidth=2.0)
         # legend(loc='upper left',prop={"size":'medium'})
         pylab.legend(loc='upper left', prop={"size": 9}, labelspacing=0.2)
@@ -212,7 +215,7 @@ def main():
                 if 1.05 * ymax < yi * y2 / 10:
                     newY2 = yi * y2 / 10
                     break
-            print "y1: %.1f ; ymin: %.1f ; newY2/100: %.1f" % (y1, ymin, newY2 / 100)
+            print("y1: %.1f ; ymin: %.1f ; newY2/100: %.1f" % (y1, ymin, newY2 / 100))
             y1 = max(y1, 4, ymin, newY2 / 100)
         pylab.axis((x1, x2, y1, newY2))
         pylab.grid(b=True, which='major', color='0.25', linestyle='-')

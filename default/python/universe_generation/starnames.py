@@ -1,3 +1,4 @@
+from __future__ import print_function
 import random
 
 import freeorion as fo
@@ -72,7 +73,7 @@ def cluster_stars(positions, num_star_groups):
         old_c = 1 - old_c
     else:
         if loop > 0:  # if here at loop 0, then didn't try for convergence
-            print "falling through system clustering iteration loop without convergence"
+            print("falling through system clustering iteration loop without convergence")
     return clusters[1 - old_c]
 
 
