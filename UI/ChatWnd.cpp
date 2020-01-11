@@ -23,112 +23,35 @@
 #include <GG/GUI.h>
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/xpressive/xpressive.hpp>
 
-
-// boost::spirit::classic pulls in windows.h which in turn defines the macros
-// SendMessage. Undefining those should avoid name collisions with FreeOrion
-// function names
-#include <boost/spirit/include/classic.hpp>
-#ifdef FREEORION_WIN32
-#  undef SendMessage
-#endif
+#include <algorithm>
+#include <iterator>
 
 
 namespace {
-    const std::string OPEN_TAG = "[[";
-    const std::string CLOSE_TAG = "]]";
-    const std::string SEPARATOR = ",";
+    std::string UserStringSubstitute(const boost::xpressive::smatch& match) {
+        auto key = match.str(1);
 
-    /** Converts (first, last) to a string, looks it up as a key in the
-      * stringtable, then then appends this to the end of the string str. */
-    struct UserStringSubstituteAndAppend {
-        UserStringSubstituteAndAppend(std::string& str) :
-            m_str(str)
-        {
-            //std::cout << "UserStringSubstituteAndAppend with str:" << str << std::endl;
+        if (match.nested_results().empty()) {
+            // not parameterized
+            if (UserStringExists(key))
+                return UserString(key);
+            return key;
         }
 
-        void operator()(const char* first, const char* last) const {
-            std::string token(first, last);
-            if (token.empty() || !UserStringExists(token))
-                return;
-            m_str += UserString(token);
-            //std::cout << "str at end of UserStringSubstituteAndAppend operator():" << m_str << std::endl;
-        }
+        if (UserStringExists(key))
+            // replace key with user string if such exists
+            key = UserString(key);
 
-        std::string& m_str;
-    };
+        auto formatter = FlexibleFormat(key);
 
-    // sticks a sequence of characters onto the end of a string
-    struct StringAppend {
-        StringAppend(std::string& str) :
-            m_str(str)
-        {
-            //std::cout << "StringAppend with str:" << str << std::endl;
-        }
+        size_t arg = 1;
+        for (auto submatch : match.nested_results())
+            formatter.bind_arg(arg++, submatch.str());
 
-        void operator()(const char* first, const char* last) const {
-            m_str += std::string(first, last);
-            //std::cout << "str at end of StringAppend operator():" << m_str << std::endl;
-        }
-
-        std::string& m_str;
-    };
-
-    // replaces \a formatter_ with a new formatter with the template string
-    // from within the specified range of characters \a first to \a last.
-    struct StartNewFormatterFromUserString {
-        StartNewFormatterFromUserString(boost::format& formatter_) :
-            formatter(formatter_)
-        {}
-
-        void operator()(const char* first, const char* last) const {
-            std::string token(first, last);
-            if (token.empty())
-                formatter = FlexibleFormat("");
-            else if (UserStringExists(token))
-                formatter = FlexibleFormat(UserString(token));
-            else
-                formatter = FlexibleFormat(token);
-            //std::cout << std::endl << "Started new formatter with token:" << token << std::endl;
-        }
-
-        boost::format& formatter;
-    };
-
-    // Each time called, binds the next argument to \a formatter_ with the
-    // string within the specified range of characters \a first to \a last.
-    struct BindFormatterArgument {
-        BindFormatterArgument(boost::format& formatter_) :
-            formatter(formatter_)
-        {}
-
-        void operator()(const char* first, const char* last) const {
-            std::string token(first, last);
-            //std::cout << "Binding formatter arg:" << arg_num << " with str:" << token << std::endl;
-            formatter.bind_arg(arg_num++, token);
-        }
-
-        boost::format& formatter;
-        mutable int arg_num = 1;
-    };
-
-    // Appends to \a str_ the string extracted from \a formatter. The
-    // character range \a first to \a last is ignored.
-    struct AppendFormatterString {
-        AppendFormatterString(const boost::format& formatter_, std::string& str_) :
-            formatter(formatter_),
-            m_str(str_)
-        {}
-
-        void operator()(const char* first, const char* last) const {
-            m_str += formatter.str();
-            //std::cout << "Appending formatted str:" << formatter.str() << std::endl;
-        }
-
-        const boost::format& formatter;
-        std::string& m_str;
-    };
+        return formatter.str();
+    }
 
     // finds instances of stringtable substitutions and/or string formatting
     // within the text \a input and evaluates them. [[KEY]] will be looked up
@@ -140,33 +63,12 @@ namespace {
     // intance of %3% or higher numbers will be deleted from the string, unless
     // a third or more parameters are specified.
     std::string StringtableTextSubstitute(const std::string& input) {
-        std::string retval;
+        using namespace boost::xpressive;
 
-        namespace classic = boost::spirit::classic;
-        classic::rule<> token = *(classic::anychar_p - CLOSE_TAG.c_str() - SEPARATOR.c_str());
+        sregex param = (s1 = +_w);
+        sregex regex = as_xpr("[[") >> (s1 = +_w) >> !*(',' >> param) >> "]]";
 
-        classic::rule<> var = OPEN_TAG.c_str() >> token[UserStringSubstituteAndAppend(retval)] >> CLOSE_TAG.c_str();
-        classic::rule<> non_var = classic::anychar_p - OPEN_TAG.c_str();
-
-        boost::format formatter;
-        classic::rule<> substitution = OPEN_TAG.c_str() >> token[StartNewFormatterFromUserString(formatter)]
-                                     >> *(SEPARATOR.c_str() >> token[BindFormatterArgument(formatter)])
-                                     >> CLOSE_TAG.c_str();
-
-
-        // parse and substitute variables
-        try {
-            classic::parse(input.c_str(), *(
-                  non_var[StringAppend(retval)]
-                | substitution[AppendFormatterString(formatter, retval)]
-                //| var
-                )
-            );
-        } catch (...) {
-            ErrorLogger() << "StringtableTextSubstitute caught exception when parsing input: " << input;
-        }
-
-        return retval;
+        return regex_replace(input, regex, UserStringSubstitute);
     }
 }
 
