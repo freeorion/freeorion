@@ -1,6 +1,7 @@
 from __future__ import print_function
 import math
 import random
+import sys
 from hashlib import md5
 
 error_list = []
@@ -38,7 +39,7 @@ def report_error(msg):
     Handles error messages.
     """
     error_list.append(msg)
-    print(msg)
+    print(msg, file=sys.stderr)
 
 
 class MapGenerationError(RuntimeError):

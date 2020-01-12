@@ -117,6 +117,6 @@ def generate_systems(pos_list, gsd):
         else:
             # Intentionally non-modal.  Should be a warning.
             print(("Python generate_systems: place planets in system %d at position (%.2f, %.2f) failed"
-                   % (system, position[0], position[1])))
+                   % (system, position[0], position[1])), file=sys.stderr)
 
     return sys_list
