@@ -613,7 +613,7 @@ SHIP_TECHS_REQUIRING_BLACK_HOLE = (
 
 # <editor-fold desc="Species">
 # species names
-SP_LAMBALALAM = "SP_LEMBALALAM"
+SP_LEMBALALAM = "SP_LEMBALALAM"
 
 # Species modifiers
 SPECIES_RESEARCH_MODIFIER = {'NO': 0.0, 'BAD': 0.75, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 3.0}
@@ -681,13 +681,13 @@ TAG_DESTROYED_ON_CONQUEST = "DESTROYED_ON_CONQUEST"
 # some species have a fixed population
 SPECIES_FIXED_POPULATION = {
     # species_name: fixed_population_size
-    SP_LAMBALALAM: 5.0,
+    SP_LEMBALALAM: 5.0,
 }
 
 # techs that are unlocked if conquering a planet of a species
 SPECIES_TECH_UNLOCKS = {
     # species: [tech1, tech2, ...]
-    SP_LAMBALALAM: [GRO_LIFE_CYCLE, SPY_STEALTH_1, SPY_STEALTH_2]
+    SP_LEMBALALAM: [GRO_LIFE_CYCLE, SPY_STEALTH_1, SPY_STEALTH_2]
 }
 # </editor-fold>
 
