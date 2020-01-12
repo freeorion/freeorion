@@ -4,6 +4,7 @@ from common.configure_logging import redirect_logging_to_freeorion_logger
 # Logging is redirected before other imports so that import errors appear in log files.
 redirect_logging_to_freeorion_logger()
 
+import sys
 from random import random, uniform, choice
 from math import sin, cos, pi, hypot
 
@@ -35,7 +36,7 @@ def execute_turn_events():
 
         print("...creating new", field_type, "field, at distance", dist_from_center, "from center")
         if fo.create_field(field_type, x, y, size) == fo.invalid_object():
-            print("Turn events: couldn't create new field")
+            print("Turn events: couldn't create new field", file=sys.stderr)
 
     # creating monsters
     gsd = fo.get_galaxy_setup_data()
@@ -52,7 +53,7 @@ def execute_turn_events():
         # search for systems without planets or fleets
         candidates = [s for s in systems if len(fo.sys_get_planets(s)) <= 0 and len(fo.sys_get_fleets(s)) <= 0]
         if not candidates:
-            print("Turn events: unable to find system for monster spawn")
+            print("Turn events: unable to find system for monster spawn", file=sys.stderr)
         else:
             system = choice(candidates)
             print("...creating new", monster_type, "at", fo.get_name(system))
@@ -61,11 +62,11 @@ def execute_turn_events():
             monster_fleet = fo.create_monster_fleet(system)
             # if fleet creation fails, report an error
             if monster_fleet == fo.invalid_object():
-                print("Turn events: unable to create new monster fleet")
+                print("Turn events: unable to create new monster fleet", file=sys.stderr)
             else:
                 # create monster, if creation fails, report an error
                 monster = fo.create_monster(monster_type, monster_fleet)
                 if monster == fo.invalid_object():
-                    print("Turn events: unable to create monster in fleet")
+                    print("Turn events: unable to create monster in fleet", file=sys.stderr)
 
     return True

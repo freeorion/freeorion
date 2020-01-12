@@ -1,4 +1,5 @@
 from __future__ import print_function
+import sys
 from collections import defaultdict
 from math import acos, ceil, cos, floor, pi, sin, sqrt
 from random import gauss, randint, random, uniform
@@ -520,7 +521,7 @@ def cluster_galaxy_calc_positions(positions, adjacency_grid, size, width):
     Calculate positions for the cluster galaxy shape.
     """
     if size < 1:
-        print("Cluster galaxy requested for less than 1 star")
+        print("Cluster galaxy requested for less than 1 star", file=sys.stderr)
         return
 
     if size == 1:
