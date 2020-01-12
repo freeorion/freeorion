@@ -4514,7 +4514,7 @@ void DesignWnd::MainPanel::Populate() {
 
     const std::vector<HullType::Slot>& hull_slots = m_hull->Slots();
 
-    for (auto i = 0; i != hull_slots.size(); ++i) {
+    for (size_t i = 0; i != hull_slots.size(); ++i) {
         const HullType::Slot& slot = hull_slots[i];
         auto slot_control = GG::Wnd::Create<SlotControl>(slot.x, slot.y, slot.type);
         m_slots.push_back(slot_control);
