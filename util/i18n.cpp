@@ -254,20 +254,6 @@ namespace {
 
         return mag;
     }
-
-    int TestRounding() {
-        for (double num : {-0.001, -0.02, 0.0001,
-                           84.5, 90.9, 99.9,
-                           9999.9, 245.1, 2451.1, 12451.1, 1124451.1})
-        {
-            std::cout << "n: " << num
-                      << "  r2: " << DoubleToString(num, 2, false)
-                      << "  r3: " << DoubleToString(num, 3, false)
-                      << "  r5: " << DoubleToString(num, 5, false) << std::endl;
-        }
-        exit(0);
-    }
-    //int dummy = TestRounding();
 }
 
 std::string DoubleToString(double val, int digits, bool always_show_sign) {
