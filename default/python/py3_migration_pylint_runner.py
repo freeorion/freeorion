@@ -5,7 +5,6 @@ from multiprocessing import cpu_count
 # First path must be module in that directory, it is used as base by pylint
 paths = [
     'common',
-    'common/charting/charts.py',
     'auth/auth.py',
     'chat/chat.py',
     'handlers/inspect_freeOrionAIInterface.py',
