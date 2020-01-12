@@ -51,6 +51,8 @@ namespace boost {
 namespace {
     void                    DumpObjects(const Universe& universe)
     { DebugLogger() << universe.Objects().Dump(); }
+    std::string             ObjectDump(const UniverseObject& obj)
+    { return obj.Dump(0); }
 
     // We're returning the result of operator-> here so that python doesn't
     // need to deal with std::shared_ptr class.
@@ -473,7 +475,7 @@ namespace FreeOrionPython {
             .def("hasTag",                      &UniverseObject::HasTag)
             .add_property("meters",             make_function(ObjectMeters,                 return_internal_reference<>()))
             .def("getMeter",                    make_function(ObjectGetMeter,               return_internal_reference<>()))
-            .def("dump",                        &UniverseObject::Dump,                      return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
+            .def("dump",                        make_function(&ObjectDump,                  return_value_policy<return_by_value>()), "Returns string with debug information.")
         ;
 
         ///////////////////
