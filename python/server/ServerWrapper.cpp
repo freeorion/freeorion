@@ -91,10 +91,6 @@ namespace {
     object GetResourceDirWrapper()
     { return object(PathToString(GetResourceDir())); }
 
-    // Wrapper for GetUserConfigDir
-    object GetUserConfigDirWrapper()
-    { return object(PathToString(GetUserConfigDir())); }
-
     // Wrapper for getting empire objects
     list GetAllEmpires() {
         list empire_list;
