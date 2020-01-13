@@ -465,6 +465,19 @@ public:
 
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
+    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void DragDropEnter(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                       GG::Flags<GG::ModKey> mod_keys) override;
+
+    void DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                      GG::Flags<GG::ModKey> mod_keys) override;
+
+    void CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                    GG::Flags<GG::ModKey> mod_keys) override;
+
+    void DragDropLeave() override;
+
     void SetValue(double value, size_t index = 0);  ///< sets displayed \a value with \a index
     //@}
 

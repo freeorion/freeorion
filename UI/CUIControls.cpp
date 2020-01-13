@@ -1372,6 +1372,23 @@ void StatisticIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 void StatisticIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
+void StatisticIcon::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+void StatisticIcon::DragDropEnter(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                  GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+void StatisticIcon::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                 GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+void StatisticIcon::CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+void StatisticIcon::DragDropLeave()
+{ ForwardEventToParent(); }
+
 void StatisticIcon::DoLayout() {
     // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
     int icon_dim = std::min(Value(Height()), Value(Width()));
