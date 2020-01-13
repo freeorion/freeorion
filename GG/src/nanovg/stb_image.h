@@ -1355,6 +1355,9 @@ static unsigned char *stbi__convert_format(unsigned char *data, int img_n, int r
       unsigned char *src  = data + j * x * img_n   ;
       unsigned char *dest = good + j * x * req_comp;
 
+      #pragma GCC diagnostic push
+      #pragma GCC diagnostic ignored "-Wmisleading-indentation"
+
       #define COMBO(a,b)  ((a)*8+(b))
       #define CASE(a,b)   case COMBO(a,b): for(i=x-1; i >= 0; --i, src += a, dest += b)
       // convert source image with img_n components to one with req_comp components;
@@ -1375,6 +1378,8 @@ static unsigned char *stbi__convert_format(unsigned char *data, int img_n, int r
          default: STBI_ASSERT(0);
       }
       #undef CASE
+
+      #pragma GCC diagnostic pop
    }
 
    STBI_FREE(data);

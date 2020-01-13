@@ -2,8 +2,6 @@
 #undef int64_t
 #endif
 
-#include <boost/static_assert.hpp>
-#include <boost/detail/endian.hpp>
 #include <boost/version.hpp>
 
 #if BOOST_VERSION == 105800

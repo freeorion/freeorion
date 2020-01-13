@@ -2242,7 +2242,7 @@ void Font::HandleTag(const std::shared_ptr<FormattingTag>& tag, double* orig_col
                     } else {
                         well_formed_tag = false;
                     }
-                } catch (boost::bad_lexical_cast) {
+                } catch (const boost::bad_lexical_cast&) {
                     try {
                         double color[4];
                         color[0] = lexical_cast<double>(tag->params[0]);
@@ -2259,7 +2259,7 @@ void Font::HandleTag(const std::shared_ptr<FormattingTag>& tag, double* orig_col
                         } else {
                             well_formed_tag = false;
                         }
-                    } catch (boost::bad_lexical_cast) {
+                    } catch (const boost::bad_lexical_cast&) {
                         well_formed_tag = false;
                     }
                 }
