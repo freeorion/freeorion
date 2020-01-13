@@ -3,7 +3,7 @@ Policy
     description = "PLC_STOCKPILE_LIQUIDATION_DESC"
     short_description = "PLC_STOCKPILE_LIQUIDATION_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
-    adoptioncost = 5 + Statistic Sum value = LocalCandidate.Population condition = OwnedBy empire = Source.Owner
+    adoptioncost = 5 + Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ]
     effectsgroups =
         EffectsGroup
             scope = And [
