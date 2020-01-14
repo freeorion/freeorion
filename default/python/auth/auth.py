@@ -69,7 +69,7 @@ class AuthProvider:
     def list_players(self):
         """Returns list of PlayerSetupData to use in quickstart"""
         players = []
-        for player_name, auth_data in self.logins.iteritems():
+        for player_name, auth_data in self.logins.items():
             if fo.roleType.clientTypePlayer in auth_data[1]:
                 psd = fo.PlayerSetupData()
                 psd.player_name = player_name

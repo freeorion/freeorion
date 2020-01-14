@@ -127,7 +127,7 @@ def _encode_set(o):
 
 def _encode_dict(o):
     """Get a string representation of a dict with its encoded content."""
-    return "{%s}" % (', '.join(['%s: %s' % (encode(k), encode(v)) for k, v in o.iteritems()]))
+    return "{%s}" % (', '.join(['%s: %s' % (encode(k), encode(v)) for k, v in o.items()]))
 
 
 _encoder_table = {

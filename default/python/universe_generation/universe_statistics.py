@@ -1,3 +1,4 @@
+from __future__ import print_function
 import freeorion as fo
 from common.print_utils import Float, Sequence, Table, Text
 
@@ -40,8 +41,8 @@ def log_planet_count_dist(sys_list):
     )
     for planet_count, sys_count in planet_count_dist.items():
         count_distribution_table.add_row((planet_count, sys_count[0], 100.0 * sys_count[0] / len(sys_list)))
-    print count_distribution_table
-    print
+    print(count_distribution_table)
+    print()
 
     size_distribution = Table(
         [Text('size'), Text('count'), Float('% of planets', precession=1)],
@@ -49,8 +50,8 @@ def log_planet_count_dist(sys_list):
     )
     for planet_size, planet_count in sorted(planet_size_dist.items()):
         size_distribution.add_row((planet_size, planet_count, 100.0 * planet_count / planet_tally))
-    print size_distribution
-    print
+    print(size_distribution)
+    print()
 
 
 def log_planet_type_summary(sys_list):
@@ -67,8 +68,8 @@ def log_planet_type_summary(sys_list):
 
     for planet_type, planet_count in sorted(planet_type_summary_table.items()):
         type_summary_table.add_row((planet_type.name, 100.0 * planet_count / planet_total))
-    print type_summary_table
-    print
+    print(type_summary_table)
+    print()
 
 
 def log_species_summary(native_freq):
@@ -86,8 +87,8 @@ def log_species_summary(native_freq):
 
     for species, count in sorted(empire_species.items()):
         species_summary_table.add_row((species, count, 100.0 * count / num_empires))
-    print species_summary_table
-    print
+    print(species_summary_table)
+    print()
 
     native_chance = universe_tables.NATIVE_FREQUENCY[native_freq]
     # as the value in the universe table is higher for a lower frequency, we have to invert it
@@ -128,8 +129,8 @@ def log_species_summary(native_freq):
                  [str(p_t) for p_t in natives.planet_types_for_natives[species]]]
             )
 
-    print native_table
-    print
+    print(native_table)
+    print()
 
     native_settled_planet_total = sum(settled_native_planet_summary.values())
     type_summary_table = Table(
@@ -145,16 +146,16 @@ def log_species_summary(native_freq):
         potential_percent = 100.0 * planet_count / (1E-10 + native_potential_planet_total)
         settled_percent = 100.0 * settled_planet_count / (1E-10 + planet_count)
         type_summary_table.add_row((planet_type.name, potential_percent, settled_percent))
-    print type_summary_table
-    print
+    print(type_summary_table)
+    print()
 
 
 def log_monsters_summary(monster_freq):
     monster_place_table = Table([Text('monster'), Text('count')], table_name='Monster placement')
     for monster, counter in sorted(monsters_summary):
         monster_place_table.add_row([monster, counter])
-    print monster_place_table
-    print
+    print(monster_place_table)
+    print()
 
     monster_chance = universe_tables.MONSTER_FREQUENCY[monster_freq]
     monster_table = Table(
@@ -169,8 +170,8 @@ def log_monsters_summary(monster_freq):
              tracked_monsters_tries[monster], tracked_monsters_summary[monster],
              tracked_monsters_location_summary[monster], tracked_nest_location_summary[monster])
         )
-    print monster_table
-    print
+    print(monster_table)
+    print()
 
 
 def log_specials_summary():
@@ -180,8 +181,8 @@ def log_specials_summary():
     )
     for special in sorted(specials_summary):
         special_placement_count_table.add_row([special, specials_summary[special]])
-    print special_placement_count_table
-    print
+    print(special_placement_count_table)
+    print()
 
     special_placement = Table(
         [Text('count'), Text('tally'), Float('% of objects', precession=1)],
@@ -190,8 +191,8 @@ def log_specials_summary():
     objects_tally = sum(specials_repeat_dist.values())
     for number, tally in specials_repeat_dist.items():
         special_placement.add_row((number, tally, 100.0 * tally / (1E-10 + objects_tally)))
-    print special_placement
-    print
+    print(special_placement)
+    print()
 
 
 def log_systems():
@@ -208,7 +209,7 @@ def log_systems():
 
     # Printing too much info at once will lead to truncation of text
     for line in systems_table.get_table().split('\n'):
-        print line
+        print(line)
 
 
 def log_planets():
@@ -235,4 +236,4 @@ def log_planets():
 
     # Printing too much info at once will lead to truncation of text
     for line in planets_table.get_table().split('\n'):
-        print line
+        print(line)

@@ -297,7 +297,7 @@ class Reporter(object):
         info(foci_table)
         debug("Empire Totals:\nPopulation: %5d \nProduction: %5d\nResearch: %5d\n",
               empire.population(), empire.productionPoints, empire.resourceProduction(fo.resourceType.research))
-        for name, (cp, mp) in warnings.iteritems():
+        for name, (cp, mp) in warnings.items():
             warn("Population Warning! -- %s has unsustainable current pop %d -- target %d", name, cp, mp)
 
 
@@ -405,7 +405,7 @@ def set_planet_growth_specials(focus_manager):
         return
 
     # TODO Consider actual resource output of the candidate locations rather than only population
-    for special, locations in ColonisationAI.available_growth_specials.iteritems():
+    for special, locations in ColonisationAI.available_growth_specials.items():
         # Find which metabolism is boosted by this special
         metabolism = AIDependencies.metabolismBoosts.get(special)
         if not metabolism:

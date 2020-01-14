@@ -1,3 +1,4 @@
+from __future__ import print_function
 import random
 from collections import defaultdict
 
@@ -47,7 +48,7 @@ def place_special(specials, obj):
             continue
 
         fo.add_special(obj, special)
-        print "Special", special, "added to", fo.get_name(obj)
+        print("Special", special, "added to", fo.get_name(obj))
         universe_statistics.specials_summary[special] += 1
 
         return 1
@@ -74,7 +75,7 @@ def distribute_specials(specials_freq, universe_objects):
         return
 
     # dump a list of all specials meeting that conditions and their properties to the log
-    print "Specials available for distribution at game start:"
+    print("Specials available for distribution at game start:")
     for special in specials:
         print("... {:30}: spawn rate {:2.3f} / spawn limit {}".
               format(special, fo.special_spawn_rate(special), fo.special_spawn_limit(special)))
@@ -106,7 +107,7 @@ def distribute_specials(specials_freq, universe_objects):
         for (obj, system, specials_count) in obj_tuple_needing_specials:
             systems_needing_specials[system].add((obj, system, specials_count))
 
-        print " Placing in {} locations remaining.".format(len(systems_needing_specials))
+        print(" Placing in {} locations remaining.".format(len(systems_needing_specials)))
 
         # Find a list of candidates all spaced GALAXY_DECOUPLING_DISTANCE apart
         candidates = []

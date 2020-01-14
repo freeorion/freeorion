@@ -78,7 +78,7 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
         # then it is a standard dictionary.
         if not all(key in obj for key in ('__class__', '__module__')):
             return {self.__interpret(key): self.__interpret(value)
-                    for key, value in obj.iteritems()}
+                    for key, value in obj.items()}
 
         # pop and verify class and module name, then parse the class content
         class_name = obj.pop('__class__')
