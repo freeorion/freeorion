@@ -1,6 +1,7 @@
 import pytest
 
 import savegame_codec
+from common import six
 from pytest import fixture
 
 
@@ -25,7 +26,7 @@ class DummyTestClass(object):
 class TrustedScope(object):
 
     def __enter__(self):
-        reload(savegame_codec)  # just to be sure
+        six.moves.reload_module(savegame_codec)  # just to be sure
         savegame_codec._definitions.trusted_classes.update({
             __name__ + ".DummyTestClass": DummyTestClass,
             __name__ + ".GetStateTester": GetStateTester,
@@ -85,23 +86,34 @@ def test_encoding_simple_object(simple_object):
 
 
 def test_encoding_function():
+    if six.PY3:
+        match = "Class builtins.function is not trusted"
+    else:
+        match = "Class __builtin__.function is not trusted"
+
     with pytest.raises(savegame_codec.CanNotSaveGameException,
                        message="Could save function",
-                       match="Class __builtin__.function is not trusted"):
+                       match=match):
         check_encoding(lambda: 0)
 
 
+# remove this test after migration to python3
 def test_encoding_old_style_class():
-    with pytest.raises(savegame_codec.CanNotSaveGameException,
-                       message="Could save Old style class",
-                       match="Encountered unsupported object test_savegame_manager.OldStyleClass \(<type 'classobj'>\)"):
-        check_encoding(OldStyleClass)
+    if six.PY2:
+        with pytest.raises(savegame_codec.CanNotSaveGameException,
+                           message="Could save Old style class",
+                           match="Encountered unsupported object test_savegame_manager.OldStyleClass \(<type 'classobj'>\)"):
+            check_encoding(OldStyleClass)
 
 
 def test_encoding_type():
+    if six.PY3:
+        match = "Class builtins.type is not trusted$"
+    else:
+        match = "Class __builtin__.type is not trusted"
     with pytest.raises(savegame_codec.CanNotSaveGameException,
                        message="Could save untrusted class",
-                       match="Class __builtin__.type is not trusted"):
+                       match=match):
         check_encoding(list)
 
 

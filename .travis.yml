@@ -141,5 +141,24 @@ jobs:
         - pip install pytest==3.6.3
       script:
         - pytest
-      env:
-        - NAME="Pytest"
+      name: "Pytest 2.7.14"
+    - stage: test
+      os: linux
+      dist: xenial
+      language: python
+      python: 3.5
+      before_install:
+        - pip install pytest==3.6.3
+      script:
+        - pytest
+      name: "Pytest 3.5"
+    - stage: test
+      os: linux
+      dist: xenial
+      language: python
+      python: 3.8
+      before_install:
+        - pip install pytest==3.6.3
+      script:
+        - pytest
+      name: "Pytest 3.8"
