@@ -10,6 +10,7 @@ have their future focus decided.
 # Note: The algorithm is not stable with respect to pid order.  i.e. Two empire with
 #       exactly the same colonies, but different pids may make different choices.
 from logging import info, warn, debug
+from operator import itemgetter
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from aistate_interface import get_aistate
@@ -262,7 +263,7 @@ class Reporter(object):
             resource_priorities[priority_type] = aistate.get_priority(priority_type)
 
         sorted_priorities = resource_priorities.items()
-        sorted_priorities.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
+        sorted_priorities.sort(key=itemgetter(1), reverse=True)
         top_priority = -1
         for evaluation_priority, evaluation_score in sorted_priorities:
             if top_priority < 0:

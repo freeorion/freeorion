@@ -419,7 +419,7 @@ def get_colony_fleets():
     colonization_timer.start('Evaluate Outpost Opportunities')
 
     sorted_planets = evaluated_colony_planets.items()
-    sorted_planets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
+    sorted_planets.sort(key=itemgetter(1), reverse=True)
 
     _print_colony_candidate_table(sorted_planets, show_detail=False)
 
@@ -438,7 +438,7 @@ def get_colony_fleets():
     colonization_timer.stop()
 
     sorted_outposts = evaluated_outpost_planets.items()
-    sorted_outposts.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
+    sorted_outposts.sort(key=itemgetter(1), reverse=True)
 
     _print_outpost_candidate_table(sorted_outposts)
 
@@ -1194,7 +1194,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
             for rating in ratings:
                 if rating[0] >= 0.75 * best_scores.get(pid, [9999])[0]:
                     potential_targets.append((pid, rating))
-        potential_targets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
+        potential_targets.sort(key=itemgetter(1), reverse=True)
 
     # added a lot of checking because have been getting mysterious exception, after too many recursions to get info
     fleet_pool = set(fleet_pool)
