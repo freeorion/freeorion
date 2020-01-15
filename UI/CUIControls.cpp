@@ -1360,18 +1360,33 @@ void StatisticIcon::RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys
 void StatisticIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (Disabled())
         return;
-    LeftClickedSignal();
-    ForwardEventToParent();
+    LeftClickedSignal(pt);
 }
 
 void StatisticIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (Disabled())
         return;
-    RightClickedSignal();
-    ForwardEventToParent();
+    RightClickedSignal(pt);
 }
 
 void StatisticIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+void StatisticIcon::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+void StatisticIcon::DragDropEnter(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                  GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+void StatisticIcon::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                 GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+void StatisticIcon::CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+void StatisticIcon::DragDropLeave()
 { ForwardEventToParent(); }
 
 void StatisticIcon::DoLayout() {

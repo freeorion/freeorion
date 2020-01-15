@@ -24,7 +24,6 @@ public:
 
     void Render() override;
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
-    bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
     void Update();
     void SetToolTip(MeterType meter_type, const std::shared_ptr<GG::BrowseInfoWnd>& browse_wnd);
     void ClearToolTip(MeterType meter_type);
