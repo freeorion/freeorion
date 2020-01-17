@@ -1113,13 +1113,14 @@ def generate_production_orders():
         else:
             warn("Failed enqueueing %s at planet %s, got result %d" % (building_name, planet, res))
 
-    building_name = "BLD_EVACUATION"
+    buildings_to_scrap = ("BLD_EVACUATION", "BLD_GATEWAY_VOID")
     for pid in state.get_inhabited_planets():
         planet = universe.getPlanet(pid)
         if not planet:
             continue
         for bldg in planet.buildingIDs:
-            if universe.getBuilding(bldg).buildingTypeName == building_name:
+            building_name = universe.getBuilding(bldg).buildingTypeName
+            if building_name in buildings_to_scrap:
                 res = fo.issueScrapOrder(bldg)
                 debug("Tried scrapping %s at planet %s, got result %d", building_name, planet.name, res)
 
