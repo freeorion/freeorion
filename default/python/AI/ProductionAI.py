@@ -20,6 +20,7 @@ from EnumsAI import (EmpireProductionTypes, FocusType, MissionType, PriorityType
                      get_priority_production_types, )
 from character.character_module import Aggression
 from freeorion_tools import AITimer, chat_human, ppstring, tech_is_complete
+from operator import itemgetter
 from turn_state import state
 
 _best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
@@ -1222,7 +1223,7 @@ def generate_production_orders():
         production_priorities[priority_type] = int(max(0, (aistate.get_priority(priority_type)) ** 0.5))
 
     sorted_priorities = production_priorities.items()
-    sorted_priorities.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
+    sorted_priorities.sort(key=itemgetter(1), reverse=True)
 
     top_score = -1
 
