@@ -13,6 +13,7 @@
 #include <boost/signals2/signal.hpp>
 #include <boost/thread/shared_mutex.hpp>
 #include "EnumsFwd.h"
+#include "FleetPlan.h"
 #include "ObjectMap.h"
 #include "UniverseObject.h"
 #include "UnlockableItem.h"
@@ -27,8 +28,6 @@ class ShipDesign;
 class System;
 class Pathfinder;
 class IDAllocator;
-class FleetPlan;
-class MonsterFleetPlan;
 
 
 namespace Condition {
