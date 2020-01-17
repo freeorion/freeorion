@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include "parse/EnumParser.h"
-#include "parse/ItemsParser.h"
+#include "parse/UnlockableItem.h"
 #include "parse/ValueRefParser.h"
 #include "parse/EnumValueRefRules.h"
 #include "parse/ConditionParserImpl.h"
@@ -341,7 +341,7 @@ BOOST_AUTO_TEST_CASE(UnlockableItemTypeParser)
     CHECK_ENUM_AND_RESULT("ShipHull", UIT_SHIP_HULL, UnlockableItemType, parse::detail::unlockable_item_type_grammar);
     CHECK_ENUM_AND_RESULT("ShipDesign", UIT_SHIP_DESIGN, UnlockableItemType, parse::detail::unlockable_item_type_grammar);
     CHECK_ENUM_AND_RESULT("Tech", UIT_TECH, UnlockableItemType, parse::detail::unlockable_item_type_grammar);
-    CHECK_ENUM_AND_RESULT("Policy", UIT_POLICY, UnlockableItemType, parse::detail::unlockable_item_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Policy", UIT_POLICY, UnlockableItemType, parse::detail::unlockable_item_type_grammar);
     CHECK_FAILED_ENUM(UnlockableItemType, parse::detail::unlockable_item_type_grammar);
 }
 

@@ -1,5 +1,5 @@
-#ifndef _ItemsParser_h_
-#define _ItemsParser_h_
+#ifndef _parse_UnlockableItem_h_
+#define _parse_UnlockableItem_h_
 
 #include "Lexer.h"
 
@@ -19,4 +19,4 @@ namespace parse { namespace detail {
     };
 } }
 
-#endif // _ItemsParser_h_
+#endif // _parse_UnlockableItem_h_
