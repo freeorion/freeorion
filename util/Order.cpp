@@ -293,26 +293,10 @@ bool FleetMoveOrder::Check(int empire_id, int fleet_id, int dest_system_id, bool
         return false;
     }
 
-    int start_system = fleet->SystemID();
-    if (start_system == INVALID_OBJECT_ID)
-        start_system = fleet->NextSystemID();
-
     auto dest_system = GetEmpireKnownSystem(dest_system_id, empire_id);
     if (!dest_system) {
         ErrorLogger() << "Empire with id " << empire_id << " ordered fleet to move to system with id " << dest_system_id << " but no such system is known to that empire";
         return false;
-    }
-
-    // verify fleet route first system
-    if (append && !fleet->TravelRoute().empty()) {
-        // We should append and there is something to append to
-        int last_system = fleet->TravelRoute().back();
-        if (last_system != start_system) {
-            ErrorLogger() << "Empire with id " << empire_id
-                          << " ordered a fleet to continue from system with id " << start_system
-                          << ", but the fleet's current route won't lead there, it leads to system " << last_system;
-            return false;
-        }
     }
 
     return true;
