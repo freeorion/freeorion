@@ -462,7 +462,7 @@ def assess_ship_design_role(design):
 
 def generate_fleet_orders_for_fleet_missions():
     """Generates fleet orders from targets."""
-    print("Generating fleet orders")
+    debug("Generating fleet orders")
 
     # The following fleet lists are based on *Roles* -- Secure type missions are done by fleets with Military Roles
     debug("Fleets by Role\n")

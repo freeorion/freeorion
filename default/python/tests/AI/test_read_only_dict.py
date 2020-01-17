@@ -49,7 +49,7 @@ def test_conversion_to_dict():
     read_only_dict = ReadOnlyDict(dict_content)
     normal_dict = dict(read_only_dict)
     assert len(normal_dict) == len(dict_content)
-    assert normal_dict.items() == dict_content.items()
+    assert list(normal_dict.items()) == list(dict_content.items())
 
 
 def test_deletion():

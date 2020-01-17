@@ -5,6 +5,7 @@ from logging import warn, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from common.print_utils import print_in_columns
+from common import six
 
 import AIDependencies as Dep
 import AIstate
@@ -389,7 +390,7 @@ def init():
     )
 
     for k, v in tech_handlers:
-        if isinstance(k, basestring):
+        if isinstance(k, six.string_types):
             k = (k, )  # wrap single techs to tuple
         for tech in k:
             priority_funcs[tech] = v

@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import division
 
 import random
 
@@ -337,7 +338,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
     #     and with large galaxies an excessive amount of time can be used in failed attempts
     # b.) lower than the minimum jump distance limit that should be considered high priority (see options.py),
     #     otherwise no attempt at all would be made to enforce the other requirements for home systems (see below)
-    min_jumps = min(HS_MAX_JUMP_DISTANCE_LIMIT, max(int(float(len(systems)) / float(num_home_systems * 2)),
+    min_jumps = min(HS_MAX_JUMP_DISTANCE_LIMIT, max(int(len(systems) / (num_home_systems * 2)),
                                                     HS_MIN_DISTANCE_PRIORITY_LIMIT))
 
     # home systems must have a certain minimum of systems and planets in their near vicinity

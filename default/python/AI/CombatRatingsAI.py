@@ -1,6 +1,7 @@
 from collections import Counter
 from logging import warn
 
+from common import six
 import freeOrionAIInterface as fo
 import FleetUtilsAI
 from aistate_interface import get_aistate
@@ -248,7 +249,7 @@ class FleetCombatStats(object):
         :return: list of ship stats
         :rtype: list
         """
-        return map(lambda x: x.get_stats(hashable=hashable), self.__ship_stats)
+        return map(lambda x: x.get_stats(hashable=hashable), self.__ship_stats)  # pylint: disable=map-builtin-not-iterating PY_3_MIGRATION
 
     def get_ship_combat_stats(self):
         """Returns list of ShipCombatStats of fleet."""
@@ -264,7 +265,7 @@ class FleetCombatStats(object):
         :return: Rating of the fleet
         :rtype: float
         """
-        return combine_ratings_list(map(lambda x: x.get_rating(enemy_stats, ignore_fighters), self.__ship_stats))
+        return combine_ratings_list([x.get_rating(enemy_stats, ignore_fighters) for x in self.__ship_stats])
 
     def get_rating_vs_planets(self):
         return self.get_rating(ignore_fighters=True)
@@ -403,7 +404,7 @@ def combine_ratings_list(ratings_list):
     :return: combined rating
     :rtype: float
     """
-    return reduce(combine_ratings, ratings_list) if ratings_list else 0
+    return six.moves.reduce(combine_ratings, ratings_list) if ratings_list else 0
 
 
 def rating_needed(target, current=0):
