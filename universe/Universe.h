@@ -15,6 +15,7 @@
 #include "EnumsFwd.h"
 #include "ObjectMap.h"
 #include "UniverseObject.h"
+#include "UnlockableItem.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
@@ -26,7 +27,6 @@ class ShipDesign;
 class System;
 class Pathfinder;
 class IDAllocator;
-struct UnlockableItem;
 class FleetPlan;
 class MonsterFleetPlan;
 
