@@ -1,11 +1,10 @@
 # This Python file uses the following encoding: utf-8
-import StringIO
+from common import six
 import cProfile
 import logging
 import pstats
 import re
 import traceback
-from collections import Mapping
 from functools import wraps
 from logging import debug, error
 
@@ -129,7 +128,7 @@ logging.getLogger().addHandler(console_handler)
 
 def remove_tags(message):
     """Remove tags described in Font.h from message."""
-    expr = '</?(i|u|(rgba ([0-1]\.)?\d+ ([0-1]\.)?\d+ ([0-1]\.)?\d+ ([0-1]\.)?\d+)|rgba|left|center|right|pre)>'
+    expr = r'</?(i|u|(rgba ([0-1]\.)?\d+ ([0-1]\.)?\d+ ([0-1]\.)?\d+ ([0-1]\.)?\d+)|rgba|left|center|right|pre)>'
     return re.sub(expr, '', message)
 
 
@@ -226,7 +225,7 @@ def profile(func):
         pr.enable()
         retval = func(*args, **kwargs)
         pr.disable()
-        s = StringIO.StringIO()
+        s = six.StringIO()
         sortby = 'cumulative'
         ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
         ps.print_stats()
@@ -247,7 +246,7 @@ def get_partial_visibility_turn(obj_id):
     return visibility_turns_map.get(fo.visibility.partial, -9999)
 
 
-class ReadOnlyDict(Mapping):
+class ReadOnlyDict(six.moves.collections_abc.Mapping):
     """A dict that offers only read access.
 
      Note that if the values of the ReadOnlyDict are mutable,

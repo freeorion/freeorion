@@ -11,9 +11,9 @@ dict_content = {
 
 def test_dict_content():
     test_dict = ReadOnlyDict(dict_content)
-    assert test_dict.keys() == dict_content.keys()
-    assert test_dict.values() == dict_content.values()
-    assert test_dict.items() == dict_content.items()
+    assert set(test_dict.keys()) == set(dict_content.keys())
+    assert set(test_dict.values()) == set(dict_content.values())
+    assert set(test_dict.items()) == set(dict_content.items())
     assert len(test_dict) == len(dict_content)
 
 
@@ -34,12 +34,6 @@ def test_non_existing_keys():
     with pytest.raises(KeyError, message="Invalid key lookup didn't raise a KeyError", match="'INVALID_KEY'"):
         # noinspection PyStatementEffect
         test_dict['INVALID_KEY']
-
-
-def test_str_conversion():
-    # check bool and str conversions
-    test_dict = ReadOnlyDict(dict_content)
-    assert str(test_dict) == str(dict_content)
 
 
 def test_bool():

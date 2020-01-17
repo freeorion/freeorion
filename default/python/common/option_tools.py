@@ -1,8 +1,8 @@
 from __future__ import print_function
 
+from common import six
 import os
 import sys
-from ConfigParser import SafeConfigParser
 from collections import OrderedDict as odict
 
 AI_SUB_DIR = 'AI'
@@ -67,7 +67,7 @@ def _create_default_config_file(path):
     """
     Writes default config to file.
     """
-    config = SafeConfigParser()
+    config = six.moves.configparser.SafeConfigParser()
     presets = _get_preset_default_ai_options()
     for section, entries in presets.items():
         config.add_section(section)
@@ -113,7 +113,7 @@ def parse_config(option_string, config_dir):
     # get defaults; check if don't already exist and can write
     default_file = _get_option_file(config_dir)
     if os.path.exists(default_file):
-        config = SafeConfigParser()
+        config = six.moves.configparser.SafeConfigParser()
         config.read([default_file])
     else:
         try:

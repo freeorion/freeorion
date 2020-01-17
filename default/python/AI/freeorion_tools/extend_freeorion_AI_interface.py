@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 """
 This module extend freeOrionAIInterface from python side.
 Check that you have import of this module from FreeOrionAI.py
@@ -40,12 +41,12 @@ don't commit logger wrapped function to repo.
 """
 import inspect
 import os
+from common import six
 from functools import wraps
-from itertools import izip_longest
 from logging import debug
 
 import freeOrionAIInterface as fo
-from _freeorion_tools import dict_from_map
+from ._freeorion_tools import dict_from_map
 
 
 PLANET = 'P'
@@ -126,7 +127,7 @@ def logger(callable_object, argument_wrappers=None):
     :return:
     """
     def inner(*args, **kwargs):
-        arguments = [str(wrapper(arg) if wrapper else arg) for arg, wrapper in izip_longest(args, argument_wrappers)]
+        arguments = [str(wrapper(arg) if wrapper else arg) for arg, wrapper in six.moves.zip_longest(args, argument_wrappers)]
         arguments.extend('%s=%s' % item for item in kwargs.items())
         res = callable_object(*args, **kwargs)
         frame = inspect.currentframe().f_back

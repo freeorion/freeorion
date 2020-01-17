@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 """This package provides json-based encoding and decoding for use in FreeOrion AI savegames.
 
 The encoding is json-based with custom prefixes to support some objects
@@ -41,6 +42,6 @@ Example usage:
     aistate = savegame_codec.load_savegame_string(savegame_string)
 """
 
-from _decoder import decode, load_savegame_string
-from _definitions import CanNotSaveGameException, InvalidSaveGameException
-from _encoder import encode, build_savegame_string
+from ._decoder import decode, load_savegame_string
+from ._definitions import CanNotSaveGameException, InvalidSaveGameException
+from ._encoder import encode, build_savegame_string

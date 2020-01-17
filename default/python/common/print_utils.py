@@ -7,7 +7,7 @@ For test proposes this module is not import any freeorion runtime libraries.
 If you improve it somehow, add usage example to __main__ section.
 """
 
-from itertools import izip_longest
+from common import six
 from math import ceil
 
 
@@ -28,7 +28,7 @@ def print_in_columns(items, columns=2, printer=print):
     :return None:
     """
     row_count = int(ceil((float(len(items)) / columns)))
-    text_columns = list(izip_longest(*[iter(items)] * row_count, fillvalue=''))
+    text_columns = list(six.moves.zip_longest(*[iter(items)] * row_count, fillvalue=''))
     column_widths = (max(len(x) for x in word) for word in text_columns)
     template = '   '.join('%%-%ss' % w for w in column_widths)
 
@@ -83,9 +83,15 @@ class Text(Base):
         super(Text, self).__init__(name, align=align, description=description)
 
     def to_unicode(self, val):
-        if not isinstance(val, unicode):
-            if not isinstance(val, str):
-                val = str(val)
+        # If it is python2 unicode or python3 str return immediately
+        if isinstance(val, six.text_type):
+            return self.fmt.format(val, **self.kwargs)
+
+        # If it is not a string convert to string
+        if not isinstance(val, six.string_types):
+            val = str(val)
+
+        if six.PY2:
             val = val.decode('utf-8')
         return self.fmt.format(val, **self.kwargs)
 
@@ -161,13 +167,16 @@ class Table(object):
     def get_table(self):
         columns = [[len(y) for y in x] for x in zip(*self.__rows)]
         # join size of headers and columns, since columns can be empty
-        header_and_columns = [[h] + x for h, x in izip_longest([len(x.name) for x in self.__headers], columns, fillvalue=[])]
+        header_and_columns = [[h] + x for h, x in six.moves.zip_longest([len(x.name) for x in self.__headers], columns, fillvalue=[])]
         column_widths = [max(x) for x in header_and_columns]
 
         result = []
 
         if self.__table_name:
-            result.append(self.__table_name.decode('utf-8'))
+            if six.PY2:
+                result.append(self.__table_name.decode('utf-8'))
+            else:
+                result.append(self.__table_name)
 
         result.append(self.__get_row_separator(self.__header_sep, column_widths))
         inner_separator = ' %s ' % self.__vertical_sep
@@ -194,4 +203,7 @@ class Table(object):
             name_width = max(len(x.name) for x in legend)
             for header in legend:
                 result.append(('*%-*s %s' % (name_width, header.name[:-1], header.description)))
-        return '\n'.join(x.encode('utf-8') for x in result)
+        if six.PY2:
+            return '\n'.join(x.encode('utf-8') for x in result)
+        else:
+            return '\n'.join(result)
