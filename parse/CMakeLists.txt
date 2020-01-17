@@ -21,6 +21,7 @@ target_sources(freeorionparse
         ${CMAKE_CURRENT_LIST_DIR}/EffectParserImpl.h
         ${CMAKE_CURRENT_LIST_DIR}/EnumParser.h
         ${CMAKE_CURRENT_LIST_DIR}/EnumValueRefRules.h
+        ${CMAKE_CURRENT_LIST_DIR}/ItemsParser.h
         ${CMAKE_CURRENT_LIST_DIR}/Lexer.h
         ${CMAKE_CURRENT_LIST_DIR}/MovableEnvelope.h
         ${CMAKE_CURRENT_LIST_DIR}/ParseImpl.h

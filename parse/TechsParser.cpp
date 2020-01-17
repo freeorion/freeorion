@@ -3,6 +3,7 @@
 #include "ParseImpl.h"
 #include "EnumParser.h"
 #include "EffectParser.h"
+#include "ItemsParser.h"
 #include "ValueRefParser.h"
 #include "MovableEnvelope.h"
 
