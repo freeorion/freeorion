@@ -1512,6 +1512,8 @@ namespace {
             return empire->ShipDesignsLost();
         if (parsed_map_name == "ShipDesignsOwned")
             return empire->ShipDesignsOwned();
+        if (parsed_map_name == "ShipDesignsInProduction")
+            return empire->ShipDesignsInProduction();
         if (parsed_map_name == "ShipDesignsProduced")
             return empire->ShipDesignsProduced();
         if (parsed_map_name == "ShipDesignsScrapped")
@@ -1771,6 +1773,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     // empire properties indexed by integers
     if (variable_name == "EmpireShipsDestroyed" ||
         variable_name == "ShipDesignsDestroyed" ||
+        variable_name == "ShipDesignsInProduction" ||
         variable_name == "ShipDesignsLost" ||
         variable_name == "ShipDesignsOwned" ||
         variable_name == "ShipDesignsProduced" ||

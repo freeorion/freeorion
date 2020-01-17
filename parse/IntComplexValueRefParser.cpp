@@ -145,6 +145,7 @@ namespace parse {
             =   (
                     (   tok.ShipDesignsDestroyed_
                     |   tok.ShipDesignsLost_
+                    |   tok.ShipDesignsInProduction_
                     |   tok.ShipDesignsOwned_
                     |   tok.ShipDesignsProduced_
                     |   tok.ShipDesignsScrapped_
@@ -202,7 +203,7 @@ namespace parse {
         part_class_in_ship_design.name("PartOfClassInShipDesign");
         part_class_as_int.name("PartClass");
         ship_parts_owned.name("ShipPartsOwned");
-        empire_design_ref.name("ShipDesignsDestroyed, ShipDesignsLost, ShipDesignsOwned, ShipDesignsProduced, or ShipDesignsScrapped");
+        empire_design_ref.name("ShipDesignsDestroyed, ShipDesignsInProduction, ShipDesignsLost, ShipDesignsOwned, ShipDesignsProduced, or ShipDesignsScrapped");
         slots_in_hull.name("SlotsInHull");
         slots_in_ship_design.name("SlotsInShipDesign");
         special_added_on_turn.name("SpecialAddedOnTurn");
