@@ -49,7 +49,7 @@ void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*
 
     // loop through objects in copied map, copying or cloning each depending
     // on whether there already is a corresponding object in this map
-    for (const_iterator<> it = copied_map.begin(); it != copied_map.end(); ++it)
+    for (const_iterator<UniverseObject> it = copied_map.begin(); it != copied_map.end(); ++it)
         this->CopyObject(*it, empire_id);
 }
 
@@ -90,52 +90,6 @@ int ObjectMap::NumObjects() const
 bool ObjectMap::Empty() const
 { return m_objects.empty(); }
 
-std::shared_ptr<const UniverseObject> ObjectMap::Object(int id) const
-{ return Object<UniverseObject>(id); }
-
-std::shared_ptr<UniverseObject> ObjectMap::Object(int id)
-{ return Object<UniverseObject>(id); }
-
-std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const std::vector<int>& object_ids) const {
-    std::vector<std::shared_ptr<const UniverseObject>> result;
-    for (int object_id : object_ids)
-        if (auto obj = Object(object_id))
-            result.push_back(obj);
-        else
-            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
-    return result;
-}
-
-std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const std::set<int>& object_ids) const {
-    std::vector<std::shared_ptr<const UniverseObject>> result;
-    for (int object_id : object_ids)
-        if (auto obj = Object(object_id))
-            result.push_back(obj);
-        else
-            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
-    return result;
-}
-
-std::vector<std::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const std::vector<int>& object_ids) {
-    std::vector<std::shared_ptr<UniverseObject>> result;
-    for (int object_id : object_ids)
-        if (auto obj = Object(object_id))
-            result.push_back(obj);
-        else
-            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
-    return result;
-}
-
-std::vector<std::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const std::set<int>& object_ids) {
-    std::vector<std::shared_ptr<UniverseObject>> result;
-    for (int object_id : object_ids)
-        if (auto obj = Object(object_id))
-            result.push_back(obj);
-        else
-            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
-    return result;
-}
-
 std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const {
     std::vector<std::shared_ptr<const UniverseObject>> result;
     for (auto it = begin(); it != end(); ++it) {
@@ -171,18 +125,6 @@ int ObjectMap::HighestObjectID() const {
         return INVALID_OBJECT_ID;
     return m_objects.rbegin()->first;
 }
-
-ObjectMap::iterator<> ObjectMap::begin()
-{ return begin<UniverseObject>(); }
-
-ObjectMap::iterator<> ObjectMap::end()
-{ return end<UniverseObject>(); }
-
-ObjectMap::const_iterator<> ObjectMap::begin() const
-{ return begin<UniverseObject>(); }
-
-ObjectMap::const_iterator<> ObjectMap::end() const
-{ return end<UniverseObject>(); }
 
 void ObjectMap::InsertCore(std::shared_ptr<UniverseObject> item, int empire_id/* = ALL_EMPIRES*/) {
     FOR_EACH_MAP(TryInsertIntoMap, item);
@@ -394,7 +336,7 @@ void ObjectMap::CopyObjectsToSpecializedMaps() {
 std::string ObjectMap::Dump(unsigned short ntabs) const {
     std::ostringstream dump_stream;
     dump_stream << "ObjectMap contains UniverseObjects: " << std::endl;
-    for (const_iterator<> it = begin(); it != end(); ++it)
+    for (const_iterator<UniverseObject> it = begin(); it != end(); ++it)
         dump_stream << it->Dump(ntabs) << std::endl;
     dump_stream << std::endl;
     return dump_stream.str();

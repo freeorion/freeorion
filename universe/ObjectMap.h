@@ -32,7 +32,7 @@ FO_COMMON_API extern const int ALL_EMPIRES;
 /** Contains a set of objects that make up a (known or complete) Universe. */
 class FO_COMMON_API ObjectMap {
 public:
-    template <class T = UniverseObject>
+    template <typename T>
     struct iterator : private std::map<int, std::shared_ptr<T>>::iterator {
         iterator(const typename std::map<int, std::shared_ptr<T>>::iterator& base, ObjectMap& owner) :
             std::map<int, std::shared_ptr<T>>::iterator(base),
@@ -94,7 +94,7 @@ public:
         }
     };
 
-    template <class T = UniverseObject>
+    template <typename T>
     struct const_iterator : private std::map<int, std::shared_ptr<T>>::const_iterator {
         const_iterator(const typename std::map<int, std::shared_ptr<T>>::const_iterator& base,
                        const ObjectMap& owner) :
@@ -178,48 +178,32 @@ public:
     /** Returns true if this ObjectMap contains no objects */
     bool Empty() const;
 
-    /** Returns a pointer to the universe object with ID number \a id,
-      * or a null std::shared_ptr if none exists */
-    std::shared_ptr<const UniverseObject> Object(int id) const;
-
-    /** Returns a pointer to the universe object with ID number \a id,
-      * or a null std::shared_ptr if none exists */
-    std::shared_ptr<UniverseObject> Object(int id);
-
     /** Returns a pointer to the object of type T with ID number \a id.
       * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
-    template <class T>
+    template <class T = UniverseObject>
     std::shared_ptr<const T> Object(int id) const;
 
     /** Returns a pointer to the object of type T with ID number \a id.
       * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
-    template <class T>
+    template <class T = UniverseObject>
     std::shared_ptr<T> Object(int id);
-
-    /** Returns a vector containing the objects with ids in \a object_ids */
-    std::vector<std::shared_ptr<const UniverseObject>> FindObjects(const std::vector<int>& object_ids) const;
-    std::vector<std::shared_ptr<const UniverseObject>> FindObjects(const std::set<int>& object_ids) const;
-
-    /** Returns a vector containing the objects with ids in \a object_ids */
-    std::vector<std::shared_ptr<UniverseObject>> FindObjects(const std::vector<int>& object_ids);
-    std::vector<std::shared_ptr<UniverseObject>> FindObjects(const std::set<int>& object_ids);
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
-    template <class T>
+    template <class T = UniverseObject>
     std::vector<std::shared_ptr<const T>> FindObjects(const std::vector<int>& object_ids) const;
 
-    template <class T>
+    template <class T = UniverseObject>
     std::vector<std::shared_ptr<const T>> FindObjects(const std::set<int>& object_ids) const;
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
-    template <class T>
+    template <class T = UniverseObject>
     std::vector<std::shared_ptr<T>> FindObjects(const std::vector<int>& object_ids);
 
-    template <class T>
+    template <class T = UniverseObject>
     std::vector<std::shared_ptr<T>> FindObjects(const std::set<int>& object_ids);
 
     /** Returns all the objects that match \a visitor */
@@ -229,11 +213,11 @@ public:
     std::vector<std::shared_ptr<UniverseObject>> FindObjects(const UniverseObjectVisitor& visitor);
 
     /** Returns all the objects of type T */
-    template <class T>
+    template <class T = UniverseObject>
     std::vector<std::shared_ptr<const T>> FindObjects() const;
 
     /** Returns all the objects of type T */
-    template <class T>
+    template <class T = UniverseObject>
     std::vector<std::shared_ptr<T>> FindObjects();
 
     /** Returns the IDs of all the objects that match \a visitor */
@@ -253,19 +237,13 @@ public:
     int                     HighestObjectID() const;
 
     /** iterators */
-    // these first 4 are primarily for convenience
-    iterator<>              begin();
-    iterator<>              end();
-    const_iterator<>        begin() const;
-    const_iterator<>        end() const;
-
-    template <class T>
+    template <class T = UniverseObject>
     iterator<T>             begin();
-    template <class T>
+    template <class T = UniverseObject>
     iterator<T>             end();
-    template <class T>
+    template <class T = UniverseObject>
     const_iterator<T>       begin() const;
-    template <class T>
+    template <class T = UniverseObject>
     const_iterator<T>       end() const;
 
     std::string             Dump(unsigned short ntabs = 0) const;
