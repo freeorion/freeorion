@@ -763,15 +763,23 @@ std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
 }
 
 bool ClientUI::ZoomToObject(const std::string& name) {
+    // try first by finding the object by name
     for (auto& obj : GetUniverse().Objects().FindObjects<UniverseObject>())
         if (boost::iequals(obj->Name(), name))
             return ZoomToObject(obj->ID());
+
+    // try again by converting string to an ID
+    try {
+        return ZoomToObject(std::stoi(name));
+    } catch (...) {
+    }
+
     return false;
 }
 
 bool ClientUI::ZoomToObject(int id) {
     return ZoomToSystem(id)     || ZoomToPlanet(id) || ZoomToBuilding(id)   ||
-           ZoomToFleet(id)      || ZoomToShip(id);
+           ZoomToFleet(id)      || ZoomToShip(id)   || ZoomToField(id);
 }
 
 bool ClientUI::ZoomToPlanet(int id) {
