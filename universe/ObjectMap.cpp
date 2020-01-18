@@ -34,6 +34,25 @@
                                             f(m_existing_buildings, ##__VA_ARGS__);        \
                                             f(m_existing_fields, ##__VA_ARGS__); }
 
+
+namespace {
+    template<class T>
+    static void ClearMap(std::map<int, std::shared_ptr<T>>& map)
+    { map.clear(); }
+
+    template <class T>
+    static void TryInsertIntoMap(std::map<int, std::shared_ptr<T>>& map, std::shared_ptr<UniverseObject> item)
+    {
+        if (dynamic_cast<T*>(item.get()))
+            map[item->ID()] = std::dynamic_pointer_cast<T, UniverseObject>(item);
+    }
+
+    template<class T>
+    void EraseFromMap(std::map<int, std::shared_ptr<T>>& map, int id)
+    { map.erase(id); }
+}
+
+
 /////////////////////////////////////////////
 // class ObjectMap
 /////////////////////////////////////////////
@@ -351,24 +370,8 @@ std::shared_ptr<UniverseObject> ObjectMap::ExistingObject(int id) {
 // Static helpers
 
 template<class T>
-void ObjectMap::EraseFromMap(std::map<int, std::shared_ptr<T>>& map, int id)
-{ map.erase(id); }
-
-template<class T>
-void ObjectMap::ClearMap(std::map<int, std::shared_ptr<T>>& map)
-{ map.clear(); }
-
-template<class T>
 void ObjectMap::SwapMap(std::map<int, std::shared_ptr<T>>& map, ObjectMap& rhs)
 { map.swap(rhs.Map<T>()); }
-
-template <class T>
-void ObjectMap::TryInsertIntoMap(std::map<int, std::shared_ptr<T>>& map,
-                                 std::shared_ptr<UniverseObject> item)
-{
-    if (dynamic_cast<T*>(item.get()))
-        map[item->ID()] = std::dynamic_pointer_cast<T, UniverseObject>(item);
-}
 
 // template specializations
 
