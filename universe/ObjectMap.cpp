@@ -37,18 +37,18 @@
 
 namespace {
     template<class T>
-    static void ClearMap(std::map<int, std::shared_ptr<T>>& map)
+    static void ClearMap(ObjectMap::container_type<T>& map)
     { map.clear(); }
 
     template <class T>
-    static void TryInsertIntoMap(std::map<int, std::shared_ptr<T>>& map, std::shared_ptr<UniverseObject> item)
+    static void TryInsertIntoMap(ObjectMap::container_type<T>& map, std::shared_ptr<UniverseObject> item)
     {
         if (dynamic_cast<T*>(item.get()))
             map[item->ID()] = std::dynamic_pointer_cast<T, UniverseObject>(item);
     }
 
     template<class T>
-    void EraseFromMap(std::map<int, std::shared_ptr<T>>& map, int id)
+    void EraseFromMap(ObjectMap::container_type<T>& map, int id)
     { map.erase(id); }
 }
 
@@ -370,79 +370,79 @@ std::shared_ptr<UniverseObject> ObjectMap::ExistingObject(int id) {
 // Static helpers
 
 template<class T>
-void ObjectMap::SwapMap(std::map<int, std::shared_ptr<T>>& map, ObjectMap& rhs)
+void ObjectMap::SwapMap(ObjectMap::container_type<T>& map, ObjectMap& rhs)
 { map.swap(rhs.Map<T>()); }
 
 // template specializations
 
 template <>
-const std::map<int, std::shared_ptr<UniverseObject>>& ObjectMap::Map() const
+const ObjectMap::container_type<UniverseObject>& ObjectMap::Map() const
 { return m_objects; }
 
 template <>
-const std::map<int, std::shared_ptr<ResourceCenter>>& ObjectMap::Map() const
+const ObjectMap::container_type<ResourceCenter>& ObjectMap::Map() const
 { return m_resource_centers; }
 
 template <>
-const std::map<int, std::shared_ptr<PopCenter>>& ObjectMap::Map() const
+const ObjectMap::container_type<PopCenter>& ObjectMap::Map() const
 { return m_pop_centers; }
 
 template <>
-const std::map<int, std::shared_ptr<Ship>>& ObjectMap::Map() const
+const ObjectMap::container_type<Ship>& ObjectMap::Map() const
 { return m_ships; }
 
 template <>
-const std::map<int, std::shared_ptr<Fleet>>& ObjectMap::Map() const
+const ObjectMap::container_type<Fleet>& ObjectMap::Map() const
 { return m_fleets; }
 
 template <>
-const std::map<int, std::shared_ptr<Planet>>& ObjectMap::Map() const
+const ObjectMap::container_type<Planet>& ObjectMap::Map() const
 { return m_planets; }
 
 template <>
-const std::map<int, std::shared_ptr<System>>& ObjectMap::Map() const
+const ObjectMap::container_type<System>& ObjectMap::Map() const
 { return m_systems; }
 
 template <>
-const std::map<int, std::shared_ptr<Building>>& ObjectMap::Map() const
+const ObjectMap::container_type<Building>& ObjectMap::Map() const
 { return m_buildings; }
 
 template <>
-const std::map<int, std::shared_ptr<Field>>& ObjectMap::Map() const
+const ObjectMap::container_type<Field>& ObjectMap::Map() const
 { return m_fields; }
 
 template <>
-std::map<int, std::shared_ptr<UniverseObject>>& ObjectMap::Map()
+ObjectMap::container_type<UniverseObject>& ObjectMap::Map()
 { return m_objects; }
 
 template <>
-std::map<int, std::shared_ptr<ResourceCenter>>& ObjectMap::Map()
+ObjectMap::container_type<ResourceCenter>& ObjectMap::Map()
 { return m_resource_centers; }
 
 template <>
-std::map<int, std::shared_ptr<PopCenter>>& ObjectMap::Map()
+ObjectMap::container_type<PopCenter>& ObjectMap::Map()
 { return m_pop_centers; }
 
 template <>
-std::map<int, std::shared_ptr<Ship>>& ObjectMap::Map()
+ObjectMap::container_type<Ship>& ObjectMap::Map()
 { return m_ships; }
 
 template <>
-std::map<int, std::shared_ptr<Fleet>>& ObjectMap::Map()
+ObjectMap::container_type<Fleet>& ObjectMap::Map()
 { return m_fleets; }
 
 template <>
-std::map<int, std::shared_ptr<Planet>>& ObjectMap::Map()
+ObjectMap::container_type<Planet>& ObjectMap::Map()
 { return m_planets; }
 
 template <>
-std::map<int, std::shared_ptr<System>>& ObjectMap::Map()
+ObjectMap::container_type<System>& ObjectMap::Map()
 { return m_systems; }
 
 template <>
-std::map<int, std::shared_ptr<Building>>& ObjectMap::Map()
+ObjectMap::container_type<Building>& ObjectMap::Map()
 { return m_buildings; }
 
 template <>
-std::map<int, std::shared_ptr<Field>>& ObjectMap::Map()
+ObjectMap::container_type<Field>& ObjectMap::Map()
 { return m_fields; }
