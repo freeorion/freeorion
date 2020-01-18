@@ -418,25 +418,24 @@ std::shared_ptr<T> ObjectMap::Object(int id) {
 template <class T>
 std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects() const {
     std::vector<std::shared_ptr<const T>> result;
-    for (auto it = begin<T>(); it != end<T>(); ++it)
-        result.push_back(*it);
+    for (const auto& entry : Map<T>())
+        result.push_back(entry.second);
     return result;
 }
 
 template <class T>
 std::vector<std::shared_ptr<T>> ObjectMap::FindObjects() {
     std::vector<std::shared_ptr<T>> result;
-    for (auto it = begin<T>(); it != end<T>(); ++it)
-        result.push_back(*it);
+    for (const auto& entry : Map<T>())
+        result.push_back(entry.second);
     return result;
 }
 
 template <class T>
 std::vector<int> ObjectMap::FindObjectIDs() const {
     std::vector<int> result;
-    for (auto it = Map<typename std::remove_const<T>::type>().begin();
-         it != Map<typename std::remove_const<T>::type>().end(); ++it)
-    { result.push_back(it->first); }
+    for (const auto& entry : Map<T>())
+        result.push_back(entry.first);
     return result;
 }
 

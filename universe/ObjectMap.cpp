@@ -49,8 +49,8 @@ void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*
 
     // loop through objects in copied map, copying or cloning each depending
     // on whether there already is a corresponding object in this map
-    for (const_iterator<UniverseObject> it = copied_map.begin(); it != copied_map.end(); ++it)
-        this->CopyObject(*it, empire_id);
+    for (const auto& obj : copied_map)
+        this->CopyObject(obj, empire_id);
 }
 
 void ObjectMap::CopyForSerialize(const ObjectMap& copied_map) {
@@ -92,8 +92,8 @@ bool ObjectMap::Empty() const
 
 std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const {
     std::vector<std::shared_ptr<const UniverseObject>> result;
-    for (auto it = begin(); it != end(); ++it) {
-        if (auto obj = it->Accept(visitor))
+    for (auto obj : *this) {
+        if (obj->Accept(visitor))
             result.push_back(Object(obj->ID()));
     }
     return result;
@@ -110,9 +110,9 @@ std::vector<std::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const Univer
 
 std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) const {
     std::vector<int> result;
-    for (auto it = begin(); it != end(); ++it) {
-        if (it->Accept(visitor))
-            result.push_back(it->ID());
+    for (auto obj : *this) {
+        if (obj->Accept(visitor))
+            result.push_back(obj->ID());
     }
     return result;
 }
@@ -328,16 +328,15 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
 
 void ObjectMap::CopyObjectsToSpecializedMaps() {
     FOR_EACH_SPECIALIZED_MAP(ClearMap);
-    for (auto it = Map<UniverseObject>().begin();
-         it != Map<UniverseObject>().end(); ++it)
-    { FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, it->second); }
+    for (const auto& entry : Map<UniverseObject>())
+    { FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, entry.second); }
 }
 
 std::string ObjectMap::Dump(unsigned short ntabs) const {
     std::ostringstream dump_stream;
     dump_stream << "ObjectMap contains UniverseObjects: " << std::endl;
-    for (const_iterator<UniverseObject> it = begin(); it != end(); ++it)
-        dump_stream << it->Dump(ntabs) << std::endl;
+    for (const auto& obj : *this)
+        dump_stream << obj->Dump(ntabs) << std::endl;
     dump_stream << std::endl;
     return dump_stream.str();
 }
