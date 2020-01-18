@@ -84,7 +84,7 @@ std::shared_ptr<System> CombatInfo::GetSystem()
 
 float CombatInfo::GetMonsterDetection() const {
     float monster_detection = 0.0;
-    for (auto it = objects.const_begin(); it != objects.const_end(); ++it) {
+    for (auto it = objects.begin(); it != objects.end(); ++it) {
         auto obj = *it;
         if (obj->Unowned() && (obj->ObjectType() == OBJ_SHIP || obj->ObjectType() == OBJ_PLANET ))
             monster_detection = std::max(monster_detection, obj->InitialMeterValue(METER_DETECTION));
@@ -1076,8 +1076,8 @@ namespace {
             std::vector<int> delete_list;
             delete_list.reserve(combat_info.objects.NumObjects());
 
-            for (auto it = combat_info.objects.const_begin();
-                 it != combat_info.objects.const_end(); ++it)
+            for (auto it = combat_info.objects.begin();
+                 it != combat_info.objects.end(); ++it)
             {
                 auto obj = *it;
 
@@ -1286,8 +1286,8 @@ namespace {
 
         // Populate lists of things that can attack. List attackers also by empire.
         void PopulateAttackers() {
-            for (auto it = combat_info.objects.const_begin();
-                 it != combat_info.objects.const_end(); ++it)
+            for (auto it = combat_info.objects.begin();
+                 it != combat_info.objects.end(); ++it)
             {
                 auto obj = *it;
                 bool can_attack{ObjectCanAttack(obj)};

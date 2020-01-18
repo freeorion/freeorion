@@ -256,17 +256,17 @@ public:
     // these first 4 are primarily for convenience
     iterator<>              begin();
     iterator<>              end();
-    const_iterator<>        const_begin() const;
-    const_iterator<>        const_end() const;
+    const_iterator<>        begin() const;
+    const_iterator<>        end() const;
 
     template <class T>
     iterator<T>             begin();
     template <class T>
     iterator<T>             end();
     template <class T>
-    const_iterator<T>       const_begin() const;
+    const_iterator<T>       begin() const;
     template <class T>
-    const_iterator<T>       const_end() const;
+    const_iterator<T>       end() const;
 
     std::string             Dump(unsigned short ntabs = 0) const;
 
@@ -412,11 +412,11 @@ ObjectMap::iterator<T> ObjectMap::end()
 { return iterator<T>(Map<typename std::remove_const<T>::type>().end(), *this); }
 
 template <class T>
-ObjectMap::const_iterator<T> ObjectMap::const_begin() const
+ObjectMap::const_iterator<T> ObjectMap::begin() const
 { return const_iterator<T>(Map<typename std::remove_const<T>::type>().begin(), *this); }
 
 template <class T>
-ObjectMap::const_iterator<T> ObjectMap::const_end() const
+ObjectMap::const_iterator<T> ObjectMap::end() const
 { return const_iterator<T>(Map<typename std::remove_const<T>::type>().end(), *this); }
 
 template <class T>
@@ -440,7 +440,7 @@ std::shared_ptr<T> ObjectMap::Object(int id) {
 template <class T>
 std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects() const {
     std::vector<std::shared_ptr<const T>> result;
-    for (auto it = const_begin<T>(); it != const_end<T>(); ++it)
+    for (auto it = begin<T>(); it != end<T>(); ++it)
         result.push_back(*it);
     return result;
 }

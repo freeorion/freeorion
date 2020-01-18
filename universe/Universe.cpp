@@ -241,7 +241,7 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id/* = ALL_EMPIRES*/) 
 
     // check each object's visibility against all empires, including the object
     // if an empire has visibility of it
-    for (auto obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it) {
+    for (auto obj_it = m_objects.begin(); obj_it != m_objects.end(); ++obj_it) {
         int id = obj_it->ID();
         for (int detector_empire_id : empire_ids) {
             Visibility vis = GetObjectVisibilityByEmpire(id, detector_empire_id);
@@ -1958,8 +1958,8 @@ namespace {
         auto empire_detection_strengths = GetEmpiresDetectionStrengths(empire_id);
 
         // filter objects as detectors for this empire or detectable objects
-        for (auto object_it = objects.const_begin();
-             object_it != objects.const_end(); ++object_it)
+        for (auto object_it = objects.begin();
+             object_it != objects.end(); ++object_it)
         {
             auto obj = *object_it;
             int object_id = object_it->ID();
@@ -2143,8 +2143,8 @@ namespace {
     void SetAllObjectsVisibleToAllEmpires() {
         Universe& universe = GetUniverse();
         // set every object visible to all empires
-        for (auto obj_it = Objects().const_begin();
-             obj_it != Objects().const_end(); ++obj_it)
+        for (auto obj_it = Objects().begin();
+             obj_it != Objects().end(); ++obj_it)
         {
             for (auto& empire_entry : Empires()) {
                 // objects
@@ -2164,7 +2164,7 @@ namespace {
         // map from empire ID to ID of systems where those empires own at least one object
         std::map<int, std::set<int>> empires_systems_with_owned_objects;
         // get systems where empires have owned objects
-        for (auto it = objects.const_begin(); it != objects.const_end(); ++it) {
+        for (auto it = objects.begin(); it != objects.end(); ++it) {
             auto obj = *it;
             if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID)
                 continue;
@@ -2203,8 +2203,8 @@ namespace {
                                                Universe::EmpireObjectVisibilityMap& empire_object_visibility)
     {
         // propagate visibility from contained to container objects
-        for (auto container_object_it = objects.const_begin();
-             container_object_it != objects.const_end(); ++container_object_it)
+        for (auto container_object_it = objects.begin();
+             container_object_it != objects.end(); ++container_object_it)
         {
             int container_obj_id = container_object_it->ID();
 
@@ -2655,8 +2655,8 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
 
 
         // fleets that are not visible and that contain no ships or only stale ships are stale
-        for (auto obj_it = latest_known_objects.const_begin();
-             obj_it != latest_known_objects.const_end(); ++obj_it)
+        for (auto obj_it = latest_known_objects.begin();
+             obj_it != latest_known_objects.end(); ++obj_it)
         {
             if (obj_it->ObjectType() != OBJ_FLEET)
                 continue;
@@ -3092,7 +3092,7 @@ void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_ob
     // than no visibility of.  TODO: include what requested empire knows about
     // other empires' visibilites of objects
     empire_object_visibility.clear();
-    for (auto it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
+    for (auto it = m_objects.begin(); it != m_objects.end(); ++it) {
         int object_id = it->ID();
         Visibility vis = GetObjectVisibilityByEmpire(object_id, encoding_empire);
         if (vis > VIS_NO_VISIBILITY)

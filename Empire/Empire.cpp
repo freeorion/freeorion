@@ -927,8 +927,8 @@ const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
     TraceLogger(supply) << "Empire::KnownStarlanes for empire " << m_id;
 
     const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
-    for (auto sys_it = Objects().const_begin<System>();
-         sys_it != Objects().const_end<System>(); ++sys_it)
+    for (auto sys_it = Objects().begin<System>();
+         sys_it != Objects().end<System>(); ++sys_it)
     {
         int start_id = sys_it->ID();
         TraceLogger(supply) << "system " << start_id << " has up to " << sys_it->StarlanesWormholes().size() << " lanes / wormholes";
@@ -961,8 +961,8 @@ const std::map<int, std::set<int>> Empire::VisibleStarlanes() const {
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
 
-    for (auto sys_it = objects.const_begin<System>();
-         sys_it != objects.const_end<System>(); ++sys_it)
+    for (auto sys_it = objects.begin<System>();
+         sys_it != objects.end<System>(); ++sys_it)
     {
         int start_id = sys_it->ID();
 
