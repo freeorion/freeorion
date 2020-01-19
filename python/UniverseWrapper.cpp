@@ -72,20 +72,14 @@ namespace {
     const Building*         GetBuildingP(const Universe& universe, int id)
     { return ::GetBuilding(id).operator->(); }
 
-    std::vector<int>        ObjectIDs(const Universe& universe)
-    { return Objects().FindObjectIDs(); }
-    std::vector<int>        FleetIDs(const Universe& universe)
-    { return Objects().FindObjectIDs<Fleet>(); }
-    std::vector<int>        SystemIDs(const Universe& universe)
-    { return Objects().FindObjectIDs<System>(); }
-    std::vector<int>        FieldIDs(const Universe& universe)
-    { return Objects().FindObjectIDs<Field>(); }
-    std::vector<int>        PlanetIDs(const Universe& universe)
-    { return Objects().FindObjectIDs<Planet>(); }
-    std::vector<int>        ShipIDs(const Universe& universe)
-    { return Objects().FindObjectIDs<Ship>(); }
-    std::vector<int>        BuildingIDs(const Universe& universe)
-    { return Objects().FindObjectIDs<Building>(); }
+    template<typename T>
+    std::vector<int> ObjectIDs(const Universe& universe)
+    {
+        std::vector<int> result(universe.Objects().size<T>(), INVALID_OBJECT_ID);
+        for (const auto& obj : universe.Objects().all<T>())
+            result.push_back(obj->ID());
+        return result;
+    }
 
     std::vector<std::string>SpeciesFoci(const Species& species) {
         std::vector<std::string> retval;
@@ -351,13 +345,13 @@ namespace FreeOrionPython {
             .def("getBuilding",                 make_function(GetBuildingP,         return_value_policy<reference_existing_object>()))
             .def("getGenericShipDesign",        &Universe::GetGenericShipDesign,    return_value_policy<reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated name (string).")
 
-            .add_property("allObjectIDs",       make_function(ObjectIDs,            return_value_policy<return_by_value>()))
-            .add_property("fleetIDs",           make_function(FleetIDs,             return_value_policy<return_by_value>()))
-            .add_property("systemIDs",          make_function(SystemIDs,            return_value_policy<return_by_value>()))
-            .add_property("fieldIDs",           make_function(FieldIDs,             return_value_policy<return_by_value>()))
-            .add_property("planetIDs",          make_function(PlanetIDs,            return_value_policy<return_by_value>()))
-            .add_property("shipIDs",            make_function(ShipIDs,              return_value_policy<return_by_value>()))
-            .add_property("buildingIDs",        make_function(BuildingIDs,          return_value_policy<return_by_value>()))
+            .add_property("allObjectIDs",       make_function(ObjectIDs<UniverseObject>,  return_value_policy<return_by_value>()))
+            .add_property("fleetIDs",           make_function(ObjectIDs<Fleet>,           return_value_policy<return_by_value>()))
+            .add_property("systemIDs",          make_function(ObjectIDs<System>,          return_value_policy<return_by_value>()))
+            .add_property("fieldIDs",           make_function(ObjectIDs<Field>,           return_value_policy<return_by_value>()))
+            .add_property("planetIDs",          make_function(ObjectIDs<Planet>,          return_value_policy<return_by_value>()))
+            .add_property("shipIDs",            make_function(ObjectIDs<Ship>,            return_value_policy<return_by_value>()))
+            .add_property("buildingIDs",        make_function(ObjectIDs<Building>,        return_value_policy<return_by_value>()))
             .def("destroyedObjectIDs",          make_function(&Universe::EmpireKnownDestroyedObjectIDs,
                                                                                     return_value_policy<return_by_value>()))
 

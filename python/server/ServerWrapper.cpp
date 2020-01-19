@@ -643,16 +643,16 @@ namespace {
 
     list GetAllObjects() {
         list py_all_objects;
-        for (int object_id : Objects().FindObjectIDs()) {
-            py_all_objects.append(object_id);
+        for (const auto& object : Objects().all()) {
+            py_all_objects.append(object->ID());
         }
         return py_all_objects;
     }
 
     list GetSystems() {
         list py_systems;
-        for (int system_id : Objects().FindObjectIDs<System>()) {
-            py_systems.append(system_id);
+        for (const auto& system : Objects().all<System>()) {
+            py_systems.append(system->ID());
         }
         return py_systems;
     }

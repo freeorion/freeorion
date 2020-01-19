@@ -1802,8 +1802,8 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     }
 
     // test for colonies count
-    std::vector<int> planet_ids = Objects().FindObjectIDs(OwnedVisitor<Planet>(empire_id));
-    if (planet_ids.size() > static_cast<size_t>(GetGameRules().Get<int>("RULE_CONCEDE_COLONIES_THRESHOLD"))) {
+    auto planets = Objects().find<Planet>(OwnedVisitor<Planet>(empire_id));
+    if (planets.size() > static_cast<size_t>(GetGameRules().Get<int>("RULE_CONCEDE_COLONIES_THRESHOLD"))) {
         player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CONCEDE_EXCEED_COLONIES"), false));
         return false;
     }
@@ -1822,10 +1822,8 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
         GetUniverse().RecursiveDestroy(obj->ID());
     }
     // unclaim owned planets
-    for (int planet_id : planet_ids) {
-        auto planet = GetPlanet(planet_id);
-        if (planet)
-            planet->Reset();
+    for (const auto& planet : planets) {
+        planet->Reset();
     }
 
     // Don't wait for turn
@@ -2380,9 +2378,9 @@ namespace {
         combats.clear();
         // for each system, find if a combat will occur in it, and if so, assemble
         // necessary information about that combat in combats
-        for (int sys_id : GetUniverse().Objects().FindObjectIDs<System>()) {
-            if (CombatConditionsInSystem(sys_id)) {
-                combats.push_back(CombatInfo(sys_id, CurrentTurn()));
+        for (const auto& sys : GetUniverse().Objects().all<System>()) {
+            if (CombatConditionsInSystem(sys->ID())) {
+                combats.push_back(CombatInfo(sys->ID(), CurrentTurn()));
             }
         }
     }

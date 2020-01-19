@@ -7032,16 +7032,17 @@ bool MapWnd::ZoomToNextSystem() {
 }
 
 bool MapWnd::ZoomToPrevIdleFleet() {
-    auto vec = GetUniverse().Objects().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
-    auto it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
+    auto vec = GetUniverse().Objects().find<Fleet>(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
+    auto it = std::find_if(vec.begin(), vec.end(),
+        [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.begin())
         --it;
     else
         it = vec.end();
-    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.count(*it)))
+    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.count((*it)->ID())))
         --it;
-    m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.back();
+    m_current_fleet_id = it != vec.end() ? (*it)->ID() : vec.empty() ? INVALID_OBJECT_ID : vec.back()->ID();
 
     if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
@@ -7052,14 +7053,15 @@ bool MapWnd::ZoomToPrevIdleFleet() {
 }
 
 bool MapWnd::ZoomToNextIdleFleet() {
-    auto vec = GetUniverse().Objects().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
-    auto it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
+    auto vec = GetUniverse().Objects().find<Fleet>(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
+    auto it = std::find_if(vec.begin(), vec.end(),
+        [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.end())
         ++it;
-    while (it != vec.end() && destroyed_object_ids.count(*it))
+    while (it != vec.end() && destroyed_object_ids.count((*it)->ID()))
         ++it;
-    m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.front();
+    m_current_fleet_id = it != vec.end() ? (*it)->ID() : vec.empty() ? INVALID_OBJECT_ID : vec.front()->ID();
 
     if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
@@ -7070,16 +7072,17 @@ bool MapWnd::ZoomToNextIdleFleet() {
 }
 
 bool MapWnd::ZoomToPrevFleet() {
-    auto vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
-    auto it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
+    auto vec = GetUniverse().Objects().find<Fleet>(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
+    auto it = std::find_if(vec.begin(), vec.end(),
+        [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.begin())
         --it;
     else
         it = vec.end();
-    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.count(*it)))
+    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.count((*it)->ID())))
         --it;
-    m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.back();
+    m_current_fleet_id = it != vec.end() ? (*it)->ID() : vec.empty() ? INVALID_OBJECT_ID : vec.back()->ID();
 
     if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
@@ -7090,14 +7093,15 @@ bool MapWnd::ZoomToPrevFleet() {
 }
 
 bool MapWnd::ZoomToNextFleet() {
-    auto vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
-    auto it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
+    auto vec = GetUniverse().Objects().find<Fleet>(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
+    auto it = std::find_if(vec.begin(), vec.end(),
+        [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
     auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.end())
         ++it;
-    while (it != vec.end() && destroyed_object_ids.count(*it))
+    while (it != vec.end() && destroyed_object_ids.count((*it)->ID()))
         ++it;
-    m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.front();
+    m_current_fleet_id = it != vec.end() ? (*it)->ID() : vec.empty() ? INVALID_OBJECT_ID : vec.front()->ID();
 
     if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);

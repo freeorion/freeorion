@@ -861,7 +861,12 @@ void Universe::BackPropagateObjectMeters(const std::vector<int>& object_ids) {
 }
 
 void Universe::BackPropagateObjectMeters()
-{ BackPropagateObjectMeters(m_objects.FindObjectIDs()); }
+{
+    std::vector<int> result;
+    for (const auto& obj : m_objects.all())
+        result.push_back(obj->ID());
+    BackPropagateObjectMeters(result);
+}
 
 namespace {
     /** Used by GetEffectsAndTargets to process a vector of effects groups.
@@ -1202,8 +1207,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     std::map<int, std::shared_ptr<ConditionCache>> cached_source_condition_matches;
 
     // prepopulate the cache for safe concurrent access
-    for (int obj_id : m_objects.FindObjectIDs()) {
-        cached_source_condition_matches[obj_id] = std::make_shared<ConditionCache>();
+    for (const auto& obj : m_objects.all()) {
+        cached_source_condition_matches[obj->ID()] = std::make_shared<ConditionCache>();
     }
 
     cached_source_condition_matches[INVALID_OBJECT_ID] = std::make_shared<ConditionCache>();
@@ -2895,11 +2900,9 @@ void Universe::EffectDestroy(int object_id, int source_object_id) {
 }
 
 void Universe::InitializeSystemGraph(int for_empire_id) {
-    auto system_ids = ::EmpireKnownObjects(for_empire_id).FindObjectIDs<System>();
-    std::vector<std::shared_ptr<const System>> systems;
-    for (size_t system1_index = 0; system1_index < system_ids.size(); ++system1_index) {
-        int system1_id = system_ids[system1_index];
-        systems.push_back(GetEmpireKnownSystem(system1_id, for_empire_id));
+    std::vector<int> system_ids;
+    for (const auto& system : ::EmpireKnownObjects(for_empire_id).all<System>()) {
+        system_ids.push_back(system->ID());
     }
 
     m_pathfinder->InitializeSystemGraph(system_ids, for_empire_id);

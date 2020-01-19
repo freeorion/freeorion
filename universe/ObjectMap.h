@@ -222,18 +222,8 @@ public:
     template <class T = UniverseObject>
     std::vector<std::shared_ptr<T>> all();
 
-    /** Returns the IDs of all the objects that match \a visitor */
-    std::vector<int>        FindObjectIDs(const UniverseObjectVisitor& visitor) const;
-
-    /** Returns the IDs of all the objects of type T */
-    template <class T>
-    std::vector<int>        FindObjectIDs() const;
-
     /** Returns the IDs of all objects not known to have been destroyed. */
     std::vector<int>        FindExistingObjectIDs() const;
-
-    /** Returns the IDs of all objects in this ObjectMap */
-    std::vector<int>        FindObjectIDs() const;
 
     /** Returns highest used object ID in this ObjectMap */
     int                     HighestObjectID() const;
@@ -421,14 +411,6 @@ std::vector<std::shared_ptr<T>> ObjectMap::all() {
     std::vector<std::shared_ptr<T>> result;
     for (const auto& entry : Map<T>())
         result.push_back(entry.second);
-    return result;
-}
-
-template <class T>
-std::vector<int> ObjectMap::FindObjectIDs() const {
-    std::vector<int> result;
-    for (const auto& entry : Map<T>())
-        result.push_back(entry.first);
     return result;
 }
 

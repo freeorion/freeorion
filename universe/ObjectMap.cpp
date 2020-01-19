@@ -106,18 +106,6 @@ ObjectMap* ObjectMap::Clone(int empire_id) const {
 bool ObjectMap::empty() const
 { return m_objects.empty(); }
 
-std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) const {
-    std::vector<int> result;
-    for (auto obj : *this) {
-        if (obj->Accept(visitor))
-            result.push_back(obj->ID());
-    }
-    return result;
-}
-
-std::vector<int> ObjectMap::FindObjectIDs() const
-{ return FindObjectIDs<UniverseObject>(); }
-
 int ObjectMap::HighestObjectID() const {
     if (m_objects.empty())
         return INVALID_OBJECT_ID;
