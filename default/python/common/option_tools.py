@@ -75,7 +75,7 @@ def _create_default_config_file(path):
             config.set(section, k, str(v))
     if path:
         try:
-            with open(unicode(path, 'utf-8'), 'w') as configfile:
+            with open(six.text_type(path, 'utf-8'), 'w') as configfile:
                 config.write(configfile)
             print("default config is dumped to %s" % path)
         except IOError:

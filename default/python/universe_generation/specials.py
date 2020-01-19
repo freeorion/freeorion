@@ -112,7 +112,7 @@ def distribute_specials(specials_freq, universe_objects):
         # Find a list of candidates all spaced GALAXY_DECOUPLING_DISTANCE apart
         candidates = []
         while systems_needing_specials:
-            random_sys = random.choice(systems_needing_specials.values())
+            random_sys = random.choice(list(systems_needing_specials.values()))
             member = random.choice(list(random_sys))
             obj, system, specials_count = member
             candidates.append(obj)

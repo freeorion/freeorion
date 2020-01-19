@@ -418,7 +418,7 @@ def get_colony_fleets():
         assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None, [], True))
     colonization_timer.start('Evaluate Outpost Opportunities')
 
-    sorted_planets = evaluated_colony_planets.items()
+    sorted_planets = list(evaluated_colony_planets.items())
     sorted_planets.sort(key=itemgetter(1), reverse=True)
 
     _print_colony_candidate_table(sorted_planets, show_detail=False)
@@ -437,7 +437,7 @@ def get_colony_fleets():
 
     colonization_timer.stop()
 
-    sorted_outposts = evaluated_outpost_planets.items()
+    sorted_outposts = list(evaluated_outpost_planets.items())
     sorted_outposts.sort(key=itemgetter(1), reverse=True)
 
     _print_outpost_candidate_table(sorted_outposts)
@@ -1157,13 +1157,13 @@ def assign_colony_fleets_to_colonise():
     # assign fleet targets to colonisable planets
     all_colony_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION)
     send_colony_ships(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_colony_fleet_ids),
-                      aistate.colonisablePlanetIDs.items(),
+                      list(aistate.colonisablePlanetIDs.items()),
                       MissionType.COLONISATION)
 
     # assign fleet targets to colonisable outposts
     all_outpost_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST)
     send_colony_ships(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_outpost_fleet_ids),
-                      aistate.colonisableOutpostIDs.items(),
+                      list(aistate.colonisableOutpostIDs.items()),
                       MissionType.OUTPOST)
 
 
@@ -1459,7 +1459,7 @@ class OrbitalColonizationManager(object):
 
         :rtype: list[int]
         """
-        return self._colonization_plans.keys()
+        return list(self._colonization_plans.keys())
 
     def create_new_plan(self, target_id, source_id):
         """

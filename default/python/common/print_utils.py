@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import division
 
 """
 Print utils.
@@ -27,7 +28,7 @@ def print_in_columns(items, columns=2, printer=print):
     :type printer: (str) -> None
     :return None:
     """
-    row_count = int(ceil((float(len(items)) / columns)))
+    row_count = int(ceil((len(items) / columns)))
     text_columns = list(six.moves.zip_longest(*[iter(items)] * row_count, fillvalue=''))
     column_widths = (max(len(x) for x in word) for word in text_columns)
     template = '   '.join('%%-%ss' % w for w in column_widths)

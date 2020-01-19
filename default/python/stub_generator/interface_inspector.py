@@ -2,6 +2,7 @@ import os
 from inspect import getdoc, isroutine
 from logging import warn, error, debug
 
+from common import six
 from generate_stub import make_stub
 
 
@@ -21,7 +22,7 @@ def get_member_info(name, member):
             info['value'] = member
         else:
             info['value'] = str(member)
-    elif isinstance(member, (str, long, bool, float)):
+    elif isinstance(member, (str, bool, float)) or isinstance(member, six.integer_types):
         info['value'] = member
     elif isinstance(member, (list, tuple, dict, set, frozenset)):
         if not len(member):
@@ -120,7 +121,7 @@ def _inspect(obj, instances):
         else:
             warn("Unknown: '%s' of type '%s': %s" % (name, type(member), member))
     for i, instance in enumerate(instances, start=2):
-        if isinstance(instance, (basestring, int, long, float)):
+        if isinstance(instance, (six.string_types, float)) or isinstance(instance, six.integer_types):
             warn("Argument number %s(1-based) is builtin python instance: (%s) %s", i, type(instance), instance)
             continue
         try:

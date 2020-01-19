@@ -159,6 +159,9 @@ class AIFleetOrder(object):
     def __eq__(self, other):
         return type(self) == type(other) and self.fleet == other.fleet and self.target == other.target
 
+    def __hash__(self):
+        return hash(self.fleet)
+
 
 class OrderMove(AIFleetOrder):
     ORDER_NAME = 'move'

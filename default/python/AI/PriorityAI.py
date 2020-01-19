@@ -50,7 +50,7 @@ def calculate_priorities():
     prioritiees_timer.start('Evaluating Military Status')
     MilitaryAI.get_military_fleets()
 
-    print("\n** Calculating Production Priorities ***\n")
+    debug("\n** Calculating Production Priorities ***\n")
     prioritiees_timer.start('reporting Production Priority')
     _calculate_industry_priority()  # purely for reporting purposes
     prioritiees_timer.start('setting Exploration Priority')

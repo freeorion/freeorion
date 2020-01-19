@@ -718,6 +718,9 @@ class AIFleetMission(object):
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.fleet == other.target
 
+    def __hash__(self):
+        return hash(self.fleet)
+
     def __str__(self):
         fleet = self.fleet.get_object()
 

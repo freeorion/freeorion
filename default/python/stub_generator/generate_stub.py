@@ -1,6 +1,7 @@
 from logging import warn, error
 from operator import itemgetter
 
+from common import six
 from parse_docs import Docs
 
 
@@ -167,6 +168,6 @@ def make_stub(data, result_path, classes_to_ignore):
     for function in sorted(groups['function'], key=itemgetter('name')):
         res.append(handle_function(function))
 
-    with open(unicode(result_path, 'utf-8'), 'w') as f:
+    with open(six.texttype(result_path, 'utf-8'), 'w') as f:
         f.write('\n\n\n'.join(res))
         f.write('\n')

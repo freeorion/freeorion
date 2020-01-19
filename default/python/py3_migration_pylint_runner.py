@@ -4,7 +4,13 @@ from multiprocessing import cpu_count
 
 # First path must be module in that directory, it is used as base by pylint
 paths = [
-    'common',
+    'common/configure_logging.py',
+    'common/handlers.py',
+    'common/listeners.py',
+    'common/option_tools.py',
+    'common/print_utils.py',
+    'common/profiling.py',
+    'common/timers.py',
     'auth/auth.py',
     'chat/chat.py',
     'handlers/inspect_freeOrionAIInterface.py',

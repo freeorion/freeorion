@@ -32,8 +32,9 @@ class AdjacencyGrid(object):
         """Removes pos."""
         self.grid[self.cell(pos)].discard(pos)
 
-    def _square_indices_containing_cell(self, (cell_x, cell_y), radius):
+    def _square_indices_containing_cell(self, cell, radius):
         """Return a square of indices containing cell."""
+        cell_x, cell_y = cell
         upper_left_x = max(0, cell_x - radius)
         upper_left_y = max(0, cell_y - radius)
         lower_right_x = min(self.width - 1, cell_x + radius)

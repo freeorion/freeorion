@@ -135,7 +135,8 @@ def merge_args(name, raw_arg_types, is_class):
         names, types = get_argument_names(arg_types[0], is_class)
         use_keyword = False
     elif len(arg_types) == 2 and any(not x for x in arg_types):
-        names, types = get_argument_names(filter(None, arg_types)[0], is_class)
+
+        names, types = get_argument_names(next(filter(None, arg_types)), is_class)  # pylint: disable=filter-builtin-not-iterating
         use_keyword = True
     else:
         error('[%s] Cannot merge, use first argument group from:\n    %s\n',
@@ -143,7 +144,7 @@ def merge_args(name, raw_arg_types, is_class):
               '\n    '.join(', '.join('(%s)%s' % (tp, name) for tp, name in arg_set) for arg_set in raw_arg_types))
         names, types = get_argument_names(raw_arg_types[0], is_class)
         use_keyword = False
-    return ['%s=None' % arg_name for arg_name in names] if use_keyword else names, zip(names, types)
+    return ['%s=None' % arg_name for arg_name in names] if use_keyword else names, list(zip(names, types))
 
 
 def normalize_rtype(rtype):
