@@ -1301,7 +1301,7 @@ StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                              double value, int digits, bool showsign,
                              GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-    m_values(1, {value, digits, showsign})
+    m_values(1, std::tuple<double, int, bool>{value, digits, showsign})
 {
     m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
 }
