@@ -48,25 +48,25 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
         return;
     }
     // add system to objects in combat
-    objects.Insert(system);
+    objects.insert(system);
 
     // find ships and their owners in system
-    auto ships = Objects().FindObjects<Ship>(system->ShipIDs());
+    auto ships = Objects().find<Ship>(system->ShipIDs());
     for (auto& ship : ships) {
         // add owner of ships in system to empires that have assets in this battle
         empire_ids.insert(ship->Owner());
         // add ships to objects in combat
-        objects.Insert(ship);
+        objects.insert(ship);
     }
 
     // find planets and their owners in system
-    auto planets = Objects().FindObjects<Planet>(system->PlanetIDs());
+    auto planets = Objects().find<Planet>(system->PlanetIDs());
     for (auto& planet : planets) {
         // if planet is populated or has an owner, add owner to empires that have assets in this battle
         if (!planet->Unowned() || planet->InitialMeterValue(METER_POPULATION) > 0.0f)
             empire_ids.insert(planet->Owner());
         // add planets to objects in combat
-        objects.Insert(planet);
+        objects.insert(planet);
     }
 
     InitializeObjectVisibility();
@@ -77,10 +77,10 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
 }
 
 std::shared_ptr<const System> CombatInfo::GetSystem() const
-{ return this->objects.Object<System>(this->system_id); }
+{ return this->objects.at<System>(this->system_id); }
 
 std::shared_ptr<System> CombatInfo::GetSystem()
-{ return this->objects.Object<System>(this->system_id); }
+{ return this->objects.at<System>(this->system_id); }
 
 float CombatInfo::GetMonsterDetection() const {
     float monster_detection = 0.0;
@@ -105,7 +105,7 @@ void CombatInfo::GetObjectsToSerialize(ObjectMap& filtered_objects, int encoding
     if (&filtered_objects == &this->objects)
         return;
 
-    filtered_objects.Clear();
+    filtered_objects.clear();
 
     if (encoding_empire == ALL_EMPIRES) {
         filtered_objects = this->objects;
@@ -975,7 +975,7 @@ namespace {
                 if (combat_info.destroyed_object_ids.count(attacker_id))
                     continue;   // destroyed objects can't launch fighters
 
-                auto ship = combat_info.objects.Object<Ship>(attacker_id);
+                auto ship = combat_info.objects.at<Ship>(attacker_id);
                 if (!ship)
                     continue;   // non-ships can't launch fighters
 
@@ -1026,7 +1026,7 @@ namespace {
                                                              species, damage, combat_targets);
                 fighter_ptr->SetID(next_fighter_id--);
                 fighter_ptr->Rename(fighter_name);
-                combat_info.objects.Insert(fighter_ptr);
+                combat_info.objects.insert(fighter_ptr);
                 if (!fighter_ptr) {
                     ErrorLogger(combat) << "AddFighters unable to create and insert new Fighter object...";
                     break;
@@ -1074,7 +1074,7 @@ namespace {
             IncapacitationsEventPtr incaps_event = std::make_shared<IncapacitationsEvent>();
 
             std::vector<int> delete_list;
-            delete_list.reserve(combat_info.objects.NumObjects());
+            delete_list.reserve(combat_info.objects.size());
 
             for (auto it = combat_info.objects.begin();
                  it != combat_info.objects.end(); ++it)
@@ -1111,7 +1111,7 @@ namespace {
             std::stringstream ss;
             for (auto id : delete_list) {
                 ss << id << " ";
-                combat_info.objects.Remove(id);
+                combat_info.objects.erase(id);
             }
             DebugLogger() << "Removed destroyed objects from combat state with ids: " << ss.str();
         }
@@ -1621,7 +1621,7 @@ namespace {
 
         DebugLogger() << "Returning fighters to ships:";
         for (auto& entry : ships_fighters_to_add_back) {
-            auto ship = combat_info.objects.Object<Ship>(entry.first);
+            auto ship = combat_info.objects.at<Ship>(entry.first);
             if (!ship) {
                 ErrorLogger(combat) << "Couldn't get ship with id " << entry.first << " for fighter to return to...";
                 continue;
@@ -1672,7 +1672,7 @@ namespace {
         // despite their attack power depending on something (their defence meter)
         // that processing shots at them may reduce.
         for (int attacker_id : shuffled_attackers) {
-            auto attacker = combat_info.objects.Object(attacker_id);
+            auto attacker = combat_info.objects.at(attacker_id);
 
             if (!attacker) {
                 ErrorLogger() << "CombatRound couldn't get object with id " << attacker_id;
@@ -1697,7 +1697,7 @@ namespace {
 
         // Process ship and fighter attacks
         for (int attacker_id : shuffled_attackers) {
-            auto attacker = combat_info.objects.Object(attacker_id);
+            auto attacker = combat_info.objects.at(attacker_id);
 
             if (!attacker) {
                 ErrorLogger() << "CombatRound couldn't get object with id " << attacker_id;
@@ -1730,7 +1730,7 @@ namespace {
         if (bout < GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS")) {
             auto launches_event = std::make_shared<FighterLaunchesEvent>();
             for (int attacker_id : shuffled_attackers) {
-                auto attacker = combat_info.objects.Object(attacker_id);
+                auto attacker = combat_info.objects.at(attacker_id);
 
                 if (!attacker) {
                     ErrorLogger() << "CombatRound couldn't get object with id " << attacker_id;
@@ -1833,10 +1833,10 @@ namespace {
 }
 
 void AutoResolveCombat(CombatInfo& combat_info) {
-    if (combat_info.objects.Empty())
+    if (combat_info.objects.empty())
         return;
 
-    auto system = combat_info.objects.Object<System>(combat_info.system_id);
+    auto system = combat_info.objects.at<System>(combat_info.system_id);
     if (!system)
         ErrorLogger() << "AutoResolveCombat couldn't get system with id " << combat_info.system_id;
     else

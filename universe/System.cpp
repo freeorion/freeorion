@@ -570,7 +570,7 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
 
     // get moving fleets owned by empire
     std::vector<std::shared_ptr<const Fleet>> moving_empire_fleets;
-    for (auto& object : objects.FindObjects(MovingFleetVisitor())) {
+    for (auto& object : objects.find(MovingFleetVisitor())) {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             if (fleet->OwnedBy(empire_id))
                 moving_empire_fleets.push_back(fleet);

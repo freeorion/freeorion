@@ -1991,10 +1991,10 @@ void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_cont
         }
     }
     if (found_type) {
-        //if (int(condition_non_targets.size()) < Objects().NumObjects()) {
+        //if (int(condition_non_targets.size()) < Objects().size()) {
         //    DebugLogger() << "Type::GetBaseNonMatches will provide " << condition_non_targets.size()
         //                  << " objects of type " << GetType()->Eval() << " rather than "
-        //                  << Objects().NumObjects() << " total objects";
+        //                  << Objects().size() << " total objects";
         //}
     } else {
         ConditionBase::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
@@ -2832,7 +2832,7 @@ void Contains::Eval(const ScriptingContext& parent_context,
 
         // initialize subcondition candidates from local candidate's contents
         const ObjectMap& objects = Objects();
-        ObjectSet subcondition_matches = objects.FindObjects(local_context.condition_local_candidate->ContainedObjectIDs());
+        ObjectSet subcondition_matches = objects.find(local_context.condition_local_candidate->ContainedObjectIDs());
 
         // apply subcondition to candidates
         if (!subcondition_matches.empty()) {
@@ -3046,7 +3046,7 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
         if (local_context.condition_local_candidate->SystemID() != INVALID_OBJECT_ID)
             container_object_ids.insert(local_context.condition_local_candidate->SystemID());
 
-        ObjectSet subcondition_matches = objects.FindObjects(container_object_ids);
+        ObjectSet subcondition_matches = objects.find(container_object_ids);
 
         // apply subcondition to candidates
         if (!subcondition_matches.empty()) {
@@ -3124,7 +3124,7 @@ bool ContainedBy::Match(const ScriptingContext& local_context) const {
     if (candidate->ContainerObjectID() != INVALID_OBJECT_ID && candidate->ContainerObjectID() != candidate->SystemID())
         containers.insert(candidate->ContainerObjectID());
 
-    ObjectSet container_objects = Objects().FindObjects<const UniverseObject>(containers);
+    ObjectSet container_objects = Objects().find<const UniverseObject>(containers);
     if (container_objects.empty())
         return false;
 
@@ -3273,7 +3273,7 @@ void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 
     const ObjectMap& obj_map = Objects();
     const std::set<int>& system_object_ids = system->ObjectIDs();
-    auto sys_objs = obj_map.FindObjects(system_object_ids);
+    auto sys_objs = obj_map.find(system_object_ids);
 
     // insert all objects that have the specified system id
     condition_non_targets.reserve(sys_objs.size() + 1);
@@ -5114,7 +5114,7 @@ namespace {
             std::shared_ptr<const Ship> ship = nullptr;
             if (auto fighter = std::dynamic_pointer_cast<const ::Fighter>(candidate)) {
                 // it is a fighter
-                ship = Objects().Object<Ship>(fighter->LaunchedFrom());
+                ship = Objects().at<Ship>(fighter->LaunchedFrom());
             } else {
                 ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
             }
@@ -7665,7 +7665,7 @@ namespace {
 
         // loop over all existing lanes in all systems, checking if a lane
         // beween the specified systems would cross any of the existing lanes
-        for (auto& system : objects.FindObjects<System>()) {
+        for (auto& system : objects.all<System>()) {
             if (system == lane_end_sys1 || system == lane_end_sys2)
                 continue;
 
@@ -7699,7 +7699,7 @@ namespace {
             return true;
 
         const ObjectMap& objects = Objects();
-        auto systems = objects.FindObjects<System>();
+        auto systems = objects.all<System>();
 
         // loop over all existing systems, checking if each is too close to a
         // lane between the specified lane endpoints

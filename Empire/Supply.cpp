@@ -256,7 +256,7 @@ namespace {
         float accumulator_current = 0.0f;
         float accumulator_max = 0.0f;
 
-        for (auto obj : Objects().FindObjects(sys->ObjectIDs())) {
+        for (auto obj : Objects().find(sys->ObjectIDs())) {
             if (!obj || !obj->OwnedBy(empire_id))
                 continue;
             if (obj->Meters().count(METER_SUPPLY) > 0)
@@ -273,7 +273,7 @@ namespace {
 
         float accumulator_current = 0.0f;
 
-        for (auto obj : Objects().FindObjects(OwnedVisitor<UniverseObject>(empire_id))) {
+        for (auto obj : Objects().find(OwnedVisitor<UniverseObject>(empire_id))) {
             if (!obj || !obj->OwnedBy(empire_id))
                 continue;
             if (obj->Meters().count(METER_SUPPLY) > 0)
@@ -353,7 +353,7 @@ void SupplyManager::Update() {
     // probably temporary: additional restriction here for supply propagation
     // but not for general system obstruction as determind within Empire::UpdateSupplyUnobstructedSystems
     /////
-    const auto fleets = GetUniverse().Objects().FindObjects<Fleet>();
+    const auto fleets = GetUniverse().Objects().all<Fleet>();
 
     for (const auto& entry : Empires()) {
         int empire_id = entry.first;
@@ -481,7 +481,7 @@ void SupplyManager::Update() {
                 if (auto sys = GetSystem(sys_id)) {
                     std::vector<int> obj_ids;
                     std::copy(sys->ContainedObjectIDs().begin(), sys->ContainedObjectIDs().end(), std::back_inserter(obj_ids));
-                    for (auto& obj : Objects().FindObjects(obj_ids)) {
+                    for (auto& obj : Objects().find(obj_ids)) {
                         if (!obj)
                             continue;
                         if (!obj->OwnedBy(empire_id))

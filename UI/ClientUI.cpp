@@ -764,7 +764,7 @@ std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
 
 bool ClientUI::ZoomToObject(const std::string& name) {
     // try first by finding the object by name
-    for (auto& obj : GetUniverse().Objects().FindObjects<UniverseObject>())
+    for (auto& obj : GetUniverse().Objects().all<UniverseObject>())
         if (boost::iequals(obj->Name(), name))
             return ZoomToObject(obj->ID());
 

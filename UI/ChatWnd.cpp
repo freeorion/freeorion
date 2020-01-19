@@ -140,12 +140,12 @@ void MessageWndEdit::FindGameWords() {
         m_game_words.insert(entry.second->PlayerName());
     }
     // add system names
-    for (auto& system : GetUniverse().Objects().FindObjects<System>()) {
+    for (auto& system : GetUniverse().Objects().all<System>()) {
         if (system->Name() != "")
             m_game_words.insert(system->Name());
     }
      // add ship names
-    for (auto& ship : GetUniverse().Objects().FindObjects<Ship>()) {
+    for (auto& ship : GetUniverse().Objects().all<Ship>()) {
         if (ship->Name() != "")
             m_game_words.insert(ship->Name());
     }

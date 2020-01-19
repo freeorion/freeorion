@@ -110,7 +110,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     }
 
     ar  & BOOST_SERIALIZATION_NVP(objects);
-    DebugLogger() << "Universe::serialize : " << serializing_label << " " << objects.NumObjects() << " objects";
+    DebugLogger() << "Universe::serialize : " << serializing_label << " " << objects.size() << " objects";
     if (Archive::is_loading::value) {
         m_objects.swap(objects);
     }
@@ -166,9 +166,9 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     if (Archive::is_saving::value) {
         DebugLogger() << "Universe::serialize : Cleaning up temporary data";
         // clean up temporary objects in temporary ObjectMaps.
-        objects.Clear();
+        objects.clear();
         for (auto& elko : empire_latest_known_objects)
-        { elko.second.Clear(); }
+        { elko.second.clear(); }
     }
 
     if (Archive::is_loading::value) {

@@ -171,57 +171,54 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    /** Returns number of objects in this ObjectMap */
-    int NumObjects() const;
-
     /** Returns the number of objects of the specified class in this ObjectMap. */
-    template <class T>
-    int NumObjects() const;
+    template <class T=UniverseObject>
+    int size() const;
 
     /** Returns true if this ObjectMap contains no objects */
-    bool Empty() const;
+    bool empty() const;
 
     /** Returns a pointer to the object of type T with ID number \a id.
       * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
     template <class T = UniverseObject>
-    std::shared_ptr<const T> Object(int id) const;
+    std::shared_ptr<const T> at(int id) const;
 
     /** Returns a pointer to the object of type T with ID number \a id.
       * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
     template <class T = UniverseObject>
-    std::shared_ptr<T> Object(int id);
+    std::shared_ptr<T> at(int id);
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<const T>> FindObjects(const std::vector<int>& object_ids) const;
+    std::vector<std::shared_ptr<const T>> find(const std::vector<int>& object_ids) const;
 
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<const T>> FindObjects(const std::set<int>& object_ids) const;
+    std::vector<std::shared_ptr<const T>> find(const std::set<int>& object_ids) const;
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<T>> FindObjects(const std::vector<int>& object_ids);
+    std::vector<std::shared_ptr<T>> find(const std::vector<int>& object_ids);
 
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<T>> FindObjects(const std::set<int>& object_ids);
+    std::vector<std::shared_ptr<T>> find(const std::set<int>& object_ids);
 
     /** Returns all the objects that match \a visitor */
-    std::vector<std::shared_ptr<const UniverseObject>> FindObjects(const UniverseObjectVisitor& visitor) const;
+    std::vector<std::shared_ptr<const UniverseObject>> find(const UniverseObjectVisitor& visitor) const;
 
     /** Returns all the objects that match \a visitor */
-    std::vector<std::shared_ptr<UniverseObject>> FindObjects(const UniverseObjectVisitor& visitor);
+    std::vector<std::shared_ptr<UniverseObject>> find(const UniverseObjectVisitor& visitor);
 
     /** Returns all the objects of type T */
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<const T>> FindObjects() const;
+    std::vector<std::shared_ptr<const T>> all() const;
 
     /** Returns all the objects of type T */
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<T>> FindObjects();
+    std::vector<std::shared_ptr<T>> all();
 
     /** Returns the IDs of all the objects that match \a visitor */
     std::vector<int>        FindObjectIDs(const UniverseObjectVisitor& visitor) const;
@@ -309,18 +306,18 @@ public:
       * If there already was an object in the map with the id \a id then
       * that object will be removed. */
     template <class T>
-    void Insert(std::shared_ptr<T> obj, int empire_id = ALL_EMPIRES);
+    void insert(std::shared_ptr<T> obj, int empire_id = ALL_EMPIRES);
 
     /** Removes object with id \a id from map, and returns that object, if
       * there was an object under that ID in the map.  If no such object
       * existed in the map, a null shared_ptr is returned and nothing is
       * removed. The ObjectMap will no longer share ownership of the
       * returned object. */
-    std::shared_ptr<UniverseObject> Remove(int id);
+    std::shared_ptr<UniverseObject> erase(int id);
 
     /** Empties map, removing shared ownership by this map of all
       * previously contained objects. */
-    void Clear();
+    void clear();
 
     /** Swaps the contents of *this with \a rhs. */
     void swap(ObjectMap& rhs);
@@ -337,7 +334,7 @@ public:
     //@}
 
 private:
-    void InsertCore(std::shared_ptr<UniverseObject> item, int empire_id = ALL_EMPIRES);
+    void insertCore(std::shared_ptr<UniverseObject> item, int empire_id = ALL_EMPIRES);
 
     void CopyObjectsToSpecializedMaps();
 
@@ -392,7 +389,7 @@ ObjectMap::const_iterator<T> ObjectMap::end() const
 { return const_iterator<T>(Map<typename std::remove_const<T>::type>().end(), *this); }
 
 template <class T>
-std::shared_ptr<const T> ObjectMap::Object(int id) const {
+std::shared_ptr<const T> ObjectMap::at(int id) const {
     auto it = Map<typename std::remove_const<T>::type>().find(id);
     return std::shared_ptr<const T>(
         it != Map<typename std::remove_const<T>::type>().end()
@@ -401,7 +398,7 @@ std::shared_ptr<const T> ObjectMap::Object(int id) const {
 }
 
 template <class T>
-std::shared_ptr<T> ObjectMap::Object(int id) {
+std::shared_ptr<T> ObjectMap::at(int id) {
     auto it = Map<typename std::remove_const<T>::type>().find(id);
     return std::shared_ptr<T>(
         it != Map<typename std::remove_const<T>::type>().end()
@@ -410,7 +407,7 @@ std::shared_ptr<T> ObjectMap::Object(int id) {
 }
 
 template <class T>
-std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects() const {
+std::vector<std::shared_ptr<const T>> ObjectMap::all() const {
     std::vector<std::shared_ptr<const T>> result;
     for (const auto& entry : Map<T>())
         result.push_back(entry.second);
@@ -418,7 +415,7 @@ std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects() const {
 }
 
 template <class T>
-std::vector<std::shared_ptr<T>> ObjectMap::FindObjects() {
+std::vector<std::shared_ptr<T>> ObjectMap::all() {
     std::vector<std::shared_ptr<T>> result;
     for (const auto& entry : Map<T>())
         result.push_back(entry.second);
@@ -434,7 +431,7 @@ std::vector<int> ObjectMap::FindObjectIDs() const {
 }
 
 template <class T>
-std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects(const std::vector<int>& object_ids) const {
+std::vector<std::shared_ptr<const T>> ObjectMap::find(const std::vector<int>& object_ids) const {
     std::vector<std::shared_ptr<const T>> retval;
     typedef typename std::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
@@ -446,7 +443,7 @@ std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects(const std::vector<i
 }
 
 template <class T>
-std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects(const std::set<int>& object_ids) const {
+std::vector<std::shared_ptr<const T>> ObjectMap::find(const std::set<int>& object_ids) const {
     std::vector<std::shared_ptr<const T>> retval;
     typedef typename std::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
@@ -458,7 +455,7 @@ std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects(const std::set<int>
 }
 
 template <class T>
-std::vector<std::shared_ptr<T>> ObjectMap::FindObjects(const std::vector<int>& object_ids) {
+std::vector<std::shared_ptr<T>> ObjectMap::find(const std::vector<int>& object_ids) {
     std::vector<std::shared_ptr<T>> retval;
     typedef typename std::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
@@ -470,7 +467,7 @@ std::vector<std::shared_ptr<T>> ObjectMap::FindObjects(const std::vector<int>& o
 }
 
 template <class T>
-std::vector<std::shared_ptr<T>> ObjectMap::FindObjects(const std::set<int>& object_ids) {
+std::vector<std::shared_ptr<T>> ObjectMap::find(const std::set<int>& object_ids) {
     std::vector<std::shared_ptr<T>> retval;
     typedef typename std::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
@@ -482,14 +479,14 @@ std::vector<std::shared_ptr<T>> ObjectMap::FindObjects(const std::set<int>& obje
 }
 
 template <class T>
-int ObjectMap::NumObjects() const
+int ObjectMap::size() const
 { return Map<typename std::remove_const<T>::type>().size(); }
 
 template <class T>
-void ObjectMap::Insert(std::shared_ptr<T> item, int empire_id /* = ALL_EMPIRES */) {
+void ObjectMap::insert(std::shared_ptr<T> item, int empire_id /* = ALL_EMPIRES */) {
     if (!item)
         return;
-    InsertCore(std::dynamic_pointer_cast<UniverseObject>(item), empire_id);
+    insertCore(std::dynamic_pointer_cast<UniverseObject>(item), empire_id);
 }
 
 // template specializations
