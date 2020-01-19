@@ -6913,7 +6913,7 @@ namespace {
     }
 
     std::set<std::pair<std::string, int>, CustomRowCmp> GetOwnedSystemNamesIDs(int empire_id) {
-        auto owned_planets = Objects().find(OwnedVisitor<Planet>(empire_id));
+        auto owned_planets = Objects().find<Planet>(OwnedVisitor<Planet>(empire_id));
 
         // get IDs of systems that contain any owned planets
         std::unordered_set<int> system_ids;

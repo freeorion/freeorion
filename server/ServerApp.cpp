@@ -1812,12 +1812,12 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     empire->Eliminate();
 
     // destroy owned ships
-    for (auto& obj : Objects().find(OwnedVisitor<Ship>(empire_id))) {
+    for (auto& obj : Objects().find<Ship>(OwnedVisitor<Ship>(empire_id))) {
         obj->SetOwner(ALL_EMPIRES);
         GetUniverse().RecursiveDestroy(obj->ID());
     }
     // destroy owned buildings
-    for (auto& obj : Objects().find(OwnedVisitor<Building>(empire_id))) {
+    for (auto& obj : Objects().find<Building>(OwnedVisitor<Building>(empire_id))) {
         obj->SetOwner(ALL_EMPIRES);
         GetUniverse().RecursiveDestroy(obj->ID());
     }
@@ -2085,8 +2085,8 @@ namespace {
       * definition of elimination.  As of this writing, elimination means
       * having no ships and no planets. */
     bool EmpireEliminated(int empire_id) {
-          return (Objects().find(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
-                  Objects().find(OwnedVisitor<Ship>(empire_id)).empty());      // no ship
+          return (Objects().find<Planet>(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
+                  Objects().find<Ship>(OwnedVisitor<Ship>(empire_id)).empty());      // no ship
       }
 
     void GetEmpireFleetsAtSystem(std::map<int, std::set<int>>& empire_fleets, int system_id) {
@@ -3417,13 +3417,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
         bool empires_present = false;
         bool unrestricted_empires_present = false;
         std::vector<std::shared_ptr<Fleet>> monsters;
-        for (auto maybe_fleet : m_universe.Objects().find(system->FleetIDs())) {
-            auto fleet = std::dynamic_pointer_cast<Fleet>(maybe_fleet);
-            if (!fleet) {
-                ErrorLogger() << "Non Fleet object in system(" << system->ID()
-                              << ") fleets with id = " << maybe_fleet->ID();
-                continue;
-            }
+        for (const auto& fleet : m_universe.Objects().find<Fleet>(system->FleetIDs())) {
             // will not require visibility for empires to block clearing of monster travel restrictions
             // unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for
             // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived

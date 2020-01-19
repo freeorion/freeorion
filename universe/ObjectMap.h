@@ -207,10 +207,12 @@ public:
     std::vector<std::shared_ptr<T>> find(const std::set<int>& object_ids);
 
     /** Returns all the objects that match \a visitor */
-    std::vector<std::shared_ptr<const UniverseObject>> find(const UniverseObjectVisitor& visitor) const;
+    template <class T = UniverseObject>
+    std::vector<std::shared_ptr<const T>> find(const UniverseObjectVisitor& visitor) const;
 
     /** Returns all the objects that match \a visitor */
-    std::vector<std::shared_ptr<UniverseObject>> find(const UniverseObjectVisitor& visitor);
+    template <class T = UniverseObject>
+    std::vector<std::shared_ptr<T>> find(const UniverseObjectVisitor& visitor);
 
     /** Returns all the objects of type T */
     template <class T = UniverseObject>
@@ -476,6 +478,28 @@ std::vector<std::shared_ptr<T>> ObjectMap::find(const std::set<int>& object_ids)
             retval.push_back(std::shared_ptr<T>(map_it->second));
     }
     return retval;
+}
+
+template <class T>
+std::vector<std::shared_ptr<const T>> ObjectMap::find(const UniverseObjectVisitor& visitor) const {
+    std::vector<std::shared_ptr<const T>> result;
+    typedef typename std::remove_const<T>::type mutableT;
+    for (auto entry : Map<mutableT>()) {
+        if (entry.second->Accept(visitor))
+            result.push_back(entry.second);
+    }
+    return result;
+}
+
+template <class T>
+std::vector<std::shared_ptr<T>> ObjectMap::find(const UniverseObjectVisitor& visitor) {
+    std::vector<std::shared_ptr<T>> result;
+    typedef typename std::remove_const<T>::type mutableT;
+    for (const auto& entry : Map<mutableT>()) {
+        if (entry.second->Accept(visitor))
+            result.push_back(entry.second);
+    }
+    return result;
 }
 
 template <class T>

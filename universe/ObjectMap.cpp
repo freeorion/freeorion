@@ -106,24 +106,6 @@ ObjectMap* ObjectMap::Clone(int empire_id) const {
 bool ObjectMap::empty() const
 { return m_objects.empty(); }
 
-std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::find(const UniverseObjectVisitor& visitor) const {
-    std::vector<std::shared_ptr<const UniverseObject>> result;
-    for (auto obj : *this) {
-        if (obj->Accept(visitor))
-            result.push_back(at(obj->ID()));
-    }
-    return result;
-}
-
-std::vector<std::shared_ptr<UniverseObject>> ObjectMap::find(const UniverseObjectVisitor& visitor) {
-    std::vector<std::shared_ptr<UniverseObject>> result;
-    for (const auto& obj : *this) {
-        if (std::shared_ptr<UniverseObject> match = obj->Accept(visitor))
-            result.push_back(at(match->ID()));
-    }
-    return result;
-}
-
 std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) const {
     std::vector<int> result;
     for (auto obj : *this) {

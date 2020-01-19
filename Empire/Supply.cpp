@@ -481,20 +481,15 @@ void SupplyManager::Update() {
                 if (auto sys = GetSystem(sys_id)) {
                     std::vector<int> obj_ids;
                     std::copy(sys->ContainedObjectIDs().begin(), sys->ContainedObjectIDs().end(), std::back_inserter(obj_ids));
-                    for (auto& obj : Objects().find(obj_ids)) {
-                        if (!obj)
+                    for (auto& planet : Objects().find<Planet>(obj_ids)) {
+                        if (!planet)
                             continue;
-                        if (!obj->OwnedBy(empire_id))
+                        if (!planet->OwnedBy(empire_id))
                             continue;
-                        if (obj->ObjectType() == OBJ_PLANET) {
-                            if (auto planet = std::dynamic_pointer_cast<Planet>(obj)) {
-                                if (!planet->SpeciesName().empty())
-                                    has_colony = true;
-                                else
-                                    has_outpost = true;
-                                continue;
-                            }
-                        }
+                        if (!planet->SpeciesName().empty())
+                            has_colony = true;
+                        else
+                            has_outpost = true;
                     }
                 }
                 if (has_colony)
