@@ -80,8 +80,8 @@ def _calculate_industry_priority():  # currently only used to print status
     # get current industry production & Target
     industry_production = empire.resourceProduction(fo.resourceType.industry)
     owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
-    planets = map(universe.getPlanet, owned_planet_ids)
-    target_pp = sum(map(lambda x: x.currentMeterValue(fo.meterType.targetIndustry), planets))
+    planets = (universe.getPlanet(x) for x in owned_planet_ids)
+    target_pp = sum(x.currentMeterValue(fo.meterType.targetIndustry) for x in planets)
 
     # currently, previously set to 50 in calculatePriorities(), this is just for reporting
     industry_priority = get_aistate().get_priority(PriorityType.RESOURCE_PRODUCTION)
@@ -124,7 +124,7 @@ def _calculate_research_priority():
                       (state.get_number_of_colonies() < 12))
     # get current industry production & Target
     owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
-    planets = map(universe.getPlanet, owned_planet_ids)
+    planets = (universe.getPlanet(x) for x in owned_planet_ids)
     target_rp = sum(map(lambda _x: _x.currentMeterValue(fo.meterType.targetResearch), planets))
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     enemies_sighted = aistate.misc.get('enemies_sighted', {})
@@ -350,7 +350,7 @@ def _calculate_invasion_priority():
         return 0.0
 
     if len(aistate.colonisablePlanetIDs) > 0:
-        best_colony_score = max(2, aistate.colonisablePlanetIDs.items()[0][1][0])
+        best_colony_score = max(2, next(iter(aistate.colonisablePlanetIDs.items()))[1][0])
     else:
         best_colony_score = 2
 
@@ -429,8 +429,8 @@ def _calculate_military_priority():
     enemies_sighted = aistate.misc.get('enemies_sighted', {})
 
     target_planet_ids = ([pid for pid, pscore, trp in AIstate.invasionTargets[:allotted_invasion_targets()]] +
-                         [pid for pid, pscore in aistate.colonisablePlanetIDs.items()[:allottedColonyTargets]] +
-                         [pid for pid, pscore in aistate.colonisableOutpostIDs.items()[:allottedColonyTargets]])
+                         [pid for pid, pscore in list(aistate.colonisablePlanetIDs.items())[:allottedColonyTargets]] +
+                         [pid for pid, pscore in list(aistate.colonisableOutpostIDs.items())[:allottedColonyTargets]])
 
     my_systems = set(state.get_empire_planets_by_system())
     target_systems = set(PlanetUtilsAI.get_systems(target_planet_ids))
@@ -490,8 +490,7 @@ def _calculate_top_production_queue_priority():
     for priorityType in get_priority_production_types():
         production_queue_priorities[priorityType] = aistate.get_priority(priorityType)
 
-    sorted_priorities = production_queue_priorities.items()
-    sorted_priorities.sort(key=itemgetter(1), reverse=True)
+    sorted_priorities = sorted(production_queue_priorities.items(), key=itemgetter(1), reverse=True)
     top_production_queue_priority = -1
     for evaluationPair in sorted_priorities:
         if top_production_queue_priority < 0:

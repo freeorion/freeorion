@@ -432,7 +432,7 @@ def generate_production_orders():
                 if pid in queued_shipyard_locs:
                     break  # won't try building more than one shipyard at once, per colonizer
             else:  # no queued shipyards, get planets with target pop >=3, and queue a shipyard on the one with biggest current pop
-                planets = map(universe.getPlanet, state.get_empire_planets_with_species(spec_name))
+                planets = (universe.getPlanet(x) for x in state.get_empire_planets_with_species(spec_name))
                 pops = sorted([(planet_.initialMeterValue(fo.meterType.population), planet_.id) for planet_ in planets if (planet_ and planet_.initialMeterValue(fo.meterType.targetPopulation) >= 3.0)])
                 pids = [pid for pop, pid in pops if building_type.canBeProduced(empire.empireID, pid)]
                 if pids:
@@ -584,7 +584,7 @@ def generate_production_orders():
             yard_locs = []
             need_yard = {}
             top_pilot_locs = []
-            for sys_id in set(asteroid_systems.keys()).difference(asteroid_yards.keys()):
+            for sys_id in set(asteroid_systems.keys()).difference(asteroid_yards.keys()):  # pylint: disable=dict-keys-not-iterating; # PY_3_MIGRATION
                 if sys_id in top_pilot_systems:
                     for pid, _ in top_pilot_systems[sys_id]:
                         if pid not in queued_shipyard_locs:  # will catch it later if shipyard already present
@@ -596,11 +596,11 @@ def generate_production_orders():
                     for pid, _ in top_pilot_systems[sys_id]:
                         if pid not in queued_shipyard_locs:  # will catch it later if shipyard already present
                             need_yard[sys_id] = pid
-            if (not yard_locs) and len(asteroid_yards.values()) <= int(current_turn / 50):  # not yet building & not enough current locs, find a location to build one
+            if (not yard_locs) and len(asteroid_yards.values()) <= int(current_turn / 50):  # pylint: disable=dict-values-not-iterating; # PY_3_MIGRATION # not yet building & not enough current locs, find a location to build one
                 colonizer_loc_choices = []
                 builder_loc_choices = []
-                bld_systems = set(asteroid_systems.keys()).difference(asteroid_yards.keys())
-                for sys_id in bld_systems.intersection(builder_systems.keys()):
+                bld_systems = set(asteroid_systems.keys()).difference(asteroid_yards.keys())  # pylint: disable=dict-keys-not-iterating; # PY_3_MIGRATION
+                for sys_id in bld_systems.intersection(builder_systems.keys()):  # pylint: disable=dict-keys-not-iterating; # PY_3_MIGRATION
                     for this_spec, pid in builder_systems[sys_id]:
                         if this_spec in ColonisationAI.empire_colonizers:
                             if pid in (ColonisationAI.empire_colonizers[this_spec] + queued_shipyard_locs):
@@ -1223,8 +1223,7 @@ def generate_production_orders():
     for priority_type in get_priority_production_types():
         production_priorities[priority_type] = int(max(0, (aistate.get_priority(priority_type)) ** 0.5))
 
-    sorted_priorities = production_priorities.items()
-    sorted_priorities.sort(key=itemgetter(1), reverse=True)
+    sorted_priorities = sorted(production_priorities.items(), key=itemgetter(1), reverse=True)
 
     top_score = -1
 
@@ -1521,7 +1520,7 @@ def build_ship_facilities(bld_name, best_pilot_facilities, top_locs=None):
         return
     valid_locs = (list(loc for loc in try_locs.intersection(top_locs) if bld_type.canBeProduced(empire.empireID, loc)) +
                   list(loc for loc in try_locs.difference(top_locs) if bld_type.canBeProduced(empire.empireID, loc)))
-    debug("Have %d potential locations: %s", len(valid_locs), map(universe.getPlanet, valid_locs))
+    debug("Have %d potential locations: %s", len(valid_locs), [universe.getPlanet(x) for x in valid_locs])
     # TODO: rank by defense ability, etc.
     num_queued = len(queued_bld_locs)
     already_covered = []  # just those covered on this turn

@@ -262,8 +262,7 @@ class Reporter(object):
         for priority_type in get_priority_resource_types():
             resource_priorities[priority_type] = aistate.get_priority(priority_type)
 
-        sorted_priorities = resource_priorities.items()
-        sorted_priorities.sort(key=itemgetter(1), reverse=True)
+        sorted_priorities = sorted(resource_priorities.items(), key=itemgetter(1), reverse=True)
         top_priority = -1
         for evaluation_priority, evaluation_score in sorted_priorities:
             if top_priority < 0:

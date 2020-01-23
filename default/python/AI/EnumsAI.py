@@ -40,7 +40,7 @@ class Enum(object):
     @classmethod
     def range(cls, start, end):
         result = []
-        current_range = range(start, end)  # pylint: disable=range-builtin-not-iterating PY_3_MIGRATION
+        current_range = range(start, end)  # pylint: disable=range-builtin-not-iterating; # PY_3_MIGRATION
         for key in dir(cls):
             if not key.startswith('_'):
                 value = getattr(cls, key)

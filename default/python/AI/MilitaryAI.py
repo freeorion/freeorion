@@ -645,7 +645,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
 
     mil_fleets_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
     mil_needing_repair_ids, mil_fleets_ids = avail_mil_needing_repair(mil_fleets_ids, split_ships=True)
-    avail_mil_rating = combine_ratings_list(map(CombatRatingsAI.get_fleet_rating, mil_fleets_ids))
+    avail_mil_rating = combine_ratings_list([CombatRatingsAI.get_fleet_rating(x) for x in mil_fleets_ids])
 
     if not mil_fleets_ids:
         if "Main" in thisround:
@@ -704,18 +704,18 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
             capital_sys_id = ranked_systems[-1][-1]
         else:
             try:
-                capital_sys_id = aistate.fleetStatus.items()[0][1]['sysID']
+                capital_sys_id = next(iter(aistate.fleetStatus.items()))[1]['sysID']
             except:
                 pass
 
     num_targets = max(10, PriorityAI.allotted_outpost_targets)
     top_target_planets = ([pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allotted_invasion_targets()]
                            if pscore > InvasionAI.MIN_INVASION_SCORE] +
-                          [pid for pid, (pscore, spec) in aistate.colonisableOutpostIDs.items()[:num_targets]
+                          [pid for pid, (pscore, spec) in list(aistate.colonisableOutpostIDs.items())[:num_targets]
                            if pscore > InvasionAI.MIN_INVASION_SCORE] +
-                          [pid for pid, (pscore, spec) in aistate.colonisablePlanetIDs.items()[:num_targets]
+                          [pid for pid, (pscore, spec) in list(aistate.colonisablePlanetIDs.items())[:num_targets]
                            if pscore > InvasionAI.MIN_INVASION_SCORE])
-    top_target_planets.extend(aistate.qualifyingTroopBaseTargets.keys())
+    top_target_planets.extend(aistate.qualifyingTroopBaseTargets.keys())  # pylint: disable=dict-keys-not-iterating; # PY_3_MIGRATION
 
     base_col_target_systems = PlanetUtilsAI.get_systems(top_target_planets)
     top_target_systems = []
