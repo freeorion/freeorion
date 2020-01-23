@@ -358,6 +358,7 @@ WEAPON_UPGRADE_DICT = {
     "SR_WEAPON_2_1": tuple(("SHP_WEAPON_2_%d" % i, 2) for i in [2, 3, 4]),
     "SR_WEAPON_3_1": tuple(("SHP_WEAPON_3_%d" % i, 3) for i in [2, 3, 4]),
     "SR_WEAPON_4_1": tuple(("SHP_WEAPON_4_%d" % i, 5) for i in [2, 3, 4]),
+    "SR_GAMMA_BURST": tuple(("SHP_GAMMA_BURST_%d" % i, i) for i in [2, 3]),
     "SR_SPINAL_ANTIMATTER": (),
 }
 
@@ -368,6 +369,7 @@ WEAPON_ROF_UPGRADE_DICT = {
     "SR_WEAPON_2_1": (),
     "SR_WEAPON_3_1": (),
     "SR_WEAPON_4_1": (),
+    "SR_GAMMA_BURST": (),
     "SR_SPINAL_ANTIMATTER": (),
 }
 
