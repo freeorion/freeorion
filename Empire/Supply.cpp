@@ -333,10 +333,12 @@ void SupplyManager::Update() {
         empire_system_supply_ranges[entry.first] = empire->SystemSupplyRanges();
         empire_supply_unobstructed_systems[entry.first] = empire->SupplyUnobstructedSystems();
 
-        std::stringstream ss;
-        for (int system_id : empire_supply_unobstructed_systems[entry.first])
-        { ss << system_id << ", "; }
-        TraceLogger(supply) << "Empire " << empire->EmpireID() << " unobstructed systems: " << ss.str();
+        TraceLogger(supply) << "Empire " << empire->EmpireID() << " unobstructed systems: " << [&]() {
+            std::stringstream ss;
+            for (int system_id : empire_supply_unobstructed_systems[entry.first])
+            { ss << system_id << ", "; }
+            return ss.str();
+        }();
     }
     for (auto empire_id_pair : empire_system_supply_ranges) {
         for (auto sys_id_pair : empire_id_pair.second) {
@@ -522,14 +524,16 @@ void SupplyManager::Update() {
                 TraceLogger(supply) << " ... only empire here: " << *empire_ranges_here.begin()->second.begin() << " with range: " << empire_ranges_here.begin()->first;
 
             } else {
-                std::stringstream erss;
-                for (const auto& er : empire_ranges_here) {
-                    erss << er.first << " : (";
-                    for (const auto& eid : er.second)
-                        erss << eid << " ";
-                    erss << ")   ";
-                }
-                TraceLogger(supply) << " ... ranges of empires: " << erss.str();
+                TraceLogger(supply) << " ... ranges of empires: " << [&]() {
+                    std::stringstream erss;
+                    for (const auto& er : empire_ranges_here) {
+                        erss << er.first << " : (";
+                        for (const auto& eid : er.second)
+                            erss << eid << " ";
+                        erss << ")   ";
+                    }
+                    return erss.str();
+                }();
             }
 
             if (empire_ranges_here.empty())
@@ -652,9 +656,8 @@ void SupplyManager::Update() {
                 // how far is this system from a source of supply for this empire?
                 float distance_to_supply_source = supply_range.second.second;
 
-                std::stringstream laness;
                 for (int lane_end_sys_id : empire_visible_starlanes[empire_id][system_id])
-                TraceLogger(supply) << "Propagating from system " << system_id << " range: " << range << " and distance: " << distance_to_supply_source;
+                    TraceLogger(supply) << "Propagating from system " << system_id << " range: " << range << " and distance: " << distance_to_supply_source;
 
                 // attempt to propagate to all adjacent systems...
                 for (int lane_end_sys_id : empire_visible_starlanes[empire_id][system_id]) {
@@ -701,20 +704,20 @@ void SupplyManager::Update() {
                     if (prev_range_it == prev_sys_ranges.end()) {
                         empire_propagating_supply_ranges_next[empire_id][lane_end_sys_id] =
                             {range_after_one_more_jump, distance_to_supply_source_after_next_lane};
-                        //DebugLogger() << " ... default case: no previous entry.";
+                        //TraceLogger(supply) << " ... default case: no previous entry.";
 
                     } else {
-                        //DebugLogger() << " ... previous entry values: " << prev_range_it->second.first << " and " << prev_range_it->second.second;
+                        //TraceLogger(supply) << " ... previous entry values: " << prev_range_it->second.first << " and " << prev_range_it->second.second;
 
                         if (range_after_one_more_jump > prev_range_it->second.first) {
                             empire_propagating_supply_ranges_next[empire_id][lane_end_sys_id].first =
                                 range_after_one_more_jump;
-                            //DebugLogger() << " ... range increased!";
+                            //TraceLogger(supply) << " ... range increased!";
                         }
                         if (distance_to_supply_source_after_next_lane < prev_range_it->second.second) {
                             empire_propagating_supply_ranges_next[empire_id][lane_end_sys_id].second =
                                 distance_to_supply_source_after_next_lane;
-                            //DebugLogger() << " ... distance decreased!";
+                            //TraceLogger(supply) << " ... distance decreased!";
                         }
                     }
                     // always record a traversal, so connectivity is calculated properly
@@ -724,12 +727,12 @@ void SupplyManager::Update() {
                     // erase any previous obstructed traversal that just succeeded
                     if (m_supply_starlane_obstructed_traversals[empire_id].count({system_id, lane_end_sys_id}))
                     {
-                        //DebugLogger() << "Removed obstructed traversal from " << system_id << " to " << lane_end_sys_id;
+                        //TraceLogger(supply) << "Removed obstructed traversal from " << system_id << " to " << lane_end_sys_id;
                         m_supply_starlane_obstructed_traversals[empire_id].erase({system_id, lane_end_sys_id});
                     }
                     if (m_supply_starlane_obstructed_traversals[empire_id].count({lane_end_sys_id, system_id}))
                     {
-                        //DebugLogger() << "Removed obstructed traversal from " << lane_end_sys_id << " to " << system_id;
+                        //TraceLogger(supply) << "Removed obstructed traversal from " << lane_end_sys_id << " to " << system_id;
                         m_supply_starlane_obstructed_traversals[empire_id].erase({lane_end_sys_id, system_id});
                     }
                 }
@@ -743,12 +746,13 @@ void SupplyManager::Update() {
     //// DEBUG
     TraceLogger(supply) << "SupplyManager::Update: after removing conflicts, empires can provide supply to the following system ids (and ranges in jumps):";
     for (auto& empire_supply : empire_propagating_supply_ranges) {
-        int empire_id = empire_supply.first;
-        std::stringstream ss;
-        for (auto& supply_range : empire_supply.second) {
-            ss << supply_range.first << " (" << supply_range.second.first << "),  ";
-        }
-        TraceLogger(supply) << " ... empire " << empire_id << ":  " << ss.str();
+        TraceLogger(supply) << " ... empire " << empire_supply.first << ":  " << [&]() {
+            std::stringstream ss;
+            for (auto& supply_range : empire_supply.second)
+                ss << supply_range.first << " (" << supply_range.second.first << "),  ";
+            return ss.str();
+        }();
+
     }
     //// END DEBUG
 
@@ -862,13 +866,12 @@ void SupplyManager::Update() {
 
         TraceLogger(supply) << "Empire " << empire_id << " supply groups map before merging:";
         for (auto const& q : supply_groups_map) {
-            int source_id = q.first;
-
-            std::stringstream other_ids;
-            for (auto const& r : q.second)
-            { other_ids << r << ", "; }
-
-            TraceLogger(supply) << " ... src: " << source_id << " to: " << other_ids.str();
+            TraceLogger(supply) << " ... src: " << q.first << " to: " << [&]() {
+                std::stringstream other_ids;
+                for (auto const& r : q.second)
+                { other_ids << r << ", "; }
+                return other_ids.str();
+            }();
         }
 
 
@@ -925,10 +928,12 @@ void SupplyManager::Update() {
     for (const auto& empire_pair : m_resource_supply_groups) {
         DebugLogger(supply) << "Connected supply groups for empire " << empire_pair.first << ":";
         for (const auto& group_set : empire_pair.second) {
-            std::stringstream ss;
-            for (const auto& sys : group_set)
-                ss << sys << ", ";
-            DebugLogger(supply) << " ... " << ss.str();
+            DebugLogger(supply) << " ... " << [&]() {
+                std::stringstream ss;
+                for (const auto& sys : group_set)
+                    ss << sys << ", ";
+                return ss.str();
+            }();
         }
     }
 }
