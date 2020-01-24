@@ -244,12 +244,14 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     RegisterLoggerWithOptionsDB("server", true);
     RegisterLoggerWithOptionsDB("combat_log");
     RegisterLoggerWithOptionsDB("combat");
+    RegisterLoggerWithOptionsDB("supply");
     RegisterLoggerWithOptionsDB("effects");
     RegisterLoggerWithOptionsDB("conditions");
     RegisterLoggerWithOptionsDB("FSM");
     RegisterLoggerWithOptionsDB("network");
     RegisterLoggerWithOptionsDB("python");
     RegisterLoggerWithOptionsDB("timer");
+    RegisterLoggerWithOptionsDB("IDallocator");
 
     InfoLogger() << FreeOrionVersionString();
 

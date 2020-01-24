@@ -22,6 +22,8 @@
 namespace {
     const float EPSILON = 0.01f;
     const std::string EMPTY_STRING;
+
+    DeclareThreadSafeLogger(supply);
 }
 
 
@@ -724,7 +726,7 @@ void Empire::UpdateSupplyUnobstructedSystems(bool precombat /*=false*/) {
 }
 
 void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems, bool precombat /*=false*/) {
-    DebugLogger() << "UpdateSupplyUnobstructedSystems for empire " << m_id;
+    TraceLogger(supply) << "UpdateSupplyUnobstructedSystems (allowing supply propagation) for empire " << m_id;
     m_supply_unobstructed_systems.clear();
 
     // get systems with historically at least partial visibility
@@ -768,7 +770,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
             continue; //known to be destroyed so can't affect supply, important just in case being updated on client side
         }
 
-        //DebugLogger() << "Fleet " << fleet->ID() << " is in system " << system_id << " with next system " << fleet->NextSystemID() << " and is owned by " << fleet->Owner() << " armed: " << fleet->HasArmedShips() << " and agressive: " << fleet->Aggressive();
+        TraceLogger(supply) << "Fleet " << fleet->ID() << " is in system " << system_id << " with next system " << fleet->NextSystemID() << " and is owned by " << fleet->Owner() << " armed: " << fleet->HasArmedShips() << " and agressive: " << fleet->Aggressive();
         if (fleet->HasArmedShips() && fleet->Aggressive()) {
             if (fleet->OwnedBy(m_id)) {
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
@@ -802,7 +804,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
     std::stringstream ss;
     for (int obj_id : systems_containing_obstructing_objects)
     { ss << obj_id << ", "; }
-    DebugLogger() << "Systems with obstructing objects for empire " << m_name << " (" << m_id << ") : " << ss.str();
+    TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems systems with obstructing objects for empire " << m_id << " : " << ss.str();
 
     std::stringstream ss2;
     for (auto sys_lanes : m_preserved_system_exit_lanes) {
@@ -821,11 +823,17 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
 
     // check each potential supplyable system for whether it can propagate supply.
     for (int sys_id : known_systems) {
-        //DebugLogger() << "deciding unobstructedness for system " << sys_id;
+        auto sys = GetSystem(sys_id);
+        if (!sys) {
+            ErrorLogger() << "Empire::UpdateSupplyUnobstructedSystems tried to look up known by non existant system with id " << sys_id;
+            continue;
+        }
 
         // has empire ever seen this system with partial or better visibility?
-        if (!systems_with_at_least_partial_visibility_at_some_point.count(sys_id))
+        if (!systems_with_at_least_partial_visibility_at_some_point.count(sys_id)) {
+            TraceLogger(supply) << "System " << sys->Name() << " (" << sys_id << ") has never been seen";
             continue;
+        }
 
         // if system is explored, then whether it can propagate supply depends
         // on what friendly / enemy ships and planets are in the system
@@ -833,19 +841,27 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
         if (unrestricted_friendly_systems.count(sys_id)) {
             // in unrestricted friendly systems, supply can propagate
             m_supply_unobstructed_systems.insert(sys_id);
+            TraceLogger(supply) << "System " << sys->Name() << " (" << sys_id << ") +++ is unrestricted and friendly";
 
         } else if (systems_containing_friendly_fleets.count(sys_id)) {
             // if there are unrestricted friendly ships, and no unrestricted enemy fleets, supply can propagate
-            if (!unrestricted_obstruction_systems.count(sys_id))
+            if (!unrestricted_obstruction_systems.count(sys_id)) {
                 m_supply_unobstructed_systems.insert(sys_id);
+                TraceLogger(supply) << "System " << sys->Name() << " (" << sys_id << ") +++ has friendly fleets and no obstructions";
+            } else {
+                TraceLogger(supply) << "System " << sys->Name() << " (" << sys_id << ") --- is has friendly fleets but has obstructions";
+            }
 
         } else if (!systems_containing_obstructing_objects.count(sys_id)) {
             // if there are no friendly fleets or obstructing enemy fleets, supply can propagate
             m_supply_unobstructed_systems.insert(sys_id);
+            TraceLogger(supply) << "System " << sys->Name() << " (" << sys_id << ") +++ has no obstructing objects";
 
         } else if (!systems_with_lane_preserving_fleets.count(sys_id)) {
             // if there are obstructing enemy fleets but no friendly fleets that could maintain
             // lane access, supply cannot propagate and this empire's available system exit
+            TraceLogger(supply) << "System " << sys->Name() << " (" << sys_id << ") --- has no lane preserving fleets";
+
             // lanes for this system are cleared
             if (!m_preserved_system_exit_lanes[sys_id].empty()) {
                 std::stringstream ssca;
@@ -853,12 +869,12 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
                      << sys_id << "); available lanes were:";
                 for (int system_id : m_preserved_system_exit_lanes[sys_id])
                     ssca << system_id << ", ";
-                DebugLogger() << ssca.str();
+                TraceLogger(supply) << ssca.str();
             }
             m_preserved_system_exit_lanes[sys_id].clear();
 
         } else {
-            DebugLogger() << "Empire::UpdateSupplyUnobstructedSystems : Restricted system " << sys_id << " with no friendly fleets, no obustrcting enemy fleets, and no lane-preserving fleets";
+            TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems : Restricted system " << sys_id << " with no friendly fleets, no obustrcting enemy fleets, and no lane-preserving fleets";
         }
     }
 }
@@ -902,16 +918,20 @@ const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
     std::map<int, std::set<int>> retval;
 
     const Universe& universe = GetUniverse();
+    TraceLogger(supply) << "Empire::KnownStarlanes for empire " << m_id;
 
     const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
     for (auto sys_it = Objects().const_begin<System>();
          sys_it != Objects().const_end<System>(); ++sys_it)
     {
         int start_id = sys_it->ID();
+        TraceLogger(supply) << "system " << start_id << " has up to " << sys_it->StarlanesWormholes().size() << " lanes / wormholes";
 
         // exclude lanes starting at systems known to be destroyed
-        if (known_destroyed_objects.count(start_id))
+        if (known_destroyed_objects.count(start_id)) {
+            TraceLogger(supply) << "system " << start_id << " known destroyed, so lanes from it are unknown";
             continue;
+        }
 
         for (const auto& lane : sys_it->StarlanesWormholes()) {
             int end_id = lane.first;
@@ -921,8 +941,11 @@ const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
             retval[start_id].insert(end_id);
             retval[end_id].insert(start_id);
         }
+
+        TraceLogger(supply) << "system " << start_id << " had " << retval[start_id].size() << " known lanes";
     }
 
+    TraceLogger(supply) << "Total of " << retval.size() << " systems had known lanes";
     return retval;
 }
 
