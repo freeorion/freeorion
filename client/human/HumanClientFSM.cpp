@@ -69,7 +69,7 @@
 
 
 class CombatLogManager;
-CombatLogManager&   GetCombatLogManager();
+CombatLogManager& GetCombatLogManager();
 
 namespace {
     DeclareThreadSafeLogger(FSM);
