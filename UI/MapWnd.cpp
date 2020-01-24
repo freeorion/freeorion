@@ -2232,7 +2232,6 @@ void MapWnd::RenderFleetMovementLines() {
     // texture for dots
     auto move_line_dot_texture = MoveLineDotTexture();
     float dot_size = Value(move_line_dot_texture->DefaultWidth());
-    //std::cout << "dot size: " << dot_size << std::endl;
 
     // texture coords
     if (dot_star_texture_coords.empty()) {
@@ -2372,7 +2371,6 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, float
     dot_vertices_buffer.activate();
     dot_star_texture_coords.activate();
     glDrawArrays(GL_QUADS, 0, dot_vertices_buffer.size());
-    //std::cout << "dot verts buffer size: " << dot_vertices_buffer.size() << std::endl;
 }
 
 void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line,
@@ -3609,7 +3607,6 @@ namespace {
                 auto dest_system = GetSystem(render_lane.first);
                 if (!dest_system)
                     continue;
-                //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
 
 
                 // check that this lane isn't already in map / being rendered.
@@ -3619,7 +3616,6 @@ namespace {
                 already_rendered_full_lanes.insert({dest_system->ID(), start_system->ID()});
 
 
-                //std::cout << "adding full length lane" << std::endl;
                 // add vertices for this full-length starlane
                 LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
                 starlane_vertices.store(lane_endpoints.X1, lane_endpoints.Y1);
@@ -3633,15 +3629,12 @@ namespace {
                     Empire* empire = entry.second;
                     const auto& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(entry.first);
 
-                    //std::cout << "resource supply starlane traversals for empire " << empire->Name() << ": " << resource_supply_lanes.size() << std::endl;
-
                     std::pair<int, int> lane_forward{start_system->ID(), dest_system->ID()};
                     std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
 
                     // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
                     if (resource_supply_lanes.count(lane_forward) || resource_supply_lanes.count(lane_backward)) {
                         lane_colour = empire->Color();
-                        //std::cout << "selected colour of empire " << empire->Name() << " for this full lane" << std::endl;
                         break;
                     }
                 }
@@ -3649,8 +3642,6 @@ namespace {
                 // vertex colours for starlane
                 starlane_colors.store(lane_colour);
                 starlane_colors.store(lane_colour);
-
-                //DebugLogger() << "adding full lane from " << start_system->Name() << " to " << dest_system->Name();
             }
         }
     }
@@ -5606,17 +5597,6 @@ std::vector<int> MapWnd::FleetIDsOfFleetButtonsOverlapping(int fleet_id) const {
                    || test_fb.InWindow(GG::Pt(fleet_btn->Left(), fleet_btn->Bottom()))
                    || test_fb.InWindow(fleet_btn->LowerRight());
 
-        //std::cout << "FleetButton with fleets: ";
-        //for (const auto entry : test_fb.Fleets())
-        //    std::cout << entry << " ";
-        //if (retval)
-        //    std::cout << "  overlaps FleetButton with fleets: ";
-        //else
-        //    std::cout << "  does not overlap FleetButton with fleets: ";
-        //for (const auto entry : fleet_btn->Fleets())
-        //    std::cout << entry << " ";
-        //std::cout << std::endl;
-
         return retval;
     };
 
@@ -5705,10 +5685,6 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
     if (const auto& wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleetIDs(fleet_ids_to_include_in_fleet_wnd)) {
         // check which fleet(s) is/are selected in the button's FleetWnd
         auto selected_fleet_ids = wnd_for_button->SelectedFleetIDs();
-        //std::cout << "Initially selected fleets: " << selected_fleet_ids.size() << " : ";
-        //for (auto id : selected_fleet_ids)
-        //    std::cout << id << " ";
-        //std::cout << std::endl;
 
         // record selected fleet if just one fleet is selected.  otherwise, keep default
         // INVALID_OBJECT_ID to indicate that no single fleet is selected
@@ -5917,8 +5893,6 @@ void MapWnd::SelectedShipsChanged() {
 }
 
 void MapWnd::RefreshFleetButtonSelectionIndicators() {
-    //std::cout << "MapWnd::RefreshFleetButtonSelectionIndicators()" << std::endl;
-
     // clear old selection indicators
     for (auto& stationary_fleet_button : m_stationary_fleet_buttons) {
         for (auto& button : stationary_fleet_button.second)

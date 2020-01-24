@@ -735,7 +735,6 @@ namespace {
     void ShipDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         const GG::Pt old_size = Size();
         GG::Control::SizeMove(ul, lr);
-        //std::cout << "ShipDataPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
         if (old_size != Size())
             RequirePreRender();
     }
@@ -1018,7 +1017,6 @@ namespace {
 
         void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
-
             m_panel = GG::Wnd::Create<ShipDataPanel>(Width(), Height(), m_ship_id);
             push_back(m_panel);
         }
@@ -1026,7 +1024,6 @@ namespace {
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
-            //std::cout << "ShipRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
             if (!empty() && old_size != Size() && m_panel)
                 m_panel->Resize(Size());
         }
@@ -1189,11 +1186,9 @@ void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& 
     if (!m_is_new_fleet_drop_target) {
         // normally the containing row (or the listbox that contains that) will
         // handle drag-drop related things
-        //std::cout << "FleetDataPanel::DragDropHere forwarding to parent..." << std::endl << std::flush;
         ForwardEventToParent();
     }
 
-    //std::cout << "FleetDataPanel::DragDropHere locally checking drops..." << std::endl << std::flush;
     DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
 
     if (Disabled()) {
@@ -1230,22 +1225,17 @@ void FleetDataPanel::CheckDrops(const GG::Pt& pt, std::map<const Wnd*, bool>& dr
 }
 
 void FleetDataPanel::DragDropLeave()
-{
-    //std::cout << "FleetDataPanel::DragDropLeave" << std::endl << std::flush;
-    Select(false);
-}
+{ Select(false); }
 
 void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                                      const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
 {
     if (!m_is_new_fleet_drop_target) {
-        //std::cout << "FleetDataPanel::DropsAcceptable default rejecting all" << std::endl << std::flush;
         // reject all
         Wnd::DropsAcceptable(first, last, pt, mod_keys);
         return;
     }
 
-    //std::cout << "FleetDataPanel::DropsAcceptable locally checking drops" << std::endl << std::flush;
     // only used when FleetDataPanel sets independently in the FleetWnd, not
     // in a FleetListBox
 
@@ -1334,7 +1324,6 @@ void FleetDataPanel::SetSystemID(int id)
 void FleetDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
     GG::Control::SizeMove(ul, lr);
-    //std::cout << "FleetDataPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
     if (old_size != Size())
         DoLayout();
 }
@@ -1819,7 +1808,6 @@ namespace {
 
         void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
-
             m_panel = GG::Wnd::Create<FleetDataPanel>(Width(), Height(), m_fleet_id);
             push_back(m_panel);
         }
@@ -1827,7 +1815,6 @@ namespace {
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
-            //std::cout << "FleetRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
             if (!empty() && old_size != Size() && m_panel)
                 m_panel->Resize(Size());
         }
@@ -1967,7 +1954,6 @@ public:
     void DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                       GG::Flags<GG::ModKey> mod_keys) override
     {
-        //std::cout << "FleetsListBox::DragDropHere" << std::endl << std::flush;
         CUIListBox::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
 
         // default to removing highlighting of any row that has it.
@@ -2053,19 +2039,15 @@ public:
     }
 
     void DragDropLeave() override {
-        //std::cout << "FleetsListBox::DragDropLeave" << std::endl << std::flush;
         CUIListBox::DragDropLeave();
         ClearHighlighting();
-        //std::cout << "FleetsListBox::DragDropLeave done" << std::endl << std::flush;
     }
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         CUIListBox::SizeMove(ul, lr);
-        //std::cout << "FleetListBox::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
-            //std::cout << "FleetListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
             for (auto& row : *this)
                 row->Resize(row_size);
         }
@@ -2358,10 +2340,8 @@ public:
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         CUIListBox::SizeMove(ul, lr);
-        //std::cout << "ShipsListBox::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
-            //std::cout << "ShipsListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
             for (auto& row : *this)
                 row->Resize(row_size);
         }
@@ -2507,7 +2487,6 @@ int FleetDetailPanel::FleetID() const
 { return m_fleet_id; }
 
 std::set<int> FleetDetailPanel::SelectedShipIDs() const {
-    //std::cout << "FleetDetailPanel::SelectedShipIDs()" << std::endl;
     std::set<int> retval;
 
     for (const auto& selection : m_ships_lb->Selections()) {
@@ -3114,12 +3093,6 @@ void FleetWnd::Refresh() {
     auto sel_flt_at_loc = selected_fleet_locations_ids.equal_range(location);
     for (auto it = sel_flt_at_loc.first; it != sel_flt_at_loc.second; ++it)
     { still_present_initially_selected_fleets.insert(it->second); }
-
-
-    //std::cout << "Still present initially selected fleets: ";
-    //for (auto entry : still_present_initially_selected_fleets)
-    //    std::cout << entry << " ";
-    //std::cout << std::endl;
 
 
     // Reselect previously-selected fleets, or default select first fleet in FleetWnd

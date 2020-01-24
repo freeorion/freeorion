@@ -91,8 +91,6 @@ void BuildingsPanel::ExpandCollapse(bool expanded) {
 }
 
 void BuildingsPanel::Update() {
-    //std::cout << "BuildingsPanel::Update" << std::endl;
-
     // remove old indicators
     for (auto& indicator : m_building_indicators)
         DetachChild(indicator.get());
@@ -142,7 +140,6 @@ void BuildingsPanel::Update() {
     int queue_index = -1;
     for (const auto& elem : empire->GetProductionQueue()) {
         ++queue_index;
-        //std::cout << "queue index: " << queue_index << " elem: " << elem.Dump() << std::endl;
         if (elem.item.build_type != BT_BUILDING) continue;  // don't show in-progress ships in BuildingsPanel...
         if (elem.location != m_planet_id) continue;         // don't show buildings located elsewhere
 

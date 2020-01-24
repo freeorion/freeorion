@@ -1753,13 +1753,9 @@ void SidePanel::PlanetPanel::Refresh() {
         // underestimate, since one needs to drop more droops than there are defenders
         // to capture a planet
         float defending_troops = planet->InitialMeterValue(METER_TROOPS);
-        //std::cout << "def troops: " << defending_troops << std::endl;
         float log10_df = floor(std::log10(defending_troops));
-        //std::cout << "def troops log10: " << log10_df << std::endl;
         float rounding_adjustment = std::pow(10.0f, log10_df - 2.0f);
-        //std::cout << "adjustment: " << rounding_adjustment << std::endl;
         defending_troops += rounding_adjustment;
-        //std::cout << "adjusted def troops: " << defending_troops<< std::endl;
 
         std::string defending_troops_text = DoubleToString(defending_troops, 3, false);
         std::string invasion_text = boost::io::str(FlexibleFormat(UserString("PL_INVADE"))
@@ -2552,8 +2548,6 @@ void SidePanel::PlanetPanelContainer::Clear() {
 }
 
 void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_ids, StarType star_type) {
-    //std::cout << "SidePanel::PlanetPanelContainer::SetPlanets( size: " << planet_ids.size() << " )" << std::endl;
-
     int initial_selected_planet_panel = m_selected_planet_id;
 
     // remove old panels

@@ -711,10 +711,8 @@ public:
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         CUIListBox::SizeMove(ul, lr);
-        //std::cout << "PlayerListBox::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
-            //std::cout << "PlayerListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
             for (auto& row : *this)
                 row->Resize(row_size);
         }

@@ -503,9 +503,6 @@ void TextLinker::MarkLinks() {
         return;
     }
 
-    //std::cout << "TextLinker::MarkLinks:" << std::endl;
-    //std::cout << "raw text:" << raw_text << std::endl;
-
     int copy_start_index = 0;
     auto raw_text_start_it = raw_text.begin();
 
@@ -542,7 +539,6 @@ void TextLinker::MarkLinks() {
 
     // set underlying UI control text
     SetLinkedText(marked_text);
-    //std::cout << "marktext:" << marked_text << std::endl << std::endl;
 }
 
 const LinkDecorator TextLinker::DEFAULT_DECORATOR;

@@ -66,7 +66,6 @@ namespace {
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             const GG::Pt old_size = Size();
             GG::Control::SizeMove(ul, lr);
-            //std::cout << "ProductionItemPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
             if (old_size != Size())
                 DoLayout();
         }
@@ -385,8 +384,6 @@ namespace {
 
             SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, location_id, empire_id));
-
-            //std::cout << "ProductionItemRow(building) height: " << Value(Height()) << std::endl;
         };
 
         void CompleteConstruction() override {
@@ -400,7 +397,6 @@ namespace {
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
-            //std::cout << "ProductionItemRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
             if (!empty() && old_size != Size() && m_panel)
                 m_panel->Resize(Size());
         }
@@ -431,10 +427,8 @@ namespace {
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             const GG::Pt old_size = Size();
             CUIListBox::SizeMove(ul, lr);
-            //std::cout << "BuildableItemsListBox::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
             if (old_size != Size()) {
                 const GG::Pt row_size = ListRowSize();
-                //std::cout << "BuildableItemsListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
                 for (auto& row : *this)
                     row->Resize(row_size);
             }
@@ -626,15 +620,12 @@ void BuildDesignatorWnd::BuildSelector::DoLayout() {
 
 void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
-
     CUIWnd::SizeMove(ul, lr);
-
     if (old_size != GG::Wnd::Size())
         DoLayout();
 }
 
 void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool refresh_list) {
-    //std::cout << "BuildDesignatorWnd::BuildSelector::SetBuildLocation(" << location_id << ")" << std::endl;
     if (m_production_location != location_id) {
         m_production_location = location_id;
         if (refresh_list)
@@ -801,7 +792,6 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
 }
 
 void BuildDesignatorWnd::BuildSelector::PopulateList() {
-    //std::cout << "BuildDesignatorWnd::BuildSelector::PopulateList start" << std::endl;
     Empire* empire = GetEmpire(m_empire_id);
     if (!empire)
         return;
@@ -1142,8 +1132,6 @@ void BuildDesignatorWnd::SetBuild(int queue_idx) {
 }
 
 void BuildDesignatorWnd::SelectSystem(int system_id) {
-    //std::cout << "BuildDesignatorWnd::SelectSystem(" << system_id << ")" << std::endl;
-
     if (system_id == SidePanel::SystemID()) {
         // don't need to do anything.  already showing the requested system.
         return;
@@ -1157,7 +1145,6 @@ void BuildDesignatorWnd::SelectSystem(int system_id) {
 }
 
 void BuildDesignatorWnd::SelectPlanet(int planet_id) {
-    //std::cout << "BuildDesignatorWnd::SelectPlanet(" << planet_id << ")" << std::endl;
     SidePanel::SelectPlanet(planet_id);
     if (planet_id != INVALID_OBJECT_ID)
         m_system_default_planets[SidePanel::SystemID()] = planet_id;
@@ -1170,7 +1157,6 @@ void BuildDesignatorWnd::Refresh() {
 }
 
 void BuildDesignatorWnd::Update() {
-    //std::cout << "BuildDesignatorWnd::Update()" << std::endl;
     SidePanel::Update();
     m_build_selector->Refresh();
     m_enc_detail_panel->Refresh();
@@ -1197,7 +1183,6 @@ void BuildDesignatorWnd::InitializeWindows() {
 }
 
 void BuildDesignatorWnd::Reset() {
-    //std::cout << "BuildDesignatorWnd::Reset()" << std::endl;
     SelectSystem(INVALID_OBJECT_ID);
     ShowAllTypes(false);            // show all types without populating the list
     HideAvailability(false, false); // hide unavailable items without populating the list
@@ -1207,7 +1192,6 @@ void BuildDesignatorWnd::Reset() {
 }
 
 void BuildDesignatorWnd::Clear() {
-    //std::cout << "BuildDesignatorWnd::Clear()" << std::endl;
     SidePanel::SetSystem(INVALID_OBJECT_ID);
     Reset();
     m_system_default_planets.clear();
