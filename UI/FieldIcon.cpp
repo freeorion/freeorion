@@ -17,12 +17,19 @@
 ////////////////////////////////////////////////
 FieldIcon::FieldIcon(int field_id) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1),
-    m_field_id(field_id),
-    m_selection_indicator(nullptr),
-    m_mouseover_indicator(nullptr),
-    m_selected(false),
-    m_name(nullptr)
-{
+    m_field_id(field_id)
+{}
+
+void FieldIcon::CompleteConstruction() {
+    GG::Control::CompleteConstruction();
+
+    // mouseover indicator graphic
+    auto mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "field_mouseover.png");
+    GG::X texture_width = mouseover_texture->DefaultWidth();
+    GG::Y texture_height = mouseover_texture->DefaultHeight();
+    m_mouseover_indicator = GG::Wnd::Create<GG::StaticGraphic>(mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_mouseover_indicator->Resize(GG::Pt(texture_width, texture_height));
+
     Refresh();
 }
 
@@ -49,8 +56,7 @@ void FieldIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
     GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
 
-    const int SEL_IND_WIDTH_HEIGHT = ClientUI::SystemSelectionIndicatorSize() * Value(Width()) / ClientUI::SystemIconSize();
-    const GG::Pt SEL_IND_SIZE = GG::Pt(GG::X(SEL_IND_WIDTH_HEIGHT), GG::Y(SEL_IND_WIDTH_HEIGHT));
+    const GG::Pt SEL_IND_SIZE = Size();
 
     // selection indicator
     if (m_selected && m_selection_indicator) {
@@ -75,10 +81,8 @@ void FieldIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void FieldIcon::Refresh() {
-    std::shared_ptr<const Field> field = GetField(m_field_id);
-    if (!field)
-        return;
-    m_texture = ClientUI::FieldTexture(field->FieldTypeName());
+    if (auto field = GetField(m_field_id))
+        m_texture = ClientUI::FieldTexture(field->FieldTypeName());
 }
 
 void FieldIcon::Render()
@@ -94,7 +98,7 @@ void FieldIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
         RightClickedSignal(m_field_id);
 
-    std::shared_ptr<const Field> field = GetField(m_field_id);
+    auto field = GetField(m_field_id);
     if (!field)
         return;
     const std::string& field_type_name = field->FieldTypeName();
@@ -121,22 +125,21 @@ void FieldIcon::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 }
 
 void FieldIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    //// indicate mouseover
-    //if (m_mouseover_indicator) {
-    //    AttachChild(m_mouseover_indicator);
-    //    MoveChildUp(m_mouseover_indicator);
-    //} else if (m_mouseover_indicator) {
-    //    DetachChild(m_mouseover_indicator);
-    //}
-    //MouseEnteringSignal(m_field_id);
+    // indicate mouseover
+    if (m_mouseover_indicator) {
+        AttachChild(m_mouseover_indicator);
+        MoveChildUp(m_mouseover_indicator);
+    } else if (m_mouseover_indicator) {
+        DetachChild(m_mouseover_indicator);
+    }
+    MouseEnteringSignal(m_field_id);
 }
 
 void FieldIcon::MouseLeave() {
-    //// un-indicate mouseover
-    //if (m_mouseover_indicator)
-    //    DetachChild(m_mouseover_indicator);
-
-    //MouseLeavingSignal(m_field_id);
+    // un-indicate mouseover
+    if (m_mouseover_indicator)
+        DetachChild(m_mouseover_indicator);
+    MouseLeavingSignal(m_field_id);
 }
 
 void FieldIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -161,8 +164,6 @@ bool FieldIcon::InWindow(const GG::Pt& pt) const {
 
     const int distx = Value(delta.x);
     const int disty = Value(delta.y);
-
-    //std::cout << "Radius: " << RADIUS << "  dist: " << std::sqrt<double>(distx*distx + disty*disty) << std::endl;
 
     return distx*distx + disty*disty <= RADIUS2;
 }
