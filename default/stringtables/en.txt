@@ -14289,7 +14289,7 @@ SH_COLONY_BASE
 Colony Base Hull
 
 SH_COLONY_BASE_DESC
-'''A hull designed to create a colony on another planet in system. It cannot move between systems or move quickly in-system and consequently has only one internal slot.
+'''A hull designed to create a colony on another planet in system. It cannot move between systems or move quickly in-system and consequently has only three internal slots.
 
 [[metertype METER_STEALTH]] is medium and [[metertype METER_DETECTION]] is medium.'''
 
