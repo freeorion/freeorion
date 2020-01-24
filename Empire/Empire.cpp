@@ -892,9 +892,10 @@ const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
             continue;
 
         for (const auto& lane : sys_it->StarlanesWormholes()) {
-            if (lane.second || known_destroyed_objects.count(lane.second))
-                continue;   // is a wormhole, not a starlane, or is connected to a known destroyed system
             int end_id = lane.first;
+            bool is_wormhole = lane.second;
+            if (is_wormhole || known_destroyed_objects.count(end_id))
+                continue;   // is a wormhole, not a starlane, or is connected to a known destroyed system
             retval[start_id].insert(end_id);
             retval[end_id].insert(start_id);
         }
