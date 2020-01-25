@@ -6,7 +6,7 @@ import freeOrionAIInterface as fo
 from AIDependencies import INVALID_ID
 
 from abstract_test_bases import PropertyTester, DumpTester
-from utils import greater_or_equal, is_equal, is_false
+from utils import greater_or_equal, is_equal, is_not_equal, is_false
 
 
 TYPE = PropertyTester.TYPE
@@ -412,6 +412,7 @@ class ShipDesignTester(PropertyTester, DumpTester):
         },
         "hull": {
             TYPE: str,
+            ADDITIONAL_TESTS: [is_not_equal("")],
         },
         "hull_type": {
             TYPE: fo.hullType,
@@ -426,23 +427,24 @@ class ShipDesignTester(PropertyTester, DumpTester):
 
     def test_productionCost(self):
         for obj in self.objects_to_test:
-            retval = obj.productionCost(fo.empireID(), -1)
+            retval = obj.productionCost(fo.empireID(), INVALID_ID)
             self.assertIsInstance(retval, float)
             self.assertGreater(retval, 0.0)
 
     def test_productionTime(self):
         for obj in self.objects_to_test:
-            retval = obj.productionTime(fo.empireID(), -1)
+            retval = obj.productionTime(fo.empireID(), INVALID_ID)
             self.assertIsInstance(retval, int)
             self.assertGreater(retval, 0.0)
 
     def test_perTurnCost(self):
         for obj in self.objects_to_test:
-            retval = obj.perTurnCost(fo.empireID(), -1)
+            retval = obj.perTurnCost(fo.empireID(), INVALID_ID)
             self.assertIsInstance(retval, float)
             self.assertGreater(retval, 0.0)
-            self.assertAlmostEquals(obj.productionCost(fo.empireID(), -1) / obj.productionTime(fo.empireID(), -1),
-                                    retval, places=3)
+            self.assertAlmostEquals(retval,
+                obj.productionCost(fo.empireID(), INVALID_ID) / obj.productionTime(fo.empireID(), INVALID_ID),
+                places=3)
 
     def test_productionLocationForEmpire(self):
         for obj in self.objects_to_test:
@@ -502,6 +504,73 @@ class PartTypeTester(PropertyTester):
             design = ship.design
             self.objects_to_test.extend([fo.getPartType(part) for part in design.parts if part])
 
+
+class HullTypeTester(PropertyTester):
+    class_to_test = fo.hullType
+    properties = deepcopy(PropertyTester.properties)
+    properties.update({
+        "name": {
+            TYPE: str,
+        },
+        "numSlots": {
+            TYPE: int,
+        },
+        "structure": {
+            TYPE: float,
+        },
+        "stealth": {
+            TYPE: float,
+        },
+        "fuel": {
+            TYPE: float,
+        },
+        "speed": {
+            TYPE: float,
+        },
+        "slots": {
+            TYPE: fo.ShipSlotVec,
+        },
+        "costTimeLocationInvariant": {
+            TYPE: bool,
+        },
+    })
+
+    def test_numSlotsOfSlotType(self):
+        for obj in self.objects_to_test:
+            total_slots = 0
+            for slot_type in (fo.shipSlotType.internal, fo.shipSlotType.external, fo.shipSlotType.core):
+                retval = obj.numSlotsOfSlotType(slot_type)
+                self.assertIsInstance(retval, int)
+                self.assertGreaterEqual(retval, 0)
+                total_slots += retval
+            self.assertEquals(total_slots, obj.numSlots)
+
+            with self.assertRaises(Exception):
+                obj.numSlotsOfSlotType(2)
+            with self.assertRaises(Exception):
+                obj.numSlotsOfSlotType("")
+
+    def test_productionCost(self):
+        for obj in self.objects_to_test:
+            retval = obj.productionCost(fo.empireID(), INVALID_ID)
+            self.assertIsInstance(retval, float)
+            self.assertGreaterEqual(retval, 0.0)
+
+    def test_productionTime(self):
+        for obj in self.objects_to_test:
+            retval = obj.productionTime(fo.empireID(), INVALID_ID)
+            self.assertIsInstance(retval, int)
+            self.assertGreaterEqual(retval, 0)
+
+    def test_hasTag(self):
+        for obj in self.objects_to_test:
+            retval = obj.hasTag("")
+            self.assertIsInstance(retval, bool)
+            self.assertFalse(retval)
+
+    def setUp(self):
+        empire = fo.getEmpire()
+        self.objects_to_test = [fo.getHullType(hull) for hull in empire.availableShipHulls]
 
 # TODO: Fields - but need to query an actual object, so need dedicated universe setup
 
@@ -608,8 +677,8 @@ class SpeciesTester(PropertyTester, DumpTester):
 
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
-    test_classes = [UniverseObjectTester, UniverseTester, FleetTester, ShipTester, PartTypeTester,
-                    ShipDesignTester, FieldTypeTester, SpecialTester, SpeciesTester]
+    test_classes = [UniverseTester, UniverseObjectTester, FleetTester, ShipTester, PartTypeTester,
+                    HullTypeTester, ShipDesignTester, FieldTypeTester, SpecialTester, SpeciesTester]
     for test_class in test_classes:
         if issubclass(test_class, PropertyTester):
             # generate the tests from setup data
