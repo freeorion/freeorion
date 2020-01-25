@@ -378,9 +378,72 @@ class PartTypeTester(PropertyTester):
             self.objects_to_test.extend([fo.getPartType(part) for part in design.parts if part])
 
 
+class SpeciesTester(PropertyTester):
+    class_to_test = fo.species
+    properties = deepcopy(PropertyTester.properties)
+    properties.update({
+        "name": {
+            TYPE: str,
+        },
+        "description": {
+            TYPE: str,
+        },
+        "homeworlds": {
+            TYPE: fo.IntSet,
+        },
+        "foci": {
+            TYPE: fo.StringVec,
+        },
+        "preferredFocus": {
+            TYPE: str,
+        },
+        "canColonize": {
+            TYPE: bool,
+        },
+        "canProduceShips": {
+            TYPE: bool,
+        },
+        "tags": {
+            TYPE: fo.StringSet,
+        },
+    })
+
+    def test_getPlanetEnvironment(self):
+        species = fo.getSpecies("SP_HUMAN")
+        retval = species.getPlanetEnvironment(fo.planetType.terran)
+        self.assertIsInstance(retval, fo.planetEnvironment)
+        self.assertEquals(retval, fo.planetEnvironment.good)
+
+        retval = species.getPlanetEnvironment(fo.planetType.asteroids)
+        self.assertIsInstance(retval, fo.planetEnvironment)
+        self.assertEquals(retval, fo.planetEnvironment.uninhabitable)
+
+        retval = species.getPlanetEnvironment(fo.planetType.toxic)
+        self.assertIsInstance(retval, fo.planetEnvironment)
+        self.assertEquals(retval, fo.planetEnvironment.hostile)
+
+        with self.assertRaises(Exception):
+            species.getPlanetEnvironment()
+
+        with self.assertRaises(Exception):
+            species.getPlanetEnvironment(int())
+
+        with self.assertRaises(Exception):
+            species.getPlanetEnvironment(str())
+
+    def test_dump(self):
+        species = fo.getSpecies("SP_HUMAN")
+        retval = species.dump()
+        self.assertIsInstance(retval, str)
+
+    def setUp(self):
+        self.objects_to_test = [fo.getSpecies("SP_HUMAN")]
+
+
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
-    test_classes = [UniverseObjectTester, UniverseTester, FleetTester, ShipTester, PartTypeTester]
+    test_classes = [UniverseObjectTester, UniverseTester, FleetTester, ShipTester, PartTypeTester,
+                    SpeciesTester]
     for test_class in test_classes:
         if issubclass(test_class, PropertyTester):
             # generate the tests from setup data
