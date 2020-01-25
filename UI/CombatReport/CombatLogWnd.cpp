@@ -66,7 +66,6 @@ public:
 };
 
 namespace {
-
     // TODO: Function adapted from CombatEvents.cpp, will need to be extracted to a common library
     const std::string& LinkTag(UniverseObjectType obj_type) {
         static const std::string EMPTY_STRING("");
@@ -90,9 +89,8 @@ namespace {
     }
 
     // TODO: Function adapted from CombatEvents.cpp, will need to beextracted to a common library
-    std::string WrapWithTagAndId(const std::string& meat, const std::string& tag, int id) {
-        return boost::str(boost::format("<%1% %2%>%3%</%1%>") % tag % id % meat);
-    }
+    std::string WrapWithTagAndId(const std::string& meat, const std::string& tag, int id)
+    { return boost::str(boost::format("<%1% %2%>%3%</%1%>") % tag % id % meat); }
 
     /// Segregates \a objects into categories based on \a categories and ownership;
     /// only applies to objects owned by one of \a owners;
@@ -101,7 +99,8 @@ namespace {
         const std::set<int>& owners,
         const std::set<int>& objects,
         std::vector<std::function<bool(std::shared_ptr<UniverseObject>)>> categories,
-        std::function<bool(std::shared_ptr<UniverseObject>, std::shared_ptr<UniverseObject>)> order) {
+        std::function<bool(std::shared_ptr<UniverseObject>, std::shared_ptr<UniverseObject>)> order)
+    {
         decltype(SegregateForces(owners, objects, categories, order)) forces;
 
         for (int object_id : objects) {
@@ -132,13 +131,12 @@ namespace {
         return forces;
     }
 
-    bool IsShip(std::shared_ptr<UniverseObject> object) {
-        return object->ObjectType() == UniverseObjectType::OBJ_SHIP;
-    }
+    bool IsShip(std::shared_ptr<UniverseObject> object)
+    { return object->ObjectType() == UniverseObjectType::OBJ_SHIP; }
 
     bool HasPopulation(std::shared_ptr<UniverseObject> object) {
-              return object->GetMeter(METER_POPULATION) &&
-               object->InitialMeterValue(METER_POPULATION) > 0.0f;  
+        return object->GetMeter(METER_POPULATION) &&
+               object->InitialMeterValue(METER_POPULATION) > 0.0f;
     }
 
     std::string EmpireIdToText(int empire_id) {
@@ -159,12 +157,13 @@ namespace {
 
     class OrderByNameAndId {
     public:
-        explicit OrderByNameAndId(int viewing_empire_id_ = ALL_EMPIRES)
-            : viewing_empire_id(viewing_empire_id_) {
-            }
+        explicit OrderByNameAndId(int viewing_empire_id_ = ALL_EMPIRES) :
+            viewing_empire_id(viewing_empire_id_)
+        {}
 
         bool operator()(const std::shared_ptr<UniverseObject>& lhs,
-                        const std::shared_ptr<UniverseObject>& rhs) {
+                        const std::shared_ptr<UniverseObject>& rhs)
+        {
             const auto& lhs_public_name = lhs->PublicName(viewing_empire_id);
             const auto& rhs_public_name = rhs->PublicName(viewing_empire_id);
             if (lhs_public_name != rhs_public_name) {
@@ -189,7 +188,8 @@ namespace {
         int viewing_empire_id,
         const std::vector<std::vector<std::shared_ptr<UniverseObject>>>& forces,
         const std::string& delimiter = ", ",
-        const std::string& category_delimiter = "\n-\n") {
+        const std::string& category_delimiter = "\n-\n")
+    {
         std::stringstream ss;
 
         bool first_category = true;
@@ -235,7 +235,7 @@ namespace {
         void ToggleExpansion();
 
         CombatLogWnd::Impl&                     log;
-        int                                     viewing_empire_id;
+        int                                     viewing_empire_id = ALL_EMPIRES;
         ConstCombatEventPtr                     event;
         std::shared_ptr<LinkText>               title;
         std::vector<std::shared_ptr<GG::Wnd>>   details;
@@ -312,7 +312,7 @@ namespace {
         static size_t CountForces(std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces);
 
         CombatLogWnd::Impl& log;
-        const int viewing_empire_id;
+        const int viewing_empire_id = ALL_EMPIRES;
         std::shared_ptr<LinkText> title;
         std::shared_ptr<LinkText> details;
         std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces;
@@ -325,12 +325,13 @@ namespace {
                                                            CombatLogWnd::Impl& log_,
                                                            int viewing_empire_id_,
                                                            int empire_id,
-                                                           std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces_)
-        : AccordionPanel(w, GG::Y(ClientUI::Pts()), true),
-          log(log_),
-          viewing_empire_id(viewing_empire_id_),
-          title(log.DecorateLinkText(CountToText(empire_id, CountForces(forces_)))),
-          forces(std::move(forces_)) {}
+                                                           std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces_) :
+        AccordionPanel(w, GG::Y(ClientUI::Pts()), true),
+        log(log_),
+        viewing_empire_id(viewing_empire_id_),
+        title(log.DecorateLinkText(CountToText(empire_id, CountForces(forces_)))),
+        forces(std::move(forces_))
+    {}
 
     void EmpireForcesAccordionPanel::CompleteConstruction() {
         AccordionPanel::CompleteConstruction();
@@ -358,9 +359,8 @@ namespace {
         if (new_collapsed) {
             GetLayout()->Remove(details.get());
         } else {
-            if (!details) {
+            if (!details)
                 details = log.DecorateLinkText(ForcesToText(viewing_empire_id, forces));
-            }
 
             GetLayout()->Add(details, GetLayout()->Rows(), 0);
         }
@@ -381,11 +381,10 @@ CombatLogWnd::Impl::Impl(CombatLogWnd& _wnd) :
     m_wnd(_wnd),
     m_text_format_flags(GG::FORMAT_WORDBREAK| GG::FORMAT_LEFT | GG::FORMAT_TOP),
     m_font(ClientUI::GetFont())
-{ }
+{}
 
-GG::Pt CombatLogWnd::Impl::MinUsableSize() const {
-    return GG::Pt(m_font->SpaceWidth()*20, m_font->Lineskip()*10);
-}
+GG::Pt CombatLogWnd::Impl::MinUsableSize() const
+{ return GG::Pt(m_font->SpaceWidth()*20, m_font->Lineskip()*10); }
 
 void CombatLogWnd::Impl::HandleWndChanged()
 { m_wnd.RequirePreRender(); }
@@ -394,7 +393,8 @@ void CombatLogWnd::Impl::HandleWndChanged()
 namespace {
     /**Find a parent of type T*/
     template <typename T>
-    T const* FindParentOfType(GG::Wnd const* parent) {
+    T const* FindParentOfType(GG::Wnd const* parent)
+    {
         GG::Wnd const * iwnd = parent;
         T const* type_T = dynamic_cast<const T*>(iwnd);
         while (iwnd && !type_T) {
@@ -421,7 +421,6 @@ namespace {
        + CombatLogWnd is in a TabWnd as the second tab.
        + CombatLogWnd is in a ScrollPanel
     */
-
     class LazyScrollerLinkText : public LinkText {
     public:
         mutable boost::signals2::signal<void ()> ChangedSignal;

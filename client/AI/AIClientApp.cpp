@@ -46,7 +46,8 @@ namespace {
      */
     template <typename T>
     void AddTraitBypassOption(OptionsDB& db, std::string const & root, std::string ROOT,
-                                 T def, ValidatorBase const & validator) {
+                              T def, ValidatorBase const & validator)
+    {
         std::string option_root = "ai.trait." + root + ".";
         std::string user_string_root = "OPTIONS_DB_AI_CONFIG_TRAIT_"+ROOT;
         db.Add<bool>(option_root + "force.enabled", UserStringNop(user_string_root + "_FORCE"), false);
