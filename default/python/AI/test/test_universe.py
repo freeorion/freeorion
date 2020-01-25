@@ -378,6 +378,37 @@ class PartTypeTester(PropertyTester):
             self.objects_to_test.extend([fo.getPartType(part) for part in design.parts if part])
 
 
+class SpecialTester(PropertyTester):
+    class_to_test = fo.special
+    properties = deepcopy(PropertyTester.properties)
+    properties.update({
+        "name": {
+            TYPE: str,
+        },
+        "description": {
+            TYPE: str,
+        },
+        "spawnrate": {
+            TYPE: float,
+        },
+        "spawnlimit": {
+            TYPE: int,
+        },
+    })
+
+    def test_dump(self):
+        retval = fo.getSpecial("ANCIENT_RUINS_SPECIAL").dump()
+        self.assertIsInstance(retval, str)
+
+    def test_initialCapacity(self):
+        retval = fo.getSpecial("ANCIENT_RUINS_SPECIAL").initialCapacity(-1)
+        self.assertIsInstance(retval, float)
+        self.assertEquals(retval, 0.0)
+
+    def setUp(self):
+        self.objects_to_test = [fo.getSpecial("ANCIENT_RUINS_SPECIAL")]
+
+
 class SpeciesTester(PropertyTester):
     class_to_test = fo.species
     properties = deepcopy(PropertyTester.properties)
@@ -443,7 +474,7 @@ class SpeciesTester(PropertyTester):
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
     test_classes = [UniverseObjectTester, UniverseTester, FleetTester, ShipTester, PartTypeTester,
-                    SpeciesTester]
+                    SpecialTester, SpeciesTester]
     for test_class in test_classes:
         if issubclass(test_class, PropertyTester):
             # generate the tests from setup data
