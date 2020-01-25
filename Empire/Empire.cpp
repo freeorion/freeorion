@@ -801,24 +801,30 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
         }
     }
 
-    std::stringstream ss;
-    for (int obj_id : systems_containing_obstructing_objects)
-    { ss << obj_id << ", "; }
-    TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems systems with obstructing objects for empire " << m_id << " : " << ss.str();
+    TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems systems with obstructing objects for empire " << m_id << " : " << [&]() {
+        std::stringstream ss;
+        for (int obj_id : systems_containing_obstructing_objects)
+        { ss << obj_id << ", "; }
+        return ss.str();
+    }();
 
-    std::stringstream ss2;
-    for (auto sys_lanes : m_preserved_system_exit_lanes) {
-        ss2 << "[Sys: " << sys_lanes.first << " : (";
-        for (auto lane : sys_lanes.second)
-        { ss2 << lane << " "; }
-        ss2 << ")]  ";
-    }
-    DebugLogger() << "Preserved System-Lanes for empire " << m_name << " (" << m_id << ") : " << ss2.str();
+    DebugLogger() << "Preserved System-Lanes for empire " << m_name << " (" << m_id << ") : " << [&]() {
+        std::stringstream ss2;
+        for (auto sys_lanes : m_preserved_system_exit_lanes) {
+            ss2 << "[Sys: " << sys_lanes.first << " : (";
+            for (auto lane : sys_lanes.second)
+            { ss2 << lane << " "; }
+            ss2 << ")]  ";
+        }
+        return ss2.str();
+    }();
 
-    std::stringstream ss3;
-    for (auto sys_id : systems_with_lane_preserving_fleets)
-    { ss3 << sys_id << ", "; }
-    DebugLogger() << "Systems with lane-preserving fleets for empire " << m_name << " (" << m_id << ") : " << ss3.str();
+    DebugLogger() << "Systems with lane-preserving fleets for empire " << m_name << " (" << m_id << ") : " << [&]() {
+        std::stringstream ss3;
+        for (auto sys_id : systems_with_lane_preserving_fleets)
+        { ss3 << sys_id << ", "; }
+        return ss3.str();
+    }();
 
 
     // check each potential supplyable system for whether it can propagate supply.
