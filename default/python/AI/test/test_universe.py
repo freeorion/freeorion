@@ -367,6 +367,25 @@ class PartTypeTester(PropertyTester):
             self.objects_to_test.extend([fo.getPartType(part) for part in design.parts if part])
 
 
+# TODO: Fields - but need to query an actual object, so need dedicated universe setup
+
+
+class FieldTypeTester(PropertyTester, DumpTester):
+    class_to_test = fo.fieldType
+    properties = deepcopy(PropertyTester.properties)
+    properties.update({
+        "name": {
+            TYPE: str,
+        },
+        "description": {
+            TYPE: str,
+        },
+    })
+
+    def setUp(self):
+        self.objects_to_test = [fo.getFieldType("FLD_ION_STORM")]
+
+
 class SpecialTester(PropertyTester, DumpTester):
     class_to_test = fo.special
     properties = deepcopy(PropertyTester.properties)
@@ -454,7 +473,7 @@ class SpeciesTester(PropertyTester, DumpTester):
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
     test_classes = [UniverseObjectTester, UniverseTester, FleetTester, ShipTester, PartTypeTester,
-                    SpecialTester, SpeciesTester]
+                    FieldTypeTester, SpecialTester, SpeciesTester]
     for test_class in test_classes:
         if issubclass(test_class, PropertyTester):
             # generate the tests from setup data
