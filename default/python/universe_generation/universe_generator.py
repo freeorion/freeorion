@@ -123,7 +123,8 @@ def create_universe(psd_map):
     # set up empires for each player
     seed_rng(seed_pool.pop())
     for empire, psd, home_system in zip(psd_map.keys(), psd_map.values(), home_systems):
-        if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name):
+        give_empire_default_designs = (psd.client_type == fo.clientType.Human)
+        if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name, give_empire_default_designs):
             report_error("Python create_universe: couldn't set up empire for player %s" % psd.player_name)
 
     # assign names to all star systems and their planets
