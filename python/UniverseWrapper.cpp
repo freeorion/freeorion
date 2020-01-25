@@ -612,7 +612,6 @@ namespace FreeOrionPython {
             .add_property("structure",          &HullType::Structure)
             .add_property("stealth",            &HullType::Stealth)
             .add_property("fuel",               &HullType::Fuel)
-            .add_property("starlaneSpeed",      &HullType::Speed) // TODO: Remove this after transition period
             .add_property("speed",              &HullType::Speed)
             .def("numSlotsOfSlotType",          NumSlotsOfSlotType)
             .add_property("slots",              make_function(
