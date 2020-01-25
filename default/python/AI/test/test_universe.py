@@ -5,7 +5,7 @@ import freeOrionAIInterface as fo
 
 from AIDependencies import INVALID_ID
 
-from abstract_test_bases import PropertyTester
+from abstract_test_bases import PropertyTester, DumpTester
 from utils import greater_or_equal, is_equal, is_false
 
 
@@ -20,7 +20,7 @@ class UniverseTester(unittest.TestCase):
         self.assertIsNotNone(fo.getUniverse())
 
 
-class UniverseObjectTester(PropertyTester):
+class UniverseObjectTester(PropertyTester, DumpTester):
     # hack: we don't want unittest to run this abstract test base.
     # Therefore, we override this classes run function to do nothing.
     class_to_test = fo.universeObject
@@ -71,17 +71,6 @@ class UniverseObjectTester(PropertyTester):
         universe = fo.getUniverse()
         object_ids = list(universe.allObjectIDs)
         self.objects_to_test = map(universe.getObject, object_ids)
-
-    def test_dump(self):
-        for obj in self.objects_to_test:
-            retval = obj.dump()
-            self.assertIsInstance(retval, str)
-            self.assertTrue(retval)
-
-    def test_dump_takes_no_args(self):
-        for obj in self.objects_to_test:
-            for arg in (int(), float(), str(), None):
-                self.assertRaises(Exception, obj.dump, arg)
 
     def test_ownedBy_owner(self):
         for obj in self.objects_to_test:
@@ -195,7 +184,7 @@ class UniverseObjectTester(PropertyTester):
             self.assertFalse(retval)
 
 
-class FleetTester(UniverseObjectTester):
+class FleetTester(UniverseObjectTester, DumpTester):
     class_to_test = fo.fleet
     properties = deepcopy(UniverseObjectTester.properties)
     properties.update({
@@ -259,7 +248,7 @@ class FleetTester(UniverseObjectTester):
         assert all(isinstance(obj, self.class_to_test) for obj in self.objects_to_test)
 
 
-class ShipTester(UniverseObjectTester):
+class ShipTester(UniverseObjectTester, DumpTester):
     class_to_test = fo.ship
     properties = deepcopy(UniverseObjectTester.properties)
     properties.update({
@@ -378,7 +367,7 @@ class PartTypeTester(PropertyTester):
             self.objects_to_test.extend([fo.getPartType(part) for part in design.parts if part])
 
 
-class SpecialTester(PropertyTester):
+class SpecialTester(PropertyTester, DumpTester):
     class_to_test = fo.special
     properties = deepcopy(PropertyTester.properties)
     properties.update({
@@ -396,10 +385,6 @@ class SpecialTester(PropertyTester):
         },
     })
 
-    def test_dump(self):
-        retval = fo.getSpecial("ANCIENT_RUINS_SPECIAL").dump()
-        self.assertIsInstance(retval, str)
-
     def test_initialCapacity(self):
         retval = fo.getSpecial("ANCIENT_RUINS_SPECIAL").initialCapacity(-1)
         self.assertIsInstance(retval, float)
@@ -409,7 +394,7 @@ class SpecialTester(PropertyTester):
         self.objects_to_test = [fo.getSpecial("ANCIENT_RUINS_SPECIAL")]
 
 
-class SpeciesTester(PropertyTester):
+class SpeciesTester(PropertyTester, DumpTester):
     class_to_test = fo.species
     properties = deepcopy(PropertyTester.properties)
     properties.update({
@@ -461,11 +446,6 @@ class SpeciesTester(PropertyTester):
 
         with self.assertRaises(Exception):
             species.getPlanetEnvironment(str())
-
-    def test_dump(self):
-        species = fo.getSpecies("SP_HUMAN")
-        retval = species.dump()
-        self.assertIsInstance(retval, str)
 
     def setUp(self):
         self.objects_to_test = [fo.getSpecies("SP_HUMAN")]

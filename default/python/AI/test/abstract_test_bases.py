@@ -42,3 +42,20 @@ class PropertyTester(unittest.TestCase):
 
         for test in additional_tests:
             test[0](self, return_value, *test[1:])
+
+
+class DumpTester(unittest.TestCase):
+
+    def test_dump(self):
+        for obj in self.objects_to_test:
+            retval = obj.dump()
+            self.assertIsInstance(retval, str)
+
+    def test_dump_takes_no_args(self):
+        for obj in self.objects_to_test:
+            for arg in (int(), float(), str(), None):
+                self.assertRaises(Exception, obj.dump, arg)
+
+    def setUp(self):
+        self.objects_to_test = []
+        raise NotImplementedError
