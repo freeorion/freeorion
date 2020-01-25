@@ -1,6 +1,6 @@
-
+// param1: value
 NATIVE_PLANETARY_DEFENSE
-'''        EffectsGroup
+'''EffectsGroup
             scope = Source
             activation = And [
                 Planet
@@ -8,12 +8,7 @@ NATIVE_PLANETARY_DEFENSE
             ]
             accountinglabel = "NATIVE_PLANETARY_DEFENSE_LABEL"
             priority = [[DEFAULT_PRIORITY]]
-            effects = [
-                SetMaxDefense value = Value + 10
-                SetDetection value = Value + 10
-            ]
-            
-    [[AVERAGE_PLANETARY_DEFENSE]]
+            effects = SetMaxDefense value = Value + @1@
 '''
 
 AVERAGE_PLANETARY_DEFENSE

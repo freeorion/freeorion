@@ -1,0 +1,33 @@
+// param1: detection
+// param2: defense
+// param3: shields
+// param4: troops
+//currently unused
+NATIVE_FORTIFICATION_CUSTOM
+'''
+    [[NATIVE_PLANETARY_DETECTION(@1@)]]
+    [[NATIVE_PLANETARY_DEFENSE(@2@)]]
+    [[NATIVE_PLANETARY_SHIELDS(@3@)]]
+    [[NATIVE_PLANETARY_TROOPS(@4@)]]
+'''
+
+//currently unused
+NATIVE_FORTIFICATION_HIGH
+'''[[NATIVE_FORTIFICATION_CUSTOM(30,30,30,30)]]'''
+
+//currently unused
+NATIVE_FORTIFICATION_MEDIUM
+'''[[NATIVE_FORTIFICATION_CUSTOM(20,20,20,20)]]'''
+
+//currently unused
+NATIVE_FORTIFICATION_LOW
+'''[[NATIVE_FORTIFICATION_CUSTOM(10,10,10,10)]]'''
+
+//currently unused
+NATIVE_FORTIFICATION_MINIMAL
+'''[[NATIVE_PLANETARY_SHIELDS(1)]]'''
+
+#include "/scripting/species/common/detection.macros"
+#include "/scripting/species/common/planet_defense.macros"
+#include "/scripting/species/common/planet_shields.macros"
+#include "/scripting/species/common/troops.macros"

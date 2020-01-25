@@ -1,4 +1,4 @@
-
+// param1: value
 NATIVE_PLANETARY_SHIELDS
 '''EffectsGroup
             scope = Source
@@ -6,9 +6,9 @@ NATIVE_PLANETARY_SHIELDS
                 Planet
                 Unowned
             ]
-            effects = SetMaxShield value = Value + 10 accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
-
-    [[AVERAGE_PLANETARY_SHIELDS]]
+            accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetMaxShield value = Value + @1@
 '''
 
 

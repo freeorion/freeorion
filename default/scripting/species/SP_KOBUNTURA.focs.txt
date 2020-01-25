@@ -29,9 +29,12 @@ Species
         [[BAD_OFFENSE_TROOPS]]
 
         // not for description
-        [[NATIVE_PLANETARY_DEFENSE]]
-        [[NATIVE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[AVERAGE_PLANETARY_SHIELDS]]
         [[STANDARD_SHIP_SHIELDS]]
+        [[NATIVE_PLANETARY_DETECTION(10)]]
+        [[NATIVE_PLANETARY_DEFENSE(10)]]
+        [[NATIVE_PLANETARY_SHIELDS(10)]]
     ]
 
     [[BARREN_STANDARD_EP]]

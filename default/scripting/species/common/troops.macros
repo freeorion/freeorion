@@ -1,3 +1,16 @@
+// param1: value
+NATIVE_PLANETARY_TROOPS
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Unowned
+            ]
+            accountinglabel = "NATIVE_PLANETARY_TROOPS_LABEL"
+            priority = [[VERY_EARLY_PRIORITY]]
+            effects = SetMaxTroops value = Value + @1@
+'''
+
 BASIC_DEFENSE_TROOPS
 '''        EffectsGroup
             scope = Source

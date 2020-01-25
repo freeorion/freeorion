@@ -15167,13 +15167,23 @@ Outpost
 
 # %1% FIXME
 # %2% FIXME
+NATIVE_PLANETARY_DETECTION_LABEL
+%2% Native Planetary Detection
+
+# %1% FIXME
+# %2% FIXME
 NATIVE_PLANETARY_DEFENSE_LABEL
-%2% Planetary Defense
+%2% Native Planetary Defense
 
 # %1% FIXME
 # %2% FIXME
 NATIVE_PLANETARY_SHIELDS_LABEL
-%2% Planetary Shields
+%2% Native Planetary Shields
+
+# %1% FIXME
+# %2% FIXME
+NATIVE_PLANETARY_TROOPS_LABEL
+%2% Native Planetary Troops
 
 VERY_BRIGHT_STAR
 Very bright star
