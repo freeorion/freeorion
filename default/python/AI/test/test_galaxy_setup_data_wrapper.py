@@ -64,9 +64,60 @@ class GalaxySetupDataTester(PropertyTester):
         self.objects_to_test = [fo.getGalaxySetupData()]
 
 
+class GameRuleTester(unittest.TestCase):
+
+    def test_gamerules(self):
+        self.assertIsNotNone(fo.getGameRules())
+
+
+# TODO: Expose and test GameRules::Type and associated functions
+class GameRulesFuncTester(PropertyTester):
+    class_to_test = fo.GameRules
+    properties = deepcopy(PropertyTester.properties)
+    properties.update({
+        "empty": {
+            TYPE: bool,
+        },
+    })
+
+    def test_getRulesAsStrings(self):
+        retval = self.rules.getRulesAsStrings()
+        self.assertIsNotNone(retval)
+        self.assertIsInstance(retval, dict)
+
+    def test_ruleExists(self):
+        for rule in self.rule_names:
+            retval = self.rules.ruleExists(rule)
+            self.assertIsInstance(retval, bool)
+            self.assertTrue(retval)
+
+        retval = self.rules.ruleExists(self.nonexisting_rule)
+        self.assertIsInstance(retval, bool)
+        self.assertFalse(retval)
+
+        with self.assertRaises(Exception):
+            self.rules.ruleExists(2)  # should only take str
+
+    def test_getDescription(self):
+        for rule in self.rule_names:
+            retval = self.rules.getDescription(rule)
+            self.assertIsInstance(retval, str)
+
+        with self.assertRaises(RuntimeError):
+            self.rules.getDescription(self.nonexisting_rule)
+
+    def setUp(self):
+        self.rules = fo.getGameRules()
+        self.objects_to_test = [self.rules]
+        self.rule_names = []
+        self.nonexisting_rule = "THIS_RULE_SHOULD_NOT_EXIST_2308213"
+        for rule in self.rules.getRulesAsStrings():
+            self.rule_names.append(rule)
+
+
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
-    test_classes = [GalaxySetupDataTester]
+    test_classes = [GalaxySetupDataTester, GameRuleTester, GameRulesFuncTester]
     for test_class in test_classes:
         if issubclass(test_class, PropertyTester):
             # generate the tests from setup data
