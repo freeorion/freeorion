@@ -4,7 +4,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 
 
-## [v0.4.9] - 2020-01-13
+## [v0.4.9] - 2020-01-26
 
 #### Key Changes
 
@@ -134,6 +134,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed AI picking ships that didn't have enough fuel to do a mission
 - Reduced AI invasion overkill / waste
 - Made AI consider lost fleets when determining unknown threats
+- Made AI scrap Gateway to the Void building on planets it captures, if the planet has one. The AI can't handle that building and it's presence severely disrupted the AI in such cases.
 
 #### Bugs
 
@@ -175,6 +176,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed undefined behaviour when reporting a FramebufferFailedException when initializing OpenGL
 - Fixed issue where, when gifting a planet, the recipient empire did not get production items that are currently produced at that planet transferred to its production queue
 - Fixed issue where, after playing a game with modified rules, the default setting for a new game and the rule values in the intro screen pedia would be those of the previously-played game, rather than the defined rule default values
+- Fixed issue where, when a certain system (system 0) was destroyed (e.g. by a Black Hole Collapser), an empire aware of this destruction would forget all starlane connections and loose all supply propagation between it's systems
 
 ### Technical / Internal
 
