@@ -572,6 +572,91 @@ class HullTypeTester(PropertyTester):
         empire = fo.getEmpire()
         self.objects_to_test = [fo.getHullType(hull) for hull in empire.availableShipHulls]
 
+
+class BuildingTester(UniverseObjectTester):
+    class_to_test = fo.building
+    properties = deepcopy(PropertyTester.properties)
+    properties.update({
+        "buildingTypeName": {
+            TYPE: str,
+        },
+        "planetID": {
+            TYPE: int,
+        },
+        "producedByEmpireID": {
+            TYPE: int,
+        },
+        "orderedScrapped": {
+            TYPE: bool,
+            ADDITIONAL_TESTS: [is_false()]
+        }
+    })
+
+    def setUp(self):
+        universe = fo.getUniverse()
+        self.objects_to_test = [universe.getBuilding(_id) for _id in universe.buildingIDs]
+
+
+class BuildingTypeTester(PropertyTester, DumpTester):
+    class_to_test = fo.buildingType
+    properties = deepcopy(PropertyTester.properties)
+    properties.update({
+        "name": {
+            TYPE: str,
+        },
+        "description": {
+            TYPE: str,
+        },
+        "costTimeLocationInvariant": {
+            TYPE: bool,
+        },
+    })
+
+    def test_productionCost(self):
+        for obj in self.objects_to_test:
+            retval = obj.productionCost(fo.empireID(), INVALID_ID)
+            self.assertIsInstance(retval, float)
+            self.assertGreaterEqual(retval, 0.0)
+
+    def test_productionTime(self):
+        for obj in self.objects_to_test:
+            retval = obj.productionTime(fo.empireID(), INVALID_ID)
+            self.assertIsInstance(retval, int)
+            self.assertGreaterEqual(retval, 0)
+
+    def test_perTurnCost(self):
+        for obj in self.objects_to_test:
+            retval = obj.perTurnCost(fo.empireID(), INVALID_ID)
+            self.assertIsInstance(retval, float)
+            self.assertGreaterEqual(retval, 0)
+
+            self.assertAlmostEquals(retval,
+                obj.productionCost(fo.empireID(), INVALID_ID) / obj.productionTime(fo.empireID(), INVALID_ID),
+                places=3)
+
+    def test_captureResult(self):
+        for obj in self.objects_to_test:
+            retval = obj.captureResult(fo.empireID(), fo.empireID(), INVALID_ID, False)
+            self.assertIsInstance(retval, fo.captureResult)
+
+    def test_canBeProduced(self):
+        for obj in self.objects_to_test:
+            retval = obj.canBeProduced(fo.empireID(), INVALID_ID)
+            self.assertIsInstance(retval, bool)
+            self.assertFalse(retval)
+
+    def test_canBeEnqueued(self):
+        for obj in self.objects_to_test:
+            retval = obj.canBeEnqueued(fo.empireID(), INVALID_ID)
+            self.assertIsInstance(retval, bool)
+            self.assertFalse(retval)
+
+    def setUp(self):
+        universe = fo.getUniverse()
+        self.objects_to_test = [fo.getBuildingType(universe.getBuilding(_id).buildingTypeName)
+                                for _id in universe.buildingIDs]
+
+
 # TODO: Fields - but need to query an actual object, so need dedicated universe setup
 
 
@@ -678,7 +763,8 @@ class SpeciesTester(PropertyTester, DumpTester):
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
     test_classes = [UniverseTester, UniverseObjectTester, FleetTester, ShipTester, PartTypeTester,
-                    HullTypeTester, ShipDesignTester, FieldTypeTester, SpecialTester, SpeciesTester]
+                    HullTypeTester, BuildingTester, BuildingTypeTester,
+                    ShipDesignTester, FieldTypeTester, SpecialTester, SpeciesTester]
     for test_class in test_classes:
         if issubclass(test_class, PropertyTester):
             # generate the tests from setup data
