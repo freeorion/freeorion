@@ -196,8 +196,13 @@ namespace {
     { return ship_design.Description(false); }
     boost::function<const std::string& (const ShipDesign&)> ShipDesignDescriptionFunc =         &ShipDesignDescription;
 
-    bool                    (*ValidDesignHullAndParts)(const std::string& hull,
-                                                       const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
+    bool ValidDesignHullAndParts(const std::string& hull, boost::python::list parts_list)
+    {
+        std::vector<std::string> parts;
+        for (size_t i = 0; i < boost::python::len(parts_list); i++)
+            parts.push_back(boost::python::extract<std::string>(parts_list[i]));
+        return ShipDesign::ValidDesign(hull, parts);
+    }
 
     const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
     // The following (PartsSlotType) is not currently used, but left as an example for this kind of wrapper
