@@ -334,6 +334,142 @@ class ShipTester(UniverseObjectTester, DumpTester):
             self.objects_to_test.extend(map(universe.getShip, universe.getFleet(fid).shipIDs))
 
 
+class ShipDesignTester(PropertyTester, DumpTester):
+    class_to_test = fo.shipDesign
+    properties = deepcopy(PropertyTester.properties)
+    properties.update({
+        "id": {
+            TYPE: int,
+        },
+        "name": {
+            TYPE: str,
+        },
+        "description": {
+            TYPE: str,
+        },
+        "designedOnTurn": {
+            TYPE: int,
+        },
+        "speed": {
+            TYPE: float,
+        },
+        "structure": {
+            TYPE: float,
+        },
+        "shields": {
+            TYPE: float,
+        },
+        "fuel": {
+            TYPE: float,
+        },
+        "detection": {
+            TYPE: float,
+        },
+        "colonyCapacity": {
+            TYPE: float,
+        },
+        "troopCapacity": {
+            TYPE: float,
+        },
+        "stealth": {
+            TYPE: float,
+        },
+        "industryGeneration": {
+            TYPE: float,
+        },
+        "researchGeneration": {
+            TYPE: float,
+        },
+        "tradeGeneration": {
+            TYPE: float,
+        },
+        "defense": {
+            TYPE: float,
+        },
+        "attack": {
+            TYPE: float,
+        },
+        "canColonize": {
+            TYPE: bool,
+        },
+        "canInvade": {
+            TYPE: bool,
+        },
+        "isArmed": {
+            TYPE: bool,
+        },
+        "hasFighters": {
+            TYPE: bool,
+        },
+        "hasDirectWeapons": {
+            TYPE: bool,
+        },
+        "isMonster": {
+            TYPE: bool,
+        },
+        "costTimeLocationInvariant": {
+            TYPE: bool,
+        },
+        "hull": {
+            TYPE: str,
+        },
+        "hull_type": {
+            TYPE: fo.hullType,
+        },
+        "parts": {
+            TYPE: fo.StringVec,
+        },
+        "attackStats": {
+            TYPE: fo.IntVec,
+        },
+    })
+
+    def test_productionCost(self):
+        for obj in self.objects_to_test:
+            retval = obj.productionCost(fo.empireID(), -1)
+            self.assertIsInstance(retval, float)
+            self.assertGreater(retval, 0.0)
+
+    def test_productionTime(self):
+        for obj in self.objects_to_test:
+            retval = obj.productionTime(fo.empireID(), -1)
+            self.assertIsInstance(retval, int)
+            self.assertGreater(retval, 0.0)
+
+    def test_perTurnCost(self):
+        for obj in self.objects_to_test:
+            retval = obj.perTurnCost(fo.empireID(), -1)
+            self.assertIsInstance(retval, float)
+            self.assertGreater(retval, 0.0)
+            self.assertAlmostEquals(obj.productionCost(fo.empireID(), -1) / obj.productionTime(fo.empireID(), -1),
+                                    retval, places=3)
+
+    def test_productionLocationForEmpire(self):
+        for obj in self.objects_to_test:
+            retval = obj.productionLocationForEmpire(fo.empireID(), -1)
+            self.assertIsInstance(retval, bool)
+            self.assertFalse(retval)
+
+    def test_validShipDesign(self):
+        for obj in self.objects_to_test:
+            retval = fo.validShipDesign(obj.hull, list(obj.parts))
+            self.assertIsInstance(retval, bool)
+            self.assertTrue(retval)
+
+        retval = fo.validShipDesign("THIS_HULL_DOES_NOT_EXIST", ["", ""])
+        self.assertIsInstance(retval, bool)
+        self.assertFalse(retval)
+
+    def setUp(self):
+        universe = fo.getUniverse()
+        fleet_ids = list(universe.fleetIDs)
+        ship_ids = [ship_id for fid in fleet_ids
+                    for ship_id in universe.getFleet(fid).shipIDs]
+        self.objects_to_test = [fo.getShipDesign(universe.getShip(ship_id).designID) for ship_id in ship_ids]
+        self.objects_to_test.append(fo.getPredefinedShipDesign("SD_COLONY_BASE"))
+        assert self.objects_to_test
+
+
 class PartTypeTester(PropertyTester):
     class_to_test = fo.partType
     properties = deepcopy(PropertyTester.properties)
@@ -473,7 +609,7 @@ class SpeciesTester(PropertyTester, DumpTester):
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
     test_classes = [UniverseObjectTester, UniverseTester, FleetTester, ShipTester, PartTypeTester,
-                    FieldTypeTester, SpecialTester, SpeciesTester]
+                    ShipDesignTester, FieldTypeTester, SpecialTester, SpeciesTester]
     for test_class in test_classes:
         if issubclass(test_class, PropertyTester):
             # generate the tests from setup data
