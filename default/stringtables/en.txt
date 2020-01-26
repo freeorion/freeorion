@@ -11005,6 +11005,16 @@ Doubles stockpiling on stockpile-focused planets.
 PLC_STOCKPILE_LIQUIDATION_SHORT_DESC
 Increases stockpiling
 
+PLC_ALLIED_REPAIR
+Allied Repair
+
+PLC_ALLIED_REPAIR_DESC
+If two empires are allied, and either has adopted this policy, both will receive repairs to damaged ships while at eachother's [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]]s and from [[tech SHP_FLEET_REPAIR]].
+
+PLC_ALLIED_REPAIR_SHORT_DESC
+Allows allies to repair ships
+
+
 ##
 ## Technology categories
 ##
