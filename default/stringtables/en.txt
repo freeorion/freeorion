@@ -1149,6 +1149,12 @@ Enable Super-Tester Takeover
 RULE_ENABLE_SUPER_TESTER_DESC
 Enables [[BLD_SUPER_TEST]] building
 
+RULE_ENABLE_ADDING_DEFAULT_DESIGNS
+Enable Default Design Adding
+
+RULE_ENABLE_ADDING_DEFAULT_DESIGNS_DESC
+Enables adding of default designs to player empires during universe generation
+
 RULE_STOCKPILE_IMPORT_LIMITED
 Stockpile Import Limited
 
