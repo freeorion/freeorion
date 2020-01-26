@@ -111,3 +111,19 @@ std::shared_ptr<UniverseObject> OwnedVisitor::Visit(std::shared_ptr<UniverseObje
     return nullptr;
 }
 
+////////////////////////////////////////////////
+// HostileVisitor
+////////////////////////////////////////////////
+HostileVisitor::HostileVisitor(int viewing_empire, int owning_empire) :
+    viewing_empire_id(viewing_empire),
+    owning_empire_id(owning_empire)
+{}
+
+HostileVisitor::~HostileVisitor() = default;
+
+std::shared_ptr<UniverseObject> HostileVisitor::Visit(std::shared_ptr<UniverseObject> obj) const
+{
+    if (obj->HostileToEmpire(viewing_empire_id))
+        return obj;
+    return nullptr;
+}

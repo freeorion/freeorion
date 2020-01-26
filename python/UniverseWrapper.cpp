@@ -121,7 +121,7 @@ namespace {
 
     std::vector<int> ShortestNonHostilePath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
-        auto fleet_pred = std::make_shared<HostileVisitor<System>>(empire_id);
+        auto fleet_pred = std::make_shared<HostileVisitor>(empire_id);
         std::pair<std::list<int>, int> path = universe.GetPathfinder()->ShortestPath(start_sys, end_sys, empire_id, fleet_pred);
         std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
