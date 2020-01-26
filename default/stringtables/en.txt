@@ -15520,6 +15520,43 @@ Krill Spawner
 ## AI diplomacy strings and lists
 ##
 
+
+# Newline separated list of polite alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
+'''Nice to hear from you again.
+Receipt of transmission acknowledged.
+'''
+
+# Newline separated list of harsh alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_HARSH_LIST
+'''If you cannot sustain your own ambitions, you are unworthy of our help.
+Please find another benefactor to leech sustenance from.
+'''
+
+# Newline separated list of polite positive alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_RESPONSES_YES_MILD_LIST
+'''Our empires will benefit from mutual support and collaboration.
+We are honoured to work more closely together towards our mutual success.
+'''
+
+# Newline separated list of polite negative alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_RESPONSES_NO_MILD_LIST
+'''We do not believe such an agreement would be to our mutual benefit at this time.
+We cannot spare the resources that such an agreement would require of us.
+'''
+
+# Newline separated list of harsh positive alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_RESPONSES_YES_HARSH_LIST
+'''We reluctantly agree to support your futile efforts.
+Perhaps we will find amusement from prolonging your hopeless struggles.
+'''
+
+# Newline separated list of harsh negative alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_RESPONSES_NO_HARSH_LIST
+'''We would never agree to share our resources with you!
+You are wholely unworthy of such trust and support.
+'''
+
 # Newline separated list of polite peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
 '''Nice to hear from you again.
