@@ -18,6 +18,7 @@ namespace parse {
         rule
             =   tok.TheEmpire_  [ _val = AFFIL_SELF ]
             |   tok.EnemyOf_    [ _val = AFFIL_ENEMY ]
+            |   tok.PeaceWith_  [ _val = AFFIL_PEACE ]
             |   tok.AllyOf_     [ _val = AFFIL_ALLY ]
             |   tok.AnyEmpire_  [ _val = AFFIL_ANY ]
             |   tok.None_       [ _val = AFFIL_NONE ]

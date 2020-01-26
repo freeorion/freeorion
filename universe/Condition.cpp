@@ -1187,13 +1187,23 @@ namespace {
                 break;
             }
 
+            case AFFIL_PEACE: {
+                if (m_empire_id == ALL_EMPIRES)
+                    return true;
+                if (m_empire_id == candidate->Owner())
+                    return false;
+                DiplomaticStatus status = Empires().GetDiplomaticStatus(m_empire_id, candidate->Owner());
+                return (status == DIPLO_PEACE);
+                break;
+            }
+
             case AFFIL_ALLY: {
                 if (m_empire_id == ALL_EMPIRES)
                     return false;
                 if (m_empire_id == candidate->Owner())
                     return false;
                 DiplomaticStatus status = Empires().GetDiplomaticStatus(m_empire_id, candidate->Owner());
-                return (status >= DIPLO_PEACE);
+                return (status >= DIPLO_ALLIED);
                 break;
             }
 
@@ -1306,6 +1316,11 @@ std::string EmpireAffiliation::Dump(unsigned short ntabs) const {
 
     } else if (m_affiliation == AFFIL_ENEMY) {
         retval += "OwnedBy affiliation = EnemyOf";
+        if (m_empire_id)
+            retval += " empire = " + m_empire_id->Dump(ntabs);
+
+    } else if (m_affiliation == AFFIL_PEACE) {
+        retval += "OwnedBy affiliation = PeaceWith";
         if (m_empire_id)
             retval += " empire = " + m_empire_id->Dump(ntabs);
 

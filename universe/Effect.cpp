@@ -3249,7 +3249,20 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
                 continue;
 
             DiplomaticStatus status = Empires().GetDiplomaticStatus(recipient_id, empire_id.first);
-            if (status >= DIPLO_PEACE)
+            if (status >= DIPLO_ALLIED)
+                recipient_empire_ids.insert(empire_id.first);
+        }
+        break;
+    }
+
+    case AFFIL_PEACE: {
+        // add empires at peace with the specified empire
+        for (auto& empire_id : Empires()) {
+            if (empire_id.first == recipient_id || recipient_id == ALL_EMPIRES)
+                continue;
+
+            DiplomaticStatus status = Empires().GetDiplomaticStatus(recipient_id, empire_id.first);
+            if (status == DIPLO_PEACE)
                 recipient_empire_ids.insert(empire_id.first);
         }
         break;
@@ -3342,6 +3355,7 @@ std::string GenerateSitRepMessage::Dump(unsigned short ntabs) const {
     switch (m_affiliation) {
     case AFFIL_SELF:    retval += "TheEmpire";  break;
     case AFFIL_ENEMY:   retval += "EnemyOf";    break;
+    case AFFIL_PEACE:   retval += "PeaceWith";  break;
     case AFFIL_ALLY:    retval += "AllyOf";     break;
     case AFFIL_ANY:     retval += "AnyEmpire";  break;
     case AFFIL_CAN_SEE: retval += "CanSee";     break;
@@ -3515,7 +3529,20 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
                 continue;
 
             DiplomaticStatus status = Empires().GetDiplomaticStatus(empire_id, empire_entry.first);
-            if (status >= DIPLO_PEACE)
+            if (status >= DIPLO_ALLIED)
+                empire_ids.insert(empire_entry.first);
+        }
+        break;
+    }
+
+    case AFFIL_PEACE: {
+        // add empires at peace with the specified empire
+        for (const auto& empire_entry : Empires()) {
+            if (empire_entry.first == empire_id || empire_id == ALL_EMPIRES)
+                continue;
+
+            DiplomaticStatus status = Empires().GetDiplomaticStatus(empire_id, empire_entry.first);
+            if (status == DIPLO_PEACE)
                 empire_ids.insert(empire_entry.first);
         }
         break;
@@ -3585,6 +3612,7 @@ std::string SetVisibility::Dump(unsigned short ntabs) const {
     switch (m_affiliation) {
     case AFFIL_SELF:    retval += "TheEmpire";  break;
     case AFFIL_ENEMY:   retval += "EnemyOf";    break;
+    case AFFIL_PEACE:   retval += "PeaceWith";  break;
     case AFFIL_ALLY:    retval += "AllyOf";     break;
     case AFFIL_ANY:     retval += "AnyEmpire";  break;
     case AFFIL_CAN_SEE: retval += "CanSee";     break;

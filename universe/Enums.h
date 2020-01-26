@@ -175,6 +175,7 @@ GG_ENUM(EmpireAffiliationType,
     INVALID_EMPIRE_AFFIL_TYPE = -1,
     AFFIL_SELF,     ///< the given empire iteslf
     AFFIL_ENEMY,    ///< enemies of the given empire
+    AFFIL_PEACE,    ///< empires at peace with the given empire
     AFFIL_ALLY,     ///< allies of the given empire
     AFFIL_ANY,      ///< any empire
     AFFIL_NONE,     ///< no empire

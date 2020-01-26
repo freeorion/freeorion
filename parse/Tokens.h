@@ -302,6 +302,7 @@
     (PartsInShipDesign)                         \
     (PartType)                                  \
     (Passive)                                   \
+    (PeaceWith)                                 \
     (Planet)                                    \
     (Planetbound)                               \
     (PlanetEnvironment)                         \
