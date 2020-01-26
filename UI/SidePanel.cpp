@@ -3280,7 +3280,7 @@ void SidePanel::RefreshImpl() {
     if (m_selection_enabled) {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         if (empire_id != ALL_EMPIRES)
-            vistor = std::make_shared<OwnedVisitor<Planet>>(empire_id);
+            vistor = std::make_shared<OwnedVisitor>(empire_id);
     }
     m_planet_panel_container->SetValidSelectionPredicate(vistor);
 
@@ -3528,7 +3528,7 @@ bool SidePanel::PlanetSelectable(int planet_id) const {
     std::shared_ptr<UniverseObjectVisitor> selectable_visitor;
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     if (empire_id != ALL_EMPIRES)
-        selectable_visitor = std::make_shared<OwnedVisitor<Planet>>(empire_id);
+        selectable_visitor = std::make_shared<OwnedVisitor>(empire_id);
 
     if (!selectable_visitor)
         return true;

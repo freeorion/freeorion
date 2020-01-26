@@ -1780,7 +1780,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     }
 
     // test for colonies count
-    auto planets = Objects().find<Planet>(OwnedVisitor<Planet>(empire_id));
+    auto planets = Objects().find<Planet>(OwnedVisitor(empire_id));
     if (planets.size() > static_cast<size_t>(GetGameRules().Get<int>("RULE_CONCEDE_COLONIES_THRESHOLD"))) {
         player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CONCEDE_EXCEED_COLONIES"), false));
         return false;
@@ -1790,12 +1790,12 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     empire->Eliminate();
 
     // destroy owned ships
-    for (auto& obj : Objects().find<Ship>(OwnedVisitor<Ship>(empire_id))) {
+    for (auto& obj : Objects().find<Ship>(OwnedVisitor(empire_id))) {
         obj->SetOwner(ALL_EMPIRES);
         GetUniverse().RecursiveDestroy(obj->ID());
     }
     // destroy owned buildings
-    for (auto& obj : Objects().find<Building>(OwnedVisitor<Building>(empire_id))) {
+    for (auto& obj : Objects().find<Building>(OwnedVisitor(empire_id))) {
         obj->SetOwner(ALL_EMPIRES);
         GetUniverse().RecursiveDestroy(obj->ID());
     }
@@ -2050,8 +2050,8 @@ namespace {
       * definition of elimination.  As of this writing, elimination means
       * having no ships and no planets. */
     bool EmpireEliminated(int empire_id) {
-          return (Objects().find<Planet>(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
-                  Objects().find<Ship>(OwnedVisitor<Ship>(empire_id)).empty());      // no ship
+          return (Objects().find<Planet>(OwnedVisitor(empire_id)).empty() &&  // no planets
+                  Objects().find<Ship>(OwnedVisitor(empire_id)).empty());     // no ship
       }
 
     void GetEmpireFleetsAtSystem(std::map<int, std::set<int>>& empire_fleets, int system_id) {

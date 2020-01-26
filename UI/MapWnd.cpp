@@ -6885,7 +6885,7 @@ namespace {
     }
 
     std::set<std::pair<std::string, int>, CustomRowCmp> GetOwnedSystemNamesIDs(int empire_id) {
-        auto owned_planets = Objects().find<Planet>(OwnedVisitor<Planet>(empire_id));
+        auto owned_planets = Objects().find<Planet>(OwnedVisitor(empire_id));
 
         // get IDs of systems that contain any owned planets
         std::unordered_set<int> system_ids;
@@ -7044,7 +7044,7 @@ bool MapWnd::ZoomToNextIdleFleet() {
 }
 
 bool MapWnd::ZoomToPrevFleet() {
-    auto vec = GetUniverse().Objects().find<Fleet>(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
+    auto vec = GetUniverse().Objects().find<Fleet>(OwnedVisitor(HumanClientApp::GetApp()->EmpireID()));
     auto it = std::find_if(vec.begin(), vec.end(),
         [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
@@ -7065,7 +7065,7 @@ bool MapWnd::ZoomToPrevFleet() {
 }
 
 bool MapWnd::ZoomToNextFleet() {
-    auto vec = GetUniverse().Objects().find<Fleet>(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
+    auto vec = GetUniverse().Objects().find<Fleet>(OwnedVisitor(HumanClientApp::GetApp()->EmpireID()));
     auto it = std::find_if(vec.begin(), vec.end(),
         [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
     auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();

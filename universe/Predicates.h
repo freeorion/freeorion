@@ -93,31 +93,16 @@ struct FO_COMMON_API MovingFleetVisitor : UniverseObjectVisitor
 };
 
 /** returns obj iff \a obj is owned by the empire with id \a empire, and \a obj is of type T. */
-template <class T>
-struct OwnedVisitor : UniverseObjectVisitor
+struct FO_COMMON_API OwnedVisitor : UniverseObjectVisitor
 {
     OwnedVisitor(int empire = ALL_EMPIRES);
 
-    virtual ~OwnedVisitor()
-    {}
+    virtual ~OwnedVisitor();
 
-    std::shared_ptr<UniverseObject> Visit(std::shared_ptr<T> obj) const override;
+    std::shared_ptr<UniverseObject> Visit(std::shared_ptr<UniverseObject> obj) const override;
 
     const int empire_id;
 };
-
-template <class T>
-OwnedVisitor<T>::OwnedVisitor(int empire) :
-    empire_id(empire)
-{}
-
-template <class T>
-std::shared_ptr<UniverseObject> OwnedVisitor<T>::Visit(std::shared_ptr<T> obj) const
-{
-    if (obj->OwnedBy(empire_id))
-        return obj;
-    return nullptr;
-}
 
 template <class T>
 struct HostileVisitor : UniverseObjectVisitor

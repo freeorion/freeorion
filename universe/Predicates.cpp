@@ -94,3 +94,20 @@ std::shared_ptr<UniverseObject> MovingFleetVisitor::Visit(std::shared_ptr<Fleet>
         return obj;
     return nullptr;
 }
+
+////////////////////////////////////////////////
+// OwnedVisitor
+////////////////////////////////////////////////
+OwnedVisitor::OwnedVisitor(int empire) :
+    empire_id(empire)
+{}
+
+OwnedVisitor::~OwnedVisitor() = default;
+
+std::shared_ptr<UniverseObject> OwnedVisitor::Visit(std::shared_ptr<UniverseObject> obj) const
+{
+    if (obj->OwnedBy(empire_id))
+        return obj;
+    return nullptr;
+}
+
