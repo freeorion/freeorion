@@ -14245,7 +14245,7 @@ SH_BASIC_SMALL
 Coque Basique Légère
 
 SH_BASIC_SMALL_DESC
-'''Une petite coque interstellaire de base pour astronef. Ne dispose que d'une niche externe, mais comparée aux autres coques de base, elle est capable d'effectuer un voyage supplémentaire sur une Voie spatiale.
+'''Une petite coque interstellaire de base pour astronef. Ne dispose que d'une niche externe, mais est très efficace en matière de voyage sur Voies spatiales.
 
 Sa [[metertype METER_STEALTH]] est standard de même que son [[metertype METER_DETECTION]], tandis que sa [[metertype METER_SPEED]] est moyenne.
 
@@ -14286,7 +14286,7 @@ SH_COLONY_BASE
 Coque Colon Stellaire
 
 SH_COLONY_BASE_DESC
-'''Une coque conçue pour le transport de colons et la création d'une colonie sur une autre planète du système où elle a été produite. Elle ne peut pas voyager sur les Voies spatiales entre les systèmes stellaires, pas plus qu'elle n'est rapide dans son propre système. Étant donné son rôle, elle dispose seulement d'une niche interne.
+'''Une coque conçue pour le transport de colons et la création d'une colonie sur une autre planète du système où elle a été produite. Elle ne peut pas voyager sur les Voies spatiales entre les systèmes stellaires, pas plus qu'elle n'est rapide dans son propre système. Étant donné son rôle, elle dispose seulement de trois niches internes.
 
 Sa [[metertype METER_STEALTH]] est standard de même que son [[metertype METER_DETECTION]].'''
 
