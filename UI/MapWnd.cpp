@@ -4483,10 +4483,9 @@ void MapWnd::ReselectLastFleet() {
 
     // search through stored selected fleets' ids and remove ids of missing fleets
     std::set<int> missing_fleets;
-    for (int fleet_id : m_selected_fleet_ids) {
-        auto fleet = objects.at<Fleet>(fleet_id);
+    for (const auto& fleet : objects.find<Fleet>(m_selected_fleet_ids)) {
         if (!fleet)
-            missing_fleets.insert(fleet_id);
+            missing_fleets.insert(fleet->ID());
     }
     for (int fleet_id : missing_fleets)
         m_selected_fleet_ids.erase(fleet_id);
@@ -6839,8 +6838,7 @@ void MapWnd::RefreshPopulationIndicator() {
     const ObjectMap& objects = Objects();
 
     //tally up all species population counts
-    for (int pop_center_id : pop_center_ids) {
-        auto pc = objects.at<PopCenter>(pop_center_id);
+    for (const auto& pc : objects.find<PopCenter>(pop_center_ids)) {
         if (!pc)
             continue;
 

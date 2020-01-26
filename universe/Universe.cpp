@@ -2687,26 +2687,24 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
             bool fleet_stale = true;
             // check each ship. if any are visible or not visible but not stale,
             // fleet is not stale
-            for (int ship_id : fleet->ShipIDs()) {
-                auto ship = latest_known_objects.at<Ship>(ship_id);
-
+            for (const auto& ship : latest_known_objects.find<Ship>(fleet->ShipIDs())) {
                 // if ship doesn't think it's in this fleet, doesn't count.
                 if (!ship || ship->FleetID() != fleet_id)
                     continue;
 
                 // if ship is destroyed, doesn't count
-                if (destroyed_set.count(ship_id))
+                if (destroyed_set.count(ship->ID()))
                     continue;
 
                 // is contained ship visible? If so, fleet is not stale.
-                auto vis_it = vis_map.find(ship_id);
+                auto vis_it = vis_map.find(ship->ID());
                 if (vis_it != vis_map.end() && vis_it->second > VIS_NO_VISIBILITY) {
                     fleet_stale = false;
                     break;
                 }
 
                 // is contained ship not visible and not stale? if so, fleet is not stale
-                if (!stale_set.count(ship_id)) {
+                if (!stale_set.count(ship->ID())) {
                     fleet_stale = false;
                     break;
                 }

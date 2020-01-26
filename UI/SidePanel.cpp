@@ -1252,10 +1252,10 @@ namespace {
             return retval;
 
         // is there a valid single selected ship in the active FleetWnd?
-        for (int ship_id : FleetUIManager::GetFleetUIManager().SelectedShipIDs())
-            if (auto ship = GetUniverse().Objects().at<Ship>(ship_id))
-                if (ship->SystemID() == system_id && ship->HasTroops() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-                    retval.insert(ship);
+        for (const auto& ship : GetUniverse().Objects().find<Ship>(
+                FleetUIManager::GetFleetUIManager().SelectedShipIDs()))
+            if (ship->SystemID() == system_id && ship->HasTroops() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+                retval.insert(ship);
 
         return retval;
     }

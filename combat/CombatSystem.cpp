@@ -971,13 +971,11 @@ namespace {
 
         bool HasUnlauchedArmedFighters(const CombatInfo& combat_info) const {
             // check each ship to see if it has any unlaunched armed fighters...
-            for (int attacker_id : attacker_ids) {
-                if (combat_info.destroyed_object_ids.count(attacker_id))
-                    continue;   // destroyed objects can't launch fighters
-
-                auto ship = combat_info.objects.at<Ship>(attacker_id);
+            for (const auto& ship : combat_info.objects.find<Ship>(attacker_ids)) {
                 if (!ship)
-                    continue;   // non-ships can't launch fighters
+                    continue;   // discard invalid ship references
+                if (combat_info.destroyed_object_ids.count(ship->ID()))
+                    continue;   // destroyed objects can't launch fighters
 
                 auto weapons = ShipWeaponsStrengths(ship);
                 for (const PartAttackInfo& weapon : weapons) {
@@ -1303,7 +1301,7 @@ namespace {
         }
     };
 
-    std::vector<PartAttackInfo> GetWeapons(std::shared_ptr<UniverseObject>& attacker) {
+    std::vector<PartAttackInfo> GetWeapons(std::shared_ptr<UniverseObject> attacker) {
         // Loop over weapons of attacking object. Each gets a shot at a
         // randomly selected target object, from the objects in the combat
         // that match the weapon's targetting condition.
@@ -1367,7 +1365,7 @@ namespace {
                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
     }
 
-    void ShootAllWeapons(std::shared_ptr<UniverseObject>& attacker,
+    void ShootAllWeapons(std::shared_ptr<UniverseObject> attacker,
                          AutoresolveInfo& combat_state, int bout, int round,
                          AttacksEventPtr& attacks_event,
                          WeaponsPlatformEvent::WeaponsPlatformEventPtr& platform_event,
@@ -1482,7 +1480,7 @@ namespace {
         }
     }
 
-    void LaunchFighters(std::shared_ptr<UniverseObject>& attacker,
+    void LaunchFighters(std::shared_ptr<UniverseObject> attacker,
                         const std::vector<PartAttackInfo>& weapons,
                         AutoresolveInfo& combat_state, int bout, int round,
                         FighterLaunchesEventPtr& launches_event)
@@ -1671,38 +1669,28 @@ namespace {
         // Process planets attacks first so that they still have full power,
         // despite their attack power depending on something (their defence meter)
         // that processing shots at them may reduce.
-        for (int attacker_id : shuffled_attackers) {
-            auto attacker = combat_info.objects.at(attacker_id);
-
-            if (!attacker) {
-                ErrorLogger() << "CombatRound couldn't get object with id " << attacker_id;
+        for (const auto& planet : combat_info.objects.find<Planet>(shuffled_attackers)) {
+            if (!planet)
+                continue;
+            if (!ObjectCanAttack(planet)) {
+                DebugLogger() << "Planet " << planet->Name() << " could not attack.";
                 continue;
             }
-            if (attacker->ObjectType() != OBJ_PLANET)
-                continue;   // fighter and ship attacks processed below
-            if (!ObjectCanAttack(attacker)) {
-                DebugLogger() << "Planet " << attacker->Name() << " could not attack.";
-                continue;
-            }
-            DebugLogger(combat) << "Planet: " << attacker->Name();
+            DebugLogger(combat) << "Planet: " << planet->Name();
 
             auto platform_event = std::make_shared<WeaponsPlatformEvent>(
-                bout, attacker_id, attacker->Owner());
+                bout, planet->ID(), planet->Owner());
             attacks_event->AddEvent(platform_event);
 
-            ShootAllWeapons(attacker, combat_state, bout, round++,
+            ShootAllWeapons(planet, combat_state, bout, round++,
                             attacks_event, platform_event, fighter_on_fighter_event);
         }
 
 
         // Process ship and fighter attacks
-        for (int attacker_id : shuffled_attackers) {
-            auto attacker = combat_info.objects.at(attacker_id);
-
-            if (!attacker) {
-                ErrorLogger() << "CombatRound couldn't get object with id " << attacker_id;
+        for (const auto& attacker : combat_info.objects.find(shuffled_attackers)) {
+            if (!attacker)
                 continue;
-            }
             if (attacker->ObjectType() == OBJ_PLANET) {
                 continue;   // planet attacks processed above
             }
@@ -1713,7 +1701,7 @@ namespace {
             DebugLogger(combat) << "Attacker: " << attacker->Name();
 
             auto platform_event = std::make_shared<WeaponsPlatformEvent>(
-                bout, attacker_id, attacker->Owner());
+                bout, attacker->ID(), attacker->Owner());
 
             ShootAllWeapons(attacker, combat_state, bout, round++,
                             attacks_event, platform_event, fighter_on_fighter_event);
@@ -1729,16 +1717,9 @@ namespace {
         // they won't get any chance to attack during this combat
         if (bout < GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS")) {
             auto launches_event = std::make_shared<FighterLaunchesEvent>();
-            for (int attacker_id : shuffled_attackers) {
-                auto attacker = combat_info.objects.at(attacker_id);
-
-                if (!attacker) {
-                    ErrorLogger() << "CombatRound couldn't get object with id " << attacker_id;
+            for (const auto& attacker : combat_info.objects.find<Ship>(shuffled_attackers)) {
+                if (!attacker)
                     continue;
-                }
-                if (attacker->ObjectType() != OBJ_SHIP) {
-                    continue;   // currently only ships can launch fighters
-                }
                 if (!ObjectCanAttack(attacker)) {
                     DebugLogger() << "Attacker " << attacker->Name() << " could not attack.";
                     continue;
@@ -1753,21 +1734,21 @@ namespace {
                 // Set launching carrier as at least basically visible to other empires.
                 if (!launches_event->AreSubEventsEmpty(ALL_EMPIRES)) {
                     for (auto detector_empire_id : combat_info.empire_ids) {
-                        Visibility initial_vis = combat_info.empire_object_visibility[detector_empire_id][attacker_id];
-                        TraceLogger(combat) << "Pre-attack visibility of launching carrier id: " << attacker_id
+                        Visibility initial_vis = combat_info.empire_object_visibility[detector_empire_id][attacker->ID()];
+                        TraceLogger(combat) << "Pre-attack visibility of launching carrier id: " << attacker->ID()
                                             << " by empire: " << detector_empire_id << " was: " << initial_vis;
 
                         if (initial_vis >= VIS_BASIC_VISIBILITY)
                             continue;
 
-                        combat_info.empire_object_visibility[detector_empire_id][attacker_id] = VIS_BASIC_VISIBILITY;
+                        combat_info.empire_object_visibility[detector_empire_id][attacker->ID()] = VIS_BASIC_VISIBILITY;
 
                         DebugLogger(combat) << " ... Setting post-attack visability to " << VIS_BASIC_VISIBILITY;
 
                         // record visibility change event due to attack
                         // FIXME attacker, TARGET, attacker empire, target empire, visibility
-                        stealth_change_event->AddEvent(attacker_id,
-                                                       attacker_id,
+                        stealth_change_event->AddEvent(attacker->ID(),
+                                                       attacker->ID(),
                                                        attacker->Owner(),
                                                        detector_empire_id,
                                                        VIS_BASIC_VISIBILITY);
