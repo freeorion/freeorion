@@ -1279,7 +1279,7 @@ namespace {
 
         const std::regex dot { "\\.+" };
         const std::vector<std::string> nodes {
-            std::sregex_token_iterator(name.cbegin(), name.cend(), dot, -1),
+            std::sregex_token_iterator(name.begin(), name.end(), dot, -1),
             std::sregex_token_iterator()
         };
 
