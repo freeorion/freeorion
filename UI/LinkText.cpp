@@ -210,7 +210,7 @@ std::string ColorByOwner::Decorate(const std::string& object_id_str, const std::
     const Empire* empire = nullptr;
     // get object indicated by object_id, and then get object's owner, if any
     int object_id = CastStringToInt(object_id_str);
-    auto object = Objects().at(object_id);
+    auto object = Objects().get(object_id);
     if (object && !object->Unowned())
         empire = GetEmpire(object->Owner());
     if (empire)

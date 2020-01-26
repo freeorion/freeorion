@@ -77,10 +77,10 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
 }
 
 std::shared_ptr<const System> CombatInfo::GetSystem() const
-{ return this->objects.at<System>(this->system_id); }
+{ return this->objects.get<System>(this->system_id); }
 
 std::shared_ptr<System> CombatInfo::GetSystem()
-{ return this->objects.at<System>(this->system_id); }
+{ return this->objects.get<System>(this->system_id); }
 
 float CombatInfo::GetMonsterDetection() const {
     float monster_detection = 0.0;
@@ -1619,7 +1619,7 @@ namespace {
 
         DebugLogger() << "Returning fighters to ships:";
         for (auto& entry : ships_fighters_to_add_back) {
-            auto ship = combat_info.objects.at<Ship>(entry.first);
+            auto ship = combat_info.objects.get<Ship>(entry.first);
             if (!ship) {
                 ErrorLogger(combat) << "Couldn't get ship with id " << entry.first << " for fighter to return to...";
                 continue;
@@ -1817,7 +1817,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     if (combat_info.objects.empty())
         return;
 
-    auto system = combat_info.objects.at<System>(combat_info.system_id);
+    auto system = combat_info.objects.get<System>(combat_info.system_id);
     if (!system)
         ErrorLogger() << "AutoResolveCombat couldn't get system with id " << combat_info.system_id;
     else

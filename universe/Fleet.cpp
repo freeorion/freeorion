@@ -646,7 +646,7 @@ namespace {
         return std::any_of(
             ship_ids.begin(), ship_ids.end(),
             [&pred](const int ship_id) {
-                const auto& ship = Objects().at<const Ship>(ship_id);
+                const auto& ship = Objects().get<const Ship>(ship_id);
                 if (!ship) {
                     WarnLogger() << "Object map is missing ship with expected id " << ship_id;
                     return false;

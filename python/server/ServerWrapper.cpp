@@ -675,7 +675,7 @@ namespace {
     }
 
     int CreatePlanet(PlanetSize size, PlanetType planet_type, int system_id, int orbit, const std::string& name) {
-        auto system = Objects().at<System>(system_id);
+        auto system = Objects().get<System>(system_id);
 
         // Perform some validity checks
         // Check if system with id system_id exists
@@ -733,7 +733,7 @@ namespace {
     }
 
     int CreateBuilding(const std::string& building_type, int planet_id, int empire_id) {
-        auto planet = Objects().at<Planet>(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "CreateBuilding: couldn't get planet with ID " << planet_id;
             return INVALID_OBJECT_ID;
@@ -765,7 +765,7 @@ namespace {
 
     int CreateFleet(const std::string& name, int system_id, int empire_id, bool aggressive = false) {
         // Get system and check if it exists
-        auto system = Objects().at<System>(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "CreateFleet: couldn't get system with ID " << system_id;
             return INVALID_OBJECT_ID;

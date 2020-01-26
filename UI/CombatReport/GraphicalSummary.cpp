@@ -269,7 +269,7 @@ public:
         m_sizer(sizer),
         m_hovered(false)
     {
-        auto object = Objects().at(participant.object_id);
+        auto object = Objects().get(participant.object_id);
         if (object) {
             SetBrowseText(object->PublicName(ClientApp::GetApp()->EmpireID()) + " " +
                           DoubleToString(participant.current_health, 3, false) + "/" +

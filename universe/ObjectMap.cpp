@@ -90,7 +90,7 @@ void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source, int emp
     if (GetUniverse().GetObjectVisibilityByEmpire(source_id, empire_id) <= VIS_NO_VISIBILITY)
         return;
 
-    if (std::shared_ptr<UniverseObject> destination = this->at(source_id)) {
+    if (auto destination = this->get(source_id)) {
         destination->Copy(source, empire_id); // there already is a version of this object present in this ObjectMap, so just update it
     } else {
         insertCore(std::shared_ptr<UniverseObject>(source->Clone()), empire_id); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
@@ -117,7 +117,7 @@ void ObjectMap::insertCore(std::shared_ptr<UniverseObject> item, int empire_id/*
     if (item &&
         !GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).count(item->ID()))
     {
-        auto this_item = this->at(item->ID());
+        auto this_item = this->get(item->ID());
         m_existing_objects[item->ID()] = this_item;
         switch (item->ObjectType()) {
             case OBJ_BUILDING:
@@ -203,7 +203,7 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_obj
             continue;
         if (destroyed_object_ids.count(entry.first))
             continue;
-        auto this_item = this->at(entry.first);
+        auto this_item = this->get(entry.first);
         m_existing_objects[entry.first] = this_item;
         switch (entry.second->ObjectType()) {
             case OBJ_BUILDING:
@@ -260,7 +260,7 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
             continue;
 
         // store systems' contained objects
-        if (this->at(sys_id)) { // although this is expected to be a system, can't use Object<System> here due to CopyForSerialize not copying the type-specific objects info
+        if (this->get(sys_id)) { // although this is expected to be a system, can't use Object<System> here due to CopyForSerialize not copying the type-specific objects info
             contained_objs[sys_id].insert(contained_id);
 
             if (type == OBJ_PLANET)
@@ -276,11 +276,11 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
         }
 
         // store planets' contained buildings
-        if (type == OBJ_BUILDING && this->at(alt_id))
+        if (type == OBJ_BUILDING && this->get(alt_id))
             contained_buildings[alt_id].insert(contained_id);
 
         // store fleets' contained ships
-        if (type == OBJ_SHIP && this->at(alt_id))
+        if (type == OBJ_SHIP && this->get(alt_id))
             contained_ships[alt_id].insert(contained_id);
     }
 

@@ -1422,7 +1422,7 @@ void FleetDataPanel::Refresh() {
             return std::all_of(
                 fleet->ShipIDs().begin(), fleet->ShipIDs().end(),
                 [&pred](const int ship_id) {
-                    const auto& ship = Objects().at<const Ship>(ship_id);
+                    const auto& ship = Objects().get<const Ship>(ship_id);
                     if (!ship) {
                         WarnLogger() << "Object map is missing ship with expected id " << ship_id;
                         return false;
@@ -3785,7 +3785,7 @@ void FleetWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) 
     // remove deleted fleet's row
     for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         int row_fleet_id = FleetInRow(it);
-        if (objects.at<Fleet>(row_fleet_id) == deleted_fleet) {
+        if (objects.get<Fleet>(row_fleet_id) == deleted_fleet) {
             m_fleets_lb->Erase(it);
             break;
         }

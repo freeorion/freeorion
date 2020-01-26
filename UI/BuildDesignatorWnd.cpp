@@ -1091,7 +1091,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
     const ProductionQueue& queue = empire->GetProductionQueue();
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
         int location_id = queue[queue_idx].location;
-        if (auto build_location = objects.at(location_id)) {
+        if (auto build_location = objects.get(location_id)) {
             // centre map on system of build location
             int system_id = build_location->SystemID();
             auto&& map = ClientUI::GetClientUI()->GetMapWnd();

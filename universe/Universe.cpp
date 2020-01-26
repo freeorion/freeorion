@@ -363,7 +363,7 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
             return std::set<std::string>();
         return object_it->second;
     } else {
-        auto obj = m_objects.at(object_id);
+        auto obj = m_objects.get(object_id);
         if (!obj)
             return std::set<std::string>();
         // all specials visible
@@ -623,7 +623,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
         if (m_destroyed_object_ids.count(object_id))
             continue;
         // get object
-        auto obj = m_objects.at(object_id);
+        auto obj = m_objects.get(object_id);
         if (!obj) {
             ErrorLogger() << "Universe::InitMeterEstimatesAndDiscrepancies couldn't find an object that was in the effect accounting map...?";
             continue;
@@ -692,7 +692,7 @@ void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects
         if (collected_ids.count(cur_id))
             return true;
 
-        auto cur_object = m_objects.at(cur_id);
+        auto cur_object = m_objects.get(cur_id);
         if (!cur_object) {
             ErrorLogger() << "Universe::UpdateMeterEstimates tried to get an invalid object for id " << cur_id
                           << " in container " << container_id
@@ -1805,7 +1805,7 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
     if (objects.empty())
         return;
 
-    auto obj = objects.at(object_id);
+    auto obj = objects.get(object_id);
     if (!obj) {
         ErrorLogger() << "ForgetKnownObject empire: " << empire_id
                       << " bad object id: " << object_id;
@@ -1826,7 +1826,7 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
 
     int container_id = obj->ContainerObjectID();
     if (container_id != INVALID_OBJECT_ID) {
-        if (auto container = objects.at(container_id)) {
+        if (auto container = objects.get(container_id)) {
             if (auto system = std::dynamic_pointer_cast<System>(container))
                 system->Remove(object_id);
             else if (auto planet = std::dynamic_pointer_cast<Planet>(container))
@@ -1913,7 +1913,7 @@ namespace {
             } else if (obj->ObjectType() == OBJ_SHIP) {
                 auto ship = std::dynamic_pointer_cast<const Ship>(obj);
                 if (ship)
-                    fleet = Objects().at<Fleet>(ship->FleetID());
+                    fleet = Objects().get<Fleet>(ship->FleetID());
             }
             if (fleet) {
                 int cur_id = fleet->SystemID();
@@ -2396,7 +2396,7 @@ namespace {
                     continue;
 
                 int object_id = obj_entry.first;
-                auto obj = objects.at(object_id);
+                auto obj = objects.get(object_id);
                 if (!obj)
                     continue;
 
@@ -2565,7 +2565,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
             // update empire's latest known data about object, based on current visibility and historical visibility and knowledge of object
 
             // is there already last known version of an UniverseObject stored for this empire?
-            if (auto known_obj = known_object_map.at(object_id)) {
+            if (auto known_obj = known_object_map.get(object_id)) {
                 known_obj->Copy(full_object, empire_id);                    // already a stored version of this object for this empire.  update it, limited by visibility this empire has for this object this turn
             } else {
                 if (auto new_obj = std::shared_ptr<UniverseObject>(full_object->Clone(empire_id)))    // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
@@ -2747,7 +2747,7 @@ void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id)
 
 void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = true*/) {
     // remove object from any containing UniverseObject
-    auto obj = m_objects.at(object_id);
+    auto obj = m_objects.get(object_id);
     if (!obj) {
         ErrorLogger() << "Universe::Destroy called for nonexistant object with id: " << object_id;
         return;
@@ -2774,7 +2774,7 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
 std::set<int> Universe::RecursiveDestroy(int object_id) {
     std::set<int> retval;
 
-    auto obj = m_objects.at(object_id);
+    auto obj = m_objects.get(object_id);
     if (!obj) {
         DebugLogger() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << object_id;
         return retval;
@@ -2873,7 +2873,7 @@ bool Universe::Delete(int object_id) {
     DebugLogger() << "Universe::Delete with ID: " << object_id;
     // find object amongst existing objects and delete directly, without storing
     // any info about the previous object (as is done for destroying an object)
-    auto obj = m_objects.at(object_id);
+    auto obj = m_objects.get(object_id);
     if (!obj) {
         ErrorLogger() << "Tried to delete a nonexistant object with id: " << object_id;
         return false;

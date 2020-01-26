@@ -286,13 +286,13 @@ SupplyManager& ServerApp::GetSupplyManager()
 { return m_supply_manager; }
 
 std::shared_ptr<UniverseObject> ServerApp::GetUniverseObject(int object_id)
-{ return m_universe.Objects().at(object_id); }
+{ return m_universe.Objects().get(object_id); }
 
 ObjectMap& ServerApp::EmpireKnownObjects(int empire_id)
 { return m_universe.EmpireKnownObjects(empire_id); }
 
 std::shared_ptr<UniverseObject> ServerApp::EmpireKnownObject(int object_id, int empire_id)
-{ return m_universe.EmpireKnownObjects(empire_id).at(object_id); }
+{ return m_universe.EmpireKnownObjects(empire_id).get(object_id); }
 
 ServerNetworking& ServerApp::Networking()
 { return m_networking; }

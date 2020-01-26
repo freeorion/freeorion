@@ -182,13 +182,13 @@ public:
       * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
     template <class T = UniverseObject>
-    std::shared_ptr<const T> at(int id) const;
+    std::shared_ptr<const T> get(int id) const;
 
     /** Returns a pointer to the object of type T with ID number \a id.
       * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
     template <class T = UniverseObject>
-    std::shared_ptr<T> at(int id);
+    std::shared_ptr<T> get(int id);
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
@@ -381,7 +381,7 @@ ObjectMap::const_iterator<T> ObjectMap::end() const
 { return const_iterator<T>(Map<typename std::remove_const<T>::type>().end(), *this); }
 
 template <class T>
-std::shared_ptr<const T> ObjectMap::at(int id) const {
+std::shared_ptr<const T> ObjectMap::get(int id) const {
     auto it = Map<typename std::remove_const<T>::type>().find(id);
     return std::shared_ptr<const T>(
         it != Map<typename std::remove_const<T>::type>().end()
@@ -390,7 +390,7 @@ std::shared_ptr<const T> ObjectMap::at(int id) const {
 }
 
 template <class T>
-std::shared_ptr<T> ObjectMap::at(int id) {
+std::shared_ptr<T> ObjectMap::get(int id) {
     auto it = Map<typename std::remove_const<T>::type>().find(id);
     return std::shared_ptr<T>(
         it != Map<typename std::remove_const<T>::type>().end()
