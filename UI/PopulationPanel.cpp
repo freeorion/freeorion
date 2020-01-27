@@ -38,12 +38,7 @@ void PopulationPanel::CompleteConstruction() {
     m_expand_button->LeftPressedSignal.connect(
         boost::bind(&PopulationPanel::ExpandCollapseButtonPressed, this));
 
-    const auto obj = GetUniverseObject(m_popcenter_id);
-    if (!obj) {
-        ErrorLogger() << "Attempted to construct a PopulationPanel with an invalid object id " << m_popcenter_id;
-        return;
-    }
-    auto pop = GetPopCenter();
+    auto pop = Objects().get<PopCenter>(m_popcenter_id);
     if (!pop) {
         ErrorLogger() << "Attempted to construct a PopulationPanel with an object id that is not a popcenter: " << m_popcenter_id;
         return;
@@ -76,7 +71,7 @@ void PopulationPanel::CompleteConstruction() {
             std::string meter_string = boost::lexical_cast<std::string>(meter_type);
 
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-            auto pc = this->GetPopCenter();
+            auto pc = Objects().get<PopCenter>(m_popcenter_id);
             if (meter_type == METER_POPULATION && pc) {
                 std::string species_name = pc->SpeciesName();
                 if (!species_name.empty()) {
@@ -127,7 +122,7 @@ void PopulationPanel::Update() {
         m_multi_icon_value_indicator->ClearToolTip(meter_stat.first);
     }
 
-    auto pop = GetPopCenter();
+    auto pop = Objects().get<PopCenter>(m_popcenter_id);
     if (!pop) {
         ErrorLogger() << "PopulationPanel::Update couldn't get PopCenter or couldn't get UniverseObject";
         return;
@@ -216,15 +211,6 @@ void PopulationPanel::DoLayout() {
     }
 
     SetCollapsed(!s_expanded_map[m_popcenter_id]);
-}
-
-std::shared_ptr<const PopCenter> PopulationPanel::GetPopCenter() const {
-    auto pop = ::GetPopCenter(m_popcenter_id);
-    if (!pop) {
-        ErrorLogger() << "PopulationPanel tried to get an object with an invalid m_popcenter_id: " << m_popcenter_id;
-        return nullptr;
-    }
-    return pop;
 }
 
 std::map<int, bool> PopulationPanel::s_expanded_map;

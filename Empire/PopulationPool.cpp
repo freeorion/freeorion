@@ -19,10 +19,10 @@ void PopulationPool::SetPopCenters(const std::vector<int>& pop_center_ids) {
 void PopulationPool::Update() {
     m_population = 0.0f;
     // sum population from all PopCenters in this pool
-    for (int pop_center_id : m_pop_center_ids) {
-        if (auto center = GetPopCenter(pop_center_id)) {
-            m_population += center->CurrentMeterValue(METER_POPULATION);
-        }
+    for (const auto& center : Objects().find<PopCenter>(m_pop_center_ids)) {
+        if (!center)
+            continue;
+        m_population += center->CurrentMeterValue(METER_POPULATION);
     }
     ChangedSignal();
 }

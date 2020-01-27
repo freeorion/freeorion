@@ -2548,13 +2548,11 @@ namespace {
             }
         }
 
-        for (const auto& pop_center_id : empire->GetPopulationPool().PopCenterIDs()) {
-            auto obj = GetUniverseObject(pop_center_id);
-            auto pc = std::dynamic_pointer_cast<const PopCenter>(obj);
-            if (!pc)
+        for (const auto& pop_center : Objects().find<PopCenter>(empire->GetPopulationPool().PopCenterIDs())) {
+            if (!pop_center)
                 continue;
 
-            const std::string& species_name = pc->SpeciesName();
+            const std::string& species_name = pop_center->SpeciesName();
             if (species_name.empty())
                 continue;
 

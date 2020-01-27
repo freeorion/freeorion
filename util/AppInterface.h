@@ -129,9 +129,6 @@ inline std::shared_ptr<UniverseObject> GetEmpireKnownObject(int object_id, int e
 inline std::shared_ptr<ResourceCenter> GetEmpireKnownResourceCenter(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).get<ResourceCenter>(object_id); }
 
-inline std::shared_ptr<PopCenter> GetPopCenter(int object_id)
-{ return IApp::GetApp()->GetUniverse().Objects().get<PopCenter>(object_id); }
-
 inline std::shared_ptr<PopCenter> GetEmpireKnownPopCenter(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).get<PopCenter>(object_id); }
 
