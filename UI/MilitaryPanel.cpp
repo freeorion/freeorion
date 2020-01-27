@@ -46,7 +46,7 @@ void MilitaryPanel::CompleteConstruction() {
     m_expand_button->LeftPressedSignal.connect(
         boost::bind(&MilitaryPanel::ExpandCollapseButtonPressed, this));
 
-    const auto obj = GetUniverseObject(m_planet_id);
+    const auto obj = Objects().get(m_planet_id);
     if (!obj) {
         ErrorLogger() << "Invalid object id " << m_planet_id;
         return;
@@ -100,7 +100,7 @@ void MilitaryPanel::ExpandCollapse(bool expanded) {
 }
 
 void MilitaryPanel::Update() {
-    auto obj = GetUniverseObject(m_planet_id);
+    auto obj = Objects().get(m_planet_id);
     if (!obj) {
         ErrorLogger() << "MilitaryPanel::Update coudln't get object with id  " << m_planet_id;
         return;

@@ -147,7 +147,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         first_fleet = *fleets.begin();
     if (first_fleet && first_fleet->SystemID() == INVALID_OBJECT_ID && first_fleet->NextSystemID() != INVALID_OBJECT_ID) {
         int next_sys_id = first_fleet->NextSystemID();
-        if (auto obj = GetUniverseObject(next_sys_id)) {
+        if (auto obj = Objects().get(next_sys_id)) {
             // fleet is not in a system and has a valid next destination, so can orient it in that direction
             // fleet icons might not appear on the screen in the exact place corresponding to their
             // actual universe position, but if they're moving along a starlane, this code will assume

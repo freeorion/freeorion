@@ -182,7 +182,7 @@ std::string SupplyManager::Dump(int empire_id) const {
 
                 for (const auto& trav : m_supply_starlane_traversals.at(empire_supply.first)) {
                     if (trav.first == sys->ID()) {
-                        auto obj = GetUniverseObject(trav.second);
+                        auto obj = Objects().get(trav.second);
                         if (obj)
                             retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
@@ -192,7 +192,7 @@ std::string SupplyManager::Dump(int empire_id) const {
                 retval += "Traversals to here from: ";
                 for (const auto& trav : m_supply_starlane_traversals.at(empire_supply.first)) {
                     if (trav.second == sys->ID()) {
-                        auto obj = GetUniverseObject(trav.first);
+                        auto obj = Objects().get(trav.first);
                         if (obj)
                             retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
@@ -202,7 +202,7 @@ std::string SupplyManager::Dump(int empire_id) const {
                 retval += "Blocked Traversals from here to: ";
                 for (const auto& trav : m_supply_starlane_obstructed_traversals.at(empire_supply.first)) {
                     if (trav.first == sys->ID()) {
-                        auto obj = GetUniverseObject(trav.second);
+                        auto obj = Objects().get(trav.second);
                         if (obj)
                             retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
@@ -212,7 +212,7 @@ std::string SupplyManager::Dump(int empire_id) const {
                 retval += "Blocked Traversals to here from: ";
                 for (const auto& trav : m_supply_starlane_obstructed_traversals.at(empire_supply.first)) {
                     if (trav.second == sys->ID()) {
-                        auto obj = GetUniverseObject(trav.first);
+                        auto obj = Objects().get(trav.first);
                         if (obj)
                             retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }

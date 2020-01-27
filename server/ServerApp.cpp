@@ -2532,7 +2532,7 @@ namespace {
             // TODO: fix similar issue for overlogging on attacker side
             std::set<int> already_logged__target_ships;
             for (const auto& attack_event : events_that_killed) {
-                auto attacker = GetUniverseObject(attack_event->attacker_id);
+                auto attacker = Objects().get(attack_event->attacker_id);
                 if (!attacker)
                     continue;
                 int attacker_empire_id = attacker->Owner();
@@ -3428,7 +3428,7 @@ void ServerApp::PostCombatProcessTurns() {
     // check for loss of empire capitals
     for (auto& entry : empires) {
         int capital_id = entry.second->CapitalID();
-        if (auto capital = GetUniverseObject(capital_id)) {
+        if (auto capital = Objects().get(capital_id)) {
             if (!capital->OwnedBy(entry.first))
                 entry.second->SetCapitalID(INVALID_OBJECT_ID);
         } else {
@@ -3530,7 +3530,7 @@ void ServerApp::PostCombatProcessTurns() {
     // check for loss of empire capitals
     for (auto& entry : empires) {
         int capital_id = entry.second->CapitalID();
-        if (auto capital = GetUniverseObject(capital_id)) {
+        if (auto capital = Objects().get(capital_id)) {
             if (!capital->OwnedBy(entry.first))
                 entry.second->SetCapitalID(INVALID_OBJECT_ID);
         } else {

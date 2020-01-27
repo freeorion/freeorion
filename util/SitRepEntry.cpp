@@ -205,7 +205,7 @@ namespace {
 }
 
 SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id, int empire_id) {
-    auto obj = GetUniverseObject(object_id);
+    auto obj = Objects().get(object_id);
     if (!obj)
         return GenericCombatDamagedObjectSitrep(combat_system_id);
 

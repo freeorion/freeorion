@@ -58,7 +58,7 @@ namespace {
     // need to deal with std::shared_ptr class.
     // Please don't use this trick elsewhere to grab a raw UniverseObject*!
     const UniverseObject*   GetUniverseObjectP(const Universe& universe, int id)
-    { return ::GetUniverseObject(id).operator->(); }
+    { return ::Objects().get<UniverseObject>(id).operator->(); }
     const Ship*             GetShipP(const Universe& universe, int id)
     { return ::Objects().get<Ship>(id).operator->(); }
     const Fleet*            GetFleetP(const Universe& universe, int id)

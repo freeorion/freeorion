@@ -483,7 +483,7 @@ float PartType::ProductionCost(int empire_id, int location_id, int in_design_id/
 
     const auto arbitrary_large_number = 999999.9f;
 
-    auto location = GetUniverseObject(location_id);
+    auto location = Objects().get(location_id);
     if (!location && !m_production_cost->TargetInvariant())
         return arbitrary_large_number;
 
@@ -507,7 +507,7 @@ int PartType::ProductionTime(int empire_id, int location_id, int in_design_id/* 
     else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
         return m_production_time->Eval(ScriptingContext(nullptr, nullptr, in_design_id));
 
-    auto location = GetUniverseObject(location_id);
+    auto location = Objects().get(location_id);
     if (!location && !m_production_time->TargetInvariant())
         return arbitrary_large_number;
 
@@ -659,7 +659,7 @@ float HullType::ProductionCost(int empire_id, int location_id, int in_design_id/
 
     const auto arbitrary_large_number = 999999.9f;
 
-    auto location = GetUniverseObject(location_id);
+    auto location = Objects().get(location_id);
     if (!location && !m_production_cost->TargetInvariant())
         return arbitrary_large_number;
 
@@ -683,7 +683,7 @@ int HullType::ProductionTime(int empire_id, int location_id, int in_design_id/* 
 
     const auto arbitrary_large_number = 999999;
 
-    auto location = GetUniverseObject(location_id);
+    auto location = Objects().get(location_id);
     if (!location && !m_production_time->TargetInvariant())
         return arbitrary_large_number;
 
@@ -1072,7 +1072,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     }
 
     // must own the production location...
-    auto location = GetUniverseObject(location_id);
+    auto location = Objects().get(location_id);
     if (!location) {
         WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << location_id;
         return false;

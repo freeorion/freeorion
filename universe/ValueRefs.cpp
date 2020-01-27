@@ -2006,7 +2006,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             object_id = m_int_ref1->Eval(context);
         if (object_id == INVALID_OBJECT_ID)
             return 0;
-        auto object = GetUniverseObject(object_id);
+        auto object = Objects().get(object_id);
         if (!object)
             return 0;
 
@@ -2192,14 +2192,14 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         int object1_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object1_id = m_int_ref1->Eval(context);
-        auto obj1 = GetUniverseObject(object1_id);
+        auto obj1 = Objects().get(object1_id);
         if (!obj1)
             return 0.0;
 
         int object2_id = INVALID_OBJECT_ID;
         if (m_int_ref2)
             object2_id = m_int_ref2->Eval(context);
-        auto obj2 = GetUniverseObject(object2_id);
+        auto obj2 = Objects().get(object2_id);
         if (!obj2)
             return 0.0;
 
@@ -2247,7 +2247,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         int object_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object_id = m_int_ref1->Eval(context);
-        auto object = GetUniverseObject(object_id);
+        auto object = Objects().get(object_id);
         if (!object)
             return 0.0;
 
@@ -2263,7 +2263,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         int object_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object_id = m_int_ref1->Eval(context);
-        auto object = GetUniverseObject(object_id);
+        auto object = Objects().get(object_id);
         if (!object)
             return 0.0;
         auto ship = std::dynamic_pointer_cast<const Ship>(object);
@@ -2949,7 +2949,7 @@ std::string NameLookup::Eval(const ScriptingContext& context) const {
 
     switch (m_lookup_type) {
     case OBJECT_NAME: {
-        auto obj = GetUniverseObject(m_value_ref->Eval(context));
+        auto obj = Objects().get(m_value_ref->Eval(context));
         return obj ? obj->Name() : "";
         break;
     }

@@ -2461,7 +2461,7 @@ void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
 
     m_buildings_panel->EnableOrderIssuing(enable);
 
-    auto obj = GetUniverseObject(m_planet_id);
+    auto obj = Objects().get(m_planet_id);
     if (!enable || !obj || !obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         m_focus_drop->Disable();
     else

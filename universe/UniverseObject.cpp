@@ -302,7 +302,7 @@ void UniverseObject::Move(double x, double y)
 { MoveTo(m_x + x, m_y + y); }
 
 void UniverseObject::MoveTo(int object_id)
-{ MoveTo(GetUniverseObject(object_id)); }
+{ MoveTo(Objects().get(object_id)); }
 
 void UniverseObject::MoveTo(std::shared_ptr<UniverseObject> object) {
     if (!object) {

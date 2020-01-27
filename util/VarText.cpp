@@ -60,7 +60,7 @@ namespace {
         } catch (...) {
             return boost::none;
         }
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj)
             return boost::none;
 

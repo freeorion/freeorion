@@ -216,7 +216,7 @@ namespace {
         Condition::ObjectSet objs;
         boost::python::stl_input_iterator<int> end;
         for (boost::python::stl_input_iterator<int> id(obj_ids); id != end; ++id) {
-            if (auto obj = GetUniverseObject(*id))
+            if (auto obj = Objects().get(*id))
                 objs.push_back(obj);
             else
                 ErrorLogger() << "FilterIDsWithCondition:: Passed an invalid universe object id " << *id;
@@ -540,7 +540,7 @@ namespace {
     //
     // Wrappers for common UniverseObject class member funtions
     object GetName(int object_id) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "GetName: Couldn't get object with ID " << object_id;
             return object("");
@@ -549,7 +549,7 @@ namespace {
     }
 
     void SetName(int object_id, const std::string& name) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "RenameUniverseObject: Couldn't get object with ID " << object_id;
             return;
@@ -558,7 +558,7 @@ namespace {
     }
 
     double GetX(int object_id) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "GetX: Couldn't get object with ID " << object_id;
             return UniverseObject::INVALID_POSITION;
@@ -567,7 +567,7 @@ namespace {
     }
 
     double GetY(int object_id) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "GetY: Couldn't get object with ID " << object_id;
             return UniverseObject::INVALID_POSITION;
@@ -576,7 +576,7 @@ namespace {
     }
 
     tuple GetPos(int object_id) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "GetPos: Couldn't get object with ID " << object_id;
             return make_tuple(UniverseObject::INVALID_POSITION,
@@ -586,7 +586,7 @@ namespace {
     }
 
     int GetOwner(int object_id) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "GetOwner: Couldn't get object with ID " << object_id;
             return ALL_EMPIRES;
@@ -596,7 +596,7 @@ namespace {
 
     void AddSpecial(int object_id, const std::string special_name) {
         // get the universe object and check if it exists
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "AddSpecial: Couldn't get object with ID " << object_id;
             return;
@@ -615,7 +615,7 @@ namespace {
 
     void RemoveSpecial(int object_id, const std::string special_name) {
         // get the universe object and check if it exists
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "RemoveSpecial: Couldn't get object with ID " << object_id;
             return;
@@ -942,7 +942,7 @@ namespace {
         boost::python::stl_input_iterator<int> end;
         for (boost::python::stl_input_iterator<int> id(obj_ids);
              id != end; ++id) {
-            if (auto obj = GetUniverseObject(*id)) {
+            if (auto obj = Objects().get(*id)) {
                 py_systems.append(obj->SystemID());
             } else {
                 ErrorLogger() << "Passed an invalid universe object id " << *id;

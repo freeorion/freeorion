@@ -130,7 +130,7 @@ void MeterBrowseWnd::Initialize() {
     const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
     // get objects and meters to verify that they exist
-    auto obj = GetUniverseObject(m_object_id);
+    auto obj = Objects().get(m_object_id);
     if (!obj) {
         ErrorLogger() << "MeterBrowseWnd couldn't get object with id " << m_object_id;
         return;
@@ -238,7 +238,7 @@ namespace {
         int obj_id, const MeterType& meter_type)
     {
         // get object and meter, aborting if not valid
-        auto obj = GetUniverseObject(obj_id);
+        auto obj = Objects().get(obj_id);
         if (!obj) {
             ErrorLogger() << "Couldn't get object with id " << obj_id;
             return boost::none;
@@ -262,7 +262,7 @@ namespace {
 }
 
 void MeterBrowseWnd::UpdateSummary() {
-    auto obj = GetUniverseObject(m_object_id);
+    auto obj = Objects().get(m_object_id);
     if (!obj)
         return;
 
@@ -331,7 +331,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     // add label-value pairs for each alteration recorded for this meter
     for (const auto& info : *maybe_info_vec) {
-        auto source = GetUniverseObject(info.source_id);
+        auto source = Objects().get(info.source_id);
 
         std::string text;
         std::string name;

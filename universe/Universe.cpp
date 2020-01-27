@@ -1627,7 +1627,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 
     for (auto& entry : m_marked_destroyed) {
         int obj_id = entry.first;
-        auto obj = GetUniverseObject(obj_id);
+        auto obj = Objects().get(obj_id);
         if (!obj)
             continue;
 
@@ -1680,10 +1680,10 @@ namespace {
 }
 
 void Universe::CountDestructionInStats(int object_id, int source_object_id) {
-    auto obj = GetUniverseObject(object_id);
+    auto obj = Objects().get(object_id);
     if (!obj)
         return;
-    auto source = GetUniverseObject(source_object_id);
+    auto source = Objects().get(source_object_id);
     if (!source)
         return;
 
@@ -1734,7 +1734,7 @@ void Universe::ApplyEffectDerivedVisibilities() {
         for (const auto& object_entry : empire_entry.second) {
             if (object_entry.first <= INVALID_OBJECT_ID)
                 continue;   // can't set a non-object's visibility
-            auto target = GetUniverseObject(object_entry.first);
+            auto target = Objects().get(object_entry.first);
             if (!target)
                 continue;   // don't need to set a non-gettable object's visibility
 
@@ -1751,7 +1751,7 @@ void Universe::ApplyEffectDerivedVisibilities() {
             // evaluate valuerefs and and store visibility of object
             for (auto& source_ref_entry : object_entry.second) {
                 // set up context for executing ValueRef to determine visibility to set
-                auto source = GetUniverseObject(source_ref_entry.first);
+                auto source = Objects().get(source_ref_entry.first);
                 ScriptingContext context(source, target, target_initial_vis);
 
                 const auto val_ref = source_ref_entry.second;
@@ -1854,7 +1854,7 @@ void Universe::SetEmpireSpecialVisibility(int empire_id, int object_id,
 {
     if (empire_id == ALL_EMPIRES || special_name.empty() || object_id == INVALID_OBJECT_ID)
         return;
-    //auto obj = GetUniverseObject(object_id);
+    //auto obj = Objects().get(object_id);
     //if (!obj)
     //    return;
     //if (!obj->HasSpecial(special_name))

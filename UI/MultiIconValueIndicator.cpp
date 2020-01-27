@@ -116,12 +116,9 @@ void MultiIconValueIndicator::Update() {
     for (std::size_t i = 0; i < m_icons.size(); ++i) {
         assert(m_icons[i]);
         double total = 0.0;
-        for (int object_id : m_object_ids) {
-            auto obj = GetUniverseObject(object_id);
-            if (!obj) {
-                ErrorLogger() << "MultiIconValueIndicator::Update couldn't get object with id " << object_id;
+        for (const auto& obj : Objects().find<UniverseObject>(m_object_ids)) {
+            if (!obj)
                 continue;
-            }
             //DebugLogger() << "MultiIconValueIndicator::Update object:";
             //DebugLogger() << obj->Dump();
             auto type = m_meter_types[i].first;

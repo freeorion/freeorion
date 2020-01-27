@@ -48,17 +48,17 @@ void PopulationPanel::CompleteConstruction() {
     m_meter_stats.push_back({
         METER_POPULATION,
         GG::Wnd::Create<StatisticIcon>(ClientUI::SpeciesIcon(pop->SpeciesName()),
-                                       obj->InitialMeterValue(METER_POPULATION), 3, false,
+                                       pop->InitialMeterValue(METER_POPULATION), 3, false,
                                        MeterIconSize().x, MeterIconSize().y)});
     m_meter_stats.push_back({
         METER_HAPPINESS,
         GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_HAPPINESS),
-                                       obj->InitialMeterValue(METER_HAPPINESS), 3, false,
+                                       pop->InitialMeterValue(METER_HAPPINESS), 3, false,
                                        MeterIconSize().x, MeterIconSize().y)});
     m_meter_stats.push_back({
         METER_CONSTRUCTION,
         GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_CONSTRUCTION),
-                                       obj->InitialMeterValue(METER_CONSTRUCTION), 3, false,
+                                       pop->InitialMeterValue(METER_CONSTRUCTION), 3, false,
                                        MeterIconSize().x, MeterIconSize().y)});
 
     // meter and production indicators

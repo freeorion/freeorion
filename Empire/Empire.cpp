@@ -94,12 +94,12 @@ std::shared_ptr<const UniverseObject> Empire::Source() const {
         return nullptr;
 
     // Use the current source if valid
-    auto valid_current_source = GetUniverseObject(m_source_id);
+    auto valid_current_source = Objects().get(m_source_id);
     if (valid_current_source && valid_current_source->OwnedBy(m_id))
         return valid_current_source;
 
     // Try the capital
-    auto capital_as_source = GetUniverseObject(m_capital_id);
+    auto capital_as_source = Objects().get(m_capital_id);
     if (capital_as_source && capital_as_source->OwnedBy(m_id)) {
         m_source_id = m_capital_id;
         return capital_as_source;
@@ -142,7 +142,7 @@ void Empire::SetCapitalID(int id) {
     if (possible_capital && possible_capital->OwnedBy(m_id))
         m_capital_id = id;
 
-    auto possible_source = GetUniverseObject(id);
+    auto possible_source = Objects().get(id);
     if (possible_source && possible_source->OwnedBy(m_id))
         m_source_id = id;
 }
@@ -458,7 +458,7 @@ bool Empire::ProducibleItem(BuildType build_type, int location_id) const {
         return false;
 
     // must own the production location...
-    auto location = GetUniverseObject(location_id);
+    auto location = Objects().get(location_id);
     if (!location) {
         WarnLogger() << "Empire::ProducibleItem for BT_STOCKPILE unable to get location object with id " << location_id;
         return false;
@@ -495,7 +495,7 @@ bool Empire::ProducibleItem(BuildType build_type, const std::string& name, int l
     if (!building_type || !building_type->Producible())
         return false;
 
-    auto build_location = GetUniverseObject(location);
+    auto build_location = Objects().get(location);
     if (!build_location)
         return false;
 
@@ -525,7 +525,7 @@ bool Empire::ProducibleItem(BuildType build_type, int design_id, int location) c
     if (!ship_design || !ship_design->Producible())
         return false;
 
-    auto build_location = GetUniverseObject(location);
+    auto build_location = Objects().get(location);
     if (!build_location) return false;
 
     if (build_type == BT_SHIP) {
@@ -558,7 +558,7 @@ bool Empire::EnqueuableItem(BuildType build_type, const std::string& name, int l
     if (!building_type || !building_type->Producible())
         return false;
 
-    auto build_location = GetUniverseObject(location);
+    auto build_location = Objects().get(location);
     if (!build_location)
         return false;
 
@@ -649,7 +649,7 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
 
     // as of this writing, only planets can generate supply propagation
     std::vector<std::shared_ptr<const UniverseObject>> owned_planets;
-    for (const auto& int planet: Objects().find<Planet>(known_objects)) {
+    for (const auto& planet: Objects().find<Planet>(known_objects)) {
         if (!planet)
             continue;
         if (planet->OwnedBy(this->EmpireID()))
@@ -1833,7 +1833,7 @@ void Empire::CheckProductionProgress() {
                 build_description = "unknown build type";
         }
 
-        auto build_location = GetUniverseObject(elem.location);
+        auto build_location = Objects().get(elem.location);
         if (!build_location || (elem.item.build_type == BT_BUILDING && build_location->ObjectType() != OBJ_PLANET)) {
             ErrorLogger() << "Couldn't get valid build location for completed " << build_description;
             continue;
@@ -1867,7 +1867,7 @@ void Empire::CheckProductionProgress() {
             if (consumption_impossible)
                 break;
             for (auto& special_meter : special_type.second) {
-                auto obj = GetUniverseObject(special_meter.first);
+                auto obj = Objects().get(special_meter.first);
                 float capacity = obj ? obj->SpecialCapacity(special_type.first) : 0.0f;
                 if (capacity < special_meter.second * elem.blocksize) {
                     consumption_impossible = true;
@@ -1880,7 +1880,7 @@ void Empire::CheckProductionProgress() {
             if (consumption_impossible)
                 break;
             for (auto& object_meter : meter_type.second) {
-                auto obj = GetUniverseObject(object_meter.first);
+                auto obj = Objects().get(object_meter.first);
                 const Meter* meter = obj ? obj->GetMeter(meter_type.first) : nullptr;
                 if (!meter || meter->Current() < object_meter.second * elem.blocksize) {
                     consumption_impossible = true;
@@ -1911,7 +1911,7 @@ void Empire::CheckProductionProgress() {
         // consume the item's special and meter consumption
         for (auto& special_type : sc) {
             for (auto& special_meter : special_type.second) {
-                auto obj = GetUniverseObject(special_meter.first);
+                auto obj = Objects().get(special_meter.first);
                 if (!obj)
                     continue;
                 if (!obj->HasSpecial(special_type.first))
@@ -1923,7 +1923,7 @@ void Empire::CheckProductionProgress() {
         }
         for (auto& meter_type : mc) {
             for (const auto& object_meter : meter_type.second) {
-                auto obj = GetUniverseObject(object_meter.first);
+                auto obj = Objects().get(object_meter.first);
                 if (!obj)
                     continue;
                 Meter*meter = obj->GetMeter(meter_type.first);
@@ -2144,7 +2144,7 @@ void Empire::CheckProductionProgress() {
                     if (rally_point_id != INVALID_OBJECT_ID) {
                         if (Objects().get<System>(rally_point_id)) {
                             next_fleet->CalculateRouteTo(rally_point_id);
-                        } else if (auto rally_obj = GetUniverseObject(rally_point_id)) {
+                        } else if (auto rally_obj = Objects().get(rally_point_id)) {
                             if (Objects().get<System>(rally_obj->SystemID()))
                                 next_fleet->CalculateRouteTo(rally_obj->SystemID());
                         } else {

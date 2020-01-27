@@ -851,7 +851,7 @@ namespace {
 
     /** Return the location of the object with id \p object_id.*/
     GeneralizedLocationType GeneralizedLocation(int object_id) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         return GeneralizedLocation(obj);
     }
 
@@ -1043,11 +1043,11 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
     // If one or both objects are (in) a fleet between systems, use the destination system
     // and add the distance from the fleet to the destination system, essentially calculating
     // the distance travelled until both could be in the same system.
-    std::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+    const auto obj1 = Objects().get(object1_id);
     if (!obj1)
         return -1;
 
-    std::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+    const auto obj2 = Objects().get(object2_id);
     if (!obj2)
         return -1;
 

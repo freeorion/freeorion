@@ -203,7 +203,7 @@ void MultiMeterStatusBar::Update() {
     m_projected_values.clear(); // projected current value of .first MeterTypes for the start of next turn
     m_target_max_values.clear();// current values of the .second MeterTypes in m_meter_types
 
-    auto obj = GetUniverseObject(m_object_id);
+    auto obj = Objects().get(m_object_id);
     if (!obj) {
         ErrorLogger() << "MultiMeterStatusBar couldn't get object with id " << m_object_id;
         return;

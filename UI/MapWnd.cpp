@@ -4412,7 +4412,7 @@ void MapWnd::ShowEncyclopediaEntry(const std::string& str) {
 }
 
 void MapWnd::CenterOnObject(int id) {
-    if (auto obj = GetUniverseObject(id))
+    if (auto obj = Objects().get(id))
         CenterOnMapCoord(obj->X(), obj->Y());
 }
 
@@ -4709,7 +4709,7 @@ void MapWnd::ForgetObject(int id) {
     // Tell the server to change what the empire wants to know
     // in future so that the server doesn't keep resending this
     // object information.
-    auto obj = GetUniverseObject(id);
+    auto obj = Objects().get(id);
     if (!obj)
         return;
 
@@ -6490,7 +6490,7 @@ void MapWnd::ShowProduction() {
     // home system (ie. where the capital is)
     if (SidePanel::SystemID() == INVALID_OBJECT_ID) {
         if (const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
-            if (auto obj = GetUniverseObject(empire->CapitalID()))
+            if (auto obj = Objects().get(empire->CapitalID()))
                 SelectSystem(obj->SystemID());
     } else {
         // if a system is already shown, make sure a planet gets selected by
@@ -6858,7 +6858,7 @@ bool MapWnd::ZoomToHomeSystem() {
     int home_id = empire->CapitalID();
 
     if (home_id != INVALID_OBJECT_ID) {
-        auto object = GetUniverseObject(home_id);
+        auto object = Objects().get(home_id);
         if (!object)
             return false;
         CenterOnObject(object->SystemID());
@@ -7103,8 +7103,7 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
     if (obj_group.empty())
         return false; // shouldn't happen?
     for (const auto& obj_ids : wasted_PP_objects) {
-        for (int obj_id : obj_ids) {
-            auto obj = GetUniverseObject(obj_id);
+        for (const auto& obj : Objects().find<UniverseObject>(obj_ids)) {
             if (obj && obj->SystemID() != INVALID_OBJECT_ID) {
                 // found object with wasted PP that is in a system.  zoom there.
                 CenterOnObject(obj->SystemID());

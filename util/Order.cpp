@@ -75,7 +75,7 @@ bool RenameOrder::Check(int empire, int object, const std::string& new_name) {
         return false;
     }
 
-    auto obj = GetUniverseObject(object);
+    auto obj = Objects().get(object);
 
     if (!obj) {
         ErrorLogger() << "RenameOrder::Check() : passed an invalid object.";
@@ -104,7 +104,7 @@ void RenameOrder::ExecuteImpl() const {
 
     GetValidatedEmpire();
 
-    auto obj = GetUniverseObject(m_object);
+    auto obj = Objects().get(m_object);
 
     obj->Rename(m_name);
 }
@@ -1176,7 +1176,7 @@ ScrapOrder::ScrapOrder(int empire, int object_id) :
 }
 
 bool ScrapOrder::Check(int empire_id, int object_id) {
-    auto obj = GetUniverseObject(object_id);
+    auto obj = Objects().get(object_id);
 
     if (!obj) {
         ErrorLogger() << "IssueScrapOrder : passed an invalid object_id";
@@ -1292,7 +1292,7 @@ bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_
         return false;
     }
 
-    auto obj = GetUniverseObject(object_id);
+    auto obj = Objects().get(object_id);
     if (!obj) {
         ErrorLogger() << "IssueGiveObjectToEmpireOrder : passed invalid object id";
         return false;

@@ -1100,7 +1100,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
             ErrorLogger() << "Fleet::CalculateRoute got empty route from ShortestPath";
             return;
         }
-        auto obj = GetUniverseObject(sys_list1.front());
+        auto obj = Objects().get(sys_list1.front());
         if (!obj) {
             ErrorLogger() << "Fleet::CalculateRoute couldn't get path start object with id " << path1.first.front();
             return;
@@ -1121,7 +1121,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
             ErrorLogger() << "Fleet::CalculateRoute got empty route from ShortestPath";
             return;
         }
-        obj = GetUniverseObject(sys_list2.front());
+        obj = Objects().get(sys_list2.front());
         if (!obj) {
             ErrorLogger() << "Fleet::CalculateRoute couldn't get path start object with id " << path2.first.front();
             return;

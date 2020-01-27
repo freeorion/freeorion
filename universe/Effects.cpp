@@ -327,7 +327,7 @@ void Effect::Execute(const TargetsCauses& targets_causes,
     { return; }
     // apply this effect for each source causing it
     for (const auto& targets_entry : targets_causes) {
-        ScriptingContext source_context(GetUniverseObject(targets_entry.first.source_object_id));
+        ScriptingContext source_context(Objects().get(targets_entry.first.source_object_id));
         Execute(source_context, targets_entry.second.target_set,
                 accounting_map, targets_entry.second.effect_cause,
                 only_meter_effects, only_appearance_effects,

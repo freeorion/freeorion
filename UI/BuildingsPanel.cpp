@@ -68,7 +68,7 @@ void BuildingsPanel::CompleteConstruction() {
         boost::bind(&BuildingsPanel::ExpandCollapseButtonPressed, this));
 
     // get owner, connect its production queue changed signal to update this panel
-    auto planet = GetUniverseObject(m_planet_id);
+    auto planet = Objects().get(m_planet_id);
     if (planet) {
         if (const Empire* empire = GetEmpire(planet->Owner())) {
             const ProductionQueue& queue = empire->GetProductionQueue();

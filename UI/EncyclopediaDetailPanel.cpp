@@ -1162,7 +1162,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
         // get a location where the empire might build something.
-        auto location = GetUniverseObject(empire->CapitalID());
+        auto location = Objects().get(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         // TODO: only loop over planets?
         // TODO: pass in a location condition, and pick a location that matches it if possible
@@ -2496,7 +2496,7 @@ namespace {
             return;
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-        auto obj = GetUniverseObject(id);
+        auto obj = Objects().get(id);
         if (!obj) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << item_name;
             return;

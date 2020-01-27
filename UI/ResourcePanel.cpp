@@ -50,7 +50,7 @@ void ResourcePanel::CompleteConstruction() {
     m_expand_button->LeftPressedSignal.connect(
         boost::bind(&ResourcePanel::ExpandCollapseButtonPressed, this));
 
-    const auto obj = GetUniverseObject(m_rescenter_id);
+    const auto obj = Objects().get(m_rescenter_id);
     if (!obj) {
         ErrorLogger() << "Invalid object id " << m_rescenter_id;
         return;
@@ -132,7 +132,7 @@ void ResourcePanel::Update() {
         m_multi_icon_value_indicator->ClearToolTip(meter_stat.first);
     }
 
-    auto obj = GetUniverseObject(m_rescenter_id);
+    auto obj = Objects().get(m_rescenter_id);
     if (!obj) {
         ErrorLogger() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
         return;

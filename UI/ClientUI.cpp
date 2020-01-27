@@ -975,7 +975,7 @@ bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str) {
 }
 
 void ClientUI::DumpObject(int object_id) {
-    auto obj = GetUniverseObject(object_id);
+    auto obj = Objects().get(object_id);
     if (!obj)
         return;
     m_message_wnd->HandleLogMessage(obj->Dump() + "\n");

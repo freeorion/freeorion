@@ -50,7 +50,7 @@ Moderator::SetOwner::SetOwner(int object_id, int new_owner_empire_id) :
 {}
 
 void Moderator::SetOwner::Execute() const {
-    auto obj = GetUniverseObject(m_object_id);
+    auto obj = Objects().get(m_object_id);
     if (!obj) {
         ErrorLogger() << "Moderator::SetOwner::Execute couldn't get object with id: " << m_object_id;
         return;
