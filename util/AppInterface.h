@@ -120,9 +120,6 @@ inline ObjectMap& EmpireKnownObjects(int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id); }
 
 /** Accessor for individual objects. */
-inline std::shared_ptr<UniverseObject> GetEmpireKnownObject(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObject(object_id, empire_id); }
-
 inline std::shared_ptr<ResourceCenter> GetEmpireKnownResourceCenter(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).get<ResourceCenter>(object_id); }
 

@@ -254,8 +254,8 @@ namespace {
         // get endpoints of lane in universe.  may be different because on-
         // screen lanes are drawn between system circles, not system centres
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        auto prev = GetEmpireKnownObject(lane_start_sys_id, empire_id);
-        auto next = GetEmpireKnownObject(lane_end_sys_id, empire_id);
+        auto prev = EmpireKnownObjects(empire_id).get(lane_start_sys_id);
+        auto next = EmpireKnownObjects(empire_id).get(lane_end_sys_id);
         if (!next || !prev) {
             ErrorLogger() << "ScreenPosOnStarlane couldn't find next system " << lane_start_sys_id << " or prev system " << lane_end_sys_id;
             return boost::none;

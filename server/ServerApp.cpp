@@ -2468,7 +2468,7 @@ namespace {
 
                 for (int dest_obj_id : empire_kdos.second) {
                     //DebugLogger() << "Creating destroyed object sitrep for empire " << empire_id << " and object " << dest_obj_id;
-                    //if (auto obj = GetEmpireKnownObject(dest_obj_id, empire_id)) {
+                    //if (auto obj = EmpireKnownObjects(empire_id).get(dest_obj_id)) {
                     //    DebugLogger() << "Object known to empire: " << obj->Dump();
                     //} else {
                     //    DebugLogger() << "Object not known to empire";

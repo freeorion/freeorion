@@ -253,7 +253,7 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
 }
 
 SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_id, int empire_id) {
-    auto obj = GetEmpireKnownObject(object_id, empire_id);
+    auto obj = EmpireKnownObjects(empire_id).get(object_id);
     if (!obj) {
         DebugLogger() << "Object " << object_id << " does not exist!!!";
         return GenericCombatDestroyedObjectSitrep(combat_system_id);
