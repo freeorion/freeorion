@@ -119,28 +119,6 @@ inline ObjectMap& Objects()
 inline ObjectMap& EmpireKnownObjects(int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id); }
 
-/** Accessor for individual objects. */
-inline std::shared_ptr<ResourceCenter> GetEmpireKnownResourceCenter(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<ResourceCenter>(object_id); }
-
-inline std::shared_ptr<PopCenter> GetEmpireKnownPopCenter(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<PopCenter>(object_id); }
-
-inline std::shared_ptr<Planet> GetEmpireKnownPlanet(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Planet>(object_id); }
-
-inline std::shared_ptr<Field> GetEmpireKnownField(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Field>(object_id); }
-
-inline std::shared_ptr<Ship> GetEmpireKnownShip(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Ship>(object_id); }
-
-inline std::shared_ptr<Fleet> GetEmpireKnownFleet(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Fleet>(object_id); }
-
-inline std::shared_ptr<Building> GetEmpireKnownBuilding(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Building>(object_id); }
-
 /** Returns the object name of the universe object. This can be apperant object
  * name, if the application isn't supposed to see the real object name. */
 inline std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object)
