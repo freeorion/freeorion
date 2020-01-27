@@ -2434,7 +2434,7 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList:
         return;
     }
 
-    auto res = GetResourceCenter(m_planet_id);
+    auto res = Objects().get<ResourceCenter>(m_planet_id);
     if (!res) {
         ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't convert object with id " << m_planet_id << " to a ResourceCenter";
         return;

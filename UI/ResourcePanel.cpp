@@ -43,7 +43,7 @@ void ResourcePanel::CompleteConstruction() {
 
     SetName("ResourcePanel");
 
-    auto res = GetResCenter();
+    auto res = Objects().get<ResourceCenter>(m_rescenter_id);
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
@@ -222,15 +222,6 @@ void ResourcePanel::DoLayout() {
     }
 
     SetCollapsed(!s_expanded_map[m_rescenter_id]);
-}
-
-std::shared_ptr<const ResourceCenter> ResourcePanel::GetResCenter() const {
-    auto res = GetResourceCenter(m_rescenter_id);
-    if (!res) {
-        ErrorLogger() << "ResourcePanel tried to get an object with an invalid m_rescenter_id";
-        return nullptr;
-    }
-    return res;
 }
 
 std::map<int, bool> ResourcePanel::s_expanded_map;
