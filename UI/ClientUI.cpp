@@ -829,7 +829,7 @@ bool ClientUI::ZoomToBuilding(int id) {
 }
 
 bool ClientUI::ZoomToField(int id) {
-    //if (auto field = GetField(id)) {
+    //if (auto field = Objects().get<Field>(id)) {
     //  // TODO: implement this
     //}
     return false;

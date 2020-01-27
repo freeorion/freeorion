@@ -68,7 +68,7 @@ namespace {
     const System*           GetSystemP(const Universe& universe, int id)
     { return ::Objects().get<System>(id).operator->(); }
     const Field*            GetFieldP(const Universe& universe, int id)
-    { return ::GetField(id).operator->();  }
+    { return ::Objects().get<Field>(id).operator->();  }
     const Building*         GetBuildingP(const Universe& universe, int id)
     { return ::Objects().get<Building>(id).operator->(); }
 

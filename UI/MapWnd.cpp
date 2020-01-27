@@ -3953,7 +3953,7 @@ void MapWnd::InitFieldRenderingBuffers() {
 
     for (auto& field_icon : m_field_icons) {
         bool current_field_visible = universe.GetObjectVisibilityByEmpire(field_icon.first, empire_id) > VIS_BASIC_VISIBILITY;
-        auto field = GetField(field_icon.first);
+        auto field = Objects().get<Field>(field_icon.first);
         if (!field)
             continue;
         const float FIELD_SIZE = field->InitialMeterValue(METER_SIZE);  // field size is its radius
@@ -4764,7 +4764,7 @@ void MapWnd::DoSystemIconsLayout() {
 void MapWnd::DoFieldIconsLayout() {
     // position and resize field icons
     for (auto& field_icon : m_field_icons) {
-        auto field = GetField(field_icon.first);
+        auto field = Objects().get<Field>(field_icon.first);
         if (!field) {
             ErrorLogger() << "MapWnd::DoFieldIconsLayout couldn't get field with id " << field_icon.first;
             continue;
