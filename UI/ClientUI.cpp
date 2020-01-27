@@ -821,7 +821,7 @@ bool ClientUI::ZoomToShip(int id) {
 }
 
 bool ClientUI::ZoomToBuilding(int id) {
-    if (auto building = GetBuilding(id)) {
+    if (auto building = Objects().get<Building>(id)) {
         ZoomToBuildingType(building->BuildingTypeName());
         return ZoomToPlanet(building->PlanetID());
     }

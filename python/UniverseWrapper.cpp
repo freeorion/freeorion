@@ -70,7 +70,7 @@ namespace {
     const Field*            GetFieldP(const Universe& universe, int id)
     { return ::GetField(id).operator->();  }
     const Building*         GetBuildingP(const Universe& universe, int id)
-    { return ::GetBuilding(id).operator->(); }
+    { return ::Objects().get<Building>(id).operator->(); }
 
     template<typename T>
     std::vector<int> ObjectIDs(const Universe& universe)

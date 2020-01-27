@@ -1531,11 +1531,8 @@ void SidePanel::PlanetPanel::Refresh() {
     // check for shipyard
     const auto& known_destroyed_object_ids =
         GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
-    for (int building_id : planet->BuildingIDs()) {
-        auto building = GetBuilding(building_id);
-        if (!building)
-            continue;
-        if (known_destroyed_object_ids.count(building_id))
+    for (const auto& building : Objects().find<Building>(planet->BuildingIDs())) {
+        if (!building || known_destroyed_object_ids.count(building->ID()))
             continue;
         if (building->HasTag(TAG_SHIPYARD)) {
             has_shipyard = true;

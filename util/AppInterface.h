@@ -162,9 +162,6 @@ inline std::shared_ptr<Fleet> GetFleet(int object_id)
 inline std::shared_ptr<Fleet> GetEmpireKnownFleet(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Fleet>(object_id); }
 
-inline std::shared_ptr<Building> GetBuilding(int object_id)
-{ return IApp::GetApp()->GetUniverse().Objects().get<Building>(object_id); }
-
 inline std::shared_ptr<Building> GetEmpireKnownBuilding(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Building>(object_id); }
 

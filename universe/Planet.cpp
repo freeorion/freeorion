@@ -611,9 +611,11 @@ void Planet::Reset() {
     GetMeter(METER_REBEL_TROOPS)->Reset();
 
     if (m_is_about_to_be_colonized && !OwnedBy(ALL_EMPIRES)) {
-        for (int building_id : m_buildings)
-            if (auto building = GetBuilding(building_id))
-                building->Reset();
+        for (const auto& building : Objects().find<Building>(m_buildings)) {
+            if (!building)
+                continue;
+            building->Reset();
+        }
     }
 
     //m_turn_last_conquered left unchanged
@@ -710,9 +712,11 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
         Reset();
     } else {
         PopCenter::Reset();
-        for (int building_id : m_buildings)
-            if (auto building = GetBuilding(building_id))
-                building->Reset();
+        for (const auto& building : Objects().find<Building>(m_buildings)) {
+            if (!building)
+                continue;
+            building->Reset();
+        }
         m_is_about_to_be_colonized = false;
         m_is_about_to_be_invaded = false;
         m_is_about_to_be_bombarded = false;

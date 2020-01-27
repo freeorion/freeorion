@@ -1209,7 +1209,7 @@ void ScrapOrder::ExecuteImpl() const {
 
     if (auto ship = Objects().get<Ship>(m_object_id)) {
         ship->SetOrderedScrapped(true);
-    } else if (std::shared_ptr<Building> building = GetBuilding(m_object_id)) {
+    } else if (auto building = Objects().get<Building>(m_object_id)) {
         building->SetOrderedScrapped(true);
     }
 }
@@ -1221,7 +1221,7 @@ bool ScrapOrder::UndoImpl() const {
     if (auto ship = Objects().get<Ship>(m_object_id)) {
         if (ship->OwnedBy(empire_id))
             ship->SetOrderedScrapped(false);
-    } else if (auto building = GetBuilding(m_object_id)) {
+    } else if (auto building = Objects().get<Building>(m_object_id)) {
         if (building->OwnedBy(empire_id))
             building->SetOrderedScrapped(false);
     } else {

@@ -117,7 +117,7 @@ void BuildingsPanel::Update() {
         if (this_client_stale_object_info.count(object_id))
             continue;
 
-        auto building = GetBuilding(object_id);
+        auto building = Objects().get<Building>(object_id);
         if (!building) {
             ErrorLogger() << "BuildingsPanel::Update couldn't get building with id: " << object_id << " on planet " << planet->Name();
             continue;
@@ -259,7 +259,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_building_id(building_id)
 {
-    if (auto building = GetBuilding(m_building_id))
+    if (auto building = Objects().get<Building>(m_building_id))
         building->StateChangedSignal.connect(
             boost::bind(&BuildingIndicator::RequirePreRender, this));
 }
@@ -350,7 +350,7 @@ void BuildingIndicator::PreRender() {
 void BuildingIndicator::Refresh() {
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
-    auto building = GetBuilding(m_building_id);
+    auto building = Objects().get<Building>(m_building_id);
     if (!building)
         return;
 
@@ -400,7 +400,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     // queued production item, and that the owner of the building is this
     // client's player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    auto building = GetBuilding(m_building_id);
+    auto building = Objects().get<Building>(m_building_id);
     if (!building)
         return;
 
