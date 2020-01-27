@@ -290,7 +290,7 @@ bool FleetMoveOrder::Check(int empire_id, int fleet_id, int dest_system_id, bool
         return false;
     }
 
-    auto dest_system = GetEmpireKnownSystem(dest_system_id, empire_id);
+    auto dest_system = EmpireKnownObjects(empire_id).get<System>(dest_system_id);
     if (!dest_system) {
         ErrorLogger() << "Empire with id " << empire_id << " ordered fleet to move to system with id " << dest_system_id << " but no such system is known to that empire";
         return false;

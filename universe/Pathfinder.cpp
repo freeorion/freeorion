@@ -518,7 +518,7 @@ namespace {
                 int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
                 // look up lane between systems
-                std::shared_ptr<const System> system1 = GetEmpireKnownSystem(sys_id_1, m_empire_id);
+                std::shared_ptr<const System> system1 = EmpireKnownObjects(m_empire_id).get<System>(sys_id_1);
                 if (!system1) {
                     ErrorLogger() << "EdgeDescriptor::operator() couldn't find system with id " << sys_id_1;
                     return false;
@@ -589,12 +589,12 @@ namespace {
                 int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
                 // look up objects in system
-                auto system1 = GetEmpireKnownSystem(sys_id_1, m_empire_id);
+                auto system1 = EmpireKnownObjects(m_empire_id).get<System>(sys_id_1);
                 if (!system1) {
                     ErrorLogger() << "Invalid source system " << sys_id_1;
                     return true;
                 }
-                auto system2 = GetEmpireKnownSystem(sys_id_2, m_empire_id);
+                auto system2 = EmpireKnownObjects(m_empire_id).get<System>(sys_id_2);
                 if (!system2) {
                     ErrorLogger() << "Invalid target system " << sys_id_2;
                     return true;
@@ -1138,7 +1138,7 @@ bool Pathfinder::SystemHasVisibleStarlanes(int system_id, int empire_id) const
 { return pimpl->SystemHasVisibleStarlanes(system_id, empire_id); }
 
 bool Pathfinder::PathfinderImpl::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
-    if (auto system = GetEmpireKnownSystem(system_id, empire_id))
+    if (auto system = EmpireKnownObjects(empire_id).get<System>(system_id))
         if (!system->StarlanesWormholes().empty())
             return true;
     return false;
@@ -1413,7 +1413,7 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(
     // add edges for all starlanes
     for (size_t system1_index = 0; system1_index < system_ids.size(); ++system1_index) {
         int system1_id = system_ids[system1_index];
-        std::shared_ptr<const System> system1 = GetEmpireKnownSystem(system1_id, for_empire_id);
+        std::shared_ptr<const System> system1 = EmpireKnownObjects(for_empire_id).get<System>(system1_id);
         //std::shared_ptr<const System> & system1 = systems[system1_index];
 
         // add edges and edge weights

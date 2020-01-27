@@ -117,9 +117,9 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
     if (vis >= VIS_BASIC_VISIBILITY) {
         m_ships =                         copied_fleet->VisibleContainedObjectIDs(empire_id);
 
-        m_next_system = ((GetEmpireKnownSystem(copied_fleet->m_next_system, empire_id))
+        m_next_system = ((EmpireKnownObjects(empire_id).get<System>(copied_fleet->m_next_system))
                          ? copied_fleet->m_next_system : INVALID_OBJECT_ID);
-        m_prev_system = ((GetEmpireKnownSystem(copied_fleet->m_prev_system, empire_id))
+        m_prev_system = ((EmpireKnownObjects(empire_id).get<System>(copied_fleet->m_prev_system))
                          ? copied_fleet->m_prev_system : INVALID_OBJECT_ID);
         m_arrived_this_turn =             copied_fleet->m_arrived_this_turn;
         m_arrival_starlane =              copied_fleet->m_arrival_starlane;
@@ -456,7 +456,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
             ++route_it;
             if (route_it != route.end()) {
                 // update next system on route and distance to it from current position
-                next_system = GetEmpireKnownSystem(*route_it, this->Owner());
+                next_system = EmpireKnownObjects(this->Owner()).get<System>(*route_it);
                 if (next_system) {
                     TraceLogger() << "Fleet::MovePath checking unrestriced lane travel from Sys("
                                   <<  cur_system->ID() << ") to Sys(" << (next_system && next_system->ID()) << ")";
