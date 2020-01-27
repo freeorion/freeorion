@@ -1117,7 +1117,7 @@ namespace {
 
     // Wrapper for Planet class member functions
     PlanetType PlanetGetType(int planet_id) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetType: Couldn't get planet with ID " << planet_id;
             return INVALID_PLANET_TYPE;
@@ -1126,7 +1126,7 @@ namespace {
     }
 
     void PlanetSetType(int planet_id, PlanetType planet_type) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetType: Couldn't get planet with ID " << planet_id;
             return;
@@ -1144,7 +1144,7 @@ namespace {
     }
 
     PlanetSize PlanetGetSize(int planet_id) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetSize: Couldn't get planet with ID " << planet_id;
             return INVALID_PLANET_SIZE;
@@ -1153,7 +1153,7 @@ namespace {
     }
 
     void PlanetSetSize(int planet_id, PlanetSize planet_size) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSize: Couldn't get planet with ID " << planet_id;
             return;
@@ -1169,7 +1169,7 @@ namespace {
     }
 
     object PlanetGetSpecies(int planet_id) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetSpecies: Couldn't get planet with ID " << planet_id;
             return object("");
@@ -1178,7 +1178,7 @@ namespace {
     }
 
     void PlanetSetSpecies(int planet_id, const std::string& species_name) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSpecies: Couldn't get planet with ID " << planet_id;
             return;
@@ -1187,7 +1187,7 @@ namespace {
     }
 
     object PlanetGetFocus(int planet_id) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetFocus: Couldn't get planet with ID " << planet_id;
             return object("");
@@ -1196,7 +1196,7 @@ namespace {
     }
 
     void PlanetSetFocus(int planet_id, const std::string& focus) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSpecies: Couldn't get planet with ID " << planet_id;
             return;
@@ -1206,7 +1206,7 @@ namespace {
 
     list PlanetAvailableFoci(int planet_id) {
         list py_foci;
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetAvailableFoci: Couldn't get planet with ID " << planet_id;
             return py_foci;
@@ -1218,7 +1218,7 @@ namespace {
     }
 
     bool PlanetMakeOutpost(int planet_id, int empire_id) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetMakeOutpost: couldn't get planet with ID:" << planet_id;
             return false;
@@ -1233,7 +1233,7 @@ namespace {
     }
 
     bool PlanetMakeColony(int planet_id, int empire_id, const std::string& species, double population) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetMakeColony: couldn't get planet with ID:" << planet_id;
             return false;
@@ -1256,7 +1256,7 @@ namespace {
     }
 
     object PlanetCardinalSuffix(int planet_id) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetCardinalSuffix: couldn't get planet with ID:" << planet_id;
             return object(UserString("ERROR"));

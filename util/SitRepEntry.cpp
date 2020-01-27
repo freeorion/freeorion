@@ -374,8 +374,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
 
     //bool system_contains_recipient_empire_planets = false;
     //if (const System* system = GetSystem(system_id)) {
-    //    for (int planet_id : system->FindObjectIDs<Planet>()) {
-    //        const Planet* planet = GetPlanet(planet_id);
+    //    for (const auto& planet : system->all<Planet>()) {
     //        if (!planet || planet->Unowned())
     //            continue;
     //        if (planet->OwnedBy(recipient_empire_id)) {

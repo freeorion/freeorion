@@ -487,7 +487,7 @@ bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id) {
         return false;
     }
 
-    auto planet = GetPlanet(planet_id);
+    auto planet = Objects().get<Planet>(planet_id);
     float colonist_capacity = ship->ColonyCapacity();
     if (!planet) {
         ErrorLogger() << "ColonizeOrder::Check() : couldn't get planet with id " << planet_id;
@@ -541,7 +541,7 @@ void ColonizeOrder::ExecuteImpl() const {
         return;
 
     auto ship = GetShip(m_ship);
-    auto planet = GetPlanet(m_planet);
+    auto planet = Objects().get<Planet>(m_planet);
 
     planet->SetIsAboutToBeColonized(true);
     ship->SetColonizePlanet(m_planet);
@@ -551,7 +551,7 @@ void ColonizeOrder::ExecuteImpl() const {
 }
 
 bool ColonizeOrder::UndoImpl() const {
-    auto planet = GetPlanet(m_planet);
+    auto planet = Objects().get<Planet>(m_planet);
     if (!planet) {
         ErrorLogger() << "ColonizeOrder::UndoImpl couldn't get planet with id " << m_planet;
         return false;
@@ -622,7 +622,7 @@ bool InvadeOrder::Check(int empire_id, int ship_id, int planet_id) {
         return false;
     }
 
-    auto planet = GetPlanet(planet_id);
+    auto planet = Objects().get<Planet>(planet_id);
     if (!planet) {
         ErrorLogger() << "InvadeOrder::ExecuteImpl couldn't get planet with id " << planet_id;
         return false;
@@ -668,7 +668,7 @@ void InvadeOrder::ExecuteImpl() const {
         return;
 
     auto ship = GetShip(m_ship);
-    auto planet = GetPlanet(m_planet);
+    auto planet = Objects().get<Planet>(m_planet);
 
     // note: multiple ships, from same or different empires, can invade the same planet on the same turn
     DebugLogger() << "InvadeOrder::ExecuteImpl set for ship " << m_ship << " "
@@ -681,7 +681,7 @@ void InvadeOrder::ExecuteImpl() const {
 }
 
 bool InvadeOrder::UndoImpl() const {
-    auto planet = GetPlanet(m_planet);
+    auto planet = Objects().get<Planet>(m_planet);
     if (!planet) {
         ErrorLogger() << "InvadeOrder::UndoImpl couldn't get planet with id " << m_planet;
         return false;
@@ -737,7 +737,7 @@ bool BombardOrder::Check(int empire_id, int ship_id, int planet_id) {
         return false;
     }
 
-    auto planet = GetPlanet(planet_id);
+    auto planet = Objects().get<Planet>(planet_id);
     if (!planet) {
         ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get planet with id " << planet_id;
         return false;
@@ -775,7 +775,7 @@ void BombardOrder::ExecuteImpl() const {
         return;
 
     auto ship = GetShip(m_ship);
-    auto planet = GetPlanet(m_planet);
+    auto planet = Objects().get<Planet>(m_planet);
 
     // note: multiple ships, from same or different empires, can bombard the same planet on the same turn
     DebugLogger() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "
@@ -789,7 +789,7 @@ void BombardOrder::ExecuteImpl() const {
 }
 
 bool BombardOrder::UndoImpl() const {
-    auto planet = GetPlanet(m_planet);
+    auto planet = Objects().get<Planet>(m_planet);
     if (!planet) {
         ErrorLogger() << "BombardOrder::UndoImpl couldn't get planet with id " << m_planet;
         return false;
@@ -827,7 +827,7 @@ ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, const std::string& fo
 }
 
 bool ChangeFocusOrder::Check(int empire_id, int planet_id, const std::string& focus) {
-    auto planet = GetPlanet(planet_id);
+    auto planet = Objects().get<Planet>(planet_id);
 
     if (!planet) {
         ErrorLogger() << "Illegal planet id specified in change planet focus order.";
@@ -853,7 +853,7 @@ void ChangeFocusOrder::ExecuteImpl() const {
     if (!Check(EmpireID(), m_planet, m_focus))
         return;
 
-    auto planet = GetPlanet(m_planet);
+    auto planet = Objects().get<Planet>(m_planet);
 
     planet->SetFocus(m_focus);
 }
@@ -1336,7 +1336,7 @@ void GiveObjectToEmpireOrder::ExecuteImpl() const {
 
     if (auto fleet = GetFleet(m_object_id))
         fleet->SetGiveToEmpire(m_recipient_empire_id);
-    else if (auto planet = GetPlanet(m_object_id))
+    else if (auto planet = Objects().get<Planet>(m_object_id))
         planet->SetGiveToEmpire(m_recipient_empire_id);
 }
 
@@ -1349,7 +1349,7 @@ bool GiveObjectToEmpireOrder::UndoImpl() const {
             fleet->ClearGiveToEmpire();
             return true;
         }
-    } else if (auto planet = GetPlanet(m_object_id)) {
+    } else if (auto planet = Objects().get<Planet>(m_object_id)) {
         if (planet->OwnedBy(empire_id)) {
             planet->ClearGiveToEmpire();
             return true;

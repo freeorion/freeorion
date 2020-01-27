@@ -170,9 +170,10 @@ namespace {
         std::map<std::set<int>, float> planets_with_available_pp;
         for (const auto& objects_pp : prod_queue.AvailablePP(industry_pool)) {
             std::set<int> planets;
-            for (int object_id : objects_pp.first) {
-                if (/* auto planet = */ GetPlanet(object_id))
-                    planets.insert(object_id);
+            for (const auto& planet : Objects().find<Planet>(objects_pp.first)) {
+                if (!planet)
+                    continue;
+                planets.insert(planet->ID());
             }
             if (!planets.empty())
                 planets_with_available_pp[planets] = objects_pp.second;
@@ -186,9 +187,10 @@ namespace {
         std::map<std::set<int>, float> planets_with_allocated_pp;
         for (const auto& objects_pp : prod_queue.AllocatedPP()) {
             std::set<int> planets;
-            for (int object_id : objects_pp.first) {
-                if (GetPlanet(object_id))
-                    planets.insert(object_id);
+            for (const auto& planet : Objects().find<Planet>(objects_pp.first)) {
+                if (!planet)
+                    continue;
+                planets.insert(planet->ID());
             }
             if (!planets.empty())
                 planets_with_allocated_pp[planets] = objects_pp.second;
@@ -203,9 +205,10 @@ namespace {
         std::set<std::set<int>> planets_with_wasted_pp;
         for (const auto& objects : prod_queue.ObjectsWithWastedPP(industry_pool)) {
                  std::set<int> planets;
-                 for (int object_id : objects) {
-                     if (GetPlanet(object_id))
-                         planets.insert(object_id);
+                 for (const auto& planet : Objects().find<Planet>(objects)) {
+                    if (!planet)
+                        continue;
+                    planets.insert(planet->ID());
                  }
                  if (!planets.empty())
                      planets_with_wasted_pp.insert(planets);

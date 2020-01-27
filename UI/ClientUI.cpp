@@ -783,7 +783,7 @@ bool ClientUI::ZoomToObject(int id) {
 }
 
 bool ClientUI::ZoomToPlanet(int id) {
-    if (auto planet = GetPlanet(id)) {
+    if (auto planet = Objects().get<Planet>(id)) {
         GetMapWnd()->CenterOnObject(planet->SystemID());
         GetMapWnd()->SelectSystem(planet->SystemID());
         GetMapWnd()->SelectPlanet(id);
@@ -793,7 +793,7 @@ bool ClientUI::ZoomToPlanet(int id) {
 }
 
 bool ClientUI::ZoomToPlanetPedia(int id) {
-    if (GetPlanet(id))
+    if (Objects().get<Planet>(id))
         GetMapWnd()->ShowPlanet(id);
     return false;
 }

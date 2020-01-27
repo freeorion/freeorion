@@ -649,10 +649,11 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
 
     // as of this writing, only planets can generate supply propagation
     std::vector<std::shared_ptr<const UniverseObject>> owned_planets;
-    for (int object_id : known_objects) {
-        if (auto planet = GetPlanet(object_id))
-            if (planet->OwnedBy(this->EmpireID()))
-                owned_planets.push_back(planet);
+    for (const auto& int planet: Objects().find<Planet>(known_objects)) {
+        if (!planet)
+            continue;
+        if (planet->OwnedBy(this->EmpireID()))
+            owned_planets.push_back(planet);
     }
 
     //std::cout << "... empire owns " << owned_planets.size() << " planets" << std::endl;
@@ -1944,7 +1945,7 @@ void Empire::CheckProductionProgress() {
         // create actual thing(s) being produced
         switch (elem.item.build_type) {
         case BT_BUILDING: {
-            auto planet = GetPlanet(elem.location);
+            auto planet = Objects().get<Planet>(elem.location);
 
             // create new building
             auto building = universe.InsertNew<Building>(m_id, elem.item.name, m_id);
@@ -1977,7 +1978,7 @@ void Empire::CheckProductionProgress() {
                 species_name = location_pop_center->SpeciesName();
             else if (auto location_ship = std::dynamic_pointer_cast<const Ship>(build_location))
                 species_name = location_ship->SpeciesName();
-            else if (auto capital_planet = GetPlanet(this->CapitalID()))
+            else if (auto capital_planet = Objects().get<Planet>(this->CapitalID()))
                 species_name = capital_planet->SpeciesName();
             // else give up...
             if (species_name.empty()) {

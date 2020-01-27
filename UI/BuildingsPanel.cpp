@@ -96,7 +96,7 @@ void BuildingsPanel::Update() {
         DetachChild(indicator.get());
     m_building_indicators.clear();
 
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet) {
         ErrorLogger() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;

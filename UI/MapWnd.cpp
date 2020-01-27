@@ -688,12 +688,12 @@ public:
         }
         // get detection ranges for planets in the selected system (if any)
         if (const auto system = GetSystem(sel_system_id)) {
-            for (int planet_id : system->PlanetIDs()) {
-                if (const auto planet = GetPlanet(planet_id)) {
-                    const float planet_range = planet->InitialMeterValue(METER_DETECTION);
-                    if (planet_range > 20)
-                        fixed_distances.insert(planet_range);
-                }
+            for (const auto& planet : Objects().find<Planet>(system->PlanetIDs())) {
+                if (!planet)
+                    continue;
+                const float planet_range = planet->InitialMeterValue(METER_DETECTION);
+                if (planet_range > 20)
+                    fixed_distances.insert(planet_range);
             }
         }
 
@@ -3510,7 +3510,7 @@ namespace {
             for (int object_id : available_pp_group.first) {
                 // this_pool += std::to_string(object_id) +", ";
 
-                auto planet = GetPlanet(object_id);
+                auto planet = Objects().get<Planet>(object_id);
                 if (!planet)
                     continue;
 
@@ -5397,7 +5397,7 @@ void MapWnd::PlanetDoubleClicked(int planet_id) {
         return;
 
     // retrieve system_id from planet_id
-    auto planet = GetPlanet(planet_id);
+    auto planet = Objects().get<Planet>(planet_id);
     if (!planet)
         return;
 

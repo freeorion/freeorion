@@ -74,7 +74,7 @@ namespace {
             std::string property_name = *first;
             if (property_name == "Planet") {
                 if (auto b = std::dynamic_pointer_cast<const Building>(obj)) {
-                    obj = GetPlanet(b->PlanetID());
+                    obj = Objects().get<Planet>(b->PlanetID());
                 } else {
                     ErrorLogger() << "FollowReference : object not a building, so can't get its planet.";
                     obj = nullptr;
@@ -144,7 +144,7 @@ namespace {
             if (property_name_part == "Planet") {
                 if (auto b = std::dynamic_pointer_cast<const Building>(obj)) {
                     retval += "(" + std::to_string(b->PlanetID()) + "): ";
-                    obj = GetPlanet(b->PlanetID());
+                    obj = Objects().get<Planet>(b->PlanetID());
                 } else
                     obj = nullptr;
             } else if (property_name_part == "System") {
@@ -1374,7 +1374,7 @@ PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContex
         int planet_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             planet_id = m_int_ref1->Eval(context);
-        const auto planet = GetPlanet(planet_id);
+        const auto planet = Objects().get<Planet>(planet_id);
         if (!planet)
             return INVALID_PLANET_ENVIRONMENT;
 

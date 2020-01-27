@@ -354,7 +354,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         case ECT_BUILDING: {
             name.clear();
             if (const auto& building = std::dynamic_pointer_cast<const Building>(source))
-                if (const auto& planet = GetPlanet(building->PlanetID()))
+                if (const auto& planet = Objects().get<Planet>(building->PlanetID()))
                     name = planet->Name();
             const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_BUILDING")

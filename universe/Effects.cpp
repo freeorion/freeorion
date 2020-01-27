@@ -1441,7 +1441,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
     auto location = std::dynamic_pointer_cast<Planet>(context.effect_target);
     if (!location)
         if (auto location_building = std::dynamic_pointer_cast<Building>(context.effect_target))
-            location = GetPlanet(location_building->PlanetID());
+            location = Objects().get<Planet>(location_building->PlanetID());
     if (!location) {
         ErrorLogger() << "CreateBuilding::Execute couldn't get a Planet object at which to create the building";
         return;
@@ -2479,7 +2479,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         if (!dest_planet) {
             auto dest_building = std::dynamic_pointer_cast<Building>(destination);
             if (dest_building) {
-                dest_planet = GetPlanet(dest_building->PlanetID());
+                dest_planet = Objects().get<Planet>(dest_building->PlanetID());
             }
         }
         if (!dest_planet)
@@ -2497,7 +2497,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             old_sys->Remove(building->ID());
         building->SetSystem(INVALID_OBJECT_ID);
 
-        if (auto old_planet = GetPlanet(building->PlanetID()))
+        if (auto old_planet = Objects().get<Planet>(building->PlanetID()))
             old_planet->RemoveBuilding(building->ID());
 
         dest_planet->AddBuilding(building->ID());

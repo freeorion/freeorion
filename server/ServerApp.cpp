@@ -2167,7 +2167,7 @@ namespace {
                 if (planet_vis <= VIS_BASIC_VISIBILITY)
                     continue;
                 // skip planets that have no owner and that are unpopulated; don't matter for combat conditions test
-                auto planet = GetPlanet(planet_id);
+                auto planet = Objects().get<Planet>(planet_id);
                 if (planet->Unowned() && planet->InitialMeterValue(METER_POPULATION) <= 0.0f)
                     continue;
                 visible_planets.insert(planet->ID());
@@ -2292,8 +2292,7 @@ namespace {
             GetPlanetsVisibleToEmpireAtSystem(aggressive_empire_visible_planets, aggressive_empire_id, system_id);
 
             // is any planet owned by an empire at war with aggressive empire?
-            for (int planet_id : aggressive_empire_visible_planets) {
-                auto planet = GetPlanet(planet_id);
+            for (const auto& planet : Objects().find<Planet>(aggressive_empire_visible_planets)) {
                 if (!planet)
                     continue;
                 int visible_planet_empire_id = planet->Owner();
@@ -2601,7 +2600,7 @@ namespace {
     void UpdateEmpireInvasionInfo(const std::map<int, std::map<int, double>>& planet_empire_invasion_troops) {
         for (const auto& planet_empire_troops : planet_empire_invasion_troops) {
             int planet_id = planet_empire_troops.first;
-            auto planet = GetPlanet(planet_id);
+            auto planet = Objects().get<Planet>(planet_id);
             if (!planet)
                 continue;
             const auto& planet_species = planet->SpeciesName();
@@ -2629,7 +2628,7 @@ namespace {
             ErrorLogger() << "ColonizePlanet couldn't get ship with id " << ship_id;
             return false;
         }
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "ColonizePlanet couldn't get planet with id " << planet_id;
             return false;
@@ -2705,7 +2704,7 @@ namespace {
 
             ship->SetColonizePlanet(INVALID_OBJECT_ID); // reset so failed colonization doesn't leave ship with hanging colonization order set
 
-            auto planet = GetPlanet(colonize_planet_id);
+            auto planet = Objects().get<Planet>(colonize_planet_id);
             if (!planet)
                 continue;
 
@@ -2736,7 +2735,7 @@ namespace {
             int colonizing_ship_id = *empire_ships_colonizing.begin();
 
             int planet_id = planet_colonization.first;
-            auto planet = GetPlanet(planet_id);
+            auto planet = Objects().get<Planet>(planet_id);
             if (!planet) {
                 ErrorLogger() << "HandleColonization couldn't get planet with id " << planet_id;
                 continue;
@@ -2837,7 +2836,7 @@ namespace {
             int invade_planet_id = ship->OrderedInvadePlanet();
             if (invade_planet_id == INVALID_OBJECT_ID)
                 continue;
-            auto planet = GetPlanet(invade_planet_id);
+            auto planet = Objects().get<Planet>(invade_planet_id);
             if (!planet)
                 continue;
             planet->ResetIsAboutToBeInvaded();
@@ -2895,7 +2894,7 @@ namespace {
         // process each planet's ground combats
         for (auto& planet_combat : planet_empire_troops) {
             int planet_id = planet_combat.first;
-            auto planet = GetPlanet(planet_id);
+            auto planet = Objects().get<Planet>(planet_id);
             std::set<int> all_involved_empires;
             int planet_initial_owner_id = planet->Owner();
 
@@ -3135,7 +3134,7 @@ namespace {
             if (!building->OrderedScrapped())
                 continue;
 
-            if (auto planet = GetPlanet(building->PlanetID()))
+            if (auto planet = Objects().get<Planet>(building->PlanetID()))
                 planet->RemoveBuilding(building->ID());
 
             if (auto system = GetSystem(building->SystemID()))

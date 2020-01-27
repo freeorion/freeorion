@@ -682,7 +682,7 @@ public:
 
     void Refresh() {
         ScopedTimer timer("RotatingPlanetControl::Refresh", true);
-        auto planet = GetPlanet(m_planet_id);
+        auto planet = Objects().get<Planet>(m_planet_id);
         if (!planet) return;
 
         // these values ensure that wierd GLUT-sphere artifacts do not show themselves
@@ -910,7 +910,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     SetName(UserString("PLANET_PANEL"));
 
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet) {
         ErrorLogger() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
         return;
@@ -1106,7 +1106,7 @@ void SidePanel::PlanetPanel::DoLayout() {
 }
 
 void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet || !GetOptionsDB().Get<bool>("ui.map.sidepanel.planet.shown"))
         return;
 
@@ -1300,7 +1300,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
         return INVALID_OBJECT_ID;
     if (GetUniverse().GetObjectVisibilityByEmpire(target_planet_id, empire_id) < VIS_PARTIAL_VISIBILITY)
         return INVALID_OBJECT_ID;
-    auto target_planet = GetPlanet(target_planet_id);
+    auto target_planet = Objects().get<Planet>(target_planet_id);
     if (!target_planet)
         return INVALID_OBJECT_ID;
     int system_id = target_planet->SystemID();
@@ -1412,7 +1412,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenInvasionShips(int targe
     if (empire_id == ALL_EMPIRES)
         return retval;
 
-    auto target_planet = GetPlanet(target_planet_id);
+    auto target_planet = Objects().get<Planet>(target_planet_id);
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();
@@ -1454,7 +1454,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenBombardShips(int target
     if (empire_id == ALL_EMPIRES)
         return retval;
 
-    auto target_planet = GetPlanet(target_planet_id);
+    auto target_planet = Objects().get<Planet>(target_planet_id);
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();
@@ -1487,7 +1487,7 @@ void SidePanel::PlanetPanel::Refresh() {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     m_planet_connection.disconnect();
 
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet) {
         DebugLogger() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
@@ -1985,7 +1985,7 @@ void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void SidePanel::PlanetPanel::SetFocus(const std::string& focus) {
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         return;
     // todo: if focus is already equal to planet's focus, return early.
@@ -2041,7 +2041,7 @@ void SidePanel::PlanetPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet)
         return;
 
@@ -2298,7 +2298,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
     // order or cancel colonization, depending on whether it has previously
     // been ordered
 
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet || planet->InitialMeterValue(METER_POPULATION) != 0.0 || !m_order_issuing_enabled)
         return;
 
@@ -2340,7 +2340,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
     // order or cancel invasion, depending on whether it has previously
     // been ordered
 
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
         (planet->InitialMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
@@ -2385,7 +2385,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
     // order or cancel bombard, depending on whether it has previously
     // been ordered
 
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
         (planet->InitialMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
@@ -2554,19 +2554,16 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
     Clear();
 
     std::multimap<int, int> orbits_planets;
-    for (int planet_id : planet_ids) {
-        auto planet = GetPlanet(planet_id);
-        if (!planet) {
-            ErrorLogger() << "PlanetPanelContainer::SetPlanets couldn't find planet with id " << planet_id;
+    for (const auto& planet : Objects().find<Planet>(planet_ids)) {
+        if (!planet)
             continue;
-        }
         int system_id = planet->SystemID();
         auto system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "PlanetPanelContainer::SetPlanets couldn't find system of planet" << planet->Name();
             continue;
         }
-        orbits_planets.insert({system->OrbitOfPlanet(planet_id), planet_id});
+        orbits_planets.insert({system->OrbitOfPlanet(planet->ID()), planet->ID()});
     }
 
     // create new panels and connect their signals
@@ -2737,7 +2734,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
         // find selectables
         for (auto& panel : m_planet_panels) {
             int planet_id = panel->PlanetID();
-            auto planet = GetPlanet(planet_id);
+            auto planet = Objects().get<Planet>(planet_id);
 
             if (planet && planet->Accept(*m_valid_selection_predicate)) {
                 m_candidate_ids.insert(planet_id);
@@ -3520,7 +3517,7 @@ bool SidePanel::PlanetSelectable(int planet_id) const {
     if (planet_ids.count(planet_id) == 0)
         return false;
 
-    auto planet = GetPlanet(planet_id);
+    auto planet = Objects().get<Planet>(planet_id);
     if (!planet)
         return false;
 

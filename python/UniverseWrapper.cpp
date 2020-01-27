@@ -64,7 +64,7 @@ namespace {
     const Fleet*            GetFleetP(const Universe& universe, int id)
     { return ::GetFleet(id).operator->(); }
     const Planet*           GetPlanetP(const Universe& universe, int id)
-    { return ::GetPlanet(id).operator->(); }
+    { return ::Objects().get<Planet>(id).operator->(); }
     const System*           GetSystemP(const Universe& universe, int id)
     { return ::GetSystem(id).operator->(); }
     const Field*            GetFieldP(const Universe& universe, int id)

@@ -468,7 +468,7 @@ std::string Planet::CardinalSuffix() const {
             continue;
         }
 
-        PlanetType other_planet_type = GetPlanet(sys_orbit)->Type();
+        PlanetType other_planet_type = Objects().get<Planet>(sys_orbit)->Type();
         if (other_planet_type == INVALID_PLANET_TYPE)
             continue;
 
