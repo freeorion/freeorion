@@ -206,8 +206,7 @@ int Fleet::MaxShipAgeInTurns() const {
 
     bool fleet_is_scrapped = true;
     int retval = 0;
-    for (int ship_id : m_ships) {
-        auto ship = GetShip(ship_id);
+    for (const auto& ship : Objects().find<Ship>(m_ships)) {
         if (!ship || ship->OrderedScrapped())
             continue;
         if (ship->AgeInTurns() > retval)
@@ -1293,8 +1292,7 @@ float Fleet::Speed() const {
 
     bool fleet_is_scrapped = true;
     float retval = MAX_SHIP_SPEED;  // max speed no ship can go faster than
-    for (int ship_id : m_ships) {
-        auto ship = GetShip(ship_id);
+    for (const auto& ship : Objects().find<Ship>(m_ships)) {
         if (!ship || ship->OrderedScrapped())
             continue;
         if (ship->Speed() < retval)
@@ -1314,15 +1312,12 @@ float Fleet::Damage() const {
 
     bool fleet_is_scrapped = true;
     float retval = 0.0f;
-    for (int ship_id : m_ships) {
-        if (auto ship = GetShip(ship_id)) {
-            if (!ship->OrderedScrapped()) {
-                if (const auto design = ship->Design()){
-                    retval += design->Attack();
-                }
-                fleet_is_scrapped = false;
-            }
-        }
+    for (const auto& ship : Objects().find<Ship>(m_ships)) {
+        if (!ship || ship->OrderedScrapped())
+            continue;
+        if (const auto design = ship->Design())
+            retval += design->Attack();
+        fleet_is_scrapped = false;
     }
 
     if (fleet_is_scrapped)
@@ -1337,13 +1332,11 @@ float Fleet::Structure() const {
 
     bool fleet_is_scrapped = true;
     float retval = 0.0f;
-    for (int ship_id : m_ships) {
-        if (auto ship = GetShip(ship_id)) {
-            if (!ship->OrderedScrapped()) {
-                retval += ship->CurrentMeterValue(METER_STRUCTURE);
-                fleet_is_scrapped = false;
-            }
-        }
+    for (const auto& ship : Objects().find<Ship>(m_ships)) {
+        if (!ship || ship->OrderedScrapped())
+            continue;
+        retval += ship->CurrentMeterValue(METER_STRUCTURE);
+        fleet_is_scrapped = false;
     }
 
     if (fleet_is_scrapped)
@@ -1358,13 +1351,11 @@ float Fleet::Shields() const {
 
     bool fleet_is_scrapped = true;
     float retval = 0.0f;
-    for (int ship_id : m_ships) {
-        if (auto ship = GetShip(ship_id)) {
-            if (!ship->OrderedScrapped()) {
-                retval += ship->CurrentMeterValue(METER_SHIELD);
-                fleet_is_scrapped = false;
-            }
-        }
+    for (const auto& ship : Objects().find<Ship>(m_ships)) {
+        if (!ship || ship->OrderedScrapped())
+            continue;
+        retval += ship->CurrentMeterValue(METER_SHIELD);
+        fleet_is_scrapped = false;
     }
 
     if (fleet_is_scrapped)
@@ -1380,10 +1371,10 @@ std::string Fleet::GenerateFleetName() {
         return UserString("NEW_FLEET_NAME_NO_NUMBER");
 
     std::vector<std::shared_ptr<const Ship>> ships;
-    for (int ship_id : m_ships) {
-        if (auto ship = GetShip(ship_id)) {
-            ships.push_back(ship);
-        }
+    for (const auto& ship : Objects().find<Ship>(m_ships)) {
+        if (!ship)
+            continue;
+        ships.push_back(ship);
     }
 
     auto it = ships.begin();

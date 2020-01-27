@@ -408,7 +408,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             sitrep.AddVariable(VarText::FLEET_ID_TAG,      std::to_string(fleet_id));
             int ship_id = *fleet->ShipIDs().begin();
             sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
-            if (auto ship = GetShip(ship_id))
+            if (auto ship = Objects().get<Ship>(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
             return sitrep;
         } else {
@@ -444,7 +444,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(fleet->Owner()));
             int ship_id = *fleet->ShipIDs().begin();
             sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
-            if (auto ship = GetShip(ship_id))
+            if (auto ship = Objects().get<Ship>(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
             return sitrep;
         } else {
@@ -471,7 +471,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(fleet->Owner()));
             int ship_id = *fleet->ShipIDs().begin();
             sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
-            if (auto ship = GetShip(ship_id))
+            if (auto ship = Objects().get<Ship>(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
             return sitrep;
         } else {

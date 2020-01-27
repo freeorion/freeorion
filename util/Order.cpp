@@ -133,9 +133,8 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
 
     int system_id = INVALID_OBJECT_ID;
 
-    for (int ship_id : ship_ids) {
+    for (const auto& ship : Objects().find<Ship>(ship_ids)) {
         // verify that empire is not trying to take ships from somebody else's fleet
-        auto ship = GetShip(ship_id);
         if (!ship) {
             ErrorLogger() << "Empire attempted to create a new fleet with an invalid ship";
             return false;
@@ -180,9 +179,7 @@ void NewFleetOrder::ExecuteImpl() const {
     GetUniverse().InhibitUniverseObjectSignals(true);
 
     // validate specified ships
-    std::vector<std::shared_ptr<Ship>> validated_ships;
-    for (int ship_id : m_ship_ids)
-        validated_ships.push_back(GetShip(ship_id));
+    auto validated_ships = Objects().find<Ship>(m_ship_ids);
 
     int system_id = validated_ships[0]->SystemID();
     auto system = GetSystem(system_id);
@@ -462,7 +459,7 @@ ColonizeOrder::ColonizeOrder(int empire, int ship, int planet) :
 }
 
 bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id) {
-    auto ship = GetShip(ship_id);
+    auto ship = Objects().get<Ship>(ship_id);
     if (!ship) {
         ErrorLogger() << "ColonizeOrder::Check() : passed an invalid ship_id " << ship_id;
         return false;
@@ -540,7 +537,7 @@ void ColonizeOrder::ExecuteImpl() const {
     if (!Check(EmpireID(), m_ship, m_planet))
         return;
 
-    auto ship = GetShip(m_ship);
+    auto ship = Objects().get<Ship>(m_ship);
     auto planet = Objects().get<Planet>(m_planet);
 
     planet->SetIsAboutToBeColonized(true);
@@ -561,7 +558,7 @@ bool ColonizeOrder::UndoImpl() const {
         return false;
     }
 
-    auto ship = GetShip(m_ship);
+    auto ship = Objects().get<Ship>(m_ship);
     if (!ship) {
         ErrorLogger() << "ColonizeOrder::UndoImpl couldn't get ship with id " << m_ship;
         return false;
@@ -594,7 +591,7 @@ InvadeOrder::InvadeOrder(int empire, int ship, int planet) :
 
 bool InvadeOrder::Check(int empire_id, int ship_id, int planet_id) {
     // make sure ship_id is a ship...
-    auto ship = GetShip(ship_id);
+    auto ship = Objects().get<Ship>(ship_id);
     if (!ship) {
         ErrorLogger() << "IssueInvadeOrder : passed an invalid ship_id";
         return false;
@@ -667,7 +664,7 @@ void InvadeOrder::ExecuteImpl() const {
     if(!Check(EmpireID(), m_ship, m_planet))
         return;
 
-    auto ship = GetShip(m_ship);
+    auto ship = Objects().get<Ship>(m_ship);
     auto planet = Objects().get<Planet>(m_planet);
 
     // note: multiple ships, from same or different empires, can invade the same planet on the same turn
@@ -687,7 +684,7 @@ bool InvadeOrder::UndoImpl() const {
         return false;
     }
 
-    auto ship = GetShip(m_ship);
+    auto ship = Objects().get<Ship>(m_ship);
     if (!ship) {
         ErrorLogger() << "InvadeOrder::UndoImpl couldn't get ship with id " << m_ship;
         return false;
@@ -719,7 +716,7 @@ BombardOrder::BombardOrder(int empire, int ship, int planet) :
 }
 
 bool BombardOrder::Check(int empire_id, int ship_id, int planet_id) {
-    auto ship = GetShip(ship_id);
+    auto ship = Objects().get<Ship>(ship_id);
     if (!ship) {
         ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get ship with id " << ship_id;
         return false;
@@ -774,7 +771,7 @@ void BombardOrder::ExecuteImpl() const {
     if(!Check(EmpireID(), m_ship, m_planet))
         return;
 
-    auto ship = GetShip(m_ship);
+    auto ship = Objects().get<Ship>(m_ship);
     auto planet = Objects().get<Planet>(m_planet);
 
     // note: multiple ships, from same or different empires, can bombard the same planet on the same turn
@@ -795,7 +792,7 @@ bool BombardOrder::UndoImpl() const {
         return false;
     }
 
-    auto ship = GetShip(m_ship);
+    auto ship = Objects().get<Ship>(m_ship);
     if (!ship) {
         ErrorLogger() << "BombardOrder::UndoImpl couldn't get ship with id " << m_ship;
         return false;
@@ -1196,7 +1193,7 @@ bool ScrapOrder::Check(int empire_id, int object_id) {
         return false;
     }
 
-    auto ship = GetShip(object_id);
+    auto ship = Objects().get<Ship>(object_id);
     if (ship && ship->SystemID() == INVALID_OBJECT_ID) {
         ErrorLogger() << "ScrapOrder::Check : can scrap a traveling ship";
     }
@@ -1210,7 +1207,7 @@ void ScrapOrder::ExecuteImpl() const {
     if (!Check(EmpireID(), m_object_id))
         return;
 
-    if (auto ship = GetShip(m_object_id)) {
+    if (auto ship = Objects().get<Ship>(m_object_id)) {
         ship->SetOrderedScrapped(true);
     } else if (std::shared_ptr<Building> building = GetBuilding(m_object_id)) {
         building->SetOrderedScrapped(true);
@@ -1221,7 +1218,7 @@ bool ScrapOrder::UndoImpl() const {
     GetValidatedEmpire();
     int empire_id = EmpireID();
 
-    if (auto ship = GetShip(m_object_id)) {
+    if (auto ship = Objects().get<Ship>(m_object_id)) {
         if (ship->OwnedBy(empire_id))
             ship->SetOrderedScrapped(false);
     } else if (auto building = GetBuilding(m_object_id)) {

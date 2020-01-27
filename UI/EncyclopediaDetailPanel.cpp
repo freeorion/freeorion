@@ -2316,7 +2316,7 @@ namespace {
 
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.insert(selected_ship);
-            if (const auto this_ship = GetShip(selected_ship)) {
+            if (const auto this_ship = Objects().get<Ship>(selected_ship)) {
                 if (!this_ship->SpeciesName().empty())
                     additional_species.insert(this_ship->SpeciesName());
                 if (!this_ship->OwnedBy(client_empire_id)) {
@@ -2336,10 +2336,11 @@ namespace {
                 }
             }
         }
-        for (int ship_id : chosen_ships)
-            if (const auto this_ship = GetShip(ship_id))
-                if (!this_ship->SpeciesName().empty())
-                    additional_species.insert(this_ship->SpeciesName());
+        for (const auto& this_ship : Objects().find<Ship>(chosen_ships)) {
+            if (!this_ship || !this_ship->SpeciesName().empty())
+                continue;
+            additional_species.insert(this_ship->SpeciesName());
+        }
         std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
         detailed_description = GetDetailedDescriptionBase(design);
 
@@ -2433,7 +2434,7 @@ namespace {
         int selected_ship = fleet_manager.SelectedShipID();
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.insert(selected_ship);
-            if (const auto this_ship = GetShip(selected_ship)) {
+            if (const auto this_ship = Objects().get<Ship>(selected_ship)) {
                 if (!additional_species.empty() && ((this_ship->InitialMeterValue(METER_MAX_SHIELD) > 0) || !this_ship->OwnedBy(client_empire_id))) {
                     enemy_DR = this_ship->InitialMeterValue(METER_MAX_SHIELD);
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
@@ -2451,10 +2452,11 @@ namespace {
                 }
             }
         }
-        for (int ship_id : chosen_ships)
-            if (const auto this_ship = GetShip(ship_id))
-                if (!this_ship->SpeciesName().empty())
-                    additional_species.insert(this_ship->SpeciesName());
+        for (const auto& this_ship : Objects().find<Ship>(chosen_ships)) {
+            if (!this_ship || !this_ship->SpeciesName().empty())
+                continue;
+            additional_species.insert(this_ship->SpeciesName());
+        }
         std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
         detailed_description = GetDetailedDescriptionBase(incomplete_design.get());
 

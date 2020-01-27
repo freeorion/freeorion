@@ -674,15 +674,15 @@ public:
             if (auto fleet = GetFleet(fleet_id)) {
                 if (fleet->Speed() > 20)
                     fixed_distances.insert(fleet->Speed());
-                for (int ship_id : fleet->ShipIDs()) {
-                    if (auto ship = GetShip(ship_id)) {
-                        const float ship_range = ship->InitialMeterValue(METER_DETECTION);
-                        if (ship_range > 20)
-                            fixed_distances.insert(ship_range);
-                        const float ship_speed = ship->Speed();
-                        if (ship_speed > 20)
-                            fixed_distances.insert(ship_speed);
-                    }
+                for (const auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
+                    if (!ship)
+                        continue;
+                    const float ship_range = ship->InitialMeterValue(METER_DETECTION);
+                    if (ship_range > 20)
+                        fixed_distances.insert(ship_range);
+                    const float ship_speed = ship->Speed();
+                    if (ship_speed > 20)
+                        fixed_distances.insert(ship_speed);
                 }
             }
         }

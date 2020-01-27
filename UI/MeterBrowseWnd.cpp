@@ -446,7 +446,7 @@ void ShipDamageBrowseWnd::Initialize() {
     const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
     // get objects and meters to verify that they exist
-    auto ship = GetShip(m_object_id);
+    auto ship = Objects().get<Ship>(m_object_id);
     if (!ship) {
         ErrorLogger() << "ShipDamageBrowseWnd couldn't get ship with id " << m_object_id;
         return;
@@ -484,7 +484,7 @@ void ShipDamageBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 }
 
 void ShipDamageBrowseWnd::UpdateSummary() {
-    auto ship = GetShip(m_object_id);
+    auto ship = Objects().get<Ship>(m_object_id);
     if (!ship)
         return;
 
@@ -509,7 +509,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     m_effect_labels_and_values.clear();
 
     // get object and meter, aborting if not valid
-    auto ship = GetShip(m_object_id);
+    auto ship = Objects().get<Ship>(m_object_id);
     if (!ship) {
         ErrorLogger() << "ShipDamageBrowseWnd::UpdateEffectLabelsAndValues couldn't get ship with id " << m_object_id;
         return;
@@ -624,7 +624,7 @@ void ShipFightersBrowseWnd::Initialize() {
     const GG::Clr BG_COLOR = ClientUI::WndColor();
 
     // get objects and meters to verify that they exist
-    auto ship = GetShip(m_object_id);
+    auto ship = Objects().get<Ship>(m_object_id);
     if (!ship) {
         ErrorLogger() << "Couldn't get ship with id " << m_object_id;
         return;
@@ -679,7 +679,7 @@ void ShipFightersBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 }
 
 void ShipFightersBrowseWnd::UpdateSummary() {
-    auto ship = GetShip(m_object_id);
+    auto ship = Objects().get<Ship>(m_object_id);
     if (!ship)
         return;
 
@@ -751,7 +751,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     m_hangar_list->DetachChildren();
 
     // early return if no valid ship, ship design, or no parts in the design
-    auto ship = GetShip(m_object_id);
+    auto ship = Objects().get<Ship>(m_object_id);
     if (!ship) {
         ErrorLogger() << "Couldn't get ship with id " << m_object_id;
         return;

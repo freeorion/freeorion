@@ -116,12 +116,12 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         bool monsters = true;
         // find if any ship in fleets in button is not a monster
         for (auto& fleet : fleets) {
-            for (int ship_id : fleet->ShipIDs()) {
-                if (auto ship = GetShip(ship_id)) {
-                    if (!ship->IsMonster()) {
-                        monsters = false;
-                        break;
-                    }
+            for (const auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
+                if (!ship)
+                    continue;
+                if (!ship->IsMonster()) {
+                    monsters = false;
+                    break;
                 }
             }
         }

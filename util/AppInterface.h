@@ -153,9 +153,6 @@ inline std::shared_ptr<Field> GetField(int object_id)
 inline std::shared_ptr<Field> GetEmpireKnownField(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Field>(object_id); }
 
-inline std::shared_ptr<Ship> GetShip(int object_id)
-{ return IApp::GetApp()->GetUniverse().Objects().get<Ship>(object_id); }
-
 inline std::shared_ptr<Ship> GetEmpireKnownShip(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Ship>(object_id); }
 

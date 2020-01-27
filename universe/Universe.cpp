@@ -1843,7 +1843,7 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
 
     // if object is a ship, empire also gets knowledge of its design
     if (vis >= VIS_PARTIAL_VISIBILITY) {
-        if (auto ship = GetShip(object_id))
+        if (auto ship = Objects().get<Ship>(object_id))
             SetEmpireKnowledgeOfShipDesign(ship->DesignID(), empire_id);
     }
 }
@@ -2433,7 +2433,7 @@ namespace {
                         obj_vis_map[obj_id] = allied_vis;
                         if (allied_vis < VIS_PARTIAL_VISIBILITY)
                             continue;
-                        if (auto ship = GetShip(obj_id))
+                        if (auto ship = Objects().get<Ship>(obj_id))
                             universe.SetEmpireKnowledgeOfShipDesign(ship->DesignID(), empire_id);
                     }
                 }

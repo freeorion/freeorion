@@ -815,7 +815,7 @@ bool ClientUI::ZoomToFleet(int id) {
 }
 
 bool ClientUI::ZoomToShip(int id) {
-    if (auto ship = GetShip(id))
+    if (auto ship = Objects().get<Ship>(id))
         return ZoomToFleet(ship->FleetID());
     return false;
 }

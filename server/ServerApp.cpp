@@ -2113,8 +2113,7 @@ namespace {
 
         // get best monster detection strength here.  Use monster detection meters for this...
         float monster_detection_strength_here = 0.0f;
-        for (int ship_id : system->ShipIDs()) {
-            auto ship = GetShip(ship_id);
+        for (const auto& ship : Objects().find<Ship>(system->ShipIDs())) {
             if (!ship || !ship->Unowned())  // only want unowned / monster ships
                 continue;
             if (ship->InitialMeterValue(METER_DETECTION) > monster_detection_strength_here)
@@ -2131,8 +2130,7 @@ namespace {
                 continue;
             }
 
-            for (int ship_id : fleet->ShipIDs()) {
-                auto ship = GetShip(ship_id);
+            for (const auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
                 if (!ship)
                     continue;
                 // if a ship is low enough stealth, its fleet can be seen by monsters
@@ -2405,7 +2403,7 @@ namespace {
 
                     // record if empire should be informed of potential fleet
                     // destruction (which is checked later)
-                    if (auto ship = GetShip(object_id)) {
+                    if (auto ship = Objects().get<Ship>(object_id)) {
                         if (ship->FleetID() != INVALID_OBJECT_ID)
                             empires_to_update_of_fleet_destruction[ship->FleetID()].insert(empire_id);
                     }
@@ -2540,7 +2538,7 @@ namespace {
                 int attacker_empire_id = attacker->Owner();
                 Empire* attacker_empire = GetEmpire(attacker_empire_id);
 
-                auto target_ship = GetShip(attack_event->target_id);
+                auto target_ship = Objects().get<Ship>(attack_event->target_id);
                 if (!target_ship)
                     continue;
                 int target_empire_id = target_ship->Owner();
@@ -2623,7 +2621,7 @@ namespace {
 
     /** Does colonization, with safety checks */
     bool ColonizePlanet(int ship_id, int planet_id) {
-        auto ship = GetShip(ship_id);
+        auto ship = Objects().get<Ship>(ship_id);
         if (!ship) {
             ErrorLogger() << "ColonizePlanet couldn't get ship with id " << ship_id;
             return false;
@@ -2771,7 +2769,7 @@ namespace {
                 continue;
 
             // before actual colonization, which deletes the colony ship, store ship info for later use with sitrep generation
-            auto ship = GetShip(colonizing_ship_id);
+            auto ship = Objects().get<Ship>(colonizing_ship_id);
             if (!ship)
                 ErrorLogger() << "HandleColonization couldn't get ship with id " << colonizing_ship_id;
             const auto& species_name = ship ? ship->SpeciesName() : "";

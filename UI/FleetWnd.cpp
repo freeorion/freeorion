@@ -170,10 +170,12 @@ namespace {
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 
     bool ContainsArmedShips(const std::vector<int>& ship_ids) {
-        for (int ship_id : ship_ids)
-            if (auto ship = GetShip(ship_id))
-                if (ship->IsArmed() || ship->HasFighters())
-                    return true;
+        for (const auto& ship : Objects().find<Ship>(ship_ids)) {
+            if (!ship)
+                continue;
+            if (ship->IsArmed() || ship->HasFighters())
+                return true;
+        }
         return false;
     }
 
@@ -746,7 +748,7 @@ namespace {
         m_ship_icon_overlays.clear();
         DetachChildAndReset(m_scanline_control);
 
-        auto ship = GetShip(m_ship_id);
+        auto ship = Objects().get<Ship>(m_ship_id);
         if (!ship)
             return;
 
@@ -795,7 +797,7 @@ namespace {
 
         SetShipIcon();
 
-        auto ship = GetShip(m_ship_id);
+        auto ship = Objects().get<Ship>(m_ship_id);
         if (!ship) {
             // blank text and delete icons
             m_ship_name_text->SetText("");
@@ -872,7 +874,7 @@ namespace {
     }
 
     double ShipDataPanel::StatValue(MeterType stat_name) const {
-        if (auto ship = GetShip(m_ship_id)) {
+        if (auto ship = Objects().get<Ship>(m_ship_id)) {
             if (stat_name == METER_CAPACITY)
                 return ship->TotalWeaponsDamage(0.0f, false);
             else if (stat_name == METER_TROOPS)
@@ -924,7 +926,7 @@ namespace {
         m_initialized = true;
 
         // ship name text.  blank if no ship.
-        auto ship = GetShip(m_ship_id);
+        auto ship = Objects().get<Ship>(m_ship_id);
         std::string ship_name;
         if (ship)
             ship_name = ship->Name();
@@ -1013,7 +1015,7 @@ namespace {
         {
             SetName("ShipRow");
             SetChildClippingMode(ClipToClient);
-            if (GetShip(m_ship_id))
+            if (Objects().get<Ship>(m_ship_id))
                 SetDragDropDataType(SHIP_DROP_TYPE_STRING);
         }
 
@@ -1260,7 +1262,7 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
         const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(it->first);
         if (!ship_row)
             continue;
-        auto ship = GetShip(ship_row->ShipID());
+        auto ship = Objects().get<Ship>(ship_row->ShipID());
         if (!ship)
             continue;
 
@@ -1902,7 +1904,7 @@ public:
                     ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get ship row from dropped wnd";
                     continue;
                 }
-                dropped_ships.push_back(GetShip(ship_row->ShipID()));
+                dropped_ships.push_back(Objects().get<Ship>(ship_row->ShipID()));
             }
         }
 
@@ -2026,7 +2028,7 @@ public:
 
                 const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(dropped_wnd);
                 assert(ship_row);
-                std::shared_ptr<Ship> ship = GetShip(ship_row->ShipID());
+                auto ship = Objects().get<Ship>(ship_row->ShipID());
 
                 if (!ValidShipTransfer(ship, drop_target_fleet))
                     return; // not a valid drop
@@ -2106,7 +2108,7 @@ protected:
 
             } else if (it->first->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
                 if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(it->first))
-                    if (auto ship = GetShip(ship_row->ShipID()))
+                    if (auto ship = Objects().get<Ship>(ship_row->ShipID()))
                         it->second = ValidShipTransfer(ship, target_fleet);
             } else {
                 // no valid drop type string
@@ -2289,7 +2291,7 @@ public:
             if (!ship_row)
                 continue;
 
-            auto ship = GetShip(ship_row->ShipID());
+            auto ship = Objects().get<Ship>(ship_row->ShipID());
             if (!ship) {
                 ErrorLogger() << "ShipsListBox::DropsAcceptable couldn't get ship for ship row";
                 continue;
@@ -2321,7 +2323,7 @@ public:
                 const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd.get());
                 assert(ship_row);
                 ship_ids.push_back(ship_row->ShipID());
-                ship_from_dropped_wnd = GetShip(ship_row->ShipID());
+                ship_from_dropped_wnd = Objects().get<Ship>(ship_row->ShipID());
             }
         }
 
@@ -2563,7 +2565,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (!ship_row)
         return;
 
-    std::shared_ptr<Ship> ship = GetShip(ship_row->ShipID());
+    auto ship = Objects().get<Ship>(ship_row->ShipID());
     if (!ship)
         return;
     auto fleet = GetFleet(m_fleet_id);
@@ -3382,39 +3384,28 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     auto system = GetSystem(fleet->SystemID());
     std::set<int> ship_ids_set = fleet->ShipIDs();
 
-    // find damaged ships
     std::vector<int> damaged_ship_ids;
-    damaged_ship_ids.reserve(ship_ids_set.size());
-    for (int ship_id : ship_ids_set) {
-        auto ship = GetShip(ship_id);
-        if (ship->InitialMeterValue(METER_STRUCTURE) < ship->InitialMeterValue(METER_MAX_STRUCTURE))
-            damaged_ship_ids.push_back(ship_id);
-    }
-
-    // find ships with no remaining fuel
     std::vector<int> unfueled_ship_ids;
-    unfueled_ship_ids.reserve(ship_ids_set.size());
-    for (int ship_id : ship_ids_set) {
-        auto ship = GetShip(ship_id);
-        if (!ship)
-            continue;
-        if (ship->InitialMeterValue(METER_FUEL) < 1)
-            unfueled_ship_ids.push_back(ship_id);
-    }
-
-    // find ships that can carry fighters but dont have a full complement of them
     std::vector<int> not_full_fighters_ship_ids;
+
+    damaged_ship_ids.reserve(ship_ids_set.size());
+    unfueled_ship_ids.reserve(ship_ids_set.size());
     not_full_fighters_ship_ids.reserve(ship_ids_set.size());
-    for (int ship_id : ship_ids_set) {
-        auto ship = GetShip(ship_id);
+
+    for (const auto& ship : Objects().find<Ship>(ship_ids_set)) {
         if (!ship)
             continue;
-        if (!ship->HasFighters())
-            continue;
-        if (ship->FighterCount() < ship->FighterMax())
-            not_full_fighters_ship_ids.push_back(ship_id);
-    }
 
+        // find damaged ships
+        if (ship->InitialMeterValue(METER_STRUCTURE) < ship->InitialMeterValue(METER_MAX_STRUCTURE))
+            damaged_ship_ids.push_back(ship->ID());
+        // find ships with no remaining fuel
+        if (ship->InitialMeterValue(METER_FUEL) < 1)
+            unfueled_ship_ids.push_back(ship->ID());
+        // find ships that can carry fighters but dont have a full complement of them
+        if (ship->HasFighters() && ship->FighterCount() < ship->FighterMax())
+            not_full_fighters_ship_ids.push_back(ship->ID());
+    }
 
     // determine which other empires are at peace with client empire and have
     // an owned object in this fleet's system

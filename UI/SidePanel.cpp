@@ -1268,8 +1268,7 @@ namespace {
             return retval;
 
         // is there a valid single selected ship in the active FleetWnd?
-        for (int ship_id : FleetUIManager::GetFleetUIManager().SelectedShipIDs()) {
-            auto ship = GetShip(ship_id);
+        for (const auto& ship : Objects().find<Ship>(FleetUIManager::GetFleetUIManager().SelectedShipIDs())) {
             if (!ship || ship->SystemID() != system_id)
                 continue;
             if (!ship->CanBombard() || !ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
@@ -1287,10 +1286,12 @@ std::shared_ptr<const Ship> ValidSelectedColonyShip(int system_id) {
         return nullptr;
 
     // is there a valid selected ship in the active FleetWnd?
-    for (int ship_id : FleetUIManager::GetFleetUIManager().SelectedShipIDs())
-        if (auto ship = GetShip(ship_id))
-            if (ship->SystemID() == system_id && ship->CanColonize() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-                return ship;
+    for (const auto& ship : Objects().find<Ship>(FleetUIManager::GetFleetUIManager().SelectedShipIDs())) {
+        if (!ship)
+            continue;
+        if (ship->SystemID() == system_id && ship->CanColonize() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+            return ship;
+    }
     return nullptr;
 }
 
@@ -1571,7 +1572,7 @@ void SidePanel::PlanetPanel::Refresh() {
 
     auto selected_colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
     if (!selected_colony_ship && FleetUIManager::GetFleetUIManager().SelectedShipIDs().empty())
-        selected_colony_ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
+        selected_colony_ship = Objects().get<Ship>(AutomaticallyChosenColonyShip(m_planet_id));
 
     auto invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
     if (invasion_ships.empty()) {
@@ -2317,7 +2318,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
         // find colony ship and order it to colonize
         auto ship = ValidSelectedColonyShip(SidePanel::SystemID());
         if (!ship)
-            ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
+            ship = Objects().get<Ship>(AutomaticallyChosenColonyShip(m_planet_id));
 
         if (!ship) {
             ErrorLogger() << "SidePanel::PlanetPanel::ClickColonize valid colony not found!";
