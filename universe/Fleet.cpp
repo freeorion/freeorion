@@ -286,9 +286,9 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
 
     // get current, previous and next systems of fleet
-    auto cur_system = GetSystem(this->SystemID());          // may be 0
-    auto prev_system = GetSystem(this->PreviousSystemID()); // may be 0 if this fleet is not moving or ordered to move
-    auto next_system = GetSystem(*route_it);                // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
+    auto cur_system = Objects().get<System>(this->SystemID());          // may be 0
+    auto prev_system = Objects().get<System>(this->PreviousSystemID()); // may be 0 if this fleet is not moving or ordered to move
+    auto next_system = Objects().get<System>(*route_it);                // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
     if (!next_system) {
         ErrorLogger() << "Fleet::MovePath couldn't get next system with id " << *route_it << " for fleet " << this->Name() << "(" << this->ID() << ")";
         return retval;
@@ -804,7 +804,7 @@ void Fleet::MovementPhase() {
         }
     }
 
-    auto current_system = GetSystem(SystemID());
+    auto current_system = Objects().get<System>(SystemID());
     auto initial_system = current_system;
     auto move_path = MovePath();
 
@@ -883,7 +883,7 @@ void Fleet::MovementPhase() {
     for (it = move_path.begin(); it != move_path.end(); ++it) {
         next_it = it;   ++next_it;
 
-        auto system = GetSystem(it->object_id);
+        auto system = Objects().get<System>(it->object_id);
 
         // is this system the last node reached this turn?  either it's an end of turn node,
         // or there are no more nodes after this one on path
@@ -905,7 +905,7 @@ void Fleet::MovementPhase() {
             } else {
                 std::stringstream ss;
                 for (const auto& loc : m_travel_route) {
-                    auto route_system = GetSystem(loc);
+                    auto route_system = Objects().get<System>(loc);
                     ss << (route_system ? route_system->Name() : "invalid id") << "("<< loc << ") ";
                 }
 
@@ -914,7 +914,7 @@ void Fleet::MovementPhase() {
                     const auto path_back_to_expected = GetPathfinder()->ShortestPath(
                         system->ID(), m_travel_route.front(), ALL_EMPIRES);
                     for (const auto& loc : path_back_to_expected.first) {
-                        auto route_system = GetSystem(loc);
+                        auto route_system = Objects().get<System>(loc);
                         ss_path_back << (route_system ? route_system->Name() : "invalid id") << "("<< loc << ") ";
                     }
                 } catch (const std::out_of_range&) {
@@ -981,7 +981,7 @@ void Fleet::MovementPhase() {
     if (!m_travel_route.empty() && next_it != move_path.end() && it != move_path.end()) {
         // there is another system later on the path to aim for.  find it
         for (; next_it != move_path.end(); ++next_it) {
-            if (GetSystem(next_it->object_id)) {
+            if (Objects().get<System>(next_it->object_id)) {
                 //DebugLogger() << "___ setting m_next_system to " << next_it->object_id;
                 m_next_system = next_it->object_id;
                 break;
@@ -1034,7 +1034,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
     if (m_prev_system != INVALID_OBJECT_ID && SystemID() == m_prev_system) {
         // if we haven't actually left yet, we have to move from whichever system we are at now
 
-        if (!GetSystem(target_system_id)) {
+        if (!Objects().get<System>(target_system_id)) {
             // destination system doesn't exist or doesn't exist in known universe, so can't move to it.  leave route empty.
             try {
                 SetRoute(route);
@@ -1077,7 +1077,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
     //        return; // next system also isn't visible; leave route empty.
     //
     //    // safety check: ensure supposedly visible object actually exists in known universe.
-    //    if (!GetSystem(m_next_system)) {
+    //    if (!Objects().get<System>(m_next_system)) {
     //        ErrorLogger() << "Fleet::CalculateRoute found system with id " << m_next_system << " should be visible to this fleet's owner, but the system doesn't exist in the known universe!";
     //        return; // abort if object doesn't exist in known universe... can't path to it if it's not there, even if it's considered visible for some reason...
     //    }
@@ -1159,7 +1159,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
 }
 
 bool Fleet::Blockaded() const {
-    auto system = GetSystem(this->SystemID());
+    auto system = Objects().get<System>(this->SystemID());
 
     if (!system)
         return false;
@@ -1201,7 +1201,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     // find which empires have blockading aggressive armed ships in system;
     // fleets that just arrived do not blockade by themselves, but may
     // reinforce a preexisting blockade, and may possibly contribute to detection
-    auto current_system = GetSystem(start_system_id);
+    auto current_system = Objects().get<System>(start_system_id);
     if (!current_system) {
         DebugLogger() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering system (" << start_system_id << ") but can't retrieve system copy";
         return false;

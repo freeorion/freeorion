@@ -723,7 +723,7 @@ namespace {
 
             if (build_type == BT_SHIP) {
                 // for ships, add a set rally point command
-                if (auto system = GetSystem(SidePanel::SystemID())) {
+                if (auto system = Objects().get<System>(SidePanel::SystemID())) {
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
                     popup->AddMenuItem(GG::MenuItem(rally_prompt,               false, false, rally_to_action));
                 }

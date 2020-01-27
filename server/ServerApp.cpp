@@ -2056,7 +2056,7 @@ namespace {
 
     void GetEmpireFleetsAtSystem(std::map<int, std::set<int>>& empire_fleets, int system_id) {
         empire_fleets.clear();
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system)
             return;
         for (auto& fleet : Objects().find<const Fleet>(system->FleetIDs())) {
@@ -2066,7 +2066,7 @@ namespace {
 
     void GetEmpirePlanetsAtSystem(std::map<int, std::set<int>>& empire_planets, int system_id) {
         empire_planets.clear();
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system)
             return;
         for (auto& planet : Objects().find<const Planet>(system->PlanetIDs())) {
@@ -2081,7 +2081,7 @@ namespace {
                                           int empire_id, int system_id)
     {
         visible_fleets.clear();
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system)
             return; // no such system
         const auto& fleet_ids = system->FleetIDs();
@@ -2146,7 +2146,7 @@ namespace {
                                            int empire_id, int system_id)
     {
         visible_planets.clear();
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system)
             return; // no such system
         const auto& planet_ids = system->PlanetIDs();
@@ -2216,7 +2216,7 @@ namespace {
         if (empire_fleets_here.empty())
             return false;
 
-        auto this_system = GetSystem(system_id);
+        auto this_system = Objects().get<System>(system_id);
         DebugLogger(combat) << "CombatConditionsInSystem() for system (" << system_id << ") " << this_system->Name();
         // which empires have aggressive ships here? (including monsters as id ALL_EMPIRES)
         std::set<int> empires_with_aggressive_fleets_here;
@@ -2438,7 +2438,7 @@ namespace {
 
             // update system ownership after combat.  may be necessary if the
             // combat caused planets to change ownership.
-            if (auto system = GetSystem(combat_info.system_id)) {
+            if (auto system = Objects().get<System>(combat_info.system_id)) {
                 // ensure all participants get updates on system.  this ensures
                 // that an empire who lose all objects in the system still
                 // knows about a change in system ownership
@@ -2662,7 +2662,7 @@ namespace {
             return false;
         }
 
-        auto system = GetSystem(ship->SystemID());
+        auto system = Objects().get<System>(ship->SystemID());
 
         // destroy colonizing ship, and its fleet if now empty
         auto fleet = GetFleet(ship->FleetID());
@@ -2739,7 +2739,7 @@ namespace {
                 continue;
             }
             int system_id = planet->SystemID();
-            auto system = GetSystem(system_id);
+            auto system = Objects().get<System>(system_id);
             if (!system) {
                 ErrorLogger() << "HandleColonization couldn't get system with id " << system_id;
                 continue;
@@ -2847,7 +2847,7 @@ namespace {
             // how many troops are invading?
             planet_empire_troops[invade_planet_id][ship->Owner()] += ship->TroopCapacity();
 
-            auto system = GetSystem(ship->SystemID());
+            auto system = Objects().get<System>(ship->SystemID());
 
             // destroy invading ships and their fleets if now empty
             auto fleet = GetFleet(ship->FleetID());
@@ -3039,7 +3039,7 @@ namespace {
                 // gifted object must be in a system
                 if (gifted_obj->SystemID() == INVALID_OBJECT_ID)
                     continue;
-                auto system = GetSystem(gifted_obj->SystemID());
+                auto system = Objects().get<System>(gifted_obj->SystemID());
                 if (!system)
                     continue;
 
@@ -3094,7 +3094,7 @@ namespace {
 
             DebugLogger() << "... ship: " << ship->ID() << " ordered scrapped";
 
-            auto system = GetSystem(ship->SystemID());
+            auto system = Objects().get<System>(ship->SystemID());
             if (system)
                 system->Remove(ship->ID());
 
@@ -3135,7 +3135,7 @@ namespace {
             if (auto planet = Objects().get<Planet>(building->PlanetID()))
                 planet->RemoveBuilding(building->ID());
 
-            if (auto system = GetSystem(building->SystemID()))
+            if (auto system = Objects().get<System>(building->SystemID()))
                 system->Remove(building->ID());
 
             // record scrapping in empire stats
@@ -3179,7 +3179,7 @@ namespace {
             if (!fleet->Empty())
                 continue;
 
-            auto sys = GetSystem(fleet->SystemID());
+            auto sys = Objects().get<System>(fleet->SystemID());
             if (sys)
                 sys->Remove(fleet->ID());
 

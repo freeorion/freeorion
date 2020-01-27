@@ -436,7 +436,7 @@ std::string Planet::CardinalSuffix() const {
         return retval;
     }
 
-    auto cur_system = GetSystem(SystemID());
+    auto cur_system = Objects().get<System>(SystemID());
     // Early return for no system
     if (!cur_system) {
         ErrorLogger() << "Planet " << Name() << "(" << ID()
@@ -656,7 +656,7 @@ void Planet::Conquer(int conquerer) {
             // destroy object
             //DebugLogger() << "Planet::Conquer destroying object: " << building->Name();
             this->RemoveBuilding(building->ID());
-            if (auto system = GetSystem(this->SystemID()))
+            if (auto system = Objects().get<System>(this->SystemID()))
                 system->Remove(building->ID());
             GetUniverse().Destroy(building->ID());
         } else if (cap_result == CR_RETAIN) {

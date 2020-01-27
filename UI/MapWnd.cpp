@@ -687,7 +687,7 @@ public:
             }
         }
         // get detection ranges for planets in the selected system (if any)
-        if (const auto system = GetSystem(sel_system_id)) {
+        if (const auto system = Objects().get<System>(sel_system_id)) {
             for (const auto& planet : Objects().find<Planet>(system->PlanetIDs())) {
                 if (!planet)
                     continue;
@@ -2061,7 +2061,7 @@ void MapWnd::RenderSystems() {
             // render circles around systems that have at least one starlane, if they are enabled
             if (!circles) continue;
 
-            if (auto system = GetSystem(system_icon.first)) {
+            if (auto system = Objects().get<System>(system_icon.first)) {
                 if (system->NumStarlanes() > 0) {
                     bool has_empire_planet = false;
                     bool has_neutrals = false;
@@ -3074,7 +3074,7 @@ void MapWnd::InitSystemRenderingBuffers() {
     for (const auto& system_icon : m_system_icons) {
         const auto& icon = system_icon.second;
         int system_id = system_icon.first;
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -3517,7 +3517,7 @@ namespace {
                 //DebugLogger() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
 
                 int system_id = planet->SystemID();
-                auto system = GetSystem(system_id);
+                auto system = Objects().get<System>(system_id);
                 if (!system)
                     continue;
 
@@ -3610,7 +3610,7 @@ namespace {
             if (this_client_known_destroyed_objects.count(system_id))
                 continue;
 
-            auto start_system = GetSystem(system_id);
+            auto start_system = Objects().get<System>(system_id);
             if (!start_system) {
                 ErrorLogger() << "GetFullLanesToRender couldn't get system with id " << system_id;
                 continue;
@@ -3627,7 +3627,7 @@ namespace {
                 if (this_client_known_destroyed_objects.count(lane_end_sys_id))
                     continue;
 
-                auto dest_system = GetSystem(render_lane.first);
+                auto dest_system = Objects().get<System>(render_lane.first);
                 if (!dest_system)
                     continue;
 
@@ -3705,7 +3705,7 @@ namespace {
             if (this_client_known_destroyed_objects.count(system_id))
                 continue;
 
-            auto start_system = GetSystem(system_id);
+            auto start_system = Objects().get<System>(system_id);
             if (!start_system) {
                 ErrorLogger() << "GetFullLanesToRender couldn't get system with id " << system_id;
                 continue;
@@ -3722,7 +3722,7 @@ namespace {
                 if (this_client_known_destroyed_objects.count(lane_end_sys_id))
                     continue;
 
-                auto dest_system = GetSystem(render_lane.first);
+                auto dest_system = Objects().get<System>(render_lane.first);
                 if (!dest_system)
                     continue;
                 //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
@@ -3793,7 +3793,7 @@ namespace {
             if (this_client_known_destroyed_objects.count(system_id))
                 continue;
 
-            auto start_system = GetSystem(system_id);
+            auto start_system = Objects().get<System>(system_id);
             if (!start_system) {
                 ErrorLogger() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
                 continue;
@@ -3810,7 +3810,7 @@ namespace {
                 if (this_client_known_destroyed_objects.count(lane_end_sys_id))
                     continue;
 
-                auto dest_system = GetSystem(render_lane.first);
+                auto dest_system = Objects().get<System>(render_lane.first);
                 if (!dest_system)
                     continue;
                 //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
@@ -3867,7 +3867,7 @@ namespace {
             if (this_client_known_destroyed_objects.count(system_id))
                 continue;
 
-            auto start_system = GetSystem(system_id);
+            auto start_system = Objects().get<System>(system_id);
             if (!start_system) {
                 ErrorLogger() << "GetFullLanesToRender couldn't get system with id " << system_id;
                 continue;
@@ -3884,7 +3884,7 @@ namespace {
                 if (this_client_known_destroyed_objects.count(lane_end_sys_id))
                     continue;
 
-                auto dest_system = GetSystem(render_lane.first);
+                auto dest_system = Objects().get<System>(render_lane.first);
                 if (!dest_system)
                     continue;
 
@@ -4213,7 +4213,7 @@ void MapWnd::InitScaleCircleRenderingBuffer() {
     if (radius < 5)
         return;
 
-    auto selected_system = GetSystem(SidePanel::SystemID());
+    auto selected_system = Objects().get<System>(SidePanel::SystemID());
     if (!selected_system)
         return;
 
@@ -4428,7 +4428,7 @@ void MapWnd::ReselectLastSystem() {
 
 void MapWnd::SelectSystem(int system_id) {
     //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system && system_id != INVALID_OBJECT_ID) {
         ErrorLogger() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
         system_id = INVALID_OBJECT_ID;
@@ -4749,7 +4749,7 @@ void MapWnd::DoSystemIconsLayout() {
     // position and resize system icons and gaseous substance
     const int SYSTEM_ICON_SIZE = SystemIconSize();
     for (auto& system_icon : m_system_icons) {
-        auto system = GetSystem(system_icon.first);
+        auto system = Objects().get<System>(system_icon.first);
         if (!system) {
             ErrorLogger() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << system_icon.first;
             continue;
@@ -4783,7 +4783,7 @@ void MapWnd::DoFleetButtonsLayout() {
 
     auto place_system_fleet_btn = [this](const std::unordered_map<int, std::unordered_set<std::shared_ptr<FleetButton>>>::value_type& system_and_btns, bool is_departing) {
         // calculate system icon position
-        auto system = GetSystem(system_and_btns.first);
+        auto system = Objects().get<System>(system_and_btns.first);
         if (!system) {
             ErrorLogger() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << system_and_btns.first;
             return;
@@ -4924,7 +4924,7 @@ namespace {
             && !fleet->TravelRoute().empty()
             && fleet->SystemID() != INVALID_OBJECT_ID)
         {
-            auto system = GetSystem(fleet->SystemID());
+            auto system = Objects().get<System>(fleet->SystemID());
             if (system)
                 return system;
             ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
@@ -4941,7 +4941,7 @@ namespace {
              || fleet->TravelRoute().empty())
             && fleet->SystemID() != INVALID_OBJECT_ID)
         {
-            auto system = GetSystem(fleet->SystemID());
+            auto system = Objects().get<System>(fleet->SystemID());
             if (system)
                 return system;
             ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
@@ -4962,7 +4962,7 @@ namespace {
         int sys1_id = fleet->PreviousSystemID();
         int sys2_id = fleet->NextSystemID();
 
-        auto sys1 = GetSystem(sys1_id);
+        auto sys1 = Objects().get<System>(sys1_id);
         if (!sys1)
             return boost::none;
         if (sys1->HasStarlaneTo(sys2_id))
@@ -5343,20 +5343,20 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags<GG::ModKey> mod_keys) {
 
         } else if (mas == MAS_AddStarlane) {
             int selected_system_id = SidePanel::SystemID();
-            if (GetSystem(selected_system_id)) {
+            if (Objects().get<System>(selected_system_id)) {
                 net.SendMessage(ModeratorActionMessage(
                     Moderator::AddStarlane(system_id, selected_system_id)));
             }
 
         } else if (mas == MAS_RemoveStarlane) {
             int selected_system_id = SidePanel::SystemID();
-            if (GetSystem(selected_system_id)) {
+            if (Objects().get<System>(selected_system_id)) {
                 net.SendMessage(ModeratorActionMessage(
                     Moderator::RemoveStarlane(system_id, selected_system_id)));
             }
         } else if (mas == MAS_SetOwner) {
             int empire_id = m_moderator_wnd->SelectedEmpire();
-            auto system = GetSystem(system_id);
+            auto system = Objects().get<System>(system_id);
             if (!system)
                 return;
 
@@ -5511,9 +5511,9 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
         // disallow "offroad" (direct non-starlane non-wormhole) travel
         if (route.size() == 2 && *route.begin() != *route.rbegin()) {
             int begin_id = *route.begin();
-            auto begin_sys = GetSystem(begin_id);
+            auto begin_sys = Objects().get<System>(begin_id);
             int end_id = *route.rbegin();
-            auto end_sys = GetSystem(end_id);
+            auto end_sys = Objects().get<System>(end_id);
 
             if (!begin_sys->HasStarlaneTo(end_id) && !begin_sys->HasWormholeTo(end_id) &&
                 !end_sys->HasStarlaneTo(begin_id) && !end_sys->HasWormholeTo(begin_id))
@@ -6888,15 +6888,16 @@ namespace {
         auto owned_planets = Objects().find<Planet>(OwnedVisitor<Planet>(empire_id));
 
         // get IDs of systems that contain any owned planets
-        std::unordered_set<int> system_ids;
+        std::set<int> system_ids;
         for (auto& obj : owned_planets)
         { system_ids.insert(obj->SystemID()); }
 
         // store systems, sorted alphabetically
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
-        for (int system_id : system_ids) {
-            if (auto sys = GetSystem(system_id))
-                system_names_ids.insert({sys->Name(), sys->ID()});
+        for (const auto& sys : Objects().find<System>(system_ids)) {
+            if (!sys)
+                continue;
+            system_names_ids.insert({sys->Name(), sys->ID()});
         }
 
         return system_names_ids;
@@ -6911,7 +6912,7 @@ bool MapWnd::ZoomToPrevOwnedSystem() {
 
     // find currently selected system in list
     auto it = system_names_ids.rend();
-    auto sel_sys = GetSystem(SidePanel::SystemID());
+    auto sel_sys = Objects().get<System>(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),  std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.rend())
@@ -6937,7 +6938,7 @@ bool MapWnd::ZoomToNextOwnedSystem() {
     auto it = system_names_ids.end();
 
     // find currently selected system in list
-    auto sel_sys = GetSystem(SidePanel::SystemID());
+    auto sel_sys = Objects().get<System>(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.begin(), system_names_ids.end(), std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.end())
@@ -6961,7 +6962,7 @@ bool MapWnd::ZoomToPrevSystem() {
 
     // find currently selected system in list
     auto it = system_names_ids.rend();
-    auto sel_sys = GetSystem(SidePanel::SystemID());
+    auto sel_sys = Objects().get<System>(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),  std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.rend())
@@ -6986,7 +6987,7 @@ bool MapWnd::ZoomToNextSystem() {
     auto it = system_names_ids.end();
 
     // find currently selected system in list
-    auto sel_sys = GetSystem(SidePanel::SystemID());
+    auto sel_sys = Objects().get<System>(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.begin(), system_names_ids.end(), std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.end())
@@ -7259,7 +7260,7 @@ bool MapWnd::IsFleetExploring(const int fleet_id){
 }
 
 namespace {
-    typedef std::unordered_set<int> SystemIDListType;
+    typedef std::set<int> SystemIDListType;
     typedef std::unordered_set<int> FleetIDListType;
     typedef std::vector<int> RouteListType;
     typedef std::pair<double, RouteListType> OrderedRouteType;
@@ -7306,8 +7307,8 @@ namespace {
 
     /** Get the shortest suitable route from @p start_id to @p destination_id as known to @p empire_id */
     OrderedRouteType GetShortestRoute(int empire_id, int start_id, int destination_id) {
-        auto start_system = GetSystem(start_id);
-        auto dest_system = GetSystem(destination_id);
+        auto start_system = Objects().get<System>(start_id);
+        auto dest_system = Objects().get<System>(destination_id);
         if (!start_system || !dest_system) {
             WarnLogger() << "Invalid start or destination system";
             return OrderedRouteType();
@@ -7648,12 +7649,11 @@ void MapWnd::DispatchFleetsExploring() {
     // Populate list of unexplored systems
     timer.EnterSection("unexplored systems");
     SystemIDListType unexplored_systems;
-    for (int system_id : candidates_unknown_systems) {
-        auto system = GetSystem(system_id);
+    for (const auto& system : Objects().find<System>(candidates_unknown_systems)) {
         if (!system)
             continue;
         if (!empire->HasExploredSystem(system->ID()) &&
-            !systems_being_explored.count(system_id))
+            !systems_being_explored.count(system->ID()))
         { unexplored_systems.insert(system->ID()); }
     }
     timer.EnterSection("");
@@ -7675,16 +7675,13 @@ void MapWnd::DispatchFleetsExploring() {
     // Determine fleet routes for each unexplored system
     timer.EnterSection("fleet_routes");
     std::unordered_map<int, int> fleet_route_count;
-    for (const auto& unexplored_system_id : unexplored_systems) {
-        auto unexplored_system = GetSystem(unexplored_system_id);
-        if (!unexplored_system) {
-            WarnLogger() << "Invalid system " << unexplored_system_id;
+    for (const auto& unexplored_system : Objects().find<System>(unexplored_systems)) {
+        if (!unexplored_system)
             continue;
-        }
 
         for (const auto& fleet_id : idle_fleets) {
             if (max_routes_per_system > 0 &&
-                fleet_route_count[unexplored_system_id] > max_routes_per_system)
+                fleet_route_count[unexplored_system->ID()] > max_routes_per_system)
             { break; }
 
             auto fleet = GetFleet(fleet_id);
@@ -7697,7 +7694,7 @@ void MapWnd::DispatchFleetsExploring() {
 
             auto route = GetOrderedFleetRoute(fleet, unexplored_system);
             if (route.first > 0.0) {
-                ++fleet_route_count[unexplored_system_id];
+                ++fleet_route_count[unexplored_system->ID()];
                 fleet_routes.emplace(route);
             }
         }

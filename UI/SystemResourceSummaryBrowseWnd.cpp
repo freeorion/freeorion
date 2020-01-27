@@ -179,7 +179,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     }
     m_production_labels_and_amounts.clear();
 
-    auto system = GetSystem(m_system_id);
+    auto system = Objects().get<System>(m_system_id);
     if (!system || m_resource_type == INVALID_RESOURCE_TYPE)
         return;
 
@@ -270,7 +270,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
     }
     m_allocation_labels_and_amounts.clear();
 
-    auto system = GetSystem(m_system_id);
+    auto system = Objects().get<System>(m_system_id);
     if (!system || m_resource_type == INVALID_RESOURCE_TYPE)
         return;
 

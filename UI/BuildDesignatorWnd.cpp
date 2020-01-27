@@ -1374,7 +1374,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
     // only checking visible objects for this clients empire (and not the
     // latest known objects) as an empire shouldn't be able to use a planet or
     // system it can't currently see as a production location.
-    auto sys = GetSystem(system_id);
+    auto sys = Objects().get<System>(system_id);
     if (!sys) {
         ErrorLogger() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
         return;

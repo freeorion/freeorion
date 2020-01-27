@@ -766,12 +766,12 @@ double Pathfinder::LinearDistance(int system1_id, int system2_id) const {
 }
 
 double Pathfinder::PathfinderImpl::LinearDistance(int system1_id, int system2_id) const {
-    std::shared_ptr<const System> system1 = GetSystem(system1_id);
+    const auto system1 = Objects().get<System>(system1_id);
     if (!system1) {
         ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system1_id;
         throw std::out_of_range("system1_id invalid");
     }
-    std::shared_ptr<const System> system2 = GetSystem(system2_id);
+    const auto system2 = Objects().get<System>(system2_id);
     if (!system2) {
         ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system2_id;
         throw std::out_of_range("system2_id invalid");
@@ -830,7 +830,7 @@ namespace {
             return nullptr;
 
         int system_id = obj->SystemID();
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (system)
             return system_id;
 
@@ -1051,8 +1051,8 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
     if (!obj2)
         return -1;
 
-    std::shared_ptr<const System> system_one = GetSystem(obj1->SystemID());
-    std::shared_ptr<const System> system_two = GetSystem(obj2->SystemID());
+    auto system_one = Objects().get<System>(obj1->SystemID());
+    auto system_two = Objects().get<System>(obj2->SystemID());
     std::pair< std::list< int >, double > path_len_pair;
     double dist1(0.0), dist2(0.0);
     std::shared_ptr<const Fleet> fleet;
@@ -1061,7 +1061,7 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
         fleet = FleetFromObject(obj1);
         if (!fleet)
             return -1;
-        if (std::shared_ptr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
+        if (auto next_sys = Objects().get<System>(fleet->NextSystemID())) {
             system_one = next_sys;
             dist1 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
         }
@@ -1071,7 +1071,7 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
         fleet = FleetFromObject(obj2);
         if (!fleet)
             return -1;
-        if (std::shared_ptr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
+        if (auto next_sys = Objects().get<System>(fleet->NextSystemID())) {
             system_two = next_sys;
             dist2 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
         }

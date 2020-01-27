@@ -3212,7 +3212,7 @@ std::string InSystem::Description(bool negated/* = false*/) const {
     int system_id = INVALID_OBJECT_ID;
     if (m_system_id && m_system_id->ConstantExpr())
         system_id = m_system_id->Eval();
-    if (auto system = GetSystem(system_id))
+    if (auto system = Objects().get<System>(system_id))
         system_str = system->Name();
     else if (m_system_id)
         system_str = m_system_id->Description();
@@ -3259,7 +3259,7 @@ void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 
     // simple case of a single specified system id; can add just objects in that system
     int system_id = m_system_id->Eval(parent_context);
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system)
         return;
 
@@ -3367,7 +3367,7 @@ std::string ObjectID::Description(bool negated/* = false*/) const {
     int object_id = INVALID_OBJECT_ID;
     if (m_object_id && m_object_id->ConstantExpr())
         object_id = m_object_id->Eval();
-    if (auto system = GetSystem(object_id))
+    if (auto system = Objects().get<System>(object_id))
         object_str = system->Name();
     else if (m_object_id)
         object_str = m_object_id->Description();
@@ -4807,7 +4807,7 @@ namespace {
             if (!candidate)
                 return false;
 
-            std::shared_ptr<const System> system = GetSystem(candidate->SystemID());
+            std::shared_ptr<const System> system = Objects().get<System>(candidate->SystemID());
             if (system || (system = std::dynamic_pointer_cast<const System>(candidate)))
                 return !m_types.empty() && std::count(m_types.begin(), m_types.end(), system->GetStarType());
 
@@ -4911,7 +4911,7 @@ bool StarType::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    std::shared_ptr<const System> system = GetSystem(candidate->SystemID());
+    std::shared_ptr<const System> system = Objects().get<System>(candidate->SystemID());
     if (system || (system = std::dynamic_pointer_cast<const System>(candidate))) {
         for (auto& type : m_types) {
             if (type->Eval(local_context) == system->GetStarType())
@@ -7833,7 +7833,7 @@ namespace {
 
             // check all existing lanes of currently-being-checked system
             for (const auto& lane : sys_existing_lanes) {
-                auto lane_end_sys3 = GetSystem(lane.first);
+                auto lane_end_sys3 = Objects().get<System>(lane.first);
                 if (!lane_end_sys3)
                     continue;
                 // don't need to check against existing lanes that include one
@@ -7882,7 +7882,7 @@ namespace {
             // destination objects
             std::set<std::shared_ptr<const System>> dest_systems;
             for (auto& obj : destination_objects) {
-                if (auto sys = GetSystem(obj->SystemID()))
+                if (auto sys = Objects().get<System>(obj->SystemID()))
                     dest_systems.insert(sys);
             }
             std::copy(dest_systems.begin(), dest_systems.end(), std::inserter(m_destination_systems, m_destination_systems.end()));
@@ -7895,7 +7895,7 @@ namespace {
             // get system from candidate
             auto candidate_sys = std::dynamic_pointer_cast<const System>(candidate);
             if (!candidate_sys)
-                candidate_sys = GetSystem(candidate->SystemID());
+                candidate_sys = Objects().get<System>(candidate->SystemID());
             if (!candidate_sys)
                 return false;
 
@@ -7917,7 +7917,7 @@ namespace {
             // present lanes of the candidate system
             //TraceLogger() << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << std::endl;
             for (const auto& lane : candidate_sys->StarlanesWormholes()) {
-                auto candidate_existing_lane_end_sys = GetSystem(lane.first);
+                auto candidate_existing_lane_end_sys = Objects().get<System>(lane.first);
                 if (!candidate_existing_lane_end_sys)
                     continue;
 
@@ -7938,7 +7938,7 @@ namespace {
                 // check this destination system's existing lanes against a lane
                 // to the candidate system
                 for (const auto& dest_lane : dest_sys->StarlanesWormholes()) {
-                    auto dest_lane_end_sys = GetSystem(dest_lane.first);
+                    auto dest_lane_end_sys = Objects().get<System>(dest_lane.first);
                     if (!dest_lane_end_sys)
                         continue;
 

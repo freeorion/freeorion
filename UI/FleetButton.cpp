@@ -309,7 +309,6 @@ void FleetButton::LayoutIcons() {
     // refresh fleet button tooltip
     if (m_fleet_blockaded) {
         std::shared_ptr<Fleet> fleet;
-        std::shared_ptr<System> current_system;
         std::string available_exits = "";
         int available_exits_count = 0;
 
@@ -318,13 +317,11 @@ void FleetButton::LayoutIcons() {
             fleet = GetFleet(*m_fleets.begin());
         else return;
 
-        current_system = GetSystem(fleet->SystemID());
-
-        for (const auto& target_system_id : current_system->StarlanesWormholes()) {
+        for (const auto& target_system_id : Objects().get<System>(fleet->SystemID())->StarlanesWormholes()) {
             if (fleet->BlockadedAtSystem(fleet->SystemID(), target_system_id.first))
                 continue;
 
-            std::shared_ptr<System> target_system = GetSystem(target_system_id.first);
+            auto target_system = Objects().get<System>(target_system_id.first);
             if (target_system) {
                 available_exits += "\n" + target_system->ApparentName(HumanClientApp::GetApp()->EmpireID());
                 available_exits_count++;

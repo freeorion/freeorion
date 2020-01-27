@@ -81,7 +81,7 @@ namespace {
                 }
             } else if (property_name == "System") {
                 if (obj)
-                    obj = GetSystem(obj->SystemID());
+                    obj = Objects().get<System>(obj->SystemID());
                 if (!obj)
                     ErrorLogger() << "FollowReference : Unable to get system for object";
             } else if (property_name == "Fleet") {
@@ -150,7 +150,7 @@ namespace {
             } else if (property_name_part == "System") {
                 if (obj) {
                     retval += "(" + std::to_string(obj->SystemID()) + "): ";
-                    obj = GetSystem(obj->SystemID());
+                    obj = Objects().get<System>(obj->SystemID());
                 }
             } else if (property_name_part == "Fleet") {
                 if (auto s = std::dynamic_pointer_cast<const Ship>(obj))  {
@@ -1040,7 +1040,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "LastTurnBattleHere") {
         if (auto const_system = std::dynamic_pointer_cast<const System>(object))
             return const_system->LastTurnBattleHere();
-        else if (auto system = GetSystem(object->SystemID()))
+        else if (auto system = Objects().get<System>(object->SystemID()))
             return system->LastTurnBattleHere();
         return INVALID_GAME_TURN;
 
@@ -1070,7 +1070,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     }
     else if (property_name == "Orbit") {
-        if (auto system = GetSystem(object->SystemID()))
+        if (auto system = Objects().get<System>(object->SystemID()))
             return system->OrbitOfPlanet(object->ID());
         return -1;
 

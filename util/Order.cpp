@@ -161,7 +161,7 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
         ErrorLogger() << "Empire attempted to create a new fleet outside a system";
         return false;
     }
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system) {
         ErrorLogger() << "Empire attempted to create a new fleet in a nonexistant system";
         return false;
@@ -182,7 +182,7 @@ void NewFleetOrder::ExecuteImpl() const {
     auto validated_ships = Objects().find<Ship>(m_ship_ids);
 
     int system_id = validated_ships[0]->SystemID();
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
 
     std::shared_ptr<Fleet> fleet;
     if (m_fleet_id == INVALID_OBJECT_ID) {
@@ -238,7 +238,7 @@ void NewFleetOrder::ExecuteImpl() const {
         if (!modified_fleet->Empty())
             modified_fleet->StateChangedSignal();
         else {
-            if (auto modified_fleet_system = GetSystem(modified_fleet->SystemID()))
+            if (auto modified_fleet_system = Objects().get<System>(modified_fleet->SystemID()))
                 modified_fleet_system->Remove(modified_fleet->ID());
 
             GetUniverse().Destroy(modified_fleet->ID());
@@ -438,7 +438,7 @@ void FleetTransferOrder::ExecuteImpl() const {
         if (!modified_fleet->Empty())
             modified_fleet->StateChangedSignal();
         else {
-            if (auto system = GetSystem(modified_fleet->SystemID()))
+            if (auto system = Objects().get<System>(modified_fleet->SystemID()))
                 system->Remove(modified_fleet->ID());
 
             GetUniverse().Destroy(modified_fleet->ID());
@@ -1303,7 +1303,7 @@ bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_
         return false;
     }
 
-    auto system = GetSystem(obj->SystemID());
+    auto system = Objects().get<System>(obj->SystemID());
     if (!system) {
         ErrorLogger() << "IssueGiveObjectToEmpireOrder : couldn't get system of object";
         return false;

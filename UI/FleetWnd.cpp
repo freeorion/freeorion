@@ -101,8 +101,8 @@ namespace {
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-        std::shared_ptr<const System> dest_sys = GetSystem(fleet->FinalDestinationID());
-        std::shared_ptr<const System> cur_sys = GetSystem(fleet->SystemID());
+        const auto dest_sys = Objects().get<System>(fleet->FinalDestinationID());
+        const auto cur_sys = Objects().get<System>(fleet->SystemID());
         bool returning_to_current_system = (dest_sys == cur_sys) && !fleet->TravelRoute().empty();
         if (dest_sys && (dest_sys != cur_sys || returning_to_current_system)) {
             std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
@@ -209,7 +209,7 @@ namespace {
             return;
 
         std::shared_ptr<const Ship> first_ship = *ships.begin();
-        auto system = GetSystem(first_ship->SystemID());
+        auto system = Objects().get<System>(first_ship->SystemID());
         if (!system)
             return;
 
@@ -292,7 +292,7 @@ namespace {
             return;
         }
 
-        auto system = GetSystem(target_fleet->SystemID());
+        auto system = Objects().get<System>(target_fleet->SystemID());
         if (!system) {
             ErrorLogger() << "MergeFleetsIntoFleet couldn't get system for the target fleet";
             return;
@@ -2915,7 +2915,7 @@ void FleetWnd::SetStatIconValues() {
 
 void FleetWnd::RefreshStateChangedSignals() {
     m_system_connection.disconnect();
-    if (auto system = GetSystem(m_system_id))
+    if (auto system = Objects().get<System>(m_system_id))
         m_system_connection = system->StateChangedSignal.connect(
             boost::bind(&FleetWnd::RequireRefresh, this), boost::signals2::at_front);
 
@@ -3048,7 +3048,7 @@ void FleetWnd::Refresh() {
         }
         fleet_locations_ids.swap(fleets_near_enough);
 
-    } else if (auto system = GetSystem(m_system_id)) {
+    } else if (auto system = Objects().get<System>(m_system_id)) {
         location = {m_system_id, GG::Pt(GG::X(system->X()), GG::Y(system->Y()))};
 
     } else {
@@ -3068,7 +3068,7 @@ void FleetWnd::Refresh() {
         m_new_fleet_drop_target->SetSystemID(m_system_id);
 
     // If the location is a system add in any ships from m_empire_id that are in the system.
-    if (auto system = GetSystem(m_system_id)) {
+    if (auto system = Objects().get<System>(m_system_id)) {
         m_fleet_ids.clear();
         // get fleets to show from system, based on required ownership
         for (auto& fleet : Objects().find<Fleet>(system->FleetIDs())) {
@@ -3381,7 +3381,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     if (!fleet)
         return;
 
-    auto system = GetSystem(fleet->SystemID());
+    auto system = Objects().get<System>(fleet->SystemID());
     std::set<int> ship_ids_set = fleet->ShipIDs();
 
     std::vector<int> damaged_ship_ids;
@@ -3698,7 +3698,7 @@ namespace {
             return "";
 
         int nearest_system_id(GetPathfinder()->NearestSystemTo(fleet->X(), fleet->Y()));
-        if (auto system = GetSystem(nearest_system_id)) {
+        if (auto system = Objects().get<System>(nearest_system_id)) {
             const std::string& sys_name = system->ApparentName(client_empire_id);
             return sys_name;
         }
@@ -3717,7 +3717,7 @@ std::string FleetWnd::TitleText() const {
     // FleetWnd's empire and system
     const Empire* empire = GetEmpire(m_empire_id);
 
-    if (auto system = GetSystem(m_system_id)) {
+    if (auto system = Objects().get<System>(m_system_id)) {
         const std::string& sys_name = system->ApparentName(client_empire_id);
         return (empire
                 ? boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %

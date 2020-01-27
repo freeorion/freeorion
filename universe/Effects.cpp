@@ -70,7 +70,7 @@ namespace {
 
         // remove ship from old fleet / system, put into new system if necessary
         if (ship->SystemID() != system->ID()) {
-            if (auto old_system = GetSystem(ship->SystemID())) {
+            if (auto old_system = Objects().get<System>(ship->SystemID())) {
                 old_system->Remove(ship->ID());
                 ship->SetSystem(INVALID_OBJECT_ID);
             }
@@ -112,13 +112,13 @@ namespace {
             return;
         }
 
-        auto next_system = GetSystem(new_next_system);
+        auto next_system = Objects().get<System>(new_next_system);
         if (!next_system) {
             ErrorLogger() << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
             return;
         }
 
-        if (new_previous_system != INVALID_OBJECT_ID && !GetSystem(new_previous_system)) {
+        if (new_previous_system != INVALID_OBJECT_ID && !Objects().get<System>(new_previous_system)) {
             ErrorLogger() << "UpdateFleetRoute couldn't get new previous system with id: " << new_previous_system;
         }
 
@@ -1160,7 +1160,7 @@ void SetOwner::Execute(const ScriptingContext& context) const {
 
         // move ship into new fleet
         std::shared_ptr<Fleet> new_fleet;
-        if (auto system = GetSystem(ship->SystemID()))
+        if (auto system = Objects().get<System>(ship->SystemID()))
             new_fleet = CreateNewFleet(system, ship);
         else
             new_fleet = CreateNewFleet(ship->X(), ship->Y(), ship);
@@ -1328,7 +1328,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "CreatePlanet::Execute passed no target object";
         return;
     }
-    auto system = GetSystem(context.effect_target->SystemID());
+    auto system = Objects().get<System>(context.effect_target->SystemID());
     if (!system) {
         ErrorLogger() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
@@ -1470,7 +1470,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
 
     building->SetOwner(location->Owner());
 
-    auto system = GetSystem(location->SystemID());
+    auto system = Objects().get<System>(location->SystemID());
     if (system)
         system->Insert(building);
 
@@ -1560,7 +1560,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    auto system = GetSystem(context.effect_target->SystemID());
+    auto system = Objects().get<System>(context.effect_target->SystemID());
     if (!system) {
         ErrorLogger() << "CreateShip::Execute passed a target not in a system";
         return;
@@ -2114,7 +2114,7 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
     }
     auto target_system = std::dynamic_pointer_cast<System>(context.effect_target);
     if (!target_system)
-        target_system = GetSystem(context.effect_target->SystemID());
+        target_system = Objects().get<System>(context.effect_target->SystemID());
     if (!target_system)
         return; // nothing to do!
 
@@ -2133,7 +2133,7 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
     for (auto& endpoint_object : endpoint_objects) {
         auto endpoint_system = std::dynamic_pointer_cast<const System>(endpoint_object);
         if (!endpoint_system)
-            endpoint_system = GetSystem(endpoint_object->SystemID());
+            endpoint_system = Objects().get<System>(endpoint_object->SystemID());
         if (!endpoint_system)
             continue;
         endpoint_systems.insert(std::const_pointer_cast<System>(endpoint_system));
@@ -2180,7 +2180,7 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
     }
     auto target_system = std::dynamic_pointer_cast<System>(context.effect_target);
     if (!target_system)
-        target_system = GetSystem(context.effect_target->SystemID());
+        target_system = Objects().get<System>(context.effect_target->SystemID());
     if (!target_system)
         return; // nothing to do!
 
@@ -2200,7 +2200,7 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
     for (auto& endpoint_object : endpoint_objects) {
         auto endpoint_system = std::dynamic_pointer_cast<const System>(endpoint_object);
         if (!endpoint_system)
-            endpoint_system = GetSystem(endpoint_object->SystemID());
+            endpoint_system = Objects().get<System>(endpoint_object->SystemID());
         if (!endpoint_system)
             continue;
         endpoint_systems.insert(std::const_pointer_cast<System>(endpoint_system));
@@ -2297,13 +2297,13 @@ void MoveTo::Execute(const ScriptingContext& context) const {
     auto destination = std::const_pointer_cast<UniverseObject>(*valid_locations.begin());
 
     // get previous system from which to remove object if necessary
-    auto old_sys = GetSystem(context.effect_target->SystemID());
+    auto old_sys = Objects().get<System>(context.effect_target->SystemID());
 
     // do the moving...
     if (auto fleet = std::dynamic_pointer_cast<Fleet>(context.effect_target)) {
         // fleets can be inserted into the system that contains the destination
         // object (or the destination object itself if it is a system)
-        if (auto dest_system = GetSystem(destination->SystemID())) {
+        if (auto dest_system = Objects().get<System>(destination->SystemID())) {
             if (fleet->SystemID() != dest_system->ID()) {
                 // remove fleet from old system, put into new system
                 if (old_sys)
@@ -2394,7 +2394,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
                 ship->SetSystem(INVALID_OBJECT_ID);
             }
 
-            if (auto new_sys = GetSystem(dest_sys_id)) {
+            if (auto new_sys = Objects().get<System>(dest_sys_id)) {
                 // ship is moving to a new system. insert it.
                 new_sys->Insert(ship);
             } else {
@@ -2426,7 +2426,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
 
         } else {
             // need to create a new fleet for ship
-            if (auto dest_system = GetSystem(dest_sys_id)) {
+            if (auto dest_system = Objects().get<System>(dest_sys_id)) {
                 CreateNewFleet(dest_system, ship);                          // creates new fleet, inserts fleet into system and ship into fleet
                 ExploreSystem(dest_system->ID(), ship);
 
@@ -2443,7 +2443,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
     } else if (auto planet = std::dynamic_pointer_cast<Planet>(context.effect_target)) {
         // planets need to be located in systems, so get system that contains destination object
 
-        auto dest_system = GetSystem(destination->SystemID());
+        auto dest_system = Objects().get<System>(destination->SystemID());
         if (!dest_system)
             return; // can't move a planet to a non-system
 
@@ -2488,7 +2488,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         if (dest_planet->ID() == building->PlanetID())
             return; // nothing to do
 
-        auto dest_system = GetSystem(destination->SystemID());
+        auto dest_system = Objects().get<System>(destination->SystemID());
         if (!dest_system)
             return;
 
@@ -2624,7 +2624,7 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
     if (target->X() == new_x && target->Y() == new_y)
         return;
 
-    auto old_sys = GetSystem(target->SystemID());
+    auto old_sys = Objects().get<System>(target->SystemID());
 
     if (auto system = std::dynamic_pointer_cast<System>(target)) {
         system->MoveTo(new_x, new_y);
@@ -2787,7 +2787,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
         // containment situation
 
     } else if (auto fleet = std::dynamic_pointer_cast<Fleet>(target)) {
-        auto old_sys = GetSystem(fleet->SystemID());
+        auto old_sys = Objects().get<System>(fleet->SystemID());
         if (old_sys)
             old_sys->Remove(fleet->ID());
         fleet->SetSystem(INVALID_OBJECT_ID);
@@ -2803,7 +2803,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);
 
     } else if (auto ship = std::dynamic_pointer_cast<Ship>(target)) {
-        auto old_sys = GetSystem(ship->SystemID());
+        auto old_sys = Objects().get<System>(ship->SystemID());
         if (old_sys)
             old_sys->Remove(ship->ID());
         ship->SetSystem(INVALID_OBJECT_ID);
@@ -2821,7 +2821,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
         }
 
     } else if (auto field = std::dynamic_pointer_cast<Field>(target)) {
-        auto old_sys = GetSystem(field->SystemID());
+        auto old_sys = Objects().get<System>(field->SystemID());
         if (old_sys)
             old_sys->Remove(field->ID());
         field->SetSystem(INVALID_OBJECT_ID);

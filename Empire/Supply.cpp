@@ -173,8 +173,7 @@ std::string SupplyManager::Dump(int empire_id) const {
             if (empire_id != ALL_EMPIRES && empire_supply.first != empire_id)
                 continue;
             retval += "Supplyable systems for empire " + std::to_string(empire_supply.first) + "\n";
-            for (int system_id : empire_supply.second) {
-                auto sys = GetSystem(system_id);
+            for (const auto& sys : Objects().find<System>(empire_supply.second)) {
                 if (!sys)
                     continue;
                 retval += "\n" + sys->PublicName(empire_id) + " (" + std::to_string(sys->ID()) + ") ";
@@ -228,8 +227,7 @@ std::string SupplyManager::Dump(int empire_id) const {
             retval += "Supply groups for empire " + std::to_string(empire_supply.first) + "\n";
             for (const auto& system_group : empire_supply.second) {
                 retval += "group: ";
-                for (int system_id : system_group) {
-                    auto sys = GetSystem(system_id);
+                for (const auto& sys : Objects().find<System>(system_group)) {
                     if (!sys)
                         continue;
                     retval += "\n" + sys->PublicName(empire_id) + " (" + std::to_string(sys->ID()) + ") ";
@@ -249,7 +247,7 @@ namespace {
     std::pair<float, float> EmpireTotalSupplyRangeSumInSystem(int empire_id, int system_id) {
         if (empire_id == ALL_EMPIRES || system_id == INVALID_OBJECT_ID)
             return {0.0f, 0.0f};
-        const auto sys = GetSystem(system_id);
+        const auto sys = Objects().get<System>(system_id);
         if (!sys)
             return {0.0f, 0.0f};
 
@@ -283,10 +281,10 @@ namespace {
     }
 
     float DistanceBetweenObjects(int obj1_id, int obj2_id) {
-        auto obj1 = GetSystem(obj1_id);
+        auto obj1 = Objects().get<System>(obj1_id);
         if (!obj1)
             return 0.0f;
-        auto obj2 = GetSystem(obj2_id);
+        auto obj2 = Objects().get<System>(obj2_id);
         if (!obj2)
             return 0.0f;
         double dx = obj2->X() - obj1->X();
@@ -462,13 +460,13 @@ void SupplyManager::Update() {
         // resolve supply fights between multiple empires in one system.
         // pass over all empire-supplied systems, removing supply for all
         // but the empire with the highest supply range in each system
-        for (int sys_id : systems_with_supply_in_them) {
-            TraceLogger(supply) << "Determining top supply empire in system " << GetSystem(sys_id)->Name() << " (" << sys_id << ")";
+        for (const auto& sys : Objects().find<System>(systems_with_supply_in_them)) {
+            TraceLogger(supply) << "Determining top supply empire in system " << sys->Name() << " (" << sys->ID() << ")";
             // sort empires by range in this system
             std::map<float, std::set<int>> empire_ranges_here;
             for (auto& empire_supply : empire_propagating_supply_ranges) {
                 int empire_id = empire_supply.first;
-                auto empire_supply_it = empire_supply.second.find(sys_id);
+                auto empire_supply_it = empire_supply.second.find(sys->ID());
                 // does this empire have any range in this system? if so, store it
                 if (empire_supply_it == empire_supply.second.end())
                     continue;
@@ -478,19 +476,15 @@ void SupplyManager::Update() {
 
                 // empires with planets in system
                 bool has_outpost = false, has_colony = false;
-                if (auto sys = GetSystem(sys_id)) {
-                    std::vector<int> obj_ids;
-                    std::copy(sys->ContainedObjectIDs().begin(), sys->ContainedObjectIDs().end(), std::back_inserter(obj_ids));
-                    for (auto& planet : Objects().find<Planet>(obj_ids)) {
-                        if (!planet)
-                            continue;
-                        if (!planet->OwnedBy(empire_id))
-                            continue;
-                        if (!planet->SpeciesName().empty())
-                            has_colony = true;
-                        else
-                            has_outpost = true;
-                    }
+                for (auto& planet : Objects().find<Planet>(sys->PlanetIDs())) {
+                    if (!planet)
+                        continue;
+                    if (!planet->OwnedBy(empire_id))
+                        continue;
+                    if (!planet->SpeciesName().empty())
+                        has_colony = true;
+                    else
+                        has_outpost = true;
                 }
                 if (has_colony)
                     bonus += 0.5f;
@@ -498,9 +492,9 @@ void SupplyManager::Update() {
                     bonus += 0.3f;
 
                 // sum of all supply sources in this system
-                bonus += empire_system_supply_range_sums[empire_id][sys_id].first / 1000.0f;
+                bonus += empire_system_supply_range_sums[empire_id][sys->ID()].first / 1000.0f;
                 // sum of max supply of sourses in this system
-                bonus += empire_system_supply_range_sums[empire_id][sys_id].second / 100000.0f;
+                bonus += empire_system_supply_range_sums[empire_id][sys->ID()].second / 100000.0f;
                 bonus += empire_total_supply_range_sums[empire_id] / 100000000.0f;
 
                 // distance to supply source from here
@@ -580,12 +574,12 @@ void SupplyManager::Update() {
 
                 // remove from range entry...
                 auto& empire_ranges = empire_supply.second;
-                empire_ranges.erase(sys_id);
+                empire_ranges.erase(sys->ID());
 
-                TraceLogger(supply) << "... removed empire " << empire_id << " system " << sys_id << " supply.";
+                TraceLogger(supply) << "... removed empire " << empire_id << " system " << sys->ID() << " supply.";
 
                 // Remove from unobstructed systems
-                empire_supply_unobstructed_systems[empire_id].erase(sys_id);
+                empire_supply_unobstructed_systems[empire_id].erase(sys->ID());
 
                 auto& lane_traversals = m_supply_starlane_traversals[empire_id];
                 auto lane_traversals_initial = lane_traversals;
@@ -595,18 +589,18 @@ void SupplyManager::Update() {
                 // remove from traversals departing from or going to this system for this empire,
                 // and set any traversals going to this system as obstructed
                 for (const auto& lane : lane_traversals_initial) {
-                    if (lane.first == sys_id) {
-                        lane_traversals.erase({sys_id, lane.second});
+                    if (lane.first == sys->ID()) {
+                        lane_traversals.erase({sys->ID(), lane.second});
                     }
-                    if (lane.second == sys_id) {
-                        lane_traversals.erase({lane.first, sys_id});
-                        obstructed_traversals.insert({lane.first, sys_id});
+                    if (lane.second == sys->ID()) {
+                        lane_traversals.erase({lane.first, sys->ID()});
+                        obstructed_traversals.insert({lane.first, sys->ID()});
                     }
                 }
 
                 // remove obstructed traverals departing from this system
                 for (const auto& lane : obstrcuted_traversals_initial) {
-                    if (lane.first == sys_id)
+                    if (lane.first == sys->ID())
                         obstructed_traversals.erase({lane.first, lane.second});
                 }
             }
@@ -614,9 +608,9 @@ void SupplyManager::Update() {
             //// DEBUG
             for (auto& empire_supply : empire_propagating_supply_ranges) {
                 auto& system_ranges = empire_supply.second;
-                auto range_it = system_ranges.find(sys_id);
+                auto range_it = system_ranges.find(sys->ID());
                 if (range_it != system_ranges.end())
-                    TraceLogger(supply) << " ... after culling empires ranges at system " << sys_id << " : " << empire_supply.first << " : " << range_it->second.first;
+                    TraceLogger(supply) << " ... after culling empires ranges at system " << sys->ID() << " : " << empire_supply.first << " : " << range_it->second.first;
             }
             //// END DEBUG
         }

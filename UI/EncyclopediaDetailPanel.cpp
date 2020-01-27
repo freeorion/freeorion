@@ -1702,7 +1702,7 @@ namespace {
             for (auto& obj : nonempty_empire_fleets) {
                 std::string fleet_link = LinkTaggedIDText(VarText::FLEET_ID_TAG, obj->ID(), obj->PublicName(client_empire_id));
                 std::string system_link;
-                if (auto system = GetSystem(obj->SystemID())) {
+                if (auto system = Objects().get<System>(obj->SystemID())) {
                     std::string sys_name = system->ApparentName(client_empire_id);
                     system_link = LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name);
                     detailed_description += str(FlexibleFormat(UserString("OWNED_FLEET_AT_SYSTEM"))

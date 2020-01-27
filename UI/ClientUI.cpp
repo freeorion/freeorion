@@ -799,7 +799,7 @@ bool ClientUI::ZoomToPlanetPedia(int id) {
 }
 
 bool ClientUI::ZoomToSystem(int id) {
-    if (auto system = GetSystem(id)) {
+    if (auto system = Objects().get<System>(id)) {
         ZoomToSystem(system);
         return true;
     }

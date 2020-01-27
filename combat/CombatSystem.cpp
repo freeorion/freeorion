@@ -42,7 +42,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     turn(turn_),
     system_id(system_id_)
 {
-    auto system = ::GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system) {
         ErrorLogger() << "CombatInfo constructed with invalid system id: " << system_id;
         return;

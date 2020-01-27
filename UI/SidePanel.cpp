@@ -775,7 +775,7 @@ namespace {
         int SystemID() const { return m_system_id; }
 
         SortKeyType SortKey(std::size_t column) const override
-        { return GetSystem(m_system_id)->Name() + std::to_string(m_system_id); }
+        { return Objects().get<System>(m_system_id)->Name() + std::to_string(m_system_id); }
 
     private:
         int m_system_id;
@@ -801,7 +801,7 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
         if (!system_row)
             return;
 
-        auto system = GetSystem(system_row->SystemID());
+        auto system = Objects().get<System>(system_row->SystemID());
         if (!system)
             return;
 
@@ -1305,7 +1305,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     if (!target_planet)
         return INVALID_OBJECT_ID;
     int system_id = target_planet->SystemID();
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system)
         return INVALID_OBJECT_ID;
     // is planet a valid colonization target?
@@ -1417,7 +1417,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenInvasionShips(int targe
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system)
         return retval;
 
@@ -1459,7 +1459,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenBombardShips(int target
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system)
         return retval;
 
@@ -1921,7 +1921,7 @@ void SidePanel::PlanetPanel::Refresh() {
                                  " (id: " << m_planet_id << ") without having seen it before!";
             }
 
-            auto system = GetSystem(planet->SystemID());
+            auto system = Objects().get<System>(planet->SystemID());
             if (system && system->GetVisibility(client_empire_id) <= VIS_BASIC_VISIBILITY) { // HACK: system is basically visible or less, so we must not be in detection range of the planet.
                 detection_info = UserString("PL_NOT_IN_RANGE");
             }
@@ -2043,7 +2043,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     if (!planet)
         return;
 
-    auto system = GetSystem(planet->SystemID());
+    auto system = Objects().get<System>(planet->SystemID());
 
     // determine which other empires are at peace with client empire and have
     // an owned object in this fleet's system
@@ -2556,7 +2556,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
         if (!planet)
             continue;
         int system_id = planet->SystemID();
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "PlanetPanelContainer::SetPlanets couldn't find system of planet" << planet->Name();
             continue;
@@ -2838,7 +2838,7 @@ namespace {
             }
             m_labels_and_amounts.clear();
 
-            auto system = GetSystem(m_system_id);
+            auto system = Objects().get<System>(m_system_id);
             if (!system)
                 return;
 
@@ -3153,7 +3153,7 @@ void SidePanel::RefreshInPreRender() {
 
 
     // connect state changed and insertion signals for planets and fleets in system
-    auto system = GetSystem(s_system_id);
+    auto system = Objects().get<System>(s_system_id);
     if (!system) {
         ErrorLogger() << "SidePanel::Refresh couldn't get system with id " << s_system_id;
         return;
@@ -3177,7 +3177,7 @@ void SidePanel::RefreshInPreRender() {
 }
 
 void SidePanel::RefreshSystemNames() {
-    //auto system = GetSystem(s_system_id);
+    //auto system = Objects().get<System>(s_system_id);
     //if (!system)
     //    return;
 
@@ -3242,7 +3242,7 @@ void SidePanel::RefreshImpl() {
 
     RefreshSystemNames();
 
-    auto system = GetSystem(s_system_id);
+    auto system = Objects().get<System>(s_system_id);
     // if no system object, there is nothing to populate with.  early abort.
     if (!system)
         return;
@@ -3411,7 +3411,7 @@ void SidePanel::DoLayout() {
     GG::GUI::PreRenderWindow(m_planet_panel_container);
 
     // hide scrollbar if there is no planets in the system
-    auto system = GetSystem(s_system_id);
+    auto system = Objects().get<System>(s_system_id);
     if (system) {
         if (system->PlanetIDs().empty())
             m_planet_panel_container->HideScrollbar();
@@ -3507,7 +3507,7 @@ bool SidePanel::PlanetSelectable(int planet_id) const {
     if (!m_selection_enabled)
         return false;
 
-    auto system = GetSystem(s_system_id);
+    auto system = Objects().get<System>(s_system_id);
     if (!system)
         return false;
 
@@ -3563,7 +3563,7 @@ void SidePanel::SetSystem(int system_id) {
     if (s_system_id == system_id)
         return;
 
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system) {
         s_system_id = INVALID_OBJECT_ID;
         return;
@@ -3571,7 +3571,7 @@ void SidePanel::SetSystem(int system_id) {
 
     s_system_id = system_id;
 
-    if (GetSystem(s_system_id))
+    if (Objects().get<System>(s_system_id))
         PlaySidePanelOpenSound();
 
     // refresh sidepanels

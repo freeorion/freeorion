@@ -2742,7 +2742,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         return retval;
     }
 
-    auto system = GetSystem(obj->SystemID());
+    auto system = Objects().get<System>(obj->SystemID());
 
     if (auto ship = std::dynamic_pointer_cast<Ship>(obj)) {
         // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
