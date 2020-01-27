@@ -2093,14 +2093,13 @@ namespace {
         TraceLogger(combat) << "\t** GetFleetsVisibleToEmpire " << empire_id << " at system " << system->Name();
         // for visible fleets by an empire, check visibility of fleets by that empire
         if (empire_id != ALL_EMPIRES) {
-            for (int fleet_id : fleet_ids) {
-                auto fleet = GetFleet(fleet_id);
+            for (const auto& fleet : Objects().find<Fleet>(fleet_ids)) {
                 if (!fleet)
                     continue;
                 if (fleet->OwnedBy(empire_id))
                     continue;   // don't care about fleets owned by the same empire for determining combat conditions
                 Visibility fleet_vis = GetUniverse().GetObjectVisibilityByEmpire(fleet->ID(), empire_id);
-                TraceLogger(combat) << "\t\tfleet (" << fleet_id << ") has visibility rank " << fleet_vis;
+                TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") has visibility rank " << fleet_vis;
                 if (fleet_vis >= VIS_BASIC_VISIBILITY)
                     visible_fleets.insert(fleet->ID());
             }
@@ -2121,8 +2120,7 @@ namespace {
         }
 
         // test each ship in each fleet for visibility by best monster detection here
-        for (int fleet_id : fleet_ids) {
-            auto fleet = GetFleet(fleet_id);
+        for (const auto& fleet : Objects().find<Fleet>(fleet_ids)) {
             if (!fleet)
                 continue;
             if (fleet->Unowned()) {
@@ -2222,8 +2220,7 @@ namespace {
         std::set<int> empires_with_aggressive_fleets_here;
         for (auto& empire_fleets : empire_fleets_here) {
             int empire_id = empire_fleets.first;
-            for (int fleet_id : empire_fleets.second) {
-                auto fleet = GetFleet(fleet_id);
+            for (const auto& fleet : Objects().find<Fleet>(empire_fleets.second)) {
                 if (!fleet)
                     continue;
                 // an unarmed Monster will not trigger combat
@@ -2317,8 +2314,7 @@ namespace {
             GetFleetsVisibleToEmpireAtSystem(aggressive_empire_visible_fleets, aggressive_empire_id, system_id);
 
             // is any fleet owned by an empire at war with aggressive empire?
-            for (int fleet_id : aggressive_empire_visible_fleets) {
-                auto fleet = GetFleet(fleet_id);
+            for (const auto& fleet : Objects().find<Fleet>(aggressive_empire_visible_fleets)) {
                 if (!fleet)
                     continue;
                 int visible_fleet_empire_id = fleet->Owner();
@@ -2665,7 +2661,7 @@ namespace {
         auto system = Objects().get<System>(ship->SystemID());
 
         // destroy colonizing ship, and its fleet if now empty
-        auto fleet = GetFleet(ship->FleetID());
+        auto fleet = Objects().get<Fleet>(ship->FleetID());
         if (fleet) {
             fleet->RemoveShips({ship->ID()});
             if (fleet->Empty()) {
@@ -2850,7 +2846,7 @@ namespace {
             auto system = Objects().get<System>(ship->SystemID());
 
             // destroy invading ships and their fleets if now empty
-            auto fleet = GetFleet(ship->FleetID());
+            auto fleet = Objects().get<Fleet>(ship->FleetID());
             if (fleet) {
                 fleet->RemoveShips({ship->ID()});
                 if (fleet->Empty()) {
@@ -3098,7 +3094,7 @@ namespace {
             if (system)
                 system->Remove(ship->ID());
 
-            auto fleet = GetFleet(ship->FleetID());
+            auto fleet = Objects().get<Fleet>(ship->FleetID());
             if (fleet) {
                 fleet->RemoveShips({ship->ID()});
                 if (fleet->Empty()) {

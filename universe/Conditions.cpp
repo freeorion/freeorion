@@ -8209,7 +8209,7 @@ bool Stationary::Match(const ScriptingContext& local_context) const {
     auto fleet = std::dynamic_pointer_cast<const Fleet>(candidate);
     if (!fleet)
         if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
-            fleet = GetFleet(ship->FleetID());
+            fleet = Objects().get<Fleet>(ship->FleetID());
 
     if (fleet) {
         // if a fleet is available, it is "moving", or not stationary, if it's
@@ -8267,7 +8267,7 @@ bool Aggressive::Match(const ScriptingContext& local_context) const {
     auto fleet = std::dynamic_pointer_cast<const Fleet>(candidate);
     if (!fleet)
         if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
-            fleet = GetFleet(ship->FleetID());
+            fleet = Objects().get<Fleet>(ship->FleetID());
 
     if (!fleet)
         return false;

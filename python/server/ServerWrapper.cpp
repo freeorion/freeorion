@@ -810,7 +810,7 @@ namespace {
         }
 
         // get fleet and check if it exists
-        auto fleet = GetFleet(fleet_id);
+        auto fleet = Objects().get<Fleet>(fleet_id);
         if (!fleet) {
             ErrorLogger() << "CreateShip: couldn't get fleet with ID " << fleet_id;
             return INVALID_OBJECT_ID;

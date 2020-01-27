@@ -807,7 +807,7 @@ bool ClientUI::ZoomToSystem(int id) {
 }
 
 bool ClientUI::ZoomToFleet(int id) {
-    if (auto fleet = GetFleet(id)) {
+    if (auto fleet = Objects().get<Fleet>(id)) {
         ZoomToFleet(fleet);
         return true;
     }

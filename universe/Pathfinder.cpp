@@ -733,7 +733,7 @@ namespace {
         std::shared_ptr<const Fleet> retval = std::dynamic_pointer_cast<const Fleet>(obj);
         if (!retval) {
             if (auto ship = std::dynamic_pointer_cast<const Ship>(obj))
-                retval = GetFleet(ship->FleetID());
+                retval = Objects().get<Fleet>(ship->FleetID());
         }
         return retval;
     }

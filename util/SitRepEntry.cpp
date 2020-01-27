@@ -370,7 +370,7 @@ SitRepEntry CreatePlanetOutpostedSitRep(int planet_id) {
 }
 
 SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id) {
-    auto fleet = GetFleet(fleet_id);
+    auto fleet = Objects().get<Fleet>(fleet_id);
 
     //bool system_contains_recipient_empire_planets = false;
     //if (const System* system = Objects().get<System>(system_id)) {

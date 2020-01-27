@@ -231,7 +231,7 @@ void CombatInfo::InitializeObjectVisibility() {
                 }
                 if (vis < VIS_PARTIAL_VISIBILITY && GetGameRules().Get<bool>("RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE")) {
                     if (auto ship = std::dynamic_pointer_cast<Ship>(obj)) {
-                        if (auto fleet = ::GetFleet(ship->FleetID())) {
+                        if (auto fleet = Objects().get<Fleet>(ship->FleetID())) {
                             if (fleet->Aggressive()) {
                                 vis = VIS_PARTIAL_VISIBILITY;
                                 DebugLogger() << "Ship " << obj->Name() << " visible from aggressive fleet";

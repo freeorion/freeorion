@@ -209,14 +209,14 @@ void NewFleetOrder::ExecuteImpl() const {
 
     // new fleet will get same m_arrival_starlane as fleet of the first ship in the list.
     auto first_ship = validated_ships[0];
-    auto first_fleet = GetFleet(first_ship->FleetID());
+    auto first_fleet = Objects().get<Fleet>(first_ship->FleetID());
     if (first_fleet)
         fleet->SetArrivalStarlane(first_fleet->ArrivalStarlane());
 
     std::unordered_set<std::shared_ptr<Fleet>> modified_fleets;
     // remove ships from old fleet(s) and add to new
     for (auto& ship : validated_ships) {
-        if (auto old_fleet = GetFleet(ship->FleetID())) {
+        if (auto old_fleet = Objects().get<Fleet>(ship->FleetID())) {
             modified_fleets.insert(old_fleet);
             old_fleet->RemoveShips({ship->ID()});
         }
@@ -261,7 +261,7 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
     if (!Check(empire_id, fleet_id, dest_system_id))
         return;
 
-    auto fleet = GetFleet(FleetID());
+    auto fleet = Objects().get<Fleet>(FleetID());
 
     int start_system = fleet->SystemID();
     if (start_system == INVALID_OBJECT_ID)
@@ -279,7 +279,7 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
 }
 
 bool FleetMoveOrder::Check(int empire_id, int fleet_id, int dest_system_id, bool append) {
-    auto fleet = GetFleet(fleet_id);
+    auto fleet = Objects().get<Fleet>(fleet_id);
     if (!fleet) {
         ErrorLogger() << "Empire with id " << empire_id << " ordered fleet with id " << fleet_id << " to move, but no such fleet exists";
         return false;
@@ -308,7 +308,7 @@ void FleetMoveOrder::ExecuteImpl() const {
     // convert list of ids to list of System
     std::list<int> route_list;
 
-    auto fleet = GetFleet(FleetID());
+    auto fleet = Objects().get<Fleet>(FleetID());
 
     if (m_append && !fleet->TravelRoute().empty()){
         route_list = fleet->TravelRoute();
@@ -349,7 +349,7 @@ FleetTransferOrder::FleetTransferOrder(int empire, int dest_fleet,
 }
 
 bool FleetTransferOrder::Check(int empire_id, int dest_fleet_id, const std::vector<int>& ship_ids) {
-    auto fleet = GetFleet(dest_fleet_id);
+    auto fleet = Objects().get<Fleet>(dest_fleet_id);
     if (!fleet) {
         ErrorLogger() << "Empire attempted to move ships to a nonexistant fleet";
         return false;
@@ -403,7 +403,7 @@ void FleetTransferOrder::ExecuteImpl() const {
         return;
 
     // look up the destination fleet
-    auto target_fleet = GetFleet(DestinationFleet());
+    auto target_fleet = Objects().get<Fleet>(DestinationFleet());
 
     // check that all ships are in the same system
     auto ships = Objects().find<Ship>(m_add_ships);
@@ -413,7 +413,7 @@ void FleetTransferOrder::ExecuteImpl() const {
     // remove from old fleet(s)
     std::set<std::shared_ptr<Fleet>> modified_fleets;
     for (auto& ship : ships) {
-        if (auto source_fleet = GetFleet(ship->FleetID())) {
+        if (auto source_fleet = Objects().get<Fleet>(ship->FleetID())) {
             source_fleet->RemoveShips({ship->ID()});
             modified_fleets.insert(source_fleet);
         }
@@ -464,7 +464,7 @@ bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id) {
         ErrorLogger() << "ColonizeOrder::Check() : passed an invalid ship_id " << ship_id;
         return false;
     }
-    auto fleet = GetFleet(ship->FleetID());
+    auto fleet = Objects().get<Fleet>(ship->FleetID());
     if (!fleet) {
         ErrorLogger() << "ColonizeOrder::Check() : ship with passed ship_id has invalid fleet_id";
         return false;
@@ -543,7 +543,7 @@ void ColonizeOrder::ExecuteImpl() const {
     planet->SetIsAboutToBeColonized(true);
     ship->SetColonizePlanet(m_planet);
 
-    if (auto fleet = GetFleet(ship->FleetID()))
+    if (auto fleet = Objects().get<Fleet>(ship->FleetID()))
         fleet->StateChangedSignal();
 }
 
@@ -571,7 +571,7 @@ bool ColonizeOrder::UndoImpl() const {
     planet->SetIsAboutToBeColonized(false);
     ship->ClearColonizePlanet();
 
-    if (auto fleet = GetFleet(ship->FleetID()))
+    if (auto fleet = Objects().get<Fleet>(ship->FleetID()))
         fleet->StateChangedSignal();
 
     return true;
@@ -607,7 +607,7 @@ bool InvadeOrder::Check(int empire_id, int ship_id, int planet_id) {
     }
 
     // get fleet of ship
-    auto fleet = GetFleet(ship->FleetID());
+    auto fleet = Objects().get<Fleet>(ship->FleetID());
     if (!fleet) {
         ErrorLogger() << "IssueInvadeOrder : ship with passed ship_id has invalid fleet_id";
         return false;
@@ -673,7 +673,7 @@ void InvadeOrder::ExecuteImpl() const {
     planet->SetIsAboutToBeInvaded(true);
     ship->SetInvadePlanet(m_planet);
 
-    if (auto fleet = GetFleet(ship->FleetID()))
+    if (auto fleet = Objects().get<Fleet>(ship->FleetID()))
         fleet->StateChangedSignal();
 }
 
@@ -697,7 +697,7 @@ bool InvadeOrder::UndoImpl() const {
     planet->SetIsAboutToBeInvaded(false);
     ship->ClearInvadePlanet();
 
-    if (auto fleet = GetFleet(ship->FleetID()))
+    if (auto fleet = Objects().get<Fleet>(ship->FleetID()))
         fleet->StateChangedSignal();
 
     return true;
@@ -781,7 +781,7 @@ void BombardOrder::ExecuteImpl() const {
     planet->SetIsAboutToBeBombarded(true);
     ship->SetBombardPlanet(m_planet);
 
-    if (auto fleet = GetFleet(ship->FleetID()))
+    if (auto fleet = Objects().get<Fleet>(ship->FleetID()))
         fleet->StateChangedSignal();
 }
 
@@ -805,7 +805,7 @@ bool BombardOrder::UndoImpl() const {
     planet->SetIsAboutToBeBombarded(false);
     ship->ClearBombardPlanet();
 
-    if (auto fleet = GetFleet(ship->FleetID()))
+    if (auto fleet = Objects().get<Fleet>(ship->FleetID()))
         fleet->StateChangedSignal();
 
     return true;
@@ -1243,7 +1243,7 @@ AggressiveOrder::AggressiveOrder(int empire, int object_id, bool aggression/* = 
 }
 
 bool AggressiveOrder::Check(int empire_id, int object_id, bool aggression) {
-    auto fleet = GetFleet(object_id);
+    auto fleet = Objects().get<Fleet>(object_id);
     if (!fleet) {
         ErrorLogger() << "IssueAggressionOrder : no fleet with passed id";
         return false;
@@ -1263,7 +1263,7 @@ void AggressiveOrder::ExecuteImpl() const {
     if (!Check(EmpireID(), m_object_id, m_aggression))
         return;
 
-    auto fleet = GetFleet(m_object_id);
+    auto fleet = Objects().get<Fleet>(m_object_id);
 
     fleet->SetAggressive(m_aggression);
 }
@@ -1331,7 +1331,7 @@ void GiveObjectToEmpireOrder::ExecuteImpl() const {
     if (!Check(EmpireID(), m_object_id, m_recipient_empire_id))
         return;
 
-    if (auto fleet = GetFleet(m_object_id))
+    if (auto fleet = Objects().get<Fleet>(m_object_id))
         fleet->SetGiveToEmpire(m_recipient_empire_id);
     else if (auto planet = Objects().get<Planet>(m_object_id))
         planet->SetGiveToEmpire(m_recipient_empire_id);
@@ -1341,7 +1341,7 @@ bool GiveObjectToEmpireOrder::UndoImpl() const {
     GetValidatedEmpire();
     int empire_id = EmpireID();
 
-    if (auto fleet = GetFleet(m_object_id)) {
+    if (auto fleet = Objects().get<Fleet>(m_object_id)) {
         if (fleet->OwnedBy(empire_id)) {
             fleet->ClearGiveToEmpire();
             return true;

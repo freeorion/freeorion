@@ -437,7 +437,7 @@ void System::Remove(int id) {
     m_objects.erase(id);
 
     if (removed_fleet) {
-        if (auto fleet = GetFleet(id))
+        if (auto fleet = Objects().get<Fleet>(id))
             FleetsRemovedSignal({fleet});
     }
     StateChangedSignal();

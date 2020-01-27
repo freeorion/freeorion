@@ -76,14 +76,10 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 {
     std::vector<std::shared_ptr<const Fleet>> fleets;
     fleets.reserve(fleet_IDs.size());
-    m_fleets.reserve(fleet_IDs.size());
-    for (int fleet_id : fleet_IDs) {
-        auto fleet = GetFleet(fleet_id);
-        if (!fleet) {
-            ErrorLogger() << "FleetButton::FleetButton couldn't get fleet with id " << fleet_id;
+    for (const auto& fleet : Objects().find<Fleet>(fleet_IDs)) {
+        if (!fleet)
             continue;
-        }
-        m_fleets.push_back(fleet_id);
+        m_fleets.push_back(fleet->ID());
         fleets.push_back(fleet);
     }
 
@@ -314,7 +310,7 @@ void FleetButton::LayoutIcons() {
 
         if (!m_fleets.empty())
             // can just pick first fleet because all fleets in system should have same exits
-            fleet = GetFleet(*m_fleets.begin());
+            fleet = Objects().get<Fleet>(*m_fleets.begin());
         else return;
 
         for (const auto& target_system_id : Objects().get<System>(fleet->SystemID())->StarlanesWormholes()) {

@@ -86,7 +86,7 @@ namespace {
                     ErrorLogger() << "FollowReference : Unable to get system for object";
             } else if (property_name == "Fleet") {
                 if (auto s = std::dynamic_pointer_cast<const Ship>(obj)) {
-                    obj = GetFleet(s->FleetID());
+                    obj = Objects().get<Fleet>(s->FleetID());
                 } else {
                     ErrorLogger() << "FollowReference : object not a ship, so can't get its fleet";
                     obj = nullptr;
@@ -155,7 +155,7 @@ namespace {
             } else if (property_name_part == "Fleet") {
                 if (auto s = std::dynamic_pointer_cast<const Ship>(obj))  {
                     retval += "(" + std::to_string(s->FleetID()) + "): ";
-                    obj = GetFleet(s->FleetID());
+                    obj = Objects().get<Fleet>(s->FleetID());
                 } else
                     obj = nullptr;
             }

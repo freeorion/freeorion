@@ -2308,7 +2308,7 @@ namespace {
                     selected_fleet_id = *selected_fleets.begin();
                 else if (fleet_wnd->FleetIDs().size() > 0)
                     selected_fleet_id = *fleet_wnd->FleetIDs().begin();
-                if (auto selected_fleet = GetFleet(selected_fleet_id))
+                if (auto selected_fleet = Objects().get<Fleet>(selected_fleet_id))
                     if (!selected_fleet->ShipIDs().empty())
                         selected_ship = *selected_fleet->ShipIDs().begin();
             }
@@ -2330,10 +2330,10 @@ namespace {
                 }
             }
         } else if (fleet_manager.ActiveFleetWnd()) {
-            for (int fleet_id : fleet_manager.ActiveFleetWnd()->SelectedFleetIDs()) {
-                if (const auto this_fleet = GetFleet(fleet_id)) {
-                    chosen_ships.insert(this_fleet->ShipIDs().begin(), this_fleet->ShipIDs().end());
-                }
+            for (const auto& fleet : Objects().find<Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
+                if (!fleet)
+                    continue;
+                chosen_ships.insert(fleet->ShipIDs().begin(), fleet->ShipIDs().end());
             }
         }
         for (const auto& this_ship : Objects().find<Ship>(chosen_ships)) {
@@ -2446,10 +2446,10 @@ namespace {
                 }
             }
         } else if (fleet_manager.ActiveFleetWnd()) {
-            for (int fleet_id : fleet_manager.ActiveFleetWnd()->SelectedFleetIDs()) {
-                if (const auto this_fleet = GetFleet(fleet_id)) {
-                    chosen_ships.insert(this_fleet->ShipIDs().begin(), this_fleet->ShipIDs().end());
-                }
+            for (const auto& fleet : Objects().find<Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
+                if (!fleet)
+                    continue;
+                chosen_ships.insert(fleet->ShipIDs().begin(), fleet->ShipIDs().end());
             }
         }
         for (const auto& this_ship : Objects().find<Ship>(chosen_ships)) {

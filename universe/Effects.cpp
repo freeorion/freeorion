@@ -78,7 +78,7 @@ namespace {
         }
 
         if (ship->FleetID() != INVALID_OBJECT_ID) {
-            if (auto old_fleet = GetFleet(ship->FleetID())) {
+            if (auto old_fleet = Objects().get<Fleet>(ship->FleetID())) {
                 old_fleet->RemoveShips({ship->ID()});
             }
         }
@@ -1152,7 +1152,7 @@ void SetOwner::Execute(const ScriptingContext& context) const {
     if (auto ship = std::dynamic_pointer_cast<Ship>(context.effect_target)) {
         // assigning ownership of a ship requires updating the containing
         // fleet, or splitting ship off into a new fleet at the same location
-        auto fleet = GetFleet(ship->FleetID());
+        auto fleet = Objects().get<Fleet>(ship->FleetID());
         if (!fleet)
             return;
         if (fleet->Owner() == empire_id)
@@ -2356,7 +2356,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             auto dest_fleet = std::dynamic_pointer_cast<const Fleet>(destination);
             if (!dest_fleet)
                 if (auto dest_ship = std::dynamic_pointer_cast<const Ship>(destination))
-                    dest_fleet = GetFleet(dest_ship->FleetID());
+                    dest_fleet = Objects().get<Fleet>(dest_ship->FleetID());
             if (dest_fleet) {
                 UpdateFleetRoute(fleet, dest_fleet->NextSystemID(), dest_fleet->PreviousSystemID());
 
@@ -2375,7 +2375,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         if (!dest_fleet) {
             auto dest_ship = std::dynamic_pointer_cast<Ship>(destination);
             if (dest_ship)
-                dest_fleet = GetFleet(dest_ship->FleetID());
+                dest_fleet = Objects().get<Fleet>(dest_ship->FleetID());
         }
         if (dest_fleet && dest_fleet->ID() == ship->FleetID())
             return; // already in destination fleet. nothing to do.
@@ -2405,7 +2405,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             // may create a fleet for ship below...
         }
 
-        auto old_fleet = GetFleet(ship->FleetID());
+        auto old_fleet = Objects().get<Fleet>(ship->FleetID());
 
         if (dest_fleet && same_owners) {
             // ship is moving to a different fleet owned by the same empire, so
@@ -2650,7 +2650,7 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
             old_sys->Remove(ship->ID());
         ship->SetSystem(INVALID_OBJECT_ID);
 
-        auto old_fleet = GetFleet(ship->FleetID());
+        auto old_fleet = Objects().get<Fleet>(ship->FleetID());
         if (old_fleet) {
             old_fleet->RemoveShips({ship->ID()});
             if (old_fleet->Empty()) {
@@ -2808,7 +2808,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
             old_sys->Remove(ship->ID());
         ship->SetSystem(INVALID_OBJECT_ID);
 
-        auto old_fleet = GetFleet(ship->FleetID());
+        auto old_fleet = Objects().get<Fleet>(ship->FleetID());
         if (old_fleet)
             old_fleet->RemoveShips({ship->ID()});
         ship->SetFleetID(INVALID_OBJECT_ID);

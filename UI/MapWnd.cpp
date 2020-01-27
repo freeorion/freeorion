@@ -670,20 +670,20 @@ public:
 
         // get selected fleet speeds and detection ranges
         std::set<double> fixed_distances;
-        for (int fleet_id : fleet_ids) {
-            if (auto fleet = GetFleet(fleet_id)) {
-                if (fleet->Speed() > 20)
-                    fixed_distances.insert(fleet->Speed());
-                for (const auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
-                    if (!ship)
-                        continue;
-                    const float ship_range = ship->InitialMeterValue(METER_DETECTION);
-                    if (ship_range > 20)
-                        fixed_distances.insert(ship_range);
-                    const float ship_speed = ship->Speed();
-                    if (ship_speed > 20)
-                        fixed_distances.insert(ship_speed);
-                }
+        for (const auto& fleet : Objects().find<Fleet>(fleet_ids)) {
+            if (!fleet)
+                continue;
+            if (fleet->Speed() > 20)
+                fixed_distances.insert(fleet->Speed());
+            for (const auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
+                if (!ship)
+                    continue;
+                const float ship_range = ship->InitialMeterValue(METER_DETECTION);
+                if (ship_range > 20)
+                    fixed_distances.insert(ship_range);
+                const float ship_speed = ship->Speed();
+                if (ship_speed > 20)
+                    fixed_distances.insert(ship_speed);
             }
         }
         // get detection ranges for planets in the selected system (if any)
@@ -4088,7 +4088,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             auto ship = std::dynamic_pointer_cast<const Ship>(obj);
             if (!ship)
                 continue;
-            auto fleet = GetFleet(ship->FleetID());
+            auto fleet = Objects().get<Fleet>(ship->FleetID());
             if (!fleet || INVALID_OBJECT_ID == fleet->SystemID())
                 continue;
         }
@@ -4521,7 +4521,7 @@ void MapWnd::SelectPlanet(int planetID)
 { m_production_wnd->SelectPlanet(planetID); }   // calls SidePanel::SelectPlanet()
 
 void MapWnd::SelectFleet(int fleet_id)
-{ SelectFleet(GetFleet(fleet_id)); }
+{ SelectFleet(Objects().get<Fleet>(fleet_id)); }
 
 void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
@@ -4596,7 +4596,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
     if (fleet_id == INVALID_OBJECT_ID)
         return;
 
-    auto fleet = GetFleet(fleet_id);
+    auto fleet = Objects().get<Fleet>(fleet_id);
     if (!fleet) {
         ErrorLogger() << "MapWnd::SetFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
@@ -4643,7 +4643,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
         return;
 
     // ensure passed fleet exists
-    auto fleet = GetFleet(fleet_id);
+    auto fleet = Objects().get<Fleet>(fleet_id);
     if (!fleet) {
         ErrorLogger() << "MapWnd::SetProjectedFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
@@ -5083,11 +5083,10 @@ void MapWnd::CreateFleetButtonsOfType(FleetButtonMap& type_fleet_buttons,
 
         // sort fleets by position
         std::map<std::pair<double, double>, std::vector<int>> fleet_positions_ids;
-        for (int id : fleet_IDs) {
-            const auto fleet = GetFleet(id);
+        for (const auto& fleet : Objects().find<Fleet>(fleet_IDs)) {
             if (!fleet)
                 continue;
-            fleet_positions_ids[{fleet->X(), fleet->Y()}].push_back(id);
+            fleet_positions_ids[{fleet->X(), fleet->Y()}].push_back(fleet->ID());
         }
 
         // create separate FleetButton for each cluster of fleets
@@ -5473,12 +5472,9 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
     auto fleet_ids = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleetIDs();
 
     // apply to all selected this-player-owned fleets in currently-active FleetWnd
-    for (int fleet_id : fleet_ids) {
-        auto fleet = GetFleet(fleet_id);
-        if (!fleet) {
-            ErrorLogger() << "MapWnd::PlotFleetMovementLine couldn't get fleet with id " << fleet_id;
+    for (const auto& fleet : Objects().find<Fleet>(fleet_ids)) {
+        if (!fleet)
             continue;
-        }
 
         // only give orders / plot prospective move paths of fleets owned by player
         if (!(fleet->OwnedBy(empire_id)) || !(fleet->NumShips()))
@@ -5486,7 +5482,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
         // plot empty move pathes if destination is not a known system
         if (system_id == INVALID_OBJECT_ID) {
-            m_projected_fleet_lines.erase(fleet_id);
+            m_projected_fleet_lines.erase(fleet->ID());
             continue;
         }
 
@@ -5525,19 +5521,19 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
         // if actually ordering fleet movement, not just prospectively previewing, ... do so
         if (execute_move && !route.empty()){
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<FleetMoveOrder>(empire_id, fleet_id, system_id, append));
-            StopFleetExploring(fleet_id);
+                std::make_shared<FleetMoveOrder>(empire_id, fleet->ID(), system_id, append));
+            StopFleetExploring(fleet->ID());
         }
 
         // show route on map
-        SetProjectedFleetMovementLine(fleet_id, route);
+        SetProjectedFleetMovementLine(fleet->ID(), route);
     }
 }
 
 std::vector<int> MapWnd::FleetIDsOfFleetButtonsOverlapping(int fleet_id) const {
     std::vector<int> fleet_ids;
 
-    auto fleet = GetFleet(fleet_id);
+    auto fleet = Objects().get<Fleet>(fleet_id);
     if (!fleet) {
         ErrorLogger() << "MapWnd::FleetIDsOfFleetButtonsOverlapping: Fleet id "
                       << fleet_id << " does not exist.";
@@ -5729,15 +5725,14 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
     std::vector<int> sensor_ghosts;
 
     // find sensor ghosts
-    for (int fleet_id : fleet_ids) {
-        auto fleet = GetFleet(fleet_id);
+    for (const auto& fleet : Objects().find<Fleet>(fleet_ids)) {
         if (!fleet)
             continue;
         if (fleet->OwnedBy(empire_id))
             continue;
-        if (GetUniverse().GetObjectVisibilityByEmpire(fleet_id, empire_id) >= VIS_BASIC_VISIBILITY)
+        if (GetUniverse().GetObjectVisibilityByEmpire(fleet->ID(), empire_id) >= VIS_BASIC_VISIBILITY)
             continue;
-        sensor_ghosts.push_back(fleet_id);
+        sensor_ghosts.push_back(fleet->ID());
     }
 
     // should there be sensor ghosts, offer to dismiss them
@@ -7250,7 +7245,7 @@ void MapWnd::StopFleetExploring(const int fleet_id) {
     // force UI update. Removing a fleet from the UI's list of exploring fleets
     // doesn't actually change the Fleet object's state in any way, so the UI
     // would otherwise still show the fleet as "exploring"
-    if (auto fleet = GetFleet(fleet_id))
+    if (auto fleet = Objects().get<Fleet>(fleet_id))
         fleet->StateChangedSignal();
 }
 
@@ -7561,7 +7556,7 @@ namespace {
             TraceLogger() << "Fleet " << std::to_string(fleet_id) << " not idle";
             return;
         }
-        auto fleet = GetFleet(fleet_id);
+        auto fleet = Objects().get<Fleet>(fleet_id);
         if (!fleet) {
             ErrorLogger() << "No valid fleet with id " << fleet_id;
             idle_fleets.erase(idle_fleet_it);
@@ -7612,16 +7607,16 @@ void MapWnd::DispatchFleetsExploring() {
     // clean the fleet list by removing non-existing fleet, and extract the
     // fleets waiting for orders
     timer.EnterSection("idle fleets/systems being explored");
-    for (auto it = m_fleets_exploring.begin(); it != m_fleets_exploring.end();) {
-        auto fleet = GetFleet(*it);
-        if (!fleet || destroyed_objects.count(fleet->ID())) {
-            it = m_fleets_exploring.erase(it); //this fleet can't explore anymore
+    for (const auto& fleet : Objects().find<Fleet>(m_fleets_exploring)) {
+        if (!fleet)
+            continue;
+        if (destroyed_objects.count(fleet->ID())) {
+            m_fleets_exploring.erase(fleet->ID()); //this fleet can't explore anymore
         } else {
              if (fleet->MovePath().empty())
                 idle_fleets.insert(fleet->ID());
             else
                 systems_being_explored.emplace(fleet->FinalDestinationID(), fleet->ID());
-            ++it;
         }
     }
     timer.EnterSection("");
@@ -7683,7 +7678,7 @@ void MapWnd::DispatchFleetsExploring() {
                 fleet_route_count[unexplored_system->ID()] > max_routes_per_system)
             { break; }
 
-            auto fleet = GetFleet(fleet_id);
+            auto fleet = Objects().get<Fleet>(fleet_id);
             if (!fleet) {
                 WarnLogger() << "Invalid fleet " << fleet_id;
                 continue;
@@ -7722,7 +7717,7 @@ void MapWnd::DispatchFleetsExploring() {
     for (SystemFleetMap::iterator system_fleet_it = systems_being_explored.begin();
          system_fleet_it != systems_being_explored.end(); ++system_fleet_it)
     {
-        auto fleet = GetFleet(system_fleet_it->second);
+        auto fleet = Objects().get<Fleet>(system_fleet_it->second);
         if (!fleet)
             continue;
 

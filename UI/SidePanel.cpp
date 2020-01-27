@@ -1143,7 +1143,7 @@ namespace {
     bool IsAvailable(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        auto fleet = GetFleet(ship->FleetID());
+        auto fleet = Objects().get<Fleet>(ship->FleetID());
         if (!fleet)
             return false;
         if (ship->SystemID() == system_id &&
@@ -1158,7 +1158,7 @@ namespace {
     bool AvailableToColonize(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        auto fleet = GetFleet(ship->FleetID());
+        auto fleet = Objects().get<Fleet>(ship->FleetID());
         if (!fleet)
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
@@ -1171,7 +1171,7 @@ namespace {
     bool AvailableToInvade(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        auto fleet = GetFleet(ship->FleetID());
+        auto fleet = Objects().get<Fleet>(ship->FleetID());
         if (!fleet)
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
@@ -1184,7 +1184,7 @@ namespace {
     bool AvailableToBombard(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        auto fleet = GetFleet(ship->FleetID());
+        auto fleet = Objects().get<Fleet>(ship->FleetID());
         if (!fleet)
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
