@@ -854,18 +854,10 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, boo
 
 }
 
-void Universe::BackPropagateObjectMeters(const std::vector<int>& object_ids) {
-    // copy current meter values to initial values
-    for (auto& obj : m_objects.find(object_ids))
-        obj->BackPropagateMeters();
-}
-
 void Universe::BackPropagateObjectMeters()
 {
-    std::vector<int> result;
     for (const auto& obj : m_objects.all())
-        result.push_back(obj->ID());
-    BackPropagateObjectMeters(result);
+        obj->BackPropagateMeters();
 }
 
 namespace {

@@ -254,9 +254,6 @@ public:
     /** Sets all objects' meters' initial values to their current values. */
     void BackPropagateObjectMeters();
 
-    /** Sets indicated objects' meters' initial values to their current values. */
-    void BackPropagateObjectMeters(const std::vector<int>& object_ids);
-
     /** Determines which empires can see which objects at what visibility
       * level, based on  */
     void UpdateEmpireObjectVisibilities();
