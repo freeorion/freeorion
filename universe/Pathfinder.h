@@ -21,7 +21,6 @@
   * around the Universe. */
 class FO_COMMON_API Pathfinder {
 public:
-
     typedef std::shared_ptr<const Pathfinder> ConstPtr;
     typedef std::shared_ptr<UniverseObjectVisitor> SystemExclusionPredicateType;
 
@@ -35,19 +34,19 @@ public:
     /** Returns the straight-line distance between the objects with the given
       * IDs. \throw std::out_of_range This function will throw if either object
       * ID is out of range. */
-    double                  LinearDistance(int object1_id, int object2_id) const;
+    double LinearDistance(int object1_id, int object2_id) const;
 
     /** Returns the number of starlane jumps between the systems with the given
       * IDs. If there is no path between the systems, -1 is returned.
       * \throw std::out_of_range This function will throw if either system
       * ID is not a valid system id. */
-    short                   JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
+    short JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
 
     /** Returns the number of starlane jumps between any two objects, accounting
       * for cases where one or the other are fleets / ships on starlanes between
       * systems. Returns INT_MAX when no path exists, or either object does not
       * exist. */
-    int                     JumpDistanceBetweenObjects(int object1_id, int object2_id) const;
+    int JumpDistanceBetweenObjects(int object1_id, int object2_id) const;
 
     /** Returns the sequence of systems, including \a system1_id and
       * \a system2_id, that defines the shortest path from \a system1 to
@@ -58,8 +57,7 @@ public:
       * visibility if \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if either system ID
       * is out of range, or if the empire ID is not known. */
-    std::pair<std::list<int>, double>
-                            ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
+    std::pair<std::list<int>, double> ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
     /** Shortest path known to an empire between two systems, excluding routes
      *  for systems containing objects for @p system_predicate.
@@ -77,7 +75,7 @@ public:
       * for cases where one or the other are fleets / ships on starlanes between
       * systems. Returns -1 when no path exists, or either object does not
       * exist. */
-    double                  ShortestPathDistance(int object1_id, int object2_id) const;
+    double ShortestPathDistance(int object1_id, int object2_id) const;
 
     /** Returns the sequence of systems, including \a system1 and \a system2,
       * that defines the path with the fewest jumps from \a system1 to
@@ -87,9 +85,8 @@ public:
       * \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
       * will throw if either system ID is out of range or if the empire ID is
       * not known. */
-    std::pair<std::list<int>, int>
-                            LeastJumpsPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES,
-                                           int max_jumps = INT_MAX) const;
+    std::pair<std::list<int>, int> LeastJumpsPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES,
+                                                  int max_jumps = INT_MAX) const;
 
     /** Returns whether there is a path known to empire \a empire_id between
       * system \a system1 and system \a system2.  The path is calculated using
@@ -97,7 +94,7 @@ public:
       * if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
       * will throw if either system ID is out of range or if the empire ID is
       * not known. */
-    bool                    SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
+    bool SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
     /** Returns true iff \a system is reachable from another system (i.e. it
       * has at least one known starlane to it).   This does not guarantee that
@@ -106,7 +103,7 @@ public:
       * The starlanes considered depend on their visibility for empire
       * \a empire_id, or without regard to visibility if
       * \a empire_id == ALL_EMPIRES. */
-    bool                    SystemHasVisibleStarlanes(int system_id, int empire_id = ALL_EMPIRES) const;
+    bool SystemHasVisibleStarlanes(int system_id, int empire_id = ALL_EMPIRES) const;
 
     /** Returns the systems that are one starlane hop away from system
       * \a system.  The returned systems are indexed by distance from
@@ -117,7 +114,7 @@ public:
       * ID is out of range. */
     //TODO empire_id is never set to anything other than self, which in
     //the AI's is the same as ALL_EMPIRES
-    std::multimap<double, int>              ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
+    std::multimap<double, int> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
 
     /** Returns the system ids of systems that are within \p jumps of the \p
         candidates system ids.*/
@@ -143,14 +140,12 @@ public:
     /** Fills pathfinding data structure and determines least jumps distances
       * between systems for the empire with id \a for_empire_id or uses the
       * main / true / visible objects if \a for_empire_id is ALL_EMPIRES*/
-    void            InitializeSystemGraph(const std::vector<int> system_ids, int for_empire_id = ALL_EMPIRES);
+    void InitializeSystemGraph(const std::vector<int> system_ids, int for_empire_id = ALL_EMPIRES);
 
     /** Regenerates per-empire system view graphs by filtering the complete
       * system graph based on empire visibility.  Does not regenerate the base
       * graph to account for actual system-starlane connectivity changes. */
-    void            UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id = ALL_EMPIRES);
-
-
+    void UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id = ALL_EMPIRES);
     //@}
 
     class PathfinderImpl;
