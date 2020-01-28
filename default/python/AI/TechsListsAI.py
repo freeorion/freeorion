@@ -202,6 +202,7 @@ class TechGroup1SparseB(TechGroup1):
             "SHP_WEAPON_2_1",
             self.hull,
             "SHP_MULTICELL_CAST",
+            "SHP_DEUTERIUM_TANK",
             "SHP_WEAPON_2_2",
             "PRO_ORBITAL_GEN",
             "SPY_DETECT_2",
@@ -216,7 +217,7 @@ class TechGroup1SparseC(TechGroup1):
         self.enqueue(
             self.economy,
             self.economy,
-            self.hull,
+            "SHP_ORG_HULL",
             "SHP_MULTICELL_CAST",
             "PRO_NANOTECH_PROD",
             "PRO_SENTIENT_AUTOMATION",
@@ -225,13 +226,14 @@ class TechGroup1SparseC(TechGroup1):
             "GRO_GENETIC_MED",
             "GRO_SYMBIOTIC_BIO",
             "PRO_EXOBOTS",
+            "SHP_DEUTERIUM_TANK",  # more reach for more scouting and planets
             "PRO_MICROGRAV_MAN",
             "GRO_XENO_GENETICS",
             "SHP_ASTEROID_HULLS",
             "PRO_FUSION_GEN",
             "SHP_WEAPON_2_1",
             "SHP_ZORTRIUM_PLATE",
-            self.hull,
+            "SHP_MIL_ROBO_CONT",
             "LRN_FORCE_FIELD",
             "SHP_WEAPON_2_2",
             "PRO_ORBITAL_GEN",
@@ -409,6 +411,7 @@ class TechGroup3(TechGroup):
             "DEF_PLAN_BARRIER_SHLD_3",
         ])
         self.misc.extend([
+            "SHP_DEUTERIUM_TANK",
             "SHP_BASIC_DAM_CONT",
             "SHP_INTSTEL_LOG",
             "SHP_FLEET_REPAIR",
@@ -437,6 +440,7 @@ class TechGroup3A(TechGroup3):
         self.enqueue(
             self.hull,
             self.economy,
+            self.misc,
             self.defense,
             self.defense,
             self.economy,
@@ -474,7 +478,7 @@ class TechGroup3A(TechGroup3):
             self.weapon,
             self.weapon,
             self.weapon,
-            self.weapon
+            self.weapon,
         )
 
 
@@ -484,6 +488,7 @@ class TechGroup3B(TechGroup3):
         self.enqueue(
             self.hull,
             self.economy,
+            self.misc,
             self.defense,
             self.defense,
             self.economy,
@@ -521,7 +526,7 @@ class TechGroup3B(TechGroup3):
             self.defense,
             self.economy,
             self.misc,
-            self.economy
+            self.economy,
         )
 
 
@@ -530,6 +535,7 @@ class TechGroup3Sparse(TechGroup3):
         super(TechGroup3Sparse, self).__init__()
         self.enqueue(
             self.hull,
+            self.misc,
             self.defense,
             self.defense,
             self.economy,
@@ -582,7 +588,8 @@ class TechGroup4(TechGroup):
         ])
         self.enqueue(
             self.hull,
-            self.hull
+            self.hull,
+            "SHP_ANTIMATTER_TANK",
         )
 
 
