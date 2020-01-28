@@ -30,7 +30,7 @@ namespace {
     void MoveFleetWithShips(Fleet& fleet, double x, double y){
         fleet.MoveTo(x, y);
 
-        for (auto& ship : Objects().FindObjects<Ship>(fleet.ShipIDs())) {
+        for (auto& ship : Objects().find<Ship>(fleet.ShipIDs())) {
             ship->MoveTo(x, y);
         }
     }
@@ -38,7 +38,7 @@ namespace {
     void InsertFleetWithShips(Fleet& fleet, std::shared_ptr<System>& system){
         system->Insert(fleet.shared_from_this());
 
-        for (auto& ship : Objects().FindObjects<Ship>(fleet.ShipIDs())) {
+        for (auto& ship : Objects().find<Ship>(fleet.ShipIDs())) {
             system->Insert(ship);
         }
     }
@@ -585,7 +585,7 @@ float Fleet::Fuel() const {
     float fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
 
-    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().find<const Ship>(m_ships)) {
         const Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL);
         if (!meter) {
             ErrorLogger() << "Fleet::Fuel skipping ship with no fuel meter";
@@ -611,7 +611,7 @@ float Fleet::MaxFuel() const {
     float max_fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
 
-    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().find<const Ship>(m_ships)) {
         const Meter* meter = ship->UniverseObject::GetMeter(METER_MAX_FUEL);
         if (!meter) {
             ErrorLogger() << "Fleet::MaxFuel skipping ship with no max fuel meter";
@@ -641,12 +641,12 @@ namespace {
                    const std::set<int>& ship_ids)
     {
         // Searching for each Ship one at a time is faster than
-        // FindObjects(ship_ids), because an early exit avoids searching the
+        // find(ship_ids), because an early exit avoids searching the
         // remaining ids.
         return std::any_of(
             ship_ids.begin(), ship_ids.end(),
             [&pred](const int ship_id) {
-                const auto& ship = Objects().Object<const Ship>(ship_id);
+                const auto& ship = Objects().get<const Ship>(ship_id);
                 if (!ship) {
                     WarnLogger() << "Object map is missing ship with expected id " << ship_id;
                     return false;
@@ -717,7 +717,7 @@ float Fleet::ResourceOutput(ResourceType type) const {
         return output;
 
     // determine resource output of each ship in this fleet
-    for (auto& ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (auto& ship : Objects().find<const Ship>(m_ships)) {
         output += ship->CurrentMeterValue(meter_type);
     }
     return output;
@@ -796,7 +796,7 @@ void Fleet::MovementPhase() {
         supply_unobstructed_systems.insert(empire->SupplyUnobstructedSystems().begin(),
                                            empire->SupplyUnobstructedSystems().end());
 
-    auto ships = Objects().FindObjects<Ship>(m_ships);
+    auto ships = Objects().find<Ship>(m_ships);
 
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
@@ -1222,18 +1222,18 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     }
 
     float lowest_ship_stealth = 99999.9f; // arbitrary large number. actual stealth of ships should be less than this...
-    for (auto& ship : Objects().FindObjects<const Ship>(this->ShipIDs())) {
+    for (auto& ship : Objects().find<const Ship>(this->ShipIDs())) {
         if (lowest_ship_stealth > ship->CurrentMeterValue(METER_STEALTH))
             lowest_ship_stealth = ship->CurrentMeterValue(METER_STEALTH);
     }
 
     float monster_detection = 0.0f;
-    auto fleets = Objects().FindObjects<const Fleet>(current_system->FleetIDs());
+    auto fleets = Objects().find<const Fleet>(current_system->FleetIDs());
     for (auto& fleet : fleets) {
         if (!fleet->Unowned())
             continue;
 
-        for (auto& ship : Objects().FindObjects<const Ship>(fleet->ShipIDs())) {
+        for (auto& ship : Objects().find<const Ship>(fleet->ShipIDs())) {
             float cur_detection = ship->CurrentMeterValue(METER_DETECTION);
             if (cur_detection >= monster_detection)
                 monster_detection = cur_detection;

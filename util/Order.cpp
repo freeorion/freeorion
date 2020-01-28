@@ -370,7 +370,7 @@ bool FleetTransferOrder::Check(int empire_id, int dest_fleet_id, const std::vect
 
     bool invalid_ships {false};
 
-    for (auto ship : Objects().FindObjects<Ship>(ship_ids)) {
+    for (auto ship : Objects().find<Ship>(ship_ids)) {
         if (!ship) {
             ErrorLogger() << "IssueFleetTransferOrder : passed an invalid ship_id";
             invalid_ships = true;
@@ -409,7 +409,7 @@ void FleetTransferOrder::ExecuteImpl() const {
     auto target_fleet = GetFleet(DestinationFleet());
 
     // check that all ships are in the same system
-    auto ships = Objects().FindObjects<Ship>(m_add_ships);
+    auto ships = Objects().find<Ship>(m_add_ships);
 
     GetUniverse().InhibitUniverseObjectSignals(true);
 
@@ -1317,7 +1317,7 @@ bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_
         return false;
     }
 
-    auto system_objects = Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
+    auto system_objects = Objects().find<const UniverseObject>(system->ObjectIDs());
     if (!std::any_of(system_objects.begin(), system_objects.end(),
                      [recipient_empire_id](const std::shared_ptr<const UniverseObject> o){ return o->Owner() == recipient_empire_id; }))
     {

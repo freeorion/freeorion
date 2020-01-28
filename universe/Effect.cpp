@@ -155,7 +155,7 @@ namespace {
         for (const std::string& star_name : star_names) {
             // does an existing system have this name?
             bool dupe = false;
-            for (auto& system : Objects().FindObjects<System>()) {
+            for (auto& system : Objects().all<System>()) {
                 if (system->Name() == star_name) {
                     dupe = true;
                     break;  // another systme has this name. skip to next potential name.
@@ -2311,7 +2311,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
                 dest_system->Insert(fleet);
 
                 // also move ships of fleet
-                for (auto& ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
+                for (auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
                     if (old_sys)
                         old_sys->Remove(ship->ID());
                     dest_system->Insert(ship);
@@ -2332,7 +2332,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             fleet->MoveTo(destination);
 
             // also move ships of fleet
-            for (auto& ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
+            for (auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
                 if (old_sys)
                     old_sys->Remove(ship->ID());
                 ship->SetSystem(INVALID_OBJECT_ID);
@@ -2458,7 +2458,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         dest_system->Insert(planet);  // let system pick an orbit
 
         // also insert buildings of planet into system.
-        for (auto& building : Objects().FindObjects<Building>(planet->BuildingIDs())) {
+        for (auto& building : Objects().find<Building>(planet->BuildingIDs())) {
             if (old_sys)
                 old_sys->Remove(building->ID());
             dest_system->Insert(building);
@@ -2521,12 +2521,12 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             system->Insert(destination);
 
         // find fleets / ships at destination location and insert into system
-        for (auto& obj : Objects().FindObjects<Fleet>()) {
+        for (auto& obj : Objects().all<Fleet>()) {
             if (obj->X() == system->X() && obj->Y() == system->Y())
                 system->Insert(obj);
         }
 
-        for (auto& obj : Objects().FindObjects<Ship>()) {
+        for (auto& obj : Objects().all<Ship>()) {
             if (obj->X() == system->X() && obj->Y() == system->Y())
                 system->Insert(obj);
         }
@@ -2637,7 +2637,7 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
         fleet->MoveTo(new_x, new_y);
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);
 
-        for (auto& ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
+        for (auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
             if (old_sys)
                 old_sys->Remove(ship->ID());
             ship->SetSystem(INVALID_OBJECT_ID);
@@ -2779,7 +2779,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
 
     if (auto system = std::dynamic_pointer_cast<System>(target)) {
         system->MoveTo(new_x, new_y);
-        for (auto& obj : Objects().FindObjects<UniverseObject>(system->ObjectIDs())) {
+        for (auto& obj : Objects().find<UniverseObject>(system->ObjectIDs())) {
             obj->MoveTo(new_x, new_y);
         }
         // don't need to remove objects from system or insert into it, as all
@@ -2792,7 +2792,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
             old_sys->Remove(fleet->ID());
         fleet->SetSystem(INVALID_OBJECT_ID);
         fleet->MoveTo(new_x, new_y);
-        for (auto& ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
+        for (auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
             if (old_sys)
                 old_sys->Remove(ship->ID());
             ship->SetSystem(INVALID_OBJECT_ID);

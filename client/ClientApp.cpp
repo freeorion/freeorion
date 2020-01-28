@@ -54,7 +54,7 @@ SupplyManager& ClientApp::GetSupplyManager()
 { return m_supply_manager; }
 
 std::shared_ptr<UniverseObject> ClientApp::GetUniverseObject(int object_id)
-{ return GetUniverse().Objects().Object(object_id); }
+{ return GetUniverse().Objects().get(object_id); }
 
 ObjectMap& ClientApp::EmpireKnownObjects(int empire_id) {
     // observers and moderators should have accurate info about what each empire knows
@@ -67,7 +67,7 @@ ObjectMap& ClientApp::EmpireKnownObjects(int empire_id) {
 }
 
 std::shared_ptr<UniverseObject> ClientApp::EmpireKnownObject(int object_id, int empire_id)
-{ return EmpireKnownObjects(empire_id).Object(object_id); }
+{ return EmpireKnownObjects(empire_id).get(object_id); }
 
 const OrderSet& ClientApp::Orders() const
 { return m_orders; }

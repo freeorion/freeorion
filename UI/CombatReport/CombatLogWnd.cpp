@@ -103,8 +103,7 @@ namespace {
     {
         decltype(SegregateForces(owners, objects, categories, order)) forces;
 
-        for (int object_id : objects) {
-            auto object = Objects().Object(object_id);
+        for (const auto& object: Objects().find(objects)) {
             if (!object)
                 continue;
 

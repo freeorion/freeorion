@@ -34,6 +34,25 @@
                                             f(m_existing_buildings, ##__VA_ARGS__);        \
                                             f(m_existing_fields, ##__VA_ARGS__); }
 
+
+namespace {
+    template<class T>
+    static void ClearMap(ObjectMap::container_type<T>& map)
+    { map.clear(); }
+
+    template <class T>
+    static void TryInsertIntoMap(ObjectMap::container_type<T>& map, std::shared_ptr<UniverseObject> item)
+    {
+        if (dynamic_cast<T*>(item.get()))
+            map[item->ID()] = std::dynamic_pointer_cast<T, UniverseObject>(item);
+    }
+
+    template<class T>
+    void EraseFromMap(ObjectMap::container_type<T>& map, int id)
+    { map.erase(id); }
+}
+
+
 /////////////////////////////////////////////
 // class ObjectMap
 /////////////////////////////////////////////
@@ -49,8 +68,8 @@ void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*
 
     // loop through objects in copied map, copying or cloning each depending
     // on whether there already is a corresponding object in this map
-    for (const_iterator<> it = copied_map.begin(); it != copied_map.end(); ++it)
-        this->CopyObject(*it, empire_id);
+    for (const auto& obj : copied_map)
+        this->CopyObject(obj, empire_id);
 }
 
 void ObjectMap::CopyForSerialize(const ObjectMap& copied_map) {
@@ -71,10 +90,10 @@ void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source, int emp
     if (GetUniverse().GetObjectVisibilityByEmpire(source_id, empire_id) <= VIS_NO_VISIBILITY)
         return;
 
-    if (std::shared_ptr<UniverseObject> destination = this->Object(source_id)) {
+    if (auto destination = this->get(source_id)) {
         destination->Copy(source, empire_id); // there already is a version of this object present in this ObjectMap, so just update it
     } else {
-        InsertCore(std::shared_ptr<UniverseObject>(source->Clone()), empire_id); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
+        insertCore(std::shared_ptr<UniverseObject>(source->Clone()), empire_id); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
     }
 }
 
@@ -84,87 +103,8 @@ ObjectMap* ObjectMap::Clone(int empire_id) const {
     return result;
 }
 
-int ObjectMap::NumObjects() const
-{ return static_cast<int>(m_objects.size()); }
-
-bool ObjectMap::Empty() const
+bool ObjectMap::empty() const
 { return m_objects.empty(); }
-
-std::shared_ptr<const UniverseObject> ObjectMap::Object(int id) const
-{ return Object<UniverseObject>(id); }
-
-std::shared_ptr<UniverseObject> ObjectMap::Object(int id)
-{ return Object<UniverseObject>(id); }
-
-std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const std::vector<int>& object_ids) const {
-    std::vector<std::shared_ptr<const UniverseObject>> result;
-    for (int object_id : object_ids)
-        if (auto obj = Object(object_id))
-            result.push_back(obj);
-        else
-            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
-    return result;
-}
-
-std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const std::set<int>& object_ids) const {
-    std::vector<std::shared_ptr<const UniverseObject>> result;
-    for (int object_id : object_ids)
-        if (auto obj = Object(object_id))
-            result.push_back(obj);
-        else
-            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
-    return result;
-}
-
-std::vector<std::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const std::vector<int>& object_ids) {
-    std::vector<std::shared_ptr<UniverseObject>> result;
-    for (int object_id : object_ids)
-        if (auto obj = Object(object_id))
-            result.push_back(obj);
-        else
-            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
-    return result;
-}
-
-std::vector<std::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const std::set<int>& object_ids) {
-    std::vector<std::shared_ptr<UniverseObject>> result;
-    for (int object_id : object_ids)
-        if (auto obj = Object(object_id))
-            result.push_back(obj);
-        else
-            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
-    return result;
-}
-
-std::vector<std::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const {
-    std::vector<std::shared_ptr<const UniverseObject>> result;
-    for (auto it = begin(); it != end(); ++it) {
-        if (auto obj = it->Accept(visitor))
-            result.push_back(Object(obj->ID()));
-    }
-    return result;
-}
-
-std::vector<std::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) {
-    std::vector<std::shared_ptr<UniverseObject>> result;
-    for (const auto& obj : *this) {
-        if (std::shared_ptr<UniverseObject> match = obj->Accept(visitor))
-            result.push_back(Object(match->ID()));
-    }
-    return result;
-}
-
-std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) const {
-    std::vector<int> result;
-    for (auto it = begin(); it != end(); ++it) {
-        if (it->Accept(visitor))
-            result.push_back(it->ID());
-    }
-    return result;
-}
-
-std::vector<int> ObjectMap::FindObjectIDs() const
-{ return FindObjectIDs<UniverseObject>(); }
 
 int ObjectMap::HighestObjectID() const {
     if (m_objects.empty())
@@ -172,24 +112,12 @@ int ObjectMap::HighestObjectID() const {
     return m_objects.rbegin()->first;
 }
 
-ObjectMap::iterator<> ObjectMap::begin()
-{ return begin<UniverseObject>(); }
-
-ObjectMap::iterator<> ObjectMap::end()
-{ return end<UniverseObject>(); }
-
-ObjectMap::const_iterator<> ObjectMap::begin() const
-{ return begin<UniverseObject>(); }
-
-ObjectMap::const_iterator<> ObjectMap::end() const
-{ return end<UniverseObject>(); }
-
-void ObjectMap::InsertCore(std::shared_ptr<UniverseObject> item, int empire_id/* = ALL_EMPIRES*/) {
+void ObjectMap::insertCore(std::shared_ptr<UniverseObject> item, int empire_id/* = ALL_EMPIRES*/) {
     FOR_EACH_MAP(TryInsertIntoMap, item);
     if (item &&
         !GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).count(item->ID()))
     {
-        auto this_item = this->Object(item->ID());
+        auto this_item = this->get(item->ID());
         m_existing_objects[item->ID()] = this_item;
         switch (item->ObjectType()) {
             case OBJ_BUILDING:
@@ -225,7 +153,7 @@ void ObjectMap::InsertCore(std::shared_ptr<UniverseObject> item, int empire_id/*
     }
 }
 
-std::shared_ptr<UniverseObject> ObjectMap::Remove(int id) {
+std::shared_ptr<UniverseObject> ObjectMap::erase(int id) {
     // search for object in objects map
     auto it = m_objects.find(id);
     if (it == m_objects.end())
@@ -240,7 +168,7 @@ std::shared_ptr<UniverseObject> ObjectMap::Remove(int id) {
     return result;
 }
 
-void ObjectMap::Clear() {
+void ObjectMap::clear() {
     FOR_EACH_MAP(ClearMap);
     FOR_EACH_EXISTING_MAP(ClearMap);
 }
@@ -275,7 +203,7 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_obj
             continue;
         if (destroyed_object_ids.count(entry.first))
             continue;
-        auto this_item = this->Object(entry.first);
+        auto this_item = this->get(entry.first);
         m_existing_objects[entry.first] = this_item;
         switch (entry.second->ObjectType()) {
             case OBJ_BUILDING:
@@ -332,7 +260,7 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
             continue;
 
         // store systems' contained objects
-        if (this->Object(sys_id)) { // although this is expected to be a system, can't use Object<System> here due to CopyForSerialize not copying the type-specific objects info
+        if (this->get(sys_id)) { // although this is expected to be a system, can't use Object<System> here due to CopyForSerialize not copying the type-specific objects info
             contained_objs[sys_id].insert(contained_id);
 
             if (type == OBJ_PLANET)
@@ -348,11 +276,11 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
         }
 
         // store planets' contained buildings
-        if (type == OBJ_BUILDING && this->Object(alt_id))
+        if (type == OBJ_BUILDING && this->get(alt_id))
             contained_buildings[alt_id].insert(contained_id);
 
         // store fleets' contained ships
-        if (type == OBJ_SHIP && this->Object(alt_id))
+        if (type == OBJ_SHIP && this->get(alt_id))
             contained_ships[alt_id].insert(contained_id);
     }
 
@@ -386,16 +314,15 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
 
 void ObjectMap::CopyObjectsToSpecializedMaps() {
     FOR_EACH_SPECIALIZED_MAP(ClearMap);
-    for (auto it = Map<UniverseObject>().begin();
-         it != Map<UniverseObject>().end(); ++it)
-    { FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, it->second); }
+    for (const auto& entry : Map<UniverseObject>())
+    { FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, entry.second); }
 }
 
 std::string ObjectMap::Dump(unsigned short ntabs) const {
     std::ostringstream dump_stream;
     dump_stream << "ObjectMap contains UniverseObjects: " << std::endl;
-    for (const_iterator<> it = begin(); it != end(); ++it)
-        dump_stream << it->Dump(ntabs) << std::endl;
+    for (const auto& obj : *this)
+        dump_stream << obj->Dump(ntabs) << std::endl;
     dump_stream << std::endl;
     return dump_stream.str();
 }
@@ -410,95 +337,79 @@ std::shared_ptr<UniverseObject> ObjectMap::ExistingObject(int id) {
 // Static helpers
 
 template<class T>
-void ObjectMap::EraseFromMap(std::map<int, std::shared_ptr<T>>& map, int id)
-{ map.erase(id); }
-
-template<class T>
-void ObjectMap::ClearMap(std::map<int, std::shared_ptr<T>>& map)
-{ map.clear(); }
-
-template<class T>
-void ObjectMap::SwapMap(std::map<int, std::shared_ptr<T>>& map, ObjectMap& rhs)
+void ObjectMap::SwapMap(ObjectMap::container_type<T>& map, ObjectMap& rhs)
 { map.swap(rhs.Map<T>()); }
-
-template <class T>
-void ObjectMap::TryInsertIntoMap(std::map<int, std::shared_ptr<T>>& map,
-                                 std::shared_ptr<UniverseObject> item)
-{
-    if (dynamic_cast<T*>(item.get()))
-        map[item->ID()] = std::dynamic_pointer_cast<T, UniverseObject>(item);
-}
 
 // template specializations
 
 template <>
-const std::map<int, std::shared_ptr<UniverseObject>>& ObjectMap::Map() const
+const ObjectMap::container_type<UniverseObject>& ObjectMap::Map() const
 { return m_objects; }
 
 template <>
-const std::map<int, std::shared_ptr<ResourceCenter>>& ObjectMap::Map() const
+const ObjectMap::container_type<ResourceCenter>& ObjectMap::Map() const
 { return m_resource_centers; }
 
 template <>
-const std::map<int, std::shared_ptr<PopCenter>>& ObjectMap::Map() const
+const ObjectMap::container_type<PopCenter>& ObjectMap::Map() const
 { return m_pop_centers; }
 
 template <>
-const std::map<int, std::shared_ptr<Ship>>& ObjectMap::Map() const
+const ObjectMap::container_type<Ship>& ObjectMap::Map() const
 { return m_ships; }
 
 template <>
-const std::map<int, std::shared_ptr<Fleet>>& ObjectMap::Map() const
+const ObjectMap::container_type<Fleet>& ObjectMap::Map() const
 { return m_fleets; }
 
 template <>
-const std::map<int, std::shared_ptr<Planet>>& ObjectMap::Map() const
+const ObjectMap::container_type<Planet>& ObjectMap::Map() const
 { return m_planets; }
 
 template <>
-const std::map<int, std::shared_ptr<System>>& ObjectMap::Map() const
+const ObjectMap::container_type<System>& ObjectMap::Map() const
 { return m_systems; }
 
 template <>
-const std::map<int, std::shared_ptr<Building>>& ObjectMap::Map() const
+const ObjectMap::container_type<Building>& ObjectMap::Map() const
 { return m_buildings; }
 
 template <>
-const std::map<int, std::shared_ptr<Field>>& ObjectMap::Map() const
+const ObjectMap::container_type<Field>& ObjectMap::Map() const
 { return m_fields; }
 
 template <>
-std::map<int, std::shared_ptr<UniverseObject>>& ObjectMap::Map()
+ObjectMap::container_type<UniverseObject>& ObjectMap::Map()
 { return m_objects; }
 
 template <>
-std::map<int, std::shared_ptr<ResourceCenter>>& ObjectMap::Map()
+ObjectMap::container_type<ResourceCenter>& ObjectMap::Map()
 { return m_resource_centers; }
 
 template <>
-std::map<int, std::shared_ptr<PopCenter>>& ObjectMap::Map()
+ObjectMap::container_type<PopCenter>& ObjectMap::Map()
 { return m_pop_centers; }
 
 template <>
-std::map<int, std::shared_ptr<Ship>>& ObjectMap::Map()
+ObjectMap::container_type<Ship>& ObjectMap::Map()
 { return m_ships; }
 
 template <>
-std::map<int, std::shared_ptr<Fleet>>& ObjectMap::Map()
+ObjectMap::container_type<Fleet>& ObjectMap::Map()
 { return m_fleets; }
 
 template <>
-std::map<int, std::shared_ptr<Planet>>& ObjectMap::Map()
+ObjectMap::container_type<Planet>& ObjectMap::Map()
 { return m_planets; }
 
 template <>
-std::map<int, std::shared_ptr<System>>& ObjectMap::Map()
+ObjectMap::container_type<System>& ObjectMap::Map()
 { return m_systems; }
 
 template <>
-std::map<int, std::shared_ptr<Building>>& ObjectMap::Map()
+ObjectMap::container_type<Building>& ObjectMap::Map()
 { return m_buildings; }
 
 template <>
-std::map<int, std::shared_ptr<Field>>& ObjectMap::Map()
+ObjectMap::container_type<Field>& ObjectMap::Map()
 { return m_fields; }

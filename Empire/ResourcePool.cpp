@@ -125,7 +125,7 @@ void ResourcePool::Update() {
     // system.  If a group does, place the object into that system group's set
     // of objects.  If no group contains the object, place the object in its own
     // single-object group.
-    for (auto& obj : Objects().FindObjects<const UniverseObject>(m_object_ids)) {
+    for (auto& obj : Objects().find<const UniverseObject>(m_object_ids)) {
         int object_id = obj->ID();
         int object_system_id = obj->SystemID();
         // can't generate resources when not in a system

@@ -297,7 +297,7 @@ namespace {
 
                 // occupied planets
                 std::vector<std::shared_ptr<const Planet>> species_occupied_planets;
-                for (auto& planet : Objects().FindObjects<Planet>()) {
+                for (auto& planet : Objects().all<Planet>()) {
                     if ((planet->SpeciesName() == entry.first) && !known_homeworlds.count(planet->ID()))
                         species_occupied_planets.push_back(planet);
                 }
@@ -365,7 +365,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_SHIP") {
-            for (auto& ship : Objects().FindObjects<Ship>()) {
+            for (auto& ship : Objects().all<Ship>()) {
                 const std::string& ship_name = ship->PublicName(client_empire_id);
                 sorted_entries_list.insert({ship_name,
                                             {LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  ",
@@ -373,7 +373,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_MONSTER") {
-            for (auto& ship : Objects().FindObjects<Ship>()) {
+            for (auto& ship : Objects().all<Ship>()) {
                 if (!ship->IsMonster())
                     continue;
                 const std::string& ship_name = ship->PublicName(client_empire_id);
@@ -395,7 +395,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_FLEET") {
-            for (auto& fleet : Objects().FindObjects<Fleet>()) {
+            for (auto& fleet : Objects().all<Fleet>()) {
                 const std::string& flt_name = fleet->PublicName(client_empire_id);
                 sorted_entries_list.insert({flt_name,
                                             {LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), flt_name) + "  ",
@@ -403,7 +403,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_PLANET") {
-            for (auto& planet : Objects().FindObjects<Planet>()) {
+            for (auto& planet : Objects().all<Planet>()) {
                 const std::string& plt_name = planet->PublicName(client_empire_id);
                 sorted_entries_list.insert({plt_name,
                                             {LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), plt_name) + "  ",
@@ -411,7 +411,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_BUILDING") {
-            for (auto& building : Objects().FindObjects<Building>()) {
+            for (auto& building : Objects().all<Building>()) {
                 const std::string& bld_name = building->PublicName(client_empire_id);
                 sorted_entries_list.insert({bld_name,
                                             {LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), bld_name) + "  ",
@@ -419,7 +419,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_SYSTEM") {
-            for (auto& system : Objects().FindObjects<System>()) {
+            for (auto& system : Objects().all<System>()) {
                 const std::string& sys_name = system->ApparentName(client_empire_id);
                 sorted_entries_list.insert({sys_name,
                                             {LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name) + "  ",
@@ -427,7 +427,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_FIELD") {
-            for (auto& field : Objects().FindObjects<Field>()) {
+            for (auto& field : Objects().all<Field>()) {
                 const std::string& field_name = field->Name();
                 sorted_entries_list.insert({field_name,
                                             {LinkTaggedIDText(VarText::FIELD_ID_TAG, field->ID(), field_name) + "  ",
@@ -1659,7 +1659,7 @@ namespace {
 
 
         // Planets
-        auto empire_planets = Objects().FindObjects(OwnedVisitor<Planet>(empire_id));
+        auto empire_planets = Objects().find<Planet>(OwnedVisitor<Planet>(empire_id));
         if (!empire_planets.empty()) {
             detailed_description += "\n\n" + UserString("OWNED_PLANETS");
             for (auto& obj : empire_planets) {
@@ -1671,10 +1671,9 @@ namespace {
 
         // Fleets
         std::vector<std::shared_ptr<const UniverseObject>> nonempty_empire_fleets;
-        for (auto& maybe_fleet : Objects().FindObjects(OwnedVisitor<Fleet>(empire_id))) {
-            if (auto fleet = std::dynamic_pointer_cast<const Fleet>(maybe_fleet))
-                if (!fleet->Empty())
-                    nonempty_empire_fleets.push_back(fleet);
+        for (const auto& fleet : Objects().find<Fleet>(OwnedVisitor<Fleet>(empire_id))) {
+            if (!fleet->Empty())
+                nonempty_empire_fleets.push_back(fleet);
         }
         if (!nonempty_empire_fleets.empty()) {
             detailed_description += "\n\n" + UserString("OWNED_FLEETS") + "\n";

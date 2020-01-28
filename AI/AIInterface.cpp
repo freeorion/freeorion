@@ -173,7 +173,7 @@ namespace AIInterface {
             // ownership to all, while remembering which planets this is done
             // to.
             universe.InhibitUniverseObjectSignals(true);
-            for (auto& planet : universe.Objects().FindObjects<Planet>()) {
+            for (auto& planet : universe.Objects().all<Planet>()) {
                  if (planet->Unowned()) {
                      unowned_planets.push_back(planet);
                      planet->SetOwner(player_id);

@@ -127,52 +127,52 @@ inline std::shared_ptr<UniverseObject> GetEmpireKnownObject(int object_id, int e
 { return IApp::GetApp()->EmpireKnownObject(object_id, empire_id); }
 
 inline std::shared_ptr<ResourceCenter> GetResourceCenter(int object_id)
-{ return IApp::GetApp()->GetUniverse().Objects().Object<ResourceCenter>(object_id); }
+{ return IApp::GetApp()->GetUniverse().Objects().get<ResourceCenter>(object_id); }
 
 inline std::shared_ptr<ResourceCenter> GetEmpireKnownResourceCenter(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<ResourceCenter>(object_id); }
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<ResourceCenter>(object_id); }
 
 inline std::shared_ptr<PopCenter> GetPopCenter(int object_id)
-{ return IApp::GetApp()->GetUniverse().Objects().Object<PopCenter>(object_id); }
+{ return IApp::GetApp()->GetUniverse().Objects().get<PopCenter>(object_id); }
 
 inline std::shared_ptr<PopCenter> GetEmpireKnownPopCenter(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<PopCenter>(object_id); }
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<PopCenter>(object_id); }
 
 inline std::shared_ptr<Planet> GetPlanet(int object_id)
-{ return IApp::GetApp()->GetUniverse().Objects().Object<Planet>(object_id); }
+{ return IApp::GetApp()->GetUniverse().Objects().get<Planet>(object_id); }
 
 inline std::shared_ptr<Planet> GetEmpireKnownPlanet(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Planet>(object_id); }
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Planet>(object_id); }
 
 inline std::shared_ptr<System> GetSystem(int object_id)
-{ return IApp::GetApp()->GetUniverse().Objects().Object<System>(object_id); }
+{ return IApp::GetApp()->GetUniverse().Objects().get<System>(object_id); }
 
 inline std::shared_ptr<System> GetEmpireKnownSystem(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<System>(object_id); }
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<System>(object_id); }
 
 inline std::shared_ptr<Field> GetField(int object_id)
-{ return IApp::GetApp()->GetUniverse().Objects().Object<Field>(object_id); }
+{ return IApp::GetApp()->GetUniverse().Objects().get<Field>(object_id); }
 
 inline std::shared_ptr<Field> GetEmpireKnownField(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Field>(object_id); }
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Field>(object_id); }
 
 inline std::shared_ptr<Ship> GetShip(int object_id)
-{ return IApp::GetApp()->GetUniverse().Objects().Object<Ship>(object_id); }
+{ return IApp::GetApp()->GetUniverse().Objects().get<Ship>(object_id); }
 
 inline std::shared_ptr<Ship> GetEmpireKnownShip(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Ship>(object_id); }
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Ship>(object_id); }
 
 inline std::shared_ptr<Fleet> GetFleet(int object_id)
-{ return IApp::GetApp()->GetUniverse().Objects().Object<Fleet>(object_id); }
+{ return IApp::GetApp()->GetUniverse().Objects().get<Fleet>(object_id); }
 
 inline std::shared_ptr<Fleet> GetEmpireKnownFleet(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Fleet>(object_id); }
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Fleet>(object_id); }
 
 inline std::shared_ptr<Building> GetBuilding(int object_id)
-{ return IApp::GetApp()->GetUniverse().Objects().Object<Building>(object_id); }
+{ return IApp::GetApp()->GetUniverse().Objects().get<Building>(object_id); }
 
 inline std::shared_ptr<Building> GetEmpireKnownBuilding(int object_id, int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Building>(object_id); }
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).get<Building>(object_id); }
 
 /** Returns the object name of the universe object. This can be apperant object
  * name, if the application isn't supposed to see the real object name. */

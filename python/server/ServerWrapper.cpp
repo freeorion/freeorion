@@ -643,16 +643,16 @@ namespace {
 
     list GetAllObjects() {
         list py_all_objects;
-        for (int object_id : Objects().FindObjectIDs()) {
-            py_all_objects.append(object_id);
+        for (const auto& object : Objects().all()) {
+            py_all_objects.append(object->ID());
         }
         return py_all_objects;
     }
 
     list GetSystems() {
         list py_systems;
-        for (int system_id : Objects().FindObjectIDs<System>()) {
-            py_systems.append(system_id);
+        for (const auto& system : Objects().all<System>()) {
+            py_systems.append(system->ID());
         }
         return py_systems;
     }
@@ -675,7 +675,7 @@ namespace {
     }
 
     int CreatePlanet(PlanetSize size, PlanetType planet_type, int system_id, int orbit, const std::string& name) {
-        auto system = Objects().Object<System>(system_id);
+        auto system = Objects().get<System>(system_id);
 
         // Perform some validity checks
         // Check if system with id system_id exists
@@ -733,7 +733,7 @@ namespace {
     }
 
     int CreateBuilding(const std::string& building_type, int planet_id, int empire_id) {
-        auto planet = Objects().Object<Planet>(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "CreateBuilding: couldn't get planet with ID " << planet_id;
             return INVALID_OBJECT_ID;
@@ -765,7 +765,7 @@ namespace {
 
     int CreateFleet(const std::string& name, int system_id, int empire_id, bool aggressive = false) {
         // Get system and check if it exists
-        auto system = Objects().Object<System>(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "CreateFleet: couldn't get system with ID " << system_id;
             return INVALID_OBJECT_ID;

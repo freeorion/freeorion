@@ -473,7 +473,7 @@ namespace {
                 return;
 
             const auto& destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(m_empire_id);
-            for (auto& ship : Objects().FindObjects<Ship>()) {
+            for (auto& ship : Objects().all<Ship>()) {
                 if (!ship->OwnedBy(m_empire_id) || destroyed_objects.count(ship->ID()))
                     continue;
                 m_values[FLEET_DETAIL_SHIP_COUNT]++;
@@ -2069,7 +2069,7 @@ void MapWnd::RenderSystems() {
                     std::map<int, int> colony_count_by_empire_id;
                     const std::set<int>& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
 
-                    for (auto& planet : Objects().FindObjects<const Planet>(system->PlanetIDs())) {
+                    for (auto& planet : Objects().find<const Planet>(system->PlanetIDs())) {
                         if (known_destroyed_object_ids.count(planet->ID()) > 0)
                             continue;
 
@@ -2751,7 +2751,7 @@ void MapWnd::InitTurn() {
 
     timer.EnterSection("fleet signals");
     // connect system fleet add and remove signals
-    for (auto& system : objects.FindObjects<System>()) {
+    for (auto& system : objects.all<System>()) {
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsInsertedSignal.connect(
             boost::bind(&MapWnd::FleetsInsertedSignalHandler, this, _1)));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsRemovedSignal.connect(
@@ -2852,7 +2852,7 @@ void MapWnd::InitTurn() {
 
     if (turn_number == 1 && this_client_empire) {
         // start first turn with player's system selected
-        if (auto obj = objects.Object(this_client_empire->CapitalID())) {
+        if (auto obj = objects.get(this_client_empire->CapitalID())) {
             SelectSystem(obj->SystemID());
             CenterOnMapCoord(obj->X(), obj->Y());
         }
@@ -2943,7 +2943,7 @@ void MapWnd::InitTurnRendering() {
     m_system_icons.clear();
 
     // create system icons
-    for (auto& sys : objects.FindObjects<System>()) {
+    for (auto& sys : objects.all<System>()) {
         int sys_id = sys->ID();
 
         // skip known destroyed objects
@@ -2990,7 +2990,7 @@ void MapWnd::InitTurnRendering() {
     m_field_icons.clear();
 
     // create field icons
-    for (auto& field : objects.FindObjects<Field>()) {
+    for (auto& field : objects.all<Field>()) {
         int fld_id = field->ID();
 
         // skip known destroyed and stale fields
@@ -4042,7 +4042,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<float, float>>, float> empire_position_max_detection_ranges;
 
-    for (auto& obj : objects.FindObjects<UniverseObject>()) {
+    for (auto& obj : objects.all<UniverseObject>()) {
         int object_id = obj->ID();
         // skip destroyed objects
         if (destroyed_object_ids.count(object_id))
@@ -4066,7 +4066,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             auto ship = std::dynamic_pointer_cast<const Ship>(obj);
             if (!ship)
                 continue;
-            auto fleet = objects.Object<Fleet>(ship->FleetID());
+            auto fleet = objects.get<Fleet>(ship->FleetID());
             if (!fleet)
                 continue;
             int cur_id = fleet->SystemID();
@@ -4483,10 +4483,9 @@ void MapWnd::ReselectLastFleet() {
 
     // search through stored selected fleets' ids and remove ids of missing fleets
     std::set<int> missing_fleets;
-    for (int fleet_id : m_selected_fleet_ids) {
-        auto fleet = objects.Object<Fleet>(fleet_id);
+    for (const auto& fleet : objects.find<Fleet>(m_selected_fleet_ids)) {
         if (!fleet)
-            missing_fleets.insert(fleet_id);
+            missing_fleets.insert(fleet->ID());
     }
     for (int fleet_id : missing_fleets)
         m_selected_fleet_ids.erase(fleet_id);
@@ -4698,7 +4697,7 @@ void MapWnd::ForgetObject(int id) {
     // If there is only 1 ship in a fleet, forget the fleet
     auto ship = std::dynamic_pointer_cast<const Ship>(obj);
     if (ship) {
-        if (auto ship_s_fleet = GetUniverse().Objects().Object<const Fleet>(ship->FleetID())) {
+        if (auto ship_s_fleet = GetUniverse().Objects().get<const Fleet>(ship->FleetID())) {
             bool only_ship_in_fleet = ship_s_fleet->NumShips() == 1;
             if (only_ship_in_fleet)
                 return ForgetObject(ship->FleetID());
@@ -4807,7 +4806,7 @@ void MapWnd::DoFleetButtonsLayout() {
             std::shared_ptr<const Fleet> fleet;
 
             // skip button if it has no fleets (somehow...?) or if the first fleet in the button is 0
-            if (fb->Fleets().empty() || !(fleet = objects.Object<Fleet>(*fb->Fleets().begin()))) {
+            if (fb->Fleets().empty() || !(fleet = objects.get<Fleet>(*fb->Fleets().begin()))) {
                 ErrorLogger() << "DoFleetButtonsLayout couldn't get first fleet for button";
                 continue;
             }
@@ -4831,7 +4830,7 @@ void MapWnd::DoFleetButtonsLayout() {
             std::shared_ptr<const Fleet> fleet;
 
             // skip button if it has no fleets (somehow...?) or if the first fleet in the button is 0
-            if (fb->Fleets().empty() || !(fleet = objects.Object<Fleet>(*fb->Fleets().begin()))) {
+            if (fb->Fleets().empty() || !(fleet = objects.get<Fleet>(*fb->Fleets().begin()))) {
                 ErrorLogger() << "DoFleetButtonsLayout couldn't get first fleet for button";
                 continue;
             }
@@ -5150,8 +5149,7 @@ void MapWnd::RefreshFleetSignals() {
 
     // connect fleet change signals to update fleet movement lines, so that ordering
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
-    auto fleets = Objects().FindObjects<Fleet>();
-    AddFleetsStateChangedSignal(fleets);
+    AddFleetsStateChangedSignal(Objects().all<Fleet>());
 }
 
 void MapWnd::RefreshSliders() {
@@ -5388,7 +5386,7 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags<GG::ModKey> mod_keys) {
             if (!system)
                 return;
 
-            for (auto& obj : Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs())) {
+            for (auto& obj : Objects().find<const UniverseObject>(system->ContainedObjectIDs())) {
                 UniverseObjectType obj_type = obj->ObjectType();
                 if (obj_type >= OBJ_BUILDING && obj_type < OBJ_SYSTEM) {
                     net.SendMessage(ModeratorActionMessage(
@@ -6680,7 +6678,7 @@ void MapWnd::RefreshFleetResourceIndicator() {
     const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
 
     int total_fleet_count = 0;
-    for (auto& ship : Objects().FindObjects<Ship>()) {
+    for (auto& ship : Objects().all<Ship>()) {
         if (ship->OwnedBy(empire_id) && !this_client_known_destroyed_objects.count(ship->ID()))
             total_fleet_count++;
     }
@@ -6840,9 +6838,7 @@ void MapWnd::RefreshPopulationIndicator() {
     const ObjectMap& objects = Objects();
 
     //tally up all species population counts
-    for (int pop_center_id : pop_center_ids) {
-        auto obj = objects.Object(pop_center_id);
-        auto pc = std::dynamic_pointer_cast<const PopCenter>(obj);
+    for (const auto& pc : objects.find<PopCenter>(pop_center_ids)) {
         if (!pc)
             continue;
 
@@ -6908,14 +6904,14 @@ namespace {
     std::set<std::pair<std::string, int>, CustomRowCmp> GetSystemNamesIDs() {
         // get systems, store alphabetized
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
-        for (auto& system : Objects().FindObjects<System>()) {
+        for (auto& system : Objects().all<System>()) {
             system_names_ids.insert({system->Name(), system->ID()});
         }
         return system_names_ids;
     }
 
     std::set<std::pair<std::string, int>, CustomRowCmp> GetOwnedSystemNamesIDs(int empire_id) {
-        auto owned_planets = Objects().FindObjects(OwnedVisitor<Planet>(empire_id));
+        auto owned_planets = Objects().find<Planet>(OwnedVisitor<Planet>(empire_id));
 
         // get IDs of systems that contain any owned planets
         std::unordered_set<int> system_ids;
@@ -7034,16 +7030,17 @@ bool MapWnd::ZoomToNextSystem() {
 }
 
 bool MapWnd::ZoomToPrevIdleFleet() {
-    auto vec = GetUniverse().Objects().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
-    auto it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
+    auto vec = GetUniverse().Objects().find<Fleet>(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
+    auto it = std::find_if(vec.begin(), vec.end(),
+        [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.begin())
         --it;
     else
         it = vec.end();
-    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.count(*it)))
+    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.count((*it)->ID())))
         --it;
-    m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.back();
+    m_current_fleet_id = it != vec.end() ? (*it)->ID() : vec.empty() ? INVALID_OBJECT_ID : vec.back()->ID();
 
     if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
@@ -7054,14 +7051,15 @@ bool MapWnd::ZoomToPrevIdleFleet() {
 }
 
 bool MapWnd::ZoomToNextIdleFleet() {
-    auto vec = GetUniverse().Objects().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
-    auto it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
+    auto vec = GetUniverse().Objects().find<Fleet>(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
+    auto it = std::find_if(vec.begin(), vec.end(),
+        [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.end())
         ++it;
-    while (it != vec.end() && destroyed_object_ids.count(*it))
+    while (it != vec.end() && destroyed_object_ids.count((*it)->ID()))
         ++it;
-    m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.front();
+    m_current_fleet_id = it != vec.end() ? (*it)->ID() : vec.empty() ? INVALID_OBJECT_ID : vec.front()->ID();
 
     if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
@@ -7072,16 +7070,17 @@ bool MapWnd::ZoomToNextIdleFleet() {
 }
 
 bool MapWnd::ZoomToPrevFleet() {
-    auto vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
-    auto it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
+    auto vec = GetUniverse().Objects().find<Fleet>(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
+    auto it = std::find_if(vec.begin(), vec.end(),
+        [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.begin())
         --it;
     else
         it = vec.end();
-    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.count(*it)))
+    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.count((*it)->ID())))
         --it;
-    m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.back();
+    m_current_fleet_id = it != vec.end() ? (*it)->ID() : vec.empty() ? INVALID_OBJECT_ID : vec.back()->ID();
 
     if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
@@ -7092,14 +7091,15 @@ bool MapWnd::ZoomToPrevFleet() {
 }
 
 bool MapWnd::ZoomToNextFleet() {
-    auto vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
-    auto it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
+    auto vec = GetUniverse().Objects().find<Fleet>(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
+    auto it = std::find_if(vec.begin(), vec.end(),
+        [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
     auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.end())
         ++it;
-    while (it != vec.end() && destroyed_object_ids.count(*it))
+    while (it != vec.end() && destroyed_object_ids.count((*it)->ID()))
         ++it;
-    m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.front();
+    m_current_fleet_id = it != vec.end() ? (*it)->ID() : vec.empty() ? INVALID_OBJECT_ID : vec.front()->ID();
 
     if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);

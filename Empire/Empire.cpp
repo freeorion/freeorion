@@ -678,15 +678,14 @@ void Empire::UpdateSystemSupplyRanges() {
     const ObjectMap& empire_known_objects = EmpireKnownObjects(this->EmpireID());
 
     // get ids of objects partially or better visible to this empire.
-    std::vector<int> known_objects_vec = empire_known_objects.FindObjectIDs();
     const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     std::set<int> known_objects_set;
 
     // exclude objects known to have been destroyed (or rather, include ones that aren't known by this empire to be destroyed)
-    for (int object_id : known_objects_vec)
-        if (!known_destroyed_objects.count(object_id))
-            known_objects_set.insert(object_id);
+    for (const auto& obj : empire_known_objects.all())
+        if (!known_destroyed_objects.count(obj->ID()))
+            known_objects_set.insert(obj->ID());
     UpdateSystemSupplyRanges(known_objects_set);
 }
 
@@ -699,7 +698,7 @@ void Empire::UpdateUnobstructedFleets() {
         if (!system)
             continue;
 
-        for (auto& fleet : Objects().FindObjects<Fleet>(system->FleetIDs())) {
+        for (auto& fleet : Objects().find<Fleet>(system->FleetIDs())) {
             if (known_destroyed_objects.count(fleet->ID()))
                 continue;
             if (fleet->OwnedBy(m_id))
@@ -713,15 +712,14 @@ void Empire::UpdateSupplyUnobstructedSystems(bool precombat /*=false*/) {
 
     // get ids of systems partially or better visible to this empire.
     // TODO: make a UniverseObjectVisitor for objects visible to an empire at a specified visibility or greater
-    std::vector<int> known_systems_vec = EmpireKnownObjects(this->EmpireID()).FindObjectIDs<System>();
     const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     std::set<int> known_systems_set;
 
     // exclude systems known to have been destroyed (or rather, include ones that aren't known to be destroyed)
-    for (int system_id : known_systems_vec)
-        if (!known_destroyed_objects.count(system_id))
-            known_systems_set.insert(system_id);
+    for (const auto& sys : EmpireKnownObjects(this->EmpireID()).all<System>())
+        if (!known_destroyed_objects.count(sys->ID()))
+            known_systems_set.insert(sys->ID());
     UpdateSupplyUnobstructedSystems(known_systems_set, precombat);
 }
 
@@ -762,7 +760,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
     std::set<int> unrestricted_friendly_systems;
     std::set<int> systems_containing_obstructing_objects;
     std::set<int> unrestricted_obstruction_systems;
-    for (auto& fleet : GetUniverse().Objects().FindObjects<Fleet>()) {
+    for (auto& fleet : GetUniverse().Objects().all<Fleet>()) {
         int system_id = fleet->SystemID();
         if (system_id == INVALID_OBJECT_ID) {
             continue;   // not in a system, so can't affect system obstruction
