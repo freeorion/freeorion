@@ -60,3 +60,9 @@ This script should be run from directory where `tox.ini` located
 cd default/python
 flake8
 ```
+
+This script should be run from directory where `mypi.ini` located
+```sh
+cd default/python
+mypy --config-file mypy.ini
+```

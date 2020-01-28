@@ -98,3 +98,7 @@ contents.xcworkspacedata
 # Visual Studio
 .vs/
 .vscode/
+
+# linters temp files
+.mypy_cache/
+.pytest_cache/

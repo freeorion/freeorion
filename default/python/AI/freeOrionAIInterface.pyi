@@ -4,6 +4,7 @@
 # During execution, the actual freeOrionAIInterface module is made available via
 # a C++ Boost-python process as part of the launch.
 
+# type: ignore
 
 class AccountingInfoVec(object):
     def __contains__(self, obj):
