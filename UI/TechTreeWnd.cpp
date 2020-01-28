@@ -1615,11 +1615,11 @@ bool TechTreeWnd::TechListBox::TechRowCmp(const GG::ListBox::Row& lhs, const GG:
 }
 
 TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name) :
-    CUIListBox::Row(w, GG::Y(ClientUI::Pts() * 2 + 5), "TechListBox::TechRow"),
+    CUIListBox::Row(w, GG::Y(ClientUI::Pts() * 2 + 5)),
     m_tech(tech_name),
     m_background_color(ClientUI::WndColor()),
     m_enqueued(false)
-{}
+{ SetDragDropDataType("TechListBox::TechRow"); }
 
 void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
 
@@ -1758,7 +1758,7 @@ void TechTreeWnd::TechListBox::CompleteConstruction() {
     GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
     std::vector<GG::X> col_widths = TechRow::ColWidths(row_width);
     const GG::Y HEIGHT(Value(col_widths[0]));
-    m_header_row = GG::Wnd::Create<GG::ListBox::Row>(row_width, HEIGHT, "");
+    m_header_row = GG::Wnd::Create<GG::ListBox::Row>(row_width, HEIGHT);
 
     auto graphic_col = GG::Wnd::Create<CUILabel>("");  // graphic
     graphic_col->Resize(GG::Pt(col_widths[0], HEIGHT));

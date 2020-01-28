@@ -134,7 +134,7 @@ public:
 
         /** \name Structors */ ///@{
         Row();
-        Row(X w, Y h, const std::string& drag_drop_data_type, Alignment align = ALIGN_VCENTER, unsigned int margin = 2);
+        Row(X w, Y h);
         virtual ~Row();
         //@}
 

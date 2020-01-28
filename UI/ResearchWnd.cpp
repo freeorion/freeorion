@@ -67,9 +67,10 @@ namespace {
     //////////////////////////////////////////////////
     struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ResearchQueue::Element& queue_element) :
-            GG::ListBox::Row(w, QueueTechPanel::DefaultHeight(), "RESEARCH_QUEUE_ROW"),
+            GG::ListBox::Row(w, QueueTechPanel::DefaultHeight()),
             elem(queue_element)
         {
+            SetDragDropDataType("RESEARCH_QUEUE_ROW");
             RequirePreRender();
             Resize(GG::Pt(w, QueueTechPanel::DefaultHeight()));
         }

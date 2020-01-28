@@ -787,9 +787,10 @@ namespace {
     class SystemRow : public GG::ListBox::Row {
     public:
         SystemRow(int system_id, GG::Y h) :
-            GG::ListBox::Row(GG::X1, h, "SystemRow"),
+            GG::ListBox::Row(GG::X1, h),
             m_system_id(system_id)
         {
+            SetDragDropDataType("SystemRow");
             SetName("SystemRow");
             RequirePreRender();
         }
@@ -1821,7 +1822,8 @@ void SidePanel::PlanetPanel::Refresh() {
                 ClientUI::ArtDir() / planet->FocusIcon(focus_name), true);
             auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             graphic->Resize(GG::Pt(MeterIconSize().x*3/2, MeterIconSize().y*3/2));
-            auto row = GG::Wnd::Create<GG::DropDownList::Row>(graphic->Width(), graphic->Height(), "FOCUS");
+            auto row = GG::Wnd::Create<GG::DropDownList::Row>(graphic->Width(), graphic->Height());
+            row->SetDragDropDataType("FOCUS");
 
             row->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             row->SetBrowseText(

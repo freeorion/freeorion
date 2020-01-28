@@ -649,7 +649,7 @@ private:
     class ConditionRow : public GG::ListBox::Row {
     public:
         ConditionRow(const std::string& key, GG::Y row_height) :
-            GG::ListBox::Row(GG::X1, row_height, ""),
+            GG::ListBox::Row(GG::X1, row_height),
             m_condition_key(key),
             m_label(GG::Wnd::Create<CUILabel>(UserString(m_condition_key), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP))
         {}
@@ -670,7 +670,7 @@ private:
     class StringRow : public GG::ListBox::Row {
     public:
         StringRow(const std::string& text, GG::Y row_height, bool stringtable_lookup = true) :
-            GG::ListBox::Row(GG::X1, row_height, ""),
+            GG::ListBox::Row(GG::X1, row_height),
             m_string(text)
         {
             const std::string& label = (text.empty() ? EMPTY_STRING :
@@ -1581,13 +1581,16 @@ public:
     ObjectRow(GG::X w, GG::Y h, std::shared_ptr<const UniverseObject> obj, bool expanded,
               int container_object_panel, const id_range& contained_object_panels,
               int indent) :
-        GG::ListBox::Row(w, h, "", GG::ALIGN_CENTER, 1),
+        GG::ListBox::Row(w, h),
         m_container_object_panel(container_object_panel),
         m_contained_object_panels(contained_object_panels.begin(), contained_object_panels.end()),
         m_obj_init(obj),
         m_expanded_init(expanded),
         m_indent_init(indent)
-    {}
+    {
+        SetMargin(1);
+        SetRowAlignment(GG::ALIGN_VCENTER);
+    }
 
     void CompleteConstruction() override {
         GG::ListBox::Row::CompleteConstruction();
@@ -1806,8 +1809,10 @@ private:
 class ObjectHeaderRow : public GG::ListBox::Row {
 public:
     ObjectHeaderRow(GG::X w, GG::Y h) :
-        GG::ListBox::Row(w, h, "", GG::ALIGN_CENTER, 1)
+        GG::ListBox::Row(w, h)
     {
+        SetMargin(1);
+        SetRowAlignment(GG::ALIGN_CENTER);
         m_panel = GG::Wnd::Create<ObjectHeaderPanel>(w, h);
     }
 

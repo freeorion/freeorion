@@ -330,11 +330,11 @@ namespace {
 
     struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ProductionQueue::Element& elem_, int queue_index_) :
-            GG::ListBox::Row(w, QueueProductionItemPanel::DefaultHeight(),
-                             BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE),
+            GG::ListBox::Row(w, QueueProductionItemPanel::DefaultHeight()),
             queue_index(queue_index_),
             elem(elem_)
         {
+            SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
             const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
             float total_cost(1.0f);
             int minimum_turns(1);

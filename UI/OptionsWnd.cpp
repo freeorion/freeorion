@@ -313,14 +313,14 @@ namespace {
     class OptionsListRow : public GG::ListBox::Row {
     public:
         OptionsListRow(GG::X w, GG::Y h, std::shared_ptr<RowContentsWnd> contents) :
-            GG::ListBox::Row(w, h, ""),
+            GG::ListBox::Row(w, h),
             m_contents(std::forward<std::shared_ptr<RowContentsWnd>>(contents))
         {
             SetChildClippingMode(ClipToClient);
         }
 
         OptionsListRow(GG::X w, GG::Y h, std::shared_ptr<Wnd> contents, int indentation = 0) :
-            GG::ListBox::Row(w, h, "")
+            GG::ListBox::Row(w, h)
         {
             SetChildClippingMode(ClipToClient);
             if (contents)

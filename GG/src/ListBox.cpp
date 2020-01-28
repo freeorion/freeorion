@@ -201,16 +201,14 @@ namespace {
 // GG::ListBox::Row
 ////////////////////////////////////////////////
 ListBox::Row::Row() :
-    Control(X0, Y0, ListBox::DEFAULT_ROW_WIDTH, ListBox::DEFAULT_ROW_HEIGHT),
-    m_row_alignment(ALIGN_VCENTER)
+    Row(ListBox::DEFAULT_ROW_WIDTH, ListBox::DEFAULT_ROW_HEIGHT)
 {}
 
-ListBox::Row::Row(X w, Y h, const std::string& drag_drop_data_type,
-                  Alignment align/* = ALIGN_VCENTER*/, unsigned int margin/* = 2*/) : 
+ListBox::Row::Row(X w, Y h) :
     Control(X0, Y0, w, h),
-    m_row_alignment(align),
-    m_margin(margin)
-{ SetDragDropDataType(drag_drop_data_type); }
+    m_row_alignment(ALIGN_VCENTER),
+    m_margin(ListBox::DEFAULT_MARGIN)
+{}
 
 void ListBox::Row::CompleteConstruction()
 { SetLayout(Wnd::Create<DeferredLayout>(X0, Y0, Width(), Height(), 1, 1, m_margin, m_margin)); }
@@ -488,9 +486,12 @@ void ListBox::Row::SetMargin(unsigned int margin)
         return;
 
     m_margin = margin;
-    auto&& layout = GetLayout();
-    layout->SetBorderMargin(margin);
-    layout->SetCellMargin(margin);
+    auto layout = GetLayout();
+    if (layout)
+    {
+        layout->SetBorderMargin(margin);
+        layout->SetCellMargin(margin);
+    }
 }
 
 void ListBox::Row::SetNormalized(bool normalized)

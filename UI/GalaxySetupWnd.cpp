@@ -77,12 +77,12 @@ namespace {
     class RuleListRow : public GG::ListBox::Row {
     public:
         RuleListRow(GG::X w, GG::Y h, std::shared_ptr<RowContentsWnd> contents) :
-            GG::ListBox::Row(w, h, ""),
+            GG::ListBox::Row(w, h),
             m_contents(std::forward<std::shared_ptr<RowContentsWnd>>(contents))
         {}
 
         RuleListRow(GG::X w, GG::Y h, std::shared_ptr<Wnd> contents, int indentation = 0) :
-            GG::ListBox::Row(w, h, "")
+            GG::ListBox::Row(w, h)
         {
             if (contents)
                 m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, std::forward<std::shared_ptr<GG::Wnd>>(contents), indentation);
@@ -393,8 +393,10 @@ namespace {
     // row type used in the SpeciesSelector
     struct UserStringRow : public GG::ListBox::Row {
         UserStringRow(const std::string& key, GG::X w, GG::Y h) :
-            GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
+            GG::ListBox::Row(w, h)
         {
+            SetMargin(0);
+            SetRowAlignment(GG::ALIGN_VCENTER);
             GG::Wnd::SetName(key);
         }
 
