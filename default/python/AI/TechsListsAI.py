@@ -114,6 +114,7 @@ class TechGroup1(TechGroup):
             "PRO_ROBOTIC_PROD",
         ])
         self.weapon.extend([
+            "SHP_WEAPON_GAMMA_BURST_1",
             "SHP_WEAPON_1_2",
             "SHP_WEAPON_1_3",
             "SHP_FIGHTERS_1",
@@ -127,7 +128,7 @@ class TechGroup1(TechGroup):
             "SHP_MIL_ROBO_CONT",
             "SHP_ORG_HULL",
         ])
-        # always start with the same first 8 techs; leaves 1 econ, 3 weap, 2 hull
+        # always start with the same first 8 techs; leaves 1 econ, 4 weap, 2 hull
         self.enqueue(
             self.economy,
             self.economy,
@@ -147,6 +148,7 @@ class TechGroup1a(TechGroup1):
             self.weapon,
             self.weapon,
             self.weapon,
+            self.weapon,
             self.economy,
             self.hull,
         )
@@ -159,6 +161,7 @@ class TechGroup1b(TechGroup1):
             self.weapon,
             self.hull,
             self.economy,
+            self.weapon,
             self.weapon,
             self.weapon,
         )
@@ -174,7 +177,8 @@ class TechGroup1SparseA(TechGroup1):
             self.weapon,
             self.weapon,
 
-            "SHP_SPACE_FLUX_DRIVE"
+            "SHP_SPACE_FLUX_DRIVE",
+            self.weapon,
         )
 
 
