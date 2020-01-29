@@ -4504,45 +4504,35 @@ void DesignWnd::MainPanel::DoLayout() {
 
     const int PTS = ClientUI::Pts();
     const GG::X PTS_WIDE(PTS / 2);           // guess at how wide per character the font needs
-    const GG::Y BUTTON_HEIGHT(PTS * 2);
-    const GG::X LABEL_WIDTH = PTS_WIDE * 15;
     const int PAD = 6;
-    const int GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT = 25;    // rough guesstimate... avoid overly long part class names
-    const GG::X BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT;
+	
+	GG::Pt ul,lr,ll,ur,mus;
+	lr = ClientSize() - GG::Pt(GG::X(PAD), GG::Y(PAD));
+    m_confirm_button->SizeMove(lr - m_confirm_button->MinUsableSize(), lr);
 
-    GG::X edit_right = ClientWidth();
-    GG::X confirm_right = ClientWidth() - PAD;
+	mus=m_replace_button->MinUsableSize();
+	ul = m_confirm_button->RelativeUpperLeft() - GG::Pt(mus.x+PAD, GG::Y(0));
+    m_replace_button->SizeMove(ul, ul+mus);
 
-    GG::Pt lr = GG::Pt(confirm_right, BUTTON_HEIGHT) + GG::Pt(GG::X0, GG::Y(PAD));
-    GG::Pt ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_confirm_button->SizeMove(ul, lr);
-
-    lr = lr - GG::Pt(BUTTON_WIDTH, GG::Y(0))- GG::Pt(GG::X(PAD),GG::Y(0));
-    ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_replace_button->SizeMove(ul, lr);
-
-    edit_right = ul.x - PAD;
-
-    lr = ClientSize() + GG::Pt(-GG::X(PAD), -GG::Y(PAD));
-    ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_clear_button->SizeMove(ul, lr);
+	ll= GG::Pt(GG::X(PAD), ClientHeight() - PAD);
+	mus=m_clear_button->MinUsableSize();
+	ul = ll-GG::Pt(GG::X0, mus.y);
+    m_clear_button->SizeMove(ul, ul+mus);
 
     ul = GG::Pt(GG::X(PAD), GG::Y(PAD));
-    lr = ul + GG::Pt(LABEL_WIDTH, m_design_name->MinUsableSize().y);
+	// adjust based on the (bigger) height of the edit bar 
+	lr= ul+GG::Pt(m_design_name_label->MinUsableSize().x, m_design_name->MinUsableSize().y);
     m_design_name_label->SizeMove(ul, lr);
 
-    ul.x += lr.x;
-    lr.x = edit_right;
-    m_design_name->SizeMove(ul, lr);
+	ul= GG::Pt(m_design_name_label->RelativeLowerRight().x+PAD, GG::Y(PAD));
+    m_design_name->SizeMove(ul, GG::Pt(GG::X(ClientWidth()-PAD), ul.y+m_design_name->MinUsableSize().y));
 
-    ul.x = GG::X(PAD);
-    ul.y += (m_design_name->Height() + PAD);
-    lr = ul + GG::Pt(LABEL_WIDTH, m_design_name->MinUsableSize().y);
+	ul=GG::Pt(GG::X(PAD), GG::Y(m_design_name->RelativeLowerRight().y+PAD));
+	lr= ul+GG::Pt(m_design_description_label->MinUsableSize().x, m_design_description->MinUsableSize().y);
     m_design_description_label->SizeMove(ul, lr);
 
-    ul.x = lr.x + PAD;
-    lr.x = confirm_right;
-    m_design_description->SizeMove(ul, lr);
+    ul.x = m_design_description_label->RelativeLowerRight().x + PAD;
+    m_design_description->SizeMove(ul, GG::Pt(GG::X(ClientWidth()-PAD),ul.y+m_design_description->MinUsableSize().y));
 
     // place background image of hull
     ul.x = GG::X0;
