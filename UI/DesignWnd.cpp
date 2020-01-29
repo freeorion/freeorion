@@ -3966,6 +3966,8 @@ public:
     /** Replace an existing design.*/
     void ReplaceDesign();
 
+    void ToggleDescriptionEditor();
+  
     void HighlightSlotType(std::vector<ShipSlotType>& slot_types);   //!< renders slots of the indicated types differently, perhaps to indicate that that those slots can be drop targets for a particular part?
 
     /** Track changes in base type. */
@@ -4033,8 +4035,8 @@ private:
     std::shared_ptr<GG::StaticGraphic>          m_background_image = nullptr;
     std::shared_ptr<GG::Label>                  m_design_name_label = nullptr;
     std::shared_ptr<GG::Edit>                   m_design_name = nullptr;
-    std::shared_ptr<GG::Label>                  m_design_description_label = nullptr;
-    std::shared_ptr<GG::Edit>                   m_design_description = nullptr;
+    std::shared_ptr<GG::StateButton>            m_design_description_toggle = nullptr;
+    std::shared_ptr<GG::MultiEdit>              m_design_description_edit = nullptr;
     std::shared_ptr<GG::Button>                 m_replace_button = nullptr;
     std::shared_ptr<GG::Button>                 m_confirm_button = nullptr;
     std::shared_ptr<GG::Button>                 m_clear_button = nullptr;
@@ -4055,8 +4057,8 @@ void DesignWnd::MainPanel::CompleteConstruction() {
 
     m_design_name_label = GG::Wnd::Create<CUILabel>(UserString("DESIGN_WND_DESIGN_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_design_name = GG::Wnd::Create<CUIEdit>(UserString("DESIGN_NAME_DEFAULT"));
-    m_design_description_label = GG::Wnd::Create<CUILabel>(UserString("DESIGN_WND_DESIGN_DESCRIPTION"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_design_description = GG::Wnd::Create<CUIEdit>(UserString("DESIGN_DESCRIPTION_DEFAULT"));
+    m_design_description_toggle = GG::Wnd::Create<CUIStateButton>(UserString("DESIGN_WND_DESIGN_DESCRIPTION"),GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    m_design_description_edit = GG::Wnd::Create<CUIMultiEdit>(UserString("DESIGN_DESCRIPTION_DEFAULT"));
     m_replace_button = Wnd::Create<CUIButton>(UserString("DESIGN_WND_UPDATE"));
     m_confirm_button = Wnd::Create<CUIButton>(UserString("DESIGN_WND_ADD_FINISHED"));
     m_clear_button = Wnd::Create<CUIButton>(UserString("DESIGN_WND_CLEAR"));
@@ -4066,8 +4068,8 @@ void DesignWnd::MainPanel::CompleteConstruction() {
 
     AttachChild(m_design_name_label);
     AttachChild(m_design_name);
-    AttachChild(m_design_description_label);
-    AttachChild(m_design_description);
+    AttachChild(m_design_description_toggle);
+    AttachChild(m_design_description_edit);
     AttachChild(m_replace_button);
     AttachChild(m_confirm_button);
     AttachChild(m_clear_button);
@@ -4078,6 +4080,7 @@ void DesignWnd::MainPanel::CompleteConstruction() {
         boost::bind(&DesignWnd::MainPanel::DesignNameEditedSlot, this, _1));
     m_replace_button->LeftClickedSignal.connect(DesignReplacedSignal);
     m_confirm_button->LeftClickedSignal.connect(DesignConfirmedSignal);
+    m_design_description_toggle->CheckedSignal.connect(boost::bind(&DesignWnd::MainPanel::ToggleDescriptionEditor,this));
     DesignChangedSignal.connect(boost::bind(&DesignWnd::MainPanel::DesignChanged, this));
     DesignReplacedSignal.connect(boost::bind(&DesignWnd::MainPanel::ReplaceDesign, this));
     DesignConfirmedSignal.connect(boost::bind(&DesignWnd::MainPanel::AddDesign, this));
@@ -4151,9 +4154,9 @@ DesignWnd::MainPanel::ValidatedNameAndDescription() const
 
     // Is the descrition a stringtable index or the same as the saved designs value
     const std::string desc_index =
-        (UserStringExists(m_design_description->Text()) ? m_design_description->Text() :
+        (UserStringExists(m_design_description_edit->Text()) ? m_design_description_edit->Text() :
          ((maybe_saved && (*maybe_saved)->LookupInStringtable()
-           && (m_design_description->Text() == (*maybe_saved)->Description())) ? (*maybe_saved)->Description(false) : ""));
+           && (m_design_description_edit->Text() == (*maybe_saved)->Description())) ? (*maybe_saved)->Description(false) : ""));
 
     // Are both the title and the description string table lookup values
     if (!name_index.empty() && !desc_index.empty())
@@ -4163,7 +4166,7 @@ DesignWnd::MainPanel::ValidatedNameAndDescription() const
 
     return std::make_pair(
         I18nString(false, (IsDesignNameValid()) ? m_design_name->Text() : UserString("DESIGN_NAME_DEFAULT")),
-        I18nString(false, m_design_description->Text()));
+        I18nString(false, m_design_description_edit->Text()));
 }
 
 const DesignWnd::MainPanel::I18nString DesignWnd::MainPanel::ValidatedDesignName() const
@@ -4212,7 +4215,7 @@ void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void DesignWnd::MainPanel::Sanitize() {
     SetHull(nullptr, false);
     m_design_name->SetText(UserString("DESIGN_NAME_DEFAULT"));
-    m_design_description->SetText(UserString("DESIGN_DESCRIPTION_DEFAULT"));
+    m_design_description_edit->SetText(UserString("DESIGN_DESCRIPTION_DEFAULT"));
     // disconnect old empire design signal
     m_empire_designs_changed_signal.disconnect();
 }
@@ -4443,7 +4446,7 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     }
 
     m_design_name->SetText(ship_design->Name());
-    m_design_description->SetText(ship_design->Description());
+    m_design_description_edit->SetText(ship_design->Description());
 
     bool suppress_design_changed_signal = true;
     SetHull(ship_design->GetHull(), !suppress_design_changed_signal);
@@ -4474,7 +4477,7 @@ void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
 {
     SetDesignComponents(hull, parts);
     m_design_name->SetText(name);
-    m_design_description->SetText(desc);
+    m_design_description_edit->SetText(desc);
 }
 
 void DesignWnd::MainPanel::HighlightSlotType(std::vector<ShipSlotType>& slot_types) {
@@ -4554,11 +4557,14 @@ void DesignWnd::MainPanel::DoLayout() {
     m_design_name->SizeMove(ul, GG::Pt(GG::X(ClientWidth()-PAD), ul.y+m_design_name->MinUsableSize().y));
 
 	ul=GG::Pt(GG::X(PAD), GG::Y(m_design_name->RelativeLowerRight().y+PAD));
-	lr= ul+GG::Pt(m_design_description_label->MinUsableSize().x, m_design_description->MinUsableSize().y);
-    m_design_description_label->SizeMove(ul, lr);
+	// Apparently calling minuseablesize on the button itself doesn't work
+	lr= ul+GG::Pt(m_design_description_toggle->GetLabel()->MinUsableSize().x+10, m_design_name->MinUsableSize().y);
+    m_design_description_toggle->SizeMove(ul, lr);
 
-    ul.x = m_design_description_label->RelativeLowerRight().x + PAD;
-    m_design_description->SizeMove(ul, GG::Pt(GG::X(ClientWidth()-PAD),ul.y+m_design_description->MinUsableSize().y));
+    ul.x = m_design_description_toggle->RelativeLowerRight().x + PAD;
+    m_design_description_edit->SizeMove(ul, GG::Pt(GG::X(ClientWidth()-PAD),ul.y+PTS*4+8));
+	if (m_design_description_toggle->Checked()) { m_design_description_edit->Show() ; }
+	else { m_design_description_edit->Hide(); }
 
     // place background image of hull
     ul.x = GG::X0;
@@ -4981,6 +4987,10 @@ void DesignWnd::MainPanel::ReplaceDesign() {
     DesignChangedSignal();
 }
 
+void DesignWnd::MainPanel::ToggleDescriptionEditor() {
+  if (m_design_description_toggle->Checked()) { m_design_description_edit->Show() ; }
+  else { m_design_description_edit->Hide(); }
+}
 
 //////////////////////////////////////////////////
 // DesignWnd                                    //
