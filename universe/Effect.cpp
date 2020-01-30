@@ -172,8 +172,8 @@ namespace Effect {
 ///////////////////////////////////////////////////////////
 // EffectsGroup                                          //
 ///////////////////////////////////////////////////////////
-EffectsGroup::EffectsGroup(std::unique_ptr<Condition::ConditionBase>&& scope,
-                           std::unique_ptr<Condition::ConditionBase>&& activation,
+EffectsGroup::EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
+                           std::unique_ptr<Condition::Condition>&& activation,
                            std::vector<std::unique_ptr<EffectBase>>&& effects,
                            const std::string& accounting_label,
                            const std::string& stacking_group, int priority,
@@ -2102,7 +2102,7 @@ unsigned int RemoveSpecial::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // AddStarlanes                                          //
 ///////////////////////////////////////////////////////////
-AddStarlanes::AddStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition) :
+AddStarlanes::AddStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition) :
     m_other_lane_endpoint_condition(std::move(other_lane_endpoint_condition))
 {}
 
@@ -2168,7 +2168,7 @@ unsigned int AddStarlanes::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // RemoveStarlanes                                       //
 ///////////////////////////////////////////////////////////
-RemoveStarlanes::RemoveStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition) :
+RemoveStarlanes::RemoveStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition) :
     m_other_lane_endpoint_condition(std::move(other_lane_endpoint_condition))
 {}
 
@@ -2273,7 +2273,7 @@ unsigned int SetStarType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // MoveTo                                                //
 ///////////////////////////////////////////////////////////
-MoveTo::MoveTo(std::unique_ptr<Condition::ConditionBase>&& location_condition) :
+MoveTo::MoveTo(std::unique_ptr<Condition::Condition>&& location_condition) :
     m_location_condition(std::move(location_condition))
 {}
 
@@ -2565,7 +2565,7 @@ unsigned int MoveTo::GetCheckSum() const {
 // MoveInOrbit                                           //
 ///////////////////////////////////////////////////////////
 MoveInOrbit::MoveInOrbit(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
-                         std::unique_ptr<Condition::ConditionBase>&& focal_point_condition) :
+                         std::unique_ptr<Condition::Condition>&& focal_point_condition) :
     m_speed(std::move(speed)),
     m_focal_point_condition(std::move(focal_point_condition)),
     m_focus_x(nullptr),
@@ -2712,7 +2712,7 @@ unsigned int MoveInOrbit::GetCheckSum() const {
 // MoveTowards                                           //
 ///////////////////////////////////////////////////////////
 MoveTowards::MoveTowards(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
-                         std::unique_ptr<Condition::ConditionBase>&& dest_condition) :
+                         std::unique_ptr<Condition::Condition>&& dest_condition) :
     m_speed(std::move(speed)),
     m_dest_condition(std::move(dest_condition)),
     m_dest_x(nullptr),
@@ -2868,7 +2868,7 @@ unsigned int MoveTowards::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetDestination                                        //
 ///////////////////////////////////////////////////////////
-SetDestination::SetDestination(std::unique_ptr<Condition::ConditionBase>&& location_condition) :
+SetDestination::SetDestination(std::unique_ptr<Condition::Condition>&& location_condition) :
     m_location_condition(std::move(location_condition))
 {}
 
@@ -3178,7 +3178,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
                                              MessageParams&& message_parameters,
                                              EmpireAffiliationType affiliation,
-                                             std::unique_ptr<Condition::ConditionBase>&& condition,
+                                             std::unique_ptr<Condition::Condition>&& condition,
                                              const std::string label,
                                              bool stringtable_lookup) :
     m_message_string(message_string),
@@ -3492,7 +3492,7 @@ unsigned int SetTexture::GetCheckSum() const {
 SetVisibility::SetVisibility(std::unique_ptr<ValueRef::ValueRefBase<Visibility>> vis,
                              EmpireAffiliationType affiliation,
                              std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
-                             std::unique_ptr<Condition::ConditionBase>&& of_objects) :
+                             std::unique_ptr<Condition::Condition>&& of_objects) :
     m_vis(std::move(vis)),
     m_empire_id(std::move(empire_id)),
     m_affiliation(affiliation),
@@ -3659,7 +3659,7 @@ unsigned int SetVisibility::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Conditional                                           //
 ///////////////////////////////////////////////////////////
-Conditional::Conditional(std::unique_ptr<Condition::ConditionBase>&& target_condition,
+Conditional::Conditional(std::unique_ptr<Condition::Condition>&& target_condition,
                          std::vector<std::unique_ptr<EffectBase>>&& true_effects,
                          std::vector<std::unique_ptr<EffectBase>>&& false_effects) :
     m_target_condition(std::move(target_condition)),

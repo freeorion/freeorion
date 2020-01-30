@@ -106,7 +106,7 @@ namespace {
             std::string                             cost_text;
             std::string                             time_text;
             std::string                             desc_text;
-            std::vector<Condition::ConditionBase*>  location_conditions;
+            std::vector<Condition::Condition*>  location_conditions;
 
             switch (m_item.build_type) {
             case BT_BUILDING: {
@@ -192,12 +192,12 @@ namespace {
     std::string EnqueueAndLocationConditionDescription(const std::string& building_name, int candidate_object_id,
                                                        int empire_id, bool only_failed_conditions)
     {
-        std::vector<Condition::ConditionBase*> enqueue_conditions;
+        std::vector<Condition::Condition*> enqueue_conditions;
         Condition::OwnerHasBuildingTypeAvailable bld_avail_cond(building_name);
         enqueue_conditions.push_back(&bld_avail_cond);
         if (const BuildingType* building_type = GetBuildingType(building_name)) {
-            enqueue_conditions.push_back(const_cast<Condition::ConditionBase*>(building_type->EnqueueLocation()));
-            enqueue_conditions.push_back(const_cast<Condition::ConditionBase*>(building_type->Location()));
+            enqueue_conditions.push_back(const_cast<Condition::Condition*>(building_type->EnqueueLocation()));
+            enqueue_conditions.push_back(const_cast<Condition::Condition*>(building_type->Location()));
         }
         auto source = GetSourceObjectForEmpire(empire_id);
         if (only_failed_conditions)
@@ -209,22 +209,22 @@ namespace {
     std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
                                              int empire_id, bool only_failed_conditions)
     {
-        std::vector<Condition::ConditionBase*> location_conditions;
+        std::vector<Condition::Condition*> location_conditions;
         auto can_prod_ship_cond = std::make_shared<Condition::CanProduceShips>();
         location_conditions.push_back(can_prod_ship_cond.get());
         auto ship_avail_cond = std::make_shared<Condition::OwnerHasShipDesignAvailable>(ship_design_id);
         location_conditions.push_back(ship_avail_cond.get());
-        std::shared_ptr<Condition::ConditionBase> can_colonize_cond;
+        std::shared_ptr<Condition::Condition> can_colonize_cond;
         if (const ShipDesign* ship_design = GetShipDesign(ship_design_id)) {
             if (ship_design->CanColonize()) {
                 can_colonize_cond.reset(new Condition::CanColonize());
                 location_conditions.push_back(can_colonize_cond.get());
             }
             if (const HullType* hull_type = ship_design->GetHull())
-                location_conditions.push_back(const_cast<Condition::ConditionBase*>(hull_type->Location()));
+                location_conditions.push_back(const_cast<Condition::Condition*>(hull_type->Location()));
             for (const std::string& part_name : ship_design->Parts()) {
                 if (const PartType* part_type = GetPartType(part_name))
-                    location_conditions.push_back(const_cast<Condition::ConditionBase*>(part_type->Location()));
+                    location_conditions.push_back(const_cast<Condition::Condition*>(part_type->Location()));
             }
         }
         auto source = GetSourceObjectForEmpire(empire_id);

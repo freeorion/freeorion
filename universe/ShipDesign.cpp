@@ -196,11 +196,11 @@ CommonParams::CommonParams(std::unique_ptr<ValueRef::ValueRefBase<double>>&& pro
                            std::unique_ptr<ValueRef::ValueRefBase<int>>&& production_time_,
                            bool producible_,
                            const std::set<std::string>& tags_,
-                           std::unique_ptr<Condition::ConditionBase>&& location_,
+                           std::unique_ptr<Condition::Condition>&& location_,
                            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects_,
                            ConsumptionMap<MeterType>&& production_meter_consumption_,
                            ConsumptionMap<std::string>&& production_special_consumption_,
-                           std::unique_ptr<Condition::ConditionBase>&& enqueue_location_) :
+                           std::unique_ptr<Condition::Condition>&& enqueue_location_) :
     production_cost(std::move(production_cost_)),
     production_time(std::move(production_time_)),
     producible(producible_),
@@ -297,7 +297,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
                    CommonParams& common_params, const MoreCommonParams& more_common_params,
                    std::vector<ShipSlotType> mountable_slot_types,
                    const std::string& icon, bool add_standard_capacity_effect,
-                   std::unique_ptr<Condition::ConditionBase>&& combat_targets) :
+                   std::unique_ptr<Condition::Condition>&& combat_targets) :
     m_name(more_common_params.name),
     m_description(more_common_params.description),
     m_class(part_class),

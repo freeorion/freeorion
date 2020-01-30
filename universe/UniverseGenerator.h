@@ -41,7 +41,7 @@ class FO_COMMON_API MonsterFleetPlan : public FleetPlan {
 public:
     MonsterFleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
                      double spawn_rate = 1.0, int spawn_limit = 9999,
-                     std::unique_ptr<Condition::ConditionBase>&& location = nullptr,
+                     std::unique_ptr<Condition::Condition>&& location = nullptr,
                      bool lookup_name_userstring = false) :
         FleetPlan(fleet_name, ship_design_names, lookup_name_userstring),
         m_spawn_rate(spawn_rate),
@@ -55,12 +55,12 @@ public:
     {}
     double                          SpawnRate() const   { return m_spawn_rate; }
     int                             SpawnLimit() const  { return m_spawn_limit; }
-    const Condition::ConditionBase* Location() const    { return m_location.get(); }
+    const Condition::Condition* Location() const    { return m_location.get(); }
 protected:
     double                          m_spawn_rate = 1.0;
     int                             m_spawn_limit = 9999;
     // Use shared_ptr insead of unique_ptr because boost::python requires a deleter
-    const std::shared_ptr<Condition::ConditionBase> m_location = nullptr;
+    const std::shared_ptr<Condition::Condition> m_location = nullptr;
 };
 
 /** Set active meter current values equal to target/max meter current

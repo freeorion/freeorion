@@ -14,7 +14,7 @@ namespace Effect {
     class EffectsGroup;
 }
 namespace Condition {
-    struct ConditionBase;
+    struct Condition;
 }
 namespace ValueRef {
     template <typename T>
@@ -117,7 +117,7 @@ public:
                                     ProductionSpecialConsumption() const{ return m_production_special_consumption; }
 
     const std::set<std::string>&    Tags() const            { return m_tags; }
-    const Condition::ConditionBase* Location() const        { return m_location.get(); }    ///< returns the condition that determines the locations where this building can be produced
+    const Condition::Condition* Location() const        { return m_location.get(); }    ///< returns the condition that determines the locations where this building can be produced
 
     /** Returns a condition that can be used by the UI to further filter (beyond
       * the Location() requirement) where this building will be presented for
@@ -125,7 +125,7 @@ public:
       * BuildDesignatorWnd. Example usage: Buildings that are already enqueued
       * at a production location are hidden so they don't appear in the list of
       * available items that can be enqueued/produced (again) at that location. */
-    const Condition::ConditionBase* EnqueueLocation() const { return m_enqueue_location.get(); }
+    const Condition::Condition* EnqueueLocation() const { return m_enqueue_location.get(); }
 
     /** Returns the EffectsGroups that encapsulate the effects that buildings ofi
         this type have when operational. */
@@ -167,8 +167,8 @@ private:
     std::set<std::string>                               m_tags;
     CommonParams::ConsumptionMap<MeterType>             m_production_meter_consumption;
     CommonParams::ConsumptionMap<std::string>           m_production_special_consumption;
-    std::unique_ptr<Condition::ConditionBase>           m_location;
-    std::unique_ptr<Condition::ConditionBase>           m_enqueue_location;
+    std::unique_ptr<Condition::Condition>           m_location;
+    std::unique_ptr<Condition::Condition>           m_enqueue_location;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_icon;
 };

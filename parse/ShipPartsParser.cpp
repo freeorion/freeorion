@@ -34,7 +34,7 @@ namespace parse {
         typedef std::tuple<
             boost::optional<double>,
             boost::optional<double>,
-            boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>>
+            boost::optional<parse::detail::MovableEnvelope<Condition::Condition>>
         > OptCap_OptStat2_OptMoveableTargets;
     }
 }
@@ -53,7 +53,7 @@ namespace {
                          bool& pass)
     {
         boost::optional<double> capacity, stat2;
-        boost::optional<parse::detail::MovableEnvelope<Condition::ConditionBase>> combat_targets;
+        boost::optional<parse::detail::MovableEnvelope<Condition::Condition>> combat_targets;
         std::tie(capacity, stat2, combat_targets) = capacity_and_stat2_and_targets;
 
 

@@ -14,7 +14,7 @@
 class UniverseObject;
 
 namespace Condition {
-    struct ConditionBase;
+    struct Condition;
     typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
 }
 
@@ -549,7 +549,7 @@ private:
   * \a other_lane_endpoint_condition */
 class FO_COMMON_API AddStarlanes final : public EffectBase {
 public:
-    explicit AddStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition);
+    explicit AddStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -557,7 +557,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<Condition::ConditionBase> m_other_lane_endpoint_condition;
+    std::unique_ptr<Condition::Condition> m_other_lane_endpoint_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -568,7 +568,7 @@ private:
   * \a other_lane_endpoint_condition */
 class FO_COMMON_API RemoveStarlanes final : public EffectBase {
 public:
-    explicit RemoveStarlanes(std::unique_ptr<Condition::ConditionBase>&& other_lane_endpoint_condition);
+    explicit RemoveStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition);
 
     void            Execute(const ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -576,7 +576,7 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<Condition::ConditionBase> m_other_lane_endpoint_condition;
+    std::unique_ptr<Condition::Condition> m_other_lane_endpoint_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -608,7 +608,7 @@ private:
   * nothing is done. */
 class FO_COMMON_API MoveTo final : public EffectBase {
 public:
-    explicit MoveTo(std::unique_ptr<Condition::ConditionBase>&& location_condition);
+    explicit MoveTo(std::unique_ptr<Condition::Condition>&& location_condition);
 
     void            Execute(const ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -616,7 +616,7 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<Condition::ConditionBase> m_location_condition;
+    std::unique_ptr<Condition::Condition> m_location_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -629,7 +629,7 @@ private:
 class FO_COMMON_API MoveInOrbit final : public EffectBase {
 public:
     MoveInOrbit(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
-                std::unique_ptr<Condition::ConditionBase>&& focal_point_condition);
+                std::unique_ptr<Condition::Condition>&& focal_point_condition);
     MoveInOrbit(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& focus_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& focus_y = nullptr);
@@ -641,7 +641,7 @@ public:
 
 private:
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_speed;
-    std::unique_ptr<Condition::ConditionBase>       m_focal_point_condition;
+    std::unique_ptr<Condition::Condition>       m_focal_point_condition;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_focus_x;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_focus_y;
 
@@ -655,7 +655,7 @@ private:
 class FO_COMMON_API MoveTowards final : public EffectBase {
 public:
     MoveTowards(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
-                std::unique_ptr<Condition::ConditionBase>&& dest_condition);
+                std::unique_ptr<Condition::Condition>&& dest_condition);
     MoveTowards(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& dest_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& dest_y = nullptr);
@@ -667,7 +667,7 @@ public:
 
 private:
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_speed;
-    std::unique_ptr<Condition::ConditionBase>       m_dest_condition;
+    std::unique_ptr<Condition::Condition>       m_dest_condition;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_dest_x;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_dest_y;
 
@@ -682,7 +682,7 @@ private:
   * nothing is done. */
 class FO_COMMON_API SetDestination final : public EffectBase {
 public:
-    explicit SetDestination(std::unique_ptr<Condition::ConditionBase>&& location_condition);
+    explicit SetDestination(std::unique_ptr<Condition::Condition>&& location_condition);
 
     void            Execute(const ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -690,7 +690,7 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<Condition::ConditionBase> m_location_condition;
+    std::unique_ptr<Condition::Condition> m_location_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -796,7 +796,7 @@ public:
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           MessageParams&& message_parameters,
                           EmpireAffiliationType affiliation,
-                          std::unique_ptr<Condition::ConditionBase>&& condition,
+                          std::unique_ptr<Condition::Condition>&& condition,
                           const std::string label = "",
                           bool stringtable_lookup = true);
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
@@ -815,7 +815,7 @@ public:
     std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>* >> MessageParameters() const;
 
     ValueRef::ValueRefBase<int>*    RecipientID() const     { return m_recipient_empire_id.get(); }
-    Condition::ConditionBase*       GetCondition() const    { return m_condition.get(); }
+    Condition::Condition*       GetCondition() const    { return m_condition.get(); }
     EmpireAffiliationType           Affiliation() const     { return m_affiliation; }
     unsigned int                    GetCheckSum() const override;
 
@@ -826,7 +826,7 @@ private:
                             m_message_parameters;
     std::unique_ptr<ValueRef::ValueRefBase<int>>
                             m_recipient_empire_id;
-    std::unique_ptr<Condition::ConditionBase>
+    std::unique_ptr<Condition::Condition>
                             m_condition;
     EmpireAffiliationType   m_affiliation;
     std::string             m_label;
@@ -885,7 +885,7 @@ public:
     SetVisibility(std::unique_ptr<ValueRef::ValueRefBase<Visibility>> vis,
                   EmpireAffiliationType affiliation,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr,
-                  std::unique_ptr<Condition::ConditionBase>&& of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
+                  std::unique_ptr<Condition::Condition>&& of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -900,7 +900,7 @@ public:
     EmpireAffiliationType Affiliation() const
     { return m_affiliation; }
 
-    Condition::ConditionBase* OfObjectsCondition() const
+    Condition::Condition* OfObjectsCondition() const
     { return m_condition.get(); }
 
     unsigned int GetCheckSum() const override;
@@ -909,7 +909,7 @@ private:
     std::unique_ptr<ValueRef::ValueRefBase<Visibility>> m_vis;
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
     EmpireAffiliationType m_affiliation;
-    std::unique_ptr<Condition::ConditionBase> m_condition;
+    std::unique_ptr<Condition::Condition> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -920,7 +920,7 @@ private:
   * alterative set of effects if the condition is not met. */
 class FO_COMMON_API Conditional final : public EffectBase {
 public:
-    Conditional(std::unique_ptr<Condition::ConditionBase>&& target_condition,
+    Conditional(std::unique_ptr<Condition::Condition>&& target_condition,
                 std::vector<std::unique_ptr<EffectBase>>&& true_effects,
                 std::vector<std::unique_ptr<EffectBase>>&& false_effects);
 
@@ -951,7 +951,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<Condition::ConditionBase> m_target_condition; // condition to apply to each target object to determine which effects to execute
+    std::unique_ptr<Condition::Condition> m_target_condition; // condition to apply to each target object to determine which effects to execute
     std::vector<std::unique_ptr<EffectBase>> m_true_effects;      // effects to execute if m_target_condition matches target object
     std::vector<std::unique_ptr<EffectBase>> m_false_effects;     // effects to execute if m_target_condition does not match target object
 

@@ -21,7 +21,7 @@ namespace ValueRef {
     struct ValueRefBase;
 }
 
-/** this namespace holds ConditionBase and its subclasses; these classes
+/** this namespace holds Condition and its subclasses; these classes
   * represent predicates about UniverseObjects used by, for instance, the
   * Effect system. */
 namespace Condition {
@@ -53,7 +53,7 @@ enum ContentType : int {
 };
 
 /** Same as ConditionDescription, but returns a string only with conditions that have not been met. */
-FO_COMMON_API std::string ConditionFailedDescription(const std::vector<ConditionBase*>& conditions,
+FO_COMMON_API std::string ConditionFailedDescription(const std::vector<Condition*>& conditions,
                                                      std::shared_ptr<const UniverseObject> candidate_object = nullptr,
                                                      std::shared_ptr<const UniverseObject> source_object = nullptr);
 
@@ -66,19 +66,19 @@ FO_COMMON_API std::string ConditionFailedDescription(const std::vector<Condition
   * candidate object is provided, the returned string will indicate which
   * subconditions the candidate matches, and indicate if the overall combination
   * of conditions matches the object. */
-FO_COMMON_API std::string ConditionDescription(const std::vector<ConditionBase*>& conditions,
+FO_COMMON_API std::string ConditionDescription(const std::vector<Condition*>& conditions,
                                                std::shared_ptr<const UniverseObject> candidate_object = nullptr,
                                                std::shared_ptr<const UniverseObject> source_object = nullptr);
 
 /** Matches all objects if the number of objects that match Condition
   * \a condition is is >= \a low and < \a high.  Matched objects may
   * or may not themselves match the condition. */
-struct FO_COMMON_API Number final : public ConditionBase {
+struct FO_COMMON_API Number final : public Condition {
     Number(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
            std::unique_ptr<ValueRef::ValueRefBase<int>>&& high,
-           std::unique_ptr<ConditionBase>&& condition);
+           std::unique_ptr<Condition>&& condition);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -94,7 +94,7 @@ private:
 
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_low;
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_high;
-    std::unique_ptr<ConditionBase> m_condition;
+    std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -102,11 +102,11 @@ private:
 };
 
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
-struct FO_COMMON_API Turn final : public ConditionBase {
+struct FO_COMMON_API Turn final : public Condition {
     explicit Turn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& high = nullptr);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -136,19 +136,19 @@ private:
   * the specified \a sorting_type of those property values.  For example,
   * objects with the largest, smallest or most common property value may be
   * selected preferentially. */
-struct FO_COMMON_API SortedNumberOf final : public ConditionBase {
+struct FO_COMMON_API SortedNumberOf final : public Condition {
     /** Sorts randomly, without considering a sort key. */
     SortedNumberOf(std::unique_ptr<ValueRef::ValueRefBase<int>>&& number,
-                   std::unique_ptr<ConditionBase>&& condition);
+                   std::unique_ptr<Condition>&& condition);
 
     /** Sorts according to the specified method, based on the key values
       * evaluated for each object. */
     SortedNumberOf(std::unique_ptr<ValueRef::ValueRefBase<int>>&& number,
                    std::unique_ptr<ValueRef::ValueRefBase<double>>&& sort_key_ref,
                    SortingMethod sorting_method,
-                   std::unique_ptr<ConditionBase>&& condition);
+                   std::unique_ptr<Condition>&& condition);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -165,7 +165,7 @@ private:
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_number;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_sort_key;
     SortingMethod m_sorting_method = SORT_RANDOM;
-    std::unique_ptr<ConditionBase> m_condition;
+    std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -173,10 +173,10 @@ private:
 };
 
 /** Matches all objects. */
-struct FO_COMMON_API All final : public ConditionBase {
-    All() : ConditionBase() {}
+struct FO_COMMON_API All final : public Condition {
+    All() : Condition() {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     std::string Description(bool negated = false) const override;
@@ -199,10 +199,10 @@ private:
 
 /** Matches no objects. Currently only has an experimental use for efficient immediate rejection as the top-line condition.
  *  Essentially the entire point of this Condition is to provide the specialized GetDefaultInitialCandidateObjects() */
-struct FO_COMMON_API None final : public ConditionBase {
-    None() : ConditionBase() {}
+struct FO_COMMON_API None final : public Condition {
+    None() : Condition() {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -229,12 +229,12 @@ private:
 /** Matches all objects that are owned (if \a exclusive == false) or only owned
   * (if \a exclusive == true) by an empire that has affilitation type
   * \a affilitation with Empire \a empire_id. */
-struct FO_COMMON_API EmpireAffiliation final : public ConditionBase {
+struct FO_COMMON_API EmpireAffiliation final : public Condition {
     EmpireAffiliation(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id, EmpireAffiliationType affiliation);
     explicit EmpireAffiliation(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
     explicit EmpireAffiliation(EmpireAffiliationType affiliation);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -257,10 +257,10 @@ private:
 };
 
 /** Matches the source object only. */
-struct FO_COMMON_API Source final : public ConditionBase {
-    Source() : ConditionBase() {}
+struct FO_COMMON_API Source final : public Condition {
+    Source() : Condition() {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     bool RootCandidateInvariant() const override
@@ -285,10 +285,10 @@ private:
   * within a subcondition to match the object actually being matched by the
   * whole compound condition, rather than an object just being matched in a
   * subcondition in order to evaluate the outer condition. */
-struct FO_COMMON_API RootCandidate final : public ConditionBase {
-    RootCandidate() : ConditionBase() {}
+struct FO_COMMON_API RootCandidate final : public Condition {
+    RootCandidate() : Condition() {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     bool RootCandidateInvariant() const override
@@ -315,10 +315,10 @@ private:
   * use the All condition. */
 
 /** Matches the target of an effect being executed. */
-struct FO_COMMON_API Target final : public ConditionBase {
-    Target() : ConditionBase() {}
+struct FO_COMMON_API Target final : public Condition {
+    Target() : Condition() {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     bool RootCandidateInvariant() const override
@@ -344,11 +344,11 @@ private:
 /** Matches planets that are a homeworld for any of the species specified in
   * \a names.  If \a names is empty, matches any planet that is a homeworld for
   * any species in the current game Universe. */
-struct FO_COMMON_API Homeworld final : public ConditionBase {
+struct FO_COMMON_API Homeworld final : public Condition {
     Homeworld();
     explicit Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -372,10 +372,10 @@ private:
 };
 
 /** Matches planets that are an empire's capital. */
-struct FO_COMMON_API Capital final : public ConditionBase {
-    Capital() : ConditionBase() {}
+struct FO_COMMON_API Capital final : public Condition {
+    Capital() : Condition() {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     bool RootCandidateInvariant() const override
@@ -399,10 +399,10 @@ private:
 };
 
 /** Matches space monsters. */
-struct FO_COMMON_API Monster final : public ConditionBase {
-    Monster() : ConditionBase() {}
+struct FO_COMMON_API Monster final : public Condition {
+    Monster() : Condition() {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     bool RootCandidateInvariant() const override
@@ -426,10 +426,10 @@ private:
 };
 
 /** Matches armed ships and monsters. */
-struct FO_COMMON_API Armed final : public ConditionBase {
-    Armed() : ConditionBase() {}
+struct FO_COMMON_API Armed final : public Condition {
+    Armed() : Condition() {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     bool RootCandidateInvariant() const override
     { return true; }
     bool TargetInvariant() const override
@@ -451,11 +451,11 @@ private:
 };
 
 /** Matches all objects that are of UniverseObjectType \a type. */
-struct FO_COMMON_API Type final : public ConditionBase {
+struct FO_COMMON_API Type final : public Condition {
     explicit Type(std::unique_ptr<ValueRef::ValueRefBase<UniverseObjectType>>&& type);
     explicit Type(UniverseObjectType type);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -480,10 +480,10 @@ private:
 
 /** Matches all Building objects that are one of the building types specified
   * in \a names. */
-struct FO_COMMON_API Building final : public ConditionBase {
+struct FO_COMMON_API Building final : public Condition {
     explicit Building(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -507,7 +507,7 @@ private:
 };
 
 /** Matches all objects that have an attached Special named \a name. */
-struct FO_COMMON_API HasSpecial final : public ConditionBase {
+struct FO_COMMON_API HasSpecial final : public Condition {
     explicit HasSpecial();
     explicit HasSpecial(const std::string& name);
     explicit HasSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
@@ -519,7 +519,7 @@ struct FO_COMMON_API HasSpecial final : public ConditionBase {
                std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity_low,
                std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity_high = nullptr);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -545,12 +545,12 @@ private:
 };
 
 /** Matches all objects that have the tag \a tag. */
-struct FO_COMMON_API HasTag final : public ConditionBase {
+struct FO_COMMON_API HasTag final : public Condition {
     HasTag();
     explicit HasTag(const std::string& name);
     explicit HasTag(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -572,11 +572,11 @@ private:
 };
 
 /** Matches all objects that were created on turns within the specified range. */
-struct FO_COMMON_API CreatedOnTurn final : public ConditionBase {
+struct FO_COMMON_API CreatedOnTurn final : public Condition {
     CreatedOnTurn(std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& high);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -601,13 +601,13 @@ private:
 /** Matches all objects that contain an object that matches Condition
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
-struct FO_COMMON_API Contains final : public ConditionBase {
-    Contains(std::unique_ptr<ConditionBase>&& condition) :
-        ConditionBase(),
+struct FO_COMMON_API Contains final : public Condition {
+    Contains(std::unique_ptr<Condition>&& condition) :
+        Condition(),
         m_condition(std::move(condition))
     {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -623,7 +623,7 @@ struct FO_COMMON_API Contains final : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ConditionBase> m_condition;
+    std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -633,13 +633,13 @@ private:
 /** Matches all objects that are contained by an object that matches Condition
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
-struct FO_COMMON_API ContainedBy final : public ConditionBase {
-    ContainedBy(std::unique_ptr<ConditionBase>&& condition) :
-        ConditionBase(),
+struct FO_COMMON_API ContainedBy final : public Condition {
+    ContainedBy(std::unique_ptr<Condition>&& condition) :
+        Condition(),
         m_condition(std::move(condition))
     {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -655,7 +655,7 @@ struct FO_COMMON_API ContainedBy final : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ConditionBase> m_condition;
+    std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -663,10 +663,10 @@ private:
 };
 
 /** Matches all objects that are in the system with the indicated \a system_id */
-struct FO_COMMON_API InSystem final : public ConditionBase {
+struct FO_COMMON_API InSystem final : public Condition {
     InSystem(std::unique_ptr<ValueRef::ValueRefBase<int>>&& system_id);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -690,10 +690,10 @@ private:
 };
 
 /** Matches the object with the id \a object_id */
-struct FO_COMMON_API ObjectID final : public ConditionBase {
+struct FO_COMMON_API ObjectID final : public Condition {
     ObjectID(std::unique_ptr<ValueRef::ValueRefBase<int>>&& object_id);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -719,10 +719,10 @@ private:
 /** Matches all Planet objects that have one of the PlanetTypes in \a types.
   * Note that all Building objects which are on matching planets are also
   * matched. */
-struct FO_COMMON_API PlanetType final : public ConditionBase {
+struct FO_COMMON_API PlanetType final : public Condition {
     PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetType>>>&& types);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -748,10 +748,10 @@ private:
 /** Matches all Planet objects that have one of the PlanetSizes in \a sizes.
   * Note that all Building objects which are on matching planets are also
   * matched. */
-struct FO_COMMON_API PlanetSize final : public ConditionBase {
+struct FO_COMMON_API PlanetSize final : public Condition {
     PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetSize>>>&& sizes);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -777,11 +777,11 @@ private:
 /** Matches all Planet objects that have one of the PlanetEnvironments in
   * \a environments.  Note that all Building objects which are on matching
   * planets are also matched. */
-struct FO_COMMON_API PlanetEnvironment final : public ConditionBase {
+struct FO_COMMON_API PlanetEnvironment final : public Condition {
     PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetEnvironment>>>&& environments,
                       std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name_ref = nullptr);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -808,11 +808,11 @@ private:
 /** Matches all planets or ships that have one of the species in \a species.
   * Note that all Building object which are on matching planets are also
   * matched. */
-struct FO_COMMON_API Species final : public ConditionBase {
+struct FO_COMMON_API Species final : public Condition {
     explicit Species(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
     Species();
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -837,7 +837,7 @@ private:
 
 /** Matches planets where the indicated number of the indicated building type
   * or ship design are enqueued on the production queue. */
-struct FO_COMMON_API Enqueued final : public ConditionBase {
+struct FO_COMMON_API Enqueued final : public Condition {
     Enqueued(BuildType build_type,
              std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
              std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr,
@@ -849,7 +849,7 @@ struct FO_COMMON_API Enqueued final : public ConditionBase {
                       std::unique_ptr<ValueRef::ValueRefBase<int>>&& high = nullptr);
     Enqueued();
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -878,10 +878,10 @@ private:
 };
 
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
-struct FO_COMMON_API FocusType final : public ConditionBase {
+struct FO_COMMON_API FocusType final : public Condition {
     FocusType(std::vector<std::unique_ptr<ValueRef::ValueRefBase<std::string>>>&& names);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -906,10 +906,10 @@ private:
 
 /** Matches all System objects that have one of the StarTypes in \a types.  Note that all objects
     in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.). */
-struct FO_COMMON_API StarType final : public ConditionBase {
+struct FO_COMMON_API StarType final : public Condition {
     StarType(std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::StarType>>>&& types);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -931,10 +931,10 @@ private:
 };
 
 /** Matches all ships whose ShipDesign has the hull specified by \a name. */
-struct FO_COMMON_API DesignHasHull final : public ConditionBase {
+struct FO_COMMON_API DesignHasHull final : public Condition {
     explicit DesignHasHull(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -959,12 +959,12 @@ private:
 
 /** Matches all ships whose ShipDesign has >= \a low and < \a high of the ship
   * part specified by \a name. */
-struct FO_COMMON_API DesignHasPart final : public ConditionBase {
+struct FO_COMMON_API DesignHasPart final : public Condition {
     DesignHasPart(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& low = nullptr,
                   std::unique_ptr<ValueRef::ValueRefBase<int>>&& high = nullptr);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -991,12 +991,12 @@ private:
 
 /** Matches ships whose ShipDesign has >= \a low and < \a high of ship parts of
   * the specified \a part_class */
-struct FO_COMMON_API DesignHasPartClass final : public ConditionBase {
+struct FO_COMMON_API DesignHasPartClass final : public Condition {
     DesignHasPartClass(ShipPartClass part_class,
                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& low,
                        std::unique_ptr<ValueRef::ValueRefBase<int>>&& high);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -1023,11 +1023,11 @@ private:
 
 /** Matches ships who ShipDesign is a predefined shipdesign with the name
   * \a name */
-struct FO_COMMON_API PredefinedShipDesign final : public ConditionBase {
+struct FO_COMMON_API PredefinedShipDesign final : public Condition {
     explicit PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
     explicit PredefinedShipDesign(ValueRef::ValueRefBase<std::string>* name);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1049,10 +1049,10 @@ private:
 };
 
 /** Matches ships whose design id \a id. */
-struct FO_COMMON_API NumberedShipDesign final : public ConditionBase {
+struct FO_COMMON_API NumberedShipDesign final : public Condition {
     NumberedShipDesign(std::unique_ptr<ValueRef::ValueRefBase<int>>&& design_id);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1074,10 +1074,10 @@ private:
 };
 
 /** Matches ships or buildings produced by the empire with id \a empire_id.*/
-struct FO_COMMON_API ProducedByEmpire final : public ConditionBase {
+struct FO_COMMON_API ProducedByEmpire final : public Condition {
     ProducedByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1099,10 +1099,10 @@ private:
 };
 
 /** Matches a given object with a linearly distributed probability of \a chance. */
-struct FO_COMMON_API Chance final : public ConditionBase {
+struct FO_COMMON_API Chance final : public Condition {
     Chance(std::unique_ptr<ValueRef::ValueRefBase<double>>&& chance);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1125,12 +1125,12 @@ private:
 
 /** Matches all objects that have a meter of type \a meter, and whose current
   * value is >= \a low and <= \a high. */
-struct FO_COMMON_API MeterValue final : public ConditionBase {
+struct FO_COMMON_API MeterValue final : public Condition {
     MeterValue(MeterType meter,
                std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
                std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1155,13 +1155,13 @@ private:
 
 /** Matches ships that have a ship part meter of type \a meter for part \a part
   * whose current value is >= low and <= high. */
-struct FO_COMMON_API ShipPartMeterValue final : public ConditionBase {
+struct FO_COMMON_API ShipPartMeterValue final : public Condition {
     ShipPartMeterValue(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_part_name,
                        MeterType meter,
                        std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
                        std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1183,7 +1183,7 @@ private:
 
 /** Matches all objects if the empire with id \a empire_id has an empire meter
   * \a meter whose current value is >= \a low and <= \a high. */
-struct FO_COMMON_API EmpireMeterValue final : public ConditionBase {
+struct FO_COMMON_API EmpireMeterValue final : public Condition {
     EmpireMeterValue(const std::string& meter,
                      std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
                      std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
@@ -1192,7 +1192,7 @@ struct FO_COMMON_API EmpireMeterValue final : public ConditionBase {
                      std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
                      std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1214,12 +1214,12 @@ private:
 
 /** Matches all objects whose owner's stockpile of \a stockpile is between
   * \a low and \a high, inclusive. */
-struct FO_COMMON_API EmpireStockpileValue final : public ConditionBase {
+struct FO_COMMON_API EmpireStockpileValue final : public Condition {
     EmpireStockpileValue(ResourceType stockpile,
                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& low,
                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& high);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1243,10 +1243,10 @@ private:
 };
 
 /** Matches all objects whose owner who has tech \a name. */
-struct FO_COMMON_API OwnerHasTech final : public ConditionBase {
+struct FO_COMMON_API OwnerHasTech final : public Condition {
     explicit OwnerHasTech(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1268,11 +1268,11 @@ private:
 };
 
 /** Matches all objects whose owner who has the building type \a name available. */
-struct FO_COMMON_API OwnerHasBuildingTypeAvailable final : public ConditionBase {
+struct FO_COMMON_API OwnerHasBuildingTypeAvailable final : public Condition {
     explicit OwnerHasBuildingTypeAvailable(const std::string& name);
     explicit OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1294,11 +1294,11 @@ private:
 };
 
 /** Matches all objects whose owner who has the ship design \a id available. */
-struct FO_COMMON_API OwnerHasShipDesignAvailable final : public ConditionBase {
+struct FO_COMMON_API OwnerHasShipDesignAvailable final : public Condition {
     explicit OwnerHasShipDesignAvailable(int id);
     explicit OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRefBase<int>>&& id);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1320,11 +1320,11 @@ private:
 };
 
 /** Matches all objects whose owner who has the ship part @a name available. */
-struct FO_COMMON_API OwnerHasShipPartAvailable final : public ConditionBase {
+struct FO_COMMON_API OwnerHasShipPartAvailable final : public Condition {
     explicit OwnerHasShipPartAvailable(const std::string& name);
     explicit OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1346,10 +1346,10 @@ private:
 };
 
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */
-struct FO_COMMON_API VisibleToEmpire final : public ConditionBase {
+struct FO_COMMON_API VisibleToEmpire final : public Condition {
     explicit VisibleToEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1374,11 +1374,11 @@ private:
   * object that meets \a condition.  Warning: this Condition can slow things
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
-struct FO_COMMON_API WithinDistance final : public ConditionBase {
+struct FO_COMMON_API WithinDistance final : public Condition {
     WithinDistance(std::unique_ptr<ValueRef::ValueRefBase<double>>&& distance,
-                   std::unique_ptr<ConditionBase>&& condition);
+                   std::unique_ptr<Condition>&& condition);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1393,7 +1393,7 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_distance;
-    std::unique_ptr<ConditionBase> m_condition;
+    std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1404,11 +1404,11 @@ private:
   * object that meets \a condition.  Warning: this Condition can slow things
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
-struct FO_COMMON_API WithinStarlaneJumps final : public ConditionBase {
+struct FO_COMMON_API WithinStarlaneJumps final : public Condition {
     WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRefBase<int>>&& jumps,
-                        std::unique_ptr<ConditionBase>&& condition);
+                        std::unique_ptr<Condition>&& condition);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1423,7 +1423,7 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_jumps;
-    std::unique_ptr<ConditionBase> m_condition;
+    std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1436,13 +1436,13 @@ private:
   * that a lane would be geometrically acceptable, meaning it wouldn't cross
   * any other lanes, pass too close to another system, or be too close in angle
   * to an existing lane. */
-struct FO_COMMON_API CanAddStarlaneConnection : ConditionBase {
-    explicit CanAddStarlaneConnection(std::unique_ptr<ConditionBase>&& condition) :
-        ConditionBase(),
+struct FO_COMMON_API CanAddStarlaneConnection : Condition {
+    explicit CanAddStarlaneConnection(std::unique_ptr<Condition>&& condition) :
+        Condition(),
         m_condition(std::move(condition))
     {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1456,7 +1456,7 @@ struct FO_COMMON_API CanAddStarlaneConnection : ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ConditionBase> m_condition;
+    std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1465,10 +1465,10 @@ private:
 
 /** Matches systems that have been explored by at least one Empire
   * in \a empire_ids. */
-struct FO_COMMON_API ExploredByEmpire final : public ConditionBase {
+struct FO_COMMON_API ExploredByEmpire final : public Condition {
     explicit ExploredByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1491,10 +1491,10 @@ private:
 
 /** Matches objects that are moving. ... What does that mean?  Departing this
   * turn, or were located somewhere else last turn...? */
-struct FO_COMMON_API Stationary final : public ConditionBase {
-    explicit Stationary() : ConditionBase() {}
+struct FO_COMMON_API Stationary final : public Condition {
+    explicit Stationary() : Condition() {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     bool RootCandidateInvariant() const override
     { return true; }
     bool TargetInvariant() const override
@@ -1516,17 +1516,17 @@ private:
 };
 
 /** Matches objects that are aggressive fleets or are in aggressive fleets. */
-struct FO_COMMON_API Aggressive final : public ConditionBase {
+struct FO_COMMON_API Aggressive final : public Condition {
     explicit Aggressive() :
-        ConditionBase(),
+        Condition(),
         m_aggressive(true)
     {}
     explicit Aggressive(bool aggressive) :
-        ConditionBase(),
+        Condition(),
         m_aggressive(aggressive)
     {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     bool RootCandidateInvariant() const override
     { return true; }
     bool TargetInvariant() const override
@@ -1553,10 +1553,10 @@ private:
 
 /** Matches objects that are in systems that can be fleet supplied by the
   * empire with id \a empire_id */
-struct FO_COMMON_API FleetSupplyableByEmpire final : public ConditionBase {
+struct FO_COMMON_API FleetSupplyableByEmpire final : public Condition {
     explicit FleetSupplyableByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1580,11 +1580,11 @@ private:
 /** Matches objects that are in systems that are connected by resource-sharing
   * to at least one object that meets \a condition using the resource-sharing
   * network of the empire with id \a empire_id */
-struct FO_COMMON_API ResourceSupplyConnectedByEmpire final : public ConditionBase {
+struct FO_COMMON_API ResourceSupplyConnectedByEmpire final : public Condition {
     ResourceSupplyConnectedByEmpire(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
-                                    std::unique_ptr<ConditionBase>&& condition);
+                                    std::unique_ptr<Condition>&& condition);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1599,7 +1599,7 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
-    std::unique_ptr<ConditionBase> m_condition;
+    std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1607,10 +1607,10 @@ private:
 };
 
 /** Matches objects whose species has the ability to found new colonies. */
-struct FO_COMMON_API CanColonize final : public ConditionBase {
-    explicit CanColonize() : ConditionBase() {}
+struct FO_COMMON_API CanColonize final : public Condition {
+    explicit CanColonize() : Condition() {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     bool RootCandidateInvariant() const override
     { return true; }
     bool TargetInvariant() const override
@@ -1632,10 +1632,10 @@ private:
 };
 
 /** Matches objects whose species has the ability to produce ships. */
-struct FO_COMMON_API CanProduceShips final : public ConditionBase {
-    CanProduceShips() : ConditionBase() {}
+struct FO_COMMON_API CanProduceShips final : public Condition {
+    CanProduceShips() : Condition() {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     bool RootCandidateInvariant() const override
     { return true; }
     bool TargetInvariant() const override
@@ -1658,10 +1658,10 @@ private:
 
 /** Matches the objects that have been targeted for bombardment by at least one
   * object that matches \a m_by_object_condition. */
-struct FO_COMMON_API OrderedBombarded final : public ConditionBase {
-    explicit OrderedBombarded(std::unique_ptr<ConditionBase>&& by_object_condition);
+struct FO_COMMON_API OrderedBombarded final : public Condition {
+    explicit OrderedBombarded(std::unique_ptr<Condition>&& by_object_condition);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1675,7 +1675,7 @@ struct FO_COMMON_API OrderedBombarded final : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ConditionBase> m_by_object_condition;
+    std::unique_ptr<Condition> m_by_object_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1684,7 +1684,7 @@ private:
 
 /** Matches all objects if the comparisons between values of ValueRefs meet the
   * specified comparison types. */
-struct FO_COMMON_API ValueTest final : public ConditionBase {
+struct FO_COMMON_API ValueTest final : public Condition {
     ValueTest(std::unique_ptr<ValueRef::ValueRefBase<double>>&& value_ref1,
               ComparisonType comp1,
               std::unique_ptr<ValueRef::ValueRefBase<double>>&& value_ref2,
@@ -1703,7 +1703,7 @@ struct FO_COMMON_API ValueTest final : public ConditionBase {
               ComparisonType comp2 = INVALID_COMPARISON,
               std::unique_ptr<ValueRef::ValueRefBase<int>>&& value_ref3 = nullptr);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1737,13 +1737,13 @@ private:
 
 /** Matches objects that match the location condition of the specified
   * content.  */
-struct FO_COMMON_API Location final : public ConditionBase {
+struct FO_COMMON_API Location final : public Condition {
 public:
     Location(ContentType content_type,
              std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name1,
              std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name2 = nullptr);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1768,12 +1768,12 @@ private:
 
 /** Matches objects that match the combat targeting condition of the specified
   * content.  */
-struct FO_COMMON_API CombatTarget final : public ConditionBase {
+struct FO_COMMON_API CombatTarget final : public Condition {
 public:
     CombatTarget(ContentType content_type,
                  std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1797,14 +1797,14 @@ private:
 
 
 /** Matches all objects that match every Condition in \a operands. */
-struct FO_COMMON_API And final : public ConditionBase {
-    explicit And(std::vector<std::unique_ptr<ConditionBase>>&& operands);
-    And(std::unique_ptr<ConditionBase>&& operand1,
-        std::unique_ptr<ConditionBase>&& operand2,
-        std::unique_ptr<ConditionBase>&& operand3 = nullptr,
-        std::unique_ptr<ConditionBase>&& operand4 = nullptr);
+struct FO_COMMON_API And final : public Condition {
+    explicit And(std::vector<std::unique_ptr<Condition>>&& operands);
+    And(std::unique_ptr<Condition>&& operand1,
+        std::unique_ptr<Condition>&& operand2,
+        std::unique_ptr<Condition>&& operand3 = nullptr,
+        std::unique_ptr<Condition>&& operand4 = nullptr);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -1815,11 +1815,11 @@ struct FO_COMMON_API And final : public ConditionBase {
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
-    const std::vector<ConditionBase*> Operands() const;
+    const std::vector<Condition*> Operands() const;
     unsigned int GetCheckSum() const override;
 
 private:
-    std::vector<std::unique_ptr<ConditionBase>> m_operands;
+    std::vector<std::unique_ptr<Condition>> m_operands;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1827,14 +1827,14 @@ private:
 };
 
 /** Matches all objects that match at least one Condition in \a operands. */
-struct FO_COMMON_API Or final : public ConditionBase {
-    explicit Or(std::vector<std::unique_ptr<ConditionBase>>&& operands);
-    Or(std::unique_ptr<ConditionBase>&& operand1,
-       std::unique_ptr<ConditionBase>&& operand2,
-       std::unique_ptr<ConditionBase>&& operand3 = nullptr,
-       std::unique_ptr<ConditionBase>&& operand4 = nullptr);
+struct FO_COMMON_API Or final : public Condition {
+    explicit Or(std::vector<std::unique_ptr<Condition>>&& operands);
+    Or(std::unique_ptr<Condition>&& operand1,
+       std::unique_ptr<Condition>&& operand2,
+       std::unique_ptr<Condition>&& operand3 = nullptr,
+       std::unique_ptr<Condition>&& operand4 = nullptr);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1846,7 +1846,7 @@ struct FO_COMMON_API Or final : public ConditionBase {
     unsigned int GetCheckSum() const override;
 
 private:
-    std::vector<std::unique_ptr<ConditionBase>> m_operands;
+    std::vector<std::unique_ptr<Condition>> m_operands;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1854,10 +1854,10 @@ private:
 };
 
 /** Matches all objects that do not match the Condition \a operand. */
-struct FO_COMMON_API Not final : public ConditionBase {
-    explicit Not(std::unique_ptr<ConditionBase>&& operand);
+struct FO_COMMON_API Not final : public Condition {
+    explicit Not(std::unique_ptr<Condition>&& operand);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1869,7 +1869,7 @@ struct FO_COMMON_API Not final : public ConditionBase {
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ConditionBase> m_operand;
+    std::unique_ptr<Condition> m_operand;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1880,10 +1880,10 @@ private:
   * matches at least one candidate object. Matches all objects that match that
   * condaition, ignoring any conditions listed later. If no candidate matches
   * any of the conditions, it matches nothing. */
-struct FO_COMMON_API OrderedAlternativesOf final : public ConditionBase {
-    explicit OrderedAlternativesOf(std::vector<std::unique_ptr<ConditionBase>>&& operands);
+struct FO_COMMON_API OrderedAlternativesOf final : public Condition {
+    explicit OrderedAlternativesOf(std::vector<std::unique_ptr<Condition>>&& operands);
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1892,11 +1892,11 @@ struct FO_COMMON_API OrderedAlternativesOf final : public ConditionBase {
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
-    const std::vector<ConditionBase*> Operands() const;
+    const std::vector<Condition*> Operands() const;
     unsigned int GetCheckSum() const override;
 
 private:
-    std::vector<std::unique_ptr<ConditionBase>> m_operands;
+    std::vector<std::unique_ptr<Condition>> m_operands;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1905,14 +1905,14 @@ private:
 
 /** Matches whatever its subcondition matches, but has a customized description
   * string that is returned by Description() by looking up in the stringtable. */
-struct FO_COMMON_API Described final : public ConditionBase {
-    Described(std::unique_ptr<ConditionBase>&& condition, const std::string& desc_stringtable_key) :
-        ConditionBase(),
+struct FO_COMMON_API Described final : public Condition {
+    Described(std::unique_ptr<Condition>&& condition, const std::string& desc_stringtable_key) :
+        Condition(),
             m_condition(std::move(condition)),
         m_desc_stringtable_key(desc_stringtable_key)
     {}
 
-    bool operator==(const ConditionBase& rhs) const override;
+    bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     bool RootCandidateInvariant() const override;
@@ -1925,7 +1925,7 @@ struct FO_COMMON_API Described final : public ConditionBase {
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ConditionBase> m_condition;
+    std::unique_ptr<Condition> m_condition;
     std::string m_desc_stringtable_key;
 
     friend class boost::serialization::access;
@@ -1935,13 +1935,13 @@ private:
 
 // template implementations
 template <class Archive>
-void ConditionBase::serialize(Archive& ar, const unsigned int version)
+void Condition::serialize(Archive& ar, const unsigned int version)
 {}
 
 template <class Archive>
 void Number::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_low)
         & BOOST_SERIALIZATION_NVP(m_high)
         & BOOST_SERIALIZATION_NVP(m_condition);
@@ -1950,7 +1950,7 @@ void Number::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void Turn::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_low)
         & BOOST_SERIALIZATION_NVP(m_high);
 }
@@ -1958,7 +1958,7 @@ void Turn::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void SortedNumberOf::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_number)
         & BOOST_SERIALIZATION_NVP(m_sort_key)
         & BOOST_SERIALIZATION_NVP(m_sorting_method)
@@ -1967,69 +1967,69 @@ void SortedNumberOf::serialize(Archive& ar, const unsigned int version)
 
 template <class Archive>
 void All::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
 template <class Archive>
 void None::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
 template <class Archive>
 void EmpireAffiliation::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
         & BOOST_SERIALIZATION_NVP(m_affiliation);
 }
 
 template <class Archive>
 void Source::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
 template <class Archive>
 void RootCandidate::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
 template <class Archive>
 void Target::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
 template <class Archive>
 void Homeworld::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_names);
 }
 
 template <class Archive>
 void Capital::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
 template <class Archive>
 void Monster::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
 template <class Archive>
 void Armed::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
 template <class Archive>
 void Type::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_type);
 }
 
 template <class Archive>
 void Building::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_names);
 }
 
 template <class Archive>
 void HasSpecial::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_capacity_low)
         & BOOST_SERIALIZATION_NVP(m_capacity_high)
@@ -2040,14 +2040,14 @@ void HasSpecial::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void HasTag::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
 void CreatedOnTurn::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_low)
         & BOOST_SERIALIZATION_NVP(m_high);
 }
@@ -2055,49 +2055,49 @@ void CreatedOnTurn::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void Contains::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
 template <class Archive>
 void ContainedBy::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
 template <class Archive>
 void InSystem::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_system_id);
 }
 
 template <class Archive>
 void ObjectID::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_object_id);
 }
 
 template <class Archive>
 void PlanetType::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_types);
 }
 
 template <class Archive>
 void PlanetSize::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_sizes);
 }
 
 template <class Archive>
 void PlanetEnvironment::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_environments)
         & BOOST_SERIALIZATION_NVP(m_species_name);
 }
@@ -2105,14 +2105,14 @@ void PlanetEnvironment::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void Species::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_names);
 }
 
 template <class Archive>
 void Enqueued::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_build_type)
         & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_design_id)
@@ -2124,28 +2124,28 @@ void Enqueued::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void FocusType::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_names);
 }
 
 template <class Archive>
 void StarType::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_types);
 }
 
 template <class Archive>
 void DesignHasHull::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
 void DesignHasPart::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_low)
         & BOOST_SERIALIZATION_NVP(m_high)
         & BOOST_SERIALIZATION_NVP(m_name);
@@ -2154,7 +2154,7 @@ void DesignHasPart::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void DesignHasPartClass::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_low)
         & BOOST_SERIALIZATION_NVP(m_high)
         & BOOST_SERIALIZATION_NVP(m_class);
@@ -2163,35 +2163,35 @@ void DesignHasPartClass::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void PredefinedShipDesign::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
 void NumberedShipDesign::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_design_id);
 }
 
 template <class Archive>
 void ProducedByEmpire::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>
 void Chance::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_chance);
 }
 
 template <class Archive>
 void MeterValue::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_meter)
         & BOOST_SERIALIZATION_NVP(m_low)
         & BOOST_SERIALIZATION_NVP(m_high);
@@ -2200,7 +2200,7 @@ void MeterValue::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void EmpireStockpileValue::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_low)
         & BOOST_SERIALIZATION_NVP(m_high);
 }
@@ -2208,21 +2208,21 @@ void EmpireStockpileValue::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void OwnerHasTech::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
 void OwnerHasBuildingTypeAvailable::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
 void OwnerHasShipDesignAvailable::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_id);
 }
 
@@ -2230,21 +2230,21 @@ template <class Archive>
 void OwnerHasShipPartAvailable::serialize(Archive& ar,
                                           const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
 void VisibleToEmpire::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>
 void WithinDistance::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_distance)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
@@ -2252,7 +2252,7 @@ void WithinDistance::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void WithinStarlaneJumps::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_jumps)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
@@ -2260,41 +2260,41 @@ void WithinStarlaneJumps::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void CanAddStarlaneConnection::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
 template <class Archive>
 void ExploredByEmpire::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>
 void Stationary::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition);
 }
 
 template <class Archive>
 void Aggressive::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_aggressive);
 }
 
 template <class Archive>
 void FleetSupplyableByEmpire::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>
 void ResourceSupplyConnectedByEmpire::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
@@ -2302,26 +2302,26 @@ void ResourceSupplyConnectedByEmpire::serialize(Archive& ar, const unsigned int 
 template <class Archive>
 void CanColonize::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition);
 }
 
 template <class Archive>
 void CanProduceShips::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition);
 }
 
 template <class Archive>
 void OrderedBombarded::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_by_object_condition);
 }
 
 template <class Archive>
 void ValueTest::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_value_ref1)
         & BOOST_SERIALIZATION_NVP(m_value_ref2)
         & BOOST_SERIALIZATION_NVP(m_value_ref3)
@@ -2338,7 +2338,7 @@ void ValueTest::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void Location::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_name1)
         & BOOST_SERIALIZATION_NVP(m_name2)
         & BOOST_SERIALIZATION_NVP(m_content_type);
@@ -2347,7 +2347,7 @@ void Location::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void CombatTarget::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_content_type);
 }
@@ -2355,35 +2355,35 @@ void CombatTarget::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void And::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_operands);
 }
 
 template <class Archive>
 void Or::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_operands);
 }
 
 template <class Archive>
 void Not::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_operand);
 }
 
 template <class Archive>
 void OrderedAlternativesOf::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_operands);
 }
 
 template <class Archive>
 void Described::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_condition)
         & BOOST_SERIALIZATION_NVP(m_desc_stringtable_key);
 }

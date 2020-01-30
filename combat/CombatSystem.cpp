@@ -257,7 +257,7 @@ void CombatInfo::InitializeObjectVisibility() {
 namespace {
     // if source is owned by ALL_EMPIRES, match objects owned by an empire
     // if source is owned by an empire, match unowned objects and objects owned by enemies of source's owner empire
-    Condition::ConditionBase* VisibleEnemyOfOwnerCondition() {
+    Condition::Condition* VisibleEnemyOfOwnerCondition() {
         return new Condition::Or(
             // unowned candidate object case
             boost::make_unique<Condition::And>(
@@ -289,7 +289,7 @@ namespace {
         ;
     }
 
-    const std::unique_ptr<Condition::ConditionBase> is_enemy_ship_or_fighter =
+    const std::unique_ptr<Condition::Condition> is_enemy_ship_or_fighter =
         boost::make_unique<Condition::And>(
             boost::make_unique<Condition::Or>(
                 boost::make_unique<Condition::And>(
@@ -300,9 +300,9 @@ namespace {
                             nullptr,
                             boost::make_unique<ValueRef::Constant<double>>(0.0)))),
                 boost::make_unique<Condition::Type>(OBJ_FIGHTER)),
-            std::unique_ptr<Condition::ConditionBase>{VisibleEnemyOfOwnerCondition()});
+            std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()});
 
-    const std::unique_ptr<Condition::ConditionBase> is_enemy_ship =
+    const std::unique_ptr<Condition::Condition> is_enemy_ship =
         boost::make_unique<Condition::And>(
             boost::make_unique<Condition::Type>(OBJ_SHIP),
 
@@ -312,11 +312,11 @@ namespace {
                     nullptr,
                     boost::make_unique<ValueRef::Constant<double>>(0.0))),
 
-            std::unique_ptr<Condition::ConditionBase>{VisibleEnemyOfOwnerCondition()});
+            std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()});
 
-    const std::unique_ptr<Condition::ConditionBase> is_enemy_ship_fighter_or_armed_planet =
+    const std::unique_ptr<Condition::Condition> is_enemy_ship_fighter_or_armed_planet =
         boost::make_unique<Condition::And>(
-            std::unique_ptr<Condition::ConditionBase>{VisibleEnemyOfOwnerCondition()},  // enemies
+            std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()},  // enemies
             boost::make_unique<Condition::Or>(
                 boost::make_unique<Condition::Or>(
                     boost::make_unique<Condition::And>(
@@ -347,7 +347,7 @@ namespace {
                                 nullptr,
                                 boost::make_unique<ValueRef::Constant<double>>(0.0)))))));
 
-    const std::unique_ptr<Condition::ConditionBase> if_source_is_planet_then_ships_else_all =
+    const std::unique_ptr<Condition::Condition> if_source_is_planet_then_ships_else_all =
         boost::make_unique<Condition::Or>(
             boost::make_unique<Condition::And>(     // if source is a planet, match ships
                 boost::make_unique<Condition::Number>(
@@ -374,7 +374,7 @@ namespace {
     struct PartAttackInfo {
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
                        float part_attack_,
-                       const ::Condition::ConditionBase* combat_targets_ = nullptr) :
+                       const ::Condition::Condition* combat_targets_ = nullptr) :
             part_class(part_class_),
             part_type_name(part_name_),
             part_attack(part_attack_),
@@ -383,7 +383,7 @@ namespace {
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
                        int fighters_launched_, float fighter_damage_,
                        const std::string& fighter_type_name_,
-                       const ::Condition::ConditionBase* combat_targets_ = nullptr) :
+                       const ::Condition::Condition* combat_targets_ = nullptr) :
             part_class(part_class_),
             part_type_name(part_name_),
             combat_targets(combat_targets_),
@@ -395,7 +395,7 @@ namespace {
         ShipPartClass                       part_class;
         std::string                         part_type_name;
         float                               part_attack = 0.0f;     // for direct damage parts
-        const ::Condition::ConditionBase*   combat_targets = nullptr;
+        const ::Condition::Condition*   combat_targets = nullptr;
         int                                 fighters_launched = 0;  // for fighter bays, input value should be limited by ship available fighters to launch
         float                               fighter_damage = 0.0f;  // for fighter bays, input value should be determined by ship fighter weapon setup
         std::string                         fighter_type_name;
@@ -886,7 +886,7 @@ namespace {
         float fighter_attack = 0.0f;
         std::string fighter_name = UserString("OBJ_FIGHTER");
         std::map<std::string, int> part_fighter_launch_capacities;
-        const ::Condition::ConditionBase* fighter_combat_targets = nullptr;
+        const ::Condition::Condition* fighter_combat_targets = nullptr;
 
         // determine what ship does during combat, based on parts and their meters...
         for (const auto& part_name : design->Parts()) {
@@ -894,7 +894,7 @@ namespace {
             if (!part)
                 continue;
             ShipPartClass part_class = part->Class();
-            const ::Condition::ConditionBase* part_combat_targets = part->CombatTargets();
+            const ::Condition::Condition* part_combat_targets = part->CombatTargets();
 
             // direct weapon and fighter-related parts all handled differently...
             if (part_class == PC_DIRECT_WEAPON) {
@@ -1008,7 +1008,7 @@ namespace {
         std::vector<int> AddFighters(int number, float damage, int owner_empire_id,
                                      int from_ship_id, const std::string& species,
                                      const std::string& fighter_name,
-                                     const Condition::ConditionBase* combat_targets)
+                                     const Condition::Condition* combat_targets)
         {
             std::vector<int> retval;
 
@@ -1336,7 +1336,7 @@ namespace {
         return weapons;
     }
 
-    const Condition::ConditionBase* SpeciesTargettingCondition(const std::shared_ptr<UniverseObject>& attacker) {
+    const Condition::Condition* SpeciesTargettingCondition(const std::shared_ptr<UniverseObject>& attacker) {
         if (!attacker)
             return if_source_is_planet_then_ships_else_all.get();
 

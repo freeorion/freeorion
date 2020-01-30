@@ -67,7 +67,7 @@ Special::Special(const std::string& name, const std::string& description,
                  std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
                  double spawn_rate /*= 1.0*/, int spawn_limit /*= 99999*/,
                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& initial_capaicty /*= nullptr*/,
-                 std::unique_ptr<Condition::ConditionBase>&& location /*= nullptr*/,
+                 std::unique_ptr<Condition::Condition>&& location /*= nullptr*/,
                  const std::string& graphic /*= ""*/) :
     m_name(name),
     m_description(description),

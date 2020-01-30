@@ -10,7 +10,7 @@
 Fighter::Fighter()
 {}
 
-Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, const ::Condition::ConditionBase* combat_targets) :
+Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, const ::Condition::Condition* combat_targets) :
     UniverseObject(),
     m_damage(damage),
     m_launched_from_id(launched_from_id),
@@ -35,7 +35,7 @@ bool Fighter::HostileToEmpire(int empire_id) const
 UniverseObjectType Fighter::ObjectType() const
 { return OBJ_FIGHTER; }
 
-const ::Condition::ConditionBase* Fighter::CombatTargets() const
+const ::Condition::Condition* Fighter::CombatTargets() const
 { return m_combat_targets; }
 
 float Fighter::Damage() const

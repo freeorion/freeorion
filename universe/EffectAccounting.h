@@ -19,7 +19,7 @@ class UniverseObject;
 struct ScriptingContext;
 
 namespace Condition {
-    struct ConditionBase;
+    struct Condition;
 }
 
 namespace Effect {
@@ -145,8 +145,8 @@ namespace Effect {
     * active in the current turn. */
     class FO_COMMON_API EffectsGroup {
     public:
-        EffectsGroup(std::unique_ptr<Condition::ConditionBase>&& scope,
-                    std::unique_ptr<Condition::ConditionBase>&& activation,
+        EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
+                    std::unique_ptr<Condition::Condition>&& activation,
                     std::vector<std::unique_ptr<EffectBase>>&& effects,
                     const std::string& accounting_label = "",
                     const std::string& stacking_group = "", int priority = 0,
@@ -163,8 +163,8 @@ namespace Effect {
                         bool only_generate_sitrep_effects = false) const;
 
         const std::string&              StackingGroup() const       { return m_stacking_group; }
-        Condition::ConditionBase*       Scope() const               { return m_scope.get(); }
-        Condition::ConditionBase*       Activation() const          { return m_activation.get(); }
+        Condition::Condition*       Scope() const               { return m_scope.get(); }
+        Condition::Condition*       Activation() const          { return m_activation.get(); }
         const std::vector<EffectBase*>  EffectsList() const;
         const std::string&              GetDescription() const;
         const std::string&              AccountingLabel() const     { return m_accounting_label; }
@@ -180,8 +180,8 @@ namespace Effect {
         virtual unsigned int            GetCheckSum() const;
 
     protected:
-        std::unique_ptr<Condition::ConditionBase>   m_scope;
-        std::unique_ptr<Condition::ConditionBase>   m_activation;
+        std::unique_ptr<Condition::Condition>   m_scope;
+        std::unique_ptr<Condition::Condition>   m_activation;
         std::string                 m_stacking_group;
         std::vector<std::unique_ptr<EffectBase>>    m_effects;
         std::string                 m_accounting_label;

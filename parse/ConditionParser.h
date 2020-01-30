@@ -13,11 +13,11 @@ namespace Condition {
     enum SortingMethod : int;
     enum ComparisonType : int;
     enum ContentType : int;
-    struct ConditionBase;
+    struct Condition;
 }
 
 namespace parse { namespace detail {
-    using condition_payload        = MovableEnvelope<Condition::ConditionBase>;
+    using condition_payload        = MovableEnvelope<Condition::Condition>;
     using condition_signature      = condition_payload ();
     using condition_parser_rule    = rule<condition_signature>;
     using condition_parser_grammar = grammar<condition_signature>;
