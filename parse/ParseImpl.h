@@ -13,7 +13,7 @@
 
 
 namespace Condition {
-    struct ConditionBase;
+    struct Condition;
 }
 
 namespace Effect {

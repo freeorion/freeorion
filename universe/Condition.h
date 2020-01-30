@@ -28,12 +28,12 @@ enum SearchDomain {
 };
 
 /** The base class for all Conditions. */
-struct FO_COMMON_API ConditionBase {
-    ConditionBase() {}
-    virtual ~ConditionBase();
+struct FO_COMMON_API Condition {
+    Condition() {}
+    virtual ~Condition();
 
-    virtual bool operator==(const ConditionBase& rhs) const;
-    bool operator!=(const ConditionBase& rhs) const
+    virtual bool operator==(const Condition& rhs) const;
+    bool operator!=(const Condition& rhs) const
     { return !(*this == rhs); }
 
     virtual void Eval(const ScriptingContext& parent_context,

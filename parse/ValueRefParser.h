@@ -11,7 +11,7 @@
 #include <boost/spirit/include/phoenix.hpp>
 
 namespace Condition {
-    struct ConditionBase;
+    struct Condition;
 }
 
 namespace parse { namespace detail {
@@ -26,7 +26,7 @@ namespace parse { namespace detail {
     template <typename T>
     using value_ref_grammar = detail::grammar<value_ref_signature<T>>;
 
-    using condition_payload        = MovableEnvelope<Condition::ConditionBase>;
+    using condition_payload        = MovableEnvelope<Condition::Condition>;
     using condition_signature      = condition_payload ();
     using condition_parser_grammar = grammar<condition_signature>;
 

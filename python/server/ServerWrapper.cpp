@@ -210,7 +210,7 @@ namespace {
     //Checks the condition against many objects at once.
     //Checking many systems is more efficient because for example monster fleet plans
     //typically uses WithinStarLaneJumps to exclude placement near empires.
-    list FilterIDsWithCondition(const Condition::ConditionBase* cond, const list &obj_ids) {
+    list FilterIDsWithCondition(const Condition::Condition* cond, const list &obj_ids) {
         list permitted_ids;
 
         Condition::ObjectSet objs;

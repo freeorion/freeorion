@@ -145,7 +145,7 @@ struct FO_COMMON_API Statistic final : public Variable<T>
 {
     Statistic(std::unique_ptr<ValueRefBase<T>>&& value_ref,
               StatisticType stat_type,
-              std::unique_ptr<Condition::ConditionBase>&& sampling_condition);
+              std::unique_ptr<Condition::Condition>&& sampling_condition);
 
     bool        operator==(const ValueRefBase<T>& rhs) const override;
     T           Eval(const ScriptingContext& context) const override;
@@ -160,7 +160,7 @@ struct FO_COMMON_API Statistic final : public Variable<T>
     StatisticType GetStatisticType() const
     { return m_stat_type; }
 
-    const Condition::ConditionBase* GetSamplingCondition() const
+    const Condition::Condition* GetSamplingCondition() const
     { return m_sampling_condition.get(); }
 
     const ValueRefBase<T>* GetValueRef() const
@@ -172,7 +172,7 @@ protected:
     /** Gets the set of objects in the Universe that match the sampling condition. */
     void GetConditionMatches(const ScriptingContext& context,
                              Condition::ObjectSet& condition_targets,
-                             Condition::ConditionBase* condition) const;
+                             Condition::Condition* condition) const;
 
     /** Evaluates the property for the specified objects. */
     void  GetObjectPropertyValues(const ScriptingContext& context,
@@ -184,7 +184,7 @@ protected:
 
 private:
     StatisticType                             m_stat_type;
-    std::unique_ptr<Condition::ConditionBase> m_sampling_condition;
+    std::unique_ptr<Condition::Condition> m_sampling_condition;
     std::unique_ptr<ValueRefBase<T>>          m_value_ref;
 
     friend class boost::serialization::access;
@@ -742,7 +742,7 @@ void Variable<T>::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 template <class T>
 Statistic<T>::Statistic(std::unique_ptr<ValueRefBase<T>>&& value_ref, StatisticType stat_type,
-                        std::unique_ptr<Condition::ConditionBase>&& sampling_condition) :
+                        std::unique_ptr<Condition::Condition>&& sampling_condition) :
     Variable<T>(NON_OBJECT_REFERENCE, ""),
     m_stat_type(stat_type),
     m_sampling_condition(std::move(sampling_condition)),
@@ -778,7 +778,7 @@ bool Statistic<T>::operator==(const ValueRefBase<T>& rhs) const
 template <class T>
 void Statistic<T>::GetConditionMatches(const ScriptingContext& context,
                                        Condition::ObjectSet& condition_targets,
-                                       Condition::ConditionBase* condition) const
+                                       Condition::Condition* condition) const
 {
     condition_targets.clear();
     if (!condition)

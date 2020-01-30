@@ -16,8 +16,8 @@
 namespace parse {
 
     detail::MovableEnvelope<Effect::EffectsGroup> construct_EffectsGroup(
-        const detail::MovableEnvelope<Condition::ConditionBase>& scope,
-        const detail::MovableEnvelope<Condition::ConditionBase>& activation,
+        const detail::MovableEnvelope<Condition::Condition>& scope,
+        const detail::MovableEnvelope<Condition::Condition>& activation,
         const std::vector<detail::effect_payload>& effects,
         const std::string& accounting_label,
         const std::string& stacking_group,

@@ -62,7 +62,7 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     // returns a condition which matches objects with the specififed \a object_types
-    std::unique_ptr<Condition::ConditionBase> ConditionForObjectTypes(
+    std::unique_ptr<Condition::Condition> ConditionForObjectTypes(
         const std::vector<UniverseObjectType>& object_types)
     {
         if (object_types.empty())
@@ -71,7 +71,7 @@ namespace {
         if (object_types.size() == 1)
             return boost::make_unique<Condition::Type>(*object_types.begin());
 
-        std::vector<std::unique_ptr<Condition::ConditionBase>> subconditions;
+        std::vector<std::unique_ptr<Condition::Condition>> subconditions;
         for (auto obj_type : object_types)
             subconditions.emplace_back(boost::make_unique<Condition::Type>(obj_type));
         return boost::make_unique<Condition::Or>(std::move(subconditions));
@@ -398,7 +398,7 @@ namespace {
 
     std::map<std::string, std::string> object_list_cond_description_map;
 
-    const std::string& ConditionClassName(const Condition::ConditionBase* const condition) {
+    const std::string& ConditionClassName(const Condition::Condition* const condition) {
         if (dynamic_cast<const Condition::All* const>(condition))
             return ALL_CONDITION;
         else if (dynamic_cast<const Condition::EmpireAffiliation* const>(condition))
@@ -471,7 +471,7 @@ const GG::X CONDITION_WIDGET_WIDTH(380);
 
 class ConditionWidget : public GG::Control {
 public:
-    ConditionWidget(GG::X x, GG::Y y, const Condition::ConditionBase* initial_condition = nullptr) :
+    ConditionWidget(GG::X x, GG::Y y, const Condition::Condition* initial_condition = nullptr) :
         GG::Control(x, y, CONDITION_WIDGET_WIDTH, GG::Y1, GG::INTERACTIVE)
     {
         if (!initial_condition) {
@@ -495,7 +495,7 @@ public:
     ~ConditionWidget()
     {}
 
-    std::unique_ptr<Condition::ConditionBase> GetCondition() {
+    std::unique_ptr<Condition::Condition> GetCondition() {
         auto row_it = m_class_drop->CurrentItem();
         if (row_it == m_class_drop->end())
             return boost::make_unique<Condition::All>();
@@ -543,19 +543,19 @@ public:
             return boost::make_unique<Condition::HasSpecial>(GetString());
 
         } else if (condition_key == HASGROWTHSPECIAL_CONDITION) {
-            std::vector<std::unique_ptr<Condition::ConditionBase>> operands;
+            std::vector<std::unique_ptr<Condition::Condition>> operands;
             // determine sitrep order
             std::istringstream template_stream(UserString("FUNCTIONAL_GROWTH_SPECIALS_LIST"));
             for (auto stream_it = std::istream_iterator<std::string>(template_stream);
                  stream_it != std::istream_iterator<std::string>(); stream_it++)
             { operands.push_back(boost::make_unique<Condition::HasSpecial>(*stream_it)); }
 
-            std::unique_ptr<Condition::ConditionBase> this_cond = boost::make_unique<Condition::Or>(std::move(operands));
+            std::unique_ptr<Condition::Condition> this_cond = boost::make_unique<Condition::Or>(std::move(operands));
             object_list_cond_description_map[this_cond->Description()] = HASGROWTHSPECIAL_CONDITION;
             return this_cond;
 
         } else if (condition_key == ASTWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_ASTEROIDS ContainedBy And [System Contains PlanetType X]]
-            std::vector<std::unique_ptr<Condition::ConditionBase>> operands1;
+            std::vector<std::unique_ptr<Condition::Condition>> operands1;
             operands1.push_back(boost::make_unique<Condition::Type>(boost::make_unique<ValueRef::Constant<UniverseObjectType>>(OBJ_PLANET)));
             const std::string& text = GetString();
             if (text == UserString("CONDITION_ANY")) {
@@ -565,18 +565,18 @@ public:
             } else {
                 operands1.push_back(boost::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>()));
             }
-            std::vector<std::unique_ptr<Condition::ConditionBase>> operands2;
+            std::vector<std::unique_ptr<Condition::Condition>> operands2;
             operands2.push_back(boost::make_unique<Condition::Type>(boost::make_unique<ValueRef::Constant<UniverseObjectType>>(OBJ_SYSTEM)));
             std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> maintype;
             maintype.push_back(boost::make_unique<ValueRef::Constant<PlanetType>>(PT_ASTEROIDS));
             operands2.push_back(boost::make_unique<Condition::Contains>(boost::make_unique<Condition::PlanetType>(std::move(maintype))));
             operands1.push_back(boost::make_unique<Condition::ContainedBy>(boost::make_unique<Condition::And>(std::move(operands2))));
-            std::unique_ptr<Condition::ConditionBase> this_cond = boost::make_unique<Condition::And>(std::move(operands1));
+            std::unique_ptr<Condition::Condition> this_cond = boost::make_unique<Condition::And>(std::move(operands1));
             object_list_cond_description_map[this_cond->Description()] = ASTWITHPTYPE_CONDITION;
             return this_cond;
 
         } else if (condition_key == GGWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_GASGIANT ContainedBy And [System Contains PlanetType X]]
-            std::vector<std::unique_ptr<Condition::ConditionBase>> operands1;
+            std::vector<std::unique_ptr<Condition::Condition>> operands1;
             const std::string& text = GetString();
             if (text == UserString("CONDITION_ANY")) {
                 std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> copytype;
@@ -584,13 +584,13 @@ public:
                     operands1.push_back(boost::make_unique<Condition::Not>(boost::make_unique<Condition::PlanetType>(std::move(copytype))));
             } else
                 operands1.push_back(boost::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>()));
-            std::vector<std::unique_ptr<Condition::ConditionBase>> operands2;
+            std::vector<std::unique_ptr<Condition::Condition>> operands2;
             operands2.push_back(boost::make_unique<Condition::Type>(boost::make_unique<ValueRef::Constant<UniverseObjectType>>(OBJ_SYSTEM)));
             std::vector<std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>> maintype;
             maintype.push_back(boost::make_unique<ValueRef::Constant<PlanetType>>(PT_GASGIANT));
             operands2.push_back(boost::make_unique<Condition::Contains>(boost::make_unique<Condition::PlanetType>(std::move(maintype))));
             operands1.push_back(boost::make_unique<Condition::ContainedBy>(boost::make_unique<Condition::And>(std::move(operands2))));
-            std::unique_ptr<Condition::ConditionBase> this_cond = boost::make_unique<Condition::And>(std::move(operands1));
+            std::unique_ptr<Condition::Condition> this_cond = boost::make_unique<Condition::And>(std::move(operands1));
             object_list_cond_description_map[this_cond->Description()] = GGWITHPTYPE_CONDITION;
             return this_cond;
 
@@ -779,7 +779,7 @@ private:
     int DropListDropHeight() const
     { return 12; }
 
-    void Init(const Condition::ConditionBase* init_condition) {
+    void Init(const Condition::Condition* init_condition) {
         // fill droplist with basic types of conditions and select appropriate row
         m_class_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
         m_class_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
@@ -1076,12 +1076,12 @@ private:
 class FilterDialog : public CUIWnd {
 public:
     FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>& vis_filters,
-                 const Condition::ConditionBase* const condition_filter);
+                 const Condition::Condition* const condition_filter);
 
     void CompleteConstruction() override;
     bool ChangesAccepted();
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>> GetVisibilityFilters() const;
-    std::unique_ptr<Condition::ConditionBase> GetConditionFilter();
+    std::unique_ptr<Condition::Condition> GetConditionFilter();
 
 protected:
     GG::Rect CalculatePosition() const override;
@@ -1109,7 +1109,7 @@ private:
 
 FilterDialog::FilterDialog(const std::map<UniverseObjectType,
                            std::set<VIS_DISPLAY>>& vis_filters,
-                           const Condition::ConditionBase* const condition_filter) :
+                           const Condition::Condition* const condition_filter) :
     CUIWnd(UserString("FILTERS"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL,
            FILTER_OPTIONS_WND_NAME),
@@ -1219,7 +1219,7 @@ bool FilterDialog::ChangesAccepted()
 std::map<UniverseObjectType, std::set<VIS_DISPLAY>> FilterDialog::GetVisibilityFilters() const
 { return m_vis_filters; }
 
-std::unique_ptr<Condition::ConditionBase> FilterDialog::GetConditionFilter()
+std::unique_ptr<Condition::Condition> FilterDialog::GetConditionFilter()
 { return m_condition_widget->GetCondition(); }
 
 GG::Rect FilterDialog::CalculatePosition() const
@@ -1942,7 +1942,7 @@ public:
     static GG::Y ListRowHeight()
     { return GG::Y(ClientUI::Pts() * 2); }
 
-    const Condition::ConditionBase* const FilterCondition() const
+    const Condition::Condition* const FilterCondition() const
     { return m_filter_condition.get(); }
 
     const std::map<UniverseObjectType, std::set<VIS_DISPLAY>> Visibilities() const
@@ -1975,7 +1975,7 @@ public:
     bool AnythingCollapsed() const
     { return !m_collapsed_objects.empty(); }
 
-    void SetFilterCondition(std::unique_ptr<Condition::ConditionBase>&& condition) {
+    void SetFilterCondition(std::unique_ptr<Condition::Condition>&& condition) {
         m_filter_condition = std::move(condition);
         Refresh();
     }
@@ -2363,7 +2363,7 @@ private:
 
     std::map<int, boost::signals2::connection>          m_object_change_connections;
     std::set<int>                                       m_collapsed_objects;
-    std::unique_ptr<Condition::ConditionBase>           m_filter_condition = nullptr;
+    std::unique_ptr<Condition::Condition>           m_filter_condition = nullptr;
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>> m_visibilities;
     std::shared_ptr<ObjectHeaderRow>                    m_header_row = nullptr;
     boost::signals2::connection                         m_obj_deleted_connection;

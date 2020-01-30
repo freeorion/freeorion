@@ -25,7 +25,7 @@
 // FocusType                                   //
 /////////////////////////////////////////////////
 FocusType::FocusType(const std::string& name, const std::string& description,
-                     std::unique_ptr<Condition::ConditionBase>&& location,
+                     std::unique_ptr<Condition::Condition>&& location,
                      const std::string& graphic) :
     m_name(name),
     m_description(description),
@@ -94,7 +94,7 @@ Species::Species(const SpeciesStrings& strings,
                  const std::string& preferred_focus,
                  const std::map<PlanetType, PlanetEnvironment>& planet_environments,
                  std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-                 std::unique_ptr<Condition::ConditionBase>&& combat_targets,
+                 std::unique_ptr<Condition::Condition>&& combat_targets,
                  const SpeciesParams& params,
                  const std::set<std::string>& tags,
                  const std::string& graphic) :
@@ -136,20 +136,20 @@ void Species::Init() {
             boost::make_unique<ValueRef::Constant<PlanetEnvironment>>( ::PE_UNINHABITABLE));
         auto this_species_name_ref =
             boost::make_unique<ValueRef::Constant<std::string>>(m_name);  // m_name specifies this species
-        auto enviro_cond = std::unique_ptr<Condition::ConditionBase>(
+        auto enviro_cond = std::unique_ptr<Condition::Condition>(
             boost::make_unique<Condition::Not>(
-                std::unique_ptr<Condition::ConditionBase>(
+                std::unique_ptr<Condition::Condition>(
                     boost::make_unique<Condition::PlanetEnvironment>(
                         std::move(environments_vec), std::move(this_species_name_ref)))));
 
-        auto type_cond = std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::Type>(
+        auto type_cond = std::unique_ptr<Condition::Condition>(boost::make_unique<Condition::Type>(
             boost::make_unique<ValueRef::Constant<UniverseObjectType>>( ::OBJ_POP_CENTER)));
 
-        std::vector<std::unique_ptr<Condition::ConditionBase>> operands;
+        std::vector<std::unique_ptr<Condition::Condition>> operands;
         operands.push_back(std::move(enviro_cond));
         operands.push_back(std::move(type_cond));
 
-        m_location = std::unique_ptr<Condition::ConditionBase>(boost::make_unique<Condition::And>(std::move(operands)));
+        m_location = std::unique_ptr<Condition::Condition>(boost::make_unique<Condition::And>(std::move(operands)));
     }
     m_location->SetTopLevelContent(m_name);
 
