@@ -6,7 +6,7 @@
 
 #include <boost/spirit/include/qi_expect.hpp>
 
-#include "universe/ValueRef.h"
+#include "universe/ValueRefs.h"
 #include "parse/Lexer.h"
 
 namespace std {

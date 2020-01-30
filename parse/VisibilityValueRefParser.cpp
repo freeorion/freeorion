@@ -4,7 +4,7 @@
 #include "EnumValueRefRules.h"
 
 #include "../universe/Enums.h"
-#include "../universe/ValueRef.h"
+#include "../universe/ValueRefs.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

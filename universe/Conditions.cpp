@@ -16,7 +16,7 @@
 #include "Species.h"
 #include "Special.h"
 #include "Meter.h"
-#include "ValueRef.h"
+#include "ValueRefs.h"
 #include "Enums.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"

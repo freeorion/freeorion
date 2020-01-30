@@ -4,7 +4,7 @@
 #include "EnumValueRefRules.h"
 
 #include "../universe/Enums.h"
-#include "../universe/ValueRef.h"
+#include "../universe/ValueRefs.h"
 
 namespace parse { namespace detail {
     universe_object_type_parser_rules::universe_object_type_parser_rules(

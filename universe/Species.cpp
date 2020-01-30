@@ -5,7 +5,7 @@
 #include "PopCenter.h"
 #include "Ship.h"
 #include "UniverseObject.h"
-#include "ValueRef.h"
+#include "ValueRefs.h"
 #include "Enums.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"

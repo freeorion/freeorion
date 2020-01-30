@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include "parse/ValueRefParser.h"
-#include "universe/ValueRef.h"
+#include "universe/ValueRefs.h"
 #include "CommonTest.h"
 
 struct ValueRefStringFixture {
