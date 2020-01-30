@@ -173,27 +173,23 @@ struct FO_COMMON_API PlayerSaveGameData : public PlayerSaveHeaderData {
         PlayerSaveHeaderData(),
         m_orders(),
         m_ui_data(),
-        m_save_state_string(),
-        m_ready(false)
+        m_save_state_string()
     {}
 
     PlayerSaveGameData(const std::string& name, int empire_id,
                        const std::shared_ptr<OrderSet>& orders,
                        const std::shared_ptr<SaveGameUIData>& ui_data,
                        const std::string& save_state_string,
-                       Networking::ClientType client_type,
-                       bool ready) :
+                       Networking::ClientType client_type) :
         PlayerSaveHeaderData(name, empire_id, client_type),
         m_orders(orders),
         m_ui_data(ui_data),
-        m_save_state_string(save_state_string),
-        m_ready(ready)
+        m_save_state_string(save_state_string)
     {}
 
     std::shared_ptr<OrderSet>       m_orders;
     std::shared_ptr<SaveGameUIData> m_ui_data;
     std::string                     m_save_state_string;
-    bool                            m_ready;
 
 private:
     friend class boost::serialization::access;
@@ -201,7 +197,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(PlayerSaveGameData, 1);
+BOOST_CLASS_VERSION(PlayerSaveGameData, 2);
 
 /** Data that must be retained by the server when saving and loading a
   * game that isn't player data or the universe */

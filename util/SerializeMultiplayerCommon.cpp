@@ -197,8 +197,9 @@ void PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_ui_data)
         & BOOST_SERIALIZATION_NVP(m_save_state_string)
         & BOOST_SERIALIZATION_NVP(m_client_type);
-    if (version >= 1) {
-        ar & BOOST_SERIALIZATION_NVP(m_ready);
+    if (version == 1) {
+        bool ready;
+        ar & boost::serialization::make_nvp("m_ready", ready);
     }
 }
 
