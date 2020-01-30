@@ -148,7 +148,7 @@
     <ClInclude Include="..\..\universe\UniverseObject.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\ValueRef.h">
+    <ClInclude Include="..\..\universe\ValueRefs.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\util\AppInterface.h">

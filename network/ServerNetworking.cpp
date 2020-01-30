@@ -3,7 +3,7 @@
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
-#include "../universe/ValueRef.h"
+#include "../universe/ValueRefs.h"
 #include "../parse/Parse.h"
 
 //TODO: replace with std::make_unique when transitioning to C++14

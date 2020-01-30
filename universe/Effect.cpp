@@ -8,7 +8,7 @@
 #include "../util/SitRepEntry.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
-#include "ValueRef.h"
+#include "ValueRefs.h"
 #include "Condition.h"
 #include "Pathfinder.h"
 #include "Universe.h"

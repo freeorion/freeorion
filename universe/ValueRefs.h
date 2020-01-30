@@ -1,5 +1,5 @@
-#ifndef _ValueRef_h_
-#define _ValueRef_h_
+#ifndef _ValueRefs_h_
+#define _ValueRefs_h_
 
 #include "ScriptingContext.h"
 #include "ValueRefBase.h"
@@ -2282,4 +2282,4 @@ void Operation<T>::serialize(Archive& ar, const unsigned int version)
 
 } // namespace ValueRef
 
-#endif // _ValueRef_h_
+#endif // _ValueRefs_h_
