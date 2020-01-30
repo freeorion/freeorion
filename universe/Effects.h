@@ -1,5 +1,5 @@
-#ifndef _Effect_h_
-#define _Effect_h_
+#ifndef _Effects_h_
+#define _Effects_h_
 
 #include "EffectAccounting.h"
 
@@ -1264,4 +1264,4 @@ void Conditional::serialize(Archive& ar, const unsigned int version)
 }
 } // namespace Effect
 
-#endif // _Effect_h_
+#endif // _Effects_h_

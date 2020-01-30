@@ -1,6 +1,6 @@
 #include "EffectParser1.h"
 
-#include "../universe/Effect.h"
+#include "../universe/Effects.h"
 #include "../universe/ValueRefs.h"
 #include "../universe/Enums.h"
 

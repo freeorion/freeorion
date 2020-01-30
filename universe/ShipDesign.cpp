@@ -8,7 +8,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "Conditions.h"
-#include "Effect.h"
+#include "Effects.h"
 #include "Planet.h"
 #include "Ship.h"
 #include "Predicates.h"
