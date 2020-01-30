@@ -217,7 +217,7 @@
     <ClInclude Include="..\..\universe\Building.h" />
     <ClInclude Include="..\..\universe\Conditions.h" />
     <ClInclude Include="..\..\universe\Effects.h" />
-    <ClInclude Include="..\..\universe\EffectAccounting.h" />
+    <ClInclude Include="..\..\universe\Effect.h" />
     <ClInclude Include="..\..\universe\Enums.h" />
     <ClInclude Include="..\..\universe\Field.h" />
     <ClInclude Include="..\..\universe\Fleet.h" />

@@ -1,7 +1,7 @@
 #include "Building.h"
 
 #include "Condition.h"
-#include "EffectAccounting.h"
+#include "Effect.h"
 #include "Planet.h"
 #include "Predicates.h"
 #include "Universe.h"

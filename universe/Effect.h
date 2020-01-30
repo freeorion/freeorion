@@ -1,5 +1,5 @@
-#ifndef _Effect_Accounting_h_
-#define _Effect_Accounting_h_
+#ifndef _Effect_h_
+#define _Effect_h_
 
 
 #include "EnumsFwd.h"

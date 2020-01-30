@@ -13,7 +13,7 @@
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 #include "../universe/Enums.h"
-#include "../universe/EffectAccounting.h"
+#include "../universe/Effect.h"
 #include "../universe/Predicates.h"
 #include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"

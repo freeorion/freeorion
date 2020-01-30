@@ -12,7 +12,7 @@
 #include "../Empire/EmpireManager.h"
 #include "IDAllocator.h"
 #include "Building.h"
-#include "EffectAccounting.h"
+#include "Effect.h"
 #include "Fleet.h"
 #include "Planet.h"
 #include "Ship.h"

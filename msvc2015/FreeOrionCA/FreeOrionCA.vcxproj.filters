@@ -230,7 +230,7 @@
     <ClInclude Include="..\..\universe\ObjectMap.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\EffectAccounting.h">
+    <ClInclude Include="..\..\universe\Effect.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\python\CommonWrappers.h">

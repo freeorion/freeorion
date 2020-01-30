@@ -9,7 +9,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Order.h"
 #include "../universe/Building.h"
-#include "../universe/EffectAccounting.h"
+#include "../universe/Effect.h"
 #include "../universe/Planet.h"
 #include "../universe/Enums.h"
 #include "../Empire/Empire.h"

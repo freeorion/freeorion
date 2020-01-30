@@ -1,4 +1,4 @@
-#include "EffectAccounting.h"
+#include "Effect.h"
 
 #include "UniverseObject.h"
 #include "ObjectMap.h"
