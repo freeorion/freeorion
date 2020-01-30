@@ -131,7 +131,7 @@ void Species::Init() {
     if (!m_location) {
         // set up a Condition structure to match popcenters that have
         // (not uninhabitable) environment for this species
-        std::vector<std::unique_ptr<ValueRef::ValueRefBase< ::PlanetEnvironment>>> environments_vec;
+        std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>> environments_vec;
         environments_vec.push_back(
             boost::make_unique<ValueRef::Constant<PlanetEnvironment>>( ::PE_UNINHABITABLE));
         auto this_species_name_ref =

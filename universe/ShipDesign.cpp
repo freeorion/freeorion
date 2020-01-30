@@ -51,7 +51,7 @@ namespace {
     // by the result of evalulating \a increase_vr
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type,
-                  std::unique_ptr<ValueRef::ValueRefBase<double>>&& increase_vr)
+                  std::unique_ptr<ValueRef::ValueRef<double>>&& increase_vr)
     {
         typedef std::vector<std::unique_ptr<Effect::EffectBase>> Effects;
         auto scope = boost::make_unique<Condition::Source>();
@@ -192,8 +192,8 @@ CommonParams::CommonParams() :
     effects()
 {}
 
-CommonParams::CommonParams(std::unique_ptr<ValueRef::ValueRefBase<double>>&& production_cost_,
-                           std::unique_ptr<ValueRef::ValueRefBase<int>>&& production_time_,
+CommonParams::CommonParams(std::unique_ptr<ValueRef::ValueRef<double>>&& production_cost_,
+                           std::unique_ptr<ValueRef::ValueRef<int>>&& production_time_,
                            bool producible_,
                            const std::set<std::string>& tags_,
                            std::unique_ptr<Condition::Condition>&& location_,

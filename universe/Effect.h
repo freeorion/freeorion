@@ -20,7 +20,7 @@ namespace Condition {
 
 namespace ValueRef {
     template <class T>
-    struct ValueRefBase;
+    struct ValueRef;
 }
 
 namespace Effect {
@@ -49,7 +49,7 @@ class FO_COMMON_API SetMeter final : public EffectBase {
 public:
 
     SetMeter(MeterType meter,
-             std::unique_ptr<ValueRef::ValueRefBase<double>>&& value,
+             std::unique_ptr<ValueRef::ValueRef<double>>&& value,
              const boost::optional<std::string>& accounting_label = boost::none);
 
     void Execute(const ScriptingContext& context) const override;
@@ -74,7 +74,7 @@ public:
 
 private:
     MeterType m_meter;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_value;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_value;
     std::string m_accounting_label;
 
     friend class boost::serialization::access;
@@ -93,8 +93,8 @@ public:
     /** Affects the \a meter_type meter that belongs to part(s) named \a
         part_name. */
     SetShipPartMeter(MeterType meter_type,
-                     std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& part_name,
-                     std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
+                     std::unique_ptr<ValueRef::ValueRef<std::string>>&& part_name,
+                     std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
     void Execute(const ScriptingContext& context) const override;
     void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
@@ -110,14 +110,14 @@ public:
     std::string     Dump(unsigned short ntabs = 0) const override;
     bool            IsMeterEffect() const override { return true; }
     void            SetTopLevelContent(const std::string& content_name) override;
-    const           ValueRef::ValueRefBase<std::string>* GetPartName() const { return m_part_name.get(); }
+    const           ValueRef::ValueRef<std::string>* GetPartName() const { return m_part_name.get(); }
     MeterType       GetMeterType() const { return m_meter; }
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_part_name;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_part_name;
     MeterType                                               m_meter;
-    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_value;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -129,10 +129,10 @@ private:
   * does nothing. */
 class FO_COMMON_API SetEmpireMeter final : public EffectBase {
 public:
-    SetEmpireMeter(const std::string& meter, std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
+    SetEmpireMeter(const std::string& meter, std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
-    SetEmpireMeter(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id, const std::string& meter,
-                   std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
+    SetEmpireMeter(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id, const std::string& meter,
+                   std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
     void Execute(const ScriptingContext& context) const override;
     void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
@@ -152,9 +152,9 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<int>>    m_empire_id;
+    std::unique_ptr<ValueRef::ValueRef<int>>    m_empire_id;
     std::string                                     m_meter;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_value;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -166,10 +166,10 @@ private:
 class FO_COMMON_API SetEmpireStockpile final : public EffectBase {
 public:
     SetEmpireStockpile(ResourceType stockpile,
-                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
-    SetEmpireStockpile(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
+                       std::unique_ptr<ValueRef::ValueRef<double>>&& value);
+    SetEmpireStockpile(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
                        ResourceType stockpile,
-                       std::unique_ptr<ValueRef::ValueRefBase<double>>&& value);
+                       std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -177,9 +177,9 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<int>>    m_empire_id;
+    std::unique_ptr<ValueRef::ValueRef<int>>    m_empire_id;
     ResourceType                                    m_stockpile;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_value;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -192,7 +192,7 @@ private:
 class FO_COMMON_API SetEmpireCapital final : public EffectBase {
 public:
     explicit SetEmpireCapital();
-    explicit SetEmpireCapital(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
+    explicit SetEmpireCapital(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
 
     void            Execute(const ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -200,7 +200,7 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
+    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -213,7 +213,7 @@ private:
     SZ_GASGIANT, respectively. */
 class FO_COMMON_API SetPlanetType final : public EffectBase {
 public:
-    explicit SetPlanetType(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&& type);
+    explicit SetPlanetType(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -221,7 +221,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<PlanetType>> m_type;
+    std::unique_ptr<ValueRef::ValueRef<PlanetType>> m_type;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -235,7 +235,7 @@ private:
   * or PT_GASGIANT, respectively. */
 class FO_COMMON_API SetPlanetSize final : public EffectBase {
 public:
-    explicit SetPlanetSize(std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>&& size);
+    explicit SetPlanetSize(std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& size);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -243,7 +243,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>> m_size;
+    std::unique_ptr<ValueRef::ValueRef<PlanetSize>> m_size;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -254,7 +254,7 @@ private:
   * and ships, but has no effect on other objects. */
 class FO_COMMON_API SetSpecies final : public EffectBase {
 public:
-    explicit SetSpecies(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species);
+    explicit SetSpecies(std::unique_ptr<ValueRef::ValueRef<std::string>>&& species);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -262,7 +262,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_species_name;
+    std::unique_ptr<ValueRef::ValueRef<std::string>> m_species_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -273,7 +273,7 @@ private:
   * \a empire_id was already the owner of the target object. */
 class FO_COMMON_API SetOwner final : public EffectBase {
 public:
-    explicit SetOwner(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id);
+    explicit SetOwner(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -281,7 +281,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
+    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -292,9 +292,9 @@ private:
   * \a opinion */
 class FO_COMMON_API SetSpeciesEmpireOpinion final : public EffectBase {
 public:
-    SetSpeciesEmpireOpinion(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
-                            std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
-                            std::unique_ptr<ValueRef::ValueRefBase<double>>&& opinion);
+    SetSpeciesEmpireOpinion(std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
+                            std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                            std::unique_ptr<ValueRef::ValueRef<double>>&& opinion);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -302,9 +302,9 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_species_name;
-    std::unique_ptr<ValueRef::ValueRefBase<int>>            m_empire_id;
-    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_opinion;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_species_name;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_opinion;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -315,9 +315,9 @@ private:
   * \a rated_species to \a opinion */
 class FO_COMMON_API SetSpeciesSpeciesOpinion final : public EffectBase {
 public:
-    SetSpeciesSpeciesOpinion(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& opinionated_species_name,
-                             std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& rated_species_name,
-                             std::unique_ptr<ValueRef::ValueRefBase<double>>&& opinion);
+    SetSpeciesSpeciesOpinion(std::unique_ptr<ValueRef::ValueRef<std::string>>&& opinionated_species_name,
+                             std::unique_ptr<ValueRef::ValueRef<std::string>>&& rated_species_name,
+                             std::unique_ptr<ValueRef::ValueRef<double>>&& opinion);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -325,9 +325,9 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_opinionated_species_name;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_rated_species_name;
-    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_opinion;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_opinionated_species_name;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_rated_species_name;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_opinion;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -338,9 +338,9 @@ private:
   * specified \a location_id */
 class FO_COMMON_API CreatePlanet final : public EffectBase {
 public:
-    CreatePlanet(std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>&& type,
-                 std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>&& size,
-                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+    CreatePlanet(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type,
+                 std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& size,
+                 std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                  std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
@@ -349,9 +349,9 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<PlanetType>>     m_type;
-    std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>>     m_size;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_name;
+    std::unique_ptr<ValueRef::ValueRef<PlanetType>>     m_type;
+    std::unique_ptr<ValueRef::ValueRef<PlanetSize>>     m_size;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
     std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
@@ -362,8 +362,8 @@ private:
 /** Creates a new Building with specified \a type on the \a target Planet. */
 class FO_COMMON_API CreateBuilding final : public EffectBase {
 public:
-    CreateBuilding(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& building_type_name,
-                   std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+    CreateBuilding(std::unique_ptr<ValueRef::ValueRef<std::string>>&& building_type_name,
+                   std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                    std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
@@ -372,8 +372,8 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_building_type_name;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_name;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_building_type_name;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
     std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
@@ -386,16 +386,16 @@ private:
   * empire with the specified \a empire_id */
 class FO_COMMON_API CreateShip final : public EffectBase {
 public:
-    CreateShip(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& predefined_ship_design_name,
-               std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
-               std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
-               std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
+    CreateShip(std::unique_ptr<ValueRef::ValueRef<std::string>>&& predefined_ship_design_name,
+               std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+               std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
+               std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_name,
                std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
-    CreateShip(std::unique_ptr<ValueRef::ValueRefBase<int>>&& ship_design_id,
-               std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
-               std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& species_name,
-               std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& ship_name,
+    CreateShip(std::unique_ptr<ValueRef::ValueRef<int>>&& ship_design_id,
+               std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+               std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
+               std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_name,
                std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
@@ -404,11 +404,11 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_design_name;
-    std::unique_ptr<ValueRef::ValueRefBase<int>>            m_design_id;
-    std::unique_ptr<ValueRef::ValueRefBase<int>>            m_empire_id;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_species_name;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_name;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_design_name;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_design_id;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_species_name;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
     std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
@@ -420,16 +420,16 @@ private:
   * of the specified \a size. */
 class FO_COMMON_API CreateField final : public EffectBase {
 public:
-    CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& field_type_name,
-                         std::unique_ptr<ValueRef::ValueRefBase<double>>&& size,
-                         std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+    CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& field_type_name,
+                         std::unique_ptr<ValueRef::ValueRef<double>>&& size,
+                         std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                          std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
-    CreateField(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& field_type_name,
-                std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
-                std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
-                std::unique_ptr<ValueRef::ValueRefBase<double>>&& size,
-                std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+    CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& field_type_name,
+                std::unique_ptr<ValueRef::ValueRef<double>>&& x,
+                std::unique_ptr<ValueRef::ValueRef<double>>&& y,
+                std::unique_ptr<ValueRef::ValueRef<double>>&& size,
+                std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                 std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
@@ -438,11 +438,11 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_field_type_name;
-    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_x;
-    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_y;
-    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_size;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_name;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_field_type_name;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_x;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_y;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_size;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
     std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
@@ -454,15 +454,15 @@ private:
   * location. */
 class FO_COMMON_API CreateSystem final : public EffectBase {
 public:
-    CreateSystem(std::unique_ptr<ValueRef::ValueRefBase< ::StarType>>&& type,
-                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
-                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
-                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+    CreateSystem(std::unique_ptr<ValueRef::ValueRef< ::StarType>>&& type,
+                 std::unique_ptr<ValueRef::ValueRef<double>>&& x,
+                 std::unique_ptr<ValueRef::ValueRef<double>>&& y,
+                 std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                  std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
-    CreateSystem(std::unique_ptr<ValueRef::ValueRefBase<double>>&& x,
-                 std::unique_ptr<ValueRef::ValueRefBase<double>>&& y,
-                 std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
+    CreateSystem(std::unique_ptr<ValueRef::ValueRef<double>>&& x,
+                 std::unique_ptr<ValueRef::ValueRef<double>>&& y,
+                 std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                  std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
@@ -471,10 +471,10 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase< ::StarType>>    m_type;
-    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_x;
-    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_y;
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_name;
+    std::unique_ptr<ValueRef::ValueRef< ::StarType>>    m_type;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_x;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_y;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
     std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
@@ -506,19 +506,19 @@ private:
 class FO_COMMON_API AddSpecial final : public EffectBase {
 public:
     explicit AddSpecial(const std::string& name, float capacity = 1.0f);
-    explicit AddSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name,
-                        std::unique_ptr<ValueRef::ValueRefBase<double>>&& capacity = nullptr);
+    explicit AddSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+                        std::unique_ptr<ValueRef::ValueRef<double>>&& capacity = nullptr);
 
     void Execute(const ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
-    const ValueRef::ValueRefBase<std::string>* GetSpecialName() const { return m_name.get(); }
+    const ValueRef::ValueRef<std::string>* GetSpecialName() const { return m_name.get(); }
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_capacity;
+    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_capacity;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -530,7 +530,7 @@ private:
 class FO_COMMON_API RemoveSpecial final : public EffectBase {
 public:
     explicit RemoveSpecial(const std::string& name);
-    explicit RemoveSpecial(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name);
+    explicit RemoveSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -538,7 +538,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
+    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -587,7 +587,7 @@ private:
   * non-System targets. */
 class FO_COMMON_API SetStarType final : public EffectBase {
 public:
-    explicit SetStarType(std::unique_ptr<ValueRef::ValueRefBase<StarType>>&& type);
+    explicit SetStarType(std::unique_ptr<ValueRef::ValueRef<StarType>>&& type);
 
     void            Execute(const ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -595,7 +595,7 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<StarType>> m_type;
+    std::unique_ptr<ValueRef::ValueRef<StarType>> m_type;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -628,11 +628,11 @@ private:
   * rotation.*/
 class FO_COMMON_API MoveInOrbit final : public EffectBase {
 public:
-    MoveInOrbit(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
+    MoveInOrbit(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
                 std::unique_ptr<Condition::Condition>&& focal_point_condition);
-    MoveInOrbit(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
-                std::unique_ptr<ValueRef::ValueRefBase<double>>&& focus_x = nullptr,
-                std::unique_ptr<ValueRef::ValueRefBase<double>>&& focus_y = nullptr);
+    MoveInOrbit(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
+                std::unique_ptr<ValueRef::ValueRef<double>>&& focus_x = nullptr,
+                std::unique_ptr<ValueRef::ValueRef<double>>&& focus_y = nullptr);
 
     void            Execute(const ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -640,10 +640,10 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_speed;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_speed;
     std::unique_ptr<Condition::Condition>       m_focal_point_condition;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_focus_x;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_focus_y;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_focus_x;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_focus_y;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -654,11 +654,11 @@ private:
   * position on the map. */
 class FO_COMMON_API MoveTowards final : public EffectBase {
 public:
-    MoveTowards(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
+    MoveTowards(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
                 std::unique_ptr<Condition::Condition>&& dest_condition);
-    MoveTowards(std::unique_ptr<ValueRef::ValueRefBase<double>>&& speed,
-                std::unique_ptr<ValueRef::ValueRefBase<double>>&& dest_x = nullptr,
-                std::unique_ptr<ValueRef::ValueRefBase<double>>&& dest_y = nullptr);
+    MoveTowards(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
+                std::unique_ptr<ValueRef::ValueRef<double>>&& dest_x = nullptr,
+                std::unique_ptr<ValueRef::ValueRef<double>>&& dest_y = nullptr);
 
     void            Execute(const ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -666,10 +666,10 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_speed;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_speed;
     std::unique_ptr<Condition::Condition>       m_dest_condition;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_dest_x;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_dest_y;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_dest_x;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_dest_y;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -719,7 +719,7 @@ private:
   * target object has multiple owners, nothing is done. */
 class FO_COMMON_API Victory final : public EffectBase {
 public:
-    explicit Victory(const std::string& reason_string); // TODO: Make this a ValueRefBase<std::string>*
+    explicit Victory(const std::string& reason_string); // TODO: Make this a ValueRef<std::string>*
 
     void            Execute(const ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -738,9 +738,9 @@ private:
   * progress towards that tech has been completed. */
 class FO_COMMON_API SetEmpireTechProgress final : public EffectBase {
 public:
-    SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
-                          std::unique_ptr<ValueRef::ValueRefBase<double>>&& research_progress,
-                          std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr);
+    SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRef<std::string>>&& tech_name,
+                          std::unique_ptr<ValueRef::ValueRef<double>>&& research_progress,
+                          std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr);
 
     void            Execute(const ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -748,9 +748,9 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_tech_name;
-    std::unique_ptr<ValueRef::ValueRefBase<double>>         m_research_progress;
-    std::unique_ptr<ValueRef::ValueRefBase<int>>            m_empire_id;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_tech_name;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_research_progress;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -759,8 +759,8 @@ private:
 
 class FO_COMMON_API GiveEmpireTech final : public EffectBase {
 public:
-    explicit GiveEmpireTech(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& tech_name,
-                            std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr);
+    explicit GiveEmpireTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& tech_name,
+                            std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr);
 
     void            Execute(const ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -768,8 +768,8 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<std::string>>    m_tech_name;
-    std::unique_ptr<ValueRef::ValueRefBase<int>>            m_empire_id;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_tech_name;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -785,11 +785,11 @@ private:
 class FO_COMMON_API GenerateSitRepMessage final : public EffectBase {
 public:
     using MessageParams =  std::vector<std::pair<
-        std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>>;
+        std::string, std::unique_ptr<ValueRef::ValueRef<std::string>>>>;
 
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           MessageParams&& message_parameters,
-                          std::unique_ptr<ValueRef::ValueRefBase<int>>&& recipient_empire_id,
+                          std::unique_ptr<ValueRef::ValueRef<int>>&& recipient_empire_id,
                           EmpireAffiliationType affiliation,
                           const std::string label = "",
                           bool stringtable_lookup = true);
@@ -812,9 +812,9 @@ public:
     const std::string&  MessageString() const               { return m_message_string; }
     const std::string&  Icon() const                        { return m_icon; }
 
-    std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>* >> MessageParameters() const;
+    std::vector<std::pair<std::string, ValueRef::ValueRef<std::string>* >> MessageParameters() const;
 
-    ValueRef::ValueRefBase<int>*    RecipientID() const     { return m_recipient_empire_id.get(); }
+    ValueRef::ValueRef<int>*    RecipientID() const     { return m_recipient_empire_id.get(); }
     Condition::Condition*       GetCondition() const    { return m_condition.get(); }
     EmpireAffiliationType           Affiliation() const     { return m_affiliation; }
     unsigned int                    GetCheckSum() const override;
@@ -822,9 +822,9 @@ public:
 private:
     std::string             m_message_string;
     std::string             m_icon;
-    std::vector<std::pair<std::string, std::unique_ptr<ValueRef::ValueRefBase<std::string>>>>
+    std::vector<std::pair<std::string, std::unique_ptr<ValueRef::ValueRef<std::string>>>>
                             m_message_parameters;
-    std::unique_ptr<ValueRef::ValueRefBase<int>>
+    std::unique_ptr<ValueRef::ValueRef<int>>
                             m_recipient_empire_id;
     std::unique_ptr<Condition::Condition>
                             m_condition;
@@ -840,8 +840,8 @@ private:
 /** Applies an overlay texture to Systems. */
 class FO_COMMON_API SetOverlayTexture final : public EffectBase {
 public:
-    SetOverlayTexture(const std::string& texture, std::unique_ptr<ValueRef::ValueRefBase<double>>&& size);
-    SetOverlayTexture(const std::string& texture, ValueRef::ValueRefBase<double>* size);
+    SetOverlayTexture(const std::string& texture, std::unique_ptr<ValueRef::ValueRef<double>>&& size);
+    SetOverlayTexture(const std::string& texture, ValueRef::ValueRef<double>* size);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -851,7 +851,7 @@ public:
 
 private:
     std::string m_texture;
-    std::unique_ptr<ValueRef::ValueRefBase<double>> m_size;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_size;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -882,19 +882,19 @@ private:
   * visibility mechanics. */
 class FO_COMMON_API SetVisibility final : public EffectBase {
 public:
-    SetVisibility(std::unique_ptr<ValueRef::ValueRefBase<Visibility>> vis,
+    SetVisibility(std::unique_ptr<ValueRef::ValueRef<Visibility>> vis,
                   EmpireAffiliationType affiliation,
-                  std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id = nullptr,
+                  std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr,
                   std::unique_ptr<Condition::Condition>&& of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
 
-    ValueRef::ValueRefBase<Visibility>* GetVisibility() const
+    ValueRef::ValueRef<Visibility>* GetVisibility() const
     { return m_vis.get(); }
 
-    ValueRef::ValueRefBase<int>* EmpireID() const
+    ValueRef::ValueRef<int>* EmpireID() const
     { return m_empire_id.get(); }
 
     EmpireAffiliationType Affiliation() const
@@ -906,8 +906,8 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRefBase<Visibility>> m_vis;
-    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
+    std::unique_ptr<ValueRef::ValueRef<Visibility>> m_vis;
+    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
     EmpireAffiliationType m_affiliation;
     std::unique_ptr<Condition::Condition> m_condition;
 

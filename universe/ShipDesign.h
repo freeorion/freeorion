@@ -35,7 +35,7 @@ namespace Effect {
 }
 namespace ValueRef {
     template <typename T>
-    struct ValueRefBase;
+    struct ValueRef;
 }
 class Empire;
 
@@ -43,11 +43,11 @@ class Empire;
   * storage for parsing to reduce number of sub-items parsed per item. */
 struct FO_COMMON_API CommonParams {
     template <typename T>
-    using ConsumptionMap = std::map<T, std::pair<std::unique_ptr<ValueRef::ValueRefBase<double>>,
+    using ConsumptionMap = std::map<T, std::pair<std::unique_ptr<ValueRef::ValueRef<double>>,
                                                  std::unique_ptr<Condition::Condition>>>;
     CommonParams();
-    CommonParams(std::unique_ptr<ValueRef::ValueRefBase<double>>&& production_cost_,
-                 std::unique_ptr<ValueRef::ValueRefBase<int>>&& production_time_,
+    CommonParams(std::unique_ptr<ValueRef::ValueRef<double>>&& production_cost_,
+                 std::unique_ptr<ValueRef::ValueRef<int>>&& production_time_,
                  bool producible_,
                  const std::set<std::string>& tags_,
                  std::unique_ptr<Condition::Condition>&& location_,
@@ -57,8 +57,8 @@ struct FO_COMMON_API CommonParams {
                  std::unique_ptr<Condition::Condition>&& enqueue_location_);
     ~CommonParams();
 
-    std::unique_ptr<ValueRef::ValueRefBase<double>> production_cost;
-    std::unique_ptr<ValueRef::ValueRefBase<int>>    production_time;
+    std::unique_ptr<ValueRef::ValueRef<double>> production_cost;
+    std::unique_ptr<ValueRef::ValueRef<int>>    production_time;
     bool                                            producible;
     std::set<std::string>                           tags;
     ConsumptionMap<MeterType>                       production_meter_consumption;
@@ -152,8 +152,8 @@ private:
     float           m_secondary_stat = 0.0f;    // damage for a hangar bay, shots per turn for a weapon, etc.
     bool            m_producible = false;
 
-    std::unique_ptr<ValueRef::ValueRefBase<double>>     m_production_cost;
-    std::unique_ptr<ValueRef::ValueRefBase<int>>        m_production_time;
+    std::unique_ptr<ValueRef::ValueRef<double>>     m_production_cost;
+    std::unique_ptr<ValueRef::ValueRef<int>>        m_production_time;
     std::vector<ShipSlotType>                           m_mountable_slot_types;
     std::set<std::string>                               m_tags;
     CommonParams::ConsumptionMap<MeterType>             m_production_meter_consumption;
@@ -340,8 +340,8 @@ private:
     float       m_stealth = 0.0f;
     float       m_structure = 0.0f;
 
-    std::unique_ptr<ValueRef::ValueRefBase<double>>     m_production_cost;
-    std::unique_ptr<ValueRef::ValueRefBase<int>>        m_production_time;
+    std::unique_ptr<ValueRef::ValueRef<double>>     m_production_cost;
+    std::unique_ptr<ValueRef::ValueRef<int>>        m_production_time;
     bool                                                m_producible = false;
     std::vector<Slot>                                   m_slots;
     std::set<std::string>                               m_tags;

@@ -12,12 +12,12 @@ namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
     using PassedMessageParams =  std::vector<std::pair<std::string,
-        MovableEnvelope<ValueRef::ValueRefBase<std::string>>>>;
+        MovableEnvelope<ValueRef::ValueRef<std::string>>>>;
 
     effect_payload construct_GenerateSitRepMessage1(
         const std::string& message_string, const std::string& icon,
         const PassedMessageParams& message_parameters,
-        const MovableEnvelope<ValueRef::ValueRefBase<int>>& recipient_empire_id,
+        const MovableEnvelope<ValueRef::ValueRef<int>>& recipient_empire_id,
         EmpireAffiliationType affiliation,
         const std::string label,
         bool stringtable_lookup,

@@ -18,7 +18,7 @@ namespace Condition {
 }
 namespace ValueRef {
     template <typename T>
-    struct ValueRefBase;
+    struct ValueRef;
 }
 
 /** A Building UniverseObject type. */
@@ -106,8 +106,8 @@ public:
     float                           PerTurnCost(int empire_id, int location_id) const;      ///< returns the maximum number of production points per turn that can be spend on this building
     int                             ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to build this building at this location by this empire
 
-    const ValueRef::ValueRefBase<double>* Cost() const      { return m_production_cost.get(); }   ///< returns the ValueRef that determines ProductionCost()
-    const ValueRef::ValueRefBase<int>*    Time() const      { return m_production_time.get(); }   ///< returns the ValueRef that determines ProductionTime()
+    const ValueRef::ValueRef<double>* Cost() const      { return m_production_cost.get(); }   ///< returns the ValueRef that determines ProductionCost()
+    const ValueRef::ValueRef<int>*    Time() const      { return m_production_time.get(); }   ///< returns the ValueRef that determines ProductionTime()
 
     bool                            Producible() const      { return m_producible; }        ///< returns whether this building type is producible by players and appears on the production screen
 
@@ -160,8 +160,8 @@ private:
 
     std::string                                         m_name;
     std::string                                         m_description;
-    std::unique_ptr<ValueRef::ValueRefBase<double>>     m_production_cost;
-    std::unique_ptr<ValueRef::ValueRefBase<int>>        m_production_time;
+    std::unique_ptr<ValueRef::ValueRef<double>>     m_production_cost;
+    std::unique_ptr<ValueRef::ValueRef<int>>        m_production_time;
     bool                                                m_producible;
     CaptureResult                                       m_capture_result;
     std::set<std::string>                               m_tags;

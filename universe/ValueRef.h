@@ -11,14 +11,14 @@ namespace ValueRef {
 /** The base class for all ValueRef classes.  This class provides the public
   * interface for a ValueRef expression tree. */
 template <class T>
-struct FO_COMMON_API ValueRefBase
+struct FO_COMMON_API ValueRef
 {
-    virtual ~ValueRefBase()
+    virtual ~ValueRef()
     {}
 
-    virtual bool operator==(const ValueRefBase<T>& rhs) const;
+    virtual bool operator==(const ValueRef<T>& rhs) const;
 
-    bool operator!=(const ValueRefBase<T>& rhs) const
+    bool operator!=(const ValueRef<T>& rhs) const
     { return !(*this == rhs); }
 
     /** Evaluates the expression tree with an empty context.  Useful for

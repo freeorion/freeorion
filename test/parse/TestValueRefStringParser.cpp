@@ -16,7 +16,7 @@ struct ValueRefStringFixture {
         delete result;
     }
 
-    bool parse(std::string phrase, ValueRef::ValueRefBase<std::string>*& result) {
+    bool parse(std::string phrase, ValueRef::ValueRef<std::string>*& result) {
         const parse::lexer& lexer = lexer.instance();
         boost::spirit::qi::in_state_type in_state;
         boost::spirit::qi::eoi_type eoi;
@@ -45,7 +45,7 @@ struct ValueRefStringFixture {
     static const std::array<std::string, 3> containerTypes;
     static const std::array<std::string, 13> attributes;
 
-    ValueRef::ValueRefBase<std::string>* result;
+    ValueRef::ValueRef<std::string>* result;
     const ValueRef::Constant<std::string>* value;
     const ValueRef::Statistic<std::string>* statistic;
     const ValueRef::Variable<std::string>* variable;

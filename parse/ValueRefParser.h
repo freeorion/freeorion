@@ -18,7 +18,7 @@ namespace parse { namespace detail {
     // TODO: Investigate refactoring ValueRef to use variant,
     // for increased locality of reference.
     template <typename T>
-    using value_ref_payload = MovableEnvelope<ValueRef::ValueRefBase<T>>;
+    using value_ref_payload = MovableEnvelope<ValueRef::ValueRef<T>>;
     template <typename T>
     using value_ref_signature = value_ref_payload<T> ();
     template <typename T>

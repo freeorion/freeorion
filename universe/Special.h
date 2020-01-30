@@ -22,7 +22,7 @@ namespace Condition {
 }
 namespace ValueRef {
     template <typename T>
-    struct ValueRefBase;
+    struct ValueRef;
 }
 
 /** A predefined set of EffectsGroups that can be attached to a UniverseObject
@@ -34,10 +34,10 @@ class FO_COMMON_API Special {
 public:
     /** \name Structors */ //@{
     Special(const std::string& name, const std::string& description,
-            std::unique_ptr<ValueRef::ValueRefBase<double>>&& stealth,
+            std::unique_ptr<ValueRef::ValueRef<double>>&& stealth,
             std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
             double spawn_rate = 1.0, int spawn_limit = 99999,
-            std::unique_ptr<ValueRef::ValueRefBase<double>>&& initial_capaicty = nullptr,
+            std::unique_ptr<ValueRef::ValueRef<double>>&& initial_capaicty = nullptr,
             std::unique_ptr<Condition::Condition>&& location = nullptr,
             const std::string& graphic = "");
 
@@ -48,7 +48,7 @@ public:
     const std::string&                      Name() const        { return m_name; }          ///< returns the unique name for this type of special
     std::string                             Description() const;                            ///< returns a text description of this type of special
     std::string                             Dump(unsigned short ntabs = 0) const;           ///< returns a data file format representation of this object
-    const ValueRef::ValueRefBase<double>*   Stealth() const     { return m_stealth.get(); } ///< returns the stealth of the special, which determines how easily it is seen by empires
+    const ValueRef::ValueRef<double>*   Stealth() const     { return m_stealth.get(); } ///< returns the stealth of the special, which determines how easily it is seen by empires
 
     /** Returns the EffectsGroups that encapsulate the effects that specials of
         this type have. */
@@ -57,7 +57,7 @@ public:
 
     float                                   SpawnRate() const       { return m_spawn_rate; }
     int                                     SpawnLimit() const      { return m_spawn_limit; }
-    const ValueRef::ValueRefBase<double>*   InitialCapacity() const { return m_initial_capacity.get(); }///< returns the ValueRef to use to set the initial capacity of the special when placed
+    const ValueRef::ValueRef<double>*   InitialCapacity() const { return m_initial_capacity.get(); }///< returns the ValueRef to use to set the initial capacity of the special when placed
     float                                   InitialCapacity(int object_id) const;                       ///< evaluates initial apacity ValueRef using the object with specified \a object_id as the object on which the special will be placed
     const Condition::Condition*         Location() const        { return m_location.get(); }        ///< returns the condition that determines whether an UniverseObject can have this special applied during universe creation
     const std::string&                      Graphic() const         { return m_graphic; };              ///< returns the name of the grapic file for this special
@@ -76,11 +76,11 @@ private:
 
     std::string                                         m_name = "";
     std::string                                         m_description = "";
-    std::unique_ptr<ValueRef::ValueRefBase<double>>     m_stealth;
+    std::unique_ptr<ValueRef::ValueRef<double>>     m_stealth;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     float                                               m_spawn_rate = 0.0f;
     int                                                 m_spawn_limit = 99999;
-    std::unique_ptr<ValueRef::ValueRefBase<double>>     m_initial_capacity;
+    std::unique_ptr<ValueRef::ValueRef<double>>     m_initial_capacity;
     std::unique_ptr<Condition::Condition>           m_location;
     std::string                                         m_graphic ="";
 
