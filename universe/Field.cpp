@@ -21,7 +21,7 @@
 namespace {
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, double increase) {
-        typedef std::vector<std::unique_ptr<Effect::EffectBase>> Effects;
+        typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
         auto scope = boost::make_unique<Condition::Source>();
         std::unique_ptr<Condition::Source> activation = nullptr;
         auto vr =

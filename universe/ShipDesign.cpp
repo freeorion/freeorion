@@ -53,7 +53,7 @@ namespace {
     IncreaseMeter(MeterType meter_type,
                   std::unique_ptr<ValueRef::ValueRef<double>>&& increase_vr)
     {
-        typedef std::vector<std::unique_ptr<Effect::EffectBase>> Effects;
+        typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
         auto scope = boost::make_unique<Condition::Source>();
         auto activation = boost::make_unique<Condition::Source>();
 
@@ -107,7 +107,7 @@ namespace {
     IncreaseMeter(MeterType meter_type, const std::string& part_name,
                   float increase, bool allow_stacking = true)
     {
-        typedef std::vector<std::unique_ptr<Effect::EffectBase>> Effects;
+        typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
         auto scope = boost::make_unique<Condition::Source>();
         auto activation = boost::make_unique<Condition::Source>();
 
