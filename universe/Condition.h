@@ -1,5 +1,5 @@
-#ifndef _ConditionBase_h_
-#define _ConditionBase_h_
+#ifndef _Condition_h_
+#define _Condition_h_
 
 #include "../util/Export.h"
 
@@ -105,4 +105,4 @@ private:
 
 }
 
-#endif // _ConditionBase_h_
+#endif // _Condition_h_

@@ -8,7 +8,7 @@
 
 #include "../universe/Building.h"
 #include "../universe/Enums.h"
-#include "../universe/ConditionBase.h"
+#include "../universe/Condition.h"
 #include "../universe/ValueRefBase.h"
 
 //TODO: replace with std::make_unique when transitioning to C++14

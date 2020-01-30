@@ -1,6 +1,6 @@
 #include "Building.h"
 
-#include "ConditionBase.h"
+#include "Condition.h"
 #include "EffectAccounting.h"
 #include "Planet.h"
 #include "Predicates.h"

@@ -13,7 +13,7 @@
 #include "System.h"
 #include "Species.h"
 #include "Enums.h"
-#include "ConditionBase.h"
+#include "Condition.h"
 
 #include <limits>
 

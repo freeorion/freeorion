@@ -3,7 +3,7 @@
 
 
 #include "EnumsFwd.h"
-#include "ConditionBase.h"
+#include "Condition.h"
 
 #include "../util/Export.h"
 #include "../util/CheckSums.h"

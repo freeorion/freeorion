@@ -10,7 +10,7 @@
 #include "ConditionParserImpl.h"
 #include "CommonParamsParser.h"
 
-#include "../universe/ConditionBase.h"
+#include "../universe/Condition.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/ValueRefBase.h"
 

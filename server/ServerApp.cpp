@@ -7,7 +7,7 @@
 #include "../combat/CombatLogManager.h"
 #include "../parse/Parse.h"
 #include "../universe/Building.h"
-#include "../universe/ConditionBase.h"
+#include "../universe/Condition.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"

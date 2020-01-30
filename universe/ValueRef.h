@@ -3,7 +3,7 @@
 
 #include "ScriptingContext.h"
 #include "ValueRefBase.h"
-#include "ConditionBase.h"
+#include "Condition.h"
 #include "Universe.h"
 #include "../util/Export.h"
 #include "../util/i18n.h"
