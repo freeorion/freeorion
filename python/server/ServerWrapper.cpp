@@ -1,6 +1,6 @@
 #include "ServerWrapper.h"
 
-#include "../../universe/ConditionBase.h"
+#include "../../universe/Condition.h"
 #include "../../universe/ScriptingContext.h"
 #include "../../universe/Species.h"
 #include "../../universe/Special.h"

@@ -8,7 +8,7 @@
 #include "LinkText.h"
 #include "CUILinkTextBlock.h"
 #include "MapWnd.h"
-#include "../universe/ConditionBase.h"
+#include "../universe/Condition.h"
 #include "../universe/EffectAccounting.h"
 #include "../universe/ValueRefBase.h"
 #include "../universe/Encyclopedia.h"

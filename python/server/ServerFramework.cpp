@@ -5,7 +5,7 @@
 #include "../CommonWrappers.h"
 
 #include "../../util/Logger.h"
-#include "../../universe/ConditionBase.h"
+#include "../../universe/Condition.h"
 #include "../../universe/Universe.h"
 #include "../../universe/UniverseGenerator.h"
 
