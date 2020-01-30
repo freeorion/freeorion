@@ -11,7 +11,7 @@
 
 #include "../universe/Condition.h"
 #include "../universe/ShipDesign.h"
-#include "../universe/ValueRefBase.h"
+#include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 //TODO: replace with std::make_unique when transitioning to C++14

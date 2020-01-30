@@ -16,7 +16,7 @@
 #include "../universe/Tech.h"
 #include "../universe/Effect.h"
 #include "../universe/Enums.h"
-#include "../universe/ValueRefBase.h"
+#include "../universe/ValueRef.h"
 #include "../Empire/Empire.h"
 #include "TechTreeLayout.h"
 #include "TechTreeArcs.h"

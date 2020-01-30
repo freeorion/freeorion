@@ -19,7 +19,7 @@
 #include "../universe/Tech.h"
 #include "../universe/UniverseGenerator.h"
 #include "../universe/Enums.h"
-#include "../universe/ValueRefBase.h"
+#include "../universe/ValueRef.h"
 #include "../Empire/Empire.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"

@@ -4,7 +4,7 @@
 #include "../universe/Building.h"
 #include "../universe/Condition.h"
 #include "../universe/ShipDesign.h"
-#include "../universe/ValueRefBase.h"
+#include "../universe/ValueRef.h"
 #include "../util/AppInterface.h"
 #include "../util/GameRules.h"
 #include "../util/ScopedTimer.h"

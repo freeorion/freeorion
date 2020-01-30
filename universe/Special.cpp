@@ -3,7 +3,7 @@
 #include "Condition.h"
 #include "EffectAccounting.h"
 #include "UniverseObject.h"
-#include "ValueRefBase.h"
+#include "ValueRef.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"

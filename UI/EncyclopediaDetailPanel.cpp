@@ -10,7 +10,7 @@
 #include "MapWnd.h"
 #include "../universe/Condition.h"
 #include "../universe/EffectAccounting.h"
-#include "../universe/ValueRefBase.h"
+#include "../universe/ValueRef.h"
 #include "../universe/Encyclopedia.h"
 #include "../universe/Universe.h"
 #include "../universe/Tech.h"

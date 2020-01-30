@@ -20,7 +20,7 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/Conditions.h"
 #include "../universe/Enums.h"
-#include "../universe/ValueRefBase.h"
+#include "../universe/ValueRef.h"
 #include "../client/human/HumanClientApp.h"
 
 #include <GG/DrawUtil.h>
