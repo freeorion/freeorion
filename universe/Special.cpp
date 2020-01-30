@@ -1,7 +1,7 @@
 #include "Special.h"
 
 #include "Condition.h"
-#include "EffectAccounting.h"
+#include "Effect.h"
 #include "UniverseObject.h"
 #include "ValueRef.h"
 #include "../util/OptionsDB.h"

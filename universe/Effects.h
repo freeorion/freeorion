@@ -1,7 +1,7 @@
 #ifndef _Effects_h_
 #define _Effects_h_
 
-#include "EffectAccounting.h"
+#include "Effect.h"
 
 #include "../util/Export.h"
 

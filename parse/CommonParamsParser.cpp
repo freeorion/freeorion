@@ -10,7 +10,7 @@
 #include "ValueRefParser.h"
 
 #include "../universe/Conditions.h"
-#include "../universe/EffectAccounting.h"
+#include "../universe/Effect.h"
 #include "../universe/ValueRefs.h"
 
 #include <boost/spirit/include/phoenix.hpp>
