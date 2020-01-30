@@ -9,7 +9,7 @@
 #include "EffectParser.h"
 #include "ValueRefParser.h"
 
-#include "../universe/Condition.h"
+#include "../universe/Conditions.h"
 #include "../universe/EffectAccounting.h"
 #include "../universe/ValueRef.h"
 

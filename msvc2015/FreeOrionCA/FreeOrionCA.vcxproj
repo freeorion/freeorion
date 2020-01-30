@@ -154,7 +154,7 @@
     <ClInclude Include="..\..\python\CommonWrappers.h" />
     <ClInclude Include="..\..\python\SetWrapper.h" />
     <ClInclude Include="..\..\universe\Building.h" />
-    <ClInclude Include="..\..\universe\Condition.h" />
+    <ClInclude Include="..\..\universe\Conditions.h" />
     <ClInclude Include="..\..\universe\Effect.h" />
     <ClInclude Include="..\..\universe\EffectAccounting.h" />
     <ClInclude Include="..\..\universe\Enums.h" />

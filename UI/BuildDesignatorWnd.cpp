@@ -18,7 +18,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../universe/Building.h"
 #include "../universe/ShipDesign.h"
-#include "../universe/Condition.h"
+#include "../universe/Conditions.h"
 #include "../universe/Enums.h"
 #include "../universe/ValueRefBase.h"
 #include "../client/human/HumanClientApp.h"

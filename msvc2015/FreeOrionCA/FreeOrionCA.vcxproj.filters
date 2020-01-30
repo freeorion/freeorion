@@ -173,7 +173,7 @@
     <ClInclude Include="..\..\universe\Effect.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\Condition.h">
+    <ClInclude Include="..\..\universe\Conditions.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\Building.h">

@@ -17,7 +17,7 @@
 #include "../util/Directories.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
-#include "../universe/Condition.h"
+#include "../universe/Conditions.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Enums.h"
