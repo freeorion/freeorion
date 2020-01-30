@@ -1,6 +1,6 @@
 #include "Species.h"
 
-#include "Condition.h"
+#include "Conditions.h"
 #include "EffectAccounting.h"
 #include "PopCenter.h"
 #include "Ship.h"

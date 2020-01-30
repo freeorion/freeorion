@@ -1,6 +1,6 @@
 #include "Field.h"
 
-#include "Condition.h"
+#include "Conditions.h"
 #include "Effect.h"
 #include "Enums.h"
 #include "Meter.h"

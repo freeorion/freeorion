@@ -20,7 +20,7 @@
 #include "../universe/Building.h"
 #include "../universe/Field.h"
 #include "../universe/Species.h"
-#include "../universe/Condition.h"
+#include "../universe/Conditions.h"
 #include "../universe/ValueRef.h"
 #include "../universe/Enums.h"
 

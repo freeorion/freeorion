@@ -13,7 +13,7 @@
 #include "../universe/System.h"
 #include "../universe/Species.h"
 #include "../universe/Enums.h"
-#include "../universe/Condition.h"
+#include "../universe/Conditions.h"
 #include "../universe/ValueRef.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"

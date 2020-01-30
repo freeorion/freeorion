@@ -1,5 +1,5 @@
-#ifndef _Condition_h_
-#define _Condition_h_
+#ifndef _Conditions_h_
+#define _Conditions_h_
 
 
 #include "EnumsFwd.h"
@@ -2389,4 +2389,4 @@ void Described::serialize(Archive& ar, const unsigned int version)
 }
 } // namespace Condition
 
-#endif // _Condition_h_
+#endif // _Conditions_h_

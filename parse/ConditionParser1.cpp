@@ -1,6 +1,6 @@
 #include "ConditionParser1.h"
 
-#include "../universe/Condition.h"
+#include "../universe/Conditions.h"
 #include "../universe/Enums.h"
 #include "../universe/ValueRefBase.h"
 
