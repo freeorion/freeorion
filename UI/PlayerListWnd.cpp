@@ -243,7 +243,6 @@ namespace {
             m_peace_indicator(nullptr),
             m_allied_indicator(nullptr),
             m_diplo_status(INVALID_DIPLOMATIC_STATUS),
-            m_player_status(Message::PLAYING_TURN),
             m_player_type(Networking::INVALID_CLIENT_TYPE),
             m_host(false),
             m_win_status(NEITHER),
@@ -338,11 +337,8 @@ namespace {
                 MessageIcon()->OrthoBlit(UpperLeft() + m_diplo_msg_ul, UpperLeft() + m_diplo_msg_ul + ICON_SIZE);
 
             // render player status icon
-            switch (m_player_status) {
-            case Message::PLAYING_TURN:     PlayingIcon()->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
-            case Message::WAITING:          WaitingIcon()->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
-            default:    break;
-            }
+            if (const auto *empire = GetEmpire(m_empire_id))
+                (empire->Ready() ? WaitingIcon() : PlayingIcon())->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE);
 
             // render player type icon
             switch (m_player_type) {
@@ -499,13 +495,6 @@ namespace {
             m_peace_indicator->Update();
             m_allied_indicator->Update();
         }
-
-        void            SetStatus(Message::PlayerStatus player_status)
-        { m_player_status = player_status; }
-
-        Message::PlayerStatus Status() const
-        { return m_player_status; }
-
     private:
         int             IconSize() const   { return Value(Height()) - 2; }
 
@@ -617,7 +606,6 @@ namespace {
         GG::Pt                  m_win_status_icon_ul;
 
         DiplomaticStatus        m_diplo_status;
-        Message::PlayerStatus   m_player_status;
         Networking::ClientType  m_player_type;
         bool                    m_host;
         enum {
@@ -660,20 +648,9 @@ namespace {
             return m_empire_id;
         }
 
-        Message::PlayerStatus Status() const {
-            if (m_panel)
-                return m_panel->Status();
-            return Message::PLAYING_TURN;
-        }
-
         void    Update() {
             if (m_panel)
                 m_panel->Update();
-        }
-
-        void    SetStatus(Message::PlayerStatus player_status) {
-            if (m_panel)
-                m_panel->SetStatus(player_status);
         }
 
         /** This function overridden because otherwise, rows don't expand
@@ -756,7 +733,7 @@ void PlayerListWnd::CompleteConstruction() {
         boost::bind(&PlayerListWnd::PlayerListWnd::HandleDiplomaticMessageChange, this, _1, _2));
     DoLayout();
 
-    Refresh(true);
+    Refresh();
 }
 
 std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
@@ -770,36 +747,6 @@ std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
             retval.insert(selected_player_id);
     }
     return retval;
-}
-
-std::set<int> PlayerListWnd::ReadyEmpiresIDs() const {
-    std::set<int> retval;
-    for (auto it = m_player_list->begin(); it != m_player_list->end(); ++it) {
-        PlayerRow* row = dynamic_cast<PlayerRow*>(it->get());
-        if (!row)
-            continue;
-
-        int empire_id = row->EmpireID();
-        if (empire_id == ALL_EMPIRES)
-            continue;
-
-        if (row->Status() == Message::WAITING)
-            retval.insert(empire_id);
-    }
-    return retval;
-}
-
-void PlayerListWnd::HandleEmpireStatusUpdate(Message::PlayerStatus player_status, int about_empire_id) {
-    for (auto& row : *m_player_list) {
-        if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row.get())) {
-            if (about_empire_id == ALL_EMPIRES) {
-                WarnLogger() << "PlayerListWnd::HandleEmpireStatusUpdate got no empire";
-            } else if (player_row->EmpireID() == about_empire_id) {
-                player_row->SetStatus(player_status);
-                return;
-            }
-        }
-    }
 }
 
 void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id) {
@@ -844,9 +791,8 @@ void PlayerListWnd::Update() {
     }
 }
 
-void PlayerListWnd::Refresh(bool clean_empire_status) {
+void PlayerListWnd::Refresh() {
     std::set<int> initially_selected_players = this->SelectedPlayerIDs();
-    std::set<int> ready_empires = this->ReadyEmpiresIDs();
 
     m_player_list->Clear();
 
@@ -862,8 +808,6 @@ void PlayerListWnd::Refresh(bool clean_empire_status) {
     for (const auto& empire : Empires()) {
         int player_id = app->EmpirePlayerID(empire.first);
         auto player_row = GG::Wnd::Create<PlayerRow>(row_size.x, row_size.y, player_id, empire.first);
-        if (!clean_empire_status && (ready_empires.find(empire.first) != ready_empires.end()))
-            player_row->SetStatus(Message::WAITING);
         m_player_list->Insert(player_row);
         player_row->Resize(row_size);
     }

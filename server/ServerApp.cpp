@@ -1421,19 +1421,6 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
         }
     }
-
-    for (auto player_connection_it = m_networking.established_begin();
-         player_connection_it != m_networking.established_end(); ++player_connection_it)
-    {
-        // send other empires' statuses
-        for (const auto& empire : Empires()) {
-            auto other_orders_it = m_turn_sequence.find(empire.first);
-            bool ready = other_orders_it == m_turn_sequence.end() ||
-                (other_orders_it->second && empire.second->Ready());
-            (*player_connection_it)->SendMessage(PlayerStatusMessage(ready ? Message::WAITING : Message::PLAYING_TURN,
-                                                                     empire.first));
-        }
-    }
 }
 
 void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
@@ -1747,20 +1734,9 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
                                                         GetSpeciesManager(), GetCombatLogManager(),
                                                         GetSupplyManager(), player_info_map,
                                                         m_galaxy_setup_data, use_binary_serialization));
-
-        // send other empires' statuses
-        for (const auto& empire : Empires()) {
-            auto other_orders_it = m_turn_sequence.find(empire.first);
-            bool ready = other_orders_it == m_turn_sequence.end() ||
-                    (other_orders_it->second && empire.second->Ready());
-            player_connection->SendMessage(PlayerStatusMessage(ready ? Message::WAITING : Message::PLAYING_TURN,
-                                                               empire.first));
-        }
     } else {
         ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
     }
-
-    // TODO: notify other players
 }
 
 bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
@@ -1920,15 +1896,6 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
         ui_data,
         m_galaxy_setup_data,
         use_binary_serialization));
-
-    // send other empires' statuses
-    for (const auto& empire : Empires()) {
-        auto other_orders_it = m_turn_sequence.find(empire.first);
-        bool ready = other_orders_it == m_turn_sequence.end() ||
-            (other_orders_it->second && empire.second->Ready());
-        player_connection->SendMessage(PlayerStatusMessage(ready ? Message::WAITING : Message::PLAYING_TURN,
-                                                           empire.first));
-    }
 
     return empire_id;
 }
