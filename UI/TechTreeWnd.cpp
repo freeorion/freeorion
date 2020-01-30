@@ -13,7 +13,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../universe/Tech.h"
-#include "../universe/Effect.h"
+#include "../universe/Effects.h"
 #include "../universe/Enums.h"
 #include "../universe/ValueRef.h"
 #include "../Empire/Empire.h"

@@ -1,4 +1,4 @@
-#include "Effect.h"
+#include "Effects.h"
 
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"

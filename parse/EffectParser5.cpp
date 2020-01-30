@@ -1,7 +1,7 @@
 #include "EffectParser5.h"
 
 #include "ConditionParserImpl.h"
-#include "../universe/Effect.h"
+#include "../universe/Effects.h"
 #include "../universe/Condition.h"
 
 #include <boost/spirit/include/phoenix.hpp>
