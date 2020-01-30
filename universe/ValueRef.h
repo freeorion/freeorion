@@ -1,5 +1,5 @@
-#ifndef _ValueRefBase_h_
-#define _ValueRefBase_h_
+#ifndef _ValueRef_h_
+#define _ValueRef_h_
 
 #include "ScriptingContext.h"
 #include "../util/Export.h"
@@ -69,4 +69,4 @@ private:
 
 }
 
-#endif // _ValueRefBase_h_
+#endif // _ValueRef_h_

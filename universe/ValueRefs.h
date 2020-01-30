@@ -2,7 +2,7 @@
 #define _ValueRefs_h_
 
 #include "ScriptingContext.h"
-#include "ValueRefBase.h"
+#include "ValueRef.h"
 #include "Condition.h"
 #include "Universe.h"
 #include "../util/Export.h"

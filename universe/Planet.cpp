@@ -9,7 +9,7 @@
 #include "Species.h"
 #include "Universe.h"
 #include "Enums.h"
-#include "ValueRefBase.h"
+#include "ValueRef.h"
 #include "../util/Logger.h"
 #include "../util/GameRules.h"
 #include "../util/OptionsDB.h"

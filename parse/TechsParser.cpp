@@ -9,7 +9,7 @@
 #include "../universe/EffectAccounting.h"
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
-#include "../universe/ValueRefBase.h"
+#include "../universe/ValueRef.h"
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>

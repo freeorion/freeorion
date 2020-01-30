@@ -4,7 +4,7 @@
 #include "../universe/Condition.h"
 #include "../universe/Effect.h"
 #include "../universe/Enums.h"
-#include "../universe/ValueRefBase.h"
+#include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

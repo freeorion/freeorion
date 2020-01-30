@@ -6,7 +6,7 @@
 #include "Predicates.h"
 #include "Universe.h"
 #include "Enums.h"
-#include "ValueRefBase.h"
+#include "ValueRef.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/OptionsDB.h"
