@@ -341,11 +341,11 @@ std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
 }
 
 std::string ComplexVariableDescription(const std::vector<std::string>& property_names,
-                                       const ValueRef::ValueRefBase<int>* int_ref1,
-                                       const ValueRef::ValueRefBase<int>* int_ref2,
-                                       const ValueRef::ValueRefBase<int>* int_ref3,
-                                       const ValueRef::ValueRefBase<std::string>* string_ref1,
-                                       const ValueRef::ValueRefBase<std::string>* string_ref2)
+                                       const ValueRef<int>* int_ref1,
+                                       const ValueRef<int>* int_ref2,
+                                       const ValueRef<int>* int_ref3,
+                                       const ValueRef<std::string>* string_ref1,
+                                       const ValueRef<std::string>* string_ref2)
 {
     if (property_names.empty()) {
         ErrorLogger() << "ComplexVariableDescription passed empty property names?!";
@@ -373,11 +373,11 @@ std::string ComplexVariableDescription(const std::vector<std::string>& property_
 }
 
 std::string ComplexVariableDump(const std::vector<std::string>& property_names,
-                                const ValueRef::ValueRefBase<int>* int_ref1,
-                                const ValueRef::ValueRefBase<int>* int_ref2,
-                                const ValueRef::ValueRefBase<int>* int_ref3,
-                                const ValueRef::ValueRefBase<std::string>* string_ref1,
-                                const ValueRef::ValueRefBase<std::string>* string_ref2)
+                                const ValueRef<int>* int_ref1,
+                                const ValueRef<int>* int_ref2,
+                                const ValueRef<int>* int_ref3,
+                                const ValueRef<std::string>* string_ref1,
+                                const ValueRef<std::string>* string_ref2)
 {
     std::string retval;
     if (property_names.empty()) {
@@ -2320,7 +2320,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (meter_name.empty())
             return 0.0;
 
-        MeterType meter_type = ValueRef::NameToMeter(meter_name);
+        MeterType meter_type = NameToMeter(meter_name);
         if (meter_type != INVALID_METER_TYPE) {
             if (m_return_immediate_value)
                 return ship->CurrentPartMeterValue(meter_type, part_name);
@@ -2949,13 +2949,13 @@ std::string UserStringLookup<std::vector<std::string>>::Eval(const ScriptingCont
 /////////////////////////////////////////////////////
 // NameLookup                                      //
 /////////////////////////////////////////////////////
-NameLookup::NameLookup(std::unique_ptr<ValueRefBase<int>>&& value_ref, LookupType lookup_type) :
+NameLookup::NameLookup(std::unique_ptr<ValueRef<int>>&& value_ref, LookupType lookup_type) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref)),
     m_lookup_type(lookup_type)
 {}
 
-bool NameLookup::operator==(const ValueRefBase<std::string>& rhs) const {
+bool NameLookup::operator==(const ValueRef<std::string>& rhs) const {
     if (&rhs == this)
         return true;
     if (typeid(rhs) != typeid(*this))

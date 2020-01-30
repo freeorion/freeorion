@@ -21,9 +21,9 @@
 
 namespace CheckSums {
     template <typename T>
-    void CheckSumCombine(unsigned int& sum, const typename ValueRef::ValueRefBase<T>& c)
+    void CheckSumCombine(unsigned int& sum, const typename ValueRef::ValueRef<T>& c)
     {
-        TraceLogger() << "CheckSumCombine(ValueRef::ValueRefBase<T>): " << typeid(c).name();
+        TraceLogger() << "CheckSumCombine(ValueRef::ValueRef<T>): " << typeid(c).name();
         sum += c.GetCheckSum();
         sum %= CHECKSUM_MODULUS;
     }
@@ -34,11 +34,11 @@ class UniverseObject;
 namespace ValueRef {
 /** the constant value leaf ValueRef class. */
 template <class T>
-struct FO_COMMON_API Constant final : public ValueRefBase<T>
+struct FO_COMMON_API Constant final : public ValueRef<T>
 {
     explicit Constant(T value);
 
-    bool operator==(const ValueRefBase<T>& rhs) const override;
+    bool operator==(const ValueRef<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
 
     bool RootCandidateInvariant() const override
@@ -84,7 +84,7 @@ enum ReferenceType {
 /** The variable value ValueRef class.  The value returned by this node is
   * taken from the gamestate, most often from the Source or Target objects. */
 template <class T>
-struct FO_COMMON_API Variable : public ValueRefBase<T>
+struct FO_COMMON_API Variable : public ValueRef<T>
 {
     explicit Variable(ReferenceType ref_type, const std::string& property_name = "",
                       bool return_immediate_value = false);
@@ -95,7 +95,7 @@ struct FO_COMMON_API Variable : public ValueRefBase<T>
              const std::string& property_name,
              bool return_immediate_value = false);
 
-    bool operator==(const ValueRefBase<T>& rhs) const override;
+    bool operator==(const ValueRef<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
     bool RootCandidateInvariant() const override;
     bool LocalCandidateInvariant() const override;
@@ -143,11 +143,11 @@ enum StatisticType {
 template <class T>
 struct FO_COMMON_API Statistic final : public Variable<T>
 {
-    Statistic(std::unique_ptr<ValueRefBase<T>>&& value_ref,
+    Statistic(std::unique_ptr<ValueRef<T>>&& value_ref,
               StatisticType stat_type,
               std::unique_ptr<Condition::Condition>&& sampling_condition);
 
-    bool        operator==(const ValueRefBase<T>& rhs) const override;
+    bool        operator==(const ValueRef<T>& rhs) const override;
     T           Eval(const ScriptingContext& context) const override;
     bool        RootCandidateInvariant() const override;
     bool        LocalCandidateInvariant() const override;
@@ -163,7 +163,7 @@ struct FO_COMMON_API Statistic final : public Variable<T>
     const Condition::Condition* GetSamplingCondition() const
     { return m_sampling_condition.get(); }
 
-    const ValueRefBase<T>* GetValueRef() const
+    const ValueRef<T>* GetValueRef() const
     { return m_value_ref.get(); }
 
     unsigned int GetCheckSum() const override;
@@ -185,7 +185,7 @@ protected:
 private:
     StatisticType                             m_stat_type;
     std::unique_ptr<Condition::Condition> m_sampling_condition;
-    std::unique_ptr<ValueRefBase<T>>          m_value_ref;
+    std::unique_ptr<ValueRef<T>>          m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -198,14 +198,14 @@ template <class T>
 struct FO_COMMON_API ComplexVariable final : public Variable<T>
 {
     explicit ComplexVariable(const std::string& variable_name,
-                             std::unique_ptr<ValueRefBase<int>>&& int_ref1 = nullptr,
-                             std::unique_ptr<ValueRefBase<int>>&& int_ref2 = nullptr,
-                             std::unique_ptr<ValueRefBase<int>>&& int_ref3 = nullptr,
-                             std::unique_ptr<ValueRefBase<std::string>>&& string_ref1 = nullptr,
-                             std::unique_ptr<ValueRefBase<std::string>>&& string_ref2 = nullptr,
+                             std::unique_ptr<ValueRef<int>>&& int_ref1 = nullptr,
+                             std::unique_ptr<ValueRef<int>>&& int_ref2 = nullptr,
+                             std::unique_ptr<ValueRef<int>>&& int_ref3 = nullptr,
+                             std::unique_ptr<ValueRef<std::string>>&& string_ref1 = nullptr,
+                             std::unique_ptr<ValueRef<std::string>>&& string_ref2 = nullptr,
                              bool return_immediate_value = false);
 
-    bool operator==(const ValueRefBase<T>& rhs) const override;
+    bool operator==(const ValueRef<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
     bool RootCandidateInvariant() const override;
     bool LocalCandidateInvariant() const override;
@@ -214,19 +214,19 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
     std::string Description() const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
-    const ValueRefBase<int>* IntRef1() const;
-    const ValueRefBase<int>* IntRef2() const;
-    const ValueRefBase<int>* IntRef3() const;
-    const ValueRefBase<std::string>* StringRef1() const;
-    const ValueRefBase<std::string>* StringRef2() const;
+    const ValueRef<int>* IntRef1() const;
+    const ValueRef<int>* IntRef2() const;
+    const ValueRef<int>* IntRef3() const;
+    const ValueRef<std::string>* StringRef1() const;
+    const ValueRef<std::string>* StringRef2() const;
     unsigned int GetCheckSum() const override;
 
 protected:
-    std::unique_ptr<ValueRefBase<int>> m_int_ref1;
-    std::unique_ptr<ValueRefBase<int>> m_int_ref2;
-    std::unique_ptr<ValueRefBase<int>> m_int_ref3;
-    std::unique_ptr<ValueRefBase<std::string>> m_string_ref1;
-    std::unique_ptr<ValueRefBase<std::string>> m_string_ref2;
+    std::unique_ptr<ValueRef<int>> m_int_ref1;
+    std::unique_ptr<ValueRef<int>> m_int_ref2;
+    std::unique_ptr<ValueRef<int>> m_int_ref3;
+    std::unique_ptr<ValueRef<std::string>> m_string_ref1;
+    std::unique_ptr<ValueRef<std::string>> m_string_ref2;
 
 private:
     friend class boost::serialization::access;
@@ -247,10 +247,10 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
     template <typename T>
     StaticCast(T&& value_ref,
                typename std::enable_if<
-               std::is_convertible<T, std::unique_ptr<ValueRefBase<FromType>>>::value
+               std::is_convertible<T, std::unique_ptr<ValueRef<FromType>>>::value
                && !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type* = nullptr);
 
-    bool operator==(const ValueRefBase<ToType>& rhs) const override;
+    bool operator==(const ValueRef<ToType>& rhs) const override;
     ToType Eval(const ScriptingContext& context) const override;
     bool RootCandidateInvariant() const override;
     bool LocalCandidateInvariant() const override;
@@ -260,13 +260,13 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRefBase<FromType>* GetValueRef() const
+    const ValueRef<FromType>* GetValueRef() const
     { return m_value_ref.get(); }
 
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRefBase<FromType>> m_value_ref;
+    std::unique_ptr<ValueRef<FromType>> m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -279,9 +279,9 @@ private:
 template <class FromType>
 struct FO_COMMON_API StringCast final : public Variable<std::string>
 {
-    StringCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref);
+    StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref);
 
-    bool operator==(const ValueRefBase<std::string>& rhs) const override;
+    bool operator==(const ValueRef<std::string>& rhs) const override;
     std::string Eval(const ScriptingContext& context) const override;
     bool RootCandidateInvariant() const override;
     bool LocalCandidateInvariant() const override;
@@ -291,13 +291,13 @@ struct FO_COMMON_API StringCast final : public Variable<std::string>
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRefBase<FromType>* GetValueRef() const
+    const ValueRef<FromType>* GetValueRef() const
     { return m_value_ref; }
 
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRefBase<FromType>> m_value_ref;
+    std::unique_ptr<ValueRef<FromType>> m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -308,9 +308,9 @@ private:
   * and returns the UserString equivalent(s). */
 template <class FromType>
 struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
-    explicit UserStringLookup(std::unique_ptr<ValueRefBase<FromType>>&& value_ref);
+    explicit UserStringLookup(std::unique_ptr<ValueRef<FromType>>&& value_ref);
 
-    bool operator==(const ValueRefBase<std::string>& rhs) const override;
+    bool operator==(const ValueRef<std::string>& rhs) const override;
     std::string Eval(const ScriptingContext& context) const override;
     bool RootCandidateInvariant() const override;
     bool LocalCandidateInvariant() const override;
@@ -320,13 +320,13 @@ struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRefBase<FromType>* GetValueRef() const
+    const ValueRef<FromType>* GetValueRef() const
     { return m_value_ref; }
 
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRefBase<FromType>> m_value_ref;
+    std::unique_ptr<ValueRef<FromType>> m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -342,9 +342,9 @@ struct FO_COMMON_API NameLookup final : public Variable<std::string> {
         SHIP_DESIGN_NAME
     };
 
-    NameLookup(std::unique_ptr<ValueRefBase<int>>&& value_ref, LookupType lookup_type);
+    NameLookup(std::unique_ptr<ValueRef<int>>&& value_ref, LookupType lookup_type);
 
-    bool operator==(const ValueRefBase<std::string>& rhs) const override;
+    bool operator==(const ValueRef<std::string>& rhs) const override;
     std::string Eval(const ScriptingContext& context) const override;
     bool RootCandidateInvariant() const override;
     bool LocalCandidateInvariant() const override;
@@ -354,7 +354,7 @@ struct FO_COMMON_API NameLookup final : public Variable<std::string> {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRefBase<int>* GetValueRef() const
+    const ValueRef<int>* GetValueRef() const
     { return m_value_ref.get(); }
 
     LookupType GetLookupType() const
@@ -363,7 +363,7 @@ struct FO_COMMON_API NameLookup final : public Variable<std::string> {
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRefBase<int>> m_value_ref;
+    std::unique_ptr<ValueRef<int>> m_value_ref;
     LookupType m_lookup_type;
 
     friend class boost::serialization::access;
@@ -404,19 +404,19 @@ enum OpType {
   * random number generation are performed on the child(ren) of this node, and
   * the result is returned. */
 template <class T>
-struct FO_COMMON_API Operation final : public ValueRefBase<T>
+struct FO_COMMON_API Operation final : public ValueRef<T>
 {
     /** Binary operation ctor. */
-    Operation(OpType op_type, std::unique_ptr<ValueRefBase<T>>&& operand1,
-              std::unique_ptr<ValueRefBase<T>>&& operand2);
+    Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand1,
+              std::unique_ptr<ValueRef<T>>&& operand2);
 
     /** Unary operation ctor. */
-    Operation(OpType op_type, std::unique_ptr<ValueRefBase<T>>&& operand);
+    Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand);
 
     /* N-ary operation ctor. */
-    Operation(OpType op_type, std::vector<std::unique_ptr<ValueRefBase<T>>>&& operands);
+    Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands);
 
-    bool operator==(const ValueRefBase<T>& rhs) const override;
+    bool operator==(const ValueRef<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
     bool RootCandidateInvariant() const override;
     bool LocalCandidateInvariant() const override;
@@ -430,13 +430,13 @@ struct FO_COMMON_API Operation final : public ValueRefBase<T>
     OpType GetOpType() const;
 
     /** 1st operand (or 0 if none exists). */
-    const ValueRefBase<T>* LHS() const;
+    const ValueRef<T>* LHS() const;
 
     /** 2nd operand (or 0 if only one exists) */
-    const ValueRefBase<T>* RHS() const;
+    const ValueRef<T>* RHS() const;
 
     /** all operands */
-    const std::vector<ValueRefBase<T>*> Operands() const;
+    const std::vector<ValueRef<T>*> Operands() const;
 
     unsigned int GetCheckSum() const override;
 
@@ -446,7 +446,7 @@ private:
     T       EvalImpl(const ScriptingContext& context) const;
 
     OpType                                          m_op_type = TIMES;
-    std::vector<std::unique_ptr<ValueRefBase<T>>>   m_operands;
+    std::vector<std::unique_ptr<ValueRef<T>>>   m_operands;
     bool                                            m_constant_expr = false;
     T                                               m_cached_const_value = T();
 
@@ -467,19 +467,19 @@ FO_COMMON_API std::string FormatedDescriptionPropertyNames(
 
 FO_COMMON_API std::string ComplexVariableDescription(
     const std::vector<std::string>& property_names,
-    const ValueRef::ValueRefBase<int>* int_ref1,
-    const ValueRef::ValueRefBase<int>* int_ref2,
-    const ValueRef::ValueRefBase<int>* int_ref3,
-    const ValueRef::ValueRefBase<std::string>* string_ref1,
-    const ValueRef::ValueRefBase<std::string>* string_ref2);
+    const ValueRef<int>* int_ref1,
+    const ValueRef<int>* int_ref2,
+    const ValueRef<int>* int_ref3,
+    const ValueRef<std::string>* string_ref1,
+    const ValueRef<std::string>* string_ref2);
 
 FO_COMMON_API std::string ComplexVariableDump(
     const std::vector<std::string>& property_names,
-    const ValueRef::ValueRefBase<int>* int_ref1,
-    const ValueRef::ValueRefBase<int>* int_ref2,
-    const ValueRef::ValueRefBase<int>* int_ref3,
-    const ValueRef::ValueRefBase<std::string>* string_ref1,
-    const ValueRef::ValueRefBase<std::string>* string_ref2);
+    const ValueRef<int>* int_ref1,
+    const ValueRef<int>* int_ref2,
+    const ValueRef<int>* int_ref3,
+    const ValueRef<std::string>* string_ref1,
+    const ValueRef<std::string>* string_ref2);
 
 FO_COMMON_API std::string StatisticDescription(StatisticType stat_type,
                                                const std::string& value_desc,
@@ -487,10 +487,10 @@ FO_COMMON_API std::string StatisticDescription(StatisticType stat_type,
 
 // Template Implementations
 ///////////////////////////////////////////////////////////
-// ValueRefBase                                          //
+// ValueRef                                          //
 ///////////////////////////////////////////////////////////
 template <class T>
-bool ValueRefBase<T>::operator==(const ValueRefBase<T>& rhs) const
+bool ValueRef<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -501,7 +501,7 @@ bool ValueRefBase<T>::operator==(const ValueRefBase<T>& rhs) const
 
 template <class T>
 template <class Archive>
-void ValueRefBase<T>::serialize(Archive& ar, const unsigned int version)
+void ValueRef<T>::serialize(Archive& ar, const unsigned int version)
 {}
 
 ///////////////////////////////////////////////////////////
@@ -513,7 +513,7 @@ Constant<T>::Constant(T value) :
 {}
 
 template <class T>
-bool Constant<T>::operator==(const ValueRefBase<T>& rhs) const
+bool Constant<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -594,7 +594,7 @@ template <class T>
 template <class Archive>
 void Constant<T>::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef)
         & BOOST_SERIALIZATION_NVP(m_value)
         & BOOST_SERIALIZATION_NVP(m_top_level_content);
 }
@@ -636,7 +636,7 @@ Variable<T>::Variable(ReferenceType ref_type,
 }
 
 template <class T>
-bool Variable<T>::operator==(const ValueRefBase<T>& rhs) const
+bool Variable<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -731,7 +731,7 @@ template <class T>
 template <class Archive>
 void Variable<T>::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef)
         & BOOST_SERIALIZATION_NVP(m_ref_type)
         & BOOST_SERIALIZATION_NVP(m_property_name)
         & BOOST_SERIALIZATION_NVP(m_return_immediate_value);
@@ -741,7 +741,7 @@ void Variable<T>::serialize(Archive& ar, const unsigned int version)
 // Statistic                                             //
 ///////////////////////////////////////////////////////////
 template <class T>
-Statistic<T>::Statistic(std::unique_ptr<ValueRefBase<T>>&& value_ref, StatisticType stat_type,
+Statistic<T>::Statistic(std::unique_ptr<ValueRef<T>>&& value_ref, StatisticType stat_type,
                         std::unique_ptr<Condition::Condition>&& sampling_condition) :
     Variable<T>(NON_OBJECT_REFERENCE, ""),
     m_stat_type(stat_type),
@@ -750,7 +750,7 @@ Statistic<T>::Statistic(std::unique_ptr<ValueRefBase<T>>&& value_ref, StatisticT
 {}
 
 template <class T>
-bool Statistic<T>::operator==(const ValueRefBase<T>& rhs) const
+bool Statistic<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -1147,11 +1147,11 @@ void Statistic<T>::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 template <class T>
 ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
-                                    std::unique_ptr<ValueRefBase<int>>&& int_ref1,
-                                    std::unique_ptr<ValueRefBase<int>>&& int_ref2,
-                                    std::unique_ptr<ValueRefBase<int>>&& int_ref3,
-                                    std::unique_ptr<ValueRefBase<std::string>>&& string_ref1,
-                                    std::unique_ptr<ValueRefBase<std::string>>&& string_ref2,
+                                    std::unique_ptr<ValueRef<int>>&& int_ref1,
+                                    std::unique_ptr<ValueRef<int>>&& int_ref2,
+                                    std::unique_ptr<ValueRef<int>>&& int_ref3,
+                                    std::unique_ptr<ValueRef<std::string>>&& string_ref1,
+                                    std::unique_ptr<ValueRef<std::string>>&& string_ref2,
                                     bool return_immediate_value) :
     Variable<T>(NON_OBJECT_REFERENCE, std::vector<std::string>(1, variable_name), return_immediate_value),
     m_int_ref1(std::move(int_ref1)),
@@ -1162,7 +1162,7 @@ ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
 {}
 
 template <class T>
-bool ComplexVariable<T>::operator==(const ValueRefBase<T>& rhs) const
+bool ComplexVariable<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -1224,23 +1224,23 @@ bool ComplexVariable<T>::operator==(const ValueRefBase<T>& rhs) const
 }
 
 template <class T>
-const ValueRefBase<int>* ComplexVariable<T>::IntRef1() const
+const ValueRef<int>* ComplexVariable<T>::IntRef1() const
 { return m_int_ref1.get(); }
 
 template <class T>
-const ValueRefBase<int>* ComplexVariable<T>::IntRef2() const
+const ValueRef<int>* ComplexVariable<T>::IntRef2() const
 { return m_int_ref2.get(); }
 
 template <class T>
-const ValueRefBase<int>* ComplexVariable<T>::IntRef3() const
+const ValueRef<int>* ComplexVariable<T>::IntRef3() const
 { return m_int_ref3.get(); }
 
 template <class T>
-const ValueRefBase<std::string>* ComplexVariable<T>::StringRef1() const
+const ValueRef<std::string>* ComplexVariable<T>::StringRef1() const
 { return m_string_ref1.get(); }
 
 template <class T>
-const ValueRefBase<std::string>* ComplexVariable<T>::StringRef2() const
+const ValueRef<std::string>* ComplexVariable<T>::StringRef2() const
 { return m_string_ref2.get(); }
 
 template <class T>
@@ -1408,14 +1408,14 @@ template <typename T>
 StaticCast<FromType, ToType>::StaticCast(
     T&& value_ref,
     typename std::enable_if<
-    std::is_convertible<T, std::unique_ptr<ValueRefBase<FromType>>>::value
+    std::is_convertible<T, std::unique_ptr<ValueRef<FromType>>>::value
     && !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type*) :
     Variable<ToType>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
 {}
 
 template <class FromType, class ToType>
-bool StaticCast<FromType, ToType>::operator==(const ValueRefBase<ToType>& rhs) const
+bool StaticCast<FromType, ToType>::operator==(const ValueRef<ToType>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -1486,7 +1486,7 @@ template <class FromType, class ToType>
 template <class Archive>
 void StaticCast<FromType, ToType>::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef)
         & BOOST_SERIALIZATION_NVP(m_value_ref);
 }
 
@@ -1494,7 +1494,7 @@ void StaticCast<FromType, ToType>::serialize(Archive& ar, const unsigned int ver
 // StringCast                                            //
 ///////////////////////////////////////////////////////////
 template <class FromType>
-StringCast<FromType>::StringCast(std::unique_ptr<ValueRefBase<FromType>>&& value_ref) :
+StringCast<FromType>::StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
 {
@@ -1509,7 +1509,7 @@ StringCast<FromType>::StringCast(std::unique_ptr<ValueRefBase<FromType>>&& value
 }
 
 template <class FromType>
-bool StringCast<FromType>::operator==(const ValueRefBase<std::string>& rhs) const
+bool StringCast<FromType>::operator==(const ValueRef<std::string>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -1597,7 +1597,7 @@ template <class FromType>
 template <class Archive>
 void StringCast<FromType>::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef)
         & BOOST_SERIALIZATION_NVP(m_value_ref);
 }
 
@@ -1605,7 +1605,7 @@ void StringCast<FromType>::serialize(Archive& ar, const unsigned int version)
 // UserStringLookup                                      //
 ///////////////////////////////////////////////////////////
 template <class FromType>
-UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRefBase<FromType>>&& value_ref) :
+UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRef<FromType>>&& value_ref) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
 {
@@ -1620,7 +1620,7 @@ UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRefBase<FromTy
 }
 
 template <class FromType>
-bool UserStringLookup<FromType>::operator==(const ValueRefBase<std::string>& rhs) const {
+bool UserStringLookup<FromType>::operator==(const ValueRef<std::string>& rhs) const {
     if (&rhs == this)
         return true;
     if (typeid(rhs) != typeid(*this))
@@ -1714,7 +1714,7 @@ template <class FromType>
 template <class Archive>
 void UserStringLookup<FromType>::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase<std::string>)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef<std::string>)
         & BOOST_SERIALIZATION_NVP(m_value_ref);
 }
 
@@ -1724,7 +1724,7 @@ void UserStringLookup<FromType>::serialize(Archive& ar, const unsigned int versi
 template <class Archive>
 void NameLookup::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase<std::string>)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef<std::string>)
         & BOOST_SERIALIZATION_NVP(m_value_ref)
         & BOOST_SERIALIZATION_NVP(m_lookup_type);
 }
@@ -1734,8 +1734,8 @@ void NameLookup::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 template <class T>
 Operation<T>::Operation(OpType op_type,
-                        std::unique_ptr<ValueRefBase<T>>&& operand1,
-                        std::unique_ptr<ValueRefBase<T>>&& operand2) :
+                        std::unique_ptr<ValueRef<T>>&& operand1,
+                        std::unique_ptr<ValueRef<T>>&& operand2) :
     m_op_type(op_type),
     m_operands()
 {
@@ -1748,7 +1748,7 @@ Operation<T>::Operation(OpType op_type,
 }
 
 template <class T>
-Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRefBase<T>>&& operand) :
+Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand) :
     m_op_type(op_type),
     m_operands()
 {
@@ -1759,7 +1759,7 @@ Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRefBase<T>>&& opera
 }
 
 template <class T>
-Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRefBase<T>>>&& operands) :
+Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands) :
     m_op_type(op_type),
     m_operands(std::move(operands))
 {
@@ -1795,7 +1795,7 @@ void Operation<T>::CacheConstValue()
 }
 
 template <class T>
-bool Operation<T>::operator==(const ValueRefBase<T>& rhs) const
+bool Operation<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -1828,7 +1828,7 @@ OpType Operation<T>::GetOpType() const
 { return m_op_type; }
 
 template <class T>
-const ValueRefBase<T>* Operation<T>::LHS() const
+const ValueRef<T>* Operation<T>::LHS() const
 {
     if (m_operands.empty())
         return nullptr;
@@ -1836,7 +1836,7 @@ const ValueRefBase<T>* Operation<T>::LHS() const
 }
 
 template <class T>
-const ValueRefBase<T>* Operation<T>::RHS() const
+const ValueRef<T>* Operation<T>::RHS() const
 {
     if (m_operands.size() < 2)
         return nullptr;
@@ -1844,11 +1844,11 @@ const ValueRefBase<T>* Operation<T>::RHS() const
 }
 
 template <class T>
-const std::vector<ValueRefBase<T>*> Operation<T>::Operands() const
+const std::vector<ValueRef<T>*> Operation<T>::Operands() const
 {
-    std::vector<ValueRefBase<T>*> retval(m_operands.size());
+    std::vector<ValueRef<T>*> retval(m_operands.size());
     std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
-                   [](const std::unique_ptr<ValueRefBase<T>>& p) { return *p; });
+                   [](const std::unique_ptr<ValueRef<T>>& p) { return *p; });
     return retval;
 }
 
@@ -2273,7 +2273,7 @@ template <class T>
 template <class Archive>
 void Operation<T>::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef)
         & BOOST_SERIALIZATION_NVP(m_op_type)
         & BOOST_SERIALIZATION_NVP(m_operands)
         & BOOST_SERIALIZATION_NVP(m_constant_expr)

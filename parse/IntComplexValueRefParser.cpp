@@ -71,12 +71,12 @@ namespace parse {
                > label(tok.Object_)
                > ( int_rules.expr
                    // "cast" the ValueRef::Statistic<int> into
-                   // ValueRef::ValueRefBase<int> so the alternative contains a
+                   // ValueRef::ValueRef<int> so the alternative contains a
                    // single type
-                   | qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRefBase<int>>>()[int_rules.statistic_expr])
+                   | qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRef<int>>>()[int_rules.statistic_expr])
                > label(tok.Object_)
                > (int_rules.expr
-                  | qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRefBase<int>>>()[int_rules.statistic_expr])
+                  | qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRef<int>>>()[int_rules.statistic_expr])
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr)) ]
             ;
 

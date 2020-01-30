@@ -23,7 +23,7 @@ struct ValueRefUniverseObjectTypeFixture {
         delete result;
     }
 
-    bool parse(std::string phrase, ValueRef::ValueRefBase<UniverseObjectType>*& result) {
+    bool parse(std::string phrase, ValueRef::ValueRef<UniverseObjectType>*& result) {
         const parse::lexer& lexer = lexer.instance();
         boost::spirit::qi::in_state_type in_state;
         boost::spirit::qi::eoi_type eoi;
@@ -52,7 +52,7 @@ struct ValueRefUniverseObjectTypeFixture {
     static const std::array<std::string, 3> containerTypes;
     static const std::array<std::string, 1> attributes;
 
-    ValueRef::ValueRefBase<UniverseObjectType>* result;
+    ValueRef::ValueRef<UniverseObjectType>* result;
     const ValueRef::Operation<UniverseObjectType>* operation1;
     const ValueRef::Operation<UniverseObjectType>* operation2;
     const ValueRef::Operation<UniverseObjectType>* operation3;
