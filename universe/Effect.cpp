@@ -36,7 +36,7 @@ Effect::AccountingInfo::AccountingInfo(
     running_meter_total(running_meter_total_)
 {}
 
-bool Effect::AccountingInfo::operator==(const Effect::AccountingInfo& rhs) const {
+bool Effect::AccountingInfo::operator==(const AccountingInfo& rhs) const {
     return
         cause_type == rhs.cause_type &&
         specific_cause == rhs.specific_cause &&

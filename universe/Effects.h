@@ -26,7 +26,7 @@ namespace ValueRef {
 namespace Effect {
 /** Does nothing when executed. Useful for triggering side-effects of effect
   * execution without modifying the gamestate. */
-class FO_COMMON_API NoOp final : public EffectBase {
+class FO_COMMON_API NoOp final : public Effect {
 public:
     NoOp();
 
@@ -45,7 +45,7 @@ private:
   * is set if \a max == true; otherwise the current value of the meter is set.
   * If the target of the Effect does not have the requested meter, nothing is
   * done. */
-class FO_COMMON_API SetMeter final : public EffectBase {
+class FO_COMMON_API SetMeter final : public Effect {
 public:
 
     SetMeter(MeterType meter,
@@ -88,7 +88,7 @@ private:
   * affected (this is not the same at the slot type in which the part is
   * actually located, as a part might be mountable in both types, and
   * located in a different type than specified, and would be matched). */
-class FO_COMMON_API SetShipPartMeter final : public EffectBase {
+class FO_COMMON_API SetShipPartMeter final : public Effect {
 public:
     /** Affects the \a meter_type meter that belongs to part(s) named \a
         part_name. */
@@ -127,7 +127,7 @@ private:
 /** Sets the indicated meter on the empire with the indicated id to the
   * indicated value.  If \a meter is not a valid meter for empires,
   * does nothing. */
-class FO_COMMON_API SetEmpireMeter final : public EffectBase {
+class FO_COMMON_API SetEmpireMeter final : public Effect {
 public:
     SetEmpireMeter(const std::string& meter, std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
@@ -163,7 +163,7 @@ private:
 
 /** Sets the empire stockpile of the target's owning empire to \a value.  If
   * the target does not have exactly one owner, nothing is done. */
-class FO_COMMON_API SetEmpireStockpile final : public EffectBase {
+class FO_COMMON_API SetEmpireStockpile final : public Effect {
 public:
     SetEmpireStockpile(ResourceType stockpile,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& value);
@@ -189,7 +189,7 @@ private:
 /** Makes the target planet the capital of its owner's empire.  If the target
   * object is not a planet, does not have an owner, or has more than one owner
   * the effect does nothing. */
-class FO_COMMON_API SetEmpireCapital final : public EffectBase {
+class FO_COMMON_API SetEmpireCapital final : public Effect {
 public:
     explicit SetEmpireCapital();
     explicit SetEmpireCapital(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
@@ -211,7 +211,7 @@ private:
     type of a PT_ASTEROID or PT_GASGIANT planet will also change its size to SZ_TINY or SZ_HUGE, respectively.
     Similarly, changing type to PT_ASTEROID or PT_GASGIANT will also cause the size to change to SZ_ASTEROID or
     SZ_GASGIANT, respectively. */
-class FO_COMMON_API SetPlanetType final : public EffectBase {
+class FO_COMMON_API SetPlanetType final : public Effect {
 public:
     explicit SetPlanetType(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type);
 
@@ -233,7 +233,7 @@ private:
   * planet will also change its type to PT_BARREN.  Similarly, changing size to
   * SZ_ASTEROID or SZ_GASGIANT will also cause the type to change to PT_ASTEROID
   * or PT_GASGIANT, respectively. */
-class FO_COMMON_API SetPlanetSize final : public EffectBase {
+class FO_COMMON_API SetPlanetSize final : public Effect {
 public:
     explicit SetPlanetSize(std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& size);
 
@@ -252,7 +252,7 @@ private:
 
 /** Sets the species on the target to \a species_name.  This works on planets
   * and ships, but has no effect on other objects. */
-class FO_COMMON_API SetSpecies final : public EffectBase {
+class FO_COMMON_API SetSpecies final : public Effect {
 public:
     explicit SetSpecies(std::unique_ptr<ValueRef::ValueRef<std::string>>&& species);
 
@@ -271,7 +271,7 @@ private:
 
 /** Sets empire \a empire_id as the owner of the target.  This has no effect if
   * \a empire_id was already the owner of the target object. */
-class FO_COMMON_API SetOwner final : public EffectBase {
+class FO_COMMON_API SetOwner final : public Effect {
 public:
     explicit SetOwner(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
 
@@ -290,7 +290,7 @@ private:
 
 /** Sets the opinion of Species \a species for empire with id \a empire_id to
   * \a opinion */
-class FO_COMMON_API SetSpeciesEmpireOpinion final : public EffectBase {
+class FO_COMMON_API SetSpeciesEmpireOpinion final : public Effect {
 public:
     SetSpeciesEmpireOpinion(std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
                             std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
@@ -313,7 +313,7 @@ private:
 
 /** Sets the opinion of Species \a opinionated_species for other species
   * \a rated_species to \a opinion */
-class FO_COMMON_API SetSpeciesSpeciesOpinion final : public EffectBase {
+class FO_COMMON_API SetSpeciesSpeciesOpinion final : public Effect {
 public:
     SetSpeciesSpeciesOpinion(std::unique_ptr<ValueRef::ValueRef<std::string>>&& opinionated_species_name,
                              std::unique_ptr<ValueRef::ValueRef<std::string>>&& rated_species_name,
@@ -336,12 +336,12 @@ private:
 
 /** Creates a new Planet with specified \a type and \a size at the system with
   * specified \a location_id */
-class FO_COMMON_API CreatePlanet final : public EffectBase {
+class FO_COMMON_API CreatePlanet final : public Effect {
 public:
     CreatePlanet(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type,
                  std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& size,
                  std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                 std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
+                 std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -352,7 +352,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<PlanetType>>     m_type;
     std::unique_ptr<ValueRef::ValueRef<PlanetSize>>     m_size;
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
-    std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
+    std::vector<std::unique_ptr<Effect>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -360,11 +360,11 @@ private:
 };
 
 /** Creates a new Building with specified \a type on the \a target Planet. */
-class FO_COMMON_API CreateBuilding final : public EffectBase {
+class FO_COMMON_API CreateBuilding final : public Effect {
 public:
     CreateBuilding(std::unique_ptr<ValueRef::ValueRef<std::string>>&& building_type_name,
                    std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                   std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
+                   std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -374,7 +374,7 @@ public:
 private:
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_building_type_name;
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
-    std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
+    std::vector<std::unique_ptr<Effect>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -384,19 +384,19 @@ private:
 /** Creates a new Ship with specified \a predefined_ship_design_name design
   * from those in the list of PredefinedShipDesignManager, and owned by the
   * empire with the specified \a empire_id */
-class FO_COMMON_API CreateShip final : public EffectBase {
+class FO_COMMON_API CreateShip final : public Effect {
 public:
     CreateShip(std::unique_ptr<ValueRef::ValueRef<std::string>>&& predefined_ship_design_name,
                std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
                std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
                std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_name,
-               std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
+               std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     CreateShip(std::unique_ptr<ValueRef::ValueRef<int>>&& ship_design_id,
                std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
                std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
                std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_name,
-               std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
+               std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -409,7 +409,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_species_name;
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
-    std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
+    std::vector<std::unique_ptr<Effect>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -418,19 +418,19 @@ private:
 
 /** Creates a new Field with specified \a field_type_name FieldType
   * of the specified \a size. */
-class FO_COMMON_API CreateField final : public EffectBase {
+class FO_COMMON_API CreateField final : public Effect {
 public:
     CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& field_type_name,
                          std::unique_ptr<ValueRef::ValueRef<double>>&& size,
                          std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                         std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
+                         std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& field_type_name,
                 std::unique_ptr<ValueRef::ValueRef<double>>&& x,
                 std::unique_ptr<ValueRef::ValueRef<double>>&& y,
                 std::unique_ptr<ValueRef::ValueRef<double>>&& size,
                 std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
+                std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -443,7 +443,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<double>>         m_y;
     std::unique_ptr<ValueRef::ValueRef<double>>         m_size;
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
-    std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
+    std::vector<std::unique_ptr<Effect>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -452,18 +452,18 @@ private:
 
 /** Creates a new system with the specified \a colour and at the specified
   * location. */
-class FO_COMMON_API CreateSystem final : public EffectBase {
+class FO_COMMON_API CreateSystem final : public Effect {
 public:
     CreateSystem(std::unique_ptr<ValueRef::ValueRef< ::StarType>>&& type,
                  std::unique_ptr<ValueRef::ValueRef<double>>&& x,
                  std::unique_ptr<ValueRef::ValueRef<double>>&& y,
                  std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                 std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
+                 std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     CreateSystem(std::unique_ptr<ValueRef::ValueRef<double>>&& x,
                  std::unique_ptr<ValueRef::ValueRef<double>>&& y,
                  std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                 std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after);
+                 std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(const ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -475,7 +475,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<double>>         m_x;
     std::unique_ptr<ValueRef::ValueRef<double>>         m_y;
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
-    std::vector<std::unique_ptr<EffectBase>>                m_effects_to_apply_after;
+    std::vector<std::unique_ptr<Effect>>                m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -487,7 +487,7 @@ private:
   * as well.  Destroy effects delay the desctruction of their targets until
   * after other all effects have executed, to ensure the source or target of
   * other effects are present when they execute. */
-class FO_COMMON_API Destroy final : public EffectBase {
+class FO_COMMON_API Destroy final : public Effect {
 public:
     Destroy();
 
@@ -503,7 +503,7 @@ private:
 };
 
 /** Adds the Special with the name \a name to the target object. */
-class FO_COMMON_API AddSpecial final : public EffectBase {
+class FO_COMMON_API AddSpecial final : public Effect {
 public:
     explicit AddSpecial(const std::string& name, float capacity = 1.0f);
     explicit AddSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
@@ -527,7 +527,7 @@ private:
 
 /** Removes the Special with the name \a name to the target object.  This has
   * no effect if no such Special was already attached to the target object. */
-class FO_COMMON_API RemoveSpecial final : public EffectBase {
+class FO_COMMON_API RemoveSpecial final : public Effect {
 public:
     explicit RemoveSpecial(const std::string& name);
     explicit RemoveSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
@@ -547,7 +547,7 @@ private:
 
 /** Creates starlane(s) between the target system and systems that match
   * \a other_lane_endpoint_condition */
-class FO_COMMON_API AddStarlanes final : public EffectBase {
+class FO_COMMON_API AddStarlanes final : public Effect {
 public:
     explicit AddStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition);
 
@@ -566,7 +566,7 @@ private:
 
 /** Removes starlane(s) between the target system and systems that match
   * \a other_lane_endpoint_condition */
-class FO_COMMON_API RemoveStarlanes final : public EffectBase {
+class FO_COMMON_API RemoveStarlanes final : public Effect {
 public:
     explicit RemoveStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition);
 
@@ -585,7 +585,7 @@ private:
 
 /** Sets the star type of the target to \a type.  This has no effect on
   * non-System targets. */
-class FO_COMMON_API SetStarType final : public EffectBase {
+class FO_COMMON_API SetStarType final : public Effect {
 public:
     explicit SetStarType(std::unique_ptr<ValueRef::ValueRef<StarType>>&& type);
 
@@ -606,7 +606,7 @@ private:
   * the condition \a location_condition.  If multiple objects match the
   * condition, then one is chosen.  If no objects match the condition, then
   * nothing is done. */
-class FO_COMMON_API MoveTo final : public EffectBase {
+class FO_COMMON_API MoveTo final : public Effect {
 public:
     explicit MoveTo(std::unique_ptr<Condition::Condition>&& location_condition);
 
@@ -626,7 +626,7 @@ private:
 /** Moves an UniverseObject to a location as though it was moving in orbit of
   * some object or position on the map.  Sign of \a speed indicates CCW / CW
   * rotation.*/
-class FO_COMMON_API MoveInOrbit final : public EffectBase {
+class FO_COMMON_API MoveInOrbit final : public Effect {
 public:
     MoveInOrbit(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
                 std::unique_ptr<Condition::Condition>&& focal_point_condition);
@@ -652,7 +652,7 @@ private:
 
 /** Moves an UniverseObject a specified distance towards some object or
   * position on the map. */
-class FO_COMMON_API MoveTowards final : public EffectBase {
+class FO_COMMON_API MoveTowards final : public Effect {
 public:
     MoveTowards(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
                 std::unique_ptr<Condition::Condition>&& dest_condition);
@@ -680,7 +680,7 @@ private:
   * matches the condition \a location_condition.  If multiple objects match the
   * condition, then one is chosen.  If no objects match the condition, then
   * nothing is done. */
-class FO_COMMON_API SetDestination final : public EffectBase {
+class FO_COMMON_API SetDestination final : public Effect {
 public:
     explicit SetDestination(std::unique_ptr<Condition::Condition>&& location_condition);
 
@@ -698,7 +698,7 @@ private:
 };
 
 /** Sets aggression level of the target object. */
-class FO_COMMON_API SetAggression final : public EffectBase {
+class FO_COMMON_API SetAggression final : public Effect {
 public:
     explicit SetAggression(bool aggressive);
 
@@ -717,7 +717,7 @@ private:
 
 /** Causes the owner empire of the target object to win the game.  If the
   * target object has multiple owners, nothing is done. */
-class FO_COMMON_API Victory final : public EffectBase {
+class FO_COMMON_API Victory final : public Effect {
 public:
     explicit Victory(const std::string& reason_string); // TODO: Make this a ValueRef<std::string>*
 
@@ -736,7 +736,7 @@ private:
 
 /** Sets whether an empire has researched at tech, and how much research
   * progress towards that tech has been completed. */
-class FO_COMMON_API SetEmpireTechProgress final : public EffectBase {
+class FO_COMMON_API SetEmpireTechProgress final : public Effect {
 public:
     SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRef<std::string>>&& tech_name,
                           std::unique_ptr<ValueRef::ValueRef<double>>&& research_progress,
@@ -757,7 +757,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class FO_COMMON_API GiveEmpireTech final : public EffectBase {
+class FO_COMMON_API GiveEmpireTech final : public Effect {
 public:
     explicit GiveEmpireTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& tech_name,
                             std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr);
@@ -782,7 +782,7 @@ private:
   * which are substituted as string parameters %1%, %2%, %3%, etc. in the order
   * they are specified.  Extra parameters beyond those needed by \a message_string
   * are ignored, and missing parameters are left as blank text. */
-class FO_COMMON_API GenerateSitRepMessage final : public EffectBase {
+class FO_COMMON_API GenerateSitRepMessage final : public Effect {
 public:
     using MessageParams =  std::vector<std::pair<
         std::string, std::unique_ptr<ValueRef::ValueRef<std::string>>>>;
@@ -838,7 +838,7 @@ private:
 };
 
 /** Applies an overlay texture to Systems. */
-class FO_COMMON_API SetOverlayTexture final : public EffectBase {
+class FO_COMMON_API SetOverlayTexture final : public Effect {
 public:
     SetOverlayTexture(const std::string& texture, std::unique_ptr<ValueRef::ValueRef<double>>&& size);
     SetOverlayTexture(const std::string& texture, ValueRef::ValueRef<double>* size);
@@ -859,7 +859,7 @@ private:
 };
 
 /** Applies a texture to Planets. */
-class FO_COMMON_API SetTexture final : public EffectBase {
+class FO_COMMON_API SetTexture final : public Effect {
 public:
     explicit SetTexture(const std::string& texture);
 
@@ -880,7 +880,7 @@ private:
 
 /** Sets visibility of an object for an empire, independent of standard
   * visibility mechanics. */
-class FO_COMMON_API SetVisibility final : public EffectBase {
+class FO_COMMON_API SetVisibility final : public Effect {
 public:
     SetVisibility(std::unique_ptr<ValueRef::ValueRef<Visibility>> vis,
                   EmpireAffiliationType affiliation,
@@ -918,11 +918,11 @@ private:
 
 /** Executes a set of effects if an execution-time condition is met, or an
   * alterative set of effects if the condition is not met. */
-class FO_COMMON_API Conditional final : public EffectBase {
+class FO_COMMON_API Conditional final : public Effect {
 public:
     Conditional(std::unique_ptr<Condition::Condition>&& target_condition,
-                std::vector<std::unique_ptr<EffectBase>>&& true_effects,
-                std::vector<std::unique_ptr<EffectBase>>&& false_effects);
+                std::vector<std::unique_ptr<Effect>>&& true_effects,
+                std::vector<std::unique_ptr<Effect>>&& false_effects);
 
     void Execute(const ScriptingContext& context) const override;
     /** Note: executes all of the true or all of the false effects on each
@@ -952,8 +952,8 @@ public:
 
 private:
     std::unique_ptr<Condition::Condition> m_target_condition; // condition to apply to each target object to determine which effects to execute
-    std::vector<std::unique_ptr<EffectBase>> m_true_effects;      // effects to execute if m_target_condition matches target object
-    std::vector<std::unique_ptr<EffectBase>> m_false_effects;     // effects to execute if m_target_condition does not match target object
+    std::vector<std::unique_ptr<Effect>> m_true_effects;      // effects to execute if m_target_condition matches target object
+    std::vector<std::unique_ptr<Effect>> m_false_effects;     // effects to execute if m_target_condition does not match target object
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -974,19 +974,19 @@ void EffectsGroup::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void EffectBase::serialize(Archive& ar, const unsigned int version)
+void Effect::serialize(Archive& ar, const unsigned int version)
 {}
 
 template <class Archive>
 void NoOp::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect);
 }
 
 template <class Archive>
 void SetMeter::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_meter)
         & BOOST_SERIALIZATION_NVP(m_value)
         & BOOST_SERIALIZATION_NVP(m_accounting_label);
@@ -995,7 +995,7 @@ void SetMeter::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void SetShipPartMeter::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_part_name)
         & BOOST_SERIALIZATION_NVP(m_meter)
         & BOOST_SERIALIZATION_NVP(m_value);
@@ -1004,7 +1004,7 @@ void SetShipPartMeter::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void SetEmpireMeter::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
         & BOOST_SERIALIZATION_NVP(m_meter)
         & BOOST_SERIALIZATION_NVP(m_value);
@@ -1013,7 +1013,7 @@ void SetEmpireMeter::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void SetEmpireStockpile::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
         & BOOST_SERIALIZATION_NVP(m_stockpile)
         & BOOST_SERIALIZATION_NVP(m_value);
@@ -1022,42 +1022,42 @@ void SetEmpireStockpile::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void SetEmpireCapital::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>
 void SetPlanetType::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_type);
 }
 
 template <class Archive>
 void SetPlanetSize::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_size);
 }
 
 template <class Archive>
 void SetSpecies::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_species_name);
 }
 
 template <class Archive>
 void SetOwner::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>
 void CreatePlanet::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_type)
         & BOOST_SERIALIZATION_NVP(m_size)
         & BOOST_SERIALIZATION_NVP(m_name)
@@ -1067,7 +1067,7 @@ void CreatePlanet::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void CreateBuilding::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_building_type_name)
         & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_effects_to_apply_after);
@@ -1076,7 +1076,7 @@ void CreateBuilding::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void CreateShip::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_design_name)
         & BOOST_SERIALIZATION_NVP(m_design_id)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
@@ -1088,7 +1088,7 @@ void CreateShip::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void CreateField::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_field_type_name)
         & BOOST_SERIALIZATION_NVP(m_x)
         & BOOST_SERIALIZATION_NVP(m_y)
@@ -1100,7 +1100,7 @@ void CreateField::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void CreateSystem::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_type)
         & BOOST_SERIALIZATION_NVP(m_x)
         & BOOST_SERIALIZATION_NVP(m_y)
@@ -1111,13 +1111,13 @@ void CreateSystem::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void Destroy::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect);
 }
 
 template <class Archive>
 void AddSpecial::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_capacity);
 }
@@ -1125,42 +1125,42 @@ void AddSpecial::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void RemoveSpecial::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
 void AddStarlanes::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_other_lane_endpoint_condition);
 }
 
 template <class Archive>
 void RemoveStarlanes::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_other_lane_endpoint_condition);
 }
 
 template <class Archive>
 void SetStarType::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_type);
 }
 
 template <class Archive>
 void MoveTo::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_location_condition);
 }
 
 template <class Archive>
 void MoveInOrbit::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_speed)
         & BOOST_SERIALIZATION_NVP(m_focal_point_condition)
         & BOOST_SERIALIZATION_NVP(m_focus_x)
@@ -1170,7 +1170,7 @@ void MoveInOrbit::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void MoveTowards::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_speed)
         & BOOST_SERIALIZATION_NVP(m_dest_condition)
         & BOOST_SERIALIZATION_NVP(m_dest_x)
@@ -1180,28 +1180,28 @@ void MoveTowards::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void SetDestination::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_location_condition);
 }
 
 template <class Archive>
 void SetAggression::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_aggressive);
 }
 
 template <class Archive>
 void Victory::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_reason_string);
 }
 
 template <class Archive>
 void SetEmpireTechProgress::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_tech_name)
         & BOOST_SERIALIZATION_NVP(m_research_progress)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
@@ -1210,7 +1210,7 @@ void SetEmpireTechProgress::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void GiveEmpireTech::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_tech_name)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
@@ -1218,7 +1218,7 @@ void GiveEmpireTech::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void GenerateSitRepMessage::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_message_string)
         & BOOST_SERIALIZATION_NVP(m_icon)
         & BOOST_SERIALIZATION_NVP(m_message_parameters)
@@ -1232,7 +1232,7 @@ void GenerateSitRepMessage::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void SetOverlayTexture::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_texture)
         & BOOST_SERIALIZATION_NVP(m_size);
 }
@@ -1240,14 +1240,14 @@ void SetOverlayTexture::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void SetTexture::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_texture);
 }
 
 template <class Archive>
 void SetVisibility::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_vis)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
         & BOOST_SERIALIZATION_NVP(m_affiliation)
@@ -1257,7 +1257,7 @@ void SetVisibility::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void Conditional::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Effect)
         & BOOST_SERIALIZATION_NVP(m_target_condition)
         & BOOST_SERIALIZATION_NVP(m_true_effects)
         & BOOST_SERIALIZATION_NVP(m_false_effects);

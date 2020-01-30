@@ -7,12 +7,12 @@
 #include <boost/spirit/include/qi.hpp>
 
 namespace Effect {
-    class EffectBase;
+    class Effect;
     class EffectsGroup;
 }
 
 namespace parse { namespace detail {
-    using effect_payload        = MovableEnvelope<Effect::EffectBase>;
+    using effect_payload        = MovableEnvelope<Effect::Effect>;
     using effect_signature      = effect_payload ();
     using effect_parser_rule    = rule<effect_signature>;
     using effect_parser_grammar = grammar<effect_signature>;

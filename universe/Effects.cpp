@@ -174,7 +174,7 @@ namespace Effect {
 ///////////////////////////////////////////////////////////
 EffectsGroup::EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
                            std::unique_ptr<Condition::Condition>&& activation,
-                           std::vector<std::unique_ptr<EffectBase>>&& effects,
+                           std::vector<std::unique_ptr<Effect>>&& effects,
                            const std::string& accounting_label,
                            const std::string& stacking_group, int priority,
                            const std::string& description,
@@ -206,10 +206,10 @@ void EffectsGroup::Execute(const TargetsCauses& targets_causes, AccountingMap* a
     }
 }
 
-const std::vector<EffectBase*>  EffectsGroup::EffectsList() const {
-    std::vector<EffectBase*> retval(m_effects.size());
+const std::vector<Effect*>  EffectsGroup::EffectsList() const {
+    std::vector<Effect*> retval(m_effects.size());
     std::transform(m_effects.begin(), m_effects.end(), retval.begin(),
-                   [](const std::unique_ptr<EffectBase>& xx) {return xx.get();});
+                   [](const std::unique_ptr<Effect>& xx) {return xx.get();});
     return retval;
 }
 
@@ -309,12 +309,12 @@ std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_group
 
 
 ///////////////////////////////////////////////////////////
-// EffectBase                                            //
+// Effect                                            //
 ///////////////////////////////////////////////////////////
-EffectBase::~EffectBase()
+Effect::~Effect()
 {}
 
-void EffectBase::Execute(const TargetsCauses& targets_causes,
+void Effect::Execute(const TargetsCauses& targets_causes,
                          AccountingMap* accounting_map,
                          bool only_meter_effects, bool only_appearance_effects,
                          bool include_empire_meter_effects,
@@ -335,7 +335,7 @@ void EffectBase::Execute(const TargetsCauses& targets_causes,
     }
 }
 
-void EffectBase::Execute(const ScriptingContext& context,
+void Effect::Execute(const ScriptingContext& context,
                          const TargetSet& targets,
                          AccountingMap* accounting_map,
                          const EffectCause& effect_cause,
@@ -353,7 +353,7 @@ void EffectBase::Execute(const ScriptingContext& context,
     Execute(context, targets);
 }
 
-void EffectBase::Execute(const ScriptingContext& context, const TargetSet& targets) const {
+void Effect::Execute(const ScriptingContext& context, const TargetSet& targets) const {
     if (targets.empty())
         return;
 
@@ -365,10 +365,10 @@ void EffectBase::Execute(const ScriptingContext& context, const TargetSet& targe
     }
 }
 
-unsigned int EffectBase::GetCheckSum() const {
+unsigned int Effect::GetCheckSum() const {
     unsigned int retval{0};
 
-    CheckSums::CheckSumCombine(retval, "EffectBase");
+    CheckSums::CheckSumCombine(retval, "Effect");
 
     TraceLogger() << "GetCheckSum(EffectsGroup): retval: " << retval;
     return retval;
@@ -495,7 +495,7 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
         auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
         if (!op) {
             ErrorLogger() << "SetMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
-            EffectBase::Execute(context, targets);
+            Effect::Execute(context, targets);
             return;
         }
         // RHS should be a ConstantExpr
@@ -506,7 +506,7 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
             increment = -increment;
         } else {
             ErrorLogger() << "SetMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
-            EffectBase::Execute(context, targets);
+            Effect::Execute(context, targets);
             return;
         }
         //DebugLogger() << "simple increment: " << increment;
@@ -520,7 +520,7 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
     }
 
     // meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
-    EffectBase::Execute(context, targets);
+    Effect::Execute(context, targets);
 }
 
 std::string SetMeter::Dump(unsigned short ntabs) const {
@@ -666,7 +666,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
     // to target, but the value is target-invariant
     if (!m_part_name->TargetInvariant()) {
         DebugLogger() << "SetShipPartMeter::Execute has target-variant part name, which it is not (yet) coded to handle efficiently!";
-        EffectBase::Execute(context, targets);
+        Effect::Execute(context, targets);
         return;
     }
 
@@ -694,7 +694,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
         auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
         if (!op) {
             ErrorLogger() << "SetShipPartMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
-            EffectBase::Execute(context, targets);
+            Effect::Execute(context, targets);
             return;
         }
         // RHS should be a ConstantExpr
@@ -705,7 +705,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
             increment = -increment;
         } else {
             ErrorLogger() << "SetShipPartMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
-            EffectBase::Execute(context, targets);
+            Effect::Execute(context, targets);
             return;
         }
         //DebugLogger() << "simple increment: " << increment;
@@ -725,7 +725,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
     } else {
         //DebugLogger() << "complicated meter adjustment...";
         // meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
-        EffectBase::Execute(context, targets);
+        Effect::Execute(context, targets);
     }
 }
 
@@ -838,7 +838,7 @@ void SetEmpireMeter::Execute(const ScriptingContext& context, const TargetSet& t
     }
 
     // TODO: efficiently handle target invariant empire id and value
-    EffectBase::Execute(context, targets);
+    Effect::Execute(context, targets);
     //return;
 
     //if (m_empire_id->TargetInvariant() && m_value->TargetInvariant()) {
@@ -846,7 +846,7 @@ void SetEmpireMeter::Execute(const ScriptingContext& context, const TargetSet& t
 
     ////DebugLogger() << "complicated meter adjustment...";
     //// meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
-    //EffectBase::Execute(context, targets);
+    //Effect::Execute(context, targets);
 }
 
 std::string SetEmpireMeter::Dump(unsigned short ntabs) const
@@ -1316,7 +1316,7 @@ unsigned int SetSpeciesSpeciesOpinion::GetCheckSum() const {
 CreatePlanet::CreatePlanet(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type,
                            std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& size,
                            std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                           std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                           std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_type(std::move(type)),
     m_size(std::move(size)),
     m_name(std::move(name)),
@@ -1427,7 +1427,7 @@ unsigned int CreatePlanet::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 CreateBuilding::CreateBuilding(std::unique_ptr<ValueRef::ValueRef<std::string>>&& building_type_name,
                                std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                               std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                               std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_building_type_name(std::move(building_type_name)),
     m_name(std::move(name)),
     m_effects_to_apply_after(std::move(effects_to_apply_after))
@@ -1532,7 +1532,7 @@ CreateShip::CreateShip(std::unique_ptr<ValueRef::ValueRef<std::string>>&& predef
                        std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
                        std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
                        std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_name,
-                       std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                       std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_design_name(std::move(predefined_ship_design_name)),
     m_design_id(nullptr),
     m_empire_id(std::move(empire_id)),
@@ -1545,7 +1545,7 @@ CreateShip::CreateShip(std::unique_ptr<ValueRef::ValueRef<int>>&& ship_design_id
                        std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
                        std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
                        std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_name,
-                       std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                       std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_design_name(nullptr),
     m_design_id(std::move(ship_design_id)),
     m_empire_id(std::move(empire_id)),
@@ -1711,7 +1711,7 @@ unsigned int CreateShip::GetCheckSum() const {
 CreateField::CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& field_type_name,
                          std::unique_ptr<ValueRef::ValueRef<double>>&& size,
                          std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                         std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                         std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_field_type_name(std::move(field_type_name)),
     m_x(nullptr),
     m_y(nullptr),
@@ -1725,7 +1725,7 @@ CreateField::CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& fiel
                          std::unique_ptr<ValueRef::ValueRef<double>>&& y,
                          std::unique_ptr<ValueRef::ValueRef<double>>&& size,
                          std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                         std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                         std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_field_type_name(std::move(field_type_name)),
     m_x(std::move(x)),
     m_y(std::move(y)),
@@ -1862,7 +1862,7 @@ CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRef< ::StarType>>&& ty
                            std::unique_ptr<ValueRef::ValueRef<double>>&& x,
                            std::unique_ptr<ValueRef::ValueRef<double>>&& y,
                            std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                           std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                           std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_type(std::move(type)),
     m_x(std::move(x)),
     m_y(std::move(y)),
@@ -1875,7 +1875,7 @@ CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRef< ::StarType>>&& ty
 CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRef<double>>&& x,
                            std::unique_ptr<ValueRef::ValueRef<double>>&& y,
                            std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                           std::vector<std::unique_ptr<EffectBase>>&& effects_to_apply_after) :
+                           std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_type(nullptr),
     m_x(std::move(x)),
     m_y(std::move(y)),
@@ -3660,8 +3660,8 @@ unsigned int SetVisibility::GetCheckSum() const {
 // Conditional                                           //
 ///////////////////////////////////////////////////////////
 Conditional::Conditional(std::unique_ptr<Condition::Condition>&& target_condition,
-                         std::vector<std::unique_ptr<EffectBase>>&& true_effects,
-                         std::vector<std::unique_ptr<EffectBase>>&& false_effects) :
+                         std::vector<std::unique_ptr<Effect>>&& true_effects,
+                         std::vector<std::unique_ptr<Effect>>&& false_effects) :
     m_target_condition(std::move(target_condition)),
     m_true_effects(std::move(true_effects)),
     m_false_effects(std::move(false_effects))
@@ -3698,14 +3698,14 @@ void Conditional::Execute(const ScriptingContext& context, const TargetSet& targ
         m_target_condition->Eval(context, matches, non_matches, Condition::MATCHES);
 
     if (!matches.empty() && !m_true_effects.empty()) {
-        Effect::TargetSet& match_targets = *reinterpret_cast<Effect::TargetSet*>(&matches);
+        TargetSet& match_targets = *reinterpret_cast<TargetSet*>(&matches);
         for (auto& effect : m_true_effects) {
             if (effect)
                 effect->Execute(context, match_targets);
         }
     }
     if (!non_matches.empty() && !m_false_effects.empty()) {
-        Effect::TargetSet& non_match_targets = *reinterpret_cast<Effect::TargetSet*>(&non_matches);
+        TargetSet& non_match_targets = *reinterpret_cast<TargetSet*>(&non_matches);
         for (auto& effect : m_false_effects) {
             if (effect)
                 effect->Execute(context, non_match_targets);
@@ -3740,7 +3740,7 @@ void Conditional::Execute(const ScriptingContext& context,
 
     // execute true and false effects to target matches and non-matches respectively
     if (!matches.empty() && !m_true_effects.empty()) {
-        Effect::TargetSet& match_targets = *reinterpret_cast<Effect::TargetSet*>(&matches);
+        TargetSet& match_targets = *reinterpret_cast<TargetSet*>(&matches);
         for (const auto& effect : m_true_effects) {
             effect->Execute(context, match_targets, accounting_map,
                             effect_cause,
@@ -3750,7 +3750,7 @@ void Conditional::Execute(const ScriptingContext& context,
         }
     }
     if (!non_matches.empty() && !m_false_effects.empty()) {
-        Effect::TargetSet& non_match_targets = *reinterpret_cast<Effect::TargetSet*>(&non_matches);
+        TargetSet& non_match_targets = *reinterpret_cast<TargetSet*>(&non_matches);
         for (const auto& effect : m_false_effects) {
             effect->Execute(context, non_match_targets, accounting_map,
                             effect_cause,

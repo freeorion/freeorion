@@ -72,9 +72,9 @@ namespace Effect {
     * attached) and the target object are both required.  Note that this means
     * that ValueRefs contained within Effects can refer to values in either the
     * source or target objects. */
-    class FO_COMMON_API EffectBase {
+    class FO_COMMON_API Effect {
     public:
-        virtual ~EffectBase();
+        virtual ~Effect();
 
         virtual void Execute(const ScriptingContext& context) const = 0;
 
@@ -147,7 +147,7 @@ namespace Effect {
     public:
         EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
                     std::unique_ptr<Condition::Condition>&& activation,
-                    std::vector<std::unique_ptr<EffectBase>>&& effects,
+                    std::vector<std::unique_ptr<Effect>>&& effects,
                     const std::string& accounting_label = "",
                     const std::string& stacking_group = "", int priority = 0,
                     const std::string& description = "",
@@ -165,7 +165,7 @@ namespace Effect {
         const std::string&              StackingGroup() const       { return m_stacking_group; }
         Condition::Condition*       Scope() const               { return m_scope.get(); }
         Condition::Condition*       Activation() const          { return m_activation.get(); }
-        const std::vector<EffectBase*>  EffectsList() const;
+        const std::vector<Effect*>  EffectsList() const;
         const std::string&              GetDescription() const;
         const std::string&              AccountingLabel() const     { return m_accounting_label; }
         int                             Priority() const            { return m_priority; }
@@ -183,7 +183,7 @@ namespace Effect {
         std::unique_ptr<Condition::Condition>   m_scope;
         std::unique_ptr<Condition::Condition>   m_activation;
         std::string                 m_stacking_group;
-        std::vector<std::unique_ptr<EffectBase>>    m_effects;
+        std::vector<std::unique_ptr<Effect>>    m_effects;
         std::string                 m_accounting_label;
         int                         m_priority;
         std::string                 m_description;
