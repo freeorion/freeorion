@@ -605,7 +605,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
     TraceLogger(effects) << "IMEAD: updating meter estimates";
 
     // save starting meter vales
-    std::unordered_map<int, boost::container::flat_map<MeterType, double>> starting_current_meter_values;
+    DiscrepancyMap starting_current_meter_values;
     starting_current_meter_values.reserve(m_objects.size());
     for (const auto& obj : m_objects.all()) {
         auto& obj_discrep = starting_current_meter_values[obj->ID()];

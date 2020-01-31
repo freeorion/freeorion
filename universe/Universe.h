@@ -48,7 +48,6 @@ namespace Effect {
     typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
     typedef std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>> AccountingMap;
     typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> TargetsCauses;
-    typedef std::unordered_map<int, boost::container::flat_map<MeterType, double>> DiscrepancyMap;
 }
 
 namespace ValueRef {
@@ -87,6 +86,13 @@ private:
     typedef std::vector<std::pair<int, VisValRef>>      SrcVisValRefVec;
     typedef std::map<int, SrcVisValRefVec>              ObjSrcVisValRefVecMap;
     typedef std::map<int, ObjSrcVisValRefVecMap>        EmpireObjectVisValueRefMap;
+
+    /** Discrepancy between meter's value at start of turn, and the value that
+      * this client calculate that the meter should have with the knowledge
+      * available -> the unknown factor affecting the meter.  This is used
+      * when generating effect accounting, in the case where the expected
+      * and actual meter values don't match. */
+    typedef std::unordered_map<int, boost::container::flat_map<MeterType, double>> DiscrepancyMap;
 
 public:
     typedef std::map<int, Visibility>               ObjectVisibilityMap;            ///< map from object id to Visibility level for a particular empire
@@ -507,7 +513,12 @@ private:
     std::map<int, std::set<int>>    m_empire_known_ship_design_ids;     ///< ship designs known to each empire
 
     Effect::AccountingMap           m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
-    Effect::DiscrepancyMap          m_effect_discrepancy_map;           ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
+
+    /// map from target object id, to map from target meter, to discrepancy
+    /// between meter's actual initial value, and the initial value that this
+    /// meter should have as far as the client can tell: the unknown factor
+    /// affecting the meter.
+    DiscrepancyMap                  m_effect_discrepancy_map;
 
     std::map<int, std::set<int>>    m_marked_destroyed;                 ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object. key is destroyed object, and value set are the ids of objects that caused the destruction (may be multiples destroying a single target on a given turn)
 

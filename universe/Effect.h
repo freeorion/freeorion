@@ -126,13 +126,6 @@ namespace Effect {
         float   running_meter_total;///< meter total as of this effect.
     };
 
-    /** Discrepancy between meter's value at start of turn, and the value that
-      * this client calculates that the meter should have with the knowledge
-      * available -> the unknown factor affecting the meter.  This is used
-      * when generating effect accounting, in the case where the expected
-      * and actual meter values don't match. */
-    typedef std::unordered_map<int, boost::container::flat_map<MeterType, double>> DiscrepancyMap;
-
     /** Contains one or more Effects, a Condition which indicates the objects in
     * the scope of the Effect(s), and a Condition which indicates whether or not
     * the Effect(s) will be executed on the objects in scope during the current
