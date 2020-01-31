@@ -75,8 +75,10 @@ namespace {
     template<typename T>
     std::vector<int> ObjectIDs(const Universe& universe)
     {
-        std::vector<int> result(universe.Objects().size<T>(), INVALID_OBJECT_ID);
-        for (const auto& obj : universe.Objects().all<T>())
+        std::vector<int> result;
+        auto objs = universe.Objects().all<T>();
+        result.reserve(objs.size());
+        for (const auto& obj : objs)
             result.push_back(obj->ID());
         return result;
     }
