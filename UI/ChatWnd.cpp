@@ -139,15 +139,16 @@ void MessageWndEdit::FindGameWords() {
         m_game_words.insert(entry.second->Name());
         m_game_words.insert(entry.second->PlayerName());
     }
+    auto& objs = GetUniverse().Objects();
     // add system names
-    for (auto& system : GetUniverse().Objects().all<System>()) {
-        if (system->Name() != "")
-            m_game_words.insert(system->Name());
+    for (auto sys_it = objs.begin<System>(); sys_it != objs.end<System>(); ++sys_it) {
+        if (sys_it->Name() != "")
+            m_game_words.insert(sys_it->Name());
     }
      // add ship names
-    for (auto& ship : GetUniverse().Objects().all<Ship>()) {
-        if (ship->Name() != "")
-            m_game_words.insert(ship->Name());
+    for (auto ship_it = objs.begin<Ship>(); ship_it != objs.end<Ship>(); ++ship_it) {
+        if (ship_it->Name() != "")
+            m_game_words.insert(ship_it->Name());
     }
      // add ship design names
 
