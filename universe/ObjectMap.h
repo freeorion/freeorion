@@ -173,7 +173,7 @@ public:
     /** \name Accessors */ //@{
     /** Returns the number of objects of the specified class in this ObjectMap. */
     template <class T=UniverseObject>
-    int size() const;
+    std::size_t size() const;
 
     /** Returns true if this ObjectMap contains no objects */
     bool empty() const;
@@ -409,6 +409,7 @@ std::vector<std::shared_ptr<const T>> ObjectMap::all() const {
 template <class T>
 std::vector<std::shared_ptr<T>> ObjectMap::all() {
     std::vector<std::shared_ptr<T>> result;
+    result.reserve(Map<T>().size());
     for (const auto& entry : Map<T>())
         result.push_back(entry.second);
     return result;
@@ -417,6 +418,7 @@ std::vector<std::shared_ptr<T>> ObjectMap::all() {
 template <class T>
 std::vector<std::shared_ptr<const T>> ObjectMap::find(const std::vector<int>& object_ids) const {
     std::vector<std::shared_ptr<const T>> retval;
+    retval.reserve(object_ids.size());
     typedef typename std::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
         auto map_it = Map<mutableT>().find(object_id);
@@ -429,6 +431,7 @@ std::vector<std::shared_ptr<const T>> ObjectMap::find(const std::vector<int>& ob
 template <class T>
 std::vector<std::shared_ptr<const T>> ObjectMap::find(const std::set<int>& object_ids) const {
     std::vector<std::shared_ptr<const T>> retval;
+    retval.reserve(object_ids.size());
     typedef typename std::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
         auto map_it = Map<mutableT>().find(object_id);
@@ -441,6 +444,7 @@ std::vector<std::shared_ptr<const T>> ObjectMap::find(const std::set<int>& objec
 template <class T>
 std::vector<std::shared_ptr<T>> ObjectMap::find(const std::vector<int>& object_ids) {
     std::vector<std::shared_ptr<T>> retval;
+    retval.reserve(object_ids.size());
     typedef typename std::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
         auto map_it = Map<mutableT>().find(object_id);
@@ -453,6 +457,7 @@ std::vector<std::shared_ptr<T>> ObjectMap::find(const std::vector<int>& object_i
 template <class T>
 std::vector<std::shared_ptr<T>> ObjectMap::find(const std::set<int>& object_ids) {
     std::vector<std::shared_ptr<T>> retval;
+    retval.reserve(object_ids.size());
     typedef typename std::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
         auto map_it = Map<mutableT>().find(object_id);
@@ -466,6 +471,7 @@ template <class T>
 std::vector<std::shared_ptr<const T>> ObjectMap::find(const UniverseObjectVisitor& visitor) const {
     std::vector<std::shared_ptr<const T>> result;
     typedef typename std::remove_const<T>::type mutableT;
+    result.reserve(size<mutableT>());
     for (auto entry : Map<mutableT>()) {
         if (entry.second->Accept(visitor))
             result.push_back(entry.second);
@@ -477,6 +483,7 @@ template <class T>
 std::vector<std::shared_ptr<T>> ObjectMap::find(const UniverseObjectVisitor& visitor) {
     std::vector<std::shared_ptr<T>> result;
     typedef typename std::remove_const<T>::type mutableT;
+    result.reserve(size<mutableT>());
     for (const auto& entry : Map<mutableT>()) {
         if (entry.second->Accept(visitor))
             result.push_back(entry.second);
@@ -485,7 +492,7 @@ std::vector<std::shared_ptr<T>> ObjectMap::find(const UniverseObjectVisitor& vis
 }
 
 template <class T>
-int ObjectMap::size() const
+std::size_t ObjectMap::size() const
 { return Map<typename std::remove_const<T>::type>().size(); }
 
 template <class T>

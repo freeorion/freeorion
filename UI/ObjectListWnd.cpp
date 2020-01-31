@@ -925,13 +925,13 @@ private:
             param_widget_top += m_string_drop->Height();
 
             std::vector< ::PlanetSize> planet_sizes;
+            planet_sizes.reserve(NUM_PLANET_SIZES);
             for (auto size = SZ_TINY; size != NUM_PLANET_SIZES; size = ::PlanetSize(size + 1))
                 planet_sizes.push_back(size);
 
             auto row_it = m_string_drop->end();
-            for (const std::string& text : StringsFromEnums(planet_sizes)) {
+            for (const std::string& text : StringsFromEnums(planet_sizes))
                 row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(text, GG::Y(ClientUI::Pts())));
-            }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
 
@@ -945,6 +945,7 @@ private:
             AttachChild(m_string_drop);
 
             std::vector< ::PlanetType> planet_types;
+            planet_types.reserve(NUM_PLANET_TYPES);
             for (::PlanetType type = PT_SWAMP; type != NUM_PLANET_TYPES; type = ::PlanetType(type + 1))
                 planet_types.push_back(type);
 
@@ -969,6 +970,7 @@ private:
             param_widget_top += m_string_drop->Height();
 
             std::vector< ::StarType> star_types;
+            star_types.reserve(NUM_STAR_TYPES);
             for (::StarType type = STAR_BLUE; type != NUM_STAR_TYPES; type = ::StarType(type + 1))
                 star_types.push_back(type);
 
@@ -1015,6 +1017,7 @@ private:
             param_widget_top = m_string_drop->Height() + GG::Y(Value(PAD));
 
             std::vector< ::MeterType> meter_types;
+            meter_types.reserve(NUM_METER_TYPES);
             for (auto type = METER_TARGET_POPULATION; type != NUM_METER_TYPES; type = ::MeterType(type + 1))
                 meter_types.push_back(type);
 
@@ -1551,6 +1554,7 @@ private:
 
     std::vector<std::shared_ptr<GG::Control>> GetControls() {
         std::vector<std::shared_ptr<GG::Control>> retval;
+        retval.reserve(NUM_COLUMNS);
 
         RefreshCache();
 
@@ -1688,6 +1692,7 @@ public:
         m_controls.clear();
 
         auto&& controls = GetControls();
+        m_controls.reserve(controls.size());
         for (int i = 0; i < static_cast<int>(controls.size()); ++i) {
             m_controls.push_back(controls[i]);
             AttachChild(controls[i]);
@@ -1788,6 +1793,7 @@ private:
 
     std::vector<std::shared_ptr<GG::Button>> GetControls() {
         std::vector<std::shared_ptr<GG::Button>> retval;
+        retval.reserve(NUM_COLUMNS);
 
         auto control = Wnd::Create<CUIButton>("-");
         retval.push_back(control);
