@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <XMLDoc>
 <GG::Clr hex="00FF00"/> <!-- Pure Green -->
-<GG::Clr hex="2020FF"/> <!-- Dark Blue -->
+<GG::Clr hex="6060FF"/> <!-- Darkish Blue -->
 <GG::Clr hex="FF00FF"/> <!-- Pure Magenta -->
 <GG::Clr hex="FFFF00"/> <!-- Pure Yellow -->
 <GG::Clr hex="00FFFF"/> <!-- Pure Cyan -->
-<GG::Clr hex="801010"/> <!-- Dark Red -->
+<GG::Clr hex="903030"/> <!-- Dark Red -->
 <GG::Clr hex="FF8C00"/> <!-- Orange -->
 <GG::Clr hex="7200B3"/> <!-- Purple -->
 <GG::Clr hex="5E7800"/> <!-- Olive -->
