@@ -49,7 +49,7 @@ class DiplomaticCorp(object):
             elif aggression.key == fo.aggression.cautious:
                 accept_proposal = attitude > 5
             else:  # aggression typical or greater
-                accept_proposal = False            
+                accept_proposal = False
             if aggression.key <= fo.aggression.typical:
                 possible_acknowledgments = UserStringList("AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST")
                 if accept_proposal:
