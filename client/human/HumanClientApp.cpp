@@ -403,12 +403,7 @@ bool HumanClientApp::CanSaveNow() const {
         if (GetEmpireClientType(entry.first) != Networking::CLIENT_TYPE_AI_PLAYER)
             continue;   // only care about AIs
 
-        auto status_it = m_empire_status.find(entry.first);
-
-        if (status_it == this->m_empire_status.end()) {
-            return false;  // missing status for AI; can't assume it's ready
-        }
-        if (status_it->second != Message::WAITING) {
+        if (!entry.second->Ready()) {
             return false;
         }
     }
@@ -1449,8 +1444,9 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_cod
     // Only save or allow user to cancel if not exiting due to an error.
     if (!skip_savegame) {
         // Check if this is a multiplayer game and the player has not set status to ready
-        if (was_playing && !m_single_player_game && 
-            m_empire_status[m_empire_id] != Message::WAITING &&
+        if (was_playing && !m_single_player_game &&
+            m_empires.GetEmpire(m_empire_id) != nullptr &&
+            !m_empires.GetEmpire(m_empire_id)->Ready() &&
             GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER)
         {
             std::shared_ptr<GG::Font> font = ClientUI::GetFont();
@@ -1504,7 +1500,7 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_cod
         after_server_shutdown_action = std::bind(&HumanClientApp::ExitSDL, this, exit_code);
 
     m_fsm->process_event(StartQuittingGame(m_server_process, std::move(after_server_shutdown_action)));
-    
+
     m_exit_handled = false;
 }
 

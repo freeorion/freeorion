@@ -68,16 +68,6 @@ public:
     const std::map<int, PlayerInfo>& Players() const;
     /** @} */
 
-    /** @brief Return the empire statuses in game
-     *
-     * @return Return a map containing PlayerStatus instances as value and
-     *      their empire identifier as key.
-     *
-     * @{ */
-    std::map<int, Message::PlayerStatus>& EmpireStatus();
-    const std::map<int, Message::PlayerStatus>& EmpireStatus() const;
-    /** @} */
-
     /** @brief Return the ::Universe known to this client
      *
      * @return A reference to the single ::Universe instance representing
@@ -262,11 +252,6 @@ protected:
     /** Indexed by player id, contains info about all players in the game */
 
     std::map<int, PlayerInfo>   m_player_info;
-    /** Indexed by empire id, contains the last known PlayerStatus for each
-     *      empire.
-     */
-    std::map<int, Message::PlayerStatus>
-                                m_empire_status;
 };
 
 #endif // _ClientApp_h_

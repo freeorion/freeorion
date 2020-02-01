@@ -210,9 +210,15 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_authenticated);
     }
+
+    if (Archive::is_loading::value && version < 4) {
+        m_ready = false;
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_ready);
+    }
 }
 
-BOOST_CLASS_VERSION(Empire, 3)
+BOOST_CLASS_VERSION(Empire, 4)
 
 template void Empire::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Empire::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);

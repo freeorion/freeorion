@@ -637,6 +637,12 @@ void Empire::Win(const std::string& reason) {
     }
 }
 
+bool Empire::Ready() const
+{ return m_ready; }
+
+void Empire::SetReady(bool ready)
+{ m_ready = ready; }
+
 void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     //std::cout << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name() << std::endl;
     m_supply_system_ranges.clear();

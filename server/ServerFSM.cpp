@@ -3041,7 +3041,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
                client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
     {
         // store empire orders and resume waiting for more
-        const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
+        Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
         if (!empire) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
             sender->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
@@ -3077,7 +3077,8 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
         server.SetEmpireSaveGameData(empire_id, boost::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id,
                                      order_set, ui_data, save_state_string,
-                                     client_type, true));
+                                     client_type));
+        empire->SetReady(true);
 
         // notify other player that this empire submitted orders
         for (auto player_it = server.m_networking.established_begin();
