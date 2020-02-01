@@ -37,25 +37,28 @@ class DiplomaticCorp(object):
             return
         aistate = get_aistate()
         if message.type == fo.diplomaticMessageType.alliesProposal:
+            aistate.log_alliance_request(message.sender, message.recipient)
             proposal_sender_player = fo.empirePlayerID(message.sender)
             attitude = aistate.character.attitude_to_empire(message.sender, aistate.diplomatic_logs)
             possible_acknowledgments = []
             aggression = aistate.character.get_trait(Aggression)
             if aggression.key == fo.aggression.beginner:
-                attitude = attitude + 50
+                accept_proposal = True
             elif aggression.key == fo.aggression.turtle:
-                attitude = attitude + 10
+                accept_proposal = attitude > 0
             elif aggression.key == fo.aggression.cautious:
-                attitude = attitude + 5
+                accept_proposal = attitude > 5
+            else:  # aggression typical or greater
+                accept_proposal = False            
             if aggression.key <= fo.aggression.typical:
                 possible_acknowledgments = UserStringList("AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST")
-                if attitude > 10:
+                if accept_proposal:
                     possible_replies = UserStringList("AI_ALLIANCE_PROPOSAL_RESPONSES_YES_MILD_LIST")
                 else:
                     possible_replies = UserStringList("AI_ALLIANCE_PROPOSAL_RESPONSES_NO_MILD_LIST")
             else:
                 possible_acknowledgments = UserStringList("AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_HARSH_LIST")
-                if attitude > 10:
+                if accept_proposal:
                     possible_replies = UserStringList("AI_ALLIANCE_PROPOSAL_RESPONSES_YES_HARSH_LIST")
                 else:
                     possible_replies = UserStringList("AI_ALLIANCE_PROPOSAL_RESPONSES_NO_HARSH_LIST")
@@ -64,7 +67,7 @@ class DiplomaticCorp(object):
             debug("Acknowledging proposal with initial message (from %d choices): '%s'" % (
                 len(possible_acknowledgments), acknowledgement))
             fo.sendChatMessage(proposal_sender_player, acknowledgement)
-            if attitude > 10:
+            if accept_proposal:
                 diplo_reply = fo.diplomaticMessage(message.recipient, message.sender,
                                                    fo.diplomaticMessageType.acceptAlliesProposal)
                 debug("Sending diplomatic message to empire %s of type %s" % (message.sender, diplo_reply.type))
