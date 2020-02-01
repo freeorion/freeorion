@@ -474,7 +474,7 @@ namespace {
 
             const auto& destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(m_empire_id);
             for (auto ship_it = Objects().begin<Ship>(); ship_it != Objects().end<Ship>(); ++ship_it) {
-                auto& ship = *ship_it;
+                auto ship = *ship_it;
 
                 if (!ship->OwnedBy(m_empire_id) || destroyed_objects.count(ship->ID()))
                     continue;
@@ -2754,7 +2754,7 @@ void MapWnd::InitTurn() {
     timer.EnterSection("fleet signals");
     // connect system fleet add and remove signals
     for (auto sys_it = objects.begin<System>(); sys_it != objects.end<System>(); ++sys_it) {
-        auto& system = *sys_it;
+        auto system = *sys_it;
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsInsertedSignal.connect(
             boost::bind(&MapWnd::FleetsInsertedSignalHandler, this, _1)));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsRemovedSignal.connect(
@@ -4040,12 +4040,11 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     const auto& stale_object_ids = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
-    const auto& objects = GetUniverse().Objects();
 
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<float, float>>, float> empire_position_max_detection_ranges;
 
-    for (auto& obj : objects) {
+    for (const auto& obj : Objects()) {
         int object_id = obj->ID();
         // skip destroyed objects
         if (destroyed_object_ids.count(object_id))
@@ -4063,17 +4062,14 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             continue;
 
         // don't show radii for fleets or moving ships
-        if (obj->ObjectType() == OBJ_FLEET)
+        if (obj->ObjectType() == OBJ_FLEET) {
             continue;
-        if (obj->ObjectType() == OBJ_SHIP) {
+        } else if (obj->ObjectType() == OBJ_SHIP) {
             auto ship = std::dynamic_pointer_cast<const Ship>(obj);
             if (!ship)
                 continue;
-            auto fleet = objects.get<Fleet>(ship->FleetID());
-            if (!fleet)
-                continue;
-            int cur_id = fleet->SystemID();
-            if (cur_id == INVALID_OBJECT_ID)
+            auto fleet = GetFleet(ship->FleetID());
+            if (!fleet || INVALID_OBJECT_ID == fleet->SystemID())
                 continue;
         }
 
