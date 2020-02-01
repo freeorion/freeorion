@@ -72,14 +72,11 @@ FleetButton::FleetButton(int fleet_id, SizeType size_type) :
 {}
 
 FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) :
-    GG::Button("", nullptr, GG::CLR_ZERO),
-    m_fleets(),
-    m_icons(),
-    m_selection_indicator(nullptr),
-    m_scanline_control(nullptr),
-    m_selected(false)
+    GG::Button("", nullptr, GG::CLR_ZERO)
 {
     std::vector<std::shared_ptr<const Fleet>> fleets;
+    fleets.reserve(fleet_IDs.size());
+    m_fleets.reserve(fleet_IDs.size());
     for (int fleet_id : fleet_IDs) {
         auto fleet = GetFleet(fleet_id);
         if (!fleet) {
@@ -181,9 +178,10 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
     }  
 
     // add graphics for all icons needed
+    m_icons.reserve(4);
+
     if (m_fleet_blockaded) {
-        std::shared_ptr<GG::Texture> blockaded_texture = FleetBlockadedIcon(size_type);
-        if (blockaded_texture) {
+        if (auto blockaded_texture = FleetBlockadedIcon(size_type)) {
             auto icon = GG::Wnd::Create<GG::StaticGraphic>(blockaded_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             GG::Clr opposite_clr(255 - this->Color().r, 255 - this->Color().g, 255 - this->Color().b, this->Color().a);
             icon->SetColor(opposite_clr);
@@ -191,8 +189,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         }
     }
 
-    std::shared_ptr<GG::Texture> size_texture = FleetSizeIcon(num_ships, size_type);
-    if (size_texture) {
+    if (auto size_texture = FleetSizeIcon(num_ships, size_type)) {
         auto icon = GG::Wnd::Create<RotatingGraphic>(size_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         icon->SetPhaseOffset(pointing_angle);
         icon->SetRPM(0.0f);
@@ -230,9 +227,8 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 void FleetButton::CompleteConstruction() {
     Button::CompleteConstruction();
 
-    for (auto& icon: m_icons) {
+    for (auto& icon: m_icons)
         AttachChild(icon);
-    }
 
     // Scanlines for not currently-visible objects?
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -432,6 +428,7 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<std::
         if (hasArmedShips)   { main_filenames.push_back("head-monster.png"); }
         else                 { main_filenames.push_back("head-monster-harmless.png"); }
     } else {
+        main_filenames.reserve(4);
         if (hasArmedShips)   { main_filenames.push_back("head-warship.png"); }
         if (hasColonyShips)  { main_filenames.push_back("head-colony.png");  }
         if (hasOutpostShips) { main_filenames.push_back("head-outpost.png"); }
@@ -440,6 +437,7 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<std::
     if (main_filenames.empty()) { main_filenames.push_back("head-scout.png"); }
 
     std::vector<std::shared_ptr<GG::Texture>> result;
+    result.reserve(main_filenames.size());
     for (const std::string& name : main_filenames) {
         std::shared_ptr<GG::Texture> texture_temp = ClientUI::GetTexture(
             ClientUI::ArtDir() / "icons" / "fleet" / (size_prefix + name), false);

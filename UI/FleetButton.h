@@ -52,21 +52,19 @@ public:
 protected:
     /** \name Mutators */ //@{
     void RenderUnpressed() override;
-
     void RenderPressed() override;
-
     void RenderRollover() override;
     //@}
 
 private:
-    void                    LayoutIcons();
+    void LayoutIcons();
 
-    std::vector<int>                m_fleets;   ///< the fleets represented by this button
+    std::vector<int>                                m_fleets;   ///< the fleets represented by this button
     std::vector<std::shared_ptr<GG::StaticGraphic>> m_icons;
     std::shared_ptr<RotatingGraphic>                m_selection_indicator;
     std::shared_ptr<ScanlineControl>                m_scanline_control;
-    bool                            m_selected; ///< should this button render itself specially to show that it is selected?
-    bool                            m_fleet_blockaded;
+    bool                                            m_selected = false; ///< should this button render itself specially to show that it is selected?
+    bool                                            m_fleet_blockaded = false;
 };
 
 /* returns head icon for passed fleet at passed icon size */

@@ -246,6 +246,7 @@ namespace {
 
         // select ships with the requested design id
         std::vector<int> ships_of_design_ids;
+        ships_of_design_ids.reserve(ship_ids.size());
         for (auto& ship : Objects().find<Ship>(ship_ids)) {
             if (ship->DesignID() == design_id)
                 ships_of_design_ids.push_back(ship->ID());
@@ -267,9 +268,8 @@ namespace {
 
         // sort ships by ID into container, indexed by design id
         std::map<int, std::vector<int>> designs_ship_ids;
-        for (auto& ship : Objects().find<Ship>(ship_ids)) {
+        for (auto& ship : Objects().find<Ship>(ship_ids))
             designs_ship_ids[ship->DesignID()].push_back(ship->ID());
-        }
 
         // note that this will cause a UI update for each call to CreateNewFleetFromShips
         // we can re-evaluate this code if it presents a noticable performance problem
@@ -300,7 +300,7 @@ namespace {
 
         // filter fleets in system to select just those owned by this client's
         // empire, and collect their ship ids
-        std::vector<std::shared_ptr<Fleet>> all_system_fleets = Objects().find<Fleet>(system->FleetIDs());
+        std::vector<std::shared_ptr<Fleet>> all_system_fleets(Objects().find<Fleet>(system->FleetIDs()));
         std::vector<int> empire_system_fleet_ids;
         empire_system_fleet_ids.reserve(all_system_fleets.size());
         std::vector<std::shared_ptr<Fleet>> empire_system_fleets;
@@ -950,6 +950,7 @@ namespace {
         //int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
         std::vector<std::pair<MeterType, std::shared_ptr<GG::Texture>>> meters_icons;
+        meters_icons.reserve(13);
         meters_icons.push_back({METER_STRUCTURE,          ClientUI::MeterIcon(METER_STRUCTURE)});
         if (ship->IsArmed())
             meters_icons.push_back({METER_CAPACITY,       DamageIcon()});
@@ -972,6 +973,7 @@ namespace {
             meters_icons.push_back({meter, ClientUI::MeterIcon(meter)});
         }
 
+        m_stat_icons.reserve(meters_icons.size());
         for (auto& entry : meters_icons) {
             auto icon = GG::Wnd::Create<StatisticIcon>(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
             m_stat_icons.push_back({entry.first, icon});
@@ -1395,17 +1397,9 @@ void FleetDataPanel::Refresh() {
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
 
         // set icons
-        std::vector<std::shared_ptr<GG::Texture>>   icons;
-        std::vector<GG::Flags<GG::GraphicStyle>>    styles;
-
-        std::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::SizeType::LARGE);
-        icons.push_back(size_icon);
-        styles.push_back(DataPanelIconStyle());
-
-        std::vector<std::shared_ptr<GG::Texture>> head_icons = FleetHeadIcons(fleet, FleetButton::SizeType::LARGE);
-        std::copy(head_icons.begin(), head_icons.end(), std::back_inserter(icons));
-        for (size_t i = 0; i < head_icons.size(); ++i)
-            styles.push_back(DataPanelIconStyle());
+        std::vector<std::shared_ptr<GG::Texture>> icons(FleetHeadIcons(fleet, FleetButton::SizeType::LARGE));
+        icons.push_back(FleetSizeIcon(fleet, FleetButton::SizeType::LARGE));
+        std::vector<GG::Flags<GG::GraphicStyle>> styles(icons.size(), DataPanelIconStyle());
 
         m_fleet_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(icons, styles);
         AttachChild(m_fleet_icon);
@@ -1502,6 +1496,7 @@ void FleetDataPanel::RefreshStateChangedSignals() {
     m_fleet_connection = fleet->StateChangedSignal.connect(
         boost::bind(&FleetDataPanel::RequireRefresh, this));
 
+    m_ship_connections.reserve(fleet->NumShips());
     for (auto& ship : Objects().find<const Ship>(fleet->ShipIDs()))
         m_ship_connections.push_back(
             ship->StateChangedSignal.connect(
@@ -1727,6 +1722,7 @@ void FleetDataPanel::Init() {
         int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
         std::vector<std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext;
+        meters_icons_browsetext.reserve(12);
         meters_icons_browsetext.emplace_back(METER_SIZE,            FleetCountIcon(),                       "FW_FLEET_COUNT_SUMMARY");
         meters_icons_browsetext.emplace_back(METER_CAPACITY,        DamageIcon(),                           "FW_FLEET_DAMAGE_SUMMARY");
         meters_icons_browsetext.emplace_back(METER_SECONDARY_STAT,  FightersIcon(),                         "FW_FLEET_FIGHTER_SUMMARY");
@@ -1740,6 +1736,7 @@ void FleetDataPanel::Init() {
         meters_icons_browsetext.emplace_back(METER_FUEL,            ClientUI::MeterIcon(METER_FUEL),        "FW_FLEET_FUEL_SUMMARY");
         meters_icons_browsetext.emplace_back(METER_SPEED,           ClientUI::MeterIcon(METER_SPEED),       "FW_FLEET_SPEED_SUMMARY");
 
+        m_stat_icons.reserve(meters_icons_browsetext.size());
         for (const auto& entry : meters_icons_browsetext) {
             auto icon = GG::Wnd::Create<StatisticIcon>(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
             auto meter_type = std::get<0>(entry);
@@ -1880,7 +1877,9 @@ public:
 
         // sort dropped Wnds to extract fleets or ships dropped.  (should only be one or the other in a given drop)
         std::vector<std::shared_ptr<Fleet>> dropped_fleets;
+        dropped_fleets.reserve(wnds.size());
         std::vector<std::shared_ptr<Ship>> dropped_ships;
+        dropped_ships.reserve(wnds.size());
 
         //DebugLogger() << "... getting/sorting dropped fleets or ships...";
         for (const auto& wnd : wnds) {
@@ -2316,6 +2315,7 @@ public:
 
         std::shared_ptr<Ship> ship_from_dropped_wnd;
         std::vector<int> ship_ids;
+        ship_ids.reserve(wnds.size());
         for (const auto& wnd : wnds) {
             if (wnd->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
                 const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd.get());
@@ -2768,6 +2768,7 @@ void FleetWnd::CompleteConstruction() {
     // add fleet aggregate stat icons
     int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
+    m_stat_icons.reserve(7);
     for (auto entry : {
             std::make_tuple(METER_SIZE, FleetCountIcon(), UserStringNop("FW_FLEET_COUNT_SUMMARY")),
             std::make_tuple(METER_CAPACITY, DamageIcon(), UserStringNop("FW_FLEET_DAMAGE_SUMMARY")),
