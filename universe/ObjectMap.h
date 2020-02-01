@@ -401,6 +401,7 @@ std::shared_ptr<T> ObjectMap::get(int id) {
 template <class T>
 std::vector<std::shared_ptr<const T>> ObjectMap::all() const {
     std::vector<std::shared_ptr<const T>> result;
+    result.reserve(size<T>());
     for (const auto& entry : Map<T>())
         result.push_back(entry.second);
     return result;
