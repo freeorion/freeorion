@@ -36,6 +36,45 @@ class DiplomaticCorp(object):
         if message.recipient != fo.empireID():
             return
         aistate = get_aistate()
+        if message.type == fo.diplomaticMessageType.alliesProposal:
+            aistate.log_alliance_request(message.sender, message.recipient)
+            proposal_sender_player = fo.empirePlayerID(message.sender)
+            attitude = aistate.character.attitude_to_empire(message.sender, aistate.diplomatic_logs)
+            possible_acknowledgments = []
+            aggression = aistate.character.get_trait(Aggression)
+            if aggression.key == fo.aggression.beginner:
+                accept_proposal = True
+            elif aggression.key == fo.aggression.turtle:
+                accept_proposal = attitude > 0
+            elif aggression.key == fo.aggression.cautious:
+                accept_proposal = attitude > 5
+            else:  # aggression typical or greater
+                accept_proposal = False
+            if aggression.key <= fo.aggression.typical:
+                possible_acknowledgments = UserStringList("AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST")
+                if accept_proposal:
+                    possible_replies = UserStringList("AI_ALLIANCE_PROPOSAL_RESPONSES_YES_MILD_LIST")
+                else:
+                    possible_replies = UserStringList("AI_ALLIANCE_PROPOSAL_RESPONSES_NO_MILD_LIST")
+            else:
+                possible_acknowledgments = UserStringList("AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_HARSH_LIST")
+                if accept_proposal:
+                    possible_replies = UserStringList("AI_ALLIANCE_PROPOSAL_RESPONSES_YES_HARSH_LIST")
+                else:
+                    possible_replies = UserStringList("AI_ALLIANCE_PROPOSAL_RESPONSES_NO_HARSH_LIST")
+            acknowledgement = random.choice(possible_acknowledgments)
+            reply_text = random.choice(possible_replies)
+            debug("Acknowledging proposal with initial message (from %d choices): '%s'" % (
+                len(possible_acknowledgments), acknowledgement))
+            fo.sendChatMessage(proposal_sender_player, acknowledgement)
+            if accept_proposal:
+                diplo_reply = fo.diplomaticMessage(message.recipient, message.sender,
+                                                   fo.diplomaticMessageType.acceptAlliesProposal)
+                debug("Sending diplomatic message to empire %s of type %s" % (message.sender, diplo_reply.type))
+                fo.sendDiplomaticMessage(diplo_reply)
+            debug("sending chat to player %d of empire %d, message body: '%s'" % (
+                proposal_sender_player, message.sender, reply_text))
+            fo.sendChatMessage(proposal_sender_player, reply_text)
         if message.type == fo.diplomaticMessageType.peaceProposal:
             aistate.log_peace_request(message.sender, message.recipient)
             proposal_sender_player = fo.empirePlayerID(message.sender)

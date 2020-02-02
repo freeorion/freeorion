@@ -1189,7 +1189,7 @@ namespace {
 
             case AFFIL_PEACE: {
                 if (m_empire_id == ALL_EMPIRES)
-                    return true;
+                    return false;
                 if (m_empire_id == candidate->Owner())
                     return false;
                 DiplomaticStatus status = Empires().GetDiplomaticStatus(m_empire_id, candidate->Owner());

@@ -122,10 +122,11 @@ BOOST_AUTO_TEST_CASE(CaptureResultParser) {
 
 BOOST_AUTO_TEST_CASE(EmpireAffiliationTypeParser) {
     // Literal is number of tests, not number of enums.
-    BOOST_REQUIRE_MESSAGE(NUM_AFFIL_TYPES == 7, "Untested enumeration value.");
+    BOOST_REQUIRE_MESSAGE(NUM_AFFIL_TYPES == 8, "Untested enumeration value.");
 
     CHECK_ENUM_AND_RESULT("TheEmpire", AFFIL_SELF, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
     CHECK_ENUM_AND_RESULT("EnemyOf", AFFIL_ENEMY, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
+    CHECK_ENUM_AND_RESULT("PeaceWith", AFFIL_PEACE, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
     CHECK_ENUM_AND_RESULT("AllyOf", AFFIL_ALLY, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
     CHECK_ENUM_AND_RESULT("AnyEmpire", AFFIL_ANY, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
     CHECK_ENUM_AND_RESULT("None", AFFIL_NONE, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);

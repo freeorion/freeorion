@@ -441,10 +441,11 @@ class Aggression(Trait):
         if self.aggression == fo.aggression.beginner:
             return 9
         log_index = (other_empire_id, fo.empireID())
+        num_alliance_requests = len(diplomatic_logs.get('alliance_requests', {}).get(log_index, []))
         num_peace_requests = len(diplomatic_logs.get('peace_requests', {}).get(log_index, []))
         num_war_declarations = len(diplomatic_logs.get('war_declarations', {}).get(log_index, []))
         # Too many requests for peace irritate the AI, as do any war declarations
-        irritation = (self.aggression * (2.0 + num_peace_requests / 10.0 + 2.0 * num_war_declarations) + 0.5)
+        irritation = (self.aggression * (2.0 + num_alliance_requests / 5.0 + num_peace_requests / 10.0 + 2.0 * num_war_declarations) + 0.5)
         attitude = 10 * random.random() - irritation
         return min(10, max(-10, attitude))
 
