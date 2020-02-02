@@ -129,8 +129,11 @@ namespace {
     int IssueChangeFocusOrder(int planet_id, const std::string& focus)
     { return Issue<ChangeFocusOrder>(planet_id, focus); }
 
-    int IssueFleetMoveOrder(int fleet_id, int destination_id)
+    int IssueFleetMoveOrder2(int fleet_id, int destination_id)
     { return Issue<FleetMoveOrder>(fleet_id, destination_id); }
+
+    int IssueFleetMoveOrder3(int fleet_id, int destination_id, bool append)
+    { return Issue<FleetMoveOrder>(fleet_id, destination_id, append); }
 
     int IssueColonizeOrder(int ship_id, int planet_id)
     { return Issue<ColonizeOrder>(ship_id, planet_id); }
@@ -201,7 +204,8 @@ namespace FreeOrionPython {
         def("updateResearchQueue",                  AIInterface::UpdateResearchQueue);
         def("updateProductionQueue",                AIInterface::UpdateProductionQueue);
 
-        def("issueFleetMoveOrder",                  IssueFleetMoveOrder, "Orders the fleet with indicated fleetID (int) to move to the system with the indicated destinationID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated fleet or system.");
+        def("issueFleetMoveOrder",                  IssueFleetMoveOrder2, "Orders the fleet with indicated fleetID (int) to move to the system with the indicated destinationID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated fleet or system.");
+        def("issueFleetMoveOrder",                  IssueFleetMoveOrder3, "Orders the fleet with indicated fleetID (int) to move to the system with the indicated destinationID (int). Append (true) the destination to an already present route, or set the destination as route (false). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated fleet or system.");
         def("issueRenameOrder",                     IssueRenameOrder, "Orders the renaming of the object with indicated objectID (int) to the new indicated name (string). Returns 1 (int) on success or 0 (int) on failure due to this AI player not being able to rename the indicated object (which this player must fully own, and which must be a fleet, ship or planet).");
         def("issueScrapOrder",                      IssueScrapOrder, "Orders the ship or building with the indicated objectID (int) to be scrapped. Returns 1 (int) on success or 0 (int) on failure due to not finding a ship or building with the indicated ID, or if the indicated ship or building is not owned by this AI client's empire.");
         def("issueNewFleetOrder",                   IssueNewFleetOrder, "Orders a new fleet to be created with the indicated name (string) and containing the indicated shipIDs (IntVec). The ships must be located in the same system and must all be owned by this player. Returns the new fleets id (int) on success or 0 (int) on failure due to one of the noted conditions not being met.");
