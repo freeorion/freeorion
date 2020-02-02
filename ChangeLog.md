@@ -4,7 +4,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 
 
-## [v0.4.9] - 2020-01-26
+## [v0.4.9] - 2020-02-02
 
 #### Key Changes
 
