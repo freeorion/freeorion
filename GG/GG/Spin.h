@@ -393,13 +393,11 @@ void Spin<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
         break;
     case GGK_PAGEUP:
     case GGK_UP:
-    case GGK_PLUS:
     case GGK_KP_PLUS:
         IncrImpl(true);
         break;
     case GGK_PAGEDOWN:
     case GGK_DOWN:
-    case GGK_MINUS:
     case GGK_KP_MINUS:
         DecrImpl(true);
         break;

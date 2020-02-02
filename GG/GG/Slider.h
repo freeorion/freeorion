@@ -352,11 +352,9 @@ void Slider<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
             if (m_orientation != VERTICAL)
                 SlideToImpl(m_posn - (0 < (m_range_max - m_range_min) ? 1 : -1), true);
             break;
-        case GGK_PLUS:
         case GGK_KP_PLUS:
             SlideToImpl(m_posn + 1, true);
             break;
-        case GGK_MINUS:
         case GGK_KP_MINUS:
             SlideToImpl(m_posn - 1, true);
             break;

@@ -653,12 +653,6 @@ void GG::GetTranslatedCodePoint(Key key, std::uint32_t key_code_point, Flags<Mod
         } catch (const utf8::invalid_code_point&) {
             translated_code_point.clear();
         }
-    } else {
-        KeypadKeyToPrintable(key, mod_keys);
-        if (GGK_DELETE <= key || !isprint(key))
-            translated_code_point.clear();
-        else
-            translated_code_point = key;
     }
 }
 

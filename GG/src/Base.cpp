@@ -26,24 +26,3 @@
 
 
 const bool GG::INSTRUMENT_ALL_SIGNALS = false;
-
-void GG::KeypadKeyToPrintable(Key& key, Flags<ModKey> mod_keys)
-{
-    using namespace GG;
-
-    if (GGK_KP0 <= key && key <= GGK_KP9 && (mod_keys & MOD_KEY_NUM)) {
-        key = Key(GGK_0 + (key - GGK_KP0));
-    } else {
-        switch (key) {
-        case GGK_KP_PERIOD:
-            if (mod_keys & MOD_KEY_NUM) key = GGK_PERIOD;
-            break;
-        case GGK_KP_DIVIDE:   key = GGK_SLASH;    break;
-        case GGK_KP_MULTIPLY: key = GGK_ASTERISK; break;
-        case GGK_KP_MINUS:    key = GGK_MINUS;    break;
-        case GGK_KP_PLUS:     key = GGK_PLUS;     break;
-        case GGK_KP_EQUALS:   key = GGK_EQUALS;   break;
-        default: break;
-        }
-    }
-}

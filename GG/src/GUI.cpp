@@ -274,7 +274,7 @@ GUIImpl::GUIImpl() :
     m_key_press_repeat_delay(250),
     m_key_press_repeat_interval(66),
     m_last_key_press_repeat_time(0),
-    m_last_pressed_key_code_point{GGK_UNKNOWN, 0u},
+    m_last_pressed_key_code_point{GGK_NONE, 0u},
     m_prev_key_press_time(-1),
     m_mouse_button_down_repeat_delay(250),
     m_mouse_button_down_repeat_interval(66),
@@ -671,7 +671,7 @@ void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_tic
 
     auto&& focus_wnd = FocusWnd();
     if (m_key_press_repeat_delay != 0 &&
-        m_last_pressed_key_code_point.first != GGK_UNKNOWN &&
+        m_last_pressed_key_code_point.first != GGK_NONE &&
         focus_wnd &&
         focus_wnd->RepeatKeyPress())
     {
@@ -727,7 +727,7 @@ void GUIImpl::HandleKeyRelease(Key key, std::uint32_t key_code_point, Flags<ModK
 {
     key = KeyMappedKey(key, m_key_map);
     m_last_key_press_repeat_time = 0;
-    m_last_pressed_key_code_point.first = GGK_UNKNOWN;
+    m_last_pressed_key_code_point.first = GGK_NONE;
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
     m_browse_target = nullptr;
@@ -835,7 +835,7 @@ void GUIImpl::ClearState()
     m_mod_keys = Flags<ModKey>();
     m_last_mouse_button_down_repeat_time = 0;
     m_last_key_press_repeat_time = 0;
-    m_last_pressed_key_code_point = {GGK_UNKNOWN, 0u};
+    m_last_pressed_key_code_point = {GGK_NONE, 0u};
 
     m_prev_wnd_drag_position = Pt();
     m_browse_info_wnd.reset();
