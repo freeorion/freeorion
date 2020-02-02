@@ -614,8 +614,6 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
         obj_discrep.reserve(obj->Meters().size());
         for (const auto& meter_pair : obj->Meters()) {
             // inserting in order into initially-empty map should always put next item efficiently at end
-            //obj_discrep.insert_or_assign(obj_discrep.end(), meter_pair.first, meter_pair.second.Current());
-            //obj_discrep.insert(obj_discrep.end(), std::pair<MeterType, double>{meter_pair.first, meter_pair.second.Current()});
             obj_discrep.emplace_hint(obj_discrep.end(), meter_pair.first, meter_pair.second.Current());
         }
     }
