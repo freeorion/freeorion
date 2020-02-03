@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 
+from __future__ import print_function
 
 import sys
 import os
@@ -43,27 +44,27 @@ class Generator(object):
 
     def execute(self, version, branch, build_no, build_sys):
         if build_no == INVALID_BUILD_NO:
-            print "WARNING: Can't determine git commit!"
+            print("WARNING: Can't determine git commit!")
 
         if os.path.isfile(self.outfile):
             with open(self.outfile) as check_file:
                 check_file_contents = check_file.read()
                 if build_no == INVALID_BUILD_NO:
                     if version in check_file_contents:
-                        print "Version matches version in existing Version.cpp, skip regenerating it"
+                        print("Version matches version in existing Version.cpp, skip regenerating it")
                         return
                 elif build_no in check_file_contents:
-                    print "Build number matches build number in existing Version.cpp, skip regenerating it"
+                    print("Build number matches build number in existing Version.cpp, skip regenerating it")
                     return
 
         try:
             with open(self.infile) as template_file:
                 template = Template(template_file.read())
         except:
-            print "WARNING: Can't access %s, %s not updated!" % (self.infile, self.outfile)
+            print("WARNING: Can't access %s, %s not updated!" % (self.infile, self.outfile))
             return
 
-        print "Writing file: %s" % self.outfile
+        print("Writing file: %s" % self.outfile)
         with open(self.outfile, "w") as generated_file:
             generated_file.write(self.compile_output(template, version, branch, build_no, build_sys))
 
@@ -91,7 +92,7 @@ class NsisInstScriptGenerator(Generator):
                 FreeOrion_DLL_LIST_INSTALL="\n  ".join(['File "..\\' + fname + '"' for fname in dll_files]),
                 FreeOrion_DLL_LIST_UNINSTALL="\n  ".join(['Delete "$INSTDIR\\' + fname + '"' for fname in dll_files]))
         else:
-            print "WARNING: no dll files for installer package found"
+            print("WARNING: no dll files for installer package found")
             return template.substitute(
                 FreeOrion_VERSION=version,
                 FreeOrion_BRANCH=branch,
@@ -102,8 +103,8 @@ class NsisInstScriptGenerator(Generator):
 
 
 if 3 != len(sys.argv):
-    print "ERROR: invalid parameters."
-    print "make_versioncpp.py <project rootdir> <build system name>"
+    print("ERROR: invalid parameters.")
+    print("make_versioncpp.py <project rootdir> <build system name>")
     quit()
 
 os.chdir(sys.argv[1])
@@ -124,18 +125,18 @@ branch = ""
 build_no = INVALID_BUILD_NO
 
 try:
-    branch = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip()
+    branch = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], universal_newlines=True).strip()
     if (branch == "master") or (branch[:7] == "release"):
         branch = ""
     else:
         branch += " "
-    commit = check_output(["git", "show", "-s", "--format=%h", "--abbrev=7", "HEAD"]).strip()
-    timestamp = float(check_output(["git", "show", "-s", "--format=%ct", "HEAD"]).strip())
+    commit = check_output(["git", "show", "-s", "--format=%h", "--abbrev=7", "HEAD"], universal_newlines=True).strip()
+    timestamp = float(check_output(["git", "show", "-s", "--format=%ct", "HEAD"], universal_newlines=True).strip())
     build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d"), commit])
 except:
-    print "WARNING: git not installed or not setup correctly"
+    print("WARNING: git not installed or not setup correctly")
 
 for generator in generators:
     generator.execute(version, branch, build_no, build_sys)
 
-print "Building v%s %sbuild %s" % (version, branch, build_no)
+print("Building v%s %sbuild %s" % (version, branch, build_no))
