@@ -61,7 +61,11 @@ bool PythonServer::InitModules() {
 
     // Allow the "freeorion" C++ module to be imported within Python code
     try {
+#if PY_VERSION_HEX >= 0x03000000
+        PyInit_freeorion();
+#else
         initfreeorion();
+#endif
     } catch (...) {
         ErrorLogger() << "Unable to initialize 'freeorion' server Python module";
         return false;

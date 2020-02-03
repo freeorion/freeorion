@@ -94,7 +94,12 @@ bool PythonBase::Initialize()
 
     // allow the "freeorion_logger" C++ module to be imported within Python code
     try {
+#if PY_VERSION_HEX >= 0x03000000
+        PyInit_freeorion_logger();
+#else
         initfreeorion_logger();
+#endif
+
     } catch (...) {
         ErrorLogger() << "Unable to initialize FreeOrion Python logging module";
         return false;

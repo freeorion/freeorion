@@ -112,7 +112,11 @@ bool PythonAI::InitModules() {
 
     // allows the "freeOrionAIInterface" C++ module to be imported within Python code
     try {
+#if PY_VERSION_HEX >= 0x03000000
+        PyInit_freeOrionAIInterface();
+#else
         initfreeOrionAIInterface();
+#endif
     } catch (...) {
         ErrorLogger() << "Unable to initialize 'freeOrionAIInterface' AI Python module";
         return false;
