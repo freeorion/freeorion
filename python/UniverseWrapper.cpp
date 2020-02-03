@@ -77,7 +77,7 @@ namespace {
     {
         std::vector<int> result;
         auto objs = universe.Objects().all<T>();
-        result.reserve(objs.size());
+        result.reserve(universe.Objects().size<T>());
         for (const auto& obj : objs)
             result.push_back(obj->ID());
         return result;

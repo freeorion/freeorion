@@ -2753,13 +2753,37 @@ void MapWnd::InitTurn() {
     // connect system fleet add and remove signals
     for (auto& system : objects.all<System>()) {
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsInsertedSignal.connect(
-            boost::bind(&MapWnd::FleetsInsertedSignalHandler, this, _1)));
+            [this](const std::vector<std::shared_ptr<Fleet>>& fleets) {
+                RefreshFleetButtons();
+                for (auto& fleet : fleets) {
+                    if (!m_fleet_state_change_signals.count(fleet->ID()))
+                        m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
+                            boost::bind(&MapWnd::RefreshFleetButtons, this));
+                }
+            }));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsRemovedSignal.connect(
-            boost::bind(&MapWnd::FleetsRemovedSignalHandler, this, _1)));
+            [this](const std::vector<std::shared_ptr<Fleet>>& fleets) {
+                RefreshFleetButtons();
+                for (auto& fleet : fleets) {
+                    auto found_signal = m_fleet_state_change_signals.find(fleet->ID());
+                    if (found_signal != m_fleet_state_change_signals.end()) {
+                        found_signal->second.disconnect();
+                        m_fleet_state_change_signals.erase(found_signal);
+                    }
+                }
+            }));
     }
 
-    RefreshFleetSignals();
+    for (auto& con : m_fleet_state_change_signals)
+        con.second.disconnect();
+    m_fleet_state_change_signals.clear();
 
+    // connect fleet change signals to update fleet movement lines, so that ordering
+    // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
+    for (auto& fleet : Objects().all<Fleet>()) {
+        m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
+            boost::bind(&MapWnd::RefreshFleetButtons, this));
+    }
 
     // set turn button to current turn
     m_btn_turn->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
@@ -4041,7 +4065,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<float, float>>, float> empire_position_max_detection_ranges;
 
-    for (auto& obj : objects.all<UniverseObject>()) {
+    for (auto& obj : Objects().all<UniverseObject>()) {
         int object_id = obj->ID();
         // skip destroyed objects
         if (destroyed_object_ids.count(object_id))
@@ -5101,51 +5125,6 @@ void MapWnd::DeleteFleetButtons() {
     m_departing_fleet_buttons.clear();
     m_moving_fleet_buttons.clear();
     m_offroad_fleet_buttons.clear();
-}
-
-void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    ScopedTimer timer("RemoveFleetsStateChangedSignal()", true);
-    for (auto& fleet : fleets) {
-        auto found_signal = m_fleet_state_change_signals.find(fleet->ID());
-        if (found_signal != m_fleet_state_change_signals.end()) {
-            found_signal->second.disconnect();
-            m_fleet_state_change_signals.erase(found_signal);
-        }
-    }
-}
-
-void MapWnd::AddFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    ScopedTimer timer("AddFleetsStateChangedSignal()", true);
-    for (auto& fleet : fleets) {
-        m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshFleetButtons, this));
-    }
-}
-
-void MapWnd::FleetsInsertedSignalHandler(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    ScopedTimer timer("FleetsInsertedSignalHandler()", true);
-    RefreshFleetButtons();
-    RemoveFleetsStateChangedSignal(fleets);
-    AddFleetsStateChangedSignal(fleets);
-}
-
-void MapWnd::FleetsRemovedSignalHandler(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    ScopedTimer timer("FleetsRemovedSignalHandler()", true);
-    RefreshFleetButtons();
-    RemoveFleetsStateChangedSignal(fleets);
-}
-
-void MapWnd::RefreshFleetSignals() {
-    ScopedTimer timer("RefreshFleetSignals()", true);
-    // disconnect old fleet statechangedsignal connections
-    for (auto& con : m_fleet_state_change_signals)
-    { con.second.disconnect(); }
-    m_fleet_state_change_signals.clear();
-
-
-    // connect fleet change signals to update fleet movement lines, so that ordering
-    // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
-    AddFleetsStateChangedSignal(Objects().all<Fleet>());
 }
 
 void MapWnd::RefreshSliders() {

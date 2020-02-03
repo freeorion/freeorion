@@ -2,6 +2,7 @@
 #define _Object_Map_h_
 
 
+#include <boost/range/adaptor/map.hpp>
 #include <boost/serialization/access.hpp>
 
 #include "../util/Export.h"
@@ -216,11 +217,15 @@ public:
 
     /** Returns all the objects of type T */
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<const T>> all() const;
+    boost::select_second_const_range<container_type<T>> all() const {
+        return Map<T>() | boost::adaptors::map_values;
+    }
 
     /** Returns all the objects of type T */
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<T>> all();
+    boost::select_second_mutable_range<container_type<T>> all() {
+        return Map<T>() | boost::adaptors::map_values;
+    }
 
     /** Returns the IDs of all objects not known to have been destroyed. */
     std::vector<int>        FindExistingObjectIDs() const;
@@ -396,24 +401,6 @@ std::shared_ptr<T> ObjectMap::get(int id) {
         it != Map<typename std::remove_const<T>::type>().end()
             ? it->second
             : nullptr);
-}
-
-template <class T>
-std::vector<std::shared_ptr<const T>> ObjectMap::all() const {
-    std::vector<std::shared_ptr<const T>> result;
-    result.reserve(size<T>());
-    for (const auto& entry : Map<T>())
-        result.push_back(entry.second);
-    return result;
-}
-
-template <class T>
-std::vector<std::shared_ptr<T>> ObjectMap::all() {
-    std::vector<std::shared_ptr<T>> result;
-    result.reserve(Map<T>().size());
-    for (const auto& entry : Map<T>())
-        result.push_back(entry.second);
-    return result;
 }
 
 template <class T>

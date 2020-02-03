@@ -157,8 +157,7 @@ namespace {
     std::string GenerateSystemName() {
         static std::vector<std::string> star_names = UserStringList("STAR_NAMES");
 
-        const ObjectMap& objects = Objects();
-        std::vector<std::shared_ptr<const System>> systems = objects.all<System>();
+        auto systems = Objects().all<System>();
 
         // pick a name for the system
         for (const std::string& star_name : star_names) {

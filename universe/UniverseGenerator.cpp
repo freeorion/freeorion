@@ -658,9 +658,11 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
     std::map<int, std::set<int>> potential_system_lanes;
 
     // get systems
-    auto sys_vec = Objects().all<System>();
+    auto sys_rng = Objects().all<System>();
+    std::vector<std::shared_ptr<System>> sys_vec;
     std::map<int, std::shared_ptr<System>> sys_map;
-    std::transform(sys_vec.begin(), sys_vec.end(), std::inserter(sys_map, sys_map.end()),
+    std::copy(sys_rng.begin(), sys_rng.end(), std::back_inserter(sys_vec));
+    std::transform(sys_rng.begin(), sys_rng.end(), std::inserter(sys_map, sys_map.end()),
                    [](const std::shared_ptr<System>& p) { return std::make_pair(p->ID(), p); });
 
     // generate lanes
