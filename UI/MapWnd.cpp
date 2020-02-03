@@ -473,9 +473,7 @@ namespace {
                 return;
 
             const auto& destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(m_empire_id);
-            for (auto ship_it = Objects().begin<Ship>(); ship_it != Objects().end<Ship>(); ++ship_it) {
-                auto ship = *ship_it;
-
+            for (auto& ship : Objects().all<Ship>()) {
                 if (!ship->OwnedBy(m_empire_id) || destroyed_objects.count(ship->ID()))
                     continue;
                 m_values[FLEET_DETAIL_SHIP_COUNT]++;
@@ -2753,8 +2751,7 @@ void MapWnd::InitTurn() {
 
     timer.EnterSection("fleet signals");
     // connect system fleet add and remove signals
-    for (auto sys_it = objects.begin<System>(); sys_it != objects.end<System>(); ++sys_it) {
-        auto system = *sys_it;
+    for (auto& system : objects.all<System>()) {
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsInsertedSignal.connect(
             boost::bind(&MapWnd::FleetsInsertedSignalHandler, this, _1)));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsRemovedSignal.connect(
@@ -2946,8 +2943,8 @@ void MapWnd::InitTurnRendering() {
     m_system_icons.clear();
 
     // create system icons
-    for (auto sys_it = objects.begin<System>(); sys_it != objects.end<System>(); ++sys_it) {
-        int sys_id = (*sys_it)->ID();
+    for (auto& sys : objects.all<System>()) {
+        int sys_id = sys->ID();
 
         // skip known destroyed objects
         if (this_client_known_destroyed_objects.count(sys_id))
@@ -2993,8 +2990,8 @@ void MapWnd::InitTurnRendering() {
     m_field_icons.clear();
 
     // create field icons
-    for (auto fld_it = objects.begin<Field>(); fld_it != objects.end<Field>(); ++fld_it) {
-        int fld_id = (*fld_it)->ID();
+    for (auto& field : objects.all<Field>()) {
+        int fld_id = field->ID();
 
         // skip known destroyed and stale fields
         if (this_client_known_destroyed_objects.count(fld_id))
@@ -4044,7 +4041,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<float, float>>, float> empire_position_max_detection_ranges;
 
-    for (const auto& obj : Objects()) {
+    for (auto& obj : objects.all<UniverseObject>()) {
         int object_id = obj->ID();
         // skip destroyed objects
         if (destroyed_object_ids.count(object_id))
@@ -5142,8 +5139,9 @@ void MapWnd::RefreshFleetSignals() {
     ScopedTimer timer("RefreshFleetSignals()", true);
     // disconnect old fleet statechangedsignal connections
     for (auto& con : m_fleet_state_change_signals)
-        con.second.disconnect();
+    { con.second.disconnect(); }
     m_fleet_state_change_signals.clear();
+
 
     // connect fleet change signals to update fleet movement lines, so that ordering
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
@@ -6676,8 +6674,7 @@ void MapWnd::RefreshFleetResourceIndicator() {
     const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
 
     int total_fleet_count = 0;
-    for (auto shp_it = Objects().begin<Ship>(); shp_it != Objects().end<Ship>(); ++shp_it) {
-        const auto& ship = *shp_it;
+    for (auto& ship : Objects().all<Ship>()) {
         if (ship->OwnedBy(empire_id) && !this_client_known_destroyed_objects.count(ship->ID()))
             total_fleet_count++;
     }
@@ -6903,8 +6900,7 @@ namespace {
     std::set<std::pair<std::string, int>, CustomRowCmp> GetSystemNamesIDs() {
         // get systems, store alphabetized
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
-        for (auto sys_it = Objects().begin<System>(); sys_it != Objects().end<System>(); ++sys_it) {
-            const auto& system = *sys_it;
+        for (auto& system : Objects().all<System>()) {
             system_names_ids.insert({system->Name(), system->ID()});
         }
         return system_names_ids;
@@ -6916,7 +6912,7 @@ namespace {
         // get IDs of systems that contain any owned planets
         std::unordered_set<int> system_ids;
         for (auto& obj : owned_planets)
-            system_ids.insert(obj->SystemID());
+        { system_ids.insert(obj->SystemID()); }
 
         // store systems, sorted alphabetically
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
