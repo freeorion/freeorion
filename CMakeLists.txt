@@ -227,12 +227,13 @@ endif()
 ## Collect project dependencies.
 ##
 
-set(MINIMUM_PYTHON_VERSION 2.7)
+set(MINIMUM_PYTHON_VERSION 3.6)
 set(MINIMUM_BOOST_VERSION 1.58.0)
 
 find_package(Threads)
 find_package(PythonInterp ${MINIMUM_PYTHON_VERSION} REQUIRED)
 find_package(PythonLibs ${MINIMUM_PYTHON_VERSION} REQUIRED)
+find_package(Python ${MINIMUM_PYTHON_VERSION} REQUIRED)
 find_package(Boost ${MINIMUM_BOOST_VERSION}
     COMPONENTS
         date_time
@@ -245,25 +246,9 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         serialization
         system
         thread
+        python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}
     REQUIRED)
-if(${Boost_VERSION} GREATER 106699) # boost >= 1.67
-    find_package(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} REQUIRED)
-    set(Boost_PYTHON_LIBRARY ${Boost_PYTHON${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_LIBRARY})
-else()
-    # boost python suffixes are determined by distributives
-    # try different alternatives
-    find_package(Boost OPTIONAL_COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR})
-    if(Boost_PYTHON${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_FOUND)
-        set(Boost_PYTHON_LIBRARY ${Boost_PYTHON${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_LIBRARY})
-    else()
-        find_package(Boost OPTIONAL_COMPONENTS python-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR})
-        if(Boost_PYTHON-PY${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_FOUND)
-            set(Boost_PYTHON_LIBRARY ${Boost_PYTHON-PY${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_LIBRARY})
-        else()
-            find_package(Boost COMPONENTS python REQUIRED)
-        endif()
-    endif()
-endif()
+set(Boost_PYTHON_LIBRARY ${Boost_PYTHON${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_LIBRARY})
 
 find_package(ZLIB REQUIRED)
 if(NOT BUILD_HEADLESS)
