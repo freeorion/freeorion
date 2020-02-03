@@ -11,6 +11,7 @@
 #include <boost/signals2/signal.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/thread/shared_mutex.hpp>
+#include <boost/container/flat_map.hpp>
 
 #include <list>
 #include <map>
@@ -18,6 +19,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include "../util/Export.h"
 
@@ -45,9 +47,9 @@ namespace Effect {
     struct SourcedEffectsGroup;
     class EffectsGroup;
     typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
-    typedef std::map<int, std::map<MeterType, std::vector<AccountingInfo>>> AccountingMap;
+    typedef std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>> AccountingMap;
     typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> TargetsCauses;
-    typedef std::map<int, std::map<MeterType, double>> DiscrepancyMap;
+    typedef std::unordered_map<int, boost::container::flat_map<MeterType, double>> DiscrepancyMap;
 }
 
 namespace ValueRef {

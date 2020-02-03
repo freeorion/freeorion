@@ -595,27 +595,38 @@ void Universe::ApplyGenerateSitRepEffects() {
 }
 
 void Universe::InitMeterEstimatesAndDiscrepancies() {
-    DebugLogger() << "Universe::InitMeterEstimatesAndDiscrepancies";
-    ScopedTimer timer("Universe::InitMeterEstimatesAndDiscrepancies");
+    DebugLogger(effects) << "Universe::InitMeterEstimatesAndDiscrepancies";
+    ScopedTimer timer("Universe::InitMeterEstimatesAndDiscrepancies", true, std::chrono::microseconds(1));
 
     // clear old discrepancies and accounting
     m_effect_discrepancy_map.clear();
     m_effect_accounting_map.clear();
+    m_effect_discrepancy_map.reserve(m_objects.size());
+    m_effect_accounting_map.reserve(m_objects.size());
 
-    DebugLogger() << "IMEAD: updating meter estimates";
+    TraceLogger(effects) << "IMEAD: updating meter estimates";
 
     // save starting meter vales
-    Effect::DiscrepancyMap starting_current_meter_values;
-    for (const auto& obj : m_objects)
-        for (const auto& meter_pair : obj->Meters())
-            starting_current_meter_values[obj->ID()][meter_pair.first] = meter_pair.second.Current();
+    std::unordered_map<int, boost::container::flat_map<MeterType, double>> starting_current_meter_values;
+    starting_current_meter_values.reserve(m_objects.size());
+    for (const auto& obj : m_objects) {
+        auto& obj_discrep = starting_current_meter_values[obj->ID()];
+        obj_discrep.reserve(obj->Meters().size());
+        for (const auto& meter_pair : obj->Meters()) {
+            // inserting in order into initially-empty map should always put next item efficiently at end
+            obj_discrep.emplace_hint(obj_discrep.end(), meter_pair.first, meter_pair.second.Current());
+        }
+    }
 
 
     // generate new estimates (normally uses discrepancies, but in this case will find none)
     UpdateMeterEstimates();
 
 
-    DebugLogger() << "IMEAD: determining discrepancies";
+    TraceLogger(effects) << "IMEAD: determining discrepancies";
+    TraceLogger(effects) << "Initial accounting map size: " << m_effect_accounting_map.size()
+                         << "   and discrepancy map size: " << m_effect_discrepancy_map.size();
+
     // determine meter max discrepancies
     for (auto& entry : m_effect_accounting_map) {
         int object_id = entry.first;
@@ -625,43 +636,53 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
         // get object
         auto obj = m_objects.get(object_id);
         if (!obj) {
-            ErrorLogger() << "Universe::InitMeterEstimatesAndDiscrepancies couldn't find an object that was in the effect accounting map...?";
+            ErrorLogger(effects) << "Universe::InitMeterEstimatesAndDiscrepancies couldn't find an object that was in the effect accounting map...?";
             continue;
         }
+        if (obj->Meters().empty())
+            continue;
 
         TraceLogger(effects) << "... discrepancies for " << obj->Name() << " (" << obj->ID() << "):";
+
+        auto& account_map = entry.second;
+        account_map.reserve(obj->Meters().size());
+
+        // discrepancies should be empty before this loop, so emplacing / assigning should be fine here (without overwriting existing data)
+        auto dis_map_it = m_effect_discrepancy_map.emplace_hint(m_effect_discrepancy_map.end(), object_id, boost::container::flat_map<MeterType, double>{});
+        auto& discrep_map = dis_map_it->second;
+        discrep_map.reserve(obj->Meters().size());
+
+        auto& start_map = starting_current_meter_values[object_id];
+        start_map.reserve(obj->Meters().size());
+
+        TraceLogger(effects) << "For object " << object_id << " initial accounting map size: "
+                             << account_map.size() << "  discrep map size: " << discrep_map.size()
+                             << "  and starting meters map size: " << start_map.size();
 
         // every meter has a value at the start of the turn, and a value after
         // updating with known effects
         for (auto& meter_pair : obj->Meters()) {
             MeterType type = meter_pair.first;
-
-            // skip paired active meters, as differences in these are expected
-            // and persistent, and not a "discrepancy"
+            // skip paired active meters, as differences in these are expected and persistent, and not a "discrepancy"
             if (type >= METER_POPULATION && type <= METER_TROOPS)
                 continue;
+            Meter& meter = meter_pair.second;
 
             // discrepancy is the difference between expected and actual meter
             // values at start of turn. here "expected" is what the meter value
             // was before updating the meters, and actual is what it is now
             // after updating the meters based on the known universe.
-            Meter& meter = meter_pair.second;
-            float discrepancy = starting_current_meter_values[object_id][type] - meter.Current();
+            float discrepancy = start_map[type] - meter.Current();
             if (discrepancy == 0.0f) continue;   // no discrepancy for this meter
 
-            // add to discrepancy map
-            m_effect_discrepancy_map[object_id][type] = discrepancy;
+            // add to discrepancy map. as above, should have been empty before this loop.
+            discrep_map.emplace_hint(discrep_map.end(), type, discrepancy);
 
             // correct current max meter estimate for discrepancy
             meter.AddToCurrent(discrepancy);
 
             // add discrepancy adjustment to meter accounting
-            Effect::AccountingInfo info;
-            info.cause_type = ECT_UNKNOWN_CAUSE;
-            info.meter_change = discrepancy;
-            info.running_meter_total = meter.Current();
-
-            m_effect_accounting_map[object_id][type].push_back(info);
+            account_map[type].emplace_back(INVALID_OBJECT_ID, ECT_UNKNOWN_CAUSE, discrepancy, meter.Current());
 
             TraceLogger(effects) << "... ... " << boost::lexical_cast<std::string>(type) << ": " << discrepancy;
         }
@@ -740,6 +761,7 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
         objects_set.insert(object_id);
     }
     std::vector<int> final_objects_vec;
+    final_objects_vec.reserve(objects_set.size());
     std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(final_objects_vec));
     if (!final_objects_vec.empty())
         UpdateMeterEstimatesImpl(final_objects_vec, GetOptionsDB().Get<bool>("effects.accounting.enabled"));
@@ -769,20 +791,17 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, boo
         if (!do_accounting)
             continue;
 
-        // record current value(s) of meters after resetting
-        for (MeterType type = MeterType(0); type != NUM_METER_TYPES;
-             type = MeterType(type + 1))
-        {
-            if (Meter* meter = obj->GetMeter(type)) {
-                Effect::AccountingInfo info;
-                info.source_id = INVALID_OBJECT_ID;
-                info.cause_type = ECT_INHERENT;
-                info.meter_change = meter->Current() - Meter::DEFAULT_VALUE;
-                info.running_meter_total = meter->Current();
+        auto& meters = obj->Meters();
+        auto& account_map = m_effect_accounting_map[obj_id];
+        account_map.clear();    // remove any old accounting info. this should be redundant here.
+        account_map.reserve(meters.size());
 
-                if (info.meter_change != 0.0f)
-                    m_effect_accounting_map[obj_id][type].push_back(info);
-            }
+        for (auto& meter_pair : meters) {
+            MeterType type = meter_pair.first;
+            const auto& meter = meter_pair.second;
+            float meter_change = meter.Current() - Meter::DEFAULT_VALUE;
+            if (meter_change != 0.0f)
+                account_map[type].emplace_back(INVALID_OBJECT_ID, ECT_INHERENT, meter_change, meter.Current());
         }
     }
 
@@ -814,6 +833,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, boo
             if (dis_it == m_effect_discrepancy_map.end())
                 continue;   // no discrepancy, so skip to next object
 
+            auto& account_map = m_effect_accounting_map[obj_id];    // reserving space now should be redundant with previous manipulations
+
             // apply all meters' discrepancies
             for (auto& entry : dis_it->second) {
                 MeterType type = entry.first;
@@ -830,12 +851,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, boo
 
                 meter->AddToCurrent(discrepancy);
 
-                Effect::AccountingInfo info;
-                info.cause_type = ECT_UNKNOWN_CAUSE;
-                info.meter_change = discrepancy;
-                info.running_meter_total = meter->Current();
-
-                m_effect_accounting_map[obj_id][type].push_back(info);
+                account_map[type].emplace_back(INVALID_OBJECT_ID, ECT_UNKNOWN_CAUSE, discrepancy, meter->Current());
             }
         }
     }
@@ -1188,7 +1204,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // transfer target objects from input vector to a set
     Effect::TargetSet all_potential_targets = m_objects.find(target_objects);
 
-    TraceLogger(effects) << "target objects:";
+    TraceLogger(effects) << "GetEffectsAndTargets target objects:";
     for (auto& obj : all_potential_targets)
         TraceLogger(effects) << obj->Dump();
 
