@@ -43,6 +43,7 @@ namespace parse {
             |    tok.BuildingType_
             |    tok.Focus_
             |    tok.PreferredFocus_
+            |    tok.Hull_
             ;
 
         constant

@@ -197,7 +197,7 @@ HULL_FUEL_EFFICIENCY_EFFECTSGROUP
             ]
             accountinglabel = "@1@_FUEL_EFFICIENCY_LABEL"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetMaxFuel value = ((Value - HullFuel name = ThisHull) * @2@ + HullFuel name = ThisHull ) * Statistic If Condition = And [ Source HasTag name = "@1@_FUEL_EFFICIENCY" ]
+            effects = SetMaxFuel value = Value * @2@  * Statistic If Condition = And [ Source HasTag name = "@1@_FUEL_EFFICIENCY" ]
 
      // If a ship has less than one maximum fuel it will never be able to travel out of supply so refueling does not make sense.
      // In order to communicate that and to prevent wrong refuel sitreps, we set the maximum fuel for that case to zero
@@ -213,5 +213,17 @@ HULL_FUEL_EFFICIENCY_EFFECTSGROUP
             priority = [[METER_OVERRIDE_PRIORITY]]
             effects = If condition = (Value(Source.MaxFuel) < 1) effects = SetMaxFuel value = 0
 '''
+
+// This adds the hull's base fuel to the max fuel meter after applying the fuel efficiency multiplier.
+// Note the use of the default accountinglabel.
+ADD_HULL_FUEL_TO_MAX_FUEL_METER
+'''EffectsGroup
+            scope = Source
+            accountinglabel = "TT_SHIP_HULL"
+            priority = [[VERY_VERY_LATE_PRIORITY]]
+            effects = SetMaxFuel value = ( Value + HullFuel name = Source.Hull )
+'''
+
+
 
 #include "/scripting/common/priorities.macros"
