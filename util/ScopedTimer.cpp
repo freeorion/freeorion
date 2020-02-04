@@ -3,6 +3,7 @@
 #include "Logger.h"
 
 #include <boost/unordered_map.hpp>
+#include <boost/chrono.hpp>
 
 #include <iomanip>
 #include <sstream>
@@ -13,8 +14,7 @@ namespace {
 
 class ScopedTimer::Impl {
 public:
-    Impl(const std::string& timed_name, bool enable_output,
-         std::chrono::microseconds threshold) :
+    Impl(const std::string& timed_name, bool enable_output, std::chrono::microseconds threshold) :
         m_start(std::chrono::high_resolution_clock::now()),
         m_name(timed_name),
         m_enable_output(enable_output),
@@ -22,10 +22,12 @@ public:
     {}
 
     ~Impl() {
-        std::chrono::nanoseconds duration =
-            std::chrono::high_resolution_clock::now() - m_start;
+        if (!m_enable_output)
+            return;
 
-        if (!ShouldOutput(duration))
+        std::chrono::nanoseconds duration{std::chrono::high_resolution_clock::now() - m_start};
+
+        if (duration < m_threshold)
             return;
 
         std::stringstream ss;
@@ -34,14 +36,28 @@ public:
         DebugLogger(timer) << ss.str();
     }
 
-    bool ShouldOutput(const std::chrono::nanoseconds& duration)
-    { return ((duration >= m_threshold) && m_enable_output ); }
+    void Restart()
+    { m_start = std::chrono::high_resolution_clock::now(); }
 
-    static void FormatDuration(std::stringstream& ss,
-                               const std::chrono::nanoseconds& duration)
-    {
+    template <typename UNITS = std::chrono::seconds>
+    double Duration() const {
+        using ns = std::chrono::nanoseconds;
+        ns duration{std::chrono::high_resolution_clock::now() - m_start};
+        return static_cast<double>(duration.count()) / ns::period::den * ns::period::num / UNITS::period::num * UNITS::period::den;
+    }
+
+    std::string DurationString() const {
+        std::stringstream ss;
+        std::chrono::nanoseconds duration{std::chrono::high_resolution_clock::now() - m_start};
+        FormatDuration(ss, duration);
+        return ss.str();
+    }
+
+    static void FormatDuration(std::stringstream& ss, const std::chrono::nanoseconds& duration) {
         ss << std::setw(8) << std::right;
-        if (duration >= std::chrono::milliseconds(2))
+        if (duration >= std::chrono::seconds(2))
+            ss << std::chrono::duration_cast<std::chrono::seconds>(duration).count() << " s";
+        else if (duration >= std::chrono::milliseconds(2))
             ss << std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() << " ms";
         else if (duration >= std::chrono::microseconds(2))
             ss << std::chrono::duration_cast<std::chrono::microseconds>(duration).count() << " µs";
@@ -69,6 +85,15 @@ ScopedTimer::ScopedTimer(const std::string& timed_name,
 //!     ~ScopedTimer is required because Impl is defined here.
 ScopedTimer::~ScopedTimer()
 {}
+
+void ScopedTimer::restart()
+{ m_impl->Restart(); }
+
+double ScopedTimer::duration() const
+{ return m_impl->Duration(); }
+
+std::string ScopedTimer::DurationString() const
+{ return m_impl->DurationString(); }
 
 
 
@@ -132,10 +157,13 @@ public:
 
     /** The destructor will print the table of accumulated times. */
     ~Impl() {
+        if (!m_enable_output)
+            return;
+
         std::chrono::nanoseconds duration =
             std::chrono::high_resolution_clock::now() - m_start;
 
-        if (!ShouldOutput(duration))
+        if (duration > m_threshold)
             return;
 
         // No table so use basic ScopedTimer output.
@@ -167,7 +195,8 @@ public:
                 continue;
             }
 
-            if (!ShouldOutput(jt->second))
+            // is duration yet long enough to output?
+            if (jt->second > m_threshold)
                 continue;
 
             // Create a header with padding, so all times align.

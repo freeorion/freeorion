@@ -51,7 +51,6 @@
 #include "../network/ClientNetworking.h"
 #include "../client/human/HumanClientApp.h"
 
-#include <boost/timer.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/optional/optional.hpp>

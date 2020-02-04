@@ -8,7 +8,6 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/spirit/include/qi.hpp>
-#include <boost/timer.hpp>
 
 #include <GG/Clr.h>
 

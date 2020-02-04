@@ -18,10 +18,15 @@
 //! print output.
 class FO_COMMON_API ScopedTimer {
 public:
-    ScopedTimer(const std::string& timed_name, bool enable_output = false,
-                std::chrono::microseconds threshold = std::chrono::milliseconds(1));
+    explicit ScopedTimer(const std::string& timed_name = "", bool enable_output = false,
+                         std::chrono::microseconds threshold = std::chrono::milliseconds(1));
     ScopedTimer(const std::string& timed_name, std::chrono::microseconds threshold);
     ~ScopedTimer();
+
+    void restart();
+
+    double duration() const;
+    std::string DurationString() const;
 
     class Impl;
 

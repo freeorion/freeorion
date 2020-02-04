@@ -20,7 +20,6 @@
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
 
-#include <boost/timer.hpp>
 #include <boost/python/str.hpp>
 #include <boost/uuid/random_generator.hpp>
 

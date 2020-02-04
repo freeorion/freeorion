@@ -31,7 +31,6 @@
 #include "Encyclopedia.h"
 
 #include <boost/property_map/property_map.hpp>
-#include <boost/timer.hpp>
 
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
@@ -1222,20 +1221,17 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
     ConditionCache& invariant_condition_matches = *cached_source_condition_matches[INVALID_OBJECT_ID];
 
-    boost::timer type_timer;
-    boost::timer eval_timer;
-
     std::list<Effect::TargetsCauses> targets_causes_reorder_buffer; // create before run_queue, destroy after run_queue
     unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
     RunQueue<StoreTargetsAndCausesOfEffectsGroupsWorkItem> run_queue(num_threads);
     boost::shared_mutex global_mutex;
     boost::unique_lock<boost::shared_mutex> global_lock(global_mutex); // create after run_queue, destroy before run_queue
 
-    eval_timer.restart();
 
     // 1) EffectsGroups from Species
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for SPECIES";
-    type_timer.restart();
+    ScopedTimer type_timer;
+    ScopedTimer eval_timer;
 
     // find each species planets in single pass, maintaining object map order per-species
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> species_objects;
@@ -1253,7 +1249,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         species_objects[species_name].push_back(planet);
     }
 
-    double planet_species_time = type_timer.elapsed();
+    double planet_species_time = type_timer.duration();
     type_timer.restart();
 
     // find each species ships in single pass, maintaining object map order per-species
@@ -1270,7 +1266,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         }
         species_objects[species_name].push_back(ship);
     }
-    double ship_species_time = type_timer.elapsed();
+    double ship_species_time = type_timer.duration();
 
     // enforce species effects order
     for (const auto& entry : GetSpeciesManager()) {
@@ -1328,7 +1324,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 global_mutex));
         }
     }
-    double special_time = type_timer.elapsed();
+    double special_time = type_timer.duration();
 
     // 3) EffectsGroups from Techs
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for TECHS";
@@ -1356,7 +1352,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             }
         }
     }
-    double tech_time = type_timer.elapsed();
+    double tech_time = type_timer.duration();
 
     // 4) EffectsGroups from Buildings
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for BUILDINGS";
@@ -1396,7 +1392,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 global_mutex));
         }
     }
-    double building_time = type_timer.elapsed();
+    double building_time = type_timer.duration();
 
     // 5) EffectsGroups from Ship Hull and Ship Parts
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for SHIPS hulls and parts";
@@ -1472,7 +1468,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 global_mutex));
         }
     }
-    double ships_time = type_timer.elapsed();
+    double ships_time = type_timer.duration();
 
     // 6) EffectsGroups from Fields
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for FIELDS";
@@ -1512,10 +1508,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 global_mutex));
         }
     }
-    double fields_time = type_timer.elapsed();
+    double fields_time = type_timer.duration();
 
     run_queue.Wait(global_lock);
-    double eval_time = eval_timer.elapsed();
+    double eval_time = eval_timer.duration();
 
     eval_timer.restart();
     // add results to targets_causes in issue order
@@ -1526,7 +1522,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             targets_causes.push_back(result);
         }
     }
-    double reorder_time = eval_timer.elapsed();
+    double reorder_time = eval_timer.duration();
     DebugLogger() << "Issue times: planet species: " << planet_species_time*1000
                   << " ship species: " << ship_species_time*1000
                   << " specials: " << special_time*1000

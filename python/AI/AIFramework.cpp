@@ -6,6 +6,7 @@
 #include "../../util/Logger.h"
 #include "../../util/i18n.h"
 #include "../../util/OptionsDB.h"
+#include "../../util/ScopedTimer.h"
 #include "../../Empire/Empire.h"
 #include "../../Empire/Diplomacy.h"
 #include "../CommonFramework.h"
@@ -18,7 +19,6 @@
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/docstring_options.hpp>
 #include <boost/mpl/vector.hpp>
-#include <boost/timer.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
 #include <boost/python/scope.hpp>
@@ -139,7 +139,7 @@ void PythonAI::GenerateOrders() {
     DebugLogger() << "PythonAI::GenerateOrders : initializing turn";
     //AIInterface::InitTurn();
 
-    boost::timer order_timer;
+    ScopedTimer order_timer;
     try {
         // call Python function that generates orders for current turn
         //DebugLogger() << "PythonAI::GenerateOrders : getting generate orders object";
@@ -154,7 +154,7 @@ void PythonAI::GenerateOrders() {
         ErrorLogger() << "PythonAI::GenerateOrders : Python error caught.  Partial orders sent to server";
     }
     AIInterface::DoneTurn();
-    DebugLogger() << "PythonAI::GenerateOrders order generating time: " << (order_timer.elapsed() * 1000.0) << " ms";
+    DebugLogger() << "PythonAI::GenerateOrders order generating time: " << order_timer.DurationString();
 }
 
 void PythonAI::HandleChatMessage(int sender_id, const std::string& msg) {
