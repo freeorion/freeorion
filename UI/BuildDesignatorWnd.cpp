@@ -181,7 +181,7 @@ namespace {
             return source;
 
         // not a valid source?!  scan through all objects to find one owned by this empire
-        for (const auto& obj : GetUniverse().Objects()) {
+        for (const auto& obj : GetUniverse().Objects().all()) {
             if (obj->OwnedBy(empire_id))
                 return obj;
         }

@@ -2723,7 +2723,7 @@ void MapWnd::InitTurn() {
     ObjectMap& objects = Objects();
 
     TraceLogger(effects) << "MapWnd::InitTurn initial:";
-    for (auto obj : objects)
+    for (auto obj : objects.all())
         TraceLogger(effects) << obj->Dump();
 
     timer.EnterSection("system graph");

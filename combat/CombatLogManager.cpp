@@ -84,11 +84,10 @@ CombatLog::CombatLog(const CombatInfo& combat_info) :
 {
     // compile all remaining and destroyed objects' ids
     object_ids = combat_info.destroyed_object_ids;
-    for (auto it = combat_info.objects.begin();
-         it != combat_info.objects.end(); ++it)
+    for (const auto& obj : combat_info.objects.all())
     {
-        object_ids.insert(it->ID());
-        participant_states[it->ID()] = CombatParticipantState(**it);
+        object_ids.insert(obj->ID());
+        participant_states[obj->ID()] = CombatParticipantState(*obj);
     }
 }
 

@@ -2030,7 +2030,7 @@ public:
         std::map<int, std::set<int>>    planet_buildings;
         std::set<int>                   fields;
 
-        for (const auto& obj : GetUniverse().Objects()) {
+        for (const auto& obj : GetUniverse().Objects().all()) {
             if (!ObjectShown(obj))
                 continue;
 

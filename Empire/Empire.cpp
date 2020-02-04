@@ -107,10 +107,10 @@ std::shared_ptr<const UniverseObject> Empire::Source() const {
 
     // Find any object owned by the empire
     // TODO determine if ExistingObjects() is faster and acceptable
-    for (const auto& obj_it : Objects()) {
-        if (obj_it->OwnedBy(m_id)) {
-            m_source_id = obj_it->ID();
-            return (obj_it);
+    for (const auto& obj : Objects().all()) {
+        if (obj->OwnedBy(m_id)) {
+            m_source_id = obj->ID();
+            return obj;
         }
     }
 
@@ -931,11 +931,10 @@ const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
     TraceLogger(supply) << "Empire::KnownStarlanes for empire " << m_id;
 
     const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
-    for (auto sys_it = Objects().begin<System>();
-         sys_it != Objects().end<System>(); ++sys_it)
+    for (const auto& sys : Objects().all<System>())
     {
-        int start_id = sys_it->ID();
-        TraceLogger(supply) << "system " << start_id << " has up to " << sys_it->StarlanesWormholes().size() << " lanes / wormholes";
+        int start_id = sys->ID();
+        TraceLogger(supply) << "system " << start_id << " has up to " << sys->StarlanesWormholes().size() << " lanes / wormholes";
 
         // exclude lanes starting at systems known to be destroyed
         if (known_destroyed_objects.count(start_id)) {
@@ -943,7 +942,7 @@ const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
             continue;
         }
 
-        for (const auto& lane : sys_it->StarlanesWormholes()) {
+        for (const auto& lane : sys->StarlanesWormholes()) {
             int end_id = lane.first;
             bool is_wormhole = lane.second;
             if (is_wormhole || known_destroyed_objects.count(end_id))
@@ -965,17 +964,16 @@ const std::map<int, std::set<int>> Empire::VisibleStarlanes() const {
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
 
-    for (auto sys_it = objects.begin<System>();
-         sys_it != objects.end<System>(); ++sys_it)
+    for (const auto& sys : objects.all<System>())
     {
-        int start_id = sys_it->ID();
+        int start_id = sys->ID();
 
         // is system visible to this empire?
         if (universe.GetObjectVisibilityByEmpire(start_id, m_id) <= VIS_NO_VISIBILITY)
             continue;
 
         // get system's visible lanes for this empire
-        for (auto& lane : sys_it->VisibleStarlanesWormholes(m_id)) {
+        for (auto& lane : sys->VisibleStarlanesWormholes(m_id)) {
             if (lane.second)
                 continue;   // is a wormhole, not a starlane
             int end_id = lane.first;

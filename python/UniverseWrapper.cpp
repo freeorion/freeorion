@@ -76,9 +76,8 @@ namespace {
     std::vector<int> ObjectIDs(const Universe& universe)
     {
         std::vector<int> result;
-        auto objs = universe.Objects().all<T>();
         result.reserve(universe.Objects().size<T>());
-        for (const auto& obj : objs)
+        for (const auto& obj : universe.Objects().all<T>())
             result.push_back(obj->ID());
         return result;
     }

@@ -784,7 +784,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
     TraceLogger(effects) << "SetActiveMetersToTargetMaxCurrentValues";
     // check for each pair of meter types.  if both exist, set active
     // meter current value equal to target meter current value.
-    for (const auto& object : object_map) {
+    for (const auto& object : object_map.all()) {
         TraceLogger(effects) << "  object: " << object->Name() << " (" << object->ID() << ")";
         for (auto& entry : AssociatedMeterTypes()) {
             if (Meter* meter = object->GetMeter(entry.first)) {
@@ -800,7 +800,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
 }
 
 void SetNativePopulationValues(ObjectMap& object_map) {
-    for (const auto& object : object_map) {
+    for (const auto& object : object_map.all()) {
         Meter* meter = object->GetMeter(METER_POPULATION);
         Meter* targetmax_meter = object->GetMeter(METER_TARGET_POPULATION);
         // only applies to unowned planets

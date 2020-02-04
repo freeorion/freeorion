@@ -157,13 +157,11 @@ namespace {
     std::string GenerateSystemName() {
         static std::vector<std::string> star_names = UserStringList("STAR_NAMES");
 
-        auto systems = Objects().all<System>();
-
         // pick a name for the system
         for (const std::string& star_name : star_names) {
             // does an existing system have this name?
             bool dupe = false;
-            for (auto& system : systems) {
+            for (auto& system : Objects().all<System>()) {
                 if (system->Name() == star_name) {
                     dupe = true;
                     break;  // another system has this name. skip to next potential name.

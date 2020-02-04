@@ -2356,7 +2356,7 @@ namespace {
       * updating after combat. */
     void BackProjectSystemCombatInfoObjectMeters(std::vector<CombatInfo>& combats) {
         for (CombatInfo& combat : combats) {
-            for (const auto& object : combat.objects)
+            for (const auto& object : combat.objects.all())
                 object->BackPropagateMeters();
         }
     }
@@ -3517,7 +3517,7 @@ void ServerApp::PostCombatProcessTurns() {
     TraceLogger(effects) << objects.Dump();
 
     // Planet depopulation, some in-C++ meter modifications
-    for (const auto& obj : objects) {
+    for (const auto& obj : objects.all()) {
         obj->PopGrowthProductionResearchPhase();
         obj->ClampMeters();  // ensures no meters are over MAX.  probably redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
