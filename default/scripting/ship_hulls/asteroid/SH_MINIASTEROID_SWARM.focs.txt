@@ -34,6 +34,7 @@ Hull
     ]
     effectsgroups = [
         [[GOOD_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[ASTEROID_FIELD_STEALTH_BONUS]]
         EffectsGroup
             scope = Source

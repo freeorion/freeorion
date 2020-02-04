@@ -92,6 +92,7 @@ Hull
 
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[GOOD_VISION]]
         [[MONSTER_SHIELD_REGENERATION]]
 

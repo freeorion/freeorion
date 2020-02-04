@@ -83,6 +83,7 @@ Hull
             effects = SetStructure value = max((Target.Structure + ( Target.Structure/10 )), (Target.Structure + 20))
 
         [[BAD_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
