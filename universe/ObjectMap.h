@@ -2,6 +2,8 @@
 #define _Object_Map_h_
 
 
+#include <boost/range/any_range.hpp>
+#include <boost/range/size.hpp>
 #include <boost/range/adaptor/map.hpp>
 #include <boost/serialization/access.hpp>
 
@@ -66,21 +68,17 @@ public:
     template <class T = UniverseObject>
     std::shared_ptr<T> get(int id);
 
-    /** Returns a vector containing the objects with ids in \a object_ids that
-      * are of type T */
-    template <class T = UniverseObject>
-    std::vector<std::shared_ptr<const T>> find(const std::vector<int>& object_ids) const;
-
-    template <class T = UniverseObject>
-    std::vector<std::shared_ptr<const T>> find(const std::set<int>& object_ids) const;
+    using id_range = boost::any_range<int, boost::forward_traversal_tag>;
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<T>> find(const std::vector<int>& object_ids);
+    std::vector<std::shared_ptr<const T>> find(const id_range& object_ids) const;
 
+    /** Returns a vector containing the objects with ids in \a object_ids that
+      * are of type T */
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<T>> find(const std::set<int>& object_ids);
+    std::vector<std::shared_ptr<T>> find(const id_range& object_ids);
 
     /** Returns all the objects that match \a visitor */
     template <class T = UniverseObject>
@@ -253,9 +251,9 @@ std::shared_ptr<T> ObjectMap::get(int id) {
 }
 
 template <class T>
-std::vector<std::shared_ptr<const T>> ObjectMap::find(const std::vector<int>& object_ids) const {
+std::vector<std::shared_ptr<const T>> ObjectMap::find(const id_range& object_ids) const {
     std::vector<std::shared_ptr<const T>> retval;
-    retval.reserve(object_ids.size());
+    retval.reserve(boost::size(object_ids));
     typedef typename std::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
         auto map_it = Map<mutableT>().find(object_id);
@@ -266,35 +264,9 @@ std::vector<std::shared_ptr<const T>> ObjectMap::find(const std::vector<int>& ob
 }
 
 template <class T>
-std::vector<std::shared_ptr<const T>> ObjectMap::find(const std::set<int>& object_ids) const {
-    std::vector<std::shared_ptr<const T>> retval;
-    retval.reserve(object_ids.size());
-    typedef typename std::remove_const<T>::type mutableT;
-    for (int object_id : object_ids) {
-        auto map_it = Map<mutableT>().find(object_id);
-        if (map_it != Map<mutableT>().end())
-            retval.push_back(std::shared_ptr<const T>(map_it->second));
-    }
-    return retval;
-}
-
-template <class T>
-std::vector<std::shared_ptr<T>> ObjectMap::find(const std::vector<int>& object_ids) {
+std::vector<std::shared_ptr<T>> ObjectMap::find(const id_range& object_ids) {
     std::vector<std::shared_ptr<T>> retval;
-    retval.reserve(object_ids.size());
-    typedef typename std::remove_const<T>::type mutableT;
-    for (int object_id : object_ids) {
-        auto map_it = Map<mutableT>().find(object_id);
-        if (map_it != Map<mutableT>().end())
-            retval.push_back(std::shared_ptr<T>(map_it->second));
-    }
-    return retval;
-}
-
-template <class T>
-std::vector<std::shared_ptr<T>> ObjectMap::find(const std::set<int>& object_ids) {
-    std::vector<std::shared_ptr<T>> retval;
-    retval.reserve(object_ids.size());
+    retval.reserve(boost::size(object_ids));
     typedef typename std::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
         auto map_it = Map<mutableT>().find(object_id);
