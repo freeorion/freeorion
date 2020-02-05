@@ -246,7 +246,15 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         system
         thread
     REQUIRED)
-if(${Boost_VERSION} GREATER 106699) # boost >= 1.67
+
+# New CMake correct how Boost versions are reported
+if(POLICY CMP0093)
+  cmake_policy(SET CMP0093 NEW)
+  set(BOOST167 1.66.99)
+else()
+  set(BOOST167 106699)
+endif()
+if(${Boost_VERSION} GREATER ${BOOST167}) # boost >= 1.67
     find_package(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} REQUIRED)
     set(Boost_PYTHON_LIBRARY ${Boost_PYTHON${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_LIBRARY})
 else()
