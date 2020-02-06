@@ -658,9 +658,11 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
     std::map<int, std::set<int>> potential_system_lanes;
 
     // get systems
-    auto sys_vec = Objects().all<System>();
+    auto sys_rng = Objects().all<System>();
+    std::vector<std::shared_ptr<System>> sys_vec;
     std::map<int, std::shared_ptr<System>> sys_map;
-    std::transform(sys_vec.begin(), sys_vec.end(), std::inserter(sys_map, sys_map.end()),
+    std::copy(sys_rng.begin(), sys_rng.end(), std::back_inserter(sys_vec));
+    std::transform(sys_rng.begin(), sys_rng.end(), std::inserter(sys_map, sys_map.end()),
                    [](const std::shared_ptr<System>& p) { return std::make_pair(p->ID(), p); });
 
     // generate lanes
@@ -782,7 +784,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
     TraceLogger(effects) << "SetActiveMetersToTargetMaxCurrentValues";
     // check for each pair of meter types.  if both exist, set active
     // meter current value equal to target meter current value.
-    for (const auto& object : object_map) {
+    for (const auto& object : object_map.all()) {
         TraceLogger(effects) << "  object: " << object->Name() << " (" << object->ID() << ")";
         for (auto& entry : AssociatedMeterTypes()) {
             if (Meter* meter = object->GetMeter(entry.first)) {
@@ -798,7 +800,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
 }
 
 void SetNativePopulationValues(ObjectMap& object_map) {
-    for (const auto& object : object_map) {
+    for (const auto& object : object_map.all()) {
         Meter* meter = object->GetMeter(METER_POPULATION);
         Meter* targetmax_meter = object->GetMeter(METER_TARGET_POPULATION);
         // only applies to unowned planets

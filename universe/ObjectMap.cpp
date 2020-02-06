@@ -68,7 +68,7 @@ void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*
 
     // loop through objects in copied map, copying or cloning each depending
     // on whether there already is a corresponding object in this map
-    for (const auto& obj : copied_map)
+    for (const auto& obj : copied_map.all())
         this->CopyObject(obj, empire_id);
 }
 
@@ -248,7 +248,7 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     std::map<int, std::set<int>> contained_ships;
     std::map<int, std::set<int>> contained_fields;
 
-    for (const auto& contained : *this) {
+    for (const auto& contained : all()) {
         if (destroyed_object_ids.count(contained->ID()))
             continue;
 
@@ -285,7 +285,7 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     }
 
     // set contained objects of all possible containers
-    for (const auto& obj : *this) {
+    for (const auto& obj : all()) {
         if (obj->ObjectType() == OBJ_SYSTEM) {
             auto sys = std::dynamic_pointer_cast<System>(obj);
             if (!sys)
@@ -321,7 +321,7 @@ void ObjectMap::CopyObjectsToSpecializedMaps() {
 std::string ObjectMap::Dump(unsigned short ntabs) const {
     std::ostringstream dump_stream;
     dump_stream << "ObjectMap contains UniverseObjects: " << std::endl;
-    for (const auto& obj : *this)
+    for (const auto& obj : all())
         dump_stream << obj->Dump(ntabs) << std::endl;
     dump_stream << std::endl;
     return dump_stream.str();

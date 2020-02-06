@@ -275,21 +275,6 @@ private:
 
     void RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
 
-    /** Connect all \p fleets StateChangedSignal to RefreshFleetButtons. */
-    void AddFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets);
-
-    /** Disconnect all \p fleets StateChangedSignal from RefreshFleetButtons. */
-    void RemoveFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets);
-
-    /** Handle FleetsInsertedSignal by connecting signals and refreshing fleet
-        buttons. */
-    void FleetsInsertedSignalHandler(const std::vector<std::shared_ptr<Fleet>>& fleets);
-
-    /** Handle FleetsRemovedSignal by disconnecting signals and refreshing fleet
-        buttons. */
-    void FleetsRemovedSignalHandler(const std::vector<std::shared_ptr<Fleet>>& fleets);
-
-
     void DoFleetButtonsLayout();                     //!< does layout of fleet buttons
 
     /** Return fleets ids of all fleet buttons containing or overlapping the
@@ -307,8 +292,6 @@ private:
 
     void DoSystemIconsLayout();          //!< does layout of system icons
     void DoFieldIconsLayout();           //!< does layout of field icons
-
-    void RefreshFleetSignals();          //!< disconnects and reconnects all fleet change signals
 
     void RefreshSliders();               //!< shows or hides sliders on map
 

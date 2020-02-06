@@ -84,11 +84,12 @@ std::shared_ptr<System> CombatInfo::GetSystem()
 
 float CombatInfo::GetMonsterDetection() const {
     float monster_detection = 0.0;
-    for (auto it = objects.begin(); it != objects.end(); ++it) {
-        auto obj = *it;
-        if (obj->Unowned() && (obj->ObjectType() == OBJ_SHIP || obj->ObjectType() == OBJ_PLANET ))
+    for (const auto& obj : objects.all<Ship>())
+        if (obj->Unowned())
             monster_detection = std::max(monster_detection, obj->InitialMeterValue(METER_DETECTION));
-    }
+    for (const auto& obj : objects.all<Planet>())
+        if (obj->Unowned())
+            monster_detection = std::max(monster_detection, obj->InitialMeterValue(METER_DETECTION));
     return monster_detection;
 }
 
@@ -187,7 +188,7 @@ void CombatInfo::InitializeObjectVisibility() {
 
         float empire_detection = det_strengths[empire_id];
 
-        for (auto obj : objects) {
+        for (auto obj : objects.all()) {
 
             if (obj->ObjectType() == OBJ_SYSTEM) {
                 // systems always visible to empires with objects in them
@@ -1074,11 +1075,8 @@ namespace {
             std::vector<int> delete_list;
             delete_list.reserve(combat_info.objects.size());
 
-            for (auto it = combat_info.objects.begin();
-                 it != combat_info.objects.end(); ++it)
+            for (const auto& obj : combat_info.objects.all())
             {
-                auto obj = *it;
-
                 // Check if object is already noted as destroyed; don't need to re-record this
                 if (destroyed_object_ids.count(obj->ID()))
                     continue;
@@ -1198,7 +1196,7 @@ namespace {
             auto temp = empire_infos;
 
             std::set<int> empire_ids_with_objects;
-            for (const auto obj : combat_info.objects)
+            for (const auto obj : combat_info.objects.all())
                 empire_ids_with_objects.insert(obj->Owner());
 
             for (auto& empire : empire_infos) {
@@ -1244,7 +1242,7 @@ namespace {
             InitialStealthEvent::EmpireToObjectVisibilityMap report;
 
             // loop over all objects, noting which is visible by which empire or neutrals
-            for (const auto target : combat_info.objects) {
+            for (const auto target : combat_info.objects.all()) {
                 // for all empires, can they detect this object?
                 for (int viewing_empire_id : combat_info.empire_ids) {
                     // get visibility of target to attacker empire
@@ -1284,14 +1282,12 @@ namespace {
 
         // Populate lists of things that can attack. List attackers also by empire.
         void PopulateAttackers() {
-            for (auto it = combat_info.objects.begin();
-                 it != combat_info.objects.end(); ++it)
+            for (const auto& obj : combat_info.objects.all())
             {
-                auto obj = *it;
                 bool can_attack{ObjectCanAttack(obj)};
                 if (can_attack) {
-                    valid_attacker_object_ids.insert(it->ID());
-                    empire_infos[obj->Owner()].attacker_ids.insert(it->ID());
+                    valid_attacker_object_ids.insert(obj->ID());
+                    empire_infos[obj->Owner()].attacker_ids.insert(obj->ID());
                 }
 
                 DebugLogger(combat) << "Considering object " << obj->Name() << " (" << obj->ID() << ")"
@@ -1598,10 +1594,11 @@ namespace {
         DebugLogger() << "Recovering fighters at end of combat...";
 
         // count still-existing and not destroyed fighters at end of combat
-        for (auto obj_it = combat_info.objects.begin();
-             obj_it != combat_info.objects.end() && obj_it->ID() < 0; ++obj_it)
+        for (const auto& obj : combat_info.objects.all())
         {
-            auto fighter = std::dynamic_pointer_cast<Fighter>(*obj_it);
+            if (obj->ID() >= 0)
+                continue;
+            auto fighter = std::dynamic_pointer_cast<Fighter>(obj);
             if (!fighter || fighter->Destroyed())
                 continue;   // destroyed fighters can't return
             if (combat_info.destroyed_object_ids.count(fighter->LaunchedFrom())) {
@@ -1808,7 +1805,7 @@ namespace {
         combat_state.CullTheDead(bout, bout_event);
 
         // Backpropagate meters so that next round tests can use the results of the previous round
-        for (auto obj : combat_info.objects)
+        for (auto obj : combat_info.objects.all())
             obj->BackPropagateMeters();
     }
 }
@@ -1831,7 +1828,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
         //static boost::hash<std::string> cs_string_hash;
         // TODO: salt further with galaxy setup seed
-        base_seed = combat_info.objects.begin()->ID() + CurrentTurn();
+        base_seed = (*combat_info.objects.all().begin())->ID() + CurrentTurn();
     }
 
     // compile list of valid objects to attack or be attacked in this combat

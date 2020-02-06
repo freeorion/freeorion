@@ -2,6 +2,9 @@
 #define _Object_Map_h_
 
 
+#include <boost/range/any_range.hpp>
+#include <boost/range/size.hpp>
+#include <boost/range/adaptor/map.hpp>
 #include <boost/serialization/access.hpp>
 
 #include "../util/Export.h"
@@ -35,131 +38,6 @@ public:
     template <typename T>
     using container_type = std::map<int, std::shared_ptr<T>>;
 
-    template <typename T>
-    struct iterator : private container_type<T>::iterator {
-        iterator(const typename container_type<T>::iterator& base, ObjectMap& owner) :
-            container_type<T>::iterator(base),
-            m_owner(owner)
-        { Refresh(); }
-
-        std::shared_ptr<T> operator *() const
-        { return m_current_ptr; }
-
-        // The result of this operator is not intended to be stored, so it's safe to
-        // return a reference to an instance variable that's going to be soon overwritten.
-        std::shared_ptr<T>& operator ->() const
-        { return m_current_ptr; }
-
-        iterator& operator ++() {
-            container_type<T>::iterator::operator++();
-            Refresh();
-            return *this;
-        }
-
-        iterator operator ++(int) {
-            iterator result = iterator(container_type<T>::iterator::operator++(0), m_owner);
-            Refresh();
-            return result;
-        }
-
-        iterator& operator --() {
-            container_type<T>::iterator::operator--();
-            Refresh();
-            return *this;
-        }
-
-        iterator operator --(int) {
-            iterator result = iterator(container_type<T>::iterator::operator--(0), m_owner);
-            Refresh();
-            return result;
-        }
-
-        bool operator ==(const iterator& other) const
-        { return (typename container_type<T>::iterator(*this) == other); }
-
-        bool operator !=(const iterator& other) const
-        { return (typename container_type<T>::iterator(*this) != other);}
-
-    private:
-        mutable std::shared_ptr<T> m_current_ptr;
-        ObjectMap& m_owner;
-
-        // We always want m_current_ptr to be pointing to our parent iterator's
-        // current item, if it is a valid object. Otherwise, we just want to
-        // return a "null" pointer.  We assume that we are dealing with valid
-        // iterators in the range [begin(), end()].
-        void Refresh() const {
-            if (typename container_type<T>::iterator(*this) == (m_owner.Map<T>().end())) {
-                m_current_ptr = nullptr;
-            } else {
-                m_current_ptr = std::shared_ptr<T>(container_type<T>::iterator::operator*().second);
-            }
-        }
-    };
-
-    template <typename T>
-    struct const_iterator : private container_type<T>::const_iterator {
-        const_iterator(const typename container_type<T>::const_iterator& base,
-                       const ObjectMap& owner) :
-            container_type<T>::const_iterator(base),
-            m_owner(owner)
-        { Refresh(); }
-
-        std::shared_ptr<const T> operator *() const
-        { return m_current_ptr; }
-
-        // The result of this operator is not intended to be stored, so it's safe to
-        // return a reference to an instance variable that's going to be soon overwritten.
-        std::shared_ptr<const T>& operator ->() const
-        { return m_current_ptr; }
-
-        const_iterator& operator ++() {
-            container_type<T>::const_iterator::operator++();
-            Refresh();
-            return *this;
-        }
-
-        const_iterator operator ++(int) {
-            const_iterator result = container_type<T>::const_iterator::operator++(0);
-            Refresh();
-            return result;
-        }
-
-        const_iterator& operator --() {
-            container_type<T>::const_iterator::operator--();
-            Refresh();
-            return *this;
-        }
-
-        const_iterator operator --(int) {
-            const_iterator result = container_type<T>::const_iterator::operator--(0);
-            Refresh();
-            return result;
-        }
-
-        bool operator ==(const const_iterator& other) const
-        { return (typename container_type<T>::const_iterator(*this) == other); }
-
-        bool operator !=(const const_iterator& other) const
-        { return (typename container_type<T>::const_iterator(*this) != other); }
-
-    private:
-        // See iterator for comments.
-        mutable std::shared_ptr<const T> m_current_ptr;
-        const ObjectMap& m_owner;
-
-        // We always want m_current_ptr to be pointing to our parent iterator's current item, if it is a valid object.
-        // Otherwise, we just want to return a "null" pointer.  We assume that we are dealing with valid iterators in
-        // the range [begin(), end()].
-        void Refresh() const {
-            if (typename container_type<T>::const_iterator(*this) == (m_owner.Map<T>().end())) {
-                m_current_ptr = nullptr;
-            } else {
-                m_current_ptr = std::shared_ptr<T>(container_type<T>::const_iterator::operator*().second);
-            }
-        }
-    };
-
     /** \name Structors */ //@{
     ObjectMap();
     ~ObjectMap();
@@ -190,21 +68,17 @@ public:
     template <class T = UniverseObject>
     std::shared_ptr<T> get(int id);
 
-    /** Returns a vector containing the objects with ids in \a object_ids that
-      * are of type T */
-    template <class T = UniverseObject>
-    std::vector<std::shared_ptr<const T>> find(const std::vector<int>& object_ids) const;
-
-    template <class T = UniverseObject>
-    std::vector<std::shared_ptr<const T>> find(const std::set<int>& object_ids) const;
+    using id_range = boost::any_range<int, boost::forward_traversal_tag>;
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<T>> find(const std::vector<int>& object_ids);
+    std::vector<std::shared_ptr<const T>> find(const id_range& object_ids) const;
 
+    /** Returns a vector containing the objects with ids in \a object_ids that
+      * are of type T */
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<T>> find(const std::set<int>& object_ids);
+    std::vector<std::shared_ptr<T>> find(const id_range& object_ids);
 
     /** Returns all the objects that match \a visitor */
     template <class T = UniverseObject>
@@ -216,27 +90,21 @@ public:
 
     /** Returns all the objects of type T */
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<const T>> all() const;
+    boost::select_second_const_range<container_type<T>> all() const {
+        return Map<T>() | boost::adaptors::map_values;
+    }
 
     /** Returns all the objects of type T */
     template <class T = UniverseObject>
-    std::vector<std::shared_ptr<T>> all();
+    boost::select_second_mutable_range<container_type<T>> all() {
+        return Map<T>() | boost::adaptors::map_values;
+    }
 
     /** Returns the IDs of all objects not known to have been destroyed. */
     std::vector<int>        FindExistingObjectIDs() const;
 
     /** Returns highest used object ID in this ObjectMap */
     int                     HighestObjectID() const;
-
-    /** iterators */
-    template <class T = UniverseObject>
-    iterator<T>             begin();
-    template <class T = UniverseObject>
-    iterator<T>             end();
-    template <class T = UniverseObject>
-    const_iterator<T>       begin() const;
-    template <class T = UniverseObject>
-    const_iterator<T>       end() const;
 
     std::string             Dump(unsigned short ntabs = 0) const;
 
@@ -365,22 +233,6 @@ private:
 };
 
 template <class T>
-ObjectMap::iterator<T> ObjectMap::begin()
-{ return iterator<T>(Map<typename std::remove_const<T>::type>().begin(), *this); }
-
-template <class T>
-ObjectMap::iterator<T> ObjectMap::end()
-{ return iterator<T>(Map<typename std::remove_const<T>::type>().end(), *this); }
-
-template <class T>
-ObjectMap::const_iterator<T> ObjectMap::begin() const
-{ return const_iterator<T>(Map<typename std::remove_const<T>::type>().begin(), *this); }
-
-template <class T>
-ObjectMap::const_iterator<T> ObjectMap::end() const
-{ return const_iterator<T>(Map<typename std::remove_const<T>::type>().end(), *this); }
-
-template <class T>
 std::shared_ptr<const T> ObjectMap::get(int id) const {
     auto it = Map<typename std::remove_const<T>::type>().find(id);
     return std::shared_ptr<const T>(
@@ -399,27 +251,9 @@ std::shared_ptr<T> ObjectMap::get(int id) {
 }
 
 template <class T>
-std::vector<std::shared_ptr<const T>> ObjectMap::all() const {
-    std::vector<std::shared_ptr<const T>> result;
-    result.reserve(size<T>());
-    for (const auto& entry : Map<T>())
-        result.push_back(entry.second);
-    return result;
-}
-
-template <class T>
-std::vector<std::shared_ptr<T>> ObjectMap::all() {
-    std::vector<std::shared_ptr<T>> result;
-    result.reserve(Map<T>().size());
-    for (const auto& entry : Map<T>())
-        result.push_back(entry.second);
-    return result;
-}
-
-template <class T>
-std::vector<std::shared_ptr<const T>> ObjectMap::find(const std::vector<int>& object_ids) const {
+std::vector<std::shared_ptr<const T>> ObjectMap::find(const id_range& object_ids) const {
     std::vector<std::shared_ptr<const T>> retval;
-    retval.reserve(object_ids.size());
+    retval.reserve(boost::size(object_ids));
     typedef typename std::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
         auto map_it = Map<mutableT>().find(object_id);
@@ -430,35 +264,9 @@ std::vector<std::shared_ptr<const T>> ObjectMap::find(const std::vector<int>& ob
 }
 
 template <class T>
-std::vector<std::shared_ptr<const T>> ObjectMap::find(const std::set<int>& object_ids) const {
-    std::vector<std::shared_ptr<const T>> retval;
-    retval.reserve(object_ids.size());
-    typedef typename std::remove_const<T>::type mutableT;
-    for (int object_id : object_ids) {
-        auto map_it = Map<mutableT>().find(object_id);
-        if (map_it != Map<mutableT>().end())
-            retval.push_back(std::shared_ptr<const T>(map_it->second));
-    }
-    return retval;
-}
-
-template <class T>
-std::vector<std::shared_ptr<T>> ObjectMap::find(const std::vector<int>& object_ids) {
+std::vector<std::shared_ptr<T>> ObjectMap::find(const id_range& object_ids) {
     std::vector<std::shared_ptr<T>> retval;
-    retval.reserve(object_ids.size());
-    typedef typename std::remove_const<T>::type mutableT;
-    for (int object_id : object_ids) {
-        auto map_it = Map<mutableT>().find(object_id);
-        if (map_it != Map<mutableT>().end())
-            retval.push_back(std::shared_ptr<T>(map_it->second));
-    }
-    return retval;
-}
-
-template <class T>
-std::vector<std::shared_ptr<T>> ObjectMap::find(const std::set<int>& object_ids) {
-    std::vector<std::shared_ptr<T>> retval;
-    retval.reserve(object_ids.size());
+    retval.reserve(boost::size(object_ids));
     typedef typename std::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
         auto map_it = Map<mutableT>().find(object_id);
