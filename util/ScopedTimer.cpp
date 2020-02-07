@@ -55,14 +55,30 @@ public:
 
     static void FormatDuration(std::stringstream& ss, const std::chrono::nanoseconds& duration) {
         ss << std::setw(8) << std::right;
-        if (duration >= std::chrono::seconds(2))
+        if (duration >= std::chrono::seconds(20)) {
             ss << std::chrono::duration_cast<std::chrono::seconds>(duration).count() << " s";
-        else if (duration >= std::chrono::milliseconds(2))
+
+        } else if (duration >= std::chrono::seconds(2)) {
+            auto ms{std::chrono::duration_cast<std::chrono::milliseconds>(duration).count()};
+            ss << (ms / 100) / 10.0 << " s";    // round to 10ths of seconds
+
+        } else if (duration >= std::chrono::milliseconds(20)) {
             ss << std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() << " ms";
-        else if (duration >= std::chrono::microseconds(2))
+
+        } else if (duration >= std::chrono::milliseconds(2)) {
+            auto ms{std::chrono::duration_cast<std::chrono::microseconds>(duration).count()};
+            ss << (ms / 100) / 10.0 << " ms";    // round to 10ths of milliseconds
+
+        } else if (duration >= std::chrono::microseconds(20)) {
             ss << std::chrono::duration_cast<std::chrono::microseconds>(duration).count() << " µs";
-        else
+
+        } else if (duration >= std::chrono::microseconds(2)) {
+            auto ns{std::chrono::duration_cast<std::chrono::microseconds>(duration).count()};
+            ss << (ns / 100) / 10.0 << " µs";    // round to 10ths of microseconds
+
+        } else {
             ss << std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count() << " ns";
+        }
     }
 
     std::chrono::high_resolution_clock::time_point m_start;
