@@ -573,6 +573,17 @@ if (m_ref_type == EFFECT_TARGET_VALUE_REFERENCE) {                     \
     }                                                                  \
 }
 
+#define LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(T)                         \
+ErrorLogger() << "Variable<" #T ">::Eval unrecognized object "         \
+                 "property: "                                          \
+              << TraceReference(m_property_name, m_ref_type, context); \
+if (context.source)                                                    \
+    ErrorLogger() << "source: " << context.source->ObjectType() << " " \
+                  << context.source->ID() << " ( "                     \
+                  << context.source->Name() << " ) ";                  \
+else                                                                   \
+    ErrorLogger() << "source (none)";
+
 template <>
 PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
 {
@@ -603,13 +614,7 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
         return INVALID_PLANET_SIZE;
     }
 
-
-    ErrorLogger() << "Variable<PlanetSize>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
-    if (context.source)
-        ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                      << context.source->ID() << " ( " << context.source->Name() << " ) ";
-    else
-        ErrorLogger() << "source (none)";
+    LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(PlanetSize)
 
     return INVALID_PLANET_SIZE;
 }
@@ -659,16 +664,12 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
         return INVALID_PLANET_TYPE;
     }
 
-
-    ErrorLogger() << "Variable<PlanetType>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
-    if (context.source)
-        ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                      << context.source->ID() << " ( " << context.source->Name() << " ) ";
-    else
-        ErrorLogger() << "source (none)";
+    LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(PlanetType)
 
     return INVALID_PLANET_TYPE;
 }
+
+
 
 template <>
 PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
@@ -689,12 +690,7 @@ PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& cont
         return INVALID_PLANET_ENVIRONMENT;
     }
 
-    ErrorLogger() << "Variable<PlanetEnvironment>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
-    if (context.source)
-        ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                      << context.source->ID() << " ( " << context.source->Name() << " ) ";
-    else
-        ErrorLogger() << "source (none)";
+    LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(PlanetEnvironment)
 
     return INVALID_PLANET_ENVIRONMENT;
 }
@@ -723,12 +719,7 @@ UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& co
         return INVALID_UNIVERSE_OBJECT_TYPE;
     }
 
-    ErrorLogger() << "Variable<UniverseObjectType>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
-    if (context.source)
-        ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                      << context.source->ID() << " ( " << context.source->Name() << " ) ";
-    else
-        ErrorLogger() << "source (none)";
+    LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(UniverseObjectType)
 
     return INVALID_UNIVERSE_OBJECT_TYPE;
 }
@@ -763,12 +754,7 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
         return INVALID_STAR_TYPE;
     }
 
-    ErrorLogger() << "Variable<StarType>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
-    if (context.source)
-        ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                      << std::to_string(context.source->ID()) << " ( " << context.source->Name() << " ) ";
-    else
-        ErrorLogger() << "source (none)";
+    LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(StarType)
 
     return INVALID_STAR_TYPE;
 }
@@ -804,13 +790,8 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         }
 
         // add more non-object reference double functions here
-        ErrorLogger() << "Variable<double>::Eval unrecognized non-object property: "
-                      << TraceReference(m_property_name, m_ref_type, context);
-        if (context.source)
-            ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                          << context.source->ID() << " ( " << context.source->Name() << " ) ";
-        else
-            ErrorLogger() << "source (none)";
+
+        LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(float)
 
         return 0.0;
     }
@@ -818,13 +799,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                   m_ref_type, context);
     if (!object) {
-        ErrorLogger() << "Variable<double>::Eval unable to follow reference: "
-                      << TraceReference(m_property_name, m_ref_type, context);
-        if (context.source)
-            ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                          << context.source->ID() << " ( " << context.source->Name() << " ) ";
-        else
-            ErrorLogger() << "source (none)";
+        LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(float)
 
         return 0.0;
     }
@@ -887,13 +862,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return range_it->second;
     }
 
-    ErrorLogger() << "Variable<double>::Eval unrecognized object property: "
-                  << TraceReference(m_property_name, m_ref_type, context);
-    if (context.source)
-        ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                      << context.source->ID() << " ( " << context.source->Name() << " ) ";
-    else
-        ErrorLogger() << "source (none)";
+    LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(float)
 
     return 0.0;
 }
@@ -943,12 +912,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
         // add more non-object reference int functions here
 
-        ErrorLogger() << "Variable<int>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
-        if (context.source)
-            ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                          << context.source->ID() << " ( " << context.source->Name() << " ) ";
-        else
-            ErrorLogger() << "source (none)";
+        LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(int)
 
         return 0;
     }
@@ -956,12 +920,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                   m_ref_type, context);
     if (!object) {
-        ErrorLogger() << "Variable<int>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
-        if (context.source)
-            ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                          << context.source->ID() << " ( " << context.source->Name() << " ) ";
-        else
-            ErrorLogger() << "source (none)";
+        LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(int)
 
         return 0;
     }
@@ -1132,12 +1091,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_OBJECT_ID;
     }
 
-    ErrorLogger() << "Variable<int>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
-    if (context.source)
-        ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                      << context.source->ID() << " ( " << context.source->Name() << " ) ";
-    else
-        ErrorLogger() << "source (none)";
+    LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(int)
 
     return 0;
 }
@@ -1152,24 +1106,16 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
 
     if (m_ref_type == NON_OBJECT_REFERENCE) {
         // add more non-object reference string vector functions here
-        ErrorLogger() << "std::vector<std::string>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
-        if (context.source)
-            ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                          << context.source->ID() << " ( " << context.source->Name() << " ) ";
-        else
-            ErrorLogger() << "source (none)";
+        LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(std::vector<std::string>)
+
         return {};
     }
 
     auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                   m_ref_type, context);
     if (!object) {
-        ErrorLogger() << "Variable<int>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
-        if (context.source)
-            ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                          << context.source->ID() << " ( " << context.source->Name() << " ) ";
-        else
-            ErrorLogger() << "source (none)";
+        LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(std::vector<std::string>)
+
         return {};
     }
 
@@ -1197,12 +1143,7 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
         return {};
     }
 
-    ErrorLogger() << "std::vector<std::string>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
-    if (context.source)
-        ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                      << context.source->ID() << " ( " << context.source->Name() << " ) ";
-    else
-        ErrorLogger() << "source (none)";
+    LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(std::vector<std::string>)
 
     return {};
 }
@@ -1219,12 +1160,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
             return GetGalaxySetupData().GetSeed();
 
         // add more non-object reference string functions here
-        ErrorLogger() << "Variable<std::string>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
-        if (context.source)
-            ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                          << context.source->ID() << " ( " << context.source->Name() << " ) ";
-        else
-            ErrorLogger() << "source (none)";
+        LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(std::string)
 
         return "";
     }
@@ -1232,12 +1168,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
     auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                   m_ref_type, context);
     if (!object) {
-        ErrorLogger() << "Variable<std::string>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
-        if (context.source)
-            ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                          << context.source->ID() << " ( " << context.source->Name() << " ) ";
-        else
-            ErrorLogger() << "source (none)";
+        LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(std::string)
 
         return "";
     }
@@ -1321,12 +1252,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         return empire->TopPriorityEnqueuedTech();
     }
 
-    ErrorLogger() << "Variable<std::string>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
-    if (context.source)
-        ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                      << context.source->ID() << " ( " << context.source->Name() << " ) ";
-    else
-        ErrorLogger() << "source (none)";
+    LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(std::string)
 
     return "";
 }
