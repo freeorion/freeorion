@@ -6,9 +6,9 @@ macro(ADD_GIGI_ACCEPTANCE_TEST name)
     target_link_libraries(gg_acceptance_${name}
         GiGi
         GiGiSDL
+        Threads::Threads
         ${OPENGL_gl_LIBRARY}
         ${OPENGL_glu_LIBRARY}
-        ${CMAKE_THREAD_LIBS_INIT}
         ${GLEW_LIBRARIES}
         ${SDL_LIBRARIES}
     )

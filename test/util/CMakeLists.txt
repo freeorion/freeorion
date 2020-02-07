@@ -21,7 +21,7 @@ target_include_directories(fo_unittest_util
 
 target_link_libraries(fo_unittest_util
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT}
+    Threads::Threads
 )
 
 add_dependencies(unittest

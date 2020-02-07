@@ -24,8 +24,8 @@ target_include_directories(fo_unittest_parse
 
 target_link_libraries(fo_unittest_parse
     freeorioncommon
+    Threads::Threads
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 add_coverage(fo_unittest_parse

@@ -519,11 +519,11 @@ target_link_libraries(freeoriond
     freeorioncommon
     freeorionparse
     ZLIB::ZLIB
+    Threads::Threads
     ${PYTHON_LIBRARIES}
     ${Boost_PYTHON_LIBRARY}
     ${Boost_LOG_LIBRARY}
     ${Boost_LOG_SETUP_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 target_dependencies_copy_to_build(freeoriond)
@@ -554,11 +554,11 @@ target_link_libraries(freeorionca
     freeorioncommon
     freeorionparse
     ZLIB::ZLIB
+    Threads::Threads
     ${PYTHON_LIBRARIES}
     ${Boost_PYTHON_LIBRARY}
     ${Boost_LOG_LIBRARY}
     ${Boost_LOG_SETUP_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 target_dependencies_copy_to_build(freeorionca)
@@ -651,6 +651,7 @@ if(NOT BUILD_HEADLESS)
         GiGi
         GiGiSDL
         ZLIB::ZLIB
+        Threads::Threads
         ${OPENGL_gl_LIBRARY}
         ${OPENGL_glu_LIBRARY}
         ${OPENAL_LIBRARY}
@@ -661,7 +662,6 @@ if(NOT BUILD_HEADLESS)
         ${Boost_LOG_LIBRARY}
         ${Boost_LOG_SETUP_LIBRARY}
         ${ICONV_LIBRARY}
-        ${CMAKE_THREAD_LIBS_INIT}
     )
 
     target_dependencies_copy_to_build(freeorion)

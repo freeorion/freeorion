@@ -31,11 +31,11 @@ target_include_directories(fo_systemtest_game
 target_link_libraries(fo_systemtest_game
     freeorioncommon
     freeorionparse
+    Threads::Threads
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
     ${Boost_LOG_LIBRARY}
     ${Boost_LOG_SETUP_LIBRARY}
     ${Boost_THREAD_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 add_coverage(fo_systemtest_game
