@@ -4,24 +4,18 @@ add_executable(fo_unittest_util
     main.cpp
 )
 
-target_compile_definitions(fo_unittest_util
-    PRIVATE
-        -DBOOST_TEST_DYN_LINK
-        -DBOOST_TEST_NO_LIB
-        -DBOOST_ALL_DYN_LINK
-        -DBOOST_ALL_NO_LIB
-)
-
 target_include_directories(fo_unittest_util
     PRIVATE
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/GG/
-        ${Boost_INCLUDE_DIRS}
 )
 
 target_link_libraries(fo_unittest_util
-    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
     Threads::Threads
+    Boost::boost
+    Boost::disable_autolinking
+    Boost::dynamic_linking
+    Boost::unit_test_framework
 )
 
 add_dependencies(unittest

@@ -55,8 +55,6 @@ option(BUILD_DOCUMENTATION "Builds HTML documentation." OFF)
 option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_DEVEL_PACKAGE "Install development files." ON)
 
-cmake_dependent_option(USE_STATIC_LIBS "Favour static linking of depencendies." OFF BUILD_SHARED_LIBS OFF)
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -82,17 +80,7 @@ endif()
 
 set(MINIMUM_BOOST_VERSION 1.58.0)
 
-if(NOT USE_STATIC_LIBS)
-    add_definitions(
-        -DBOOST_ALL_NO_LIB
-        -DBOOST_ALL_DYN_LINK
-        -DBOOST_LOG_NO_LIB
-        -DBOOST_LOG_DYN_LINK
-    )
-endif()
-
-set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS date_time filesystem regex system thread log REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS filesystem regex system REQUIRED)
 
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
@@ -138,13 +126,6 @@ configure_file(
 
 add_library(GiGi "")
 
-if(USE_STATIC_LIBS)
-    set_target_properties(GiGi
-        PROPERTIES
-        LINK_SEARCH_END_STATIC true
-    )
-endif()
-
 target_compile_definitions(GiGi
     PRIVATE
         -DFONS_USE_FREETYPE
@@ -158,15 +139,19 @@ target_compile_definitions(GiGi
 
 target_include_directories(GiGi SYSTEM
     PRIVATE
-        ${Boost_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
         ${FREETYPE_INCLUDE_DIRS}
 )
 
 target_link_libraries(GiGi
     GLEW::GLEW
-    ${Boost_LIBRARIES}
-    ${OPENGL_LIBRARIES}
+    Boost::boost
+    Boost::disable_autolinking
+    Boost::dynamic_linking
+    Boost::filesystem
+    Boost::regex
+    Boost::system
+    ${OPENGL_glu_LIBRARY}
     ${FREETYPE_LIBRARIES}
 )
 
@@ -181,16 +166,8 @@ endif()
 
 add_library(GiGiSDL "")
 
-if(USE_STATIC_LIBS)
-    set_target_properties(GiGiSDL
-        PROPERTIES
-        LINK_SEARCH_END_STATIC true
-    )
-endif()
-
 target_include_directories(GiGiSDL SYSTEM
     PRIVATE
-        ${Boost_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
         ${SDL_INCLUDE_DIR}
 )
@@ -198,6 +175,9 @@ target_include_directories(GiGiSDL SYSTEM
 target_link_libraries(GiGiSDL
     GiGi
     GLEW::GLEW
+    Boost::boost
+    Boost::disable_autolinking
+    Boost::dynamic_linking
     ${OPENGL_LIBRARIES}
     ${SDL_LIBRARIES}
 )

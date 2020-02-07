@@ -225,32 +225,31 @@ find_package(PythonInterp ${MINIMUM_PYTHON_VERSION} REQUIRED)
 find_package(PythonLibs ${MINIMUM_PYTHON_VERSION} REQUIRED)
 find_package(Boost ${MINIMUM_BOOST_VERSION}
     COMPONENTS
-        date_time
         filesystem
         iostreams
         locale
         log
         log_setup
-        regex
         serialization
-        system
         thread
     REQUIRED)
-if(${Boost_VERSION} GREATER 106699) # boost >= 1.67
+
+if(${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION} VERSION_GREATER 1.66.0)
     find_package(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} REQUIRED)
-    set(Boost_PYTHON_LIBRARY ${Boost_PYTHON${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_LIBRARY})
+    set(Boost_PYTHON_SUFFIX "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
 else()
     # boost python suffixes are determined by distributives
     # try different alternatives
     find_package(Boost OPTIONAL_COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR})
-    if(Boost_PYTHON${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_FOUND)
-        set(Boost_PYTHON_LIBRARY ${Boost_PYTHON${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_LIBRARY})
+    if(TARGET Boost::python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR})
+        set(Boost_PYTHON_SUFFIX "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
     else()
         find_package(Boost OPTIONAL_COMPONENTS python-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR})
-        if(Boost_PYTHON-PY${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_FOUND)
-            set(Boost_PYTHON_LIBRARY ${Boost_PYTHON-PY${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_LIBRARY})
+        if(TARGET Boost::python-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR})
+            set(Boost_PYTHON_SUFFIX "-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
         else()
             find_package(Boost COMPONENTS python REQUIRED)
+            set(Boost_PYTHON_SUFFIX "")
         endif()
     endif()
 endif()
@@ -291,19 +290,11 @@ endif()
 
 set_property(DIRECTORY APPEND
     PROPERTY COMPILE_DEFINITIONS
-        # Disable Boost auto-linking
-        # http://www.boost.org/doc/libs/1_59_0/libs/config/doc/html/index.html#boost_config.configuring_boost_for_your_platform.user_settable_options
-        BOOST_ALL_NO_LIB
-
         # Boost iostreams doesn't honor BOOST_ALL_NO_LIB when linking zlib.
         # It also tries to link by default to the boost in-source zlib librar,
         # which we don't want.
         # http://www.boost.org/doc/libs/1_59_0/boost/iostreams/detail/config/zlib.hpp
         $<$<PLATFORM_ID:Windows>:BOOST_ZLIB_BINARY=zlib.lib>
-
-        # Link all boost libraries dynamically
-        # http://www.boost.org/doc/libs/1_59_0/libs/config/doc/html/index.html#boost_config.configuring_boost_for_your_platform.user_settable_options
-        BOOST_ALL_DYN_LINK
 
         # with boost 1.61 some boost::optional internals were changed. However
         # boost::spirit relies on some API the old implementation provided.
@@ -384,22 +375,21 @@ target_compile_definitions(freeorioncommon
 target_include_directories(freeorioncommon SYSTEM
     PRIVATE
         ${CMAKE_SOURCE_DIR}
-        ${Boost_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
 )
 
 target_link_libraries(freeorioncommon
+    Boost::boost
+    Boost::disable_autolinking
+    Boost::dynamic_linking
+    Boost::filesystem
+    Boost::iostreams
+    Boost::locale
+    Boost::log
+    Boost::log_setup
+    Boost::thread
+    Boost::serialization
     ZLIB::ZLIB
-    ${Boost_DATE_TIME_LIBRARY}
-    ${Boost_FILESYSTEM_LIBRARY}
-    ${Boost_IOSTREAMS_LIBRARY}
-    ${Boost_LOCALE_LIBRARY}
-    ${Boost_LOG_LIBRARY}
-    ${Boost_LOG_SETUP_LIBRARY}
-    ${Boost_REGEX_LIBRARY}
-    ${Boost_SERIALIZATION_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY}
-    ${Boost_THREAD_LIBRARY}
     ${CORE_FOUNDATION_LIBRARY}
 )
 
@@ -416,9 +406,22 @@ add_dependencies(freeorioncommon freeorionversion)
 
 add_library(freeorionparseobj OBJECT "")
 
+# Object libraries only understand the modern CMake approach of defining
+# dependencies via imported targets and target_link_libraries starting 3.12.
+# For now manually unpack the compiler definitions and include directories.
+target_compile_definitions(freeorionparseobj
+    INTERFACE
+        $<TARGET_PROPERTY:Boost::disable_autolinking,COMPILE_DEFINITIONS>
+        $<TARGET_PROPERTY:Boost::dynamic_linking,COMPILE_DEFINITIONS>
+)
+
+target_include_directories(freeorionparseobj
+    INTERFACE
+        $<TARGET_PROPERTY:Boost::boost,INCLUDE_DIRECTORIES>
+)
+
 target_include_directories(freeorionparseobj SYSTEM
     PRIVATE
-        ${Boost_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
 )
 
@@ -511,7 +514,6 @@ target_compile_definitions(freeoriond
 
 target_include_directories(freeoriond SYSTEM
     PRIVATE
-        ${Boost_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
         ${PYTHON_INCLUDE_PATH}
 )
@@ -521,10 +523,13 @@ target_link_libraries(freeoriond
     freeorionparse
     ZLIB::ZLIB
     Threads::Threads
+    Boost::boost
+    Boost::disable_autolinking
+    Boost::dynamic_linking
+    Boost::log
+    Boost::log_setup
+    Boost::python${Boost_PYTHON_SUFFIX}
     ${PYTHON_LIBRARIES}
-    ${Boost_PYTHON_LIBRARY}
-    ${Boost_LOG_LIBRARY}
-    ${Boost_LOG_SETUP_LIBRARY}
 )
 
 target_dependencies_copy_to_build(freeoriond)
@@ -546,7 +551,6 @@ target_compile_definitions(freeorionca
 
 target_include_directories(freeorionca SYSTEM
     PRIVATE
-        ${Boost_INCLUDE_DIRS}
         ${PYTHON_INCLUDE_PATH}
         ${PROJECT_SOURCE_DIR}/GG
 )
@@ -556,10 +560,13 @@ target_link_libraries(freeorionca
     freeorionparse
     ZLIB::ZLIB
     Threads::Threads
+    Boost::boost
+    Boost::disable_autolinking
+    Boost::dynamic_linking
+    Boost::log
+    Boost::log_setup
+    Boost::python${Boost_PYTHON_SUFFIX}
     ${PYTHON_LIBRARIES}
-    ${Boost_PYTHON_LIBRARY}
-    ${Boost_LOG_LIBRARY}
-    ${Boost_LOG_SETUP_LIBRARY}
 )
 
 target_dependencies_copy_to_build(freeorionca)
@@ -628,7 +635,6 @@ if(NOT BUILD_HEADLESS)
 
     target_include_directories(freeorion SYSTEM
         PRIVATE
-            ${Boost_INCLUDE_DIRS}
             ${OPENGL_INCLUDE_DIR}
             ${SDL_INCLUDE_DIR}
             ${OPENAL_INCLUDE_DIR}
@@ -653,15 +659,17 @@ if(NOT BUILD_HEADLESS)
         ZLIB::ZLIB
         Threads::Threads
         GLEW::GLEW
+        Boost::boost
+        Boost::disable_autolinking
+        Boost::dynamic_linking
+        Boost::log
+        Boost::log_setup
         ${OPENGL_gl_LIBRARY}
         ${OPENGL_glu_LIBRARY}
         ${OPENAL_LIBRARY}
         ${SDL_LIBRARIES}
         ${OGG_LIBRARIES}
         ${VORBIS_LIBRARIES}
-        ${Boost_LOCALE_LIBRARY}
-        ${Boost_LOG_LIBRARY}
-        ${Boost_LOG_SETUP_LIBRARY}
         ${ICONV_LIBRARY}
     )
 

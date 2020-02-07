@@ -1,9 +1,6 @@
 find_package(Boost ${MINIMUM_BOOST_VERSION}
     COMPONENTS
         unit_test_framework
-        log
-        log_setup
-        thread
     REQUIRED)
 
 add_executable(fo_systemtest_game
@@ -14,10 +11,6 @@ add_executable(fo_systemtest_game
 target_compile_definitions(fo_systemtest_game
     PRIVATE
         -DFREEORION_BUILD_HUMAN
-        -DBOOST_TEST_DYN_LINK
-        -DBOOST_TEST_NO_LIB
-        -DBOOST_ALL_DYN_LINK
-        -DBOOST_ALL_NO_LIB
         -DBOOST_TEST_IGNORE_SIGCHLD
 )
 
@@ -25,17 +18,18 @@ target_include_directories(fo_systemtest_game
     PRIVATE
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/GG/
-        ${Boost_INCLUDE_DIRS}
 )
 
 target_link_libraries(fo_systemtest_game
     freeorioncommon
     freeorionparse
-    Threads::Threads
-    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
-    ${Boost_LOG_LIBRARY}
-    ${Boost_LOG_SETUP_LIBRARY}
-    ${Boost_THREAD_LIBRARY}
+    Boost::boost
+    Boost::disable_autolinking
+    Boost::dynamic_linking
+    Boost::thread
+    Boost::log
+    Boost::log_setup
+    Boost::unit_test_framework
 )
 
 add_coverage(fo_systemtest_game
