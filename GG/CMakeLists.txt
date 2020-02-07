@@ -161,7 +161,6 @@ target_include_directories(GiGi SYSTEM
         ${Boost_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
         ${FREETYPE_INCLUDE_DIRS}
-        ${PNG_INCLUDE_DIRS}
         ${TIFF_INCLUDE_DIRS}
 )
 
@@ -172,8 +171,8 @@ target_link_libraries(GiGi
     ${FREETYPE_LIBRARIES}
 )
 
-if(PNG_FOUND)
-    target_link_libraries(GiGi ${PNG_LIBRARIES})
+if(TARGET PNG::PNG)
+    target_link_libraries(GiGi PNG::PNG)
 endif()
 
 if(TIFF_FOUND)
