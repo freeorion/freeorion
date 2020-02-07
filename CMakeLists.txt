@@ -385,10 +385,10 @@ target_include_directories(freeorioncommon SYSTEM
         ${CMAKE_SOURCE_DIR}
         ${Boost_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
-        ${ZLIB_INCLUDE_DIRS}
 )
 
 target_link_libraries(freeorioncommon
+    ZLIB::ZLIB
     ${Boost_DATE_TIME_LIBRARY}
     ${Boost_FILESYSTEM_LIBRARY}
     ${Boost_IOSTREAMS_LIBRARY}
@@ -399,7 +399,6 @@ target_link_libraries(freeorioncommon
     ${Boost_SERIALIZATION_LIBRARY}
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_THREAD_LIBRARY}
-    ${ZLIB_LIBRARIES}
     ${CORE_FOUNDATION_LIBRARY}
 )
 
@@ -512,7 +511,6 @@ target_compile_definitions(freeoriond
 target_include_directories(freeoriond SYSTEM
     PRIVATE
         ${Boost_INCLUDE_DIRS}
-        ${ZLIB_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
         ${PYTHON_INCLUDE_PATH}
 )
@@ -520,6 +518,7 @@ target_include_directories(freeoriond SYSTEM
 target_link_libraries(freeoriond
     freeorioncommon
     freeorionparse
+    ZLIB::ZLIB
     ${PYTHON_LIBRARIES}
     ${Boost_PYTHON_LIBRARY}
     ${Boost_LOG_LIBRARY}
@@ -548,13 +547,13 @@ target_include_directories(freeorionca SYSTEM
     PRIVATE
         ${Boost_INCLUDE_DIRS}
         ${PYTHON_INCLUDE_PATH}
-        ${ZLIB_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
 )
 
 target_link_libraries(freeorionca
     freeorioncommon
     freeorionparse
+    ZLIB::ZLIB
     ${PYTHON_LIBRARIES}
     ${Boost_PYTHON_LIBRARY}
     ${Boost_LOG_LIBRARY}
@@ -636,7 +635,6 @@ if(NOT BUILD_HEADLESS)
             ${OGG_INCLUDE_DIRS}
             ${VORBIS_INCLUDE_DIRS}
             ${FREETYPE_INCLUDE_DIRS}
-            ${ZLIB_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/GG
     )
 
@@ -652,13 +650,13 @@ if(NOT BUILD_HEADLESS)
         freeorionparse
         GiGi
         GiGiSDL
+        ZLIB::ZLIB
         ${OPENGL_gl_LIBRARY}
         ${OPENGL_glu_LIBRARY}
         ${OPENAL_LIBRARY}
         ${SDL_LIBRARIES}
         ${OGG_LIBRARIES}
         ${VORBIS_LIBRARIES}
-        ${ZLIB_LIBRARIES}
         ${Boost_LOCALE_LIBRARY}
         ${Boost_LOG_LIBRARY}
         ${Boost_LOG_SETUP_LIBRARY}
