@@ -7,9 +7,9 @@ jobs:
   include:
     - stage: lint
       os: linux
-      dist: xenial
+      dist: bionic
       language: python
-      python: 2.7.14
+      python: 2.7.15
       before_install:
         - pip install flake8-putty==0.4.0
       before_script:
@@ -21,7 +21,7 @@ jobs:
         - NAME="Lint Python script"
     - stage: build
       os: linux
-      dist: xenial
+      dist: bionic
       language: shell
       services:
         - docker
@@ -65,7 +65,7 @@ jobs:
           branch: master
     - stage: build
       os: linux
-      dist: xenial
+      dist: bionic
       language: cpp
       services:
         - docker
@@ -134,9 +134,9 @@ jobs:
         - ccache --show-stats
     - stage: test
       os: linux
-      dist: xenial
+      dist: bionic
       language: python
-      python: 2.7.14
+      python: 2.7.15
       before_install:
         - pip install pytest==3.6.3
       script:
@@ -144,7 +144,7 @@ jobs:
       name: "Pytest 2.7.14"
     - stage: test
       os: linux
-      dist: xenial
+      dist: bionic
       language: python
       python: 3.5
       before_install:
@@ -154,7 +154,7 @@ jobs:
       name: "Pytest 3.5"
     - stage: test
       os: linux
-      dist: xenial
+      dist: bionic
       language: python
       python: 3.8
       before_install:
