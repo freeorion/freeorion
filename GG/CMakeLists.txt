@@ -160,16 +160,15 @@ target_include_directories(GiGi SYSTEM
     PRIVATE
         ${Boost_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
-        ${GLEW_INCLUDE_DIRS}
         ${FREETYPE_INCLUDE_DIRS}
         ${PNG_INCLUDE_DIRS}
         ${TIFF_INCLUDE_DIRS}
 )
 
 target_link_libraries(GiGi
+    GLEW::GLEW
     ${Boost_LIBRARIES}
     ${OPENGL_LIBRARIES}
-    ${GLEW_LIBRARIES}
     ${FREETYPE_LIBRARIES}
 )
 
@@ -195,14 +194,13 @@ target_include_directories(GiGiSDL SYSTEM
     PRIVATE
         ${Boost_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
-        ${GLEW_INCLUDE_DIRS}
         ${SDL_INCLUDE_DIR}
 )
 
 target_link_libraries(GiGiSDL
     GiGi
+    GLEW::GLEW
     ${OPENGL_LIBRARIES}
-    ${GLEW_LIBRARIES}
     ${SDL_LIBRARIES}
 )
 

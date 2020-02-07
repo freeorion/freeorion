@@ -264,6 +264,7 @@ if(NOT BUILD_HEADLESS)
         message(FATAL_ERROR "OpenGL GLU library not found.")
     endif()
 
+    find_package(GLEW REQUIRED)
     find_package(SDL REQUIRED)
     find_package(OpenAL REQUIRED)
     find_package(Ogg REQUIRED)
@@ -629,7 +630,6 @@ if(NOT BUILD_HEADLESS)
         PRIVATE
             ${Boost_INCLUDE_DIRS}
             ${OPENGL_INCLUDE_DIR}
-            ${GLEW_INCLUDE_DIRS}
             ${SDL_INCLUDE_DIR}
             ${OPENAL_INCLUDE_DIR}
             ${OGG_INCLUDE_DIRS}
@@ -652,6 +652,7 @@ if(NOT BUILD_HEADLESS)
         GiGiSDL
         ZLIB::ZLIB
         Threads::Threads
+        GLEW::GLEW
         ${OPENGL_gl_LIBRARY}
         ${OPENGL_glu_LIBRARY}
         ${OPENAL_LIBRARY}
