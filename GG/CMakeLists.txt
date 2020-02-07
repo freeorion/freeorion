@@ -23,7 +23,7 @@
 # Zach Laine
 # whatwasthataddress@gmail.com
 
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 if(POLICY CMP0044)
     cmake_policy(SET CMP0044 OLD)

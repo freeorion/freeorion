@@ -1,8 +1,4 @@
-if(APPLE)
-    cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
-else()
-    cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
-endif()
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 cmake_policy(SET CMP0042 NEW)
 
