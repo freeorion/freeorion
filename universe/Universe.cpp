@@ -1224,7 +1224,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     boost::shared_mutex global_mutex;
     boost::unique_lock<boost::shared_mutex> global_lock(global_mutex); // create after run_queue, destroy before run_queue
 
-    SectionedScopedTimer type_timer("Effect TargetSets Evaluation", true, std::chrono::microseconds(0));
+    SectionedScopedTimer type_timer("Effect TargetSets Evaluation", true, std::chrono::microseconds(0), true);
 
     // 1) EffectsGroups from Species
     type_timer.EnterSection("species");

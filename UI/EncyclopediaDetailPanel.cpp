@@ -686,7 +686,7 @@ void EncyclopediaDetailPanel::DoLayout() {
     const int BTN_WIDTH = 24;
     const int Y_OFFSET = 22;
 
-    SectionedScopedTimer timer("EncyclopediaDetailPanel::DoLayout", std::chrono::milliseconds(1));
+    SectionedScopedTimer timer("EncyclopediaDetailPanel::DoLayout", true, std::chrono::milliseconds(1), true);
 
     // name
     GG::Pt ul = GG::Pt(GG::X(6), GG::Y(Y_OFFSET));
@@ -709,7 +709,7 @@ void EncyclopediaDetailPanel::DoLayout() {
     // main verbose description (fluff, effects, unlocks, ...)
     ul = GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM + TEXT_MARGIN_Y + Y_OFFSET + 1);
     lr = GG::Pt(Width() - BORDER_RIGHT, Height() - BORDER_BOTTOM*3 - PTS - 4);
-    timer.EnterSection("description->SizeMove");
+    timer.EnterSection("m_scroll_panel->SizeMove");
     m_scroll_panel->SizeMove(ul, lr);
     timer.EnterSection("");
 

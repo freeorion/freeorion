@@ -100,8 +100,8 @@ private:
 class FO_COMMON_API SectionedScopedTimer {
 public:
     SectionedScopedTimer(const std::string& timed_name, bool enable_output = false,
-                         std::chrono::microseconds threshold = std::chrono::milliseconds(1));
-    SectionedScopedTimer(const std::string& timed_name, std::chrono::microseconds threshold);
+                         std::chrono::microseconds threshold = std::chrono::milliseconds(1),
+                         bool unify_section_duration_units = false);
     ~SectionedScopedTimer();
 
     //! Start recording times for @p section_name.
