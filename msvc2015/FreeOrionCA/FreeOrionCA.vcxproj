@@ -134,6 +134,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\client\AI\AIClientApp.h" />
     <ClInclude Include="..\..\client\AI\AIInterface.h" />
+    <ClInclude Include="..\..\client\AI\AIFramework.h" />
     <ClInclude Include="..\..\client\ClientApp.h" />
     <ClInclude Include="..\..\client\ClientFSMEvents.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
@@ -148,7 +149,6 @@
     <ClInclude Include="..\..\network\Message.h" />
     <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
-    <ClInclude Include="..\..\python\AI\AIFramework.h" />
     <ClInclude Include="..\..\python\AI\AIWrapper.h" />
     <ClInclude Include="..\..\python\CommonFramework.h" />
     <ClInclude Include="..\..\python\CommonWrappers.h" />
@@ -198,11 +198,11 @@
   <ItemGroup>
     <ClCompile Include="..\..\client\AI\AIClientApp.cpp" />
     <ClCompile Include="..\..\client\AI\AIInterface.cpp" />
+    <ClCompile Include="..\..\client\AI\AIFramework.cpp" />
     <ClCompile Include="..\..\client\AI\camain.cpp" />
     <ClCompile Include="..\..\client\ClientApp.cpp" />
     <ClCompile Include="..\..\client\ClientFSMEvents.cpp" />
     <ClCompile Include="..\..\network\ClientNetworking.cpp" />
-    <ClCompile Include="..\..\python\AI\AIFramework.cpp" />
     <ClCompile Include="..\..\python\AI\AIWrapper.cpp" />
     <ClCompile Include="..\..\python\CommonFramework.cpp" />
     <ClCompile Include="..\..\python\ConfigWrapper.cpp" />

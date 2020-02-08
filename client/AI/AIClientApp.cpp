@@ -1,6 +1,6 @@
 #include "AIClientApp.h"
 
-#include "../../python/AI/AIFramework.h"
+#include "AIFramework.h"
 #include "../../util/Logger.h"
 #include "../../util/LoggerWithOptionsDB.h"
 #include "../../util/OptionsDB.h"

@@ -9,10 +9,10 @@
 #include "../../util/ScopedTimer.h"
 #include "../../Empire/Empire.h"
 #include "../../Empire/Diplomacy.h"
-#include "../CommonFramework.h"
-#include "../SetWrapper.h"
-#include "../CommonWrappers.h"
-#include "AIWrapper.h"
+#include "../../python/CommonFramework.h"
+#include "../../python/SetWrapper.h"
+#include "../../python/CommonWrappers.h"
+#include "../../python/AI/AIWrapper.h"
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>

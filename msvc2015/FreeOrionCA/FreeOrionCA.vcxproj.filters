@@ -68,6 +68,9 @@
     <ClInclude Include="..\..\client\AI\AIInterface.h">
       <Filter>Header Files\client\AI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\client\AI\AIFramework.h">
+      <Filter>Header Files\client\AI</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Empire\Empire.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
@@ -233,9 +236,6 @@
     <ClInclude Include="..\..\python\SetWrapper.h">
       <Filter>Header Files\python</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\python\AI\AIFramework.h">
-      <Filter>Header Files\python\AI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\python\AI\AIWrapper.h">
       <Filter>Header Files\python\AI</Filter>
     </ClInclude>
@@ -262,8 +262,8 @@
     <ClCompile Include="..\..\client\AI\AIInterface.cpp">
       <Filter>Source Files\client\AI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\python\AI\AIFramework.cpp">
-      <Filter>Source Files\python\AI</Filter>
+    <ClCompile Include="..\..\client\AI\AIFramework.cpp">
+      <Filter>Source Files\client\AI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\python\AI\AIWrapper.cpp">
       <Filter>Source Files\python\AI</Filter>
