@@ -684,13 +684,6 @@ if(NOT BUILD_HEADLESS)
             ${PROJECT_SOURCE_DIR}/GG
     )
 
-    if(WIN32)
-        target_sources(freeorion
-            PRIVATE
-                ${CMAKE_CURRENT_LIST_DIR}/FreeOrion.ico
-        )
-    endif()
-
     target_link_libraries(freeorion
         freeorioncommon
         freeorionparse

@@ -258,7 +258,7 @@
     <ClInclude Include="..\..\util\XMLDoc.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\FreeOrion.ico" />
+    <None Include="..\..\client\human\FreeOrion.ico" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\client\ClientApp.cpp" />

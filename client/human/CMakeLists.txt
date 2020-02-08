@@ -9,6 +9,7 @@ target_sources(freeorion
         ${CMAKE_CURRENT_LIST_DIR}/HumanClientFSM.cpp
         # Add icon resource file to freeorion.exe
         $<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_LIST_DIR}/FreeOrion.rc>
+        $<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_LIST_DIR}/FreeOrion.ico>
         $<$<PLATFORM_ID:Darwin>:${CMAKE_CURRENT_LIST_DIR}/chmain.mm>
         $<$<PLATFORM_ID:Darwin>:${CMAKE_CURRENT_LIST_DIR}/GUIController.mm>
 )
