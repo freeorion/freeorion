@@ -686,7 +686,7 @@ void EncyclopediaDetailPanel::DoLayout() {
     const int BTN_WIDTH = 24;
     const int Y_OFFSET = 22;
 
-    SectionedScopedTimer timer("EncyclopediaDetailPanel::DoLayout", true, std::chrono::milliseconds(1), true);
+    SectionedScopedTimer timer("EncyclopediaDetailPanel::DoLayout");
 
     // name
     GG::Pt ul = GG::Pt(GG::X(6), GG::Y(Y_OFFSET));

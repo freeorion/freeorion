@@ -176,7 +176,7 @@ namespace parse { namespace detail {
 
     template <typename Grammar, typename Arg1>
     bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1) {
-        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", true, std::chrono::milliseconds(10), true);
+        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::milliseconds(10));
 
         std::string filename;
         std::string file_contents;
@@ -200,7 +200,7 @@ namespace parse { namespace detail {
 
     template <typename Grammar, typename Arg1, typename Arg2>
     bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1, Arg2& arg2) {
-        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", true, std::chrono::microseconds(1000), true);
+        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::milliseconds(10));
 
         std::string filename;
         std::string file_contents;

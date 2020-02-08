@@ -2713,7 +2713,7 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
 void MapWnd::InitTurn() {
     int turn_number = CurrentTurn();
     DebugLogger() << "Initializing turn " << turn_number;
-    SectionedScopedTimer timer("MapWnd::InitTurn", true, std::chrono::milliseconds(1), true);
+    SectionedScopedTimer timer("MapWnd::InitTurn");
     timer.EnterSection("init");
 
     //DebugLogger() << GetSupplyManager().Dump();
@@ -7594,7 +7594,7 @@ namespace {
 
 void MapWnd::DispatchFleetsExploring() {
     DebugLogger() << "MapWnd::DispatchFleetsExploring called";
-    SectionedScopedTimer timer("MapWnd::DispatchFleetsExploring", true, std::chrono::microseconds(1), true);
+    SectionedScopedTimer timer("MapWnd::DispatchFleetsExploring");
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire *empire = GetEmpire(empire_id);

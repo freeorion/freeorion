@@ -179,8 +179,8 @@ class SectionedScopedTimer::Impl : public ScopedTimer::Impl {
     };
 
 public:
-    Impl(const std::string& timed_name, bool enable_output,
-         std::chrono::microseconds threshold, bool unify_section_duration_units) :
+    Impl(const std::string& timed_name, std::chrono::microseconds threshold,
+         bool enable_output, bool unify_section_duration_units) :
         ScopedTimer::Impl(timed_name, enable_output, threshold),
         m_unify_units(unify_section_duration_units)
     {}
@@ -283,10 +283,10 @@ private:
 };
 
 SectionedScopedTimer::SectionedScopedTimer(const std::string& timed_name,
-                                           bool enable_output,
                                            std::chrono::microseconds threshold,
+                                           bool enable_output,
                                            bool unify_section_duration_units) :
-    m_impl(new Impl(timed_name, enable_output, threshold, unify_section_duration_units))
+    m_impl(new Impl(timed_name, threshold, enable_output, unify_section_duration_units))
 {}
 
 // ~SectionedScopedTimer is required because Impl is defined here.
