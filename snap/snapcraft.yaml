@@ -20,7 +20,7 @@ parts:
     freeorion:
         source: .
         override-build: |
-            sed -i.bak -e 's|Icon=freeorion$|Icon=${SNAP}/meta/gui/icon.png|g' ../src/freeorion.desktop
+            sed -i.bak -e 's|Icon=freeorion$|Icon=${SNAP}/meta/gui/icon.png|g' ../src/packaging/freeorion.desktop
             snapcraftctl build
         plugin: cmake
         override-pull: |
