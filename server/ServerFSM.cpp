@@ -2,11 +2,11 @@
 
 #include "SaveLoad.h"
 #include "ServerApp.h"
+#include "ServerNetworking.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
-#include "../network/ServerNetworking.h"
 #include "../network/Message.h"
 #include "../util/Directories.h"
 #include "../util/GameRules.h"

@@ -2,10 +2,10 @@
 #define _ServerApp_h_
 
 #include "ServerFramework.h"
+#include "ServerNetworking.h"
 #include "../util/Process.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
-#include "../network/ServerNetworking.h"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"

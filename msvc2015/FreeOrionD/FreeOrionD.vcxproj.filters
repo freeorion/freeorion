@@ -83,9 +83,6 @@
     <ClInclude Include="..\..\network\Networking.h">
       <Filter>Header Files\network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\network\ServerNetworking.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\universe\Building.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
@@ -156,6 +153,9 @@
       <Filter>Header Files\server</Filter>
     </ClInclude>
     <ClInclude Include="..\..\server\ServerFSM.h">
+      <Filter>Header Files\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ServerNetworking.h">
       <Filter>Header Files\server</Filter>
     </ClInclude>
     <ClInclude Include="..\..\server\ServerWrapper.h">
@@ -235,9 +235,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\network\ServerNetworking.cpp">
-      <Filter>Source Files\network</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\server\ServerFSM.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
@@ -248,6 +245,9 @@
       <Filter>Source Files\server</Filter>
     </ClCompile>
     <ClCompile Include="..\..\server\ServerFramework.cpp">
+      <Filter>Source Files\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\server\ServerNetworking.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
     <ClCompile Include="..\..\server\ServerWrapper.cpp">

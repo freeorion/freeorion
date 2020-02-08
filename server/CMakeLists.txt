@@ -4,6 +4,7 @@ target_sources(freeoriond
         ${CMAKE_CURRENT_LIST_DIR}/ServerApp.h
         ${CMAKE_CURRENT_LIST_DIR}/ServerFramework.h
         ${CMAKE_CURRENT_LIST_DIR}/ServerFSM.h
+        ${CMAKE_CURRENT_LIST_DIR}/ServerNetworking.h
         ${CMAKE_CURRENT_LIST_DIR}/ServerWrapper.h
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/dmain.cpp
@@ -11,5 +12,6 @@ target_sources(freeoriond
         ${CMAKE_CURRENT_LIST_DIR}/ServerApp.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ServerFramework.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ServerFSM.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ServerNetworking.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ServerWrapper.cpp
 )

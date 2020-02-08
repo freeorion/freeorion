@@ -142,13 +142,13 @@
     <ClInclude Include="..\..\Empire\PopulationPool.h" />
     <ClInclude Include="..\..\network\Message.h" />
     <ClInclude Include="..\..\network\Networking.h" />
-    <ClInclude Include="..\..\network\ServerNetworking.h" />
     <ClInclude Include="..\..\python\CommonFramework.h" />
     <ClInclude Include="..\..\python\SetWrapper.h" />
     <ClInclude Include="..\..\server\SaveLoad.h" />
     <ClInclude Include="..\..\server\ServerApp.h" />
     <ClInclude Include="..\..\server\ServerFramework.h" />
     <ClInclude Include="..\..\server\ServerFSM.h" />
+    <ClInclude Include="..\..\server\ServerNetworking.h" />
     <ClInclude Include="..\..\server\ServerWrapper.h" />
     <ClInclude Include="..\..\universe\Building.h" />
     <ClInclude Include="..\..\universe\Conditions.h" />
@@ -196,7 +196,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\combat\CombatSystem.cpp" />
-    <ClCompile Include="..\..\network\ServerNetworking.cpp" />
     <ClCompile Include="..\..\python\CommonFramework.cpp" />
     <ClCompile Include="..\..\python\ConfigWrapper.cpp" />
     <ClCompile Include="..\..\python\EmpireWrapper.cpp" />
@@ -208,6 +207,7 @@
     <ClCompile Include="..\..\server\ServerApp.cpp" />
     <ClCompile Include="..\..\server\ServerFramework.cpp" />
     <ClCompile Include="..\..\server\ServerFSM.cpp" />
+    <ClCompile Include="..\..\server\ServerNetworking.cpp" />
     <ClCompile Include="..\..\server\ServerWrapper.cpp" />
     <ClCompile Include="..\..\universe\UniverseGenerator.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
