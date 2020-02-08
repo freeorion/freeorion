@@ -18,10 +18,15 @@
 //! print output.
 class FO_COMMON_API ScopedTimer {
 public:
-    ScopedTimer(const std::string& timed_name, bool enable_output = false,
-                std::chrono::microseconds threshold = std::chrono::milliseconds(1));
+    explicit ScopedTimer(const std::string& timed_name = "", bool enable_output = false,
+                         std::chrono::microseconds threshold = std::chrono::milliseconds(1));
     ScopedTimer(const std::string& timed_name, std::chrono::microseconds threshold);
     ~ScopedTimer();
+
+    void restart();
+
+    double duration() const;
+    std::string DurationString() const;
 
     class Impl;
 
@@ -58,7 +63,7 @@ private:
 //! ```{.cpp}
 //! void function_to_profile () {
 //!
-//!     SectionedScopedTimer timer("Title", std::chrono::milliseconds(1));
+//!     SectionedScopedTimer timer("Title");
 //!     timer.EnterSection("initial section");
 //!
 //!     profiled_code();
@@ -94,9 +99,10 @@ private:
 //! ```
 class FO_COMMON_API SectionedScopedTimer {
 public:
-    SectionedScopedTimer(const std::string& timed_name, bool enable_output = false,
-                         std::chrono::microseconds threshold = std::chrono::milliseconds(1));
-    SectionedScopedTimer(const std::string& timed_name, std::chrono::microseconds threshold);
+    explicit SectionedScopedTimer(const std::string& timed_name,
+                                  std::chrono::microseconds threshold = std::chrono::milliseconds(1),
+                                  bool enable_output = true,
+                                  bool unify_section_duration_units = true);
     ~SectionedScopedTimer();
 
     //! Start recording times for @p section_name.

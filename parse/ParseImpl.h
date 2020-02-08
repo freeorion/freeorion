@@ -8,7 +8,6 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/spirit/include/qi.hpp>
-#include <boost/timer.hpp>
 
 #include <GG/Clr.h>
 
@@ -201,7 +200,7 @@ namespace parse { namespace detail {
 
     template <typename Grammar, typename Arg1, typename Arg2>
     bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1, Arg2& arg2) {
-        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::microseconds(1000));
+        SectionedScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::milliseconds(10));
 
         std::string filename;
         std::string file_contents;

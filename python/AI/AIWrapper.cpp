@@ -21,7 +21,6 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/mpl/vector.hpp>
-#include <boost/timer.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
 #include <boost/python/scope.hpp>

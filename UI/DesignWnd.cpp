@@ -28,7 +28,6 @@
 
 #include <boost/cast.hpp>
 #include <boost/function.hpp>
-#include <boost/timer.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>

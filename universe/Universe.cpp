@@ -31,7 +31,6 @@
 #include "Encyclopedia.h"
 
 #include <boost/property_map/property_map.hpp>
-#include <boost/timer.hpp>
 
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
@@ -1214,31 +1213,26 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     std::map<int, std::shared_ptr<ConditionCache>> cached_source_condition_matches;
 
     // prepopulate the cache for safe concurrent access
-    for (const auto& obj : m_objects.all()) {
+    for (const auto& obj : m_objects.all())
         cached_source_condition_matches[obj->ID()] = std::make_shared<ConditionCache>();
-    }
-
     cached_source_condition_matches[INVALID_OBJECT_ID] = std::make_shared<ConditionCache>();
-
     ConditionCache& invariant_condition_matches = *cached_source_condition_matches[INVALID_OBJECT_ID];
 
-    boost::timer type_timer;
-    boost::timer eval_timer;
-
-    std::list<Effect::TargetsCauses> targets_causes_reorder_buffer; // create before run_queue, destroy after run_queue
+    std::list<Effect::TargetsCauses> targets_causes_reorder_buffer; // list not vector to avoid invaliding iterators when pushing more items onto list due to vector reallocation
     unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
     RunQueue<StoreTargetsAndCausesOfEffectsGroupsWorkItem> run_queue(num_threads);
     boost::shared_mutex global_mutex;
     boost::unique_lock<boost::shared_mutex> global_lock(global_mutex); // create after run_queue, destroy before run_queue
 
-    eval_timer.restart();
+    SectionedScopedTimer type_timer("Effect TargetSets Evaluation", std::chrono::microseconds(0));
 
     // 1) EffectsGroups from Species
+    type_timer.EnterSection("species");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for SPECIES";
-    type_timer.restart();
 
     // find each species planets in single pass, maintaining object map order per-species
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> species_objects;
+
     for (auto& planet : m_objects.all<Planet>()) {
         if (m_destroyed_object_ids.count(planet->ID()))
             continue;
@@ -1252,9 +1246,6 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         }
         species_objects[species_name].push_back(planet);
     }
-
-    double planet_species_time = type_timer.elapsed();
-    type_timer.restart();
 
     // find each species ships in single pass, maintaining object map order per-species
     for (auto& ship : m_objects.all<Ship>()) {
@@ -1270,7 +1261,6 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         }
         species_objects[species_name].push_back(ship);
     }
-    double ship_species_time = type_timer.elapsed();
 
     // enforce species effects order
     for (const auto& entry : GetSpeciesManager()) {
@@ -1293,8 +1283,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     }
 
     // 2) EffectsGroups from Specials
+    type_timer.EnterSection("specials");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for SPECIALS";
-    type_timer.restart();
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> specials_objects;
     // determine objects with specials in a single pass
     for (const auto& obj : m_objects.all()) {
@@ -1328,11 +1318,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 global_mutex));
         }
     }
-    double special_time = type_timer.elapsed();
 
     // 3) EffectsGroups from Techs
+    type_timer.EnterSection("techs");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for TECHS";
-    type_timer.restart();
     std::list<std::vector<std::shared_ptr<const UniverseObject>>> tech_sources;
     for (auto& entry : Empires()) {
         const Empire* empire = entry.second;
@@ -1356,12 +1345,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             }
         }
     }
-    double tech_time = type_timer.elapsed();
 
     // 4) EffectsGroups from Buildings
+    type_timer.EnterSection("buildings");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for BUILDINGS";
-    type_timer.restart();
-
     // determine buildings of each type in a single pass
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> buildings_by_type;
     for (auto& building : m_objects.all<Building>()) {
@@ -1396,16 +1383,16 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 global_mutex));
         }
     }
-    double building_time = type_timer.elapsed();
 
     // 5) EffectsGroups from Ship Hull and Ship Parts
+    type_timer.EnterSection("ship hull/parts");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for SHIPS hulls and parts";
-    type_timer.restart();
     // determine ship hulls and parts of each type in a single pass
     // the same ship might be added multiple times if it contains the part multiple times
     // recomputing targets for the same ship and part is kind of silly here, but shouldn't hurt
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_hull_type;
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_part_type;
+
     for (auto& ship : m_objects.all<Ship>()) {
         if (m_destroyed_object_ids.count(ship->ID()))
             continue;
@@ -1472,11 +1459,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 global_mutex));
         }
     }
-    double ships_time = type_timer.elapsed();
 
     // 6) EffectsGroups from Fields
+    type_timer.EnterSection("fields");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for FIELDS";
-    type_timer.restart();
     // determine fields of each type in a single pass
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> fields_by_type;
     for (auto& field : m_objects.all<Field>()) {
@@ -1512,30 +1498,16 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 global_mutex));
         }
     }
-    double fields_time = type_timer.elapsed();
 
+    type_timer.EnterSection("eval waiting");
     run_queue.Wait(global_lock);
-    double eval_time = eval_timer.elapsed();
 
-    eval_timer.restart();
     // add results to targets_causes in issue order
-    // FIXME: each job is an effectsgroup, and we need that separation for
-    // execution anyway, so maintain it here instead of merging.
-    for (const Effect::TargetsCauses& job_results : targets_causes_reorder_buffer) {
-        for (const std::pair<Effect::SourcedEffectsGroup, Effect::TargetsAndCause>& result : job_results) {
-            targets_causes.push_back(result);
-        }
-    }
-    double reorder_time = eval_timer.elapsed();
-    DebugLogger() << "Issue times: planet species: " << planet_species_time*1000
-                  << " ship species: " << ship_species_time*1000
-                  << " specials: " << special_time*1000
-                  << " techs: " << tech_time*1000
-                  << " buildings: " << building_time*1000
-                  << " hulls/parts: " << ships_time*1000
-                  << " fields: " << fields_time*1000;
-    DebugLogger() << "Evaluation time: " << eval_time*1000
-                  << " reorder time: " << reorder_time*1000;
+    // FIXME: each job is an effectsgroup, and we need that separation for execution anyway, so maintain it here instead of merging.
+    type_timer.EnterSection("reordering");
+    for (const auto& job_results : targets_causes_reorder_buffer)
+        for (const auto& result : job_results)
+            targets_causes.push_back(result);   // looping over targets_causes_reorder_buffer to sum up the sizes of job_results in order to reserve space in targets_causes was slower than just push_back into targets_causes and letting it reallocate itself as needed, in my test
 }
 
 void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,

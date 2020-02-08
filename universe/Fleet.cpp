@@ -15,7 +15,6 @@
 #include "../Empire/Supply.h"
 
 #include <boost/bind.hpp>
-#include <boost/timer.hpp>
 
 namespace {
     const bool ALLOW_ALLIED_SUPPLY = true;

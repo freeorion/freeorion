@@ -23,7 +23,6 @@
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/weak_ptr.hpp>
-#include <boost/timer.hpp>
 #include <boost/date_time/posix_time/time_serialize.hpp>
 #include <boost/uuid/uuid_serialize.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -821,9 +820,9 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                    >> BOOST_SERIALIZATION_NVP(current_turn);
                 GetUniverse().EncodingEmpire() = empire_id;
 
-                boost::timer deserialize_timer;
+                ScopedTimer deserialize_timer;
                 ia >> BOOST_SERIALIZATION_NVP(empires);
-                DebugLogger() << "ExtractGameStartMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+                DebugLogger() << "ExtractGameStartMessage empire deserialization time " << deserialize_timer.DurationString();
 
                 ia >> BOOST_SERIALIZATION_NVP(species);
                 combat_logs.Clear();    // only needed when loading new game, not when incrementally serializing logs on turn update
@@ -832,7 +831,7 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
 
                 deserialize_timer.restart();
                 Deserialize(ia, universe);
-                DebugLogger() << "ExtractGameStartMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+                DebugLogger() << "ExtractGameStartMessage universe deserialization time " << deserialize_timer.DurationString();
 
 
                 ia >> BOOST_SERIALIZATION_NVP(players)
@@ -866,9 +865,10 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                >> BOOST_SERIALIZATION_NVP(current_turn);
             GetUniverse().EncodingEmpire() = empire_id;
 
-            boost::timer deserialize_timer;
+            ScopedTimer deserialize_timer;
             ia >> BOOST_SERIALIZATION_NVP(empires);
-            DebugLogger() << "ExtractGameStartMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+
+            DebugLogger() << "ExtractGameStartMessage empire deserialization time " << deserialize_timer.DurationString();
 
             ia >> BOOST_SERIALIZATION_NVP(species);
             combat_logs.Clear();    // only needed when loading new game, not when incrementally serializing logs on turn update
@@ -877,29 +877,29 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
 
             deserialize_timer.restart();
             Deserialize(ia, universe);
-            DebugLogger() << "ExtractGameStartMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            DebugLogger() << "ExtractGameStartMessage universe deserialization time " << deserialize_timer.DurationString();;
 
 
             ia >> BOOST_SERIALIZATION_NVP(players)
                >> BOOST_SERIALIZATION_NVP(loaded_game_data);
-            TraceLogger() << "ExtractGameStartMessage players and loaded_game_data=" << loaded_game_data << " deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            TraceLogger() << "ExtractGameStartMessage players and loaded_game_data=" << loaded_game_data << " deserialization time " << deserialize_timer.DurationString();
             if (loaded_game_data) {
                 Deserialize(ia, orders);
-                TraceLogger() << "ExtractGameStartMessage orders deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+                TraceLogger() << "ExtractGameStartMessage orders deserialization time " << deserialize_timer.DurationString();
                 ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
                 if (ui_data_available)
                     ia >> BOOST_SERIALIZATION_NVP(ui_data);
-                TraceLogger() << "ExtractGameStartMessage UI data " << ui_data_available << " deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+                TraceLogger() << "ExtractGameStartMessage UI data " << ui_data_available << " deserialization time " << deserialize_timer.DurationString();
                 ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
                 if (save_state_string_available)
                     ia >> BOOST_SERIALIZATION_NVP(save_state_string);
-                TraceLogger() << "ExtractGameStartMessage save state " << save_state_string_available << " deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+                TraceLogger() << "ExtractGameStartMessage save state " << save_state_string_available << " deserialization time " << deserialize_timer.DurationString();
             } else {
                 ui_data_available = false;
                 save_state_string_available = false;
             }
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
-            TraceLogger() << "ExtractGameStartMessage galaxy setup data deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            TraceLogger() << "ExtractGameStartMessage galaxy setup data deserialization time " << deserialize_timer.DurationString();
         }
 
     } catch (const std::exception& err) {
