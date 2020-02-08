@@ -2,8 +2,8 @@
 
 #include "ClientNetworking.h"
 
-#include "Message.h"
-#include "MessageQueue.h"
+#include "../network/Message.h"
+#include "../network/MessageQueue.h"
 
 // boost::asio pulls in windows.h which in turn defines the macros GetMessage,
 // SendMessage, min and max. Disabling the generation of the min and max macros
@@ -17,7 +17,7 @@
 #   undef SendMessage
 #endif
 
-#include "Networking.h"
+#include "../network/Networking.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 

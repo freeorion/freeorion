@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\client\ClientApp.h" />
     <ClInclude Include="..\..\client\ClientFSMEvents.h" />
+    <ClInclude Include="..\..\client\ClientNetworking.h" />
     <ClInclude Include="..\..\client\human\chmain.h" />
     <ClInclude Include="..\..\client\human\HumanClientApp.h" />
     <ClInclude Include="..\..\client\human\HumanClientFSM.h" />
@@ -152,7 +153,6 @@
     <ClInclude Include="..\..\Empire\EmpireManager.h" />
     <ClInclude Include="..\..\Empire\ResourcePool.h" />
     <ClInclude Include="..\..\Empire\PopulationPool.h" />
-    <ClInclude Include="..\..\network\ClientNetworking.h" />
     <ClInclude Include="..\..\network\Message.h" />
     <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
@@ -264,10 +264,10 @@
   <ItemGroup>
     <ClCompile Include="..\..\client\ClientApp.cpp" />
     <ClCompile Include="..\..\client\ClientFSMEvents.cpp" />
+    <ClCompile Include="..\..\client\ClientNetworking.cpp" />
     <ClCompile Include="..\..\client\human\chmain.cpp" />
     <ClCompile Include="..\..\client\human\HumanClientApp.cpp" />
     <ClCompile Include="..\..\client\human\HumanClientFSM.cpp" />
-    <ClCompile Include="..\..\network\ClientNetworking.cpp" />
     <ClCompile Include="..\..\UI\About.cpp" />
     <ClCompile Include="..\..\UI\AccordionPanel.cpp" />
     <ClCompile Include="..\..\UI\BuildDesignatorWnd.cpp" />

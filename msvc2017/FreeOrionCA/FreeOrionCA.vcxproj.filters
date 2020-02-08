@@ -56,6 +56,9 @@
     <ClInclude Include="..\..\client\ClientFSMEvents.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\client\ClientNetworking.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\client\AI\AIClientApp.h">
       <Filter>Header Files\client\AI</Filter>
     </ClInclude>
@@ -85,9 +88,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Empire\PopulationPool.h">
       <Filter>Header Files\Empire</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\network\ClientNetworking.h">
-      <Filter>Header Files\network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\network\Networking.h">
       <Filter>Header Files\network</Filter>
@@ -245,8 +245,8 @@
     <ClCompile Include="..\..\client\ClientFSMEvents.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\network\ClientNetworking.cpp">
-      <Filter>Source Files\network</Filter>
+    <ClCompile Include="..\..\client\ClientNetworking.cpp">
+      <Filter>Source Files\client</Filter>
     </ClCompile>
     <ClCompile Include="..\..\client\AI\camain.cpp">
       <Filter>Source Files\client\AI</Filter>

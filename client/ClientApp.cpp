@@ -7,7 +7,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../network/Networking.h"
-#include "../network/ClientNetworking.h"
+#include "ClientNetworking.h"
 
 #include <stdexcept>
 #include <boost/bind.hpp>

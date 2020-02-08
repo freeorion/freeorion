@@ -2,10 +2,10 @@
 
 #include "CUIControls.h"
 #include "../client/human/HumanClientApp.h"
+#include "../client/ClientNetworking.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../network/Message.h"
-#include "../network/ClientNetworking.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"

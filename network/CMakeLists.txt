@@ -15,19 +15,3 @@ target_sources(freeoriond
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/ServerNetworking.cpp
 )
-
-target_sources(freeorionca
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/ClientNetworking.h
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/ClientNetworking.cpp
-)
-
-if(NOT BUILD_HEADLESS)
-    target_sources(freeorion
-        PUBLIC
-            ${CMAKE_CURRENT_LIST_DIR}/ClientNetworking.h
-        PRIVATE
-            ${CMAKE_CURRENT_LIST_DIR}/ClientNetworking.cpp
-    )
-endif()

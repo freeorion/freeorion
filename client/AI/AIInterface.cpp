@@ -1,7 +1,7 @@
 #include "AIInterface.h"
 
-#include "../../network/ClientNetworking.h"
 #include "AIClientApp.h"
+#include "../ClientNetworking.h"
 
 #include "../../universe/Universe.h"
 #include "../../universe/UniverseObject.h"

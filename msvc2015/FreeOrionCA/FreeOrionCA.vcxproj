@@ -138,6 +138,7 @@
     <ClInclude Include="..\..\client\AI\AIWrapper.h" />
     <ClInclude Include="..\..\client\ClientApp.h" />
     <ClInclude Include="..\..\client\ClientFSMEvents.h" />
+    <ClInclude Include="..\..\client\ClientNetworking.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\ResearchQueue.h" />
     <ClInclude Include="..\..\Empire\ProductionQueue.h" />
@@ -146,7 +147,6 @@
     <ClInclude Include="..\..\Empire\PopulationPool.h" />
     <ClInclude Include="..\..\GG\GG\Clr.h" />
     <ClInclude Include="..\..\GG\GG\Exception.h" />
-    <ClInclude Include="..\..\network\ClientNetworking.h" />
     <ClInclude Include="..\..\network\Message.h" />
     <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
@@ -203,7 +203,7 @@
     <ClCompile Include="..\..\client\AI\camain.cpp" />
     <ClCompile Include="..\..\client\ClientApp.cpp" />
     <ClCompile Include="..\..\client\ClientFSMEvents.cpp" />
-    <ClCompile Include="..\..\network\ClientNetworking.cpp" />
+    <ClCompile Include="..\..\client\ClientNetworking.cpp" />
     <ClCompile Include="..\..\python\CommonFramework.cpp" />
     <ClCompile Include="..\..\python\ConfigWrapper.cpp" />
     <ClCompile Include="..\..\python\EmpireWrapper.cpp" />
