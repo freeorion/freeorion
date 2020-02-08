@@ -173,28 +173,19 @@ public:
 
     /** The destructor will print the table of accumulated times. */
     ~Impl() {
-        if (!m_enable_output)
+        if (!m_enable_output || !m_sections)
             return;
 
-        std::chrono::nanoseconds duration =
-            std::chrono::high_resolution_clock::now() - m_start;
+        std::chrono::nanoseconds duration = std::chrono::high_resolution_clock::now() - m_start;
 
-        if (duration > m_threshold)
+        if (duration < m_threshold)
             return;
 
-        // No table so use basic ScopedTimer output.
-        if (!m_sections)
-            return;
+        EnterSection("");   // Stop the final section
 
-        //Stop the final section.
-        EnterSection("");
+        if (m_sections->m_section_names.size() == 1 && *m_sections->m_section_names.begin() == "")
+            return; // Don't print the table if the only section is the default section
 
-        // Don't print the table if the only section is the default section
-        auto only_section_is_the_default =
-            (m_sections->m_section_names.size() == 1
-             && *m_sections->m_section_names.begin() == "");
-        if (only_section_is_the_default)
-            return;
 
         //Print the section times followed by the total time elapsed.
 
@@ -212,7 +203,7 @@ public:
             }
 
             // is duration yet long enough to output?
-            if (jt->second > m_threshold)
+            if (jt->second < m_threshold)
                 continue;
 
             // Create a header with padding, so all times align.
