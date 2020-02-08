@@ -652,7 +652,7 @@ if(NOT BUILD_HEADLESS)
             PROPERTIES
                 MACOSX_BUNDLE TRUE
                 MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
-                MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/Xcode/Info.plist"
+                MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/packaging/Info.plist"
                 RESOURCE "${PROJECT_SOURCE_DIR}/client/human/main.xib"
         )
     endif()
