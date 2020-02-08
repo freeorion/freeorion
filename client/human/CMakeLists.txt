@@ -12,4 +12,12 @@ target_sources(freeorion
         $<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_LIST_DIR}/FreeOrion.ico>
         $<$<PLATFORM_ID:Darwin>:${CMAKE_CURRENT_LIST_DIR}/chmain.mm>
         $<$<PLATFORM_ID:Darwin>:${CMAKE_CURRENT_LIST_DIR}/GUIController.mm>
+        $<$<PLATFORM_ID:Darwin>:${CMAKE_CURRENT_LIST_DIR}/main.xib>
+)
+
+set_property(
+    SOURCE
+        ${CMAKE_CURRENT_LIST_DIR}/main.xib
+    PROPERTY
+        MACOSX_PACKAGE_LOCATION "Resources/"
 )

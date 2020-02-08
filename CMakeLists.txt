@@ -628,7 +628,6 @@ if(NOT BUILD_HEADLESS)
             Changelog.md
             default
             Xcode/FreeOrion.icns
-            Xcode/main.xib
         )
         target_sources(freeorion
             PRIVATE
@@ -654,7 +653,7 @@ if(NOT BUILD_HEADLESS)
                 MACOSX_BUNDLE TRUE
                 MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
                 MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/Xcode/Info.plist"
-                RESOURCE "${PROJECT_SOURCE_DIR}/Xcode/main.xib"
+                RESOURCE "${PROJECT_SOURCE_DIR}/client/human/main.xib"
         )
     endif()
 
