@@ -12,7 +12,7 @@
 #include "../../python/CommonFramework.h"
 #include "../../python/SetWrapper.h"
 #include "../../python/CommonWrappers.h"
-#include "../../python/AI/AIWrapper.h"
+#include "AIWrapper.h"
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>

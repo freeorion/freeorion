@@ -3,9 +3,11 @@ target_sources(freeorionca
         ${CMAKE_CURRENT_LIST_DIR}/AIClientApp.h
         ${CMAKE_CURRENT_LIST_DIR}/AIFramework.h
         ${CMAKE_CURRENT_LIST_DIR}/AIInterface.h
+        ${CMAKE_CURRENT_LIST_DIR}/AIWrapper.h
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/AIClientApp.cpp
         ${CMAKE_CURRENT_LIST_DIR}/AIFramework.cpp
         ${CMAKE_CURRENT_LIST_DIR}/AIInterface.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/AIWrapper.cpp
         ${CMAKE_CURRENT_LIST_DIR}/camain.cpp
 )
