@@ -9,9 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Header Files\AI">
-      <UniqueIdentifier>{0b89f998-cbcb-41d7-a769-d4b4b31ee70c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\client">
       <UniqueIdentifier>{0e8f8032-78e0-4fb0-8880-386704b27db3}</UniqueIdentifier>
     </Filter>
@@ -32,9 +29,6 @@
     </Filter>
     <Filter Include="Header Files\client\AI">
       <UniqueIdentifier>{2b260b85-270a-432d-8d6c-94ec7c922589}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\AI">
-      <UniqueIdentifier>{c3ab409d-1113-4558-985e-22ced3ae2a29}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\client">
       <UniqueIdentifier>{9b9fafb5-5938-4a70-a059-e2ac800bb473}</UniqueIdentifier>
@@ -62,9 +56,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\AI\AIInterface.h">
-      <Filter>Header Files\AI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\client\ClientApp.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
@@ -72,6 +63,9 @@
       <Filter>Header Files\client</Filter>
     </ClInclude>
     <ClInclude Include="..\..\client\AI\AIClientApp.h">
+      <Filter>Header Files\client\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\AI\AIInterface.h">
       <Filter>Header Files\client\AI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Empire\Empire.h">
@@ -266,8 +260,8 @@
     <ClCompile Include="..\..\client\AI\AIClientApp.cpp">
       <Filter>Source Files\client\AI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\AI\AIInterface.cpp">
-      <Filter>Source Files\AI</Filter>
+    <ClCompile Include="..\..\client\AI\AIInterface.cpp">
+      <Filter>Source Files\client\AI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\python\AI\AIFramework.cpp">
       <Filter>Source Files\python\AI</Filter>

@@ -703,7 +703,6 @@ endif()
 ## Recurse into sources.
 ##
 
-add_subdirectory(AI)
 add_subdirectory(client)
 add_subdirectory(combat)
 add_subdirectory(Empire)

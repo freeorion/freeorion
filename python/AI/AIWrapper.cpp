@@ -1,6 +1,6 @@
 #include "AIWrapper.h"
 
-#include "../../AI/AIInterface.h"
+#include "../../client/AI/AIInterface.h"
 #include "../../client/ClientApp.h"
 #include "../../universe/Universe.h"
 #include "../../util/AppInterface.h"

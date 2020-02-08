@@ -2,7 +2,7 @@
 #define __FreeOrion__Python__AIFramework__
 
 #include "../CommonFramework.h"
-#include "../../AI/AIInterface.h"
+#include "../../client/AI/AIInterface.h"
 
 #include <string>
 

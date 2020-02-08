@@ -1,5 +1,5 @@
-#ifndef AI_INTERFACE
-#define AI_INTERFACE
+#ifndef _AIInterface_h_
+#define _AIInterface_h_
 
 #include <string>
 #include <vector>
@@ -296,4 +296,4 @@ namespace AIInterface {
     /** @} */
 };
 
-#endif
+#endif // _AIInterface_h_

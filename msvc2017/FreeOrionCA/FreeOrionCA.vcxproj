@@ -132,8 +132,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\AI\AIInterface.h" />
     <ClInclude Include="..\..\client\AI\AIClientApp.h" />
+    <ClInclude Include="..\..\client\AI\AIInterface.h" />
     <ClInclude Include="..\..\client\ClientApp.h" />
     <ClInclude Include="..\..\client\ClientFSMEvents.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
@@ -197,8 +197,8 @@
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\AI\AIInterface.cpp" />
     <ClCompile Include="..\..\client\AI\AIClientApp.cpp" />
+    <ClCompile Include="..\..\client\AI\AIInterface.cpp" />
     <ClCompile Include="..\..\client\AI\camain.cpp" />
     <ClCompile Include="..\..\client\ClientApp.cpp" />
     <ClCompile Include="..\..\client\ClientFSMEvents.cpp" />
