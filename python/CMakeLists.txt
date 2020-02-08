@@ -1,5 +1,3 @@
-add_subdirectory(server)
-
 target_sources(freeoriond
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/CommonFramework.h

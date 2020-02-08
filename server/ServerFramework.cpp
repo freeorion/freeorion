@@ -1,6 +1,6 @@
 #include "ServerFramework.h"
 
-#include "../python/server/ServerWrapper.h"
+#include "ServerWrapper.h"
 #include "../python/SetWrapper.h"
 #include "../python/CommonWrappers.h"
 
