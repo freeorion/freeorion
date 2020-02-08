@@ -161,6 +161,9 @@
     <ClInclude Include="..\..\server\SaveLoad.h">
       <Filter>Header Files\server</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\server\UniverseGenerator.h">
+      <Filter>Header Files\server</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\util\binreloc.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
@@ -218,9 +221,6 @@
     <ClInclude Include="..\..\universe\Effect.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\UniverseGenerator.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\util\AppInterface.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
@@ -251,6 +251,9 @@
     <ClCompile Include="..\..\server\ServerWrapper.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\server\UniverseGenerator.cpp">
+      <Filter>Source Files\server</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\server\dmain.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
@@ -259,9 +262,6 @@
     </ClCompile>
     <ClCompile Include="..\..\combat\CombatSystem.cpp">
       <Filter>Source Files\combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\UniverseGenerator.cpp">
-      <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\python\CommonFramework.cpp">
       <Filter>Source Files\python</Filter>

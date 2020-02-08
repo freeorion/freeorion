@@ -67,10 +67,3 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObject.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefs.cpp
 )
-
-target_sources(freeoriond
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/UniverseGenerator.h
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/UniverseGenerator.cpp
-)

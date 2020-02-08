@@ -177,6 +177,7 @@
     <ClInclude Include="..\..\server\ServerFSM.h" />
     <ClInclude Include="..\..\server\ServerNetworking.h" />
     <ClInclude Include="..\..\server\ServerWrapper.h" />
+    <ClInclude Include="..\..\server\UniverseGenerator.h" />
     <ClInclude Include="..\..\universe\Building.h" />
     <ClInclude Include="..\..\universe\Conditions.h" />
     <ClInclude Include="..\..\universe\Effects.h" />
@@ -198,7 +199,6 @@
     <ClInclude Include="..\..\universe\System.h" />
     <ClInclude Include="..\..\universe\Tech.h" />
     <ClInclude Include="..\..\universe\Universe.h" />
-    <ClInclude Include="..\..\universe\UniverseGenerator.h" />
     <ClInclude Include="..\..\universe\UniverseObject.h" />
     <ClInclude Include="..\..\universe\ValueRefs.h" />
     <ClInclude Include="..\..\util\AppInterface.h" />
@@ -236,7 +236,7 @@
     <ClCompile Include="..\..\server\ServerFSM.cpp" />
     <ClCompile Include="..\..\server\ServerNetworking.cpp" />
     <ClCompile Include="..\..\server\ServerWrapper.cpp" />
-    <ClCompile Include="..\..\universe\UniverseGenerator.cpp" />
+    <ClCompile Include="..\..\server\UniverseGenerator.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
     <ClCompile Include="..\..\util\DependencyVersions.cpp" />
     <ClCompile Include="StdAfx.cpp">
