@@ -627,7 +627,6 @@ if(NOT BUILD_HEADLESS)
         list(APPEND FREEORION_ASSETS
             Changelog.md
             default
-            Xcode/FreeOrion.icns
         )
         target_sources(freeorion
             PRIVATE
