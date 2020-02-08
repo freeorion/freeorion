@@ -40,6 +40,7 @@ set(FreeOrion_VERSION 0.4.9+)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 option(BUILD_SHARED_LIBS "Build project as shared libraries." ON)
 option(BUILD_TESTING "Build the testing tree." OFF)
@@ -363,9 +364,6 @@ endif()
 
 target_compile_options(freeorioncommon
     PRIVATE
-        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
         $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
         $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
 )
@@ -443,9 +441,6 @@ endif()
 
 target_compile_options(freeorionparseobj
     PRIVATE
-        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
         $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
         $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
         $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:GNU>>:-O3>
@@ -482,13 +477,6 @@ if(MSVC)
     )
 endif()
 
-target_compile_options(freeorionparse
-    PRIVATE
-        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
-)
-
 if(APPLE)
     # Xcode doesn't build freeorionparse because it doesn't have any
     # source code files associated and only links the freeorionparselib
@@ -515,13 +503,6 @@ if(WIN32)
             OUTPUT_NAME FreeOrionD
     )
 endif()
-
-target_compile_options(freeoriond
-    PRIVATE
-        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
-)
 
 target_compile_definitions(freeoriond
     PRIVATE
@@ -557,13 +538,6 @@ if(WIN32)
             OUTPUT_NAME FreeOrionCA
     )
 endif()
-
-target_compile_options(freeorionca
-    PRIVATE
-        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
-)
 
 target_compile_definitions(freeorionca
     PRIVATE
@@ -646,13 +620,6 @@ if(NOT BUILD_HEADLESS)
                 RESOURCE "${PROJECT_SOURCE_DIR}/Xcode/main.xib"
         )
     endif()
-
-    target_compile_options(freeorion
-        PRIVATE
-            $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
-            $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
-            $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
-    )
 
     target_compile_definitions(freeorion
         PRIVATE

@@ -41,9 +41,10 @@
 # else
 #  define GG_SDL_API __declspec(dllimport)
 # endif
-#else
-# define GG_SDL_API
 #endif
+# ifdef __GNUC__
+#  define GG_SDL_API __attribute__((__visibility__("default")))
+# endif
 
 namespace GG {
 

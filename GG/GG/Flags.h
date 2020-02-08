@@ -74,7 +74,7 @@ struct is_flag_type : std::false_type {};
     template <>                                                         \
     struct is_flag_type<name> : std::true_type {};                      \
                                                                         \
-    class name                                                          \
+    class GG_API name                                                   \
     {                                                                   \
     public:                                                             \
         name() : m_value(0) {}                                          \
