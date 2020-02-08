@@ -73,7 +73,7 @@ public:
             ss << std::chrono::duration_cast<std::chrono::microseconds>(duration).count() << " µs";
 
         } else if (duration >= std::chrono::microseconds(2)) {
-            auto ns{std::chrono::duration_cast<std::chrono::microseconds>(duration).count()};
+            auto ns{std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count()};
             ss << (ns / 100) / 10.0 << " µs";    // round to 10ths of microseconds
 
         } else {
