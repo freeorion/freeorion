@@ -1,10 +1,10 @@
 #ifndef _ServerApp_h_
 #define _ServerApp_h_
 
+#include "ServerFramework.h"
 #include "../util/Process.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
-#include "../python/server/ServerFramework.h"
 #include "../network/ServerNetworking.h"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"

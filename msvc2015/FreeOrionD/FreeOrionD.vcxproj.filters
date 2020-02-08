@@ -152,6 +152,9 @@
     <ClInclude Include="..\..\server\ServerApp.h">
       <Filter>Header Files\server</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\server\ServerFramework.h">
+      <Filter>Header Files\server</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\server\ServerFSM.h">
       <Filter>Header Files\server</Filter>
     </ClInclude>
@@ -221,9 +224,6 @@
     <ClInclude Include="..\..\util\AppInterface.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\python\server\ServerFramework.h">
-      <Filter>Header Files\python\server</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\python\server\ServerWrapper.h">
       <Filter>Header Files\python\server</Filter>
     </ClInclude>
@@ -247,6 +247,9 @@
     <ClCompile Include="..\..\server\ServerApp.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\server\ServerFramework.cpp">
+      <Filter>Source Files\server</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\server\dmain.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
@@ -258,9 +261,6 @@
     </ClCompile>
     <ClCompile Include="..\..\universe\UniverseGenerator.cpp">
       <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\python\server\ServerFramework.cpp">
-      <Filter>Source Files\python\server</Filter>
     </ClCompile>
     <ClCompile Include="..\..\python\server\ServerWrapper.cpp">
       <Filter>Source Files\python\server</Filter>
