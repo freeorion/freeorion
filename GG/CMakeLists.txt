@@ -126,6 +126,8 @@ configure_file(
 
 add_library(GiGi "")
 
+add_library(GiGi::GiGi ALIAS GiGi)
+
 target_compile_definitions(GiGi
     PRIVATE
         -DFONS_USE_FREETYPE
@@ -137,49 +139,57 @@ target_compile_definitions(GiGi
         $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.71>:BOOST_GIL_USES_MP11>
 )
 
-target_include_directories(GiGi SYSTEM
-    PRIVATE
+target_include_directories(GiGi
+    INTERFACE
         ${OPENGL_INCLUDE_DIR}
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    PRIVATE
         ${FREETYPE_INCLUDE_DIRS}
 )
 
 target_link_libraries(GiGi
-    GLEW::GLEW
-    Boost::boost
-    Boost::disable_autolinking
-    Boost::dynamic_linking
-    Boost::filesystem
-    Boost::regex
-    Boost::system
-    ${OPENGL_glu_LIBRARY}
-    ${FREETYPE_LIBRARIES}
+    PUBLIC
+        GLEW::GLEW
+        Boost::boost
+        Boost::disable_autolinking
+        Boost::dynamic_linking
+        Boost::filesystem
+        ${OPENGL_gl_LIBRARY}
+        ${OPENGL_glu_LIBRARY}
+    PRIVATE
+        Boost::regex
+        ${FREETYPE_LIBRARIES}
 )
 
 if(TARGET PNG::PNG)
-    target_link_libraries(GiGi PNG::PNG)
+    target_link_libraries(GiGi PRIVATE PNG::PNG)
 endif()
 
 if(TARGET TIFF::TIFF)
-    target_link_libraries(GiGi TIFF::TIFF)
+    target_link_libraries(GiGi PRIVATE TIFF::TIFF)
 endif()
 
 
 add_library(GiGiSDL "")
 
+add_library(GiGi::GiGiSDL ALIAS GiGiSDL)
+
 target_include_directories(GiGiSDL SYSTEM
-    PRIVATE
-        ${OPENGL_INCLUDE_DIR}
+    INTERFACE
         ${SDL_INCLUDE_DIR}
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
 target_link_libraries(GiGiSDL
-    GiGi
-    GLEW::GLEW
-    Boost::boost
-    Boost::disable_autolinking
-    Boost::dynamic_linking
-    ${OPENGL_LIBRARIES}
-    ${SDL_LIBRARIES}
+    PUBLIC
+        GiGi::GiGi
+        ${SDL_LIBRARIES}
+    PRIVATE
+        Boost::boost
+        Boost::disable_autolinking
+        Boost::dynamic_linking
 )
 
 

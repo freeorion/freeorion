@@ -263,8 +263,6 @@ if(NOT BUILD_HEADLESS)
         message(FATAL_ERROR "OpenGL GLU library not found.")
     endif()
 
-    find_package(GLEW REQUIRED)
-    find_package(SDL REQUIRED)
     find_package(OpenAL REQUIRED)
     find_package(Ogg REQUIRED)
     find_package(Vorbis REQUIRED)
@@ -375,7 +373,6 @@ target_compile_definitions(freeorioncommon
 target_include_directories(freeorioncommon SYSTEM
     PRIVATE
         ${CMAKE_SOURCE_DIR}
-        ${PROJECT_SOURCE_DIR}/GG
 )
 
 target_link_libraries(freeorioncommon
@@ -390,6 +387,7 @@ target_link_libraries(freeorioncommon
     Boost::thread
     Boost::serialization
     ZLIB::ZLIB
+    GiGi::GiGi
     ${CORE_FOUNDATION_LIBRARY}
 )
 
@@ -413,16 +411,15 @@ target_compile_definitions(freeorionparseobj
     INTERFACE
         $<TARGET_PROPERTY:Boost::disable_autolinking,COMPILE_DEFINITIONS>
         $<TARGET_PROPERTY:Boost::dynamic_linking,COMPILE_DEFINITIONS>
+    PUBLIC
+        $<TARGET_PROPERTY:GiGi::GiGi,COMPILE_DEFINITIONS>
 )
 
 target_include_directories(freeorionparseobj
     INTERFACE
         $<TARGET_PROPERTY:Boost::boost,INCLUDE_DIRECTORIES>
-)
-
-target_include_directories(freeorionparseobj SYSTEM
-    PRIVATE
-        ${PROJECT_SOURCE_DIR}/GG
+    PUBLIC
+        $<TARGET_PROPERTY:GiGi::GiGi,INCLUDE_DIRECTORIES>
 )
 
 set_property(TARGET freeorionparseobj
@@ -514,22 +511,23 @@ target_compile_definitions(freeoriond
 
 target_include_directories(freeoriond SYSTEM
     PRIVATE
-        ${PROJECT_SOURCE_DIR}/GG
         ${PYTHON_INCLUDE_PATH}
 )
 
 target_link_libraries(freeoriond
-    freeorioncommon
-    freeorionparse
-    ZLIB::ZLIB
-    Threads::Threads
-    Boost::boost
-    Boost::disable_autolinking
-    Boost::dynamic_linking
-    Boost::log
-    Boost::log_setup
-    Boost::python${Boost_PYTHON_SUFFIX}
-    ${PYTHON_LIBRARIES}
+    PRIVATE
+        freeorioncommon
+        freeorionparse
+        ZLIB::ZLIB
+        Threads::Threads
+        Boost::boost
+        Boost::disable_autolinking
+        Boost::dynamic_linking
+        Boost::log
+        Boost::log_setup
+        Boost::python${Boost_PYTHON_SUFFIX}
+        ${PYTHON_LIBRARIES}
+        GiGi::GiGi
 )
 
 target_dependencies_copy_to_build(freeoriond)
@@ -552,7 +550,6 @@ target_compile_definitions(freeorionca
 target_include_directories(freeorionca SYSTEM
     PRIVATE
         ${PYTHON_INCLUDE_PATH}
-        ${PROJECT_SOURCE_DIR}/GG
 )
 
 target_link_libraries(freeorionca
@@ -567,6 +564,7 @@ target_link_libraries(freeorionca
     Boost::log_setup
     Boost::python${Boost_PYTHON_SUFFIX}
     ${PYTHON_LIBRARIES}
+    GiGi::GiGi
 )
 
 target_dependencies_copy_to_build(freeorionca)
@@ -636,12 +634,10 @@ if(NOT BUILD_HEADLESS)
     target_include_directories(freeorion SYSTEM
         PRIVATE
             ${OPENGL_INCLUDE_DIR}
-            ${SDL_INCLUDE_DIR}
             ${OPENAL_INCLUDE_DIR}
             ${OGG_INCLUDE_DIRS}
             ${VORBIS_INCLUDE_DIRS}
             ${FREETYPE_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/GG
     )
 
     if(WIN32)
@@ -654,11 +650,10 @@ if(NOT BUILD_HEADLESS)
     target_link_libraries(freeorion
         freeorioncommon
         freeorionparse
-        GiGi
-        GiGiSDL
+        GiGi::GiGi
+        GiGi::GiGiSDL
         ZLIB::ZLIB
         Threads::Threads
-        GLEW::GLEW
         Boost::boost
         Boost::disable_autolinking
         Boost::dynamic_linking
@@ -667,7 +662,6 @@ if(NOT BUILD_HEADLESS)
         ${OPENGL_gl_LIBRARY}
         ${OPENGL_glu_LIBRARY}
         ${OPENAL_LIBRARY}
-        ${SDL_LIBRARIES}
         ${OGG_LIBRARIES}
         ${VORBIS_LIBRARIES}
         ${ICONV_LIBRARY}
