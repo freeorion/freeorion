@@ -34,8 +34,8 @@ class EnumMeta(type):
         return super_new(cls, name, bases, attrs)
 
 
+@six.add_metaclass(EnumMeta)
 class Enum(object):
-    __metaclass__ = EnumMeta
 
     @classmethod
     def range(cls, start, end):

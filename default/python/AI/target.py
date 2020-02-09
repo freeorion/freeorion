@@ -34,8 +34,10 @@ class Target(object):
         """
         return None
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.id is not None and self.id >= 0
+
+    __nonzero__ = __bool__
 
     def get_system(self):
         """
