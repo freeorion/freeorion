@@ -404,7 +404,7 @@ def combine_ratings_list(ratings_list):
     :return: combined rating
     :rtype: float
     """
-    return six.moves.reduce(combine_ratings, ratings_list) if ratings_list else 0
+    return six.moves.reduce(combine_ratings, ratings_list, 0)
 
 
 def rating_needed(target, current=0):
