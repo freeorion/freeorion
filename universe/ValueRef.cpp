@@ -588,14 +588,22 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
         return INVALID_PLANET_SIZE;
     }
 
-    if (auto p = std::dynamic_pointer_cast<const Planet>(object)) {
-        if (property_name == "PlanetSize")
+    if (property_name == "PlanetSize") {
+        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
             return p->Size();
-        else if (property_name == "NextLargerPlanetSize")
+        return INVALID_PLANET_SIZE;
+
+    } else if (property_name == "NextLargerPlanetSize") {
+        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
             return p->NextLargerPlanetSize();
-        else if (property_name == "NextSmallerPlanetSize")
+        return INVALID_PLANET_SIZE;
+
+    } else if (property_name == "NextSmallerPlanetSize") {
+        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
             return p->NextSmallerPlanetSize();
+        return INVALID_PLANET_SIZE;
     }
+
 
     ErrorLogger() << "Variable<PlanetSize>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
     if (context.source)
@@ -621,20 +629,37 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
         return INVALID_PLANET_TYPE;
     }
 
-    if (auto p = std::dynamic_pointer_cast<const Planet>(object)) {
-        if (property_name == "PlanetType")
+    if (property_name == "PlanetType") {
+        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
             return p->Type();
-        else if (property_name == "OriginalType")
+        return INVALID_PLANET_TYPE;
+
+    } else if (property_name == "OriginalType") {
+        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
             return p->OriginalType();
-        else if (property_name == "NextCloserToOriginalPlanetType")
+        return INVALID_PLANET_TYPE;
+
+    } else if (property_name == "NextCloserToOriginalPlanetType") {
+        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
             return p->NextCloserToOriginalPlanetType();
-        else if (property_name == "NextBetterPlanetType")
+        return INVALID_PLANET_TYPE;
+
+    } else if (property_name == "NextBetterPlanetType") {
+        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
             return p->NextBetterPlanetTypeForSpecies();
-        else if (property_name == "ClockwiseNextPlanetType")
+        return INVALID_PLANET_TYPE;
+
+    } else if (property_name == "ClockwiseNextPlanetType") {
+        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
             return p->ClockwiseNextPlanetType();
-        else if (property_name == "CounterClockwiseNextPlanetType")
+        return INVALID_PLANET_TYPE;
+
+    } else if (property_name == "CounterClockwiseNextPlanetType") {
+        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
             return p->CounterClockwiseNextPlanetType();
+        return INVALID_PLANET_TYPE;
     }
+
 
     ErrorLogger() << "Variable<PlanetType>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
     if (context.source)
@@ -661,6 +686,8 @@ PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& cont
         }
         if (auto p = std::dynamic_pointer_cast<const Planet>(object))
             return p->EnvironmentForSpecies();
+
+        return INVALID_PLANET_ENVIRONMENT;
     }
 
     ErrorLogger() << "Variable<PlanetEnvironment>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
@@ -693,6 +720,8 @@ UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& co
             return OBJ_POP_CENTER;
         else if (std::dynamic_pointer_cast<const ResourceCenter>(object))
             return OBJ_PROD_CENTER;
+
+        return INVALID_UNIVERSE_OBJECT_TYPE;
     }
 
     ErrorLogger() << "Variable<UniverseObjectType>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
@@ -719,13 +748,20 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
         return INVALID_STAR_TYPE;
     }
 
-    if (auto s = std::dynamic_pointer_cast<const System>(object)) {
-        if (property_name == "StarType")
+    if (property_name == "StarType") {
+        if (auto s = std::dynamic_pointer_cast<const System>(object))
             return s->GetStarType();
-        else if (property_name == "NextOlderStarType")
+        return INVALID_STAR_TYPE;
+
+    } else if (property_name == "NextOlderStarType") {
+        if (auto s = std::dynamic_pointer_cast<const System>(object))
             return s->NextOlderStarType();
-        else if (property_name == "NextYoungerStarType")
+        return INVALID_STAR_TYPE;
+
+    } else if (property_name == "NextYoungerStarType") {
+        if (auto s = std::dynamic_pointer_cast<const System>(object))
             return s->NextYoungerStarType();
+        return INVALID_STAR_TYPE;
     }
 
     ErrorLogger() << "Variable<StarType>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
@@ -802,6 +838,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
             else
                 return object->InitialMeterValue(meter_type);
         }
+        return 0.0;
 
     } else if (property_name == "X") {
         return object->X();
@@ -812,14 +849,17 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     } else if (property_name == "SizeAsDouble") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->Size();
+        return 0.0;
 
     } else if (property_name == "HabitableSize") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->HabitableSize();
+        return 0.0;
 
     } else if (property_name == "DistanceFromOriginalType") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->DistanceFromOriginalType();
+        return 0.0;
 
     } else if (property_name == "CurrentTurn") {
         return CurrentTurn();
@@ -831,6 +871,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
             return ship->TotalWeaponsDamage();
         if (auto fighter = std::dynamic_pointer_cast<const Fighter>(object))
             return fighter->Damage();
+        return 0.0;
 
     } else if (property_name == "PropagatedSupplyRange") {
         const auto& ranges = GetSupplyManager().PropagatedSupplyRanges();
@@ -930,8 +971,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "TurnsSinceFocusChange") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->TurnsSinceFocusChange();
-        else
-            return 0;
+        return 0;
 
     }
     else if (property_name == "ProducedByEmpireID") {
@@ -939,22 +979,19 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return ship->ProducedByEmpireID();
         else if (auto building = std::dynamic_pointer_cast<const Building>(object))
             return building->ProducedByEmpireID();
-        else
-            return ALL_EMPIRES;
+        return ALL_EMPIRES;
 
     }
     else if (property_name == "ArrivedOnTurn") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->ArrivedOnTurn();
-        else
-            return INVALID_GAME_TURN;
+        return INVALID_GAME_TURN;
 
     }
     else if (property_name == "DesignID") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->DesignID();
-        else
-            return INVALID_DESIGN_ID;
+        return INVALID_DESIGN_ID;
 
     }
     else if (property_name == "SpeciesID") {
@@ -962,8 +999,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return GetSpeciesManager().GetSpeciesID(planet->SpeciesName());
         else if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return GetSpeciesManager().GetSpeciesID(ship->SpeciesName());
-        else
-            return -1;
+        return -1;
 
     }
     else if (property_name == "FleetID") {
@@ -971,8 +1007,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return ship->FleetID();
         else if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->ID();
-        else
-            return INVALID_OBJECT_ID;
+        return INVALID_OBJECT_ID;
 
     }
     else if (property_name == "PlanetID") {
@@ -980,8 +1015,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return building->PlanetID();
         else if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->ID();
-        else
-            return INVALID_OBJECT_ID;
+        return INVALID_OBJECT_ID;
 
     }
     else if (property_name == "SystemID") {
@@ -991,50 +1025,43 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "FinalDestinationID") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->FinalDestinationID();
-        else
-            return INVALID_OBJECT_ID;
+        return INVALID_OBJECT_ID;
 
     }
     else if (property_name == "NextSystemID") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->NextSystemID();
-        else
-            return INVALID_OBJECT_ID;
+        return INVALID_OBJECT_ID;
 
     }
     else if (property_name == "PreviousSystemID") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->PreviousSystemID();
-        else
-            return INVALID_OBJECT_ID;
+        return INVALID_OBJECT_ID;
 
     }
     else if (property_name == "ArrivalStarlaneID") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->ArrivalStarlane();
-        else
-            return INVALID_OBJECT_ID;
+        return INVALID_OBJECT_ID;
 
     }
     else if (property_name == "NearestSystemID") {
         if (object->SystemID() != INVALID_OBJECT_ID)
             return object->SystemID();
-
         return GetPathfinder()->NearestSystemTo(object->X(), object->Y());
 
     }
     else if (property_name == "NumShips") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->NumShips();
-        else
-            return 0;
+        return 0;
 
     }
     else if (property_name == "NumStarlanes") {
         if (auto system = std::dynamic_pointer_cast<const System>(object))
             return system->NumStarlanes();
-        else
-            return 0;
+        return 0;
 
     }
     else if (property_name == "LastTurnBattleHere") {
@@ -1042,36 +1069,31 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return const_system->LastTurnBattleHere();
         else if (auto system = GetSystem(object->SystemID()))
             return system->LastTurnBattleHere();
-        else
-            return INVALID_GAME_TURN;
+        return INVALID_GAME_TURN;
 
     }
     else if (property_name == "LastTurnActiveInBattle") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->LastTurnActiveInCombat();
-        else
-            return INVALID_GAME_TURN;
+        return INVALID_GAME_TURN;
 
     }
     else if (property_name == "LastTurnAttackedByShip") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->LastTurnAttackedByShip();
-        else
-            return INVALID_GAME_TURN;
+        return INVALID_GAME_TURN;
 
     }
     else if (property_name == "LastTurnConquered") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->LastTurnConquered();
-        else
-            return INVALID_GAME_TURN;
+        return INVALID_GAME_TURN;
 
     }
     else if (property_name == "LastTurnResupplied") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->LastResuppliedOnTurn();
-        else
-            return INVALID_GAME_TURN;
+        return INVALID_GAME_TURN;
 
     }
     else if (property_name == "Orbit") {
@@ -1083,8 +1105,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "ETA") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->ETA().first;
-        else
-            return 0;
+        return 0;
 
     }
     else if (property_name == "NumSpecials") {
@@ -1094,8 +1115,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "LaunchedFrom") {
         if (auto fighter = std::dynamic_pointer_cast<const Fighter>(object))
             return fighter->LaunchedFrom();
-        else
-            return INVALID_OBJECT_ID;
+        return INVALID_OBJECT_ID;
     }
 
     ErrorLogger() << "Variable<int>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
@@ -1124,7 +1144,6 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
                           << context.source->ID() << " ( " << context.source->Name() << " ) ";
         else
             ErrorLogger() << "source (none)";
-
         return {};
     }
 
@@ -1137,7 +1156,6 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
                           << context.source->ID() << " ( " << context.source->Name() << " ) ";
         else
             ErrorLogger() << "source (none)";
-
         return {};
     }
 
@@ -1156,11 +1174,13 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
     else if (property_name == "AvailableFoci") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->AvailableFoci();
+        return {};
     }
     else if (property_name == "Parts") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             if (const ShipDesign* design = ship->Design())
                 return design->Parts();
+        return {};
     }
 
     ErrorLogger() << "std::vector<std::string>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
@@ -1227,19 +1247,23 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
             return ship->SpeciesName();
         else if (auto fighter = std::dynamic_pointer_cast<const Fighter>(object))
             return fighter->SpeciesName();
+        return "";
 
     } else if (property_name == "Hull") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             if (const ShipDesign* design = ship->Design())
                 return design->Hull();
+        return "";
 
     } else if (property_name == "BuildingType") {
         if (auto building = std::dynamic_pointer_cast<const Building>(object))
             return building->BuildingTypeName();
+        return "";
 
     } else if (property_name == "Focus") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->Focus();
+        return "";
 
     } else if (property_name == "PreferredFocus") {
         const Species* species = nullptr;
