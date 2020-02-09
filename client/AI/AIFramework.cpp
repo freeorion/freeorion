@@ -1,6 +1,6 @@
 #include "AIFramework.h"
 
-#include "AIInterface.h"
+#include "AIClientApp.h"
 #include "AIWrapper.h"
 #include "../../universe/Building.h"
 #include "../../universe/Universe.h"
@@ -52,7 +52,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     boost::python::docstring_options doc_options(true, true, false);
 
     ///////////////////
-    //  AIInterface  //
+    //  Game client  //
     ///////////////////
     FreeOrionPython::WrapAI();
 
@@ -138,7 +138,6 @@ bool PythonAI::InitModules() {
 
 void PythonAI::GenerateOrders() {
     DebugLogger() << "PythonAI::GenerateOrders : initializing turn";
-    //AIInterface::InitTurn();
 
     ScopedTimer order_timer;
     try {
@@ -154,7 +153,11 @@ void PythonAI::GenerateOrders() {
 
         ErrorLogger() << "PythonAI::GenerateOrders : Python error caught.  Partial orders sent to server";
     }
-    AIInterface::DoneTurn();
+
+    AIClientApp* app = AIClientApp::GetApp();
+    // encodes order sets and sends turn orders message.  "done" the turn for the client, but "starts" the turn for the server
+    app->StartTurn(app->GetAI()->GetSaveStateString());
+
     DebugLogger() << "PythonAI::GenerateOrders order generating time: " << order_timer.DurationString();
 }
 

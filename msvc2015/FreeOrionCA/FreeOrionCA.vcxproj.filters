@@ -62,9 +62,6 @@
     <ClInclude Include="..\..\client\AI\AIClientApp.h">
       <Filter>Header Files\client\AI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\client\AI\AIInterface.h">
-      <Filter>Header Files\client\AI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\client\AI\AIFramework.h">
       <Filter>Header Files\client\AI</Filter>
     </ClInclude>
@@ -251,9 +248,6 @@
       <Filter>Source Files\client\AI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\client\AI\AIClientApp.cpp">
-      <Filter>Source Files\client\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\client\AI\AIInterface.cpp">
       <Filter>Source Files\client\AI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\client\AI\AIFramework.cpp">

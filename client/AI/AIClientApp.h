@@ -35,6 +35,11 @@ public:
     /** \name Accessors */ //@{
     int EffectsProcessingThreads() const override;
 
+    /** @brief Return the player name of this client
+     *
+     * @return An UTF-8 encoded and NUL terminated string containing the player
+     *      name of this client.
+     */
     const std::string& PlayerName() const
     { return m_player_name; }
     //@}

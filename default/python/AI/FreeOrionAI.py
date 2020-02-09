@@ -1,4 +1,4 @@
-"""The FreeOrionAI module contains the methods which can be made by the C AIInterface;
+"""The FreeOrionAI module contains the methods which can be made by the C game client;
 these methods in turn activate other portions of the python AI code."""
 from logging import debug, info, error, fatal
 
