@@ -1,5 +1,7 @@
 #include "AIFramework.h"
 
+#include "AIInterface.h"
+#include "AIWrapper.h"
 #include "../../universe/Building.h"
 #include "../../universe/Universe.h"
 #include "../../util/Directories.h"
@@ -12,7 +14,6 @@
 #include "../../python/CommonFramework.h"
 #include "../../python/SetWrapper.h"
 #include "../../python/CommonWrappers.h"
-#include "AIWrapper.h"
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
@@ -198,3 +199,6 @@ const std::string& PythonAI::GetSaveStateString() const {
     //DebugLogger() << "PythonAI::GetSaveStateString() returning: " << s_save_state_string;
     return FreeOrionPython::GetStaticSaveStateString();
 }
+
+void PythonAI::SetAggression(int aggr)
+{ m_aggression = aggr; }

@@ -130,7 +130,7 @@ int AIClientApp::EffectsProcessingThreads() const
 AIClientApp* AIClientApp::GetApp()
 { return static_cast<AIClientApp*>(s_app); }
 
-const AIBase* AIClientApp::GetAI()
+const PythonAI* AIClientApp::GetAI()
 { return m_AI.get(); }
 
 void AIClientApp::Run() {

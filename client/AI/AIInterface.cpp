@@ -1,6 +1,7 @@
 #include "AIInterface.h"
 
 #include "AIClientApp.h"
+#include "AIFramework.h"
 #include "../ClientNetworking.h"
 
 #include "../../universe/Universe.h"
@@ -35,39 +36,6 @@ using boost::python::str;
 namespace {
     const float DUMMY_FLOAT = 0.0f;
 }
-
-//////////////////////////////////
-//          AI Base             //
-//////////////////////////////////
-AIBase::~AIBase()
-{}
-
-void AIBase::GenerateOrders()
-{ AIInterface::DoneTurn(); }
-
-void AIBase::HandleChatMessage(int sender_id, const std::string& msg)
-{}
-
-void AIBase::HandleDiplomaticMessage(const DiplomaticMessage& msg)
-{}
-
-void AIBase::HandleDiplomaticStatusUpdate(const DiplomaticStatusUpdateInfo& u)
-{}
-
-void AIBase::StartNewGame()
-{}
-
-void AIBase::ResumeLoadedGame(const std::string& save_state_string)
-{}
-
-const std::string& AIBase::GetSaveStateString() const {
-    static std::string default_state_string("AIBase default save state string");
-    DebugLogger() << "AIBase::GetSaveStateString() returning: " << default_state_string;
-    return default_state_string;
-}
-
-void AIBase::SetAggression(int aggr)
-{ m_aggression = aggr; }
 
 
 //////////////////////////////////

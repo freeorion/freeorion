@@ -7,7 +7,6 @@
 #include <vector>
 
 
-class AIBase;
 class PythonAI;
 
 /** the application framework for an AI player FreeOrion client.*/
@@ -41,7 +40,7 @@ public:
     //@}
 
     static AIClientApp* GetApp();       ///< returns a AIClientApp pointer to the singleton instance of the app
-    const AIBase*       GetAI();        ///< returns pointer to AIBase implementation of AI for this client
+    const PythonAI*     GetAI();        ///< returns pointer to AIBase implementation of AI for this client
 
 private:
     void                Run();          ///< initializes app state, then executes main event handler/render loop (PollAndRender())
