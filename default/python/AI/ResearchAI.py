@@ -399,7 +399,7 @@ def init():
     # if tech already in priority_funcs do nothing
     # if tech starts with prefix add prefix handler
     # otherwise print warning and add DEFAULT_PRIORITY
-    for tech in [t for t in fo.techs() if not tech_is_complete(t)]:
+    for tech in [tech_ for tech_ in fo.techs() if not tech_is_complete(tech_)]:
         if tech in priority_funcs:
             continue
         for prefix, handler in prefixes:

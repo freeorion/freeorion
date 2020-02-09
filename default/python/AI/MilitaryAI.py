@@ -645,7 +645,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
 
     mil_fleets_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
     mil_needing_repair_ids, mil_fleets_ids = avail_mil_needing_repair(mil_fleets_ids, split_ships=True)
-    avail_mil_rating = combine_ratings_list([CombatRatingsAI.get_fleet_rating(x) for x in mil_fleets_ids])
+    avail_mil_rating = combine_ratings_list(CombatRatingsAI.get_fleet_rating(x) for x in mil_fleets_ids)
 
     if not mil_fleets_ids:
         if "Main" in thisround:

@@ -1,16 +1,15 @@
 import math
 import random
-from logging import info, warn, error, debug
+from logging import debug, error, info, warn
+from operator import itemgetter
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-from common.print_utils import Sequence, Table, Text
 
 import AIDependencies
 import AIstate
 import ColonisationAI
 import CombatRatingsAI
 import FleetUtilsAI
-from aistate_interface import get_aistate
 import MilitaryAI
 import PlanetUtilsAI
 import PriorityAI
@@ -18,9 +17,10 @@ import ShipDesignAI
 from AIDependencies import INVALID_ID
 from EnumsAI import (EmpireProductionTypes, FocusType, MissionType, PriorityType, ShipRoleType,
                      get_priority_production_types, )
+from aistate_interface import get_aistate
 from character.character_module import Aggression
+from common.print_utils import Sequence, Table, Text
 from freeorion_tools import AITimer, chat_human, ppstring, tech_is_complete
-from operator import itemgetter
 from turn_state import state
 
 _best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
@@ -433,7 +433,10 @@ def generate_production_orders():
                     break  # won't try building more than one shipyard at once, per colonizer
             else:  # no queued shipyards, get planets with target pop >=3, and queue a shipyard on the one with biggest current pop
                 planets = (universe.getPlanet(x) for x in state.get_empire_planets_with_species(spec_name))
-                pops = sorted([(planet_.initialMeterValue(fo.meterType.population), planet_.id) for planet_ in planets if (planet_ and planet_.initialMeterValue(fo.meterType.targetPopulation) >= 3.0)])
+                pops = sorted(
+                    (planet_.initialMeterValue(fo.meterType.population), planet_.id) for planet_ in planets if
+                    (planet_ and planet_.initialMeterValue(fo.meterType.targetPopulation) >= 3.0)
+                )
                 pids = [pid for pop, pid in pops if building_type.canBeProduced(empire.empireID, pid)]
                 if pids:
                     build_loc = pids[-1]
