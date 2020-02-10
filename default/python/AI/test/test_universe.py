@@ -184,7 +184,7 @@ class UniverseObjectTester(PropertyTester, DumpTester):
             self.assertFalse(retval)
 
 
-class FleetTester(UniverseObjectTester, DumpTester):
+class FleetTester(UniverseObjectTester):
     class_to_test = fo.fleet
     properties = deepcopy(UniverseObjectTester.properties)
     properties.update({
@@ -248,7 +248,7 @@ class FleetTester(UniverseObjectTester, DumpTester):
         assert all(isinstance(obj, self.class_to_test) for obj in self.objects_to_test)
 
 
-class ShipTester(UniverseObjectTester, DumpTester):
+class ShipTester(UniverseObjectTester):
     class_to_test = fo.ship
     properties = deepcopy(UniverseObjectTester.properties)
     properties.update({
@@ -657,6 +657,126 @@ class BuildingTypeTester(PropertyTester, DumpTester):
                                 for _id in universe.buildingIDs]
 
 
+class ResourceCenterTester(PropertyTester, DumpTester):
+    class_to_test = fo.resourceCenter
+    properties = deepcopy(PropertyTester.properties)
+    properties.update({
+        "focus": {
+            TYPE: str,
+        },
+        "turnsSinceFocusChange": {
+            TYPE: int,
+        },
+        "availableFoci": {
+            TYPE: fo.StringVec,
+        },
+    })
+
+    def setUp(self):
+        universe = fo.getUniverse()
+        self.objects_to_test = [planet for planet in
+                                [universe.getPlanet(planet_id) for planet_id in universe.planetIDs]
+                                if planet.ownedBy(fo.empireID())]
+
+
+class PopCenterTester(PropertyTester, DumpTester):
+    class_to_test = fo.popCenter
+    properties = deepcopy(PropertyTester.properties)
+    properties.update({
+        "speciesName": {
+            TYPE: str,
+        },
+    })
+
+    def setUp(self):
+        universe = fo.getUniverse()
+        self.objects_to_test = [planet for planet in
+                                [universe.getPlanet(planet_id) for planet_id in universe.planetIDs]
+                                if planet.ownedBy(fo.empireID())]
+
+
+class PlanetTester(UniverseObjectTester):
+    class_to_test = fo.planet
+    properties = deepcopy(UniverseObjectTester.properties)
+    properties.update({
+        "size": {
+            TYPE: fo.planetSize,
+        },
+        "type": {
+            TYPE: fo.planetType,
+        },
+        "originalType": {
+            TYPE: fo.planetType,
+        },
+        "distanceFromOriginalType": {
+            TYPE: int,
+        },
+        "clockwiseNextPlanetType": {
+            TYPE: fo.planetType,
+        },
+        "counterClockwiseNextPlanetType": {
+            TYPE: fo.planetType,
+        },
+        "nextLargerPlanetSize": {
+            TYPE: fo.planetSize,
+        },
+        "nextSmallerPlanetSize": {
+            TYPE: fo.planetSize,
+        },
+        "OrbitalPeriod": {
+            TYPE: float,
+        },
+        "InitialOrbitalPosition": {
+            TYPE: float,
+        },
+        "RotationalPeriod": {
+            TYPE: float,
+        },
+        "LastTurnAttackedByShip": {
+            TYPE: int,
+        },
+        "LastTurnConquered": {
+            TYPE: int,
+        },
+        "buildingIDs": {
+            TYPE: fo.IntSet,
+        },
+        "habitableSize": {
+            TYPE: int,
+        },
+    })
+
+    def test_environmentForSpecies(self):
+        species = "SP_HUMAN"
+        species_obj = fo.getSpecies(species)
+        for obj in self.objects_to_test:
+            retval = obj.environmentForSpecies(species)
+            self.assertIsInstance(retval, fo.planetEnvironment)
+            self.assertEquals(retval, species_obj.getPlanetEnvironment(obj.type))
+            with self.assertRaises(Exception):
+                retval = obj.environmentForSpecies()
+
+    def test_nextBetterPlanetTypeForSpecies(self):
+        species = "SP_HUMAN"
+        species_obj = fo.getSpecies(species)
+        for obj in self.objects_to_test:
+            retval = obj.nextBetterPlanetTypeForSpecies(species)
+            self.assertIsInstance(retval, fo.planetType)
+            with self.assertRaises(Exception):
+                retval = obj.nextBetterPlanetTypeForSpecies()
+
+    def test_OrbitalPositionOnTurn(self):
+        for obj in self.objects_to_test:
+            retval = obj.OrbitalPositionOnTurn(0)
+            self.assertIsInstance(retval, float)
+            with self.assertRaises(Exception):
+                retval = obj.OrbitalPositionOnTurn()
+
+    def setUp(self):
+        universe = fo.getUniverse()
+        self.objects_to_test = [universe.getPlanet(planet_id) for planet_id in universe.planetIDs]
+
+
 # TODO: Fields - but need to query an actual object, so need dedicated universe setup
 
 
@@ -763,7 +883,8 @@ class SpeciesTester(PropertyTester, DumpTester):
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
     test_classes = [UniverseTester, UniverseObjectTester, FleetTester, ShipTester, PartTypeTester,
-                    HullTypeTester, BuildingTester, BuildingTypeTester,
+                    HullTypeTester, BuildingTester, BuildingTypeTester, ResourceCenterTester,
+                    PopCenterTester, PlanetTester,
                     ShipDesignTester, FieldTypeTester, SpecialTester, SpeciesTester]
     for test_class in test_classes:
         if issubclass(test_class, PropertyTester):
