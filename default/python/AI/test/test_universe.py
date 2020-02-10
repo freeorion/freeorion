@@ -442,9 +442,9 @@ class ShipDesignTester(PropertyTester, DumpTester):
             retval = obj.perTurnCost(fo.empireID(), INVALID_ID)
             self.assertIsInstance(retval, float)
             self.assertGreater(retval, 0.0)
-            self.assertAlmostEquals(retval,
-                obj.productionCost(fo.empireID(), INVALID_ID) / obj.productionTime(fo.empireID(), INVALID_ID),
-                places=3)
+            cost = obj.productionCost(fo.empireID(), INVALID_ID)
+            time = obj.productionTime(fo.empireID(), INVALID_ID)
+            self.assertAlmostEquals(retval, cost/time, places=3)
 
     def test_productionLocationForEmpire(self):
         for obj in self.objects_to_test:
@@ -630,9 +630,9 @@ class BuildingTypeTester(PropertyTester, DumpTester):
             self.assertIsInstance(retval, float)
             self.assertGreaterEqual(retval, 0)
 
-            self.assertAlmostEquals(retval,
-                obj.productionCost(fo.empireID(), INVALID_ID) / obj.productionTime(fo.empireID(), INVALID_ID),
-                places=3)
+            cost = obj.productionCost(fo.empireID(), INVALID_ID)
+            time = obj.productionTime(fo.empireID(), INVALID_ID)
+            self.assertAlmostEquals(retval, cost/time, places=3)
 
     def test_captureResult(self):
         for obj in self.objects_to_test:
@@ -754,28 +754,114 @@ class PlanetTester(UniverseObjectTester):
             self.assertIsInstance(retval, fo.planetEnvironment)
             self.assertEquals(retval, species_obj.getPlanetEnvironment(obj.type))
             with self.assertRaises(Exception):
-                retval = obj.environmentForSpecies()
+                _ = obj.environmentForSpecies()
 
     def test_nextBetterPlanetTypeForSpecies(self):
         species = "SP_HUMAN"
-        species_obj = fo.getSpecies(species)
         for obj in self.objects_to_test:
             retval = obj.nextBetterPlanetTypeForSpecies(species)
             self.assertIsInstance(retval, fo.planetType)
             with self.assertRaises(Exception):
-                retval = obj.nextBetterPlanetTypeForSpecies()
+                _ = obj.nextBetterPlanetTypeForSpecies()
 
     def test_OrbitalPositionOnTurn(self):
         for obj in self.objects_to_test:
             retval = obj.OrbitalPositionOnTurn(0)
             self.assertIsInstance(retval, float)
             with self.assertRaises(Exception):
-                retval = obj.OrbitalPositionOnTurn()
+                _ = obj.OrbitalPositionOnTurn()
 
     def setUp(self):
         universe = fo.getUniverse()
         self.objects_to_test = [universe.getPlanet(planet_id) for planet_id in universe.planetIDs]
 
+
+class SystemTester(UniverseObjectTester):
+    class_to_test = fo.system
+    properties = deepcopy(UniverseObjectTester.properties)
+    properties.update({
+       "starType": {
+           TYPE: fo.starType,
+       },
+        "numStarlanes": {
+            TYPE: int,
+        },
+        "numWormholes": {
+            TYPE: int,
+        },
+        "starlanesWormholes": {
+            TYPE: fo.IntBoolMap,
+        },
+        "planetIDs": {
+            TYPE: fo.IntSet,
+        },
+        "buildingIDs": {
+            TYPE: fo.IntSet,
+        },
+        "fleetIDs": {
+            TYPE: fo.IntSet,
+        },
+        "shipIDs": {
+            TYPE: fo.IntSet,
+        },
+        "fieldIDs": {
+            TYPE: fo.IntSet,
+        },
+        "lastTurnBattleHere": {
+            TYPE: int,
+        },
+    })
+
+    def test_HasStarlaneToSystemID(self):
+        universe = fo.getUniverse()
+        for obj in self.objects_to_test:
+            # should not have connection to INVALID_ID
+            retval = obj.HasStarlaneToSystemID(INVALID_ID)
+            self.assertIsInstance(retval, bool)
+            self.assertFalse(retval)
+
+            # should have connection to its immediate neighbours
+            for sys_id in universe.getImmediateNeighbors(obj.id, fo.empireID()):
+                retval = obj.HasStarlaneToSystemID(sys_id)
+                self.assertIsInstance(retval, bool)
+                self.assertTrue(retval)
+
+            # should accept only int
+            with self.assertRaises(Exception):
+                _ = obj.HasStarlaneToSystemID()
+            with self.assertRaises(Exception):
+                _ = obj.HasStarlaneToSystemID(0.2)
+            with self.assertRaises(Exception):
+                _ = obj.HasStarlaneToSystemID(1.0)
+            with self.assertRaises(Exception):
+                _ = obj.HasStarlaneToSystemID('1')
+
+    def test_HasWormholeToSystemID(self):
+        universe = fo.getUniverse()
+        for obj in self.objects_to_test:
+            # should not have any wormholes
+            retval = obj.HasWormholeToSystemID(INVALID_ID)
+            self.assertIsInstance(retval, bool)
+            self.assertFalse(retval)
+
+            for sys_id in universe.getImmediateNeighbors(obj.id, fo.empireID()):
+                retval = obj.HasWormholeToSystemID(sys_id)
+                self.assertIsInstance(retval, bool)
+                self.assertFalse(retval)
+
+            # should accept only int
+            with self.assertRaises(Exception):
+                _ = obj.HasWormholeToSystemID()
+            with self.assertRaises(Exception):
+                _ = obj.HasWormholeToSystemID(0.2)
+            with self.assertRaises(Exception):
+                _ = obj.HasWormholeToSystemID(1.0)
+            with self.assertRaises(Exception):
+                _ = obj.HasWormholeToSystemID('1')
+
+    def setUp(self):
+        universe = fo.getUniverse()
+        self.objects_to_test = [universe.getSystem(system_id) for system_id in universe.systemIDs]
 
 # TODO: Fields - but need to query an actual object, so need dedicated universe setup
 
@@ -884,7 +970,7 @@ def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
     test_classes = [UniverseTester, UniverseObjectTester, FleetTester, ShipTester, PartTypeTester,
                     HullTypeTester, BuildingTester, BuildingTypeTester, ResourceCenterTester,
-                    PopCenterTester, PlanetTester,
+                    PopCenterTester, PlanetTester, SystemTester,
                     ShipDesignTester, FieldTypeTester, SpecialTester, SpeciesTester]
     for test_class in test_classes:
         if issubclass(test_class, PropertyTester):
