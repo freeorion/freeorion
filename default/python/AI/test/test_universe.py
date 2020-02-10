@@ -859,6 +859,11 @@ class SystemTester(UniverseObjectTester):
             with self.assertRaises(Exception):
                 obj.HasWormholeToSystemID('1')
 
+    def test_number_of_starlanes(self):
+        for obj in self.objects_to_test:
+            self.assertEquals(len(fo.getUniverse().getImmediateNeighbors(obj.id, fo.empireID)),
+                              obj.numStarlanes)
+
     def test_contained_fleets(self):
         universe = fo.getUniverse()
         for obj in self.objects_to_test:
