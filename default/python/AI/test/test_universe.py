@@ -69,8 +69,7 @@ class UniverseObjectTester(PropertyTester, DumpTester):
 
     def setUp(self):
         universe = fo.getUniverse()
-        object_ids = list(universe.allObjectIDs)
-        self.objects_to_test = map(universe.getObject, object_ids)
+        self.objects_to_test = [universe.getObject(object_id) for object_id in universe.allObjectIDs]
 
     def test_ownedBy_owner(self):
         for obj in self.objects_to_test:
@@ -861,7 +860,7 @@ class SystemTester(UniverseObjectTester):
 
     def test_number_of_starlanes(self):
         for obj in self.objects_to_test:
-            self.assertEquals(len(fo.getUniverse().getImmediateNeighbors(obj.id, fo.empireID)),
+            self.assertEquals(len(fo.getUniverse().getImmediateNeighbors(obj.id, fo.empireID())),
                               obj.numStarlanes)
 
     def test_contained_fleets(self):
