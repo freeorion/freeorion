@@ -754,7 +754,7 @@ class PlanetTester(UniverseObjectTester):
             self.assertIsInstance(retval, fo.planetEnvironment)
             self.assertEquals(retval, species_obj.getPlanetEnvironment(obj.type))
             with self.assertRaises(Exception):
-                _ = obj.environmentForSpecies()
+                obj.environmentForSpecies()
 
     def test_nextBetterPlanetTypeForSpecies(self):
         species = "SP_HUMAN"
@@ -762,14 +762,14 @@ class PlanetTester(UniverseObjectTester):
             retval = obj.nextBetterPlanetTypeForSpecies(species)
             self.assertIsInstance(retval, fo.planetType)
             with self.assertRaises(Exception):
-                _ = obj.nextBetterPlanetTypeForSpecies()
+                obj.nextBetterPlanetTypeForSpecies()
 
     def test_OrbitalPositionOnTurn(self):
         for obj in self.objects_to_test:
             retval = obj.OrbitalPositionOnTurn(0)
             self.assertIsInstance(retval, float)
             with self.assertRaises(Exception):
-                _ = obj.OrbitalPositionOnTurn()
+                obj.OrbitalPositionOnTurn()
 
     def setUp(self):
         universe = fo.getUniverse()
@@ -780,9 +780,9 @@ class SystemTester(UniverseObjectTester):
     class_to_test = fo.system
     properties = deepcopy(UniverseObjectTester.properties)
     properties.update({
-       "starType": {
+        "starType": {
            TYPE: fo.starType,
-       },
+        },
         "numStarlanes": {
             TYPE: int,
         },
@@ -828,13 +828,13 @@ class SystemTester(UniverseObjectTester):
 
             # should accept only int
             with self.assertRaises(Exception):
-                _ = obj.HasStarlaneToSystemID()
+                obj.HasStarlaneToSystemID()
             with self.assertRaises(Exception):
-                _ = obj.HasStarlaneToSystemID(0.2)
+                obj.HasStarlaneToSystemID(0.2)
             with self.assertRaises(Exception):
-                _ = obj.HasStarlaneToSystemID(1.0)
+                obj.HasStarlaneToSystemID(1.0)
             with self.assertRaises(Exception):
-                _ = obj.HasStarlaneToSystemID('1')
+                obj.HasStarlaneToSystemID('1')
 
     def test_HasWormholeToSystemID(self):
         universe = fo.getUniverse()
@@ -851,13 +851,13 @@ class SystemTester(UniverseObjectTester):
 
             # should accept only int
             with self.assertRaises(Exception):
-                _ = obj.HasWormholeToSystemID()
+                obj.HasWormholeToSystemID()
             with self.assertRaises(Exception):
-                _ = obj.HasWormholeToSystemID(0.2)
+                obj.HasWormholeToSystemID(0.2)
             with self.assertRaises(Exception):
-                _ = obj.HasWormholeToSystemID(1.0)
+                obj.HasWormholeToSystemID(1.0)
             with self.assertRaises(Exception):
-                _ = obj.HasWormholeToSystemID('1')
+                obj.HasWormholeToSystemID('1')
 
     def test_contained_fleets(self):
         universe = fo.getUniverse()
