@@ -859,6 +859,36 @@ class SystemTester(UniverseObjectTester):
             with self.assertRaises(Exception):
                 _ = obj.HasWormholeToSystemID('1')
 
+    def test_contained_fleets(self):
+        universe = fo.getUniverse()
+        for obj in self.objects_to_test:
+            for fleet_id in obj.fleetIDs:
+                self.assertTrue(universe.getFleet(fleet_id).containedBy(obj.id))
+
+    def test_contained_fields(self):
+        universe = fo.getUniverse()
+        for obj in self.objects_to_test:
+            for field_id in obj.fieldIDs:
+                self.assertTrue(universe.getField(field_id).containedBy(obj.id))
+
+    def test_contained_planets(self):
+        universe = fo.getUniverse()
+        for obj in self.objects_to_test:
+            for planet_id in obj.planetIDs:
+                self.assertTrue(universe.getPlanet(planet_id).containedBy(obj.id))
+
+    def test_contained_buildings(self):
+        universe = fo.getUniverse()
+        for obj in self.objects_to_test:
+            for building_id in obj.buildingIDs:
+                self.assertTrue(universe.getBuilding(building_id).containedBy(obj.id))
+
+    def test_contained_ships(self):
+        universe = fo.getUniverse()
+        for obj in self.objects_to_test:
+            for ship_id in obj.shipIDs:
+                self.assertTrue(universe.getShip(ship_id).containedBy(obj.id))
+
     def setUp(self):
         universe = fo.getUniverse()
         self.objects_to_test = [universe.getSystem(system_id) for system_id in universe.systemIDs]
