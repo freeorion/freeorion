@@ -248,6 +248,18 @@
       <Filter>Header Files\util</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="..\..\universe\EnumsFwd.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRef.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Condition.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ScriptingContext.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">
@@ -331,16 +343,7 @@
     <ClCompile Include="..\..\universe\Building.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\ValueRef.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Condition.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\universe\Effect.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\EffectAccounting.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Encyclopedia.cpp">
@@ -449,6 +452,15 @@
       <Filter>Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="..\..\universe\Effects.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Conditions.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ValueRefs.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\util\Version.cpp.in">
