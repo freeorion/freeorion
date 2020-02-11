@@ -376,19 +376,22 @@ target_include_directories(freeorioncommon SYSTEM
 )
 
 target_link_libraries(freeorioncommon
-    Boost::boost
-    Boost::disable_autolinking
-    Boost::dynamic_linking
-    Boost::filesystem
-    Boost::iostreams
-    Boost::locale
-    Boost::log
-    Boost::log_setup
-    Boost::thread
-    Boost::serialization
-    ZLIB::ZLIB
-    GiGi::GiGi
-    ${CORE_FOUNDATION_LIBRARY}
+    INTERFACE
+        Boost::boost
+        Boost::disable_autolinking
+        Boost::dynamic_linking
+        Boost::filesystem
+        Boost::iostreams
+        Boost::locale
+        Boost::log
+        Boost::log_setup
+        Boost::thread
+        Boost::serialization
+        ZLIB::ZLIB
+    PUBLIC
+        GiGi::GiGi
+    PRIVATE
+        ${CORE_FOUNDATION_LIBRARY}
 )
 
 if(WIN32 AND ${Boost_VERSION} GREATER 106699) # boost >= 1.67
@@ -518,16 +521,8 @@ target_link_libraries(freeoriond
     PRIVATE
         freeorioncommon
         freeorionparse
-        ZLIB::ZLIB
-        Threads::Threads
-        Boost::boost
-        Boost::disable_autolinking
-        Boost::dynamic_linking
-        Boost::log
-        Boost::log_setup
         Boost::python${Boost_PYTHON_SUFFIX}
         ${PYTHON_LIBRARIES}
-        GiGi::GiGi
 )
 
 target_dependencies_copy_to_build(freeoriond)
@@ -555,16 +550,8 @@ target_include_directories(freeorionca SYSTEM
 target_link_libraries(freeorionca
     freeorioncommon
     freeorionparse
-    ZLIB::ZLIB
-    Threads::Threads
-    Boost::boost
-    Boost::disable_autolinking
-    Boost::dynamic_linking
-    Boost::log
-    Boost::log_setup
     Boost::python${Boost_PYTHON_SUFFIX}
     ${PYTHON_LIBRARIES}
-    GiGi::GiGi
 )
 
 target_dependencies_copy_to_build(freeorionca)
@@ -650,15 +637,7 @@ if(NOT BUILD_HEADLESS)
     target_link_libraries(freeorion
         freeorioncommon
         freeorionparse
-        GiGi::GiGi
         GiGi::GiGiSDL
-        ZLIB::ZLIB
-        Threads::Threads
-        Boost::boost
-        Boost::disable_autolinking
-        Boost::dynamic_linking
-        Boost::log
-        Boost::log_setup
         ${OPENGL_gl_LIBRARY}
         ${OPENGL_glu_LIBRARY}
         ${OPENAL_LIBRARY}

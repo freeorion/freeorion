@@ -23,12 +23,6 @@ target_include_directories(fo_systemtest_game
 target_link_libraries(fo_systemtest_game
     freeorioncommon
     freeorionparse
-    Boost::boost
-    Boost::disable_autolinking
-    Boost::dynamic_linking
-    Boost::thread
-    Boost::log
-    Boost::log_setup
     Boost::unit_test_framework
 )
 
