@@ -273,8 +273,8 @@ namespace {
 
         float accumulator_current = 0.0f;
 
-        for (auto obj : Objects().find(OwnedVisitor<UniverseObject>(empire_id))) {
-            if (!obj || !obj->OwnedBy(empire_id))
+        for (auto obj : Objects().find(OwnedVisitor(empire_id))) {
+            if (!obj)
                 continue;
             if (obj->Meters().count(METER_SUPPLY) > 0)
                 accumulator_current += obj->CurrentMeterValue(METER_SUPPLY);

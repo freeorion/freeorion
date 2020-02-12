@@ -1681,7 +1681,7 @@ namespace {
 
 
         // Planets
-        auto empire_planets = Objects().find<Planet>(OwnedVisitor<Planet>(empire_id));
+        auto empire_planets = Objects().find<Planet>(OwnedVisitor(empire_id));
         if (!empire_planets.empty()) {
             detailed_description += "\n\n" + UserString("OWNED_PLANETS");
             for (auto& obj : empire_planets) {
@@ -1693,7 +1693,7 @@ namespace {
 
         // Fleets
         std::vector<std::shared_ptr<const UniverseObject>> nonempty_empire_fleets;
-        for (const auto& fleet : Objects().find<Fleet>(OwnedVisitor<Fleet>(empire_id))) {
+        for (const auto& fleet : Objects().find<Fleet>(OwnedVisitor(empire_id))) {
             if (!fleet->Empty())
                 nonempty_empire_fleets.push_back(fleet);
         }
