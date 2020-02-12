@@ -334,7 +334,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
               EmpireManager& empire_manager, SpeciesManager& species_manager,
               CombatLogManager& combat_log_manager, GalaxySetupData& galaxy_setup_data)
 {
-    ScopedTimer timer("LoadGame: " + filename, true);
+    SectionedScopedTimer timer("LoadGame");
 
     // player notifications
     if (ServerApp* server = ServerApp::GetApp())
@@ -365,16 +365,21 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             // XML file format signature not found; try as binary
             freeorion_bin_iarchive ia(ifs);
             DebugLogger() << "Reading binary iarchive";
+            timer.EnterSection("binary headers");
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
             ia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_header_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_game_empire_data);
-
+            timer.EnterSection("binary player data");
             ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
+            timer.EnterSection("binary empires");
             ia >> BOOST_SERIALIZATION_NVP(empire_manager);
+            timer.EnterSection("binary species");
             ia >> BOOST_SERIALIZATION_NVP(species_manager);
+            timer.EnterSection("binary combat log");
             ia >> BOOST_SERIALIZATION_NVP(combat_log_manager);
+            timer.EnterSection("binary universe");
             Deserialize(ia, universe);
 
             DebugLogger() << "Done deserializing";
@@ -384,6 +389,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             DebugLogger() << "Reading XML iarchive";
             // read from save file: uncompressed header serialized data, with compressed main archive string at end...
             // deserialize uncompressed save header info
+            timer.EnterSection("xml headers");
             xia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             xia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
             xia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
@@ -394,10 +400,15 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             if (ignored_save_preview_data.save_format_marker == XML_DIRECT_MARKER) {
                 // deserialize directly from file / disk to gamestate
 
+                timer.EnterSection("xml player data");
                 xia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
+                timer.EnterSection("xml empires");
                 xia >> BOOST_SERIALIZATION_NVP(empire_manager);
+                timer.EnterSection("xml species");
                 xia >> BOOST_SERIALIZATION_NVP(species_manager);
+                timer.EnterSection("xml combat log");
                 xia >> BOOST_SERIALIZATION_NVP(combat_log_manager);
+                timer.EnterSection("xml universe");
                 Deserialize(xia, universe);
 
             } else {
@@ -405,6 +416,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
                 if (BOOST_VERSION >= 106600 && ignored_save_preview_data.save_format_marker == XML_COMPRESSED_MARKER)
                     throw std::invalid_argument("Save Format Not Compatible with Boost Version " BOOST_LIB_VERSION);
 
+                timer.EnterSection("decompression");
                 // allocate buffers for compressed and deceompressed serialized gamestate
                 DebugLogger() << "Allocating buffers for XML deserialization...";
                 std::string serial_str, compressed_str;
@@ -455,10 +467,15 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
                 // create archive with (preallocated) buffer...
                 freeorion_xml_iarchive xia2(s_source);
                 // deserialize main gamestate info
+                timer.EnterSection("xml player data");
                 xia2 >> BOOST_SERIALIZATION_NVP(player_save_game_data);
+                timer.EnterSection("xml empires");
                 xia2 >> BOOST_SERIALIZATION_NVP(empire_manager);
+                timer.EnterSection("xml species");
                 xia2 >> BOOST_SERIALIZATION_NVP(species_manager);
+                timer.EnterSection("xml combat logs");
                 xia2 >> BOOST_SERIALIZATION_NVP(combat_log_manager);
+                timer.EnterSection("xml universe");
                 Deserialize(xia2, universe);
             }
         }
@@ -467,13 +484,13 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         ErrorLogger() << "LoadGame(...) failed!  Error: " << err.what();
         return;
     }
-    DebugLogger() << "LoadGame : Successfully loaded save file";
+    DebugLogger() << "LoadGame : Successfully loaded save file: " + filename;
 }
 
 void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_setup_data) {
     SaveGamePreviewData ignored_save_preview_data;
 
-    ScopedTimer timer("LoadGalaxySetupData: " + filename, true);
+    ScopedTimer timer("LoadGalaxySetupData");
 
     try {
         fs::path path = FilenameToPath(filename);
