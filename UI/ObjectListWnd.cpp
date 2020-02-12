@@ -1468,7 +1468,7 @@ public:
             AttachChild(m_dot);
         }
 
-        auto obj = GetUniverseObject(m_object_id);
+        auto obj = Objects().get(m_object_id);
         auto textures = ObjectTextures(obj);
 
         m_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(
@@ -1549,7 +1549,7 @@ private:
     void RefreshCache() const {
         m_column_val_cache.clear();
         m_column_val_cache.reserve(NUM_COLUMNS);
-        auto obj = GetUniverseObject(m_object_id);
+        auto obj = Objects().get(m_object_id);
         ScriptingContext context(obj);
 
         // get currently displayed column value refs, put values into this panel's cache
@@ -2264,7 +2264,7 @@ private:
     void AddObjectRow(int object_id, int container, const std::set<int>& contents,
                       int indent, GG::ListBox::iterator it)
     {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj)
             return;
         const GG::Pt row_size = ListRowSize();
@@ -2356,7 +2356,7 @@ private:
     void ObjectStateChanged(int object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
         if (!obj)
             return;
@@ -2549,7 +2549,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     // create popup menu with object commands in it
     popup->AddMenuItem(GG::MenuItem(UserString("DUMP"), false, false, dump_action));
 
-    auto obj = GetUniverseObject(object_id);
+    auto obj = Objects().get(object_id);
     //DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
     if (!obj)
         return;
@@ -2570,7 +2570,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         for (const auto& entry : m_list_box->Selections()) {
             ObjectRow *row = dynamic_cast<ObjectRow *>(entry->get());
             if (row) {
-                auto one_planet = GetPlanet(row->ObjectID());
+                auto one_planet = Objects().get<Planet>(row->ObjectID());
                 if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
                     for (const std::string& planet_focus : one_planet->AvailableFoci())
                         all_foci[planet_focus]++;
@@ -2600,7 +2600,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     if (!row)
                         continue;
 
-                    auto one_planet = GetPlanet(row->ObjectID());
+                    auto one_planet = Objects().get<Planet>(row->ObjectID());
                     if (!(one_planet && one_planet->OwnedBy(app->EmpireID())))
                         continue;
 
@@ -2634,7 +2634,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     ObjectRow* row = dynamic_cast<ObjectRow*>(entry->get());
                     if (!row)
                         continue;
-                    auto one_planet = GetPlanet(row->ObjectID());
+                    auto one_planet = Objects().get<Planet>(row->ObjectID());
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID()) || !cur_empire->ProducibleItem(BT_SHIP, ship_design, row->ObjectID()))
                         continue;
                     ProductionQueue::ProductionItem ship_item(BT_SHIP, ship_design);
@@ -2672,7 +2672,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     ObjectRow *row = dynamic_cast<ObjectRow *>(selection->get());
                     if (!row)
                         continue;
-                    std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
+                    std::shared_ptr<Planet> one_planet = Objects().get<Planet>(row->ObjectID());
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID())
                         || !cur_empire->EnqueuableItem(BT_BUILDING, bld, row->ObjectID())
                         || !cur_empire->ProducibleItem(BT_BUILDING, bld, row->ObjectID()))

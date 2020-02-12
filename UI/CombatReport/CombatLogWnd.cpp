@@ -587,7 +587,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
     // Write Header text
-    auto system = GetSystem(log->system_id);
+    auto system = Objects().get<System>(log->system_id);
     const std::string& sys_name = (system ? system->PublicName(client_empire_id) : UserString("ERROR"));
     DebugLogger(combat_log) << "Showing combat log #" << log_id << " at " << sys_name << " (" << log->system_id
                             << ") with " << log->combat_events.size() << " events";

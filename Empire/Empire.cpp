@@ -94,12 +94,12 @@ std::shared_ptr<const UniverseObject> Empire::Source() const {
         return nullptr;
 
     // Use the current source if valid
-    auto valid_current_source = GetUniverseObject(m_source_id);
+    auto valid_current_source = Objects().get(m_source_id);
     if (valid_current_source && valid_current_source->OwnedBy(m_id))
         return valid_current_source;
 
     // Try the capital
-    auto capital_as_source = GetUniverseObject(m_capital_id);
+    auto capital_as_source = Objects().get(m_capital_id);
     if (capital_as_source && capital_as_source->OwnedBy(m_id)) {
         m_source_id = m_capital_id;
         return capital_as_source;
@@ -142,7 +142,7 @@ void Empire::SetCapitalID(int id) {
     if (possible_capital && possible_capital->OwnedBy(m_id))
         m_capital_id = id;
 
-    auto possible_source = GetUniverseObject(id);
+    auto possible_source = Objects().get(id);
     if (possible_source && possible_source->OwnedBy(m_id))
         m_source_id = id;
 }
@@ -458,7 +458,7 @@ bool Empire::ProducibleItem(BuildType build_type, int location_id) const {
         return false;
 
     // must own the production location...
-    auto location = GetUniverseObject(location_id);
+    auto location = Objects().get(location_id);
     if (!location) {
         WarnLogger() << "Empire::ProducibleItem for BT_STOCKPILE unable to get location object with id " << location_id;
         return false;
@@ -495,7 +495,7 @@ bool Empire::ProducibleItem(BuildType build_type, const std::string& name, int l
     if (!building_type || !building_type->Producible())
         return false;
 
-    auto build_location = GetUniverseObject(location);
+    auto build_location = Objects().get(location);
     if (!build_location)
         return false;
 
@@ -525,7 +525,7 @@ bool Empire::ProducibleItem(BuildType build_type, int design_id, int location) c
     if (!ship_design || !ship_design->Producible())
         return false;
 
-    auto build_location = GetUniverseObject(location);
+    auto build_location = Objects().get(location);
     if (!build_location) return false;
 
     if (build_type == BT_SHIP) {
@@ -558,7 +558,7 @@ bool Empire::EnqueuableItem(BuildType build_type, const std::string& name, int l
     if (!building_type || !building_type->Producible())
         return false;
 
-    auto build_location = GetUniverseObject(location);
+    auto build_location = Objects().get(location);
     if (!build_location)
         return false;
 
@@ -649,10 +649,11 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
 
     // as of this writing, only planets can generate supply propagation
     std::vector<std::shared_ptr<const UniverseObject>> owned_planets;
-    for (int object_id : known_objects) {
-        if (auto planet = GetPlanet(object_id))
-            if (planet->OwnedBy(this->EmpireID()))
-                owned_planets.push_back(planet);
+    for (const auto& planet: Objects().find<Planet>(known_objects)) {
+        if (!planet)
+            continue;
+        if (planet->OwnedBy(this->EmpireID()))
+            owned_planets.push_back(planet);
     }
 
     //std::cout << "... empire owns " << owned_planets.size() << " planets" << std::endl;
@@ -699,8 +700,7 @@ void Empire::UpdateUnobstructedFleets() {
     const std::set<int>& known_destroyed_objects =
         GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
-    for (int system_id : m_supply_unobstructed_systems) {
-        auto system = GetSystem(system_id);
+    for (const auto& system : Objects().find<System>(m_supply_unobstructed_systems)) {
         if (!system)
             continue;
 
@@ -708,7 +708,7 @@ void Empire::UpdateUnobstructedFleets() {
             if (known_destroyed_objects.count(fleet->ID()))
                 continue;
             if (fleet->OwnedBy(m_id))
-                fleet->SetArrivalStarlane(system_id);
+                fleet->SetArrivalStarlane(system->ID());
         }
     }
 }
@@ -832,59 +832,56 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
 
 
     // check each potential supplyable system for whether it can propagate supply.
-    for (int sys_id : known_systems) {
-        auto sys = GetSystem(sys_id);
-        if (!sys) {
-            ErrorLogger() << "Empire::UpdateSupplyUnobstructedSystems tried to look up known by non existant system with id " << sys_id;
+    for (const auto& sys : Objects().find<System>(known_systems)) {
+        if (!sys)
             continue;
-        }
 
         // has empire ever seen this system with partial or better visibility?
-        if (!systems_with_at_least_partial_visibility_at_some_point.count(sys_id)) {
-            TraceLogger(supply) << "System " << sys->Name() << " (" << sys_id << ") has never been seen";
+        if (!systems_with_at_least_partial_visibility_at_some_point.count(sys->ID())) {
+            TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") has never been seen";
             continue;
         }
 
         // if system is explored, then whether it can propagate supply depends
         // on what friendly / enemy ships and planets are in the system
 
-        if (unrestricted_friendly_systems.count(sys_id)) {
+        if (unrestricted_friendly_systems.count(sys->ID())) {
             // in unrestricted friendly systems, supply can propagate
-            m_supply_unobstructed_systems.insert(sys_id);
-            TraceLogger(supply) << "System " << sys->Name() << " (" << sys_id << ") +++ is unrestricted and friendly";
+            m_supply_unobstructed_systems.insert(sys->ID());
+            TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") +++ is unrestricted and friendly";
 
-        } else if (systems_containing_friendly_fleets.count(sys_id)) {
+        } else if (systems_containing_friendly_fleets.count(sys->ID())) {
             // if there are unrestricted friendly ships, and no unrestricted enemy fleets, supply can propagate
-            if (!unrestricted_obstruction_systems.count(sys_id)) {
-                m_supply_unobstructed_systems.insert(sys_id);
-                TraceLogger(supply) << "System " << sys->Name() << " (" << sys_id << ") +++ has friendly fleets and no obstructions";
+            if (!unrestricted_obstruction_systems.count(sys->ID())) {
+                m_supply_unobstructed_systems.insert(sys->ID());
+                TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") +++ has friendly fleets and no obstructions";
             } else {
-                TraceLogger(supply) << "System " << sys->Name() << " (" << sys_id << ") --- is has friendly fleets but has obstructions";
+                TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") --- is has friendly fleets but has obstructions";
             }
 
-        } else if (!systems_containing_obstructing_objects.count(sys_id)) {
+        } else if (!systems_containing_obstructing_objects.count(sys->ID())) {
             // if there are no friendly fleets or obstructing enemy fleets, supply can propagate
-            m_supply_unobstructed_systems.insert(sys_id);
-            TraceLogger(supply) << "System " << sys->Name() << " (" << sys_id << ") +++ has no obstructing objects";
+            m_supply_unobstructed_systems.insert(sys->ID());
+            TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") +++ has no obstructing objects";
 
-        } else if (!systems_with_lane_preserving_fleets.count(sys_id)) {
+        } else if (!systems_with_lane_preserving_fleets.count(sys->ID())) {
             // if there are obstructing enemy fleets but no friendly fleets that could maintain
             // lane access, supply cannot propagate and this empire's available system exit
-            TraceLogger(supply) << "System " << sys->Name() << " (" << sys_id << ") --- has no lane preserving fleets";
+            TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") --- has no lane preserving fleets";
 
             // lanes for this system are cleared
-            if (!m_preserved_system_exit_lanes[sys_id].empty()) {
+            if (!m_preserved_system_exit_lanes[sys->ID()].empty()) {
                 std::stringstream ssca;
                 ssca << "Empire::UpdateSupplyUnobstructedSystems clearing preserved lanes for system ("
-                     << sys_id << "); available lanes were:";
-                for (int system_id : m_preserved_system_exit_lanes[sys_id])
+                     << sys->ID() << "); available lanes were:";
+                for (int system_id : m_preserved_system_exit_lanes[sys->ID()])
                     ssca << system_id << ", ";
                 TraceLogger(supply) << ssca.str();
             }
-            m_preserved_system_exit_lanes[sys_id].clear();
+            m_preserved_system_exit_lanes[sys->ID()].clear();
 
         } else {
-            TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems : Restricted system " << sys_id << " with no friendly fleets, no obustrcting enemy fleets, and no lane-preserving fleets";
+            TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems : Restricted system " << sys->ID() << " with no friendly fleets, no obustrcting enemy fleets, and no lane-preserving fleets";
         }
     }
 }
@@ -893,8 +890,7 @@ void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id) {
     if (!m_supply_unobstructed_systems.count(start_system_id))
         m_pending_system_exit_lanes[start_system_id].insert(dest_system_id);
     else { // if the system is unobstructed, mark all its lanes as avilable
-        auto system = GetSystem(start_system_id);
-        for (const auto& lane : system->StarlanesWormholes()) {
+        for (const auto& lane : Objects().get<System>(start_system_id)->StarlanesWormholes()) {
             m_pending_system_exit_lanes[start_system_id].insert(lane.first); // will add both starlanes and wormholes
         }
     }
@@ -1491,7 +1487,7 @@ void Empire::AddHullType(const std::string& name) {
 }
 
 void Empire::AddExploredSystem(int ID) {
-    if (GetSystem(ID))
+    if (Objects().get<System>(ID))
         m_explored_systems.insert(ID);
     else
         ErrorLogger() << "Empire::AddExploredSystem given an invalid system id: " << ID;
@@ -1837,12 +1833,12 @@ void Empire::CheckProductionProgress() {
                 build_description = "unknown build type";
         }
 
-        auto build_location = GetUniverseObject(elem.location);
+        auto build_location = Objects().get(elem.location);
         if (!build_location || (elem.item.build_type == BT_BUILDING && build_location->ObjectType() != OBJ_PLANET)) {
             ErrorLogger() << "Couldn't get valid build location for completed " << build_description;
             continue;
         }
-        auto system = GetSystem(build_location->SystemID());
+        auto system = Objects().get<System>(build_location->SystemID());
         // TODO: account for shipyards and/or other ship production
         // sites that are in interstellar space, if needed
         if (!system) {
@@ -1871,7 +1867,7 @@ void Empire::CheckProductionProgress() {
             if (consumption_impossible)
                 break;
             for (auto& special_meter : special_type.second) {
-                auto obj = GetUniverseObject(special_meter.first);
+                auto obj = Objects().get(special_meter.first);
                 float capacity = obj ? obj->SpecialCapacity(special_type.first) : 0.0f;
                 if (capacity < special_meter.second * elem.blocksize) {
                     consumption_impossible = true;
@@ -1884,7 +1880,7 @@ void Empire::CheckProductionProgress() {
             if (consumption_impossible)
                 break;
             for (auto& object_meter : meter_type.second) {
-                auto obj = GetUniverseObject(object_meter.first);
+                auto obj = Objects().get(object_meter.first);
                 const Meter* meter = obj ? obj->GetMeter(meter_type.first) : nullptr;
                 if (!meter || meter->Current() < object_meter.second * elem.blocksize) {
                     consumption_impossible = true;
@@ -1915,7 +1911,7 @@ void Empire::CheckProductionProgress() {
         // consume the item's special and meter consumption
         for (auto& special_type : sc) {
             for (auto& special_meter : special_type.second) {
-                auto obj = GetUniverseObject(special_meter.first);
+                auto obj = Objects().get(special_meter.first);
                 if (!obj)
                     continue;
                 if (!obj->HasSpecial(special_type.first))
@@ -1927,7 +1923,7 @@ void Empire::CheckProductionProgress() {
         }
         for (auto& meter_type : mc) {
             for (const auto& object_meter : meter_type.second) {
-                auto obj = GetUniverseObject(object_meter.first);
+                auto obj = Objects().get(object_meter.first);
                 if (!obj)
                     continue;
                 Meter*meter = obj->GetMeter(meter_type.first);
@@ -1944,7 +1940,7 @@ void Empire::CheckProductionProgress() {
         // create actual thing(s) being produced
         switch (elem.item.build_type) {
         case BT_BUILDING: {
-            auto planet = GetPlanet(elem.location);
+            auto planet = Objects().get<Planet>(elem.location);
 
             // create new building
             auto building = universe.InsertNew<Building>(m_id, elem.item.name, m_id);
@@ -1977,7 +1973,7 @@ void Empire::CheckProductionProgress() {
                 species_name = location_pop_center->SpeciesName();
             else if (auto location_ship = std::dynamic_pointer_cast<const Ship>(build_location))
                 species_name = location_ship->SpeciesName();
-            else if (auto capital_planet = GetPlanet(this->CapitalID()))
+            else if (auto capital_planet = Objects().get<Planet>(this->CapitalID()))
                 species_name = capital_planet->SpeciesName();
             // else give up...
             if (species_name.empty()) {
@@ -2057,7 +2053,7 @@ void Empire::CheckProductionProgress() {
 
     // create fleets for new ships and put ships into fleets
     for (auto& entry : system_new_ships) {
-        auto system = GetSystem(entry.first);
+        auto system = Objects().get<System>(entry.first);
         if (!system) {
             ErrorLogger() << "Couldn't get system with id " << entry.first << " for creating new fleets for newly produced ships";
             continue;
@@ -2146,10 +2142,10 @@ void Empire::CheckProductionProgress() {
                     next_fleet->SetAggressive(next_fleet->HasArmedShips());
 
                     if (rally_point_id != INVALID_OBJECT_ID) {
-                        if (GetSystem(rally_point_id)) {
+                        if (Objects().get<System>(rally_point_id)) {
                             next_fleet->CalculateRouteTo(rally_point_id);
-                        } else if (auto rally_obj = GetUniverseObject(rally_point_id)) {
-                            if (GetSystem(rally_obj->SystemID()))
+                        } else if (auto rally_obj = Objects().get(rally_point_id)) {
+                            if (Objects().get<System>(rally_obj->SystemID()))
                                 next_fleet->CalculateRouteTo(rally_obj->SystemID());
                         } else {
                             ErrorLogger() << "Unable to find system to route to with rally point id: " << rally_point_id;

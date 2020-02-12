@@ -1642,7 +1642,7 @@ void PartsListBox::Populate() {
     // get empire id and location to use for cost and time comparisons
     int loc_id = INVALID_OBJECT_ID;
     if (empire) {
-        auto location = GetUniverseObject(empire->CapitalID());
+        auto location = Objects().get(empire->CapitalID());
         loc_id = location ? location->ID() : INVALID_OBJECT_ID;
     }
 

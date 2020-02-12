@@ -43,14 +43,14 @@ void ResourcePanel::CompleteConstruction() {
 
     SetName("ResourcePanel");
 
-    auto res = GetResCenter();
+    auto res = Objects().get<ResourceCenter>(m_rescenter_id);
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
     m_expand_button->LeftPressedSignal.connect(
         boost::bind(&ResourcePanel::ExpandCollapseButtonPressed, this));
 
-    const auto obj = GetUniverseObject(m_rescenter_id);
+    const auto obj = Objects().get(m_rescenter_id);
     if (!obj) {
         ErrorLogger() << "Invalid object id " << m_rescenter_id;
         return;
@@ -132,7 +132,7 @@ void ResourcePanel::Update() {
         m_multi_icon_value_indicator->ClearToolTip(meter_stat.first);
     }
 
-    auto obj = GetUniverseObject(m_rescenter_id);
+    auto obj = Objects().get(m_rescenter_id);
     if (!obj) {
         ErrorLogger() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
         return;
@@ -222,15 +222,6 @@ void ResourcePanel::DoLayout() {
     }
 
     SetCollapsed(!s_expanded_map[m_rescenter_id]);
-}
-
-std::shared_ptr<const ResourceCenter> ResourcePanel::GetResCenter() const {
-    auto res = GetResourceCenter(m_rescenter_id);
-    if (!res) {
-        ErrorLogger() << "ResourcePanel tried to get an object with an invalid m_rescenter_id";
-        return nullptr;
-    }
-    return res;
 }
 
 std::map<int, bool> ResourcePanel::s_expanded_map;

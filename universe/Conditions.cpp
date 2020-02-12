@@ -1511,7 +1511,7 @@ namespace {
             auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
             std::shared_ptr<const ::Building> building;
             if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-                planet = GetPlanet(building->PlanetID());
+                planet = Objects().get<Planet>(building->PlanetID());
             }
             if (!planet)
                 return false;
@@ -1644,7 +1644,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
     auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
     if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        planet = GetPlanet(building->PlanetID());
+        planet = Objects().get<Planet>(building->PlanetID());
     }
     if (!planet)
         return false;
@@ -3212,7 +3212,7 @@ std::string InSystem::Description(bool negated/* = false*/) const {
     int system_id = INVALID_OBJECT_ID;
     if (m_system_id && m_system_id->ConstantExpr())
         system_id = m_system_id->Eval();
-    if (auto system = GetSystem(system_id))
+    if (auto system = Objects().get<System>(system_id))
         system_str = system->Name();
     else if (m_system_id)
         system_str = m_system_id->Description();
@@ -3259,7 +3259,7 @@ void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 
     // simple case of a single specified system id; can add just objects in that system
     int system_id = m_system_id->Eval(parent_context);
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system)
         return;
 
@@ -3367,7 +3367,7 @@ std::string ObjectID::Description(bool negated/* = false*/) const {
     int object_id = INVALID_OBJECT_ID;
     if (m_object_id && m_object_id->ConstantExpr())
         object_id = m_object_id->Eval();
-    if (auto system = GetSystem(object_id))
+    if (auto system = Objects().get<System>(object_id))
         object_str = system->Name();
     else if (m_object_id)
         object_str = m_object_id->Description();
@@ -3473,7 +3473,7 @@ namespace {
             auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
             std::shared_ptr<const ::Building> building;
             if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-                planet = GetPlanet(building->PlanetID());
+                planet = Objects().get<Planet>(building->PlanetID());
             }
             if (planet) {
                 // is it one of the specified building types?
@@ -3590,7 +3590,7 @@ bool PlanetType::Match(const ScriptingContext& local_context) const {
     auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
     if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        planet = GetPlanet(building->PlanetID());
+        planet = Objects().get<Planet>(building->PlanetID());
     }
     if (planet) {
         for (auto& type : m_types) {
@@ -3657,7 +3657,7 @@ namespace {
             auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
             std::shared_ptr<const ::Building> building;
             if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-                planet = GetPlanet(building->PlanetID());
+                planet = Objects().get<Planet>(building->PlanetID());
             }
             if (planet) {
                 // is it one of the specified building types?
@@ -3777,7 +3777,7 @@ bool PlanetSize::Match(const ScriptingContext& local_context) const {
     auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
     if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        planet = GetPlanet(building->PlanetID());
+        planet = Objects().get<Planet>(building->PlanetID());
     }
     if (planet) {
         for (auto& size : m_sizes) {
@@ -3850,7 +3850,7 @@ namespace {
             auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
             std::shared_ptr<const ::Building> building;
             if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-                planet = GetPlanet(building->PlanetID());
+                planet = Objects().get<Planet>(building->PlanetID());
             }
             if (planet) {
                 // is it one of the specified building types?
@@ -3994,7 +3994,7 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
     auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
     if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        planet = GetPlanet(building->PlanetID());
+        planet = Objects().get<Planet>(building->PlanetID());
     }
     if (!planet)
         return false;
@@ -4085,7 +4085,7 @@ namespace {
             }
             // is it a building on a planet?
             if (auto building = std::dynamic_pointer_cast<const ::Building>(candidate)) {
-                auto planet = GetPlanet(building->PlanetID());
+                auto planet = Objects().get<Planet>(building->PlanetID());
                 const std::string& species_name = planet->SpeciesName();
                 // if the planet (which IS a popcenter) has a species and that species is one of those specified...
                 return !species_name.empty() && (m_names.empty() || std::count(m_names.begin(), m_names.end(), species_name));
@@ -4207,7 +4207,7 @@ bool Species::Match(const ScriptingContext& local_context) const {
     auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
     if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        planet = GetPlanet(building->PlanetID());
+        planet = Objects().get<Planet>(building->PlanetID());
     }
     if (planet) {
         if (m_names.empty()) {
@@ -4624,7 +4624,7 @@ namespace {
             auto res_center = std::dynamic_pointer_cast<const ResourceCenter>(candidate);
             std::shared_ptr<const ::Building> building;
             if (!res_center && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-                if (auto planet = GetPlanet(building->PlanetID()))
+                if (auto planet = Objects().get<Planet>(building->PlanetID()))
                     res_center = std::dynamic_pointer_cast<const ResourceCenter>(planet);
             }
             if (res_center) {
@@ -4736,7 +4736,7 @@ bool FocusType::Match(const ScriptingContext& local_context) const {
     auto res_center = std::dynamic_pointer_cast<const ResourceCenter>(candidate);
     std::shared_ptr<const ::Building> building;
     if (!res_center && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        if (auto planet = GetPlanet(building->PlanetID()))
+        if (auto planet = Objects().get<Planet>(building->PlanetID()))
             res_center = std::dynamic_pointer_cast<const ResourceCenter>(planet);
     }
     if (res_center) {
@@ -4807,7 +4807,7 @@ namespace {
             if (!candidate)
                 return false;
 
-            std::shared_ptr<const System> system = GetSystem(candidate->SystemID());
+            std::shared_ptr<const System> system = Objects().get<System>(candidate->SystemID());
             if (system || (system = std::dynamic_pointer_cast<const System>(candidate)))
                 return !m_types.empty() && std::count(m_types.begin(), m_types.end(), system->GetStarType());
 
@@ -4911,7 +4911,7 @@ bool StarType::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    std::shared_ptr<const System> system = GetSystem(candidate->SystemID());
+    std::shared_ptr<const System> system = Objects().get<System>(candidate->SystemID());
     if (system || (system = std::dynamic_pointer_cast<const System>(candidate))) {
         for (auto& type : m_types) {
             if (type->Eval(local_context) == system->GetStarType())
@@ -7833,7 +7833,7 @@ namespace {
 
             // check all existing lanes of currently-being-checked system
             for (const auto& lane : sys_existing_lanes) {
-                auto lane_end_sys3 = GetSystem(lane.first);
+                auto lane_end_sys3 = Objects().get<System>(lane.first);
                 if (!lane_end_sys3)
                     continue;
                 // don't need to check against existing lanes that include one
@@ -7882,7 +7882,7 @@ namespace {
             // destination objects
             std::set<std::shared_ptr<const System>> dest_systems;
             for (auto& obj : destination_objects) {
-                if (auto sys = GetSystem(obj->SystemID()))
+                if (auto sys = Objects().get<System>(obj->SystemID()))
                     dest_systems.insert(sys);
             }
             std::copy(dest_systems.begin(), dest_systems.end(), std::inserter(m_destination_systems, m_destination_systems.end()));
@@ -7895,7 +7895,7 @@ namespace {
             // get system from candidate
             auto candidate_sys = std::dynamic_pointer_cast<const System>(candidate);
             if (!candidate_sys)
-                candidate_sys = GetSystem(candidate->SystemID());
+                candidate_sys = Objects().get<System>(candidate->SystemID());
             if (!candidate_sys)
                 return false;
 
@@ -7917,7 +7917,7 @@ namespace {
             // present lanes of the candidate system
             //TraceLogger() << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << std::endl;
             for (const auto& lane : candidate_sys->StarlanesWormholes()) {
-                auto candidate_existing_lane_end_sys = GetSystem(lane.first);
+                auto candidate_existing_lane_end_sys = Objects().get<System>(lane.first);
                 if (!candidate_existing_lane_end_sys)
                     continue;
 
@@ -7938,7 +7938,7 @@ namespace {
                 // check this destination system's existing lanes against a lane
                 // to the candidate system
                 for (const auto& dest_lane : dest_sys->StarlanesWormholes()) {
-                    auto dest_lane_end_sys = GetSystem(dest_lane.first);
+                    auto dest_lane_end_sys = Objects().get<System>(dest_lane.first);
                     if (!dest_lane_end_sys)
                         continue;
 
@@ -8209,7 +8209,7 @@ bool Stationary::Match(const ScriptingContext& local_context) const {
     auto fleet = std::dynamic_pointer_cast<const Fleet>(candidate);
     if (!fleet)
         if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
-            fleet = GetFleet(ship->FleetID());
+            fleet = Objects().get<Fleet>(ship->FleetID());
 
     if (fleet) {
         // if a fleet is available, it is "moving", or not stationary, if it's
@@ -8267,7 +8267,7 @@ bool Aggressive::Match(const ScriptingContext& local_context) const {
     auto fleet = std::dynamic_pointer_cast<const Fleet>(candidate);
     if (!fleet)
         if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
-            fleet = GetFleet(ship->FleetID());
+            fleet = Objects().get<Fleet>(ship->FleetID());
 
     if (!fleet)
         return false;
@@ -8461,7 +8461,7 @@ namespace {
                 auto candidate_planet = std::dynamic_pointer_cast<const Planet>(candidate);
                 std::shared_ptr<const ::Building> building;
                 if (!candidate_planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
-                    candidate_planet = GetPlanet(building->PlanetID());
+                    candidate_planet = Objects().get<Planet>(building->PlanetID());
                 if (candidate_planet) {
                     int candidate_planet_id = candidate_planet->ID();
                     // can only match if the from_object is (or is on) the same planet
@@ -8469,7 +8469,7 @@ namespace {
                         auto from_obj_planet = std::dynamic_pointer_cast<const Planet>(from_object);
                         std::shared_ptr<const ::Building> from_building;
                         if (!from_obj_planet && (from_building = std::dynamic_pointer_cast<const ::Building>(from_object)))
-                            from_obj_planet = GetPlanet(from_building->PlanetID());
+                            from_obj_planet = Objects().get<Planet>(from_building->PlanetID());
                         if (from_obj_planet && from_obj_planet->ID() == candidate_planet_id)
                             return true;
                     }
@@ -8630,7 +8630,7 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
             ErrorLogger() << "CanColonize couldn't cast supposedly building candidate";
             return false;
         }
-        auto planet = GetPlanet(building->PlanetID());
+        auto planet = Objects().get<Planet>(building->PlanetID());
         if (!planet) {
             ErrorLogger() << "CanColonize couldn't get building's planet";
             return false;
@@ -8703,7 +8703,7 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
             ErrorLogger() << "CanProduceShips couldn't cast supposedly building candidate";
             return false;
         }
-        auto planet = GetPlanet(building->PlanetID());
+        auto planet = Objects().get<Planet>(building->PlanetID());
         if (!planet) {
             ErrorLogger() << "CanProduceShips couldn't get building's planet";
             return false;

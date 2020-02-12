@@ -54,7 +54,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
         // special case for population meter for an indicator showing only a
         // single popcenter: icon is species icon, rather than generic pop icon
         if (PRIMARY_METER_TYPE == METER_POPULATION && m_object_ids.size() == 1) {
-            if (auto pc = GetPopCenter(*m_object_ids.begin()))
+            if (auto pc = Objects().get<PopCenter>(*m_object_ids.begin()))
                 texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
 
@@ -67,7 +67,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
         m_icons.back()->RightClickedSignal.connect([this, meter, meter_string](const GG::Pt& pt) {
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-            auto pc = GetPopCenter(*(this->m_object_ids.begin()));
+            auto pc = Objects().get<PopCenter>(*(this->m_object_ids.begin()));
             if (meter == METER_POPULATION && pc && this->m_object_ids.size() == 1) {
                 auto species_name = pc->SpeciesName();
                 if (!species_name.empty()) {
@@ -116,12 +116,9 @@ void MultiIconValueIndicator::Update() {
     for (std::size_t i = 0; i < m_icons.size(); ++i) {
         assert(m_icons[i]);
         double total = 0.0;
-        for (int object_id : m_object_ids) {
-            auto obj = GetUniverseObject(object_id);
-            if (!obj) {
-                ErrorLogger() << "MultiIconValueIndicator::Update couldn't get object with id " << object_id;
+        for (const auto& obj : Objects().find<UniverseObject>(m_object_ids)) {
+            if (!obj)
                 continue;
-            }
             //DebugLogger() << "MultiIconValueIndicator::Update object:";
             //DebugLogger() << obj->Dump();
             auto type = m_meter_types[i].first;

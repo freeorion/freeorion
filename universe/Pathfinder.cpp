@@ -518,7 +518,7 @@ namespace {
                 int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
                 // look up lane between systems
-                std::shared_ptr<const System> system1 = GetEmpireKnownSystem(sys_id_1, m_empire_id);
+                std::shared_ptr<const System> system1 = EmpireKnownObjects(m_empire_id).get<System>(sys_id_1);
                 if (!system1) {
                     ErrorLogger() << "EdgeDescriptor::operator() couldn't find system with id " << sys_id_1;
                     return false;
@@ -589,12 +589,12 @@ namespace {
                 int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
                 // look up objects in system
-                auto system1 = GetEmpireKnownSystem(sys_id_1, m_empire_id);
+                auto system1 = EmpireKnownObjects(m_empire_id).get<System>(sys_id_1);
                 if (!system1) {
                     ErrorLogger() << "Invalid source system " << sys_id_1;
                     return true;
                 }
-                auto system2 = GetEmpireKnownSystem(sys_id_2, m_empire_id);
+                auto system2 = EmpireKnownObjects(m_empire_id).get<System>(sys_id_2);
                 if (!system2) {
                     ErrorLogger() << "Invalid target system " << sys_id_2;
                     return true;
@@ -733,7 +733,7 @@ namespace {
         std::shared_ptr<const Fleet> retval = std::dynamic_pointer_cast<const Fleet>(obj);
         if (!retval) {
             if (auto ship = std::dynamic_pointer_cast<const Ship>(obj))
-                retval = GetFleet(ship->FleetID());
+                retval = Objects().get<Fleet>(ship->FleetID());
         }
         return retval;
     }
@@ -766,12 +766,12 @@ double Pathfinder::LinearDistance(int system1_id, int system2_id) const {
 }
 
 double Pathfinder::PathfinderImpl::LinearDistance(int system1_id, int system2_id) const {
-    std::shared_ptr<const System> system1 = GetSystem(system1_id);
+    const auto system1 = Objects().get<System>(system1_id);
     if (!system1) {
         ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system1_id;
         throw std::out_of_range("system1_id invalid");
     }
-    std::shared_ptr<const System> system2 = GetSystem(system2_id);
+    const auto system2 = Objects().get<System>(system2_id);
     if (!system2) {
         ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system2_id;
         throw std::out_of_range("system2_id invalid");
@@ -830,7 +830,7 @@ namespace {
             return nullptr;
 
         int system_id = obj->SystemID();
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (system)
             return system_id;
 
@@ -851,7 +851,7 @@ namespace {
 
     /** Return the location of the object with id \p object_id.*/
     GeneralizedLocationType GeneralizedLocation(int object_id) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         return GeneralizedLocation(obj);
     }
 
@@ -1043,16 +1043,16 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
     // If one or both objects are (in) a fleet between systems, use the destination system
     // and add the distance from the fleet to the destination system, essentially calculating
     // the distance travelled until both could be in the same system.
-    std::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+    const auto obj1 = Objects().get(object1_id);
     if (!obj1)
         return -1;
 
-    std::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+    const auto obj2 = Objects().get(object2_id);
     if (!obj2)
         return -1;
 
-    std::shared_ptr<const System> system_one = GetSystem(obj1->SystemID());
-    std::shared_ptr<const System> system_two = GetSystem(obj2->SystemID());
+    auto system_one = Objects().get<System>(obj1->SystemID());
+    auto system_two = Objects().get<System>(obj2->SystemID());
     std::pair< std::list< int >, double > path_len_pair;
     double dist1(0.0), dist2(0.0);
     std::shared_ptr<const Fleet> fleet;
@@ -1061,7 +1061,7 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
         fleet = FleetFromObject(obj1);
         if (!fleet)
             return -1;
-        if (std::shared_ptr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
+        if (auto next_sys = Objects().get<System>(fleet->NextSystemID())) {
             system_one = next_sys;
             dist1 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
         }
@@ -1071,7 +1071,7 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
         fleet = FleetFromObject(obj2);
         if (!fleet)
             return -1;
-        if (std::shared_ptr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
+        if (auto next_sys = Objects().get<System>(fleet->NextSystemID())) {
             system_two = next_sys;
             dist2 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
         }
@@ -1138,7 +1138,7 @@ bool Pathfinder::SystemHasVisibleStarlanes(int system_id, int empire_id) const
 { return pimpl->SystemHasVisibleStarlanes(system_id, empire_id); }
 
 bool Pathfinder::PathfinderImpl::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
-    if (auto system = GetEmpireKnownSystem(system_id, empire_id))
+    if (auto system = EmpireKnownObjects(empire_id).get<System>(system_id))
         if (!system->StarlanesWormholes().empty())
             return true;
     return false;
@@ -1413,7 +1413,7 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(
     // add edges for all starlanes
     for (size_t system1_index = 0; system1_index < system_ids.size(); ++system1_index) {
         int system1_id = system_ids[system1_index];
-        std::shared_ptr<const System> system1 = GetEmpireKnownSystem(system1_id, for_empire_id);
+        std::shared_ptr<const System> system1 = EmpireKnownObjects(for_empire_id).get<System>(system1_id);
         //std::shared_ptr<const System> & system1 = systems[system1_index];
 
         // add edges and edge weights

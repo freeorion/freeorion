@@ -169,7 +169,7 @@ UniverseObjectType UniverseObject::ObjectType() const
 { return INVALID_UNIVERSE_OBJECT_TYPE; }
 
 std::string UniverseObject::Dump(unsigned short ntabs) const {
-    auto system = GetSystem(this->SystemID());
+    auto system = Objects().get<System>(this->SystemID());
 
     std::stringstream os;
 
@@ -185,7 +185,7 @@ std::string UniverseObject::Dump(unsigned short ntabs) const {
     } else {
         os << "  at: (" << this->X() << ", " << this->Y() << ")";
         int near_id = GetPathfinder()->NearestSystemTo(this->X(), this->Y());
-        auto near_system = GetSystem(near_id);
+        auto near_system = Objects().get<System>(near_id);
         if (near_system) {
             const std::string& sys_name = near_system->Name();
             if (sys_name.empty())
@@ -302,7 +302,7 @@ void UniverseObject::Move(double x, double y)
 { MoveTo(m_x + x, m_y + y); }
 
 void UniverseObject::MoveTo(int object_id)
-{ MoveTo(GetUniverseObject(object_id)); }
+{ MoveTo(Objects().get(object_id)); }
 
 void UniverseObject::MoveTo(std::shared_ptr<UniverseObject> object) {
     if (!object) {

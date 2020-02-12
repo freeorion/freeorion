@@ -290,7 +290,7 @@ namespace {
                 } else {
                     species_entry += "(" + std::to_string(species->Homeworlds().size()) + "):  ";
                     for (int homeworld_id : species->Homeworlds()) {
-                        if (std::shared_ptr<const Planet> homeworld = GetPlanet(homeworld_id)) {
+                        if (std::shared_ptr<const Planet> homeworld = Objects().get<Planet>(homeworld_id)) {
                             known_homeworlds.insert(homeworld_id);
                             // if known, add to beginning
                             homeworld_info = LinkTaggedIDText(VarText::PLANET_ID_TAG, homeworld_id, homeworld->PublicName(client_empire_id)) + "   " + homeworld_info;
@@ -1162,7 +1162,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
         // get a location where the empire might build something.
-        auto location = GetUniverseObject(empire->CapitalID());
+        auto location = Objects().get(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         // TODO: only loop over planets?
         // TODO: pass in a location condition, and pick a location that matches it if possible
@@ -1543,7 +1543,7 @@ namespace {
             detailed_description += str(FlexibleFormat(UserString("ENC_AUTO_TIME_COST_INVARIANT_STR")) % UserString("ENC_VERB_PRODUCE_STR"));
         } else {
             detailed_description += str(FlexibleFormat(UserString("ENC_AUTO_TIME_COST_VARIABLE_STR")) % UserString("ENC_VERB_PRODUCE_STR"));
-            if (auto planet = GetPlanet(this_location_id)) {
+            if (auto planet = Objects().get<Planet>(this_location_id)) {
                 int local_cost = building_type->ProductionCost(client_empire_id, this_location_id);
                 int local_time = building_type->ProductionTime(client_empire_id, this_location_id);
                 std::string local_name = planet->Name();
@@ -1657,7 +1657,7 @@ namespace {
 
         // Capital
         name = empire->Name();
-        auto capital = GetPlanet(empire->CapitalID());
+        auto capital = Objects().get<Planet>(empire->CapitalID());
         if (capital)
             detailed_description += UserString("EMPIRE_CAPITAL") +
                 LinkTaggedIDText(VarText::PLANET_ID_TAG, capital->ID(), capital->Name());
@@ -1702,7 +1702,7 @@ namespace {
             for (auto& obj : nonempty_empire_fleets) {
                 std::string fleet_link = LinkTaggedIDText(VarText::FLEET_ID_TAG, obj->ID(), obj->PublicName(client_empire_id));
                 std::string system_link;
-                if (auto system = GetSystem(obj->SystemID())) {
+                if (auto system = Objects().get<System>(obj->SystemID())) {
                     std::string sys_name = system->ApparentName(client_empire_id);
                     system_link = LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name);
                     detailed_description += str(FlexibleFormat(UserString("OWNED_FLEET_AT_SYSTEM"))
@@ -2057,7 +2057,7 @@ namespace {
         } else {
             detailed_description += UserString("HOMEWORLD") + "\n";
             for (int hw_id : species->Homeworlds()) {
-                if (auto homeworld = GetPlanet(hw_id))
+                if (auto homeworld = Objects().get<Planet>(hw_id))
                     detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, hw_id,
                                                              homeworld->PublicName(client_empire_id)) + "\n";
                 else
@@ -2072,7 +2072,7 @@ namespace {
         if (sp_op_it != species_object_populations.end()) {
             const auto& object_pops = sp_op_it->second;
             for (const auto& object_pop : object_pops) {
-                auto plt = GetPlanet(object_pop.first);
+                auto plt = Objects().get<Planet>(object_pop.first);
                 if (!plt)
                     continue;
                 if (plt->SpeciesName() != item_name) {
@@ -2288,7 +2288,7 @@ namespace {
 
         std::set<std::string> additional_species; // from currently selected planet and fleets, if any
         const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-        if (const auto planet = GetPlanet(map_wnd->SelectedPlanetID())) {
+        if (const auto planet = Objects().get<Planet>(map_wnd->SelectedPlanetID())) {
             if (!planet->SpeciesName().empty())
                 additional_species.insert(planet->SpeciesName());
         }
@@ -2308,7 +2308,7 @@ namespace {
                     selected_fleet_id = *selected_fleets.begin();
                 else if (fleet_wnd->FleetIDs().size() > 0)
                     selected_fleet_id = *fleet_wnd->FleetIDs().begin();
-                if (auto selected_fleet = GetFleet(selected_fleet_id))
+                if (auto selected_fleet = Objects().get<Fleet>(selected_fleet_id))
                     if (!selected_fleet->ShipIDs().empty())
                         selected_ship = *selected_fleet->ShipIDs().begin();
             }
@@ -2316,7 +2316,7 @@ namespace {
 
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.insert(selected_ship);
-            if (const auto this_ship = GetShip(selected_ship)) {
+            if (const auto this_ship = Objects().get<Ship>(selected_ship)) {
                 if (!this_ship->SpeciesName().empty())
                     additional_species.insert(this_ship->SpeciesName());
                 if (!this_ship->OwnedBy(client_empire_id)) {
@@ -2330,16 +2330,17 @@ namespace {
                 }
             }
         } else if (fleet_manager.ActiveFleetWnd()) {
-            for (int fleet_id : fleet_manager.ActiveFleetWnd()->SelectedFleetIDs()) {
-                if (const auto this_fleet = GetFleet(fleet_id)) {
-                    chosen_ships.insert(this_fleet->ShipIDs().begin(), this_fleet->ShipIDs().end());
-                }
+            for (const auto& fleet : Objects().find<Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
+                if (!fleet)
+                    continue;
+                chosen_ships.insert(fleet->ShipIDs().begin(), fleet->ShipIDs().end());
             }
         }
-        for (int ship_id : chosen_ships)
-            if (const auto this_ship = GetShip(ship_id))
-                if (!this_ship->SpeciesName().empty())
-                    additional_species.insert(this_ship->SpeciesName());
+        for (const auto& this_ship : Objects().find<Ship>(chosen_ships)) {
+            if (!this_ship || !this_ship->SpeciesName().empty())
+                continue;
+            additional_species.insert(this_ship->SpeciesName());
+        }
         std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
         detailed_description = GetDetailedDescriptionBase(design);
 
@@ -2424,7 +2425,7 @@ namespace {
         enemy_shots.insert(typical_shot);
         std::set<std::string> additional_species; // TODO: from currently selected planet and ship, if any
         const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-        if (const auto planet = GetPlanet(map_wnd->SelectedPlanetID())) {
+        if (const auto planet = Objects().get<Planet>(map_wnd->SelectedPlanetID())) {
             if (!planet->SpeciesName().empty())
                 additional_species.insert(planet->SpeciesName());
         }
@@ -2433,7 +2434,7 @@ namespace {
         int selected_ship = fleet_manager.SelectedShipID();
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.insert(selected_ship);
-            if (const auto this_ship = GetShip(selected_ship)) {
+            if (const auto this_ship = Objects().get<Ship>(selected_ship)) {
                 if (!additional_species.empty() && ((this_ship->InitialMeterValue(METER_MAX_SHIELD) > 0) || !this_ship->OwnedBy(client_empire_id))) {
                     enemy_DR = this_ship->InitialMeterValue(METER_MAX_SHIELD);
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
@@ -2445,16 +2446,17 @@ namespace {
                 }
             }
         } else if (fleet_manager.ActiveFleetWnd()) {
-            for (int fleet_id : fleet_manager.ActiveFleetWnd()->SelectedFleetIDs()) {
-                if (const auto this_fleet = GetFleet(fleet_id)) {
-                    chosen_ships.insert(this_fleet->ShipIDs().begin(), this_fleet->ShipIDs().end());
-                }
+            for (const auto& fleet : Objects().find<Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
+                if (!fleet)
+                    continue;
+                chosen_ships.insert(fleet->ShipIDs().begin(), fleet->ShipIDs().end());
             }
         }
-        for (int ship_id : chosen_ships)
-            if (const auto this_ship = GetShip(ship_id))
-                if (!this_ship->SpeciesName().empty())
-                    additional_species.insert(this_ship->SpeciesName());
+        for (const auto& this_ship : Objects().find<Ship>(chosen_ships)) {
+            if (!this_ship || !this_ship->SpeciesName().empty())
+                continue;
+            additional_species.insert(this_ship->SpeciesName());
+        }
         std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
         detailed_description = GetDetailedDescriptionBase(incomplete_design.get());
 
@@ -2494,7 +2496,7 @@ namespace {
             return;
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-        auto obj = GetUniverseObject(id);
+        auto obj = Objects().get(id);
         if (!obj) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << item_name;
             return;
@@ -2546,13 +2548,11 @@ namespace {
             }
         }
 
-        for (const auto& pop_center_id : empire->GetPopulationPool().PopCenterIDs()) {
-            auto obj = GetUniverseObject(pop_center_id);
-            auto pc = std::dynamic_pointer_cast<const PopCenter>(obj);
-            if (!pc)
+        for (const auto& pop_center : Objects().find<PopCenter>(empire->GetPopulationPool().PopCenterIDs())) {
+            if (!pop_center)
                 continue;
 
-            const std::string& species_name = pc->SpeciesName();
+            const std::string& species_name = pop_center->SpeciesName();
             if (species_name.empty())
                 continue;
 
@@ -2726,7 +2726,7 @@ namespace {
         general_type = UserString("SP_PLANET_SUITABILITY");
 
         int planet_id = boost::lexical_cast<int>(item_name);
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
 
         // show image of planet environment at the top of the suitability report
         const auto& filenames = PlanetEnvFilenames(planet->Type());

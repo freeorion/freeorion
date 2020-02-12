@@ -130,7 +130,7 @@ void MeterBrowseWnd::Initialize() {
     const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
     // get objects and meters to verify that they exist
-    auto obj = GetUniverseObject(m_object_id);
+    auto obj = Objects().get(m_object_id);
     if (!obj) {
         ErrorLogger() << "MeterBrowseWnd couldn't get object with id " << m_object_id;
         return;
@@ -238,7 +238,7 @@ namespace {
         int obj_id, const MeterType& meter_type)
     {
         // get object and meter, aborting if not valid
-        auto obj = GetUniverseObject(obj_id);
+        auto obj = Objects().get(obj_id);
         if (!obj) {
             ErrorLogger() << "Couldn't get object with id " << obj_id;
             return boost::none;
@@ -262,7 +262,7 @@ namespace {
 }
 
 void MeterBrowseWnd::UpdateSummary() {
-    auto obj = GetUniverseObject(m_object_id);
+    auto obj = Objects().get(m_object_id);
     if (!obj)
         return;
 
@@ -331,7 +331,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     // add label-value pairs for each alteration recorded for this meter
     for (const auto& info : *maybe_info_vec) {
-        auto source = GetUniverseObject(info.source_id);
+        auto source = Objects().get(info.source_id);
 
         std::string text;
         std::string name;
@@ -354,7 +354,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         case ECT_BUILDING: {
             name.clear();
             if (const auto& building = std::dynamic_pointer_cast<const Building>(source))
-                if (const auto& planet = GetPlanet(building->PlanetID()))
+                if (const auto& planet = Objects().get<Planet>(building->PlanetID()))
                     name = planet->Name();
             const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_BUILDING")
@@ -446,7 +446,7 @@ void ShipDamageBrowseWnd::Initialize() {
     const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
     // get objects and meters to verify that they exist
-    auto ship = GetShip(m_object_id);
+    auto ship = Objects().get<Ship>(m_object_id);
     if (!ship) {
         ErrorLogger() << "ShipDamageBrowseWnd couldn't get ship with id " << m_object_id;
         return;
@@ -484,7 +484,7 @@ void ShipDamageBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 }
 
 void ShipDamageBrowseWnd::UpdateSummary() {
-    auto ship = GetShip(m_object_id);
+    auto ship = Objects().get<Ship>(m_object_id);
     if (!ship)
         return;
 
@@ -509,7 +509,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     m_effect_labels_and_values.clear();
 
     // get object and meter, aborting if not valid
-    auto ship = GetShip(m_object_id);
+    auto ship = Objects().get<Ship>(m_object_id);
     if (!ship) {
         ErrorLogger() << "ShipDamageBrowseWnd::UpdateEffectLabelsAndValues couldn't get ship with id " << m_object_id;
         return;
@@ -624,7 +624,7 @@ void ShipFightersBrowseWnd::Initialize() {
     const GG::Clr BG_COLOR = ClientUI::WndColor();
 
     // get objects and meters to verify that they exist
-    auto ship = GetShip(m_object_id);
+    auto ship = Objects().get<Ship>(m_object_id);
     if (!ship) {
         ErrorLogger() << "Couldn't get ship with id " << m_object_id;
         return;
@@ -679,7 +679,7 @@ void ShipFightersBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 }
 
 void ShipFightersBrowseWnd::UpdateSummary() {
-    auto ship = GetShip(m_object_id);
+    auto ship = Objects().get<Ship>(m_object_id);
     if (!ship)
         return;
 
@@ -751,7 +751,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     m_hangar_list->DetachChildren();
 
     // early return if no valid ship, ship design, or no parts in the design
-    auto ship = GetShip(m_object_id);
+    auto ship = Objects().get<Ship>(m_object_id);
     if (!ship) {
         ErrorLogger() << "Couldn't get ship with id " << m_object_id;
         return;

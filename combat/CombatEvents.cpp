@@ -89,7 +89,7 @@ namespace {
     /// with the content being the public name from the point of view of empire_id.
     /// Returns UserString("ENC_COMBAT_UNKNOWN_OBJECT") if object_id is not found.
     std::string PublicNameLink(int empire_id, int object_id) {
-        auto object = GetUniverseObject(object_id);
+        auto object = Objects().get(object_id);
         if (object) {
             const std::string& name = object->PublicName(empire_id);
             const std::string& tag = LinkTag(object->ObjectType());
@@ -317,7 +317,7 @@ std::string InitialStealthEvent::DebugString() const {
         ss << " Viewing Empire: " << EmpireLink(empire_object_vis.first) << "\n";
 
         for (const auto& viewed_object : empire_object_vis.second) {
-            const auto obj = GetUniverseObject(viewed_object.first);
+            const auto obj = Objects().get(viewed_object.first);
             int owner_id = obj ? obj->Owner() : ALL_EMPIRES;
             ss << FighterOrPublicNameLink(ALL_EMPIRES, viewed_object.first, owner_id);
         }
@@ -344,7 +344,7 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id) con
         // Check Visibility of objects, report those that are not visible.
         std::vector<std::string> cloaked_attackers;
         for (auto& object_vis : visible_objects) {
-            const auto obj = GetUniverseObject(object_vis.first);
+            const auto obj = Objects().get(object_vis.first);
             const auto name = obj ? obj->Name() : UserString("UNKNOWN");
             DebugLogger() << " ... object: " << name << " (" << object_vis.first << ") has vis: " << object_vis.second;
             if (object_vis.second > VIS_NO_VISIBILITY)
@@ -686,7 +686,7 @@ std::string IncapacitationEvent::DebugString() const {
 
 
 std::string IncapacitationEvent::CombatLogDescription(int viewing_empire_id) const {
-    auto object = GetUniverseObject(object_id);
+    auto object = Objects().get(object_id);
     std::string template_str, object_str;
     int owner_id = object_owner_id;
 

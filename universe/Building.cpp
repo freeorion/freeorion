@@ -269,7 +269,7 @@ float BuildingType::ProductionCost(int empire_id, int location_id) const {
 
         const auto arbitrary_large_number = 999999.9f;
 
-        auto location = GetUniverseObject(location_id);
+        auto location = Objects().get(location_id);
         if (!location && !m_production_cost->TargetInvariant())
             return arbitrary_large_number;
 
@@ -297,7 +297,7 @@ int BuildingType::ProductionTime(int empire_id, int location_id) const {
 
         const auto arbitrary_large_number = 9999;
 
-        auto location = GetUniverseObject(location_id);
+        auto location = Objects().get(location_id);
         if (!location && !m_production_time->TargetInvariant())
             return arbitrary_large_number;
 
@@ -315,7 +315,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     if (!m_location)
         return true;
 
-    auto location = GetUniverseObject(location_id);
+    auto location = Objects().get(location_id);
     if (!location)
         return false;
 
@@ -330,7 +330,7 @@ bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
     if (!m_enqueue_location)
         return true;
 
-    auto location = GetUniverseObject(location_id);
+    auto location = Objects().get(location_id);
     if (!location)
         return false;
 

@@ -436,7 +436,7 @@ std::string Planet::CardinalSuffix() const {
         return retval;
     }
 
-    auto cur_system = GetSystem(SystemID());
+    auto cur_system = Objects().get<System>(SystemID());
     // Early return for no system
     if (!cur_system) {
         ErrorLogger() << "Planet " << Name() << "(" << ID()
@@ -468,7 +468,7 @@ std::string Planet::CardinalSuffix() const {
             continue;
         }
 
-        PlanetType other_planet_type = GetPlanet(sys_orbit)->Type();
+        PlanetType other_planet_type = Objects().get<Planet>(sys_orbit)->Type();
         if (other_planet_type == INVALID_PLANET_TYPE)
             continue;
 
@@ -611,9 +611,11 @@ void Planet::Reset() {
     GetMeter(METER_REBEL_TROOPS)->Reset();
 
     if (m_is_about_to_be_colonized && !OwnedBy(ALL_EMPIRES)) {
-        for (int building_id : m_buildings)
-            if (auto building = GetBuilding(building_id))
-                building->Reset();
+        for (const auto& building : Objects().find<Building>(m_buildings)) {
+            if (!building)
+                continue;
+            building->Reset();
+        }
     }
 
     //m_turn_last_conquered left unchanged
@@ -654,7 +656,7 @@ void Planet::Conquer(int conquerer) {
             // destroy object
             //DebugLogger() << "Planet::Conquer destroying object: " << building->Name();
             this->RemoveBuilding(building->ID());
-            if (auto system = GetSystem(this->SystemID()))
+            if (auto system = Objects().get<System>(this->SystemID()))
                 system->Remove(building->ID());
             GetUniverse().Destroy(building->ID());
         } else if (cap_result == CR_RETAIN) {
@@ -710,9 +712,11 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
         Reset();
     } else {
         PopCenter::Reset();
-        for (int building_id : m_buildings)
-            if (auto building = GetBuilding(building_id))
-                building->Reset();
+        for (const auto& building : Objects().find<Building>(m_buildings)) {
+            if (!building)
+                continue;
+            building->Reset();
+        }
         m_is_about_to_be_colonized = false;
         m_is_about_to_be_invaded = false;
         m_is_about_to_be_bombarded = false;

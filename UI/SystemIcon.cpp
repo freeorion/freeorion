@@ -99,7 +99,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system)
         return;
 
@@ -261,7 +261,7 @@ void SystemIcon::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
     ClientUI* ui = ClientUI::GetClientUI();
-    if (auto system = GetSystem(m_system_id)) {
+    if (auto system = Objects().get<System>(m_system_id)) {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
                                               ClientUI::StarTypeFilePrefixes()[star_type],
@@ -647,7 +647,7 @@ void SystemIcon::Refresh() {
     std::string name;
     m_system_connection.disconnect();
 
-    auto system = GetSystem(m_system_id);
+    auto system = Objects().get<System>(m_system_id);
     if (system) {
         name = system->Name();
         m_system_connection = system->StateChangedSignal.connect(

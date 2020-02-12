@@ -50,9 +50,6 @@ private:
     /** object id for the PopulationCenter that this panel displays */
     int m_popcenter_id = INVALID_OBJECT_ID;
 
-    /** returns the PopCenter object with id m_popcenter_id */
-    std::shared_ptr<const PopCenter> GetPopCenter() const;
-
     /** Icons for the associated meter type. */
     std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_meter_stats;
 

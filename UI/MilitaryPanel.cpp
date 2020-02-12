@@ -39,14 +39,14 @@ void MilitaryPanel::CompleteConstruction() {
 
     SetName("MilitaryPanel");
 
-    auto planet = this->GetPlanet();
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet)
         throw std::invalid_argument("Attempted to construct a MilitaryPanel with an object id is not a Planet");
 
     m_expand_button->LeftPressedSignal.connect(
         boost::bind(&MilitaryPanel::ExpandCollapseButtonPressed, this));
 
-    const auto obj = GetUniverseObject(m_planet_id);
+    const auto obj = Objects().get(m_planet_id);
     if (!obj) {
         ErrorLogger() << "Invalid object id " << m_planet_id;
         return;
@@ -100,7 +100,7 @@ void MilitaryPanel::ExpandCollapse(bool expanded) {
 }
 
 void MilitaryPanel::Update() {
-    auto obj = GetUniverseObject(m_planet_id);
+    auto obj = Objects().get(m_planet_id);
     if (!obj) {
         ErrorLogger() << "MilitaryPanel::Update coudln't get object with id  " << m_planet_id;
         return;
@@ -188,20 +188,6 @@ void MilitaryPanel::DoLayout() {
     }
 
     SetCollapsed(!s_expanded_map[m_planet_id]);
-}
-
-std::shared_ptr<const Planet> MilitaryPanel::GetPlanet() const {
-    auto obj = GetUniverseObject(m_planet_id);
-    if (!obj) {
-        ErrorLogger() << "MilitaryPanel tried to get an object with an invalid m_planet_id";
-        return nullptr;
-    }
-    auto planet = std::dynamic_pointer_cast<const Planet>(obj);
-    if (!planet) {
-        ErrorLogger() << "MilitaryPanel failed casting an object pointer to a Planet pointer";
-        return nullptr;
-    }
-    return planet;
 }
 
 std::map<int, bool> MilitaryPanel::s_expanded_map;

@@ -308,7 +308,7 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const {
 }
 
 void Species::AddHomeworld(int homeworld_id) {
-    if (!GetUniverseObject(homeworld_id))
+    if (!Objects().get(homeworld_id))
         DebugLogger() << "Species asked to add homeworld id " << homeworld_id << " but there is no such object in the Universe";
     if (m_homeworlds.count(homeworld_id))
         return;

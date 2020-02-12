@@ -76,14 +76,10 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 {
     std::vector<std::shared_ptr<const Fleet>> fleets;
     fleets.reserve(fleet_IDs.size());
-    m_fleets.reserve(fleet_IDs.size());
-    for (int fleet_id : fleet_IDs) {
-        auto fleet = GetFleet(fleet_id);
-        if (!fleet) {
-            ErrorLogger() << "FleetButton::FleetButton couldn't get fleet with id " << fleet_id;
+    for (const auto& fleet : Objects().find<Fleet>(fleet_IDs)) {
+        if (!fleet)
             continue;
-        }
-        m_fleets.push_back(fleet_id);
+        m_fleets.push_back(fleet->ID());
         fleets.push_back(fleet);
     }
 
@@ -116,12 +112,12 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         bool monsters = true;
         // find if any ship in fleets in button is not a monster
         for (auto& fleet : fleets) {
-            for (int ship_id : fleet->ShipIDs()) {
-                if (auto ship = GetShip(ship_id)) {
-                    if (!ship->IsMonster()) {
-                        monsters = false;
-                        break;
-                    }
+            for (const auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
+                if (!ship)
+                    continue;
+                if (!ship->IsMonster()) {
+                    monsters = false;
+                    break;
                 }
             }
         }
@@ -147,7 +143,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         first_fleet = *fleets.begin();
     if (first_fleet && first_fleet->SystemID() == INVALID_OBJECT_ID && first_fleet->NextSystemID() != INVALID_OBJECT_ID) {
         int next_sys_id = first_fleet->NextSystemID();
-        if (auto obj = GetUniverseObject(next_sys_id)) {
+        if (auto obj = Objects().get(next_sys_id)) {
             // fleet is not in a system and has a valid next destination, so can orient it in that direction
             // fleet icons might not appear on the screen in the exact place corresponding to their
             // actual universe position, but if they're moving along a starlane, this code will assume
@@ -309,22 +305,19 @@ void FleetButton::LayoutIcons() {
     // refresh fleet button tooltip
     if (m_fleet_blockaded) {
         std::shared_ptr<Fleet> fleet;
-        std::shared_ptr<System> current_system;
         std::string available_exits = "";
         int available_exits_count = 0;
 
         if (!m_fleets.empty())
             // can just pick first fleet because all fleets in system should have same exits
-            fleet = GetFleet(*m_fleets.begin());
+            fleet = Objects().get<Fleet>(*m_fleets.begin());
         else return;
 
-        current_system = GetSystem(fleet->SystemID());
-
-        for (const auto& target_system_id : current_system->StarlanesWormholes()) {
+        for (const auto& target_system_id : Objects().get<System>(fleet->SystemID())->StarlanesWormholes()) {
             if (fleet->BlockadedAtSystem(fleet->SystemID(), target_system_id.first))
                 continue;
 
-            std::shared_ptr<System> target_system = GetSystem(target_system_id.first);
+            auto target_system = Objects().get<System>(target_system_id.first);
             if (target_system) {
                 available_exits += "\n" + target_system->ApparentName(HumanClientApp::GetApp()->EmpireID());
                 available_exits_count++;

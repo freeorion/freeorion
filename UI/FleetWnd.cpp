@@ -95,14 +95,14 @@ namespace {
 
     std::string FleetDestinationText(int fleet_id) {
         std::string retval = "";
-        auto fleet = GetFleet(fleet_id);
+        auto fleet = Objects().get<Fleet>(fleet_id);
         if (!fleet)
             return retval;
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-        std::shared_ptr<const System> dest_sys = GetSystem(fleet->FinalDestinationID());
-        std::shared_ptr<const System> cur_sys = GetSystem(fleet->SystemID());
+        const auto dest_sys = Objects().get<System>(fleet->FinalDestinationID());
+        const auto cur_sys = Objects().get<System>(fleet->SystemID());
         bool returning_to_current_system = (dest_sys == cur_sys) && !fleet->TravelRoute().empty();
         if (dest_sys && (dest_sys != cur_sys || returning_to_current_system)) {
             std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
@@ -170,10 +170,12 @@ namespace {
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 
     bool ContainsArmedShips(const std::vector<int>& ship_ids) {
-        for (int ship_id : ship_ids)
-            if (auto ship = GetShip(ship_id))
-                if (ship->IsArmed() || ship->HasFighters())
-                    return true;
+        for (const auto& ship : Objects().find<Ship>(ship_ids)) {
+            if (!ship)
+                continue;
+            if (ship->IsArmed() || ship->HasFighters())
+                return true;
+        }
         return false;
     }
 
@@ -207,7 +209,7 @@ namespace {
             return;
 
         std::shared_ptr<const Ship> first_ship = *ships.begin();
-        auto system = GetSystem(first_ship->SystemID());
+        auto system = Objects().get<System>(first_ship->SystemID());
         if (!system)
             return;
 
@@ -284,13 +286,13 @@ namespace {
         if (client_empire_id == ALL_EMPIRES)
             return;
 
-        auto target_fleet = GetFleet(fleet_id);
+        auto target_fleet = Objects().get<Fleet>(fleet_id);
         if (!target_fleet) {
             ErrorLogger() << "MergeFleetsIntoFleet couldn't get a fleet with id " << fleet_id;
             return;
         }
 
-        auto system = GetSystem(target_fleet->SystemID());
+        auto system = Objects().get<System>(target_fleet->SystemID());
         if (!system) {
             ErrorLogger() << "MergeFleetsIntoFleet couldn't get system for the target fleet";
             return;
@@ -557,7 +559,7 @@ namespace {
         if (!ship || !new_fleet)
             return false;   // can't transfer no ship or to no fleet
 
-        std::shared_ptr<const Fleet> current_fleet = GetFleet(ship->FleetID());
+        std::shared_ptr<const Fleet> current_fleet = Objects().get<Fleet>(ship->FleetID());
         if (current_fleet && current_fleet->ID() == new_fleet->ID())
             return false;   // can't transfer a fleet to a fleet it already is in
 
@@ -746,7 +748,7 @@ namespace {
         m_ship_icon_overlays.clear();
         DetachChildAndReset(m_scanline_control);
 
-        auto ship = GetShip(m_ship_id);
+        auto ship = Objects().get<Ship>(m_ship_id);
         if (!ship)
             return;
 
@@ -795,7 +797,7 @@ namespace {
 
         SetShipIcon();
 
-        auto ship = GetShip(m_ship_id);
+        auto ship = Objects().get<Ship>(m_ship_id);
         if (!ship) {
             // blank text and delete icons
             m_ship_name_text->SetText("");
@@ -872,7 +874,7 @@ namespace {
     }
 
     double ShipDataPanel::StatValue(MeterType stat_name) const {
-        if (auto ship = GetShip(m_ship_id)) {
+        if (auto ship = Objects().get<Ship>(m_ship_id)) {
             if (stat_name == METER_CAPACITY)
                 return ship->TotalWeaponsDamage(0.0f, false);
             else if (stat_name == METER_TROOPS)
@@ -924,7 +926,7 @@ namespace {
         m_initialized = true;
 
         // ship name text.  blank if no ship.
-        auto ship = GetShip(m_ship_id);
+        auto ship = Objects().get<Ship>(m_ship_id);
         std::string ship_name;
         if (ship)
             ship_name = ship->Name();
@@ -996,7 +998,7 @@ namespace {
         m_ship_connection = ship->StateChangedSignal.connect(
             boost::bind(&ShipDataPanel::RequireRefresh, this));
 
-        if (auto fleet = GetFleet(ship->FleetID()))
+        if (auto fleet = Objects().get<Fleet>(ship->FleetID()))
             m_fleet_connection = fleet->StateChangedSignal.connect(
                 boost::bind(&ShipDataPanel::RequireRefresh, this));
     }
@@ -1013,7 +1015,7 @@ namespace {
         {
             SetName("ShipRow");
             SetChildClippingMode(ClipToClient);
-            if (GetShip(m_ship_id))
+            if (Objects().get<Ship>(m_ship_id))
                 SetDragDropDataType(SHIP_DROP_TYPE_STRING);
         }
 
@@ -1242,7 +1244,7 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
     // in a FleetListBox
 
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    std::shared_ptr<const Fleet> this_panel_fleet = GetFleet(m_fleet_id);
+    std::shared_ptr<const Fleet> this_panel_fleet = Objects().get<Fleet>(m_fleet_id);
 
     // for every Wnd being dropped...
     for (DropsAcceptableIter it = first; it != last; ++it) {
@@ -1260,7 +1262,7 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
         const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(it->first);
         if (!ship_row)
             continue;
-        auto ship = GetShip(ship_row->ShipID());
+        auto ship = Objects().get<Ship>(ship_row->ShipID());
         if (!ship)
             continue;
 
@@ -1333,7 +1335,7 @@ void FleetDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void FleetDataPanel::ToggleAggression() {
     if (!m_aggression_toggle)
         return;
-    auto fleet = GetFleet(m_fleet_id);
+    auto fleet = Objects().get<Fleet>(m_fleet_id);
     if (fleet) {
         if (ClientPlayerIsModerator())
             return; // todo: handle moderator actions for this...
@@ -1376,7 +1378,7 @@ void FleetDataPanel::Refresh() {
         m_fleet_icon = GG::Wnd::Create<GG::StaticGraphic>(new_fleet_texture, DataPanelIconStyle());
         AttachChild(m_fleet_icon);
 
-    } else if (auto fleet = GetFleet(m_fleet_id)) {
+    } else if (auto fleet = Objects().get<Fleet>(m_fleet_id)) {
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         // set fleet name and destination text
         std::string public_fleet_name = fleet->PublicName(client_empire_id);
@@ -1489,7 +1491,7 @@ void FleetDataPanel::RefreshStateChangedSignals() {
     for (auto& connection : m_ship_connections)
         connection.disconnect();
 
-    auto fleet = GetFleet(m_fleet_id);
+    auto fleet = Objects().get<Fleet>(m_fleet_id);
     if (!fleet)
         return;
 
@@ -1519,7 +1521,7 @@ void FleetDataPanel::SetStatIconValues() {
     std::vector<float> fuels;
     std::vector<float> speeds;
 
-    auto fleet = GetFleet(m_fleet_id);
+    auto fleet = Objects().get<Fleet>(m_fleet_id);
 
     fuels.reserve(fleet->NumShips());
     speeds.reserve(fleet->NumShips());
@@ -1630,7 +1632,7 @@ void FleetDataPanel::UpdateAggressionToggle() {
 
     if (m_is_new_fleet_drop_target) {
         aggression = m_new_fleet_aggression;
-    } else if (auto fleet = GetFleet(m_fleet_id)) {
+    } else if (auto fleet = Objects().get<Fleet>(m_fleet_id)) {
         aggression = fleet->Aggressive() ? FLEET_AGGRESSIVE : FLEET_PASSIVE;
     } else {
         DetachChild(m_aggression_toggle);
@@ -1718,7 +1720,7 @@ void FleetDataPanel::Init() {
         m_aggression_toggle->LeftClickedSignal.connect(
             boost::bind(&FleetDataPanel::ToggleAggression, this));
 
-    } else if (auto fleet = GetFleet(m_fleet_id)) {
+    } else if (auto fleet = Objects().get<Fleet>(m_fleet_id)) {
         int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
         std::vector<std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext;
@@ -1796,7 +1798,7 @@ namespace {
     class FleetRow : public GG::ListBox::Row {
     public:
         FleetRow(int fleet_id, GG::X w, GG::Y h) :
-            GG::ListBox::Row(w, h, GetFleet(fleet_id) ? FLEET_DROP_TYPE_STRING : ""),
+            GG::ListBox::Row(w, h, Objects().get<Fleet>(fleet_id) ? FLEET_DROP_TYPE_STRING : ""),
             m_fleet_id(fleet_id)
         {
             SetName("FleetRow");
@@ -1868,7 +1870,7 @@ public:
         }
 
         int target_fleet_id = drop_target_fleet_row->FleetID();
-        auto target_fleet = GetFleet(target_fleet_id);
+        auto target_fleet = Objects().get<Fleet>(target_fleet_id);
         if (!target_fleet) {
             ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get target fleet with id: " << target_fleet_id;
             return;
@@ -1894,7 +1896,7 @@ public:
                     ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get fleet row from dropped wnd";
                     continue;
                 }
-                dropped_fleets.push_back(GetFleet(fleet_row->FleetID()));
+                dropped_fleets.push_back(Objects().get<Fleet>(fleet_row->FleetID()));
 
             } else if (wnd->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
                 const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd.get());
@@ -1902,7 +1904,7 @@ public:
                     ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get ship row from dropped wnd";
                     continue;
                 }
-                dropped_ships.push_back(GetShip(ship_row->ShipID()));
+                dropped_ships.push_back(Objects().get<Ship>(ship_row->ShipID()));
             }
         }
 
@@ -1987,7 +1989,7 @@ public:
         FleetRow* drop_target_fleet_row = boost::polymorphic_downcast<FleetRow*>(drop_target_row.get());
         assert(drop_target_fleet_row);
 
-        auto drop_target_fleet = GetFleet(drop_target_fleet_row->FleetID());
+        auto drop_target_fleet = Objects().get<Fleet>(drop_target_fleet_row->FleetID());
         assert(drop_target_fleet);
 
 
@@ -2014,7 +2016,7 @@ public:
 
                 const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(dropped_wnd);
                 assert(fleet_row);
-                auto fleet = GetFleet(fleet_row->FleetID());
+                auto fleet = Objects().get<Fleet>(fleet_row->FleetID());
 
                 if (!ValidFleetMerge(fleet, drop_target_fleet))
                     return; // not a valid drop
@@ -2026,7 +2028,7 @@ public:
 
                 const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(dropped_wnd);
                 assert(ship_row);
-                std::shared_ptr<Ship> ship = GetShip(ship_row->ShipID());
+                auto ship = Objects().get<Ship>(ship_row->ShipID());
 
                 if (!ValidShipTransfer(ship, drop_target_fleet))
                     return; // not a valid drop
@@ -2087,7 +2089,7 @@ protected:
         const FleetRow* target_fleet_row = boost::polymorphic_downcast<const FleetRow*>(row->get());
         std::shared_ptr<const Fleet> target_fleet;
         if (target_fleet_row)
-            target_fleet = GetFleet(target_fleet_row->FleetID());
+            target_fleet = Objects().get<Fleet>(target_fleet_row->FleetID());
 
         // loop through dropped Wnds, checking if each is a valid ship or fleet.  this doesn't
         // consider whether there is a mixture of fleets and ships, as each row is considered
@@ -2101,12 +2103,12 @@ protected:
             // if any of the nested if's fail, the default rejection of the drop will remain set
             if (it->first->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
                 if (const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(it->first))
-                    if (auto fleet = GetFleet(fleet_row->FleetID()))
+                    if (auto fleet = Objects().get<Fleet>(fleet_row->FleetID()))
                         it->second = ValidFleetMerge(fleet, target_fleet);
 
             } else if (it->first->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
                 if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(it->first))
-                    if (auto ship = GetShip(ship_row->ShipID()))
+                    if (auto ship = Objects().get<Ship>(ship_row->ShipID()))
                         it->second = ValidShipTransfer(ship, target_fleet);
             } else {
                 // no valid drop type string
@@ -2224,7 +2226,7 @@ public:
     void Refresh() {
         ScopedTimer timer("ShipsListBox::Refresh");
 
-        auto fleet = GetFleet(m_fleet_id);
+        auto fleet = Objects().get<Fleet>(m_fleet_id);
         if (!fleet) {
             Clear();
             return;
@@ -2289,13 +2291,13 @@ public:
             if (!ship_row)
                 continue;
 
-            auto ship = GetShip(ship_row->ShipID());
+            auto ship = Objects().get<Ship>(ship_row->ShipID());
             if (!ship) {
                 ErrorLogger() << "ShipsListBox::DropsAcceptable couldn't get ship for ship row";
                 continue;
             }
 
-            auto fleet = GetFleet(ship->FleetID());
+            auto fleet = Objects().get<Fleet>(ship->FleetID());
             if (!fleet) {
                 ErrorLogger() << "ShipsListBox::DropsAcceptable couldn't get fleet with id " << ship->FleetID();
                 continue;
@@ -2321,7 +2323,7 @@ public:
                 const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd.get());
                 assert(ship_row);
                 ship_ids.push_back(ship_row->ShipID());
-                ship_from_dropped_wnd = GetShip(ship_row->ShipID());
+                ship_from_dropped_wnd = Objects().get<Ship>(ship_row->ShipID());
             }
         }
 
@@ -2449,7 +2451,7 @@ void FleetDetailPanel::SetFleet(int fleet_id) {
 
     // if set fleet changed, and new fleet exists, update state change signal connection
     if (m_fleet_id != old_fleet_id && m_fleet_id != INVALID_OBJECT_ID) {
-        auto fleet = GetFleet(m_fleet_id);
+        auto fleet = Objects().get<Fleet>(m_fleet_id);
         if (fleet && !fleet->Empty()) {
             m_fleet_connection = fleet->StateChangedSignal.connect(
                 boost::bind(&FleetDetailPanel::Refresh, this), boost::signals2::at_front);
@@ -2563,10 +2565,10 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (!ship_row)
         return;
 
-    std::shared_ptr<Ship> ship = GetShip(ship_row->ShipID());
+    auto ship = Objects().get<Ship>(ship_row->ShipID());
     if (!ship)
         return;
-    auto fleet = GetFleet(m_fleet_id);
+    auto fleet = Objects().get<Fleet>(m_fleet_id);
 
     const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != MAS_NoAction) {
@@ -2727,7 +2729,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     m_order_issuing_enabled(order_issuing_enabled)
 {
     if (!fleet_ids.empty()) {
-        if (auto fleet = GetFleet(*fleet_ids.begin()))
+        if (auto fleet = Objects().get<Fleet>(*fleet_ids.begin()))
             m_empire_id = fleet->Owner();
     }
 
@@ -2744,8 +2746,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
 
     // Determine the size of the bounding box containing the fleets, plus the leeway
     bool is_first_fleet = true;
-    for (int fleet_id : m_fleet_ids) {
-        auto fleet = GetFleet(fleet_id);
+    for (const auto& fleet : Objects().find<Fleet>(m_fleet_ids)) {
         if (!fleet)
             continue;
 
@@ -2913,7 +2914,7 @@ void FleetWnd::SetStatIconValues() {
 
 void FleetWnd::RefreshStateChangedSignals() {
     m_system_connection.disconnect();
-    if (auto system = GetSystem(m_system_id))
+    if (auto system = Objects().get<System>(m_system_id))
         m_system_connection = system->StateChangedSignal.connect(
             boost::bind(&FleetWnd::RequireRefresh, this), boost::signals2::at_front);
 
@@ -2921,11 +2922,12 @@ void FleetWnd::RefreshStateChangedSignals() {
         fleet_connection.disconnect();
     m_fleet_connections.clear();
 
-    for (auto fleet_id : m_fleet_ids) {
-        if (auto fleet = GetFleet(fleet_id))
-            m_fleet_connections.push_back(
-                fleet->StateChangedSignal.connect(
-                    boost::bind(&FleetWnd::RequireRefresh, this)));
+    for (const auto& fleet : Objects().find<Fleet>(m_fleet_ids)) {
+        if (!fleet)
+            continue;
+        m_fleet_connections.push_back(
+            fleet->StateChangedSignal.connect(
+                boost::bind(&FleetWnd::RequireRefresh, this)));
     }
 }
 
@@ -2955,23 +2957,22 @@ void FleetWnd::Refresh() {
     // Check all fleets in initial_fleet_ids and keep those that exist.
     std::unordered_set<int> fleets_that_exist;
     GG::Rect fleets_bounding_box;
-    for (int fleet_id : initial_fleet_ids) {
-        // skip known destroyed and stale info objects
-        if (this_client_known_destroyed_objects.count(fleet_id))
-            continue;
-        if (this_client_stale_object_info.count(fleet_id))
+    for (const auto& fleet : Objects().find<Fleet>(initial_fleet_ids)) {
+        if (!fleet)
             continue;
 
-        auto fleet = GetFleet(fleet_id);
-        if (!fleet)
+        // skip known destroyed and stale info objects
+        if (this_client_known_destroyed_objects.count(fleet->ID()))
+            continue;
+        if (this_client_stale_object_info.count(fleet->ID()))
             continue;
 
         auto fleet_loc = GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()));
         // Grow the fleets bounding box
         fleets_bounding_box = CreateOrGrowBox(fleets_that_exist.empty(), fleets_bounding_box, fleet_loc);
 
-        fleets_that_exist.insert(fleet_id);
-        fleet_locations_ids.insert({{fleet->SystemID(), fleet_loc}, fleet_id});
+        fleets_that_exist.insert(fleet->ID());
+        fleet_locations_ids.insert({{fleet->SystemID(), fleet_loc}, fleet->ID()});
     }
 
     auto bounding_box_center = GG::Pt(fleets_bounding_box.MidX(), fleets_bounding_box.MidY());
@@ -2979,12 +2980,11 @@ void FleetWnd::Refresh() {
 
     // Filter initially selected fleets according to existing fleets
     GG::Rect selected_fleets_bounding_box;
-    for (int fleet_id : initially_selected_fleets) {
-        if (!fleets_that_exist.count(fleet_id))
+    for (const auto& fleet : Objects().find<Fleet>(initially_selected_fleets)) {
+        if (!fleet)
             continue;
 
-        auto fleet = GetFleet(fleet_id);
-        if (!fleet)
+        if (!fleets_that_exist.count(fleet->ID()))
             continue;
 
         auto fleet_loc = GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()));
@@ -2992,7 +2992,7 @@ void FleetWnd::Refresh() {
         // Grow the selected fleets bounding box
         selected_fleets_bounding_box = CreateOrGrowBox(selected_fleet_locations_ids.empty(),
                                                        selected_fleets_bounding_box, fleet_loc);
-        selected_fleet_locations_ids.insert({{fleet->SystemID(), fleet_loc}, fleet_id});
+        selected_fleet_locations_ids.insert({{fleet->SystemID(), fleet_loc}, fleet->ID()});
     }
     auto selected_bounding_box_center = GG::Pt(selected_fleets_bounding_box.MidX(),
                                                selected_fleets_bounding_box.MidY());
@@ -3046,7 +3046,7 @@ void FleetWnd::Refresh() {
         }
         fleet_locations_ids.swap(fleets_near_enough);
 
-    } else if (auto system = GetSystem(m_system_id)) {
+    } else if (auto system = Objects().get<System>(m_system_id)) {
         location = {m_system_id, GG::Pt(GG::X(system->X()), GG::Y(system->Y()))};
 
     } else {
@@ -3066,7 +3066,7 @@ void FleetWnd::Refresh() {
         m_new_fleet_drop_target->SetSystemID(m_system_id);
 
     // If the location is a system add in any ships from m_empire_id that are in the system.
-    if (auto system = GetSystem(m_system_id)) {
+    if (auto system = Objects().get<System>(m_system_id)) {
         m_fleet_ids.clear();
         // get fleets to show from system, based on required ownership
         for (auto& fleet : Objects().find<Fleet>(system->FleetIDs())) {
@@ -3148,8 +3148,7 @@ void FleetWnd::DoLayout() {
     // are there any fleets owned by this client's empire int his FleetWnd?
     bool this_client_owns_fleets_in_this_wnd(false);
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    for (int fleet_id : m_fleet_ids) {
-        auto fleet = GetFleet(fleet_id);
+    for (const auto& fleet : Objects().find<Fleet>(m_fleet_ids)) {
         if (!fleet)
             continue;
         if (fleet->OwnedBy(this_client_empire_id)) {
@@ -3205,7 +3204,7 @@ void FleetWnd::DoLayout() {
 }
 
 void FleetWnd::AddFleet(int fleet_id) {
-    auto fleet = GetFleet(fleet_id);
+    auto fleet = Objects().get<Fleet>(fleet_id);
     if (!fleet /*|| fleet->Empty()*/)
         return;
 
@@ -3222,7 +3221,7 @@ void FleetWnd::DeselectAllFleets() {
 }
 
 void FleetWnd::SelectFleet(int fleet_id) {
-    if (fleet_id == INVALID_OBJECT_ID || !(GetFleet(fleet_id))) {
+    if (fleet_id == INVALID_OBJECT_ID || !(Objects().get<Fleet>(fleet_id))) {
         ErrorLogger() << "FleetWnd::SelectFleet invalid id " << fleet_id;
         DeselectAllFleets();
         return;
@@ -3285,7 +3284,7 @@ int FleetWnd::EmpireID() const
 
 bool FleetWnd::ContainsFleet(int fleet_id) const {
     for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
-        auto fleet = GetFleet(FleetInRow(it));
+        auto fleet = Objects().get<Fleet>(FleetInRow(it));
         if (fleet && fleet->ID() == fleet_id)
             return true;
     }
@@ -3301,7 +3300,7 @@ bool FleetWnd::ContainsFleets(const Set& fleet_ids_) const {
 
     // Remove found ids from fleet_ids.  If fleet_ids is empty, all have been found.
     for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
-        auto fleet = GetFleet(FleetInRow(it));
+        auto fleet = Objects().get<Fleet>(FleetInRow(it));
         if (fleet)
             fleet_ids.erase(fleet->ID());
 
@@ -3375,46 +3374,35 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
 void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    auto fleet = GetFleet(FleetInRow(it));
+    auto fleet = Objects().get<Fleet>(FleetInRow(it));
     if (!fleet)
         return;
 
-    auto system = GetSystem(fleet->SystemID());
+    auto system = Objects().get<System>(fleet->SystemID());
     std::set<int> ship_ids_set = fleet->ShipIDs();
 
-    // find damaged ships
     std::vector<int> damaged_ship_ids;
-    damaged_ship_ids.reserve(ship_ids_set.size());
-    for (int ship_id : ship_ids_set) {
-        auto ship = GetShip(ship_id);
-        if (ship->InitialMeterValue(METER_STRUCTURE) < ship->InitialMeterValue(METER_MAX_STRUCTURE))
-            damaged_ship_ids.push_back(ship_id);
-    }
-
-    // find ships with no remaining fuel
     std::vector<int> unfueled_ship_ids;
-    unfueled_ship_ids.reserve(ship_ids_set.size());
-    for (int ship_id : ship_ids_set) {
-        auto ship = GetShip(ship_id);
-        if (!ship)
-            continue;
-        if (ship->InitialMeterValue(METER_FUEL) < 1)
-            unfueled_ship_ids.push_back(ship_id);
-    }
-
-    // find ships that can carry fighters but dont have a full complement of them
     std::vector<int> not_full_fighters_ship_ids;
+
+    damaged_ship_ids.reserve(ship_ids_set.size());
+    unfueled_ship_ids.reserve(ship_ids_set.size());
     not_full_fighters_ship_ids.reserve(ship_ids_set.size());
-    for (int ship_id : ship_ids_set) {
-        auto ship = GetShip(ship_id);
+
+    for (const auto& ship : Objects().find<Ship>(ship_ids_set)) {
         if (!ship)
             continue;
-        if (!ship->HasFighters())
-            continue;
-        if (ship->FighterCount() < ship->FighterMax())
-            not_full_fighters_ship_ids.push_back(ship_id);
-    }
 
+        // find damaged ships
+        if (ship->InitialMeterValue(METER_STRUCTURE) < ship->InitialMeterValue(METER_MAX_STRUCTURE))
+            damaged_ship_ids.push_back(ship->ID());
+        // find ships with no remaining fuel
+        if (ship->InitialMeterValue(METER_FUEL) < 1)
+            unfueled_ship_ids.push_back(ship->ID());
+        // find ships that can carry fighters but dont have a full complement of them
+        if (ship->HasFighters() && ship->FighterCount() < ship->FighterMax())
+            not_full_fighters_ship_ids.push_back(ship->ID());
+    }
 
     // determine which other empires are at peace with client empire and have
     // an owned object in this fleet's system
@@ -3702,12 +3690,12 @@ int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {
 
 namespace {
     std::string SystemNameNearestToFleet(int client_empire_id, int fleet_id) {
-        auto fleet = GetFleet(fleet_id);
+        auto fleet = Objects().get<Fleet>(fleet_id);
         if (!fleet)
             return "";
 
         int nearest_system_id(GetPathfinder()->NearestSystemTo(fleet->X(), fleet->Y()));
-        if (auto system = GetSystem(nearest_system_id)) {
+        if (auto system = Objects().get<System>(nearest_system_id)) {
             const std::string& sys_name = system->ApparentName(client_empire_id);
             return sys_name;
         }
@@ -3726,7 +3714,7 @@ std::string FleetWnd::TitleText() const {
     // FleetWnd's empire and system
     const Empire* empire = GetEmpire(m_empire_id);
 
-    if (auto system = GetSystem(m_system_id)) {
+    if (auto system = Objects().get<System>(m_system_id)) {
         const std::string& sys_name = system->ApparentName(client_empire_id);
         return (empire
                 ? boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %
@@ -3778,7 +3766,7 @@ void FleetWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) 
         return;
 
     // if detail panel is showing the deleted fleet, reset to show nothing
-    if (GetFleet(m_fleet_detail_panel->FleetID()) == deleted_fleet)
+    if (Objects().get<Fleet>(m_fleet_detail_panel->FleetID()) == deleted_fleet)
         m_fleet_detail_panel->SetFleet(INVALID_OBJECT_ID);
 
     const ObjectMap& objects = GetUniverse().Objects();

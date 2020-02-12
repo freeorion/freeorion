@@ -814,14 +814,12 @@ void SetNativePopulationValues(ObjectMap& object_map) {
 
 bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name) {
     // get home planet and system, check if they exist
-    auto home_planet = GetPlanet(planet_id);
-    std::shared_ptr<System> home_system;
-    if (home_planet)
-        home_system = GetSystem(home_planet->SystemID());
-    if (!home_planet || !home_system) {
-        ErrorLogger() << "SetEmpireHomeworld: couldn't get homeworld or system for empire" << empire->EmpireID();
+    auto home_planet = Objects().get<Planet>(planet_id);
+    if (!home_planet)
         return false;
-    }
+    auto home_system = Objects().get<System>(home_planet->SystemID());
+    if (!home_system)
+        return false;
 
     DebugLogger() << "SetEmpireHomeworld: setting system " << home_system->ID()
                   << " (planet " <<  home_planet->ID() << ") to be home system for empire " << empire->EmpireID();

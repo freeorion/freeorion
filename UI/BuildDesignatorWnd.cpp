@@ -176,7 +176,7 @@ namespace {
         if (!empire)
             return nullptr;
 
-        if (auto source = GetUniverseObject(empire->CapitalID()))
+        if (auto source = Objects().get(empire->CapitalID()))
             return source;
 
         // not a valid source?!  scan through all objects to find one owned by this empire
@@ -201,9 +201,9 @@ namespace {
         }
         auto source = GetSourceObjectForEmpire(empire_id);
         if (only_failed_conditions)
-            return ConditionFailedDescription(enqueue_conditions, GetUniverseObject(candidate_object_id), source);
+            return ConditionFailedDescription(enqueue_conditions, Objects().get(candidate_object_id), source);
         else
-            return ConditionDescription(enqueue_conditions, GetUniverseObject(candidate_object_id), source);
+            return ConditionDescription(enqueue_conditions, Objects().get(candidate_object_id), source);
     }
 
     std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
@@ -230,9 +230,9 @@ namespace {
         auto source = GetSourceObjectForEmpire(empire_id);
 
         if (only_failed_conditions)
-            return ConditionFailedDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
+            return ConditionFailedDescription(location_conditions, Objects().get(candidate_object_id), source);
         else
-            return ConditionDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
+            return ConditionDescription(location_conditions, Objects().get(candidate_object_id), source);
     }
 
     std::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
@@ -259,7 +259,7 @@ namespace {
             const std::string& enqueue_and_location_condition_failed_text =
                 EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
             if (!enqueue_and_location_condition_failed_text.empty())
-                if (auto location = GetUniverseObject(candidate_object_id)) {
+                if (auto location = Objects().get(candidate_object_id)) {
                     std::string failed_cond_loc = boost::io::str(
                         FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
                     main_text += "\n\n" + failed_cond_loc + ":\n" + enqueue_and_location_condition_failed_text;
@@ -315,7 +315,7 @@ namespace {
             const std::string& location_condition_failed_text =
                 LocationConditionDescription(item.design_id, candidate_object_id, empire_id, true);
             if (!location_condition_failed_text.empty())
-                if (auto location = GetUniverseObject(candidate_object_id)) {
+                if (auto location = Objects().get(candidate_object_id)) {
                     std::string failed_cond_loc = boost::io::str(FlexibleFormat(
                         UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
                     main_text += ("\n\n" + failed_cond_loc + ":\n" + location_condition_failed_text);
@@ -652,7 +652,7 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
 
 void BuildDesignatorWnd::BuildSelector::Refresh() {
     ScopedTimer timer("BuildDesignatorWnd::BuildSelector::Refresh()");
-    if (auto prod_loc = GetUniverseObject(this->m_production_location))
+    if (auto prod_loc = Objects().get(this->m_production_location))
         this->SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE_LOCATION")) % prod_loc->Name()));
     else
         this->SetName(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"));
@@ -1374,7 +1374,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
     // only checking visible objects for this clients empire (and not the
     // latest known objects) as an empire shouldn't be able to use a planet or
     // system it can't currently see as a production location.
-    auto sys = GetSystem(system_id);
+    auto sys = Objects().get<System>(system_id);
     if (!sys) {
         ErrorLogger() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
         return;

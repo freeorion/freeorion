@@ -274,7 +274,7 @@ namespace {
             main_text += UserString("BUILD_ITEM_TYPE_PROJECT") + "\n";
 
             item_name = UserString(elem.item.name);
-            auto loc = GetUniverseObject(elem.location);
+            auto loc = Objects().get(elem.location);
             location_ok = loc && loc->OwnedBy(elem.empire_id) && (std::dynamic_pointer_cast<const ResourceCenter>(loc));
 
             total_cost = 1.0;
@@ -282,12 +282,12 @@ namespace {
             icon = ClientUI::MeterIcon(METER_STOCKPILE);
         }
 
-        if (std::shared_ptr<UniverseObject> rally_object = GetUniverseObject(elem.rally_point_id)) {
+        if (auto rally_object = Objects().get(elem.rally_point_id)) {
             main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_RALLIED_TO"))
                                         % rally_object->Name()) + "\n";
         }
 
-        if (std::shared_ptr<UniverseObject> location = GetUniverseObject(elem.location))
+        if (auto location = Objects().get(elem.location))
             main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION"))
                                         % location->Name()) + "\n";
 
@@ -454,7 +454,7 @@ namespace {
         std::string location_text;
         bool system_selected = false;
         bool rally_dest_selected = (elem.rally_point_id != INVALID_OBJECT_ID && elem.rally_point_id == SidePanel::SystemID());
-        if (std::shared_ptr<const UniverseObject> location = GetUniverseObject(elem.location)) {
+        if (const auto location = Objects().get(elem.location)) {
             system_selected = (location->SystemID() != INVALID_OBJECT_ID && location ->SystemID() == SidePanel::SystemID());
             if (GetOptionsDB().Get<bool>("ui.queue.production_location.shown")) {
                 if (rally_dest_selected && !system_selected) {
@@ -723,7 +723,7 @@ namespace {
 
             if (build_type == BT_SHIP) {
                 // for ships, add a set rally point command
-                if (auto system = GetSystem(SidePanel::SystemID())) {
+                if (auto system = Objects().get<System>(SidePanel::SystemID())) {
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
                     popup->AddMenuItem(GG::MenuItem(rally_prompt,               false, false, rally_to_action));
                 }
@@ -1119,7 +1119,7 @@ void ProductionWnd::UpdateInfoPanel() {
 
     // find if there is a local location
     int prod_loc_id = this->SelectedPlanetID();
-    auto loc_obj = GetUniverseObject(prod_loc_id);
+    auto loc_obj = Objects().get(prod_loc_id);
     if (!loc_obj) {
         // clear local info...
         m_production_info_panel->ClearLocalInfo();

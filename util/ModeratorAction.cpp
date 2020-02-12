@@ -50,7 +50,7 @@ Moderator::SetOwner::SetOwner(int object_id, int new_owner_empire_id) :
 {}
 
 void Moderator::SetOwner::Execute() const {
-    auto obj = GetUniverseObject(m_object_id);
+    auto obj = Objects().get(m_object_id);
     if (!obj) {
         ErrorLogger() << "Moderator::SetOwner::Execute couldn't get object with id: " << m_object_id;
         return;
@@ -80,12 +80,12 @@ Moderator::AddStarlane::AddStarlane(int system_1_id, int system_2_id) :
 {}
 
 void Moderator::AddStarlane::Execute() const {
-    std::shared_ptr<System> sys1 = GetSystem(m_id_1);
+    auto sys1 = Objects().get<System>(m_id_1);
     if (!sys1) {
         ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_1;
         return;
     }
-    std::shared_ptr<System> sys2 = GetSystem(m_id_2);
+    auto sys2 = Objects().get<System>(m_id_2);
     if (!sys2) {
         ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_2;
         return;
@@ -116,12 +116,12 @@ Moderator::RemoveStarlane::RemoveStarlane(int system_1_id, int system_2_id) :
 {}
 
 void Moderator::RemoveStarlane::Execute() const {
-    std::shared_ptr<System> sys1 = GetSystem(m_id_1);
+    auto sys1 = Objects().get<System>(m_id_1);
     if (!sys1) {
         ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_1;
         return;
     }
-    std::shared_ptr<System> sys2 = GetSystem(m_id_2);
+    auto sys2 = Objects().get<System>(m_id_2);
     if (!sys2) {
         ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_2;
         return;
@@ -208,7 +208,7 @@ Moderator::CreatePlanet::CreatePlanet(int system_id, PlanetType planet_type, Pla
 {}
 
 void Moderator::CreatePlanet::Execute() const {
-    std::shared_ptr<System> location = GetSystem(m_system_id);
+    auto location = Objects().get<System>(m_system_id);
     if (!location) {
         ErrorLogger() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;

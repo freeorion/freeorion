@@ -783,7 +783,7 @@ bool ClientUI::ZoomToObject(int id) {
 }
 
 bool ClientUI::ZoomToPlanet(int id) {
-    if (auto planet = GetPlanet(id)) {
+    if (auto planet = Objects().get<Planet>(id)) {
         GetMapWnd()->CenterOnObject(planet->SystemID());
         GetMapWnd()->SelectSystem(planet->SystemID());
         GetMapWnd()->SelectPlanet(id);
@@ -793,13 +793,13 @@ bool ClientUI::ZoomToPlanet(int id) {
 }
 
 bool ClientUI::ZoomToPlanetPedia(int id) {
-    if (GetPlanet(id))
+    if (Objects().get<Planet>(id))
         GetMapWnd()->ShowPlanet(id);
     return false;
 }
 
 bool ClientUI::ZoomToSystem(int id) {
-    if (auto system = GetSystem(id)) {
+    if (auto system = Objects().get<System>(id)) {
         ZoomToSystem(system);
         return true;
     }
@@ -807,7 +807,7 @@ bool ClientUI::ZoomToSystem(int id) {
 }
 
 bool ClientUI::ZoomToFleet(int id) {
-    if (auto fleet = GetFleet(id)) {
+    if (auto fleet = Objects().get<Fleet>(id)) {
         ZoomToFleet(fleet);
         return true;
     }
@@ -815,13 +815,13 @@ bool ClientUI::ZoomToFleet(int id) {
 }
 
 bool ClientUI::ZoomToShip(int id) {
-    if (auto ship = GetShip(id))
+    if (auto ship = Objects().get<Ship>(id))
         return ZoomToFleet(ship->FleetID());
     return false;
 }
 
 bool ClientUI::ZoomToBuilding(int id) {
-    if (auto building = GetBuilding(id)) {
+    if (auto building = Objects().get<Building>(id)) {
         ZoomToBuildingType(building->BuildingTypeName());
         return ZoomToPlanet(building->PlanetID());
     }
@@ -829,7 +829,7 @@ bool ClientUI::ZoomToBuilding(int id) {
 }
 
 bool ClientUI::ZoomToField(int id) {
-    //if (auto field = GetField(id)) {
+    //if (auto field = Objects().get<Field>(id)) {
     //  // TODO: implement this
     //}
     return false;
@@ -975,7 +975,7 @@ bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str) {
 }
 
 void ClientUI::DumpObject(int object_id) {
-    auto obj = GetUniverseObject(object_id);
+    auto obj = Objects().get(object_id);
     if (!obj)
         return;
     m_message_wnd->HandleLogMessage(obj->Dump() + "\n");

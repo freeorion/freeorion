@@ -65,7 +65,7 @@ void SpecialsPanel::Update() {
 
 
     // get specials to display
-    auto obj = GetUniverseObject(m_object_id);
+    auto obj = Objects().get(m_object_id);
     if (!obj) {
         ErrorLogger() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
         return;

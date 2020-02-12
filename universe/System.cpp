@@ -287,16 +287,16 @@ bool System::HasWormholeTo(int id) const {
 int  System::Owner() const {
     // Check if all of the owners are the same empire.
     int first_owner_found(ALL_EMPIRES);
-    for (int planet_id : m_planets) {
-        if (auto planet = GetPlanet(planet_id)) {
-            const int owner = planet->Owner();
-            if (owner == ALL_EMPIRES)
-                continue;
-            if (first_owner_found == ALL_EMPIRES)
-                first_owner_found = owner;
-            if (first_owner_found != owner)
-                return ALL_EMPIRES;
-        }
+    for (const auto& planet : Objects().find<Planet>(m_planets)) {
+        if (!planet)
+            continue;
+        const int owner = planet->Owner();
+        if (owner == ALL_EMPIRES)
+            continue;
+        if (first_owner_found == ALL_EMPIRES)
+            first_owner_found = owner;
+        if (first_owner_found != owner)
+            return ALL_EMPIRES;
     }
     return first_owner_found;
 }
@@ -437,7 +437,7 @@ void System::Remove(int id) {
     m_objects.erase(id);
 
     if (removed_fleet) {
-        if (auto fleet = GetFleet(id))
+        if (auto fleet = Objects().get<Fleet>(id))
             FleetsRemovedSignal({fleet});
     }
     StateChangedSignal();

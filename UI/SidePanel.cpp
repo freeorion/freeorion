@@ -682,7 +682,7 @@ public:
 
     void Refresh() {
         ScopedTimer timer("RotatingPlanetControl::Refresh", true);
-        auto planet = GetPlanet(m_planet_id);
+        auto planet = Objects().get<Planet>(m_planet_id);
         if (!planet) return;
 
         // these values ensure that wierd GLUT-sphere artifacts do not show themselves
@@ -775,7 +775,7 @@ namespace {
         int SystemID() const { return m_system_id; }
 
         SortKeyType SortKey(std::size_t column) const override
-        { return GetSystem(m_system_id)->Name() + std::to_string(m_system_id); }
+        { return Objects().get<System>(m_system_id)->Name() + std::to_string(m_system_id); }
 
     private:
         int m_system_id;
@@ -801,7 +801,7 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
         if (!system_row)
             return;
 
-        auto system = GetSystem(system_row->SystemID());
+        auto system = Objects().get<System>(system_row->SystemID());
         if (!system)
             return;
 
@@ -910,7 +910,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     SetName(UserString("PLANET_PANEL"));
 
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet) {
         ErrorLogger() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
         return;
@@ -1106,7 +1106,7 @@ void SidePanel::PlanetPanel::DoLayout() {
 }
 
 void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet || !GetOptionsDB().Get<bool>("ui.map.sidepanel.planet.shown"))
         return;
 
@@ -1143,7 +1143,7 @@ namespace {
     bool IsAvailable(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        auto fleet = GetFleet(ship->FleetID());
+        auto fleet = Objects().get<Fleet>(ship->FleetID());
         if (!fleet)
             return false;
         if (ship->SystemID() == system_id &&
@@ -1158,7 +1158,7 @@ namespace {
     bool AvailableToColonize(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        auto fleet = GetFleet(ship->FleetID());
+        auto fleet = Objects().get<Fleet>(ship->FleetID());
         if (!fleet)
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
@@ -1171,7 +1171,7 @@ namespace {
     bool AvailableToInvade(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        auto fleet = GetFleet(ship->FleetID());
+        auto fleet = Objects().get<Fleet>(ship->FleetID());
         if (!fleet)
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
@@ -1184,7 +1184,7 @@ namespace {
     bool AvailableToBombard(std::shared_ptr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        auto fleet = GetFleet(ship->FleetID());
+        auto fleet = Objects().get<Fleet>(ship->FleetID());
         if (!fleet)
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
@@ -1268,8 +1268,7 @@ namespace {
             return retval;
 
         // is there a valid single selected ship in the active FleetWnd?
-        for (int ship_id : FleetUIManager::GetFleetUIManager().SelectedShipIDs()) {
-            auto ship = GetShip(ship_id);
+        for (const auto& ship : Objects().find<Ship>(FleetUIManager::GetFleetUIManager().SelectedShipIDs())) {
             if (!ship || ship->SystemID() != system_id)
                 continue;
             if (!ship->CanBombard() || !ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
@@ -1287,10 +1286,12 @@ std::shared_ptr<const Ship> ValidSelectedColonyShip(int system_id) {
         return nullptr;
 
     // is there a valid selected ship in the active FleetWnd?
-    for (int ship_id : FleetUIManager::GetFleetUIManager().SelectedShipIDs())
-        if (auto ship = GetShip(ship_id))
-            if (ship->SystemID() == system_id && ship->CanColonize() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-                return ship;
+    for (const auto& ship : Objects().find<Ship>(FleetUIManager::GetFleetUIManager().SelectedShipIDs())) {
+        if (!ship)
+            continue;
+        if (ship->SystemID() == system_id && ship->CanColonize() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+            return ship;
+    }
     return nullptr;
 }
 
@@ -1300,11 +1301,11 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
         return INVALID_OBJECT_ID;
     if (GetUniverse().GetObjectVisibilityByEmpire(target_planet_id, empire_id) < VIS_PARTIAL_VISIBILITY)
         return INVALID_OBJECT_ID;
-    auto target_planet = GetPlanet(target_planet_id);
+    auto target_planet = Objects().get<Planet>(target_planet_id);
     if (!target_planet)
         return INVALID_OBJECT_ID;
     int system_id = target_planet->SystemID();
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system)
         return INVALID_OBJECT_ID;
     // is planet a valid colonization target?
@@ -1412,11 +1413,11 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenInvasionShips(int targe
     if (empire_id == ALL_EMPIRES)
         return retval;
 
-    auto target_planet = GetPlanet(target_planet_id);
+    auto target_planet = Objects().get<Planet>(target_planet_id);
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system)
         return retval;
 
@@ -1454,11 +1455,11 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenBombardShips(int target
     if (empire_id == ALL_EMPIRES)
         return retval;
 
-    auto target_planet = GetPlanet(target_planet_id);
+    auto target_planet = Objects().get<Planet>(target_planet_id);
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system)
         return retval;
 
@@ -1487,7 +1488,7 @@ void SidePanel::PlanetPanel::Refresh() {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     m_planet_connection.disconnect();
 
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet) {
         DebugLogger() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
@@ -1530,11 +1531,8 @@ void SidePanel::PlanetPanel::Refresh() {
     // check for shipyard
     const auto& known_destroyed_object_ids =
         GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
-    for (int building_id : planet->BuildingIDs()) {
-        auto building = GetBuilding(building_id);
-        if (!building)
-            continue;
-        if (known_destroyed_object_ids.count(building_id))
+    for (const auto& building : Objects().find<Building>(planet->BuildingIDs())) {
+        if (!building || known_destroyed_object_ids.count(building->ID()))
             continue;
         if (building->HasTag(TAG_SHIPYARD)) {
             has_shipyard = true;
@@ -1571,7 +1569,7 @@ void SidePanel::PlanetPanel::Refresh() {
 
     auto selected_colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
     if (!selected_colony_ship && FleetUIManager::GetFleetUIManager().SelectedShipIDs().empty())
-        selected_colony_ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
+        selected_colony_ship = Objects().get<Ship>(AutomaticallyChosenColonyShip(m_planet_id));
 
     auto invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
     if (invasion_ships.empty()) {
@@ -1923,7 +1921,7 @@ void SidePanel::PlanetPanel::Refresh() {
                                  " (id: " << m_planet_id << ") without having seen it before!";
             }
 
-            auto system = GetSystem(planet->SystemID());
+            auto system = Objects().get<System>(planet->SystemID());
             if (system && system->GetVisibility(client_empire_id) <= VIS_BASIC_VISIBILITY) { // HACK: system is basically visible or less, so we must not be in detection range of the planet.
                 detection_info = UserString("PL_NOT_IN_RANGE");
             }
@@ -1985,7 +1983,7 @@ void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void SidePanel::PlanetPanel::SetFocus(const std::string& focus) {
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         return;
     // todo: if focus is already equal to planet's focus, return early.
@@ -2041,11 +2039,11 @@ void SidePanel::PlanetPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet)
         return;
 
-    auto system = GetSystem(planet->SystemID());
+    auto system = Objects().get<System>(planet->SystemID());
 
     // determine which other empires are at peace with client empire and have
     // an owned object in this fleet's system
@@ -2298,7 +2296,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
     // order or cancel colonization, depending on whether it has previously
     // been ordered
 
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet || planet->InitialMeterValue(METER_POPULATION) != 0.0 || !m_order_issuing_enabled)
         return;
 
@@ -2317,7 +2315,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
         // find colony ship and order it to colonize
         auto ship = ValidSelectedColonyShip(SidePanel::SystemID());
         if (!ship)
-            ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
+            ship = Objects().get<Ship>(AutomaticallyChosenColonyShip(m_planet_id));
 
         if (!ship) {
             ErrorLogger() << "SidePanel::PlanetPanel::ClickColonize valid colony not found!";
@@ -2340,7 +2338,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
     // order or cancel invasion, depending on whether it has previously
     // been ordered
 
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
         (planet->InitialMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
@@ -2385,7 +2383,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
     // order or cancel bombard, depending on whether it has previously
     // been ordered
 
-    auto planet = GetPlanet(m_planet_id);
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
         (planet->InitialMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
@@ -2436,7 +2434,7 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList:
         return;
     }
 
-    auto res = GetResourceCenter(m_planet_id);
+    auto res = Objects().get<ResourceCenter>(m_planet_id);
     if (!res) {
         ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't convert object with id " << m_planet_id << " to a ResourceCenter";
         return;
@@ -2463,7 +2461,7 @@ void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
 
     m_buildings_panel->EnableOrderIssuing(enable);
 
-    auto obj = GetUniverseObject(m_planet_id);
+    auto obj = Objects().get(m_planet_id);
     if (!enable || !obj || !obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         m_focus_drop->Disable();
     else
@@ -2554,19 +2552,16 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
     Clear();
 
     std::multimap<int, int> orbits_planets;
-    for (int planet_id : planet_ids) {
-        auto planet = GetPlanet(planet_id);
-        if (!planet) {
-            ErrorLogger() << "PlanetPanelContainer::SetPlanets couldn't find planet with id " << planet_id;
+    for (const auto& planet : Objects().find<Planet>(planet_ids)) {
+        if (!planet)
             continue;
-        }
         int system_id = planet->SystemID();
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "PlanetPanelContainer::SetPlanets couldn't find system of planet" << planet->Name();
             continue;
         }
-        orbits_planets.insert({system->OrbitOfPlanet(planet_id), planet_id});
+        orbits_planets.insert({system->OrbitOfPlanet(planet->ID()), planet->ID()});
     }
 
     // create new panels and connect their signals
@@ -2737,7 +2732,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
         // find selectables
         for (auto& panel : m_planet_panels) {
             int planet_id = panel->PlanetID();
-            auto planet = GetPlanet(planet_id);
+            auto planet = Objects().get<Planet>(planet_id);
 
             if (planet && planet->Accept(*m_valid_selection_predicate)) {
                 m_candidate_ids.insert(planet_id);
@@ -2843,7 +2838,7 @@ namespace {
             }
             m_labels_and_amounts.clear();
 
-            auto system = GetSystem(m_system_id);
+            auto system = Objects().get<System>(m_system_id);
             if (!system)
                 return;
 
@@ -3158,7 +3153,7 @@ void SidePanel::RefreshInPreRender() {
 
 
     // connect state changed and insertion signals for planets and fleets in system
-    auto system = GetSystem(s_system_id);
+    auto system = Objects().get<System>(s_system_id);
     if (!system) {
         ErrorLogger() << "SidePanel::Refresh couldn't get system with id " << s_system_id;
         return;
@@ -3182,7 +3177,7 @@ void SidePanel::RefreshInPreRender() {
 }
 
 void SidePanel::RefreshSystemNames() {
-    //auto system = GetSystem(s_system_id);
+    //auto system = Objects().get<System>(s_system_id);
     //if (!system)
     //    return;
 
@@ -3247,7 +3242,7 @@ void SidePanel::RefreshImpl() {
 
     RefreshSystemNames();
 
-    auto system = GetSystem(s_system_id);
+    auto system = Objects().get<System>(s_system_id);
     // if no system object, there is nothing to populate with.  early abort.
     if (!system)
         return;
@@ -3416,7 +3411,7 @@ void SidePanel::DoLayout() {
     GG::GUI::PreRenderWindow(m_planet_panel_container);
 
     // hide scrollbar if there is no planets in the system
-    auto system = GetSystem(s_system_id);
+    auto system = Objects().get<System>(s_system_id);
     if (system) {
         if (system->PlanetIDs().empty())
             m_planet_panel_container->HideScrollbar();
@@ -3512,7 +3507,7 @@ bool SidePanel::PlanetSelectable(int planet_id) const {
     if (!m_selection_enabled)
         return false;
 
-    auto system = GetSystem(s_system_id);
+    auto system = Objects().get<System>(s_system_id);
     if (!system)
         return false;
 
@@ -3520,7 +3515,7 @@ bool SidePanel::PlanetSelectable(int planet_id) const {
     if (planet_ids.count(planet_id) == 0)
         return false;
 
-    auto planet = GetPlanet(planet_id);
+    auto planet = Objects().get<Planet>(planet_id);
     if (!planet)
         return false;
 
@@ -3568,7 +3563,7 @@ void SidePanel::SetSystem(int system_id) {
     if (s_system_id == system_id)
         return;
 
-    auto system = GetSystem(system_id);
+    auto system = Objects().get<System>(system_id);
     if (!system) {
         s_system_id = INVALID_OBJECT_ID;
         return;
@@ -3576,7 +3571,7 @@ void SidePanel::SetSystem(int system_id) {
 
     s_system_id = system_id;
 
-    if (GetSystem(s_system_id))
+    if (Objects().get<System>(s_system_id))
         PlaySidePanelOpenSound();
 
     // refresh sidepanels

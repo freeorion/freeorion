@@ -216,7 +216,7 @@ namespace {
         Condition::ObjectSet objs;
         boost::python::stl_input_iterator<int> end;
         for (boost::python::stl_input_iterator<int> id(obj_ids); id != end; ++id) {
-            if (auto obj = GetUniverseObject(*id))
+            if (auto obj = Objects().get(*id))
                 objs.push_back(obj);
             else
                 ErrorLogger() << "FilterIDsWithCondition:: Passed an invalid universe object id " << *id;
@@ -540,7 +540,7 @@ namespace {
     //
     // Wrappers for common UniverseObject class member funtions
     object GetName(int object_id) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "GetName: Couldn't get object with ID " << object_id;
             return object("");
@@ -549,7 +549,7 @@ namespace {
     }
 
     void SetName(int object_id, const std::string& name) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "RenameUniverseObject: Couldn't get object with ID " << object_id;
             return;
@@ -558,7 +558,7 @@ namespace {
     }
 
     double GetX(int object_id) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "GetX: Couldn't get object with ID " << object_id;
             return UniverseObject::INVALID_POSITION;
@@ -567,7 +567,7 @@ namespace {
     }
 
     double GetY(int object_id) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "GetY: Couldn't get object with ID " << object_id;
             return UniverseObject::INVALID_POSITION;
@@ -576,7 +576,7 @@ namespace {
     }
 
     tuple GetPos(int object_id) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "GetPos: Couldn't get object with ID " << object_id;
             return make_tuple(UniverseObject::INVALID_POSITION,
@@ -586,7 +586,7 @@ namespace {
     }
 
     int GetOwner(int object_id) {
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "GetOwner: Couldn't get object with ID " << object_id;
             return ALL_EMPIRES;
@@ -596,7 +596,7 @@ namespace {
 
     void AddSpecial(int object_id, const std::string special_name) {
         // get the universe object and check if it exists
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "AddSpecial: Couldn't get object with ID " << object_id;
             return;
@@ -615,7 +615,7 @@ namespace {
 
     void RemoveSpecial(int object_id, const std::string special_name) {
         // get the universe object and check if it exists
-        auto obj = GetUniverseObject(object_id);
+        auto obj = Objects().get(object_id);
         if (!obj) {
             ErrorLogger() << "RemoveSpecial: Couldn't get object with ID " << object_id;
             return;
@@ -739,7 +739,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
 
-        auto system = GetSystem(planet->SystemID());
+        auto system = Objects().get<System>(planet->SystemID());
         if (!system) {
             ErrorLogger() << "CreateBuilding: couldn't get system for planet";
             return INVALID_OBJECT_ID;
@@ -810,13 +810,13 @@ namespace {
         }
 
         // get fleet and check if it exists
-        auto fleet = GetFleet(fleet_id);
+        auto fleet = Objects().get<Fleet>(fleet_id);
         if (!fleet) {
             ErrorLogger() << "CreateShip: couldn't get fleet with ID " << fleet_id;
             return INVALID_OBJECT_ID;
         }
 
-        auto system = GetSystem(fleet->SystemID());
+        auto system = Objects().get<System>(fleet->SystemID());
         if (!system) {
             ErrorLogger() << "CreateShip: couldn't get system for fleet";
             return INVALID_OBJECT_ID;
@@ -923,7 +923,7 @@ namespace {
 
     int CreateFieldInSystem(const std::string& field_type_name, double size, int system_id) {
         // check if system exists and get system
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "CreateFieldInSystem: couldn't get system with ID" << system_id;
             return INVALID_OBJECT_ID;
@@ -942,7 +942,7 @@ namespace {
         boost::python::stl_input_iterator<int> end;
         for (boost::python::stl_input_iterator<int> id(obj_ids);
              id != end; ++id) {
-            if (auto obj = GetUniverseObject(*id)) {
+            if (auto obj = Objects().get(*id)) {
                 py_systems.append(obj->SystemID());
             } else {
                 ErrorLogger() << "Passed an invalid universe object id " << *id;
@@ -973,7 +973,7 @@ namespace {
 
     // Wrappers for System class member functions
     StarType SystemGetStarType(int system_id) {
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetStarType: couldn't get system with ID " << system_id;
             return INVALID_STAR_TYPE;
@@ -988,7 +988,7 @@ namespace {
             return;
         }
 
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemSetStarType : Couldn't get system with ID " << system_id;
             return;
@@ -998,7 +998,7 @@ namespace {
     }
 
     int SystemGetNumOrbits(int system_id) {
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetNumOrbits : Couldn't get system with ID " << system_id;
             return 0;
@@ -1008,7 +1008,7 @@ namespace {
 
     list SystemFreeOrbits(int system_id) {
         list py_orbits;
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemFreeOrbits : Couldn't get system with ID " << system_id;
             return py_orbits;
@@ -1019,7 +1019,7 @@ namespace {
     }
 
     bool SystemOrbitOccupied(int system_id, int orbit) {
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemOrbitOccupied : Couldn't get system with ID " << system_id;
             return 0;
@@ -1028,7 +1028,7 @@ namespace {
     }
 
     int SystemOrbitOfPlanet(int system_id, int planet_id) {
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemOrbitOfPlanet : Couldn't get system with ID " << system_id;
             return 0;
@@ -1038,7 +1038,7 @@ namespace {
 
     list SystemGetPlanets(int system_id) {
         list py_planets;
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetPlanets : Couldn't get system with ID " << system_id;
             return py_planets;
@@ -1050,7 +1050,7 @@ namespace {
 
     list SystemGetFleets(int system_id) {
         list py_fleets;
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetFleets : Couldn't get system with ID " << system_id;
             return py_fleets;
@@ -1063,7 +1063,7 @@ namespace {
     list SystemGetStarlanes(int system_id) {
         list py_starlanes;
         // get source system
-        auto system = GetSystem(system_id);
+        auto system = Objects().get<System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetStarlanes : Couldn't get system with ID " << system_id;
             return py_starlanes;
@@ -1083,12 +1083,12 @@ namespace {
 
     void SystemAddStarlane(int from_sys_id, int to_sys_id) {
         // get source and destination system, check that both exist
-        auto from_sys = GetSystem(from_sys_id);
+        auto from_sys = Objects().get<System>(from_sys_id);
         if (!from_sys) {
             ErrorLogger() << "SystemAddStarlane : Couldn't find system with ID " << from_sys_id;
             return;
         }
-        auto to_sys = GetSystem(to_sys_id);
+        auto to_sys = Objects().get<System>(to_sys_id);
         if (!to_sys) {
             ErrorLogger() << "SystemAddStarlane : Couldn't find system with ID " << to_sys_id;
             return;
@@ -1100,12 +1100,12 @@ namespace {
 
     void SystemRemoveStarlane(int from_sys_id, int to_sys_id) {
         // get source and destination system, check that both exist
-        auto from_sys = GetSystem(from_sys_id);
+        auto from_sys = Objects().get<System>(from_sys_id);
         if (!from_sys) {
             ErrorLogger() << "SystemRemoveStarlane : Couldn't find system with ID " << from_sys_id;
             return;
         }
-        auto to_sys = GetSystem(to_sys_id);
+        auto to_sys = Objects().get<System>(to_sys_id);
         if (!to_sys) {
             ErrorLogger() << "SystemRemoveStarlane : Couldn't find system with ID " << to_sys_id;
             return;
@@ -1117,7 +1117,7 @@ namespace {
 
     // Wrapper for Planet class member functions
     PlanetType PlanetGetType(int planet_id) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetType: Couldn't get planet with ID " << planet_id;
             return INVALID_PLANET_TYPE;
@@ -1126,7 +1126,7 @@ namespace {
     }
 
     void PlanetSetType(int planet_id, PlanetType planet_type) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetType: Couldn't get planet with ID " << planet_id;
             return;
@@ -1144,7 +1144,7 @@ namespace {
     }
 
     PlanetSize PlanetGetSize(int planet_id) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetSize: Couldn't get planet with ID " << planet_id;
             return INVALID_PLANET_SIZE;
@@ -1153,7 +1153,7 @@ namespace {
     }
 
     void PlanetSetSize(int planet_id, PlanetSize planet_size) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSize: Couldn't get planet with ID " << planet_id;
             return;
@@ -1169,7 +1169,7 @@ namespace {
     }
 
     object PlanetGetSpecies(int planet_id) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetSpecies: Couldn't get planet with ID " << planet_id;
             return object("");
@@ -1178,7 +1178,7 @@ namespace {
     }
 
     void PlanetSetSpecies(int planet_id, const std::string& species_name) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSpecies: Couldn't get planet with ID " << planet_id;
             return;
@@ -1187,7 +1187,7 @@ namespace {
     }
 
     object PlanetGetFocus(int planet_id) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetFocus: Couldn't get planet with ID " << planet_id;
             return object("");
@@ -1196,7 +1196,7 @@ namespace {
     }
 
     void PlanetSetFocus(int planet_id, const std::string& focus) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSpecies: Couldn't get planet with ID " << planet_id;
             return;
@@ -1206,7 +1206,7 @@ namespace {
 
     list PlanetAvailableFoci(int planet_id) {
         list py_foci;
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetAvailableFoci: Couldn't get planet with ID " << planet_id;
             return py_foci;
@@ -1218,7 +1218,7 @@ namespace {
     }
 
     bool PlanetMakeOutpost(int planet_id, int empire_id) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetMakeOutpost: couldn't get planet with ID:" << planet_id;
             return false;
@@ -1233,7 +1233,7 @@ namespace {
     }
 
     bool PlanetMakeColony(int planet_id, int empire_id, const std::string& species, double population) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetMakeColony: couldn't get planet with ID:" << planet_id;
             return false;
@@ -1256,7 +1256,7 @@ namespace {
     }
 
     object PlanetCardinalSuffix(int planet_id) {
-        auto planet = GetPlanet(planet_id);
+        auto planet = Objects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetCardinalSuffix: couldn't get planet with ID:" << planet_id;
             return object(UserString("ERROR"));
