@@ -448,7 +448,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
     return home_systems
 
 
-def setup_empire(empire, empire_name, home_system, starting_species, player_name):
+def setup_empire(empire, empire_name, home_system, starting_species, player_name, add_premade_ship_designs=True):
     """
     Sets up various aspects of an empire, like empire name, homeworld, etc.
     """
@@ -512,10 +512,11 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     for item in fo.load_item_spec_list():
         fo.empire_unlock_item(empire, item.type, item.name)
 
-    # add premade ship designs to empire
-    print("Player", player_name, ": add premade ship designs")
-    for ship_design in fo.design_get_premade_list():
-        fo.empire_add_ship_design(empire, ship_design)
+    if add_premade_ship_designs:
+        # add premade ship designs to empire
+        print("Player", player_name, ": add premade ship designs")
+        for ship_design in fo.design_get_premade_list():
+            fo.empire_add_ship_design(empire, ship_design)
 
     # add starting fleets to empire
     # use default content file

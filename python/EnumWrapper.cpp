@@ -229,5 +229,11 @@ namespace FreeOrionPython {
             .value("clientTypeObserver",  Networking::ROLE_CLIENT_TYPE_OBSERVER)
             .value("galaxySetup",         Networking::ROLE_GALAXY_SETUP)
         ;
+        enum_<Networking::ClientType>("clientType")
+            .value("Human",         Networking::CLIENT_TYPE_HUMAN_PLAYER)
+            .value("AI",            Networking::CLIENT_TYPE_AI_PLAYER)
+            .value("Observer",      Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+            .value("Moderator",     Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        ;
     }
 }
