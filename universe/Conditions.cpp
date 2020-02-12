@@ -266,12 +266,12 @@ bool Condition::operator==(const Condition& rhs) const {
 }
 
 void Condition::Eval(const ScriptingContext& parent_context,
-                         ObjectSet& matches, ObjectSet& non_matches,
-                         SearchDomain search_domain/* = NON_MATCHES*/) const
+                     ObjectSet& matches, ObjectSet& non_matches,
+                     SearchDomain search_domain/* = NON_MATCHES*/) const
 { EvalImpl(matches, non_matches, search_domain, MatchHelper(this, parent_context)); }
 
 void Condition::Eval(const ScriptingContext& parent_context,
-                         ObjectSet& matches) const
+                     ObjectSet& matches) const
 {
     matches.clear();
     ObjectSet condition_initial_candidates;
@@ -284,7 +284,7 @@ void Condition::Eval(const ScriptingContext& parent_context,
 }
 
 bool Condition::Eval(const ScriptingContext& parent_context,
-                         std::shared_ptr<const UniverseObject> candidate) const
+                     std::shared_ptr<const UniverseObject> candidate) const
 {
     if (!candidate)
         return false;
@@ -304,7 +304,7 @@ bool Condition::Eval(std::shared_ptr<const UniverseObject> candidate) const {
 }
 
 void Condition::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                      ObjectSet& condition_non_targets) const
+                                                  ObjectSet& condition_non_targets) const
 { AddAllObjectsSet(condition_non_targets); }
 
 std::string Condition::Description(bool negated/* = false*/) const

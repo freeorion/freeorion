@@ -24,8 +24,7 @@ Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species
 Fighter::~Fighter()
 {}
 
-bool Fighter::HostileToEmpire(int empire_id) const
-{
+bool Fighter::HostileToEmpire(int empire_id) const {
     if (OwnedBy(empire_id))
         return false;
     return empire_id == ALL_EMPIRES || Unowned() ||
