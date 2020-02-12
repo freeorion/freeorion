@@ -4059,6 +4059,7 @@ void DesignWnd::MainPanel::CompleteConstruction() {
     m_design_name = GG::Wnd::Create<CUIEdit>(UserString("DESIGN_NAME_DEFAULT"));
     m_design_description_toggle = GG::Wnd::Create<CUIStateButton>(UserString("DESIGN_WND_DESIGN_DESCRIPTION"),GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     m_design_description_edit = GG::Wnd::Create<CUIMultiEdit>(UserString("DESIGN_DESCRIPTION_DEFAULT"));
+    m_design_description_edit->SetTextFormat(m_design_description_edit->GetTextFormat() | GG::FORMAT_IGNORETAGS);
     m_replace_button = Wnd::Create<CUIButton>(UserString("DESIGN_WND_UPDATE"));
     m_confirm_button = Wnd::Create<CUIButton>(UserString("DESIGN_WND_ADD_FINISHED"));
     m_clear_button = Wnd::Create<CUIButton>(UserString("DESIGN_WND_CLEAR"));
