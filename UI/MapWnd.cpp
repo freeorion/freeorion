@@ -7588,9 +7588,6 @@ namespace {
 };
 
 void MapWnd::DispatchFleetsExploring() {
-    DebugLogger() << "MapWnd::DispatchFleetsExploring called";
-    SectionedScopedTimer timer("MapWnd::DispatchFleetsExploring");
-
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire *empire = GetEmpire(empire_id);
     if (!empire) {
@@ -7606,7 +7603,6 @@ void MapWnd::DispatchFleetsExploring() {
 
     // clean the fleet list by removing non-existing fleet, and extract the
     // fleets waiting for orders
-    timer.EnterSection("idle fleets/systems being explored");
     for (const auto& fleet : Objects().find<Fleet>(m_fleets_exploring)) {
         if (!fleet)
             continue;
@@ -7619,7 +7615,6 @@ void MapWnd::DispatchFleetsExploring() {
                 systems_being_explored.emplace(fleet->FinalDestinationID(), fleet->ID());
         }
     }
-    timer.EnterSection("");
 
     if (idle_fleets.empty())
         return;
@@ -7632,7 +7627,6 @@ void MapWnd::DispatchFleetsExploring() {
         }();
 
     //list all unexplored systems by taking the neighboors of explored systems because ObjectMap does not list them all.
-    timer.EnterSection("candidate unknown systems");
     SystemIDListType candidates_unknown_systems;
     const auto& empire_explored_systems = empire->ExploredSystems();
     SystemIDListType explored_systems(empire_explored_systems.begin(), empire_explored_systems.end());
@@ -7641,7 +7635,6 @@ void MapWnd::DispatchFleetsExploring() {
     candidates_unknown_systems.insert(neighboors.begin(), neighboors.end());
 
     // Populate list of unexplored systems
-    timer.EnterSection("unexplored systems");
     SystemIDListType unexplored_systems;
     for (const auto& system : Objects().find<System>(candidates_unknown_systems)) {
         if (!system)
@@ -7650,7 +7643,6 @@ void MapWnd::DispatchFleetsExploring() {
             !systems_being_explored.count(system->ID()))
         { unexplored_systems.insert(system->ID()); }
     }
-    timer.EnterSection("");
 
     if (unexplored_systems.empty()) {
         TraceLogger() << "No unknown systems to explore";
@@ -7667,7 +7659,6 @@ void MapWnd::DispatchFleetsExploring() {
     std::multimap<double, FleetRouteType> fleet_routes;  // priority, (fleet, route)
 
     // Determine fleet routes for each unexplored system
-    timer.EnterSection("fleet_routes");
     std::unordered_map<int, int> fleet_route_count;
     for (const auto& unexplored_system : Objects().find<System>(unexplored_systems)) {
         if (!unexplored_system)
@@ -7693,7 +7684,6 @@ void MapWnd::DispatchFleetsExploring() {
             }
         }
     }
-    timer.EnterSection("");
 
     if (!fleet_routes.empty()) {
         TraceLogger() << [fleet_routes]() {
@@ -7707,11 +7697,9 @@ void MapWnd::DispatchFleetsExploring() {
     }
 
     // Issue fleet orders
-    timer.EnterSection("issue orders");
     for (auto fleet_route : fleet_routes) {
         IssueExploringFleetOrders(idle_fleets, systems_being_explored, fleet_route.second);
     }
-    timer.EnterSection("");
 
     // verify fleets have expected destination
     for (SystemFleetMap::iterator system_fleet_it = systems_being_explored.begin();
