@@ -27,8 +27,8 @@ struct ScriptingContext {
       * may be different from the overall universe visibility. */
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                      const boost::any& background_) :
-        source(source_),
-        background(background_)
+    source(source_)//,
+    //        background(boost::any(std::ref(background_)))
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
@@ -89,7 +89,7 @@ struct ScriptingContext {
     std::shared_ptr<const UniverseObject>   condition_root_candidate;
     std::shared_ptr<const UniverseObject>   condition_local_candidate;
     const boost::any                        current_value;
-    const boost::any&                       background = boost::any();
+    const boost::any                        background = boost::any();
 };
 
 #endif // _ScriptingContext_h_

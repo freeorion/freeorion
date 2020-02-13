@@ -7366,7 +7366,7 @@ bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
     if (local_context.background.empty()) {
         return VisibleToEmpireSimpleMatch(empire_id, Universe::EmpireObjectVisibilityMap())(candidate);
     } else {
-        const Universe::EmpireObjectVisibilityMap& empire_object_vis_map_override = boost::any_cast<Universe::EmpireObjectVisibilityMap&>(local_context.background);
+        const Universe::EmpireObjectVisibilityMap& empire_object_vis_map_override = boost::any_cast<Universe::EmpireObjectVisibilityMap>(local_context.background);
         return VisibleToEmpireSimpleMatch(empire_id, empire_object_vis_map_override)(candidate);
     }
 }

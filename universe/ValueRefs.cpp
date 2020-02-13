@@ -835,10 +835,10 @@ double Variable<double>::Eval(const ScriptingContext& context) const
             return planet->DistanceFromOriginalType();
         return 0.0;
 
-    } else if (property_name == "CombatBout") {
-        if ((!context.background.empty()) && context.background.type() == std::typeid(std::tuple)) {
-            auto & contents = context.background;
-            return contents
+    } else if (property_name == "CombatBout") {        
+        if ((!context.background.empty()) && (typeid(context.background) == typeid(int))) {
+            int contents = boost::any_cast<int>(context.background);
+            return contents;
         }
         return 0.0;
 
@@ -883,8 +883,8 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     if (m_ref_type == NON_OBJECT_REFERENCE) {
         if (property_name == "CombatBout") {
-            if ((!context.background.empty()) && context.background.type() == std::typeid(std::tuple))
-                return context.background.empty());
+            if ((!context.background.empty()) && (typeid(context.background) == typeid(int)))
+                return 0.0;
             return 0.0;
         }
 
