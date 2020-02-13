@@ -10,6 +10,7 @@
 #include "../util/Logger.h"
 #include "../util/Order.h"
 #include "../util/ModeratorAction.h"
+#include "../util/ScopedTimer.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../universe/System.h"
@@ -37,6 +38,8 @@
 std::vector<std::string> SpecialNames();
 
 namespace {
+    using id_range = boost::any_range<int, boost::forward_traversal_tag>;
+
     const unsigned int NUM_COLUMNS(12u);
 
     void AddOptions(OptionsDB& db) {
@@ -913,15 +916,15 @@ private:
             // collect all valid tags on any object in universe
             std::set<std::string> all_tags;
 
-            for (auto& obj : GetUniverse().Objects().all<UniverseObject>()) {
+            for (auto& obj : Objects().all<UniverseObject>()) {
                 auto tags = obj->Tags();
                 all_tags.insert(tags.begin(), tags.end());
             }
 
             auto row_it = m_string_drop->end();
-            for (const std::string& tag : all_tags) {
+            for (const std::string& tag : all_tags)
                 row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(tag, GG::Y(ClientUI::Pts())));
-            }
+
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
 
@@ -1583,11 +1586,11 @@ private:
 class ObjectRow : public GG::ListBox::Row {
 public:
     ObjectRow(GG::X w, GG::Y h, std::shared_ptr<const UniverseObject> obj, bool expanded,
-              int container_object_panel, const std::set<int>& contained_object_panels,
+              int container_object_panel, const id_range& contained_object_panels,
               int indent) :
         GG::ListBox::Row(w, h, "", GG::ALIGN_CENTER, 1),
         m_container_object_panel(container_object_panel),
-        m_contained_object_panels(contained_object_panels),
+        m_contained_object_panels(contained_object_panels.begin(), contained_object_panels.end()),
         m_obj_init(obj),
         m_expanded_init(expanded),
         m_indent_init(indent)
@@ -1655,9 +1658,9 @@ private:
     std::shared_ptr<ObjectPanel>            m_panel = nullptr;
     int                                     m_container_object_panel;
     std::set<int>                           m_contained_object_panels;
-    std::shared_ptr<const UniverseObject>   m_obj_init = nullptr;
-    bool                                    m_expanded_init;
-    int                                     m_indent_init;
+    std::shared_ptr<const UniverseObject>   m_obj_init;
+    bool                                    m_expanded_init = false;
+    int                                     m_indent_init = 0;
 };
 
 ////////////////////////////////////////////////
@@ -1963,9 +1966,8 @@ public:
         Refresh();
     }
 
-    bool ObjectCollapsed(int object_id) const {
-        return object_id != INVALID_OBJECT_ID && m_collapsed_objects.count(object_id);
-    }
+    bool ObjectCollapsed(int object_id) const
+    { return object_id != INVALID_OBJECT_ID && m_collapsed_objects.count(object_id); }
 
     bool AnythingCollapsed() const
     { return !m_collapsed_objects.empty(); }
@@ -1985,7 +1987,7 @@ public:
     void ClearContents() {
         Clear();
         for (auto& entry : m_object_change_connections)
-        { entry.second.disconnect(); }
+            entry.second.disconnect();
         m_object_change_connections.clear();
     }
 
@@ -2012,6 +2014,7 @@ public:
     }
 
     void Refresh() {
+        SectionedScopedTimer timer("ObjectListBox::Refresh");
         std::size_t first_visible_queue_row = std::distance(this->begin(), this->FirstRowShown());
         ClearContents();
         auto initial_style = this->Style();
@@ -2027,6 +2030,7 @@ public:
         std::map<int, std::set<int>>    planet_buildings;
         std::set<int>                   fields;
 
+        timer.EnterSection("object cast-sorting");
         for (const auto& obj : GetUniverse().Objects().all()) {
             if (!ObjectShown(obj))
                 continue;
@@ -2052,6 +2056,7 @@ public:
 
 
         // add system rows
+        timer.EnterSection("system rows");
         for (int system_id : systems) {
             auto sp_it = system_planets.find(system_id);
             auto sf_it = system_fleets.find(system_id);
@@ -2123,7 +2128,7 @@ public:
             indent--;
         }
 
-
+        timer.EnterSection("non-system object rows");
         // add planets not in shown systems
         for (const auto& sp : system_planets) {
             for (int planet_id : sp.second) {
@@ -2195,8 +2200,11 @@ public:
         for (int field_id : fields)
             AddObjectRow(field_id, INVALID_OBJECT_ID, std::set<int>(), indent);
 
+        timer.EnterSection("sorting");
         this->SetStyle(initial_style);
 
+
+        timer.EnterSection("final");
         if (!this->Empty())
             this->BringRowIntoView(--this->end());
         if (first_visible_queue_row < this->NumRows())
@@ -2247,10 +2255,10 @@ public:
     mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 private:
-    void AddObjectRow(int object_id, int container, const std::set<int>& contents, int indent)
+    void AddObjectRow(int object_id, int container, const id_range& contents, int indent)
     { AddObjectRow(object_id, container, contents, indent, this->end()); }
 
-    void AddObjectRow(int object_id, int container, const std::set<int>& contents,
+    void AddObjectRow(int object_id, int container, const id_range& contents,
                       int indent, GG::ListBox::iterator it)
     {
         auto obj = Objects().get(object_id);
@@ -2258,7 +2266,7 @@ private:
             return;
         const GG::Pt row_size = ListRowSize();
         auto object_row = GG::Wnd::Create<ObjectRow>(row_size.x, row_size.y, obj, !ObjectCollapsed(object_id),
-                                              container, contents, indent);
+                                                     container, contents, indent);
         this->Insert(object_row, it);
         object_row->Resize(row_size);
         object_row->ExpandCollapseSignal.connect(
@@ -2374,10 +2382,7 @@ private:
 ObjectListWnd::ObjectListWnd(const std::string& config_name) :
     CUIWnd(UserString("MAP_BTN_OBJECTS"),
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
-           config_name, false),
-    m_list_box(nullptr),
-    m_filter_button(nullptr),
-    m_collapse_button(nullptr)
+           config_name, false)
 {}
 
 void ObjectListWnd::CompleteConstruction() {
