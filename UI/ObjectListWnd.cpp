@@ -2258,18 +2258,17 @@ public:
 
 private:
     void AddObjectRow(int object_id, int container, const id_range& contents, int indent)
-    { AddObjectRow(object_id, container, contents, indent, this->end()); }
+    { AddObjectRow(Objects().get(object_id), container, contents, indent); }
 
-    void AddObjectRow(int object_id, int container, const id_range& contents,
-                      int indent, GG::ListBox::iterator it)
+    void AddObjectRow(std::shared_ptr<const UniverseObject> obj, int container,
+                      const id_range& contents, int indent)
     {
-        auto obj = Objects().get(object_id);
         if (!obj)
             return;
         const GG::Pt row_size = ListRowSize();
-        auto object_row = GG::Wnd::Create<ObjectRow>(row_size.x, row_size.y, obj, !ObjectCollapsed(object_id),
+        auto object_row = GG::Wnd::Create<ObjectRow>(row_size.x, row_size.y, obj, !ObjectCollapsed(obj->ID()),
                                                      container, contents, indent);
-        this->Insert(object_row, it);
+        this->Insert(object_row);
         object_row->Resize(row_size);
         object_row->ExpandCollapseSignal.connect(
             boost::bind(&ObjectListBox::ObjectExpandCollapseClicked, this, _1), boost::signals2::at_front);
