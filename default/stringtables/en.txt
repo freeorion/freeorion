@@ -17011,6 +17011,7 @@ Skadi
 Skaro
 Skat
 Slipher
+Slnko
 Slunce
 Smeg
 Soare
