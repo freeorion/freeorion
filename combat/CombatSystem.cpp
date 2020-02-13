@@ -1381,6 +1381,7 @@ namespace {
         }
         TraceLogger(combat) << "Species targeting condition: " << species_targetting_condition->Dump();
 
+        BackgroundContext combat_context = BackgroundContext(bout, combat_state.combat_info.empire_object_visibility);
         for (const PartAttackInfo& weapon : weapons) {
             // skip non-direct-fire weapons (as only direct fire weapons can "shoot").
             // fighter launches handled separately
@@ -1403,7 +1404,7 @@ namespace {
             AddAllObjectsSet(combat_state.combat_info.objects, targets);
 
             // attacker is source object for condition evaluation. use combat-specific vis info.
-            ScriptingContext context(attacker, combat_state.combat_info.empire_object_visibility);
+            ScriptingContext context(attacker, combat_context);
 
             // apply species targeting condition and then weapon targeting condition
             species_targetting_condition->Eval(context, targets, rejected_targets, Condition::MATCHES);

@@ -9,6 +9,20 @@
 
 class UniverseObject;
 
+struct BackgroundContext {
+public:
+    BackgroundContext()
+    {}
+
+    BackgroundContext(int bout_, Universe::EmpireObjectVisibilityMap& empire_object_visibility_) :
+        bout(bout_),
+        empire_object_visibility(empire_object_visibility_)
+    {}
+
+    int bout;
+    Universe::EmpireObjectVisibilityMap empire_object_visibility;       ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increas
+};
+
 struct ScriptingContext {
     /** Empty context.  Useful for evaluating ValueRef::Constant that don't
       * depend on their context. */
@@ -26,9 +40,9 @@ struct ScriptingContext {
       * conditions. Useful in combat resolution when the visibility of objects
       * may be different from the overall universe visibility. */
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
-                     const boost::any& background_) :
-    source(source_)//,
-    //        background(boost::any(std::ref(background_)))
+                     const BackgroundContext& background_) :
+        source(source_),
+        background(background_)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
@@ -70,7 +84,7 @@ struct ScriptingContext {
                                             condition_local_candidate_),    // if parent context doesn't already have a root candidate, the new local candidate is the root
         condition_local_candidate(      condition_local_candidate_),        // new local candidate
         current_value(                  parent_context.current_value),
-        background( parent_context.background)
+        background(                     parent_context.background)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
@@ -89,7 +103,7 @@ struct ScriptingContext {
     std::shared_ptr<const UniverseObject>   condition_root_candidate;
     std::shared_ptr<const UniverseObject>   condition_local_candidate;
     const boost::any                        current_value;
-    const boost::any                        background = boost::any();
+    const BackgroundContext                 background;
 };
 
 #endif // _ScriptingContext_h_
