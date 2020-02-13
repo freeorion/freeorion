@@ -2056,8 +2056,8 @@ public:
 
 
         // add system rows
-        timer.EnterSection("system rows");
         for (int system_id : systems) {
+            timer.EnterSection("system rows");
             auto sp_it = system_planets.find(system_id);
             auto sf_it = system_fleets.find(system_id);
             std::set<int> system_contents;
@@ -2070,6 +2070,7 @@ public:
             ++indent;
 
             // add planet rows in this system
+            timer.EnterSection("system planet rows");
             if (sp_it != system_planets.end()) {
                 for (int planet_id : sp_it->second) {
                     auto pb_it = planet_buildings.find(planet_id);
@@ -2098,6 +2099,7 @@ public:
             }
 
             // add fleet rows in this system
+            timer.EnterSection("system fleet rows");
             if (sf_it != system_fleets.end()) {
                 for (int fleet_id : sf_it->second) {
                     auto fs_it = fleet_ships.find(fleet_id);
