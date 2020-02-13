@@ -1073,8 +1073,6 @@ boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
         // check status of all empires: are they all done their turns?
         bool all_participants_waiting = true;
         for (auto& entry : Client().Empires()) {
-            int empire_id = entry.first;
-
             if (!entry.second->Ready()) {
                 all_participants_waiting = false;
                 break;

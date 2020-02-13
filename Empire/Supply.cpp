@@ -646,7 +646,8 @@ void SupplyManager::Update() {
                 float distance_to_supply_source = supply_range.second.second;
 
                 for (int lane_end_sys_id : empire_visible_starlanes[empire_id][system_id])
-                    TraceLogger(supply) << "Propagating from system " << system_id << " range: " << range << " and distance: " << distance_to_supply_source;
+                    TraceLogger(supply) << "Propagating from system " << system_id << " to " << lane_end_sys_id
+                                        << " range: " << range << " and distance: " << distance_to_supply_source;
 
                 // attempt to propagate to all adjacent systems...
                 for (int lane_end_sys_id : empire_visible_starlanes[empire_id][system_id]) {
