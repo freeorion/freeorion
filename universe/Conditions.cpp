@@ -7306,8 +7306,14 @@ void VisibleToEmpire::Eval(const ScriptingContext& parent_context,
         int empire_id = m_empire_id->Eval(parent_context);
 
         // need to check visibility of each candidate object separately
-        EvalImpl(matches, non_matches, search_domain,
-                 VisibleToEmpireSimpleMatch(empire_id, parent_context.empire_object_vis_map_override));
+        if (parent_context.background.empty()) {
+            EvalImpl(matches, non_matches, search_domain,
+                     VisibleToEmpireSimpleMatch(empire_id, Universe::EmpireObjectVisibilityMap()));
+        } else {
+            auto& empire_object_vis_map_override = boost::any_cast<const Universe::EmpireObjectVisibilityMap>(parent_context.background); 
+            EvalImpl(matches, non_matches, search_domain,
+                     VisibleToEmpireSimpleMatch(empire_id, empire_object_vis_map_override));
+        }
     } else {
         // re-evaluate empire id for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -7357,7 +7363,12 @@ bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
     }
 
     int empire_id = m_empire_id->Eval(local_context);
-    return VisibleToEmpireSimpleMatch(empire_id, local_context.empire_object_vis_map_override)(candidate);
+    if (local_context.background.empty()) {
+        return VisibleToEmpireSimpleMatch(empire_id, Universe::EmpireObjectVisibilityMap())(candidate);
+    } else {
+        const Universe::EmpireObjectVisibilityMap& empire_object_vis_map_override = boost::any_cast<Universe::EmpireObjectVisibilityMap&>(local_context.background);
+        return VisibleToEmpireSimpleMatch(empire_id, empire_object_vis_map_override)(candidate);
+    }
 }
 
 void VisibleToEmpire::SetTopLevelContent(const std::string& content_name) {

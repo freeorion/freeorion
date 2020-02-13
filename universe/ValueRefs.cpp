@@ -835,6 +835,13 @@ double Variable<double>::Eval(const ScriptingContext& context) const
             return planet->DistanceFromOriginalType();
         return 0.0;
 
+    } else if (property_name == "CombatBout") {
+        if ((!context.background.empty()) && context.background.type() == std::typeid(std::tuple)) {
+            auto & contents = context.background;
+            return contents
+        }
+        return 0.0;
+
     } else if (property_name == "CurrentTurn") {
         return CurrentTurn();
 
@@ -875,6 +882,12 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     IF_CURRENT_VALUE(int)
 
     if (m_ref_type == NON_OBJECT_REFERENCE) {
+        if (property_name == "CombatBout") {
+            if ((!context.background.empty()) && context.background.type() == std::typeid(std::tuple))
+                return context.background.empty());
+            return 0.0;
+        }
+
         if (property_name == "CurrentTurn")
             return CurrentTurn();
         if (property_name == "GalaxySize")
