@@ -21,7 +21,9 @@ public:
 
     int bout;
     Universe::EmpireObjectVisibilityMap empire_object_visibility;       ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increas
+
 };
+static const BackgroundContext theEmptyBackground = BackgroundContext();
 
 struct ScriptingContext {
     /** Empty context.  Useful for evaluating ValueRef::Constant that don't
@@ -103,7 +105,8 @@ struct ScriptingContext {
     std::shared_ptr<const UniverseObject>   condition_root_candidate;
     std::shared_ptr<const UniverseObject>   condition_local_candidate;
     const boost::any                        current_value;
-    const BackgroundContext                 background;
+
+    const BackgroundContext&               background = theEmptyBackground;
 };
 
 #endif // _ScriptingContext_h_
