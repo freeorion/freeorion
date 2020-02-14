@@ -1234,10 +1234,6 @@ METER_POPULATION
 populace
 
 # Meter types
-METER_HEALTH
-zdraví
-
-# Meter types
 METER_INDUSTRY
 průmysl
 

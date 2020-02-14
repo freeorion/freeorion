@@ -1148,10 +1148,6 @@ METER_POPULATION
 population
 
 # Meter types
-METER_HEALTH
-hälsa
-
-# Meter types
 METER_INDUSTRY
 industri
 

@@ -1702,10 +1702,6 @@ METER_TARGET_POPULATION
 Tavoite väestö
 
 # Meter types
-METER_TARGET_HEALTH
-Tavoite terveys
-
-# Meter types
 METER_TARGET_INDUSTRY
 Tavoite teollisuus
 
@@ -1740,10 +1736,6 @@ Max Puolustus
 # Meter types
 METER_POPULATION
 Väestö
-
-# Meter types
-METER_HEALTH
-Terveys
 
 # Meter types
 METER_INDUSTRY

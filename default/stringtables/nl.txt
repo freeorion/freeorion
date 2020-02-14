@@ -1340,10 +1340,6 @@ METER_POPULATION
 populatie
 
 # Meter types
-METER_HEALTH
-gezondheid
-
-# Meter types
 METER_INDUSTRY
 industrie
 

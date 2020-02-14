@@ -1281,9 +1281,6 @@ Speichert ob der Vollbildmodus zu den gespeicherten Wert zurückgesetzt werden s
 OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC
 Entscheidet ob ein Abbild der Effektgruppen in die Beschreibung von Technologien, Gebäuden und Schiffsteilen eingefügt werden.
 
-OPTIONS_DB_VERBOSE_LOGGING_DESC
-Schaltet die ausführliche Protokollierung der Inhalte des Universums und Effektberechnung.
-
 OPTIONS_DB_VERBOSE_SITREP_DESC
 Schaltet das Einfügen der Situationsberichte mit Fehlerausgabe ein.
 
@@ -2113,30 +2110,8 @@ Nachrichten
 MAP_PRODUCTION_TITLE
 Produktion
 
-MAP_PROD_WASTED_TITLE
-Ungenutzte Produktion
-
-# %1% number of production points generated.
-# %2% number of production points currently not used for production.
-MAP_PROD_WASTED_TEXT
-'''Gesamte Produktion : %1%
-Verschwendete Produkt. : %2%
-
-Hier klicken um das Produktionsmenü zu öffnen'''
-
 MAP_RESEARCH_TITLE
 Forschung
-
-MAP_RES_WASTED_TITLE
-Ungenutzte Forschung
-
-# %1% number of research points generated.
-# %2% number of research points currently not used for research.
-MAP_RES_WASTED_TEXT
-'''Gesamte Forschung : %1%
-Verschwendete Forsch. : %2%
-
-Hier klicken um das Forschungsmenü zu öffnen'''
 
 MAP_POPULATION_DISTRIBUTION
 Volkszählung
@@ -2158,12 +2133,6 @@ Handel
 
 MAP_TRADE_TEXT
 Handelsleistung des gesamten Imperiums. (Handel tut nichts)
-
-MAP_FLEET_TITLE
-Flottenstärke
-
-MAP_FLEET_TEXT
-Gesamtanzahl Schiffe
 
 
 ##
@@ -2602,7 +2571,7 @@ Krieg erklären
 PEACE_PROPOSAL
 Friedensangebot
 
-PEACE_PROPOSAL_CANEL
+PEACE_PROPOSAL_CANCEL
 Friedensangebot annullieren
 
 PEACE_ACCEPT
@@ -2824,12 +2793,6 @@ Neuen Entwurfsnamen eingeben:
 DESIGN_INVALID
 Ungültiger Entwurf
 
-DESIGN_OBSOLETE
-Veralteter Entwurf
-
-DESIGN_WND_ADD
-Neuen Entwurf hinzufügen
-
 
 ##
 ## Statistics
@@ -3041,9 +3004,6 @@ CATEGORY_GUIDES
 
 CATEGORY_GAME_CONCEPTS
 *Spielkonzepte*
-
-CATEGORY_USER_INTERFACE
-*Benutzeroberfläche*
 
 GROWTH_ARTICLE_SHORT_DESC
 Wachstum
@@ -4515,10 +4475,6 @@ METER_TARGET_POPULATION
 Ziel Bevölkerung
 
 # Meter types
-METER_TARGET_HEALTH
-Ziel Gesundheit
-
-# Meter types
 METER_TARGET_INDUSTRY
 Ziel Industrie
 
@@ -4559,24 +4515,12 @@ METER_MAX_TROOPS
 Max Truppen
 
 # Meter types
-METER_MAX_REBEL_TROOPS
-Max Rebellen Truppen
-
-# Meter types
 METER_MAX_SUPPLY
 Max Versorgung
 
 # Meter types
 METER_POPULATION
 Bevölkerung
-
-# Meter types
-METER_HEALTH
-Gesundheit
-
-# Meter types
-METER_GROWTH
-Wachstum
 
 # Meter types
 METER_INDUSTRY
@@ -4812,9 +4756,6 @@ Sternenklasse
 #DESC_VAR_TARGETPOPULATION
 #[[METER_TARGET_POPULATION]]
 
-#DESC_VAR_TARGETHEALTH
-#[[METER_TARGET_HEALTH]]
-
 #DESC_VAR_TARGETINDUSTRY
 #[[METER_TARGET_INDUSTRY]]
 
@@ -4850,9 +4791,6 @@ Sternenklasse
 
 #DESC_VAR_POPULATION
 #[[METER_POPULATION]]
-
-#DESC_VAR_HEALTH
-#[[METER_HEALTH]]
 
 #DESC_VAR_INDUSTRY
 #[[METER_INDUSTRY]]
@@ -8795,12 +8733,6 @@ Empfang der Nachricht bestätigt.
 
 OPTIONS_PAGE_HOTKEYS
 Tastaturkürzel
-
-HOTKEYS_Z_COMBAT
-Kampffenster
-
-HOTKEYS_MAP
-Kartenfenster
 
 HOTKEYS_GENERAL
 Allgemeine Kürzel

@@ -107,9 +107,6 @@ Corbeta I
 SD_SMALL_MARK1_DESC
 Pequeña y barata nave con catapulta electromagnéticap.
 
-SD_SMALL_MARK2_DESC
-Pequeña y barata nave con catapulta electromagnéticap.
-
 SD_MARK_1
 Fragata I
 
@@ -1933,10 +1930,6 @@ METER_TARGET_POPULATION
 Población Objetivo
 
 # Meter types
-METER_TARGET_HEALTH
-Salud Objetivo
-
-# Meter types
 METER_TARGET_INDUSTRY
 Indústria Objetivo
 
@@ -1971,10 +1964,6 @@ Defensa Máxima
 # Meter types
 METER_POPULATION
 Población
-
-# Meter types
-METER_HEALTH
-Salud
 
 # Meter types
 METER_INDUSTRY

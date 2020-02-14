@@ -1313,30 +1313,8 @@ Guida
 MAP_PRODUCTION_TITLE
 Produzione
 
-MAP_PROD_WASTED_TITLE
-Produzione Inutilizzata
-
-# %1% number of production points generated.
-# %2% number of production points currently not used for production.
-MAP_PROD_WASTED_TEXT
-'''Produzione Totale : %1%
-Produzione Sprecata : %2%
-
-Click qui per aprire il menu di produzione'''
-
 MAP_RESEARCH_TITLE
 Ricerca
-
-MAP_RES_WASTED_TITLE
-Ricerca Inutilizzata
-
-# %1% number of research points generated.
-# %2% number of research points currently not used for research.
-MAP_RES_WASTED_TEXT
-'''Ricerca Totale : %1%
-Ricerca Sprecata : %2%
-
-Click qui per aprire il menu di ricerca'''
 
 MAP_POPULATION_DISTRIBUTION
 Censimento
@@ -1352,12 +1330,6 @@ Commercio
 
 MAP_TRADE_TEXT
 Commercio totale impero. (Commercio non fa nulla)
-
-MAP_FLEET_TITLE
-Conteggio Flotte
-
-MAP_FLEET_TEXT
-Numero totale di navi
 
 
 ##
@@ -1699,7 +1671,7 @@ Dichiara Guerra
 PEACE_PROPOSAL
 Proponi Pace
 
-PEACE_PROPOSAL_CANEL
+PEACE_PROPOSAL_CANCEL
 Annulla Proposta di Pace
 
 PEACE_ACCEPT
@@ -2459,9 +2431,6 @@ SITREP_SHIP_DAMAGED_AT_SYSTEM
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
 La %shipdesign% è stata danneggiata da %system%.
-
-SITREP_PLANET_BOMBARDED_AT_SYSTEM
-%empire% pianeta %planet% è stato bombardato da %system%.
 
 SITREP_GROUND_BATTLE
 Una battaglia si è verificata sul pianeta %planet%.
@@ -3680,10 +3649,6 @@ Resistenza: %1%
 PART_DESC_DIRECT_FIRE_STATS
 '''Danno Attacco: %1%
 
-
-
-SR_WEAPON_2_DESC
-Bassa potenza e massa
 
 SR_ION_CANNON
 Cannone a Ioni
