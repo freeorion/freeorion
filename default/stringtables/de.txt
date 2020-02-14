@@ -6651,9 +6651,6 @@ Solarverjüngerer
 BLD_SOL_REJUV_DESC
 Versorgt einen Stern mit zusätzlichem Brennstoff, um ihn künstlich zu verjüngern. Der Stern wird um eine Stufe jünger, gemäß der folgenden Reihenfolge: [[STAR_RED]], [[STAR_ORANGE]], [[STAR_YELLOW]], [[STAR_WHITE]], [[STAR_BLUE]]. Dieser Prozess kann auch von einem [[encyclopedia OUTPOSTS_TITLE]] aus durchgeführt werden.
 
-BLD_TRANSFORMER
-Transformer
-
 BLD_TRANSFORMER_DESC
 Ein vielseitiges, extrem teures Gebäude, dass den Effekt anderer Gebäude replizieren kann. Wird aktiviert, indem ein entsprechender Fokus gewählt wird. Kann den Effekt der Gebäudetypen [[buildingtype BLD_BIOTERROR_PROJECTOR]], [[buildingtype BLD_STARGATE]], [[buildingtype BLD_PLANET_DRIVE]] und [[buildingtype BLD_SPATIAL_DISTORT_GEN]] nachahmen, sofern die entsprechende Technologie bereits verfügbar ist.
 
@@ -6927,15 +6924,6 @@ BLD_COL_SUPER_TEST_DESC
 ## Hull and ship part description templates
 ##
 
-# %1% hull base starlane speed.
-# %2% hull base fuel capacity.
-# %3% hull base starlane speed.
-# %4% hull base structure value.
-HULL_DESC
-'''[[metertype METER_SPEED]]: %1%
-[[metertype METER_FUEL]]: %2%
-[[metertype METER_STRUCTURE]]: %4%'''
-
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
 Fassungsvermögen: %1%
@@ -6947,10 +6935,6 @@ Stärke: %1%
 # %1% ship part strength (shield).
 PART_DESC_SHIELD_STRENGTH
 Schildstärke: %1%
-
-# %1% ship part strength (detection).
-PART_DESC_DETECTION
-[[metertype METER_DETECTION]]: %1%
 
 # %1% ship part damage done (direct fire weapons).
 # %2% number of shots done per attack.
