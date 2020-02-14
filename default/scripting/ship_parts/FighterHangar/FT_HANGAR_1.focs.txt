@@ -23,7 +23,7 @@ Part
             activation = Source
             stackinggroup = "INTERCEPTOR_FAST_LAUNCH_EFFECT"
             effects = [
-                SetMaxCapacity partname = "FT_BAY_1" value = (PartsInShipDesign name = "FT_BAY_1" design = Target.DesignID) * (
+                SetMaxCapacity partname = "FT_BAY_1" value = (
                     3 +
                     Statistic If Condition = OwnerHasTech Name = "SHP_FIGHTERS_2" +
                     Statistic If Condition = OwnerHasTech Name = "SHP_FIGHTERS_3" +
