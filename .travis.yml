@@ -48,13 +48,6 @@ _test_python_common: &_test_python_common
 
 jobs:
   include:
-    - name: Lint AI with Python 2.7
-      <<: *_lint_python_common
-      python: 2.7
-      before_install:
-        - alias pip=/usr/bin/pip
-        - alias python=/usr/bin/python2
-
     - name: Lint AI with Python 3.5
       <<: *_lint_python_common
       python: 3.5
@@ -141,12 +134,6 @@ jobs:
       script:
         - cmake -GXcode -DBUILD_TESTING=ON ..
         - cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
-
-    - name: Unittest AI with Python 2.7
-      <<: *_test_python_common
-      python: 2.7
-      before_install:
-        - alias pip=/usr/bin/pip
 
     - name: Unittest AI with Python 3.5
       <<: *_test_python_common

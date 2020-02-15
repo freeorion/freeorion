@@ -108,16 +108,14 @@ bool PythonAI::Initialize() {
         return false;
 }
 
+bool PythonAI::InitImports() {
+    DebugLogger() << "Initializing AI Python imports";
+    // allows the "freeOrionAIInterface" C++ module to be imported within Python code
+    return PyImport_AppendInittab("freeOrionAIInterface", &PyInit_freeOrionAIInterface) != -1;
+}
+
 bool PythonAI::InitModules() {
     DebugLogger() << "Initializing AI Python modules";
-
-    // allows the "freeOrionAIInterface" C++ module to be imported within Python code
-    try {
-        initfreeOrionAIInterface();
-    } catch (...) {
-        ErrorLogger() << "Unable to initialize 'freeOrionAIInterface' AI Python module";
-        return false;
-    }
 
     // Confirm existence of the directory containing the AI Python scripts
     // and add it to Pythons sys.path to make sure Python will find our scripts
@@ -148,7 +146,7 @@ void PythonAI::GenerateOrders() {
         generateOrdersPythonFunction();
     } catch (const error_already_set& err) {
         HandleErrorAlreadySet();
-        if (!IsPythonRunning())
+        if (!IsPythonRunning() || GetOptionsDB().Get<bool>("testing"))
             throw;
 
         ErrorLogger() << "PythonAI::GenerateOrders : Python error caught.  Partial orders sent to server";

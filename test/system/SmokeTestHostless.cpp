@@ -243,8 +243,9 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         while (ProcessMessages(start_time, MAX_WAITING_SEC));
     }
 
-    if (launch_server && server)
+    if (launch_server && server) {
         BOOST_REQUIRE(server->Terminate());
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

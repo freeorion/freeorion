@@ -90,11 +90,9 @@ namespace {
         return retval;
     }
 
-    void UpdateMetersWrapper(const Universe& universe, const boost::python::list& objList) {
-        std::vector<int> objvec;
-        int const numObjects = boost::python::len(objList);
-        for (int i = 0; i < numObjects; i++)
-            objvec.push_back(boost::python::extract<int>(objList[i]));
+    void UpdateMetersWrapper(const Universe& universe, const boost::python::object& objIter) {
+        boost::python::stl_input_iterator<int> begin(objIter), end;
+        std::vector<int> objvec(begin, end);
         GetUniverse().UpdateMeterEstimates(objvec);
     }
 

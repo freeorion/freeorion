@@ -217,7 +217,7 @@ endif()
 ## Collect project dependencies.
 ##
 
-set(MINIMUM_PYTHON_VERSION 2.7)
+set(MINIMUM_PYTHON_VERSION 3.5)
 set(MINIMUM_BOOST_VERSION 1.58.0)
 
 find_package(Threads)
@@ -235,13 +235,8 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         thread
     REQUIRED)
 
-if(${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION} VERSION_GREATER 1.66.0)
-    find_package(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} REQUIRED)
-    set(Boost_PYTHON_SUFFIX "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
-else()
-    find_package(Boost COMPONENTS python REQUIRED)
-    set(Boost_PYTHON_SUFFIX "")
-endif()
+find_package(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} REQUIRED)
+set(Boost_PYTHON_SUFFIX "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
 
 find_package(ZLIB REQUIRED)
 if(NOT BUILD_HEADLESS)
