@@ -2022,188 +2022,193 @@ public:
         m_header_row->Update();
 
         // sort objects by containment associations
-        std::set<int>                   systems;
-        std::map<int, std::set<int>>    system_fleets;
-        std::map<int, std::set<int>>    fleet_ships;
-        std::map<int, std::set<int>>    system_planets;
-        std::map<int, std::set<int>>    planet_buildings;
-        std::set<int>                   fields;
+        std::set<std::shared_ptr<System>>                   systems;
+        std::map<int, std::set<std::shared_ptr<Fleet>>>     system_fleets;
+        std::map<int, std::set<std::shared_ptr<Ship>>>      fleet_ships;
+        std::map<int, std::set<std::shared_ptr<Planet>>>    system_planets;
+        std::map<int, std::set<std::shared_ptr<Building>>>  planet_buildings;
+        std::map<int, std::set<std::shared_ptr<Field>>>     system_fields;
 
         timer.EnterSection("object cast-sorting");
-        for (const auto& obj : GetUniverse().Objects().all()) {
-            if (!ObjectShown(obj))
-                continue;
-
-            int object_id = obj->ID();
-
-            if (obj->ObjectType() == OBJ_SYSTEM) {
-                systems.insert(object_id);
-            } else if (obj->ObjectType() == OBJ_FIELD) {
-                fields.insert(object_id);
-            } else if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj)) {
-                system_fleets[fleet->SystemID()].insert(object_id);
-            } else if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
-                fleet_ships[ship->FleetID()].insert(object_id);
-            } else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj)) {
-                system_planets[planet->SystemID()].insert(object_id);
-            } else if (auto building = std::dynamic_pointer_cast<const Building>(obj)) {
-                planet_buildings[building->PlanetID()].insert(object_id);
-            } // OBJ_FIGHTER shouldn't exist outside combat, so ignored here
+        for (const auto& obj : Objects().all<System>()) {
+            if (ObjectShown(obj))
+                systems.insert(obj);
         }
+        for (const auto& obj : Objects().all<Field>()) {
+            if (ObjectShown(obj))
+                system_fields[obj->SystemID()].insert(obj);
+        }
+        for (const auto& obj : Objects().all<Fleet>()) {
+            if (ObjectShown(obj))
+                system_fleets[obj->SystemID()].insert(obj);
+        }
+        for (const auto& obj : Objects().all<Ship>()) {
+            if (ObjectShown(obj))
+                fleet_ships[obj->FleetID()].insert(obj);
+        }
+        for (const auto& obj : Objects().all<Planet>()) {
+            if (ObjectShown(obj))
+                system_planets[obj->SystemID()].insert(obj);
+        }
+        for (const auto& obj : Objects().all<Building>()) {
+            if (ObjectShown(obj))
+                planet_buildings[obj->PlanetID()].insert(obj);
+        }
+        // OBJ_FIGHTER shouldn't exist outside combat, so ignored here
+
 
         int indent = 0;
 
-
         // add system rows
-        for (int system_id : systems) {
+        for (auto& system : systems) {
             timer.EnterSection("system rows");
-            auto sp_it = system_planets.find(system_id);
-            auto sf_it = system_fleets.find(system_id);
-            std::set<int> system_contents;
-            if (sp_it != system_planets.end())
-                system_contents = sp_it->second;
-            if (sf_it != system_fleets.end())
-                system_contents.insert(sf_it->second.begin(), sf_it->second.end());
+            std::vector<int> system_contents;
+            system_contents.reserve(system_planets[system->ID()].size() + system_fleets[system->ID()].size());
+            for (const auto& planet : system_planets[system->ID()])
+                system_contents.push_back(planet->ID());
+            for (const auto& fleet : system_fleets[system->ID()])
+                system_contents.push_back(fleet->ID());
 
-            AddObjectRow(system_id, INVALID_OBJECT_ID, system_contents, indent);
+            AddObjectRow(system, INVALID_OBJECT_ID, system_contents, indent);
+            if (ObjectCollapsed(system->ID())) {
+                timer.EnterSection("");
+                // remove contained planets and buildings, which will not be shown
+                for (const auto& planet : system_planets[system->ID()])
+                    planet_buildings[planet->ID()].clear();
+                system_planets[system->ID()].clear();
+                continue;
+            }
+
             ++indent;
 
             // add planet rows in this system
             timer.EnterSection("system planet rows");
-            if (sp_it != system_planets.end()) {
-                for (int planet_id : sp_it->second) {
-                    auto pb_it = planet_buildings.find(planet_id);
+            for (const auto& planet : system_planets[system->ID()]) {
+                std::vector<int> planet_contents;
+                planet_contents.reserve(planet_buildings[planet->ID()].size());
+                for (const auto& building : planet_buildings[planet->ID()])
+                    planet_contents.push_back(building->ID());
 
-                    if (!ObjectCollapsed(system_id)) {
-                        AddObjectRow(planet_id, system_id,
-                                        pb_it != planet_buildings.end() ? pb_it->second : std::set<int>(),
-                                        indent);
-                        ++indent;
-                    }
-
-                    // add building rows on this planet
-                    if (pb_it != planet_buildings.end()) {
-                        if (!ObjectCollapsed(planet_id) && !ObjectCollapsed(system_id)) {
-                            for (int building_id : pb_it->second) {
-                                AddObjectRow(building_id, planet_id, std::set<int>(), indent);
-                            }
-                        }
-                        planet_buildings.erase(pb_it);
-                    }
-
-                    if (!ObjectCollapsed(system_id))
-                        indent--;
+                AddObjectRow(planet, system->ID(), planet_contents, indent);
+                if (ObjectCollapsed(planet->ID())) {
+                    // remove contained buildings, which will not be shown
+                    planet_buildings[planet->ID()].clear();
+                    continue;
                 }
-                system_planets.erase(sp_it);
+
+                ++indent;
+                // add building rows on this planet
+                for (const auto& building : planet_buildings[planet->ID()])
+                    AddObjectRow(building, planet->ID(), id_range(), indent);
+                planet_buildings[planet->ID()].clear();
+                --indent;
             }
+            system_planets[system->ID()].clear();
 
             // add fleet rows in this system
             timer.EnterSection("system fleet rows");
-            if (sf_it != system_fleets.end()) {
-                for (int fleet_id : sf_it->second) {
-                    auto fs_it = fleet_ships.find(fleet_id);
+            for (const auto& fleet : system_fleets[system->ID()]) {
+                std::vector<int> fleet_contents;
+                fleet_contents.reserve(fleet_ships[fleet->ID()].size());
+                for (const auto& ship : fleet_ships[fleet->ID()])
+                    fleet_contents.push_back(ship->ID());
 
-                    if (!ObjectCollapsed(system_id)) {
-                        AddObjectRow(fleet_id, system_id,
-                                        fs_it != fleet_ships.end() ? fs_it->second : std::set<int>(),
-                                        indent);
-                        ++indent;
-                    }
-
-                    // add ship rows in this fleet
-                    if (fs_it != fleet_ships.end()) {
-                        if (!ObjectCollapsed(fleet_id) && !ObjectCollapsed(system_id)) {
-                            for (int ship_id : fs_it->second) {
-                                AddObjectRow(ship_id, fleet_id, std::set<int>(), indent);
-                            }
-                        }
-                        fleet_ships.erase(fs_it);
-                    }
-
-                    if (!ObjectCollapsed(system_id))
-                        indent--;
+                AddObjectRow(fleet, system->ID(), fleet_contents, indent);
+                if (ObjectCollapsed(fleet->ID())) {
+                    // remove contained ships, which will not be shown
+                    fleet_ships[fleet->ID()].clear();
+                    continue;
                 }
-                system_fleets.erase(sf_it);
+
+                ++indent;
+                // add ship rows in this fleet
+                for (const auto& ship : fleet_ships[fleet->ID()])
+                    AddObjectRow(ship, fleet->ID(), id_range(), indent);
+                fleet_ships[fleet->ID()].clear();
+                --indent;
             }
+            system_fleets[system->ID()].clear();
+
+            // add field rows in this system
+            timer.EnterSection("system field rows");
+            for (const auto& field : system_fields[system->ID()])
+                AddObjectRow(field, system->ID(), id_range(), indent);
+            system_fields[system->ID()].clear();
 
             indent--;
         }
 
-        timer.EnterSection("non-system object rows");
-        // add planets not in shown systems
-        for (const auto& sp : system_planets) {
-            for (int planet_id : sp.second) {
-                auto pb_it = planet_buildings.find(planet_id);
+        // add planets not in shown systems (ie. in no system or in systems that aren't shown)
+        timer.EnterSection("non-system planet rows");
+        for (const auto& sys_planets : system_planets) {
+            for (const auto& planet : sys_planets.second) {
+                std::vector<int> planet_contents;
+                planet_contents.reserve(planet_buildings[planet->ID()].size());
+                for (const auto& building : planet_buildings[planet->ID()])
+                    planet_contents.push_back(building->ID());
 
-                AddObjectRow(planet_id, INVALID_OBJECT_ID,
-                             pb_it != planet_buildings.end() ? pb_it->second : std::set<int>(),
-                             indent);
-                ++indent;
-
-                // add building rows on this planet
-                if (pb_it != planet_buildings.end()) {
-                    if (!ObjectCollapsed(planet_id)) {
-                        for (int building_id : pb_it->second) {
-                            AddObjectRow(building_id, planet_id, std::set<int>(), indent);
-                        }
-                    }
-                    planet_buildings.erase(pb_it);
+                AddObjectRow(planet, sys_planets.first, planet_contents, indent);
+                if (ObjectCollapsed(planet->ID())) {
+                    // remove contained buildings, which will not be shown
+                    planet_buildings[planet->ID()].clear();
+                    continue;
                 }
 
+                ++indent;
+                // add building rows on this planet
+                for (const auto& building : planet_buildings[planet->ID()])
+                    AddObjectRow(building, planet->ID(), id_range(), indent);
+                planet_buildings[planet->ID()].clear();
                 --indent;
             }
         }
-        system_planets.clear();
 
-
-        // add buildings not in a shown planet
-        for (const auto& pb : planet_buildings) {
-            for (int building_id : pb.second) {
-                AddObjectRow(building_id, INVALID_OBJECT_ID, std::set<int>(), indent);
-            }
-        }
-        planet_buildings.clear();
-
+        // add buildings not on shown planets
+        for (const auto& plt_buildings : planet_buildings)
+            for (const auto& building : plt_buildings.second)
+                AddObjectRow(building, plt_buildings.first, id_range(), indent);
 
         // add fleets not in shown systems
-        for (const auto& sf : system_fleets) {
-            for (int fleet_id : sf.second) {
-                auto fs_it = fleet_ships.find(fleet_id);
+        timer.EnterSection("non-system fleet rows");
+        for (const auto& sys_fleets : system_fleets) {
+           for (const auto& fleet : sys_fleets.second) {
+            // add fleet rows in this system
+                std::vector<int> fleet_contents;
+                fleet_contents.reserve(fleet_ships[fleet->ID()].size());
+                for (const auto& ship : fleet_ships[fleet->ID()])
+                    fleet_contents.push_back(ship->ID());
 
-                AddObjectRow(fleet_id, INVALID_OBJECT_ID,
-                                fs_it != fleet_ships.end() ? fs_it->second : std::set<int>(),
-                                indent);
-                ++indent;
-
-                // add ship rows on this fleet
-                if (fs_it != fleet_ships.end()) {
-                    if (!ObjectCollapsed(fleet_id)) {
-                        for (int ship_id : fs_it->second) {
-                            AddObjectRow(ship_id, fleet_id, std::set<int>(), indent);
-                        }
-                    }
-                    fleet_ships.erase(fs_it);
+                AddObjectRow(fleet, sys_fleets.first, fleet_contents, indent);
+                if (ObjectCollapsed(fleet->ID())) {
+                    // remove contained ships, which will not be shown
+                    fleet_ships[fleet->ID()].clear();
+                    continue;
                 }
-                indent--;
+
+                ++indent;
+                // add ship rows in this fleet
+                for (const auto& ship : fleet_ships[fleet->ID()])
+                    AddObjectRow(ship, fleet->ID(), id_range(), indent);
+                fleet_ships[fleet->ID()].clear();
+                --indent;
             }
-        }
-        system_fleets.clear();
+       }
+
+        // add ships not in shown fleets
+        for (const auto& flt_ships : fleet_ships)
+            for (const auto& ship : flt_ships.second)
+                AddObjectRow(ship, flt_ships.first, id_range(), indent);
+
+        // add fields not in shown systems
+        timer.EnterSection("non-system field rows");
+        for (const auto& sys_fields : system_fields)
+            for (const auto& field : sys_fields.second)
+                AddObjectRow(field, sys_fields.first, id_range(), indent);
 
 
-        // add any remaining ships not in shown fleets
-        for (const auto& fs : fleet_ships) {
-            for (int ship_id : fs.second) {
-                AddObjectRow(ship_id, INVALID_OBJECT_ID, std::set<int>(), indent);
-            }
-        }
-        fleet_ships.clear();
-
-        for (int field_id : fields)
-            AddObjectRow(field_id, INVALID_OBJECT_ID, std::set<int>(), indent);
-
+        // sort added rows
         timer.EnterSection("sorting");
         this->SetStyle(initial_style);
-
 
         timer.EnterSection("final");
         if (!this->Empty())
