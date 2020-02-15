@@ -99,9 +99,6 @@ Spelare %1% har inte längre förbindelse med servern.
 ## Command-line and options database entries
 ##
 
-OPTIONS_DB_HELP
-Skriv ut detta hjälpmeddelande.
-
 OPTIONS_DB_BG_MUSIC
 Väljer bakgrundsspår att spela.
 
@@ -168,24 +165,6 @@ Ljudfilen som spelas då muspekaren flyttas ovanför en systemikon.
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
 Ljudfilen som spelas då systemets sidpanel öppnas.
 
-OPTIONS_DB_GAMESETUP_STARS
-Antalet stjärnor i galaxen som kommer att genereras.
-
-OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-Formen på galaxen som kommer att genereras.
-
-OPTIONS_DB_GAMESETUP_GALAXY_AGE
-Galaxens ålder som kommer att genereras.
-
-OPTIONS_DB_GAMESETUP_PLANET_DENSITY
-Antalet planeter per system i galaxen som kommer att genereras.
-
-OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-Antalet stjärnfarleder i galaxen som kommer att genereras.
-
-OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-Förekomsten av specialare i galaxen som kommer att genereras.
-
 
 ##
 ## File dialog
@@ -196,15 +175,6 @@ Fil(er):
 
 FILE_DLG_FILE_TYPES
 Typ(er):
-
-FILE_DLG_OVERWRITE_PROMPT
-%1% existerar redan.\nVill du skriva över den?
-
-FILE_DLG_FILENAME_IS_A_DIRECTORY
-"%1%"\när en katalog.
-
-FILE_DLG_FILE_DOES_NOT_EXIST
-Fil "%1%"\nexisterar inte.
 
 
 ##
@@ -1006,14 +976,8 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 ANCIENT_RUINS_SPECIAL
 Uråldriga ruiner
 
-ANCIENT_RUINS_SPECIAL_DESCRIPTION
-Denna planet hyser ruiner efter en högutvecklad forntida ras, vars kännedom för länge sedan gått förlorad. Ger en bonus till din forskning i form av högre avkastning.
-
 ECCENTRIC_ORBIT_SPECIAL
 Excentrisk bana
-
-ECCENTRIC_ORBIT_SPECIAL_DESC
-Denna planets bana är väldigt excentrisk. Den har ett stort avstånd mellan dess närmaste och mest avlägsna ansats till dess stjärna. De omväxlande förhållandena hämmar utveckling av infrastruktur, men skapar ett gynnande underlag för forskning.
 
 MINERALS_SPECIAL
 Rik på mineraler

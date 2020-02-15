@@ -151,9 +151,6 @@ COMMAND_LINE_USAGE
 COMMAND_LINE_DEFAULT
 '''Standardní: '''
 
-OPTIONS_DB_HELP
-Vytisknout tuto nápovědu.
-
 OPTIONS_DB_GENERATE_CONFIG_XML
 Využívá všech nastavení z jakékoli stávající config.xml souboru a ty, uvedené na příkazové řádce vytvořit config.xml souboru. Tím se přepíše stávající soubor config.xml, pokud existuje.
 
@@ -1048,14 +1045,8 @@ SITREP_EMPIRE_ELIMINATED
 ANCIENT_RUINS_SPECIAL
 Starobylé ruiny
 
-ANCIENT_RUINS_SPECIAL_DESCRIPTION
-Tato planeta má na povrchu zříceniny budov vyspělých starověkých ras, které byly zapomenuty v historických knihách.Objevením získáte bonus k výzkumu.
-
 ECCENTRIC_ORBIT_SPECIAL
 Excentrická orbita
-
-ECCENTRIC_ORBIT_SPECIAL_DESC
-Dráha této planety je velmi výstřední. Má velký rozdíl mezi jeho nejbližší a nejdelší vzdálenosti k její hvězdě. Celkové oslunění se výrazně liší v průběhu celého roku. Různé podmínky brzdí rozvoj infrastruktury, ale poskytne prospěšný základ pro výzkum.
 
 MINERALS_SPECIAL
 Bohatá na minerály
@@ -1361,32 +1352,17 @@ Zkoumánním struktury mozku a jeho funkcí jako např. elektrochemické a kvant
 LRN_ALGO_ELEGANCE
 Elegantní algoritmy
 
-LRN_ALGO_ELEGANCE_DESC
-S rostoucí složitostí problémů v analýze dat jsou konvenční algoritmy přetíženy. Od této fáze vývoje je nutné najít jiné algoritmické přístupy a funkce, pro které je nezbytná elegance řešení a také musí být optimalizovány esteticky a metaforicky.
-
 LRN_TRANSLING_THT
 Multinárodní jazyk
-
-LRN_TRANSLING_THT_DESC
-Různí myslitelé se potýkají s pravidly cizího jazyka,který se chtějí naučit, jsou vnímáni průměrně,protože jsou omezeny stanovenými druhy projevu. Výjimečných myslitelé mohou překonat omezení jazyka,myšlení a analýzy na vynikající úrovni. Ale pouze velcí myslitelé zůstávají v izolaci a zbytečné,pokládající si otázku: Jak všem vyjádřit bez adekvátního jazyka záblesky jejich inspirace?
 
 LRN_PSIONICS
 Psionická komunikace
 
-LRN_PSIONICS_DESC
-Díky hlubokému zkoumání nebo umělému vylepšení, může mozek rozvíjet dovednosti, které mu umožní komunikovat přímo bez omezení fyzického těla s okolním vesmírem. Komunikace jako jsou např.:telepatie, empatie, jasnovidectví, předvídání, psychokineze a psychoenergetika mohou nahradit banální biologické nebo technologické alternativy.Avšak vedlejší účinky těchto sil, včetně sebekontroly, změny osobnosti, mohou mít dalekosáhlé důsledky pro vztah mezi takto nadanými a nenadaných organismy.
-
 LRN_ARTIF_MINDS
 Umělá inteligence
 
-LRN_ARTIF_MINDS_DESC
-Zatímco klasické počítače, mají téměř nulovou inteligenci a znají pouze matematický systém, a tak jim chybí důležité vlastnosti, jako jsou sebeuvědomění, vědomí nebo pocit. Vytvořením dokonalé umělé inteligence, lze tyto vlastnosti vytvářet a upravovat. Tato zjištění otevírají nové možnosti v oblasti kognitivních věd a vytváření nových Metaparadigmat.
-
 LRN_XENOARCH
 Xenoarcheologie
-
-LRN_XENOARCH_DESC
-Současná soustava říší, ras a civilizací, nejsou první ani jediní, kteří žili v této galaxii. Památky, zříceniny a zvěsti o starších lidských uskupení se mohou najít na opuštěnch planetách, asteroidech, či zničené lodě plovoucí v prázdném prostoru. Hledáním a dešifrováním těchto informací je poskytnuta příležitost k objevování dávných tajemstvích a možnost poučit se z nich, nebo dokonce varovaní díky starým poznatkům.
 
 LRN_GRAVITONICS
 Graviton

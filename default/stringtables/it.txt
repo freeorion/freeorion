@@ -296,9 +296,6 @@ COMMAND_LINE_USAGE
 COMMAND_LINE_DEFAULT
 '''Predefiniti: '''
 
-OPTIONS_DB_HELP
-Mostra questo messaggio di aiuto.
-
 OPTIONS_DB_GENERATE_CONFIG_XML
 Utilizza tutte le impostazioni da qualsiasi file config.xml esistente e quelli indicati sulla riga di comando per generare un file config.xml. Questo sovrascriverà il file config.xml corrente, se esiste.
 
@@ -566,26 +563,6 @@ Imposta la dimensione del pianeta rotante più grande nel pannello laterale del 
 OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER
 Imposta la dimensione del pianeta rotante più piccolo nel pannello laterale del sistema.
 
-OPTIONS_DB_GAMESETUP_STARS
-'''Il numero approssimativo di sistemi per la galassia che sarà generata.
-Per una partita bilanciata il numero consigliato è 15-30 sistemi per impero.
-Numeri molto elevati di sistemi potrebbero causare dei rallentamenti di FreeOrion, specialmente nelle fasi avanzate.'''
-
-OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-La forma della galassia da generare.
-
-OPTIONS_DB_GAMESETUP_GALAXY_AGE
-L'età della galassia da generare.
-
-OPTIONS_DB_GAMESETUP_PLANET_DENSITY
-Il numero di pianeti per sistema da generare.
-
-OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-Il numero di rotte da generare.
-
-OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-Il numero di apparizioni speciali da generare.
-
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 Il nome del tuo impero.
 
@@ -594,9 +571,6 @@ Il nome usato nel gioco dal giocatore.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
 Il colore usato per il tuo impero.
-
-OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
-Il numero di avversari IA nel gioco.
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 La spaziatura orizzontale fra tecnologie nell'albero tecnologico, in multipli della larghezza di ogni singola tecnologia.
@@ -1752,9 +1726,6 @@ Ricerca
 RESEARCH_INFO_RP
 PR
 
-RESEARCH_QUEUE_PROMPT
-Doppio click oppure Shift-click su un elemento disponibile per aggiungerlo alla coda di ricerca.
-
 
 ##
 ## Build selector window
@@ -2032,23 +2003,8 @@ Popolazione
 METER_INDUSTRY_VALUE_LABEL
 Industria
 
-METER_INDUSTRY_VALUE_DESC
-'''L'industria rappresenta la produzione e la modifica di beni fisici. È necessaria per la produzione di edifici, navi spaziali e altri progetti.
-
-L'industria di un pianeta può essere utilizzata per qualsiasi progetto di produzione di [[enciclopedia METER_SUPPLY]] linea pianeti collegati. La produzione di qualunque industria non in funzione viene sprecata ad ogni turno.
-
-Ogni progetto ha un numero minimo di turni necessari per essere costruito. Per esempio, se un progetto che è costato 15 PP, e ha avuto un tempo minimo di 3 giri, 5 PPS è il massimo che potrebbe essere messo verso il suo completamento per turno.
-Il progetto nella parte superiore della coda è dato PP prima. Qualunque PP rimanenti vengono poi dati al progetto successivo in coda, e se vi è ancora più attuale dalla prossima - e così via. È possibile modificare la priorità degli elementi della coda trascinando gli elementi più importanti più vicini alla cima.
-'''
-
 METER_RESEARCH_VALUE_LABEL
 Ricerca
-
-METER_RESEARCH_VALUE_DESC
-'''La ricerca (o PR "Punti Ricerca") di tutti i pianeti dell'impero è combinata per la scoperta di nuove tecnologie. Qualsiasi punto ricerca che non possa essere speso per ricercare una tecnologia è perso ad ogni turno. Ogni tecnologia ha un numero minimo di turni richiesto per essere ricercato. Per esempio, se una tecnologia che costa 15 PR e riechiede un tempo minimo di 3 turni, 5 PR è il massimo per turno che può essere assegnato al suo completamento.
-Alla tecnologia in cima alla coda è assegnata la priorità di ricerca con il massimo numero di PR consentito.  Ogni PR restante è poi fornito alla prossima tecnologia in coda, stessa cosa dicasi per la tecnologia successiva - e così via. È possibile modificare la priorità degli elementi della coda trascinando gli elementi più importanti più vicini alla cima.
-
-La ricerca non richiede la connessione di linee[[metertype METER_SUPPLY]] per essere utilizzata.'''
 
 METER_TRADE_VALUE_LABEL
 Commercio
@@ -2056,29 +2012,14 @@ Commercio
 METER_CONSTRUCTION_VALUE_LABEL
 Infrastrutture
 
-METER_CONSTRUCTION_VALUE_DESC
-Il termine infrastruttura si riferisce a strutture tecniche che supportano un pianeta colonizzato: servizi di energia, trasporti, telecomunicazioni e sociali per i cittadini.
-
 METER_HAPPINESS_VALUE_LABEL
 Felicità
-
-METER_HAPPINESS_VALUE_DESC
-La felicità non svolge ancora nessuna funzione.
 
 METER_FUEL_VALUE_LABEL
 Carburante
 
 METER_SHIELD_VALUE_LABEL
 Scudi
-
-METER_SHIELD_VALUE_DESC
-'''Il termine scudi combina tutti i tipi di campi di forza protettivi. Vengono rigenerati ad ogni turno e solitamente sono le prime protezioni che gli attacchi in arrivo devono superare. Ci sono due tipi distinti di scudi che funzionano in modo molto diverso: scudi nave e scudi barriera planetari.
-
- Scudi nave: Riducono il danno sostenuto da ciascun colpo tramite la resistenza agli attacchi della parte di scudo. Un'arma può penetrare uno scudo solo se il valore del suo danno è superiore alla resistenza dello scudo stesso.
-
-Scudi barriera planetari: Funzionano come una sorta di armatura planetaria. La loro forza è ridotta ad ogni colpo fino a quando non si esauriscono del tutto, ulteriori colpi potranno finalmente riuscire a superare le difese e danneggiare le strutture planetarie. Gli scudi barriera planetari rigenerano la loro forza ogni turno di un certo valore.
-
-Sia le navi spaziali che pianeti hanno un misuratore di Scudi.'''
 
 METER_DEFENSE_VALUE_LABEL
 Difesa
@@ -2100,11 +2041,6 @@ Il misuratore delle truppe su un pianeta rappresenta il potere delle forze di te
 METER_DETECTION_VALUE_LABEL
 Raggio di Rilevamento
 
-METER_DETECTION_VALUE_DESC
-'''Il Raggio di Rilevamento rappresenta il numero di uu che i sensori possono raggiungere. Un impero può vedere solo gli oggetti che hanno un valore di [[metertype METER_STEALTH]] inferiore o uguale alla sua [[encyclopedia DETECTION_TITLE]] e si trova nel Raggio di Rilevamento controllato da una nave spaziale o pianeta.
-
-Navi spaziali e pianeti hanno un misuratore di Raggio di Rilevamento. C'è l'opzione per visualizzare i cerchi del Raggio di Rilevamento nella sezione Mappa Galassia del menu Opzioni.'''
-
 METER_STEALTH_VALUE_LABEL
 Occultamento
 
@@ -2115,12 +2051,6 @@ Navi spaziali, strutture, speciali, sistemi e pianeti hanno un misuratore di Occ
 
 METER_DETECTION_STRENGTH_VALUE_LABEL
 Forza di Rilevamento
-
-METER_DETECTION_STRENGTH_VALUE_DESC
-'''Il termine Forza di Rilevamento rappresenta il livello tecnologico dei sensori di un impero. Un impero può vedere solo gli oggetti che hanno un valore di [[metertype METER_STEALTH]] inferiore o uguale alla sua Forza di Rlevamento e sono all'interno di un [[metertype METER_DETECTION]] controllato da una nave spaziale o un pianeta.
-
-Gli imperi hanno un misuratore di Forza di Rilevamento.'''
-
 
 PEACE_TITLE
 Pace
@@ -2136,9 +2066,6 @@ Gli avamposti sono stazioni non presidiate che possono essere fondate in luoghi 
 
 GROWTH_FOCUS_TITLE
 Focus sulla Crescita
-
-GROWTH_FOCUS_TEXT
-Il focus sulla crescita rappresenta l'esportazione di materiali rari e sostanze che aiutano la crescita della popolazione di una determinata specie. È disponibile solo in determinate situazioni: su alcuni mondi e su pianeti con speciali caratteristiche di crescita. Un pianeta incentrato sulla crescita aumenta la popolazione massima solo su altri pianeti ad esso collegati da linee di [[enciclopedia METER_SUPPLY]]. Un pianeta natale focalizzato sulla crescita aiuta solo altri pianeti della stessa specie. Pianeti con caratteristiche speciali di crescita, fanno progredire lo sviluppo di una singola specie, per esempio, alcuni aiutano lo sviluppo delle specie organiche.
 
 TRADE_FOCUS_TITLE
 Focus sul Commercio
@@ -2548,30 +2475,6 @@ Preferenze Ambientali:
 
 SP_HUMAN
 Umano
-
-SP_HUMAN_DESC
-'''Per lo più innocui. Tutte le statistiche medie per scopi di prova.
-Preferiscono pianeti terrestri.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-'''
-
-SP_SCYLIOR_GAMEPLAY_DESC
-'''Tri-Tentacoli, nautiloidi acquatici.
-Preferiscono pianeti oceanici.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-'''
-
-SP_GYSACHE_GAMEPLAY_DESC
-'''Codardi, bizzarri erbivori simil-pecore.
-Preferiscono pianeti paludosi.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-'''
-
-SP_CHATO_GAMEPLAY_DESC
-'''Entità cristalline sessili che cavalcano gli animali Goshk.
-Preferiscono pianeti tossici.
-[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-'''
 
 
 ##
@@ -3110,9 +3013,6 @@ Singolarità Trascendentale
 GRO_PLANET_ECOL
 Ecologia Planetaria
 
-GRO_PLANET_ECOL_DESC
-L'agricoltura e la scienza medica aumentano drasticamente la capacità di sopravvivenza, inducendo, per un certo tempo, una crescita demografica esponenziale. Ma, prima o poi, nuovi limiti di crescita insorgono nella capacità di trasporto di un pianeta e nella interconnessione vitale che lo supporta. La comprensione dell'Ecologia e la sua interazione agli stress ambientali consente il sostenimento del sistema ed il godimento dei relativi vantaggi per le generazioni future.
-
 GRO_GENETIC_ENG
 Ingegneria Genetica
 
@@ -3130,11 +3030,6 @@ Medicina Genetica
 
 GRO_LIFECYCLE_MAN
 Controllo del Ciclo Vitale
-
-GRO_LIFECYCLE_MAN_DESC
-'''Attraverso manipolazioni chimiche e criogeniche, i processi di vita possono essere interrotti senza terminarli definitivamente. Gli esseri in questo stato sono conservati a tempo indeterminato, non consumano risorse e richiedono un po di stoccaggio - non vivono - nello spazio. Con questa tecnica, la capacità delle navi colonie può essere notevolmente aumentata.
-
-Gli organismi più complessi si sviluppano attraverso varie fasi fisiologiche durante una vita, se distintamente separati da metamorfosi oppure sfocate dal lento invecchiamento. In molti casi, una o più di queste fasi sono, almeno in un dato momento, più utili e desiderabili di altre. Con delicato controllo dei meccanismi ormonali o mentali, diventa possibile velocizzare o rallentare drasticamente ogni fase, permettendo agli individui completamente sviluppati e funzionali di essere prodotti in una frazione del tempo naturale e per quegli individui rimanere funzionale a tempo indeterminato diventando effettivamente immortali.'''
 
 GRO_ADV_ECOMAN
 Ecomanipolazione Avanzata
@@ -3505,9 +3400,6 @@ Scanner Omnidirezionale
 SPY_STEALTH_1
 Smorzatore Elettromagnetico
 
-SPY_STEALTH_1_DESC
-Sblocca la parte della nave elettromagnetica e aumenta la velocità [[metertype METER_STEALTH]] Di tutti i pianeti e gli edifici di 20. Questo bonus non è cumulativo con quello di altre tecniche stealth.
-
 SPY_STEALTH_2
 Campo di Assorbimento
 
@@ -3626,16 +3518,6 @@ Portale Spaziale
 ## Hull and ship part description templates
 ##
 
-# %1% hull base starlane speed.
-# %2% hull base fuel capacity.
-# %3% hull base starlane speed.
-# %4% hull base structure value.
-HULL_DESC
-'''Velocità Rotta Spaziale: %1%
-Capacità Carburante: %2%
-Velocità di Combattimento: %3%
-Salute: %4%'''
-
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
 Capacità: %1%
@@ -3643,12 +3525,6 @@ Capacità: %1%
 # %1% ship part strength (other).
 PART_DESC_STRENGTH
 Resistenza: %1%
-
-# %1% ship part damage done (direct fire weapons).
-# %2% number of shots done per attack.
-PART_DESC_DIRECT_FIRE_STATS
-'''Danno Attacco: %1%
-
 
 SR_ION_CANNON
 Cannone a Ioni
@@ -3686,18 +3562,10 @@ Scanner Neutronico
 DT_DETECTOR_4
 Sensori
 
-FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-'''Aumenta la velocità di Starlane entro 15. 
-
-La ricerca su N-Dimensionale nel subspazio ha determinato una matrice di motore più efficiente.'''
-
 
 ##
 ## Ship parts
 ##
-
-FU_SINGULARITY_ENGINE_CORE_DESC
-'''Un cugino più piccolo della diga Hyperspace attrezzata per le navi, il motore singolo aumenta drasticamente la generazione di energia. Aumenta la velocità di Starlane entro 20. '''
 
 ST_CLOAK_1
 Smorzatore Elettromagnetico

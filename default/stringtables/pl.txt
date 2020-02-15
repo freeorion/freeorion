@@ -131,9 +131,6 @@ COMMAND_LINE_USAGE
 COMMAND_LINE_DEFAULT
 '''Domyślne: '''
 
-OPTIONS_DB_HELP
-Wyświetl ten tekst pomocniczy.
-
 OPTIONS_DB_GENERATE_CONFIG_XML
 Używa wszystkich ustawień z obecnego pliku config.xml o ile taki istnieje oraz tych podanych z linii komend do wygenerowania nowego pliku config.xml . Ta operacja nadpisze obecny plik config.xml , jeśli istnieje.
 
@@ -374,32 +371,11 @@ Ustala rozmiar największych renderowanych, obracających się planet w panelu b
 OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER
 Ustala rozmiar najmniejszych renderowanych, obracających się planet w panelu bocznym.
 
-OPTIONS_DB_GAMESETUP_STARS
-Ilość gwiazd w galaktyce do wygenerowania.
-
-OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-Kształt galaktyki do wygenerowania.
-
-OPTIONS_DB_GAMESETUP_GALAXY_AGE
-Wiek galaktyki do wygenerowania.
-
-OPTIONS_DB_GAMESETUP_PLANET_DENSITY
-Ilość planet w każdym systemie w galaktyce do wygenerowania.
-
-OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-Ilość szlaków gwiezdnych w galaktyce do wygenerowania.
-
-OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-Częstotliwość pojawiania się elementów specjalnych w galaktyce do wygenerowania.
-
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 Nazwa dla Twojego imperium w grze.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
 Kolor Twojego imperium w grze.
-
-OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
-Ilość przeciwników SI w grze.
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 Poziomy odstęp pomiędzy technologiami na ekranie technologii, wyrażony w wielokrotności szerokości jednej teorii technologicznej.
@@ -432,21 +408,6 @@ Plik(i):
 
 FILE_DLG_FILE_TYPES
 Typ(y):
-
-FILE_DLG_OVERWRITE_PROMPT
-'''%1% już istnieje.
-
-Nadpisać?'''
-
-FILE_DLG_FILENAME_IS_A_DIRECTORY
-'''"%1%"
-
-jest katalogiem.'''
-
-FILE_DLG_FILE_DOES_NOT_EXIST
-'''Plik "%1%"
-
-nie istnieje.'''
 
 FILE_DLG_DEVICE_IS_NOT_READY
 Urządzenie nie jest gotowe.
@@ -924,9 +885,6 @@ Wcześniejsze naiwne teorie opisywały tą teorię jako synteza czterech podstaw
 LRN_FORCE_FIELD
 Harmoniczność pól siłowych
 
-LRN_FORCE_FIELD_DESC
-Podobnie jak w przypadku analizy Fouriera fal dźwiękowych, elektromagnetyzm, a także silne i słabe siły mogą być wyrażona jako harmoniczne fale stojące superpozycji kwantowej pola sił. Poprzez selektywne rozszerzenie harmoniczności tych fal, siły te mogą być dowolnie kontrolowane zapewniając w określonych warunkach ekranowanie, wzmocnienie, osłonę lub podparcie.
-
 LRN_MIND_VOID_DESC
 Nie jesteśmy sami w kosmosie... ale dlaczego nasze poszukiwania są tak ograniczone? Wiele kultur w mitach, legendach lub poprzez gorącą wiarę wskazuje na swego rodzaju wyższą świadomość. Można kochać lub walczyć z ideą Boga czy innego obserwatora, jest jednak oczywiste, że coś - być może wszechświat na pewnym poziomie - jest żywe, świadome, obserwujące.
 
@@ -965,12 +923,6 @@ Zwiększa zasięg okrętu powiększając jego zasoby paliwa.
 BLD_OBSERVATORY
 Obserwatorium
 
-BLD_OBSERVATORY_DESC
-'''Naturalne rozszerzenie teleskopów przemysłowych i informacyjnych, wyposażające je w wojskowe algorytmy umożliwiające wykrywanie obiektów na dużych odległościach. Planeta, na której wybudowano obserwatorium wysyła w kosmos potężne impulsy wykrywające. Z tego powodu ukrycie takiej planety staje się bardzo trudne. Z drugiej strony, impulsy te mogą zostać odbite przez wszystkie obiekty znajdujące się we względnej bliskości planety, co bardzo ułatwia wykrywanie takich obiektów z zaprzyjaźnionych planet znajdujących się w zasięgu obserwatorium.
-
-Dodaje +10 do współczynnika Wykrywanie na wszystkich zaprzyjaźnionych planetach znajdujących się w odległości nie większej niż 200.
-Na planecie, na której wybudowano obserwatorium współczynnik Ukrywanie zmniejsza się o 10.'''
-
 
 ##
 ## Hull and ship part description templates
@@ -1002,32 +954,17 @@ DT_DETECTOR_2_DESC
 ST_CLOAK_1
 Tłumik elektromagnetyczny
 
-ST_CLOAK_1_DESC
-Zmniejsza wykrywalność okrętu, na którym został zamontowany, poprzez tłumienie emisji elektromagnetycznych generowanych przez systemy okrętu. Może skompensować tylko niewielką ilość takich emisji, dlatego elementy generujące wiele szumów nie będą przez niego skutecznie maskowane.
-
 SH_DEFENSE_GRID
 Siatka ochronna
-
-SH_DEFENSE_GRID_DESC
-Słaba ochrona, ale nie dodaje masy.
 
 SH_DEFLECTOR
 Osłony
 
-SH_DEFLECTOR_DESC
-Mocna ochrona przy zachowaniu niewielkiej masy.
-
 CO_COLONY_POD
 Kapsuła kolonizacyjna
 
-CO_COLONY_POD_DESC
-Umożliwia osadnikom przetrwanie podróży do nowej planety. Umożliwia okrętom kolonizowanie nowych światów.
-
 CO_SUSPEND_ANIM_POD
 Krioniczna kapsuła kolonizacyjna.
-
-CO_SUSPEND_ANIM_POD_DESC
-W trakcie podróży kolonizacyjnej osadnicy utrzymywani są w stanie obniżonego metabolizmu, dzięki czemu nie ma konieczności ich żywienia, a to z kolei zwiększa liczbę osadników przenoszonych przez jeden okręt.
 
 
 ##

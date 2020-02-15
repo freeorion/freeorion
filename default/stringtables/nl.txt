@@ -105,9 +105,6 @@ COMMAND_LINE_USAGE
 COMMAND_LINE_DEFAULT
 '''Standaard: '''
 
-OPTIONS_DB_HELP
-Geef dit help bericht weer.
-
 OPTIONS_DB_GENERATE_CONFIG_XML
 Gebruikt alle instellingen van ieder bestaand config.xml bestand en de instellingen die op de commandoregel gegeven worden om een config.xml bestand te genereren. Dit overschrijft het huidige config.xml bestand, als het bestaat.
 
@@ -282,24 +279,6 @@ Indien waar, klikken op meerdere vloot knoppen zal meerdere vloot vensters gelij
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Sluit open vensters zoals de vloot venster en het systeem zijpaneel als u op de hoofdkaart rechts-klikt.
 
-OPTIONS_DB_GAMESETUP_STARS
-Het aantal sterren om in de melkweg te genereren.
-
-OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-De vorm van de melkweg om te genereren.
-
-OPTIONS_DB_GAMESETUP_GALAXY_AGE
-De leeftijd van de melkweg om te genereren.
-
-OPTIONS_DB_GAMESETUP_PLANET_DENSITY
-Het aantal planeten per systeem in de melkweg om te genereren.
-
-OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-Het aantal sterrenbanen in de melkweg om te genereren.
-
-OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-'''De frequentie van verschijning van specials in de melkweg om te genereren. '''
-
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 De horizontale afstand tussen technologiÃ«n in het onderzoeksvenster, in meerdere van de breedte voor iedere enkele theorie technologie.
 
@@ -328,15 +307,6 @@ Het volume (0 tot 255) waarop de muziek afgespeeld moet worden.
 
 FILE_DLG_FILES
 Bestand(en):
-
-FILE_DLG_OVERWRITE_PROMPT
-%1% bestaat.\nMag het overschreven worden?
-
-FILE_DLG_FILENAME_IS_A_DIRECTORY
-"%1%"\nis een directory.
-
-FILE_DLG_FILE_DOES_NOT_EXIST
-Bestand "%1%"\nbestaat niet.
 
 FILE_DLG_DEVICE_IS_NOT_READY
 Apparaat is niet gereed.
@@ -1162,14 +1132,8 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 ANCIENT_RUINS_SPECIAL
 Oude Ruïnes
 
-ANCIENT_RUINS_SPECIAL_DESCRIPTION
-Deze planeet bevat de ruÃ¯nes van een geavanceerde oude soort, die vergeten en niet in de geschiedenisboeken terug te vinden zijn, dit geeft een bonus in onderzoek.
-
 ECCENTRIC_ORBIT_SPECIAL
 Eccentrische Omloopbaan
-
-ECCENTRIC_ORBIT_SPECIAL_DESC
-De omloopbaan van deze planeet is zeer eccentrisch. Er is een groot verschil tussen de afstand met zijn ster gedurende het jaar. De hoeveelheid energie die de planeet van de ster ontvangt verschilt sterk gedurende het jaar. Deze fluctuerende condities beperken infrastructuurontwikkeling, maar geven een voordelig platform voor onderzoek.
 
 MINERALS_SPECIAL
 Minerale Rijkdom
@@ -1524,29 +1488,14 @@ De structuren en hun functies in het brein worden bepaald. De electroschemische 
 LRN_ALGO_ELEGANCE
 Algoritmische Elegantie
 
-LRN_ALGO_ELEGANCE_DESC
-Met toenemende complexiteit van gegevens analyse problemen, traditionele metingen van de algoritme efficientie worden steeds minder bruikbaar door de beperkingen van onomkeerbare complexiteit. Op dit punt worden andere meetmethoden van algoritmische vorm en functie significant; esthetisch en metaforisch, de elegantie van de oplossing moet geoptimaliseerd worden.
-
 LRN_TRANSLING_THT
 Translinguïstiek
-
-LRN_TRANSLING_THT_DESC
-Een minder intellect worstelt met, of accepteert de beperkingen van de taalt die ze geleerd hebben. Toerijkende intellectuelen bereiken en voelen een beperking door de concepten om dingen te verwoorden. Echt grote intellectuelen kunnen zich ontdoen van de ketens van de taal, vormen en analyseren gedachten over de rand van een verhevenheid. Maar mindere grote intellectuelen zullen geisoleerd en onbeduidend achterblijven, want zonder taal om gedachten over te brengen, hoe moeten zij hun inzichten delen?
-
-LRN_PSIONICS_DESC
-Door diepe introspectie of kunstmatige verbeteringen kan het brein eigenschappen ontwikkelen om directe interactie met het universum eromheen uit te voeren, daarmee beperkingen van het fysieke lichaam te omzijlen. Krachten als telepathie, empathie, helderziendheid, voorkennis, telekinese en psycho-energetica vervangen hun normaal biologische of technologische alternatieven. Toepassing van deze krachten, inclusief hersenspoelen, personaliteitsverandering en bezetenheid hebben diepe implicaties voor relaties tussen getallenteerde en niet-getallenteerde wezens.
 
 LRN_ARTIF_MINDS
 Kunstmatig Verstand
 
-LRN_ARTIF_MINDS_DESC
-Terwijl traditionele computers een bijna onmeetbare intelligentie en calculerend vermogen hebben, missen ze de essentiele kwaliteiten van het begrip dat ze bestaan, bewustzijn en waarneming. Met de ontwikkeling van echte kunstmatig verstand kunnen deze kwaliteiten gesynthetiseerd, aangepast en veranderd worden. Deze onderzoeken openen nieuwe onderzoekswegen in congnitieve wetenschappen en nieuwe metaparadigma's.
-
 LRN_XENOARCH
 Xenoarchaeologie
-
-LRN_XENOARCH_DESC
-De hedendaagse rijken, rassen en enkele-ster beschavingen zijn niet de eerste of enige wezens die in dit universum hebben geleefd. Overblijfselen, ruines en geruchten van oude beschavingen kunnen op verlaten planeten, levenloze astroiden of zwervend door de open ruimte gevonden worden. Het vinden en ontcijferen van dergelijke aanwijzingen heeft grote potentie om geheimen te onthullen, lessen te leren of waarschuwingen over vergeten kennis te geven.
 
 LRN_GRAVITONICS
 Gravitoniek
@@ -1562,9 +1511,6 @@ Vroege, naïve theoriën beschreven onderdelen van de vier fundamentele krachten
 
 LRN_FORCE_FIELD
 Krachtveld Harmoniciteit
-
-LRN_FORCE_FIELD_DESC
-Net zoals met Fourier analyse op geluid, kunnen elektromagnetisme, sterke en zwakke krachten uitgedrukt worden in harmonische superposities van quantumgolven van krachtdragende deeltjes. Door deze harmonische golven selectief te versterken, kunnen de krachten gemanilpuleerd worden om als schild, ondersteuning, opslag of als wapen gebruikt te worden.
 
 LRN_MIND_VOID
 Gedachte van het Lege
@@ -1587,9 +1533,6 @@ Vroege superstring theoretici spraken over 10, 11 of 26 dimensionele universums,
 GRO_PLANET_ECOL
 Planetaire Ecologie
 
-GRO_PLANET_ECOL_DESC
-Agrocultuur en medische wetenschappen kunnen overleving drastisch vergroten, waardoor de populatiegroei gedurende een tijd hyperexponentieel kan groeien. Uiteindelijk zullen nieuwe limieten voor de groeicapaciteit van een planeet en het interverbonden web van leven dat het ondersteunt verschijnen. Begrip van natuurlijke ecologie en zijn interactie met stressfactoren laten het systeem ondersteunen en de nakomende generaties er voordeel uit halen.
-
 GRO_GENETIC_ENG
 Genetische Modificatie
 
@@ -1611,38 +1554,20 @@ Traditionele Genetische Modificatie past de genetische code aan, implementeert d
 GRO_LIFECYCLE_MAN
 Levenscyclus Manipulatie
 
-GRO_LIFECYCLE_MAN_DESC
-Meeste complexe organismen gaan door een proces door verschillende fysiologische stadia gedurende een leven, zowel via duidelijk gescheiden metamorphoses als vage, continue verouderingsprocessen. In veel gevallen is een of meerdere van deze stadiums meer bruikbaar en gewenst dan andere. Door nauwkeurige controle van hormonale en mentale mechanismen wordt het mogelijk om de snelheid van elk stadium te versnellen of vertragen, waardoor volledig ontwikkelde en functionele individuen geproduceerd kunnen worden in een fractie van de natuurlijke tijdsspan. Die individuen blijven daarnaast ook oneindig functioneel, waardoor ze zo goed als onsterfelijk worden.
-
 GRO_XENO_GENETICS
 Xenologische Genetica
-
-GRO_XENO_GENETICS_DESC
-Vroege genetica is beperkt door de beschikbaarheid van monsters van natuurlijk voorkomende organismen om modificaties op te baseren. Daarnaast zijn deze modificaties beperkt binnen de limieten van de fysische mechanismen voor de opslag, aanpassing en expressie van de genetische code in ontwikkelde individuen. Door equivalente systemen in compleet verschillende ecosystemen en organismen te onderzoeken kan meer inzicht en openbaringen verkregen verkregen worden, waardoor nieuwe ontwikkelingen in meer bekende genetische systemen versneld worden.
 
 GRO_NANOTECH_MED
 Nanotech Medicijn
 
-GRO_NANOTECH_MED_DESC
-Terwijl genetische aanpassingen de effecten van ongewenste of schadelijke mutaties of onjuiste biochemische balansen kan repareren of ongedaan maken, kunnen grote fysische trauma's en niet-genetische aangeboren afwijkingen alleen met fysische aanpassingen behandeld worden. Nanotechnologie kan gebruikt worden om dit te bereiken, met twee voordelen: Aanpassingen kunnen zonder invasieve operaties en bijbehordende secundaire schade en risico's gedaan worden, en de tijd voor de behandeling is sterk gereduceerd aangezien de gereedschappen om de taak te doen altijd op de juiste plaats en klaar voor gebruik zijn.
-
 PRO_MICROGRAV_MAN
 Microzwaartekracht Productie
-
-PRO_MICROGRAV_MAN_DESC
-De microzwaartekracht van een lage omloopbaan rond een planeet biedt veel potentie voor nieuwe productiehal ontwerpen, apparatuur ontwerpen en technieken die niet mogelijk zijn op een planeetoppervlakte. Vaste stoffen kunnen met minimale ondersteuning op hun plaats gehouden worden. Vloeistoffen en gassen verplaatsen zich vrij, gevormd door hun oppervlaktespanning, tenzij ze anders gemanipuleerd worden. Fabrieksapparatuur kan optimaal in 3 dimensies geplaatst worden. Indien op de juiste manier toegepast kunnen deze condities de efficientie en het productieproces sterk vergroten.
 
 PRO_ROBOTIC_PROD
 Robotische Productie
 
-PRO_ROBOTIC_PROD_DESC
-Hoewel de het initieel ontwerp hoge eisen stelt en de initiele implementatie van de fabrieken nog steeds supervisie vereisen, zal de vervanging van het bedieningspersoneel van het feitelijke productieproces vele bottlenecks elimineren. Robots werken continue, zonder doorlopende eisen voor meer economische compensatie. Robots hebben veel meer tolerantie voor gevaarlijke omgevingscondities in de fabriek en vereisen geen additionele leefruimte buiten de werkplek. Robots vervullen hun taak foutloos, of ten minste zo goed als ze worden opgedragen.
-
 PRO_FUSION_GEN
 Fusie Generatie
-
-PRO_FUSION_GEN_DESC
-Explosieve of ongecontrolleerde thermonucleaire reacties zijn relatief eenvoudig te maken op de schaal van kleine tactische kernkoppen tot supergigantische stellaire ovens. Controlleerbare, stabiele en praktische energieproductie van dergelijke reacties is iets wat moeilijker. Het proces blijft aantrekkelijk doordat er een bijna-onbeperkte aanvoer van energie ontstaat die emissie-vrij verloopt.
 
 SHP_GAL_EXPLO
 Galactische Ontdekkingsreizen
@@ -1672,9 +1597,6 @@ Vergroot Planeet Populatie
 
 GRO_BIOTERROR
 Bioterreur Faciliteiten
-
-SPY_DETECT_2_DESC
-Ontsluit Actieve Radar scheepsonderdeel.
 
 
 ##

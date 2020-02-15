@@ -163,9 +163,6 @@ COMMAND_LINE_USAGE
 COMMAND_LINE_DEFAULT
 '''Oletus: '''
 
-OPTIONS_DB_HELP
-Tulosta ohje.
-
 OPTIONS_DB_GENERATE_CONFIG_XML
 Käyttää kaikkia asetuksia mistä tahansa olemassa olevasta config.xml tiedostosta sekä komentoriville syötettyjä tietoja luodakseen config.xml tiedoston. Tämä tiedosto korvaa mahdollisen jo olemassa olevan config.xml tiedoston.
 
@@ -349,24 +346,6 @@ Asettaa tähtijärjestelmän sivupaneelin koon.
 OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
 Asettaa näytetäänkö renderöidyt planeetat / asteroidit sivupaneelissa.
 
-OPTIONS_DB_GAMESETUP_STARS
-Tähtien määrä luotavassa galaksissa.
-
-OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-Luotavan galaksin muoto.
-
-OPTIONS_DB_GAMESETUP_GALAXY_AGE
-Luotavan galaksin ikä.
-
-OPTIONS_DB_GAMESETUP_PLANET_DENSITY
-Planeettojen määrä tähtijärjestelmässä luotavassa galaksissa.
-
-OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-Tähtilinjojen määrä luotavassa galaksissa.
-
-OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-Erikoisuuksien esiintyminen luotavassa galaksissa.
-
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 Pelissä käyttämäsi imperiumin nimi.
 
@@ -375,12 +354,6 @@ Pelissä käyttämäsi nimi.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
 Pelissä käyttämäsi imperiumin väri.
-
-OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
-Kotiplaneettasi laji pelin alussa.
-
-OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
-Tekoälyvastustajien määrä pelissä.
 
 OPTIONS_DB_STRINGTABLE_FILENAME
 Asettaa käännöstiedoston.
@@ -1509,9 +1482,6 @@ SITREP_EMPIRE_ELIMINATED
 SP_HUMAN
 Ihmiset
 
-SP_HUMAN_DESC
-Normi.
-
 
 ##
 ## Specials
@@ -1520,14 +1490,8 @@ Normi.
 ANCIENT_RUINS_SPECIAL
 Muinaisia raunioita
 
-ANCIENT_RUINS_SPECIAL_DESCRIPTION
-Tällä planeetalla on jäänteitä kehittyneestä muinaisesta sivilisaatiosta. Näiden jäänteiden tutkiminen antaa bonuksen tutkimukseen.
-
 ECCENTRIC_ORBIT_SPECIAL
 Epäsäännöllinen kiertorata
-
-ECCENTRIC_ORBIT_SPECIAL_DESC
-Tämän planeetan kiertorata on hyvin epäsäännöllinen. Planeetan etäisyys tähdestä, jota se kiertää vaihtelee suuresti, ja näin ollen planeetan saama säteilymäärä ei ole tasainen vuoden ympäri. Vaihtelevat olosuhteet haittaavat infrastruktuurin kehittymistä, mutta tarjoavat hedelmällisen maaperän tutkimukselle.
 
 MINERALS_SPECIAL
 Mineraalirikas
@@ -2218,9 +2182,6 @@ Avaa ydinohjuksen, aluksen osa.
 SPY_DETECT_2
 Aktiivitutka
 
-SPY_DETECT_2_DESC
-Avaa aktiivitutkan, aluksen osa.
-
 SHP_DEUTERIUM_TANK
 Deuteriumtankki
 
@@ -2242,16 +2203,6 @@ Laivatelakka
 ## Hull and ship part description templates
 ##
 
-# %1% hull base starlane speed.
-# %2% hull base fuel capacity.
-# %3% hull base starlane speed.
-# %4% hull base structure value.
-HULL_DESC
-'''Tähtilinjanopeus: %1%
-Polttoainekapasiteetti: %2%
-Taistelunopeus: %3%
-Kestävyys: %4%'''
-
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
 Kapasiteetti: %1%
@@ -2259,13 +2210,6 @@ Kapasiteetti: %1%
 # %1% ship part strength (other).
 PART_DESC_STRENGTH
 Vahvuus: %1%
-
-# %1% ship part damage done (direct fire weapons).
-# %2% number of shots done per attack.
-PART_DESC_DIRECT_FIRE_STATS
-'''Vahinko: %1%
-Tulinopeus: %2% laukausta/vuoro
-Kantama: %3%'''
 
 
 ##
@@ -2292,9 +2236,6 @@ Keskinkertainen havainnointikyky, suuri häiverangaistus alukselle
 
 SH_DEFENSE_GRID
 Puolustusverkko
-
-SH_DEFENSE_GRID_DESC
-Heikko puolustus, joka ei tuo lisämassaa
 
 
 ##
