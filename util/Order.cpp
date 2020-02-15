@@ -310,12 +310,39 @@ void FleetMoveOrder::ExecuteImpl() const {
 
     auto fleet = Objects().get<Fleet>(FleetID());
 
-    if (m_append && !fleet->TravelRoute().empty()){
-        route_list = fleet->TravelRoute();
-        route_list.erase(--route_list.end());// Remove the last one since it is the first one of the other
+    if (m_append && !fleet->TravelRoute().empty()) {
+        route_list = fleet->TravelRoute();      // copy existing route
+
+        DebugLogger() << "FleetMoveOrder::ExecuteImpl appending initial" << [&]() {
+            std::stringstream ss;
+            for (int waypoint : route_list)
+                ss << " " << waypoint;
+            return ss.str();
+        }() << "  with" << [&]() {
+            std::stringstream ss;
+            for (int waypoint : m_route)
+                ss << " " << waypoint;
+            return ss.str();
+        }();
+
+        route_list.erase(--route_list.end());   // remove last item as it should be the first in the appended route
     }
 
     std::copy(m_route.begin(), m_route.end(), std::back_inserter(route_list));
+    DebugLogger() << [fleet, route_list]() {
+        std::stringstream ss;
+        ss << "FleetMoveOrder::ExecuteImpl Setting route of fleet " << fleet->ID() << " at system " << fleet->SystemID() << " to: ";
+        if (route_list.empty())
+            return std::string("[empty route]");
+        for (int waypoint : route_list)
+            ss << " " << std::to_string(waypoint);
+        return ss.str();
+    }();
+
+    if (route_list.front() == fleet->SystemID()) {
+        DebugLogger() << "FleetMoveOrder::ExecuteImpl given route that starts with fleet " << fleet->ID() << "'s current system (" << route_list.front() << "); removing it";
+        route_list.pop_front();
+    }
 
     // check destination validity: disallow movement that's out of range
     auto eta = fleet->ETA(fleet->MovePath(route_list));
@@ -324,15 +351,11 @@ void FleetMoveOrder::ExecuteImpl() const {
         return;
     }
 
-    DebugLogger() << [fleet, route_list]() {
-        std::stringstream ss;
-        ss << "FleetMoveOrder::ExecuteImpl Setting route of fleet " << fleet->ID() << " to ";
-        for (int waypoint : route_list)
-            ss << " " << std::to_string(waypoint);
-        return ss.str();
-    }();
-
-    fleet->SetRoute(route_list);
+    try {
+        fleet->SetRoute(route_list);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Caught exception setting fleet route while executing fleet move order: " << e.what();
+    }
 }
 
 ////////////////////////////////////////////////
