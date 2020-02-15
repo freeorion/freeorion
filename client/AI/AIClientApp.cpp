@@ -401,7 +401,11 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
     case Message::CHECKSUM: {
         TraceLogger() << "(AIClientApp) CheckSum.";
-        VerifyCheckSum(msg);
+        bool result = VerifyCheckSum(msg);
+        if (!result) {
+            ErrorLogger() << "Wrong checksum";
+            throw std::runtime_error("AI got incorrect checksum.");
+        }
         break;
     }
 
