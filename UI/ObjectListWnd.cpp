@@ -1380,8 +1380,7 @@ public:
         m_object_id(obj ? obj->ID() : INVALID_OBJECT_ID),
         m_indent(indent),
         m_expanded(expanded),
-        m_has_contents(has_contents),
-        m_column_val_cache()
+        m_has_contents(has_contents)
     {
         SetChildClippingMode(ClipToClient);
         auto rcobj = std::dynamic_pointer_cast<const ResourceCenter>(obj);
@@ -1391,16 +1390,20 @@ public:
     }
 
     void ResourceCenterChanged() {
-        RefreshCache();
+        m_column_val_cache.clear();
         RequirePreRender();
     }
 
     std::string SortKey(std::size_t column) const {
-        if (column >= m_column_val_cache.size())
-            RefreshCache();
-        if (column >= m_column_val_cache.size())
-            return "";
-        return m_column_val_cache[column];
+        // result cached? if not, calculate and cache
+        auto it = m_column_val_cache.find(column);
+        if (it != m_column_val_cache.end())
+            return it->second;
+
+        auto ref = GetColumnValueRef(column);
+        auto val = ref ? ref->Eval(ScriptingContext(Objects().get(m_object_id))) : "";
+        m_column_val_cache[column] = val;
+        return val;
     }
 
     int ObjectID() const { return m_object_id; }
@@ -1546,30 +1549,12 @@ private:
         RefreshLayout();
     }
 
-    void RefreshCache() const {
-        m_column_val_cache.clear();
-        m_column_val_cache.reserve(NUM_COLUMNS);
-        auto obj = Objects().get(m_object_id);
-        ScriptingContext context(obj);
-
-        // get currently displayed column value refs, put values into this panel's cache
-        for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
-            auto ref = GetColumnValueRef(static_cast<int>(i));
-            if (ref)
-                m_column_val_cache.push_back(ref->Eval(context));
-            else
-                m_column_val_cache.push_back("");
-        }
-    }
-
     std::vector<std::shared_ptr<GG::Control>> GetControls() {
         std::vector<std::shared_ptr<GG::Control>> retval;
         retval.reserve(NUM_COLUMNS);
 
-        RefreshCache();
-
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
-            std::string col_val = m_column_val_cache[i];
+            std::string col_val = SortKey(i);
             auto control = GG::Wnd::Create<CUILabel>(col_val, GG::FORMAT_LEFT);
             control->Resize(GG::Pt(GG::X(GetColumnWidth(i)), ClientHeight()));
             retval.push_back(control);
@@ -1588,7 +1573,7 @@ private:
     std::shared_ptr<GG::StaticGraphic>          m_dot = nullptr;
     std::shared_ptr<MultiTextureStaticGraphic>  m_icon = nullptr;
     std::vector<std::shared_ptr<GG::Control>>   m_controls;
-    mutable std::vector<std::string>            m_column_val_cache;
+    mutable std::map<std::size_t, std::string>  m_column_val_cache;
     bool                                        m_selected = false;
 };
 
