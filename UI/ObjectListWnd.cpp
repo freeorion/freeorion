@@ -2014,6 +2014,8 @@ public:
     void Refresh() {
         std::size_t first_visible_queue_row = std::distance(this->begin(), this->FirstRowShown());
         ClearContents();
+        auto initial_style = this->Style();
+        this->SetStyle(GG::LIST_NOSORT);    // to avoid sorting while inserting
 
         m_header_row->Update();
 
@@ -2192,6 +2194,8 @@ public:
 
         for (int field_id : fields)
             AddObjectRow(field_id, INVALID_OBJECT_ID, std::set<int>(), indent);
+
+        this->SetStyle(initial_style);
 
         if (!this->Empty())
             this->BringRowIntoView(--this->end());
