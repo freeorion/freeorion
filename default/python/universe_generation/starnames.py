@@ -107,7 +107,7 @@ def name_group(group_list, group_name, star_type_assignments, planet_assignments
         name_list = [group_name + " " + modifier for modifier in modifiers]
     else:
         name_list = [modifier + " " + group_name for modifier in modifiers]
-    return zip(these_systems, name_list)  # pylint: disable=zip-builtin-not-iterating PY_3_MIGRATION
+    return zip(these_systems, name_list)  # pylint: disable=zip-builtin-not-iterating; # PY_3_MIGRATION
 
 
 def name_star_systems(system_list):
@@ -230,7 +230,7 @@ def name_star_systems(system_list):
     #     num_individual_stars, len(individual_names))
     indiv_name_sample = random.sample(individual_names, num_individual_stars)
     # indiv_name_assignments = zip([(pos.x, pos.y) for pos in position_list[:num_individual_stars]], indiv_name_sample)
-    star_name_map.update(zip(indiv_systems, indiv_name_sample))  # pylint: disable=zip-builtin-not-iterating PY_3_MIGRATION
+    star_name_map.update(zip(indiv_systems, indiv_name_sample))  # pylint: disable=zip-builtin-not-iterating; # PY_3_MIGRATION
     # print "sampling for %d group names from list of %d total group names"%(num_star_groups, len(group_names))
     if len(group_names) < num_star_groups:
         group_names.extend([names.random_name(6) for _ in range(num_star_groups - len(group_names))])

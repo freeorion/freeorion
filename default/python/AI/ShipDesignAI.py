@@ -45,15 +45,16 @@ global variables:
 import copy
 import math
 from collections import Counter, defaultdict
-from logging import debug, info, warn, error
+from logging import debug, error, info, warn
 
 import freeOrionAIInterface as fo
-from aistate_interface import get_aistate
+
 import AIDependencies
 import CombatRatingsAI
 import FleetUtilsAI
 from AIDependencies import INVALID_ID
-from freeorion_tools import UserString, tech_is_complete, get_ai_tag_grade
+from aistate_interface import get_aistate
+from freeorion_tools import UserString, get_ai_tag_grade, tech_is_complete
 from turn_state import state
 
 # Define meta classes for the ship parts  TODO storing as set may not be needed anymore
@@ -436,7 +437,7 @@ class ShipDesignCache(object):
                                 for slottype in slotlist}
         new_parts = [get_part_type(part) for part in empire.availableShipParts
                      if part not in self.strictly_worse_parts]
-        pid = self.production_cost.keys()[0]  # as only location invariant parts are considered, use arbitrary planet.
+        pid = next(iter(self.production_cost.keys()))  # as only location invariant parts are considered, use arbitrary planet.
         for new_part in new_parts:
             self.strictly_worse_parts[new_part.name] = []
             if new_part.partClass in WEAPONS:
@@ -471,7 +472,7 @@ class ShipDesignCache(object):
         if not self.testhulls:
             debug("Testhull cache not found. This may happen only at first turn after game start or load.")
             for hullname in available_hulls:
-                des = [des for des in testdesign_names_part if des.endswith(hullname)]
+                des = [des_ for des_ in testdesign_names_part if des_.endswith(hullname)]
                 if des:
                     self.testhulls.add(hullname)
             if verbose:
@@ -542,7 +543,7 @@ class ShipDesignCache(object):
                 slotlist = [s for s in get_hulltype(testhull).slots]
                 slot_index = slotlist.index(slot)
                 num_slots = len(slotlist)
-                for part in [part for part in needs_update if slot in part.mountableSlotTypes]:
+                for part in [part_ for part_ in needs_update if slot in part_.mountableSlotTypes]:
                     partlist = num_slots * [""]
                     partlist[slot_index] = part.name
                     testdesign_name = "%s_%s_%s" % (TESTDESIGN_NAME_PART, part.name, testhull)
@@ -1246,8 +1247,14 @@ class ShipDesigner(object):
             for x in partname_dict:
                 debug("  %s: %s" % (x, partname_dict[x]))
 
-        part_dict = {slottype: zip(partname_dict[slottype], map(get_part_type, partname_dict[slottype]))
-                     for slottype in partname_dict}  # {slottype: [(partname, parttype_object)]}
+        part_dict = {
+            slottype: list(
+                zip(
+                    partname_dict[slottype],
+                    (get_part_type(x) for x in partname_dict[slottype])
+                )
+            ) for slottype in partname_dict
+        }  # {slottype: [(partname, parttype_object)]}
 
         for slottype in part_dict:
             part_dict[slottype] = [tup for tup in part_dict[slottype] if tup[1].partClass in self.useful_part_classes]
@@ -1363,7 +1370,7 @@ class ShipDesigner(object):
                     break
                 current_filling = total_filling[slot]
                 num_parts = len(current_filling)
-                range_parts = range(num_parts)
+                range_parts = list(range(num_parts))
                 current_parts = []
                 other_parts = []
                 for s in number_of_slots_by_slottype:

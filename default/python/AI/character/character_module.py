@@ -90,8 +90,10 @@ import random
 from logging import warn, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+from common import six
 
 
+@six.add_metaclass(abc.ABCMeta)
 class Trait(object):
     """An abstract class representing a type of trait of the AI.
 
@@ -117,7 +119,6 @@ class Trait(object):
     Any given Trait class should not implement all the taps, only those
     it needs to override to cause the relevant trait.
     """
-    __metaclass__ = abc.ABCMeta
 
     def __repr__(self):
         return "Trait"

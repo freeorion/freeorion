@@ -230,7 +230,7 @@ def get_invasion_fleets():
         ])
     info(invasion_table)
 
-    sorted_planets = filter(lambda x: x[1] > 0, sorted_planets)
+    sorted_planets = [x for x in sorted_planets if x[1] > 0]
     # export opponent planets for other AI modules
     AIstate.opponentPlanetIDs = [pid for pid, __, __ in sorted_planets]
     AIstate.invasionTargets = sorted_planets

@@ -204,7 +204,7 @@ class DisjointSets(object):
         ret = defaultdict(list)
         for pos in self.dsets.keys():
             ret[self.root(pos)].append(pos)
-        return ret.values()
+        return list(ret.values())
 
 
 class Clusterer(object):

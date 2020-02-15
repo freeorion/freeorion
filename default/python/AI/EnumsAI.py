@@ -7,14 +7,11 @@ def check_validity(value):
 
 
 class EnumItem(int):
-    @staticmethod
-    def __new__(cls, *more):
-        return super(EnumItem, cls).__new__(cls, more[0])
-
-    def __init__(self, number, name, enum_name):
-        super(EnumItem, self).__init__(number)
-        self.name = name
-        self.enum_name = enum_name
+    def __new__(self, number, name, enum_name):
+        obj = int.__new__(EnumItem, number)
+        obj.name = name
+        obj.enum_name = enum_name
+        return obj
 
     def __str__(self):
         return "%s.%s" % (self.enum_name, self.name)
@@ -34,13 +31,12 @@ class EnumMeta(type):
         return super_new(cls, name, bases, attrs)
 
 
+@six.add_metaclass(EnumMeta)
 class Enum(object):
-    __metaclass__ = EnumMeta
-
     @classmethod
     def range(cls, start, end):
         result = []
-        current_range = range(start, end)  # pylint: disable=range-builtin-not-iterating PY_3_MIGRATION
+        current_range = range(start, end)  # pylint: disable=range-builtin-not-iterating; # PY_3_MIGRATION
         for key in dir(cls):
             if not key.startswith('_'):
                 value = getattr(cls, key)

@@ -249,7 +249,7 @@ class FleetCombatStats(object):
         :return: list of ship stats
         :rtype: list
         """
-        return map(lambda x: x.get_stats(hashable=hashable), self.__ship_stats)  # pylint: disable=map-builtin-not-iterating PY_3_MIGRATION
+        return map(lambda x: x.get_stats(hashable=hashable), self.__ship_stats)  # pylint: disable=map-builtin-not-iterating; # PY_3_MIGRATION
 
     def get_ship_combat_stats(self):
         """Returns list of ShipCombatStats of fleet."""
@@ -404,7 +404,7 @@ def combine_ratings_list(ratings_list):
     :return: combined rating
     :rtype: float
     """
-    return six.moves.reduce(combine_ratings, ratings_list) if ratings_list else 0
+    return six.moves.reduce(combine_ratings, ratings_list, 0)
 
 
 def rating_needed(target, current=0):

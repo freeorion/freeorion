@@ -29,7 +29,7 @@ def get_ai_tag_grade(tag_list, tag_type):
     X is most commonly (but not necessarily) one of [NO, BAD, AVERAGE, GOOD, GREAT, ULTIMATE]
     If no matching tags, returns empty string (which for most types should be considered equivalent to AVERAGE)
     """
-    for tag in [tag for tag in tag_list if tag.count("_") > 0]:
+    for tag in [tag_ for tag_ in tag_list if tag_.count("_") > 0]:
         parts = tag.split("_", 1)
         if parts[1] == tag_type.upper():
             return parts[0]

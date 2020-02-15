@@ -16,8 +16,11 @@ class Target(object):
         if not self:
             warn("Target is invalid %s" % self)
 
-    def __cmp__(self, other):
-        return type(self) == type(other) and cmp(self.id, other.id)
+    def __eq__(self, other):
+        return type(self) == type(other) and self.id == other.id
+
+    def __hash__(self):
+        return hash(self.id)
 
     def __str__(self):
         target = self.get_object()
@@ -31,8 +34,10 @@ class Target(object):
         """
         return None
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.id is not None and self.id >= 0
+
+    __nonzero__ = __bool__
 
     def get_system(self):
         """

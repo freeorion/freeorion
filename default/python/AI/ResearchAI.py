@@ -399,7 +399,7 @@ def init():
     # if tech already in priority_funcs do nothing
     # if tech starts with prefix add prefix handler
     # otherwise print warning and add DEFAULT_PRIORITY
-    for tech in [tech for tech in fo.techs() if not tech_is_complete(tech)]:
+    for tech in [tech_ for tech_ in fo.techs() if not tech_is_complete(tech_)]:
         if tech in priority_funcs:
             continue
         for prefix, handler in prefixes:
@@ -623,8 +623,7 @@ def generate_classic_research_orders():
     debug("Techs researched and available for use:")
     completed_techs = sorted(list(get_completed_techs()))
     tlist = completed_techs + [" "] * 3
-    tlines = zip(tlist[0::3], tlist[1::3], tlist[2::3])
-    for tline in tlines:
+    for tline in zip(tlist[0::3], tlist[1::3], tlist[2::3]):
         debug("%25s %25s %25s", *tline)
     debug('')
 
@@ -777,11 +776,11 @@ def generate_classic_research_orders():
         if len(aistate.colonisablePlanetIDs) == 0:
             best_colony_site_score = 0
         else:
-            best_colony_site_score = aistate.colonisablePlanetIDs.items()[0][1]
+            best_colony_site_score = next(iter(aistate.colonisablePlanetIDs.items()))[1]
         if len(aistate.colonisableOutpostIDs) == 0:
             best_outpost_site_score = 0
         else:
-            best_outpost_site_score = aistate.colonisableOutpostIDs.items()[0][1]
+            best_outpost_site_score = next(iter(aistate.colonisableOutpostIDs.items()))[1]
         need_improved_scouting = (best_colony_site_score < 150 or best_outpost_site_score < 200)
 
         if need_improved_scouting:
