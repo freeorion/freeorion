@@ -3213,6 +3213,7 @@ void ServerApp::PreCombatProcessTurns() {
             DebugLogger() << "No OrderSet for empire " << empire_orders.first;
             continue;
         }
+        DebugLogger() << "<<= Executing Orders for empire " << empire_orders.first << " =>>";
         for (const auto& id_and_order : *save_game_data->m_orders)
             id_and_order.second->Execute();
     }
