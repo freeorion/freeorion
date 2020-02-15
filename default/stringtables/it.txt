@@ -2049,9 +2049,6 @@ METER_STEALTH_VALUE_DESC
 
 Navi spaziali, strutture, speciali, sistemi e pianeti hanno un misuratore di Occultamento.'''
 
-METER_DETECTION_STRENGTH_VALUE_LABEL
-Forza di Rilevamento
-
 PEACE_TITLE
 Pace
 

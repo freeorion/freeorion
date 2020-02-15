@@ -1425,15 +1425,6 @@ planet omgeving
 DESC_VAR_STARTYPE
 ster type
 
-DESC_VAR_MAXFUEL
-max brandstof
-
-DESC_VAR_MAXSHIELD
-max schild
-
-DESC_VAR_MAXDEFENSE
-max defensie
-
 DESC_VAR_TRADESTOCKPILE
 handel voorraad
 
