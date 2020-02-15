@@ -363,14 +363,12 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         } else {
             ErrorLogger() << "Fleet::MovePath: No previous or current system!?";
         }
-        if (prev_or_cur) {
-            if (!prev_or_cur->HasStarlaneTo(next_system->ID())) {
-                DebugLogger() << "Fleet::MovePath for Fleet " << this->Name() << " (" << this->ID()
-                              << ") No starlane connection between systems " << prev_or_cur->Name() << "(" << prev_or_cur->ID()
-                              << ")  and " << next_system->Name() << "(" << next_system->ID()
-                              << "). Abandoning the rest of the route. Route was: " << RouteNums();
-                return retval;
-            }
+        if (prev_or_cur && !prev_or_cur->HasStarlaneTo(next_system->ID())) {
+            DebugLogger() << "Fleet::MovePath for Fleet " << this->Name() << " (" << this->ID()
+                            << ") No starlane connection between systems " << prev_or_cur->Name() << "(" << prev_or_cur->ID()
+                            << ")  and " << next_system->Name() << "(" << next_system->ID()
+                            << "). Abandoning the rest of the route. Route was: " << RouteNums();
+            return retval;
         }
 
 
@@ -799,9 +797,8 @@ void Fleet::MovementPhase() {
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
     if (GetSupplyManager().SystemHasFleetSupply(SystemID(), Owner(), ALLOW_ALLIED_SUPPLY)) {
-        for (auto& ship : ships) {
+        for (auto& ship : ships)
             ship->Resupply();
-        }
     }
 
     auto current_system = Objects().get<System>(SystemID());
