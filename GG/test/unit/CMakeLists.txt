@@ -29,22 +29,12 @@ add_executable(gg_unittest
     main.cpp
 )
 
-target_compile_definitions(gg_unittest
-    PRIVATE
-        -DBOOST_TEST_DYN_LINK
-        -DBOOST_TEST_NO_LIB
-        -DBOOST_ALL_DYN_LINK
-        -DBOOST_ALL_NO_LIB
-)
-
-target_include_directories(gg_unittest
-    PRIVATE
-        ${Boost_INCLUDE_DIRS}
-)
-
 target_link_libraries(gg_unittest
     GiGi
-    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
+    Boost::boost
+    Boost::disable_autolinking
+    Boost::dynamic_linking
+    Boost::unit_test_framework
 )
 
 add_coverage(fo_unittest_parse

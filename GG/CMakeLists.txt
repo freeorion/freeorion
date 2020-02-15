@@ -23,7 +23,7 @@
 # Zach Laine
 # whatwasthataddress@gmail.com
 
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 if(POLICY CMP0044)
     cmake_policy(SET CMP0044 OLD)
@@ -55,8 +55,6 @@ option(BUILD_DOCUMENTATION "Builds HTML documentation." OFF)
 option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_DEVEL_PACKAGE "Install development files." ON)
 
-cmake_dependent_option(USE_STATIC_LIBS "Favour static linking of depencendies." OFF BUILD_SHARED_LIBS OFF)
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -82,17 +80,7 @@ endif()
 
 set(MINIMUM_BOOST_VERSION 1.58.0)
 
-if(NOT USE_STATIC_LIBS)
-    add_definitions(
-        -DBOOST_ALL_NO_LIB
-        -DBOOST_ALL_DYN_LINK
-        -DBOOST_LOG_NO_LIB
-        -DBOOST_LOG_DYN_LINK
-    )
-endif()
-
-set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS date_time filesystem regex system thread log REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS filesystem regex system REQUIRED)
 
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
@@ -138,12 +126,7 @@ configure_file(
 
 add_library(GiGi "")
 
-if(USE_STATIC_LIBS)
-    set_target_properties(GiGi
-        PROPERTIES
-        LINK_SEARCH_END_STATIC true
-    )
-endif()
+add_library(GiGi::GiGi ALIAS GiGi)
 
 target_compile_definitions(GiGi
     PRIVATE
@@ -156,54 +139,57 @@ target_compile_definitions(GiGi
         $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.71>:BOOST_GIL_USES_MP11>
 )
 
-target_include_directories(GiGi SYSTEM
-    PRIVATE
-        ${Boost_INCLUDE_DIRS}
+target_include_directories(GiGi
+    INTERFACE
         ${OPENGL_INCLUDE_DIR}
-        ${GLEW_INCLUDE_DIRS}
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    PRIVATE
         ${FREETYPE_INCLUDE_DIRS}
-        ${PNG_INCLUDE_DIRS}
-        ${TIFF_INCLUDE_DIRS}
 )
 
 target_link_libraries(GiGi
-    ${Boost_LIBRARIES}
-    ${OPENGL_LIBRARIES}
-    ${GLEW_LIBRARIES}
-    ${FREETYPE_LIBRARIES}
+    PUBLIC
+        GLEW::GLEW
+        Boost::boost
+        Boost::disable_autolinking
+        Boost::dynamic_linking
+        Boost::filesystem
+        ${OPENGL_gl_LIBRARY}
+        ${OPENGL_glu_LIBRARY}
+    PRIVATE
+        Boost::regex
+        ${FREETYPE_LIBRARIES}
 )
 
-if(PNG_FOUND)
-    target_link_libraries(GiGi ${PNG_LIBRARIES})
+if(TARGET PNG::PNG)
+    target_link_libraries(GiGi PRIVATE PNG::PNG)
 endif()
 
-if(TIFF_FOUND)
-    target_link_libraries(GiGi ${TIFF_LIBRARIES})
+if(TARGET TIFF::TIFF)
+    target_link_libraries(GiGi PRIVATE TIFF::TIFF)
 endif()
 
 
 add_library(GiGiSDL "")
 
-if(USE_STATIC_LIBS)
-    set_target_properties(GiGiSDL
-        PROPERTIES
-        LINK_SEARCH_END_STATIC true
-    )
-endif()
+add_library(GiGi::GiGiSDL ALIAS GiGiSDL)
 
 target_include_directories(GiGiSDL SYSTEM
-    PRIVATE
-        ${Boost_INCLUDE_DIRS}
-        ${OPENGL_INCLUDE_DIR}
-        ${GLEW_INCLUDE_DIRS}
+    INTERFACE
         ${SDL_INCLUDE_DIR}
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
 target_link_libraries(GiGiSDL
-    GiGi
-    ${OPENGL_LIBRARIES}
-    ${GLEW_LIBRARIES}
-    ${SDL_LIBRARIES}
+    PUBLIC
+        GiGi::GiGi
+        ${SDL_LIBRARIES}
+    PRIVATE
+        Boost::boost
+        Boost::disable_autolinking
+        Boost::dynamic_linking
 )
 
 
