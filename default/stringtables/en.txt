@@ -12862,7 +12862,7 @@ BLD_CONC_CAMP
 Concentration Camps
 
 BLD_CONC_CAMP_DESC
-'''Decreases the planet's [[metertype METER_POPULATION]] at a rate of 3 per turn, increases [[metertype METER_TARGET_INDUSTRY]] by 5 times the planet's [[metertype METER_POPULATION]] and sets the [[metertype METER_TARGET_HAPPINESS]] to 0.
+'''Decreases the planet's [[metertype METER_POPULATION]] at a rate of 3 per turn, increases [[metertype METER_TARGET_INDUSTRY]] by 2 times the planet's [[metertype METER_POPULATION]] and sets the [[metertype METER_TARGET_HAPPINESS]] to 0.
 
 Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently.'''
 
