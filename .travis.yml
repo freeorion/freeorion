@@ -93,6 +93,7 @@ jobs:
       script:
         - cmake -DBUILD_TESTING=ON ..
         - cmake --build . -- -j 2
+      after_success:
         - cmake --build . --target unittest
       before_cache:
         - ccache --clean
