@@ -18,7 +18,21 @@ jobs:
         - flake8
         - python -m compileall -q .
       env:
-        - NAME="Lint Python script"
+        - NAME="Lint Python 2.7 script"
+    - stage: lint
+      os: linux
+      dist: bionic
+      language: python
+      python: 3.5
+      before_install:
+        - python3 -m pip install flake8-putty==0.4.0
+      before_script:
+        - cd default/python
+      script:
+        - flake8
+        - python3 -m compileall -q .
+      env:
+        - NAME="Lint Python 3.5 script"
     - stage: build
       os: linux
       dist: bionic
