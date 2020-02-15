@@ -1390,6 +1390,8 @@ public:
         if (rcobj)
             rcobj->ResourceCenterChangedSignal.connect(
                 boost::bind(&ObjectPanel::ResourceCenterChanged, this));
+
+        RequirePreRender();
     }
 
     void ResourceCenterChanged() {
@@ -1413,13 +1415,11 @@ public:
 
     void PreRender() override {
         GG::Control::PreRender();
-        RefreshLayout();
+        Init();
+        DoLayout();
     }
 
     void Render() override {
-        if (!m_initialized)
-            Init();
-
         const GG::Clr& background_colour = ClientUI::WndColor();
         const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
         const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
@@ -1437,12 +1437,66 @@ public:
         const GG::Pt old_size = Size();
         GG::Control::SizeMove(ul, lr);
         if (old_size != Size())
-            DoLayout();
+            RequirePreRender();//DoLayout();//RequirePreRender();
     }
 
-    void RefreshLayout() {
+    void SetHasContents(bool has_contents)
+    { m_has_contents = has_contents; }
+
+    mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
+
+private:
+    void DoLayout() {
         if (!m_initialized)
             return;
+
+        const GG::X ICON_WIDTH(Value(ClientHeight()));
+
+        GG::X indent(ICON_WIDTH * m_indent);
+        GG::X left = indent;
+        GG::Y top(GG::Y0);
+        GG::Y bottom(ClientHeight());
+
+        if (m_expand_button)
+            m_expand_button->SizeMove(GG::Pt(left, top), GG::Pt(left + ICON_WIDTH, bottom));
+        else if (m_dot)
+            m_dot->SizeMove(GG::Pt(left, top), GG::Pt(left + ICON_WIDTH, bottom));
+
+        left += ICON_WIDTH + PAD;
+
+        if (m_icon) {
+            m_icon->SizeMove(GG::Pt(left, top), GG::Pt(left + ICON_WIDTH, bottom));
+            left += ICON_WIDTH + PAD;
+        }
+
+        // loop through m_controls, positioning according to column widths.
+        // first column position dependent on indent (ie. left at start of loop)
+        // second column position fixed equal to first column width value.
+        // ie. reset left, not dependent on current left.
+        auto& ctrl = m_controls[0];
+        GG::X width(GetColumnWidth(static_cast<int>(-1)) + GetColumnWidth(static_cast<int>(0)));
+        GG::X right = width;
+        ctrl->SizeMove(GG::Pt(left, top), GG::Pt(right, bottom));
+        left = right + 2*PAD;
+
+        for (std::size_t i = 1; i < m_controls.size(); ++i) {
+            right = left + GetColumnWidth(static_cast<int>(i));
+            if ((ctrl = m_controls[i]))
+                ctrl->SizeMove(GG::Pt(left, top), GG::Pt(right, bottom));
+            left = right + PAD;
+        }
+    }
+
+    void ExpandCollapseButtonPressed() {
+        m_expanded = !m_expanded;
+        ExpandCollapseSignal();
+    }
+
+    void Init() {
+        if (m_initialized)
+            return;
+        m_initialized = true;
+
         GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER |
                                             GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
@@ -1490,66 +1544,7 @@ public:
             AttachChild(control);
         }
 
-        DoLayout();
-    }
-
-    void SetHasContents(bool has_contents)
-    { m_has_contents = has_contents; }
-
-    mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
-
-private:
-    void DoLayout() {
-        if (!m_initialized)
-            return;
-
-        const GG::X ICON_WIDTH(Value(ClientHeight()));
-
-        GG::X indent(ICON_WIDTH * m_indent);
-        GG::X left = indent;
-        GG::Y top(GG::Y0);
-        GG::Y bottom(ClientHeight());
-
-        if (m_expand_button) {
-            m_expand_button->SizeMove(GG::Pt(left, top), GG::Pt(left + ICON_WIDTH, bottom));
-        } else if (m_dot) {
-            m_dot->SizeMove(GG::Pt(left, top), GG::Pt(left + ICON_WIDTH, bottom));
-        }
-        left += ICON_WIDTH + PAD;
-
-        if (m_icon) {
-            m_icon->SizeMove(GG::Pt(left, top), GG::Pt(left + ICON_WIDTH, bottom));
-            left += ICON_WIDTH + PAD;
-        }
-
-        // loop through m_controls, positioning according to column widths.
-        // first column position dependent on indent (ie. left at start of loop)
-        // second column position fixed equal to first column width value.
-        // ie. reset left, not dependent on current left.
-        auto& ctrl = m_controls[0];
-        GG::X width(GetColumnWidth(static_cast<int>(-1)) + GetColumnWidth(static_cast<int>(0)));
-        GG::X right = width;
-        ctrl->SizeMove(GG::Pt(left, top), GG::Pt(right, bottom));
-        left = right + 2*PAD;
-
-        for (std::size_t i = 1; i < m_controls.size(); ++i) {
-            right = left + GetColumnWidth(static_cast<int>(i));
-            if ((ctrl = m_controls[i]))
-                ctrl->SizeMove(GG::Pt(left, top), GG::Pt(right, bottom));
-            left = right + PAD;
-        }
-    }
-
-    void ExpandCollapseButtonPressed() {
-        m_expanded = !m_expanded;
-        ExpandCollapseSignal();
-    }
-
-    void Init() {
-        if (m_initialized)
-            return;
-        m_initialized = true;
-        RefreshLayout();
+        RequirePreRender();
     }
 
     std::vector<std::shared_ptr<GG::Control>> GetControls() {
@@ -1572,9 +1567,9 @@ private:
     bool    m_expanded = false;
     bool    m_has_contents = false;
 
-    std::shared_ptr<GG::Button>                 m_expand_button = nullptr;
-    std::shared_ptr<GG::StaticGraphic>          m_dot = nullptr;
-    std::shared_ptr<MultiTextureStaticGraphic>  m_icon = nullptr;
+    std::shared_ptr<GG::Button>                 m_expand_button;
+    std::shared_ptr<GG::StaticGraphic>          m_dot;
+    std::shared_ptr<MultiTextureStaticGraphic>  m_icon;
     std::vector<std::shared_ptr<GG::Control>>   m_controls;
     mutable std::map<std::size_t, std::string>  m_column_val_cache;
     bool                                        m_selected = false;
@@ -1655,7 +1650,7 @@ public:
 
     mutable boost::signals2::signal<void (int)> ExpandCollapseSignal;
 private:
-    std::shared_ptr<ObjectPanel>            m_panel = nullptr;
+    std::shared_ptr<ObjectPanel>            m_panel;
     int                                     m_container_object_panel;
     std::set<int>                           m_contained_object_panels;
     std::shared_ptr<const UniverseObject>   m_obj_init;
@@ -1922,16 +1917,20 @@ public:
     virtual ~ObjectListBox()
     {}
 
+    void PreRender() override {
+        CUIListBox::PreRender();
+        const GG::Pt row_size = ListRowSize();
+        for (auto& row : *this)
+            row->Resize(row_size);
+        m_header_row->Resize(row_size);
+        ListBox::AdjustScrolls(true);
+    }
+
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         Wnd::SizeMove(ul, lr);
-        if (old_size != Size()) {
-            const GG::Pt row_size = ListRowSize();
-            for (auto& row : *this)
-                row->Resize(row_size);
-            m_header_row->Resize(row_size);
-            ListBox::AdjustScrolls(true);
-        }
+        if (old_size != Size())
+            RequirePreRender();
     }
 
     GG::Pt ListRowSize() const
