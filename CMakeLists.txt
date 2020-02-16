@@ -570,8 +570,6 @@ if(NOT BUILD_HEADLESS)
         list(APPEND FREEORION_ASSETS
             Changelog.md
             default
-            Xcode/FreeOrion.icns
-            Xcode/main.xib
         )
         target_sources(freeorion
             PRIVATE
@@ -596,8 +594,8 @@ if(NOT BUILD_HEADLESS)
             PROPERTIES
                 MACOSX_BUNDLE TRUE
                 MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
-                MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/Xcode/Info.plist"
-                RESOURCE "${PROJECT_SOURCE_DIR}/Xcode/main.xib"
+                MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/packaging/Info.plist"
+                RESOURCE "${PROJECT_SOURCE_DIR}/client/human/main.xib"
         )
     endif()
 
@@ -614,13 +612,6 @@ if(NOT BUILD_HEADLESS)
             ${VORBIS_INCLUDE_DIRS}
             ${FREETYPE_INCLUDE_DIRS}
     )
-
-    if(WIN32)
-        target_sources(freeorion
-            PRIVATE
-                ${CMAKE_CURRENT_LIST_DIR}/FreeOrion.ico
-        )
-    endif()
 
     target_link_libraries(freeorion
         freeorioncommon
@@ -754,7 +745,7 @@ if(UNIX AND NOT APPLE)
     if(NOT BUILD_HEADLESS)
         install(
             FILES
-            ${CMAKE_SOURCE_DIR}/freeorion.desktop
+            ${CMAKE_SOURCE_DIR}/packaging/freeorion.desktop
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
         )
     endif()

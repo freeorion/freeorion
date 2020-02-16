@@ -115,10 +115,10 @@ generators = [
     Generator('util/Version.cpp.in', 'util/Version.cpp')
 ]
 if system() == 'Windows':
-    generators.append(NsisInstScriptGenerator('Installer/FreeOrion_Install_Script.nsi.in',
-                                              'Installer/FreeOrion_Install_Script.nsi'))
+    generators.append(NsisInstScriptGenerator('packaging/windows_installer.nsi.in',
+                                              'packaging/windows_installer.nsi'))
 if system() == 'Darwin':
-    generators.append(Generator('Xcode/Info.plist.in', 'Xcode/Info.plist'))
+    generators.append(Generator('packaging/Info.plist.in', 'packaging/Info.plist'))
 
 version = "0.4.9+"
 branch = ""

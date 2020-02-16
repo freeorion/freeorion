@@ -408,7 +408,7 @@
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\FreeOrion.ico">
+    <None Include="..\..\client\human\FreeOrion.ico">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
