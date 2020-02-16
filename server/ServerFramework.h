@@ -1,8 +1,8 @@
-#ifndef __FreeOrion__Python__ServerFramework__
-#define __FreeOrion__Python__ServerFramework__
+#ifndef _ServerFramework_h_
+#define _ServerFramework_h_
 
-#include "../CommonFramework.h"
-#include "../../util/MultiplayerCommon.h"
+#include "../python/CommonFramework.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <boost/circular_buffer.hpp>
 
@@ -49,4 +49,4 @@ const std::string GetPythonAuthDir();
 // Returns folder containing the Python chat scripts
 const std::string GetPythonChatDir();
 
-#endif /* defined(__FreeOrion__Python__ServerFramework__) */
+#endif // _ServerFramework_h_

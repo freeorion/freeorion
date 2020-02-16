@@ -1,7 +1,7 @@
 #ifndef _ServerNetworking_h_
 #define _ServerNetworking_h_
 
-#include "Message.h"
+#include "../network/Message.h"
 
 #include <boost/asio.hpp>
 #include <boost/function.hpp>
@@ -344,4 +344,4 @@ private:
     friend class ServerNetworking;
 };
 
-#endif
+#endif // _ServerNetworking_h_

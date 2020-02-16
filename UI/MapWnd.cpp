@@ -48,7 +48,7 @@
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
 #include "../network/Message.h"
-#include "../network/ClientNetworking.h"
+#include "../client/ClientNetworking.h"
 #include "../client/human/HumanClientApp.h"
 
 #include <boost/graph/graph_concepts.hpp>

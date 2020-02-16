@@ -1,8 +1,8 @@
-#ifndef __FreeOrion__Python__AIFramework__
-#define __FreeOrion__Python__AIFramework__
+#ifndef _AIFramework_h_
+#define _AIFramework_h_
 
-#include "../CommonFramework.h"
-#include "../../AI/AIInterface.h"
+#include "../../python/CommonFramework.h"
+#include "AIInterface.h"
 
 #include <string>
 
@@ -26,4 +26,4 @@ private:
     boost::python::object m_python_module_ai;
 };
 
-#endif // __FreeOrion__Python__AIFramework__
+#endif // _AIFramework_h_

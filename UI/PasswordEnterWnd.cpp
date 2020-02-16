@@ -3,7 +3,7 @@
 #include <GG/GUI.h>
 
 #include "../util/i18n.h"
-#include "../network/ClientNetworking.h"
+#include "../client/ClientNetworking.h"
 #include "../client/human/HumanClientApp.h"
 
 namespace {

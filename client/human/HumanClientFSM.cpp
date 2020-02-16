@@ -6,7 +6,7 @@
 #include "../../universe/Species.h"
 #include "../../universe/Universe.h"
 #include "../../network/Networking.h"
-#include "../../network/ClientNetworking.h"
+#include "../ClientNetworking.h"
 #include "../../util/i18n.h"
 #include "../util/GameRules.h"
 #include "../../util/OptionsDB.h"

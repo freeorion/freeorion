@@ -40,11 +40,11 @@ target_sources(fo_systemtest_game
         ${PROJECT_SOURCE_DIR}/client/ClientApp.h
         ${PROJECT_SOURCE_DIR}/client/ClientFSMEvents.h
         ${PROJECT_SOURCE_DIR}/GG/GG/ClrConstants.h
-        ${PROJECT_SOURCE_DIR}/network/ClientNetworking.h
+        ${PROJECT_SOURCE_DIR}/client/ClientNetworking.h
     PRIVATE
         ${PROJECT_SOURCE_DIR}/client/ClientApp.cpp
         ${PROJECT_SOURCE_DIR}/client/ClientFSMEvents.cpp
-        ${PROJECT_SOURCE_DIR}/network/ClientNetworking.cpp
+        ${PROJECT_SOURCE_DIR}/client/ClientNetworking.cpp
 )
 
 set(FO_TEST_GAME

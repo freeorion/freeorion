@@ -9,9 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Header Files\AI">
-      <UniqueIdentifier>{0b89f998-cbcb-41d7-a769-d4b4b31ee70c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\client">
       <UniqueIdentifier>{0e8f8032-78e0-4fb0-8880-386704b27db3}</UniqueIdentifier>
     </Filter>
@@ -36,9 +33,6 @@
     <Filter Include="Header Files\client\AI">
       <UniqueIdentifier>{2b260b85-270a-432d-8d6c-94ec7c922589}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\AI">
-      <UniqueIdentifier>{c3ab409d-1113-4558-985e-22ced3ae2a29}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\client">
       <UniqueIdentifier>{9b9fafb5-5938-4a70-a059-e2ac800bb473}</UniqueIdentifier>
     </Filter>
@@ -54,24 +48,27 @@
     <Filter Include="Header Files\GG">
       <UniqueIdentifier>{7e48aed2-0a7f-45a6-8c82-c1d7a143dfa7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\python\AI">
-      <UniqueIdentifier>{5559c554-27b1-4449-94e3-f1bb8b3374d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\python\AI">
-      <UniqueIdentifier>{840c46ce-8edc-4578-83d0-a181cbe74a7e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\AI\AIInterface.h">
-      <Filter>Header Files\AI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\client\ClientApp.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
     <ClInclude Include="..\..\client\ClientFSMEvents.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\client\ClientNetworking.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\client\AI\AIClientApp.h">
+      <Filter>Header Files\client\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\AI\AIInterface.h">
+      <Filter>Header Files\client\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\AI\AIFramework.h">
+      <Filter>Header Files\client\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\AI\AIWrapper.h">
       <Filter>Header Files\client\AI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Empire\Empire.h">
@@ -91,9 +88,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Empire\PopulationPool.h">
       <Filter>Header Files\Empire</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\network\ClientNetworking.h">
-      <Filter>Header Files\network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\network\Networking.h">
       <Filter>Header Files\network</Filter>
@@ -239,12 +233,6 @@
     <ClInclude Include="..\..\python\SetWrapper.h">
       <Filter>Header Files\python</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\python\AI\AIFramework.h">
-      <Filter>Header Files\python\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\python\AI\AIWrapper.h">
-      <Filter>Header Files\python\AI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\python\CommonFramework.h">
       <Filter>Header Files\python</Filter>
     </ClInclude>
@@ -256,8 +244,8 @@
     <ClCompile Include="..\..\client\ClientFSMEvents.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\network\ClientNetworking.cpp">
-      <Filter>Source Files\network</Filter>
+    <ClCompile Include="..\..\client\ClientNetworking.cpp">
+      <Filter>Source Files\client</Filter>
     </ClCompile>
     <ClCompile Include="..\..\client\AI\camain.cpp">
       <Filter>Source Files\client\AI</Filter>
@@ -265,14 +253,14 @@
     <ClCompile Include="..\..\client\AI\AIClientApp.cpp">
       <Filter>Source Files\client\AI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\AI\AIInterface.cpp">
-      <Filter>Source Files\AI</Filter>
+    <ClCompile Include="..\..\client\AI\AIInterface.cpp">
+      <Filter>Source Files\client\AI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\python\AI\AIFramework.cpp">
-      <Filter>Source Files\python\AI</Filter>
+    <ClCompile Include="..\..\client\AI\AIFramework.cpp">
+      <Filter>Source Files\client\AI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\python\AI\AIWrapper.cpp">
-      <Filter>Source Files\python\AI</Filter>
+    <ClCompile Include="..\..\client\AI\AIWrapper.cpp">
+      <Filter>Source Files\client\AI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\python\CommonFramework.cpp">
       <Filter>Source Files\python</Filter>

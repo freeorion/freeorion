@@ -1,7 +1,7 @@
 #include "ClientAppFixture.h"
 
 #include "combat/CombatLogManager.h"
-#include "network/ClientNetworking.h"
+#include "client/ClientNetworking.h"
 #include "universe/Species.h"
 #include "util/Directories.h"
 #include "util/GameRules.h"

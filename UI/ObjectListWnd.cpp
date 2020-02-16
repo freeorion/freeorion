@@ -5,7 +5,7 @@
 #include "CUISpin.h"
 #include "FleetButton.h"
 #include "../client/human/HumanClientApp.h"
-#include "../network/ClientNetworking.h"
+#include "../client/ClientNetworking.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/Order.h"

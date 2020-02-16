@@ -1,5 +1,5 @@
-#ifndef __FreeOrion__Python__AIWrapper__
-#define __FreeOrion__Python__AIWrapper__
+#ifndef _AIWrapper_h_
+#define _AIWrapper_h_
 
 #include <string>
 
@@ -13,4 +13,4 @@ namespace FreeOrionPython {
     void WrapAI();
 }
 
-#endif /* defined(__FreeOrion__Python__AIWrapper__) */
+#endif // _AIWrapper_h_

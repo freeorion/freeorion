@@ -17,7 +17,7 @@
 #include "../../UI/ServerConnectWnd.h"
 #include "../../UI/Sound.h"
 #include "../../network/Message.h"
-#include "../../network/ClientNetworking.h"
+#include "../ClientNetworking.h"
 #include "../../util/i18n.h"
 #include "../../util/LoggerWithOptionsDB.h"
 #include "../../util/GameRules.h"

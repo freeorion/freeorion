@@ -1,6 +1,7 @@
 #include "AIClientApp.h"
 
-#include "../../python/AI/AIFramework.h"
+#include "AIFramework.h"
+#include "../ClientNetworking.h"
 #include "../../util/Logger.h"
 #include "../../util/LoggerWithOptionsDB.h"
 #include "../../util/OptionsDB.h"
@@ -9,7 +10,6 @@
 #include "../../util/i18n.h"
 #include "../util/AppInterface.h"
 #include "../../network/Message.h"
-#include "../../network/ClientNetworking.h"
 #include "../util/Random.h"
 #include "../util/Version.h"
 

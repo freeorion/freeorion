@@ -63,6 +63,9 @@
     <ClInclude Include="..\..\client\ClientFSMEvents.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\client\ClientNetworking.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\client\human\HumanClientFSM.h">
       <Filter>Header Files\client\human</Filter>
     </ClInclude>
@@ -91,9 +94,6 @@
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
     <ClInclude Include="..\..\network\Networking.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\network\ClientNetworking.h">
       <Filter>Header Files\network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\network\Message.h">
@@ -419,6 +419,9 @@
     <ClCompile Include="..\..\client\ClientApp.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\client\ClientNetworking.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\client\human\HumanClientApp.cpp">
       <Filter>Source Files\client\human</Filter>
     </ClCompile>
@@ -427,9 +430,6 @@
     </ClCompile>
     <ClCompile Include="..\..\client\human\HumanClientFSM.cpp">
       <Filter>Source Files\client\human</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\network\ClientNetworking.cpp">
-      <Filter>Source Files\network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\ShaderProgram.cpp">
       <Filter>Source Files\UI</Filter>

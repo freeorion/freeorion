@@ -1,7 +1,7 @@
 #include "AIWrapper.h"
 
-#include "../../AI/AIInterface.h"
-#include "../../client/ClientApp.h"
+#include "AIInterface.h"
+#include "../ClientApp.h"
 #include "../../universe/Universe.h"
 #include "../../util/AppInterface.h"
 #include "../../util/Directories.h"
@@ -14,8 +14,8 @@
 #include "../../Empire/Empire.h"
 #include "../../Empire/EmpireManager.h"
 #include "../../Empire/Diplomacy.h"
-#include "../SetWrapper.h"
-#include "../CommonWrappers.h"
+#include "../../python/SetWrapper.h"
+#include "../../python/CommonWrappers.h"
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>

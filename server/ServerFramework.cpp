@@ -1,13 +1,13 @@
 #include "ServerFramework.h"
 
 #include "ServerWrapper.h"
-#include "../SetWrapper.h"
-#include "../CommonWrappers.h"
+#include "../python/SetWrapper.h"
+#include "../python/CommonWrappers.h"
 
-#include "../../util/Logger.h"
-#include "../../universe/Condition.h"
-#include "../../universe/Universe.h"
-#include "../../universe/UniverseGenerator.h"
+#include "../util/Logger.h"
+#include "../universe/Condition.h"
+#include "../universe/Universe.h"
+#include "../universe/UniverseGenerator.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/python.hpp>
