@@ -6560,22 +6560,22 @@ unsigned int EmpireStockpileValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // EmpireHasAdoptedPolicy                                //
 ///////////////////////////////////////////////////////////
-EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRefBase<int>>&& empire_id,
-                                               std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
-    ConditionBase(),
+EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                                               std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
 {}
 
-EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRefBase<std::string>>&& name) :
-    ConditionBase(),
+EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Condition(),
     m_name(std::move(name))
 {}
 
 EmpireHasAdoptedPolicy::~EmpireHasAdoptedPolicy()
 {}
 
-bool EmpireHasAdoptedPolicy::operator==(const ConditionBase& rhs) const {
+bool EmpireHasAdoptedPolicy::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
     if (typeid(*this) != typeid(rhs))
@@ -6605,7 +6605,7 @@ namespace {
             if (!empire)
                 return false;
 
-            return empire->AdoptedPolicyTurns().count(m_name);
+            return empire->AdoptedPoliciesTurns().count(m_name);
         }
 
         std::string m_name;
@@ -6626,7 +6626,7 @@ void EmpireHasAdoptedPolicy::Eval(const ScriptingContext& parent_context,
         EvalImpl(matches, non_matches, search_domain, EmpireHasAdoptedPolicySimpleMatch(name));
     } else {
         // re-evaluate allowed turn range for each candidate object
-        ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+        Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
 

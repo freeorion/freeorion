@@ -1,7 +1,7 @@
 #ifndef _Government_h_
 #define _Government_h_
 
-#include "../Universe/ValueRefFwd.h"
+#include "../Universe/ValueRef.h"
 
 #include "../util/Export.h"
 #include "../util/Pending.h"
@@ -22,7 +22,7 @@ class FO_COMMON_API Policy {
 public:
     Policy(const std::string& name, const std::string& description,
            const std::string& short_description, const std::string& category,
-           std::unique_ptr<ValueRef::ValueRefBase<double>>&& adoption_cost,
+           std::unique_ptr<ValueRef::ValueRef<double>>&& adoption_cost,
            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
            const std::string& graphic);
     ~Policy();
@@ -57,13 +57,13 @@ private:
     const Policy& operator=(const Policy&); // disabled
     void Init();
 
-    std::string                                         m_name = "";
-    std::string                                         m_description = "";
-    std::string                                         m_short_description = "";
-    std::string                                         m_category = "";
-    std::unique_ptr<ValueRef::ValueRefBase<double>>     m_adoption_cost = nullptr;
+    std::string                                         m_name;
+    std::string                                         m_description;
+    std::string                                         m_short_description;
+    std::string                                         m_category;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_adoption_cost;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
-    std::string                                         m_graphic = "";
+    std::string                                         m_graphic;
 
     friend class PolicyManager;
 };
