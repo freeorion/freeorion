@@ -148,10 +148,10 @@ class HomeSystemFinder(object):
 
             if len(local_pool) < self.num_home_systems:
                 if not best_candidate:
-                    print ("Failing in find_home_systems_for_min_jump_distance because "
-                           "current_merit_lower_bound = {} trims local pool to {} systems "
-                           "which is less than num_home_systems {}.".format(
-                               current_merit_lower_bound, len(local_pool), self.num_home_systems))
+                    print("Failing in find_home_systems_for_min_jump_distance because "
+                          "current_merit_lower_bound = {} trims local pool to {} systems "
+                          "which is less than num_home_systems {}.".format(
+                              current_merit_lower_bound, len(local_pool), self.num_home_systems))
                 break
 
             attempts = min(attempts - 1, len(local_pool))
@@ -180,8 +180,8 @@ class HomeSystemFinder(object):
 
             # If we have a better candidate, set the new lower bound and try for a better candidate.
             if merit > current_merit_lower_bound:
-                print ("Home system set merit lower bound improved from {} to "
-                       "{}".format(current_merit_lower_bound, merit))
+                print("Home system set merit lower bound improved from {} to "
+                      "{}".format(current_merit_lower_bound, merit))
                 current_merit_lower_bound = merit
                 best_candidate = [s for (_, s) in merit_system]
 
@@ -358,8 +358,8 @@ def compile_home_system_list(num_home_systems, systems, gsd):
             pool_matching_sys_limit.append(system)
             if count_planets_in_systems(systems_in_vicinity) >= min_planets_in_vicinity_limit(len(systems_in_vicinity)):
                 pool_matching_sys_and_planet_limit.append(system)
-    print (len(pool_matching_sys_and_planet_limit),
-           "systems meet the min systems and planets in the near vicinity limit")
+    print(len(pool_matching_sys_and_planet_limit),
+          "systems meet the min systems and planets in the near vicinity limit")
     print(len(pool_matching_sys_limit), "systems meet the min systems in the near vicinity limit")
 
     # now try to pick the requested number of home systems
