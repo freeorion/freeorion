@@ -891,9 +891,6 @@ COMMAND_LINE_USAGE
 COMMAND_LINE_DEFAULT
 '''Standard: '''
 
-OPTIONS_DB_HELP
-Diese Hilfemeldung ausgeben.
-
 OPTIONS_DB_GENERATE_CONFIG_XML
 Übernimmt die Standardeinstellungen, die Einstellungen einer bestehenden config.xml Datei und jene aus der Kommandozeile um eine config.xml Datei zu erzeugen. Dies überschreibt die momentane config.xml Datei, falls vorhanden.
 
@@ -1210,21 +1207,6 @@ OPTIONS_DB_GAMESETUP_PLANET_DENSITY
 '''Anzahl der Planeten je System, die in der Galaxie erzeugt werden soll.
 '''
 
-OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-Anzahl der Sternstraßen, die in der Galaxie erzeugt werden sollen.
-
-OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-Wie häufig Besonderheiten in der Galaxie auftreten sollen.
-
-OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY
-Wie häufig Monster in der Galaxie auftreten sollen.
-
-OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY
-Wie häufig Eingeborene in der Galaxie auftreten sollen.
-
-OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
-Die maximale Aggressionsstufe für KI Gegner.
-
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 Der Name Ihres Imperiums.
 
@@ -1238,9 +1220,6 @@ OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
 '''Die Spezies mit der in Ihrem Imperium gestartet wird.
 
 Es hat keine Wirkung auf Planeten Ihres Imperiums die durch andere Spezies Kolonisiert worden sind.'''
-
-OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
-Die Anzahl KI Gegner im Spiel.
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 Horizontaler Abstand zwischen Technologien im Technologiebildschirm, gemessen in Vielfachen der Breite einer einzelnen Theorie Technologie.
@@ -1280,9 +1259,6 @@ Speichert ob der Vollbildmodus zu den gespeicherten Wert zurückgesetzt werden s
 
 OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC
 Entscheidet ob ein Abbild der Effektgruppen in die Beschreibung von Technologien, Gebäuden und Schiffsteilen eingefügt werden.
-
-OPTIONS_DB_VERBOSE_LOGGING_DESC
-Schaltet die ausführliche Protokollierung der Inhalte des Universums und Effektberechnung.
 
 OPTIONS_DB_VERBOSE_SITREP_DESC
 Schaltet das Einfügen der Situationsberichte mit Fehlerausgabe ein.
@@ -2113,30 +2089,8 @@ Nachrichten
 MAP_PRODUCTION_TITLE
 Produktion
 
-MAP_PROD_WASTED_TITLE
-Ungenutzte Produktion
-
-# %1% number of production points generated.
-# %2% number of production points currently not used for production.
-MAP_PROD_WASTED_TEXT
-'''Gesamte Produktion : %1%
-Verschwendete Produkt. : %2%
-
-Hier klicken um das Produktionsmenü zu öffnen'''
-
 MAP_RESEARCH_TITLE
 Forschung
-
-MAP_RES_WASTED_TITLE
-Ungenutzte Forschung
-
-# %1% number of research points generated.
-# %2% number of research points currently not used for research.
-MAP_RES_WASTED_TEXT
-'''Gesamte Forschung : %1%
-Verschwendete Forsch. : %2%
-
-Hier klicken um das Forschungsmenü zu öffnen'''
 
 MAP_POPULATION_DISTRIBUTION
 Volkszählung
@@ -2158,12 +2112,6 @@ Handel
 
 MAP_TRADE_TEXT
 Handelsleistung des gesamten Imperiums. (Handel tut nichts)
-
-MAP_FLEET_TITLE
-Flottenstärke
-
-MAP_FLEET_TEXT
-Gesamtanzahl Schiffe
 
 
 ##
@@ -2602,7 +2550,7 @@ Krieg erklären
 PEACE_PROPOSAL
 Friedensangebot
 
-PEACE_PROPOSAL_CANEL
+PEACE_PROPOSAL_CANCEL
 Friedensangebot annullieren
 
 PEACE_ACCEPT
@@ -2705,9 +2653,6 @@ RESEARCH_QUEUE_EMPIRE
 
 RESEARCH_INFO_RP
 FP
-
-RESEARCH_QUEUE_PROMPT
-Klicke doppelt oder mit Shift auf ein verfügbares Objekt um es zur Forschungswarteschlange hinzufügen.
 
 
 ##
@@ -2823,12 +2768,6 @@ Neuen Entwurfsnamen eingeben:
 
 DESIGN_INVALID
 Ungültiger Entwurf
-
-DESIGN_OBSOLETE
-Veralteter Entwurf
-
-DESIGN_WND_ADD
-Neuen Entwurf hinzufügen
 
 
 ##
@@ -3042,9 +2981,6 @@ CATEGORY_GUIDES
 CATEGORY_GAME_CONCEPTS
 *Spielkonzepte*
 
-CATEGORY_USER_INTERFACE
-*Benutzeroberfläche*
-
 GROWTH_ARTICLE_SHORT_DESC
 Wachstum
 
@@ -3086,17 +3022,11 @@ Handel
 METER_CONSTRUCTION_VALUE_LABEL
 Infrastruktur
 
-METER_CONSTRUCTION_VALUE_DESC
-Die Bezeichnung Infrastruktur bezieht sich auf sämtliche Netzwerke, die einen kolonialisierten Planeten betreffen: Energie, Transport, Telekommunikation und soziale Einrichtungen für die Bewohner.
-
 METER_HAPPINESS_VALUE_LABEL
 Zufriedenheit
 
 METER_FUEL_VALUE_LABEL
 Treibstoff
-
-METER_FUEL_VALUE_DESC
-Treibstoff erlaubt Schiffe entlang der Sternstraßen zu reisen. Für jede Sternstraße verbraucht ein Schiff 1 Einheit Treibstoff. Treibstoff wird bei keiner anderen Aktion verbraucht. Die [[metertype METER_SUPPLY]] tanken ein Schiff vollständig auf. Wenn ein Schiff jenseits einer verbündeten Sternstraße reist, wird der Treibstoff langsam wiederhergestellt, sobald sich das Schiff nicht mehr auf einer Sternstraße befindet.
 
 METER_SHIELD_VALUE_LABEL
 Schild
@@ -3124,21 +3054,8 @@ Die Truppenstärke auf einem Planeten spiegelt die Schlagkraft der dort stationi
 METER_DETECTION_VALUE_LABEL
 Erkennungsreichweite
 
-METER_DETECTION_VALUE_DESC
-'''Die Erkennungsreichweite sagt aus, wie weit die Sensoren reichen. Ein Imperium kann nur Objekte erkennen, deren  [[metertype METER_STEALTH]] kleiner oder gleich der [[encyclopedia DETECTION_TITLE]] sind und innerhalb der Erkennungsreichweite eines eigenen Raumschiffes oder Planeten liegt.
-
-Raumschiffe und Planeten haben einen Erkennungsreichweitenanzeiger. Es gibt im Optionsmenü die Möglichkeit, die Erkennungsreichweite für die Galaxiekarte anzuzeigen oder auszublenden.'''
-
 METER_STEALTH_VALUE_LABEL
 Tarnung
-
-METER_DETECTION_STRENGTH_VALUE_LABEL
-Erkennung Stärke
-
-METER_DETECTION_STRENGTH_VALUE_DESC
-'''Der Begriff Erkennung Stärke stellt das technologische Niveau der Sensoren eines Imperiums dar. Ein Imperium kann nur Objekte sehen, die einen [[metertype METER_STEALTH]]s-Wert haben, der kleiner oder gleich groß ist, wie die, seiner eigenen Erkennung Stärke und sich innerhalb der [[metertype METER_DETECTION]] eines Raumschiffes oder Planeten befindet.
-
-Imperien haben eines Erkennungsstärke Mass.'''
 
 PEACE_TITLE
 Frieden
@@ -3178,16 +3095,6 @@ Roboterspezies sind intelligente Maschinen. Die maximale Bevölkerung dieser Spe
 
 PHOTOTROPHIC_SPECIES_TITLE
 Phototropher Stoffwechsel
-
-PHOTOTROPHIC_SPECIES_TEXT
-'''Phototrophe Spezies leben hauptsächlich oder vollständig von Sonnelicht. Die maximalen Bevölkerungen dieser Spezies sind stark beeinflusst von der Helligkeit des Sternes im jeweiligen System - umso heller, desto besser. Es gibt keine speziellen Wachstumsboni.
-
-Population changes:
-Blue Star: Tiny +3 , Small +6 , Medium +9 , Large +12 , Huge +15.
-White Star: Tiny +1.5 , Small +3 , Medium +4.5 , Large +6 , Huge +7.5.
-Yellow Star, Orange Star: No changes.
-Red Star, Neutron Star: Tiny -1 , Small -2 , Medium -3 , Large -4 , Huge -5.
-Black Hole, No Star: Tiny -10 , Small -20 , Medium -30 , Large -40 , Huge -50.'''
 
 TELEPATHIC_TITLE
 Telepathie
@@ -3776,137 +3683,11 @@ Bevorzugt erdähnliche Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
-#SP_SCYLIOR
-#Scylior
-
-SP_SCYLIOR_GAMEPLAY_DESC
-'''Besitzt drei Tentakel, aquatischer Nautilus.
-Bevorzugt ozeanische Planeten.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-'''
-
-#SP_GYSACHE
-#Gysache
-
-#SP_CHATO
-#Chato
-
-#SP_TRITH
-#Trith
-
-#SP_HAPPY
-#Happybirthday
-
-#SP_HHHOH
-#Hhhoh
-
-#SP_EAXAW
-#Eaxaw
-
-#SP_DERTHREAN
-#Derthrean
-
-#SP_LAENFA
-#Laenfa
-
-#SP_TAEGHIRUS
-#Tae Ghirus
-
-#SP_MUURSH
-#Mu Ursh
-
-#SP_GEORGE
-#George
-
-#SP_CRAY
-#Cray
-
-#SP_ETTY
-#Etty
-
-#SP_CYNOS
-#Cynos
-
-#SP_PHINNERT
-#Phinnert
-
-#SP_EGASSEM
-#Egassem
-
-#SP_SSLITH
-#Sslith
-
-#SP_FIFTYSEVEN
-#Fifty-seven
-
-#SP_SETINON
-#Setinon
-
-#SP_NYMNMN
-#Nymnmn
-
-#SP_TRENCHERS
-#Trenchers
-
-#SP_RAAAGH
-#Raaagh
-
-#SP_BEIGEGOO
-#Beige Goo
-
-#SP_SILEXIAN
-#Silexian
-
-#SP_KOBUNTURA
-#Kobuntura
-
-#SP_UGMORS
-#Ugmors
-
-#SP_GISGUFGTHRIM
-#Gis Guf Gthrim
-
-#SP_HIDDENGARDENER
-#Hidden Gardener
-
-#SP_ABADDONI
-#Abaddoni
-
-#SP_ACIREMA
-#Acirema
-
-#SP_OURBOOLS
-#Ourbools
-
 SP_OURBOOLS_GAMEPLAY_DESC
 '''Riesige Blinde Schwimmer die, die Schwerkraft "sehen" können.
 Bevorzugt ozeanische Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
-
-#SP_VOLP
-#Volp-Uglush
-
-#SP_FURTHEST
-#Furthest
-
-#SP_BANFORO
-#Banforo
-
-#SP_KILANDOW
-#Kilandow
-
-#SP_MISIORLA
-#Misiorla
-
-#SP_EXOBOT
-#Exobot
-
-#SP_EXPERIMENTOR
-#Experimentor
-
-#SP_SUPER_TEST
-#Super Testers
 
 
 ##
@@ -4056,11 +3837,6 @@ Dafür ermöglicht diese Anomalie aber auch das Durchführen von Experimenten, d
 RESONANT_MOON_SPECIAL
 Resonanzmond
 
-RESONANT_MOON_SPECIAL_DESC
-'''Erhöht [[metertype METER_STEALTH]] von Gebäuden auf diesem Planeten und von eigenen Schiffen in diesem System um 10.
-
-Dieser Planet hat einen natürlichen Satelliten, dessen Umlaufzeit genauso lang ist, wie seine Rotationsperiode. Daher hat der Mond eine "dunkle Seite", die dem Planeten stets abgewandt ist und sich hervorragend für Geheimanlagen eignet. Der Bereich zwischen Mond und Planet ist zudem ein gutes Versteck für Gebäude und Flotten.  
-
 COMPUTRONIUM_SPECIAL
 Computroniummond
 
@@ -4071,11 +3847,6 @@ Der Mond dieses Planeten ist in Wirklichkeit ein von einer verschwundenen Zivili
 
 HONEYCOMB_SPECIAL
 Honigwabe
-
-HONEYCOMB_SPECIAL_DESC
-'''Solange dieser Planet auf [[metertype METER_INDUSTRY]] fokussiert ist, erhalten alle via [[metertype METER_SUPPLY]] verbundenen Planeten, die auf [[METER_INDUSTRY]] fokussiert sind, 0,5 [[metertype METER_TARGET_INDUSTRY]] pro [[metertype METER_POPULATION]].
-
-Die Honigwabe ist ein Planet, der von den Erbauern vor langer Zeit zu einem Lager umfunktioniert wurde. Nahezu alle Planeten in den umliegenden Systemen wurden vollständig abgebaut und ihre Bestandteile lagern nun getrennt sortiert in gigantischen Röhren in der Planetenkruste. Der Bestand reicht von seltenen und wertvollen Elementen über schwer herstellbare Moleküle bis hin zu einer Vielzahl an Energiequellen. Die Absicht hinter dieser Ansammlung ist unklar, ebenso wie der Grund, warum sie nie zum Einsatz kam.
 
 PHILOSOPHER_SPECIAL
 Philosophenplanet
@@ -4119,11 +3890,6 @@ Tief unter der eisigen Kruste dieses Planeten liegt ein prähistorischer weißer
 
 HEAD_ON_A_SPIKE_SPECIAL
 Kopf auf einem Pfahl
-
-HEAD_ON_A_SPIKE_SPECIAL_DESC
-'''Der Kopf des einstmaligen Imperators ruht aufgespießt für alle sichtbar und erfüllt die Herzen aller Feinde mit Furcht.
-
-Schiffe anderer Imperien innerhalb von 100uu, ob feindlich oder nicht, verlieren leicht an [[metertype METER_SHIELD]], [[metertype METER_STRUCTURE]] und Waffenstärke.'''
 
 HEAD_ON_A_SPIKE_SPECIAL_EFFECT
 Angsterfüllt
@@ -4515,10 +4281,6 @@ METER_TARGET_POPULATION
 Ziel Bevölkerung
 
 # Meter types
-METER_TARGET_HEALTH
-Ziel Gesundheit
-
-# Meter types
 METER_TARGET_INDUSTRY
 Ziel Industrie
 
@@ -4559,24 +4321,12 @@ METER_MAX_TROOPS
 Max Truppen
 
 # Meter types
-METER_MAX_REBEL_TROOPS
-Max Rebellen Truppen
-
-# Meter types
 METER_MAX_SUPPLY
 Max Versorgung
 
 # Meter types
 METER_POPULATION
 Bevölkerung
-
-# Meter types
-METER_HEALTH
-Gesundheit
-
-# Meter types
-METER_GROWTH
-Wachstum
 
 # Meter types
 METER_INDUSTRY
@@ -4812,9 +4562,6 @@ Sternenklasse
 #DESC_VAR_TARGETPOPULATION
 #[[METER_TARGET_POPULATION]]
 
-#DESC_VAR_TARGETHEALTH
-#[[METER_TARGET_HEALTH]]
-
 #DESC_VAR_TARGETINDUSTRY
 #[[METER_TARGET_INDUSTRY]]
 
@@ -4850,9 +4597,6 @@ Sternenklasse
 
 #DESC_VAR_POPULATION
 #[[METER_POPULATION]]
-
-#DESC_VAR_HEALTH
-#[[METER_HEALTH]]
 
 #DESC_VAR_INDUSTRY
 #[[METER_INDUSTRY]]
@@ -5482,9 +5226,6 @@ Was ist ein Gott? Befasst sich ein Gott damit, ob er sich moralisch und wohlwoll
 GRO_PLANET_ECOL
 Planetare Ökologie
 
-GRO_PLANET_ECOL_DESC
-Agrikultureller und medizinischer Fortschritt kann die Bevölkerungssterblichkeit drastisch reduzieren; daraufhin entwickelt sich ein zeitlich begrenztes hyperexponentielles Wachstum. Schliesslich ergeben sich durch die Flächenkapazität des Planeten und das Netzwerk des Lebens, das er versorgen muss, neue Grenzen für das Wachstum. Das Verständnis der natürlichen Ökologie und ihrer Reaktion auf Belastungen hilft dabei, sie zu erhalten, damit auch künftige Generationen ihre Vorzüge ausschöpfen können.
-
 GRO_GENETIC_ENG
 Gentechnik
 
@@ -5506,23 +5247,11 @@ Traditionelle Gentherapie verändert den genetischen Kode und bringt ihn dann in
 GRO_LIFECYCLE_MAN
 Lebenszyklus Manipulation
 
-GRO_LIFECYCLE_MAN_DESC
-'''Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, the capacity of colony ships can be greatly increased.
-
-Die meisten komplexen Organismen durchschreiten während ihres Lebens physiologische Stadien, manchmal abgegrenzt durch Metamorphose oder auch kaum wahrnehmlich durch einen langsamen Altersprozess. In vielen Fällen sind eines oder mehrere dieser Stadien, zumindest zu einer gewissen Zeit, nützlicher und wünschenswerter als andere. Durch exakte Kontrolle hormonaler und mentaler Mechanismen wird es möglich, Lebensstadien drastisch zu verkürzen oder herauszuzögern, wodurch in einem Bruchteil des natürlichen Zeitrahmens voll entwickelte Individuen geschaffen werden können und die existierenden Individuen ihre Funktionalität niemals einbüßen und so praktisch unsterblich werden.'''
-
 GRO_ADV_ECOMAN
 Fortgeschrittene Ökomanipulation
 
 GRO_XENO_GENETICS
 Xenogenetik
-
-GRO_XENO_GENETICS_DESC
-'''Erhöht die maximale Bevölkerung von Planeten des Typs [[PE_ADEQUATE]] & [[PE_POOR]], abhängig von deren Größe; [[SZ_TINY]]: +2, [[SZ_SMALL]]: +4, [[SZ_MEDIUM]]: +6, [[SZ_LARGE]]: +8, [[SZ_HUGE]]: +10, sowie Planeten des Typs [[PE_HOSTILE]]; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.
-
-The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
-
-Der frühen Genetik sind durch die natürlich vorhandenen Organismen Grenzen gesetzt, da die Methoden der Gentechnik ausschliesslich auf ihnen basieren. Darüber hinaus ist die Genetik durch die physikalischen Mechanismen des genetischen Kodes wie seine Unterbringung, Veränderung und Ausdruck in erwachsenen Individuen limitiert. Durch den Vergleich sich entsprechender Systeme in unterschiedlichen Ökosystemen und ihren Organismen sind weitreichende Erkenntnisse möglich, die zu neuen Entwicklungen in den altbekannten genetischen Systemen Ansporn geben.'''
 
 GRO_NANOTECH_MED
 Nanomedizin
@@ -5534,13 +5263,6 @@ Während genetische Modifikationen die Effekte unerwünschter oder schädlicher 
 
 GRO_XENO_HYBRIDS
 Xenohybridisierung
-
-GRO_XENO_HYBRIDS_DESC
-'''Erhöht die Maximale Bevölkerung von Planeten des Typs [[PE_POOR]], abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5, sowie Planeten des Typs [[PE_HOSTILE]]; [[SZ_TINY]]: +2, [[SZ_SMALL]]: +4, [[SZ_MEDIUM]]: +6, [[SZ_LARGE]]: +8, [[SZ_HUGE]]: +10.
-
-Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
-
-Ganz gleich, wie umfassend das Verständnis für ein biologisches System ist oder wie geschickt es verbessert wurde, es wird immer durch sein innewohnendes Wesen eingeschränkt. Strukturen und grundlegende Physiologie können nur in den Grenzen der Biologie eines einzelnen Planeten verändert werden. Durch das Verständnis fremder Biologie können unterschiedliche Systeme vereint werden und so eine völlig neue hybride Biologie geschaffen werden, die bessere Fähigkeiten als ihre einzelnen Ursprünge besitzt.'''
 
 GRO_NANO_CYBERNET
 Nanokybernetik
@@ -5623,13 +5345,6 @@ Mit zunehmender Automatisierung in der Produktion wird die Maschinerie fähig, s
 
 PRO_NDIM_ASSMB
 N-Dimensionale Montage
-
-PRO_NDIM_ASSMB_DESC
-''' Unlocks the Hyperspatial Dam
-
-Once the greatest fear of N-dimensional physicists, now the noblest goal. To deliberately create a hyperspatial rift between our universe and the next, but inside a dimensional bubble, safely separate from known space-time. Once this is accomplished, it would be a relatively simple matter to tap into the enormous flow of energy that would travel across the rift.
-
-Die Geometrie des physikalischen Raums hat schon immer die Montage von Objekten in diesem Raum behindert. Objekte können sich nicht am gleichen Ort befinden und Volumen nicht gleichzeitig offen und geschlossen vorliegen, wenn sich ihre Existenz auf drei Dimensionen beschränkt. Mit dem Überschreiten dieser Grenzen können störende Objektteile in Taschendimensionen und somit aus dem Weg gefaltet werden; kontinuierliche Linien können an Massen vorbeigeleitet werden, indem man "von der Achse" abweicht. Ähnliche Methoden werden auch angewandt, um niederdimensionale Objekte in Konfigurationen zu arrangieren, die ohne höherdimensionale Montagewege unmöglich wären.'''
 
 PRO_SINGULAR_GEN
 Singularitätskonstruktion
@@ -5730,13 +5445,6 @@ Erhöht die Bevölkerungskapazität auf allen bewohnbaren Planeten, abhängig vo
 
 CON_NDIM_STRC
 N-Dimensionale Gebäude
-
-CON_NDIM_STRC_DESC
-'''Erhöht die Bevölkerungskapazität auf allen bewohnbaren Planeten, abhängig von deren Größe; [[SZ_TINY]]: +2, [[SZ_SMALL]]: +4, [[SZ_MEDIUM]]: +6, [[SZ_LARGE]]: +8, [[SZ_HUGE]]: +10.
-
-The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
-
-Von allen bizzaren Kunststücken der angewandten Physik hat die Fähigkeit, den Raum in sich selbst zu falten, den direktesten und tiefgreifendsten Einfluss auf die Form und das Design von Gebäuden. Das Potential ist endlos, und das wortwörtlich: Flure biegen sich zurück an ihren Beginn oder werden so verdreht, dass ihre Decke der Boden wird. Darüber hinaus löst sich das Konzept des Städtewachstums in Wohlgefallen auf, da eine beliebige Anzahl Personen in einem willkürlich kleinen Volumen sicher in einer angrenzenden Existenzebene untergebracht werden können.'''
 
 SHP_GAL_EXPLO
 Galaktische Erkundung
@@ -5865,17 +5573,6 @@ Bioterroranlage
 GRO_BIOTERROR_DESC
 Ein Forschungszentrum erschaffen, um sicher die gefährlichsten Biologischen Waffen zu entwickeln, versteckt vor neugierigen Augen. Biologische Waffen wirken zu langsam um in einem offenen miliärischen Konflikt wirksam zu sein, als Terrorwaffe sind sie unerreicht, eine langsam wachsende Kontamination verbreitet Angst und Schrecken. Bilder von verzweifelten Personen, in Quarantäne gehalten durch ihre eigene Regierung, säen Verzweiflung jenseits der betroffenen Gebiete. Jedoch müssen größte Sicherheitsmaßnahmen eingehalten werden, wenn man solche Organismen entwickelt, um sicherzustellen, dass sie nicht versehentlich freigesetzt werden. Außerdem ist strikte Geheimhaltung notwendig, um nicht zu riskieren, dass diplomatische Beziehungen mit anderen Imperien und zur eigenen Bevölkerung leiden.
 
-#GRO_CYBORG
-#Cyborgs
-
-GRO_CYBORG_DESC
-'''Erhöht die Maximale Bevölkerung von Planeten des Typs [[PE_HOSTILE]], abhängig von deren Größe; [[SZ_TINY]]: +2, [[SZ_SMALL]]: +4, [[SZ_MEDIUM]]: +6, [[SZ_LARGE]]: +8, [[SZ_HUGE]]: +10.
-
-A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
-
-#GRO_GAIA_TRANS
-#Gaia Transformation
-
 LRN_OBSERVATORY_I
 Observatorium
 
@@ -5889,11 +5586,6 @@ Der Durchschnittsbürger verschwendet wortwörtlich sein Hirn, das eine der best
 
 LRN_STELLAR_TOMOGRAPHY
 Stellartomographie
-
-LRN_STELLAR_TOMOGRAPHY_DESC
-'''Increases target [[metertype METER_RESEARCH]] on planets with the Research focus per Population by 1, 0.75, 0.5, or 0.2 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively.
-
-Ein Netzwerk spezialisierter Satelliten kann mit tomographischen Methoden die Vorgänge im Inneren eines Sterns rekonstruieren. Diese schwer herzustellenden Bedingungen, besonders die in exotischen Sterntypen, sind für diverse Forschungsprojekte ideal.'''
 
 LRN_ENCLAVE_VOID
 Enklave der Leere
@@ -6332,11 +6024,6 @@ Orbitale Produktionsanlage für den Bau interstellarer militärischer Raumschiff
 BLD_SHIPYARD_ORBITAL_DRYDOCK
 Orbitales Trockendock
 
-BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-'''Dies ist eine Aufrüstung für [[buildingtype BLD_SHIPYARD_BASE]]en. Sie wird für die Herstellung aller größeren Schiffsrümpfe sowie für weitere Werftaufrüstungen benötigt. Diese Aufrüstung kann außerdem die [[metertype METER_STRUCTURE]] beschädigter Schiffe reparieren.
-
-Beim Bau eines großen interstellaren Fahrzeuges ist es unpraktisch, die schweren Bauteile per Weltraumlift zu befördern. Weitaus praktischer ist es, die Bauteile zum Zusammenbau im Orbit vor Ort zu konstruieren, um sich den Transport von der Planetenoberfläche zu ersparen.'''
-
 BLD_SHIPYARD_CON_NANOROBO
 Nanobot-Verarbeitungseinheit
 
@@ -6465,15 +6152,6 @@ Zum Entwerfen universell verwendbarer Werkzeuge ist ein Verständis der physisch
 
 Ein Imperium kann auf bis zu sechs Planeten Akademien unterhalten. Jede Akademie benötigt eine zufriedene [[metertype METER_POPULATION]] einer anderen Spezies und muss mindestens drei Sternstraßensprünge von den anderen Akademien entfernt sein.'''
 
-#BLD_MEGALITH
-#Megalith
-
-BLD_MEGALITH_DESC
-'''Kann nur auf der Heimatwelt des Imperiums mit [[buildingtype BLD_IMPERIAL_PALACE]] errichtet werden. Wenn vorhanden, erreichen alle Ressourcenmeter auf dem Planeten ihre Zielwerte in nur einem Zug.
-Erhöht [[metertype METER_TARGET_CONSTRUCTION]] um 30. Erhöht [[metertype METER_SUPPLY]] auf allen Planeten im Imperium um 1. Erhöht [[metertype METER_TROOPS]] aller bevölkerter Planeten innerhalb von 2 Sternstraßensprüngen um 10.
-
-Ein außergewöhnlich großer Sternenkratzer mit einem Durchmesser von mehreren Kilometern. Eine Inspiration für Architekten im gesamten Imperium.'''
-
 BLD_SPACE_ELEVATOR
 Weltraumlift
 
@@ -6545,19 +6223,6 @@ Erschafft einen [[fieldtype FLD_SUBSPACE_RIFT]] mit 100uu Radius um das Gebäude
 BLD_HYPER_DAM
 Hyperspatialdamm
 
-BLD_HYPER_DAM_DESC
-'''Energieversorgung für über [[metertype METER_SUPPLY]] verbundene Planeten mit Industriefokus, aber ohne Zugriff auf einen [[buildingtype BLD_BLACK_HOLE_POW_GEN]]. Erhöht [[metertype METER_TARGET_INDUSTRY]] auf solchen Planeten um 1 pro [[metertype METER_POPULATION]], aber reduziert [[metertype METER_TARGET_POPULATION]] entsprechend der Planetengröße:
-• ([[SZ_TINY]] -1)
-• ([[SZ_SMALL]] -2)
-• ([[SZ_MEDIUM]] -3)
-• ([[SZ_LARGE]] -4)
-• ([[SZ_HUGE]] -5)
-[[NO_STACK_SUPPLY_CONNECTION_TEXT]]
-
-Ein kontrollierter Riss in der Struktur des Universums, genutzt als Energiequelle. Jeder Planet unterhält eigene Dämme, während ein einzelnes Kontrollzentrum dafür sorgt, dass das Zeit-Raum-Kontinuum unter der Belastung nicht zusammenbricht. Der Einsatz eines Dammes hat für die Bevölkerung gesundheitliche Folgen, außer in Systemen mit einem [[STAR_BLACK]].
-
-Dieses Gebäude hat keinen Nutzen für Planeten, die mit einem [[buildingtype BLD_BLACK_HOLE_POW_GEN]] verbunden sind, stellt aber eine Alternative dar, falls ein solcher nicht gebaut werden kann.'''
-
 BLD_SOL_ACCEL
 Solarbeschleuniger
 
@@ -6578,16 +6243,6 @@ Ein elektrischer Generator in niedriger Umlaufbahn, welcher aus der Sonne, die e
 
 BLD_CLONING_CENTER
 Kloncenter
-
-BLD_CLONING_CENTER_DESC
-'''Erhöht [[metertype METER_TARGET_POPULATION]] auf allen Planeten entsprechend ihrer Größe:
-• ([[SZ_TINY]] +1)
-• ([[SZ_SMALL]] +2)
-• ([[SZ_MEDIUM]] +3)
-• ([[SZ_LARGE]] +4)
-• ([[SZ_HUGE]] +5)
-
-Das [[tech GRO_INDUSTRY_CLONE]] ermöglicht die industrielle Anfertigung ganzer Völker und schafft so neue Bewohner für das Imperium.'''
 
 BLD_TERRAFORM
 Terraformation
@@ -6616,20 +6271,8 @@ Entfernt ein [[encyclopedia KRAKEN_NEST_SPECIAL]], [[encyclopedia SNOWFLAKE_NEST
 BLD_NEUTRONIUM_EXTRACTOR
 Neutroniumextrahierer
 
-BLD_NEUTRONIUM_EXTRACTOR_DESC
-'''Gewährt dem Imperium Zugriff auf Neutronium, welches einer [[buildingtype BLD_NEUTRONIUM_FORGE]] die Herstellung von Schiffsbauteilen wie der [[shippart AR_NEUTRONIUM_PLATE]] ermöglicht.
-[[BUILDING_AVAILABLE_ON_OUTPOSTS]].
-
-Um aus Neutronium Bauteile herzustellen, muss es erst aus [[STAR_NEUTRON]]en extrahiert werden. Das gewonnene Neutronium wird anschließend zu [[BLD_NEUTRONIUM_FORGE]]n verfrachtet.'''
-
 BLD_NEUTRONIUM_FORGE
 Neutroniumschmiede
-
-BLD_NEUTRONIUM_FORGE_DESC
-'''Dies ist eine Aufrüstung für [[buildingtype BLD_SHIPYARD_BASE]]en. Sie wird für die Herstellung von Schiffen mit Neutroniumbauteilen benötigt.
-
-Die industrielle Verarbeitung von Neutronium ist nur in hochspezialisierten Anlagen möglich, welche auf [[encyclopedia OUTPOSTS_TITLE]] nicht errichtet werden können.
-[[MACRO_NEUTRONIUM_BUILDINGS]]'''
 
 BLD_NEUTRONIUM_SYNTH
 Neutroniumsynthesierer
@@ -6693,10 +6336,6 @@ Wandelt einen Asteroidengürtel oder Gasriesen in einen künstlichen Planeten um
 BLD_ART_PARADISE_PLANET
 Künstliche Paradieswelt
 
-BLD_ART_PARADISE_PLANET_DESC
-'''Wandelt einen Asteroidengürtel oder Gasriesen in einen künstlichen Planeten um. Aus [[PT_ASTEROIDS]] werden [[SZ_TINY]]e [[PT_BARREN]]e Planeten und aus [[PT_GASGIANT]]n werden [[SZ_HUGE]]e [[PT_BARREN]]e Planeten. Der Planet erhält zudem die [[special GAIA_SPECIAL]]-Besonderheit, welche den Planeten schrittweise umwandelt, bis er perfekt zu seinen Bewohnern passt.
-[[ARTIFICIAL_PLANET_PROCESS_LOCATION]]'''
-
 BLD_ART_MOON
 Künstlicher Mond
 
@@ -6712,12 +6351,6 @@ Solarverjüngerer
 
 BLD_SOL_REJUV_DESC
 Versorgt einen Stern mit zusätzlichem Brennstoff, um ihn künstlich zu verjüngern. Der Stern wird um eine Stufe jünger, gemäß der folgenden Reihenfolge: [[STAR_RED]], [[STAR_ORANGE]], [[STAR_YELLOW]], [[STAR_WHITE]], [[STAR_BLUE]]. Dieser Prozess kann auch von einem [[encyclopedia OUTPOSTS_TITLE]] aus durchgeführt werden.
-
-BLD_TRANSFORMER
-Transformer
-
-BLD_TRANSFORMER_DESC
-Ein vielseitiges, extrem teures Gebäude, dass den Effekt anderer Gebäude replizieren kann. Wird aktiviert, indem ein entsprechender Fokus gewählt wird. Kann den Effekt der Gebäudetypen [[buildingtype BLD_BIOTERROR_PROJECTOR]], [[buildingtype BLD_STARGATE]], [[buildingtype BLD_PLANET_DRIVE]] und [[buildingtype BLD_SPATIAL_DISTORT_GEN]] nachahmen, sofern die entsprechende Technologie bereits verfügbar ist.
 
 BLD_PLANET_CLOAK
 Planetares Tarngerät
@@ -6743,11 +6376,6 @@ Um das Tor zu nutzen, muss der Fokus des Startplaneten auf [[FOCUS_STARGATE_SEND
 
 BLD_GAS_GIANT_GEN
 Gasriesengenerator
-
-BLD_GAS_GIANT_GEN_DESC
-'''Kann nur auf [[PT_GASGIANT]]n errichtet werden und gewährt 10 [[metertype METER_TARGET_INDUSTRY]] an alle Planeten mit Industriefokus im selben System. Weitere [[BLD_GAS_GIANT_GEN]]en im selben System haben keinen Effekt.
-
-Ein Stromgenerator, der aus [[PT_GASGIANT]]en Energie gewinnt.'''
 
 BLD_STARLANE_BORE
 Sternstraßenbohrer
@@ -6989,15 +6617,6 @@ BLD_COL_SUPER_TEST_DESC
 ## Hull and ship part description templates
 ##
 
-# %1% hull base starlane speed.
-# %2% hull base fuel capacity.
-# %3% hull base starlane speed.
-# %4% hull base structure value.
-HULL_DESC
-'''[[metertype METER_SPEED]]: %1%
-[[metertype METER_FUEL]]: %2%
-[[metertype METER_STRUCTURE]]: %4%'''
-
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
 Fassungsvermögen: %1%
@@ -7009,10 +6628,6 @@ Stärke: %1%
 # %1% ship part strength (shield).
 PART_DESC_SHIELD_STRENGTH
 Schildstärke: %1%
-
-# %1% ship part strength (detection).
-PART_DESC_DETECTION
-[[metertype METER_DETECTION]]: %1%
 
 # %1% ship part damage done (direct fire weapons).
 # %2% number of shots done per attack.
@@ -7112,34 +6727,14 @@ SR_WEAPON_0_1_DESC
 SR_WEAPON_1_1
 Massenkatapult
 
-SR_WEAPON_1_1_DESC
-'''Die Grundbewaffnung für Kriegsschiffe. Weitere Erforschung der Waffentechnik erhöht den verursachten [[encyclopedia DAMAGE_TITLE]].
-
-[[SR_WEAPON_1_1]]e verursachen 1 Punkt zusätzlichen [[encyclopedia DAMAGE_TITLE]] für jeden Level in der Pilotenfähigkeit der Spezies, die sie konstruiert hat (-1 Schaden für schlechte Piloten).'''
-
 SR_WEAPON_2_1
 Laserwaffe
-
-SR_WEAPON_2_1_DESC
-'''Eine leistungsfähigere Schiffswaffe als das Massenkatapult. Weitere Erforschung der Waffentechnik erhöht den verursachten [[encyclopedia DAMAGE_TITLE]].
-
-[[SR_WEAPON_2_1]]n verursachen 2 Punkte zusätzlichen [[DAMAGE_TITLE]] für jeden Level in der Pilotenfähigkeit der Spezies, die sie konstruiert hat (-2 Schaden für schlechte Piloten). Auf Schiffen mit [[shiphull SH_ORGANIC]] kann ein [[shippart SP_SOLAR_CONCENTRATOR]] den [[DAMAGE_TITLE]] ebenfalls steigern.'''
 
 SR_WEAPON_3_1
 Plasmakanone
 
-SR_WEAPON_3_1_DESC
-'''Eine leistungsfähigere Schiffswaffe als der Laser. Weitere Erforschung der Waffentechnik erhöht den verursachten [[encyclopedia DAMAGE_TITLE]].
-
-[[SR_WEAPON_3_1]]n verursachen 3 Punkte zusätzlichen [[encyclopedia DAMAGE_TITLE]] für jeden Level in der Pilotenfähigkeit der Spezies, die sie konstruiert hat (-3 Schaden für schlechte Piloten).'''
-
 SR_WEAPON_4_1
 Todesstrahl
-
-SR_WEAPON_4_1_DESC
-'''Eine leistungsfähigere Schiffswaffe als die Plasmakanone. Weitere Erforschung der Waffentechnik erhöht den verursachten [[encyclopedia DAMAGE_TITLE]].
-
-[[SR_WEAPON_4_1]]en verursachen 5 Punkte zusätzlichen [[encyclopedia DAMAGE_TITLE]] für jeden Level in der Pilotenfähigkeit der Spezies, die sie konstruiert hat (-5 Schaden für schlechte Piloten).'''
 
 SR_SPINAL_ANTIMATTER
 Antimateriekanone
@@ -7473,11 +7068,6 @@ SH_MULTISPEC_DESC
 SH_ROBOTIC_INTERFACE_SHIELDS
 Robotikinterface: Schild
 
-SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Verleiht [[metertype METER_SHIELD]] für jedes Schiff mit [[SH_ROBOTIC_INTERFACE_SHIELDS]] vor Ort. Jedes zusätzliche Schiff verleiht einen geringeren Bonus, der höchstmögliche Wert beträgt 20. Kann nur in Schiffen mit [[encyclopedia HULL_LINE_ROBOTIC]] und [[encyclopedia ROBOTIC_SPECIES_TITLE]]-Besatzung genutzt werden.
-
-Robotische Spezies sind in der Lage, sich zu einem Netzwerk zu verbinden und dadurch ihre Rechenleistung drastisch zu erhöhen. [[SH_ROBOTIC_INTERFACE_SHIELDS]] nutzt dieses Netzwerk, um die Flugbahn eintreffender Geschosse zu berechnen und durch gezieltes Fokussieren des Schutzschildes abzuwehren.'''
-
 CO_COLONY_POD
 Besiedlungsmodul
 
@@ -7592,10 +7182,6 @@ Eine mächtige negative Energie-Waffe [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLA
 
 SP_CHAOS_WAVE
 Chaoswelle
-
-SP_CHAOS_WAVE_DESC
-'''Eine mächtige Waffe [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ANY_POP]].
-WARNUNG: Entfernt auch die [[special GAIA_SPECIAL]]-Besonderheit, falls vorhanden.'''
 
 SP_NOVA_BOMB
 Novabombe
@@ -7909,47 +7495,11 @@ Mit wenigen externen Steckplätzen ist dieser Rumpf für die Frontlinie ungeeign
 SH_ENDOSYMBIOTIC
 Endosymbiotischer Rumpf
 
-SH_ENDOSYMBIOTIC_DESC
-'''Dieser lebende einzellige Rumpf steht mit seiner Besatzung in einer symbiotischen Beziehung. Die Besatzung lebt im Zellplasma und fungiert als Organellen. Der Rumpf hat vier externe und drei interne Steckplätze.
-Organisches Wachstum: Startet mit 5 [[metertype METER_STRUCTURE]], aber wächst um 15 [[metertype METER_STRUCTURE]] über 30 Züge.
-
-[[metertype METER_STEALTH]] ist hoch, [[metertype METER_DETECTION]] ist hoch und [[metertype METER_SPEED]] ist hoch.
-
-[[LIVING_HULL_AUTO_REGEN]]
-
-Eignet sich hervorragend als Kriegsschiff, Aufklärer oder Plünderer.
-
-[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED]]'''
-
 SH_RAVENOUS
 Gefräßiger Rumpf
 
-SH_RAVENOUS_DESC
-'''Dieser nichtlebende organische Rumpf - oder 'Zombie'-Rumpf - wurde aus dem Blut und Fleisch seiner Brüder gebaut. Er hat fünf externe und zwei interne Steckplätze.
-Organisches Wachstum: Startet mit 5 [[metertype METER_STRUCTURE]], aber wächst um 20 [[metertype METER_STRUCTURE]] über 40 Züge.
-
-[[metertype METER_STEALTH]] ist durchschnittlich, [[metertype METER_DETECTION]] ist sehr hoch und [[metertype METER_SPEED]] ist hoch.
-
-Hat großes Potential als schnelles, mächtiges Kriegsschiff.
-
-Dieser Rumpf erhält keinen Bonus auf die Regeneration von [[metertype METER_STRUCTURE]] oder [[metertype METER_FUEL]].
-
-[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]'''
-
 SH_BIOADAPTIVE
 Bio-Adaptiver Rumpf
-
-SH_BIOADAPTIVE_DESC
-'''Ein lebender Rumpf mit Körper und Geist in Einklang, Meister der Heilung und Ausdauer. Er hat drei externe und drei interne Steckplätze.
-Organisches Wachstum: Startet mit 15 [[metertype METER_STRUCTURE]], aber wächst um 25 [[metertype METER_STRUCTURE]] über 50 Züge.
-
-[[metertype METER_STEALTH]] ist sehr hoch, [[metertype METER_DETECTION]] ist sehr hoch und [[metertype METER_SPEED]] ist hoch.
-
-Hat großes Potential als getarntes Kriegsschiff, Aufklärer oder Plünderer.
-
-Dieser lebende Rumpf regeneriert außerhalb von Kämpfen und Blockaden mit jedem Zug [[metertype METER_STRUCTURE]] gleich ihrem derzeitigen Wert. Ein Schiff mit mindestens halber Struktur ist so in nur einem Zug vollkommen repariert. Außerdem regeneriert der Rumpf mit jeden Zug 0,2 [[metertype METER_FUEL]].
-
-[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED]]'''
 
 SH_SENTIENT
 Empfindungsfähiger Rumpf
@@ -8057,9 +7607,6 @@ SH_XENTRONIUM_DESC
 
 SH_COLONY_BASE
 Siedler-Basisrumpf
-
-SH_COLONY_BASE_DESC
-Konzipiert zum Gründen einer Siedlung auf einem anderen Planeten im selben System. Kann sein System nicht verlassen oder sich schnell im System bewegen und hat nur einen internen Steckplatz.
 
 SH_FLOATER_BODY
 Schwimmerkörper
@@ -8795,12 +8342,6 @@ Empfang der Nachricht bestätigt.
 
 OPTIONS_PAGE_HOTKEYS
 Tastaturkürzel
-
-HOTKEYS_Z_COMBAT
-Kampffenster
-
-HOTKEYS_MAP
-Kartenfenster
 
 HOTKEYS_GENERAL
 Allgemeine Kürzel

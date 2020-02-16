@@ -107,9 +107,6 @@ Corbeta I
 SD_SMALL_MARK1_DESC
 Pequeña y barata nave con catapulta electromagnéticap.
 
-SD_SMALL_MARK2_DESC
-Pequeña y barata nave con catapulta electromagnéticap.
-
 SD_MARK_1
 Fragata I
 
@@ -175,11 +172,6 @@ Flota de Batalla
 ## Status update messages
 ##
 
-SERVER_WONT_START
-'''El servidor no ha podido ser lanzado.
-
-Nota para usuarios de GNU/Linux: Se supone que el ejecutable del servidor esta en el directorio de trabajo.  Si freeorion fue ejecutado desde otro lugar que no fuese el directorio donde se encuentra el binario, necesitaras salir y reiniciar desde ese directorio.'''
-
 SERVER_TIMEOUT
 El servidor no responde
 
@@ -214,9 +206,6 @@ Uso:
 
 COMMAND_LINE_DEFAULT
 Por defecto:
-
-OPTIONS_DB_HELP
-Imprime este mensaje de ayuda.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Usa todas las configuraciones a partir de cualquier fichero config.xml existente y las que se den por la terminal, para generar un fichero config.xml. Esto sobreescribe el actual config.xml, si existe.
@@ -485,24 +474,6 @@ Establece el tamaño de los planetas mas pequeños en el panel lateral.
 OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
 Establece si se muestran renderizados o no los planetas, asteroides en el panel lateral.
 
-OPTIONS_DB_GAMESETUP_STARS
-Número de estrellas en la galaxia generadas.
-
-OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-La forma de la galaxia que se generará.
-
-OPTIONS_DB_GAMESETUP_GALAXY_AGE
-La edad de la galaxia que se generará.
-
-OPTIONS_DB_GAMESETUP_PLANET_DENSITY
-El número de planetas por sistema que sera generado.
-
-OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-El número de líneas estelares en la galaxia para ser generado.
-
-OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-La frecuencia de especiales que aparecen en la galaxia para ser generados.
-
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 El nombre usado en juego por tu imperio.
 
@@ -511,12 +482,6 @@ El nombre usado en el juego para representar al jugador en el modo solitario.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
 El color usado en juego por tu imperio.
-
-OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
-La especie en tu mundo origen al inicio del juego.
-
-OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
-El número de oponentes IA que jugaran la partida.
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 El espaciado horizontal a ser introducido entre tecnologías en el árbol tecnológico, en múltiplos del ancho de una sola teoría tecnológica.
@@ -1689,36 +1654,16 @@ El imperio %empire% ha sido eliminado.
 ## Species
 ##
 
-SP_GYSACHE
-GYSACHE
-
-SP_GYSACHE_DESC
-Cobardes Herbivoros.
-
-SP_TRITH_DESC
-Desconsolados xenófobos telépatas.
-
 
 ##
 ## Specials
 ##
 
-GAIA_SPECIAL_DESC
-'''Este planeta ha sido esencialmente transformado en un organismo viviente, permitiendo que cambie y se adapte para suplir las necesidades de su población.
-
-Dobla la agricultura objetivo del planeta, salud y población.'''
-
 ANCIENT_RUINS_DEPLETED_SPECIAL
 Ruinas Antiguas
 
-ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-Este planeta guarda las ruinas de una antigua raza avanzada, que han sido olvidados en los libros de historia, triplicando la investigación en el planeta e incrementado la investigación en mundos enfocados a través del imperio por 1/20, no acumulable.
-
 ANCIENT_RUINS_SPECIAL
 Ruinas Antiguas
-
-ANCIENT_RUINS_SPECIAL_DESCRIPTION
-En este planeta se encuentran las ruinas de una antigua raza, que han sido olvidadas en los libros de historia. Proporcionan bonificación a la investigación.
 
 ECCENTRIC_ORBIT_SPECIAL
 Órbita Excéntrica
@@ -1730,9 +1675,6 @@ La distancia de suministro desde este planeta se reduce en 1, pero la investigac
 
 RESONANT_MOON_SPECIAL
 Luna Resonante
-
-RESONANT_MOON_SPECIAL_DESC
-Este planeta tiene un satelite natural, cuyo periodo orbital esta en resonancia 1:1 con su periodo rotacional, causando un lado oscuro permanente que no se ve desde el planeta.  Este lado oscuro es perfecto para emplazar infraestructuras clandestinas.
 
 MINERALS_SPECIAL
 Rico en Minerales
@@ -1933,10 +1875,6 @@ METER_TARGET_POPULATION
 Población Objetivo
 
 # Meter types
-METER_TARGET_HEALTH
-Salud Objetivo
-
-# Meter types
 METER_TARGET_INDUSTRY
 Indústria Objetivo
 
@@ -1971,10 +1909,6 @@ Defensa Máxima
 # Meter types
 METER_POPULATION
 Población
-
-# Meter types
-METER_HEALTH
-Salud
 
 # Meter types
 METER_INDUSTRY
@@ -2468,32 +2402,17 @@ Las estructuras y funciones del cerebro son determinadas. La electroquímica y n
 LRN_ALGO_ELEGANCE
 Algoritmia elegante
 
-LRN_ALGO_ELEGANCE_DESC
-Con cada vez mayor dificultad para el análisis de datos, las medidas tradicionales de la eficiencia de los algoritmos se volvieron inútiles debido a la irreductible complejidad. En ese punto, otras mediciones de las formas y funciones de los algoritmos cobran significado, estética y metafóricamente, la elegancia de la solución debe ser optimizada.
-
 LRN_TRANSLING_THT
 Pensamiento Translingüístico
-
-LRN_TRANSLING_THT_DESC
-Las mentes inferiores luchan, o aceptan los limites del lenguaje que han aprendido. Las mentes adecuadas se limitan y se sienten obligadas por los conceptos que les han dado para expresarse. Las autenticas mentes superiores superan libremente los limites del lenguaje, formando y analizando pensamientos que rondan lo trascendental. Pero si las grandes mentes son aisladas y futiles, sin un lenguaje con el que expresar sus pensamientos, no podrán compartir su interior.
 
 LRN_PSIONICS
 Psiónicos
 
-LRN_PSIONICS_DESC
-Mediante introspección o mejoras artificiales, el cerebro puede desarrollar habilidades para interactuar directamente con el universo que lo rodea, sobrepasando las limitaciones de un cuerpo físico. Poderes como la telepatía, empatía, clarividencia, pre-ciencia, telequinesis y psicoenergias reemplazan o superan a la biología mundana o a las tecnologías alternativas. Las aplicaciones de estos poderes, incluyendo el control mental, alteración personal y posesión tiene profundas implicaciones para las relaciones entre personas con y sin talento.
-
 LRN_ARTIF_MINDS
 Mentes Artificiales
 
-LRN_ARTIF_MINDS_DESC
-Mientras que las computadores tradicionales tienen una inteligencia insondable y habilidades de computo, se echa en falta las cualidades esenciales de supervivencia, consciencia o sensibilidad. Con el desarrollo de verdaderas mentes artificiales, esas cantidades pueden ser sintetizadas, modificadas y alteradas. Estas investigaciones abren nuevas posibilidades para la investigación en ciencias cognitivas y nuevos metaparadigmas.
-
 LRN_XENOARCH
 Xenoarqueología
-
-LRN_XENOARCH_DESC
-Los imperios contemporáneos, razas y civilizaciones no son los primeros o únicos seres que han vivido en la galaxia. Restos, ruinas y rumores de los ancianos pueden ser encontrados en los planetas desérticos y asteroides sin vida, o viajando por el espacio. Encontrarlos y descifrarlos tiene un gran potencial para revelar secretos, enseñar lecciones, o avisar sobre peligros del conocimiento antiguo.
 
 LRN_GRAVITONICS
 Gravitónicos
@@ -2509,9 +2428,6 @@ Tiempo atrás, teorías sencillas, describían subelementos de las cuatro fuerza
 
 LRN_FORCE_FIELD
 Campos de Fuerza Armónicos
-
-LRN_FORCE_FIELD_DESC
-Como el análisis del sonido, electromagnetismo, fuertes y débiles fuerzas pueden ser expresadas como superposiciones armónicas cuánticas de onda estática de partículas de fuerza-carga. Amplificando selectivamente estos armónicos, las fuerzas pueden ser controladas arbitrariamente para escudos, ataques, control o soporte.
 
 LRN_MIND_VOID
 Mente del Vacío
@@ -2534,14 +2450,8 @@ Anteriores teóricos de supercuerdas hablan de 10, 11 ó 26 universos dimensiona
 LRN_UNIF_CONC
 Conciencia Unificada
 
-LRN_UNIF_CONC_DESC
-La comunicación telepática entre individuos o interfaces mente-máquina solo permite lo mas básico, intercambios triviales y superficiales de pensamientos e ideas.  Mentes verdaderamente unidas funcionan como una única consciencia, con las habilidades y conocimiento sumadas de las partes que los constituyen y actuando como una entidad única.  Esto tiene un enorme potencial, pero también implica riesgos, en que la unión no puede buscar su propia destrucción, que es necesario para las mentes originales para ser recuperadas.  Alternativamente, una de las mentes puede dominar a las demás, controlando o destruyendo las otras, no formando una unión armoniosa equivalente.
-
 LRN_QUANT_NET
 Red Cuántica
-
-LRN_QUANT_NET_DESC
-Cada particula esta conectada inextricablemente en el nivel cuantico de cada particula con la que previamente ha interactuado.  Viejas ideas mecánicas sobre la causa y el efecto no se aplican en este nivel y las particulas pueden “comunicarse” instantaneamente a través de grandes distancias.  Cuando una completa comprensión de este fenomeno es adquirido, acciones selectivas a pequeña escala a una distancia entre dos puntos cualquiera puede conseguirse instantaneamente y los límites de velocidad relativistas no se aplican en la tranferencia de información.
 
 LRN_TRANSCEND
 Transcendencia de Singularidad
@@ -2551,9 +2461,6 @@ LRN_TRANSCEND_DESC
 
 GRO_PLANET_ECOL
 Ecología Planetaria
-
-GRO_PLANET_ECOL_DESC
-La agricultura y la ciencia médica pueden incrementar drasticamente la supervivencia, causando que el crecimiento de la población sea hiperexponencial por un tiempo.  A veces, nuevos límites para crecer surgen de la capacidad de almacenamiento de un planeta, y el ecosistema que lo soporta.  Comprendiendo la ecología natural y su interacción a extremos permite al sistema ser sostenido, y sus beneficios cosechados por las generaciones futuras.
 
 GRO_GENETIC_ENG
 Ingeniería Genética
@@ -2576,26 +2483,14 @@ La ingeniería tradicional genética altera códigos genéticos e implementa o a
 GRO_LIFECYCLE_MAN
 Manipulación del Ciclo de Vida
 
-GRO_LIFECYCLE_MAN_DESC
-La mayoría de organismos complejos progresan a través de estados psicológicos durante su vida, claramente separados por metamorfosis o por el envejecimiento.  En muchos casos, uno o mas de estos estados son, al menos en un tiempo dado, mas útiles y deseables que otros.  Con un delicado control hormonal o mecanismos mentales, es posible acelerar o frenar cada estado, permitiendo producir individuos desarrollados y funcionales en una fracción del tiempo natural, convirtiendolos efectivamente en inmortales.
-
 GRO_XENO_GENETICS
 Geneticas Xenológicas
-
-GRO_XENO_GENETICS_DESC
-Anteriores estudios genéticos se veían limitados por las muestras de organismos naturales disponibles en los que basar sus modificaciones.  Así mismo, estas modificaciones están restringidas en los limites de los mecanismos físicos del código genético guardado o la alteración y expresión en individuos desarrollados.  Investigando los sistemas equivalentes en ecosistemas totalmente diferentes y organismos, grandes visiones o revelaciones pueden ocurrir, estimulando nuevos desarrollos en mas sistemas familiares genéticos.
 
 GRO_NANOTECH_MED
 Medicina Nanotecnológica
 
-GRO_NANOTECH_MED_DESC
-Mientras que las alteraciones genéticas pueden reparar o deshacer los efectos de mutaciones no deseadas o para corregir desajustes bioquímicos, tratar mayores traumas físicos y defectos congénitos no genéticos requiere medidas correctivas físicas.  La nanotecnología puede ser usada para cumplir esas tareas, con dos ventajas importantes:  La corrección se puede llevar a cabo sin cirugía invasiva o riesgos secundarios asociados y el tiempo de reacción para el tratamiento se ve enormemente reducido, ya que las herramientas para hacer el trabajo están siempre en su sitio y listas para funcionar.
-
 GRO_XENO_HYBRIDS
 Hybridación Xenológica
-
-GRO_XENO_HYBRIDS_DESC
-Independientemente de lo bien que se comprenda una habilidad mejorada, un sistema biológico esta limitado por su naturaleza inherente.  Las estructuras y la psicología básica solo pueden ser alteradas en los confines biológicos de un solo planeta.  Con la compresión de otras biologias, los dispares sistemas pueden ser fusionados, formando una biología híbrida, con habilidades potenciales y mayores rasgos que los de cualquiera de sus partes.
 
 GRO_NANO_CYBERNET
 Cibernética Nanotecnológica
@@ -2612,31 +2507,14 @@ La sensibilidad tal y como la conocemos siempre ha sido vista como inextricablem
 GRO_ENERGY_META
 Metabolismo de Pura Energía
 
-GRO_ENERGY_META_DESC
-El último estado de desarrollo físico es transcender a todo lo físico.  Sin cuerpo, los individuos y la sociedad pueden moverse, crecer y existir libremente, sin obstáculos por culpa de innecesarios limites físicos y procesos metabólicos ineficientes que gastan la energía que soporta la homeostasis.
-
 PRO_MICROGRAV_MAN
 Manufactura Microgravitacional
-
-PRO_MICROGRAV_MAN_DESC
-La micro-gravedad de planeta de órbita baja ofrece un gran potencial para nuevos diseños de instalaciones de manufactura, equipamiento y técnicas imposibles en la superficie de los planetas.  Los sólidos pueden ser mantenidos en su sitio con un soporte mínimo.  Líquidos y gases flotan libres, cambiando de forma solo por la tensión de la superficie, a menos que se manipulen.  El equipamiento de la fábricas puede ser organizado en 3 dimensiones.  Estas condiciones permiten grandes incrementos en la eficiencia y la productividad, si son explotados adecuadamente.
 
 PRO_ROBOTIC_PROD
 Producción Robótica
 
-PRO_ROBOTIC_PROD_DESC
-A pesar de diseños iniciales e instalaciones de alto nivel, la puesta en marcha todavía requiere de supervisión activa.  La supresión de los operadores en los procesos actuales de producción, elimina muchos problemas.  Los robots trabajan continuamente sin perpetuas demandas de mayores compensaciones económicas.  Los robots tienen una mayor tolerancia a las condiciones ambientales peligrosas en fábricas y no requieren espacio habitable adicional.  Los robots llevan a cabo las tares asignadas rápidamente, o por lo menos tan bien como han sido instruidos.
-
-PRO_EXOBOTS_DESC
-'''Exobots, como se les conoce comúnmente, son una maravilla del encuentro entre forma y función. Son robots que se diseñaron para cumplir casi cualquier trabajo industrial, en campos que van desde la electrónica a la construcción a gran escala. Fáciles de producir en masa, sirven mejor en las colonias que carecen de la infraestructura y fuerza de trabajo para dedicarse a fábricas especializadas. Cada colonia recibe un equipo estándar de exobots, aumentando su construcción durante las primeras fases del desarrollo.
-
-Incrementa la indústria objetivo en todos los planetas con el enfoque de Indústria por un quinto de la población del planeta y la minería objetivo en todos los planetas con enfoque de Minería por 10.'''
-
 PRO_FUSION_GEN
 Generación de Fusión
-
-PRO_FUSION_GEN_DESC
-Reacciones termonucleares explosivas o incontroladas son relativamente simples de causar a escala, desde cabezas tácticas nucleares hasta hornos estelares supergigantes.  La generación de energía controlable, estable y práctica a partir de la reacción es algo mas difícil.  El proceso sigue siendo atractivo, debido a la fuente casi ilimitada de combustible y las potenciales operaciones libres de emisiones.
 
 PRO_NANOTECH_PROD
 Producción Nanotecnológica
@@ -2647,32 +2525,17 @@ Las técnicas tradicionales de producción estan fundamentalmente limitadas por 
 PRO_ORBITAL_GEN
 Generación Orbital
 
-PRO_ORBITAL_GEN_DESC
-Cuerpos planetarios de órbita baja proveen numerosos beneficios para la generación de energía, en comparación con la superficie planetaria.  La exposición directa a la radiación solar cercana sin atenuaciones atmosféricas y los órdenes de magnitud de grandes estructuras que pueden ser ensambladas en micro-gravedad para recogerlos, son ventajas significativas.  La energía resultante puede ser usada en órbita o puede ser dirigida al planeta para soportar la indústria de la superficie.  Así mismo, nuevos mecanismos de conversión de energía hacen que este disponible en órbita, incluyendo el acoplamiento de los campos magnéticos planetarios, intercambios momentáneos orbitales y calientamiento por fricción con las atmósferas planetarias, que son únicamente aplicables para aplicaciones especializadas.
-
 PRO_SENTIENT_AUTOMATION
 Automatización Sensible
-
-PRO_SENTIENT_AUTOMATION_DESC
-Cuando el equipamiento se automatiza, es capaz de replicarse y mantenerse por si mismo sin soporte externo, excepto por los materiales primarios necesarios y un producto final solicitado o sugerido a ser producido.  Cuando son controlados por una mente artificial, el sistema entero puede aprender, planear, reaccionar y adaptarse de manera autónoma y lo puede hacer sin las tradicionales ineficiencias necesarias para albergar y emplear trabajadores.
 
 PRO_NDIM_ASSMB
 Ensamblaje N-Dimensional
 
-PRO_NDIM_ASSMB_DESC
-La geometría del espacio físico siempre ha sido un impedimento mayor para ensamblar objetos en el espacio.  Los objetos no pueden ser colocados y los volúmenes no pueden ser cerrados y abiertos si su existencia se limita a tres dimensiones.  Sobrepasando esta limitación, partes del objeto pueden ser desplegadas de la forma en dimensiones de bolsillo y las líneas continuas se pueden pasar alrededor de otras masas “fuera de eje”.  Mecanismos similares son usados para ensamblar objetos en menores dimensiones con configuraciones que podrian ser imposibles sin vías de dimensiones superiores.
-
 PRO_SINGULAR_GEN
 Generación de Singuralidad
 
-PRO_SINGULAR_GEN_DESC
-Cuando la materia es atraída hacia un singularidad por la curvatura intensa del espacio tiempo o por campos gravitacionales, la materia forma un disco de acreción y es comprimido y calentado inmensamente.  Radiaciones de alta energía emitidas desde el disco se pueden capturar y aprovechar para generar electricidad.  El horizonte del evento de la singularidad misma también emite radiación para aniquilar los pares virtuales de partícula anti-partícula que se forman cerca.  Este método de generación eléctrica es significativamente mas delicado e inestable que el usado con el disco de acreción, pero produce incluso mas producción también.
-
 PRO_ZERO_GEN
 Generación Punto Cero
-
-PRO_ZERO_GEN_DESC
-Cualquier mecanismo de generación de energía que requiere suministro de combustible esta limitado por la relativa relación masa-energía: no se puede producir mas energía que la masa equivalente consumida, incluso con una eficiencia perfecta.  Al hacer uso de la energía inherente del vacío o energía Punto Cero, una fuente infinita de energía efectiva es posible.  El porcentaje o electricidad de esta extracción es también teóricamente ilimitada, con limites solo en los medios para recolectar y usar la producción.
 
 PRO_NEUTRONIUM_EXTRACTION
 Extracción de Neutronium
@@ -2689,9 +2552,6 @@ La forma de una estructura o espacio inhabitado no es meramente guiado por las l
 CON_ORGANIC_STRC
 Estructura Orgánica
 
-CON_ORGANIC_STRC_DESC
-Edificios formados por minerales inanimados son funcionales y en ocasiones elegantes y los que se realizan con formas orgánicas muertas son simples y baratas.  Las estructuras vivientes actuales, pueden crecer en su forma final sin trabajo adicional, así como cierto grado de auto reparación.  Pueden también auto regular naturalmente sus medio ambientes internos o potencialmente adaptándose  a variados y cambiantes ambientes cuando sea necesario durante o después de su crecimiento inicial.
-
 CON_ARCH_MONOFILS
 Monofilamento Arquitectural
 
@@ -2707,20 +2567,11 @@ Una vez ciertos umbrales de rendimiento son sobrepasados, medir las propiedades 
 CON_FRC_ENRG_STRC
 Estructuras Fuerza-Energía
 
-CON_FRC_ENRG_STRC_DESC
-Cuando fuerzas y energía pueden ser manipuladas como se desee para proporcionar la misma funcionalidad que las superficies sólidas, no hay una necesidad esencial para tener materiales físicos encapsulando a los ocupantes de un edificio.  Las estructuras compuestas enteramente de energía tienen muchas ventajas, incluyendo la simple reconfiguración, resistencia, portabilidad y nuevas posibilidades de diseño.
-
 CON_CONTGRAV_ARCH
 Arquitectura Gravitacional Controlada
 
-CON_CONTGRAV_ARCH_DESC
-Controlando integramente la fuerza y orientación de fuerzas gravitacionales que actúan sobre una estructura existente, los diseños pueden simultáneamente exhibir la libertad de la ingravidez y la utilidad de definir arriba y abajo.  La estructura misma, y el medio ambiente local que busca proporcionar, puede tomar cualquier forma en el espacio, extendiendose a grandes distancias, bucle sobre si mismo y haciendo interconexiones arbitrarias.  Simultáneamente, los medio ambientes locales pueden  administrarse con un remolcador útil, que pueden variar de o ser completamente diferentes de áreas adyacentes.  Una versatilidad como esta permite nuevos diseños funcionales para la sociedad, manufactura y otros usos.
-
 CON_GAL_INFRA
 Infraestructura Galáctica
-
-CON_GAL_INFRA_DESC
-La integración y el desarrollo de las infraestructuras en mundos con gran capacidad productiva en una red galáctica unificada, es uno de los mayores esfuerzos logísticos concebibles.  Una vez completo, la funcionalidad del sistema unifica los mundos que lo componen.  Transporte integrado, alojamiento, mantenimiento y herramientas de construcción pueden ser desplegados de forma fluida donde sea necesario para optimizar la asignación de recursos o ajustar cambios.
 
 CON_ART_HEAVENLY
 Cuerpos Celestiales Artificiales
@@ -2731,14 +2582,8 @@ Una gran masa de una pequeña luna o mas grande no es suficiente para concebir l
 CON_TRANS_ARCH
 Arquitectura Transcendental
 
-CON_TRANS_ARCH_DESC
-La conclusión de diseños unificados funcionales óptimos con elegancia en la forma.  Una estructura transcendente expande e inspira las mentes de sus ocupantes u observadores en su forma, lugar, substancia e integración, sea a través de la escala imponente, énfasis en una idea perfecta, percepción o la falta de la misma o absoluta simplicidad y adecuación para un fin.
-
 CON_NDIM_STRC
 Estructuras N-Dimensionales
-
-CON_NDIM_STRC_DESC
-De todos los rasgos bizarros de física aplicada, la habilidad para doblar el espacio a si mismo tiene la mas directa y profunda influencia en la forma y diseño estructural.  El infinito potencial, literalmente como pasillos estan hechos para doblegarse sobre sus principios o del revés para que su cielo se convierta en suelo.  Así mismo, el concepto de la expansión humana se convierte en algo anecdótico, ya que cualquier número de personas puede caber en un pequeño volumen arbitrario, a buen recaudo en un plano adyacente de existencia.
 
 SHP_GAL_EXPLO
 Exploración Galáctica
@@ -2749,14 +2594,8 @@ El descubrimiento de los viajes interestelares mediante las líneas estelares im
 SHP_INTSTEL_LOG
 Logística Interestelar
 
-SHP_INTSTEL_LOG_DESC
-Suministrar efectivamente naves, ordenando el movimiento general de flota e incluso organizando el movimiento de naves especificas en batalla requiere de una comprensión compleja de navegación y detección asi como los métodos de adquisición de información.
-
 SHP_MIL_ROBO_CONT
 Control Robótico Militar
-
-SHP_MIL_ROBO_CONT_DESC
-El control robótico puede ser usado efectivamente para tareas como la agricultura, minería e indústria; la extensión natural de este concepto es desarrollar equipamiento robótico militar capaz de operar una nave independientemente.  Esto permitirá una gran versatilidad en el diseño, ya que la necesidad de aparatosos sistemas de soporte de vida serian eliminados.  Los cascos producidos con esta tecnología pueden también llevar a cabo reparaciones peligrosas sin preocuparse por la seguridad y limitaciones biológicas de ingenieros vivos.
 
 SHP_SPACE_FLUX_DRIVE
 Motor Espacial Fluido
@@ -2784,9 +2623,6 @@ Los dispositivos tradicionales de propulsión operan en objetos de relativamente
 
 SHP_TRANSSPACE_DRIVE
 Motor Trans-Espacial
-
-SHP_TRANSSPACE_DRIVE_DESC
-Incluso cuando las dimensiones espaciales son sesgadas por efectos relativistas, un objeto generalmente tiene una constante en las características del espacio-tiempo.  Creando un dispositivo que altere las características del espacio-tiempo mismo usando efectos casi relativistas, sería posible crear un método rápido y sigiloso.
 
 SHP_MIDCOMB_LOG
 Logística en Pleno Combate
@@ -2851,14 +2687,8 @@ De manera habitual, la manipulación de energía requiere que tenga forma de mat
 SHP_QUANT_ENRG_MAG
 Magnificación Energética Cuántica
 
-SHP_QUANT_ENRG_MAG_DESC
-Debido a la incertidumbre cuántica, es posible para una partícula ganar arbitrariamente una pequeña cantidad de energía o para nuevas partículas para tener una existencia temporal.  Detectando y magnificando estas fluctuaciones en la energía cuántica, sería posible incrementar tremendamente las capacidades de un casco de energía.
-
 SHP_ENRG_BOUND_MAN
 Manipulación de Energía Límite
-
-SHP_ENRG_BOUND_MAN_DESC
-Tanto si son construidos, crecidos o adaptados desde una estructura pre-existente, las naves compuestas de materia deben tener una estructura lógica y coordinada para permitir incluso una utilidad básica.  Aunque la energía pura no tiene esas restricciones.  Esto permite a un casco de energía pura tener cualquier forma, aunque  inútil desde un punto de vista material.
 
 SHP_SOLAR_CONT
 Contención Solar
@@ -2956,9 +2786,6 @@ En imperios particularmente expansivos, la necesidad de mover naves a lugares de
 CON_ART_PLANET
 Planeta Artificial
 
-CON_ART_PLANET_DESC
-Gigantes de gas y cinturones de asteroides ofrecen una oportunidad única de recursos, no solo como sitios donde adquirir valiosos - y a veces extramadamente raros - recursos, pero como materias primas dentro y fuera de si mismas para la producción de planetas artificiales.  Estos planetas ofreceran nuevos centros de producción, sistemas previamente vacios u ocupados.  Además, varias mejoras clave del planeta pueden ser modificadas o añadidas durante el proceso de construcción, permitiendo potencialmente especificar el tamaño y ambiente o ciertos especiales de planetas a ser añadidos.
-
 CON_PALACE_EXCLUDE
 Palacio Excluidor
 
@@ -3004,11 +2831,6 @@ Permite la terraformación remota
 GRO_CYBORG
 Ciborgs
 
-GRO_CYBORG_DESC
-'''Una versátil fusión de organismo y máquina, capaz de adaptarse a una tremenda variedad de circunstancias.  La generación espontanea de órganos especializados y fuerza mecánicamente mejorada permite a los ciborgs existir con facilidad en cualquier ambiente.
-
-Incrementa la población que puede ser sostenida por planetas Hostil, Pobre y Adecuado a 5, 10, 15, 20 y 25 para planetas Diminuto, Pequeño, Medio, Grande y Gigante, respectivamente.  La Salud en planetas Hostil y Pobre se incrementa por 10 y la Salud de planetas Adecuado por 5.'''
-
 GRO_GAIA_TRANS
 Transformación de Gaia
 
@@ -3033,24 +2855,11 @@ Diferentes tipos de estrella no solo tienen sus propios atributos distintivos y 
 LRN_DISTRIB_THOUGHT
 Red Distribuida de Computadores
 
-LRN_DISTRIB_THOUGHT_DESC
-El ciudadano medio malgasta literalmente su mente, uno de los dispositivos de computación mas finos del universo. Al hacer uso de los ciclos de inactividad del cerebro sobre una gran masa de población mediante simples transreceptores cibernéticos, los centros de investigación del mundo tienen acceso a un poder puro y duro de computación barata y abundante.
-
 LRN_STELLAR_TOMOGRAPHY
 Tomografía Estelar
 
-LRN_STELLAR_TOMOGRAPHY_DESC
-'''Una red de satelites especializados puede usar métodos de tomografia para reconstruir las actividades que ocurren en lo profundo de una estrella.  De otra forma las costosas condiciones para producir son ideales para una variedad de investigaciones forzosas, con grandes beneficios para tipos de estrella exóticas.    Proporciona +4 a la investigación por 10 de población en mundos enfocados en investigación primaria en sistemas con agujeros negros.  Proporciona +3 a planetas en sistemas con estrellas neutrón.  Proporciona +2 a planetas en sistemas con estrellas blancas o azules.  Proporciona +1 a planetas con estrellas rojas, naranjas o amarillas.
-
-Multiplica la investigación objetivo de todos los planetas con enfoque en investigación r 2. 1.75, 1.5 o 1.25 en sistemas con estrellas Agujero Negro, Neutron, Azul o Blanco y Amarillo, Naranja o Roja, respectivamente.'''
-
 LRN_SPATIAL_DISTORT_GEN
 Generador de Distorsión Espacial
-
-LRN_SPATIAL_DISTORT_GEN_DESC
-'''Manipulando las propiedades dimensionales de una línea estelar, sería posible plegarla selectivamente para que una nave en camino con una velocidad suficientemente baja pueda volver por donde vino, gastando su tiempo y combustible.
-
-Alternativamente, la nave puede ser enviada al azar a otra línea estelar adyacente al edificio.'''
 
 LRN_GATEWAY_VOID
 Puerta al Vacío
@@ -3072,11 +2881,6 @@ Colapsando con cuidado una estrella roja, un Agujero Negro puede ser formado.  E
 
 LRN_PSY_DOM
 Dominación Psicogenica
-
-LRN_PSY_DOM_DESC
-'''Es difícil forzar una conciencia individual a someterse al control mental total de otros seres contra su voluntad.  Manipulando las fases temporales involucradas, la fuerza mental ejercida por una población sobre un periodo de horas puede ser interpuesto para llevar en un solo individuo en segundos, creando una casi irresistible compulsión para juntar la mente unificada.
-
-Tiene un 10% de probabilidad de tomar el control de cualquier nave enemiga entre un salto de línea estelar de una colonia perteneciente al imperio, teniendo en cuenta que la nave no es propiedad de un imperio que también tenga esta tecnología.'''
 
 MIND_CONTROL_SHORT_DESC
 Permite el Control Mental
@@ -3196,9 +3000,6 @@ Todas las colonias empiezan el juego con una detección de nivel 20 y la parte d
 SPY_DETECT_2
 Radar Activo
 
-SPY_DETECT_2_DESC
-Desbloquea la parte de nave del Radar Activo.
-
 SPY_DETECT_3
 Escaner de Neutrones
 
@@ -3216,9 +3017,6 @@ Desbloquea la parte de nave Sensores e incrementa la detección de todos los pla
 SPY_STEALTH_1
 Amortiguador Electromagnético
 
-SPY_STEALTH_1_DESC
-Desbloquea la parte de nave Amortiguador Electromagnético e incrementa la ocultación de todos los planetas, sistemas y edificios por 5.  Esta bonificación no es acumulativa con las de otras tecnologías de ocultación.
-
 SPY_STEALTH_2
 Campo de Absorción
 
@@ -3229,9 +3027,6 @@ Incrementa la ocultación de todos los planetas, sistemas y edificios por 30.  E
 
 SPY_STEALTH_3
 Camuflaje Dimensional
-
-SPY_STEALTH_3_DESC
-Desbloquea la parte de nave Camuflaje Dimensional e incrementa la salud de todos los planetas, sistemas y edificios por 55. Esta bonificación no es acumulativa con otras tecnologías de ocultación.
 
 SPY_STEALTH_4
 Camuflaje de Fase
@@ -3297,9 +3092,6 @@ Esta nave insignia se construye a partir de asteroides grandiosos, algunos de lo
 
 SHP_ORG_HULL
 Casco Orgánico
-
-SHP_ORG_HULL_DESC
-Este es el tipo de casco orgánico mas básico:  un casco viviente crecido a partir de la unidad de vida más básica y forjado en la batalla.  Tiene tres espacios externos y uno interno.  La ocultación es elevada y la velocidad media, pero su estructura es un poco baja.  Este casco regenera estructura y combustible entre combates.
 
 SHP_ENDOSYMB_HULL
 Casco Endosimbiótico
@@ -3392,68 +3184,35 @@ Instalación de producción orbital para el ensamblaje de naves interestelares m
 BLD_SHIPYARD_ORBITAL_DRYDOCK
 Dique seco Orbital
 
-BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-Instalaciones astilleras expandidas orbitales que permiten la producción de mas grandes diseños de cascos de naves que un astillero básico.
-
 BLD_SHIPYARD_CON_NANOROBO
 Unidad de Proceso Nanorobotica
-
-BLD_SHIPYARD_CON_NANOROBO_DESC
-La producción de millones de nanorobots de mantenimiento y su conexión a una sola IA principal requiere  mas extensivas instalaciones roboticas que la producción de cascos roboticos básicos.  Este edificio es capaz de facilitar la construcción de cascos roboticos mas avanzados que la Unidad de Proceso Robotica.  Esta es una mejora para el Dique Seco Orbital y permite la producción de Cascos NanoRoboticos y Cascos Roboticos.
 
 BLD_SHIPYARD_CON_GEOINT
 Instalación Geointegrada
 
-BLD_SHIPYARD_CON_GEOINT_DESC
-Cuando las necesidades de un astillero son suficientemente grandes, ya no es práctico para el y el planeta en el que se construye seguir siendo entidades separadas. Es mas útil integrarlas en una unidad armoniosa, extendiendo el astillero por debajo de la superficie hasta una órbita geosincrona, haciendo total uso de todos los aspectos geologicos del planeta.  Esta es una mejora para el Dique Seco Orbital y permite la producción de Cascos Titanicos y Cascos Auto-Gravitatorios.
-
 BLD_SHIPYARD_CON_ADV_ENGINE
 Bahia de Ingeniería Avanzada
-
-BLD_SHIPYARD_CON_ADV_ENGINE_DESC
-Una extremadamente bien desarrollada instalación de ingeniería que se especializa en la producción del Motor Trans-Espacial, pero también es capaz de producir el Motor Espacial Fluido.  Esta es una mejora para el Dique Seco Orbital y permite la construcción de Cascos Espaciales Fluidos y Cascos Trans-Espaciales.  Además, esta mejora permite a cualquier astillero en el imperio o imperio aliado producir naves con Torpedos Antimateria y Torpedos de Plasma.
 
 BLD_SHIPYARD_AST
 Procesador de Asteroide
 
-BLD_SHIPYARD_AST_DESC
-Un astillero dedicado con el proposito de cazar asteroides y usarlos como cascos de naves.  Solo puede ser construido en un cinturon de asteroides.  Esta es una mejora para el Astillero Básico y es requirido para la producción de todos los cascos de asteroide y las consiguientes mejoras para astilleros de asteroide.
-
 BLD_SHIPYARD_AST_REF
 Procesador de Reformación de Asteroide
-
-BLD_SHIPYARD_AST_REF_DESC
-Una extensiva instalación dedicada a fusionar, forjar, deconstruir y reconstruir asteroides preexistentes para formar partes de nave y cascos.  Esta es una mejora para el Astillero de Asteroide y permite la producción de Enjambres de Nano-Asteroide, Cascos de Asteroide Compuesto y Cascos de Nave Insignia de Asteroide Esparcido.  Además, esta mejora permite a cualquier astillero en el imperio o imperio aliado para producir partes de nave con Armadura Blindada de Roca.
 
 BLD_SHIPYARD_ORG_ORB_INC
 Incubador Orbital
 
-BLD_SHIPYARD_ORG_ORB_INC_DESC
-Un astillero diseñado para cumplir las necesidades de criaturas espaciales maduras.  Las condiciones en el astillero deben cumplir las especificaciones exactas para que las naves puedan seguir con vida y desarrollarse.  Cualquier nave viva sin acabar tiene posibilidades de ser destruida si el astillero es suficientemente dañado.  Esta es una mejora para el Astillero Básico y es requerido para el desarrollo de todos los cascos orgánicos con la excepción de Casco Estáticos Multicelulares y la producción de todas las mejoras posteriores de astilleros orgánicos.
-
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB
 Cámara de Crecimiento Celular
-
-BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC
-Una mejora de astillero especializado capaz de incrementar el tamaño de organismos monocelulares a proporciones verdaderamente masivas.  Esta es una mejora para el Astillero Orgánico y permite el desarrollo de Cascos Protoplásmicos.  La presencia de esta mejora y la mejora de Instalación Xenocoordinadora en el mismo planeta permite el desarrollo de Cascos Endosimbióticos.  La presencia de estas dos mejoras en cualquier sitio del imperio o imperio aliado permite la producción de partes de nave Bio-Interceptor.
 
 BLD_SHIPYARD_ORG_XENO_FAC
 Instalación Xenocoordinadora
 
-BLD_SHIPYARD_ORG_XENO_FAC_DESC
-Una instalación dedicada a crear una relación totalmente simbiótica entre la nave y su tripulación.  Esta es una mejora para el Astillero Orgánico y permite el desarrollo de Cascos Simbióticos.  La presencia de esta mejora y la mejora Cámara de Crecimiento Celular en el mismo planeta permite el desarrollo de Cascos Endosimbióticos.  La presencia de estas dos mejoras en cualquier parte del imperio o imperio aliado permite la producción de partes de nave Bio-Interceptor.
-
 BLD_SHIPYARD_ENRG_COMP
 Compresor de Energía
 
-BLD_SHIPYARD_ENRG_COMP_DESC
-Un astillero altamente especializado diseñado para crear y montar partes en grandes haces de energía densamente comprimida.  Este es un proceso frágil y este astillero sufrira una majestuosa explosión si recibe aunque sea una pequeña cantidad de daño.  Esta es una mejora para el Astillero Básico y es requerido para la formación de todos los cascos de energía y futuras mejoras de astillero de casco de energía.
-
 BLD_SHIPYARD_ENRG_SOLAR
 Unidad de Contención Solar
-
-BLD_SHIPYARD_ENRG_SOLAR_DESC
-La tarea de crear un sol en miniatura es una fastuosa tarea por si misma.  La producción de un cuerpo así en el que partes de nave puedan ser montadas con seguridad lo es más aún.  Esta es una mejora para el Compresor de Energía y permite la formación de Cascos Solares.
 
 BLD_BIOTERROR_PROJECTOR
 Base de Proyección Bioterror
@@ -3472,13 +3231,6 @@ Decrementa la ocultación de todos los objetos en el mismo sistema por 45.  Este
 BLD_INDUSTRY_CENTER
 Centro Industrial
 
-BLD_INDUSTRY_CENTER_DESC
-'''Inicialmente proporciona +5 a la indústria a 100 de distancia en línea directa de la instalación, no acumulable, en mundos enfocados en la indústria.
-
-[[tech PRO_INDUSTRY_CENTER_II]] aumenta la bonificación de refinamiento en +6 e incrementa la distancia en 200.
-
-[[tech PRO_INDUSTRY_CENTER_III]] aumenta la bonificación de refinamiento en +7 e incrementa la distancia en 300.'''
-
 BLD_MEGALITH
 Megalito
 
@@ -3489,9 +3241,6 @@ Este edificio establece la capital de dueño del imperio, por encima de cualquie
 
 BLD_SPACE_ELEVATOR
 Ascensor Espacial
-
-BLD_SPACE_ELEVATOR_DESC
-Un enorme y prácticamente irrompible cable atado a un satélite en la órbita baja geoestacionaria en un lado, y una plataforma lanzadera en el límite del planeta en el otro. El ascensor espacial aumenta el comercio del sistema entero.
 
 BLD_GENOME_BANK
 Banco de Genomas
@@ -3504,34 +3253,14 @@ Incrementa la agricultura objetivo en planetas enfocados en agricultura por una 
 BLD_GAIA_TRANS
 Transformación de Gaia
 
-BLD_GAIA_TRANS_DESC
-'''Convierte un planeta en un mundo Gaia mediante un programa de ordenador basado en celulas sensibles, casi divinas.  Este planeta maravilloso para la vista y famoso a través de la galaxia conocida como una celebración de la vida y la harmonia.  Los habitantes de este mundo piensan y actuan como parte de un organismo mayor, sirviendo sus necesidades simultáneamente consigo mismo.
-
-Los planetas Gaia tienen una salud, agricultura y población doble.'''
-
 BLD_COLLECTIVE_NET
 Red de pensamiento colectivo
-
-BLD_COLLECTIVE_NET_DESC
-'''Transfiriendo la mente en el ciberespacio, millares de mentes pueden actuar como una, resolviendo los problemas y haciendo posible descubrimientos que una sola mente no podría lograr.
-
-Incrementa la agricultura objetivo en planetas con enfoque en Agricultura por la mitad de la población del planeta, en planetas objetivo con enfoque Industrial por la mitad de la población del planeta, en planetas objetivo de minería con enfoque en Minería por 20 y planetas objetivo de investigación con enfoque en Investigación por la mitad.
-
-Viajes de Línea Estelar entre 500 uus crearan disrupción en la efectivada de este edificio y eliminar estas bonificaciones.'''
 
 BLD_GATEWAY_VOID
 Puerta al Vacío
 
-BLD_GATEWAY_VOID_DESC
-Una brecha dimensional capaz de magnificar el potencial destructivo de la Mente del Vacío en una región localizada.  Cualquier nave que entre en el sistema sin pasar a través del mismo turno son destruidas y todas las colonias son reducidas al estatus de puesto avanzado, con una población máxima de un decimo.  Es imposible para cualquiera que este fuera del sistema que contenga este edificio ver lo que hay.
-
 BLD_ENCLAVE_VOID
 Enclave del Vacío
-
-BLD_ENCLAVE_VOID_DESC
-'''La población de un planeta entero es perfilada genéticamente hacia la Mente del Vacío y dedicada a canalizar su sabiduría para el imperio. Los ciudadanos del Enclave del Vacío son considerados como sacerdotes, los canales de un pensamiento y sabiduría mas elevados. En todos los asuntos de importancia para el imperio, se busca su consejo. Los emisarios del Enclave pueden incluso ser enviados para participar en los proyectos de investigación del imperio. Este mundo nunca puede exceder la producción industrial o de minería por más de 30.
-
-Multiplica la investigación objetivo en todos los planetas con enfoque en Investigación por 1.5.'''
 
 BLD_ART_BLACK_HOLE
 Agujero Negro Artificial
@@ -3542,11 +3271,6 @@ Una singularidad construida en una órbita lejana de un sistema. Su poder sirve 
 BLD_HYPER_DAM
 Dique Hiperespacial
 
-BLD_HYPER_DAM_DESC
-'''Un rasguño en la tela del universo, controlado y enjaulado de forma segura. El dique hiperespacial sirve como una fuente de energía casi ilimitada para el sector entero.
-
-Incrementa la indústria objetivo en planetas con enfoque en Indústria por la población del planeta y decrementa la salud en estos planetas por 5.'''
-
 BLD_SOL_ACCEL
 Acelerador Solar
 
@@ -3555,17 +3279,6 @@ Un Acelerador Solar incrementa la edad de una estrella artificialmente acelerand
 
 BLD_SOL_ORB_GEN
 Generador Solar Orbital
-
-BLD_SOL_ORB_GEN_DESC
-'''Un generador en una órbita solar baja diseñado para atrapar directamente la energía de una estrella.  Ya que diferentes tipos de estrella producen diferentes cantidades de energía, la bonificación a la indústria del sistema depende del tipo de estrella.
-
-Estrellas Azul y Blanca proporcionan una bonificación igual a la población del planeta a la indústria objetivo con enfoque en Indústria en el mismo sistema.
-
-Estrellas Amarilla y Naranja proporcionan una bonificación igual a la mitad de la población del planeta a la indústria objetivo en planetas con enfoque en Indústria en el mismo sistema.
-
-Estrellas Roja proporcionan una bonificación igual a una cuarta parte de la población del planeta a la indústria objetivo en planetas con enfoque en Indústria en el mismo sistema.
-
-Este edificio puede ser construido en un puesto de avanzada.'''
 
 BLD_CLONING_CENTER
 Centro de Clonación
@@ -3598,14 +3311,8 @@ Permite la construcción de naves con partes de nave de Neutronio.'''
 BLD_NEUTRONIUM_FORGE
 Forja de Neutronio
 
-BLD_NEUTRONIUM_FORGE_DESC
-El proceso industrial de neutronio requiere una instalación especializada extensiva.  Este edificio es requerido para construir cualquier nave con partes de neutronio.  A diferencia de la mayoría de astilleros y mejoras, este edificio no puede ser construido en un puesto de avanzada.
-
 BLD_NEUTRONIUM_SYNTH
 Sintetizador de Neutronio
-
-BLD_NEUTRONIUM_SYNTH_DESC
-Un antiguo edificio diseñado hace mucho tiempo para sintetizar neutronio.  Un imperio con este edificio no necesita un Extractor de Neutronio para construir partes de nave de neutronio.
 
 BLD_CONC_CAMP
 Campos de Concentración
@@ -3617,9 +3324,6 @@ Decrementa la población del planeta a un ritmo de 3 por turno e incrementa la i
 
 BLD_BLACK_HOLE_POW_GEN
 Generador de Energía de Agujero Negro
-
-BLD_BLACK_HOLE_POW_GEN_DESC
-Este edificio proporciona una bonificación a la indústria máxima del doble de la población del planeta para todos los planetas en el imperio con enfoque en Indústria.  Este edificio puede ser construido en un puesto de avanzada.
 
 BLD_PLANET_DRIVE
 Motor Planetario de Línea Estelar
@@ -3646,11 +3350,6 @@ Forma un planeta artificial a partir de un cinturón de asteroides o un gigante 
 BLD_ART_MOON
 Luna Artificial
 
-BLD_ART_MOON_DESC
-'''Forma una luna artificial con un periodo orbital 1:1 - periodo de resonancia rotacional.  Esto permite que la construcción de edificios especiales que solo pueden ser construidos con una luna resonante.
-
-Esto no puede ser construido en un Gigante de Gas o Cinturon de Asteroides.'''
-
 BLD_SOL_REJUV
 Rejuvenecedor Solar
 
@@ -3668,9 +3367,6 @@ Este edificio puede tener los efectos de un Replicador, un Dispositivo de Oculta
 BLD_PLANET_CLOAK
 Dispositivo de Ocultación Planetario
 
-BLD_PLANET_CLOAK_DESC
-Ajustando fases de partes de un planeta dentro y afuera en el espacio-tiempo, su ocultación puede ser incrementada masivamente.
-
 BLD_SPATIAL_DISTORT_GEN
 Generador de Distorsión Espacial
 
@@ -3680,15 +3376,8 @@ Manipulando las propiedades dimensionales de una línea estelar, sería posible 
 BLD_STARGATE
 Puerta Estelar
 
-BLD_STARGATE_DESC
-'''Capaz de crear un atajo mediante el espacio-tiempo entre si mismo y cualquier otra puerta estelar que pertenezca al imperio.
-Para activar la puerta estelar, establece el planeta al enfoque Puerta Estelar y construye un activador de puerta estelar en el planeta en el sistema origen y una baliza de puerta estelar en un planeta con enfoque Puerta Estelar en el sistema destino.'''
-
 BLD_GAS_GIANT_GEN
 Generador de Gigante de Gas
-
-BLD_GAS_GIANT_GEN_DESC
-Un generador de energía diseñado para recolectar la energía de un Gigante de Gas.  Este edificio solo puede ser construido en un gigante de gas y proporciona una bonificación a la indústria de los planetas con enfoque en Indústria en el mismo sistema de un cuarto de la población de los planetas.
 
 BLD_COLONY_BASE
 Colonia Base
@@ -3701,16 +3390,6 @@ Crea una nave Colonia Base que puede ser usada para colonizar otro planeta en el
 ## Hull and ship part description templates
 ##
 
-# %1% hull base starlane speed.
-# %2% hull base fuel capacity.
-# %3% hull base starlane speed.
-# %4% hull base structure value.
-HULL_DESC
-'''Velocidad de Línea Estelar: %1%
-Capacidad de Combustible: %2%
-Velocidad de Combate: %3%
-Salud: %4%'''
-
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
 Capacidad: %1%
@@ -3718,13 +3397,6 @@ Capacidad: %1%
 # %1% ship part strength (other).
 PART_DESC_STRENGTH
 Fuerza: %1%
-
-# %1% ship part damage done (direct fire weapons).
-# %2% number of shots done per attack.
-PART_DESC_DIRECT_FIRE_STATS
-'''Daño: %1%
-Cadencia de Disparo: %2% disparos/turno
-Alcance: %3%'''
 
 
 ##
@@ -3848,26 +3520,14 @@ Genera energía usando generación Punto Cero y convirtiendolo en combustible us
 ST_CLOAK_1
 Amortiguador Electromagnético
 
-ST_CLOAK_1_DESC
-Mejora la ocultación de la nave amortiguando emisiones electromagnéticas de los sistemas.  Solo puede compensar una pequeña parte de las emisiones y no servirá con partes que produzcan grandes emisiones, si están presentes.
-
 ST_CLOAK_2
 Campo de Absorción
-
-ST_CLOAK_2_DESC
-Crea un campo de absorción alrededor de la nave, transformandola efectivamente en un cuerpo negro perfecto.
 
 ST_CLOAK_3
 Ocultación Dimensional
 
-ST_CLOAK_3_DESC
-Esconde este nave entre rizos dimensionales, incrementando enormemente su ocultación.
-
 ST_CLOAK_4
 Ocultación de Fase
-
-ST_CLOAK_4_DESC
-Modula la frecuencia de cualquier onda emitida desde la nave para parecer radiación de fondo.
 
 AR_ZORTRIUM_PLATE
 Armadura Blindada de Zortrium
@@ -3896,20 +3556,11 @@ Admirable defensa con masa moderada
 SH_DEFENSE_GRID
 Red de Defensa
 
-SH_DEFENSE_GRID_DESC
-Pobre defensa sin masa extra
-
 SH_DEFLECTOR
 Escudo Deflector
 
-SH_DEFLECTOR_DESC
-Gran defensa con poca masa
-
 SH_MULTISPEC
 Escudo Multi-Espectral
-
-SH_MULTISPEC_DESC
-Poderoso Escudo capaz de proteger una nave dentro de una estrella.  Proporciona una alta bonificación a la ocultación en el mapa de galaxia cuando la nave esta en una estrella que no sea un Agujero Negro o una Estrella Neutron y permite a la nave a entrar en una estrella en combate.
 
 CO_COLONY_POD
 Capsula Colonial
@@ -3941,254 +3592,98 @@ Distingue irregularidades geométricas naturales de naves enemigas manipulando d
 SH_ROBOTIC
 Casco Robótico
 
-SH_ROBOTIC_DESC
-'''Este casco esta completamente automatizado y funciona bajo los principios del Control Robótico Militar.  Como el casco standard y restaura su estructura entre combates, pero tiene una baja estructura máxima.
-
-Además de un Astillero Básico y un Dique Seco Orbital, o una Unidad de Proceso Robótica o una Unidad de Proceso Nanorobótica, es necesario para ser construido en el planeta.'''
-
 SH_SPATIAL_FLUX
 Casco Espacial Fluido
-
-SH_SPATIAL_FLUX_DESC
-'''Este casco diminuto es capaz de alcanzar una inmensa velocidad debido a la potencia del Motor Espacial Fluido.  Solo tiene dos espacios externos y su estructura máxima es baja, la ocultación es muy elevada, pero recibe una gran penalización cuando esta en movimiento o en combate en la mapa de galaxia.
-
-Además de un Astillero Básico y un Dique Seco Orbital, o una Bahía de Ingeniería o una Bahía Avanzada de Ingeniería es necesario para ser construido en el planeta.'''
 
 SH_SELF_GRAVITATING
 Casco Auto-Gravitatorio
 
-SH_SELF_GRAVITATING_DESC
-'''Este casco es inmenso tanto en tamaño como en potencia, con ocho espacios externos y dos internos.  Es bastante robusto, con una estructura máxima elevada, pero con una ocultación y velocidad penosas.
-
-Además de un Astillero Básico y un Dique Seco Orbital, o un Megaprocesador Militar o una Instalación Geointegrada es necesario para ser construido en el planeta.'''
-
 SH_NANOROBOTIC
 Casco Nano-Robótico
-
-SH_NANOROBOTIC_DESC
-'''Este casco automatizado es grande y rápido y es capaz de auto repararse usando millones de nano-robots.  Tiene seis espacios externos y uno interno, pero tiene una ocultación baja y es muy frágil, aunque regenera su estructura entre combates.
-
-Requiere un Astillero Básico, un Dique Seco Orbital y una Unidad de Proceso Nanorobótica en el planeta donde se construye.'''
 
 SH_TITANIC
 Casco Titánico
 
-SH_TITANIC_DESC
-'''Este extraordinariamente gran casco requiere un poco de ingeniería incluso para moverse.  Tiene dieciséis espacios externos y tres internos y su estructura máxima es muy elevada, pero a costa de la velocidad y ocultación.
-
-Requiere un Astillero Básico, un Dique Seco Orbital y una Instalación Geointegrada en el planeta donde se construye.'''
-
 SH_TRANSSPATIAL
 Casco Trans-Espacial
-
-SH_TRANSSPATIAL_DESC
-'''Este casco es capaz de viajar oculto y a una velocidad increíble debido a su Motor Trans-Espacial.  Solo tiene un slot externo y su estructura máxima es extremadamente baja.
-
-Requiere un Astillero Básico, un Dique Seco Orbital y una Bahía Avanzada de Ingeniería en el planeta donde se construye.'''
 
 SH_LOGISTICS_FACILITATOR
 Facilitador Logístico
 
-SH_LOGISTICS_FACILITATOR_DESC
-'''Esta nave insignia organizadora esta diseñada para organizar y dirigir transferencias de tripulación y objetos en medio de la batalla.  Tiene siete espacios externos y dos internos.  Su velocidad es baja, pero su estructura máxima muy elevada.  Además, su propia flota de cargueros ocultos permite la transferencia de material y personal durante la batalla, permitiendo que todas las naves amigas recuperar estructura durante el combate y recuperar completamente la estructura entre combates.
-
-Requiere un Astillero Básico, un Dique Seco Orbital una Unidad de Proceso Nanorobótica, una Instalación Geointegrada, una Bahía Avanzada de Ingeniería y Ensamblaje Logístico Militar para poder ser construido.'''
-
 SH_ASTEROID
 Casco de Asteroide
-
-SH_ASTEROID_DESC
-'''Este casco se construye a partir de un asteroide de tamaño considerable.  Mas espacioso que el casco standard, tiene cuatro espacios externos y dos internos.  La velocidad y estructura son relativamente bajas, pero es muy barato de construir.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
-
-Requiere un Astillero Básico y un Procesador de Asteroide en el cinturón de asteroides donde se produce.'''
 
 SH_SMALL_ASTEROID
 Casco de Asteroide Pequeño
 
-SH_SMALL_ASTEROID_DESC
-'''Este casco se construye a partir de un asteroide muy pequeño. Solo tiene un espacio externo y otro interno.  La velocidad es muy buena, pero su estructura es muy baja.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
-
-Requiere un Astillero Básico y un Procesador de Asteroide en el cinturón de asteroides donde se produce.'''
-
 SH_HEAVY_ASTEROID
 Casco de Asteroide Pesado
-
-SH_HEAVY_ASTEROID_DESC
-'''Este casco se construye a partir de un asteroide gigantesco. Tiene seis espacios externos y tres internos.  La velocidad es muy baja, pero su estructura es moderadamente alta.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
-
-Requiere un Astillero Básico y un Procesador de Asteroide en el cinturón de asteroides donde se produce.'''
 
 SH_CAMOUFLAGE_ASTEROID
 Casco de Asteroide Camuflado
 
-SH_CAMOUFLAGE_ASTEROID_DESC
-'''Este asteroide esta diseñado para asemejarse a un asteroide real.  Tiene cuatro espacios internos y ninguno interno.  La estructura es moderada, pero la velocidad es bastante baja.  Este casco consigue una tremenda bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema que contiene un cinturón de asteroides y en combate cuando se oculta en uno de ellos.
-
-Requiere un Astillero Básico y un Procesador de Asteroide en el cinturón de asteroides donde se produce.'''
-
 SH_SMALL_CAMOUFLAGE_ASTEROID
 Casco de Asteroide Pequeño Camuflado
-
-SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
-'''Este casco de asteroide camuflado es capaz de usar partes de nave de asteroide camufladas en su exterior, aunque debe ser construido con un tamaño menor para compensar y evitar perdidas en su bonificación de ocultación.  Tiene un espacio exterior y uno interior.  La velocidad es moderada, pero su estructura bastante baja.  Este casco tiene un tremendo bonificador a su ocultación en el mapa de galaxia cuando esta en un sistema que contenga un cinturón de asteroides y en combate cuando se esconde detrás de uno.
-
-Requiere un Astillero Básico y un Procesador de Asteroide en el cinturón de asteroides donde se produce.'''
 
 SH_AGREGATE_ASTEROID
 Casco de Asteroide Agregado
 
-SH_AGREGATE_ASTEROID_DESC
-'''Este casco masivo esta formado por la combinación de varios asteroides grandes.  Tiene cincuenta espacios externos y cuatro internos.  La estructura es buena, pero su velocidad es muy baja.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
-
-Requiere un Astillero Básico y un Procesador de Asteroide y una Instalación de Reformado de Asteroides en el cinturón de asteroides donde se produce.'''
-
 SH_MINIASTEROID_SWARM
 Enjambre de Mini-Asteroides
-
-SH_MINIASTEROID_SWARM_DESC
-'''Este casco se construye a partir de un asteroide pequeño, donde muchos de los trozos se han dividido para formar numerosos asteroides diminutos, controlados por el casco principal.  Estos asteroides protegen a la nave, otorgando una bonificación a sus escudos.  Este casco tiene dos espacios externos pero ninguno interno.  La estructura es muy baja, pero con una velocidad alta.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
-
-Requiere un Astillero Básico y un Procesador de Asteroide y una Instalación de Reformado de Asteroides en el cinturón de asteroides donde se produce.'''
 
 SH_SCATTERED_ASTEROID
 Casco de Asteroide Esparcido
 
-SH_SCATTERED_ASTEROID_DESC
-'''Esta nave insignia se construye a partir de asteroides grandiosos, alguno de los cuales han sido combinados para formar el casco principal.  Estos asteroides protegen a  la nave principal, así como cualquier nave amiga que la acompañe, otorgando una bonificación a sus escudos para todas las naves que te pertenezcan y las naves aliadas en las cercanias.  Como el casco de asteroide compuesto,  tiene quince espacios externos y cuatro internos.  La velocidad es muy baja, pero la estructura es elevada.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
-
-Requiere un Astillero Básico y un Procesador de Asteroide y una Instalación de Reformado de Asteroides en el cinturón de asteroides donde se produce.'''
-
 SH_CRYSTALLIZED_ASTEROID
 Casco de Asteroide Cristalizado
-
-SH_CRYSTALLIZED_ASTEROID_DESC
-'''Este robusto casco se construye a partir de asteroides grandiosos, endurecido con técnicas avanzadas de cristalización. Como el Casco de Asteroide normal, tiene cuatro espacios externos y dos internos.  La velocidad es algo baja, pero su estructura es extremadamente alta.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
-
-Requiere un Astillero Básico y un Procesador de Asteroide y un Módulo de Cristalización en el cinturón de asteroides donde se produce.'''
 
 SH_ORGANIC
 Casco Orgánico
 
-SH_ORGANIC_DESC
-'''Este es el tipo de casco orgánico mas básico:  un casco viviente crecido a partir de la unidad de vida más básica y forjado en la batalla.  Tiene tres espacios externos y uno interno.  La ocultación es elevada y la velocidad media, pero su estructura es un poco baja.  Este casco regenera estructura y combustible entre combates.
-
-Requiere un Astillero Básico y un Incubador Orbital en el planeta en el que se construye.'''
-
 SH_STATIC_MULTICELLULAR
 Casco Multicelular Estático
-
-SH_STATIC_MULTICELLULAR_DESC
-'''Aunque empezara siendo orgánico, este casco no tiene vida, producido mediante fundición multicelular.  La versatilidad del interior y la falta de necesidad para órganos internos incrementa su capacidad, pero sin sistemas vivos para mantener la estructura es muy débil.  Tiene tres espacios externos y dos internos.  La ocultación es moderada y su velocidad buena, pero su estructura es muy baja.  A diferencia de la mayoría de cascos orgánicos, no regenera ni la estructura ni el combustible entre combates.
-
-Requiere un Astillero Básico y un Ensamblaje Orgánico Industrial en el planeta en el que se construye.'''
 
 SH_ENDOMORPHIC
 Casco Endomórfico
 
-SH_ENDOMORPHIC_DESC
-'''Este casco viviente contiene componentes multicelulares sin vida para un modularidad interna mayor.  Este casco tiene cuatro espacios externos y tres internos.  La ocultación es buena y la velocidad moderada, pero la estructura es baja.  Este casco regenera estructura y combustible entre combates.
-
-Requiere un Astillero Básico, un Incubador Orbital y un Ensamblador Orgánico Industrial en el planeta en el que se construye.'''
-
 SH_SYMBIOTIC
 Casco Simbiótico
-
-SH_SYMBIOTIC_DESC
-'''Este casco viviente existe en una relación simbiótica con su tripulación, incrementando su ocultación y velocidad. Tiene dos espacios externos y uno interno.  La ocultación, velocidad y estructura son buenas.  Este casco regenera estructura y combustible entre combates.
-
-Requiere un Astillero Básico, un Incubador Orbital y una Instalación de Xenocoordinación en el planeta en el que se construye.'''
 
 SH_PROTOPLASMIC
 Casco Protoplásmico
 
-SH_PROTOPLASMIC_DESC
-'''Este casco monocelular suspende sus partes internas en un citoplasma en vez de montarlos en una estructura sólida interna.  Tiene tres espacios externos e internos.  La velocidad es moderada y su ocultación alta, pero su estructura es muy baja.  Este casco regenera estructura y combustible entre combates.
-
-Requiere un Astillero Básico, un Incubador Orbital y una Cámara de Crecimiento Celular en el planeta en el que se construye.'''
-
 SH_ENDOSYMBIOTIC
 Casco Endosimbiótico
-
-SH_ENDOSYMBIOTIC_DESC
-'''Este casco monocelular existe en una relación simbiótica con su tripulación, suspendiendolos en citoplasma y usando sus órganos.  Tiene tres espacios externos y dos internos.  La velocidad y ocultación son buenas y su estructura moderada.  Este casco regenera estructura y combustible entre combates.
-
-Requiere un Astillero Básico, un Incubador Orbital, una Instalación de Xenocoordinación y una Cámara de Crecimiento Celular en el planeta en el que se construye.'''
 
 SH_RAVENOUS
 Casco Famélico
 
-SH_RAVENOUS_DESC
-'''Este casco viviente surge de la sangre de sus hermanos.  Tiene cuatro espacios externos y dos internos.  La ocultación es baja, pero la velocidad y estructura elevadas.  A diferencia de la mayoría de cascos orgánicos, el Casco Famélico solo regenera combustible entre combates.
-
-Requiere un Astillero Básico, un Incubador Orbital y una Cámara de Maduración Competitiva en el planeta en el que se construye.'''
-
 SH_BIOADAPTIVE
 Casco Bio-Adaptivo
-
-SH_BIOADAPTIVE_DESC
-'''Este casco viviente tiene una mente y cuerpo en perfecta armonía, permitiendo que reaccione y se adapte a su entorno con una eficiencia sin parangón.  Solo tiene dos espacios internos y externos, pero la ocultación, velocidad y estructura son muy elevados.  Este casco regenera combustible y recupera completamente su estructura entre combates.
-
-Requiere un Astillero Básico, un Incubador Orbital y una Unidad de Modificación Bioneuronal en el planeta en el que se construye.'''
 
 SH_SENTIENT
 Casco Sensible
 
-SH_SENTIENT_DESC
-'''Esta nave insignia consciente de si misma tiene poderosas habilidades analíticas  y una tremenda capacidad de memorización, que le permite dirigir naves amigas y proporcionar información útil y tácticas sutiles en combate, otorgando una bonificación a la salud y detección para todas las naves amigas que la acompañen.  Tiene seis espacios externos y tres internos.  Tiene una velocidad baja, pero una ocultación y estructura buenas.  Este casco regenera estructura y combustible entre combates.
-
-Requiere un Astillero Básico, un Incubador Orbital, una Cámara de Maduración Competitiva y una Unidad de Modificación Neuronal en el planeta en el que se construye.'''
-
 SH_COMPRESSED_ENERGY
 Casco de Energía Comprimida
-
-SH_COMPRESSED_ENERGY_DESC
-'''Este casco rápido se compone enteramente de energía comprimida y solo tiene un espacio externo.  La estructura es baja, pero su ocultación y velocidad son muy elevadas.  Este casco requiere una gran cantidad de energía para ser construido y solo puede hacerse en un sistema con una estrella de tipo Blanca, Azul o Agujero Negro.
-
-Requiere un Astillero Básico y un Compresor de Energía en el planeta en el que se construye.'''
 
 SH_FRACTAL_ENERGY
 Casco de Energía Fractal
 
-SH_FRACTAL_ENERGY_DESC
-'''Este casco, aunque pequeño, tiene una superficie fractal que le permite montar muchas mas partes que un casco standard.  Tiene veinte espacios externos pero ninguno interno.  La ocultación es muy baja, pero su estructura y velocidad son moderadas.  Este casco requiere una enorme cantidad de energía para ser construida y solo puede hacerse en un sistema con una estrella de tipo Azul o Agujero Negro.
-
-Requiere un Astillero Básico, un Compresor de Energía y una Formación Enfocada de Energía Controlada en el planeta en el que se construye.'''
-
 SH_QUANTUM_ENERGY
 Casco de Energía Cuántica
-
-SH_QUANTUM_ENERGY_DESC
-'''Este casco magnifica las fluctuaciones de energía cuántica para incrementar su propio poder.  Tiene siete espacios externos y tres internos.  La velocidad y estructura son muy elevadas, pero su ocultación muy baja.  Este casco requiere una enorme cantidad de energía para ser construido y solo puede hacerse en un sistema con una estrella de tipo Azul o Agujero Negro.
-
-Requiere un Astillero Básico, un Compresor de Energía y una Formación Enfocada de Energía Controlada en el planeta en el que se construye.'''
 
 SH_SOLAR
 Casco Solar
 
-SH_SOLAR_DESC
-'''Esta majestuosa nave insignia es esencialmente un sol en miniatura y como tal es una gran fuente de combustible y visibilidad.  Todas las naves amigas recuperan completamente el combustible entre combates y todas las naves enemigas en la vecindad reciben una penalización a la ocultación.  Este casco tiene 18 espacios externos y 9 internos - una mayor capacidad interna que cualquier otro casco.  La estructura es extremadamente alta pero la velocidad y la ocultación son muy bajas.  Aun así, esta nave tiene la habilidad de entrar en una estrella y esconderse, otorgando la ocultación perfecta en el mapa de galaxia cuando esta en un sistema con una estrella de cualquiera que no sea Agujero Negro o Neutrónica y en combate, cuando se esconde en esa estrella.  Esta nave requiere una cantidad tremenda de energía para construirla y debe captar energía desde colisiones partícula-antipartícula en el evento del horizonte de un Agujero Negro en su formación.
-
-Requiere un Astillero Básico, un Compresor de Energía y una Unidad de Contención Solar en el planeta en el que se construye.'''
-
 SH_BASIC_LARGE
 Casco Standard
-
-SH_BASIC_LARGE_DESC
-'''Casco interestelar básico.
-
-Requiere un Astillero Básico y un Dique Seco Orbital en el planeta en el que se construye.'''
 
 SH_XENTRONIUM
 Casco de Xentronio
 
-SH_XENTRONIUM_DESC
-Un casco construido principalmente de xentronio.  Aunque pequeño, tiene una extrema estructura máxima.
-
 SH_COLONY_BASE
 Casco de Colonia Base
-
-SH_COLONY_BASE_DESC
-Un casco diseñado para crear una colonia en otro planeta del sistema.  No puede moverse entre sistemas o de forma rápida dentro del sistema.
 
 
 ##
