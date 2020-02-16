@@ -1,16 +1,9 @@
 macro(ADD_GIGI_ACCEPTANCE_TEST name)
     add_executable(gg_acceptance_${name}
         ${ARGN}
-        $<TARGET_OBJECTS:gigi_acceptance_runner>
     )
     target_link_libraries(gg_acceptance_${name}
-        GiGi
-        GiGiSDL
-        Threads::Threads
-        GLEW::GLEW
-        ${OPENGL_gl_LIBRARY}
-        ${OPENGL_glu_LIBRARY}
-        ${SDL_LIBRARIES}
+        gigi_acceptance_runner
     )
     set_target_properties(gg_acceptance_${name}
         PROPERTIES
@@ -24,26 +17,25 @@ message("-- Configuring GIGI acceptance tests")
 include_directories(
     SYSTEM
     ${OPENGL_INCLUDE_DIR}
-    ${SDL_INCLUDE_DIR}
 )
 
-add_library(gigi_acceptance_runner OBJECT
+add_library(gigi_acceptance_runner STATIC
     runner/Application.cpp
     runner/Dialog.cpp
     runner/ResourceCursor.cpp
 )
 
-# Object libraries only understand the modern CMake approach of defining
-# dependencies via imported targets and target_link_libraries starting 3.12.
-# For now manually unpack the compiler definitions and include directories.
-target_compile_definitions(gigi_acceptance_runner
-    INTERFACE
-        $<TARGET_PROPERTY:GLEW::GLEW,COMPILE_DEFINITIONS>
+target_link_libraries(gigi_acceptance_runner
+    PUBLIC
+        GiGi
+        GiGiSDL
+        GLEW::GLEW
+        ${SDL_LIBRARIES}
 )
 
 target_include_directories(gigi_acceptance_runner
-    INTERFACE
-        $<TARGET_PROPERTY:GLEW::GLEW,INCLUDE_DIRECTORIES>
+    PUBLIC
+        ${SDL_INCLUDE_DIR}
 )
 
 add_gigi_acceptance_test(text_control TestTextControl.cpp)

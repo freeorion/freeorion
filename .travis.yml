@@ -142,8 +142,10 @@ jobs:
         - mkdir build
         - cd build
       script:
-        - cmake -GXcode ..
+        - cmake -GXcode -DBUILD_TESTING=ON ..
         - cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
+      after_success:
+        - cmake --build . --config Release --target unittest
       before_cache:
         - ccache --clean
         - ccache --show-stats
