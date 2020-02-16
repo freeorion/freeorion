@@ -5,7 +5,8 @@ stages:
 
 jobs:
   include:
-    - stage: lint
+    - name: Lint AI with Python 2.7
+      stage: lint
       os: linux
       dist: bionic
       language: python
@@ -17,9 +18,8 @@ jobs:
       script:
         - flake8
         - python -m compileall -q .
-      env:
-        - NAME="Lint Python 2.7 script"
-    - stage: lint
+    - name: Lint AI with Python 3.5
+      stage: lint
       os: linux
       dist: bionic
       language: python
@@ -31,16 +31,14 @@ jobs:
       script:
         - flake8
         - python3 -m compileall -q .
-      env:
-        - NAME="Lint Python 3.5 script"
-    - stage: build
+    - name: Build C++ API documentation
+      stage: build
       os: linux
       dist: bionic
       language: shell
       services:
         - docker
       env:
-        - NAME="Build C++ API documentation"
         # Auth token to push API documentation
         - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
       before_install:
@@ -77,15 +75,13 @@ jobs:
         skip_cleanup: true
         on:
           branch: master
-    - stage: build
+    - name: Build FreeOrion on Ubunutu 18.04 (Bionic)
       os: linux
       dist: bionic
       language: cpp
       services:
         - docker
       cache: ccache
-      env:
-        - NAME="Build FreeOrion"
       before_install:
         - mkdir -p $HOME/.ccache;
         - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
@@ -112,14 +108,13 @@ jobs:
       before_cache:
         - ccache --clean
         - ccache --show-stats
-    - stage: build
+    - name: Build FreeOrion on MacOS 10.12
+      stage: build
       os: osx
       language: cpp
       osx_image: xcode8.3
       compiler: clang
       cache: ccache
-      env:
-        - NAME="Build FreeOrion"
       before_install:
         - export HOMEBREW_LOGS="~/homebrew-logs"
         - export HOMEBREW_TEMP="~/homebrew-temp"
@@ -149,7 +144,8 @@ jobs:
       before_cache:
         - ccache --clean
         - ccache --show-stats
-    - stage: test
+    - name: Unittest AI with Python 2.7
+      stage: test
       os: linux
       dist: bionic
       language: python
@@ -158,8 +154,8 @@ jobs:
         - pip install pytest==3.6.3
       script:
         - pytest
-      name: "Pytest 2.7.14"
-    - stage: test
+    - name: Unittest AI with Python 3.5
+      stage: test
       os: linux
       dist: bionic
       language: python
@@ -168,8 +164,8 @@ jobs:
         - pip install pytest==3.6.3
       script:
         - pytest
-      name: "Pytest 3.5"
-    - stage: test
+    - name: Unittest AI with Python 3.8
+      stage: test
       os: linux
       dist: bionic
       language: python
@@ -178,4 +174,3 @@ jobs:
         - pip install pytest==3.6.3
       script:
         - pytest
-      name: "Pytest 3.8"
