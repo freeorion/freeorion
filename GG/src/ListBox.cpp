@@ -523,7 +523,6 @@ bool ListBox::RowPtrIteratorLess::operator()(const ListBox::iterator& lhs, const
 ////////////////////////////////////////////////
 // GG::ListBox
 ////////////////////////////////////////////////
-
 ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
     m_caret(m_rows.end()),

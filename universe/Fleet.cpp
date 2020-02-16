@@ -306,7 +306,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
             if (BlockadedAtSystem(cur_system->ID(), next_system->ID())) {
                 // blockade debug logging
                 TraceLogger() << "Fleet::MovePath checking blockade from "<< cur_system->ID() << " to "<< next_system->ID();
-                TraceLogger() << "Fleet::MovePath finds system " <<cur_system->Name() << " (" <<cur_system->ID()
+                TraceLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" <<cur_system->ID()
                               << ") blockaded for fleet " << this->Name();
                 is_post_blockade = true;
             } else {
@@ -726,8 +726,6 @@ std::shared_ptr<UniverseObject> Fleet::Accept(const UniverseObjectVisitor& visit
 { return visitor.Visit(std::const_pointer_cast<Fleet>(std::static_pointer_cast<const Fleet>(shared_from_this()))); }
 
 void Fleet::SetRoute(const std::list<int>& route) {
-    //DebugLogger() << "Fleet::SetRoute() ";
-
     if (UnknownRoute())
         throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an unknown route.");
 

@@ -239,9 +239,6 @@ public:
     typedef RowSignalType      AfterInsertRowSignalType;    ///< emitted after a row is inserted into the list box
     typedef RowSignalType      DroppedRowSignalType;        ///< emitted when a row is inserted into the list box via drag-and-drop
     typedef ConstRowSignalType DropRowAcceptableSignalType; ///< emitted when a row may be inserted into the list box via drag-and-drop
-    typedef RowClickSignalType LeftClickedRowSignalType;    ///< emitted when a row in the listbox is left-clicked; provides the row left-clicked and the clicked point
-    typedef RowClickSignalType RightClickedRowSignalType;   ///< emitted when a row in the listbox is right-clicked; provides the row right-clicked and the clicked point
-    typedef RowClickSignalType DoubleClickedRowSignalType;  ///< emitted when a row in the listbox is left-double-clicked
     typedef RowSignalType      BeforeEraseRowSignalType;    ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted before the row is removed
     typedef RowSignalType      AfterEraseRowSignalType;     ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted after the row is removed
     typedef RowSignalType      BrowsedRowSignalType;        ///< emitted when a row in the listbox is "browsed" (rolled over) by the cursor; provides the browsed row
@@ -308,7 +305,7 @@ public:
 
     /** Returns true iff \p type is allowed to be dropped over this ListBox
         when drag-and-drop is enabled. */
-    bool AllowedDropType(const std::string& type) const;
+    bool            AllowedDropType(const std::string& type) const;
 
     /** Whether the list should autoscroll when the user is attempting to drop
         an item into a location that is not currently visible. */
@@ -323,19 +320,19 @@ public:
     unsigned int    AutoScrollInterval() const;
 
     /** Return true if drops are allowed.*/
-    bool AllowingDrops();
+    bool            AllowingDrops();
 
 
-    mutable ClearedRowsSignalType        ClearedRowsSignal;        /// the cleared signal object for this ListBox
+    mutable ClearedRowsSignalType        ClearedRowsSignal;        ///< the cleared signal object for this ListBox
     mutable BeforeInsertRowSignalType    BeforeInsertRowSignal;    ///< the before insert signal object for this ListBox
     mutable AfterInsertRowSignalType     AfterInsertRowSignal;     ///< the after insert signal object for this ListBox
     mutable SelRowsChangedSignalType     SelRowsChangedSignal;     ///< the selection change signal object for this ListBox
     mutable DroppedRowSignalType         DroppedRowSignal;         ///< the dropped signal object for this ListBox
     mutable DropRowAcceptableSignalType  DropRowAcceptableSignal;  ///< the drop-acceptability signal object for this ListBox
     mutable MovedRowSignalType           MovedRowSignal;           ///< the moved signal object for this ListBox
-    mutable LeftClickedRowSignalType     LeftClickedRowSignal;     ///< the left click signal object for this ListBox
-    mutable RightClickedRowSignalType    RightClickedRowSignal;    ///< the right click signal object for this ListBox
-    mutable DoubleClickedRowSignalType   DoubleClickedRowSignal;   ///< the double click signal object for this ListBox
+    mutable RowClickSignalType           LeftClickedRowSignal;     ///< the left click signal object for this ListBox
+    mutable RowClickSignalType           RightClickedRowSignal;    ///< the right click signal object for this ListBox
+    mutable RowClickSignalType           DoubleClickedRowSignal;   ///< the double click signal object for this ListBox
     mutable BeforeEraseRowSignalType     BeforeEraseRowSignal;     ///< the before erase signal object for this ListBox
     mutable AfterEraseRowSignalType      AfterEraseRowSignal;      ///< the after erase signal object for this ListBox
     mutable BrowsedRowSignalType         BrowsedRowSignal;         ///< the browsed signal object for this ListBox
@@ -378,112 +375,112 @@ public:
         of this ListBox. */
     void Insert(const std::vector<std::shared_ptr<Row>>& rows);
 
-    std::shared_ptr<Row> Erase(iterator it, bool signal = false);        ///< removes and returns the row that \a it points to from the ListBox, or 0 if no such row exists
-    void            Clear();                                        ///< empties the ListBox
-    void            SelectRow(iterator it, bool signal = false);    ///< selects row \a it
-    void            DeselectRow(iterator it, bool signal = false);  ///< deselects row \a it
-    void            SelectAll(bool signal = false);                 ///< selects all rows
-    void            DeselectAll(bool signal = false);               ///< deselects all rows
-    void            SetSelections(const SelectionSet& s,
-                                  bool signal = false);     ///< sets the set of selected rows to \a s
+    std::shared_ptr<Row>Erase(iterator it, bool signal = false);        ///< removes and returns the row that \a it points to from the ListBox, or 0 if no such row exists
 
-    iterator        begin();                                ///< returns an iterator to the first list row
-    iterator        end();                                  ///< returns an iterator to the imaginary row one past the last one
+    void Clear();                                        ///< empties the ListBox
+    void SelectRow(iterator it, bool signal = false);    ///< selects row \a it
+    void DeselectRow(iterator it, bool signal = false);  ///< deselects row \a it
+    void SelectAll(bool signal = false);                 ///< selects all rows
+    void DeselectAll(bool signal = false);               ///< deselects all rows
+    void SetSelections(const SelectionSet& s, bool signal = false);  ///< sets the set of selected rows to \a s
 
-    Row&            GetRow(std::size_t n);                  ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
+    iterator    begin();                                ///< returns an iterator to the first list row
+    iterator    end();                                  ///< returns an iterator to the imaginary row one past the last one
 
-    void            SetCaret(iterator it);                  ///< sets the position of the caret to \a it
-    void            BringRowIntoView(iterator it);          ///< moves the scrollbars so that row \a it is visible
-    void            SetFirstRowShown(iterator it);          ///< moves the scrollbars so that row \a it is the first visible
+    Row& GetRow(std::size_t n);                         ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
+
+    void SetCaret(iterator it);                         ///< sets the position of the caret to \a it
+    void BringRowIntoView(iterator it);                 ///< moves the scrollbars so that row \a it is visible
+    void SetFirstRowShown(iterator it);                 ///< moves the scrollbars so that row \a it is the first visible
 
     /** Sets how much to scroll when scrolled using the mousewheel. */
-    void            SetVScrollWheelIncrement(unsigned int increment);
-    void            SetHScrollWheelIncrement(unsigned int increment);
+    void SetVScrollWheelIncrement(unsigned int increment);
+    void SetHScrollWheelIncrement(unsigned int increment);
 
-    void            SetInteriorColor(Clr c);                ///< sets the color painted into the client area of the control
-    void            SetHiliteColor(Clr c);                  ///< sets the color behind selected line items
+    void SetInteriorColor(Clr c);                       ///< sets the color painted into the client area of the control
+    void SetHiliteColor(Clr c);                         ///< sets the color behind selected line items
 
     /** sets the style flags for the ListBox to \a s. \see GG::ListBoxStyle */
-    void            SetStyle(Flags<ListBoxStyle> s);
+    void SetStyle(Flags<ListBoxStyle> s);
 
-    void            SetColHeaders(const std::shared_ptr<Row>& r);                  ///< sets the row used as headings for the columns; this Row becomes property of the ListBox.
-    void            RemoveColHeaders();                     ///< removes any columns headings set
+    void SetColHeaders(const std::shared_ptr<Row>& r);  ///< sets the row used as headings for the columns; this Row becomes property of the ListBox.
+    void RemoveColHeaders();                            ///< removes any columns headings set
 
-    void            SetColWidth(std::size_t n, X w);        ///< sets the width of column \n to \a w; not range-checked
-    void            SetNumCols(std::size_t n);              ///< sets the number of columns in the ListBox to \a n; if no column widths exist before this call, proportional widths are calulated and set, otherwise no column widths are set
-    void            SetSortCol(std::size_t n);              ///< sets the index of the column used to sort rows when sorting is enabled; not range-checked
+    void SetColWidth(std::size_t n, X w);               ///< sets the width of column \n to \a w; not range-checked
+    void SetNumCols(std::size_t n);                     ///< sets the number of columns in the ListBox to \a n; if no column widths exist before this call, proportional widths are calulated and set, otherwise no column widths are set
+    void SetSortCol(std::size_t n);                     ///< sets the index of the column used to sort rows when sorting is enabled; not range-checked
 
     /** Sets the comparison function used to sort a given pair of Rows during
         row sorting.  Note that \a sort_cmp is assumed to produce an ascending
         order when used to sort; setting the LIST_SORTDESCENDING style can be
         used to produce a reverse sort. */
-    void            SetSortCmp(const boost::function<bool (const Row&, const Row&, std::size_t)>& sort_cmp);
+    void SetSortCmp(const boost::function<bool (const Row&, const Row&, std::size_t)>& sort_cmp);
 
     /** Fixes the column widths; by default, an empty ListBox will take on the
         number of columns of its first added row. \note The number of columns
         and their widths may still be set via SetNumCols() and SetColWidth()
         after this function has been called. */
-    void            LockColWidths();
+    void LockColWidths();
 
     /** Allows the number of columns to be determined by the first row added to
         an empty ListBox */
-    void            UnLockColWidths();
+    void UnLockColWidths();
 
     /** Set ListBox to stop managing column widths and alignment.  The number of columns must be
         set with SetColWidth(), but widths of individual rows columns or the header will not be
         managed by ListBox. */
-    void            ManuallyManageColProps();
+    void ManuallyManageColProps();
 
     /** Sets the alignment of column \a n to \a align; not range-checked */
-    void            SetColAlignment(std::size_t n, Alignment align);
+    void SetColAlignment(std::size_t n, Alignment align);
 
     /** Sets the stretch of column \a n to \a stretch; not range-checked */
-    void            SetColStretch(std::size_t n, double stretch);
+    void SetColStretch(std::size_t n, double stretch);
 
     /** Sets the alignment of row \a it to \a align; not range-checked */
-    void            SetRowAlignment(iterator it, Alignment align);
+    void SetRowAlignment(iterator it, Alignment align);
 
     /** Sets whether to normalize rows when inserted (true) or leave them as
       * they are. */
-    void            NormalizeRowsOnInsert(bool enable = true);
+    void NormalizeRowsOnInsert(bool enable = true);
 
     /** Sets the column widths from an exemplar \p row.*/
-    void            DefineColWidths(const Row& row);
+    void DefineColWidths(const Row& row);
 
     /** Sets the column alignments from an exemplar \p row.*/
-    void            DefineColAlignments(const Row& row);
+    void DefineColAlignments(const Row& row);
 
     /** Sets the column alignments from an exemplar \p row.*/
-    void            DefineColStretches(const Row& row);
+    void DefineColStretches(const Row& row);
 
     /** Sets whether to add padding at the end of the scrolls when the ListBox is
      *  bigger than the client area, so that any row can be scrolled all the way to
      *  the top (true), or only use as much space as it needs. */
-    void            AddPaddingAtEnd(bool enable = true);
+    void AddPaddingAtEnd(bool enable = true);
 
     /** Allow drops if \p allow is true.*/
-    void            AllowDrops(bool allow);
+    void AllowDrops(bool allow);
 
     /** Allow all drop types if \p allow is true.*/
-    void            AllowAllDropTypes(bool allow);
+    void AllowAllDropTypes(bool allow);
 
     /** Allows Rows with data type \a str to be dropped over this ListBox when
         drag-and-drop is enabled. \note Passing "" enables all drop types. */
-    void            AllowDropType(const std::string& str);
+    void AllowDropType(const std::string& str);
 
     /** Set this to determine whether the list should autoscroll when the user
         is attempting to drop an item into a location that is not currently
         visible. */
-    void            AutoScrollDuringDragDrops(bool auto_scroll);
+    void AutoScrollDuringDragDrops(bool auto_scroll);
 
     /** Sets the thickness of the area around the border of the client area that
         will provoke an auto-scroll, if AutoScrollDuringDragDrops() returns
         true. */
-    void            SetAutoScrollMargin(unsigned int margin);
+    void SetAutoScrollMargin(unsigned int margin);
 
     /** Sets the number of milliseconds that elapse between row/column scrolls
         when auto-scrolling. */
-    void            SetAutoScrollInterval(unsigned int interval);
+    void SetAutoScrollInterval(unsigned int interval);
     //@}
 
     /** \brief Sorts two Rows of a ListBox using operator<() on the
