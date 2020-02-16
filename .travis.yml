@@ -3,34 +3,35 @@ stages:
   - build
   - test
 
+_lint_python_common: &_lint_python_common
+  stage: lint
+  os: linux
+  dist: bionic
+  language: python
+  install:
+    - pip install flake8-putty==0.4.0
+  before_script:
+    - cd default/python
+  script:
+    - flake8
+    - python -m compileall -q .
+
 jobs:
   include:
     - name: Lint AI with Python 2.7
-      stage: lint
-      os: linux
-      dist: bionic
-      language: python
+      <<: *_lint_python_common
       python: 2.7
       before_install:
-        - pip install flake8-putty==0.4.0
-      before_script:
-        - cd default/python
-      script:
-        - flake8
-        - python -m compileall -q .
+        - alias pip=/usr/bin/pip
+        - alias python=/usr/bin/python2
+
     - name: Lint AI with Python 3.5
-      stage: lint
-      os: linux
-      dist: bionic
-      language: python
+      <<: *_lint_python_common
       python: 3.5
       before_install:
-        - python3 -m pip install flake8-putty==0.4.0
-      before_script:
-        - cd default/python
-      script:
-        - flake8
-        - python3 -m compileall -q .
+        - alias pip=/usr/bin/pip3
+        - alias python=/usr/bin/python3
+
     - name: Build C++ API documentation
       stage: build
       os: linux
