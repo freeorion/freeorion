@@ -1,3 +1,4 @@
+---
 stages:
   - lint
   - build
@@ -15,6 +16,25 @@ _lint_python_common: &_lint_python_common
   script:
     - flake8
     - python -m compileall -q .
+
+_build_cpp_common: &_build_cpp_common
+  stage: build
+  language: cpp
+  cache: ccache
+  install:
+    - mkdir -p $HOME/.ccache;
+    - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
+    - echo max_size = 200M >> $HOME/.ccache/ccache.conf
+    - ccache --version
+    - ccache --show-stats
+  before_script:
+    - mkdir build
+    - cd build
+  after_success:
+    - cmake --build . --config Release --target unittest
+  before_cache:
+    - ccache --clean
+    - ccache --show-stats
 
 _test_python_common: &_test_python_common
   stage: test
@@ -86,75 +106,41 @@ jobs:
         skip_cleanup: true
         on:
           branch: master
+
     - name: Build FreeOrion on Ubunutu 18.04 (Bionic)
+      <<: *_build_cpp_common
       os: linux
       dist: bionic
-      language: cpp
       services:
         - docker
-      cache: ccache
       before_install:
-        - mkdir -p $HOME/.ccache;
-        - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
-        - echo max_size = 200M >> $HOME/.ccache/ccache.conf
-        - ccache --version
-        - ccache --show-stats
         - docker pull freeorion/freeorion-travis-build
-        # Add transparent cmake function to allow possible cross platform use of
-        # build sections.
         # mount ccache dir and set its environment variable
         # timeout before Travis kills jobs so that ccache is always at least partially populated
         - >
           function cmake {
               docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -v "${HOME}/.ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
           }
-      before_script:
-        - mkdir build
-        - cd build
       script:
         - cmake -DBUILD_TESTING=ON ..
         - cmake --build . -- -j 2
-      after_success:
-        - cmake --build . --target unittest
-      before_cache:
-        - ccache --clean
-        - ccache --show-stats
+
     - name: Build FreeOrion on MacOS 10.12
-      stage: build
+      <<: *_build_cpp_common
       os: osx
-      language: cpp
       osx_image: xcode8.3
       compiler: clang
-      cache: ccache
       before_install:
-        - export HOMEBREW_LOGS="~/homebrew-logs"
-        - export HOMEBREW_TEMP="~/homebrew-temp"
         - brew install ccache
         - export PATH="/usr/local/opt/ccache/libexec:$PATH"
-        - mkdir -p $HOME/.ccache;
-        - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
-        - echo max_size = 200M >> $HOME/.ccache/ccache.conf
-        - ccache --version
-        - ccache --show-stats
-        # Add transparent cmake function to allow possible cross platform use of
-        # build sections.
-        # mount ccache dir and set its environment variable
         # timeout before Travis kills jobs so that ccache is always at least partially populated
         - >
           function cmake {
               /usr/local/bin/gtimeout 40m /usr/local/bin/cmake $@
           }
-      before_script:
-        - mkdir build
-        - cd build
       script:
         - cmake -GXcode -DBUILD_TESTING=ON ..
         - cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
-      after_success:
-        - cmake --build . --config Release --target unittest
-      before_cache:
-        - ccache --clean
-        - ccache --show-stats
 
     - name: Unittest AI with Python 2.7
       <<: *_test_python_common
