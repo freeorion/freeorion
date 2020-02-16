@@ -16,6 +16,16 @@ _lint_python_common: &_lint_python_common
     - flake8
     - python -m compileall -q .
 
+_test_python_common: &_test_python_common
+  stage: test
+  os: linux
+  dist: bionic
+  language: python
+  install:
+    - pip install pytest==3.6.3
+  script:
+    - pytest
+
 jobs:
   include:
     - name: Lint AI with Python 2.7
@@ -145,33 +155,21 @@ jobs:
       before_cache:
         - ccache --clean
         - ccache --show-stats
+
     - name: Unittest AI with Python 2.7
-      stage: test
-      os: linux
-      dist: bionic
-      language: python
+      <<: *_test_python_common
       python: 2.7
       before_install:
-        - pip install pytest==3.6.3
-      script:
-        - pytest
+        - alias pip=/usr/bin/pip
+
     - name: Unittest AI with Python 3.5
-      stage: test
-      os: linux
-      dist: bionic
-      language: python
+      <<: *_test_python_common
       python: 3.5
       before_install:
-        - pip install pytest==3.6.3
-      script:
-        - pytest
+        - alias pip=/usr/bin/pip3
+
     - name: Unittest AI with Python 3.8
-      stage: test
-      os: linux
-      dist: bionic
-      language: python
+      <<: *_test_python_common
       python: 3.8
       before_install:
-        - pip install pytest==3.6.3
-      script:
-        - pytest
+        - alias pip=/usr/bin/pip3
