@@ -275,6 +275,9 @@
     <ClInclude Include="..\..\universe\ScriptingContext.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Empire\Government.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\universe\ConditionSource.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
@@ -499,6 +502,9 @@
     </ClCompile>
     <ClCompile Include="..\..\universe\ValueRefs.cpp">
       <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\Government.cpp">
+      <Filter>Source Files\Empire</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
