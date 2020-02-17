@@ -1478,7 +1478,7 @@ class OrbitalColonizationManager(object):
     def turn_start_cleanup(self):
         universe = fo.getUniverse()
         # clean up invalid or finished plans
-        for pid in self._colonization_plans.keys():
+        for pid in list(self._colonization_plans.keys()):
             if not self._colonization_plans[pid].is_valid():
                 del self._colonization_plans[pid]
 
