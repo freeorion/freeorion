@@ -6130,7 +6130,7 @@ QUICK_START_GUIDE_TITLE
 **Guide de Démarrage Rapide**
 
 QUICK_START_GUIDE_TEXT
-'''Voici une brève introduction au gameplay de Freeorion. Ce guide in-game, ajouté récemment, est pour le moment assez sommaire mais sera complété au fil des versions. Un guide plus conséquent est disponible sur le site freeorion.org (URL actuelle: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url>).
+'''Voici une brève introduction au gameplay de Freeorion. Un guide plus conséquent est disponible sur le site freeorion.org (URL actuelle: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url>).
 
 [[DETAILED_PEDIA_REFERENCE]]
 Il est conseillé de consulter en priorité les sections [[encyclopedia CATEGORY_GAME_CONCEPTS]], [[encyclopedia CATEGORY_GUIDES]], et [[encyclopedia ENC_METER_TYPE]].
@@ -6398,6 +6398,9 @@ Coque
 ATTACK
 Dommages Totaux Armement
 
+PRODUCTION_COST
+Coût Production
+
 OBJECT_TYPE  # translated
 Type
 
@@ -6448,6 +6451,9 @@ Système Suiv.
 
 PREV_SYSTEM
 Système Préc.
+
+ARRIVAL_STARLANE
+En Provenance Système
 
 LAST_TURN_BATTLE_HERE
 Dern. Tour Bataille ici
@@ -12856,7 +12862,9 @@ BLD_CONC_CAMP
 Camps de Concentration
 
 BLD_CONC_CAMP_DESC
-'''Réduit la [[metertype METER_POPULATION]] d'une planète de 3 par tour, et augmente la [[metertype METER_TARGET_INDUSTRY]] de 5 fois la [[metertype METER_POPULATION]] planétaire. La [[metertype METER_TARGET_HAPPINESS]] est réduite à 0.
+'''Réduit la [[metertype METER_POPULATION]] d'une planète de 3 par tour, et augmente la [[metertype METER_TARGET_INDUSTRY]] de 2 fois la [[metertype METER_POPULATION]] planétaire. La [[metertype METER_TARGET_HAPPINESS]] est réduite à 0.
+
+Si supprimé, des [[buildingtype BLD_CONC_CAMP_REMNANT]] subsistent durant plusieurs tours.
 
 Purger une planète d'une espèce indésirable permet l'introduction d'une espèce plus adaptée. En créant un réseau planétaire de camps de concentration conçus pour abattre les internés à la tâche, il est possible d'atteindre rapidement et efficacement le but fixé.'''
 
@@ -15164,13 +15172,23 @@ Avant-Poste
 
 # %1% FIXME
 # %2% FIXME
+NATIVE_PLANETARY_DETECTION_LABEL
+%2% Détection planétaire native
+
+# %1% FIXME
+# %2% FIXME
 NATIVE_PLANETARY_DEFENSE_LABEL
-%2% Défense planétaire
+%2% Défense planétaire native
 
 # %1% FIXME
 # %2% FIXME
 NATIVE_PLANETARY_SHIELDS_LABEL
-%2% Bouclier planétaire
+%2% Boucliers planétaires natifs
+
+# %1% FIXME
+# %2% FIXME
+NATIVE_PLANETARY_TROOPS_LABEL
+%2% Infanterie planétaire native
 
 VERY_BRIGHT_STAR
 Étoile très lumineuse
@@ -15507,16 +15525,53 @@ Modèle Invalide
 ## AI diplomacy strings and lists
 ##
 
+
+# Newline separated list of polite alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
+'''Heureux d'avoir de vos nouvelles.
+Réception de transmission confirmée.
+'''
+
+# Newline separated list of harsh alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_HARSH_LIST
+'''Si vous ne pouvez soutenir vos propres ambitions, vous n'êtes pas digne de notre aide.
+Veuillez solliciter un autre bienfaiteur à qui soutirer des ressources.
+'''
+
+# Newline separated list of polite positive alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_RESPONSES_YES_MILD_LIST
+'''Nos empires peuvent tirer bénéfice d'une entraide et collaboration avancée.
+Nous serions honorés de coopérer plus étroitement en vue d'une réussite mutuelle.
+'''
+
+# Newline separated list of polite negative alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_RESPONSES_NO_MILD_LIST
+'''Nous ne pensons pas qu'il résulterait un bénéfice mutuel d'un tel accord en l'état.
+Nous ne pouvons octroyer les ressources qu'un accord de la sorte exigerait de notre part.
+'''
+
+# Newline separated list of harsh positive alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_RESPONSES_YES_HARSH_LIST
+'''Nous acceptons à contrecœur de soutenir votre futile entreprise.
+Peut-être nous amuserons-nous de vos gesticulations inutiles et combats désespérés.
+'''
+
+# Newline separated list of harsh negative alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_RESPONSES_NO_HARSH_LIST
+'''Nous n'accepterons jamais de partager nos ressources avec vous!
+Vous êtes totalement indigne d'une telle confiance et d'un tel soutien.
+'''
+
 # Newline separated list of polite peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
 '''Heureux de recevoir de vos nouvelles.
-Réception de transmission acceptée.
+Réception de transmission confirmée.
 '''
 
 # Newline separated list of harsh peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_HARSH_LIST
 '''Comment? N'êtes-vous pas déjà mort?
-Oh, pas une nouvelle pleurnicherie pathétique, de grâce!
+Oh, pas encore une pleurnicherie pathétique, de grâce!
 '''
 
 # Newline separated list of polite positive peace proposal acknowlegements.
