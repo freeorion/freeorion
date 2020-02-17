@@ -177,7 +177,7 @@ def name_star_systems(system_list):
     indiv_systems = []
 
     # remove groups with only one non-deep-system
-    for groupindex, group_list in star_groups.items():
+    for groupindex, group_list in list(star_groups.items()):
         max_can_transfer = len(potential_group_names) - len(star_groups) + len(individual_names) - len(indiv_systems)
         if max_can_transfer <= 0:
             break
@@ -221,8 +221,8 @@ def name_star_systems(system_list):
     random.shuffle(potential_group_names)
     random.shuffle(individual_names)
     random.shuffle(group_names)
-    num_for_indiv = min(max(len(potential_group_names) / 2, num_individual_stars + 1 - len(individual_names)),
-                        len(potential_group_names))
+    num_for_indiv = int(min(max(len(potential_group_names) / 2, num_individual_stars + 1 - len(individual_names)),
+                        len(potential_group_names)))
     individual_names.extend(potential_group_names[:num_for_indiv])
     group_names.extend(potential_group_names[num_for_indiv:])
 

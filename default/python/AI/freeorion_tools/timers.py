@@ -87,7 +87,7 @@ class AILogTimer(Timer):
             mode = 'w'  # empty file
         else:
             mode = 'a'
-        with open(six.text_type(self.log_name, 'utf-8'), mode) as f:
+        with open(six.ensure_text(self.log_name, 'utf-8'), mode) as f:
             f.write(text)
             f.write('\n')
 

@@ -575,6 +575,16 @@ def _make_single_function_combiner(funcnamei, f_combo):
     return func
 
 
+def _maxmin_not_none(f_combo):
+    """Make a combiner that collects not None items and applies min or max"""
+    def func(llin):
+        ll = [x for x in llin if x is not None]
+        if not ll:
+            return 0
+        return f_combo(ll)
+    return func
+
+
 # Create combiners for traits that all must be true
 for funcname in ["may_explore_system", "may_surge_industry", "may_maximize_research", "may_invade",
                  "may-invade_with_bases", "may_build_building", "may_produce_troops",
@@ -587,11 +597,11 @@ for funcname in ["may_explore_system", "may_surge_industry", "may_maximize_resea
 # Create combiners for traits that take min result
 for funcname in ["max_number_colonies", "invasion_priority_scaling",
                  "military_priority_scaling", "max_defense_portion"]:
-    setattr(Character, funcname, _make_single_function_combiner(funcname, min))
+    setattr(Character, funcname, _make_single_function_combiner(funcname, _maxmin_not_none(min)))
 
 # Create combiners for traits that take max result
 for funcname in ["target_number_of_orbitals", "military_safety_factor", "get_research_index"]:
-    setattr(Character, funcname, _make_single_function_combiner(funcname, max))
+    setattr(Character, funcname, _make_single_function_combiner(funcname, _maxmin_not_none(max)))
 
 # Create combiners for traits that take any result
 for funcname in ["check_orbital_production"]:
