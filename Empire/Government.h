@@ -1,8 +1,7 @@
 #ifndef _Government_h_
 #define _Government_h_
 
-#include "../Universe/ValueRef.h"
-
+#include "../universe/ValueRef.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
