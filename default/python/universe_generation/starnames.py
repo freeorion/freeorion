@@ -221,8 +221,8 @@ def name_star_systems(system_list):
     random.shuffle(potential_group_names)
     random.shuffle(individual_names)
     random.shuffle(group_names)
-    num_for_indiv = min(max(len(potential_group_names) / 2, num_individual_stars + 1 - len(individual_names)),
-                        len(potential_group_names))
+    num_for_indiv = int(min(max(len(potential_group_names) / 2, num_individual_stars + 1 - len(individual_names)),
+                        len(potential_group_names)))
     individual_names.extend(potential_group_names[:num_for_indiv])
     group_names.extend(potential_group_names[num_for_indiv:])
 
