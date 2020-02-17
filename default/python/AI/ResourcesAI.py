@@ -571,7 +571,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
 
     aistate = get_aistate()
     for adj_round in [1, 2, 3, 4]:
-        for pid, pinfo in focus_manager.raw_planet_info.items():
+        for pid, pinfo in list(focus_manager.raw_planet_info.items()):
             ii, tr = pinfo.possible_output[INDUSTRY]
             ri, rr = pinfo.possible_output[RESEARCH]
             ci, cr = pinfo.current_output
