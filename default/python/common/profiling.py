@@ -38,7 +38,7 @@ def profile(save_path, sort_by='cumulative'):
             base_path = os.path.dirname(save_path)
             if not os.path.exists(base_path):
                 os.makedirs(base_path)
-            with open(six.text_type(save_path, 'utf-8'), 'a') as f:
+            with open(six.ensure_text(save_path, 'utf-8'), 'a') as f:
                 f.write(s.getvalue())
                 f.write('\n')
 
