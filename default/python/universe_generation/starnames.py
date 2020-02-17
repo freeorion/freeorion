@@ -177,7 +177,7 @@ def name_star_systems(system_list):
     indiv_systems = []
 
     # remove groups with only one non-deep-system
-    for groupindex, group_list in star_groups.items():
+    for groupindex, group_list in list(star_groups.items()):
         max_can_transfer = len(potential_group_names) - len(star_groups) + len(individual_names) - len(indiv_systems)
         if max_can_transfer <= 0:
             break
