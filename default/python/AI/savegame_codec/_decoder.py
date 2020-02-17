@@ -51,7 +51,7 @@ def load_savegame_string(string):
         debug("Base64/zlib decoding path for savestate failed: %s" % e)
 
     try:
-        string = zlib.decompress(string)
+        string = zlib.decompress(six.ensure_binary(string, 'utf-8'))
         debug("zlib-decompressed a non-base64-encoded save-state string.")
     except zlib.error:
         # probably an uncompressed string
