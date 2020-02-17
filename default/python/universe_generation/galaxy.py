@@ -12,6 +12,9 @@ import util
 
 class AdjacencyGrid(object):
     def __init__(self, universe_width):
+        """
+        :param float universe_width:
+        """
         assert universe_tables.MIN_SYSTEM_SEPARATION < universe_tables.MAX_STARLANE_LENGTH
         self.min_dist = universe_tables.MIN_SYSTEM_SEPARATION
         self.max_dist = universe_tables.MAX_STARLANE_LENGTH
@@ -640,6 +643,8 @@ def ring_galaxy_calc_positions(positions, adjacency_grid, size, width):
 def box_galaxy_calc_positions(positions, adjacency_grid, size, width):
     """
     Calculate positions for the box galaxy shape.
+
+    :param float width:
     """
     for i in range(size):
         attempts = 100
