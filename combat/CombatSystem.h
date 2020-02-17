@@ -63,6 +63,11 @@ private:
 /** Auto-resolves a battle. */
 void AutoResolveCombat(CombatInfo& combat_info);
 
+struct SharedAutoresolveInfo {
+    int                                 bout;
+    Universe::EmpireObjectVisibilityMap GetEmpireObjectVisibilityMap()
+}
+
 template <class Archive>
 void CombatInfo::save(Archive & ar, const unsigned int version) const
 {

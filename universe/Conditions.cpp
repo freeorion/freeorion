@@ -7307,7 +7307,7 @@ void VisibleToEmpire::Eval(const ScriptingContext& parent_context,
 
         // need to check visibility of each candidate object separately
         EvalImpl(matches, non_matches, search_domain,
-                 VisibleToEmpireSimpleMatch(empire_id, parent_context.background.empire_object_visibility));
+                 VisibleToEmpireSimpleMatch(empire_id, parent_context.GetEmpireObjectVisibilityMap()));
     } else {
         // re-evaluate empire id for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -7357,7 +7357,7 @@ bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
     }
 
     int empire_id = m_empire_id->Eval(local_context);
-    return VisibleToEmpireSimpleMatch(empire_id, local_context.background.empire_object_visibility)(candidate);
+    return VisibleToEmpireSimpleMatch(empire_id, local_context.GetEmpireObjectVisibilityMap())(candidate);
 }
 
 void VisibleToEmpire::SetTopLevelContent(const std::string& content_name) {
