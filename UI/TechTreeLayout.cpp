@@ -125,27 +125,28 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
         node->CreatePlaceHolder(m_nodes);
 
     //3. put nodes into containers for each depth column
-    std::vector<std::vector<Node*>> nodes_at_each_depth(max_node_depth + 1);
+    std::vector<std::vector<Node*>> tree_layers(max_node_depth + 1);
     for (Node* node : m_nodes) {
-        assert((node->depth >= 0) && (node->depth < static_cast<int>(nodes_at_each_depth.size())));
-        nodes_at_each_depth[node->depth].push_back(node);
+        assert((node->depth >= 0) && (node->depth < static_cast<int>(tree_layers.size())));
+        tree_layers[node->depth].push_back(node);
     }
-    // sort within each depth column
-    for (auto& level : nodes_at_each_depth)
-        std::sort(level.begin(), level.end(), [](Node* l, Node* r) -> bool { return *l < *r; });
+
+    // Sort nodes within each layer
+    for (auto& layer : tree_layers)
+        std::sort(layer.begin(), layer.end(), [](Node* l, Node* r) -> bool { return *l < *r; });
 
     //4. do layout
-    std::vector<Column> row_index = std::vector<Column>(nodes_at_each_depth.size());
+    std::vector<Column> row_index = std::vector<Column>(tree_layers.size());
 
     // in what order do columns receive nodes?
     std::vector<int> column_order;
-    column_order.reserve(nodes_at_each_depth.size());
+    column_order.reserve(tree_layers.size());
     // start with column with most nodes, progess outwards from it
     int first_column = 0;
     unsigned int max_column_nodes = 0;
-    for (unsigned int i = 0; i < nodes_at_each_depth.size(); ++i) {
-        if (nodes_at_each_depth[i].size() > max_column_nodes) {
-            max_column_nodes = nodes_at_each_depth[i].size();
+    for (unsigned int i = 0; i < tree_layers.size(); ++i) {
+        if (tree_layers[i].size() > max_column_nodes) {
+            max_column_nodes = tree_layers[i].size();
             first_column = i;
         }
     }
@@ -153,12 +154,12 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
     column_order.push_back(first_column);
     int next_column = column_order[0] + 1;
     int prev_column = column_order[0] - 1;
-    while (column_order.size() < nodes_at_each_depth.size()) {
+    while (column_order.size() < tree_layers.size()) {
         if (prev_column >= 0) {
             column_order.push_back(prev_column);
             prev_column--;
         }
-        if (next_column < static_cast<int>(nodes_at_each_depth.size())) {
+        if (next_column < static_cast<int>(tree_layers.size())) {
             column_order.push_back(next_column);
             next_column++;
         }
@@ -166,7 +167,7 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
     // distribute tech nodes over the table, one column at a time
     for (int column : column_order) {
         std::string current_category;
-        for (Node* node : nodes_at_each_depth[column]) {
+        for (Node* node : tree_layers[column]) {
             const Tech* node_tech = GetTech(node->tech_name);
             const std::string& node_category = node_tech ? node_tech->Category() : "";
             bool new_category = node_category != current_category;
