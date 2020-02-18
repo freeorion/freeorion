@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <boost/range/algorithm.hpp>
+#include <boost/range/irange.hpp>
 
 namespace  {
     const int NODE_CELL_HEIGHT = 2;
@@ -138,51 +139,36 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
     // 3. Sort nodes by depth level, category and name
     boost::range::sort(m_nodes, [](Node* l, Node* r) -> bool { return *l < *r; });
 
-    // find max node depth
-    unsigned int max_node_depth = 0;
-    for (Node* node : m_nodes)
-        max_node_depth = std::max(max_node_depth, node->depth);
-
-    //3. put nodes into containers for each depth column
+    // 4. Separate tree nodes into layers by depth
+    unsigned int max_node_depth = (!m_nodes.empty()) ? m_nodes.back()->depth : 0;
     std::vector<std::vector<Node*>> tree_layers(max_node_depth + 1);
-    for (Node* node : m_nodes) {
-        assert((node->depth >= 0) && (node->depth < static_cast<int>(tree_layers.size())));
+    for (Node* node : m_nodes)
         tree_layers[node->depth].push_back(node);
+
+    // 5. Find widest tree layer
+    unsigned int widest_layer_idx = 0;
+    for (auto cur_layer_idx : boost::irange(size_t{}, tree_layers.size()))
+        if (tree_layers[widest_layer_idx].size() < tree_layers[cur_layer_idx].size())
+            widest_layer_idx = cur_layer_idx;
+
+    // 6. Process layers starting from the widest layer
+    std::vector<unsigned int> layer_order;
+    layer_order.reserve(tree_layers.size());
+    layer_order.push_back(widest_layer_idx);
+    int offset = 0;
+    while (layer_order.size() < tree_layers.size()) {
+        ++offset;
+        if (0 <= widest_layer_idx - offset)
+            layer_order.push_back(widest_layer_idx - offset);
+        if (widest_layer_idx + offset < tree_layers.size())
+            layer_order.push_back(widest_layer_idx + offset);
     }
 
-    //4. do layout
     std::vector<Column> row_index = std::vector<Column>(tree_layers.size());
-
-    // in what order do columns receive nodes?
-    std::vector<int> column_order;
-    column_order.reserve(tree_layers.size());
-    // start with column with most nodes, progess outwards from it
-    int first_column = 0;
-    unsigned int max_column_nodes = 0;
-    for (unsigned int i = 0; i < tree_layers.size(); ++i) {
-        if (tree_layers[i].size() > max_column_nodes) {
-            max_column_nodes = tree_layers[i].size();
-            first_column = i;
-        }
-    }
-    // progress outwards from initial column
-    column_order.push_back(first_column);
-    int next_column = column_order[0] + 1;
-    int prev_column = column_order[0] - 1;
-    while (column_order.size() < tree_layers.size()) {
-        if (prev_column >= 0) {
-            column_order.push_back(prev_column);
-            prev_column--;
-        }
-        if (next_column < static_cast<int>(tree_layers.size())) {
-            column_order.push_back(next_column);
-            next_column++;
-        }
-    }
     // distribute tech nodes over the table, one column at a time
-    for (int column : column_order) {
+    for (int layer : layer_order) {
         std::string current_category;
-        for (Node* node : tree_layers[column]) {
+        for (Node* node : tree_layers[layer]) {
             const Tech* node_tech = GetTech(node->tech_name);
             const std::string& node_category = node_tech ? node_tech->Category() : "";
             bool new_category = node_category != current_category;
