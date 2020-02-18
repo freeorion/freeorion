@@ -992,15 +992,14 @@ namespace {
     };
 
     /// A collection of information the autoresolution must keep around
-    struct AutoresolveInfo : SharedAutoresolveInfo {
-        int                             bout;
+    struct AutoresolveInfo {
         std::set<int>                   valid_attacker_object_ids;  // all objects that can attack
         std::map<int, EmpireCombatInfo> empire_infos;               // empire specific information, indexed by empire id
+        CombatInfo&                     combat_info;
         int                             next_fighter_id = -1000001; // give fighters negative ids so as to avoid clashes with any positive-id of persistent UniverseObjects
         std::set<int>                   destroyed_object_ids;       // objects that have been destroyed so far during this combat
 
-        explicit AutoresolveInfo(int bout_, CombatInfo& combat_info_) :
-            bout(bout_),
+        explicit AutoresolveInfo(CombatInfo& combat_info_) :
             combat_info(combat_info_)
         {
             PopulateAttackers();
@@ -1404,7 +1403,7 @@ namespace {
             AddAllObjectsSet(combat_state.combat_info.objects, targets);
 
             // attacker is source object for condition evaluation. use combat-specific vis info.
-            ScriptingContext context(attacker, combat_state);
+            ScriptingContext context(attacker, combat_state.combat_info);
 
             // apply species targeting condition and then weapon targeting condition
             species_targetting_condition->Eval(context, targets, rejected_targets, Condition::MATCHES);
@@ -1431,7 +1430,7 @@ namespace {
             auto targetx = std::const_pointer_cast<UniverseObject>(target);
 
             // do actual attacks
-            Attack(attacker, weapon, targetx, combat_state.combat_info, combat_state.bout, round,
+            Attack(attacker, weapon, targetx, combat_state.combat_info, combat_state.combat_info.bout, round,
                    attacks_event, platform_event, fighter_on_fighter_event);
 
         } // end for over weapons
@@ -1523,7 +1522,7 @@ namespace {
 
             // combat event
             CombatEventPtr launch_event = std::make_shared<FighterLaunchEvent>(
-                combat_state.bout, attacker->ID(), attacker_owner_id, new_fighter_ids.size());
+                combat_state.combat_info.bout, attacker->ID(), attacker_owner_id, new_fighter_ids.size());
             launches_event->AddEvent(launch_event);
 
 
@@ -1632,10 +1631,10 @@ namespace {
     void CombatRound(AutoresolveInfo& combat_state) {
         CombatInfo& combat_info = combat_state.combat_info;
 
-        auto bout_event = std::make_shared<BoutEvent>(combat_state.bout);
+        auto bout_event = std::make_shared<BoutEvent>(combat_info.bout);
         combat_info.combat_events.push_back(bout_event);
         if (combat_state.valid_attacker_object_ids.empty()) {
-            DebugLogger(combat) << "Combat bout " << combat_state.bout << " aborted due to no remaining attackers.";
+            DebugLogger(combat) << "Combat bout " << combat_info.bout << " aborted due to no remaining attackers.";
             return;
         }
 
@@ -1654,7 +1653,7 @@ namespace {
         auto attacks_event = std::make_shared<AttacksEvent>();
         bout_event->AddEvent(attacks_event);
 
-        auto fighter_on_fighter_event = std::make_shared<FightersAttackFightersEvent>(combat_state.bout);
+        auto fighter_on_fighter_event = std::make_shared<FightersAttackFightersEvent>(combat_info.bout);
         bout_event->AddEvent(fighter_on_fighter_event);
 
         int round = 1;  // counter of events during the current combat bout
@@ -1677,7 +1676,7 @@ namespace {
             DebugLogger(combat) << "Planet: " << planet->Name();
 
             auto platform_event = std::make_shared<WeaponsPlatformEvent>(
-                combat_state.bout, planet->ID(), planet->Owner());
+                combat_info.bout, planet->ID(), planet->Owner());
             attacks_event->AddEvent(platform_event);
 
             ShootAllWeapons(planet, combat_state, round++,
@@ -1699,7 +1698,7 @@ namespace {
             DebugLogger(combat) << "Attacker: " << attacker->Name();
 
             auto platform_event = std::make_shared<WeaponsPlatformEvent>(
-                combat_state.bout, attacker->ID(), attacker->Owner());
+                combat_info.bout, attacker->ID(), attacker->Owner());
 
             ShootAllWeapons(attacker, combat_state, round++,
                             attacks_event, platform_event, fighter_on_fighter_event);
@@ -1708,12 +1707,12 @@ namespace {
                 attacks_event->AddEvent(platform_event);
         }
 
-        auto stealth_change_event = std::make_shared<StealthChangeEvent>(bout);
+        auto stealth_change_event = std::make_shared<StealthChangeEvent>(combat_info.bout);
 
         // Launch fighters (which can attack in any subsequent combat bouts).
         // There is no point to launching fighters during the last bout, since
         // they won't get any chance to attack during this combat
-        if (combat_state.bout < GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS")) {
+        if (combat_info.bout < GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS")) {
             auto launches_event = std::make_shared<FighterLaunchesEvent>();
             for (const auto& attacker : combat_info.objects.find<Ship>(shuffled_attackers)) {
                 if (!attacker)
@@ -1803,7 +1802,7 @@ namespace {
             combat_info.combat_events.push_back(stealth_change_event);
 
         /// Remove all who died in the bout
-        combat_state.CullTheDead(combat_state.bout, bout_event);
+        combat_state.CullTheDead(combat_info.bout, bout_event);
 
         // Backpropagate meters so that next round tests can use the results of the previous round
         for (auto obj : combat_info.objects.all())
@@ -1855,7 +1854,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
         DebugLogger(combat) << "Combat at " << system->Name() << " ("
                             << combat_info.system_id << ") Bout " << bout;
-        combat_state.bout = bout;
+        combat_info.bout = bout;
         CombatRound(combat_state);
         last_bout = bout;
     } // end for over combat arounds

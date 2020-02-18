@@ -1865,6 +1865,7 @@ void Universe::SetEmpireSpecialVisibility(int empire_id, int object_id,
         m_empire_object_visible_specials[empire_id][object_id].erase(special_name);
 }
 
+
 namespace {
     /** for each empire: for each position where the empire has detector objects,
       * what is the empire's detection range at that location?  (this is the

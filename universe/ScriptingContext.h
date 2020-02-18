@@ -2,6 +2,7 @@
 #define _ScriptingContext_h_
 
 #include "Universe.h"
+#include "../combat/CombatSystem.h"
 
 #include <boost/any.hpp>
 
@@ -26,9 +27,9 @@ struct ScriptingContext {
       * conditions. Useful in combat resolution when the visibility of objects
       * may be different from the overall universe visibility. */
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
-                     const Universe::EmpireObjectVisibilityMap& visibility_map) :
+                     const CombatInfo& combat_info_) :
         source(source_),
-        empire_object_vis_map_override(visibility_map)
+        combat_info(combat_info_)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
@@ -54,7 +55,7 @@ struct ScriptingContext {
         condition_root_candidate(parent_context.condition_root_candidate),
         condition_local_candidate(parent_context.condition_local_candidate),
         current_value(current_value_),
-        empire_object_vis_map_override(parent_context.empire_object_vis_map_override)
+        combat_info(parent_context.combat_info)
     {}
 
     /** For recursive evaluation of Conditions.  Keeps source and effect_target
@@ -70,7 +71,7 @@ struct ScriptingContext {
                                             condition_local_candidate_),    // if parent context doesn't already have a root candidate, the new local candidate is the root
         condition_local_candidate(      condition_local_candidate_),        // new local candidate
         current_value(                  parent_context.current_value),
-        empire_object_vis_map_override( parent_context.empire_object_vis_map_override)
+        combat_info( parent_context.combat_info)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
@@ -89,7 +90,7 @@ struct ScriptingContext {
     std::shared_ptr<const UniverseObject>   condition_root_candidate;
     std::shared_ptr<const UniverseObject>   condition_local_candidate;
     const boost::any                        current_value;
-    Universe::EmpireObjectVisibilityMap     empire_object_vis_map_override;
+    const CombatInfo&                       combat_info = s_empty_combat_info;
 };
 
 #endif // _ScriptingContext_h_

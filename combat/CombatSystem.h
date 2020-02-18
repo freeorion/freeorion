@@ -9,6 +9,7 @@
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 
+
 /** Contains information about the state of a combat before or after the combat
   * occurs. */
 struct CombatInfo {
@@ -37,6 +38,7 @@ public:
     std::set<int>                       destroyed_object_ids;           ///< ids of objects destroyed during this battle
     std::map<int, std::set<int>>        destroyed_object_knowers;       ///< indexed by empire ID, the set of ids of objects the empire knows were destroyed during the combat
     Universe::EmpireObjectVisibilityMap empire_object_visibility;       ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
+    int                                 bout = 0;
     std::vector<CombatEventPtr>         combat_events;                  ///< list of combat attack events that occur in combat
 
     float   GetMonsterDetection() const;
@@ -62,11 +64,6 @@ private:
 
 /** Auto-resolves a battle. */
 void AutoResolveCombat(CombatInfo& combat_info);
-
-struct SharedAutoresolveInfo {
-    int                                 bout;
-    Universe::EmpireObjectVisibilityMap GetEmpireObjectVisibilityMap()
-}
 
 template <class Archive>
 void CombatInfo::save(Archive & ar, const unsigned int version) const
@@ -127,5 +124,7 @@ void CombatInfo::load(Archive & ar, const unsigned int version)
     empire_object_visibility.swap(filtered_empire_object_visibility);
     combat_events.swap(           filtered_combat_events);
 }
+
+static const CombatInfo s_empty_combat_info = {};
 
 #endif // _CombatSystem_h_
