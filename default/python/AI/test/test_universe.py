@@ -551,13 +551,13 @@ class HullTypeTester(PropertyTester):
 
     def test_productionCost(self):
         for obj in self.objects_to_test:
-            retval = obj.productionCost(fo.empireID(), INVALID_ID)
+            retval = obj.productionCost(fo.empireID(), INVALID_ID, INVALID_ID)
             self.assertIsInstance(retval, float)
             self.assertGreaterEqual(retval, 0.0)
 
     def test_productionTime(self):
         for obj in self.objects_to_test:
-            retval = obj.productionTime(fo.empireID(), INVALID_ID)
+            retval = obj.productionTime(fo.empireID(), INVALID_ID, INVALID_ID)
             self.assertIsInstance(retval, int)
             self.assertGreaterEqual(retval, 0)
 
