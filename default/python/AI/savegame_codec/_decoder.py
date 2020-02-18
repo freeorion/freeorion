@@ -56,6 +56,10 @@ def load_savegame_string(string):
     except zlib.error:
         # probably an uncompressed string
         debug("Will try decoding savestate string without base64 or zlib compression.")
+
+    # We need to check uncompressed string, since zip archive of the empty string is not the empty string.
+    if not string:
+        raise Exception("Save game string is empty")
     return decode(string)
 
 
