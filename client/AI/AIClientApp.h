@@ -7,7 +7,6 @@
 #include <vector>
 
 
-class AIBase;
 class PythonAI;
 
 /** the application framework for an AI player FreeOrion client.*/
@@ -36,12 +35,17 @@ public:
     /** \name Accessors */ //@{
     int EffectsProcessingThreads() const override;
 
+    /** @brief Return the player name of this client
+     *
+     * @return An UTF-8 encoded and NUL terminated string containing the player
+     *      name of this client.
+     */
     const std::string& PlayerName() const
     { return m_player_name; }
     //@}
 
     static AIClientApp* GetApp();       ///< returns a AIClientApp pointer to the singleton instance of the app
-    const AIBase*       GetAI();        ///< returns pointer to AIBase implementation of AI for this client
+    const PythonAI*     GetAI();        ///< returns pointer to AIBase implementation of AI for this client
 
 private:
     void                Run();          ///< initializes app state, then executes main event handler/render loop (PollAndRender())

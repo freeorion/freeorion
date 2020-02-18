@@ -133,7 +133,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\client\AI\AIClientApp.h" />
-    <ClInclude Include="..\..\client\AI\AIInterface.h" />
     <ClInclude Include="..\..\client\AI\AIFramework.h" />
     <ClInclude Include="..\..\client\AI\AIWrapper.h" />
     <ClInclude Include="..\..\client\ClientApp.h" />
@@ -198,7 +197,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\client\AI\AIClientApp.cpp" />
-    <ClCompile Include="..\..\client\AI\AIInterface.cpp" />
     <ClCompile Include="..\..\client\AI\AIFramework.cpp" />
     <ClCompile Include="..\..\client\AI\AIWrapper.cpp" />
     <ClCompile Include="..\..\client\AI\camain.cpp" />
