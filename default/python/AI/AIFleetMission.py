@@ -1,3 +1,4 @@
+from __future__ import division
 from logging import debug, warn
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error

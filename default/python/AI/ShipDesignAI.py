@@ -658,7 +658,7 @@ class AdditionalSpecifications(object):
             for dmg, count in enemy_attack_stats.items():
                 d += dmg*count
                 n += count
-            self.avg_enemy_weapon_strength = d/n
+            self.avg_enemy_weapon_strength = d // n  # TODO check if we need floor division here
 
     def convert_to_tuple(self):
         """Create a tuple of this class' attributes (e.g. to use as key in dict).

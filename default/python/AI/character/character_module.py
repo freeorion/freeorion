@@ -42,7 +42,7 @@ assigned some additional mandatory trait(s).  For example the Trith and
 a mandatory Genocidal trait.  Perhaps add a probabilty distribution of
 trait components to the FOCS description of a playable species.
 """
-
+from __future__ import division
 
 # Some ideas for future trait modules are:
 # TODO: challenge/difficulty -- to replace the difficulty related portions
