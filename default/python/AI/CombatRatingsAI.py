@@ -1,3 +1,4 @@
+from __future__ import division
 from collections import Counter
 from logging import warn
 
@@ -52,7 +53,7 @@ class ShipCombatStats(object):
             """
 
             :param attacks:
-            :type attacks: dict|None
+            :type attacks: dict[float, int]|None
             :param structure:
             :type structure: int|None
             :param shields:
@@ -61,7 +62,7 @@ class ShipCombatStats(object):
             """
             self.structure = 1 if structure is None else structure
             self.shields = 0 if shields is None else shields
-            self.attacks = {} if attacks is None else tuple_to_dict(attacks)
+            self.attacks = {} if attacks is None else tuple_to_dict(attacks)  # type: dict[float, int]
 
         def get_stats(self, hashable=False):
             """
@@ -148,7 +149,7 @@ class ShipCombatStats(object):
                         # TODO: Depending on future implementation, might actually need to handle this case.
                         warn("Multiple hangar types present on one ship, estimates expected to be wrong.")
                     fighter_damage = max(fighter_damage, part_damage)
-        self._basic_stats = self.BasicStats(attacks, structure, shields)
+        self._basic_stats = self.BasicStats(attacks, int(structure), int(shields))
         self._fighter_stats = self.FighterStats(fighter_capacity, fighter_launch_rate, fighter_damage)
 
     def get_basic_stats(self, hashable=False):
