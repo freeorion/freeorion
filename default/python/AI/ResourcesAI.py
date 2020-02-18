@@ -64,7 +64,7 @@ class PlanetFocusManager(object):
         self.raw_planet_info = dict(self.all_planet_info)
         self.baked_planet_info = {}
 
-        for pid, pinfo in self.raw_planet_info.items():
+        for pid, pinfo in list(self.raw_planet_info.items()):
             if not pinfo.planet.availableFoci:
                 self.baked_planet_info[pid] = self.raw_planet_info.pop(pid)
 
