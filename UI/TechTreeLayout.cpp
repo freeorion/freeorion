@@ -4,6 +4,7 @@
 #include "../util/Logger.h"
 #include <algorithm>
 #include <cmath>
+#include <boost/range/algorithm/replace.hpp>
 
 namespace  {
     const int NODE_CELL_HEIGHT = 2;
@@ -112,16 +113,32 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
     for (Node* node : m_nodes)
          node->fillDepth();
 
+    // 2. Insert placeholder nodes between display nodes, whose depth difference
+    //    exceeds 1.
+    auto initial_nodes = m_nodes;
+    for (auto node : initial_nodes) {
+        for (auto current_child : node->children) {
+            auto current_parent = node;
+
+            while (current_parent->depth + 1 < current_child->depth) {
+                auto placeholder = new Node(current_parent, current_child);
+                m_nodes.push_back(placeholder);
+
+                boost::range::replace(current_child->parents, current_parent, placeholder);
+                boost::range::replace(current_parent->children, current_child, placeholder);
+
+                if (current_parent->primary_child == current_child)
+                    current_parent->primary_child = placeholder;
+
+                current_parent = placeholder;
+            }
+        }
+    }
+
     // find max node depth
     unsigned int max_node_depth = 0;
     for (Node* node : m_nodes)
         max_node_depth = std::max(max_node_depth, node->depth);
-
-    //2. create placeholder nodes
-    DebugLogger() << "TechTreeLayout::DoLayout creating placeholder nodes...";
-    std::vector<Node*> raw_nodes = m_nodes; // just iterator over initial nodes, not also over the placeholders
-    for (Node* node : raw_nodes)
-        node->CreatePlaceHolder(m_nodes);
 
     //3. put nodes into containers for each depth column
     std::vector<std::vector<Node*>> tree_layers(max_node_depth + 1);
@@ -284,62 +301,19 @@ TechTreeLayout::Node::Node(const std::string& tech, GG::X width, GG::Y height) :
 /**
  * recursively creates dummy nodes between parent and child
  */
-TechTreeLayout::Node::Node(Node* parent, Node* child, std::vector<Node*>& nodes) :
+TechTreeLayout::Node::Node(Node* parent, Node* child) :
     weight(LINE_CELL_HEIGHT),
     tech_name(),
     place_holder(true),
     m_width(0),
     m_height(0)
 {
-    assert(parent != 0 && child != 0);
-    // ensure passed in nodes are valid
-    if (!parent)
-        ErrorLogger() << "Node::Node passed null parent";
-    if (!child)
-        ErrorLogger() << "Node::Node passed null child";
-    if (!parent || !child)
-        return;
-
-    //DebugLogger() << "Node::Node given parent " << parent
-    //                       << " and child: " << child;
-
-    //DebugLogger() << "Node::Node given parent with depth " << parent->depth
-    //                       << "  and child with depth: " << child->depth;
-
-    // ensure there is space to insert node between parent and child nodes
-    if (child->depth <= parent->depth + 1) {
-        ErrorLogger() << "no space to insert a dummy node!";
-        depth = child->depth;
-        return;
-    }
-
-    //DebugLogger() << "Node::Node adding dummy node: " << this
-    //                       << "  between parent node tech: " << parent->tech_name
-    //                       << "  and child node tech: " << child->tech_name;
-
-    // add node to main node bookkeeping
-    nodes.push_back(this);
-
     // copy parent/child connectivity
     depth = parent->depth + 1;
     tech_name = child->tech_name;
     parents.push_back(parent);
     children.push_back(child);
     primary_child = child;
-
-    // update child's parents to point to this node instead of input parent
-    for (Node*& child_parent_ref : child->parents) {
-        if (child_parent_ref == parent)
-            child_parent_ref = this;
-    }
-
-    // update parent's child node pointers to instead point to this node
-    for (Node*& parent_child_ref : parent->children) {
-        if (parent_child_ref == child)
-            parent_child_ref = this;
-    }
-    if (parent->primary_child == child)
-        parent->primary_child = this;
 }
 
 TechTreeLayout::Node::~Node() {
@@ -508,54 +482,6 @@ void TechTreeLayout::Node::fillDepth() {
     for (Node* child : children) {
         child->depth = std::max(child->depth, this->depth + 1);
         child->fillDepth();
-    }
-}
-
-void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*>& nodes) {
-    //DebugLogger() << "Creating PlaceHolder for node " << this;
-    //DebugLogger().flush();
-    //DebugLogger() << "  for tech: " << tech_name;
-    //DebugLogger().flush();
-    //DebugLogger() << "  which has " << children.size() << " children:";
-    //DebugLogger().flush();
-    //for (const Node* child : children) {
-    //    DebugLogger() << "      child: " << child << " with tech: " << child->tech_name;
-    //}
-
-
-    for (Node* child : children) {
-        //DebugLogger() << "   processing child: " << child << " with tech: " << child->tech_name;
-
-
-        Node* current_parent_node = this;
-
-        //DebugLogger() << "Dummy nodes from " << this->tech_name << " to child: " << child->tech_name;
-        //int dummy_nodes_added = 0;
-        while (current_parent_node->depth + 1 < child->depth) {
-            // there is at least one column gap beween the horizontal positions
-            // of this node and this child node.
-            //
-            // to fill the gap visually, create dummy node(s) in the columns
-            // between them.
-            //DebugLogger() << "next column depth: " << current_parent_node->depth + 1
-            //                       << "  child_depth: " << child->depth;
-            //DebugLogger() << "current_parent_node: " << current_parent_node
-            //                       << " child: " << child;
-            auto dummy_node = new Node(current_parent_node, child, nodes);
-            //DebugLogger() << "new dummy node depth: " << dummy_node->depth;
-            current_parent_node = dummy_node;
-            //++dummy_nodes_added;
-        }
-        //DebugLogger() << "done adding dummy nodes.  current_parent node depth + 1: " << current_parent_node->depth + 1 << "  child depth: " << child->depth;
-        //if (dummy_nodes_added > 0) {
-        //    DebugLogger() << "added " << dummy_nodes_added << " dummy nodes for from tech " << tech_name;
-        //}
-
-        //DebugLogger() << " node now has " << children.size() << " children:";
-        //DebugLogger().flush();
-        //for (Node* child : children) {
-        //    DebugLogger() << "      child: " << child << " with tech: " << child->tech_name;
-        //}
     }
 }
 

@@ -153,7 +153,7 @@ public:
     auto operator<(Node const & y) const -> bool;
 
 private:
-    Node(Node* parent, Node* child, std::vector<Node*>& nodes);
+    Node(Node* parent, Node* child);
 
     auto Wobble(Column & column) -> bool;
 
@@ -162,8 +162,6 @@ private:
     void fillDepth();
 
     auto CalculateFamilyDistance(int row) -> double;
-
-    void CreatePlaceHolder(std::vector<Node*>& nodes);
 
     void DoLayout(std::vector<Column> & row_index, bool cat);
 
