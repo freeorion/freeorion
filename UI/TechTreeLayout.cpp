@@ -4,7 +4,7 @@
 #include "../util/Logger.h"
 #include <algorithm>
 #include <cmath>
-#include <boost/range/algorithm/replace.hpp>
+#include <boost/range/algorithm.hpp>
 
 namespace  {
     const int NODE_CELL_HEIGHT = 2;
@@ -135,6 +135,9 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
         }
     }
 
+    // 3. Sort nodes by depth level, category and name
+    boost::range::sort(m_nodes, [](Node* l, Node* r) -> bool { return *l < *r; });
+
     // find max node depth
     unsigned int max_node_depth = 0;
     for (Node* node : m_nodes)
@@ -146,10 +149,6 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
         assert((node->depth >= 0) && (node->depth < static_cast<int>(tree_layers.size())));
         tree_layers[node->depth].push_back(node);
     }
-
-    // Sort nodes within each layer
-    for (auto& layer : tree_layers)
-        std::sort(layer.begin(), layer.end(), [](Node* l, Node* r) -> bool { return *l < *r; });
 
     //4. do layout
     std::vector<Column> row_index = std::vector<Column>(tree_layers.size());
