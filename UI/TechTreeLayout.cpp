@@ -108,13 +108,12 @@ TechTreeLayout::~TechTreeLayout() {
 void TechTreeLayout::DoLayout(double column_width, double row_height, double x_margin) {
     assert(column_width > 0 && row_height > 0);
     double internal_height = row_height / NODE_CELL_HEIGHT; // node has NODE_CELL_HEIGHT rows internally
-    //1. set all node depths from root parents
+    // 1. Set depth of all nodes
     for (Node* node : m_nodes)
-        if (node->parents.empty())
-            node->SetDepthRecursive(0);    // also sets all children's depths
+         node->fillDepth();
 
     // find max node depth
-    int max_node_depth = 0;
+    unsigned int max_node_depth = 0;
     for (Node* node : m_nodes)
         max_node_depth = std::max(max_node_depth, node->depth);
 
@@ -505,11 +504,11 @@ void TechTreeLayout::Node::AddChild(Node* node) {
     }
 }
 
-void TechTreeLayout::Node::SetDepthRecursive(int depth) {
-    this->depth = std::max(depth, this->depth);
-    // set children's depths
-    for (Node* node : children)
-        node->SetDepthRecursive(this->depth + 1);
+void TechTreeLayout::Node::fillDepth() {
+    for (Node* child : children) {
+        child->depth = std::max(child->depth, this->depth + 1);
+        child->fillDepth();
+    }
 }
 
 void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*>& nodes) {
@@ -583,7 +582,7 @@ void TechTreeLayout::Node::DoLayout(std::vector<Column>& row_index, bool cat) {
             count++;
         }
     }
-    if (static_cast<int>(row_index.size()) < depth + 1) row_index.resize(depth + 1);
+    if (row_index.size() < depth + 1) row_index.resize(depth + 1);
 
     // if any parents or children have been placed, put this node in next free
     // space after the ideal node.  if no parents or children have been placed,

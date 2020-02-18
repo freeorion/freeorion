@@ -159,7 +159,7 @@ private:
 
     void AddChild(Node* node);
 
-    void SetDepthRecursive(int depth);
+    void fillDepth();
 
     auto CalculateFamilyDistance(int row) -> double;
 
@@ -175,8 +175,7 @@ private:
 
     std::vector<Node*> children;
 
-    //! depth 1 available at beginning 2 one requisite etc
-    int depth = -1;
+    unsigned int depth = 1;
 
     //! layout row, every node is organized in a straight tabelle system
     int row = -1;
