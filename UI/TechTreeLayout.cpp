@@ -8,15 +8,8 @@
 namespace  {
     const int NODE_CELL_HEIGHT = 2;
     const int LINE_CELL_HEIGHT = 1;
+}
 
-///////////////////////////
-// struct NodePointerCmp //
-///////////////////////////
-    struct NodePointerCmp {
-        bool operator()(const TechTreeLayout::Node* x, const TechTreeLayout::Node* y) const
-        { return x && y && (*x) < (*y); }
-    };
-} //namespace
 
 //////////////////
 // class Column //
@@ -139,8 +132,7 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
     }
     // sort within each depth column
     for (auto& level : nodes_at_each_depth)
-    { std::sort(level.begin(), level.end(), NodePointerCmp()); }
-
+        std::sort(level.begin(), level.end(), [](Node* l, Node* r) -> bool { return *l < *r; });
 
     //4. do layout
     std::vector<Column> row_index = std::vector<Column>(nodes_at_each_depth.size());
