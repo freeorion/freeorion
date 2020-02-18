@@ -512,7 +512,7 @@ def set_planet_production_and_research_specials(focus_manager):
 def set_planet_protection_foci(focus_manager):
     """Assess and set protection foci"""
     universe = fo.getUniverse()
-    for pid, pinfo in focus_manager.raw_planet_info.items():
+    for pid, pinfo in list(focus_manager.raw_planet_info.items()):
         planet = pinfo.planet
         if PROTECTION in planet.availableFoci and assess_protection_focus(pinfo):
             current_focus = planet.focus
@@ -689,7 +689,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
         target_pp -= (ii - ri)
 
     # Any planet still raw is set to industry
-    for pid in focus_manager.raw_planet_info.keys():
+    for pid in list(focus_manager.raw_planet_info.keys()):
         focus_manager.bake_future_focus(pid, INDUSTRY, False)
 
 
