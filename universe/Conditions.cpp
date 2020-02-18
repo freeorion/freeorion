@@ -6409,6 +6409,17 @@ EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile,
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
+EmpireStockpileValue::EmpireStockpileValue(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                                           ResourceType stockpile,
+                                           std::unique_ptr<ValueRef::ValueRef<double>>&& low,
+                                           std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
+    Condition(),
+    m_empire_id(std::move(empire_id)),
+    m_stockpile(stockpile),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
 bool EmpireStockpileValue::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
@@ -6416,6 +6427,9 @@ bool EmpireStockpileValue::operator==(const Condition& rhs) const {
         return false;
 
     const EmpireStockpileValue& rhs_ = static_cast<const EmpireStockpileValue&>(rhs);
+
+    if (m_empire_id != rhs_.m_empire_id)
+        return false;
 
     if (m_stockpile != rhs_.m_stockpile)
         return false;
@@ -6590,6 +6604,9 @@ bool EmpireHasAdoptedPolicy::operator==(const Condition& rhs) const {
         return false;
 
     const EmpireHasAdoptedPolicy& rhs_ = static_cast<const EmpireHasAdoptedPolicy&>(rhs);
+
+    if (m_empire_id != rhs_.m_empire_id)
+        return false;
 
     CHECK_COND_VREF_MEMBER(m_name)
 

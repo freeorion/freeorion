@@ -1095,8 +1095,8 @@ struct FO_COMMON_API EmpireHasAdoptedPolicy final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
     unsigned int GetCheckSum() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1994,8 +1994,17 @@ template <typename Archive>
 void EmpireStockpileValue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
+        & BOOST_SERIALIZATION_NVP(m_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_stockpile)
         & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high)
+        & BOOST_SERIALIZATION_NVP(m_high);
+}
+
+template <class Archive>
+void EmpireHasAdoptedPolicy::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
+        & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
