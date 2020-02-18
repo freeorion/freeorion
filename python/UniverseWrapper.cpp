@@ -199,7 +199,8 @@ namespace {
     bool ValidDesignHullAndParts(const std::string& hull, boost::python::list parts_list)
     {
         std::vector<std::string> parts;
-        for (size_t i = 0; i < boost::python::len(parts_list); i++)
+        const int list_length = boost::python::len(parts_list);
+        for (int i = 0; i < list_length; i++)
             parts.push_back(boost::python::extract<std::string>(parts_list[i]));
         return ShipDesign::ValidDesign(hull, parts);
     }
