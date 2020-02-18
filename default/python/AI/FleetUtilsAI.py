@@ -26,6 +26,10 @@ def stats_meet_reqs(stats, requirements):
     :rtype: bool
     """
     for key in requirements:
+        if key not in stats:  # skip requirements not related to stats
+            if key != "target_system":  # expected not to be in stats
+                warn("Requirement %s not in stats", key)
+            continue
         if stats.get(key, 0) < requirements[key]:
             return False
     return True

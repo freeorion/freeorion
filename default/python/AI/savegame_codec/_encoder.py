@@ -41,7 +41,7 @@ def build_savegame_string(use_compression=True):
     if use_compression:
         import base64
         import zlib
-        savegame_string = base64.b64encode(zlib.compress(savegame_string))
+        savegame_string = base64.b64encode(zlib.compress(six.ensure_binary(savegame_string, 'utf-8')))
     return savegame_string
 
 

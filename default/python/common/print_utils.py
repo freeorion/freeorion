@@ -113,7 +113,10 @@ class Bool(Base):
         super(Bool, self).__init__(name, description=description)
 
     def to_unicode(self, val):
-        return self.no_yes[val].decode('utf-8')
+        if six.PY2:
+            return self.no_yes[val].decode('utf-8')
+        else:
+            return self.no_yes[val]
 
 
 class Sequence(Text):
