@@ -136,7 +136,7 @@ def get_invasion_fleets():
         # Pass 2: for each target previously identified for base troopers, check that still qualifies and
         # check how many base troopers would be needed; if reasonable then queue up the troops and record this in
         # get_aistate().qualifyingTroopBaseTargets
-        for pid in aistate.qualifyingTroopBaseTargets.keys():
+        for pid in list(aistate.qualifyingTroopBaseTargets.keys()):
             planet = universe.getPlanet(pid)
             if planet and planet.owner == empire_id:
                 del aistate.qualifyingTroopBaseTargets[pid]

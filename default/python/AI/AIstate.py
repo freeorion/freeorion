@@ -986,7 +986,7 @@ class AIstate(object):
         universe = fo.getUniverse()
         empire_id = fo.empireID()
         for dct in [self.qualifyingTroopBaseTargets]:
-            for pid in dct.keys():
+            for pid in list(dct.keys()):
                 planet = universe.getPlanet(pid)
                 if planet and planet.ownedBy(empire_id):
                     del dct[pid]

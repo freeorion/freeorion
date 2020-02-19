@@ -1488,7 +1488,7 @@ class OrbitalColonizationManager(object):
         unaccounted_plans = dict(self._colonization_plans)
 
         # Check which plans still have valid bases assigned (possibly interrupted by combat last turn)
-        for pid in unaccounted_plans.keys():
+        for pid in list(unaccounted_plans.keys()):
             if unaccounted_plans[pid].base_assigned:
                 del unaccounted_plans[pid]
 
