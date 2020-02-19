@@ -164,18 +164,46 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
             layer_order.push_back(widest_layer_idx + offset);
     }
 
+    // 7. Place nodes on layer columns trying to place relative nodes close
+    //    together.
     std::vector<Column> row_index = std::vector<Column>(tree_layers.size());
-    // distribute tech nodes over the table, one column at a time
     for (int layer : layer_order) {
         std::string current_category;
         for (Node* node : tree_layers[layer]) {
+            if (node->row != -1)
+                continue;
+
+            // find average row index of node's children and parents
+
+            // 2. place node
+            int index = 0;
+            int count = 0;
+            //check children
+            for (auto child : node->children) {
+                if (child->row != -1) {
+                    index += child->row;
+                    count++;
+                }
+            }
+            //check parents
+            for (auto parent : node->parents) {
+                if (parent->row != -1) {
+                    index += parent->row;
+                    count++;
+                }
+            }
+
+            // if any parents or children have been placed, put this node in next free
+            // space after the ideal node.  if no parents or children have been placed,
+            // put node at start of row
+            int index_offset = (count != 0) ? index / count : 1;
+            row_index[node->depth].Place(row_index[node->depth].ClosestFreeIndex(index_offset, node), node);
+
             const Tech* node_tech = GetTech(node->tech_name);
-            const std::string& node_category = node_tech ? node_tech->Category() : "";
-            bool new_category = node_category != current_category;
-            node->DoLayout(row_index, new_category);
-            current_category = node_category;
+            current_category = node_tech ? node_tech->Category() : "";
         }
     }
+
     // optimize layout, every node gets a rating if moving would shorten the distance to it's family
     // if the movement is possible either if the place if free or the neighbour has the opposite wish
     bool movement = true;
@@ -468,38 +496,6 @@ void TechTreeLayout::Node::fillDepth() {
         child->depth = std::max(child->depth, this->depth + 1);
         child->fillDepth();
     }
-}
-
-void TechTreeLayout::Node::DoLayout(std::vector<Column>& row_index, bool cat) {
-    //assert(row_height > 0 && column_width > 0 && row_index != 0);
-    if (row != -1) return; //already done
-
-    // find average row index of node's children and parents
-
-    // 2. place node
-    int index = 0;
-    int count = 0;
-    //check children
-    for (int i = children.size(); i --> 0;) {
-        if (children[i]->row != -1) {
-            index += children[i]->row;
-            count++;
-        }
-    }
-    //check parents
-    for (int i = parents.size(); i --> 0;) {
-        if (parents[i]->row != -1) {
-            index += parents[i]->row;
-            count++;
-        }
-    }
-    if (row_index.size() < depth + 1) row_index.resize(depth + 1);
-
-    // if any parents or children have been placed, put this node in next free
-    // space after the ideal node.  if no parents or children have been placed,
-    // put node at start of row
-    int index_offset = (count != 0) ? index / count : 1;
-    row_index[depth].Place(row_index[depth].ClosestFreeIndex(index_offset, this), this);
 }
 
 void TechTreeLayout::Node::CreateEdges(double x_margin, double column_width, double row_height) {

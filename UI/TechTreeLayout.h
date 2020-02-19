@@ -163,8 +163,6 @@ private:
 
     auto CalculateFamilyDistance(int row) -> double;
 
-    void DoLayout(std::vector<Column> & row_index, bool cat);
-
     void CalculateCoordinate(double column_width, double row_height);
 
     void CreateEdges(double x_margin, double column_width, double row_height);
