@@ -16,6 +16,17 @@ namespace  {
 //////////////////
 // class Column //
 //////////////////
+class TechTreeLayout::Column {
+public:
+    auto Fit(int index, TechTreeLayout::Node* node) -> bool;
+
+    auto ClosestFreeIndex(int index, TechTreeLayout::Node* node) -> int;
+
+    auto Place(int index, TechTreeLayout::Node* node) -> bool;
+
+    std::vector<TechTreeLayout::Node*> column;
+};
+
 bool TechTreeLayout::Column::Fit(int index, TechTreeLayout::Node* node) {
     if (0 >= index)
         return false;
