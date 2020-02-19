@@ -161,7 +161,7 @@ private:
 
     auto CalculateFamilyDistance(int row) -> double;
 
-    void CalculateCoordinate(double column_width, double row_height);
+    void place(double column_width, double row_height);
 
     void CreateEdges(double x_margin, double column_width, double row_height);
 

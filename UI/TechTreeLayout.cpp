@@ -109,7 +109,6 @@ TechTreeLayout::~TechTreeLayout() {
  */
 void TechTreeLayout::DoLayout(double column_width, double row_height, double x_margin) {
     assert(column_width > 0 && row_height > 0);
-    double internal_height = row_height / NODE_CELL_HEIGHT; // node has NODE_CELL_HEIGHT rows internally
     // 1. Set depth of all nodes
     for (Node* node : m_nodes)
          node->fillDepth();
@@ -166,7 +165,7 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
 
     // 7. Place nodes on layer columns trying to place relative nodes close
     //    together.
-    std::vector<Column> row_index = std::vector<Column>(tree_layers.size());
+    std::vector<Column> columns = std::vector<Column>(tree_layers.size());
     for (int layer : layer_order) {
         std::string current_category;
         for (Node* node : tree_layers[layer]) {
@@ -197,7 +196,7 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
             // space after the ideal node.  if no parents or children have been placed,
             // put node at start of row
             int index_offset = (count != 0) ? index / count : 1;
-            row_index[node->depth].Place(row_index[node->depth].ClosestFreeIndex(index_offset, node), node);
+            columns[node->depth].Place(columns[node->depth].ClosestFreeIndex(index_offset, node), node);
 
             const Tech* node_tech = GetTech(node->tech_name);
             current_category = node_tech ? node_tech->Category() : "";
@@ -211,7 +210,7 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
         movement = false;
 
         for (auto node : m_nodes) {
-            auto& column = row_index[node->depth];
+            auto& column = columns[node->depth];
 
             double dist = node->CalculateFamilyDistance(node->row);
 
@@ -278,29 +277,25 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
         continue_shuffle:;
     }
 
-    //4.d. count used rows and columns
-    unsigned int column_count = row_index.size();
+    // 8. Place nodes on canvas
+    double internal_height = row_height / NODE_CELL_HEIGHT; // node has NODE_CELL_HEIGHT rows internally
+    for (Node* node : m_nodes)
+         node->place(column_width, internal_height);
+
+    // 9. Count used rows and columns
+    unsigned int column_count = columns.size();
     unsigned int row_count = 0;
-    for (int i = row_index.size(); i-->0;) {
-        unsigned int cur_row_count = 0;
-        for (unsigned int j = row_index[i].column.size(); j --> 0; ) {
-            if (row_index[i].column[j]) {
-                cur_row_count = j;
-                break;
-            }
-        }
+    for (auto& column : columns) {
+        unsigned int cur_row_count = boost::range::count_if(column.column, [](Node* e) -> bool { return e; });
         row_count = std::max(row_count, cur_row_count);
     }
-    //4.e. set size
-    for (int i = m_nodes.size(); i --> 0 ; )
-         m_nodes[i]->CalculateCoordinate(column_width, internal_height);
 
     m_width = column_count * column_width;
     m_height = row_count * internal_height;
 
-    //5. create edges
-    for (int i = m_nodes.size(); i --> 0 ; )
-        m_nodes[i]->CreateEdges(x_margin, column_width, internal_height);
+    // 10. create edges
+    for (Node* node : m_nodes)
+        node->CreateEdges(x_margin, column_width, internal_height);
 }
 
 const GG::X TechTreeLayout::GetWidth() const
@@ -405,7 +400,7 @@ const GG::X TechTreeLayout::Node::GetX() const
 const GG::Y TechTreeLayout::Node::GetY() const
 { return GG::Y(static_cast<int>(m_y)); }
 
-void TechTreeLayout::Node::CalculateCoordinate(double column_width, double row_height) {
+void TechTreeLayout::Node::place(double column_width, double row_height) {
     m_x = (static_cast<double>(depth) - 0.5) * column_width;
     m_y = row * row_height;
 }
@@ -503,7 +498,7 @@ void TechTreeLayout::Node::CreateEdges(double x_margin, double column_width, dou
         //find next real node and create coordinates
         Node* next = children[i];
         while (next->place_holder) {
-            next->CalculateCoordinate(column_width, row_height);
+            next->place(column_width, row_height);
             next = next->primary_child;
         }
         const std::string& to = next->tech_name;
