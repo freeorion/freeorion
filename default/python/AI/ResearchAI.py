@@ -1,3 +1,4 @@
+from __future__ import division
 import math
 import random
 from functools import partial
