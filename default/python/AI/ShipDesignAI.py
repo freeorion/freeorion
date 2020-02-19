@@ -1740,7 +1740,7 @@ class WarShipDesigner(MilitaryShipDesignerBaseClass):
 
     def _calc_rating_for_name(self):
         self.update_stats(ignore_species=True)
-        return self.design_stats.structure*self._total_dmg()*(1+self.design_stats.shields//10)
+        return self.design_stats.structure*self._total_dmg()*(1+self.design_stats.shields/10)
 
 
 class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
@@ -1810,7 +1810,7 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
         return best_rating, best_partlist
 
     def _calc_rating_for_name(self):
-        base_rating = self.design_stats.structure*self._total_dmg()*(1+self.design_stats.shields//10)
+        base_rating = self.design_stats.structure*self._total_dmg()*(1+self.design_stats.shields/10)
         fighter_rating = self.design_stats.fighter_capacity * self.design_stats.fighter_launch_rate * (.1+self.design_stats.fighter_damage)
         return base_rating + fighter_rating
 
