@@ -155,8 +155,6 @@ public:
 private:
     Node(Node* parent, Node* child);
 
-    auto Wobble(Column & column) -> bool;
-
     void AddChild(Node* node);
 
     void fillDepth();

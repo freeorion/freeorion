@@ -209,13 +209,75 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
     bool movement = true;
     while (movement) {
         movement = false;
-        for (unsigned int i = m_nodes.size(); i --> 0;) {
-            if (m_nodes[i]->Wobble(row_index[m_nodes[i]->depth])) {
-                movement = true;
-                break;
+
+        for (auto node : m_nodes) {
+            auto& column = row_index[node->depth];
+
+            double dist = node->CalculateFamilyDistance(node->row);
+
+            //try to find free space arround optimal position
+            int closest_free_index = column.ClosestFreeIndex(static_cast<int>(node->row + dist + 0.5), node);
+
+            //check if that space is better
+            double improvement = std::abs(dist)
+                               - std::abs(node->CalculateFamilyDistance(closest_free_index));
+
+            if (improvement > 0.25) {
+                if (column.Fit(closest_free_index, node)) {
+                    for (int i = node->row + node->weight; i --> node->row; )
+                        column.column[i] = nullptr;
+
+                    column.Place(closest_free_index, node);
+
+                    movement = true;
+                    goto continue_shuffle;
+                }
+            }
+
+            // no free space found, but might be able to swap positions with another node
+
+            // find neighbour
+            int direction = (dist > 0) ? 1 : -1;
+            Node* neighbour_node = nullptr;
+            int pivot = node->row;
+
+            // find next node adjacent to node in requested direction
+            while (!neighbour_node || neighbour_node == node) {
+                if (pivot < 0 || pivot >= column.column.size()) {
+                    neighbour_node = nullptr;
+                    break;
+                }
+
+                neighbour_node = column.column[pivot];
+                pivot += direction;
+            }
+
+            // try to switch node with neighbour node
+            if (neighbour_node) {
+                improvement = std::abs(dist)
+                            + std::abs(neighbour_node->CalculateFamilyDistance(neighbour_node->row))
+                            - std::abs(neighbour_node->CalculateFamilyDistance(node->row))
+                            - std::abs(node->CalculateFamilyDistance(neighbour_node->row));
+
+                if (improvement > 0.25) { // 0 produces endless loop
+                    if (node->weight == neighbour_node->weight) {
+                        for (int i = 0; i < node->weight; i++) {
+                            column.column[node->row + i] = neighbour_node;
+                            column.column[neighbour_node->row + i] = node;
+                        }
+
+                        std::swap(node->row, neighbour_node->row);
+
+                        movement = true;
+                        goto continue_shuffle;
+                    }
+                }
             }
         }
+
+        continue_shuffle:;
     }
+
     //4.d. count used rows and columns
     unsigned int column_count = row_index.size();
     unsigned int row_count = 0;
@@ -362,69 +424,6 @@ double TechTreeLayout::Node::CalculateFamilyDistance(int row) {
             distance += std::abs(node->row - row);
 
     return distance / familysize;
-}
-
-bool TechTreeLayout::Node::Wobble(Column& column) {
-    double dist, new_dist, s_dist, new_s_dist;
-    dist = CalculateFamilyDistance(row);
-
-    //try to find free space arround optimal position
-    int closest_free_index = column.ClosestFreeIndex(static_cast<int>(row + dist + 0.5), this);
-
-    //check if that space is better
-    new_dist = CalculateFamilyDistance(closest_free_index);
-    double improvement = std::abs(dist) - std::abs(new_dist);
-    if (improvement > 0.25) {
-        if (column.Fit(closest_free_index, this)) {
-            for (int i = row + weight; i --> row; )
-                column.column[i] = nullptr;
-
-            column.Place(closest_free_index, this);
-
-            //std::cout << m_name << ":" << dist << " -> " << new_dist <<"\n";
-            return true;
-        }
-    }
-
-    // no free space found, but might be able to swap positions with another node
-
-    // find neighbour
-    int direction = (dist > 0) ? 1 : -1;
-    Node* n = nullptr;
-    int i = row;
-
-    // find next node adjacent to node this in requested direction
-    while (!n || n == this) {
-        if (i < 0 || i >= static_cast<int>(column.column.size())) {
-            n = nullptr;
-            break;
-        }
-
-        n = column.column[i];
-        i += direction;
-    }
-
-    // try to switch node with neighbour node
-    if (n) {
-        s_dist     = n->CalculateFamilyDistance(n->row);
-        new_s_dist = n->CalculateFamilyDistance(   row);
-        new_dist   =    CalculateFamilyDistance(n->row);
-        improvement = std::abs(dist) + std::abs(s_dist) - std::abs(new_dist) - std::abs(new_s_dist);
-        if (improvement > 0.25) { // 0 produces endless loop
-            if (weight == n->weight) {
-                for (int i = 0; i < weight; i++) {
-                    column.column[row + i] = n;
-                    column.column[n->row + i] = this;
-                }
-                int t_row = row;
-                row = n->row;
-                n->row = t_row;
-                //std::cout << "(S)" << m_name  << ":" << dist << " -> " << new_dist << " & "<< n->m_name  << ":" << s_dist << " -> " << new_s_dist << "\n";
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 bool TechTreeLayout::Node::operator<(const TechTreeLayout::Node& y) const {
