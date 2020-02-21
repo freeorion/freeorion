@@ -2403,14 +2403,14 @@ namespace {
         // second-order visibility sharing (but only through allies with lower
         // empire id)
         auto input_eov_copy = empire_object_visibility;
-        // unused variable auto input_eovs_copy = empire_object_visible_specials;
+        auto input_eovs_copy = empire_object_visible_specials;
         Universe& universe = GetUniverse();
 
         for (auto& empire_entry : Empires()) {
             int empire_id = empire_entry.first;
             // output maps for this empire
             auto& obj_vis_map = empire_object_visibility[empire_id];
-            // unused variable Universe::ObjectSpecialsMap& obj_specials_map = empire_object_visible_specials[empire_id];
+            auto& obj_specials_map = empire_object_visible_specials[empire_id];
 
             for (auto allied_empire_id : Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_id, DIPLO_ALLIED)) {
                 if (empire_id == allied_empire_id) {
@@ -2420,7 +2420,7 @@ namespace {
 
                 // input maps for this ally empire
                 auto& allied_obj_vis_map = input_eov_copy[allied_empire_id];
-                // unused variable Universe::ObjectSpecialsMap& allied_obj_specials_map = input_eovs_copy[allied_empire_id];
+                auto& allied_obj_specials_map = input_eovs_copy[allied_empire_id];
 
                 // add allied visibilities to outer-loop empire visibilities
                 // whenever the ally has better visibility of an object
@@ -2436,6 +2436,14 @@ namespace {
                         if (auto ship = Objects().get<Ship>(obj_id))
                             universe.SetEmpireKnowledgeOfShipDesign(ship->DesignID(), empire_id);
                     }
+                }
+
+                // add allied visibilities of specials to outer-loop empire
+                // visibilities as well
+                for (const auto& allied_obj_special_vis_pair : allied_obj_specials_map) {
+                    int obj_id = allied_obj_special_vis_pair.first;
+                    const auto& specials = allied_obj_special_vis_pair.second;
+                    obj_specials_map[obj_id].insert(specials.begin(), specials.end());
                 }
             }
         }
