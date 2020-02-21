@@ -1100,8 +1100,8 @@ struct FO_COMMON_API EmpireHasAdoptedPolicy final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name = nullptr;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id = nullptr;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
