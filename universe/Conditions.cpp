@@ -6609,36 +6609,6 @@ bool EmpireHasAdoptedPolicy::operator==(const Condition& rhs) const {
     return true;
 }
 
-namespace {
-    struct EmpireHasAdoptedPolicySimpleMatch {
-        EmpireHasAdoptedPolicySimpleMatch(const std::string& name, int empire_id) :
-            m_name(name),
-            m_empire_id(empire_id)
-        {}
-
-        bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
-            if (!candidate)
-                return false;
-
-            int actual_empire_id = m_empire_id;
-            if (m_empire_id == ALL_EMPIRES) {
-                if (candidate->Unowned())
-                    return false;
-                actual_empire_id = candidate->Owner();
-            }
-
-            const Empire* empire = GetEmpire(actual_empire_id);
-            if (!empire)
-                return false;
-
-            return empire->PolicyAdopted(m_name);
-        }
-
-        std::string m_name;
-        int m_empire_id;
-    };
-}
-
 void EmpireHasAdoptedPolicy::Eval(const ScriptingContext& parent_context,
                                   ObjectSet& matches, ObjectSet& non_matches,
                                   SearchDomain search_domain/* = NON_MATCHES*/) const
@@ -6647,10 +6617,24 @@ void EmpireHasAdoptedPolicy::Eval(const ScriptingContext& parent_context,
                              (!m_name || m_name->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
-        // evaluate number limits once, use to match all candidates
-        std::string name = m_name ? m_name->Eval(parent_context) : "";
-        int empire_id = m_empire_id->Eval(parent_context);  // if m_empire_id not set, default to local candidate's owner, which is not target invariant
-        EvalImpl(matches, non_matches, search_domain, EmpireHasAdoptedPolicySimpleMatch(name, empire_id));
+        // If m_empire_id is specified (not null), and all parameters are
+        // local-candidate-invariant, then matching for this condition doesn't
+        // need to check each candidate object separately for matching, so
+        // don't need to use EvalImpl and can instead do a simpler transfer
+        bool match = Match(parent_context);
+
+        // transfer objects to or from candidate set, according to whether the
+        // specified empire meter was in the requested range
+        if (match && search_domain == NON_MATCHES) {
+            // move all objects from non_matches to matches
+            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
+            non_matches.clear();
+        } else if (!match && search_domain == MATCHES) {
+            // move all objects from matches to non_matches
+            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+            matches.clear();
+        }
+
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -6681,16 +6665,37 @@ std::string EmpireHasAdoptedPolicy::Dump(unsigned short ntabs) const {
 }
 
 bool EmpireHasAdoptedPolicy::Match(const ScriptingContext& local_context) const {
+    int empire_id = ALL_EMPIRES;
     auto candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger() << "EmpireHasAdoptedPolicy::Match passed no candidate object";
+    // if m_empire_id not set, default to candidate object's owner
+    if (!m_empire_id && !candidate) {
+        ErrorLogger() << "EmpireHasAdoptedPolicy::Match passed no candidate object but expects one due to having no empire id valueref specified and thus wanting to use the local candidate's owner as the empire id";
+        return false;
+
+    } else if (m_empire_id && !candidate && !m_empire_id->LocalCandidateInvariant()) {
+        ErrorLogger() << "EmpireHasAdoptedPolicy::Match passed no candidate object but but empire id valueref references the local candidate";
+        return false;
+
+    } else if (!m_empire_id && candidate) {
+        // default to candidate's owner if no empire id valueref is specified
+        empire_id = candidate->Owner();
+
+    } else if (m_empire_id) {
+        // either candidate exists or m_empire_id is local-candidate-invariant (or both)
+        empire_id = m_empire_id->Eval(local_context);
+
+    } else {
+        ErrorLogger() << "EmpireHasAdoptedPolicy::Match reached unexpected default case for candidate and empire id valueref existance";
         return false;
     }
-    int empire_id = (m_empire_id ? m_empire_id->Eval(local_context) : candidate->Owner());
-    if (empire_id == ALL_EMPIRES)
-        return false;
+
+    const Empire* empire = GetEmpire(empire_id);
+    if (!empire)
+         return false;
+
     std::string name = m_name ? m_name->Eval(local_context) : "";
-    return EmpireHasAdoptedPolicySimpleMatch(name, empire_id)(candidate);
+
+    return empire->PolicyAdopted(name);
 }
 
 void EmpireHasAdoptedPolicy::SetTopLevelContent(const std::string& content_name) {
