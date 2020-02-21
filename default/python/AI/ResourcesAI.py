@@ -9,6 +9,7 @@ have their future focus decided.
 """
 # Note: The algorithm is not stable with respect to pid order.  i.e. Two empire with
 #       exactly the same colonies, but different pids may make different choices.
+from __future__ import division
 from logging import info, warn, debug
 from operator import itemgetter
 
