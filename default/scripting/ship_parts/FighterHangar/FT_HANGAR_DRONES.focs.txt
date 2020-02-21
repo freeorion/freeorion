@@ -1,0 +1,34 @@
+Part
+    name = "FT_HANGAR_DRONES"
+    description = "FT_HANGAR_DRONES_DESC"
+    exclusions = [ "FT_HANGAR_0" "FT_HANGAR_1" "FT_HANGAR_2" "FT_HANGAR_3" "FT_HANGAR_4" ]
+    class = FighterHangar
+    capacity = 36
+    damage = 1
+    combatTargets = And [
+        // Attacks blindly everything moving non-friendly objects
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        Or [
+           [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+           Fighter
+        ]
+    ]
+    mountableSlotTypes = Core
+    buildcost = 120 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 1
+    tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
+    location = OwnedBy empire = Source.Owner
+    effectsgroups = [
+        EffectsGroup
+            scope = [[EMPIRE_OWNED_SHIP_WITH_PART(FT_BAY_1)]]
+            activation = Source
+            effects = [
+                SetCapacity partname = "FT_BAY_1" value = 6
+                SetMaxCapacity partname = "FT_BAY_1" value = 6
+            ]
+    ]
+    icon = "icons/ship_parts/fighters-1.png"
+
+#include "/scripting/ship_parts/targeting.macros"
+#include "/scripting/common/upkeep.macros"
+#include "/scripting/techs/techs.macros"
