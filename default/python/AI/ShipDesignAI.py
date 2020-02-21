@@ -42,6 +42,7 @@ global variables:
 # TODO: Implement a better system for the new weapon upgrade functionality:
 #       - _calculate_weapon_strength() may be removed
 #       - Filtering the weapon parts must be updated: current cache does not consider tech upgrades, weapons are ignored
+from __future__ import division
 import copy
 import math
 from collections import Counter, defaultdict
@@ -745,7 +746,7 @@ class ShipDesigner(object):
         self.partnames = []         # list of partnames (string)
         self.parts = []             # list of actual part objects
         self.design_stats = DesignStats()
-        self.production_cost = 9999
+        self.production_cost = 9999.0
         self.production_time = 1
         self.pid = INVALID_ID               # planetID for checks on production cost if not LocationInvariant.
         self.additional_specifications = AdditionalSpecifications()
@@ -1437,7 +1438,7 @@ class ShipDesigner(object):
 
         :return: summed up damage vs shielded enemy
         """
-        total_dmg = 0
+        total_dmg = 0.0
         for dmg, count in self.design_stats.attacks.items():
             total_dmg += max(0, dmg - self.additional_specifications.enemy_shields) * count
         return total_dmg
@@ -1447,7 +1448,7 @@ class ShipDesigner(object):
 
         :return: Total damage of the design (against no shields)
         """
-        total_dmg = 0
+        total_dmg = 0.0
         for dmg, count in self.design_stats.attacks.items():
             total_dmg += dmg * count
         return total_dmg
@@ -1513,14 +1514,6 @@ class ShipDesigner(object):
         else:
             return self.production_cost / FleetUtilsAI.get_fleet_upkeep()  # base cost
 
-    def _shield_factor(self):
-        """Calculate the effective factor by which structure is increased by shields.
-
-        :rtype: float
-        """
-        enemy_dmg = self.additional_specifications.max_enemy_weapon_strength
-        return max(enemy_dmg / max(0.01, enemy_dmg - self.design_stats.shields), 1)
-
     def _effective_fuel(self):
         """Return the number of turns the ship can move without refueling.
 
@@ -1536,14 +1529,6 @@ class ShipDesigner(object):
         """
         return min(self.additional_specifications.expected_turns_till_fight * self.design_stats.organic_growth,
                    self.design_stats.maximum_organic_growth)
-
-    def _remaining_growth(self):
-        """Get growth potential after _expected_organic_growth() took place.
-
-        :return: Remaining growth after _expected_organic_growth()
-        :rtype: float
-        """
-        return self.design_stats.maximum_organic_growth - self._expected_organic_growth()
 
     def _effective_mine_damage(self):
         """Return enemy mine damage corrected by self-repair-rate.
@@ -1650,11 +1635,6 @@ class MilitaryShipDesignerBaseClass(ShipDesigner):
         # To account for this, we need to maximize rating/cost_squared not rating/cost as usual.
         exponent = get_aistate().character.warship_adjusted_production_cost_exponent()
         return super(MilitaryShipDesignerBaseClass, self)._adjusted_production_cost()**exponent
-
-    def _effective_structure(self):
-        effective_structure = self.design_stats.structure + self._expected_organic_growth() + self._remaining_growth() / 5
-        effective_structure *= self._shield_factor()
-        return effective_structure
 
     def _speed_factor(self):
         return 1 + 0.005*(self.design_stats.speed - 85)
@@ -2174,7 +2154,7 @@ class KrillSpawnerShipDesigner(ShipDesigner):
         structure_factor = (1 + self.design_stats.structure - self._minimum_structure())**0.03  # nice to have but not too important
         fuel_factor = self._effective_fuel()
         speed_factor = 1 + (self.design_stats.speed - self._minimum_speed())**0.1
-        stealth_factor = 1 + (self.design_stats.stealth + self.design_stats.asteroid_stealth / 2)  # TODO: Adjust for enemy detection strength
+        stealth_factor = 1 + (self.design_stats.stealth + self.design_stats.asteroid_stealth // 2)  # TODO: Adjust for enemy detection strength
         detection_factor = self.design_stats.detection**1.5
         return (structure_factor * fuel_factor * speed_factor *
                 stealth_factor * detection_factor / self.production_cost)

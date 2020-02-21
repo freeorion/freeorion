@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import division
 import sys
 from collections import defaultdict
 from math import acos, ceil, cos, floor, pi, sin, sqrt
@@ -523,6 +524,10 @@ def disc_galaxy_calc_positions(positions, adjacency_grid, size, width):
 def cluster_galaxy_calc_positions(positions, adjacency_grid, size, width):
     """
     Calculate positions for the cluster galaxy shape.
+    :type positions: list
+    :type adjacency_grid: AdjacencyGrid
+    :type size: int
+    :type width: float
     """
     if size < 1:
         print("Cluster galaxy requested for less than 1 star", file=sys.stderr)
