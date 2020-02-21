@@ -6243,8 +6243,7 @@ bool EmpireMeterValue::operator==(const Condition& rhs) const {
 
     const EmpireMeterValue& rhs_ = static_cast<const EmpireMeterValue&>(rhs);
 
-    if (m_empire_id != rhs_.m_empire_id)
-        return false;
+    CHECK_COND_VREF_MEMBER(m_empire_id)
 
     if (m_meter != rhs_.m_meter)
         return false;
@@ -6428,8 +6427,7 @@ bool EmpireStockpileValue::operator==(const Condition& rhs) const {
 
     const EmpireStockpileValue& rhs_ = static_cast<const EmpireStockpileValue&>(rhs);
 
-    if (m_empire_id != rhs_.m_empire_id)
-        return false;
+    CHECK_COND_VREF_MEMBER(m_empire_id)
 
     if (m_stockpile != rhs_.m_stockpile)
         return false;
@@ -6605,9 +6603,7 @@ bool EmpireHasAdoptedPolicy::operator==(const Condition& rhs) const {
 
     const EmpireHasAdoptedPolicy& rhs_ = static_cast<const EmpireHasAdoptedPolicy&>(rhs);
 
-    if (m_empire_id != rhs_.m_empire_id)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_name)
 
     return true;
@@ -6747,9 +6743,7 @@ bool OwnerHasTech::operator==(const Condition& rhs) const {
 
     const OwnerHasTech& rhs_ = static_cast<const OwnerHasTech&>(rhs);
 
-    if (m_empire_id != rhs_.m_empire_id)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_name)
 
     return true;
@@ -6898,9 +6892,7 @@ bool OwnerHasBuildingTypeAvailable::operator==(const Condition& rhs) const {
 
     const OwnerHasBuildingTypeAvailable& rhs_ = static_cast<const OwnerHasBuildingTypeAvailable&>(rhs);
 
-    if (m_empire_id != rhs_.m_empire_id)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_name)
 
     return true;
@@ -7038,9 +7030,7 @@ bool OwnerHasShipDesignAvailable::operator==(const Condition& rhs) const {
 
     const OwnerHasShipDesignAvailable& rhs_ = static_cast<const OwnerHasShipDesignAvailable&>(rhs);
 
-    if (m_empire_id != rhs_.m_empire_id)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_id)
 
     return true;
@@ -7181,12 +7171,9 @@ bool OwnerHasShipPartAvailable::operator==(const Condition& rhs) const {
     if (typeid(*this) != typeid(rhs))
         return false;
 
-    const OwnerHasShipPartAvailable& rhs_ =
-        static_cast<const OwnerHasShipPartAvailable&>(rhs);
+    const OwnerHasShipPartAvailable& rhs_ = static_cast<const OwnerHasShipPartAvailable&>(rhs);
 
-    if (m_empire_id != rhs_.m_empire_id)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_name)
 
     return true;
