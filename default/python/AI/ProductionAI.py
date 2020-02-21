@@ -1,3 +1,4 @@
+from __future__ import division
 import math
 import random
 from logging import debug, error, info, warn
@@ -599,7 +600,7 @@ def generate_production_orders():
                     for pid, _ in top_pilot_systems[sys_id]:
                         if pid not in queued_shipyard_locs:  # will catch it later if shipyard already present
                             need_yard[sys_id] = pid
-            if (not yard_locs) and len(asteroid_yards.values()) <= int(current_turn / 50):  # pylint: disable=dict-values-not-iterating; # PY_3_MIGRATION # not yet building & not enough current locs, find a location to build one
+            if (not yard_locs) and len(asteroid_yards.values()) <= int(current_turn // 50):  # pylint: disable=dict-values-not-iterating; # PY_3_MIGRATION # not yet building & not enough current locs, find a location to build one
                 colonizer_loc_choices = []
                 builder_loc_choices = []
                 bld_systems = set(asteroid_systems.keys()).difference(asteroid_yards.keys())  # pylint: disable=dict-keys-not-iterating; # PY_3_MIGRATION
@@ -1206,7 +1207,7 @@ def generate_production_orders():
             loc = random.choice(build_choices)
             prod_time = best_design.productionTime(empire.empireID, loc)
             prod_cost = best_design.productionCost(empire.empireID, loc)
-            troopers_needed = max(0, int(min(0.99 + (current_turn/20.0 - total_available_troops)/max(2, prod_time - 1), total_military_ships/3 - total_troop_ships)))
+            troopers_needed = max(0, int(min(0.99 + (current_turn/20.0 - total_available_troops)/max(2, prod_time - 1), total_military_ships//3 - total_troop_ships)))
             ship_number = troopers_needed
             per_turn_cost = (float(prod_cost) / prod_time)
             if troopers_needed > 0 and total_pp > 3*per_turn_cost*queued_troop_ships and aistate.character.may_produce_troops():
