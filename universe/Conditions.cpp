@@ -6624,10 +6624,14 @@ namespace {
             if (!candidate)
                 return false;
 
-            if (candidate->Unowned())
-                return false;
+            int actual_empire_id = m_empire_id;
+            if (m_empire_id == ALL_EMPIRES) {
+                if (candidate->Unowned())
+                    return false;
+                actual_empire_id = candidate->Owner();
+            }
 
-            const Empire* empire = GetEmpire(m_empire_id);
+            const Empire* empire = GetEmpire(actual_empire_id);
             if (!empire)
                 return false;
 
@@ -6648,10 +6652,8 @@ void EmpireHasAdoptedPolicy::Eval(const ScriptingContext& parent_context,
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        std::shared_ptr<const UniverseObject> no_object;
-        ScriptingContext local_context(parent_context, no_object);
-        std::string name = m_name ? m_name->Eval(local_context) : "";
-        int empire_id = m_empire_id->Eval(local_context);   // if m_empire_id not set, default to local candidate's owner, which is not target invariant
+        std::string name = m_name ? m_name->Eval(parent_context) : "";
+        int empire_id = m_empire_id->Eval(parent_context);  // if m_empire_id not set, default to local candidate's owner, which is not target invariant
         EvalImpl(matches, non_matches, search_domain, EmpireHasAdoptedPolicySimpleMatch(name, empire_id));
     } else {
         // re-evaluate allowed turn range for each candidate object
