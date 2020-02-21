@@ -84,8 +84,8 @@ namespace {
 
     int EmpirePlayerID(int empire_id) {
         int player_id = AIClientApp::GetApp()->EmpirePlayerID(empire_id);
-        if (-1 == player_id)
-            DebugLogger() << "AIWrapper::EmpirePlayerID(" << std::to_string(empire_id) << ") - passed an invalid empire_id";
+        if (Networking::INVALID_PLAYER_ID == player_id)
+            DebugLogger() << "AIWrapper::EmpirePlayerID(" << empire_id << ") - passed an invalid empire_id";
         return player_id;
     }
 
@@ -342,6 +342,10 @@ namespace {
     int IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "IssueEnqueueBuildingProductionOrder : couldn't get empire with id " << empire_id;
+            return 0;
+        }
 
         if (!empire->ProducibleItem(BT_BUILDING, item_name, location_id)) {
             ErrorLogger() << "IssueEnqueueBuildingProductionOrder : specified item_name and location_id that don't indicate an item that can be built at that location";
@@ -362,6 +366,10 @@ namespace {
     int IssueEnqueueShipProductionOrder(int design_id, int location_id) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "IssueEnqueueShipProductionOrder : couldn't get empire with id " << empire_id;
+            return 0;
+        }
 
         if (!empire->ProducibleItem(BT_SHIP, design_id, location_id)) {
             ErrorLogger() << "IssueEnqueueShipProductionOrder : specified design_id and location_id that don't indicate a design that can be built at that location";
@@ -377,6 +385,10 @@ namespace {
     int IssueChangeProductionQuantityOrder(int queue_index, int new_quantity, int new_blocksize) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "IssueChangeProductionQuantityOrder : couldn't get empire with id " << empire_id;
+            return 0;
+        }
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
@@ -402,6 +414,10 @@ namespace {
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "IssueRequeueProductionOrder : couldn't get empire with id " << empire_id;
+            return 0;
+        }
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         if (old_queue_index < 0 || static_cast<int>(queue.size()) <= old_queue_index) {
@@ -430,6 +446,10 @@ namespace {
     int IssueDequeueProductionOrder(int queue_index) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "IssueDequeueProductionOrder : couldn't get empire with id " << empire_id;
+            return 0;
+        }
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
@@ -446,6 +466,10 @@ namespace {
     int IssuePauseProductionOrder(int queue_index, bool pause) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "IssuePauseProductionOrder : couldn't get empire with id " << empire_id;
+            return 0;
+        }
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
@@ -462,6 +486,10 @@ namespace {
     int IssueAllowStockpileProductionOrder(int queue_index, bool use_stockpile) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "IssueAllowStockpileProductionOrder : couldn't get empire with id " << empire_id;
+            return 0;
+        }
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
