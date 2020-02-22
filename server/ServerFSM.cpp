@@ -3328,15 +3328,13 @@ void WaitingForTurnEnd::SaveTimedoutHandler(const boost::system::error_code& err
 ProcessingTurn::ProcessingTurn(my_context c) :
     my_base(c),
     m_start(std::chrono::high_resolution_clock::now())
-{
+{ TraceLogger(FSM) << "(ServerFSM) ProcessingTurn"; }
+
+ProcessingTurn::~ProcessingTurn() {
     auto duration = std::chrono::high_resolution_clock::now() - m_start;
     DebugLogger(FSM) << "ProcessingTurn time: " << std::chrono::duration_cast<std::chrono::seconds>(duration).count() << " s";
-
-    TraceLogger(FSM) << "(ServerFSM) ProcessingTurn";
+    TraceLogger(FSM) << "(ServerFSM) ~ProcessingTurn";
 }
-
-ProcessingTurn::~ProcessingTurn()
-{ TraceLogger(FSM) << "(ServerFSM) ~ProcessingTurn"; }
 
 sc::result ProcessingTurn::react(const ProcessTurn& u) {
     TraceLogger(FSM) << "(ServerFSM) ProcessingTurn.ProcessTurn";
