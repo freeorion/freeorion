@@ -2583,7 +2583,13 @@ BUTTON_DISABLED
 Button Disabled
 
 SAVE_DISABLED_BROWSE_TEXT
-The Save Game button is disabled, either because this is a multiplayer game in which this client is neither Host nor Moderator, or because at the time this menu was opened at least one of the AIs had not yet finished submitting its moves for the turn (indicated by a green triangle status icon just to the left of its player-type icon in the Empires window).
+'''The Save Game button is disabled. This may be be because:
+
+-This is a multiplayer game in which this client is neither Host nor Moderator.
+
+-When this menu was opened at least one of the AIs had not yet finished submitting its moves for the turn (indicated by a green triangle status icon just to the left of its player-type icon in the Empires window).
+
+-Another save is ongoing.'''
 
 GAME_MENU_REALLY_CONCEDE
 Confirm conceding? This empire will be removed from the game.
