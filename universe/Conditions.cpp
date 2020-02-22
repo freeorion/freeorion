@@ -1420,7 +1420,6 @@ void RootCandidate::GetDefaultInitialCandidateObjects(const ScriptingContext& pa
         condition_non_targets.push_back(parent_context.condition_root_candidate);
 }
 
-
 unsigned int RootCandidate::GetCheckSum() const {
     unsigned int retval{0};
 
@@ -1564,10 +1563,10 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
+        names.reserve(m_names.size());
         // get all names from valuerefs
-        for (auto& name : m_names) {
+        for (auto& name : m_names)
             names.push_back(name->Eval(parent_context));
-        }
         EvalImpl(matches, non_matches, search_domain, HomeworldSimpleMatch(names));
     } else {
         // re-evaluate allowed names for each candidate object
@@ -4420,7 +4419,7 @@ void Enqueued::Eval(const ScriptingContext& parent_context,
             low = 1;
 
         // need to test each candidate separately using EvalImpl and EnqueuedSimpleMatch
-        // because the test check that something is enqueued at the candidate location
+        // because the test checks that something is enqueued at the candidate location
         EvalImpl(matches, non_matches, search_domain, EnqueuedSimpleMatch(m_build_type, name, design_id, 
                                                                           empire_id, low, high));
     } else {
@@ -9000,7 +8999,6 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
             matches.insert(matches.end(), non_matches.begin(), non_matches.end());
             non_matches.clear();
         }
-
 
     } else {
         // re-evaluate value and ranges for each candidate object
