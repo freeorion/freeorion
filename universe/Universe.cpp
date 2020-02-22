@@ -766,7 +766,8 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
 }
 
 void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, bool do_accounting) {
-    ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + std::to_string(objects_vec.size()) + " objects", true);
+    auto number_text = std::to_string(objects_vec.empty() ? m_objects.ExistingObjects().size() : objects_vec.size());
+    ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + number_text + " objects", true);
 
     // get all pointers to objects once, to avoid having to do so repeatedly
     // when iterating over the list in the following code
@@ -779,8 +780,6 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, boo
     }
 
     for (auto& obj : object_ptrs) {
-        int obj_id = obj->ID();
-
         // Reset max meters to DEFAULT_VALUE and current meters to initial value
         // at start of this turn
         obj->ResetTargetMaxUnpairedMeters();
@@ -790,7 +789,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, boo
             continue;
 
         auto& meters = obj->Meters();
-        auto& account_map = m_effect_accounting_map[obj_id];
+        auto& account_map = m_effect_accounting_map[obj->ID()];
         account_map.clear();    // remove any old accounting info. this should be redundant here.
         account_map.reserve(meters.size());
 
@@ -824,14 +823,12 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, boo
     // max at the start of the turn
     if (!m_effect_discrepancy_map.empty() && do_accounting) {
         for (auto& obj : object_ptrs) {
-            int obj_id = obj->ID();
-
             // check if this object has any discrepancies
-            auto dis_it = m_effect_discrepancy_map.find(obj_id);
+            auto dis_it = m_effect_discrepancy_map.find(obj->ID());
             if (dis_it == m_effect_discrepancy_map.end())
                 continue;   // no discrepancy, so skip to next object
 
-            auto& account_map = m_effect_accounting_map[obj_id];    // reserving space now should be redundant with previous manipulations
+            auto& account_map = m_effect_accounting_map[obj->ID()]; // reserving space now should be redundant with previous manipulations
 
             // apply all meters' discrepancies
             for (auto& entry : dis_it->second) {
@@ -844,7 +841,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, boo
                 if (!meter)
                     continue;
 
-                TraceLogger(effects) << "object " << obj_id << " has meter " << type
+                TraceLogger(effects) << "object " << obj->ID() << " has meter " << type
                                      << ": discrepancy: " << discrepancy << " and : " << meter->Dump();
 
                 meter->AddToCurrent(discrepancy);
@@ -865,11 +862,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, boo
     TraceLogger(effects) << "UpdateMeterEstimatesImpl after discrepancies and clamping objects:";
     for (auto& obj : object_ptrs)
         TraceLogger(effects) << obj->Dump();
-
 }
 
-void Universe::BackPropagateObjectMeters()
-{
+void Universe::BackPropagateObjectMeters() {
     for (const auto& obj : m_objects.all())
         obj->BackPropagateMeters();
 }
