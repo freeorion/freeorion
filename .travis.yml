@@ -1,46 +1,75 @@
+---
 stages:
   - lint
   - build
   - test
 
+_lint_python_common: &_lint_python_common
+  stage: lint
+  os: linux
+  dist: bionic
+  language: python
+  install:
+    - pip install flake8-putty==0.4.0
+  before_script:
+    - cd default/python
+  script:
+    - flake8
+    - python -m compileall -q .
+
+_build_cpp_common: &_build_cpp_common
+  stage: build
+  language: cpp
+  cache: ccache
+  install:
+    - mkdir -p $HOME/.ccache;
+    - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
+    - echo max_size = 200M >> $HOME/.ccache/ccache.conf
+    - ccache --version
+    - ccache --show-stats
+  before_script:
+    - mkdir build
+    - cd build
+  after_success:
+    - cmake --build . --config Release --target unittest
+  before_cache:
+    - ccache --clean
+    - ccache --show-stats
+
+_test_python_common: &_test_python_common
+  stage: test
+  os: linux
+  dist: bionic
+  language: python
+  install:
+    - pip install pytest==3.6.3
+  script:
+    - pytest
+
 jobs:
   include:
-    - stage: lint
-      os: linux
-      dist: bionic
-      language: python
-      python: 2.7.15
+    - name: Lint AI with Python 2.7
+      <<: *_lint_python_common
+      python: 2.7
       before_install:
-        - pip install flake8-putty==0.4.0
-      before_script:
-        - cd default/python
-      script:
-        - flake8
-        - python -m compileall -q .
-      env:
-        - NAME="Lint Python 2.7 script"
-    - stage: lint
-      os: linux
-      dist: bionic
-      language: python
+        - alias pip=/usr/bin/pip
+        - alias python=/usr/bin/python2
+
+    - name: Lint AI with Python 3.5
+      <<: *_lint_python_common
       python: 3.5
       before_install:
-        - python3 -m pip install flake8-putty==0.4.0
-      before_script:
-        - cd default/python
-      script:
-        - flake8
-        - python3 -m compileall -q .
-      env:
-        - NAME="Lint Python 3.5 script"
-    - stage: build
+        - alias pip=/usr/bin/pip3
+        - alias python=/usr/bin/python3
+
+    - name: Build C++ API documentation
+      stage: build
       os: linux
       dist: bionic
       language: shell
       services:
         - docker
       env:
-        - NAME="Build C++ API documentation"
         # Auth token to push API documentation
         - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
       before_install:
@@ -77,105 +106,56 @@ jobs:
         skip_cleanup: true
         on:
           branch: master
-    - stage: build
+
+    - name: Build FreeOrion on Ubunutu 18.04 (Bionic)
+      <<: *_build_cpp_common
       os: linux
       dist: bionic
-      language: cpp
       services:
         - docker
-      cache: ccache
-      env:
-        - NAME="Build FreeOrion"
       before_install:
-        - mkdir -p $HOME/.ccache;
-        - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
-        - echo max_size = 200M >> $HOME/.ccache/ccache.conf
-        - ccache --version
-        - ccache --show-stats
         - docker pull freeorion/freeorion-travis-build
-        # Add transparent cmake function to allow possible cross platform use of
-        # build sections.
         # mount ccache dir and set its environment variable
         # timeout before Travis kills jobs so that ccache is always at least partially populated
         - >
           function cmake {
               docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -v "${HOME}/.ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
           }
-      before_script:
-        - mkdir build
-        - cd build
       script:
         - cmake -DBUILD_TESTING=ON ..
         - cmake --build . -- -j 2
-      after_success:
-        - cmake --build . --target unittest
-      before_cache:
-        - ccache --clean
-        - ccache --show-stats
-    - stage: build
+
+    - name: Build FreeOrion on MacOS 10.12
+      <<: *_build_cpp_common
       os: osx
-      language: cpp
       osx_image: xcode8.3
       compiler: clang
-      cache: ccache
-      env:
-        - NAME="Build FreeOrion"
       before_install:
-        - export HOMEBREW_LOGS="~/homebrew-logs"
-        - export HOMEBREW_TEMP="~/homebrew-temp"
         - brew install ccache
         - export PATH="/usr/local/opt/ccache/libexec:$PATH"
-        - mkdir -p $HOME/.ccache;
-        - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
-        - echo max_size = 200M >> $HOME/.ccache/ccache.conf
-        - ccache --version
-        - ccache --show-stats
-        # Add transparent cmake function to allow possible cross platform use of
-        # build sections.
-        # mount ccache dir and set its environment variable
         # timeout before Travis kills jobs so that ccache is always at least partially populated
         - >
           function cmake {
               /usr/local/bin/gtimeout 40m /usr/local/bin/cmake $@
           }
-      before_script:
-        - mkdir build
-        - cd build
       script:
         - cmake -GXcode -DBUILD_TESTING=ON ..
         - cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
-      after_success:
-        - cmake --build . --config Release --target unittest
-      before_cache:
-        - ccache --clean
-        - ccache --show-stats
-    - stage: test
-      os: linux
-      dist: bionic
-      language: python
-      python: 2.7.15
+
+    - name: Unittest AI with Python 2.7
+      <<: *_test_python_common
+      python: 2.7
       before_install:
-        - pip install pytest==3.6.3
-      script:
-        - pytest
-      name: "Pytest 2.7.14"
-    - stage: test
-      os: linux
-      dist: bionic
-      language: python
+        - alias pip=/usr/bin/pip
+
+    - name: Unittest AI with Python 3.5
+      <<: *_test_python_common
       python: 3.5
       before_install:
-        - pip install pytest==3.6.3
-      script:
-        - pytest
-      name: "Pytest 3.5"
-    - stage: test
-      os: linux
-      dist: bionic
-      language: python
+        - alias pip=/usr/bin/pip3
+
+    - name: Unittest AI with Python 3.8
+      <<: *_test_python_common
       python: 3.8
       before_install:
-        - pip install pytest==3.6.3
-      script:
-        - pytest
-      name: "Pytest 3.8"
+        - alias pip=/usr/bin/pip3
