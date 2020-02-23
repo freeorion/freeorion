@@ -31,9 +31,6 @@
     <Filter Include="Header Files\network">
       <UniqueIdentifier>{683283a4-a27f-4105-8437-c3d102745e9f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\network">
-      <UniqueIdentifier>{b9e15fb8-5458-4bcb-92dc-09ba4b65cfae}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\UI">
       <UniqueIdentifier>{f9dda62a-26fb-45a2-a8dc-c2fe4f1434c8}</UniqueIdentifier>
     </Filter>

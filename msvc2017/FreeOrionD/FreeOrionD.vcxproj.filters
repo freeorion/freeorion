@@ -27,9 +27,6 @@
     <Filter Include="Header Files\util">
       <UniqueIdentifier>{d2f5dbff-1284-42b2-967e-0b1e7e4070ca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\network">
-      <UniqueIdentifier>{88999d0a-94bc-43cc-a21c-ce4ef5fd65a4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\server">
       <UniqueIdentifier>{b7b96e1d-6ba0-4b2d-bb2b-9dd040fd6854}</UniqueIdentifier>
     </Filter>
