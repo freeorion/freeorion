@@ -77,7 +77,9 @@ namespace {
             qi::_5_type _5;
             qi::_6_type _6;
             qi::_7_type _7;
+            qi::_8_type _8;
             qi::_r1_type _r1;
+            qi::matches_type matches_;
             qi::_pass_type _pass;
             qi::_val_type _val;
             qi::eps_type eps;
@@ -86,11 +88,15 @@ namespace {
             const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             hull_stats
-                =  (label(tok.Speed_)       >   double_rule
-                >   label(tok.Fuel_)        >   double_rule
-                >   label(tok.Stealth_)     >   double_rule
-                >   label(tok.Structure_)   >   double_rule)
-                    [ _val = construct<HullTypeStats>(_2, _1, _3, _4) ]
+                =  (label(tok.Speed_)       >   double_rule // _1
+                >   matches_[tok.NoDefaultSpeedEffect_]     // _2
+                >   label(tok.Fuel_)        >   double_rule // _3
+                >   matches_[tok.NoDefaultFuelEffect_]      // _4
+                >   label(tok.Stealth_)     >   double_rule // _5
+                >   matches_[tok.NoDefaultStealthEffect_]   // _6
+                >   label(tok.Structure_)   >   double_rule // _7
+                >   matches_[tok.NoDefaultStructureEffect_])// _8
+                    [ _val = construct<HullTypeStats>(_3, _1, _5, _7, _4, _2, _6, _8) ]
                 ;
 
             slot

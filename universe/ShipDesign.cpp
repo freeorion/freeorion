@@ -180,17 +180,7 @@ const ShipDesign* GetShipDesign(int ship_design_id)
 ////////////////////////////////////////////////
 // CommonParams
 ////////////////////////////////////////////////
-CommonParams::CommonParams() :
-    production_cost(nullptr),
-    production_time(nullptr),
-    producible(false),
-    tags(),
-    production_meter_consumption(),
-    production_special_consumption(),
-    location(nullptr),
-    enqueue_location(nullptr),
-    effects()
-{}
+CommonParams::CommonParams() {}
 
 CommonParams::CommonParams(std::unique_ptr<ValueRef::ValueRef<double>>&& production_cost_,
                            std::unique_ptr<ValueRef::ValueRef<int>>&& production_time_,
@@ -204,7 +194,6 @@ CommonParams::CommonParams(std::unique_ptr<ValueRef::ValueRef<double>>&& product
     production_cost(std::move(production_cost_)),
     production_time(std::move(production_time_)),
     producible(producible_),
-    tags(),
     production_meter_consumption(std::move(production_meter_consumption_)),
     production_special_consumption(std::move(production_special_consumption_)),
     location(std::move(location_)),
@@ -215,8 +204,7 @@ CommonParams::CommonParams(std::unique_ptr<ValueRef::ValueRef<double>>&& product
         tags.insert(boost::to_upper_copy<std::string>(tag));
 }
 
-CommonParams::~CommonParams()
-{}
+CommonParams::~CommonParams() {}
 
 
 /////////////////////////////////////
@@ -472,7 +460,7 @@ bool PartType::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float PartType::ProductionCost(int empire_id, int location_id, int in_design_id/* = INVALID_DESIGN_ID*/) const {
+float PartType::ProductionCost(int empire_id, int location_id, int in_design_id) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost)
         return 1.0f;
 
@@ -496,7 +484,7 @@ float PartType::ProductionCost(int empire_id, int location_id, int in_design_id/
     return static_cast<float>(m_production_cost->Eval(context));
 }
 
-int PartType::ProductionTime(int empire_id, int location_id, int in_design_id/* = INVALID_DESIGN_ID*/) const {
+int PartType::ProductionTime(int empire_id, int location_id, int in_design_id) const {
     const auto arbitrary_large_number = 9999;
 
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)
@@ -548,18 +536,7 @@ unsigned int PartType::GetCheckSum() const {
 ////////////////////////////////////////////////
 // HullType
 ////////////////////////////////////////////////
-HullType::HullType() :
-    m_production_cost(nullptr),
-    m_production_time(nullptr),
-    m_slots(),
-    m_tags(),
-    m_production_meter_consumption(),
-    m_production_special_consumption(),
-    m_location(nullptr),
-    m_effects(),
-    m_graphic(),
-    m_icon()
-{}
+HullType::HullType() {}
 
 HullType::HullType(const HullTypeStats& stats,
                    CommonParams&& common_params,
@@ -576,17 +553,15 @@ HullType::HullType(const HullTypeStats& stats,
     m_production_time(std::move(common_params.production_time)),
     m_producible(common_params.producible),
     m_slots(slots),
-    m_tags(),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
     m_exclusions(more_common_params.exclusions),
-    m_effects(),
     m_graphic(graphic),
     m_icon(icon)
 {
     TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
-    Init(std::move(common_params.effects));
+    Init(std::move(common_params.effects), stats);
 
     for (const std::string& tag : common_params.tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
@@ -596,17 +571,18 @@ HullType::Slot::Slot() :
     type(INVALID_SHIP_SLOT_TYPE)
 {}
 
-HullType::~HullType()
-{}
+HullType::~HullType() {}
 
-void HullType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects) {
-    if (m_fuel != 0)
+void HullType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+                    const HullTypeStats& stats)
+{
+    if (stats.default_fuel_effects && m_fuel != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
-    if (m_stealth != 0)
+    if (stats.default_stealth_effects && m_stealth != 0)
         m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_stealth));
-    if (m_structure != 0)
+    if (stats.default_structure_effects && m_structure != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure,    "RULE_SHIP_STRUCTURE_FACTOR"));
-    if (m_speed != 0)
+    if (stats.default_speed_effects && m_speed != 0)
         m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed,        "RULE_SHIP_SPEED_FACTOR"));
 
     if (m_production_cost)
@@ -648,7 +624,7 @@ bool HullType::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float HullType::ProductionCost(int empire_id, int location_id, int in_design_id/* = INVALID_DESIGN_ID*/) const {
+float HullType::ProductionCost(int empire_id, int location_id, int in_design_id) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost)
         return 1.0f;
 
@@ -672,7 +648,7 @@ float HullType::ProductionCost(int empire_id, int location_id, int in_design_id/
     return static_cast<float>(m_production_cost->Eval(context));
 }
 
-int HullType::ProductionTime(int empire_id, int location_id, int in_design_id/* = INVALID_DESIGN_ID*/) const {
+int HullType::ProductionTime(int empire_id, int location_id, int in_design_id) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)
         return 1;
 
@@ -804,8 +780,7 @@ ParsedShipDesign::ParsedShipDesign(
     const std::vector<std::string>& parts,
     const std::string& icon, const std::string& model,
     bool name_desc_in_stringtable, bool monster,
-    const boost::uuids::uuid& uuid /*= boost::uuids::nil_uuid()*/
-) :
+    const boost::uuids::uuid& uuid) :
     m_name(name),
     m_description(description),
     m_uuid(uuid),
@@ -823,8 +798,6 @@ ParsedShipDesign::ParsedShipDesign(
 // ShipDesign
 ////////////////////////////////////////////////
 ShipDesign::ShipDesign() :
-    m_name(),
-    m_description(),
     m_uuid(boost::uuids::nil_generator()()),
     m_designed_on_turn(UniverseObject::INVALID_OBJECT_AGE),
     m_designed_by_empire(ALL_EMPIRES),

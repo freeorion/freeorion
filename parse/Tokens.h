@@ -263,6 +263,10 @@
     (NextTurnPopGrowth)                         \
     (NextYoungerStarType)                       \
     (NoDefaultCapacityEffect)                   \
+    (NoDefaultFuelEffect)                       \
+    (NoDefaultSpeedEffect)                      \
+    (NoDefaultStealthEffect)                    \
+    (NoDefaultStructureEffect)                  \
     (None)                                      \
     (NoOp)                                      \
     (NoStar)                                    \

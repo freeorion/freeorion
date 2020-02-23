@@ -28,6 +28,8 @@
 
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
+FO_COMMON_API extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int INVALID_GAME_TURN;
 namespace Condition {
     struct Condition;
 }
@@ -153,18 +155,18 @@ private:
     float           m_secondary_stat = 0.0f;    // damage for a hangar bay, shots per turn for a weapon, etc.
     bool            m_producible = false;
 
-    std::unique_ptr<ValueRef::ValueRef<double>>     m_production_cost;
-    std::unique_ptr<ValueRef::ValueRef<int>>        m_production_time;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_production_cost;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
     std::vector<ShipSlotType>                           m_mountable_slot_types;
     std::set<std::string>                               m_tags;
     CommonParams::ConsumptionMap<MeterType>             m_production_meter_consumption;
     CommonParams::ConsumptionMap<std::string>           m_production_special_consumption;
-    std::unique_ptr<Condition::Condition>           m_location;
+    std::unique_ptr<Condition::Condition>               m_location;
     std::set<std::string>                               m_exclusions;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_icon;
     bool                                                m_add_standard_capacity_effect = false;
-    std::unique_ptr<Condition::Condition>           m_combat_targets;
+    std::unique_ptr<Condition::Condition>               m_combat_targets;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -210,12 +212,12 @@ private:
 
     /** Future part type being parsed by parser.  mutable so that it can
         be assigned to m_part_types when completed.*/
-    mutable boost::optional<Pending::Pending<PartTypeMap>> m_pending_part_types = boost::none;
+    mutable boost::optional<Pending::Pending<PartTypeMap>>      m_pending_part_types = boost::none;
 
     /** Set of part types.  mutable so that when the parse completes it can
         be updated. */
     mutable std::map<std::string, std::unique_ptr<PartType>>    m_parts;
-    static PartTypeManager*             s_instance;
+    static PartTypeManager*                                     s_instance;
 };
 
 
@@ -229,30 +231,45 @@ FO_COMMON_API const PartType* GetPartType(const std::string& name);
 /** Hull stats.  Used by parser due to limits on number of sub-items per
   * parsed main item. */
 struct HullTypeStats {
-    HullTypeStats()
-    {}
+    HullTypeStats() = default;
 
     HullTypeStats(float fuel_,
                   float speed_,
                   float stealth_,
-                  float structure_) :
+                  float structure_,
+                  bool no_default_fuel_effects_,
+                  bool no_default_speed_effects_,
+                  bool no_default_stealth_effects_,
+                  bool no_default_structure_effects_) :
         fuel(fuel_),
         speed(speed_),
         stealth(stealth_),
-        structure(structure_)
+        structure(structure_),
+        default_fuel_effects(!no_default_fuel_effects_),
+        default_speed_effects(!no_default_speed_effects_),
+        default_stealth_effects(!no_default_stealth_effects_),
+        default_structure_effects(!no_default_structure_effects_)
     {}
 
     float   fuel = 0.0f;
     float   speed = 0.0f;
     float   stealth = 0.0f;
     float   structure = 0.0f;
+    bool    default_fuel_effects = true;
+    bool    default_speed_effects = true;
+    bool    default_stealth_effects = true;
+    bool    default_structure_effects = true;
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int) {
         ar  & BOOST_SERIALIZATION_NVP(fuel)
             & BOOST_SERIALIZATION_NVP(speed)
             & BOOST_SERIALIZATION_NVP(stealth)
-            & BOOST_SERIALIZATION_NVP(structure);
+            & BOOST_SERIALIZATION_NVP(structure)
+            & BOOST_SERIALIZATION_NVP(default_fuel_effects)
+            & BOOST_SERIALIZATION_NVP(default_speed_effects)
+            & BOOST_SERIALIZATION_NVP(default_stealth_effects)
+            & BOOST_SERIALIZATION_NVP(default_structure_effects);
     }
 };
 
@@ -332,27 +349,28 @@ public:
     //@}
 
 private:
-    void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects);
+    void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+              const HullTypeStats& stats);
 
-    std::string m_name = "";
-    std::string m_description = "";
+    std::string m_name;
+    std::string m_description;
     float       m_speed = 1.0f;
     float       m_fuel = 0.0f;
     float       m_stealth = 0.0f;
     float       m_structure = 0.0f;
 
-    std::unique_ptr<ValueRef::ValueRef<double>>     m_production_cost;
-    std::unique_ptr<ValueRef::ValueRef<int>>        m_production_time;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_production_cost;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
     bool                                                m_producible = false;
     std::vector<Slot>                                   m_slots;
     std::set<std::string>                               m_tags;
     CommonParams::ConsumptionMap<MeterType>             m_production_meter_consumption;
     CommonParams::ConsumptionMap<std::string>           m_production_special_consumption;
-    std::unique_ptr<Condition::Condition>           m_location;
+    std::unique_ptr<Condition::Condition>               m_location;
     std::set<std::string>                               m_exclusions;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
-    std::string                                         m_graphic = "";
-    std::string                                         m_icon = "";
+    std::string                                         m_graphic;
+    std::string                                         m_icon;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -436,17 +454,17 @@ struct FO_COMMON_API ParsedShipDesign {
     std::string                 m_description;
     boost::uuids::uuid          m_uuid;
 
-    int                         m_designed_on_turn;
-    int                         m_designed_by_empire;
+    int                         m_designed_on_turn = INVALID_GAME_TURN;
+    int                         m_designed_by_empire = ALL_EMPIRES;
 
     std::string                 m_hull;
     std::vector<std::string>    m_parts;
-    bool                        m_is_monster;
+    bool                        m_is_monster = false;
 
     std::string                 m_icon;
     std::string                 m_3D_model;
 
-    bool                        m_name_desc_in_stringtable;
+    bool                        m_name_desc_in_stringtable = false;
 };
 
 class FO_COMMON_API ShipDesign {
@@ -612,17 +630,17 @@ private:
     std::string                 m_description;
     boost::uuids::uuid          m_uuid;
 
-    int                         m_designed_on_turn;
-    int                         m_designed_by_empire;
+    int                         m_designed_on_turn = INVALID_GAME_TURN;
+    int                         m_designed_by_empire = ALL_EMPIRES;
 
     std::string                 m_hull;
     std::vector<std::string>    m_parts;
-    bool                        m_is_monster;
+    bool                        m_is_monster = false;
 
     std::string                 m_icon;
     std::string                 m_3D_model;
 
-    bool                        m_name_desc_in_stringtable;
+    bool                        m_name_desc_in_stringtable = false;
 
     // Note that these are fine to compute on demand and cache here -- it is
     // not necessary to serialize them.
