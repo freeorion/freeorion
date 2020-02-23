@@ -496,6 +496,9 @@ public:
     /** Returns the window's parent (may be null). */
     std::shared_ptr<Wnd> Parent() const;
 
+    /** Returns true iff \a wnd is an ancestor (indirect parent) of this wnd. */
+    bool IsAncestorOf(const std::shared_ptr<Wnd>& wnd) const;
+
     /** Returns the earliest ancestor window (may be null). */
     std::shared_ptr<Wnd> RootParent() const;
 

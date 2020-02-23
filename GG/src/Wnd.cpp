@@ -361,6 +361,20 @@ const std::list<std::shared_ptr<Wnd>>& Wnd::Children() const
 std::shared_ptr<Wnd> Wnd::Parent() const
 { return LockAndResetIfExpired(m_parent); }
 
+bool Wnd::IsAncestorOf(const std::shared_ptr<Wnd>& wnd) const
+{
+    // Is this Wnd one of wnd's (direct or indirect) parents?
+    if (!wnd)
+        return false;
+    auto&& parent_of_wnd = wnd->Parent();
+    while (parent_of_wnd) {
+        if (parent_of_wnd.get() == this)
+            return true;
+        parent_of_wnd = parent_of_wnd->Parent();
+    }
+    return false;
+}
+
 std::shared_ptr<Wnd> Wnd::RootParent() const
 {
     auto&& parent = Parent();
