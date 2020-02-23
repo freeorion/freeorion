@@ -1049,6 +1049,9 @@ Cannot concede from a game with only one human player.
 ERROR_INCOMPATIBLE_VERSION
 Server cannot properly read messages from your client, most likely due to incompatible game versions.
 
+ERROR_CHECKSUM_MISMATCH
+Content checksum on the server and the client differs.
+
 ##
 ## Game Rules
 ##

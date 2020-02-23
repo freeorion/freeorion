@@ -243,7 +243,9 @@ boost::statechart::result WaitingForSPHostAck::react(const StartQuittingGame& e)
 
 boost::statechart::result WaitingForSPHostAck::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-    Client().VerifyCheckSum(e.m_message);
+    bool result = Client().VerifyCheckSum(e.m_message);
+    if (!result)
+        ClientUI::MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
     return discard_event();
 }
 
@@ -320,7 +322,9 @@ boost::statechart::result WaitingForMPHostAck::react(const StartQuittingGame& e)
 
 boost::statechart::result WaitingForMPHostAck::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-    Client().VerifyCheckSum(e.m_message);
+    bool result = Client().VerifyCheckSum(e.m_message);
+    if (!result)
+        ClientUI::MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
     return discard_event();
 }
 
@@ -566,7 +570,9 @@ boost::statechart::result MPLobby::react(const StartQuittingGame& e) {
 
 boost::statechart::result MPLobby::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-    Client().VerifyCheckSum(e.m_message);
+    bool result = Client().VerifyCheckSum(e.m_message);
+    if (!result)
+        ClientUI::MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
     return discard_event();
 }
 
