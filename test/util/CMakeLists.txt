@@ -18,6 +18,8 @@ target_link_libraries(fo_unittest_util
     Boost::unit_test_framework
 )
 
+target_dependencies_copy_to_build(fo_unittest_util)
+
 add_dependencies(unittest
     fo_unittest_util
 )

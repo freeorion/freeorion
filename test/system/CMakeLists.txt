@@ -26,6 +26,8 @@ target_link_libraries(fo_systemtest_game
     Boost::unit_test_framework
 )
 
+target_dependencies_copy_to_build(fo_systemtest_game)
+
 add_coverage(fo_systemtest_game
     unittest
 )
