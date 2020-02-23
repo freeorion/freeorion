@@ -589,8 +589,10 @@ void SitRepPanel::NextClicked() {
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, true));
 }
 
-void SitRepPanel::LastClicked()
-{ ShowSitRepsForTurn(CurrentTurn()); }
+void SitRepPanel::LastClicked() {
+    auto turns = GetUnvalidatedSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID());
+    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, CurrentTurn(), false));    // search backwards from current turn for a non-empty sitrep turn
+}
 
 void SitRepPanel::FilterClicked() {
     std::map<int, std::string> menu_index_templates;
