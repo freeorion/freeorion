@@ -1382,11 +1382,15 @@ namespace {
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_HULL");
 
+        std::string slots_list;
+        for (auto slot_type : {SL_EXTERNAL, SL_INTERNAL, SL_CORE})
+            slots_list += UserString(boost::lexical_cast<std::string>((slot_type))) + ": " + std::to_string(hull->NumSlots(slot_type)) + "\n";
         detailed_description += UserString(hull->Description()) + "\n\n" + str(FlexibleFormat(UserString("HULL_DESC"))
             % hull->Speed()
             % hull->Fuel()
-            % hull->Speed()
-            % hull->Structure());
+            % hull->Stealth()
+            % hull->Structure()
+            % slots_list);
 
         static std::vector<std::string> hull_tags_to_describe = UserStringList("FUNCTIONAL_HULL_DESC_TAGS_LIST");
         for (const std::string tag : hull_tags_to_describe) {

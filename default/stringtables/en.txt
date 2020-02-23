@@ -13222,12 +13222,16 @@ BLD_COL_SUPER_TEST_DESC
 
 # %1% hull base starlane speed.
 # %2% hull base fuel capacity.
-# %3% hull base starlane speed.
+# %3% hull base stealth.
 # %4% hull base structure value.
+# %5% hull slots listing
 HULL_DESC
 '''[[metertype METER_SPEED]]: %1%
 [[metertype METER_FUEL]]: %2%
-[[metertype METER_STRUCTURE]]: %4%'''
+[[metertype METER_STEALTH]]: %3%
+[[metertype METER_STRUCTURE]]: %4%
+
+%5%'''
 
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
