@@ -251,8 +251,11 @@ float Tech::ResearchCost(int empire_id) const {
         return arbitrary_large_number;
 
     } else {
-        std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
-        if (!source && !m_research_cost->SourceInvariant())
+        if (m_research_cost->SourceInvariant())
+            return m_research_cost->Eval();
+
+        auto source = Empires().GetSource(empire_id);
+        if (!source)
             return arbitrary_large_number;
 
         ScriptingContext context(source);
