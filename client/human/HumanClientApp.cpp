@@ -28,6 +28,7 @@
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
 #include "../../util/Version.h"
+#include "../../util/ScopedTimer.h"
 #include "../../universe/Planet.h"
 #include "../../universe/Species.h"
 #include "../../universe/Enums.h"
@@ -1020,16 +1021,15 @@ void HumanClientApp::HandleMessage(Message& msg) {
 }
 
 void HumanClientApp::UpdateCombatLogs(const Message& msg){
-    DebugLogger() << "HCL Update Combat Logs";
+    ScopedTimer timer("HumanClientApp::UpdateCombatLogs");
 
     // Unpack the combat logs from the message
     std::vector<std::pair<int, CombatLog>> logs;
     ExtractDispatchCombatLogsMessageData(msg, logs);
 
     // Update the combat log manager with the completed logs.
-    for (auto it = logs.begin(); it != logs.end(); ++it) {
+    for (auto it = logs.begin(); it != logs.end(); ++it)
         GetCombatLogManager().CompleteLog(it->first, it->second);
-    }
 }
 
 void HumanClientApp::HandleSaveGamePreviews(const Message& msg) {

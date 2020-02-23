@@ -73,8 +73,6 @@ namespace {
             boost::iostreams::seek(ifs, 0, std::ios_base::beg);
             // binary deserialization iff document is not xml
             if (xml5 != xxx5) {
-                ScopedTimer timer("LoadSaveGamePreviewData (binary): " + path.string(), true);
-
                 // first attempt binary deserialziation
                 freeorion_bin_iarchive ia(ifs);
 
@@ -82,7 +80,6 @@ namespace {
                 ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
 
             } else {
-                DebugLogger() << "Deserializing XML data";
                 freeorion_xml_iarchive ia(ifs);
                 ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
 
