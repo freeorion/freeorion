@@ -2,7 +2,6 @@
 #define _ScriptingContext_h_
 
 #include "Universe.h"
-#include "../combat/CombatSystem.h"
 
 #include <boost/any.hpp>
 
@@ -10,11 +9,21 @@
 
 class UniverseObject;
 
+struct FO_COMMON_API ScriptingCombatInfo {
+    ScriptingCombatInfo() {}
+    ScriptingCombatInfo(int bout_, const Universe::EmpireObjectVisibilityMap& vis) :
+        bout(bout_),
+        empire_object_visibility(vis)
+    {}
+
+    int bout = 0;
+    Universe::EmpireObjectVisibilityMap empire_object_visibility;
+};
+
 struct ScriptingContext {
     /** Empty context.  Useful for evaluating ValueRef::Constant that don't
       * depend on their context. */
-    ScriptingContext()
-    {}
+    ScriptingContext() = default;
 
     /** Context with only a source object.  Useful for evaluating effectsgroup
       * scope and activation conditions that have no external candidates or
@@ -27,7 +36,7 @@ struct ScriptingContext {
       * conditions. Useful in combat resolution when the visibility of objects
       * may be different from the overall universe visibility. */
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
-                     const CombatInfo& combat_info_) :
+                     const ScriptingCombatInfo& combat_info_) :
         source(source_),
         combat_info(combat_info_)
     {}
@@ -85,12 +94,15 @@ struct ScriptingContext {
         current_value(current_value_)
     {}
 
+    static const ScriptingCombatInfo s_empty_combat_info;
+
     std::shared_ptr<const UniverseObject>   source;
     std::shared_ptr<UniverseObject>         effect_target;
     std::shared_ptr<const UniverseObject>   condition_root_candidate;
     std::shared_ptr<const UniverseObject>   condition_local_candidate;
     const boost::any                        current_value;
-    const CombatInfo&                       combat_info = s_empty_combat_info;
+    //
+    const ScriptingCombatInfo&              combat_info = ScriptingCombatInfo();
 };
 
 #endif // _ScriptingContext_h_
