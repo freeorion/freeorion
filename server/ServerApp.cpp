@@ -970,11 +970,12 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
                   << " logs to player " << player_connection->PlayerID();
 
     try {
-        player_connection->SendMessage(DispatchCombatLogsMessage(logs));
+        bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
+        player_connection->SendMessage(DispatchCombatLogsMessage(logs, use_binary_serialization));
     } catch (const std::exception& e) {
         ErrorLogger() << "caught exception sending combat logs message: " << e.what();
         std::vector<std::pair<int, const CombatLog>> empty_logs;
-        player_connection->SendMessage(DispatchCombatLogsMessage(empty_logs));
+        player_connection->SendMessage(DispatchCombatLogsMessage(empty_logs, false));
     }
 }
 

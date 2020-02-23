@@ -314,7 +314,8 @@ FO_COMMON_API Message DispatchSavePreviewsMessage(const PreviewInformation& prev
 FO_COMMON_API Message RequestCombatLogsMessage(const std::vector<int>& ids);
 
 /** returns combat logs to the client */
-FO_COMMON_API Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatLog>>& logs);
+FO_COMMON_API Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatLog>>& logs,
+                                                bool use_binary_serialization);
 
 /** Sends logger configuration details to server or ai process. */
 FO_COMMON_API Message LoggerConfigMessage(int sender, const std::set<std::tuple<std::string, std::string, LogLevel>>& options);
