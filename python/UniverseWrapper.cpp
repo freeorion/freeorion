@@ -51,7 +51,9 @@ namespace boost {
 namespace {
     void                    DumpObjects(const Universe& universe)
     { DebugLogger() << universe.Objects().Dump(); }
-    std::string             ObjectDump(const UniverseObject& obj)
+
+    template<class T>
+    std::string             DumpWrapper(const T& obj)
     { return obj.Dump(0); }
 
     // We're returning the result of operator-> here so that python doesn't
@@ -194,8 +196,14 @@ namespace {
     { return ship_design.Description(false); }
     boost::function<const std::string& (const ShipDesign&)> ShipDesignDescriptionFunc =         &ShipDesignDescription;
 
-    bool                    (*ValidDesignHullAndParts)(const std::string& hull,
-                                                       const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
+    bool ValidDesignHullAndParts(const std::string& hull, boost::python::list parts_list)
+    {
+        std::vector<std::string> parts;
+        const int list_length = boost::python::len(parts_list);
+        for (int i = 0; i < list_length; i++)
+            parts.push_back(boost::python::extract<std::string>(parts_list[i]));
+        return ShipDesign::ValidDesign(hull, parts);
+    }
 
     const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
     // The following (PartsSlotType) is not currently used, but left as an example for this kind of wrapper
@@ -332,7 +340,7 @@ namespace FreeOrionPython {
         class_<Meter, noncopyable>("meter", no_init)
             .add_property("current",            &Meter::Current)
             .add_property("initial",            &Meter::Initial)
-            .def("dump",                        &Meter::Dump,                       return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
+            .def("dump",                        &DumpWrapper<Meter>,                       return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
 
         ////////////////////
@@ -472,7 +480,7 @@ namespace FreeOrionPython {
             .def("hasTag",                      &UniverseObject::HasTag)
             .add_property("meters",             make_function(ObjectMeters,                 return_internal_reference<>()))
             .def("getMeter",                    make_function(ObjectGetMeter,               return_internal_reference<>()))
-            .def("dump",                        make_function(&ObjectDump,                  return_value_policy<return_by_value>()), "Returns string with debug information.")
+            .def("dump",                        make_function(&DumpWrapper<UniverseObject>,                  return_value_policy<return_by_value>()), "Returns string with debug information.")
         ;
 
         ///////////////////
@@ -578,7 +586,7 @@ namespace FreeOrionPython {
                                                 ))
 
             .def("productionLocationForEmpire", &ShipDesign::ProductionLocation)
-            .def("dump",                        &ShipDesign::Dump,                          return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
+            .def("dump",                        &DumpWrapper<ShipDesign>,                          return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
         def("validShipDesign",                  ValidDesignHullAndParts, "Returns true (boolean) if the passed hull (string) and parts (StringVec) make up a valid ship design, and false (boolean) otherwise. Valid ship designs don't have any parts in slots that can't accept that type of part, and contain only hulls and parts that exist (and may also need to contain the correct number of parts - this needs to be verified).");
         def("getShipDesign",                    &GetShipDesign,                             return_value_policy<reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated id number (int).");
@@ -605,7 +613,6 @@ namespace FreeOrionPython {
             .add_property("structure",          &HullType::Structure)
             .add_property("stealth",            &HullType::Stealth)
             .add_property("fuel",               &HullType::Fuel)
-            .add_property("starlaneSpeed",      &HullType::Speed) // TODO: Remove this after transition period
             .add_property("speed",              &HullType::Speed)
             .def("numSlotsOfSlotType",          NumSlotsOfSlotType)
             .add_property("slots",              make_function(
@@ -645,7 +652,7 @@ namespace FreeOrionPython {
             .def("canBeEnqueued",               &EnqueueLocationTest)  //(int empire_id, int location_id)
             .add_property("costTimeLocationInvariant",
                                                 &BuildingType::ProductionCostTimeLocationInvariant)
-            .def("dump",                        &BuildingType::Dump,                        return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
+            .def("dump",                        &DumpWrapper<BuildingType>,                        return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
         def("getBuildingType",                  &GetBuildingType,                           return_value_policy<reference_existing_object>(), "Returns the building type (BuildingType) with the indicated name (string).");
         ////////////////////
@@ -721,7 +728,7 @@ namespace FreeOrionPython {
         class_<FieldType, noncopyable>("fieldType", no_init)
             .add_property("name",               make_function(&FieldType::Name,             return_value_policy<copy_const_reference>()))
             .add_property("description",        make_function(&FieldType::Description,      return_value_policy<copy_const_reference>()))
-            .def("dump",                        &FieldType::Dump,                           return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
+            .def("dump",                        &DumpWrapper<FieldType>,                           return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
         def("getFieldType",                     &GetFieldType,                           return_value_policy<reference_existing_object>());
 
@@ -734,7 +741,7 @@ namespace FreeOrionPython {
             .add_property("description",        &Special::Description)
             .add_property("spawnrate",          make_function(&Special::SpawnRate,      return_value_policy<return_by_value>()))
             .add_property("spawnlimit",         make_function(&Special::SpawnLimit,     return_value_policy<return_by_value>()))
-            .def("dump",                        &Special::Dump,                         return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
+            .def("dump",                        &DumpWrapper<Special>,                         return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
             .def("initialCapacity",             SpecialInitialCapacityOnObject)
         ;
         def("getSpecial",                       &GetSpecial,                            return_value_policy<reference_existing_object>(), "Returns the special (Special) with the indicated name (string).");
@@ -753,7 +760,7 @@ namespace FreeOrionPython {
             .add_property("tags",               make_function(&Species::Tags,           return_value_policy<return_by_value>()))
             // TODO: const std::vector<FocusType>& Species::Foci()
             .def("getPlanetEnvironment",        &Species::GetPlanetEnvironment)
-            .def("dump",                        &Species::Dump,                         return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
+            .def("dump",                        &DumpWrapper<Species>,                         return_value_policy<return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
         def("getSpecies",                       &GetSpecies,                            return_value_policy<reference_existing_object>(), "Returns the species (Species) with the indicated name (string).");
     }

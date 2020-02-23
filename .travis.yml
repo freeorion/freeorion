@@ -157,7 +157,7 @@ jobs:
       before_install:
         - pip install pytest==3.6.3
       script:
-        - pytest
+        - pytest --ignore=default/python/AI/test/
       name: "Pytest 2.7.14"
     - stage: test
       os: linux
@@ -167,7 +167,7 @@ jobs:
       before_install:
         - pip install pytest==3.6.3
       script:
-        - pytest
+        - pytest --ignore=default/python/AI/test/
       name: "Pytest 3.5"
     - stage: test
       os: linux
@@ -177,5 +177,5 @@ jobs:
       before_install:
         - pip install pytest==3.6.3
       script:
-        - pytest
+        - pytest --ignore=default/python/AI/test/
       name: "Pytest 3.8"
