@@ -172,11 +172,11 @@ public:
 
     /** \name Accessors */ ///@{
     const std::string&          AppName() const;                    ///< returns the user-defined name of the application
-    std::shared_ptr<Wnd>                        FocusWnd() const;                   ///< returns the GG::Wnd that currently has the input focus
+    std::shared_ptr<Wnd>        FocusWnd() const;                   ///< returns the GG::Wnd that currently has the input focus
     bool                        FocusWndAcceptsTypingInput() const; ///< returns true iff the current focus GG::Wnd accepts typing input
-    std::shared_ptr<Wnd>                        PrevFocusInteractiveWnd() const;    ///< returns the previous Wnd to the current FocusWnd. Cycles through INTERACTIVE Wnds, in order determined by parent-child relationships
-    std::shared_ptr<Wnd>                        NextFocusInteractiveWnd() const;    ///< returns the next Wnd to the current FocusWnd.
-    std::shared_ptr<Wnd>                        GetWindowUnder(const Pt& pt) const; ///< returns the GG::Wnd under the point pt
+    std::shared_ptr<Wnd>        PrevFocusInteractiveWnd() const;    ///< returns the previous Wnd to the current FocusWnd. Cycles through INTERACTIVE Wnds, in order determined by parent-child relationships
+    std::shared_ptr<Wnd>        NextFocusInteractiveWnd() const;    ///< returns the next Wnd to the current FocusWnd.
+    std::shared_ptr<Wnd>        GetWindowUnder(const Pt& pt) const; ///< returns the GG::Wnd under the point pt
     unsigned int                DeltaT() const;                     ///< returns ms since last frame was rendered
     virtual unsigned int        Ticks() const = 0;                  ///< returns milliseconds since the app started running
     bool                        RenderingDragDropWnds() const;      ///< returns true iff drag-and-drop Wnds are currently being rendered
@@ -232,15 +232,15 @@ public:
     AcceleratorSignalType&                  AcceleratorSignal(Key key, Flags<ModKey> mod_keys = MOD_KEY_NONE) const;
 
     /** Returns true iff keyboard accelerator signals fire while modal windows are open. */
-    bool ModalAcceleratorSignalsEnabled() const;
+    bool                                    ModalAcceleratorSignalsEnabled() const;
 
     /** Returns true iff any modal Wnds are open. */
-    bool ModalWndsOpen() const;
+    bool                                    ModalWndsOpen() const;
 
     /** Saves \a wnd to file \a filename during the next render cycle.  If \a
         wnd is not rendered during the render cycle, or PNG support is not
         enabled, this is a no-op. */
-    void SaveWndAsPNG(const Wnd* wnd, const std::string& filename) const;
+    void                                    SaveWndAsPNG(const Wnd* wnd, const std::string& filename) const;
     //@}
 
     /** \name Mutators */ ///@{
@@ -253,7 +253,7 @@ public:
     virtual void    HandleSystemEvents() = 0;
 
     /** Event handler for GG events. */
-    void HandleGGEvent(EventType event, Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel, const std::string* text = nullptr);
+    void            HandleGGEvent(EventType event, Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel, const std::string* text = nullptr);
 
     void            ClearEventState();
 
