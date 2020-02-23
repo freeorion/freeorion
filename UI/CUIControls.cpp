@@ -795,6 +795,8 @@ void CUIDropDownList::Render() {
     GG::Pt ul = UpperLeft();
     GG::Clr lb_color = LB()->Color();
     GG::Clr border_color = Disabled() ? DisabledColor(lb_color) : lb_color;
+    if (GG::GUI::GetGUI()->FocusWnd().get() == this)
+        border_color = GG::LightColor(border_color);
     GG::Clr interior_color = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
 
     glPushMatrix();
@@ -953,7 +955,10 @@ void CUIEdit::LosingFocus() {
 void CUIEdit::Render() {
     GG::Clr color = Color();
     GG::Clr border_color = Disabled() ? DisabledColor(color) : color;
+    if (GG::GUI::GetGUI()->FocusWnd().get() == this)
+        border_color = GG::LightColor(border_color);
     GG::Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
+
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     //GG::Pt client_ul = ClientUpperLeft(), client_lr = ClientLowerRight();
@@ -1095,6 +1100,8 @@ void CUIMultiEdit::CompleteConstruction() {
 void CUIMultiEdit::Render() {
     GG::Clr color = Color();
     GG::Clr border_color =      Disabled()  ?   DisabledColor(color)            :   color;
+    if (GG::GUI::GetGUI()->FocusWnd().get() == this)
+        border_color = GG::LightColor(border_color);
     GG::Clr int_color_to_use =  Disabled()  ?   DisabledColor(InteriorColor())  :   InteriorColor();
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();

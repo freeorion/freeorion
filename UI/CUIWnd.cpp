@@ -319,10 +319,12 @@ void CUIWnd::Render() {
 
     } else {
         bool flashing = m_flashing && static_cast<int>(GG::GUI::GetGUI()->Ticks()) % (m_flash_duration * 2) > m_flash_duration;
+        auto focus_wnd = GG::GUI::GetGUI()->FocusWnd();
+        bool highlight = (focus_wnd.get() == this || this->IsAncestorOf(focus_wnd));
 
         flashing ? glColor(GG::LightColor(ClientUI::WndColor())) : glColor(ClientUI::WndColor());
         glDrawArrays(GL_TRIANGLE_FAN,   m_buffer_indices[1].first, m_buffer_indices[1].second);
-        flashing ? glColor(GG::LightColor(ClientUI::WndOuterBorderColor())) : glColor(ClientUI::WndOuterBorderColor());
+        flashing || highlight ? glColor(GG::LightColor(ClientUI::WndOuterBorderColor())) : glColor(ClientUI::WndOuterBorderColor());
         glDrawArrays(GL_LINE_LOOP,      m_buffer_indices[1].first, m_buffer_indices[1].second);
         flashing ? glColor(GG::LightColor(ClientUI::WndInnerBorderColor())) : glColor(ClientUI::WndInnerBorderColor());
         glDrawArrays(GL_LINE_LOOP,      m_buffer_indices[2].first, m_buffer_indices[2].second);
