@@ -1049,6 +1049,9 @@ Impossible de capituler dans une partie avec un seul joueur humain.
 ERROR_INCOMPATIBLE_VERSION
 Le serveur ne peut pas lire correctement les messages de votre client, probablement en raison de versions incompatibles du jeu.
 
+ERROR_CHECKSUM_MISMATCH
+Le contenu de contrôle entre le serveur et le client diffère.
+
 ##
 ## Game Rules
 ##
@@ -2583,7 +2586,13 @@ BUTTON_DISABLED
 Bouton désactivé
 
 SAVE_DISABLED_BROWSE_TEXT
-Le bouton "Sauvegarder" est désactivé, soit parce qu'il s'agit d'une partie multijoueurs dont ce client n'est ni l'Hôte ni le Modérateur, soit parce que le menu a été ouvert alors qu'au moins une des IAs n'a pas encore terminé son tour de jeu (indiqué par un triangle vert à gauche de l'icône représentant le type de joueur dans la fenêtre Empires).
+'''Le bouton "Sauvegarder" est désactivé. Possibles causes:
+
+- Il s'agit d'une partie multijoueurs dont ce client n'est ni l'Hôte ni le Modérateur.
+
+- Le menu a été ouvert alors qu'au moins une des IAs n'a pas encore terminé son tour de jeu (indiqué par un triangle vert à gauche de l'icône représentant le type de joueur dans la fenêtre Empires).
+
+- Une autre opération de sauvegarde est déjà en cours.'''
 
 GAME_MENU_REALLY_CONCEDE
 Confirmer la capitulation? Cet empire sera supprimé de cette partie.
@@ -13213,12 +13222,16 @@ BLD_COL_SUPER_TEST_DESC
 
 # %1% hull base starlane speed.
 # %2% hull base fuel capacity.
-# %3% hull base starlane speed.
+# %3% hull base stealth.
 # %4% hull base structure value.
+# %5% hull slots listing
 HULL_DESC
 '''[[metertype METER_SPEED]] : %1%
 [[metertype METER_FUEL]] : %2%
-[[metertype METER_STRUCTURE]] : %4%'''
+[[metertype METER_STEALTH]]: %3%
+[[metertype METER_STRUCTURE]] : %4%
+
+%5%'''
 
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
