@@ -3,6 +3,7 @@ Hull
     description = "SH_ROBOTIC_DESC"
     speed = 75
     fuel = 2
+    NoDefaultFuelEffect
     stealth = 5
     structure = 25
     slots = [

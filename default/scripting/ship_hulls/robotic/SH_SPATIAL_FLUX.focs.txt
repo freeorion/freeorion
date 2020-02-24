@@ -3,6 +3,7 @@ Hull
     description = "SH_SPATIAL_FLUX_DESC"
     speed = 80
     fuel = 8
+    NoDefaultFuelEffect
     stealth = 15
     structure = 3
     slots = [

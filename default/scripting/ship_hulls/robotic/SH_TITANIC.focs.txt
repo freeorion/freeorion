@@ -3,6 +3,7 @@ Hull
     description = "SH_TITANIC_DESC"
     speed = 80
     fuel = 1.2
+    NoDefaultFuelEffect
     stealth = -35
     structure = 160
     slots = [

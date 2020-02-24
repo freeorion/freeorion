@@ -3,6 +3,7 @@ Hull
     description = "SH_SPACE_FLUX_BUBBLE_DESC"
     speed = 80
     fuel = 6
+    NoDefaultFuelEffect
     stealth = 15
     structure = 19
     slots = Slot type = Internal position = (0.50, 0.50)
