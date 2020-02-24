@@ -1200,6 +1200,11 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
                 return design->Hull();
         return "";
 
+    } else if (property_name == "FieldType") {
+        if (auto field = std::dynamic_pointer_cast<const Field>(object))
+            return field->FieldTypeName();
+        return "";
+
     } else if (property_name == "BuildingType") {
         if (auto building = std::dynamic_pointer_cast<const Building>(object))
             return building->BuildingTypeName();

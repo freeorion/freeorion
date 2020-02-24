@@ -41,6 +41,7 @@ namespace parse {
             %=   tok.Name_
             |    tok.Species_
             |    tok.BuildingType_
+            |    tok.FieldType_
             |    tok.Focus_
             |    tok.PreferredFocus_
             |    tok.Hull_
