@@ -9,6 +9,8 @@
 
 class UniverseObject;
 
+/** combat/CombatInfo extends this ScriptingCombatInfo in order
+  * to give Conditions and ValueRefs access to combat related data */
 struct FO_COMMON_API ScriptingCombatInfo {
     ScriptingCombatInfo() {}
     ScriptingCombatInfo(int bout_, const Universe::EmpireObjectVisibilityMap& vis) :
@@ -16,9 +18,10 @@ struct FO_COMMON_API ScriptingCombatInfo {
         empire_object_visibility(vis)
     {}
 
-    int bout = 0;
-    Universe::EmpireObjectVisibilityMap empire_object_visibility;
+    int bout = 0; ///< current combat bout, used with CombatBout ValueRef for implementing bout dependent targeting. First combat bout is 1
+    Universe::EmpireObjectVisibilityMap empire_object_visibility; ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
 };
+FO_COMMON_API const ScriptingCombatInfo EMPTY_COMBAT_INFO{};
 
 struct ScriptingContext {
     /** Empty context.  Useful for evaluating ValueRef::Constant that don't
@@ -94,15 +97,12 @@ struct ScriptingContext {
         current_value(current_value_)
     {}
 
-    static const ScriptingCombatInfo s_empty_combat_info;
-
     std::shared_ptr<const UniverseObject>   source;
     std::shared_ptr<UniverseObject>         effect_target;
     std::shared_ptr<const UniverseObject>   condition_root_candidate;
     std::shared_ptr<const UniverseObject>   condition_local_candidate;
     const boost::any                        current_value;
-    //
-    const ScriptingCombatInfo&              combat_info = ScriptingCombatInfo();
+    const ScriptingCombatInfo&              combat_info = EMPTY_COMBAT_INFO;
 };
 
 #endif // _ScriptingContext_h_
