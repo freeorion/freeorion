@@ -2,6 +2,7 @@
 #define _CombatSystem_h_
 
 #include "../universe/Universe.h"
+#include "../universe/ScriptingContext.h"
 #include "../util/AppInterface.h"
 #include "CombatEvent.h"
 
@@ -9,9 +10,10 @@
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 
+
 /** Contains information about the state of a combat before or after the combat
   * occurs. */
-struct CombatInfo {
+struct CombatInfo : public ScriptingCombatInfo {
 public:
     /** \name Structors */ //@{
     CombatInfo() = default;
@@ -36,7 +38,6 @@ public:
     std::set<int>                       damaged_object_ids;             ///< ids of objects damaged during this battle
     std::set<int>                       destroyed_object_ids;           ///< ids of objects destroyed during this battle
     std::map<int, std::set<int>>        destroyed_object_knowers;       ///< indexed by empire ID, the set of ids of objects the empire knows were destroyed during the combat
-    Universe::EmpireObjectVisibilityMap empire_object_visibility;       ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
     std::vector<CombatEventPtr>         combat_events;                  ///< list of combat attack events that occur in combat
 
     float   GetMonsterDetection() const;

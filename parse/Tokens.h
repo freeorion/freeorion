@@ -57,6 +57,7 @@
     (ClockwiseNextPlanetType)                   \
     (Colony)                                    \
     (Colour)                                    \
+    (CombatBout)                                \
     (CombatTargets)                             \
     (Condition)                                 \
     (Construction)                              \

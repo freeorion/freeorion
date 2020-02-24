@@ -9,11 +9,24 @@
 
 class UniverseObject;
 
+/** combat/CombatInfo extends this ScriptingCombatInfo in order
+  * to give Conditions and ValueRefs access to combat related data */
+struct FO_COMMON_API ScriptingCombatInfo {
+    ScriptingCombatInfo() {}
+    ScriptingCombatInfo(int bout_, const Universe::EmpireObjectVisibilityMap& vis) :
+        bout(bout_),
+        empire_object_visibility(vis)
+    {}
+
+    int bout = 0; ///< current combat bout, used with CombatBout ValueRef for implementing bout dependent targeting. First combat bout is 1
+    Universe::EmpireObjectVisibilityMap empire_object_visibility; ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
+};
+FO_COMMON_API const ScriptingCombatInfo EMPTY_COMBAT_INFO{};
+
 struct ScriptingContext {
     /** Empty context.  Useful for evaluating ValueRef::Constant that don't
       * depend on their context. */
-    ScriptingContext()
-    {}
+    ScriptingContext() = default;
 
     /** Context with only a source object.  Useful for evaluating effectsgroup
       * scope and activation conditions that have no external candidates or
@@ -26,9 +39,9 @@ struct ScriptingContext {
       * conditions. Useful in combat resolution when the visibility of objects
       * may be different from the overall universe visibility. */
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
-                     const Universe::EmpireObjectVisibilityMap& visibility_map) :
+                     const ScriptingCombatInfo& combat_info_) :
         source(source_),
-        empire_object_vis_map_override(visibility_map)
+        combat_info(combat_info_)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
@@ -54,7 +67,7 @@ struct ScriptingContext {
         condition_root_candidate(parent_context.condition_root_candidate),
         condition_local_candidate(parent_context.condition_local_candidate),
         current_value(current_value_),
-        empire_object_vis_map_override(parent_context.empire_object_vis_map_override)
+        combat_info(parent_context.combat_info)
     {}
 
     /** For recursive evaluation of Conditions.  Keeps source and effect_target
@@ -70,7 +83,7 @@ struct ScriptingContext {
                                             condition_local_candidate_),    // if parent context doesn't already have a root candidate, the new local candidate is the root
         condition_local_candidate(      condition_local_candidate_),        // new local candidate
         current_value(                  parent_context.current_value),
-        empire_object_vis_map_override( parent_context.empire_object_vis_map_override)
+        combat_info( parent_context.combat_info)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
@@ -89,7 +102,7 @@ struct ScriptingContext {
     std::shared_ptr<const UniverseObject>   condition_root_candidate;
     std::shared_ptr<const UniverseObject>   condition_local_candidate;
     const boost::any                        current_value;
-    Universe::EmpireObjectVisibilityMap     empire_object_vis_map_override;
+    const ScriptingCombatInfo&              combat_info = EMPTY_COMBAT_INFO;
 };
 
 #endif // _ScriptingContext_h_

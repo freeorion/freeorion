@@ -52,7 +52,8 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
         ;
 
     free_variable_name
-        =   tok.CurrentTurn_
+        =   tok.CombatBout_
+        |   tok.CurrentTurn_
         |   tok.GalaxyAge_
         |   tok.GalaxyMaxAIAggression_
         |   tok.GalaxyMonsterFrequency_
