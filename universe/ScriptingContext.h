@@ -21,7 +21,7 @@ struct FO_COMMON_API ScriptingCombatInfo {
     int bout = 0; ///< current combat bout, used with CombatBout ValueRef for implementing bout dependent targeting. First combat bout is 1
     Universe::EmpireObjectVisibilityMap empire_object_visibility; ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
 };
-FO_COMMON_API const ScriptingCombatInfo EMPTY_COMBAT_INFO{};
+const ScriptingCombatInfo EMPTY_COMBAT_INFO{};
 
 struct ScriptingContext {
     /** Empty context.  Useful for evaluating ValueRef::Constant that don't
