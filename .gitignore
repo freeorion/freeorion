@@ -57,12 +57,9 @@ DerivedData
 # FreeOrion specific
 *.zip
 /util/Version.cpp
-/Installer/FreeOrion_Install_Script.nsi
+/packaging/windows_installer.nsi
+/packaging/Info.plist
 /doc/apidoc-commit-message
-
-# FreeOrion Xcode project
-/Xcode/Info.plist
-contents.xcworkspacedata
 
 # FreeOrion MSVC project
 *.pdb
