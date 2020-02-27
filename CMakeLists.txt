@@ -633,9 +633,9 @@ endif()
 if(WIN32)
     add_custom_command(TARGET freeorion POST_BUILD
         COMMAND
-            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python27.dll" "$<TARGET_FILE_DIR:freeorion>"
+            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}.dll" "$<TARGET_FILE_DIR:freeorion>"
         COMMAND
-            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python27.zip" "$<TARGET_FILE_DIR:freeorion>" 
+            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}.zip" "$<TARGET_FILE_DIR:freeorion>" 
     )
 endif()
 
@@ -676,7 +676,7 @@ if(APPLE)
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_REGEX_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
-           ${CMAKE_COMMAND} -E copy_if_different "${Boost_PYTHON_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
+           ${CMAKE_COMMAND} -E copy_if_different "${Boost_PYTHON${Boost_PYTHON_SUFFIX}_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_SERIALIZATION_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
@@ -778,7 +778,7 @@ if(WIN32)
         boost_locale.dll
         boost_log.dll
         boost_log_setup.dll
-        boost_python.dll
+        boost_python${Boost_PYTHON_SUFFIX}.dll
         boost_regex.dll
         boost_serialization.dll
         boost_system.dll
@@ -789,7 +789,7 @@ if(WIN32)
         libpng13.dll
         libvorbis.dll
         libvorbisfile.dll
-        python26.dll
+        python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}.dll
         wrap_oal.dll
         z.dll
         zlib1.dll
