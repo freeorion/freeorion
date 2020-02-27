@@ -78,7 +78,7 @@ GG_FLAGSPEC_IMPL(ModKey);
 WndEvent::WndEvent(EventType type, const Pt& pt, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
-    m_key(GGK_UNKNOWN),
+    m_key(GGK_NONE),
     m_key_code_point(0),
     m_mod_keys(mod_keys),
     m_wheel_move(0),
@@ -90,7 +90,7 @@ WndEvent::WndEvent(EventType type, const Pt& pt, Flags<ModKey> mod_keys) :
 WndEvent::WndEvent(EventType type, const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
-    m_key(GGK_UNKNOWN),
+    m_key(GGK_NONE),
     m_key_code_point(0),
     m_mod_keys(mod_keys),
     m_drag_move(move),
@@ -103,7 +103,7 @@ WndEvent::WndEvent(EventType type, const Pt& pt, const Pt& move, Flags<ModKey> m
 WndEvent::WndEvent(EventType type, const Pt& pt, int move, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
-    m_key(GGK_UNKNOWN),
+    m_key(GGK_NONE),
     m_key_code_point(0),
     m_mod_keys(mod_keys),
     m_wheel_move(move),
@@ -115,7 +115,7 @@ WndEvent::WndEvent(EventType type, const Pt& pt, int move, Flags<ModKey> mod_key
 WndEvent::WndEvent(EventType type, const Pt& pt, const std::map<std::shared_ptr<Wnd>, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
-    m_key(GGK_UNKNOWN),
+    m_key(GGK_NONE),
     m_key_code_point(0),
     m_mod_keys(mod_keys),
     m_wheel_move(0),
@@ -134,7 +134,7 @@ WndEvent::WndEvent(EventType type, const Pt& pt, const std::map<std::shared_ptr<
 WndEvent::WndEvent(EventType type, const Pt& pt, const std::vector<std::shared_ptr<Wnd>>& drag_drop_wnds, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
-    m_key(GGK_UNKNOWN),
+    m_key(GGK_NONE),
     m_key_code_point(0),
     m_mod_keys(mod_keys),
     m_wheel_move(0),
@@ -147,7 +147,7 @@ WndEvent::WndEvent(EventType type, const Pt& pt, const std::vector<std::shared_p
 WndEvent::WndEvent(EventType type, const Pt& pt, const Wnd* const drag_wnd, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
-    m_key(GGK_UNKNOWN),
+    m_key(GGK_NONE),
     m_key_code_point(0),
     m_mod_keys(mod_keys),
     m_wheel_move(0),
@@ -174,7 +174,7 @@ WndEvent::WndEvent(EventType type, Key key, std::uint32_t code_point, Flags<ModK
 
 WndEvent::WndEvent(EventType type, unsigned int ticks, Timer* timer) :
     m_type(type),
-    m_key(GGK_UNKNOWN),
+    m_key(GGK_NONE),
     m_key_code_point(0),
     m_mod_keys(),
     m_wheel_move(0),
@@ -185,7 +185,7 @@ WndEvent::WndEvent(EventType type, unsigned int ticks, Timer* timer) :
 
 WndEvent::WndEvent (WndEvent::EventType type, const std::string* text):
     m_type(type),
-    m_key(GGK_UNKNOWN),
+    m_key(GGK_NONE),
     m_key_code_point(0),
     m_mod_keys(),
     m_wheel_move(0),
@@ -196,7 +196,7 @@ WndEvent::WndEvent (WndEvent::EventType type, const std::string* text):
 
 WndEvent::WndEvent(EventType type) :
     m_type(type),
-    m_key(GGK_UNKNOWN),
+    m_key(GGK_NONE),
     m_key_code_point(0),
     m_mod_keys(), 
     m_wheel_move(0),

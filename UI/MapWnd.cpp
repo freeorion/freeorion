@@ -190,8 +190,8 @@ namespace {
         Hotkey::AddHotkey("ui.map.system.zoom.home",        UserStringNop("HOTKEY_MAP_ZOOM_HOME_SYSTEM"),                       GG::GGK_h,                      GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("ui.map.system.zoom.prev",        UserStringNop("HOTKEY_MAP_ZOOM_PREV_SYSTEM"),                       GG::GGK_COMMA,                  GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("ui.map.system.zoom.next",        UserStringNop("HOTKEY_MAP_ZOOM_NEXT_SYSTEM"),                       GG::GGK_PERIOD,                 GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.system.owned.zoom.prev",  UserStringNop("HOTKEY_MAP_ZOOM_PREV_OWNED_SYSTEM"),                 GG::GGK_LESS,                   GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
-        Hotkey::AddHotkey("ui.map.system.owned.zoom.next",  UserStringNop("HOTKEY_MAP_ZOOM_NEXT_OWNED_SYSTEM"),                 GG::GGK_GREATER,                GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
+        Hotkey::AddHotkey("ui.map.system.owned.zoom.prev",  UserStringNop("HOTKEY_MAP_ZOOM_PREV_OWNED_SYSTEM"),                 GG::GGK_COMMA,                  GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
+        Hotkey::AddHotkey("ui.map.system.owned.zoom.next",  UserStringNop("HOTKEY_MAP_ZOOM_NEXT_OWNED_SYSTEM"),                 GG::GGK_PERIOD,                 GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
         Hotkey::AddHotkey("ui.map.fleet.zoom.prev",         UserStringNop("HOTKEY_MAP_ZOOM_PREV_FLEET"),                        GG::GGK_f,                      GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("ui.map.fleet.zoom.next",         UserStringNop("HOTKEY_MAP_ZOOM_NEXT_FLEET"),                        GG::GGK_g,                      GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("ui.map.fleet.idle.zoom.prev",    UserStringNop("HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET"),                   GG::GGK_f,                      GG::MOD_KEY_ALT);

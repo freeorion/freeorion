@@ -198,7 +198,7 @@ namespace {
             m_code_point = key_code_point;
             m_mods = mod_keys;
             // exit modal loop only if not a modifier
-            if (!(m_key >= GG::GGK_NUMLOCK && m_key <= GG::GGK_COMPOSE))
+            if (GG::GGK_LCONTROL > m_key || GG::GGK_RGUI < m_key)
                 m_done = true;
 
             /// @todo Clean up, ie transform LCTRL or RCTRL into CTRL and
