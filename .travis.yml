@@ -55,6 +55,15 @@ jobs:
         - alias pip=/usr/bin/pip3
         - alias python=/usr/bin/python3
 
+    - name: Lint string tables
+      stage: lint
+      os: linux
+      dist: bionic
+      language: python
+      python: 3.5
+      script:
+        - ./check/st-tool.py check --reference default/stringtables/en.txt default/stringtables/*.txt
+
     - name: Build C++ API documentation
       stage: build
       os: linux
