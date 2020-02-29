@@ -214,7 +214,8 @@ public:
         bool operator()(const iterator& lhs, const iterator& rhs) const;
     };
 
-    struct IteratorHash : std::unary_function<iterator, std::size_t> {
+    struct IteratorHash
+    {
         std::size_t operator()(const iterator& it) const
         { return boost::hash<const std::shared_ptr<Row>>()(*it); }
     };
