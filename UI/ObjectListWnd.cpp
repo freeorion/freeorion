@@ -1847,9 +1847,7 @@ private:
 
 namespace {
     struct CustomRowCmp {
-        bool operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs,
-                        std::size_t column)
-        {
+        bool operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) const {
             auto lhs_key = lhs.SortKey(column);
             auto rhs_key = rhs.SortKey(column);
             try {
