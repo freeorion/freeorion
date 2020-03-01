@@ -329,9 +329,7 @@ void Effect::Execute(const ScriptingContext& context,
     { return; }
     // apply this effect for each source causing it
     for (const auto& targets_entry : targets_causes) {
-        auto source = context.source;
-        if (context.objects)
-            source = std::const_pointer_cast<const UniverseObject>(context.objects->get(targets_entry.first.source_object_id));
+        auto source = std::const_pointer_cast<const UniverseObject>(context.objects.get(targets_entry.first.source_object_id));
         ScriptingContext source_context(source, context);
         Execute(source_context, targets_entry.second.target_set,
                 accounting_map, targets_entry.second.effect_cause,

@@ -520,7 +520,7 @@ std::vector<std::string> Planet::AvailableFoci() const {
     auto this_planet = std::dynamic_pointer_cast<const Planet>(UniverseObject::shared_from_this());
     if (!this_planet)
         return retval;
-    ScriptingContext context(this_planet, &Objects());
+    ScriptingContext context(this_planet);
     if (const auto* species = GetSpecies(this_planet->SpeciesName())) {
         for (const auto& focus_type : species->Foci()) {
             if (const auto* location = focus_type.Location()) {

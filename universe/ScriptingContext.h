@@ -2,6 +2,7 @@
 #define _ScriptingContext_h_
 
 #include "Universe.h"
+#include "../util/AppInterface.h"
 
 #include <boost/any.hpp>
 
@@ -25,12 +26,12 @@ struct FO_COMMON_API ScriptingCombatInfo {
 const ScriptingCombatInfo EMPTY_COMBAT_INFO{};
 
 struct ScriptingContext {
-    /** Empty context.  Useful for evaluating ValueRef::Constant that don't
-      * depend on their context. */
-    ScriptingContext() = default;
+    explicit ScriptingContext(ObjectMap& objects_ = Objects()) :
+        objects(objects_)
+    {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
-                     ObjectMap* objects_) :
+                     ObjectMap& objects_ = Objects()) :
         source(source_),
         objects(objects_)
     {}
@@ -50,12 +51,12 @@ struct ScriptingContext {
                      ScriptingCombatInfo& combat_info_) :
         source(source_),
         combat_info(combat_info_),
-        objects(&combat_info_.objects)
+        objects(combat_info_.objects)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                      std::shared_ptr<UniverseObject> target_,
-                     ObjectMap* objects_) :
+                     ObjectMap& objects_ = Objects()) :
         source(source_),
         effect_target(target_),
         objects(objects_)
@@ -100,9 +101,9 @@ struct ScriptingContext {
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                      std::shared_ptr<UniverseObject> target_,
                      const boost::any& current_value_,
-                     std::shared_ptr<const UniverseObject> condition_root_candidate_,
-                     std::shared_ptr<const UniverseObject> condition_local_candidate_,
-                     ObjectMap* objects_) :
+                     std::shared_ptr<const UniverseObject> condition_root_candidate_ = nullptr,
+                     std::shared_ptr<const UniverseObject> condition_local_candidate_ = nullptr,
+                     ObjectMap& objects_ = Objects()) :
         source(source_),
         condition_root_candidate(condition_root_candidate_),
         condition_local_candidate(condition_local_candidate_),
@@ -116,7 +117,7 @@ struct ScriptingContext {
     std::shared_ptr<const UniverseObject>   condition_local_candidate;
     const boost::any                        current_value;
     const ScriptingCombatInfo&              combat_info = EMPTY_COMBAT_INFO;
-    ObjectMap*                              objects = nullptr;
+    ObjectMap&                              objects;
 };
 
 #endif // _ScriptingContext_h_

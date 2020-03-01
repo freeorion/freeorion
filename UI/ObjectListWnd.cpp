@@ -1406,7 +1406,7 @@ public:
             return it->second;
 
         auto ref = GetColumnValueRef(column);
-        auto val = ref ? ref->Eval(ScriptingContext(Objects().get(m_object_id), &Objects())) : "";
+        auto val = ref ? ref->Eval(ScriptingContext(Objects().get(m_object_id))) : "";
         m_column_val_cache[column] = val;
         return val;
     }

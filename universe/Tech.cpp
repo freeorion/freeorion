@@ -258,8 +258,7 @@ float Tech::ResearchCost(int empire_id) const {
         if (!source)
             return arbitrary_large_number;
 
-        ScriptingContext context(source, &Objects());
-        return m_research_cost->Eval(context);
+        return m_research_cost->Eval(ScriptingContext(source));
     }
 }
 
@@ -286,9 +285,7 @@ int Tech::ResearchTime(int empire_id) const {
         if (!source && !m_research_turns->SourceInvariant())
             return arbitrary_large_number;
 
-        ScriptingContext context(source, &Objects());
-
-        return m_research_turns->Eval(context);
+        return m_research_turns->Eval(ScriptingContext(source));
     }
 }
 

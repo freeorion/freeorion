@@ -1617,7 +1617,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                                  << " " << effects_group->AccountingLabel() << " " << effects_group->StackingGroup() << ")";
 
             // execute Effects in the EffectsGroup
-            effects_group->Execute(ScriptingContext(nullptr, &m_objects),
+            effects_group->Execute(ScriptingContext(nullptr, m_objects),
                                    group_targets_causes,
                                    update_effect_accounting ? &m_effect_accounting_map : nullptr,
                                    only_meter_effects,
@@ -1762,7 +1762,7 @@ void Universe::ApplyEffectDerivedVisibilities() {
             for (auto& source_ref_entry : object_entry.second) {
                 // set up context for executing ValueRef to determine visibility to set
                 auto source = m_objects.get(source_ref_entry.first);
-                ScriptingContext context(source, target, target_initial_vis, nullptr, nullptr, &m_objects);
+                ScriptingContext context(source, target, target_initial_vis, nullptr, nullptr, m_objects);
 
                 const auto val_ref = source_ref_entry.second;
 
@@ -2393,7 +2393,7 @@ namespace {
                     float stealth = 0.0f;
                     const auto special_stealth = special->Stealth();
                     if (special_stealth)
-                        stealth = special_stealth->Eval(ScriptingContext(obj, &objects));
+                        stealth = special_stealth->Eval(ScriptingContext(obj, objects));
 
                     // if special is 0 stealth, or has stealth less than empire's detection strength, mark as visible
                     if (stealth <= 0.0f || stealth <= detection_strength) {
@@ -2941,7 +2941,7 @@ void Universe::UpdateStatRecords() {
             if (value_ref->SourceInvariant()) {
                 stat_records[empire_id][current_turn] = value_ref->Eval();
             } else if (entry.second) {
-                stat_records[empire_id][current_turn] = value_ref->Eval(ScriptingContext(entry.second, &m_objects));
+                stat_records[empire_id][current_turn] = value_ref->Eval(ScriptingContext(entry.second, m_objects));
             }
         }
     }

@@ -467,7 +467,7 @@ float PartType::ProductionCost(int empire_id, int location_id, int in_design_id)
     if (m_production_cost->ConstantExpr()) {
         return static_cast<float>(m_production_cost->Eval());
     } else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant()) {
-        ScriptingContext context(nullptr, nullptr, in_design_id, nullptr, nullptr, &Objects());
+        ScriptingContext context(nullptr, nullptr, in_design_id);
         return static_cast<float>(m_production_cost->Eval(context));
     }
 
@@ -481,7 +481,7 @@ float PartType::ProductionCost(int empire_id, int location_id, int in_design_id)
     if (!source && !m_production_cost->SourceInvariant())
         return arbitrary_large_number;
 
-    ScriptingContext context(source, location, in_design_id, nullptr, nullptr, &Objects());
+    ScriptingContext context(source, location, in_design_id);
     return static_cast<float>(m_production_cost->Eval(context));
 }
 
@@ -494,7 +494,7 @@ int PartType::ProductionTime(int empire_id, int location_id, int in_design_id) c
     if (m_production_time->ConstantExpr()) {
         return m_production_time->Eval();
     } else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant()) {
-        ScriptingContext context(nullptr, nullptr, in_design_id, nullptr, nullptr, &Objects());
+        ScriptingContext context(nullptr, nullptr, in_design_id);
         return m_production_time->Eval(context);
     }
 
@@ -506,7 +506,7 @@ int PartType::ProductionTime(int empire_id, int location_id, int in_design_id) c
     if (!source && !m_production_time->SourceInvariant())
         return arbitrary_large_number;
 
-    ScriptingContext context(source, location, in_design_id, nullptr, nullptr, &Objects());
+    ScriptingContext context(source, location, in_design_id);
     return m_production_time->Eval(context);
 }
 
@@ -633,7 +633,7 @@ float HullType::ProductionCost(int empire_id, int location_id, int in_design_id)
     if (m_production_cost->ConstantExpr()) {
         return static_cast<float>(m_production_cost->Eval());
     } else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant()) {
-        ScriptingContext context(nullptr, nullptr, in_design_id, nullptr, nullptr, &Objects());
+        ScriptingContext context(nullptr, nullptr, in_design_id);
         return static_cast<float>(m_production_cost->Eval(context));
     }
 
@@ -647,7 +647,7 @@ float HullType::ProductionCost(int empire_id, int location_id, int in_design_id)
     if (!source && !m_production_cost->SourceInvariant())
         return arbitrary_large_number;
 
-    ScriptingContext context(source, location, in_design_id, nullptr, nullptr, &Objects());
+    ScriptingContext context(source, location, in_design_id);
     return static_cast<float>(m_production_cost->Eval(context));
 }
 
@@ -658,7 +658,7 @@ int HullType::ProductionTime(int empire_id, int location_id, int in_design_id) c
     if (m_production_time->ConstantExpr()) {
         return m_production_time->Eval();
     } else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant()) {
-        ScriptingContext context(nullptr, nullptr, in_design_id, nullptr, nullptr, &Objects());
+        ScriptingContext context(nullptr, nullptr, in_design_id);
         return m_production_time->Eval(context);
     }
 
@@ -672,7 +672,7 @@ int HullType::ProductionTime(int empire_id, int location_id, int in_design_id) c
     if (!source && !m_production_time->SourceInvariant())
         return arbitrary_large_number;
 
-    ScriptingContext context(source, location, in_design_id, nullptr, nullptr, &Objects());
+    ScriptingContext context(source, location, in_design_id);
     return m_production_time->Eval(context);
 }
 
@@ -1085,7 +1085,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
         return false;
     }
     // evaluate using location as the source, as it should be an object owned by this empire.
-    ScriptingContext location_as_source_context(location, location, &Objects());
+    ScriptingContext location_as_source_context(location, location);
     if (!hull->Location()->Eval(location_as_source_context, location))
         return false;
 

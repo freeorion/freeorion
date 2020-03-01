@@ -178,11 +178,10 @@ std::string ConditionFailedDescription(const std::vector<Condition*>& conditions
     if (conditions.empty())
         return UserString("NONE");
 
-    ScriptingContext parent_context(source_object, &Objects());
     std::string retval;
 
     // test candidate against all input conditions, and store descriptions of each
-    for (const auto& result : ConditionDescriptionAndTest(conditions, parent_context, candidate_object)) {
+    for (const auto& result : ConditionDescriptionAndTest(conditions, ScriptingContext(source_object), candidate_object)) {
             if (!result.second)
                  retval += UserString("FAILED") + " <rgba 255 0 0 255>" + result.first +"</rgba>\n";
     }
@@ -200,10 +199,9 @@ std::string ConditionDescription(const std::vector<Condition*>& conditions,
     if (conditions.empty())
         return UserString("NONE");
 
-    ScriptingContext parent_context(source_object, &Objects());
     // test candidate against all input conditions, and store descriptions of each
     auto condition_description_and_test_results =
-        ConditionDescriptionAndTest(conditions, parent_context, candidate_object);
+        ConditionDescriptionAndTest(conditions, ScriptingContext(source_object), candidate_object);
     bool all_conditions_match_candidate = true, at_least_one_condition_matches_candidate = false;
     for (const auto& result : condition_description_and_test_results) {
         all_conditions_match_candidate = all_conditions_match_candidate && result.second;
