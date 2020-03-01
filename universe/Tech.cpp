@@ -258,7 +258,7 @@ float Tech::ResearchCost(int empire_id) const {
         if (!source)
             return arbitrary_large_number;
 
-        ScriptingContext context(source);
+        ScriptingContext context(source, &Objects());
         return m_research_cost->Eval(context);
     }
 }
@@ -282,11 +282,11 @@ int Tech::ResearchTime(int empire_id) const {
         return arbitrary_large_number;
 
     } else {
-        std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
+        auto source = Empires().GetSource(empire_id);
         if (!source && !m_research_turns->SourceInvariant())
             return arbitrary_large_number;
 
-        ScriptingContext context(source);
+        ScriptingContext context(source, &Objects());
 
         return m_research_turns->Eval(context);
     }

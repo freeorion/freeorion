@@ -80,21 +80,22 @@ namespace Effect {
 
         virtual void Execute(const ScriptingContext& context, const TargetSet& targets) const;
 
-        void Execute(const TargetsCauses& targets_causes,
-                    AccountingMap* accounting_map,
-                    bool only_meter_effects = false,
-                    bool only_appearance_effects = false,
-                    bool include_empire_meter_effects = false,
-                    bool only_generate_sitrep_effects = false) const;
+        void Execute(const ScriptingContext& context,
+                     const TargetsCauses& targets_causes,
+                     AccountingMap* accounting_map,
+                     bool only_meter_effects = false,
+                     bool only_appearance_effects = false,
+                     bool include_empire_meter_effects = false,
+                     bool only_generate_sitrep_effects = false) const;
 
         virtual void Execute(const ScriptingContext& context,
-                            const TargetSet& targets,
-                            AccountingMap* accounting_map,
-                            const EffectCause& effect_cause,
-                            bool only_meter_effects = false,
-                            bool only_appearance_effects = false,
-                            bool include_empire_meter_effects = false,
-                            bool only_generate_sitrep_effects = false) const;
+                             const TargetSet& targets,
+                             AccountingMap* accounting_map,
+                             const EffectCause& effect_cause,
+                             bool only_meter_effects = false,
+                             bool only_appearance_effects = false,
+                             bool include_empire_meter_effects = false,
+                             bool only_generate_sitrep_effects = false) const;
 
         virtual std::string     Dump(unsigned short ntabs = 0) const = 0;
         virtual bool            IsMeterEffect() const { return false; }
@@ -139,16 +140,17 @@ namespace Effect {
     class FO_COMMON_API EffectsGroup {
     public:
         EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
-                    std::unique_ptr<Condition::Condition>&& activation,
-                    std::vector<std::unique_ptr<Effect>>&& effects,
-                    const std::string& accounting_label = "",
-                    const std::string& stacking_group = "", int priority = 0,
-                    const std::string& description = "",
-                    const std::string& content_name = "");
+                     std::unique_ptr<Condition::Condition>&& activation,
+                     std::vector<std::unique_ptr<Effect>>&& effects,
+                     const std::string& accounting_label = "",
+                     const std::string& stacking_group = "", int priority = 0,
+                     const std::string& description = "",
+                     const std::string& content_name = "");
         virtual ~EffectsGroup();
 
         /** execute all effects in group */
-        void    Execute(const TargetsCauses& targets_causes,
+        void    Execute(const ScriptingContext& context,
+                        const TargetsCauses& targets_causes,
                         AccountingMap* accounting_map = nullptr,
                         bool only_meter_effects = false,
                         bool only_appearance_effects = false,
@@ -156,9 +158,9 @@ namespace Effect {
                         bool only_generate_sitrep_effects = false) const;
 
         const std::string&              StackingGroup() const       { return m_stacking_group; }
-        Condition::Condition*       Scope() const               { return m_scope.get(); }
-        Condition::Condition*       Activation() const          { return m_activation.get(); }
-        const std::vector<Effect*>  EffectsList() const;
+        Condition::Condition*           Scope() const               { return m_scope.get(); }
+        Condition::Condition*           Activation() const          { return m_activation.get(); }
+        const std::vector<Effect*>      EffectsList() const;
         const std::string&              GetDescription() const;
         const std::string&              AccountingLabel() const     { return m_accounting_label; }
         int                             Priority() const            { return m_priority; }
@@ -175,12 +177,12 @@ namespace Effect {
     protected:
         std::unique_ptr<Condition::Condition>   m_scope;
         std::unique_ptr<Condition::Condition>   m_activation;
-        std::string                 m_stacking_group;
+        std::string                             m_stacking_group;
         std::vector<std::unique_ptr<Effect>>    m_effects;
-        std::string                 m_accounting_label;
-        int                         m_priority;
-        std::string                 m_description;
-        std::string                 m_content_name;
+        std::string                             m_accounting_label;
+        int                                     m_priority;
+        std::string                             m_description;
+        std::string                             m_content_name;
 
     private:
         friend class boost::serialization::access;
@@ -190,7 +192,6 @@ namespace Effect {
 
     /** Returns a single string which `Dump`s a vector of EffectsGroups. */
     FO_COMMON_API std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_groups);
-
 }
 
 #endif

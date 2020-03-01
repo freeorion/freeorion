@@ -178,7 +178,7 @@ std::string ConditionFailedDescription(const std::vector<Condition*>& conditions
     if (conditions.empty())
         return UserString("NONE");
 
-    ScriptingContext parent_context(source_object);
+    ScriptingContext parent_context(source_object, &Objects());
     std::string retval;
 
     // test candidate against all input conditions, and store descriptions of each
@@ -200,7 +200,7 @@ std::string ConditionDescription(const std::vector<Condition*>& conditions,
     if (conditions.empty())
         return UserString("NONE");
 
-    ScriptingContext parent_context(source_object);
+    ScriptingContext parent_context(source_object, &Objects());
     // test candidate against all input conditions, and store descriptions of each
     auto condition_description_and_test_results =
         ConditionDescriptionAndTest(conditions, parent_context, candidate_object);

@@ -369,7 +369,7 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id) 
             const Condition::Condition* c = bt->EnqueueLocation();
             if (!c)
                 return true;
-            ScriptingContext context(location_obj);
+            ScriptingContext context(location_obj, &Objects());
             return c->Eval(context, location_obj);
         }
         return true;
@@ -403,7 +403,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
     case BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             auto location_obj = Objects().get(location_id);
-            ScriptingContext context(location_obj);
+            ScriptingContext context(location_obj, &Objects());
 
             for (const auto& psc : bt->ProductionSpecialConsumption()) {
                 if (!psc.second.first)
@@ -429,7 +429,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
     case BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
             auto location_obj = Objects().get(location_id);
-            ScriptingContext context(location_obj);
+            ScriptingContext context(location_obj, &Objects());
 
             if (const HullType* ht = GetHullType(sd->Hull())) {
                 for (const auto& psc : ht->ProductionSpecialConsumption()) {
@@ -470,7 +470,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
     case BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             auto obj = Objects().get(location_id);
-            ScriptingContext context(obj);
+            ScriptingContext context(obj, &Objects());
 
             for (const auto& pmc : bt->ProductionMeterConsumption()) {
                 if (!pmc.second.first)
@@ -483,7 +483,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
     case BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
             auto obj = Objects().get(location_id);
-            ScriptingContext context(obj);
+            ScriptingContext context(obj, &Objects());
 
             if (const HullType* ht = GetHullType(sd->Hull())) {
                 for (const auto& pmc : ht->ProductionMeterConsumption()) {

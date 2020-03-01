@@ -192,14 +192,15 @@ EffectsGroup::EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
 EffectsGroup::~EffectsGroup()
 {}
 
-void EffectsGroup::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
+void EffectsGroup::Execute(const ScriptingContext& context,
+                           const TargetsCauses& targets_causes, AccountingMap* accounting_map,
                            bool only_meter_effects, bool only_appearance_effects,
                            bool include_empire_meter_effects,
                            bool only_generate_sitrep_effects) const
 {
     // execute each effect of the group one by one, unless filtered by flags
     for (auto& effect : m_effects) {
-        effect->Execute(targets_causes, accounting_map,
+        effect->Execute(context, targets_causes, accounting_map,
                         only_meter_effects, only_appearance_effects,
                         include_empire_meter_effects,
                         only_generate_sitrep_effects);
@@ -314,11 +315,12 @@ std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_group
 Effect::~Effect()
 {}
 
-void Effect::Execute(const TargetsCauses& targets_causes,
-                         AccountingMap* accounting_map,
-                         bool only_meter_effects, bool only_appearance_effects,
-                         bool include_empire_meter_effects,
-                         bool only_generate_sitrep_effects) const
+void Effect::Execute(const ScriptingContext& context,
+                     const TargetsCauses& targets_causes,
+                     AccountingMap* accounting_map,
+                     bool only_meter_effects, bool only_appearance_effects,
+                     bool include_empire_meter_effects,
+                     bool only_generate_sitrep_effects) const
 {
     if (   (only_appearance_effects      && !this->IsAppearanceEffect())
         || (only_meter_effects           && !this->IsMeterEffect())
@@ -327,7 +329,10 @@ void Effect::Execute(const TargetsCauses& targets_causes,
     { return; }
     // apply this effect for each source causing it
     for (const auto& targets_entry : targets_causes) {
-        ScriptingContext source_context(Objects().get(targets_entry.first.source_object_id));
+        auto source = context.source;
+        if (context.objects)
+            source = std::const_pointer_cast<const UniverseObject>(context.objects->get(targets_entry.first.source_object_id));
+        ScriptingContext source_context(source, context);
         Execute(source_context, targets_entry.second.target_set,
                 accounting_map, targets_entry.second.effect_cause,
                 only_meter_effects, only_appearance_effects,
@@ -336,12 +341,12 @@ void Effect::Execute(const TargetsCauses& targets_causes,
 }
 
 void Effect::Execute(const ScriptingContext& context,
-                         const TargetSet& targets,
-                         AccountingMap* accounting_map,
-                         const EffectCause& effect_cause,
-                         bool only_meter_effects, bool only_appearance_effects,
-                         bool include_empire_meter_effects,
-                         bool only_generate_sitrep_effects) const
+                     const TargetSet& targets,
+                     AccountingMap* accounting_map,
+                     const EffectCause& effect_cause,
+                     bool only_meter_effects, bool only_appearance_effects,
+                     bool include_empire_meter_effects,
+                     bool only_generate_sitrep_effects) const
 {
     if (   (only_appearance_effects      && !this->IsAppearanceEffect())
         || (only_meter_effects           && !this->IsMeterEffect())
@@ -449,7 +454,7 @@ void SetMeter::Execute(const ScriptingContext& context,
         // process each target separately in order to do effect accounting for each
         for (auto& target : targets) {
             // get Meter for this effect and target
-            const Meter* meter = target->GetMeter(m_meter);
+            Meter* meter = target->GetMeter(m_meter);
             if (!meter)
                 continue;   // some objects might match target conditions, but not actually have the relevant meter. In that case, don't need to do accounting.
 
@@ -459,7 +464,8 @@ void SetMeter::Execute(const ScriptingContext& context,
             info.running_meter_total =  meter->Current();
 
             // actually execute effect to modify meter
-            Execute(ScriptingContext(context.source, target));
+            float val = m_value->Eval(ScriptingContext(context, target, meter->Current()));
+            meter->SetCurrent(val);
 
             // update for meter change and new total
             info.meter_change = meter->Current() - info.running_meter_total;

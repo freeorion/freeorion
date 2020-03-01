@@ -34,7 +34,6 @@ public:
     int                                 turn = INVALID_GAME_TURN;       ///< main game turn
     int                                 system_id = INVALID_OBJECT_ID;  ///< ID of system where combat is occurring (could be INVALID_OBJECT_ID ?)
     std::set<int>                       empire_ids;                     ///< IDs of empires involved in combat
-    ObjectMap                           objects;                        ///< actual state of objects relevant to combat
     std::set<int>                       damaged_object_ids;             ///< ids of objects damaged during this battle
     std::set<int>                       destroyed_object_ids;           ///< ids of objects destroyed during this battle
     std::map<int, std::set<int>>        destroyed_object_knowers;       ///< indexed by empire ID, the set of ids of objects the empire knows were destroyed during the combat

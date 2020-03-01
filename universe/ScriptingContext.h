@@ -18,8 +18,9 @@ struct FO_COMMON_API ScriptingCombatInfo {
         empire_object_visibility(vis)
     {}
 
-    int bout = 0; ///< current combat bout, used with CombatBout ValueRef for implementing bout dependent targeting. First combat bout is 1
-    Universe::EmpireObjectVisibilityMap empire_object_visibility; ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
+    int                                 bout = 0;                   ///< current combat bout, used with CombatBout ValueRef for implementing bout dependent targeting. First combat bout is 1
+    ObjectMap                           objects;                    ///< actual state of objects relevant to combat
+    Universe::EmpireObjectVisibilityMap empire_object_visibility;   ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
 };
 const ScriptingCombatInfo EMPTY_COMBAT_INFO{};
 
@@ -28,52 +29,61 @@ struct ScriptingContext {
       * depend on their context. */
     ScriptingContext() = default;
 
-    /** Context with only a source object.  Useful for evaluating effectsgroup
-      * scope and activation conditions that have no external candidates or
-      * effect target to propagate. */
-    explicit ScriptingContext(std::shared_ptr<const UniverseObject> source_) :
-        source(source_)
-    {}
-
-    /** Context with source and visibility map to use when evalulating Visiblity
-      * conditions. Useful in combat resolution when the visibility of objects
-      * may be different from the overall universe visibility. */
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
-                     const ScriptingCombatInfo& combat_info_) :
+                     ObjectMap* objects_) :
         source(source_),
-        combat_info(combat_info_)
+        objects(objects_)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
-                     std::shared_ptr<UniverseObject> target_) :
+                     const ScriptingContext& parent_context) :
+        source(                     source_),
+        effect_target(              parent_context.effect_target),
+        condition_root_candidate(   parent_context.condition_root_candidate),
+        condition_local_candidate(  parent_context.condition_local_candidate),
+        current_value(              parent_context.current_value),
+        combat_info(                parent_context.combat_info),
+        objects(                    parent_context.objects)
+    {}
+
+    ScriptingContext(std::shared_ptr<const UniverseObject> source_,
+                     ScriptingCombatInfo& combat_info_) :
         source(source_),
-        effect_target(target_)
+        combat_info(combat_info_),
+        objects(&combat_info_.objects)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                      std::shared_ptr<UniverseObject> target_,
-                     const boost::any& current_value_) :
+                     ObjectMap* objects_) :
         source(source_),
         effect_target(target_),
-        current_value(current_value_)
+        objects(objects_)
     {}
 
-    /** For evaluating ValueRef in an Effect::Execute function.  Keeps input
-      * context, but specifies the current value. */
+    ScriptingContext(const ScriptingContext& parent_context,
+                     std::shared_ptr<UniverseObject> target_,
+                     const boost::any& current_value_) :
+        source(                     parent_context.source),
+        effect_target(              target_),
+        condition_root_candidate(   parent_context.condition_root_candidate),
+        condition_local_candidate(  parent_context.condition_local_candidate),
+        current_value(              current_value_),
+        combat_info(                parent_context.combat_info),
+        objects(                    parent_context.objects)
+    {}
+
     ScriptingContext(const ScriptingContext& parent_context,
                      const boost::any& current_value_) :
-        source(parent_context.source),
-        effect_target(parent_context.effect_target),
-        condition_root_candidate(parent_context.condition_root_candidate),
-        condition_local_candidate(parent_context.condition_local_candidate),
-        current_value(current_value_),
-        combat_info(parent_context.combat_info)
+        source(                     parent_context.source),
+        effect_target(              parent_context.effect_target),
+        condition_root_candidate(   parent_context.condition_root_candidate),
+        condition_local_candidate(  parent_context.condition_local_candidate),
+        current_value(              current_value_),
+        combat_info(                parent_context.combat_info),
+        objects(                    parent_context.objects)
     {}
 
-    /** For recursive evaluation of Conditions.  Keeps source and effect_target
-      * from input context, but sets local candidate with input object, and if
-      * there is no root candidate in the parent context, then the input object
-      * becomes the root candidate. */
     ScriptingContext(const ScriptingContext& parent_context,
                      std::shared_ptr<const UniverseObject> condition_local_candidate_) :
         source(                         parent_context.source),
@@ -83,18 +93,21 @@ struct ScriptingContext {
                                             condition_local_candidate_),    // if parent context doesn't already have a root candidate, the new local candidate is the root
         condition_local_candidate(      condition_local_candidate_),        // new local candidate
         current_value(                  parent_context.current_value),
-        combat_info( parent_context.combat_info)
+        combat_info(                    parent_context.combat_info),
+        objects(                        parent_context.objects)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                      std::shared_ptr<UniverseObject> target_,
                      const boost::any& current_value_,
                      std::shared_ptr<const UniverseObject> condition_root_candidate_,
-                     std::shared_ptr<const UniverseObject> condition_local_candidate_) :
+                     std::shared_ptr<const UniverseObject> condition_local_candidate_,
+                     ObjectMap* objects_) :
         source(source_),
         condition_root_candidate(condition_root_candidate_),
         condition_local_candidate(condition_local_candidate_),
-        current_value(current_value_)
+        current_value(current_value_),
+        objects(objects_)
     {}
 
     std::shared_ptr<const UniverseObject>   source;
@@ -103,6 +116,7 @@ struct ScriptingContext {
     std::shared_ptr<const UniverseObject>   condition_local_candidate;
     const boost::any                        current_value;
     const ScriptingCombatInfo&              combat_info = EMPTY_COMBAT_INFO;
+    ObjectMap*                              objects = nullptr;
 };
 
 #endif // _ScriptingContext_h_
