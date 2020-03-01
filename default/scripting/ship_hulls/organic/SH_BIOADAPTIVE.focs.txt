@@ -3,6 +3,7 @@ Hull
     description = "SH_BIOADAPTIVE_DESC"
     speed = 100
     fuel = 1
+    NoDefaultFuelEffect
     stealth = 35
     structure = 15
     slots = [

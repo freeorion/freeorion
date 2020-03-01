@@ -3,6 +3,7 @@ Hull
     description = "SH_COLONY_BASE_DESC"
     speed = 0
     fuel = 0
+    NoDefaultFuelEffect
     stealth = 5
     structure = 3
     slots = [

@@ -3,6 +3,7 @@ Hull
     description = "SH_SYMBIOTIC_DESC"
     speed = 100
     fuel = 2
+    NoDefaultFuelEffect
     stealth = 15
     structure = 10
     slots = [

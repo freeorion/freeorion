@@ -3,6 +3,7 @@ Hull
     description = "SH_BASIC_MEDIUM_DESC"
     speed = 60
     fuel = 3
+    NoDefaultFuelEffect
     stealth = 5
     structure = 10
     slots = [

@@ -3,6 +3,7 @@ Hull
     description = "SH_COSMIC_DRAGON_BODY_DESC"
     speed = 25
     fuel = 100
+    NoDefaultFuelEffect
     stealth = 5
     structure = 50000
     slots = [

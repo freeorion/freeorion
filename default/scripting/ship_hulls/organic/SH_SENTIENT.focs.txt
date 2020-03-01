@@ -3,6 +3,7 @@ Hull
     description = "SH_SENTIENT_DESC"
     speed = 100
     fuel = 1
+    NoDefaultFuelEffect
     stealth = 25
     structure = 12
     slots = [

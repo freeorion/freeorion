@@ -3,6 +3,7 @@ Hull
     description = "SH_SNOWFLAKE_1_BODY_DESC"
     speed = 55
     fuel = 5
+    NoDefaultFuelEffect
     stealth = 15
     structure = 25
     slots = [

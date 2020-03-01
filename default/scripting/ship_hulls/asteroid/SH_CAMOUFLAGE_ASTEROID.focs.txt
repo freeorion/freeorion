@@ -3,6 +3,7 @@ Hull
     description = "SH_CAMOUFLAGE_ASTEROID_DESC"
     speed = 60
     fuel = 2
+    NoDefaultFuelEffect
     stealth = 25
     structure = 40
     slots = [

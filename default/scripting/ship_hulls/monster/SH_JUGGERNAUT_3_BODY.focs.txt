@@ -3,6 +3,7 @@ Hull
     description = "SH_JUGGERNAUT_3_BODY_DESC"
     speed = 25
     fuel = 5
+    NoDefaultFuelEffect
     stealth = 5
     structure = 1000
     slots = [

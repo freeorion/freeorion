@@ -3,6 +3,7 @@ Hull
     description = "SH_SMALL_ASTEROID_DESC"
     speed = 60
     fuel = 2
+    NoDefaultFuelEffect
     stealth = 5
     structure = 15
     slots = [

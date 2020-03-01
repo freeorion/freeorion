@@ -3,6 +3,7 @@ Hull
     description = "SH_RAVENOUS_DESC"
     speed = 100
     fuel = 1
+    NoDefaultFuelEffect
     stealth = 5
     structure = 5
     slots = [

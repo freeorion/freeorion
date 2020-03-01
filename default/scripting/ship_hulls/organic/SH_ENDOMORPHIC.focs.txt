@@ -3,6 +3,7 @@ Hull
     description = "SH_ENDOMORPHIC_DESC"
     speed = 100
     fuel = 2
+    NoDefaultFuelEffect
     stealth = 5
     structure = 5
     slots = [

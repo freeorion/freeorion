@@ -3,6 +3,7 @@ Hull
     description = "SH_ORGANIC_DESC"
     speed = 90
     fuel = 2
+    NoDefaultFuelEffect
     stealth = 5
     structure = 5
     slots = [

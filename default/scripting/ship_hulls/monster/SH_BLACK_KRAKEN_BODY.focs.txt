@@ -3,6 +3,7 @@ Hull
     description = "SH_BLACK_KRAKEN_BODY_DESC"
     speed = 200
     fuel = 100
+    NoDefaultFuelEffect
     stealth = 25
     structure = 4000
     slots = [
