@@ -3,6 +3,7 @@ Hull
     description = "SH_EXP_OUTPOST_HULL_DESC"
     speed = 0
     fuel = 1
+    NoDefaultFuelEffect
     stealth = 55
     structure = 1700
     slots = [

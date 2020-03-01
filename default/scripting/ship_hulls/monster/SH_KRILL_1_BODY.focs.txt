@@ -3,6 +3,7 @@ Hull
     description = "SH_KRILL_1_BODY_DESC"
     speed = 30
     fuel = 5
+    NoDefaultFuelEffect
     stealth = 15
     structure = 20
     slots = [

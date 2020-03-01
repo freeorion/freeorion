@@ -3,6 +3,7 @@ Hull
     description = "SH_COMPRESSED_ENERGY_DESC"
     speed = 120
     fuel = 5
+    NoDefaultFuelEffect
     stealth = 45
     structure = 10
     slots = Slot type = External position = (0.65, 0.40)

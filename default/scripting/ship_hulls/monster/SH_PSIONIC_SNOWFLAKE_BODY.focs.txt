@@ -3,6 +3,7 @@ Hull
     description = "SH_PSIONIC_SNOWFLAKE_BODY_DESC"
     speed = 300
     fuel = 100
+    NoDefaultFuelEffect
     stealth = 25
     structure = 1800
     slots = [

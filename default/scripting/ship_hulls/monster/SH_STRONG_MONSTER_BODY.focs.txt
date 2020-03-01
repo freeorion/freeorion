@@ -3,6 +3,7 @@ Hull
     description = "SH_STRONG_MONSTER_BODY_DESC"
     speed = 30
     fuel = 5
+    NoDefaultFuelEffect
     stealth = 5
     structure = 80
     slots = [

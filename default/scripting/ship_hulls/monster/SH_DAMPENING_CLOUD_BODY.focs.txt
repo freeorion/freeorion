@@ -3,6 +3,7 @@ Hull
     description = "SH_DAMPENING_CLOUD_BODY_DESC"
     speed = 20
     fuel = 1
+    NoDefaultFuelEffect
     stealth = 45
     structure = 5000
     slots = [

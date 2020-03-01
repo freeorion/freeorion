@@ -3,6 +3,7 @@ Hull
     description = "SH_IMMOBILE_FACTORY_DESC"
     speed = 0
     fuel = 0
+    NoDefaultFuelEffect
     stealth = 5
     structure = 1000
     slots = [

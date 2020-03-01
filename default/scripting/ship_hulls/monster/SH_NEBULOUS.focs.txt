@@ -3,6 +3,7 @@ Hull
     description = "SH_NEBULOUS_BODY"
     speed = 100
     fuel = 1
+    NoDefaultFuelEffect
     stealth = 75
     structure = 5000
     slots = [

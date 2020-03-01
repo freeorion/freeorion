@@ -3,6 +3,7 @@ Hull
     description = "SH_PROTOPLASMIC_DESC"
     speed = 100
     fuel = 2
+    NoDefaultFuelEffect
     stealth = 25
     structure = 5
     slots = [

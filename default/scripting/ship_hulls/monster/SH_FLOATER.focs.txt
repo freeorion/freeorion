@@ -3,6 +3,7 @@ Hull
     description = "SH_FLOATER_BODY_DESC"
     speed = 20
     fuel = 3
+    NoDefaultFuelEffect
     stealth = 15
     structure = 20
     slots = [
