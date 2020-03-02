@@ -15346,16 +15346,16 @@ FUEL_EFFICIENCY_DESC
 [[FUEL_EFFICIENCY_TITLE]]
 
 BAD_FUEL_EFFICIENCY_LABEL
-Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 60%%
+Coque <i>%2%</i> -40%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
 
 AVERAGE_FUEL_EFFICIENCY_LABEL
-Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 100%%
+Coque <i>%2%</i> +0%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
 
 GOOD_FUEL_EFFICIENCY_LABEL
-Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 200%%
+Coque <i>%2%</i> +100%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
 
 GREAT_FUEL_EFFICIENCY_LABEL
-Coque <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 400%%
+Coque <i>%2%</i> +300%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
 
 HULL_DESC_BAD_FUEL_EFFICIENCY
 [[encyclopedia FUEL_EFFICIENCY_TITLE]]: 60%
