@@ -157,13 +157,13 @@ private:
     int                     m_range_max;    ///< highest value "
     unsigned int            m_line_sz;      ///< logical units traversed in a line movement (such as a click on either end button)
     unsigned int            m_page_sz;      ///< logical units traversed for a page movement (such as a click in non-tab middle area, or PgUp/PgDn)
-    std::shared_ptr<Button>                 m_tab;          ///< the button representing the tab
-    std::shared_ptr<Button>                 m_incr;         ///< the increase button (line down/line right)
-    std::shared_ptr<Button>                 m_decr;         ///< the decrease button (line up/line left)
+    std::shared_ptr<Button> m_tab;          ///< the button representing the tab
+    std::shared_ptr<Button> m_incr;         ///< the increase button (line down/line right)
+    std::shared_ptr<Button> m_decr;         ///< the decrease button (line up/line left)
     ScrollRegion            m_initial_depressed_region; ///< the part of the scrollbar originally under cursor in LButtonDown msg
     ScrollRegion            m_depressed_region;         ///< the part of the scrollbar currently being "depressed" by held-down mouse button
-    bool                    m_dragging_tab;
-    bool                    m_tab_dragged;
+    bool                    m_dragging_tab = false;
+    bool                    m_tab_dragged = false;
 };
 
 /** A convenience function that signals \a scroll's position, via

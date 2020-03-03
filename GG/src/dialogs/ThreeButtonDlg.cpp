@@ -46,12 +46,7 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shar
     m_border_color(border_color),
     m_text_color(text_color),
     m_button_color(button_color),
-    m_default(0),
     m_escape(buttons - 1),
-    m_result(0),
-    m_button_0(nullptr),
-    m_button_1(nullptr),
-    m_button_2(nullptr),
     m_button_layout(Wnd::Create<Layout>(X0, Y0, X1, Y1, 2, 1, 10))
 {
     if (buttons < 1)

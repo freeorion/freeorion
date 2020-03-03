@@ -880,7 +880,7 @@ namespace detail {
     {
         FTFaceWrapper();
         ~FTFaceWrapper();
-        FT_Face m_face;
+        FT_Face m_face = nullptr;
     };
 }
 

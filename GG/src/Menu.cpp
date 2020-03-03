@@ -87,10 +87,8 @@ PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color
     m_hilite_color(hilite_color),
     m_sel_text_color(text_color),
     m_menu_data(MenuItem()),
-    m_open_levels(),
     m_caret(1, INVALID_CARET),
-    m_origin(x, y),
-    m_item_selected(nullptr)
+    m_origin(x, y)
 {
     m_open_levels.resize(1);
 }

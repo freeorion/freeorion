@@ -240,18 +240,18 @@ private:
 
     Pt              m_contents_sz;          ///< The size of the entire text block in the control (not just the visible part)
 
-    X               m_first_col_shown;      ///< The position (counted from the left side of the text) of the first pixel shown
-    Y               m_first_row_shown;      ///< The position (counted from the top of the text) of the first pixel shown
+    X               m_first_col_shown{0};   ///< The position (counted from the left side of the text) of the first pixel shown
+    Y               m_first_row_shown{0};   ///< The position (counted from the top of the text) of the first pixel shown
 
     std::size_t     m_max_lines_history;
 
-    std::shared_ptr<Scroll>         m_vscroll;
-    std::shared_ptr<Scroll>         m_hscroll;
-    unsigned int    m_vscroll_wheel_scroll_increment;
-    unsigned int    m_hscroll_wheel_scroll_increment;
+    std::shared_ptr<Scroll> m_vscroll;
+    std::shared_ptr<Scroll> m_hscroll;
+    unsigned int            m_vscroll_wheel_scroll_increment = 0;
+    unsigned int            m_hscroll_wheel_scroll_increment = 0;
 
-    bool            m_preserve_text_position_on_next_set_text;
-    bool            m_ignore_adjust_scrolls;
+    bool            m_preserve_text_position_on_next_set_text = false;
+    bool            m_ignore_adjust_scrolls = false;
 };
 
 } // namespace GG

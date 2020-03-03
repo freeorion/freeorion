@@ -62,15 +62,12 @@ namespace GG {
         FlatRectangle(UpperLeft(), LowerRight(), m_background_color, CLR_ZERO, 0);
     }
 
-    ScrollPanel::ScrollPanel():
-        m_vscroll(nullptr),
-        m_content(nullptr),
+    ScrollPanel::ScrollPanel() :
         m_background_color(CLR_ZERO)
     {}
 
     ScrollPanel::ScrollPanel(X x, Y y, X w, Y h, std::shared_ptr<Wnd> content):
         Wnd(x, y, w, h, INTERACTIVE),
-        m_vscroll(nullptr),
         m_content(content),
         m_background_color(CLR_ZERO)
     {}

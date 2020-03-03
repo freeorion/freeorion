@@ -61,13 +61,8 @@ Scroll::Scroll(Orientation orientation, Clr color, Clr interior) :
     m_range_max(99),
     m_line_sz(5),
     m_page_sz(25),
-    m_tab(nullptr),
-    m_incr(nullptr),
-    m_decr(nullptr),
     m_initial_depressed_region(SBR_NONE),
-    m_depressed_region(SBR_NONE),
-    m_dragging_tab(false),
-    m_tab_dragged(false)
+    m_depressed_region(SBR_NONE)
 {
     Control::SetColor(color);
     const auto& style = GetStyleFactory();

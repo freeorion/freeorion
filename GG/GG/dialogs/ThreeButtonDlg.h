@@ -85,7 +85,6 @@ public:
 
 private:
     std::size_t NumButtons() const;
-    void ConnectSignals();
     void Button0Clicked();
     void Button1Clicked();
     void Button2Clicked();
@@ -94,9 +93,9 @@ private:
     Clr         m_border_color;
     Clr         m_text_color;
     Clr         m_button_color;
-    std::size_t m_default;
-    std::size_t m_escape;
-    std::size_t m_result;
+    std::size_t m_default = 0;
+    std::size_t m_escape = 0;
+    std::size_t m_result = 0;
     std::shared_ptr<Button>     m_button_0;
     std::shared_ptr<Button>     m_button_1;
     std::shared_ptr<Button>     m_button_2;

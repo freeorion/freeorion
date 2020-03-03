@@ -107,15 +107,7 @@ MultiEdit::MultiEdit(const std::string& str, const std::shared_ptr<Font>& font, 
     m_style(style),
     m_cursor_begin(0, CP0),
     m_cursor_end(0, CP0),
-    m_first_col_shown(0),
-    m_first_row_shown(0),
-    m_max_lines_history(ALL_LINES),
-    m_vscroll(nullptr),
-    m_hscroll(nullptr),
-    m_vscroll_wheel_scroll_increment(0),
-    m_hscroll_wheel_scroll_increment(0),
-    m_preserve_text_position_on_next_set_text(false),
-    m_ignore_adjust_scrolls(false)
+    m_max_lines_history(ALL_LINES)
 {
     SetColor(color);
 }

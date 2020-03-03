@@ -50,8 +50,7 @@
 
 namespace GG { namespace detail {
 
-    FTFaceWrapper::FTFaceWrapper() :
-        m_face(nullptr)
+    FTFaceWrapper::FTFaceWrapper()
     {}
 
     FTFaceWrapper::~FTFaceWrapper()
@@ -210,13 +209,13 @@ namespace {
 
     struct FTLibraryWrapper
     {
-        FTLibraryWrapper() : m_library(nullptr)
+        FTLibraryWrapper()
         {
             if (!m_library && FT_Init_FreeType(&m_library)) // if no library exists and we can't create one...
                 throw FailedFTLibraryInit("Unable to initialize FreeType font library object");
         }
         ~FTLibraryWrapper() { FT_Done_FreeType(m_library); }
-        FT_Library m_library;
+        FT_Library m_library = nullptr;
     } g_library;
 
     struct PushSubmatchOntoStackP
@@ -499,11 +498,7 @@ namespace {
     public:
         CompiledRegex(const std::unordered_set<std::string>& known_tags,
                       bool strip_unpaired_tags) :
-            m_text(nullptr),
-            m_known_tags(&known_tags),
-            m_ignore_tags(false),
-            m_tag_stack(),
-            m_EVERYTHING()
+            m_known_tags(&known_tags)
         {
             // Synonyms for s1 thru s5 sub matches
             xpr::mark_tag tag_name_tag(1);
@@ -585,9 +580,9 @@ namespace {
             return retval;
         }
 
-        const std::string* m_text;
-        const std::unordered_set<std::string>* m_known_tags;
-        bool m_ignore_tags;
+        const std::string* m_text = nullptr;
+        const std::unordered_set<std::string>* m_known_tags = nullptr;
+        bool m_ignore_tags = false;
 
         // m_tag_stack is used to track XML opening/closing tags.
         std::stack<Font::Substring> m_tag_stack;

@@ -181,9 +181,9 @@ struct GG::GUIImpl
     std::weak_ptr<Wnd>         m_focus_wnd;             // GUI window that currently has the input focus (this is the base level focus window, used when no modal windows are active)
     std::list<std::pair<std::shared_ptr<Wnd>, std::weak_ptr<Wnd>>>
                  m_modal_wnds;            // modal GUI windows, and the window with focus for that modality (only the one in back is active, simulating a stack but allowing traversal of the list)
-    bool         m_allow_modal_accelerator_signals; // iff true: keyboard accelerator signals will be output while modal window(s) is open
+    bool         m_allow_modal_accelerator_signals = false; // iff true: keyboard accelerator signals will be output while modal window(s) is open
 
-    bool         m_mouse_button_state[3]; // the up/down states of the three buttons on the mouse are kept here
+    bool         m_mouse_button_state[3] = {false, false, false};   // the up/down states of the three buttons on the mouse are kept here
     Pt           m_mouse_pos;             // absolute position of mouse, based on last MOUSEMOVE event
     Pt           m_mouse_rel;             // relative position of mouse, based on last MOUSEMOVE event
     Flags<ModKey>m_mod_keys;              // currently-depressed modifier keys, based on last KEYPRESS event
@@ -204,27 +204,27 @@ struct GG::GUIImpl
     int          m_min_drag_time;         // the minimum amount of time that a drag must be in progress before it is considered a drag, in ms
     int          m_min_drag_distance;     // the minimum distance that a drag must cover before it is considered a drag
 
-    int          m_prev_mouse_button_press_time; // the time of the most recent mouse button press
-    Pt           m_prev_mouse_button_press_pos;  // the location of the most recent mouse button press
-    std::weak_ptr<Wnd>         m_prev_wnd_under_cursor; // GUI window most recently under the input cursor; may be 0
-    int          m_prev_wnd_under_cursor_time; // the time at which prev_wnd_under_cursor was initially set to its current value
-    std::weak_ptr<Wnd>         m_curr_wnd_under_cursor; // GUI window currently under the input cursor; may be 0
-    std::weak_ptr<Wnd>         m_drag_wnds[3];          // GUI window currently being clicked or dragged by each mouse button
-    Pt           m_prev_wnd_drag_position;// the upper-left corner of the dragged window when the last *Drag message was generated
-    Pt           m_wnd_drag_offset;       // the offset from the upper left corner of the dragged window to the cursor for the current drag
-    bool         m_curr_drag_wnd_dragged; // true iff the currently-pressed window (m_drag_wnds[N]) has actually been dragged some distance (in which case releasing the mouse button is not a click). note that a dragged wnd is one being continuously repositioned by the dragging, and not a wnd being drag-dropped.
-    std::shared_ptr<Wnd>         m_curr_drag_wnd;         // nonzero iff m_curr_drag_wnd_dragged is true (that is, we have actually started dragging the Wnd, not just pressed the mouse button); will always be one of m_drag_wnds.
-    std::weak_ptr<Wnd>         m_curr_drag_drop_here_wnd;// the Wnd that most recently received a DragDropEnter or DragDropHere message (0 if DragDropLeave was sent as well, or if none)
-    Pt           m_wnd_resize_offset;     // offset from the cursor of either the upper-left or lower-right corner of the GUI window currently being resized
-    WndRegion    m_wnd_region;            // window region currently being dragged or clicked; for non-frame windows, this will always be WR_NONE
+    int                 m_prev_mouse_button_press_time; // the time of the most recent mouse button press
+    Pt                  m_prev_mouse_button_press_pos;  // the location of the most recent mouse button press
+    std::weak_ptr<Wnd>  m_prev_wnd_under_cursor; // GUI window most recently under the input cursor; may be 0
+    int                 m_prev_wnd_under_cursor_time; // the time at which prev_wnd_under_cursor was initially set to its current value
+    std::weak_ptr<Wnd>  m_curr_wnd_under_cursor; // GUI window currently under the input cursor; may be 0
+    std::weak_ptr<Wnd>  m_drag_wnds[3];          // GUI window currently being clicked or dragged by each mouse button
+    Pt                  m_prev_wnd_drag_position;           // the upper-left corner of the dragged window when the last *Drag message was generated
+    Pt                  m_wnd_drag_offset;                  // the offset from the upper left corner of the dragged window to the cursor for the current drag
+    bool                m_curr_drag_wnd_dragged = false;    // true iff the currently-pressed window (m_drag_wnds[N]) has actually been dragged some distance (in which case releasing the mouse button is not a click). note that a dragged wnd is one being continuously repositioned by the dragging, and not a wnd being drag-dropped.
+    std::shared_ptr<Wnd>m_curr_drag_wnd;                    // nonzero iff m_curr_drag_wnd_dragged is true (that is, we have actually started dragging the Wnd, not just pressed the mouse button); will always be one of m_drag_wnds.
+    std::weak_ptr<Wnd>  m_curr_drag_drop_here_wnd;          // the Wnd that most recently received a DragDropEnter or DragDropHere message (0 if DragDropLeave was sent as well, or if none)
+    Pt                  m_wnd_resize_offset;                // offset from the cursor of either the upper-left or lower-right corner of the GUI window currently being resized
+    WndRegion           m_wnd_region;                       // window region currently being dragged or clicked; for non-frame windows, this will always be WR_NONE
 
     /** The current browse info window, if any. */
     std::shared_ptr<BrowseInfoWnd> m_browse_info_wnd;
 
-    int          m_browse_info_mode;      // the current browse info mode (only valid if browse_info_wnd is non-null)
-    Wnd*         m_browse_target;         // the current browse info target
+    int                 m_browse_info_mode;      // the current browse info mode (only valid if browse_info_wnd is non-null)
+    Wnd*                m_browse_target;         // the current browse info target
 
-    std::weak_ptr<Wnd>         m_drag_drop_originating_wnd; // the window that originally owned the Wnds in drag_drop_wnds
+    std::weak_ptr<Wnd>  m_drag_drop_originating_wnd; // the window that originally owned the Wnds in drag_drop_wnds
 
     /** The Wnds currently being dragged and dropped. They are owned by the GUI and rendered separately.*/
     std::map<std::shared_ptr<Wnd>, Pt> m_drag_drop_wnds;
@@ -238,14 +238,14 @@ struct GG::GUIImpl
     /** The signals emitted by the keyboard accelerators. */
     std::map<std::pair<Key, Flags<ModKey>>, std::shared_ptr<GUI::AcceleratorSignalType>> m_accelerator_sigs;
 
-    bool         m_mouse_lr_swap;         // treat left and right mouse events as each other
+    bool         m_mouse_lr_swap = false; // treat left and right mouse events as each other
     std::map<Key, Key>
                  m_key_map;               // substitute Key press events with different Key press events
 
     int          m_delta_t;               // the number of ms since the last frame
-    bool         m_rendering_drag_drop_wnds;
+    bool         m_rendering_drag_drop_wnds = false;
     double       m_FPS;                   // the most recent calculation of the frames per second rendering speed (-1.0 if calcs are disabled)
-    bool         m_calc_FPS;              // true iff FPS calcs are to be done
+    bool         m_calc_FPS = false;      // true iff FPS calcs are to be done
     double       m_max_FPS;               // the maximum allowed frames per second rendering speed
 
     Wnd*         m_double_click_wnd;      // GUI window most recently clicked
@@ -253,13 +253,13 @@ struct GG::GUIImpl
     int          m_double_click_start_time;// the time from which we started measuring double_click_time, in ms
     int          m_double_click_time;     // time elapsed since last click, in ms
 
-    std::shared_ptr<StyleFactory> m_style_factory;
-    bool                            m_render_cursor;
-    std::shared_ptr<Cursor> m_cursor;
+    std::shared_ptr<StyleFactory>   m_style_factory;
+    bool                            m_render_cursor = false;
+    std::shared_ptr<Cursor>         m_cursor;
 
-    std::set<Timer*>  m_timers;
+    std::set<Timer*> m_timers;
 
-    const Wnd* m_save_as_png_wnd;
+    const Wnd* m_save_as_png_wnd = nullptr;
     std::string m_save_as_png_filename;
 
     std::string m_clipboard_text;
@@ -270,7 +270,6 @@ GUIImpl::GUIImpl() :
     m_allow_modal_accelerator_signals(false),
     m_mouse_pos(X(-1000), Y(-1000)),
     m_mouse_rel(X(0), Y(0)),
-    m_mod_keys(),
     m_key_press_repeat_delay(250),
     m_key_press_repeat_interval(66),
     m_last_key_press_repeat_time(0),
@@ -285,38 +284,16 @@ GUIImpl::GUIImpl() :
     m_prev_mouse_button_press_time(-1),
     m_prev_wnd_under_cursor(),
     m_prev_wnd_under_cursor_time(-1),
-    m_curr_wnd_under_cursor(),
-    m_drag_wnds(),
-    m_prev_wnd_drag_position(Pt()),
-    m_wnd_drag_offset(Pt()),
-    m_curr_drag_wnd_dragged(false),
-    m_curr_drag_wnd(nullptr),
-    m_curr_drag_drop_here_wnd(),
     m_wnd_region(WR_NONE),
     m_browse_info_mode(0),
-    m_browse_target(nullptr),
-    m_drag_drop_originating_wnd(),
-    m_mouse_lr_swap(false),
     m_delta_t(0),
-    m_rendering_drag_drop_wnds(false),
     m_FPS(-1.0),
-    m_calc_FPS(false),
     m_max_FPS(0.0),
-    m_double_click_wnd(nullptr),
     m_double_click_button(0),
     m_double_click_start_time(-1),
     m_double_click_time(-1),
-    m_style_factory(new StyleFactory()),
-    m_render_cursor(false),
-    m_cursor(),
-    m_save_as_png_wnd(nullptr),
-    m_clipboard_text()
-{
-    m_drag_wnds[0].reset();
-    m_drag_wnds[1].reset();
-    m_drag_wnds[2].reset();
-    m_mouse_button_state[0] = m_mouse_button_state[1] = m_mouse_button_state[2] = false;
-}
+    m_style_factory(new StyleFactory())
+{}
 
 void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, int curr_ticks)
 {

@@ -119,11 +119,11 @@ public:
 
     bool Run() override;
 
-    void           SetBorderColor(Clr clr);       ///< sets the color used to render the border of the control
-    void           SetInteriorColor(Clr clr);     ///< sets the color used to render the interior of the control
-    void           SetTextColor(Clr clr);         ///< sets the color used to render menu item text
-    void           SetHiliteColor(Clr clr);       ///< sets the color used to indicate a hilited menu item
-    void           SetSelectedTextColor(Clr clr); ///< sets the color used to render a hilited menu item's text
+    void SetBorderColor(Clr clr);       ///< sets the color used to render the border of the control
+    void SetInteriorColor(Clr clr);     ///< sets the color used to render the interior of the control
+    void SetTextColor(Clr clr);         ///< sets the color used to render menu item text
+    void SetHiliteColor(Clr clr);       ///< sets the color used to indicate a hilited menu item
+    void SetSelectedTextColor(Clr clr); ///< sets the color used to render a hilited menu item's text
     //@}
 
     static const std::size_t INVALID_CARET;
@@ -149,14 +149,13 @@ private:
     Clr               m_hilite_color;   ///< color behind selected items
     Clr               m_sel_text_color; ///< color of selected text
 
-    MenuItem          m_menu_data;   ///< this is not just a single menu item; the next_level element represents the entire menu
+    MenuItem          m_menu_data;      ///< this is not just a single menu item; the next_level element represents the entire menu
 
-    std::vector<Rect> m_open_levels; ///< bounding rectangles for each open submenu, used to detect clicks in them
-    std::vector<std::size_t>
-                      m_caret;       ///< stack representing the caret's location's path (eg 0th subitem of 1st subitem of item 3) back() is the most recent push
+    std::vector<Rect>           m_open_levels;      ///< bounding rectangles for each open submenu, used to detect clicks in them
+    std::vector<std::size_t>    m_caret;            ///< stack representing the caret's location's path (eg 0th subitem of 1st subitem of item 3) back() is the most recent push
 
-    const Pt          m_origin;         ///< the upper left hand corner of the control's visible area
-    MenuItem*         m_item_selected;  ///< the menu item selected (0 if none)
+    const Pt          m_origin;                     ///< the upper left hand corner of the control's visible area
+    MenuItem*         m_item_selected = nullptr;    ///< the menu item selected (0 if none)
 };
 
 } // namespace GG
