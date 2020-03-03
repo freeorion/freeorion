@@ -219,10 +219,7 @@ namespace {
             CUIWnd(UserString("OPTIONS_FONTS"),
                    GG::GUI::GetGUI()->AppWidth() / 6,       GG::GUI::GetGUI()->AppHeight() / 6,
                    GG::GUI::GetGUI()->AppWidth() * 2 / 3,   GG::GUI::GetGUI()->AppHeight() * 2 / 3,
-                   GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE | CLOSABLE),
-            m_font_graphic(nullptr),
-            m_title_font_graphic(nullptr),
-            m_hscroll(nullptr)
+                   GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE | CLOSABLE)
         {}
 
         void CompleteConstruction() override {
@@ -240,6 +237,17 @@ namespace {
                 m_font_graphic->Resize(GG::Pt(texture->Width(), texture->Height()));
                 AttachChild(m_font_graphic);
                 top += m_font_graphic->Height() + 1;
+            }
+
+            font = ClientUI::GetBoldFont();
+            if (font)
+                texture = font->GetTexture();
+            if (texture) {
+                m_bold_font_graphic = GG::Wnd::Create<GG::StaticGraphic>(texture);
+                m_bold_font_graphic->MoveTo(GG::Pt(GG::X0, top));
+                m_bold_font_graphic->Resize(GG::Pt(texture->Width(), texture->Height()));
+                AttachChild(m_bold_font_graphic);
+                top += m_bold_font_graphic->Height() + 1;
             }
 
             font = ClientUI::GetTitleFont();
@@ -292,6 +300,7 @@ namespace {
 
     private:
         std::shared_ptr<GG::StaticGraphic>  m_font_graphic;
+        std::shared_ptr<GG::StaticGraphic>  m_bold_font_graphic;
         std::shared_ptr<GG::StaticGraphic>  m_title_font_graphic;
         std::shared_ptr<GG::Scroll>         m_hscroll;
     };
@@ -547,6 +556,7 @@ void OptionsWnd::CompleteConstruction() {
 
     CreateSectionHeader(current_page, 0,                                UserString("OPTIONS_FONTS"));
     FontOption(current_page, 0, "ui.font.path",                         UserString("OPTIONS_FONT_TEXT"));
+    FontOption(current_page, 0, "ui.font.bold.path",                    UserString("OPTIONS_FONT_BOLD_TEXT"));
     FontOption(current_page, 0, "ui.font.title.path",                   UserString("OPTIONS_FONT_TITLE"));
 
     // show font texture button
