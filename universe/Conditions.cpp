@@ -3395,13 +3395,11 @@ void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
     }
 
     // simple case of a single specified id; can add just that object
-    std::shared_ptr<const UniverseObject> no_object;
-    int object_id = m_object_id->Eval(ScriptingContext(parent_context, no_object));
+    int object_id = m_object_id->Eval(parent_context);
     if (object_id == INVALID_OBJECT_ID)
         return;
 
-    auto obj = parent_context.objects.ExistingObject(object_id);
-    if (obj)
+    if (auto obj = parent_context.objects.ExistingObject(object_id))
         condition_non_targets.push_back(obj);
 }
 
