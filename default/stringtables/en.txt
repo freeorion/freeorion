@@ -12063,7 +12063,7 @@ SHP_WEAPON_GAMMA_BURST_1
 Gamma Slingshots
 
 SHP_WEAPON_GAMMA_BURST_1_DESC
-Unlocks the [[shippart SR_GAMMA_BURST]], an automated weapon system doing low damage to multiple targets.
+Unlocks the [[shippart SR_GAMMA_BURST]], an automated weapon system doing low damage to multiple targets. The base weapon part has shot damage 2.
 
 SHP_WEAPON_GAMMA_BURST_2
 Gamma Slingshot 2
@@ -12075,7 +12075,7 @@ SHP_WEAPON_GAMMA_BURST_3
 Gamma Slingshot 3
 
 SHP_WEAPON_GAMMA_BURST_3_DESC
-Upgrades [[shippart SR_GAMMA_BURST]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 5.
+Upgrades [[shippart SR_GAMMA_BURST]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 7.
 
 SHP_ION_CANNON
 Ion Cannon
