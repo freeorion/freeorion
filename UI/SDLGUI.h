@@ -1,52 +1,14 @@
-// -*- C++ -*-
-/* GG is a GUI for SDL and OpenGL.
-   Copyright (C) 2003-2008 T. Zachary Laine
-
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License
-   as published by the Free Software Foundation; either version 2.1
-   of the License, or (at your option) any later version.
-   
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-    
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA
-
-   If you do not wish to comply with the terms of the LGPL please
-   contact the author as other terms are available for a fee.
-    
-   Zach Laine
-   whatwasthataddress@gmail.com */
-
 /** \file SDLGUI.h \brief Contains SDLGUI, the input driver for using SDL with
     GG. */
 
-#ifndef _GG_SDLGUI_h_
-#define _GG_SDLGUI_h_
+#ifndef _SDLGUI_h_
+#define _SDLGUI_h_
 
 #include <GG/GUI.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keyboard.h>
 
-
-#ifdef _MSC_VER
-# ifdef GiGiSDL_EXPORTS
-#  define GG_SDL_API __declspec(dllexport)
-# else
-#  define GG_SDL_API __declspec(dllimport)
-# endif
-#endif
-# ifdef __GNUC__
-#  define GG_SDL_API __attribute__((__visibility__("default")))
-# endif
-
-namespace GG {
 
 class Framebuffer;
 
@@ -83,7 +45,7 @@ class Framebuffer;
     there should be no need to override the behavior of HandleSDLEvents().
     However, the HandleNonGGEvent() default implementation only responds to
     SDL_QUIT events, and so should be overridden in most cases. */
-class GG_SDL_API SDLGUI : public GG::GUI
+class SDLGUI : public GG::GUI
 {
 public:
     /** \name Structors */ ///@{
@@ -95,12 +57,12 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    X AppWidth() const override;
-    Y AppHeight() const override;
+    GG::X AppWidth() const override;
+    GG::Y AppHeight() const override;
     unsigned int Ticks() const override;
     std::string ClipboardText() const override;
     virtual std::vector<std::string> GetSupportedResolutions() const override;
-    virtual Pt GetDefaultResolution (int display_id) const override;
+    virtual GG::Pt GetDefaultResolution (int display_id) const override;
 
     virtual bool Fullscreen() const final;
     virtual bool FakeModeChange() const final;
@@ -125,12 +87,12 @@ public:
     void            operator()();      ///< external interface to Run()
 
     void            SetWindowTitle(const std::string& title);
-    void            SetVideoMode(X width, Y height, bool fullscreen, bool fake_mode_change);
+    void            SetVideoMode(GG::X width, GG::Y height, bool fullscreen, bool fake_mode_change);
     //@}
 
     static SDLGUI*  GetGUI();                             ///< allows any code to access the gui framework by calling SDLGUI::GetGUI()
 
-    static  Pt      GetDefaultResolutionStatic(int display_id);
+    static  GG::Pt  GetDefaultResolutionStatic(int display_id);
     static int      NumVideoDisplaysStatic();
     bool            FramebuffersAvailable() const;
 
@@ -172,15 +134,15 @@ protected:
     static int MaximumPossibleDimension(bool is_width = true);
 
 private:
-    void            RelayTextInput (const SDL_TextInputEvent& text, Pt mouse_pos);
+    void            RelayTextInput (const SDL_TextInputEvent& text, GG::Pt mouse_pos);
     /** Bare minimum SDL video initialization to allow queries to display sizes etc.
         If called during static initialization, it will cause OSX to crash on exit. */
     static void     SDLMinimalInit();
 
-    X         m_app_width;      ///< application width and height (defaults to 1024 x 768)
-    Y         m_app_height;
-    X         m_initial_x; ///< The initial position of the application window
-    Y         m_initial_y;
+    GG::X     m_app_width;      ///< application width and height (defaults to 1024 x 768)
+    GG::Y     m_app_height;
+    GG::X     m_initial_x; ///< The initial position of the application window
+    GG::Y     m_initial_y;
     bool      m_fullscreen;
     bool      m_fake_mode_change;
     int       m_display_id;
@@ -193,7 +155,4 @@ private:
     std::unique_ptr<Framebuffer> m_framebuffer;
 };
 
-} // namespace GG
-
 #endif
-

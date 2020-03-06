@@ -149,4 +149,3 @@ update_stdafx_h("FreeOrionD/StdAfx.h", ["Common/Common.vcxproj"],   ["FreeOrionD
 update_stdafx_h("FreeOrionCA/StdAfx.h",["Common/Common.vcxproj"],   ["FreeOrionCA/FreeOrionCA.vcxproj"])
 
 update_stdafx_h("GiGi/StdAfx.h",       [],                    ["GiGi/GiGi.vcxproj"])
-#update_stdafx_h("GiGiSDL/StdAfx.h",    ["GiGi/GiGi.vcxproj"], ["GiGiSDL/GiGiSDL.vcxproj"])

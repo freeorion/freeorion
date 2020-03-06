@@ -23,5 +23,4 @@
 # Zach Laine
 # whatwasthataddress@gmail.com
 
-add_subdirectory(acceptance)
 add_subdirectory(unit)

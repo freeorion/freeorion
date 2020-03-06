@@ -204,6 +204,9 @@
     <ClInclude Include="..\..\UI\ResourcePanel.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\SDLGUI.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\UI\ServerConnectWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
@@ -540,6 +543,9 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\ResourcePanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\SDLGUI.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\ServerConnectWnd.cpp">

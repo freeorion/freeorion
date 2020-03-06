@@ -1,28 +1,5 @@
-/* GG is a GUI for SDL and OpenGL.
-   Copyright (C) 2003-2008 T. Zachary Laine
+#include "SDLGUI.h"
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License
-   as published by the Free Software Foundation; either version 2.1
-   of the License, or (at your option) any later version.
-   
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-    
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA
-
-   If you do not wish to comply with the terms of the LGPL please
-   contact the author as other terms are available for a fee.
-    
-   Zach Laine
-   whatwasthataddress@gmail.com */
-
-#include <GG/SDL/SDLGUI.h>
 #include <GG/EventPump.h>
 #include <GG/WndEvent.h>
 #include <GG/utf8/checked.h>
@@ -129,87 +106,85 @@ namespace {
     };
 }
 
-namespace GG {
-    class Framebuffer {
-    public:
-        /// Construct a framebuffer of dimensions \a size.
-        /// \throws FramebufferFailedException if using framebuffers is not going to work.
-        Framebuffer(GG::Pt size) :
-            m_id(0),
-            m_texture(0),
-            m_depth_rbo(0)
-        {
-            int width = Value(size.x);
-            int height = Value(size.y);
+class Framebuffer {
+public:
+    /// Construct a framebuffer of dimensions \a size.
+    /// \throws FramebufferFailedException if using framebuffers is not going to work.
+    Framebuffer(GG::Pt size) :
+        m_id(0),
+        m_texture(0),
+        m_depth_rbo(0)
+    {
+        int width = Value(size.x);
+        int height = Value(size.y);
 
-            // Create the texture to render the image on
-            glGenTextures(1, &m_texture);
-            glBindTexture(GL_TEXTURE_2D, m_texture);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
-                         GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-            glBindTexture(GL_TEXTURE_2D, 0);
+        // Create the texture to render the image on
+        glGenTextures(1, &m_texture);
+        glBindTexture(GL_TEXTURE_2D, m_texture);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
+                        GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
-            // create a renderbuffer object to store depth and stencil info
-            glGenRenderbuffersEXT(1, &m_depth_rbo);
-            glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depth_rbo);
-            glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, width, height);
-            glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+        // create a renderbuffer object to store depth and stencil info
+        glGenRenderbuffersEXT(1, &m_depth_rbo);
+        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depth_rbo);
+        glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, width, height);
+        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
 
-            glGenFramebuffersEXT(1, &m_id);
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_id);
+        glGenFramebuffersEXT(1, &m_id);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_id);
 
-            // attach the texture to FBO color attachment point
-            glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,        // 1. fbo target: GL_FRAMEBUFFER_EXT
-                                      GL_COLOR_ATTACHMENT0_EXT,  // 2. attachment point
-                                      GL_TEXTURE_2D,         // 3. tex target: GL_TEXTURE_2D
-                                      m_texture,             // 4. tex ID
-                                      0);                    // 5. mipmap level: 0(base)
+        // attach the texture to FBO color attachment point
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,        // 1. fbo target: GL_FRAMEBUFFER_EXT
+                                    GL_COLOR_ATTACHMENT0_EXT,  // 2. attachment point
+                                    GL_TEXTURE_2D,         // 3. tex target: GL_TEXTURE_2D
+                                    m_texture,             // 4. tex ID
+                                    0);                    // 5. mipmap level: 0(base)
 
-            // attach the renderbuffer to depth attachment point
-            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,     // 1. fbo target: GL_FRAMEBUFFER_EXT
-                                         GL_DEPTH_ATTACHMENT_EXT,
-                                         GL_RENDERBUFFER_EXT,     // 3. rbo target: GL_RENDERBUFFER_EXT
-                                         m_depth_rbo);              // 4. rbo ID
+        // attach the renderbuffer to depth attachment point
+        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,     // 1. fbo target: GL_FRAMEBUFFER_EXT
+                                        GL_DEPTH_ATTACHMENT_EXT,
+                                        GL_RENDERBUFFER_EXT,     // 3. rbo target: GL_RENDERBUFFER_EXT
+                                        m_depth_rbo);              // 4. rbo ID
 
-            // the same render buffer has the stencil data in other bits
-            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
-                                      GL_STENCIL_ATTACHMENT_EXT,
-                                      GL_RENDERBUFFER_EXT,
-                                      m_depth_rbo);
+        // the same render buffer has the stencil data in other bits
+        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
+                                    GL_STENCIL_ATTACHMENT_EXT,
+                                    GL_RENDERBUFFER_EXT,
+                                    m_depth_rbo);
 
-            // check FBO status
-            GLenum status = glCheckFramebufferStatusEXT (GL_FRAMEBUFFER_EXT);
-            if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
-                throw FramebufferFailedException (status);
-            }
-
-            // switch back to window-system-provided framebuffer
-            glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+        // check FBO status
+        GLenum status = glCheckFramebufferStatusEXT (GL_FRAMEBUFFER_EXT);
+        if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
+            throw FramebufferFailedException (status);
         }
 
-        GLuint OpenGLId()
-        { return m_id; }
+        // switch back to window-system-provided framebuffer
+        glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+    }
 
-        GLuint TextureId()
-        { return m_texture; }
+    GLuint OpenGLId()
+    { return m_id; }
 
-        ~Framebuffer() {
-            glDeleteFramebuffersEXT(1, &m_id);
-            glDeleteRenderbuffersEXT(1, &m_depth_rbo);
-            glDeleteTextures(1, &m_texture);
-        }
+    GLuint TextureId()
+    { return m_texture; }
 
-    private:
-        GLuint m_id;
-        GLuint m_texture;
-        GLuint m_depth_rbo;
-    };
-}
+    ~Framebuffer() {
+        glDeleteFramebuffersEXT(1, &m_id);
+        glDeleteRenderbuffersEXT(1, &m_depth_rbo);
+        glDeleteTextures(1, &m_texture);
+    }
+
+private:
+    GLuint m_id;
+    GLuint m_texture;
+    GLuint m_depth_rbo;
+};
 
 // member functions
 SDLGUI::SDLGUI(int w/* = 1024*/, int h/* = 768*/, bool calc_FPS/* = false*/, const std::string& app_name/* = "GG"*/,

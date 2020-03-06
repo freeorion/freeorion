@@ -3,7 +3,7 @@
 #include <GG/Texture.h>
 #include <GG/Cursor.h>
 
-#include <GG/SDL/SDLGUI.h>
+#include "../../../UI/SDLGUI.h"
 
 #include <boost/format.hpp>
 
@@ -27,7 +27,7 @@ class Application::Impl {
 };
 
 
-class MinimalGGApp : public GG::SDLGUI {
+class MinimalGGApp : public SDLGUI {
     public:
         MinimalGGApp(int width, int height, bool calculate_FPS,
                      const std::string& name, int x, int y, bool fullscreen,

@@ -27,10 +27,6 @@ add_subdirectory(dialogs)
 add_subdirectory(RichText)
 add_subdirectory(nanovg)
 
-if(BUILD_SDL_DRIVER)
-    add_subdirectory(SDL)
-endif()
-
 target_sources(GiGi
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/AlignmentFlags.cpp
