@@ -13218,7 +13218,6 @@ Super Tester Colony
 BLD_COL_SUPER_TEST_DESC
 [[BLD_COL_PART_1]] Super Tester colony. [[BLD_COL_PART_2]] Super Tester colony [[BLD_COL_PART_3]].
 
-OPTIONS_FONT_TEXT
 ##
 ## Hull and ship part description templates
 ##
