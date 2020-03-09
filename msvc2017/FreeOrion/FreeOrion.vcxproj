@@ -22,7 +22,7 @@
     <ProjectGuid>{311D02C0-427D-4A03-AAEB-B819A9ACF5AB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>FreeOrion</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
