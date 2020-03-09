@@ -3187,12 +3187,9 @@ namespace {
 
 void ServerApp::PreCombatProcessTurns() {
     ScopedTimer timer("ServerApp::PreCombatProcessTurns", true);
-    ObjectMap& objects = m_universe.Objects();
 
     m_universe.ResetAllObjectMeters(false, true);   // revert current meter values to initial values prior to update after incrementing turn number during previous post-combat turn processing.
-
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphs();
-
 
     DebugLogger() << "ServerApp::ProcessTurns executing orders";
 
@@ -3268,7 +3265,7 @@ void ServerApp::PreCombatProcessTurns() {
 
 
     // fleet movement
-    auto fleets = objects.all<Fleet>();
+    auto fleets = Objects().all<Fleet>();
     for (auto& fleet : fleets) {
         if (fleet)
             fleet->ClearArrivalFlag();

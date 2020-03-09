@@ -527,7 +527,8 @@ std::string ProductionQueue::ProductionItem::Dump() const {
 //////////////////////////////
 // ProductionQueue::Element //
 //////////////////////////////
-ProductionQueue::Element::Element()
+ProductionQueue::Element::Element() :
+     m_uuid(boost::uuids::nil_generator()())
 {}
 
 ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int ordered_,
@@ -541,7 +542,8 @@ ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int orde
     location(location_),
     blocksize_memory(blocksize_),
     paused(paused_),
-    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_)
+    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_),
+    m_uuid(boost::uuids::nil_generator()())
 {}
 
 ProductionQueue::Element::Element(BuildType build_type, std::string name, int empire_id_, int ordered_,

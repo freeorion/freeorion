@@ -11,6 +11,7 @@
 #include <string>
 #include <boost/serialization/access.hpp>
 #include <boost/signals2/signal.hpp>
+#include <boost/uuid/uuid.hpp>
 
 class ResourcePool;
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
@@ -67,21 +68,22 @@ struct FO_COMMON_API ProductionQueue {
                 int location_, bool paused_ = false,
                 bool allowed_imperial_stockpile_use_ = true);
 
-        ProductionItem  item;
-        int             empire_id = ALL_EMPIRES;
-        int             ordered = 0;                ///< how many of item (blocks) to produce
-        int             blocksize = 1;              ///< size of block to produce (default=1)
-        int             remaining = 0;              ///< how many left to produce
-        int             location = INVALID_OBJECT_ID;///< the ID of the UniverseObject at which this item is being produced
-        float           allocated_pp = 0.0f;        ///< PP allocated to this ProductionQueue Element by Empire production update
-        float           progress = 0.0f;            ///< fraction of this item that is complete.
-        float           progress_memory = 0.0f;     ///< updated by server turn processing; aides in allowing blocksize changes to be undone in same turn w/o progress loss
-        int             blocksize_memory = 1;       ///< used along with progress_memory
-        int             turns_left_to_next_item = -1;
-        int             turns_left_to_completion = -1;
-        int             rally_point_id = INVALID_OBJECT_ID;
-        bool            paused = false;
-        bool            allowed_imperial_stockpile_use = true;
+        ProductionItem      item;
+        int                 empire_id = ALL_EMPIRES;
+        int                 ordered = 0;                ///< how many of item (blocks) to produce
+        int                 blocksize = 1;              ///< size of block to produce (default=1)
+        int                 remaining = 0;              ///< how many left to produce
+        int                 location = INVALID_OBJECT_ID;///< the ID of the UniverseObject at which this item is being produced
+        float               allocated_pp = 0.0f;        ///< PP allocated to this ProductionQueue Element by Empire production update
+        float               progress = 0.0f;            ///< fraction of this item that is complete.
+        float               progress_memory = 0.0f;     ///< updated by server turn processing; aides in allowing blocksize changes to be undone in same turn w/o progress loss
+        int                 blocksize_memory = 1;       ///< used along with progress_memory
+        int                 turns_left_to_next_item = -1;
+        int                 turns_left_to_completion = -1;
+        int                 rally_point_id = INVALID_OBJECT_ID;
+        bool                paused = false;
+        bool                allowed_imperial_stockpile_use = true;
+        boost::uuids::uuid  m_uuid;
 
         std::string Dump() const;
 

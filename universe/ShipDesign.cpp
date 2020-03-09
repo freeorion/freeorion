@@ -802,15 +802,7 @@ ParsedShipDesign::ParsedShipDesign(
 // ShipDesign
 ////////////////////////////////////////////////
 ShipDesign::ShipDesign() :
-    m_uuid(boost::uuids::nil_generator()()),
-    m_designed_on_turn(UniverseObject::INVALID_OBJECT_AGE),
-    m_designed_by_empire(ALL_EMPIRES),
-    m_hull(),
-    m_parts(),
-    m_is_monster(false),
-    m_icon(),
-    m_3D_model(),
-    m_name_desc_in_stringtable(false)
+    m_uuid(boost::uuids::nil_generator()())
 {}
 
 ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_throw,
@@ -1423,6 +1415,7 @@ bool operator ==(const ShipDesign& first, const ShipDesign& second) {
     std::map<std::string, int> first_parts;
     std::map<std::string, int> second_parts;
 
+    // don't care if order is different, as long as the types and numbers of parts is the same
     for (const std::string& part_name : first.Parts())
     { ++first_parts[part_name]; }
 

@@ -540,7 +540,7 @@ private:
     ProductionQueue::ProductionItem m_item;
     int m_number = 0;
     int m_location = INVALID_OBJECT_ID;
-    int m_index = INVALID_INDEX;
+    //int m_index = INVALID_INDEX;
     int m_new_quantity = INVALID_QUANTITY;
     int m_new_blocksize = INVALID_QUANTITY;
     int m_new_index = INVALID_INDEX;
@@ -549,6 +549,7 @@ private:
     int m_split_incomplete = INVALID_SPLIT_INCOMPLETE;
     int m_dupe = INVALID_SPLIT_INCOMPLETE;
     int m_use_imperial_pp = INVALID_USE_IMPERIAL_PP;
+    boost::uuids::uuid m_uuid = boost::uuids::nil_generator()();
 
     static const int INVALID_INDEX = -500;
     static const int INVALID_QUANTITY = -1000;
