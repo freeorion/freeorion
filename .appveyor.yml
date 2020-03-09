@@ -27,7 +27,7 @@ skip_commits:
 
 install:
   - cd ..
-  - ps: Start-FileDownload https://github.com/freeorion/freeorion-sdk/releases/download/v10/FreeOrionSDK_10_MSVC-v140-xp.zip -FileName FreeOrionSDK.zip
+  - ps: Start-FileDownload https://github.com/freeorion/freeorion-sdk/releases/download/v11/FreeOrionSDK_11_MSVC-v141-Win32.zip -FileName FreeOrionSDK.zip
   - unzip -q FreeOrionSDK.zip
   - cp bin/* freeorion/
   - cd freeorion
@@ -42,11 +42,11 @@ before_build:
 
 build_script:
   - if "%BUILD_SYSTEM%" == "MSVC" (
-      msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /property:PlatformToolset=v140_xp /property:Configuration=Release-XP /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /verbosity:minimal
+      msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /property:PlatformToolset=v141 /property:Configuration=Release /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /verbosity:minimal
     )
   - if "%BUILD_SYSTEM%" == "CMAKE" (
       pushd build &&
-      cmake -G "Visual Studio 15 2017" -T v140_xp -DBUILD_TESTING=On .. &&
+      cmake -G "Visual Studio 15 2017" -T v141 -A Win32 -DBUILD_TESTING=On .. &&
       cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /verbosity:minimal &&
       popd
     )

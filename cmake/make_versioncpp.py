@@ -21,7 +21,7 @@ required_boost_libraries = [
     "boost_locale",
     "boost_log",
     "boost_log_setup",
-    "boost_python",
+    "boost_python%d%d" % (sys.version_info.major, sys.version_info.minor),
     "boost_regex",
     "boost_serialization",
     "boost_signals",
