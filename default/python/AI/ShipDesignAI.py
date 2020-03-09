@@ -1584,10 +1584,13 @@ class ShipDesigner(object):
 
     def _calculate_fighter_launch_rate(self, bay_parts, hangar_part_name):
         launch_rate = 0
-        bays_tech_bonus = AIDependencies.HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT.get(hangar_part_name, {})
+        bay_launch_capacity_modifier_dict = {}
+        if hangar_part_name != None:
+            bay_launch_capacity_modifier_dict = AIDependencies.HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT.get(hangar_part_name, {})
         for bay_part in bay_parts:
             launch_rate += bay_part.capacity
-            launch_rate += _get_tech_bonus(bays_tech_bonus, bay_part.name)
+            if {} != bays_tech_bonus:
+                launch_rate += _get_tech_bonus(bay_launch_capacity_modifier_dict, bay_part.name)
         return launch_rate
 
     def _calculate_hangar_damage(self, hangar_part, ignore_species=False):
@@ -2368,7 +2371,7 @@ def _get_tech_bonus(upgrade_dict, part_name):
             _raised_warnings.add(part_name)
             error(("WARNING: Encountered unknown part (%s): "
                    "The AI can play on but its damage estimates may be incorrect leading to worse decision-making. "
-                   "Please update AIDependencies.py") % part_name, exc_info=True)
+                   "Please update AIDependencies.py - %s") % (part_name, upgrade_dict), exc_info=True)
         return 0
     total_tech_bonus = 0
     for tech, bonus in upgrades:
