@@ -2733,6 +2733,9 @@ Taille des polices
 OPTIONS_FONT_TEXT
 Texte
 
+OPTIONS_FONT_BOLD_TEXT
+Texte gras
+
 OPTIONS_FONT_TITLE
 Titres des fenêtres
 
@@ -13214,7 +13217,6 @@ Colonie Super-Testeurs
 
 BLD_COL_SUPER_TEST_DESC
 [[BLD_COL_PART_1]] colonie Super-Testeurs. [[BLD_COL_PART_2]] colonie Super-Testeurs [[BLD_COL_PART_3]].
-
 
 ##
 ## Hull and ship part description templates
