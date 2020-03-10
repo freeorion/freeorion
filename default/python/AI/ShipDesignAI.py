@@ -1585,11 +1585,11 @@ class ShipDesigner(object):
     def _calculate_fighter_launch_rate(self, bay_parts, hangar_part_name):
         launch_rate = 0
         bay_launch_capacity_modifier_dict = {}
-        if hangar_part_name != None:
+        if hangar_part_name:
             bay_launch_capacity_modifier_dict = AIDependencies.HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT.get(hangar_part_name, {})
         for bay_part in bay_parts:
             launch_rate += bay_part.capacity
-            if {} != bay_launch_capacity_modifier_dict:
+            if bay_launch_capacity_modifier_dict:
                 launch_rate += _get_tech_bonus(bay_launch_capacity_modifier_dict, bay_part.name)
         return launch_rate
 
