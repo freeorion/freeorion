@@ -1,3 +1,50 @@
+DEFAULT_SHIP_WEAPON_COMBAT_TARGETS
+''' And [
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        Or [
+           // Shoot at about one enemy per weapon per average - ships with fewer weapon parts are actually more focussed
+           MaximumNumberOf number = Max( 3, ( Source.Fleet.NumShips * [[COUNT_SHIP_WEAPONS(Source.DesignID)]] ) )
+                           sortkey = [[DEFAULT_TARGET_SHIP_VALUE]]
+                           condition = And [
+              InSystem id = Source.SystemID
+              [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+              [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+           ]
+           // Rarely attacking fighters
+           // Not sure if that means that about 10 percent of fighters are matched
+           // or if that means there is a 10 percent chance that all fighters match
+           And [
+               Random probability = 0.1
+               Fighter
+           ]
+        ]
+    ]
+'''
+
+
+// It is good to shoot dangerous, vulnerable ships              which could be repaired to be even more dangerous
+DEFAULT_TARGET_SHIP_VALUE
+''' ( LocalCandidate.Attack / Max(1,LocalCandidate.Structure) + ( ( LocalCandidate.MaxStructure - LocalCandidate.Structure) / LocalCandidate.MaxStructure / 2 ) ) '''
+// Also some way to access the current shot ship part or at least the shot damage would be nice
+
+
+// Arrgh maintenance nightmare
+// @1@ Ship Design ID
+COUNT_SHIP_WEAPONS
+''' (
+    PartsInShipDesign name = "SR_WEAPON_1_1" design = @1@ +
+    PartsInShipDesign name = "SR_WEAPON_2_1" design = @1@ +
+    PartsInShipDesign name = "SR_WEAPON_3_1" design = @1@ +
+    PartsInShipDesign name = "SR_WEAPON_4_1" design = @1@ +
+    PartsInShipDesign name = "SR_ICE_BEAM" design = @1@ +
+    PartsInShipDesign name = "SR_JAWS" design = @1@ +
+    PartsInShipDesign name = "SR_PLASMA_DISCHARGE" design = @1@ +
+    PartsInShipDesign name = "SR_SPINAL_ANTIMATTER" design = @1@ +
+    PartsInShipDesign name = "SR_SPINES" design = @1@ +
+    PartsInShipDesign name = "SR_TENTACLE" design = @1@
+    )
+'''
+
 // If unowned or owner has not unlocked the ship part yet.
 COMBAT_TARGETS_VISIBLE_ENEMY
 '''        Or [        // unowned target, when attacker is owned by an empire, and target is visible to that empire

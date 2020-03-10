@@ -6,14 +6,19 @@ Part
     capacity = 4
     damage = 1
     combatTargets = OrderedAlternativesOf [
-        // Target Bombers and Heavy Bombers first
+        // Rather target Bombers and Heavy Bombers
         And [
             [[COMBAT_TARGETS_VISIBLE_ENEMY]]
             Fighter
             Or [
                DesignHasPart name = "FT_HANGAR_3"
                DesignHasPart name = "FT_HANGAR_4"
+               // Low chance to intercept other fighters. Higher if few bombers present
+               Random probability = 0.1
             ]
+            // If there are few bombers intercept other fighters
+            // NumberOf doesnt work for fighters, also number should be fleet dependent
+            NumberOf number = 3 condition = Fighter
         ]
         And [ [[COMBAT_TARGETS_VISIBLE_ENEMY]]  Fighter ]
         // if no fighters: target enemy ships

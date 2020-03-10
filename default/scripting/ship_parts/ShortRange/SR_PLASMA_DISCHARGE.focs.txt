@@ -3,6 +3,7 @@ Part
     description = "SR_PLASMA_DISCHARGE_DESC"
     class = ShortRange
     damage = 20
+    combatTargets = [[DEFAULT_SHIP_WEAPON_COMBAT_TARGETS]]
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 3
@@ -13,3 +14,4 @@ Part
 #include "shortrange.macros"
 
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/ship_parts/targeting.macros"
