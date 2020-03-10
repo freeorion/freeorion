@@ -30,16 +30,12 @@ BOOST_PYTHON_MODULE(freeorion_logger) {
 }
 
 PythonBase::PythonBase() :
-#if defined(FREEORION_MACOSX)
-    m_home_dir(L""),
-    m_program_name(L""),
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+    m_home_dir(nullptr),
+    m_program_name(nullptr),
 #endif
     m_python_module_error(nullptr)
 {
-#if defined(FREEORION_WIN32)
-    m_home_dir[0] = L'\0';
-    m_program_name[0] = L'\0';
-#endif
 }
 
 PythonBase::~PythonBase() {
@@ -57,10 +53,10 @@ bool PythonBase::Initialize()
         // provided by the system). These API calls have been added in an attempt to
         // solve the problems. Not sure if they are really required, but better save
         // than sorry... ;)
-        wcscpy(m_home_dir, GetPythonHome().wstring().c_str());
+        m_home_dir = Py_DecodeLocale(GetPythonHome().string().c_str(), nullptr);
         Py_SetPythonHome(m_home_dir);
         DebugLogger() << "Python home set to " << Py_GetPythonHome();
-        wcscpy(m_program_name, (GetPythonHome() / "Python").wstring().c_str());
+        m_program_name = Py_DecodeLocale((GetPythonHome() / "Python").string().c_str(), nullptr);
         Py_SetProgramName(m_program_name);
         DebugLogger() << "Python program name set to " << Py_GetProgramFullPath();
 #endif
@@ -176,6 +172,16 @@ void PythonBase::Finalize() {
         }
 
         Py_Finalize();
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+        if (m_home_dir != nullptr) {
+            PyMem_RawFree(m_home_dir);
+            m_home_dir = nullptr;
+        }
+        if (m_program_name != nullptr) {
+            PyMem_RawFree(m_program_name);
+            m_program_name = nullptr;
+        }
+#endif
         DebugLogger() << "Cleaned up FreeOrion Python interface";
     }
 }
