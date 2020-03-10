@@ -11,6 +11,7 @@
       <CompileAsManaged>false</CompileAsManaged>
       <CompileAsWinRT>false</CompileAsWinRT>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <CppLanguageStandard>c++14</CppLanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

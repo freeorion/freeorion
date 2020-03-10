@@ -3,8 +3,16 @@
 Notable changes to the FreeOrion project will be documented in this file.
 
 
+## [v0.4.9+] - TBA
+
+
+#### Technical / Internal
+
+- C++14 is now supported and required to compile.
+
 
 ## [v0.4.9] - 2020-02-02
+
 
 #### Key Changes
 
