@@ -7,7 +7,10 @@ Part
     damage = 12
     combatTargets = And [
         [[COMBAT_TARGETS_VISIBLE_ENEMY]]
-        [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+        Or [
+           [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+           [[COMBAT_TARGETS_PLANET_WITH_DEFENSE]]
+        ]
     ]
     mountableSlotTypes = Internal
     buildcost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
