@@ -382,7 +382,7 @@ FIGHTER_DAMAGE_UPGRADE_DICT = {
     "FT_HANGAR_1": (("SHP_FIGHTERS_2", 0), ("SHP_FIGHTERS_3", 0), ("SHP_FIGHTERS_4", 0)),
     "FT_HANGAR_2": (("SHP_FIGHTERS_2", 2), ("SHP_FIGHTERS_3", 2), ("SHP_FIGHTERS_4", 2)),
     "FT_HANGAR_3": (("SHP_FIGHTERS_2", 3), ("SHP_FIGHTERS_3", 3), ("SHP_FIGHTERS_4", 3)),
-    "FT_HANGAR_4": (),
+    "FT_HANGAR_4": (("SHP_FIGHTERS_2", 6), ("SHP_FIGHTERS_3", 6), ("SHP_FIGHTERS_4", 6)),
 }
 
 FIGHTER_CAPACITY_UPGRADE_DICT = {
@@ -660,10 +660,10 @@ PILOT_FIGHTERDAMAGE_MODIFIER_DICT = {
     # TRAIT:    {hangar_name: effect, hangar_name2: effect2,...}
     # TODO FT_HANGAR_1 fighters are not able to attack ships so pilot damage modifier does not apply
     "NO":       {},
-    "BAD":      {"FT_HANGAR_1":  0, "FT_HANGAR_2": -2, "FT_HANGAR_3": -3, "FT_HANGAR_4": -4},
-    "GOOD":     {"FT_HANGAR_1":  0, "FT_HANGAR_2":  2, "FT_HANGAR_3":  3, "FT_HANGAR_4": 4},
-    "GREAT":    {"FT_HANGAR_1":  0, "FT_HANGAR_2":  4, "FT_HANGAR_3":  6, "FT_HANGAR_4": 8},
-    "ULTIMATE": {"FT_HANGAR_1":  0, "FT_HANGAR_2":  6, "FT_HANGAR_3":  9, "FT_HANGAR_4": 12},
+    "BAD":      {"FT_HANGAR_1":  0, "FT_HANGAR_2": -1, "FT_HANGAR_3": -1, "FT_HANGAR_4": -1},
+    "GOOD":     {"FT_HANGAR_1":  0, "FT_HANGAR_2":  1, "FT_HANGAR_3":  1, "FT_HANGAR_4": 1},
+    "GREAT":    {"FT_HANGAR_1":  0, "FT_HANGAR_2":  2, "FT_HANGAR_3":  2, "FT_HANGAR_4": 2},
+    "ULTIMATE": {"FT_HANGAR_1":  0, "FT_HANGAR_2":  3, "FT_HANGAR_3":  3, "FT_HANGAR_4": 3},
 }
 
 PILOT_FIGHTER_CAPACITY_MODIFIER_DICT = {
