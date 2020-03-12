@@ -8,6 +8,7 @@ Russian
 # * cjckem at gmail.com
 # * nikqz nikqz@mail.ru
 # * Bestary (lynx.bestary@gmail.com)
+# * naiffuR (gameinside.su)
 #
 # Notes: to avoid potential conflict with functional keys in other files, do not
 # make any stringtable keys beginning with "FUNCTIONAL_".
@@ -57,6 +58,8 @@ NO
 Нет
 
 # Used as a placeholder for unexpanded content in the combat log window.
+ELLIPSIS
+...
 
 EMPIRE
 Империя
@@ -102,6 +105,15 @@ RENAME
 
 ENTER_NEW_NAME
 Введите новое имя
+
+NOTHING_VALUE_SYMBOL
+--
+
+UNKNOWN_VALUE_SYMBOL
+?
+
+UNKNOWN_VALUE_SYMBOL_2
+???
 
 ERROR
 ОШИБКА
@@ -157,7 +169,7 @@ NEW_MONSTER_FLEET_NAME
 # Name for a newly created colony-only fleet.
 # %1% represents a unique number.
 NEW_COLONY_FLEET_NAME
-Поселенческий флот %1%
+Колониальный флот %1%
 
 # Name for a newly created reconnaissance-only fleet.
 # %1% represents a unique number.
@@ -190,8 +202,12 @@ NEW_BATTLE_FLEET_NAME
 #      If any other asteroids are in the system, the roman numeral is appended.
 # %1% name of the system this planet is created in.
 # %2% suffix for this planet
+NEW_PLANET_NAME
+%1% %2%
 
 # The label pre-pended to a new asteroids naming suffix
+NEW_ASTEROIDS_SUFFIX
+[[PT_ASTEROIDS]]
 
 EMPTY_SPACE
 Глубокий космос
@@ -201,6 +217,9 @@ UNEXPLORED_REGION
 
 UNEXPLORED_SYSTEM
 Неисследованная система
+
+NOT_APPLICABLE
+N/A
 
 BOMBER
 Бомбардировщик
@@ -257,6 +276,7 @@ CONTENT
 MULTIPLAYER
 Мультиплеер
 
+
 ##
 ## Major errors
 ##
@@ -265,6 +285,14 @@ ERROR_SOUND_INITIALIZATION_FAILED
 '''Не удалось инициализировать аудиосистему OpenAL.
 Проверьте лог-файл для получения более подробной информации.
 '''
+
+OPENGL_VERSION_LOW_TITLE
+OpenGL Version Low
+
+OPENGL_VERSION_LOW_TEXT
+'''Установленная  OpenGL ниже 2.0 версии
+
+при запуске FreeOrion может произойти сбой.'''
 
 # Used as a prefix for the FORMAT_LIST_[1-MANY]_ITEMS translation entries.
 FORMAT_LIST_DEFAULT_PLURAL_HEADER
@@ -281,35 +309,42 @@ FORMAT_LIST_DEFAULT_EMPTY_HEADER
 FORMAT_LIST_DEFAULT_DUAL_HEADER
 Имеются:
 
+FORMAT_LIST_0_ITEMS
+%1%
+
 FORMAT_LIST_1_ITEMS
-%1% %2%
+%1% %2%.
 
 FORMAT_LIST_2_ITEMS
-%1% %2% и %3%
+%1% %2% и %3%.
 
 FORMAT_LIST_3_ITEMS
-%1% %2%, %3% и %4%
+%1% %2%, %3% и %4%.
 
 FORMAT_LIST_4_ITEMS
-%1% %2%, %3%, %4% и %5%
+%1% %2%, %3%, %4% и %5%.
 
 FORMAT_LIST_5_ITEMS
-%1% %2%, %3%, %4%, %5% и %6%
+%1% %2%, %3%, %4%, %5% и %6%.
 
 FORMAT_LIST_6_ITEMS
-%1% %2%, %3%, %4%, %5%, %6% и %7%
+%1% %2%, %3%, %4%, %5%, %6% и %7%.
 
 FORMAT_LIST_7_ITEMS
-%1% %2%, %3%, %4%, %5%, %6%, %7% и %8%
+%1% %2%, %3%, %4%, %5%, %6%, %7% и %8%.
 
 FORMAT_LIST_8_ITEMS
-%1% %2%, %3%, %4%, %5%, %6%, %7%, %8% и %9%
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8% и %9%.
 
 FORMAT_LIST_9_ITEMS
-%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9% и %10%
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9% и %10%.
 
 FORMAT_LIST_10_ITEMS
-%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10% и %11%
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10% и %11%.
+
+FORMAT_LIST_MANY_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
+
 
 ##
 ## Build Projects
@@ -331,6 +366,7 @@ PROJECT_BT_STOCKPILE_DESC
 Пример: империя хочет перенести очки промышленности из главной группы снабжения в одну из второстепенных, где эти очки не производятся. Для этого сперва очки нужно запасти в основной группе снабжения, где они образуются. В основной группе производится 100 очков промышленности за ход, а верхний предел резервов - 10. Производственная очередь требует 120 очков за ход, следовательно все имеющиеся у империи мощности будут уходить на неё.
 Чтобы иметь возможность передать что-либо нуждающейся группе, нужно внести в очередь на производство 10х [[PROJECT_BT_STOCKPILE]], поместив эти элементы в самый верх. Они должны производиться в основной группе снабжения, где наличествуют очки производства.
 Так как [[PROJECT_BT_STOCKPILE]] расположена выше остальных элементов очереди, её финансирование гарантируется, следовательно резервы империи будут точно пополняться на 10 очков производства за ход. Для стабильной, постоянной передачи ресурсов, число повторений для [[PROJECT_BT_STOCKPILE]] устанавливается 99.'''
+
 
 ##
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
@@ -576,6 +612,7 @@ SD_DRAGON_TOOTH
 SD_DRAGON_TOOTH_DESC
 Древний корабль с мощным вооружением и защитной системой. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
+
 ##
 ## Monsters
 ##
@@ -611,7 +648,7 @@ SM_TREE
 Лес Дайсона
 
 SM_TREE_DESC
-Космический "лес", состоящий из многочисленных "деревьев", с волокнистыми ветвями. Деревья размножились и сформировали нечто наподобие сферы, на соответствующем расстоянии вокруг звезды. Леса Дайсона препятствуют навигации, а со временем они разрастаются, и их становится сложнее искоренять. Если этого не сделать, то периодически они будут рассылать свои семена через звёздные пути и занимать остальные звёзды. Семена [[SM_TREE]] известны как "[[predefinedsigndesign SM_FLOATER]]", и их может быть трудно обнаружить.
+Космический "лес", состоящий из многочисленных "деревьев", с волокнистыми ветвями. Деревья размножились и сформировали нечто наподобие сферы, на соответствующем расстоянии вокруг звезды. Леса Дайсона препятствуют навигации, а со временем они разрастаются, и их становится сложнее искоренять. Если этого не сделать, то периодически они будут рассылать свои семена через звёздные пути и занимать остальные звёзды. Семена [[SM_TREE]] известны как "[[predefinedshipdesign SM_FLOATER]]", и их может быть трудно обнаружить.
 
 SM_FLOATER
 Скиталец
@@ -635,7 +672,7 @@ SM_DRONE_FACTORY
 Фабрика боевых роботов
 
 SM_DRONE_FACTORY_DESC
-Производственная фабрика, построенная в давным-давно забытую войну для защиты уже давно исчезнувших её строителей. Удивительно, но она по-прежнему функционирует, иногда создавая новых Боевых роботов.
+Производственная фабрика, построенная давным-давно в забытую войну для защиты уже давно исчезнувших её строителей. Удивительно, но она по-прежнему функционирует, иногда создавая новых Боевых роботов.
 
 SM_GUARD_0
 Технический корабль
@@ -711,7 +748,7 @@ SM_SNOWFLAKE_2
 Снежинка
 
 SM_SNOWFLAKE_2_DESC
-'''Легковесный космический монстр с необычайным обзором.
+'''Легковесный космический монстр с исключительным зрением.
 
 [[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
@@ -821,6 +858,7 @@ SM_COSMIC_DRAGON_DESC
 
 Космические драконы - это биоинженерные космические монстры, невероятно мощные, опасно вооружённые, имеющие высокий параметр [[metertype METER_STEALTH]]. Потребуется сильный флот и хорошая [[encyclopedia DETECTION_TITLE]], чтобы уничтожить такого. Драконы блуждают в поисках обитаемых планет и атакуют, и способны даже испарять целые системы, если с ними никак не бороться.'''
 
+
 ##
 ## Fields
 ##
@@ -843,6 +881,12 @@ FLD_NEBULA_1
 FLD_NEBULA_1_DESC
 Облако водорода, которое может сжаться, сформировав новую звезду.
 
+FLD_NEBULA_2
+[[FLD_NEBULA_1]]
+
+FLD_NEBULA_2_DESC
+[[FLD_NEBULA_1_DESC]]
+
 FLD_SUBSPACE_RIFT
 Пространственный разрыв
 
@@ -854,6 +898,7 @@ FLD_ACCRETION_DISC
 
 FLD_ACCRETION_DISC_DESC
 Аккреционный диск представляет из себя структуру (часто - околозвёздный диск), образованную веществом, рассеянном в направлении орбитального вращения вокруг массивного центрального небесного тела. Все планеты в затронутой им системе получают штраф -1 к [[metertype METER_SUPPLY]].
+
 
 ##
 ## Predefined starting fleets
@@ -870,6 +915,7 @@ FN_COLONY_FLEET
 
 MONSTERS
 Монстры
+
 
 ##
 ## Status update messages
@@ -985,6 +1031,12 @@ ERROR_NOT_ENOUGH_HUMAN_PLAYERS
 ERROR_TOO_MANY_HUMAN_PLAYERS
 Слишком много игроков-людей.
 
+ERROR_NOT_ENOUGH_CONNECTED_HUMAN_PLAYERS
+Недостаточно игроков человеческой империи в сети.
+
+ERROR_TOO_MANY_UNCONNECTED_HUMAN_PLAYERS
+Слишком много неподключенных игроков в человеческой империи.
+
 ERROR_CONNECTION_WAS_REPLACED
 Ваше подключение было изменено.
 
@@ -1000,9 +1052,27 @@ ERROR_CONCEDE_EXCEED_COLONIES
 ERROR_CONCEDE_LAST_HUMAN_PLAYER
 Нельзя признавать поражение при наличии в игре только одного игрока-человека.
 
+ERROR_INCOMPATIBLE_VERSION
+Сервер не может правильно считать сообщения от вашего клиента, скорее всего из-за несовместимых версий игр.
+
+ERROR_CHECKSUM_MISMATCH
+Контрольная сумма содержимого на сервере и клиенте отличается.
+
 ##
 ## Game Rules
 ##
+
+RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR
+Перерасход ПП за тур
+
+RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR_DESC
+Процент перерасхода ПП за каждый ход сборки предмета.
+
+RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR
+Окончательный перерасход ПП
+
+RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR_DESC
+Процент чрезмерного перерасхода ПП к окончательному ходу сборки предмета во времени.
 
 RULE_CHEAP_AND_FAST_TECH_RESEARCH
 Быстрые и дешёвые науки
@@ -1027,6 +1097,18 @@ RULE_NUM_COMBAT_ROUNDS
 
 RULE_NUM_COMBAT_ROUNDS_DESC
 Какое количество этапов боя может произойти за каждый ход.
+
+RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE
+Агрессивные корабли, видимые в бою
+
+RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE_DESC
+Корабли во флотах, которые настроены на управление своей системой, начинают сражение, видимое для всех империй, независимо от их скрытности и уровней обнаружения..
+
+RULE_RESEED_PRNG_SERVER
+Случайный пересев
+
+RULE_RESEED_PRNG_SERVER_DESC
+При повторном заполнении воспроизведение того же самого сохранения или использование тех же настроек и начального значения не приведет к одинаковым случайным результатам. Это, возможно, предпочтительнее, если игроки хотят быть уверены, что никто из них не может предсказать будущие случайные результаты на основе предыдущих случайных результатов, или если игрок хочет «перебросить» результаты битвы или случайного эффекта при повторном воспроизведении хода, и не получить те же результаты, что и в предыдущей попытке.
 
 RULE_SHIP_SPEED_FACTOR
 Скорость кораблей
@@ -1082,6 +1164,18 @@ RULE_STOCKPILE_IMPORT_LIMITED
 RULE_STOCKPILE_IMPORT_LIMITED_DESC
 Активирует предел для импорта резервов за ход.
 
+RULE_TEST_INT
+Test Integer
+
+RULE_TEST_INT_DESC
+Test
+
+RULE_TEST_STRING
+Test String
+
+RULE_TEST_STRING_DESC
+Test
+
 RULE_STARLANES_EVERYWHERE
 Звёздные пути повсюду
 
@@ -1110,7 +1204,7 @@ RULE_HABITABLE_SIZE_GASGIANT
 Население газовых гигантов
 
 RULE_HABITABLE_SIZE_DESC
-Значение, задающее максимальное число параметра [[encyclopedia POPULATION_TITLE_SHORT_DESC]] для планет данного размера.
+Значение, задающее максимальное число параметра [[METER_POPULATION]] для планет данного размера.
 
 RULE_ALLOW_CONCEDE
 Разрешить признавать поражение
@@ -1135,6 +1229,36 @@ RULE_ONLY_ALLIANCE_WIN
 
 RULE_ONLY_ALLIANCE_WIN_DESC
 Игроки в альянсе могут побеждать вместе, если число человеческих игроков в их альянсе не превышает возможное количество людей-победителей для данной игры. При этом в галактике не должно оставаться других выживших игроков-людей.
+
+RULE_SHIP_PART_BASED_UPKEEP
+Использование частичного содержания
+
+RULE_SHIP_PART_BASED_UPKEEP_DESC
+Расчет технического обслуживания на основе частей судна, а не самих судов.
+
+RULE_ENABLE_ALLIED_REPAIR
+Сухие доки и полевой ремонт флота ремонтируют корабли союзников
+
+RULE_ENABLE_ALLIED_REPAIR_DESC
+Разрешить строительство сухих доков и полевые ремонтные технологии флота для ремонта кораблей союзных империй.
+
+RULE_SHOW_DETAILED_EMPIRES_DATA
+Показать подробные данные империй
+
+RULE_SHOW_DETAILED_EMPIRES_DATA_DESC
+Показать исследования и производство, исследованные здания, детали и корпуса всех империй.
+
+RULE_DIPLOMACY
+Разрешенная дипломатия
+
+RULE_DIPLOMACY_DESC
+Управляет дипломатическими ограничениями между игроками. По умолчанию все взаимодействия разрешены.
+
+RULE_DIPLOMACY_ALLOWED_FOR_ALL
+Все разрешено
+
+RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
+Все запрещено
 
 ##
 ## Command-line and options database entries
@@ -1174,6 +1298,9 @@ OPTIONS_DB_HOSTLESS
 OPTIONS_DB_SKIP_CHECKSUM
 Пропустить сравнивание контрольных сумм директории ресурсов. Это позволит игре быстрее стартовать, когда клиент и сервер расположены на одном компьютере и пользуются одной директорией ресурсов.
 
+OPTIONS_DB_TESTING
+Только для Linux. ИИ будет выводить журнал на консоль вместо файла для тестирования.
+
 OPTIONS_DB_GENERATE_CONFIG_XML
 Использовать настройки по-умолчанию, настройки из существующего файла config.xml или настройки, переданные командной строкой для создания файла config.xml. Это перезапишет текущий файл config.xml, если тот уже существует.
 
@@ -1196,7 +1323,8 @@ OPTIONS_DB_FULLSCREEN
 Запускать игру в полноэкранном режиме. При нажатии клавиши "Применить" настройки могут применится сразу, или может потребоваться рестарт игры.
 
 OPTIONS_DB_FAKE_MODE_CHANGE
-Не изменять разрешение экрана в реальности. Вместо этого, игра открывается в окне, с выбранным разрешением и масштабом. Это позволяет избежать некоторых проблем, связанных с реальным изменением разрешения экрана, наблюдаемых в Линуксе.
+'''Не изменяйте разрешение экрана. Показ игры в буфер экрана с требуемым разрешением и масштабирование буфера для заполнения экрана.
+Позволяет избежать некоторых проблем с изменением реального режима экрана, которые, как известно, появляются в linux.'''
 
 OPTIONS_DB_FULLSCREEN_MONITOR_ID
 Выберите монитор для использования полноэкранного режима. Основной монитор должен иметь индекс 0. Может потребоваться рестарт, чтобы изменения применились.
@@ -1216,6 +1344,9 @@ OPTIONS_DB_GALAXY_MAP_GAS
 
 OPTIONS_DB_GALAXY_MAP_STARFIELDS
 Отображать звездные поля вокруг систем. Это может замедлить рендеринг на старых компьютерах.
+
+OPTIONS_DB_GALAXY_MAP_STARFIELDS_SCALE
+Устанавливает размер звездных полей вокруг систем.
 
 OPTIONS_DB_GALAXY_MAP_SCALE_LINE
 Показывать масштабную линейку космических расстояний на галактической карте.
@@ -1256,6 +1387,15 @@ OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING
 OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE
 Насколько часто рисовать точки линий снабжения флота.
 
+OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE
+Игнорировать вражеские корабли, когда флот настроен на разведку
+
+OPTIONS_DB_FLEET_EXPLORE_SYSTEM_ROUTE_LIMIT
+Ограничивает число флотов, которые тестируют маршрут к каждой системе для флотов, настроенных на автоматическое исследование. Нижние пределы могут быть быстрее,но могут создавать менее оптимизированную маршрутизацию. Ограничение -1 отключает ограничение.
+
+OPTIONS_DB_FLEET_EXPLORE_SYSTEM_KNOWN_MULTIPLIER
+Множитель к приоритетному значению неисследованных систем, которые ранее были замечены империей. Значение меньше 1.0 будут отдавать предпочтение известным системам за неизвестных систем.
+
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
 Рисовать дальность обнаружения для объектов на карте галактики.
 
@@ -1273,6 +1413,42 @@ OPTIONS_DB_MP_HOST_ADDRESS
 
 OPTIONS_DB_MP_PLAYER_NAME
 Имя игрока при создании или присоединении к многопользовательской игре.
+
+OPTIONS_DB_MP_AI_MIN
+Установите минимальное количество игроков ИИ, необходимое для запуска многопользовательской игры.
+
+OPTIONS_DB_MP_AI_MAX
+Ограничьте количество ИИ, разрешенных в многопользовательской игре. Установите значение -1 для неограниченного.
+
+OPTIONS_DB_MP_HUMAN_MIN
+Установите минимальное количество игроков, необходимое для запуска многопользовательской игры..
+
+OPTIONS_DB_MP_HUMAN_MAX
+Ограничить количество игроков-людей в многопользовательской игре. Установите -1 для неограниченного.
+
+OPTIONS_DB_MP_CONN_HUMAN_MIN
+Минимальное число активных игроков, ниже которого сервер остановит игру.
+
+OPTIONS_DB_MP_UNCONN_HUMAN_MAX
+Максимальное количество игроков, контролирующих неликвидированные империи, которые могут быть отключены от сервера до того, как он остановит игру. Отключен, если 0, то есть сервер никогда не остановит игру из-за того, что игроки, играющие в империю, не подключены.
+
+OPTIONS_DB_COOKIES_EXPIRE
+Количество минут после того, как запись cookie будет считаться просроченной.
+
+OPTIONS_DB_PUBLISH_STATISTICS
+Включить отправку статики империи игроку.
+
+OPTIONS_DB_FIRST_TURN_TIME
+Абсолютный момент времени в формате «2019-01-20 11:59:59» в UTC. Если пусто, продвижение первого хода произойдет после истечения интервала. Требуется фиксированный интервал для включения.
+
+OPTIONS_DB_TIMEOUT_INTERVAL
+Максимальный интервал в секундах между ходами вперед. Если 0, то ходы по тайм-ауту отключены, и ходы будут продвигаться только после того, как все игроки закончили свой ход..
+
+OPTIONS_DB_TIMEOUT_FIXED_INTERVAL
+Ход вперед через фиксированные промежутки времени, независимо от того, когда и когда игроки отправили приказы хода.
+
+OPTIONS_DB_CLIENT_MESSAGE_SIZE_MAX
+Ограничение размера клиентского сообщения в байтах.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Позиция центра главного меню экрана, как часть полной ширины приложения.
@@ -1481,6 +1657,24 @@ OPTIONS_DB_UI_FIELD_FOG_CLR
 OPTIONS_DB_UI_PLANET_FOG_CLR
 Устанавливает цвет полосы затенения над графикам планеты боковой панели.
 
+OPTIONS_DB_UI_PLANET_STATUS_ICON_SIZE
+Устанавливает размер значка статуса планеты.
+
+OPTIONS_DB_UI_PLANET_STATUS_ICON_TITLE
+Уведомление о статусе планеты
+
+OPTIONS_DB_UI_PLANET_STATUS_ATTACKED
+%1% был атакован на предыдущем ходу.
+
+OPTIONS_DB_UI_PLANET_STATUS_CONQUERED
+%1% только что был завоеван. Счастье, вероятно, уменьшится.
+
+OPTIONS_DB_UI_PLANET_STATUS_UNHAPPY
+Население на %1% очень недовольно. Его нельзя использовать в качестве источника для переселенцев.
+
+OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY
+%1% был отрезан от поставок. Промышленность, созданная на этой планете, может быть использована только здесь.
+
 OPTIONS_DB_UI_SYSTEM_CIRCLES
 Рисовать круги вокруг систем.
 
@@ -1545,9 +1739,18 @@ OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
 При поиске в энциклопедии проверять совпадения в содержимом параграфа.
 
 # Section title for options window logging
+OPTIONS_DB_UI_LOGGER_THRESHOLDS
+Logger thresholds
+
+OPTIONS_DB_UI_LOGGER_THRESHOLD_TOOLTIP
+'''Each log output file (freeorion.log, freeoriond.log, and AI_x.log) collects log records from sources (sections of code).
+Setting the threshold for a source will enable logs records of that level or higher for that source.
+Each process client, server, and ai has a general source and may have additional detailed sources (eg. combat resolution logs).'''
 
 # This is a label to designate the logger as the general or default logger for a process
 # %1% is the name of a process logger, client, server or ai
+OPTIONS_DB_UI_LOGGER_PER_PROCESS_GENERAL
+%1% general
 
 OPTIONS_DB_KEYPRESS_REPEAT_DELAY
 Устанавливает задержку между удерживанием клавиши и генерированием повторяющихся нажатий.
@@ -1559,7 +1762,10 @@ OPTIONS_DB_MOUSE_REPEAT_DELAY
 Устанавливает задержку между нажатием кнопки мыши и генерацией повторяющихся кликов.
 
 OPTIONS_DB_MOUSE_REPEAT_INTERVAL
-Устанавливает задержку между удерживанием кнопки мыши пока удерживается кнопка мыши.
+Устанавливает задержку между удерживанием кнопки мыши пока удерживается кнопка мыши
+
+OPTIONS_DB_DISPLAY_TIMESTAMP
+Включает отметку времени сообщений в окнах чата.
 
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 Если включено, то при выборе нескольких флотов разворачиваются окна для каждого из них. Если нет, то открытие окна нового флота будет происходить поверх окна со старым.
@@ -1572,6 +1778,9 @@ OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS
 
 OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
 Автоматически добавлять все сохраненные дизайны кораблей в известные дизайны империи.
+
+OPTIONS_DB_ADD_DEFAULT_DESIGNS
+Автоматическое добавление конструкций кораблей игры по умолчанию к известным дизайнам игрока-империи.
 
 OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
 В окне «Дизайн» динамически обновлять страницу энциклопедии с подробными сведениями при редактировании имени дизайна.
@@ -1595,8 +1804,11 @@ OPTIONS_DB_UI_PROD_QUEUE_LOCATION
 Показывать производственное местоположение для элементов в производственной очереди.
 
 OPTIONS_DB_GAMESETUP_SEED
-'''Зерно используется для случайной генерации галактики.
-Галактики генерируемые с теми же настройками и тем же зерном будут одинаковым'''.
+'''Семя, используемое для случайной генерации галактики.
+Галактики, созданные с одинаковыми настройками и одинаковым семенем, будут идентичны.'''
+
+OPTIONS_DB_GAMESETUP_UID
+'''Игровой UID для новых игр. Опция только для сервера может быть использована для предсказуемого названия игры на серверах без хоста.'''
 
 OPTIONS_DB_GAMESETUP_STARS
 '''Количество генерируемых систем в галактике.
@@ -1627,7 +1839,8 @@ OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 '''Количество планет с аномалиями и артефактами.
 
-Некоторые аномалиями или артефактами охраняются стражами, оставленными «Предтечами». Только если значение «Частота появления Монстров» установлено в «Нет» они не будут появляться.'''
+Некоторые аномалиями или артефактами охраняются стражами, оставленными «Предтечами». Только если значение «Частота появления Монстров» установлено в «Нет» они не будут появляться.
+'''
 
 OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY
 '''Частота появления монстров в галактике.
@@ -1637,7 +1850,8 @@ OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY
 OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY
 '''Количество планет с аборигенами.
 
-Некоторые инопланетяне могут быть технологически продвинуты и могут создавать оборонительные корабли для защиты своих родных миров, они появятся даже если параметр «Частота появления монстров» установлен на «Нет».'''
+Некоторые инопланетяне могут быть технологически продвинуты и могут создавать оборонительные корабли для защиты своих родных миров, они появятся даже если параметр «Частота появления монстров» установлен на «Нет».
+'''
 
 OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
 '''Степень не дружелюбности компьютерных игроков.
@@ -1661,7 +1875,6 @@ OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
 OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
 '''Количество компьютерных игроков.
 
-
 Лучше иметь хотя бы одного игрока на каждые 15-30 систем в игре, играя с большим или меньшим количеством ИИ может создать проблемы с балансом.
 
 Очень большое количество ИИ может вызвать лаги, особенно на поздних этапах игры.'''
@@ -1681,11 +1894,23 @@ OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE
 OPTIONS_DB_SAVE_DIR
 Каталог для сохраненных игр.
 
+OPTIONS_DB_SERVER_SAVE_DIR
+Общедоступный каталог для сохранённых игр на сервере.
+
 OPTIONS_DB_RESOURCE_DIR
 Корневой каталог для главных файлов игры (настроек и файлов данных).
 
 OPTIONS_DB_LOG_LEVEL
-Нижний уровень выводимых в логе сообщений.
+Переопределяет пороговые значения всех регистраторов до этого уровня, на котором и будут выводиться сообщения журнала.
+
+OPTIONS_DB_LOG_FILE
+Переопределяет местоположение файла журнала по умолчанию.
+
+OPTIONS_DB_LOGGER_FILE_SINK_LEVEL
+Устанавливает пороговое значение, равное или превышающее, какие сообщения журнала будут генерироваться для источника по умолчанию для этого процесса.
+
+OPTIONS_DB_LOGGER_SOURCE_LEVEL
+Устанавливает пороговое значение, равное или превышающее, какие сообщения журнала будут генерироваться для этого источника.
 
 OPTIONS_DB_STRINGTABLE_FILENAME
 Устанавливает языко-специфичный файл с таблицами строк.
@@ -1726,6 +1951,18 @@ OPTIONS_DB_AUTOSAVE_TURNS
 OPTIONS_DB_AUTOSAVE_LIMIT
 Максимальное число файлов сохранений.
 
+OPTIONS_DB_AUTOSAVE_GALAXY_CREATION
+Включите автосохранение после создания галактики перед началом игры.
+
+OPTIONS_DB_AUTOSAVE_GAME_CLOSE
+Включить автосохранение при выходе из игры или закрытии игры. В многопользовательском режиме без хоста включите автосохранение, когда сервер закрывает игру из-за отключения игрока или когда сервер останавливается.
+
+OPTIONS_DB_AUTOSAVE_HOSTLESS
+Включить автосохранение в режиме без хоста.
+
+OPTIONS_DB_AUTOSAVE_INTERVAL
+Задержка в секундах после начала последнего хода или автосохранения до следующего автосохранения. Предотвращает потерю заказов игроков при сбое сервера. 0 если отключено.
+
 OPTIONS_DB_UI_MOUSE_LR_SWAP
 Поменять местами кнопки мыши.
 
@@ -1733,10 +1970,16 @@ OPTIONS_DB_MUSIC_VOLUME
 Громкость музыки (от 0 до 255).
 
 OPTIONS_DB_QUICKSTART
-Начать новую быструю игру немедленно, минуя главное меню.
+Запускает новую быструю игру, минуя главное меню в одиночной игре или лобби в многопользовательской. В многопользовательском режиме требуется режим без хоста и отсутствие ограничений на минимальное количество подключенных игроков, так как сервер запускается без подключенных игроков.
+
+OPTIONS_DB_CONTINUE
+Продолжение воспроизведения из последнего сохранения, минуя главное меню.
 
 OPTIONS_DB_AUTO_N_TURNS
-Автоматическое нажатие кнопки «Конец Хода» на первых N ходах (до 400 ходов, по умолчанию 0); Полезно для различных тестов, в частности с --quickstart или --load, возможно также --auto-quit
+Автоматическое нажатие кнопки «Конец Хода» на первых N ходах (до 400 ходов, по умолчанию 0); Полезно для различных тестов, в частности с --quickstart или --load, возможно также --auto-quit.
+
+OPTIONS_DB_CHECKED_GL_VERSION
+Сохраняет, была ли проверена версия OpenGL этой системы. Если false, несколько параметров рендеринга могут быть изменены в зависимости от версии GL, после чего эта опция будет установлена ​​в true.
 
 OPTIONS_DB_RESET_FSSIZE
 Сбрасывать сохраненное разрешение для полноэкранного режима. При значении ложно разрешение будет устанавливаться на максимально большое, при значении верно будет использоваться ранее сохраненные параметры
@@ -1766,10 +2009,16 @@ OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC
 Указывает количество потоков, используемых при обработке эффектов на сервере. Более чем один поток может привести к непредсказуемым сбоям
 
 OPTIONS_DB_AUTO_QUIT
-Автоматический выход после того, как завершены все ходы заданные с помощью -auto-advance-n-turn (по умолчанию - ноль). Полезно для различных тестов, в частности с --quickstart или --load
+Автоматический выход после того, как завершены все ходы заданные с помощью -auto-advance-n-turn (по умолчанию - ноль). Полезно для различных тестов, в частности с --quickstart или --load.
 
 OPTIONS_DB_BINARY_SERIALIZATION
-Использует бинарную сериализацию для сохранения игр. Двоичная сериализация быстрее сохраняется и загружается, но может быть невозможна загрузка игр в другой операционной системе
+Использует бинарную сериализацию для сохранения игр. Двоичная сериализация быстрее сохраняется и загружается, но может быть невозможна загрузка игр в другой операционной системе.
+
+OPTIONS_DB_SERVER_BINARY_SERIALIZATION
+Сервер будет использовать двоичную сериализацию для взаимодействия клиент-сервер, если версия клиента совпадает с версией сервера. Двоичная сериализация быстрее переносится, но может быть несовместима между различными операционными системами и архитектурами..
+
+OPTIONS_DB_XML_ZLIB_SERIALIZATION
+При сохранении игр с XML-сериализацией сожмите большую часть XML перед записью файла. Сжатие существенно уменьшает размеры сохраняемых файлов, но может сделать их не загружаемыми из-за требований к памяти для распаковки сохраненных данных.
 
 OPTIONS_DB_UI_WINDOWS_EXISTS
 Истина, если в настоящее время существует окно с заданным именем конфигурации, ложно - если окно было создана и удалено, не существует - если ни одно окно не было создано с таким именем
@@ -1890,6 +2139,12 @@ OPTIONS_DB_SECTION_MISC
 OPTIONS_DB_SECTION_NETWORK
 Сервер и сеть
 
+OPTIONS_DB_SECTION_RAW
+Все опции только с необработанными ключами описания
+
+OPTIONS_DB_SECTION_RESOURCE
+Ресурсы игровых данных
+
 OPTIONS_DB_SECTION_SAVE
 Сохранение игры
 
@@ -1971,12 +2226,34 @@ COLOR_DLG_NEW
 COLOR_DLG_OLD
 Старый
 
+COLOR_DLG_RED
+R:
+
+COLOR_DLG_GREEN
+G:
+
+COLOR_DLG_BLUE
+B:
+
+COLOR_DLG_HUE
+H:
+
+COLOR_DLG_SATURATION
+S:
+
+COLOR_DLG_VALUE
+V:
+
+COLOR_DLG_ALPHA
+A:
+
+
 ##
 ## Intro screen
 ##
 
 INTRO_WINDOW_TITLE
-FreeOrion Главное меню
+Главное меню FreeOrion
 
 INTRO_BTN_CONTINUE
 Продолжить
@@ -1996,6 +2273,9 @@ INTRO_BTN_LOAD_GAME
 INTRO_BTN_OPTIONS
 Опции
 
+INTRO_BTN_PEDIA
+[[MAP_BTN_PEDIA]]
+
 INTRO_BTN_ABOUT
 Об игре
 
@@ -2013,6 +2293,7 @@ ERR_CONNECT_TIMED_OUT
 
 INTRO_CREDITS_LICENSE
 Выпущено под
+
 
 ##
 ## Server Setup Screen
@@ -2103,9 +2384,15 @@ READY_BN
 NOT_READY_BN
 Отклонить
 
+# %1% is a turn progress phase
+PLAYING_GAME
+Играя в игру: %1%
+
+# %1% is a player name
 PLAYER_ENTERED_GAME
 %1% зашёл в игру
 
+# %1% is a player name
 PLAYER_LEFT_GAME
 %1% покинул игру
 
@@ -2260,6 +2547,7 @@ GSETUP_MANIACAL
 GSETUP_SPECIES_RANDOM_DESC
 Выбирает случайный вид из доступных игровых видов.
 
+
 ##
 ## About dialog
 ##
@@ -2274,7 +2562,8 @@ VISION
 Технические особенности
 
 FREEORION_VISION
-FreeOrion - игра с открытым исходным кодом, основанная на игре Master of Orion. Пошаговая стратегическая космическая игра с масштабной вселенной, строящаяся на классической модели '4X' с добавлением элементов развития наций, как в Europa Universalis 2, с гибким движком тактических боев. Так как проект модульный, принцип открытого исходного кода позволяет значительно упростить доработку игровых элементов и движка с помощью сообщества, в то время как команда FreeOrion сосредоточена построением живой, дышащей вселенной в "великой кампании".
+FreeOrion - игра с открытым исходным кодом, основанная на игре Master of Orion. Пошаговая стратегическая космическая игра с масштабной вселенной, строящаяся на классической модели '4X' с добавлением элементов развития наций, как в Europa Universalis 2, с гибким движком тактических боев. Так как проект модульный, принцип открытого исходного кода позволяет значительно упростить доработку игровых элементов и движка с помощью сообщества, в то время как команда FreeOrion сосредоточена построением живой, дышащей вселенной в "великой кампании"..
+
 
 ##
 ## In-game menu
@@ -2302,7 +2591,13 @@ BUTTON_DISABLED
 Кнопка отключена
 
 SAVE_DISABLED_BROWSE_TEXT
-Кнопка «Сохранить игру» отключена либо потому, что это многопользовательская игра, в которой вы не являетесь ни хостом, ни модератором, либо потому, что в то время, когда это меню было открыто, по крайней мере один из ИИ еще не завершил свои передвижения на текущем ходу (индикация значка состояния в виде зеленого треугольника слева от значка игрока в окне «Империи»).
+'''Кнопка «Сохранить игру» отключена. Это может быть потому, что:
+
+-Это многопользовательская игра, в которой этот клиент не является ни хостом, ни модератором.
+
+-Когда это меню было открыто, по крайней мере, один из ИИ еще не завершил отправку своих ходов на ход (обозначается зеленым треугольным значком состояния слева от его значка игрока в окне Empires)..
+
+-Еще одно сохранение продолжается.'''
 
 GAME_MENU_REALLY_CONCEDE
 Вы действительно хотите сдаться?
@@ -2595,7 +2890,10 @@ OPTIONS_GALAXY_MAP_GAS
 Газовые облака как фон у галактики
 
 OPTIONS_GALAXY_MAP_STARFIELDS
-Звезды в фоне у галактики
+Отображение звездных полей на карте галактики
+
+OPTIONS_GALAXY_MAP_STARFIELDS_SCALE
+Карта галактики звездные поля размер звезды
 
 OPTIONS_GALAXY_MAP_SCALE_LINE
 Масштаб увеличения галактики
@@ -2892,9 +3190,10 @@ OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_TITLE
 Создать файл конфигурации (Расширенная опция)
 
 OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC
-'''Сохранение текущих настроек в качестве настроек по-умолчанию. Благодаря этому они всегда будут иметь приоритет перед любыми другими настройками, кроме консольных команд.
-В этом файле будут содержаться только изменённые значения различных базовых параметров.
-Любой другой файл настроек будет перезаписан при этом.
+'''Сохраняет текущие параметры конфигурации в качестве постоянных параметров по умолчанию.
+Такие настройки имеют приоритет над любыми настройками в config.xml, но не командной строкой.
+Сохраняет только те настройки, которые были изменены из значений по умолчанию.
+Все существующие постоянные конфигурационные файлы перезаписываются.
 
 Данные настройки могут стать невалидными при смене версий игры.
 Настройки из ранее открытого окна могут не примениться, если соответствующая им игровая сессия не была запущена.
@@ -2915,50 +3214,152 @@ OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE
 MAP_BTN_TURN_UPDATE
 Ход %1%
 
+# %1% current turn number.
+MAP_BTN_TURN_UNREADY
+Пересмотреть заказы %1%
+
+MAP_BTN_TURN_TOOLTIP
+Начать ход
+
+MAP_BTN_TURN_TOOLTIP_DESC_SP
+'''Начинает обработку хода в следующей последовательности:
+
+[[MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO]]
+'''
+
+MAP_BTN_TURN_TOOLTIP_DESC_MP
+'''Отправка заказов на сервер. Обработка хода будет выполняться в следующей последовательности:
+
+[[MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO]]
+'''
+
+MAP_BTN_TURN_TOOLTIP_DESC_OBS
+Наблюдатели не могут начать обработку хода.
+
+MAP_BTN_TURN_TOOLTIP_DESC_MOD
+'''Начинает обработку хода, даже если некоторые игроки не отправили свои заказы на сервер.
+Обработка хода будет выполняться в следующей последовательности:
+
+[[MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO]]
+'''
+
+MAP_BTN_TURN_TOOLTIP_DESC_WAIT
+В ожидании других игроков, чтобы отправить свои заказы. Нажмите еще раз, чтобы пересмотреть заказы.
+
+MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO
+'''<u>Выполнение заказа</u>
+Колонизация, вторжение, бомбардировка, дарение, слом и движение флота
+
+<u>Разрешение боя</u>
+
+<u>Производство, исследования и популяция</u>
+Реализация эффекта, производство кораблей и зданий, освоение новых технологий, рост населения, обновление системы снабжения.'''
+
+# %1% number of seconds
+MAP_TIMEOUT_SECONDS
+%1% секунд
+
+# %1% number of minutes
+# %2% number of seconds
+MAP_TIMEOUT_MINS_SECS
+%1% мин %2% сек
+
+# %1% number of hours
+# %2% number of minutes
+MAP_TIMEOUT_HRS_MINS
+%1% часов %2% мин
+
+# %1% number of frames currently displayed per second.
+MAP_INDICATOR_FPS
+%1% FPS
+
+# %1% number of 'universe units' which the bar scale on the map represents.
 MAP_SCALE_INDICATOR
 <s>%1% сл</s>
 
 MAP_BTN_MENU
 Меню
 
+MAP_BTN_MENU_DESC
+''''''
+
 MAP_BTN_AUTO_ADVANCE_ENABLED
 Автопродолжение хода
+
+MAP_BTN_AUTO_ADVANCE_ENABLED_DESC
+''''''
 
 MAP_BTN_MANUAL_TURN_ADVANCE
 Ручное продолжение хода
 
+MAP_BTN_MANUAL_TURN_ADVANCE_DESC
+''''''
+
 MAP_BTN_MODERATOR
 Модератор
+
+MAP_BTN_MODERATOR_DESC
+''''''
 
 MAP_BTN_OBJECTS
 Объекты
 
+MAP_BTN_OBJECTS_DESC
+''''''
+
 MAP_BTN_SITREP
 События
+
+MAP_BTN_SITREP_DESC
+''''''
 
 MAP_BTN_RESEARCH
 Наука
 
+MAP_BTN_RESEARCH_DESC
+''''''
+
 MAP_BTN_PRODUCTION
 Промышленность
+
+MAP_BTN_PRODUCTION_DESC
+''''''
 
 MAP_BTN_DESIGN
 Дизайн
 
+MAP_BTN_DESIGN_DESC
+''''''
+
 MAP_BTN_GRAPH
 Графики
+
+MAP_BTN_GRAPH_DESC
+''''''
 
 MAP_BTN_PEDIA
 Энциклопедия
 
+MAP_BTN_PEDIA_DESC
+''''''
+
 MAP_BTN_EMPIRES
 Империи
+
+MAP_BTN_EMPIRES_DESC
+''''''
 
 MAP_BTN_MESSAGES
 Сообщения
 
+MAP_BTN_MESSAGES_DESC
+''''''
+
 MAP_PRODUCTION_TITLE
 Промышленность
+
+MAP_PRODUCTION_WASTED_TITLE
+Потраченное впустую производство
 
 MAP_PROD_CLICK_TO_OPEN
 '''
@@ -2996,7 +3397,7 @@ RESOURCE_TT_WASTED
 Потеряно
 
 MAP_POPULATION_DISTRIBUTION
-Перепись населения
+Популяция
 
 CENSUS_SPECIES_HEADER
 Виды
@@ -3023,13 +3424,13 @@ MAP_FLEET_ARMED_COUNT
 Военные корабли
 
 MAP_FLEET_UNARMED_COUNT
-Невооруженные суда
+Невооруженные корабли
 
 MAP_FLEET_TROOP_COUNT
 Десантные корабли
 
 MAP_FLEET_COLONY_COUNT
-Колониальные суда
+Колониальные корабли
 
 MAP_FLEET_CARRIER_COUNT
 Авианосные корабли
@@ -3091,6 +3492,7 @@ RESOURCE_EXPORT
 RESOURCE_SELF_SUFFICIENT
 Ни импорта, ни экспорта
 
+
 ##
 ## Side panel/Planet panel
 ##
@@ -3129,10 +3531,15 @@ PL_CANCEL_BOMBARD
 
 # %1% the planet size as text (small, medium, large, ...).
 # %2% type of the planet environment (desert, oceanic, terran, ...).
+PL_TYPE_SIZE
+%1% %2%
 
 # %1% the planet size as text (small, medium, large, ...).
 # %2% type of the planet environment (desert, oceanic, terran, ...).
 # %3% suitability of the planet for a concrete species (adequate, hostile, ...).
+# %4% species name for which suitability applies (Human, Trith, ...).
+PL_TYPE_SIZE_ENV
+%1% %2% (%4%: %3%)
 
 PL_NO_VISIBILITY
 Планету в данный момент не видно.
@@ -3226,6 +3633,8 @@ TT_CHANGE
 
 # %1% the meter name displayed.
 # %2% the meter value.
+TT_BREAKDOWN_SUMMARY
+%1%: %2%
 
 TT_INHERENT
 Присущий
@@ -3262,6 +3671,8 @@ TT_SPECIES
 
 # %1% name of this fields field type.
 # %2% name of field
+TT_FIELD
+<i>%2%</i>
 
 TT_FIGHTER_LAUNCH
 Запускающий
@@ -3285,6 +3696,8 @@ TT_UNKNOWN
 Неизвестный
 
 # %1% name of the species.
+TT_SPECIES_POPULATION
+%1% [[METER_POPULATION]]
 
 SP_RENAME_SYSTEM
 Переименовать систему
@@ -3365,6 +3778,8 @@ FW_UNKNOWN_DESIGN_NAME
 
 # %1% name of the ship design that was used by this ship.
 # %2% name of the ship owning species.
+FW_SPECIES_SHIP_DESIGN_LABEL
+(%2%) %1%
 
 # Displayed when creating a new fleet by dropping ships into the new fleet slot.
 FW_NEW_FLEET_LABEL
@@ -3613,8 +4028,17 @@ DIPLOMACY
 PEACE
 Мир
 
+AT_PEACE_WITH
+В мире с
+
 WAR
 Война
+
+AT_WAR_WITH
+Воюет с
+
+ALLIED_WITH
+В союзе с
 
 WAR_DECLARATION
 Объявить войну
@@ -3661,6 +4085,8 @@ TECH_TOTAL_COST_ALT_STR
 
 # %1% research points used this turn.
 # %2% research points available for this turn.
+TECH_TURN_COST_STR
++%1% / %2% RP
 
 # %1% number of remaining turns to complete the technology research.
 TECH_TURNS_LEFT_STR
@@ -3733,6 +4159,8 @@ PRODUCTION_INFO_AT_LOCATION_TITLE
 
 # %1% type of resource (Research, Production, ...).
 # %2% name of the empire which owns this resource produced.
+PRODUCTION_INFO_EMPIRE
+%2% %1%
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
 Всего доступно очков
@@ -3753,13 +4181,14 @@ STOCKPILE_LABEL
 Резервы
 
 STOCKPILE_USE_LABEL
-Использовано резервов
+Использовано
 
 STOCKPILE_USE_LIMIT
-Предел использования резервов
+Предел резервов
 
 STOCKPILE_CHANGE_LABEL
-Резерв на след. ход
+На следующем ходу
+
 
 ##
 ## Research window
@@ -3772,10 +4201,14 @@ RESEARCH_WND_TITLE
 RESEARCH_QUEUE_EMPIRE
 %1% очередь исследований
 
+RESEARCH_INFO_RP
+ОИ
+
 RESEARCH_QUEUE_PROMPT
 '''Дважды щёлкните мышью или щёлкните с удержанием Shift на любом элементе, чтобы добавить его к очереди исследования.
 
-Удерживайте клавишу Control при нажатии на элемент, чтобы добавить его в верх очереди.'''
+Удерживайте клавишу Control при нажатии на элемент, чтобы добавить его в верх очереди'''
+
 
 ##
 ## Build selector window
@@ -3812,6 +4245,8 @@ PRODUCTION_WND_REDUNDANT
 
 # %1% currently used amount of production points used per turn to build an item.
 # %2% maximum available amount of production points for this turn.
+PRODUCTION_TURN_COST_STR
++%1% / %2% PP
 
 # %1% number of turns left to finish the production of an item.
 PRODUCTION_TURNS_LEFT_STR
@@ -3887,6 +4322,7 @@ PRODUCTION_WINDOW_ARTICLE_TEXT
 Приостановка производства отменяет любой новый прогресс для элемента, пока производство не будет возобновлено.
 Для заказов кораблей существует дополнительная опция меню - "Отправить в систему...". Когда заказ завершается, новый корабль (или корабли) по умолчанию получают пункт назначения указанной системы. Чтобы установить или изменить место сборки, выберите желаемую систему на карте, затем правый клик по заказау -> <i>Отправить в</i>... (название системы).
 
+
 <u>Производственные заказы</u>
 
 Производственные заказы создаются через панель доступных к производству элементов, после чего помещаются в панель производственной очереди.
@@ -3915,7 +4351,7 @@ PRODUCTION_WINDOW_ARTICLE_TEXT
 
 - 4-й ход: Заказ #1 30 /   6 ->   6  дополнительно 4 PP уходят на следующее повторение для этого заказа.
 
-- 5-й ход: Строительство корабля завершено (Заказ #1)
+ 5-й ход: Строительство корабля завершено (Заказ #1)
                 Заказ #1   4 / 32 -> 10  теперь осталось только 1 повторение.
 
 - 6-й ход: Заказ #1 14 / 22 -> 10
@@ -3952,11 +4388,16 @@ PRODUCTION_WINDOW_ARTICLE_TEXT
 
 '''
 
+PRODUCTION_INFO_PP
+PP
+
 # %1% name of the empire that owns the production queue.
 PRODUCTION_QUEUE_EMPIRE
 %1% очередь производства
 
 # %1% the amount of items that should be produced in a single batch.
+PRODUCTION_QUEUE_MULTIPLES
+'''%1%x '''
 
 # %1% number of repetions an item should be produced on after another.
 PRODUCTION_QUEUE_REPETITIONS
@@ -4017,6 +4458,13 @@ MOVE_UP_QUEUE_ITEM
 MOVE_DOWN_QUEUE_ITEM
 Переместить в конец очереди
 
+MOVE_UP_LIST_ITEM
+Переместить наверх
+
+MOVE_DOWN_LIST_ITEM
+Переместить в низ
+
+
 SPLIT_INCOMPLETE
 Разделить повторения
 
@@ -4035,6 +4483,7 @@ PRODUCTION_WND_TOOLTIP_PARTS
 # %1% name of the location where the object should be build.
 PRODUCTION_WND_TOOLTIP_FAILED_COND
 Неудовлетворительные требования производства в %1%
+
 
 ##
 ## Design window
@@ -4148,6 +4597,14 @@ DESIGN_WND_KNOWN_DETAIL
 
 DESIGN_WND_RENAME_FINISHED
 Переименовать готовый дизайн
+
+# %1% name of the equivalent ship design.
+# %2% new name of the ship design.
+DESIGN_WND_RENAME_FINISHED_DETAIL
+'''Переименовать готовый дизайн из
+"%1%"
+в 
+"%2%"'''
 
 DESIGN_WND_COMPONENT_CONFLICT
 Конфликтующий дизайн
@@ -4297,11 +4754,15 @@ STATISTICS_TEST_3
 ##
 
 # %1% name of the species.
+ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
+'''%1%:'''
 
 # %1% content of ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1 expanded to match
 #     column width.
 # %2% the planet environment for a species.
 # %3% the planet population capacity for a species.
+ENC_SPECIES_PLANET_TYPE_SUITABILITY
+%1%        %2% (%3%)
 
 # %1% name of the planet.
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
@@ -4535,7 +4996,22 @@ ENC_HOMEWORLDS
 [Игра - Домашние миры]
 
 ENC_TEXTURES
-[Тест - Структура]
+[Тест - Текстуры]
+
+ENC_POP_CENTER
+Центр народонаселения
+
+ENC_PROD_CENTER
+Производственный центр
+
+ENC_FIGHTER
+Истребитель
+
+ENC_TEXTURE_INFO
+%4% -- %1% x %2% px @ %3% BPP<img src = "%4%"></img>
+
+ENC_VECTOR_TEXTURE_INFO
+%4% -- %1% x %2% px with %3% shapes<img src = "%4%"></img>
 
 ENC_INDEX
 Оглавление энциклопедии
@@ -4562,6 +5038,14 @@ ENC_SEARCH_NOTHING_FOUND
 #     (e.g. for a ship part it would be the ship part class).
 # %2% general type description of the thing described in the encyclopedia.
 #     (e.g. for a ship part it would be the content of 'ENC_SHIP_PART').
+ENC_DETAIL_TYPE_STR
+%1% %2%
+
+ENC_PP
+ПП
+
+ENC_RP
+ОИ
 
 # Concise listing of costs required to produce item or research tech.
 # %1% cost to complete requested item or technology.
@@ -4642,9 +5126,15 @@ ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 [[metertype METER_SPEED]]: %8%    [[metertype METER_FUEL]] [[METER_CAPACITY]]: %9%
 Заселенность [[METER_CAPACITY]]: %10%    [[metertype METER_TROOPS]]: %11%
 [[OBJ_FIGHTER]] [[encyclopedia DAMAGE_TITLE]]: %13%    [[ENC_SDD_HANGAR]]: %12%    [[ENC_SDD_BAY]]: %14%
-Оценочная боевая мощь   (<i>игнорирование щитов</i>):  %15$.f   (%16$.2f за PP)
-            (<i>противник с атакой %17$.1f и щитами %18$.1f</i>):  %19$.f   (%20$.2f за PP)
+Оценочная боевая мощь   (<i>игнорирование щитов</i>):  %15$.f   (%16$.2f за ПП)
+            (<i>противник с атакой %17$.1f и щитами %18$.1f</i>):  %19$.f   (%20$.2f за ПП)
 '''
+
+ENC_SDD_HANGAR
+[[encyclopedia PC_FIGHTER_HANGAR]] [[METER_CAPACITY]]
+
+ENC_SDD_BAY
+[[encyclopedia PC_FIGHTER_BAY]] [[METER_CAPACITY]]
 
 ENC_UNLOCKED_BY
 '''<u>Открытые технологии:</u>
@@ -4664,10 +5154,15 @@ ENC_SHIP_EXCLUSIONS
 
 # %1% name of the item type unlocked (building, ship part, hull, ...).
 # %2% name of the item unlocked (a specific building or ship part, ...).
+ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
+'''%1%: %2%
+'''
 
 # %1% category of the technology.
 # %2% UNUSED
 # %3% short description of the technology.
+ENC_TECH_DETAIL_TYPE_STR
+%3%
 
 # %1% object, technology or other content that should be looked up in the
 #     encyclopedia.
@@ -4723,6 +5218,15 @@ ENC_COMBAT_RECOVER_STR
 
 ENC_COMBAT_UNKNOWN_OBJECT
 Неизвестно
+
+# %1% empire name
+# %2% species name
+# %3% fighter type name
+ENC_COMBAT_EMPIRE_FIGHTER_NAME
+%1% %2% %3%
+
+ENC_COMBAT_ROGUE
+Rogue
 
 # %1% number of combat round.
 ENC_ROUND_BEGIN
@@ -4804,6 +5308,7 @@ ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 
 ENC_METER_TYPE
 Тип измерителя
+
 
 ##
 ## Combat report
@@ -4998,20 +5503,121 @@ SYSTEM_BLOCKADE_TITLE
 Блокада системы
 
 SYSTEM_BLOCKADE_TEXT
-'''Если агрессивный, вооружённый флот вторгается во вражескую систему, он устанавливает блокаду против всех империй, с которыми воюет, и которые в настоящее время уже не блокируют систему. При установке блокады у заблокированных империй прерывается [[metertype METER_SUPPLY]], а производство замыкается на самих системах, начиная использовать только местные ресурсы для создания только местных структур. Во время ведения активных боевых действий также приостанавливается действие эффектов, для которых необходимо отсутствие боя (работа [[encyclopedia ORBITAL_DRYDOCK_REPAIR_TITLE]] и рост числа [[metertype METER_TROOPS]], соответствующий этому ходу).
+'''When an armed fleet set to aggressive mode arrives at a system, it will establish a system blockade against all empires it is at [[encyclopedia WAR_TITLE]] with and that currently do not blockade the system. When a blockade is established, [[metertype METER_SUPPLY]] propagation is interrupted for the blockaded empire.
+
 После установки блокады все звёздные пути, ведущие в систему, охраняются врагами, поэтому если враждебные силы войдут в систему, они смогут выйти только через тот путь, через который они зашли. Но если вражеских кораблей много, и все они входили через разные пути, все использованные ими пути будут также открыты и на выход. Если все боевые флоты блокадной системы будут уничтожены или покинут систему до прибытия новых её флотов, то ранее открытые выходы будут снова заблокированы.
-Союзные флоты не оказывают прямого влияния на блокировку снабжения и звёздных путей, но могут помогать планете устранять силы блокады. Если в систему вторгнутся одновременно два враждебных к ней флота (и при условии, что она не заблокирована), ни один из них не установит блокаду друг против друга, но они установят блокаду против других вражеских империй, что придут позднее.
-Космические монстры тоже могут устанавливать блокады, но блокада всегда будет сниматься по окончанию боя, после чего флот империи сможет покинуть систему любым звёздным выходом из неё, или устанавливать блокаду по очереди с монстром. Кроме того, если заблокированный флот оснащён бронёй и установлен в агрессивный режим, то [[metertype METER_SUPPLY]] будет восстановлено. Если монстр и имперский флот встретятся одновременно, флот получит шанс действовать первым и создать блокаду против самого монстра.'''
+
+Союзные флоты не оказывают прямого влияния на блокировку снабжения и звёздных путей, но могут помогать планете устранять силы блокады.
+
+Если в систему вторгнутся одновременно два враждебных к ней флота (и при условии, что она не заблокирована), ни один из них не установит блокаду друг против друга, но они установят блокаду против других вражеских империй, что придут позднее.
+
+Космические монстры тоже могут устанавливать блокады, но блокада всегда будет сниматься по окончанию боя, после чего флот империи сможет покинуть систему любым звёздным выходом из неё, или устанавливать блокаду по очереди с монстром. Кроме того, если заблокированный флот вооружен и настроен на агрессивный режим, то распространение снабжения будет восстановлено. Если монстр и имперский флот встретятся одновременно, флот получит шанс действовать первым и создать блокаду против самого монстра.'''
+
 
 ##
 ## Encyclopedia articles
 ##
 
+METER_TARGET_POPULATION_VALUE_LABEL
+[[METER_POPULATION_VALUE_LABEL]]
+
+METER_TARGET_POPULATION_VALUE_DESC
+[[METER_POPULATION_VALUE_DESC]]
+
+METER_TARGET_INDUSTRY_VALUE_LABEL
+[[METER_INDUSTRY_VALUE_LABEL]]
+
+METER_TARGET_INDUSTRY_VALUE_DESC
+[[METER_INDUSTRY_VALUE_DESC]]
+
+METER_TARGET_RESEARCH_VALUE_LABEL
+[[METER_RESEARCH_VALUE_LABEL]]
+
+METER_TARGET_RESEARCH_VALUE_DESC
+[[METER_RESEARCH_VALUE_DESC]]
+
+METER_TARGET_TRADE_VALUE_LABEL
+[[METER_TRADE_VALUE_LABEL]]
+
+METER_TARGET_TRADE_VALUE_DESC
+[[METER_TRADE_VALUE_DESC]]
+
+METER_TARGET_CONSTRUCTION_VALUE_LABEL
+[[METER_CONSTRUCTION_VALUE_LABEL]]
+
+METER_TARGET_CONSTRUCTION_VALUE_DESC
+[[METER_CONSTRUCTION_VALUE_DESC]]
+
+METER_TARGET_HAPPINESS_VALUE_LABEL
+[[METER_HAPPINESS_VALUE_LABEL]]
+
+METER_TARGET_HAPPINESS_VALUE_DESC
+[[METER_HAPPINESS_VALUE_DESC]]
+
+METER_MAX_CAPACITY_VALUE_LABEL
+[[METER_CAPACITY_VALUE_LABEL]]
+
+METER_MAX_CAPACITY_VALUE_DESC
+[[METER_CAPACITY_VALUE_DESC]]
+
+METER_MAX_SECONDARY_STAT_VALUE_LABEL
+[[METER_SECONDARY_STAT_VALUE_LABEL]]
+
+METER_MAX_SECONDARY_STAT_VALUE_DESC
+[[METER_SECONDARY_STAT_VALUE_DESC]]
+
+METER_MAX_FUEL_VALUE_LABEL
+[[METER_FUEL_VALUE_LABEL]]
+
+METER_MAX_FUEL_VALUE_DESC
+[[METER_FUEL_VALUE_DESC]]
+
+METER_MAX_SHIELD_VALUE_LABEL
+[[METER_SHIELD_VALUE_LABEL]]
+
+METER_MAX_SHIELD_VALUE_DESC
+[[METER_SHIELD_VALUE_DESC]]
+
+METER_MAX_STRUCTURE_VALUE_LABEL
+[[METER_STRUCTURE_VALUE_LABEL]]
+
+METER_MAX_STRUCTURE_VALUE_DESC
+[[METER_STRUCTURE_VALUE_DESC]]
+
+METER_MAX_DEFENSE_VALUE_LABEL
+[[METER_DEFENSE_VALUE_LABEL]]
+
+METER_MAX_DEFENSE_VALUE_DESC
+[[METER_DEFENSE_VALUE_DESC]]
+
+METER_MAX_SUPPLY_VALUE_LABEL
+[[METER_SUPPLY_VALUE_LABEL]]
+
+METER_MAX_SUPPLY_VALUE_DESC
+[[METER_SUPPLY_VALUE_DESC]]
+
+METER_MAX_STOCKPILE_VALUE_LABEL
+[[METER_STOCKPILE_VALUE_LABEL]]
+
+METER_MAX_STOCKPILE_VALUE_DESC
+[[METER_STOCKPILE_VALUE_DESC]]
+
+METER_MAX_TROOPS_VALUE_LABEL
+[[METER_TROOPS_VALUE_LABEL]]
+
+METER_MAX_TROOPS_VALUE_DESC
+[[METER_TROOPS_VALUE_DESC]]
+
 METER_POPULATION_VALUE_LABEL
 Население
 
 METER_POPULATION_VALUE_DESC
-Абстрактное значение для размера колонии, зависящее от специфики вида.
+'''Население представляет собой размер колонии на планете. Его максимальное значение зависит от [[encyclopedia ENC_SPECIES]] и того, насколько пригодна планета [[encyclopedia ENVIRONMENT_TITLE]] для этого вида. Многие [[metertype METER_INDUSTRY]] и [[metertype METER_RESEARCH]] выходные бонусы связаны с размером популяции: большая популяция дает больше бонусов.
+
+Для того чтобы колония могла выступать в качестве источника поселенцев для колонизации других планет, необходимо население не менее трех человек и минимум [[metertype METER_HAPPINESS]] 5 человек. Колониальный корабль имеет популяцию колонистов, которая определяется [[encyclopedia PC_COLONY]] мощностью конструкции корабля. При колонизации планеты количество колонистов на борту корабля будет стартовым населением на вновь заселенной планете.
+
+Целевая популяция-это стабильный размер популяции, к которому приблизится планета, учитывая текущие факторы, влияющие на численность населения планеты. Его значение связано с [[encyclopedia ENC_BUILDING_TYPE]]s, построенными на планете, [[encyclopedia ENC_TECH]], исследованными империей, [[encyclopedia ENC_SPECIAL]]s, связанными с планетой, и различными другими игровыми эффектами. Если эти факторы изменятся, то целевое значение населения, скорее всего, изменится.
+'''
 
 METER_INDUSTRY_VALUE_LABEL
 Промышленность
@@ -5021,14 +5627,16 @@ METER_INDUSTRY_VALUE_DESC
 
 Промышленность планеты может быть использована для каких-либо производственных проектов на линии [[metertype METER_SUPPLY]] соединенных планет. Любая нераспределенная Промышленность добавляется к [[metertype METER_STOCKPILE]].
 
-Информацию об интерфейсах, касающихся промышленности, смотрите в статье [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
+Целевой отраслью является стабильный уровень промышленного производства, к которому приблизится планета, учитывая текущие факторы, влияющие на ресурсы отрасли. Его значение связано с [[encyclopedia ENC_BUILDING_TYPE]]s, построенными на планете, [[encyclopedia ENC_TECH]], исследованными империей, [[encyclopedia ENC_SPECIAL]]s, связанными с планетой, и различными другими игровыми эффектами. Если эти факторы изменятся, то целевое значение отрасли, скорее всего, изменится.
+
+Информацию об интерфейсе смотрите в разделе [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
 
 METER_RESEARCH_VALUE_LABEL
 Наука
 
 METER_RESEARCH_VALUE_DESC
-'''Наука или научно-исследовательские очки (RP - Research Points) суммирует исследовательский потенциал всех планет империи, предназначенный открывать новые [[encyclopedia ENC_TECH]]. 
+'''Наука или научно-исследовательские очки (ОИ - очки исследований) суммирует исследовательский потенциал всех планет империи, предназначенный открывать новые [[encyclopedia ENC_TECH]].
 
 Каждая наука имеет фиксированный минимум ходов, за который её можно исследовать. К примеру, если наука "стоит" 15 очков исследования и исследуется минимум 3 хода, то всего 5 очков исследований допустимо потратить на неё за ход.
 
@@ -5039,17 +5647,24 @@ METER_RESEARCH_VALUE_DESC
 METER_TRADE_VALUE_LABEL
 Торговля
 
+METER_TRADE_VALUE_DESC
+[[MAP_TRADE_TEXT]]
+
 METER_CONSTRUCTION_VALUE_LABEL
 Инфраструктура
 
 METER_CONSTRUCTION_VALUE_DESC
-Понятие Инфраструктуры относится к техническим структурам, которые поддерживают колонизированную планету: энергия, транспорт, телекоммуникации и социальные услуги для граждан
+'''Понятие Инфраструктуры относится к техническим структурам, которые поддерживают колонизированную планету: энергия, транспорт, телекоммуникации и социальные услуги для граждан.
+
+Целевая инфраструктура - это стабильный уровень инфраструктуры, к которому приблизится планета, учитывая текущие факторы, влияющие на планетарную инфраструктуру. Его значение связано с [[encyclopedia ENC_BUILDING_TYPE]], построенными на планете, [[encyclopedia ENC_TECH]], исследованными империей, [[encyclopedia ENC_SPECIAL]], связанными с планетой, и различными другими игровыми эффектами. Если эти факторы изменятся, то значение целевой инфраструктуры, скорее всего, изменится.'''
 
 METER_HAPPINESS_VALUE_LABEL
 Счастье
 
 METER_HAPPINESS_VALUE_DESC
-Счастье населения колонии после первоначального заселения или после вторжения находится на низком уровне, а также на счастье могут влиять другие факторы. В качестве источника поселенцев для колонизации других планет необходимо иметь минимальное значение счастья 5
+'''Счастье населения колонии начинается с низкого уровня после первоначальной колонизации или после вторжения, а также может зависеть от других факторов. Минимальное счастье 5 необходимо для того, чтобы колония действовала как источник поселенцев для колонизации других планет.
+
+Целевое Счастье - это стабильный уровень счастья, к которому приблизится население планеты, учитывая текущие факторы, влияющие на планетарное счастье. Его значение связано с [[encyclopedia ENC_BUILDING_TYPE]], построенными на планете, [[encyclopedia ENC_TECH]], исследованными империей, [[encyclopedia ENC_SPECIAL]], связанными с планетой, и различными другими игровыми эффектами. Если эти факторы изменятся, то целевое значение счастья, скорее всего, изменится.'''
 
 METER_CAPACITY_VALUE_LABEL
 Параметры - первичные
@@ -5068,7 +5683,11 @@ METER_FUEL_VALUE_LABEL
 Топливо
 
 METER_FUEL_VALUE_DESC
-Топливо позволяет кораблям путешествовать между галактиками за пределами [[metertype METER_SUPPLY]] своей империи. Топливо расходуется на каждый пройденный отрезок галактического пути. Остановка корабля в зоне [[metertype METER_SUPPLY]] позволяет полностью заправить баки. Если корабль остается неподвижным за пределами [[metertype METER_SUPPLY]], топливо будет медленно накапливаться. Количество топлива в <encyclopedia ENC_SHIP_DESIGN>Дизайн корабля</encyclopedia> зависит от вместимости [[encyclopedia ENC_SHIP_HULL]], а также может быть увеличено с помощью некоторых [[encyclopedia ENC_SHIP_PART]]
+'''Топливо позволяет кораблям путешествовать по Звездным линиям за пределами [[metertype METER_SUPPLY]] вашей империи. Топливо расходуется для каждого звездолета, проходящего вне системы снабжения;остановка в пределах [[metertype METER_SUPPLY]] линий полностью заправит корабль. Если корабль остается неподвижным вне дружественных [[metertype METER_SUPPLY]] линий, топливо будет медленно регенерировать.
+
+Эффективное количество топлива  <encyclopedia ENC_SHIP_DESIGN>конструкция судна </encyclopedia> зависит от базового топлива корпуса и дополнительных топливных эффектов, масштабируемых [[encyclopedia FUEL_EFFICIENCY_TITLE]] из [[encyclopedia ENC_SHIP_HULL]]. Топливная эффективность изменяет эффективную емкость топлива [[encyclopedia ENC_SHIP_PART]] и умножит любые другие модифицирующие топливо эффекты.
+
+Игра всегда будет показывать эффективные уровни топлива, после масштабирования для эффективности корпуса. Подробнее об эффекте эффективности можно посмотреть в разделе наведение курсора мыши.'''
 
 METER_SHIELD_VALUE_LABEL
 Энерго-щиты
@@ -5105,13 +5724,24 @@ METER_SUPPLY_VALUE_DESC
 
 Набор базовых линий снабжения для империи (набор наименее прыжковых расстояний звезд, соединяющих ресурсодобывающие системы каждой группы ресурсов) будет иметь большую толщину, чем неосновные звездные переходы. Если PP в настоящее время теряется в составе группы ресурсов, внешние полосы основных звездных звезд будут выделены контрастным цветом.
 
-Линии снабжения также могут использоваться для пополнения [[metertype METER_FUEL]] кораблей'''
+Линии снабжения также можно использовать для пополнения запаса [[metertype METER_FUEL]] кораблей.
+
+Линии снабжения будут блокированы вооруженными вражескими кораблями, принадлежащими империям, с которыми империя находится в состоянии войны. На противоположном конце спектра империи в [[encyclopedia ALLIANCE_TITLE]] будут совместно использовать линии поставок и все связанные с ними выгоды..'''
+
+METER_STOCKPILE_VALUE_LABEL
+Резервный запас
+
+METER_STOCKPILE_VALUE_DESC
+'''Имперская емкость запасов указывает на способность империи брать излишки и использовать накопленные производственные точки. Общая емкость запасов империи - это сумма счетчиков запасов всех ее планет плюс технологический бонус. Общая сумма определяет, сколько ПП может быть взято из запаса каждый оборот, который будет использоваться для производства..
+
+Виды имеют различные врожденные уровни способности к накоплению запасов.'''
 
 METER_TROOPS_VALUE_LABEL
 Войска
 
 METER_TROOPS_VALUE_DESC
 '''Термин Войска сочетает в себе все виды вооруженных сил, способных работать на поверхности планеты
+
 Размер войска на планете представляет собой силу обороняющихся сухопутных отрядов. Вторгшиеся силы должны отправить более мощную силу (т.е. выше общее число войска), чтобы завоевать планету. На кораблях должны быть построены специальные отсеки для перевозки войск и такие войска не могут вторгнуться, если защищающаяся планета имеет активные [[metertype METER_SHIELD]]'''
 
 METER_REBEL_TROOPS_VALUE_LABEL
@@ -5148,19 +5778,49 @@ METER_SPEED_VALUE_LABEL
 Скорость
 
 METER_SPEED_VALUE_DESC
-Скорость на карте галактики (uu / ход). Расстояние uu, пройденное кораблем за один ход, равно его скорости на звездной карте и отображается пунктирной линией, за которой следует круг, показывающий количество ходов необходимых для полного перемещения и достижения следующей системы. Если скорость звездолета корабля меньше чем длина звездного пути для завершения путешествия потребуется не менее 2 ходов. Каждая пройденная звезда будет потреблять только 1 единицу [[metertype METER_FUEL]] независимо от требуемых ходов
+Скорость на карте галактики (uu/ход). Расстояние uu, пройденное кораблем за один ход, равно его скорости на звездной карте и отображается пунктирной линией, за которой следует круг, показывающий количество ходов необходимых для полного перемещения и достижения следующей системы. Если скорость звездолета корабля меньше чем длина звездного пути для завершения путешествия потребуется не менее 2 ходов. Каждая пройденная звезда будет потреблять только 1 единицу [[metertype METER_FUEL]] независимо от требуемых ходов.
+
+METER_DETECTION_STRENGTH_VALUE_LABEL
+[[DETECTION_TITLE]]
+
+METER_DETECTION_STRENGTH_VALUE_DESC
+[[DETECTION_TEXT]]
+
+WAR_TITLE
+Война
+
+WAR_TEXT
+War is the default diplomatic state between empires. Armed ships will enforce a [[encyclopedia SYSTEM_BLOCKADE_TITLE]] on enemy ships, obstruct enemy [[metertype METER_SUPPLY]] lines, impede enemy colonization, and engage in combat with enemy ships. Enemy planets may be subjected to invasion or bombardment.
 
 PEACE_TITLE
 Мир
 
 PEACE_TEXT
-Мир - это состояние дипломатических отношений между империями, когда каждая из них принимает обязательство не атаковать корабли или планеты своего оппонента, а также не препятствовать [[metertype METER_SUPPLY]] флотов, обмену ресурсами и не мешать колонизации
+Мир-это дипломатическое состояние между империями, в котором они взаимно соглашаются не атаковать корабли или планеты друг друга, не навязывать [[encyclopedia SYSTEM_BLOCKADE_TITLE]] на кораблях друг друга, не позволять кораблям препятствовать линиям друг друга [[metertype METER_SUPPLY]] и не препятствовать колонизации. Мир - это минимальный уровень дипломатии, на котором [[encyclopedia GIFTING_TITLE]] между империями допускается.
+
+ALLIANCE_TITLE
+Союз
+
+ALLIANCE_TEXT
+Alliance is the closest diplomatic state between empires. Allied empires share visibility and [[metertype METER_SUPPLY]] lines. Allied empires may share victory when the relevant Game Rule is set accordingly.
+
+GIFTING_TITLE
+Одаривание
+
+GIFTING_TEXT
+Empires with sufficiently close dipomatic relations ([[encyclopedia PEACE_TITLE]] or closer), may gift planets or fleets to one another, provided the target empire has a presence (ship or planet) in the same system as the object being gifted.
 
 OUTPOSTS_TITLE
 Аванпосты
 
 OUTPOSTS_TEXT
-Аванпосты - это автоматические станции, которые могут размещаться в местах, где жизнь колонистов невозможна. На них отсутствует население и, как правило нет промышленности. Но они создают [[metertype METER_SUPPLY]] (при наличии соответствующей технологии), а так же обеспечивают обзор той области, где расположены. На планетах, где уже есть Аванпост могут быть основаны колонии. Чтобы построить Аванпост необходим корабль с модулем [[shippart CO_OUTPOST_POD]] на борту
+Аванпосты - это автоматические станции, которые могут размещаться в местах, где жизнь колонистов невозможна. На них отсутствует население и, как правило нет промышленности. Но они создают [[metertype METER_SUPPLY]] (при наличии соответствующей технологии), а так же обеспечивают обзор той области, где расположены. На планетах, где уже есть Аванпост могут быть основаны колонии. Чтобы построить Аванпост необходим корабль с модулем [[shippart CO_OUTPOST_POD]] на борту.
+
+HOMEWORLDS_TITLE
+Родной мир
+
+HOMEWORLDS_TEXT
+Домашние миры-это планеты, на которых находятся виды, когда начинается игра (обратите внимание, что один вид может иметь несколько домашних миров). [[Tech SPY_CUSTOM_ADVISORIES]] показывает их существование и количество, но не их местоположение. Быть родным миром дает планете несколько преимуществ, пока она все еще населена оригинальными видами: [[metertype METER_TARGET_POPULATION]], [[metertype METER_MAX_TROOPS]] и [[metertype METER_TARGET_HAPPINESS]] все увеличиваются, и [[encyclopedia GROWTH_FOCUS_TITLE]] включен (если только вид не является [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]]) и увеличивается [[metertype METER_TARGET_POPULATION]] других колоний с тем же видом.
 
 FOCUS_TITLE
 Фокус
@@ -5195,6 +5855,16 @@ PROTECTION_FOCUS_TITLE
 
 PROTECTION_FOCUS_TEXT
 Планета полностью переключается на оборону. [[metertype METER_TROOPS]], планетарная [[metertype METER_DEFENSE]] и планетарные [[metertype METER_SHIELD]] повышаются.
+
+STOCKPILE_FOCUS_TITLE
+Цель: резервы
+
+STOCKPILE_FOCUS_TEXT
+'''Цель резервы увеличивает [[metertype METER_STOCKPILE]] планеты.
+
+Родной мир, ориентированный на запасы, также помогает другим планетам того же вида и увеличивает [[metertype METER_STOCKPILE]] там на дополнительные 0,04 на популяцию.
+
+[[METER_STOCKPILE_VALUE_DESC]]'''
 
 ARMOR_TITLE
 Броня
@@ -5274,7 +5944,13 @@ SELF_SUSTAINING_SPECIES_TITLE
 Самоподдерживающийся метаболизм
 
 SELF_SUSTAINING_SPECIES_TEXT
-Самоподдерживающиеся виды могут быть энергетическими или кристаллическими существами или чем-то более иноземным. Их объединяет то, что они не нуждаются в питании, поэтому их МАКС численность населения очень высока. Несмотря на то, что у них отсутствуют факторы роста, их МАКС численность населения равна значению вида, который снабжен всеми тремя [[encyclopedia GROWTH_FOCUS_TITLE]] факторами
+[[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] виды могут быть энергетическими или кристаллическими существами или чем-то еще более странным. Их сущность заключается в том, что они не нуждаются в поддержке, поэтому их [[metertype METER_TARGET_POPULATION]] очень высока. Хотя нет специальных предложений, которые способствуют их росту, их целевая популяция равна виду, который снабжен всеми тремя специальными [[encyclopedia GROWTH_FOCUS_TITLE]].
+
+GASEOUS_SPECIES_TITLE
+Газообразный метаболизм
+
+GASEOUS_SPECIES_TEXT
+[[encyclopedia GASEOUS_SPECIES_CLASS]] виды имеют метаболизм, основанный на элементах, которые находятся в состоянии газообразной среды, подобной земле. Большинство исследователей фактически соглашаются, что сложная жизнь, основанная на газообразном метаболизме, физически невозможна. Поиски жизни в наиболее вероятной среде обитания, газовых гигантах, в основном игнорируются. Хотя газовые гиганты действительно огромны, обитаемая территория похожа на планету среднего размера. Также не существует специальных предложений, способствующих росту газообразных видов..
 
 TELEPATHIC_TITLE
 Телепатия
@@ -5356,32 +6032,31 @@ DESIGN_WINDOW_ARTICLE_TITLE
 DESIGN_WINDOW_ARTICLE_TEXT
 '''[[DESIGN_WINDOW_ARTICLE_TITLE]] предназначено для просмотра или изменения конструкций монстров или кораблей
 
-Есть четыре вспомогательных окна:  [[DESIGN_WND_STARTS]], [[DESIGN_WND_PART_PALETTE_TITLE]], [[DESIGN_WND_MAIN_PANEL_TITLE]] и [[MAP_BTN_PEDIA]]
+Designs and ship parts can be [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]], [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] or [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]. [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]] designs and parts are unrestricted for use by the empire. [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] designs and parts are restricted in some way. Some unavailable designs and parts may be unlocked by researching associated [[encyclopedia ENC_TECH]]. [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] designs, hulls and parts are obsoleted/unobsoleted at will by the empire. [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] designs will not appear in the [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]] and only appear in [[DESIGN_WINDOW_ARTICLE_TITLE]] when the "[[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]" filter is toggled to display them.
 
+Есть четыре вспомогательных окна:  [[DESIGN_WND_STARTS]], [[DESIGN_WND_PART_PALETTE_TITLE]], [[DESIGN_WND_MAIN_PANEL_TITLE]] и [[MAP_BTN_PEDIA]].
 
-[[DESIGN_WND_STARTS]] имеет четыре вкладки: пустую [[DESIGN_WND_HULLS]], [[DESIGN_WND_FINISHED_DESIGNS]] дизайны, [[DESIGN_WND_SAVED_DESIGNS]] проекты предыдущих игр и [[DESIGN_WND_MONSTERS]] проекты для контроля. Перетащите или дважды щелкните по корпусам, рисункам или монстрам, чтобы отредактировать / осмотреть их в проектировщике
+[[DESIGN_WND_STARTS]] имеет четыре вкладки: пустую [[DESIGN_WND_HULLS]], [[DESIGN_WND_FINISHED_DESIGNS]] дизайны, [[DESIGN_WND_SAVED_DESIGNS]] проекты предыдущих игр и [[DESIGN_WND_MONSTERS]] проекты для контроля. Перетащите или дважды щелкните по корпусам, рисункам или монстрам, чтобы отредактировать / осмотреть их в проектировщике.
 
-[[DESIGN_WND_FINISHED_DESIGNS]] проекты отображаются в том же порядке, что и «Производственном окне». Дизайны можно перемещать в списке, чтобы изменить их порядок. Удалите проекты с помощью «[[DESIGN_WND_DELETE_DESIGN]]» из контекстного меню. Корабли уже поставленные в очередь для производства будут по-прежнему строиться со старым дизайном. Сохраните проекты на диске для будущих игр с помощью «[[DESIGN_SAVE]]» в контекстном меню
+[[DESIGN_WND_FINISHED_DESIGNS]] проекты отображаются в том же порядке, что и «Производственном окне». Дизайны можно перемещать в списке, чтобы изменить их порядок. Удалите проекты с помощью «[[DESIGN_WND_DELETE_DESIGN]]» из контекстного меню. Корабли уже поставленные в очередь для производства будут по-прежнему строиться со старым дизайном. Сохраните проекты на диске для будущих игр с помощью «[[DESIGN_SAVE]]» в контекстном меню.
 
-Щелкните правой кнопкой мыши [[DESIGN_WND_SAVED_DESIGNS]] по дизайну и скопируйте один или все сохраненные проекты в доступный список проектов империи. Если в настройках игры активировать «[[OPTIONS_ADD_SAVED_DESIGNS]], то все конструкции [[DESIGN_WND_SAVED_DESIGNS]] будут автоматически импортированы при старте новой игры 
+Щелкните правой кнопкой мыши [[DESIGN_WND_SAVED_DESIGNS]] по дизайну и скопируйте один или все сохраненные проекты в доступный список проектов империи. Если в настройках игры активировать «[[OPTIONS_ADD_SAVED_DESIGNS]], то все конструкции [[DESIGN_WND_SAVED_DESIGNS]] будут автоматически импортированы при старте новой игры.
 
+[[DESIGN_WND_PART_PALETTE_TITLE]] отображает части. Если связанные технологии с данной частью исследованы, то она может использоваться в текущих проектах. Другие части не могут использоваться, потому что либо связанная с ними технология не была исследована, либо часть доступна только монстрам.
 
-[[DESIGN_WND_PART_PALETTE_TITLE]] отображает части. Если связанные технологии с данной частью исследованы, то она может использоваться в текущих проектах. Другие части не могут использоваться, потому что либо связанная с ними технология не была исследована, либо часть доступна только монстрам
+"[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" и "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" установка фильтров на [[DESIGN_WND_STARTS]] и [[DESIGN_WND_PART_PALETTE_TITLE]] позволит переключать отображение частей, которые империя может использовать или которые ограничены. Некоторые недоступные части могут быть разблокированы, исследуя связанные с ней [[encyclopedia ENC_TECH]].
 
-"[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" и "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" установка фильтров на [[DESIGN_WND_STARTS]] и [[DESIGN_WND_PART_PALETTE_TITLE]] позволит переключать отображение частей, которые империя может использовать или которые ограничены. Некоторые недоступные части могут быть разблокированы, исследуя связанные с ней [[encyclopedia ENC_TECH]]
+В окне [[DESIGN_WND_PART_PALETTE_TITLE]] есть фильтры для отображения / скрытия целых категорий частей.
 
-В окне [[DESIGN_WND_PART_PALETTE_TITLE]] есть фильтры для отображения / скрытия целых категорий частей
+[[DESIGN_WND_MAIN_PANEL_TITLE]] это панель проектирования для текущего дизайна.
 
+Текущая конструкция может иметь внутренние, внешние и центральные [[encyclopedia SLOT_TITLE]]ы. Перетащите или дважды щелкните на части из [[DESIGN_WND_PART_PALETTE_TITLE]], чтобы добавить или удалить.
 
-[[DESIGN_WND_MAIN_PANEL_TITLE]] это панель проектирования для текущего дизайна
+Добавьте имя и необязательное описание дизайна.
 
-Текущая конструкция может иметь внутренние, внешние и центральные [[encyclopedia SLOT_TITLE]]ы. Перетащите или дважды щелкните на части из [[DESIGN_WND_PART_PALETTE_TITLE]], чтобы добавить или удалить 
+Нажмите «[[DESIGN_WND_ADD_FINISHED]]», чтобы добавить проект в конец списка существующих проектов [[DESIGN_WND_FINISHED_DESIGNS]].
 
-Добавьте имя и необязательное описание дизайна
-
-Нажмите «[[DESIGN_WND_ADD_FINISHED]]», чтобы добавить проект в конец списка существующих проектов [[DESIGN_WND_FINISHED_DESIGNS]]
-
-Нажмите «[[DESIGN_WND_UPDATE_FINISHED]]», чтобы заменить недавно выбранный дизайн [[DESIGN_WND_FINISHED_DESIGNS]] новым дизайном. «[[DESIGN_WND_UPDATE_FINISHED]]» будет активным только в том случае, если этот проект был запущен из проекта в списке [[DESIGN_WND_FINISHED_DESIGNS]]. «[[DESIGN_WND_UPDATE_FINISHED]]» только меняет новый дизайн, любые суда уже поставленные в очередь для производства или уже выпущенные останутся не обновленными
+Нажмите «[[DESIGN_WND_UPDATE_FINISHED]]», чтобы заменить недавно выбранный дизайн [[DESIGN_WND_FINISHED_DESIGNS]] новым дизайном. «[[DESIGN_WND_UPDATE_FINISHED]]» будет активным только в том случае, если этот проект был запущен из проекта в списке [[DESIGN_WND_FINISHED_DESIGNS]]. «[[DESIGN_WND_UPDATE_FINISHED]]» только меняет новый дизайн, любые корабли уже поставленные в очередь для производства или уже выпущенные останутся не обновленными
 '''
 
 FLEET_MOVEMENT_ARTICLE_TITLE
@@ -5416,7 +6091,8 @@ FIELDS_TITLE
 Межзвездные пространства
 
 FIELDS_TEXT
-Существует несколько типов областей, каждая из которых имеет своеобразный, несколько диффузный внешний вид. Щелчок правой кнопкой мыши по ним в [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] вызывает небольшое всплывающее меню, идентифицирующее их тип и предоставляющее возможность просмотреть их данные
+Существует несколько типов областей, каждая из которых имеет своеобразный, несколько диффузный внешний вид. Щелчок правой кнопкой мыши по ним в [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] вызывает небольшое всплывающее меню, идентифицирующее их тип и предоставляющее возможность просмотреть их данные.
+
 
 ##
 ## Guides
@@ -5449,7 +6125,7 @@ FreeOrion - бесплатная, с открытым исходным кодо�
 '''
 
 QUICK_START_GUIDE_TITLE
-**Инструкция по началу работы**
+**Краткое руководство**
 
 QUICK_START_GUIDE_TEXT
 '''Это краткое введение в игровой процесс FreeOrion. Это руководство появилось недавно и в настоящее время в нем мало данных, но оно активно пополняется. Более полное руководство по начальным азам игры доступно на freeorion.org (текущий адрес: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url>)
@@ -5517,7 +6193,52 @@ ORBITAL_DRYDOCK_REPAIR_TEXT
 
 Ремонт начнется только на следующий ход после того как корабль войдет в систему. Корабли нуждаются во времени для стыковки, а ремонтному доку требуется время для подготовки как необходимой оснастки, так и самого пристыкованного корабля
 
-Любой бой в системе нарушит ремонт на этом ходу'''
+Любой бой в системе нарушит ремонт на этом ходу.'''
+
+CONFIG_GUIDE_TITLE
+Руководство по настройке
+
+CONFIG_GUIDE_TEXT
+'''Most configuration options for the game are stored and read from a single XML formatted file named config.xml.
+If this file does not exist (or is for a different build or version), it will be (re)created when the client starts.
+The configuration file is typically updated after a stored option is changed, but may be deferred until a later action (such as clicking Done or Apply).
+Some of these options can be changed from the [[OPTIONS_TITLE]] menu, under the Main Menu.
+
+An option set in the persistent config file (if one exists) will override the value from config.xml.
+An option set from a command line argument will override the value from both files.
+config.xml will be changed to reflect any overridden values.
+
+
+Постоянный файл конфигурации:
+
+A persistent configuration file is an optional XML file named persistent_config.xml.
+If this file exists, any settings it contains will override those from the main configuration file.
+This may be useful when a different build of the game is launched, such as after updating to a new version. To help retain compatibility, it is preferred to keep as few options in this file as needed.
+
+A persistent configuration file can be created or updated on the [[OPTIONS_TITLE]] menu [[OPTIONS_PAGE_MISC]] tab by clicking the [[OPTIONS_CREATE_PERSISTENT_CONFIG]] button.
+When using this button, there are a couple of known issues:
+Some options may be included even though they were not changed by the user, as they were adjusted after their default value. After updating to a new version, it may be required to manually remove these options from the file to update their default setting.
+Windows that have not been open in the current session may not have previously changed settings retained. It is advised to have a game running and open all desired windows at least once to initialize the settings before using this button.
+
+The persistent configuration file may be manually created if desired, but should never contain the "version.string" option.
+
+
+Расположение файлов конфигурации:
+
+Location in the filesystem is dependant on the OS definition of an environment variable.
+On Windows platforms the variable is denoted by wrapping in % - ( %var% ).
+On MacOSX and Linux platforms the variable is denoted by starting with ${ and ending with } - ( ${var} ).
+
+Windows: %APPDATA%\Roaming\FreeOrion
+    (e.g. C:\Users\username\AppData\Roaming\FreeOrion)
+
+MacOSX: ${HOME}/Library/Application Support/FreeOrion
+    (e.g. /Users/username/Library/Application Support/FreeOrion)
+
+Linux: ${XDG_CONFIG_HOME}/freeorion or if $XDG_CONFIG_HOME is not set: ${HOME}/.config/freeorion
+    (e.g. /home/username/.config/freeorion)
+'''
+
 
 ##
 ## Turn progress
@@ -5561,7 +6282,8 @@ ERROR_PROCESSING_SERVER_MESSAGE
 Ошибка обработки сообщения с сервера
 
 ERROR_EARLY_TURN_UPDATE
-Получено неожиданное обновление с сервера
+Получено неожиданное обновление с сервера.
+
 
 ##
 ## Messages panel
@@ -5569,6 +6291,30 @@ ERROR_EARLY_TURN_UPDATE
 
 MESSAGES_PANEL_TITLE
 Сообщения
+
+# %1% and %2% are color coded empire names
+MESSAGES_WAR_DECLARATION
+%1% и %2% сейчас на войне.
+
+# %1% and %2% are color coded empire names
+MESSAGES_PEACE_TREATY
+%1% и %2% теперь в мире.
+
+# %1% and %2% are color coded empire names
+MESSAGES_ALLIANCE
+%1% и %2% вступили в альянс.
+
+MESSAGES_HELP_COMMAND
+'''/pedia [article]: open the specified article in the pedia
+/pm [player] [message]: sends private message to specified player
+/zoom [object]: zoom to the specified universe object (system, planet, ship, fleet or building)
+'''
+
+MESSAGES_WHISPER
+(Шепчет)
+
+MESSAGES_INVALID
+Invalid player or no message entered.
 
 ##
 ## Players list
@@ -5599,6 +6345,7 @@ COLLAPSE_ALL
 EXPAND_ALL
 Развернуть все
 
+
 ##
 ## Objects columns
 ##
@@ -5611,6 +6358,12 @@ PLANETS_SUBMENU
 
 FLEETS_SUBMENU
 Флот / Корабли
+
+PLANET_ENVIRONMENTS_SUBMENU
+Окружающая среда для видов
+
+ID
+ID
 
 NAME
 Название
@@ -5638,6 +6391,12 @@ PARTS
 
 HULL
 Корпус
+
+ATTACK
+Общий урон от оружия
+
+PRODUCTION_COST
+Стоимость производства
 
 OBJECT_TYPE
 Тип
@@ -5690,17 +6449,32 @@ NEXT_SYSTEM
 PREV_SYSTEM
 Предыд. система
 
+ARRIVAL_STARLANE
+Прибыл из системы
+
 LAST_TURN_BATTLE_HERE
 Прошло ходов от сражения здесь
 
 LAST_TURN_ACTIVE_IN_BATTLE
-Прошло ходов от сражения
+Последний ход в битве
+
+LAST_TURN_RESUPPLIED
+Последний ход пополнения
+
+LAST_TURN_CONQUERED
+Последний ход завоевания
+
+LAST_TURN_ATTACKED_BY_SHIP
+Последний ход атакован кораблем
 
 ARRIVED_ON_TURN
 На данном ходу достиг цели
 
 SIZE_AS_DOUBLE
-Размер
+Размер как число
+
+HABITABLE_SIZE
+Пригодный размер
 
 DISTANCE_FROM_ORIGINAL_TYPE
 Расст. от ориг. типа планеты
@@ -5734,6 +6508,7 @@ SPECIALS
 
 TAGS
 Теги
+
 
 ##
 ## Filters dialog
@@ -5814,6 +6589,7 @@ CONDITION_PTYPE_W_AST
 CONDITION_ANY
 Любой
 
+
 ##
 ## Situation report
 ##
@@ -5857,6 +6633,9 @@ SITREP_HIDE_TEMPLATE
 SITREP_SHOWALL_TEMPLATES
 Показать все заблокированные данные
 
+SITREP_WELCOME
+[[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
+
 SITREP_WELCOME_LABEL
 Добро пожаловать
 
@@ -5893,6 +6672,12 @@ SITREP_TECH_RESEARCHED
 SITREP_TECH_RESEARCHED_LABEL
 Открыта технология
 
+SITREP_EMPIRE_TECH_RESEARCHED_DETECTION
+%empire% [[encyclopedia DETECTION_TITLE]] обновлен до %rawtext:dstrength%
+
+SITREP_EMPIRE_TECH_RESEARCHED_DETECTION_LABEL
+Техническое обновление обнаружения Империи
+
 SITREP_TECH_UNLOCKED
 %tech% была разблокирована и может быть исследована.
 
@@ -5916,6 +6701,12 @@ SITREP_BUILDING_TYPE_UNLOCKED
 
 SITREP_BUILDING_TYPE_UNLOCKED_LABEL
 Доступно новое здание
+
+SITREP_WEAPONS_UPGRADED
+Все оружие %shippart% установленное на кораблях было улучшено до %tech%. Модернизированное оружие наносит %rawtext:dam% дополнительного урона за выстрел
+
+SITREP_WEAPONS_UPGRADED_LABEL
+Техническое обновление оружия
 
 SITREP_COMBAT_SYSTEM
 %combat% в системе %system%.
@@ -6260,7 +7051,25 @@ EFFECT_ART_PLANET
 %planet% была превращена в искусственную планету.
 
 EFFECT_ART_PLANET_LABEL
-Искусственная планета
+Черная дыра
+
+INTERSPECIES_ACADEMY_LABEL
+Академия Межвидового Дизайна
+
+CONDITION_INTERSPECIES_ACADEMY_SPECIES_ALREADY_EXISTS
+Академии видов этой планеты уже существуют в империи
+
+EFFECT_INTERSPECIES_ACADEMY
+Дополнительный эффект от вступления %species% на %planet% в академию Межвидового дизайна. Каждая академия дизайна добавляет 0,05 %rawtext%.
+
+EFFECT_INTERSPECIES_ACADEMY_LABEL
+Новая Академия Межвидового Дизайна
+
+EFFECT_INTERSPECIES_ACADEMY_DESTROY
+Уничтожение поддельных дубликатов в академии дизайна %planet%.
+
+EFFECT_INTERSPECIES_ACADEMY_DESTROY_LABEL
+Дубликат Академии уничтожен
 
 EFFECT_TAME_MONSTER_HATCHED
 На %planet%: прирученный %predefinedshipdesign% готов к службе
@@ -6394,6 +7203,12 @@ EFFECT_FLEET_MOVED_TO
 EFFECT_FLEET_MOVED_TO_LABEL
 Флот перемещен в
 
+EFFECT_SHIP_REFUELED
+В % system%: на корабле %ship% достаточно топлива, чтобы возобновить путешествие по звездныи системам.
+
+EFFECT_SHIP_REFUELED_LABEL
+Корабль заправлен
+
 HEAD_ON_A_SPIKE_MESSAGE
 Столица %empire% пала
 
@@ -6404,12 +7219,21 @@ CUSTOM_SITREP_INTRODUCTION
 Добро пожаловать в первоначальный брифинг о состоянии дел и обстановке в империи. В соответствии с директивой %tech% все занятые служащие империи стремятся собрать важную информацию и отправить ее на %system%, где она компилируется в отчеты, например, с уведомлением о важных событиях и других напоминаниях, выбранных лидером империи
 
 # This message value must contain no spaces. Use underlines instead.
+CUSTOM_1
+Custom_1
 
 # This message value must contain no spaces. Use underlines instead.
+CUSTOM_2
+Custom_2
 
 # This message value must contain no spaces. Use underlines instead.
+CUSTOM_3
+Custom_3
 
 # This message value must contain no spaces. Use underlines instead.
+CUSTOM_4
+Custom_4
+
 
 ##
 ## Victory/defeat
@@ -6419,7 +7243,10 @@ VICTORY_TECH
 ПОБЕДА! %empire% превзошла сложившуюся реальность и выиграла технологическую победу
 
 VICTORY_ALL_ENEMIES_ELIMINATED
-ПОБЕДА! %empire% последняя выживающая империя
+ПОБЕДА! %empire% - последняя выжившая империя.
+
+VICTORY_FEW_HUMANS_ALIVE
+ПОБЕДА! %empire% - одна из последних выживших империй, контролируемых игроком-человеком.
 
 VICTORY_EXPERIMENTOR_CAPTURE
 ПОБЕДА! %empire% захватила мощных Экспериментаторов и покончила со страшной угрозой наводнившую галактику
@@ -6431,6 +7258,7 @@ SITREP_EMPIRE_ELIMINATED
 Империя %empire% была уничтожена
 SITREP_EMPIRE_ELIMINATED_LABEL
 Империя уничтожена
+
 
 ##
 ## Random beginner hints
@@ -6558,6 +7386,7 @@ BEGINNER_HINT_21
 BEGINNER_HINT_22
 22: Выбрав систему и нажав на ALT-C вы увидите диапазон окружности системы, увеличение или уменьшение масштаба позволит оценить расстояние, посмотрев на величину измеряемого расстояния
 
+
 ##
 ## Species
 ##
@@ -6628,7 +7457,13 @@ SELF_SUSTAINING_SPECIES_CLASS
 Самоподдерживаемые
 
 SELF_SUSTAINING_SPECIES_CLASS_DESC
-Перечень [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] видов:
+Список [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] видов:
+
+GASEOUS_SPECIES_CLASS
+Газообразный
+
+GASEOUS_SPECIES_CLASS_DESC
+Список [[encyclopedia GASEOUS_SPECIES_TITLE]] видов:
 
 # Species Pedia Articles
 
@@ -6644,6 +7479,7 @@ SP_HUMAN_GAMEPLAY_DESC
 SP_HUMAN_DESC
 '''Описание:
 Люди - двуногие всеядные существа, живующие племенами и обладающие невероятными способностями к выживанию. Они усовершенствовали свои орудия для более эффективной охоты, и способны долго преследовать жертву, чтобы в конечном итоге завалить её и съесть. Современные люди по-прежнему живут под сильным влиянием реакции "бей или беги", но, однако, с любой опасностью, с которой невозможно справиться в одиночку, они предпочитают бороться группой, чтобы количеством в конце концов преодолеть трудность. Иногда люди едят заведомо малосъедобные вещи только для того, чтобы доказать, что они могут это сделать, и используют некоторые ядовитые вещества для придания новых оттенков вкуса пище.
+
 Социальный строй:
 Современные люди создали несколько географически обусловленных наций, в основе которых прочно закрепились исторически сложившиеся культурные традиции. Эти нации конкурируют друг с другом, иногда устраивая войны, и в то же время - сотрудничают по другим вопросам. Религиозные разногласия, различные ресурсы и даже правильный способ приготовления определённой пищи - всё это до сих пор используются людьми для оправдания своих агрессивных действий, которые значительно тормозят технологический прогресс данной расы.
 '''
@@ -7120,6 +7956,9 @@ SP_NYMNMN_GAMEPLAY_DESC
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 '''
 
+SP_NYMNMN_DESC
+''''''
+
 SP_TRENCHERS
 Тренчеры
 
@@ -7129,6 +7968,9 @@ SP_TRENCHERS_GAMEPLAY_DESC
 Предпочитают [[PT_BARREN]] планеты
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
+
+SP_TRENCHERS_DESC
+'''<img src="species/trenchers.png"></img>'''
 
 SP_RAAAGH
 Раааах
@@ -7304,7 +8146,8 @@ SP_ACIREMA_DESC
 Портал - это радиоктивная планета, имеющая связь с иной вселенной, и вращающаяся близко к очень яркой звезде - голубому гиганту. Считается, что связь с иной вселенной могла быть открыта Предтечами. Существует даже вероятность, что ранее на Портале была разумная жизнь,  но она была уничтожена Ациремами сразу после совершения ими перехода (или в процессе исследований, тестирований какого-либо современного оружия).
 
 Препятствие для распространения:
-Ациремы не смогут расселяться - им не хватит времени, чтобы успеть переместиться на другую планету и выжить.'''
+Ациремы не смогут расселяться - им не хватит времени, чтобы успеть переместиться на другую планету и выжить.
+'''
 
 SP_OURBOOLS
 Урбулы
@@ -7498,8 +8341,7 @@ SP_EXPERIMENTOR_GAMEPLAY_DESC
 '''
 
 SP_EXPERIMENTOR_DESC
-'''Экспериментаторы - древняя раса предтеч, существование которой полностью посвящено стремлению к знаниям. Их желание учиться не имеет равных себе, и они не стесняются рассматривать даже целые галактики в качестве лабораторий для своих экспериментов.
-'''
+Экспериментаторы - древняя раса предтеч, существование которой полностью посвящено стремлению к знаниям. Их желание учиться не имеет равных себе, и они не стесняются рассматривать даже целые галактики в качестве лабораторий для своих экспериментов.
 
 SP_SUPER_TEST
 Супер-тестеры
@@ -7509,6 +8351,10 @@ SP_SUPER_TEST_GAMEPLAY_DESC
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
 '''
+
+SP_SUPER_TEST_DESC
+''''''
+
 
 ##
 ## Specials
@@ -7651,7 +8497,8 @@ TEMPORAL_ANOMALY_SPECIAL_DESC
 • [[SZ_LARGE]] (-20)
 • [[SZ_HUGE]] (-25)
 
-Течение времени на этой планете серьезно искажено. Хаотичные локальные ускорения и замедления времени вызывают серьёзные проблемы у любого живого существа. Социальная и сколько-либо продуктивная деятельность на планете практически невозможна. Потребуются все меры предосторожности и невероятная приспособляемость вида чтобы основать здесь колонию. С другой стороны, временная аномалия несёт в себе огромный потенциал для научных экспериментов, значительно превосходящий тот, что возможен на обычных, нормальных планетах.'''
+Течение времени на этой планете серьезно искажено. Хаотичные локальные ускорения и замедления времени вызывают серьёзные проблемы у любого живого существа. Социальная и сколько-либо продуктивная деятельность на планете практически невозможна. Потребуются все меры предосторожности и невероятная приспособляемость вида чтобы основать здесь колонию. 
+С другой стороны, временная аномалия несёт в себе огромный потенциал для научных экспериментов, значительно превосходящий тот, что возможен на обычных, нормальных планетах.'''
 
 RESONANT_MOON_SPECIAL
 Резонансная луна
@@ -7895,6 +8742,10 @@ OBJ_BUILDING
 OBJ_SHIP
 Корабль
 
+# Note: the OBJ_SHIP and OBJ_BUILDING entries are used for the build item type of ships and buildings.
+BUILD_ITEM_TYPE_PROJECT
+Проект
+
 # Universe object types
 OBJ_FLEET
 Флот
@@ -8080,6 +8931,13 @@ FOCUS_INDUSTRY
 Индустрия
 
 # Focus types
+FOCUS_STOCKPILE
+Запас
+
+FOCUS_STOCKPILE_DESC
+Позволяет специалистам по складским запасам наращивать потенциал изъятия запасов
+
+# Focus types
 FOCUS_RESEARCH
 Исследования
 
@@ -8188,6 +9046,10 @@ METER_MAX_SUPPLY
 Макс. снабжение
 
 # Meter types
+METER_MAX_STOCKPILE
+Макс. запас
+
+# Meter types
 METER_MAX_TROOPS
 Макс. войска
 
@@ -8244,6 +9106,10 @@ METER_SUPPLY
 Снабжение
 
 # Meter types
+METER_STOCKPILE
+Запас
+
+# Meter types
 METER_TROOPS
 Войска
 
@@ -8268,6 +9134,8 @@ METER_SPEED
 Скорость
 
 # Meter types
+METER_DETECTION_STRENGTH
+[[DETECTION_TITLE]]
 
 METER_BUILDING_COST_FACTOR
 Фактор затрат на строительство
@@ -8354,7 +9222,11 @@ BT_BUILDING
 
 # Build types
 BT_SHIP
-Корабль
+корабль
+
+# Build types
+BT_STOCKPILE
+резервы
 
 # Resource types
 INVALID_RESOURCE_TYPE
@@ -8559,6 +9431,38 @@ VIS_PARTIAL_VISIBILITY
 VIS_FULL_VISIBILITY
 Полная
 
+# Path types
+PATH_BINARY
+''''''
+
+# Path types
+PATH_RESOURCE
+''''''
+
+# Path types
+PATH_PYTHON
+''''''
+
+# Path types
+PATH_DATA_ROOT
+''''''
+
+# Path types
+PATH_DATA_USER
+''''''
+
+# Path types
+PATH_CONFIG
+''''''
+
+# Path types
+PATH_SAVE
+''''''
+
+# Path types
+PATH_TEMP
+''''''
+
 # Ship hull categories
 
 HULL_LINE_GENERIC
@@ -8633,6 +9537,7 @@ HULL_MONSTER_TREE
 HULL_MONSTER_TREE_DESC
 Корпуса используемые в дизайнах монстров-деревьев
 
+
 ##
 ## FOCS value references, effects & condition descriptions
 ##
@@ -8657,9 +9562,6 @@ DESC_VAR_LOCAL_CANDIDATE
 
 DESC_VAR_ROOT_CANDIDATE
 корневой кандидат состояния
-
-DESC_STATISTIC
-статистика
 
 DESC_STAT_TYPE
 тип отчета
@@ -8727,6 +9629,93 @@ DESC_VAR_GALAXYSTARLANEFREQUENCY
 DESC_VAR_NON_OBJECT_REFERENCE
 свободная переменная
 
+DESC_VAR_TARGETPOPULATION
+[[METER_TARGET_POPULATION]]
+
+DESC_VAR_TARGETINDUSTRY
+[[METER_TARGET_INDUSTRY]]
+
+DESC_VAR_TARGETRESEARCH
+[[METER_TARGET_RESEARCH]]
+
+DESC_VAR_TARGETTRADE
+[[METER_TARGET_TRADE]]
+
+DESC_VAR_TARGETCONSTRUCTION
+[[METER_TARGET_CONSTRUCTION]]
+
+DESC_VAR_MAXFUEL
+[[METER_MAX_FUEL]]
+
+DESC_VAR_MAXSHIELD
+[[METER_MAX_SHIELD]]
+
+DESC_VAR_MAXSTRUCTURE
+[[METER_MAX_STRUCTURE]]
+
+DESC_VAR_MAXDEFENSE
+[[METER_MAX_DEFENSE]]
+
+DESC_VAR_MAXTROOPS
+[[METER_MAX_TROOPS]]
+
+DESC_VAR_MAXCAPACITY
+[[METER_MAX_CAPACITY]]
+
+DESC_VAR_MAX_SECONDARY_STAT
+[[METER_MAX_SECONDARY_STAT]]
+
+DESC_VAR_POPULATION
+[[METER_POPULATION]]
+
+DESC_VAR_INDUSTRY
+[[METER_INDUSTRY]]
+
+DESC_VAR_RESEARCH
+[[METER_RESEARCH]]
+
+DESC_VAR_TRADE
+[[METER_TRADE]]
+
+DESC_VAR_CONSTRUCTION
+[[METER_CONSTRUCTION]]
+
+DESC_VAR_FUEL
+[[METER_FUEL]]
+
+DESC_VAR_SHIELD
+[[METER_SHIELD]]
+
+DESC_VAR_STRUCTURE
+[[METER_STRUCTURE]]
+
+DESC_VAR_DEFENSE
+[[METER_DEFENSE]]
+
+DESC_VAR_TROOPS
+[[METER_TROOPS]]
+
+DESC_VAR_SUPPLY
+[[METER_SUPPLY]]
+
+DESC_VAR_STEALTH
+[[METER_STEALTH]]
+
+DESC_VAR_DETECTION
+[[METER_DETECTION]]
+
+DESC_VAR_SPEED
+[[METER_SPEED]]
+
+DESC_VAR_CAPACITY
+[[METER_CAPACITY]]
+
+DESC_VAR_SECONDARY_STAT
+[[METER_SECONDARY_STAT]]
+
+DESC_VAR_SIZE
+[[METER_SIZE]]
+
 DESC_VAR_TRADESTOCKPILE
 торговый запас
 
@@ -8741,6 +9730,9 @@ DESC_VAR_RESEARCHOUTPUT
 
 DESC_VAR_OWNER
 владелец
+
+DESC_VAR_ID
+ID
 
 DESC_VAR_AGE
 возраст в ходах
@@ -8815,10 +9807,24 @@ DESC_VAR_LASTTURNBATTLEHERE
 в последний раз бой был здесь
 
 DESC_COMPLEX
-Совокупность переменных
+Комплексная переменная
+
+DESC_VAR_JUMPSBETWEEN
+Звездный прыжок между системами, содержащими объекты с идентификаторами %1% и %2%
+
+DESC_STATISTIC
+Статистика
+
+DESC_VAR_COUNT
+количество объектов %2%
+
+DESC_VAR_IF
+0 или 1, если есть какой-либо объект %2%
 
 # FOCS variable reference description text.
 # %1% reference type of the FOCS variable.
+DESC_VALUE_REF_MULTIPART_VARIABLE0
+%1%
 
 # FOCS variable reference description text.
 # %1% reference type of the FOCS variable.
@@ -8882,6 +9888,7 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 DESC_VALUE_REF_MULTIPART_VARIABLEMANY
 %1% %2% %3% %4% %5% %6% %7% ...
 
+
 ##
 ## FOCS condition descriptions
 ##
@@ -8891,6 +9898,12 @@ DESC_ALL
 
 DESC_ALL_NOT
 ''' не во вселенной'''
+
+DESC_NONE
+[[DESC_ALL_NOT]]
+
+DESC_NONE_NOT
+[[DESC_ALL]]
 
 # %1% name of the empire this condition applies to.
 DESC_EMPIRE_AFFILIATION_SELF
@@ -9338,10 +10351,10 @@ DESC_CAN_COLONIZE_NOT
 ''' виды, которые не могут колонизировать'''
 
 DESC_CAN_PRODUCE_SHIPS
-''' виды, которые могут производить суда'''
+''' виды, которые могут производить корабли'''
 
 DESC_CAN_PRODUCE_SHIPS_NOT
-''' виды, которые не могут производить суда'''
+''' виды, которые не могут производить корабли'''
 
 DESC_SUPPLY_CONNECTED_FLEET
 ''' находится в системе, где империя %1% может осуществлять снабжение флота'''
@@ -9367,11 +10380,136 @@ DESC_ORDERED_BOMBARDED
 DESC_ORDERED_BOMBARDED_NOT
 ''' не бомбардирован объектом %1%'''
 
+# %1% content type description, eg. species, building, focus, tech
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+DESC_LOCATION
+''' это соответствует условию расположения %1% %2%'''
+
+# %1% content type description, eg. species, building, focus, tech
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+DESC_LOCATION_NOT
+''' это не соответствует условию расположения %1% %2%'''
+
+# %1% content type description, eg. species, building, focus, tech
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+DESC_COMBAT_TARGET
+''' это соответствует состоянию боевых целей %1% %2%'''
+
+# %1% content type description, eg. species, building, focus, tech
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+DESC_COMBAT_TARGET_NOT
+''' это не соответствует состоянию боевых целей %1% %2%'''
+
+# AND Descriptions for expressions 'AND [ A B C ]'
+DESC_AND_BEFORE_OPERANDS
+''' ['''
+
 DESC_AND_BETWEEN_OPERANDS
-''' и'''
+''', или'''
+
+DESC_AND_AFTER_OPERANDS
+''' ]'''
+
+DESC_AND_BEFORE_SINGLE_OPERAND
+''''''
+
+DESC_AND_AFTER_SINGLE_OPERAND
+''''''
+
+# NOT AND Descriptions for expressions  'NOT AND [ A B C ]'
+# We actually describe the the logically equivalent expression ( (not A) or (not B) or (not C) )
+# Note: the operands (not A), (not B).. are handled in the descriptions of A, B.. respectively
+DESC_NOT_AND_BEFORE_OPERANDS
+'''[[DESC_NOT_OR_BEFORE_OPERANDS]]'''
+
+DESC_NOT_AND_BETWEEN_OPERANDS
+'''[[DESC_NOT_OR_BETWEEN_OPERANDS]]'''
+
+DESC_NOT_AND_AFTER_OPERANDS
+'''[[DESC_NOT_OR_AFTER_OPERANDS]]'''
+
+
+# Description for 'not ( AND [ A ] )' expressions
+# Actually instead we describe 'OR [ not A ]' and leave the description of negation to A
+DESC_NOT_AND_BEFORE_SINGLE_OPERAND
+'''[[DESC_OR_BEFORE_SINGLE_OPERAND]]'''
+
+DESC_NOT_AND_AFTER_SINGLE_OPERAND
+'''[[DESC_OR_AFTER_SINGLE_OPERAND]]'''
+
+
+# OR Descriptions: for expressions of the form ( A or B or C )
+DESC_OR_BEFORE_OPERANDS
+''' (either'''
 
 DESC_OR_BETWEEN_OPERANDS
-''' или'''
+''', или'''
+
+DESC_OR_AFTER_OPERANDS
+''' )'''
+
+DESC_OR_BEFORE_SINGLE_OPERAND
+''''''
+
+DESC_OR_AFTER_SINGLE_OPERAND
+''''''
+
+
+# NOT OR Descriptions; for expressions of the form 'NOT OR [ A B C ]'
+# We actually describe the logically equivalent expression 'AND [ (NOT A) (NOT B) (NOT C) ]'
+# Note: (NOT A), (NOT B).. are handled in the descriptions of A, B.. respectively
+DESC_NOT_OR_BEFORE_OPERANDS
+'''[[DESC_AND_BEFORE_OPERANDS]]'''
+
+DESC_NOT_OR_BETWEEN_OPERANDS
+'''[[DESC_AND_BETWEEN_OPERANDS]]'''
+
+DESC_NOT_OR_AFTER_OPERANDS
+'''[[DESC_AND_AFTER_OPERANDS]]'''
+
+# for expressions of the form 'NOT OR [ A ]' we describe instead 'AND [ NOT A ]'
+# Note: (NOT A) is handled in the description of A
+DESC_NOT_OR_BEFORE_SINGLE_OPERAND
+'''[[DESC_AND_BEFORE_SINGLE_OPERAND]]'''
+
+DESC_NOT_OR_AFTER_SINGLE_OPERAND
+'''[[DESC_AND_AFTER_SINGLE_OPERAND]]'''
+
+
+
+# OrderedAlternativesOf Descriptions for expressions 'OrderedAlternativesOf [ A B C ]'
+DESC_ORDERED_ALTERNATIVES_BEFORE_OPERANDS
+'''that matches the first matching condition {'''
+
+DESC_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS
+''', еще'''
+
+DESC_ORDERED_ALTERNATIVES_AFTER_OPERANDS
+''' }'''
+
+DESC_ORDERED_ALTERNATIVES_BEFORE_SINGLE_OPERAND
+'''{'''
+
+DESC_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND
+'''(iff it also has non-matches)}'''
+
+# Expressions like  'NOT OrderedAlternativesOf [ A B C ]'
+# Note: returned matches rely on (NOT A), (NOT B).. and are handled in the descriptions of A, B.. respectively
+DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_OPERANDS
+'''that matches the first matching conditions' non-matching candidates: {'''
+
+DESC_NOT_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS
+''', else'''
+
+DESC_NOT_ORDERED_ALTERNATIVES_AFTER_OPERANDS
+''' }'''
+
+DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_SINGLE_OPERAND
+'''{'''
+
+DESC_NOT_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND
+'''(iff it also has non-matches)}'''
+
 
 # %1% textual description of the lower turn limit.
 # %2% textual description of the upper turn limit.
@@ -9532,6 +10670,7 @@ DESC_HAS_TAG
 DESC_HAS_TAG_NOT
 ''' это не %1%'''
 
+
 ##
 ## Technology categories
 ##
@@ -9678,7 +10817,8 @@ EXTINCT_SPECIES_TECHS
 Вымершие виды
 
 EXTINCT_SPECIES_TECHS_DESC
-'''Технология специализируется на вымерших видах '''
+Технологии, связанные с вымершими видами.
+
 
 ##
 ## Technology theories
@@ -10203,7 +11343,7 @@ SHP_MASSPROP_SPEC
 Специализация по массовому движению
 
 SHP_MASSPROP_SPEC_DESC
-Традиционные двигательные устройства хорошо работают на объектах с относительно малой массой. Однако, когда масса корабля приближается к небольшой луне, обычные методы движения очень неуклюжи и требуют огромного количества энергии. Новый подход к движению с учетом размера объекта, рассматриваемого как фундаментальный аспект системы, мог бы позволить таким судам иметь полезную мобильность
+Традиционные двигательные устройства хорошо работают на объектах с относительно малой массой. Однако, когда масса корабля приближается к небольшой луне, обычные методы движения очень неуклюжи и требуют огромного количества энергии. Новый подход к движению с учетом размера объекта, рассматриваемого как фундаментальный аспект системы, мог бы позволить таким кораблям иметь полезную мобильность
 
 SHP_TRANSSPACE_DRIVE
 Транс-пространственный двигатель
@@ -10337,6 +11477,9 @@ VICTORY_SHORT_DESC
 
 SHIP_PART_UNLOCK_SHORT_DESC
 Открывает корабельный модуль
+
+SHIP_FUEL_IMPROVE_SHORT_DESC
+Улучшает топливные баки кораблей
 
 SHIP_WEAPON_UNLOCK_SHORT_DESC
 Разблокирует оружие
@@ -10560,7 +11703,7 @@ LRN_SPATIAL_DISTORT_GEN
 Пространственный генератор искажений
 
 LRN_SPATIAL_DISTORT_GEN_DESC
-Путем манипулирования пространственных свойств звездных путей можно было бы выборочно изгибать их. Медленные входящие корабли могут быть возвращены в прежнюю систему вылета, а более быстрые суда могут быть существенно замедлены
+Путем манипулирования пространственных свойств звездных путей можно было бы выборочно изгибать их. Медленные входящие корабли могут быть возвращены в прежнюю систему вылета, а более быстрые корабли могут быть существенно замедлены
 
 LRN_GATEWAY_VOID
 Путь в никуда
@@ -10981,7 +12124,7 @@ SPY_DETECT_1
 Оптический сканер
 
 SPY_DETECT_1_DESC
-Все колонии начинают игру с уровнем [[metertype METER_DETECTION]] 50 и общее [[encyclopedia DETECTION_TITLE]] империи 10, а деталь корабля [[shippart DT_DETECTOR_1]] позволяет судам достичь такого же уровня обнаружения
+Все колонии начинают игру с уровнем [[metertype METER_DETECTION]] 50 и общее [[encyclopedia DETECTION_TITLE]] империи 10, а деталь корабля [[shippart DT_DETECTOR_1]] позволяет кораблям достичь такого же уровня обнаружения
 
 SPY_DETECT_2
 Активная радиолокация
@@ -11106,13 +12249,19 @@ SHP_DEUTERIUM_TANK
 Емкость для дейтерия
 
 SHP_DEUTERIUM_TANK_DESC
-Разблокирует [[shippart FU_BASIC_TANK]] как одну из возможных деталей корабля
+Небольшое обновление для каждой из ваших [[shippart FU_BASIC_TANK]] частей корабля. Увеличивает емкость [[metertype METER_FUEL]] и тем самым количество прыжков, которые ваши корабли могут делать без дозаправки.
+
+SHP_DEUTERIUM_TANK_EFFECT
+Технология дейтериевого бака 
 
 SHP_ANTIMATTER_TANK
 Емкость для антиматерий
 
 SHP_ANTIMATTER_TANK_DESC
-Разблокирует [[shippart FU_BASIC_TANK]] как одну из возможных деталей корабля
+Умеренное обновление для каждой из ваших [[shippart FU_BASIC_TANK]] частей корабля. Увеличивает емкость [[metertype METER_FUEL]] и тем самым количество прыжков, которые ваши корабли могут делать без дозаправки.
+
+SHP_ANTIMATTER_TANK_EFFECT
+Технология бака антивещества
 
 SHP_ZERO_POINT
 Генератор топлива с нулевой точкой
@@ -11522,6 +12671,25 @@ BLD_INDUSTRY_CENTER_DESC
 
 Дальнейшее усовершенствование [[tech PRO_INDUSTRY_CENTER_III]] утраивает базовый бонус'''
 
+BLD_INTERSPECIES_ACADEMY
+Академия Межвидового Дизайна
+
+BLD_INTERSPECIES_ACADEMY_DESC
+'''Увеличивает добычу запасов на своей планете на 10, если эта планета сосредоточена на накоплении запасов.
+Увеличивает [[metertype METER_RESEARCH]] на своей планете на 5, если эта планета имеет фокус исследования.
+
+Умение проектировать устройства для использования различными видами имеет решающее значение для разработки универсально используемых инструментов.
+
+Каждая империя может содержать академию на шести планетах с различными видами. Чтобы поддерживать академию, планета [[metertype METER_POPULATION]] должна быть счастлива, и по крайней мере должна находится в трех прыжка звездолета до ближайшей существующей академии.'''
+
+BLD_STOCKPILING_CENTER
+Императорский центр запутанности
+
+BLD_STOCKPILING_CENTER_DESC
+'''Предоставляет бонус к [[metertype METER_STOCKPILE]] по 0,1 за [[metertype METER_INDUSTRY]].
+
+Instead of using factories entangled directly between the production place and the workers planet, a central hub can connect any entangled factories with any entangled factory workers. This provides great flexibility in production location.'''
+
 BLD_MEGALITH
 Мегалит
 
@@ -11573,7 +12741,7 @@ BLD_GATEWAY_VOID
 Врата в пустоту
 
 BLD_GATEWAY_VOID_DESC
-'''Возможность закрыть систему почти полностью, может быть полезна для империи в обороне. Любые суда, которые войдут в эту систему не пройдя через один и тот же проход, будут уничтожены, а все колонии внутри немедленно сведены к статусу [[encyclopedia OUTPOSTS_TITLE]]ов. [[metertype METER_STEALTH]] всех объектов в системе увеличивается на 1000, что делает их практически невозможными для обнаружения
+'''Возможность закрыть систему почти полностью, может быть полезна для империи в обороне. Любые корабли, которые войдут в эту систему не пройдя через один и тот же проход, будут уничтожены, а все колонии внутри немедленно сведены к статусу [[encyclopedia OUTPOSTS_TITLE]]ов. [[metertype METER_STEALTH]] всех объектов в системе увеличивается на 1000, что делает их практически невозможными для обнаружения
 
 Пространственный разрыв, способный увеличивать деструктивный потенциал Пустоты разума в локализованной области'''
 
@@ -11742,7 +12910,7 @@ BLD_ART_MOON_DESC
 
 Это невозможно построить на [[PT_GASGIANT]] или поясе астероидов
 
-Хотя естественные спутники являются относительно обычными явлениями среди планетных тел, по-настоящему редко встречается луна с орбитальным периодом равным периоду его вращения. У такого спутника была бы одна сторона, постоянно обращенная от планеты и позволяющая строить массивные строения, которые при нормальных условиях были бы легко видны с поверхности планеты. Таким образом, возводимые строения будут иметь полную секретность и совершенно невидимы для ничего не подозревающего населения на планете ниже. Суда, вращающиеся вокруг планеты, также смогут более эффективно скрываться от агрессоров'''
+Хотя естественные спутники являются относительно обычными явлениями среди планетных тел, по-настоящему редко встречается луна с орбитальным периодом равным периоду его вращения. У такого спутника была бы одна сторона, постоянно обращенная от планеты и позволяющая строить массивные строения, которые при нормальных условиях были бы легко видны с поверхности планеты. Таким образом, возводимые строения будут иметь полную секретность и совершенно невидимы для ничего не подозревающего населения на планете ниже. Корабли, вращающиеся вокруг планеты, также смогут более эффективно скрываться от агрессоров'''
 
 BLD_SOL_REJUV
 Солнечные омолаживатель
@@ -12023,14 +13191,23 @@ BLD_COL_SUPER_TEST
 BLD_COL_SUPER_TEST_DESC
 Колония супер-тестеров [[BLD_COL_PART_1]]. [[BLD_COL_PART_2]] Колония супер-тестеров [[BLD_COL_PART_3]]
 
+
 ##
 ## Hull and ship part description templates
 ##
 
 # %1% hull base starlane speed.
 # %2% hull base fuel capacity.
-# %3% hull base starlane speed.
+# %3% hull base stealth.
 # %4% hull base structure value.
+# %5% hull slots listing
+HULL_DESC
+'''[[metertype METER_SPEED]]: %1%
+[[metertype METER_FUEL]]: %2%
+[[metertype METER_STEALTH]]: %3%
+[[metertype METER_STRUCTURE]]: %4%
+
+%5%'''
 
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
@@ -12045,6 +13222,8 @@ PART_DESC_SHIELD_STRENGTH
 Сила щита: %1%
 
 # %1% ship part strength (detection).
+PART_DESC_DETECTION
+[[metertype METER_DETECTION]]: %1%
 
 # %1% ship part damage done (direct fire weapons).
 # %2% number of shots done per attack.
@@ -12057,6 +13236,7 @@ PART_DESC_DIRECT_FIRE_STATS
 PART_DESC_HANGAR_STATS
 '''Количество истребителей: %1%
 Урон [[encyclopedia DAMAGE_TITLE]]: %2%'''
+
 
 ##
 ## Ship parts
@@ -12075,7 +13255,10 @@ FT_BAY_1_DESC
 Система запуска для истребителей
 
 FT_HANGAR_0
-Ангар 0
+Ангар приманок
+
+FT_HANGAR_0_FIGHTER
+Приманка
 
 FT_HANGAR_0_DESC
 Система хранения невооруженных кораблей
@@ -12083,11 +13266,17 @@ FT_HANGAR_0_DESC
 FT_HANGAR_1
 Ангар перехватчиков
 
+FT_HANGAR_1_FIGHTER
+Перехватчик
+
 FT_HANGAR_1_DESC
 Система хранения для минимально вооруженных истребителей
 
 FT_HANGAR_2
 Ангар истребителей
+
+FT_HANGAR_2_FIGHTER
+Истребитель
 
 FT_HANGAR_2_DESC
 Система хранения для легких вооруженных истребителей
@@ -12095,11 +13284,17 @@ FT_HANGAR_2_DESC
 FT_HANGAR_3
 Ангар бомбардировщиков
 
+FT_HANGAR_3_FIGHTER
+Бомбардировщик
+
 FT_HANGAR_3_DESC
 Система хранения для умеренно вооруженных истребителей
 
 FT_HANGAR_4
-Ангар 4
+Ангар тяжелых бомбардировщиков
+
+FT_HANGAR_4_FIGHTER
+Тяжелый бомбардировщик
 
 FT_HANGAR_4_DESC
 Система хранения для тяжело вооруженных истребителей
@@ -12312,35 +13507,48 @@ DT_DETECTOR_4
 Сенсоры
 
 DT_DETECTOR_4_DESC
-Очень большой радиус обнаружения
+Очень большой радиус обнаружения.
+
+FU_ENGINE_PART_LIMIT
+На судне может быть установлена только одна деталь двигателя.
 
 FU_IMPROVED_ENGINE_COUPLINGS
 Улучшенная сцепка двигателей
 
 FU_IMPROVED_ENGINE_COUPLINGS_DESC
-'''Увеличивает межзвездную [[metertype METER_SPEED]] на 10
+'''Лучшие детали двигателя приравниваются к лучшим двигателям.
 
-Лучшие части двигателя приравниваются к лучшим двигателям'''
+- Увеличивает [[metertype METER_SPEED]] на 20.
+- [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX
 N-мерная матрица двигателя
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-'''Увеличивает межзвездную [[metertype METER_SPEED]] на 20 
+'''Исследование N-мерного подпространства привело к созданию более эффективной матрицы двигателей.
 
-Исследование N-мерного подпространства привело к созданию более эффективной двигательной матрице'''
+- Увеличивает [[metertype METER_SPEED]] на 40.
+- [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_SINGULARITY_ENGINE_CORE
 Сингулярный двигатель ядра
 
 FU_SINGULARITY_ENGINE_CORE_DESC
-Близкий родственник [[buildingtype BLD_HYPER_DAM]] разработанный для кораблей. Сингулярный двигатель ядра значительно повышает мощность. Увеличивает межзвездную [[metertype METER_SPEED]] на 30
+'''Близкий родственник [[buildingtype BLD_HYPER_DAM]] разработанный для кораблей. Сингулярный двигатель ядра значительно повышает мощность..
+
+- Увеличивает [[metertype METER_SPEED]] на 80.
+- [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_TRANSPATIAL_DRIVE
 Транс-пространственный привод
 
 FU_TRANSPATIAL_DRIVE_DESC
-Невероятно мощный привод, который изгибает пространство-время, увеличивая как [[metertype METER_SPEED]], так и [[metertype METER_STEALTH]] на 40. Может устанавливаться только в центральный [[encyclopedia SLOT_TITLE]]. Бонус скрытности не складывается с другими бонусами частей корабля
+'''Невероятно мощный двигатель, который искривляет само пространство-время..
+
+- Увеличивает [[metertype METER_SPEED]] на 60
+- Увеличивает [[metertype METER_STEALTH]] на 40
+- Увеличение скрытности не складывается с другими бонусами..
+- [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_BASIC_TANK
 Дополнительный топливный бак
@@ -12484,7 +13692,7 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 Роботизированный интерфейс: щиты
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Роботизированный интерфейс: щиты имеют прочность щита примерно 1 прочность щита за другой дополнительный роботизированный интерфейс. Таким образом происходит увеличение общего экранирования кораблей находящимся в том же месте, хотя и с уменьшающейся отдачей при более высоких количествах. Эффект ограничен 20-процентной прочностью, применяется только к судам, имеющим экипаж [[encyclopedia ROBOTIC_SPECIES_TITLE]] вида и может быть размещен только на типе корпуса корабля [[encyclopedia HULL_LINE_ROBOTIC]]
+'''Роботизированный интерфейс: щиты имеют прочность щита примерно 1 прочность щита за другой дополнительный роботизированный интерфейс. Таким образом происходит увеличение общего экранирования кораблей находящимся в том же месте, хотя и с уменьшающейся отдачей при более высоких количествах. Эффект ограничен 20-процентной прочностью, применяется только к кораблям, имеющим экипаж [[encyclopedia ROBOTIC_SPECIES_TITLE]] вида и может быть размещен только на типе корпуса корабля [[encyclopedia HULL_LINE_ROBOTIC]]
 
 Роботизированные виды обладают неотъемлемой способностью объединиться и тем самым существенно увеличить их чистую вычислительную мощность. Роботизированный интерфейс: щиты используют эту сеть для расчета траектории входящего огня и усиления мощности щита в точке удара
 '''
@@ -12641,31 +13849,32 @@ SHP_ORGANIC_WAR_ADAPTION_DESC
 Похоже [[encyclopedia HULL_LINE_ORGANIC]] корабли могут собирать фотонную энергию, которая может быть перенаправлена для расширения возможностей некоторых систем кораблей
 
 SHP_ORGANIC_WAR_ADAPTION_SHORT_DESC
-Увеличивает силу [[SR_WEAPON_2_1]] в зависимости от типа звезды
+Увеличивает силу [[SR_WEAPON_2_1]] в зависимости от типа звезды.
 
 PR_MOBILE_ASSEMBLER
 Мобильная верфь
 
 PR_MOBILE_ASSEMBLER_DESC
-Позволяет производить корабли вдали от планет
+Позволяет производить корабли вдали от планет.
 
 RS_AUTOLAB
 Автоматическая лаборатория
 
 RS_AUTOLAB_DESC
-Генерирует научные исследования владельцу
+Генерирует научные исследования владельцу.
 
 RS_AUTOFACTORY
 Автозавод
 
 RS_AUTOFACTORY_DESC
-Генерирует промышленное производство владельцу
+Генерирует промышленное производство владельцу.
 
 RS_AUTOTRADER
 Автотрейдер
 
 RS_AUTOTRADER_DESC
-Генерирует торговлю владельцу
+Генерирует торговлю владельцу.
+
 
 ##
 ## Ship hulls
@@ -12689,7 +13898,19 @@ SH_SPATIAL_FLUX_DESC
 
 [[metertype METER_STEALTH]] начинается с 15, увеличивается на 10 в бездеятельном состоянии, но уменьшается на 30 на любом ходе, если находится в движении. Открытия в области технологий, таких как [[tech SPY_STEALTH_PART_1]] позволяют экипажам увеличить невидимость корабля на 10 за каждый уровень
 
-[[metertype METER_DETECTION]] среднее и [[metertype METER_SPEED]] средняя
+[[metertype METER_DETECTION]] средний и [[metertype METER_SPEED]] средний.
+
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
+
+SH_SPACE_FLUX_BUBBLE
+Пузырьковый корпус пространственного потока
+
+SH_SPACE_FLUX_BUBBLE_DESC
+'''Этот крошечный корпус способен развивать приличную скорость на больших расстояниях благодаря мощи [[tech SHP_SPACE_FLUX_BUBBLE]]. Однако он имеет только один внутренний слот, и его max [[metertype METER_STRUCTURE]] низок.
+
+[[metertype METER_STEALTH]] начинается с 15, увеличивается на 10 в пассивном режиме, но уменьшается на 30 на любом ходу, когда остается в пути. Технологические достижения, такие как [[tech SPY_STEALTH_PART_1]], позволяют экипажам увеличивать скрытность корабля на 10 .
+
+[[metertype METER_DETECTION]] средний и [[metertype METER_SPEED]] средний.
 
 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
 
@@ -13235,13 +14456,14 @@ SH_COSMIC_DRAGON_BODY
 Дракон космических размеров
 
 SH_COSMIC_DRAGON_BODY_DESC
-Устрашающий космический дракон размером с планету
+Устрашающий космический дракон размером с планету.
 
 SH_DAMPENING_CLOUD_BODY
 Угасающее облачное тело
 
 SH_DAMPENING_CLOUD_BODY_DESC
-Космическое облако высокоэнергетических частиц
+Космическое облако высокоэнергетических частиц.
+
 
 ##
 ## Monsters Macros
@@ -13264,6 +14486,7 @@ SM_SNOWFLAKE_ENVIRONMENT
 
 SM_JUGGERNAUT_ENVIRONMENT
 Благоприятная среда: [[PT_ASTEROIDS]]. Гнезда сокрушительных сил (джаггернауты) обычно находятся в поясах Астероидов, а сами джаггернауты могут созреть в более крупные формы в системах с поясами [[PT_ASTEROIDS]]
+
 
 ##
 ## Buildings macros
@@ -13289,6 +14512,7 @@ BLD_COL_PART_2
 
 BLD_COL_PART_3
 Время создания будет и дальше увеличивать сокращение путем исследования технологий, которые позволят быстрее направлять колонии используя новые детали двигателей и более быстрые корпуса
+
 
 # Macro keys formatting for ship designs, hulls or parts:
 # BLD_SHIPYARD_TYPE1_TYPE2_REQUIRED (required building type(s) owned by
@@ -13367,6 +14591,7 @@ SHIPDESIGN_NO_TRAVEL
 SHIPDESIGN_PLANET_INVASION
 [[metertype METER_TROOPS]] и оборудование, которое может быть использовано для вторжения в планету
 
+
 ##
 ## Ship part/tech application macros
 ##
@@ -13408,19 +14633,20 @@ SHIP_WEAPON_QUICKLY_REDUCE
 что позволяет кораблям быстро сокращать
 
 ENEMY_PLANET_ORGANIC_POP
-органическое население вражеских планет
+органическое [[metertype METER_POPULATION]] вражеских планет
 
 ENEMY_PLANET_ROBOTIC_POP
-роботизированное население вражеских планет
+роботизированное [[metertype METER_POPULATION]] планет противника
 
 ENEMY_PLANET_LITHIC_POP
-каменное (почвенное) население вражеских планет
+Литик [[metertype METER_POPULATION]] планет противника
 
 ENEMY_PLANET_PHOTOTROPHIC_POP
-фототрофная популяция вражеских планет
+Фототроф [[metertype METER_POPULATION]] планет противника
 
 ENEMY_PLANET_ANY_POP
-любое население вражеских планет
+любое [[metertype METER_POPULATION]] планет противника
+
 
 ##
 ## Tech macros
@@ -13428,6 +14654,7 @@ ENEMY_PLANET_ANY_POP
 
 COLONY_BUILDING_TIME_DECREASE
 Среди прочего, эта технология уменьшает время на построение колонии, расположенной далеко от соответствующих видов в империи.
+
 
 ##
 ## Growth macros
@@ -13470,6 +14697,7 @@ GROWTH_SPECIALS_ENTRY_LIST
 
 GROWTH_SPECIAL_LABEL
 Планета <i>%1%</i> [[TT_SPECIAL]]
+
 
 ##
 ## Species picks
@@ -13667,7 +14895,7 @@ BAD_FUEL_DESC
 
 AVERAGE_FUEL_DESC
 	Средний максимум [[metertype METER_FUEL]]: +0
-	
+
 GOOD_FUEL_DESC
 +	Хороший максимум [[metertype METER_FUEL]]: +1
 
@@ -13689,6 +14917,7 @@ TELEPATHIC_DETECTION_DESC
 COMMUNAL_VISION_DESC
 	Общая концепция: разделяет обзор в рамках одинаковых видов.
 
+
 ##
 ## Fuel regeneration
 ##
@@ -13698,6 +14927,7 @@ AVERAGE_BASE_FUEL_REGEN_DESC
 
 LIVING_HULL_BASE_FUEL_REGEN_DESC
 '''	Живой органический корпус [[metertype METER_FUEL]] восполнение: + 0.3'''
+
 
 ##
 ## Accounting labels
@@ -13814,6 +15044,11 @@ ULTIMATE_RESEARCH_LABEL
 
 # %1% FIXME
 # %2% FIXME
+VERY_BAD_SUPPLY_LABEL
+%2% Очень плохое снабжение
+
+# %1% FIXME
+# %2% FIXME
 BAD_SUPPLY_LABEL
 %2% Плохое снабжение
 
@@ -13831,6 +15066,61 @@ GREAT_SUPPLY_LABEL
 # %2% FIXME
 ULTIMATE_SUPPLY_LABEL
 %2% Превосходное снабжение
+
+# %1% FIXME
+# %2% FIXME
+BAD_STOCKPILE_LABEL
+%2% Плохой запас
+
+# %1% FIXME
+# %2% FIXME
+AVERAGE_STOCKPILE_LABEL
+%2% Средний запас
+
+# %1% FIXME
+# %2% FIXME
+GOOD_STOCKPILE_LABEL
+%2% Хороший запас
+
+# %1% FIXME
+# %2% FIXME
+GREAT_STOCKPILE_LABEL
+%2% Большой запас
+
+# %1% FIXME
+# %2% FIXME
+ULTIMATE_STOCKPILE_LABEL
+%2% Превосходный запас
+
+# %1% FIXME
+# %2% FIXME
+NO_FUEL_LABEL
+%2% Нет топлива
+
+# %1% FIXME
+# %2% FIXME
+BAD_FUEL_LABEL
+%2% Низкий уровень топлива
+
+# %1% FIXME
+# %2% FIXME
+AVERAGE_FUEL_LABEL
+%2% Средний уровень топлива
+
+# %1% FIXME
+# %2% FIXME
+GOOD_FUEL_LABEL
+%2% Отличный уровень топлива
+
+# %1% FIXME
+# %2% FIXME
+GREAT_FUEL_LABEL
+%2% Большой уровень топлива
+
+# %1% FIXME
+# %2% FIXME
+ULTIMATE_FUEL_LABEL
+%2% Превосходный уровень топлива
 
 # %1% FIXME
 # %2% FIXME
@@ -13868,6 +15158,11 @@ OUTPOST_TROOP_LABEL
 
 # %1% FIXME
 # %2% FIXME
+NATIVE_PLANETARY_DETECTION_LABEL
+%2% Обнаружение Родной Планеты
+
+# %1% FIXME
+# %2% FIXME
 NATIVE_PLANETARY_DEFENSE_LABEL
 %2% Планетарная оборона
 
@@ -13875,6 +15170,11 @@ NATIVE_PLANETARY_DEFENSE_LABEL
 # %2% FIXME
 NATIVE_PLANETARY_SHIELDS_LABEL
 %2% Планетарные щиты
+
+# %1% FIXME
+# %2% FIXME
+NATIVE_PLANETARY_TROOPS_LABEL
+%2% Планетарные войска
 
 VERY_BRIGHT_STAR
 Очень яркая звезда
@@ -13912,8 +15212,26 @@ HOMEWORLD_BONUS
 CAPITAL_LABEL
 Столица
 
+BLD_STOCKPILING_CENTER_LABEL
+Императорский центр запутанности
+
 CONCENTRATION_CAMPS_LABEL
 Концентрационные лагеря
+
+GENERIC_SUPPLIES_FIXED_BONUS_LABEL
+[[PRO_GENERIC_SUPPLIES]] фиксированный бонус
+
+GENERIC_SUPPLIES_FOCUS_BONUS_LABEL
+[[PRO_GENERIC_SUPPLIES]] бонус на основе фокуса
+
+GENERIC_SUPPLIES_POPULATION_BONUS_LABEL
+[[PRO_GENERIC_SUPPLIES]] популяционный бонус
+
+INTERSTELLAR_ENTANGLEMENT_FACTORY_POPULATION_BONUS_LABEL
+Interstellar Entanglement Factory population based bonus
+
+INTERSTELLAR_ENTANGLEMENT_FACTORY_FIXED_BONUS_LABEL
+Межзвездная Фабрика запутывания фиксированный бонус
 
 ORBITAL_HAB_LABEL
 Обитают на орбите
@@ -13938,6 +15256,9 @@ EXCELLENT_VISION_LABEL
 
 FOCUS_PROTECTION_LABEL
 Защитный фокус
+
+GASEOUS_LABEL
+Окружающая среда газового гиганта
 
 XENOPHOBIC_LABEL_SELF
 Безумие с ненавистью к иноземцам (другие виды поблизости)
@@ -13978,14 +15299,64 @@ CLOAK_INTERFERENCE
 TRANSPATIAL_CLOAK_INTERACTION
 Транспатиал двигатель - маскировка
 
+FUEL_TITLE
+Топливо
+
+FUEL_EFFICIENCY_TITLE
+Эффективность топлива
+
+FUEL_REFUEL_EFFICIENCY_TEXT
+'''[[metertype METER_FUEL]] позволяет кораблям путешествовать по звездным линиям за пределами [[metertype METER_SUPPLY]] вашей империи. Топливо расходуется на каждую звездную дорожку, пройденную за пределами запаса; остановка в пределах [[metertype METER_SUPPLY]] строк полностью заправит корабль. Если корабль остается за пределами дружественных [[metertype METER_SUPPLY]] линий, топливо будет медленно регенерировать.
+
+Базовая топливная емкость <encyclopedia ENC_SHIP_DESIGN> Дизайн корабля </encyclopedia> зависит от используемого [[encyclopedia ENC_SHIP_HULL]], но ее также можно увеличить с помощью некоторых [[encyclopedia ENC_SHIP_PART]].
+
+Корпуса кораблей имеют большую (400%), хорошую (200%), нормальную (100%) или плохую (60%) эффективность, которая определяет эффективность любых дополнительных частей топлива или другие эффекты модификации топлива. Топливная эффективность обычно уменьшается с увеличением массы корпуса, поэтому только очень маленькие корабли имеют высокую топливную эффективность, и огромные корабли борются за пределами [[metertype METER_SUPPLY]]. Игра всегда будет показывать эффективные уровни топлива после масштабирования для эффективности корпуса.'''
+
 BASE_FUEL_REGEN_LABEL
 Стационарный регенератор топлива
+
+FUEL_EFFICIENCY_DESC
+[[FUEL_EFFICIENCY_TITLE]]
+
+BAD_FUEL_EFFICIENCY_LABEL
+Корпус <i>%2%</i> -40%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
+
+AVERAGE_FUEL_EFFICIENCY_LABEL
+Корпус <i>%2%</i> +0%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
+
+GOOD_FUEL_EFFICIENCY_LABEL
+Корпус <i>%2%</i> +100%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
+
+GREAT_FUEL_EFFICIENCY_LABEL
+Корпус <i>%2%</i> +300%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
+
+HULL_DESC_BAD_FUEL_EFFICIENCY
+[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 60%
+
+HULL_DESC_AVERAGE_FUEL_EFFICIENCY
+[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 100%
+
+HULL_DESC_GOOD_FUEL_EFFICIENCY
+[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 200%
+
+HULL_DESC_GREAT_FUEL_EFFICIENCY
+[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 400%
+
+MAX_FUEL_LESS_THAN_ONE_DESC
+Заправка невозможна
+
+MAX_FUEL_LESS_THAN_ONE_LABEL
+Топливный бак слишком мал для дозаправки (Макс. топливо < 1,0)
 
 SPATIAL_FLUX_MALUS
 Помеховые интерференций
 
 SPATIAL_FLUX_BONUS
 Бонус флюкс-двигателя
+
+DYING_POPULATION_LABEL
+Умирающее население
+
 
 ##
 ## Tags
@@ -14013,7 +15384,10 @@ SELF_SUSTAINING
 Самодостаточные
 
 TELEPATHIC
-Обладающие телепатией
+Телепатический
+
+GASEOUS
+Газообразный
 
 ORBITAL
 Орбитальные
@@ -14023,16 +15397,39 @@ ORBITAL
 ##
 
 # Newline separated list of capitol names for beginner AIs
+AI_CAPITOL_NAMES_BEGINNER
+'''Башня слоновой кости
+Женский монастырь
+Монастырь
+Детский дом'''
 
 # Newline separated list of capitol names for turtle AIs
+AI_CAPITOL_NAMES_TURTLE
+'''Цитадель
+Тюрьма'''
 
 # Newline separated list of capitol names for cautious AIs
+AI_CAPITOL_NAMES_CAUTIOUS
+'''Бастион
+Крепость'''
 
 # Newline separated list of capitol names for typical AIs
+AI_CAPITOL_NAMES_TYPICAL
+'''Убежище
+Зона свободной торговли
+Родной мир'''
 
 # Newline separated list of capitol names for aggressive AIs
+AI_CAPITOL_NAMES_AGGRESSIVE
+'''Королевский
+Имперский'''
 
 # Newline separated list of capitol names for maniacal AIs
+AI_CAPITOL_NAMES_MANIACAL
+'''Славный
+Высший
+Вечный
+Непобедимый'''
 
 AI_SHIPDESIGN_NAME_INVALID
 Неверный дизайн
@@ -14040,6 +15437,25 @@ AI_SHIPDESIGN_NAME_INVALID
 # Newline separated list of military ship names owned by AIs.
 # The usage is determined by a rating defined inside the AI scripts. The names
 # are roughly ordered by order of appearance in the game.
+AI_SHIPDESIGN_NAME_MILITARY
+'''Гарпия
+Горгона
+Кентавр
+Цербер
+Гриффин
+Мантикора
+Гидра
+Пифон
+Пегас
+Феникс
+Геркулес
+Атлант
+Гелиос
+Прометей
+Посейдон
+Аид
+Немезида
+Зевс'''
 
 # Newline separated list of local troop transporter names owned by AIs.
 # The usage is determined by a rating defined inside the AI scripts. The names
@@ -14092,6 +15508,43 @@ AI_SHIPDESIGN_NAME_KRILLSPAWNER
 ##
 ## AI diplomacy strings and lists
 ##
+
+
+# Newline separated list of polite alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
+'''Рад снова тебя слышать.
+Прием передачи подтвержден.
+'''
+
+# Newline separated list of harsh alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_HARSH_LIST
+'''Если вы не можете поддерживать свои собственные амбиции, вы недостойны нашей помощи.
+Пожалуйста, найдите другого благодетеля для пиявочного пропитания..
+'''
+
+# Newline separated list of polite positive alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_RESPONSES_YES_MILD_LIST
+'''Наши империи выиграют от взаимной поддержки и сотрудничества.
+Для нас большая честь работать более тесно вместе для достижения нашего общего успеха.
+'''
+
+# Newline separated list of polite negative alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_RESPONSES_NO_MILD_LIST
+'''Мы не считаем, что такое соглашение принесет нам обоюдную выгоду в настоящее время.
+Мы не можем экономить ресурсы, которых потребует от нас такое соглашение..
+'''
+
+# Newline separated list of harsh positive alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_RESPONSES_YES_HARSH_LIST
+'''Мы неохотно соглашаемся поддержать ваши тщетные усилия.
+Возможно, мы найдем удовольствие в продолжении вашей безнадежной борьбы..
+'''
+
+# Newline separated list of harsh negative alliance proposal acknowlegements.
+AI_ALLIANCE_PROPOSAL_RESPONSES_NO_HARSH_LIST
+'''Мы никогда не согласимся поделиться с вами нашими ресурсами!
+Вы совершенно недостойны такого доверия и поддержки..
+'''
 
 # Newline separated list of polite peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
@@ -14235,16 +15688,47 @@ AI_FIRST_TURN_GREETING_MSG608
 Отправить вас к вашим предкам - наш священный долг!
 
 # Don't translate this entry.
+AI_FIRST_TURN_GREETING_LIST_BEGINNER
+'''AI_FIRST_TURN_GREETING_MSG101
+AI_FIRST_TURN_GREETING_MSG102
+AI_FIRST_TURN_GREETING_MSG103'''
 
 # Don't translate this entry.
+AI_FIRST_TURN_GREETING_LIST_TURTLE
+'''AI_FIRST_TURN_GREETING_MSG201
+AI_FIRST_TURN_GREETING_MSG202'''
 
 # Don't translate this entry.
+AI_FIRST_TURN_GREETING_LIST_CAUTIOUS
+'''AI_FIRST_TURN_GREETING_MSG301
+AI_FIRST_TURN_GREETING_MSG302'''
 
 # Don't translate this entry.
+AI_FIRST_TURN_GREETING_LIST_TYPICAL
+'''AI_FIRST_TURN_GREETING_MSG401
+AI_FIRST_TURN_GREETING_MSG402
+AI_FIRST_TURN_GREETING_MSG403'''
 
 # Don't translate this entry.
+AI_FIRST_TURN_GREETING_LIST_AGGRESSIVE
+'''AI_FIRST_TURN_GREETING_MSG501
+AI_FIRST_TURN_GREETING_MSG502
+AI_FIRST_TURN_GREETING_MSG503
+AI_FIRST_TURN_GREETING_MSG504
+AI_FIRST_TURN_GREETING_MSG505
+AI_FIRST_TURN_GREETING_MSG506'''
 
 # Don't translate this entry.
+AI_FIRST_TURN_GREETING_LIST_MANIACAL
+'''AI_FIRST_TURN_GREETING_MSG601
+AI_FIRST_TURN_GREETING_MSG602
+AI_FIRST_TURN_GREETING_MSG603
+AI_FIRST_TURN_GREETING_MSG604
+AI_FIRST_TURN_GREETING_MSG605
+AI_FIRST_TURN_GREETING_MSG606
+AI_FIRST_TURN_GREETING_MSG607
+AI_FIRST_TURN_GREETING_MSG608'''
+
 
 ##
 ## Hotkey names and descriptions
@@ -14253,8 +15737,23 @@ AI_FIRST_TURN_GREETING_MSG608
 OPTIONS_PAGE_HOTKEYS
 Горячие клавиши
 
+HOTKEYS_UI
+Пользовательский интерфейс
+
+HOTKEYS_UI_MAP
+Окно карты
+
+HOTKEYS_UI_MAP_FLEET
+Флоты
+
+HOTKEYS_UI_MAP_SYSTEM
+Системы
+
 HOTKEYS_GENERAL
 Общие клавиши
+
+HOTKEYS_VIDEO
+Видео
 
 HOTKEY_MAP_OPEN_CHAT
 Открыть окно чата
@@ -14367,6 +15866,9 @@ HOTKEY_SELECT_ALL
 HOTKEY_DESELECT
 Снять выделение
 
+HOTKEY_AUTOCOMPLETE
+Автозаполнение набранного слова
+
 HOTKEY_FOCUS_PREV_WND
 Предыдущий объект
 
@@ -14382,63 +15884,3357 @@ HOTKEY_QUIT
 HOTKEY_FULLSCREEN
 Полноэкранный режим
 
+
 ##
 ## Name lists
 ##
 
 # Newline separated list of star cluster names
+STAR_GROUP_WORDS
+'''Alpha
+Beta
+Gamma
+Delta
+Epsilon
+Zeta
+Eta
+Theta
+Iota
+Kappa
+Lambda
+Mu
+Nu
+Xi
+Omicron
+Pi
+Rho
+Sigma
+Tau
+Upsilon
+Phi
+Chi
+Psi
+Omega'''
 
 # Newline separated list of star cluster suffixes
+STAR_GROUP_CHARS
+'''α
+β
+γ
+δ
+ε
+ζ
+η
+θ
+ι
+κ
+λ
+μ
+ν
+ξ
+ο
+π
+ρ
+σ
+τ
+υ
+φ
+χ
+ψ
+ω'''
 
 # Newline separated list of star cluster names
+STAR_GROUP_NAMES
+Центавра
 
 # Newline separated list of star names
+STAR_NAMES
+'''Aadhavan
+Aaftaab
+Aberdeen
+Abydos
+Abyormen
+Acamar
+Achernar
+Achird
+Acrux
+Acubens
+Adams
+Adhafera
+Adhara
+Adhil
+Aditya
+Adria
+Aegir
+Aegis
+Aftab
+Agemem
+Agena
+Ahl
+Ain
+Airy
+Ajai
+Ajax
+Akrab
+Al Borak
+Alathfar
+Albaldah
+Albali
+Albans
+Albion
+Albireo
+Alchiba
+Alcor
+Alcyone
+Aldebaran
+Alderamin
+Aldhibah
+Aleel
+Alfecca
+Alfirk
+Algedi
+Algenib
+Algernon
+Algieba
+Algiz
+Algol
+Algorab
+Alhague
+Alhena
+Alioth
+Alkaid
+Alkalurops
+Alkes
+Alkurhah
+Almaak
+Almach
+Alnair
+Alnasl
+Alnath
+Alnilam
+Alnitak
+Alniyat
+Alphard
+Alphecca
+Alpheratz
+Alrai
+Alrescha
+Alrisha
+Alsafi
+Alsciaukat
+Alshain
+Alshat
+Alsuhail
+Altair
+Alterf
+Aludra
+Alula
+Alven
+Alya
+Alzirr
+Ambrozius
+Amel
+An Ghrian
+Anacreon
+Anar
+Anarres
+Ancale
+Ancha
+Andor
+Angel
+Angetenar
+Angstrom
+Ankaa
+Ankh
+Anraq
+Anser
+Ansuz
+Antares
+Antilia
+Applejack
+Apus
+Aquila
+Aquilae
+Araw
+Arbol
+Arcturus
+Ares
+Argus
+Ariel
+Arietis
+Arka
+Arkab
+Arneb
+Arrakis
+Artatore
+Artemis
+Aruna
+Arunan
+Arusha
+Ascella
+Asellus
+Asgard
+Asimov
+Asmodeus
+Aspidiske
+Astéri
+Asteria
+Asterope
+Astley
+Astraea
+Astrum
+Asvins
+Aten
+Athena
+Athens
+Atik
+Atlas
+Atria
+Atutuahi
+Aurelia
+Aurigae
+Aurinko
+Aurora
+Auseklis
+Austin
+Auva
+Avior
+Axis
+Ayora
+Azelfafage
+Azha
+Azmidiske
+Baade
+Baal-Samem
+Babel
+Bacabs
+Bach
+Baer
+Baham
+Bahcall
+Baía
+Balan
+Balder
+Ballybran
+Barcia
+Barnard
+Baten
+Bato
+Baxtim
+Beaivi
+Beaumonde
+Becrux
+Beid
+Bell
+Bellatrix
+Belzagor
+Benetnasch
+Berel
+Berkano
+Bernadette
+Bessel
+Betelgeuse
+Bexley
+Beylix
+Bhanu
+Bhaskar
+Biham
+Bintang
+Bituín
+Bladehill
+Bob
+Boca
+Bode
+Bok
+Bolton
+Bootis
+Bop
+Borealis
+Borlach
+Boros
+Botein
+Brachium
+Bradbury
+Bragi
+Bravio
+Brethil
+Brey
+Brog
+Bud
+Burbidge
+Burke
+Caebeth
+Calafia
+Cannon
+Canopus
+Capella
+Caph
+Caps
+Carcharoth
+Carina
+Caroli
+Cassandra
+Cassini
+Castor
+Cavo
+Cebalrai
+Celaeno
+Celestia
+Celtsi
+Ceti
+Cetus
+Chadwick
+Chara
+Charlie
+Cheleb
+Cherruve
+Chertan
+Chhonnai
+Chih Nu
+Chiron
+Chort
+Chthon
+Ciryon
+Citlālin
+Coatlicue
+Coccolino
+Collassa
+Constance
+Copernicus
+Cor
+Cormack
+Corona
+Correctos
+Coruscant
+Crawford
+Crius
+Crow
+Crypto
+Cryslon
+Crystous
+Csillag
+Cursa
+Cygni
+Cynosura
+Cyteen
+D'Korsh
+D'nebag
+Dabih
+Dagaz
+Dairuin
+Dar
+Darquan
+Darrian
+Deadwood
+Deemi
+Delphi
+Demeter
+Deneb
+Denebola
+Denubius
+Deucalion
+Dhrawn
+Diadem
+Dicke
+Diell
+Diggity
+Diphda
+Divakara
+Dnoces
+Dolz
+Doow-tsae
+Dosadi
+Dosis
+Draco
+Draconis
+Drakka
+Draper
+Drengist
+Dres
+Dreven
+Dschubba
+Dsiban
+Dubhe
+Dukalis
+Duna
+Dunatis
+Dungortheb
+Durash
+Durgosh
+Dvorak
+Dyson
+Dyton
+Ea
+Ecthelion
+Edasich
+Edda
+Eddington
+Eek
+Eeloo
+Eguzki
+Ehwaz
+Eilinel
+Ekkaia
+Ekul
+El Gero
+Elased
+Electra
+Elena
+Elnath
+Eltanin
+Elu
+Encke
+Endoria
+Endymion
+Engolong
+Engwar
+Enif
+Eos
+Ephyse
+Epsylon
+Eridani
+Erigone
+Erna
+Eros
+Errai
+Erythro
+Escalon
+Escher
+Esper
+Estela
+Estreya
+Ètâila
+Eternia
+Étoile
+Eurphates
+Euterpe
+Eve
+Ewia
+Ex
+Exis
+Ezellohar
+Ezra
+Fafnir
+Fairchild
+Falmari
+Faraday
+Farlight
+Fehu
+Felix
+Fetter
+Fetū
+Fhloston
+Fieras
+Finisterre
+Fiorina
+Firma
+Fiumena
+Fixas
+Fluttershy
+Fomalhaut
+Formic
+Fornacis
+Fowler
+Fox
+Frack
+Fraunhofer
+Frey
+Fuinur
+Furud
+Gabriel
+Gacrux
+Gaea
+Gaia
+Galileo
+Galle
+Gallifrey
+Galos
+Gamab
+Gamow
+Ganges
+Gari
+Garnet
+Garriot
+Garth
+Gawara
+Gebo
+Gefjon
+Gehenna
+Gemroy
+Geni
+Giacconi
+Gianfar
+Giausar
+Giedi
+Gienah
+Giiziss
+Gilly
+Gimboid
+Gimilzôr
+Ginglith
+Gion
+Girtab
+Glade
+Gladiolus
+Gloom
+Glund
+Gnayiru
+Gne
+Godel
+Goltucot
+Gomeisa
+Gomorrah
+Gor
+Gorgonea
+Gorra
+Gorta
+Gorthol
+Goth
+Graffias
+Grail
+Gram
+Gray
+Grian
+Grotto
+Grue
+Gruis
+Grumium
+Gundung
+Guradas
+Guth
+Gwiazda
+Gygax
+Haalar
+Hadar
+Hadhodrond
+Hador
+Haedi
+Hagalaz
+Hale
+Haleth
+Halley
+Hamal
+Hananim
+Haretha
+Harlequin
+Hartmann
+Harvest
+Hashi
+Hassaleh
+Hathoor
+Haven
+Hawking
+Hegira
+Heimdall
+Heinlein
+Helevorn
+Helix
+Helliconia
+Helos
+Helotrix
+Hematopf
+Henderson
+Henge
+Hera
+Herbert
+Herbig
+Hercules
+Herculis
+Herschel
+Hesikos
+Hesperus
+Hetu’u
+Heulo
+Hewish
+Heze
+Hhnub
+Highgate
+Hiigara
+Hijra
+Himring
+Hiru
+Hisa
+Hisemtuk
+Hluqhl
+Hnau
+Hnub Qub
+Hocotate
+Hoedus
+Holly
+Homam
+Honeydew
+Horst
+Hoyle
+Huachuca
+Huan
+Hubble
+Huggins
+Huishtín
+Hulse
+Huygens
+Hvězda
+Hviezda
+Hyades
+Hyadum
+Hyboria
+Hydros
+Hyperion
+Icarius
+Idril
+Idun
+Ike
+Ileenium
+Iliad
+Ilios
+Ilium
+Illuin
+Imlach
+Imra
+Incedius
+Ingwaz
+Interrobang
+Inti
+Inupiaq
+Ioram
+Ipsum
+Iranha
+Ìràwọ̀
+Ireta
+Irk
+Iru
+Isa
+Ishtar
+Iskander
+Israfel
+Isteddu
+Istélla
+Iszm
+Ita
+Ithil
+Itzamna
+Ix
+Ixchel
+Ixitixl
+Izar
+Jabbah
+Jansky
+Jelena
+Jera
+Jhonaai
+Jiangyin
+Jijo
+Jinga
+Jinx
+Jirntu
+Jool
+Jophekka
+Jua
+Juthtath
+Jyothisha
+Kaashyapa
+Kadiravan
+Kailis
+Kaitos
+Kajam
+Kakata
+Kala
+Kalas
+Kalidasa
+Kapteyn
+Karahkwa
+Kartaka
+Kartow
+Kaus
+Kazzkark
+Keeta
+Keid
+Kelvin
+Kenaz
+Kent
+Kentaurus
+Kephra
+Kepler
+Kerbin
+Kerry
+Kewkba
+Khaga
+Khama
+Kharak
+Khiori
+Kholdan
+Khonvoum
+Khorshid
+Khursheed
+Kilipi
+Kilja
+King
+Kintana
+Kirkwood
+Kitalpha
+Kithrup
+Klazart
+Klystron
+Knuth
+Kobol
+Kochab
+Kochanski
+Kornephori
+Kraj
+Krampus
+Kraz
+Kregen
+Kril
+Kronos
+Krull
+Kryten
+Kuiper
+Kulthea
+Kulthos
+Kuma
+La
+Laan
+Laganini
+Lagash
+Lagrange
+Laguz
+Lalaith
+Lamarckia
+Lambda
+Langa
+Laplace
+Lassell
+Lava
+Laythe
+Leera
+Leibowitz
+Lemaitre
+Leonis
+Leporis
+Lesath
+Levitt
+Lhûn
+Lilac
+Lintang
+Lir
+Listavus
+Lister
+Lithia
+Lockyer
+Locris
+Loki
+Lomadia
+Lómelindi
+Londinium
+Lorenzo
+Lorum
+Losi
+Lossini
+Luinil
+Lumen
+Lupi
+Lurga
+Lusitania
+Lyae
+Lylat
+Lynx
+Lyonesse
+Lyot
+Lystena
+Maalor
+Maasym
+Maelas
+Magrathea
+Máhanaxar
+Mahtan
+Maia
+Majipoor
+Makina
+Malacandra
+Malin
+Mallus
+Mambo
+Mamura
+Mangaroa
+Mannaz
+Mannga
+Manzil
+Maretta
+Marfik
+Margrave
+Marich
+Marinara
+Markab
+Marklar
+Masoandro
+Mat Troi
+Matahari
+Matar
+Matenga
+Mbyja
+Mebsuta
+Medea
+Media
+Megalon
+Megrez
+Meiji
+Meissa
+Mejare
+Mekbuda
+Meklon
+Meness
+Menkab
+Menkalinan
+Menkar
+Menkent
+Menkib
+Mentar
+Merak
+Merga
+Merops
+Mesa
+Mesarthim
+Mesklin
+Messier
+Metallah
+Metaluna
+Miaplacidi
+Micojan
+Midkemia
+Mier
+Miki
+Mimosa
+Minerva
+Minkar
+Minkowski
+Minmus
+Mintaka
+Mira
+Mirach
+Miram
+Miranda
+Mirfak
+Miri
+Míriel
+Miron
+Mirphak
+Mirzam
+Misha
+Mithra
+Mitra
+Miyamoto
+Mizar
+Mnemon
+Mobas
+Mobius
+Moctezuma
+Moho
+Moletrap
+Molyneux
+Mongo
+Montra
+Monzoto
+Mor-Tax
+Morma
+Moro
+Morrig
+Morthrai
+Moskva
+Mothallah
+Mufrid
+Mughaling
+Muhlifain
+Muir
+Muliphen
+Mün
+Muphrid
+Murzim
+Muscida
+Myomachia
+Myrtilus
+Mze
+Na Atibu
+Na'ir
+Nacre
+Nahar
+Nakshatras
+Naledi
+Namcap
+Naos
+Nap
+Narsilion
+Narzina
+Nash
+Nashira
+Násti
+Natanik
+Nauthiz
+Navi
+Nay
+Nazin
+Needle
+Nekkar
+Nemari
+Nenning
+Neptunus
+Neruval
+Newton
+Nexus
+Ngôi Sao
+Nidor
+Nihal
+Nihil
+Niikhirch
+Nikko
+Nile
+Nipiruk
+Nirn
+Nit
+Nitzer
+Nivrim
+Niyat
+Njord
+Nocobi
+Nodus
+Nordia
+Normalus
+Norris
+Note
+Nuk
+Nunki
+Nusakan
+Nyarl
+Nyénye
+Nyota
+Oa
+Oakka
+Oasis
+Obaca
+Octo
+Odin
+Odyssey
+Ohisama
+Oiolossë
+Olakira
+Olbers
+Olduvai
+Olympus
+Onsay
+Oort
+Ophiuchi
+Optera
+Orchid
+Orionis
+Orocarni
+Orthe
+Osiris
+Othila
+Oyarsa
+Pacifica
+Pagalos
+Paladia
+Pandora
+Panon Poe
+Papis
+Paquin
+Paranar
+Parth
+Path
+Pawn
+Pay
+Peacock
+Peel
+Pegasus
+Pell
+Pelorum
+PemHov
+Penrose
+Penzias
+Perdide
+Perelandra
+Pern
+Persephone
+Perseus
+Perth
+Pet
+Petaybee
+Phact
+Phad
+Phaet
+Phantos
+Pharagos
+Phecda
+Pherkad
+Phoenix
+Phyco
+Piazzi
+Pickering
+Pike
+Pinatha
+Pinkie
+Pisces
+Piscium
+Plato
+Pleione
+Po
+Poi
+Poiesis
+Polaris
+Pollus
+Pollux
+Polyphemus
+PooshNa
+Porrima
+Posterior
+Prace
+Praecipua
+Praxis
+Primodius
+Prior
+Procyon
+Prokets
+Propus
+Proteus
+Proxima
+Prysmos
+Ptolemy
+Pulcherri
+Puppis
+Pyrrus
+Qar'To
+Quayal
+Quillur
+Ra
+Radar
+Ragnarok
+Rai
+Rainbow
+Rama
+Ran
+Rana
+Rangi
+Rarity
+Ras
+Rasalgethi
+Rastaban
+Rasto
+Rauros
+Raven
+Ravi
+Rayden
+Razmus
+Reach
+Réalta
+Rebelus
+Reber
+Regina
+Regis
+Regor
+Regulus
+Rehua
+Reilsa
+Remulak
+Requiem
+Reticuli
+Reul
+Reverie
+Reynolds
+Rha
+Rhampora
+Rheims
+Rhilus
+Rhovanion
+Ri-pog
+Riccioli
+Rigel
+Rimmer
+Rin
+Robi
+Rochallor
+Rollage
+Rome
+Romeo
+Romulas
+Rook
+Rosetta
+Rossi
+Rotan
+Rotanev
+Rothinzil
+Roua
+Rov
+Rubanis
+Rubin
+Ruchba
+Rukbat
+Rukvash
+Rum
+Russell
+Rylos
+Ryoun
+Sabik
+Sadalbari
+Sadalmelik
+Sadalsuud
+Sadatoni
+Sadr
+Saeros
+Sagan
+Sagittari
+Saiph
+Sakuru
+Salm
+Salpeter
+Salusa
+Sandage
+Sangre
+Santo
+Sargas
+Sarin
+Sarma
+Satry
+Saule
+Saurak
+Savitru
+Scarab
+Sceptrum
+Scheat
+Schedar
+Schmidt
+Schwarzs
+Scorpii
+Scylla
+Secilia
+Segin
+Seginus
+Seidon
+Seiren
+Selia
+Sera
+Seregon
+Seren
+Setag
+Seyfert
+Shade
+Sham
+Shams
+Shapiro
+Shapley
+Sharatan
+Shaula
+Shedir
+Sheliak
+Shelly
+Shemesh
+Sheratan
+Shikasta
+Shoggoth
+Shokodo
+Shora
+Shtern
+Sidus
+Sihnon
+Silk
+Silpion
+Silverhold
+Simius
+Siqieiq
+Sirius
+Sitoele
+Sitter
+Situla
+Sjtar
+Skadi
+Skaro
+Skat
+Slipher
+Slnko
+Slunce
+Smeg
+Soare
+Sodom
+Sole
+Soleil
+Solen
+Solntze
+Soma
+Sonce
+Sonne
+Soorajh
+Sooriyan
+Soorya
+Sopota
+Soror
+Sowilo
+Sparta
+Spica
+Sssla
+Staila
+Stalaz
+Starbow
+Starillus
+Stärn
+Statler
+Stea
+Stedda
+Stèila
+Steja
+Stella
+Stelo
+Ster
+Stëra
+Steredenn
+Steren
+Stêrk
+Stern
+Sterope
+Stidda
+Stilla
+Stivan
+Stjarna
+Stjer
+Sto
+Stràla
+Stroggos
+Struve
+Styx
+Sualocin
+Subra
+Suhail
+Sulafat
+Sulva
+Sunce
+Sunna
+Suno
+Supina
+Suraj
+Surya
+Suryudu
+Synnax
+Syrma
+T'ae-yang
+Tabit
+Tabul
+Tähti
+Tai yong
+Taiyo
+Takis
+Taladas
+Talas
+Talitha
+Tama
+Tane
+Tania
+Tanis
+Tanith
+Tao
+Taonoui
+Tarak
+Tarazed
+Targ
+Tauraro
+Tauri
+Taygeta
+Taylor
+Techno
+Tegmen
+Tegmine
+Teja
+Tejat
+Teka
+Tele
+Telemachus
+Tenebra
+Teoblan
+Terebellum
+Terminus
+Tewari
+Thabit
+Thalassa
+Theemim
+Thor
+Thorne
+Thra
+Thrax
+Threshold
+Thuban
+Thulcandra
+Thule
+Thurisaz
+Tiamat
+Tiberius
+Tier
+Tigris
+Tinapolis
+Tirawa
+Tirol
+Tiwaz
+Tombaugh
+Tombstone
+Toranor
+Tork
+Tormance
+Tradamere
+Tran
+Tranai
+Trantor
+Trax
+Trebakka
+Triumph
+Trixie
+Troas
+Trobia
+Troika
+Trondheim
+Trophy
+Troy
+Tschai
+Tsehay
+Tum
+Tumunzahar
+Turais
+Turbin
+Tusk
+Twa
+Twilight
+Tycho
+Tylo
+Typhon
+Tyr
+Uch-Akip
+Udaya
+Uftivan
+Uinen
+Ukko
+Ulduz
+Ull
+Uluru
+Úmanyar
+Undo
+Unukalhai
+Ur
+Urania
+Urchachka
+Urras
+Ursa
+Uruz
+Uvluġiaq
+Uxmai
+Valeria
+Valier
+Vall
+Van Allen
+Vanant
+Vargas
+Vaza
+Vega
+Vekta
+Velorum
+Venice
+Verbena
+Verrier
+Vhilinyar
+Vindeatrix
+Vinea
+Vista
+Volantis
+Vox
+Vulcan
+Waglen
+Waldorf
+Walter
+Wangülen
+Warawara
+Wasat
+Watt
+Wazn
+Wedge
+Wei
+Weizsacker
+Wen-chang
+Wezen
+Wheeler
+Whetuu
+Whipple
+Whitefall
+Whittier
+Whynil
+Wiily
+Wilka
+Willow
+Wilson
+Wilwarin
+Winter
+Wolf
+Wonderbolt
+Worlorn
+Wormwood
+Woz
+Wraith
+Wunjo
+Xanadu
+Xanthus
+Xendalla
+Xengara
+Xenon
+Xenos
+Xephos
+Xiddig
+Xocotl
+Xudax
+Yaraay
+Yarak
+Yarrow
+Yatakya
+Yed
+Yekub
+Yildiz
+Yildun
+Yiminga
+Yll
+Yoka
+Yoldiz
+Yonder
+York
+Yoyo
+Yr Haul
+Yuggoth
+Zakuri
+Zaniah
+Zanzibar
+Zarra
+Zaurak
+Zavijava
+Zavron
+Zecora
+Zeelich
+Zeist
+Zen
+Zhardan
+Zibal
+Zillikian
+Zoctan
+Zomg
+Zon
+Zora
+Zosma
+Zun di
+Zvaigzne
+Zvezda
+Zvijezda
+Zwicky
+Zygot
+Zyrgon
+'''
 
 # Newline separated list of empire names
+EMPIRE_NAMES
+'''Academy
+Accord
+Administration
+Affiliation
+Agglomeration
+Aggregate
+Alliance
+Amalgamation
+Aristocracy
+Ascendancy
+Assembly
+Association
+Authority
+Barony
+Binding
+Bishopric
+Bloc
+Brotherhood
+Cabal
+Center
+Civilization
+Cluster
+Coalition
+Collaboration
+Collectivity
+Command
+Commonwealth
+Community
+Compact
+Concord
+Confederation
+Conglomerate
+Congregation
+Consensus
+Consortium
+Control
+Cooperative
+County
+Covenant
+Delimitation
+Demarcation
+Division
+Domain
+Domination
+Dominion
+Duchy
+Empire
+Enclave
+Entente
+Entirety
+Entity
+Equality
+Federation
+Foundation
+Front
+Governance
+Growth
+Harmony
+Hegemony
+Hierocracy
+Imperium
+Integration
+Invincible
+Joining
+Jurisdiction
+Kingdom
+League
+Marvelous
+Matriarchy
+Oligarchy
+Order
+Pacificat
+Pact
+Panarchy
+Patriarchy
+Peace
+Perfection
+Plurality
+Possession
+Preeminence
+Primacy
+Principality
+Protectorate
+Realm
+Region
+Republic
+Righteous
+Section
+Sector
+Segment
+Seigniory
+Sept
+Singularity
+Society
+Solidarity
+Sovereignty
+Sphere
+Supremacy
+Suzerainty
+Syndicate
+Synthesis
+Territory
+Totality
+Tribes
+Unanimity
+Unification
+Union
+Unity
+Zone'''
 
 # Newline separated list of mammal-based ship names
+SHIP_NAME_MAMMALS
+'''Aardvark
+Aardwolf
+Agouti
+Alpaca
+Ape
+Armadillo
+Aye-Aye
+Babirusa
+Baboon
+Badger
+Bandicoot
+Bat
+Beaver
+Boar
+Bobcat
+Bonobo
+Camel
+Capuchin
+Caracal
+Cat
+Chevrotain
+Chimpanzee
+Chinchilla
+Civet
+Coati
+Colobus
+Cottontail
+Coyote
+Deer
+Dhole
+Dingo
+Dog
+Dolphin
+Donkey
+Dromedary
+Dugong
+Elephant
+Elk
+Fennec
+Ferret
+Fox
+Genet
+Gibbon
+Giraffe
+Goat
+Gorilla
+Guanaco
+Hare
+Hart
+Hedgehog
+Hippopotamus
+Hog
+Horse
+Humpback
+Hyena
+Hyrax
+Jackal
+Jackrabbit
+Jaguar
+Jaguarundi
+Kangaroo
+Kine
+Kinkajou
+Kodiak
+Langur
+Lemur
+Leopard
+Lion
+Llama
+Loris
+Lynx
+Macaque
+Mammoth
+Manatee
+Mandrill
+Margay
+Marmoset
+Marten
+Mink
+Mole
+Mongoose
+Monkey
+Moose
+Mouse
+Mule
+Muntjac
+Narwhale
+Ocelot
+Okapi
+Onager
+Opossum
+Orangutan
+Orca
+Otter
+Ox
+Panda
+Pangolin
+Pika
+Platypus
+Polecat
+Porpoises
+Pronghorn
+Puma
+Rabbit
+Raccoon
+Ram
+Rat
+Reindeer
+Rhinoceros
+Sabretooth
+Seal
+Shrew
+Skunk
+Sloth
+Stag
+Tamandua
+Tamarin
+Tapir
+Tarpan
+Tarsius
+Tenrec
+Tiger
+Vicugna
+Wallaby
+Walrus
+Warthog
+Weasel
+Whale
+Wildebeest
+Wolf
+Wolverine
+Wombat
+Zebra'''
 
 # Newline separated list of bird-based ship names
+SHIP_NAME_BIRDS
+'''Albatross
+Canary
+Condor
+Cormorant
+Crow
+Dove
+Eagle
+Falcon
+Finch
+Flamingo
+Goose
+Heron
+Kestrel
+Kiwi
+Lark
+Osprey
+Ostrich
+Pelican
+Penguin
+Pheasant
+Pidgeon
+Quail
+Raven
+Rhea
+Sparrow
+Stork
+Swallow
+Swan
+Thrush
+Woodpecker'''
 
 # Newline separated list of ship-based ship names
+SHIP_NAME_FISH
+'''Albacore
+Anchovy
+Barracuda
+Bass
+Capelin
+Char
+Coelacanth
+Eel
+Flounder
+Gourami
+Guppy
+Herring
+Koi
+Lamprey
+Mackerel
+Marlin
+Minnow
+Pike
+Piranha
+Remora
+Sculpin
+Shark
+Sockeye
+Stingray
+Trout
+Walleye'''
 
 # Newline separated list of plant-based ship names
+SHIP_NAME_FLORA
+'''Almond
+Apple
+Arbutus
+Ash
+Aspen
+Avocado
+Balsa
+Bamboo
+Beech
+Birch
+Cacao
+Cedar
+Cherry
+Chestnut
+Cinnamon
+Cork
+Cypress
+Dogwood
+Durian
+Elm
+Eucalyptus
+Fig
+Fir
+Hazel
+Hickory
+Holly
+Juniper
+Larch
+Lime
+Mahogany
+Mango
+Maple
+Oak
+Olive
+Orange
+Palm
+Pear
+Persimmon
+Pine
+Plum
+Poplar
+Rubber
+Sequoia
+Spruce
+Sumac
+Willow'''
 
 # Newline separated list of mineral-based ship names
+SHIP_NAME_STONE
+'''Amphibolite
+Andesite
+Basalt
+Chalk
+Clay
+Dolomite
+Flint
+Gabbro
+Gneiss
+Granite
+Komatite
+Limestone
+Marble
+Obsidian
+Pegmatite
+Pumice
+Quartzite
+Sandstone
+Schist
+Shale
+Slate'''
 
 # Newline separated list of weather-based ship names
+SHIP_NAME_WEATHER
+'''Autumn
+Avalanche
+Blizzard
+Breeze
+Calm
+Cold
+Cyclone
+Dawn
+Daybreak
+Drizzle
+Drought
+Dusk
+Earthquake
+Eclipse
+Fog
+Heatwave
+Hurricane
+Lavaflow
+Lightning
+Maelstrom
+Mist
+Monsoon
+Nightfall
+Rainbow
+Rainfall
+Seacurrent
+Sleet
+Snap
+Snowfall
+Solstice
+Spring
+Stormcloud
+Summer
+Sunshine
+Thermal
+Thunder
+Tide
+Tornado
+Tsunami
+Twister
+Vortex
+Whirlwind
+Wind
+Winter'''
 
 # Newline separated list of star constellationbased ship names
+SHIP_NAME_CONSTELLATIONS
+'''Andromeda
+Antlia
+Apus
+Aquarius
+Aquila
+Ara
+Aries
+Auriga
+Bootes
+Caelum
+Camelopardalis
+Cancer
+Canes
+Venatici
+Canis
+Capricornus
+Carina
+Cassiopeia
+Centaurus
+Cepheus
+Cetus
+Chamaeleon
+Circinus
+Columba
+Coma
+Berenices
+Corona
+Corvus
+Crater
+Crux
+Cygnus
+Delphinus
+Dorado
+Draco
+Equuleus
+Eridanus
+Fornax
+Gemini
+Grus
+Hercules
+Horologium
+Hydra
+Hydrus
+Indus
+Lacerta
+Leo
+Lepus
+Libra
+Lupus
+Lyra
+Mensa
+Microscopium
+Monoceros
+Musca
+Norma
+Octans
+Ophiuchus
+Orion
+Pavo
+Perseus
+Phoenix
+Pictor
+Pisces
+Puppis
+Pyxis
+Reticulum
+Sagitta
+Sagittarius
+Scorpius
+Sculptor
+Scutum
+Serpens
+Sextans
+Taurus
+Telescopium
+Triangulum
+Tucana
+Ursa
+Vela
+Virgo
+Volans
+Vulpecula'''
 
 # Newline separated list of various namebased ship names
+SHIP_NAME_STARS
+'''Acamar
+Achernar
+Achird
+Acrux
+Acubens
+Adhafera
+Adhil
+Agena
+Ain
+Al Athfar
+Al Bali
+Al Dhanab
+Al Dulfim
+Al Gieba
+Al Giedi
+Al Haud
+Al Nair
+Al Niyat
+Al Rescha
+Al Thalimain
+Alaraph
+Albireo
+Alchibah
+Alcyone
+Aldebaran
+Alfirk
+Algenib
+Algol
+Algorab
+Alioth
+Alkalurops
+Alkes
+Almach
+Almeisan
+Alnilam
+Alnitak
+Alphard
+Alpheratz
+Alruccabah
+Alsafi
+Alshain
+Altair
+Aludra
+Alya
+Ancha
+Angetenar
+Ankaa
+Antares
+Arcturus
+Arkab
+Arrakis
+Ascella
+Asellus
+Asmidiske
+Asterope
+Atik
+Atlas
+Atria
+Auva
+Avior
+Azelfafage
+Azha
+Azimech
+Baham
+Baten
+Beid
+Bellatrix
+Benetnasch
+Betelgeuse
+Botein
+Canopus
+Capella
+Caph
+Caput
+Trianguli
+Castor
+Celaeno
+Celbalrai
+Chara
+Cheleb
+Chertan
+Chort
+Cih
+Cor Caroli
+Cor Hydrae
+Cor Leonis
+Coxa
+Cujam
+Cursa
+Dabih
+Deneb
+Denebola
+Diphda
+Dnoces
+Dschubba
+Dubhe
+Dziban
+Edasich
+El
+Nath
+Electra
+Eltanin
+Enif
+Er
+Rai
+Eschamali
+Fomalhaut
+Furud
+Gacrux
+Garnet
+Gemma
+Giauzar
+Gienah
+Gomeisa
+Graffias
+Grumium
+Hadar
+Hamal
+Heka
+Heze
+Homam
+Izar
+Jabbah
+Kabdhilinan
+Kaffaljidhmah
+Kaitos
+Kalb
+Kaou
+Pih
+Kaus
+Ke
+Kwan
+Keid
+Kentaurus
+Kin
+Yu
+Kitalpha
+Kochab
+Kokab
+Kornephoros
+Kraz
+Kuma
+Kurhah
+Lesuth
+Maasim
+Maaz
+Maia
+Marchab
+Marfak
+Markab
+Matar
+Mebsuta
+Megrez
+Meissa
+Mekbuda
+Men
+Menkab
+Menkalinan
+Menkar
+Menkent
+Menkib
+Merak
+Merope
+Mesarthim
+Miaplacidus
+Mimosa
+Minkar
+Mintaka
+Mira
+Mirach
+Mirak
+Mirzam
+Mizar
+Mothallah
+Muhlifain
+Muliphein
+Mulu-lizi
+Muphrid
+Nakkar
+Naos
+Nashira
+Navi
+Nekkar
+Nihal
+Nodus
+Nunki
+Nusakan
+Phact
+Phad
+Phaet
+Phecda
+Pherkab
+Pleione
+Polaris
+Pollux
+Porrima
+Praecipula
+Prijipati
+Primus
+Hyadum
+Procyon
+Propus
+Pulcherrima
+Rana
+Ras Algethi
+Ras Alhague
+Ras Elased
+Rasalas
+Rastaban
+Regor
+Regulus
+Rigel
+Rigilkent
+Rischa
+Rotanev
+Ruchba
+Rukbah
+Rukbat
+Sabik
+Sadachbia
+Sadal Melik
+Sadal Suud
+Sadalbari
+Sadatoni
+Sadr
+Saiph
+Samakah
+Sargas
+Sarin
+Scheat
+Schedar
+Schemali
+Scutulum
+Segin
+Seginus
+Shaula
+Shedir
+Sheliak
+Shelyak
+Sheratan
+Sirius
+Situla
+Skat
+Spica
+Sualocin
+Suhail
+Sulafat
+Syrma
+Talitha
+Tania
+Tarazed
+Tarf
+Taygeta
+Tchou
+Tegmine
+Tejat
+Thabit
+Thuban
+Tseen
+Tsih
+Tso
+Hea
+Tsze
+Tseang
+Tyl
+Ukdah
+Unukalhai
+Vega
+Vindemiatrix
+Wasat
+Wezen
+Wezn
+Yed
+Yildun
+Zaniah
+Zaurak
+Zavijava
+Zozma
+Zubanalakrab
+Zubenhakrabi
+Aardharaa
+Aashada
+Aaslesha
+Abhijit
+Ashresha
+Ashwini
+Bharani
+Bhargava
+Bhishaja
+Bhomyavasar
+Brihaspativasara
+Budhavar
+Chitra
+Dhanishta
+Dhanu
+Guruvar
+Hastaa
+Induvasar
+Jyeshta
+Kanya
+Karkataka
+Krittika
+Kumbha
+Makara
+Mangalvar
+Mesha
+Mithuna
+Mrigasheerisham
+Phalguni
+Proshtapada
+Pubba
+Punarvasu
+Purvashada
+Pushya
+Ravivar
+Revathi
+Rohini
+Savitru
+Shaniva
+Shatha
+Shravana
+Shukravar
+Simha
+Somavar
+Sthiravasara
+Swati
+Tishya
+Tula
+Uttara
+Uttarashada
+Vichruta
+Vishaaka
+Vrishchika'''
 
 # Newline separated list of roman mythology-based ship names
+SHIP_NAME_ROMAN_MYTHOLOGY
+'''Aurora
+Auster
+Bacchus
+Bellona
+Decima
+Diana
+Orcus
+Fama
+Faunus
+Favonius
+Fortuna
+Galinthis
+Gratiae
+Juno
+Justitia
+Latona
+Matuta
+Minerva
+Morta
+Nona
+Parcae
+Pax
+Proserpina
+Salacia
+Salus
+Silvanus
+Somnus
+Tellus
+Ulysses
+Veiovis
+Vesper
+Vesta
+Vulturnus'''
 
 # Newline separated list of greek mythology-based ship names
+SHIP_NAME_GREEK_MYTHOLOGY
+'''Aesculapius
+Achelois
+Acheron
+Acis
+Adrasteia
+Aegaeon
+Aeolus
+Aether
+Agdistis
+Agrius
+Alastor
+Alcyoneus
+Alectrona
+Aloadae
+Alpheus
+Amphitrite
+Ananke
+Antaeus
+Antheia
+Aphaea
+Aphrodite
+Arethusa
+Argus
+Aristaeus
+Artemis
+Asclepius
+Asopus
+Asteria
+Astraeus
+Ate
+Athena
+Atropos
+Attis
+Auxo
+Bia
+Boreas
+Briareus
+Brontes
+Cabiri
+Caerus
+Calliope
+Calypso
+Ceto
+Chloris
+Chronos
+Circe
+Cladeus
+Cleochareia
+Clio
+Clymene
+Clytie
+Coeus
+Cotys
+Cragus
+Crataeis
+Crius
+Cronus
+Cybele
+Cyclopes
+Daphne
+Demeter
+Dinlas
+Dionysus
+Dioscuri
+Doris
+Echo
+Efreisone
+Eidyia
+Eileithyia
+Elpis
+Enyalius
+Enyo
+Eos
+Eosphorus
+Ephialtes
+Epimetheus
+Erato
+Erebus
+Erinyes
+Ethehofos
+Eunomia
+Eurotas
+Eurus
+Euterpe
+Galinthias
+Giants
+Glaucus
+Gyes
+Hades
+Hamadryads
+Hebe
+Hecate
+Hecatoncheires
+Helios
+Hemera
+Hephaestus
+Hera
+Heracles
+Hermes
+Hespera
+Hesperos
+Hestia
+Horae
+Hybris
+Hypnos
+Irene
+Iris
+Lachesis
+Leto
+Melpomene
+Metis
+Metope
+Mnemosyne
+Moirae
+Momus
+Morpheus
+Naiads
+Nemesis
+Nereids
+Nereus
+Notus
+Oceanid
+Odysseus
+Ophion
+Oreads
+Otus
+Peitho
+Peneus
+Persephone
+Pheme
+Phoebe
+Phorcys
+Phosporus
+Pleiades
+Polyhymnia
+Polyphemus
+Poseidon
+Priapus
+Prometheus
+Selene
+Semele
+Silenus
+Sterope
+Steropes
+Tartarus
+Taygete
+Terpsichore
+Thalia
+Thallo
+Thanatos
+Theia
+Themis
+Thetis
+Titan
+Tityas
+Tyche
+Typhon
+Zephyrus
+Zeus'''
 
 # Newline separated list of norse mythology-based ship names
+SHIP_NAME_NORSE_MYTHOLOGY
+'''Aegir
+Alaisiagae
+Alberich
+Alfhild
+Alfrodull
+Alvis
+Andhrimnir
+Andvaranaut
+Andvari
+Angrboda
+As
+Asgard
+Embla
+Astrild
+Asynjur
+Atla
+Audhumla
+Balder
+Beldegg
+Bergelmir
+Beyla
+Bifrost
+Billing
+Bor
+Borghild
+Bragi
+Brono
+Brunhilde
+Buri
+Bylgia
+Dagur
+Disen
+Dvalin
+Edda
+Einmyria
+Eir
+Eisa
+Elli
+Fafnir
+Fenrir
+Forseti
+Freyr
+Frigg
+Gefion
+Geirrod
+Ginnungagap
+Gjallar
+Gladsheim
+Glen
+Glum
+Gna
+Gullveig
+Gunnar
+Heimdall
+Heimskringla
+Helheim
+Hermod
+Hladgunnr
+Hlin
+Honir
+Muninn
+Hymir
+Idun
+Jord
+Jormungand
+Jotunheim
+Jotuns
+Kari
+Ketill
+Kvasir
+Laga
+Landvaettir
+Lifthrasir
+Lofn
+Loki
+Magni
+Modi
+Miming
+Mimir
+Mjollnir
+Mundilfari
+Muspell
+Nidhogg
+Niflheim
+Njord
+Norn
+Nott
+Odin
+Ragnarok
+Sceaf
+Sif
+Sigurd
+Sjofn
+Skadi
+Sleipnir
+Snotra
+Surt
+Svadilfari
+Svalin
+Syn
+Thiazi
+Thor
+Thrud
+Tyr
+Utgard
+Valhalla
+Vali
+Valkyri
+Vanaheim
+Vanir
+Ve
+Vidar
+Vili
+Yggdrasil
+Ymir'''
 
 # Newline separated list of basque mythology-based ship names
+SHIP_NAME_BASQUE_MYTHOLOGY
+'''Aatxe
+Adur
+Aide
+Aideko
+Akerbeltz
+Ama
+Amalur
+Argiduna
+Atarrabi
+Axular
+Basa
+Begizko
+Beigorri
+Benzozia
+Betadur
+Birao
+Eate
+Egoi
+Eguzku
+Ekaitz
+Eki
+Erditse
+Erensuge
+Erge
+Erio
+Etsai
+Euri
+Gaixtoak
+Gaizkin
+Galtzagorri
+Gauargi
+Gaueko
+Goikoa
+Gorritxiki
+Hodei
+Iduzki
+Ieltxu
+Iguzki
+Ilargi
+Inguma
+Inizitu
+Intxixu
+Iratargi
+Iritxu
+Itsaso
+Itxasgorrieta
+Iuski
+Laino
+Laminak
+Lur
+Lurra
+Maju
+Mayi
+Mikelats
+Mozorro
+Numen
+Oaztargi
+Odei
+Ortz
+Ortzeder
+Ortzi
+Ost
+Ostadar
+Ostots
+Ostri
+Ozkarri
+Patuek
+Sakre
+Sorguin
+Sugoi
+Tartaro
+Torto
+Tronagarru
+Txaalgorri
+Tximistarri
+Ur
+Urci
+Urtzi
+Yaun
+Zezengorri
+Zuberoa'''
 
 # FIXME: Sort these into their proper locations?
 # Newline separated list of various mythology-based ship names
+SHIP_NAME_UNSORTED_MYTHOLOGY
+'''Gorgon
+Sphinx
+Medusa
+Pegasus
+Echidna
+Satyr
+Nymph
+Cyclops
+Harpy
+Abarimon
+Abatwa
+Ahriman
+Aitvaras
+Ajatar
+Amphisbaena
+Anubite
+Apis
+Aspare
+Aswang
+Athos
+Automatas
+Aziza
+Bahamut
+Bakhtak
+Baku
+Balaur
+Banshee
+Barbegazi
+Barghest
+Basilisk
+Baxajuan
+Boobrie
+Broxa
+Bukavac
+Bunyip
+Buraq
+Catoblepas
+Cerberus
+Charybdis
+Cherufe
+Chimaera
+Chimera
+Chiron
+Chrysaor
+Cikavac
+Cluricaun
+Coblynau
+Cockatrice
+Crocotta
+Dahu
+Diwata
+Domowije
+Drac
+Draugr
+Drekavac
+Dvergr
+Dybbuk
+Eloko
+Empusa
+Encantado
+Ettin
+Euryale
+Fachen
+Feeorin
+Gaki
+Gancanagh
+Gargoyle
+Garuda
+Geryon
+Grendel
+Griffin
+Guivre
+Gwyllgi
+Haetae
+Hippogriff
+Hitotsume-kozou
+Huldra
+Huldrefolk
+Hypocampus
+Ifrit
+Ixionidae
+Jengu
+Jikininki
+Kabouter
+Kallikantzaroi
+Kapre
+Karkadann
+Kharybdis
+Kishi
+Kitsune
+Klytias
+Kobold
+Kraken
+Kroni
+Kujuta
+Kumiho
+Ladon
+Lamia
+Lammasu
+Lampades
+Leshii
+Leyak
+Liderc
+Maal
+Manananggal
+Mandrake
+Manticore
+Mara
+Menehune
+Merrow
+Midwayer
+Mimi
+Minotaur
+Mitmitke
+Myling
+Naga
+Naiad
+Ngoro
+Nue
+Nukekubi
+Oni
+Opinicus
+Oread
+Orochi
+Orthrus
+Ouroboros
+Ovinnik
+Patupairehe
+Penanggalan
+Piasa
+Pixie
+Polevik
+Ponaturi
+Pooka
+Rabisu
+Raiju
+Rakshasa
+Redcap
+Roc
+Rokurokubi
+Rusalka
+Samebito
+Scylla
+Selkie
+Serpopard
+Shedim
+Simurgh
+Sirena
+Skvader
+Sluagh
+Spriggan
+Squonk
+Stheno
+Stryx
+Talos
+Taniwha
+Tanuki
+Tarasque
+Tengu
+Tikbalang
+Tomte
+Tonttu
+Trowe
+Turul
+Unwaba
+Vetter
+Voadkyn
+Vodyanoy
+Wendigo
+Wyrm
+Wyvern
+Yuki-onna
+Yuurei'''
 
 # Newline separated list of scientist-based ship names
+SHIP_NAME_SCIENTISTS
+'''Ampere
+Angstrom
+Archimedes
+Aristotle
+Avogadro
+Becquerel
+Bell
+Bernoulli
+Bohr
+Boltzmann
+Boyle
+Cassini
+Cavendish
+Celsius
+Chandrasekhar
+Copernicus
+Coulomb
+Crick
+Curie
+Darwin
+Dalton
+Descartes
+Dirac
+Doppler
+Edison
+Einstein
+Euler
+Faraday
+Fermi
+Feynman
+Flemming
+Ford
+Foucault
+Franklin
+Galen
+Galileo
+Galvani
+Gauss
+Glenn
+Goddard
+Golgi
+Goodall
+Hales
+Halley
+Hawking
+Heisenberg
+Helmholtz
+Herschel
+Hertzsprung
+Hooke
+Hoyle
+Hubble
+Huygens
+Hertz
+Jenner
+Kelvin
+Kepler
+Kuiper
+Lagrange
+Lavoisier
+Leeuwenhoek
+Linnaeus
+Lorenz
+Mach
+Malpighi
+Maxwell
+Mendeleev
+Needham
+Newton
+Oersted
+Ohm
+Oort
+Oppenheimer
+Pasteur
+Pauling
+Planck
+Pliny
+Redi
+Richter
+Rontgen
+Rutherford
+Sagan
+Salk
+Schwann
+Schrodinger
+Schwarzschild
+Spallanzani
+Tesla
+Tycho
+Vesalius
+Van
+Allen
+Volta
+Voltaire
+Watson'''
 
 # Newline separated list of author-based ship names
+SHIP_NAME_AUTHORS
+'''Adams
+Aldiss
+Alexander
+Anderson
+Anthony
+Asimov
+Banks
+Baum
+Beagle
+Bear
+Bester
+Bisson
+Blish
+Bloch
+Bova
+Bradbury
+Bradley
+Brin
+Brooks
+Brunner
+Bujold
+Burroughs
+Butler
+Capek
+Card
+Charnas
+Cherryh
+Chesterton
+Chiang
+Clarke
+Clement
+Clifton
+Cordwainer
+Crichton
+Davidson
+Delany
+Dick
+Dickson
+Effinger
+Egan
+Ellison
+Farmer
+Foster
+Gaiman
+Gerrold
+Gibson
+Greeley
+Haldeman
+Heinlein
+Henderson
+Herbert
+Hickman
+Johnson
+Jordan
+Kagan
+Kelly
+Keyes
+Knight
+Kornbluth
+Kress
+L'Engle
+Lafferty
+Landis
+Langford
+Larson
+Le Guin
+Leckie
+Leiber
+Leinster
+Lem
+Levine
+Lewis
+Link
+Longyear
+Lucas
+Martin
+McCaffrey
+McHugh
+McIntyre
+Miller
+Niven
+Orwell
+Perry
+Pratchett
+Pohl
+Resnick
+Riley
+Robinson
+Roddenberry
+Rowling
+Rusch
+Russ
+Russell
+Sawyer
+Sheffield
+Shelley
+Shepard
+Silverberg
+Simak
+Simmons
+Stapledon
+Steele
+Stephenson
+Sterling
+Straczynski
+Stross
+Sturgeon
+Swanwick
+Tiptree
+Tolkien
+Turtledove
+Vance
+Varley
+Verne
+Vinge
+Vonnegut
+Watt-Evans
+Wells
+Wilhelm
+Williamson
+Willis
+Wilson
+Wolfe
+Wolverton
+Zahn
+Zelazny'''
 
 # Newline separated list of artist-based ship names
+SHIP_NAME_ARTISTS
+'''Botticelli
+Bruegel
+Caravaggio
+Cezanne
+Chagall
+Da Vinci
+Dali
+Degas
+Delacroix
+Dore
+Duerer
+Escher
+Gauguin
+Giotto
+Goya
+Holbein
+Kahlo
+Kandinsky
+Klee
+Klimt
+Magritte
+Manet
+Matisse
+Michelangelo
+Miro
+Modigliani
+Mondrian
+Monet
+O'Keeffe
+Picasso
+Pollock
+Raphael
+Rembrandt
+Renoir
+Rodin
+Rubens
+Van Gogh
+Warhol
+Whistler'''
+
+SHIP_NAME_VIRTUES
+'''Altruism
+Autonomy
+Balance
+Charity
+Chastity
+Commitment
+Compassion
+Continence
+Cooperation
+Courage
+Courtesy
+Creativity
+Curiosity
+Dependability
+Detachment
+Determination
+Diligence
+Discipline
+Empathy
+Endurance
+Enthusiasm
+Excellence
+Fairness
+Faith
+Fidelity
+Focus
+Foresight
+Forgiveness
+Fortitude
+Freedom
+Generosity
+Happiness
+Helpfulness
+Honesty
+Honor
+Hospitality
+Humility
+Humor
+Idealism
+Imagination
+Independence
+Innocence
+Integrity
+Justice
+Kindness
+Liberty
+Loyalty
+Mercy
+Moderation
+Modesty
+Nurture
+Obedience
+Optimism
+Patience
+Peace
+Perfection
+Perseverance
+Piety
+Prudence
+Purity
+Reason
+Refinement
+Respect
+Restraint
+Self-Discipline
+Sensitivity
+Sincerity
+Strength
+Sympathy
+Tactfulness
+Temperance
+Tolerance
+Trust
+Truth
+Understanding
+Unselfishness
+Valor
+Virtue
+Wisdom
+Zeal'''
 
 # Newline separated list of emotion-based ship names
+SHIP_NAME_EMOTIONS
+'''Acceptance
+Agony
+Ambivalance
+Anger
+Angst
+Anticipation
+Awe
+Boredom
+Confidence
+Depression
+Disgust
+Ecstasy
+Envy
+Fear
+Frustration
+Guilt
+Hate
+Hope
+Jealousy
+Joy
+Loneliness
+Love
+Pride
+Rage
+Remorse
+Shame
+Smugness
+Sorrow
+Surprise
+Suspicion'''
 
 # Newline separated list of architecture-based ship names
+SHIP_NAME_ARCHITECTURE
+'''Apex
+Arch
+Barrel
+Buttress
+Ceiling
+Column
+Cornice
+Dome
+Eaves
+Facade
+Foundation
+Frieze
+Gable
+Keystone
+Minaret
+Pediment
+Pier
+Pilaster
+Pillar
+Rotunda
+Spandrel
+Stucco
+Terrace
+Tower
+Truss
+Vault
+Veranda
+Wall
+Window'''
 
 # Newline separated list of "master of orion 2"-based ship names
+SHIP_NAME_MOO2_STARS
+'''Akrab
+Endoria
+Erigone
+Ezra
+Fixas
+Lir
+Manzil
+Muscida
+Tewari
+Vox
+Woz
+Xanthus
+Yarak
+Yekub'''
 
 SHIP_NAME_OTHER
 Бесконечный сентябрь
 
 # Newline separated list of developer name based ship names
+SHIP_NAME_DEVS
+'''Adrian Broher
+Aquataine
+Big Joe
+Cami
+Cjkjvfnby
+Dbenage-CX
+Dilvish
+Eleazar
+Geoff the Medio
+LGM-Doyle
+Morlic
+O01eg
+Ophiuchusagrrr
+PD
+Tyreth
+Tzlaine
+Vezzra'''
+
+SHIP_NAMES
+'''[[SHIP_NAME_MAMMALS]]
+[[SHIP_NAME_BIRDS]]
+[[SHIP_NAME_FISH]]
+[[SHIP_NAME_FLORA]]
+[[SHIP_NAME_STONE]]
+[[SHIP_NAME_WEATHER]]
+[[SHIP_NAME_CONSTELLATIONS]]
+[[SHIP_NAME_STARS]]
+[[SHIP_NAME_SCIENTISTS]]
+[[SHIP_NAME_AUTHORS]]
+[[SHIP_NAME_ARTISTS]]
+[[SHIP_NAME_VIRTUES]]
+[[SHIP_NAME_EMOTIONS]]
+[[SHIP_NAME_ARCHITECTURE]]
+[[SHIP_NAME_MOO2_STARS]]
+[[SHIP_NAME_OTHER]]'''
+
+MONSTER_NAMES
+'''[[SHIP_NAME_ROMAN_MYTHOLOGY]]
+[[SHIP_NAME_GREEK_MYTHOLOGY]]
+[[SHIP_NAME_NORSE_MYTHOLOGY]]
+[[SHIP_NAME_BASQUE_MYTHOLOGY]]
+[[SHIP_NAME_UNSORTED_MYTHOLOGY]]
+[[SHIP_NAME_DEVS]]'''
 
 #include "../content_specific_parameters.txt"
 #include "../customizations/common_user_customizations.txt"
