@@ -88,7 +88,8 @@ void InitDirs(const std::string& argv0) {
     s_user_dir      =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
     s_bin_dir       =   app_path / "Executables";
     s_config_path   =   s_user_dir / "config.xml";
-    s_python_home   =   app_path / "Frameworks" / "Python.framework" / "Versions" / "Current";
+    // ToDo: get python version from linked boost python library
+    s_python_home   =   app_path / "Frameworks" / "Python.framework" / "Versions" / "3.5";
 
     fs::path p = s_user_dir;
     if (!exists(p))

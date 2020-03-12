@@ -108,7 +108,7 @@ Section Uninstall
   SetShellVarContext all
 
   ${FreeOrion_DLL_LIST_UNINSTALL}
-  Delete "$$INSTDIR\Python27.zip"
+  Delete "$$INSTDIR\Python${FreeOrion_PYTHON_VERSION}.zip"
   Delete "$$INSTDIR\FreeorionCA.exe"
   Delete "$$INSTDIR\FreeorionD.exe"
   Delete "$$INSTDIR\Freeorion.exe"
