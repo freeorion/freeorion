@@ -11,6 +11,8 @@
 
 class PythonServer : public PythonBase {
 public:
+    /** Initializes server Python imports. */
+    bool InitImports() override;
     /** Initializes server Python modules. */
     bool InitModules() override;
 

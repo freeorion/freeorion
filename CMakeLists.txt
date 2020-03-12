@@ -95,7 +95,7 @@ if(APPLE)
     # Location of the FreeOrionSDK root
     set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/dep/")
     set(CMAKE_FRAMEWORK_PATH "${CMAKE_BINARY_DIR}/dep/Frameworks")
-    set(CMAKE_PROGRAM_PATH "${CMAKE_FRAMEWORK_PATH}/Python.framework/Versions/Current/bin")
+    set(CMAKE_PROGRAM_PATH "${CMAKE_FRAMEWORK_PATH}/Python.framework/Versions/3.5/bin")
 endif()
 
 if(UNIX)
@@ -217,7 +217,7 @@ endif()
 ## Collect project dependencies.
 ##
 
-set(MINIMUM_PYTHON_VERSION 2.7)
+set(MINIMUM_PYTHON_VERSION 3.5)
 set(MINIMUM_BOOST_VERSION 1.58.0)
 
 find_package(Threads)
@@ -235,13 +235,8 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         thread
     REQUIRED)
 
-if(${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION} VERSION_GREATER 1.66.0)
-    find_package(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} REQUIRED)
-    set(Boost_PYTHON_SUFFIX "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
-else()
-    find_package(Boost COMPONENTS python REQUIRED)
-    set(Boost_PYTHON_SUFFIX "")
-endif()
+find_package(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} REQUIRED)
+set(Boost_PYTHON_SUFFIX "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
 
 find_package(ZLIB REQUIRED)
 if(NOT BUILD_HEADLESS)
@@ -357,6 +352,7 @@ endif()
 target_compile_definitions(freeorioncommon
     PRIVATE
     -DFREEORION_BUILD_COMMON
+    -DFREEORION_PYTHON_VERSION=\"${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}\"
 )
 
 target_include_directories(freeorioncommon SYSTEM

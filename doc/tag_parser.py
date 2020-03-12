@@ -48,7 +48,7 @@ def add_doc_source(_file_name, _line_number, _content, _tags):
 
 
 def parse_file(_parse_file, _tags):
-    with open(_parse_file, 'r') as f:
+    with open(_parse_file, 'r', encoding='utf-8') as f:
         match_line = 0
         content = []
         special_comments_this_file = None

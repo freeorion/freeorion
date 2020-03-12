@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 from __future__ import print_function
 
@@ -90,7 +90,9 @@ class NsisInstScriptGenerator(Generator):
                 FreeOrion_BUILD_NO=build_no,
                 FreeOrion_BUILDSYS=build_sys,
                 FreeOrion_DLL_LIST_INSTALL="\n  ".join(['File "..\\' + fname + '"' for fname in dll_files]),
-                FreeOrion_DLL_LIST_UNINSTALL="\n  ".join(['Delete "$INSTDIR\\' + fname + '"' for fname in dll_files]))
+                FreeOrion_DLL_LIST_UNINSTALL="\n  ".join(['Delete "$INSTDIR\\' + fname + '"' for fname in dll_files]),
+                FreeOrion_PYTHON_VERSION="%d%d" % (sys.version_info.major, sys.version_info.minor))
+
         else:
             print("WARNING: no dll files for installer package found")
             return template.substitute(
@@ -99,7 +101,8 @@ class NsisInstScriptGenerator(Generator):
                 FreeOrion_BUILD_NO=build_no,
                 FreeOrion_BUILDSYS=build_sys,
                 FreeOrion_DLL_LIST_INSTALL="",
-                FreeOrion_DLL_LIST_UNINSTALL="")
+                FreeOrion_DLL_LIST_UNINSTALL="",
+                FreeOrion_PYTHON_VERSION="")
 
 
 if 3 != len(sys.argv):
