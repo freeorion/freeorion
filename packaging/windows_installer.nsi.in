@@ -60,7 +60,7 @@ Section "MainSection" SEC01
   Delete "$$INSTDIR\vcredist_x86.exe"
 
   ${FreeOrion_DLL_LIST_INSTALL}
-  File "..\Python27.zip"
+  File "..\Python${FreeOrion_PYTHON_VERSION}.zip"
   File "..\FreeorionCA.exe"
   File "..\FreeorionD.exe"
   File "..\Freeorion.exe"
