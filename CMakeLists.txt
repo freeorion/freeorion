@@ -352,6 +352,7 @@ endif()
 target_compile_definitions(freeorioncommon
     PRIVATE
     -DFREEORION_BUILD_COMMON
+    -DFREEORION_PYTHON_VERSION=\"${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}\"
 )
 
 target_include_directories(freeorioncommon SYSTEM

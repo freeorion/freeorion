@@ -34,7 +34,7 @@ namespace {
    globaldir: FreeOrion.app/Contents/Resources
    bindir:  FreeOrion.app/Contents/Executables
    configpath: ~/Library/FreeOrion/config.xml
-   pythonhome: FreeOrion.app/Contents/Frameworks/Python.framework/Versions/Current
+   pythonhome: FreeOrion.app/Contents/Frameworks/Python.framework/Versions/{PythonMajor}.{PythonMinor}
 */
 namespace {
     fs::path   s_user_dir;
@@ -88,8 +88,7 @@ void InitDirs(const std::string& argv0) {
     s_user_dir      =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
     s_bin_dir       =   app_path / "Executables";
     s_config_path   =   s_user_dir / "config.xml";
-    // ToDo: get python version from linked boost python library
-    s_python_home   =   app_path / "Frameworks" / "Python.framework" / "Versions" / "3.5";
+    s_python_home   =   app_path / "Frameworks" / "Python.framework" / "Versions" / FREEORION_PYTHON_VERSION;
 
     fs::path p = s_user_dir;
     if (!exists(p))
