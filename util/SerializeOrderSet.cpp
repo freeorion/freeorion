@@ -21,7 +21,7 @@ BOOST_CLASS_EXPORT(InvadeOrder)
 BOOST_CLASS_EXPORT(BombardOrder)
 BOOST_CLASS_EXPORT(ChangeFocusOrder)
 BOOST_CLASS_EXPORT(ResearchQueueOrder)
-BOOST_CLASS_EXPORT(ProductionQueueOrder)
+BOOST_CLASS_EXPORT(ProductionQueueOrder, 1)
 BOOST_CLASS_EXPORT(ShipDesignOrder)
 BOOST_CLASS_EXPORT(ScrapOrder)
 BOOST_CLASS_EXPORT(AggressiveOrder)
@@ -129,18 +129,53 @@ template <class Archive>
 void ProductionQueueOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
-        & BOOST_SERIALIZATION_NVP(m_item)
-        & BOOST_SERIALIZATION_NVP(m_number)
-        & BOOST_SERIALIZATION_NVP(m_location)
-        & BOOST_SERIALIZATION_NVP(m_index)
-        & BOOST_SERIALIZATION_NVP(m_new_quantity)
+        & BOOST_SERIALIZATION_NVP(m_item);
+
+    int m_number, m_index, m_pause, m_split_incomplete, m_dupe, m_use_imperial_pp;
+    if (version < 2)
+        ar  & BOOST_SERIALIZATION_NVP(m_number);
+
+    ar  & BOOST_SERIALIZATION_NVP(m_location);
+
+    if (version < 2)
+        ar  & BOOST_SERIALIZATION_NVP(m_index);
+
+    ar  & BOOST_SERIALIZATION_NVP(m_new_quantity)
         & BOOST_SERIALIZATION_NVP(m_new_blocksize)
         & BOOST_SERIALIZATION_NVP(m_new_index)
-        & BOOST_SERIALIZATION_NVP(m_rally_point_id)
-        & BOOST_SERIALIZATION_NVP(m_pause)
-        & BOOST_SERIALIZATION_NVP(m_split_incomplete)
-        & BOOST_SERIALIZATION_NVP(m_dupe)
-        & BOOST_SERIALIZATION_NVP(m_use_imperial_pp);
+        & BOOST_SERIALIZATION_NVP(m_rally_point_id);
+
+    if (version < 2) {
+        ar  & BOOST_SERIALIZATION_NVP(m_pause)
+            & BOOST_SERIALIZATION_NVP(m_split_incomplete)
+            & BOOST_SERIALIZATION_NVP(m_dupe)
+            & BOOST_SERIALIZATION_NVP(m_use_imperial_pp);
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_action);
+    }
+
+    if (version < 2 && Archive::is_loading::value) {
+        // would need to generate action and UUID from deserialized values. instead generate an invalid order. will break partial-turn saves.
+        m_uuid = boost::uuids::nil_generator()();
+        m_action = INVALID_PROD_QUEUE_ACTION;
+
+    } else {
+        // Serialization of m_uuid as a primitive doesn't work as expected from
+        // the documentation.  This workaround instead serializes a string
+        // representation.
+        if (Archive::is_saving::value) {
+            auto string_uuid = boost::uuids::to_string(m_uuid);
+            ar & BOOST_SERIALIZATION_NVP(string_uuid);
+        } else {
+            std::string string_uuid;
+            ar & BOOST_SERIALIZATION_NVP(string_uuid);
+            try {
+                m_uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
+            } catch (const boost::bad_lexical_cast&) {
+                m_uuid = boost::uuids::nil_generator()();
+            }
+        }
+    }
 }
 
 template <class Archive>

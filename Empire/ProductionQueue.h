@@ -83,7 +83,7 @@ struct FO_COMMON_API ProductionQueue {
         int                 rally_point_id = INVALID_OBJECT_ID;
         bool                paused = false;
         bool                allowed_imperial_stockpile_use = true;
-        boost::uuids::uuid  m_uuid;
+        boost::uuids::uuid  uuid;
 
         std::string Dump() const;
 
@@ -137,7 +137,6 @@ struct FO_COMMON_API ProductionQueue {
     /** Returns sets of object ids that have more available than allocated PP */
     std::set<std::set<int>> ObjectsWithWastedPP(const std::shared_ptr<ResourcePool>& industry_pool) const;
 
-
     // STL container-like interface
     bool            empty() const;
     unsigned int    size() const;
@@ -146,13 +145,16 @@ struct FO_COMMON_API ProductionQueue {
     const_iterator  find(int i) const;
     const Element&  operator[](int i) const;
 
+    const_iterator  find(boost::uuids::uuid uuid) const;
+    int             IndexOfUUID(boost::uuids::uuid uuid) const;
+
     /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
       * determines the number of projects in progress, and the industry consumed by projects
       * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
       * empire->CheckProductionProgress() will actually spend PP, remove items from queue and create them
       * in the universe. */
-    void Update();
+    void        Update();
 
     // STL container-like interface
     void        push_back(const Element& element);

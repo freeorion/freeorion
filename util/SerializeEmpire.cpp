@@ -75,26 +75,27 @@ void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version
         & BOOST_SERIALIZATION_NVP(rally_point_id)
         & BOOST_SERIALIZATION_NVP(paused)
         & BOOST_SERIALIZATION_NVP(allowed_imperial_stockpile_use);
+
     if (Archive::is_saving::value) {
-        // Serialization of m_uuid as a primitive doesn't work as expected from
+        // Serialization of uuid as a primitive doesn't work as expected from
         // the documentation.  This workaround instead serializes a string
         // representation.
-        auto string_uuid = boost::uuids::to_string(m_uuid);
+        auto string_uuid = boost::uuids::to_string(uuid);
         ar & BOOST_SERIALIZATION_NVP(string_uuid);
 
-    } else (Archive::is_loading::value && version < 2) {
+     } else if (Archive::is_loading::value && version < 2) {
         // assign a random ID to this element so that future-issued orders can refer to it
-        m_uuid = boost::uuids::random_generator()();
+        uuid = boost::uuids::random_generator()();
 
     } else {
         // convert string back into UUID
         std::string string_uuid;
-        ar && BOOST_SERIALIZATION_NVP(string_uuid);
+        ar & BOOST_SERIALIZATION_NVP(string_uuid);
 
         try {
-            m_uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
+            uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
         } catch (const boost::bad_lexical_cast&) {
-            m_uuid = boost::uuids::random_generator()();
+            uuid = boost::uuids::random_generator()();
         }
     }
 }

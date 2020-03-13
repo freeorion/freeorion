@@ -519,17 +519,29 @@ private:
   * \a empire's queue. */
 class FO_COMMON_API ProductionQueueOrder : public Order {
 public:
+    enum ProdQueueOrderAction : int {
+        INVALID_PROD_QUEUE_ACTION = -1,
+        PLACE_IN_QUEUE,
+        REMOVE_FROM_QUEUE,
+        SPLIT_INCOMPLETE,
+        DUPLICATE_ITEM,
+        SET_QUANTITY_AND_BLOCK_SIZE,
+        SET_QUANTITY,
+        MOVE_ITEM_TO_INDEX,
+        SET_RALLY_POINT,
+        PAUSE_PRODUCTION,
+        RESUME_PRODUCTION,
+        ALLOW_STOCKPILE_USE,
+        DISALLOW_STOCKPILE_USE,
+        NUM_PROD_QUEUE_ACTIONS
+    };
+
     /** \name Structors */ //@{
-    ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
-    ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy);
-    ProductionQueueOrder(int empire, int index, int rally_point_id, bool dummy1, bool dummy2);
-    ProductionQueueOrder(int empire, int index, int new_quantity, int new_blocksize);
-    ProductionQueueOrder(int empire, int index, int new_index);
-    ProductionQueueOrder(int empire, int index);
-    ProductionQueueOrder(int empire, int index, bool pause, float dummy);
-    ProductionQueueOrder(int empire, int index, float dummy1);
-    ProductionQueueOrder(int empire, int index, float dummy1, float dummy2);
-    ProductionQueueOrder(int empire, int index, bool allow_use_imperial_pp, float dummy, float dummy2);
+    ProductionQueueOrder(ProdQueueOrderAction action, int empire, boost::uuids::uuid uuid,
+                         const ProductionQueue::ProductionItem& item,
+                         int number, int location, int pos = -1);
+    ProductionQueueOrder(ProdQueueOrderAction action, int empire, boost::uuids::uuid uuid,
+                         int num1 = -1, int num2 = -1);
     //@}
 
 private:
@@ -538,28 +550,16 @@ private:
     void ExecuteImpl() const override;
 
     ProductionQueue::ProductionItem m_item;
-    int m_number = 0;
     int m_location = INVALID_OBJECT_ID;
-    //int m_index = INVALID_INDEX;
     int m_new_quantity = INVALID_QUANTITY;
     int m_new_blocksize = INVALID_QUANTITY;
     int m_new_index = INVALID_INDEX;
     int m_rally_point_id = INVALID_OBJECT_ID;
-    int m_pause = INVALID_PAUSE_RESUME;
-    int m_split_incomplete = INVALID_SPLIT_INCOMPLETE;
-    int m_dupe = INVALID_SPLIT_INCOMPLETE;
-    int m_use_imperial_pp = INVALID_USE_IMPERIAL_PP;
     boost::uuids::uuid m_uuid = boost::uuids::nil_generator()();
+    ProdQueueOrderAction m_action = INVALID_PROD_QUEUE_ACTION;
 
     static const int INVALID_INDEX = -500;
     static const int INVALID_QUANTITY = -1000;
-    static const int PAUSE = 1;
-    static const int RESUME = 2;
-    static const int INVALID_PAUSE_RESUME = -1;
-    static const int INVALID_SPLIT_INCOMPLETE = -1;
-    static const int USE_IMPERIAL_PP = 4;
-    static const int DONT_USE_IMPERIAL_PP = 8;
-    static const int INVALID_USE_IMPERIAL_PP = -4;
 
     friend class boost::serialization::access;
     template <class Archive>
