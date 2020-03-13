@@ -54,6 +54,7 @@ option(BUILD_SDL_DRIVER "Builds GG SDL support (the GiGiSDL library)." ON)
 option(BUILD_DOCUMENTATION "Builds HTML documentation." OFF)
 option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_DEVEL_PACKAGE "Install development files." ON)
+option(BUILD_HEADLESS "Headless components: server and AI." OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -82,31 +83,32 @@ set(MINIMUM_BOOST_VERSION 1.58.0)
 
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS filesystem regex system REQUIRED)
 
-find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
-find_package(Freetype REQUIRED)
-
-if(NOT OPENGL_GLU_FOUND)
-    message(FATAL_ERROR "OpenGL GLU library not found.")
+if(NOT BUILD_HEADLESS)
+    find_package(OpenGL REQUIRED)
+    find_package(GLEW REQUIRED)
+    find_package(Freetype REQUIRED)
+    
+    if(NOT OPENGL_GLU_FOUND)
+        message(FATAL_ERROR "OpenGL GLU library not found.")
+    endif()
+    
+    if(ENABLE_PNG_TEXTURES)
+        find_package(PNG REQUIRED)
+        set(int_have_png 1)
+    else()
+        set(int_have_png 0)
+    endif()
+    
+    if(ENABLE_TIFF_TEXTURES)
+        find_package(TIFF REQUIRED)
+        set(int_have_tiff 1)
+    else()
+        set(int_have_tiff 0)
+    endif()
+    set(SDL_NO_MAIN true)
+    
+    find_package(SDL REQUIRED)
 endif()
-
-if(ENABLE_PNG_TEXTURES)
-    find_package(PNG REQUIRED)
-    set(int_have_png 1)
-else()
-    set(int_have_png 0)
-endif()
-
-if(ENABLE_TIFF_TEXTURES)
-    find_package(TIFF REQUIRED)
-    set(int_have_tiff 1)
-else()
-    set(int_have_tiff 0)
-endif()
-set(SDL_NO_MAIN true)
-
-find_package(SDL REQUIRED)
-
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -140,78 +142,85 @@ target_compile_definitions(GiGi
 )
 
 target_include_directories(GiGi
-    INTERFACE
-        ${OPENGL_INCLUDE_DIR}
-    PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    PRIVATE
-        ${FREETYPE_INCLUDE_DIRS}
-)
-
-target_link_libraries(GiGi
-    PUBLIC
-        GLEW::GLEW
-        Boost::boost
-        Boost::disable_autolinking
-        Boost::dynamic_linking
-        Boost::filesystem
-        ${OPENGL_gl_LIBRARY}
-        ${OPENGL_glu_LIBRARY}
-    PRIVATE
-        Boost::regex
-        ${FREETYPE_LIBRARIES}
-)
-
-if(TARGET PNG::PNG)
-    target_link_libraries(GiGi PRIVATE PNG::PNG)
-endif()
-
-if(TARGET TIFF::TIFF)
-    target_link_libraries(GiGi PRIVATE TIFF::TIFF)
-endif()
-
-
-add_library(GiGiSDL "")
-
-add_library(GiGi::GiGiSDL ALIAS GiGiSDL)
-
-target_include_directories(GiGiSDL SYSTEM
-    INTERFACE
-        ${SDL_INCLUDE_DIR}
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
-target_link_libraries(GiGiSDL
-    PUBLIC
-        GiGi::GiGi
-        ${SDL_LIBRARIES}
-    PRIVATE
-        Boost::boost
-        Boost::disable_autolinking
-        Boost::dynamic_linking
-)
+set_target_properties(GiGi PROPERTIES LINKER_LANGUAGE CXX)
 
+if(NOT BUILD_HEADLESS)
+    target_include_directories(GiGi
+        INTERFACE
+            ${OPENGL_INCLUDE_DIR}
+        PRIVATE
+            ${FREETYPE_INCLUDE_DIRS}
+    )
 
-##
-## Recurse into sources.
-##
-
-add_subdirectory(GG)
-add_subdirectory(src)
-
-if(BUILD_TESTING)
-    enable_testing()
-    enable_coverage()
-
-    if(NOT TARGET unittest)
-        add_custom_target(unittest
-            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-            COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
-        )
+    target_link_libraries(GiGi
+        PUBLIC
+            GLEW::GLEW
+            Boost::boost
+            Boost::disable_autolinking
+            Boost::dynamic_linking
+            Boost::filesystem
+            ${OPENGL_gl_LIBRARY}
+            ${OPENGL_glu_LIBRARY}
+        PRIVATE
+            Boost::regex
+            ${FREETYPE_LIBRARIES}
+    )
+    
+    if(TARGET PNG::PNG)
+        target_link_libraries(GiGi PRIVATE PNG::PNG)
     endif()
-
-    add_subdirectory(test)
+    
+    if(TARGET TIFF::TIFF)
+        target_link_libraries(GiGi PRIVATE TIFF::TIFF)
+    endif()
+    
+    
+    add_library(GiGiSDL "")
+    
+    add_library(GiGi::GiGiSDL ALIAS GiGiSDL)
+    
+    target_include_directories(GiGiSDL SYSTEM
+        INTERFACE
+            ${SDL_INCLUDE_DIR}
+        PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    )
+    
+    target_link_libraries(GiGiSDL
+        PUBLIC
+            GiGi::GiGi
+            ${SDL_LIBRARIES}
+        PRIVATE
+            Boost::boost
+            Boost::disable_autolinking
+            Boost::dynamic_linking
+    )
+    
+    
+    ##
+    ## Recurse into sources.
+    ##
+    
+    add_subdirectory(GG)
+    add_subdirectory(src)
+    
+    if(BUILD_TESTING)
+        enable_testing()
+        enable_coverage()
+    
+        if(NOT TARGET unittest)
+            add_custom_target(unittest
+                COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+                COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
+            )
+        endif()
+    
+        add_subdirectory(test)
+    endif()
 endif()
 
 if(BUILD_DOCUMENTATION)
@@ -231,7 +240,7 @@ if(BUILD_DEVEL_PACKAGE)
     )
 endif()
 
-if(UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE AND NOT BUILD_HEADLESS)
     install(
         TARGETS GiGi
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -243,7 +252,7 @@ if(UNIX AND NOT APPLE)
     )
 endif()
 
-if(UNIX AND BUILD_DEVEL_PACKAGE)
+if(UNIX AND BUILD_DEVEL_PACKAGE AND NOT BUILD_HEADLESS)
     get_pkg_config_libs(pkg_config_libs ${GiGi_LINK_LIBS})
 
     configure_file(
@@ -261,7 +270,7 @@ if(UNIX AND BUILD_DEVEL_PACKAGE)
 endif()
 
 
-if(UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE AND NOT BUILD_HEADLESS)
     install(
         TARGETS GiGiSDL
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -273,7 +282,7 @@ if(UNIX AND NOT APPLE)
     )
 endif()
 
-if(UNIX AND BUILD_DEVEL_PACKAGE)
+if(UNIX AND BUILD_DEVEL_PACKAGE AND NOT BUILD_HEADLESS)
     get_pkg_config_libs(pkg_config_libs ${GiGiSDL_LINK_LIBS})
 
     configure_file(
