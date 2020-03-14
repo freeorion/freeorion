@@ -158,6 +158,7 @@ void ProductionQueueOrder::serialize(Archive& ar, const unsigned int version)
     if (version < 2 && Archive::is_loading::value) {
         // would need to generate action and UUID from deserialized values. instead generate an invalid order. will break partial-turn saves.
         m_uuid = boost::uuids::nil_generator()();
+        m_uuid2 = m_uuid;
         m_action = INVALID_PROD_QUEUE_ACTION;
 
     } else {
@@ -167,13 +168,20 @@ void ProductionQueueOrder::serialize(Archive& ar, const unsigned int version)
         if (Archive::is_saving::value) {
             auto string_uuid = boost::uuids::to_string(m_uuid);
             ar & BOOST_SERIALIZATION_NVP(string_uuid);
+            auto string_uuid2 = boost::uuids::to_string(m_uuid2);
+            ar & BOOST_SERIALIZATION_NVP(string_uuid2);
+
         } else {
             std::string string_uuid;
             ar & BOOST_SERIALIZATION_NVP(string_uuid);
+            std::string string_uuid2;
+            ar & BOOST_SERIALIZATION_NVP(string_uuid2);
             try {
                 m_uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
+                m_uuid2 = boost::lexical_cast<boost::uuids::uuid>(string_uuid2);
             } catch (const boost::bad_lexical_cast&) {
                 m_uuid = boost::uuids::nil_generator()();
+                m_uuid2 = m_uuid;
             }
         }
     }

@@ -24,7 +24,6 @@
 #include <boost/cast.hpp>
 #include <boost/range/numeric.hpp>
 #include <boost/range/adaptor/map.hpp>
-#include <boost/uuid/random_generator.hpp>
 
 #include <cmath>
 #include <iterator>
@@ -1179,12 +1178,9 @@ void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& i
     if (!empire)
         return;
 
-    auto new_uuid = boost::uuids::random_generator()();
-
     HumanClientApp::GetApp()->Orders().IssueOrder(
         std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::PLACE_IN_QUEUE,
-                                               client_empire_id, new_uuid,
-                                               item, number, location, pos));
+                                               client_empire_id, item, number, location, pos));
 
     empire->UpdateProductionQueue();
     m_build_designator_wnd->CenterOnBuild(pos >= 0 ? pos : m_queue_wnd->GetQueueListBox()->NumRows() - 1);
@@ -1340,7 +1336,8 @@ void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
 
     if (queue_it != empire->GetProductionQueue().end())
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::SPLIT_INCOMPLETE, client_empire_id, queue_it->uuid));
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::SPLIT_INCOMPLETE,
+                                                   client_empire_id, queue_it->uuid));
 
     empire->UpdateProductionQueue();
 }

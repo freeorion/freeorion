@@ -2636,10 +2636,9 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID()) || !cur_empire->ProducibleItem(BT_SHIP, ship_design, row->ObjectID()))
                         continue;
                     ProductionQueue::ProductionItem ship_item(BT_SHIP, ship_design);
-                    auto new_uuid = boost::uuids::random_generator()();
                     app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(
                         ProductionQueueOrder::PLACE_IN_QUEUE, app->EmpireID(),
-                        new_uuid, ship_item, 1, row->ObjectID(), pos));
+                        ship_item, 1, row->ObjectID(), pos));
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)
@@ -2681,10 +2680,9 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                         continue;
                     }
                     ProductionQueue::ProductionItem bld_item(BT_BUILDING, bld);
-                    auto new_uuid = boost::uuids::random_generator()();
                     app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(
                         ProductionQueueOrder::PLACE_IN_QUEUE, app->EmpireID(),
-                        new_uuid, bld_item, 1, row->ObjectID(), pos));
+                        bld_item, 1, row->ObjectID(), pos));
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)

@@ -357,12 +357,11 @@ namespace {
             return 0;
         }
 
-        auto uuid = boost::uuids::random_generator()();
         auto item = ProductionQueue::ProductionItem(BT_BUILDING, item_name);
 
         AIClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::PLACE_IN_QUEUE,
-                                                   empire_id, uuid, item, 1, location_id));
+                                                   empire_id, item, 1, location_id));
 
         return 1;
     }
@@ -380,12 +379,11 @@ namespace {
             return 0;
         }
 
-        auto uuid = boost::uuids::random_generator()();
         auto item = ProductionQueue::ProductionItem(BT_SHIP, design_id);
 
         AIClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::PLACE_IN_QUEUE,
-                                                   empire_id, uuid, item, 1, location_id));
+                                                   empire_id, item, 1, location_id));
 
         return 1;
     }

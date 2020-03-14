@@ -537,10 +537,11 @@ public:
     };
 
     /** \name Structors */ //@{
-    ProductionQueueOrder(ProdQueueOrderAction action, int empire, boost::uuids::uuid uuid,
+    ProductionQueueOrder(ProdQueueOrderAction action, int empire,
                          const ProductionQueue::ProductionItem& item,
                          int number, int location, int pos = -1);
-    ProductionQueueOrder(ProdQueueOrderAction action, int empire, boost::uuids::uuid uuid,
+    ProductionQueueOrder(ProdQueueOrderAction action, int empire,
+                         boost::uuids::uuid uuid,
                          int num1 = -1, int num2 = -1);
     //@}
 
@@ -550,13 +551,13 @@ private:
     void ExecuteImpl() const override;
 
     ProductionQueue::ProductionItem m_item;
-    int m_location = INVALID_OBJECT_ID;
-    int m_new_quantity = INVALID_QUANTITY;
-    int m_new_blocksize = INVALID_QUANTITY;
-    int m_new_index = INVALID_INDEX;
-    int m_rally_point_id = INVALID_OBJECT_ID;
-    boost::uuids::uuid m_uuid;
-    ProdQueueOrderAction m_action = INVALID_PROD_QUEUE_ACTION;
+    int                             m_location = INVALID_OBJECT_ID;
+    int                             m_new_quantity = INVALID_QUANTITY;
+    int                             m_new_blocksize = INVALID_QUANTITY;
+    int                             m_new_index = INVALID_INDEX;
+    int                             m_rally_point_id = INVALID_OBJECT_ID;
+    boost::uuids::uuid              m_uuid, m_uuid2;
+    ProdQueueOrderAction            m_action = INVALID_PROD_QUEUE_ACTION;
 
     static const int INVALID_INDEX = -500;
     static const int INVALID_QUANTITY = -1000;

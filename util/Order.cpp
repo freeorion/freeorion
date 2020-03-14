@@ -18,6 +18,7 @@
 #include "../Empire/Empire.h"
 
 #include <boost/uuid/nil_generator.hpp>
+#include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
 #include <fstream>
@@ -936,7 +937,6 @@ void ResearchQueueOrder::ExecuteImpl() const {
 // ProductionQueueOrder
 ////////////////////////////////////////////////
 ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, int empire,
-                                           boost::uuids::uuid uuid,
                                            const ProductionQueue::ProductionItem& item,
                                            int number, int location, int pos) :
     Order(empire),
@@ -944,7 +944,8 @@ ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, int empi
     m_location(location),
     m_new_quantity(number),
     m_new_index(pos),
-    m_uuid(uuid),
+    m_uuid(boost::uuids::random_generator()()),
+    m_uuid2(boost::uuids::nil_generator()()),
     m_action(action)
 {
     if (action != PLACE_IN_QUEUE)
@@ -955,12 +956,15 @@ ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, int empi
                                            boost::uuids::uuid uuid, int num1, int num2) :
     Order(empire),
     m_uuid(uuid),
+    m_uuid2(boost::uuids::nil_generator()()),
     m_action(action)
 {
     switch(m_action) {
     case REMOVE_FROM_QUEUE:
+        break;
     case SPLIT_INCOMPLETE:
     case DUPLICATE_ITEM:
+        m_uuid2 = boost::uuids::random_generator()();
         break;
     case SET_QUANTITY_AND_BLOCK_SIZE:
         m_new_quantity = num1;
@@ -991,8 +995,8 @@ void ProductionQueueOrder::ExecuteImpl() const {
         switch(m_action) {
         case PLACE_IN_QUEUE: {
             if (m_item.build_type == BT_BUILDING || m_item.build_type == BT_SHIP || m_item.build_type == BT_STOCKPILE) {
-                DebugLogger() << "ProductionQueueOrder place in queue: " << m_item.Dump();
-                empire->PlaceProductionOnQueue(m_item, m_new_quantity, 1, m_location, m_new_index);
+                DebugLogger() << "ProductionQueueOrder place in queue: " << m_item.Dump() << "  at index: " << m_new_index;
+                empire->PlaceProductionOnQueue(m_item, m_uuid, m_new_quantity, 1, m_location, m_new_index);
             } else {
                 ErrorLogger() << "ProductionQueueOrder tried to place invalid build type in queue!";
             }
@@ -1014,7 +1018,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
                 ErrorLogger() << "ProductionQueueOrder asked to split invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder splitting incomplete from item";
-                empire->SplitIncompleteProductionItem(idx);
+                empire->SplitIncompleteProductionItem(idx, m_uuid2);
             }
             break;
         }
@@ -1024,7 +1028,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
                 ErrorLogger() << "ProductionQueueOrder asked to duplicate invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder duplicating item";
-                empire->DuplicateProductionItem(idx);
+                empire->DuplicateProductionItem(idx, m_uuid2);
             }
             break;
         }

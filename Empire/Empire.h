@@ -186,32 +186,24 @@ public:
 
     /** Sets research progress of tech with \a name to \a progress. */
     void SetTechResearchProgress(const std::string& name, float progress);
+
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
       * placed at the end of the queue. */
-    void PlaceProductionOnQueue(BuildType build_type, const std::string& name,
-                                int number, int blocksize, int location, int pos = -1);
-    /** Adds the indicated build to the production queue, placing it before
-      * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
-      * placed at the end of the queue. */
-    void PlaceProductionOnQueue(BuildType build_type, int design_id, int number,
+    void PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
+                                boost::uuids::uuid uuid, int number,
                                 int blocksize, int location, int pos = -1);
-    /** Adds the indicated build to the production queue, placing it before
-    * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
-    * placed at the end of the queue.
-    * The second parameter is there for overloading resolution and gets ignored.
-    */
-    void PlaceProductionOnQueue(BuildType build_type, BuildType dummy, int number,
-                                int blocksize, int location, int pos = -1);
-    /** Adds the indicated build to the production queue, placing it before
-      * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
-      * placed at the end of the queue. */
-    void PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item, int number,
-                                int blocksize, int location, int pos = -1);
+
+    /** Adds a copy of the production item at position \a index below it in
+      * the queue, with one less quantity. Sets the quantity of the production
+      * item at position \a index to 1, retaining its incomplete progress. */
+    void SplitIncompleteProductionItem(int index, boost::uuids::uuid uuid);
+    /** Adds a copy of the production item at position \a index below it in
+      * the queue, with no progress. */
+    void DuplicateProductionItem(int index, boost::uuids::uuid uuid);
+
     void SetProductionQuantity(int index, int quantity);     ///< Changes the remaining number to produce for queue item \a index to \a quantity
     void SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize);   ///< Changes the remaining number and blocksize to produce for queue item \a index to \a quantity and \a blocksize
-    void SplitIncompleteProductionItem(int index);           ///< Adds a copy of the production item at position \a index below it in the queue, with one less quantity. Sets the quantity of the production item at position \a index to 1, retaining its incomplete progress.
-    void DuplicateProductionItem(int index);                 ///< Adds a copy of the production item at position \a index below it in the queue, with no progress.
     void SetProductionRallyPoint(int index, int rally_point_id = INVALID_OBJECT_ID);  ///< Sets the rally point for ships produced by this produce, to which they are automatically ordered to move after they are produced.
     void MoveProductionWithinQueue(int index, int new_index);///< Moves \a tech from the production queue, if it is in the production queue already.
     void RemoveProductionFromQueue(int index);               ///< Removes the produce at position \a index in the production queue, if such an index exists.
