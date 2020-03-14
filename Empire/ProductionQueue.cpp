@@ -515,11 +515,11 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
 }
 
 std::string ProductionQueue::ProductionItem::Dump() const {
-    std::string retval = "ProductionItem: " + boost::lexical_cast<std::string>(build_type) + " ";
+    std::string retval = "ProductionItem: " + boost::lexical_cast<std::string>(build_type);
     if (!name.empty())
-        retval += "name: " + name;
+        retval += " name: " + name;
     if (design_id != INVALID_DESIGN_ID)
-        retval += "id: " + std::to_string(design_id);
+        retval += " id: " + std::to_string(design_id);
     return retval;
 }
 
