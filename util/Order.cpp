@@ -18,6 +18,7 @@
 #include "../Empire/Empire.h"
 
 #include <boost/uuid/nil_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 #include <fstream>
 #include <vector>
@@ -1000,7 +1001,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
         case REMOVE_FROM_QUEUE: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
-                ErrorLogger() << "ProductionQueueOrder asked to remove invalid UUID";
+                ErrorLogger() << "ProductionQueueOrder asked to remove invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder removing item";
                 empire->RemoveProductionFromQueue(idx);
@@ -1010,7 +1011,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
         case SPLIT_INCOMPLETE: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
-                ErrorLogger() << "ProductionQueueOrder asked to split invalid UUID";
+                ErrorLogger() << "ProductionQueueOrder asked to split invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder splitting incomplete from item";
                 empire->SplitIncompleteProductionItem(idx);
@@ -1020,7 +1021,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
         case DUPLICATE_ITEM: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
-                ErrorLogger() << "ProductionQueueOrder asked to duplicate invalid UUID";
+                ErrorLogger() << "ProductionQueueOrder asked to duplicate invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder duplicating item";
                 empire->DuplicateProductionItem(idx);
@@ -1030,7 +1031,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
         case SET_QUANTITY_AND_BLOCK_SIZE: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
-                ErrorLogger() << "ProductionQueueOrder asked to set quantity and blocksize of invalid UUID";
+                ErrorLogger() << "ProductionQueueOrder asked to set quantity and blocksize of invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder setting quantity and block size";
                 empire->SetProductionQuantityAndBlocksize(idx, m_new_quantity, m_new_blocksize);
@@ -1040,7 +1041,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
         case SET_QUANTITY: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
-                ErrorLogger() << "ProductionQueueOrder asked to set quantity of invalid UUID";
+                ErrorLogger() << "ProductionQueueOrder asked to set quantity of invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder setting quantity " << m_new_quantity;
                 empire->SetProductionQuantity(idx, m_new_quantity);
@@ -1050,7 +1051,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
         case MOVE_ITEM_TO_INDEX: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
-                ErrorLogger() << "ProductionQueueOrder asked to move invalid UUID";
+                ErrorLogger() << "ProductionQueueOrder asked to move invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder moving to index " << m_new_index;
                 empire->MoveProductionWithinQueue(idx, m_new_index);
@@ -1060,7 +1061,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
         case SET_RALLY_POINT: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
-                ErrorLogger() << "ProductionQueueOrder asked to set rally point of invalid UUID";
+                ErrorLogger() << "ProductionQueueOrder asked to set rally point of invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder setting rally point to " << m_rally_point_id;
                 empire->SetProductionRallyPoint(idx, m_rally_point_id);
@@ -1070,7 +1071,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
         case PAUSE_PRODUCTION: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
-                ErrorLogger() << "ProductionQueueOrder asked to pause invalid UUID";
+                ErrorLogger() << "ProductionQueueOrder asked to pause invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder pausing";
                 empire->PauseProduction(idx);
@@ -1080,7 +1081,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
         case RESUME_PRODUCTION: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
-                ErrorLogger() << "ProductionQueueOrder asked to resume invalid UUID";
+                ErrorLogger() << "ProductionQueueOrder asked to resume invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder resuming";
                 empire->ResumeProduction(idx);
@@ -1090,7 +1091,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
         case ALLOW_STOCKPILE_USE: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
-                ErrorLogger() << "ProductionQueueOrder asked to allow stockpiling on invalid UUID";
+                ErrorLogger() << "ProductionQueueOrder asked to allow stockpiling on invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder allowing stockpile";
                 empire->AllowUseImperialPP(idx, true);
@@ -1100,7 +1101,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
         case DISALLOW_STOCKPILE_USE: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
-                ErrorLogger() << "ProductionQueueOrder asked to disallow stockpiling on invalid UUID";
+                ErrorLogger() << "ProductionQueueOrder asked to disallow stockpiling on invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder disallowing stockpile";
                 empire->AllowUseImperialPP(idx, false);
