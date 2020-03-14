@@ -1033,18 +1033,18 @@ void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it, const GG
         return;
 
     // This precorrects the position for a factor in Empire::MoveProductionWithinQueue
-    int position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), row_it);
+    int new_position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), row_it);
     int original_position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), original_position_it);
-    auto direction = original_position < position;
-    int corrected_position = position + (direction ? 1 : 0);
+    auto direction = original_position < new_position;
+    int corrected_new_position = new_position + (direction ? 1 : 0);
 
-    auto queue_it = empire->GetProductionQueue().find(position);
+    auto queue_it = empire->GetProductionQueue().find(original_position);
 
     if (queue_it != empire->GetProductionQueue().end())
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::MOVE_ITEM_TO_INDEX,
                                                    client_empire_id, queue_it->uuid,
-                                                   corrected_position));
+                                                   corrected_new_position));
     empire->UpdateProductionQueue();
 }
 
