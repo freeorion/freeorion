@@ -255,7 +255,6 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
     Order(empire_id),
     m_fleet(fleet_id),
     m_dest_system(dest_system_id),
-    m_route(),
     m_append(append)
 {
     if (!Check(empire_id, fleet_id, dest_system_id))
@@ -270,6 +269,19 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
         start_system = fleet->TravelRoute().back();
 
     auto short_path = GetPathfinder()->ShortestPath(start_system, m_dest_system, EmpireID());
+    if (short_path.first.empty()) {
+        ErrorLogger() << "FleetMoveOrder generated empty shortest path between system " << start_system
+                      << " and " << m_dest_system << " for empire " << EmpireID() << " with fleet " << fleet_id;
+        return;
+    }
+
+    // if in a system now, don't include it in the route
+    if (short_path.first.front() == fleet->SystemID()) {
+        DebugLogger() << "FleetMoveOrder removing fleet " << fleet_id
+                      << " current system location " << fleet->SystemID()
+                      << " from shortest path to system " << m_dest_system;
+        short_path.first.pop_front();
+    }
 
     std::copy(short_path.first.begin(), short_path.first.end(), std::back_inserter(m_route));
 
