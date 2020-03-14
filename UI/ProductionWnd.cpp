@@ -1299,11 +1299,11 @@ void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
 
     auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
     auto queue_it = empire->GetProductionQueue().find(idx);
+    auto action = pause ? ProductionQueueOrder::PAUSE_PRODUCTION : ProductionQueueOrder::RESUME_PRODUCTION;
 
     if (queue_it != empire->GetProductionQueue().end())
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::PAUSE_PRODUCTION,
-                                                   client_empire_id, queue_it->uuid));
+            std::make_shared<ProductionQueueOrder>(action, client_empire_id, queue_it->uuid));
 
     empire->UpdateProductionQueue();
 }
@@ -1355,10 +1355,11 @@ void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow)
 
     auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
     auto queue_it = empire->GetProductionQueue().find(idx);
+    auto action = allow ? ProductionQueueOrder::ALLOW_STOCKPILE_USE : ProductionQueueOrder::DISALLOW_STOCKPILE_USE;
 
     if (queue_it != empire->GetProductionQueue().end())
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new ProductionQueueOrder(ProductionQueueOrder::ALLOW_STOCKPILE_USE, client_empire_id, queue_it->uuid)));
+            OrderPtr(new ProductionQueueOrder(action, client_empire_id, queue_it->uuid)));
 
     empire->UpdateProductionQueue();
 }
