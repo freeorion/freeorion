@@ -118,6 +118,24 @@ jobs:
         - cmake -DBUILD_TESTING=ON ..
         - cmake --build . -- -j 2
 
+    - name: Build headless FreeOrion on Ubunutu 18.04 (Bionic)
+      <<: *_build_cpp_common
+      os: linux
+      dist: bionic
+      services:
+        - docker
+      before_install:
+        - docker pull freeorion/freeorion-travis-build
+        # mount ccache dir and set its environment variable
+        # timeout before Travis kills jobs so that ccache is always at least partially populated
+        - >
+          function cmake {
+              docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -v "${HOME}/.ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
+          }
+      script:
+        - cmake -DBUILD_HEADLESS=ON -DBUILD_TESTING=ON ..
+        - cmake --build . -- -j 2
+
     - name: Build FreeOrion on MacOS 10.12
       <<: *_build_cpp_common
       os: osx

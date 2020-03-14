@@ -261,14 +261,12 @@ if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
 
-if(NOT BUILD_HEADLESS)
-    set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
-    set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
-    set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
-    add_subdirectory(GG)
-    set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
-    unset(_ORIG_CMAKE_INSTALL_LIBDIR)
-endif()
+set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
+set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
+set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
+add_subdirectory(GG)
+set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
+unset(_ORIG_CMAKE_INSTALL_LIBDIR)
 
 set_property(DIRECTORY APPEND
     PROPERTY COMPILE_DEFINITIONS
@@ -350,12 +348,16 @@ if(APPLE)
 endif()
 
 target_compile_definitions(freeorioncommon
+    PUBLIC
+        -DBOOST_ALL_DYN_LINK
     PRIVATE
-    -DFREEORION_BUILD_COMMON
-    -DFREEORION_PYTHON_VERSION=\"${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}\"
+        -DFREEORION_BUILD_COMMON
+        -DFREEORION_PYTHON_VERSION=\"${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}\"
 )
 
 target_include_directories(freeorioncommon SYSTEM
+    PUBLIC
+        $<TARGET_PROPERTY:GiGi::GiGi,INCLUDE_DIRECTORIES>
     PRIVATE
         ${CMAKE_SOURCE_DIR}
 )
@@ -373,8 +375,6 @@ target_link_libraries(freeorioncommon
         Boost::thread
         Boost::serialization
         ZLIB::ZLIB
-    PUBLIC
-        GiGi::GiGi
     PRIVATE
         ${CORE_FOUNDATION_LIBRARY}
 )
@@ -411,6 +411,13 @@ target_include_directories(freeorionparseobj
         $<TARGET_PROPERTY:GiGi::GiGi,INCLUDE_DIRECTORIES>
 )
 
+if(NOT BUILD_HEADLESS)
+    target_link_libraries(freeorioncommon
+        PUBLIC
+            GiGi::GiGi
+    )
+endif()
+
 set_property(TARGET freeorionparseobj
     PROPERTY
     POSITION_INDEPENDENT_CODE ON
@@ -436,6 +443,8 @@ target_compile_options(freeorionparseobj
 )
 
 target_compile_definitions(freeorionparseobj
+    PUBLIC
+        -DBOOST_ALL_DYN_LINK
     PRIVATE
         -DNDEBUG
         -DFREEORION_BUILD_PARSE
