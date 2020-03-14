@@ -15,14 +15,17 @@ BOOST_CLASS_EXPORT(RenameOrder)
 BOOST_CLASS_EXPORT(NewFleetOrder)
 BOOST_CLASS_VERSION(NewFleetOrder, 1)
 BOOST_CLASS_EXPORT(FleetMoveOrder)
+BOOST_CLASS_VERSION(FleetMoveOrder, 2)
 BOOST_CLASS_EXPORT(FleetTransferOrder)
 BOOST_CLASS_EXPORT(ColonizeOrder)
 BOOST_CLASS_EXPORT(InvadeOrder)
 BOOST_CLASS_EXPORT(BombardOrder)
 BOOST_CLASS_EXPORT(ChangeFocusOrder)
 BOOST_CLASS_EXPORT(ResearchQueueOrder)
-BOOST_CLASS_EXPORT(ProductionQueueOrder, 1)
+BOOST_CLASS_EXPORT(ProductionQueueOrder)
+BOOST_CLASS_VERSION(ProductionQueueOrder, 2)
 BOOST_CLASS_EXPORT(ShipDesignOrder)
+BOOST_CLASS_VERSION(ShipDesignOrder, 1)
 BOOST_CLASS_EXPORT(ScrapOrder)
 BOOST_CLASS_EXPORT(AggressiveOrder)
 BOOST_CLASS_EXPORT(GiveObjectToEmpireOrder)
@@ -72,8 +75,6 @@ void FleetMoveOrder::serialize(Archive& ar, const unsigned int version)
         m_append = false;
     }
 }
-
-BOOST_CLASS_VERSION(FleetMoveOrder, 2);
 
 template <class Archive>
 void FleetTransferOrder::serialize(Archive& ar, const unsigned int version)
@@ -217,8 +218,6 @@ void ShipDesignOrder::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_3D_model);
     ar  & BOOST_SERIALIZATION_NVP(m_name_desc_in_stringtable);
 }
-
-BOOST_CLASS_VERSION(ShipDesignOrder, 1)
 
 template <class Archive>
 void ScrapOrder::serialize(Archive& ar, const unsigned int version)
