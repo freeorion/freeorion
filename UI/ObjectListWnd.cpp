@@ -31,6 +31,7 @@
 #include <boost/lexical_cast.hpp>
 //TODO: replace with std::make_unique when transitioning to C++14
 #include <boost/smart_ptr/make_unique.hpp>
+#include <boost/uuid/random_generator.hpp>
 
 #include <iterator>
 #include <sstream>
@@ -2635,7 +2636,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID()) || !cur_empire->ProducibleItem(BT_SHIP, ship_design, row->ObjectID()))
                         continue;
                     ProductionQueue::ProductionItem ship_item(BT_SHIP, ship_design);
-                    app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(app->EmpireID(), ship_item, 1, row->ObjectID(), pos));
+                    auto new_uuid = boost::uuids::random_generator()();
+                    app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(
+                        ProductionQueueOrder::PLACE_IN_QUEUE, app->EmpireID(),
+                        new_uuid, ship_item, 1, row->ObjectID(), pos));
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)
@@ -2666,10 +2670,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 std::string bld = entry.first;
                 bool needs_queue_update(false);
                 for (const auto& selection : m_list_box->Selections()) {
-                    ObjectRow *row = dynamic_cast<ObjectRow *>(selection->get());
+                    auto row = dynamic_cast<ObjectRow *>(selection->get());
                     if (!row)
                         continue;
-                    std::shared_ptr<Planet> one_planet = Objects().get<Planet>(row->ObjectID());
+                    auto one_planet = Objects().get<Planet>(row->ObjectID());
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID())
                         || !cur_empire->EnqueuableItem(BT_BUILDING, bld, row->ObjectID())
                         || !cur_empire->ProducibleItem(BT_BUILDING, bld, row->ObjectID()))
@@ -2677,7 +2681,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                         continue;
                     }
                     ProductionQueue::ProductionItem bld_item(BT_BUILDING, bld);
-                    app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(app->EmpireID(), bld_item, 1, row->ObjectID(), pos));
+                    auto new_uuid = boost::uuids::random_generator()();
+                    app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(
+                        ProductionQueueOrder::PLACE_IN_QUEUE, app->EmpireID(),
+                        new_uuid, bld_item, 1, row->ObjectID(), pos));
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)

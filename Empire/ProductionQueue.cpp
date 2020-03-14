@@ -527,7 +527,8 @@ std::string ProductionQueue::ProductionItem::Dump() const {
 //////////////////////////////
 // ProductionQueue::Element //
 //////////////////////////////
-ProductionQueue::Element::Element()
+ProductionQueue::Element::Element() :
+     uuid(boost::uuids::nil_generator()())
 {}
 
 ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int ordered_,
@@ -541,7 +542,8 @@ ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int orde
     location(location_),
     blocksize_memory(blocksize_),
     paused(paused_),
-    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_)
+    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_),
+    uuid(boost::uuids::nil_generator()())
 {}
 
 ProductionQueue::Element::Element(BuildType build_type, std::string name, int empire_id_, int ordered_,
@@ -689,6 +691,22 @@ const ProductionQueue::Element& ProductionQueue::operator[](int i) const {
     if (i < 0 || i >= static_cast<int>(m_queue.size()))
         throw std::out_of_range("Tried to access ProductionQueue element out of bounds");
     return m_queue[i];
+}
+
+ProductionQueue::const_iterator ProductionQueue::find(boost::uuids::uuid uuid) const {
+    if (uuid == boost::uuids::nil_generator()())
+        return m_queue.end();
+    for (auto it = m_queue.begin(); it != m_queue.end(); ++it)
+        if (it->uuid == uuid)
+            return it;
+    return m_queue.end();
+}
+
+int ProductionQueue::IndexOfUUID(boost::uuids::uuid uuid) const {
+    auto it = find(uuid);
+    if (it == end())
+        return -1;
+    return std::distance(begin(), it);
 }
 
 void ProductionQueue::Update() {

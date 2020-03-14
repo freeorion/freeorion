@@ -1272,7 +1272,7 @@ void Empire::MoveProductionWithinQueue(int index, int new_index) {
         new_index < 0 || static_cast<int>(m_production_queue.size()) <= new_index)
     {
         DebugLogger() << "Empire::MoveProductionWithinQueue index: " << index << "  new index: "
-                               << new_index << "  queue size: " << m_production_queue.size();
+                      << new_index << "  queue size: " << m_production_queue.size();
         ErrorLogger() << "Attempted to move a production queue item to or from an invalid index.";
         return;
     }

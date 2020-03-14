@@ -922,124 +922,181 @@ void ResearchQueueOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // ProductionQueueOrder
 ////////////////////////////////////////////////
-ProductionQueueOrder::ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item,
+ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, int empire,
+                                           boost::uuids::uuid uuid,
+                                           const ProductionQueue::ProductionItem& item,
                                            int number, int location, int pos) :
     Order(empire),
     m_item(item),
-    m_number(number),
     m_location(location),
-    m_new_index(pos)
-{}
+    m_new_quantity(number),
+    m_new_index(pos),
+    m_uuid(uuid),
+    m_action(action)
+{
+    if (action != PLACE_IN_QUEUE)
+        ErrorLogger() << "ProductionQueueOrder called with parameters for placing in queue but with another action";
+}
 
-ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quantity, int new_blocksize) :
+ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, int empire,
+                                           boost::uuids::uuid uuid, int num1, int num2) :
     Order(empire),
-    m_index(index),
-    m_new_quantity(new_quantity),
-    m_new_blocksize(new_blocksize)
-{}
-
-ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy) :
-    Order(empire),
-    m_index(index),
-    m_new_quantity(new_quantity)
-{}
-
-ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int rally_point_id, bool dummy1, bool dummy2) :
-    Order(empire),
-    m_index(index),
-    m_rally_point_id(rally_point_id)
-{}
-
-ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_index) :
-    Order(empire),
-    m_index(index),
-    m_new_index(new_index)
-{}
-
-ProductionQueueOrder::ProductionQueueOrder(int empire, int index) :
-    Order(empire),
-    m_index(index)
-{}
-
-ProductionQueueOrder::ProductionQueueOrder(int empire, int index, bool pause, float dummy) :
-    Order(empire),
-    m_index(index),
-    m_pause(pause ? PAUSE : RESUME)
-{}
-
-ProductionQueueOrder::ProductionQueueOrder(int empire, int index, float dummy1) :
-    Order(empire),
-    m_index(index),
-    m_split_incomplete(index)
-{}
-
-ProductionQueueOrder::ProductionQueueOrder(int empire, int index, float dummy1, float dummy2) :
-    Order(empire),
-    m_index(index),
-    m_dupe(index)
-{}
-
-ProductionQueueOrder::ProductionQueueOrder(int empire, int index, bool allow_use_imperial_pp, float dummy, float dummy2) :
-    Order(empire),
-    m_index(index),
-    m_use_imperial_pp(allow_use_imperial_pp ? USE_IMPERIAL_PP : DONT_USE_IMPERIAL_PP)
-{}
+    m_uuid(uuid),
+    m_action(action)
+{
+    switch(m_action) {
+    case REMOVE_FROM_QUEUE:
+    case SPLIT_INCOMPLETE:
+    case DUPLICATE_ITEM:
+        break;
+    case SET_QUANTITY_AND_BLOCK_SIZE:
+        m_new_quantity = num1;
+        m_new_blocksize = num2;
+        break;
+    case SET_QUANTITY:
+        m_new_quantity = num1;
+        break;
+    case MOVE_ITEM_TO_INDEX:
+        m_new_index = num1;
+    case SET_RALLY_POINT:
+        m_rally_point_id = num1;
+        break;
+    case PAUSE_PRODUCTION:
+    case RESUME_PRODUCTION:
+    case ALLOW_STOCKPILE_USE:
+    case DISALLOW_STOCKPILE_USE:
+        break;
+    default:
+        ErrorLogger() << "ProductionQueueOrder given unrecognized action!";
+    }
+}
 
 void ProductionQueueOrder::ExecuteImpl() const {
     try {
         auto empire = GetValidatedEmpire();
 
-        if (m_item.build_type == BT_BUILDING || m_item.build_type == BT_SHIP || m_item.build_type == BT_STOCKPILE) {
-            DebugLogger() << "ProductionQueueOrder place " << m_item.Dump();
-            empire->PlaceProductionOnQueue(m_item, m_number, 1, m_location, m_new_index);
-
-        } else if (m_split_incomplete != INVALID_SPLIT_INCOMPLETE) {
-            DebugLogger() << "ProductionQueueOrder splitting incomplete from item";
-            empire->SplitIncompleteProductionItem(m_index);
-
-        } else if (m_dupe != INVALID_SPLIT_INCOMPLETE) {
-            DebugLogger() << "ProductionQueueOrder duplicating item";
-            empire->DuplicateProductionItem(m_index);
-
-        } else if (m_new_blocksize != INVALID_QUANTITY) {
-            DebugLogger() << "ProductionQueueOrder quantity " << m_new_quantity << " Blocksize " << m_new_blocksize;
-            empire->SetProductionQuantityAndBlocksize(m_index, m_new_quantity, m_new_blocksize);
-
-        } else if (m_new_quantity != INVALID_QUANTITY) {
-            DebugLogger() << "ProductionQueueOrder quantity " << m_new_quantity;
-            empire->SetProductionQuantity(m_index, m_new_quantity);
-
-        } else if (m_new_index != INVALID_INDEX) {
-            DebugLogger() << "ProductionQueueOrder moving item in queue";
-            empire->MoveProductionWithinQueue(m_index, m_new_index);
-
-        } else if (m_rally_point_id != INVALID_OBJECT_ID) {
-            DebugLogger() << "ProductionQueueOrder setting rally point to id: " << m_rally_point_id;
-            empire->SetProductionRallyPoint(m_index, m_rally_point_id);
-
-        } else if (m_index != INVALID_INDEX) {
-            if (m_pause == PAUSE) {
-                DebugLogger() << "ProductionQueueOrder: pausing production";
-                empire->PauseProduction(m_index);
-
-            } else if (m_pause == RESUME) {
-                DebugLogger() << "ProductionQueueOrder: unpausing production";
-                empire->ResumeProduction(m_index);
-
-            } else if (m_use_imperial_pp == USE_IMPERIAL_PP) {
-                DebugLogger() << "ProductionQueueOrder: allow use of imperial PP stockpile";
-                empire->AllowUseImperialPP(m_index, true); 
-
-            } else if (m_use_imperial_pp == DONT_USE_IMPERIAL_PP) {
-                DebugLogger() << "ProductionQueueOrder: disallow use of imperial PP stockpile";
-                empire->AllowUseImperialPP(m_index, false);
-
-            } else /*if (m_pause == INVALID_PAUSE_RESUME)*/ {
-                DebugLogger() << "ProductionQueueOrder: removing item from index " << m_index;
-                empire->RemoveProductionFromQueue(m_index);
+        switch(m_action) {
+        case PLACE_IN_QUEUE: {
+            if (m_item.build_type == BT_BUILDING || m_item.build_type == BT_SHIP || m_item.build_type == BT_STOCKPILE) {
+                DebugLogger() << "ProductionQueueOrder place in queue: " << m_item.Dump();
+                empire->PlaceProductionOnQueue(m_item, m_new_quantity, 1, m_location, m_new_index);
+            } else {
+                ErrorLogger() << "ProductionQueueOrder tried to place invalid build type in queue!";
             }
-        } else {
-            ErrorLogger() << "ProductionQueueOrder: Malformed";
+            break;
+        }
+        case REMOVE_FROM_QUEUE: {
+            auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
+            if (idx == -1) {
+                ErrorLogger() << "ProductionQueueOrder asked to remove invalid UUID";
+            } else {
+                DebugLogger() << "ProductionQueueOrder removing item";
+                empire->RemoveProductionFromQueue(idx);
+            }
+            break;
+        }
+        case SPLIT_INCOMPLETE: {
+            auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
+            if (idx == -1) {
+                ErrorLogger() << "ProductionQueueOrder asked to split invalid UUID";
+            } else {
+                DebugLogger() << "ProductionQueueOrder splitting incomplete from item";
+                empire->SplitIncompleteProductionItem(idx);
+            }
+            break;
+        }
+        case DUPLICATE_ITEM: {
+            auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
+            if (idx == -1) {
+                ErrorLogger() << "ProductionQueueOrder asked to duplicate invalid UUID";
+            } else {
+                DebugLogger() << "ProductionQueueOrder duplicating item";
+                empire->DuplicateProductionItem(idx);
+            }
+            break;
+        }
+        case SET_QUANTITY_AND_BLOCK_SIZE: {
+            auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
+            if (idx == -1) {
+                ErrorLogger() << "ProductionQueueOrder asked to set quantity and blocksize of invalid UUID";
+            } else {
+                DebugLogger() << "ProductionQueueOrder setting quantity and block size";
+                empire->SetProductionQuantityAndBlocksize(idx, m_new_quantity, m_new_blocksize);
+            }
+            break;
+        }
+        case SET_QUANTITY: {
+            auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
+            if (idx == -1) {
+                ErrorLogger() << "ProductionQueueOrder asked to set quantity of invalid UUID";
+            } else {
+                DebugLogger() << "ProductionQueueOrder setting quantity " << m_new_quantity;
+                empire->SetProductionQuantity(idx, m_new_quantity);
+            }
+            break;
+        }
+        case MOVE_ITEM_TO_INDEX: {
+            auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
+            if (idx == -1) {
+                ErrorLogger() << "ProductionQueueOrder asked to move invalid UUID";
+            } else {
+                DebugLogger() << "ProductionQueueOrder moving to index " << m_new_index;
+                empire->MoveProductionWithinQueue(idx, m_new_index);
+            }
+            break;
+        }
+        case SET_RALLY_POINT: {
+            auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
+            if (idx == -1) {
+                ErrorLogger() << "ProductionQueueOrder asked to set rally point of invalid UUID";
+            } else {
+                DebugLogger() << "ProductionQueueOrder setting rally point to " << m_rally_point_id;
+                empire->SetProductionRallyPoint(idx, m_rally_point_id);
+            }
+            break;
+        }
+        case PAUSE_PRODUCTION: {
+            auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
+            if (idx == -1) {
+                ErrorLogger() << "ProductionQueueOrder asked to pause invalid UUID";
+            } else {
+                DebugLogger() << "ProductionQueueOrder pausing";
+                empire->PauseProduction(idx);
+            }
+            break;
+        }
+        case RESUME_PRODUCTION: {
+            auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
+            if (idx == -1) {
+                ErrorLogger() << "ProductionQueueOrder asked to resume invalid UUID";
+            } else {
+                DebugLogger() << "ProductionQueueOrder resuming";
+                empire->ResumeProduction(idx);
+            }
+            break;
+        }
+        case ALLOW_STOCKPILE_USE: {
+            auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
+            if (idx == -1) {
+                ErrorLogger() << "ProductionQueueOrder asked to allow stockpiling on invalid UUID";
+            } else {
+                DebugLogger() << "ProductionQueueOrder allowing stockpile";
+                empire->AllowUseImperialPP(idx, true);
+            }
+            break;
+        }
+        case DISALLOW_STOCKPILE_USE: {
+            auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
+            if (idx == -1) {
+                ErrorLogger() << "ProductionQueueOrder asked to disallow stockpiling on invalid UUID";
+            } else {
+                DebugLogger() << "ProductionQueueOrder disallowing stockpile";
+                empire->AllowUseImperialPP(idx, false);
+            }
+            break;
+        }
+        default:
+            ErrorLogger() << "ProductionQueueOrder::ExecuteImpl got invalid action";
         }
     } catch (const std::exception& e) {
         ErrorLogger() << "Build order execution threw exception: " << e.what();

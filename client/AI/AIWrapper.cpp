@@ -357,8 +357,12 @@ namespace {
             return 0;
         }
 
+        auto uuid = boost::uuids::random_generator()();
+        auto item = ProductionQueue::ProductionItem(BT_BUILDING, item_name);
+
         AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(empire_id, ProductionQueue::ProductionItem(BT_BUILDING, item_name), 1, location_id));
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::PLACE_IN_QUEUE,
+                                                   empire_id, uuid, item, 1, location_id));
 
         return 1;
     }
@@ -376,8 +380,12 @@ namespace {
             return 0;
         }
 
+        auto uuid = boost::uuids::random_generator()();
+        auto item = ProductionQueue::ProductionItem(BT_SHIP, design_id);
+
         AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(empire_id, ProductionQueue::ProductionItem(BT_SHIP, design_id), 1, location_id));
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::PLACE_IN_QUEUE,
+                                                   empire_id, uuid, item, 1, location_id));
 
         return 1;
     }
@@ -400,8 +408,13 @@ namespace {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(empire_id, queue_index, new_quantity, new_blocksize));
+        auto queue_it = empire->GetProductionQueue().find(queue_index);
+
+        if (queue_it != empire->GetProductionQueue().end())
+            AIClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::SET_QUANTITY_AND_BLOCK_SIZE,
+                                                       empire_id, queue_it->uuid,
+                                                       new_quantity, new_blocksize));
 
         return 1;
     }
@@ -437,8 +450,12 @@ namespace {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(empire_id, old_queue_index, new_queue_index));
+        auto queue_it = empire->GetProductionQueue().find(old_queue_index);
+
+        if (queue_it != empire->GetProductionQueue().end())
+            AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::MOVE_ITEM_TO_INDEX,
+                                                   empire_id, queue_it->uuid, new_queue_index));
 
         return 1;
     }
@@ -457,8 +474,12 @@ namespace {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(empire_id, queue_index));
+        auto queue_it = empire->GetProductionQueue().find(queue_index);
+
+        if (queue_it != empire->GetProductionQueue().end())
+            AIClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::REMOVE_FROM_QUEUE,
+                                                       empire_id, queue_it->uuid));
 
         return 1;
     }
@@ -477,8 +498,12 @@ namespace {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(empire_id, queue_index, pause, 0.0f));
+        auto queue_it = empire->GetProductionQueue().find(queue_index);
+
+        if (queue_it != empire->GetProductionQueue().end())
+            AIClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::PAUSE_PRODUCTION,
+                                                       empire_id, queue_it->uuid));
 
         return 1;
     }
@@ -497,8 +522,12 @@ namespace {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(empire_id, queue_index, use_stockpile, 0.0f, 0.0f));
+        auto queue_it = empire->GetProductionQueue().find(queue_index);
+
+        if (queue_it != empire->GetProductionQueue().end())
+            AIClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ALLOW_STOCKPILE_USE,
+                                                       empire_id, queue_it->uuid));
 
         return 1;
     }
