@@ -802,8 +802,19 @@ void Fleet::MovementPhase() {
     auto move_path = MovePath();
 
     if (!move_path.empty()) {
-        DebugLogger() << "Fleet::MovementPhase this: " << this->Name() << " (" << this->ID()
-                      << ")  move path:" << [&]() {
+        DebugLogger() << "Fleet::MovementPhase " << this->Name() << " (" << this->ID()
+                      << ")  route:" << [&]() {
+            std::stringstream ss;
+            for (auto sys_id : this->TravelRoute()) {
+                auto sys = Objects().get<System>(sys_id);
+                if (sys)
+                    ss << "  " << sys->Name() << " (" << sys_id << ")";
+                else
+                    ss << "  (???) (" << sys_id << ")";
+            }
+            return ss.str();
+        }()
+                      << "   move path:" << [&]() {
             std::stringstream ss;
             for (auto node : move_path) {
                 auto sys = Objects().get<System>(node.object_id);
@@ -887,7 +898,7 @@ void Fleet::MovementPhase() {
 
 
     // if fleet not moving, nothing more to do.
-    if (move_path.empty() || move_path.size() == 1)
+    if (move_path.empty())
         return;
 
 
@@ -913,36 +924,8 @@ void Fleet::MovementPhase() {
             m_prev_system = system->ID();               // passing a system, so update previous system of this fleet
 
             // reached a system, so remove it from the route
-            if (m_travel_route.front() == system->ID()) {
+            if (m_travel_route.front() == system->ID())
                 m_travel_route.erase(m_travel_route.begin());
-
-            } else {
-                std::stringstream ss;
-                for (const auto& loc : m_travel_route) {
-                    auto route_system = Objects().get<System>(loc);
-                    ss << (route_system ? route_system->Name() : "invalid id") << "("<< loc << ") ";
-                }
-
-                std::stringstream ss_path_back;
-                try {
-                    const auto path_back_to_expected = GetPathfinder()->ShortestPath(
-                        system->ID(), m_travel_route.front(), ALL_EMPIRES);
-                    for (const auto& loc : path_back_to_expected.first) {
-                        auto route_system = Objects().get<System>(loc);
-                        ss_path_back << (route_system ? route_system->Name() : "invalid id") << "("<< loc << ") ";
-                    }
-                } catch (const std::out_of_range&) {
-                    ErrorLogger() << "Couldn't find route from current location back to expected path";
-                }
-
-                ErrorLogger() << "Fleet::MovementPhase: Encountered an unexpected system on route."
-                              << "  Fleet is " << Name() << "(" << ID() << ")"
-                              << " Expected system is " << system->Name() << "(" << system->ID() << ")"
-                              << " but front of route is " << m_travel_route.front()
-                              << ". Whole route is [" << ss.str() <<"]"
-                              << ". Path back to expected path is [" << ss_path_back.str() << "]";
-                // TODO: Notify the suer with a sitrep?
-            }
 
             bool resupply_here = GetSupplyManager().SystemHasFleetSupply(system->ID(), this->Owner(), ALLOW_ALLIED_SUPPLY);
 
