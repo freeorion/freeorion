@@ -78,6 +78,14 @@ inline Clr InvertClr(const Clr& clr)
                clr.a);
 }
 
+inline Clr BlendClr(const Clr& src, const Clr& dst, float factor)
+{
+    return Clr(static_cast<unsigned char>(src.r * factor + dst.r * (1 - factor)),
+               static_cast<unsigned char>(src.g * factor + dst.g * (1 - factor)),
+               static_cast<unsigned char>(src.b * factor + dst.b * (1 - factor)),
+               static_cast<unsigned char>(src.a * factor + dst.a * (1 - factor)));
+}
+
 /** Named ctor that constructs a Clr from four floats that represent the color
     channels (each must be >= 0.0 and <= 1.0). */
 inline Clr FloatClr(float r, float g, float b, float a)
